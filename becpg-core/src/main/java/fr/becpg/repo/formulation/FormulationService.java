@@ -31,5 +31,7 @@ public interface FormulationService<T extends FormulatedEntity> {
      T formulate(T repositoryEntity) throws FormulateException;
 
 	void registerFormulationChain(Class<T> clazz, FormulationChain<T> chain);
+
+	boolean shouldFormulate(NodeRef entityNodeRef);
 	
 }

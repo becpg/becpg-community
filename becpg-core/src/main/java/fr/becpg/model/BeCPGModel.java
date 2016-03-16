@@ -89,6 +89,10 @@ public interface BeCPGModel {
 	// code aspect
 	QName ASPECT_CODE = QName.createQName(BECPG_URI, "codeAspect");
 	QName PROP_CODE = QName.createQName(BECPG_URI, "code");
+	
+	// score aspect
+	QName ASPECT_ENTITY_SCORE = QName.createQName(BECPG_URI, "entityScoreAspect");
+	QName PROP_ENTITY_SCORE = QName.createQName(BECPG_URI, "entityScore");
 
 	// systemFolder
 	QName ASPECT_SYSTEM_FOLDER = QName.createQName(BECPG_URI, "systemFolderAspect");

@@ -98,8 +98,6 @@
                          */
                         onReady : function Properties_onReady()
                         {
-                            var me = this;
-
                             // Upload logo event 
                             YAHOO.util.Event.addListener(this.id + "-uploadLogo-button", "click", this.doUploadLogo, this, true);
                             
@@ -114,9 +112,9 @@
                                 type : "folder"
                              }).display(this.options.isFavourite);
                             
-                            
-                            this.widgets.tabView = new YAHOO.widget.TabView(this.id+'-properties-tabview');
-                            
+                            if(Dom.get(this.id+'-properties-tabview')!=null){
+                            	this.widgets.tabView = new YAHOO.widget.TabView(this.id+'-properties-tabview');
+                            }
                             
                             // Load the form
                             Alfresco.util.Ajax.request(

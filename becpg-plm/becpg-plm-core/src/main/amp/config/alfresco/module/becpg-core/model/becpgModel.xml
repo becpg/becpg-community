@@ -2539,9 +2539,14 @@
 						<constraint ref="bcpg:systemState" />
 					</constraints>
 				</property>
-				<property name="bcpg:productScores">
-					<type>d:mltext</type>
-					<index enabled="false"></index>
+			</properties>
+		</aspect>
+
+		<aspect name="bcpg:entityScoreAspect">
+			<properties>
+				<property name="bcpg:entityScore">
+				  <type>d:text</type>
+				  <index enabled="false"/>
 				</property>
 			</properties>
 		</aspect>

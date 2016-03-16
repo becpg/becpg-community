@@ -18,18 +18,22 @@
 package fr.becpg.repo.formulation.impl;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.util.StopWatch;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationChain;
@@ -46,7 +50,9 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 
 	private static final String DEFAULT_CHAIN_ID = "default";
 
-	AlfrescoRepository<T> alfrescoRepository;
+	private AlfrescoRepository<T> alfrescoRepository;
+
+	private NodeService nodeService;
 
 	private final Map<Class<T>, Map<String, FormulationChain<T>>> formulationChains = new HashMap<>();
 
@@ -54,6 +60,10 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 
 	public void setAlfrescoRepository(AlfrescoRepository<T> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
+	}
+
+	public void setNodeService(NodeService nodeService) {
+		this.nodeService = nodeService;
 	}
 
 	@Override
@@ -172,6 +182,21 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 		}
 
 		return repositoryEntity;
+	}
+
+	@Override
+	public boolean shouldFormulate(NodeRef entityNodeRef) {
+
+		if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_FORMULATED_ENTITY)) {
+
+			Date modified = (Date) nodeService.getProperty(entityNodeRef, ContentModel.PROP_MODIFIED);
+			Date formulated = (Date) nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_FORMULATED_DATE);
+
+			if ((modified == null) || (formulated == null) || (modified.getTime() > formulated.getTime())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private FormulationChain<T> getChain(Class<?> clazz, String chainId) {

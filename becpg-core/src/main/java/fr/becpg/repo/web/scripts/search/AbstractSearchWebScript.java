@@ -31,7 +31,7 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.helper.JSONHelper;
+import fr.becpg.repo.helper.JsonHelper;
 import fr.becpg.repo.search.AdvSearchService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.web.scripts.WebscriptHelper;
@@ -116,7 +116,7 @@ public abstract class AbstractSearchWebScript extends AbstractWebScript {
 		if (query != null && !query.isEmpty()) {
 
 			JSONObject jsonObject = new JSONObject(query);
-			criteriaMap = JSONHelper.extractCriteria(jsonObject);
+			criteriaMap = JsonHelper.extractCriteria(jsonObject);
 			datatype = QName.createQName(jsonObject.getString("datatype"), namespaceService);
 
 		}

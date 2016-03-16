@@ -127,10 +127,11 @@
 						var scores = object.scores;					
 						var intScore = parseInt(scores.global);					
 						var spriteIndex=(intScore/5>>0);
+
 						html+="<ul><li class=\"title\">"+instance.msg("label.product.scores")+"</li><li id=\"scoreLi\" class=\"score-"+spriteIndex+"\" " +
-						"title=\""+instance.msg("tooltip.components.validation")+": "+Math.ceil(scores.details.componentsValidation*100)+
-						"%\n"+instance.msg("tooltip.mandatory.completion")+": "+Math.ceil(scores.details.mandatoryFields*100)+
-						"%\n"+instance.msg("tooltip.specification.respect")+": "+scores.details.specifications+"%\">";
+						"title=\""+instance.msg("tooltip.components.validation")+": "+Math.floor(scores.details.componentsValidation)+
+						"%\n"+instance.msg("tooltip.mandatory.completion")+": "+Math.floor(scores.details.mandatoryFields)+
+						"%\n"+instance.msg("tooltip.specification.respect")+": "+Math.floor(scores.details.specifications)+"%\">";
 
 						html+="<span>"+Math.floor(scores.global)+"%</span>";
 						html+="</li></ul>";

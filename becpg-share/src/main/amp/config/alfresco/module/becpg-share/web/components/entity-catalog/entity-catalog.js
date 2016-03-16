@@ -67,10 +67,7 @@
 		 */
 		onReady : function EntityCatalog_onReady() {
 			var instance=this;
-			// Appel AJax entity-catalog 
-			// /becpg/entity/catalog/node/{store_type}/{store_id}/{id}
-			// ne rien affiché si pas de catalogues
-
+			
 			function parseJsonToHTML(json){
 				//displays things if there are any catalogs
 				if(json !== undefined && json != null && Object.keys(json).length > 0){
@@ -78,25 +75,26 @@
 					var html="<div class=\"entity-catalog\">";				
 					for(var key in json){
 						var score = json[key].score;
-						var locales = json[key].locales;
+						var locale = json[key].locale;
 						var label = json[key].label;
 						var catalogId = json[key].id;
 						
-						if(locales !== undefined && locales != null && locales.length > 0){
-							catalogId = catalogId+"_"+locales[0];
+						if(locale !== undefined && locale != null ){
+							catalogId = catalogId+"_"+locale;
 						}
 						
 						html+="<div id="+instance.id+"_catalog_"+ catalogId +" class=\"catalog "+(key==0?"first-catalog":"")+"\">";
 						html+="<div class=\"catalog-header set-bordered-panel-heading\">";
-							html+="<span class=\"catalog-name\">"+instance.msg("label.catalog")+" \""+replaceLocaleWithFlag(label, locales)+"\"</span>";
+							html+="<span class=\"catalog-name\">"+instance.msg("label.catalog")+" \""+label+
+							(locale!=null?"<img src=\"/share/res/components/images/flags/"+locale+".png\">":"")+"\"</span>";
 							
-							html+="<progress value=\""+score+"\">"							
+							html+="<progress value=\""+(score/100)+"\">";							
 								//IE fix
 								html+="<div class=\"progress-bar\">";
 									html+="<span style=\"width: "+score+"%;\">"+score+"%</span>";
 								html+="</div>";					        	
-							html+="</progress>"
-							html+="<span class=\"score-info\">"+Math.floor(score*100)+" % "+instance.msg("label.completed")+"</span>";
+							html+="</progress>";
+							html+="<span class=\"score-info\">"+Math.floor(score)+" % "+instance.msg("label.completed")+"</span>";
 						html+="</div>";
 
 						html+="<div class=\"catalog-details\">";
@@ -104,14 +102,14 @@
 
 						//display missing props, if any
 						if(json[key].missingFields !== undefined){
-							html+="<ul class=\"catalog-missing-propList\">"
-								if(json[key].missingFields.length > 0){
-									for(var field in json[key].missingFields){
-										html+="<li class=\"missing-field\">"+replaceLocaleWithFlag(json[key].missingFields[field].localized)+"</li>";								
-									}
-								} else {
-									html+="<li class=\"no-missing-prop\">"+instance.msg("label.no_missing_prop")+"</li>";
+							html+="<ul class=\"catalog-missing-propList\">";
+								for(var field in json[key].missingFields){
+									html+="<li class=\"missing-field\" id=\"missing-field_"+json[key]+"_"+json[key].missingFields[field].displayName+"\">"
+											+json[key].missingFields[field].displayName+
+											(json[key].missingFields[field].locale!=null?"<img src=\"/share/res/components/images/flags/"
+													+json[key].missingFields[field].locale+".png\">":"")+"</li>";	
 								}
+								
 							html+="</ul>";
 						} 
 						html+="</div>";
@@ -120,36 +118,9 @@
 					html+="</div>";	
 					return html;
 				} else {
-					return null;
-				}
-			}
-
-			//Replaces locale in formatted label by img markup with corresponding flag
-			// eg: "legal name_en" would be replaced by "legal name <img>" with img tag having english flag as src
-			function replaceLocaleWithFlag(field, locales){
-				//localized field
-				if(/_([a-z]{2})+/.test(field)){
-					var match = field.match(/_([a-z]{2})+/g)[0];
-					var locale = match.substring(1,3);
-
-					var imgMarkup = "<img src=\"/share/res/components/images/flags/"+locale+".png\">";
-					var replaced = field.replace(match, imgMarkup);
-					return replaced;
-				} else if(locales !== undefined){
-					//localized catalog with only one locale set
-					if(locales.length == 1){
-						
-						var locale = locales[0];
-						var imgMarkup = "<img src=\"/share/res/components/images/flags/"+locale+".png\">";
-						var replaced = field+imgMarkup;
-						return replaced;
-					} else {
-						
-						return field;
-					}
-				} else {
-					return field;
-				}
+					return "<span class=\"no-missing-prop\">"+instance.msg("label.no_missing_prop")+"</span>";
+				};
+				
 			}
 
 			/**
@@ -159,7 +130,6 @@
 			 */ 
 			function colorizeMissingFields(json, id){
 				var i=0;
-				var step=5; //value of hue between each catalog
 				
 				for(var key in json){
 					var color = "hsl("+(i*360/7)+", "+(70+(i%20)*(i%2==0?1:-1))+"%, 50%)";
@@ -167,16 +137,16 @@
 					var colorTipElement = document.createElement("SPAN");
 					colorTipElement.style.backgroundColor=color;
 					colorTipElement.className+="catalog-color";	
-					colorTipElement.title=instance.msg("label.catalog")+" '"+json[key].label+(json[key].locales !== undefined && json[key].locales.length == 1 ? "("+json[key].locales[0]+")'": "'");
+					colorTipElement.title=instance.msg("label.catalog")+" '"+json[key].label+(json[key].locale !== undefined && json[key].locale.length == 1 ? "("+json[key].locale+")'": "'");
 					
 					if(json[key].missingFields !== undefined){
 						
 						//put a color tip for this catalog
 						var catalogId = json[key].id;
-						var locales = json[key].locales;
+						var locale = json[key].locale;
 						
-						if(locales !== undefined && locales != null && locales.length > 0){
-							catalogId = catalogId+"_"+locales[0];
+						if(locale !== undefined && locale != null ){
+							catalogId = catalogId+"_"+locale;
 						}
 						var labelId = instance.id+"_"+catalogId+"_missingPropLabel";
 						
@@ -192,7 +162,7 @@
 						for(var field in json[key].missingFields){							
 							//try to find a prop or assoc with this field
 							
-							var fieldCode = json[key].missingFields[field].code.replace(":", "_");
+							var fieldCode = json[key].missingFields[field].id.replace(":", "_");
 							var fieldId="";
 							
 							var found = YAHOO.util.Dom.get(id+"_assoc_"+fieldCode);
@@ -209,7 +179,6 @@
 								}
 								
 								//put color tip
-								var parent = found.parentNode;
 								var labels = document.getElementsByTagName("label");
 								
 
@@ -217,14 +186,34 @@
 									var currentLabel = labels[labelIndex];									
 									
 									//checks if we're on the right label, and the catalog is not already labelled
+									var hasLocaleIcon = false;
 									if(currentLabel.htmlFor.contains(fieldId) && currentLabel.parentNode.innerHTML.indexOf(colorTipElement.style.backgroundColor) == -1){
-										currentLabel.parentNode.insertBefore(colorTipElement.cloneNode(false), currentLabel.nextSibling);										
+										if(currentLabel.childNodes){
+											for(var child in currentLabel.childNodes){
+												var currentChildNode = currentLabel.childNodes[child];
+												if(currentChildNode.nodeType == Node.ELEMENT_NODE && currentChildNode.className.contains("locale-icon")){
+													hasLocaleIcon = true;
+													break;
+												}
+											}
+										}
+										
+										if(hasLocaleIcon){
+											currentLabel.parentNode.insertBefore(colorTipElement.cloneNode(false), currentLabel.nextSibling);	
+										} else {
+											currentLabel.innerHTML+=colorTipElement.outerHTML;
+										}
 									}
 								}							
 							} else {
-								console.log("can't find any prop or assoc for field "+fieldCode);
-								console.log("prop id would be "+id+"_prop_"+fieldCode);
-								console.log("assoc id would be "+id+"_assoc_"+fieldCode);
+								
+								var absentMissingFieldId = "missing-field_"+json[key]+"_"+json[key].missingFields[field].displayName;
+								
+								var absentMissingFieldHTMLElement = YAHOO.util.Dom.get(absentMissingFieldId);
+								
+								if(absentMissingFieldHTMLElement !== undefined && absentMissingFieldHTMLElement != null){
+									absentMissingFieldHTMLElement.outerHTML = "";
+								}
 							}							
 						}
 					}
@@ -232,8 +221,9 @@
 				}
 			}
 
+			YAHOO.util.Dom.get(this.id+"-entity-catalog").innerHTML='<span class="wait">' + Alfresco.util.encodeHTML(this.msg("label.loading")) + '</span>';
+			
 			//Affichage des notes et ajouts de tags dans les forms
-			//init
 			Alfresco.util.Ajax.request({
 				url : Alfresco.constants.PROXY_URI + "becpg/entity/catalog/node/" + instance.options.entityNodeRef.replace(":/",""),
 				method : Alfresco.util.Ajax.GET,
@@ -243,7 +233,6 @@
 
 						if(response.json !== undefined){
 							var html = parseJsonToHTML(response.json);
-							//console.log("html: "+html);
 							YAHOO.util.Dom.get(this.id+"-entity-catalog").innerHTML=html;
 														
 							var insertId = this.id.replace("-mgr", "");							
