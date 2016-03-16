@@ -16,6 +16,7 @@ import java.util.Objects;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
@@ -51,7 +52,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	/** The Constant NO_GRP. */
 	public static final String NO_GRP = "-";
 	private static final String MESSAGE_MISSING_INGLIST = "message.formulate.missing.ingList";
-	private static final String  MESSAGE_NOTAUTHORIZED_ING = "message.formulate.notauhorized.ing";
+	private static final String MESSAGE_NOTAUTHORIZED_ING = "message.formulate.notauhorized.ing";
 
 	/** The logger. */
 	private static final Log logger = LogFactory.getLog(IngsCalculatingFormulationHandler.class);
@@ -70,7 +71,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
-		logger.debug("Calculate ingredient list");
+		logger.debug("\t==== Calculate ingredient list of " + formulatedProduct.getName());
 
 		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
 			return true;
@@ -204,7 +205,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		}
 
 		// check formulated product
-		checkILOfFormulatedProduct(formulatedProduct.getIngList(), formulatedProduct.getProductSpecifications(), reqCtrlMap);
+		checkILOfFormulatedProduct(formulatedProduct.getIngList(), getMergedForbiddenIngList(formulatedProduct), reqCtrlMap);
 
 		// sort collection
 		sortIL(formulatedProduct.getIngList());
@@ -231,7 +232,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 		// check product respect specification
 		checkILOfPart(compoListDataItem.getProduct(), compoListDataItem.getDeclType(), componentProductData,
-				formulatedProduct.getProductSpecifications(), reqCtrlMap);
+				getMergedForbiddenIngList(formulatedProduct), reqCtrlMap);
 
 		if (componentProductData.getIngList() == null) {
 			if (logger.isDebugEnabled()) {
@@ -361,11 +362,6 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				newIngListDataItem.setIsIonized(true);
 			}
 
-			if (logger.isDebugEnabled()) {
-				logger.debug("productData: " + compoListDataItem.getProduct() + " - ing: "
-						+ nodeService.getProperty(ingNodeRef, BeCPGModel.PROP_CHARACT_NAME) + " qtyPerc: " + totalQtyIng);
-			}
-
 			// recursive
 			if (!component.isLeaf()) {
 				calculateILOfPart(compoListDataItem, component, ingList, retainNodes, totalQtyIngMap, totalQtyVolMap, newIngListDataItem);
@@ -384,7 +380,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	 *            the total qty ing map
 	 */
 	private void checkILOfPart(NodeRef productNodeRef, DeclarationType declType, ProductData componentProductData,
-			List<ProductSpecificationData> productSpecicationDataList, Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap) {
+			List<ForbiddenIngListDataItem> forbiddenIngredientsList, Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap) {
 
 		if (!PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.equals(nodeService.getType(productNodeRef))) {
 
@@ -394,51 +390,109 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				if ((declType == null) || !declType.equals(DeclarationType.DoNotDetails)) {
 					// req not respected
 					String message = I18NUtil.getMessage(MESSAGE_MISSING_INGLIST);
-					addReqCtrl(reqCtrlMap, RequirementType.Tolerated, message, productNodeRef);									
+					addReqCtrl(reqCtrlMap, RequirementType.Tolerated, message, productNodeRef);
 				}
 			} else {
 
-				for (ProductSpecificationData productSpecificationData : productSpecicationDataList) {
+				forbiddenIngredientsList.forEach(fil -> {
+					componentProductData.getIngList().forEach(ingListDataItem->  {
 
-					for (IngListDataItem ingListDataItem : componentProductData.getIngList()) {
-						if (logger.isDebugEnabled()) {
-							logger.debug("For " + productNodeRef + " testing ing :"
-									+ nodeService.getProperty(ingListDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME));
-						}
-						for (ForbiddenIngListDataItem fil : productSpecificationData.getForbiddenIngList()) {
+						if (!RequirementType.Authorized.equals(fil.getReqType())) {
 
-							if (!RequirementType.Authorized.equals(fil.getReqType())) {
-
-								if (checkRuleMatchIng(ingListDataItem, fil)) {
-									// Look for raw material
-									if ((componentProductData.getCompoListView().getCompoList() != null)
-											&& !componentProductData.getCompoListView().getCompoList().isEmpty()) {
-										for (CompoListDataItem c : componentProductData.getCompoListView().getCompoList()) {
-											checkILOfPart(c.getProduct(), declType, (ProductData) alfrescoRepository.findOne(c.getProduct()),
-													productSpecicationDataList, reqCtrlMap);
-										}
+							if (checkRuleMatchIng(ingListDataItem, fil)) {
+								// Look for raw material
+								if ((componentProductData.getCompoListView().getCompoList() != null)
+										&& !componentProductData.getCompoListView().getCompoList().isEmpty()) {
+									for (CompoListDataItem c : componentProductData.getCompoListView().getCompoList()) {
+										checkILOfPart(c.getProduct(), declType, (ProductData) alfrescoRepository.findOne(c.getProduct()),
+												forbiddenIngredientsList, reqCtrlMap);
+									}
+								} else {
+									logger.debug("Adding not respected for :" + fil.getReqMessage());
+									ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(fil.getNodeRef());
+									if (reqCtrl == null) {
+										reqCtrl = new ReqCtrlListDataItem(null, fil.getReqType(), fil.getReqMessage(), null, new ArrayList<NodeRef>(),
+												RequirementDataType.Specification);
+										reqCtrlMap.put(fil.getNodeRef(), reqCtrl);
 									} else {
-										logger.debug("Adding not respected for :" + fil.getReqMessage());
-										ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(fil.getNodeRef());
-										if (reqCtrl == null) {
-											reqCtrl = new ReqCtrlListDataItem(null, fil.getReqType(), fil.getReqMessage(), null,
-													new ArrayList<NodeRef>(), RequirementDataType.Specification);
-											reqCtrlMap.put(fil.getNodeRef(), reqCtrl);
-										} else reqCtrl.setReqDataType(RequirementDataType.Specification);
+										reqCtrl.setReqDataType(RequirementDataType.Specification);
+									}
 
-										if (!reqCtrl.getSources().contains(productNodeRef)) {
-											reqCtrl.getSources().add(productNodeRef);
-										}
+									if (!reqCtrl.getSources().contains(productNodeRef)) {
+										reqCtrl.getSources().add(productNodeRef);
 									}
 								}
 							}
-
 						}
-					}
-				}
+
+					});
+				});
 
 			}
 		}
+	}
+
+	public List<ForbiddenIngListDataItem> getMergedForbiddenIngList(ProductData product) {
+
+		if ((product.getProductSpecifications() == null) || product.getProductSpecifications().isEmpty()) {
+
+			if (product instanceof ProductSpecificationData) {
+				return ((ProductSpecificationData) product).getForbiddenIngList();
+			} else {
+				return new ArrayList<ForbiddenIngListDataItem>();
+			}
+		} else {
+
+			List<ForbiddenIngListDataItem> unmergedForbiddenIngList = new ArrayList<>();
+
+			for (ProductSpecificationData specification : product.getProductSpecifications()) {
+				unmergedForbiddenIngList.addAll(getMergedForbiddenIngList(specification));
+			}
+
+			return mergeForbiddenIngList(unmergedForbiddenIngList);
+		}
+	}
+
+	public List<ForbiddenIngListDataItem> mergeForbiddenIngList(List<ForbiddenIngListDataItem> unmergedList) {
+		List<ForbiddenIngListDataItem> mergedList = new ArrayList<>();
+		Map<String, ForbiddenIngListDataItem> mergingForbiddenIngMap = new HashMap<>();
+		// merge ing, bio/geo orig props from common fbd ings
+		for (ForbiddenIngListDataItem forbiddenIng : unmergedList) {
+			if (forbiddenIng.getReqMessage() != null) {
+
+				if (mergingForbiddenIngMap.containsKey(forbiddenIng.getReqMessage())
+						&& (mergingForbiddenIngMap.get(forbiddenIng.getReqMessage()) != null)) {
+					// merge values
+
+					ForbiddenIngListDataItem mappedForbiddenIng = mergingForbiddenIngMap.get(forbiddenIng.getReqMessage());
+					
+					mappedForbiddenIng.getIngs().addAll(forbiddenIng.getIngs());
+					mappedForbiddenIng.getBioOrigins().addAll(forbiddenIng.getBioOrigins());
+					mappedForbiddenIng.getGeoOrigins().addAll(forbiddenIng.getGeoOrigins());
+					mappedForbiddenIng.getRequiredGeoOrigins().addAll(forbiddenIng.getRequiredGeoOrigins());
+					mappedForbiddenIng.getGeoTransfo().addAll(forbiddenIng.getGeoTransfo());
+
+					// returns false if string is null or is not valid
+					// if one of these is ionized or gmo, they all are
+					if (BooleanUtils.toBoolean(forbiddenIng.getIsGMO())) {
+						if (!BooleanUtils.toBoolean(mappedForbiddenIng.getIsGMO())) {
+							mappedForbiddenIng.setIsGMO(forbiddenIng.getIsGMO());
+						}
+					}
+
+					if (BooleanUtils.toBoolean(forbiddenIng.getIsIonized())) {
+						if (!BooleanUtils.toBoolean(mappedForbiddenIng.getIsIonized())) {
+							mappedForbiddenIng.setIsIonized(forbiddenIng.getIsIonized());
+						}
+					}
+
+				} else {
+					mergingForbiddenIngMap.put(forbiddenIng.getReqMessage(), forbiddenIng);
+				}
+			}
+		}
+		mergedList.addAll(mergingForbiddenIngMap.values());
+		return mergedList;
 	}
 
 	private boolean checkRuleMatchIng(IngListDataItem ingListDataItem, ForbiddenIngListDataItem fil) {
@@ -528,38 +582,36 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	 * check the ingredients of the part according to the specification
 	 *
 	 */
-	private void checkILOfFormulatedProduct(Collection<IngListDataItem> ingList, List<ProductSpecificationData> productSpecicationDataList,
-			Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap) {
+	private void checkILOfFormulatedProduct(Collection<IngListDataItem> ingList,
+			List<ForbiddenIngListDataItem> productSpecicationsForbiddenIngredientsList, Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap) {
 
 		boolean checkAutorized = false;
-		for (ProductSpecificationData productSpecification : productSpecicationDataList) {
+		for (ForbiddenIngListDataItem fil : productSpecicationsForbiddenIngredientsList) {
 
 			for (IngListDataItem ingListDataItem : ingList) {
+				if (!RequirementType.Authorized.equals(fil.getReqType())) {
+					// Ings
+					if (!fil.getIngs().isEmpty()) {
+						if (fil.getIngs().contains(ingListDataItem.getIng())) {
+							if ((fil.getQtyPercMaxi() != null) && (fil.getQtyPercMaxi() <= ingListDataItem.getQtyPerc())) {
 
-				for (ForbiddenIngListDataItem fil : productSpecification.getForbiddenIngList()) {
-					if (!RequirementType.Authorized.equals(fil.getReqType())) {
-						// Ings
-						if (!fil.getIngs().isEmpty()) {
-							if (fil.getIngs().contains(ingListDataItem.getIng())) {
-								if ((fil.getQtyPercMaxi() != null) && (fil.getQtyPercMaxi() <= ingListDataItem.getQtyPerc())) {
-
-									// req not respected
-									ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(fil.getNodeRef());
-									if (reqCtrl == null) {
-										reqCtrl = new ReqCtrlListDataItem(null, fil.getReqType(), fil.getReqMessage(), ingListDataItem.getIng(),
-												new ArrayList<NodeRef>(), RequirementDataType.Specification);
-										reqCtrlMap.put(fil.getNodeRef(), reqCtrl);
-									} else {
-										reqCtrl.setReqDataType(RequirementDataType.Specification);
-									}
+								// req not respected
+								ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(fil.getNodeRef());
+								if (reqCtrl == null) {
+									reqCtrl = new ReqCtrlListDataItem(null, fil.getReqType(), fil.getReqMessage(), ingListDataItem.getIng(),
+											new ArrayList<NodeRef>(), RequirementDataType.Specification);
+									reqCtrlMap.put(fil.getNodeRef(), reqCtrl);
+								} else {
+									reqCtrl.setReqDataType(RequirementDataType.Specification);
 								}
 							}
 						}
-
-					} else {
-						checkAutorized = true;
 					}
+
+				} else {
+					checkAutorized = true;
 				}
+
 			}
 		}
 
@@ -569,29 +621,23 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 			for (IngListDataItem ingListDataItem : ingList) {
 				boolean autorized = false;
-				for (ProductSpecificationData productSpecificationData : productSpecicationDataList) {
 
-					for (ForbiddenIngListDataItem fil : productSpecificationData.getForbiddenIngList()) {
-						if (RequirementType.Authorized.equals(fil.getReqType())) {
-							if (checkRuleMatchIng(ingListDataItem, fil)) {
-								autorized = true;
-								if(fil.getReqMessage()!= null && fil.getReqMessage()!=""){
-									addReqCtrl(reqCtrlMap, RequirementType.Authorized, fil.getReqMessage(), ingListDataItem.getIng());
-								}
-								break;
+				for (ForbiddenIngListDataItem fil : productSpecicationsForbiddenIngredientsList) {
+					if (RequirementType.Authorized.equals(fil.getReqType())) {
+						if (checkRuleMatchIng(ingListDataItem, fil)) {
+							autorized = true;
+							if ((fil.getReqMessage() != null) && (fil.getReqMessage() != "")) {
+								addReqCtrl(reqCtrlMap, RequirementType.Authorized, fil.getReqMessage(), ingListDataItem.getIng());
 							}
+							break;
 						}
 					}
-
-					if(autorized){
-						break;
-					}
-
 				}
 
 				if (!autorized) {
+
 					String message = I18NUtil.getMessage(MESSAGE_NOTAUTHORIZED_ING);
-					addReqCtrl(reqCtrlMap, RequirementType.Forbidden, message, ingListDataItem.getIng());					
+					addReqCtrl(reqCtrlMap, RequirementType.Forbidden, message, ingListDataItem.getIng());
 				}
 
 			}
@@ -685,8 +731,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		}
 		return ingList;
 	}
-	
-	private void addReqCtrl(Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap, RequirementType requirementType, String message, NodeRef sourceNodeRef){
+
+	private void addReqCtrl(Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap, RequirementType requirementType, String message, NodeRef sourceNodeRef) {
 		ReqCtrlListDataItem reqCtrl = null;
 		for (ReqCtrlListDataItem r : reqCtrlMap.values()) {
 			if (message.equals(r.getReqMessage())) {

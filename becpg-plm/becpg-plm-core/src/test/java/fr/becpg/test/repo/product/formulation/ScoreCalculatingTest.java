@@ -4,11 +4,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -21,7 +23,6 @@ import org.junit.Test;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.helper.AssociationService;
-import fr.becpg.repo.helper.JsonScoreHelper;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
@@ -50,9 +51,9 @@ public class ScoreCalculatingTest extends AbstractFinishedProductTest {
 	}
 
 	@Test
-	public void testScore() {
+	public void testScore(){
 
-		// create FP
+		//create FP
 		NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			FinishedProductData finishedProduct = new FinishedProductData();
@@ -88,6 +89,7 @@ public class ScoreCalculatingTest extends AbstractFinishedProductTest {
 			compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial12NodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
+
 			/**
 			 * Packaging part
 			 */
@@ -109,71 +111,83 @@ public class ScoreCalculatingTest extends AbstractFinishedProductTest {
 			packagingList.add(new PackagingListDataItem(null, 1d, PackagingListUnit.kg, PackagingLevel.Secondary, true, packagingKit1NodeRef));
 			finishedProduct.getPackagingListView().setPackagingList(packagingList);
 
-			finishedProduct.setLegalName("Finished Product 1");
+			finishedProduct.setLegalName(new MLText(Locale.FRENCH, "Produit fini 1"));
+
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
 		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-
+			
 			/**
 			 * Spec
 			 */
 			Map<QName, Serializable> properties = new HashMap<>();
 			properties.put(ContentModel.PROP_NAME, "Spec1");
-			NodeRef productSpecificationNodeRef1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
+			NodeRef productSpecificationNodeRef1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, 
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, 
+							(String)properties.get(ContentModel.PROP_NAME)), 
 					PLMModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
 
 			ProductSpecificationData specifications = (ProductSpecificationData) alfrescoRepository.findOne(productSpecificationNodeRef1);
 			List<ForbiddenIngListDataItem> forbiddenIngList2 = new ArrayList<>();
-
+			
 			ings = new ArrayList<>();
 			List<NodeRef> geoOrigins = new ArrayList<NodeRef>();
-			ings.add(ing2);
+			ings.add(ing2);				
 			geoOrigins.add(geoOrigin2);
-			forbiddenIngList2.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "Ing2 geoOrigin2 interdit sur charcuterie", null,
-					null, null, ings, geoOrigins, new ArrayList<>()));
-
+			forbiddenIngList2.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "Ing2 geoOrigin2 interdit sur charcuterie", null, null, null, ings, geoOrigins, new ArrayList<>()));
+			
 			specifications.setForbiddenIngList(forbiddenIngList2);
 			alfrescoRepository.save(specifications);
 
 			nodeService.createAssociation(finishedProductNodeRef, productSpecificationNodeRef1, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
 			return null;
-
+			
 		}, false, true);
 
-		// formulate and check FP score
+
+		//formulate and check FP score
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-			productService.formulate(finishedProductNodeRef);
+			productService.formulate(finishedProductNodeRef);			
 			ProductData finishedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
 
 			assertNotNull(finishedProduct.getEntityScore());
 			JSONObject scoresObject = new JSONObject(finishedProduct.getEntityScore());
-			logger.info("Scores JSON object=" + scoresObject);
+			logger.info("Scores JSON object="+scoresObject);
 
 			int validationScore = (int) (scoresObject.getJSONObject("details").getDouble("componentsValidation"));
 			int specificationsScore = scoresObject.getJSONObject("details").getInt("specifications");
 			int mandatoryFieldsScore = (int) (scoresObject.getJSONObject("details").getDouble("mandatoryFields"));
-			int globalScore = (int) (scoresObject.getDouble("global"));
-
-			logger.info("ValidationScore=" + validationScore);
-			logger.info("SpecificationsScore=" + specificationsScore);
-			logger.info("MandatoryFieldsScore=" + mandatoryFieldsScore);
+			int globalScore = (int) (scoresObject.getDouble("global"));		
+			
+			logger.info("ValidationScore="+validationScore+ " (expecting 37)");
+			logger.info("SpecificationsScore="+specificationsScore+ " (expecting 90)");
+			logger.info("MandatoryFieldsScore="+mandatoryFieldsScore+ " (expecting 20)");
+			logger.info("GlobalScore="+globalScore+ " (expecting 49)");
 
 			assertEquals(37, validationScore);
 			assertEquals(90, specificationsScore);
 			assertEquals(33, mandatoryFieldsScore);
 			assertEquals(53, globalScore);
 
-			JSONArray catalogs = scoresObject.getJSONArray(JsonScoreHelper.PROP_CATALOGS);
-			assertNotNull(catalogs);
-			// TODO tests catalogs
-
+			JSONArray missingFieldsArray = scoresObject.getJSONArray("catalogs").getJSONObject(0).getJSONArray("missingFields");
+			assertNotNull(missingFieldsArray);
+			
+			assertEquals(4,missingFieldsArray.length());
+			logger.info("score="+scoresObject.getJSONArray("catalogs").getJSONObject(0).getDouble("score")+" (expecting 20)");
+			assertEquals(20d, scoresObject.getJSONArray("catalogs").getJSONObject(0).getDouble("score"));
+			
+			String missingFieldsString = missingFieldsArray.toString();
+			logger.info("Missing fields: "+missingFieldsString);
+			assertTrue(missingFieldsString.contains("bcpg:netWeight"));
+			assertTrue(missingFieldsString.contains("bcpg:precautionOfUseRef"));
+			assertTrue(missingFieldsString.contains("bcpg:storageConditionsRef"));
+			assertTrue(missingFieldsString.contains("bcpg:ingListGeoOrigin"));
+			
 			return null;
 		}, false, true);
 	}
-
 }
