@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2015 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2015 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.listvalue;
@@ -46,28 +46,28 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 	private static final String SOURCE_TYPE_PRODUCT = "product";
 
 	private static final String SOURCE_TYPE_PRODUCT_REPORT = "productreport";
-	
+
 	private final static Log logger = LogFactory.getLog(ProductListValuePlugin.class);
 
 	@Autowired
 	private ReportTplService reportTplService;
 
+	@Override
 	public String[] getHandleSourceTypes() {
-		return new String[] { SOURCE_TYPE_PRODUCT, SOURCE_TYPE_PRODUCT_REPORT};
+		return new String[] { SOURCE_TYPE_PRODUCT, SOURCE_TYPE_PRODUCT_REPORT };
 	}
 
-	public ListValuePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize,
-			Map<String, Serializable> props) {
+	@Override
+	public ListValuePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
 
 		String classNames = (String) props.get(ListValueService.PROP_CLASS_NAMES);
 		String[] arrClassNames = classNames != null ? classNames.split(PARAM_VALUES_SEPARATOR) : null;
-	
 
 		if (sourceType.equals(SOURCE_TYPE_PRODUCT)) {
 			return suggestProducts(query, pageNum, pageSize, arrClassNames, props);
 		} else if (sourceType.equals(SOURCE_TYPE_PRODUCT_REPORT)) {
 			String productType = (String) props.get(ListValueService.PROP_PRODUCT_TYPE);
-			
+
 			QName productTypeQName = QName.createQName(productType, namespaceService);
 			return suggestProductReportTemplates(productTypeQName, query, pageNum, pageSize);
 
@@ -76,7 +76,6 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 		return null;
 	}
 
-
 	private ListValuePage suggestProducts(String query, Integer pageNum, Integer pageSize, String[] arrClassNames, Map<String, Serializable> props) {
 		if (logger.isDebugEnabled()) {
 			if (arrClassNames != null) {
@@ -84,15 +83,10 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 			}
 		}
 
-		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery()
-				.ofType(PLMModel.TYPE_PRODUCT)
-				.excludeDefaults()
-				.inSearchTemplate(searchTemplate)
-				.locale(I18NUtil.getContentLocale())
-				.andOperator().ftsLanguage();
+		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(PLMModel.TYPE_PRODUCT).excludeDefaults()
+				.inSearchTemplate(searchTemplate).locale(I18NUtil.getContentLocale()).andOperator().ftsLanguage();
 
 		StringBuilder ftsQuery = new StringBuilder();
-		
 
 		if (!isAllQuery(query)) {
 			if (query.length() > 2) {
@@ -100,10 +94,10 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 				ftsQuery.append(" ");
 			}
 			ftsQuery.append(query);
-			
+
 			ftsQuery.append(")^10 AND +(");
 		}
-		
+
 		ftsQuery.append("@");
 		ftsQuery.append(PLMModel.PROP_PRODUCT_STATE.toString());
 		ftsQuery.append(":");
@@ -116,9 +110,28 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 		ftsQuery.append(PLMModel.PROP_PRODUCT_STATE.toString());
 		ftsQuery.append(":");
 		ftsQuery.append(SystemState.Simulation.toString());
-		
-		
+
 		queryBuilder.andFTSQuery(ftsQuery.toString());
+
+		String queryFilter = (String) props.get(ListValueService.PROP_FILTER);
+
+		
+		if ((queryFilter != null) && (!queryFilter.isEmpty())) {
+			String[] splitted = queryFilter.split("\\|");
+
+			String filterValue = splitted[1];
+			if ((filterValue != null) && !filterValue.isEmpty()) {
+				if (filterValue.contains("{")) {
+					NodeRef entityNodeRef = new NodeRef((String) props.get(ListValueService.PROP_NODEREF));
+					if (entityNodeRef != null) {
+						filterValue = extractExpr(entityNodeRef, filterValue);
+					}
+				}
+				if ((filterValue != null) && !filterValue.isEmpty()) {
+					queryBuilder.andPropEquals(QName.createQName(splitted[0], namespaceService), filterValue);
+				}
+			}
+		}
 
 		// filter by classNames
 		filterByClass(queryBuilder, arrClassNames);
@@ -131,7 +144,7 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 	/**
 	 * Get the report templates of the product type that user can choose from
 	 * UI.
-	 * 
+	 *
 	 * @param query
 	 *            the query
 	 * @return the map
@@ -142,8 +155,7 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 		query = prepareQuery(query);
 		List<NodeRef> tplsNodeRef = reportTplService.getUserReportTemplates(ReportType.Document, nodeType, query);
 
-		return new ListValuePage(tplsNodeRef, pageNum, pageSize, new NodeRefListValueExtractor(ContentModel.PROP_NAME,
-				nodeService));
+		return new ListValuePage(tplsNodeRef, pageNum, pageSize, new NodeRefListValueExtractor(ContentModel.PROP_NAME, nodeService));
 	}
 
 }

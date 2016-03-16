@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2015 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2015 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.listvalue.impl;
@@ -27,6 +27,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
@@ -100,10 +102,12 @@ public class EntityListValuePlugin implements ListValuePlugin {
 
 	private final Analyzer luceneAnaLyzer = null;
 
+	@Override
 	public String[] getHandleSourceTypes() {
 		return new String[] { SOURCE_TYPE_TARGET_ASSOC, SOURCE_TYPE_LINKED_VALUE, SOURCE_TYPE_LINKED_VALUE_ALL, SOURCE_TYPE_LIST_VALUE };
 	}
 
+	@Override
 	public ListValuePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
 
 		String path = (String) props.get(ListValueService.PROP_PATH);
@@ -128,10 +132,10 @@ public class EntityListValuePlugin implements ListValuePlugin {
 
 	/**
 	 * Suggest target class according to query
-	 * 
+	 *
 	 * Query path : +PATH:"/app:company_home/cm:System/cm:Lists/cm:Nuts/*"
 	 * +TYPE:"bcpg:nut" +@cm\:name:"Nut1*".
-	 * 
+	 *
 	 * @param type
 	 *            the type
 	 * @param query
@@ -140,7 +144,8 @@ public class EntityListValuePlugin implements ListValuePlugin {
 	 * @return the map
 	 */
 	@SuppressWarnings("unchecked")
-	public ListValuePage suggestTargetAssoc(QName type, String query, Integer pageNum, Integer pageSize, String[] arrClassNames, Map<String, Serializable> props) {
+	public ListValuePage suggestTargetAssoc(QName type, String query, Integer pageNum, Integer pageSize, String[] arrClassNames,
+			Map<String, Serializable> props) {
 
 		if (logger.isDebugEnabled()) {
 			if (arrClassNames != null) {
@@ -149,15 +154,14 @@ public class EntityListValuePlugin implements ListValuePlugin {
 		}
 
 		String template = searchTemplate;
-		if(entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_CHARACT)){
+		if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_CHARACT)) {
 			template = charactSearchTemplate;
-		} else if(entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_LIST_VALUE)){
+		} else if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_LIST_VALUE)) {
 			template = listValueSearchTemplate;
 		}
-		
-		
-		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(type).excludeDefaults().inSearchTemplate(template).
-				locale(I18NUtil.getContentLocale()).andOperator().ftsLanguage();
+
+		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(type).excludeDefaults().inSearchTemplate(template)
+				.locale(I18NUtil.getContentLocale()).andOperator().ftsLanguage();
 
 		if (!isAllQuery(query)) {
 			if (query.length() > 2) {
@@ -186,7 +190,7 @@ public class EntityListValuePlugin implements ListValuePlugin {
 			if (extras != null) {
 				String filterByAssoc = extras.get(PROP_FILTER_BY_ASSOC);
 				String strAssocNodeRef = (String) props.get(ListValueService.PROP_PARENT);
-				if (filterByAssoc != null && filterByAssoc.length() > 0 && strAssocNodeRef != null && strAssocNodeRef.length() > 0) {
+				if ((filterByAssoc != null) && (filterByAssoc.length() > 0) && (strAssocNodeRef != null) && (strAssocNodeRef.length() > 0)) {
 					QName assocQName = QName.createQName(filterByAssoc, namespaceService);
 
 					NodeRef nodeRef = new NodeRef(strAssocNodeRef);
@@ -224,11 +228,11 @@ public class EntityListValuePlugin implements ListValuePlugin {
 
 	/**
 	 * Suggest linked value according to query
-	 * 
+	 *
 	 * Query path : +PATH:
 	 * "/app:company_home/cm:System/cm:LinkedLists/cm:Hierarchy/cm:Hierarchy1_Hierarchy2*"
 	 * +TYPE:"bcpg:LinkedValue" +@cm\:lkvPrevValue:"hierar*".
-	 * 
+	 *
 	 * @param path
 	 *            the path
 	 * @param parent
@@ -238,7 +242,8 @@ public class EntityListValuePlugin implements ListValuePlugin {
 	 * @param b
 	 * @return the map
 	 */
-	private ListValuePage suggestLinkedValue(String path, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props, boolean all) {
+	private ListValuePage suggestLinkedValue(String path, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props,
+			boolean all) {
 
 		NodeRef itemIdNodeRef = null;
 
@@ -264,14 +269,14 @@ public class EntityListValuePlugin implements ListValuePlugin {
 
 		if (!all) {
 			String parent = (String) props.get(ListValueService.PROP_PARENT);
-			NodeRef parentNodeRef = parent != null && NodeRef.isNodeRef(parent) ? new NodeRef(parent) : null;
+			NodeRef parentNodeRef = (parent != null) && NodeRef.isNodeRef(parent) ? new NodeRef(parent) : null;
 			ret = hierarchyService.getHierarchiesByPath(path, parentNodeRef, query);
 		} else {
 			ret = hierarchyService.getAllHierarchiesByPath(path, query);
 		}
 
 		// avoid cycle: when editing an item, cannot select itself as parent
-		if (itemIdNodeRef != null && ret.contains(itemIdNodeRef)) {
+		if ((itemIdNodeRef != null) && ret.contains(itemIdNodeRef)) {
 			ret.remove(itemIdNodeRef);
 		}
 
@@ -280,10 +285,10 @@ public class EntityListValuePlugin implements ListValuePlugin {
 
 	/**
 	 * Suggest list value according to query
-	 * 
+	 *
 	 * Query path : +PATH:"/app:company_home/cm:System/cm:Lists/cm:Nuts/*"
 	 * +TYPE:"bcpg:nut" +@cm\:name:"Nut1*".
-	 * 
+	 *
 	 * @param path
 	 *            the path
 	 * @param query
@@ -312,7 +317,7 @@ public class EntityListValuePlugin implements ListValuePlugin {
 
 	/**
 	 * Prepare query. //TODO escape + - && || ! ( ) { } [ ] ^ " ~ * ? : \
-	 * 
+	 *
 	 * @param query
 	 *            the query
 	 * @return the string
@@ -321,7 +326,8 @@ public class EntityListValuePlugin implements ListValuePlugin {
 	protected String prepareQuery(String query) {
 
 		logger.debug("Query before prepare:" + query);
-		if (query != null && !(query.endsWith(SUFFIX_ALL) || query.endsWith(SUFFIX_SPACE) || query.endsWith(SUFFIX_DOUBLE_QUOTE) || query.endsWith(SUFFIX_SIMPLE_QUOTE))) {
+		if ((query != null) && !(query.endsWith(SUFFIX_ALL) || query.endsWith(SUFFIX_SPACE) || query.endsWith(SUFFIX_DOUBLE_QUOTE)
+				|| query.endsWith(SUFFIX_SIMPLE_QUOTE))) {
 			// Query with wildcard are not getting analyzed by stemmers
 			// so do it manually
 			Analyzer analyzer = getTextAnalyzer();
@@ -382,7 +388,7 @@ public class EntityListValuePlugin implements ListValuePlugin {
 				return (Analyzer) Class.forName(def.resolveAnalyserClassName(Locale.getDefault())).newInstance();
 			} catch (Exception e) {
 				logger.error(e, e);
-				if(Locale.FRENCH.equals(Locale.getDefault())){
+				if (Locale.FRENCH.equals(Locale.getDefault())) {
 					return new FrenchBeCPGAnalyser();
 				} else {
 					return new EnglishBeCPGAnalyser();
@@ -399,21 +405,21 @@ public class EntityListValuePlugin implements ListValuePlugin {
 			for (String className : arrClassNames) {
 				QName classQName;
 				Integer boost = null;
-				if(className.contains("^")){
+				if (className.contains("^")) {
 					String[] splitted = className.split("\\^");
 					classQName = QName.createQName(splitted[0], namespaceService);
 					boost = Integer.valueOf(splitted[1]);
 				} else {
-				  classQName = QName.createQName(className, namespaceService);
+					classQName = QName.createQName(className, namespaceService);
 				}
 				ClassDefinition classDef = dictionaryService.getClass(classQName);
 				if (classDef.isAspect()) {
 					queryBuilder.withAspect(classQName);
 				} else {
-					if(boost!=null){
-					  queryBuilder.inBoostedType(classQName,boost);
+					if (boost != null) {
+						queryBuilder.inBoostedType(classQName, boost);
 					} else {
-					   queryBuilder.inType(classQName);
+						queryBuilder.inType(classQName);
 					}
 				}
 			}
@@ -456,11 +462,42 @@ public class EntityListValuePlugin implements ListValuePlugin {
 		return queryBuilder;
 	}
 
-	protected boolean isAllQuery(String query) {
-		return query != null && query.trim().equals(SUFFIX_ALL);
+	// TODO duplicate in AbstractExprNameExtractor
+	protected String extractExpr(NodeRef nodeRef, String exprFormat) {
+		Matcher patternMatcher = Pattern.compile("\\{([^}]+)\\}").matcher(exprFormat);
+		StringBuffer sb = new StringBuffer();
+		while (patternMatcher.find()) {
+
+			String propQname = patternMatcher.group(1);
+			String replacement = "";
+			if (propQname.contains("|")) {
+				for (String propQnameAlt : propQname.split("\\|")) {
+					replacement = extractPropText(nodeRef, propQnameAlt);
+					if ((replacement != null) && !replacement.isEmpty()) {
+						break;
+					}
+				}
+
+			} else {
+				replacement = extractPropText(nodeRef, propQname);
+			}
+
+			patternMatcher.appendReplacement(sb, replacement != null ? replacement.replace("$", "") : "");
+
+		}
+		patternMatcher.appendTail(sb);
+		return sb.toString();
 	}
 
-	public boolean isQueryMatch(String query, String entityName) {
+	protected String extractPropText(NodeRef nodeRef, String propQname) {
+		return (String) nodeService.getProperty(nodeRef, QName.createQName(propQname, namespaceService));
+	}
+
+	protected boolean isAllQuery(String query) {
+		return (query != null) && query.trim().equals(SUFFIX_ALL);
+	}
+
+	protected boolean isQueryMatch(String query, String entityName) {
 
 		if (query != null) {
 
@@ -532,7 +569,7 @@ public class EntityListValuePlugin implements ListValuePlugin {
 
 	/**
 	 * Suggest a dalist item
-	 * 
+	 *
 	 * @param entityNodeRef
 	 * @param datalistType
 	 * @param propertyQName
@@ -541,7 +578,8 @@ public class EntityListValuePlugin implements ListValuePlugin {
 	 * @param pageSize
 	 * @return
 	 */
-	protected ListValuePage suggestDatalistItem(NodeRef entityNodeRef, QName datalistType, QName propertyQName, String query, Integer pageNum, Integer pageSize) {
+	protected ListValuePage suggestDatalistItem(NodeRef entityNodeRef, QName datalistType, QName propertyQName, String query, Integer pageNum,
+			Integer pageSize) {
 
 		List<NodeRef> ret = BeCPGQueryBuilder.createQuery().ofType(datalistType).andPropQuery(propertyQName, prepareQuery(query))
 				.inPath(nodeService.getPath(entityNodeRef).toPrefixString(namespaceService) + "/*/*")
