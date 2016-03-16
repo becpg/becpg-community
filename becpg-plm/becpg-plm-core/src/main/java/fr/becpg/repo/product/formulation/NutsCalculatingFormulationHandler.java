@@ -21,7 +21,6 @@ import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
@@ -164,9 +163,9 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 							if (valuePerserving > ul) {
 								String message = I18NUtil.getMessage(MESSAGE_MAXIMAL_DAILY_VALUE,
 										nodeService.getProperty(n.getNut(), BeCPGModel.PROP_CHARACT_NAME));
-							
-								formulatedProduct.getCompoListView().getReqCtrlList()
-								.add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, n.getNut(), new ArrayList<NodeRef>(), RequirementDataType.Specification));
+
+								formulatedProduct.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden,
+										message, n.getNut(), new ArrayList<NodeRef>(), RequirementDataType.Specification));
 							}
 						}
 					} else {
@@ -185,56 +184,86 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 					}
 				});
 
-				checkNutrientsOfFormulatedProduct(formulatedProduct, formulatedProduct.getProductSpecifications());
+				checkNutrientsOfFormulatedProduct(formulatedProduct);
 
 			}
 		}
 		return true;
 	}
 
-	private void checkNutrientsOfFormulatedProduct(ProductData formulatedProduct, List<ProductSpecificationData> productSpecifications) {
-		
-		for (ProductSpecificationData productSpecification : productSpecifications) {
-			if ((productSpecification.getNutList() != null) && !productSpecification.getNutList().isEmpty()) {
-				productSpecification.getNutList().forEach(nutListSpecDataItem -> {
-				
-					formulatedProduct.getNutList().forEach(nutListDataItem -> {
+	private void checkNutrientsOfFormulatedProduct(ProductData formulatedProduct) {
+		getSpecificationsNutList(formulatedProduct).forEach(nutListSpecDataItem -> {
+			formulatedProduct.getNutList().forEach(nutListDataItem -> {
 
-						boolean isNutAllowed = true;
+				boolean isNutAllowed = true;
 
-						if (nutListDataItem.getNut().equals(nutListSpecDataItem.getNut())) {
+				if (nutListDataItem.getNut().equals(nutListSpecDataItem.getNut())) {
 
-							if ((nutListSpecDataItem.getValue() != null) && !nutListSpecDataItem.getValue().equals(nutListDataItem.getValue())) {
-								isNutAllowed = false;
-								
-								
-							}
+					if ((nutListSpecDataItem.getValue() != null) && !nutListSpecDataItem.getValue().equals(nutListDataItem.getValue())) {
+						isNutAllowed = false;
 
-							if (nutListSpecDataItem.getMini() != null) {
-								if (nutListDataItem.getValue() == null || nutListDataItem.getValue() < nutListSpecDataItem.getMini()) {
-									isNutAllowed = false;
-								}
-							}
+					}
 
-							if (nutListSpecDataItem.getMaxi() != null) {
-								if (nutListDataItem.getValue() == null || nutListDataItem.getValue() > nutListSpecDataItem.getMaxi()) {
-									isNutAllowed = false;
-								}
-							}
+					if (nutListSpecDataItem.getMini() != null) {
+						if ((nutListDataItem.getValue() == null) || (nutListDataItem.getValue() < nutListSpecDataItem.getMini())) {
+							isNutAllowed = false;
 						}
+					}
 
-						
-						
-						if (!isNutAllowed) {
-							String message = I18NUtil.getMessage(MESSAGE_NUT_NOT_IN_RANGE,
-									nodeService.getProperty(nutListSpecDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME));
-							formulatedProduct.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden,
-									message, nutListSpecDataItem.getNut(), new ArrayList<NodeRef>(), RequirementDataType.Specification));
+					if (nutListSpecDataItem.getMaxi() != null) {
+						if ((nutListDataItem.getValue() == null) || (nutListDataItem.getValue() > nutListSpecDataItem.getMaxi())) {
+							isNutAllowed = false;
 						}
-					});
-				});
-			}
+					}
+				}
+
+				if (!isNutAllowed) {
+					String message = I18NUtil.getMessage(MESSAGE_NUT_NOT_IN_RANGE,
+							nodeService.getProperty(nutListSpecDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME));
+					formulatedProduct.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message,
+							nutListSpecDataItem.getNut(), new ArrayList<NodeRef>(), RequirementDataType.Specification));
+				}
+			});
+		});
+	}
+
+	/**
+	 * Recursively reduces range of authorized value for each nut in each
+	 * specifications bound to product
+	 *
+	 * @param formulatedProduct
+	 * @return
+	 */
+	private List<NutListDataItem> getSpecificationsNutList(ProductData formulatedProduct) {
+		if ((formulatedProduct.getProductSpecifications() == null) || formulatedProduct.getProductSpecifications().isEmpty()) {
+			return formulatedProduct.getNutList();
+		} else {
+			List<NutListDataItem> unmergedNutList = new ArrayList<>();
+			formulatedProduct.getProductSpecifications().forEach(specification -> {
+				unmergedNutList.addAll(getSpecificationsNutList(specification));
+			});
+			return mergeSpecificationsNuts(unmergedNutList);
 		}
+	}
+
+	private List<NutListDataItem> mergeSpecificationsNuts(List<NutListDataItem> unmergedList) {
+		List<NutListDataItem> res = new ArrayList<>();
+		Map<NodeRef, NutListDataItem> mergingNutMap = new HashMap<>();
+
+		// reduces authorized values range
+		unmergedList.forEach(nut -> {
+			if (nut.getNut() != null) {
+				if (mergingNutMap.containsKey(nut.getNut())) {
+					NutListDataItem mappedNut = mergingNutMap.get(nut.getNut());
+					mappedNut.setMini(Math.max(nut.getMini(), mappedNut.getMini()));
+					mappedNut.setMaxi(Math.min(nut.getMaxi(), mappedNut.getMaxi()));
+				} else {
+					mergingNutMap.put(nut.getNut(), nut);
+				}
+			}
+		});
+		res.addAll(mergingNutMap.values());
+		return res;
 
 	}
 
@@ -295,7 +324,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 	 * @return
 	 */
 	public static String calculateUnit(ProductUnit productUnit, String nutUnit) {
-		if(nutUnit!=null && nutUnit.contains("/")){
+		if ((nutUnit != null) && nutUnit.contains("/")) {
 			return nutUnit;
 		}
 		return nutUnit += calculateSuffixUnit(productUnit);
