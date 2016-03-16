@@ -714,7 +714,7 @@
 																		 LEFT JOIN becpg_property AS prop ON prop.entity_id = entity.id
 							where
 								prop_entity.prop_name="pjt:projectEntity"
-								and (prop.prop_name = "bcpg:productHierarchy1" or prop.prop_name = "bcpg:productHierarchy2") and entity.instance_id = ${instanceId}
+								and (prop.prop_name = "bcpg:productHierarchy1" or prop.prop_name = "bcpg:productHierarchy2" or prop.prop_name = "bcpg:erpCode") and entity.instance_id = ${instanceId}
 							 group by id
 							]]>
 						</SQL>
