@@ -151,8 +151,8 @@ public class ReqCtrlWebScript extends AbstractProductWebscript {
 			}
 
 			//might be null if product has never been formulated, if not put it in res
-			if(product.getProductScores() != null){
-				JSONObject scores = new JSONObject(product.getProductScores());
+			if(product.getEntityScore() != null){
+				JSONObject scores = new JSONObject(product.getEntityScore());
 				ret.put("scores", scores);
 				if(logger.isDebugEnabled()){
 					logger.debug("ret : "+ret);

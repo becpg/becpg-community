@@ -40,7 +40,7 @@ import fr.becpg.repo.entity.datalist.WUsedListService;
 import fr.becpg.repo.entity.datalist.WUsedListService.WUsedOperator;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
-import fr.becpg.repo.helper.JSONHelper;
+import fr.becpg.repo.helper.JsonHelper;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.search.impl.NestedAdvSearchPlugin;
@@ -206,7 +206,7 @@ public class WUsedExtractor extends MultiLevelExtractor {
 						JSONObject searchQuery = (JSONObject) jsonObject.get("searchQuery");
 						String searchTerm = (String) jsonObject.get("searchTerm");
 						if (searchQuery != null) {
-							Map<String, String> criteriaMap = JSONHelper.extractCriteria(searchQuery);
+							Map<String, String> criteriaMap = JsonHelper.extractCriteria(searchQuery);
 							QName datatype = QName.createQName(searchQuery.getString("datatype"), namespaceService);
 
 							BeCPGQueryBuilder queryBuilder = advSearchService.createSearchQuery(datatype, searchTerm, null, true, null, null);
