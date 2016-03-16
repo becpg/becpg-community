@@ -640,7 +640,7 @@
                               name : "processList",
                               type : "bcpg:resourceProduct",
                               subType : "fr.becpg.repo.product.data.productList.ProcessListDataItem",
-                              template : "processListView.processList.^[plResource.toString() == '{item1}']?.{item2}"
+                              template : "processListView.processList.^[resource.toString() == '{item1}']?.{item2}"
                            },
                            {
                               name : "resourceParamList",

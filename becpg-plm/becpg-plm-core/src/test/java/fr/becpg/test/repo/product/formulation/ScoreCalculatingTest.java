@@ -170,8 +170,8 @@ public class ScoreCalculatingTest extends AbstractFinishedProductTest {
 
 			assertEquals(37, validationScore);
 			assertEquals(90, specificationsScore);
-			assertEquals(20, mandatoryFieldsScore);
-			assertEquals(49, globalScore);			
+			assertEquals(33, mandatoryFieldsScore);
+			assertEquals(53, globalScore);
 
 			JSONArray missingFieldsArray = scoresObject.getJSONArray("catalogs").getJSONObject(0).getJSONArray("missingFields");
 			assertNotNull(missingFieldsArray);
