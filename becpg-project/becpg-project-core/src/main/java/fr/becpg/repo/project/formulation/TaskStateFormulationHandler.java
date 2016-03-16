@@ -285,7 +285,7 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 						
 						
 						if(!TaskState.InProgress.equals(currentTaskState)){
-							projectActivityService.postTaskStateChangeActivity(nextTask.getNodeRef(), nextTask.getTaskState().toString(), TaskState.InProgress.toString());
+							projectActivityService.postTaskStateChangeActivity(nextTask.getNodeRef(), currentTaskState.toString(), TaskState.InProgress.toString());
 						}
 
 						if (!nextTask.getIsGroup()) {
