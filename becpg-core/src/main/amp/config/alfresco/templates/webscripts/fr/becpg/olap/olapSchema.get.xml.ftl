@@ -704,6 +704,7 @@
 								entity.id as id,
 								entity.entity_id as entity_noderef,
 								entity.entity_name as name,
+								MAX(IF(prop.prop_name = "bcpg:erpCode",prop.string_value,NULL)) as erpCode,
 								MAX(IF(prop.prop_name = "bcpg:productHierarchy1",prop.string_value,NULL)) as productHierarchy1,
 								MAX(IF(prop.prop_name = "bcpg:productHierarchy2",prop.string_value,NULL)) as productHierarchy2,
 								prop_entity.batch_id as batch_id,
@@ -722,6 +723,7 @@
 				</Level>
 				<Level name="productHierarchy2" caption="${msg("jsolap.subFamily.title")}" column="productHierarchy2" type="String"   >
 				</Level>
+				<Level name="erpCode" caption="${msg("jsolap.erpCode.title")}" column="erpCode"  type="String"   />
 				<Level name="entity_noderef" caption="${msg("jsolap.entity.caption")}" column="entity_noderef" nameColumn="name" type="String"   >
 				</Level>
 			</Hierarchy>
