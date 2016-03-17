@@ -108,10 +108,9 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 	protected abstract Map<NodeRef, List<NodeRef>> getMandatoryCharacts(ProductData formulatedProduct, QName componentType);
 
-	/**
-	 * Returns the data type used to raise rclDataItems when formulating
-	 */
-	protected abstract RequirementDataType getDataType();
+	protected abstract String getSpecErrorMessageKey();
+
+	protected abstract RequirementDataType getRequirementDataType();
 
 	protected Map<NodeRef, List<NodeRef>> getMandatoryCharactsFromList(List<T> simpleListDataList) {
 		Map<NodeRef, List<NodeRef>> mandatoryCharacts = new HashMap<>(simpleListDataList.size());
@@ -182,7 +181,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 							isGenericRawMaterial);
 				}
 			}
-			addReqCtrlList(formulatedProduct.getCompoListView().getReqCtrlList(), mandatoryCharacts, getDataType());
+			addReqCtrlList(formulatedProduct.getCompoListView().getReqCtrlList(), mandatoryCharacts, getRequirementDataType());
 
 		}
 
@@ -457,7 +456,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 							nodeService.getProperty(formulatedCharactDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME), error);
 
 					ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Tolerated, message,
-							formulatedCharactDataItem.getCharactNodeRef(), new ArrayList<NodeRef>(), getDataType());
+							formulatedCharactDataItem.getCharactNodeRef(), new ArrayList<NodeRef>(), getRequirementDataType());
 					formulatedProduct.getCompoListView().getReqCtrlList().add(rclDataItem);
 				}
 
@@ -506,37 +505,36 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		if (getDataListVisited(formulatedProduct) != null) {
 			extractRequirements(formulatedProduct).forEach(specDataItem -> {
 				getDataListVisited(formulatedProduct).forEach(listDataItem -> {
-
-					if (listDataItem instanceof MinMaxValueDataItem) {
-						boolean isCharactAllowed = true;
-						MinMaxValueDataItem minMaxValueDataItem = (MinMaxValueDataItem) listDataItem;
-
-						if (listDataItem.getCharactNodeRef().equals(listDataItem.getCharactNodeRef())) {
-
-							if ((listDataItem.getValue() != null) && !listDataItem.getValue().equals(listDataItem.getValue())) {
+					if (specDataItem instanceof MinMaxValueDataItem) {
+						if (specDataItem.getCharactNodeRef().equals(listDataItem.getCharactNodeRef())) {
+							boolean isCharactAllowed = true;
+							MinMaxValueDataItem minMaxSpecValueDataItem = (MinMaxValueDataItem) specDataItem;
+							if ((specDataItem.getValue() != null) && !specDataItem.getValue().equals(listDataItem.getValue())) {
 								isCharactAllowed = false;
 							}
 
-							if (minMaxValueDataItem.getMini() != null) {
-								if ((listDataItem.getValue() == null) || (listDataItem.getValue() < minMaxValueDataItem.getMini())) {
+							if (minMaxSpecValueDataItem.getMini() != null) {
+								if ((listDataItem.getValue() == null) || (listDataItem.getValue() < minMaxSpecValueDataItem.getMini())) {
 									isCharactAllowed = false;
 								}
 							}
 
-							if (minMaxValueDataItem.getMaxi() != null) {
-								if ((listDataItem.getValue() == null) || (listDataItem.getValue() > minMaxValueDataItem.getMaxi())) {
+							if (minMaxSpecValueDataItem.getMaxi() != null) {
+								if ((listDataItem.getValue() == null) || (listDataItem.getValue() > minMaxSpecValueDataItem.getMaxi())) {
 									isCharactAllowed = false;
 								}
 							}
+							
+							if (!isCharactAllowed) {
+								String message = I18NUtil.getMessage(getSpecErrorMessageKey(),
+										nodeService.getProperty(listDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME));
+								formulatedProduct.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden,
+										message, listDataItem.getCharactNodeRef(), new ArrayList<NodeRef>(), RequirementDataType.Specification));
+
+							}
 						}
 
-						if (!isCharactAllowed) {
-							String message = I18NUtil.getMessage(getSpecErrorMessageKey(),
-									nodeService.getProperty(listDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME));
-							formulatedProduct.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden,
-									message, listDataItem.getCharactNodeRef(), new ArrayList<NodeRef>(), RequirementDataType.Specification));
-
-						}
+						
 					}
 				});
 			});
@@ -559,35 +557,24 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	private void mergeRequirements(List<T> ret, List<T> toAdd) {
 		toAdd.forEach(item -> {
 			if (item.getCharactNodeRef() != null) {
-					boolean isFound = false;
-					for (T sl : ret) {
-						if (item.getCharactNodeRef().equals(sl.getCharactNodeRef())) {
-							isFound = true;
-							mergeRequirement(item, sl);
-							break;
+				boolean isFound = false;
+				for (T sl : ret) {
+					if (item.getCharactNodeRef().equals(sl.getCharactNodeRef())) {
+						isFound = true;
+						if ((sl instanceof MinMaxValueDataItem) && (item instanceof MinMaxValueDataItem)) {
+							((MinMaxValueDataItem) sl)
+									.setMini(Math.max(((MinMaxValueDataItem) sl).getMini(), ((MinMaxValueDataItem) item).getMini()));
+							((MinMaxValueDataItem) sl)
+									.setMaxi(Math.min(((MinMaxValueDataItem) sl).getMaxi(), ((MinMaxValueDataItem) item).getMaxi()));
 						}
+						break;
 					}
-					if (!isFound) {
-						ret.add(item);
-					}
+				}
+				if (!isFound) {
+					ret.add(item);
+				}
 			}
 		});
-	}
-
-	
-    // Custom methods
-	
-	protected abstract String getSpecErrorMessageKey();
-
-	
-	private void mergeRequirement(T item, T sl) {
-		if ((sl instanceof MinMaxValueDataItem) && (item instanceof MinMaxValueDataItem)) {
-			((MinMaxValueDataItem) sl)
-					.setMini(Math.max(((MinMaxValueDataItem) sl).getMini(), ((MinMaxValueDataItem) item).getMini()));
-			((MinMaxValueDataItem) sl)
-					.setMaxi(Math.min(((MinMaxValueDataItem) sl).getMaxi(), ((MinMaxValueDataItem) item).getMaxi()));
-		}
-		
 	}
 
 }

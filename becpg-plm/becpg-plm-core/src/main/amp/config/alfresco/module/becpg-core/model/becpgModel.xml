@@ -391,7 +391,9 @@
 				<list>
 					<value>Packaging</value>
 					<value>Labelling</value>
-					<value>Nutriment</value>
+					<value>LabelClaim</value>
+					<value>PhysicoChem</value>
+					<value>Nutrient</value>
 					<value>Ingredient</value>
 					<value>Allergen</value>
 					<value>Composition</value>
@@ -399,6 +401,7 @@
 					<value>Cost</value>
 					<value>Formulation</value>
 					<value>Completion</value>
+					<value>Validation</value>
 				</list>
 			</parameter>
 		</constraint>

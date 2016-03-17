@@ -98,7 +98,6 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 						visitedProducts.add(part);
 					}
 				}
-
 			}
 
 			computeClaimList(productData, parser, context);
@@ -142,7 +141,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 	private void addMissingLabelClaimReq(ProductData productData, LabelClaimListDataItem labelClaimItem) {
 		String message = I18NUtil.getMessage("message.formulate.labelClaim.undefined_state", extractName(labelClaimItem.getLabelClaim()));
 		productData.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Info, message,
-				labelClaimItem.getLabelClaim(), new ArrayList<NodeRef>(), RequirementDataType.Labelling));
+				labelClaimItem.getLabelClaim(), new ArrayList<NodeRef>(), RequirementDataType.LabelClaim));
 
 	}
 
@@ -151,7 +150,6 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 	}
 
 	private void computeClaimList(ProductData productData, ExpressionParser parser, StandardEvaluationContext context) {
-		// ClaimLabel list
 		if (productData.getLabelClaimList() != null) {
 			for (LabelClaimListDataItem labelClaimListDataItem : productData.getLabelClaimList()) {
 				labelClaimListDataItem.setIsFormulated(false);
@@ -188,7 +186,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 							nodeService.getProperty(labelClaimListDataItem.getLabelClaim(), BeCPGModel.PROP_CHARACT_NAME),
 							labelClaimListDataItem.getErrorLog());
 					productData.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message,
-							labelClaimListDataItem.getLabelClaim(), new ArrayList<NodeRef>(), RequirementDataType.Labelling));
+							labelClaimListDataItem.getLabelClaim(), new ArrayList<NodeRef>(), RequirementDataType.LabelClaim));
 				}
 
 			}
