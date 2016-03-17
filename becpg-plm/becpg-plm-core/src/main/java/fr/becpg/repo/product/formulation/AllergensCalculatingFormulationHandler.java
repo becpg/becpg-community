@@ -12,7 +12,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
@@ -141,7 +140,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 			// sort
 			sort(formulatedProduct.getAllergenList());
 
-			checkAllergensOfFormulatedProduct(formulatedProduct);
+			checkRequirementsOfFormulatedProduct(formulatedProduct);
 
 		}
 
@@ -255,8 +254,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 							}
 						}
 					} else {
-						String message = I18NUtil.getMessage("message.formulate.allergen.error.nullQtyPerc",
-								nodeService.getProperty(allergenNodeRef, BeCPGModel.PROP_CHARACT_NAME));
+						String message = I18NUtil.getMessage("message.formulate.allergen.error.nullQtyPerc", extractName(allergenNodeRef));
 						ReqCtrlListDataItem error = errors.get(message);
 
 						if ((allergenListDataItem.getQtyPerc() != null) && (qtyUsed != null)
@@ -271,9 +269,9 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 							}
 
 							if (logger.isDebugEnabled()) {
-								logger.debug("Add " + nodeService.getProperty(allergenNodeRef, BeCPGModel.PROP_CHARACT_NAME) + "["
-										+ partProduct.getName() + "] - " + allergenListDataItem.getQtyPerc() + "% * " + qtyUsed + " / " + netQty
-										+ "(=" + value + " ) kg to " + newAllergenListDataItem.getQtyPerc());
+								logger.debug("Add " + extractName(allergenNodeRef) + "[" + partProduct.getName() + "] - "
+										+ allergenListDataItem.getQtyPerc() + "% * " + qtyUsed + " / " + netQty + "(=" + value + " ) kg to "
+										+ newAllergenListDataItem.getQtyPerc());
 							}
 
 							value += newAllergenListDataItem.getQtyPerc();
@@ -365,8 +363,8 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 				if (EQUAL == comp) {
 
-					String allergenName1 = (String) nodeService.getProperty(a1.getAllergen(), BeCPGModel.PROP_CHARACT_NAME);
-					String allergenName2 = (String) nodeService.getProperty(a2.getAllergen(), BeCPGModel.PROP_CHARACT_NAME);
+					String allergenName1 = extractName(a1.getAllergen());
+					String allergenName2 = extractName(a2.getAllergen());
 
 					comp = allergenName1.compareTo(allergenName2);
 				} else {
@@ -385,79 +383,77 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 	}
 
-	/**
-	 * check the allergens of the part according to the specification
-	 *
-	 */
-	private void checkAllergensOfFormulatedProduct(ProductData formulatedProduct) {
-
-		getMergedAllergens(formulatedProduct).forEach(al -> {
-			formulatedProduct.getAllergenList().forEach(allergenListDataItem -> {
-
-				if ((allergenListDataItem.getInVoluntary() || allergenListDataItem.getVoluntary())
-						&& allergenListDataItem.getAllergen().equals(al.getAllergen())) {
-
-					boolean isAllergenAllowed = false;
-					if (al.getVoluntary() && allergenListDataItem.getVoluntary()) {
-						isAllergenAllowed = true;
-					} else if (al.getInVoluntary() && allergenListDataItem.getInVoluntary()) {
-						isAllergenAllowed = true;
-					}
-
-					if (logger.isDebugEnabled()) {
-						logger.debug("### allergène présent " + nodeService.getProperty(al.getAllergen(), BeCPGModel.PROP_CHARACT_NAME)
-								+ " is Allowed " + isAllergenAllowed);
-					}
-					if (!isAllergenAllowed) {
-						String message = I18NUtil.getMessage(MESSAGE_FORBIDDEN_ALLERGEN,
-								nodeService.getProperty(allergenListDataItem.getAllergen(), BeCPGModel.PROP_CHARACT_NAME));
-						ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message,
-								allergenListDataItem.getAllergen(), new ArrayList<NodeRef>(), RequirementDataType.Specification);
-						formulatedProduct.getCompoListView().getReqCtrlList().add(rclDataItem);
-					}
-				}
-			});
-		});
-
+	private String extractName(NodeRef charactRef) {
+		return (String) nodeService.getProperty(charactRef, BeCPGModel.PROP_CHARACT_NAME);
 	}
 
-	public List<AllergenListDataItem> getMergedAllergens(ProductData dat) {
-		if ((dat.getProductSpecifications() == null) || dat.getProductSpecifications().isEmpty()) {
-			return dat.getAllergenList();
-		} else {
-			List<AllergenListDataItem> unmergedAllergenList = new ArrayList<>();
+	private void checkRequirementsOfFormulatedProduct(ProductData formulatedProduct) {
+		if (getDataListVisited(formulatedProduct) != null) {
+			extractRequirements(formulatedProduct).forEach(specDataItem -> {
+				getDataListVisited(formulatedProduct).forEach(listDataItem -> {
+					if (listDataItem.getAllergen().equals(specDataItem.getAllergen())) {
+						if ((listDataItem.getInVoluntary() || listDataItem.getVoluntary())) {
 
-			for (ProductSpecificationData specification : dat.getProductSpecifications()) {
-				unmergedAllergenList.addAll(getMergedAllergens(specification));
-			}
+							boolean isAllergenAllowed = false;
+							if (specDataItem.getVoluntary() && listDataItem.getVoluntary()) {
+								isAllergenAllowed = true;
+							} else if (specDataItem.getInVoluntary() && listDataItem.getInVoluntary()) {
+								isAllergenAllowed = true;
+							}
 
-			return mergeAllergenDataItems(unmergedAllergenList);
-
+							if (!isAllergenAllowed) {
+								String message = I18NUtil.getMessage(MESSAGE_FORBIDDEN_ALLERGEN, extractName(listDataItem.getAllergen()));
+								ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message,
+										listDataItem.getAllergen(), new ArrayList<NodeRef>(), RequirementDataType.Specification);
+								formulatedProduct.getCompoListView().getReqCtrlList().add(rclDataItem);
+							}
+						}
+					}
+				});
+			});
 		}
 	}
 
-	public List<AllergenListDataItem> mergeAllergenDataItems(List<AllergenListDataItem> unmergedAllergens) {
-		List<AllergenListDataItem> result = new ArrayList<>();
-		Map<NodeRef, AllergenListDataItem> mergingMap = new HashMap<>();
-
-		unmergedAllergens.forEach(allergen -> {
-			if (mergingMap.containsKey(allergen.getAllergen())) {
-				AllergenListDataItem mappedAllergen = mergingMap.get(allergen.getAllergen());
-
-				// if one value is true, set to true
-				if (BooleanUtils.isFalse(mappedAllergen.getVoluntary()) && BooleanUtils.isTrue(allergen.getVoluntary())) {
-					mappedAllergen.setVoluntary(Boolean.TRUE);
+	private List<AllergenListDataItem> extractRequirements(ProductData formulatedProduct) {
+		List<AllergenListDataItem> ret = new ArrayList<>();
+		if (formulatedProduct.getProductSpecifications() != null) {
+			for (ProductSpecificationData specification : formulatedProduct.getProductSpecifications()) {
+				mergeRequirements(ret, extractRequirements(specification));
+				if (getDataListVisited(specification) != null) {
+					mergeRequirements(ret, getDataListVisited(specification));
 				}
+			}
+		}
+		return ret;
+	}
 
-				if (BooleanUtils.isFalse(mappedAllergen.getInVoluntary()) && BooleanUtils.isTrue(allergen.getInVoluntary())) {
-					mappedAllergen.setInVoluntary(Boolean.TRUE);
+	private void mergeRequirements(List<AllergenListDataItem> ret, List<AllergenListDataItem> toAdd) {
+		toAdd.forEach(item -> {
+			if (item.getAllergen() != null) {
+				boolean isFound = false;
+				for (AllergenListDataItem sl : ret) {
+					if (item.getAllergen().equals(sl.getAllergen())) {
+						isFound = true;
+						// if one value is true, set to true
+						if (Boolean.FALSE.equals(sl.getVoluntary()) && Boolean.TRUE.equals(item.getVoluntary())) {
+							sl.setVoluntary(Boolean.TRUE);
+						}
+
+						if (Boolean.FALSE.equals(sl.getInVoluntary()) && Boolean.TRUE.equals(item.getInVoluntary())) {
+							sl.setInVoluntary(Boolean.TRUE);
+						}
+						break;
+					}
 				}
-			} else {
-				mergingMap.put(allergen.getAllergen(), allergen);
+				if (!isFound) {
+					ret.add(item);
+				}
 			}
 		});
-
-		result.addAll(mergingMap.values());
-		return result;
 	}
+
+	private List<AllergenListDataItem> getDataListVisited(ProductData partProduct) {
+		return partProduct.getAllergenList();
+	}
+
 }

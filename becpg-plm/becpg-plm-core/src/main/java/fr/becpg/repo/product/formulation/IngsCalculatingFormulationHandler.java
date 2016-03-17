@@ -16,7 +16,6 @@ import java.util.Objects;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
-import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
@@ -205,7 +204,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		}
 
 		// check formulated product
-		checkILOfFormulatedProduct(formulatedProduct.getIngList(), getMergedForbiddenIngList(formulatedProduct), reqCtrlMap);
+		checkILOfFormulatedProduct(formulatedProduct.getIngList(), extractRequirements(formulatedProduct), reqCtrlMap);
 
 		// sort collection
 		sortIL(formulatedProduct.getIngList());
@@ -231,8 +230,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap) throws FormulateException {
 
 		// check product respect specification
-		checkILOfPart(compoListDataItem.getProduct(), compoListDataItem.getDeclType(), componentProductData,
-				getMergedForbiddenIngList(formulatedProduct), reqCtrlMap);
+		checkILOfPart(compoListDataItem.getProduct(), compoListDataItem.getDeclType(), componentProductData, extractRequirements(formulatedProduct),
+				reqCtrlMap);
 
 		if (componentProductData.getIngList() == null) {
 			if (logger.isDebugEnabled()) {
@@ -395,7 +394,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			} else {
 
 				forbiddenIngredientsList.forEach(fil -> {
-					componentProductData.getIngList().forEach(ingListDataItem->  {
+					componentProductData.getIngList().forEach(ingListDataItem -> {
 
 						if (!RequirementType.Authorized.equals(fil.getReqType())) {
 
@@ -432,67 +431,66 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		}
 	}
 
-	public List<ForbiddenIngListDataItem> getMergedForbiddenIngList(ProductData product) {
-
-		if ((product.getProductSpecifications() == null) || product.getProductSpecifications().isEmpty()) {
-
-			if (product instanceof ProductSpecificationData) {
-				return ((ProductSpecificationData) product).getForbiddenIngList();
-			} else {
-				return new ArrayList<ForbiddenIngListDataItem>();
-			}
-		} else {
-
-			List<ForbiddenIngListDataItem> unmergedForbiddenIngList = new ArrayList<>();
-
-			for (ProductSpecificationData specification : product.getProductSpecifications()) {
-				unmergedForbiddenIngList.addAll(getMergedForbiddenIngList(specification));
-			}
-
-			return mergeForbiddenIngList(unmergedForbiddenIngList);
-		}
-	}
-
-	public List<ForbiddenIngListDataItem> mergeForbiddenIngList(List<ForbiddenIngListDataItem> unmergedList) {
-		List<ForbiddenIngListDataItem> mergedList = new ArrayList<>();
-		Map<String, ForbiddenIngListDataItem> mergingForbiddenIngMap = new HashMap<>();
-		// merge ing, bio/geo orig props from common fbd ings
-		for (ForbiddenIngListDataItem forbiddenIng : unmergedList) {
-			if (forbiddenIng.getReqMessage() != null) {
-
-				if (mergingForbiddenIngMap.containsKey(forbiddenIng.getReqMessage())
-						&& (mergingForbiddenIngMap.get(forbiddenIng.getReqMessage()) != null)) {
-					// merge values
-
-					ForbiddenIngListDataItem mappedForbiddenIng = mergingForbiddenIngMap.get(forbiddenIng.getReqMessage());
-					
-					mappedForbiddenIng.getIngs().addAll(forbiddenIng.getIngs());
-					mappedForbiddenIng.getBioOrigins().addAll(forbiddenIng.getBioOrigins());
-					mappedForbiddenIng.getGeoOrigins().addAll(forbiddenIng.getGeoOrigins());
-					mappedForbiddenIng.getRequiredGeoOrigins().addAll(forbiddenIng.getRequiredGeoOrigins());
-					mappedForbiddenIng.getGeoTransfo().addAll(forbiddenIng.getGeoTransfo());
-
-					// returns false if string is null or is not valid
-					// if one of these is ionized or gmo, they all are
-					if (BooleanUtils.toBoolean(forbiddenIng.getIsGMO())) {
-						if (!BooleanUtils.toBoolean(mappedForbiddenIng.getIsGMO())) {
-							mappedForbiddenIng.setIsGMO(forbiddenIng.getIsGMO());
-						}
-					}
-
-					if (BooleanUtils.toBoolean(forbiddenIng.getIsIonized())) {
-						if (!BooleanUtils.toBoolean(mappedForbiddenIng.getIsIonized())) {
-							mappedForbiddenIng.setIsIonized(forbiddenIng.getIsIonized());
-						}
-					}
-
-				} else {
-					mergingForbiddenIngMap.put(forbiddenIng.getReqMessage(), forbiddenIng);
+	private List<ForbiddenIngListDataItem> extractRequirements(ProductData formulatedProduct) {
+		List<ForbiddenIngListDataItem> ret = new ArrayList<>();
+		if (formulatedProduct.getProductSpecifications() != null) {
+			for (ProductSpecificationData specification : formulatedProduct.getProductSpecifications()) {
+				mergeRequirements(ret, extractRequirements(specification));
+				if (getDataListVisited(specification) != null) {
+					mergeRequirements(ret, getDataListVisited(specification));
 				}
 			}
 		}
-		mergedList.addAll(mergingForbiddenIngMap.values());
-		return mergedList;
+		return ret;
+	}
+
+	private void mergeRequirements(List<ForbiddenIngListDataItem> ret, List<ForbiddenIngListDataItem> toAdd) {
+		toAdd.forEach(item -> {
+			if (item.getReqMessage() != null) {
+				boolean isFound = false;
+				for (ForbiddenIngListDataItem sl : ret) {
+					if ((sl.getReqMessage() != null) && item.getReqMessage().equals(sl.getReqMessage())) {
+						isFound = true;
+						// TODO remplacer simplement non ?
+						// sl.getIngs().addAll(forbiddenIng.getIngs());
+						// sl.getBioOrigins().addAll(forbiddenIng.getBioOrigins());
+						// sl.getGeoOrigins().addAll(forbiddenIng.getGeoOrigins());
+						// sl.getRequiredGeoOrigins().addAll(forbiddenIng.getRequiredGeoOrigins());
+						// sl.getGeoTransfo().addAll(forbiddenIng.getGeoTransfo());
+						//
+						// // returns false if string is null or is not valid
+						// // if one of these is ionized or gmo, they all are
+						// if (BooleanUtils.toBoolean(forbiddenIng.getIsGMO()))
+						// {
+						// if
+						// (!BooleanUtils.toBoolean(mappedForbiddenIng.getIsGMO()))
+						// {
+						// mappedForbiddenIng.setIsGMO(forbiddenIng.getIsGMO());
+						// }
+						// }
+						//
+						// if
+						// (BooleanUtils.toBoolean(forbiddenIng.getIsIonized()))
+						// {
+						// if
+						// (!BooleanUtils.toBoolean(mappedForbiddenIng.getIsIonized()))
+						// {
+						// mappedForbiddenIng.setIsIonized(forbiddenIng.getIsIonized());
+						// }
+						// }
+						break;
+					}
+				}
+				if (!isFound) {
+					ret.add(item);
+				}
+
+			}
+		});
+	}
+
+	private List<ForbiddenIngListDataItem> getDataListVisited(ProductSpecificationData partProduct) {
+		return partProduct.getForbiddenIngList();
 	}
 
 	private boolean checkRuleMatchIng(IngListDataItem ingListDataItem, ForbiddenIngListDataItem fil) {
