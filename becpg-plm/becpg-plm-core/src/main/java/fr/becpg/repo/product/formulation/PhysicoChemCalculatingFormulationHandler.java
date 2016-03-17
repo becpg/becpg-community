@@ -93,7 +93,7 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 	}
 
 	@Override
-	protected RequirementDataType getDataType() {
+	protected RequirementDataType getRequirementDataType() {
 		return RequirementDataType.PhysicoChem;
 	}
 

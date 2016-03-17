@@ -98,7 +98,6 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 						visitedProducts.add(part);
 					}
 				}
-
 			}
 
 			computeClaimList(productData, parser, context);
@@ -151,7 +150,6 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 	}
 
 	private void computeClaimList(ProductData productData, ExpressionParser parser, StandardEvaluationContext context) {
-		// ClaimLabel list
 		if (productData.getLabelClaimList() != null) {
 			for (LabelClaimListDataItem labelClaimListDataItem : productData.getLabelClaimList()) {
 				labelClaimListDataItem.setIsFormulated(false);
