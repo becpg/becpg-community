@@ -25,6 +25,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.extensions.surf.util.I18NUtil;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.helper.AssociationService;
@@ -211,35 +212,57 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 			Map<QName, Serializable> properties = nodeService.getProperties(productData.getNodeRef());
 			String defaultLocale = Locale.getDefault().getLanguage();
 			JSONArray catalogs = new JSONArray(mandatoryFields);
+			QName productType = nodeService.getType(productData.getNodeRef());
+			if(logger.isDebugEnabled()){
+				logger.info("Type of product is "+productType);
+			}
+
 			for (int i = 0; i < catalogs.length(); i++) {
 				JSONObject catalog = catalogs.getJSONObject(i);
-				List<String> langs = new LinkedList<>(getLocales(productData.getReportLocales(), catalog));
-
-				langs.sort((o1, o2) -> {
-					if (o1.equals(defaultLocale)) {
-						return -1;
-					}
-					if (o2.equals(defaultLocale)) {
-						return 1;
-					}
-					return 0;
-				});
+				JSONArray catalogEntityTypes = (catalog.has(JsonScoreHelper.PROP_ENTITY_TYPE)) ? catalog.getJSONArray(JsonScoreHelper.PROP_ENTITY_TYPE) : new JSONArray();
+				List<QName> qnameCatalogEntityTypeList = new ArrayList<QName>();
 				
-				JSONArray reqFields = catalog.getJSONArray(JsonScoreHelper.PROP_FIELDS);
-				for (String lang : langs) {
+				for(int catalogEntityTypeIndex=0; catalogEntityTypeIndex< catalogEntityTypes.length(); catalogEntityTypeIndex++){
+					qnameCatalogEntityTypeList.add(QName.createQName(catalogEntityTypes.getString(catalogEntityTypeIndex), namespaceService));
+				}
 
-					JSONArray missingFields = extractMissingFields(productData, catalog.getString(JsonScoreHelper.PROP_LABEL), properties, reqFields,
-							defaultLocale.equals(lang) ? null : lang);
-					if (missingFields.length() > 0) {
-						JSONObject catalogDesc = new JSONObject();
-						catalogDesc.put(JsonScoreHelper.PROP_MISSING_FIELDS, missingFields);
-						catalogDesc.put(JsonScoreHelper.PROP_LOCALE, lang);
-						catalogDesc.put(JsonScoreHelper.PROP_SCORE, ((reqFields.length() -missingFields.length()) * 100d) / reqFields.length());
-						catalogDesc.put(JsonScoreHelper.PROP_LABEL, catalog.getString(JsonScoreHelper.PROP_LABEL));
-						catalogDesc.put(JsonScoreHelper.PROP_ID, catalog.getString(JsonScoreHelper.PROP_ID));
-						ret.put(catalogDesc);
+				//if this catalog applies to this type, or this catalog has no type defined (it applies to every entity type)
+				if(qnameCatalogEntityTypeList.isEmpty() || qnameCatalogEntityTypeList.contains(productType)){
+					logger.info("Formulating for catalog \""+catalog.getString(JsonScoreHelper.PROP_LABEL)+"\"");
+					List<String> langs = new LinkedList<>(getLocales(productData.getReportLocales(), catalog));
+
+					langs.sort((o1, o2) -> {
+						if (o1.equals(defaultLocale)) {
+							return -1;
+						}
+						if (o2.equals(defaultLocale)) {
+							return 1;
+						}
+						return 0;
+					});
+
+					String color = catalog.has(JsonScoreHelper.PROP_COLOR) ? catalog.getString(JsonScoreHelper.PROP_COLOR) : "hsl("+(i*(360/7))+", 60%, 50%)";
+					if(logger.isDebugEnabled()){
+						logger.debug("Color of catalog is: "+color+ (catalog.has(JsonScoreHelper.PROP_COLOR) ? " (fetched from catalog)" : " (generated)"));
 					}
 
+					JSONArray reqFields = catalog.getJSONArray(JsonScoreHelper.PROP_FIELDS);
+					for (String lang : langs) {
+
+						JSONArray missingFields = extractMissingFields(productData, catalog.getString(JsonScoreHelper.PROP_LABEL), properties, reqFields,
+								defaultLocale.equals(lang) ? null : lang);
+						if (missingFields.length() > 0) {
+							JSONObject catalogDesc = new JSONObject();
+							catalogDesc.put(JsonScoreHelper.PROP_MISSING_FIELDS, missingFields);
+							catalogDesc.put(JsonScoreHelper.PROP_LOCALE, lang);
+							catalogDesc.put(JsonScoreHelper.PROP_SCORE, ((reqFields.length() -missingFields.length()) * 100d) / reqFields.length());
+							catalogDesc.put(JsonScoreHelper.PROP_LABEL, catalog.getString(JsonScoreHelper.PROP_LABEL));
+							catalogDesc.put(JsonScoreHelper.PROP_ID, catalog.getString(JsonScoreHelper.PROP_ID));
+							catalogDesc.put(JsonScoreHelper.PROP_COLOR, color);
+							ret.put(catalogDesc);
+						}
+
+					}
 				}
 			}
 		}
