@@ -361,13 +361,6 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 					assertTrue(reqCtrlList.getSources().contains(formulatedProduct.getNodeRef()));
 					checks++;
 
-				} else if (reqCtrlList.getReqMessage().equals("Champ obligatoire 'Poids net (kg)' manquant (catalogue 'EU 1169/2011 (INCO)')")) {
-
-					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
-					assertEquals(1, reqCtrlList.getSources().size());
-					assertTrue(reqCtrlList.getSources().contains(formulatedProduct.getNodeRef()));
-					checks++;
-
 				} else if (reqCtrlList.getReqMessage()
 						.equals("Champ obligatoire 'Précautions d'emploi' manquant (catalogue 'EU 1169/2011 (INCO)')")) {
 
@@ -384,14 +377,6 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 					assertTrue(reqCtrlList.getSources().contains(formulatedProduct.getNodeRef()));
 					checks++;
 
-				} else if (reqCtrlList.getReqMessage()
-						.equals("Champ obligatoire 'Origine géographique' manquant (catalogue 'EU 1169/2011 (INCO)')")) {
-
-					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
-					assertEquals(1, reqCtrlList.getSources().size());
-					assertTrue(reqCtrlList.getSources().contains(formulatedProduct.getNodeRef()));
-					checks++;
-
 				} else {
 					logger.info("============= Unexpected rclDataItem ===================");
 					logger.info(reqCtrlList.getReqMessage());
@@ -399,8 +384,8 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 				}
 			}
 
-			logger.info("/*-- Done checking, checks=" + checks + " (should be 13) --*/");
-			assertEquals(13, checks);
+			logger.info("/*-- Done checking, checks=" + checks + " (should be 11) --*/");
+			assertEquals(11, checks);
 
 			/*
 			 * #257: check reqCtrlList is clear if all req are respected (we
@@ -417,11 +402,11 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 			formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
 
 			/*
-			 * 5 rclDataItem remains : one for non validated product, and four
-			 * for INCO missing fields: legal name, conservation conditions, geo
-			 * orig and precautions for use
+			 * 4 rclDataItem remains : one for non validated product, and three
+			 * for INCO missing fields: legal name, conservation conditions, and precautions for use
 			 */
-			assertEquals(5, formulatedProduct.getCompoListView().getReqCtrlList().size());
+			
+			assertEquals(4, formulatedProduct.getCompoListView().getReqCtrlList().size());
 
 			return null;
 

@@ -76,7 +76,7 @@ public class FormulationAllergensTest extends AbstractFinishedProductTest {
 	}
 
 	@Test
-	public void testNutsFormulation() throws Exception {
+	public void testAllergensFormulation() throws Exception {
 
 		formulate();
 
@@ -111,7 +111,7 @@ public class FormulationAllergensTest extends AbstractFinishedProductTest {
 				assertTrue(false);
 			}
 		}
-		assertEquals(3, checkMissingFields);
+		assertEquals(2, checkMissingFields);
 		assertEquals(1, checks);
 
 	}

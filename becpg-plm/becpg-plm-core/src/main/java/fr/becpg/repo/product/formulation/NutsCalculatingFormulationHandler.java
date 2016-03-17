@@ -288,7 +288,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 	}
 
 	@Override
-	protected RequirementDataType getDataType() {
+	protected RequirementDataType getRequirementDataType() {
 		return RequirementDataType.Nutrient;
 	}
 

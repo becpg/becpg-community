@@ -130,9 +130,6 @@ public class FormulationGenericRawMaterialTest extends AbstractFinishedProductTe
 			Assert.assertNotNull(listContainerNodeRef);
 			Assert.assertNotNull(entityListDAO.getList(listContainerNodeRef, PLMModel.TYPE_COSTLIST));
 			
-			//#1909 Raw material has INCO unmet requirements -> compoList contains INCO rclDataItems
-			Assert.assertNotNull(entityListDAO.getList(listContainerNodeRef, PLMModel.TYPE_COMPOLIST));
-			
 			
 			return null;
 

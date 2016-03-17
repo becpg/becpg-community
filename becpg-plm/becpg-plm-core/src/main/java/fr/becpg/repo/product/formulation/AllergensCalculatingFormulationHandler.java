@@ -150,16 +150,10 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 	private Double getRegulatoryThreshold(ProductData formulatedProduct, NodeRef allergen) {
 		Double ret = null;
-
-		for (ProductSpecificationData productSpecification : formulatedProduct.getProductSpecifications()) {
-			if ((productSpecification.getAllergenList() != null) && !productSpecification.getAllergenList().isEmpty()) {
-				AllergenListDataItem temp = productSpecification.getAllergenList().stream().filter(al -> al.getAllergen().equals(allergen))
-						.findFirst().orElse(null);
-				if ((temp != null) && (temp.getQtyPerc() != null)) {
-					ret = temp.getQtyPerc();
-				}
-
-			}
+		AllergenListDataItem temp = extractRequirements(formulatedProduct).stream().filter(al -> al.getAllergen().equals(allergen)).findFirst()
+				.orElse(null);
+		if ((temp != null) && (temp.getQtyPerc() != null)) {
+			ret = temp.getQtyPerc();
 		}
 
 		return ret != null ? ret : (Double) nodeService.getProperty(allergen, PLMModel.PROP_ALLERGEN_REGULATORY_THRESHOLD);
@@ -442,6 +436,11 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 						if (Boolean.FALSE.equals(sl.getInVoluntary()) && Boolean.TRUE.equals(item.getInVoluntary())) {
 							sl.setInVoluntary(Boolean.TRUE);
 						}
+						
+						if(sl.getQtyPerc()!=null && item.getQtyPerc()!=null){
+							sl.setQtyPerc(Math.min(sl.getQtyPerc(),item.getQtyPerc()));
+						}
+						
 						break;
 					}
 				}
