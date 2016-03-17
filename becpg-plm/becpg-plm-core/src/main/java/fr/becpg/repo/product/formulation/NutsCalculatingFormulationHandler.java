@@ -184,88 +184,14 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 					}
 				});
 
-				checkNutrientsOfFormulatedProduct(formulatedProduct);
+				checkRequirementsOfFormulatedProduct(formulatedProduct);
 
 			}
 		}
 		return true;
 	}
 
-	private void checkNutrientsOfFormulatedProduct(ProductData formulatedProduct) {
-		getSpecificationsNutList(formulatedProduct).forEach(nutListSpecDataItem -> {
-			formulatedProduct.getNutList().forEach(nutListDataItem -> {
-
-				boolean isNutAllowed = true;
-
-				if (nutListDataItem.getNut().equals(nutListSpecDataItem.getNut())) {
-
-					if ((nutListSpecDataItem.getValue() != null) && !nutListSpecDataItem.getValue().equals(nutListDataItem.getValue())) {
-						isNutAllowed = false;
-
-					}
-
-					if (nutListSpecDataItem.getMini() != null) {
-						if ((nutListDataItem.getValue() == null) || (nutListDataItem.getValue() < nutListSpecDataItem.getMini())) {
-							isNutAllowed = false;
-						}
-					}
-
-					if (nutListSpecDataItem.getMaxi() != null) {
-						if ((nutListDataItem.getValue() == null) || (nutListDataItem.getValue() > nutListSpecDataItem.getMaxi())) {
-							isNutAllowed = false;
-						}
-					}
-				}
-
-				if (!isNutAllowed) {
-					String message = I18NUtil.getMessage(MESSAGE_NUT_NOT_IN_RANGE,
-							nodeService.getProperty(nutListSpecDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME));
-					formulatedProduct.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message,
-							nutListSpecDataItem.getNut(), new ArrayList<NodeRef>(), RequirementDataType.Specification));
-				}
-			});
-		});
-	}
-
-	/**
-	 * Recursively reduces range of authorized value for each nut in each
-	 * specifications bound to product
-	 *
-	 * @param formulatedProduct
-	 * @return
-	 */
-	private List<NutListDataItem> getSpecificationsNutList(ProductData formulatedProduct) {
-		if ((formulatedProduct.getProductSpecifications() == null) || formulatedProduct.getProductSpecifications().isEmpty()) {
-			return formulatedProduct.getNutList();
-		} else {
-			List<NutListDataItem> unmergedNutList = new ArrayList<>();
-			formulatedProduct.getProductSpecifications().forEach(specification -> {
-				unmergedNutList.addAll(getSpecificationsNutList(specification));
-			});
-			return mergeSpecificationsNuts(unmergedNutList);
-		}
-	}
-
-	private List<NutListDataItem> mergeSpecificationsNuts(List<NutListDataItem> unmergedList) {
-		List<NutListDataItem> res = new ArrayList<>();
-		Map<NodeRef, NutListDataItem> mergingNutMap = new HashMap<>();
-
-		// reduces authorized values range
-		unmergedList.forEach(nut -> {
-			if (nut.getNut() != null) {
-				if (mergingNutMap.containsKey(nut.getNut())) {
-					NutListDataItem mappedNut = mergingNutMap.get(nut.getNut());
-					mappedNut.setMini(Math.max(nut.getMini(), mappedNut.getMini()));
-					mappedNut.setMaxi(Math.min(nut.getMaxi(), mappedNut.getMaxi()));
-				} else {
-					mergingNutMap.put(nut.getNut(), nut);
-				}
-			}
-		});
-		res.addAll(mergingNutMap.values());
-		return res;
-
-	}
+	
 
 	private List<ReqCtrlListDataItem> visitPart(ProductData partProduct, List<NutListDataItem> nutList, List<NutListDataItem> retainNodes,
 			Double qtyUsed, Double netQty, Boolean isGenericRawMaterial, Map<NodeRef, Double> totalQtiesValue) {
@@ -365,4 +291,10 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 	protected RequirementDataType getDataType() {
 		return RequirementDataType.Nutrient;
 	}
+
+	@Override
+	protected String getSpecErrorMessageKey() {
+		return MESSAGE_NUT_NOT_IN_RANGE;
+	}
+	
 }

@@ -588,9 +588,10 @@
 					entity.entity_id as noderef,
 					entity.entity_name as name,
 					entity.is_last_version as isLastVersion,
-					
 					MAX(IF(prop.prop_name = "pjt:projectHierarchy1",prop.string_value,NULL)) as projectHierarchy1,
 					MAX(IF(prop.prop_name = "pjt:projectHierarchy2",prop.string_value,NULL)) as projectHierarchy2,
+					MAX(IF(prop.prop_name = "metadata:siteId",prop.string_value,NULL)) as siteId,
+					MAX(IF(prop.prop_name = "metadata:siteName",prop.string_value,NULL)) as siteName,
 					MAX(IF(prop.prop_name = "bcpg:code",prop.string_value,NULL)) as code,
 					MAX(IF(prop.prop_name = "cm:created",prop.date_value,NULL)) as projectDateCreated,
 					MAX(IF(prop.prop_name = "cm:creator",prop.string_value,NULL)) as projectCreator,
@@ -622,30 +623,9 @@
 		</View>
 		
 
-		<Dimension type="StandardDimension" foreignKey="id" name="site" caption="${msg("jsolap.site.title")}">
-			<Hierarchy hasAll="true" primaryKey="entity_id">
-				<View alias="site">
-						<SQL dialect="generic">
-							<![CDATA[
-							select
-								entity.id as id,
-								entity.entity_id as entity_noderef,
-								entity.entity_name as name,
-								MAX(IF(prop.prop_name = "metadata:siteId",prop.string_value,NULL)) as siteId,
-								MAX(IF(prop.prop_name = "metadata:siteName",prop.string_value,NULL)) as siteName,
-								prop_entity.batch_id as batch_id,
-								prop_entity.entity_id as entity_id
-							from
-								becpg_property AS prop_entity  LEFT JOIN becpg_entity AS entity  ON entity.entity_id = prop_entity.prop_id
-																		 LEFT JOIN becpg_property AS prop ON prop.entity_id = entity.id
-							where
-								prop_entity.prop_name="pjt:projectEntity"
-								and (prop.prop_name = "bcpg:productHierarchy1" or prop.prop_name = "bcpg:productHierarchy2") and entity.instance_id = ${instanceId}
-							 group by id
-							]]>
-						</SQL>
-				</View>
-				<Level name="site" caption="${msg("jsolap.site.title")}" column="siteName"  type="String" />	
+		<Dimension name="site" caption="${msg("jsolap.site.title")}">
+			<Hierarchy name="site" caption="${msg("jsolap.site.title")}" hasAll="true" allMemberCaption="${msg("jsolap.site.caption")}">
+				<Level name="site" caption="${msg("jsolap.site.title")}" column="siteName"  type="String" />
 			</Hierarchy>
 		</Dimension>
 
@@ -707,15 +687,14 @@
 								MAX(IF(prop.prop_name = "bcpg:erpCode",prop.string_value,NULL)) as erpCode,
 								MAX(IF(prop.prop_name = "bcpg:productHierarchy1",prop.string_value,NULL)) as productHierarchy1,
 								MAX(IF(prop.prop_name = "bcpg:productHierarchy2",prop.string_value,NULL)) as productHierarchy2,
-								prop_entity.batch_id as batch_id,
 								prop_entity.entity_id as entity_id
 							from
 								becpg_property AS prop_entity  LEFT JOIN becpg_entity AS entity  ON entity.entity_id = prop_entity.prop_id
-																		 LEFT JOIN becpg_property AS prop ON prop.entity_id = entity.id
+															   LEFT JOIN becpg_property AS prop ON prop.entity_id = entity.id
 							where
 								prop_entity.prop_name="pjt:projectEntity"
-								and (prop.prop_name = "bcpg:productHierarchy1" or prop.prop_name = "bcpg:productHierarchy2") and entity.instance_id = ${instanceId}
-							 group by id
+								and (prop.prop_name = "bcpg:productHierarchy1" or prop.prop_name = "bcpg:productHierarchy2" or prop.prop_name = "bcpg:erpCode") and entity.instance_id = ${instanceId}
+							 group by entity_id
 							]]>
 						</SQL>
 				</View>		
