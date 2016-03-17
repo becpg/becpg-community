@@ -252,51 +252,7 @@
 
 			//automatic refresh on formulation
 			YAHOO.Bubbling.on( "refreshDataGrids", recallWebScript, this);
-			YAHOO.Bubbling.on( "activeDataListChanged", recallWebScript, this);
-			
-			//init
-			Alfresco.util.Ajax.request({
-				url : Alfresco.constants.PROXY_URI + "becpg/product/reqctrllist/node/" + instance.options.entityNodeRef.replace(":/","")+"?view="+instance.options.list,
-				method : Alfresco.util.Ajax.GET,
-				responseContentType : Alfresco.util.Ajax.JSON,
-				successCallback : {
-					fn : function (response){
-
-						YAHOO.util.Dom.get("constraintsList-"+instance.id+"-scores").innerHTML= parseJsonToHTML(response.json, instance);
-
-						var scoreDiv = YAHOO.util.Dom.get("scoreLi");
-						if(scoreDiv !== undefined && scoreDiv != null){
-							var scoreDivClassName = scoreDiv.className;
-							var spriteIndex = scoreDivClassName.split("-")[1];
-
-							var imgWidth = 74;
-							var widthRatio = imgWidth/166;
-
-							var	rightPos = (((spriteIndex-1)*(166+14)+2+(spriteIndex>4?10:0))*widthRatio)+"px";
-
-							scoreDiv.style.backgroundPosition = "-"+rightPos+" 0px";
-							scoreDiv.style.width=imgWidth+"px";
-							scoreDiv.style.height=imgWidth+"px";
-
-
-							var backgroundSize= Math.floor(3629*widthRatio)+"px "+Math.floor(396*widthRatio)+"px";
-							scoreDiv.childNodes[0].style.lineHeight=imgWidth+"px";
-							scoreDiv.childNodes[0].style.fontSize=3*widthRatio+"em";
-							scoreDiv.style.backgroundSize=backgroundSize;
-
-							
-						}
-						//move dom elts			
-						var createdDiv = YAHOO.util.Dom.get("constraintsList-"+instance.id+"-scores");
-						var constraintsListGrid = YAHOO.util.Dom.get("constraintsList-"+instance.id+"-grid");
-						YAHOO.util.Dom.insertBefore(createdDiv, constraintsListGrid.parentNode);
-						
-					},
-					scope : instance
-				},
-				failureMessage : "Could not load html template for version graph",
-				execScripts : true
-			});    
+			YAHOO.Bubbling.on( "activeDataListChanged", recallWebScript, this); 
 
 		},
 
