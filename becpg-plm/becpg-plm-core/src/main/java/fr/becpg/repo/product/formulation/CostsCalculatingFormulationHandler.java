@@ -599,4 +599,9 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	protected RequirementDataType getDataType() {
 		return RequirementDataType.Cost;
 	}
+
+	@Override
+	protected String getSpecErrorMessageKey() {
+		return null;
+	}
 }
