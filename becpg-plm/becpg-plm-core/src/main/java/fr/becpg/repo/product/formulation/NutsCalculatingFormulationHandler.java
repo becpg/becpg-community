@@ -191,8 +191,6 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 		return true;
 	}
 
-	
-
 	private List<ReqCtrlListDataItem> visitPart(ProductData partProduct, List<NutListDataItem> nutList, List<NutListDataItem> retainNodes,
 			Double qtyUsed, Double netQty, Boolean isGenericRawMaterial, Map<NodeRef, Double> totalQtiesValue) {
 
@@ -250,7 +248,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 	 * @return
 	 */
 	public static String calculateUnit(ProductUnit productUnit, String nutUnit) {
-		if ((nutUnit != null) && nutUnit.contains("/")) {
+		if ((nutUnit == null) || nutUnit.contains("/")) {
 			return nutUnit;
 		}
 		return nutUnit += calculateSuffixUnit(productUnit);
@@ -296,5 +294,5 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 	protected String getSpecErrorMessageKey() {
 		return MESSAGE_NUT_NOT_IN_RANGE;
 	}
-	
+
 }
