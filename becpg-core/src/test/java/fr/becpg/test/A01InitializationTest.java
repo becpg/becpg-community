@@ -30,7 +30,7 @@ import fr.becpg.model.BeCPGModel;
 @RunWith(RemoteTestRunner.class)
 @Remote(runnerClass = SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:alfresco/application-context.xml" })
-public class InitializationTest {
+public class A01InitializationTest {
 
 	@Autowired
 	@Qualifier("qnameDAO")

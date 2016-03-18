@@ -129,7 +129,6 @@ public class FormulationGenericRawMaterialTest extends AbstractFinishedProductTe
 			NodeRef listContainerNodeRef = entityListDAO.getListContainer(rawMaterial1NodeRef);
 			Assert.assertNotNull(listContainerNodeRef);
 			Assert.assertNotNull(entityListDAO.getList(listContainerNodeRef, PLMModel.TYPE_COSTLIST));
-			Assert.assertNull(entityListDAO.getList(listContainerNodeRef, PLMModel.TYPE_COMPOLIST));
 			
 			
 			return null;

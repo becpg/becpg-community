@@ -28,6 +28,8 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 
 	private static final Log logger = LogFactory.getLog(PhysicoChemCalculatingFormulationHandler.class);
 
+	public static final String MESSAGE_PHYSICO_NOT_IN_RANGE = "message.formulate.physicoChemList.notInRangeValue";
+	
 	@Override
 	protected Class<PhysicoChemListDataItem> getInstanceClass() {
 
@@ -43,27 +45,29 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 			if (formulatedProduct.getPhysicoChemList() == null) {
 				formulatedProduct.setPhysicoChemList(new LinkedList<PhysicoChemListDataItem>());
 			}
-			
+
 			// has compo
-			if(formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))){
+			if (formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 				formulateSimpleList(formulatedProduct, formulatedProduct.getPhysicoChemList());
 			}
-			
+
 			computeFormulatedList(formulatedProduct, formulatedProduct.getPhysicoChemList(), PLMModel.PROP_PHYSICO_CHEM_FORMULA,
 					"message.formulate.physicoChemList.error");
-			
+
 			formulatedProduct.getPhysicoChemList().forEach(n -> {
-				n.setUnit( (String) nodeService.getProperty(n.getPhysicoChem(), PLMModel.PROP_PHYSICO_CHEM_UNIT));
+				n.setUnit((String) nodeService.getProperty(n.getPhysicoChem(), PLMModel.PROP_PHYSICO_CHEM_UNIT));
 			});
 
+			checkRequirementsOfFormulatedProduct(formulatedProduct);
+			
 		}
 		return true;
 	}
 
 	@Override
 	protected boolean accept(ProductData formulatedProduct) {
-		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)
-				|| ((formulatedProduct.getPhysicoChemList() == null) && !alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_PHYSICOCHEMLIST))) {
+		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || ((formulatedProduct.getPhysicoChemList() == null)
+				&& !alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_PHYSICOCHEMLIST))) {
 			return false;
 		}
 		return true;
@@ -89,7 +93,13 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 	}
 
 	@Override
-	protected RequirementDataType getDataType() {
+	protected RequirementDataType getRequirementDataType() {
 		return RequirementDataType.PhysicoChem;
 	}
+
+	@Override
+	protected String getSpecErrorMessageKey() {
+		return MESSAGE_PHYSICO_NOT_IN_RANGE;
+	}
+
 }

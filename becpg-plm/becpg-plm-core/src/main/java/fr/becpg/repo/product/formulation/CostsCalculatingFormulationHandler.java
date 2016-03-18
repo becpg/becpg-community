@@ -139,7 +139,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 					formulatedProduct.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())));
 			visitCompoListChildren(formulatedProduct, composite, costList, DEFAULT_LOSS_RATIO, netQty, mandatoryCharacts1);
 
-			addReqCtrlList(formulatedProduct.getCompoListView().getReqCtrlList(), mandatoryCharacts1, getDataType());
+			addReqCtrlList(formulatedProduct.getCompoListView().getReqCtrlList(), mandatoryCharacts1, getRequirementDataType());
 
 		}
 
@@ -157,7 +157,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				visitPart(packagingListDataItem.getProduct(), costList, qty, null, netQty, mandatoryCharacts2, null, false);
 			}
 
-			addReqCtrlList(formulatedProduct.getPackagingListView().getReqCtrlList(), mandatoryCharacts2,getDataType());
+			addReqCtrlList(formulatedProduct.getPackagingListView().getReqCtrlList(), mandatoryCharacts2,getRequirementDataType());
 		}
 
 		if (formulatedProduct.hasProcessListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
@@ -179,7 +179,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				}
 			}
 
-			addReqCtrlList(formulatedProduct.getProcessListView().getReqCtrlList(), mandatoryCharacts3,getDataType());
+			addReqCtrlList(formulatedProduct.getProcessListView().getReqCtrlList(), mandatoryCharacts3,getRequirementDataType());
 		}
 
 	}
@@ -596,7 +596,12 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	}
 
 	@Override
-	protected RequirementDataType getDataType() {
+	protected RequirementDataType getRequirementDataType() {
 		return RequirementDataType.Cost;
+	}
+
+	@Override
+	protected String getSpecErrorMessageKey() {
+		return null;
 	}
 }

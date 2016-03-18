@@ -110,9 +110,9 @@
 					<show id="bcpg:legalName" />
 					<show id="bcpg:productComments" />
 					<show id="cm:description" force="true" />
-					<show id="bcpg:packagingDescription" force="true" />
-					<show id="bcpg:code" />
+					<show id="bcpg:packagingDescription" force="true" />					
 					<show id="bcpg:productState" />
+					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:eanCode" />
 					<show id="bcpg:eanCodeLevel2"  />
@@ -672,6 +672,7 @@
 					<show id="bcpg:productHierarchy1" force="true"/>
 					<show id="bcpg:productHierarchy2" force="true"/>
 					<show id="bcpg:productState" force="true"/>
+					<!-- we need bcpg:code for bulk-edit in order to navigate on the entity -->
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
 
@@ -871,8 +872,9 @@
 					<show id="bcpg:productComments" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:packagingDescription" force="true" />
-					<show id="bcpg:entityTplRef" force="true" />
+					<show id="bcpg:entityTplRef" force="true" />					
 					<show id="bcpg:productState" />
+					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:eanCode" />
 					<show id="bcpg:eanCodeLevel2" />
@@ -962,8 +964,9 @@
 							<control-param name="parent">bcpg_productHierarchy1
 							</control-param>
 						</control>
-					</field>
+					</field>					
 					<field id="bcpg:productState" set="mainInfo" />
+					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
 					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo" />
 					<field id="bcpg:eanCodeLevel2" help-id="becpg.forms.help.eanCodeLevel2" set="mainInfo" />
@@ -1573,6 +1576,7 @@
 					<show id="bcpg:productHierarchy2" />
 					<show id="bcpg:productState" />
 					<show id="bcpg:productUnit" />
+					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:entityTplRef" force="true" />
 
@@ -1621,6 +1625,7 @@
 					</field>
 					<field id="bcpg:productState" set="mainInfo" />
 					<field id="bcpg:productUnit" set="mainInfo" />
+					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
 					<field id="bcpg:entityTplRef" set="mainInfo">
 						<control
@@ -2413,9 +2418,9 @@
 					<show id="bcpg:legalName" />
 					<show id="bcpg:productComments" />
 					<show id="cm:description" force="true" />
-					<show id="bcpg:packagingDescription" force="true" />
-					<show id="bcpg:code" />
+					<show id="bcpg:packagingDescription" force="true" />					
 					<show id="bcpg:productState" />
+					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:eanCode" />
 					<show id="bcpg:suppliers" />
@@ -2941,11 +2946,11 @@
 					<show id="bcpg:productComments" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:packagingDescription" force="true" />
-					<show id="bcpg:code" force="true" />
 					<show id="bcpg:entityTplRef" force="true" />
 					<show id="bcpg:productState" />
+					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
-					<show id="bcpg:eanCode" />
+					<show id="bcpg:eanCode" />									
 					<show id="bcpg:suppliers" />
 					<show id="bcpg:plants" force="true" />
 					<show id="bcpg:supplierPlants" force="true"/>
@@ -3019,10 +3024,10 @@
 							</control-param>
 						</control>
 					</field>
+					<field id="bcpg:productState" set="mainInfo" />
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
-					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo" />
-					<field id="bcpg:productState" set="mainInfo" />
+					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo" />					
 					<field id="bcpg:suppliers" set="mainInfo" />
 					<field id="bcpg:plants" set="mainInfo" />
 					<field id="bcpg:supplierPlants" set="mainInfo" >
@@ -3360,9 +3365,9 @@
 					<show id="bcpg:legalName" />
 					<show id="bcpg:productComments" />
 					<show id="cm:description" force="true" />
-					<show id="bcpg:packagingDescription" force="true" />
-					<show id="bcpg:code" />
+					<show id="bcpg:packagingDescription" force="true" />					
 					<show id="bcpg:productState" />
+					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:entityTplRef" force="true" />
 					
@@ -3897,6 +3902,7 @@
 					<show id="bcpg:packagingDescription" force="true" />
 					<show id="bcpg:entityTplRef" force="true" />
 					<show id="bcpg:productState" />
+					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
 
 					<!-- Consumer -->
@@ -3968,6 +3974,7 @@
 						</control>
 					</field>
 					<field id="bcpg:productState" set="mainInfo" />
+					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
 					<field id="bcpg:entityTplRef" set="mainInfo">
 						<control
@@ -5832,6 +5839,7 @@
 					<show id="bcpg:supplierHierarchy2" />
 					<show id="bcpg:supplierState" />
 					<show id="cm:description" />
+					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:supplierAccountRef" />
 					<show id="bcpg:supplierTel" />
@@ -5935,6 +5943,7 @@
 					<show id="bcpg:clientHierarchy2" />
 					<show id="bcpg:clientState" />
 					<show id="cm:description" />
+					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:clientTel" />
 					<show id="bcpg:clientEmail" />
