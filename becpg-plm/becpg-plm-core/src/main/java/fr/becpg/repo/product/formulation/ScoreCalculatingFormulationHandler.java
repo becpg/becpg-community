@@ -126,10 +126,16 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 					}
 				}
 
+				//pre merge, ctrlDataItems might be duplicated, visit them only once
+				List<String> visitedCtrlDataItems = new ArrayList<>();
 				for (ReqCtrlListDataItem ctrl : view.getReqCtrlList()) {
+					
+					
 					if (specificationScore > 10) {
-						if ((ctrl.getReqDataType() == RequirementDataType.Specification) && (ctrl.getReqType() == RequirementType.Forbidden)) {
+						if ((ctrl.getReqDataType() == RequirementDataType.Specification) && (ctrl.getReqType() == RequirementType.Forbidden) && !visitedCtrlDataItems.contains(ctrl.getReqMessage())) {
+							logger.info("Visiting specification rclDataItem: "+ctrl.getReqMessage()+", s="+ctrl.getSources());
 							specificationScore -= 10;
+							visitedCtrlDataItems.add(ctrl.getReqMessage());
 						}
 					} else {
 						break;
@@ -156,6 +162,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 			Double componentsValidationScore = (childrenSize > 0 ? (childScore * 100d) / childrenSize : 100d);
 			Double completionPercent = (componentsValidationScore + mandatoryFieldsScore + specificationScore) / 3d;
 
+			
 			JSONObject details = new JSONObject();
 
 			details.put("mandatoryFields", mandatoryFieldsScore);
@@ -165,6 +172,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 			scores.put("global", completionPercent);
 			scores.put("details", details);
 			scores.put(JsonScoreHelper.PROP_CATALOGS, mandatoryFields);
+			logger.info("Done calculating score of product "+product.getName()+", children: "+ componentsValidationScore +"%, mandatory: " + mandatoryFieldsScore + "% , specifications: "+ specificationScore + "%, global="+completionPercent+"%");
 
 		} catch (JSONException e) {
 			logger.error("Cannot create Json Score", e);
@@ -184,7 +192,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 	public ReqCtrlListDataItem createValidationRclDataItem(NodeRef node) {
 		String message = I18NUtil.getMessage(MESSAGE_NON_VALIDATED_STATE);
 
-		ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, null, new ArrayList<NodeRef>(),
+		ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, null, new ArrayList<NodeRef>(),
 				RequirementDataType.Validation);
 
 		rclDataItem.getSources().add(node);
