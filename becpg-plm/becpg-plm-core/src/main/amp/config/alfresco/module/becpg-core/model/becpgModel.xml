@@ -391,8 +391,8 @@
 				<list>
 					<value>Packaging</value>
 					<value>Labelling</value>
-					<value>LabelClaim</value>
-					<value>PhysicoChem</value>
+					<value>Labelclaim</value>
+					<value>Physicochem</value>
 					<value>Nutrient</value>
 					<value>Ingredient</value>
 					<value>Allergen</value>

@@ -132,7 +132,7 @@
 				var i=0;
 				
 				for(var key in json){
-					var color = "hsl("+(i*360/7)+", "+(70+(i%20)*(i%2==0?1:-1))+"%, 50%)";
+					var color = json[key].color;
 					
 					var colorTipElement = document.createElement("SPAN");
 					colorTipElement.style.backgroundColor=color;

@@ -1,6 +1,7 @@
 package fr.becpg.repo.product.formulation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -40,9 +41,11 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 
 	private static final Log logger = LogFactory.getLog(LabelClaimFormulationHandler.class);
 
-	public static final String MESSAGE_UNDEFINED_CHARACT = "message.formulate.undefined.charact";
+	private static final String MESSAGE_NOT_CLAIM = "message.formulate.labelClaim.notClaimed";
 
-	public static final String MESSAGE_MISSING_CLAIM = "message.formulate.labelClaim.missing";
+	private static final String MESSAGE_LABELCLAIM_MISSING = "message.formulate.labelClaim.missing";
+
+	private static final String MESSAGE_LABELCLAIM_ERROR = "message.formulate.labelClaim.error";
 
 	private NodeService nodeService;
 
@@ -91,7 +94,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 						if (partProduct.getLabelClaimList() != null) {
 							for (LabelClaimListDataItem labelClaim : partProduct.getLabelClaimList()) {
 								if (!LabelClaimListDataItem.VALUE_NA.equals(labelClaim.getLabelClaimValue())) {
-									visitPart(productData, labelClaim);
+									visitPart(productData, partProduct, labelClaim);
 								}
 							}
 						}
@@ -108,7 +111,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 		return true;
 	}
 
-	private void visitPart(ProductData productData, LabelClaimListDataItem subLabelClaimItem) {
+	private void visitPart(ProductData productData, ProductData partProduct, LabelClaimListDataItem subLabelClaimItem) {
 		for (LabelClaimListDataItem labelClaimItem : productData.getLabelClaimList()) {
 			if (((labelClaimItem.getIsManual() == null) || !labelClaimItem.getIsManual())
 					&& ((labelClaimItem.getLabelClaim() != null) && labelClaimItem.getLabelClaim().equals(subLabelClaimItem.getLabelClaim()))) {
@@ -126,22 +129,22 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 						break;
 					case LabelClaimListDataItem.VALUE_EMPTY:
 					default:
-						addMissingLabelClaimReq(productData, labelClaimItem);
+						addMissingLabelClaimReq(productData, partProduct, labelClaimItem);
 						labelClaimItem.setLabelClaimValue(LabelClaimListDataItem.VALUE_EMPTY);
 						break;
 					}
 				} else {
-					addMissingLabelClaimReq(productData, labelClaimItem);
+					addMissingLabelClaimReq(productData, partProduct, labelClaimItem);
 					labelClaimItem.setLabelClaimValue(LabelClaimListDataItem.VALUE_EMPTY);
 				}
 			}
 		}
 	}
 
-	private void addMissingLabelClaimReq(ProductData productData, LabelClaimListDataItem labelClaimItem) {
-		String message = I18NUtil.getMessage("message.formulate.labelClaim.undefined_state", extractName(labelClaimItem.getLabelClaim()));
-		productData.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Info, message,
-				labelClaimItem.getLabelClaim(), new ArrayList<NodeRef>(), RequirementDataType.LabelClaim));
+	private void addMissingLabelClaimReq(ProductData productData, ProductData partProduct, LabelClaimListDataItem labelClaimItem) {
+		String message = I18NUtil.getMessage(MESSAGE_LABELCLAIM_MISSING, extractName(labelClaimItem.getLabelClaim()));
+		productData.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message,
+				labelClaimItem.getLabelClaim(), new ArrayList<NodeRef>(Arrays.asList(partProduct.getNodeRef())), RequirementDataType.Labelclaim));
 
 	}
 
@@ -182,11 +185,11 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 
 				if (labelClaimListDataItem.getErrorLog() != null) {
 
-					String message = I18NUtil.getMessage("message.formulate.labelClaim.error", Locale.getDefault(),
+					String message = I18NUtil.getMessage(MESSAGE_LABELCLAIM_ERROR, Locale.getDefault(),
 							nodeService.getProperty(labelClaimListDataItem.getLabelClaim(), BeCPGModel.PROP_CHARACT_NAME),
 							labelClaimListDataItem.getErrorLog());
 					productData.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message,
-							labelClaimListDataItem.getLabelClaim(), new ArrayList<NodeRef>(), RequirementDataType.LabelClaim));
+							labelClaimListDataItem.getLabelClaim(), new ArrayList<NodeRef>(), RequirementDataType.Labelclaim));
 				}
 
 			}
@@ -200,7 +203,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 				getDataListVisited(formulatedProduct).forEach(listDataItem -> {
 					if (listDataItem.getLabelClaim().equals(specDataItem.getLabelClaim())) {
 						if (Boolean.TRUE.equals(specDataItem.getIsClaimed() && !Boolean.TRUE.equals(listDataItem.getIsClaimed()))) {
-							String message = I18NUtil.getMessage(MESSAGE_MISSING_CLAIM, extractName(listDataItem.getLabelClaim()));
+							String message = I18NUtil.getMessage(MESSAGE_NOT_CLAIM, extractName(listDataItem.getLabelClaim()));
 							formulatedProduct.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden,
 									message, listDataItem.getLabelClaim(), new ArrayList<NodeRef>(), RequirementDataType.Specification));
 						}

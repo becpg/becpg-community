@@ -94,7 +94,7 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 
 	@Override
 	protected RequirementDataType getRequirementDataType() {
-		return RequirementDataType.PhysicoChem;
+		return RequirementDataType.Physicochem;
 	}
 
 	@Override
