@@ -1139,7 +1139,7 @@
 			<properties>
 				<property name="bcpg:packagingListQty">
 					<type>d:double</type>
-					<mandatory>false</mandatory>
+					<mandatory>true</mandatory>
 					<index enabled="false" />
 				</property>
 				<property name="bcpg:packagingListUnit">

@@ -288,7 +288,7 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 				 * #1909 added non validation rclDataItem
 				 */
 				if (reqCtrlList.getReqMessage().equals("Composant non validé")) {
-					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
+					assertEquals(RequirementType.Tolerated, reqCtrlList.getReqType());
 					assertEquals(RequirementDataType.Validation, reqCtrlList.getReqDataType());
 					assertEquals(10, reqCtrlList.getSources().size());
 
