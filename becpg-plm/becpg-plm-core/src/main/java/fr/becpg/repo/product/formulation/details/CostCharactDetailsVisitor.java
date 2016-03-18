@@ -247,7 +247,7 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 						ProductUnit.getUnit((String) nodeService.getProperty(compoListDataItem.getProduct(), PLMModel.PROP_PRODUCT_UNIT)))
 						/ FormulationHelper.getNetQtyInLorKg(productData, FormulationHelper.DEFAULT_NET_WEIGHT) * subQty;
 			
-				visitPart(productData.getNodeRef(), compoListDataItem.getProduct(), ret, qty, null, netQty, currLevel);
+				visitPart(productData.getNodeRef(), compoListDataItem.getProduct(), ret, qty, qty, netQty, currLevel);
 				
 				if (((maxLevel < 0) || (currLevel < maxLevel)) && !entityDictionaryService.isMultiLevelLeaf(nodeService.getType(compoListDataItem.getProduct()))) {
 					visitRecur((ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct()), ret, currLevel+1, maxLevel, qty, netQty);

@@ -36,9 +36,11 @@ import java.util.concurrent.atomic.LongAdder;
 
 import javax.annotation.Resource;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -53,6 +55,7 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.CompoListUnit;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.LabelingRuleType;
@@ -61,6 +64,7 @@ import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
+import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.test.BeCPGTestHelper;
@@ -77,7 +81,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 	@Resource
 	private AssociationService associationService;
-	
+
 	@Resource
 	@Qualifier("mlAwareNodeService")
 	private NodeService mlNodeService;
@@ -121,7 +125,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 			finishedProduct1.getLabelingListView().setLabelingRuleList(labelingRuleList);
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
-		} , false, true);
+		}, false, true);
 	}
 
 	// private String detailsDefaultFormat = "{0} {1,number,0.#%} ({2})";
@@ -142,7 +146,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 			finishedProduct1.getCompoListView().setCompoList(compoList1);
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
-		} , false, true);
+		}, false, true);
 
 		// └──[root - 0.0 (1.0)]
 		// ├──[ing1 french - null]
@@ -196,7 +200,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 			finishedProduct1.getCompoListView().setCompoList(compoList1);
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
-		} , false, true);
+		}, false, true);
 
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
@@ -251,7 +255,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 			finishedProduct1.getCompoListView().setCompoList(compoList1);
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
-		} , false, true);
+		}, false, true);
 
 		// Declare
 		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
@@ -379,7 +383,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
-		} , false, true);
+		}, false, true);
 
 		// Declare
 		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
@@ -430,7 +434,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
-		} , false, true);
+		}, false, true);
 
 		// └──[root - 0.0 (11.0, vol: 11.0) ]
 		// ├──[ing5 french - 5.0 (10.0, vol: 10.0) Detail]
@@ -473,7 +477,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
-		} , false, true);
+		}, false, true);
 
 		checkILL(finishedProductNodeRef3, labelingRuleList, "ing4 french 71,4%, epices french, legal Raw material 1 (<b>allergen1</b>) 8,6%",
 				Locale.FRENCH);
@@ -497,7 +501,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
-		} , false, true);
+		}, false, true);
 
 		// Declare
 		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
@@ -529,7 +533,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
-		} , false, true);
+		}, false, true);
 
 		// Declare
 		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
@@ -550,7 +554,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			nodeService.removeAspect(rawMaterial7NodeRef, PLMModel.ASPECT_ING_TYPE);
 			return null;
-		} , false, true);
+		}, false, true);
 	}
 
 	/**
@@ -989,7 +993,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 			formulatedProduct.getCompoListView().getCompoList().get(2).setProduct(rawMaterial7NodeRef);
 			alfrescoRepository.save(formulatedProduct);
 			return null;
-		} , false, true);
+		}, false, true);
 
 		// └──[root - 0.0 (2.0)]
 		// ├──[pâte french - 1.0 (3.0)]
@@ -1029,7 +1033,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 					.add(new CompoListDataItem(null, null, 5d, null, CompoListUnit.kg, 0d, DeclarationType.Group, finishProduct2));
 			alfrescoRepository.save(formulatedProduct);
 			return null;
-		} , false, true);
+		}, false, true);
 
 		// └──[root - 0.0 (7.0, vol: null) ]
 		// ├──[pâte french - 1.0 (3.0, vol: null) Detail]
@@ -1134,7 +1138,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 			return null;
 
-		} , false, true);
+		}, false, true);
 
 	}
 
@@ -1151,22 +1155,28 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 			for (ReqCtrlListDataItem reqCtrlListDataItem : formulatedProduct.getCompoListView().getReqCtrlList()) {
 				if (RequirementType.Forbidden.equals(reqCtrlListDataItem.getReqType())) {
-					
+
 					String error = reqCtrlListDataItem.getReqMessage();
-					if(RequirementDataType.Validation.equals(reqCtrlListDataItem.getReqDataType())){
+					if (RequirementDataType.Validation.equals(reqCtrlListDataItem.getReqDataType())) {
 						Assert.assertEquals("Composant non validé", error);
-					} else if(RequirementDataType.Completion.equals(reqCtrlListDataItem.getReqDataType())){
-						assertTrue(error.equals("Champ obligatoire 'Famille' manquant (catalogue 'Std catal.')") 
-								|| error.equals("Champ obligatoire 'Sous famille' manquant (catalogue 'Std catal.')"));
-					} else {					
+					} else if (RequirementDataType.Completion.equals(reqCtrlListDataItem.getReqDataType())) {
+						assertTrue(error.equals("Champ obligatoire 'Libellé légal' manquant (catalogue 'EU 1169/2011 (INCO)')")
+								|| error.equals("Champ obligatoire 'Poids net (kg)' manquant (catalogue 'EU 1169/2011 (INCO)')")
+								|| error.equals("Champ obligatoire 'Précautions d'emploi' manquant (catalogue 'EU 1169/2011 (INCO)')")
+								|| error.equals("Champ obligatoire 'Conditions de conservation' manquant (catalogue 'EU 1169/2011 (INCO)')")
+								|| error.equals("Champ obligatoire 'Origine géographique' manquant (catalogue 'EU 1169/2011 (INCO)')"));
+					} else {
 						Assert.assertEquals("Incorrect label :" + error + "\n   - compare to " + errorMessage, error, errorMessage);
 					}
+				} else if (RequirementType.Info.equals(reqCtrlListDataItem.getReqType())) {
+					logger.info("Info rclDataItem, message: " + reqCtrlListDataItem.getReqMessage());
+					Assert.assertEquals("Etat de l'allégation {0} indéfini", reqCtrlListDataItem.getReqMessage());
 				}
 			}
 
 			return null;
 
-		} , false, true);
+		}, false, true);
 
 	}
 
@@ -1217,7 +1227,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 			return null;
 
-		} , false, true);
+		}, false, true);
 	}
 
 	@Test
@@ -1272,26 +1282,25 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		});
 		try {
 			authenticationComponent.setCurrentUser("labellingUser1");
-		
+
 			final NodeRef finishProduct1 = createTestProduct(null);
 			final NodeRef finishProduct2 = createTestProduct(null);
-			
+
 			NodeRef finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-				
+
 				MLText legalName = (MLText) mlNodeService.getProperty(finishProduct1, BeCPGModel.PROP_LEGAL_NAME);
 				legalName.addValue(Locale.FRENCH, "legal Finished product 1");
 				legalName.addValue(Locale.FRANCE, "legal Finished product 1");
 				legalName.addValue(Locale.CANADA_FRENCH, "legal Finished product 1 fr_CA");
-				
+
 				legalName = (MLText) mlNodeService.getProperty(finishProduct2, BeCPGModel.PROP_LEGAL_NAME);
-				
+
 				legalName.addValue(Locale.FRENCH, "legal Finished product 1");
 				legalName.addValue(Locale.FRANCE, "legal Finished product 1");
 				legalName.addValue(Locale.CANADA_FRENCH, "legal Finished product 1 fr_CA");
-				
-				
+
 				mlNodeService.setProperty(finishProduct1, BeCPGModel.PROP_LEGAL_NAME, legalName);
-				
+
 				FinishedProductData finishedProduct1 = new FinishedProductData();
 				finishedProduct1.setName("Finished product " + Calendar.getInstance().getTimeInMillis());
 				finishedProduct1.setLegalName("legal Finished product 1");
@@ -1300,8 +1309,10 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 				finishedProduct1.setDensity(1d);
 				List<CompoListDataItem> compoList1 = new ArrayList<>();
 				compoList1.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF11NodeRef));
-				compoList1.add(new CompoListDataItem(null, compoList1.get(0), null, 1d, CompoListUnit.kg, 0d, DeclarationType.DoNotDetails, finishProduct1));
-				compoList1.add(new CompoListDataItem(null, compoList1.get(0), null, 2d, CompoListUnit.kg, 0d, DeclarationType.DoNotDetails, finishProduct2));
+				compoList1.add(
+						new CompoListDataItem(null, compoList1.get(0), null, 1d, CompoListUnit.kg, 0d, DeclarationType.DoNotDetails, finishProduct1));
+				compoList1.add(
+						new CompoListDataItem(null, compoList1.get(0), null, 2d, CompoListUnit.kg, 0d, DeclarationType.DoNotDetails, finishProduct2));
 				compoList1.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF12NodeRef));
 				compoList1.add(
 						new CompoListDataItem(null, compoList1.get(3), null, 3d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial13NodeRef));
@@ -1321,7 +1332,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 				finishedProduct1.getLabelingListView().setLabelingRuleList(labelingRuleList);
 
 				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
-			} , false, true);
+			}, false, true);
 
 			final LongAdder adder = new LongAdder();
 
@@ -1332,21 +1343,21 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 				String currentUser = "admin";
 				I18NUtil.setLocale(Locale.FRENCH);
-				
+
 				if ((adder.intValue() % 2) == 0) {
 					I18NUtil.setLocale(Locale.CANADA_FRENCH);
 					currentUser = "labellingUser1";
 				}
 				authenticationComponent.setCurrentUser(currentUser);
 
-				logger.info("running labeling in thread " + threadName + " for user" + currentUser);
+				 logger.info("running labeling in thread " + threadName + "for user" + currentUser);
 
 				String ill = "pâte french 50% (legal Finished product 1 50%), garniture french 50% (legal Raw material 13 25% (ing3 french 25%), ing3 french 16,7%, ing4 french 8,3%)";
 
 				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 					productService.formulate(finishedProductNodeRef1);
-					
+
 					ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef1);
 
 					Assert.assertTrue(formulatedProduct.getLabelingListView().getLabelingRuleList().size() > 0);
@@ -1360,14 +1371,13 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 						String formulatedIll = illDataItem.getValue().getValue(Locale.FRENCH);
 						Assert.assertEquals("Incorrect label :" + formulatedIll + "\n   - compare to " + ill, ill, formulatedIll);
 						Assert.assertNotNull(illDataItem.getLogValue());
-						logger.info("Finished labeling in thread " + threadName );
+						logger.info("Finished labeling in thread " +
+						 threadName );
 					}
 
 					return null;
 
-				} , false, true);
-
-				
+				}, false, true);
 
 				return null;
 			};
@@ -1398,6 +1408,90 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 			I18NUtil.setLocale(Locale.getDefault());
 		}
 
+	}
+
+	
+	// Pas la bonne place ici on test l'étiquetage pas les allégations labeling != labelClaim
+	@Test
+	public void testSpecificationsLabelingMerge() {
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			Map<QName, Serializable> properties = new HashMap<>();
+			// properties.put(BeCPGModel.PROP_CHARACT_NAME, "labelClaim1");
+			properties.put(BeCPGModel.PROP_CHARACT_NAME, "labelClaim1");
+			NodeRef testProduct = createTestProduct(null);
+			NodeRef labelClaimNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					PLMModel.TYPE_LABEL_CLAIM, properties).getChildRef();
+
+			properties = new HashMap<>();
+			properties.put(ContentModel.PROP_NAME, "Spec1");
+			NodeRef productSpecificationNodeRef1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
+					PLMModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
+
+			ProductSpecificationData productSpec1 = (ProductSpecificationData) alfrescoRepository.findOne(productSpecificationNodeRef1);
+			productSpec1.setLabelClaimList(new ArrayList<LabelClaimListDataItem>());
+
+			productSpec1.getLabelClaimList().add(new LabelClaimListDataItem(labelClaimNodeRef, "toto", Boolean.TRUE));
+			alfrescoRepository.save(productSpec1);
+
+			properties = new HashMap<>();
+			properties.put(ContentModel.PROP_NAME, "Spec2");
+			NodeRef productSpecificationNodeRef2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
+					PLMModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
+
+			ProductSpecificationData productSpec2 = (ProductSpecificationData) alfrescoRepository.findOne(productSpecificationNodeRef2);
+			productSpec2.setLabelClaimList(new ArrayList<LabelClaimListDataItem>());
+			productSpec2.getLabelClaimList().add(new LabelClaimListDataItem(labelClaimNodeRef, "toto", Boolean.FALSE));
+
+			alfrescoRepository.save(productSpec2);
+
+			properties = new HashMap<>();
+			properties.put(ContentModel.PROP_NAME, "global Spec");
+			NodeRef globalProductSpecificationNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
+					PLMModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
+
+			ProductSpecificationData globalSpec = (ProductSpecificationData) alfrescoRepository.findOne(globalProductSpecificationNodeRef);
+
+			globalSpec.setProductSpecifications(new ArrayList<ProductSpecificationData>());
+			globalSpec.getProductSpecifications().add(productSpec1);
+			globalSpec.getProductSpecifications().add(productSpec2);
+
+			ProductData product = alfrescoRepository.findOne(testProduct);
+			product.setProductSpecifications(new ArrayList<ProductSpecificationData>());
+			product.getProductSpecifications().add(globalSpec);
+			product.setLabelClaimList(new ArrayList<LabelClaimListDataItem>());
+			LabelClaimListDataItem productLabelClaimFalse = new LabelClaimListDataItem(labelClaimNodeRef, "toto", Boolean.TRUE);
+			productLabelClaimFalse.setIsManual(Boolean.TRUE);
+			product.getLabelClaimList().add(productLabelClaimFalse);
+			alfrescoRepository.save(product);
+
+			nodeService.createAssociation(globalProductSpecificationNodeRef, productSpecificationNodeRef2, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
+			nodeService.createAssociation(globalProductSpecificationNodeRef, productSpecificationNodeRef1, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
+
+			// create association
+			nodeService.createAssociation(testProduct, globalProductSpecificationNodeRef, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
+
+			/*-- Formulation --*/
+			logger.info("/*-- Formulation --*/");
+			productService.formulate(testProduct);
+
+			/* -- Check formulation -- */
+			ProductData formulatedProduct = alfrescoRepository.findOne(testProduct);
+
+			logger.info("/*-- Formulation raised " + formulatedProduct.getCompoListView().getReqCtrlList().size() + " rclDataItem --*/");
+			for (ReqCtrlListDataItem rclDataItem : formulatedProduct.getCompoListView().getReqCtrlList()) {
+				logger.info(rclDataItem.getReqMessage());
+				if (rclDataItem.getReqMessage().equals("L'allégation 'labelClaim1' doit être revendiquée")) {
+					fail();
+				}
+			}
+
+			return null;
+		}, false, true);
 	}
 
 }

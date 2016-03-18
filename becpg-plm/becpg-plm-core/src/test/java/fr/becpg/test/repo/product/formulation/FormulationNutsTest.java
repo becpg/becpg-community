@@ -19,7 +19,6 @@ package fr.becpg.test.repo.product.formulation;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,8 +64,6 @@ public class FormulationNutsTest extends AbstractFinishedProductTest {
 	@Autowired
 	@Qualifier("productFormulationChain")
 	private FormulationChain<ProductData> formulationChain;
-	
-	
 
 	@Override
 	public void setUp() throws Exception {
@@ -82,7 +79,6 @@ public class FormulationNutsTest extends AbstractFinishedProductTest {
 		formulate(true);
 
 	}
-	
 
 	protected void checkProduct(ProductData formulatedProduct, boolean propagateMode) {
 		int checks = 0;
@@ -139,6 +135,8 @@ public class FormulationNutsTest extends AbstractFinishedProductTest {
 				nodeService.getProperty(nut3, BeCPGModel.PROP_CHARACT_NAME));
 		String message4 = I18NUtil.getMessage(NutsCalculatingFormulationHandler.MESSAGE_MAXIMAL_DAILY_VALUE,
 				nodeService.getProperty(nut3, BeCPGModel.PROP_CHARACT_NAME));
+		String message5 = I18NUtil.getMessage(NutsCalculatingFormulationHandler.MESSAGE_NUT_NOT_IN_RANGE,
+				nodeService.getProperty(nut4, BeCPGModel.PROP_CHARACT_NAME));
 
 		logger.info(formulatedProduct.getCompoListView().getReqCtrlList().size());
 		for (ReqCtrlListDataItem r : formulatedProduct.getCompoListView().getReqCtrlList()) {
@@ -164,6 +162,9 @@ public class FormulationNutsTest extends AbstractFinishedProductTest {
 			} else if (message4.equals(r.getReqMessage())) {
 				assertEquals(0, r.getSources().size());
 				checks++;
+			} else if (message5.equals(r.getReqMessage())) {
+				// should not occur
+				fail();
 			}
 		}
 		if (propagateMode) {
@@ -177,21 +178,46 @@ public class FormulationNutsTest extends AbstractFinishedProductTest {
 		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			Map<QName, Serializable> properties = new HashMap<>();
-			properties.put(ContentModel.PROP_NAME, name + " Spec Nut");
+			properties.put(ContentModel.PROP_NAME, name + " Spec Nut 1");
 			NodeRef productSpecificationNodeRef1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
 					PLMModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
 
-			ProductSpecificationData productSpecification = (ProductSpecificationData) alfrescoRepository.findOne(productSpecificationNodeRef1);
+			ProductSpecificationData productSpecification1 = (ProductSpecificationData) alfrescoRepository.findOne(productSpecificationNodeRef1);
 
 			List<NutListDataItem> nutList = new ArrayList<>();
 			nutList.add(new NutListDataItem(null, null, null, 3d, 4d, null, nut1, null));
 			nutList.add(new NutListDataItem(null, null, null, 7d, null, null, nut2, null));
 			nutList.add(new NutListDataItem(null, null, null, null, 10d, null, nut3, null));
+			nutList.add(new NutListDataItem(null, null, null, 1.5d, 10d, null, nut4, null));
+			productSpecification1.setNutList(nutList);
 
-			productSpecification.setNutList(nutList);
+			properties.put(ContentModel.PROP_NAME, name + " Spec Nut 2");
+			NodeRef productSpecificationNodeRef2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
+					PLMModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
 
-			alfrescoRepository.save(productSpecification);
+			ProductSpecificationData productSpecification2 = (ProductSpecificationData) alfrescoRepository.findOne(productSpecificationNodeRef2);
+			List<NutListDataItem> nutList2 = new ArrayList<>();
+			nutList2.add(new NutListDataItem(null, null, null, 0.3d, 1.5d, null, nut4, null));
+			productSpecification2.setNutList(nutList2);
+
+			alfrescoRepository.save(productSpecification1);
+			alfrescoRepository.save(productSpecification2);
+
+			properties.put(ContentModel.PROP_NAME, name + " Spec Nut Global");
+			NodeRef globalProductSpecificationNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
+					PLMModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
+
+			ProductSpecificationData globalProductSpecification = (ProductSpecificationData) alfrescoRepository
+					.findOne(globalProductSpecificationNodeRef);
+			List<ProductSpecificationData> specList = new ArrayList<>();
+			specList.add(productSpecification1);
+			specList.add(productSpecification2);
+			globalProductSpecification.setProductSpecifications(specList);
+
+			alfrescoRepository.save(globalProductSpecification);
 
 			FinishedProductData finishedProduct = new FinishedProductData();
 			finishedProduct.setName(name);
@@ -201,7 +227,6 @@ public class FormulationNutsTest extends AbstractFinishedProductTest {
 			finishedProduct.setUnitPrice(22.4d);
 			finishedProduct.setDensity(1d);
 			finishedProduct.setServingSize(50d);// 50g
-			finishedProduct.setProductSpecifications(Collections.singletonList(productSpecification));
 
 			finishedProduct.setProjectedQty(10000l);
 			List<CompoListDataItem> compoList = new ArrayList<>();
@@ -215,18 +240,27 @@ public class FormulationNutsTest extends AbstractFinishedProductTest {
 			compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
-			nutList = new ArrayList<>();
-			nutList.add(new NutListDataItem(null, null, null, null, null, null, nut1, null));
-			nutList.add(new NutListDataItem(null, null, null, null, null, null, nut2, null));
-			nutList.add(new NutListDataItem(null, null, null, null, null, null, nut3, null));
-			finishedProduct.setNutList(nutList);
+			List<NutListDataItem> nutList3 = new ArrayList<>();
+			nutList3.add(new NutListDataItem(null, null, null, null, null, null, nut1, null));
+			nutList3.add(new NutListDataItem(null, null, null, null, null, null, nut2, null));
+			nutList3.add(new NutListDataItem(null, null, null, null, null, null, nut3, null));
+			finishedProduct.setNutList(nutList3);
 
 			finishedProduct = (FinishedProductData) alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct);
 
-			nodeService.createAssociation(finishedProduct.getNodeRef(), productSpecificationNodeRef1, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
+			nodeService.createAssociation(globalProductSpecificationNodeRef, productSpecificationNodeRef1, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
+			nodeService.createAssociation(globalProductSpecificationNodeRef, productSpecificationNodeRef2, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
+			nodeService.createAssociation(finishedProduct.getNodeRef(), globalProductSpecificationNodeRef, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
 
+			// ProductData ps1 =
+			// alfrescoRepository.findOne(productSpecificationNodeRef1);
+			// logger.info("PS1 has "+ps1.getNutList().size()+" nuts");
+			//
+			// ProductData ps2 =
+			// alfrescoRepository.findOne(productSpecificationNodeRef2);
+			// logger.info("PS2 has "+ps2.getNutList().size()+" nuts");
 			return finishedProduct.getNodeRef();
-		} , false, true);
+		}, false, true);
 	}
 
 	public void formulate(boolean propagate) throws Exception {
@@ -259,7 +293,7 @@ public class FormulationNutsTest extends AbstractFinishedProductTest {
 
 				return null;
 
-			} , false, true);
+			}, false, true);
 
 		} finally {
 			if (propagate) {
@@ -272,6 +306,5 @@ public class FormulationNutsTest extends AbstractFinishedProductTest {
 		}
 
 	}
-
 
 }

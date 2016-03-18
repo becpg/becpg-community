@@ -43,6 +43,7 @@ import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
@@ -106,11 +107,10 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	protected abstract List<T> getDataListVisited(ProductData partProduct);
 
 	protected abstract Map<NodeRef, List<NodeRef>> getMandatoryCharacts(ProductData formulatedProduct, QName componentType);
-	
-	/**
-	 * Returns the data type used to raise rclDataItems when formulating
-	 */
-	protected abstract RequirementDataType getDataType();
+
+	protected abstract String getSpecErrorMessageKey();
+
+	protected abstract RequirementDataType getRequirementDataType();
 
 	protected Map<NodeRef, List<NodeRef>> getMandatoryCharactsFromList(List<T> simpleListDataList) {
 		Map<NodeRef, List<NodeRef>> mandatoryCharacts = new HashMap<>(simpleListDataList.size());
@@ -181,7 +181,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 							isGenericRawMaterial);
 				}
 			}
-			addReqCtrlList(formulatedProduct.getCompoListView().getReqCtrlList(), mandatoryCharacts, getDataType());
+			addReqCtrlList(formulatedProduct.getCompoListView().getReqCtrlList(), mandatoryCharacts, getRequirementDataType());
 
 		}
 
@@ -206,7 +206,8 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		}
 	}
 
-	protected void addReqCtrlList(List<ReqCtrlListDataItem> reqCtrlList, Map<NodeRef, List<NodeRef>> mandatoryCharacts, RequirementDataType dataType) {
+	protected void addReqCtrlList(List<ReqCtrlListDataItem> reqCtrlList, Map<NodeRef, List<NodeRef>> mandatoryCharacts,
+			RequirementDataType dataType) {
 
 		// ReqCtrlList
 		for (Map.Entry<NodeRef, List<NodeRef>> mandatoryCharact : mandatoryCharacts.entrySet()) {
@@ -214,8 +215,8 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 				String message = I18NUtil.getMessage(MESSAGE_UNDEFINED_CHARACT,
 						nodeService.getProperty(mandatoryCharact.getKey(), BeCPGModel.PROP_CHARACT_NAME));
 
-				reqCtrlList.add(
-						new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, mandatoryCharact.getKey(), mandatoryCharact.getValue(), dataType));
+				reqCtrlList.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, mandatoryCharact.getKey(),
+						mandatoryCharact.getValue(), dataType));
 			}
 		}
 	}
@@ -228,7 +229,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	 */
 	protected void visitPart(NodeRef componentNodeRef, List<T> simpleListDataList, Double weightUsed, Double volUsed, Double netQty,
 			Map<NodeRef, List<NodeRef>> mandatoryCharacts, Map<NodeRef, Double> totalQtiesValue, boolean isGenericRawMaterial)
-					throws FormulateException {
+			throws FormulateException {
 
 		ProductData partProduct = (ProductData) alfrescoRepository.findOne(componentNodeRef);
 
@@ -417,7 +418,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 							Expression exp = parser.parseExpression(formula);
 							Object ret = exp.getValue(context);
-							if (ret == null || ret instanceof Double || ret instanceof Integer) {
+							if ((ret == null) || (ret instanceof Double) || (ret instanceof Integer)) {
 								formulatedCharactDataItem.setValue((Double) ret);
 
 								if (formula.contains(".value") && (formulatedCharactDataItem instanceof MinMaxValueDataItem)) {
@@ -445,17 +446,17 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 								logger.debug("Error in formula :" + SpelHelper.formatFormula(formula), e);
 							}
 						}
-					} 
+					}
 				}
- 
+
 				if (error != null) {
 					formulatedCharactDataItem.setValue(null);
 					formulatedCharactDataItem.setErrorLog(error);
 					String message = I18NUtil.getMessage(errorKey, Locale.getDefault(),
 							nodeService.getProperty(formulatedCharactDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME), error);
-					
+
 					ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Tolerated, message,
-							formulatedCharactDataItem.getCharactNodeRef(), new ArrayList<NodeRef>(), getDataType());
+							formulatedCharactDataItem.getCharactNodeRef(), new ArrayList<NodeRef>(), getRequirementDataType());
 					formulatedProduct.getCompoListView().getReqCtrlList().add(rclDataItem);
 				}
 
@@ -499,4 +500,81 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 		}
 	}
+
+	protected void checkRequirementsOfFormulatedProduct(ProductData formulatedProduct) {
+		if (getDataListVisited(formulatedProduct) != null) {
+			extractRequirements(formulatedProduct).forEach(specDataItem -> {
+				getDataListVisited(formulatedProduct).forEach(listDataItem -> {
+					if (specDataItem instanceof MinMaxValueDataItem) {
+						if (specDataItem.getCharactNodeRef().equals(listDataItem.getCharactNodeRef())) {
+							boolean isCharactAllowed = true;
+							MinMaxValueDataItem minMaxSpecValueDataItem = (MinMaxValueDataItem) specDataItem;
+							if ((specDataItem.getValue() != null) && !specDataItem.getValue().equals(listDataItem.getValue())) {
+								isCharactAllowed = false;
+							}
+
+							if (minMaxSpecValueDataItem.getMini() != null) {
+								if ((listDataItem.getValue() == null) || (listDataItem.getValue() < minMaxSpecValueDataItem.getMini())) {
+									isCharactAllowed = false;
+								}
+							}
+
+							if (minMaxSpecValueDataItem.getMaxi() != null) {
+								if ((listDataItem.getValue() == null) || (listDataItem.getValue() > minMaxSpecValueDataItem.getMaxi())) {
+									isCharactAllowed = false;
+								}
+							}
+							
+							if (!isCharactAllowed) {
+								String message = I18NUtil.getMessage(getSpecErrorMessageKey(),
+										nodeService.getProperty(listDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME));
+								formulatedProduct.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden,
+										message, listDataItem.getCharactNodeRef(), new ArrayList<NodeRef>(), RequirementDataType.Specification));
+
+							}
+						}
+
+						
+					}
+				});
+			});
+		}
+	}
+
+	private List<T> extractRequirements(ProductData formulatedProduct) {
+		List<T> ret = new ArrayList<>();
+		if (formulatedProduct.getProductSpecifications() != null) {
+			for (ProductSpecificationData specification : formulatedProduct.getProductSpecifications()) {
+				mergeRequirements(ret, extractRequirements(specification));
+				if (getDataListVisited(specification) != null) {
+					mergeRequirements(ret, getDataListVisited(specification));
+				}
+			}
+		}
+		return ret;
+	}
+
+	private void mergeRequirements(List<T> ret, List<T> toAdd) {
+		toAdd.forEach(item -> {
+			if (item.getCharactNodeRef() != null) {
+				boolean isFound = false;
+				for (T sl : ret) {
+					if (item.getCharactNodeRef().equals(sl.getCharactNodeRef())) {
+						isFound = true;
+						if ((sl instanceof MinMaxValueDataItem) && (item instanceof MinMaxValueDataItem)) {
+							((MinMaxValueDataItem) sl)
+									.setMini(Math.max(((MinMaxValueDataItem) sl).getMini(), ((MinMaxValueDataItem) item).getMini()));
+							((MinMaxValueDataItem) sl)
+									.setMaxi(Math.min(((MinMaxValueDataItem) sl).getMaxi(), ((MinMaxValueDataItem) item).getMaxi()));
+						}
+						break;
+					}
+				}
+				if (!isFound) {
+					ret.add(item);
+				}
+			}
+		});
+	}
+
 }

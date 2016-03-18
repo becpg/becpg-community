@@ -81,6 +81,7 @@
 					<excludes>
 						<exclude>fr/becpg/test/repo/olap/OlapServiceTest.java</exclude>
 					</excludes>
+					<runOrder>alphabetical</runOrder>
 				</configuration>
 			</plugin>
 			<plugin>

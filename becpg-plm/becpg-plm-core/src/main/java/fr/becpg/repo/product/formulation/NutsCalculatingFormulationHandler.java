@@ -21,7 +21,6 @@ import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
@@ -164,9 +163,9 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 							if (valuePerserving > ul) {
 								String message = I18NUtil.getMessage(MESSAGE_MAXIMAL_DAILY_VALUE,
 										nodeService.getProperty(n.getNut(), BeCPGModel.PROP_CHARACT_NAME));
-							
-								formulatedProduct.getCompoListView().getReqCtrlList()
-								.add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, n.getNut(), new ArrayList<NodeRef>(), RequirementDataType.Specification));
+
+								formulatedProduct.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden,
+										message, n.getNut(), new ArrayList<NodeRef>(), RequirementDataType.Specification));
 							}
 						}
 					} else {
@@ -185,57 +184,11 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 					}
 				});
 
-				checkNutrientsOfFormulatedProduct(formulatedProduct, formulatedProduct.getProductSpecifications());
+				checkRequirementsOfFormulatedProduct(formulatedProduct);
 
 			}
 		}
 		return true;
-	}
-
-	private void checkNutrientsOfFormulatedProduct(ProductData formulatedProduct, List<ProductSpecificationData> productSpecifications) {
-		
-		for (ProductSpecificationData productSpecification : productSpecifications) {
-			if ((productSpecification.getNutList() != null) && !productSpecification.getNutList().isEmpty()) {
-				productSpecification.getNutList().forEach(nutListSpecDataItem -> {
-				
-					formulatedProduct.getNutList().forEach(nutListDataItem -> {
-
-						boolean isNutAllowed = true;
-
-						if (nutListDataItem.getNut().equals(nutListSpecDataItem.getNut())) {
-
-							if ((nutListSpecDataItem.getValue() != null) && !nutListSpecDataItem.getValue().equals(nutListDataItem.getValue())) {
-								isNutAllowed = false;
-								
-								
-							}
-
-							if (nutListSpecDataItem.getMini() != null) {
-								if (nutListDataItem.getValue() == null || nutListDataItem.getValue() < nutListSpecDataItem.getMini()) {
-									isNutAllowed = false;
-								}
-							}
-
-							if (nutListSpecDataItem.getMaxi() != null) {
-								if (nutListDataItem.getValue() == null || nutListDataItem.getValue() > nutListSpecDataItem.getMaxi()) {
-									isNutAllowed = false;
-								}
-							}
-						}
-
-						
-						
-						if (!isNutAllowed) {
-							String message = I18NUtil.getMessage(MESSAGE_NUT_NOT_IN_RANGE,
-									nodeService.getProperty(nutListSpecDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME));
-							formulatedProduct.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden,
-									message, nutListSpecDataItem.getNut(), new ArrayList<NodeRef>(), RequirementDataType.Specification));
-						}
-					});
-				});
-			}
-		}
-
 	}
 
 	private List<ReqCtrlListDataItem> visitPart(ProductData partProduct, List<NutListDataItem> nutList, List<NutListDataItem> retainNodes,
@@ -295,7 +248,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 	 * @return
 	 */
 	public static String calculateUnit(ProductUnit productUnit, String nutUnit) {
-		if(nutUnit!=null && nutUnit.contains("/")){
+		if ((nutUnit == null) || nutUnit.contains("/")) {
 			return nutUnit;
 		}
 		return nutUnit += calculateSuffixUnit(productUnit);
@@ -333,7 +286,13 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 	}
 
 	@Override
-	protected RequirementDataType getDataType() {
+	protected RequirementDataType getRequirementDataType() {
 		return RequirementDataType.Nutrient;
 	}
+
+	@Override
+	protected String getSpecErrorMessageKey() {
+		return MESSAGE_NUT_NOT_IN_RANGE;
+	}
+
 }
