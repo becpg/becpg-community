@@ -123,6 +123,7 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 			compoList.add(new CompoListDataItem(null, null, null, 2d, CompoListUnit.kg, null, null, semiFinishedProductNodeRef));
 			finishedProduct.setPhysicoChemList(new ArrayList<>());
 			finishedProduct.getPhysicoChemList().add(new PhysicoChemListDataItem(null, 7d, null, null, null, physicoChem1));
+			finishedProduct.getPhysicoChemList().add(new PhysicoChemListDataItem(null, 6d, null, null, null, physicoChem2));
 
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
@@ -200,6 +201,7 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 			// physico chem must not be higher than 7
 			ArrayList<PhysicoChemListDataItem> physicoChemList = new ArrayList<>();
 			physicoChemList.add(new PhysicoChemListDataItem(null, null, null, 5d, 7d, physicoChem1));
+			physicoChemList.add(new PhysicoChemListDataItem(null, null, null, 8d, 15d, physicoChem2));
 			productSpecification1.setPhysicoChemList(physicoChemList);
 
 			// nut1 can't be lower than 15 and higher than 50
@@ -227,6 +229,7 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 			// physico chem must not be lower than 7 (must be 7 precisely)
 			physicoChemList = new ArrayList<>();
 			physicoChemList.add(new PhysicoChemListDataItem(null, null, null, 7d, 9d, physicoChem1));
+			physicoChemList.add(new PhysicoChemListDataItem(null, null, null, 5d, 8d, physicoChem2));
 			productSpecification2.setPhysicoChemList(physicoChemList);
 
 			// nut1 must not be higher than 30 and lower than 10
@@ -290,7 +293,6 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 					assertEquals(10, reqCtrlList.getSources().size());
 
 					checks++;
-					logger.info("/*-- check++, check=" + checks + " --*/\n");
 				} else if (reqCtrlList.getReqMessage().equals("OGM interdit")) {
 
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
@@ -301,7 +303,6 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 					assertTrue(reqCtrlList.getSources().contains(rawMaterial5NodeRef));
 					assertTrue(reqCtrlList.getSources().contains(rawMaterial6NodeRef));
 					checks++;
-					logger.info("/*-- check++, check=" + checks + " --*/\n");
 				} else if (reqCtrlList.getReqMessage().equals("Ionisation interdite")) {
 
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
@@ -318,9 +319,14 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 					assertTrue(false);
 					assertEquals(RequirementType.Tolerated, reqCtrlList.getReqType());
 				} else if (reqCtrlList.getReqMessage()
-						.equals("La valeur du physico-chimique " + physicoChem1 + " ne respecte pas le cahier des charges")) {
+						.equals("La valeur du physico-chimique physicoChem1 ne respecte pas le cahier des charges")) {
 					// should not occur
 					assertTrue(false);
+				} else if (reqCtrlList.getReqMessage()
+						.equals("La valeur du physico-chimique physicoChem2 ne respecte pas le cahier des charges")) {
+					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
+					assertEquals(0, reqCtrlList.getSources().size());
+					checks++;
 				} else if (reqCtrlList.getReqMessage().equals("Ing3 geoOrigin1 obligatoire")) {
 
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
@@ -384,8 +390,8 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 				}
 			}
 
-			logger.info("/*-- Done checking, checks=" + checks + " (should be 11) --*/");
-			assertEquals(11, checks);
+			logger.info("/*-- Done checking, checks=" + checks + " (should be 12) --*/");
+			assertEquals(12, checks);
 
 			/*
 			 * #257: check reqCtrlList is clear if all req are respected (we
