@@ -141,7 +141,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 	private void addMissingLabelClaimReq(ProductData productData, LabelClaimListDataItem labelClaimItem) {
 		String message = I18NUtil.getMessage("message.formulate.labelClaim.undefined_state", extractName(labelClaimItem.getLabelClaim()));
 		productData.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Info, message,
-				labelClaimItem.getLabelClaim(), new ArrayList<NodeRef>(), RequirementDataType.LabelClaim));
+				labelClaimItem.getLabelClaim(), new ArrayList<NodeRef>(), RequirementDataType.Labelclaim));
 
 	}
 
@@ -186,7 +186,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 							nodeService.getProperty(labelClaimListDataItem.getLabelClaim(), BeCPGModel.PROP_CHARACT_NAME),
 							labelClaimListDataItem.getErrorLog());
 					productData.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message,
-							labelClaimListDataItem.getLabelClaim(), new ArrayList<NodeRef>(), RequirementDataType.LabelClaim));
+							labelClaimListDataItem.getLabelClaim(), new ArrayList<NodeRef>(), RequirementDataType.Labelclaim));
 				}
 
 			}

@@ -137,26 +137,30 @@
 						html+="</li></ul>";
 					}
 
-					//Parses each array mapped to dataType
-					html+="<div class=\"dataTypeList\"><div class=\"title\">"+instance.msg("label.constraints.violations")+"<span class=\"req-all-all rclFilterSelected\"><a class=\"req-filter "+REQFILTER_EVENTCLASS + " href=\"#\">"+instance.msg("label.constraints.view-all")+"</a></span></div>";
+					
 
 					//if we have some constraints in res
-					if((Object.keys(object).length > 1 && object.scores !== undefined) || (Object.keys(object).length > 0 && object.scores === undefined)){
+					if(object.rclNumber !== undefined && object.rclNumber != null && object.rclNumber.length > 0){					
+						//Parses each array mapped to dataType
+						html+="<div class=\"dataTypeList\"><div class=\"title\">"+instance.msg("label.constraints.violations")+"<span class=\"req-all-all rclFilterSelected\"><a class=\"req-filter "+REQFILTER_EVENTCLASS + " href=\"#\">"+instance.msg("label.constraints.view-all")+"</a></span></div>";
+
 						html+="<div class=\"rclFilterElt\"><div>";
-						for(var dataType in object){
 
-							if(dataType !== "scores"){
+						for(var dataType in object.rclNumber){
 								var scoreInfo = "";
+								var dataTypeName = Object.keys(object.rclNumber[dataType])[0];
+								html+="<div class=\"div-"+dataTypeName.toLowerCase()+"\"><span class=\"span-"+dataTypeName.toLowerCase()+"\"><a class=\"req-filter "+REQFILTER_EVENTCLASS+"\" href=\"#\">"+instance.msg("label.constraints."+dataTypeName.toLowerCase())+scoreInfo+"</a></span><ul>";
 
-								html+="<div class=\"div-"+dataType.toLowerCase()+"\"><span class=\"span-"+dataType.toLowerCase()+"\"><a class=\"req-filter "+REQFILTER_EVENTCLASS+"\" href=\"#\">"+instance.msg("label.constraints."+dataType.toLowerCase())+scoreInfo+"</a></span><ul>";
-								var types = object[dataType];
-								for(var type in types){
-									var value = types[type];
-									html+="<li><span class=\"req-"+dataType.toLowerCase()+"-"+type+"\" title=\""+instance.msg("reqTypes."+type)+"\"><a class=\"req-filter "+REQFILTER_EVENTCLASS+ "\" href=\"#\"><span class=\"reqType"+type+"\"></span>"+value+"</a></li>";
+								var types = object.rclNumber[dataType];
+
+								for(var type in types[dataTypeName]){
+									var value = types[dataTypeName][type];
+
+									html+="<li><span class=\"req-"+dataTypeName.toLowerCase()+"-"+type+"\" title=\""+instance.msg("reqTypes."+type)+"\"><a class=\"req-filter "+REQFILTER_EVENTCLASS+ "\" href=\"#\"><span class=\"reqType"+type+"\"></span>"+value+"</a></li>";
 
 								}        		  
 								html+="</ul></div>";
-							}
+							
 						}
 						html+="</div></div></div>";
 					}
@@ -188,7 +192,8 @@
 					//refreshes view by calling filter
 					var splits = owner.className.split("-");  
 					var type = (splits.length > 2 ? splits[2].split(" ")[0] : undefined); 
-					var dataType = splits[1].charAt(0).toUpperCase()+splits[1].slice(1);                 
+					var dataType = splits[1].charAt(0).toUpperCase()+splits[1].slice(1);     
+					console.log("Filter called, type="+type+", dataType= "+dataType)
 					YAHOO.Bubbling.fire("constraintsList-"+instance.id+"changeFilter",
 							{
 						filterOwner : "constraintsList-"+instance.id,
@@ -220,7 +225,7 @@
 					successCallback : {
 						fn : function (response){
 							YAHOO.util.Dom.get("constraintsList-"+instance.id+"-scores").innerHTML= parseJsonToHTML(response.json, instance);
-
+							console.log(response.json);
 							var scoreDiv = YAHOO.util.Dom.get("scoreLi");
 							if(scoreDiv !== undefined && scoreDiv != null){
 								var scoreDivClassName = scoreDiv.className;
