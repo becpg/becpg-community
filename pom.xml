@@ -81,7 +81,7 @@
 		<argLine>-Xms256m -Xmx1524m -Duser.language=fr</argLine>
 		
 		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
-		<birt.version>4.5.0a</birt.version>
+		<birt.version>4.4.2</birt.version>
 		<sonar.language>java</sonar.language>
 		
 		<springloaded.version>1.2.1.RELEASE</springloaded.version>
