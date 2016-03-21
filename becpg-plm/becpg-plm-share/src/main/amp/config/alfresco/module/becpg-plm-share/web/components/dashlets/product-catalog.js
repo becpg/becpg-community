@@ -405,9 +405,9 @@
                            /* Favourite / Charact / Download */
                            desc += '<div class="detail detail-social">';
                            desc += '<span class="item item-social">' + this.generateFavourite(this, oRecord) + '</span>';
-                           desc += '<span class="item item-social item-separator"><a class="view-documents" href="' + documentsUrl + '"  title="' + this
-                                 .msg("actions.entity.view-documents") + '" tabindex="0">' + this
-                                 .msg("actions.entity.view-documents.short") + '</a></span>';
+                           desc += '<span class="item item-social item-separator"><a class="view-reports" href="' + documentsUrl + '"  title="' + this
+                                 .msg("actions.entity.view-reports") + '" tabindex="0">' + this
+                                 .msg("actions.entity.view-reports.short") + '</a></span>';
                            desc += '<span class="item item-social item-separator"><a class="view-characts" href="' + charactsUrl + '" title="' + this
                                  .msg("actions.entity.view-datalists") + '" tabindex="0">' + this
                                  .msg("actions.entity.view-datalists.short") + '</a></span>';

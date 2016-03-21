@@ -2681,6 +2681,8 @@
                                     {
                                         obj.callback.call(recordFound);
                                     }
+                                    
+                                    Bubbling.fire("dirtyDataTable");
                                 };
 
                                 this.afterDataGridUpdate.push(fnAfterUpdate);
@@ -2689,6 +2691,7 @@
                                 {
                                     page : this.currentPage
                                 });
+                                
 
                             }
                         },
@@ -2719,6 +2722,13 @@
                                         Alfresco.util.Anim.fadeOut(el);
                                     }
                                 }
+                                
+                                var fnAfterDelete = function EntityDataGrid_onDataItemCreated_refreshSuccess_fnAfterUpdate()
+                                {
+                                    Bubbling.fire("dirtyDataTable");
+                                };
+
+                                this.afterDataGridUpdate.push(fnAfterDelete);
 
                                 this._updateDataGrid.call(this,
                                 {
