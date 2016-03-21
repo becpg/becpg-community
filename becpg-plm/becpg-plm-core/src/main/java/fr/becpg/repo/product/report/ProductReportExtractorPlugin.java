@@ -592,7 +592,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 			if (extractInMultiLevel) {
 				for (CompoListDataItem dataItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-					if (nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT) && extractInMultiLevel) {
+					if ((nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT)
+							|| nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_FINISHEDPRODUCT) ) && extractInMultiLevel) {
 						ProductData sfProductData = alfrescoRepository.findOne(dataItem.getProduct());
 						if (sfProductData.hasPackagingListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 							for (PackagingListDataItem subDataItem : sfProductData
@@ -648,7 +649,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				}
 			}
 
-			if (nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT) && extractInMultiLevel) {
+			if ((nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT) 
+					|| nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_FINISHEDPRODUCT))  && extractInMultiLevel) {
 				if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 					for (CompoListDataItem subDataItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 						loadCompoListItem(dataItem, subDataItem, compoListElt, defaultVariantNodeRef, level + 1,
