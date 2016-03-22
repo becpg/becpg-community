@@ -224,6 +224,8 @@ function getDocResults(params)
    if (params.rootNode !== null)
    {
       ftsQuery = 'PATH:"' + rootNode.qnamePath + '//*" AND (' + ftsQuery + ')';
+   } else {
+	   ftsQuery = '-PATH:"/bcpg:entitiesHistory//*" AND (' + ftsQuery + ')';
    }
    
    ftsQuery = '(' + ftsQuery + ') AND -TYPE:"cm:thumbnail" AND -TYPE:"cm:failedThumbnail" AND -TYPE:"cm:rating" AND -TYPE:"fm:post" AND -ASPECT:"sys:hidden" AND -cm:creator:system';
@@ -301,7 +303,7 @@ function getEntityResults(params)
    if (params.rootNode !== null)
    {
       ftsQuery = 'PATH:"' + rootNode.qnamePath + '//*" AND (' + ftsQuery + ')';
-   }
+   } 
    
    ftsQuery = '(' + ftsQuery + ') AND -ASPECT:"sys:hidden" AND -ASPECT:"bcpg:compositeVersion" AND -cm:creator:system -ASPECT:"bcpg:entityTplAspect" AND -ASPECT:"bcpg:hiddenFolder" AND -TYPE:"bcpg:systemEntity"';
    
