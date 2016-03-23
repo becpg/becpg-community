@@ -422,19 +422,20 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 	}
 
 	private void mergeRequirements(List<AllergenListDataItem> ret, List<AllergenListDataItem> toAdd) {
-		toAdd.forEach(item -> {
+		toAdd.forEach(item -> {	
 			if (item.getAllergen() != null) {
 				boolean isFound = false;
 				for (AllergenListDataItem sl : ret) {
 					if (item.getAllergen().equals(sl.getAllergen())) {
 						isFound = true;
+						
 						// if one value is true, set to true
-						if (Boolean.FALSE.equals(sl.getVoluntary()) && Boolean.TRUE.equals(item.getVoluntary())) {
-							sl.setVoluntary(Boolean.TRUE);
+						if (Boolean.TRUE.equals(sl.getVoluntary()) && Boolean.FALSE.equals(item.getVoluntary())) {
+							sl.setVoluntary(Boolean.FALSE);
 						}
 
-						if (Boolean.FALSE.equals(sl.getInVoluntary()) && Boolean.TRUE.equals(item.getInVoluntary())) {
-							sl.setInVoluntary(Boolean.TRUE);
+						if (Boolean.TRUE.equals(sl.getInVoluntary()) && Boolean.FALSE.equals(item.getInVoluntary())) {
+							sl.setInVoluntary(Boolean.FALSE);
 						}
 						
 						if(sl.getQtyPerc()!=null && item.getQtyPerc()!=null){

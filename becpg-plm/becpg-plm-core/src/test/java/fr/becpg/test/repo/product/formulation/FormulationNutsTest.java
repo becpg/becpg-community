@@ -126,19 +126,19 @@ public class FormulationNutsTest extends AbstractFinishedProductTest {
 		checks = 0;
 
 		String message0 = I18NUtil.getMessage(NutsCalculatingFormulationHandler.MESSAGE_NUT_NOT_IN_RANGE,
-				nodeService.getProperty(nut1, BeCPGModel.PROP_CHARACT_NAME));
+				nodeService.getProperty(nut1, BeCPGModel.PROP_CHARACT_NAME), "3", " >=7", "");
 		String message1 = I18NUtil.getMessage(NutsCalculatingFormulationHandler.MESSAGE_NUT_NOT_IN_RANGE,
-				nodeService.getProperty(nut2, BeCPGModel.PROP_CHARACT_NAME));
+				nodeService.getProperty(nut2, BeCPGModel.PROP_CHARACT_NAME), "6", " >=7", "");
 		String message2 = I18NUtil.getMessage(NutsCalculatingFormulationHandler.MESSAGE_NUT_NOT_IN_RANGE,
-				nodeService.getProperty(nut3, BeCPGModel.PROP_CHARACT_NAME));
+				nodeService.getProperty(nut3, BeCPGModel.PROP_CHARACT_NAME), "14", "", " <=10");
 		String message3 = I18NUtil.getMessage(AbstractSimpleListFormulationHandler.MESSAGE_UNDEFINED_CHARACT,
 				nodeService.getProperty(nut3, BeCPGModel.PROP_CHARACT_NAME));
 		String message4 = I18NUtil.getMessage(NutsCalculatingFormulationHandler.MESSAGE_MAXIMAL_DAILY_VALUE,
 				nodeService.getProperty(nut3, BeCPGModel.PROP_CHARACT_NAME));
-		String message5 = I18NUtil.getMessage(NutsCalculatingFormulationHandler.MESSAGE_NUT_NOT_IN_RANGE,
-				nodeService.getProperty(nut4, BeCPGModel.PROP_CHARACT_NAME));
+		logger.info(message1);
+		logger.info(message2);
 
-		logger.info(formulatedProduct.getCompoListView().getReqCtrlList().size());
+		logger.info("Formulation raised " + formulatedProduct.getCompoListView().getReqCtrlList().size() + " rclDataItems");
 		for (ReqCtrlListDataItem r : formulatedProduct.getCompoListView().getReqCtrlList()) {
 
 			logger.info("reqCtrl " + r.getReqMessage() + r.getReqType() + r.getSources());
@@ -155,18 +155,20 @@ public class FormulationNutsTest extends AbstractFinishedProductTest {
 				if (propagateMode) {
 					fail();
 				}
-
 				assertEquals(1, r.getSources().size());
 				assertEquals(rawMaterial4NodeRef, r.getSources().get(0));
 				checks++;
 			} else if (message4.equals(r.getReqMessage())) {
 				assertEquals(0, r.getSources().size());
 				checks++;
-			} else if (message5.equals(r.getReqMessage())) {
+			} else if ((r.getReqMessage() != null) && r.getReqMessage().contains("Le nutriment nut4")) {
 				// should not occur
+				// TODO use regexp for a better matching ?
 				fail();
 			}
 		}
+
+		logger.info("checks: " + checks);
 		if (propagateMode) {
 			assertEquals(3, checks);
 		} else {

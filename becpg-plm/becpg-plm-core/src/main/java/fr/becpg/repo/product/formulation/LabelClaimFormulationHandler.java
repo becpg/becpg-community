@@ -1,9 +1,11 @@
 package fr.becpg.repo.product.formulation;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -102,8 +104,11 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 
 			computeClaimList(productData, parser, context);
 
-			checkRequirementsOfFormulatedProduct(productData);
 		}
+
+		// check even if product has no labelclaim, which can be forbidden by
+		// specifications
+		checkRequirementsOfFormulatedProduct(productData);
 
 		return true;
 	}
@@ -196,18 +201,36 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 
 	private void checkRequirementsOfFormulatedProduct(ProductData formulatedProduct) {
 		if (getDataListVisited(formulatedProduct) != null) {
-			extractRequirements(formulatedProduct).forEach(specDataItem -> {
+			Map<LabelClaimListDataItem, Boolean> specLabelClaimsVisitedMap = new HashMap<>();
+			extractRequirements(formulatedProduct).forEach(extracedSpecDataItem -> {
+				specLabelClaimsVisitedMap.put(extracedSpecDataItem, false);
+			});
+
+			specLabelClaimsVisitedMap.keySet().forEach(specDataItem -> {
 				getDataListVisited(formulatedProduct).forEach(listDataItem -> {
 					if (listDataItem.getLabelClaim().equals(specDataItem.getLabelClaim())) {
+						specLabelClaimsVisitedMap.put(specDataItem, true);
 						if (Boolean.TRUE.equals(specDataItem.getIsClaimed() && !Boolean.TRUE.equals(listDataItem.getIsClaimed()))) {
-							String message = I18NUtil.getMessage(MESSAGE_MISSING_CLAIM, extractName(listDataItem.getLabelClaim()));
-							formulatedProduct.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden,
-									message, listDataItem.getLabelClaim(), new ArrayList<NodeRef>(), RequirementDataType.Specification));
+							addMissingLabelClaim(formulatedProduct, listDataItem);
 						}
 					}
 				});
 			});
+
+			// check that all the labelClaim in specs have been visited in
+			// product
+			specLabelClaimsVisitedMap.keySet().forEach(specDataItem -> {
+				if (Boolean.FALSE.equals(specLabelClaimsVisitedMap.get(specDataItem))) {
+					addMissingLabelClaim(formulatedProduct, specDataItem);
+				}
+			});
 		}
+	}
+
+	private void addMissingLabelClaim(ProductData formulatedProduct, LabelClaimListDataItem labelClaim) {
+		String message = I18NUtil.getMessage(MESSAGE_MISSING_CLAIM, extractName(labelClaim.getLabelClaim()));
+		formulatedProduct.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message,
+				labelClaim.getLabelClaim(), new ArrayList<NodeRef>(), RequirementDataType.Specification));
 	}
 
 	private List<LabelClaimListDataItem> extractRequirements(ProductData formulatedProduct) {
