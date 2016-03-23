@@ -124,7 +124,9 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 			finishedProduct.setPhysicoChemList(new ArrayList<>());
 			finishedProduct.getPhysicoChemList().add(new PhysicoChemListDataItem(null, 7d, null, null, null, physicoChem1));
 			finishedProduct.getPhysicoChemList().add(new PhysicoChemListDataItem(null, 6d, null, null, null, physicoChem2));
-
+			finishedProduct.getPhysicoChemList().add(new PhysicoChemListDataItem(null, 1.29d, null, null, null, physicoChem6));
+			finishedProduct.getPhysicoChemList().add(new PhysicoChemListDataItem(null, 3.4d, null, null, null, physicoChem7));
+			finishedProduct.getPhysicoChemList().add(new PhysicoChemListDataItem(null, 0.6774d, null, null, null, physicoChem8));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
@@ -202,6 +204,7 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 			ArrayList<PhysicoChemListDataItem> physicoChemList = new ArrayList<>();
 			physicoChemList.add(new PhysicoChemListDataItem(null, null, null, 5d, 7d, physicoChem1));
 			physicoChemList.add(new PhysicoChemListDataItem(null, null, null, 8d, 15d, physicoChem2));
+			physicoChemList.add(new PhysicoChemListDataItem(null, null, null, null, 3d, physicoChem7));
 			productSpecification1.setPhysicoChemList(physicoChemList);
 
 			// nut1 can't be lower than 15 and higher than 50
@@ -229,7 +232,8 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 			// physico chem must not be lower than 7 (must be 7 precisely)
 			physicoChemList = new ArrayList<>();
 			physicoChemList.add(new PhysicoChemListDataItem(null, null, null, 7d, 9d, physicoChem1));
-			physicoChemList.add(new PhysicoChemListDataItem(null, null, null, 5d, 8d, physicoChem2));
+			physicoChemList.add(new PhysicoChemListDataItem(null, null, null, 5d, 9d, physicoChem2));
+			physicoChemList.add(new PhysicoChemListDataItem(null, null, null, 3d, null, physicoChem6));
 			productSpecification2.setPhysicoChemList(physicoChemList);
 
 			// nut1 must not be higher than 30 and lower than 10
@@ -288,7 +292,7 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 				 * #1909 added non validation rclDataItem
 				 */
 				if (reqCtrlList.getReqMessage().equals("Composant non validé")) {
-					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
+					assertEquals(RequirementType.Tolerated, reqCtrlList.getReqType());
 					assertEquals(RequirementDataType.Validation, reqCtrlList.getReqDataType());
 					assertEquals(10, reqCtrlList.getSources().size());
 
@@ -318,12 +322,22 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 					// should not occur
 					assertTrue(false);
 					assertEquals(RequirementType.Tolerated, reqCtrlList.getReqType());
-				} else if (reqCtrlList.getReqMessage()
-						.equals("La valeur du physico-chimique physicoChem1 ne respecte pas le cahier des charges")) {
+				} else if (reqCtrlList.getReqMessage().contains("La caractéristique physicoChem1")) {
+					// TODO regexp for better matching ?
 					// should not occur
 					assertTrue(false);
-				} else if (reqCtrlList.getReqMessage()
-						.equals("La valeur du physico-chimique physicoChem2 ne respecte pas le cahier des charges")) {
+				} else if (reqCtrlList.getReqMessage().contains("La caractéristique physicoChem8")) {
+					// should not occur
+					assertTrue(false);
+				} else if (reqCtrlList.getReqMessage().contains("La caractéristique physicoChem2")) {
+					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
+					assertEquals(0, reqCtrlList.getSources().size());
+					checks++;
+				} else if (reqCtrlList.getReqMessage().contains("La caractéristique physicoChem6")) {
+					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
+					assertEquals(0, reqCtrlList.getSources().size());
+					checks++;
+				} else if (reqCtrlList.getReqMessage().contains("La caractéristique physicoChem7")) {
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
 					assertEquals(0, reqCtrlList.getSources().size());
 					checks++;
@@ -384,14 +398,13 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 					checks++;
 
 				} else {
-					logger.info("============= Unexpected rclDataItem ===================");
-					logger.info(reqCtrlList.getReqMessage());
+					logger.info("Unexpected rclDataItem: " + reqCtrlList.getReqMessage());
 					fail();
 				}
 			}
 
-			logger.info("/*-- Done checking, checks=" + checks + " (should be 12) --*/");
-			assertEquals(12, checks);
+			logger.info("/*-- Done checking, checks=" + checks + " (should be 14) --*/");
+			assertEquals(14, checks);
 
 			/*
 			 * #257: check reqCtrlList is clear if all req are respected (we
@@ -409,9 +422,10 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 
 			/*
 			 * 4 rclDataItem remains : one for non validated product, and three
-			 * for INCO missing fields: legal name, conservation conditions, and precautions for use
+			 * for INCO missing fields: legal name, conservation conditions, and
+			 * precautions for use
 			 */
-			
+
 			assertEquals(4, formulatedProduct.getCompoListView().getReqCtrlList().size());
 
 			return null;

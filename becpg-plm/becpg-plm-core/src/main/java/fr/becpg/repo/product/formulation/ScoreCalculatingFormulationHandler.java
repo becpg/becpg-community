@@ -25,7 +25,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.extensions.surf.util.I18NUtil;
 
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.helper.AssociationService;
@@ -126,14 +125,17 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 					}
 				}
 
-				//pre merge, ctrlDataItems might be duplicated, visit them only once
+				// pre merge, ctrlDataItems might be duplicated, visit them only
+				// once
 				List<String> visitedCtrlDataItems = new ArrayList<>();
 				for (ReqCtrlListDataItem ctrl : view.getReqCtrlList()) {
-					
-					
+
 					if (specificationScore > 10) {
-						if ((ctrl.getReqDataType() == RequirementDataType.Specification) && (ctrl.getReqType() == RequirementType.Forbidden) && !visitedCtrlDataItems.contains(ctrl.getReqMessage())) {
-							logger.info("Visiting specification rclDataItem: "+ctrl.getReqMessage()+", s="+ctrl.getSources());
+						if ((ctrl.getReqDataType() == RequirementDataType.Specification) && (ctrl.getReqType() == RequirementType.Forbidden)
+								&& !visitedCtrlDataItems.contains(ctrl.getReqMessage())) {
+							if(logger.isDebugEnabled()){
+								logger.debug("Visiting specification rclDataItem: " + ctrl.getReqMessage() + ", s=" + ctrl.getSources());
+							}
 							specificationScore -= 10;
 							visitedCtrlDataItems.add(ctrl.getReqMessage());
 						}
@@ -162,7 +164,6 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 			Double componentsValidationScore = (childrenSize > 0 ? (childScore * 100d) / childrenSize : 100d);
 			Double completionPercent = (componentsValidationScore + mandatoryFieldsScore + specificationScore) / 3d;
 
-			
 			JSONObject details = new JSONObject();
 
 			details.put("mandatoryFields", mandatoryFieldsScore);
@@ -172,7 +173,8 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 			scores.put("global", completionPercent);
 			scores.put("details", details);
 			scores.put(JsonScoreHelper.PROP_CATALOGS, mandatoryFields);
-			logger.info("Done calculating score of product "+product.getName()+", children: "+ componentsValidationScore +"%, mandatory: " + mandatoryFieldsScore + "% , specifications: "+ specificationScore + "%, global="+completionPercent+"%");
+			logger.info("Done calculating score of product " + product.getName() + ", children: " + componentsValidationScore + "%, mandatory: "
+					+ mandatoryFieldsScore + "% , specifications: " + specificationScore + "%, global=" + completionPercent + "%");
 
 		} catch (JSONException e) {
 			logger.error("Cannot create Json Score", e);
@@ -221,22 +223,26 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 			String defaultLocale = Locale.getDefault().getLanguage();
 			JSONArray catalogs = new JSONArray(mandatoryFields);
 			QName productType = nodeService.getType(productData.getNodeRef());
-			if(logger.isDebugEnabled()){
-				logger.info("Type of product is "+productType);
+			if (logger.isDebugEnabled()) {
+				logger.debug("Type of product is " + productType);
 			}
 
 			for (int i = 0; i < catalogs.length(); i++) {
 				JSONObject catalog = catalogs.getJSONObject(i);
-				JSONArray catalogEntityTypes = (catalog.has(JsonScoreHelper.PROP_ENTITY_TYPE)) ? catalog.getJSONArray(JsonScoreHelper.PROP_ENTITY_TYPE) : new JSONArray();
+				JSONArray catalogEntityTypes = (catalog.has(JsonScoreHelper.PROP_ENTITY_TYPE))
+						? catalog.getJSONArray(JsonScoreHelper.PROP_ENTITY_TYPE) : new JSONArray();
 				List<QName> qnameCatalogEntityTypeList = new ArrayList<QName>();
-				
-				for(int catalogEntityTypeIndex=0; catalogEntityTypeIndex< catalogEntityTypes.length(); catalogEntityTypeIndex++){
+
+				for (int catalogEntityTypeIndex = 0; catalogEntityTypeIndex < catalogEntityTypes.length(); catalogEntityTypeIndex++) {
 					qnameCatalogEntityTypeList.add(QName.createQName(catalogEntityTypes.getString(catalogEntityTypeIndex), namespaceService));
 				}
 
-				//if this catalog applies to this type, or this catalog has no type defined (it applies to every entity type)
-				if(qnameCatalogEntityTypeList.isEmpty() || qnameCatalogEntityTypeList.contains(productType)){
-					logger.info("Formulating for catalog \""+catalog.getString(JsonScoreHelper.PROP_LABEL)+"\"");
+				// if this catalog applies to this type, or this catalog has no
+				// type defined (it applies to every entity type)
+				if (qnameCatalogEntityTypeList.isEmpty() || qnameCatalogEntityTypeList.contains(productType)) {
+					if(logger.isDebugEnabled()){
+						logger.debug("Formulating for catalog \"" + catalog.getString(JsonScoreHelper.PROP_LABEL) + "\"");
+					}
 					List<String> langs = new LinkedList<>(getLocales(productData.getReportLocales(), catalog));
 
 					langs.sort((o1, o2) -> {
@@ -249,21 +255,23 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 						return 0;
 					});
 
-					String color = catalog.has(JsonScoreHelper.PROP_COLOR) ? catalog.getString(JsonScoreHelper.PROP_COLOR) : "hsl("+(i*(360/7))+", 60%, 50%)";
-					if(logger.isDebugEnabled()){
-						logger.debug("Color of catalog is: "+color+ (catalog.has(JsonScoreHelper.PROP_COLOR) ? " (fetched from catalog)" : " (generated)"));
+					String color = catalog.has(JsonScoreHelper.PROP_COLOR) ? catalog.getString(JsonScoreHelper.PROP_COLOR)
+							: "hsl(" + (i * (360 / 7)) + ", 60%, 50%)";
+					if (logger.isDebugEnabled()) {
+						logger.debug("Color of catalog is: " + color
+								+ (catalog.has(JsonScoreHelper.PROP_COLOR) ? " (fetched from catalog)" : " (generated)"));
 					}
 
 					JSONArray reqFields = catalog.getJSONArray(JsonScoreHelper.PROP_FIELDS);
 					for (String lang : langs) {
 
-						JSONArray missingFields = extractMissingFields(productData, catalog.getString(JsonScoreHelper.PROP_LABEL), properties, reqFields,
-								defaultLocale.equals(lang) ? null : lang);
+						JSONArray missingFields = extractMissingFields(productData, catalog.getString(JsonScoreHelper.PROP_LABEL), properties,
+								reqFields, defaultLocale.equals(lang) ? null : lang);
 						if (missingFields.length() > 0) {
 							JSONObject catalogDesc = new JSONObject();
 							catalogDesc.put(JsonScoreHelper.PROP_MISSING_FIELDS, missingFields);
 							catalogDesc.put(JsonScoreHelper.PROP_LOCALE, lang);
-							catalogDesc.put(JsonScoreHelper.PROP_SCORE, ((reqFields.length() -missingFields.length()) * 100d) / reqFields.length());
+							catalogDesc.put(JsonScoreHelper.PROP_SCORE, ((reqFields.length() - missingFields.length()) * 100d) / reqFields.length());
 							catalogDesc.put(JsonScoreHelper.PROP_LABEL, catalog.getString(JsonScoreHelper.PROP_LABEL));
 							catalogDesc.put(JsonScoreHelper.PROP_ID, catalog.getString(JsonScoreHelper.PROP_ID));
 							catalogDesc.put(JsonScoreHelper.PROP_COLOR, color);

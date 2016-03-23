@@ -88,7 +88,7 @@ public class FormulationAllergensTest extends AbstractFinishedProductTest {
 		// ReqCtrlList
 		int checkMissingFields = 0;
 		for (ReqCtrlListDataItem r : formulatedProduct.getCompoListView().getReqCtrlList()) {
-
+			logger.info("Checking rclDataItem " + r.getReqMessage());
 			if ((r.getReqMessage() != null) && r.getReqMessage().contains("Champ obligatoire")) {
 				assertEquals(RequirementType.Forbidden, r.getReqType());
 				checkMissingFields++;
@@ -101,18 +101,22 @@ public class FormulationAllergensTest extends AbstractFinishedProductTest {
 			} else if (I18NUtil.getMessage(AllergensCalculatingFormulationHandler.MESSAGE_FORBIDDEN_ALLERGEN,
 					nodeService.getProperty(allergen1, BeCPGModel.PROP_CHARACT_NAME)).equals(r.getReqMessage())) {
 
-				// should not happen
-				assertTrue(false);
+				assertEquals(0, r.getSources().size());
+				assertEquals(RequirementType.Forbidden, r.getReqType());
+				checks++;
+			} else if (I18NUtil.getMessage(AllergensCalculatingFormulationHandler.MESSAGE_FORBIDDEN_ALLERGEN,
+					nodeService.getProperty(allergen4, BeCPGModel.PROP_CHARACT_NAME)).equals(r.getReqMessage())) {
+
 				assertEquals(0, r.getSources().size());
 				assertEquals(RequirementType.Forbidden, r.getReqType());
 				checks++;
 			} else {
 				logger.info("Unexpected rclDataItem: " + r.getReqMessage());
-				assertTrue(false);
+				fail();
 			}
 		}
 		assertEquals(2, checkMissingFields);
-		assertEquals(1, checks);
+		assertEquals(3, checks);
 
 	}
 
@@ -128,19 +132,26 @@ public class FormulationAllergensTest extends AbstractFinishedProductTest {
 			ProductSpecificationData productSpecification = (ProductSpecificationData) alfrescoRepository.findOne(productSpecificationNodeRef1);
 
 			// two catalogs
-			/*-- Spec allergen 1 : Allergen 1 is allowed in RM1&3 if voluntary, or 11 is involuntary--*/
 			properties.clear();
 			properties.put(ContentModel.PROP_NAME, name + " Spec Allergen 1");
 			NodeRef productSpecificationNodeRef2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
 					PLMModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
 
+			properties.clear();
+			properties.put(BeCPGModel.PROP_CHARACT_NAME, "allergen5");
+			properties.put(PLMModel.PROP_ALLERGEN_TYPE, "Major");
+			NodeRef allergen5 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					PLMModel.TYPE_ALLERGEN, properties).getChildRef();
+
 			ProductSpecificationData productSpecification2 = (ProductSpecificationData) alfrescoRepository.findOne(productSpecificationNodeRef2);
 
 			List<AllergenListDataItem> allergens = new ArrayList<>();
 
 			allergens.add(new AllergenListDataItem(null, null, false, true, null, null, allergen1, false));
-			allergens.add(new AllergenListDataItem(null, null, false, false, null, null, allergen2, false));
+			allergens.add(new AllergenListDataItem(null, null, true, false, null, null, allergen2, false));
+
 			productSpecification2.setAllergenList(allergens);
 			alfrescoRepository.save(productSpecification2);
 
@@ -153,7 +164,9 @@ public class FormulationAllergensTest extends AbstractFinishedProductTest {
 			ProductSpecificationData productSpecification3 = (ProductSpecificationData) alfrescoRepository.findOne(productSpecificationNodeRef3);
 
 			allergens.clear();
-			allergens.add(new AllergenListDataItem(null, null, true, false, null, null, allergen1, false));
+			allergens.add(new AllergenListDataItem(null, null, true, false, null, null, allergen4, false));
+			allergens.add(new AllergenListDataItem(null, null, true, true, null, null, allergen3, false));
+			allergens.add(new AllergenListDataItem(null, null, false, true, null, null, allergen2, false));
 			productSpecification3.setAllergenList(allergens);
 			alfrescoRepository.save(productSpecification3);
 
@@ -196,30 +209,31 @@ public class FormulationAllergensTest extends AbstractFinishedProductTest {
 			// putting allergens in RMs
 			ProductData rm1 = alfrescoRepository.findOne(rawMaterial1NodeRef);
 			if (rm1.getAllergenList() != null) {
+				rm1.getAllergenList().clear();
 				rm1.getAllergenList().add(new AllergenListDataItem(null, null, true, false, new ArrayList<>(), new ArrayList<>(), allergen1, false));
+				rm1.getAllergenList().add(new AllergenListDataItem(null, null, true, false, new ArrayList<>(), new ArrayList<>(), allergen3, false));
+				rm1.getAllergenList().add(new AllergenListDataItem(null, null, true, false, new ArrayList<>(), new ArrayList<>(), allergen5, false));
+				rm1.getAllergenList().add(new AllergenListDataItem(null, null, true, false, new ArrayList<>(), new ArrayList<>(), allergen2, false));
 			}
+			alfrescoRepository.save(rm1);
 
 			ProductData rm2 = alfrescoRepository.findOne(rawMaterial2NodeRef);
 			if (rm2.getAllergenList() != null) {
-				rm2.getAllergenList().add(new AllergenListDataItem(null, null, true, false, new ArrayList<>(), new ArrayList<>(), allergen1, false));
-				rm2.getAllergenList().add(new AllergenListDataItem(null, null, false, true, new ArrayList<>(), new ArrayList<>(), allergen2, false));
+				rm2.getAllergenList().clear();
+				rm2.getAllergenList().add(new AllergenListDataItem(null, null, false, true, new ArrayList<>(), new ArrayList<>(), allergen4, false));
+				rm2.getAllergenList().add(new AllergenListDataItem(null, null, true, true, new ArrayList<>(), new ArrayList<>(), allergen2, false));
+				rm2.getAllergenList().add(new AllergenListDataItem(null, null, false, false, new ArrayList<>(), new ArrayList<>(), allergen3, false));
+
 			}
+			alfrescoRepository.save(rm2);
 
 			ProductData rm3 = alfrescoRepository.findOne(rawMaterial3NodeRef);
-			if (rm3.getAllergenList() != null) {
-				rm3.getAllergenList().add(new AllergenListDataItem(null, null, true, false, new ArrayList<>(), new ArrayList<>(), allergen1, false));
-				rm3.getAllergenList().add(new AllergenListDataItem(null, null, true, true, new ArrayList<>(), new ArrayList<>(), allergen2, false));
-			}
+			rm3.getAllergenList().clear();
+			alfrescoRepository.save(rm3);
 
 			ProductData rm4 = alfrescoRepository.findOne(rawMaterial4NodeRef);
-			if (rm4.getAllergenList() != null) {
-				rm4.getAllergenList().add(new AllergenListDataItem(null, null, true, false, new ArrayList<>(), new ArrayList<>(), allergen2, false));
-			}
-
-			ProductData rm11 = alfrescoRepository.findOne(rawMaterial11NodeRef);
-			if (rm11.getAllergenList() != null) {
-				rm11.getAllergenList().add(new AllergenListDataItem(null, null, true, false, new ArrayList<>(), new ArrayList<>(), allergen1, false));
-			}
+			rm4.getAllergenList().clear();
+			alfrescoRepository.save(rm4);
 
 			// Binding specifications
 			nodeService.createAssociation(productSpecificationNodeRef1, productSpecificationNodeRef3, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
