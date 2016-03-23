@@ -7408,6 +7408,27 @@
 					<field id="bcpg:physicoChemFormulaErrorLog" label="hidden"/>
 				</appearance>
 			</form>
+			<form id="datagridWUsed">
+				<field-visibility>
+					<show id="bcpg:variantIds" force="true" />
+					<show id="bcpg:pclPhysicoChem" />
+					<show id="bcpg:pclValue" />
+					<show id="bcpg:pclUnit" />
+					<show id="bcpg:pclMini" />
+					<show id="bcpg:pclMaxi" />
+					<show id="bcpg:pclTextCriteria" />
+					<show id="fm:commentCount" force="true" />
+					<show id="bcpg:physicoChemIsFormulated" />
+					<show id="bcpg:physicoChemFormulaErrorLog" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:variantIds" label="hidden"></field>
+					<field id="bcpg:pclUnit" read-only="true"></field>
+					<field id="fm:commentCount" label="hidden" read-only="true" />
+					<field id="bcpg:physicoChemIsFormulated" label="hidden"/>
+					<field id="bcpg:physicoChemFormulaErrorLog" label="hidden"/>
+				</appearance>
+			</form>
 		</forms>
 	</config>
 	<!-- bcpg:physicoChemList type (existing nodes) -->
