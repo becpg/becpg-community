@@ -122,14 +122,14 @@ public class ReqCtrlWebScript extends AbstractProductWebscript {
 				}
 
 				if(currentCount.containsKey(item.getReqType().toString())){
-					currentCount.put(item.getReqType().toString(), currentCount.get(item.getReqType().toString())+Math.max(item.getSources().size(),1));
+					currentCount.put(item.getReqType().toString(), currentCount.get(item.getReqType().toString())+1);
 				} else {
-					currentCount.put(item.getReqType().toString(), Math.max(item.getSources().size(), 1));
+					currentCount.put(item.getReqType().toString(), 1);
 				}
 			} else {
 				//this dataType was not found before, adding it
 				Map<String, Integer> newMap = new HashMap<String, Integer>();
-				newMap.put(item.getReqType().toString(), Math.max(item.getSources().size(), 1));
+				newMap.put(item.getReqType().toString(), 1);
 				counts.put(key.toString(), newMap);
 			}
 		}

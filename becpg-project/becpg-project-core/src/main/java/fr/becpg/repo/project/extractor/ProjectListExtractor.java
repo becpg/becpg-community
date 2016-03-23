@@ -183,6 +183,8 @@ public class ProjectListExtractor extends ActivityListExtractor {
 
 					}
 					
+					beCPGQueryBuilder.excludeProp(ProjectModel.PROP_TL_IS_EXCLUDE_FROM_SEARCH, Boolean.TRUE.toString());
+					
 					if(dataListFilter.getCriteriaMap()==null){
 						dataListFilter.setCriteriaMap(new HashMap<String, String>());
 					}

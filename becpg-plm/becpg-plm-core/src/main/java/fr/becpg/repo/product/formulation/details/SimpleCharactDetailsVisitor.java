@@ -18,6 +18,7 @@
 package fr.becpg.repo.product.formulation.details;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -41,6 +42,7 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 import fr.becpg.repo.repository.model.UnitAwareDataItem;
+import fr.becpg.repo.variant.filters.VariantFilters;
 
 @Service
 public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
@@ -94,9 +96,10 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 	public CharactDetails visitRecur(ProductData subProductData, CharactDetails ret, Integer currLevel, Integer maxLevel, Double subWeight, Double subVol, Double netQty)
 			throws FormulateException {
 
-		if (subProductData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+		if (subProductData.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))){
 
-			for (CompoListDataItem compoListDataItem : subProductData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {			
+			for (CompoListDataItem compoListDataItem : subProductData
+					.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 				
 				Double weightUsed = FormulationHelper.getQtyInKg(compoListDataItem);								
 				if(FormulationHelper.getNetWeight(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT) != 0d && subWeight !=null){
