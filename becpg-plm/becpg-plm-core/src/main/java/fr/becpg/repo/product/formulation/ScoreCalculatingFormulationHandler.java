@@ -270,7 +270,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 						if (missingFields.length() > 0) {
 							JSONObject catalogDesc = new JSONObject();
 							catalogDesc.put(JsonScoreHelper.PROP_MISSING_FIELDS, missingFields);
-							catalogDesc.put(JsonScoreHelper.PROP_LOCALE, lang);
+							catalogDesc.put(JsonScoreHelper.PROP_LOCALE, defaultLocale.equals(lang) ? null : lang);
 							catalogDesc.put(JsonScoreHelper.PROP_SCORE, ((reqFields.length() - missingFields.length()) * 100d) / reqFields.length());
 							catalogDesc.put(JsonScoreHelper.PROP_LABEL, catalog.getString(JsonScoreHelper.PROP_LABEL));
 							catalogDesc.put(JsonScoreHelper.PROP_ID, catalog.getString(JsonScoreHelper.PROP_ID));
