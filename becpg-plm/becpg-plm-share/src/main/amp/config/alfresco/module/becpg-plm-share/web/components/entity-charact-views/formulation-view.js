@@ -176,7 +176,7 @@
 			//handles filtering on click
 			var fnOnTypeFilterHandler = function PL__fnOnShowTaskHandler(layer, args) {
 				try {
-					var owner = YAHOO.Bubbling.getOwnerByTagName(args[1].anchor, "span");  
+					var owner = YAHOO.Bubbling.getOwnerByTagName(args[1].anchor, "span"); 
 					var selectedItems = document.getElementsByClassName("rclFilterSelected");
 
 					//sets clicked item to selected
@@ -193,7 +193,6 @@
 					var splits = owner.className.split("-");  
 					var type = (splits.length > 2 ? splits[2].split(" ")[0] : undefined); 
 					var dataType = splits[1].charAt(0).toUpperCase()+splits[1].slice(1);     
-					console.log("Filter called, type="+type+", dataType= "+dataType)
 					YAHOO.Bubbling.fire("constraintsList-"+instance.id+"changeFilter",
 							{
 						filterOwner : "constraintsList-"+instance.id,
@@ -225,7 +224,6 @@
 					successCallback : {
 						fn : function (response){
 							YAHOO.util.Dom.get("constraintsList-"+instance.id+"-scores").innerHTML= parseJsonToHTML(response.json, instance);
-							console.log(response.json);
 							var scoreDiv = YAHOO.util.Dom.get("scoreLi");
 							if(scoreDiv !== undefined && scoreDiv != null){
 								var scoreDivClassName = scoreDiv.className;
