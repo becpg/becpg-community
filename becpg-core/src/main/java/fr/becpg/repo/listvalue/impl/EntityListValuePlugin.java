@@ -29,6 +29,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
@@ -489,7 +490,12 @@ public class EntityListValuePlugin implements ListValuePlugin {
 		return sb.toString();
 	}
 
+	@SuppressWarnings("unchecked")
 	protected String extractPropText(NodeRef nodeRef, String propQname) {
+		if(nodeService.getProperty(nodeRef, QName.createQName(propQname, namespaceService)) instanceof List){
+			return ((List<String>)nodeService.getProperty(nodeRef, QName.createQName(propQname, namespaceService))).stream()
+					  .collect(Collectors.joining(","));
+		}
 		return (String) nodeService.getProperty(nodeRef, QName.createQName(propQname, namespaceService));
 	}
 
