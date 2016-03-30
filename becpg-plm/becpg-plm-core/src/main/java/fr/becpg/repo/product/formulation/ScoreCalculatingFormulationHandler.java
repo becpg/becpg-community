@@ -173,8 +173,6 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 			scores.put("global", completionPercent);
 			scores.put("details", details);
 			scores.put(JsonScoreHelper.PROP_CATALOGS, mandatoryFields);
-			logger.info("Done calculating score of product " + product.getName() + ", children: " + componentsValidationScore + "%, mandatory: "
-					+ mandatoryFieldsScore + "% , specifications: " + specificationScore + "%, global=" + completionPercent + "%");
 
 		} catch (JSONException e) {
 			logger.error("Cannot create Json Score", e);

@@ -35,11 +35,9 @@ import java.util.concurrent.atomic.LongAdder;
 
 import javax.annotation.Resource;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -55,7 +53,6 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.CompoListUnit;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.LabelingRuleType;
@@ -64,7 +61,6 @@ import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
-import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.test.BeCPGTestHelper;
@@ -227,6 +223,37 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		// il faut prendre dans le calcul slmt la qté MeO dans le SF.
 
 	}
+	
+	
+//	@Test
+//	public void testIngsLabelingWithYield() throws Exception {
+//		final NodeRef finishedProductNodeRef1 = createTestProduct(null);
+//		
+//		finishedProductNodeRef1
+//
+//		// Declare
+//		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
+//
+//		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
+//		labelingRuleList.add(new LabelingRuleListDataItem("Declare", null, LabelingRuleType.Declare,
+//				Arrays.asList(localSF11NodeRef, rawMaterial12NodeRef, localSF12NodeRef), null));
+//		labelingRuleList
+//				.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format, Arrays.asList(ing1, ing2, ing3, ing4), null));
+//		labelingRuleList.add(
+//				new LabelingRuleListDataItem("Param1", "detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
+//
+//		// └──[root - 0.0 (9.0)]
+//		// ├──[ing1 french - 0.8333333333333334]
+//		// ├──[ing2 french - 2.166666666666667]
+//		// ├──[ing3 french - 5.0]
+//		// └──[ing4 french - 1.0]
+//
+//		checkILL(finishedProductNodeRef1, labelingRuleList, "ing3 french 55,6%, ing2 french 24,1%, ing4 french 11,1%, ing1 french 9,3%",
+//				Locale.FRENCH);
+//
+//		
+//		
+//	}
 
 	@Test
 	public void testMultiLevelSFGroup() throws Exception {
