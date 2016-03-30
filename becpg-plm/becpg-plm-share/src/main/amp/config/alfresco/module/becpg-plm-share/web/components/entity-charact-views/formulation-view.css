@@ -123,7 +123,7 @@ div.constraintsList .scrollableList {
 
 .formulation-view .constraintsList .datagrid .scrollableList {
 	padding: 0;
-	height: 260px;
+	height: 265px;
 }
 
 .constraintsList .datagrid .body .grid table {
@@ -151,7 +151,7 @@ div.constraintsList .scrollableList {
 	background-color: #fff;
 	border-radius: 3px;
 	box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
-	margin: 0px 0px 2px;
+	margin: 0px 5px 5px;
 	padding: 5px;
 	border: 1px solid #CCCCCC;
 }
@@ -181,7 +181,7 @@ div.dataTypeList .title {
 }
 
 .rclReq-details ul {
-	max-height: 64px;
+	max-height: 72px;
 	overflow-y: auto;
 }
 
@@ -190,10 +190,6 @@ div.dataTypeList .title {
 }
 .dataTypeList span .rclFilterSelected {
 	padding: 1px;
-}
-
-.dataTypeList .title {
-	padding: 0px;
 }
 
 .rclFilterElt ul {
@@ -231,15 +227,8 @@ span.req-all-all, .dataTypeList .rclFilterElt li{
 
 div.dataTypeList {
 	overflow: auto;
-	padding: 0.2em;
-	margin: 0px 10px 10px;
-	margin-right: 4px;
 	/* avoids text breaking on low resolutions */
 	min-width: 251px;
-}
-
-div.dataTypeList .title {
-	padding: 0.2em;
 }
 
 
@@ -263,6 +252,7 @@ div.dataTypeList .title {
 
 .constraintsList .datagrid .rclReq-details .rclReq-content ul li {
 	list-style-type: disc;
+	min-height: 18px;
 }
 
 .constraintsList .datagrid  .rclReq-details .rclReq-content ol li {

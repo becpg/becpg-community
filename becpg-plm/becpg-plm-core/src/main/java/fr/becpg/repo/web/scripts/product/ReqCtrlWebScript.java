@@ -68,30 +68,20 @@ public class ReqCtrlWebScript extends AbstractProductWebscript {
 
 		Map<String, Map<String, Integer>> counts = new HashMap<String, Map<String, Integer>>();
 		//Try to match requirement type. Default is null (no filter)
-		try {
-			rType = RequirementType.valueOf(type);
-		} catch(Exception e){
-			//either IllegalArgumentException or NPE
-			rType = null;
-		}
+		rType = RequirementType.fromString(type);
 
 		//Try to match requirement data type. Default is null (no filter)
-		try {
-			rDataType = RequirementDataType.valueOf(dataType);
-		} catch(Exception e){
-			//either IllegalArgumentException or NPE
-			rDataType = null;
-		}
+		rDataType = RequirementDataType.fromString(dataType);
 
 		//fetches correct list to find rclDataItem in
 		List<ReqCtrlListDataItem> ctrlList;
 		if(logger.isDebugEnabled()){
 			logger.debug("Called view: "+view);
 		}
-		if(view != null && view.equals("processList")){
-
+		
+		if("processList".equals(view)){
 			ctrlList = product.getProcessListView().getReqCtrlList();
-		} else if(view != null && view.equals("packagingList")){
+		} else if("packagingList".equals(view)){
 			ctrlList = product.getPackagingListView().getReqCtrlList();
 		} else {
 			ctrlList = product.getCompoListView().getReqCtrlList();
@@ -99,10 +89,10 @@ public class ReqCtrlWebScript extends AbstractProductWebscript {
 
 		for(ReqCtrlListDataItem item : ctrlList){
 			//Filtering on reqType and reqDataType
-			if(rType != null && item.getReqType() != (rType)){
+			if(rType != null && item.getReqType() != rType){
 				continue;
 			}
-			if(rDataType != null && item.getReqDataType() != null && item.getReqDataType() != (rDataType)){
+			if(rDataType != null && item.getReqDataType() != rDataType){
 				continue;
 			}
 
@@ -159,9 +149,6 @@ public class ReqCtrlWebScript extends AbstractProductWebscript {
 					try {
 						JSONObject o1Values = o1.getJSONObject((String) o1.keys().next());
 						JSONObject o2Values = o2.getJSONObject((String) o2.keys().next());
-//						if(logger.isDebugEnabled()){
-//							logger.debug("Comparing "+o1+"(has Fbd: "+o1Values.has("Forbidden")+") and "+o2+" ("+o2Values.has("Forbidden")+")");
-//						}
 						
 						//TODO check if we only need forbidden to sort, or other sorting criterias are relevant
 						if((o1Values.has("Forbidden") && !(o2Values.has("Forbidden")))
@@ -184,10 +171,6 @@ public class ReqCtrlWebScript extends AbstractProductWebscript {
 					}
 				}
 			});
-			
-			if(logger.isDebugEnabled()){
-				logger.debug("Sorted rclNumber: "+rclSortingArray);
-			}
 
 			//might be null if product has never been formulated, if not put it in res
 			if(product.getEntityScore() != null){
@@ -196,7 +179,6 @@ public class ReqCtrlWebScript extends AbstractProductWebscript {
 				ret.put("scores", scores);
 				if(logger.isDebugEnabled()){
 					logger.debug("ret : "+ret);
-					logger.debug("scores="+scores);
 				}
 			}
 

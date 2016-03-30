@@ -103,6 +103,24 @@ public class FormulationLabelClaimTest extends AbstractFinishedProductTest {
 			NodeRef labelClaimNodeRef4 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_LABEL_CLAIM, properties).getChildRef();
+			
+			properties.clear();
+			properties.put(BeCPGModel.PROP_CHARACT_NAME, "labelClaim5");
+			NodeRef labelClaimNodeRef5 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					PLMModel.TYPE_LABEL_CLAIM, properties).getChildRef();
+			
+			properties.clear();
+			properties.put(BeCPGModel.PROP_CHARACT_NAME, "labelClaim6");
+			NodeRef labelClaimNodeRef6 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					PLMModel.TYPE_LABEL_CLAIM, properties).getChildRef();
+			
+			properties.clear();
+			properties.put(BeCPGModel.PROP_CHARACT_NAME, "labelClaim7");
+			NodeRef labelClaimNodeRef7 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					PLMModel.TYPE_LABEL_CLAIM, properties).getChildRef();
 
 			properties = new HashMap<>();
 			properties.put(ContentModel.PROP_NAME, "Spec1");
@@ -116,6 +134,8 @@ public class FormulationLabelClaimTest extends AbstractFinishedProductTest {
 			productSpec1.getLabelClaimList().add(new LabelClaimListDataItem(labelClaimNodeRef, "toto", Boolean.TRUE));
 			productSpec1.getLabelClaimList().add(new LabelClaimListDataItem(labelClaimNodeRef2, "toto", Boolean.FALSE));
 			productSpec1.getLabelClaimList().add(new LabelClaimListDataItem(labelClaimNodeRef3, "toto", Boolean.TRUE));
+			productSpec1.getLabelClaimList().add(new LabelClaimListDataItem(labelClaimNodeRef5, "toto", Boolean.FALSE));
+			productSpec1.getLabelClaimList().add(new LabelClaimListDataItem(labelClaimNodeRef6, "toto", Boolean.TRUE));
 			alfrescoRepository.save(productSpec1);
 
 			properties = new HashMap<>();
@@ -129,6 +149,7 @@ public class FormulationLabelClaimTest extends AbstractFinishedProductTest {
 			productSpec2.setLabelClaimList(new ArrayList<LabelClaimListDataItem>());
 			productSpec2.getLabelClaimList().add(new LabelClaimListDataItem(labelClaimNodeRef, "toto", Boolean.FALSE));
 			productSpec2.getLabelClaimList().add(new LabelClaimListDataItem(labelClaimNodeRef2, "toto", Boolean.TRUE));
+			productSpec2.getLabelClaimList().add(new LabelClaimListDataItem(labelClaimNodeRef5, "toto", Boolean.FALSE));
 
 			alfrescoRepository.save(productSpec2);
 
@@ -151,14 +172,38 @@ public class FormulationLabelClaimTest extends AbstractFinishedProductTest {
 			LabelClaimListDataItem productLabelClaimFalse = new LabelClaimListDataItem(labelClaimNodeRef, "toto", Boolean.TRUE);
 			LabelClaimListDataItem productLabelClaimFalse2 = new LabelClaimListDataItem(labelClaimNodeRef2, "toto", Boolean.FALSE);
 			LabelClaimListDataItem productLabelClaimFalse4 = new LabelClaimListDataItem(labelClaimNodeRef4, "toto", Boolean.TRUE);
+			LabelClaimListDataItem productLabelClaimFalse5 = new LabelClaimListDataItem(labelClaimNodeRef5, "toto", Boolean.TRUE);
+			LabelClaimListDataItem productLabelClaimFalse6 = new LabelClaimListDataItem(labelClaimNodeRef6, "toto", Boolean.TRUE);
+			LabelClaimListDataItem productLabelClaimFalse7 = new LabelClaimListDataItem(labelClaimNodeRef7, "toto", Boolean.TRUE);
+			
+			LabelClaimListDataItem subProductLabelClaim6 = new LabelClaimListDataItem(labelClaimNodeRef6, "toto", Boolean.TRUE);
+			subProductLabelClaim6.setLabelClaimValue(LabelClaimListDataItem.VALUE_EMPTY);
+			LabelClaimListDataItem subProductLabelClaim7 = new LabelClaimListDataItem(labelClaimNodeRef7, "toto", Boolean.TRUE);
+			subProductLabelClaim7.setLabelClaimValue(LabelClaimListDataItem.VALUE_EMPTY);
+			
 			productLabelClaimFalse.setIsManual(Boolean.TRUE);
 			productLabelClaimFalse2.setIsManual(Boolean.TRUE);
 			productLabelClaimFalse4.setIsManual(Boolean.TRUE);
+			productLabelClaimFalse5.setIsManual(Boolean.TRUE);
+			subProductLabelClaim6.setIsManual(Boolean.TRUE);
+			subProductLabelClaim7.setIsManual(Boolean.TRUE);
+			
+			ProductData rm12 = alfrescoRepository.findOne(rawMaterial12NodeRef);
+			if(rm12 != null && rm12.getLabelClaimList() != null){
+				rm12.getLabelClaimList().add(subProductLabelClaim6);
+				rm12.getLabelClaimList().add(subProductLabelClaim7);
+				alfrescoRepository.save(rm12);
+			} 
+			
 			product.getLabelClaimList().add(productLabelClaimFalse);
 			product.getLabelClaimList().add(productLabelClaimFalse2);
 			product.getLabelClaimList().add(productLabelClaimFalse4);
+			product.getLabelClaimList().add(productLabelClaimFalse5);
+			product.getLabelClaimList().add(productLabelClaimFalse6);
+			product.getLabelClaimList().add(productLabelClaimFalse7);
+			
 			alfrescoRepository.save(product);
-
+			
 			nodeService.createAssociation(globalProductSpecificationNodeRef, productSpecificationNodeRef2, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
 			nodeService.createAssociation(globalProductSpecificationNodeRef, productSpecificationNodeRef1, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
 
@@ -176,22 +221,37 @@ public class FormulationLabelClaimTest extends AbstractFinishedProductTest {
 			int checks = 0;
 			for (ReqCtrlListDataItem rclDataItem : formulatedProduct.getCompoListView().getReqCtrlList()) {
 				logger.info(rclDataItem.getReqMessage());
-				if (rclDataItem.getReqMessage().equals("L'allégation 'labelClaim1' doit être revendiquée")) {
+				if ("L'allégation 'labelClaim1' doit être revendiquée".equals(rclDataItem.getReqMessage())) {
 					fail();
-				} else if (rclDataItem.getReqMessage().equals("L'allégation 'labelClaim2' doit être revendiquée")) {
+				} else if ("L'allégation 'labelClaim2' doit être revendiquée".equals(rclDataItem.getReqMessage())) {
 					assertEquals(RequirementDataType.Specification, rclDataItem.getReqDataType());
 					assertEquals(RequirementType.Forbidden, rclDataItem.getReqType());
 					checks++;
-				} else if (rclDataItem.getReqMessage().equals("L'allégation 'labelClaim3' doit être revendiquée")) {
+				} else if ("L'allégation 'labelClaim3' doit être revendiquée".equals(rclDataItem.getReqMessage())) {
 					assertEquals(RequirementDataType.Specification, rclDataItem.getReqDataType());
 					assertEquals(RequirementType.Forbidden, rclDataItem.getReqType());
 					checks++;
-				} else if (rclDataItem.getReqMessage().equals("L'allégation 'labelClaim4' doit être revendiquée")) {
+				} else if ("L'allégation 'labelClaim4' doit être revendiquée".equals(rclDataItem.getReqMessage())) {
 					fail();
+				} else if ("L'allégation 'labelClaim5' doit être revendiquée".equals(rclDataItem.getReqMessage())) {
+					fail();
+				} else if ("L'allégation 'labelClaim6' doit être revendiquée".equals(rclDataItem.getReqMessage())) {
+					assertEquals(RequirementDataType.Specification, rclDataItem.getReqDataType());
+					assertEquals(RequirementType.Forbidden, rclDataItem.getReqType());
+					checks++;
+				} else if("Allégation 'labelClaim6' non renseignée".equals(rclDataItem.getReqMessage())){
+					assertEquals(RequirementDataType.Labelclaim, rclDataItem.getReqDataType());
+					assertEquals(RequirementType.Info, rclDataItem.getReqType());
+					checks++;
+				} else if("Allégation 'labelClaim7' non renseignée".equals(rclDataItem.getReqMessage())){
+					assertEquals(RequirementDataType.Labelclaim, rclDataItem.getReqDataType());
+					assertEquals(RequirementType.Info, rclDataItem.getReqType());
+					checks++;
 				}
 
 			}
-			assertEquals(2, checks);
+			logger.info("Checks: "+checks+" (should be 5)");
+			assertEquals(5, checks);
 
 			return null;
 		}, false, true);
