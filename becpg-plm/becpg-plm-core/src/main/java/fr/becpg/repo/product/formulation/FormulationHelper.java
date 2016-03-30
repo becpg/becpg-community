@@ -58,8 +58,10 @@ public class FormulationHelper {
 	private static final Log logger = LogFactory.getLog(FormulationHelper.class);
 
 	public static Double getQtyInKg(CompoListDataItem compoListDataItem) {
-		return (compoListDataItem.getQty() != null) && !compoListDataItem.getQty().isNaN() && !compoListDataItem.getQty().isInfinite()
-				? compoListDataItem.getQty() : DEFAULT_COMPONANT_QUANTITY;
+		if((compoListDataItem.getQty() == null) || compoListDataItem.getQty().isNaN()  || compoListDataItem.getQty().isInfinite()){
+			compoListDataItem.setQty(DEFAULT_COMPONANT_QUANTITY);
+		}
+		return compoListDataItem.getQty();
 	}
 
 	public static Double getYield(CompoListDataItem compoListDataItem) {
