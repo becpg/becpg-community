@@ -348,6 +348,8 @@ public interface PLMModel {
 	QName ASSOC_CUSTOMSCODE = QName.createQName(BeCPGModel.BECPG_URI, "customsCodeRef");
 	
 	
+	QName ASPECT_WATER = QName.createQName(BeCPGModel.BECPG_URI, "waterAspect");
+	
 	
 	
 }
