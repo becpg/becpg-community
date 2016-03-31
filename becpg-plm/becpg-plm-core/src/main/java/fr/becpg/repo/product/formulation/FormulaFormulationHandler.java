@@ -54,7 +54,9 @@ import fr.becpg.repo.product.data.PackagingKitData;
 import fr.becpg.repo.product.data.PackagingListView;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
+import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.PackagingListUnit;
+import fr.becpg.repo.product.data.packaging.VariantPackagingData;
 import fr.becpg.repo.product.data.productList.CompositionDataItem;
 import fr.becpg.repo.product.data.productList.DynamicCharactExecOrder;
 import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
@@ -184,16 +186,28 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 								String formula = SpelHelper.formatFormula(dynamicCharactListItem.getFormula());
 								logger.debug("Parse formula : " + formula + " (" + dynamicCharactListItem.getName() + ")");
 								Expression exp = parser.parseExpression(formula);
-								
+
 								QName columnName = QName.createQName(dynamicCharactListItem.getColumnName().replaceFirst("_", ":"), namespaceService);
 								if (nullDynColumnNames.contains(columnName)) {
 									nullDynColumnNames.remove(columnName);
 								}
 								for (CompositionDataItem dataListItem : view.getMainDataList()) {
+
+									Double origQty = dataListItem.getQty();
+									Double qtyPerProduct = getQtyPerProduct(productData, dataListItem);
+									dataListItem.setQty(qtyPerProduct);
+
 									StandardEvaluationContext dataContext = new StandardEvaluationContext(
 											new FormulaFormulationContext(alfrescoRepository, productData, dataListItem));
 									formulaService.registerCustomFunctions(dataContext);
-									Object value = exp.getValue(dataContext);
+									Object value = null;
+									try {
+										value = exp.getValue(dataContext);
+									} finally {
+										if ((qtyPerProduct != null) && qtyPerProduct.equals(dataListItem.getQty())) {
+											dataListItem.setQty(origQty);
+										}
+									}
 
 									if (!L2CacheSupport.isCacheOnlyEnable()
 											&& ((dynamicCharactListItem.getMultiLevelFormula() != null)
@@ -216,13 +230,12 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 								}
 								dynamicCharactListItem.setValue(null);
 							} else {
-								
+
 								String[] formulas = SpelHelper.formatMTFormulas(dynamicCharactListItem.getFormula());
-								for(String formula: formulas){
-									
-									
+								for (String formula : formulas) {
+
 									Matcher varFormulaMatcher = SpelHelper.formulaVarPattern.matcher(formula);
-									if(varFormulaMatcher.matches()){
+									if (varFormulaMatcher.matches()) {
 										logger.debug("Variable formula : " + varFormulaMatcher.group(2) + " (" + varFormulaMatcher.group(1) + ")");
 										Expression exp = parser.parseExpression(varFormulaMatcher.group(2));
 										context.setVariable(varFormulaMatcher.group(1), exp.getValue(context));
@@ -271,6 +284,25 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 	}
 
+	private Double getQtyPerProduct(ProductData productData, CompositionDataItem dataListItem) {
+		if (dataListItem instanceof PackagingListDataItem) {
+			VariantPackagingData variantPackagingData = productData.getDefaultVariantPackagingData();
+
+			if ((variantPackagingData != null) && (dataListItem.getQty() != null)) {
+				if (PackagingLevel.Secondary.equals(((PackagingListDataItem) dataListItem).getPkgLevel())
+						&& (variantPackagingData.getProductPerBoxes() != null)) {
+					return dataListItem.getQty() / variantPackagingData.getProductPerBoxes();
+				}
+
+				if (PackagingLevel.Tertiary.equals(((PackagingListDataItem) dataListItem).getPkgLevel())
+						&& (variantPackagingData.getProductPerPallet() != null)) {
+					return dataListItem.getQty() / variantPackagingData.getProductPerPallet();
+				}
+			}
+		}
+		return dataListItem.getQty();
+	}
+
 	private JSONObject extractJSONTree(ProductData productData, CompositionDataItem dataListItem, Object value, Expression exp) throws JSONException {
 		JSONObject jsonObject = new JSONObject();
 
@@ -300,40 +332,48 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 				compositeList.add(pair);
 			}
 		} else if (subProductData instanceof PackagingKitData) {
-			for (CompositionDataItem subDataListItem : subProductData.getPackagingListView().getPackagingList()) {
-				Double listQty = dataListItem.getQty();
-				Double subListQty = subDataListItem.getQty();
+
+			VariantPackagingData variantPackagingData = productData.getDefaultVariantPackagingData();
+
+			for (PackagingListDataItem subDataListItem : subProductData.getPackagingListView().getPackagingList()) {
+
 				Pair<CompositionDataItem, Double> pair = new Pair<>(subDataListItem, subDataListItem.getQty());
 
-				if ((subDataListItem instanceof PackagingListDataItem) && (((PackagingListDataItem) subDataListItem).getPackagingListUnit() != null)
-						&& PackagingListUnit.PP.equals(((PackagingListDataItem) subDataListItem).getPackagingListUnit())) {
-					subListQty = 1 / subListQty;
+				if ((variantPackagingData != null) && (subDataListItem.getQty() != null)) {
+					if (PackagingLevel.Secondary.equals(subDataListItem.getPkgLevel()) && (variantPackagingData.getProductPerBoxes() != null)) {
+						subDataListItem.setQty(subDataListItem.getQty() / variantPackagingData.getProductPerBoxes());
+					}
+
+					if (PackagingLevel.Tertiary.equals(subDataListItem.getPkgLevel()) && (variantPackagingData.getProductPerPallet() != null)) {
+						subDataListItem.setQty(subDataListItem.getQty() / variantPackagingData.getProductPerPallet());
+					}
 				}
+
 				if ((dataListItem instanceof PackagingListDataItem) && (((PackagingListDataItem) dataListItem).getPackagingListUnit() != null)
-						&& PackagingListUnit.PP.equals(((PackagingListDataItem) dataListItem).getPackagingListUnit())) {
-					listQty = 1 / listQty;
+						&& !PackagingListUnit.PP.equals(((PackagingListDataItem) dataListItem).getPackagingListUnit())
+						&& (dataListItem.getQty() != null) && (subDataListItem.getQty() != null)) {
+					subDataListItem.setQty(dataListItem.getQty() * subDataListItem.getQty());
 				}
-				subDataListItem.setQty(listQty * subListQty);
+
 				compositeList.add(pair);
 			}
 		}
 		for (Pair<CompositionDataItem, Double> pair : compositeList) {
 			try {
 				JSONObject subObject = new JSONObject();
-				
-				
+
 				StandardEvaluationContext dataContext = new StandardEvaluationContext(
 						new FormulaFormulationContext(alfrescoRepository, productData, pair.getFirst()));
-	
+
 				String subPath = path + "/" + pair.getFirst().getNodeRef().getId();
-	
+
 				formulaService.registerCustomFunctions(dataContext);
 				Object subValue = exp.getValue(dataContext);
 				subObject.put(JsonFormulaHelper.JSON_VALUE, subValue);
 				subObject.put(JsonFormulaHelper.JSON_DISPLAY_VALUE, JsonFormulaHelper.formatValue(subValue));
 				subObject.put(JsonFormulaHelper.JSON_PATH, subPath);
 				subList.put(subObject);
-	
+
 				if (PLMModel.TYPE_SEMIFINISHEDPRODUCT.equals(nodeService.getType(dataListItem.getComponent()))
 						|| PLMModel.TYPE_FINISHEDPRODUCT.equals(nodeService.getType(dataListItem.getComponent()))
 						|| PLMModel.TYPE_PACKAGINGKIT.equals(nodeService.getType(dataListItem.getComponent()))) {
