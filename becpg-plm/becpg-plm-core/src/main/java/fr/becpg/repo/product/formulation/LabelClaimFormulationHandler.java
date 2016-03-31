@@ -43,11 +43,11 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 
 	private static final Log logger = LogFactory.getLog(LabelClaimFormulationHandler.class);
 
-	private static final String MESSAGE_NOT_CLAIM = "message.formulate.labelClaim.notClaimed";
+	public static final String MESSAGE_NOT_CLAIM = "message.formulate.labelClaim.notClaimed";
 
-	private static final String MESSAGE_MISSING_CLAIM = "message.formulate.labelClaim.missing";
+	public static final String MESSAGE_MISSING_CLAIM = "message.formulate.labelClaim.missing";
 
-	private static final String MESSAGE_LABELCLAIM_ERROR = "message.formulate.labelClaim.error";
+	public static final String MESSAGE_LABELCLAIM_ERROR = "message.formulate.labelClaim.error";
 
 	private NodeService nodeService;
 
@@ -95,11 +95,11 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 						ProductData partProduct = alfrescoRepository.findOne(part);
 						if (partProduct.getLabelClaimList() != null) {
 							for (LabelClaimListDataItem labelClaim : partProduct.getLabelClaimList()) {
-								if(logger.isDebugEnabled()){
-									logger.debug("Shall we visit "+extractName(labelClaim.getLabelClaim())+" ?");
+								if (logger.isDebugEnabled()) {
+									logger.debug("Shall we visit " + extractName(labelClaim.getLabelClaim()) + " ?");
 								}
 								if (!LabelClaimListDataItem.VALUE_NA.equals(labelClaim.getLabelClaimValue())) {
-									if(logger.isDebugEnabled()){
+									if (logger.isDebugEnabled()) {
 										logger.debug("yes we should");
 									}
 									visitPart(productData, partProduct, labelClaim);
@@ -124,12 +124,13 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 
 	private void visitPart(ProductData productData, ProductData partProduct, LabelClaimListDataItem subLabelClaimItem) {
 		for (LabelClaimListDataItem labelClaimItem : productData.getLabelClaimList()) {
-			if(logger.isDebugEnabled()){
-				logger.debug("Visiting labelClaim "+extractName(labelClaimItem.getLabelClaim())+" isManual: "+labelClaimItem.getIsManual()+" equals to subLabelClaimItem: "+subLabelClaimItem.equals(labelClaimItem));
+			if (logger.isDebugEnabled()) {
+				logger.debug("Visiting labelClaim " + extractName(labelClaimItem.getLabelClaim()) + " isManual: " + labelClaimItem.getIsManual()
+						+ " equals to subLabelClaimItem: " + subLabelClaimItem.equals(labelClaimItem));
 			}
 			if (((labelClaimItem.getIsManual() == null) || !labelClaimItem.getIsManual())
 					&& ((labelClaimItem.getLabelClaim() != null) && labelClaimItem.getLabelClaim().equals(subLabelClaimItem.getLabelClaim()))) {
-				
+
 				if (subLabelClaimItem.getLabelClaimValue() != null) {
 					switch (subLabelClaimItem.getLabelClaimValue()) {
 					case LabelClaimListDataItem.VALUE_TRUE:
@@ -144,16 +145,17 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 						break;
 					case LabelClaimListDataItem.VALUE_EMPTY:
 					default:
-						if(logger.isDebugEnabled()){
-							logger.debug("case empty/default for "+extractName(subLabelClaimItem.getLabelClaim())+" (value is: \""+subLabelClaimItem.getLabelClaimValue()+"\")");
+						if (logger.isDebugEnabled()) {
+							logger.debug("case empty/default for " + extractName(subLabelClaimItem.getLabelClaim()) + " (value is: \""
+									+ subLabelClaimItem.getLabelClaimValue() + "\")");
 						}
 						addMissingLabelClaimReq(productData, partProduct, labelClaimItem);
 						labelClaimItem.setLabelClaimValue(LabelClaimListDataItem.VALUE_EMPTY);
 						break;
 					}
 				} else {
-					if(logger.isDebugEnabled()){
-						logger.debug(extractName(subLabelClaimItem.getLabelClaim())+" has null label claim value");
+					if (logger.isDebugEnabled()) {
+						logger.debug(extractName(subLabelClaimItem.getLabelClaim()) + " has null label claim value");
 					}
 					addMissingLabelClaimReq(productData, partProduct, labelClaimItem);
 					labelClaimItem.setLabelClaimValue(LabelClaimListDataItem.VALUE_EMPTY);
@@ -228,8 +230,8 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 			specLabelClaimsVisitedMap.keySet().forEach(specDataItem -> {
 				getDataListVisited(formulatedProduct).forEach(listDataItem -> {
 					if (listDataItem.getLabelClaim().equals(specDataItem.getLabelClaim())) {
-						if(logger.isDebugEnabled()){
-							logger.debug(extractName(specDataItem.getLabelClaim())+" has been visited");
+						if (logger.isDebugEnabled()) {
+							logger.debug(extractName(specDataItem.getLabelClaim()) + " has been visited");
 						}
 						specLabelClaimsVisitedMap.put(specDataItem, true);
 						if (Boolean.TRUE.equals(specDataItem.getIsClaimed() && !Boolean.TRUE.equals(listDataItem.getIsClaimed()))) {
@@ -243,8 +245,8 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 			// product
 			specLabelClaimsVisitedMap.keySet().forEach(specDataItem -> {
 				if (Boolean.FALSE.equals(specLabelClaimsVisitedMap.get(specDataItem))) {
-					if(logger.isDebugEnabled()){
-						logger.debug(extractName(specDataItem.getLabelClaim())+" was not found, raising rclDataItem for spec");
+					if (logger.isDebugEnabled()) {
+						logger.debug(extractName(specDataItem.getLabelClaim()) + " was not found, raising rclDataItem for spec");
 					}
 					addSpecificationUnclaimedLabelClaim(formulatedProduct, specDataItem);
 				}

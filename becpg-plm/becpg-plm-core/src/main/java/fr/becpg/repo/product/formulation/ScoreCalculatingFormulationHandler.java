@@ -47,9 +47,9 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 
 	private static final Log logger = LogFactory.getLog(ScoreCalculatingFormulationHandler.class);
 
-	private static final String MESSAGE_MANDATORY_FIELD_MISSING = "message.formulate.mandatory_property";
-	private static final String MESSAGE_MANDATORY_FIELD_MISSING_LOCALIZED = "message.formulate.mandatory_property_localized";
-	private static final String MESSAGE_NON_VALIDATED_STATE = "message.formulate.nonValidatedState";
+	public static final String MESSAGE_MANDATORY_FIELD_MISSING = "message.formulate.mandatory_property";
+	public static final String MESSAGE_MANDATORY_FIELD_MISSING_LOCALIZED = "message.formulate.mandatory_property_localized";
+	public static final String MESSAGE_NON_VALIDATED_STATE = "message.formulate.nonValidatedState";
 
 	private AlfrescoRepository<ProductData> alfrescoRepository;
 
@@ -173,6 +173,8 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 			scores.put("global", completionPercent);
 			scores.put("details", details);
 			scores.put(JsonScoreHelper.PROP_CATALOGS, mandatoryFields);
+			logger.debug("Done calculating score of product " + product.getName() + ", children: " + componentsValidationScore + "%, mandatory: "
+					+ mandatoryFieldsScore + "% , specifications: " + specificationScore + "%, global=" + completionPercent + "%");
 
 		} catch (JSONException e) {
 			logger.error("Cannot create Json Score", e);

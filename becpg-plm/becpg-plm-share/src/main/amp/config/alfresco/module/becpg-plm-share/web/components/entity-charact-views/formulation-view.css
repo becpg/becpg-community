@@ -162,10 +162,6 @@ div.constraintsList .scrollableList {
 	padding: 0 2px;
 }
 
-.rclFilterElt ul {
-	margin: 5px;
-}
-
 .rclFilterElt > div {
 	overflow-y: auto;
 	max-height: 64px;
@@ -196,10 +192,6 @@ div.dataTypeList .title {
 	display: inline;
 }
 
-span.req-all-all, .dataTypeList .rclFilterElt li{
-	margin: 5px;
-}
-
 #scoresDiv {
 	margin: 0px 10px 5px;
 	overflow: auto;
@@ -228,7 +220,6 @@ span.req-all-all, .dataTypeList .rclFilterElt li{
 div.dataTypeList {
 	overflow: auto;
 	/* avoids text breaking on low resolutions */
-	min-width: 251px;
 }
 
 
