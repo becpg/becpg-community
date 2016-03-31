@@ -252,28 +252,29 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 		// load the 2 datalists
 		QName pivotProperty = entityDictionaryService.getDefaultPivotAssoc(datalistType);
+		if(pivotProperty != null){
+			MultiLevelListData listData1 = loadCompositeDataList(entity1NodeRef, datalistType);
+			MultiLevelListData listData2 = loadCompositeDataList(entity2NodeRef, datalistType);
 
-		MultiLevelListData listData1 = loadCompositeDataList(entity1NodeRef, datalistType);
-		MultiLevelListData listData2 = loadCompositeDataList(entity2NodeRef, datalistType);
+			if(logger.isDebugEnabled()){
+				logger.debug("listData1 " + listData1);
+				logger.debug("listData2 " + listData2);
+			}
+			CompositeComparableItem compositeItem1 = new CompositeComparableItem(0, null, null);
+			loadComparableItems(compositeItem1, listData1);
 
-		if(logger.isDebugEnabled()){
-			logger.debug("listData1 " + listData1);
-			logger.debug("listData2 " + listData2);
-		}
-		CompositeComparableItem compositeItem1 = new CompositeComparableItem(0, null, null);
-		loadComparableItems(compositeItem1, listData1);
+			CompositeComparableItem compositeItem2 = new CompositeComparableItem(0, null, null);
+			loadComparableItems(compositeItem2, listData2);
 
-		CompositeComparableItem compositeItem2 = new CompositeComparableItem(0, null, null);
-		loadComparableItems(compositeItem2, listData2);
+			List<StructCompareResultDataItem> structComparisonList = new LinkedList<>();
+			structCompareCompositeDataLists(datalistType, pivotProperty, structComparisonList, compositeItem1, compositeItem2);
 
-		List<StructCompareResultDataItem> structComparisonList = new LinkedList<>();
-		structCompareCompositeDataLists(datalistType, pivotProperty, structComparisonList, compositeItem1, compositeItem2);
+			String comparison = nodeService.getProperty(entity1NodeRef, ContentModel.PROP_NAME) + COMPARISON_SEPARATOR
+					+ nodeService.getProperty(entity2NodeRef, ContentModel.PROP_NAME) + COMPARISON_SEPARATOR
+					+ dictionaryService.getType(datalistType).getTitle(dictionaryService);
 
-		String comparison = nodeService.getProperty(entity1NodeRef, ContentModel.PROP_NAME) + COMPARISON_SEPARATOR
-				+ nodeService.getProperty(entity2NodeRef, ContentModel.PROP_NAME) + COMPARISON_SEPARATOR
-				+ dictionaryService.getType(datalistType).getTitle(dictionaryService);
-
-		structCompareResults.put(comparison, structComparisonList);
+			structCompareResults.put(comparison, structComparisonList);
+		}		
 	}
 
 	private MultiLevelListData loadCompositeDataList(NodeRef entityNodeRef, QName datalistType) {
@@ -288,17 +289,19 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 	private void loadComparableItems(CompositeComparableItem compositeItem, MultiLevelListData listData) {
 
 		for (Entry<NodeRef, MultiLevelListData> entry : listData.getTree().entrySet()) {
-			NodeRef nodeRef = entry.getKey();
+			if(entry.getValue().getEntityNodeRef() != null){
+				NodeRef nodeRef = entry.getKey();
 
-			// TODO generic should be able to combine several properties (ie:
-			// EAN, Funtion,...)
-			String pivot = (String) nodeService.getProperty(entry.getValue().getEntityNodeRef(), BeCPGModel.PROP_LEGAL_NAME);			
-			if (pivot == null) {
-				pivot = entry.getValue().getEntityNodeRef().toString();
-			}
-			CompositeComparableItem c = new CompositeComparableItem(entry.getValue().getDepth(), pivot, nodeRef);
-			addComparableItem(compositeItem, pivot, c);
-			loadComparableItems(c, entry.getValue());
+				// TODO generic should be able to combine several properties (ie:
+				// EAN, Funtion,...)
+				String pivot = (String) nodeService.getProperty(entry.getValue().getEntityNodeRef(), BeCPGModel.PROP_LEGAL_NAME);			
+				if (pivot == null) {
+					pivot = entry.getValue().getEntityNodeRef().toString();
+				}
+				CompositeComparableItem c = new CompositeComparableItem(entry.getValue().getDepth(), pivot, nodeRef);
+				addComparableItem(compositeItem, pivot, c);
+				loadComparableItems(c, entry.getValue());
+			}			
 		}
 	}
 

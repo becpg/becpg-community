@@ -34,6 +34,7 @@ import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.constraints.CompoListUnit;
+import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.variant.filters.VariantFilters;
@@ -80,7 +81,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 
 		Double qtyUsed = calculateQtyUsed(compositeDefaultVariant);
 		formulatedProduct.setRecipeQtyUsed(qtyUsed);
-
+		
 		if ((netWeight != null) && (qtyUsed != null) && (qtyUsed != 0d)) {
 			formulatedProduct.setYield((100 * netWeight) / qtyUsed);
 		}
@@ -105,9 +106,6 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 				formulatedProduct.setDensity(null);
 			}
 		}
-		
-		
-		
 
 		return true;
 	}
@@ -169,17 +167,12 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 	private Double calculateQtyUsed(Composite<CompoListDataItem> composite) throws FormulateException {
 
 		Double qty = 0d;
-
 		for (Composite<CompoListDataItem> component : composite.getChildren()) {
-
-			if (!component.isLeaf()) {
-				// calculate children
-				qty += calculateQtyUsed(component);
-			} else {
-				if ((component.getData().getQty() != null) && !component.getData().getQty().isNaN() && !component.getData().getQty().isInfinite()) {
-					qty += (component.getData().getQty() * FormulationHelper.getYield(component.getData())) / 100;
+			if (!DeclarationType.Omit.equals(component.getData().getDeclType())) {
+				if (!component.isLeaf()) {
+					qty += calculateQtyUsed(component);
 				} else {
-					component.getData().setQty(0d);
+					qty += (FormulationHelper.getQtyInKg(component.getData()) * FormulationHelper.getYield(component.getData())) / 100;
 				}
 			}
 		}

@@ -128,7 +128,13 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 					}
 				}
 				if ((filterValue != null) && !filterValue.isEmpty()) {
-					queryBuilder.andPropEquals(QName.createQName(splitted[0], namespaceService), filterValue);
+					if(filterValue.contains(",")){
+						for(String tmp : filterValue.split(",")){
+							queryBuilder.andPropEquals(QName.createQName(splitted[0], namespaceService), tmp);
+						}
+					} else {
+						queryBuilder.andPropEquals(QName.createQName(splitted[0], namespaceService), filterValue);
+					}
 				}
 			}
 		}

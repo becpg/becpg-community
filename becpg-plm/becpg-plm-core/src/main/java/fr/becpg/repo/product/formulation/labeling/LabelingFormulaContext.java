@@ -178,6 +178,7 @@ public class LabelingFormulaContext {
 
 	private boolean showIngCEECode = false;
 	private boolean useVolume = false;
+	private boolean ingsLabelingWithYield = false;
 
 	public void setUseVolume(boolean useVolume) {
 		this.useVolume = useVolume;
@@ -185,6 +186,14 @@ public class LabelingFormulaContext {
 
 	public void setShowIngCEECode(boolean showIngCEECode) {
 		this.showIngCEECode = showIngCEECode;
+	}
+
+	public boolean isIngsLabelingWithYield() {
+		return ingsLabelingWithYield;
+	}
+
+	public void setIngsLabelingWithYield(boolean ingsLabelingWithYield) {
+		this.ingsLabelingWithYield = ingsLabelingWithYield;
 	}
 
 	public void setIngDefaultFormat(String ingDefaultFormat) {
