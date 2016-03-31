@@ -49,11 +49,9 @@ import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
-import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
-import fr.becpg.repo.product.data.productList.NutListDataItem;
-import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.formulation.AllergensCalculatingFormulationHandler;
+import fr.becpg.repo.product.formulation.ScoreCalculatingFormulationHandler;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
 public class FormulationWithIngRequirementsTest extends AbstractFinishedProductTest {
@@ -121,12 +119,6 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 			compoList.add(new CompoListDataItem(null, parent22, null, 1d, CompoListUnit.P, 0d, DeclarationType.Declare, rawMaterial5NodeRef));
 
 			compoList.add(new CompoListDataItem(null, null, null, 2d, CompoListUnit.kg, null, null, semiFinishedProductNodeRef));
-			finishedProduct.setPhysicoChemList(new ArrayList<>());
-			finishedProduct.getPhysicoChemList().add(new PhysicoChemListDataItem(null, 7d, null, null, null, physicoChem1));
-			finishedProduct.getPhysicoChemList().add(new PhysicoChemListDataItem(null, 6d, null, null, null, physicoChem2));
-			finishedProduct.getPhysicoChemList().add(new PhysicoChemListDataItem(null, 1.29d, null, null, null, physicoChem6));
-			finishedProduct.getPhysicoChemList().add(new PhysicoChemListDataItem(null, 3.4d, null, null, null, physicoChem7));
-			finishedProduct.getPhysicoChemList().add(new PhysicoChemListDataItem(null, 0.6774d, null, null, null, physicoChem8));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
@@ -195,23 +187,6 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 			allergenList.add(new AllergenListDataItem(null, null, false, false, voluntary, inVoluntary, allergen1, false));
 			productSpecification1.setAllergenList(allergenList);
 
-			// label claims
-			ArrayList<LabelClaimListDataItem> labelClaimList = new ArrayList<>();
-			labelClaimList.add(new LabelClaimListDataItem(null, "Riche en fer", true));
-			productSpecification1.setLabelClaimList(labelClaimList);
-
-			// physico chem must not be higher than 7
-			ArrayList<PhysicoChemListDataItem> physicoChemList = new ArrayList<>();
-			physicoChemList.add(new PhysicoChemListDataItem(null, null, null, 5d, 7d, physicoChem1));
-			physicoChemList.add(new PhysicoChemListDataItem(null, null, null, 8d, 15d, physicoChem2));
-			physicoChemList.add(new PhysicoChemListDataItem(null, null, null, null, 3d, physicoChem7));
-			productSpecification1.setPhysicoChemList(physicoChemList);
-
-			// nut1 can't be lower than 15 and higher than 50
-			ArrayList<NutListDataItem> nutList = new ArrayList<>();
-			nutList.add(new NutListDataItem(null, null, "g/100mL", 15d, 50d, null, nut1, null));
-			productSpecification1.setNutList(nutList);
-
 			alfrescoRepository.save(productSpecification1);
 
 			// specification2
@@ -224,23 +199,6 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 			ProductSpecificationData productSpecification2 = (ProductSpecificationData) alfrescoRepository.findOne(productSpecificationNodeRef2);
 			List<ForbiddenIngListDataItem> forbiddenIngList2 = new ArrayList<>();
 
-			// label claim is not claimed
-			ArrayList<LabelClaimListDataItem> labelClaimList2 = new ArrayList<>();
-			labelClaimList2.add(new LabelClaimListDataItem(null, "Riche en fer", false));
-			productSpecification2.setLabelClaimList(labelClaimList2);
-
-			// physico chem must not be lower than 7 (must be 7 precisely)
-			physicoChemList = new ArrayList<>();
-			physicoChemList.add(new PhysicoChemListDataItem(null, null, null, 7d, 9d, physicoChem1));
-			physicoChemList.add(new PhysicoChemListDataItem(null, null, null, 5d, 9d, physicoChem2));
-			physicoChemList.add(new PhysicoChemListDataItem(null, null, null, 3d, null, physicoChem6));
-			productSpecification2.setPhysicoChemList(physicoChemList);
-
-			// nut1 must not be higher than 30 and lower than 10
-			nutList = new ArrayList<>();
-			nutList.add(new NutListDataItem(null, null, "g/100mL", 10d, 30d, null, nut1, null));
-			productSpecification2.setNutList(nutList);
-
 			ings = new ArrayList<>();
 			geoOrigins = new ArrayList<>();
 			ings.add(ing2);
@@ -248,30 +206,12 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 			forbiddenIngList2.add(new ForbiddenIngListDataItem(null, RequirementType.Info, "Ing2 geoOrigin2 interdit sur charcuterie", null, null,
 					null, ings, geoOrigins, bioOrigins));
 
-			// allergen
-			allergenList.clear();
-			voluntary.clear();
-			inVoluntary.clear();
-			voluntary.add(rawMaterial1NodeRef);
-			voluntary.add(rawMaterial5NodeRef);
-			allergenList.add(new AllergenListDataItem(null, null, false, false, voluntary, inVoluntary, allergen1, false));
-			productSpecification2.setAllergenList(allergenList);
-
 			productSpecification2.setForbiddenIngList(forbiddenIngList2);
 			alfrescoRepository.save(productSpecification2);
 
-			properties = new HashMap<>();
-			properties.put(ContentModel.PROP_NAME, "Spec3");
-			NodeRef productSpecificationNodeRef3 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
-					PLMModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
-
-			// spec 3 has both spec 1 and spec 2
-			nodeService.createAssociation(productSpecificationNodeRef3, productSpecificationNodeRef2, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
-			nodeService.createAssociation(productSpecificationNodeRef3, productSpecificationNodeRef1, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
-
 			// create association
-			nodeService.createAssociation(finishedProductNodeRef, productSpecificationNodeRef3, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
+			nodeService.createAssociation(finishedProductNodeRef, productSpecificationNodeRef2, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
+			nodeService.createAssociation(finishedProductNodeRef, productSpecificationNodeRef1, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
 
 			/*-- Formulate product --*/
 			logger.info("/*-- Formulate product --*/");
@@ -291,14 +231,13 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 				/*
 				 * #1909 added non validation rclDataItem
 				 */
-				if (reqCtrlList.getReqMessage().equals("Composant non validé")) {
+				if (I18NUtil.getMessage(ScoreCalculatingFormulationHandler.MESSAGE_NON_VALIDATED_STATE).equals(reqCtrlList.getReqMessage())) {
 					assertEquals(RequirementType.Tolerated, reqCtrlList.getReqType());
 					assertEquals(RequirementDataType.Validation, reqCtrlList.getReqDataType());
 					assertEquals(10, reqCtrlList.getSources().size());
 
 					checks++;
 				} else if (reqCtrlList.getReqMessage().equals("OGM interdit")) {
-
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
 					assertEquals(5, reqCtrlList.getSources().size());
 					assertTrue(reqCtrlList.getSources().contains(rawMaterial2NodeRef));
@@ -308,7 +247,6 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 					assertTrue(reqCtrlList.getSources().contains(rawMaterial6NodeRef));
 					checks++;
 				} else if (reqCtrlList.getReqMessage().equals("Ionisation interdite")) {
-
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
 					assertEquals(5, reqCtrlList.getSources().size());
 					assertTrue(reqCtrlList.getSources().contains(rawMaterial2NodeRef));
@@ -322,25 +260,6 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 					// should not occur
 					assertTrue(false);
 					assertEquals(RequirementType.Tolerated, reqCtrlList.getReqType());
-				} else if (reqCtrlList.getReqMessage().contains("La caractéristique physicoChem1")) {
-					// TODO regexp for better matching ?
-					// should not occur
-					assertTrue(false);
-				} else if (reqCtrlList.getReqMessage().contains("La caractéristique physicoChem8")) {
-					// should not occur
-					assertTrue(false);
-				} else if (reqCtrlList.getReqMessage().contains("La caractéristique physicoChem2")) {
-					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
-					assertEquals(0, reqCtrlList.getSources().size());
-					checks++;
-				} else if (reqCtrlList.getReqMessage().contains("La caractéristique physicoChem6")) {
-					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
-					assertEquals(0, reqCtrlList.getSources().size());
-					checks++;
-				} else if (reqCtrlList.getReqMessage().contains("La caractéristique physicoChem7")) {
-					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
-					assertEquals(0, reqCtrlList.getSources().size());
-					checks++;
 				} else if (reqCtrlList.getReqMessage().equals("Ing3 geoOrigin1 obligatoire")) {
 
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
@@ -374,23 +293,26 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 					assertEquals(0, reqCtrlList.getSources().size());
 					checks++;
 
-				} else if (reqCtrlList.getReqMessage().equals("Champ obligatoire 'Libellé légal' manquant (catalogue 'EU 1169/2011 (INCO)')")) {
+				} else if (I18NUtil
+						.getMessage(ScoreCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Libellé légal", "EU 1169/2011 (INCO)")
+						.equals(reqCtrlList.getReqMessage())) {
 
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
 					assertEquals(1, reqCtrlList.getSources().size());
 					assertTrue(reqCtrlList.getSources().contains(formulatedProduct.getNodeRef()));
 					checks++;
 
-				} else if (reqCtrlList.getReqMessage()
-						.equals("Champ obligatoire 'Précautions d'emploi' manquant (catalogue 'EU 1169/2011 (INCO)')")) {
+				} else if (I18NUtil
+						.getMessage(ScoreCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Précautions d'emploi", "EU 1169/2011 (INCO)")
+						.equals(reqCtrlList.getReqMessage())) {
 
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
 					assertEquals(1, reqCtrlList.getSources().size());
 					assertTrue(reqCtrlList.getSources().contains(formulatedProduct.getNodeRef()));
 					checks++;
 
-				} else if (reqCtrlList.getReqMessage()
-						.equals("Champ obligatoire 'Conditions de conservation' manquant (catalogue 'EU 1169/2011 (INCO)')")) {
+				} else if (I18NUtil.getMessage(ScoreCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Conditions de conservation",
+						"EU 1169/2011 (INCO)").equals(reqCtrlList.getReqMessage())) {
 
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
 					assertEquals(1, reqCtrlList.getSources().size());
@@ -403,14 +325,15 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 				}
 			}
 
-			logger.info("/*-- Done checking, checks=" + checks + " (should be 14) --*/");
-			assertEquals(14, checks);
+			logger.info("/*-- Done checking, checks=" + checks + " (should be 11) --*/");
+			assertEquals(11, checks);
 
 			/*
 			 * #257: check reqCtrlList is clear if all req are respected (we
 			 * remove specification to get everything OK)
 			 */
-			nodeService.removeAssociation(finishedProductNodeRef, productSpecificationNodeRef3, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
+			nodeService.removeAssociation(finishedProductNodeRef, productSpecificationNodeRef1, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
+			nodeService.removeAssociation(finishedProductNodeRef, productSpecificationNodeRef2, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
 
 			/*-- Formulate product --*/
 			logger.debug("/*-- Formulate product --*/");
@@ -426,6 +349,7 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 			 * precautions for use
 			 */
 
+			logger.debug("After removing specs, " + formulatedProduct.getCompoListView().getReqCtrlList().size() + " remain");
 			assertEquals(4, formulatedProduct.getCompoListView().getReqCtrlList().size());
 
 			return null;
