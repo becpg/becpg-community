@@ -1,6 +1,8 @@
 package fr.becpg.repo.web.scripts.product;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,30 +68,20 @@ public class ReqCtrlWebScript extends AbstractProductWebscript {
 
 		Map<String, Map<String, Integer>> counts = new HashMap<String, Map<String, Integer>>();
 		//Try to match requirement type. Default is null (no filter)
-		try {
-			rType = RequirementType.valueOf(type);
-		} catch(Exception e){
-			//either IllegalArgumentException or NPE
-			rType = null;
-		}
+		rType = RequirementType.fromString(type);
 
 		//Try to match requirement data type. Default is null (no filter)
-		try {
-			rDataType = RequirementDataType.valueOf(dataType);
-		} catch(Exception e){
-			//either IllegalArgumentException or NPE
-			rDataType = null;
-		}
+		rDataType = RequirementDataType.fromString(dataType);
 
 		//fetches correct list to find rclDataItem in
 		List<ReqCtrlListDataItem> ctrlList;
 		if(logger.isDebugEnabled()){
 			logger.debug("Called view: "+view);
 		}
-		if(view != null && view.equals("processList")){
-
+		
+		if("processList".equals(view)){
 			ctrlList = product.getProcessListView().getReqCtrlList();
-		} else if(view != null && view.equals("packagingList")){
+		} else if("packagingList".equals(view)){
 			ctrlList = product.getPackagingListView().getReqCtrlList();
 		} else {
 			ctrlList = product.getCompoListView().getReqCtrlList();
@@ -97,10 +89,10 @@ public class ReqCtrlWebScript extends AbstractProductWebscript {
 
 		for(ReqCtrlListDataItem item : ctrlList){
 			//Filtering on reqType and reqDataType
-			if(rType != null && item.getReqType() != (rType)){
+			if(rType != null && item.getReqType() != rType){
 				continue;
 			}
-			if(rDataType != null && item.getReqDataType() != null && item.getReqDataType() != (rDataType)){
+			if(rDataType != null && item.getReqDataType() != rDataType){
 				continue;
 			}
 
@@ -112,51 +104,81 @@ public class ReqCtrlWebScript extends AbstractProductWebscript {
 				key = item.getReqDataType();
 			}
 
-			if(logger.isDebugEnabled()){
-				logger.debug("ReqCtrlDataItem \""+item+"\" passed the filter.");
-			}
-			
 			//Filter passed, adding count		
 			if(counts.containsKey(key.toString())){					
 				Map<String, Integer> currentCount = counts.get(key.toString());
 				if(currentCount == null){
 					currentCount = new HashMap<String, Integer>();
 				}
-				
+
 				if(currentCount.containsKey(item.getReqType().toString())){
-					currentCount.put(item.getReqType().toString(), currentCount.get(item.getReqType().toString())+Math.max(item.getSources().size(),1));
+					currentCount.put(item.getReqType().toString(), currentCount.get(item.getReqType().toString())+1);
 				} else {
-					currentCount.put(item.getReqType().toString(), Math.max(item.getSources().size(), 1));
+					currentCount.put(item.getReqType().toString(), 1);
 				}
 			} else {
 				//this dataType was not found before, adding it
 				Map<String, Integer> newMap = new HashMap<String, Integer>();
-				newMap.put(item.getReqType().toString(), Math.max(item.getSources().size(), 1));
+				newMap.put(item.getReqType().toString(), 1);
 				counts.put(key.toString(), newMap);
 			}
 		}
 
 		try {			
 			//puts each count of rclDataItems in ret, mapped with proper key 
+			List<JSONObject> rclSortingArray = new ArrayList<JSONObject>();
 			JSONObject ret = new JSONObject();
 			for(String dt : counts.keySet()){				
 				Map<String, Integer> currentCount = counts.get(dt);
 
-				JSONObject tmp = new JSONObject();
+				JSONObject rclValues = new JSONObject();
 
 				for(String key : currentCount.keySet()){
-					tmp.put(key, currentCount.get(key));
+					rclValues.put(key, currentCount.get(key));
 				}
-				ret.put(dt, tmp);
+				JSONObject rclValuesMapping = new JSONObject();
+				rclValuesMapping.put(dt, rclValues);
+				rclSortingArray.add(rclValuesMapping);
 			}
+
+			rclSortingArray.sort(new Comparator<JSONObject>() {
+				@Override
+				public int compare(JSONObject o1, JSONObject o2) {
+					//sort on keys (fbd > all)
+					
+					try {
+						JSONObject o1Values = o1.getJSONObject((String) o1.keys().next());
+						JSONObject o2Values = o2.getJSONObject((String) o2.keys().next());
+						
+						//TODO check if we only need forbidden to sort, or other sorting criterias are relevant
+						if((o1Values.has("Forbidden") && !(o2Values.has("Forbidden")))
+								|| (o1Values.has("Forbidden") && o2Values.has("Forbidden") && o1Values.getInt("Forbidden") >= o2Values.getInt("Forbidden"))){
+							if(logger.isDebugEnabled()){
+								logger.debug(o1+" (o1) > "+o2+" (o2)");
+							}
+							return -1;
+						} else {
+							if(logger.isDebugEnabled()){
+								logger.debug(o2+" (o2) > "+o1+" (o1)");
+							}
+							return 1;
+						}
+					} catch (JSONException e){
+						if(logger.isDebugEnabled()){
+							logger.debug("JSONException, returning equals");
+						}
+						return 0;
+					}
+				}
+			});
 
 			//might be null if product has never been formulated, if not put it in res
 			if(product.getEntityScore() != null){
 				JSONObject scores = new JSONObject(product.getEntityScore());
+				ret.put("rclNumber", rclSortingArray.toArray());
 				ret.put("scores", scores);
 				if(logger.isDebugEnabled()){
 					logger.debug("ret : "+ret);
-					logger.debug("scores="+scores);
 				}
 			}
 

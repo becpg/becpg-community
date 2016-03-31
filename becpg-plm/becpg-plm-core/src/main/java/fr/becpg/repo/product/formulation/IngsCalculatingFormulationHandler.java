@@ -80,7 +80,6 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		if (!formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))
 				|| (!alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_INGLIST)
 						&& !alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_INGLABELINGLIST))) {
-			logger.debug("no compo => no formulation");
 			return true;
 		}
 
@@ -392,8 +391,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 					addReqCtrl(reqCtrlMap, RequirementType.Tolerated, message, productNodeRef);
 				}
 			} else {
-
 				forbiddenIngredientsList.forEach(fil -> {
+
 					componentProductData.getIngList().forEach(ingListDataItem -> {
 
 						if (!RequirementType.Authorized.equals(fil.getReqType())) {
@@ -407,7 +406,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 												forbiddenIngredientsList, reqCtrlMap);
 									}
 								} else {
-									logger.debug("Adding not respected for :" + fil.getReqMessage());
+									logger.debug("Adding not respected for: " + fil.getReqMessage());
 									ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(fil.getNodeRef());
 									if (reqCtrl == null) {
 										reqCtrl = new ReqCtrlListDataItem(null, fil.getReqType(), fil.getReqMessage(), null, new ArrayList<NodeRef>(),
@@ -435,56 +434,86 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		List<ForbiddenIngListDataItem> ret = new ArrayList<>();
 		if (formulatedProduct.getProductSpecifications() != null) {
 			for (ProductSpecificationData specification : formulatedProduct.getProductSpecifications()) {
-				mergeRequirements(ret, extractRequirements(specification));
+				mergeRequirements(ret, extractRequirements(specification), formulatedProduct);
 				if (getDataListVisited(specification) != null) {
-					mergeRequirements(ret, getDataListVisited(specification));
+					mergeRequirements(ret, getDataListVisited(specification), formulatedProduct);
 				}
 			}
 		}
 		return ret;
 	}
 
-	private void mergeRequirements(List<ForbiddenIngListDataItem> ret, List<ForbiddenIngListDataItem> toAdd) {
+	private void mergeRequirements(List<ForbiddenIngListDataItem> ret, List<ForbiddenIngListDataItem> toAdd, ProductData formulatedProduct) {
 		toAdd.forEach(item -> {
 			if (item.getReqMessage() != null) {
-				boolean isFound = false;
-				for (ForbiddenIngListDataItem sl : ret) {
-					if ((sl.getReqMessage() != null) && item.getReqMessage().equals(sl.getReqMessage())) {
-						isFound = true;
-						// TODO remplacer simplement non ?
-						// sl.getIngs().addAll(forbiddenIng.getIngs());
-						// sl.getBioOrigins().addAll(forbiddenIng.getBioOrigins());
-						// sl.getGeoOrigins().addAll(forbiddenIng.getGeoOrigins());
-						// sl.getRequiredGeoOrigins().addAll(forbiddenIng.getRequiredGeoOrigins());
-						// sl.getGeoTransfo().addAll(forbiddenIng.getGeoTransfo());
-						//
-						// // returns false if string is null or is not valid
-						// // if one of these is ionized or gmo, they all are
-						// if (BooleanUtils.toBoolean(forbiddenIng.getIsGMO()))
-						// {
-						// if
-						// (!BooleanUtils.toBoolean(mappedForbiddenIng.getIsGMO()))
-						// {
-						// mappedForbiddenIng.setIsGMO(forbiddenIng.getIsGMO());
-						// }
-						// }
-						//
-						// if
-						// (BooleanUtils.toBoolean(forbiddenIng.getIsIonized()))
-						// {
-						// if
-						// (!BooleanUtils.toBoolean(mappedForbiddenIng.getIsIonized()))
-						// {
-						// mappedForbiddenIng.setIsIonized(forbiddenIng.getIsIonized());
-						// }
-						// }
-						break;
-					}
-				}
-				if (!isFound) {
+
+				// check that this item is not in list, in which case add it
+				if (ret.stream().noneMatch(sl -> sl.getReqMessage().equals(item.getReqMessage()))) {
 					ret.add(item);
 				}
 
+				// ret.forEach(sl -> {
+				// if ((sl.getReqMessage() != null) &&
+				// item.getReqMessage().equals(sl.getReqMessage())) {
+				// // TODO remplacer simplement non ?
+				// sl.setIngs(uniqueUnionWith(item.getIngs(), sl.getIngs()));
+				// sl.setBioOrigins(uniqueUnionWith(item.getBioOrigins(),
+				// sl.getBioOrigins()));
+				// sl.setGeoOrigins(uniqueUnionWith(item.getGeoOrigins(),
+				// sl.getGeoOrigins()));
+				//
+				// //intersect
+				// boolean hadRequiredGeoOrigins =
+				// sl.getRequiredGeoOrigins().isEmpty();
+				//
+				// if(hadRequiredGeoOrigins){
+				// //intersection
+				// sl.setRequiredGeoOrigins(intersect(sl.getRequiredGeoOrigins(),
+				// item.getRequiredGeoOrigins()));
+				// } else {
+				// //union
+				// sl.setRequiredGeoOrigins(uniqueUnionWith(null,
+				// item.getRequiredGeoOrigins()));
+				// }
+				// //if req geo origin list was not empty beforehand but became
+				// so
+				// if(sl.getRequiredGeoOrigins().isEmpty() &&
+				// hadRequiredGeoOrigins){
+				// if(logger.isDebugEnabled()){
+				// logger.debug("Formulation emptied requiredGeoOrigins for
+				// ingredient "+sl.getReqMessage());
+				// }
+				// String message =
+				// I18NUtil.getMessage(MESSAGE_EMPTY_REQ_GEO_ORIGIN_LIST,
+				// sl.getReqMessage());
+				// formulatedProduct.getCompoListView().getReqCtrlList().add(new
+				// ReqCtrlListDataItem(
+				// null, RequirementType.Forbidden, message, null, new
+				// ArrayList<>(), RequirementDataType.Specification));
+				// }
+				// /*
+				// sl.setRequiredGeoOrigins(sl.getRequiredGeoOrigins()
+				// .stream()
+				// .filter(item.getRequiredGeoOrigins()::contains)
+				// .collect(Collectors.toList()));
+				// */
+				// sl.setRequiredGeoOrigins(uniqueUnionWith(item.getRequiredGeoOrigins(),
+				// sl.getRequiredGeoOrigins()));
+				// sl.setGeoTransfo(uniqueUnionWith(item.getGeoTransfo(),
+				// sl.getGeoTransfo()));
+				//
+				// if(Boolean.FALSE.equals(Boolean.getBoolean(sl.getIsGMO())) &&
+				// Boolean.TRUE.equals(Boolean.getBoolean(item.getIsGMO()))){
+				// sl.setIsGMO(Boolean.TRUE);
+				// }
+				//
+				// if(Boolean.FALSE.equals(Boolean.getBoolean(sl.getIsIonized()))
+				// &&
+				// Boolean.TRUE.equals(Boolean.getBoolean(item.getIsIonized()))){
+				// sl.setIsGMO(Boolean.TRUE);
+				// }
+				// }
+				// });
 			}
 		});
 	}
@@ -495,13 +524,15 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 	private boolean checkRuleMatchIng(IngListDataItem ingListDataItem, ForbiddenIngListDataItem fil) {
 
-		// GMO
-		if ((fil.getIsGMO() != null) && !fil.getIsGMO().isEmpty() && !fil.getIsGMO().equals(ingListDataItem.getIsGMO().toString())) {
+		if ((fil.getIsGMO() != null) && !fil.getIsGMO().isEmpty() && (!fil.getIsGMO().equals(ingListDataItem.getIsGMO().toString())
+				|| (Boolean.FALSE.equals(Boolean.valueOf(fil.getIsGMO())) && Boolean.FALSE.equals(ingListDataItem.getIsGMO())))) {
+
 			return false; // check next rule
 		}
 
 		// Ionized
-		if ((fil.getIsIonized() != null) && !fil.getIsIonized().isEmpty() && !fil.getIsIonized().equals(ingListDataItem.getIsIonized().toString())) {
+		if ((fil.getIsIonized() != null) && !fil.getIsIonized().isEmpty() && (!fil.getIsIonized().equals(ingListDataItem.getIsIonized().toString())
+				|| (Boolean.FALSE.equals(Boolean.valueOf(fil.getIsIonized())) && Boolean.FALSE.equals(ingListDataItem.getIsIonized())))) {
 			return false; // check next rule
 		}
 
@@ -633,7 +664,6 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				}
 
 				if (!autorized) {
-
 					String message = I18NUtil.getMessage(MESSAGE_NOTAUTHORIZED_ING);
 					addReqCtrl(reqCtrlMap, RequirementType.Forbidden, message, ingListDataItem.getIng());
 				}

@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2015 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2015 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.web.scripts.simulation;
@@ -21,8 +21,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.alfresco.model.ContentModel;
+import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.extensions.webscripts.AbstractWebScript;
@@ -36,9 +40,12 @@ import fr.becpg.model.SystemState;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.repository.AlfrescoRepository;
 
 /**
- * 
+ *
  * @author matthieu
  *
  */
@@ -50,14 +57,20 @@ public class SimulationWebScript extends AbstractWebScript {
 
 	private AssociationService associationService;
 
-	private EntityListDAO entityListDAO;
-
 	private NodeService nodeService;
 
-	
 	private EntityVersionService entityVersionService;
-	
-	
+
+	private AlfrescoRepository<ProductData> alfrescoRepository;
+
+	private CopyService copyService;
+
+	private static Log logger = LogFactory.getLog(SimulationWebScript.class);
+
+	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
+		this.alfrescoRepository = alfrescoRepository;
+	}
+
 	public void setEntityVersionService(EntityVersionService entityVersionService) {
 		this.entityVersionService = entityVersionService;
 	}
@@ -67,15 +80,15 @@ public class SimulationWebScript extends AbstractWebScript {
 	}
 
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
-		this.entityListDAO = entityListDAO;
 	}
 
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
-	
 
-
+	public void setCopyService(CopyService copyService) {
+		this.copyService = copyService;
+	}
 
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
@@ -84,7 +97,7 @@ public class SimulationWebScript extends AbstractWebScript {
 		String dataListItems = req.getParameter(PARAM_DATALISTITEMS);
 
 		List<NodeRef> dataListItemsNodeRefs = new ArrayList<>();
-		if (dataListItems != null && !dataListItems.isEmpty()) {
+		if ((dataListItems != null) && !dataListItems.isEmpty()) {
 			for (String dataListItem : dataListItems.split(",")) {
 				dataListItemsNodeRefs.add(new NodeRef(dataListItem));
 			}
@@ -93,15 +106,14 @@ public class SimulationWebScript extends AbstractWebScript {
 		NodeRef simulationNodeRef = null;
 
 		NodeRef entityNodeRef = null;
-		if (entityNodeRefParam != null && !entityNodeRefParam.isEmpty()) {
+		if ((entityNodeRefParam != null) && !entityNodeRefParam.isEmpty()) {
 			entityNodeRef = new NodeRef(entityNodeRefParam);
 		}
 
 		if (!dataListItemsNodeRefs.isEmpty()) {
-			for (NodeRef dataListItem : dataListItemsNodeRefs) {
-				simulationNodeRef = createSimulationNodeRef(associationService.getTargetAssoc(dataListItem, PLMModel.ASSOC_COMPOLIST_PRODUCT), nodeService.getPrimaryParent(entityListDAO.getEntity(dataListItem)).getParentRef());
-				associationService.update(dataListItem, PLMModel.ASSOC_COMPOLIST_PRODUCT, simulationNodeRef);
-			}
+
+			recurSimule(entityNodeRef, null, dataListItemsNodeRefs);
+
 		} else if (entityNodeRef != null) {
 			simulationNodeRef = createSimulationNodeRef(entityNodeRef, nodeService.getPrimaryParent(entityNodeRef).getParentRef());
 		}
@@ -118,20 +130,72 @@ public class SimulationWebScript extends AbstractWebScript {
 			ret.write(res.getWriter());
 		} catch (JSONException e) {
 			throw new WebScriptException("Unable to serialize JSON", e);
-		} 
+		}
+
+	}
+
+	private NodeRef recurSimule(NodeRef entityNodeRef, CompoListDataItem dataListItem, List<NodeRef> dataListItemsNodeRefs) {
+
+		NodeRef parentNodeRef = dataListItem != null ? dataListItem.getComponent() : entityNodeRef;
+
+		ProductData productData = alfrescoRepository.findOne(parentNodeRef);
+
+		if (productData.getCompoList() != null) {
+			for (CompoListDataItem item : productData.getCompoList()) {
+				NodeRef simulationNodeRef = recurSimule(entityNodeRef, item, dataListItemsNodeRefs);
+				if (simulationNodeRef != null) {
+					if (dataListItem == null) {
+						logger.debug("Update root " + productData.getName());
+						associationService.update(item.getNodeRef(), PLMModel.ASSOC_COMPOLIST_PRODUCT, simulationNodeRef);
+					} else {
+						NodeRef parentSimulationNodeRef = createCopyNodeRef(parentNodeRef,
+								nodeService.getPrimaryParent(entityNodeRef).getParentRef());
+						ProductData newProductData = alfrescoRepository.findOne(parentSimulationNodeRef);
+						logger.debug("Create new SF " + newProductData.getName());
+						for (CompoListDataItem newItem : newProductData.getCompoList()) {
+							NodeRef origNodeRef = associationService.getTargetAssoc(newItem.getNodeRef(), ContentModel.ASSOC_ORIGINAL);
+							if ((origNodeRef != null) && origNodeRef.equals(item.getNodeRef())) {
+								associationService.update(newItem.getNodeRef(), PLMModel.ASSOC_COMPOLIST_PRODUCT, simulationNodeRef);
+								logger.debug("Update new SF " + newProductData.getName());
+								return newProductData.getNodeRef();
+							}
+						}
+					}
+				}
+			}
+
+		}
+
+		if ((dataListItem != null) && dataListItemsNodeRefs.contains(dataListItem.getNodeRef())) {
+			logger.debug("Found item to simulate:" + dataListItem.getNodeRef());
+			return createCopyNodeRef(dataListItem.getComponent(), nodeService.getPrimaryParent(entityNodeRef).getParentRef());
+		}
+
+		return null;
 
 	}
 
 	private NodeRef createSimulationNodeRef(NodeRef entityNodeRef, NodeRef parentRef) {
-		
-		NodeRef simulationNodeRef =  entityVersionService.createBranch(entityNodeRef, parentRef);
-		
+
+		NodeRef simulationNodeRef = entityVersionService.createBranch(entityNodeRef, parentRef);
+
 		nodeService.setProperty(simulationNodeRef, PLMModel.PROP_PRODUCT_STATE, SystemState.Simulation);
 		if (nodeService.hasAspect(simulationNodeRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT)) {
 			nodeService.removeAspect(simulationNodeRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT);
 		}
-		
+
 		return simulationNodeRef;
+	}
+
+	private NodeRef createCopyNodeRef(NodeRef entityNodeRef, NodeRef parentRef) {
+
+		NodeRef simulationNodeRef = copyService.copyAndRename(entityNodeRef, parentRef, ContentModel.ASSOC_CONTAINS, null, true);
+		nodeService.setProperty(simulationNodeRef, PLMModel.PROP_PRODUCT_STATE, SystemState.Simulation);
+		if (nodeService.hasAspect(simulationNodeRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT)) {
+			nodeService.removeAspect(simulationNodeRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT);
+		}
+		return simulationNodeRef;
+
 	}
 
 }

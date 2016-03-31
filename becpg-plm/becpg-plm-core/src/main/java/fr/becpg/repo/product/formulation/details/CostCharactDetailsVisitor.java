@@ -43,7 +43,6 @@ import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.formulation.CostsCalculatingFormulationHandler;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.product.formulation.PackagingHelper;
-import fr.becpg.repo.repository.model.UnitAwareDataItem;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
 @Service
@@ -61,23 +60,28 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 	public CharactDetails visit(ProductData formulatedProduct, List<NodeRef> dataListItems, Integer level) throws FormulateException {
 
 		CharactDetails ret = createCharactDetails(dataListItems);
-		
-		if(level == null){
+
+		if (level == null) {
 			level = 0;
 		}
 
 		Double netQty = FormulationHelper.getNetQtyForCost(formulatedProduct);
 
-		visitRecur(formulatedProduct,ret,0, level, netQty,  netQty);
+		visitRecur(formulatedProduct, ret, 0, level, netQty, netQty);
 
 		return ret;
 	}
-	
-	
-	public CharactDetails visitRecur(ProductData formulatedProduct, CharactDetails ret, Integer currLevel, Integer maxLevel, Double subQuantity , Double netQty)
-			throws FormulateException {
-		
-		
+
+	public CharactDetails visitRecur(ProductData formulatedProduct, CharactDetails ret, Integer currLevel, Integer maxLevel, Double subQuantity,
+			Double netQty) throws FormulateException {
+
+		SimpleCharactUnitProvider unitProvider = item -> {
+			CostListDataItem c = (CostListDataItem) item;
+			return CostsCalculatingFormulationHandler.calculateUnit(formulatedProduct.getUnit(),
+					(String) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTCURRENCY),
+					(Boolean) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTFIXED));
+		};
+
 		if (formulatedProduct.getDefaultVariantPackagingData() == null) {
 			formulatedProduct.setDefaultVariantPackagingData(packagingHelper.getDefaultVariantPackagingData(formulatedProduct));
 		}
@@ -89,7 +93,8 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 		if (formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 			Composite<CompoListDataItem> composite = CompositeHelper.getHierarchicalCompoList(
 					formulatedProduct.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())));
-			visitCompoListChildren(formulatedProduct, composite, ret, CostsCalculatingFormulationHandler.DEFAULT_LOSS_RATIO, subQuantity, netQty , currLevel, maxLevel);
+			visitCompoListChildren(formulatedProduct, composite, ret, CostsCalculatingFormulationHandler.DEFAULT_LOSS_RATIO, subQuantity, netQty,
+					currLevel, maxLevel, unitProvider);
 		}
 
 		if (formulatedProduct.hasPackagingListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
@@ -100,16 +105,18 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 
 			for (PackagingListDataItem packagingListDataItem : formulatedProduct
 					.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
-				Double qty = FormulationHelper.getQtyForCostByPackagingLevel(formulatedProduct, packagingListDataItem, nodeService)
-						/ FormulationHelper.getNetQtyForCost(formulatedProduct) * subQuantity;
+				Double qty = (FormulationHelper.getQtyForCostByPackagingLevel(formulatedProduct, packagingListDataItem, nodeService)
+						/ FormulationHelper.getNetQtyForCost(formulatedProduct)) * subQuantity;
 
-				visitPart(formulatedProduct.getNodeRef(), packagingListDataItem.getProduct(), ret, qty, null, netQty, currLevel);
-				
-//				if ((maxLevel < 0) || (currLevel < maxLevel)) {
-//
-//					visitRecur((ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct()), ret, currLevel++, maxLevel, qty);
-//				}
-				
+				visitPart(formulatedProduct.getNodeRef(), packagingListDataItem.getProduct(), ret, qty, null, netQty, currLevel, unitProvider);
+
+				// if ((maxLevel < 0) || (currLevel < maxLevel)) {
+				//
+				// visitRecur((ProductData)
+				// alfrescoRepository.findOne(compoListDataItem.getProduct()),
+				// ret, currLevel++, maxLevel, qty);
+				// }
+
 			}
 
 		}
@@ -122,35 +129,35 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 			for (ProcessListDataItem processListDataItem : formulatedProduct
 					.getProcessList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 
-				Double qty = FormulationHelper.getQty(formulatedProduct, processListDataItem)
-						/ FormulationHelper.getNetQtyForCost(formulatedProduct) * subQuantity;
-				if (processListDataItem.getResource() != null && qty != null) {
+				Double qty = (FormulationHelper.getQty(formulatedProduct, processListDataItem)
+						/ FormulationHelper.getNetQtyForCost(formulatedProduct)) * subQuantity;
+				if ((processListDataItem.getResource() != null) && (qty != null)) {
 					if (ProcessListUnit.P.equals(processListDataItem.getUnit()) && ProductUnit.P.equals(formulatedProduct.getUnit())) {
 						netQty = FormulationHelper.QTY_FOR_PIECE;
 					}
 
-					visitPart(formulatedProduct.getNodeRef(), processListDataItem.getResource(), ret, qty, null, netQty,currLevel);
-					
-//					if ((maxLevel < 0) || (currLevel < maxLevel)) {
-//
-//						visitRecur((ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct()), ret, currLevel++, maxLevel, qty);
-//					}
-					
+					visitPart(formulatedProduct.getNodeRef(), processListDataItem.getResource(), ret, qty, null, netQty, currLevel, unitProvider);
+
+					// if ((maxLevel < 0) || (currLevel < maxLevel)) {
+					//
+					// visitRecur((ProductData)
+					// alfrescoRepository.findOne(compoListDataItem.getProduct()),
+					// ret, currLevel++, maxLevel, qty);
+					// }
+
 				}
 			}
 
 		}
 
 		visiteTemplateCosts(formulatedProduct, ret);
-	
 
 		return ret;
 	}
-	
 
 	private void visiteTemplateCosts(ProductData formulatedProduct, CharactDetails ret) {
 
-		if (formulatedProduct.getEntityTpl() != null && !formulatedProduct.getEntityTpl().equals(formulatedProduct)) {
+		if ((formulatedProduct.getEntityTpl() != null) && !formulatedProduct.getEntityTpl().equals(formulatedProduct)) {
 
 			visitTemplateCostList(formulatedProduct, formulatedProduct.getEntityTpl().getNodeRef(), formulatedProduct.getEntityTpl().getCostList(),
 					ret);
@@ -169,14 +176,14 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 
 		for (CostListDataItem templateCostList : templateCostLists) {
 
-			if (templateCostList != null && ret.hasElement(templateCostList.getCharactNodeRef()) && templateCostList.getValue()!=null) {
+			if ((templateCostList != null) && ret.hasElement(templateCostList.getCharactNodeRef()) && (templateCostList.getValue() != null)) {
 				// plants
 				if (templateCostList.getPlants().isEmpty() || templateCostList.getPlants().contains(plantNodeRef)) {
 
 					Double netQty = 1d;
 					Double qtyUsed = 1d;
 
-					if (formulatedProduct.getUnit() != null && templateCostList.getUnit() != null) {
+					if ((formulatedProduct.getUnit() != null) && (templateCostList.getUnit() != null)) {
 						if (!templateCostList.getUnit().endsWith(formulatedProduct.getUnit().toString())) {
 							if (FormulationHelper.isProductUnitP(formulatedProduct.getUnit())) {
 								if (templateCostList.getUnit().endsWith("kg") || templateCostList.getUnit().endsWith("L")) {
@@ -184,8 +191,8 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 									qtyUsed = FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d);
 
 								} else if (templateCostList.getUnit().endsWith("Pal")) {
-									if (formulatedProduct.getDefaultVariantPackagingData() != null
-											&& formulatedProduct.getDefaultVariantPackagingData().getProductPerPallet() != null) {
+									if ((formulatedProduct.getDefaultVariantPackagingData() != null)
+											&& (formulatedProduct.getDefaultVariantPackagingData().getProductPerPallet() != null)) {
 
 										netQty = (double) formulatedProduct.getDefaultVariantPackagingData().getProductPerPallet();
 
@@ -194,14 +201,14 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 							} else if (FormulationHelper.isProductUnitKg(formulatedProduct.getUnit())
 									|| FormulationHelper.isProductUnitLiter(formulatedProduct.getUnit())) {
 								if (templateCostList.getUnit().endsWith("P")) {
-									qtyUsed =  FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d);
+									qtyUsed = FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d);
 
 								} else if (templateCostList.getUnit().endsWith("Pal")) {
-									if (formulatedProduct.getDefaultVariantPackagingData() != null
-											&& formulatedProduct.getDefaultVariantPackagingData().getProductPerPallet() != null) {
+									if ((formulatedProduct.getDefaultVariantPackagingData() != null)
+											&& (formulatedProduct.getDefaultVariantPackagingData().getProductPerPallet() != null)) {
 
 										netQty = ((double) formulatedProduct.getDefaultVariantPackagingData().getProductPerPallet()
-														* FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d));
+												* FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d));
 
 									}
 								}
@@ -209,13 +216,14 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 						}
 					}
 
-					String unit = null;
-					if(templateCostList instanceof UnitAwareDataItem){
-						unit = ((UnitAwareDataItem)templateCostList).getUnit();
-					}
-					Double value = FormulationHelper.calculateValue(0d, qtyUsed, templateCostList.getValue(), netQty, unit);
+					Double value = FormulationHelper.calculateValue(0d, qtyUsed, templateCostList.getValue(), netQty, templateCostList.getUnit());
 
-					ret.addKeyValue(templateCostList.getCharactNodeRef(), new CharactDetailsValue(formulatedProduct.getNodeRef(), entityNodeRef, value,0 , templateCostList.getUnit()));
+					String unit = CostsCalculatingFormulationHandler.calculateUnit(formulatedProduct.getUnit(),
+							(String) nodeService.getProperty(templateCostList.getCost(), PLMModel.PROP_COSTCURRENCY),
+							(Boolean) nodeService.getProperty(templateCostList.getCost(), PLMModel.PROP_COSTFIXED));
+
+					ret.addKeyValue(templateCostList.getCharactNodeRef(),
+							new CharactDetailsValue(formulatedProduct.getNodeRef(), entityNodeRef, value, 0, unit));
 
 				}
 			}
@@ -223,8 +231,8 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 
 	}
 
-	private void visitCompoListChildren(ProductData productData, Composite<CompoListDataItem> composite, CharactDetails ret,
-			Double parentLossRatio, Double subQty, Double netQty, Integer  currLevel, Integer maxLevel) throws FormulateException {
+	private void visitCompoListChildren(ProductData productData, Composite<CompoListDataItem> composite, CharactDetails ret, Double parentLossRatio,
+			Double subQty, Double netQty, Integer currLevel, Integer maxLevel, SimpleCharactUnitProvider unitProvider) throws FormulateException {
 
 		for (Composite<CompoListDataItem> component : composite.getChildren()) {
 
@@ -239,20 +247,20 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 
 				// calculate children
 				Composite<CompoListDataItem> c = component;
-				visitCompoListChildren(productData, c, ret, newLossPerc, subQty, netQty, currLevel, maxLevel);
+				visitCompoListChildren(productData, c, ret, newLossPerc, subQty, netQty, currLevel, maxLevel, unitProvider);
 			} else {
 				CompoListDataItem compoListDataItem = component.getData();
 
-				Double qty = FormulationHelper.getQtyForCost(compoListDataItem, parentLossRatio,
+				Double qty = (FormulationHelper.getQtyForCost(compoListDataItem, parentLossRatio,
 						ProductUnit.getUnit((String) nodeService.getProperty(compoListDataItem.getProduct(), PLMModel.PROP_PRODUCT_UNIT)))
-						/ FormulationHelper.getNetQtyInLorKg(productData, FormulationHelper.DEFAULT_NET_WEIGHT) * subQty;
-			
-				visitPart(productData.getNodeRef(), compoListDataItem.getProduct(), ret, qty, qty, netQty, currLevel);
-				
-				if (((maxLevel < 0) || (currLevel < maxLevel)) && !entityDictionaryService.isMultiLevelLeaf(nodeService.getType(compoListDataItem.getProduct()))) {
-					visitRecur((ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct()), ret, currLevel+1, maxLevel, qty, netQty);
+						/ FormulationHelper.getNetQtyInLorKg(productData, FormulationHelper.DEFAULT_NET_WEIGHT)) * subQty;
+
+				visitPart(productData.getNodeRef(), compoListDataItem.getProduct(), ret, qty, qty, netQty, currLevel, unitProvider);
+
+				if (((maxLevel < 0) || (currLevel < maxLevel))
+						&& !entityDictionaryService.isMultiLevelLeaf(nodeService.getType(compoListDataItem.getProduct()))) {
+					visitRecur((ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct()), ret, currLevel + 1, maxLevel, qty, netQty);
 				}
-				
 
 			}
 		}

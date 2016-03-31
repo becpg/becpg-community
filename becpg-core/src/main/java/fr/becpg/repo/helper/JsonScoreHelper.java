@@ -11,6 +11,9 @@ public class JsonScoreHelper {
 	public static final String PROP_LOCALES = "locales";
 	public static final String PROP_SCORE = "score";
 	public static final String PROP_LOCALE = "locale";
+	public static final String PROP_ENTITY_TYPE = "entityType";
+	public static final String PROP_COLOR = "color";
+	
 	
 	
 }

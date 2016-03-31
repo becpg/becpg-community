@@ -469,7 +469,8 @@
 
 			Alfresco.util.Ajax.request({
 				method : Alfresco.util.Ajax.POST,
-				url : Alfresco.constants.PROXY_URI + "becpg/entity/simulation/create?dataListItems=" + nodeRefs,
+				url : Alfresco.constants.PROXY_URI + "becpg/entity/simulation/create?dataListItems=" + nodeRefs
+						+ (this.options.entityNodeRef ? "&entityNodeRef=" + this.options.entityNodeRef : ""),
 				successCallback : {
 					fn : function(resp) {
 						if (resp.json) {
