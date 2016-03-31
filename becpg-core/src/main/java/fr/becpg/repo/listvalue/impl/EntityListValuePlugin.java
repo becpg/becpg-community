@@ -503,7 +503,7 @@ public class EntityListValuePlugin implements ListValuePlugin {
 		return (query != null) && query.trim().equals(SUFFIX_ALL);
 	}
 
-	protected boolean isQueryMatch(String query, String entityName) {
+	public boolean isQueryMatch(String query, String entityName) {
 
 		if (query != null) {
 
