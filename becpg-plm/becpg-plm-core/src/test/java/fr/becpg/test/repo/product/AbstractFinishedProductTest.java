@@ -207,6 +207,12 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 	protected NodeRef physicoChem4;
 
 	protected NodeRef physicoChem5;
+	
+	protected NodeRef physicoChem6;
+	
+	protected NodeRef physicoChem7;
+	
+	protected NodeRef physicoChem8;
 
 	protected NodeRef supplier1;
 
@@ -486,7 +492,22 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			physicoChem5 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_PHYSICO_CHEM, properties).getChildRef();
-
+			properties.clear();
+			properties.put(BeCPGModel.PROP_CHARACT_NAME, "physicoChem6");
+			physicoChem6 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					PLMModel.TYPE_PHYSICO_CHEM, properties).getChildRef();
+			properties.clear();
+			properties.put(BeCPGModel.PROP_CHARACT_NAME, "physicoChem7");
+			physicoChem7 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					PLMModel.TYPE_PHYSICO_CHEM, properties).getChildRef();
+			properties.clear();
+			properties.put(BeCPGModel.PROP_CHARACT_NAME, "physicoChem8");
+			physicoChem8 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					PLMModel.TYPE_PHYSICO_CHEM, properties).getChildRef();
+			
 			// Suppliers
 			properties.put(ContentModel.PROP_NAME, "supplier1");
 			supplier1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,

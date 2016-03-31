@@ -22,5 +22,13 @@ public enum RequirementType {
 	Authorized,
 	Forbidden,
 	Tolerated,
-	Info
+	Info;
+
+	public static RequirementType fromString(String type) {
+		try {
+			return RequirementType.valueOf(type);
+		} catch(IllegalArgumentException | NullPointerException e){
+			return null;
+		}
+	}
 }

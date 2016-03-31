@@ -51,9 +51,9 @@ public class ScoreCalculatingTest extends AbstractFinishedProductTest {
 	}
 
 	@Test
-	public void testScore(){
+	public void testScore() {
 
-		//create FP
+		// create FP
 		NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			FinishedProductData finishedProduct = new FinishedProductData();
@@ -89,7 +89,6 @@ public class ScoreCalculatingTest extends AbstractFinishedProductTest {
 			compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial12NodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
-
 			/**
 			 * Packaging part
 			 */
@@ -113,80 +112,84 @@ public class ScoreCalculatingTest extends AbstractFinishedProductTest {
 
 			finishedProduct.setLegalName(new MLText(Locale.FRENCH, "Produit fini 1"));
 
-
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
 		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			
+
 			/**
 			 * Spec
 			 */
 			Map<QName, Serializable> properties = new HashMap<>();
 			properties.put(ContentModel.PROP_NAME, "Spec1");
-			NodeRef productSpecificationNodeRef1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, 
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, 
-							(String)properties.get(ContentModel.PROP_NAME)), 
+			NodeRef productSpecificationNodeRef1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
 					PLMModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
 
 			ProductSpecificationData specifications = (ProductSpecificationData) alfrescoRepository.findOne(productSpecificationNodeRef1);
 			List<ForbiddenIngListDataItem> forbiddenIngList2 = new ArrayList<>();
-			
+
 			ings = new ArrayList<>();
 			List<NodeRef> geoOrigins = new ArrayList<NodeRef>();
-			ings.add(ing2);				
+			ings.add(ing2);
 			geoOrigins.add(geoOrigin2);
-			forbiddenIngList2.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "Ing2 geoOrigin2 interdit sur charcuterie", null, null, null, ings, geoOrigins, new ArrayList<>()));
-			
+			forbiddenIngList2.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "Ing2 geoOrigin2 interdit sur charcuterie", null,
+					null, null, ings, geoOrigins, new ArrayList<>()));
+
 			specifications.setForbiddenIngList(forbiddenIngList2);
 			alfrescoRepository.save(specifications);
 
 			nodeService.createAssociation(finishedProductNodeRef, productSpecificationNodeRef1, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
 			return null;
-			
+
 		}, false, true);
 
-
-		//formulate and check FP score
+		// formulate and check FP score
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-			productService.formulate(finishedProductNodeRef);			
+			productService.formulate(finishedProductNodeRef);
 			ProductData finishedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
 
 			assertNotNull(finishedProduct.getEntityScore());
 			JSONObject scoresObject = new JSONObject(finishedProduct.getEntityScore());
-			logger.info("Scores JSON object="+scoresObject);
+			logger.info("Scores JSON object=" + scoresObject);
 
 			int validationScore = (int) (scoresObject.getJSONObject("details").getDouble("componentsValidation"));
 			int specificationsScore = scoresObject.getJSONObject("details").getInt("specifications");
 			int mandatoryFieldsScore = (int) (scoresObject.getJSONObject("details").getDouble("mandatoryFields"));
-			int globalScore = (int) (scoresObject.getDouble("global"));		
-			
-			logger.info("ValidationScore="+validationScore+ " (expecting 37)");
-			logger.info("SpecificationsScore="+specificationsScore+ " (expecting 90)");
-			logger.info("MandatoryFieldsScore="+mandatoryFieldsScore+ " (expecting 20)");
-			logger.info("GlobalScore="+globalScore+ " (expecting 49)");
+			int globalScore = (int) (scoresObject.getDouble("global"));
 
+			logger.info("ValidationScore=" + validationScore + " (expecting 37)");
+			logger.info("SpecificationsScore=" + specificationsScore + " (expecting 90)");
+			logger.info("MandatoryFieldsScore=" + mandatoryFieldsScore + " (expecting 33)");
+			logger.info("GlobalScore=" + globalScore + " (expecting 53)");
+
+			//3 /8 valid products (37.5%)
 			assertEquals(37, validationScore);
+			
+			// 1 spec requirement is not respected : -10%
 			assertEquals(90, specificationsScore);
+			
+			// 1/3 mandatory fields filled (33.33%)
 			assertEquals(33, mandatoryFieldsScore);
+			
+			// 37.5 + 90 + 33 = 53.5 % global score
 			assertEquals(53, globalScore);
 
 			JSONArray missingFieldsArray = scoresObject.getJSONArray("catalogs").getJSONObject(0).getJSONArray("missingFields");
 			assertNotNull(missingFieldsArray);
-			
-			assertEquals(4,missingFieldsArray.length());
-			logger.info("score="+scoresObject.getJSONArray("catalogs").getJSONObject(0).getDouble("score")+" (expecting 20)");
-			assertEquals(20d, scoresObject.getJSONArray("catalogs").getJSONObject(0).getDouble("score"));
-			
+
+			assertEquals(2, missingFieldsArray.length());
+			logger.info("score=" + scoresObject.getJSONArray("catalogs").getJSONObject(0).getDouble("score") + " (expecting 33)");
+
+			assertEquals(33, (int) scoresObject.getJSONArray("catalogs").getJSONObject(0).getDouble("score"));
+
 			String missingFieldsString = missingFieldsArray.toString();
-			logger.info("Missing fields: "+missingFieldsString);
-			assertTrue(missingFieldsString.contains("bcpg:netWeight"));
+			logger.info("Missing fields: " + missingFieldsString);
 			assertTrue(missingFieldsString.contains("bcpg:precautionOfUseRef"));
 			assertTrue(missingFieldsString.contains("bcpg:storageConditionsRef"));
-			assertTrue(missingFieldsString.contains("bcpg:ingListGeoOrigin"));
-			
+
 			return null;
 		}, false, true);
 	}

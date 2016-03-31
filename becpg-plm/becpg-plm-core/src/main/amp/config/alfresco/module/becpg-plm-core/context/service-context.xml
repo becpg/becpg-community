@@ -148,8 +148,9 @@
 	<bean id="webscript.fr.becpg.simulation.simulation-create.post" class="fr.becpg.repo.web.scripts.simulation.SimulationWebScript" parent="webscript">
 		<property name="associationService" ref="associationService" />
 		<property name="nodeService" ref="NodeService" />		
-		<property name="entityListDAO" ref="entityListDAO" />
+		<property name="alfrescoRepository" ref="alfrescoRepository" />
 		<property name="entityVersionService" ref="entityVersionService"/>
+		<property name="copyService" ref="CopyService" />
 	</bean>
 
 	<!-- Export search -->

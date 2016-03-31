@@ -178,6 +178,7 @@ public class LabelingFormulaContext {
 
 	private boolean showIngCEECode = false;
 	private boolean useVolume = false;
+	private boolean ingsLabelingWithYield = false;
 
 	public void setUseVolume(boolean useVolume) {
 		this.useVolume = useVolume;
@@ -185,6 +186,14 @@ public class LabelingFormulaContext {
 
 	public void setShowIngCEECode(boolean showIngCEECode) {
 		this.showIngCEECode = showIngCEECode;
+	}
+
+	public boolean isIngsLabelingWithYield() {
+		return ingsLabelingWithYield;
+	}
+
+	public void setIngsLabelingWithYield(boolean ingsLabelingWithYield) {
+		this.ingsLabelingWithYield = ingsLabelingWithYield;
 	}
 
 	public void setIngDefaultFormat(String ingDefaultFormat) {
@@ -531,20 +540,22 @@ public class LabelingFormulaContext {
 	public boolean addRule(NodeRef ruleNodeRef, String name, List<NodeRef> components, List<NodeRef> replacement, MLText label, String formula,
 			LabelingRuleType labeLabelingRuleType) {
 
-		if (LabelingRuleType.Type.equals(labeLabelingRuleType)
-				|| ((((components != null) && (components.size() > 1)) || ((replacement != null) && !replacement.isEmpty()))
-						&& (LabelingRuleType.Detail.equals(labeLabelingRuleType) || LabelingRuleType.Group.equals(labeLabelingRuleType)
-								|| LabelingRuleType.DoNotDetails.equals(labeLabelingRuleType)))) {
-			aggregate(ruleNodeRef, name, components, replacement, label, formula, labeLabelingRuleType);
-		} else {
-			if ((components != null) && !components.isEmpty()) {
-				for (NodeRef component : components) {
-					nodeDeclarationFilters.put(component, new DeclarationFilter(formula, DeclarationType.valueOf(labeLabelingRuleType.toString())));
-				}
+		if(labeLabelingRuleType!=null){
+			if (LabelingRuleType.Type.equals(labeLabelingRuleType)
+					|| ((((components != null) && (components.size() > 1)) || ((replacement != null) && !replacement.isEmpty()))
+							&& (LabelingRuleType.Detail.equals(labeLabelingRuleType) || LabelingRuleType.Group.equals(labeLabelingRuleType)
+									|| LabelingRuleType.DoNotDetails.equals(labeLabelingRuleType)))) {
+				aggregate(ruleNodeRef, name, components, replacement, label, formula, labeLabelingRuleType);
 			} else {
-				declarationFilters.add(new DeclarationFilter(formula, DeclarationType.valueOf(labeLabelingRuleType.toString())));
+				if ((components != null) && !components.isEmpty()) {
+					for (NodeRef component : components) {
+						nodeDeclarationFilters.put(component, new DeclarationFilter(formula, DeclarationType.valueOf(labeLabelingRuleType.toString())));
+					}
+				} else {
+					declarationFilters.add(new DeclarationFilter(formula, DeclarationType.valueOf(labeLabelingRuleType.toString())));
+				}
+	
 			}
-
 		}
 
 		return true;

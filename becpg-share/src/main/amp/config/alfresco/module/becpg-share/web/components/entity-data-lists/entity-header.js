@@ -35,6 +35,8 @@
    beCPG.custom.NodeHeader = function NodeHeader_constructor(htmlId) {
       beCPG.custom.NodeHeader.superclass.constructor.call(this, htmlId);
 
+      YAHOO.Bubbling.on("folderCopied", this.onEntityCopied , this);
+      
       return this;
    };
 
@@ -167,8 +169,32 @@
 
                   },
                   
-                 
 
+                  /**
+                   * Generic file action event handler
+                   *
+                   * @method onFileAction
+                   * @param layer {object} Event fired
+                   * @param args {array} Event parameters (depends on event type)
+                   */
+                  onEntityCopied: function DL_onEntityCopied(layer, args)
+                  {
+                     var obj = args[1];
+                     if (obj)
+                     {
+                    	 var siteId = null;
+                    	 if(obj.destination!=null && obj.destination.indexOf("Sites")>0
+                    			 && obj.destination.split('/').length>1){
+                    		 siteId = obj.destination.split('/')[2];
+                    	 }
+                    	 
+                    	 window.location = "/share/page/"+ (siteId ? 'site/'+siteId+"/": '')
+                    	 + "entity-data-lists?list="
+                    	 +(this.options.listId? this.options.listId:"View-properties")
+                    	 +"&nodeRef=" + obj.nodeRef;
+                     }
+                  },
+                 
                   /**
                    * Refresh component in response to metadataRefresh event
                    * 

@@ -1,19 +1,23 @@
 package fr.becpg.repo.product.formulation;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
@@ -37,6 +41,10 @@ public class StateFormulationHandler extends FormulationBaseHandler<ProductData>
 	private AlfrescoRepository<ProductData> alfrescoRepository;
 	
 	private DictionaryService dictionaryService;
+	
+	private NodeService nodeService;
+	
+	private AssociationService associationService;
 
 	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
@@ -46,10 +54,16 @@ public class StateFormulationHandler extends FormulationBaseHandler<ProductData>
 		this.dictionaryService = dictionaryService;
 	}
 
+	public void setNodeService(NodeService nodeService) {
+		this.nodeService = nodeService;
+	}	
+
+	public void setAssociationService(AssociationService associationService) {
+		this.associationService = associationService;
+	}
 
 	@Override
 	public boolean process(ProductData context) throws FormulateException {
-		// TODO Auto-generated method stub
 		for( CompoListDataItem compo : context.getCompoList()){
 			visitPart(compo.getNodeRef(), context);
 		}
@@ -90,10 +104,10 @@ public class StateFormulationHandler extends FormulationBaseHandler<ProductData>
 		//allergens must be present on toValidate state
 		if(parent.getState()==SystemState.ToValidate){
 			if(dat.getAllergenList() == null || dat.getAllergenList().isEmpty()){
-				
-				ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(parent.getNodeRef(), RequirementType.Forbidden, 
-						"Allergens are not present", null, 
-						new ArrayList<NodeRef>(), RequirementDataType.Formulation);
+				ReqCtrlListDataItem rclDataItem = createReqDataItem("", null);
+//				 rclDataItem = new ReqCtrlListDataItem(parent.getNodeRef(), RequirementType.Forbidden, 
+//						"Allergens are not present", null, 
+//						new ArrayList<NodeRef>(), RequirementDataType.Formulation);
 						rclDataItem.getSources().add(dat.getNodeRef());
 				
 				parent.getCompoListView().getReqCtrlList().add(rclDataItem);
@@ -102,6 +116,13 @@ public class StateFormulationHandler extends FormulationBaseHandler<ProductData>
 		}
 		
 //		dat.get
+		
+		//if has no plants
+		if(associationService.getTargetAssoc(dat.getNodeRef(), PLMModel.ASSOC_PLANTS) == null){
+//			ReqCtrlListDataItem rclDataItem = createReqDataItem(dat.getNodeRef(), "", null);
+//			rclDataItem.getSources().add(dat.getNodeRef());
+			
+		}
 		
 		
 		
@@ -123,9 +144,11 @@ public class StateFormulationHandler extends FormulationBaseHandler<ProductData>
 			dat.getCompoListView().getReqCtrlList().clear();
 		}
 	}
-
-
-
-
-
+	
+	public ReqCtrlListDataItem createReqDataItem(String key, String... params){
+		String message = I18NUtil.getMessage(key, (Object[])params);
+		
+		ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, null, new ArrayList<>(), RequirementDataType.Formulation);
+		return rclDataItem;
+	}
 }

@@ -17,6 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.product.formulation;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -63,6 +64,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 	public static final String UNIT_SEPARATOR = "/";
 	public static final String MESSAGE_UNDEFINED_CHARACT = "message.formulate.undefined.charact";
+	public static final String MESSAGE_UNDEFINED_VALUE = "message.formulate.undefined.value";
 
 	private static final Log logger = LogFactory.getLog(AbstractSimpleListFormulationHandler.class);
 
@@ -524,17 +526,23 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 									isCharactAllowed = false;
 								}
 							}
-							
+
 							if (!isCharactAllowed) {
 								String message = I18NUtil.getMessage(getSpecErrorMessageKey(),
-										nodeService.getProperty(listDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME));
+										nodeService.getProperty(listDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME),
+										(listDataItem.getValue() != null ? listDataItem.getValue() : I18NUtil.getMessage(MESSAGE_UNDEFINED_VALUE)),
+										(minMaxSpecValueDataItem.getMini() != null
+												? NumberFormat.getInstance(Locale.getDefault()).format(minMaxSpecValueDataItem.getMini()) + "<= " 
+												: ""),
+										(minMaxSpecValueDataItem.getMaxi() != null
+												?  " <=" + NumberFormat.getInstance(Locale.getDefault()).format(minMaxSpecValueDataItem.getMaxi()) 
+												: ""));
 								formulatedProduct.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden,
 										message, listDataItem.getCharactNodeRef(), new ArrayList<NodeRef>(), RequirementDataType.Specification));
 
 							}
 						}
 
-						
 					}
 				});
 			});
@@ -551,6 +559,13 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 				}
 			}
 		}
+		
+		//if this spec has a datalist, merge it with the rest. Only applies to specs
+		if (getDataListVisited(formulatedProduct) != null && !getDataListVisited(formulatedProduct).isEmpty() && formulatedProduct instanceof ProductSpecificationData) {
+//			logger.info("formulatedProduct (c=" + formulatedProduct.getClass().getName() + ") has a dataList, visiting it)");
+			mergeRequirements(ret, getDataListVisited(formulatedProduct));
+		}
+		
 		return ret;
 	}
 
@@ -562,10 +577,21 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 					if (item.getCharactNodeRef().equals(sl.getCharactNodeRef())) {
 						isFound = true;
 						if ((sl instanceof MinMaxValueDataItem) && (item instanceof MinMaxValueDataItem)) {
-							((MinMaxValueDataItem) sl)
-									.setMini(Math.max(((MinMaxValueDataItem) sl).getMini(), ((MinMaxValueDataItem) item).getMini()));
-							((MinMaxValueDataItem) sl)
-									.setMaxi(Math.min(((MinMaxValueDataItem) sl).getMaxi(), ((MinMaxValueDataItem) item).getMaxi()));
+							MinMaxValueDataItem castSl = (MinMaxValueDataItem) sl;
+							MinMaxValueDataItem castItem = (MinMaxValueDataItem) item;
+//							logger.info("Merging minMax values: sl=[" + castSl.getMini()+" - "+castSl.getMaxi()+"], item=["+castItem.getMini()+" - "+castItem.getMaxi()+"]");
+							if ((castSl.getMini() != null) && (castItem.getMini() != null)) {
+								castSl.setMini(Math.max(castSl.getMini(), castItem.getMini()));
+							} else if (castItem.getMini() != null) {
+								castSl.setMini(castItem.getMini());
+							}
+
+							if ((castSl.getMaxi() != null) && (castItem.getMaxi() != null)) {
+								castSl.setMaxi(Math.min(castSl.getMaxi(), castItem.getMaxi()));
+							} else if (castItem.getMaxi() != null) {
+								castSl.setMaxi(castItem.getMaxi());
+							}
+//							logger.info("Merged sl=[" + castSl.getMini()+" - "+castSl.getMaxi()+"]");
 						}
 						break;
 					}
