@@ -22,6 +22,7 @@ import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
+import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
@@ -94,18 +95,21 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 
 					for (CompoListDataItem compoItem : formulatedProduct.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 
-						NodeRef part = compoItem.getProduct();
-						Double weight = FormulationHelper.getQtyInKg(compoItem);
-						Double vol = FormulationHelper.getNetVolume(compoItem, nodeService);
-
-						ProductData partProduct = (ProductData) alfrescoRepository.findOne(part);
-
-						Double qtyUsed = FormulationHelper.isProductUnitLiter(partProduct.getUnit()) ? vol : weight;
-
-						if (qtyUsed != null) {
-							if (!(partProduct instanceof LocalSemiFinishedProductData)) {
-								visitPart(partProduct, formulatedProduct.getNutList(), retainNodes, qtyUsed, netQty, isGenericRawMaterial,
-										totalQtiesValue);
+						if(compoItem.getDeclType() != DeclarationType.Omit){
+						
+							NodeRef part = compoItem.getProduct();
+							Double weight = FormulationHelper.getQtyInKg(compoItem);
+							Double vol = FormulationHelper.getNetVolume(compoItem, nodeService);
+	
+							ProductData partProduct = (ProductData) alfrescoRepository.findOne(part);
+	
+							Double qtyUsed = FormulationHelper.isProductUnitLiter(partProduct.getUnit()) ? vol : weight;
+	
+							if (qtyUsed != null) {
+								if (!(partProduct instanceof LocalSemiFinishedProductData)) {
+									visitPart(partProduct, formulatedProduct.getNutList(), retainNodes, qtyUsed, netQty, isGenericRawMaterial,
+											totalQtiesValue);
+								}
 							}
 						}
 					}
