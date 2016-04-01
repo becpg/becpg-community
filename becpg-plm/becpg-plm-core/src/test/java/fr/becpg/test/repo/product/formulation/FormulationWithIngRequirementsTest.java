@@ -290,7 +290,10 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 						nodeService.getProperty(allergen1, BeCPGModel.PROP_CHARACT_NAME)))) {
 
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
-					assertEquals(0, reqCtrlList.getSources().size());
+					assertEquals(3, reqCtrlList.getSources().size());
+					assertTrue(reqCtrlList.getSources().contains(rawMaterial1NodeRef));
+					assertTrue(reqCtrlList.getSources().contains(rawMaterial2NodeRef));
+					assertTrue(reqCtrlList.getSources().contains(rawMaterial6NodeRef));
 					checks++;
 
 				} else if (I18NUtil
