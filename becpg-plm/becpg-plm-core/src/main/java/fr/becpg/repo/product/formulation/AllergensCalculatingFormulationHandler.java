@@ -4,6 +4,7 @@
 package fr.becpg.repo.product.formulation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -399,6 +400,8 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 								String message = I18NUtil.getMessage(MESSAGE_FORBIDDEN_ALLERGEN, extractName(listDataItem.getAllergen()));
 								ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message,
 										listDataItem.getAllergen(), new ArrayList<NodeRef>(), RequirementDataType.Specification);
+								rclDataItem.getSources().addAll(listDataItem.getVoluntarySources());
+								rclDataItem.getSources().addAll(listDataItem.getInVoluntarySources());
 								formulatedProduct.getCompoListView().getReqCtrlList().add(rclDataItem);
 							}
 						}
