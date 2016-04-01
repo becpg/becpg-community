@@ -100,7 +100,8 @@ public class FormulationProductWithoutQtyTest extends AbstractFinishedProductTes
 				
 				logger.debug("getRecipeQtyUsed: " + formulatedProduct.getRecipeQtyUsed());
 				logger.debug("getRecipeVolumeUsed: " + formulatedProduct.getRecipeVolumeUsed());
-				assertEquals(7.002d,formulatedProduct.getRecipeQtyUsed());
+				assertEquals(4.002d,formulatedProduct.getRecipeQtyUsed());
+				
 				
 				//costs
 				int checks=0;
@@ -110,12 +111,12 @@ public class FormulationProductWithoutQtyTest extends AbstractFinishedProductTes
 					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
 					logger.debug(trace);
 					if(costListDataItem.getCost().equals(cost1)){
-						assertEquals(df.format(0.857183662d), df.format(costListDataItem.getValue()));
+						assertEquals(df.format(1.499750125), df.format(costListDataItem.getValue()));
 						assertEquals("€/kg", costListDataItem.getUnit());
 						checks++;
 					}
 					if(costListDataItem.getCost().equals(cost2)){
-						assertEquals(df.format(1.143101971), df.format(costListDataItem.getValue()));
+						assertEquals(df.format(2), df.format(costListDataItem.getValue()));
 						assertEquals("€/kg", costListDataItem.getUnit());
 						checks++;
 					}
@@ -126,15 +127,15 @@ public class FormulationProductWithoutQtyTest extends AbstractFinishedProductTes
 				assertNotNull("NutList is null", formulatedProduct.getNutList());
 				for(NutListDataItem nutListDataItem : 	formulatedProduct.getNutList()){
 					String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
-					logger.debug(trace);
+					logger.info(trace);
 					if(nutListDataItem.getNut().equals(nut1)){
-						assertEquals(df.format(0.571550985), df.format(nutListDataItem.getValue()));
+						assertEquals(df.format(1d), df.format(nutListDataItem.getValue()));
 						assertEquals("kJ/100g", nutListDataItem.getUnit());
 						assertEquals(GROUP1, nutListDataItem.getGroup());
 						checks++;
 					}
 					if(nutListDataItem.getNut().equals(nut2)){
-						assertEquals(df.format(1.143101971), df.format(nutListDataItem.getValue()));
+						assertEquals(df.format(2d), df.format(nutListDataItem.getValue()));
 						assertEquals("kcal/100g", nutListDataItem.getUnit());
 						assertEquals(GROUP2, nutListDataItem.getGroup());
 						checks++;
@@ -194,7 +195,7 @@ public class FormulationProductWithoutQtyTest extends AbstractFinishedProductTes
 				logger.debug("getRecipeQtyUsed: " + formulatedProduct.getRecipeQtyUsed());
 				logger.debug("getRecipeVolumeUsed: " + formulatedProduct.getRecipeVolumeUsed());
 				DecimalFormat df = new DecimalFormat("0.000");
-				assertEquals(df.format(0.077d),df.format(formulatedProduct.getRecipeQtyUsed()));
+				assertEquals(df.format(0.072d),df.format(formulatedProduct.getRecipeQtyUsed()));
 				
 				logger.debug("unit of product formulated: " + finishedProduct.getUnit());				
 				//costs
@@ -202,7 +203,7 @@ public class FormulationProductWithoutQtyTest extends AbstractFinishedProductTes
 				assertNotNull("CostList is null", formulatedProduct.getCostList());
 				for(CostListDataItem costListDataItem : formulatedProduct.getCostList()){
 					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
-					logger.debug(trace);
+					logger.info(trace);
 					if(costListDataItem.getCost().equals(cost1)){
 						assertEquals("check cost", df.format(0.177d), df.format(costListDataItem.getValue()));
 						assertEquals("check cost unit", "€/P", costListDataItem.getUnit());
@@ -220,15 +221,15 @@ public class FormulationProductWithoutQtyTest extends AbstractFinishedProductTes
 				assertNotNull("NutList is null", formulatedProduct.getNutList());
 				for(NutListDataItem nutListDataItem : 	formulatedProduct.getNutList()){
 					String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
-					logger.debug(trace);
+					logger.info(trace);
 					if(nutListDataItem.getNut().equals(nut1)){
-						assertEquals("check nut", df.format(1d), df.format(nutListDataItem.getValue()));
+						assertEquals("check nut", df.format(1.0694444444444444d), df.format(nutListDataItem.getValue()));
 						assertEquals("check nut unit", "kJ/100g", nutListDataItem.getUnit());
 						assertEquals("must be group1", GROUP1, nutListDataItem.getGroup());
 						checks++;
 					}
 					if(nutListDataItem.getNut().equals(nut2)){
-						assertEquals("check nut", df.format(2.064935065d), df.format(nutListDataItem.getValue()));
+						assertEquals("check nut", df.format(2.208333333333333d), df.format(nutListDataItem.getValue()));
 						assertEquals("check nut unit", "kcal/100g", nutListDataItem.getUnit());
 						assertEquals("must be group2", GROUP2, nutListDataItem.getGroup());
 						checks++;
