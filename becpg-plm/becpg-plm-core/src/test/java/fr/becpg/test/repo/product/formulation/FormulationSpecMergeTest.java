@@ -563,19 +563,23 @@ public class FormulationSpecMergeTest extends AbstractFinishedProductTest {
 				} else if (I18NUtil.getMessage(AllergensCalculatingFormulationHandler.MESSAGE_FORBIDDEN_ALLERGEN,
 						nodeService.getProperty(allergen2, BeCPGModel.PROP_CHARACT_NAME)).equals(r.getReqMessage())) {
 
-					assertEquals(0, r.getSources().size());
+					assertEquals(2, r.getSources().size());
+					assertTrue(r.getSources().contains(rawMaterial1NodeRef));
+					assertTrue(r.getSources().contains(rawMaterial2NodeRef));
 					assertEquals(RequirementType.Forbidden, r.getReqType());
 					checks++;
 				} else if (I18NUtil.getMessage(AllergensCalculatingFormulationHandler.MESSAGE_FORBIDDEN_ALLERGEN,
 						nodeService.getProperty(allergen1, BeCPGModel.PROP_CHARACT_NAME)).equals(r.getReqMessage())) {
 
-					assertEquals(0, r.getSources().size());
+					assertEquals(1, r.getSources().size());
+					assertTrue(r.getSources().contains(rawMaterial1NodeRef));
 					assertEquals(RequirementType.Forbidden, r.getReqType());
 					checks++;
 				} else if (I18NUtil.getMessage(AllergensCalculatingFormulationHandler.MESSAGE_FORBIDDEN_ALLERGEN,
 						nodeService.getProperty(allergen4, BeCPGModel.PROP_CHARACT_NAME)).equals(r.getReqMessage())) {
 
-					assertEquals(0, r.getSources().size());
+					assertEquals(1, r.getSources().size());
+					assertTrue(r.getSources().contains(rawMaterial2NodeRef));
 					assertEquals(RequirementType.Forbidden, r.getReqType());
 					checks++;
 				} else if (!RequirementDataType.Completion.equals(r.getReqDataType())) {

@@ -133,7 +133,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 					if (specificationScore > 10) {
 						if ((ctrl.getReqDataType() == RequirementDataType.Specification) && (ctrl.getReqType() == RequirementType.Forbidden)
 								&& !visitedCtrlDataItems.contains(ctrl.getReqMessage())) {
-							if(logger.isDebugEnabled()){
+							if (logger.isDebugEnabled()) {
 								logger.debug("Visiting specification rclDataItem: " + ctrl.getReqMessage() + ", s=" + ctrl.getSources());
 							}
 							specificationScore -= 10;
@@ -223,9 +223,6 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 			String defaultLocale = Locale.getDefault().getLanguage();
 			JSONArray catalogs = new JSONArray(mandatoryFields);
 			QName productType = nodeService.getType(productData.getNodeRef());
-			if (logger.isDebugEnabled()) {
-				logger.debug("Type of product is " + productType);
-			}
 
 			for (int i = 0; i < catalogs.length(); i++) {
 				JSONObject catalog = catalogs.getJSONObject(i);
@@ -237,10 +234,16 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 					qnameCatalogEntityTypeList.add(QName.createQName(catalogEntityTypes.getString(catalogEntityTypeIndex), namespaceService));
 				}
 
+				if (logger.isDebugEnabled()) {
+					logger.debug("== Catalog \"" + catalog.getString(JsonScoreHelper.PROP_LABEL) + "\" ==");
+					logger.debug("Types of catalog: " + qnameCatalogEntityTypeList);
+					logger.debug("Type of product: " + productType);
+				}
+
 				// if this catalog applies to this type, or this catalog has no
 				// type defined (it applies to every entity type)
 				if (qnameCatalogEntityTypeList.isEmpty() || qnameCatalogEntityTypeList.contains(productType)) {
-					if(logger.isDebugEnabled()){
+					if (logger.isDebugEnabled()) {
 						logger.debug("Formulating for catalog \"" + catalog.getString(JsonScoreHelper.PROP_LABEL) + "\"");
 					}
 					List<String> langs = new LinkedList<>(getLocales(productData.getReportLocales(), catalog));
@@ -355,11 +358,13 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 			message = I18NUtil.getMessage(MESSAGE_MANDATORY_FIELD_MISSING, field.getString(JsonScoreHelper.PROP_DISPLAY_NAME), catalogName);
 		}
 
+		logger.debug("Creating new rclDataItem: " + message);
 		ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, null, new ArrayList<NodeRef>(),
 				RequirementDataType.Completion);
 		rclDataItem.getSources().add(productData.getNodeRef());
 
 		// put rclDataItem in proper view
+
 		if (!productData.getCompoListView().getCompoList().isEmpty()) {
 			productData.getCompoListView().getReqCtrlList().add(rclDataItem);
 		} else if (!productData.getProcessListView().getProcessList().isEmpty()) {

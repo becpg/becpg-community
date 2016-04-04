@@ -23,10 +23,16 @@ import fr.becpg.repo.repository.RepositoryEntity;
 
 public interface FormulatedEntity extends RepositoryEntity {
 
-	 Integer getReformulateCount();
-	 void setReformulateCount(Integer reformulateCount);
-	
-	 Date getFormulatedDate();
-	 void setFormulatedDate(Date formulatedDate);
-	
+	Integer getReformulateCount();
+
+	void setReformulateCount(Integer reformulateCount);
+
+	Integer getCurrentReformulateCount();
+
+	void setCurrentReformulateCount(Integer currentReformulateCount);
+
+	Date getFormulatedDate();
+
+	void setFormulatedDate(Date formulatedDate);
+
 }
