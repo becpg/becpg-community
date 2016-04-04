@@ -666,7 +666,7 @@ public class LabelingFormulaContext {
 		return ret.toString();
 	}
 
-	private String renderCompositeIng(CompositeLabeling compositeLabeling, double ratio) {
+	private String renderCompositeIng(CompositeLabeling compositeLabeling, Double ratio) {
 		StringBuffer ret = new StringBuffer();
 		boolean appendEOF = false;
 		for (Map.Entry<IngTypeItem, List<AbstractLabelingComponent>> kv : getSortedIngListByType(compositeLabeling).entrySet()) {
@@ -709,7 +709,7 @@ public class LabelingFormulaContext {
 	}
 
 	private StringBuilder renderLabelingComponent(CompositeLabeling parent, List<AbstractLabelingComponent> subComponents, String separator,
-			double ratio) {
+			Double ratio) {
 
 		StringBuilder ret = new StringBuilder();
 
@@ -747,9 +747,13 @@ public class LabelingFormulaContext {
 					toAppend = getIngTextFormat(component).format(new Object[] { ingName, qtyPerc, subIngBuff.toString() });
 
 				} else if (component instanceof CompositeLabeling) {
-
-					toAppend = getIngTextFormat(component).format(new Object[] { ingName, qtyPerc, renderCompositeIng((CompositeLabeling) component,
-							DeclarationType.Kit.equals(((CompositeLabeling) component).getDeclarationType()) ? 1d : qtyPerc) });
+					
+				   Double subRatio = qtyPerc;
+				   if(DeclarationType.Kit.equals(((CompositeLabeling) component).getDeclarationType())){
+					   subRatio = 1d;
+				   }
+					
+					toAppend = getIngTextFormat(component).format(new Object[] { ingName, qtyPerc, renderCompositeIng((CompositeLabeling) component, subRatio) });
 
 				} else {
 					logger.error("Unsupported ing type. Name: " + component.getName());
@@ -889,7 +893,11 @@ public class LabelingFormulaContext {
 		return (component instanceof CompositeLabeling) && ((CompositeLabeling) component).isGroup();
 	}
 
-	public Double computeQtyPerc(CompositeLabeling parent, AbstractLabelingComponent component, double ratio) {
+	public Double computeQtyPerc(CompositeLabeling parent, AbstractLabelingComponent component, Double ratio) {
+		if(ratio == null){
+			return null;
+		}
+		
 		Double qty = component.getQty();
 		if ((parent.getQtyTotal() != null) && (parent.getQtyTotal() > 0) && (qty != null)) {
 			qty = (qty / parent.getQtyTotal()) * ratio;
@@ -897,7 +905,11 @@ public class LabelingFormulaContext {
 		return qty;
 	}
 
-	public Double computeVolumePerc(CompositeLabeling parent, AbstractLabelingComponent component, double ratio) {
+	public Double computeVolumePerc(CompositeLabeling parent, AbstractLabelingComponent component, Double ratio) {
+		if(ratio == null){
+			return null;
+		}
+		
 		Double volume = component.getVolume();
 		if ((parent.getVolumeTotal() != null) && (parent.getVolumeTotal() > 0) && (volume != null)) {
 			volume = (volume / parent.getVolumeTotal()) * ratio;

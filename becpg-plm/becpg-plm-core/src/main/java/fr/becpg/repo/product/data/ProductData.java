@@ -97,6 +97,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private Date formulatedDate;
 	private Date modifiedDate;
 	private Integer reformulateCount;
+	private Integer currentReformulateCount;
 	private IngTypeItem ingType;
 	private Boolean isUpToDate = false;
 	
@@ -817,7 +818,13 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		this.reformulateCount = reformulateCount;
 	}
 
-	
+	public Integer getCurrentReformulateCount() {
+		return currentReformulateCount;
+	}
+
+	public void setCurrentReformulateCount(Integer currentReformulateCount) {
+		this.currentReformulateCount = currentReformulateCount;
+	}
 
 	/**
 	 * Instantiates a new product data.

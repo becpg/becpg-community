@@ -85,6 +85,7 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	 */
 	private Date formulatedDate;
 	private Integer reformulateCount;
+	private Integer currentReformulateCount;
 	
 	private List<TaskListDataItem> taskList;
 	private List<DeliverableListDataItem> deliverableList;
@@ -171,6 +172,14 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 		this.reformulateCount = reformulateCount;
 	}
 
+	public Integer getCurrentReformulateCount() {
+		return currentReformulateCount;
+	}
+
+	public void setCurrentReformulateCount(Integer currentReformulateCount) {
+		this.currentReformulateCount = currentReformulateCount;
+	}
+	
 	@AlfProp
 	@AlfQname(qname = "pjt:projectDueDate")
 	public Date getDueDate() {
