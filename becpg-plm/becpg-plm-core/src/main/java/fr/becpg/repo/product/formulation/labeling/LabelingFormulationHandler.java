@@ -868,6 +868,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 				Double waterLost = 0d;
 				if (labelingFormulaContext.isIngsLabelingWithYield() && (qty != null) && (yield != null) && (yield != 100d)
+						&& recipeQtyUsed!=null
 						&& nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_WATER)) {
 					waterLost = (1 - (yield / 100d)) * recipeQtyUsed;
 					qty -= waterLost;
@@ -1031,12 +1032,14 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						}
 
 						Double recurYield = yield;
+						Double recurRecipeQtyUsed  = recipeQtyUsed;
 						if (!(productData instanceof LocalSemiFinishedProductData)) {
 							recurYield = computeYield(productData);
+							recurRecipeQtyUsed = productData.getRecipeQtyUsed();
 						}
 
 						visitCompositeLabeling(compositeLabeling, composite, labelingFormulaContext, computedRatio, recurYield,
-								productData.getRecipeQtyUsed(), !parent.equals(compositeLabeling));
+								recurRecipeQtyUsed, !parent.equals(compositeLabeling));
 					}
 				}
 
