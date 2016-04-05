@@ -229,6 +229,13 @@ span.reqTypeForbidden {
     padding-left: 20px;
     background-repeat: no-repeat
 }
+span.dynaCompEquals {
+    background-image: url("../../components/images/equals-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat;
+    margin-left: 5px
+}
+
 span.dynaCompIncrease {
     background-image: url("../../components/images/increase-16.png") !important;
     padding-left: 20px;
