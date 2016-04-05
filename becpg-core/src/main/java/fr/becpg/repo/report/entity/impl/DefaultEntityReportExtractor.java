@@ -343,7 +343,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	}
 	
 	protected void loadComments(NodeRef nodeRef, Element nodeElt , Map<String, byte[]> images){
-		if (nodeService.hasAspect(nodeRef, ForumModel.ASPECT_DISCUSSABLE)) {
+		if (nodeRef != null &&  nodeService.exists(nodeRef) && nodeService.hasAspect(nodeRef, ForumModel.ASPECT_DISCUSSABLE)) {
 			List<ChildAssociationRef> assocs = nodeService.getChildAssocs(nodeRef, ForumModel.ASSOC_DISCUSSION, ForumModel.ASSOC_DISCUSSION, true);
 	        if (!assocs.isEmpty()){
 	            NodeRef forumFolder = assocs.get(0).getChildRef();
