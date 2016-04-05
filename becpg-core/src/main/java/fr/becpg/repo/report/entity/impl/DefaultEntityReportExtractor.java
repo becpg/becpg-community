@@ -377,7 +377,6 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				localName+="_"+suffix;
 			}
 			nodeElt.addAttribute(localName, value);
-		
 		}
 	}
 
