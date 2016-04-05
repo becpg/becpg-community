@@ -549,6 +549,9 @@ public class FormulationHelper {
 			return FormulationHelper.QTY_FOR_PIECE;
 		} else {
 			if (ProductUnit.P.equals(formulatedProduct.getUnit())) {
+				if(formulatedProduct.getQty()!=null){
+					return formulatedProduct.getQty();
+				}
 				return FormulationHelper.QTY_FOR_PIECE;
 			} else {
 				return FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
