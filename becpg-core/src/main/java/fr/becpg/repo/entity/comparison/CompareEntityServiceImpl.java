@@ -208,7 +208,9 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 							NodeRef c = (target2Refs.get(0)).getTargetRef();							
 							if (characteristicNodeRef.equals(c)) {
-								logger.info("###c " + nodeService.getProperty(c, ContentModel.PROP_NAME));
+								if(logger.isDebugEnabled()){
+									logger.debug("###c " + nodeService.getProperty(c, ContentModel.PROP_NAME));
+								}
 								dataListItem2NodeRef = d;
 								break;
 							}
@@ -589,7 +591,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		// some system properties are not found (versionDescription,
 		// frozenModifier, etc...)
 		if (propertyDef == null) {
-			logger.info("Property Def doesn't exists for: "+propertyQName);
+			logger.debug("Property Def doesn't exists for: "+propertyQName);
 			return;
 		}
 
@@ -633,7 +635,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		if (comparisonDataItem == null) {
 			String[] values = new String[nbEntities];
 			values[0] = strValue1;
-			logger.info("nbEntities " + nbEntities + " comparisonPosition " + comparisonPosition);
+			logger.debug("nbEntities " + nbEntities + " comparisonPosition " + comparisonPosition);
 			values[comparisonPosition] = strValue2;
 			comparisonDataItem = new CompareResultDataItem(dataListType, charactPath, characteristic, propertyQName, values);
 			comparisonMap.put(key, comparisonDataItem);
