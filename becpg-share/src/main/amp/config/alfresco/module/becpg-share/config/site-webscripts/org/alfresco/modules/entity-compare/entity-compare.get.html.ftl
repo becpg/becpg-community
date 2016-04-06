@@ -8,6 +8,7 @@
 
  new beCPG.component.AutoCompletePicker('${el}-entities', '${el}-entities-field', true).setOptions(
    {
+        currentValue: "${entities}",
  		mode: "edit",
         multipleSelectMode: true, 
  		targetLinkTemplate: "${targetLinkTemplate}" ,
@@ -34,7 +35,7 @@
 										 <span class="clear" ></span>
 								</div>			
 								<div id="${el}-entities-field-container"></div>
-								<input type="hidden" id="${el}-entities-added" name="entities" />
+								<input type="hidden" id="${el}-entities-added" name="entities" value="${entities}" />
 						   </div>
 					   </div>
 					</div>

@@ -71,6 +71,18 @@
 	<bean id="webscript.fr.becpg.report.reportTpls.get" class="fr.becpg.repo.web.scripts.report.ReportTplsWebScript" parent="webscript">
 		<property name="namespaceService" ref="NamespaceService" />
 		<property name="reportTplService" ref="reportTplService" />
+		<property name="associationService" ref="associationService" />
+	</bean>
+	
+	<bean id="webscript.fr.becpg.report.reportDataSource.get" class="fr.becpg.repo.web.scripts.report.ReportDataSourceWebscript" parent="webscript">
+		<property name="entityReportService" ref="entityReportService" />
+	</bean>
+
+	<bean id="webscript.fr.becpg.report.reportTpl.get" class="fr.becpg.repo.web.scripts.report.ReportTplWebScript" parent="webscript">
+		<property name="nodeService" ref="NodeService" />
+		<property name="entityReportService" ref="entityReportService" />
+		<property name="associationService" ref="associationService" />
+		<property name="entityReportAsyncGenerator" ref="entityReportAsyncGenerator" />
 	</bean>
 	
 	
