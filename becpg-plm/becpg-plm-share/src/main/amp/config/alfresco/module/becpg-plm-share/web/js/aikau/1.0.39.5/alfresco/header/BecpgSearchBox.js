@@ -1074,7 +1074,7 @@ define(["dojo/_base/declare",
                      var _this = this;
                      this._timeoutHandle = setTimeout(function() {
                         
-                    	if (_this.showDocumentEntities)
+                    	if (_this.showEntitiesResults)
                         {
                     		 _this.liveSearchEntities(terms, 0); 
                         }
@@ -1259,7 +1259,7 @@ define(["dojo/_base/declare",
                      // build the widget for the item - including the thumbnail url for the document
                      var link = "entity-data-lists?list=View-properties&nodeRef=" + item.nodeRef;
                      var lastModified = item.lastThumbnailModification || 1;
-                     var itemLink = this.createLiveSearchEntities({
+                     var itemLink = this.createLiveSearchEntity({
                         searchBox: this,
                         cssClass: "alf-livesearch-thumbnail",
                         title: desc,
