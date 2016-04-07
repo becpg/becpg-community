@@ -137,17 +137,7 @@
 		<property name="serviceRegistry" ref="ServiceRegistry"/>
 	</bean>
 
-	<!-- Report -->
-	<bean id="webscript.fr.becpg.report.reportDataSource.get" class="fr.becpg.repo.web.scripts.report.ReportDataSourceWebscript" parent="webscript">
-		<property name="entityReportService" ref="entityReportService" />
-	</bean>
-
-	<bean id="webscript.fr.becpg.report.reportTpl.get" class="fr.becpg.repo.web.scripts.report.ReportTplWebScript" parent="webscript">
-		<property name="nodeService" ref="NodeService" />
-		<property name="entityReportService" ref="entityReportService" />
-		<property name="associationService" ref="associationService" />
-		<property name="entityReportAsyncGenerator" ref="entityReportAsyncGenerator" />
-	</bean>
+	
 
 	<bean id="webscript.fr.becpg.entity.entityTpl.get" class="fr.becpg.repo.web.scripts.entity.EntityTplWebScript" parent="webscript">
 		<property name="nodeService" ref="nodeService" />

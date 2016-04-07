@@ -446,12 +446,14 @@ public class FormulationTest extends AbstractFinishedProductTest {
 					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
 					logger.debug(trace);
 					if(costListDataItem.getCost().equals(cost1)){
-						assertEquals("check cost", df.format(0.177d), df.format(costListDataItem.getValue()));
+						assertEquals("check cost", df.format(0.009d), df.format(costListDataItem.getValue()));
+						assertEquals("check cost", df.format(0.177d), df.format(costListDataItem.getValuePerProduct()));
 						assertEquals("check cost unit", "€/P", costListDataItem.getUnit());
 						checks++;
 					}
 					if(costListDataItem.getCost().equals(cost2)){
-						assertEquals("check cost", df.format(0.174d), df.format(costListDataItem.getValue()));
+						assertEquals("check cost", df.format(0.009d), df.format(costListDataItem.getValue()));
+						assertEquals("check cost", df.format(0.174d), df.format(costListDataItem.getValuePerProduct()));
 						assertEquals("check cost unit", "€/P", costListDataItem.getUnit());
 						checks++;
 					}

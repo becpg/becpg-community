@@ -58,8 +58,8 @@
 				  </div>
 				</#if>  
 			      <div class="form-fields item-type-select">
-				      <button id="${el}-itemTypeSelect-button" name="bulk-edit-itemSelect-button">${msg("menu.select.type")}&nbsp;&#9662;</button>
-				   	   <div id="${el}-itemTypeSelect-menu" class="yuimenu" style="visibility:hidden;">
+				        <button id="${el}-itemTypeSelect-button" name="bulk-edit-itemSelect-button">${msg("menu.select.type")}&nbsp;&#9662;</button>
+				   	    <div id="${el}-itemTypeSelect-menu" class="yuimenu" style="visibility:hidden;">
 				               <div class="bd">
 				                  <ul>
 				                  <#list itemTypes as itemType >
@@ -77,6 +77,18 @@
 							<option value="OR" >${msg("operator.or")}</option>
 							<option value="AND" >${msg("operator.and")}</option>
 						 </select>
+						 <button id="${el}-typeFilterSelect-button" name="type-filter-itemSelect-button">${msg("menu.select.type")}&nbsp;&#9662;</button>
+				   	     <div id="${el}-typeFilterSelect-menu" class="yuimenu" style="visibility:hidden;">
+				               <div class="bd">
+				                  <ul>
+				                  	<li><a href="#"><span class="all">${msg("menu.select.all")}</span></a></li>
+				                  <#list filterTypes as itemType >
+				                     <li><a href="#"><span class="${itemType.name}<#if itemType.selected??>#selected</#if>">${itemType.label}</span></a></li>
+				                  </#list>
+				                  </ul>
+				               </div>
+				         </div>
+						 
 				         <button id="${el}-show-button">${msg("menu.show")}</button>
 				    </div>
 			</#if>

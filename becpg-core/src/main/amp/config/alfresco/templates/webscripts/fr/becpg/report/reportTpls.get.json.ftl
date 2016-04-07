@@ -11,5 +11,6 @@
 	}<#if reportTpl_has_next>,</#if>
    </#list>
    ]
+   ,"entities":"${entities!""}"
 }
 </#escape>

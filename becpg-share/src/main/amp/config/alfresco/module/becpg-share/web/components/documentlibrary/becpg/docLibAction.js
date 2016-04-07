@@ -257,7 +257,7 @@
 	            // Always create a new instance
 	            this.modules.entityCompare = new Alfresco.module.SimpleDialog(this.id + "-entityCompare").setOptions({
 	               width : "33em",
-	               templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/entity-compare/entity-compare",
+	               templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/entity-compare/entity-compare?entityNodeRef="+p_record.nodeRef,
 	               actionUrl : actionUrl,
 	               validateOnSubmit : false,
 	               firstFocus : this.id + "-entityCompare-entities-field",

@@ -386,7 +386,11 @@ if (beCPG.module.EntityDataGridRenderers) {
 									} else {
 										currValue = parseFloat(json.comp[i].value);
 										if (currValue != Number.NaN && refValue != Number.NaN) {
-											className = (refValue > currValue) ? "dynaCompIncrease" : "dynaCompDecrease";
+											if(refValue == currValue){
+												className = "dynaCompEquals";
+											} else {
+												className = (refValue < currValue) ? "dynaCompIncrease" : "dynaCompDecrease";
+											}
 										} else {
 											className = "dynaCompNone";
 										}
@@ -724,7 +728,11 @@ if (beCPG.module.EntityDataGridRenderers) {
 								} else {
 									currValue = parseFloat(json.comp[z].value);
 									if (currValue != Number.NaN && refValue != Number.NaN) {
-										className = (refValue > currValue) ? "dynaCompIncrease" : "dynaCompDecrease";
+										if(refValue == currValue){
+											className = "dynaCompEquals";
+										} else {
+											className = (refValue < currValue) ? "dynaCompIncrease" : "dynaCompDecrease";
+										}
 									} else {
 										className = "dynaCompNone";
 									}

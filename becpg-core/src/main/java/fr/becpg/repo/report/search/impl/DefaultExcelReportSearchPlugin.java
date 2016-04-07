@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
@@ -46,13 +47,16 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 
 	@Autowired
 	protected NamespaceService namespaceService;
+	
+	@Autowired
+	protected EntityDictionaryService entityDictionaryService;
 
 	@Override
 	public void fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum,
 			AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache) {
 
 		for (NodeRef entityNodeRef : searchResults) {
-			if (mainType.equals(nodeService.getType(entityNodeRef))) {
+			if (entityDictionaryService.isSubClass(nodeService.getType(entityNodeRef), mainType)) {
 				if (keyColumn != null) {
 					Serializable key = nodeService.getProperty(entityNodeRef, keyColumn.getFieldDef().getName());
 					if (key == null) {

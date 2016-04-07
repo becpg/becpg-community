@@ -116,6 +116,32 @@ public class WUsedExtractor extends MultiLevelExtractor {
 
 			@Override
 			public void filter(MultiLevelListData wUsedData) {
+				
+				if (dataListFilter.getExtraParams() != null && dataListFilter.getExtraParams().length() > 0) {
+					try {
+						JSONObject jsonObject = new JSONObject(dataListFilter.getExtraParams());
+						if (jsonObject.has("typeFilter")) {
+							String typeFilter  = (String) jsonObject.get("typeFilter");
+							if(typeFilter!=null && !typeFilter.isEmpty()
+									&& !"all".equalsIgnoreCase(typeFilter)){
+								
+								QName type = QName.createQName(typeFilter, namespaceService);
+								for (Iterator<Entry<NodeRef, MultiLevelListData>> iterator = wUsedData.getTree().entrySet().iterator(); iterator.hasNext();) {
+									Entry<NodeRef, MultiLevelListData> entry = iterator.next();
+									NodeRef nodeRef = entry.getValue().getEntityNodeRef();
+									if (!type.equals(nodeService.getType(nodeRef))) {
+										iterator.remove();
+									}
+								}
+							}							
+						}
+
+					} catch (JSONException e) {
+						logger.error(e);
+					}
+				}
+
+				
 				if (dataListFilter.getFilterId().equals(DataListFilter.FORM_FILTER)) {
 					Map<String, String> criteriaMap = nestedAdvSearchPlugin.cleanCriteria(dataListFilter.getCriteriaMap());
 
@@ -193,6 +219,7 @@ public class WUsedExtractor extends MultiLevelExtractor {
 		}
 		return WUsedOperator.AND;
 	}
+	
 
 	private List<NodeRef> getWusedNodeRefs(DataListFilter dataListFilter) {
 
