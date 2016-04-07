@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2015 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2015 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.product.formulation.details;
@@ -54,9 +54,8 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 	protected NodeService nodeService;
 
 	protected EntityDictionaryService entityDictionaryService;
-	
-	protected QName dataListType;
 
+	protected QName dataListType;
 
 	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
 		this.entityDictionaryService = entityDictionaryService;
@@ -75,12 +74,17 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 		this.dataListType = dataListType;
 	}
 
+	public interface SimpleCharactUnitProvider {
+		public String provideUnit(SimpleCharactDataItem item);
+
+	}
+
 	@Override
 	public CharactDetails visit(ProductData productData, List<NodeRef> dataListItems, Integer level) throws FormulateException {
 
 		CharactDetails ret = createCharactDetails(dataListItems);
-		
-		if(level == null){
+
+		if (level == null) {
 			level = 0;
 		}
 
@@ -93,33 +97,32 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 		return ret;
 	}
 
-	public CharactDetails visitRecur(ProductData subProductData, CharactDetails ret, Integer currLevel, Integer maxLevel, Double subWeight, Double subVol, Double netQty)
-			throws FormulateException {
+	public CharactDetails visitRecur(ProductData subProductData, CharactDetails ret, Integer currLevel, Integer maxLevel, Double subWeight,
+			Double subVol, Double netQty) throws FormulateException {
 
-		if (subProductData.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))){
+		if (subProductData.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 
 			for (CompoListDataItem compoListDataItem : subProductData
 					.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
-				
-				Double weightUsed = FormulationHelper.getQtyInKg(compoListDataItem);								
-				if(FormulationHelper.getNetWeight(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT) != 0d && subWeight !=null){
-					weightUsed = weightUsed
-							/ FormulationHelper.getNetWeight(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT) 
-							* subWeight;
-					
-				}
-				
-				Double volUsed = FormulationHelper.getNetVolume(compoListDataItem, nodeService);
-				if(FormulationHelper.getNetVolume(compoListDataItem, nodeService) != null && FormulationHelper.getNetVolume(subProductData) != null && subVol != null){
-					volUsed = volUsed
-							/ FormulationHelper.getNetVolume(subProductData) 
-							* subVol;					
-				}
-				
-				visitPart(subProductData.getNodeRef(), compoListDataItem.getProduct(), ret, weightUsed, volUsed, netQty, currLevel);
 
-				if (((maxLevel < 0) || (currLevel < maxLevel)) && !entityDictionaryService.isMultiLevelLeaf(nodeService.getType(compoListDataItem.getProduct()))) {
-					visitRecur((ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct()), ret, currLevel+1, maxLevel, weightUsed, volUsed, netQty);
+				Double weightUsed = FormulationHelper.getQtyInKg(compoListDataItem);
+				if ((FormulationHelper.getNetWeight(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT) != 0d) && (subWeight != null)) {
+					weightUsed = (weightUsed / FormulationHelper.getNetWeight(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT)) * subWeight;
+
+				}
+
+				Double volUsed = FormulationHelper.getNetVolume(compoListDataItem, nodeService);
+				if ((FormulationHelper.getNetVolume(compoListDataItem, nodeService) != null)
+						&& (FormulationHelper.getNetVolume(subProductData) != null) && (subVol != null)) {
+					volUsed = (volUsed / FormulationHelper.getNetVolume(subProductData)) * subVol;
+				}
+
+				visitPart(subProductData.getNodeRef(), compoListDataItem.getProduct(), ret, weightUsed, volUsed, netQty, currLevel, null);
+
+				if (((maxLevel < 0) || (currLevel < maxLevel))
+						&& !entityDictionaryService.isMultiLevelLeaf(nodeService.getType(compoListDataItem.getProduct()))) {
+					visitRecur((ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct()), ret, currLevel + 1, maxLevel, weightUsed,
+							volUsed, netQty);
 				}
 
 			}
@@ -129,7 +132,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 	}
 
 	protected CharactDetails createCharactDetails(List<NodeRef> dataListItems) {
-		
+
 		List<NodeRef> tmp = new ArrayList<>();
 		if (dataListItems != null) {
 			for (NodeRef dataListItem : dataListItems) {
@@ -140,13 +143,14 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 				}
 			}
 		}
-		
+
 		CharactDetails ret = new CharactDetails(tmp);
-		
+
 		return ret;
 	}
 
-	protected void visitPart(NodeRef parent, NodeRef entityNodeRef, CharactDetails charactDetails, Double weightUsed, Double volUsed, Double netQty, Integer currLevel) throws FormulateException {
+	protected void visitPart(NodeRef parent, NodeRef entityNodeRef, CharactDetails charactDetails, Double weightUsed, Double volUsed, Double netQty,
+			Integer currLevel, SimpleCharactUnitProvider unitProvider) throws FormulateException {
 
 		if (entityNodeRef == null) {
 			return;
@@ -158,34 +162,38 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 		}
 
 		@SuppressWarnings("unchecked")
-		List<SimpleCharactDataItem> simpleCharactDataList = (List<SimpleCharactDataItem>) alfrescoRepository.loadDataList(entityNodeRef, dataListType, dataListType);
+		List<SimpleCharactDataItem> simpleCharactDataList = (List<SimpleCharactDataItem>) alfrescoRepository.loadDataList(entityNodeRef, dataListType,
+				dataListType);
 
 		for (SimpleCharactDataItem simpleCharact : simpleCharactDataList) {
-			if (simpleCharact != null && charactDetails.hasElement(simpleCharact.getCharactNodeRef())) {
-				
+			if ((simpleCharact != null) && charactDetails.hasElement(simpleCharact.getCharactNodeRef())) {
+
 				String unit = null;
-				
-				if (simpleCharact instanceof UnitAwareDataItem) {
-					unit =  ((UnitAwareDataItem) simpleCharact).getUnit();
-				} 
+				if (unitProvider != null) {
+					unit = unitProvider.provideUnit(simpleCharact);
+				}
+
+				if ((unit == null) && (simpleCharact instanceof UnitAwareDataItem)) {
+					unit = ((UnitAwareDataItem) simpleCharact).getUnit();
+				}
 
 				// calculate charact from qty or vol ?
 				boolean isVol = FormulationHelper.isCharactFormulatedFromVol(nodeService, simpleCharact)
-						|| FormulationHelper.isProductUnitLiter(FormulationHelper.getProductUnit(entityNodeRef,nodeService)) ? true : false;
+						|| FormulationHelper.isProductUnitLiter(FormulationHelper.getProductUnit(entityNodeRef, nodeService)) ? true : false;
 				Double qtyUsed = isVol ? volUsed : weightUsed;
-				
+
 				Double value = FormulationHelper.calculateValue(0d, qtyUsed, simpleCharact.getValue(), netQty, unit);
 
-				if(value!=null && value!= 0d){
+				if ((value != null) && (value != 0d)) {
 					if (logger.isDebugEnabled()) {
 						logger.debug("Add new charact detail. Charact: "
 								+ nodeService.getProperty(simpleCharact.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME) + " - entityNodeRef: "
 								+ nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_CHARACT_NAME) + " - netQty: " + netQty + " - qty: " + qtyUsed
 								+ " - value: " + value);
 					}
-					
-					
-					charactDetails.addKeyValue(simpleCharact.getCharactNodeRef(),new CharactDetailsValue(parent, entityNodeRef, value, currLevel, unit));
+
+					charactDetails.addKeyValue(simpleCharact.getCharactNodeRef(),
+							new CharactDetailsValue(parent, entityNodeRef, value, currLevel, unit));
 				}
 			}
 		}
