@@ -76,6 +76,10 @@
 			<!-- Sample use case -->
 			<!--  <itemType name="bcpg:entityV2" /> -->
 		</itemTypes>
+		<filterTypes>
+			<!-- Sample use case -->
+			<!--  <itemType name="bcpg:entityV2" selected="true" /> -->
+		</filterTypes>
 	</config>
 	
 	<config evaluator="string-compare" condition="EntityDataLists">

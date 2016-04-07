@@ -73,10 +73,36 @@ function main()
 	            model.type = obj.type;
 	         }
 	     }
+	      
+	//Load filters
+
+	 var filterTypesConfig = config.scoped["wused-search"]["filterTypes"].childrenMap["itemType"];
+	 var filterTypes = [];
+	 for (var i = 0, itemType, label; i < filterTypesConfig.size(); i++) {
+	  		itemType = filterTypesConfig.get(i);
+
+	  		// resolve label text
+	  		label = itemType.attributes["label"];
+	  		if (label == null) {
+	  			label = "type." + itemType.attributes["name"].replace(":", "_");
+	  			if (label != null) {
+	  				label = msg.get(label);
+	  			}
+	  		}
+
+	  		// create the model object to represent the sort field definition
+	  		filterTypes.push({
+	  			name : itemType.attributes["name"],
+	  			label : label ? label : itemType.attributes["name"],
+	  		    selected : itemType.attributes["selected"] ? itemType.attributes["selected"] : false
+	  		});
+	  	}
+	  		
+	 model.filterTypes = filterTypes;
+
  }
     
-      
-      
+  
    
  // Widget instantiation metadata...
    var wUsedForm = {

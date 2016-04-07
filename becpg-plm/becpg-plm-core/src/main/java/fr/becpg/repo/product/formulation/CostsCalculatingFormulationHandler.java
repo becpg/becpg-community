@@ -273,6 +273,10 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 
 				} else if (FormulationHelper.isProductUnitP(formulatedProduct.getUnit())) {
 					costPerProduct = c.getValue();
+					if(formulatedProduct.getQty()!=null){
+						costPerProduct *=formulatedProduct.getQty();
+					}
+					
 				} else {
 					costPerProduct = netQty * c.getValue();
 				}

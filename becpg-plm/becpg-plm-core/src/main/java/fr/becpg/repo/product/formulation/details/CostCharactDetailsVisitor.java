@@ -67,20 +67,20 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 
 		Double netQty = FormulationHelper.getNetQtyForCost(formulatedProduct);
 
-		visitRecur(formulatedProduct, ret, 0, level, netQty, netQty);
-
-		return ret;
-	}
-
-	public CharactDetails visitRecur(ProductData formulatedProduct, CharactDetails ret, Integer currLevel, Integer maxLevel, Double subQuantity,
-			Double netQty) throws FormulateException {
-
 		SimpleCharactUnitProvider unitProvider = item -> {
 			CostListDataItem c = (CostListDataItem) item;
 			return CostsCalculatingFormulationHandler.calculateUnit(formulatedProduct.getUnit(),
 					(String) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTCURRENCY),
 					(Boolean) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTFIXED));
 		};
+
+		visitRecurCost(formulatedProduct, ret, 0, level, netQty, netQty, unitProvider);
+
+		return ret;
+	}
+
+	public CharactDetails visitRecurCost(ProductData formulatedProduct, CharactDetails ret, Integer currLevel, Integer maxLevel, Double subQuantity,
+			Double netQty, SimpleCharactUnitProvider unitProvider) throws FormulateException {
 
 		if (formulatedProduct.getDefaultVariantPackagingData() == null) {
 			formulatedProduct.setDefaultVariantPackagingData(packagingHelper.getDefaultVariantPackagingData(formulatedProduct));
@@ -253,13 +253,14 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 
 				Double qty = (FormulationHelper.getQtyForCost(compoListDataItem, parentLossRatio,
 						ProductUnit.getUnit((String) nodeService.getProperty(compoListDataItem.getProduct(), PLMModel.PROP_PRODUCT_UNIT)))
-						/ FormulationHelper.getNetQtyInLorKg(productData, FormulationHelper.DEFAULT_NET_WEIGHT)) * subQty;
+						/ FormulationHelper.getNetQtyForCost(productData)) * subQty;
 
 				visitPart(productData.getNodeRef(), compoListDataItem.getProduct(), ret, qty, qty, netQty, currLevel, unitProvider);
 
 				if (((maxLevel < 0) || (currLevel < maxLevel))
 						&& !entityDictionaryService.isMultiLevelLeaf(nodeService.getType(compoListDataItem.getProduct()))) {
-					visitRecur((ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct()), ret, currLevel + 1, maxLevel, qty, netQty);
+					visitRecurCost((ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct()), ret, currLevel + 1, maxLevel, qty,
+							netQty, unitProvider);
 				}
 
 			}

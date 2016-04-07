@@ -281,7 +281,9 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 			assertFalse("#Error".equals(dynamicCharactListItem.getValue()));
 			
 			if("MTLine1".equals(dynamicCharactListItem.getTitle())){
-				assertTrue((Integer)dynamicCharactListItem.getValue() == 45);
+				if( dynamicCharactListItem.getValue() instanceof Integer){
+					assertTrue((Integer) dynamicCharactListItem.getValue() == 45);
+				} 
 			}
 			
 		}

@@ -6636,10 +6636,38 @@
 					<field id="bcpg:costListValuePerProduct" read-only="true" />
 				</appearance>				
 			</form>
+			<form id="datagridWUsed">
+				<field-visibility>
+					<show id="bcpg:variantIds" force="true" />
+					<show id="bcpg:depthLevel" />
+					<show id="bcpg:costListCost" />
+					<show id="bcpg:costListValue" />
+					<show id="bcpg:costListUnit" />					
+					<show id="bcpg:costListPreviousValue" />
+					<show id="bcpg:costListFutureValue" />
+					<show id="bcpg:costListValuePerProduct" />
+					<show id="bcpg:isManualListItem" force="true" />
+					<show id="bcpg:plants" force="true" />
+					<show id="bcpg:costListComponent" />
+					<show id="bcpg:costListSimulatedValue" />
+					<show id="fm:commentCount" force="true" />
+					<show id="bcpg:costListIsFormulated" />
+					<show id="bcpg:costListFormulaErrorLog" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:variantIds" label="hidden"></field>
+					<field id="bcpg:depthLevel" label="hidden"></field>					
+					<field id="fm:commentCount" label="hidden" read-only="true" />
+					<field id="bcpg:costListIsFormulated"  label="hidden"/>
+					<field id="bcpg:costListFormulaErrorLog"  label="hidden"/>
+					<field id="bcpg:costListValuePerProduct" read-only="true" />
+				</appearance>				
+			</form>
 			<form id="filter">
 				<field-visibility>
-					<show id="bcpg:costListCost" />
-					<show id="bcpg:plants" force="true" />
+					<show id="bcpg:costListCost" for-mode="create"/>
+					<show id="entity_bcpg:costListCost_bcpg:product" for-mode="view"/>
+					<show id="bcpg:plants"   for-mode="create" force="true" />
 				</field-visibility>	
 				<appearance>
 					<field id="bcpg:costListCost">
@@ -6648,6 +6676,7 @@
 					</field>
 			   </appearance>		
 			</form>
+			
 		</forms>
 	</config>
 	<!-- bcpg:costList type (existing nodes) -->
@@ -7244,6 +7273,7 @@
 
 			<form id="filter">
 				<field-visibility>
+				    <show id="entity_bcpg:nutListNut_bcpg:product" for-mode="view"/>
 					<show id="bcpg:nutListMethod" />
 					<show id="bcpg:nutListGroup" />
 				</field-visibility>
@@ -7429,6 +7459,19 @@
 					<field id="bcpg:physicoChemFormulaErrorLog" label="hidden"/>
 				</appearance>
 			</form>
+			<form id="filter">
+				<field-visibility>
+				    <show id="entity_bcpg:pclPhysicoChem_bcpg:product" for-mode="view"/>
+				    <show id="bcpg:pclPhysicoChem" for-mode="create"/>
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:pclPhysicoChem">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+				</appearance>
+			</form>
+			
 		</forms>
 	</config>
 	<!-- bcpg:physicoChemList type (existing nodes) -->
@@ -7805,7 +7848,9 @@
 			
 			<form id="filter">
 				<field-visibility>
-					<show id="bcpg:lclLabelClaim" />
+					<show id="bcpg:lclLabelClaim" for-mode="create"/>
+					<show id="entity_bcpg:lclLabelClaim_bcpg:product"
+						for-mode="view" />
 					<show id="bcpg:lclType" />
 					<show id="bcpg:lclClaimValue" />
 				</field-visibility>
