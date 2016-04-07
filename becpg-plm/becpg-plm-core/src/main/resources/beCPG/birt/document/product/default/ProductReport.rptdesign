@@ -7589,9 +7589,9 @@ else{
                         <property name="borderRightStyle">none</property>
                         <property name="borderTopStyle">none</property>
                         <property name="masterPage">Simple MasterPage</property>
-                        <property name="pageBreakAfter">avoid</property>
-                        <property name="pageBreakBefore">avoid</property>
-                        <property name="pageBreakInside">avoid</property>
+                        <property name="pageBreakAfter">auto</property>
+                        <property name="pageBreakBefore">auto</property>
+                        <property name="pageBreakInside">auto</property>
                         <property name="width">6.84375in</property>
                         <property name="dataSet">NutList</property>
                         <list-property name="visibility">
@@ -8492,9 +8492,43 @@ false
                                             </label>
                                         </cell>
                                         <cell id="5783">
-                                            <data id="3125">
-                                                <property name="resultSetColumn">lclLabelClaim</property>
-                                            </data>
+                                            <table id="3110">
+                                                <property name="width">6.030534351145038in</property>
+                                                <property name="dataSet">labelClaimList</property>
+                                                <list-property name="boundDataColumns">
+                                                    <structure>
+                                                        <property name="name">lclType</property>
+                                                        <text-property name="displayName">lclType</text-property>
+                                                        <expression name="expression" type="javascript">dataSetRow["lclType"]</expression>
+                                                        <property name="dataType">string</property>
+                                                    </structure>
+                                                    <structure>
+                                                        <property name="name">lclLabelClaim</property>
+                                                        <text-property name="displayName">lclLabelClaim</text-property>
+                                                        <expression name="expression" type="javascript">dataSetRow["legalName"] != null &amp;&amp; dataSetRow["legalName"] != "" ? dataSetRow["legalName"] : dataSetRow["lclLabelClaim"]</expression>
+                                                        <property name="dataType">string</property>
+                                                        <property name="allowExport">true</property>
+                                                    </structure>
+                                                    <structure>
+                                                        <property name="name">lclIsClaimed</property>
+                                                        <text-property name="displayName">lclIsClaimed</text-property>
+                                                        <expression name="expression" type="javascript">dataSetRow["lclIsClaimed"]</expression>
+                                                        <property name="dataType">string</property>
+                                                    </structure>
+                                                </list-property>
+                                                <column id="3121">
+                                                    <property name="width">4.603053435114504in</property>
+                                                </column>
+                                                <detail>
+                                                    <row id="3114">
+                                                        <cell id="3116">
+                                                            <data id="3125">
+                                                                <property name="resultSetColumn">lclLabelClaim</property>
+                                                            </data>
+                                                        </cell>
+                                                    </row>
+                                                </detail>
+                                            </table>
                                         </cell>
                                     </row>
                                 </grid>

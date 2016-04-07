@@ -2093,6 +2093,7 @@ Après décongélation, à conserver au réfrigérateur et à consommer dans la 
       <dynamicCharactLists>
         <dynamicCharactList dynamicCharactTitle="Rendement (%)" dynamicCharactValue="100.0"/>
         <dynamicCharactList dynamicCharactTitle="Qte totale MeO (kg)" dynamicCharactValue="0.2"/>
+        <dynamicCharactList dynamicCharactTitle="Nb Ech" dynamicCharactValue="10"/>
         <dynamicCharactList dynamicCharactTitle="Profit (%)" dynamicCharactValue="88.4774306769344"/>
         <dynamicCharactList dynamicCharactTitle="Co&#xFB;t MP total (&#x20AC;/kg)" dynamicCharactValue="1.5635699952316284"/>
         <dynamicCharactList dynamicCharactTitle="Co&#xFB;t (&#x20AC;/UV)" dynamicCharactValue=""/>
