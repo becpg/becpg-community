@@ -85,7 +85,14 @@
 			<itemType name="bcpg:ing" />
 			<itemType name="bcpg:organo" />
 			<itemType name="bcpg:physicoChem" />
+			<itemType name="bcpg:cost" />
 		</itemTypes>
+		<filterTypes>
+			<itemType name="bcpg:finishedProduct"  selected="true"/>
+			<itemType name="bcpg:semiFinishedProduct"  />
+			<itemType name="bcpg:rawMaterial"  />
+			<itemType name="bcpg:packagingMaterial"  />
+		</filterTypes>
 	</config>
 
 	<config evaluator="string-compare" condition="EntityDataLists">
