@@ -70,7 +70,7 @@
 
 		},
 
-		onActionBulkEdit : function EntityDataGrid_onActionShowWused(p_items) {
+		onActionBulkEdit : function EntityDataGrid_onActionBulkEdit(p_items) {
 			var items = YAHOO.lang.isArray(p_items) ? p_items : [ p_items ], me = this;
 
 			function onActionBulkEdit_redirect(itemAssocName, assocName) {
@@ -252,7 +252,7 @@
 		
 		
 		_showWusedPopup : function EntityDataGrid___showWusedPopup(popupKind, items, callBack) {
-			var showPopup = false;
+			var showPopup = false, entryCount = 0, entryKey =null;
 
 			var html = '<div class="hd">' + this.msg("header." + popupKind + ".picker") + '</div>';
 			html += '<div class="bd">';
@@ -272,6 +272,8 @@
 						|| key == "assoc_mpm_plResource"){
 						showPopup = true;
 						html += "<option value='" + key + "'>" + this.datalistColumns[key].label + "</option>";
+						entryCount++;
+						entryKey = key;
 					}
 				}
 			}
@@ -284,7 +286,13 @@
 			html += '</form></div>';
 			
 		   if (popupKind == "bulk-edit" || (showPopup && this.datalistMeta.name.indexOf("WUsed") != 0)) {
-				var containerDiv = document.createElement("div");
+				
+			   if(popupKind == "wused" && entryCount==1){
+				   callBack.call(this, entryKey, entryKey);
+				   return;
+			   }
+			   
+			   var containerDiv = document.createElement("div");
 				containerDiv.innerHTML = html;
 
 				this.widgets.wUsedPanel = Alfresco.util.createYUIPanel(containerDiv, {

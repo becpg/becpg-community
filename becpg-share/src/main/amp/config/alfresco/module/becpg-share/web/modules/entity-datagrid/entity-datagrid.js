@@ -346,7 +346,12 @@
                             /**
                              * columnForm id
                              */
-                            columnFormId : null
+                            columnFormId : null,
+                            
+                            /**
+                             * filter formId
+                             */
+                            filterFormId : "filter"
                         },
 
                         /**
@@ -887,7 +892,7 @@
 	                                                itemKind : "type",
 	                                                itemId : this.options.itemType != null ? this.options.itemType
 	                                                        : this.datalistMeta.itemType,
-	                                                formId : "filter",
+	                                                formId : this.options.filterFormId!=null ?  this.options.filterFormId :  "filter",
 	                                                list : listName
 	                                            });
 	

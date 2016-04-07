@@ -53,6 +53,7 @@
 			type : null,
 			itemType : null,
 			assocType : null,
+			filterType : null,
 			nodeRefs : null,
 			searchQuery : null,
 			searchTerm : null
@@ -104,6 +105,20 @@
 						me.widgets.typeSelect.set("label", menuItem.cfg.getProperty("text")+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
 					}
 				});
+				
+				
+				this.widgets.typeFilterSelect = Alfresco.util.createYUIButton(this, "typeFilterSelect-button", this.onTypeFilterSelect, {
+					type : "menu",
+					menu : "typeFilterSelect-menu",
+					lazyloadmenu : false
+				});
+
+				this.widgets.typeFilterSelect.getMenu().subscribe("click", function(p_sType, p_aArgs) {
+					var menuItem = p_aArgs[1];
+					if (menuItem) {
+						me.widgets.typeFilterSelect.set("label", menuItem.cfg.getProperty("text")+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
+					}
+				});
 
 				var dt = Alfresco.util.ComponentManager.find({
 					name : "beCPG.module.EntityDataGrid"
@@ -118,16 +133,18 @@
 						}
 
 						dt.options.extraParams = YAHOO.lang.JSON.stringify({
-							operator : me.widgets.operators.value
+							operator : me.widgets.operators.value,
+							typeFilter : me.options.filterType
 						});
 					} else {
 						dt.options.extraParams = YAHOO.lang.JSON.stringify({
 							operator : me.widgets.operators.value,
 							searchQuery : YAHOO.lang.JSON.parse(me.options.searchQuery),
-							searchTerm : me.options.searchTerm
+							searchTerm : me.options.searchTerm,
+							typeFilter : me.options.filterType
 						});
 					}
-
+					
 					dt.onDatalistColumns = function(response) {
 						var rename = true, columnId = "assoc_" + me.options.assocType.replace(":", "_");
 						if (response.json.columns.length < 1) {
@@ -189,7 +206,23 @@
 
 				// select first
 
-				var items = this.widgets.typeSelect.getMenu().getItems();
+
+				var items = this.widgets.typeFilterSelect.getMenu().getItems();
+
+				for ( var i in items) {
+					var typeSelected = items[i];
+					if (typeSelected) {
+						me.widgets.typeFilterSelect.set("label", typeSelected.cfg.getProperty("text")+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
+						var className = typeSelected._oAnchor.children[0].attributes[0].nodeValue;
+						this.options.filterType = className.split("#")[0];
+						if (className.indexOf("selected") > -1) {
+							break;
+						}
+					}
+				}
+				
+				
+				 items = this.widgets.typeSelect.getMenu().getItems();
 
 				if (items && items.length > 0) {
 					me.widgets.showButton.set("disabled", false);
@@ -207,6 +240,8 @@
 						}
 					}
 				}
+				
+				
 			}
 		},
 
@@ -215,6 +250,14 @@
 
 			var className = Alfresco.util.findEventClass(eventTarget);
 			this._extractValues(className);
+		},
+		
+		onTypeFilterSelect : function WUsedForm_onTypeFilterSelect(sType, aArgs, p_obj) {
+			var eventTarget = aArgs[1];
+
+			var className = Alfresco.util.findEventClass(eventTarget);
+			this.options.filterType = className.split("#")[0];
+			
 		},
 
 		onWusedTypeSelect : function WUsedForm_onItemTypeSelect(sType, aArgs, p_obj) {
