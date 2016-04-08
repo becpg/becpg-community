@@ -747,12 +747,17 @@
                 </structure>
                 <structure>
                     <property name="name">costPerKilo</property>
-                    <expression name="expression">row["costPerProduct"] / row["netWeight"]</expression>
+                    <expression name="expression">row["costPerProduct"] / (row["netWeight"] != null ? row["netWeight"] : row["productCompoQtyUsed"])</expression>
                     <property name="dataType">float</property>
                 </structure>
                 <structure>
                     <property name="name">compoListProductLabel</property>
-                    <expression name="expression">row["compoListProduct"] + " " + (row["versionLabel"] == null ? "1.0" : row["versionLabel"])</expression>
+                    <expression name="expression">if(row["title"] != null &amp;&amp; row["title"] != ""){
+row["title"]
+}
+else{
+row["compoListProduct"]
+}</expression>
                     <property name="dataType">string</property>
                 </structure>
             </list-property>
@@ -816,8 +821,7 @@
                 </structure>
                 <structure>
                     <property name="columnName">compoListYieldPerc</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
+                    <property name="analysis">measure</property>
                     <text-property name="heading">compoListYieldPerc</text-property>
                 </structure>
                 <structure>
@@ -867,6 +871,18 @@
                     <property name="analysis">dimension</property>
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">itemTypeEntity</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">title</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">title</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">productCompoQtyUsed_1</property>
+                    <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">productCompoQtyUsed_1</text-property>
                 </structure>
             </list-property>
             <list-property name="parameters"/>
@@ -920,7 +936,7 @@
                     <structure>
                         <property name="position">10</property>
                         <property name="name">compoListYieldPerc</property>
-                        <property name="dataType">string</property>
+                        <property name="dataType">float</property>
                     </structure>
                     <structure>
                         <property name="position">11</property>
@@ -964,16 +980,26 @@
                     </structure>
                     <structure>
                         <property name="position">19</property>
-                        <property name="name">costPerProduct</property>
-                        <property name="dataType">float</property>
+                        <property name="name">title</property>
+                        <property name="dataType">string</property>
                     </structure>
                     <structure>
                         <property name="position">20</property>
-                        <property name="name">costPerKilo</property>
+                        <property name="name">productCompoQtyUsed_1</property>
                         <property name="dataType">float</property>
                     </structure>
                     <structure>
                         <property name="position">21</property>
+                        <property name="name">costPerProduct</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">22</property>
+                        <property name="name">costPerKilo</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">23</property>
                         <property name="name">compoListProductLabel</property>
                         <property name="dataType">string</property>
                     </structure>
@@ -1048,8 +1074,8 @@
                     <property name="position">10</property>
                     <property name="name">compoListYieldPerc</property>
                     <property name="nativeName">compoListYieldPerc</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
                 </structure>
                 <structure>
                     <property name="position">11</property>
@@ -1107,8 +1133,22 @@
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
+                <structure>
+                    <property name="position">19</property>
+                    <property name="name">title</property>
+                    <property name="nativeName">title</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">20</property>
+                    <property name="name">productCompoQtyUsed_1</property>
+                    <property name="nativeName">productCompoQtyUsed_1</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/compoLists/compoList]#:#{depthLevel;STRING;/@depthLevel},{compoListProduct;STRING;/@compoListProduct},{compoListQtySubFormula;BIGDECIMAL;/@compoListQtySubFormula},{compoListQty;DOUBLE;/@compoListQty},{compoListUnit;STRING;/@compoListUnit},{compoListQtyAfterProcess;DOUBLE;/@compoListQtyAfterProcess},{itemType;STRING;/@itemType},{erpCode;STRING;/@erpCode},{variants;STRING;/@variants},{compoListYieldPerc;STRING;/@compoListYieldPerc},{compoListLossPerc;DOUBLE;/@compoListLossPerc},{instruction;STRING;/instruction},{unitTotalCost;DOUBLE;/@unitTotalCost},{productCompoQtyUsed;DOUBLE;../../../productCompoQtyUsed},{netWeight;DOUBLE;../../../netWeight},{compoListQtyForProduct;DOUBLE;/@compoListQtyForProduct},{versionLabel;STRING;/@versionLabel},{itemTypeEntity;STRING;../../../itemType}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/compoLists/compoList]#:#{depthLevel;STRING;/@depthLevel},{compoListProduct;STRING;/@compoListProduct},{compoListQtySubFormula;BIGDECIMAL;/@compoListQtySubFormula},{compoListQty;DOUBLE;/@compoListQty},{compoListUnit;STRING;/@compoListUnit},{compoListQtyAfterProcess;DOUBLE;/@compoListQtyAfterProcess},{itemType;STRING;/@itemType},{erpCode;STRING;/@erpCode},{variants;STRING;/@variants},{compoListYieldPerc;DOUBLE;/@compoListYieldPerc},{compoListLossPerc;DOUBLE;/@compoListLossPerc},{instruction;STRING;/instruction},{unitTotalCost;DOUBLE;/@unitTotalCost},{productCompoQtyUsed;DOUBLE;../../../productCompoQtyUsed},{netWeight;DOUBLE;../../../netWeight},{compoListQtyForProduct;DOUBLE;/@compoListQtyForProduct},{versionLabel;STRING;/@versionLabel},{itemTypeEntity;STRING;../../../itemType},{title;STRING;/@title},{productCompoQtyUsed_1;DOUBLE;../../../productCompoQtyUsed}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -1457,6 +1497,9 @@ row["costListValuePerProduct"] / row["netWeight"]
 }
 else if(row["costListUnit"].indexOf("/kg") > 0){
 row["costListValue"]
+}
+else if(row["costListUnit"].indexOf("/P") > 0){
+row["costListValue"] / row["netWeight"]
 }</expression>
                     <property name="dataType">float</property>
                 </structure>
@@ -1756,17 +1799,33 @@ row["costListValuePerProduct"] * row["nbProductsPkgLevel3"]
             <list-property name="computedColumns">
                 <structure>
                     <property name="name">costPerProduct</property>
-                    <expression name="expression">row["unitTotalCost"] * row["packagingListQtyForProduct"] * (1 + row["packagingListLossPerc"]/100)</expression>
+                    <expression name="expression">var qty = 0;
+
+if(row["itemType"] == "finishedProduct"){
+qty= row["packagingListQtyForProduct"];
+}
+else if(row["packagingListUnit"]=="g"){
+qty = row["packagingListQty"] / 1000;
+}
+else{
+qty = row["packagingListQty"]
+}
+row["unitTotalCost"] * qty * (1 + row["packagingListLossPerc"]/100)</expression>
                     <property name="dataType">float</property>
                 </structure>
                 <structure>
                     <property name="name">costPerKilo</property>
-                    <expression name="expression">row["costPerProduct"] / row["netWeight"]</expression>
+                    <expression name="expression">row["costPerProduct"] / (row["netWeight"] != null ?row["netWeight"]:row["productCompoQtyUsed"])</expression>
                     <property name="dataType">float</property>
                 </structure>
                 <structure>
                     <property name="name">packagingListProductLabel</property>
-                    <expression name="expression">row["packagingListProduct"] + " " + (row["versionLabel"] == null ? "1.0" : row["versionLabel"])</expression>
+                    <expression name="expression">if(row["title"] != null &amp;&amp; row["title"] != ""){
+row["title"]
+}
+else{
+row["packagingListProduct"]
+}</expression>
                     <property name="dataType">string</property>
                 </structure>
             </list-property>
@@ -1849,6 +1908,17 @@ row["costListValuePerProduct"] * row["nbProductsPkgLevel3"]
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">itemTypeEntity</text-property>
                 </structure>
+                <structure>
+                    <property name="columnName">title</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">title</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">productCompoQtyUsed</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="heading">productCompoQtyUsed</text-property>
+                </structure>
             </list-property>
             <list-property name="filter"/>
             <list-property name="parameters"/>
@@ -1921,16 +1991,26 @@ row["costListValuePerProduct"] * row["nbProductsPkgLevel3"]
                     </structure>
                     <structure>
                         <property name="position">14</property>
-                        <property name="name">costPerProduct</property>
-                        <property name="dataType">float</property>
+                        <property name="name">title</property>
+                        <property name="dataType">string</property>
                     </structure>
                     <structure>
                         <property name="position">15</property>
-                        <property name="name">costPerKilo</property>
+                        <property name="name">productCompoQtyUsed</property>
                         <property name="dataType">float</property>
                     </structure>
                     <structure>
                         <property name="position">16</property>
+                        <property name="name">costPerProduct</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">17</property>
+                        <property name="name">costPerKilo</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">18</property>
                         <property name="name">packagingListProductLabel</property>
                         <property name="dataType">string</property>
                     </structure>
@@ -2029,8 +2109,22 @@ row["costListValuePerProduct"] * row["nbProductsPkgLevel3"]
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
+                <structure>
+                    <property name="position">14</property>
+                    <property name="name">title</property>
+                    <property name="nativeName">title</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">15</property>
+                    <property name="name">productCompoQtyUsed</property>
+                    <property name="nativeName">productCompoQtyUsed</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingLists/packagingList]#:#{erpCode;STRING;/@erpCode},{packagingListProduct;STRING;/@packagingListProduct},{packagingListQty;DOUBLE;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{unitTotalCost;DOUBLE;/@unitTotalCost},{packagingListLossPerc;DOUBLE;/@packagingListLossPerc},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{packagingListQtyForProduct;DOUBLE;/@packagingListQtyForProduct},{depthLevel;INT;/@depthLevel},{netWeight;DOUBLE;../../../netWeight},{itemType;STRING;/@itemType},{versionLabel;STRING;/@versionLabel},{itemTypeEntity;STRING;../../../itemType}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingLists/packagingList]#:#{erpCode;STRING;/@erpCode},{packagingListProduct;STRING;/@packagingListProduct},{packagingListQty;DOUBLE;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{unitTotalCost;DOUBLE;/@unitTotalCost},{packagingListLossPerc;DOUBLE;/@packagingListLossPerc},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{packagingListQtyForProduct;DOUBLE;/@packagingListQtyForProduct},{depthLevel;INT;/@depthLevel},{netWeight;DOUBLE;../../../netWeight},{itemType;STRING;/@itemType},{versionLabel;STRING;/@versionLabel},{itemTypeEntity;STRING;../../../itemType},{title;STRING;/@title},{productCompoQtyUsed;DOUBLE;../../../productCompoQtyUsed}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -2141,12 +2235,17 @@ row["costListValuePerProduct"] * row["nbProductsPkgLevel3"]
                 </structure>
                 <structure>
                     <property name="name">costPerKilo</property>
-                    <expression name="expression">row["costPerProduct"] / row["netWeight"]</expression>
+                    <expression name="expression">row["costPerProduct"] / (row["netWeight"] != null ?row["netWeight"]:row["productCompoQtyUsed"])</expression>
                     <property name="dataType">float</property>
                 </structure>
                 <structure>
                     <property name="name">plResourceLabel</property>
-                    <expression name="expression">row["plResource"] + " " + (row["versionLabel"] == null ? "1.0" : row["versionLabel"])</expression>
+                    <expression name="expression">if(row["title"] != null &amp;&amp; row["title"] != ""){
+row["title"]
+}
+else{
+row["plResource"]
+}</expression>
                     <property name="dataType">string</property>
                 </structure>
             </list-property>
@@ -2229,6 +2328,17 @@ row["costListValuePerProduct"] * row["nbProductsPkgLevel3"]
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">itemTypeEntity</text-property>
                 </structure>
+                <structure>
+                    <property name="columnName">title</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">title</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">productCompoQtyUsed</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="heading">productCompoQtyUsed</text-property>
+                </structure>
             </list-property>
             <list-property name="filter">
                 <structure>
@@ -2309,16 +2419,26 @@ row["costListValuePerProduct"] * row["nbProductsPkgLevel3"]
                     </structure>
                     <structure>
                         <property name="position">14</property>
-                        <property name="name">costPerProduct</property>
-                        <property name="dataType">float</property>
+                        <property name="name">title</property>
+                        <property name="dataType">string</property>
                     </structure>
                     <structure>
                         <property name="position">15</property>
-                        <property name="name">costPerKilo</property>
+                        <property name="name">productCompoQtyUsed</property>
                         <property name="dataType">float</property>
                     </structure>
                     <structure>
                         <property name="position">16</property>
+                        <property name="name">costPerProduct</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">17</property>
+                        <property name="name">costPerKilo</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">18</property>
                         <property name="name">plResourceLabel</property>
                         <property name="dataType">string</property>
                     </structure>
@@ -2417,8 +2537,22 @@ row["costListValuePerProduct"] * row["nbProductsPkgLevel3"]
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
+                <structure>
+                    <property name="position">14</property>
+                    <property name="name">title</property>
+                    <property name="nativeName">title</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">15</property>
+                    <property name="name">productCompoQtyUsed</property>
+                    <property name="nativeName">productCompoQtyUsed</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/processLists/processList]#:#{unitTotalCost;DOUBLE;/@unitTotalCost},{plRateProduct;DOUBLE;/@plRateProduct},{plRateResource;DOUBLE;/@plRateResource},{plRateProcess;DOUBLE;/@plRateProcess},{plQtyResource;DOUBLE;/@plQtyResource},{plUnit;STRING;/@plUnit},{plStep;STRING;/@plStep},{plResource;STRING;/@plResource},{processListQtyForProduct;DOUBLE;/@processListQtyForProduct},{netWeight;DOUBLE;../../../netWeight},{versionLabel;STRING;/@versionLabel},{depthLevel;INT;/@depthLevel},{itemTypeEntity;STRING;../../../itemType}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/processLists/processList]#:#{unitTotalCost;DOUBLE;/@unitTotalCost},{plRateProduct;DOUBLE;/@plRateProduct},{plRateResource;DOUBLE;/@plRateResource},{plRateProcess;DOUBLE;/@plRateProcess},{plQtyResource;DOUBLE;/@plQtyResource},{plUnit;STRING;/@plUnit},{plStep;STRING;/@plStep},{plResource;STRING;/@plResource},{processListQtyForProduct;DOUBLE;/@processListQtyForProduct},{netWeight;DOUBLE;../../../netWeight},{versionLabel;STRING;/@versionLabel},{depthLevel;INT;/@depthLevel},{itemTypeEntity;STRING;../../../itemType},{title;STRING;/@title},{productCompoQtyUsed;DOUBLE;../../../productCompoQtyUsed}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -3093,12 +3227,14 @@ dataSetRow["versionLabel"]
     </page-setup>
     <body>
         <grid id="2480">
-            <property name="width">6.885496183206107in</property>
+            <property name="width">6.885416666666667in</property>
             <column id="2481">
                 <property name="style">becpg-row-header</property>
-                <property name="width">1.3206106870229009in</property>
+                <property name="width">1.6458333333333333in</property>
             </column>
-            <column id="2482"/>
+            <column id="2482">
+                <property name="width">5.239583333333333in</property>
+            </column>
             <row id="3450">
                 <cell id="3451">
                     <label id="3453">
@@ -3386,8 +3522,14 @@ dataSetRow["versionLabel"]
                 <structure>
                     <property name="name">costListValuePerProduct</property>
                     <text-property name="displayName">costListValuePerProduct</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["costListValuePerProduct"]</expression>
+                    <expression name="expression" type="javascript">if(dataSetRow["itemType"] == "finishedProduct"){
+dataSetRow["costListValuePerProduct"] / dataSetRow["netWeight"]
+}
+else if(dataSetRow["costListUnit"].indexOf("/P") > 0){
+dataSetRow["costListValue"]
+}</expression>
                     <property name="dataType">float</property>
+                    <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">costPerKilo</property>
@@ -3701,7 +3843,8 @@ dataSetRow["versionLabel"]
                     <property name="name">compoListYieldPerc</property>
                     <text-property name="displayName">compoListYieldPerc</text-property>
                     <expression name="expression" type="javascript">dataSetRow["compoListYieldPerc"]</expression>
-                    <property name="dataType">string</property>
+                    <property name="dataType">float</property>
+                    <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">compoListLossPerc</property>
@@ -3812,14 +3955,20 @@ dataSetRow["versionLabel"]
                     <expression name="filterExpr" type="javascript">dataSetRow["depthLevel"]==1</expression>
                     <property name="allowExport">true</property>
                 </structure>
+                <structure>
+                    <property name="name">title</property>
+                    <text-property name="displayName">title</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["title"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
             </list-property>
             <column id="2910">
                 <property name="style">becpg-col-border</property>
-                <property name="width">0.4732824427480916in</property>
+                <property name="width">0.6458333333333334in</property>
             </column>
             <column id="2906">
                 <property name="style">becpg-col-border</property>
-                <property name="width">2.8854166666666665in</property>
+                <property name="width">2.7083333333333335in</property>
             </column>
             <column id="3567">
                 <property name="style">becpg-col-border</property>
@@ -3850,12 +3999,6 @@ dataSetRow["versionLabel"]
                 <property name="width">0.4270833333333333in</property>
             </column>
             <column id="3464">
-                <list-property name="visibility">
-                    <structure>
-                        <property name="format">all</property>
-                        <expression name="valueExpr" type="javascript">row["itemTypeEntity"].indexOf("finishedProduct") == -1</expression>
-                    </structure>
-                </list-property>
                 <property name="style">becpg-col-border</property>
                 <property name="width">0.4791666666666667in</property>
             </column>
@@ -3998,7 +4141,7 @@ matière
                             <property name="style">becpg-data</property>
                             <structure name="numberFormat">
                                 <property name="category">Custom</property>
-                                <property name="pattern">#0.##</property>
+                                <property name="pattern">#0</property>
                             </structure>
                             <property name="resultSetColumn">compoListYieldPerc</property>
                         </data>
@@ -4260,12 +4403,6 @@ dataSetRow["packagingListPkgLevel"]
                 <property name="width">0.5833333333333334in</property>
             </column>
             <column id="3657">
-                <list-property name="visibility">
-                    <structure>
-                        <property name="format">all</property>
-                        <expression name="valueExpr" type="javascript">row["itemTypeEntity"].indexOf("finishedProduct") == -1</expression>
-                    </structure>
-                </list-property>
                 <property name="style">becpg-col-border</property>
                 <property name="width">0.5729166666666666in</property>
             </column>
@@ -4628,12 +4765,6 @@ dataSetRow["packagingListPkgLevel"]
                 <property name="width">0.7604166666666666in</property>
             </column>
             <column id="3629">
-                <list-property name="visibility">
-                    <structure>
-                        <property name="format">all</property>
-                        <expression name="valueExpr" type="javascript">row["itemTypeEntity"].indexOf("finishedProduct") == -1</expression>
-                    </structure>
-                </list-property>
                 <property name="style">becpg-col-border</property>
                 <property name="width">0.7604166666666666in</property>
             </column>
