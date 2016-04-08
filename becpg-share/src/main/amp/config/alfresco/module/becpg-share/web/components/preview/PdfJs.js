@@ -998,7 +998,9 @@
          Alfresco.util.PopupManager.displayMessage({
             text: loadingErrorMessage
          });
-         Alfresco.logger.error("Could not load PDF due to error " + exception.name + " (code " + exception.code + "): " + message);
+         if(exception){
+        	 Alfresco.logger.error("Could not load PDF due to error " + exception.name + " (code " + exception.code + "): " + message);
+         }
       },
 
       /**
