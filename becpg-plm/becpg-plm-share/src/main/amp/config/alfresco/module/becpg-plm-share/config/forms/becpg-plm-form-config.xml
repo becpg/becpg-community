@@ -5614,12 +5614,17 @@
 					<show id="bcpg:labelClaimFormula" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:charactName" />
+					<field id="bcpg:charactName" />	
+					<field id="bcpg:legalName">
+                   <control template="/org/alfresco/components/form/controls/textarea.ftl">
+                       <control-param name="maxLength">10000</control-param>
+                   </control>
+               </field>				
 					<field id="cm:description">
-						<control>
-							<control-param name="activateLinks">true</control-param>
-						</control>
-					</field>
+                   <control template="/org/alfresco/components/form/controls/textarea.ftl">
+                       <control-param name="maxLength">10000</control-param>
+                   </control>
+               </field>					
 					<field id="bcpg:labelClaimFormula">
 						<control template="/org/alfresco/components/form/controls/spel-editor.ftl">
 							<control-param name="rows">10</control-param>
@@ -5643,11 +5648,16 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:charactName" />
+					<field id="bcpg:legalName">
+                   <control template="/org/alfresco/components/form/controls/textarea.ftl">
+                       <control-param name="maxLength">10000</control-param>
+                   </control>
+               </field>				
 					<field id="cm:description">
-						<control>
-							<control-param name="activateLinks">true</control-param>
-						</control>
-					</field>
+                   <control template="/org/alfresco/components/form/controls/textarea.ftl">
+                       <control-param name="maxLength">10000</control-param>
+                   </control>
+               </field>	
 					<field id="bcpg:labelClaimFormula">
 						<control template="/org/alfresco/components/form/controls/spel-editor.ftl">
 							<control-param name="rows">10</control-param>
@@ -5669,6 +5679,11 @@
 					</field>
 					<field id="bcpg:legalName">
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:labelClaimType">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
 					</field>
 				</appearance>
 			</form>

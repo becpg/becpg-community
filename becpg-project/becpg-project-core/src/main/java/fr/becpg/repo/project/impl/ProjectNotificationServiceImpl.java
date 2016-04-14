@@ -188,7 +188,7 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 						mailAction.setParameterValue(MailActionExecuter.PARAM_TEMPLATE_MODEL, (Serializable) templateModel);
 
 						AuthenticationUtil.runAsSystem(() -> {
-							actionService.executeAction(mailAction, null);
+							actionService.executeAction(mailAction, null, true, true);
 							return null;
 						});
 					}
