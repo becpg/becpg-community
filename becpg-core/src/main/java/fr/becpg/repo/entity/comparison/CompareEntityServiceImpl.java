@@ -208,7 +208,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 							NodeRef c = (target2Refs.get(0)).getTargetRef();							
 							if (characteristicNodeRef.equals(c)) {
-								logger.info("###c " + nodeService.getProperty(c, ContentModel.PROP_NAME));
+								logger.debug("###c " + nodeService.getProperty(c, ContentModel.PROP_NAME));
 								dataListItem2NodeRef = d;
 								break;
 							}
@@ -633,7 +633,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		if (comparisonDataItem == null) {
 			String[] values = new String[nbEntities];
 			values[0] = strValue1;
-			logger.info("nbEntities " + nbEntities + " comparisonPosition " + comparisonPosition);
+			logger.debug("nbEntities " + nbEntities + " comparisonPosition " + comparisonPosition);
 			values[comparisonPosition] = strValue2;
 			comparisonDataItem = new CompareResultDataItem(dataListType, charactPath, characteristic, propertyQName, values);
 			comparisonMap.put(key, comparisonDataItem);
