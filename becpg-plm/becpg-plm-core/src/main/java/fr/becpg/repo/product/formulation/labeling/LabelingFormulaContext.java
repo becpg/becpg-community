@@ -319,7 +319,7 @@ public class LabelingFormulaContext {
 		}
 
 		if (plural && (lblComponent instanceof IngTypeItem)) {
-			return uncapitalize(((IngTypeItem) lblComponent).getPluralLegalName(I18NUtil.getLocale()));
+			return ((IngTypeItem) lblComponent).getPluralLegalName(I18NUtil.getLocale());
 		}
 
 		if (showIngCEECode && (lblComponent instanceof IngItem)) {
@@ -331,12 +331,12 @@ public class LabelingFormulaContext {
 		if (!lblComponent.getAllergens().isEmpty()) {
 			if (((lblComponent instanceof CompositeLabeling) && ((CompositeLabeling) lblComponent).getIngList().isEmpty())
 					|| (lblComponent instanceof IngItem)) {
-				return createAllergenAwareLabel(uncapitalize(lblComponent.getLegalName(I18NUtil.getLocale())), lblComponent.getAllergens());
+				return createAllergenAwareLabel(lblComponent.getLegalName(I18NUtil.getLocale()), lblComponent.getAllergens());
 			}
 
 		}
 
-		return uncapitalize(lblComponent.getLegalName(I18NUtil.getLocale()));
+		return lblComponent.getLegalName(I18NUtil.getLocale());
 	}
 
 	private String uncapitalize(String legalName) {
