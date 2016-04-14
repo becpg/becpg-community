@@ -331,12 +331,13 @@ public class EntityReportServiceImpl implements EntityReportService {
 	private boolean isLocaleEnableOnTemplate(NodeRef tplNodeRef, Locale locale) {
 
 		List<String> langs = (List<String>) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_LOCALES);
-		if (langs != null) {
+		if (langs != null && !langs.isEmpty()) {
 			for (String lang : langs) {
 				if (locale.equals(new Locale(lang))) {
 					return true;
 				}
 			}
+			return false;
 		}
 
 		return Locale.getDefault().getLanguage().equals(locale.getLanguage());
