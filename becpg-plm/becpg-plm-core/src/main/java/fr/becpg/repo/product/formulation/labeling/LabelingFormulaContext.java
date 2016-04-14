@@ -340,7 +340,7 @@ public class LabelingFormulaContext {
 	}
 
 	private String uncapitalize(String legalName) {
-		if ((legalName == null) || legalName.isEmpty() || Pattern.compile("^([A-Z]{2}|[A-Z][1-9]|\\-|_).*$").matcher(legalName).find()) {
+		if ((legalName == null) || legalName.isEmpty() || Pattern.compile("^([A-Z]{2}|[A-Z][1-9]|[A-Z]\\-|[A-Z]_).*$").matcher(legalName).find()) {
 			return legalName;
 		}
 		return StringUtils.uncapitalize(legalName);
