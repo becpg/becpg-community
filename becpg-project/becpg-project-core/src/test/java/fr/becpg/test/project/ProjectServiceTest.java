@@ -152,6 +152,66 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 
 	}
 
+	
+	@Test
+	public void testonHoldProject() {
+
+		final NodeRef projectNodeRef = createProject(ProjectState.InProgress, new Date(), null);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+
+			// check workflow instance is active
+			assertEquals(true, workflowService.getWorkflowById(projectData.getTaskList().get(0).getWorkflowInstance()).isActive());
+
+			// cancel project and check wf are not active
+			logger.debug("projectData.getTaskList().get(0).getWorkflowInstance(): " + projectData.getTaskList().get(0).getWorkflowInstance());
+
+			projectData.setProjectState(ProjectState.OnHold);
+
+			alfrescoRepository.save(projectData);
+
+			return null;
+		} , false, true);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+
+			for (TaskListDataItem task : projectData.getTaskList()) {
+				assertTrue(task.getIsExcludeFromSearch());
+			}
+
+			assertEquals("", projectData.getTaskList().get(0).getWorkflowInstance());
+
+			projectData.setProjectState(ProjectState.InProgress);
+
+			alfrescoRepository.save(projectData);
+
+			return null;
+		} , false, true);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+
+			for (TaskListDataItem task : projectData.getTaskList()) {
+
+				assertFalse(task.getIsExcludeFromSearch());
+			}
+
+			assertEquals(true, workflowService.getWorkflowById(projectData.getTaskList().get(0).getWorkflowInstance()).isActive());
+
+			projectData.setProjectState(ProjectState.InProgress);
+
+			alfrescoRepository.save(projectData);
+
+			return null;
+		} , false, true);
+
+	}
+	
 	/**
 	 * Test a project can be deleted (and workflow)
 	 */
