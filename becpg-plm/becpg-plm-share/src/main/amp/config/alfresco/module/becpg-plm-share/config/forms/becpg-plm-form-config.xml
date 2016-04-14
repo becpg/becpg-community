@@ -5680,6 +5680,11 @@
 					<field id="bcpg:legalName">
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
+					<field id="bcpg:labelClaimType">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 
