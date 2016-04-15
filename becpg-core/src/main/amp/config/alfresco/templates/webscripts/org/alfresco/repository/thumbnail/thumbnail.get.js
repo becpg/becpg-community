@@ -53,7 +53,7 @@ function main()
 	     node = bThumbnail.getThumbnailNode(node);
 	  }
     } else if((thumbnailName == "webpreview" || thumbnailName == "pdf") && node.isSubType("rep:report")){
-        bThumbnail.refreshReport(node);
+    	node = bThumbnail.refreshReport(node);
         model.allowBrowserToCache = "false";
     }
     
