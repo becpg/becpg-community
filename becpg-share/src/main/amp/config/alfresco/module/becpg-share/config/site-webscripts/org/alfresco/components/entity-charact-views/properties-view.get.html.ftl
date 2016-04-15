@@ -63,8 +63,7 @@
 								   	
 								   	<div class="yui-content properties-tab">
 								   		<div id="tab_${el}-comments">
-									   		<div  id="${el}-body"  class="comments-list">
-						            	  				            
+									   		<div  id="${el}-body"  class="comments-list">       
 					                           <div id="${el}-add-comment">
 									               <div id="${el}-add-form-container" class="theme-bg-color-4 hidden"></div>
 									            </div>
@@ -93,7 +92,9 @@
 									        </div>
 									   	</div>
 									   	<div id="tab_${el}-catlogs">
-								   			<div id="${el}-entity-catalog"></div> 
+									   		<div id="${el}_cat">
+								   				<div id="${el}_cat-entity-catalog"></div> 
+								   		  </div>	
 								   		</div>
 								   	</div>
 							   </div>

@@ -83,7 +83,7 @@
 							catalogId = catalogId+"_"+locale;
 						}
 						
-						html+="<div id="+instance.id+"_catalog_"+ catalogId +" class=\"catalog "+(key==0?"first-catalog":"")+"\">";
+						html+="<div class=\"catalog "+(key==0?"first-catalog":"")+"\">";
 						html+="<div class=\"catalog-header set-bordered-panel-heading\">";
 							html+="<span class=\"catalog-name\">"+instance.msg("label.catalog")+" \""+label+
 							(locale!=null?"<img src=\"/share/res/components/images/flags/"+locale+".png\">":"")+"\"</span>";
@@ -98,13 +98,13 @@
 						html+="</div>";
 
 						html+="<div class=\"catalog-details\">";
-						html+="<h3 id=\""+instance.id+"_"+catalogId+"_missingPropLabel\">"+instance.msg("label.missing_properties")+"</h3>";
+						html+="<h3 >"+instance.msg("label.missing_properties")+"</h3>";
 
 						//display missing props, if any
 						if(json[key].missingFields !== undefined){
 							html+="<ul class=\"catalog-missing-propList\">";
 								for(var field in json[key].missingFields){
-									html+="<li class=\"missing-field\" id=\"missing-field_"+json[key]+"_"+json[key].missingFields[field].displayName+"\">"
+									html+="<li class=\"missing-field\" >"
 											+json[key].missingFields[field].displayName+
 											(json[key].missingFields[field].locale!=null?"<img src=\"/share/res/components/images/flags/"
 													+json[key].missingFields[field].locale+".png\">":"")+"</li>";	
@@ -235,7 +235,7 @@
 							var html = parseJsonToHTML(response.json);
 							YAHOO.util.Dom.get(this.id+"-entity-catalog").innerHTML=html;
 														
-							var insertId = this.id.replace("-mgr", "");							
+							var insertId = this.id.replace("_cat","").replace("-mgr", "");							
 							var formId = insertId+"-form";
 							
 							var form = YAHOO.util.Dom.get(formId);
