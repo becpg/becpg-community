@@ -352,7 +352,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 				ret.add(new Locale(lang));
 			}
 		} else {
-			ret.add(Locale.getDefault());
+			ret.add(new Locale(Locale.getDefault().getLanguage()));
 		}
 		return ret;
 	}
