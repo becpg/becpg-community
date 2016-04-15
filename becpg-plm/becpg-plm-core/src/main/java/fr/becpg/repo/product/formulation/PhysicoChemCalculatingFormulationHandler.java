@@ -28,7 +28,7 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 
 	private static final Log logger = LogFactory.getLog(PhysicoChemCalculatingFormulationHandler.class);
 
-	public static final String MESSAGE_PHYSICO_NOT_IN_RANGE = "message.formulate.physicoChemList.notInRangeValue";
+	public static final String MESSAGE_PHYSICO_NOT_IN_RANGE = "message.formulate.physicoChem.notInRangeValue";
 	
 	@Override
 	protected Class<PhysicoChemListDataItem> getInstanceClass() {
