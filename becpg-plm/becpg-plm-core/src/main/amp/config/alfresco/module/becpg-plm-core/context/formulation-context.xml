@@ -181,7 +181,7 @@
 		<property name="contextClass" value="fr.becpg.repo.product.data.ProductData" />
 	</bean>
 
-
+<!-- 
   <bean id="fastProductFormulationChain" class="fr.becpg.repo.formulation.FormulationChain"
 		init-method="init">
 		<property name="handlers">
@@ -246,6 +246,6 @@
 		<property name="chainId" value="fastProductFormulationChain"/>
 		<property name="contextClass" value="fr.becpg.repo.product.data.ProductData" />
 		<property name="updateFormulatedDate" value="false"/>
-	</bean>
+	</bean> -->
 
 </beans>
