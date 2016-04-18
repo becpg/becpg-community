@@ -871,7 +871,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						&& recipeQtyUsed!=null
 						&& nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_WATER)) {
 					waterLost = (1 - (yield / 100d)) * recipeQtyUsed;
+					
 					qty -= waterLost;
+					
+					if (logger.isTraceEnabled()) {
+						logger.trace("Detected water lost: "+waterLost);
+					}
 				}
 
 				if ((qty != null) && (ratio != null)) {
@@ -1027,10 +1032,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					// Recur
 					if (!composite.isLeaf()) {
 
-						if (logger.isTraceEnabled()) {
-							logger.trace(" -- Recur call " + productData.getName() + " yield " + productData.getYield() + " ratio " + ratio);
-						}
-
 						Double recurYield = yield;
 						Double recurRecipeQtyUsed  = recipeQtyUsed;
 						if (!(productData instanceof LocalSemiFinishedProductData)) {
@@ -1043,6 +1044,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							
 							recurRecipeQtyUsed = productData.getRecipeQtyUsed();
 						}
+						
+						if (logger.isTraceEnabled()) {
+							logger.trace(" -- Recur call " + productData.getName() + " yield " + productData.getYield() + " ratio " + ratio);
+							logger.trace(" -- Recur yield " + recurYield + " recur recipeQtyUsed " + recurRecipeQtyUsed);
+						}
+						
 
 						visitCompositeLabeling(compositeLabeling, composite, labelingFormulaContext, computedRatio, recurYield,
 								recurRecipeQtyUsed, !parent.equals(compositeLabeling));
@@ -1053,7 +1060,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						&& ((productData instanceof LocalSemiFinishedProductData) || isMultiLevel))) {
 					// Update parent qty
 					if (qty != null) {
-						parent.setQtyTotal(parent.getQtyTotal() + applyYield(qty, yield, labelingFormulaContext));
+						parent.setQtyTotal(parent.getQtyTotal() + applyYield(qty+waterLost, yield, labelingFormulaContext));
 					}
 
 					if (volume != null) {
@@ -1069,6 +1076,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			applyReconstitution(parent, labelingFormulaContext.getReconstituableDataItems());
 			labelingFormulaContext.getReconstituableDataItems().clear();
 		}
+		
 
 		return parent;
 	}
