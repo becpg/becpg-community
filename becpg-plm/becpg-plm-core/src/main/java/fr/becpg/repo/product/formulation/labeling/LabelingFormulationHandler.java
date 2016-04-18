@@ -1035,6 +1035,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						Double recurRecipeQtyUsed  = recipeQtyUsed;
 						if (!(productData instanceof LocalSemiFinishedProductData)) {
 							recurYield = computeYield(productData);
+							
+							if((yield != null) && (yield != 100d)
+									&& recurYield!=null){
+								recurYield=recurYield*(yield/100);
+							}
+							
 							recurRecipeQtyUsed = productData.getRecipeQtyUsed();
 						}
 
