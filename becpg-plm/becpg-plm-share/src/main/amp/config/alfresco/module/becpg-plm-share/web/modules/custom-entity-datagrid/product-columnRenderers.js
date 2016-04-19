@@ -431,7 +431,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 				return '<span class="lcl-formulated-error" title="' + Alfresco.util.encodeHTML(error) + '">'
 						+ Alfresco.util.encodeHTML(data.displayValue) + '</span>';
 			}
-			return '<span class="' + data.metadata + '" >' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+			return '<span>' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
 		}
 
 	});
