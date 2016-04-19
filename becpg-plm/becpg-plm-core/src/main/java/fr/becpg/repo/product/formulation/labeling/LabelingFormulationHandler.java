@@ -872,11 +872,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						&& nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_WATER)) {
 					waterLost = (1 - (yield / 100d)) * recipeQtyUsed;
 					
-					qty -= waterLost;
-					
 					if (logger.isTraceEnabled()) {
-						logger.trace("Detected water lost: "+waterLost);
+						logger.trace("Detected water lost: "+waterLost+" for qty :"+qty);
 					}
+					
+					qty -= waterLost;
 				}
 
 				if ((qty != null) && (ratio != null)) {
@@ -968,6 +968,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 								}
 
 								if (composite.isLeaf() && (compositeLabeling.getQtyTotal() != null)) {
+									if(logger.isTraceEnabled()){
+										logger.trace("Add to totalQty: "+ applyYield(qty + waterLost, yield, labelingFormulaContext)+" yield: "+yield);
+										
+									}
+									
 									compositeLabeling.setQtyTotal(
 											applyYield(qty + waterLost, yield, labelingFormulaContext) + compositeLabeling.getQtyTotal());
 								}
@@ -991,6 +996,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							compositeLabeling.setVolume(volume);
 							compositeLabeling.setDeclarationType(declarationType);
 							if (composite.isLeaf()) {
+								if(logger.isTraceEnabled()){
+									logger.trace("Set totalQty: "+ applyYield(qty + waterLost, yield, labelingFormulaContext)+" yield: "+yield);
+									
+								}
 								compositeLabeling.setQtyTotal(applyYield(qty + waterLost, yield, labelingFormulaContext));
 								compositeLabeling.setVolumeTotal(applyYield(volume, yield, labelingFormulaContext));
 							}
@@ -1016,8 +1025,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 					Double computedRatio = 1d;
 					if (DeclarationType.Declare.equals(declarationType) && isMultiLevel && (qty != null)) {
-						Double qtyTotal = computeQtyTotal(composite, labelingFormulaContext);
-
+						Double qtyTotal = productData.getNetWeight(); 
+						
+						
 						if ((qtyTotal != null) && (qtyTotal != 0d)) {
 							computedRatio = qty / qtyTotal;
 						}
@@ -1060,7 +1070,13 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						&& ((productData instanceof LocalSemiFinishedProductData) || isMultiLevel))) {
 					// Update parent qty
 					if (qty != null) {
-						parent.setQtyTotal(parent.getQtyTotal() + applyYield(qty+waterLost, yield, labelingFormulaContext));
+						
+						if(logger.isTraceEnabled()){
+							logger.trace("Add to parent totalQty: "+ applyYield(qty + waterLost, yield, labelingFormulaContext)+" yield: "+yield);
+							
+						}
+						
+						parent.setQtyTotal(parent.getQtyTotal() + applyYield(qty + waterLost, yield, labelingFormulaContext));
 					}
 
 					if (volume != null) {
@@ -1081,21 +1097,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		return parent;
 	}
 
-	private Double computeQtyTotal(Composite<CompoListDataItem> composite, LabelingFormulaContext labelingFormulaContext) {
-		return composite.getChildren().stream().map(c -> c.getData())
-				.filter(c -> !DeclarationType.Omit.equals(getDeclarationType(c, null, labelingFormulaContext))).mapToDouble(c -> {
-					ProductData productData = (ProductData) alfrescoRepository.findOne(c.getProduct());
-
-					Double qty = FormulationHelper.getQtyInKg(c);
-					if (!(productData instanceof LocalSemiFinishedProductData)) {
-						qty *= FormulationHelper.getYield(c) / 100;
-					}
-					return qty;
-
-				}).sum();
-
-	}
-
 	private Double computeYield(ProductData productData) {
 		Double qtyUsed = productData.getRecipeQtyUsed();
 		Double netWeight = productData.getNetWeight();
@@ -1109,7 +1110,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	private Double applyYield(Double qty, Double yield, LabelingFormulaContext labelingFormulaContext) {
 		if (labelingFormulaContext.isIngsLabelingWithYield() && (qty != null) && (yield != null)) {
-			logger.trace("Apply yield: " + yield);
 			return (qty * yield) / 100d;
 		}
 		return qty;
