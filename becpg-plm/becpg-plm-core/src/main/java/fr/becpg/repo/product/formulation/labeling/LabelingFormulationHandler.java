@@ -78,6 +78,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	private NodeService mlNodeService;
 
 	private AssociationService associationService;
+	
+	private boolean ingsCalculatingWithYield = false;
 
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
@@ -93,6 +95,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
+	}
+	
+	public void setIngsCalculatingWithYield(boolean ingsCalculatingWithYield) {
+		this.ingsCalculatingWithYield = ingsCalculatingWithYield;
 	}
 
 	@Override
@@ -867,7 +873,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				}
 
 				Double waterLost = 0d;
-				if (labelingFormulaContext.isIngsLabelingWithYield() && (qty != null) && (yield != null) && (yield != 100d)
+				if ((ingsCalculatingWithYield || labelingFormulaContext.isIngsLabelingWithYield()) && (qty != null) && (yield != null) && (yield != 100d)
 						&& recipeQtyUsed!=null
 						&& nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_WATER)) {
 					waterLost = (1 - (yield / 100d)) * recipeQtyUsed;
@@ -1109,7 +1115,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	}
 
 	private Double applyYield(Double qty, Double yield, LabelingFormulaContext labelingFormulaContext) {
-		if (labelingFormulaContext.isIngsLabelingWithYield() && (qty != null) && (yield != null)) {
+		if ((ingsCalculatingWithYield || labelingFormulaContext.isIngsLabelingWithYield()) && (qty != null) && (yield != null)) {
 			return (qty * yield) / 100d;
 		}
 		return qty;
