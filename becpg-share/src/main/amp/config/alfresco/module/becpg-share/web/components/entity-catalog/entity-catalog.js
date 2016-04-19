@@ -223,7 +223,6 @@
 
 			YAHOO.util.Dom.get(this.id+"-entity-catalog").innerHTML='<span class="wait">' + Alfresco.util.encodeHTML(this.msg("label.loading")) + '</span>';
 			
-			//Affichage des notes et ajouts de tags dans les forms
 			Alfresco.util.Ajax.request({
 				url : Alfresco.constants.PROXY_URI + "becpg/entity/catalog/node/" + instance.options.entityNodeRef.replace(":/",""),
 				method : Alfresco.util.Ajax.GET,
@@ -231,25 +230,27 @@
 				successCallback : {
 					fn : function (response){
 
-						if(response.json !== undefined){
-							var html = parseJsonToHTML(response.json);
-							YAHOO.util.Dom.get(this.id+"-entity-catalog").innerHTML=html;
-														
-							var insertId = this.id.replace("_cat","").replace("-mgr", "");							
-							var formId = insertId+"-form";
+						if(response.json !== undefined ){
+							var html = parseJsonToHTML(response.json),
+							  catalogs = YAHOO.util.Dom.get(this.id+"-entity-catalog");
 							
-							var form = YAHOO.util.Dom.get(formId);
-							var pageContent = YAHOO.util.Dom.get(insertId);
-							if(form !== undefined && form != null){
+							  catalogs.innerHTML=html;
+
+							if( response.json != null && Object.keys(response.json).length > 0){
+							   var insertId = this.id.replace("_cat","").replace("-mgr", "");							
+							   var form = YAHOO.util.Dom.get(insertId+"-form");
 								
-								var catalogs = YAHOO.util.Dom.get(this.id+"-entity-catalog");
-								
-								pageContent.className+="inline-block";
-								catalogs.className+="inline-block ";
-								catalogs.className+="catalogs ";
-								YAHOO.util.Dom.insertAfter(catalogs,pageContent);
-								
-								colorizeMissingFields(response.json, insertId);
+								if(form !== undefined && form != null){
+									
+									var pageContent = YAHOO.util.Dom.get(insertId);
+									YAHOO.util.Dom.addClass(pageContent,"inline-block");
+									YAHOO.util.Dom.addClass(catalogs,"inline-block");
+									YAHOO.util.Dom.addClass(catalogs,"catalogs");
+									YAHOO.util.Dom.insertAfter(catalogs,pageContent);
+									YAHOO.util.Dom.removeClass(this.id+"-entity-catalog","hidden");
+									
+									colorizeMissingFields(response.json, insertId);
+								}
 							}
 						}
 

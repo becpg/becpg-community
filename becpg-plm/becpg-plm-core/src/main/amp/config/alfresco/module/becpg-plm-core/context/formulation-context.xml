@@ -126,13 +126,15 @@
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.IngsCalculatingFormulationHandler" >
 					<property name="nodeService" ref="nodeService" />
-					<property name="alfrescoRepository" ref="alfrescoRepository" />					
+					<property name="alfrescoRepository" ref="alfrescoRepository" />		
+					<property name="ingsCalculatingWithYield" value="${beCPG.formulation.ingsCalculatingWithYield}"/>			
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.labeling.LabelingFormulationHandler">
 				   <property name="nodeService" ref="nodeService" />
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="mlNodeService" ref="mlAwareNodeService" />
 					<property name="associationService" ref="associationService"/>
+					<property name="ingsCalculatingWithYield" value="${beCPG.formulation.ingsCalculatingWithYield}"/>			
 				</bean>
 				<bean parent="abstractSimpleFormulationHandler"
 					class="fr.becpg.repo.product.formulation.PhysicoChemCalculatingFormulationHandler">
