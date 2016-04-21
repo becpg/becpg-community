@@ -9,9 +9,11 @@
 
 
     // Define constructor...
-    beCPG.custom.DynamicWelcome = function CustomSearch_constructor(htmlId, dashboardUrl, dashboardType, site)
+    beCPG.custom.DynamicWelcome = function CustomSearch_constructor(htmlId, dashboardUrl, dashboardType, site, siteTitle,
+            docsEdition)
     {
-        beCPG.custom.DynamicWelcome.superclass.constructor.call(this, htmlId, dashboardUrl, dashboardType, site);
+        beCPG.custom.DynamicWelcome.superclass.constructor.call(this, htmlId, dashboardUrl, dashboardType, site, siteTitle,
+                docsEdition);
         return this;
     };
 
@@ -35,14 +37,17 @@
                         onReady : function DynamicWelcome_onReady()
                         {
                             // Listen on clicks for the create site link
-                            Event.addListener(this.id + "-close-button", "click", this.onCloseClick, this, true);
-                            Event.addListener(this.id + "-createSite-button", "click", this.onCreateSiteLinkClick,
-                                    this, true);
-                            Event.addListener(this.id + "-requestJoin-button", "click", this.onRequestJoinLinkClick,
-                                    this, true);
+                             this.widgets.hideButton = Alfresco.util.createYUIButton(this, "hide-button", this.onHideButtonClick);
+					         if (this.dashboardType == "user")
+					         {
+					            Event.addListener(this.id + "-get-started-panel-container", "click", function() {
+					               location.href = this.msg("welcome.user.clickable-content-link", this.docsEdition);
+					            }, this, true);
+					         }
+					         Event.addListener(this.id + "-createSite-button", "click", this.onCreateSiteLinkClick, this, true);
+					         Event.addListener(this.id + "-requestJoin-button", "click", this.onRequestJoinLinkClick, this, true);
 
                             // Custom
-
                             if (this.options.siteId != null)
                             {
 
