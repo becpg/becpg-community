@@ -114,35 +114,39 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 
 			// visits all refs and adds rclDataItem to them if required
 			for (AbstractProductDataView view : product.getViews()) {
-				for (CompositionDataItem dataItem : view.getMainDataList()) {
-					if (dataItem.getComponent() != null) {
-						if (!checkProductValidity(dataItem.getComponent())) {
-							view.getReqCtrlList().add(createValidationRclDataItem(dataItem.getComponent()));
-						} else {
-							childScore += 1;
+				if (view.getMainDataList() != null) {
+					for (CompositionDataItem dataItem : view.getMainDataList()) {
+						if (dataItem.getComponent() != null) {
+							if (!checkProductValidity(dataItem.getComponent())) {
+								view.getReqCtrlList().add(createValidationRclDataItem(dataItem.getComponent()));
+							} else {
+								childScore += 1;
+							}
+							childrenSize += 1;
 						}
-						childrenSize += 1;
 					}
 				}
 
 				// pre merge, ctrlDataItems might be duplicated, visit them only
 				// once
 				List<String> visitedCtrlDataItems = new ArrayList<>();
-				for (ReqCtrlListDataItem ctrl : view.getReqCtrlList()) {
+				if (view.getReqCtrlList() != null) {
+					for (ReqCtrlListDataItem ctrl : view.getReqCtrlList()) {
 
-					if (specificationScore > 10) {
-						if ((ctrl.getReqDataType() == RequirementDataType.Specification) && (ctrl.getReqType() == RequirementType.Forbidden)
-								&& !visitedCtrlDataItems.contains(ctrl.getReqMessage())) {
-							if (logger.isDebugEnabled()) {
-								logger.debug("Visiting specification rclDataItem: " + ctrl.getReqMessage() + ", s=" + ctrl.getSources());
+						if (specificationScore > 10) {
+							if ((ctrl.getReqDataType() == RequirementDataType.Specification) && (ctrl.getReqType() == RequirementType.Forbidden)
+									&& !visitedCtrlDataItems.contains(ctrl.getReqMessage())) {
+								if (logger.isDebugEnabled()) {
+									logger.debug("Visiting specification rclDataItem: " + ctrl.getReqMessage() + ", s=" + ctrl.getSources());
+								}
+								specificationScore -= 10;
+								visitedCtrlDataItems.add(ctrl.getReqMessage());
 							}
-							specificationScore -= 10;
-							visitedCtrlDataItems.add(ctrl.getReqMessage());
+						} else {
+							break;
 						}
-					} else {
-						break;
-					}
 
+					}
 				}
 			}
 
@@ -217,7 +221,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 
 	public JSONArray calculateMandatoryFieldsScore(ProductData productData) throws JSONException {
 		JSONArray ret = new JSONArray();
-		if ((mandatoryFields != null) && nodeService.exists(productData.getNodeRef())) {
+		if ((mandatoryFields != null) && productData.getNodeRef()!=null && nodeService.exists(productData.getNodeRef())) {
 			// Break rules !!!!
 			Map<QName, Serializable> properties = nodeService.getProperties(productData.getNodeRef());
 			String defaultLocale = Locale.getDefault().getLanguage();
