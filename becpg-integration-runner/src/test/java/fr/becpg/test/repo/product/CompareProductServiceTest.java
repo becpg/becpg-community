@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -20,6 +22,7 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.entity.comparison.CompareResultDataItem;
 import fr.becpg.repo.entity.comparison.StructCompareOperator;
 import fr.becpg.repo.entity.comparison.StructCompareResultDataItem;
+import fr.becpg.repo.helper.ProductAttributeExtractorPlugin;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
@@ -39,13 +42,16 @@ public class CompareProductServiceTest extends AbstractCompareProductTest {
 
 	private static final Log logger = LogFactory.getLog(CompareProductServiceTest.class);
 
+	@Resource
+	private ProductAttributeExtractorPlugin nameExtractor;
+
 	/**
 	 * Test comparison.
 	 */
 	@Test
 	public void testComparison() {
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final RawMaterialData allergenRawMateria = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			logger.debug("createRawMaterial 1");
 
@@ -140,9 +146,9 @@ public class CompareProductServiceTest extends AbstractCompareProductTest {
 
 			fp2NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), fp2).getNodeRef();
 
-			return null;
+			return allergenRawMaterial;
 
-		} , false, true);
+		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -153,12 +159,14 @@ public class CompareProductServiceTest extends AbstractCompareProductTest {
 			Map<String, List<StructCompareResultDataItem>> structCompareResults = new HashMap<>();
 			compareEntityService.compare(fp1NodeRef, productsNodeRef, compareResult, structCompareResults);
 
-//			 for (CompareResultDataItem c : compareResult) {
-//			 logger.info("CompareResultDataItem : " + c.toString());
-//			 }
+			// for (CompareResultDataItem c : compareResult) {
+			// logger.info("CompareResultDataItem : " + c.toString());
+			// }
+
+			String allergenMPName = nameExtractor.extractPropName(PLMModel.TYPE_RAWMATERIAL, allergenRawMateria.getNodeRef());
 
 			assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList", "Allergen 9",
-					"{http://www.bcpg.fr/model/becpg/1.0}allergenListInVolSources", "[null, MP allergen]"));
+					"{http://www.bcpg.fr/model/becpg/1.0}allergenListInVolSources", "[null, " + allergenMPName + "]"));
 			assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList", "Allergen 5",
 					"{http://www.bcpg.fr/model/becpg/1.0}allergenListInVoluntary", "[Non, Oui]"));
 			assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList", "Allergen 6",
@@ -173,7 +181,7 @@ public class CompareProductServiceTest extends AbstractCompareProductTest {
 			assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}costList", "Coût prév MP",
 					"{http://www.bcpg.fr/model/becpg/1.0}costListUnit", "[€/kg, €/L]"));
 			assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList", "Allergen 6",
-					"{http://www.bcpg.fr/model/becpg/1.0}allergenListVolSources", "[MP allergen, null]"));
+					"{http://www.bcpg.fr/model/becpg/1.0}allergenListVolSources", "[" + allergenMPName + ", null]"));
 			assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}costList", "Coût prév MP",
 					"{http://www.bcpg.fr/model/becpg/1.0}costListValue", "[12,2, 12,4]"));
 			assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList", "Allergen 9",
@@ -181,14 +189,13 @@ public class CompareProductServiceTest extends AbstractCompareProductTest {
 			assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}costList", "Coût Emb",
 					"{http://www.bcpg.fr/model/becpg/1.0}costListValue", "[12,2, 12,4]"));
 			assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList", "Allergen 7",
-					"{http://www.bcpg.fr/model/becpg/1.0}allergenListInVolSources", "[null, MP allergen]"));
+					"{http://www.bcpg.fr/model/becpg/1.0}allergenListInVolSources", "[null, " + allergenMPName + "]"));
 			assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList", "Allergen 8",
-					"{http://www.bcpg.fr/model/becpg/1.0}allergenListVolSources", "[MP allergen, null]"));
-		
+					"{http://www.bcpg.fr/model/becpg/1.0}allergenListVolSources", "[" + allergenMPName + ", null]"));
 
 			return null;
 
-		} , false, true);
+		}, false, true);
 	}
 
 	/**
@@ -198,114 +205,130 @@ public class CompareProductServiceTest extends AbstractCompareProductTest {
 	public void testStructComparison() {
 
 		Date startTime = new Date();
+		String previousNameFormat = nameExtractor.getProductNameFormat();
+		try {
 
-		fp1NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			nameExtractor.setProductNameFormat("{cm:name}");
 
-			logger.debug("createRawMaterial 1");
+			fp1NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-			FinishedProductData fp1 = new FinishedProductData();
-			fp1.setName("FP 1");
+				logger.debug("createRawMaterial 1");
 
-			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), 2d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-			compoList.add(new CompoListDataItem(null, null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(3), 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-			// compoList.add(new CompoListDataItem(null, 2, 3d, 0d,
-			// 0d, CompoListUnit.kg, "", DeclarationType.OMIT_FR,
-			// rawMaterial4NodeRef));
-			fp1.getCompoListView().setCompoList(compoList);
+				FinishedProductData fp1 = new FinishedProductData();
+				fp1.setName("FP 1");
 
-			return alfrescoRepository.create(getTestFolderNodeRef(), fp1).getNodeRef();
+				List<CompoListDataItem> compoList = new ArrayList<>();
+				compoList.add(new CompoListDataItem(null, null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
+				compoList.add(
+						new CompoListDataItem(null, compoList.get(0), 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList.add(
+						new CompoListDataItem(null, compoList.get(0), 2d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
+				compoList.add(
+						new CompoListDataItem(null, compoList.get(3), 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+				// compoList.add(new CompoListDataItem(null, 2, 3d, 0d,
+				// 0d, CompoListUnit.kg, "", DeclarationType.OMIT_FR,
+				// rawMaterial4NodeRef));
+				fp1.getCompoListView().setCompoList(compoList);
 
-		} , false, true);
+				return alfrescoRepository.create(getTestFolderNodeRef(), fp1).getNodeRef();
 
-		fp2NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			}, false, true);
 
-			logger.debug("createRawMaterial 1");
+			fp2NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-			SemiFinishedProductData sf2 = new SemiFinishedProductData();
-			sf2.setName("SF 2");
+				logger.debug("createRawMaterial 1");
 
-			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, 2d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, null, 2d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-			sf2.getCompoListView().setCompoList(compoList);
+				SemiFinishedProductData sf2 = new SemiFinishedProductData();
+				sf2.setName("SF 2");
 
-			NodeRef sf2NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), sf2).getNodeRef();
+				List<CompoListDataItem> compoList = new ArrayList<>();
+				compoList.add(new CompoListDataItem(null, null, 2d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, null, 2d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
+				sf2.getCompoListView().setCompoList(compoList);
 
-			FinishedProductData fp2 = new FinishedProductData();
-			fp2.setName("FP 2");
+				NodeRef sf2NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), sf2).getNodeRef();
 
-			compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), 2d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), 2d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-			compoList.add(new CompoListDataItem(null, null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(3), 2d, 0d, CompoListUnit.P, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(3), 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial4NodeRef));
-			compoList.add(new CompoListDataItem(null, null, 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, sf2NodeRef));
-			fp2.getCompoListView().setCompoList(compoList);
+				FinishedProductData fp2 = new FinishedProductData();
+				fp2.setName("FP 2");
 
-			return alfrescoRepository.create(getTestFolderNodeRef(), fp2).getNodeRef();
+				compoList = new ArrayList<>();
+				compoList.add(new CompoListDataItem(null, null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
+				compoList.add(
+						new CompoListDataItem(null, compoList.get(0), 2d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList.add(
+						new CompoListDataItem(null, compoList.get(0), 2d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
+				compoList.add(
+						new CompoListDataItem(null, compoList.get(3), 2d, 0d, CompoListUnit.P, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+				compoList.add(
+						new CompoListDataItem(null, compoList.get(3), 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, null, 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, sf2NodeRef));
+				fp2.getCompoListView().setCompoList(compoList);
 
-		} , false, true);
+				return alfrescoRepository.create(getTestFolderNodeRef(), fp2).getNodeRef();
 
-		waitForSolr(startTime);
+			}, false, true);
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			waitForSolr(startTime);
 
-			Map<String, List<StructCompareResultDataItem>> structCompareResults = new HashMap<>();
-			compareEntityService.compareStructDatalist(fp1NodeRef, fp2NodeRef, PLMModel.TYPE_COMPOLIST, structCompareResults);
-			List<StructCompareResultDataItem> structCompareResult = structCompareResults.get("FP 1 - FP 2 - Composition");
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-			for (StructCompareResultDataItem c : structCompareResult) {
+				Map<String, List<StructCompareResultDataItem>> structCompareResults = new HashMap<>();
+				compareEntityService.compareStructDatalist(fp1NodeRef, fp2NodeRef, PLMModel.TYPE_COMPOLIST, structCompareResults);
+				List<StructCompareResultDataItem> structCompareResult = structCompareResults.get("FP 1 - FP 2 - Composition");
 
-				String product1Name = "";
-				if (c.getCharacteristic1() != null) {
-					List<AssociationRef> compoAssocRefs1 = nodeService.getTargetAssocs(c.getCharacteristic1(), PLMModel.ASSOC_COMPOLIST_PRODUCT);
-					NodeRef productNodeRef1 = compoAssocRefs1.get(0).getTargetRef();
-					product1Name = (String) nodeService.getProperty(productNodeRef1, ContentModel.PROP_NAME);
+				for (StructCompareResultDataItem c : structCompareResult) {
+
+					String product1Name = "";
+					if (c.getCharacteristic1() != null) {
+						List<AssociationRef> compoAssocRefs1 = nodeService.getTargetAssocs(c.getCharacteristic1(), PLMModel.ASSOC_COMPOLIST_PRODUCT);
+						NodeRef productNodeRef1 = compoAssocRefs1.get(0).getTargetRef();
+						product1Name = (String) nodeService.getProperty(productNodeRef1, ContentModel.PROP_NAME);
+					}
+
+					String product2Name = "";
+					if (c.getCharacteristic2() != null) {
+						List<AssociationRef> compoAssocRefs2 = nodeService.getTargetAssocs(c.getCharacteristic2(), PLMModel.ASSOC_COMPOLIST_PRODUCT);
+						NodeRef productNodeRef2 = compoAssocRefs2.get(0).getTargetRef();
+						product2Name = (String) nodeService.getProperty(productNodeRef2, ContentModel.PROP_NAME);
+					}
+
+					logger.debug(c.getEntityList() + " - " + c.getDepthLevel() + " - " + c.getOperator() + " - " + product1Name + " - " + product2Name
+							+ " - " + c.getProperties1() + " - " + c.getProperties2());
+
+					// Output for method checkCompareRow
+					// Uncomment debug line, copy/paste in spreadsheet =>
+					// you will get the test lines
+					String productList = c.getEntityList() == null ? "" : c.getEntityList().toString();
+					logger.info("-assertTrue(checkStructCompareRow(structCompareResult, \"" + productList + "\", " + c.getDepthLevel()
+							+ ", StructCompareOperator." + c.getOperator() + ", \"" + product1Name + "\", \"" + product2Name + "\", \""
+							+ c.getProperties1() + "\", \"" + c.getProperties2() + "\"));");
 				}
 
-				String product2Name = "";
-				if (c.getCharacteristic2() != null) {
-					List<AssociationRef> compoAssocRefs2 = nodeService.getTargetAssocs(c.getCharacteristic2(), PLMModel.ASSOC_COMPOLIST_PRODUCT);
-					NodeRef productNodeRef2 = compoAssocRefs2.get(0).getTargetRef();
-					product2Name = (String) nodeService.getProperty(productNodeRef2, ContentModel.PROP_NAME);
-				}
+				assertTrue(checkStructCompareRow(structCompareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList", 2,
+						StructCompareOperator.Modified, "Raw material 1", "Raw material 1", "{{http://www.bcpg.fr/model/becpg/1.0}compoListQty=1}",
+						"{{http://www.bcpg.fr/model/becpg/1.0}compoListQty=2}"));
+				assertTrue(checkStructCompareRow(structCompareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList", 2,
+						StructCompareOperator.Modified, "Raw material 3", "Raw material 3",
+						"{{http://www.bcpg.fr/model/becpg/1.0}compoListQty=3, {http://www.bcpg.fr/model/becpg/1.0}compoListUnit=kg}",
+						"{{http://www.bcpg.fr/model/becpg/1.0}compoListQty=2, {http://www.bcpg.fr/model/becpg/1.0}compoListUnit=P}"));
 
-				logger.debug(c.getEntityList() + " - " + c.getDepthLevel() + " - " + c.getOperator() + " - " + product1Name + " - " + product2Name
-						+ " - " + c.getProperties1() + " - " + c.getProperties2());
+				assertTrue(checkStructCompareRow(structCompareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList", 2, StructCompareOperator.Added,
+						"", "Raw material 4", "{}",
+						"{{http://www.alfresco.org/model/system/1.0}locale=fr_FR, {http://www.bcpg.fr/model/becpg/1.0}compoListQty=3, {http://www.bcpg.fr/model/becpg/1.0}compoListUnit=kg, {http://www.bcpg.fr/model/becpg/1.0}compoListQtySubFormula=0, {http://www.bcpg.fr/model/becpg/1.0}compoListDeclType=Detail, {http://www.bcpg.fr/model/becpg/1.0}compoListLossPerc=0, {http://www.bcpg.fr/model/becpg/1.0}compoListProduct=Raw material 4, {http://www.bcpg.fr/model/becpg/1.0}depthLevel=2}"));
 
-				// Output for method checkCompareRow
-				// Uncomment debug line, copy/paste in spreadsheet =>
-				// you will get the test lines
-				String productList = c.getEntityList() == null ? "" : c.getEntityList().toString();
-				logger.info("-assertTrue(checkStructCompareRow(structCompareResult, \"" + productList + "\", " + c.getDepthLevel()
-						+ ", StructCompareOperator." + c.getOperator() + ", \"" + product1Name + "\", \"" + product2Name + "\", \""
-						+ c.getProperties1() + "\", \"" + c.getProperties2() + "\"));");
-			}
+				assertTrue(checkStructCompareRow(structCompareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList", 1, StructCompareOperator.Added,
+						"", "SF 2", "{}",
+						"{{http://www.alfresco.org/model/system/1.0}locale=fr_FR, {http://www.bcpg.fr/model/becpg/1.0}compoListQty=3, {http://www.bcpg.fr/model/becpg/1.0}compoListUnit=kg, {http://www.bcpg.fr/model/becpg/1.0}compoListQtySubFormula=0, {http://www.bcpg.fr/model/becpg/1.0}compoListDeclType=Detail, {http://www.bcpg.fr/model/becpg/1.0}compoListLossPerc=0, {http://www.bcpg.fr/model/becpg/1.0}compoListProduct=SF 2, {http://www.bcpg.fr/model/becpg/1.0}depthLevel=1}"));
 
-			assertTrue(checkStructCompareRow(structCompareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList", 2, StructCompareOperator.Modified,
-					"Raw material 1", "Raw material 1", "{{http://www.bcpg.fr/model/becpg/1.0}compoListQty=1}",
-					"{{http://www.bcpg.fr/model/becpg/1.0}compoListQty=2}"));
-			assertTrue(checkStructCompareRow(structCompareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList", 2, StructCompareOperator.Modified,
-					"Raw material 3", "Raw material 3",
-					"{{http://www.bcpg.fr/model/becpg/1.0}compoListQty=3, {http://www.bcpg.fr/model/becpg/1.0}compoListUnit=kg}",
-					"{{http://www.bcpg.fr/model/becpg/1.0}compoListQty=2, {http://www.bcpg.fr/model/becpg/1.0}compoListUnit=P}"));
+				return null;
 
-			assertTrue(checkStructCompareRow(structCompareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList", 2, StructCompareOperator.Added, "",
-					"Raw material 4", "{}",
-					"{{http://www.alfresco.org/model/system/1.0}locale=fr_FR, {http://www.bcpg.fr/model/becpg/1.0}compoListQty=3, {http://www.bcpg.fr/model/becpg/1.0}compoListUnit=kg, {http://www.bcpg.fr/model/becpg/1.0}compoListQtySubFormula=0, {http://www.bcpg.fr/model/becpg/1.0}compoListDeclType=Detail, {http://www.bcpg.fr/model/becpg/1.0}compoListLossPerc=0, {http://www.bcpg.fr/model/becpg/1.0}compoListProduct=Raw material 4, {http://www.bcpg.fr/model/becpg/1.0}depthLevel=2}"));
+			}, false, true);
 
-			assertTrue(checkStructCompareRow(structCompareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList", 1, StructCompareOperator.Added, "",
-					"SF 2", "{}",
-					"{{http://www.alfresco.org/model/system/1.0}locale=fr_FR, {http://www.bcpg.fr/model/becpg/1.0}compoListQty=3, {http://www.bcpg.fr/model/becpg/1.0}compoListUnit=kg, {http://www.bcpg.fr/model/becpg/1.0}compoListQtySubFormula=0, {http://www.bcpg.fr/model/becpg/1.0}compoListDeclType=Detail, {http://www.bcpg.fr/model/becpg/1.0}compoListLossPerc=0, {http://www.bcpg.fr/model/becpg/1.0}compoListProduct=SF 2, {http://www.bcpg.fr/model/becpg/1.0}depthLevel=1}"));
-
-			return null;
-
-		} , false, true);
+		} finally {
+			nameExtractor.setProductNameFormat(previousNameFormat);
+		}
 	}
+
 }

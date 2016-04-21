@@ -15,6 +15,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.repo.listvalue.CompoListValuePlugin;
 import fr.becpg.repo.listvalue.ListValueEntry;
@@ -31,7 +32,7 @@ import fr.becpg.test.BeCPGPLMTestHelper;
 public class CompoListValuePluginTest extends AbstractListValuePluginTest {
 
 	@Resource
-	CompoListValuePlugin compoListValuePlugin;
+	private CompoListValuePlugin compoListValuePlugin;
 
 	private static final Log logger = LogFactory.getLog(CompoListValuePluginTest.class);
 
