@@ -35,6 +35,7 @@ import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemGroup;
+import fr.becpg.model.SystemState;
 import fr.becpg.repo.entity.datalist.DataListExtractor;
 import fr.becpg.repo.entity.datalist.DataListExtractorFactory;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
@@ -381,7 +382,7 @@ public class EntityDataListWebScript extends AbstractWebScript {
 	private boolean isExternalUserAllowed(DataListFilter dataListFilter) {
 		if(dataListFilter.getParentNodeRef() !=null 
 				&& nodeService.hasAspect(dataListFilter.getParentNodeRef(), BeCPGModel.ASPECT_ENTITYLIST_STATE)
-				&& "Valid".equals(nodeService.getProperty(dataListFilter.getParentNodeRef(), BeCPGModel.PROP_ENTITYLIST_STATE))
+				&& SystemState.Valid.toString().equals(nodeService.getProperty(dataListFilter.getParentNodeRef(), BeCPGModel.PROP_ENTITYLIST_STATE))
 				&& isCurrentUserExternal()
 				){
 			return false;

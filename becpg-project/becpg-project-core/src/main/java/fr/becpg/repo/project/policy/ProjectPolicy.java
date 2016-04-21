@@ -106,7 +106,7 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 					nodeService.setProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_START, startDate);
 				}
 				formulateProject = true;
-			} else if (afterState.equals(ProjectState.Cancelled.toString())) {
+			} else if (afterState.equals(ProjectState.Cancelled.toString()) || afterState.equals(ProjectState.OnHold.toString())) {
 				formulateProject = true;
 			}
 		}
