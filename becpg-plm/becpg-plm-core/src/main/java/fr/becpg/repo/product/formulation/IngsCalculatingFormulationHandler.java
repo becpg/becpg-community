@@ -186,7 +186,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 							&& nodeService.hasAspect(ingListDataItem.getIng(), PLMModel.ASPECT_WATER)) {
 
 						Double waterLost = (100 - (formulatedProduct.getYield())) * formulatedProduct.getRecipeQtyUsed();
-						ingListDataItem.setQtyPerc((totalQtyIng - (waterLost)) / formulatedProduct.getRecipeQtyUsed());
+						ingListDataItem.setQtyPerc((totalQtyIng - (waterLost)) / totalQtyUsed);
 						
 					} else {
 						ingListDataItem.setQtyPerc(totalQtyIng / totalQtyUsed);
