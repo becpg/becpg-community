@@ -34,6 +34,13 @@
         </dependency>
         
         <!-- Demonstrating the dependency / installation of the repo AMP developed in the 'repo-amp' module -->
+        <dependency>
+            <groupId>${alfresco.groupId}</groupId>
+            <artifactId>alfresco-share-services</artifactId>
+            <version>${alfresco.version}</version>
+            <type>amp</type>
+        </dependency>
+        
        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>becpg-core</artifactId>
@@ -86,6 +93,7 @@
                         | explicitly mention it in the overlay section.
                         | NOTE: First-win resource strategy is used by the WAR plugin
                          -->
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
                     <overlays>
                         <!-- Current project customizations. This is normally empty, since customizations come from the AMPs -->
                         <overlay/>
@@ -96,6 +104,11 @@
                             <type>war</type>
                             <!-- To allow inclusion of META-INF -->
                             <excludes/>
+                        </overlay>
+                         <overlay>
+                            <groupId>${alfresco.groupId}</groupId>
+                            <artifactId>alfresco-share-services</artifactId>
+                            <type>amp</type>
                         </overlay>
                         <!-- Add / sort your AMPs here -->
                         <overlay>
