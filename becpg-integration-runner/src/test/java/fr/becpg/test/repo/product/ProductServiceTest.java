@@ -49,7 +49,6 @@ import fr.becpg.repo.entity.datalist.WUsedListService;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.hierarchy.HierarchyService;
-import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.PackagingMaterialData;
@@ -76,9 +75,6 @@ public class ProductServiceTest extends PLMBaseTestCase {
 	private static final int WUSED_LEVEL = 1;
 
 	private static final Log logger = LogFactory.getLog(ProductServiceTest.class);
-
-	@Resource
-	private ProductService productService;
 
 	@Resource
 	private PermissionService permissionService;
