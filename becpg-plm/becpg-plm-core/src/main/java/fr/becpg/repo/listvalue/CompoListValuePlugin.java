@@ -1,24 +1,28 @@
 /*******************************************************************************
- * Copyright (C) 2010-2015 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2015 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.listvalue;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -53,8 +57,7 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 	}
 
 	@Override
-	public ListValuePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize,
-			Map<String, Serializable> props) {
+	public ListValuePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
 
 		NodeRef entityNodeRef = new NodeRef((String) props.get(ListValueService.PROP_NODEREF));
 		logger.debug("CompoListValuePlugin sourceType: " + sourceType + " - entityNodeRef: " + entityNodeRef);
@@ -93,41 +96,44 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 			for (Map.Entry<NodeRef, MultiLevelListData> kv : mlld.getTree().entrySet()) {
 
 				NodeRef productNodeRef = kv.getValue().getEntityNodeRef();
-				logger.debug("productNodeRef: " + productNodeRef);
+				if (productNodeRef != null) {
+					logger.debug("productNodeRef: " + productNodeRef);
 
-				// avoid cycle: when editing an item, cannot select itself as
-				// parent
-				if (itemId != null && itemId.equals(kv.getKey())) {
-					continue;
-				}
+					// avoid cycle: when editing an item, cannot select itself
+					// as
+					// parent
+					if ((itemId != null) && itemId.equals(kv.getKey())) {
+						continue;
+					}
 
-				if (nodeService.getType(productNodeRef).isMatch(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT)) {
+					if (nodeService.getType(productNodeRef).isMatch(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT)) {
 
-					boolean addNode = false;
-					String productName = (String) nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME);
-					logger.debug("productName: " + productName + " - query: " + query);
+						boolean addNode = false;
+						String productName = (String) nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME);
+						logger.debug("productName: " + productName + " - query: " + query);
 
-					if (!query.isEmpty()) {
+						if (!query.isEmpty()) {
 
-						if (productName != null) {
-							if (isQueryMatch(query, productName)) {
-								addNode = true;
+							if (productName != null) {
+								if (isQueryMatch(query, productName)) {
+									addNode = true;
+								}
 							}
+						} else {
+							addNode = true;
 						}
-					} else {
-						addNode = true;
+
+						if (addNode) {
+							logger.debug("add node productName: " + productName);
+							String state = (String) nodeService.getProperty(productNodeRef, PLMModel.PROP_PRODUCT_STATE);
+							result.add(new ListValueEntry(kv.getKey().toString(), productName,
+									PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.getLocalName() + "-" + state));
+						}
 					}
 
-					if (addNode) {
-						logger.debug("add node productName: " + productName);
-						String state = (String) nodeService.getProperty(productNodeRef, PLMModel.PROP_PRODUCT_STATE);
-						result.add(new ListValueEntry(kv.getKey().toString(), productName,
-								PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.getLocalName() + "-" + state));
+					if (kv.getValue() != null) {
+						result.addAll(getParentsLevel(kv.getValue(), query, itemId));
 					}
-				}
-
-				if (kv.getValue() != null) {
-					result.addAll(getParentsLevel(kv.getValue(), query, itemId));
 				}
 			}
 		}
