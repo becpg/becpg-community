@@ -84,11 +84,11 @@ public class ProductServiceImpl implements ProductService {
 
 				L2CacheSupport.doInCacheContext(() -> {
 					AuthenticationUtil.runAsSystem(() -> {
-						if (fast) {
-							formulationService.formulate(productNodeRef, "fastProductFormulationChain");
-						} else {
+//						if (fast) {
+//							formulationService.formulate(productNodeRef, "fastProductFormulationChain");
+//						} else {
 							formulationService.formulate(productNodeRef);
-						}
+	//					}
 						return true;
 					});
 

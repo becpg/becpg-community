@@ -58,6 +58,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 	private NodeService nodeService;
 
+	private boolean ingsCalculatingWithYield = false;
+
 	protected AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
 	public void setNodeService(NodeService nodeService) {
@@ -66,6 +68,10 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
+	}
+
+	public void setIngsCalculatingWithYield(boolean ingsCalculatingWithYield) {
+		this.ingsCalculatingWithYield = ingsCalculatingWithYield;
 	}
 
 	@Override
@@ -154,7 +160,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 							|| type.isMatch(PLMModel.TYPE_FINISHEDPRODUCT)) && (compoItem.getDeclType() != DeclarationType.Omit)) {
 						Double qty = FormulationHelper.getQtyInKg(compoItem);
 						if (qty != null) {
-							totalQtyUsed += (qty * FormulationHelper.getYield(compoItem)) / 100;
+							totalQtyUsed += (applyYield(qty, formulatedProduct.getYield()) * FormulationHelper.getYield(compoItem)) / 100;
 						}
 
 						Double vol = compoItem.getVolume();
@@ -171,17 +177,17 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 		if (totalQtyUsed != 0) {
 			for (IngListDataItem ingListDataItem : formulatedProduct.getIngList()) {
+
 				// qtyPerc
 				Double totalQtyIng = totalQtyIngMap.get(ingListDataItem.getName());
-
 				if (totalQtyIng != null) {
-					if (ingListDataItem.getParent() != null) {
-						Double parentTotalQtyIng = totalQtyIngMap.get(ingListDataItem.getParent().getName());
-						if (parentTotalQtyIng != null) {
-							ingListDataItem.setQtyPerc((totalQtyIng / parentTotalQtyIng) * 100);
-						} else {
-							ingListDataItem.setQtyPerc(null);
-						}
+
+					if (ingsCalculatingWithYield && (formulatedProduct.getYield() != null) && (formulatedProduct.getRecipeQtyUsed() != null)
+							&& nodeService.hasAspect(ingListDataItem.getIng(), PLMModel.ASPECT_WATER)) {
+
+						Double waterLost = (100 - (formulatedProduct.getYield())) * formulatedProduct.getRecipeQtyUsed();
+						ingListDataItem.setQtyPerc((totalQtyIng - (waterLost)) / totalQtyUsed);
+						
 					} else {
 						ingListDataItem.setQtyPerc(totalQtyIng / totalQtyUsed);
 					}
@@ -210,6 +216,13 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 		formulatedProduct.getCompoListView().getReqCtrlList().addAll(reqCtrlMap.values());
 
+	}
+
+	private Double applyYield(Double qty, Double yield) {
+		if (ingsCalculatingWithYield && (qty != null) && (yield != null)) {
+			return (qty * yield) / 100d;
+		}
+		return qty;
 	}
 
 	/**

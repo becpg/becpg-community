@@ -72,6 +72,7 @@ function main()
 	      var entityCatalog = {
 	 	         id : "EntityCatalog", 
 	 	         name : "beCPG.component.EntityCatalog",
+	 	         initArgs :  ["\"" + args.htmlid+"_cat\""],
 	 	         options : {
 	 	        	 entityNodeRef : model.nodeRef
 	 	         }
