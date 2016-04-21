@@ -82,6 +82,14 @@
                                                 </#if>
                                              </p>
                                              
+                                             <#if args.workflowPooled == true>
+                                                <p>Cliquez sur ce lien pour voir la tâche :</p>
+                                                <p><a href="${shareUrl}/page/task-details?taskId=${args.workflowId}">${shareUrl}/page/task-details?taskId=${args.workflowId}</a>
+                                             <#else>
+                                                <p>Cliquez sur ce lien pour modifier la tâche :</p>
+                                                <p><a href="${shareUrl}/page/task-edit?taskId=${args.workflowId}">${shareUrl}/page/task-edit?taskId=${args.workflowId}</a>
+                                             </#if>
+                                             
                                              <#if (args.workflowDocuments)??>
                                                 <table cellpadding="0" callspacing="0" border="0" bgcolor="#eeeeee" style="padding:10px; border: 1px solid #aaaaaa;">
                                                    <#list args.workflowDocuments as doc>
@@ -129,15 +137,7 @@
                                                       </#if>
                                                    </#list>
                                                 </table>
-                                             </#if>
-                                             
-                                             <#if args.workflowPooled == true>
-                                                <p>Cliquez sur ce lien pour voir la tâche :</p>
-                                                <p><a href="${shareUrl}/page/task-details?taskId=${args.workflowId}">${shareUrl}/page/task-details?taskId=${args.workflowId}</a>
-                                             <#else>
-                                                <p>Cliquez sur ce lien pour modifier la tâche :</p>
-                                                <p><a href="${shareUrl}/page/task-edit?taskId=${args.workflowId}">${shareUrl}/page/task-edit?taskId=${args.workflowId}</a>
-                                             </#if>
+                                             </#if>                                                                                         
                                              
                                              <p>Cordialement,<br />
                                             beCPG</p>
