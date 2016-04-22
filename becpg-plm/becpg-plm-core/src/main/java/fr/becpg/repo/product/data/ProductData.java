@@ -847,34 +847,16 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + ((breakEven == null) ? 0 : breakEven.hashCode());
-		result = prime * result + ((clients == null) ? 0 : clients.hashCode());
-		result = prime * result + ((costList == null) ? 0 : costList.hashCode());
-		result = prime * result + ((defaultVariantPackagingData == null) ? 0 : defaultVariantPackagingData.hashCode());
+		result = prime * result + ((currentReformulateCount == null) ? 0 : currentReformulateCount.hashCode());
 		result = prime * result + ((density == null) ? 0 : density.hashCode());
-		result = prime * result + ((entityScore == null) ? 0 : entityScore.hashCode());
-		result = prime * result + ((entityTpl == null) ? 0 : entityTpl.hashCode());
 		result = prime * result + ((erpCode == null) ? 0 : erpCode.hashCode());
-		result = prime * result + ((formulatedDate == null) ? 0 : formulatedDate.hashCode());
 		result = prime * result + ((hierarchy1 == null) ? 0 : hierarchy1.hashCode());
 		result = prime * result + ((hierarchy2 == null) ? 0 : hierarchy2.hashCode());
-		result = prime * result + ((ingType == null) ? 0 : ingType.hashCode());
-		result = prime * result + ((isUpToDate == null) ? 0 : isUpToDate.hashCode());
 		result = prime * result + ((legalName == null) ? 0 : legalName.hashCode());
-		result = prime * result + ((modifiedDate == null) ? 0 : modifiedDate.hashCode());
-		result = prime * result + ((netVolume == null) ? 0 : netVolume.hashCode());
 		result = prime * result + ((netWeight == null) ? 0 : netWeight.hashCode());
-		result = prime * result + ((nutrientClass == null) ? 0 : nutrientClass.hashCode());
-		result = prime * result + ((nutrientProfile == null) ? 0 : nutrientProfile.hashCode());
-		result = prime * result + ((nutrientScore == null) ? 0 : nutrientScore.hashCode());
-		result = prime * result + ((plants == null) ? 0 : plants.hashCode());
-		result = prime * result + ((productSpecifications == null) ? 0 : productSpecifications.hashCode());
 		result = prime * result + ((profitability == null) ? 0 : profitability.hashCode());
-		result = prime * result + ((projectedQty == null) ? 0 : projectedQty.hashCode());
 		result = prime * result + ((qty == null) ? 0 : qty.hashCode());
 		result = prime * result + ((recipeQtyUsed == null) ? 0 : recipeQtyUsed.hashCode());
-		result = prime * result + ((recipeVolumeUsed == null) ? 0 : recipeVolumeUsed.hashCode());
-		result = prime * result + ((reformulateCount == null) ? 0 : reformulateCount.hashCode());
-		result = prime * result + ((reportLocales == null) ? 0 : reportLocales.hashCode());
 		result = prime * result + ((servingSize == null) ? 0 : servingSize.hashCode());
 		result = prime * result + ((state == null) ? 0 : state.hashCode());
 		result = prime * result + ((tare == null) ? 0 : tare.hashCode());
@@ -903,45 +885,20 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 				return false;
 		} else if (!breakEven.equals(other.breakEven))
 			return false;
-		if (clients == null) {
-			if (other.clients != null)
+		if (currentReformulateCount == null) {
+			if (other.currentReformulateCount != null)
 				return false;
-		} else if (!clients.equals(other.clients))
-			return false;
-		if (costList == null) {
-			if (other.costList != null)
-				return false;
-		} else if (!costList.equals(other.costList))
-			return false;
-		if (defaultVariantPackagingData == null) {
-			if (other.defaultVariantPackagingData != null)
-				return false;
-		} else if (!defaultVariantPackagingData.equals(other.defaultVariantPackagingData))
+		} else if (!currentReformulateCount.equals(other.currentReformulateCount))
 			return false;
 		if (density == null) {
 			if (other.density != null)
 				return false;
 		} else if (!density.equals(other.density))
 			return false;
-		if (entityScore == null) {
-			if (other.entityScore != null)
-				return false;
-		} else if (!entityScore.equals(other.entityScore))
-			return false;
-		if (entityTpl == null) {
-			if (other.entityTpl != null)
-				return false;
-		} else if (!entityTpl.equals(other.entityTpl))
-			return false;
 		if (erpCode == null) {
 			if (other.erpCode != null)
 				return false;
 		} else if (!erpCode.equals(other.erpCode))
-			return false;
-		if (formulatedDate == null) {
-			if (other.formulatedDate != null)
-				return false;
-		} else if (!formulatedDate.equals(other.formulatedDate))
 			return false;
 		if (hierarchy1 == null) {
 			if (other.hierarchy1 != null)
@@ -953,70 +910,20 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 				return false;
 		} else if (!hierarchy2.equals(other.hierarchy2))
 			return false;
-		if (ingType == null) {
-			if (other.ingType != null)
-				return false;
-		} else if (!ingType.equals(other.ingType))
-			return false;
-		if (isUpToDate == null) {
-			if (other.isUpToDate != null)
-				return false;
-		} else if (!isUpToDate.equals(other.isUpToDate))
-			return false;
 		if (legalName == null) {
 			if (other.legalName != null)
 				return false;
 		} else if (!legalName.equals(other.legalName))
-			return false;
-		if (modifiedDate == null) {
-			if (other.modifiedDate != null)
-				return false;
-		} else if (!modifiedDate.equals(other.modifiedDate))
-			return false;
-		if (netVolume == null) {
-			if (other.netVolume != null)
-				return false;
-		} else if (!netVolume.equals(other.netVolume))
 			return false;
 		if (netWeight == null) {
 			if (other.netWeight != null)
 				return false;
 		} else if (!netWeight.equals(other.netWeight))
 			return false;
-		if (nutrientClass == null) {
-			if (other.nutrientClass != null)
-				return false;
-		} else if (!nutrientClass.equals(other.nutrientClass))
-			return false;
-		if (nutrientProfile == null) {
-			if (other.nutrientProfile != null)
-				return false;
-		} else if (!nutrientProfile.equals(other.nutrientProfile))
-			return false;
-		if (nutrientScore == null) {
-			if (other.nutrientScore != null)
-				return false;
-		} else if (!nutrientScore.equals(other.nutrientScore))
-			return false;
-		if (plants == null) {
-			if (other.plants != null)
-				return false;
-		} else if (!plants.equals(other.plants))
-			return false;
-		if (productSpecifications == null) {
-			if (other.productSpecifications != null)
-				return false;
-		} else if (!productSpecifications.equals(other.productSpecifications))
-			return false;
 		if (profitability == null) {
 			if (other.profitability != null)
 				return false;
 		} else if (!profitability.equals(other.profitability))
-			return false;
-		if (projectedQty == null) {
-			if (other.projectedQty != null)
-				return false;
-		} else if (!projectedQty.equals(other.projectedQty))
 			return false;
 		if (qty == null) {
 			if (other.qty != null)
@@ -1027,21 +934,6 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 			if (other.recipeQtyUsed != null)
 				return false;
 		} else if (!recipeQtyUsed.equals(other.recipeQtyUsed))
-			return false;
-		if (recipeVolumeUsed == null) {
-			if (other.recipeVolumeUsed != null)
-				return false;
-		} else if (!recipeVolumeUsed.equals(other.recipeVolumeUsed))
-			return false;
-		if (reformulateCount == null) {
-			if (other.reformulateCount != null)
-				return false;
-		} else if (!reformulateCount.equals(other.reformulateCount))
-			return false;
-		if (reportLocales == null) {
-			if (other.reportLocales != null)
-				return false;
-		} else if (!reportLocales.equals(other.reportLocales))
 			return false;
 		if (servingSize == null) {
 			if (other.servingSize != null)

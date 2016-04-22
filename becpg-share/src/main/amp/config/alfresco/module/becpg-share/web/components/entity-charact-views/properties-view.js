@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (C) 2010-2015 beCPG. 
+ *  Copyright (C) 2010-2016 beCPG. 
  *   
  *  This file is part of beCPG 
  *   
@@ -140,6 +140,31 @@
                             
                             
                             beCPG.component.Properties.superclass.onReady.call(this);
+                        },
+                        
+                        /**
+                         * Helper function to position DOM elements
+                         *
+                         * @method synchronizeElements
+                         */
+                        synchronizeElements: function synchronizeElements(syncEl, sourceEl)
+                        {
+                           var sourceYuiEl = new YAHOO.util.Element(sourceEl),
+                              syncYuiEl = new YAHOO.util.Element(syncEl),
+                              region = YAHOO.util.Dom.getRegion(sourceYuiEl.get("id"));
+
+                           syncYuiEl.setStyle("position", "absolute");
+                           if(Dom.get(this.id+'-properties-tabview')==null){
+                        	   syncYuiEl.setStyle("left", region.left + "px");
+                        	   syncYuiEl.setStyle("top", region.top + "px");
+                           } else {
+                        	   var tabRegion = YAHOO.util.Dom.getRegion(this.id+'-properties-tabview');
+                        	   
+                        	   syncYuiEl.setStyle("left", (region.left - tabRegion.left)+"px");
+                        	   syncYuiEl.setStyle("top", (region.top - tabRegion.top)+ "px");
+                           }
+                           syncYuiEl.setStyle("width", region.width + "px");
+                           syncYuiEl.setStyle("height", region.height + "px");
                         },
 
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2015 beCPG.
+ * Copyright (C) 2010-2016 beCPG.
  *
  * This file is part of beCPG
  *
@@ -79,7 +79,8 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 	public boolean process(ProjectData projectData) throws FormulateException {
 
 		if (projectData.getAspects().contains(ContentModel.ASPECT_CHECKED_OUT) || projectData.getAspects().contains(ContentModel.ASPECT_WORKING_COPY)
-				|| projectData.getAspects().contains(BeCPGModel.ASPECT_COMPOSITE_VERSION) || ProjectState.Cancelled.equals(projectData.getProjectState())) {
+				|| projectData.getAspects().contains(BeCPGModel.ASPECT_COMPOSITE_VERSION) || ProjectState.Cancelled.equals(projectData.getProjectState())
+				|| ProjectState.OnHold.equals(projectData.getProjectState())) {
 			for (TaskListDataItem task : projectData.getTaskList()) {
 				if (TaskState.InProgress.equals(task.getTaskState()) && projectWorkflowService.isWorkflowActive(task)) {
 					logger.debug("Cancel workflow of project " + projectData.getName() + " for task " + task.getTaskName());

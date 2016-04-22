@@ -24,6 +24,6 @@
    
    <#if hasScore>
    		<#assign el=args.htmlid?html>	
-   		<div id="${el}-entity-catalog"></div> 
+   		<div id="${el}-entity-catalog" class="hidden" ></div> 
    </#if>
 </div>

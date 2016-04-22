@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (C) 2010-2015 beCPG. 
+ *  Copyright (C) 2010-2016 beCPG. 
  *   
  *  This file is part of beCPG 
  *   
@@ -106,7 +106,8 @@
                     + "/force",
               successCallback : {
                  fn : function EntityDataListToolbar_onFinish_success(response) {
-                	 	 YAHOO.Bubbling.fire("previewChangedEvent");
+                	 	//#2147 YAHOO.Bubbling.fire("previewChangedEvent");
+                	 	 window.location.reload();
                  },
                  scope : this
               },

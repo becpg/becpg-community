@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2015 beCPG. 
+ * Copyright (C) 2010-2016 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -86,9 +86,9 @@ public class FormulationMultiLevelILTest extends AbstractFinishedProductTest {
 				assertEquals(ing5, formulatedProduct.getIngList().get(0).getIng());
 				assertEquals(75d, formulatedProduct.getIngList().get(0).getQtyPerc());
 				assertEquals(ing1, formulatedProduct.getIngList().get(1).getIng());
-				assertEquals(70d, formulatedProduct.getIngList().get(1).getQtyPerc());
+				assertEquals(52.5d, formulatedProduct.getIngList().get(1).getQtyPerc()); 
 				assertEquals(ing4, formulatedProduct.getIngList().get(2).getIng());
-				assertEquals(30d, formulatedProduct.getIngList().get(2).getQtyPerc());
+				assertEquals(22,5d, formulatedProduct.getIngList().get(2).getQtyPerc());
 				assertEquals(ing1, formulatedProduct.getIngList().get(3).getIng());
 				assertEquals(20d, formulatedProduct.getIngList().get(3).getQtyPerc());
 				assertEquals(ing2, formulatedProduct.getIngList().get(4).getIng());

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2015 beCPG.
+ * Copyright (C) 2010-2016 beCPG.
  *
  * This file is part of beCPG
  *
@@ -322,6 +322,11 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 					assertTrue(reqCtrlList.getSources().contains(formulatedProduct.getNodeRef()));
 					checks++;
 
+				} else if (I18NUtil.getMessage(AllergensCalculatingFormulationHandler.MESSAGE_NOT_VALIDATED_ALLERGEN).equals(reqCtrlList.getReqMessage())) {
+
+					assertEquals(RequirementType.Tolerated, reqCtrlList.getReqType());
+					checks++;
+
 				} else {
 					logger.info("Unexpected rclDataItem: " + reqCtrlList.getReqMessage());
 					fail();
@@ -329,7 +334,7 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 			}
 
 			logger.info("/*-- Done checking, checks=" + checks + " (should be 11) --*/");
-			assertEquals(11, checks);
+			assertEquals(12, checks);
 
 			/*
 			 * #257: check reqCtrlList is clear if all req are respected (we
@@ -353,7 +358,7 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 			 */
 
 			logger.debug("After removing specs, " + formulatedProduct.getCompoListView().getReqCtrlList().size() + " remain");
-			assertEquals(4, formulatedProduct.getCompoListView().getReqCtrlList().size());
+			assertEquals(5, formulatedProduct.getCompoListView().getReqCtrlList().size());
 
 			return null;
 

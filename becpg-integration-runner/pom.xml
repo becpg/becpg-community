@@ -63,6 +63,7 @@
 
 
 		<!-- alfresco -->
+		
 		<dependency>
 			<groupId>org.alfresco</groupId>
 			<artifactId>alfresco-repository</artifactId>
@@ -107,6 +108,12 @@
                     <version>${alfresco.version}</version>
                     <classifier>config</classifier>
                     <type>zip</type>
+                    <exclusions>
+                    	<exclusion>
+                    		<groupId>jdk.tools</groupId>
+							<artifactId>jdk.tools</artifactId>
+                    	</exclusion>
+                    </exclusions>
          </dependency>
 
 

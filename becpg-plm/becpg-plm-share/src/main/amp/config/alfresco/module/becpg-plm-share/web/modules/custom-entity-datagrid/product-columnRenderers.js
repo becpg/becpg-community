@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2015 beCPG.
+ * Copyright (C) 2010-2016 beCPG.
  * 
  * This file is part of beCPG
  * 
@@ -311,10 +311,10 @@ if (beCPG.module.EntityDataGridRenderers) {
       		var unit, qty;
       		if(data.value == 0){
       			return "0";
-      		} else if(data.value < 0.01){
+      		} else if(Math.abs(data.value) < 0.01){
       			qty = data.value * 10000;
       			unit = " ppm";
-      		} else if(data.value < 0.1){
+      		} else if(Math.abs(data.value) < 0.1){
       			qty = data.value * 10;
       			unit = " ‰";
       		} else{
@@ -431,7 +431,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 				return '<span class="lcl-formulated-error" title="' + Alfresco.util.encodeHTML(error) + '">'
 						+ Alfresco.util.encodeHTML(data.displayValue) + '</span>';
 			}
-			return '<span class="' + data.metadata + '" >' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+			return '<span>' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
 		}
 
 	});
