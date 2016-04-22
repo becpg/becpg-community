@@ -30,5 +30,6 @@ public interface ProjectNotificationService {
 
 	void notifyTaskStateChanged(NodeRef projectNodeRef, NodeRef taskNodeRef, String beforeState, String afterState);
 	void notifyComment(NodeRef commentNodeRef, ActivityEvent activityEvent, NodeRef projectNodeRef, NodeRef taskNodeRef, NodeRef deliverableNodeRef);
+	String createSubject(NodeRef projectNodeRef, NodeRef taskNodeRef, String afterStateMsg);
 	
 }

@@ -69,14 +69,15 @@
 
 	<bean id="beCPGMailService" class="fr.becpg.repo.mail.impl.BeCPGMailServiceImpl">
 		<property name="nodeService" ref="nodeService" />
-		<property name="mailService" ref="mailService" />
-		<property name="templateService" ref="templateService" />
 		<property name="serviceRegistry" ref="ServiceRegistry" />
-		<property name="mailFrom" value="${mail.from.default}" />
-		<property name="repository" ref="repositoryHelper" />
-		<property name="searchService" ref="searchService" />
+		<property name="searchService" ref="searchService" />		
+		<property name="repository" ref="repositoryHelper" />			
 		<property name="fileFolderService" ref="fileFolderService" />
-		<property name="namespaceService" ref="namespaceService" />
+		<property name="namespaceService" ref="namespaceService" />			
+		<property name="actionService" ref="ActionService"/>
+		<property name="authorityService" ref="authorityService"/>
+		<property name="personService" ref="personService"/>
+		<property name="mailFrom" value="${mail.from.default}" />
 	</bean>
 
 
