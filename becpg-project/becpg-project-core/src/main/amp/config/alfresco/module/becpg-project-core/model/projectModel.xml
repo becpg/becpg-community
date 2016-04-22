@@ -935,7 +935,10 @@
 			 <mandatory-aspects>
 				<aspect>pjt:budgetAspect</aspect>
 			</mandatory-aspects>  
-		</type>		
+		</type>	
+		
+		
+			
 	</types>
 
 	<aspects>
@@ -1038,6 +1041,48 @@
 			</associations>
 		</aspect>
 		
+		<aspect name="pjt:notificationParamAspect">
+			<properties>
+				<property name="pjt:notificationFrequencyValue">
+					<type>d:int</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="pjt:notificationInitialValue">
+					<type>d:int</type>
+					<mandatory>false</mandatory>
+				</property>
+			</properties>
+			<associations>
+				<association name="pjt:notificationAuthorities">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>cm:authority</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>
+		</aspect>
 		
+		<aspect name="pjt:notificationDateAspect">
+			<properties>
+				<property name="pjt:lastNotificationDate">
+					<type>d:datetime</type>
+					<mandatory>true</mandatory>
+				</property>
+			</properties>
+		</aspect>
+		
+		<aspect name="pjt:notificationRefAspect">
+			<properties>
+				<property name="pjt:notificationRefNode">
+					<type>d:noderef</type>
+					<mandatory>true</mandatory>
+				</property>				
+			</properties>
+		</aspect>
 	</aspects>
 </model>

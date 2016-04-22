@@ -72,6 +72,11 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	private Double expense;	
 	private Double invoice;
 	private ResourceCost resourceCost;
+	//Notification
+	private Integer notificationFrequency;
+	private Integer initialNotification;
+	private Date lastNotification;
+	private List<NodeRef> notificationAuthorities;
 	
 
 	@AlfProp
@@ -369,6 +374,46 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 
 	public void setResourceCost(ResourceCost resourceCost) {
 		this.resourceCost = resourceCost;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "pjt:notificationFrequencyValue")
+	public Integer getNotificationFrequency() {
+		return notificationFrequency;
+	}
+
+	public void setNotificationFrequency(Integer notificationFrequency) {
+		this.notificationFrequency = notificationFrequency;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "pjt:notificationInitialValue")
+	public Integer getInitialNotification() {
+		return initialNotification;
+	}
+
+	public void setInitialNotification(Integer initialNotification) {
+		this.initialNotification = initialNotification;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "pjt:lastNotificationDate")
+	public Date getLastNotification() {
+		return lastNotification;
+	}
+
+	public void setLastNotification(Date lastNotification) {
+		this.lastNotification = lastNotification;
+	}
+
+	@AlfMultiAssoc
+	@AlfQname(qname = "pjt:notificationAuthorities")
+	public List<NodeRef> getNotificationAuthorities() {
+		return notificationAuthorities;
+	}
+
+	public void setNotificationAuthorities(List<NodeRef> notificationAuthorities) {
+		this.notificationAuthorities = notificationAuthorities;
 	}
 
 	public TaskListDataItem() {
