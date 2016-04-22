@@ -83,6 +83,7 @@
                         <addMavenDescriptor>false</addMavenDescriptor>
                         <manifestFile>${project.build.directory}/dependency/META-INF/MANIFEST.MF</manifestFile>
                     </archive>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
                     <overlays>
                         <!-- The current project customizations -->
                         <overlay/>

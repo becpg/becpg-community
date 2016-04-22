@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2015 beCPG.
+ * Copyright (C) 2010-2016 beCPG.
  *
  * This file is part of beCPG
  *
@@ -559,7 +559,9 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 			if (dataListNodeRef != null) {
 				return entityListDAO.getListItems(dataListNodeRef, datalistQname).stream().map(el -> {
-					return findOne(el, caches);
+					T ret = findOne(el, caches);
+					ret.setParentNodeRef(dataListNodeRef);
+					return ret;
 				}).collect(Collectors.toList());
 
 			}

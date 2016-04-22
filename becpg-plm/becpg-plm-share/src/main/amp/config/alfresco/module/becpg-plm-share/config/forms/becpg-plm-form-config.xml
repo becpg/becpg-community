@@ -1,4 +1,4 @@
-<!-- Copyright (C) 2010-2015 beCPG. This file is part of beCPG beCPG is free 
+<!-- Copyright (C) 2010-2016 beCPG. This file is part of beCPG beCPG is free 
 	software: you can redistribute it and/or modify it under the terms of the 
 	GNU Lesser General Public License as published by the Free Software Foundation, 
 	either version 3 of the License, or (at your option) any later version. beCPG 
@@ -5614,12 +5614,17 @@
 					<show id="bcpg:labelClaimFormula" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:charactName" />
+					<field id="bcpg:charactName" />	
+					<field id="bcpg:legalName">
+                   <control template="/org/alfresco/components/form/controls/textarea.ftl">
+                       <control-param name="maxLength">10000</control-param>
+                   </control>
+               </field>				
 					<field id="cm:description">
-						<control>
-							<control-param name="activateLinks">true</control-param>
-						</control>
-					</field>
+                   <control template="/org/alfresco/components/form/controls/textarea.ftl">
+                       <control-param name="maxLength">10000</control-param>
+                   </control>
+               </field>					
 					<field id="bcpg:labelClaimFormula">
 						<control template="/org/alfresco/components/form/controls/spel-editor.ftl">
 							<control-param name="rows">10</control-param>
@@ -5643,11 +5648,16 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:charactName" />
+					<field id="bcpg:legalName">
+                   <control template="/org/alfresco/components/form/controls/textarea.ftl">
+                       <control-param name="maxLength">10000</control-param>
+                   </control>
+               </field>				
 					<field id="cm:description">
-						<control>
-							<control-param name="activateLinks">true</control-param>
-						</control>
-					</field>
+                   <control template="/org/alfresco/components/form/controls/textarea.ftl">
+                       <control-param name="maxLength">10000</control-param>
+                   </control>
+               </field>	
 					<field id="bcpg:labelClaimFormula">
 						<control template="/org/alfresco/components/form/controls/spel-editor.ftl">
 							<control-param name="rows">10</control-param>
@@ -5669,6 +5679,11 @@
 					</field>
 					<field id="bcpg:legalName">
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:labelClaimType">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
 					</field>
 				</appearance>
 			</form>

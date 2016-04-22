@@ -1,5 +1,6 @@
 package fr.becpg.test.repo.product;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -125,10 +126,10 @@ public abstract class AbstractCompareProductTest extends PLMBaseTestCase {
 			String tempProperty = c.getProperty() == null ? "" : c.getProperty().toString();
 			if (productList.equals(tempProductList) && characteristic.equals(tempCharacteristic) && property.equals(tempProperty)
 					) {
-				if(c.getValues().toString().equals(values.toString())){
+				if(Arrays.toString(c.getValues()).equals(values.toString())){
 					return true;
 				} else {
-					logger.error("Value mismatch: "+productList+" "+characteristic+" "+property+" "+values+" VS "+c.getValues().toString() );
+					logger.error("Value mismatch: "+productList+" "+characteristic+" "+property+" "+values+" VS "+Arrays.toString(c.getValues()) );
 				}
 			}
 		}

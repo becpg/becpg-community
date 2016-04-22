@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2015 beCPG.
+ * Copyright (C) 2010-2016 beCPG.
  *
  * This file is part of beCPG
  *
@@ -36,6 +36,7 @@ import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
@@ -85,12 +86,15 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 		for (CompoListDataItem compoListDataItem : compoList) {
 			NodeRef productNodeRef = compoListDataItem.getProduct();
 			ProductData productData = alfrescoRepository.findOne(productNodeRef);
-			if ((productData instanceof SemiFinishedProductData) || (productData instanceof FinishedProductData)) {
-				for (ReqCtrlListDataItem tmp : productData.getCompoListView().getReqCtrlList()) {
-					// mandatory fields rclDataItem aren't put in parent
-					if (tmp.getReqDataType() != RequirementDataType.Completion) {
-						reqCtrlList.add(new ReqCtrlListDataItem(null, tmp.getReqType(), tmp.getReqMessage(), tmp.getCharact(), tmp.getSources(),
-								tmp.getReqDataType() != null ? tmp.getReqDataType() : RequirementDataType.Nutrient));
+			if ((productData instanceof SemiFinishedProductData) || (productData instanceof FinishedProductData)
+					|| (productData instanceof RawMaterialData)) {
+				if ((productData.getCompoListView() != null) && (productData.getCompoListView().getReqCtrlList() != null)) {
+					for (ReqCtrlListDataItem tmp : productData.getCompoListView().getReqCtrlList()) {
+						// mandatory fields rclDataItem aren't put in parent
+						if (tmp.getReqDataType() != RequirementDataType.Completion) {
+							reqCtrlList.add(new ReqCtrlListDataItem(null, tmp.getReqType(), tmp.getReqMessage(), tmp.getCharact(), tmp.getSources(),
+									tmp.getReqDataType() != null ? tmp.getReqDataType() : RequirementDataType.Nutrient));
+						}
 					}
 				}
 			}

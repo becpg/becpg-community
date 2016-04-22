@@ -94,6 +94,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	private static final String TAG_PACKAGING_LEVEL_MEASURES = "packagingLevelMeasures";
 	private static final String ATTR_NODEREF = "nodeRef";
 	private static final String ATTR_PARENT_NODEREF = "parentNodeRef";
+
+	private static final String ATTR_ALLERGENLIST_INVOLUNTARY_FROM_PROCESS = "allergenListInVoluntaryFromProcess";
+	private static final String ATTR_ALLERGENLIST_INVOLUNTARY_FROM_RAW_MATERIAL = "allergenListInVoluntaryFromRawMaterial";
 	
 	
 
@@ -195,6 +198,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				List<AllergenListDataItem> allergenList = (List<AllergenListDataItem>) datalists.get(PLMModel.TYPE_ALLERGENLIST);
 				String volAllergens = "";
 				String inVolAllergens = "";
+				String inVolAllergensProcess = "";
+				String inVolAllergensRawMaterial = "";
 
 				for (AllergenListDataItem dataItem : allergenList) {
 
@@ -206,7 +211,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 						if ((allergen == null) || allergen.isEmpty()) {
 							allergen = (String) nodeService.getProperty(dataItem.getAllergen(), BeCPGModel.PROP_CHARACT_NAME);
 						}
-
+						
+						
+						
 						// concat allergens
 						if (dataItem.getVoluntary()) {
 							if (volAllergens.isEmpty()) {
@@ -220,12 +227,37 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 							} else {
 								inVolAllergens += RepoConsts.LABEL_SEPARATOR + allergen;
 							}
+							boolean presentInRawMaterial = false;
+							boolean presentInProcess = false;
+							for(NodeRef inVoluntarySource : dataItem.getInVoluntarySources()){
+								QName inVoluntarySourceType = nodeService.getType(inVoluntarySource);
+								
+								if(!presentInRawMaterial && PLMModel.TYPE_RAWMATERIAL.equals(inVoluntarySourceType)){
+									if (inVolAllergensRawMaterial.isEmpty()) {
+										inVolAllergensRawMaterial = allergen;
+									} else {
+										inVolAllergensRawMaterial += RepoConsts.LABEL_SEPARATOR + allergen;
+									}
+									presentInRawMaterial = true;
+								} else if(!presentInProcess && PLMModel.TYPE_RESOURCEPRODUCT.equals(inVoluntarySourceType)){
+									if (inVolAllergensProcess.isEmpty()) {
+										inVolAllergensProcess = allergen;
+									} else {
+										inVolAllergensProcess += RepoConsts.LABEL_SEPARATOR + allergen;
+									}
+									presentInProcess = true;
+								}
+							}
+
 						}
 					}
 				}
 
 				allergenListElt.addAttribute(PLMModel.PROP_ALLERGENLIST_VOLUNTARY.getLocalName(), volAllergens);
 				allergenListElt.addAttribute(PLMModel.PROP_ALLERGENLIST_INVOLUNTARY.getLocalName(), inVolAllergens);
+				allergenListElt.addAttribute(ATTR_ALLERGENLIST_INVOLUNTARY_FROM_PROCESS, inVolAllergensProcess);
+				allergenListElt.addAttribute(ATTR_ALLERGENLIST_INVOLUNTARY_FROM_RAW_MATERIAL, inVolAllergensRawMaterial);
+
 			}
 
 			loadCompoList(productData, dataListsElt, defaultVariantNodeRef, images);

@@ -7,6 +7,7 @@ import java.nio.charset.Charset;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.ContentWriter;
+import org.apache.commons.io.input.BOMInputStream;
 
 import fr.becpg.common.csv.CSVReader;
 import fr.becpg.repo.importer.ImportFileReader;
@@ -19,7 +20,7 @@ public class ImportCSVFileReader implements ImportFileReader {
 
 
 	public ImportCSVFileReader(InputStream is, Charset charset, char separator) throws IOException{
-		CSVReader csvReader = new CSVReader(new InputStreamReader(is, charset), separator);
+		CSVReader csvReader = new CSVReader(new InputStreamReader(new BOMInputStream(is,false), charset), separator);
 		lines = csvReader.readAll();
 	}
 

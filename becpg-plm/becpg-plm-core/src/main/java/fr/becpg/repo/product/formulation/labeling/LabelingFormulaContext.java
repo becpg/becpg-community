@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2015 beCPG.
+ * Copyright (C) 2010-2016 beCPG.
  *
  * This file is part of beCPG
  *
@@ -349,7 +349,7 @@ public class LabelingFormulaContext {
 	}
 
 	private String uncapitalize(String legalName) {
-		if ((legalName == null) || legalName.isEmpty() || Pattern.compile("^([A-Z]{2}|[A-Z][1-9]).*$").matcher(legalName).find()) {
+		if ((legalName == null) || legalName.isEmpty() || Pattern.compile("^([A-Z]{2}|[A-Z][1-9]|[A-Z]\\-|[A-Z]_).*$").matcher(legalName).find()) {
 			return legalName;
 		}
 		return StringUtils.uncapitalize(legalName);

@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2010-2015 beCPG. 
+Copyright (C) 2010-2016 beCPG. 
  
 This file is part of beCPG 
  
@@ -41,7 +41,15 @@ public class ProductAttributeExtractorPlugin extends AbstractExprNameExtractor {
 	@Value("${beCPG.product.name.format}")
 	private String productNameFormat;
 
+
+	public void setProductNameFormat(String productNameFormat) {
+		this.productNameFormat = productNameFormat;
+	}
 	
+	public String getProductNameFormat() {
+		return productNameFormat;
+	}
+
 	@Autowired
 	private EntityDictionaryService entityDictionaryService;
 
