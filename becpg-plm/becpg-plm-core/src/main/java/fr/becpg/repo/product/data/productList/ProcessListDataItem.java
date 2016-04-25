@@ -4,14 +4,16 @@
 package fr.becpg.repo.product.data.productList;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
 
+import fr.becpg.model.MPMModel;
 import fr.becpg.repo.product.data.constraints.ProcessListUnit;
-import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
-import fr.becpg.repo.repository.annotation.InternalField;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
+import fr.becpg.repo.repository.annotation.InternalField;
 import fr.becpg.repo.repository.annotation.MultiLevelDataList;
 
 @AlfType
@@ -262,6 +264,10 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 		setResource(targetItem);
 	}
 
+	@Override
+	public QName getComponentAssocName() {
+		return MPMModel.ASSOC_PL_RESOURCE;
+	}
 
 	
 	
