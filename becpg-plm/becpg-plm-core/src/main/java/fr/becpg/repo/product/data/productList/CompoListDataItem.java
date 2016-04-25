@@ -4,7 +4,9 @@
 package fr.becpg.repo.product.data.productList;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
 
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
 import fr.becpg.repo.product.data.constraints.CompoListUnit;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
@@ -329,6 +331,11 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 	@Override
 	public void setComponent(NodeRef targetItem) {
 		setProduct(targetItem);		
+	}
+
+	@Override
+	public QName getComponentAssocName() {
+		return PLMModel.ASSOC_COMPOLIST_PRODUCT;
 	}
 	
 }
