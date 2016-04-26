@@ -216,6 +216,37 @@
 					</field>
 				</appearance>
 			</form>
+			<form id="full-screen">
+				<field-visibility>
+					<show id="mpm:plStep" />
+					<!-- <show id="mpm:plProduct" />	
+					<show id="mpm:plQty" />	 -->									
+					<show id="mpm:plResource" />
+					<show id="mpm:plQtyResource" />
+					<show id="mpm:plRateResource" />
+					<show id="mpm:plUnit" />
+				</field-visibility>
+				<appearance>	
+					<field id="mpm:plUnit">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isStoreable">true</control-param>
+						</control>
+					</field>
+								
+					<field id="mpm:plStep">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<!-- <field id="mpm:plProduct">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field> -->
+					<field id="mpm:plResource">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+				</appearance>
+			</form>
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
