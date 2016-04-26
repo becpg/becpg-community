@@ -184,7 +184,7 @@ YAHOO.Bubbling
                   {
                      actionName : "full-screen",
                      evaluate : function(asset, entity) {
-                        return asset.name !== null && (asset.name === "compoList") && entity != null && entity.userAccess.edit;
+                        return asset.name !== null && (asset.name === "compoList" || asset.name === "packagingList" || asset.name === "processList") && entity != null && entity.userAccess.edit;
                      },
                      fn : function(instance) {
 

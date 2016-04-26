@@ -18,12 +18,15 @@
 package fr.becpg.repo.product.data.productList;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
 
 import fr.becpg.repo.repository.RepositoryEntity;
 
 public interface CompositionDataItem extends RepositoryEntity, Cloneable {
 
 	NodeRef getComponent();
+	
+	QName getComponentAssocName();
 
 	void setComponent(NodeRef targetItem);
 
