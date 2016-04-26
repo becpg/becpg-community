@@ -60,29 +60,25 @@ public class VariantFilters<T extends VariantDataItem> implements DataListFilter
 		}
 
 		return obj -> {
-			if (obj instanceof VariantDataItem) {
+			if ((variantNodeRef != null) && (obj instanceof VariantDataItem)) {
 				VariantDataItem item = (obj);
 
-				if (variantNodeRef != null) {
-					if (isDefaultVariant != null) {
+				if (isDefaultVariant != null) {
 
-						if ((item.getVariants() == null) || item.getVariants().isEmpty()) {
-							if ((isDefaultVariant != null) && isDefaultVariant) {
-								return true;
-							}
-						}
-
-						if (isDefaultVariant && item.getVariants().contains(variantNodeRef)) {
+					if ((item.getVariants() == null) || item.getVariants().isEmpty()) {
+						if ((isDefaultVariant != null) && isDefaultVariant) {
 							return true;
 						}
+					}
 
-					} else if ((variantNodeRef != null) && item.getVariants().contains(variantNodeRef)) {
+					if (isDefaultVariant && item.getVariants().contains(variantNodeRef)) {
 						return true;
 					}
-					return false;
-				} else if ((item.getVariants() != null) && !item.getVariants().isEmpty()) {
-					return false;
+
+				} else if ((variantNodeRef != null) && item.getVariants().contains(variantNodeRef)) {
+					return true;
 				}
+				return false;
 			}
 			return true;
 		};
