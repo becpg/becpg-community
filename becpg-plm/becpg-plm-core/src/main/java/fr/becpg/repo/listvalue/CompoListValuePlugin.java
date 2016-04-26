@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,6 +83,13 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 
 			List<ListValueEntry> result = getParentsLevel(mlld, query, itemId);
 
+			if (entityNodeRef != null) {
+
+				String state = (String) nodeService.getProperty(entityNodeRef, PLMModel.PROP_PRODUCT_STATE);
+				result.add(new ListValueEntry(entityNodeRef.toString(), (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME),
+						nodeService.getType(entityNodeRef).getLocalName() + "-" + state));
+			}
+
 			return new ListValuePage(result, pageNum, pageSize, null);
 		}
 		return null;
@@ -106,7 +114,9 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 						continue;
 					}
 
-					if (nodeService.getType(productNodeRef).isMatch(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT)) {
+					QName type = nodeService.getType(productNodeRef);
+
+					if (type.isMatch(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT) || type.isMatch(PLMModel.TYPE_SEMIFINISHEDPRODUCT)) {
 
 						boolean addNode = false;
 						String productName = (String) nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME);
@@ -126,8 +136,14 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 						if (addNode) {
 							logger.debug("add node productName: " + productName);
 							String state = (String) nodeService.getProperty(productNodeRef, PLMModel.PROP_PRODUCT_STATE);
-							result.add(new ListValueEntry(kv.getKey().toString(), productName,
-									PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.getLocalName() + "-" + state));
+
+							if (type.isMatch(PLMModel.TYPE_SEMIFINISHEDPRODUCT)) {
+								result.add(new ListValueEntry(productNodeRef.toString(), productName,
+										PLMModel.TYPE_SEMIFINISHEDPRODUCT.getLocalName() + "-" + state));
+							} else {
+								result.add(new ListValueEntry(kv.getKey().toString(), productName,
+										PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.getLocalName() + "-" + state));
+							}
 						}
 					}
 

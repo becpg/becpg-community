@@ -73,6 +73,8 @@
 	</bean>
 	<bean id="sortableListPolicy" class="fr.becpg.repo.entity.datalist.policy.SortableListPolicy" parent="abstractBeCPGPolicy">
 		<property name="dataListSortService" ref="dataListSortService" />
+		<property name="entityDictionaryService" ref="entityDictionaryService" />
+		<property name="entityListDAO" ref="entityListDAO" />
 	</bean>
 
 
