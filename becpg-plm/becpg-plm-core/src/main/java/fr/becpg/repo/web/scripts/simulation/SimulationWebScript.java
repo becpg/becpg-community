@@ -40,8 +40,9 @@ import fr.becpg.model.SystemState;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.product.data.AbstractProductDataView;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.product.data.productList.CompositionDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 
 /**
@@ -134,30 +135,39 @@ public class SimulationWebScript extends AbstractWebScript {
 
 	}
 
-	private NodeRef recurSimule(NodeRef entityNodeRef, CompoListDataItem dataListItem, List<NodeRef> dataListItemsNodeRefs) {
+	private NodeRef recurSimule(NodeRef entityNodeRef, CompositionDataItem dataListItem, List<NodeRef> dataListItemsNodeRefs) {
 
 		NodeRef parentNodeRef = dataListItem != null ? dataListItem.getComponent() : entityNodeRef;
 
 		ProductData productData = alfrescoRepository.findOne(parentNodeRef);
 
 		if (productData.getCompoList() != null) {
-			for (CompoListDataItem item : productData.getCompoList()) {
-				NodeRef simulationNodeRef = recurSimule(entityNodeRef, item, dataListItemsNodeRefs);
-				if (simulationNodeRef != null) {
-					if (dataListItem == null) {
-						logger.debug("Update root " + productData.getName());
-						associationService.update(item.getNodeRef(), PLMModel.ASSOC_COMPOLIST_PRODUCT, simulationNodeRef);
-					} else {
-						NodeRef parentSimulationNodeRef = createCopyNodeRef(parentNodeRef,
-								nodeService.getPrimaryParent(entityNodeRef).getParentRef());
-						ProductData newProductData = alfrescoRepository.findOne(parentSimulationNodeRef);
-						logger.debug("Create new SF " + newProductData.getName());
-						for (CompoListDataItem newItem : newProductData.getCompoList()) {
-							NodeRef origNodeRef = associationService.getTargetAssoc(newItem.getNodeRef(), ContentModel.ASSOC_ORIGINAL);
-							if ((origNodeRef != null) && origNodeRef.equals(item.getNodeRef())) {
-								associationService.update(newItem.getNodeRef(), PLMModel.ASSOC_COMPOLIST_PRODUCT, simulationNodeRef);
-								logger.debug("Update new SF " + newProductData.getName());
-								return newProductData.getNodeRef();
+
+			for (AbstractProductDataView view : productData.getViews()) {
+				for (CompositionDataItem item : view.getMainDataList()) {
+
+					NodeRef simulationNodeRef = recurSimule(entityNodeRef, item, dataListItemsNodeRefs);
+					if (simulationNodeRef != null) {
+						if (dataListItem == null) {
+							logger.debug("Update root " + productData.getName());
+							associationService.update(item.getNodeRef(), item.getComponentAssocName(), simulationNodeRef);
+						} else {
+							NodeRef parentSimulationNodeRef = createCopyNodeRef(parentNodeRef,
+									nodeService.getPrimaryParent(entityNodeRef).getParentRef());
+							ProductData newProductData = alfrescoRepository.findOne(parentSimulationNodeRef);
+							logger.debug("Create new SF " + newProductData.getName());
+
+							for (AbstractProductDataView newView : newProductData.getViews()) {
+								if (newView.getClass().getName().equals(view.getClass().getName())) {
+									for (CompositionDataItem newItem : newView.getMainDataList()) {
+										NodeRef origNodeRef = associationService.getTargetAssoc(newItem.getNodeRef(), ContentModel.ASSOC_ORIGINAL);
+										if ((origNodeRef != null) && origNodeRef.equals(item.getNodeRef())) {
+											associationService.update(newItem.getNodeRef(), item.getComponentAssocName(), simulationNodeRef);
+											logger.debug("Update new SF " + newProductData.getName());
+											return newProductData.getNodeRef();
+										}
+									}
+								}
 							}
 						}
 					}

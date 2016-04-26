@@ -1031,8 +1031,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 					Double computedRatio = 1d;
 					if (DeclarationType.Declare.equals(declarationType) && isMultiLevel && (qty != null)) {
-						Double qtyTotal = productData.getNetWeight(); 
-						
+						Double qtyTotal = FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT); 
 						
 						if ((qtyTotal != null) && (qtyTotal != 0d)) {
 							computedRatio = qty / qtyTotal;
