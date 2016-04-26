@@ -97,6 +97,12 @@
 					<property name="projectActivityService" ref="projectActivityService" />
 					<property name="nodeService" ref="nodeService"/>
 				</bean>
+				<bean class="fr.becpg.repo.project.formulation.TaskOverdueFormulationHandler">
+					<property name="beCPGMailService" ref="beCPGMailService"/>
+					<property name="workflowService" ref="WorkflowService"/>
+					<property name="projectNotificationService" ref="projectNotificationService"/>
+					<property name="projectService" ref="projectService" />
+				</bean>
 			</list>
 		</property>
 		<property name="formulationService" ref="formulationService" />

@@ -606,6 +606,10 @@
 					<show id="pjt:tlWork" />
 					<show id="pjt:tlResourceCost" />
 					<show id="pjt:tlBudgetRef" />
+					
+					<show id="pjt:notificationFrequencyValue" force="true"/>
+					<show id="pjt:notificationInitialValue" force="true"/>
+					<show id="pjt:notificationAuthorities" force="true"/>
 
 				</field-visibility>
 				<appearance>
@@ -695,6 +699,24 @@
 						</control>
 					</field>
 					
+					<!-- Notifications -->
+					<set id="notifications" appearance="bordered-panel" label-id="becpg.forms.notification.label"/>
+					
+					<field id="pjt:notificationAuthorities" set="notifications" label-id="becpg.forms.notification.property.authorities">
+						<control template="/org/alfresco/components/form/controls/authority.ftl" />
+					</field>					
+					
+					<field id="pjt:notificationFrequencyValue" set="notifications" 
+					label-id="becpg.forms.notification.property.frequency"
+					help-id="becpg.forms.notification.tooltip.frequency">
+						<control template="/org/alfresco/components/form/controls/number.ftl" />
+					</field>
+					<field id="pjt:notificationInitialValue" set="notifications" 
+					label-id="becpg.forms.notification.property.initialNotification"
+					help-id="becpg.forms.notification.tooltip.initial">
+						<control template="/org/alfresco/components/form/controls/number.ftl" />
+					</field>	
+					
 				</appearance>
 			</form>
 			
@@ -730,6 +752,10 @@
 					<show id="pjt:tlWork" />
 					<show id="pjt:tlResourceCost" />
 					<show id="pjt:tlBudgetRef" />
+					
+					<show id="pjt:notificationInitialValue" force="true"/>
+					<show id="pjt:notificationFrequencyValue" force="true"/>
+					<show id="pjt:notificationAuthorities" force="true"/>
 
 				</field-visibility>
 				<appearance>
@@ -786,7 +812,6 @@
 						</control>
 					</field>
 
-
 					<set id="planning" appearance="bordered-panel" label-id="becpg.forms.set.planning.label"
 						template="/org/alfresco/components/form/2-column-set.ftl" />
 
@@ -797,6 +822,7 @@
 					<field id="pjt:tlStart" set="planning" />
 					<field id="pjt:tlEnd" set="planning" />
 					<field id="pjt:completionPercent" set="planning" />
+					
 					
 					<set id="budget" appearance="bordered-panel" label-id="becpg.forms.set.budget.label"
 						template="/org/alfresco/components/form/2-column-set.ftl" />
@@ -816,6 +842,24 @@
 						</control>
 					</field>
 					
+					<!-- Notifications -->
+					<set id="notifications" appearance="bordered-panel" label-id="becpg.forms.notification.label"/>
+					
+					<field id="pjt:notificationAuthorities" set="notifications" label-id="becpg.forms.notification.property.authorities">
+						<control template="/org/alfresco/components/form/controls/authority.ftl" />
+					</field>					
+					
+					<field id="pjt:notificationFrequencyValue" set="notifications" 
+					label-id="becpg.forms.notification.property.frequency"
+					help-id="becpg.forms.notification.tooltip.frequency">
+						<control template="/org/alfresco/components/form/controls/number.ftl" />
+					</field>
+					<field id="pjt:notificationInitialValue" set="notifications" 
+					label-id="becpg.forms.notification.property.initialNotification"
+					help-id="becpg.forms.notification.tooltip.initial">
+						<control template="/org/alfresco/components/form/controls/number.ftl" />
+					</field>	
+
 				</appearance>
 			</form>
 			<!-- Data Grid view -->
@@ -871,6 +915,10 @@
 					<show id="pjt:tlWork" />
 					<show id="pjt:tlResourceCost" />
 					<show id="pjt:tlBudgetRef" />
+					
+					<show id="pjt:notificationFrequencyValue" force="true"/>
+					<show id="pjt:notificationInitialValue" force="true"/>
+					<show id="pjt:notificationAuthorities" force="true"/>
 
 				</field-visibility>
 				<appearance>
@@ -957,7 +1005,24 @@
 						</control>
 					</field>
 					
-				</appearance>
+					<!-- Notifications -->
+					<set id="notifications" appearance="bordered-panel" label-id="becpg.forms.notification.label"/>
+					
+					<field id="pjt:notificationAuthorities" set="notifications" label-id="becpg.forms.notification.property.authorities">
+						<control template="/org/alfresco/components/form/controls/authority.ftl" />
+					</field>					
+					
+					<field id="pjt:notificationFrequencyValue" set="notifications" 
+					label-id="becpg.forms.notification.property.frequency"
+					help-id="becpg.forms.notification.tooltip.frequency">
+						<control template="/org/alfresco/components/form/controls/number.ftl" />
+					</field>
+					<field id="pjt:notificationInitialValue" set="notifications" 
+					label-id="becpg.forms.notification.property.initialNotification"
+					help-id="becpg.forms.notification.tooltip.initial">
+						<control template="/org/alfresco/components/form/controls/number.ftl" />
+					</field>		
+			</appearance>
 			</form>
 			<form id="datagrid">
 				<field-visibility>
