@@ -5,7 +5,7 @@
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/properties/local"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
-        <dependent-module archiveName="alfresco-share-services-5.1.e.amp" deploy-path="/WEB-INF/lib" handle="module:/resource/org.alfresco.alfresco-share-services-5.1.d-EA/org.alfresco.alfresco-share-services-5.1.d-EA">
+        <dependent-module archiveName="alfresco-share-services-5.1.e.amp" deploy-path="/WEB-INF/lib" handle="module:/resource/org.alfresco.alfresco-share-services-5.1.e/org.alfresco.alfresco-share-services-5.1.e">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module archiveName="becpg-core-2.1.0.amp" deploy-path="/WEB-INF/lib" handle="module:/resource/becpg-core/becpg-core">
@@ -32,10 +32,10 @@
         <dependent-module deploy-path="/" handle="module:/overlay/prj/becpg-core?includes=**/**&amp;excludes=META-INF/MANIFEST.MF">
             <dependency-type>consumes</dependency-type>
         </dependent-module>
-        <dependent-module deploy-path="/" handle="module:/overlay/prj/org.alfresco.alfresco-share-services-5.1.d-EA?includes=**/**&amp;excludes=META-INF/MANIFEST.MF">
+        <dependent-module deploy-path="/" handle="module:/overlay/prj/org.alfresco.alfresco-share-services-5.1.e?includes=**/**&amp;excludes=META-INF/MANIFEST.MF">
             <dependency-type>consumes</dependency-type>
         </dependent-module>
-        <dependent-module deploy-path="/" handle="module:/overlay/prj/org.alfresco.alfresco-5.1.d-EA?includes=**/**&amp;excludes=META-INF/MANIFEST.MF">
+        <dependent-module deploy-path="/" handle="module:/overlay/var/M2_REPO/org/alfresco/alfresco/5.1.e/alfresco-5.1.e.war?unpackFolder=target/m2e-wtp/overlays&amp;includes=**/**&amp;excludes=META-INF/MANIFEST.MF">
             <dependency-type>consumes</dependency-type>
         </dependent-module>
         <dependent-module deploy-path="/" handle="module:/overlay/slf/?includes=**/**&amp;excludes=META-INF/MANIFEST.MF">
