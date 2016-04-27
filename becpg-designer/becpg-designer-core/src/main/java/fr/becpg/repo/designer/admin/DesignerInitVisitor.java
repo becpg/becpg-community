@@ -140,5 +140,9 @@ public class DesignerInitVisitor extends AbstractInitVisitorImpl  {
 
 	}
 
+	@Override
+	public Integer initOrder() {
+		return 1;
+	}
 
 }

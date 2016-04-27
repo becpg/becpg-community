@@ -875,4 +875,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 					PermissionService.GROUP_PREFIX + PLMGroup.TradeUser.toString());
 		}
 	}
+	
+	@Override
+	public Integer initOrder() {
+		return 3;
+	}
 }
