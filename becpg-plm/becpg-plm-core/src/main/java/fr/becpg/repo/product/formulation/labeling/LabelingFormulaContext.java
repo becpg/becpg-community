@@ -716,7 +716,7 @@ public class LabelingFormulaContext {
 
 			qtyPerc = (useVolume ? volumePerc : qtyPerc);
 
-			if ((qtyPerc == null) || (qtyPerc != 0d)) {
+			if ((qtyPerc == null) || (qtyPerc > 0d)) {
 
 				String toAppend = new String();
 
