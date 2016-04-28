@@ -116,7 +116,6 @@
                     </exclusions>
          </dependency>
 
-
 	</dependencies>
 	
 	<properties>
