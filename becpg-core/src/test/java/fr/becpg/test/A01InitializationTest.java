@@ -20,6 +20,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.tradeshift.test.remote.Remote;
@@ -29,7 +30,8 @@ import fr.becpg.model.BeCPGModel;
 
 @RunWith(RemoteTestRunner.class)
 @Remote(runnerClass = SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:alfresco/application-context.xml" })
+@TestExecutionListeners( { BeCPGDependencyInjectionTestListener.class })
+@ContextConfiguration({ "classpath:alfresco/application-context.xml" })
 public class A01InitializationTest {
 
 	@Autowired
