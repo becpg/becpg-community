@@ -112,7 +112,14 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 		ftsQuery.append(SystemState.Simulation.toString());
 
 		queryBuilder.andFTSQuery(ftsQuery.toString());
+		
 
+		NodeRef entityNodeRef = new NodeRef((String) props.get(ListValueService.PROP_NODEREF));
+		
+		if(entityNodeRef!=null){
+			queryBuilder.andNotID(entityNodeRef);
+		}
+		
 		String queryFilter = (String) props.get(ListValueService.PROP_FILTER);
 
 		
@@ -122,7 +129,6 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 			String filterValue = splitted[1];
 			if ((filterValue != null) && !filterValue.isEmpty()) {
 				if (filterValue.contains("{")) {
-					NodeRef entityNodeRef = new NodeRef((String) props.get(ListValueService.PROP_NODEREF));
 					if (entityNodeRef != null) {
 						filterValue = extractExpr(entityNodeRef, filterValue);
 					}
