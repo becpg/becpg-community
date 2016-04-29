@@ -17,6 +17,8 @@
  ******************************************************************************/
 package fr.becpg.repo.product.formulation.labeling;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.text.Format;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -259,28 +261,40 @@ public class LabelingFormulaContext {
 	/* formaters */
 
 	private Format getIngTextFormat(AbstractLabelingComponent lblComponent) {
+
 		if (textFormaters.containsKey(lblComponent.getNodeRef())) {
-			return new MessageFormat(textFormaters.get(lblComponent.getNodeRef()));
+			return applyRoundingMode(new MessageFormat(textFormaters.get(lblComponent.getNodeRef())));
 		}
 
 		if (lblComponent instanceof CompositeLabeling) {
 			if (((CompositeLabeling) lblComponent).isGroup()) {
-				return new MessageFormat(groupDefaultFormat);
+				return applyRoundingMode(new MessageFormat(groupDefaultFormat));
 			}
 			if (DeclarationType.Detail.equals(((CompositeLabeling) lblComponent).getDeclarationType())) {
-				return new MessageFormat(detailsDefaultFormat);
+				return applyRoundingMode(new MessageFormat(detailsDefaultFormat));
 			}
-			return new MessageFormat(ingDefaultFormat);
+			return applyRoundingMode(new MessageFormat(ingDefaultFormat));
 		} else if (lblComponent instanceof IngTypeItem) {
 			if (((((IngTypeItem) lblComponent)).getDecThreshold() != null)
 					&& ((((IngTypeItem) lblComponent)).getQty() <= ((((IngTypeItem) lblComponent)).getDecThreshold() / 100))) {
-				return new MessageFormat(ingTypeDecThresholdFormat);
+				return applyRoundingMode(new MessageFormat(ingTypeDecThresholdFormat));
 			}
-			return new MessageFormat(ingTypeDefaultFormat);
+			return applyRoundingMode(new MessageFormat(ingTypeDefaultFormat));
 		} else if ((lblComponent instanceof IngItem) && (((IngItem) lblComponent).getSubIngs().size() > 0)) {
-			return new MessageFormat(subIngsDefaultFormat);
+			return applyRoundingMode(new MessageFormat(subIngsDefaultFormat));
 		}
-		return new MessageFormat(ingDefaultFormat);
+		return applyRoundingMode(new MessageFormat(ingDefaultFormat));
+	}
+
+	private Format applyRoundingMode(MessageFormat messageFormat) {
+		if(messageFormat.getFormats()!=null){
+			for(Format format: messageFormat.getFormats()){
+				if(format instanceof DecimalFormat){
+					((DecimalFormat)format).setRoundingMode(RoundingMode.DOWN);
+				}
+			}
+		}
+		return messageFormat;
 	}
 
 	/*
@@ -388,7 +402,7 @@ public class LabelingFormulaContext {
 				}
 			}
 		}
-		return new MessageFormat(detailsDefaultFormat).format(new Object[] { ingLegalName, null, ret.toString() });
+		return applyRoundingMode(new MessageFormat(detailsDefaultFormat)).format(new Object[] { ingLegalName, null, ret.toString() });
 	}
 
 	private String getAllergenName(NodeRef allergen) {
@@ -642,7 +656,7 @@ public class LabelingFormulaContext {
 				if (ret.length() > 0) {
 					ret.append(groupDefaultSeparator);
 				}
-				ret.append(new MessageFormat(groupListDefaultFormat).format(new Object[] { ingName, qtyPerc }));
+				ret.append(applyRoundingMode(new MessageFormat(groupListDefaultFormat)).format(new Object[] { ingName, qtyPerc }));
 			}
 		}
 
