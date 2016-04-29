@@ -220,6 +220,7 @@ public class ImportEntityXmlVisitor {
 
 					nodeType = parseQName(qName);
 
+					
 					NodeRef node = null;
 					if (currAssocType.isEmpty() || !currAssocType.peek().equals(RemoteEntityService.CHILD_ASSOC_TYPE)) {
 						node = findNode(nodeRef, code, name, curNodeRef.isEmpty() ? this.destNodeRef : null, path, nodeType, currProp, cache);
@@ -449,8 +450,10 @@ public class ImportEntityXmlVisitor {
 								}
 							}
 						}
+					} else if (multipleValues!=null ){
+						multipleValues = null;
 					}
-				}
+				} 
 			}
 		}
 
