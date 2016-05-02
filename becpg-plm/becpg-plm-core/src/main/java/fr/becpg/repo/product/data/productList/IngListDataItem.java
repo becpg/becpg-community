@@ -338,7 +338,7 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 		result = prime * result + ((isSupport == null) ? 0 : isSupport.hashCode());
 		result = prime * result + ((maxi == null) ? 0 : maxi.hashCode());
 		result = prime * result + ((mini == null) ? 0 : mini.hashCode());
-		result = prime * result + ((parent == null) ? 0 : parent.hashCode());
+		result = prime * result + ((parent == null || parent == this) ? 0 : parent.hashCode());
 		result = prime * result + ((qtyPerc == null) ? 0 : qtyPerc.hashCode());
 		result = prime * result + ((volumeQtyPerc == null) ? 0 : volumeQtyPerc.hashCode());
 		return result;

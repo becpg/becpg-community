@@ -22,14 +22,14 @@
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 
-   <import resource="classpath:alfresco/module/${artifactId}/context/model-context.xml" />
-   <import resource="classpath:alfresco/module/${artifactId}/context/service-context.xml" />
-   <import resource="classpath:alfresco/module/${artifactId}/context/product-context.xml" />
-	<import resource="classpath:alfresco/module/${artifactId}/context/action-context.xml" />
-	<import resource="classpath:alfresco/module/${artifactId}/context/formulation-context.xml" />
-	<import resource="classpath:alfresco/module/${artifactId}/context/ecm-context.xml" />
-	<import resource="classpath:alfresco/module/${artifactId}/context/quality-context.xml" />
-	<import resource="classpath:alfresco/module/${artifactId}/context/workflow-context.xml" />
-	<import resource="classpath:alfresco/module/${artifactId}/context/patch-context.xml" />
+   <import resource="classpath:alfresco/module/${project.artifactId}/context/model-context.xml" />
+   <import resource="classpath:alfresco/module/${project.artifactId}/context/service-context.xml" />
+   <import resource="classpath:alfresco/module/${project.artifactId}/context/product-context.xml" />
+	<import resource="classpath:alfresco/module/${project.artifactId}/context/action-context.xml" />
+	<import resource="classpath:alfresco/module/${project.artifactId}/context/formulation-context.xml" />
+	<import resource="classpath:alfresco/module/${project.artifactId}/context/ecm-context.xml" />
+	<import resource="classpath:alfresco/module/${project.artifactId}/context/quality-context.xml" />
+	<import resource="classpath:alfresco/module/${project.artifactId}/context/workflow-context.xml" />
+	<import resource="classpath:alfresco/module/${project.artifactId}/context/patch-context.xml" />
 	
 </beans>

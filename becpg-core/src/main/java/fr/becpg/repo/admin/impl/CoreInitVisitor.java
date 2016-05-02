@@ -259,4 +259,9 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 		}
 	}
 
+	@Override
+	public Integer initOrder() {
+		return 0;
+	}
+
 }

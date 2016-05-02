@@ -27,8 +27,6 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
-import junit.framework.TestCase;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.repo.domain.qname.QNameDAO;
@@ -68,6 +66,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.subethamail.wiser.Wiser;
 import org.w3c.dom.Document;
@@ -86,15 +85,16 @@ import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
+import junit.framework.TestCase;
 
 /**
  * base class of test cases for product classes.
  * 
  * @author matthieu
  */
-
 @RunWith(RemoteTestRunner.class)
 @Remote(runnerClass = SpringJUnit4ClassRunner.class)
+@TestExecutionListeners( { BeCPGDependencyInjectionTestListener.class })
 @ContextConfiguration({ "classpath:alfresco/application-context.xml" })
 public abstract class RepoBaseTestCase extends TestCase implements InitializingBean {
 
