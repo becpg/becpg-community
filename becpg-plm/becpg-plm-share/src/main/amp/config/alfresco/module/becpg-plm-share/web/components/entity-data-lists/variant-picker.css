@@ -42,3 +42,11 @@
 	background: url(../../components/images/enabled-indicator-on-16.png) no-repeat;
 	padding-left: 20px;
 }
+
+.yui-skin-yellowTheme .datalist-toolbar  span.variant {
+	background-position: 0px -1.5px, top;
+}
+
+.yui-skin-yellowTheme .datalist-toolbar  span.variant {
+	background-position: 0px -1.5px, top;
+}

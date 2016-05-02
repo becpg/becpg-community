@@ -88,19 +88,6 @@
 		<property name="namespacePrefixResolver" ref="namespaceService" />
 	</bean>
 
-	<!-- Mail service -->
-
-	<bean id="beCPGMailService" class="fr.becpg.repo.mail.impl.BeCPGMailServiceImpl">
-		<property name="nodeService" ref="nodeService" />
-		<property name="mailService" ref="mailService" />
-		<property name="templateService" ref="templateService" />
-		<property name="serviceRegistry" ref="ServiceRegistry" />
-		<property name="mailFrom" value="${mail.from.default}" />
-		<property name="repository" ref="repositoryHelper" />
-		<property name="searchService" ref="searchService" />
-		<property name="fileFolderService" ref="fileFolderService" />
-		<property name="namespaceService" ref="namespaceService" />
-	</bean>
 
 	<bean id="migrationService" class="fr.becpg.repo.migration.impl.MigrationServiceImpl">
 		<property name="nodeService" ref="nodeService" />

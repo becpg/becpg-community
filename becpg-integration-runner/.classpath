@@ -37,17 +37,13 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" path="/becpg-core"/>
 	<classpathentry kind="src" path="/becpg-report"/>
-	<classpathentry kind="src" path="/becpg-project-core"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/ant/ant/1.9.3/ant-1.9.3.jar" sourcepath="M2_REPO/org/apache/ant/ant/1.9.3/ant-1.9.3-sources.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/apache/ant/ant/1.9.3/ant-1.9.3-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="var" path="M2_REPO/org/apache/ant/ant-launcher/1.9.3/ant-launcher-1.9.3.jar" sourcepath="M2_REPO/org/apache/ant/ant-launcher/1.9.3/ant-launcher-1.9.3-sources.jar"/>
-	<classpathentry kind="src" path="/becpg-designer-core"/>
-	<classpathentry kind="src" path="/becpg-plm-core"/>
 	<classpathentry kind="var" path="M2_REPO/org/alfresco/alfresco-legacy-lucene/5.1.e/alfresco-legacy-lucene-5.1.e.jar" sourcepath="M2_REPO/org/alfresco/alfresco-legacy-lucene/5.1.e/alfresco-legacy-lucene-5.1.e-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/alfresco/alfresco-data-model/5.1.e/alfresco-data-model-5.1.e.jar" sourcepath="M2_REPO/org/alfresco/alfresco-data-model/5.1.e/alfresco-data-model-5.1.e-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/alfresco/alfresco-core/5.6/alfresco-core-5.6.jar" sourcepath="M2_REPO/org/alfresco/alfresco-core/5.6/alfresco-core-5.6-sources.jar">

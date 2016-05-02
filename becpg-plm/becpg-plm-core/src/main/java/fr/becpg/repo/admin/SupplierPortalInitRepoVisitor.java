@@ -8,6 +8,7 @@ import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +26,7 @@ import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
-@Service	
+@Service
 public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 
 	private static final String SUPPLIER_PJT_TPL_NAME = "plm.supplier.portal.project.tpl.name";
@@ -76,6 +77,11 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 			entityTplNodeRef = entityTplService.createEntityTpl(entityTplsNodeRef, ProjectModel.TYPE_PROJECT,
 					I18NUtil.getMessage(SUPPLIER_PJT_TPL_NAME), true, false, dataLists, null);
 
+
+			entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
+			entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_DOCUMENTS);
+
+			
 		    NodeRef qualityNodeRef = authorityService.getAuthorityNodeRef(PermissionService.GROUP_PREFIX + PLMGroup.QualityMgr.toString());
 
 
@@ -137,8 +143,11 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			alfrescoRepository.save(pjtTpl);
 		}
-
-		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 	}
 
+	@Override
+	public Integer initOrder() {
+		return 4;
+	}
+	
 }

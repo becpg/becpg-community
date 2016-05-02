@@ -25,4 +25,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 public interface InitVisitor {
 	
 	void visitContainer(NodeRef nodeRef);
+	
+	Integer initOrder();
 }

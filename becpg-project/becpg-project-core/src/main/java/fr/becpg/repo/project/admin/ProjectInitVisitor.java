@@ -190,5 +190,10 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 	protected String createRoleGroup(QName qName) {
 		return ProjectRepoConsts.PROJECT_GROUP_PREFIX + qName.toPrefixString(namespaceService).replace(":", "_");
 	}
+	
+	@Override
+	public Integer initOrder() {
+		return 2;
+	}
 
 }

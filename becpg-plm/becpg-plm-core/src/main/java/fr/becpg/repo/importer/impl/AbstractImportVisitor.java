@@ -321,7 +321,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 								value = null;
 
-								String[] arrValue = values.get(z_idx).split(RepoConsts.MULTI_VALUES_SEPARATOR);
+								String[] arrValue = split(values.get(z_idx));
 
 								for (String v : arrValue) {
 									if (!v.isEmpty()) {
@@ -360,6 +360,18 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		}
 
 		return properties;
+	}
+
+	private String[] split(String value) {
+		String[] ret = null;
+		if (value != null) {
+			ret = value.replace("\\,", "@ML@").split(RepoConsts.MULTI_VALUES_SEPARATOR);
+			for (int i = 0; i < ret.length; i++) {
+				ret[i] = ret[i].replace("@ML@", ",");
+			}
+		}
+		return ret;
+
 	}
 
 	private String parseFormula(String formula) throws ImporterException {
@@ -568,7 +580,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 						if (value.contains(",")) {
 							int count = 0;
-							for (String fileNameValue : value.split(",")) {
+							for (String fileNameValue : split(value)) {
 								importFileContent(fileNameValue, targetFolderNodeRef, fixFileNameExtension(fileName, fileNameValue, count),
 										fileMapping.getId() + (count > 0 ? "-" + count : ""));
 								count++;
@@ -1125,7 +1137,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		if (doQuery) {
 			logger.debug("findNodeByKeyOrCode: " + queryBuilder.toString());
 
-			//TODO Refactor used to lookup for parent in the same list
+			// TODO Refactor used to lookup for parent in the same list
 			if (dictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM) && !dictionaryService.isSubClass(type, BeCPGModel.TYPE_CHARACT)
 					&& !dictionaryService.isSubClass(type, BeCPGModel.TYPE_LINKED_VALUE)
 					&& !dictionaryService.isSubClass(type, BeCPGModel.TYPE_LIST_VALUE) && !dictionaryService.isSubClass(type, PLMModel.TYPE_PLANT)
@@ -1170,7 +1182,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		if (!value.isEmpty()) {
 
 			if (isTargetMany) {
-				String[] arrValue = value.split(RepoConsts.MULTI_VALUES_SEPARATOR);
+				String[] arrValue = split(value);
 
 				for (String v : arrValue) {
 					if (!v.isEmpty()) {

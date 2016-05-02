@@ -4,7 +4,9 @@
 package fr.becpg.repo.product.data.productList;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
 
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.PackagingListUnit;
 import fr.becpg.repo.repository.annotation.AlfProp;
@@ -203,6 +205,11 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 	@Override
 	public void setComponent(NodeRef targetItem) {
 		setProduct(targetItem);
+	}
+	
+	@Override
+	public QName getComponentAssocName() {
+		return PLMModel.ASSOC_PACKAGINGLIST_PRODUCT;
 	}
 
 }
