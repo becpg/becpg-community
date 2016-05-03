@@ -32,6 +32,7 @@ import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.Behaviour;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.service.cmr.repository.AssociationRef;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.rule.RuleService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -49,9 +50,10 @@ import fr.becpg.repo.report.entity.EntityReportAsyncGenerator;
  * @author quere
  *
  */
-public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy implements CheckOutCheckInServicePolicies.OnCheckOut,
-		CheckOutCheckInServicePolicies.BeforeCheckIn, CheckOutCheckInServicePolicies.OnCheckIn, CheckOutCheckInServicePolicies.BeforeCancelCheckOut,
-		NodeServicePolicies.OnRemoveAspectPolicy, NodeArchiveServicePolicies.BeforePurgeNodePolicy, CheckOutCheckInServicePolicies.OnCancelCheckOut {
+public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy
+		implements CheckOutCheckInServicePolicies.OnCheckOut, CheckOutCheckInServicePolicies.BeforeCheckIn, CheckOutCheckInServicePolicies.OnCheckIn,
+		CheckOutCheckInServicePolicies.BeforeCancelCheckOut, NodeServicePolicies.OnRemoveAspectPolicy,
+		NodeArchiveServicePolicies.BeforePurgeNodePolicy, CheckOutCheckInServicePolicies.OnCancelCheckOut, NodeServicePolicies.OnDeleteNodePolicy {
 
 	private static final Log logger = LogFactory.getLog(EntityCheckOutCheckInServicePolicy.class);
 
@@ -95,8 +97,12 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 		this.policyComponent.bindClassBehaviour(QName.createQName(NamespaceService.ALFRESCO_URI, "onRemoveAspect"), ContentModel.ASPECT_VERSIONABLE,
 				new JavaBehaviour(this, "onRemoveAspect", Behaviour.NotificationFrequency.TRANSACTION_COMMIT));
 
-		this.policyComponent.bindClassBehaviour(BeforePurgeNodePolicy.QNAME,  BeCPGModel.ASPECT_ENTITYLISTS,
+		this.policyComponent.bindClassBehaviour(BeforePurgeNodePolicy.QNAME, BeCPGModel.ASPECT_ENTITYLISTS,
 				new JavaBehaviour(this, "beforePurgeNode", Behaviour.NotificationFrequency.TRANSACTION_COMMIT));
+
+		this.policyComponent.bindClassBehaviour(QName.createQName(NamespaceService.ALFRESCO_URI, "onDeleteNode"), ContentModel.ASPECT_VERSIONABLE,
+				new JavaBehaviour(this, "onDeleteNode", Behaviour.NotificationFrequency.TRANSACTION_COMMIT));
+
 	}
 
 	@Override
@@ -148,6 +154,22 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 		try {
 			logger.debug("OnDeleteNode cm:versionable " + entityNodeRef);
 			entityVersionService.deleteVersionHistory(entityNodeRef);
+		} finally {
+			ruleService.enableRules();
+		}
+	}
+
+	@Override
+	public void onDeleteNode(ChildAssociationRef childAssocRef, boolean isNodeArchived) {
+
+		ruleService.disableRules();
+		try {
+
+			// instead
+			// If we are permanantly deleting the node then we need to
+			// remove
+			// the associated version history
+			entityVersionService.deleteVersionHistory(childAssocRef.getChildRef());
 		} finally {
 			ruleService.enableRules();
 		}
