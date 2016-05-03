@@ -117,7 +117,6 @@ public class IngItem extends AbstractLabelingComponent {
 		result = prime * result + ((charactName == null) ? 0 : charactName.hashCode());
 		result = prime * result + ((ingCEECode == null) ? 0 : ingCEECode.hashCode());
 		result = prime * result + ((ingType == null) ? 0 : ingType.hashCode());
-		result = prime * result + ((subIngs == null) ? 0 : subIngs.hashCode());
 		return result;
 	}
 
