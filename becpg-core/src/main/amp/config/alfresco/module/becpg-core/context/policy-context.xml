@@ -63,6 +63,15 @@
 		<property name="ruleService" ref="ruleService"/>
 	</bean>
 
+
+	<bean id="deleteAndRestoreEntityPolicy" class="fr.becpg.repo.entity.policy.DeleteAndRestoreEntityPolicy" init-method="init" parent="abstractBeCPGPolicy">
+		<property name="remoteEntityService" ref="remoteEntityService" />
+		<property name="contentService" ref="contentService" />
+		<property name="nodeDAO" ref="nodeDAO"/>
+		<property name="entityDictionaryService" ref="entityDictionaryService"/>
+	</bean>
+
+
 	<!-- Entity Datalist Policies -->
 	<bean id="initEntityListPolicy" class="fr.becpg.repo.entity.datalist.policy.InitEntityListPolicy" parent="abstractBeCPGPolicy">
 		<property name="namespaceService" ref="namespaceService" />
