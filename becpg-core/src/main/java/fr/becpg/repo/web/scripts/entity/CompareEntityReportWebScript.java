@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.alfresco.repo.webdav.WebDAVHelper;
 import org.alfresco.service.cmr.repository.ContentIOException;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -184,12 +185,17 @@ public class CompareEntityReportWebScript extends AbstractWebScript {
 				logger.debug("entity1NodeRef : " + entity1NodeRef);
 				logger.debug("entityNodeRefs : " + entityNodeRefs);
 			}			
-			compareEntityReportService.getComparisonReport(entity1NodeRef, entityNodeRefs, templateNodeRef, res.getOutputStream());
+			
 
 			// set mimetype for the content and the character encoding + length
 			// for the stream
+			
 			res.setContentType(mimetypeService.guessMimetype(fileName));
-			res.setHeader("Content-disposition", "attachment; filename=" + fileName);
+			res.setHeader("Content-Disposition", "attachment; filename=\"" + WebDAVHelper.encodeURL(fileName));
+			
+			
+			compareEntityReportService.getComparisonReport(entity1NodeRef, entityNodeRefs, templateNodeRef, res.getOutputStream());
+
 
 		} catch (SocketException | ContentIOException e1) {
 			// the client cut the connection - our mission was accomplished
