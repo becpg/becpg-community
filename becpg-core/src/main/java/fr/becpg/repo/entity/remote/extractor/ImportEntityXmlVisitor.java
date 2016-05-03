@@ -40,6 +40,7 @@ import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceException;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -593,7 +594,7 @@ public class ImportEntityXmlVisitor {
 		}
 
 		private NodeRef createChildAssocNode(NodeRef parentNodeRef, QName type, QName assocName, String name, NodeRef existingNodeRef) {
-			logger.debug("Creating child assoc: " + assocName + " add type :" + type + " name :" + name);
+			
 
 			if (cache.containsKey(existingNodeRef)) {
 				logger.debug("Cache contains :" + cache.get(existingNodeRef) + " of nodeRef " + existingNodeRef + " " + name);
@@ -602,27 +603,38 @@ public class ImportEntityXmlVisitor {
 			}
 
 			// Translate
-			if ((existingNodeRef == null) || !serviceRegistry.getNodeService().exists(existingNodeRef)) {
+			if ((existingNodeRef == null) || !serviceRegistry.getNodeService().exists(existingNodeRef) 
+					|| type.equals(serviceRegistry.getNodeService().getType(existingNodeRef))) {
 				NodeRef ret = serviceRegistry.getNodeService().getChildByName(parentNodeRef, assocName, name);
 				if (ret == null) {
+					
+					logger.debug("Creating child assoc: " + assocName + " add type :" + type + " name :" + name);
 					Map<QName, Serializable> properties = new HashMap<>();
 					properties.put(ContentModel.PROP_NAME, PropertiesHelper.cleanName(name));
 					return serviceRegistry.getNodeService().createNode(parentNodeRef, assocName,
 							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(PropertiesHelper.cleanName(name))),
 							type, properties).getChildRef();
 				} else {
+					
+					logger.debug("Find child assoc: " + assocName + " add type :" + type + " with same name :" + name);
+
+					if(toRemoveChildAssocsQueue.remove(serviceRegistry.getNodeService().getPrimaryParent(ret)) && logger.isDebugEnabled()){
+						logger.debug("Removing from childQueue :" + serviceRegistry.getNodeService().getPrimaryParent(ret).toString());
+					}
 					return ret;
 				}
 			} else {
 				if (!serviceRegistry.getNodeService().getPrimaryParent(existingNodeRef).getParentRef().equals(parentNodeRef)) {
 					serviceRegistry.getNodeService().moveNode(existingNodeRef, parentNodeRef, assocName,
 							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(PropertiesHelper.cleanName(name))));
-				}
+				} 
+				
+				logger.debug("Using existing child assoc: " + assocName + " add type :" + type + " name :" + name);
+				
 
-				if(logger.isDebugEnabled()){
-					logger.debug("Removing from childQueue :" + serviceRegistry.getNodeService().getPrimaryParent(existingNodeRef).toString());
+				if(toRemoveChildAssocsQueue.remove(serviceRegistry.getNodeService().getPrimaryParent(existingNodeRef)) && logger.isDebugEnabled()){
+					logger.debug("Removing from childQueue :" + serviceRegistry.getNodeService().getPrimaryParent(existingNodeRef).toString());					
 				}
-				toRemoveChildAssocsQueue.remove(serviceRegistry.getNodeService().getPrimaryParent(existingNodeRef));
 				return existingNodeRef;
 			}
 
