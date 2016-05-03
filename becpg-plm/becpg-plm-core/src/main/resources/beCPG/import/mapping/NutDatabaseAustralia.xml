@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (C) 2010-2016 beCPG. 
+   
+  This file is part of beCPG 
+   
+  beCPG is free software: you can redistribute it and/or modify 
+  it under the terms of the GNU Lesser General Public License as published by 
+  the Free Software Foundation, either version 3 of the License, or 
+  (at your option) any later version. 
+   
+  beCPG is distributed in the hope that it will be useful, 
+  but WITHOUT ANY WARRANTY; without even the implied warranty of 
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+  GNU Lesser General Public License for more details. 
+   
+  You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
+-->
+<mappings>
+	<settings>
+		<!-- <setting id="dateFormat" value="dd/MM/yyyy"/> -->
+		<!-- <setting id="decimalPattern" value="#0.00"/> -->
+	</settings>
+	
+	<mapping name="bcpg:client">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="cm:name" />
+		</nodeColumnKeys>
+	</mapping>
+
+	<mapping name="bcpg:supplier">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="cm:name" />
+		</nodeColumnKeys>	
+	</mapping>
+	
+	<!-- NUT LIST -->
+	<mapping name="bcpg:nutList">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:code" />
+		</nodeColumnKeys>
+		<dataListColumnKeys>
+			<dataListColumnKey attribute="bcpg:nutListNut" />
+		</dataListColumnKeys>
+		<columns>
+			<column id="code" attribute="bcpg:code" type="Attribute" />
+			<column id="nutListNut" attribute="bcpg:nutListNut" type="Attribute" />
+			<column id="nutListValue" attribute="bcpg:nutListValue"
+				type="Attribute" />
+			<column id="nutListUnit" attribute="bcpg:nutListUnit" type="Attribute" />
+			<column id="nutListMini" attribute="bcpg:nutListMini"
+				type="Attribute" />
+			<column id="nutListMaxi" attribute="bcpg:nutListMaxi"
+				type="Attribute" />
+		</columns>
+	</mapping>
+	
+	<!-- PRODUCT -->
+	<mapping name="bcpg:rawMaterial">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:erpCode" />
+		</nodeColumnKeys>
+		<columns>
+
+			<column id="Food ID" attribute="bcpg:erpCode" type="Attribute" />
+			<column id="Supplier" attribute="bcpg:suppliers" type="Attribute" />
+			<column id="Food Name" attribute="cm:name" type="Attribute" />
+			<column id="Moisture (g)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Water" type="Characteristic" />
+			<column id="Energy, with dietary fibre (kJ)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Energy kJ" type="Characteristic" />
+			<column id="Energy, without dietary fibre (kJ)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Energy, without dietary fibre" type="Characteristic" />
+			<column id="Protein (g)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Protein" type="Characteristic" />
+			<column id="Total fat (g)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Total lipid (fat) " type="Characteristic" />
+			<column id="Available carbohydrates, with sugar alcohols (g)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Carbohydrate, by difference " type="Characteristic" />
+			<column id="Available carbohydrates, without sugar alcohol (g)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Carbohydrates, without sugar alcohol" type="Characteristic" />
+			<column id="Starch (g)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Starch" type="Characteristic" />
+			<column id="Total sugars (g)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Sugars, total " type="Characteristic" />
+			<column id="Dietary fibre (g)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Fiber, total dietary " type="Characteristic" />
+			
+			<column id="Alcohol (g)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Alcohol (ethanol)" type="Characteristic" />
+			<column id="Ash (g)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Ash" type="Characteristic" />
+			<column id="Preformed vitamin A (retinol) (µg)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Retinol" type="Characteristic" />
+			<column id="Beta-carotene (µg)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Beta-carotene" type="Characteristic" />
+			<column id="Provitamin A (b-carotene equivalents) (µg)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Provitamin A (b-carotene equivalents)" type="Characteristic" />
+			<column id="Vitamin A retinol equivalents (µg)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Vitamin A retinol equivalents" type="Characteristic" />
+			<column id="Thiamin (B1) (mg)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Thiamin " type="Characteristic" />
+			<column id="Riboflavin (B2) (mg)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Riboflavin " type="Characteristic" />
+			<column id="Niacin (B3) (mg)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Niacin " type="Characteristic" />
+			<column id="Niacin derived equivalents (mg)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Niacine (derived equivalents)" type="Characteristic" />
+			
+			<column id="Total Folates  (µg)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Total folates" type="Characteristic" />
+			<column id="Folate, natural  (µg)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Folate, natural" type="Characteristic" />
+			<column id="Folic acid  (µg)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Folic Acid" type="Characteristic" />
+			<column id="Dietary folate equivalents  (µg)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Folate, DFE" type="Characteristic" />
+			<column id="Vitamin B6 (mg)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Vitamin B-6 " type="Characteristic" />
+			<column id="Vitamin B12  (µg)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Vitamin B-12 " type="Characteristic" />
+			<column id="Vitamin C (mg)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Vitamin C, total ascorbic acid " type="Characteristic" />
+			<column id="Alpha-tocopherol (mg)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Vitamin E (alpha-tocopherol) " type="Characteristic" />
+			<column id="Vitamin E (mg)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Vitamin E" type="Characteristic" />
+			
+			<column id="Calcium (Ca) (mg)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Calcium, Ca " type="Characteristic" />
+			<column id="Iodine (I) (µg)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Iodine" type="Characteristic" />
+			
+			
+			<column id="Iron (Fe) (mg)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Iron, Fe " type="Characteristic" />
+			<column id="Magnesium (Mg) (mg)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Magnesium, Mg " type="Characteristic" />
+			<column id="Phosphorus (P) (mg)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Phosphorus, P " type="Characteristic" />
+			<column id="Potassium (K) (mg)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Potassium, K " type="Characteristic" />
+			<column id="Selenium (Se) (µg)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Selenium" type="Characteristic" />
+			
+			<column id="Sodium (Na) (mg)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Sodium, Na" type="Characteristic" />
+			<column id="Zinc (Zn) (mg)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Zinc, Zn " type="Characteristic" />
+			<column id="Caffeine (mg)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Caffein" type="Characteristic" />
+			<column id="Cholesterol (mg)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Cholesterol" type="Characteristic" />
+			<column id="Tryptophan (mg)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Tryptophan" type="Characteristic" />
+			<column id="Total saturated fat (g)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Fatty acids, total saturated " type="Characteristic" />
+			<column id="Total monounsaturated fat (g)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Fatty acids, total monounsaturated " type="Characteristic" />
+			<column id="Total polyunsaturated fat (g)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Fatty acids, total polyunsaturated " type="Characteristic" />
+			
+			
+			<column id="Linoleic acid (g)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="FA 18:2 9c,12c (n-6), linoleic" type="Characteristic" />
+			<column id="Alpha-linolenic acid (g)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="FA 18:3 c9,c12,c15 (n-3), alpha-linolenic" type="Characteristic" />
+			<column id="C20:5w3 Eicosapentaenoic (mg)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="FA 20:5 5c,8c,11c,14c,17c (n-3), EPA" type="Characteristic" />
+			<column id="C22:5w3 Docosapentaenoic (mg)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="FA 22:5 7c,10c,13c,16c,19c (n-3), DPA" type="Characteristic" />
+			<column id="C22:6w3 Docosahexaenoic (mg)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="FA 22:6 4c,7c,10c,13c,16c,19c (n-3), DHA" type="Characteristic" />
+			
+			<column id="Total long chain omega 3 fatty acids (mg)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Total omega 3 fatty acids" type="Characteristic" />
+			<column id="Total trans fatty acids (mg)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Total trans fatty acids" type="Characteristic" />
+		</columns>
+	</mapping>
+
+	<!-- INGREDIENTS LIST -->
+	<mapping name="bcpg:ingList">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:code" />
+		</nodeColumnKeys>
+		<dataListColumnKeys>
+			<dataListColumnKey attribute="bcpg:ingListIng" />
+		</dataListColumnKeys>
+		<columns>
+			<column id="ingListQtyPerc" attribute="bcpg:ingListQtyPerc"
+				type="Attribute" />
+			<column id="ingListIsGMO" attribute="bcpg:ingListIsGMO" type="Attribute" />
+			<column id="ingListIsIonized" attribute="bcpg:ingListIsIonized"
+				type="Attribute" />
+			<column id="ingListIng" attribute="bcpg:ingListIng" type="Attribute" />
+			<column id="ingListGeoOrigin" attribute="bcpg:ingListGeoOrigin"
+				type="Attribute" />
+			<column id="ingListBioOrigin" attribute="bcpg:ingListBioOrigin"
+				type="Attribute" />
+		</columns>
+	</mapping>
+
+	<!-- COMPOSITION LIST -->
+	<mapping name="bcpg:compoList">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:code" />
+		</nodeColumnKeys>
+		<dataListColumnKeys>
+			<dataListColumnKey attribute="bcpg:compoListProduct" />
+		</dataListColumnKeys>
+		<columns>
+			<column id="code" attribute="bcpg:code" type="Attribute" />
+			<column id="level" attribute="bcpg:depthLevel" type="Attribute" />
+			<column id="compoListProduct" attribute="bcpg:compoListProduct"
+				type="Attribute" />
+			<column id="compoListQty" attribute="bcpg:compoListQty" type="Attribute" />
+			<column id="compoListUnit" attribute="bcpg:compoListUnit"
+				type="Attribute" />
+		</columns>
+	</mapping>
+
+</mappings>
