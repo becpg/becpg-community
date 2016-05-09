@@ -424,7 +424,11 @@ if (beCPG.module.EntityDataGridRenderers) {
 				var error = oRecord.getData("itemData")["prop_bcpg_lclFormulaErrorLog"]!=null ?
 						oRecord.getData("itemData")["prop_bcpg_lclFormulaErrorLog"].value : null;
 				if (error == null) {
-					return '<span class="lcl-formulated"  title="' + Alfresco.util.encodeHTML(data.metadata) + '">'
+					
+					var description = oRecord.getData("itemData")["dt_bcpg_lclLabelClaim"][0]["itemData"]["prop_cm_description"]!=null 
+					? oRecord.getData("itemData")["dt_bcpg_lclLabelClaim"][0]["itemData"]["prop_cm_description"].displayValue : "";
+					
+					return '<span class="lcl-formulated"  title="' + Alfresco.util.encodeHTML(description) + '">'
 							+ Alfresco.util.encodeHTML(data.displayValue) + '</span>';
 				}
 
