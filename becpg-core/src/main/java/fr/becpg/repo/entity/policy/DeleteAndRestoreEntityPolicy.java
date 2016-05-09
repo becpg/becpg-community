@@ -29,7 +29,6 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.common.BeCPGException;
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.ReportModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
@@ -170,7 +169,7 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 
 	@Override
 	public void beforePurgeNode(NodeRef entityNodeRef) {
-		NodeRef rootArchiveRef = nodeService.getStoreArchiveNode(entityNodeRef.getStoreRef());
+		NodeRef rootArchiveRef = nodeService.getRootNode(entityNodeRef.getStoreRef());
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Retrieving " + REMOTE_FILE_NAME + "_" + entityNodeRef.getId() + " from archiveStore ");
