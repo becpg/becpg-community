@@ -397,10 +397,10 @@
         			    	html+= tree.legal+ ':';
         			    } else {
 	        			    if(!tree.decl){
-	        			        html += this.msg("label.labeling-details.tree.item.nodec",tree.legal, beCPG.util.sigFigs(tree.qte,3), beCPG.util.sigFigs(tree.vol,3));
+	        			        html += this.msg("label.labeling-details.tree.item.nodec",tree.legal, beCPG.util.sigFigs(tree.qte,4), beCPG.util.sigFigs(tree.vol,4));
 	        			    } else {
 	        			        html += '<a href=' + beCPG.util.entityURL(tree.siteId, tree.nodeRef) + '>' 
-	        			        + this.msg("label.labeling-details.tree.item",tree.legal, beCPG.util.sigFigs(tree.qte,3), beCPG.util.sigFigs(tree.vol,3), tree.decl) +'</a>';
+	        			        + this.msg("label.labeling-details.tree.item",tree.legal, beCPG.util.sigFigs(tree.qte,4), beCPG.util.sigFigs(tree.vol,4), tree.decl) +'</a>';
 	        			    }
         			    }
 
@@ -417,7 +417,7 @@
         			    }
 			        } else {
 			            html += '<span class="packagingMaterial">'; 
-                        html +=  this.msg("label.labeling-details.tree.item",tree.legal, beCPG.util.sigFigs(tree.vol,3), beCPG.util.sigFigs(tree.qte,3), tree.decl);
+                        html +=  this.msg("label.labeling-details.tree.item",tree.legal, beCPG.util.sigFigs(tree.vol,4), beCPG.util.sigFigs(tree.qte,4), tree.decl);
                         html += '</span>';
 			        }
 			    }

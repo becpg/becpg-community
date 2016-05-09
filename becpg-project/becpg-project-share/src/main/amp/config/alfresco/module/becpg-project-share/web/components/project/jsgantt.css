@@ -14,7 +14,7 @@
 }
 
 tr.gheader {
-	height: 23px;
+	height: 2em;
 }
 
 .project-list .projects .yui-dt .gheader th {
@@ -62,11 +62,18 @@ td.ghead.current {
     white-space: nowrap;
 }
 
+.projects .ggroup span.task-title a {
+		max-width: 140px;
+	}
+
 @media screen and (min-width: 1400px) {
 	.projects  span.task-title a {
 		max-width: 200px;
 	}
 	
+	.projects .ggroup span.task-title a {
+		max-width: 200px;
+	}
 }
 
 .projects  span.resource-title {
@@ -149,7 +156,7 @@ td.ggtaskCheckbox {
 
 tr.ggroup {
 	background-color: #f3f3f3;
-	height: 23px;
+	height: 2em;
 }
 
 tr.ggroup.highlight > td, tr.grow.highlight > td, tr.gweekend.highlight  > td,tr.gmile.highlight  > td {
@@ -157,7 +164,7 @@ tr.ggroup.highlight > td, tr.grow.highlight > td, tr.gweekend.highlight  > td,tr
 }
 
 tr.grow, tr.gmile {
-	height: 23px;
+	height: 2em;
 }
 
 div.scroll {
