@@ -198,7 +198,7 @@ public class EntityListValuePlugin implements ListValuePlugin {
 
 					if (nodeService.exists(nodeRef)) {
 
-						List<NodeRef> tmp = queryBuilder.list();
+						List<NodeRef> tmp = queryBuilder.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list();
 
 						List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, assocQName);
 
