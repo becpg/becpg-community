@@ -434,7 +434,7 @@ span.semiFinishedProduct-Valid,
 span.semiFinishedProduct-ToValidate {
     padding-left: 25px;
     background-repeat: no-repeat;
-    background-position: 10px 8px, 0 0;
+    background-position: 14px 6px, 0 0;
     padding-bottom: 2px; /* fixes color tip of entity state */
 }
 
