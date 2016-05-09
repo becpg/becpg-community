@@ -63,6 +63,7 @@
 		<columns>
 
 			<column id="Food ID" attribute="bcpg:erpCode" type="Attribute" />
+			<column id="State" attribute="bcpg:productState" type="Attribute" />
 			<column id="Supplier" attribute="bcpg:suppliers" type="Attribute" />
 			<column id="Food Name" attribute="cm:name" type="Attribute" />
 			<column id="Moisture (g)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Water" type="Characteristic" />
