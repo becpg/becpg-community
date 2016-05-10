@@ -3,6 +3,7 @@ package fr.becpg.repo.entity.datalist.impl;
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 import org.springframework.stereotype.Service;
 
@@ -20,13 +21,13 @@ public class DataListOutputWriterFactory {
 	@Autowired
 	private JSONDataListOutputWriter jsonDataListOutputWriter;
 
-	public void write(WebScriptResponse res, DataListFilter dataListFilter, PaginatedExtractedItems extractedItems) throws IOException {
+	public void write(WebScriptRequest req, WebScriptResponse res, DataListFilter dataListFilter, PaginatedExtractedItems extractedItems) throws IOException {
 		if (RepoConsts.FORMAT_CSV.equals(dataListFilter.getFormat())) {
-			csvDataListOutputWriter.write(res, dataListFilter, extractedItems);
+			csvDataListOutputWriter.write(req, res, dataListFilter, extractedItems);
 		} else if (RepoConsts.FORMAT_XLSX.equals(dataListFilter.getFormat())) {
-			excelDataListOutputWriter.write(res, dataListFilter, extractedItems);
+			excelDataListOutputWriter.write(req, res, dataListFilter, extractedItems);
 		} else {
-			jsonDataListOutputWriter.write(res, dataListFilter, extractedItems);
+			jsonDataListOutputWriter.write(req, res, dataListFilter, extractedItems);
 		}
 
 	}

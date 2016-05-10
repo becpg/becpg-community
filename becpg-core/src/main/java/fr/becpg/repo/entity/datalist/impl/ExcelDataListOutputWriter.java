@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.alfresco.model.ContentModel;
+import org.alfresco.repo.webdav.WebDAVHelper;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -15,12 +18,14 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.entity.datalist.DataListOutputWriter;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
+import fr.becpg.repo.helper.AttachmentHelper;
 import fr.becpg.repo.helper.ExcelHelper;
 import fr.becpg.repo.helper.ExcelHelper.ExcelFieldTitleProvider;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
@@ -30,12 +35,17 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 
 	@Autowired
 	private ExcelDataListOutputPlugin[] plugins;
+	
+	@Autowired
+	private NodeService nodeService;
 
 	@Override
-	public void write(WebScriptResponse res, DataListFilter dataListFilter, PaginatedExtractedItems extractedItems) throws IOException {
+	public void write(WebScriptRequest req, WebScriptResponse res, DataListFilter dataListFilter, PaginatedExtractedItems extractedItems) throws IOException {
 
 		res.setContentType("application/vnd.ms-excel");
-		res.setHeader("Content-disposition", "attachment; filename=export.xlsx");
+		
+		AttachmentHelper.setAttachment(req, res, getFileName(dataListFilter));
+		
 
 		XSSFWorkbook workbook = new XSSFWorkbook();
 		XSSFSheet sheet = workbook.createSheet(dataListFilter.getDataListName());
@@ -87,6 +97,15 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 
 		workbook.write(res.getOutputStream());
 
+	}
+
+	private String getFileName(DataListFilter dataListFilter) {
+		if(dataListFilter.getEntityNodeRef()!=null){
+			return(String) nodeService.getProperty(dataListFilter.getEntityNodeRef(),
+					ContentModel.PROP_NAME)+"_"+dataListFilter.getDataListName()+".xlsx";
+		}
+		return "export.xlsx";
+		
 	}
 
 	private ExcelDataListOutputPlugin getPlugin(DataListFilter dataListFilter) {

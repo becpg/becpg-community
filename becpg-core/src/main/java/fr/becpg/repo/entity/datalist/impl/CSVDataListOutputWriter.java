@@ -10,12 +10,14 @@ import org.apache.commons.csv.writer.CSVConfig;
 import org.apache.commons.csv.writer.CSVField;
 import org.apache.commons.csv.writer.CSVWriter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.entity.datalist.DataListOutputWriter;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
+import fr.becpg.repo.helper.AttachmentHelper;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 
 @Service
@@ -25,7 +27,8 @@ public class CSVDataListOutputWriter implements DataListOutputWriter {
 	private DictionaryService dictionaryService;
 
 	@Override
-	public void write(WebScriptResponse res, DataListFilter dataListFilter, PaginatedExtractedItems extractedItems) throws IOException {
+	public void write(WebScriptRequest req, WebScriptResponse res, DataListFilter dataListFilter, PaginatedExtractedItems extractedItems)
+			throws IOException {
 		res.setContentType("application/vnd.ms-excel");
 		res.setContentEncoding("ISO-8859-1");
 
@@ -47,7 +50,7 @@ public class CSVDataListOutputWriter implements DataListOutputWriter {
 
 		writeToCSV(extractedItems, csvWriter);
 
-		res.setHeader("Content-disposition", "attachment; filename=export.csv");
+		AttachmentHelper.setAttachment(req, res, "export.csv");
 
 	}
 

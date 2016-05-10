@@ -36,6 +36,7 @@ import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
+import fr.becpg.repo.helper.AttachmentHelper;
 import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.report.client.ReportFormat;
 
@@ -125,7 +126,7 @@ public class ReportContentGet extends ContentGet {
 			entityReportService.generateReport(entityNodeRef, nodeRef, reportFormat, res.getOutputStream());
 
 			res.setContentType(mimeType);
-			res.setHeader("Content-Disposition", "attachment; filename=\"" + WebDAVHelper.encodeURL(name));
+			AttachmentHelper.setAttachment(req, res, name);
 
 			return;
 		} else {
