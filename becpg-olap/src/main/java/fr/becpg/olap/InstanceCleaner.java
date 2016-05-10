@@ -1,6 +1,8 @@
 package fr.becpg.olap;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
@@ -17,6 +19,7 @@ import org.apache.http.util.EntityUtils;
 import fr.becpg.tools.InstanceManager.Instance;
 import fr.becpg.tools.http.CheckEntityCommand;
 import fr.becpg.tools.jdbc.JdbcConnectionManager;
+import fr.becpg.tools.jdbc.JdbcConnectionManager.JdbcConnectionManagerCallBack;
 import fr.becpg.tools.jdbc.JdbcUtils;
 
 /**
@@ -43,12 +46,14 @@ public class InstanceCleaner {
 				if (!exists(entityId, instance, httpClient, httpContext)) {
 					logger.info("Deleting entity: " + entityId + " for instance: " + instance.getInstanceName());
 
-					jdbcConnectionManager.doInTransaction(connection -> {
+					jdbcConnectionManager.doInTransaction(new JdbcConnectionManagerCallBack() {
+						@Override
+						public void execute(Connection connection) throws Exception {
 
 						JdbcUtils.update(connection, "DELETE FROM `becpg_entity` where instance_id = ? AND entity_id = ?",
 								new Object[] { instance.getId(), entityId });
 
-					});
+					}});
 				}
 			}
 		}
@@ -57,25 +62,31 @@ public class InstanceCleaner {
 
 	public void purgeEntityHistoric(Instance instance) throws Exception {
 
-		jdbcConnectionManager.doInTransaction(connection -> {
+		jdbcConnectionManager.doInTransaction(new JdbcConnectionManagerCallBack() {
+			@Override
+			public void execute(Connection connection) throws Exception {
 			JdbcUtils.update(connection, "DELETE FROM `becpg_entity` where instance_id = ? AND is_last_version = ?",
 					new Object[] { instance.getId(), false });
 
-		});
+		}});
 	}
 
 	public void purgeDataListHistoric(Instance instance) throws Exception {
-		jdbcConnectionManager.doInTransaction(connection -> {
+		jdbcConnectionManager.doInTransaction(new JdbcConnectionManagerCallBack() {
+			@Override
+			public void execute(Connection connection) throws Exception {
 			JdbcUtils.update(connection, "DELETE FROM `becpg_datalist` where instance_id = ? AND is_last_version = ?",
 					new Object[] { instance.getId(), false });
-		});
+		}});
 	}
 
 	public void purgeStatistics(Instance instance, Date date) throws Exception {
-		jdbcConnectionManager.doInTransaction(connection -> {
+		jdbcConnectionManager.doInTransaction(new JdbcConnectionManagerCallBack() {
+			@Override
+			public void execute(Connection connection) throws Exception {
 			JdbcUtils.update(connection, "DELETE FROM `becpg_statistics` where instance_id = ? AND statistics_date < ?",
 					new Object[] { instance.getId(), new java.sql.Date(date.getTime()) });
-		});
+		}});
 	}
 
 	private boolean exists(String nodeRef, Instance instance, CloseableHttpClient client, HttpContext context) throws IOException {
@@ -93,7 +104,11 @@ public class InstanceCleaner {
 
 	public List<String> getAllEntities(Instance instance) throws SQLException {
 		return jdbcConnectionManager.list("SELECT `entity_id`  FROM `becpg_entity` WHERE instance_id = ? GROUP BY `entity_id`",
-				(rs, line) -> rs.getString(1), new Object[] { instance.getId() });
+				new JdbcUtils.RowMapper<String>() {
+						public String mapRow(ResultSet rs, int line) throws SQLException {
+							return rs.getString(1);
+						}
+					}, new Object[] { instance.getId() });
 	}
 
 }
