@@ -17,6 +17,7 @@
  ******************************************************************************/
 package org.saiku.web.rest.resources;
 
+import java.sql.Connection;
 import java.util.Calendar;
 
 import javax.ws.rs.GET;
@@ -38,6 +39,7 @@ import fr.becpg.olap.extractor.EntityToDBXmlVisitor;
 import fr.becpg.tools.InstanceManager;
 import fr.becpg.tools.InstanceManager.Instance;
 import fr.becpg.tools.jdbc.JdbcConnectionManager;
+import fr.becpg.tools.jdbc.JdbcConnectionManager.JdbcConnectionManagerCallBack;
 
 /**
  *
@@ -72,7 +74,9 @@ public class AdminSaikuRestClient {
 				logger.info("Start importing from instance/tenant: " + instance.getId() + "/" + instance.getInstanceName() + "/"
 						+ instance.getTenantName());
 			}
-			jdbcConnectionManager.doInTransaction(connection -> {
+			jdbcConnectionManager.doInTransaction(new JdbcConnectionManagerCallBack() {
+				@Override
+				public void execute(Connection connection) throws Exception {
 
 				instanceManager.createBatch(connection, instance);
 
@@ -86,7 +90,7 @@ public class AdminSaikuRestClient {
 				}
 
 				instanceManager.updateBatchAndDate(connection, instance);
-			});
+			}});
 
 		}
 
