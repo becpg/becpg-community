@@ -11,6 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.extensions.webscripts.WebScriptException;
+import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +32,7 @@ public class JSONDataListOutputWriter implements DataListOutputWriter {
 	private DataListSortService dataListSortService;
 
 	@Override
-	public void write(WebScriptResponse res, DataListFilter dataListFilter, PaginatedExtractedItems extractedItems) throws IOException {
+	public void write(WebScriptRequest req, WebScriptResponse res, DataListFilter dataListFilter, PaginatedExtractedItems extractedItems) throws IOException {
 		try {
 			JSONObject ret = new JSONObject();
 			if (!dataListFilter.isSimpleItem()) {
