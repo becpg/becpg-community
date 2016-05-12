@@ -385,9 +385,31 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 				Version version = versionHistory.getVersion("1.1");
 				assertNotNull(version);
 				assertNotNull(entityVersionService.getEntityVersion(version));
+				
+				
 				path = nodeService.getPath(rawMaterialNodeRef).toPrefixString(namespaceService);
 				expected = "/app:company_home/cm:rawMaterial/cm:Sea_x0020_food/cm:Fish/";
 				assertEquals("check path", expected, path.substring(0, expected.length()));
+				
+				
+				// Check out
+				workingCopyNodeRef = checkOutCheckInService.checkout(rawMaterialNodeRef);
+				logger.info("state " + rawMaterialNodeRef + " - " + nodeService.getProperty(workingCopyNodeRef, PLMModel.PROP_PRODUCT_STATE));
+				assertEquals("Check state new version", SystemState.Simulation.toString(),
+						nodeService.getProperty(workingCopyNodeRef, PLMModel.PROP_PRODUCT_STATE));
+
+				// Check in
+				 versionProperties = new HashMap<>();
+				versionProperties.put(Version.PROP_DESCRIPTION, "This is a test version");
+				versionProperties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MINOR);
+				newRawMaterialNodeRef = checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
+
+				assertNotNull("Check new version exists", newRawMaterialNodeRef);
+				assertEquals("Check state new version", SystemState.Valid.toString(),
+						nodeService.getProperty(newRawMaterialNodeRef, PLMModel.PROP_PRODUCT_STATE));
+				
+				assertEquals("Check state new version", SystemState.Valid.toString(),
+						nodeService.getProperty(entityVersionService.getEntityVersion(version), PLMModel.PROP_PRODUCT_STATE));
 
 				return null;
 

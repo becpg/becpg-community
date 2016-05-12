@@ -77,6 +77,7 @@ public class EntityListValuePlugin implements ListValuePlugin {
 	protected static final String SOURCE_TYPE_LINKED_VALUE_ALL = "allLinkedvalue";
 	protected static final String SOURCE_TYPE_LIST_VALUE = "listvalue";
 	protected static final String searchTemplate = "%(cm:name  bcpg:erpCode bcpg:code bcpg:legalName)";
+	protected static final String mixedSearchTemplate = "%(cm:name  bcpg:erpCode bcpg:code bcpg:charactName bcpg:legalName)";
 	protected static final String charactSearchTemplate = "%(bcpg:charactName bcpg:legalName)";
 	protected static final String listValueSearchTemplate = "%(bcpg:lvValue bcpg:legalName)";
 
@@ -159,6 +160,20 @@ public class EntityListValuePlugin implements ListValuePlugin {
 			template = charactSearchTemplate;
 		} else if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_LIST_VALUE)) {
 			template = listValueSearchTemplate;
+		} else if(arrClassNames!=null ){
+			for (String className : arrClassNames) {
+				QName classQName;
+				if (className.contains("^")) {
+					String[] splitted = className.split("\\^");
+					classQName = QName.createQName(splitted[0], namespaceService);
+				} else {
+					classQName = QName.createQName(className, namespaceService);
+				}
+				if (entityDictionaryService.isSubClass(classQName, BeCPGModel.TYPE_CHARACT)) {
+					template = mixedSearchTemplate;
+					break;
+				}
+			}
 		}
 
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(type).excludeDefaults().inSearchTemplate(template)
@@ -198,7 +213,7 @@ public class EntityListValuePlugin implements ListValuePlugin {
 
 					if (nodeService.exists(nodeRef)) {
 
-						List<NodeRef> tmp = queryBuilder.list();
+						List<NodeRef> tmp = queryBuilder.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list();
 
 						List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, assocQName);
 

@@ -42,6 +42,7 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.comparison.CompareEntityReportService;
 import fr.becpg.repo.entity.version.EntityVersionService;
+import fr.becpg.repo.helper.AttachmentHelper;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
@@ -124,9 +125,13 @@ public class CompareEntityReportWebScript extends AbstractWebScript {
 		String versionLabel = templateArgs.get(PARAM_VERSION_LABEL);
 		if (versionLabel != null) {
 			VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
-			Version version = versionHistory.getVersion(versionLabel);
-			entity1NodeRef = entityVersionService.getEntityVersion(version);
-
+			if(versionHistory!=null){
+				Version version = versionHistory.getVersion(versionLabel);
+				entity1NodeRef = entityVersionService.getEntityVersion(version);
+			} else {
+				entity1NodeRef = entityNodeRef;
+			}
+			
 			if (logger.isDebugEnabled()) {
 				logger.debug("entityNodeRef: " + entityNodeRef + " - versionLabel: " + versionLabel + " - entityVersionNodeRef: " + entityNodeRef);
 			}
@@ -191,7 +196,7 @@ public class CompareEntityReportWebScript extends AbstractWebScript {
 			// for the stream
 			
 			res.setContentType(mimetypeService.guessMimetype(fileName));
-			res.setHeader("Content-Disposition", "attachment; filename=\"" + WebDAVHelper.encodeURL(fileName));
+			AttachmentHelper.setAttachment(req, res, fileName);
 			
 			
 			compareEntityReportService.getComparisonReport(entity1NodeRef, entityNodeRefs, templateNodeRef, res.getOutputStream());
