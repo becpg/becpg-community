@@ -21,6 +21,7 @@ import java.util.Locale;
 
 import org.alfresco.repo.jscript.BaseScopableProcessorExtension;
 import org.alfresco.repo.jscript.ScriptNode;
+import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
@@ -33,6 +34,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.entity.AutoNumService;
+import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.olap.OlapService;
 
@@ -55,6 +57,10 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	private NamespaceService namespaceService;
 
 	private DictionaryService dictionaryService;
+
+	private EntityVersionService entityVersionService;
+
+	private ServiceRegistry serviceRegistry;
 
 	public void setOlapService(OlapService olapService) {
 		this.olapService = olapService;
@@ -83,9 +89,17 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
-	
+
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
+	}
+
+	public void setEntityVersionService(EntityVersionService entityVersionService) {
+		this.entityVersionService = entityVersionService;
+	}
+
+	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
+		this.serviceRegistry = serviceRegistry;
 	}
 
 	public String getMLProperty(ScriptNode sourceNode, String propQName, String locale) {
@@ -147,6 +161,10 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 	public String getOlapSSOUrl() {
 		return olapService.getSSOUrl();
+	}
+
+	public ScriptNode createBranch(ScriptNode entity, ScriptNode parent) {
+		return new ScriptNode(entityVersionService.createBranch(entity.getNodeRef(), parent.getNodeRef()), serviceRegistry);
 	}
 
 }

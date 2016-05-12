@@ -362,7 +362,7 @@ public class EntityDataListWebScript extends AbstractWebScript {
 
 			PaginatedExtractedItems extractedItems = extractor.extract(dataListFilter, metadataFields);
 			
-			datalistOutputWriterFactory.write(res,dataListFilter, extractedItems);
+			datalistOutputWriterFactory.write(req, res,dataListFilter, extractedItems);
 			
 
 		} catch (JSONException e) {
