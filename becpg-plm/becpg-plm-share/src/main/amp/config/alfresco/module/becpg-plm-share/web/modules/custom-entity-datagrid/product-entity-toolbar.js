@@ -321,7 +321,10 @@ YAHOO.Bubbling
                   {
                      actionName : "formulate",
                      evaluate : function(asset, entity) {
-                        return asset.name !== null && (asset.name === "compoList" || asset.name === "processList" || asset.name === "packagingList" || asset.name === "ingLabelingList" || asset.name === "nutList" || asset.name === "labelClaimList" || asset.name === "costList" || asset.name === "physicoChemList" || asset.name === "ingList" || asset.name === "allergenList") && entity != null && entity.userAccess.edit;
+                        return asset.name !== null && 
+                             (asset.name === "compoList" || asset.name === "processList" || asset.name === "packagingList" || asset.name === "ingLabelingList" || asset.name === "nutList" || asset.name === "labelClaimList" || asset.name === "costList" || asset.name === "physicoChemList" || asset.name === "ingList" || asset.name === "allergenList")
+                               && entity != null && beCPG.util.contains(entity.aspects,
+                                       "bcpg:formulatedEntityAspect") && entity.userAccess.edit;
                      },
                      fn : function(instance) {
 
