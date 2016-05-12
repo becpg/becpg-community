@@ -61,9 +61,10 @@ public class BeCPGWSHandler {
 		logger.debug(String.format("Session %s closed because of %s", session.getId(), closeReason));
 		try {
 			String room = (String) session.getUserProperties().get("room");
+			String user = (String)session.getUserProperties().get("user");
 			for (Session s : session.getOpenSessions()) {
 				if (s.isOpen() && room.equals(s.getUserProperties().get("room")) && !s.getId().equals(session.getId())) {
-					s.getBasicRemote().sendText("{\"type\":\"LEAVING\",\"user\":\"" + s.getUserProperties().get("user")  + "\"}");
+					s.getBasicRemote().sendText("{\"type\":\"LEAVING\",\"user\":\"" +  user + "\"}");
 				}
 			}
 		} catch (IOException e) {
