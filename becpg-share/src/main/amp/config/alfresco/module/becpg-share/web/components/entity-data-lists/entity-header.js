@@ -211,7 +211,11 @@
                             	}
                             	
                             } else if(message.type == "LEAVING"){
-                            	YAHOO.util.Dom.remove(me.id+"-chat-user-"+message.user);
+                            	 var child = document.getElementById(me.id+"-chat-user-"+message.user);
+                            	 if(child!=null){
+                            		 child.parentNode.removeChild(child);
+                            	 }
+                            	
                             } else if(message.type == "UPDATE"){
                             	YAHOO.util.Dom.addClass(me.id+"-chat-user-"+message.user,"user-activiti");
                             	setTimeout(function(){
