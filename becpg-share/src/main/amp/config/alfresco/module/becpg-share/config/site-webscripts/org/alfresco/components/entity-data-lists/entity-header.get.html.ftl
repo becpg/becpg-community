@@ -90,6 +90,7 @@
                   </div>
                </#if>
                </div>
+               <div id="${el}-node-users" class="node-users"></div>
             <div class="clear"></div>
          </div>
          
