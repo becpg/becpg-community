@@ -1923,7 +1923,7 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>bcpg:product</class>
+						<class>cm:cmobject</class>
 						<mandatory>false</mandatory>
 						<many>true</many>
 					</target>
