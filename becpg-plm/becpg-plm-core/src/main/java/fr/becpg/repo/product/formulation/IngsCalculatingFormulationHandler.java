@@ -39,6 +39,7 @@ import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
+import fr.becpg.repo.repository.model.MinMaxValueDataItem;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
 /**
@@ -187,7 +188,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 						Double waterLost = (100 - (formulatedProduct.getYield())) * formulatedProduct.getRecipeQtyUsed();
 						ingListDataItem.setQtyPerc((totalQtyIng - (waterLost)) / totalQtyUsed);
-						
+
 					} else {
 						ingListDataItem.setQtyPerc(totalQtyIng / totalQtyUsed);
 					}
@@ -331,6 +332,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				totalQtyIng += valueToAdd;
 				totalQtyIngMap.put(newIngListDataItem.getName(), totalQtyIng);
 			}
+			
+			
 
 			// Calculate geo origins
 			for (NodeRef geoOrigin : ingListDataItem.getGeoOrigin()) {
@@ -401,14 +404,14 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				if ((declType == null) || !declType.equals(DeclarationType.DoNotDetails)) {
 					// req not respected
 					String message = I18NUtil.getMessage(MESSAGE_MISSING_INGLIST);
-					addReqCtrl(reqCtrlMap, RequirementType.Tolerated, message, productNodeRef);
+					addReqCtrl(reqCtrlMap, RequirementType.Tolerated, message, productNodeRef, RequirementDataType.Ingredient);
 				}
 			} else {
 				forbiddenIngredientsList.forEach(fil -> {
 
 					componentProductData.getIngList().forEach(ingListDataItem -> {
 
-						if (!RequirementType.Authorized.equals(fil.getReqType())) {
+						if (!RequirementType.Authorized.equals(fil.getReqType()) && (fil.getReqMessage() != null) && !fil.getReqMessage().isEmpty()) {
 
 							if (checkRuleMatchIng(ingListDataItem, fil)) {
 								// Look for raw material
@@ -457,78 +460,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	}
 
 	private void mergeRequirements(List<ForbiddenIngListDataItem> ret, List<ForbiddenIngListDataItem> toAdd, ProductData formulatedProduct) {
-		toAdd.forEach(item -> {
-			if (item.getReqMessage() != null) {
-
-				// check that this item is not in list, in which case add it
-				if (ret.stream().noneMatch(sl -> sl.getReqMessage().equals(item.getReqMessage()))) {
-					ret.add(item);
-				}
-
-				// ret.forEach(sl -> {
-				// if ((sl.getReqMessage() != null) &&
-				// item.getReqMessage().equals(sl.getReqMessage())) {
-				// // TODO remplacer simplement non ?
-				// sl.setIngs(uniqueUnionWith(item.getIngs(), sl.getIngs()));
-				// sl.setBioOrigins(uniqueUnionWith(item.getBioOrigins(),
-				// sl.getBioOrigins()));
-				// sl.setGeoOrigins(uniqueUnionWith(item.getGeoOrigins(),
-				// sl.getGeoOrigins()));
-				//
-				// //intersect
-				// boolean hadRequiredGeoOrigins =
-				// sl.getRequiredGeoOrigins().isEmpty();
-				//
-				// if(hadRequiredGeoOrigins){
-				// //intersection
-				// sl.setRequiredGeoOrigins(intersect(sl.getRequiredGeoOrigins(),
-				// item.getRequiredGeoOrigins()));
-				// } else {
-				// //union
-				// sl.setRequiredGeoOrigins(uniqueUnionWith(null,
-				// item.getRequiredGeoOrigins()));
-				// }
-				// //if req geo origin list was not empty beforehand but became
-				// so
-				// if(sl.getRequiredGeoOrigins().isEmpty() &&
-				// hadRequiredGeoOrigins){
-				// if(logger.isDebugEnabled()){
-				// logger.debug("Formulation emptied requiredGeoOrigins for
-				// ingredient "+sl.getReqMessage());
-				// }
-				// String message =
-				// I18NUtil.getMessage(MESSAGE_EMPTY_REQ_GEO_ORIGIN_LIST,
-				// sl.getReqMessage());
-				// formulatedProduct.getCompoListView().getReqCtrlList().add(new
-				// ReqCtrlListDataItem(
-				// null, RequirementType.Forbidden, message, null, new
-				// ArrayList<>(), RequirementDataType.Specification));
-				// }
-				// /*
-				// sl.setRequiredGeoOrigins(sl.getRequiredGeoOrigins()
-				// .stream()
-				// .filter(item.getRequiredGeoOrigins()::contains)
-				// .collect(Collectors.toList()));
-				// */
-				// sl.setRequiredGeoOrigins(uniqueUnionWith(item.getRequiredGeoOrigins(),
-				// sl.getRequiredGeoOrigins()));
-				// sl.setGeoTransfo(uniqueUnionWith(item.getGeoTransfo(),
-				// sl.getGeoTransfo()));
-				//
-				// if(Boolean.FALSE.equals(Boolean.getBoolean(sl.getIsGMO())) &&
-				// Boolean.TRUE.equals(Boolean.getBoolean(item.getIsGMO()))){
-				// sl.setIsGMO(Boolean.TRUE);
-				// }
-				//
-				// if(Boolean.FALSE.equals(Boolean.getBoolean(sl.getIsIonized()))
-				// &&
-				// Boolean.TRUE.equals(Boolean.getBoolean(item.getIsIonized()))){
-				// sl.setIsGMO(Boolean.TRUE);
-				// }
-				// }
-				// });
-			}
-		});
+		ret.addAll(toAdd);
 	}
 
 	private List<ForbiddenIngListDataItem> getDataListVisited(ProductSpecificationData partProduct) {
@@ -633,7 +565,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			for (IngListDataItem ingListDataItem : ingList) {
 				if (!RequirementType.Authorized.equals(fil.getReqType())) {
 					// Ings
-					if (!fil.getIngs().isEmpty()) {
+					if (!fil.getIngs().isEmpty() && (fil.getReqMessage() != null) && !fil.getReqMessage().isEmpty()) {
 						if (fil.getIngs().contains(ingListDataItem.getIng())) {
 							if ((fil.getQtyPercMaxi() != null) && (fil.getQtyPercMaxi() <= ingListDataItem.getQtyPerc())) {
 
@@ -668,8 +600,9 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 					if (RequirementType.Authorized.equals(fil.getReqType())) {
 						if (checkRuleMatchIng(ingListDataItem, fil)) {
 							autorized = true;
-							if ((fil.getReqMessage() != null) && (fil.getReqMessage() != "")) {
-								addReqCtrl(reqCtrlMap, RequirementType.Authorized, fil.getReqMessage(), ingListDataItem.getIng());
+							if ((fil.getReqMessage() != null) && (!fil.getReqMessage().isEmpty())) {
+								addReqCtrl(reqCtrlMap, RequirementType.Authorized, fil.getReqMessage(), ingListDataItem.getIng(),
+										RequirementDataType.Specification);
 							}
 							break;
 						}
@@ -678,7 +611,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 				if (!autorized) {
 					String message = I18NUtil.getMessage(MESSAGE_NOTAUTHORIZED_ING);
-					addReqCtrl(reqCtrlMap, RequirementType.Forbidden, message, ingListDataItem.getIng());
+					addReqCtrl(reqCtrlMap, RequirementType.Forbidden, message, ingListDataItem.getIng(), RequirementDataType.Specification);
 				}
 
 			}
@@ -773,7 +706,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		return ingList;
 	}
 
-	private void addReqCtrl(Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap, RequirementType requirementType, String message, NodeRef sourceNodeRef) {
+	private void addReqCtrl(Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap, RequirementType requirementType, String message, NodeRef sourceNodeRef,
+			RequirementDataType requirementDataType) {
 		ReqCtrlListDataItem reqCtrl = null;
 		for (ReqCtrlListDataItem r : reqCtrlMap.values()) {
 			if (message.equals(r.getReqMessage())) {
@@ -783,7 +717,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		}
 
 		if (reqCtrl == null) {
-			reqCtrl = new ReqCtrlListDataItem(null, requirementType, message, null, new ArrayList<NodeRef>(), RequirementDataType.Ingredient);
+			reqCtrl = new ReqCtrlListDataItem(null, requirementType, message, null, new ArrayList<NodeRef>(), requirementDataType);
 			reqCtrlMap.put(null, reqCtrl);
 		}
 
