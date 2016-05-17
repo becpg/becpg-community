@@ -278,11 +278,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 				for (IngLabelingListDataItem dataItem : productData.getLabelingListView().getIngLabelingList()) {
 
-					MLText labelingText = dataItem.getManualValue();
-					if ((labelingText == null) || labelingText.isEmpty()) {
-						labelingText = dataItem.getValue();
-					}
-
+					MLText labelingText = dataItem.getValue();
+			
 					if (labelingText != null) {
 						List<String> locales = new ArrayList<>();
 						for (Locale locale : labelingText.getLocales()) {
