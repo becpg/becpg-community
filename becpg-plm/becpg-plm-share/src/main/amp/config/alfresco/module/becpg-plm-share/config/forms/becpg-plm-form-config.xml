@@ -7636,7 +7636,6 @@
 					<field id="bcpg:filReqType">
 						<control template="/org/alfresco/components/form/controls/selectmany.ftl">
 							<control-param name="isSearch">true</control-param>
-							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:filReqMessage">
@@ -7910,6 +7909,13 @@
 					<show id="bcpg:lclType" />
 					<show id="bcpg:lclClaimValue" />
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:lclType">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+				</appearance>
 			</form>
 			<!-- Data Grid view -->
 			<form id="datagrid">
