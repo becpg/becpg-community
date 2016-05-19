@@ -1137,6 +1137,8 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			ProductData formulatedProduct = alfrescoRepository.findOne(productNodeRef);
+			
+			labelingRuleList.add(new LabelingRuleListDataItem("Pref7", "uncapitalizeLegalName = true", LabelingRuleType.Prefs));
 
 			formulatedProduct.getLabelingListView().setLabelingRuleList(labelingRuleList);
 
@@ -1241,12 +1243,12 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 			for (IngLabelingListDataItem illDataItem : formulatedProduct1.getLabelingListView().getIngLabelingList()) {
 
-				checkILL("garniture french 50% (ing3 french 41,6%, ing4 french 8,3%)",
-						"pâte french 50% (legal Raw material 12 33,3% (ing2 french 25%, ing1 french), ing2 french 11,1%, ing1 french)",
+				checkILL("Garniture french 50% (ing3 french 41,6%, ing4 french 8,3%)",
+						"Pâte french 50% (Legal Raw material 12 33,3% (ing2 french 25%, ing1 french), ing2 french 11,1%, ing1 french)",
 						illDataItem.getValue().getValue(Locale.FRENCH));
 
-				checkILL("garniture english 50% (ing3 english 41,6%, ing4 english 8,3%)",
-						"pâte english 50% (legal Raw material 12 33,3% (ing2 english 25%, ing1 english), ing2 english 11,1%, ing1 english)",
+				checkILL("Garniture english 50% (ing3 english 41,6%, ing4 english 8,3%)",
+						"Pâte english 50% (Legal Raw material 12 33,3% (ing2 english 25%, ing1 english), ing2 english 11,1%, ing1 english)",
 						illDataItem.getValue().getValue(Locale.ENGLISH));
 
 			}
@@ -1378,7 +1380,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 				 logger.info("running labeling in thread " + threadName + "for user" + currentUser);
 
-				String ill = "pâte french 50% (legal Finished product 1 50%), garniture french 50% (legal Raw material 13 25% (ing3 french 25%), ing3 french 16,6%, ing4 french 8,3%)";
+				String ill = "Pâte french 50% (legal Finished product 1 50%), Garniture french 50% (Legal Raw material 13 25% (ing3 french 25%), ing3 french 16,6%, ing4 french 8,3%)";
 
 				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 

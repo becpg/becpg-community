@@ -181,6 +181,7 @@ public class LabelingFormulaContext {
 	private boolean showIngCEECode = false;
 	private boolean useVolume = false;
 	private boolean ingsLabelingWithYield = false;
+	private boolean uncapitalizeLegalName = false;
 
 	public void setUseVolume(boolean useVolume) {
 		this.useVolume = useVolume;
@@ -208,6 +209,10 @@ public class LabelingFormulaContext {
 
 	public void setGroupListDefaultFormat(String groupListDefaultFormat) {
 		this.groupListDefaultFormat = groupListDefaultFormat;
+	}
+
+	public void setUncapitalizeLegalName(boolean uncapitalizeLegalName) {
+		this.uncapitalizeLegalName = uncapitalizeLegalName;
 	}
 
 	public void setDetailsDefaultFormat(String detailsDefaultFormat) {
@@ -287,10 +292,10 @@ public class LabelingFormulaContext {
 	}
 
 	private Format applyRoundingMode(MessageFormat messageFormat) {
-		if(messageFormat.getFormats()!=null){
-			for(Format format: messageFormat.getFormats()){
-				if(format instanceof DecimalFormat){
-					((DecimalFormat)format).setRoundingMode(RoundingMode.DOWN);
+		if (messageFormat.getFormats() != null) {
+			for (Format format : messageFormat.getFormats()) {
+				if (format instanceof DecimalFormat) {
+					((DecimalFormat) format).setRoundingMode(RoundingMode.DOWN);
 				}
 			}
 		}
@@ -351,15 +356,18 @@ public class LabelingFormulaContext {
 			}
 		}
 
+		String ingLegalName = uncapitalizeLegalName ? uncapitalize(lblComponent.getLegalName(I18NUtil.getLocale()))
+				: lblComponent.getLegalName(I18NUtil.getLocale());
+
 		if (!lblComponent.getAllergens().isEmpty()) {
 			if (((lblComponent instanceof CompositeLabeling) && ((CompositeLabeling) lblComponent).getIngList().isEmpty())
 					|| (lblComponent instanceof IngItem)) {
-				return createAllergenAwareLabel(uncapitalize(lblComponent.getLegalName(I18NUtil.getLocale())), lblComponent.getAllergens());
+				return createAllergenAwareLabel(ingLegalName, lblComponent.getAllergens());
 			}
 
 		}
 
-		return uncapitalize(lblComponent.getLegalName(I18NUtil.getLocale()));
+		return ingLegalName;
 	}
 
 	private String uncapitalize(String legalName) {
@@ -383,14 +391,14 @@ public class LabelingFormulaContext {
 					if (ret.length() > 0) {
 						ret.append(defaultSeparator);
 					} else {
-						Matcher ma = Pattern.compile("\\b(" + Pattern.quote(allergenName) + "(s?))\\b").matcher(ingLegalName);
+						Matcher ma = Pattern.compile("\\b(" + Pattern.quote(allergenName) + "(s?))\\b").matcher(uncapitalize(ingLegalName));
 						if (ma.find() && (ma.group(1) != null)) {
 							return ma.replaceAll(allergenReplacementPattern);
 						} else {
 							for (NodeRef subAllergen : associationService.getTargetAssocs(allergen, PLMModel.ASSOC_ALLERGENSUBSETS)) {
 								String subAllergenName = uncapitalize(getAllergenName(subAllergen));
 								if ((subAllergenName != null) && !subAllergenName.isEmpty()) {
-									ma = Pattern.compile("\\b(" + Pattern.quote(subAllergenName) + "(s?))\\b").matcher(ingLegalName);
+									ma = Pattern.compile("\\b(" + Pattern.quote(subAllergenName) + "(s?))\\b").matcher(uncapitalize(ingLegalName));
 									if (ma.find() && (ma.group(1) != null)) {
 										return ma.replaceAll(allergenReplacementPattern);
 									}
@@ -554,7 +562,7 @@ public class LabelingFormulaContext {
 	public boolean addRule(NodeRef ruleNodeRef, String name, List<NodeRef> components, List<NodeRef> replacement, MLText label, String formula,
 			LabelingRuleType labeLabelingRuleType) {
 
-		if(labeLabelingRuleType!=null){
+		if (labeLabelingRuleType != null) {
 			if (LabelingRuleType.Type.equals(labeLabelingRuleType)
 					|| ((((components != null) && (components.size() > 1)) || ((replacement != null) && !replacement.isEmpty()))
 							&& (LabelingRuleType.Detail.equals(labeLabelingRuleType) || LabelingRuleType.Group.equals(labeLabelingRuleType)
@@ -563,12 +571,13 @@ public class LabelingFormulaContext {
 			} else {
 				if ((components != null) && !components.isEmpty()) {
 					for (NodeRef component : components) {
-						nodeDeclarationFilters.put(component, new DeclarationFilter(formula, DeclarationType.valueOf(labeLabelingRuleType.toString())));
+						nodeDeclarationFilters.put(component,
+								new DeclarationFilter(formula, DeclarationType.valueOf(labeLabelingRuleType.toString())));
 					}
 				} else {
 					declarationFilters.add(new DeclarationFilter(formula, DeclarationType.valueOf(labeLabelingRuleType.toString())));
 				}
-	
+
 			}
 		}
 
@@ -761,13 +770,14 @@ public class LabelingFormulaContext {
 					toAppend = getIngTextFormat(component).format(new Object[] { ingName, qtyPerc, subIngBuff.toString() });
 
 				} else if (component instanceof CompositeLabeling) {
-					
-				   Double subRatio = qtyPerc;
-				   if(DeclarationType.Kit.equals(((CompositeLabeling) component).getDeclarationType())){
-					   subRatio = 1d;
-				   }
-					
-					toAppend = getIngTextFormat(component).format(new Object[] { ingName, qtyPerc, renderCompositeIng((CompositeLabeling) component, subRatio) });
+
+					Double subRatio = qtyPerc;
+					if (DeclarationType.Kit.equals(((CompositeLabeling) component).getDeclarationType())) {
+						subRatio = 1d;
+					}
+
+					toAppend = getIngTextFormat(component)
+							.format(new Object[] { ingName, qtyPerc, renderCompositeIng((CompositeLabeling) component, subRatio) });
 
 				} else {
 					logger.error("Unsupported ing type. Name: " + component.getName());
@@ -810,15 +820,13 @@ public class LabelingFormulaContext {
 	@SuppressWarnings("unchecked")
 	private JSONObject createJsonLog(AbstractLabelingComponent component, Double totalQty, Double totalVol, Set<AbstractLabelingComponent> visited) {
 
-		
 		JSONObject tree = new JSONObject();
-		
 
-		if(visited.contains(component)){
-			return  tree;
-		} 
+		if (visited.contains(component)) {
+			return tree;
+		}
 		visited.add(component);
-		
+
 		if (component != null) {
 
 			if ((component.getNodeRef() != null) && mlNodeService.exists(component.getNodeRef())) {
@@ -879,13 +887,13 @@ public class LabelingFormulaContext {
 						}
 						JSONArray ingTypeJsonChildren = new JSONArray();
 						for (AbstractLabelingComponent childComponent : kv.getValue()) {
-							ingTypeJsonChildren.add(createJsonLog(childComponent, composite.getQtyTotal(), composite.getVolumeTotal(),visited));
+							ingTypeJsonChildren.add(createJsonLog(childComponent, composite.getQtyTotal(), composite.getVolumeTotal(), visited));
 						}
 						ingTypeJson.put("children", ingTypeJsonChildren);
 						children.add(ingTypeJson);
 					} else {
 						for (AbstractLabelingComponent childComponent : kv.getValue()) {
-							children.add(createJsonLog(childComponent, composite.getQtyTotal(), composite.getVolumeTotal(),visited));
+							children.add(createJsonLog(childComponent, composite.getQtyTotal(), composite.getVolumeTotal(), visited));
 						}
 					}
 
@@ -896,7 +904,7 @@ public class LabelingFormulaContext {
 			} else if ((component instanceof IngItem) && !((IngItem) component).getSubIngs().isEmpty()) {
 				JSONArray children = new JSONArray();
 				for (IngItem childComponent : ((IngItem) component).getSubIngs()) {
-					children.add(createJsonLog(childComponent, ((IngItem) component).getQty(), ((IngItem) component).getVolume(),visited));
+					children.add(createJsonLog(childComponent, ((IngItem) component).getQty(), ((IngItem) component).getVolume(), visited));
 				}
 				tree.put("children", children);
 			}
@@ -915,10 +923,10 @@ public class LabelingFormulaContext {
 	}
 
 	public Double computeQtyPerc(CompositeLabeling parent, AbstractLabelingComponent component, Double ratio) {
-		if(ratio == null){
+		if (ratio == null) {
 			return null;
 		}
-		
+
 		Double qty = component.getQty();
 		if ((parent.getQtyTotal() != null) && (parent.getQtyTotal() > 0) && (qty != null)) {
 			qty = (qty / parent.getQtyTotal()) * ratio;
@@ -927,10 +935,10 @@ public class LabelingFormulaContext {
 	}
 
 	public Double computeVolumePerc(CompositeLabeling parent, AbstractLabelingComponent component, Double ratio) {
-		if(ratio == null){
+		if (ratio == null) {
 			return null;
 		}
-		
+
 		Double volume = component.getVolume();
 		if ((parent.getVolumeTotal() != null) && (parent.getVolumeTotal() > 0) && (volume != null)) {
 			volume = (volume / parent.getVolumeTotal()) * ratio;
