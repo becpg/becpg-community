@@ -23,6 +23,7 @@ import org.springframework.extensions.webscripts.GUID;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.formulation.FormulateException;
@@ -39,7 +40,6 @@ import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
-import fr.becpg.repo.repository.model.MinMaxValueDataItem;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
 /**
@@ -196,6 +196,18 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 					ingListDataItem.setQtyPerc(null);
 				}
 
+				Double totalQtyMini = totalQtyIngMap.get(ingListDataItem.getName() + "-mini");
+				if (totalQtyMini != null) {
+
+					ingListDataItem.setMini(totalQtyMini / totalQtyUsed);
+				}
+
+				Double totalQtyMaxi = totalQtyIngMap.get(ingListDataItem.getName() + "-maxi");
+				if (totalQtyMaxi != null) {
+
+					ingListDataItem.setMaxi(totalQtyMaxi / totalQtyUsed);
+				}
+
 				// qtyVolumePerc
 				if (totalQtyVolMap.get(ingListDataItem.getName()) != null) {
 					ingListDataItem.setVolumeQtyPerc(totalQtyVolMap.get(ingListDataItem.getName()) / totalVolumeUsed);
@@ -309,13 +321,44 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				totalQtyIngMap.put(newIngListDataItem.getName(), totalQtyIng);
 			}
 
+			Double totalQtyMaxi = totalQtyIngMap.get(newIngListDataItem.getName() + "-maxi");
+			if (totalQtyMaxi == null) {
+				totalQtyMaxi = 0d;
+				totalQtyIngMap.put(newIngListDataItem.getName() + "-maxi", totalQtyMaxi);
+			}
+
+			Double totalQtyMini = totalQtyIngMap.get(newIngListDataItem.getName() + "-mini");
+			if (totalQtyMini == null) {
+				totalQtyMini = 0d;
+				totalQtyIngMap.put(newIngListDataItem.getName() + "-mini", totalQtyMini);
+			}
+
 			// Calculate qty
 			Double qty = FormulationHelper.getQtyInKg(compoListDataItem);
 			Double qtyIng = ingListDataItem.getQtyPerc();
+			Double mini = ingListDataItem.getMini();
+			Double maxi = ingListDataItem.getMaxi();
 
-			if ((qty != null) && (qtyIng != null)) {
+			if (qty != null) {
 				qty *= FormulationHelper.getYield(compoListDataItem) / 100;
-				Double valueToAdd = qty * qtyIng;
+
+				if ((qtyIng != null)) {
+					Double valueToAdd = qty * qtyIng;
+					totalQtyIng += valueToAdd;
+					totalQtyIngMap.put(newIngListDataItem.getName(), totalQtyIng);
+				}
+
+				if ((maxi != null)) {
+					Double valueToAdd = qty * maxi;
+					totalQtyMaxi += valueToAdd;
+					totalQtyIngMap.put(newIngListDataItem.getName() + "-maxi", totalQtyMaxi);
+				}
+
+				if ((mini != null)) {
+					Double valueToAdd = qty * mini;
+					totalQtyMini += valueToAdd;
+					totalQtyIngMap.put(newIngListDataItem.getName() + "-mini", totalQtyMini);
+				}
 
 				Double volumeQty = totalQtyVolMap.get(newIngListDataItem.getName());
 				if (volumeQty == null) {
@@ -324,16 +367,11 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 				// Semi finished
 				if ((ingListDataItem.getVolumeQtyPerc() != null) && (compoListDataItem.getVolume() != null)) {
-
 					totalQtyVolMap.put(newIngListDataItem.getName(),
 							volumeQty + ((ingListDataItem.getVolumeQtyPerc() * compoListDataItem.getVolume()) / 100));
 				}
 
-				totalQtyIng += valueToAdd;
-				totalQtyIngMap.put(newIngListDataItem.getName(), totalQtyIng);
 			}
-			
-			
 
 			// Calculate geo origins
 			for (NodeRef geoOrigin : ingListDataItem.getGeoOrigin()) {
@@ -404,7 +442,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				if ((declType == null) || !declType.equals(DeclarationType.DoNotDetails)) {
 					// req not respected
 					String message = I18NUtil.getMessage(MESSAGE_MISSING_INGLIST);
-					addReqCtrl(reqCtrlMap, RequirementType.Tolerated, message, productNodeRef, RequirementDataType.Ingredient);
+					addReqCtrl(reqCtrlMap, new NodeRef(RepoConsts.SPACES_STORE, "missing-inglist"), RequirementType.Tolerated, message,
+							productNodeRef, RequirementDataType.Ingredient);
 				}
 			} else {
 				forbiddenIngredientsList.forEach(fil -> {
@@ -558,7 +597,6 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	 */
 	private void checkILOfFormulatedProduct(Collection<IngListDataItem> ingList,
 			List<ForbiddenIngListDataItem> productSpecicationsForbiddenIngredientsList, Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap) {
-
 		boolean checkAutorized = false;
 		for (ForbiddenIngListDataItem fil : productSpecicationsForbiddenIngredientsList) {
 
@@ -601,7 +639,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 						if (checkRuleMatchIng(ingListDataItem, fil)) {
 							autorized = true;
 							if ((fil.getReqMessage() != null) && (!fil.getReqMessage().isEmpty())) {
-								addReqCtrl(reqCtrlMap, RequirementType.Authorized, fil.getReqMessage(), ingListDataItem.getIng(),
+
+								addReqCtrl(reqCtrlMap, fil.getNodeRef(), RequirementType.Authorized, fil.getReqMessage(), ingListDataItem.getIng(),
 										RequirementDataType.Specification);
 							}
 							break;
@@ -611,7 +650,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 				if (!autorized) {
 					String message = I18NUtil.getMessage(MESSAGE_NOTAUTHORIZED_ING);
-					addReqCtrl(reqCtrlMap, RequirementType.Forbidden, message, ingListDataItem.getIng(), RequirementDataType.Specification);
+					addReqCtrl(reqCtrlMap, new NodeRef(RepoConsts.SPACES_STORE, "ing-notauhtorised"), RequirementType.Forbidden, message,
+							ingListDataItem.getIng(), RequirementDataType.Specification);
 				}
 
 			}
@@ -706,19 +746,15 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		return ingList;
 	}
 
-	private void addReqCtrl(Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap, RequirementType requirementType, String message, NodeRef sourceNodeRef,
-			RequirementDataType requirementDataType) {
-		ReqCtrlListDataItem reqCtrl = null;
-		for (ReqCtrlListDataItem r : reqCtrlMap.values()) {
-			if (message.equals(r.getReqMessage())) {
-				reqCtrl = r;
-				break;
-			}
-		}
+	private void addReqCtrl(Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap, NodeRef reqNodeRef, RequirementType requirementType, String message,
+			NodeRef sourceNodeRef, RequirementDataType requirementDataType) {
 
+		ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(reqNodeRef);
 		if (reqCtrl == null) {
 			reqCtrl = new ReqCtrlListDataItem(null, requirementType, message, null, new ArrayList<NodeRef>(), requirementDataType);
-			reqCtrlMap.put(null, reqCtrl);
+			reqCtrlMap.put(reqNodeRef, reqCtrl);
+		} else {
+			reqCtrl.setReqDataType(requirementDataType);
 		}
 
 		if (!reqCtrl.getSources().contains(sourceNodeRef)) {
