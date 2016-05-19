@@ -6417,6 +6417,7 @@
 					<show id="bcpg:variantIds" force="true" />
 					<show id="pack:labelingPosition" />
 					<show id="pack:labelingLabelingTemplate" />
+					<show id="pack:labelingType" />
 					<show id="bcpg:instruction" force="true" />
 				</field-visibility>
 
