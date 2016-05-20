@@ -81,6 +81,9 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 			if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 
 				productData.getLabelClaimList().forEach(l -> {
+					
+					l.setType((String) nodeService.getProperty(l.getLabelClaim(), PLMModel.PROP_LABEL_CLAIM_TYPE));
+					
 					if ((l.getIsManual() == null) || !l.getIsManual()) {
 						l.setLabelClaimValue(null);
 					}
