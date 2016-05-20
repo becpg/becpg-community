@@ -20,9 +20,11 @@ package fr.becpg.repo.product.data.productList;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.product.data.constraints.RequirementType;
+import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -39,7 +41,7 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject{
 	 */
 	private static final long serialVersionUID = 8044333209643017576L;
 	RequirementType reqType;
-	String reqMessage;
+	MLText reqMessage;
 	Double qtyPercMaxi;
 	String isGMO;
 	String isIonized;
@@ -63,12 +65,13 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject{
 	
 
 	@AlfProp
+	@AlfMlText
 	@AlfQname(qname="bcpg:filReqMessage")
-	public String getReqMessage() {
+	public MLText getReqMessage() {
 		return reqMessage;
 	}
 
-	public void setReqMessage(String reqMessage) {
+	public void setReqMessage(MLText reqMessage) {
 		this.reqMessage = reqMessage;
 	}
 
@@ -168,8 +171,21 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject{
 	public ForbiddenIngListDataItem() {
 		super();
 	}
-
+	
 	public ForbiddenIngListDataItem(NodeRef nodeRef, RequirementType reqType, String reqMessage, Double qtyPercMaxi, Boolean isGMO, Boolean isIonized, List<NodeRef> ings, List<NodeRef> geoOrigins, List<NodeRef> bioOrigins)
+	{
+		this.nodeRef = nodeRef;
+		this.reqType = reqType;
+		this.reqMessage = new MLText(reqMessage);
+		this.qtyPercMaxi = qtyPercMaxi;
+		this.geoOrigins = geoOrigins;
+		this.bioOrigins = bioOrigins;
+		setIsGMO(isGMO);
+		setIsIonized(isIonized);		
+		this.ings = ings;
+	}
+
+	public ForbiddenIngListDataItem(NodeRef nodeRef, RequirementType reqType, MLText reqMessage, Double qtyPercMaxi, Boolean isGMO, Boolean isIonized, List<NodeRef> ings, List<NodeRef> geoOrigins, List<NodeRef> bioOrigins)
 	{
 		this.nodeRef = nodeRef;
 		this.reqType = reqType;

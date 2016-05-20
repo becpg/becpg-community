@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
@@ -442,7 +443,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				if ((declType == null) || !declType.equals(DeclarationType.DoNotDetails)) {
 					// req not respected
 					String message = I18NUtil.getMessage(MESSAGE_MISSING_INGLIST);
-					addReqCtrl(reqCtrlMap, new NodeRef(RepoConsts.SPACES_STORE, "missing-inglist"), RequirementType.Tolerated, message,
+					addReqCtrl(reqCtrlMap, new NodeRef(RepoConsts.SPACES_STORE, "missing-inglist"), RequirementType.Tolerated, new MLText(message),
 							productNodeRef, RequirementDataType.Ingredient);
 				}
 			} else {
@@ -638,8 +639,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 					if (RequirementType.Authorized.equals(fil.getReqType())) {
 						if (checkRuleMatchIng(ingListDataItem, fil)) {
 							autorized = true;
-							if ((fil.getReqMessage() != null) && (!fil.getReqMessage().isEmpty())) {
-
+							if ((fil.getReqMessage() != null) && fil.getReqMessage().getDefaultValue()!=null && (!fil.getReqMessage().getDefaultValue().isEmpty())) {
 								addReqCtrl(reqCtrlMap, fil.getNodeRef(), RequirementType.Authorized, fil.getReqMessage(), ingListDataItem.getIng(),
 										RequirementDataType.Specification);
 							}
@@ -650,7 +650,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 				if (!autorized) {
 					String message = I18NUtil.getMessage(MESSAGE_NOTAUTHORIZED_ING);
-					addReqCtrl(reqCtrlMap, new NodeRef(RepoConsts.SPACES_STORE, "ing-notauhtorised"), RequirementType.Forbidden, message,
+					addReqCtrl(reqCtrlMap, new NodeRef(RepoConsts.SPACES_STORE, "ing-notauhtorised"), RequirementType.Forbidden, new MLText(message),
 							ingListDataItem.getIng(), RequirementDataType.Specification);
 				}
 
@@ -746,7 +746,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		return ingList;
 	}
 
-	private void addReqCtrl(Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap, NodeRef reqNodeRef, RequirementType requirementType, String message,
+	private void addReqCtrl(Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap, NodeRef reqNodeRef, RequirementType requirementType, MLText message,
 			NodeRef sourceNodeRef, RequirementDataType requirementDataType) {
 
 		ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(reqNodeRef);

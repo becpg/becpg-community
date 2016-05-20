@@ -92,7 +92,7 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 					for (ReqCtrlListDataItem tmp : productData.getCompoListView().getReqCtrlList()) {
 						// mandatory fields rclDataItem aren't put in parent
 						if (tmp.getReqDataType() != RequirementDataType.Completion) {
-							reqCtrlList.add(new ReqCtrlListDataItem(null, tmp.getReqType(), tmp.getReqMessage(), tmp.getCharact(), tmp.getSources(),
+							reqCtrlList.add(new ReqCtrlListDataItem(null, tmp.getReqType(), tmp.getReqMlMessage(), tmp.getCharact(), tmp.getSources(),
 									tmp.getReqDataType() != null ? tmp.getReqDataType() : RequirementDataType.Nutrient));
 						}
 					}
@@ -111,28 +111,28 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 
 			for (ReqCtrlListDataItem r : reqCtrlList) {
 				if (r.getNodeRef() != null) {
-					if (dbReqCtrlList.containsKey(r.getReqMessage())) {
+					if (dbReqCtrlList.containsKey(r.getKey())) {
 						duplicates.add(r);
 						// Merge sources
 						for (NodeRef tmpref : r.getSources()) {
-							if (!dbReqCtrlList.get(r.getReqMessage()).getSources().contains(tmpref)) {
-								dbReqCtrlList.get(r.getReqMessage()).getSources().add(tmpref);
+							if (!dbReqCtrlList.get(r.getKey()).getSources().contains(tmpref)) {
+								dbReqCtrlList.get(r.getKey()).getSources().add(tmpref);
 							}
 						}
 					} else {
-						dbReqCtrlList.put(r.getReqMessage(), r);
+						dbReqCtrlList.put(r.getKey(), r);
 					}
 				} else {
-					if (newReqCtrlList.containsKey(r.getReqMessage())) {
+					if (newReqCtrlList.containsKey(r.getKey())) {
 						duplicates.add(r);
 						// Merge sources
 						for (NodeRef tmpref : r.getSources()) {
-							if (!newReqCtrlList.get(r.getReqMessage()).getSources().contains(tmpref)) {
-								newReqCtrlList.get(r.getReqMessage()).getSources().add(tmpref);
+							if (!newReqCtrlList.get(r.getKey()).getSources().contains(tmpref)) {
+								newReqCtrlList.get(r.getKey()).getSources().add(tmpref);
 							}
 						}
 					} else {
-						newReqCtrlList.put(r.getReqMessage(), r);
+						newReqCtrlList.put(r.getKey(), r);
 					}
 				}
 			}
@@ -160,6 +160,7 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 			sort(reqCtrlList);
 		}
 	}
+
 
 	@SuppressWarnings("unchecked")
 	private void updateFormulatedCharactInError(ProductData productData, List<ReqCtrlListDataItem> reqCtrlList) {
