@@ -324,6 +324,7 @@
 					<value>/25g</value>
 					<value>/100g</value>
 					<value>g/100g</value>
+					<value>mg/100g</value>
 					<value>g/2,2L</value>
 					<value>g/15g</value>	
 					<value>ppm</value>
@@ -334,6 +335,7 @@
 					<value>UB</value>
 					<value>cps</value>
 					<value>mg KOH/g</value>
+					<value>A/P</value>
 				</list>
 			</parameter>
 		</constraint>
