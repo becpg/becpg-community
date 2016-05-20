@@ -797,7 +797,7 @@ if (beCPG.module.EntityDataGridRenderers) {
     });
 	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-      propertyName : [ "bcpg:instruction","bcpg:lclComments"],
+      propertyName : [ "bcpg:instruction"],
       renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
          if(data.value != null && data.value.length>0){
         	 if (oColumn.hidden) {
@@ -815,6 +815,18 @@ if (beCPG.module.EntityDataGridRenderers) {
       }
   });	
 
+		
+	
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+	      propertyName : [ "bcpg:lclComments"],
+	      renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+	         if(data.value != null && data.value.length>0){
+				return data.displayValue;
+	         }
+	         return "";
+	      }
+	  });	
+	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : "bcpg:compoListVolume",
 		renderer : function(oRecord, data, label, scope) {
