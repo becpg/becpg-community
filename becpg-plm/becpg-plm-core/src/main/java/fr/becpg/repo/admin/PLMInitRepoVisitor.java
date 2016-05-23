@@ -477,6 +477,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_NUT_TYPES, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_NUT_FACTS_METHODS, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_LABELING_POSITIONS, BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(PlmRepoConsts.PATH_LABELING_TYPES, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_LABEL_TYPES, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_LABELCLAIMS_TYPES, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_MICROBIO_CONTROL_STEPS, BeCPGModel.TYPE_LIST_VALUE);

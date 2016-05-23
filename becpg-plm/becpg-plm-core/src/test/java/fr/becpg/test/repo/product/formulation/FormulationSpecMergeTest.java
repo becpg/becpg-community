@@ -711,7 +711,8 @@ public class FormulationSpecMergeTest extends AbstractFinishedProductTest {
 		}, false, true);
 	}
 
-	@Test
+	// NO merge for now @Test
+	// As it breaks Authorized ingredients list
 	public void testForbiddenIngredientsMerge() {
 
 		logger.info("/*************************************/");

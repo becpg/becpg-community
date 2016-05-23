@@ -133,6 +133,16 @@ public interface EntityListDAO {
 	 */
 	void copyDataLists(NodeRef sourceNodeRef, NodeRef targetNodeRef, boolean override);
 	
+	
+	/**
+	 * Copy one datalist to another entity
+	 * 
+	 * @param dataListNodeRef
+	 * @param entityNodeRef
+	 * @param b
+	 */
+	void copyDataList(NodeRef dataListNodeRef, NodeRef entityNodeRef, boolean override);
+	
 	/**
 	 * Copy all data lists
 	 * @param sourceNodeRef
@@ -167,6 +177,8 @@ public interface EntityListDAO {
 	 * @param targetNodeRef
 	 */
 	void moveDataLists(NodeRef sourceNodeRef, NodeRef targetNodeRef);
+
+
 
 
 
