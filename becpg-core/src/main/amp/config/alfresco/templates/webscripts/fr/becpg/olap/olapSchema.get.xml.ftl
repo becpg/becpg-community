@@ -910,12 +910,24 @@
 			</Hierarchy>
 		</Dimension>
 		
-		<Dimension  name="state" caption="${msg("jsolap.state.title")}" foreignKey="productState">
-			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.state.caption")}" primaryKey="product_state">
-				<Table name="becpg_product_state" />
-				<Level approxRowCount="5" name="product_state" caption="${msg("jsolap.state.title")}" table="becpg_product_state" column="product_state" nameColumn="product_label" type="String"    />
+		<Dimension  name="state" caption="${msg("jsolap.state.title")}">
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.state.caption")}" >
+				<Level approxRowCount="5" name="productState" caption="${msg("jsolap.state.title")}"  column="productState"  type="String"   >
+				  <NameExpression>
+					  <SQL dialect="generic" >
+					  <![CDATA[CASE WHEN productState='Simulation' THEN '${msg("listconstraint.bcpg_systemState.Simulation")}'
+	                            WHEN productState='ToValidate' THEN '${msg("listconstraint.bcpg_systemState.ToValidate")}'
+	                            WHEN productState='Valid' THEN '${msg("listconstraint.bcpg_systemState.Valid")}'
+	                            WHEN productState='Refused' THEN '${msg("listconstraint.bcpg_systemState.Refused")}'
+	                            WHEN productState='Archived' THEN '${msg("listconstraint.bcpg_systemState.Archived")}'
+	                            ELSE 'Vide'
+	                           END]]></SQL>
+             		 </NameExpression>
+				</Level>
 			</Hierarchy>
 		</Dimension>
+		
+		
 		
 		 
 		<Dimension foreignKey="id"  name="geoOrigin" caption="${msg("jsolap.geoOrigin.title")}">
