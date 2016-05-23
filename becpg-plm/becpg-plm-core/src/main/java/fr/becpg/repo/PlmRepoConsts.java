@@ -42,6 +42,7 @@ public class PlmRepoConsts {
 	public static final String PATH_PRECAUTION_OF_USE = "PrecautionOfUse";
 	public static final String PATH_LABELING_TEMPLATES = "LabelingTemplates";
 	public static final String PATH_LABELING_POSITIONS = "LabelingPositions";
+	public static final String PATH_LABELING_TYPES = "LabelingTypes";
 	
 	public static final String PATH_MICROBIO_UNITS = "MicrobioUnits";
 	

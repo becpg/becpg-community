@@ -108,8 +108,8 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 					if (!(partProduct instanceof LocalSemiFinishedProductData)) {
 						visitPart(compoItem, partProduct, formulatedProduct.getAllergenList(), retainNodes, qtyUsed, netQty, isGenericRawMaterial,
 								errors).forEach(error -> {
-									if (!rclCtrlMap.containsKey(error.getReqMessage())) {
-										rclCtrlMap.put(error.getReqMessage(), error);
+									if (!rclCtrlMap.containsKey(error.getKey())) {
+										rclCtrlMap.put(error.getKey(), error);
 									}
 								});
 

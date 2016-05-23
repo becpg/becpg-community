@@ -20,10 +20,12 @@ package fr.becpg.repo.product.data.productList;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
+import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -41,7 +43,7 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 	 */
 	private static final long serialVersionUID = -3851143080201225383L;
 	private RequirementType reqType;
-	private String reqMessage;
+	private MLText reqMlMessage;
 	private Integer sort;
 	private NodeRef charact;
 	private List<NodeRef> sources = new ArrayList<>();
@@ -57,16 +59,33 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 		this.reqType = reqType;
 	}
 
-	@AlfProp
-	@AlfQname(qname="bcpg:rclReqMessage")
 	public String getReqMessage() {
-		return reqMessage;
-	}
-
-	public void setReqMessage(String reqMessage) {
-		this.reqMessage = reqMessage;
+		return reqMlMessage!=null ? reqMlMessage.getDefaultValue() : null;
 	}
 	
+	public String getKey() {
+		String key = "key-";
+		if(getReqMessage()!=null){
+			key +=getReqMessage();
+		} 
+		if(reqDataType!=null){
+			key+= reqDataType.toString();
+		}
+		return key;
+	}
+	
+	
+	@AlfProp
+	@AlfMlText
+	@AlfQname(qname="bcpg:rclReqMessage")
+	public MLText getReqMlMessage() {
+		return reqMlMessage;
+	}
+
+	public void setReqMlMessage(MLText reqMlMessage) {
+		this.reqMlMessage = reqMlMessage;
+	}
+
 	@AlfProp
 	@AlfQname(qname="bcpg:sort")
 	public Integer getSort() {
@@ -112,26 +131,26 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 	}
 
 	
-	public ReqCtrlListDataItem(NodeRef nodeRef, RequirementType reqType, String reqMessage, NodeRef charact, List<NodeRef> sources){
-		super();
-		this.nodeRef = nodeRef;
-		this.reqType = reqType;
-		this.reqMessage = reqMessage;
-		this.charact = charact;
-		this.sources = sources;
-		this.reqDataType = RequirementDataType.Nutrient;
-	}
-	
-	
 	public ReqCtrlListDataItem(NodeRef nodeRef, RequirementType reqType, String reqMessage, NodeRef charact, List<NodeRef> sources, RequirementDataType reqDataType){
 		super();
 		this.nodeRef = nodeRef;
 		this.reqType = reqType;
-		this.reqMessage = reqMessage;
+		this.reqMlMessage = new MLText(reqMessage);
 		this.charact = charact;
 		this.sources = sources;
 		this.reqDataType = reqDataType != null ? reqDataType : RequirementDataType.Nutrient;
 	}
+	
+	public ReqCtrlListDataItem(NodeRef nodeRef, RequirementType reqType, MLText reqMessage, NodeRef charact, List<NodeRef> sources, RequirementDataType reqDataType){
+		super();
+		this.nodeRef = nodeRef;
+		this.reqType = reqType;
+		this.reqMlMessage = reqMessage;
+		this.charact = charact;
+		this.sources = sources;
+		this.reqDataType = reqDataType != null ? reqDataType : RequirementDataType.Nutrient;
+	}
+	
 
 	@Override
 	public int hashCode() {
@@ -139,7 +158,7 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 		int result = super.hashCode();
 		result = prime * result + ((charact == null) ? 0 : charact.hashCode());
 		result = prime * result + ((reqDataType == null) ? 0 : reqDataType.hashCode());
-		result = prime * result + ((reqMessage == null) ? 0 : reqMessage.hashCode());
+		result = prime * result + ((reqMlMessage == null) ? 0 : reqMlMessage.hashCode());
 		result = prime * result + ((reqType == null) ? 0 : reqType.hashCode());
 		result = prime * result + ((sort == null) ? 0 : sort.hashCode());
 		result = prime * result + ((sources == null) ? 0 : sources.hashCode());
@@ -162,10 +181,10 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 			return false;
 		if (reqDataType != other.reqDataType)
 			return false;
-		if (reqMessage == null) {
-			if (other.reqMessage != null)
+		if (reqMlMessage == null) {
+			if (other.reqMlMessage != null)
 				return false;
-		} else if (!reqMessage.equals(other.reqMessage))
+		} else if (!reqMlMessage.equals(other.reqMlMessage))
 			return false;
 		if (reqType != other.reqType)
 			return false;
@@ -184,7 +203,7 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 
 	@Override
 	public String toString() {
-		return "ReqCtrlListDataItem [nodeRef=" + nodeRef + ", reqType=" + reqType + ", reqMessage=" + reqMessage + ", sources=" + sources + ", reqDataType="+reqDataType+"]";
+		return "ReqCtrlListDataItem [nodeRef=" + nodeRef + ", reqType=" + reqType + ", reqMessage=" + reqMlMessage + ", sources=" + sources + ", reqDataType="+reqDataType+"]";
 	}
 	
 	
