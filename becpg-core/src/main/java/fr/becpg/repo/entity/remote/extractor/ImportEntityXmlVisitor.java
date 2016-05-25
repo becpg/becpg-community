@@ -40,6 +40,7 @@ import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceException;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -99,6 +100,7 @@ public class ImportEntityXmlVisitor {
 			EntityXmlHandler handler = new EntityXmlHandler(entityNodeRef, destNodeRef, properties);
 			saxParser.parse(in, handler);
 			handler.handlePropertiesQueue();
+			handler.removeExistingAssociations();
 
 			return handler.getCurNodeRef();
 		} finally {
@@ -185,6 +187,8 @@ public class ImportEntityXmlVisitor {
 
 		private Map<NodeRef, Map<QName, String>> propertiesQueue = new HashMap<>();
 
+		private List<ChildAssociationRef> toRemoveChildAssocsQueue = new ArrayList<>();
+
 		private QName currProp = null;
 
 		private QName nodeType = null;
@@ -250,11 +254,8 @@ public class ImportEntityXmlVisitor {
 						if (!currAssocType.isEmpty() && currAssocType.peek().equals(RemoteEntityService.CHILD_ASSOC_TYPE)) {
 
 							if (currAssoc.peek() != null) {
-								if (cache.containsKey(new NodeRef(nodeRef))) {
-									logger.debug("Cache contains :" + cache.get(new NodeRef(nodeRef)) + " of nodeRef " + nodeRef + " " + name);
-								}
-								NodeRef childNode = createChildAssocNode(curNodeRef.peek(), nodeType, currAssoc.peek(), name,
-										cache.get(new NodeRef(nodeRef)));
+
+								NodeRef childNode = createChildAssocNode(curNodeRef.peek(), nodeType, currAssoc.peek(), name, new NodeRef(nodeRef));
 								curNodeRef.push(childNode);
 								try {
 									retrieveNodeContent(new NodeRef(nodeRef), childNode);
@@ -312,6 +313,7 @@ public class ImportEntityXmlVisitor {
 									logger.debug("Node found creating assoc: " + currAssoc.peek() + " for node " + curNodeRef.peek());
 
 									serviceRegistry.getNodeService().createAssociation(curNodeRef.peek(), node, currAssoc.peek());
+
 								}
 
 							}
@@ -326,7 +328,7 @@ public class ImportEntityXmlVisitor {
 					currAssoc.push(parseQName(qName));
 					currAssocType.push(type);
 					if (!type.equals(RemoteEntityService.NODEREF_TYPE)) {
-						removeAllExistingAssoc(curNodeRef.peek(), currAssoc.peek(), type);
+						queueExistingAssociations(curNodeRef.peek(), currAssoc.peek(), type);
 					}
 				} else if ((type != null) && (type.length() > 0)) {
 					currProp = parseQName(qName);
@@ -449,6 +451,8 @@ public class ImportEntityXmlVisitor {
 								}
 							}
 						}
+					} else if (multipleValues != null) {
+						multipleValues = null;
 					}
 				}
 			}
@@ -513,193 +517,223 @@ public class ImportEntityXmlVisitor {
 					nodeRefMatcher.appendTail(sb);
 					serviceRegistry.getNodeService().setProperty(entry.getKey(), value.getKey(), sb.toString());
 				}
-
 			}
-
 		}
 
-	}
+		private void queueExistingAssociations(NodeRef nodeRef, QName assocName, String type) {
+			logger.debug("Queue existing assocs : " + nodeRef + " " + assocName);
 
-	private boolean shouldIgnoreProperty(QName currProp) {
-		if ((currProp == null) || ContentModel.PROP_VERSION_LABEL.equals(currProp) || ContentModel.PROP_VERSION_TYPE.equals(currProp)
-				|| ContentModel.PROP_AUTO_VERSION.equals(currProp) || ContentModel.PROP_AUTO_VERSION_PROPS.equals(currProp)
-				|| ContentModel.PROP_MODIFIED.equals(currProp) || ContentModel.PROP_MODIFIER.equals(currProp)
-				|| ContentModel.PROP_CREATED.equals(currProp) || ContentModel.PROP_CREATOR.equals(currProp)
-				|| ContentModel.PROP_NAME.equals(currProp)) {
-			return true;
-		}
-		return false;
-	}
-
-	private void removeAllExistingAssoc(NodeRef nodeRef, QName assocName, String type) {
-		logger.debug("Remove all existing assocs : " + nodeRef + " " + assocName);
-
-		if (assocName != null) {
-			if (type.equals(RemoteEntityService.CHILD_ASSOC_TYPE)) {
-				for (ChildAssociationRef assoc : serviceRegistry.getNodeService().getChildAssocs(nodeRef)) {
-					if (assoc.getQName().equals(assocName)) {
-						serviceRegistry.getNodeService().deleteNode(assoc.getChildRef());
+			if (assocName != null) {
+				if (type.equals(RemoteEntityService.CHILD_ASSOC_TYPE)) {
+					for (ChildAssociationRef assoc : serviceRegistry.getNodeService().getChildAssocs(nodeRef)) {
+						if (assoc.getQName().equals(assocName)) {
+							toRemoveChildAssocsQueue.add(assoc);
+						}
+					}
+				} else {
+					for (AssociationRef assoc : serviceRegistry.getNodeService().getTargetAssocs(nodeRef, assocName)) {
+						serviceRegistry.getNodeService().removeAssociation(nodeRef, assoc.getTargetRef(), assoc.getTypeQName());
 					}
 				}
-			} else {
-				for (AssociationRef assoc : serviceRegistry.getNodeService().getTargetAssocs(nodeRef, assocName)) {
-					serviceRegistry.getNodeService().removeAssociation(nodeRef, assoc.getTargetRef(), assoc.getTypeQName());
+			}
+		}
+
+		public void removeExistingAssociations() {
+
+			for (ChildAssociationRef assoc : toRemoveChildAssocsQueue) {
+
+				if(logger.isDebugEnabled()){
+					logger.debug("Delete childAssoc :" + assoc.toString());
 				}
+				
+				serviceRegistry.getNodeService().deleteNode(assoc.getChildRef());
 			}
+
 		}
-	}
 
-	private NodeRef createNode(String parentPath, QName type, String name) throws SAXException {
-		NodeRef parentNodeRef = findNodeByPath(parentPath);
-
-		if (parentNodeRef != null) {
-			return createNode(parentNodeRef, type, name);
-		}
-		throw new SAXException("Path doesn't exist on repository :" + parentPath);
-	}
-
-	private NodeRef createNode(NodeRef parentNodeRef, QName type, String name) {
-		NodeRef ret = serviceRegistry.getNodeService().getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, name);
-
-		if (ret == null) {
-			Map<QName, Serializable> properties = new HashMap<>();
-			properties.put(ContentModel.PROP_NAME, PropertiesHelper.cleanName(name));
-			logger.debug("Creating missing node :" + name + " at path :" + parentNodeRef);
-			ret = serviceRegistry.getNodeService()
-					.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
-							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(PropertiesHelper.cleanName(name))), type, properties)
-					.getChildRef();
-		} else {
-			if (!serviceRegistry.getNodeService().getType(ret).equals(type)) {
-				logger.error("Found node with same name: " + name + " but incorrect type :" + serviceRegistry.getNodeService().getType(ret) + "/"
-						+ type + " under: " + parentNodeRef);
-				return null;
+		private boolean shouldIgnoreProperty(QName currProp) {
+			if ((currProp == null) || ContentModel.PROP_VERSION_LABEL.equals(currProp) || ContentModel.PROP_VERSION_TYPE.equals(currProp)
+					|| ContentModel.PROP_AUTO_VERSION.equals(currProp) || ContentModel.PROP_AUTO_VERSION_PROPS.equals(currProp)
+					|| ContentModel.PROP_MODIFIED.equals(currProp) || ContentModel.PROP_MODIFIER.equals(currProp)
+					|| ContentModel.PROP_CREATED.equals(currProp) || ContentModel.PROP_CREATOR.equals(currProp)
+					|| ContentModel.PROP_NAME.equals(currProp)) {
+				return true;
 			}
+			return false;
 		}
 
-		return ret;
+		private NodeRef createNode(String parentPath, QName type, String name) throws SAXException {
+			NodeRef parentNodeRef = findNodeByPath(parentPath);
 
-	}
+			if (parentNodeRef != null) {
+				return createNode(parentNodeRef, type, name);
+			}
+			throw new SAXException("Path doesn't exist on repository :" + parentPath);
+		}
 
-	private NodeRef createChildAssocNode(NodeRef parentNodeRef, QName type, QName assocName, String name, NodeRef existingNodeRef) {
-		logger.debug("Creating child assoc: " + assocName + " add type :" + type + " name :" + name);
+		private NodeRef createNode(NodeRef parentNodeRef, QName type, String name) {
+			NodeRef ret = serviceRegistry.getNodeService().getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, name);
 
-		if ((existingNodeRef == null) || !serviceRegistry.getNodeService().exists(existingNodeRef)) {
-			NodeRef ret = serviceRegistry.getNodeService().getChildByName(parentNodeRef, assocName, name);
 			if (ret == null) {
 				Map<QName, Serializable> properties = new HashMap<>();
 				properties.put(ContentModel.PROP_NAME, PropertiesHelper.cleanName(name));
-				return serviceRegistry.getNodeService()
-						.createNode(parentNodeRef, assocName,
-								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(PropertiesHelper.cleanName(name))), type, properties)
-						.getChildRef();
+				logger.debug("Creating missing node :" + name + " at path :" + parentNodeRef);
+				ret = serviceRegistry.getNodeService().createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
+						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(PropertiesHelper.cleanName(name))), type,
+						properties).getChildRef();
 			} else {
-				return ret;
-			}
-		} else {
-			if (!serviceRegistry.getNodeService().getPrimaryParent(existingNodeRef).getParentRef().equals(parentNodeRef)) {
-				serviceRegistry.getNodeService().moveNode(existingNodeRef, parentNodeRef, assocName,
-						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(PropertiesHelper.cleanName(name))));
-			}
-			return existingNodeRef;
-		}
-
-	}
-
-	private NodeRef findNodeByPath(String parentPath) {
-
-		NodeRef rootNode = serviceRegistry.getNodeService().getRootNode(RepoConsts.SPACES_STORE);
-
-		NodeRef ret = BeCPGQueryBuilder.createQuery().selectNodeByPath(rootNode, parentPath);
-
-		if (ret == null) {
-			ret = BeCPGQueryBuilder.createQuery().selectNodeByPath(rootNode, FULL_PATH_IMPORT_TO_DO);
-		}
-
-		return ret;
-
-	}
-
-	/*
-	 * We search for : 1° - TYPE/PATH/CODE/SAME NAME 2° - TYPE/PATH/SAME NAME 3°
-	 * - TYPE/SAME NAME
-	 */
-	private NodeRef findNode(String nodeRef, String code, String name, NodeRef parentNodeRef, String path, QName type, QName currProp,
-			Map<NodeRef, NodeRef> cache) {
-		if ((nodeRef != null) && serviceRegistry.getNodeService().exists(new NodeRef(nodeRef))) {
-			return new NodeRef(nodeRef);
-		}
-
-		if ((cache != null) && cache.containsKey(new NodeRef(nodeRef))) {
-			return cache.get(new NodeRef(nodeRef));
-		}
-
-		if (ContentModel.TYPE_PERSON.equals(type)) {
-			logger.debug("try to get person : " + name);
-			return serviceRegistry.getPersonService().getPerson(name);
-		}
-
-		if (ContentModel.TYPE_AUTHORITY_CONTAINER.equals(type)) {
-			logger.debug("try to get authority : " + name);
-			return serviceRegistry.getAuthorityService().getAuthorityNodeRef(name);
-		}
-
-		BeCPGQueryBuilder beCPGQueryBuilder = BeCPGQueryBuilder.createQuery();
-
-		boolean inBD = true;
-
-		if (type != null) {
-			beCPGQueryBuilder.ofType(type);
-		}
-
-		if (parentNodeRef != null) {
-			beCPGQueryBuilder.parent(parentNodeRef);
-		}
-
-		if (path != null) {
-			beCPGQueryBuilder.inPath(path);
-			inBD = false;
-		}
-
-		if ((code != null) && (code.length() > 0)) {
-			beCPGQueryBuilder.andPropEquals(BeCPGModel.PROP_CODE, code);
-		} else if ((name != null) && (name.length() > 0)) {
-			beCPGQueryBuilder.andPropEquals(RemoteHelper.getPropName(type, entityDictionaryService), cleanName(name));
-		}
-
-		if (inBD) {
-			beCPGQueryBuilder.inDB();
-		}
-
-		beCPGQueryBuilder.maxResults(RepoConsts.MAX_RESULTS_256);
-
-		List<NodeRef> ret = beCPGQueryBuilder.list();
-		if (!ret.isEmpty()) {
-			for (NodeRef node : ret) {
-				if (serviceRegistry.getNodeService().exists(node)
-						&& name.equals(serviceRegistry.getNodeService().getProperty(node, RemoteHelper.getPropName(type, entityDictionaryService)))) {
-					logger.debug("Found node for query :" + beCPGQueryBuilder.toString());
-					return node;
+				if (!serviceRegistry.getNodeService().getType(ret).equals(type)) {
+					logger.error("Found node with same name: " + name + " but incorrect type :" + serviceRegistry.getNodeService().getType(ret) + "/"
+							+ type + " under: " + parentNodeRef);
+					return null;
 				}
 			}
+
+			return ret;
+
 		}
 
-		if (code != null) {
-			logger.debug("Retrying findNode without code for previous query : " + beCPGQueryBuilder.toString());
-			return findNode(nodeRef, null, name, parentNodeRef, path, type, currProp, null);
+		private NodeRef createChildAssocNode(NodeRef parentNodeRef, QName type, QName assocName, String name, NodeRef existingNodeRef) {
+			
+
+			if (cache.containsKey(existingNodeRef)) {
+				logger.debug("Cache contains :" + cache.get(existingNodeRef) + " of nodeRef " + existingNodeRef + " " + name);
+
+				existingNodeRef = cache.get(existingNodeRef);
+			}
+
+			// Translate
+			if ((existingNodeRef == null) || !serviceRegistry.getNodeService().exists(existingNodeRef) 
+					|| type.equals(serviceRegistry.getNodeService().getType(existingNodeRef))) {
+				NodeRef ret = serviceRegistry.getNodeService().getChildByName(parentNodeRef, assocName, name);
+				if (ret == null) {
+					
+					logger.debug("Creating child assoc: " + assocName + " add type :" + type + " name :" + name);
+					Map<QName, Serializable> properties = new HashMap<>();
+					properties.put(ContentModel.PROP_NAME, PropertiesHelper.cleanName(name));
+					return serviceRegistry.getNodeService().createNode(parentNodeRef, assocName,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(PropertiesHelper.cleanName(name))),
+							type, properties).getChildRef();
+				} else {
+					
+					logger.debug("Find child assoc: " + assocName + " add type :" + type + " with same name :" + name);
+
+					if(toRemoveChildAssocsQueue.remove(serviceRegistry.getNodeService().getPrimaryParent(ret)) && logger.isDebugEnabled()){
+						logger.debug("Removing from childQueue :" + serviceRegistry.getNodeService().getPrimaryParent(ret).toString());
+					}
+					return ret;
+				}
+			} else {
+				if (!serviceRegistry.getNodeService().getPrimaryParent(existingNodeRef).getParentRef().equals(parentNodeRef)) {
+					serviceRegistry.getNodeService().moveNode(existingNodeRef, parentNodeRef, assocName,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(PropertiesHelper.cleanName(name))));
+				} 
+				
+				logger.debug("Using existing child assoc: " + assocName + " add type :" + type + " name :" + name);
+				
+
+				if(toRemoveChildAssocsQueue.remove(serviceRegistry.getNodeService().getPrimaryParent(existingNodeRef)) && logger.isDebugEnabled()){
+					logger.debug("Removing from childQueue :" + serviceRegistry.getNodeService().getPrimaryParent(existingNodeRef).toString());					
+				}
+				return existingNodeRef;
+			}
+
 		}
 
-		if (path != null) {
-			logger.debug("Retrying findNode without path for previous query : " + beCPGQueryBuilder.toString());
-			return findNode(nodeRef, code, name, parentNodeRef, null, type, currProp, null);
+		private NodeRef findNodeByPath(String parentPath) {
+
+			NodeRef rootNode = serviceRegistry.getNodeService().getRootNode(RepoConsts.SPACES_STORE);
+
+			NodeRef ret = BeCPGQueryBuilder.createQuery().selectNodeByPath(rootNode, parentPath);
+
+			if (ret == null) {
+				ret = BeCPGQueryBuilder.createQuery().selectNodeByPath(rootNode, FULL_PATH_IMPORT_TO_DO);
+			}
+
+			return ret;
+
 		}
 
-		logger.debug("No existing node found for " + beCPGQueryBuilder.toString());
-		return null;
+		/*
+		 * We search for : 1° - TYPE/PATH/CODE/SAME NAME 2° - TYPE/PATH/SAME
+		 * NAME 3° - TYPE/SAME NAME
+		 */
+		private NodeRef findNode(String nodeRef, String code, String name, NodeRef parentNodeRef, String path, QName type, QName currProp,
+				Map<NodeRef, NodeRef> cache) {
+			if ((nodeRef != null) && serviceRegistry.getNodeService().exists(new NodeRef(nodeRef))) {
+				return new NodeRef(nodeRef);
+			}
+
+			if ((cache != null) && cache.containsKey(new NodeRef(nodeRef))) {
+				return cache.get(new NodeRef(nodeRef));
+			}
+
+			if (ContentModel.TYPE_PERSON.equals(type)) {
+				logger.debug("try to get person : " + name);
+				return serviceRegistry.getPersonService().getPerson(name);
+			}
+
+			if (ContentModel.TYPE_AUTHORITY_CONTAINER.equals(type)) {
+				logger.debug("try to get authority : " + name);
+				return serviceRegistry.getAuthorityService().getAuthorityNodeRef(name);
+			}
+
+			BeCPGQueryBuilder beCPGQueryBuilder = BeCPGQueryBuilder.createQuery();
+
+			boolean inBD = true;
+
+			if (type != null) {
+				beCPGQueryBuilder.ofType(type);
+			}
+
+			if (parentNodeRef != null) {
+				beCPGQueryBuilder.parent(parentNodeRef);
+			}
+
+			if (path != null) {
+				beCPGQueryBuilder.inPath(path);
+				inBD = false;
+			}
+
+			if ((code != null) && (code.length() > 0)) {
+				beCPGQueryBuilder.andPropEquals(BeCPGModel.PROP_CODE, code);
+			} else if ((name != null) && (name.length() > 0)) {
+				beCPGQueryBuilder.andPropEquals(RemoteHelper.getPropName(type, entityDictionaryService), cleanName(name));
+			}
+
+			if (inBD) {
+				beCPGQueryBuilder.inDB();
+			}
+
+			beCPGQueryBuilder.maxResults(RepoConsts.MAX_RESULTS_256);
+
+			List<NodeRef> ret = beCPGQueryBuilder.list();
+			if (!ret.isEmpty()) {
+				for (NodeRef node : ret) {
+					if (serviceRegistry.getNodeService().exists(node) && name
+							.equals(serviceRegistry.getNodeService().getProperty(node, RemoteHelper.getPropName(type, entityDictionaryService)))) {
+						logger.debug("Found node for query :" + beCPGQueryBuilder.toString());
+						return node;
+					}
+				}
+			}
+
+			if (code != null) {
+				logger.debug("Retrying findNode without code for previous query : " + beCPGQueryBuilder.toString());
+				return findNode(nodeRef, null, name, parentNodeRef, path, type, currProp, null);
+			}
+
+			if (path != null) {
+				logger.debug("Retrying findNode without path for previous query : " + beCPGQueryBuilder.toString());
+				return findNode(nodeRef, code, name, parentNodeRef, null, type, currProp, null);
+			}
+
+			logger.debug("No existing node found for " + beCPGQueryBuilder.toString());
+			return null;
+		}
+
+		private String cleanName(String propValue) {
+			return propValue.replaceAll("'", "");
+		}
 	}
-
-	private String cleanName(String propValue) {
-		return propValue.replaceAll("'", "");
-	}
-
 }

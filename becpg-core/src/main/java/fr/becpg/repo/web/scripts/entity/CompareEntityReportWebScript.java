@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.alfresco.repo.webdav.WebDAVHelper;
 import org.alfresco.service.cmr.repository.ContentIOException;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -41,6 +42,7 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.comparison.CompareEntityReportService;
 import fr.becpg.repo.entity.version.EntityVersionService;
+import fr.becpg.repo.helper.AttachmentHelper;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
@@ -123,9 +125,13 @@ public class CompareEntityReportWebScript extends AbstractWebScript {
 		String versionLabel = templateArgs.get(PARAM_VERSION_LABEL);
 		if (versionLabel != null) {
 			VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
-			Version version = versionHistory.getVersion(versionLabel);
-			entity1NodeRef = entityVersionService.getEntityVersion(version);
-
+			if(versionHistory!=null){
+				Version version = versionHistory.getVersion(versionLabel);
+				entity1NodeRef = entityVersionService.getEntityVersion(version);
+			} else {
+				entity1NodeRef = entityNodeRef;
+			}
+			
 			if (logger.isDebugEnabled()) {
 				logger.debug("entityNodeRef: " + entityNodeRef + " - versionLabel: " + versionLabel + " - entityVersionNodeRef: " + entityNodeRef);
 			}
@@ -184,12 +190,17 @@ public class CompareEntityReportWebScript extends AbstractWebScript {
 				logger.debug("entity1NodeRef : " + entity1NodeRef);
 				logger.debug("entityNodeRefs : " + entityNodeRefs);
 			}			
-			compareEntityReportService.getComparisonReport(entity1NodeRef, entityNodeRefs, templateNodeRef, res.getOutputStream());
+			
 
 			// set mimetype for the content and the character encoding + length
 			// for the stream
+			
 			res.setContentType(mimetypeService.guessMimetype(fileName));
-			res.setHeader("Content-disposition", "attachment; filename=" + fileName);
+			AttachmentHelper.setAttachment(req, res, fileName);
+			
+			
+			compareEntityReportService.getComparisonReport(entity1NodeRef, entityNodeRefs, templateNodeRef, res.getOutputStream());
+
 
 		} catch (SocketException | ContentIOException e1) {
 			// the client cut the connection - our mission was accomplished

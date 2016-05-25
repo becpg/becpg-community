@@ -57,6 +57,7 @@ div.legend.project-list  {
 	border-bottom: 1px dashed #d9d9d9;
 	border-right: medium none;
 	vertical-align: middle;
+	white-space: nowrap;
 }
 
 .project-list .projects .yui-dt-data .yui-dt-last td {

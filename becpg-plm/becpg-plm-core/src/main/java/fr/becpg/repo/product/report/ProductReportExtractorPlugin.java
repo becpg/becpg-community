@@ -681,7 +681,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			
 			Integer depthLevel = dataItem.getDepthLevel();
 			if (depthLevel != null) {
-				partElt.addAttribute(BeCPGModel.PROP_DEPTH_LEVEL.getLocalName(), "" + (depthLevel * level));
+				partElt.addAttribute(BeCPGModel.PROP_DEPTH_LEVEL.getLocalName(), "" + (depthLevel + level));
 				partElt.addAttribute(ATTR_NODEREF, dataItem.getNodeRef().toString());
 				if(parentDataItem != null){
 					partElt.addAttribute(ATTR_PARENT_NODEREF, parentDataItem.getNodeRef().toString());

@@ -17,6 +17,8 @@
  ******************************************************************************/
 package fr.becpg.repo.product.formulation.labeling;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.text.Format;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -259,28 +261,40 @@ public class LabelingFormulaContext {
 	/* formaters */
 
 	private Format getIngTextFormat(AbstractLabelingComponent lblComponent) {
+
 		if (textFormaters.containsKey(lblComponent.getNodeRef())) {
-			return new MessageFormat(textFormaters.get(lblComponent.getNodeRef()));
+			return applyRoundingMode(new MessageFormat(textFormaters.get(lblComponent.getNodeRef())));
 		}
 
 		if (lblComponent instanceof CompositeLabeling) {
 			if (((CompositeLabeling) lblComponent).isGroup()) {
-				return new MessageFormat(groupDefaultFormat);
+				return applyRoundingMode(new MessageFormat(groupDefaultFormat));
 			}
 			if (DeclarationType.Detail.equals(((CompositeLabeling) lblComponent).getDeclarationType())) {
-				return new MessageFormat(detailsDefaultFormat);
+				return applyRoundingMode(new MessageFormat(detailsDefaultFormat));
 			}
-			return new MessageFormat(ingDefaultFormat);
+			return applyRoundingMode(new MessageFormat(ingDefaultFormat));
 		} else if (lblComponent instanceof IngTypeItem) {
 			if (((((IngTypeItem) lblComponent)).getDecThreshold() != null)
 					&& ((((IngTypeItem) lblComponent)).getQty() <= ((((IngTypeItem) lblComponent)).getDecThreshold() / 100))) {
-				return new MessageFormat(ingTypeDecThresholdFormat);
+				return applyRoundingMode(new MessageFormat(ingTypeDecThresholdFormat));
 			}
-			return new MessageFormat(ingTypeDefaultFormat);
+			return applyRoundingMode(new MessageFormat(ingTypeDefaultFormat));
 		} else if ((lblComponent instanceof IngItem) && (((IngItem) lblComponent).getSubIngs().size() > 0)) {
-			return new MessageFormat(subIngsDefaultFormat);
+			return applyRoundingMode(new MessageFormat(subIngsDefaultFormat));
 		}
-		return new MessageFormat(ingDefaultFormat);
+		return applyRoundingMode(new MessageFormat(ingDefaultFormat));
+	}
+
+	private Format applyRoundingMode(MessageFormat messageFormat) {
+		if(messageFormat.getFormats()!=null){
+			for(Format format: messageFormat.getFormats()){
+				if(format instanceof DecimalFormat){
+					((DecimalFormat)format).setRoundingMode(RoundingMode.DOWN);
+				}
+			}
+		}
+		return messageFormat;
 	}
 
 	/*
@@ -388,7 +402,7 @@ public class LabelingFormulaContext {
 				}
 			}
 		}
-		return new MessageFormat(detailsDefaultFormat).format(new Object[] { ingLegalName, null, ret.toString() });
+		return applyRoundingMode(new MessageFormat(detailsDefaultFormat)).format(new Object[] { ingLegalName, null, ret.toString() });
 	}
 
 	private String getAllergenName(NodeRef allergen) {
@@ -642,7 +656,7 @@ public class LabelingFormulaContext {
 				if (ret.length() > 0) {
 					ret.append(groupDefaultSeparator);
 				}
-				ret.append(new MessageFormat(groupListDefaultFormat).format(new Object[] { ingName, qtyPerc }));
+				ret.append(applyRoundingMode(new MessageFormat(groupListDefaultFormat)).format(new Object[] { ingName, qtyPerc }));
 			}
 		}
 
@@ -788,16 +802,23 @@ public class LabelingFormulaContext {
 
 	public String createJsonLog(boolean mergedLabeling) {
 		if (!mergedLabeling) {
-			return createJsonLog(lblCompositeContext, null, null).toString();
+			return createJsonLog(lblCompositeContext, null, null, new HashSet<>()).toString();
 		}
-		return createJsonLog(mergedLblCompositeContext, null, null).toString();
+		return createJsonLog(mergedLblCompositeContext, null, null, new HashSet<>()).toString();
 	}
 
 	@SuppressWarnings("unchecked")
-	private JSONObject createJsonLog(AbstractLabelingComponent component, Double totalQty, Double totalVol) {
+	private JSONObject createJsonLog(AbstractLabelingComponent component, Double totalQty, Double totalVol, Set<AbstractLabelingComponent> visited) {
 
+		
 		JSONObject tree = new JSONObject();
+		
 
+		if(visited.contains(component)){
+			return  tree;
+		} 
+		visited.add(component);
+		
 		if (component != null) {
 
 			if ((component.getNodeRef() != null) && mlNodeService.exists(component.getNodeRef())) {
@@ -858,13 +879,13 @@ public class LabelingFormulaContext {
 						}
 						JSONArray ingTypeJsonChildren = new JSONArray();
 						for (AbstractLabelingComponent childComponent : kv.getValue()) {
-							ingTypeJsonChildren.add(createJsonLog(childComponent, composite.getQtyTotal(), composite.getVolumeTotal()));
+							ingTypeJsonChildren.add(createJsonLog(childComponent, composite.getQtyTotal(), composite.getVolumeTotal(),visited));
 						}
 						ingTypeJson.put("children", ingTypeJsonChildren);
 						children.add(ingTypeJson);
 					} else {
 						for (AbstractLabelingComponent childComponent : kv.getValue()) {
-							children.add(createJsonLog(childComponent, composite.getQtyTotal(), composite.getVolumeTotal()));
+							children.add(createJsonLog(childComponent, composite.getQtyTotal(), composite.getVolumeTotal(),visited));
 						}
 					}
 
@@ -875,7 +896,7 @@ public class LabelingFormulaContext {
 			} else if ((component instanceof IngItem) && !((IngItem) component).getSubIngs().isEmpty()) {
 				JSONArray children = new JSONArray();
 				for (IngItem childComponent : ((IngItem) component).getSubIngs()) {
-					children.add(createJsonLog(childComponent, ((IngItem) component).getQty(), ((IngItem) component).getVolume()));
+					children.add(createJsonLog(childComponent, ((IngItem) component).getQty(), ((IngItem) component).getVolume(),visited));
 				}
 				tree.put("children", children);
 			}

@@ -76,10 +76,10 @@
 			<column id="Niacin_(mg)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Niacin" type="Characteristic" />
 			<column id="Panto_Acid_mg)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Panto acid" type="Characteristic" />
 			<column id="Vit_B6_(mg)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Vitamin B-6" type="Characteristic" />
-			<column id="Folate_Tot_(µg)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Folate, DFE" type="Characteristic" />
+			<column id="Folate_Tot_(µg)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Total folates" type="Characteristic" />
 			<column id="Folic_Acid_(µg)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Folic Acid" type="Characteristic" />
 			<column id="Food_Folate_(µg)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Food Folate" type="Characteristic" />
-			<column id="Folate_DFE_(µg)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Folate DFE" type="Characteristic" />
+			<column id="Folate_DFE_(µg)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Folate, DFE" type="Characteristic" />
 			<column id="Choline_Tot_ (mg)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="CholineTot" type="Characteristic" />
 			<column id="Vit_B12_(µg)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Vitamin B-12" type="Characteristic" />
 			<column id="Vit_A_IU" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Vitamin A, IU" type="Characteristic" />
