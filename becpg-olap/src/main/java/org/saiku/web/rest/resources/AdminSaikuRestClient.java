@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2016 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2015 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package org.saiku.web.rest.resources;
@@ -42,7 +42,7 @@ import fr.becpg.tools.jdbc.JdbcConnectionManager;
 import fr.becpg.tools.jdbc.JdbcConnectionManager.JdbcConnectionManagerCallBack;
 
 /**
- * 
+ *
  * @author matthieu
  *
  */
@@ -71,27 +71,26 @@ public class AdminSaikuRestClient {
 	public Response launchImport() throws Exception {
 		for (final Instance instance : instanceManager.getAllInstances()) {
 			if (logger.isInfoEnabled()) {
-				logger.info("Start importing from instance/tenant: " + instance.getId() + "/" + instance.getInstanceName() + "/" + instance.getTenantName());
+				logger.info("Start importing from instance/tenant: " + instance.getId() + "/" + instance.getInstanceName() + "/"
+						+ instance.getTenantName());
 			}
 			jdbcConnectionManager.doInTransaction(new JdbcConnectionManagerCallBack() {
-
 				@Override
 				public void execute(Connection connection) throws Exception {
 
-					instanceManager.createBatch(connection, instance);
+				instanceManager.createBatch(connection, instance);
 
-					InstanceImporter remoteETLClient = new InstanceImporter(instance.getInstanceUrl());
+				InstanceImporter remoteETLClient = new InstanceImporter(instance.getInstanceUrl());
 
-					remoteETLClient.setEntityToDBXmlVisitor(new EntityToDBXmlVisitor(connection, instance));
+				remoteETLClient.setEntityToDBXmlVisitor(new EntityToDBXmlVisitor(connection, instance));
 
-					try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
+				try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
 
-						remoteETLClient.loadEntities(remoteETLClient.buildQuery(instance.getLastImport()), httpClient, instance.createHttpContext());
-					}
-
-					instanceManager.updateBatchAndDate(connection, instance);
+					remoteETLClient.loadEntities(remoteETLClient.buildQuery(instance.getLastImport()), httpClient, instance.createHttpContext());
 				}
-			});
+
+				instanceManager.updateBatchAndDate(connection, instance);
+			}});
 
 		}
 
@@ -104,93 +103,70 @@ public class AdminSaikuRestClient {
 	public Response launchPurge() throws Exception {
 		for (final Instance instance : instanceManager.getAllInstances()) {
 			if (logger.isInfoEnabled()) {
-				logger.info("Start purging nodes from instance/tenant: " + instance.getId() + "/" + instance.getInstanceName() + "/" + instance.getTenantName());
+				logger.info("Start purging nodes from instance/tenant: " + instance.getId() + "/" + instance.getInstanceName() + "/"
+						+ instance.getTenantName());
 			}
-			jdbcConnectionManager.doInTransaction(new JdbcConnectionManagerCallBack() {
 
-				@Override
-				public void execute(Connection connection) throws Exception {
+			InstanceCleaner instanceCleaner = new InstanceCleaner(jdbcConnectionManager);
 
-					InstanceCleaner instanceCleaner = new InstanceCleaner();
-
-					instanceCleaner.purgeEntities(connection, instance);
-				}
-			});
+			instanceCleaner.purgeEntities(instance);
 
 		}
 
 		return Response.ok().build();
 	}
-	
+
 	@GET
 	@Produces({ "text/plain" })
 	@Path("/purge/historic/datalists")
 	public Response purgeDataListHistoric() throws Exception {
 		for (final Instance instance : instanceManager.getAllInstances()) {
 			if (logger.isInfoEnabled()) {
-				logger.info("Start purging datalists from instance/tenant: " + instance.getId() + "/" + instance.getInstanceName() + "/" + instance.getTenantName());
+				logger.info("Start purging datalists from instance/tenant: " + instance.getId() + "/" + instance.getInstanceName() + "/"
+						+ instance.getTenantName());
 			}
-			jdbcConnectionManager.doInTransaction(new JdbcConnectionManagerCallBack() {
+			InstanceCleaner instanceCleaner = new InstanceCleaner(jdbcConnectionManager);
 
-				@Override
-				public void execute(Connection connection) throws Exception {
+			instanceCleaner.purgeDataListHistoric(instance);
 
-					InstanceCleaner instanceCleaner = new InstanceCleaner();
-
-					instanceCleaner.purgeDataListHistoric(connection, instance);
-				}
-			});
-			
 		}
 		return Response.ok().build();
-	}	
-	
+	}
+
 	@GET
 	@Produces({ "text/plain" })
 	@Path("/purge/historic/entities")
 	public Response purgeEntityHistoric() throws Exception {
 		for (final Instance instance : instanceManager.getAllInstances()) {
 			if (logger.isInfoEnabled()) {
-				logger.info("Start purging entities historic from instance/tenant: " + instance.getId() + "/" + instance.getInstanceName() + "/" + instance.getTenantName());
+				logger.info("Start purging entities historic from instance/tenant: " + instance.getId() + "/" + instance.getInstanceName() + "/"
+						+ instance.getTenantName());
 			}
-			jdbcConnectionManager.doInTransaction(new JdbcConnectionManagerCallBack() {
+			InstanceCleaner instanceCleaner = new InstanceCleaner(jdbcConnectionManager);
 
-				@Override
-				public void execute(Connection connection) throws Exception {
+			instanceCleaner.purgeEntityHistoric(instance);
 
-					InstanceCleaner instanceCleaner = new InstanceCleaner();
-
-					instanceCleaner.purgeEntityHistoric(connection, instance);
-				}
-			});
-			
 		}
 		return Response.ok().build();
-	}	
-	
+	}
+
 	@GET
 	@Produces({ "text/plain" })
 	@Path("/purge/statistics")
 	public Response purgeStatistics() throws Exception {
 		for (final Instance instance : instanceManager.getAllInstances()) {
 			if (logger.isInfoEnabled()) {
-				logger.info("Start purging statistics from instance/tenant: " + instance.getId() + "/" + instance.getInstanceName() + "/" + instance.getTenantName());
+				logger.info("Start purging statistics from instance/tenant: " + instance.getId() + "/" + instance.getInstanceName() + "/"
+						+ instance.getTenantName());
 			}
-			jdbcConnectionManager.doInTransaction(new JdbcConnectionManagerCallBack() {
+			InstanceCleaner instanceCleaner = new InstanceCleaner(jdbcConnectionManager);
 
-				@Override
-				public void execute(Connection connection) throws Exception {
+			Calendar cal = Calendar.getInstance();
+			cal.add(Calendar.MONTH, -6);
 
-					InstanceCleaner instanceCleaner = new InstanceCleaner();
+			instanceCleaner.purgeStatistics(instance, cal.getTime());
 
-					Calendar cal = Calendar.getInstance();
-					cal.add(Calendar.MONTH, -6);
-					
-					instanceCleaner.purgeStatistics(connection, instance,cal.getTime());
-				}
-			});
-			
 		}
 		return Response.ok().build();
-	}	
+	}
 }

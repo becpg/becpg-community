@@ -56,6 +56,37 @@
    width: 63%;
 }
 
+
+.node-header .node-users
+{
+   padding-top:2px;
+   float: right;
+   text-align: right
+}
+
+.node-header .node-users span
+{
+   margin-right: 10px;
+   padding: 2px;
+   border-radius: 50px; 
+   width: 34px;
+   height: 34px; 
+   display:inline-block
+
+}
+
+.node-header .node-users img {
+
+	border-radius: 50px; 
+    width: 32px;
+    height: 32px; 
+    text-align:center;
+}
+
+.node-header .node-users span.user-activiti{
+	background-color: #11b9e9;
+}
+
 .node-header .product-state
 {
    font-size: 125%;

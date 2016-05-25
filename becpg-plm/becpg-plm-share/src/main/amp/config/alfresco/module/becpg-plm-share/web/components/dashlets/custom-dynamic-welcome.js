@@ -38,12 +38,12 @@
                         {
                             // Listen on clicks for the create site link
                              this.widgets.hideButton = Alfresco.util.createYUIButton(this, "hide-button", this.onHideButtonClick);
-					         if (this.dashboardType == "user")
-					         {
-					            Event.addListener(this.id + "-get-started-panel-container", "click", function() {
-					               location.href = this.msg("welcome.user.clickable-content-link", this.docsEdition);
-					            }, this, true);
-					         }
+//					         if (this.dashboardType == "user")
+//					         {
+//					            Event.addListener(this.id + "-get-started-panel-container", "click", function() {
+//					               location.href = this.msg("welcome.user.clickable-content-link", this.docsEdition);
+//					            }, this, true);
+//					         }
 					         Event.addListener(this.id + "-createSite-button", "click", this.onCreateSiteLinkClick, this, true);
 					         Event.addListener(this.id + "-requestJoin-button", "click", this.onRequestJoinLinkClick, this, true);
 
@@ -108,14 +108,8 @@
 
                         onCreateProductLinkClick : function DynamicWelcome_onCreateProductLinkClick(p_event)
                         {
-                            // Create the createProduct module if it doesn't
-                            // exist
-                            if (this.createProduct === null)
-                            {
-                                this.createProduct = this.createTypePopup("bcpg:finishedProduct");
-                            }
-                            // and show it
-                            this.createProduct.show();
+                            var createProduct = this.createTypePopup("bcpg:finishedProduct");
+                            createProduct.show();
                             Event.stopEvent(p_event);
 
                         },
@@ -124,12 +118,8 @@
                         {
                             // Create the createProject module if it doesn't
                             // exist
-                            if (this.createProject === null)
-                            {
-                                this.createProject = this.createTypePopup("pjt:project");
-                            }
-                            // and show it
-                            this.createProject.show();
+                            var createProject = this.createTypePopup("pjt:project");
+                            createProject.show();
                             Event.stopEvent(p_event);
                         },
 

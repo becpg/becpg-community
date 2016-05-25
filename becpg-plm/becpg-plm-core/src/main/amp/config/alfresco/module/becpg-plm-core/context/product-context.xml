@@ -20,13 +20,18 @@
 
 <beans>
 
-		<!-- Product dictionary -->
+	<!-- Product dictionary -->
 	<bean id="productDictionaryService" class="fr.becpg.repo.product.ProductDictionaryServiceImpl">
 		<property name="nodeService" ref="nodeService" />
 	</bean>
 
 
 	<!-- Product Policies -->
+	<bean id="productPolicy"
+		class="fr.becpg.repo.product.policy.ProductPolicy"
+		parent="abstractBeCPGPolicy" depends-on="bcpg.plm.dictionaryBootstrap">
+	</bean>
+	
 	<bean id="productListUnits.ProductListPolicy"
 		class="fr.becpg.repo.product.policy.productListUnits.ProductListPolicy"
 		parent="abstractBeCPGPolicy" depends-on="bcpg.plm.dictionaryBootstrap">
