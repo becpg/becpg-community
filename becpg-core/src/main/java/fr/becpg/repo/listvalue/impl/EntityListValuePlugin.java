@@ -32,6 +32,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.alfresco.repo.dictionary.DictionaryDAO;
+import org.alfresco.rest.framework.resource.parameters.where.QueryHelper;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
@@ -54,6 +55,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.entity.EntityDictionaryService;
+import fr.becpg.repo.helper.BeCPGQueryHelper;
 import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.listvalue.ListValueExtractor;
 import fr.becpg.repo.listvalue.ListValuePage;
@@ -505,72 +507,73 @@ public class EntityListValuePlugin implements ListValuePlugin {
 
 	public boolean isQueryMatch(String query, String entityName) {
 
-		if (query != null) {
-
-			if (SUFFIX_ALL.equals(query)) {
-				return true;
-			}
-
-			Analyzer analyzer = getTextAnalyzer();
-
-			if (logger.isDebugEnabled()) {
-				logger.debug("Using analyzer : " + analyzer.getClass().getName());
-			}
-			TokenStream querySource = null;
-			Reader queryReader;
-			TokenStream productNameSource = null;
-			Reader productNameReader;
-			try {
-
-				queryReader = new StringReader(query);
-				productNameReader = new StringReader(entityName);
-				querySource = analyzer.tokenStream(null, queryReader);
-				productNameSource = analyzer.tokenStream(null, productNameReader);
-
-				Token reusableToken = new Token();
-				boolean match = true;
-				while ((reusableToken = querySource.next(reusableToken)) != null) {
-					Token tmpToken = new Token();
-					while ((tmpToken = productNameSource.next(tmpToken)) != null) {
-						match = false;
-						if (logger.isDebugEnabled()) {
-							logger.debug("Test StartWith : " + reusableToken.term() + " with " + tmpToken.term());
-						}
-
-						if (tmpToken.term().startsWith(reusableToken.term())) {
-							match = true;
-							break;
-						}
-					}
-					if (!match) {
-						break;
-					}
-				}
-				querySource.reset();
-				productNameSource.reset();
-				return match;
-			} catch (Exception e) {
-				logger.error(e, e);
-			} finally {
-
-				try {
-					if (querySource != null) {
-						querySource.close();
-					}
-					if (productNameSource != null) {
-						productNameSource.close();
-					}
-
-				} catch (IOException e) {
-					// Nothing todo here
-					logger.error(e, e);
-				}
-
-			}
-
-		}
-
-		return false;
+//		if (query != null) {
+//
+//			if (SUFFIX_ALL.equals(query)) {
+//				return true;
+//			}
+//
+//			Analyzer analyzer = getTextAnalyzer();
+//
+//			if (logger.isDebugEnabled()) {
+//				logger.debug("Using analyzer : " + analyzer.getClass().getName());
+//			}
+//			TokenStream querySource = null;
+//			Reader queryReader;
+//			TokenStream productNameSource = null;
+//			Reader productNameReader;
+//			try {
+//
+//				queryReader = new StringReader(query);
+//				productNameReader = new StringReader(entityName);
+//				querySource = analyzer.tokenStream(null, queryReader);
+//				productNameSource = analyzer.tokenStream(null, productNameReader);
+//
+//				Token reusableToken = new Token();
+//				boolean match = true;
+//				while ((reusableToken = querySource.next(reusableToken)) != null) {
+//					Token tmpToken = new Token();
+//					while ((tmpToken = productNameSource.next(tmpToken)) != null) {
+//						match = false;
+//						if (logger.isDebugEnabled()) {
+//							logger.debug("Test StartWith : " + reusableToken.term() + " with " + tmpToken.term());
+//						}
+//
+//						if (tmpToken.term().startsWith(reusableToken.term())) {
+//							match = true;
+//							break;
+//						}
+//					}
+//					if (!match) {
+//						break;
+//					}
+//				}
+//				querySource.reset();
+//				productNameSource.reset();
+//				return match;
+//			} catch (Exception e) {
+//				logger.error(e, e);
+//			} finally {
+//
+//				try {
+//					if (querySource != null) {
+//						querySource.close();
+//					}
+//					if (productNameSource != null) {
+//						productNameSource.close();
+//					}
+//
+//				} catch (IOException e) {
+//					// Nothing todo here
+//					logger.error(e, e);
+//				}
+//
+//			}
+//
+//		}
+//
+//		return false;
+		return BeCPGQueryHelper.isQueryMatch(query, entityName, dictionaryDAO);
 	}
 
 	/**

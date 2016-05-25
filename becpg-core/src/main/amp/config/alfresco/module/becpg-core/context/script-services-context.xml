@@ -58,6 +58,8 @@
 		<property name="mlNodeService" ref="mlAwareNodeService"/>
 		<property name="namespaceService" ref="namespaceService"/>
 		<property name="dictionaryService" ref="dictionaryService"/>
+		<property name="entityVersionService" ref="entityVersionService"/>
+		<property name="serviceRegistry" ref="ServiceRegistry"/>
 	</bean>
 
 	<!-- Override Alfresco -->
