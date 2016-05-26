@@ -132,6 +132,8 @@
 				var i=0;
 				
 				for(var key in json){
+					
+					console.log("Colorizing stuff")
 					var color = json[key].color;
 					
 					var colorTipElement = document.createElement("SPAN");
@@ -174,7 +176,7 @@
 							}
 
 							if(found !== undefined && found != null){
-								if(found.className.contains("multi-assoc")){
+								if(found.className.indexOf("multi-assoc") != -1){
 									found = found.parentNode;
 								}
 								
@@ -187,11 +189,11 @@
 									
 									//checks if we're on the right label, and the catalog is not already labelled
 									var hasLocaleIcon = false;
-									if(currentLabel.htmlFor.contains(fieldId) && currentLabel.parentNode.innerHTML.indexOf(colorTipElement.style.backgroundColor) == -1){
+									if(currentLabel.htmlFor.indexOf(fieldId) != -1  && currentLabel.parentNode.innerHTML.indexOf(colorTipElement.style.backgroundColor) == -1){
 										if(currentLabel.childNodes){
 											for(var child in currentLabel.childNodes){
 												var currentChildNode = currentLabel.childNodes[child];
-												if(currentChildNode.nodeType == Node.ELEMENT_NODE && currentChildNode.className.contains("locale-icon")){
+												if(currentChildNode.nodeType == Node.ELEMENT_NODE && currentChildNode.className.indexOf("locale-icon") != -1){
 													hasLocaleIcon = true;
 													break;
 												}
