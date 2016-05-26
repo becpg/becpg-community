@@ -57,9 +57,9 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	private NamespaceService namespaceService;
 
 	private DictionaryService dictionaryService;
-
+	
 	private EntityVersionService entityVersionService;
-
+	
 	private ServiceRegistry serviceRegistry;
 
 	public void setOlapService(OlapService olapService) {
@@ -89,15 +89,15 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
-
+	
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
 	}
-
+	
 	public void setEntityVersionService(EntityVersionService entityVersionService) {
 		this.entityVersionService = entityVersionService;
 	}
-
+	
 	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
 		this.serviceRegistry = serviceRegistry;
 	}
@@ -162,9 +162,8 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public String getOlapSSOUrl() {
 		return olapService.getSSOUrl();
 	}
-
-	public ScriptNode createBranch(ScriptNode entity, ScriptNode parent) {
+	
+	public ScriptNode createBranch(ScriptNode entity, ScriptNode parent){
 		return new ScriptNode(entityVersionService.createBranch(entity.getNodeRef(), parent.getNodeRef()), serviceRegistry);
 	}
-
 }

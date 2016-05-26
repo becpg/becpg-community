@@ -113,6 +113,8 @@ public class PlmRepoConsts {
 	
 	public static final String PATH_PRODUCT_HIERARCHY = "/app:company_home/cm:System/cm:ProductHierarchy/bcpg:entityLists/";
 	
+	public static final String PATH_NUT_DATABASES = "NutritionalDatabases";
+	
 	
 	
 	

@@ -208,6 +208,10 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 		// OLAP
 		visitFolder(systemNodeRef, RepoConsts.PATH_OLAP_QUERIES);
+		
+		//NutDatabases
+		visitFolder(systemNodeRef, PlmRepoConsts.PATH_NUT_DATABASES);
+		System.out.println("Visiting nut databases folder");
 	}
 
 	/**
@@ -224,6 +228,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		}
 		if (Objects.equals(folderName, RepoConsts.PATH_OLAP_QUERIES)) {
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/olap/*.saiku");
+		}
+		if (Objects.equals(folderName, PlmRepoConsts.PATH_NUT_DATABASES)) {
+			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/nutDatabases/*.csv");
 		}
 	}
 
