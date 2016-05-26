@@ -55,17 +55,17 @@
  new beCPG.component.AutoCompletePicker('${el}-supplier', '${el}-supplier-field', true).setOptions(
    {
  		mode: "edit",
-        multipleSelectMode: false, 
+      multipleSelectMode: false, 
  		targetLinkTemplate: "${targetLinkTemplate}" ,
- 		dsStr:"becpg/remote/proxy/becpg/autocomplete/targetassoc/associations/bcpg:supplier"
+ 		dsStr:"becpg/autocomplete/databaseSuppliers"
   });
 
  new beCPG.component.AutoCompletePicker('${el}-entities', '${el}-entities-field', true).setOptions(
    {
  		mode: "edit",
-        multipleSelectMode: true, 
+      multipleSelectMode: true, 
  		targetLinkTemplate: "${targetLinkTemplate}" ,
- 		dsStr:"becpg/remote/proxy/becpg/autocomplete/targetassoc?className=bcpg:product&classNames=bcpg:rawMaterial,bcpg:finishedProduct,bcpg:semiFinishedProduct&extra.filterByAssoc=bcpg:suppliers",
+ 		dsStr:"becpg/autocomplete/nutDataBase",
  		parentFieldHtmlId:"${el}-supplier"
   });
 
