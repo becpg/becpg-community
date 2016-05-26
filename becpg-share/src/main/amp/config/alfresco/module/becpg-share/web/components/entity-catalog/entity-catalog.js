@@ -133,7 +133,6 @@
 				
 				for(var key in json){
 					
-					console.log("Colorizing stuff")
 					var color = json[key].color;
 					
 					var colorTipElement = document.createElement("SPAN");
