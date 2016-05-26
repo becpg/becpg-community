@@ -6586,8 +6586,14 @@ row["illValue"]
                                     <structure>
                                         <property name="name">title</property>
                                         <text-property name="displayName">title</text-property>
-                                        <expression name="expression" type="javascript">dataSetRow["title"]</expression>
+                                        <expression name="expression" type="javascript">if(dataSetRow["title"] != null &amp;&amp; dataSetRow["title"] != ""){
+dataSetRow["title"]
+}
+else{
+dataSetRow["name"]
+}</expression>
                                         <property name="dataType">string</property>
+                                        <property name="allowExport">true</property>
                                     </structure>
                                 </list-property>
                                 <property name="resultSetColumn">title</property>
