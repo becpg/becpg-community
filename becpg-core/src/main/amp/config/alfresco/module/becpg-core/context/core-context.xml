@@ -147,7 +147,7 @@
 		<property name="tenantAdminService" ref="tenantAdminService"/>
 		<property name="disableAllCache" value="false"/>
 		<!-- If cache size is not define -->
-		<property name="maxCacheItems" value="1500"/>
+		<property name="maxCacheItems" value="500"/>
 		<property name="cacheSizes">
 		   <!-- Cache size is by tenant -->
 			<map>
@@ -155,8 +155,8 @@
 			  <entry key="fr.becpg.repo.entity.version.EntityVersionService" value="10" />
 			  <entry key="fr.becpg.repo.helper.AttributeExtractorService" value="500" />
 			  <entry key="fr.becpg.repo.helper.AssociationService.childs" value="2000" />
-			  <entry key="fr.becpg.repo.helper.AssociationService.assocs" value="20000" />
-			  <entry key="fr.becpg.repo.jscript.Thumbnail" value="10" />
+			  <entry key="fr.becpg.repo.helper.AssociationService.assocs" value="200000" />
+			  <entry key="fr.becpg.repo.jscript.Thumbnail" value="20" />
 			</map>
 		</property>
 	</bean>
