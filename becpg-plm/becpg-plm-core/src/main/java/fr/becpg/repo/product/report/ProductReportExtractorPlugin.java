@@ -141,11 +141,11 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	@SuppressWarnings("unchecked")
 	private void loadDataLists(NodeRef entityNodeRef, Element dataListsElt, Map<String, byte[]> images, boolean isExtractedProduct) {
 
-		RepositoryEntity entity = alfrescoRepository.findOne(entityNodeRef);
-		Map<QName, List<? extends RepositoryEntity>> datalists = repositoryEntityDefReader.getDataLists(entity);
+		ProductData productData = alfrescoRepository.findOne(entityNodeRef);
+		Map<QName, List<? extends RepositoryEntity>> datalists = repositoryEntityDefReader.getDataLists(productData);
 
 		// TODO make it more generic!!!!
-		ProductData productData = alfrescoRepository.findOne(entityNodeRef);
+		
 		NodeRef defaultVariantNodeRef = loadVariants(productData, dataListsElt.getParent());
 
 		if ((datalists != null) && !datalists.isEmpty()) {
@@ -628,13 +628,16 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 						if (sfProductData.hasPackagingListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 							for (PackagingListDataItem subDataItem : sfProductData
 									.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-								Double sfQty = 1d;
-								// multiply by qty of compoList
-								if(dataItem.getCompoListUnit() != null && dataItem.getCompoListUnit().equals(CompoListUnit.P) &&
-										dataItem.getQtySubFormula() != null){
-									sfQty = dataItem.getQtySubFormula();									
+								
+								if(PackagingLevel.Primary.equals(subDataItem.getPkgLevel())){
+									Double sfQty = 1d;
+									// multiply by qty of compoList
+									if(dataItem.getCompoListUnit() != null && dataItem.getCompoListUnit().equals(CompoListUnit.P) &&
+											dataItem.getQtySubFormula() != null){
+										sfQty = dataItem.getQtySubFormula();									
+									}
+									loadPackagingItem(sfQty, subDataItem, packagingListElt, defaultVariantNodeRef, defaultVariantPackagingData, images, 1);
 								}
-								loadPackagingItem(sfQty, subDataItem, packagingListElt, defaultVariantNodeRef, defaultVariantPackagingData, images, 1);
 							}
 						}
 					}
