@@ -60,7 +60,6 @@ public class NutDatabaseServiceTest extends PLMBaseTestCase {
 			int checks = 0;
 
 			for (NutListDataItem nut : importedRMdata.getNutList()) {
-
 				if ("Nut 2".equals(extractCharactName(nut.getCharactNodeRef()))) {
 					assertEquals(0.153d, nut.getValue());
 					++checks;

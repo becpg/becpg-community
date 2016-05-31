@@ -288,7 +288,6 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 							catalogDesc.put(JsonScoreHelper.PROP_COLOR, color);
 							ret.put(catalogDesc);
 						}
-
 					}
 				}
 			}
@@ -319,44 +318,42 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 				}
 
 				PropertyDefinition propDef = dictionaryService.getProperty(fieldQname);
-				logger.debug("PropDef: " + (propDef == null ? "Is null" : "Not null (" + propDef.getName() + ")"));
+				logger.debug("PropDef: "
+						+ (propDef == null ? "Is null" : "Not null (" + propDef.getName() + " \n" + propDef.getDataType().getName() + ")"));
 
-				if (propDef != null) {
+				if ((propDef != null) && (DataTypeDefinition.MLTEXT.equals(propDef.getDataType().getName()))) {
 					// prop is present
-					if (DataTypeDefinition.MLTEXT.equals(propDef.getDataType().getName()) && (lang != null)
-							&& mlTextIsPresent(currentField, productData, lang)) {
+					if (mlTextIsPresent(currentField, productData, lang)) {
+						logger.debug("mlProp is present");
 						present = true;
 						break;
-
-					} else if (lang == null) {
-						// non ML field case
-						if ((properties.get(fieldQname) != null) && !properties.get(fieldQname).toString().isEmpty()) {
-							present = true;
-							break;
-						}
-					} else if (!DataTypeDefinition.MLTEXT.equals(propDef.getDataType().getName()) && (lang != null)) {
-						// case non ml prop with not null lang, we don't care
-						ignore = true;
-						break;
-					} else if (DataTypeDefinition.MLTEXT.equals(propDef.getDataType().getName()) && (lang == null)) {
-						// check if there is a locale given with the field
-						if (currentField.split("_").length == 2) {
-							String locale = currentField.split("_")[1];
-							if (mlTextIsPresent(currentField, productData, locale)) {
-								present = true;
-								break;
-							}
-						}
 					}
-				} else if (lang == null) {
+
+				} else if ((propDef != null) && (lang == null)) {
+					// non ML field case
+					if ((properties.get(fieldQname) != null) && !properties.get(fieldQname).toString().isEmpty()) {
+						logger.debug("regular prop is present");
+						present = true;
+						break;
+					}
+				} else if ((propDef != null) && !DataTypeDefinition.MLTEXT.equals(propDef.getDataType().getName()) && (lang != null)) {
+					logger.debug("Non ml prop with non null lang, skipping");
+					// case non ml prop with not null lang, we don't care
+					ignore = true;
+					break;
+
+				} else if ((propDef == null) && (lang == null)) {
 					// only check assoc when lang is null
+					logger.debug("Checking if assoc is found");
 					if (associationService.getTargetAssoc(productData.getNodeRef(), fieldQname) != null) {
+						logger.debug("it is found !");
 						present = true;
 						break;
 					}
 
 				} else {
 					// lang is not null and it's not a prop
+					logger.debug("Skipping associations on localized catalogs");
 					ignore = true;
 					break;
 				}
@@ -378,15 +375,16 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 		MLText mlText = (MLText) mlNodeService.getProperty(productData.getNodeRef(), fieldQname);
 
 		if (field.contains("_")) {
+
 			String fieldSpecificLang = field.split("_")[1];
 			if ((mlText == null) || (mlText.getValue(new Locale(fieldSpecificLang)) == null)
 					|| mlText.getValue(new Locale(fieldSpecificLang)).isEmpty()) {
 				res = false;
 			}
-		} else {
-			if ((mlText == null) || (mlText.getValue(new Locale(lang)) == null) || mlText.getValue(new Locale(lang)).isEmpty()) {
-				res = false;
-			}
+
+		} else if ((lang != null)
+				&& ((mlText == null) || (mlText.getValue(new Locale(lang)) == null) || mlText.getValue(new Locale(lang)).isEmpty())) {
+			res = false;
 		}
 
 		return res;
