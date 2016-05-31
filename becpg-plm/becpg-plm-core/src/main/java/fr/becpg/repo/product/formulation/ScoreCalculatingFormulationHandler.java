@@ -323,7 +323,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 
 				if ((propDef != null) && (DataTypeDefinition.MLTEXT.equals(propDef.getDataType().getName()))) {
 					// prop is present
-					if (mlTextIsPresent(currentField, productData, lang)) {
+					if (mlTextIsPresent(currentField, productData, lang, properties)) {
 						logger.debug("mlProp is present");
 						present = true;
 						break;
@@ -369,7 +369,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 		return ret;
 	}
 
-	private boolean mlTextIsPresent(String field, ProductData productData, String lang) {
+	private boolean mlTextIsPresent(String field, ProductData productData, String lang, Map<QName, Serializable> properties) {
 		boolean res = true;
 		QName fieldQname = QName.createQName(field.split("_")[0], namespaceService);
 		MLText mlText = (MLText) mlNodeService.getProperty(productData.getNodeRef(), fieldQname);
@@ -385,6 +385,8 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 		} else if ((lang != null)
 				&& ((mlText == null) || (mlText.getValue(new Locale(lang)) == null) || mlText.getValue(new Locale(lang)).isEmpty())) {
 			res = false;
+		} else {
+			res = (properties.get(fieldQname) != null) && !properties.get(fieldQname).toString().isEmpty();
 		}
 
 		return res;
