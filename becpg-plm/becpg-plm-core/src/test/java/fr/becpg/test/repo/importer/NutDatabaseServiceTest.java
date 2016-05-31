@@ -2,9 +2,7 @@ package fr.becpg.test.repo.importer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.alfresco.service.cmr.model.FileInfo;
@@ -62,7 +60,6 @@ public class NutDatabaseServiceTest extends PLMBaseTestCase {
 			int checks = 0;
 
 			for (NutListDataItem nut : importedRMdata.getNutList()) {
-
 				if ("Nut 2".equals(extractCharactName(nut.getCharactNodeRef()))) {
 					assertEquals(0.153d, nut.getValue());
 					++checks;
@@ -77,7 +74,6 @@ public class NutDatabaseServiceTest extends PLMBaseTestCase {
 					fail();
 				}
 			}
-			;
 
 			assertEquals(3, checks);
 
@@ -100,7 +96,7 @@ public class NutDatabaseServiceTest extends PLMBaseTestCase {
 					fail();
 				}
 			}
-			;
+
 			assertEquals(3, checks);
 
 			checks = 0;
@@ -178,28 +174,15 @@ public class NutDatabaseServiceTest extends PLMBaseTestCase {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			List<FileInfo> databases = nutDatabaseService.getNutDatabases();
-			Set<FileInfo> checkedSet = new HashSet<>();
 			int checks = 0;
 
 			for (FileInfo file : databases) {
-
-				if ("usda.csv".equals(file.getName())) {
-
+				if ("import.csv".equals(file.getName())) {
 					++checks;
-					checkedSet.add(file);
-				} else if ("ciqual.csv".equals(file.getName())) {
-
-					++checks;
-					checkedSet.add(file);
-				} else if ("import.csv".equals(file.getName())) {
-
-					++checks;
-					checkedSet.add(file);
 				}
 			}
 
-			assertEquals("Some csv files are missing, try to clean and purge", 3, checks);
-			assertEquals(3, checkedSet.size());
+			assertEquals("import.csv file is not in the system, try to clean and purge", 1, checks);
 
 			return null;
 		}, false, true);
