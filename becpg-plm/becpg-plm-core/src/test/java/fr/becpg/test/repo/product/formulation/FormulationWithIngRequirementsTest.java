@@ -93,7 +93,6 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 			logger.info("/*-- Create finished product --*/");
 			FinishedProductData finishedProduct = new FinishedProductData();
 			finishedProduct.setName("Produit fini 1");
-			// finishedProduct.setLegalName("Legal Produit fini 1");
 			finishedProduct.setUnit(ProductUnit.kg);
 			finishedProduct.setQty(2d);
 			finishedProduct.setDensity(1d);
@@ -222,8 +221,8 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
 
 			int checks = 0;
-
 			logger.info("/*-- Formulation raised " + formulatedProduct.getCompoListView().getReqCtrlList().size() + " rclDataItems --*/");
+
 			for (ReqCtrlListDataItem reqCtrlList : formulatedProduct.getCompoListView().getReqCtrlList()) {
 				logger.info("/*-- Verify reqCtrlList : " + reqCtrlList.getReqMessage() + " --*/");
 				logger.info("/*-- This item has " + reqCtrlList.getSources().size() + " sources --*/");
@@ -295,7 +294,6 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 					assertTrue(reqCtrlList.getSources().contains(rawMaterial2NodeRef));
 					assertTrue(reqCtrlList.getSources().contains(rawMaterial6NodeRef));
 					checks++;
-
 				} else if (I18NUtil
 						.getMessage(ScoreCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Libellé légal", "EU 1169/2011 (INCO)")
 						.equals(reqCtrlList.getReqMessage())) {
@@ -304,7 +302,6 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 					assertEquals(1, reqCtrlList.getSources().size());
 					assertTrue(reqCtrlList.getSources().contains(formulatedProduct.getNodeRef()));
 					checks++;
-
 				} else if (I18NUtil
 						.getMessage(ScoreCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Précautions d'emploi", "EU 1169/2011 (INCO)")
 						.equals(reqCtrlList.getReqMessage())) {
@@ -313,7 +310,6 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 					assertEquals(1, reqCtrlList.getSources().size());
 					assertTrue(reqCtrlList.getSources().contains(formulatedProduct.getNodeRef()));
 					checks++;
-
 				} else if (I18NUtil.getMessage(ScoreCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Conditions de conservation",
 						"EU 1169/2011 (INCO)").equals(reqCtrlList.getReqMessage())) {
 
@@ -321,12 +317,11 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 					assertEquals(1, reqCtrlList.getSources().size());
 					assertTrue(reqCtrlList.getSources().contains(formulatedProduct.getNodeRef()));
 					checks++;
-
-				} else if (I18NUtil.getMessage(AllergensCalculatingFormulationHandler.MESSAGE_NOT_VALIDATED_ALLERGEN).equals(reqCtrlList.getReqMessage())) {
+				} else if (I18NUtil.getMessage(AllergensCalculatingFormulationHandler.MESSAGE_NOT_VALIDATED_ALLERGEN)
+						.equals(reqCtrlList.getReqMessage())) {
 
 					assertEquals(RequirementType.Tolerated, reqCtrlList.getReqType());
 					checks++;
-
 				} else {
 					logger.info("Unexpected rclDataItem: " + reqCtrlList.getReqMessage());
 					fail();
