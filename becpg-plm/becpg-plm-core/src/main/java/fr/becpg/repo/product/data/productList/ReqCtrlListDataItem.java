@@ -18,6 +18,7 @@
 package fr.becpg.repo.product.data.productList;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.MLText;
@@ -46,7 +47,7 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 	private MLText reqMlMessage;
 	private Integer sort;
 	private NodeRef charact;
-	private List<NodeRef> sources = new ArrayList<>();
+	private List<NodeRef> sources = new LinkedList<>();
 	private RequirementDataType reqDataType;
 
 	@AlfProp

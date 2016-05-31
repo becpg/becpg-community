@@ -933,7 +933,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				boolean isMultiLevel = false;
 
 				if (parent == null) {
-					parent = new CompositeLabeling(productData, nodeService);
+					parent = new CompositeLabeling(productData);
+
+					fillAllergens(parent, productData);
+
 					parent.setQty(qty);
 					parent.setVolume(volume);
 					if (logger.isTraceEnabled()) {
@@ -997,7 +1000,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							}
 
 						} else {
-							compositeLabeling = new CompositeLabeling(productData, nodeService);
+							compositeLabeling = new CompositeLabeling(productData);
+
+							fillAllergens(compositeLabeling, productData);
+
 							compositeLabeling.setQty(qty);
 							compositeLabeling.setVolume(volume);
 							compositeLabeling.setDeclarationType(declarationType);
@@ -1098,6 +1104,18 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 
 		return parent;
+	}
+
+	private void fillAllergens(CompositeLabeling compositeLabeling, ProductData productData) {
+		for (AllergenListDataItem allergenListDataItem : productData.getAllergenList()) {
+
+			if (allergenListDataItem.getVoluntary()) {
+				if (AllergenType.Major.toString().equals(nodeService.getProperty(allergenListDataItem.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE))) {
+					compositeLabeling.getAllergens().add(allergenListDataItem.getAllergen());
+				}
+			}
+		}
+
 	}
 
 	private Double computeYield(ProductData productData) {
