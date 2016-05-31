@@ -341,24 +341,39 @@ public class LabelingFormulaContext {
 		return lblComponent.getName();
 	}
 
-	public String getLegalIngName(AbstractLabelingComponent lblComponent, boolean plural) {
+	public String getLegalIngName(AbstractLabelingComponent lblComponent){
 		if (renameRules.containsKey(lblComponent.getNodeRef())) {
 			return renameRules.get(lblComponent.getNodeRef()).getValue(I18NUtil.getLocale());
 		}
+		
+		return lblComponent.getLegalName(I18NUtil.getLocale());
+	}
+	
+	
+	private String getLegalIngName(AbstractLabelingComponent lblComponent, boolean plural) {
+		
+		String ingLegalName = lblComponent.getLegalName(I18NUtil.getLocale());
+		
+		if (renameRules.containsKey(lblComponent.getNodeRef())) {
+			ingLegalName = renameRules.get(lblComponent.getNodeRef()).getValue(I18NUtil.getLocale());
+		} else {
 
-		if (plural && (lblComponent instanceof IngTypeItem)) {
-			return uncapitalize(((IngTypeItem) lblComponent).getPluralLegalName(I18NUtil.getLocale()));
-		}
-
-		if (showIngCEECode && (lblComponent instanceof IngItem)) {
-			if ((((IngItem) lblComponent).getIngCEECode() != null) && !((IngItem) lblComponent).getIngCEECode().isEmpty()) {
-				return ((IngItem) lblComponent).getIngCEECode();
+			if (plural && (lblComponent instanceof IngTypeItem)) {
+				return uncapitalize(((IngTypeItem) lblComponent).getPluralLegalName(I18NUtil.getLocale()));
+			}
+	
+			if (showIngCEECode && (lblComponent instanceof IngItem)) {
+				if ((((IngItem) lblComponent).getIngCEECode() != null) && !((IngItem) lblComponent).getIngCEECode().isEmpty()) {
+					return ((IngItem) lblComponent).getIngCEECode();
+				}
 			}
 		}
 
-		String ingLegalName = uncapitalizeLegalName ? uncapitalize(lblComponent.getLegalName(I18NUtil.getLocale()))
-				: lblComponent.getLegalName(I18NUtil.getLocale());
-
+		if(uncapitalizeLegalName){
+			ingLegalName = uncapitalize(ingLegalName);
+		}
+		
+		
 		if (!lblComponent.getAllergens().isEmpty()) {
 			if (((lblComponent instanceof CompositeLabeling) && ((CompositeLabeling) lblComponent).getIngList().isEmpty())
 					|| (lblComponent instanceof IngItem)) {

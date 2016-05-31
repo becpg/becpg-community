@@ -20,10 +20,10 @@ package fr.becpg.test.repo.product.formulation;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Calendar;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -46,7 +46,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.extensions.surf.util.I18NUtil;
-
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
@@ -223,37 +222,42 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		// il faut prendre dans le calcul slmt la qté MeO dans le SF.
 
 	}
-	
-	
-//	@Test
-//	public void testIngsLabelingWithYield() throws Exception {
-//		final NodeRef finishedProductNodeRef1 = createTestProduct(null);
-//		
-//		finishedProductNodeRef1
-//
-//		// Declare
-//		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
-//
-//		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
-//		labelingRuleList.add(new LabelingRuleListDataItem("Declare", null, LabelingRuleType.Declare,
-//				Arrays.asList(localSF11NodeRef, rawMaterial12NodeRef, localSF12NodeRef), null));
-//		labelingRuleList
-//				.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format, Arrays.asList(ing1, ing2, ing3, ing4), null));
-//		labelingRuleList.add(
-//				new LabelingRuleListDataItem("Param1", "detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
-//
-//		// └──[root - 0.0 (9.0)]
-//		// ├──[ing1 french - 0.8333333333333334]
-//		// ├──[ing2 french - 2.166666666666667]
-//		// ├──[ing3 french - 5.0]
-//		// └──[ing4 french - 1.0]
-//
-//		checkILL(finishedProductNodeRef1, labelingRuleList, "ing3 french 55,5%, ing2 french 24%, ing4 french 11,1%, ing1 french 9%",
-//				Locale.FRENCH);
-//
-//		
-//		
-//	}
+
+	// //@Test
+	// public void testIngsLabelingWithYield() throws Exception {
+	// final NodeRef finishedProductNodeRef1 = createTestProduct(null);
+	//
+	// finishedProductNodeRef1
+	//
+	// // Declare
+	// List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
+	//
+	// labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()",
+	// LabelingRuleType.Render));
+	// labelingRuleList.add(new LabelingRuleListDataItem("Declare", null,
+	// LabelingRuleType.Declare,
+	// Arrays.asList(localSF11NodeRef, rawMaterial12NodeRef, localSF12NodeRef),
+	// null));
+	// labelingRuleList
+	// .add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}",
+	// LabelingRuleType.Format, Arrays.asList(ing1, ing2, ing3, ing4), null));
+	// labelingRuleList.add(
+	// new LabelingRuleListDataItem("Param1", "detailsDefaultFormat = \"{0}
+	// {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
+	//
+	// // └──[root - 0.0 (9.0)]
+	// // ├──[ing1 french - 0.8333333333333334]
+	// // ├──[ing2 french - 2.166666666666667]
+	// // ├──[ing3 french - 5.0]
+	// // └──[ing4 french - 1.0]
+	//
+	// checkILL(finishedProductNodeRef1, labelingRuleList, "ing3 french 55,5%,
+	// ing2 french 24%, ing4 french 11,1%, ing1 french 9%",
+	// Locale.FRENCH);
+	//
+	//
+	//
+	// }
 
 	@Test
 	public void testMultiLevelSFGroup() throws Exception {
@@ -584,6 +588,77 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		}, false, true);
 	}
 
+	@Test
+	public void testAggregateAndRename() throws Exception {
+
+		// Par défaut
+		// └──[root - 0.0 (2.0)]
+		// ├──[pâte french - 1.0 (3.0)]
+		// │ ├──[ing1 french - 0.33333333333333337]
+		// │ ├──[ing2 french - 0.6666666666666667]
+		// │ └──[legal Raw material 12 - 2.0 (2.0)]
+		// │ ├──[ing1 french - 0.5]
+		// │ └──[ing2 french - 1.5]
+		// └──[garniture french - 1.0 (6.0)]
+		// ├──[ing3 french - 5.0]
+		// └──[ing4 french - 1.0]
+
+		final NodeRef finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			logger.debug("/*-- Create finished product --*/");
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName("Aggr Etiq Test 1");
+			finishedProduct.setLegalName("Aggr Etiq Test 1");
+			finishedProduct.setUnit(ProductUnit.kg);
+			finishedProduct.setQty(3d);
+			finishedProduct.setDensity(1d);
+			List<CompoListDataItem> compoList = new ArrayList<>();
+
+			compoList.add(new CompoListDataItem(null, null, null, 2d, CompoListUnit.kg, 0d, DeclarationType.DoNotDetails, rawMaterial1NodeRef));
+			compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.DoNotDetails, rawMaterial2NodeRef));
+
+			finishedProduct.getCompoListView().setCompoList(compoList);
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+		}, false, true);
+
+		// Declare
+		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
+
+		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
+		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format,
+				Arrays.asList(rawMaterial1NodeRef, rawMaterial2NodeRef), null));
+
+		labelingRuleList.add(new LabelingRuleListDataItem("Aggregate 1", null, LabelingRuleType.DoNotDetails,
+				Arrays.asList(rawMaterial1NodeRef, rawMaterial2NodeRef), Collections.singletonList(rawMaterial2NodeRef)));
+
+		checkILL(finishedProductNodeRef1, labelingRuleList, "legal Raw material 2 (<b>allergen1</b>) 100%", Locale.FRENCH);
+
+		labelingRuleList = new ArrayList<>();
+
+		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
+		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format,
+				Arrays.asList(rawMaterial1NodeRef, rawMaterial2NodeRef), null));
+
+		labelingRuleList.add(new LabelingRuleListDataItem("Aggregate 1", null, LabelingRuleType.Rename, Arrays.asList(rawMaterial1NodeRef),
+				Collections.singletonList(rawMaterial2NodeRef)));
+
+		checkILL(finishedProductNodeRef1, labelingRuleList, "legal Raw material 2 (<b>allergen1</b>) 100%", Locale.FRENCH);
+
+		labelingRuleList = new ArrayList<>();
+
+		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
+		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format,
+				Arrays.asList(ing2), null));
+
+		labelingRuleList.add(new LabelingRuleListDataItem("Declare 1", null, LabelingRuleType.Declare,
+				Arrays.asList(rawMaterial1NodeRef, rawMaterial2NodeRef), null));
+		
+		labelingRuleList.add(new LabelingRuleListDataItem("Aggregate 1", null, LabelingRuleType.DoNotDetails,
+				Arrays.asList(ing1, ing2), Collections.singletonList(ing2)));
+
+		checkILL(finishedProductNodeRef1, labelingRuleList, "ing2 french 100%", Locale.FRENCH);
+
+	}
+
 	/**
 	 * Test ingredients calculating.
 	 *
@@ -624,8 +699,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		// ├──[ing3 french - 5.0]
 		// └──[ing4 french - 1.0]
 
-		checkILL(finishedProductNodeRef1, labelingRuleList, "ing3 french 55,5%, ing2 french 24%, ing4 french 11,1%, ing1 french 9,2%",
-				Locale.FRENCH);
+		checkILL(finishedProductNodeRef1, labelingRuleList, "ing3 french 55,5%, ing2 french 24%, ing4 french 11,1%, ing1 french 9,2%", Locale.FRENCH);
 
 		// Omit
 		labelingRuleList = new ArrayList<>();
@@ -775,7 +849,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		// └──[ing5 french - 1.0]
 
 		checkILL(finishedProductNodeRef1, labelingRuleList,
-				"pâte french 50% (Test rename2 33,3% (ing2 french, ing5 french), ing2 french, ing5 french), garniture french 50% (ing3 french, Allergènes: ing5 french)",
+				"pâte french 50% (test rename2 33,3% (ing2 french, ing5 french), ing2 french, ing5 french), garniture french 50% (ing3 french, allergènes: ing5 french)",
 				Locale.FRENCH);
 
 		// Aggregate
@@ -1126,7 +1200,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		checkILL(finishedProductNodeRef1, labelingRuleList,
 				"pâte french 50% (legal Raw material 12 16,6% (ing2 french 12,5%, ing1 french 4,1%), ing2 french 11,1%, pâte french 8,3% (legal Raw material 12 5,5% (ing2 french 4,1%, ing1 french 1,3%), ing2 french 1,8%, ing1 french 0,9%), garniture french 8,3% (ing3 french 6,9%, ing4 french 1,3%), ing1 french 5,5%), garniture french 50% (ing3 french 41,6%, ing4 french 8,3%)",
 				Locale.FRENCH);
-			// TODO //Do not Declare ????
+		// TODO //Do not Declare ????
 
 	}
 
@@ -1135,9 +1209,9 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		logger.info("checkILL : " + ill);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-
+			try {
 			ProductData formulatedProduct = alfrescoRepository.findOne(productNodeRef);
-			
+
 			labelingRuleList.add(new LabelingRuleListDataItem("Pref7", "uncapitalizeLegalName = true", LabelingRuleType.Prefs));
 
 			formulatedProduct.getLabelingListView().setLabelingRuleList(labelingRuleList);
@@ -1148,7 +1222,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 			// verify IngLabelingList
 
-			try {
+		
 
 				Assert.assertNotNull("IngLabelingList is null", formulatedProduct.getLabelingListView().getIngLabelingList());
 				Assert.assertTrue(formulatedProduct.getLabelingListView().getIngLabelingList().size() > 0);
@@ -1160,7 +1234,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 				}
 			} catch (Throwable e) {
-				logger.error(e);
+				logger.error(e,e);
 				throw e;
 			}
 
@@ -1378,7 +1452,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 				}
 				authenticationComponent.setCurrentUser(currentUser);
 
-				 logger.info("running labeling in thread " + threadName + "for user" + currentUser);
+				logger.info("running labeling in thread " + threadName + "for user" + currentUser);
 
 				String ill = "Pâte french 50% (legal Finished product 1 50%), Garniture french 50% (Legal Raw material 13 25% (ing3 french 25%), ing3 french 16,6%, ing4 french 8,3%)";
 
@@ -1399,8 +1473,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 						String formulatedIll = illDataItem.getValue().getValue(Locale.FRENCH);
 						Assert.assertEquals("Incorrect label :" + formulatedIll + "\n   - compare to " + ill, ill, formulatedIll);
 						Assert.assertNotNull(illDataItem.getLogValue());
-						logger.info("Finished labeling in thread " +
-						 threadName );
+						logger.info("Finished labeling in thread " + threadName);
 					}
 
 					return null;
