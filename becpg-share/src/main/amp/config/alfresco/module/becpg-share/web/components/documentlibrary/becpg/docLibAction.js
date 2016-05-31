@@ -274,7 +274,6 @@
 	               }
 	            });
 	            
-	            
 	            this.modules.entityCompare.show();
 	       }
 	    });
@@ -289,6 +288,50 @@
         window.location.href = beCPG.util.entityDocumentsURL(recordSiteName, p_record.location.path, p_record.location.file,true);
         
         
+       }
+    });
+	
+	
+	YAHOO.Bubbling.fire("registerAction", {
+	       actionName : "onActionCopyDataListTo",
+       fn : function onActionCopyDataListTo(p_record) {
+    	   var dt = Alfresco.util.ComponentManager.find({
+				name : "beCPG.module.EntityDataGrid"
+			});
+    	   
+    	   if(dt!=null && dt.length >0 && dt[0].datalistMeta.nodeRef!=null){
+
+    		    var actionUrl = Alfresco.constants.PROXY_URI + 'becpg/entity/datalists/copy/node/' + dt[0].datalistMeta.nodeRef.replace(":/", "");
+
+	            this.modules.entityPicker = new Alfresco.module.SimpleDialog(this.id + "-entityPicker").setOptions({
+	               width : "33em",
+	               templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/entity-picker/entity-picker?title="
+	               							+encodeURIComponent(this.msg("message.copy-datalist-to",dt[0].datalistMeta.title))
+	               							+"&entityNodeRef="+p_record.nodeRef,
+	               actionUrl : actionUrl,
+	               validateOnSubmit : false,
+	               firstFocus : this.id + "-entityPicker-entity-field",
+	               onSuccess:
+	               {
+	                  fn: function onActionCopyDataListTo_success(response)
+	                  {
+	                	  if(response.json) {
+	                	    var dest = response.json[0];
+	                	    var recordSiteName = $isValueSet(p_record.location.site) ? p_record.location.site.name : null;
+	                	    window.location.href =  beCPG.util.entityURL(recordSiteName, dest, null, null , dt[0].datalistMeta.name);
+	                	  }
+	                  },
+	                  scope: this
+	               }
+	            });
+	            
+	            this.modules.entityPicker.show();
+    		   
+    	   } else {
+    		   Alfresco.util.PopupManager.displayMessage({
+    			   text : this.msg("message.copy-datalist-to.notselected")
+    		   });  
+    	   }
        }
     });
 	

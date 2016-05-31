@@ -61,10 +61,12 @@ public class TaskOverdueFormulationHandler extends FormulationBaseHandler<Projec
 	 */
 	@Override
 	public boolean process(ProjectData projectData) {
-		logger.info("Processing tasks notifications");
+	
 
 		if(ProjectState.InProgress.equals(projectData.getProjectState())){
 
+			logger.debug("Processing tasks notifications");
+			
 			for(TaskListDataItem task :  projectData.getTaskList()){
 				Boolean notificationsAreEnabled = (task.getInitialNotification() != null 
 						&& task.getNotificationAuthorities() != null 
@@ -86,10 +88,13 @@ public class TaskOverdueFormulationHandler extends FormulationBaseHandler<Projec
 				Date currentDate = new Date();
 				Date nextNotification = calculateNextNotificationDate(task, firstNotificationDate);
 				String workflowTaskId = extractWorkflowTask(task);
-				logger.debug("First notification: "+firstNotificationDate);
-				logger.debug("Last notification: "+task.getLastNotification());
-				logger.debug("Next notification: "+nextNotification);
-				logger.debug("workflowTaskId: "+workflowTaskId);
+				
+				if(logger.isDebugEnabled()){
+					logger.debug("First notification: "+firstNotificationDate);
+					logger.debug("Last notification: "+task.getLastNotification());
+					logger.debug("Next notification: "+nextNotification);
+					logger.debug("workflowTaskId: "+workflowTaskId);
+				}
 				if(nextNotification == null){
 					logger.debug("No new notification scheduled, skipping..");
 					continue;
@@ -102,7 +107,7 @@ public class TaskOverdueFormulationHandler extends FormulationBaseHandler<Projec
 				}
 			}
 		} else {
-			logger.info("Project "+projectData.getName()+" not in progress (status: "+projectData.getProjectState()+")");
+			logger.debug("Project "+projectData.getName()+" not in progress (status: "+projectData.getProjectState()+")");
 		}
 		return true;
 	}

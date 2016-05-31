@@ -278,11 +278,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 				for (IngLabelingListDataItem dataItem : productData.getLabelingListView().getIngLabelingList()) {
 
-					MLText labelingText = dataItem.getManualValue();
-					if ((labelingText == null) || labelingText.isEmpty()) {
-						labelingText = dataItem.getValue();
-					}
-
+					MLText labelingText = dataItem.getValue();
+			
 					if (labelingText != null) {
 						List<String> locales = new ArrayList<>();
 						for (Locale locale : labelingText.getLocales()) {
@@ -654,7 +651,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			Element compoListElt = dataListsElt.addElement(PLMModel.TYPE_COMPOLIST.getLocalName() + "s");
 
 			for (CompoListDataItem dataItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-				loadCompoListItem(null, dataItem, compoListElt, defaultVariantNodeRef, 1, dataItem.getQty() != null ? dataItem.getQty() : 0d, images);
+				loadCompoListItem(null, dataItem, compoListElt, defaultVariantNodeRef, 0, dataItem.getQty() != null ? dataItem.getQty() : 0d, images);
 			}
 
 			loadDynamicCharactList(productData.getCompoListView().getDynamicCharactList(), compoListElt);

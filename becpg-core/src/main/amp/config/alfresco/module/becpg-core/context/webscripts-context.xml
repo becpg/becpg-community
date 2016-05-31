@@ -105,6 +105,11 @@
 		<property name="nodeService" ref="NodeService" />
 		<property name="dataListSortService" ref="dataListSortService" />
 	</bean>
+	
+	<bean id="webscript.fr.becpg.entity.datalist.copy.post" class="fr.becpg.repo.web.scripts.entity.datalist.CopyDataListWebScript" parent="webscript">
+		<property name="entityListDAO" ref="entityListDAO" />
+	</bean>
+	
 
 
 	<!-- Entity report -->

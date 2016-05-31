@@ -139,12 +139,12 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 
 						if (specificationScore > 10) {
 							if ((ctrl.getReqDataType() == RequirementDataType.Specification) && (ctrl.getReqType() == RequirementType.Forbidden)
-									&& !visitedCtrlDataItems.contains(ctrl.getReqMessage())) {
+									&& !visitedCtrlDataItems.contains(ctrl.getKey())) {
 								if (logger.isDebugEnabled()) {
 									logger.debug("Visiting specification rclDataItem: " + ctrl.getReqMessage() + ", s=" + ctrl.getSources());
 								}
 								specificationScore -= 10;
-								visitedCtrlDataItems.add(ctrl.getReqMessage());
+								visitedCtrlDataItems.add(ctrl.getKey());
 							}
 						} else {
 							break;

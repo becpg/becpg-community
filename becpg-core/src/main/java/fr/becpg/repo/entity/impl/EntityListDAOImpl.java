@@ -147,25 +147,25 @@ public class EntityListDAOImpl implements EntityListDAO {
 	@Override
 	public NodeRef createList(NodeRef listContainerNodeRef, String name, QName listQName) {
 
-			String entityTitle = TranslateHelper.getTranslatedPath(name);
-			if (entityTitle == null) {
-				entityTitle = name;
-			}
+		String entityTitle = TranslateHelper.getTranslatedPath(name);
+		if (entityTitle == null) {
+			entityTitle = name;
+		}
 
-			QName assocQname = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name));
+		QName assocQname = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name));
 
-			if (logger.isDebugEnabled()) {
-				logger.debug("Create data list with name:" + name + " of type " + listQName.getLocalName() + " title " + entityTitle
-						+ " with assocQname : " + assocQname.toPrefixString(namespaceService));
-			}
+		if (logger.isDebugEnabled()) {
+			logger.debug("Create data list with name:" + name + " of type " + listQName.getLocalName() + " title " + entityTitle
+					+ " with assocQname : " + assocQname.toPrefixString(namespaceService));
+		}
 
-			Map<QName, Serializable> properties = new HashMap<>();
-			properties.put(ContentModel.PROP_NAME, name);
-			properties.put(ContentModel.PROP_TITLE, entityTitle);
-			properties.put(DataListModel.PROP_DATALISTITEMTYPE, listQName.toPrefixString(namespaceService));
+		Map<QName, Serializable> properties = new HashMap<>();
+		properties.put(ContentModel.PROP_NAME, name);
+		properties.put(ContentModel.PROP_TITLE, entityTitle);
+		properties.put(DataListModel.PROP_DATALISTITEMTYPE, listQName.toPrefixString(namespaceService));
 
-			return nodeService.createNode(listContainerNodeRef, ContentModel.ASSOC_CONTAINS, assocQname, DataListModel.TYPE_DATALIST, properties)
-					.getChildRef();
+		return nodeService.createNode(listContainerNodeRef, ContentModel.ASSOC_CONTAINS, assocQname, DataListModel.TYPE_DATALIST, properties)
+				.getChildRef();
 	}
 
 	@Override
@@ -281,38 +281,54 @@ public class EntityListDAOImpl implements EntityListDAO {
 					List<NodeRef> sourceListsNodeRef = getExistingListsNodeRef(sourceListContainerNodeRef);
 					for (NodeRef sourceListNodeRef : sourceListsNodeRef) {
 
-						String dataListType = (String) nodeService.getProperty(sourceListNodeRef, DataListModel.PROP_DATALISTITEMTYPE);
-						String name = (String) nodeService.getProperty(sourceListNodeRef, ContentModel.PROP_NAME);
-						QName listQName = QName.createQName(dataListType, namespaceService);
-
-						if ((listQNames == null) || listQNames.contains(listQName)) {
-
-							NodeRef existingListNodeRef;
-
-							if (name.startsWith(RepoConsts.WUSED_PREFIX) || name.startsWith(RepoConsts.CUSTOM_VIEW_PREFIX)) {
-								existingListNodeRef = getList(targetListContainerNodeRef, name);
-							} else {
-								existingListNodeRef = getList(targetListContainerNodeRef, listQName);
-							}
-
-							boolean copy = true;
-							if (existingListNodeRef != null) {
-								if (override) {
-									nodeService.deleteNode(existingListNodeRef);
-								} else {
-									copy = false;
-								}
-							}
-
-							if (copy) {
-								logger.debug("copy datalist " + listQName);
-								NodeRef newDLNodeRef = copyService.copy(sourceListNodeRef, targetListContainerNodeRef, ContentModel.ASSOC_CONTAINS,
-										DataListModel.TYPE_DATALIST, true);
-								nodeService.setProperty(newDLNodeRef, ContentModel.PROP_NAME, name);
-							}
-						}
+						copyDataListInternal(sourceListNodeRef, targetListContainerNodeRef, listQNames, override);
 					}
 				}
+			}
+		}
+
+	}
+
+	@Override
+	public void copyDataList(NodeRef dataListNodeRef, NodeRef entityNodeRef, boolean override) {
+
+		NodeRef targetListContainerNodeRef = getListContainer(entityNodeRef);
+		if (targetListContainerNodeRef != null) {
+			copyDataListInternal(dataListNodeRef, targetListContainerNodeRef, null, override);
+		}
+
+	}
+
+	private void copyDataListInternal(NodeRef dataListNodeRef, NodeRef targetListContainerNodeRef, Collection<QName> listQNames, boolean override) {
+
+		String dataListType = (String) nodeService.getProperty(dataListNodeRef, DataListModel.PROP_DATALISTITEMTYPE);
+		String name = (String) nodeService.getProperty(dataListNodeRef, ContentModel.PROP_NAME);
+		QName listQName = QName.createQName(dataListType, namespaceService);
+
+		if ((listQNames == null) || listQNames.contains(listQName)) {
+
+			NodeRef existingListNodeRef;
+
+			if (name.startsWith(RepoConsts.WUSED_PREFIX) || name.startsWith(RepoConsts.CUSTOM_VIEW_PREFIX)) {
+				existingListNodeRef = getList(targetListContainerNodeRef, name);
+			} else {
+				existingListNodeRef = getList(targetListContainerNodeRef, listQName);
+			}
+
+			boolean copy = true;
+			if (existingListNodeRef != null) {
+				if (override) {
+					nodeService.deleteNode(existingListNodeRef);
+				} else {
+					copy = false;
+				}
+			}
+
+			if (copy) {
+				logger.debug("copy datalist " + listQName);
+				NodeRef newDLNodeRef = copyService.copy(dataListNodeRef, targetListContainerNodeRef, ContentModel.ASSOC_CONTAINS,
+						DataListModel.TYPE_DATALIST, true);
+				nodeService.setProperty(newDLNodeRef, ContentModel.PROP_NAME, name);
 			}
 		}
 
@@ -368,4 +384,5 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 		return null;
 	}
+
 }

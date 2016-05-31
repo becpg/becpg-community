@@ -797,24 +797,40 @@ if (beCPG.module.EntityDataGridRenderers) {
     });
 	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-      propertyName : [ "bcpg:instruction","bcpg:lclComments"],
+      propertyName : [ "bcpg:instruction"],
       renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
          if(data.value != null && data.value.length>0){
-        	 if (oColumn.hidden) {
-					scope.widgets.dataTable.showColumn(oColumn);
-					Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
-			}
-			Dom.setStyle(elCell, "width", "16px");
-			Dom.setStyle(elCell.parentNode, "width", "16px");
-			return "<span title=\"" + Alfresco.util.encodeHTML(data.displayValue.replace(/&nbsp;/gi," ")
-					.replace(/<(?:.|\n)*?>/gm, '').replace(/\n/gm," ")) 
-			+ "\" class='instructions'>&nbsp;</span>";
+        	if(oColumn.label == ""){
+	        	 if (oColumn.hidden) {
+						scope.widgets.dataTable.showColumn(oColumn);
+						Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
+				}
+				Dom.setStyle(elCell, "width", "16px");
+				Dom.setStyle(elCell.parentNode, "width", "16px");
+				return "<span title=\"" + Alfresco.util.encodeHTML(data.displayValue.replace(/&nbsp;/gi," ")
+						.replace(/<(?:.|\n)*?>/gm, '').replace(/\n/gm," ")) 
+				+ "\" class='instructions'>&nbsp;</span>";
+        	} else {
+        		return data.displayValue;
+        	}
 			
          }
          return "";
       }
   });	
 
+		
+	
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+	      propertyName : [ "bcpg:lclComments"],
+	      renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+	         if(data.value != null && data.value.length>0){
+				return data.displayValue;
+	         }
+	         return "";
+	      }
+	  });	
+	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : "bcpg:compoListVolume",
 		renderer : function(oRecord, data, label, scope) {
