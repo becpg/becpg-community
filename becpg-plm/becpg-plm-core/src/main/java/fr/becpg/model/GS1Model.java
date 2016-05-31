@@ -28,8 +28,6 @@ public interface GS1Model {
 	/** The Constant MODEL. */
 	QName MODEL = QName.createQName(GS1_URI, "gs1Model");
 
-	QName TYPE_DELIVERY_CHANNEL = QName.createQName(GS1_URI, "DeliveryChannel");
-
 	QName ASPECT_MEASURES_ASPECT = QName.createQName(GS1_URI, "measuresAspect");
 
 	QName PROP_WEIGHT = QName.createQName(GS1_URI, "weight");

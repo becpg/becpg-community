@@ -448,33 +448,37 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 					AssociationDefinition assocDef = (AssociationDefinition) column;
 					String value = values.get(z_idx);
 
-					QName targetClass = ((AttributeMapping) attributeMapping).getTargetClass();
-					logger.debug("importAssociations targetClass" + targetClass);
-					List<NodeRef> targetRefs = findTargetNodesByValue(importContext, assocDef.isTargetMany(),
-							targetClass != null ? targetClass : assocDef.getTargetClass().getName(), value);
+					if (value != null && !value.isEmpty()) {
+						QName targetClass = ((AttributeMapping) attributeMapping).getTargetClass();
+						logger.debug("importAssociations targetClass" + targetClass);
+						List<NodeRef> targetRefs = findTargetNodesByValue(importContext, assocDef.isTargetMany(),
+								targetClass != null ? targetClass : assocDef.getTargetClass().getName(), value);
 
-					// mandatory target not found
-					if (assocDef.isTargetMandatory() && targetRefs.isEmpty()) {
-						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_GET_ASSOC_TARGET, assocDef.getName(), value));
-					}
-
-					// remove associations if needed
-					List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, assocDef.getName());
-					for (AssociationRef assocRef : assocRefs) {
-						NodeRef targetRef = assocRef.getTargetRef();
-						if (targetRefs.contains(targetRef)) {
-							logger.debug("Assoc already present");
-							targetRefs.remove(targetRef);
-						} else {
-							logger.debug("Remove assocs :" + assocDef.getName());
-							nodeService.removeAssociation(nodeRef, targetRef, assocDef.getName());
+						// mandatory target not found
+						if (targetRefs.isEmpty()) {
+							throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_GET_ASSOC_TARGET, assocDef.getName(), value));
 						}
-					}
 
-					// add new associations, the rest
-					for (NodeRef targetRef : targetRefs) {
-						logger.debug("Add assocs :" + assocDef.getName());
-						nodeService.createAssociation(nodeRef, targetRef, assocDef.getName());
+						// remove associations if needed
+						List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, assocDef.getName());
+						for (AssociationRef assocRef : assocRefs) {
+							NodeRef targetRef = assocRef.getTargetRef();
+							if (targetRefs.contains(targetRef)) {
+								logger.debug("Assoc already present");
+								targetRefs.remove(targetRef);
+							} else {
+								logger.debug("Remove assocs :" + assocDef.getName());
+								nodeService.removeAssociation(nodeRef, targetRef, assocDef.getName());
+							}
+						}
+
+						// add new associations, the rest
+						for (NodeRef targetRef : targetRefs) {
+							logger.debug("Add assocs :" + assocDef.getName());
+							nodeService.createAssociation(nodeRef, targetRef, assocDef.getName());
+						}
+					} else if(assocDef.isTargetMandatory()){
+						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_GET_ASSOC_TARGET, assocDef.getName(), value));
 					}
 				}
 			}

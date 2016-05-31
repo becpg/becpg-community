@@ -476,21 +476,23 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	public List<EntityVersion> getAllVersions(NodeRef entityNodeRef) {
 
 		List<EntityVersion> entityVersions = new ArrayList<>();
-		VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
-
-		if (versionHistory != null) {
-			List<ChildAssociationRef> versionAssocs = getVersionAssocs(entityNodeRef);
-
-			NodeRef branchFromNodeRef = getBranchFromNodeRef(entityNodeRef);
-			for (Version version : versionHistory.getAllVersions()) {
-				NodeRef entityVersionNodeRef = getEntityVersion(versionAssocs, version);
-				if (entityVersionNodeRef != null) {
-					EntityVersion entityVersion = new EntityVersion(version, entityNodeRef, entityVersionNodeRef, branchFromNodeRef);
-					if (RepoConsts.INITIAL_VERSION.equals(version.getVersionLabel())) {
-						entityVersion.setCreatedDate((Date) nodeService.getProperty(entityNodeRef, ContentModel.PROP_CREATED));
+		if( !nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_WORKING_COPY)){
+			VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
+	
+			if (versionHistory != null) {
+				List<ChildAssociationRef> versionAssocs = getVersionAssocs(entityNodeRef);
+	
+				NodeRef branchFromNodeRef = getBranchFromNodeRef(entityNodeRef);
+				for (Version version : versionHistory.getAllVersions()) {
+					NodeRef entityVersionNodeRef = getEntityVersion(versionAssocs, version);
+					if (entityVersionNodeRef != null) {
+						EntityVersion entityVersion = new EntityVersion(version, entityNodeRef, entityVersionNodeRef, branchFromNodeRef);
+						if (RepoConsts.INITIAL_VERSION.equals(version.getVersionLabel())) {
+							entityVersion.setCreatedDate((Date) nodeService.getProperty(entityNodeRef, ContentModel.PROP_CREATED));
+						}
+	
+						entityVersions.add(entityVersion);
 					}
-
-					entityVersions.add(entityVersion);
 				}
 			}
 		}

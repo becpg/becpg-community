@@ -136,59 +136,7 @@
             </parameter>
         </constraint>
     </constraints>
-    <types>
-        <type name="gs1:DeliveryChannel">
-            <parent>pub:DeliveryChannel</parent>
-            <properties/>
-            <associations/>
-            <overrides/>
-            <mandatory-aspects>
-                <aspect>gs1:DeliveryChannelAspect</aspect>
-            </mandatory-aspects>
-        </type>
-        <type name="gs1:gs1ParentType">
-            <parent>cm:content</parent>
-            <properties/>
-            <associations/>
-            <overrides/>
-            <mandatory-aspects>
-                <aspect>gs1:gs1Aspect</aspect>
-            </mandatory-aspects>
-        </type>
-    </types>
     <aspects>
-        <aspect name="gs1:DeliveryChannelAspect">
-            <properties>
-                <property name="gs1:gln">
-                    <type>d:text</type>
-                    <mandatory>true</mandatory>
-                    <index enabled="true">
-                        <atomic>false</atomic>
-                        <stored>false</stored>
-                        <tokenised>TRUE</tokenised>
-                    </index>
-                </property>
-                <property name="gs1:catalogId">
-                    <type>d:text</type>
-                    <mandatory>true</mandatory>
-                    <index enabled="true">
-                        <atomic>false</atomic>
-                        <stored>false</stored>
-                        <tokenised>TRUE</tokenised>
-                    </index>
-                </property>
-            </properties>
-            <associations/>
-            <overrides/>
-            <mandatory-aspects/>
-        </aspect>
-        <aspect name="gs1:AssetAspect">
-            <parent>pub:AssetAspect</parent>
-            <properties/>
-            <associations/>
-            <overrides/>
-            <mandatory-aspects/>
-        </aspect>
         <aspect name="gs1:measuresAspect">
             <properties>
             	<property name="gs1:productHierarchy1">

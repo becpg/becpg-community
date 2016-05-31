@@ -259,6 +259,10 @@
 				<evaluator>evaluator.becpg.doclib.action.entity</evaluator>
 			</action>
 			
+         <action id="datalist-copy-to" type="javascript" label="actions.datalist.copy-to">
+            <param name="function">onActionCopyDataListTo</param>
+            <evaluator>evaluator.doclib.action.editableByCurrentUser</evaluator>
+         </action>
 			
 
 		</actions>
@@ -300,6 +304,7 @@
 				<action index="114" id="document-approve" icon="document-approve" />
 				<action index="120" id="document-reject" icon="document-reject" />
 				<action index="130" id="document-copy-to" icon="folder-copy-to" label="actions.folder.copy-to" />
+				<action index="131" id="datalist-copy-to" icon="folder-copy-to" label="actions.datalist.copy-to" />
 				<action index="140" id="document-move-to" icon="folder-move-to" label="actions.folder.move-to" />
 				<action index="150" id="folder-manage-rules" />
 				<action index="151" id="entity-wused" />
