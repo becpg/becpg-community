@@ -17,7 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.product.data.productList;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -48,11 +48,11 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	
 	private Double volumeQtyPerc;
 	
-	private List<NodeRef> geoOrigin = new ArrayList<>();
+	private List<NodeRef> geoOrigin = new LinkedList<>();
 	
-	private List<NodeRef> geoTransfo = new ArrayList<>();
+	private List<NodeRef> geoTransfo = new LinkedList<>();
 	
-	private List<NodeRef> bioOrigin = new ArrayList<>();
+	private List<NodeRef> bioOrigin = new LinkedList<>();
 	
 	private Boolean isGMO = false;
 	

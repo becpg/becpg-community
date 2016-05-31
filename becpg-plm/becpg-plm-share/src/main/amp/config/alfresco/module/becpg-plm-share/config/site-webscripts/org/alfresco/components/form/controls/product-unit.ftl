@@ -88,18 +88,22 @@
 				var val = Dom.get("${fieldHtmlId}").value;
 						if(YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_netWeight")!=null){
 								if(val == "kg" || val == "g"){
-								    YAHOO.util.Dom.addClass(YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_netWeight").parentNode,"hidden");
+								   	YAHOO.util.Dom.addClass(YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_netWeight").parentNode,"hidden");
 								    YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_netWeight").value = "";
-								    YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_netWeight-val").value = "";
+									if(YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_netWeight-val")!=null){
+									   YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_netWeight-val").value = "";
+									}
 								 } else {
-					         		YAHOO.util.Dom.removeClass(YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_netWeight").parentNode,"hidden");
+					         			YAHOO.util.Dom.removeClass(YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_netWeight").parentNode,"hidden");
 					         	}
 			         	}
 			         	if(YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_netVolume")!=null){
 				         	if(val != "P"){
 							    YAHOO.util.Dom.addClass(YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_netVolume").parentNode,"hidden");
 							    YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_netVolume").value = "";
-							    YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_netVolume-val").value = "";
+							    if(YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_netVolume-val")!=null){
+							    	YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_netVolume-val").value = "";
+							    }
 							 } else {
 				         		YAHOO.util.Dom.removeClass(YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_netVolume").parentNode,"hidden");
 				         	}

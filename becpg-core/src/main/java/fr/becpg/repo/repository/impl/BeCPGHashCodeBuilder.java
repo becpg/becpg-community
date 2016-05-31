@@ -20,6 +20,7 @@ package fr.becpg.repo.repository.impl;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.alfresco.service.namespace.QName;
@@ -228,9 +229,13 @@ public class BeCPGHashCodeBuilder {
 
 			if (object instanceof AspectAwareDataItem 
 					&& ((AspectAwareDataItem) object).getAspects() != null) {
+					int tmp = 0;
 					for (QName aspect : ((AspectAwareDataItem) object).getAspects()) {
-						builder.append(aspect);
+						if(aspect!=null){
+							tmp+=aspect.hashCode();
+						}
 					}
+					builder.append(tmp);
 			}
 
 		} finally {
@@ -258,7 +263,7 @@ public class BeCPGHashCodeBuilder {
 					builder1.append(fieldValue);
 					builder2.append(fieldValue2);
 
-					if (builder1.hashCode() != builder2.hashCode()) {
+					if (fieldValue!=null && fieldValue2!=null && fieldValue.hashCode() != fieldValue2.hashCode()) {
 						ret += pd.getName() + " " + builder1.hashCode() + " " + builder2.hashCode() + "\n";
 
 						if (fieldValue != null) {
@@ -272,6 +277,42 @@ public class BeCPGHashCodeBuilder {
 				}
 			}
 		}
+
+		if(!obj1.getNodeRef().equals(obj2.getNodeRef())){
+			ret += "nodeRef differs\n";
+		}
+		
+		int tmp1 = 0;
+		int tmp2 = 0;
+		if (obj1 instanceof AspectAwareDataItem 
+				&& ((AspectAwareDataItem) obj1).getAspects() != null) {
+			for (QName aspect : ((AspectAwareDataItem) obj1).getAspects()) {
+				if(aspect!=null){
+					tmp1+=aspect.hashCode();
+				}
+			}
+		}
+		
+		if (obj2 instanceof AspectAwareDataItem 
+				&& ((AspectAwareDataItem) obj2).getAspects() != null) {
+			for (QName aspect : ((AspectAwareDataItem) obj2).getAspects()) {
+				if(aspect!=null){
+					tmp2+=aspect.hashCode();
+				}
+			}
+		}
+		
+		if(tmp1!=tmp2){
+			ret += "Aspect differs:\n";
+			if (((AspectAwareDataItem) obj1).getAspects() != null) {
+				ret += " ----" + ((AspectAwareDataItem) obj1).getAspects().toString() + "\n";
+			}
+			if (((AspectAwareDataItem) obj2).getAspects() != null) {
+				ret += " ----" + ((AspectAwareDataItem) obj2).getAspects().toString()  + "\n";
+			}
+		}
+		
+		
 		return ret;
 	}
 
@@ -663,7 +704,15 @@ public class BeCPGHashCodeBuilder {
 			} else {
 				if (object instanceof RepositoryEntity) {
 					iTotal = iTotal * iConstant + BeCPGHashCodeBuilder.reflectionHashCode((RepositoryEntity) object);
-				} else {
+				} else if  (object instanceof List) {
+					int tmp = 0;
+					for(Object el : (List<?>)(object)){
+						if(el!=null){
+							tmp+=el.hashCode();
+						}
+					}
+					iTotal = iTotal * iConstant + tmp;
+				}	else {
 					iTotal = iTotal * iConstant + object.hashCode();
 				}
 			}
