@@ -211,7 +211,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		
 		//NutDatabases
 		visitFolder(systemNodeRef, PlmRepoConsts.PATH_NUT_DATABASES);
-		System.out.println("Visiting nut databases folder");
 	}
 
 	/**
