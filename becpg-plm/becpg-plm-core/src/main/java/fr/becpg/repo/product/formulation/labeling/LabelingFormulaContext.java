@@ -342,11 +342,13 @@ public class LabelingFormulaContext {
 	}
 
 	public String getLegalIngName(AbstractLabelingComponent lblComponent){
+		String ingLegalName = lblComponent.getLegalName(I18NUtil.getLocale());
+		
 		if (renameRules.containsKey(lblComponent.getNodeRef())) {
-			return renameRules.get(lblComponent.getNodeRef()).getValue(I18NUtil.getLocale());
+			ingLegalName = renameRules.get(lblComponent.getNodeRef()).getClosestValue(I18NUtil.getLocale());
 		}
 		
-		return lblComponent.getLegalName(I18NUtil.getLocale());
+		return ingLegalName;
 	}
 	
 	
@@ -355,7 +357,7 @@ public class LabelingFormulaContext {
 		String ingLegalName = lblComponent.getLegalName(I18NUtil.getLocale());
 		
 		if (renameRules.containsKey(lblComponent.getNodeRef())) {
-			ingLegalName = renameRules.get(lblComponent.getNodeRef()).getValue(I18NUtil.getLocale());
+			ingLegalName = renameRules.get(lblComponent.getNodeRef()).getClosestValue(I18NUtil.getLocale());
 		} else {
 
 			if (plural && (lblComponent instanceof IngTypeItem)) {

@@ -734,6 +734,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		if ((dataItem.getPkgLevel() != null) && (dataItem.getQty() != null) && (dataItem.getPackagingListUnit() != null)) {
 			partElt.addAttribute(PLMModel.PROP_PACKAGINGLIST_QTY.getLocalName(), Double.toString(dataItem.getQty() * sfQty));
 			double qty = dataItem.getPackagingListUnit().equals(PackagingListUnit.PP) ? 1 : dataItem.getQty();
+			if(PackagingListUnit.g.equals(dataItem.getPackagingListUnit()) ){
+				qty = qty/1000;
+			}
 			if (dataItem.getPkgLevel().equals(PackagingLevel.Primary)) {				
 				partElt.addAttribute(ATTR_PACKAGING_QTY_FOR_PRODUCT, Double.toString(qty * sfQty));				
 			} else if (dataItem.getPkgLevel().equals(PackagingLevel.Secondary)
