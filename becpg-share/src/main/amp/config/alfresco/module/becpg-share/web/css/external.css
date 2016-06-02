@@ -71,103 +71,10 @@
 }
 
 
-
 #template_x002e_documentlist_v2_x002e_myfiles_x0023_default-actions-yui-rec65 .document-delete {
     display: none;
 }
 
-
-
-#alf-id137 {
-    display: none;
-}
-#yui-gen192 {
-    display: none;
-}
-#yui-gen197 {
-    display: none;
-}
-#yui-gen199 {
-    display: none;
-}
-
-#onActionEditOffline {
-    display: none;
-}
-#onActionCopyTo {
-    display: none;
-}
-#onActionMoveTo {
-    display: none;
-}
-#onActionDelete {
-
-}
-#onActionAssignWorkflow {
-    display: none;
-}
-#yui-gen257 {
-    display: none;
-}
-#onActionOpenInJavascriptConsole {
-    display: none;
-}
-
-#template_x002e_node-header_x002e_document-details_x0023_default-quickshare {
-    display: none;
-}
-
-#template_x002e_document-tags_x002e_document-details_x0023_default-body {
-    display: none;
-}
-
-#template_x002e_document-links_x002e_document-details_x0023_default-body {
-    display: none;
-}
-
-#template_x002e_document-workflows_x002e_document-details_x0023_default-body{
-    display: none;
-}
-
-.document-view-content{
-    display: none;
-}
-.document-edit-metadata{
-    display: none;
-}
-.document-edit-offline{
-    display: none;
-}
-.document-copy-to{
-    display: none;
-}
-.document-move-to{
-    display: none;
-}
-.document-delete{
-
-}
-.document-assign-workflow{
-    display: none;
-}
-.document-manage-granular-permissions{
-    display: none;
-}
-.document-manage-aspects{
-    display: none;
-}
-
-.document-change-type{
-    display: none;
-}
-
-.de_fme_jsconsole-open-in-jsconsole{
-    display: none;
-}
-
-.entity-branches {
-    display: none;
-}
 #template_x002e_document-versions_x002e_entity-data-lists_x0023_default-body {
     display: none;
 }
@@ -176,35 +83,15 @@
     display: none;
 }
 
-.document-manage-repo-permissions{
-    display: none;
-}
-
-.document-edit-properties{
-    display: none;
-}
 
 #page_x002e_data-form_x002e_task-details_x0023_default_assoc_packageItems-cntrl {
     display: none;
 }
 
 
-.entity-manage-repo-permissions {
-    display: none;
-}
-
-.document-manage-aspects{
-	display:none;
-}
-
-.folder-manage-rules {
-	display:none;
-}
-
 label[for="page_x002e_data-form_x002e_task-edit_x0023_default_assoc_packageItems-cntrl"] {
     display: none!important;
 }
-
 
 
 #alf-id137 {
@@ -220,27 +107,11 @@ label[for="page_x002e_data-form_x002e_task-edit_x0023_default_assoc_packageItems
     display: none;
 }
 
-#onActionEditOffline {
-    display: none;
-}
-#onActionCopyTo {
-    display: none;
-}
-#onActionMoveTo {
-    display: none;
-}
-#onActionDelete {
-    display: none;
-}
-#onActionAssignWorkflow {
-    display: none;
-}
 #yui-gen257 {
     display: none;
 }
-#onActionOpenInJavascriptConsole {
-    display: none;
-}
+
+
 
 #template_x002e_node-header_x002e_document-details_x0023_default-quickshare {
     display: none;
@@ -258,45 +129,6 @@ label[for="page_x002e_data-form_x002e_task-edit_x0023_default_assoc_packageItems
     display: none;
 }
 
-.document-view-content{
-    display: none;
-}
-.document-edit-metadata{
-    display: none;
-}
-.document-edit-offline{
-    display: none;
-}
-.document-copy-to{
-    display: none;
-}
-.document-move-to{
-    display: none;
-}
-.document-delete{
-    display: none;
-}
-.document-assign-workflow{
-    display: none;
-}
-.document-manage-granular-permissions{
-    display: none;
-}
-.document-manage-aspects{
-    display: none;
-}
-
-.document-change-type{
-    display: none;
-}
-
-.de_fme_jsconsole-open-in-jsconsole{
-    display: none;
-}
-
-.entity-branches {
-    display: none;
-}
 #template_x002e_document-versions_x002e_entity-data-lists_x0023_default-body {
     display: none;
 }
@@ -305,16 +137,55 @@ label[for="page_x002e_data-form_x002e_task-edit_x0023_default_assoc_packageItems
     display: none;
 }
 
-.document-manage-repo-permissions{
+
+
+#onActionEditOffline ,
+#onActionCopyTo ,
+#onActionMoveTo ,
+#onActionDelete ,
+#onActionAssignWorkflow,
+#onGoogledocsActionEdit {
     display: none;
 }
 
+
+
+.entity-manage-repo-permissions,
+.entity-branches,
+.document-manage-aspects,
+.folder-manage-rules,
+.document-view-content,
+.document-edit-metadata,
+.document-edit-offline,
+.document-copy-to,
+.document-move-to,
+.document-delete,
+.document-assign-workflow,
+.document-manage-granular-permissions,
+.document-manage-aspects,
+.document-change-type,
+.document-manage-repo-permissions,
 .document-edit-properties{
     display: none;
 }
 
+#onActionDelete.document-delete {
+	display: inherit ;
+}
 
-/* .datagrid-bar {
+.more-actions > #onActionDelete.document-delete {
+	display: none;
+}
+
+
+#onActionOpenInJavascriptConsole {
     display: none;
 }
- */
+
+
+.de_fme_jsconsole-open-in-jsconsole{
+    display: none;
+}
+
+
+
