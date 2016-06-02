@@ -125,6 +125,9 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	}
 	
 	
+	public void setEntityListDAO(EntityListDAO entityListDAO) {
+		this.entityListDAO = entityListDAO;
+	}
 
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
@@ -192,11 +195,14 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	}
 	
 	public ScriptNode createBranch(ScriptNode entity, ScriptNode parent, boolean setAutoMerge) {
+		NodeRef branchNodeRef = entityVersionService.createBranch(entity.getNodeRef(), parent.getNodeRef());
+		
+		
 		if(setAutoMerge){
-			associationService.update(entity.getNodeRef(), BeCPGModel.ASSOC_AUTO_MERGE_TO, entity.getNodeRef());
+			associationService.update(branchNodeRef, BeCPGModel.ASSOC_AUTO_MERGE_TO, entity.getNodeRef());
 		}
 		
-		return new ScriptNode(entityVersionService.createBranch(entity.getNodeRef(), parent.getNodeRef()), serviceRegistry);
+		return new ScriptNode(branchNodeRef, serviceRegistry);
 	}
 	
 
