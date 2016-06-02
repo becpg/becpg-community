@@ -28,6 +28,7 @@ import java.util.regex.Pattern;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.admin.SysAdminParams;
 import org.alfresco.repo.forum.CommentService;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authority.AuthorityDAO;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -364,10 +365,14 @@ public class ProjectServiceImpl implements ProjectService {
 	public void runScript(ProjectData project, TaskListDataItem task, NodeRef scriptNode) {
 
 		if (scriptNode != null && nodeService.exists(scriptNode)) {
+			
+			String userName = AuthenticationUtil.getFullyAuthenticatedUser();
+			
 			Map<String, Object> model = new HashMap<>();
 
 			logger.debug("Run task script " );
 
+			model.put("currentUser", userName);
 			model.put("task", task);
 			model.put("project", project);
 			model.put("shareUrl", sysAdminParams.getShareProtocol() + "://" + sysAdminParams.getShareHost() + ":" + sysAdminParams.getSharePort()
