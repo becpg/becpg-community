@@ -21,8 +21,9 @@ import java.io.Serializable;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -38,6 +39,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -202,11 +204,13 @@ public class EntityListDAOImpl implements EntityListDAO {
 	@Override
 	public List<NodeRef> getListItems(NodeRef dataListNodeRef, QName dataType) {
 
-		Map<String, Boolean> sortMap = new LinkedHashMap<>();
-		sortMap.put("@bcpg:sort", true);
-		sortMap.put("@cm:created", true);
+		// Map<String, Boolean> sortMap = new LinkedHashMap<>();
+		// sortMap.put("@bcpg:sort", true);
+		// sortMap.put("@cm:created", true);
+		//
+		// return getListItems(dataListNodeRef, dataType, sortMap);
 
-		return getListItems(dataListNodeRef, dataType, sortMap);
+		return getListItemsV2(dataListNodeRef, dataType);
 	}
 
 	@Override
@@ -222,6 +226,64 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 		return queryBuilder.childFileFolders(new PagingRequest(5000, null)).getPage();
 
+	}
+
+	
+	private List<NodeRef> getListItemsV2(final NodeRef listNodeRef, final QName listQNameFilter) {
+
+		List<NodeRef> ret = associationService.getChildAssocs(listNodeRef, ContentModel.ASSOC_CONTAINS);
+		if (listQNameFilter != null) {
+			CollectionUtils.filter(ret, object -> {
+
+//				if (!nodeService.exists((NodeRef) object)) {
+//					return false;
+//				}
+
+				if ((object != null) && (object instanceof NodeRef) && nodeService.getType((NodeRef) object).equals(listQNameFilter)) {
+					return true;
+				}
+
+				return false;
+			});
+		}
+
+		Collections.sort(ret, (o1, o2) -> {
+
+			Integer sort1 = (Integer) nodeService.getProperty(o1, BeCPGModel.PROP_SORT);
+			Integer sort2 = (Integer) nodeService.getProperty(o2, BeCPGModel.PROP_SORT);
+
+			if (sort1 == sort2) {
+
+				Date created1 = (Date) nodeService.getProperty(o1, ContentModel.PROP_CREATED);
+				Date created2 = (Date) nodeService.getProperty(o2, ContentModel.PROP_CREATED);
+
+				if (created1 == created2) {
+					return 0;
+				}
+
+				if (created1 == null) {
+					return -1;
+				}
+
+				if (created2 == null) {
+					return 1;
+				}
+
+				return created1.compareTo(created2);
+			}
+
+			if (sort1 == null) {
+				return -1;
+			}
+
+			if (sort2 == null) {
+				return 1;
+			}
+
+			return sort1.compareTo(sort2);
+		});
+
+		return ret;
 	}
 
 	@Override
