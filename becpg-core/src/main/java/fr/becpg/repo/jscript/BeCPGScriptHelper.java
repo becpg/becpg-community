@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2016 beCPG.
+ * Copyright (C) 2010-2015 beCPG.
  *
  * This file is part of beCPG
  *
@@ -57,9 +57,9 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	private NamespaceService namespaceService;
 
 	private DictionaryService dictionaryService;
-	
+
 	private EntityVersionService entityVersionService;
-	
+
 	private ServiceRegistry serviceRegistry;
 
 	public void setOlapService(OlapService olapService) {
@@ -89,15 +89,15 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
-	
+
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
 	}
-	
+
 	public void setEntityVersionService(EntityVersionService entityVersionService) {
 		this.entityVersionService = entityVersionService;
 	}
-	
+
 	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
 		this.serviceRegistry = serviceRegistry;
 	}
@@ -163,7 +163,55 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		return olapService.getSSOUrl();
 	}
 	
-	public ScriptNode createBranch(ScriptNode entity, ScriptNode parent){
-		return new ScriptNode(entityVersionService.createBranch(entity.getNodeRef(), parent.getNodeRef()), serviceRegistry);
+	public ScriptNode createBranch(ScriptNode entity, ScriptNode parent, boolean setAutoMerge) {
+		NodeRef branchNodeRef = entityVersionService.createBranch(entity.getNodeRef(), parent.getNodeRef());
+		
+		
+		if(setAutoMerge){
+			associationService.update(branchNodeRef, BeCPGModel.ASSOC_AUTO_MERGE_TO, entity.getNodeRef());
+		}
+		
+		return new ScriptNode(branchNodeRef, serviceRegistry);
 	}
+	
+
+	public ScriptNode createBranch(ScriptNode entity, ScriptNode parent) {
+		return createBranch(entity,parent,false);
+	}
+
+	public ScriptNode mergeBranch(ScriptNode entity, ScriptNode branchTo, String description, String type) {
+
+		NodeRef nodeRef = entity.getNodeRef();
+		NodeRef branchToNodeRef = null;
+		
+		if(branchTo!=null){
+			branchToNodeRef = branchTo.getNodeRef();
+		} else {
+			branchToNodeRef = associationService.getTargetAssoc(entity.getNodeRef(), BeCPGModel.ASSOC_AUTO_MERGE_TO);
+		}
+
+		VersionType versionType = VersionType.valueOf(type);
+
+		entityVersionService.prepareBranchBeforeMerge(nodeRef, branchToNodeRef);
+
+		Map<String, Serializable> properties = new HashMap<>();
+		properties.put(VersionBaseModel.PROP_VERSION_TYPE, versionType);
+		properties.put(Version.PROP_DESCRIPTION, description);
+
+		return new ScriptNode(checkOutCheckInService.checkin(nodeRef, properties), serviceRegistry);
+	}
+
+	public boolean changeEntityListStates(ScriptNode entity, String state) {
+
+		NodeRef listContainerNodeRef = entityListDAO.getListContainer(entity.getNodeRef());
+
+		if (listContainerNodeRef != null) {
+			for (NodeRef listNodeRef : entityListDAO.getExistingListsNodeRef(listContainerNodeRef)) {
+				mlNodeService.setProperty(listNodeRef, BeCPGModel.PROP_ENTITYLIST_STATE, SystemState.valueOf(state));
+			}
+		}
+
+		return true;
+	}
+
 }

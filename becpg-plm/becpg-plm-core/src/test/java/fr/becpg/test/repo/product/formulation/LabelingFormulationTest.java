@@ -638,7 +638,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format,
 				Arrays.asList(rawMaterial1NodeRef, rawMaterial2NodeRef), null));
 
-		labelingRuleList.add(new LabelingRuleListDataItem("Aggregate 1", null, LabelingRuleType.Rename, Arrays.asList(rawMaterial1NodeRef),
+		labelingRuleList.add(new LabelingRuleListDataItem("Rename 1", null, LabelingRuleType.Rename, Arrays.asList(rawMaterial1NodeRef),
 				Collections.singletonList(rawMaterial2NodeRef)));
 
 		checkILL(finishedProductNodeRef1, labelingRuleList, "legal Raw material 2 (<b>allergen1</b>) 100%", Locale.FRENCH);

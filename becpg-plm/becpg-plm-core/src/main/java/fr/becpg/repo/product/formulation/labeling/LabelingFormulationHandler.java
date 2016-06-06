@@ -296,14 +296,14 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		for (AbstractLabelingComponent component : parent.getIngList().values()) {
 			List<AbstractLabelingComponent> tmp = new ArrayList<>();
 			String name = labelingFormulaContext.getLegalIngName(component);
-
-			if (componentsByName.containsKey(name)) {
-				tmp = componentsByName.get(name);
+			if(name!=null && !name.isEmpty()){
+				if (componentsByName.containsKey(name)) {
+					tmp = componentsByName.get(name);
+				}
+				tmp.add(component);
+	
+				componentsByName.put(name, tmp);
 			}
-			tmp.add(component);
-
-			componentsByName.put(name, tmp);
-
 			if (multiLevel && (component instanceof CompositeLabeling)) {
 				aggregateLegalName((CompositeLabeling) component, labelingFormulaContext, multiLevel);
 			}
