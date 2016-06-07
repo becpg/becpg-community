@@ -18,7 +18,7 @@
 <webscript>
 	<shortname>Nut Database Import</shortname>
 	<description>Imports nutrients and raw materials from csv files</description>	
-	<url>/becpg/product/nutdatabaseimport?dest={dest}</url>
+	<url>/becpg/product/nutdatabaseimport?dest={dest}&amp;onlyNuts={onlyNuts}</url>
 	<format default="json">argument</format>
 	<authentication>user</authentication>
 	<transaction allow="readwrite" buffersize="0">required</transaction>
