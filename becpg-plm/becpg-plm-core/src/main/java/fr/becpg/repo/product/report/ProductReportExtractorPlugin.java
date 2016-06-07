@@ -62,7 +62,6 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.variant.model.VariantData;
 
 //TODO use annotation on product data instead
-@Deprecated
 @Service
 public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
