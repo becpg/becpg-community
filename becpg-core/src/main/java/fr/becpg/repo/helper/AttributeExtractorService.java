@@ -73,9 +73,6 @@ public interface AttributeExtractorService {
 	String[] getTags(NodeRef nodeRef);
 
 	String extractPropertyForReport(PropertyDefinition propertyDef, Serializable value, PropertyFormats propertyFormats, boolean formatData);
-
-	String extractAssociationsForReport(List<AssociationRef> assocRefs, QName propertyName);
-
 	
 	String extractMetadata(QName type, NodeRef entityNodeRef);
 
