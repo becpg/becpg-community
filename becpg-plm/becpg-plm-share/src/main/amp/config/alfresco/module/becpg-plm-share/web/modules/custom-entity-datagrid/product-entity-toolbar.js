@@ -504,7 +504,7 @@ YAHOO.Bubbling
                	
                	nutImporter.setOptions({
                    width : this.options.formWidth,
-                   templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/entity-importer/entity-importer",
+                   templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/entity-importer/entity-importer?onlyNuts=true",
                    actionUrl : Alfresco.constants.PROXY_URI + "becpg/product/nutdatabaseimport?dest="+ this.options.entityNodeRef+"&onlyNuts=true",
                    validateOnSubmit : false,
                    firstFocus : this.id + "-entityImporter-supplier-field",
@@ -519,12 +519,12 @@ YAHOO.Bubbling
                    onSuccess : {
                       fn : function FormulationView_onActionEntityImport_success(response) {
                          if (response.json) {
-                            for(var i in response.json) {
-                            	this.addToDataList(response.json[i], "message.rapid-link.nutrient-import.success");
-                            }
-                            
+                        	 YAHOO.Bubbling.fire("metadataRefresh");
+                        	 Alfresco.util.PopupManager.displayMessage({
+                                 text : this.msg("message.rapid-link.nutrient-import.success")
+                              });
                          }
-                         YAHOO.Bubbling.fire("refreshDataGrids");
+//                         YAHOO.Bubbling.fire("refreshDataGrids");
                       },
                       scope : this
                    },
@@ -537,6 +537,7 @@ YAHOO.Bubbling
                       scope : this
                    }
                 });
+               	
                	nutImporter.show();
                    
                	

@@ -99,7 +99,7 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 		List<IdentifiedValue> matches = new ArrayList<>();
 		logger.debug("databaseNR: "+databaseNR);
 		
-		if (databaseNR != null) {
+		if (databaseNR != null && !databaseNR.isEmpty()) {
 			NodeRef dataBaseFile = new NodeRef(databaseNR);
 			String[] headerRow = getHeaderRow(dataBaseFile);
 
@@ -131,7 +131,7 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 				NodeRef nutNodeRef = getNutNodeRef(headerRow[i]);
 				if (nutNodeRef != null) {
 					try {
-						String nutValueToken = formatNutString(values[i]);
+						String nutValueToken = values[i];
 						Number nutValue = null;
 						if (nutValueToken != null) {
 							nutValue = propertyFormats.parseDecimal(nutValueToken);
@@ -396,23 +396,13 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 		}
 	}
 
-	public boolean nameMatches(String query, String name) {
+	private boolean nameMatches(String query, String name) {
 		return BeCPGQueryHelper.isQueryMatch(query, name, dictionaryDAO);
 	}
 	
-	public boolean isInDictionary(String str){
+	private boolean isInDictionary(String str){
 			return (dictionaryDAO.getProperty(QName.createQName(str, NamespaceService)) != null 
 					|| dictionaryDAO.getAssociation(QName.createQName(str, NamespaceService)) != null) ;
-	}
-
-	private String formatNutString(String numberString) {
-		if ("traces".equals(numberString) || (numberString == null) || numberString.isEmpty()) {
-			return null;
-		} else if (numberString.contains("<")) {
-			return numberString.replace("<", "").trim();
-		} else {
-			return numberString.trim();
-		}
 	}
 	
 	private String extractValueById(NodeRef file, String id, int column){
