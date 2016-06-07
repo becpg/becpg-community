@@ -155,7 +155,7 @@
 			  <entry key="fr.becpg.repo.security.SecurityService" value="10" />
 			  <entry key="fr.becpg.repo.entity.version.EntityVersionService" value="10" />
 			  <entry key="fr.becpg.repo.helper.AttributeExtractorService" value="500" />
-			  <entry key="fr.becpg.repo.helper.AssociationService.childs" value="2000" />
+			  <entry key="fr.becpg.repo.helper.AssociationService.childs" value="10000" />
 			  <entry key="fr.becpg.repo.helper.AssociationService.assocs" value="200000" />
 			  <entry key="fr.becpg.repo.jscript.Thumbnail" value="20" />
 			</map>

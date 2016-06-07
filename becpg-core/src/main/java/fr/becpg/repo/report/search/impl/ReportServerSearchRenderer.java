@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
@@ -37,6 +38,7 @@ import fr.becpg.config.mapping.MappingException;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
 import fr.becpg.repo.report.search.SearchReportRenderer;
@@ -70,6 +72,9 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 
 	@Autowired
 	private EntityService entityService;
+	
+	@Autowired
+	private AssociationService associationService;
 
 	@Autowired
 	private AttributeExtractorService attributeExtractorService;
@@ -293,7 +298,16 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 						exportSearchCtx.getPropertyFormats(), false);
 
 			} else if (attribute instanceof AssociationDefinition) {
-				return attributeExtractorService.extractAssociationsForReport(nodeService.getTargetAssocs(nodeRef, attribute.getName()), null);
+				
+				
+				List<NodeRef> assocNodes = associationService.getTargetAssocs(nodeRef, attribute.getName());
+
+				if ((assocNodes != null) && !assocNodes.isEmpty()) {
+					return  assocNodes.stream().map(i -> attributeExtractorService.extractPropName(i))
+							.collect(Collectors.joining(RepoConsts.LABEL_SEPARATOR));
+
+				}
+				
 			}
 		}
 

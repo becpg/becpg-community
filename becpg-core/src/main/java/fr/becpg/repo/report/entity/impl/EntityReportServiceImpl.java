@@ -50,6 +50,7 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.extensions.surf.util.I18NUtil;
@@ -150,7 +151,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 				return transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, false, false);
 			};
 			AuthenticationUtil.runAsSystem(actionRunAs);
-		} , false, true);
+		}, false, true);
 	}
 
 	private void generateReportImpl(NodeRef entityNodeRef) {
@@ -181,13 +182,27 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	@Override
 	public String getXmlReportDataSource(NodeRef entityNodeRef) {
-		EntityReportData reportData = retrieveExtractor(entityNodeRef).extract(entityNodeRef);
 
-		return reportData.getXmlDataSource().asXML();
+		StopWatch watch = null;
+		try {
+			if (logger.isDebugEnabled()) {
+				watch = new StopWatch();
+				watch.start();
+			}
+
+			EntityReportData reportData = retrieveExtractor(entityNodeRef).extract(entityNodeRef);
+
+			return reportData.getXmlDataSource().asXML();
+		} finally {
+			if (logger.isDebugEnabled()) {
+				watch.stop();
+				logger.debug("XmlReportDataSource generated in  " + watch.getTotalTimeSeconds() + " seconds for node " + entityNodeRef);
+			}
+		}
 	}
 
 	@Override
-	public  EntityReportExtractorPlugin retrieveExtractor(NodeRef entityNodeRef) {
+	public EntityReportExtractorPlugin retrieveExtractor(NodeRef entityNodeRef) {
 		QName type = nodeService.getType(entityNodeRef);
 
 		EntityReportExtractorPlugin ret = null;
@@ -264,64 +279,88 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 			I18NUtil.setLocale(locale);
 
+			StopWatch watch = null;
+			if (logger.isDebugEnabled()) {
+				watch = new StopWatch();
+				watch.start();
+			}
+
 			EntityReportData reportData = retrieveExtractor(entityNodeRef).extract(entityNodeRef);
 
-			// generate reports
-			for (final NodeRef tplNodeRef : tplsNodeRef) {
+			if (logger.isDebugEnabled()) {
+				watch.stop();
+				logger.debug(
+						"Extract report data in  " + watch.getTotalTimeSeconds() + " seconds for node " + entityNodeRef + " and locale " + locale);
+			}
 
-				if (reportData.getXmlDataSource() == null) {
-					throw new IllegalArgumentException("nodeElt is null");
-				}
+			Element xmlDataSource = reportData.getXmlDataSource();
+
+			if (xmlDataSource == null) {
+				throw new IllegalArgumentException("nodeElt is null");
+			}
+
+			tplsNodeRef.stream().parallel().forEach(tplNodeRef -> {
 				if (isLocaleEnableOnTemplate(tplNodeRef, locale)) {
-					// prepare
-					String reportFormat = (String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
-					String documentName = getReportDocumentName(entityNodeRef, tplNodeRef, reportFormat, locale);
-
-					NodeRef documentNodeRef = getReportDocumenNodeRef(entityNodeRef, tplNodeRef, documentName);
-
-					if (documentNodeRef != null) {
-						// Run report
+					RetryingTransactionCallback<Object> actionCallback = () -> {
 						try {
-							policyBehaviourFilter.disableBehaviour(documentNodeRef, ContentModel.ASPECT_AUDITABLE);
+							policyBehaviourFilter.disableBehaviour(entityNodeRef);
+							// prepare
+							String reportFormat = (String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
+							String documentName = getReportDocumentName(entityNodeRef, tplNodeRef, reportFormat, locale);
 
-							ContentWriter writer = contentService.getWriter(documentNodeRef, ContentModel.PROP_CONTENT, true);
+							NodeRef documentNodeRef = getReportDocumenNodeRef(entityNodeRef, tplNodeRef, documentName);
 
-							if (writer != null) {
-								String mimetype = mimetypeService.guessMimetype(documentName);
-								writer.setMimetype(mimetype);
-								Map<String, Object> params = new HashMap<>();
+							if (documentNodeRef != null) {
+								// Run report
+								try {
+									policyBehaviourFilter.disableBehaviour(documentNodeRef, ContentModel.ASPECT_AUDITABLE);
 
-								params.put(ReportParams.PARAM_IMAGES, reportData.getDataObjects());
-								params.put(ReportParams.PARAM_FORMAT, ReportFormat.valueOf(reportFormat));
-								params.put(ReportParams.PARAM_LANG, locale.getLanguage());
-								params.put(ReportParams.PARAM_ASSOCIATED_TPL_FILES,
-										associationService.getTargetAssocs(tplNodeRef, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES));
+									ContentWriter writer = contentService.getWriter(documentNodeRef, ContentModel.PROP_CONTENT, true);
 
-								logger.debug("beCPGReportEngine createReport: " + entityNodeRef);
+									if (writer != null) {
+										String mimetype = mimetypeService.guessMimetype(documentName);
+										writer.setMimetype(mimetype);
+										Map<String, Object> params = new HashMap<>();
 
-								beCPGReportEngine.createReport(tplNodeRef, new ByteArrayInputStream(reportData.getXmlDataSource().asXML().getBytes()),
-										writer.getContentOutputStream(), params);
+										params.put(ReportParams.PARAM_IMAGES, reportData.getDataObjects());
+										params.put(ReportParams.PARAM_FORMAT, ReportFormat.valueOf(reportFormat));
+										params.put(ReportParams.PARAM_LANG, locale.getLanguage());
+										params.put(ReportParams.PARAM_ASSOCIATED_TPL_FILES,
+												associationService.getTargetAssocs(tplNodeRef, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES));
 
-								nodeService.setProperty(documentNodeRef, ContentModel.PROP_MODIFIED, new Date());
+										logger.debug("beCPGReportEngine createReport: " + entityNodeRef);
 
-								if (!Locale.getDefault().getLanguage().equals(locale.getLanguage())) {
-									nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_LOCALES, locale.getLanguage());
+										beCPGReportEngine.createReport(tplNodeRef, new ByteArrayInputStream(xmlDataSource.asXML().getBytes()),
+												writer.getContentOutputStream(), params);
+
+										nodeService.setProperty(documentNodeRef, ContentModel.PROP_MODIFIED, new Date());
+
+										if (!Locale.getDefault().getLanguage().equals(locale.getLanguage())) {
+											nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_LOCALES, locale.getLanguage());
+										}
+
+									}
+
+								} catch (ReportException e) {
+									logger.error("Failed to execute report for template : " + tplNodeRef, e);
+								} finally {
+									policyBehaviourFilter.enableBehaviour(documentNodeRef, ContentModel.ASPECT_AUDITABLE);
 								}
 
+								// Set Assoc
+								newReports.add(documentNodeRef);
+
 							}
-
-						} catch (ReportException e) {
-							logger.error("Failed to execute report for template : " + tplNodeRef, e);
 						} finally {
-							policyBehaviourFilter.enableBehaviour(documentNodeRef, ContentModel.ASPECT_AUDITABLE);
+							policyBehaviourFilter.enableBehaviour(entityNodeRef);
 						}
+						return null;
+					};
 
-						// Set Assoc
-						newReports.add(documentNodeRef);
-					}
+					transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, false, false);
 				}
+			});
 
-			}
 		}
 
 		updateReportsAssoc(entityNodeRef, newReports);
@@ -331,7 +370,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 	private boolean isLocaleEnableOnTemplate(NodeRef tplNodeRef, Locale locale) {
 
 		List<String> langs = (List<String>) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_LOCALES);
-		if (langs != null && !langs.isEmpty()) {
+		if ((langs != null) && !langs.isEmpty()) {
 			for (String lang : langs) {
 				if (locale.equals(new Locale(lang))) {
 					return true;
@@ -527,8 +566,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 	}
 
 	@Override
-	public void generateReport(NodeRef entityNodeRef, NodeRef documentNodeRef, ReportFormat reportFormat, OutputStream outputStream)
-			{
+	public void generateReport(NodeRef entityNodeRef, NodeRef documentNodeRef, ReportFormat reportFormat, OutputStream outputStream) {
 
 		EntityReportData reportData = retrieveExtractor(entityNodeRef).extract(entityNodeRef);
 
