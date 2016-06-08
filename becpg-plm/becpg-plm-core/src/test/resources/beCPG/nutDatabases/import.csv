@@ -1,6 +1,6 @@
 COLUMNS;id;cm:name;Nut 2;Nut 4;Nut 8
-VALUES;544E;RM Test 1;0,24;;traces
+VALUES;544E;RM Test 1;0,24;;;
 VALUES;544F;Chocolat, 85% de cacao, aux écorces d'orange;1,564;54,654;264,3
 VALUES;5450;Orange, de madagascar;0,153;256,2;564,1
-VALUES;5451;Chocolat au lait, 45% de cacao, enrichi en vitamine D;2,64;traces;1254,22
-VALUES;5452;Chataignes, gros calibre, pelées;;656,254;< 3
+VALUES;5451;Chocolat au lait, 45% de cacao, enrichi en vitamine D;2,64;;1254,22
+VALUES;5452;Chataignes, gros calibre, pelées;;656,254;3

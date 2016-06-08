@@ -41,14 +41,13 @@ public class NutDatabaseServiceTest extends PLMBaseTestCase {
 	}
 
 	private NodeRef getTestCSVFile() {
-		return nutDatabaseService.getNutDatabases().stream().filter(info -> info.getName().equals("import.csv")).collect(Collectors.toList()).get(0)
+		return nutDatabaseService.getNutDatabases().stream().filter(info -> info.getName().equals("import")).collect(Collectors.toList()).get(0)
 				.getNodeRef();
 	}
 
 	@Test
 	public void testImportRM() {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-
 			NodeRef csvFile = getTestCSVFile();
 			NodeRef emptyRM = createEmptyRM();
 			NodeRef importedRM1 = nutDatabaseService.createProduct(csvFile, "5450", emptyRM);
@@ -177,12 +176,12 @@ public class NutDatabaseServiceTest extends PLMBaseTestCase {
 			int checks = 0;
 
 			for (FileInfo file : databases) {
-				if ("import.csv".equals(file.getName())) {
+				if ("import".equals(file.getName())) {
 					++checks;
 				}
 			}
 
-			assertEquals("import.csv file is not in the system, try to clean and purge", 1, checks);
+			assertEquals("import file is not in the system, try to clean and purge", 1, checks);
 
 			return null;
 		}, false, true);
