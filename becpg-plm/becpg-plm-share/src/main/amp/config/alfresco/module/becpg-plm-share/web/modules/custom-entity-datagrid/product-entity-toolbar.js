@@ -519,12 +519,12 @@ YAHOO.Bubbling
                    onSuccess : {
                       fn : function FormulationView_onActionEntityImport_success(response) {
                          if (response.json) {
-                        	 YAHOO.Bubbling.fire("metadataRefresh");
+                        	 YAHOO.Bubbling.fire("refreshDataGrids");
                         	 Alfresco.util.PopupManager.displayMessage({
                                  text : this.msg("message.rapid-link.nutrient-import.success")
                               });
                          }
-//                         YAHOO.Bubbling.fire("refreshDataGrids");
+                         
                       },
                       scope : this
                    },
