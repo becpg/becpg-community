@@ -60,6 +60,9 @@
 		<property name="dictionaryService" ref="dictionaryService"/>
 		<property name="entityVersionService" ref="entityVersionService"/>
 		<property name="serviceRegistry" ref="ServiceRegistry"/>
+		<property name="associationService" ref="associationService" />
+		<property name="checkOutCheckInService" ref="checkOutCheckInService" />
+		<property name="entityListDAO" ref="entityListDAO" />
 	</bean>
 
 	<!-- Override Alfresco -->
