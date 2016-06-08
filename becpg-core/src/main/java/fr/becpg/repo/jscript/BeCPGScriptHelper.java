@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2016 beCPG.
+ * Copyright (C) 2010-2015 beCPG.
  *
  * This file is part of beCPG
  *
@@ -17,24 +17,36 @@
  ******************************************************************************/
 package fr.becpg.repo.jscript;
 
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import org.alfresco.repo.jscript.BaseScopableProcessorExtension;
 import org.alfresco.repo.jscript.ScriptNode;
+import org.alfresco.repo.version.VersionBaseModel;
 import org.alfresco.service.ServiceRegistry;
+import org.alfresco.service.cmr.coci.CheckOutCheckInService;
 import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.quickshare.QuickShareService;
 import org.alfresco.service.cmr.repository.MLText;
+import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.version.Version;
+import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.springframework.extensions.surf.util.I18NUtil;
 
+import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.SystemState;
 import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.entity.AutoNumService;
+import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.version.EntityVersionService;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.olap.OlapService;
 
@@ -57,10 +69,16 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	private NamespaceService namespaceService;
 
 	private DictionaryService dictionaryService;
-	
+
 	private EntityVersionService entityVersionService;
-	
+
 	private ServiceRegistry serviceRegistry;
+
+	private AssociationService associationService;
+
+	private EntityListDAO entityListDAO;
+
+	private CheckOutCheckInService checkOutCheckInService;
 
 	public void setOlapService(OlapService olapService) {
 		this.olapService = olapService;
@@ -89,17 +107,29 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
-	
+
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
 	}
-	
+
 	public void setEntityVersionService(EntityVersionService entityVersionService) {
 		this.entityVersionService = entityVersionService;
 	}
-	
+
 	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
 		this.serviceRegistry = serviceRegistry;
+	}
+
+	public void setAssociationService(AssociationService associationService) {
+		this.associationService = associationService;
+	}
+
+	public void setEntityListDAO(EntityListDAO entityListDAO) {
+		this.entityListDAO = entityListDAO;
+	}
+
+	public void setCheckOutCheckInService(CheckOutCheckInService checkOutCheckInService) {
+		this.checkOutCheckInService = checkOutCheckInService;
 	}
 
 	public String getMLProperty(ScriptNode sourceNode, String propQName, String locale) {
@@ -162,8 +192,54 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public String getOlapSSOUrl() {
 		return olapService.getSSOUrl();
 	}
-	
-	public ScriptNode createBranch(ScriptNode entity, ScriptNode parent){
-		return new ScriptNode(entityVersionService.createBranch(entity.getNodeRef(), parent.getNodeRef()), serviceRegistry);
+
+	public ScriptNode createBranch(ScriptNode entity, ScriptNode parent, boolean setAutoMerge) {
+		NodeRef branchNodeRef = entityVersionService.createBranch(entity.getNodeRef(), parent.getNodeRef());
+
+		if (setAutoMerge) {
+			associationService.update(branchNodeRef, BeCPGModel.ASSOC_AUTO_MERGE_TO, entity.getNodeRef());
+		}
+
+		return new ScriptNode(branchNodeRef, serviceRegistry);
 	}
+
+	public ScriptNode createBranch(ScriptNode entity, ScriptNode parent) {
+		return createBranch(entity, parent, false);
+	}
+
+	public ScriptNode mergeBranch(ScriptNode entity, ScriptNode branchTo, String description, String type) {
+
+		NodeRef nodeRef = entity.getNodeRef();
+		NodeRef branchToNodeRef = null;
+
+		if (branchTo != null) {
+			branchToNodeRef = branchTo.getNodeRef();
+		} else {
+			branchToNodeRef = associationService.getTargetAssoc(entity.getNodeRef(), BeCPGModel.ASSOC_AUTO_MERGE_TO);
+		}
+
+		VersionType versionType = VersionType.valueOf(type);
+
+		entityVersionService.prepareBranchBeforeMerge(nodeRef, branchToNodeRef);
+
+		Map<String, Serializable> properties = new HashMap<>();
+		properties.put(VersionBaseModel.PROP_VERSION_TYPE, versionType);
+		properties.put(Version.PROP_DESCRIPTION, description);
+
+		return new ScriptNode(checkOutCheckInService.checkin(nodeRef, properties), serviceRegistry);
+	}
+
+	public boolean changeEntityListStates(ScriptNode entity, String state) {
+
+		NodeRef listContainerNodeRef = entityListDAO.getListContainer(entity.getNodeRef());
+
+		if (listContainerNodeRef != null) {
+			for (NodeRef listNodeRef : entityListDAO.getExistingListsNodeRef(listContainerNodeRef)) {
+				mlNodeService.setProperty(listNodeRef, BeCPGModel.PROP_ENTITYLIST_STATE, SystemState.valueOf(state));
+			}
+		}
+
+		return true;
+	}
+
 }

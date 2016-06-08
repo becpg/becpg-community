@@ -62,7 +62,6 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.variant.model.VariantData;
 
 //TODO use annotation on product data instead
-@Deprecated
 @Service
 public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
@@ -141,11 +140,11 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	@SuppressWarnings("unchecked")
 	private void loadDataLists(NodeRef entityNodeRef, Element dataListsElt, Map<String, byte[]> images, boolean isExtractedProduct) {
 
-		RepositoryEntity entity = alfrescoRepository.findOne(entityNodeRef);
-		Map<QName, List<? extends RepositoryEntity>> datalists = repositoryEntityDefReader.getDataLists(entity);
+		ProductData productData = alfrescoRepository.findOne(entityNodeRef);
+		Map<QName, List<? extends RepositoryEntity>> datalists = repositoryEntityDefReader.getDataLists(productData);
 
 		// TODO make it more generic!!!!
-		ProductData productData = alfrescoRepository.findOne(entityNodeRef);
+		
 		NodeRef defaultVariantNodeRef = loadVariants(productData, dataListsElt.getParent());
 
 		if ((datalists != null) && !datalists.isEmpty()) {
@@ -628,13 +627,16 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 						if (sfProductData.hasPackagingListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 							for (PackagingListDataItem subDataItem : sfProductData
 									.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-								Double sfQty = 1d;
-								// multiply by qty of compoList
-								if(dataItem.getCompoListUnit() != null && dataItem.getCompoListUnit().equals(CompoListUnit.P) &&
-										dataItem.getQtySubFormula() != null){
-									sfQty = dataItem.getQtySubFormula();									
+								
+								if(PackagingLevel.Primary.equals(subDataItem.getPkgLevel())){
+									Double sfQty = 1d;
+									// multiply by qty of compoList
+									if(dataItem.getCompoListUnit() != null && dataItem.getCompoListUnit().equals(CompoListUnit.P) &&
+											dataItem.getQtySubFormula() != null){
+										sfQty = dataItem.getQtySubFormula();									
+									}
+									loadPackagingItem(sfQty, subDataItem, packagingListElt, defaultVariantNodeRef, defaultVariantPackagingData, images, 1);
 								}
-								loadPackagingItem(sfQty, subDataItem, packagingListElt, defaultVariantNodeRef, defaultVariantPackagingData, images, 1);
 							}
 						}
 					}
@@ -731,6 +733,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		if ((dataItem.getPkgLevel() != null) && (dataItem.getQty() != null) && (dataItem.getPackagingListUnit() != null)) {
 			partElt.addAttribute(PLMModel.PROP_PACKAGINGLIST_QTY.getLocalName(), Double.toString(dataItem.getQty() * sfQty));
 			double qty = dataItem.getPackagingListUnit().equals(PackagingListUnit.PP) ? 1 : dataItem.getQty();
+			if(PackagingListUnit.g.equals(dataItem.getPackagingListUnit()) ){
+				qty = qty/1000;
+			}
 			if (dataItem.getPkgLevel().equals(PackagingLevel.Primary)) {				
 				partElt.addAttribute(ATTR_PACKAGING_QTY_FOR_PRODUCT, Double.toString(qty * sfQty));				
 			} else if (dataItem.getPkgLevel().equals(PackagingLevel.Secondary)

@@ -29,6 +29,7 @@ import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.PackagingMaterialData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
+import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.ProcessListUnit;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
@@ -287,7 +288,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				if ((c.getDepthLevel() == null) || (c.getDepthLevel() == 1)) {
 					unitTotalVariableCost += costPerProduct;
 				}
-				if (formulatedProduct instanceof FinishedProductData) {
+				if (formulatedProduct instanceof FinishedProductData || formulatedProduct instanceof SemiFinishedProductData) {
 					c.setValuePerProduct(costPerProduct);
 				}
 			}
