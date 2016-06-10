@@ -47,10 +47,6 @@ div.entity-versions div.nav h6
 	visibility: visible;
 }
 
-.entity-versions .datagrid span.current {
-	background-color: #EEEEEE;
-}
-
 
 
 .entity-versions .datagrid {
@@ -68,8 +64,14 @@ div.entity-versions div.nav h6
 } */
 
 .entity-versions div.entity-branches {
-	margin-right : 1em;
+	margin-right : 0;
+	padding: 4px 0 10px;
 }
+
+.entity-versions div.entity-branches.current {
+	background-color: #EEEEEE;
+}
+
 
 .entity-versions .actions a
 {
@@ -91,7 +93,7 @@ div.entity-versions div.nav h6
 
 .entity-versions  .alfresco-datatable td .yui-dt-liner
 {
-   padding: 4px 0 10px;
+   padding: 0px;
 }
 
 

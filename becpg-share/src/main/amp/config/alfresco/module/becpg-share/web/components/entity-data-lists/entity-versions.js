@@ -194,9 +194,9 @@
                      + this.options.nodeRef.replace(":/", "") + "/compare.pdf?entities="+doc.nodeRef, html = '', current = ( this.options.nodeRef == doc.nodeRef),
                      url = beCPG.util.entityURL(doc.siteId, doc.nodeRef, doc.itemType, null, this.options.list);
                      
-                     html += '<div class="entity-branches">';
+                     html += '<div class="entity-branches'+(current ? " current":"")+'">';
                      html += '   <span class="document-version">' + $html(doc.label) + '</span>';
-                     html += '   <span class="'+doc.metadata+(current ? " current":"")+'" ><a title="'+doc.description+'" href="'+url+'">' + $html(doc.name) + '</a></span>';
+                     html += '   <span class="'+doc.metadata+'" ><a title="'+doc.description+'" href="'+url+'">' + $html(doc.name) + '</a></span>';
                    if(!current) {
                      html += '   <span class="actions"><a href="' + compareURL + '" class="compare" title="' + this
                      .msg("label.compare") + '">&nbsp;</a></span>';

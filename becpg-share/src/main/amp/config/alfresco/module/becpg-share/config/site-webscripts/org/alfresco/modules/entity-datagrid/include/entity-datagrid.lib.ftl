@@ -25,21 +25,7 @@
 </#macro>
 
 <#macro dataGridToolbar toolbarId>
-   <@dataGridToolbarSelectedItem toolbarId=toolbarId />
-   <@dataGridToolbarNewRow toolbarId=toolbarId />
-</#macro>
-
-<#macro entityDataGrid showToolBar=false showDataListTitle=true>
-<div id="${el}-body" class="datagrid<#if listName??> ${listName}</#if>">
-   <#if showDataListTitle>
-   <div class="datagrid-meta">
-      <h2 id="${el}-title"></h2>
-      <div id="${el}-description" class="datagrid-description"></div>
-   </div>
-   </#if>
-   <div id="${el}-datagridBar" class="yui-gc datagrid-bar flat-button">
-      <div class="yui-u first align-center">
-         <#if filter?? && filter >
+	<#if filter?? && filter >
          <div class="filter-form" >
 				<button id="${el}-filterform-button">${msg("filterform.header")}&nbsp;&#9662;</button>
 				<div id="${el}-filterform-panel"  class="yuimenu" >
@@ -54,7 +40,21 @@
 					  </div>
 				</div>
 			</div>
-         </#if>
+    </#if>
+   <@dataGridToolbarSelectedItem toolbarId=toolbarId />
+   <@dataGridToolbarNewRow toolbarId=toolbarId />
+</#macro>
+
+<#macro entityDataGrid showToolBar=false showDataListTitle=true>
+<div id="${el}-body" class="datagrid<#if listName??> ${listName}</#if>">
+   <#if showDataListTitle>
+   <div class="datagrid-meta">
+      <h2 id="${el}-title"></h2>
+      <div id="${el}-description" class="datagrid-description"></div>
+   </div>
+   </#if>
+   <div id="${el}-datagridBar" class="yui-gc datagrid-bar flat-button">
+      <div class="yui-u first align-center">
          <#if showToolBar><@dataGridToolbar  toolbarId=el /></#if>
       </div>
       <div class="yui-u align-right">

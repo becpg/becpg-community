@@ -528,8 +528,9 @@
                                     }
                                 }
 
-                                elCell.innerHTML = '<input id="checkbox-' + oRecord.getId() + '" type="checkbox" name="fileChecked" value="' + oData + '"' + (scope.selectedItems[oData] ? ' checked="checked">'
-                                        : '>');
+                                elCell.innerHTML = '<input class="dt-check" id="checkbox-' + oRecord.getId() + '" type="checkbox" name="fileChecked" value="' + oData + '"' + (scope.selectedItems[oData] ? ' checked="checked">'
+                                        : '>')+
+                                        '<label for="checkbox-' + oRecord.getId() + '"></label>';
                             };
                         },
                         
@@ -826,7 +827,7 @@
                             }
 
                             Alfresco.util.populateHTML([ this.id + "-title",
-                                    $html(this.datalistMeta.entityName + " - " + this.datalistMeta.title) ], [
+                                    $html(this.datalistMeta.title) ], [
                                     this.id + "-description", $links($html(this.datalistMeta.description, true)) ]);
                         },
 
