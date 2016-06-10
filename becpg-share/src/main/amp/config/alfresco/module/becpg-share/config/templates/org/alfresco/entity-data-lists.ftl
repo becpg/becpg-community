@@ -2,7 +2,7 @@
 <@templateHeader>
    <@markup id="resizer">
     <@inlineScript group="entity-datalists">
-      new Alfresco.widget.Resizer("DataLists");
+      new Alfresco.widget.Resizer("DataLists").setOptions({initialWidth:200});
     </@inlineScript>
    </@>
    <@script type="text/javascript" src="${url.context}/res/modules/data-lists/datalist-actions.js" group="entity-datalists"/>

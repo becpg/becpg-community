@@ -149,11 +149,16 @@ div.constraintsList .scrollableList {
 
 .constraintsList .datagrid .body .rclReq-details, .rclFilterElt{
 	background-color: #fff;
-	border-radius: 3px;
-	box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
+	border-radius: 2px;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+ 	transition: all 0.3s cubic-bezier(.25,.8,.25,1);
 	margin: 0px 5px 5px;
 	padding: 5px;
-	border: 1px solid #CCCCCC;
+	border: 0.5px solid #CCCCCC;
+}
+
+.constraintsList .datagrid .body .rclReq-details:hover {
+	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
 }
 
 /** RclFiltering **/

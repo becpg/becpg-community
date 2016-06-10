@@ -4,18 +4,21 @@
 }
 
 .datagrid .datagrid-description {
-	
+  display:none;
 }
+
 
 /* DataGrid Metadata */
 .datagrid .datagrid-meta {
 	margin-left: 1em;
+	float:left;
 }
+
 
 /* DataGrid bar */
 .datagrid .datagrid-bar {
-	margin: 1em -10px;
-	padding: 4px 0.5em 2px;
+	margin: 0px;
+	padding: 0px;
 }
 
 .datagrid .datagrid-bar-bottom {
@@ -387,7 +390,8 @@ div.filterButtonsBar {
 }
 
 
-.datagrid-bar .filter-form > span > span.first-child {
+.datagrid-bar .filter-form > span > span.first-child,
+.toolbar .filter-form span.first-child {
 	background: url(../../components/images/search-16.png) no-repeat 12px
 		4px;
 	padding-left: 24px;

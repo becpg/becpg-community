@@ -34,7 +34,7 @@
 		<div id="toolbar-contribs-${el}" style="display:none;">
 			<@dataGridToolbar  toolbarId=el />
 		</div>
-		<@entityDataGrid showDataListTitle=false />
+		<@entityDataGrid showDataListTitle=true />
 	</@>
 </@>
 
