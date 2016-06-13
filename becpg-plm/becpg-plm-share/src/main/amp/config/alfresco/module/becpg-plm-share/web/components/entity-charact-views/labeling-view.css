@@ -15,6 +15,7 @@
 .labeling-view  .datagrid .scrollableList {
 	padding: 0;
 	height: 260px;
+	clear: both;
 }
 
 .labeling-view  .datagrid {

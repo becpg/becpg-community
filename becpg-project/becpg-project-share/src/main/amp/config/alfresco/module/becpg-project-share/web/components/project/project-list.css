@@ -182,7 +182,7 @@
 
 .project-list  .project-activity-details  .icon {
 	float: left;
-	width: 8%;
+	width: 50px;
 	line-height: 3em;
 	min-height: 3em;
 	text-align: center;
@@ -190,7 +190,6 @@
  
 .project-list .project-activity-details  .details {
 	float: right;
-	width: 85%;
 }
 
 .project-list   .project-activity-details .details .activity-content {
@@ -211,7 +210,6 @@
 	padding: 5px;
 	box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
 	position: relative;
-	min-width: 200px;
 	clear:both;
 }
 
