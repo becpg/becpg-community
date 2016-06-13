@@ -35,6 +35,8 @@ import org.alfresco.util.ISO9075;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 public class DataListFilter {
+	
+	public static final String PATH_FILTER = "path";
 
 	public static final String NODE_PATH_FILTER = "nodePath";
 
@@ -294,8 +296,10 @@ public class DataListFilter {
 					queryBuilder.inDB();
 				}
 			} else {
-				if (!isRepo && !DataListFilter.NODE_PATH_FILTER.equals(filterId)) {
+				if (!isRepo && !DataListFilter.NODE_PATH_FILTER.equals(filterId) && !DataListFilter.PATH_FILTER.equals(filterId)) {
 					queryBuilder.inSite(siteId, containerId);
+				} else if(DataListFilter.PATH_FILTER.equals(filterId)){
+					queryBuilder.inPath(filterData);
 				}
 				queryBuilder.excludeDefaults();
 			}

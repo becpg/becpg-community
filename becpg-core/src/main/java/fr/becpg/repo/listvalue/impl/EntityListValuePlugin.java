@@ -120,7 +120,7 @@ public class EntityListValuePlugin implements ListValuePlugin {
 		switch (sourceType) {
 		case SOURCE_TYPE_TARGET_ASSOC:
 			QName type = QName.createQName(className, namespaceService);
-			return suggestTargetAssoc(type, query, pageNum, pageSize, arrClassNames, props);
+			return suggestTargetAssoc(path, type, query, pageNum, pageSize, arrClassNames, props);
 		case SOURCE_TYPE_LINKED_VALUE:
 			return suggestLinkedValue(path, query, pageNum, pageSize, props, false);
 		case SOURCE_TYPE_LINKED_VALUE_ALL:
@@ -146,7 +146,7 @@ public class EntityListValuePlugin implements ListValuePlugin {
 	 * @return the map
 	 */
 	@SuppressWarnings("unchecked")
-	public ListValuePage suggestTargetAssoc(QName type, String query, Integer pageNum, Integer pageSize, String[] arrClassNames,
+	public ListValuePage suggestTargetAssoc(String path, QName type, String query, Integer pageNum, Integer pageSize, String[] arrClassNames,
 			Map<String, Serializable> props) {
 
 		if (logger.isDebugEnabled()) {
@@ -186,6 +186,11 @@ public class EntityListValuePlugin implements ListValuePlugin {
 			queryBuilder.andFTSQuery(query);
 		}
 
+		if(path !=null && !path.isEmpty()){
+			queryBuilder.inPath(path);
+		}
+
+		
 		// filter by classNames
 		filterByClass(queryBuilder, arrClassNames);
 
