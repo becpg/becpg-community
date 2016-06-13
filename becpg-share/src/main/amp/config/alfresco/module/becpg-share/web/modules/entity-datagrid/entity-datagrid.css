@@ -307,6 +307,12 @@ div.filterform {
 }
 
 
+
+.datalist-toolbar .left .filterform div,
+.datalist-toolbar .left div.filterButtonsBar {
+ 	float:none;
+}
+
 .yui-ge .filterform .yui-g,
 .yui-gc .filterform .yui-g,
 .yui-gf .filterform .yui-g {

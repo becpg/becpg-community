@@ -32,6 +32,7 @@
 <@markup id="html">
    <@uniqueIdDiv>
 		<#assign el = args.htmlid?html>
+		<#assign filter=true >
 		<#if page.url.args.view?? >
 				<#assign view=page.url.args.view?js_string>
 		<#else>
@@ -48,27 +49,13 @@
 		</div>
 		
 		<div id="${el}-body" class="project-list datagrid">
-		   <div class="yui-gf project-list-bar datagrid-bar  flat-button">
+		    <div class="yui-gf project-list-bar datagrid-bar  flat-button">
 		      <div class="yui-u first">
 		         <h2 id="${el}-filterTitle" class="thin">
 		            &nbsp;
 		         </h2>
-		         <div class="filter-form" >
-						<button id="${el}-filterform-button">${msg("filterform.header")}</button>
-						<div id="${el}-filterform-panel"  class="yuimenu" >
-							 <div class="bd">
-							 		<div id="${el}-filterform"  class="filterform" >
-							 		    <img class="icon16" src="${url.context}/components/images/lightbox/loading.gif" />
-							 		</div>
-							 		<div class="filterButtonsBar">
-							 			<button id="${el}-filterform-clear"   >${msg("filterform.clear")}</button>
-							  			<button id="${el}-filterform-submit"   >${msg("filterform.submit")}</button>
-							  		</div>
-							  </div>
-						</div>
-					</div>
-			      </div>
-			      <div class="yui-u">
+		       </div> 
+			    <div class="yui-u">
 			         <div id="${el}-legend" class="legend">&nbsp;</div>
 			          <div class="right">
 						         <div id="${el}-paginator" class="paginator hidden"></div>
@@ -76,8 +63,8 @@
 						            <button id="${el}-itemsPerPage-button">${msg("menu.items-per-page")}</button>
 						         </div>
 						  </div>
-			      </div>
-				</div>
+			     </div>
+			  </div>
 			   <div id="${el}-grid"  class="projects grid" <#if view=="gantt" || view=="resources" >style="display:none;"</#if>> </div>
 			   <div id="${el}-gantt" class="projects ${view}" <#if view!="gantt" && view!="resources" >style="display:none;"</#if>> </div>
 						
