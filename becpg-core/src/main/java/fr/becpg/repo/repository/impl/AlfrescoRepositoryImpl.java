@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -128,7 +129,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 					entity.setNodeRef(productNodeRef);
 
 				} else {
-						
+
 					if (logger.isDebugEnabled()) {
 						logger.debug("Update instanceOf :" + entity.getClass().getName() + " " + entity.getName());
 						if (logger.isTraceEnabled()) {
@@ -284,7 +285,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 	public void saveDataList(NodeRef listContainerNodeRef, QName dataListContainerType, QName dataListType,
 			List<? extends RepositoryEntity> dataList) {
 		if ((dataList != null) && (listContainerNodeRef != null)) {
-			
+
 			NodeRef dataListNodeRef = entityListDAO.getList(listContainerNodeRef, dataListContainerType);
 
 			boolean isLazyList = dataList instanceof LazyLoadingDataList;
@@ -301,7 +302,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 				if (logger.isDebugEnabled()) {
 					logger.debug("Save dataList of type : " + dataListContainerType);
 				}
-				
+
 			}
 
 			if (dataListNodeRef != null) {
@@ -325,7 +326,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 				}
 				for (RepositoryEntity dataListItem : dataList) {
 					dataListItem.setParentNodeRef(dataListNodeRef);
-					
+
 					if (logger.isTraceEnabled()) {
 						logger.trace("Save dataList item: " + dataListItem.toString());
 					}
@@ -552,23 +553,24 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 	}
 
 	private List<T> loadDataList(NodeRef entityNodeRef, QName datalistContainerQname, QName datalistQname, Map<NodeRef, RepositoryEntity> caches) {
-		List<T> ret = new LinkedList<>();
-		
+
 		NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
 
 		if (listContainerNodeRef != null) {
 			NodeRef dataListNodeRef = entityListDAO.getList(listContainerNodeRef, datalistContainerQname);
 
 			if (dataListNodeRef != null) {
-				for(NodeRef listItemNodeRef : entityListDAO.getListItems(dataListNodeRef, datalistQname)){
-					T entity = findOne(listItemNodeRef, caches);
-					entity.setParentNodeRef(dataListNodeRef);
-					ret.add(entity);
-				}
+
+				return entityListDAO.getListItems(dataListNodeRef, datalistQname).stream().map(el -> {
+					T ret = findOne(el, caches);
+					ret.setParentNodeRef(dataListNodeRef);
+					return ret;
+				}).collect(Collectors.toList());
+
 			}
 		}
 
-		return ret;
+		return new LinkedList<>();
 	}
 
 	@Override
