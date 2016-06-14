@@ -551,14 +551,16 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 
 	private double getPackagingListQty(ProductData productData, NodeRef componentNodeRef) {
 		double totalQty = 0d;
-		for (PackagingListDataItem packList : productData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-			NodeRef productNodeRef = packList.getProduct();
-			Double qty = FormulationHelper.getQtyForCost(packList);
-			if (logger.isDebugEnabled()) {
-				logger.debug("Get component " + nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME) + "qty: " + qty);
-			}
-			if (productNodeRef.equals(componentNodeRef)) {
-				totalQty += qty;
+		if(productData.hasPackagingListEl()){
+			for (PackagingListDataItem packList : productData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+				NodeRef productNodeRef = packList.getProduct();
+				Double qty = FormulationHelper.getQtyForCost(packList);
+				if (logger.isDebugEnabled()) {
+					logger.debug("Get component " + nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME) + "qty: " + qty);
+				}
+				if (productNodeRef.equals(componentNodeRef)) {
+					totalQty += qty;
+				}
 			}
 		}
 		return totalQty;

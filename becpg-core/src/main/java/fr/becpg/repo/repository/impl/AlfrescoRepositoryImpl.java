@@ -325,12 +325,14 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 					((LazyLoadingDataList<? extends RepositoryEntity>) dataList).getDeletedNodes().clear();
 				}
 				for (RepositoryEntity dataListItem : dataList) {
-					dataListItem.setParentNodeRef(dataListNodeRef);
-
-					if (logger.isTraceEnabled()) {
-						logger.trace("Save dataList item: " + dataListItem.toString());
+					if(dataListItem.getNodeRef()==null || nodeService.exists(dataListItem.getNodeRef())){
+						dataListItem.setParentNodeRef(dataListNodeRef);
+	
+						if (logger.isTraceEnabled()) {
+							logger.trace("Save dataList item: " + dataListItem.toString());
+						}
+						save((T) dataListItem);
 					}
-					save((T) dataListItem);
 				}
 
 			}
