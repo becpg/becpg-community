@@ -61,7 +61,6 @@ import fr.becpg.repo.entity.datalist.WUsedListService;
 import fr.becpg.repo.entity.datalist.WUsedListService.WUsedOperator;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.entity.version.EntityVersionService;
-import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.RequirementType;
@@ -368,11 +367,8 @@ public class ECOServiceImpl implements ECOService {
 								applyReplacementList(ecoData, productToFormulateData);
 							}
 							
-							try {
-								productService.formulate(productToFormulateData);
-							} catch (FormulateException e) {
-								logger.warn("Failed to formulate product. NodeRef: " + productToFormulateData.getNodeRef(), e);
-							}
+							productService.formulate(productToFormulateData);
+							
 
 							if (isSimulation) {
 								// update simulation List
@@ -388,7 +384,6 @@ public class ECOServiceImpl implements ECOService {
 							if (!isSimulation) {
 								if (!changeUnitDataItem.getRevision().equals(RevisionType.NoRevision)) {
 									createNewProductVersion(productNodeRef, changeUnitDataItem.getRevision().equals(RevisionType.Major) ? VersionType.MAJOR : VersionType.MINOR, ecoData);
-
 								}
 							}
 
@@ -416,9 +411,11 @@ public class ECOServiceImpl implements ECOService {
 
 						changeUnitDataItem.setTreated(false);
 						changeUnitDataItem.setErrorMsg(e.getMessage());
+						logger.warn(e, e);
 						// Todo log better error
 						logger.error("Error applying for " + nodeService.getProperty(changeUnitDataItem.getSourceItem(), ContentModel.PROP_NAME), e);
-
+						
+						
 						return false;
 					}
 

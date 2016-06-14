@@ -75,10 +75,7 @@ public class ProductServiceImpl implements ProductService {
 	public void formulate(NodeRef productNodeRef, boolean fast) throws FormulateException {
 		if (permissionService.hasPermission(productNodeRef, PermissionService.WRITE) == AccessStatus.ALLOWED) {
 			try {
-				// disable on all product since components can be formulated
 				policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
-				// disable policy to have modified date < formulated date,
-				// better way ?
 				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 
