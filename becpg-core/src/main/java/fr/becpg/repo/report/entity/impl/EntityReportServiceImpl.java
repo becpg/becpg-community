@@ -579,9 +579,14 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 		NodeRef templateNodeRef = associationService.getTargetAssoc(documentNodeRef, ReportModel.ASSOC_REPORT_TPL);
 
-		String lang = (String) nodeService.getProperty(documentNodeRef, ReportModel.PROP_REPORT_LOCALES);
-		if ((lang == null) || lang.isEmpty()) {
-			lang = I18NUtil.getLocale().getLanguage();
+		String lang = I18NUtil.getLocale().getLanguage();
+		
+		if (nodeService.hasAspect(documentNodeRef, ReportModel.ASPECT_REPORT_LOCALES)) {
+			@SuppressWarnings("unchecked")
+			List<String> langs = (List<String>) nodeService.getProperty(documentNodeRef, ReportModel.PROP_REPORT_LOCALES);
+			if ((langs != null) && !langs.isEmpty()) {
+				lang = langs.get(0);
+			}
 		}
 
 		if (reportData.getXmlDataSource() == null) {
