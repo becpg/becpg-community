@@ -4,7 +4,6 @@
 package fr.becpg.repo.admin;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -211,8 +210,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 		// OLAP
 		visitFolder(systemNodeRef, RepoConsts.PATH_OLAP_QUERIES);
-		
-		//NutDatabases
+
+		// NutDatabases
 		visitFolder(systemNodeRef, PlmRepoConsts.PATH_NUT_DATABASES);
 	}
 
@@ -233,15 +232,15 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		}
 		if (Objects.equals(folderName, PlmRepoConsts.PATH_NUT_DATABASES)) {
 			List<NodeRef> importedFiles = contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/nutDatabases/*.csv");
-			for(NodeRef file : importedFiles){
-				
+			for (NodeRef file : importedFiles) {
+
 				String nameWithExtension = ((String) nodeService.getProperty(file, ContentModel.PROP_NAME));
 				String[] splitExtension = nameWithExtension.split(Pattern.quote("."));
-				
+
 				nodeService.setProperty(file, ContentModel.PROP_NAME, splitExtension[0]);
 			}
-			
-					}
+
+		}
 	}
 
 	/**
@@ -396,7 +395,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		Set<QName> dataLists = new LinkedHashSet<>();
 		dataLists.add(PLMModel.TYPE_CONTACTLIST);
 		dataLists.add(PLMModel.TYPE_PLANT);
-		NodeRef entityTplNodeRef = entityTplService.createEntityTpl(entityTplsNodeRef, PLMModel.TYPE_SUPPLIER, null, true, true, dataLists, subFolders);
+		NodeRef entityTplNodeRef = entityTplService.createEntityTpl(entityTplsNodeRef, PLMModel.TYPE_SUPPLIER, null, true, true, dataLists,
+				subFolders);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_DOCUMENTS);
 
@@ -489,7 +489,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		Map<String, QName> entityLists = new LinkedHashMap<>();
 
 		entityLists.put(PlmRepoConsts.PATH_ING_TYPES, PLMModel.TYPE_ING_TYPE_ITEM);
-		entityLists.put(PlmRepoConsts.PATH_TRADEMARK_TYPES,  BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(PlmRepoConsts.PATH_TRADEMARK_TYPES, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_NUT_GROUPS, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_NUT_TYPES, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_NUT_FACTS_METHODS, BeCPGModel.TYPE_LIST_VALUE);
@@ -504,7 +504,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_PM_MATERIALS, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_PM_PRINT_TYPES, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_PM_PRINT_VANISHS, BeCPGModel.TYPE_LIST_VALUE);
-		
+
 		entityLists.put(RepoConsts.PATH_REPORT_PARAMS, BeCPGModel.TYPE_LIST_VALUE);
 
 		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
@@ -637,12 +637,12 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				entityTplService.createWUsedList(entityTplNodeRef, wusedQName, null);
 			}
 			entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
-			
-			if(!productType.equals(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT)) {
+
+			if (!productType.equals(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT)) {
 				entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_REPORTS);
 				entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_DOCUMENTS);
 			}
-			
+
 		}
 	}
 
@@ -661,14 +661,16 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		dataLists.clear();
 		dataLists.add(PLMModel.TYPE_FORBIDDENINGLIST);
 		dataLists.add(PLMModel.TYPE_LABELING_RULE_LIST);
-		entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, PLMModel.TYPE_PRODUCT_SPECIFICATION, null, true, true, dataLists, null);
+		entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, PLMModel.TYPE_PRODUCT_SPECIFICATION, null, true, true, dataLists,
+				null);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 
 		// visit controlPlan
 		Set<String> subFolders = new HashSet<>();
 		dataLists.clear();
 		dataLists.add(QualityModel.TYPE_SAMPLINGDEF_LIST);
-		entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_CONTROL_PLAN, null, true, true, dataLists, subFolders);
+		entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_CONTROL_PLAN, null, true, true, dataLists,
+				subFolders);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 
 		// visit qualityControl
@@ -686,7 +688,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		// visit workItemAnalysis
 		dataLists.clear();
 		dataLists.add(QualityModel.TYPE_CONTROL_LIST);
-		entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_WORK_ITEM_ANALYSIS, null, true, true, dataLists, null);
+		entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_WORK_ITEM_ANALYSIS, null, true, true, dataLists,
+				null);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 
 		// visit NC
@@ -893,9 +896,5 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 					PermissionService.GROUP_PREFIX + PLMGroup.TradeUser.toString());
 		}
 	}
-	
-	@Override
-	public Integer initOrder() {
-		return 3;
-	}
+
 }
