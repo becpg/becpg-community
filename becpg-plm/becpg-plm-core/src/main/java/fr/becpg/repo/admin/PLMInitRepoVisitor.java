@@ -4,13 +4,16 @@
 package fr.becpg.repo.admin;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.action.evaluator.CompareMimeTypeEvaluator;
@@ -208,6 +211,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 		// OLAP
 		visitFolder(systemNodeRef, RepoConsts.PATH_OLAP_QUERIES);
+		
+		//NutDatabases
+		visitFolder(systemNodeRef, PlmRepoConsts.PATH_NUT_DATABASES);
 	}
 
 	/**
@@ -225,6 +231,17 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		if (Objects.equals(folderName, RepoConsts.PATH_OLAP_QUERIES)) {
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/olap/*.saiku");
 		}
+		if (Objects.equals(folderName, PlmRepoConsts.PATH_NUT_DATABASES)) {
+			List<NodeRef> importedFiles = contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/nutDatabases/*.csv");
+			for(NodeRef file : importedFiles){
+				
+				String nameWithExtension = ((String) nodeService.getProperty(file, ContentModel.PROP_NAME));
+				String[] splitExtension = nameWithExtension.split(Pattern.quote("."));
+				
+				nodeService.setProperty(file, ContentModel.PROP_NAME, splitExtension[0]);
+			}
+			
+					}
 	}
 
 	/**
@@ -875,5 +892,10 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			authorityService.addAuthority(PermissionService.GROUP_PREFIX + PLMGroup.Trade.toString(),
 					PermissionService.GROUP_PREFIX + PLMGroup.TradeUser.toString());
 		}
+	}
+	
+	@Override
+	public Integer initOrder() {
+		return 3;
 	}
 }

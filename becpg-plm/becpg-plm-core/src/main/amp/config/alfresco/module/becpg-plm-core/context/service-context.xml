@@ -134,6 +134,11 @@
 		<property name="nodeService" ref="nodeService" />
 	</bean>
 	
+	<bean id="webscript.fr.becpg.product.nutDatabaseImport.post" class="fr.becpg.repo.web.scripts.product.NutDatabaseImportWebScript" parent="webscript">
+		<property name="nutDatabaseService" ref="nutDatabaseService"/>
+	</bean>
+	
+	
 
 	<bean id="webscript.fr.becpg.product.charactDetailsFormulation.get" class="fr.becpg.repo.web.scripts.product.FormulateCharactDetailsWebScript" parent="webscript">
 		<property name="productService" ref="productService" />

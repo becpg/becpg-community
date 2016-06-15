@@ -2,13 +2,16 @@ package fr.becpg.repo.product.formulation;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
+import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
@@ -50,6 +53,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 	public static final String MESSAGE_MANDATORY_FIELD_MISSING = "message.formulate.mandatory_property";
 	public static final String MESSAGE_MANDATORY_FIELD_MISSING_LOCALIZED = "message.formulate.mandatory_property_localized";
 	public static final String MESSAGE_NON_VALIDATED_STATE = "message.formulate.nonValidatedState";
+	public static final String MESSAGE_OR = "message.formulate.or";
 
 	private AlfrescoRepository<ProductData> alfrescoRepository;
 
@@ -221,7 +225,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 
 	public JSONArray calculateMandatoryFieldsScore(ProductData productData) throws JSONException {
 		JSONArray ret = new JSONArray();
-		if ((mandatoryFields != null) && productData.getNodeRef()!=null && nodeService.exists(productData.getNodeRef())) {
+		if ((mandatoryFields != null) && (productData.getNodeRef() != null) && nodeService.exists(productData.getNodeRef())) {
 			// Break rules !!!!
 			Map<QName, Serializable> properties = nodeService.getProperties(productData.getNodeRef());
 			String defaultLocale = Locale.getDefault().getLanguage();
@@ -239,7 +243,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 				}
 
 				if (logger.isDebugEnabled()) {
-					logger.debug("== Catalog \"" + catalog.getString(JsonScoreHelper.PROP_LABEL) + "\" ==");
+					logger.debug("\n\t\t== Catalog \"" + catalog.getString(JsonScoreHelper.PROP_LABEL) + "\" ==");
 					logger.debug("Types of catalog: " + qnameCatalogEntityTypeList);
 					logger.debug("Type of product: " + productType);
 				}
@@ -297,45 +301,68 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 			String lang) throws JSONException {
 		JSONArray ret = new JSONArray();
 
+		logger.debug("=== Catalog name: " + catalogName + ", lang: " + lang);
 		for (int i = 0; i < reqFields.length(); i++) {
 			String field = reqFields.getString(i);
-			QName fieldQname = QName.createQName(field.split("_")[0], namespaceService);
 
-			if (logger.isDebugEnabled()) {
-				logger.debug("Test missing field: " + fieldQname);
+			List<String> splitFields = Arrays.asList(field.split(Pattern.quote("|")));
+			boolean present = false;
+
+			// if this field can be ignored (do not raise ctrl if absent)
+			boolean ignore = false;
+
+			for (String currentField : splitFields) {
+				QName fieldQname = QName.createQName(currentField.split("_")[0], namespaceService);
+
+				if (logger.isDebugEnabled()) {
+					logger.debug("Test missing field qname: " + fieldQname + ", lang: " + lang);
+				}
+
+				PropertyDefinition propDef = dictionaryService.getProperty(fieldQname);
+				logger.debug("PropDef: "
+						+ (propDef == null ? "Is null" : "Not null (" + propDef.getName() + " \n" + propDef.getDataType().getName() + ")"));
+
+				if ((propDef != null) && (DataTypeDefinition.MLTEXT.equals(propDef.getDataType().getName()))) {
+					// prop is present
+					if (mlTextIsPresent(currentField, productData, lang, properties)) {
+						logger.debug("mlProp is present");
+						present = true;
+						break;
+					}
+
+				} else if ((propDef != null) && (lang == null)) {
+					// non ML field case
+					if ((properties.get(fieldQname) != null) && !properties.get(fieldQname).toString().isEmpty()) {
+						logger.debug("regular prop is present");
+						present = true;
+						break;
+					}
+				} else if ((propDef != null) && !DataTypeDefinition.MLTEXT.equals(propDef.getDataType().getName()) && (lang != null)) {
+					logger.debug("Non ml prop with non null lang, skipping");
+					// case non ml prop with not null lang, we don't care
+					ignore = true;
+					break;
+
+				} else if ((propDef == null) && (lang == null)) {
+					// only check assoc when lang is null
+					logger.debug("Checking if assoc is found");
+					if (associationService.getTargetAssoc(productData.getNodeRef(), fieldQname) != null) {
+						logger.debug("it is found !");
+						present = true;
+						break;
+					}
+
+				} else {
+					// lang is not null and it's not a prop
+					logger.debug("Skipping associations on localized catalogs");
+					ignore = true;
+					break;
+				}
 			}
 
-			PropertyDefinition propDef = dictionaryService.getProperty(fieldQname);
-			if (propDef != null) {
-
-				if (DataTypeDefinition.MLTEXT.equals(propDef.getDataType().getName()) && (lang != null)) {
-					MLText mlText = (MLText) mlNodeService.getProperty(productData.getNodeRef(), fieldQname);
-
-					if (field.contains("_")) {
-						String fieldSpecificLang = field.split("_")[1];
-
-						if ((mlText == null) || (mlText.getValue(new Locale(fieldSpecificLang)) == null)
-								|| mlText.getValue(new Locale(fieldSpecificLang)).isEmpty()) {
-							ret.put(createMissingFields(productData, catalogName, propDef, fieldSpecificLang));
-						}
-					} else {
-						if ((mlText == null) || (mlText.getValue(new Locale(lang)) == null) || mlText.getValue(new Locale(lang)).isEmpty()) {
-							ret.put(createMissingFields(productData, catalogName, propDef, lang));
-						}
-					}
-
-				} else if (lang == null) {
-					if ((properties.get(fieldQname) == null) || properties.get(fieldQname).toString().isEmpty()) {
-						ret.put(createMissingFields(productData, catalogName, propDef, null));
-					}
-				}
-			} else if (lang == null) {
-
-				// Break rules !!!!
-				if (associationService.getTargetAssoc(productData.getNodeRef(), fieldQname) == null) {
-					ret.put(createMissingFields(productData, catalogName, dictionaryService.getAssociation(fieldQname), null));
-				}
-
+			if (!present && !ignore) {
+				logger.debug("\tfield " + field + " is absent...");
+				ret.put(createMissingFields(productData, catalogName, splitFields));
 			}
 
 		}
@@ -343,26 +370,81 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 		return ret;
 	}
 
-	private JSONObject createMissingFields(ProductData productData, String catalogName, ClassAttributeDefinition classDef, String lang)
-			throws JSONException {
+	private boolean mlTextIsPresent(String field, ProductData productData, String lang, Map<QName, Serializable> properties) {
+		boolean res = true;
+		QName fieldQname = QName.createQName(field.split("_")[0], namespaceService);
+		MLText mlText = (MLText) mlNodeService.getProperty(productData.getNodeRef(), fieldQname);
+
+		if (field.contains("_")) {
+			String fieldSpecificLang = field.split("_")[1];
+			if ((mlText == null) || (mlText.getValue(new Locale(fieldSpecificLang)) == null)
+					|| mlText.getValue(new Locale(fieldSpecificLang)).isEmpty()) {
+				res = false;
+			}
+		} else if ((lang != null)
+				&& ((mlText == null) || (mlText.getValue(new Locale(lang)) == null) || mlText.getValue(new Locale(lang)).isEmpty())) {
+			res = false;
+		} else {
+			res = (properties.get(fieldQname) != null) && !properties.get(fieldQname).toString().isEmpty();
+		}
+
+		return res;
+	}
+
+	private ClassAttributeDefinition formatQnameString(String qNameString) {
+		ClassAttributeDefinition res = null;
+
+		qNameString = qNameString.trim();
+		PropertyDefinition propDef = dictionaryService.getProperty(QName.createQName(qNameString.split("_")[0], namespaceService));
+
+		if (propDef != null) {
+			res = propDef;
+		} else {
+			AssociationDefinition assocDef = dictionaryService.getAssociation(QName.createQName(qNameString, namespaceService));
+			res = assocDef;
+		}
+
+		return res;
+	}
+
+	private JSONObject createMissingFields(ProductData productData, String catalogName, List<String> fields) throws JSONException {
 
 		JSONObject field = new JSONObject();
 
-		field.put(JsonScoreHelper.PROP_ID, classDef.getName().toPrefixString(namespaceService));
-		field.put(JsonScoreHelper.PROP_DISPLAY_NAME, classDef.getTitle(dictionaryService));
+		String id = "";
+		String displayName = "";
+		String lang = null;
+		String message = "";
 
-		String message = null;
+		for (int i = 0; i < fields.size(); ++i) {
+			String currentField = fields.get(i);
+			ClassAttributeDefinition classDef = formatQnameString(currentField);
+
+			if (currentField.contains("_")) {
+				lang = currentField.split("_")[1];
+			} else {
+				lang = null;
+			}
+
+			if (classDef == null) {
+				logger.debug("classDef for field " + currentField + " returned null");
+				break;
+			}
+
+			id += classDef.getName().toPrefixString(namespaceService) + (i == (fields.size() - 1) ? "" : "|");
+			displayName += classDef.getTitle(dictionaryService) + (i == (fields.size() - 1) ? "" : " " + I18NUtil.getMessage(MESSAGE_OR) + " ");
+		}
 
 		if (lang != null) {
-			message = I18NUtil.getMessage(MESSAGE_MANDATORY_FIELD_MISSING_LOCALIZED, field.getString(JsonScoreHelper.PROP_DISPLAY_NAME), catalogName,
-					"(" + lang + ")");
+			message = I18NUtil.getMessage(MESSAGE_MANDATORY_FIELD_MISSING_LOCALIZED, displayName, catalogName, "(" + lang + ")");
 
 			field.put(JsonScoreHelper.PROP_LOCALE, lang);
 		} else {
-			message = I18NUtil.getMessage(MESSAGE_MANDATORY_FIELD_MISSING, field.getString(JsonScoreHelper.PROP_DISPLAY_NAME), catalogName);
+			message = I18NUtil.getMessage(MESSAGE_MANDATORY_FIELD_MISSING, displayName, catalogName);
 		}
 
-		logger.debug("Creating new rclDataItem: " + message);
+		field.put(JsonScoreHelper.PROP_ID, id);
+		field.put(JsonScoreHelper.PROP_DISPLAY_NAME, displayName);
 		ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, null, new ArrayList<NodeRef>(),
 				RequirementDataType.Completion);
 		rclDataItem.getSources().add(productData.getNodeRef());
@@ -375,10 +457,6 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 			productData.getProcessListView().getReqCtrlList().add(rclDataItem);
 		} else if (!productData.getPackagingListView().getPackagingList().isEmpty()) {
 			productData.getPackagingListView().getReqCtrlList().add(rclDataItem);
-		}
-
-		if (logger.isDebugEnabled()) {
-			logger.debug("Create missing fields: " + field.toString());
 		}
 
 		return field;
