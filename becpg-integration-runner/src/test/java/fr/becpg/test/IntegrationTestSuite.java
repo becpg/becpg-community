@@ -8,6 +8,7 @@ import fr.becpg.test.repo.entity.EntityReportServiceTest;
 import fr.becpg.test.repo.entity.datalist.MultiLevelDataServiceTest;
 import fr.becpg.test.repo.listvalue.CompoListValuePluginTest;
 import fr.becpg.test.repo.listvalue.ListValueServiceTest;
+import fr.becpg.test.repo.product.CompareDocumentServiceTest;
 import fr.becpg.test.repo.product.CompareProductServiceTest;
 import fr.becpg.test.repo.product.ProductServiceTest;
 import fr.becpg.test.repo.product.lexer.CompositionLexerTest;
@@ -42,6 +43,7 @@ import fr.becpg.test.repo.web.scripts.search.SearchWebScriptTest;
 		
 		//Compare
 		CompareProductServiceTest.class,
+		CompareDocumentServiceTest.class,
 		
 		
 		//Slow
