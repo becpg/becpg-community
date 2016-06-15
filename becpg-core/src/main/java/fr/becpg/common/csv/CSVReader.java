@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2015 beCPG. 
+ * Copyright (C) 2010-2016 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -46,7 +46,7 @@ import java.util.List;
  * @author Glen Smith
  * 
  */
-public class CSVReader {
+public class CSVReader implements AutoCloseable {
 
     private final BufferedReader br;
 
@@ -256,6 +256,7 @@ public class CSVReader {
      * 
      * @throws IOException if the close fails
      */
+	@Override
     public void close() throws IOException{
     	br.close();
     }
