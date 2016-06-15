@@ -241,6 +241,35 @@
 				</field>
 				</appearance>							
 			</form>
+			<form id="filter">
+				<field-visibility>
+					<show id="ecm:culRevision" />
+					<show id="ecm:culSourceItem" />	
+					<show id="ecm:culTreated" />
+					<show id="ecm:culReqType" />	
+				</field-visibility>
+				<appearance>
+				<field id="ecm:culRevision">
+					  <control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="insertBlank">true</control-param>
+						</control>
+					</field>	
+					<field id="ecm:culReqType">
+					<control
+						template="/org/alfresco/components/form/controls/selectone.ftl" >
+						 <control-param name="options">Forbidden|data.reqtype.forbidden,Tolerated|data.reqtype.tolerated,Info|data.reqtype.info</control-param>
+						 <control-param name="isSearch">true</control-param>
+						<control-param name="insertBlank">true</control-param>
+					</control>
+				</field>
+				<field id="ecm:culTreated">
+					<control template="/org/alfresco/components/form/controls/selectone.ftl">
+						<control-param name="options">,false|data.boolean.false,true|data.boolean.true</control-param>
+					</control>
+				</field>
+				</appearance>				
+			</form>
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>

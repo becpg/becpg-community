@@ -130,13 +130,14 @@ public class ECOServiceImpl implements ECOService {
 		final ChangeOrderData ecoData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
 
 		// Do not run if already applied
-		if (!ECOState.Applied.equals(ecoData.getEcoState()) && !(ECOState.InError.equals(ecoData.getEcoState()) && ECOState.Simulated.equals(state))) {
+		if (!ECOState.Applied.equals(ecoData.getEcoState())
+				&& !(ECOState.InError.equals(ecoData.getEcoState()) && ECOState.Simulated.equals(state))) {
 
 			L2CacheSupport.doInCacheContext(() -> {
 				StopWatch watch = new StopWatch();
 				if (logger.isDebugEnabled()) {
 					watch.start();
-					logger.warn("Start running ECM [" + state.toString() + "] for thread "+Thread.currentThread().getName());
+					logger.warn("Start running ECM [" + state.toString() + "] for thread " + Thread.currentThread().getName());
 				}
 
 				// Clear changeUnitList
@@ -185,7 +186,7 @@ public class ECOServiceImpl implements ECOService {
 					watch.stop();
 					logger.warn("Impact Where Used [" + state.toString() + "] executed in  " + watch.getTotalTimeSeconds() + " seconds");
 				}
-			} , ECOState.Simulated.equals(state), true);
+			}, ECOState.Simulated.equals(state), true);
 
 			alfrescoRepository.save(ecoData);
 
@@ -211,7 +212,7 @@ public class ECOServiceImpl implements ECOService {
 
 				for (ReplacementListDataItem replacementListDataItem : ecoData.getReplacementList()) {
 
-					if (replacementListDataItem.getSourceItems() != null && !replacementListDataItem.getSourceItems().isEmpty()) {
+					if ((replacementListDataItem.getSourceItems() != null) && !replacementListDataItem.getSourceItems().isEmpty()) {
 
 						List<NodeRef> sourceList = new ArrayList<>(replacementListDataItem.getSourceItems());
 
@@ -226,7 +227,8 @@ public class ECOServiceImpl implements ECOService {
 
 						for (QName associationQName : associationQNames) {
 
-							MultiLevelListData wUsedData = wUsedListService.getWUsedEntity(sourceList, WUsedOperator.AND, associationQName, RepoConsts.MAX_DEPTH_LEVEL);
+							MultiLevelListData wUsedData = wUsedListService.getWUsedEntity(sourceList, WUsedOperator.AND, associationQName,
+									RepoConsts.MAX_DEPTH_LEVEL);
 
 							QName datalistQName = evaluateListFromAssociation(associationQName);
 							calculateWUsedList(ecoData, wUsedData, datalistQName, parent, isWUsedImpacted);
@@ -258,7 +260,8 @@ public class ECOServiceImpl implements ECOService {
 		return assocQNames;
 	}
 
-	private void calculateWUsedList(ChangeOrderData ecoData, MultiLevelListData wUsedData, QName dataListQName, WUsedListDataItem parent, boolean isWUsedImpacted) {
+	private void calculateWUsedList(ChangeOrderData ecoData, MultiLevelListData wUsedData, QName dataListQName, WUsedListDataItem parent,
+			boolean isWUsedImpacted) {
 
 		for (Map.Entry<NodeRef, MultiLevelListData> kv : wUsedData.getTree().entrySet()) {
 
@@ -284,7 +287,7 @@ public class ECOServiceImpl implements ECOService {
 
 	private ChangeUnitDataItem getOrCreateChangeUnitDataItem(ChangeOrderData ecoData, WUsedListDataItem data) {
 
-		if (data.getSourceItems()!=null && !data.getSourceItems().isEmpty()) {
+		if ((data.getSourceItems() != null) && !data.getSourceItems().isEmpty()) {
 
 			ChangeUnitDataItem changeUnitDataItem = ecoData.getChangeUnitMap().get(data.getSourceItems().get(0));
 
@@ -313,7 +316,8 @@ public class ECOServiceImpl implements ECOService {
 				ecoData.getChangeUnitList().add(changeUnitDataItem);
 
 			} else {
-				if (RevisionType.Major.equals(revisionType) || (RevisionType.Minor.equals(revisionType) && RevisionType.NoRevision.equals(changeUnitDataItem.getRevision()))) {
+				if (RevisionType.Major.equals(revisionType)
+						|| (RevisionType.Minor.equals(revisionType) && RevisionType.NoRevision.equals(changeUnitDataItem.getRevision()))) {
 					changeUnitDataItem.setRevision(revisionType);
 				}
 			}
@@ -331,19 +335,20 @@ public class ECOServiceImpl implements ECOService {
 		for (final Composite<WUsedListDataItem> component : composite.getChildren()) {
 
 			// Not First level
-			if (component.getData() != null && component.getData().getDepthLevel() > 1 && component.getData().getIsWUsedImpacted()) {
+			if ((component.getData() != null) && (component.getData().getDepthLevel() > 1) && component.getData().getIsWUsedImpacted()) {
 
 				final ChangeUnitDataItem changeUnitDataItem = getOrCreateChangeUnitDataItem(ecoData, component.getData());
 
 				// We break if product treated
-				if (changeUnitDataItem != null && !changeUnitDataItem.getTreated()) {
+				if ((changeUnitDataItem != null) && !changeUnitDataItem.getTreated()) {
 
 					// We test if all referring nodes are treated before
 					// apply
 					// to branch
-					if (component.getData().getDepthLevel() > 2 && shouldSkipCurrentBranch(ecoData, changeUnitDataItem)) {
+					if ((component.getData().getDepthLevel() > 2) && shouldSkipCurrentBranch(ecoData, changeUnitDataItem)) {
 						if (logger.isDebugEnabled()) {
-							logger.debug("Skip current branch at " + nodeService.getProperty(changeUnitDataItem.getSourceItem(), ContentModel.PROP_NAME));
+							logger.debug(
+									"Skip current branch at " + nodeService.getProperty(changeUnitDataItem.getSourceItem(), ContentModel.PROP_NAME));
 						}
 						break;
 					}
@@ -366,9 +371,8 @@ public class ECOServiceImpl implements ECOService {
 							if (component.getData().getDepthLevel() == 2) {
 								applyReplacementList(ecoData, productToFormulateData);
 							}
-							
+
 							productService.formulate(productToFormulateData);
-							
 
 							if (isSimulation) {
 								// update simulation List
@@ -383,7 +387,9 @@ public class ECOServiceImpl implements ECOService {
 							// Create new version if needed
 							if (!isSimulation) {
 								if (!changeUnitDataItem.getRevision().equals(RevisionType.NoRevision)) {
-									createNewProductVersion(productNodeRef, changeUnitDataItem.getRevision().equals(RevisionType.Major) ? VersionType.MAJOR : VersionType.MINOR, ecoData);
+									createNewProductVersion(productNodeRef,
+											changeUnitDataItem.getRevision().equals(RevisionType.Major) ? VersionType.MAJOR : VersionType.MINOR,
+											ecoData);
 								}
 							}
 
@@ -396,7 +402,8 @@ public class ECOServiceImpl implements ECOService {
 
 						if (!isSimulation) {
 							if (logger.isDebugEnabled()) {
-								logger.debug("Applied Treated to item " + nodeService.getProperty(changeUnitDataItem.getSourceItem(), ContentModel.PROP_NAME));
+								logger.debug("Applied Treated to item "
+										+ nodeService.getProperty(changeUnitDataItem.getSourceItem(), ContentModel.PROP_NAME));
 							}
 						}
 
@@ -405,7 +412,8 @@ public class ECOServiceImpl implements ECOService {
 					};
 
 					try {
-						RunAsWork<Object> actionRunAs = () -> transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, isSimulation, true);
+						RunAsWork<Object> actionRunAs = () -> transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback,
+								isSimulation, true);
 						AuthenticationUtil.runAsSystem(actionRunAs);
 					} catch (Exception e) {
 
@@ -414,8 +422,7 @@ public class ECOServiceImpl implements ECOService {
 						logger.warn(e, e);
 						// Todo log better error
 						logger.error("Error applying for " + nodeService.getProperty(changeUnitDataItem.getSourceItem(), ContentModel.PROP_NAME), e);
-						
-						
+
 						return false;
 					}
 
@@ -424,8 +431,9 @@ public class ECOServiceImpl implements ECOService {
 			}
 
 			if (!component.isLeaf()) {
-				if (!visitChildrens(component, ecoData, isSimulation))
+				if (!visitChildrens(component, ecoData, isSimulation)) {
 					return false;
+				}
 			}
 
 		}
@@ -437,8 +445,9 @@ public class ECOServiceImpl implements ECOService {
 
 		boolean skip = false;
 		for (WUsedListDataItem wulDataItem : ecoData.getWUsedList()) {
-			if (wulDataItem.getParent() != null && wulDataItem.getParent().getIsWUsedImpacted() && wulDataItem.getSourceItems().contains(changeUnitDataItem.getSourceItem())) {
-				if (ecoData.getChangeUnitMap().get(wulDataItem.getParent().getSourceItems().get(0)) == null
+			if ((wulDataItem.getParent() != null) && wulDataItem.getParent().getIsWUsedImpacted()
+					&& wulDataItem.getSourceItems().contains(changeUnitDataItem.getSourceItem())) {
+				if ((ecoData.getChangeUnitMap().get(wulDataItem.getParent().getSourceItems().get(0)) == null)
 						|| !ecoData.getChangeUnitMap().get(wulDataItem.getParent().getSourceItems().get(0)).getTreated()) {
 					skip = true;
 					break;
@@ -448,7 +457,6 @@ public class ECOServiceImpl implements ECOService {
 		}
 		return skip;
 	}
-
 
 	private void applyReplacementList(ChangeOrderData ecoData, ProductData product) {
 
@@ -464,47 +472,55 @@ public class ECOServiceImpl implements ECOService {
 	@SuppressWarnings("unchecked")
 	private <T extends CompositionDataItem> void applyToListV2(ChangeOrderData ecoData, List<T> items) {
 
-		Map<NodeRef, List<Pair<NodeRef, Integer>>> replacements = new HashMap<>();
+		Map<NodeRef, Set<Pair<NodeRef, Integer>>> replacements = new HashMap<>();
 		Set<T> toDelete = new HashSet<>();
 		for (ReplacementListDataItem replacementListDataItem : ecoData.getReplacementList()) {
-			// if rule match compoList
-			if (items.stream().map(c -> c.getComponent()).collect(Collectors.toSet()).containsAll(replacementListDataItem.getSourceItems())) {
-				boolean first = true;
-				for (NodeRef sourceItem : replacementListDataItem.getSourceItems()) {
 
-					if (toDelete.stream().map(c -> c.getComponent()).collect(Collectors.toSet()).contains(sourceItem)) {
-						logger.warn("Cannot add rule: " + sourceItem + " deleted by another rule");
-						break;
-					}
+			// Only reformulate SKIP
+			if (!((replacementListDataItem.getSourceItems() != null) && (replacementListDataItem.getTargetItem() != null)
+					&& (replacementListDataItem.getQtyPerc() != null) && (replacementListDataItem.getSourceItems().size() == 1)
+					&& replacementListDataItem.getSourceItems().contains(replacementListDataItem.getTargetItem())
+					&& (replacementListDataItem.getQtyPerc() == 100))) {
 
-					List<Pair<NodeRef, Integer>> targetItems = replacements.get(sourceItem);
-					if (first) {
-						if (targetItems == null) {
-							targetItems = new ArrayList<>();
+				// if rule match compoList
+				if (items.stream().map(c -> c.getComponent()).collect(Collectors.toSet()).containsAll(replacementListDataItem.getSourceItems())) {
+					boolean first = true;
+					for (NodeRef sourceItem : replacementListDataItem.getSourceItems()) {
+
+						if (toDelete.stream().map(c -> c.getComponent()).collect(Collectors.toSet()).contains(sourceItem)) {
+							logger.warn("Cannot add rule: " + sourceItem + " deleted by another rule");
+							break;
 						}
-						if(replacementListDataItem.getTargetItem()!=null){
-							targetItems.add(new Pair<NodeRef, Integer>(replacementListDataItem.getTargetItem(), replacementListDataItem.getQtyPerc()));
+
+						Set<Pair<NodeRef, Integer>> targetItems = replacements.get(sourceItem);
+						if (first) {
+							if (targetItems == null) {
+								targetItems = new HashSet<>();
+							}
+							if (replacementListDataItem.getTargetItem() != null) {
+								targetItems.add(
+										new Pair<NodeRef, Integer>(replacementListDataItem.getTargetItem(), replacementListDataItem.getQtyPerc()));
+							} else {
+								toDelete.addAll(items.stream().filter(c -> sourceItem.equals(c.getComponent())).collect(Collectors.toSet()));
+							}
+							replacements.put(sourceItem, targetItems);
+
+							first = false;
 						} else {
-							toDelete.addAll(items.stream().filter(c -> sourceItem.equals(c.getComponent())).collect(Collectors.toSet()));
+							if ((targetItems == null) || targetItems.isEmpty()) {
+								toDelete.addAll(items.stream().filter(c -> sourceItem.equals(c.getComponent())).collect(Collectors.toSet()));
+							} else {
+								logger.warn("Cannot delete target item: " + sourceItem + " used in another rule");
+							}
 						}
-						replacements.put(sourceItem, targetItems);
 
-						first = false;
-					} else {
-						if (targetItems == null || targetItems.isEmpty()) {
-							toDelete.addAll(items.stream().filter(c -> sourceItem.equals(c.getComponent())).collect(Collectors.toSet()));
-						} else {
-							logger.warn("Cannot delete target item: " + sourceItem + " used in another rule");
-						}
 					}
-
 				}
-
 			}
 		}
 		items.removeAll(toDelete);
 
-		for (Map.Entry<NodeRef, List<Pair<NodeRef, Integer>>> replacement : replacements.entrySet()) {
+		for (Map.Entry<NodeRef, Set<Pair<NodeRef, Integer>>> replacement : replacements.entrySet()) {
 			Set<T> components = items.stream().filter(c -> replacement.getKey().equals(c.getComponent())).collect(Collectors.toSet());
 			if (components.size() > 0) {
 				boolean first = true;
@@ -531,17 +547,17 @@ public class ECOServiceImpl implements ECOService {
 
 	private <T extends CompositionDataItem> void updateComponent(T component, NodeRef target, Integer qtyPerc) {
 		component.setComponent(target);
-		if(component instanceof CompoListDataItem){
-			if (((CompoListDataItem) component).getQtySubFormula() != null && qtyPerc != null) {
-				((CompoListDataItem) component).setQtySubFormula(qtyPerc / 100 * ((CompoListDataItem) component).getQtySubFormula());
+		if (component instanceof CompoListDataItem) {
+			if ((((CompoListDataItem) component).getQtySubFormula() != null) && (qtyPerc != null)) {
+				((CompoListDataItem) component).setQtySubFormula((qtyPerc / 100) * ((CompoListDataItem) component).getQtySubFormula());
 			}
 		} else {
-			
-			if (component.getQty() != null && qtyPerc != null) {
-				component.setQty(qtyPerc / 100 * component.getQty());
+
+			if ((component.getQty() != null) && (qtyPerc != null)) {
+				component.setQty((qtyPerc / 100) * component.getQty());
 			}
 		}
-		
+
 	}
 
 	private NodeRef getProductToImpact(ChangeOrderData ecoData, ChangeUnitDataItem changeUnitDataItem, boolean isSimulation) {
@@ -577,7 +593,8 @@ public class ECOServiceImpl implements ECOService {
 			QName charactType = nodeService.getType(charactNodeRef);
 			Double sourceValue = getCharactValue(charactNodeRef, charactType, sourceData);
 			if (logger.isDebugEnabled()) {
-				logger.debug("create calculated charact: " + nodeService.getProperty(sourceData.getNodeRef(), ContentModel.PROP_NAME) + " - " + charactNodeRef + " - sourceValue: " + sourceValue);
+				logger.debug("create calculated charact: " + nodeService.getProperty(sourceData.getNodeRef(), ContentModel.PROP_NAME) + " - "
+						+ charactNodeRef + " - sourceValue: " + sourceValue);
 			}
 			ecoData.getSimulationList().add(new SimulationListDataItem(null, sourceData.getNodeRef(), charactNodeRef, sourceValue, null));
 		}
@@ -590,11 +607,12 @@ public class ECOServiceImpl implements ECOService {
 			QName charactType = nodeService.getType(charactNodeRef);
 			Double targetValue = getCharactValue(charactNodeRef, charactType, targetData);
 			for (SimulationListDataItem simulationListDataItem : ecoData.getSimulationList()) {
-				if (simulationListDataItem.getCharact().equals(charactNodeRef) && simulationListDataItem.getSourceItem().equals(targetData.getNodeRef())) {
+				if (simulationListDataItem.getCharact().equals(charactNodeRef)
+						&& simulationListDataItem.getSourceItem().equals(targetData.getNodeRef())) {
 					simulationListDataItem.setTargetValue(targetValue);
 					if (logger.isDebugEnabled()) {
-						logger.debug("calculated charact: " + nodeService.getProperty(targetData.getNodeRef(), ContentModel.PROP_NAME) + " - " + charactNodeRef + " - sourceValue: "
-								+ simulationListDataItem.getSourceValue() + " - targetValue: " + targetValue);
+						logger.debug("calculated charact: " + nodeService.getProperty(targetData.getNodeRef(), ContentModel.PROP_NAME) + " - "
+								+ charactNodeRef + " - sourceValue: " + simulationListDataItem.getSourceValue() + " - targetValue: " + targetValue);
 					}
 				}
 
@@ -611,7 +629,7 @@ public class ECOServiceImpl implements ECOService {
 		RequirementType reqType = null;
 		String reqDetails = null;
 
-		if (targetData.getCompoListView() != null && targetData.getCompoListView().getReqCtrlList() != null) {
+		if ((targetData.getCompoListView() != null) && (targetData.getCompoListView().getReqCtrlList() != null)) {
 			for (ReqCtrlListDataItem rcl : targetData.getCompoListView().getReqCtrlList()) {
 
 				RequirementType newReqType = rcl.getReqType();
@@ -646,8 +664,8 @@ public class ECOServiceImpl implements ECOService {
 
 		QName nodeType = nodeService.getType(targetAssocNodeRef);
 
-		if (nodeType.isMatch(PLMModel.TYPE_RAWMATERIAL) || nodeType.isMatch(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT) || nodeType.isMatch(PLMModel.TYPE_SEMIFINISHEDPRODUCT)
-				|| nodeType.isMatch(PLMModel.TYPE_FINISHEDPRODUCT)) {
+		if (nodeType.isMatch(PLMModel.TYPE_RAWMATERIAL) || nodeType.isMatch(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT)
+				|| nodeType.isMatch(PLMModel.TYPE_SEMIFINISHEDPRODUCT) || nodeType.isMatch(PLMModel.TYPE_FINISHEDPRODUCT)) {
 
 			wUsedAssociations.add(PLMModel.ASSOC_COMPOLIST_PRODUCT);
 		} else if (nodeType.isMatch(PLMModel.TYPE_PACKAGINGMATERIAL) || nodeType.isMatch(PLMModel.TYPE_PACKAGINGKIT)) {
@@ -674,7 +692,7 @@ public class ECOServiceImpl implements ECOService {
 
 		return listQName;
 	}
-	
+
 	@Deprecated
 	private Double getCharactValue(NodeRef charactNodeRef, QName charactType, ProductData productData) {
 		// TODO make more generic use an annotation instead
@@ -689,8 +707,8 @@ public class ECOServiceImpl implements ECOService {
 	}
 
 	private Double getCharactValue(NodeRef charactNodeRef, List<? extends SimpleCharactDataItem> charactList) {
-	
-		if (charactList != null && charactNodeRef != null) {
+
+		if ((charactList != null) && (charactNodeRef != null)) {
 			for (SimpleCharactDataItem charactDataListItem : charactList) {
 				if (charactNodeRef.equals(charactDataListItem.getCharactNodeRef())) {
 					return charactDataListItem.getValue();
