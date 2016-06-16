@@ -52,7 +52,7 @@ public class SpelEditorListValuePlugin extends EntityListValuePlugin {
 
 		if (className != null && className.length() > 0 && className.contains(PARAM_VALUES_SEPARATOR)) {
 			String[] arrClassNames = className != null ? className.split(PARAM_VALUES_SEPARATOR) : null;
-			return suggestTargetAssoc(PLMModel.TYPE_PRODUCT, query, pageNum, pageSize, arrClassNames, props);
+			return suggestTargetAssoc(null,PLMModel.TYPE_PRODUCT, query, pageNum, pageSize, arrClassNames, props);
 		}
 		// Class is a Java class
 		try {
@@ -82,6 +82,6 @@ public class SpelEditorListValuePlugin extends EntityListValuePlugin {
 					query, pageNum, pageSize);
 		}
 
-		return suggestTargetAssoc(type, query, pageNum, pageSize, null, props);
+		return suggestTargetAssoc(null,type, query, pageNum, pageSize, null, props);
 	}
 }

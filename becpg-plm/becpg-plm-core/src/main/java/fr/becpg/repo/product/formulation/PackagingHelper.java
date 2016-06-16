@@ -41,8 +41,10 @@ public class PackagingHelper {
 
 	public PackagingData getPackagingData(ProductData productData) {
 		PackagingData packagingData = new PackagingData(productData.getVariants());
-		for (PackagingListDataItem dataItem : productData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-			loadPackagingItem(dataItem, packagingData);
+		if (productData.hasPackagingListEl()) {
+			for (PackagingListDataItem dataItem : productData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+				loadPackagingItem(dataItem, packagingData);
+			}
 		}
 		return packagingData;
 	}
@@ -72,7 +74,7 @@ public class PackagingHelper {
 		QName nodeType = nodeService.getType(dataItem.getProduct());
 
 		// Sum tare (don't take in account packagingKit)
-		if (dataItem.getPkgLevel() != null && !PLMModel.TYPE_PACKAGINGKIT.equals(nodeType)) {
+		if ((dataItem.getPkgLevel() != null) && !PLMModel.TYPE_PACKAGINGKIT.equals(nodeType)) {
 
 			BigDecimal tare = FormulationHelper.getTareInKg(dataItem, nodeService);
 
@@ -107,9 +109,10 @@ public class PackagingHelper {
 
 		loadPackaging(dataItem, packagingData, dataItem.getVariants());
 		ProductData packagingKitData = alfrescoRepository.findOne(dataItem.getProduct());
-
-		for (PackagingListDataItem p : packagingKitData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-			loadPackaging(p, packagingData, dataItem.getVariants());
+		if (packagingKitData.hasPackagingListEl()) {
+			for (PackagingListDataItem p : packagingKitData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+				loadPackaging(p, packagingData, dataItem.getVariants());
+			}
 		}
 	}
 }
