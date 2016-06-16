@@ -57,10 +57,10 @@
 	margin-right: 0;
 }
 
-.project-list .project-list-bar div.filterform .yui-u {
+.project-list-toolbar div.filterform .yui-u {
 	text-align: left;
 }
-.project-list .project-list-bar div.filterform {
+.project-list-toolbar div.filterform {
     width: 60em;
 }
 
