@@ -313,6 +313,15 @@ div.filterform {
  	float:none;
 }
 
+.datalist-toolbar .left .filterform .yui-g div.first {
+	float:left;
+}
+
+.datalist-toolbar .left .filterform .yui-u {
+    float: right;
+}
+    
+
 .yui-ge .filterform .yui-g,
 .yui-gc .filterform .yui-g,
 .yui-gf .filterform .yui-g {
