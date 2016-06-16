@@ -16,6 +16,8 @@ import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.namespace.InvalidQNameException;
+import org.alfresco.service.namespace.NamespaceException;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -123,8 +125,14 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 							nutValue = propertyFormats.parseDecimal(nutValueToken);
 						}
 
-						ret.add(new NutListDataItem(null, nutValue != null ? nutValue.doubleValue() : null, null, null, null, null, nutNodeRef,
-								false));
+						NutListDataItem nut = new NutListDataItem(null, null, null, null, null, null, nutNodeRef,
+								false);
+						
+						if(nutValue != null){
+							nut.setManualValue(nutValue.doubleValue());
+						}
+						
+						ret.add(nut);
 					} catch (ParseException e) {
 						throw new RuntimeException("unable to parse value " + values[i], e);
 					}
@@ -163,12 +171,7 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 
 				for (int i = 1; i < headerRow.length; ++i) {
 					if (isInDictionary(headerRow[i]) || (headerRow[i].contains("_") && (isInDictionary(headerRow[i]
-							.split("_")[0]))) /*
-												 * && nodeService.getProperties(
-												 * productNode).containsKey(
-												 * QName.createQName(headerRow[i
-												 * ], NamespaceService))
-												 */) {
+							.split("_")[0]))) ) {
 						String value = extractValueById(file, idSplit, i);
 						logger.info("setting property qnamed  \"" + headerRow[i] + "\" to value  \"" + value + "\"");
 						QName attributeQName = QName.createQName(headerRow[i], NamespaceService);
@@ -398,8 +401,12 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 	}
 
 	private boolean isInDictionary(String str) {
+		try {
 		return ((dictionaryDAO.getProperty(QName.createQName(str, NamespaceService)) != null)
 				|| (dictionaryDAO.getAssociation(QName.createQName(str, NamespaceService)) != null));
+		} catch(NamespaceException e){
+			return false;
+		}
 	}
 
 	private String extractValueById(NodeRef file, String id, int column) {
@@ -410,6 +417,12 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 		} else {
 			throw new RuntimeException("error extracting value from cell from id " + id + " and column " + column);
 		}
+	}
+
+	@Override
+	public String getProductName(NodeRef file, String id) {
+		String[] headerRow = getHeaderRow(file);
+		return getProductName(file, id, extractIdentifierColumnIndex(headerRow), extractNameColumnIndex(headerRow));
 	}
 
 }
