@@ -121,8 +121,10 @@
 					<show id="bcpg:subsidiaryRef" force="true" />
 					<show id="bcpg:trademarkRef" force="true" />
 					<show id="bcpg:plants" force="true" />
+					<show id="bcpg:productGeoOrigin"  force="true"  />
 					<show id="bcpg:clients" />
 					<show id="bcpg:suppliers" />
+					
 					<show id="bcpg:entityTplRef" force="true" />
 					
 					<!-- Nutrient profiling score -->
@@ -312,6 +314,7 @@
 					</field>
 					<field id="bcpg:subsidiaryRef" set="mainInfo" />
 					<field id="bcpg:plants" set="mainInfo" />
+					<fiels id="bcpg:productGeoOrigin"  set="mainInfo"  />
 					<field id="bcpg:trademarkRef" set="mainInfo" />
 					<field id="bcpg:clients" set="mainInfo" />
 					<field id="bcpg:suppliers" set="mainInfo" />
@@ -882,6 +885,7 @@
 					<show id="bcpg:customsCodeRef" force="true" />
 					<show id="bcpg:subsidiaryRef" force="true" />
 					<show id="bcpg:plants" force="true" />
+					<show id="bcpg:productGeoOrigin"  force="true"  />
 					<show id="bcpg:trademarkRef" force="true" />
 					<show id="bcpg:clients" />
 					<show id="bcpg:entityTplRef" force="true" />
@@ -977,10 +981,11 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 						</control>
 					</field>
-					<field id="bcpg:subsidiaryRef" force="true" set="mainInfo" />
-					<field id="bcpg:trademarkRef" force="true" set="mainInfo" />
-					<field id="bcpg:plants" force="true" set="mainInfo" />
-					<field id="bcpg:clients" force="true" set="mainInfo" />
+					<field id="bcpg:subsidiaryRef"  set="mainInfo" />
+					<field id="bcpg:trademarkRef"  set="mainInfo" />
+					<field id="bcpg:plants" set="mainInfo" />
+					<fiels id="bcpg:productGeoOrigin"  set="mainInfo"  />
+					<field id="bcpg:clients"  set="mainInfo" />
 					<field id="bcpg:entityTplRef" set="mainInfo">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -1759,6 +1764,7 @@
 					<show id="bcpg:certificateDate" force="true" />
 					<show id="bcpg:suppliers" />
 					<show id="bcpg:plants" force="true" />
+					<show id="bcpg:productGeoOrigin"  force="true"  />
 					<show id="bcpg:entityTplRef" force="true" />
 					
 					<!-- Tare -->
@@ -1864,6 +1870,7 @@
 					<field id="bcpg:certificateDate" set="mainInfo" />
 					<field id="bcpg:suppliers" set="mainInfo" />
 					<field id="bcpg:plants" set="mainInfo" />
+					<field id="bcpg:productGeoOrigin"  set="mainInfo"  />
 					<field id="bcpg:entityTplRef" set="mainInfo">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -2004,6 +2011,7 @@
 					<show id="bcpg:eanCode" />
 					<show id="bcpg:certificateDate" force="true" />
 					<show id="bcpg:plants" force="true" />
+					<show id="bcpg:productGeoOrigin"  force="true"  />
 
 					<!-- Tare -->
 					<show id="pack:tare" force="true" />
@@ -2076,6 +2084,7 @@
 					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo" />
 					<field id="bcpg:certificateDate" set="mainInfo" />				
 					<field id="bcpg:plants" set="mainInfo" />
+					<field id="bcpg:productGeoOrigin"  set="mainInfo"  />
 
 					<!-- tare -->
 					<field id="pack:tare" set="tare" />
@@ -2229,6 +2238,7 @@
 					<show id="bcpg:eanCode" />
 					<show id="bcpg:suppliers" />
 					<show id="bcpg:plants" force="true" />
+					<show id="bcpg:productGeoOrigin"  force="true"  />
 					<show id="bcpg:certificateDate" force="true" />
 					
 					<!-- Tare -->
@@ -2286,6 +2296,7 @@
 					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo" />
 					<field id="bcpg:suppliers" set="mainInfo" />
 					<field id="bcpg:plants" set="mainInfo" />
+					<field id="bcpg:productGeoOrigin"  set="mainInfo"  />
 					<field id="bcpg:certificateDate" set="mainInfo" />
 					<field id="bcpg:entityTplRef" set="mainInfo">
 						<control
@@ -2425,6 +2436,7 @@
 					<show id="bcpg:eanCode" />
 					<show id="bcpg:suppliers" />
 					<show id="bcpg:plants" force="true" />
+					<show id="bcpg:productGeoOrigin"  force="true"  />
 					<show id="bcpg:supplierPlants" force="true" />
 					<show id="bcpg:entityTplRef" force="true" />
 					
@@ -2537,6 +2549,7 @@
 					<field id="bcpg:productState" set="mainInfo" />
 					<field id="bcpg:suppliers" set="mainInfo" />
 					<field id="bcpg:plants" set="mainInfo" />
+					<field id="bcpg:productGeoOrigin"  set="mainInfo"  />
 					<field id="bcpg:supplierPlants" set="mainInfo" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -2714,6 +2727,7 @@
 					<show id="bcpg:packagingDescription" force="true" />
 					<show id="bcpg:eanCode" />
 					<show id="bcpg:supplierPlants" force="true"/>
+					<show id="bcpg:productGeoOrigin"  force="true"  />
 					<!-- Consumer -->
 					<show id="bcpg:productDensity" />
 					<show id="bcpg:ingTypeV2" force="true" />
@@ -2780,6 +2794,7 @@
 							
 						</control>
 					</field>
+					<field id="bcpg:productGeoOrigin"  set="mainInfo"  />
 					
 					<!-- consumer -->
 					
@@ -2954,6 +2969,7 @@
 					<show id="bcpg:suppliers" />
 					<show id="bcpg:plants" force="true" />
 					<show id="bcpg:supplierPlants" force="true"/>
+					<show id="bcpg:productGeoOrigin"  force="true"  />
 
 					<!-- Consumer -->
 					
@@ -3036,6 +3052,7 @@
 							<control-param name="ds">becpg/autocomplete/supplierPlants</control-param>
 						</control>
 					</field>
+					<field id="bcpg:productGeoOrigin" set="mainInfo"  />
 					<field id="bcpg:entityTplRef" set="mainInfo">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -3212,6 +3229,10 @@
 					<show id="bcpg:pclPhysicoChem" force="true" />
 					<show id="bcpg:pclValue" force="true" />
 					
+					<!-- Microbio -->
+					<show id="bcpg:mblMicrobio" force="true" />
+					<show id="bcpg:mblValue" force="true" />
+					
 					<!-- Allergen -->
 					<show id="bcpg:allergenListAllergen" force="true" />
 					
@@ -3234,7 +3255,10 @@
 						label-id="becpg.forms.set.nuts-criteria.label" />	
 							
 					<set id="physicoChems-criteria" appearance="bordered-panel"
-						label-id="becpg.forms.set.physicoChems-criteria.label" />		
+						label-id="becpg.forms.set.physicoChems-criteria.label" />	
+						
+					<set id="microbio-criteria" appearance="bordered-panel"
+						label-id="becpg.forms.set.microbio-criteria.label" />		
 	
 
 					<field id="cm:name" set="2-col-product-criteria" />
@@ -3340,6 +3364,16 @@
 					</field>
 					
 					<field id="bcpg:pclValue" set="physicoChems-criteria">
+						<control
+							template="/org/alfresco/components/form/controls/numberrange.ftl" />
+					</field>
+					
+					
+					<field id="bcpg:mblMicrobio" set="microbio-criteria" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:mblValue" set="microbio-criteria" >
 						<control
 							template="/org/alfresco/components/form/controls/numberrange.ftl" />
 					</field>
