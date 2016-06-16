@@ -231,15 +231,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/olap/*.saiku");
 		}
 		if (Objects.equals(folderName, PlmRepoConsts.PATH_NUT_DATABASES)) {
-			List<NodeRef> importedFiles = contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/nutDatabases/*.csv");
-			for (NodeRef file : importedFiles) {
-
-				String nameWithExtension = ((String) nodeService.getProperty(file, ContentModel.PROP_NAME));
-				String[] splitExtension = nameWithExtension.split(Pattern.quote("."));
-
-				nodeService.setProperty(file, ContentModel.PROP_NAME, splitExtension[0]);
-			}
-
+			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/nutDatabases/*.csv");
 		}
 	}
 
