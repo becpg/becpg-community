@@ -39,4 +39,12 @@ public interface NutDatabaseService {
 	 * @return the NodeRef of the created product
 	 */
 	NodeRef createProduct(NodeRef file, String id, NodeRef dest);
+	
+	/**
+	 * Returns the full name of the product in db if it exists
+	 * @param file csv file
+	 * @param id e.g. CIQUAL3200
+	 * @return e.g. CIQUAL3200 - Broccoli, cru
+	 */
+	String getProductName(NodeRef file, String id);
 }
