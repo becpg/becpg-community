@@ -897,4 +897,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		}
 	}
 
+	@Override
+	public Integer initOrder() {
+		return 3;
+	}
+	
 }
