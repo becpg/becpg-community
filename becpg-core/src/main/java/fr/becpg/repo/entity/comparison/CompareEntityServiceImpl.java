@@ -1,20 +1,33 @@
 package fr.becpg.repo.entity.comparison;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.model.ForumModel;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
+import org.alfresco.service.cmr.model.FileFolderService;
+import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.AssociationRef;
+import org.alfresco.service.cmr.repository.ContentData;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
+import org.alfresco.util.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +47,7 @@ import fr.becpg.repo.helper.AttributeExtractorService;
 
 /**
  * Compare several entities (properties, datalists and composite datalists).
- * 
+ *
  * @author querephi
  */
 @Service("compareEntityService")
@@ -66,6 +79,9 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 	@Autowired
 	private MultiLevelDataListService multiLevelDataListService;
 
+	@Autowired
+	private FileFolderService fileFolderService;
+
 	@Override
 	public List<CompareResultDataItem> compare(NodeRef entity1, List<NodeRef> entities, List<CompareResultDataItem> compareResult,
 			Map<String, List<StructCompareResultDataItem>> structCompareResults) {
@@ -83,7 +99,6 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		for (CompareResultDataItem c : comparisonMap.values()) {
 			compareResult.add(c);
 		}
-
 		return compareResult;
 	}
 
@@ -94,6 +109,11 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 		// compare entity properties
 		compareNode(null, null, null, entity1NodeRef, entity2NodeRef, nbEntities, comparisonPosition, false, comparisonMap);
+		// compare files properties
+		String comparison = nodeService.getProperty(entity1NodeRef, ContentModel.PROP_NAME) + COMPARISON_SEPARATOR
+				+ nodeService.getProperty(entity2NodeRef, ContentModel.PROP_NAME) + COMPARISON_SEPARATOR + "Documents";
+
+		compareFiles(1, entity1NodeRef, entity2NodeRef, structCompareResults, new ArrayList<StructCompareResultDataItem>(), comparison, true);
 
 		// load datalists
 		List<String> comparedDataLists = new ArrayList<>();
@@ -108,12 +128,11 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		if (listsContainer2NodeRef != null) {
 			dataLists2 = entityListDAO.getExistingListsNodeRef(listsContainer2NodeRef);
 		}
-
 		for (NodeRef dataList1 : dataLists1) {
-
 			QName dataListType = getDataListQName(dataList1);
+
 			if (!BeCPGModel.TYPE_ENTITYLIST_ITEM.equals(dataListType)) {
-				// structural comparison
+
 				compareStructDatalist(entity1NodeRef, entity2NodeRef, dataListType, structCompareResults);
 
 				// flat comparaison
@@ -132,8 +151,8 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				compareDataLists(dataListType, dataList1, dataList2NodeRef, nbEntities, comparisonPosition, comparisonMap);
 			}
 		}
-
 		// compare dataLists2 that have not been compared
+		logger.debug(" compare dataLists2 that have not been compared");
 		if (dataLists2 != null) {
 			for (NodeRef dataList2 : dataLists2) {
 
@@ -154,6 +173,247 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				}
 			}
 		}
+
+	}
+
+	private Pair<List<StructCompareResultDataItem>, Boolean> compareFiles(int depthLevel, NodeRef entity1, NodeRef entity2,
+			Map<String, List<StructCompareResultDataItem>> structCompareResults, List<StructCompareResultDataItem> structCompareListTMP,
+			String comparison, boolean rootInsert) {
+
+		logger.debug("Compare Files of level " + depthLevel + "   :: ON :entity1= " + entity1 + "  AND : entity2=" + entity2);
+		List<FileInfo> filesInfo1 = entity1 == null ? new ArrayList<FileInfo>() : fileFolderService.listFiles(entity1);
+		List<FileInfo> filesInfo2 = entity2 == null ? new ArrayList<FileInfo>() : fileFolderService.listFiles(entity2);
+		Set<FileInfo> filesTreated1 = new HashSet<FileInfo>();
+		Set<FileInfo> filesTreated2 = new HashSet<FileInfo>();
+
+		List<StructCompareResultDataItem> structComparisonList = new LinkedList<>();
+
+		Map<QName, String> properties1;
+		Map<QName, String> properties2;
+
+		for (FileInfo fileInfo1 : filesInfo1) {
+			NodeRef fileNodeRef1 = fileInfo1.getNodeRef();
+			String fileName1 = (String) nodeService.getProperty(fileNodeRef1, ContentModel.PROP_NAME);
+
+			for (FileInfo fileInfo2 : filesInfo2) {
+				NodeRef fileNodeRef2 = fileInfo2.getNodeRef();
+				String fileName2 = (String) nodeService.getProperty(fileNodeRef2, ContentModel.PROP_NAME);
+
+				if (fileName1.equals(fileName2)) {
+					ContentData contentRef1 = (ContentData) nodeService.getProperty(fileNodeRef1, ContentModel.PROP_CONTENT);
+					long size1 = contentRef1.getSize();
+
+					ContentData contentRef2 = (ContentData) nodeService.getProperty(fileNodeRef2, ContentModel.PROP_CONTENT);
+					long size2 = contentRef2.getSize();
+
+					if (size1 != size2) {
+						properties1 = new TreeMap<>();
+						properties2 = new TreeMap<>();
+						properties1.put(ContentModel.PROP_NAME, fileName1);
+						properties2.put(ContentModel.PROP_NAME, fileName2);
+
+						StructCompareResultDataItem structComparison = new StructCompareResultDataItem(ContentModel.TYPE_CONTENT, depthLevel,
+								StructCompareOperator.Modified, null, fileNodeRef1, fileNodeRef2, properties1, properties2);
+						structComparisonList.add(structComparison);
+
+						logger.debug(" depthLevel= " + depthLevel + " , Operator= " + StructCompareOperator.Modified + ", null, fileNodeRef1 of "
+								+ fileName1 + "= " + fileNodeRef1 + "" + ", fileNodeRef2 of " + fileName2 + "= " + fileNodeRef2 + " ::  size1 = "
+								+ size1 + " :: size2 =  " + size2 + " , properties1=" + properties1.get(ContentModel.PROP_NAME) + " , properties2="
+								+ properties2.get(ContentModel.PROP_NAME));
+
+					} else {
+						properties1 = new TreeMap<>();
+						properties2 = new TreeMap<>();
+						StructCompareResultDataItem structComparison = new StructCompareResultDataItem(ContentModel.TYPE_CONTENT, depthLevel,
+								StructCompareOperator.Equal, null, fileNodeRef1, fileNodeRef2, properties1, properties2);
+						structComparisonList.add(structComparison);
+
+						logger.debug("StructCompareResultDataItam :::  dataFolderType= " + ContentModel.TYPE_CONTENT + " , depthLevel= " + depthLevel
+								+ " , Operator= " + StructCompareOperator.Equal + ", null, fileNodeRef1 of " + fileName1 + "= " + fileNodeRef1
+								+ ", fileNodeRef2 of " + fileName2 + "= " + fileNodeRef2 + " , properties1=" + properties1.get(ContentModel.PROP_NAME)
+								+ " , properties2=" + properties2.get(ContentModel.PROP_NAME));
+
+					}
+
+					filesTreated1.add(fileInfo1);
+					filesTreated2.add(fileInfo2);
+					break;
+				}
+			}
+		}
+
+		for (FileInfo fileInfo1 : filesInfo1) {
+			if (!filesTreated1.contains(fileInfo1)) {
+
+				NodeRef fileNodeRef1 = fileInfo1.getNodeRef();
+				String fileName1 = (String) nodeService.getProperty(fileNodeRef1, ContentModel.PROP_NAME);
+				properties1 = new TreeMap<>();
+				properties2 = new TreeMap<>();
+				properties1.put(ContentModel.PROP_NAME, fileName1);
+
+				StructCompareResultDataItem structComparison = new StructCompareResultDataItem(ContentModel.TYPE_CONTENT, depthLevel,
+						StructCompareOperator.Removed, null, fileNodeRef1, null, properties1, properties2);
+				structComparisonList.add(structComparison);
+
+				logger.debug("StructCompareResultDataItam :::  dataFolderType= " + ContentModel.TYPE_CONTENT + " , depthLevel= " + depthLevel
+						+ " , Operator= " + StructCompareOperator.Removed + ", null, fileNodeRef1 of " + fileName1 + "= " + fileNodeRef1
+						+ ", fileNodeRef2 = null" + " , properties1=" + properties1.get(ContentModel.PROP_NAME) + " , properties2="
+						+ properties2.get(ContentModel.PROP_NAME));
+
+			}
+		}
+
+		for (FileInfo fileInfo2 : filesInfo2) {
+
+			if (!filesTreated2.contains(fileInfo2)) {
+				NodeRef fileNodeRef2 = fileInfo2.getNodeRef();
+				String fileName2 = (String) nodeService.getProperty(fileNodeRef2, ContentModel.PROP_NAME);
+
+				properties1 = new TreeMap<>();
+				properties2 = new TreeMap<>();
+				properties2.put(ContentModel.PROP_NAME, fileName2);
+				logger.debug("StructCompareResultDataItam :::  dataFolderType= " + ContentModel.TYPE_CONTENT + " , depthLevel= " + depthLevel
+						+ " , Operator= " + StructCompareOperator.Added + ", null, fileNodeRef1= null, fileNodeRef2 of " + fileName2 + "= "
+						+ fileNodeRef2 + " , properties1=" + properties1.get(ContentModel.PROP_NAME) + " , properties2="
+						+ properties2.get(ContentModel.PROP_NAME));
+				StructCompareResultDataItem structComparison = new StructCompareResultDataItem(ContentModel.TYPE_CONTENT, depthLevel,
+						StructCompareOperator.Added, null, null, fileNodeRef2, properties1, properties2);
+				structComparisonList.add(structComparison);
+			}
+
+		}
+		Pair<List<StructCompareResultDataItem>, Boolean> resultsArray = new Pair<>(structComparisonList,
+				compareSubDocuments(depthLevel, entity1, entity2, structCompareListTMP, comparison));
+
+		if (rootInsert) {
+			createForlderStruc(entity1, entity2, structComparisonList, structCompareListTMP, depthLevel, false, false);
+			structCompareResults.put(comparison, structCompareListTMP);
+
+		}
+
+		if ((isContainOperatorDifferentThan(StructCompareOperator.Equal, structComparisonList))) {
+			resultsArray.setSecond(true);
+		}
+		return resultsArray;
+	}
+
+	private boolean isContainOperatorDifferentThan(StructCompareOperator equal, List<StructCompareResultDataItem> structComparisonList) {
+		boolean isDifferentTo = false;
+
+		for (StructCompareResultDataItem s : structComparisonList) {
+			if (s.getOperator() != equal) {
+				isDifferentTo = true;
+				break;
+			}
+		}
+		return isDifferentTo;
+	}
+
+	/**
+	 *
+	 * @param depthLevel
+	 * @param entity1
+	 * @param entity2
+	 * @param structCompareResults
+	 * @param structComparisonListTMP
+	 * @param comparison
+	 * @return false if at least one descendent file has a operator different
+	 *         than equal, true otherwize .
+	 */
+	private boolean compareSubDocuments(int depthLevel, NodeRef entity1, NodeRef entity2, List<StructCompareResultDataItem> structComparisonListTMP,
+			String comparison) {
+
+		List<FileInfo> foldersInfo1 = entity1 == null ? new ArrayList<FileInfo>(0) : fileFolderService.listFolders(entity1);
+		List<FileInfo> foldersInfo2 = entity2 == null ? new ArrayList<FileInfo>(0) : fileFolderService.listFolders(entity2);
+		List<FileInfo> foldersTreaded1 = new ArrayList<FileInfo>();
+		List<FileInfo> foldersTreaded2 = new ArrayList<FileInfo>();
+		boolean isOperatorFolderIsEqual = false;
+		Pair<List<StructCompareResultDataItem>, Boolean> results = null;
+
+		for (FileInfo folderInfo1 : foldersInfo1) {
+			NodeRef folderNodeRef1 = folderInfo1.getNodeRef();
+			String folderName1 = (String) nodeService.getProperty(folderNodeRef1, ContentModel.PROP_NAME);
+			logger.debug("\n\nRetrieval  1 of folder Name  :" + folderName1);
+
+			for (FileInfo folderInfo2 : foldersInfo2) {
+				NodeRef folderNodeRef2 = folderInfo2.getNodeRef();
+				String folderName2 = (String) nodeService.getProperty(folderNodeRef2, ContentModel.PROP_NAME);
+				logger.trace("\n\nRetrieval  2 of folder Name   :" + folderName2);
+
+				if (folderName1.equals(folderName2)) {
+
+					results = compareFiles((depthLevel + 1), folderNodeRef1, folderNodeRef2, null, structComparisonListTMP, comparison, false);
+
+					isOperatorFolderIsEqual = results.getSecond() ? true : isOperatorFolderIsEqual;
+					createForlderStruc(folderNodeRef1, folderNodeRef2, results.getFirst(), structComparisonListTMP, depthLevel, true,
+							results.getSecond());
+
+					foldersTreaded1.add(folderInfo1);
+					foldersTreaded2.add(folderInfo2);
+					folderNodeRef1 = null;
+					break;
+				}
+			}
+
+			if ((results != null) && (folderNodeRef1 != null)) {
+				// Suppression action
+				results = compareFiles((depthLevel + 1), folderNodeRef1, null, null, structComparisonListTMP, comparison, false);
+				isOperatorFolderIsEqual = results.getSecond() ? true : isOperatorFolderIsEqual;
+
+				createForlderStruc(folderNodeRef1, null, results.getFirst(), structComparisonListTMP, depthLevel, true, results.getSecond());
+			}
+
+		}
+
+		for (FileInfo folderInfo2 : foldersInfo2) {
+			if (!foldersTreaded2.contains(folderInfo2)) {// Add Action
+				NodeRef folderNodeRef2 = folderInfo2.getNodeRef();
+				results = compareFiles((depthLevel + 1), null, folderNodeRef2, null, structComparisonListTMP, comparison, false);
+				isOperatorFolderIsEqual = results.getSecond() ? true : isOperatorFolderIsEqual;
+
+				createForlderStruc(null, folderNodeRef2, results.getFirst(), structComparisonListTMP, depthLevel, true, results.getSecond());
+			}
+		}
+
+		return isOperatorFolderIsEqual;
+	}
+
+	/**
+	 * Create a StructCompareResultDataItem which represent a folder. Then Merge
+	 * 'structCompareList with the folder representation and structListFiles.
+	 *
+	 * @param folderNodeRef1
+	 * @param folderNodeRef2
+	 * @param strucListFiles
+	 * @param structCompareList
+	 * @param comparison
+	 * @param depthLevel
+	 * @Param root boolean, create the folder parent at true, and don't do it at
+	 *        false.
+	 */
+	private void createForlderStruc(NodeRef folderNodeRef1, NodeRef folderNodeRef2, List<StructCompareResultDataItem> structListFiles,
+			List<StructCompareResultDataItem> structCompareList, int depthLevel, boolean root, boolean setFolderOperator) {
+
+		StructCompareOperator operator = setFolderOperator ? StructCompareOperator.Modified : StructCompareOperator.Equal;
+
+		StructCompareResultDataItem structComparison = new StructCompareResultDataItem(ContentModel.TYPE_CONTENT, depthLevel, operator, null,
+				folderNodeRef1, folderNodeRef2, new TreeMap<>(), new TreeMap<>());
+		List<StructCompareResultDataItem> structListFilesInter = new ArrayList<StructCompareResultDataItem>();
+
+		if (root) {
+			structListFilesInter.add(structComparison);
+		}
+		for (StructCompareResultDataItem s : structListFiles) {
+			structListFilesInter.add(s);
+		}
+
+		for (StructCompareResultDataItem s : structCompareList) {
+			structListFilesInter.add(s);
+		}
+		structCompareList.clear();
+		for (StructCompareResultDataItem s : structListFilesInter) {
+			structCompareList.add(s);
+		}
 	}
 
 	private QName getDataListQName(NodeRef listNodeRef) {
@@ -164,6 +424,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 			Map<String, CompareResultDataItem> comparisonMap) {
 
 		QName pivotProperty = null;
+
 		try {
 			pivotProperty = entityDictionaryService.getDefaultPivotAssoc(dataListType);
 		} catch (IllegalArgumentException e) {
@@ -191,10 +452,10 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 			// composite datalist
 			for (NodeRef dataListItem1 : dataListItems1) {
-
 				NodeRef dataListItem2NodeRef = null;
 
 				List<AssociationRef> target1Refs = nodeService.getTargetAssocs(dataListItem1, pivotProperty);
+
 				NodeRef characteristicNodeRef = null;
 
 				if (target1Refs.size() > 0) {
@@ -206,9 +467,10 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 						List<AssociationRef> target2Refs = nodeService.getTargetAssocs(d, pivotProperty);
 						if (target2Refs.size() > 0) {
 
-							NodeRef c = (target2Refs.get(0)).getTargetRef();							
+							NodeRef c = (target2Refs.get(0)).getTargetRef();
+
 							if (characteristicNodeRef.equals(c)) {
-								if(logger.isDebugEnabled()){
+								if (logger.isDebugEnabled()) {
 									logger.debug("###c " + nodeService.getProperty(c, ContentModel.PROP_NAME));
 								}
 								dataListItem2NodeRef = d;
@@ -221,6 +483,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				CharacteristicToCompare characteristicToCmp = new CharacteristicToCompare(null, characteristicNodeRef, dataListItem1,
 						dataListItem2NodeRef);
 				characteristicsToCmp.add(characteristicToCmp);
+
 			}
 
 			// compare charact that are in DL1
@@ -242,8 +505,8 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 			// compare properties of characteristics
 			for (CharacteristicToCompare c : characteristicsToCmp) {
-				compareNode(dataListType, c.getCharactPath(), c.getCharacteristic(), c.getNodeRef1(), c.getNodeRef2(), nbEntities,
-						comparisonPosition, true, comparisonMap);
+				compareNode(dataListType, c.getCharactPath(), c.getCharacteristic(), c.getNodeRef1(), c.getNodeRef2(), nbEntities, comparisonPosition,
+						true, comparisonMap);
 			}
 		}
 	}
@@ -254,11 +517,12 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 		// load the 2 datalists
 		QName pivotProperty = entityDictionaryService.getDefaultPivotAssoc(datalistType);
-		if(pivotProperty != null){
+
+		if (pivotProperty != null) {
 			MultiLevelListData listData1 = loadCompositeDataList(entity1NodeRef, datalistType);
 			MultiLevelListData listData2 = loadCompositeDataList(entity2NodeRef, datalistType);
 
-			if(logger.isDebugEnabled()){
+			if (logger.isDebugEnabled()) {
 				logger.debug("listData1 " + listData1);
 				logger.debug("listData2 " + listData2);
 			}
@@ -276,7 +540,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 					+ dictionaryService.getType(datalistType).getTitle(dictionaryService);
 
 			structCompareResults.put(comparison, structComparisonList);
-		}		
+		}
 	}
 
 	private MultiLevelListData loadCompositeDataList(NodeRef entityNodeRef, QName datalistType) {
@@ -291,19 +555,20 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 	private void loadComparableItems(CompositeComparableItem compositeItem, MultiLevelListData listData) {
 
 		for (Entry<NodeRef, MultiLevelListData> entry : listData.getTree().entrySet()) {
-			if(entry.getValue().getEntityNodeRef() != null){
+			if (entry.getValue().getEntityNodeRef() != null) {
 				NodeRef nodeRef = entry.getKey();
 
-				// TODO generic should be able to combine several properties (ie:
+				// TODO generic should be able to combine several properties
+				// (ie:
 				// EAN, Funtion,...)
-				String pivot = (String) nodeService.getProperty(entry.getValue().getEntityNodeRef(), BeCPGModel.PROP_LEGAL_NAME);			
+				String pivot = (String) nodeService.getProperty(entry.getValue().getEntityNodeRef(), BeCPGModel.PROP_LEGAL_NAME);
 				if (pivot == null) {
 					pivot = entry.getValue().getEntityNodeRef().toString();
 				}
 				CompositeComparableItem c = new CompositeComparableItem(entry.getValue().getDepth(), pivot, nodeRef);
 				addComparableItem(compositeItem, pivot, c);
 				loadComparableItems(c, entry.getValue());
-			}			
+			}
 		}
 	}
 
@@ -320,25 +585,26 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 	}
 
 	private void structCompareCompositeDataLists(QName entityListType, QName pivotProperty, List<StructCompareResultDataItem> strucComparisonList,
-			CompositeComparableItem compositeItem1, CompositeComparableItem compositeItem2) {		
-		
+			CompositeComparableItem compositeItem1, CompositeComparableItem compositeItem2) {
+
 		if (compositeItem1 != null) {
 			for (String key : compositeItem1.getItemList().keySet()) {
 
 				AbstractComparableItem c1 = compositeItem1.get(key);
 				AbstractComparableItem c2 = compositeItem2 == null ? null : compositeItem2.get(key);
 				NodeRef nodeRef1 = c1.getNodeRef();
-				NodeRef nodeRef2 = c2 == null ? null : c2.getNodeRef();				
-				
+				NodeRef nodeRef2 = c2 == null ? null : c2.getNodeRef();
+
 				StructCompareOperator operator = StructCompareOperator.Equal;
 
 				Map<String, CompareResultDataItem> comparisonMap = new TreeMap<>();
 				compareNode(entityListType, null, null, nodeRef1, nodeRef2, 2, 1, true, comparisonMap);
 
 				if (logger.isDebugEnabled()) {
-					logger.debug("structCompareCompositeDataLists: nodeRef1: " + nodeRef1 + " - nodeRef2: " + nodeRef2 + " pivotProperty: " + pivotProperty);
+					logger.debug("structCompareCompositeDataLists: nodeRef1: " + nodeRef1 + " - nodeRef2: " + nodeRef2 + " pivotProperty: "
+							+ pivotProperty);
 					logger.trace(" comparisonMap: " + comparisonMap);
-				}				
+				}
 
 				// get Properties
 				Map<QName, String> properties1 = new TreeMap<>();
@@ -351,8 +617,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 						}
 						if (pivotProperty.getLocalName().equals(c.getProperty().getLocalName())) {
 							operator = StructCompareOperator.Replaced;
-						}
-						else{
+						} else {
 							// we don't include pivot in properties
 							properties1.put(c.getProperty(), c.getValues()[0]);
 							properties2.put(c.getProperty(), c.getValues()[1]);
@@ -364,7 +629,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				if (nodeRef2 == null) {
 					operator = StructCompareOperator.Removed;
 				}
-				
+
 				// we display only changes
 				if (!StructCompareOperator.Equal.equals(operator)) {
 
@@ -392,7 +657,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 				AbstractComparableItem c2 = compositeItem2.get(key);
 
-				if ((compositeItem1 == null) || (compositeItem1 != null && compositeItem1.get(key) == null)) {
+				if ((compositeItem1 == null) || ((compositeItem1 != null) && (compositeItem1.get(key) == null))) {
 
 					// get Properties
 					Map<String, CompareResultDataItem> comparisonMap = new HashMap<>();
@@ -428,15 +693,14 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 			int nbEntities, int comparisonPosition, boolean isDataList, Map<String, CompareResultDataItem> comparisonMap) {
 
 		/*
-		 * Compare properites
+		 * Compare properties
 		 */
 
 		PropertyFormats propertyFormats = new PropertyFormats(false);
 		Map<QName, Serializable> properties1 = nodeRef1 == null ? new TreeMap<QName, Serializable>() : nodeService.getProperties(nodeRef1);
 		Map<QName, Serializable> properties2 = nodeRef2 == null ? new TreeMap<QName, Serializable>() : nodeService.getProperties(nodeRef2);
-
 		for (QName propertyQName : properties1.keySet()) {
-			
+
 			if (isCompareableProperty(propertyQName, isDataList)) {
 
 				Serializable oValue1 = properties1.get(propertyQName);
@@ -464,10 +728,10 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		 * Compare associations
 		 */
 
-		List<AssociationRef> associations1 = nodeRef1 == null ? new ArrayList<AssociationRef>() : nodeService.getTargetAssocs(nodeRef1,
-				RegexQNamePattern.MATCH_ALL);
-		List<AssociationRef> associations2 = nodeRef2 == null ? new ArrayList<AssociationRef>() : nodeService.getTargetAssocs(nodeRef2,
-				RegexQNamePattern.MATCH_ALL);
+		List<AssociationRef> associations1 = nodeRef1 == null ? new ArrayList<AssociationRef>()
+				: nodeService.getTargetAssocs(nodeRef1, RegexQNamePattern.MATCH_ALL);
+		List<AssociationRef> associations2 = nodeRef2 == null ? new ArrayList<AssociationRef>()
+				: nodeService.getTargetAssocs(nodeRef2, RegexQNamePattern.MATCH_ALL);
 
 		Map<QName, List<NodeRef>> associations1Sorted = new HashMap<>();
 		Map<QName, List<NodeRef>> associations2Sorted = new HashMap<>();
@@ -493,7 +757,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 			}
 		}
 
-		// load associations of nodeRef 1
+		// load associations of nodeRef 2
 		for (AssociationRef assocRef : associations2) {
 
 			QName qName = assocRef.getTypeQName();
@@ -591,7 +855,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		// some system properties are not found (versionDescription,
 		// frozenModifier, etc...)
 		if (propertyDef == null) {
-			logger.debug("Property Def doesn't exists for: "+propertyQName);
+			logger.debug("Property Def doesn't exists for: " + propertyQName);
 			return;
 		}
 
@@ -656,10 +920,8 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				|| qName.equals(ContentModel.PROP_STORE_IDENTIFIER) || qName.equals(ContentModel.PROP_STORE_NAME)
 				|| qName.equals(ContentModel.PROP_STORE_PROTOCOL) || qName.equals(ContentModel.PROP_CONTENT)
 				|| qName.equals(ContentModel.PROP_VERSION_LABEL) || qName.equals(ContentModel.PROP_AUTO_VERSION)
-				|| qName.equals(ContentModel.PROP_AUTO_VERSION_PROPS)
-				|| qName.equals(ContentModel.ASSOC_ORIGINAL)
-				|| qName.equals(ForumModel.PROP_COMMENT_COUNT)
-				||
+				|| qName.equals(ContentModel.PROP_AUTO_VERSION_PROPS) || qName.equals(ContentModel.ASSOC_ORIGINAL)
+				|| qName.equals(ForumModel.PROP_COMMENT_COUNT) ||
 				// system properties
 				qName.equals(BeCPGModel.PROP_PARENT_LEVEL) || qName.equals(BeCPGModel.PROP_START_EFFECTIVITY)
 				|| qName.equals(BeCPGModel.PROP_END_EFFECTIVITY) || qName.equals(ReportModel.PROP_REPORT_ENTITY_GENERATED)
@@ -677,7 +939,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				isCompareable = false;
 			}
 		}
-		
+
 		return isCompareable;
 	}
 

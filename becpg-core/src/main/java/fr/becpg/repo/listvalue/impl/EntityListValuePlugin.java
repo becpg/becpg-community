@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2016 beCPG.
+ * Copyright (C) 2010-2015 beCPG.
  *
  * This file is part of beCPG
  *
@@ -122,7 +122,7 @@ public class EntityListValuePlugin implements ListValuePlugin {
 		switch (sourceType) {
 		case SOURCE_TYPE_TARGET_ASSOC:
 			QName type = QName.createQName(className, namespaceService);
-			return suggestTargetAssoc(type, query, pageNum, pageSize, arrClassNames, props);
+			return suggestTargetAssoc(path, type, query, pageNum, pageSize, arrClassNames, props);
 		case SOURCE_TYPE_LINKED_VALUE:
 			return suggestLinkedValue(path, query, pageNum, pageSize, props, false);
 		case SOURCE_TYPE_LINKED_VALUE_ALL:
@@ -148,7 +148,7 @@ public class EntityListValuePlugin implements ListValuePlugin {
 	 * @return the map
 	 */
 	@SuppressWarnings("unchecked")
-	public ListValuePage suggestTargetAssoc(QName type, String query, Integer pageNum, Integer pageSize, String[] arrClassNames,
+	public ListValuePage suggestTargetAssoc(String path, QName type, String query, Integer pageNum, Integer pageSize, String[] arrClassNames,
 			Map<String, Serializable> props) {
 
 		if (logger.isDebugEnabled()) {
@@ -188,6 +188,11 @@ public class EntityListValuePlugin implements ListValuePlugin {
 			queryBuilder.andFTSQuery(query);
 		}
 
+		if(path !=null && !path.isEmpty()){
+			queryBuilder.inPath(path);
+		}
+
+		
 		// filter by classNames
 		filterByClass(queryBuilder, arrClassNames);
 
@@ -522,72 +527,6 @@ public class EntityListValuePlugin implements ListValuePlugin {
 
 	public boolean isQueryMatch(String query, String entityName) {
 
-//		if (query != null) {
-//
-//			if (SUFFIX_ALL.equals(query)) {
-//				return true;
-//			}
-//
-//			Analyzer analyzer = getTextAnalyzer();
-//
-//			if (logger.isDebugEnabled()) {
-//				logger.debug("Using analyzer : " + analyzer.getClass().getName());
-//			}
-//			TokenStream querySource = null;
-//			Reader queryReader;
-//			TokenStream productNameSource = null;
-//			Reader productNameReader;
-//			try {
-//
-//				queryReader = new StringReader(query);
-//				productNameReader = new StringReader(entityName);
-//				querySource = analyzer.tokenStream(null, queryReader);
-//				productNameSource = analyzer.tokenStream(null, productNameReader);
-//
-//				Token reusableToken = new Token();
-//				boolean match = true;
-//				while ((reusableToken = querySource.next(reusableToken)) != null) {
-//					Token tmpToken = new Token();
-//					while ((tmpToken = productNameSource.next(tmpToken)) != null) {
-//						match = false;
-//						if (logger.isDebugEnabled()) {
-//							logger.debug("Test StartWith : " + reusableToken.term() + " with " + tmpToken.term());
-//						}
-//
-//						if (tmpToken.term().startsWith(reusableToken.term())) {
-//							match = true;
-//							break;
-//						}
-//					}
-//					if (!match) {
-//						break;
-//					}
-//				}
-//				querySource.reset();
-//				productNameSource.reset();
-//				return match;
-//			} catch (Exception e) {
-//				logger.error(e, e);
-//			} finally {
-//
-//				try {
-//					if (querySource != null) {
-//						querySource.close();
-//					}
-//					if (productNameSource != null) {
-//						productNameSource.close();
-//					}
-//
-//				} catch (IOException e) {
-//					// Nothing todo here
-//					logger.error(e, e);
-//				}
-//
-//			}
-//
-//		}
-//
-//		return false;
 		return BeCPGQueryHelper.isQueryMatch(query, entityName, dictionaryDAO);
 	}
 
