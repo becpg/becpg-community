@@ -3229,6 +3229,10 @@
 					<show id="bcpg:pclPhysicoChem" force="true" />
 					<show id="bcpg:pclValue" force="true" />
 					
+					<!-- Microbio -->
+					<show id="bcpg:mblMicrobio" force="true" />
+					<show id="bcpg:mblValue" force="true" />
+					
 					<!-- Allergen -->
 					<show id="bcpg:allergenListAllergen" force="true" />
 					
@@ -3251,7 +3255,10 @@
 						label-id="becpg.forms.set.nuts-criteria.label" />	
 							
 					<set id="physicoChems-criteria" appearance="bordered-panel"
-						label-id="becpg.forms.set.physicoChems-criteria.label" />		
+						label-id="becpg.forms.set.physicoChems-criteria.label" />	
+						
+					<set id="microbio-criteria" appearance="bordered-panel"
+						label-id="becpg.forms.set.microbio-criteria.label" />		
 	
 
 					<field id="cm:name" set="2-col-product-criteria" />
@@ -3357,6 +3364,16 @@
 					</field>
 					
 					<field id="bcpg:pclValue" set="physicoChems-criteria">
+						<control
+							template="/org/alfresco/components/form/controls/numberrange.ftl" />
+					</field>
+					
+					
+					<field id="bcpg:mblMicrobio" set="microbio-criteria" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:mblValue" set="microbio-criteria" >
 						<control
 							template="/org/alfresco/components/form/controls/numberrange.ftl" />
 					</field>
