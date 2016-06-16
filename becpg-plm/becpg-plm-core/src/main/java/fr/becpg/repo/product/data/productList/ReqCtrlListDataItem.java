@@ -17,7 +17,6 @@
  ******************************************************************************/
 package fr.becpg.repo.product.data.productList;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
