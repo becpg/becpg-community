@@ -25,7 +25,7 @@
             <#assign el = args.htmlid?html>
             <#assign displayName = (item.displayName!item.fileName)?html>
             <#assign modifyLabel = "label.modified-by-user-on-date">
-            <div class="node-header">
+            <div class="node-header entity-header">
                <!-- Message banner -->
                <#if item.workingCopy??>
                   <#assign modifyLabel = "label.editing-started-on-date-by-user">
