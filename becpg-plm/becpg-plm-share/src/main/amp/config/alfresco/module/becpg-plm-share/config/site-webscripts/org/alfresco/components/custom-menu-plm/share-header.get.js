@@ -64,3 +64,30 @@ if(isExternalUser(user)){
     }
 }
 	
+
+if(page.url.url.startsWith(page.url.servletContext + "/site/" + page.url.templateArgs.site + "/entity-data-lists") ) {
+	
+	var siteNavigationWidgets = widgetUtils.findObject(model.jsonModel, "id", "HEADER_NAVIGATION_MENU_BAR");
+	if(siteNavigationWidgets!=null){
+		for(var i in siteNavigationWidgets.config.widgets){
+			 if(siteNavigationWidgets.config.widgets[i].id == "HEADER_SITE_DOCUMENTLIBRARY"){
+				 siteNavigationWidgets.config.widgets[i].config.selected = true;
+			 }
+		}
+	}
+	
+} else if(page.url.url.startsWith(page.url.servletContext + "/site/" + page.url.templateArgs.site + "/project-list")){
+	var siteNavigationWidgets = widgetUtils.findObject(model.jsonModel, "id", "HEADER_NAVIGATION_MENU_BAR");
+	if(siteNavigationWidgets!=null){
+		for(var i in siteNavigationWidgets.config.widgets){
+			 if(siteNavigationWidgets.config.widgets[i].id == "HEADER_SITE_PROJECT-LIST"){
+				 siteNavigationWidgets.config.widgets[i].config.selected = true;
+			 }
+		}
+	}
+}
+
+
+
+
+
