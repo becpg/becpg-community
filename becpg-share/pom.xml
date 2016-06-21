@@ -32,6 +32,7 @@
 	</licenses>
 	<properties>
           <alfresco.client.war>share</alfresco.client.war>
+          <alfresco.version>${alfresco.share.version}</alfresco.version>
          <!--  <app.filtering.enabled>false</app.filtering.enabled> -->
     </properties>
 	<dependencies>
@@ -69,6 +70,7 @@
 		    <version>1.0</version>
 		    <scope>provided</scope>
 	   </dependency>
+	 
 	</dependencies>
 	<build>
 		<plugins>

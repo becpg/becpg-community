@@ -39,6 +39,7 @@
 	</dependencies>
 	<properties>
         <alfresco.client.war>share</alfresco.client.war>
+        <alfresco.version>${alfresco.share.version}</alfresco.version>
     </properties>
 	<build>
 		<plugins>		
