@@ -57,6 +57,10 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 	private static final String CRITERIA_NUTS = "assoc_bcpg_nutListNut_added";
 
 	private static final String CRITERIA_NUTS_RANGE = "prop_bcpg_nutListValue-range";
+	
+	private static final String CRITERIA_MICROBIO = "assoc_bcpg_mblMicrobio_added";
+
+	private static final String CRITERIA_MICROBIO_RANGE = "prop_bcpg_mblValue-range";
 
 	private static final String CRITERIA_GEO_ORIGIN = "assoc_bcpg_ingListGeoOrigin_added";
 
@@ -93,6 +97,8 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 						criteria.get(CRITERIA_NUTS_RANGE));
 				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_PHYSICO, PLMModel.ASSOC_PHYSICOCHEMLIST_PHYSICOCHEM,
 						PLMModel.PROP_PHYSICOCHEMLIST_VALUE, criteria.get(CRITERIA_PHYSICO_RANGE));
+				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_MICROBIO, PLMModel.ASSOC_MICROBIOLIST_MICROBIO,
+						PLMModel.PROP_MICROBIOLIST_VALUE, criteria.get(CRITERIA_MICROBIO_RANGE));
 			}
 		}
 

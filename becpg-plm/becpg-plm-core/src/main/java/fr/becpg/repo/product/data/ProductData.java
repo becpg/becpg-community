@@ -780,7 +780,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	}
 
 	public boolean hasPackagingListEl(){
-		return hasCompoListEl(Collections.emptyList());
+		return hasPackagingListEl(Collections.emptyList());
 	}
 	
 	public boolean hasPackagingListEl( DataListFilter<ProductData, PackagingListDataItem> filter) {

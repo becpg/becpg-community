@@ -3,8 +3,13 @@ package fr.becpg.repo.web.scripts.entity;
 import java.io.IOException;
 import java.util.Map;
 
+import org.alfresco.model.ContentModel;
+import org.alfresco.repo.policy.BehaviourFilter;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.security.AccessStatus;
+import org.alfresco.service.cmr.security.PermissionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
@@ -15,10 +20,11 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.formulation.FormulateException;
+import fr.becpg.model.ReportModel;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.JsonScoreHelper;
+import fr.becpg.repo.repository.L2CacheSupport;
 
 /**
  * Gathers product's missing fields info : which ones are missing, and what is
@@ -36,6 +42,18 @@ public class EntityCatalogWebScript extends AbstractWebScript {
 	private NodeService nodeService;
 
 	private FormulationService<FormulatedEntity> formulationService;
+
+	private BehaviourFilter policyBehaviourFilter;
+
+	private PermissionService permissionService;
+
+	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
+		this.policyBehaviourFilter = policyBehaviourFilter;
+	}
+
+	public void setPermissionService(PermissionService permissionService) {
+		this.permissionService = permissionService;
+	}
 
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
@@ -60,8 +78,28 @@ public class EntityCatalogWebScript extends AbstractWebScript {
 
 		try {
 
-			if (formulationService.shouldFormulate(productNodeRef)) {
-				formulationService.formulate(productNodeRef);
+			if (formulationService.shouldFormulate(productNodeRef)
+					&& (permissionService.hasPermission(productNodeRef, PermissionService.WRITE) == AccessStatus.ALLOWED)) {
+
+				try {
+					policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+					policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+					policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+
+					L2CacheSupport.doInCacheContext(() -> {
+						AuthenticationUtil.runAsSystem(() -> {
+							formulationService.formulate(productNodeRef);
+							return true;
+						});
+
+					}, false, true);
+
+				} finally {
+					policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+					policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+					policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+				}
+
 			}
 
 			String scores = (String) nodeService.getProperty(productNodeRef, BeCPGModel.PROP_ENTITY_SCORE);
@@ -81,7 +119,7 @@ public class EntityCatalogWebScript extends AbstractWebScript {
 		} catch (JSONException e) {
 			logger.error(e, e);
 			throw new WebScriptException("Unable to serialize JSON", e);
-		} catch (FormulateException e) {
+		} catch (Exception e) {
 			logger.error(e, e);
 			throw new WebScriptException("Cannot formulate product", e);
 		}

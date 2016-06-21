@@ -56,10 +56,11 @@ td.ghead.current {
 .projects  span.task-title a {
     cursor: pointer;
     display: inline-block;
-    max-width: 160px;
+    max-width: 140px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    vertical-align: middle;
 }
 
 .projects .ggroup span.task-title a {
@@ -177,7 +178,9 @@ div.scroll {
 .projects .gicon {
 	height: 15px;
 	width: 18px;
-	display: inline-block;
+	display: block;
+    float: left;
+    padding-right:5px;
 }
 
 .projects .ggroup-expanded {

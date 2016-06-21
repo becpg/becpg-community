@@ -26,7 +26,7 @@ public class NutListValuePlugin  extends  EntityListValuePlugin{
 	
 	@Override
 	public ListValuePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
-			return suggestTargetAssoc(PLMModel.TYPE_NUT, query, pageNum, pageSize, null, props);
+			return suggestTargetAssoc(null,PLMModel.TYPE_NUT, query, pageNum, pageSize, null, props);
 	}
 	
 	@Override

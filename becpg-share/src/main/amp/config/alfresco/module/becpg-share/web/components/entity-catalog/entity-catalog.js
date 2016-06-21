@@ -216,13 +216,13 @@
 						//put color tip next to each non validated field according to the catalog
 						for(var field in json[key].missingFields){							
 							//try to find a prop or assoc with this field
-							
-							var fieldCodes = json[key].missingFields[field].id.replace(":", "_");
-							
-							var fieldCodeArray = fieldCodes.split('|');
-							for(var splitField in fieldCodeArray){
-								console.log("splitField: "+splitField);
-								colorizeSingleMissingField(splitField);
+							if(json[key].missingFields[field].id){
+								var fieldCodes = json[key].missingFields[field].id.replace(":", "_");
+								
+								var fieldCodeArray = fieldCodes.split('|');
+								for(var splitField in fieldCodeArray){
+									colorizeSingleMissingField(splitField);
+								}
 							}
 							
 							

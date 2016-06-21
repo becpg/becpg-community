@@ -31,7 +31,7 @@ public class CompareResultDataItem {
 	/** The values. */
 	private String[] values;
 	
-	private boolean isDifferent;
+	private boolean isDifferent = false;
 
 	
 	/**

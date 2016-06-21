@@ -275,7 +275,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 
 					JSONArray reqFields = catalog.getJSONArray(JsonScoreHelper.PROP_FIELDS);
 					for (String lang : langs) {
-						// a sub-catalog per lang
+
 						JSONArray missingFields = extractMissingFields(productData, catalog.getString(JsonScoreHelper.PROP_LABEL), properties,
 								reqFields, defaultLocale.equals(lang) ? null : lang);
 						if (missingFields.length() > 0) {
@@ -288,6 +288,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 							catalogDesc.put(JsonScoreHelper.PROP_COLOR, color);
 							ret.put(catalogDesc);
 						}
+
 					}
 				}
 			}
@@ -375,13 +376,11 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 		MLText mlText = (MLText) mlNodeService.getProperty(productData.getNodeRef(), fieldQname);
 
 		if (field.contains("_")) {
-
 			String fieldSpecificLang = field.split("_")[1];
 			if ((mlText == null) || (mlText.getValue(new Locale(fieldSpecificLang)) == null)
 					|| mlText.getValue(new Locale(fieldSpecificLang)).isEmpty()) {
 				res = false;
 			}
-
 		} else if ((lang != null)
 				&& ((mlText == null) || (mlText.getValue(new Locale(lang)) == null) || mlText.getValue(new Locale(lang)).isEmpty())) {
 			res = false;
@@ -446,7 +445,6 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 
 		field.put(JsonScoreHelper.PROP_ID, id);
 		field.put(JsonScoreHelper.PROP_DISPLAY_NAME, displayName);
-
 		ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, null, new ArrayList<NodeRef>(),
 				RequirementDataType.Completion);
 		rclDataItem.getSources().add(productData.getNodeRef());

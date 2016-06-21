@@ -313,6 +313,15 @@ div.filterform {
  	float:none;
 }
 
+.datalist-toolbar .left .filterform .yui-g div.first {
+	float:left;
+}
+
+.datalist-toolbar .left .filterform .yui-u {
+    float: right;
+}
+    
+
 .yui-ge .filterform .yui-g,
 .yui-gc .filterform .yui-g,
 .yui-gf .filterform .yui-g {
@@ -397,7 +406,7 @@ div.filterButtonsBar {
 
 
 .datagrid-bar .filter-form > span > span.first-child,
-.toolbar .filter-form span.first-child {
+.toolbar .filter-form  > span > span.first-child {
 	background: url(../../components/images/search-16.png) no-repeat 12px
 		4px;
 	padding-left: 24px;
