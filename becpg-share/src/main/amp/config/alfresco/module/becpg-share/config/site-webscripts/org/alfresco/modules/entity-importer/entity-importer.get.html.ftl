@@ -3,7 +3,7 @@
 <#if siteId != ""><#assign targetLinkTemplate='${url.context}/page/site/${siteId}/document-details?nodeRef={nodeRef}'><#else><#assign targetLinkTemplate='${url.context}/page/document-details?nodeRef={nodeRef}'></#if>
 
 <div id="${el}-dialog" class="change-type">
-   <div id="${el}-dialogTitle" class="hd">${msg("title")}</div>
+   <div id="${el}-dialogTitle" class="hd"><#if args.nutsCompare??>${msg("title_nuts")}<#else>${msg("title")}</#if></div>
    <div class="bd">
       <form id="${el}-form" action="" method="post" class="form-container">
          <div class="form-fields">
@@ -40,7 +40,14 @@
 				</div>
 			</div>
          <div class="bdft">
-            <input type="button" id="${el}-ok" value="${msg("button.ok")}" tabindex="0" />
+         	<#if args.nutsCompare??>
+         		<span id="${el}-show" class="yui-button yui-push-button">
+         			<span class="first-child">
+         				<button type="button" id="${el}-show-button"  tabindex="0">${msg("button.compare-nuts")}</button>
+         			</span>
+         		</span>
+         	</#if>
+         	<input type="button" id="${el}-ok" value="<#if args.nutsCompare??>${msg("button.load")}<#else>${msg("button.ok")}</#if>" tabindex="0" />
             <input type="button" id="${el}-cancel" value="${msg("button.cancel")}" tabindex="0" />
          </div>
       </form>
@@ -57,7 +64,7 @@
  		mode: "edit",
       multipleSelectMode: false, 
  		targetLinkTemplate: "${targetLinkTemplate}" ,
- 		dsStr:"becpg/autocomplete/databaseSuppliers"
+ 		dsStr:"becpg/autocomplete/nutDatabaseSuppliers"
   });
 
  new beCPG.component.AutoCompletePicker('${el}-entities', '${el}-entities-field', true).setOptions(
@@ -68,6 +75,45 @@
  		dsStr:"becpg/autocomplete/nutDataBase",
  		parentFieldHtmlId:"${el}-supplier"
   });
+  
+  <#if args.nutsCompare??>
+  YAHOO.util.Event.on("${el}-show-button","click",function(e){
+    			Alfresco.util.Ajax.request({
+				url : Alfresco.constants.URL_SERVICECONTEXT + "modules/nut-comparer/nut-comparer?base=${args.entityNodeRef}&supplier="+YAHOO.util.Dom.get("${el}-supplier-added").value+"&entities="+YAHOO.util.Dom.get("${el}-entities-added").value,
+				dataObj : {
+					htmlid : "${el}-show-popup"
+				},
+				successCallback : {
+					fn : function(response) {
+						// Inject the template from the XHR request into a new
+						// DIV
+						// element
+						var containerDiv = document.createElement("div");
+						containerDiv.innerHTML = response.serverResponse.responseText;
+
+						// The panel is created from the HTML returned in the
+						// XHR
+						// request, not the container
+						var panelDiv = YAHOO.util.Dom.getFirstChild(containerDiv);
+						
+						Alfresco.util.createYUIPanel(panelDiv, {
+							draggable : true,
+							width : "550px"
+						}).show();
+
+						//console.log(this.nut-panel);
+						//nut-panel.show();
+
+					},
+					scope : this
+				},
+				failureMessage : "Could not load dialog template from ...",
+				scope : this,
+				execScripts : true
+			});
+  });
+  </#if>
+  
 
 })();
 

@@ -71,24 +71,22 @@ public class NutDatabaseImportWebScript extends AbstractWebScript {
 			props.put(ContentModel.PROP_OWNER, AuthenticationUtil.getFullyAuthenticatedUser());
 			JSONArray ret = new JSONArray();
 			
-			logger.debug("onlyNutsBool: "+onlyNutsBool+", isItTrue: "+(onlyNutsBool == true));
+			logger.debug("setting nutrients of product: "+nodeService.getProperty(destNodeRef, ContentModel.PROP_NAME));
+			logger.debug("onlyNutsBool: "+onlyNutsBool);
 			
 			for (final String entity : entities.split(",")) {
+				logger.debug("using entity: "+entity);
 				
 				if(Boolean.TRUE.equals(onlyNutsBool)){
-					logger.debug("setting nutrients of product: "+nodeService.getProperty(destNodeRef, ContentModel.PROP_NAME));
 					List<NutListDataItem> nuts = nutDatabaseService.getNuts(file, entity);
-					logger.debug("Found nuts: ");
-					nuts.forEach(n -> logger.debug(nodeService.getProperty(n.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME)+", value= "+n.getValue()));
+						logger.debug("Importing nuts in product");
+						ProductData rmData = alfrescoRepository.findOne(destNodeRef);
+						rmData.getNutList().clear();
+						alfrescoRepository.save(rmData);
+						rmData.getNutList().addAll(nuts);
+						alfrescoRepository.save(rmData);
+						break;
 					
-					ProductData rmData = alfrescoRepository.findOne(destNodeRef);
-					logger.debug("Product currently has "+rmData.getNutList().size()+" nuts");
-					rmData.getNutList().clear();
-					alfrescoRepository.save(rmData);
-					rmData.getNutList().addAll(nuts);
-					logger.debug("Product now has "+rmData.getNutList().size()+" nuts");
-					alfrescoRepository.save(rmData);
-					break;
 				} else {
 					//create new raw material
 					logger.debug("importing new RM");
@@ -105,7 +103,7 @@ public class NutDatabaseImportWebScript extends AbstractWebScript {
 
 			res.setContentType("application/json");
 			res.setContentEncoding("UTF-8");
-			res.getWriter().write(ret.toString(3));
+			res.getWriter().write(ret.toString());
 		} catch (JSONException e) {
 			throw new WebScriptException(e.getMessage());
 		} catch (IOException e) {
