@@ -314,7 +314,7 @@
 					</field>
 					<field id="bcpg:subsidiaryRef" set="mainInfo" />
 					<field id="bcpg:plants" set="mainInfo" />
-					<fiels id="bcpg:productGeoOrigin"  set="mainInfo"  />
+					<field id="bcpg:productGeoOrigin"  set="mainInfo"  />
 					<field id="bcpg:trademarkRef" set="mainInfo" />
 					<field id="bcpg:clients" set="mainInfo" />
 					<field id="bcpg:suppliers" set="mainInfo" />
@@ -984,7 +984,7 @@
 					<field id="bcpg:subsidiaryRef"  set="mainInfo" />
 					<field id="bcpg:trademarkRef"  set="mainInfo" />
 					<field id="bcpg:plants" set="mainInfo" />
-					<fiels id="bcpg:productGeoOrigin"  set="mainInfo"  />
+					<field id="bcpg:productGeoOrigin"  set="mainInfo"  />
 					<field id="bcpg:clients"  set="mainInfo" />
 					<field id="bcpg:entityTplRef" set="mainInfo">
 						<control
