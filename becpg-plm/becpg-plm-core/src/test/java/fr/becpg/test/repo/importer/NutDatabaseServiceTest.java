@@ -48,6 +48,7 @@ public class NutDatabaseServiceTest extends PLMBaseTestCase {
 	@Test
 	public void testImportRM() {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
 			NodeRef csvFile = getTestCSVFile();
 			NodeRef emptyRM = createEmptyRM();
 			NodeRef importedRM1 = nutDatabaseService.createProduct(csvFile, "5450", emptyRM);
@@ -59,6 +60,7 @@ public class NutDatabaseServiceTest extends PLMBaseTestCase {
 			int checks = 0;
 
 			for (NutListDataItem nut : importedRMdata.getNutList()) {
+
 				if ("Nut 2".equals(extractCharactName(nut.getCharactNodeRef()))) {
 					assertEquals(0.153d, nut.getValue());
 					++checks;
@@ -95,7 +97,6 @@ public class NutDatabaseServiceTest extends PLMBaseTestCase {
 					fail();
 				}
 			}
-
 			assertEquals(3, checks);
 
 			checks = 0;
@@ -176,7 +177,9 @@ public class NutDatabaseServiceTest extends PLMBaseTestCase {
 			int checks = 0;
 
 			for (FileInfo file : databases) {
+
 				if ("import".equals(file.getName())) {
+
 					++checks;
 				}
 			}

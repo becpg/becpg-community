@@ -337,7 +337,7 @@
 					<show id="pjt:projectOverdue" />
 					<show id="pjt:projectHierarchy1" />
 					<show id="pjt:projectHierarchy2" />
-					<show id="pjt:projectPriority" />
+					<!-- <show id="pjt:projectPriority" /> -->
 					<show id="pjt:completionPercent" />
 					<show id="pjt:projectScore" />
 					<show id="bcpg:code" />

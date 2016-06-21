@@ -63,6 +63,7 @@
          <properties>
             <assoc>bcpg:plants</assoc>
             <type>bcpg:plant</type>
+            <path>System/Characts/bcpg:entityLists/Plants</path>
          </properties>
       </component>
       

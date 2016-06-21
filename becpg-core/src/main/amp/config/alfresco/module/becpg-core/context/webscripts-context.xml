@@ -152,6 +152,8 @@
 	<bean id="webscript.fr.becpg.entity.entityCatalog.get" class="fr.becpg.repo.web.scripts.entity.EntityCatalogWebScript" parent="webscript">
 		<property name="nodeService" ref="nodeService" />
 		<property name="formulationService" ref="formulationService"/>
+		<property name="policyBehaviourFilter" ref="policyBehaviourFilter"/>
+		<property name="permissionService" ref="PermissionService"/>
 	</bean>
 	
 

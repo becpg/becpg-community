@@ -296,6 +296,12 @@
          <url>/components/download/archive</url>
       </component>
 		
+	  <!-- Custom Code -->
+      <component>
+         <region-id>doclib-custom</region-id>
+         <url>/components/documentlibrary/doclib-custom</url>
+      </component>
+		
 	</components>
 </template-instance>
 

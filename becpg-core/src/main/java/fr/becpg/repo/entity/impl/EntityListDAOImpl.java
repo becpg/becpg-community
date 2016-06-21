@@ -235,9 +235,9 @@ public class EntityListDAOImpl implements EntityListDAO {
 		if (listQNameFilter != null) {
 			CollectionUtils.filter(ret, object -> {
 
-//				if (!nodeService.exists((NodeRef) object)) {
-//					return false;
-//				}
+				if (!nodeService.exists((NodeRef) object)) {
+					return false;
+				}
 
 				if ((object != null) && (object instanceof NodeRef) && nodeService.getType((NodeRef) object).equals(listQNameFilter)) {
 					return true;

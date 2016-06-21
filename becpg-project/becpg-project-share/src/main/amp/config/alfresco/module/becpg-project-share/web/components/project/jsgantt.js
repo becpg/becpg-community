@@ -1450,7 +1450,7 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
                
                if (vShowSelect === 1 ) {
                    vLeftTable +='<td class="ggtaskCheckbox"><input type="checkbox" id="taskChecked-'+vcurrDivID+'" name="taskChecked" onclick="g.selectItem(this,\''+vcurrDivID+'\');"  '+ (JSGantt.scope.selectedItems[vcurrDivID] ? ' checked="checked">'
-                   : '>')+'</td>';
+                   : '>')+'<label for="taskChecked-'+vcurrDivID+'"></label></td>';
                 }
                
                

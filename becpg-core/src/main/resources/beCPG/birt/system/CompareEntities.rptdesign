@@ -24,7 +24,7 @@
     </parameters>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="1347">
-            <property name="FILELIST">/opt/becpg/workspace/becpg/becpg-core/src/main/resources/beCPG/birt/system/CompareEntities2.xml</property>
+            <property name="FILELIST">src/main/resources/beCPG/birt/system/CompareEntities2.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -537,7 +537,7 @@ row["properties2"]
                 </structure>
                 <structure>
                     <property name="operator">is-true</property>
-                    <expression name="expr" type="javascript">(row["entityList"] == "Composition" || row["entityList"] == "Emballages")</expression>
+                    <expression name="expr" type="javascript">(row["entityList"] == "Composition" || row["entityList"] == "Emballages" || row["entityList"] == "Contenu")</expression>
                 </structure>
             </list-property>
             <list-property name="parameters"/>
@@ -1981,7 +1981,7 @@ else{
                             <property name="fontStyle">normal</property>
                             <property name="color">black</property>
                             <property name="contentType">html</property>
-                            <text-property name="content"><![CDATA[<div style="font-size: 1px; display: inline; float: left; width: <VALUE-OF>(row["depthLevel"]-1)*20</VALUE-OF>px;">&amp;nbsp;</div><B><I><VALUE-OF>row["item1"]</VALUE-OF>&amp;nbsp;&amp;nbsp;</I></B><VALUE-OF>row["displayProperties1"]</VALUE-OF>]]></text-property>
+                            <text-property name="content"><![CDATA[&amp;nbsp;&amp;nbsp;<div style="font-size: 1px; display: inline; float: left; width: <VALUE-OF>(row["depthLevel"]-1)*20</VALUE-OF>px;">&amp;nbsp;</div><B><I><VALUE-OF>row["item1"]</VALUE-OF>&amp;nbsp;&amp;nbsp;</I></B><VALUE-OF>if(row["entityList"] != "Contenu"){row["displayProperties1"];}</VALUE-OF>]]></text-property>
                         </text>
                     </cell>
                     <cell id="1689">
@@ -1995,7 +1995,7 @@ else{
                             <property name="fontStyle">normal</property>
                             <property name="color">black</property>
                             <property name="contentType">html</property>
-                            <text-property name="content"><![CDATA[<div style="font-size: 1px; display: inline; float: left; width: <VALUE-OF>(row["depthLevel"]-1)*20</VALUE-OF>px;">&amp;nbsp;</div><B><I><VALUE-OF>row["item2"]</VALUE-OF>&amp;nbsp;&amp;nbsp;</I></B><VALUE-OF>row["displayProperties2"]</VALUE-OF>]]></text-property>
+                            <text-property name="content"><![CDATA[&amp;nbsp;&amp;nbsp;<div style="font-size: 1px; display: inline; float: left; width: <VALUE-OF>(row["depthLevel"]-1)*20</VALUE-OF>px;">&amp;nbsp;</div><B><I><VALUE-OF>row["item2"]</VALUE-OF>&amp;nbsp;&amp;nbsp;</I></B><VALUE-OF>if(row["entityList"] != "Contenu"){row["displayProperties2"];}</VALUE-OF>]]></text-property>
                         </text>
                     </cell>
                 </row>

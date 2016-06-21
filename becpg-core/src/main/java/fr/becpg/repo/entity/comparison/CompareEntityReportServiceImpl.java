@@ -85,7 +85,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 
 	private static final String PROPERTY_VALUE_SEPARATOR = " : ";
 
-	private static final Log logger = LogFactory.getLog(CompareEntityServiceImpl.class);
+	private static final Log logger = LogFactory.getLog(CompareEntityReportServiceImpl.class);
 
 	@Autowired
 	private CompareEntityService compareEntityService;
@@ -124,9 +124,10 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 			// Prepare data source
 			Document document = DocumentHelper.createDocument();
 			Element entitiesCmpElt = document.addElement(TAG_ENTITIES_COMPARISON);
+			
 			entitiesCmpElt.add(renderComparisonAsXmlData(entity1, entities, compareResult));
 			entitiesCmpElt.add(renderStructComparisonAsXmlData(structCompareResults));
-
+			
 			if (logger.isTraceEnabled()) {
 				logger.trace("comparison XML " + entitiesCmpElt.asXML());
 			}
@@ -176,7 +177,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 	 *            the compare result
 	 * @return the element
 	 */
-	private Element renderComparisonAsXmlData(NodeRef entity1NodeRef, List<NodeRef> entityNodeRefs, List<CompareResultDataItem> compareResult) {
+	private  Element renderComparisonAsXmlData(NodeRef entity1NodeRef, List<NodeRef> entityNodeRefs, List<CompareResultDataItem> compareResult) {
 
 		Document document = DocumentHelper.createDocument();
 
@@ -191,10 +192,8 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 			cmpRowsElt.addAttribute(ATTR_ENTITY + i, name);
 			i++;
 		}
-
 		// compareResult
 		for (CompareResultDataItem c : compareResult) {
-
 			Element cmpRowElt = cmpRowsElt.addElement(TAG_COMPARISON_ROW);
 			if (c.getEntityList() != null) {
 				TypeDefinition typeDef = dictionaryService.getType(c.getEntityList());
@@ -212,7 +211,8 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 					}
 				}
 			}
-
+			
+			
 			cmpRowElt.addAttribute(ATTR_CHARACTERISTIC,
 					c.getCharacteristic() == null ? "" : charactPath + attributeExtractorService.extractPropName(c.getCharacteristic()));
 			cmpRowElt.addAttribute(ATTR_PROPERTY, getClassAttributeTitle(c.getProperty()));
@@ -241,8 +241,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 	 *            the pivot property
 	 * @return the element
 	 */
-	private Element renderStructComparisonAsXmlData(Map<String, List<StructCompareResultDataItem>> structCompareResults) {
-
+	public  Element renderStructComparisonAsXmlData(Map<String, List<StructCompareResultDataItem>> structCompareResults) {
 		Document document = DocumentHelper.createDocument();
 
 		// structCompareResult
@@ -250,12 +249,11 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 
 		// each comparison
 		for (String comparison : structCompareResults.keySet()) {
-
 			List<StructCompareResultDataItem> structCompareResult = structCompareResults.get(comparison);
-
+			
 			// each structCompareResultDataItem
 			for (StructCompareResultDataItem c : structCompareResult) {
-
+				
 				String entityListTitle = "";
 				if (c.getEntityList() != null) {
 					TypeDefinition typeDef = dictionaryService.getType(c.getEntityList());
@@ -263,12 +261,22 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 				}
 
 				String depthLevel = ((Integer) c.getDepthLevel()).toString();
-
+				
 				String entity1 = "";
 				String properties1 = "";
 				if (c.getCharacteristic1() != null) {
-					List<AssociationRef> compoAssocRefs = nodeService.getTargetAssocs(c.getCharacteristic1(), c.getPivotProperty());
-					NodeRef entityNodeRef = (compoAssocRefs.get(0)).getTargetRef();
+					List<AssociationRef> compoAssocRefs = null;
+					if(c.getPivotProperty() != null) {
+						compoAssocRefs = nodeService.getTargetAssocs(c.getCharacteristic1(), c.getPivotProperty());
+					}
+					// If it's a document
+					NodeRef entityNodeRef = null;
+					if((compoAssocRefs == null )|| (compoAssocRefs.isEmpty())){
+						entityNodeRef = c.getCharacteristic1();
+					} else if(compoAssocRefs!= null) {
+						entityNodeRef = (compoAssocRefs.get(0)).getTargetRef();
+					}
+					
 					entity1 = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
 
 					// props
@@ -285,8 +293,18 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 				String entity2 = "";
 				String properties2 = "";
 				if (c.getCharacteristic2() != null) {
-					List<AssociationRef> compoAssocRefs = nodeService.getTargetAssocs(c.getCharacteristic2(), c.getPivotProperty());
-					NodeRef entityNodeRef = (compoAssocRefs.get(0)).getTargetRef();
+					List<AssociationRef> compoAssocRefs= null;
+					if(c.getPivotProperty() != null) {//There isn't pivotProperty for documents
+						compoAssocRefs = nodeService.getTargetAssocs(c.getCharacteristic2(), c.getPivotProperty());
+					}
+					// If it's a document
+					NodeRef entityNodeRef = null;
+					if((compoAssocRefs == null )|| (compoAssocRefs.isEmpty())){
+						entityNodeRef = c.getCharacteristic2();
+					} else if(compoAssocRefs!= null)  {
+						entityNodeRef = (compoAssocRefs.get(0)).getTargetRef();
+					}
+					
 					entity2 = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
 
 					// props

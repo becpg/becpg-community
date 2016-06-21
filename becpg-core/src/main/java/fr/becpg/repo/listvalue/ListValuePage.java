@@ -42,11 +42,15 @@ import java.util.List;
             this.page = pageNum;
             this.pageSize = pageSize;
             this.fullListSize = fullList.size();
-            if(!fullList.isEmpty() && (fullListSize >= Math.min(page * pageSize, fullListSize))){
+            
+            int fromIndex = Math.max((page-1) * pageSize,0);
+            int toIndex = Math.min(page * pageSize, fullListSize);
+            
+            if(!fullList.isEmpty() && toIndex >= fromIndex){
             	if(listValueExtractor == null){
-            		results = (List<ListValueEntry>) fullList.subList(Math.max((page-1) * pageSize,0), Math.min(page * pageSize, fullListSize));
+            		results = (List<ListValueEntry>) fullList.subList(fromIndex, toIndex);
             	}else {
-            		results = listValueExtractor.extract(fullList.subList(Math.max((page-1) * pageSize,0), Math.min(page * pageSize, fullListSize))); 
+            		results = listValueExtractor.extract(fullList.subList(fromIndex, toIndex)); 
             	}
             } else {
             	results = new ArrayList<>();
