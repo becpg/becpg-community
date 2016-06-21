@@ -125,6 +125,10 @@
 		<property name="nutDatabaseService" ref="nutDatabaseService"/>
 	</bean>
 	
+	<bean id="webscript.fr.becpg.product.nutDatabaseCompare.get" class="fr.becpg.repo.web.scripts.product.NutDatabaseCompareWebScript" parent="webscript">
+		<property name="nutDatabaseService" ref="nutDatabaseService"/>
+	</bean>
+	
 	
 
 	<bean id="webscript.fr.becpg.product.charactDetailsFormulation.get" class="fr.becpg.repo.web.scripts.product.FormulateCharactDetailsWebScript" parent="webscript">

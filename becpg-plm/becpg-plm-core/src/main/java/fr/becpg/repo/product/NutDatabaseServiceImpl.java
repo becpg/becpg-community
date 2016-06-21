@@ -173,7 +173,7 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 					if (isInDictionary(headerRow[i]) || (headerRow[i].contains("_") && (isInDictionary(headerRow[i]
 							.split("_")[0]))) ) {
 						String value = extractValueById(file, idSplit, i);
-						logger.info("setting property qnamed  \"" + headerRow[i] + "\" to value  \"" + value + "\"");
+						logger.debug("setting property qnamed  \"" + headerRow[i] + "\" to value  \"" + value + "\"");
 						QName attributeQName = QName.createQName(headerRow[i], NamespaceService);
 
 						if (PLMModel.TYPE_SUPPLIER.equals(attributeQName)) {
@@ -182,7 +182,7 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 									.andPropEquals(PLMModel.TYPE_SUPPLIER, extractValueById(file, idSplit, i));
 							List<NodeRef> suppliers = queryBuilder.list();
 							if (!suppliers.isEmpty()) {
-								logger.info("Setting suppliers to " + suppliers);
+								logger.debug("Setting suppliers to " + suppliers);
 								dat.setSuppliers(suppliers);
 							}
 						} else if (PLMModel.PROP_PRODUCT_HIERARCHY1.equals(attributeQName)

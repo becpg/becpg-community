@@ -16,7 +16,7 @@ import fr.becpg.repo.product.NutDatabaseService;
 public class NutDatabaseImportListValuePlugin extends EntityListValuePlugin {
 
 	private static final String SOURCE_TYPE_NUT_DB = "nutDataBase";
-	private static final String SOURCE_TYPE_DATABASE_SUPPLIERS = "databaseSuppliers";
+	private static final String SOURCE_TYPE_DATABASE_SUPPLIERS = "nutDatabaseSuppliers";
 
 	@Autowired
 	private NutDatabaseService nutDatabaseService;
