@@ -18,7 +18,7 @@
    </div>
    </@>
    <@markup id="bd">
-   <div id="bd">
+   <div id="bd" class="entity-data-lists">
         <div class="yui-t1" id="alfresco-data-lists">
            <div id="yui-main">
               <div class="yui-b" id="alf-content">
