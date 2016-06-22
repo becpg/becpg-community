@@ -117,7 +117,7 @@
 			                        method : Alfresco.util.Ajax.GET,
 			                        responseContentType : Alfresco.util.Ajax.JSON,
 			                        successMessage : this.msg("message.publish.success"),
-			                        failureMessage : this.msg("message.publish.failure"),
+			                        failureMessage : this.msg("message.publish.failure")
 			                     });
 		                     },
 		                     scope : this
@@ -148,7 +148,7 @@
 								                        method : Alfresco.util.Ajax.GET,
 								                        responseContentType : Alfresco.util.Ajax.JSON,
 								                        successMessage : me.msg("message.unpublish.success"),
-								                        failureMessage : me.msg("message.unpublish.failure"),
+								                        failureMessage : me.msg("message.unpublish.failure")
 								                     });
 							                     },
 							                     scope : this

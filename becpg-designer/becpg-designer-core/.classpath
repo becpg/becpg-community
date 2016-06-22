@@ -776,11 +776,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="var" path="M2_REPO/org/apache/chemistry/opencmis/chemistry-opencmis-test-tck/0.11.0/chemistry-opencmis-test-tck-0.11.0.jar" sourcepath="M2_REPO/org/apache/chemistry/opencmis/chemistry-opencmis-test-tck/0.11.0/chemistry-opencmis-test-tck-0.11.0-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/alfresco/maven/alfresco-rad/2.1.1/alfresco-rad-2.1.1.jar" sourcepath="M2_REPO/org/alfresco/maven/alfresco-rad/2.1.1/alfresco-rad-2.1.1-sources.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/alfresco/maven/alfresco-rad/2.1.1/alfresco-rad-2.1.1-javadoc.jar!/"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="var" path="M2_REPO/com/tradeshift/junit-remote/3/junit-remote-3.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-servlet/7.4.0.v20110414/jetty-servlet-7.4.0.v20110414.jar" sourcepath="M2_REPO/org/eclipse/jetty/jetty-servlet/7.4.0.v20110414/jetty-servlet-7.4.0.v20110414-sources.jar">
 		<attributes>
