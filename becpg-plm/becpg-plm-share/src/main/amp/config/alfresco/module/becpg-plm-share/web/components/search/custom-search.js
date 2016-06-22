@@ -817,15 +817,8 @@
                               Event.addListener(toggleLink, "click", this.onSiteSearch, this, true);
                               toggleLink.style.color="";
                            }
-//                           // enables  Search button
-//                           this.widgets.searchButton.set("disabled", false);
-//
-//                           // enables  KeyListener (Enter)
-//                           if (this.widgets.enterListener)
-//                           {
-//                              this.widgets.enterListener.enable();
-//                           }
-                        },
+
+                        }
 
                     });
 })();

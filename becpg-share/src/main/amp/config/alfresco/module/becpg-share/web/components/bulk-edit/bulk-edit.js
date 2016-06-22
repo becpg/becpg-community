@@ -247,7 +247,7 @@
 							/**
 							 * Display thumbnail column
 							 */
-							showThumbnails : false,
+							showThumbnails : false
 						},
 
 						/**
@@ -895,8 +895,7 @@
 								dynamicData : false,
 								"MSG_EMPTY" : this.msg("message.empty"),
 								"MSG_ERROR" : this.msg("message.error"),
-								paginator : null,
-								
+								paginator : null
 							});
 
 							this.widgets.dataTable.handleDataReturnPayload = function EntityDataGrid_handleDataReturnPayload(oRequest, oResponse,

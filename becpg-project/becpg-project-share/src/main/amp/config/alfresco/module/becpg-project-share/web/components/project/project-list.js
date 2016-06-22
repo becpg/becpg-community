@@ -159,7 +159,7 @@ var g; // gantt var
                                                     {
                                                         id : data[i].nodeRef,
                                                         label : data[i].label,
-                                                        color : data[i].color.replace('#', ''),
+                                                        color : data[i].color!=null ? data[i].color.toString().replace('#', '') : null,
                                                         nbProjects : data[i].nbProjects
                                                     };
 

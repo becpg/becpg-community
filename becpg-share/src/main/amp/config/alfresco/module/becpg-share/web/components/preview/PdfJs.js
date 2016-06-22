@@ -516,7 +516,7 @@
          });
          this.widgets.scaleMenu.getMenu().subscribe("click", this.onZoomChange, null, this);
          var downloadMenu = [
-            { text: this.wp.msg("link.download"), value: "", onclick: { fn: this.onDownloadClick, scope: this } },
+            { text: this.wp.msg("link.download"), value: "", onclick: { fn: this.onDownloadClick, scope: this } }
          ];
          
          
