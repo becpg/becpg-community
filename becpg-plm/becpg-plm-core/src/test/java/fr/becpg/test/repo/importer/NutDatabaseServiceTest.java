@@ -41,7 +41,7 @@ public class NutDatabaseServiceTest extends PLMBaseTestCase {
 	}
 
 	private NodeRef getTestCSVFile() {
-		return nutDatabaseService.getNutDatabases().stream().filter(info -> info.getName().equals("import")).collect(Collectors.toList()).get(0)
+		return nutDatabaseService.getNutDatabases().stream().filter(info -> info.getName().equals("import.csv")).collect(Collectors.toList()).get(0)
 				.getNodeRef();
 	}
 
@@ -178,7 +178,7 @@ public class NutDatabaseServiceTest extends PLMBaseTestCase {
 
 			for (FileInfo file : databases) {
 
-				if ("import".equals(file.getName())) {
+				if ("import.csv".equals(file.getName())) {
 
 					++checks;
 				}
