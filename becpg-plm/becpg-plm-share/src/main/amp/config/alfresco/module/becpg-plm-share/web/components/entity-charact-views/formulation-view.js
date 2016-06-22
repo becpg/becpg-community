@@ -204,7 +204,7 @@
 					args[1].decrepitate = true;
 				} catch(e){
 					alert(e);
-				};
+				}
 				return true;
 			};          
 
@@ -251,7 +251,7 @@
 					failureMessage : "Could not load html template for version graph",
 					execScripts : true
 				});    
-			}
+			};
 
 			//automatic refresh on formulation
 			YAHOO.Bubbling.on( "refreshDataGrids", recallWebScript, this);
