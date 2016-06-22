@@ -47,8 +47,7 @@
 	YAHOO.extend(beCPG.component.DocumentsView, Alfresco.component.Base, {
 
 		options : {
-			currVersionNodeRef : null,
-
+			currVersionNodeRef : null
 		},
 
 		fileUpload : null,

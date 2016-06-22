@@ -90,7 +90,7 @@
                                                     Alfresco.logger.error("Error retrieving documentLibrary: ", response);
                                                 },
                                                 scope : this
-                                            },
+                                            }
                                         });
                             }
                             else
@@ -133,7 +133,7 @@
                                             Alfresco.constants.URL_SERVICECONTEXT + "components/form?formId=formulation&itemKind=type&itemId={itemId}&destination={destination}&mode=create&submitType=json&showCancelButton=true&popup=true",
                                             {
                                                 itemId : type,
-                                                destination : instance.options.userHomeNodeRef,
+                                                destination : instance.options.userHomeNodeRef
                                             });
 
                             var createRow = new Alfresco.module.SimpleDialog(instance.id + "-createType");
