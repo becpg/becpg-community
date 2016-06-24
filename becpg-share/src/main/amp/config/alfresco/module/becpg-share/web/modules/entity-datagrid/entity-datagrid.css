@@ -288,6 +288,10 @@
 	background-image: url(../../components/images/delete-row-16.png);
 }
 
+.datagrid label.dt-check {
+	display:none;
+}
+
 /* Forms */
 .form-container .form-fields {
 	border-bottom: medium none;
