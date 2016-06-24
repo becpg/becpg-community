@@ -149,14 +149,14 @@
 						for(var dataType in object.rclNumber){
 								var scoreInfo = "";
 								var dataTypeName = Object.keys(object.rclNumber[dataType])[0];
-								html+="<div class=\"div-"+dataTypeName.toLowerCase()+"\"><span class=\"span-"+dataTypeName.toLowerCase()+"\"><a class=\"req-filter "+REQFILTER_EVENTCLASS+"\" href=\"#\">"+instance.msg("label.constraints."+dataTypeName.toLowerCase())+scoreInfo+"</a></span><ul>";
+								html+="<div class=\"div-"+dataTypeName.toString().toLowerCase()+"\"><span class=\"span-"+dataTypeName.toString().toLowerCase()+"\"><a class=\"req-filter "+REQFILTER_EVENTCLASS+"\" href=\"#\">"+instance.msg("label.constraints."+dataTypeName.toString().toLowerCase())+scoreInfo+"</a></span><ul>";
 
 								var types = object.rclNumber[dataType];
 
 								for(var type in types[dataTypeName]){
 									var value = types[dataTypeName][type];
 
-									html+="<li><span class=\"req-"+dataTypeName.toLowerCase()+"-"+type+"\" title=\""+instance.msg("reqTypes."+type)+"\"><a class=\"req-filter "+REQFILTER_EVENTCLASS+ "\" href=\"#\"><span class=\"reqType"+type+"\"></span>"+value+"</a></li>";
+									html+="<li><span class=\"req-"+dataTypeName.toString().toLowerCase()+"-"+type+"\" title=\""+instance.msg("reqTypes."+type)+"\"><a class=\"req-filter "+REQFILTER_EVENTCLASS+ "\" href=\"#\"><span class=\"reqType"+type+"\"></span>"+value+"</a></li>";
 
 								}        		  
 								html+="</ul></div>";

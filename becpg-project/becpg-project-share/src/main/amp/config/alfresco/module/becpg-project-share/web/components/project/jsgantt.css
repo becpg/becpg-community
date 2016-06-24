@@ -111,6 +111,10 @@ td.ggtaskCheckbox {
 }
 
 
+.ggtaskCheckbox label{
+ 	display:none;	
+}
+
 .ggtask {
 	background: none repeat scroll 0 0 #FFBC00;
 	border: 1px solid red;
