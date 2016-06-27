@@ -93,7 +93,7 @@
    YAHOO.Bubbling.fire("registerToolbarButtonAction", {
        actionName : "entity-refresh-reports",
        evaluate : function(asset, entity) {
-           return asset.name !== null && asset.name.indexOf("View-reports") == 0  && entity.userAccess.edit;
+           return asset.name !== null && asset.name.indexOf("View-reports") == 0 ;
        },
        fn : function(instance) {
            Alfresco.util.PopupManager.displayMessage({
