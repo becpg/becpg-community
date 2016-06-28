@@ -41,6 +41,7 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.helper.PropertiesHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.hierarchy.HierarchicalEntity;
 import fr.becpg.repo.hierarchy.HierarchyHelper;
@@ -220,8 +221,6 @@ public class HierarchyServiceImpl implements HierarchyService {
 						logger.warn("Failed to classify entity. entityNodeRef: " + entityNodeRef);
 					}
 
-				} else {
-					logger.warn("Cannot classify entity since is not implemented HierarchicalEntity");
 				}
 				return null;
 
@@ -266,7 +265,7 @@ public class HierarchyServiceImpl implements HierarchyService {
 						"Warning hierarchy cycle for :" + HierarchyHelper.getHierachyName(hierarchyNodeRef, nodeService) + " " + hierarchyNodeRef);
 			}
 		}
-		String name = HierarchyHelper.getHierachyName(hierarchyNodeRef, nodeService);
+		String name = PropertiesHelper.cleanFolderName(HierarchyHelper.getHierachyName(hierarchyNodeRef, nodeService));
 		if (name != null) {
 			destinationNodeRef = repoService.getOrCreateFolderByPath(parentNodeRef, name, name);
 		} else {
