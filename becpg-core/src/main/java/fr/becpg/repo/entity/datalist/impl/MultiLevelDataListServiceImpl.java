@@ -26,6 +26,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.PermissionService;
+import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,6 +43,7 @@ import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.search.AdvSearchService;
+import fr.becpg.repo.security.SecurityService;
 
 /**
  * Extract MultiLevelDataList at corresponding level
@@ -70,6 +72,12 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 
 	@Autowired
 	private AssociationService associationService;
+
+	@Autowired
+	private SecurityService securityService;
+
+	@Autowired
+	private NamespaceService namespaceService;
 
 	@Override
 	public MultiLevelListData getMultiLevelListData(DataListFilter dataListFilter) {
@@ -103,32 +111,38 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 			visitedNodeRefs.add(entityNodeRef);
 			if ((maxDepthLevel < 0) || (currDepth < maxDepthLevel)) {
 				logger.debug("getMultiLevelListData depth :" + currDepth + " max " + maxDepthLevel);
-				if ((currDepth == 0) || !entityDictionaryService.isMultiLevelLeaf(nodeService.getType(entityNodeRef))) {
+				QName nodeType = nodeService.getType(entityNodeRef);
+
+				if ((currDepth == 0) || !entityDictionaryService.isMultiLevelLeaf(nodeType)) {
 					NodeRef listsContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
 					if (listsContainerNodeRef != null) {
 
-						NodeRef dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, dataListFilter.getDataType());
-						if (dataListNodeRef != null) {
+						int access_mode = securityService.computeAccessMode(nodeType, dataListFilter.getDataType().toPrefixString(namespaceService));
+						if (SecurityService.NONE_ACCESS != access_mode) {
+							NodeRef dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, dataListFilter.getDataType());
 
-							List<NodeRef> childRefs = getListNodeRef(dataListNodeRef, dataListFilter);
-							// Adv search already filter by perm
+							if (dataListNodeRef != null) {
 
-							for (NodeRef childRef : childRefs) {
-								entityNodeRef = getEntityNodeRef(childRef);
-								if (entityNodeRef != null) {
-									Integer depthLevel = (Integer) nodeService.getProperty(childRef, BeCPGModel.PROP_DEPTH_LEVEL);
-									if (logger.isDebugEnabled()) {
-										logger.debug("Append level:" + depthLevel + " at currLevel " + currDepth + " for "
-												+ nodeService.getProperty(entityNodeRef, org.alfresco.model.ContentModel.PROP_NAME));
+								List<NodeRef> childRefs = getListNodeRef(dataListNodeRef, dataListFilter);
+								// Adv search already filter by perm
+
+								for (NodeRef childRef : childRefs) {
+									entityNodeRef = getEntityNodeRef(childRef);
+									if (entityNodeRef != null) {
+										Integer depthLevel = (Integer) nodeService.getProperty(childRef, BeCPGModel.PROP_DEPTH_LEVEL);
+										if (logger.isDebugEnabled()) {
+											logger.debug("Append level:" + depthLevel + " at currLevel " + currDepth + " for "
+													+ nodeService.getProperty(entityNodeRef, org.alfresco.model.ContentModel.PROP_NAME));
+										}
+										MultiLevelListData tmp = getMultiLevelListData(dataListFilter, entityNodeRef,
+												currDepth + (depthLevel != null ? depthLevel : 1), maxDepthLevel, visitedNodeRefs);
+										ret.getTree().put(childRef, tmp);
+									} else {
+										Integer depthLevel = (Integer) nodeService.getProperty(childRef, BeCPGModel.PROP_DEPTH_LEVEL);
+
+										ret.getTree().put(childRef,
+												new MultiLevelListData(new ArrayList<>(), currDepth + (depthLevel != null ? depthLevel : 1)));
 									}
-									MultiLevelListData tmp = getMultiLevelListData(dataListFilter, entityNodeRef,
-											currDepth + (depthLevel != null ? depthLevel : 1), maxDepthLevel, visitedNodeRefs);
-									ret.getTree().put(childRef, tmp);
-								} else {
-									Integer depthLevel = (Integer) nodeService.getProperty(childRef, BeCPGModel.PROP_DEPTH_LEVEL);
-									
-									ret.getTree().put(childRef,new MultiLevelListData(new ArrayList<>(), 
-											currDepth + (depthLevel != null ? depthLevel : 1)));
 								}
 							}
 						}
@@ -136,7 +150,7 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 				}
 			}
 		} else {
-		  logger.debug("Detected cycle for: "+entityNodeRef);
+			logger.debug("Detected cycle for: " + entityNodeRef);
 		}
 		return ret;
 	}

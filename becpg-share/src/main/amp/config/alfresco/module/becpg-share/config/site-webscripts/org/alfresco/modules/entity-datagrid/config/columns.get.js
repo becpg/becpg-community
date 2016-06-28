@@ -265,8 +265,8 @@ function getColumns(itemType, list, formIdArgs, mode) {
 					label : (formConfig.fields[fieldId].labelId != null ? formConfig.fields[fieldId].labelId : formConfig.fields[fieldId].label),
 					"dataType" : "nested"
 				};
-				if (formId != null) {
-					column.columns = getColumns(splitted[1] + "", "sub-datagrid", "sub-datagrid-" + formId);
+				if (formIdArgs != null) {
+					column.columns = getColumns(splitted[1] + "", "sub-datagrid", "sub-datagrid-" + formIdArgs);
 				} else {
 					column.columns = getColumns(splitted[1] + "", "sub-datagrid");
 				}
