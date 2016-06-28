@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2015 beCPG.
+ * Copyright (C) 2010-2016 beCPG.
  * 
  * This file is part of beCPG
  * 
@@ -122,61 +122,6 @@
 				};
 				
 			}
-			
-			function colorizeSingleMissingField(field){
-				
-				var fieldId = "";
-				var found = YAHOO.util.Dom.get(id+"_assoc_"+fieldCode);
-				fieldId=id+"_assoc_"+fieldCode+"-cntrl";
-				
-				if(found === undefined || found == null){
-					found = YAHOO.util.Dom.get(id+"_prop_"+fieldCode);
-					fieldId=id+"_prop_"+fieldCode;
-				}
-
-				if(found !== undefined && found != null){
-					if(found.className.indexOf("multi-assoc") != -1){
-						found = found.parentNode;
-					}
-					
-					//put color tip
-					var labels = document.getElementsByTagName("label");
-					
-
-					for(var labelIndex = 0; labelIndex < labels.length; labelIndex++){
-						var currentLabel = labels[labelIndex];									
-						
-						//checks if we're on the right label, and the catalog is not already labelled
-						var hasLocaleIcon = false;
-						if(currentLabel.htmlFor.indexOf(fieldId) != -1  && currentLabel.parentNode.innerHTML.indexOf(colorTipElement.style.backgroundColor) == -1){
-							if(currentLabel.childNodes){
-								for(var child in currentLabel.childNodes){
-									var currentChildNode = currentLabel.childNodes[child];
-									if(currentChildNode.nodeType == Node.ELEMENT_NODE && currentChildNode.className.indexOf("locale-icon") != -1){
-										hasLocaleIcon = true;
-										break;
-									}
-								}
-							}
-							
-							if(hasLocaleIcon){
-								currentLabel.parentNode.insertBefore(colorTipElement.cloneNode(false), currentLabel.nextSibling);	
-							} else {
-								currentLabel.innerHTML+=colorTipElement.outerHTML;
-							}
-						}
-					}							
-				} else {
-					
-					var absentMissingFieldId = "missing-field_"+json[key]+"_"+json[key].missingFields[field].displayName;
-					
-					var absentMissingFieldHTMLElement = YAHOO.util.Dom.get(absentMissingFieldId);
-					
-					if(absentMissingFieldHTMLElement !== undefined && absentMissingFieldHTMLElement != null){
-						absentMissingFieldHTMLElement.outerHTML = "";
-					}
-				}
-			}
 
 			/**
 			 * Colorizes input fields using a color palette per catalog in json
@@ -187,6 +132,7 @@
 				var i=0;
 				
 				for(var key in json){
+					
 					var color = json[key].color;
 					
 					var colorTipElement = document.createElement("SPAN");
@@ -217,23 +163,65 @@
 						for(var field in json[key].missingFields){							
 							//try to find a prop or assoc with this field
 							
-							var fieldCodes = json[key].missingFields[field].id.replace(":", "_");
+							var fieldCode = json[key].missingFields[field].id.replace(":", "_");
+							var fieldId="";
 							
-							var fieldCodeArray = fieldCodes.split('|');
-							for(var splitField in fieldCodeArray){
-								console.log("splitField: "+splitField);
-								colorizeSingleMissingField(splitField);
+							var found = YAHOO.util.Dom.get(id+"_assoc_"+fieldCode);
+							fieldId=id+"_assoc_"+fieldCode+"-cntrl";
+							
+							if(found === undefined || found == null){
+								found = YAHOO.util.Dom.get(id+"_prop_"+fieldCode);
+								fieldId=id+"_prop_"+fieldCode;
 							}
-							
-							
-														
-						} // end foreach loop	
+
+							if(found !== undefined && found != null){
+								if(found.className.indexOf("multi-assoc") != -1){
+									found = found.parentNode;
+								}
+								
+								//put color tip
+								var labels = document.getElementsByTagName("label");
+								
+
+								for(var labelIndex = 0; labelIndex < labels.length; labelIndex++){
+									var currentLabel = labels[labelIndex];									
+									
+									//checks if we're on the right label, and the catalog is not already labelled
+									var hasLocaleIcon = false;
+									if(currentLabel.htmlFor.indexOf(fieldId) != -1  && currentLabel.parentNode.innerHTML.indexOf(colorTipElement.style.backgroundColor) == -1){
+										if(currentLabel.childNodes){
+											for(var child in currentLabel.childNodes){
+												var currentChildNode = currentLabel.childNodes[child];
+												if(currentChildNode.nodeType == Node.ELEMENT_NODE && currentChildNode.className.indexOf("locale-icon") != -1){
+													hasLocaleIcon = true;
+													break;
+												}
+											}
+										}
+										
+										if(hasLocaleIcon){
+											currentLabel.appendChild(colorTipElement.cloneNode(false));
+										} else {
+											currentLabel.innerHTML+=colorTipElement.outerHTML;
+										}
+									}
+								}							
+							} else {
+								
+								var absentMissingFieldId = "missing-field_"+json[key]+"_"+json[key].missingFields[field].displayName;
+								
+								var absentMissingFieldHTMLElement = YAHOO.util.Dom.get(absentMissingFieldId);
+								
+								if(absentMissingFieldHTMLElement !== undefined && absentMissingFieldHTMLElement != null){
+									absentMissingFieldHTMLElement.outerHTML = "";
+								}
+							}							
+						}
 					}
 					i++;
 				}
 			}
 
-			
 			YAHOO.util.Dom.get(this.id+"-entity-catalog").innerHTML='<span class="wait">' + Alfresco.util.encodeHTML(this.msg("label.loading")) + '</span>';
 			
 			Alfresco.util.Ajax.request({
