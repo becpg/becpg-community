@@ -20,6 +20,7 @@ package fr.becpg.repo.hierarchy;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
 
 public interface HierarchyService {
 
@@ -29,5 +30,6 @@ public interface HierarchyService {
 	NodeRef createRootHierarchy(NodeRef dataListNodeRef, String value);
 	NodeRef createHierarchy(NodeRef dataListNodeRef, NodeRef hierarchyParent, String value);
 	void classifyByHierarchy(NodeRef containerNodeRef, NodeRef entityNodeRef);
+	void classifyByHierarchy(NodeRef containerNodeRef, NodeRef entityNodeRef, QName hierarchyQname);
 	
 }

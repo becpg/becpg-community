@@ -1,8 +1,9 @@
 /*
- * 
+ *
  */
 package fr.becpg.repo.web.scripts.entity;
 
+import java.io.IOException;
 import java.util.Map;
 
 import org.alfresco.service.cmr.lock.LockService;
@@ -11,6 +12,8 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
@@ -21,12 +24,11 @@ import fr.becpg.repo.report.entity.EntityReportService;
 /**
  * @author querephi
  */
-@Deprecated
 public class ReportWebScript extends AbstractWebScript {
 
 	private static final Log logger = LogFactory.getLog(ReportWebScript.class);
 
-	private static final String ACTION_CHECK_DATALISTS = "check-datalists";
+	private static final String ACTION_CHECK = "check";
 	private static final String ACTION_FORCE = "force";
 
 	private static final String PARAM_ACTION = "action";
@@ -39,7 +41,6 @@ public class ReportWebScript extends AbstractWebScript {
 	private LockService lockService;
 
 	private EntityReportService entityReportService;
-
 
 	public void setEntityReportService(EntityReportService entityReportService) {
 		this.entityReportService = entityReportService;
@@ -54,7 +55,7 @@ public class ReportWebScript extends AbstractWebScript {
 	}
 
 	@Override
-	public void execute(WebScriptRequest req, WebScriptResponse res) throws WebScriptException {
+	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
 		logger.debug("start report webscript");
 		Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();
 		String action = templateArgs.get(PARAM_ACTION);
@@ -63,11 +64,11 @@ public class ReportWebScript extends AbstractWebScript {
 		String nodeId = templateArgs.get(PARAM_ID);
 
 		NodeRef nodeRef = new NodeRef(storeType, storeId, nodeId);
-		boolean generateReport;
+		boolean generateReport = false;
 
-		if (nodeService.exists(nodeRef) && lockService.getLockStatus(nodeRef) == LockStatus.NO_LOCK) {
+		if (nodeService.exists(nodeRef) && (lockService.getLockStatus(nodeRef) == LockStatus.NO_LOCK)) {
 
-			if (ACTION_CHECK_DATALISTS.equals(action)) {
+			if (ACTION_CHECK.equals(action)) {
 				generateReport = entityReportService.shouldGenerateReport(nodeRef);
 			} else if (ACTION_FORCE.equals(action)) {
 				generateReport = true;
@@ -82,5 +83,21 @@ public class ReportWebScript extends AbstractWebScript {
 			}
 
 		}
+
+		try {
+
+			JSONObject ret = new JSONObject();
+
+			ret.put("generateReport", generateReport);
+			ret.put("status", "SUCCESS");
+
+			res.setContentType("application/json");
+			res.setContentEncoding("UTF-8");
+			ret.write(res.getWriter());
+
+		} catch (JSONException e) {
+			throw new WebScriptException("Unable to serialize JSON", e);
+		}
+
 	}
 }
