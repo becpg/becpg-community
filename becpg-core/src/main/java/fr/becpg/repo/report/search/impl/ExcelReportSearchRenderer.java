@@ -77,7 +77,9 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 				XSSFSheet sheet = workbook.getSheetAt(i);
 				mainType = fillSheet(sheet, searchResults, mainType);
 			}
-
+			
+			workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
+			workbook.setForceFormulaRecalculation(true);
 			workbook.write(outputStream);
 
 		} catch (ContentIOException | IOException e) {
