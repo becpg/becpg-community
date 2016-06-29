@@ -19,8 +19,10 @@ package fr.becpg.repo.jscript;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.repo.jscript.BaseScopableProcessorExtension;
 import org.alfresco.repo.jscript.ScriptNode;
@@ -44,6 +46,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.entity.AutoNumService;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.AssociationService;
@@ -69,6 +72,8 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	private NamespaceService namespaceService;
 
 	private DictionaryService dictionaryService;
+	
+	private EntityDictionaryService entityDictionaryService;
 
 	private EntityVersionService entityVersionService;
 
@@ -130,6 +135,10 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 	public void setCheckOutCheckInService(CheckOutCheckInService checkOutCheckInService) {
 		this.checkOutCheckInService = checkOutCheckInService;
+	}
+	
+	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
+		this.entityDictionaryService = entityDictionaryService;
 	}
 
 	public String getMLProperty(ScriptNode sourceNode, String propQName, String locale) {
@@ -240,6 +249,17 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		}
 
 		return true;
+	}
+	
+	public String[] getSubTypes(String type){
+		Set<String> ret = new HashSet<>();
+
+		for(QName typeQname : entityDictionaryService.getSubTypes(QName.createQName(type,namespaceService))){
+			ret.add(typeQname.toPrefixString(namespaceService));
+		}
+		
+		return ret.toArray(new String[ret.size()]);
+		
 	}
 
 }

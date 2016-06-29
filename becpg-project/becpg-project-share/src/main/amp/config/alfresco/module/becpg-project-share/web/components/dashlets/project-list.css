@@ -93,11 +93,13 @@
 
 .project-list  div.search-box input[type="text"]
 {
-   border-color: white;
+   border-color: transparent;
    display: inline-block;
    padding: 0;
    position: relative;
    top: -1px;
+   outline: none;
+   appareance:none;
 }
 
 .project-list  div.search-box input.faded
