@@ -91,7 +91,7 @@
 				YAHOO.util.Event.addListener("${fieldHtmlId}", "change", function() {
 						if (localStorage != null) {
 						 var selEl = YAHOO.util.Dom.get("${fieldHtmlId}");
-							localStorage.setItem('${fieldHtmlId}', selEl.value);
+							localStorage.setItem('${field.name}', selEl.value);
 							for(var e=0;e<selEl.options.length;e++){
 							  selEl.options[e].defaultSelected=(selEl.selectedIndex==e);
 							}
@@ -99,9 +99,9 @@
 					});
 					
 				YAHOO.util.Event.onAvailable("${fieldHtmlId}", function() {
-					if (localStorage.getItem('${fieldHtmlId}') != null) {
+					if (localStorage.getItem('${field.name}') != null) {
 					  var selEl = YAHOO.util.Dom.get("${fieldHtmlId}");
-						selEl.value = localStorage.getItem('${fieldHtmlId}');
+						selEl.value = localStorage.getItem('${field.name}');
 						for(var e=0;e<selEl.options.length;e++){
 						 selEl.options[e].defaultSelected=(selEl.selectedIndex==e);
 						}
