@@ -58,6 +58,7 @@
 		<property name="mlNodeService" ref="mlAwareNodeService"/>
 		<property name="namespaceService" ref="namespaceService"/>
 		<property name="dictionaryService" ref="dictionaryService"/>
+		<property name="entityDictionaryService" ref="entityDictionaryService"/>
 		<property name="entityVersionService" ref="entityVersionService"/>
 		<property name="serviceRegistry" ref="ServiceRegistry"/>
 		<property name="associationService" ref="associationService" />
