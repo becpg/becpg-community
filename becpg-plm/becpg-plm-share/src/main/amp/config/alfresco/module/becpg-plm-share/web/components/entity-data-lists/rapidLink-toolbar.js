@@ -222,10 +222,15 @@
                          listType = "bcpg:"+this.options.list;
                      
                      if ("packagingList" == this.options.list) {
+                    	 var unit = "P";
+                     	 if (typeof (Storage) !== "undefined" && localStorage && localStorage.getItem('prop_bcpg_packagingListUnit') != null) {
+       					   unit = localStorage.getItem('prop_bcpg_packagingListUnit');
+       					}
+
                         dataObj = {
                               "alf_destination" : instance.options.dataListNodeRef,
                               "assoc_bcpg_packagingListProduct_added" : nodeRef,
-                              "prop_bcpg_packagingListUnit" : "P",
+                              "prop_bcpg_packagingListUnit" : unit,
                               "prop_bcpg_packagingListQty" : "0"
                            };
                      } else if ("processList" == this.options.list) {
@@ -235,10 +240,16 @@
                            };
                         listType = "mpm:processList";
                      } else {
+                    	 
+                    	 var unit = "kg";
+                    	 if (typeof (Storage) !== "undefined" && localStorage && localStorage.getItem('prop_bcpg_compoListUnit') != null) {
+       					   unit = localStorage.getItem('prop_bcpg_compoListUnit');
+       					}
+                    	 
                         dataObj = {
                               "alf_destination" : instance.options.dataListNodeRef,
                               "assoc_bcpg_compoListProduct_added" : nodeRef,
-                              "prop_bcpg_compoListUnit" : "kg",
+                              "prop_bcpg_compoListUnit" : unit,
                               "prop_bcpg_compoListQtySubFormula" : "0"
                            };
                      }
