@@ -50,8 +50,8 @@
 								itemType="bcpg:dynamicCharactList"  />
 							<div class="dynamicCharactList-prop-panel">
   					   			<span>
-  					   				<label  for="dynamicCharactList-${el}-colCheckbox">${msg("dashlet.dynamicCharactList.colCheckbox")}</label>
 					   				<input  id="dynamicCharactList-${el}-colCheckbox" type="checkbox"/>
+					   				<label  for="dynamicCharactList-${el}-colCheckbox">${msg("dashlet.dynamicCharactList.colCheckbox")}</label>
 								</span>
 					   		</div>
 						</div>
