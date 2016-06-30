@@ -37,7 +37,7 @@
         <dependency>
             <groupId>${alfresco.groupId}</groupId>
             <artifactId>alfresco-share-services</artifactId>
-            <version>${alfresco.version}</version>
+            <version>${alfresco.share.version}</version>
             <type>amp</type>
         </dependency>
         

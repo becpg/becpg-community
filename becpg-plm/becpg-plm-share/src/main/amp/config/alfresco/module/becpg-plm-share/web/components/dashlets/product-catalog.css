@@ -92,7 +92,7 @@
 
 .product-catalog  div.search-box input[type="text"]
 {
-   border-color: white;
+   border-color: transparent;
    display: inline-block;
    padding: 0;
    position: relative;
