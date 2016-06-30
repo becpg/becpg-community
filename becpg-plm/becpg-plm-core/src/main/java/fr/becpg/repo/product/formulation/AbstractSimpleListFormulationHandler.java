@@ -183,7 +183,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 							isGenericRawMaterial);
 				}
 			}
-			addReqCtrlList(formulatedProduct.getCompoListView().getReqCtrlList(), mandatoryCharacts, getRequirementDataType());
+			addReqCtrlList(formulatedProduct.getReqCtrlList(), mandatoryCharacts, getRequirementDataType());
 
 		}
 
@@ -459,7 +459,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 					ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Tolerated, message,
 							formulatedCharactDataItem.getCharactNodeRef(), new ArrayList<NodeRef>(), getRequirementDataType());
-					formulatedProduct.getCompoListView().getReqCtrlList().add(rclDataItem);
+					formulatedProduct.getReqCtrlList().add(rclDataItem);
 				}
 
 			}
@@ -537,7 +537,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 										(minMaxSpecValueDataItem.getMaxi() != null
 												?  " <=" + NumberFormat.getInstance(Locale.getDefault()).format(minMaxSpecValueDataItem.getMaxi()) 
 												: ""));
-								formulatedProduct.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden,
+								formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden,
 										message, listDataItem.getCharactNodeRef(), new ArrayList<NodeRef>(), RequirementDataType.Specification));
 
 							}

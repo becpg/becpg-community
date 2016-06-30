@@ -169,7 +169,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 
 	private void addMissingLabelClaimReq(ProductData productData, ProductData partProduct, LabelClaimListDataItem labelClaimItem) {
 		String message = I18NUtil.getMessage(MESSAGE_MISSING_CLAIM, extractName(labelClaimItem.getLabelClaim()));
-		productData.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Info, message,
+		productData.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Info, message,
 				labelClaimItem.getLabelClaim(), new ArrayList<NodeRef>(Arrays.asList(partProduct.getNodeRef())), RequirementDataType.Labelclaim));
 
 	}
@@ -214,7 +214,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 					String message = I18NUtil.getMessage(MESSAGE_LABELCLAIM_ERROR, Locale.getDefault(),
 							nodeService.getProperty(labelClaimListDataItem.getLabelClaim(), BeCPGModel.PROP_CHARACT_NAME),
 							labelClaimListDataItem.getErrorLog());
-					productData.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message,
+					productData.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message,
 							labelClaimListDataItem.getLabelClaim(), new ArrayList<NodeRef>(), RequirementDataType.Labelclaim));
 				}
 
@@ -259,7 +259,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 
 	private void addSpecificationUnclaimedLabelClaim(ProductData formulatedProduct, LabelClaimListDataItem labelClaim) {
 		String message = I18NUtil.getMessage(MESSAGE_NOT_CLAIM, extractName(labelClaim.getLabelClaim()));
-		formulatedProduct.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message,
+		formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message,
 				labelClaim.getLabelClaim(), new ArrayList<NodeRef>(), RequirementDataType.Specification));
 	}
 

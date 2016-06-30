@@ -658,7 +658,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			}
 
 			loadDynamicCharactList(productData.getCompoListView().getDynamicCharactList(), compoListElt);
-			loadReqCtrlList(productData.getCompoListView().getReqCtrlList(), compoListElt);
+			loadReqCtrlList(productData.getReqCtrlList(), compoListElt);
 		}
 
 	}

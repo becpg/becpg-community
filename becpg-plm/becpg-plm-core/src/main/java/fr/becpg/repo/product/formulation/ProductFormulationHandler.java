@@ -96,26 +96,10 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		if ((productData.hasCompoListEl(new VariantFilters<>())) || (productData.hasPackagingListEl(new VariantFilters<>()))
 				|| (productData.hasProcessListEl(new VariantFilters<>()))) {
 
-			if (productData.hasCompoListEl(new VariantFilters<>())) {
-				if (productData.getCompoListView().getReqCtrlList() != null) {
-					clearReqCltrlList(productData.getCompoListView().getReqCtrlList());
-				} else {
-					productData.getCompoListView().setReqCtrlList(new LinkedList<ReqCtrlListDataItem>());
-				}
-			}
-			if (productData.hasPackagingListEl(new VariantFilters<>())) {
-				if (productData.getPackagingListView().getReqCtrlList() != null) {
-					clearReqCltrlList(productData.getPackagingListView().getReqCtrlList());
-				} else {
-					productData.getPackagingListView().setReqCtrlList(new LinkedList<ReqCtrlListDataItem>());
-				}
-			}
-			if (productData.hasProcessListEl(new VariantFilters<>())) {
-				if (productData.getProcessListView().getReqCtrlList() != null) {
-					clearReqCltrlList(productData.getProcessListView().getReqCtrlList());
-				} else {
-					productData.getProcessListView().setReqCtrlList(new LinkedList<ReqCtrlListDataItem>());
-				}
+			if (productData.getReqCtrlList() != null) {
+				clearReqCltrlList(productData.getReqCtrlList());
+			} else {
+				productData.setReqCtrlList(new LinkedList<ReqCtrlListDataItem>());
 			}
 
 			if (formulateChildren) {
@@ -129,14 +113,8 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		}
 
 		// Reset
-		if ((productData.getCompoListView() != null) && (productData.getCompoListView().getReqCtrlList() != null)) {
-			productData.getCompoListView().getReqCtrlList().clear();
-		}
-		if ((productData.getPackagingListView() != null) && (productData.getPackagingListView().getReqCtrlList() != null)) {
-			productData.getPackagingListView().getReqCtrlList().clear();
-		}
-		if ((productData.getProcessListView() != null) && (productData.getProcessListView().getReqCtrlList() != null)) {
-			productData.getProcessListView().getReqCtrlList().clear();
+		if ((productData.getReqCtrlList() != null)) {
+			productData.getReqCtrlList().clear();
 		}
 
 		return true;
@@ -164,7 +142,6 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 
 				boolean shouldFormulate = false;
 
-				
 				if (productData.getCompoList() != null) {
 					for (CompositionDataItem c : productData.getCompoList()) {
 						if ((c.getComponent() != null)) {
@@ -244,18 +221,18 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		if (formulatedProduct.hasCompoListEl(new VariantFilters<>())) {
 			for (CompoListDataItem c : formulatedProduct.getCompoList()) {
 				if (c.getCompoListUnit() == null) {
-					addMessingReq(formulatedProduct.getCompoListView().getReqCtrlList(), null, MESSAGE_WRONG_UNIT, RequirementDataType.Composition);
+					addMessingReq(formulatedProduct.getReqCtrlList(), null, MESSAGE_WRONG_UNIT, RequirementDataType.Composition);
 				} else {
-					checkCompositionItem(formulatedProduct.getCompoListView().getReqCtrlList(), c.getProduct(), c);
+					checkCompositionItem(formulatedProduct.getReqCtrlList(), c.getProduct(), c);
 				}
 			}
 		}
 		if (formulatedProduct.hasPackagingListEl(new VariantFilters<>())) {
 			for (PackagingListDataItem p : formulatedProduct.getPackagingList()) {
 				if (p.getPackagingListUnit() == null) {
-					addMessingReq(formulatedProduct.getCompoListView().getReqCtrlList(), null, MESSAGE_WRONG_UNIT, RequirementDataType.Packaging);
+					addMessingReq(formulatedProduct.getReqCtrlList(), null, MESSAGE_WRONG_UNIT, RequirementDataType.Packaging);
 				} else {
-					checkPackagingItem(formulatedProduct.getPackagingListView().getReqCtrlList(), p);
+					checkPackagingItem(formulatedProduct.getReqCtrlList(), p);
 				}
 
 			}
@@ -267,15 +244,15 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		NodeRef productNodeRef = formulatedProduct.getNodeRef();
 		List<ReqCtrlListDataItem> reqCtrlList;
 		if (formulatedProduct instanceof PackagingKitData) {
-			reqCtrlList = formulatedProduct.getPackagingListView().getReqCtrlList();
+			reqCtrlList = formulatedProduct.getReqCtrlList();
 
 		} else {
-			reqCtrlList = formulatedProduct.getCompoListView().getReqCtrlList();
+			reqCtrlList = formulatedProduct.getReqCtrlList();
 		}
 		if (!(formulatedProduct instanceof ResourceProductData)) {
 			ProductUnit productUnit = formulatedProduct.getUnit();
 			if (productUnit == null) {
-				addMessingReq(reqCtrlList, productNodeRef, MESSAGE_MISSING_UNIT, RequirementDataType.Nutrient);
+				addMessingReq(reqCtrlList, productNodeRef, MESSAGE_MISSING_UNIT, RequirementDataType.Formulation);
 			}
 		}
 	}
