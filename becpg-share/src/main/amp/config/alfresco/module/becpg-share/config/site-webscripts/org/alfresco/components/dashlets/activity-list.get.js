@@ -34,7 +34,7 @@ function main()
                siteId: activity.siteNetwork,
                date:
                {
-                  isoDate: activity.postDate,
+                  isoDate: activity.postDate
                },
             title: summary.title || msg.get("title.generic"),
                userName: activity.postUserId,

@@ -81,7 +81,7 @@
                                           for ( var i in json.reportTpls) {
                                              items.push({
                                                 text : json.reportTpls[i].name,
-                                                value : json.reportTpls[i].nodeRef+"#"+json.reportTpls[i].name + "." + json.reportTpls[i].format.toLowerCase(),
+                                                value : json.reportTpls[i].nodeRef+"#"+json.reportTpls[i].name + "." + json.reportTpls[i].format.toString().toLowerCase()
                                              });
                                           }
                                           if(items.length>0){
@@ -94,7 +94,7 @@
                                     },
                                     scope : this
                                  },
-                                 failureMessage : "Could not get project reports '" + Alfresco.constants.PROXY_URI + "becpg/report/exportsearch/templates/pjt:project" + "'.",
+                                 failureMessage : "Could not get project reports '" + Alfresco.constants.PROXY_URI + "becpg/report/exportsearch/templates/pjt:project" + "'."
                               });
 
                      }

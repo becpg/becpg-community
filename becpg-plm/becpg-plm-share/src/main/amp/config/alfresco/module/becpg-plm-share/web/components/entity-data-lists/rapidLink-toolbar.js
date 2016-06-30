@@ -129,7 +129,7 @@
                                     Alfresco.constants.URL_SERVICECONTEXT + "components/form?formId=formulation&itemKind=type&itemId={itemId}&destination={destination}&mode=create&submitType=json&showCancelButton=true&popup=true",
                                     {
                                        itemId : "bcpg:" + type,
-                                       destination : instance.options.entity.parentNodeRef,
+                                       destination : instance.options.entity.parentNodeRef
                                     });
 
                         var createRow = new Alfresco.module.SimpleDialog(instance.id + "-createType");

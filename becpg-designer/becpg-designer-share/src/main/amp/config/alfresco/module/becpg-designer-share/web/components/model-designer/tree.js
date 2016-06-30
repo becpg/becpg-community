@@ -60,7 +60,7 @@
 			 * @type string
 			 * @default ""
 			 */
-	      configNodeRef : null,
+	      configNodeRef : null
 
 	   },
 	   /**

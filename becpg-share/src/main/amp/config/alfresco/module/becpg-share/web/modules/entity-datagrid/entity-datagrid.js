@@ -530,7 +530,7 @@
 
                                 elCell.innerHTML = '<input class="dt-check" id="checkbox-' + oRecord.getId() + '" type="checkbox" name="fileChecked" value="' + oData + '"' + (scope.selectedItems[oData] ? ' checked="checked">'
                                         : '>')+
-                                        '<label for="checkbox-' + oRecord.getId() + '"></label>';
+                                        '<label class="dt-check" for="checkbox-' + oRecord.getId() + '"></label>';
                             };
                         },
                         
