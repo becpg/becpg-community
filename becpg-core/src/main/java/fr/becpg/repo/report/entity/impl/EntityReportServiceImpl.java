@@ -332,7 +332,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 											params.put(ReportParams.PARAM_ASSOCIATED_TPL_FILES,
 													associationService.getTargetAssocs(tplNodeRef, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES));
 
-											logger.debug("beCPGReportEngine createReport: " + entityNodeRef);
+											logger.debug("beCPGReportEngine createReport: " + entityNodeRef+" for document "+documentName +" ("+documentNodeRef+")");
 
 											beCPGReportEngine.createReport(tplNodeRef, new ByteArrayInputStream(xmlDataSource.asXML().getBytes()),
 													writer.getContentOutputStream(), params);
@@ -361,7 +361,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 							return null;
 						};
 
-						transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, false, false);
+						transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, false, true);
 					}
 					return null;
 				};
