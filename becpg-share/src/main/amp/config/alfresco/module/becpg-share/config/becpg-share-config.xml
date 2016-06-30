@@ -269,8 +269,8 @@
 		<actionGroupResolver>becpg.resolver.doclib.actionGroup</actionGroupResolver>
 		<actionGroups>
 			<actionGroup id="entity-browse">
-				<action index="10" id="entity-view-datalists" />
-				<action index="100" id="entity-view-documents" />
+				<!-- <action index="10" id="entity-view-datalists" />
+				<action index="100" id="entity-view-documents" /> -->
 				<action index="101" id="document-edit-properties" icon="folder-edit-properties" label="actions.folder.edit-metadata" />
 				<action index="110" id="folder-download" />
 				<action index="114" id="entity-view-original" />
@@ -292,7 +292,7 @@
 				<action index="390" id="document-request-sync" />
 			</actionGroup>
 			<actionGroup id="entity-details">
-				<action index="100" id="entity-view-documents" />
+				<!-- <action index="100" id="entity-view-documents" /> -->
 				<action index="101" id="document-edit-metadata" icon="folder-edit-metadata" label="actions.folder.edit-metadata" />
 				<action index="102" id="entity-checkin" />
 				<action index="103" id="entity-checkout" />

@@ -605,7 +605,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 		renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
 			var variants = data.value, isInDefault = !variants || variants.length < 1;
 
-			if (data.value != null) {
+			if (data.value != null && data.value.length > 0) {
 
 				if (oColumn.hidden) {
 					scope.widgets.dataTable.showColumn(oColumn);

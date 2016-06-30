@@ -189,7 +189,7 @@
 }
  
 .project-list .project-activity-details  .details {
-	float: right;
+	float: left;
 }
 
 .project-list   .project-activity-details .details .activity-content {
