@@ -156,7 +156,7 @@
                               "MSG_ERROR" : this.msg("message.error"),
                               className : "alfresco-datatable simple-doclist",
                               renderLoopSize : 4,
-                              paginator : null,
+                              paginator : null
                            });
 
                      this.widgets.alfrescoDataTable.getDataTable = function() {
