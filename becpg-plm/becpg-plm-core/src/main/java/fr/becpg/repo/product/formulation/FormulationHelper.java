@@ -173,7 +173,7 @@ public class FormulationHelper {
 					productQtyToTransform = productQtyToTransform / formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes();
 				} else {
 					String message = I18NUtil.getMessage(MISSING_NUMBER_OF_PRODUCT_PER_BOX);
-					formulatedProduct.getProcessListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, 
+					formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, 
 							RequirementType.Forbidden, 
 							message, 
 							null, new ArrayList<NodeRef>(), RequirementDataType.Packaging));

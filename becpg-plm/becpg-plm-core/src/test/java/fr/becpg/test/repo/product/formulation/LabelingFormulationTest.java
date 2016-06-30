@@ -1253,9 +1253,9 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 			productService.formulate(formulatedProduct);
 
-			assertFalse(formulatedProduct.getCompoListView().getReqCtrlList().isEmpty());
+			assertFalse(formulatedProduct.getReqCtrlList().isEmpty());
 
-			for (ReqCtrlListDataItem reqCtrlListDataItem : formulatedProduct.getCompoListView().getReqCtrlList()) {
+			for (ReqCtrlListDataItem reqCtrlListDataItem : formulatedProduct.getReqCtrlList()) {
 				if (RequirementType.Forbidden.equals(reqCtrlListDataItem.getReqType())) {
 
 					String error = reqCtrlListDataItem.getReqMessage();

@@ -232,9 +232,9 @@ public class FormulationSpecMergeTest extends AbstractFinishedProductTest {
 			/* -- Check formulation -- */
 			ProductData formulatedProduct = alfrescoRepository.findOne(testProduct);
 
-			logger.info("/*-- Formulation raised " + formulatedProduct.getCompoListView().getReqCtrlList().size() + " rclDataItem --*/");
+			logger.info("/*-- Formulation raised " + formulatedProduct.getReqCtrlList().size() + " rclDataItem --*/");
 			int checks = 0;
-			for (ReqCtrlListDataItem rclDataItem : formulatedProduct.getCompoListView().getReqCtrlList()) {
+			for (ReqCtrlListDataItem rclDataItem : formulatedProduct.getReqCtrlList()) {
 				logger.info(rclDataItem.getReqMessage());
 				if (I18NUtil.getMessage(LabelClaimFormulationHandler.MESSAGE_NOT_CLAIM, "labelClaim1").equals(rclDataItem.getReqMessage())) {
 					fail();
@@ -390,8 +390,8 @@ public class FormulationSpecMergeTest extends AbstractFinishedProductTest {
 			logger.debug("Message 4: " + message4);
 
 			int checks = 0;
-			logger.info("Formulation raised " + finishedProduct.getCompoListView().getReqCtrlList().size() + " rclDataItems");
-			for (ReqCtrlListDataItem r : finishedProduct.getCompoListView().getReqCtrlList()) {
+			logger.info("Formulation raised " + finishedProduct.getReqCtrlList().size() + " rclDataItems");
+			for (ReqCtrlListDataItem r : finishedProduct.getReqCtrlList()) {
 
 				logger.info("reqCtrl " + r.getReqMessage() + r.getReqType() + r.getSources());
 
@@ -549,7 +549,7 @@ public class FormulationSpecMergeTest extends AbstractFinishedProductTest {
 
 			int checkMissingFields = 0;
 			int checks = 0;
-			for (ReqCtrlListDataItem r : formulatedProduct.getCompoListView().getReqCtrlList()) {
+			for (ReqCtrlListDataItem r : formulatedProduct.getReqCtrlList()) {
 				logger.debug("Checking rclDataItem " + r.getReqMessage());
 				if (I18NUtil
 						.getMessage(ScoreCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Précautions d'emploi", "EU 1169/2011 (INCO)")
@@ -678,9 +678,9 @@ public class FormulationSpecMergeTest extends AbstractFinishedProductTest {
 			logger.info("/*-- Verify formulation --*/");
 			ProductData formulatedProduct = alfrescoRepository.findOne(fp4);
 
-			logger.debug("/*-- Formulation raised " + formulatedProduct.getCompoListView().getReqCtrlList().size() + " rclDataItems --*/");
+			logger.debug("/*-- Formulation raised " + formulatedProduct.getReqCtrlList().size() + " rclDataItems --*/");
 			int checks = 0;
-			for (ReqCtrlListDataItem reqCtrlList : formulatedProduct.getCompoListView().getReqCtrlList()) {
+			for (ReqCtrlListDataItem reqCtrlList : formulatedProduct.getReqCtrlList()) {
 				logger.debug("/*-- Checking : \"" + reqCtrlList.getReqMessage() + "\" --*/");
 
 				if (I18NUtil.getMessage(PhysicoChemCalculatingFormulationHandler.MESSAGE_PHYSICO_NOT_IN_RANGE, "physicoChem2", "6", "8<= ", " <=8,5")
@@ -811,9 +811,9 @@ public class FormulationSpecMergeTest extends AbstractFinishedProductTest {
 			logger.info("/*-- Verify formulation --*/");
 			ProductData formulatedProduct = alfrescoRepository.findOne(fp5);
 
-			logger.debug("/*-- Formulation raised " + formulatedProduct.getCompoListView().getReqCtrlList().size() + " rclDataItems --*/");
+			logger.debug("/*-- Formulation raised " + formulatedProduct.getReqCtrlList().size() + " rclDataItems --*/");
 			int checks = 0, checkMissingFields = 0;
-			for (ReqCtrlListDataItem reqCtrlList : formulatedProduct.getCompoListView().getReqCtrlList()) {
+			for (ReqCtrlListDataItem reqCtrlList : formulatedProduct.getReqCtrlList()) {
 				logger.debug("/*-- Checking : \"" + reqCtrlList.getReqMessage() + "\" --*/");
 
 				if (I18NUtil

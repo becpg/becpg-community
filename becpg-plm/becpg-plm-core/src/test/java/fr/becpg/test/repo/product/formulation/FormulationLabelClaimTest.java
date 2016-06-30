@@ -217,9 +217,9 @@ public class FormulationLabelClaimTest extends AbstractFinishedProductTest {
 			/* -- Check formulation -- */
 			ProductData formulatedProduct = alfrescoRepository.findOne(testProduct);
 
-			logger.info("/*-- Formulation raised " + formulatedProduct.getCompoListView().getReqCtrlList().size() + " rclDataItem --*/");
+			logger.info("/*-- Formulation raised " + formulatedProduct.getReqCtrlList().size() + " rclDataItem --*/");
 			int checks = 0;
-			for (ReqCtrlListDataItem rclDataItem : formulatedProduct.getCompoListView().getReqCtrlList()) {
+			for (ReqCtrlListDataItem rclDataItem : formulatedProduct.getReqCtrlList()) {
 				logger.info(rclDataItem.getReqMessage());
 				if ("L'allégation 'labelClaim1' doit être revendiquée".equals(rclDataItem.getReqMessage())) {
 					fail();

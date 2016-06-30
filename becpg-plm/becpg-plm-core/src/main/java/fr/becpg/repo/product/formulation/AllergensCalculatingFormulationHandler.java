@@ -165,7 +165,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 			}
 
 			formulatedProduct.getAllergenList().retainAll(retainNodes);
-			formulatedProduct.getCompoListView().getReqCtrlList().addAll(rclCtrlMap.values());
+			formulatedProduct.getReqCtrlList().addAll(rclCtrlMap.values());
 			// sort
 			sort(formulatedProduct.getAllergenList());
 
@@ -430,7 +430,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 										listDataItem.getAllergen(), new ArrayList<NodeRef>(), RequirementDataType.Specification);
 								rclDataItem.getSources().addAll(listDataItem.getVoluntarySources());
 								rclDataItem.getSources().addAll(listDataItem.getInVoluntarySources());
-								formulatedProduct.getCompoListView().getReqCtrlList().add(rclDataItem);
+								formulatedProduct.getReqCtrlList().add(rclDataItem);
 							}
 						}
 					}

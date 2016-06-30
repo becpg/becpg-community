@@ -34,6 +34,7 @@ import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.data.productList.PriceListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
+import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.productList.ResourceParamListItem;
 import fr.becpg.repo.quality.data.dataList.ControlDefListDataItem;
 import fr.becpg.repo.repository.annotation.AlfMlText;
@@ -125,6 +126,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private List<ControlDefListDataItem> controlDefList;
 	private List<LabelingListDataItem> labelingList;
     private List<ResourceParamListItem> resourceParamList;
+    private List<ReqCtrlListDataItem> reqCtrlList;
 
 	/*
 	 * View
@@ -647,6 +649,18 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	public void setLabelingListView(LabelingListView labelingListView) {
 		this.labelingListView = labelingListView;
 	}
+	
+	
+	@DataList
+	@AlfQname(qname="bcpg:reqCtrlList")
+	public List<ReqCtrlListDataItem> getReqCtrlList() {
+		return reqCtrlList;
+	}
+
+	public void setReqCtrlList(List<ReqCtrlListDataItem> reqCtrlList) {
+		this.reqCtrlList = reqCtrlList;
+	}
+
 
 	@DataListView
 	@AlfQname(qname = "bcpg:compoList")
