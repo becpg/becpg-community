@@ -19,6 +19,7 @@ import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.namespace.NamespaceException;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -238,14 +239,20 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 						? catalog.getJSONArray(JsonScoreHelper.PROP_ENTITY_TYPE) : new JSONArray();
 				List<QName> qnameCatalogEntityTypeList = new ArrayList<QName>();
 
-				for (int catalogEntityTypeIndex = 0; catalogEntityTypeIndex < catalogEntityTypes.length(); catalogEntityTypeIndex++) {
-					qnameCatalogEntityTypeList.add(QName.createQName(catalogEntityTypes.getString(catalogEntityTypeIndex), namespaceService));
+				logger.debug("catalog has "+catalogEntityTypes.length()+" entities: "+catalogEntityTypes);
+				
+				for (int catalogEntityTypeIndex = 0; catalogEntityTypeIndex < catalogEntityTypes.length(); ++catalogEntityTypeIndex) {
+					QName qname = QName.createQName(catalogEntityTypes.getString(catalogEntityTypeIndex), namespaceService);
+
+					qnameCatalogEntityTypeList.add(qname);
 				}
 
 				if (logger.isDebugEnabled()) {
 					logger.debug("\n\t\t== Catalog \"" + catalog.getString(JsonScoreHelper.PROP_LABEL) + "\" ==");
 					logger.debug("Types of catalog: " + qnameCatalogEntityTypeList);
 					logger.debug("Type of product: " + productType);
+					logger.debug("Catalog contains product type: "+qnameCatalogEntityTypeList.contains(productType));
+					logger.debug("Catalog json: "+catalog);
 				}
 
 				// if this catalog applies to this type, or this catalog has no
@@ -312,7 +319,15 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 			boolean ignore = false;
 
 			for (String currentField : splitFields) {
-				QName fieldQname = QName.createQName(currentField.split("_")[0], namespaceService);
+				QName fieldQname = null;
+				
+				try {
+					fieldQname = QName.createQName(currentField.split("_")[0], namespaceService);
+				} catch (NamespaceException e){
+					//happens if namespace does not exist
+					ignore = true;
+					break;
+				}
 
 				if (logger.isDebugEnabled()) {
 					logger.debug("Test missing field qname: " + fieldQname + ", lang: " + lang);
