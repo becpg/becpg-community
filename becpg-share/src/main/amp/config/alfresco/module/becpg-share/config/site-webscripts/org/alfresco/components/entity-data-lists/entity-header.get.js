@@ -87,7 +87,19 @@ function main()
          likes.isLiked = model.item.likes.isLiked || false;
          likes.totalLikes = model.item.likes.totalLikes || 0;
       }
+      
+      var actualSiteId =  model.item.location.site != null ? model.item.location.site.name : null;
+      
+       if(actualSiteId == null && model.item.location.path !=null){
+    	         
+    	    if (model.item.location.path.indexOf('/Sites/')>-1)
+    	     {
+    	      	 actualSiteId = model.item.location.path.split('/')[2];
+    	     }
+      }
 
+    	  
+    	  
       var nodeHeader = {
          id : "NodeHeader",
          name : "beCPG.custom.NodeHeader",
@@ -95,7 +107,7 @@ function main()
             nodeRef : model.nodeRef,
             siteId : model.site,
             listId : model.list,
-            actualSiteId: model.item.location.site != null ? model.item.location.site.name : null,
+            actualSiteId: actualSiteId,
             rootPage : model.rootPage,
             rootLabelId : model.rootLabelId,
             showOnlyLocation: (model.showOnlyLocation == "true"),
