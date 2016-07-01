@@ -221,9 +221,9 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
 
 			int checks = 0;
-			logger.info("/*-- Formulation raised " + formulatedProduct.getCompoListView().getReqCtrlList().size() + " rclDataItems --*/");
+			logger.info("/*-- Formulation raised " + formulatedProduct.getReqCtrlList().size() + " rclDataItems --*/");
 
-			for (ReqCtrlListDataItem reqCtrlList : formulatedProduct.getCompoListView().getReqCtrlList()) {
+			for (ReqCtrlListDataItem reqCtrlList : formulatedProduct.getReqCtrlList()) {
 				logger.info("/*-- Verify reqCtrlList : " + reqCtrlList.getReqMessage() + " --*/");
 				logger.info("/*-- This item has " + reqCtrlList.getSources().size() + " sources --*/");
 
@@ -352,8 +352,8 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 			 * precautions for use
 			 */
 
-			logger.debug("After removing specs, " + formulatedProduct.getCompoListView().getReqCtrlList().size() + " remain");
-			assertEquals(5, formulatedProduct.getCompoListView().getReqCtrlList().size());
+			logger.debug("After removing specs, " + formulatedProduct.getReqCtrlList().size() + " remain");
+			assertEquals(5, formulatedProduct.getReqCtrlList().size());
 
 			return null;
 

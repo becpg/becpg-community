@@ -363,7 +363,7 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 					logger.warn(e, e);
 					String message = I18NUtil.getMessage("message.formulate.comparewith.formulate.entity.error", Locale.getDefault(),
 							tmpData.getName());
-					productData.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, null,
+					productData.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, null,
 							new ArrayList<NodeRef>(), RequirementDataType.Nutrient));
 				}
 			}
