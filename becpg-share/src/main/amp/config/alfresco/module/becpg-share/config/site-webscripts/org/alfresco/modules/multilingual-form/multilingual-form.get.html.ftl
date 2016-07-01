@@ -15,8 +15,9 @@
 							<#assign h = config.scoped["Languages"]["languages"]>
 							<#list  h.getChildren("language") as language>
 							     <#assign key = language.getAttribute("locale")>	
+							     <#assign keyValue = key?split("_")[0]>
                               <#if !key?contains(locale)>
-								<option value=${key?split("_")[0]}  >${msg("locale.name.${key}")}</option>
+								<option value=${keyValue}  >${msg("locale.name.${keyValue}")}</option>
                                </#if>
 							</#list>
 						</select>
@@ -28,7 +29,7 @@
                  <#if mlField.locale != locale>
 	         	<div class="form-field">
       				<label for="${el}-${mlField.locale}">${mlField.label!""?html}:&nbsp;
-      						<span class="locale-icon"><img class="icon16_11" title="${mlField.locale}" tabindex="0" src="${url.context}/res/components/images/flags/${mlField.locale}.png"><span>&nbsp;&nbsp;
+      						<span class="locale-icon"><img class="icon16_11" title="${msg("locale.name.${mlField.locale}")}" tabindex="0" src="${url.context}/res/components/images/flags/${mlField.locale}.png"><span>&nbsp;&nbsp;
       						<span class="translate-icon" onClick="suggestTranslate('${el}-${mlField.locale}','${mlField.locale}');" ><img class="icon16" title="${msg("translate.suggest")}" tabindex="0" src="${url.context}/res/components/images/translate-16.png"><span>
       				</label>
 	      			<#if args.textarea??>
