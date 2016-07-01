@@ -511,3 +511,8 @@ div.filterButtonsBar {
 	background-image: url(./images/dt-group-arrow-up.png);
 	background-repeat: no-repeat;
 }
+
+.nut-progress-bar {
+	margin-left: 2px;
+	margin-right: 2px;
+}

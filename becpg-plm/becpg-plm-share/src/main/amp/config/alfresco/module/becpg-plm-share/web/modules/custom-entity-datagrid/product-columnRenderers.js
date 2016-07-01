@@ -865,4 +865,136 @@ if (beCPG.module.EntityDataGridRenderers) {
 			return Alfresco.util.encodeHTML(data.displayValue);
 		}
 	});
+	
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+		propertyName : [ "bcpg:nutListGDAPerc" ],
+		renderer : function(oRecord, data, label, scope) {
+			
+			var nutNodeRef = oRecord._oData.itemData.assoc_bcpg_nutListNut[0].value;
+			var itemData =  oRecord.getData("itemData");
+			
+			function rgbToHsl(r, g, b){
+			    r /= 255, g /= 255, b /= 255;
+			    var max = Math.max(r, g, b), min = Math.min(r, g, b);
+			    var h, s, l = (max + min) / 2;
+
+			    if(max == min){
+			        h = s = 0; // achromatic
+			    }else{
+			        var d = max - min;
+			        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+			        switch(max){
+			            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+			            case g: h = (b - r) / d + 2; break;
+			            case b: h = (r - g) / d + 4; break;
+			        }
+			        h /= 6;
+			    }
+
+			    return {h, s, l};
+			};
+			
+			var percentValue = data.value;
+			var additionalProps = oRecord.getData("itemData")["dt_bcpg_nutListNut"][0].itemData;
+			var nutColor = oRecord.getData("itemData")["dt_bcpg_nutListNut"][0].color;
+			var nutValue = oRecord.getData("itemData")["prop_bcpg_nutListValue"].displayValue;
+			var gda = additionalProps.prop_bcpg_nutGDA.value;
+			var ul = additionalProps.prop_bcpg_nutUL.value;
+			var unit = additionalProps.prop_bcpg_nutUnit.displayValue;
+
+			var red = "#F44336";
+			var gray = "#cccccc";
+						
+			if(percentValue !== null && percentValue > 0 && nutColor !== undefined){
+				
+				if(nutValue !== null && ul !== null && (nutValue > ul)){
+					console.log("color turned to red because nutValue > ul, "+nutValue+" > "+ul);
+					nutColor = red;
+				}
+				
+				var hexColorSplit = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(nutColor);
+			    var rgbColor =  hexColorSplit ? {
+			        r: parseInt(hexColorSplit[1], 16),
+			        g: parseInt(hexColorSplit[2], 16),
+			        b: parseInt(hexColorSplit[3], 16)
+			    } : null;
+			    
+			    var hslColor = rgbToHsl(rgbColor.r, rgbColor.g,rgbColor.b);
+			    
+			    //background of unfilled part of progress bar
+			    if(percentValue <100){
+			    	//desaturate a bit
+			    	hslColor.s *= 0.7;
+
+			    	if(hslColor.l*1.3 < 1){
+			    		hslColor.l *=1.3;
+			    	}
+
+			    	var emptyBarColor = "hsl("+(hslColor.h*360).toFixed(0)+", "+(hslColor.s*100).toFixed(0)+"%, "+(hslColor.l*100).toFixed(0)+"%)";
+			    }
+			    
+				var fontColor = "white";
+				
+				if (rgbColor && (rgbColor.r*0.2126 + rgbColor.g*0.7152 + rgbColor.b*0.0722) > 186){
+					fontColor = "black";
+				}
+				
+				var gdaReminder = null;
+				if(gda !== null && unit !== null){
+					gdaReminder = scope.msg("becpg.forms.help.gda-reminder", gda, unit);
+				}
+				
+				var reminderColor = "black";
+				
+				if(percentValue > 80){
+					reminderColor = fontColor;
+				}
+
+				var html="<div class=\"progress-bar\" "+ (emptyBarColor !== undefined ? "style=\"background-color: " + emptyBarColor +";\" ": "") + ";\">";
+					if(gdaReminder !== null){
+						html += "<div class =\"nut-progress-bar\" style=\"float: right; color: " + reminderColor + "\">" + gdaReminder + "</div>";
+					}
+						html += "<div style=\"width: " + Math.min(percentValue, 100) + "%; background-color: " + nutColor + (percentValue < 100 ? "; border-radius: 0 3px 3px 0" : "") + ";\">";
+						html += "<div class =\"nut-progress-bar\" style=\"text-align: left; color: " + fontColor + "; white-space: nowrap;\">" + percentValue.toFixed(1) + " %</div>";
+					html += "</div>";
+				html += "</div>";					        	
+
+
+				return html;
+			} else if(percentValue !== null && percentValue > 0){
+				return Alfresco.util.encodeHTML(data.displayValue+" %");
+			} else {
+				return Alfresco.util.encodeHTML(null);
+			}
+		}
+	});
+	
+	
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+		propertyName : [ "bcpg:nutListValue" ],
+		renderer : function(oRecord, data, label, scope) {
+			//nut value is 2.3 mg/100g
+			
+			
+			var unit = oRecord._oData.itemData.prop_bcpg_nutListUnit.value;
+			var msg = data.displayValue+" "+unit;
+			
+			return Alfresco.util.encodeHTML(data.displayValue);
+		}
+	});
+	
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+		propertyName : [ "bcpg:nutListValuePerServing" ],
+		renderer : function(oRecord, data, label, scope) {
+			//one serving is 56 g
+			
+			
+			if(data.displayValue != null && data.displayValue > 0){
+				var unit = oRecord._oData.itemData.prop_bcpg_nutListUnit.value.split("/")[0];
+				var msg = data.displayValue+" "+unit;
+			}
+			
+			return Alfresco.util.encodeHTML(data.displayValue);
+		}
+	});
 }

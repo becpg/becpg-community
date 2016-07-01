@@ -4910,6 +4910,15 @@
 					<show id="bcpg:nutUL" />
 				</field-visibility>
 			</form>
+		
+			<form id="sub-datagrid">
+				<field-visibility>
+					<show id="bcpg:nutGDA" />
+					<show id="bcpg:nutUL" />
+					<show id="bcpg:nutUnit" />
+					<show id="bcpg:color" />
+				</field-visibility>
+			</form>
 		</forms>
 	</config>
 
@@ -7321,7 +7330,8 @@
 					<show id="bcpg:nutListMethod" />
 					<show id="fm:commentCount" force="true" />
 					<show id="bcpg:nutListIsFormulated" />
-					<show id="bcpg:nutListFormulaErrorLog" />
+					<show id="bcpg:nutListFormulaErrorLog" />					
+					<show id="entity_bcpg:nutListNut_bcpg:nut" force="true"/>
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden"></field>
