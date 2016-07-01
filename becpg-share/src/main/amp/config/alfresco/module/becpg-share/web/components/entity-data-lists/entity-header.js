@@ -59,6 +59,60 @@
                 	  
                    var me = this;
                 	  
+                   
+                   // MNT-9081 fix, redirect user to the correct location, if requested site is not the actual site where document is located
+                   if (this.options.siteId != this.options.actualSiteId)
+                   {
+                      // Moved to a site...
+                      if (this.options.actualSiteId != null)
+                      {
+                         var inRepository = this.options.actualSiteId === null,
+                             correctUrl = window.location.protocol + "//" + window.location.host + Alfresco.constants.URL_PAGECONTEXT + 
+                                   (inRepository ? "" : "site/" + this.options.actualSiteId + "/") + "entity-data-lists" + window.location.search;
+                         Alfresco.util.PopupManager.displayPrompt(
+                         {
+                            text: (inRepository ? this.msg("message.document.moved.repo") : this.msg("message.document.moved", this.options.actualSiteId)),
+                            buttons: [
+                            {
+                               text: this.msg("button.ok"),
+                               handler: function()
+                               {
+                                  window.location = correctUrl;
+                               },
+                               isDefault: true
+                            }]
+                         });
+                         YAHOO.lang.later(10000, this, function()
+                         {
+                            window.location = correctUrl;
+                         });
+                         return;
+                      }
+                      else
+                      {
+                         // Moved elsewhere in repository...
+                         var correctUrl = "/share/page/entity-data-lists?list=View-properties&nodeRef=" + this.options.nodeRef;;
+                         Alfresco.util.PopupManager.displayPrompt(
+                         {
+                            text: this.msg("message.document.movedToRepo"),
+                            buttons: [
+                            {
+                               text: this.msg("button.ok"),
+                               handler: function()
+                               {
+                                  window.location = correctUrl;
+                               },
+                               isDefault: true
+                            }]
+                         });
+                         YAHOO.lang.later(10000, this, function()
+                         {
+                            window.location = correctUrl;
+                         });
+                         return;
+                      }
+                  }
+                   
                 	  
                 	try {
                 		var pathBreadCrumbs = null;
@@ -130,49 +184,8 @@
                 	//Websocket
 
                 	this.registerWebSocket();
-                	
-                     // MNT-9081 fix, redirect user to the correct location, if requested site is not the actual site
-                     // where document is located
-                     if (this.options.siteId != this.options.actualSiteId) {
-                        // Moved to a site...
-                        if (this.options.actualSiteId != null) {
-                           var correctUrl = window.location.href
-                                 .replace(this.options.siteId, this.options.actualSiteId);
-                           Alfresco.util.PopupManager.displayPrompt({
-                              text : this.msg("message.document.moved", this.options.actualSiteId),
-                              buttons : [ {
-                                 text : this.msg("button.ok"),
-                                 handler : function() {
-                                    window.location = correctUrl;
-                                 },
-                                 isDefault : true
-                              } ]
-                           });
-                           YAHOO.lang.later(10000, this, function() {
-                              window.location = correctUrl;
-                           });
-                        } else {
-                           // Moved elsewhere in repository...
-                           var correctUrl = "/share/page/entity-data-lists?list=View-properties&nodeRef=" + this.options.nodeRef;
-                           Alfresco.util.PopupManager.displayPrompt({
-                              text : this.msg("message.document.movedToRepo"),
-                              buttons : [ {
-                                 text : this.msg("button.ok"),
-                                 handler : function() {
-                                    window.location = correctUrl;
-                                 },
-                                 isDefault : true
-                              } ]
-                           });
-                           YAHOO.lang.later(10000, this, function() {
-                              window.location = correctUrl;
-                           });
-                           
-                        }
-                        return;
-                     }
-
-                     this.nodeType = "entity";
+                
+                    this.nodeType = "entity";
 
                   },
                   entityUpdated: function NodeHeader_entityUpdated(layer, args){

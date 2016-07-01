@@ -300,6 +300,7 @@
 .wizard  .datagrid .scrollableList {
 	padding: 0;
 	height: 450px;
+	clear:both;
 }
 
 .wizard  .datagrid {
