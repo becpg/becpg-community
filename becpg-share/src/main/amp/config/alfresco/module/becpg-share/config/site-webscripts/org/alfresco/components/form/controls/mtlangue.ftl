@@ -15,7 +15,7 @@
          <#else>
            <span class="viewmode-value">
 			   <#list values as value>
-			      <img  src="${url.context}/res/components/images/flags/${value}.png" />
+			      <img  title="${msg("locale.name.${value}")}" src="${url.context}/res/components/images/flags/${value}.png" />
 			  </#list>
 			</span>
          </#if>
@@ -34,8 +34,9 @@
                		 <option value="" <#if field.control.params.isSearch?? >selected="selected"</#if> ></option>
                </#if>
 			   <#list  h.getChildren("language") as language>
-				    <#assign key = language.getAttribute("locale")>				
-					<option value=${key?split("_")[0]} <#if isSelected(key?split("_")[0])>selected="true"</#if> >${msg("locale.name.${key}")}</option>
+				    <#assign key = language.getAttribute("locale")>	
+				    <#assign keyValue = key?split("_")[0]>			
+					<option value=${keyValue} <#if isSelected(key?split("_")[0])>selected="true"</#if> >${msg("locale.name.${keyValue}")}</option>
 			  </#list>             
          </select>
          <@formLib.renderFieldHelp field=field />
