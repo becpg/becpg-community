@@ -36,7 +36,8 @@
       beCPG.custom.NodeHeader.superclass.constructor.call(this, htmlId);
 
       YAHOO.Bubbling.on("folderCopied", this.onEntityCopied , this);
-      YAHOO.Bubbling.on("folderMoved", this.onEntityCopied , this);
+      
+      YAHOO.Bubbling.on("dirtyDataTable", this.entityUpdated , this);
       
       return this;
    };
@@ -47,6 +48,7 @@
                Alfresco.component.NodeHeader,
                {
                     
+            	  ws : null,
                   /**
                    * Fired by YUI when parent element is available for scripting. Initial History Manager event
                    * registration
@@ -57,6 +59,60 @@
                 	  
                    var me = this;
                 	  
+                   
+                   // MNT-9081 fix, redirect user to the correct location, if requested site is not the actual site where document is located
+                   if (this.options.siteId != this.options.actualSiteId)
+                   {
+                      // Moved to a site...
+                      if (this.options.actualSiteId != null)
+                      {
+                         var inRepository = this.options.actualSiteId === null,
+                             correctUrl = window.location.protocol + "//" + window.location.host + Alfresco.constants.URL_PAGECONTEXT + 
+                                   (inRepository ? "" : "site/" + this.options.actualSiteId + "/") + "entity-data-lists" + window.location.search;
+                         Alfresco.util.PopupManager.displayPrompt(
+                         {
+                            text: (inRepository ? this.msg("message.document.moved.repo") : this.msg("message.document.moved", this.options.actualSiteId)),
+                            buttons: [
+                            {
+                               text: this.msg("button.ok"),
+                               handler: function()
+                               {
+                                  window.location = correctUrl;
+                               },
+                               isDefault: true
+                            }]
+                         });
+                         YAHOO.lang.later(10000, this, function()
+                         {
+                            window.location = correctUrl;
+                         });
+                         return;
+                      }
+                      else
+                      {
+                         // Moved elsewhere in repository...
+                         var correctUrl = "/share/page/entity-data-lists?list=View-properties&nodeRef=" + this.options.nodeRef;;
+                         Alfresco.util.PopupManager.displayPrompt(
+                         {
+                            text: this.msg("message.document.movedToRepo"),
+                            buttons: [
+                            {
+                               text: this.msg("button.ok"),
+                               handler: function()
+                               {
+                                  window.location = correctUrl;
+                               },
+                               isDefault: true
+                            }]
+                         });
+                         YAHOO.lang.later(10000, this, function()
+                         {
+                            window.location = correctUrl;
+                         });
+                         return;
+                      }
+                  }
+                   
                 	  
                 	try {
                 		var pathBreadCrumbs = null;
@@ -125,51 +181,66 @@
                 	  delete sessionStorage.pathBreadCrumbs;
                 	}
                 	
-                     // MNT-9081 fix, redirect user to the correct location, if requested site is not the actual site
-                     // where document is located
-                     if (this.options.siteId != this.options.actualSiteId) {
-                        // Moved to a site...
-                        if (this.options.actualSiteId != null) {
-                           var correctUrl = window.location.href
-                                 .replace(this.options.siteId, this.options.actualSiteId);
-                           Alfresco.util.PopupManager.displayPrompt({
-                              text : this.msg("message.document.moved", this.options.actualSiteId),
-                              buttons : [ {
-                                 text : this.msg("button.ok"),
-                                 handler : function() {
-                                    window.location = correctUrl;
-                                 },
-                                 isDefault : true
-                              } ]
-                           });
-                           YAHOO.lang.later(10000, this, function() {
-                              window.location = correctUrl;
-                           });
-                        } else {
-                           // Moved elsewhere in repository...
-                           var correctUrl = "/share/page/entity-data-lists?list=View-properties&nodeRef=" + this.options.nodeRef;
-                           Alfresco.util.PopupManager.displayPrompt({
-                              text : this.msg("message.document.movedToRepo"),
-                              buttons : [ {
-                                 text : this.msg("button.ok"),
-                                 handler : function() {
-                                    window.location = correctUrl;
-                                 },
-                                 isDefault : true
-                              } ]
-                           });
-                           YAHOO.lang.later(10000, this, function() {
-                              window.location = correctUrl;
-                           });
-                           
-                        }
-                        return;
-                     }
+                	//Websocket
 
-                     this.nodeType = "entity";
+                	this.registerWebSocket();
+                
+                    this.nodeType = "entity";
 
                   },
+                  entityUpdated: function NodeHeader_entityUpdated(layer, args){
+                	  if(this.ws!=null){
+                		  var message = {
+                     			 type : "UPDATE",
+                     			 user : Alfresco.constants.USERNAME	 
+                     	 };
+                		  this.ws.send( YAHOO.lang.JSON.stringify(message) );
+                	  }
+                	  
+                  },
                   
+                  registerWebSocket : function NodeHeader_entityUpdated(){
+                	  if ("WebSocket" in window && this.ws==null)
+                      {
+                         var protocolPrefix = (window.location.protocol === 'https:') ? 'wss:' : 'ws:', me = this;
+                         
+                         me.ws = new WebSocket(protocolPrefix + '//' + location.host + "/share/becpgws/"+this.options.nodeRef.replace(":/","")+"/"+Alfresco.constants.USERNAME);
+          		
+                         me.ws.onmessage = function (evt) 
+                         { 
+                        	 
+                            var message = YAHOO.lang.JSON.parse(evt.data);
+                            if(message.type && message.type == "JOINING"){
+                            	
+                            	if(YAHOO.util.Dom.get(me.id+"-chat-user-"+message.user)==null){
+                            		 var ulEl = YAHOO.util.Dom.get(me.id+"-node-users");
+	                            	 var html = ulEl.innerHTML;
+	                            	 
+	                            	 html += '<span id="'+me.id+'-chat-user-'+message.user+'" class="avatar" title="' + message.user + '">';
+	                            	 html += Alfresco.Share.userAvatar(message.user, 32);
+	                            	 html += "</span>";
+	                            	 
+	                            	 ulEl.innerHTML = html;
+                            	}
+                            	
+                            } else if(message.type == "LEAVING"){
+                            	 var child = document.getElementById(me.id+"-chat-user-"+message.user);
+                            	 if(child!=null){
+                            		 child.parentNode.removeChild(child);
+                            	 }
+                            	
+                            } else if(message.type == "UPDATE"){
+                            	YAHOO.util.Dom.addClass(me.id+"-chat-user-"+message.user,"user-activiti");
+                            	setTimeout(function(){
+                            	   YAHOO.Bubbling.fire("refreshDataGrids");
+                            	   YAHOO.util.Dom.removeClass(me.id+"-chat-user-"+message.user,"user-activiti");
+                            	},3000);
+                            }
+                            
+                         };
+          				
+                      }
+                  },
 
                   /**
                    * Generic file action event handler
