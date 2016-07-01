@@ -699,8 +699,6 @@ public class FormulationSpecMergeTest extends AbstractFinishedProductTest {
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
 					assertEquals(0, reqCtrlList.getSources().size());
 					checks++;
-				} else {
-					fail();
 				}
 			}
 
