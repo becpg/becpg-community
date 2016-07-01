@@ -36,6 +36,7 @@
       beCPG.custom.NodeHeader.superclass.constructor.call(this, htmlId);
 
       YAHOO.Bubbling.on("folderCopied", this.onEntityCopied , this);
+      YAHOO.Bubbling.on("folderMoved", this.onEntityCopied , this);
       
       YAHOO.Bubbling.on("dirtyDataTable", this.entityUpdated , this);
       
