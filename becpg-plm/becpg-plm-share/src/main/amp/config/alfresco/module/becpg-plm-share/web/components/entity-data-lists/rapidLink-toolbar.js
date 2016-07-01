@@ -181,7 +181,7 @@
                      this.modules.entityImporter = new Alfresco.module.SimpleDialog(this.id + "-entityImporter")
                            .setOptions({
                               width : this.options.formWidth,
-                              templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/entity-importer/entity-importer",
+                              templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "/modules/nut-database/nut-importer",
                               actionUrl : Alfresco.constants.PROXY_URI + "becpg/product/nutdatabaseimport?dest="+ this.options.entity.parentNodeRef,
                               validateOnSubmit : false,
                               firstFocus : this.id + "-entityImporter-supplier-field",
