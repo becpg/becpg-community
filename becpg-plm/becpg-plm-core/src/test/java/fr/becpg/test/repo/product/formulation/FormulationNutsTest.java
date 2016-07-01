@@ -136,8 +136,8 @@ public class FormulationNutsTest extends AbstractFinishedProductTest {
 		String message4 = I18NUtil.getMessage(NutsCalculatingFormulationHandler.MESSAGE_MAXIMAL_DAILY_VALUE,
 				nodeService.getProperty(nut3, BeCPGModel.PROP_CHARACT_NAME));
 
-		logger.info("Formulation raised " + formulatedProduct.getCompoListView().getReqCtrlList().size() + " rclDataItems");
-		for (ReqCtrlListDataItem r : formulatedProduct.getCompoListView().getReqCtrlList()) {
+		logger.info("Formulation raised " + formulatedProduct.getReqCtrlList().size() + " rclDataItems");
+		for (ReqCtrlListDataItem r : formulatedProduct.getReqCtrlList()) {
 
 			logger.info("reqCtrl " + r.getReqMessage() + r.getReqType() + r.getSources());
 

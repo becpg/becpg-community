@@ -123,7 +123,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 					for (CompositionDataItem dataItem : view.getMainDataList()) {
 						if (dataItem.getComponent() != null) {
 							if (!checkProductValidity(dataItem.getComponent())) {
-								view.getReqCtrlList().add(createValidationRclDataItem(dataItem.getComponent()));
+								product.getReqCtrlList().add(createValidationRclDataItem(dataItem.getComponent()));
 							} else {
 								childScore += 1;
 							}
@@ -131,27 +131,27 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 						}
 					}
 				}
+			}
+			
+			// pre merge, ctrlDataItems might be duplicated, visit them only
+			// once
+			List<String> visitedCtrlDataItems = new ArrayList<>();
+			if (product.getReqCtrlList() != null) {
+				for (ReqCtrlListDataItem ctrl : product.getReqCtrlList()) {
 
-				// pre merge, ctrlDataItems might be duplicated, visit them only
-				// once
-				List<String> visitedCtrlDataItems = new ArrayList<>();
-				if (view.getReqCtrlList() != null) {
-					for (ReqCtrlListDataItem ctrl : view.getReqCtrlList()) {
-
-						if (specificationScore > 10) {
-							if ((ctrl.getReqDataType() == RequirementDataType.Specification) && (ctrl.getReqType() == RequirementType.Forbidden)
-									&& !visitedCtrlDataItems.contains(ctrl.getKey())) {
-								if (logger.isDebugEnabled()) {
-									logger.debug("Visiting specification rclDataItem: " + ctrl.getReqMessage() + ", s=" + ctrl.getSources());
-								}
-								specificationScore -= 10;
-								visitedCtrlDataItems.add(ctrl.getKey());
+					if (specificationScore > 10) {
+						if ((ctrl.getReqDataType() == RequirementDataType.Specification) && (ctrl.getReqType() == RequirementType.Forbidden)
+								&& !visitedCtrlDataItems.contains(ctrl.getKey())) {
+							if (logger.isDebugEnabled()) {
+								logger.debug("Visiting specification rclDataItem: " + ctrl.getReqMessage() + ", s=" + ctrl.getSources());
 							}
-						} else {
-							break;
+							specificationScore -= 10;
+							visitedCtrlDataItems.add(ctrl.getKey());
 						}
-
+					} else {
+						break;
 					}
+
 				}
 			}
 
@@ -464,16 +464,8 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 				RequirementDataType.Completion);
 		rclDataItem.getSources().add(productData.getNodeRef());
 
-		// put rclDataItem in proper view
-
-		if (!productData.getCompoListView().getCompoList().isEmpty()) {
-			productData.getCompoListView().getReqCtrlList().add(rclDataItem);
-		} else if (!productData.getProcessListView().getProcessList().isEmpty()) {
-			productData.getProcessListView().getReqCtrlList().add(rclDataItem);
-		} else if (!productData.getPackagingListView().getPackagingList().isEmpty()) {
-			productData.getPackagingListView().getReqCtrlList().add(rclDataItem);
-		}
-
+		productData.getReqCtrlList().add(rclDataItem);
+		
 		return field;
 
 	}

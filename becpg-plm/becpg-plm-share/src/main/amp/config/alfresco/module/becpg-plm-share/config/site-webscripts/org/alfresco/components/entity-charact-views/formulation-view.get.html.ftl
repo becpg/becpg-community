@@ -11,6 +11,7 @@
    <#include "../../modules/entity-datagrid/include/entity-datagrid.js.ftl"/>
    <@script type="text/javascript" src="${url.context}/res/components/entity-data-lists/rapidLink-toolbar.js" group="entity-datalists"/>
    <@script type="text/javascript" src="${url.context}/res/components/entity-data-lists/variant-picker.js" group="entity-datalists"/>
+   <@script type="text/javascript" src="${url.context}/res/components/entity-data-lists/product-notifications.js" group="entity-datalists"/>
   
    <@script src="${url.context}/res/modules/custom-entity-datagrid/product-columnRenderers.js" group="entity-datalists"></@script>
    <@script src="${url.context}/res/modules/custom-entity-datagrid/product-entity-toolbar.js" group="entity-datalists"/>
@@ -50,8 +51,8 @@
 								itemType="bcpg:dynamicCharactList"  />
 							<div class="dynamicCharactList-prop-panel">
   					   			<span>
-  					   				<label  for="dynamicCharactList-${el}-colCheckbox">${msg("dashlet.dynamicCharactList.colCheckbox")}</label>
 					   				<input  id="dynamicCharactList-${el}-colCheckbox" type="checkbox"/>
+					   				<label  for="dynamicCharactList-${el}-colCheckbox">${msg("dashlet.dynamicCharactList.colCheckbox")}</label>
 								</span>
 					   		</div>
 						</div>

@@ -303,7 +303,6 @@
                               "pjt_projectOverdue",
                               "pjt_projectHierarchy1",
                               "pjt_projectHierarchy2",
-                              "pjt_projectPriority",
                               "pjt_completionPercent",
                               "bcpg_code",
                               "cm_name",
@@ -315,7 +314,6 @@
                                            "pjt_projectOverdue",
                                            "pjt_projectHierarchy1",
                                            "pjt_projectHierarchy2",
-                                           "pjt_projectPriority",
                                            "pjt_completionPercent",
                                            "bcpg_code",
                                            "cm_name",
@@ -434,12 +432,19 @@
                               record.nodeRef, record.itemType);
 
                         if (this.options.simpleView) {
-                           /**
-                            * Simple View
-                            */
-                           var id = this.id + '-preview-' + oRecord.getId();
-                           desc = '<span id="' + id + '" class="icon32"><a href="' + docDetailsUrl + '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' + Alfresco.util
-                                 .getFileIcon(thumbName, record.itemType) + '" alt="' + extn + '" title="' + $html(thumbName) + '" /></a></span>';
+                        	
+                        	var id = this.id + '-preview-' + oRecord.getId();
+                        	
+         				   if (isTask) {
+                             desc = '<span id="' + id + '" class="icon32"><a href="' + docDetailsUrl + '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' + Alfresco.util
+                            .getFileIcon(thumbName, record.itemType) + '" alt="' + extn + '" title="' + $html(thumbName) + '" /></a></span>';
+         				   } else {
+         					  var overdue = record.itemData["prop_pjt_projectOverdue"] != null ? $html(record.itemData["prop_pjt_projectOverdue"].displayValue)+ '&nbsp;' + this.msg("overdue.day") : '';
+           				    desc = '<span class="center ' + this.getOverdueClass(record, 32) + '" title="'+overdue+'">&nbsp;</span>';
+                          	
+         				   }
+         				    
+
 
                            // Preview tooltip
                            this.previewTooltips.push(id);

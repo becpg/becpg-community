@@ -60,7 +60,6 @@ public class ReqCtrlWebScript extends AbstractProductWebscript {
 		//Fetch query params
 		String type = req.getParameter("type");
 		String dataType = req.getParameter("dataType");
-		String view = req.getParameter("view");
 
 		//Actual filters
 		RequirementType rType;
@@ -74,18 +73,8 @@ public class ReqCtrlWebScript extends AbstractProductWebscript {
 		rDataType = RequirementDataType.fromString(dataType);
 
 		//fetches correct list to find rclDataItem in
-		List<ReqCtrlListDataItem> ctrlList;
-		if(logger.isDebugEnabled()){
-			logger.debug("Called view: "+view);
-		}
+		List<ReqCtrlListDataItem> ctrlList =  product.getReqCtrlList();
 		
-		if("processList".equals(view)){
-			ctrlList = product.getProcessListView().getReqCtrlList();
-		} else if("packagingList".equals(view)){
-			ctrlList = product.getPackagingListView().getReqCtrlList();
-		} else {
-			ctrlList = product.getCompoListView().getReqCtrlList();
-		}
 
 		for(ReqCtrlListDataItem item : ctrlList){
 			//Filtering on reqType and reqDataType

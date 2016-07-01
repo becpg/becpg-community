@@ -82,10 +82,10 @@ public class FormulationCheckPropsOfCompTest extends AbstractFinishedProductTest
 			logger.debug("/*-- Verify formulation --*/");
 			ProductData formulatedProduct1 = alfrescoRepository.findOne(finishedProductNodeRef1);
 
-			assertNotNull(formulatedProduct1.getCompoListView().getReqCtrlList());
-			logger.info("formulation raised " + formulatedProduct1.getCompoListView().getReqCtrlList().size() + " rclDataItems");
+			assertNotNull(formulatedProduct1.getReqCtrlList());
+			logger.info("formulation raised " + formulatedProduct1.getReqCtrlList().size() + " rclDataItems");
 			int checks = 0;
-			for (ReqCtrlListDataItem r : formulatedProduct1.getCompoListView().getReqCtrlList()) {
+			for (ReqCtrlListDataItem r : formulatedProduct1.getReqCtrlList()) {
 
 				logger.info("Product: " + nodeService.getProperty(r.getSources().get(0), ContentModel.PROP_NAME));
 				logger.info("Msg: " + r.getReqMessage());
