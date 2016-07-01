@@ -21,7 +21,6 @@
       <@uniqueIdDiv>
          <#if item??>
             <#include "../../include/alfresco-macros.lib.ftl" />
-            
             <#assign el = args.htmlid?html>
             <#assign displayName = (item.displayName!item.fileName)?html>
             <#assign modifyLabel = "label.modified-by-user-on-date">
