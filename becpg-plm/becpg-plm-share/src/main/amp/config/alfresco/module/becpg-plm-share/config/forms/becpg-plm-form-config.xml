@@ -843,7 +843,9 @@
 					
 					<field id="bcpg:nutListNut" set="nuts-criteria">
 						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+								<control-param name="ds">becpg/autocomplete/nut</control-param>
+							</control>
 					</field>
 					
 					<field id="bcpg:nutListValue" set="nuts-criteria">
@@ -3350,7 +3352,9 @@
 					
 					<field id="bcpg:nutListNut" set="nuts-criteria">
 						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+								<control-param name="ds">becpg/autocomplete/nut</control-param>
+							</control>
 					</field>
 					
 					<field id="bcpg:nutListValue" set="nuts-criteria">
@@ -3900,7 +3904,9 @@
 					
 					<field id="bcpg:nutListNut" set="nuts-criteria">
 						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+								<control-param name="ds">becpg/autocomplete/nut</control-param>
+							</control>
 					</field>
 					
 					<field id="bcpg:nutListValue" set="nuts-criteria">
