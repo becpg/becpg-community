@@ -1158,12 +1158,18 @@
 					<show id="qa:clMini" />
 					<show id="qa:clMaxi" />					
 					<show id="qa:clTextCriteria" />
+					<show id="qa:clTextCriteriaLimit" />
 					<show id="qa:clRequired" />
 					<show id="qa:clMethod" />
 				</field-visibility>
 
 				<appearance>
 					<field id="qa:clTextCriteria">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">3</control-param>
+						</control>
+					</field>
+					<field id="qa:clTextCriteriaLimit">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">3</control-param>
 						</control>
@@ -1182,7 +1188,8 @@
 					<show id="qa:clUnit" />
 					<show id="qa:clMini" />
 					<show id="qa:clMaxi" />		
-					<show id="qa:clTextCriteria" />			
+					<show id="qa:clTextCriteria" />
+					<show id="qa:clTextCriteriaLimit" />
 					<show id="qa:clRequired" />
 					<show id="qa:clMethod" />
 					<show id="fm:commentCount" force="true" />										
@@ -1208,12 +1215,18 @@
 					<show id="qa:clUnit" />
 					<show id="qa:clMini" />
 					<show id="qa:clMaxi" />	
-					<show id="qa:clTextCriteria" />				
+					<show id="qa:clTextCriteria" />
+					<show id="qa:clTextCriteriaLimit" />
 					<show id="qa:clRequired" />
 					<show id="qa:clMethod" />
 				</field-visibility>
 				<appearance>
 					<field id="qa:clTextCriteria">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">3</control-param>
+						</control>
+					</field>
+					<field id="qa:clTextCriteriaLimit">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">3</control-param>
 						</control>
