@@ -168,7 +168,7 @@
 
 				instance.widgets.dataSource.sendRequest("&metadata=" + encodeURIComponent(YAHOO.lang.JSON.stringify(jsonParameters)), {
 					success : function DataTable_loadDataTable_success(oRequest, oResponse, oPayload) {
-						instance.widgets.alfrescoDataTable.onDataReturnReplaceRows(oRequest, oResponse, oPayload);
+						instance.widgets.notificationsDataTable.onDataReturnReplaceRows(oRequest, oResponse, oPayload);
 
 						if (instance.widgets.paginator) {
 							instance.widgets.paginator.set('totalRecords', oResponse.meta.totalRecords);
@@ -179,8 +179,8 @@
 					},
 					// success :
 					// me.widgets.alfrescoDataTable.onDataReturnSetRows,
-					failure : instance.widgets.alfrescoDataTable.onDataReturnReplaceRows,
-					scope : instance.widgets.alfrescoDataTable,
+					failure : instance.widgets.notificationsDataTable.onDataReturnReplaceRows,
+					scope : instance.widgets.notificationsDataTable,
 					argument : {}
 				});
 			};
@@ -352,7 +352,6 @@
 			var request = {
 				fields : [ "bcpg_rclReqType", "bcpg_rclReqMessage", "bcpg_rclSources", "bcpg_rclDataType" ],
 				page : this.currentPage,
-				sort : sort,
 				queryExecutionId : this.queryExecutionId,
 				filter : {
 					filterId : "filterform",
@@ -461,7 +460,7 @@
 		 * @method reloadDataTable
 		 */
 		reloadDataTable : function SimpleDocList_reloadDataTable() {
-			this.widgets.alfrescoDataTable.loadDataTable(this.getParameters());
+			this.widgets.notificationsDataTable.loadDataTable(this.getParameters());
 		}
 
 	}, true);
