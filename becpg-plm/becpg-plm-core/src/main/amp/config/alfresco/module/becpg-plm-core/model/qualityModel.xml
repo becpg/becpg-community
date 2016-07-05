@@ -825,6 +825,11 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
+				<property name="qa:clTextCriteriaLimit">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 				<property name="qa:clRequired">
 					<type>d:boolean</type>
 					<mandatory>false</mandatory>					
