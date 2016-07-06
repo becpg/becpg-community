@@ -232,7 +232,19 @@
                 <structure>
                     <property name="columnName">aspects</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">aspects</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">netWeight</property>
+                    <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">netWeight</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">productCompoQtyUsed</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="heading">productCompoQtyUsed</text-property>
                 </structure>
             </list-property>
             <list-property name="parameters"/>
@@ -397,6 +409,16 @@
                         <property name="position">32</property>
                         <property name="name">aspects</property>
                         <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">33</property>
+                        <property name="name">netWeight</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">34</property>
+                        <property name="name">productCompoQtyUsed</property>
+                        <property name="dataType">float</property>
                     </structure>
                 </list-property>
             </structure>
@@ -626,8 +648,22 @@
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
+                <structure>
+                    <property name="position">33</property>
+                    <property name="name">netWeight</property>
+                    <property name="nativeName">netWeight</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">34</property>
+                    <property name="name">productCompoQtyUsed</property>
+                    <property name="nativeName">productCompoQtyUsed</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{productCurrency;STRING;/productCurrency},{productPrice;DOUBLE;/productPrice},{productUnit;STRING;/productUnit},{productType;STRING;/productType},{name;STRING;/name},{productState;STRING;/productState},{modified;TIMESTAMP;/modified},{productQty;DOUBLE;/productQty},{versionLabel;STRING;/versionLabel},{productHierarchy1;STRING;/productHierarchy1},{productHierarchy2;STRING;/productHierarchy2},{trademark;STRING;/trademark},{clients;STRING;/clients},{created;TIMESTAMP;/created},{description;STRING;/description},{useByDate;STRING;/useByDate},{startEffectivity;TIMESTAMP;/startEffectivity},{productComments;STRING;/productComments},{pvCallerActor;STRING;/pvCallerActor},{pvTransmitterActor;STRING;/pvTransmitterActor},{pvQualityApprovalActor;STRING;/pvQualityApprovalActor},{pvProductionApprovalActor;STRING;/pvProductionApprovalActor},{pvValidationDate;TIMESTAMP;/pvValidationDate},{pvRDApprovalActor;STRING;/pvRDApprovalActor},{legalName;STRING;/legalName},{productDensity;DOUBLE;/productDensity},{plants;STRING;/plants},{erpCode;STRING;/erpCode},{packagingDescription;STRING;/packagingDescription},{eanCode;STRING;/eanCode},{aspects;STRING;/aspects}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{productCurrency;STRING;/productCurrency},{productPrice;DOUBLE;/productPrice},{productUnit;STRING;/productUnit},{productType;STRING;/productType},{name;STRING;/name},{productState;STRING;/productState},{modified;TIMESTAMP;/modified},{productQty;DOUBLE;/productQty},{versionLabel;STRING;/versionLabel},{productHierarchy1;STRING;/productHierarchy1},{productHierarchy2;STRING;/productHierarchy2},{trademark;STRING;/trademark},{clients;STRING;/clients},{created;TIMESTAMP;/created},{description;STRING;/description},{useByDate;STRING;/useByDate},{startEffectivity;TIMESTAMP;/startEffectivity},{productComments;STRING;/productComments},{pvCallerActor;STRING;/pvCallerActor},{pvTransmitterActor;STRING;/pvTransmitterActor},{pvQualityApprovalActor;STRING;/pvQualityApprovalActor},{pvProductionApprovalActor;STRING;/pvProductionApprovalActor},{pvValidationDate;TIMESTAMP;/pvValidationDate},{pvRDApprovalActor;STRING;/pvRDApprovalActor},{legalName;STRING;/legalName},{productDensity;DOUBLE;/productDensity},{plants;STRING;/plants},{erpCode;STRING;/erpCode},{packagingDescription;STRING;/packagingDescription},{eanCode;STRING;/eanCode},{aspects;STRING;/aspects},{netWeight;DOUBLE;/netWeight},{productCompoQtyUsed;DOUBLE;/productCompoQtyUsed}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -5937,6 +5973,7 @@ value = value + "x" + BirtMath.round(dataSetRow["height"],0);
                                         <property name="borderTopColor">#FFFFFF</property>
                                         <label id="925">
                                             <property name="fontFamily">"arial"</property>
+                                            <property name="fontSize">8pt</property>
                                             <property name="display">inline</property>
                                             <text-property name="text">Page : </text-property>
                                         </label>
@@ -5947,15 +5984,18 @@ value = value + "x" + BirtMath.round(dataSetRow["height"],0);
                                         <property name="borderRightColor">#FFFFFF</property>
                                         <property name="borderTopColor">#FFFFFF</property>
                                         <auto-text id="933">
+                                            <property name="fontSize">8pt</property>
                                             <property name="display">inline</property>
                                             <property name="type">page-number</property>
                                         </auto-text>
                                         <text id="935">
+                                            <property name="fontSize">8pt</property>
                                             <property name="display">inline</property>
                                             <property name="contentType">plain</property>
                                             <text-property name="content"><![CDATA[/]]></text-property>
                                         </text>
                                         <auto-text id="937">
+                                            <property name="fontSize">8pt</property>
                                             <property name="display">inline</property>
                                             <property name="type">total-page</property>
                                         </auto-text>
@@ -6986,14 +7026,12 @@ value = value + " x " + dataSetRow["height"];
                             </cell>
                             <cell id="2374">
                                 <label id="2392">
-                                    <text-property name="text">Poids net 
-env en kg</text-property>
+                                    <text-property name="text">Poids net en g</text-property>
                                 </label>
                             </cell>
                             <cell id="2375">
                                 <label id="2393">
-                                    <text-property name="text">Poids brut 
-env en kg</text-property>
+                                    <text-property name="text">Poids brut en g</text-property>
                                 </label>
                             </cell>
                             <cell id="2761">
@@ -7008,8 +7046,7 @@ env en kg</text-property>
                             </cell>
                             <cell id="2378">
                                 <label id="2396">
-                                    <text-property name="text">Poids brut
-env en kg</text-property>
+                                    <text-property name="text">Poids brut en kg</text-property>
                                 </label>
                             </cell>
                         </row>
@@ -7053,8 +7090,8 @@ else{
                             <cell id="2364">
                                 <data id="2766">
                                     <structure name="numberFormat">
-                                        <property name="category">Fixed</property>
-                                        <property name="pattern">###0.00{RoundingMode=HALF_UP}</property>
+                                        <property name="category">Custom</property>
+                                        <property name="pattern">#0.#</property>
                                     </structure>
                                     <property name="dataSet">packagingLevelMesures</property>
                                     <list-property name="boundDataColumns">
@@ -7062,7 +7099,7 @@ else{
                                             <property name="name">tarePkgLevel1</property>
                                             <text-property name="displayName">tarePkgLevel1</text-property>
                                             <expression name="expression" type="javascript">dataSetRow["tarePkgLevel1"] * 1000</expression>
-                                            <property name="dataType">string</property>
+                                            <property name="dataType">float</property>
                                             <property name="allowExport">true</property>
                                         </structure>
                                     </list-property>
@@ -7070,17 +7107,21 @@ else{
                                 </data>
                             </cell>
                             <cell id="2365">
-                                <data id="7261">
+                                <data id="7265">
+                                    <structure name="numberFormat">
+                                        <property name="category">Custom</property>
+                                        <property name="pattern">#0.#</property>
+                                    </structure>
                                     <property name="dataSet">Product</property>
                                     <list-property name="boundDataColumns">
                                         <structure>
                                             <property name="name">netWeight</property>
                                             <text-property name="displayName">netWeight</text-property>
                                             <expression name="expression" type="javascript">if(dataSetRow["netWeight"] != null){
-dataSetRow["netWeight"] 
+dataSetRow["netWeight"] * 1000
 }
 else{
-dataSetRow["productCompoQtyUsed"]
+dataSetRow["productCompoQtyUsed"] * 1000
 }</expression>
                                             <property name="dataType">float</property>
                                             <property name="allowExport">true</property>
@@ -7092,16 +7133,17 @@ dataSetRow["productCompoQtyUsed"]
                             <cell id="2366">
                                 <data id="2714">
                                     <structure name="numberFormat">
-                                        <property name="category">Fixed</property>
-                                        <property name="pattern">###0.00{RoundingMode=HALF_UP}</property>
+                                        <property name="category">Custom</property>
+                                        <property name="pattern">#0.#</property>
                                     </structure>
                                     <property name="dataSet">packagingLevelMesures</property>
                                     <list-property name="boundDataColumns">
                                         <structure>
                                             <property name="name">grossWeightPkgLevel1</property>
                                             <text-property name="displayName">grossWeightPkgLevel1</text-property>
-                                            <expression name="expression" type="javascript">dataSetRow["grossWeightPkgLevel1"]</expression>
-                                            <property name="dataType">string</property>
+                                            <expression name="expression" type="javascript">dataSetRow["grossWeightPkgLevel1"]*1000</expression>
+                                            <property name="dataType">float</property>
+                                            <property name="allowExport">true</property>
                                         </structure>
                                     </list-property>
                                     <property name="resultSetColumn">grossWeightPkgLevel1</property>
@@ -7138,8 +7180,8 @@ dataSetRow["productCompoQtyUsed"]
                             <cell id="2369">
                                 <data id="2751">
                                     <structure name="numberFormat">
-                                        <property name="category">Fixed</property>
-                                        <property name="pattern">###0.00{RoundingMode=HALF_UP}</property>
+                                        <property name="category">Custom</property>
+                                        <property name="pattern">#0.#</property>
                                     </structure>
                                     <property name="dataSet">packagingLevelMesures</property>
                                     <list-property name="boundDataColumns">
@@ -7147,7 +7189,8 @@ dataSetRow["productCompoQtyUsed"]
                                             <property name="name">grossWeightPkgLevel2</property>
                                             <text-property name="displayName">grossWeightPkgLevel2</text-property>
                                             <expression name="expression" type="javascript">dataSetRow["grossWeightPkgLevel2"]</expression>
-                                            <property name="dataType">string</property>
+                                            <property name="dataType">float</property>
+                                            <property name="allowExport">true</property>
                                         </structure>
                                     </list-property>
                                     <property name="resultSetColumn">grossWeightPkgLevel2</property>
