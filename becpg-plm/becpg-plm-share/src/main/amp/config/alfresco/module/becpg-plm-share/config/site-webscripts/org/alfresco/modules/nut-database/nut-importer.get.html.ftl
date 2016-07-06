@@ -79,7 +79,7 @@
   <#if args.nutsCompare??>
   YAHOO.util.Event.on("${el}-show-button","click",function(e){
     			Alfresco.util.Ajax.request({
-				url : Alfresco.constants.URL_SERVICECONTEXT + "modules/nut-comparer/nut-comparer?base=${args.entityNodeRef}&supplier="+YAHOO.util.Dom.get("${el}-supplier-added").value+"&entities="+YAHOO.util.Dom.get("${el}-entities-added").value,
+				url : Alfresco.constants.URL_SERVICECONTEXT + "modules/nut-database/nut-comparer?base=${args.entityNodeRef}&supplier="+YAHOO.util.Dom.get("${el}-supplier-added").value+"&entities="+YAHOO.util.Dom.get("${el}-entities-added").value,
 				dataObj : {
 					htmlid : "${el}-show-popup"
 				},

@@ -19,4 +19,5 @@
   <shortname>nut-importer</shortname>
   <description>Import nut from csv file</description>
   <url>/modules/nut-database/nut-importer</url>
+  <authentication>user</authentication>
 </webscript>

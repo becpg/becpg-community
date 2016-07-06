@@ -495,6 +495,61 @@ YAHOO.Bubbling
 		.fire(
 		  "registerToolbarButtonAction",
 		  {
+			  actionName : "import-nuts",
+			  right : false,
+			  evaluate : function(asset, entity) {
+				  return (entity !== null && entity.userAccess.edit && asset.name !== null && asset.name === "nutList");
+				  
+			  },
+			  fn : function(instance) {
+				  var nutImporter = new Alfresco.module.SimpleDialog(this.id + "-nutImporter");            
+
+				  nutImporter.setOptions({
+					  width : this.options.formWidth,
+					  templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/nut-database/nut-importer?entityNodeRef="+ this.options.entityNodeRef+"&nutsCompare=true",
+					  actionUrl : Alfresco.constants.PROXY_URI + "becpg/product/nutdatabaseimport?dest="+ this.options.entityNodeRef+"&onlyNuts=true",
+					  validateOnSubmit : false,
+					  firstFocus : this.id + "-entityImporter-supplier-field",
+					  doBeforeFormSubmit : {
+						  fn : function FormulationView_onActionEntityImport_doBeforeFormSubmit(form) {
+							  Alfresco.util.PopupManager.displayMessage({
+								  text : this.msg("message.rapid-link.import.please-wait")
+							  });
+						  },
+						  scope : this
+					  },
+					  onSuccess : {
+						  fn : function FormulationView_onActionEntityImport_success(response) {
+							  if (response.json) {
+								  YAHOO.Bubbling.fire("refreshDataGrids");
+								  Alfresco.util.PopupManager.displayMessage({
+									  text : this.msg("message.rapid-link.nutrient-import.success")
+								  });
+							  }
+
+						  },
+						  scope : this
+					  },
+					  onFailure : {
+						  fn : function FormulationView_onActionEntityImport_failure(response) {
+							  Alfresco.util.PopupManager.displayMessage({
+								  text : this.msg("message.import.failure")
+							  });
+						  },
+						  scope : this
+					  }
+				  });
+
+				  nutImporter.show();
+
+
+			  }
+		  });
+      
+      YAHOO.Bubbling
+		.fire(
+		  "registerToolbarButtonAction",
+		  {
 			  actionName : "product-notifications",
 			  right : true,
 			  evaluate : function(asset, entity) {
@@ -522,66 +577,6 @@ YAHOO.Bubbling
 		  });
       
       
-      YAHOO.Bubbling
-      		.fire(
-    		  "registerToolbarButtonAction",
-    		  {
-    			  actionName : "import-nuts",
-    			  right : false,
-    			  evaluate : function(asset, entity) {
-    				  return (entity != null && entity.userAccess.edit && asset.name != null && asset.name === "nutList");
-    			  },
-    			  fn : function(instance) {
-    				  var nutImporter = new Alfresco.module.SimpleDialog(this.id + "-nutImporter");            
-
-    				  nutImporter.setOptions({
-    					  width : this.options.formWidth,
-    					  templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "/modules/nut-database/nut-importer?entityNodeRef="+ this.options.entityNodeRef+"&nutsCompare=true",
-    					  actionUrl : Alfresco.constants.PROXY_URI + "becpg/product/nutdatabaseimport?dest="+ this.options.entityNodeRef+"&onlyNuts=true",
-    					  validateOnSubmit : false,
-    					  firstFocus : this.id + "-entityImporter-supplier-field",
-    					  doBeforeFormSubmit : {
-    						  fn : function FormulationView_onActionEntityImport_doBeforeFormSubmit(form) {
-    							  Alfresco.util.PopupManager.displayMessage({
-    								  text : this.msg("message.rapid-link.import.please-wait")
-    							  });
-    						  },
-    						  scope : this
-    					  },
-    					  onSuccess : {
-    						  fn : function FormulationView_onActionEntityImport_success(response) {
-    							  if (response.json) {
-    								  YAHOO.Bubbling.fire("refreshDataGrids");
-    								  Alfresco.util.PopupManager.displayMessage({
-    									  text : this.msg("message.rapid-link.nutrient-import.success")
-    								  });
-    							  }
-
-    						  },
-    						  scope : this
-    					  },
-    					  onFailure : {
-    						  fn : function FormulationView_onActionEntityImport_failure(response) {
-    							  Alfresco.util.PopupManager.displayMessage({
-    								  text : this.msg("message.import.failure")
-    							  });
-    						  },
-    						  scope : this
-    					  }
-    				  });
-
-    				  nutImporter.show();
-
-
-    			  }
-    		  });
-      
-      
-      
-      
-      
-      
-      
-      
+     
    }   
 })();
