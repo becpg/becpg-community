@@ -7326,7 +7326,6 @@
 					<show id="bcpg:nutListValuePerServing" force="true" />
 					<show id="bcpg:nutListGDAPerc" force="true" />
 					<show id="bcpg:nutListLossPerc" />
-					<show id="bcpg:nutListGroup" />
 					<show id="bcpg:nutListMethod" />
 					<show id="fm:commentCount" force="true" />
 					<show id="bcpg:nutListIsFormulated" />
@@ -7337,7 +7336,7 @@
 					<field id="bcpg:variantIds" label="hidden"></field>
 					<field id="bcpg:depthLevel" label="hidden"></field>
 					<field id="bcpg:nutListFormulatedValue" label="hidden" read-only="true" />
-					<field id="bcpg:nutListUnit" read-only="true"></field>
+					<field id="bcpg:nutListUnit" read-only="true" label="hidden"></field>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 					<field id="bcpg:nutListIsFormulated" label="hidden"/>
 					<field id="bcpg:nutListFormulaErrorLog" label="hidden"/>
@@ -7355,7 +7354,6 @@
 					<show id="bcpg:nutListValuePerServing" force="true" />
 					<show id="bcpg:nutListGDAPerc" force="true" />
 					<show id="bcpg:nutListLossPerc" />
-					<show id="bcpg:nutListGroup" />
 					<show id="bcpg:nutListMethod" />
 					<show id="fm:commentCount" force="true" />
 					<show id="bcpg:nutListIsFormulated" />
