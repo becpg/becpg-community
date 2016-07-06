@@ -76,8 +76,10 @@
 
 		},
 
-		currentVariantNodeRef : null,
+		currentPage : 1,
 
+		queryExecutionId : null,
+		
 		/**
 		 * Fired by YUI when parent element is available for scripting.
 		 * 
@@ -90,18 +92,18 @@
 			// Inject the template from the XHR request into a new DIV
 			// element
 			var containerDiv = document.createElement("div");
-			containerDiv.innerHTML = '<div id="' + instance.id + '-datatable"></div>';
+			containerDiv.innerHTML = '<div><div id="' + instance.id + '-notificationTable"></div></div>';
 
 			// The panel is created from the HTML returned in the XHR
 			// request, not the container
 			var panelDiv = Dom.getFirstChild(containerDiv);
 			this.widgets.panel = Alfresco.util.createYUIPanel(panelDiv, {
-				draggable : true,
+				draggable : false,
 				width : "50em"
 			});
 
 			this.widgets.dataSource = new YAHOO.util.DataSource(this.getWebscriptUrl(), {
-				connMethodPost : false,
+				connMethodPost : true,
 				responseType : YAHOO.util.DataSource.TYPE_JSON,
 				responseSchema : {
 					resultsList : "items",
@@ -118,7 +120,7 @@
 				formatter : this.bind(this.renderCellDetail)
 			} ];
 
-			this.widgets.notificationsDataTable = new YAHOO.widget.DataTable(this.id + "-documents", columDefs, this.widgets.dataSource, {
+			this.widgets.notificationsDataTable = new YAHOO.widget.DataTable(this.id + "-notificationTable", columDefs, this.widgets.dataSource, {
 				initialLoad : false,
 				dynamicData : false,
 				"MSG_EMPTY" : '<span class="wait">' + $html(this.msg("message.loading")) + '</span>',
@@ -157,18 +159,19 @@
 			this.widgets.paginator.render();
 
 			this.widgets.notificationsDataTable.loadDataTable = function DataTable_loadDataTable(parameters) {
-
+				
 				instance.widgets.dataSource.connMgr.setDefaultPostHeader(Alfresco.util.Ajax.JSON);
-
-				var jsonParameters = parameters;
-
-				if (!jsonParameters) {
-					jsonParameters = scopeParameters;
-				}
-
-				instance.widgets.dataSource.sendRequest("&metadata=" + encodeURIComponent(YAHOO.lang.JSON.stringify(jsonParameters)), {
+					
+                if (Alfresco.util.CSRFPolicy.isFilterEnabled())
+                {
+                	instance.widgets.dataSource.connMgr.initHeader(Alfresco.util.CSRFPolicy.getHeader(),
+                            Alfresco.util.CSRFPolicy.getToken(), false);
+                }
+				
+                
+				instance.widgets.dataSource.sendRequest(YAHOO.lang.JSON.stringify(parameters), {
 					success : function DataTable_loadDataTable_success(oRequest, oResponse, oPayload) {
-						instance.widgets.alfrescoDataTable.onDataReturnReplaceRows(oRequest, oResponse, oPayload);
+						instance.widgets.notificationsDataTable.onDataReturnReplaceRows(oRequest, oResponse, oPayload);
 
 						if (instance.widgets.paginator) {
 							instance.widgets.paginator.set('totalRecords', oResponse.meta.totalRecords);
@@ -179,8 +182,8 @@
 					},
 					// success :
 					// me.widgets.alfrescoDataTable.onDataReturnSetRows,
-					failure : instance.widgets.alfrescoDataTable.onDataReturnReplaceRows,
-					scope : instance.widgets.alfrescoDataTable,
+					failure : instance.widgets.notificationsDataTable.onDataReturnReplaceRows,
+					scope : instance.widgets.notificationsDataTable,
 					argument : {}
 				});
 			};
@@ -205,26 +208,26 @@
 				instance.widgets.panel.show();
 			});
 
-			Alfresco.util.Ajax.request({
-				url : Alfresco.constants.PROXY_URI + "becpg/product/reqctrllist/node/" + instance.options.entityNodeRef.replace(":/", "") + "?view="
-						+ instance.options.list,
-				method : Alfresco.util.Ajax.GET,
-				responseContentType : Alfresco.util.Ajax.JSON,
-				successCallback : {
-					fn : function(response) {
-
-						// TODO
-
-						instance.reloadDataTable();
-
-						YAHOO.Bubbling.addDefaultAction(REQFILTER_EVENTCLASS, fnOnTypeFilterHandler);
-
-					},
-					scope : instance
-				},
-				failureMessage : "Could not load html template for version graph",
-				execScripts : true
-			});
+//			Alfresco.util.Ajax.request({
+//				url : Alfresco.constants.PROXY_URI + "becpg/product/reqctrllist/node/" + instance.options.entityNodeRef.replace(":/", "") + "?view="
+//						+ instance.options.list,
+//				method : Alfresco.util.Ajax.GET,
+//				responseContentType : Alfresco.util.Ajax.JSON,
+//				successCallback : {
+//					fn : function(response) {
+//
+//						// TODO
+//
+//						instance.reloadDataTable();
+//
+//						YAHOO.Bubbling.addDefaultAction(REQFILTER_EVENTCLASS, instance.onFilterChange);
+//
+//					},
+//					scope : instance
+//				},
+//				failureMessage : "Could not load html template for version graph",
+//				execScripts : true
+//			});
 
 		},
 
@@ -335,8 +338,11 @@
 		 * @method getWebscriptUrl
 		 */
 		getWebscriptUrl : function ProjectDashlet_getWebscriptUrl() {
+			
+			//TODO manque parentNodeRef;
+			
 			return Alfresco.constants.PROXY_URI
-					+ "becpg/entity/datalists/data/node?itemType=bcpg:reqCtrlList&pageSize=50&dataListName=reqCtrlList&entityNodeRef="
+					+ "becpg/entity/datalists/data/node?repo=true&itemType=bcpg:reqCtrlList&pageSize=50&dataListName=reqCtrlList&entityNodeRef="
 					+ this.options.entityNodeRef;
 
 		},
@@ -352,14 +358,14 @@
 			var request = {
 				fields : [ "bcpg_rclReqType", "bcpg_rclReqMessage", "bcpg_rclSources", "bcpg_rclDataType" ],
 				page : this.currentPage,
-				sort : sort,
 				queryExecutionId : this.queryExecutionId,
 				filter : {
-					filterId : "filterform",
+					filterId : "all",
 					filterOwner : null,
-					filterData : {},
+					filterData : "",
 					filterParams : null
-				}
+				},
+				extraParams : null
 			};
 			return request;
 
@@ -461,7 +467,7 @@
 		 * @method reloadDataTable
 		 */
 		reloadDataTable : function SimpleDocList_reloadDataTable() {
-			this.widgets.alfrescoDataTable.loadDataTable(this.getParameters());
+			this.widgets.notificationsDataTable.loadDataTable(this.getParameters());
 		}
 
 	}, true);
