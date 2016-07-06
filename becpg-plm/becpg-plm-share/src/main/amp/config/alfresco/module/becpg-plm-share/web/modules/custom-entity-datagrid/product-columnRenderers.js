@@ -870,30 +870,6 @@ if (beCPG.module.EntityDataGridRenderers) {
 		propertyName : [ "bcpg:nutListGDAPerc" ],
 		renderer : function(oRecord, data, label, scope) {
 			
-			var nutNodeRef = oRecord._oData.itemData.assoc_bcpg_nutListNut[0].value;
-			var itemData =  oRecord.getData("itemData");
-			
-			function rgbToHsl(r, g, b){
-			    r /= 255, g /= 255, b /= 255;
-			    var max = Math.max(r, g, b), min = Math.min(r, g, b);
-			    var h, s, l = (max + min) / 2;
-
-			    if(max == min){
-			        h = s = 0; // achromatic
-			    }else{
-			        var d = max - min;
-			        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-			        switch(max){
-			            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-			            case g: h = (b - r) / d + 2; break;
-			            case b: h = (r - g) / d + 4; break;
-			        }
-			        h /= 6;
-			    }
-
-			    return {h: h, s: s, l: l};
-			};
-			
 			var percentValue = data.value;
 			var additionalProps = oRecord.getData("itemData")["dt_bcpg_nutListNut"][0].itemData;
 			var nutColor = oRecord.getData("itemData")["dt_bcpg_nutListNut"][0].color;
@@ -902,12 +878,14 @@ if (beCPG.module.EntityDataGridRenderers) {
 			var ul = additionalProps.prop_bcpg_nutUL.value;
 			var unit = additionalProps.prop_bcpg_nutUnit.displayValue;
 
+			var ulExceeded = false;
 			var red = "#F44336";
 			var gray = "#cccccc";
 						
 			if(percentValue !== null && percentValue > 0 && nutColor !== undefined){
 				
 				if(nutValue !== null && ul !== null && (nutValue > ul)){
+					ulExceeded = true;
 					nutColor = red;
 				}
 				
@@ -918,24 +896,15 @@ if (beCPG.module.EntityDataGridRenderers) {
 			        b: parseInt(hexColorSplit[3], 16)
 			    } : null;
 			    
-			    var hslColor = rgbToHsl(rgbColor.r, rgbColor.g,rgbColor.b);
-			    
 			    //background of unfilled part of progress bar
 			    if(percentValue <100){
-			    	//desaturate a bit
-			    	hslColor.s *= 0.7;
-
-			    	if(hslColor.l*1.3 < 1){
-			    		hslColor.l *=1.3;
-			    	}
-
-			    	var emptyBarColor = "hsl("+(hslColor.h*360).toFixed(0)+", "+(hslColor.s*100).toFixed(0)+"%, "+(hslColor.l*100).toFixed(0)+"%)";
+			    	var emptyBarColor = ulExceeded ? red : gray;
 			    }
 			    
-				var fontColor = "white";
+				var fontColor = "black";
 				
-				if (rgbColor && (rgbColor.r*0.2126 + rgbColor.g*0.7152 + rgbColor.b*0.0722) > 186){
-					fontColor = "black";
+				if (rgbColor && (rgbColor.r*0.2126 + rgbColor.g*0.7152 + rgbColor.b*0.0722) < 186 && percentValue > 20){
+					fontColor = "white";
 				}
 				
 				var gdaReminder = null;
@@ -945,23 +914,23 @@ if (beCPG.module.EntityDataGridRenderers) {
 				
 				var reminderColor = "black";
 				
-				if(percentValue > 80){
+				if(percentValue > 80 || ulExceeded){
 					reminderColor = fontColor;
 				}
 
-				var html="<div class=\"progress-bar\" "+ (emptyBarColor !== undefined ? "style=\"background-color: " + emptyBarColor +";\" ": "") + ";\">";
+				var html="<div class=\"progress-bar\" "+ (emptyBarColor !== undefined ? "style=\"background-color: " + emptyBarColor +";\" ": "") + " title=\"" + percentValue.toFixed(1)+"% " + gdaReminder + (ulExceeded?"\n"+scope.msg("becpg.forms.help.ul-exceeded") : "") +"\";\">";
 					if(gdaReminder !== null){
 						html += "<div class =\"nut-progress-bar\" style=\"float: right; color: " + reminderColor + "\">" + gdaReminder + "</div>";
 					}
-						html += "<div style=\"width: " + Math.min(percentValue, 100) + "%; background-color: " + nutColor + (percentValue < 100 ? "; border-radius: 0 3px 3px 0" : "") + ";\">";
-						html += "<div class =\"nut-progress-bar\" style=\"text-align: left; color: " + fontColor + "; white-space: nowrap;\">" + percentValue.toFixed(1) + " %</div>";
+						html += "<div style=\"width: " + Math.min(percentValue, 100) + "%; background-color: " + nutColor + (percentValue < 100 ? "; border-radius: 0 4px 4px 0" : "") + ";\">";
+						html += "<div class =\"nut-progress-bar\" style=\"text-align: left; color: " + fontColor + "; white-space: nowrap;\">" + percentValue.toFixed(1) + "%</div>";
 					html += "</div>";
 				html += "</div>";					        	
 
 
 				return html;
 			} else if(percentValue !== null && percentValue > 0){
-				return Alfresco.util.encodeHTML(data.displayValue+" %");
+				return Alfresco.util.encodeHTML(data.value.toFixed(1)+" %");
 			} else {
 				return Alfresco.util.encodeHTML(null);
 			}
