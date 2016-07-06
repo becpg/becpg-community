@@ -943,9 +943,12 @@ if (beCPG.module.EntityDataGridRenderers) {
 		renderer : function(oRecord, data, label, scope) {
 			//nut value is 2.3 mg/100g
 			
-			
 			var unit = oRecord._oData.itemData.prop_bcpg_nutListUnit.value;
-			var msg = data.displayValue+" "+unit;
+			var msg = null;
+			
+			if(data.value !== null){
+				msg = data.displayValue+" "+unit;
+			}
 			
 			return Alfresco.util.encodeHTML(msg);
 		}
@@ -956,11 +959,14 @@ if (beCPG.module.EntityDataGridRenderers) {
 		renderer : function(oRecord, data, label, scope) {
 			//one serving is 56 g
 			
-			
 			if(data.displayValue != null && data.displayValue > 0){
 				var additionalProps = oRecord.getData("itemData")["dt_bcpg_nutListNut"][0].itemData;
 				var unit = additionalProps.prop_bcpg_nutUnit.displayValue;
-				var msg = data.displayValue+" "+unit;
+				var msg = null;
+				
+				if(data.value !== null){
+					msg = data.displayValue+" "+unit;
+				}
 			}
 			
 			return Alfresco.util.encodeHTML(msg);
