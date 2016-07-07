@@ -1,9 +1,6 @@
-.datalist-toolbar .right div {
+.datalist-toolbar .right > div,
+.datalist-toolbar .right > div > div {
 	float:left;
-}
-
-.datalist-toolbar .right .action-set div {
-	float:none;
 }
 
 .datalist-toolbar .entity-view-details span.first-child

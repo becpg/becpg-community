@@ -1,52 +1,326 @@
-.datalist-toolbar .edit-variant span.first-child
+
+
+
+.datalist-toolbar  .product-notifications  .loading span.first-child button
 {
-   background: url(../images/edit-16.png) no-repeat 6px 4px;
-   padding: inherit 4px inherit 4px;
+   background: url(images/loading.gif) no-repeat 12px 4px;
+   padding-left: 24px;
+}
+
+@keyframes score {
+    from {background-position: 0px 0px;}
+}
+
+@keyframes warning {
+    from { opacity: 0; }
+      to { opacity: 1; }
+}
+
+.datalist-toolbar  .product-notifications span.warning {
+	background-color: #f44336;
+    border: medium none;
+    border-radius: 3px;
+    box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
+    color: white !important;
+    font-weight: bold !important;
+    left: -11px;
+    padding: 0 3px;
+    position: relative;
+    top: -16px;
+    animation: warning 0.5s;
 }
 
 
-.datalist-toolbar .delete-variant span.first-child
-{
-   background: url(../images/delete-16.png) no-repeat 6px 4px;
-   padding: inherit 4px inherit 4px;
+.datalist-toolbar  .product-notifications  .score   span.first-child button{
+	background-image: url("../../components/images/states/percent-gauges-sprite-small.jpg");
+	font-size: 8px;
+    height: 28px;
+    padding: 0;
+    width: 29px;
+    
 }
 
-
-.datalist-toolbar .create-variant span.first-child
-{
-   background: url(../images/add-icon-16.png) no-repeat 6px 4px;
-   padding: inherit 4px inherit 4px;
+.datalist-toolbar  .product-notifications .score-1 span.first-child button {
+	background-position : -2px 0px;
+	animation: score 0.2s steps(1);
 }
 
-
-.yui-skin-lightTheme  .datalist-toolbar div.variantPicker .yui-button  {
-	margin: 0px;
+.datalist-toolbar  .product-notifications .score-2 span.first-child button {
+	background-position : -30px 0px;
+	animation: score 0.2s steps(2);
 }
 
-.datalist-toolbar span.variant-all {
+.datalist-toolbar  .product-notifications .score-3 span.first-child button {
+	background-position : -60px 0px;
+	animation: score 0.2s steps(3);
+}
 	
+.datalist-toolbar  .product-notifications .score-4 span.first-child button {
+	background-position : -90px 0px;
+	animation: score 0.2s steps(4);
 }
 
-.datalist-toolbar span.variant-common {
+.datalist-toolbar  .product-notifications .score-5 span.first-child button {
+	background-position : -90px 0px;
+	animation: score 0.2s steps(5);
+}
 	
+.datalist-toolbar  .product-notifications .score-6 span.first-child button {
+	background-position : -120px 0px;
+	animation: score 0.2s steps(6);
 }
 
-.datalist-toolbar  span.variant {
-	background: url(../../components/images/enabled-indicator-off-16.png) no-repeat;
-	padding-left: 20px;
+.datalist-toolbar  .product-notifications .score-7 span.first-child button {
+	background-position : -150px 0px;
+	animation: score 0.2s steps(7);
+}
+
+.datalist-toolbar  .product-notifications .score-8 span.first-child button {
+	background-position : -180px 0px;
+	animation: score 0.2s steps(8);
+}
+
+.datalist-toolbar  .product-notifications .score-9 span.first-child button {
+	background-position : -210px 0px;
+	animation: score 0.2s steps(9);
+}
+	
+.datalist-toolbar  .product-notifications .score-10 span.first-child button {
+	background-position : -240px 0px;
+	animation: score 0.2s steps(10);
+}
+	
+.datalist-toolbar  .product-notifications .score-11 span.first-child button {
+	background-position : -270px 0px;
+	animation: score 0.2s steps(11);
+}
+
+.datalist-toolbar  .product-notifications .score-12 span.first-child button {
+	background-position : -352px 0px;
+	 animation: score 0.2s steps(12);
+}
+
+.datalist-toolbar  .product-notifications .score-13 span.first-child button {
+	background-position : -170px 0px;
+	animation: score 0.2s steps(13);
+}
+
+.datalist-toolbar  .product-notifications .score-14 span.first-child button {
+	background-position : -240px 0px;
+	animation: score 0.2s steps(14);
+}
+	
+.datalist-toolbar  .product-notifications .score-15 span.first-child button {
+	background-position : -380px 0px;
+	animation: score 0.2s steps(15);
+}
+	
+.datalist-toolbar  .product-notifications .score-16 span.first-child button {
+	background-position : -460px 0px;
+	animation: score 0.2s steps(16);
+}
+
+.datalist-toolbar  .product-notifications .score-17 span.first-child button {
+	background-position : -240px 0px;
+	animation: score 0.2s steps(17);
+}
+	
+.datalist-toolbar  .product-notifications .score-18 span.first-child button {
+	background-position : -497px 0px;
+	animation: score 0.2s steps(18);
+}
+	
+.datalist-toolbar  .product-notifications .score-19 span.first-child button {
+	background-position : -526px 0px;
+	animation: score 0.2s steps(19);
+}
+		
+.datalist-toolbar  .product-notifications .score-20 span.first-child button {
+	background-position : -555px 0px;
+	animation: score 0.2s steps(20);
+}
+
+div.notifications-panel {
+	padding: 20px;
+	background-color: white;
+	border: 1px solid #ccc;
+	width: 50em;
+	border-radius:3px;
 }
 
 
+.notifications-panel .score  li{
+	background-image: url("../../components/images/states/percent-gauges-sprite.jpg");
+	margin: 0.2em 0.5em 0.5em;
+	display:inline-block;
+}
+							
+	/* 						
+	// TODO Merge;
 
-.datalist-toolbar  span.variant-default {
-	background: url(../../components/images/enabled-indicator-on-16.png) no-repeat;
-	padding-left: 20px;
+			var scoreDiv = YAHOO.util.Dom.get("scoreLi");
+			if (scoreDiv !== undefined && scoreDiv != null) {
+			
+				var imgWidth = 74;
+				var widthRatio = imgWidth / 166;
+
+				var rightPos = (((spriteIndex - 1) * (166 + 14) + 2 + (spriteIndex > 4 ? 10 : 0)) * widthRatio) + "px";
+				scoreDiv.style.backgroundPosition = "-" + rightPos + " 0px";
+				scoreDiv.style.width = imgWidth + "px";
+				scoreDiv.style.height = imgWidth + "px";
+
+				var backgroundSize = Math.floor(3629 * widthRatio) + "px " + Math.floor(396 * widthRatio) + "px";
+				scoreDiv.childNodes[0].style.lineHeight = imgWidth + "px";
+				scoreDiv.childNodes[0].style.fontSize = 3 * widthRatio + "em";
+				scoreDiv.style.backgroundSize = backgroundSize;
+			}
+ */
+
+
+/** OLD **/
+
+.product-notifications .datagrid .body .grid table {
+	border: none;
 }
 
-.yui-skin-yellowTheme .datalist-toolbar  span.variant {
-	background-position: 0px -1.5px, top;
+.product-notifications .datagrid .body  .yui-dt thead {
+	display: none;
 }
 
-.yui-skin-yellowTheme .datalist-toolbar  span.variant {
-	background-position: 0px -1.5px, top;
+.product-notifications .datagrid .body  .grid.yui-dt .yui-dt-data  td,
+	.datagrid.activityList .yui-dt-data td {
+	border: none !important;
+	cursor: default;
+}
+
+.product-notifications .datagrid .body  .yui-dt-data  tr, .datagrid.activityList .yui-dt-data tr.yui-dt-highlighted
+	{
+	background-color: white;
+	border: none;
+	cursor: default;
+}
+
+.product-notifications .datagrid .body .rclReq-details, .rclFilterElt{
+	background-color: #fff;
+	border-radius: 2px;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+ 	transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+	margin: 0px 5px 5px;
+	padding: 5px;
+	border: 0.5px solid #CCCCCC;
+}
+
+.product-notifications .datagrid .body .rclReq-details:hover {
+	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+}
+
+/** RclFiltering **/
+.rclFilterElt ul li, .req-all-all {
+	display: inline;
+	padding: 0 2px;
+}
+
+.rclFilterElt > div {
+	overflow-y: auto;
+	max-height: 64px;
+	height: auto;
+}
+
+div.dataTypeList span.req-all-all{
+	margin: 0px 5px 5px;
+}
+
+div.dataTypeList .title {
+	margin-bottom: 5px;	
+}
+
+.rclReq-details ul {
+	max-height: 72px;
+	overflow-y: auto;
+}
+
+.dataTypeList .rclFilterSelected {
+	background-color: #ddd;
+}
+.dataTypeList span .rclFilterSelected {
+	padding: 1px;
+}
+
+.rclFilterElt ul {
+	display: inline;
+}
+
+#scoresDiv {
+	margin: 0px 10px 5px;
+	overflow: auto;
+	margin-left: 4px;
+	margin-right: 4px;
+}
+
+#scoresDiv > ul{
+	padding: 0.2 em
+	margin-right: 10px;
+	float: left;
+	text-align: center;
+}
+
+#scoreLi{
+	background-image: url("../../components/images/states/percent-gauges-sprite.jpg");
+	margin: 0.2em 0.5em 0.5em;
+	display:inline-block;
+}
+
+#scoreLi span{
+	display: inherit;
+	text-align: center;
+}
+
+div.dataTypeList {
+	overflow: auto;
+	/* avoids text breaking on low resolutions */
+}
+
+
+.product-notifications .datagrid .body  .icon {
+	float: left;
+	width: 5%;
+}
+
+.product-notifications .datagrid  .body  .rclReq-details .rclReq-title {
+	float: right;
+	width: 95%;
+	color: black;
+}
+
+.product-notifications .datagrid  .rclReq-details .rclReq-content {
+	clear: both;
+	list-style-type: disc;
+	margin-left: 6%;
+	padding: 5px;
+}
+
+.product-notifications .datagrid .rclReq-details .rclReq-content ul li {
+	list-style-type: disc;
+	min-height: 18px;
+}
+
+.product-notifications .datagrid  .rclReq-details .rclReq-content ol li {
+	list-style-type: decimal;
+}
+
+.product-notifications .datagrid .datagrid-bar .new-row, .product-notifications .datagrid .datagrid-bar .selected-items,
+	.product-notifications .datagrid td.yui-dt-first, .product-notifications .datagrid td.yui-dt-last
+	{
+	display: none;
+}
+
+.product-notifications .datagrid  .yui-dt-message .yui-dt-last {
+	display: block;
+	border-top: 1px solid #CCCCCC;
+	border-right: 0px;
+}
+
+.product-notifications .datagrid /** Full screen mode */ 
+.full-screen .sticky-footer, .full-screen  .sticky-push {
+	height: 0px;
 }

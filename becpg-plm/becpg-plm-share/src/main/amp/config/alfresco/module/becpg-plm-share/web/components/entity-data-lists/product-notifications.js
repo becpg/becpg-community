@@ -26,7 +26,7 @@
 	 */
 	var $html = Alfresco.util.encodeHTML;
 
-	var REQFILTER_EVENTCLASS = Alfresco.util.generateDomId(null, "reqType");
+	var REQFILTER_EVENTCLASS = Alfresco.util.generateDomId(null, "notificationsReqType");
 
 	/**
 	 * ProductNotifications constructor.
@@ -43,7 +43,7 @@
 				"container" ]);
 
 		// message
-		this.name = "beCPG.component.EntityDataListToolbar";
+		this.name = "beCPG.component.FormulationView";
 
 		return this;
 	};
@@ -74,10 +74,18 @@
 
 			containerDiv : null,
 
-			toolBarInstance : null
+			toolBarInstance : null,
+			
+			list: null
 
 		},
+		
+		filterId: "all",
+		
+		filterData : "",
 
+		filterParams : null,
+		
 		currentPage : 1,
 
 		queryExecutionId : null,
@@ -90,26 +98,18 @@
 		onReady : function ProductNotifications_onReady() {
 
 			var instance = this;
+
+
+			// Inject the template from the XHR request into a
+			// new DIV
+			// element
+			var containerDiv = document.createElement("div");
 			
-//			TODO
-//			new YAHOO.widget.Panel(this, "show-notifications", {
-//				width : "240px",
-//				fixedcenter : false,
-//				close : false,
-//				draggable : false,
-//				zindex : 99,
-//				modal : false,
-//				visible : false
-//			});
 
-			this.widgets.showNotificationsButton = this.createYUIButton(this, "show-notifications", function() {
-
+			this.widgets.showNotificationsButton = this.createShowNotificationButton(this, "show-notifications", containerDiv , function() {
 				instance.reloadDataTable();
-				instance.widgets.panel.show();
-				
 			});
-			
-			Dom.addClass(instance.id +"-show-notifications", "loading");
+
 
 			Alfresco.util.Ajax.request({
 				url : Alfresco.constants.PROXY_URI + "becpg/product/reqctrllist/node/" + instance.options.entityNodeRef.replace(":/", "") + "?view="
@@ -120,25 +120,45 @@
 					fn : function(response) {
 
 						if (response.json) {
+							
+							//Update button
+							
+							
+							if (response.json.scores !== undefined) {
+								var scores = response.json.scores;
+								var intScore = parseInt(scores.global);
+								var spriteIndex = (intScore / 5 >> 0);
+								
+								var buttonClass = "score-"+ spriteIndex;
+
+								instance.widgets.showNotificationsButton.removeClass("loading");
+								instance.widgets.showNotificationsButton.addClass("score");
+								instance.widgets.showNotificationsButton.addClass(buttonClass);
+								
+								
+								instance.widgets.showNotificationsButton.set("label",  Math.floor(scores.global) + "%");
+								instance.widgets.showNotificationsButton.set("title",  "TODO");
+								
+
+								var errorSpan = document.createElement("span");
+								errorSpan.className = "warning";
+								errorSpan.innerHTML = "3";
+								
+
+								this.options.containerDiv.appendChild(errorSpan);
+								
+							}
+							
+						
+							
+							
+							//Create panel
+							
 
 							instance.options.reqCtrlListNodeRef = response.json.reqCtrlListNodeRef != null ? response.json.reqCtrlListNodeRef : "";
 
-							// Inject the template from the XHR request into a
-							// new DIV
-							// element
-							var containerDiv = document.createElement("div");
 
 							containerDiv.innerHTML = instance.createPanel(response.json);
-
-							// The panel is created from the HTML returned in
-							// the XHR
-							// request, not the container
-							var panelDiv = Dom.getFirstChild(containerDiv);
-							this.widgets.panel = Alfresco.util.createYUIPanel(panelDiv, {
-								draggable : false,
-								fixedcenter: false,
-								width : "50em"
-							});
 
 							instance.widgets.dataSource = new YAHOO.util.DataSource(this.getWebscriptUrl(), {
 								connMethodPost : true,
@@ -221,9 +241,9 @@
 							};
 
 							
-							Dom.removeClass(instance.id +"-show-notifications", "loading");
+						
 							
-							YAHOO.Bubbling.addDefaultAction(REQFILTER_EVENTCLASS, instance.onFilterChange);
+						
 
 						}
 
@@ -233,26 +253,57 @@
 				failureMessage : "Could not load html template for version graph",
 				execScripts : true
 			});
+			
+			YAHOO.Bubbling.addDefaultAction(REQFILTER_EVENTCLASS, function(layers,args){
+				var owner = YAHOO.Bubbling.getOwnerByTagName(args[1].anchor, "span");
+				var selectedItems = document.getElementsByClassName("rclFilterSelected");
+
+				// sets clicked item to selected
+				for (var i = 0; i < selectedItems.length; i++) {
+					selectedItems[i].classList.remove("rclFilterSelected");
+				}
+				var chgClass = owner;
+				if (owner.parentNode.nodeName == "LI") {
+					chgClass = owner.parentNode;
+				}
+				YAHOO.util.Dom.addClass(chgClass, "rclFilterSelected");
+
+				// refreshes view by calling filter
+				var splits = owner.className.split("-");
+				var type = (splits.length > 2 ? splits[2].split(" ")[0] : undefined);
+				var dataType = splits[1].charAt(0).toUpperCase() + splits[1].slice(1);
+				instance.filterId = (type === "all" && dataType === "All" ? "all" : "filterform");
+				instance.filterData = (type === "all" && dataType === "All" ? undefined : "{"
+					+ (type !== undefined ? ("\"prop_bcpg_rclReqType\":" + type) : "")
+					+ (dataType !== null ? (type !== undefined ? "," : "") + ("\"prop_bcpg_rclDataType\":" + dataType) : "") + "}");
+				
+				args[0].stopPropagation();
+				args[1].decrepitate = true;
+				
+				
+				instance.reloadDataTable();
+				
+			});
 
 		},
 
-		createYUIButton : function(instance, actionName, fn) {
+		createShowNotificationButton : function(instance, actionName, containerDiv , fn) {
 
-			var template = Dom.get(this.options.toolBarInstance.id + "-toolBar-template-button"), buttonWidget = null;
+			var template = Dom.get(instance.options.toolBarInstance.id + "-toolBar-template-button"), buttonWidget = null;
 
 			var spanEl = Dom.getFirstChild(template).cloneNode(true);
 
 			Dom.addClass(spanEl, actionName);
+			Dom.addClass(spanEl, "loading");
 
-			Dom.setAttribute(spanEl, "id", this.id + "-" + actionName + "Button");
+			Dom.setAttribute(spanEl, "id", instance.id + "-" + actionName + "Button");
 
 			this.options.containerDiv.appendChild(spanEl);
 
-			buttonWidget = Alfresco.util.createYUIButton(this, actionName + "Button", fn);
-
-			buttonWidget.set("label", this.msg("button." + actionName));
-			buttonWidget.set("title", this.msg("button." + actionName + ".description"));
-
+			buttonWidget = Alfresco.util.createYUIButton(instance, actionName + "Button", null, {type:"menu",menu:containerDiv,lazyloadmenu : false });
+			
+			buttonWidget.getMenu().subscribe("show",fn, buttonWidget, this);
+		
 			return buttonWidget;
 
 		},
@@ -261,49 +312,32 @@
 
 			var instance = this;
 
-			var html = "<div><div class=\"hd\"></div><div class=\"bd\"><div id=\""+instance.id+"-scoresDiv\" class=\"ctrlSumPreview  \" >";
+			var html = "<div class=\"notifications-panel\"><div id=\""+instance.id+"-scoresDiv\" class=\"ctrlSumPreview  \" >";
 
 			// put score div
 			if (json.scores !== undefined) {
 				var scores = json.scores;
 				var intScore = parseInt(scores.global);
 				var spriteIndex = (intScore / 5 >> 0);
+				var scoreTitle = instance.msg("tooltip.components.validation") + ": "
+					+ Math.floor(scores.details.componentsValidation) + "%\n" + instance.msg("tooltip.mandatory.completion") + ": "
+					+ Math.floor(scores.details.mandatoryFields) + "%\n" + instance.msg("tooltip.specification.respect") + ": "
+					+ Math.floor(scores.details.specifications) + "%";
 
-				html += "<ul><li class=\"title\">" + instance.msg("label.product.scores") + "</li>" + "<li id=\"scoreLi\" class=\"score-"
-						+ spriteIndex + "\" " + "title=\"" + instance.msg("tooltip.components.validation") + ": "
-						+ Math.floor(scores.details.componentsValidation) + "%\n" + instance.msg("tooltip.mandatory.completion") + ": "
-						+ Math.floor(scores.details.mandatoryFields) + "%\n" + instance.msg("tooltip.specification.respect") + ": "
-						+ Math.floor(scores.details.specifications) + "%\">";
+				html += "<ul><li class=\"title\">" + instance.msg("label.product.scores") + "</li>" + "<li class=\"score score-"
+						+ spriteIndex + "\" " + "title=\""+scoreTitle+"\">";
 
 				html += "<span>" + Math.floor(scores.global) + "%</span>";
 				html += "</li></ul>";
 			}
 
-			// TODO Merge;
-
-			var scoreDiv = YAHOO.util.Dom.get("scoreLi");
-			if (scoreDiv !== undefined && scoreDiv != null) {
-				var scoreDivClassName = scoreDiv.className;
-				var spriteIndex = scoreDivClassName.split("-")[1];
-				var imgWidth = 74;
-				var widthRatio = imgWidth / 166;
-
-				var rightPos = (((spriteIndex - 1) * (166 + 14) + 2 + (spriteIndex > 4 ? 10 : 0)) * widthRatio) + "px";
-				scoreDiv.style.backgroundPosition = "-" + rightPos + " 0px";
-				scoreDiv.style.width = imgWidth + "px";
-				scoreDiv.style.height = imgWidth + "px";
-
-				var backgroundSize = Math.floor(3629 * widthRatio) + "px " + Math.floor(396 * widthRatio) + "px";
-				scoreDiv.childNodes[0].style.lineHeight = imgWidth + "px";
-				scoreDiv.childNodes[0].style.fontSize = 3 * widthRatio + "em";
-				scoreDiv.style.backgroundSize = backgroundSize;
-			}
+		
 
 			// if we have some constraints in res
 			if (json.rclNumber !== undefined && json.rclNumber != null && json.rclNumber.length > 0) {
 				// Parses each array mapped to dataType
 				html += "<div class=\"dataTypeList\"><div class=\"title\">" + instance.msg("label.constraints.violations")
-						+ "<span class=\"req-all-all rclFilterSelected\"><a class=\"req-filter " + REQFILTER_EVENTCLASS + " href=\"#\">"
+						+ "<span class=\"req-all-all rclFilterSelected\"><a class=\"req-filter " + REQFILTER_EVENTCLASS + "\" href=\"#\">"
 						+ instance.msg("label.constraints.view-all") + "</a></span></div>";
 
 				html += "<div class=\"rclFilterElt\"><div>";
@@ -312,7 +346,7 @@
 					var scoreInfo = "";
 					var dataTypeName = Object.keys(json.rclNumber[dataType])[0];
 					html += "<div class=\"div-" + dataTypeName.toString().toLowerCase() + "\"><span class=\"span-"
-							+ dataTypeName.toString().toLowerCase() + "\"><a class=\"req-filter " + REQFILTER_EVENTCLASS + "\" href=\"#\">"
+							+ dataTypeName.toString().toLowerCase() + "\"><a class=\"req-filter " + REQFILTER_EVENTCLASS + "\" href=\"#\" >"
 							+ instance.msg("label.constraints." + dataTypeName.toString().toLowerCase()) + scoreInfo + "</a></span><ul>";
 
 					var types = json.rclNumber[dataType];
@@ -320,9 +354,9 @@
 					for ( var type in types[dataTypeName]) {
 						var value = types[dataTypeName][type];
 
-						html += "<li><span class=\"req-" + dataTypeName.toString().toLowerCase() + "-" + type + "\" title=\""
-								+ instance.msg("reqTypes." + type) + "\"><a class=\"req-filter " + REQFILTER_EVENTCLASS
-								+ "\" href=\"#\"><span class=\"reqType" + type + "\"></span>" + value + "</a></li>";
+						html += '<li><span class="req-' + dataTypeName.toString().toLowerCase() + '-' + type + '" title="'
+								+ instance.msg("reqTypes." + type) + '"><a class="req-filter ' + REQFILTER_EVENTCLASS
+								+ '" href="#"><span class="reqType' + type + '"></span>' + value + '</a></li>';
 
 					}
 					html += "</ul></div>";
@@ -331,7 +365,7 @@
 				html += "</div></div></div>";
 			}
 
-			html += "</div><div id=\"" + instance.id + "-notificationTable\"></div></div></div>";
+			html += "</div><div id=\"" + instance.id + "-notificationTable\"></div></div>";
 
 			return html;
 
@@ -342,7 +376,7 @@
 		 * 
 		 * @method getWebscriptUrl
 		 */
-		getWebscriptUrl : function ProjectDashlet_getWebscriptUrl() {
+		getWebscriptUrl : function ProductNotifications_getWebscriptUrl() {
 
 			// TODO manque parentNodeRef;
 
@@ -357,54 +391,22 @@
 		 * @method getParameters
 		 * @override
 		 */
-		getParameters : function ProjectDashlet_getParameters() {
+		getParameters : function ProductNotifications_getParameters() {
 
 			var request = {
 				fields : [ "bcpg_rclReqType", "bcpg_rclReqMessage", "bcpg_rclSources", "bcpg_rclDataType" ],
 				page : this.currentPage,
 				queryExecutionId : this.queryExecutionId,
 				filter : {
-					filterId : "all",
+					filterId : this.filterId,
 					filterOwner : null,
-					filterData : "",
-					filterParams : null
+					filterData : this.filterData,
+					filterParams : this.filterParams
 				},
 				extraParams : null
 			};
 			return request;
 
-		},
-
-		onFilterChange : function ProjectDashlet_onFilterChange(p_sType, p_aArgs) {
-
-			var owner = YAHOO.Bubbling.getOwnerByTagName(args[1].anchor, "span");
-			var selectedItems = document.getElementsByClassName("rclFilterSelected");
-
-			// sets clicked item to selected
-			for (var i = 0; i < selectedItems.length; i++) {
-				selectedItems[i].classList.remove("rclFilterSelected");
-			}
-			var chgClass = owner;
-			if (owner.parentNode.nodeName == "LI") {
-				chgClass = owner.parentNode;
-			}
-			YAHOO.util.Dom.addClass(chgClass, "rclFilterSelected");
-
-			// refreshes view by calling filter
-			var splits = owner.className.split("-");
-			var type = (splits.length > 2 ? splits[2].split(" ")[0] : undefined);
-			var dataType = splits[1].charAt(0).toUpperCase() + splits[1].slice(1);
-			YAHOO.Bubbling.fire("constraintsList-" + instance.id + "changeFilter", {
-				filterOwner : "constraintsList-" + instance.id,
-				filterId : (type === "all" && dataType === "All" ? "all" : "filterform"),
-				filterData : (type === "all" && dataType === "All" ? undefined : "{"
-						+ (type !== undefined ? ("\"prop_bcpg_rclReqType\":" + type) : "")
-						+ (dataType !== null ? (type !== undefined ? "," : "") + ("\"prop_bcpg_rclDataType\":" + dataType) : "") + "}")
-			});
-
-			args[0].stopPropagation();
-			args[1].decrepitate = true;
-			this.reloadDataTable();
 		},
 
 		/**
@@ -420,7 +422,7 @@
 		 * @param oData
 		 *            {object|string}
 		 */
-		renderCellDetail : function ProjectDashlet_renderCellDetail(elCell, oRecord, oColumn, oData) {
+		renderCellDetail : function ProductNotifications_renderCellDetail(elCell, oRecord, oColumn, oData) {
 			var record = oRecord.getData(), desc = "", dateLine = "";
 
 			if (record.isInfo) {
@@ -448,9 +450,8 @@
 							pUrl = beCPG.util.entityURL(product.siteId, product.value, null, null, "packagingList");
 						}
 
-						if (pUrl) {
-							//TODO						
-							pUrl += "&bcPath=true&bcList=TODO" ;//+ this.datalistMeta.name;
+						if (pUrl) {						
+							pUrl += "&bcPath=true&bcList="+ this.options.list;
 						}
 
 						desc += '<li><span class="' + product.metadata + '" ><a href="' + pUrl + '">'
