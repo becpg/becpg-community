@@ -76,7 +76,14 @@ public class ReqCtrlWebScript extends AbstractProductWebscript {
 		List<ReqCtrlListDataItem> ctrlList =  product.getReqCtrlList();
 		
 
+		NodeRef reqCtrlListNodeRef = null;
+		
 		for(ReqCtrlListDataItem item : ctrlList){
+			
+			if(reqCtrlListNodeRef == null){
+				reqCtrlListNodeRef = item.getParentNodeRef();
+			}
+			
 			//Filtering on reqType and reqDataType
 			if(rType != null && item.getReqType() != rType){
 				continue;
@@ -117,6 +124,9 @@ public class ReqCtrlWebScript extends AbstractProductWebscript {
 			//puts each count of rclDataItems in ret, mapped with proper key 
 			List<JSONObject> rclSortingArray = new ArrayList<JSONObject>();
 			JSONObject ret = new JSONObject();
+			
+			ret.put("reqCtrlListNodeRef", reqCtrlListNodeRef);
+			
 			for(String dt : counts.keySet()){				
 				Map<String, Integer> currentCount = counts.get(dt);
 

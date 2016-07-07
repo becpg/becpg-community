@@ -68,6 +68,8 @@
 
 			entityNodeRef : "",
 
+			reqCtrlListNodeRef : "",
+
 			entity : null,
 
 			containerDiv : null,
@@ -79,7 +81,7 @@
 		currentPage : 1,
 
 		queryExecutionId : null,
-		
+
 		/**
 		 * Fired by YUI when parent element is available for scripting.
 		 * 
@@ -88,146 +90,149 @@
 		onReady : function ProductNotifications_onReady() {
 
 			var instance = this;
-
-			// Inject the template from the XHR request into a new DIV
-			// element
-			var containerDiv = document.createElement("div");
-			containerDiv.innerHTML = '<div><div id="' + instance.id + '-notificationTable"></div></div>';
-
-			// The panel is created from the HTML returned in the XHR
-			// request, not the container
-			var panelDiv = Dom.getFirstChild(containerDiv);
-			this.widgets.panel = Alfresco.util.createYUIPanel(panelDiv, {
-				draggable : false,
-				width : "50em"
-			});
-
-			this.widgets.dataSource = new YAHOO.util.DataSource(this.getWebscriptUrl(), {
-				connMethodPost : true,
-				responseType : YAHOO.util.DataSource.TYPE_JSON,
-				responseSchema : {
-					resultsList : "items",
-					metaFields : {
-						startIndex : "startIndex",
-						totalRecords : "totalRecords",
-						queryExecutionId : "queryExecutionId"
-					}
-				}
-			});
-			var columDefs = [ {
-				key : "detail",
-				sortable : false,
-				formatter : this.bind(this.renderCellDetail)
-			} ];
-
-			this.widgets.notificationsDataTable = new YAHOO.widget.DataTable(this.id + "-notificationTable", columDefs, this.widgets.dataSource, {
-				initialLoad : false,
-				dynamicData : false,
-				"MSG_EMPTY" : '<span class="wait">' + $html(this.msg("message.loading")) + '</span>',
-				"MSG_ERROR" : this.msg("message.error"),
-				className : "alfresco-datatable simple-doclist",
-				renderLoopSize : 4,
-				paginator : null
-			});
-
-			this.widgets.notificationsDataTable.getDataTable = function() {
-				return this;
-			};
-
-			this.widgets.notificationsDataTable.getData = function(recordId) {
-				return this.getRecord(recordId).getData();
-			};
-
-			// YUI Paginator definition
-			this.widgets.paginator = new YAHOO.widget.Paginator({
-				containers : [ this.id + "-paginator" ],
-				rowsPerPage : this.options.maxItems,
-				initialPage : 1,
-				template : this.msg("pagination.template"),
-				pageReportTemplate : this.msg("pagination.template.page-report"),
-				previousPageLinkLabel : this.msg("pagination.previousPageLinkLabel"),
-				nextPageLinkLabel : this.msg("pagination.nextPageLinkLabel")
-			});
-
-			var handlePagination = function EntityDataGrid_handlePagination(state, scope) {
-				scope.currentPage = state.page;
-				scope.reloadDataTable();
-			};
-
-			this.widgets.paginator.subscribe("changeRequest", handlePagination, this);
-
-			this.widgets.paginator.render();
-
-			this.widgets.notificationsDataTable.loadDataTable = function DataTable_loadDataTable(parameters) {
-				
-				instance.widgets.dataSource.connMgr.setDefaultPostHeader(Alfresco.util.Ajax.JSON);
-					
-                if (Alfresco.util.CSRFPolicy.isFilterEnabled())
-                {
-                	instance.widgets.dataSource.connMgr.initHeader(Alfresco.util.CSRFPolicy.getHeader(),
-                            Alfresco.util.CSRFPolicy.getToken(), false);
-                }
-				
-                
-				instance.widgets.dataSource.sendRequest(YAHOO.lang.JSON.stringify(parameters), {
-					success : function DataTable_loadDataTable_success(oRequest, oResponse, oPayload) {
-						instance.widgets.notificationsDataTable.onDataReturnReplaceRows(oRequest, oResponse, oPayload);
-
-						if (instance.widgets.paginator) {
-							instance.widgets.paginator.set('totalRecords', oResponse.meta.totalRecords);
-							instance.widgets.paginator.setPage(oResponse.meta.startIndex, true);
-						}
-						instance.queryExecutionId = oResponse.meta.queryExecutionId;
-
-					},
-					// success :
-					// me.widgets.alfrescoDataTable.onDataReturnSetRows,
-					failure : instance.widgets.notificationsDataTable.onDataReturnReplaceRows,
-					scope : instance.widgets.notificationsDataTable,
-					argument : {}
-				});
-			};
-			// Override DataTable function to set custom empty message
-			var dataTable = this.widgets.notificationsDataTable, original_doBeforeLoadData = dataTable.doBeforeLoadData;
-
-			dataTable.doBeforeLoadData = function SimpleDocList_doBeforeLoadData(sRequest, oResponse, oPayload) {
-				if (oResponse.results && oResponse.results.length === 0) {
-					oResponse.results.unshift({
-						isInfo : true,
-						title : instance.msg("empty.notifications.title"),
-						description : instance.msg("empty.notifications.description")
-					});
-				}
-
-				return original_doBeforeLoadData.apply(this, arguments);
-			};
+			
+//			TODO
+//			new YAHOO.widget.Panel(this, "show-notifications", {
+//				width : "240px",
+//				fixedcenter : false,
+//				close : false,
+//				draggable : false,
+//				zindex : 99,
+//				modal : false,
+//				visible : false
+//			});
 
 			this.widgets.showNotificationsButton = this.createYUIButton(this, "show-notifications", function() {
 
 				instance.reloadDataTable();
 				instance.widgets.panel.show();
+				
 			});
+			
+			Dom.addClass(instance.id +"-show-notifications", "loading");
 
-//			Alfresco.util.Ajax.request({
-//				url : Alfresco.constants.PROXY_URI + "becpg/product/reqctrllist/node/" + instance.options.entityNodeRef.replace(":/", "") + "?view="
-//						+ instance.options.list,
-//				method : Alfresco.util.Ajax.GET,
-//				responseContentType : Alfresco.util.Ajax.JSON,
-//				successCallback : {
-//					fn : function(response) {
-//
-//						// TODO
-//
-//						instance.reloadDataTable();
-//
-//						YAHOO.Bubbling.addDefaultAction(REQFILTER_EVENTCLASS, instance.onFilterChange);
-//
-//					},
-//					scope : instance
-//				},
-//				failureMessage : "Could not load html template for version graph",
-//				execScripts : true
-//			});
+			Alfresco.util.Ajax.request({
+				url : Alfresco.constants.PROXY_URI + "becpg/product/reqctrllist/node/" + instance.options.entityNodeRef.replace(":/", "") + "?view="
+						+ instance.options.list,
+				method : Alfresco.util.Ajax.GET,
+				responseContentType : Alfresco.util.Ajax.JSON,
+				successCallback : {
+					fn : function(response) {
+
+						if (response.json) {
+
+							instance.options.reqCtrlListNodeRef = response.json.reqCtrlListNodeRef != null ? response.json.reqCtrlListNodeRef : "";
+
+							// Inject the template from the XHR request into a
+							// new DIV
+							// element
+							var containerDiv = document.createElement("div");
+
+							containerDiv.innerHTML = instance.createPanel(response.json);
+
+							// The panel is created from the HTML returned in
+							// the XHR
+							// request, not the container
+							var panelDiv = Dom.getFirstChild(containerDiv);
+							this.widgets.panel = Alfresco.util.createYUIPanel(panelDiv, {
+								draggable : false,
+								fixedcenter: false,
+								width : "50em"
+							});
+
+							instance.widgets.dataSource = new YAHOO.util.DataSource(this.getWebscriptUrl(), {
+								connMethodPost : true,
+								responseType : YAHOO.util.DataSource.TYPE_JSON,
+								responseSchema : {
+									resultsList : "items",
+									metaFields : {
+										startIndex : "startIndex",
+										totalRecords : "totalRecords",
+										queryExecutionId : "queryExecutionId"
+									}
+								}
+							});
+							var columDefs = [ {
+								key : "detail",
+								sortable : false,
+								formatter : this.bind(this.renderCellDetail)
+							} ];
+
+							instance.widgets.notificationsDataTable = new YAHOO.widget.DataTable(instance.id + "-notificationTable", columDefs,
+									instance.widgets.dataSource, {
+										initialLoad : false,
+										dynamicData : false,
+										"MSG_EMPTY" : '<span class="wait">' + $html(this.msg("message.loading")) + '</span>',
+										"MSG_ERROR" : this.msg("message.error"),
+										className : "alfresco-datatable simple-doclist",
+										renderLoopSize : 4,
+										paginator : null
+									});
+
+							instance.widgets.notificationsDataTable.getDataTable = function() {
+								return this;
+							};
+
+							instance.widgets.notificationsDataTable.getData = function(recordId) {
+								return this.getRecord(recordId).getData();
+							};
+
+							instance.widgets.notificationsDataTable.loadDataTable = function DataTable_loadDataTable(parameters) {
+
+								instance.widgets.dataSource.connMgr.setDefaultPostHeader(Alfresco.util.Ajax.JSON);
+
+								if (Alfresco.util.CSRFPolicy.isFilterEnabled()) {
+									instance.widgets.dataSource.connMgr.initHeader(Alfresco.util.CSRFPolicy.getHeader(), Alfresco.util.CSRFPolicy
+											.getToken(), false);
+								}
+
+								instance.widgets.dataSource.sendRequest(YAHOO.lang.JSON.stringify(parameters), {
+									success : function DataTable_loadDataTable_success(oRequest, oResponse, oPayload) {
+										instance.widgets.notificationsDataTable.onDataReturnReplaceRows(oRequest, oResponse, oPayload);
+
+										if (instance.widgets.paginator) {
+											instance.widgets.paginator.set('totalRecords', oResponse.meta.totalRecords);
+											instance.widgets.paginator.setPage(oResponse.meta.startIndex, true);
+										}
+										instance.queryExecutionId = oResponse.meta.queryExecutionId;
+
+									},
+									// success :
+									// me.widgets.alfrescoDataTable.onDataReturnSetRows,
+									failure : instance.widgets.notificationsDataTable.onDataReturnReplaceRows,
+									scope : instance.widgets.notificationsDataTable,
+									argument : {}
+								});
+							};
+							// Override DataTable function to set custom empty
+							// message
+							var dataTable = instance.widgets.notificationsDataTable, original_doBeforeLoadData = dataTable.doBeforeLoadData;
+
+							dataTable.doBeforeLoadData = function SimpleDocList_doBeforeLoadData(sRequest, oResponse, oPayload) {
+								if (oResponse.results && oResponse.results.length === 0) {
+									oResponse.results.unshift({
+										isInfo : true,
+										title : instance.msg("empty.notifications.title"),
+										description : instance.msg("empty.notifications.description")
+									});
+								}
+
+								return original_doBeforeLoadData.apply(this, arguments);
+							};
+
+							
+							Dom.removeClass(instance.id +"-show-notifications", "loading");
+							
+							YAHOO.Bubbling.addDefaultAction(REQFILTER_EVENTCLASS, instance.onFilterChange);
+
+						}
+
+					},
+					scope : instance
+				},
+				failureMessage : "Could not load html template for version graph",
+				execScripts : true
+			});
 
 		},
 
@@ -254,13 +259,13 @@
 
 		createPanel : function(json) {
 
-			var instance = me;
+			var instance = this;
 
-			var html = "<div id=\"scoresDiv\" class=\"ctrlSumPreview dashlet datagrid\" style=\"visibility: visible;\">";
+			var html = "<div><div class=\"hd\"></div><div class=\"bd\"><div id=\""+instance.id+"-scoresDiv\" class=\"ctrlSumPreview  \" >";
 
 			// put score div
-			if (object.scores !== undefined) {
-				var scores = object.scores;
+			if (json.scores !== undefined) {
+				var scores = json.scores;
 				var intScore = parseInt(scores.global);
 				var spriteIndex = (intScore / 5 >> 0);
 
@@ -295,7 +300,7 @@
 			}
 
 			// if we have some constraints in res
-			if (object.rclNumber !== undefined && object.rclNumber != null && object.rclNumber.length > 0) {
+			if (json.rclNumber !== undefined && json.rclNumber != null && json.rclNumber.length > 0) {
 				// Parses each array mapped to dataType
 				html += "<div class=\"dataTypeList\"><div class=\"title\">" + instance.msg("label.constraints.violations")
 						+ "<span class=\"req-all-all rclFilterSelected\"><a class=\"req-filter " + REQFILTER_EVENTCLASS + " href=\"#\">"
@@ -303,14 +308,14 @@
 
 				html += "<div class=\"rclFilterElt\"><div>";
 
-				for ( var dataType in object.rclNumber) {
+				for ( var dataType in json.rclNumber) {
 					var scoreInfo = "";
-					var dataTypeName = Object.keys(object.rclNumber[dataType])[0];
+					var dataTypeName = Object.keys(json.rclNumber[dataType])[0];
 					html += "<div class=\"div-" + dataTypeName.toString().toLowerCase() + "\"><span class=\"span-"
 							+ dataTypeName.toString().toLowerCase() + "\"><a class=\"req-filter " + REQFILTER_EVENTCLASS + "\" href=\"#\">"
 							+ instance.msg("label.constraints." + dataTypeName.toString().toLowerCase()) + scoreInfo + "</a></span><ul>";
 
-					var types = object.rclNumber[dataType];
+					var types = json.rclNumber[dataType];
 
 					for ( var type in types[dataTypeName]) {
 						var value = types[dataTypeName][type];
@@ -326,7 +331,7 @@
 				html += "</div></div></div>";
 			}
 
-			html += "</div>";
+			html += "</div><div id=\"" + instance.id + "-notificationTable\"></div></div></div>";
 
 			return html;
 
@@ -338,12 +343,11 @@
 		 * @method getWebscriptUrl
 		 */
 		getWebscriptUrl : function ProjectDashlet_getWebscriptUrl() {
-			
-			//TODO manque parentNodeRef;
-			
-			return Alfresco.constants.PROXY_URI
-					+ "becpg/entity/datalists/data/node?repo=true&itemType=bcpg:reqCtrlList&pageSize=50&dataListName=reqCtrlList&entityNodeRef="
-					+ this.options.entityNodeRef;
+
+			// TODO manque parentNodeRef;
+
+			return Alfresco.constants.PROXY_URI + "becpg/entity/datalists/data/node/" + this.options.reqCtrlListNodeRef.replace(":/", "")
+					+ "?repo=true&itemType=bcpg:reqCtrlList&pageSize=50&dataListName=reqCtrlList&entityNodeRef=" + this.options.entityNodeRef;
 
 		},
 
@@ -428,10 +432,10 @@
 				var reqProducts = oRecord.getData("itemData")["assoc_bcpg_rclSources"];
 				desc += '<div class="rclReq-details">';
 				if (reqType) {
-					html += '   <div class="icon" ><span class="reqType' + reqType + '" title="'
-							+ Alfresco.util.encodeHTML(scope.msg("data.reqtype." + reqType.toLowerCase())) + '">&nbsp;</span></div>';
+					desc += '   <div class="icon" ><span class="reqType' + reqType + '" title="'
+							+ Alfresco.util.encodeHTML(this.msg("data.reqtype." + reqType.toLowerCase())) + '">&nbsp;</span></div>';
 				}
-				desc += '      <div class="rclReq-title">' + Alfresco.util.encodeHTML(data.displayValue) + '</div>';
+				desc += '      <div class="rclReq-title">' + Alfresco.util.encodeHTML(oRecord.getData("itemData")["prop_bcpg_rclReqMessage"].displayValue) + '</div>';
 				desc += '      <div class="rclReq-content"><ul>';
 
 				if (reqProducts) {
@@ -440,15 +444,16 @@
 
 						if (product.metadata.indexOf("finishedProduct") != -1 || product.metadata.indexOf("semiFinishedProduct") != -1) {
 							pUrl = beCPG.util.entityURL(product.siteId, product.value, null, null, "compoList");
-						} else if (data.metadata.indexOf("packagingKit") != -1) {
+						} else if (product.metadata.indexOf("packagingKit") != -1) {
 							pUrl = beCPG.util.entityURL(product.siteId, product.value, null, null, "packagingList");
 						}
 
 						if (pUrl) {
-							pUrl += "&bcPath=true&bcList=" + scope.datalistMeta.name;
+							//TODO						
+							pUrl += "&bcPath=true&bcList=TODO" ;//+ this.datalistMeta.name;
 						}
 
-						html += '<li><span class="' + product.metadata + '" ><a href="' + pUrl + '">'
+						desc += '<li><span class="' + product.metadata + '" ><a href="' + pUrl + '">'
 								+ Alfresco.util.encodeHTML(product.displayValue) + '</a></span></li>';
 
 					}
