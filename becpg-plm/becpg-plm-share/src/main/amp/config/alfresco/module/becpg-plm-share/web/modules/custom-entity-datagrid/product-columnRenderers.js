@@ -464,7 +464,7 @@ if (beCPG.module.EntityDataGridRenderers) {
                             
                             if (product.metadata.indexOf("finishedProduct") != -1 || product.metadata.indexOf("semiFinishedProduct") != -1) {
                             	pUrl = beCPG.util.entityURL(product.siteId, product.value,null,null,"compoList");
-            				} else if (data.metadata.indexOf("packagingKit") != -1) {
+            				} else if (product.metadata.indexOf("packagingKit") != -1) {
             					pUrl = beCPG.util.entityURL(product.siteId, product.value,null,null,"packagingList");
             				} 
                             
