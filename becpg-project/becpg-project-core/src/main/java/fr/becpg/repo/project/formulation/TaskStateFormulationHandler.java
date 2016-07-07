@@ -82,7 +82,7 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 				|| projectData.getAspects().contains(BeCPGModel.ASPECT_COMPOSITE_VERSION) || ProjectState.Cancelled.equals(projectData.getProjectState())
 				|| ProjectState.OnHold.equals(projectData.getProjectState())) {
 			for (TaskListDataItem task : projectData.getTaskList()) {
-				if (TaskState.InProgress.equals(task.getTaskState()) && projectWorkflowService.isWorkflowActive(task)) {
+				if (projectWorkflowService.isWorkflowActive(task)) {
 					logger.debug("Cancel workflow of project " + projectData.getName() + " for task " + task.getTaskName());
 					projectWorkflowService.cancelWorkflow(task);
 				}
