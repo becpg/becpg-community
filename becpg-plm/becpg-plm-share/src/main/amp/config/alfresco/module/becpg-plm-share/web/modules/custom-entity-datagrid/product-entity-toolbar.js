@@ -568,6 +568,8 @@ YAHOO.Bubbling
                 var widget = new beCPG.component.ProductNotifications(instance.id + "-productNotifications").setOptions({
                    entityNodeRef : instance.options.entityNodeRef,
                    entity : instance.entity,
+                   list : encodeURIComponent(instance.datalistMeta.name != null ? instance.datalistMeta.name
+                           : instance.options.list),
                    containerDiv : divEl,
                    toolBarInstance : instance
                 });
