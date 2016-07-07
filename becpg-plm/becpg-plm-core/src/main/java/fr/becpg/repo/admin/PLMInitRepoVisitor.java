@@ -232,7 +232,12 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/olap/*.saiku");
 		}
 		if (Objects.equals(folderName, PlmRepoConsts.PATH_NUT_DATABASES)) {
-			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/nutDatabases/*.csv");
+			if(Locale.FRENCH.toString().equals(Locale.getDefault().getLanguage())){
+				contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/nutDatabases/fr/*.csv");
+			} else {
+				contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/nutDatabases/en/*.csv");
+			}
+			
 		}
 	}
 
