@@ -5,6 +5,25 @@
 parseActions(page.url.args.list!=null ?page.url.args.list : null);
 
 
+function getCustomLists()
+{
+   var myConfig = new XML(config.script),
+   customLists = [];
+
+   for each (var xmlCustomList in myConfig..customList)
+   {
+	   customLists.push(
+      {
+    	 id: xmlCustomList.@id.toString(),
+         type: xmlCustomList.@type.toString(),
+         selected: xmlCustomList.@selected.toString(),
+         formId: xmlCustomList.@formId.toString()
+      });
+   }
+   return customLists;
+}
+
+
 function main()
 {
    
@@ -20,11 +39,28 @@ var formulationView = {
    }
 };
 
+
+var customListPrefs = AlfrescoUtil.getPreferences("fr.becpg.formulation.dashlet.custom."+(page.url.args.list != null) ? page.url.args.list : "");
+
+model.customLists = getCustomLists();
+
+model.customListName = "costList";
+model.customListType = "bcpg:costList";
+
+//
+//if(customListPrefs){
+//   if(!model.customListPrefs){
+//      model.customListPrefs = {};
+//   }
+//   model.customListPrefs[dashletId] = prefs;
+//}
+
+
 model.widgets = [formulationView];
 
 model.widgets = model.widgets.concat(createDashlet("compoList-"+args.htmlid, "compoListDashlet"));
 model.widgets = model.widgets.concat(createDashlet("dynamicCharactList-"+args.htmlid, "dynamicCharactListDashlet",msg.get("dashlet.dynamicCharactList.title"),"bcpg:dynamicCharactList",true));
-model.widgets = model.widgets.concat(createDashlet("constraintsList-"+args.htmlid, "constraintsListDashlet",msg.get("dashlet.constraintsList.title"),"bcpg:reqCtrlList",true));
+model.widgets = model.widgets.concat(createDashlet("customList-"+args.htmlid, "customListDashlet",msg.get("dashlet."+model.customListName+".title"),model.customListType, true , model.customListName, "formulation", "&repo=true&guessContainer=true" ));
 
 }
 
