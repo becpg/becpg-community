@@ -111,151 +111,20 @@
 			YAHOO.util.Event.addListener("dynamicCharactList-" + this.id + "-colCheckbox", "click", function(e) {
 				YAHOO.Bubbling.fire("dynamicCharactList-" + instance.id + "refreshDataGrid");
 			});
+			
+			
+			this.widgets.customList = Alfresco.util.createYUIButton(this, "customLists", this.onCustomListChange, {
+                type : "menu",
+                menu : "customLists-menu",
+                lazyloadmenu : false
+             });
 
-			//creates a new id
-			var REQFILTER_EVENTCLASS = Alfresco.util.generateDomId(null, "reqType");
-
-			//creates html divs out of json get
-			function parseJsonToHTML(object){
-
-				if(Object.keys(object).length > 0){
-
-					var html="<div id=\"scoresDiv\" class=\"ctrlSumPreview dashlet datagrid\" style=\"visibility: visible;\">";
-
-					//put score div
-					if(object.scores !== undefined){
-						var scores = object.scores;					
-						var intScore = parseInt(scores.global);					
-						var spriteIndex=(intScore/5>>0);
-
-						html+="<ul><li class=\"title\">"+instance.msg("label.product.scores")+"</li><li id=\"scoreLi\" class=\"score-"+spriteIndex+"\" " +
-						"title=\""+instance.msg("tooltip.components.validation")+": "+Math.floor(scores.details.componentsValidation)+
-						"%\n"+instance.msg("tooltip.mandatory.completion")+": "+Math.floor(scores.details.mandatoryFields)+
-						"%\n"+instance.msg("tooltip.specification.respect")+": "+Math.floor(scores.details.specifications)+"%\">";
-
-						html+="<span>"+Math.floor(scores.global)+"%</span>";
-						html+="</li></ul>";
-					}
-
-					
-
-					//if we have some constraints in res
-					if(object.rclNumber !== undefined && object.rclNumber != null && object.rclNumber.length > 0){					
-						//Parses each array mapped to dataType
-						html+="<div class=\"dataTypeList\"><div class=\"title\">"+instance.msg("label.constraints.violations")+"<span class=\"req-all-all rclFilterSelected\"><a class=\"req-filter "+REQFILTER_EVENTCLASS + " href=\"#\">"+instance.msg("label.constraints.view-all")+"</a></span></div>";
-
-						html+="<div class=\"rclFilterElt\"><div>";
-
-						for(var dataType in object.rclNumber){
-								var scoreInfo = "";
-								var dataTypeName = Object.keys(object.rclNumber[dataType])[0];
-								html+="<div class=\"div-"+dataTypeName.toString().toLowerCase()+"\"><span class=\"span-"+dataTypeName.toString().toLowerCase()+"\"><a class=\"req-filter "+REQFILTER_EVENTCLASS+"\" href=\"#\">"+instance.msg("label.constraints."+dataTypeName.toString().toLowerCase())+scoreInfo+"</a></span><ul>";
-
-								var types = object.rclNumber[dataType];
-
-								for(var type in types[dataTypeName]){
-									var value = types[dataTypeName][type];
-
-									html+="<li><span class=\"req-"+dataTypeName.toString().toLowerCase()+"-"+type+"\" title=\""+instance.msg("reqTypes."+type)+"\"><a class=\"req-filter "+REQFILTER_EVENTCLASS+ "\" href=\"#\"><span class=\"reqType"+type+"\"></span>"+value+"</a></li>";
-
-								}        		  
-								html+="</ul></div>";
-							
-						}
-						html+="</div></div></div>";
-					}
-
-					html+="</div>";
-
-					return html;
-				} else {
-					return null;
-				}
-			} 
-
-			//handles filtering on click
-			var fnOnTypeFilterHandler = function PL__fnOnShowTaskHandler(layer, args) {
-				try {
-					var owner = YAHOO.Bubbling.getOwnerByTagName(args[1].anchor, "span"); 
-					var selectedItems = document.getElementsByClassName("rclFilterSelected");
-
-					//sets clicked item to selected
-					for(var i = 0; i < selectedItems.length; i++){
-						selectedItems[i].classList.remove("rclFilterSelected");
-					}
-					var chgClass = owner;
-					if(owner.parentNode.nodeName == "LI"){
-						chgClass = owner.parentNode;
-					}
-					YAHOO.util.Dom.addClass(chgClass, "rclFilterSelected");
-
-					//refreshes view by calling filter
-					var splits = owner.className.split("-");  
-					var type = (splits.length > 2 ? splits[2].split(" ")[0] : undefined); 
-					var dataType = splits[1].charAt(0).toUpperCase()+splits[1].slice(1);     
-					YAHOO.Bubbling.fire("constraintsList-"+instance.id+"changeFilter",
-							{
-						filterOwner : "constraintsList-"+instance.id,
-						filterId : (type === "all" && dataType === "All" ? "all": "filterform"),
-						filterData : (type === "all" && dataType === "All" ? undefined : "{"+(type!==undefined ? ("\"prop_bcpg_rclReqType\":"+type) : "") + ( dataType !== null ? (type !== undefined ? "," : "") + ("\"prop_bcpg_rclDataType\":"+dataType) : "") +"}")
-							});
-
-					args[0].stopPropagation();
-					args[1].decrepitate = true;
-				} catch(e){
-					alert(e);
-				}
-				return true;
-			};          
-
-			YAHOO.Bubbling.addDefaultAction(REQFILTER_EVENTCLASS, fnOnTypeFilterHandler);
-
-			var recallWebScript = function FormulationView_recallWebScript(layer, args){
-				//init
-				var view = args[1].list;
-				if(view !== undefined){
-					instance.options.list = view;
-				}
-				
-				Alfresco.util.Ajax.request({
-					url : Alfresco.constants.PROXY_URI + "becpg/product/reqctrllist/node/" + instance.options.entityNodeRef.replace(":/","")+"?view="+instance.options.list,
-					method : Alfresco.util.Ajax.GET,
-					responseContentType : Alfresco.util.Ajax.JSON,
-					successCallback : {
-						fn : function (response){
-							YAHOO.util.Dom.get("constraintsList-"+instance.id+"-scores").innerHTML= parseJsonToHTML(response.json, instance);
-							var scoreDiv = YAHOO.util.Dom.get("scoreLi");
-							if(scoreDiv !== undefined && scoreDiv != null){
-								var scoreDivClassName = scoreDiv.className;
-								var spriteIndex = scoreDivClassName.split("-")[1];
-								var imgWidth = 74;
-								var widthRatio = imgWidth/166;
-
-								var	rightPos = (((spriteIndex-1)*(166+14)+2+(spriteIndex>4?10:0))*widthRatio)+"px";
-								scoreDiv.style.backgroundPosition = "-"+rightPos+" 0px";
-								scoreDiv.style.width=imgWidth+"px";
-								scoreDiv.style.height=imgWidth+"px";
-
-								var backgroundSize= Math.floor(3629*widthRatio)+"px "+Math.floor(396*widthRatio)+"px";
-								scoreDiv.childNodes[0].style.lineHeight=imgWidth+"px";
-								scoreDiv.childNodes[0].style.fontSize=3*widthRatio+"em";
-								scoreDiv.style.backgroundSize=backgroundSize;
-							} 
-							
-							var createdDiv = YAHOO.util.Dom.get("constraintsList-"+instance.id+"-scores");
-							var constraintsListGrid = YAHOO.util.Dom.get("constraintsList-"+instance.id+"-grid");
-							YAHOO.util.Dom.insertBefore(createdDiv, constraintsListGrid.parentNode);
-						},
-						scope : instance
-					},
-					failureMessage : "Could not load html template for version graph",
-					execScripts : true
-				});    
-			};
-
-			//automatic refresh on formulation
-			YAHOO.Bubbling.on( "refreshDataGrids", recallWebScript, this);
-			YAHOO.Bubbling.on( "activeDataListChanged", recallWebScript, this); 
+//             // Select the preferred filter in the ui
+//             var customList = this.options.customList;
+//             customList = Alfresco.util.arrayContains(this.options.validFilters, filter) ? filter
+//                   : this.options.validFilters[0];
+//             this.widgets.filter.set("label", this.msg("filter." + filter)+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
+//             this.widgets.filter.value = filter;
 
 		},
 

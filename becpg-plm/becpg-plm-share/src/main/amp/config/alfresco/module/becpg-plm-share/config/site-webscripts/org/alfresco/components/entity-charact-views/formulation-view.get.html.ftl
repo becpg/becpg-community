@@ -44,7 +44,7 @@
 			<div id="main-view-${el}" class="formulation-view">
 					<div id="full-screen-form" class=" hidden"></div>
 					<@dataGridDashlet dashletName="compoListDashlet" dashletId="compoList-${el}" hideTitle="true" hideToolbar="true" />
-					<div class="yui-gc">
+					<div class="yui-gd">
 						<div class="yui-u first dynamicCharactList">
 							<@dataGridDashlet  dashletName="dynamicCharactListDashlet"
 								dashletId="dynamicCharactList-${el}" 
@@ -58,14 +58,22 @@
 					   		</div>
 						</div>
 					   <div class="yui-u ">
-					   		<div class="constraintsList">
-					   		
-					   		<div id="constraintsList-${el}-scores" class="formulation-view"></div>
-					   		
-					   		   <@dataGridDashlet dashletName="constraintsListDashlet"
-							   	dashletId="constraintsList-${el}" 
-							   	dashletTitle=msg("dashlet.constraintsList.title")
-							   	itemType="bcpg:reqCtrlList"  hideTitle="false" />
+					   		<div class="customList">
+					   			<span class="align-left yui-button yui-menu-button" id="${el}-customLists">
+						            <span class="first-child">
+						               <button type="button" tabindex="0"></button>
+						            </span>
+						         </span>
+						         <select id="${el}-customLists-menu">
+							         <#list customLists as customList>
+							            <option value="${customList.id?html}">${msg("dashlet." + customList.id+ "title")}</option>
+							         </#list>
+						         </select>
+	
+					   		   <@dataGridDashlet dashletName="customListDashlet"
+							   	dashletId="customList-${el}" 
+							   	dashletTitle=msg("dashlet.${customListName}.title")
+							   	itemType="${customListType}" />
 							  
 							</div>
 					   </div>
