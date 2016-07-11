@@ -9,6 +9,7 @@
 		  	<div  class="title<#if extra["hideTitle"]?? > hidden</#if>"><#if extra["dashletTitle"]??>${extra["dashletTitle"]?string}<#else><span id="${dashletId}-title"></span>&nbsp;(<span id="${dashletId}-description"></span>)</#if></div>
 			 <div class="toolbar datagrid-bar flat-button">
 			      <div class="left">
+			      	  <#nested>
 			          <#if !extra["hideFilter"]?? >
 			      		<div class="filter-form" >
 							<button id="${dashletId}-filterform-button">${msg("filterform.header")}&nbsp;&#9662;</button>

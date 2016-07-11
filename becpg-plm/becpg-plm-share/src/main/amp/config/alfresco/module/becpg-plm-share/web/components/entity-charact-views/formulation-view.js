@@ -96,7 +96,17 @@
 			/**
 			 * Current list
 			 */
-			list : ""
+			list : "",
+
+			/**
+			 * customListTypes
+			 */
+			customLists : null,
+
+			/**
+			 * Selected customList
+			 */
+			customListName : ""
 		},
 
 		formulationLock : false,
@@ -111,20 +121,18 @@
 			YAHOO.util.Event.addListener("dynamicCharactList-" + this.id + "-colCheckbox", "click", function(e) {
 				YAHOO.Bubbling.fire("dynamicCharactList-" + instance.id + "refreshDataGrid");
 			});
-			
-			
-			this.widgets.customList = Alfresco.util.createYUIButton(this, "customLists", this.onCustomListChange, {
-                type : "menu",
-                menu : "customLists-menu",
-                lazyloadmenu : false
-             });
 
-//             // Select the preferred filter in the ui
-//             var customList = this.options.customList;
-//             customList = Alfresco.util.arrayContains(this.options.validFilters, filter) ? filter
-//                   : this.options.validFilters[0];
-//             this.widgets.filter.set("label", this.msg("filter." + filter)+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
-//             this.widgets.filter.value = filter;
+			this.widgets.customList = Alfresco.util.createYUIButton(this, "customLists", this.onCustomListChange, {
+				type : "menu",
+				menu : "customLists-menu",
+				lazyloadmenu : false
+			});
+
+			// Select the preferred filter in the ui
+			this.widgets.customList.set("label", this.msg("dashlet." + this.options.customListName + ".title") + " "
+					+ Alfresco.constants.MENU_ARROW_SYMBOL);
+			
+			 this.services.preferences = new Alfresco.service.Preferences();
 
 		},
 
@@ -144,7 +152,7 @@
 							YAHOO.Bubbling.fire("refreshDataGrids", {
 								updateOnly : true,
 								callback : function() {
-									me.formulationLock  = false;
+									me.formulationLock = false;
 									Dom.removeClass(formulateButton, "loading");
 								}
 							});
@@ -154,7 +162,43 @@
 				});
 			}
 
+		},
+		onCustomListChange : function FormulationView_onCustomListChange(p_sType, p_aArgs) {
+			var menuItem = p_aArgs[1];
+			if (menuItem) {
+				try {
+					this.widgets.customList.set("label", menuItem.cfg.getProperty("text") + " " + Alfresco.constants.MENU_ARROW_SYMBOL);
+					this.widgets.customList.value = menuItem.value;
+
+					var prefs = "fr.becpg.formulation.dashlet.custom";
+
+					if (this.options.list != null && this.options.list.length > 0) {
+						prefs += "." + this.options.list;
+					}
+
+					for ( var j in this.options.customLists) {
+						var customList = this.options.customLists[j];
+							if (this.widgets.customList.value == customList.id) {
+								YAHOO.Bubbling.fire("customList-" + this.id + "scopedActiveDataListChanged", {
+									dataList : {
+										name : customList.id,
+										itemType : customList.type
+									}
+								});
+
+								break;
+							}
+
+					}
+
+					this.services.preferences.set(prefs, this.widgets.customList.value);
+
+				} catch (e) {
+					alert(e);
+				}
+			}
 		}
+
 	});
 
 })();

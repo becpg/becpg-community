@@ -59,21 +59,23 @@
 						</div>
 					   <div class="yui-u ">
 					   		<div class="customList">
-					   			<span class="align-left yui-button yui-menu-button" id="${el}-customLists">
-						            <span class="first-child">
-						               <button type="button" tabindex="0"></button>
-						            </span>
-						         </span>
-						         <select id="${el}-customLists-menu">
-							         <#list customLists as customList>
-							            <option value="${customList.id?html}">${msg("dashlet." + customList.id+ "title")}</option>
-							         </#list>
-						         </select>
-	
 					   		   <@dataGridDashlet dashletName="customListDashlet"
 							   	dashletId="customList-${el}" 
-							   	dashletTitle=msg("dashlet.${customListName}.title")
-							   	itemType="${customListType}" />
+							   	dashletTitle=msg("dashlet.customList.title")
+							   	itemType="${customListType}" >
+									<div class="customListMenu">
+										<span class="align-left yui-button yui-menu-button" id="${el}-customLists">
+								            <span class="first-child">
+								               <button type="button" tabindex="0"></button>
+								            </span>
+								         </span>
+								         <select id="${el}-customLists-menu">
+									         <#list customLists as customList>
+									            <option value="${customList.id?html}">${msg("dashlet." + customList.id+ ".title")}</option>
+									         </#list>
+								         </select>
+							         </div>
+								</@dataGridDashlet>
 							  
 							</div>
 					   </div>
