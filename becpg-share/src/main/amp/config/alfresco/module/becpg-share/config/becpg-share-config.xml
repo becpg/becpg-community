@@ -137,6 +137,17 @@
 	</config>
 
 
+	 <config evaluator="string-compare" condition="WebFramework" replace="false">
+          <web-framework>
+            <dojo-pages> 
+                <packages> 
+                    <package name="grid" location="/share/modules/entity-datagrid/lib"/> 
+                </packages>
+            </dojo-pages>
+          </web-framework>
+        </config>
+	
+
 	<config evaluator="string-compare" condition="DocLibCustom">
 		<dependencies>
 			<css src="/modules/entity-version/new-version.css" />

@@ -351,7 +351,12 @@
                             /**
                              * filter formId
                              */
-                            filterFormId : "filter"
+                            filterFormId : "filter",
+                            
+                            /**
+                             * Floating header
+                             */
+                            floatingHeader : true
                         },
 
                         /**
@@ -753,6 +758,9 @@
                                this.populateDataGrid();
                             }
 
+                            
+                            
+                            
                             // Finally show the component body here to prevent
                             // UI
                             // artifacts on YUI button decoration
@@ -1836,9 +1844,25 @@
                                         me.widgets.dataTable.dtdTargets[id].unreg();
                                         delete me.widgets.dataTable.dtdTargets[id];
                                     }
-                                });
+                                });            
 
                             }
+                            
+
+                            if(this.options.floatingHeader){
+                            	
+	                            require([
+	                        	         "jquery", "grid/floatthead"
+	                        	       ], function(jQuery) {
+	                            	
+	
+	                            	var $table = jQuery(me.widgets.dataTable._elTable);
+	                            	$table.floatThead({zIndex:1});
+	                            	
+	                            });
+                            
+                            }
+
 
                         },
 
@@ -2430,7 +2454,7 @@
                             	}
                             	
                                 this.datalistMeta = obj.dataList;
-                                if(obj.dataList.itemType!=null){
+                                if(obj.dataList.itemType!=null && obj.force == true){
                                 	this.options.itemType = obj.dataList.itemType;
                                 }
                                 

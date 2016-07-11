@@ -123,6 +123,11 @@
 	padding: 4px;
 }
 
+.datagrid .yui-dt thead {
+	background-color: white;
+}
+
+
 .datagrid .yui-dt-col-nodeRef {
 	width: 24px;
 }
