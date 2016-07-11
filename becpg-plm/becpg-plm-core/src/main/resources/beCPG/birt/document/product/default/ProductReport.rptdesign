@@ -6793,6 +6793,7 @@ dataSetRow["name"]
                                         <property name="borderTopColor">#FFFFFF</property>
                                         <label id="925">
                                             <property name="fontFamily">"arial"</property>
+                                            <property name="fontSize">8pt</property>
                                             <property name="display">inline</property>
                                             <text-property name="text" key="page">Page : </text-property>
                                         </label>
@@ -6803,15 +6804,18 @@ dataSetRow["name"]
                                         <property name="borderRightColor">#FFFFFF</property>
                                         <property name="borderTopColor">#FFFFFF</property>
                                         <auto-text id="933">
+                                            <property name="fontSize">8pt</property>
                                             <property name="display">inline</property>
                                             <property name="type">page-number</property>
                                         </auto-text>
                                         <text id="935">
+                                            <property name="fontSize">8pt</property>
                                             <property name="display">inline</property>
                                             <property name="contentType">plain</property>
                                             <text-property name="content"><![CDATA[/]]></text-property>
                                         </text>
                                         <auto-text id="937">
+                                            <property name="fontSize">8pt</property>
                                             <property name="display">inline</property>
                                             <property name="type">total-page</property>
                                         </auto-text>
@@ -9611,7 +9615,7 @@ dataSetRow["packagingListProduct"]
                                         <cell id="2374">
                                             <label id="2392">
                                                 <text-property name="text" key="netWeight">Poids net 
-env en kg</text-property>
+en g</text-property>
                                             </label>
                                         </cell>
                                         <cell id="2375">
@@ -9677,8 +9681,8 @@ else{
                                         <cell id="2364">
                                             <data id="2766">
                                                 <structure name="numberFormat">
-                                                    <property name="category">Fixed</property>
-                                                    <property name="pattern">###0.00{RoundingMode=HALF_UP}</property>
+                                                    <property name="category">Custom</property>
+                                                    <property name="pattern">#0.#</property>
                                                 </structure>
                                                 <property name="dataSet">packagingLevelMesures</property>
                                                 <list-property name="boundDataColumns">
@@ -9686,7 +9690,7 @@ else{
                                                         <property name="name">tarePkgLevel1</property>
                                                         <text-property name="displayName">tarePkgLevel1</text-property>
                                                         <expression name="expression" type="javascript">dataSetRow["tarePkgLevel1"] * 1000</expression>
-                                                        <property name="dataType">string</property>
+                                                        <property name="dataType">float</property>
                                                         <property name="allowExport">true</property>
                                                     </structure>
                                                 </list-property>
@@ -9695,16 +9699,20 @@ else{
                                         </cell>
                                         <cell id="2365">
                                             <data id="3239">
+                                                <structure name="numberFormat">
+                                                    <property name="category">Custom</property>
+                                                    <property name="pattern">#0.#</property>
+                                                </structure>
                                                 <property name="dataSet">Product</property>
                                                 <list-property name="boundDataColumns">
                                                     <structure>
                                                         <property name="name">netWeight</property>
                                                         <text-property name="displayName">netWeight</text-property>
                                                         <expression name="expression" type="javascript">if(dataSetRow["netWeight"] != null){
-dataSetRow["netWeight"] 
+dataSetRow["netWeight"] * 1000
 }
 else{
-dataSetRow["productCompoQtyUsed"]
+dataSetRow["productCompoQtyUsed"] * 1000
 }</expression>
                                                         <property name="dataType">float</property>
                                                         <property name="allowExport">true</property>
@@ -9716,16 +9724,17 @@ dataSetRow["productCompoQtyUsed"]
                                         <cell id="2366">
                                             <data id="2714">
                                                 <structure name="numberFormat">
-                                                    <property name="category">Fixed</property>
-                                                    <property name="pattern">###0.00{RoundingMode=HALF_UP}</property>
+                                                    <property name="category">Custom</property>
+                                                    <property name="pattern">#0.#</property>
                                                 </structure>
                                                 <property name="dataSet">packagingLevelMesures</property>
                                                 <list-property name="boundDataColumns">
                                                     <structure>
                                                         <property name="name">grossWeightPkgLevel1</property>
                                                         <text-property name="displayName">grossWeightPkgLevel1</text-property>
-                                                        <expression name="expression" type="javascript">dataSetRow["grossWeightPkgLevel1"]</expression>
-                                                        <property name="dataType">string</property>
+                                                        <expression name="expression" type="javascript">dataSetRow["grossWeightPkgLevel1"]*1000</expression>
+                                                        <property name="dataType">float</property>
+                                                        <property name="allowExport">true</property>
                                                     </structure>
                                                 </list-property>
                                                 <property name="resultSetColumn">grossWeightPkgLevel1</property>
@@ -9762,8 +9771,8 @@ dataSetRow["productCompoQtyUsed"]
                                         <cell id="2369">
                                             <data id="2751">
                                                 <structure name="numberFormat">
-                                                    <property name="category">Fixed</property>
-                                                    <property name="pattern">###0.00{RoundingMode=HALF_UP}</property>
+                                                    <property name="category">Custom</property>
+                                                    <property name="pattern">#0.##</property>
                                                 </structure>
                                                 <property name="dataSet">packagingLevelMesures</property>
                                                 <list-property name="boundDataColumns">
@@ -9771,7 +9780,8 @@ dataSetRow["productCompoQtyUsed"]
                                                         <property name="name">grossWeightPkgLevel2</property>
                                                         <text-property name="displayName">grossWeightPkgLevel2</text-property>
                                                         <expression name="expression" type="javascript">dataSetRow["grossWeightPkgLevel2"]</expression>
-                                                        <property name="dataType">string</property>
+                                                        <property name="dataType">float</property>
+                                                        <property name="allowExport">true</property>
                                                     </structure>
                                                 </list-property>
                                                 <property name="resultSetColumn">grossWeightPkgLevel2</property>

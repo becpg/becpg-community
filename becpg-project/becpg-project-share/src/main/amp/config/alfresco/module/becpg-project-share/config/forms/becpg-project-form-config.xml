@@ -413,9 +413,9 @@
 					<set id="mainInfo" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<field id="pjt:projectPriority" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">1|priority.high,2|priority.medium,3|priority.low
-							</control-param>
+							<control-param name="options">1|priority.high,2|priority.medium,3|priority.low</control-param>
 							<control-param name="insertBlank">true</control-param>
+							<control-param name="isSearch">true</control-param>
 						</control>
 					</field>
 					<field id="pjt:projectState" set="mainInfo">
@@ -486,9 +486,9 @@
 					<set id="mainInfo" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<field id="pjt:projectPriority" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">1|priority.high,2|priority.medium,3|priority.low
-							</control-param>
+							<control-param name="options">1|priority.high,2|priority.medium,3|priority.low</control-param>
 							<control-param name="insertBlank">true</control-param>
+							<control-param name="isSearch">true</control-param>
 						</control>
 					</field>
 					<field id="pjt:projectState" set="mainInfo">
