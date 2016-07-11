@@ -214,7 +214,7 @@
                                         {
                                             width : this.options.formWidth,
                                             templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/entity-importer/entity-importer",
-                                            actionUrl : Alfresco.constants.PROXY_URI + "becpg/remote/import?destination=" + this.options.userHomeNodeRef,
+                                            actionUrl : Alfresco.constants.PROXY_URI + "becpg/product/nutdatabaseimport?dest=" + this.options.userHomeNodeRef,
                                             validateOnSubmit : false,
                                             firstFocus : this.id + "-entityImporter-supplier-field",
                                             doBeforeFormSubmit :
