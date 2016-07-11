@@ -129,7 +129,7 @@
 			});
 
 			// Select the preferred filter in the ui
-			this.widgets.customList.set("label", this.msg("dashlet." + this.options.customListName + ".title") + " "
+			this.widgets.customList.set("label", this.msg("dashlet.customList." + this.options.customListName + ".title") + " "
 					+ Alfresco.constants.MENU_ARROW_SYMBOL);
 			
 			 this.services.preferences = new Alfresco.service.Preferences();
@@ -183,7 +183,8 @@
 									dataList : {
 										name : customList.id,
 										itemType : customList.type
-									}
+									},
+									force : true
 								});
 
 								break;

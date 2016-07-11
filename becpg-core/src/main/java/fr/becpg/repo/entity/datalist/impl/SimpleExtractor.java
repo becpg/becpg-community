@@ -104,6 +104,18 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 		List<NodeRef> results = new ArrayList<>();
 		
+		
+		if (dataListFilter.isGuessContainer() && (dataListFilter.getEntityNodeRef() != null)) {
+			NodeRef listsContainerNodeRef = entityListDAO.getListContainer(dataListFilter.getEntityNodeRef());
+			if (listsContainerNodeRef != null) {
+				NodeRef dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, dataListFilter.getDataType());
+				if (dataListNodeRef != null) {
+					dataListFilter.setParentNodeRef(dataListNodeRef);
+				}
+			}
+		}
+		
+		
 		if (dataListFilter.isAllFilter() && entityDictionaryService.isSubClass(dataListFilter.getDataType(), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
 
 			BeCPGQueryBuilder queryBuilder = dataListFilter.getSearchQuery();

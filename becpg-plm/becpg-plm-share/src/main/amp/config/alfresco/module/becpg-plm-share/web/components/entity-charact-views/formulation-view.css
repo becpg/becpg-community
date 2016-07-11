@@ -111,6 +111,34 @@ div.constraintsList .scrollableList {
 	display: block;
 }
 
+.datagrid-bar .customListMenu span.first-child {
+	background-color: transparent;
+}
+
+
+.formulation-view  .customList .datagrid .scrollableList {
+	 min-height: 355px;
+}
+
+/* 
+.formulation-view  .customList  .dashlet .title {
+    display: none;
+}
+ */
+
+
+.formulation-view  .customList .datagrid .body  .yui-dt thead th.yui-dt-first {
+	display: none;
+}
+
+
+.formulation-view  .customList .datagrid .datagrid-bar .new-row,
+.formulation-view  .customList .datagrid .datagrid-bar .selected-items,
+.formulation-view  .customList .datagrid td.yui-dt-first
+ {
+	display: none;
+}
+
 
 /** Full screen form */
 div#full-screen-form {

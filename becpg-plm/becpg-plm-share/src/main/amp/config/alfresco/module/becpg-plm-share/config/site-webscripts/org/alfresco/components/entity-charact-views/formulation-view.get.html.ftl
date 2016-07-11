@@ -10,6 +10,9 @@
 
 <@markup id="js">
    <#include "../../modules/entity-datagrid/include/entity-datagrid.js.ftl"/>
+   
+  
+
    <@script type="text/javascript" src="${url.context}/res/components/entity-data-lists/rapidLink-toolbar.js" group="entity-datalists"/>
    <@script type="text/javascript" src="${url.context}/res/components/entity-data-lists/variant-picker.js" group="entity-datalists"/>
    <@script type="text/javascript" src="${url.context}/res/components/entity-data-lists/product-notifications.js" group="entity-datalists"/>
@@ -19,6 +22,8 @@
   
    <@script src="${url.context}/res/components/entity-charact-views/dashlet-resizer.js" group="entity-datalists"/>
    <@script src="${url.context}/res/components/entity-charact-views/formulation-view.js" group="entity-datalists"/>
+
+
 </@>
 
 <@markup id="resources">
@@ -64,19 +69,18 @@
 							   	dashletTitle=msg("dashlet.customList.title")
 							   	itemType="${customListType}" >
 									<div class="customListMenu">
-										<span class="align-left yui-button yui-menu-button" id="${el}-customLists">
+										<span class="yui-button yui-menu-button" id="${el}-customLists">
 								            <span class="first-child">
 								               <button type="button" tabindex="0"></button>
 								            </span>
 								         </span>
 								         <select id="${el}-customLists-menu">
 									         <#list customLists as customList>
-									            <option value="${customList.id?html}">${msg("dashlet." + customList.id+ ".title")}</option>
+									            <option value="${customList.id?html}">${msg("dashlet.customList." + customList.id+ ".title")}</option>
 									         </#list>
 								         </select>
 							         </div>
 								</@dataGridDashlet>
-							  
 							</div>
 					   </div>
 					</div>
