@@ -1,8 +1,8 @@
 <formulation-view>
    <customLists>
-   	    <customList id="nutList" type="bcpg:nutList" formId="formulation" />
-   	    <customList id="costList" type="bcpg:costList" selected="true" formId="formulation" />
-   	    <customList id="physicoChemList" type="bcpg:physicoChemList" formId="formulation" />
+   	    <customList id="nutList" type="bcpg:nutList"  selected="true" />
+   	    <customList id="costList" type="bcpg:costList"  />
+   	    <customList id="physicoChemList" type="bcpg:physicoChemList"  />
    </customLists>
 
    <actionSetToolbar>
