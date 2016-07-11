@@ -26,7 +26,39 @@ function getCustomLists()
 
 function main()
 {
-   
+ 
+
+	var prefs = "fr.becpg.formulation.dashlet.custom";
+
+	if(page.url.args.list!=null && page.url.args.list.length>0){
+	   prefs+="."+page.url.args.list;
+	}
+
+	model.preferences = AlfrescoUtil.getPreferences(prefs);
+	model.customLists = getCustomLists();
+
+
+	if(model.preferences.list!=null ){
+		model.customListName = model.preferences.list;
+	}
+
+	for(var j in model.customLists){
+		var customList = model.customLists[j];
+		if(model.customListName!=null){
+			if(model.customListName == customList.id ){
+				model.customListType = customList.type;
+				break;
+			}
+		} else if (customList.selected == "true"){
+			model.customListName = customList.id;
+			model.customListType = customList.type;
+			break;
+		}
+		
+	}
+	
+	
+	
  
 // Widget instantiation metadata...
 var formulationView = {
@@ -35,32 +67,19 @@ var formulationView = {
    options : {
       siteId : (page.url.templateArgs.site != null) ? page.url.templateArgs.site : "",
       entityNodeRef : (page.url.args.nodeRef != null) ? page.url.args.nodeRef : "",
-      list : (page.url.args.list != null) ? page.url.args.list : ""
+      list : (page.url.args.list != null) ? page.url.args.list : "",
+      customLists : model.customLists,
+      customListName : model.customListName
    }
 };
 
-
-var customListPrefs = AlfrescoUtil.getPreferences("fr.becpg.formulation.dashlet.custom."+(page.url.args.list != null) ? page.url.args.list : "");
-
-model.customLists = getCustomLists();
-
-model.customListName = "costList";
-model.customListType = "bcpg:costList";
-
-//
-//if(customListPrefs){
-//   if(!model.customListPrefs){
-//      model.customListPrefs = {};
-//   }
-//   model.customListPrefs[dashletId] = prefs;
-//}
 
 
 model.widgets = [formulationView];
 
 model.widgets = model.widgets.concat(createDashlet("compoList-"+args.htmlid, "compoListDashlet"));
 model.widgets = model.widgets.concat(createDashlet("dynamicCharactList-"+args.htmlid, "dynamicCharactListDashlet",msg.get("dashlet.dynamicCharactList.title"),"bcpg:dynamicCharactList",true));
-model.widgets = model.widgets.concat(createDashlet("customList-"+args.htmlid, "customListDashlet",msg.get("dashlet."+model.customListName+".title"),model.customListType, true , model.customListName, "formulation", "&repo=true&guessContainer=true" ));
+model.widgets = model.widgets.concat(createDashlet("customList-"+args.htmlid, "customListDashlet",msg.get("dashlet.customList.title"),model.customListType, true , model.customListName, "formulation", "&repo=true&guessContainer=true" ));
 
 }
 

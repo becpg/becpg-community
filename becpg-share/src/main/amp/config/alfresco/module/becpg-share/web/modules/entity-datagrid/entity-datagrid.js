@@ -2430,6 +2430,10 @@
                             	}
                             	
                                 this.datalistMeta = obj.dataList;
+                                if(obj.dataList.itemType!=null){
+                                	this.options.itemType = obj.dataList.itemType;
+                                }
+                                
                                 this.entity = obj.entity;
                                 this.currentPage = 1;
                                 this.isFilterFormLoaded = false;
