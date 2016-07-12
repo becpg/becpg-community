@@ -127,7 +127,7 @@ div.constraintsList .scrollableList {
  */
 
 
-.formulation-view  .customList .datagrid .body  .yui-dt thead th.yui-dt-first {
+.formulation-view  .customList .datagrid  .yui-dt thead th.yui-dt-first {
 	display: none;
 }
 

@@ -192,7 +192,7 @@
 
 					}
 
-					this.services.preferences.set(prefs, this.widgets.customList.value);
+					this.services.preferences.set(prefs, {list:this.widgets.customList.value});
 
 				} catch (e) {
 					alert(e);

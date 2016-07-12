@@ -24,9 +24,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.query.PagingRequest;
@@ -81,6 +83,13 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 	@Autowired
 	private AssociationService associationService;
+
+	private Set<QName> hiddenListQnames = new HashSet<>();
+
+	@Override
+	public void registerHiddenList(QName listTypeQname) {
+		hiddenListQnames.add(listTypeQname);
+	}
 
 	@Override
 	public NodeRef getListContainer(NodeRef nodeRef) {
@@ -187,10 +196,12 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 					QName dataListTypeQName = QName.createQName(dataListType, namespaceService);
 
-					if (BeCPGModel.TYPE_ENTITYLIST_ITEM.equals(dataListTypeQName)
-							|| dictionaryService.isSubClass(dataListTypeQName, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
+					if ((BeCPGModel.TYPE_ENTITYLIST_ITEM.equals(dataListTypeQName)
+							|| dictionaryService.isSubClass(dataListTypeQName, BeCPGModel.TYPE_ENTITYLIST_ITEM))) {
 
-						existingLists.add(listNodeRef);
+						if (!hiddenListQnames.contains(dataListTypeQName)) {
+							existingLists.add(listNodeRef);
+						}
 					} else {
 						logger.warn("Existing " + dataListTypeQName + " list doesn't inheritate from 'bcpg:entityListItem'.");
 					}
@@ -228,7 +239,6 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 	}
 
-	
 	private List<NodeRef> getListItemsV2(final NodeRef listNodeRef, final QName listQNameFilter) {
 
 		List<NodeRef> ret = associationService.getChildAssocs(listNodeRef, ContentModel.ASSOC_CONTAINS);

@@ -1875,7 +1875,14 @@
 	                        	       ], function(jQuery) {
 	                            	
 	                            	var $table = jQuery(me.widgets.dataTable._elTable);
-	                            	$table.floatThead({zIndex:2});
+	                            	$table.floatThead({zIndex:2, scrollContainer: function($table){
+	                                    return $table.closest('.scrollableList');
+	                                },floatContainerClass:"grid yui-dt"});
+	                            	
+	                            	 YAHOO.Bubbling
+	                                 .on("refreshFloatingHeader", function(){
+	                                	 $table.floatThead('reflow');
+	                                 },this);
 	                            	
 	                            });
                             

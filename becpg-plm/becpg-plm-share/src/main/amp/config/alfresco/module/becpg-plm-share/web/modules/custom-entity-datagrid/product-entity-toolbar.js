@@ -226,6 +226,8 @@ YAHOO.Bubbling
                            });
                            YAHOO.Bubbling.unsubscribe("beforeFormRuntimeInit", onBeforeFormRuntimeInit, me);
                         };
+                        
+                        
 
                         if (Dom.hasClass("alf-hd", "hidden")) {
                            Dom.removeClass("alf-hd", "hidden");
@@ -237,7 +239,9 @@ YAHOO.Bubbling
                               Dom.setStyle("alf-content", "margin-left", this.fullScreen.marginLeft);
                            }
                            Dom.addClass("full-screen-form", "hidden");
-
+                           
+                           
+                           YAHOO.Bubbling.fire("refreshFloatingHeader");
                         } else {
                            Dom.addClass("alf-hd", "hidden");
                            Dom.addClass("alf-ft", "hidden");
@@ -285,6 +289,7 @@ YAHOO.Bubbling
                                              }
 
                                              containerDiv.innerHTML = response.serverResponse.responseText;
+                                             YAHOO.Bubbling.fire("refreshFloatingHeader");
 
                                           },
                                           scope : this
@@ -296,6 +301,7 @@ YAHOO.Bubbling
 
                            } else {
                               Dom.removeClass("full-screen-form", "hidden");
+                              YAHOO.Bubbling.fire("refreshFloatingHeader");
                            }
 
                            me.fullScreen = {
