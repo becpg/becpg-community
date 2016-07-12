@@ -4,6 +4,7 @@
 	<@link rel="stylesheet" type="text/css" href="${url.context}/res/components/entity-data-lists/product-notifications.css" group="entity-datalists" />
 	<@link rel="stylesheet" type="text/css" href="${url.context}/res/components/entity-data-lists/rapidLink-toolbar.css" group="entity-datalists" />
 	
+	<@link href="${url.context}/res/modules/entity-charact-details/entity-charact-details.css" group="entity-datalists" />
 	<@link href="${url.context}/res/components/entity-charact-views/formulation-view.css" group="entity-datalists" />
 	
 </@>
@@ -16,6 +17,11 @@
    <@script type="text/javascript" src="${url.context}/res/components/entity-data-lists/rapidLink-toolbar.js" group="entity-datalists"/>
    <@script type="text/javascript" src="${url.context}/res/components/entity-data-lists/variant-picker.js" group="entity-datalists"/>
    <@script type="text/javascript" src="${url.context}/res/components/entity-data-lists/product-notifications.js" group="entity-datalists"/>
+  
+   <@script src="${url.context}/res/yui/swf/swf.js" group="entity-datalists"></@script>
+   <@script src="${url.context}/res/yui/charts/charts.js" group="entity-datalists"></@script>
+   <@script src="${url.context}/res/modules/entity-charact-details/entity-charact-details.js" group="entity-datalists"></@script>
+  	
   
    <@script src="${url.context}/res/modules/custom-entity-datagrid/product-columnRenderers.js" group="entity-datalists"></@script>
    <@script src="${url.context}/res/modules/custom-entity-datagrid/product-entity-toolbar.js" group="entity-datalists"/>

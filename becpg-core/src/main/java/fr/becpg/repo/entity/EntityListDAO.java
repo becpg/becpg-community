@@ -39,6 +39,9 @@ public interface EntityListDAO {
     /*
      * TODO Get List and create List should directly take entityNodeRef
      */
+	
+
+	void registerHiddenList(QName listTypeQname);
 
 	NodeRef getListContainer(NodeRef nodeRef);
     
@@ -177,6 +180,7 @@ public interface EntityListDAO {
 	 * @param targetNodeRef
 	 */
 	void moveDataLists(NodeRef sourceNodeRef, NodeRef targetNodeRef);
+
 
 
 
