@@ -44,7 +44,7 @@ function widgets()
          highlightFile : page.url.args["file"] != null ? page.url.args["file"] : "",
          replicationUrlMapping : model.replicationUrlMapping != null ? model.replicationUrlMapping : "{}",
          repositoryBrowsing : false, 
-         useTitle : false,
+         useTitle : true,
          userIsSiteManager : model.userIsSiteManager,
          associatedToolbar: { _alfValue: "docListToolbar", _alfType: "REFERENCE" },
          commonComponentStyle : model.commonComponentStyle,
