@@ -1855,7 +1855,6 @@
 	                        	         "jquery", "grid/floatthead"
 	                        	       ], function(jQuery) {
 	                            	
-	
 	                            	var $table = jQuery(me.widgets.dataTable._elTable);
 	                            	$table.floatThead({zIndex:1});
 	                            	
