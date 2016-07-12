@@ -254,6 +254,11 @@
 				execScripts : true
 			});
 			
+
+//		TODO	YAHOO.Bubbling.on( "refreshDataGrids", recallWebScript, this);
+//			YAHOO.Bubbling.on( "activeDataListChanged", recallWebScript, this); 
+
+			
 			YAHOO.Bubbling.addDefaultAction(REQFILTER_EVENTCLASS, function(layers,args){
 				var owner = YAHOO.Bubbling.getOwnerByTagName(args[1].anchor, "span");
 				var selectedItems = document.getElementsByClassName("rclFilterSelected");

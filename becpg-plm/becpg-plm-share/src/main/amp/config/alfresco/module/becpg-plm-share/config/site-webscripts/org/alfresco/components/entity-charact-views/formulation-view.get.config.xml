@@ -1,4 +1,10 @@
 <formulation-view>
+   <customLists>
+   	    <customList id="nutList" type="bcpg:nutList" formId="formulation" />
+   	    <customList id="costList" type="bcpg:costList" selected="true" formId="formulation" />
+   	    <customList id="physicoChemList" type="bcpg:physicoChemList" formId="formulation" />
+   </customLists>
+
    <actionSetToolbar>
    	<action type="action-link" id="onActionBulkEdit"  permission="edit" label="actions.bulk-edit" />
    	<action type="action-link" id="onActionSimulate" list="compoList" permission="edit" label="actions.simulate" />
