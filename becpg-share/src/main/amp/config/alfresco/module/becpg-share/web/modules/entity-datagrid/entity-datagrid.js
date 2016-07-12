@@ -1566,6 +1566,25 @@
                                                     menu : me.timeStampId+"itemSelect-menu",
                                                     disabled : false
                                        });
+                                   
+                                  
+                                   if(this.options.floatingHeader){
+                                	   
+                                	   this.widgets.itemSelect.getMenu().subscribe("show",function(){
+                                		   
+                                		   var floatTheadDiv = YAHOO.util.Selector.query('div.floatThead-container');
+                                		   Dom.addClass(floatTheadDiv,"itemSelect-open");
+                                		   
+                                	   },  this.widgets.itemSelect, this);
+                                	   
+                                	   
+                                	   this.widgets.itemSelect.getMenu().subscribe("hide",function(){
+                                		   var floatTheadDiv = YAHOO.util.Selector.query('div.floatThead-container');
+                                		   Dom.removeClass(floatTheadDiv,"itemSelect-open");
+                                		   
+                                	   },  this.widgets.itemSelect, this);
+                                   }
+                                   
      
                                     
                                  // Enable item select menu
@@ -1856,7 +1875,7 @@
 	                        	       ], function(jQuery) {
 	                            	
 	                            	var $table = jQuery(me.widgets.dataTable._elTable);
-	                            	$table.floatThead({zIndex:1});
+	                            	$table.floatThead({zIndex:2});
 	                            	
 	                            });
                             

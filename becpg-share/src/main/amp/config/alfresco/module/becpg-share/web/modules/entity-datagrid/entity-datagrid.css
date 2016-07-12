@@ -1,3 +1,8 @@
+
+.yuimenu {
+	z-index:3;
+}
+
 .datagrid {
 	padding-top: 0.5em;
 	visibility: hidden;
@@ -191,6 +196,12 @@
 	background: url(../../components/images/filetypes/generic-file-16.png)
 		no-repeat;
 	padding-left: 20px;
+}
+
+/* floating head */
+
+div.itemSelect-open {
+	height:300px;
 }
 
 /* Actions */
