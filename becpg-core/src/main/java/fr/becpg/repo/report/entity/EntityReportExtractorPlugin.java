@@ -3,6 +3,8 @@
  */
 package fr.becpg.repo.report.entity;
 
+import java.util.Date;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
@@ -30,7 +32,7 @@ public interface EntityReportExtractorPlugin {
 
 	EntityReportData extract(NodeRef entityNodeRef);
 
-	boolean shouldGenerateReport(NodeRef entityNodeRef);
+	boolean shouldGenerateReport(NodeRef entityNodeRef, Date generatedReportDate);
 
 	EntityReportExtractorPriority getMatchPriority(QName type);
 
