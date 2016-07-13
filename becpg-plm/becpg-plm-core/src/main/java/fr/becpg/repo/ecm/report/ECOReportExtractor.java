@@ -18,6 +18,7 @@
 package fr.becpg.repo.ecm.report;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -120,7 +121,7 @@ public class ECOReportExtractor implements EntityReportExtractorPlugin {
 	}
 
 	@Override
-	public boolean shouldGenerateReport(NodeRef entityNodeRef) {
+	public boolean shouldGenerateReport(NodeRef entityNodeRef, Date generatedReportDate) {
 		return false;
 	}
 

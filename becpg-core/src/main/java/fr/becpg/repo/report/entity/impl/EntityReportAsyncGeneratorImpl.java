@@ -76,7 +76,7 @@ public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerato
 		@Override
 		public void run() {
 			try {
-				entityReportService.generateReport(entityNodeRef);
+				entityReportService.generateReports(entityNodeRef);
 
 			} catch (Exception e) {
 				logger.error("Unable to generate product reports ", e);
