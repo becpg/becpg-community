@@ -181,7 +181,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 											String reportFormat = (String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
 											String documentName = getReportDocumentName(entityNodeRef, tplNodeRef, reportFormat, locale);
 
-											NodeRef documentNodeRef = getReportDocumenNodeRef(entityNodeRef, tplNodeRef, documentName);
+											NodeRef documentNodeRef = getReportDocumenNodeRef(entityNodeRef, tplNodeRef, documentName, locale);
 
 											if (documentNodeRef != null) {
 												// Run report
