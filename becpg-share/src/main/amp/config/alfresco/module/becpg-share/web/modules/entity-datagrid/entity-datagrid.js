@@ -1883,6 +1883,18 @@
 	                                 .on("refreshFloatingHeader", function(){
 	                                	 $table.floatThead('reflow');
 	                                 },this);
+	                            	 
+	                            	 YAHOO.Bubbling
+	                                 .on(me.scopeId + "scopedActiveDataListChanged",function()
+	                                         {
+	                                	 $table.floatThead('destroy');
+	                                   });
+	                            	 
+	                            	 YAHOO.Bubbling
+	                                 .on(me.scopeId + "activeDataListChanged",function()
+	                                         {
+	                                	 $table.floatThead('destroy');
+	                                   });
 	                            	
 	                            });
                             
