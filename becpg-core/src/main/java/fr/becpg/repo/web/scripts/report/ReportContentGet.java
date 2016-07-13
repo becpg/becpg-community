@@ -97,14 +97,8 @@ public class ReportContentGet extends ContentGet {
 			throw new WebScriptException(HttpServletResponse.SC_NOT_FOUND, "No entity provided");
 		}
 
-		if (entityReportService.shouldGenerateReport(entityNodeRef)) {
-			logger.debug("Entity report is not up to date for " + entityNodeRef);
-			entityReportService.generateReport(entityNodeRef);
-		}
-
-		if (!nodeService.exists(nodeRef)) {
-			nodeRef = entityReportService.getSelectedReport(entityNodeRef);
-		}
+		nodeRef = entityReportService.getOrRefreshReport(entityNodeRef, nodeRef);
+	
 
 		// determine attachment
 		boolean attach = Boolean.valueOf(req.getParameter("a"));

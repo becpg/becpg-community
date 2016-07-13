@@ -69,7 +69,7 @@ public class ReportWebScript extends AbstractWebScript {
 		if (nodeService.exists(nodeRef) && (lockService.getLockStatus(nodeRef) == LockStatus.NO_LOCK)) {
 
 			if (ACTION_CHECK.equals(action)) {
-				generateReport = entityReportService.shouldGenerateReport(nodeRef);
+				generateReport = entityReportService.shouldGenerateReport(nodeRef,null);
 			} else if (ACTION_FORCE.equals(action)) {
 				generateReport = true;
 			} else {
@@ -79,7 +79,7 @@ public class ReportWebScript extends AbstractWebScript {
 			}
 
 			if (generateReport) {
-				entityReportService.generateReport(nodeRef);
+				entityReportService.generateReports(nodeRef);
 			}
 
 		}

@@ -102,7 +102,7 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
 			public NodeRef execute() throws Throwable {
-				entityReportService.generateReport(rawMaterialNodeRef);
+				entityReportService.generateReports(rawMaterialNodeRef);
 				return null;
 			}
 		}, false, true);
@@ -244,7 +244,7 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 						@Override
 						public NodeRef execute() throws Throwable {
 
-							entityReportService.generateReport(rawMaterialNodeRef);
+							entityReportService.generateReports(rawMaterialNodeRef);
 							return checkOutCheckInService.checkout(rawMaterialNodeRef);
 
 						}
@@ -649,7 +649,7 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
 			public NodeRef execute() throws Throwable {
-				entityReportService.generateReport(rawMaterialNodeRef);
+				entityReportService.generateReports(rawMaterialNodeRef);
 				return null;
 			}
 		}, false, true);

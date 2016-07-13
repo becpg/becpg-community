@@ -25,19 +25,29 @@ import fr.becpg.report.client.ReportFormat;
 
 public interface EntityReportService {
 
-	void generateReport(NodeRef entityNodeRef);
+	void generateReports(NodeRef entityNodeRef);
+	
+	void generateReport(NodeRef entityNodeRef, NodeRef documentNodeRef);
+	
+	void generateReport(NodeRef entityNodeRef, NodeRef documentNodeRef, ReportFormat reportFormat, OutputStream outputStream);
+	
+	
+	NodeRef getOrRefreshReport(NodeRef entityNodeRef, NodeRef documentNodeRef);
 
+
+	
 	String getXmlReportDataSource(NodeRef entityNodeRef);
 
 	void setPermissions(NodeRef tplNodeRef, NodeRef documentNodeRef);
 
-	boolean shouldGenerateReport(NodeRef entityNodeRef);
+	boolean shouldGenerateReport(NodeRef entityNodeRef, NodeRef documentNodeRef);
 
 	NodeRef getSelectedReport(NodeRef entityNodeRef);
 
 	String getSelectedReportName(NodeRef entityNodeRef);
 
-	void generateReport(NodeRef entityNodeRef, NodeRef documentNodeRef, ReportFormat reportFormat, OutputStream outputStream);
-
 	EntityReportExtractorPlugin retrieveExtractor(NodeRef entityNodeRef);
+
+
+	
 }
