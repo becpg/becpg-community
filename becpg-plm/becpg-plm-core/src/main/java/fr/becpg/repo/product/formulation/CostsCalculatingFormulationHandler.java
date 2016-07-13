@@ -578,13 +578,22 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 					qtyComponent = getCompoListQty(formulatedProduct, c.getComponentNodeRef(), formulatedProduct.getRecipeQtyUsed());
 				}
 				for (CostListDataItem c2 : componentData.getCostList()) {
-					if (c2.getCost().equals(c.getParent().getCost()) && (c.getSimulatedValue() != null)) {
+					if (c2.getCost().equals(c.getParent().getCost()) && (c.getSimulatedValue() != null)
+							) {
 						if (logger.isDebugEnabled()) {
 							logger.debug("add simulationCost " + "c2 value " + c2.getValue() + "c simulated value " + c.getSimulatedValue()
 									+ " qty component " + qtyComponent + " netQty " + netQty);
 						}
-						c.setValue(((c.getSimulatedValue() - c2.getValue()) * qtyComponent) / netQty);
-						c.getParent().setValue(c.getParent().getValue() + c.getValue());
+						if(c2.getValue()!=null){
+							c.setValue(((c.getSimulatedValue() - c2.getValue()) * qtyComponent) / netQty);
+						} else {
+							c.setValue(((c.getSimulatedValue()) * qtyComponent) / netQty);
+						}
+						if(c.getParent().getValue() !=null){
+							c.getParent().setValue(c.getParent().getValue() + c.getValue());
+						} else {
+							c.getParent().setValue(c.getValue());
+						}
 						break;
 					}
 				}
