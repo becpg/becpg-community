@@ -6166,9 +6166,6 @@
 					<show id="bcpg:compoListQtySubFormula" />
 					<show id="bcpg:compareWithDynColumn" force="true" />
 					<show id="bcpg:compoListUnit" />
-					<show id="bcpg:compoListQty" />
-					<show id="bcpg:compoListYieldPerc" />
-					<show id="bcpg:compoListLossPerc" />
 					<show id="bcpg:dynamicCharactColumn1" force="true" />
 					<show id="bcpg:dynamicCharactColumn2" force="true" />
 					<show id="bcpg:dynamicCharactColumn3" force="true" />
