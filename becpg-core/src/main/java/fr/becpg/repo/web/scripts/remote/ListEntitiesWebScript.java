@@ -22,7 +22,6 @@ import java.net.SocketException;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.apache.commons.io.output.CountingOutputStream;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
@@ -45,9 +44,6 @@ public class ListEntitiesWebScript extends AbstractEntityWebScript {
 			// for the stream
 			resp.setContentType(getContentType(req));
 			resp.setContentEncoding("UTF-8");
-			try (CountingOutputStream out = new CountingOutputStream(resp.getOutputStream())) {
-				resp.setHeader("Content-Length", Long.toString(out.getByteCount()));
-			}
 
 		} catch (BeCPGException e) {
 			logger.error("Cannot export entity", e);
