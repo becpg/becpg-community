@@ -8,10 +8,12 @@ import java.net.SocketException;
 import java.util.List;
 import java.util.Map;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.ContentIOException;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.output.CountingOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -23,6 +25,7 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.helper.AttachmentHelper;
 import fr.becpg.repo.report.search.ExportSearchService;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.web.scripts.search.AbstractSearchWebScript;
@@ -91,17 +94,22 @@ public class ExportSearchWebScript extends AbstractSearchWebScript {
 
 			List<NodeRef> resultNodeRefs = doSearch(req, RepoConsts.MAX_RESULTS_UNLIMITED);
 
-			// report format
-			ReportFormat reportFormat = reportTplService.getReportFormat(templateNodeRef);
+			ReportFormat reportFormat = reportTplService.getReportFormat(templateNodeRef);			
+			
+			String name = (String) nodeService.getProperty(templateNodeRef, ContentModel.PROP_NAME);
+		
+			String mimeType = mimetypeService.getMimetype(reportFormat.toString());
+
+			name = FilenameUtils.removeExtension(name) + FilenameUtils.EXTENSION_SEPARATOR_STR + mimetypeService.getExtension(mimeType);
+			
+			logger.debug("Rendering report at format :" + reportFormat.toString() + " mimetype: " + mimeType + " name " + name);
 
 			exportSearchService.createReport(datatype, templateNodeRef, resultNodeRefs, reportFormat, res.getOutputStream());
 
-			res.setContentType(mimetypeService.guessMimetype(reportFormat.toString()));
-
-			try (CountingOutputStream c = new CountingOutputStream(res.getOutputStream())) {
-				res.setHeader("Content-Length", Long.toString(c.getByteCount()));
-			}
-
+			res.setContentType(mimeType);
+			AttachmentHelper.setAttachment(req, res, name);
+			
+			
 		} catch (SocketException | ContentIOException e1) {
 
 			// the client cut the connection - our mission was accomplished
