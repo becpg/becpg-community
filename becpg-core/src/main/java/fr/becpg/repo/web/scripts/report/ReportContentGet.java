@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.web.scripts.content.ContentGet;
-import org.alfresco.repo.webdav.WebDAVHelper;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
