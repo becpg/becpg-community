@@ -103,10 +103,10 @@ public class ExportSearchWebScript extends AbstractSearchWebScript {
 			
 			logger.debug("Rendering report at format :" + reportFormat.toString() + " mimetype: " + mimeType + " name " + name);
 
-			exportSearchService.createReport(datatype, templateNodeRef, resultNodeRefs, reportFormat, res.getOutputStream());
-
 			res.setContentType(mimeType);
 			AttachmentHelper.setAttachment(req, res, name);
+			
+			exportSearchService.createReport(datatype, templateNodeRef, resultNodeRefs, reportFormat, res.getOutputStream());
 			
 			
 		} catch (SocketException | ContentIOException e1) {
