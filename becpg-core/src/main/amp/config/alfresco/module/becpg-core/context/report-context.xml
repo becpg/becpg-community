@@ -65,6 +65,7 @@
 		<property name="advSearchService" ref="AdvSearchService" />
 		<property name="namespaceService" ref="NamespaceService" />
 		<property name="reportTplService" ref="reportTplService" />
+		<property name="nodeService" ref="nodeService"/>
 	</bean>
 	
 	
