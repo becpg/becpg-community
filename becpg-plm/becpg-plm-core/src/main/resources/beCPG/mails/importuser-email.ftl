@@ -1,16 +1,3 @@
-Hello ${person.properties["cm:firstName"]!""},
-
-You account as been created on becpg.
-
-Username: ${username}
-Password: ${password}
-
-We strongly advise you to change your password when you log in for the first time.
-
-
-Regards,
-Becpg Team
-
 <html>
 
    <head>
@@ -66,14 +53,13 @@ Becpg Team
 															<br />- Password (I advice you to change it) : ${password}</p>
 															
 															<p>I advice you to use Firefox or Chrome browser.<br />															
-															You can create new products or new projects in the existing sites or create new sites.<br />
-															Visit this page to get some tutorials: <a href="http://www.becpg.net/documentation/starting-kit">http://www.becpg.net/documentation/starting-kit</a><br />
+															You can create new products or new projects in the existing sites.<br />
 															</p>
 															
                                              <p>Sincerely,<br />
                                              beCPG</p>
                                           </div>
-                                       </td>vidéos 
+                                       </td> 
                                     </tr>
                                  </table>
                               </td>
