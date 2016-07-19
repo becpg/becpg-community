@@ -19,6 +19,7 @@
 package fr.becpg.repo.web.scripts.report;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
@@ -35,6 +36,7 @@ import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
+import fr.becpg.model.ReportModel;
 import fr.becpg.repo.helper.AttachmentHelper;
 import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.report.client.ReportFormat;
@@ -70,11 +72,7 @@ public class ReportContentGet extends ContentGet {
 
 	@Override
 	public void execute(final WebScriptRequest req, final WebScriptResponse res) throws IOException {
-		String entityNodeRefParam = req.getParameter(PARAM_ENTITY_NODEREF);
-		NodeRef entityNodeRef = null;
-		if ((entityNodeRefParam != null) && !entityNodeRefParam.isEmpty()) {
-			entityNodeRef = new NodeRef(entityNodeRefParam);
-		}
+		
 
 		NodeRef nodeRef = null;
 
@@ -91,6 +89,15 @@ public class ReportContentGet extends ContentGet {
 		if (nodeRef == null) {
 			throw new WebScriptException(HttpServletResponse.SC_NOT_FOUND, "No report provided");
 		}
+		
+		String entityNodeRefParam = req.getParameter(PARAM_ENTITY_NODEREF);
+		NodeRef entityNodeRef = null;
+		if ((entityNodeRefParam != null) && !entityNodeRefParam.isEmpty()) {
+			entityNodeRef = new NodeRef(entityNodeRefParam);
+		} else {
+			entityNodeRef = entityReportService.getEntityNodeRef(nodeRef);
+		}
+		
 
 		if (entityNodeRef == null) {
 			throw new WebScriptException(HttpServletResponse.SC_NOT_FOUND, "No entity provided");

@@ -48,6 +48,8 @@ public interface EntityReportService {
 
 	EntityReportExtractorPlugin retrieveExtractor(NodeRef entityNodeRef);
 
+	NodeRef getEntityNodeRef(NodeRef nodeRef);
+
 
 	
 }

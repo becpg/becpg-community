@@ -712,4 +712,15 @@ public class EntityReportServiceImpl implements EntityReportService {
 		return documentNodeRef;
 	}
 
+	@Override
+	public NodeRef getEntityNodeRef(NodeRef reportNodeRef) {
+		List<NodeRef> entityNodeRefs = associationService.getSourcesAssocs(reportNodeRef, ReportModel.ASSOC_REPORTS);
+		if (entityNodeRefs != null) {
+			for (NodeRef entityNodeRef : entityNodeRefs) {
+				return entityNodeRef;
+			}
+		}
+		return null;
+	}
+
 }
