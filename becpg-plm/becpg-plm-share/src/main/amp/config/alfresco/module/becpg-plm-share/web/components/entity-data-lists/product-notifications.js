@@ -105,159 +105,152 @@
 			// element
 			var containerDiv = document.createElement("div");
 			
+				this.widgets.showNotificationsButton = instance.createShowNotificationButton(this, "show-notifications", containerDiv , function() {
+					instance.reloadDataTable();
+				});
+				
+				//recreates notifications tab
+				var refreshNotifications = function(){
+					Alfresco.util.Ajax.request({
 
-			this.widgets.showNotificationsButton = this.createShowNotificationButton(this, "show-notifications", containerDiv , function() {
-				instance.reloadDataTable();
-			});
-
-
-			Alfresco.util.Ajax.request({
-				url : Alfresco.constants.PROXY_URI + "becpg/product/reqctrllist/node/" + instance.options.entityNodeRef.replace(":/", "") + "?view="
+						url : Alfresco.constants.PROXY_URI + "becpg/product/reqctrllist/node/" + instance.options.entityNodeRef.replace(":/", "") + "?view="
 						+ instance.options.list,
-				method : Alfresco.util.Ajax.GET,
-				responseContentType : Alfresco.util.Ajax.JSON,
-				successCallback : {
-					fn : function(response) {
+						method : Alfresco.util.Ajax.GET,
+						responseContentType : Alfresco.util.Ajax.JSON,
+						successCallback : {
+							fn : function(response) {
 
-						if (response.json) {
-							
-							//Update button
-							
-							
-							if (response.json.scores !== undefined) {
-								var scores = response.json.scores;
-								var intScore = parseInt(scores.global);
-								var spriteIndex = (intScore / 5 >> 0);
-								
-								var buttonClass = "score-"+ spriteIndex;
+								if (response.json) {
 
-								instance.widgets.showNotificationsButton.removeClass("loading");
-								instance.widgets.showNotificationsButton.addClass("score");
-								instance.widgets.showNotificationsButton.addClass(buttonClass);
-								
-								
-								instance.widgets.showNotificationsButton.set("label",  Math.floor(scores.global) + "%");
-								instance.widgets.showNotificationsButton.set("title",  "TODO");
-								
+									//Update button
+									if (response.json.scores !== undefined) {
+										var scores = response.json.scores;
+										var intScore = parseInt(scores.global);
+										var spriteIndex = (intScore / 5 >> 0);
 
-								var errorSpan = document.createElement("span");
-								errorSpan.className = "warning";
-								errorSpan.innerHTML = "3";
-								
+										var buttonClass = "score-"+ spriteIndex;
+										
+										var totalForbidden = scores.totalForbidden;
+										if(!Dom.hasClass(instance.widgets.showNotificationsButton, "score")){
+											instance.widgets.showNotificationsButton.removeClass("loading");
+											instance.widgets.showNotificationsButton.addClass("score");
+											instance.widgets.showNotificationsButton.addClass(buttonClass);	
+										}
+										
+										instance.widgets.showNotificationsButton.set("label",  Math.floor(scores.global) + "%");
 
-								this.options.containerDiv.appendChild(errorSpan);
-								
-							}
-							
-						
-							
-							
-							//Create panel
-							
+										if(totalForbidden !== undefined && totalForbidden !== null && totalForbidden > 0){
+											instance.widgets.showNotificationsButton.set("title",  this.msg("tooltip.notifications-button", totalForbidden));
 
-							instance.options.reqCtrlListNodeRef = response.json.reqCtrlListNodeRef != null ? response.json.reqCtrlListNodeRef : "";
-
-
-							containerDiv.innerHTML = instance.createPanel(response.json);
-
-							instance.widgets.dataSource = new YAHOO.util.DataSource(this.getWebscriptUrl(), {
-								connMethodPost : true,
-								responseType : YAHOO.util.DataSource.TYPE_JSON,
-								responseSchema : {
-									resultsList : "items",
-									metaFields : {
-										startIndex : "startIndex",
-										totalRecords : "totalRecords",
-										queryExecutionId : "queryExecutionId"
+											var errorSpan = Dom.getFirstChildBy(this.options.containerDiv, function(el){ return el.className.indexOf("warning") > -1;});
+											
+											if(errorSpan === null){
+												errorSpan = document.createElement("span");
+												errorSpan.className = "warning";
+												this.options.containerDiv.appendChild(errorSpan);
+											}
+											
+											errorSpan.innerHTML = (totalForbidden !== undefined && totalForbidden !== null && totalForbidden > 0 ? totalForbidden : "");
+										}
 									}
-								}
-							});
-							var columDefs = [ {
-								key : "detail",
-								sortable : false,
-								formatter : this.bind(this.renderCellDetail)
-							} ];
 
-							instance.widgets.notificationsDataTable = new YAHOO.widget.DataTable(instance.id + "-notificationTable", columDefs,
-									instance.widgets.dataSource, {
+									//Create panel
+									instance.options.reqCtrlListNodeRef = response.json.reqCtrlListNodeRef != null ? response.json.reqCtrlListNodeRef : "";
+
+									containerDiv.innerHTML = instance.createPanel(response.json);
+									containerDiv.style.zIndex="3";
+
+									instance.widgets.dataSource = new YAHOO.util.DataSource(this.getWebscriptUrl(), {
+										connMethodPost : true,
+										responseType : YAHOO.util.DataSource.TYPE_JSON,
+										responseSchema : {
+											resultsList : "items",
+											metaFields : {
+												startIndex : "startIndex",
+												totalRecords : "totalRecords",
+												queryExecutionId : "queryExecutionId"
+											}
+										}
+									});
+									var columDefs = [ {
+										key : "detail",
+										sortable : false,
+										formatter : this.bind(this.renderCellDetail)
+									} ];
+
+									instance.widgets.notificationsDataTable = new YAHOO.widget.DataTable(instance.id + "-notificationTable", columDefs,
+											instance.widgets.dataSource, {
 										initialLoad : false,
 										dynamicData : false,
 										"MSG_EMPTY" : '<span class="wait">' + $html(this.msg("message.loading")) + '</span>',
 										"MSG_ERROR" : this.msg("message.error"),
-										className : "alfresco-datatable simple-doclist",
+										className : "alfresco-datatable simple-doclist body notifications-list",
 										renderLoopSize : 4,
 										paginator : null
 									});
 
-							instance.widgets.notificationsDataTable.getDataTable = function() {
-								return this;
-							};
+									instance.widgets.notificationsDataTable.getDataTable = function() {
+										return this;
+									};
 
-							instance.widgets.notificationsDataTable.getData = function(recordId) {
-								return this.getRecord(recordId).getData();
-							};
+									instance.widgets.notificationsDataTable.getData = function(recordId) {
+										return this.getRecord(recordId).getData();
+									};
 
-							instance.widgets.notificationsDataTable.loadDataTable = function DataTable_loadDataTable(parameters) {
 
-								instance.widgets.dataSource.connMgr.setDefaultPostHeader(Alfresco.util.Ajax.JSON);
+									instance.widgets.notificationsDataTable.loadDataTable = function DataTable_loadDataTable(parameters) {
 
-								if (Alfresco.util.CSRFPolicy.isFilterEnabled()) {
-									instance.widgets.dataSource.connMgr.initHeader(Alfresco.util.CSRFPolicy.getHeader(), Alfresco.util.CSRFPolicy
-											.getToken(), false);
-								}
+										instance.widgets.dataSource.connMgr.setDefaultPostHeader(Alfresco.util.Ajax.JSON);
 
-								instance.widgets.dataSource.sendRequest(YAHOO.lang.JSON.stringify(parameters), {
-									success : function DataTable_loadDataTable_success(oRequest, oResponse, oPayload) {
-										instance.widgets.notificationsDataTable.onDataReturnReplaceRows(oRequest, oResponse, oPayload);
-
-										if (instance.widgets.paginator) {
-											instance.widgets.paginator.set('totalRecords', oResponse.meta.totalRecords);
-											instance.widgets.paginator.setPage(oResponse.meta.startIndex, true);
+										if (Alfresco.util.CSRFPolicy.isFilterEnabled()) {
+											instance.widgets.dataSource.connMgr.initHeader(Alfresco.util.CSRFPolicy.getHeader(), Alfresco.util.CSRFPolicy
+													.getToken(), false);
 										}
-										instance.queryExecutionId = oResponse.meta.queryExecutionId;
 
-									},
-									// success :
-									// me.widgets.alfrescoDataTable.onDataReturnSetRows,
-									failure : instance.widgets.notificationsDataTable.onDataReturnReplaceRows,
-									scope : instance.widgets.notificationsDataTable,
-									argument : {}
-								});
-							};
-							// Override DataTable function to set custom empty
-							// message
-							var dataTable = instance.widgets.notificationsDataTable, original_doBeforeLoadData = dataTable.doBeforeLoadData;
+										instance.widgets.dataSource.sendRequest(YAHOO.lang.JSON.stringify(parameters), {
+											success : function DataTable_loadDataTable_success(oRequest, oResponse, oPayload) {
+												instance.widgets.notificationsDataTable.onDataReturnReplaceRows(oRequest, oResponse, oPayload);
 
-							dataTable.doBeforeLoadData = function SimpleDocList_doBeforeLoadData(sRequest, oResponse, oPayload) {
-								if (oResponse.results && oResponse.results.length === 0) {
-									oResponse.results.unshift({
-										isInfo : true,
-										title : instance.msg("empty.notifications.title"),
-										description : instance.msg("empty.notifications.description")
-									});
+												if (instance.widgets.paginator) {
+													instance.widgets.paginator.set('totalRecords', oResponse.meta.totalRecords);
+													instance.widgets.paginator.setPage(oResponse.meta.startIndex, true);
+												}
+												instance.queryExecutionId = oResponse.meta.queryExecutionId;
+
+											},
+											failure : instance.widgets.notificationsDataTable.onDataReturnReplaceRows,
+											scope : instance.widgets.notificationsDataTable,
+											argument : {}
+										});
+									};
+									// Override DataTable function to set custom empty
+									// message
+									var dataTable = instance.widgets.notificationsDataTable, original_doBeforeLoadData = dataTable.doBeforeLoadData;
+
+									dataTable.doBeforeLoadData = function SimpleDocList_doBeforeLoadData(sRequest, oResponse, oPayload) {
+										if (oResponse.results && oResponse.results.length === 0) {
+											oResponse.results.unshift({
+												isInfo : true,
+												title : instance.msg("empty.notifications.title"),
+												description : instance.msg("empty.notifications.description")
+											});
+										}
+
+										return original_doBeforeLoadData.apply(this, arguments);
+									};
 								}
 
-								return original_doBeforeLoadData.apply(this, arguments);
-							};
+							},
+							scope : instance
+						},
+						failureMessage : "Could not load html template for version graph",
+						execScripts : true
+					});
+				}
+				
+				refreshNotifications();
 
-							
-						
-							
-						
-
-						}
-
-					},
-					scope : instance
-				},
-				failureMessage : "Could not load html template for version graph",
-				execScripts : true
-			});
-			
-
-//		TODO	YAHOO.Bubbling.on( "refreshDataGrids", recallWebScript, this);
-//			YAHOO.Bubbling.on( "activeDataListChanged", recallWebScript, this); 
-
+			YAHOO.Bubbling.on( "refreshDataGrids", refreshNotifications, this);
 			
 			YAHOO.Bubbling.addDefaultAction(REQFILTER_EVENTCLASS, function(layers,args){
 				var owner = YAHOO.Bubbling.getOwnerByTagName(args[1].anchor, "span");
@@ -271,8 +264,9 @@
 				if (owner.parentNode.nodeName == "LI") {
 					chgClass = owner.parentNode;
 				}
-				YAHOO.util.Dom.addClass(chgClass, "rclFilterSelected");
+				Dom.addClass(chgClass, "rclFilterSelected");
 
+				
 				// refreshes view by calling filter
 				var splits = owner.className.split("-");
 				var type = (splits.length > 2 ? splits[2].split(" ")[0] : undefined);
@@ -289,7 +283,6 @@
 				instance.reloadDataTable();
 				
 			});
-
 		},
 
 		createShowNotificationButton : function(instance, actionName, containerDiv , fn) {
@@ -339,7 +332,7 @@
 		
 
 			// if we have some constraints in res
-			if (json.rclNumber !== undefined && json.rclNumber != null && json.rclNumber.length > 0) {
+			if (json.scores.ctrlCount !== undefined && json.scores.ctrlCount != null && json.scores.ctrlCount.length > 0) {
 				// Parses each array mapped to dataType
 				html += "<div class=\"dataTypeList\"><div class=\"title\">" + instance.msg("label.constraints.violations")
 						+ "<span class=\"req-all-all rclFilterSelected\"><a class=\"req-filter " + REQFILTER_EVENTCLASS + "\" href=\"#\">"
@@ -347,14 +340,14 @@
 
 				html += "<div class=\"rclFilterElt\"><div>";
 
-				for ( var dataType in json.rclNumber) {
+				for ( var dataType in json.scores.ctrlCount) {
 					var scoreInfo = "";
-					var dataTypeName = Object.keys(json.rclNumber[dataType])[0];
+					var dataTypeName = Object.keys(json.scores.ctrlCount[dataType])[0];
 					html += "<div class=\"div-" + dataTypeName.toString().toLowerCase() + "\"><span class=\"span-"
 							+ dataTypeName.toString().toLowerCase() + "\"><a class=\"req-filter " + REQFILTER_EVENTCLASS + "\" href=\"#\" >"
 							+ instance.msg("label.constraints." + dataTypeName.toString().toLowerCase()) + scoreInfo + "</a></span><ul>";
 
-					var types = json.rclNumber[dataType];
+					var types = json.scores.ctrlCount[dataType];
 
 					for ( var type in types[dataTypeName]) {
 						var value = types[dataTypeName][type];
@@ -381,10 +374,7 @@
 		 * 
 		 * @method getWebscriptUrl
 		 */
-		getWebscriptUrl : function ProductNotifications_getWebscriptUrl() {
-
-			// TODO manque parentNodeRef;
-
+		getWebscriptUrl : function ProductNotifications_getWebscriptUrl() {			
 			return Alfresco.constants.PROXY_URI + "becpg/entity/datalists/data/node/" + this.options.reqCtrlListNodeRef.replace(":/", "")
 					+ "?repo=true&itemType=bcpg:reqCtrlList&pageSize=50&dataListName=reqCtrlList&entityNodeRef=" + this.options.entityNodeRef;
 
@@ -480,6 +470,7 @@
 		reloadDataTable : function SimpleDocList_reloadDataTable() {
 			this.widgets.notificationsDataTable.loadDataTable(this.getParameters());
 		}
+		
 
 	}, true);
 

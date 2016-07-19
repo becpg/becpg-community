@@ -3,6 +3,7 @@ package fr.becpg.repo.product.formulation;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
@@ -123,7 +125,22 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 					for (CompositionDataItem dataItem : view.getMainDataList()) {
 						if (dataItem.getComponent() != null) {
 							if (!checkProductValidity(dataItem.getComponent())) {
-								product.getReqCtrlList().add(createValidationRclDataItem(dataItem.getComponent()));
+
+								final ReqCtrlListDataItem nonValidatedRclDataItem = createValidationRclDataItem(dataItem.getComponent());
+
+								List<ReqCtrlListDataItem> productNonValidatedRcl = product.getReqCtrlList().stream()
+										.filter(rcl -> nonValidatedRclDataItem.getReqMessage().equals(rcl.getReqMessage())
+												&& nonValidatedRclDataItem.getReqDataType().equals(rcl.getReqDataType())
+												&& nonValidatedRclDataItem.getReqType().equals(rcl.getReqType()))
+										.collect(Collectors.toList());
+
+								// add new rcl or add sources to existing
+								// validation rcl
+								if (productNonValidatedRcl.size() > 0) {
+									productNonValidatedRcl.get(0).getSources().addAll(nonValidatedRclDataItem.getSources());
+								} else {
+									product.getReqCtrlList().add(nonValidatedRclDataItem);
+								}
 							} else {
 								childScore += 1;
 							}
@@ -132,7 +149,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 					}
 				}
 			}
-			
+
 			// pre merge, ctrlDataItems might be duplicated, visit them only
 			// once
 			List<String> visitedCtrlDataItems = new ArrayList<>();
@@ -181,9 +198,48 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 
 			scores.put("global", completionPercent);
 			scores.put("details", details);
+			Map<String, Map<String, Integer>> ctrlCount = getCtrlCount(product);
+
+			List<JSONObject> ctrlArray = new ArrayList<>();
+
+			for (String ctrlKey : ctrlCount.keySet()) {
+				JSONObject currentJSO = new JSONObject();
+				currentJSO.put(ctrlKey, ctrlCount.get(ctrlKey));
+
+				ctrlArray.add(currentJSO);
+			}
+
+			ctrlArray.sort((o1, o2) -> {
+				// sort on keys (fbd > all)
+
+				try {
+					JSONObject o1Values = o1.getJSONObject((String) o1.keys().next());
+					JSONObject o2Values = o2.getJSONObject((String) o2.keys().next());
+
+					if ((o1Values.has("Forbidden") && !(o2Values.has("Forbidden"))) || (o1Values.has("Forbidden") && o2Values.has("Forbidden")
+							&& (o1Values.getInt("Forbidden") >= o2Values.getInt("Forbidden")))) {
+						return -1;
+					} else {
+						return 1;
+					}
+				} catch (JSONException e) {
+					if (logger.isDebugEnabled()) {
+						logger.debug("JSONException, returning equals");
+					}
+					return 0;
+				}
+			});
+
+			logger.debug("\n\nCtrl sorted array: " + ctrlArray + " \n\n");
+
+			scores.put("ctrlCount", ctrlArray);
+			scores.put("totalForbidden", getForbiddenCtrlAmount(ctrlCount));
+
 			scores.put(JsonScoreHelper.PROP_CATALOGS, mandatoryFields);
 			logger.debug("Done calculating score of product " + product.getName() + ", children: " + componentsValidationScore + "%, mandatory: "
 					+ mandatoryFieldsScore + "% , specifications: " + specificationScore + "%, global=" + completionPercent + "%");
+
+			logger.debug("Score json: " + scores);
 
 		} catch (JSONException e) {
 			logger.error("Cannot create Json Score", e);
@@ -201,6 +257,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 	 * @return
 	 */
 	public ReqCtrlListDataItem createValidationRclDataItem(NodeRef node) {
+		logger.debug("Creating new non validated rclDataItem, src=" + node);
 		String message = I18NUtil.getMessage(MESSAGE_NON_VALIDATED_STATE);
 
 		ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, null, new ArrayList<NodeRef>(),
@@ -239,8 +296,8 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 						? catalog.getJSONArray(JsonScoreHelper.PROP_ENTITY_TYPE) : new JSONArray();
 				List<QName> qnameCatalogEntityTypeList = new ArrayList<QName>();
 
-				logger.debug("catalog has "+catalogEntityTypes.length()+" entities: "+catalogEntityTypes);
-				
+				logger.debug("catalog has " + catalogEntityTypes.length() + " entities: " + catalogEntityTypes);
+
 				for (int catalogEntityTypeIndex = 0; catalogEntityTypeIndex < catalogEntityTypes.length(); ++catalogEntityTypeIndex) {
 					QName qname = QName.createQName(catalogEntityTypes.getString(catalogEntityTypeIndex), namespaceService);
 
@@ -251,8 +308,8 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 					logger.debug("\n\t\t== Catalog \"" + catalog.getString(JsonScoreHelper.PROP_LABEL) + "\" ==");
 					logger.debug("Types of catalog: " + qnameCatalogEntityTypeList);
 					logger.debug("Type of product: " + productType);
-					logger.debug("Catalog contains product type: "+qnameCatalogEntityTypeList.contains(productType));
-					logger.debug("Catalog json: "+catalog);
+					logger.debug("Catalog contains product type: " + qnameCatalogEntityTypeList.contains(productType));
+					logger.debug("Catalog json: " + catalog);
 				}
 
 				// if this catalog applies to this type, or this catalog has no
@@ -320,11 +377,11 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 
 			for (String currentField : splitFields) {
 				QName fieldQname = null;
-				
+
 				try {
 					fieldQname = QName.createQName(currentField.split("_")[0], namespaceService);
-				} catch (NamespaceException e){
-					//happens if namespace does not exist
+				} catch (NamespaceException e) {
+					// happens if namespace does not exist
 					ignore = true;
 					break;
 				}
@@ -362,7 +419,6 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 					// only check assoc when lang is null
 					logger.debug("Checking if assoc is found");
 					if (associationService.getTargetAssoc(productData.getNodeRef(), fieldQname) != null) {
-						logger.debug("it is found !");
 						present = true;
 						break;
 					}
@@ -429,7 +485,6 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 		String id = "";
 		String displayName = "";
 		String lang = null;
-		String message = "";
 
 		for (int i = 0; i < fields.size(); ++i) {
 			String currentField = fields.get(i);
@@ -450,22 +505,37 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 			displayName += classDef.getTitle(dictionaryService) + (i == (fields.size() - 1) ? "" : " " + I18NUtil.getMessage(MESSAGE_OR) + " ");
 		}
 
-		if (lang != null) {
-			message = I18NUtil.getMessage(MESSAGE_MANDATORY_FIELD_MISSING_LOCALIZED, displayName, catalogName, "(" + lang + ")");
+		final String message = (lang != null
+				? I18NUtil.getMessage(MESSAGE_MANDATORY_FIELD_MISSING_LOCALIZED, displayName, catalogName, "(" + lang + ")")
+				: I18NUtil.getMessage(MESSAGE_MANDATORY_FIELD_MISSING, displayName, catalogName));
 
+		if (lang != null) {
 			field.put(JsonScoreHelper.PROP_LOCALE, lang);
-		} else {
-			message = I18NUtil.getMessage(MESSAGE_MANDATORY_FIELD_MISSING, displayName, catalogName);
 		}
 
 		field.put(JsonScoreHelper.PROP_ID, id);
 		field.put(JsonScoreHelper.PROP_DISPLAY_NAME, displayName);
-		ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, null, new ArrayList<NodeRef>(),
-				RequirementDataType.Completion);
-		rclDataItem.getSources().add(productData.getNodeRef());
 
-		productData.getReqCtrlList().add(rclDataItem);
-		
+		logger.debug("Searching rcl matching msg=" + message + ", reqType=Forbidden, reqDataType=Completion");
+
+		List<ReqCtrlListDataItem> matchingRclDataItems = productData.getReqCtrlList().stream().filter(rcl -> rcl.getReqMessage().equals(message)
+				&& RequirementType.Forbidden.equals(rcl.getReqType()) && RequirementDataType.Completion.equals(rcl.getReqDataType()))
+				.collect(Collectors.toList());
+
+		if (matchingRclDataItems.size() > 0) {
+			// add sources
+			logger.debug("found " + matchingRclDataItems.size() + " matching rclDataItems, adding sources");
+			matchingRclDataItems.get(0).getSources().add(productData.getNodeRef());
+		} else {
+			// rcl not found in visited list, add it to the product
+			logger.debug("found none, adding new rcl");
+			ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, null, new ArrayList<NodeRef>(),
+					RequirementDataType.Completion);
+			rclDataItem.getSources().add(productData.getNodeRef());
+
+			productData.getReqCtrlList().add(rclDataItem);
+		}
+
 		return field;
 
 	}
@@ -490,6 +560,55 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 		}
 
 		return langs;
+	}
+
+	private Map<String, Map<String, Integer>> getCtrlCount(ProductData product) {
+
+		Map<String, Map<String, Integer>> counts = new HashMap<>();
+		List<ReqCtrlListDataItem> visitedRclItems = new ArrayList<>();
+
+		for (ReqCtrlListDataItem rclDataItem : product.getReqCtrlList()) {
+			RequirementDataType key = rclDataItem.getReqDataType();
+
+			// make sure we don't put duplicates rclDataItems
+			if (counts.containsKey(key.toString()) && !visitedRclItems.contains(rclDataItem)) {
+				Map<String, Integer> currentCount = counts.get(key.toString());
+				if (currentCount == null) {
+					currentCount = new HashMap<String, Integer>();
+				}
+
+				if (currentCount.containsKey(rclDataItem.getReqType().toString())) {
+					currentCount.put(rclDataItem.getReqType().toString(), currentCount.get(rclDataItem.getReqType().toString()) + 1);
+				} else {
+					currentCount.put(rclDataItem.getReqType().toString(), 1);
+				}
+				visitedRclItems.add(rclDataItem);
+
+			} else if (!counts.containsKey(key.toString())) {
+				// this dataType was not found before, adding it
+				Map<String, Integer> newMap = new HashMap<String, Integer>();
+				newMap.put(rclDataItem.getReqType().toString(), 1);
+				counts.put(key.toString(), newMap);
+
+				visitedRclItems.add(rclDataItem);
+			}
+		}
+
+		return counts;
+	}
+
+	private int getForbiddenCtrlAmount(Map<String, Map<String, Integer>> reqCtrlList) {
+		int res = 0;
+
+		for (Map<String, Integer> map : reqCtrlList.values()) {
+			if (map.containsKey("Forbidden")) {
+				res += map.get("Forbidden");
+			}
+		}
+
+		logger.debug("Map " + reqCtrlList + " yields " + res + " forbidden ctrls");
+
+		return res;
 	}
 
 }
