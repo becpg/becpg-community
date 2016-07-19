@@ -148,7 +148,7 @@ public class ProductServiceTest extends PLMBaseTestCase {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			/*-- Generate report --*/
-			entityReportService.generateReport(rawMaterialNodeRef);
+			entityReportService.generateReports(rawMaterialNodeRef);
 
 			/*-- Check report --*/
 			logger.debug("/*-- Check report --*/");
@@ -179,7 +179,7 @@ public class ProductServiceTest extends PLMBaseTestCase {
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
 					BeCPGModel.TYPE_ENTITY_V2, properties).getChildRef();
 
-			entityReportService.generateReport(rawMaterialNodeRef);
+			entityReportService.generateReports(rawMaterialNodeRef);
 
 			return null;
 
