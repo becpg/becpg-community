@@ -1,11 +1,7 @@
 package fr.becpg.repo.web.scripts.product;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -19,13 +15,11 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
-import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 
 /**
- * 
+ *
  * @author steven
  *
  */
@@ -56,128 +50,32 @@ public class ReqCtrlWebScript extends AbstractProductWebscript {
 			watch = new StopWatch();
 			watch.start();
 		}
-
-		//Fetch query params
-		String type = req.getParameter("type");
-		String dataType = req.getParameter("dataType");
-
-		//Actual filters
-		RequirementType rType;
-		RequirementDataType rDataType;
-
-		Map<String, Map<String, Integer>> counts = new HashMap<String, Map<String, Integer>>();
-		//Try to match requirement type. Default is null (no filter)
-		rType = RequirementType.fromString(type);
-
-		//Try to match requirement data type. Default is null (no filter)
-		rDataType = RequirementDataType.fromString(dataType);
-
-		//fetches correct list to find rclDataItem in
-		List<ReqCtrlListDataItem> ctrlList =  product.getReqCtrlList();
-		
+		List<ReqCtrlListDataItem> ctrlList = product.getReqCtrlList();
 
 		NodeRef reqCtrlListNodeRef = null;
-		
-		for(ReqCtrlListDataItem item : ctrlList){
-			
-			if(reqCtrlListNodeRef == null){
+
+		// fetch rclDataItemList node ref
+		for (ReqCtrlListDataItem item : ctrlList) {
+			if (reqCtrlListNodeRef == null) {
 				reqCtrlListNodeRef = item.getParentNodeRef();
-			}
-			
-			//Filtering on reqType and reqDataType
-			if(rType != null && item.getReqType() != rType){
-				continue;
-			}
-			if(rDataType != null && item.getReqDataType() != rDataType){
-				continue;
-			}
-
-			//sets key in case resDataType would be null
-			RequirementDataType key;
-			if(item.getReqDataType() == null){
-				key = RequirementDataType.Nutrient;
-			} else {
-				key = item.getReqDataType();
-			}
-
-			//Filter passed, adding count		
-			if(counts.containsKey(key.toString())){					
-				Map<String, Integer> currentCount = counts.get(key.toString());
-				if(currentCount == null){
-					currentCount = new HashMap<String, Integer>();
-				}
-
-				if(currentCount.containsKey(item.getReqType().toString())){
-					currentCount.put(item.getReqType().toString(), currentCount.get(item.getReqType().toString())+1);
-				} else {
-					currentCount.put(item.getReqType().toString(), 1);
-				}
-			} else {
-				//this dataType was not found before, adding it
-				Map<String, Integer> newMap = new HashMap<String, Integer>();
-				newMap.put(item.getReqType().toString(), 1);
-				counts.put(key.toString(), newMap);
+				break;
 			}
 		}
 
-		try {			
-			//puts each count of rclDataItems in ret, mapped with proper key 
-			List<JSONObject> rclSortingArray = new ArrayList<JSONObject>();
+		// put rclDataItemList NR and product score in response
+		try {
 			JSONObject ret = new JSONObject();
-			
+
+			logger.debug("\n\nreqCtrlListNodeRef: " + reqCtrlListNodeRef + "\n");
 			ret.put("reqCtrlListNodeRef", reqCtrlListNodeRef);
-			
-			for(String dt : counts.keySet()){				
-				Map<String, Integer> currentCount = counts.get(dt);
 
-				JSONObject rclValues = new JSONObject();
-
-				for(String key : currentCount.keySet()){
-					rclValues.put(key, currentCount.get(key));
-				}
-				JSONObject rclValuesMapping = new JSONObject();
-				rclValuesMapping.put(dt, rclValues);
-				rclSortingArray.add(rclValuesMapping);
-			}
-
-			rclSortingArray.sort(new Comparator<JSONObject>() {
-				@Override
-				public int compare(JSONObject o1, JSONObject o2) {
-					//sort on keys (fbd > all)
-					
-					try {
-						JSONObject o1Values = o1.getJSONObject((String) o1.keys().next());
-						JSONObject o2Values = o2.getJSONObject((String) o2.keys().next());
-						
-						//TODO check if we only need forbidden to sort, or other sorting criterias are relevant
-						if((o1Values.has("Forbidden") && !(o2Values.has("Forbidden")))
-								|| (o1Values.has("Forbidden") && o2Values.has("Forbidden") && o1Values.getInt("Forbidden") >= o2Values.getInt("Forbidden"))){
-							if(logger.isDebugEnabled()){
-								logger.debug(o1+" (o1) > "+o2+" (o2)");
-							}
-							return -1;
-						} else {
-							if(logger.isDebugEnabled()){
-								logger.debug(o2+" (o2) > "+o1+" (o1)");
-							}
-							return 1;
-						}
-					} catch (JSONException e){
-						if(logger.isDebugEnabled()){
-							logger.debug("JSONException, returning equals");
-						}
-						return 0;
-					}
-				}
-			});
-
-			//might be null if product has never been formulated, if not put it in res
-			if(product.getEntityScore() != null){
+			// might be null if product has never been formulated, if not put it
+			// in res
+			if (product.getEntityScore() != null) {
 				JSONObject scores = new JSONObject(product.getEntityScore());
-				ret.put("rclNumber", rclSortingArray.toArray());
 				ret.put("scores", scores);
-				if(logger.isDebugEnabled()){
-					logger.debug("ret : "+ret);
+				if (logger.isDebugEnabled()) {
+					logger.debug("\n\nret : " + ret);
 				}
 			}
 
@@ -188,10 +86,10 @@ public class ReqCtrlWebScript extends AbstractProductWebscript {
 			throw new WebScriptException("Unable to serialize JSON", e);
 		}
 
-		if(logger.isDebugEnabled()){
+		if (logger.isDebugEnabled()) {
 			assert watch != null;
 			watch.stop();
-			logger.debug("ReqCtrlWebScript : "+this.getClass().getName()+" takes " + watch.getTotalTimeSeconds() + " seconds");
+			logger.debug("ReqCtrlWebScript : " + this.getClass().getName() + " takes " + watch.getTotalTimeSeconds() + " seconds");
 		}
 	}
 
