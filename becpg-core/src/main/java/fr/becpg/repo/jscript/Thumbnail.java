@@ -17,8 +17,6 @@
  ******************************************************************************/
 package fr.becpg.repo.jscript;
 
-import java.util.List;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.jscript.BaseScopableProcessorExtension;
 import org.alfresco.repo.jscript.ScriptNode;
@@ -30,11 +28,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.common.BeCPGException;
-import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityService;
-import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
@@ -55,8 +51,6 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 
 	private ServiceRegistry serviceRegistry;
 
-	private AssociationService associationService;
-
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
@@ -75,10 +69,6 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 
 	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
 		this.serviceRegistry = serviceRegistry;
-	}
-
-	public void setAssociationService(AssociationService associationService) {
-		this.associationService = associationService;
 	}
 
 	public ScriptNode getThumbnailNode(ScriptNode sourceNode) {
@@ -133,13 +123,13 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 
 	public ScriptNode getReportNode(ScriptNode sourceNode) {
 		NodeRef reportNodeRef;
-		if (entityReportService.shouldGenerateReport(sourceNode.getNodeRef())) {
+		if (entityReportService.shouldGenerateReport(sourceNode.getNodeRef(), null)) {
 			logger.debug("getReportNode: Entity report is not up to date for " + sourceNode.getNodeRef());
 			reportNodeRef = entityReportService.getSelectedReport(sourceNode.getNodeRef());
 			if (reportNodeRef != null) {
 				cleanThumbnails(reportNodeRef);
 			}
-			entityReportService.generateReport(sourceNode.getNodeRef());
+			entityReportService.generateReports(sourceNode.getNodeRef());
 		}
 
 		reportNodeRef = entityReportService.getSelectedReport(sourceNode.getNodeRef());
@@ -151,19 +141,14 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 	public ScriptNode refreshReport(ScriptNode reportNode) {
 		NodeRef reportNodeRef = reportNode.getNodeRef();
 
-		List<NodeRef> entityNodeRefs = associationService.getSourcesAssocs(reportNodeRef, ReportModel.ASSOC_REPORTS);
-		if (entityNodeRefs != null) {
-			for (NodeRef entityNodeRef : entityNodeRefs) {
-				if (entityReportService.shouldGenerateReport(entityNodeRef)) {
-					logger.debug("refreshReport: Entity report is not up to date for " + entityNodeRef);
-					cleanThumbnails(reportNodeRef);
-					entityReportService.generateReport(entityNodeRef);
-				}
-				reportNodeRef = entityReportService.getSelectedReport(entityNodeRef);
-			}
+		NodeRef entityNodeRef = entityReportService.getEntityNodeRef(reportNodeRef);
+		if ((entityNodeRef != null) && entityReportService.shouldGenerateReport(entityNodeRef, reportNodeRef)) {
+			logger.debug("refreshReport: Entity report is not up to date for " + entityNodeRef);
+			cleanThumbnails(reportNodeRef);
+			entityReportService.generateReport(entityNodeRef, reportNodeRef);
 		}
-		
-		return reportNodeRef != null ? new ScriptNode(reportNodeRef, serviceRegistry, getScope()) :reportNode;
+
+		return reportNodeRef != null ? new ScriptNode(reportNodeRef, serviceRegistry, getScope()) : reportNode;
 
 	}
 

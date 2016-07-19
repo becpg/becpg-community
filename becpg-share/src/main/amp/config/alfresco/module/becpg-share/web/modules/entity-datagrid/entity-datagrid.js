@@ -1874,16 +1874,16 @@
 	                        	         "jquery", "grid/floatthead"
 	                        	       ], function(jQuery) {
 	                            	
-	                            	var $table = jQuery(me.widgets.dataTable._elTable);
-	                            	$table.floatThead({zIndex:2, scrollContainer: function($table){
-	                                    return $table.closest('.scrollableList');
-	                                },floatContainerClass:"grid yui-dt"});
+	                            	me.widgets.floatingHeader = jQuery(me.widgets.dataTable._elTable);
+	                            	me.widgets.floatingHeader.floatThead({zIndex:2, scrollContainer: function($table){
+	                                    return me.widgets.floatingHeader.closest('.scrollableList');
+	                                },floatContainerClass:"floatThead-container grid yui-dt"});
 	                            	
 	                            	 YAHOO.Bubbling
 	                                 .on("refreshFloatingHeader", function(){
-	                                	 $table.floatThead('reflow');
+	                                	 me.widgets.floatingHeader.floatThead('reflow');
 	                                 },this);
-	                            	
+	                            
 	                            });
                             
                             }
@@ -2483,6 +2483,11 @@
                                 	this.options.itemType = obj.dataList.itemType;
                                 }
                                 
+                                if(this.widgets.floatingHeader!=null ){
+                                	this.widgets.floatingHeader.floatThead('destroy');
+                                	this.widgets.floatingHeader = null;
+                                }
+                                
                                 this.entity = obj.entity;
                                 this.currentPage = 1;
                                 this.isFilterFormLoaded = false;
@@ -2515,6 +2520,7 @@
                                 if(this.widgets.filterForm!=null){
                                 	this.widgets.filterForm.getMenu().hide();
                                 }
+                                
                                 
                                 
 

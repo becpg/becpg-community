@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2016 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2016 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.project.impl;
@@ -34,6 +34,7 @@ import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.ScriptService;
+import org.alfresco.service.cmr.security.AccessPermission;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -62,9 +63,9 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * Project service that manage project
- * 
+ *
  * @author quere
- * 
+ *
  */
 
 @Service("projectService")
@@ -89,7 +90,7 @@ public class ProjectServiceImpl implements ProjectService {
 	@Autowired
 	private NamespaceService namespaceService;
 	@Autowired
-	private ScriptService scriptService;	
+	private ScriptService scriptService;
 	@Autowired
 	private CommentService commentService;
 
@@ -122,7 +123,6 @@ public class ProjectServiceImpl implements ProjectService {
 
 	}
 
-
 	@Override
 	public List<NodeRef> getTaskLegendList() {
 		return BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_TASK_LEGEND).addSort(BeCPGModel.PROP_SORT, true).inDB().list();
@@ -130,17 +130,16 @@ public class ProjectServiceImpl implements ProjectService {
 
 	@Override
 	public NodeRef getProjectsContainer(String siteId) {
-		if (siteId != null && siteId.length() > 0) {
+		if ((siteId != null) && (siteId.length() > 0)) {
 			return siteService.getContainer(siteId, SiteService.DOCUMENT_LIBRARY);
 		}
 		return null;
 	}
 
-
 	@Override
 	public void formulate(NodeRef projectNodeRef) throws FormulateException {
 		if (nodeService.getType(projectNodeRef).equals(ProjectModel.TYPE_PROJECT)) {
-			logger.debug("Formulate project : "+projectNodeRef);
+			logger.debug("Formulate project : " + projectNodeRef);
 			formulationService.formulate(projectNodeRef);
 		}
 	}
@@ -151,14 +150,14 @@ public class ProjectServiceImpl implements ProjectService {
 		// update prevTasks assoc of next tasks
 		List<NodeRef> deleteTaskPrevTaskNodeRefs = associationService.getTargetAssocs(taskListNodeRef, ProjectModel.ASSOC_TL_PREV_TASKS);
 		List<AssociationRef> nextTaskAssociationRefs = nodeService.getSourceAssocs(taskListNodeRef, ProjectModel.ASSOC_TL_PREV_TASKS);
-		
+
 		for (AssociationRef nextTaskAssociationRef : nextTaskAssociationRefs) {
-			
-			if(!nodeService.hasAspect(nextTaskAssociationRef.getSourceRef(), ContentModel.ASPECT_PENDING_DELETE)){
-				
+
+			if (!nodeService.hasAspect(nextTaskAssociationRef.getSourceRef(), ContentModel.ASPECT_PENDING_DELETE)) {
+
 				List<NodeRef> nextTaskPrevTaskNodeRefs = associationService.getTargetAssocs(nextTaskAssociationRef.getSourceRef(),
 						ProjectModel.ASSOC_TL_PREV_TASKS);
-				
+
 				if (nextTaskAssociationRefs.contains(taskListNodeRef)) {
 					nextTaskPrevTaskNodeRefs.remove(taskListNodeRef);
 				}
@@ -169,18 +168,16 @@ public class ProjectServiceImpl implements ProjectService {
 				associationService.update(nextTaskAssociationRef.getSourceRef(), ProjectModel.ASSOC_TL_PREV_TASKS, nextTaskPrevTaskNodeRefs);
 			}
 		}
-		
+
 	}
-	
 
 	@Override
 	public void submitTask(NodeRef nodeRef, String taskComment) {
 
-
-		if (taskComment != null && !taskComment.isEmpty()) {
+		if ((taskComment != null) && !taskComment.isEmpty()) {
 			commentService.createComment(nodeRef, "", taskComment, false);
 		}
-		
+
 		Date startDate = (Date) nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_START);
 		Date endDate = ProjectHelper.removeTime(new Date());
 
@@ -189,16 +186,15 @@ public class ProjectServiceImpl implements ProjectService {
 		nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_END, endDate);
 		// milestone duration is maximum 1 day or startDate is after endDate
 		Boolean isMileStone = (Boolean) nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_IS_MILESTONE);
-		if ((isMileStone != null && isMileStone) || (startDate == null || startDate.after(endDate))) {
+		if (((isMileStone != null) && isMileStone) || ((startDate == null) || startDate.after(endDate))) {
 			nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_START, endDate);
 		}
 	}
-	
-	
+
 	@Override
-	public List<NodeRef> extractResources(NodeRef projectNodeRef, List<NodeRef> resources ){
+	public List<NodeRef> extractResources(NodeRef projectNodeRef, List<NodeRef> resources) {
 		List<NodeRef> ret = new ArrayList<>();
-		
+
 		for (NodeRef resourceNodeRef : resources) {
 			String authorityName = authorityDAO.getAuthorityName(resourceNodeRef);
 			if (isRoleAuhtority(authorityName)) {
@@ -238,35 +234,32 @@ public class ProjectServiceImpl implements ProjectService {
 				}
 			} else {
 				ret.add(resourceNodeRef);
-				
+
 			}
 		}
-		
+
 		return ret;
-		
+
 	}
-	
-	
 
 	@Override
-   public NodeRef getReassignedResource(NodeRef resource) {	
-		
-		if(resource != null && nodeService.getProperty(resource, ProjectModel.PROP_QNAME_DELEGATION_STATE)!=null
-					&&(boolean)nodeService.getProperty(resource, ProjectModel.PROP_QNAME_DELEGATION_STATE)==true){
-			
-			Date delegationStart=(Date)nodeService.getProperty(resource, ProjectModel.PROP_QNAME_DELEGATION_START);
-			Date delegationEnd=(Date)nodeService.getProperty(resource, ProjectModel.PROP_QNAME_DELEGATION_END);
-			
-			if (delegationStart!=null && delegationEnd !=null &&
-					(delegationStart.before(new Date())||delegationStart.equals(new Date()))
-					&&(delegationEnd.after(new Date())||delegationEnd.equals(new Date()))){
-				
-				NodeRef reassignResource = getReassignedResource(associationService.getTargetAssoc(resource, ProjectModel.PROP_QNAME_REASSIGN_RESOURCE));
-				
-				if(reassignResource != null){
+	public NodeRef getReassignedResource(NodeRef resource) {
+
+		if ((resource != null) && (nodeService.getProperty(resource, ProjectModel.PROP_QNAME_DELEGATION_STATE) != null)
+				&& ((boolean) nodeService.getProperty(resource, ProjectModel.PROP_QNAME_DELEGATION_STATE) == true)) {
+
+			Date delegationStart = (Date) nodeService.getProperty(resource, ProjectModel.PROP_QNAME_DELEGATION_START);
+			Date delegationEnd = (Date) nodeService.getProperty(resource, ProjectModel.PROP_QNAME_DELEGATION_END);
+
+			if ((delegationStart != null) && (delegationEnd != null) && (delegationStart.before(new Date()) || delegationStart.equals(new Date()))
+					&& (delegationEnd.after(new Date()) || delegationEnd.equals(new Date()))) {
+
+				NodeRef reassignResource = getReassignedResource(
+						associationService.getTargetAssoc(resource, ProjectModel.PROP_QNAME_REASSIGN_RESOURCE));
+
+				if (reassignResource != null) {
 					return reassignResource;
-				}
-				else {
+				} else {
 					return associationService.getTargetAssoc(resource, ProjectModel.PROP_QNAME_REASSIGN_RESOURCE);
 				}
 			}
@@ -276,7 +269,7 @@ public class ProjectServiceImpl implements ProjectService {
 
 	@Override
 	public String getDeliverableUrl(NodeRef projectNodeRef, String url) {
-		if (url != null && url.contains("{")) {
+		if ((url != null) && url.contains("{")) {
 			Matcher patternMatcher = Pattern.compile("\\{([^}]+)\\}").matcher(url);
 			StringBuffer sb = new StringBuffer();
 			while (patternMatcher.find()) {
@@ -294,9 +287,10 @@ public class ProjectServiceImpl implements ProjectService {
 							if (replacement.length() > 0) {
 								replacement += ",";
 							}
-							if(splitted.length>1){
-								if(splitted[1].startsWith(DeliverableUrl.XPATH_URL_PREFIX)){
-									replacement += BeCPGQueryBuilder.createQuery().selectNodeByPath(assoc.getTargetRef(), splitted[1].substring(DeliverableUrl.XPATH_URL_PREFIX.length()));	
+							if (splitted.length > 1) {
+								if (splitted[1].startsWith(DeliverableUrl.XPATH_URL_PREFIX)) {
+									replacement += BeCPGQueryBuilder.createQuery().selectNodeByPath(assoc.getTargetRef(),
+											splitted[1].substring(DeliverableUrl.XPATH_URL_PREFIX.length()));
 								} else {
 									replacement += nodeService.getProperty(assoc.getTargetRef(), QName.createQName(splitted[1], namespaceService));
 								}
@@ -319,14 +313,15 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	private QName extractRolePropName(String authorityName) {
-		String propName = authorityName.substring((PermissionService.GROUP_PREFIX + ProjectRepoConsts.PROJECT_GROUP_PREFIX).length(),
-				authorityName.length()).replace("_", ":");
+		String propName = authorityName
+				.substring((PermissionService.GROUP_PREFIX + ProjectRepoConsts.PROJECT_GROUP_PREFIX).length(), authorityName.length())
+				.replace("_", ":");
 
 		return QName.createQName(propName, namespaceService);
 	}
 
 	private boolean isRoleAuhtority(String authorityName) {
-		return authorityName != null && authorityName.startsWith(PermissionService.GROUP_PREFIX + ProjectRepoConsts.PROJECT_GROUP_PREFIX);
+		return (authorityName != null) && authorityName.startsWith(PermissionService.GROUP_PREFIX + ProjectRepoConsts.PROJECT_GROUP_PREFIX);
 	}
 
 	@Override
@@ -336,10 +331,10 @@ public class ProjectServiceImpl implements ProjectService {
 			List<NodeRef> nodeRefs = new ArrayList<>(1);
 			nodeRefs.add(taskListNodeRef);
 
-			if (resourceNodeRef != null && nodeService.exists(resourceNodeRef)) {
+			if ((resourceNodeRef != null) && nodeService.exists(resourceNodeRef)) {
 				String authorityName = authorityDAO.getAuthorityName(resourceNodeRef);
 
-				if (authorityName != null && !isRoleAuhtority(authorityName)) {
+				if ((authorityName != null) && !isRoleAuhtority(authorityName)) {
 					logger.debug("Set permission for authority: " + authorityName + " allow :" + allow);
 					ProjectData projectData = alfrescoRepository.findOne(projectNodeRef);
 					List<DeliverableListDataItem> deliverableList = ProjectHelper.getDeliverables(projectData, taskListNodeRef);
@@ -349,7 +344,16 @@ public class ProjectServiceImpl implements ProjectService {
 
 					for (NodeRef n : nodeRefs) {
 						if (allow) {
-							permissionService.setPermission(n, authorityName, PermissionService.EDITOR, true);
+							boolean updatePerm = true;
+							for (AccessPermission perm : permissionService.getAllSetPermissions(n)) {
+								if (authorityName.equals(perm.getAuthority()) && PermissionService.EDITOR.equals(perm.getPermission())) {
+									updatePerm = false;
+									break;
+								}
+							}
+							if (updatePerm) {
+								permissionService.setPermission(n, authorityName, PermissionService.EDITOR, true);
+							}
 						} else {
 							permissionService.clearPermission(n, authorityName);
 						}
@@ -364,13 +368,13 @@ public class ProjectServiceImpl implements ProjectService {
 	@Override
 	public void runScript(ProjectData project, TaskListDataItem task, NodeRef scriptNode) {
 
-		if (scriptNode != null && nodeService.exists(scriptNode)) {
-			
+		if ((scriptNode != null) && nodeService.exists(scriptNode)) {
+
 			String userName = AuthenticationUtil.getFullyAuthenticatedUser();
-			
+
 			Map<String, Object> model = new HashMap<>();
 
-			logger.debug("Run task script " );
+			logger.debug("Run task script ");
 
 			model.put("currentUser", userName);
 			model.put("task", task);
@@ -385,13 +389,13 @@ public class ProjectServiceImpl implements ProjectService {
 
 	@Override
 	public NodeRef refusedTask(NodeRef nodeRef, String taskComment) {
-		
+
 		NodeRef taskNodeRef = associationService.getTargetAssoc(nodeRef, ProjectModel.ASSOC_TL_REFUSED_TASK_REF);
-				
-		if (taskNodeRef!=null && taskComment != null && !taskComment.isEmpty()) {
+
+		if ((taskNodeRef != null) && (taskComment != null) && !taskComment.isEmpty()) {
 			commentService.createComment(taskNodeRef, "", taskComment, false);
 		}
-		
+
 		nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_STATE, TaskState.Refused.toString());
 
 		return taskNodeRef;
@@ -400,14 +404,14 @@ public class ProjectServiceImpl implements ProjectService {
 
 	@Override
 	public Long getNbProjectsByLegend(NodeRef legendNodeRef, String siteId) {
-		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_PROJECT).andPropEquals(ProjectModel.PROP_PROJECT_STATE, ProjectState.InProgress.toString());
-		if(legendNodeRef == null){
-			queryBuilder.isNull(ProjectModel.PROP_PROJECT_LEGENDS);			
-		}
-		else{
+		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_PROJECT)
+				.andPropEquals(ProjectModel.PROP_PROJECT_STATE, ProjectState.InProgress.toString());
+		if (legendNodeRef == null) {
+			queryBuilder.isNull(ProjectModel.PROP_PROJECT_LEGENDS);
+		} else {
 			queryBuilder.andPropEquals(ProjectModel.PROP_PROJECT_LEGENDS, legendNodeRef.toString());
 		}
-		if(siteId != null){
+		if (siteId != null) {
 			queryBuilder.inSite(siteId, null);
 		}
 		return queryBuilder.count();
