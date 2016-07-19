@@ -75,7 +75,7 @@
                         {
                             var me = this;
 
-                            if (this.options.report !== null)
+                            if (this.options.report !== null && Dom.get( me.id + "-entityReportPicker-button"))
                             {
 
                                 

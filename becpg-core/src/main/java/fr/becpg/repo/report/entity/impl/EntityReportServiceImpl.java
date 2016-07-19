@@ -209,6 +209,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 																writer.getContentOutputStream(), params);
 
 														nodeService.setProperty(documentNodeRef, ContentModel.PROP_MODIFIED, generatedDate);
+														
+														nodeService.setProperty(documentNodeRef, ContentModel.PROP_NAME, documentName);
 
 														if (!Locale.getDefault().getLanguage().equals(locale.getLanguage())) {
 															nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_LOCALES,
@@ -338,6 +340,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 											writer.getContentOutputStream(), params);
 
 									nodeService.setProperty(documentNodeRef, ContentModel.PROP_MODIFIED, generatedDate);
+									
+									nodeService.setProperty(documentNodeRef, ContentModel.PROP_NAME, documentName);
 
 									if (!Locale.getDefault().getLanguage().equals(locale.getLanguage())) {
 										nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_LOCALES, locale.getLanguage());
@@ -726,6 +730,17 @@ public class EntityReportServiceImpl implements EntityReportService {
 			documentNodeRef = getSelectedReport(entityNodeRef);
 		}
 		return documentNodeRef;
+	}
+
+	@Override
+	public NodeRef getEntityNodeRef(NodeRef reportNodeRef) {
+		List<NodeRef> entityNodeRefs = associationService.getSourcesAssocs(reportNodeRef, ReportModel.ASSOC_REPORTS);
+		if (entityNodeRefs != null) {
+			for (NodeRef entityNodeRef : entityNodeRefs) {
+				return entityNodeRef;
+			}
+		}
+		return null;
 	}
 
 }

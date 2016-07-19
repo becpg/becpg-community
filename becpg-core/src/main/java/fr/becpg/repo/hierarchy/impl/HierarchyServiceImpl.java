@@ -193,18 +193,18 @@ public class HierarchyServiceImpl implements HierarchyService {
 
 			try {
 				I18NUtil.setLocale(Locale.getDefault());
-
-				NodeRef hierarchyNodeRef = getHierarchyNodeRef(entityNodeRef, hierarchyQname);
-
-				if (hierarchyNodeRef != null) {
-
+				
 					QName type = nodeService.getType(entityNodeRef);
 					ClassDefinition classDef = dictionaryService.getClass(type);
 
 					NodeRef destinationNodeRef = repoService.getOrCreateFolderByPath(containerNodeRef, type.getLocalName(),
 							classDef.getTitle(dictionaryService));
 
-					destinationNodeRef = getOrCreateHierachyFolder(hierarchyNodeRef, destinationNodeRef);
+					NodeRef hierarchyNodeRef = getHierarchyNodeRef(entityNodeRef, hierarchyQname);
+					
+					if (hierarchyNodeRef != null) {
+						destinationNodeRef = getOrCreateHierachyFolder(hierarchyNodeRef, destinationNodeRef);
+					}
 
 					if (destinationNodeRef != null) {
 						if (destinationNodeRef != entityNodeRef) {
@@ -221,7 +221,6 @@ public class HierarchyServiceImpl implements HierarchyService {
 						logger.warn("Failed to classify entity. entityNodeRef: " + entityNodeRef);
 					}
 
-				}
 				return null;
 
 			} finally {
