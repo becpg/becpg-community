@@ -31,10 +31,7 @@ public interface EntityReportService {
 	
 	void generateReport(NodeRef entityNodeRef, NodeRef documentNodeRef, ReportFormat reportFormat, OutputStream outputStream);
 	
-	
 	NodeRef getOrRefreshReport(NodeRef entityNodeRef, NodeRef documentNodeRef);
-
-
 	
 	String getXmlReportDataSource(NodeRef entityNodeRef);
 
