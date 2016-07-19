@@ -35,6 +35,7 @@ import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.model.FileFolderService;
+import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.preference.PreferenceService;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ContentService;
@@ -180,7 +181,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 											String reportFormat = (String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
 											String documentName = getReportDocumentName(entityNodeRef, tplNodeRef, reportFormat, locale);
 
-											NodeRef documentNodeRef = getReportDocumenNodeRef(entityNodeRef, tplNodeRef, documentName);
+											NodeRef documentNodeRef = getReportDocumenNodeRef(entityNodeRef, tplNodeRef, documentName, locale);
 
 											if (documentNodeRef != null) {
 												// Run report
@@ -472,10 +473,25 @@ public class EntityReportServiceImpl implements EntityReportService {
 		return documentName;
 	}
 
-	private NodeRef getReportDocumenNodeRef(NodeRef entityNodeRef, NodeRef tplNodeRef, String documentName) {
+	private NodeRef getReportDocumenNodeRef(NodeRef entityNodeRef, NodeRef tplNodeRef, String documentName, Locale locale) {
 
 		NodeRef documentsFolderNodeRef = entityService.getOrCreateDocumentsFolder(entityNodeRef);
-		NodeRef documentNodeRef = nodeService.getChildByName(documentsFolderNodeRef, ContentModel.ASSOC_CONTAINS, documentName);
+		NodeRef documentNodeRef = null;
+		for (FileInfo fileInfo : fileFolderService.listFiles(documentsFolderNodeRef)) {
+			if (tplNodeRef.equals(associationService.getTargetAssoc(fileInfo.getNodeRef(), ReportModel.ASSOC_REPORT_TPL))) {
+
+				for (Locale tmpLocale : getEntityReportLocales(fileInfo.getNodeRef())) {
+
+					if (tmpLocale.getLanguage().equals(locale.getLanguage())) {
+						documentNodeRef = fileInfo.getNodeRef();
+					}
+					break;
+				}
+				if (documentNodeRef != null) {
+					break;
+				}
+			}
+		}
 		if (documentNodeRef == null) {
 			documentNodeRef = fileFolderService.create(documentsFolderNodeRef, documentName, ReportModel.TYPE_REPORT).getNodeRef();
 			// We don't update permissions. If permissions are modified -> admin
