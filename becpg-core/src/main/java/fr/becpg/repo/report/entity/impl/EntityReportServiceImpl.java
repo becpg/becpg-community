@@ -208,6 +208,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 																writer.getContentOutputStream(), params);
 
 														nodeService.setProperty(documentNodeRef, ContentModel.PROP_MODIFIED, generatedDate);
+														
+														nodeService.setProperty(documentNodeRef, ContentModel.PROP_NAME, documentName);
 
 														if (!Locale.getDefault().getLanguage().equals(locale.getLanguage())) {
 															nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_LOCALES,
@@ -337,6 +339,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 											writer.getContentOutputStream(), params);
 
 									nodeService.setProperty(documentNodeRef, ContentModel.PROP_MODIFIED, generatedDate);
+									
+									nodeService.setProperty(documentNodeRef, ContentModel.PROP_NAME, documentName);
 
 									if (!Locale.getDefault().getLanguage().equals(locale.getLanguage())) {
 										nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_LOCALES, locale.getLanguage());
