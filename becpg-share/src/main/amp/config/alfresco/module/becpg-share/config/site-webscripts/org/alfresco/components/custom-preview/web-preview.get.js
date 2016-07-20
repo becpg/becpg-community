@@ -1,6 +1,9 @@
 <import resource="classpath:/alfresco/templates/org/alfresco/import/alfresco-util.js">
 
 function main(){
+	
+	 model.showAdditionalDownloadLinks = false;
+	 model.isReport = false;
   	   
 	   var nodeDetails = AlfrescoUtil.getNodeDetails(model.nodeRef, model.site);
 	   
