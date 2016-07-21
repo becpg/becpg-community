@@ -78,22 +78,24 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 
 		ExcelDataListOutputPlugin plugin = getPlugin(dataListFilter);
 		ExcelFieldTitleProvider titleProvider = plugin.getExcelFieldTitleProvider(dataListFilter);
+		if(extractedItems.getComputedFields()!=null){
 
-		List<AttributeExtractorStructure> fields = extractedItems.getComputedFields().stream()
-				.filter(field -> titleProvider.isAllowed(field)).collect(Collectors.toList());
-
-		ExcelHelper.appendExcelHeader(fields, null, null, headerRow, labelRow, style, cellnum, titleProvider);
-
-		for (Map<String, Object> item : plugin.decorate(extractedItems.getPageItems())) {
-			Row row = sheet.createRow(rownum++);
-
-			cell = row.createCell(0);
-			cell.setCellValue("VALUES");
-
-			ExcelHelper.appendExcelField(fields, null, item, row, 1);
+			List<AttributeExtractorStructure> fields = extractedItems.getComputedFields().stream()
+					.filter(field -> titleProvider.isAllowed(field)).collect(Collectors.toList());
+	
+			ExcelHelper.appendExcelHeader(fields, null, null, headerRow, labelRow, style, cellnum, titleProvider);
+	
+			for (Map<String, Object> item : plugin.decorate(extractedItems.getPageItems())) {
+				Row row = sheet.createRow(rownum++);
+	
+				cell = row.createCell(0);
+				cell.setCellValue("VALUES");
+	
+				ExcelHelper.appendExcelField(fields, null, item, row, 1);
+	
+			}
 
 		}
-
 		workbook.write(res.getOutputStream());
 
 	}
