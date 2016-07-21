@@ -401,8 +401,9 @@ public class DataListFilter {
 	public String toString() {
 		return "DataListFilter [filterId=" + filterId + ", filterParams=" + filterParams + ", dataListName=" + dataListName + ", entityNodeRefs="
 				+ entityNodeRefs + ", parentNodeRef=" + parentNodeRef + ", nodeRef=" + nodeRef + ", criteriaMap=" + criteriaMap + ", sortMap="
-				+ sortMap + ", dataType=" + dataType + ", isRepo=" + isRepo + ", siteId=" + siteId + ", containerId=" + containerId + ", filterData="
-				+ filterData + ", sortId=" + sortId + ", format=" + format + "]";
+				+ sortMap + ", dataType=" + dataType + ", isRepo=" + isRepo + ", guessContainer=" + guessContainer + ", siteId=" + siteId
+				+ ", containerId=" + containerId + ", filterData=" + filterData + ", extraParams=" + extraParams + ", sortId=" + sortId + ", format="
+				+ format + ", hasWriteAccess=" + hasWriteAccess + "]";
 	}
 
 	@Override

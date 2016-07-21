@@ -160,7 +160,8 @@
                               var requestParams = {
                                  fields : [],
                                  filter : dt.currentFilter,
-                                 page : 1
+                                 page : 1,
+                                 extraParams : dt.options.extraParams
                               };
                               
                               requestParams.filter.filterParams = dt._createFilterURLParameters(dt.currentFilter, dt.options.filterParameters);
