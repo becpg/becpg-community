@@ -19,7 +19,7 @@ import fr.becpg.repo.repository.annotation.MultiLevelDataList;
 
 @AlfType
 @AlfQname(qname = "bcpg:packagingList")
-@MultiLevelDataList
+@MultiLevelDataList(secondaryPivot = "bcpg:compoList")
 public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem implements CompositionDataItem {
 
 	/**

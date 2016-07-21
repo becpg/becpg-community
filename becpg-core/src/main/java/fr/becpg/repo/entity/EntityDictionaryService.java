@@ -40,6 +40,9 @@ public interface EntityDictionaryService {
 
 	ClassAttributeDefinition getPropDef(QName fieldQname);
 
-	boolean isSubClass(QName subClass, QName subClassOf);
+	ClassAttributeDefinition findMatchingPropDef(QName itemType, QName newItemType, QName fieldQname);
 	
+	boolean isSubClass(QName subClass, QName subClassOf);
+
+	QName getMultiLevelSecondaryPivot(QName dataListItemType);
 }

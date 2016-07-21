@@ -47,6 +47,7 @@ public interface RepositoryEntityDefReader<T> {
 	QName getDefaultPivoAssocName(QName dataListItemType);
 	boolean isMultiLevelDataList(QName dataListItemType);
 	boolean isMultiLevelLeaf(QName entityType);
+	QName getMultiLevelSecondaryPivot(QName dataListItemType);
 	
 	
 	

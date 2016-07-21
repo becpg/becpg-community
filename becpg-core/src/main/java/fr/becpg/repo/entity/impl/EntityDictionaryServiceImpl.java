@@ -25,6 +25,7 @@ import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.net.nntp.NewGroupsOrNewsQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -64,6 +65,12 @@ public class EntityDictionaryServiceImpl implements EntityDictionaryService {
 	public boolean isMultiLevelLeaf(QName entityType) {
 		return repositoryEntityDefReader.isMultiLevelLeaf(entityType);
 	}
+	
+	@Override
+	public QName getMultiLevelSecondaryPivot(QName dataListItemType) {
+		return repositoryEntityDefReader.getMultiLevelSecondaryPivot(dataListItemType);
+	}
+	
 
 	@Override
 	public List<AssociationDefinition> getPivotAssocDefs(QName sourceType) {
@@ -82,6 +89,20 @@ public class EntityDictionaryServiceImpl implements EntityDictionaryService {
 		return dictionaryService.getAssociation(assocName).getTargetClass().getName();
 	}
 
+	@Override
+	public ClassAttributeDefinition findMatchingPropDef(QName itemType, QName newItemType, QName fieldQname) {
+		if( fieldQname.getLocalName().contains(itemType.getLocalName())){
+			QName newQname = QName.createQName(fieldQname.getNamespaceURI(),fieldQname.getLocalName().replace(itemType.getLocalName(), newItemType.getLocalName()) );
+			ClassAttributeDefinition ret = getPropDef(newQname);
+			if(ret!=null){
+				return ret;
+			}
+		}
+		
+		return getPropDef(fieldQname);
+	}
+	
+	
 	@Override
 	public ClassAttributeDefinition getPropDef(final QName fieldQname) {
 
@@ -117,6 +138,8 @@ public class EntityDictionaryServiceImpl implements EntityDictionaryService {
 					}
 				});
 	}
+
+
 
 
 

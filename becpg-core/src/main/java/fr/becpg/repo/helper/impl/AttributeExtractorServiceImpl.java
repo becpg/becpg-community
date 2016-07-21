@@ -35,7 +35,6 @@ import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
-import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.datatype.TypeConverter;
@@ -135,22 +134,28 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		ClassAttributeDefinition fieldDef;
 		List<AttributeExtractorStructure> childrens;
 		QName fieldQname;
+		QName itemType;
 
-		public AttributeExtractorStructure(String fieldName, QName fieldQname, List<String> dLFields, boolean isEntityField) {
+		public AttributeExtractorStructure(String fieldName, QName fieldQname, List<String> dLFields, boolean isEntityField,QName itemType) {
 			this.fieldName = fieldName;
 			this.isEntityField = isEntityField;
 			this.fieldQname = fieldQname;
+			this.itemType = itemType;
 			this.childrens = readExtractStructure(fieldQname, dLFields);
 		}
 
-		public AttributeExtractorStructure(String fieldName, ClassAttributeDefinition fieldDef) {
+		public AttributeExtractorStructure(String fieldName, ClassAttributeDefinition fieldDef,QName itemType) {
 			this.fieldDef = fieldDef;
+			this.fieldQname = fieldDef.getName();
 			this.fieldName = fieldName;
+			this.itemType = itemType;
 		}
 
-		public AttributeExtractorStructure(String fieldName, QName fieldQname, ClassAttributeDefinition fieldDef, List<String> dLFields) {
+		public AttributeExtractorStructure(String fieldName, QName fieldQname, ClassAttributeDefinition fieldDef, List<String> dLFields, QName itemType) {
 			this.fieldName = fieldName;
 			this.fieldDef = fieldDef;
+			this.fieldQname = fieldDef.getName();
+			this.itemType = itemType;
 			this.childrens = readExtractStructure(fieldQname, dLFields);
 		}
 
@@ -180,6 +185,11 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 		public QName getFieldQname() {
 			return fieldQname;
+		}
+		
+
+		public QName getItemType() {
+			return itemType;
 		}
 
 		@Override
@@ -393,17 +403,17 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				}
 
 				if (entityDictionaryService.isSubClass(fieldQname, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
-					ret.add(new AttributeExtractorStructure("dt_" + dlField.replaceFirst(":", "_"), fieldQname, dLFields, false));
+					ret.add(new AttributeExtractorStructure("dt_" + dlField.replaceFirst(":", "_"), fieldQname, dLFields, false, itemType));
 
 				} else if (entityDictionaryService.isSubClass(fieldQname, BeCPGModel.TYPE_ENTITY_V2)) {
-					ret.add(new AttributeExtractorStructure("dt_" + dlField.replaceFirst(":", "_"), fieldQname, dLFields, true));
+					ret.add(new AttributeExtractorStructure("dt_" + dlField.replaceFirst(":", "_"), fieldQname, dLFields, true, itemType));
 				} else {
 					// nested assoc
 					ClassAttributeDefinition propDef = entityDictionaryService.getPropDef(fieldQname);
 					if (hasReadAccess(itemType, dlField)) {
 						if (isAssoc(propDef)) {
 							ret.add(new AttributeExtractorStructure("dt_" + dlField.replaceFirst(":", "_"),
-									((AssociationDefinition) propDef).getTargetClass().getName(), propDef, dLFields));
+									((AssociationDefinition) propDef).getTargetClass().getName(), propDef, dLFields, itemType));
 						}
 					}
 
@@ -420,7 +430,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 					if (isAssoc(prodDef)) {
 						prefix = "assoc_";
 					}
-					ret.add(new AttributeExtractorStructure(prefix + field.replaceFirst(":", "_"), prodDef));
+					ret.add(new AttributeExtractorStructure(prefix + field.replaceFirst(":", "_"), prodDef, itemType));
 				}
 			}
 		}
@@ -462,7 +472,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 					}
 				}
 			} else {
-				ret.put(field.getFieldName(), extractNodeData(nodeRef, properties, field.getFieldDef(), mode, order++));
+				ret.put(field.getFieldName(), extractNodeData(nodeRef, properties, getFieldDef(itemType,field), mode, order++));
 			}
 
 		}
@@ -471,6 +481,14 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			logger.debug(getClass().getSimpleName() + " extract node data in  " + watch.getTotalTimeSeconds());
 		}
 		return ret;
+	}
+
+	private ClassAttributeDefinition getFieldDef(QName itemType, AttributeExtractorStructure field) {
+		
+		if(!field.getItemType().equals(itemType)){
+			return entityDictionaryService.findMatchingPropDef(field.getItemType(),itemType, field.getFieldQname());
+		}
+		return field.getFieldDef();
 	}
 
 	private boolean isAssoc(ClassAttributeDefinition propDef) {
