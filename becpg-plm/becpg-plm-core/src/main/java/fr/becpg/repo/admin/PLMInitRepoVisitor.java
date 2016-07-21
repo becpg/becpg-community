@@ -218,7 +218,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	 */
 	@Override
 	protected void visitFiles(NodeRef folderNodeRef, String folderName) {
-
 		if (Objects.equals(folderName, RepoConsts.PATH_ICON)) {
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/images/*.png");
 		}
@@ -230,11 +229,10 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		}
 		if (Objects.equals(folderName, PlmRepoConsts.PATH_NUT_DATABASES)) {
 			if(Locale.FRENCH.toString().equals(Locale.getDefault().getLanguage())){
-				contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/nutDatabases/fr/*.csv");
+				contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/databases/nuts/fr/*.csv");
 			} else {
-				contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/nutDatabases/en/*.csv");
+				contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/databases/nuts/en/*.csv");
 			}
-			
 		}
 	}
 
