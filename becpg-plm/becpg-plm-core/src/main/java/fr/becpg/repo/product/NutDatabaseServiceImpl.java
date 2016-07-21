@@ -12,14 +12,15 @@ import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.namespace.InvalidQNameException;
 import org.alfresco.service.namespace.NamespaceException;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,6 +69,7 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 
 	private final static Log logger = LogFactory.getLog(NutDatabaseServiceImpl.class);
 	private final static String DATABASES_FOLDER = "/app:company_home/cm:System/cm:NutritionalDatabases";
+	private final static String METHODS_FOLDER = "/app:company_home/cm:System/cm:Lists/bcpg:entityLists/cm:NutFactsMethods";
 
 	@Override
 	public List<FileInfo> getNutDatabases() {
@@ -125,10 +127,28 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 							nutValue = propertyFormats.parseDecimal(nutValueToken);
 						}
 
-						NutListDataItem nut = new NutListDataItem(null, null, null, null, null, null, nutNodeRef,
-								false);
-						
-						if(nutValue != null){
+						NutListDataItem nut = new NutListDataItem(null, null, null, null, null, null, nutNodeRef, false);
+
+						// set method name and remove table from it (Table
+						// Ciqual 2013 -> Ciqual 2013)
+						NodeRef methodsFolderNR = BeCPGQueryBuilder.createQuery().inDB().selectNodeByPath(repositoryHelper.getCompanyHome(),
+								METHODS_FOLDER);
+						List<ChildAssociationRef> methods = nodeService.getChildAssocs(methodsFolderNR);
+						logger.debug("methodsFolderNR (" + methodsFolderNR + ") has " + methods.size() + " child assocs");
+
+						String newMethod = getFileName(databaseFile);
+						for (ChildAssociationRef method : methods) {
+							String currentMethod = (String) nodeService.getProperty(method.getChildRef(), BeCPGModel.PROP_LV_VALUE);
+							boolean methodNameMatches = newMethod.contains(currentMethod);
+							logger.debug("Found method: " + currentMethod + " match->" + methodNameMatches);
+							if (methodNameMatches) {
+								nut.setMethod(currentMethod);
+								break;
+							}
+						}
+						logger.debug("File name (method name): \"" + newMethod + "\"");
+
+						if (nutValue != null) {
 							nut.setManualValue(nutValue.doubleValue());
 						}
 						
@@ -423,6 +443,10 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 	public String getProductName(NodeRef file, String id) {
 		String[] headerRow = getHeaderRow(file);
 		return getProductName(file, id, extractIdentifierColumnIndex(headerRow), extractNameColumnIndex(headerRow));
+	}
+
+	public String getFileName(NodeRef node) {
+		return FilenameUtils.removeExtension((String) nodeService.getProperty(node, ContentModel.PROP_NAME));
 	}
 
 }
