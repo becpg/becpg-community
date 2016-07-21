@@ -120,7 +120,7 @@ public class EntityReportServiceTest extends PLMBaseTestCase {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			createdDate = new Date();
-			entityReportService.generateReport(pfNodeRef);
+			entityReportService.generateReports(pfNodeRef);
 
 			return null;
 		});
@@ -153,7 +153,7 @@ public class EntityReportServiceTest extends PLMBaseTestCase {
 
 			// rename PF
 			nodeService.setProperty(pfNodeRef, ContentModel.PROP_NAME, "PF renamed");
-			entityReportService.generateReport(pfNodeRef);
+			entityReportService.generateReports(pfNodeRef);
 
 			// check reports in generated, its name
 			Date generatedDate2 = (Date) nodeService.getProperty(pfNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED);
@@ -177,7 +177,7 @@ public class EntityReportServiceTest extends PLMBaseTestCase {
 			return null;
 		});
 
-		assertFalse(entityReportService.shouldGenerateReport(pfNodeRef));
+		assertFalse(entityReportService.shouldGenerateReport(pfNodeRef,null));
 
 		// Test datalist modified
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -190,7 +190,7 @@ public class EntityReportServiceTest extends PLMBaseTestCase {
 
 		});
 
-		assertTrue(entityReportService.shouldGenerateReport(pfNodeRef));
+		assertTrue(entityReportService.shouldGenerateReport(pfNodeRef,null));
 
 		// Delete report tpl -> report should be deleted
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -203,7 +203,7 @@ public class EntityReportServiceTest extends PLMBaseTestCase {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-			entityReportService.generateReport(pfNodeRef);
+			entityReportService.generateReports(pfNodeRef);
 
 			// check report Tpl
 			List<NodeRef> reportTplNodeRefs = reportTplService.getSystemReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT);

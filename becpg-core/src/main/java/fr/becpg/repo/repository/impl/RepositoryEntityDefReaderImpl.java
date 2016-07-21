@@ -226,4 +226,18 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 		return entityClass != null && entityClass.isAnnotationPresent(MultiLevelLeaf.class);
 	}
 
+	@Override
+	public QName getMultiLevelSecondaryPivot(QName dataListItemType) {
+		Class<T> entityClass = getEntityClass(dataListItemType);
+		if(entityClass != null && entityClass.isAnnotationPresent(MultiLevelDataList.class)){
+			String qName = entityClass.getAnnotation(MultiLevelDataList.class).secondaryPivot();
+			if(qName!=null && !qName.isEmpty()){
+				QName fieldQname = QName.createQName(qName, namespaceService);
+				return fieldQname;
+			}
+			
+		}
+		return null;
+	}
+
 }

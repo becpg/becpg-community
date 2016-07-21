@@ -106,20 +106,23 @@ public class MultiLevelExtractor extends SimpleExtractor {
 
 		PaginatedExtractedItems ret = new PaginatedExtractedItems(pageSize);
 
-		MultiLevelListData listData = multiLevelDataListService.getMultiLevelListData(dataListFilter);
+		MultiLevelListData listData = getMultiLevelListData(dataListFilter);
 
 		Map<String, Object> props = new HashMap<>();
-		props.put(PROP_ACCESSRIGHT, true); // TODO
 		props.put(PROP_ROOT_ENTITYNODEREF, dataListFilter.getEntityNodeRef());
 		props.put(PROP_PATH, "");
-		appendNextLevel(ret, metadataFields, listData, 0, startIndex, pageSize, props, dataListFilter.getFormat());
+		appendNextLevel(ret, metadataFields, listData, 0, startIndex, pageSize, props, dataListFilter);
 
 		ret.setFullListSize(listData.getSize());
 		return ret;
 	}
 
+	protected MultiLevelListData getMultiLevelListData(DataListFilter dataListFilter) {
+		return multiLevelDataListService.getMultiLevelListData(dataListFilter);
+	}
+
 	protected int appendNextLevel(PaginatedExtractedItems ret, List<String> metadataFields, MultiLevelListData listData, int currIndex,
-			int startIndex, int pageSize, Map<String, Object> props, String format) {
+			int startIndex, int pageSize, Map<String, Object> props, DataListFilter dataListFilter) {
 
 		Map<NodeRef, Map<String, Object>> cache = new HashMap<>();
 
@@ -132,12 +135,21 @@ public class MultiLevelExtractor extends SimpleExtractor {
 			props.put(PROP_PATH, curPath + "/" + entry.getKey().getId());
 
 			if ((currIndex >= startIndex) && (currIndex < (startIndex + pageSize))) {
+				
+				QName itemType = nodeService.getType(nodeRef);
+				
+				if(!itemType.equals(dataListFilter.getDataType())){
+					props.put(PROP_ACCESSRIGHT, false);
+				} else {
+					props.put(PROP_ACCESSRIGHT, true);// TODO
+				}
+				
 				if (ret.getComputedFields() == null) {
-					ret.setComputedFields(attributeExtractorService.readExtractStructure(nodeService.getType(nodeRef), metadataFields));
+					ret.setComputedFields(attributeExtractorService.readExtractStructure(dataListFilter.getDataType(), metadataFields));
 				}
 
-				if (RepoConsts.FORMAT_CSV.equals(format) || RepoConsts.FORMAT_XLSX.equals(format)) {
-					ret.addItem(extractExport(RepoConsts.FORMAT_XLSX.equals(format) ? AttributeExtractorMode.XLSX : AttributeExtractorMode.CSV,
+				if (RepoConsts.FORMAT_CSV.equals(dataListFilter.getFormat()) || RepoConsts.FORMAT_XLSX.equals(dataListFilter.getFormat())) {
+					ret.addItem(extractExport(RepoConsts.FORMAT_XLSX.equals(dataListFilter.getFormat()) ? AttributeExtractorMode.XLSX : AttributeExtractorMode.CSV,
 							nodeRef, ret.getComputedFields(), props, cache));
 				} else {
 					ret.addItem(extractJSON(nodeRef, ret.getComputedFields(), props, cache));
@@ -145,7 +157,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 			} else if (currIndex >= (startIndex + pageSize)) {
 				return currIndex;
 			}
-			currIndex = appendNextLevel(ret, metadataFields, entry.getValue(), currIndex + 1, startIndex, pageSize, props, format);
+			currIndex = appendNextLevel(ret, metadataFields, entry.getValue(), currIndex + 1, startIndex, pageSize, props, dataListFilter);
 		}
 		return currIndex;
 	}
