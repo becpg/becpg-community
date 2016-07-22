@@ -821,12 +821,12 @@
 					<index enabled="false" />
 				</property>
 				<property name="qa:clTextCriteria">
-					<type>d:text</type>
+					<type>d:mltext</type>
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
 				<property name="qa:clTextCriteriaLimit">
-					<type>d:text</type>
+					<type>d:mltext</type>
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
