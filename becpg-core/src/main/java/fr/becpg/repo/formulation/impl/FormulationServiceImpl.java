@@ -173,13 +173,13 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 			}
 		} catch (Exception e) {
 
+			logger.error(e,e);
+			
 			if (e instanceof FormulateException) {
 				throw (FormulateException) e;
 			} else if (e instanceof ConcurrencyFailureException) {
 				throw (ConcurrencyFailureException) e;
 			}
-			logger.error(e,e);
-			
 			throw new FormulateException(I18NUtil.getMessage("message.formulate.failure", repositoryEntity.getNodeRef()), e);
 
 		}
