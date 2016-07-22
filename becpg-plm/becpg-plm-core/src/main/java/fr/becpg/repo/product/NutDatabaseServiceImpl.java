@@ -8,11 +8,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.repo.model.Repository;
+import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
+import org.alfresco.service.cmr.dictionary.DictionaryService;
+import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
-import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -32,6 +33,7 @@ import fr.becpg.common.csv.CSVReader;
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
+import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.helper.BeCPGQueryHelper;
 import fr.becpg.repo.helper.PropertiesHelper;
 import fr.becpg.repo.listvalue.ListValueEntry;
@@ -62,14 +64,13 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 	private Repository repositoryHelper;
 
 	@Autowired
-	private DictionaryDAO dictionaryDAO;
+	private DictionaryService dictionaryService;
 
 	@Autowired
 	private NamespaceService NamespaceService;
 
 	private final static Log logger = LogFactory.getLog(NutDatabaseServiceImpl.class);
 	private final static String DATABASES_FOLDER = "/app:company_home/cm:System/cm:NutritionalDatabases";
-	private final static String METHODS_FOLDER = "/app:company_home/cm:System/cm:Lists/bcpg:entityLists/cm:NutFactsMethods";
 
 	@Override
 	public List<FileInfo> getNutDatabases() {
@@ -129,29 +130,36 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 
 						NutListDataItem nut = new NutListDataItem(null, null, null, null, null, null, nutNodeRef, false);
 
-						// set method name and remove table from it (Table
-						// Ciqual 2013 -> Ciqual 2013)
-						NodeRef methodsFolderNR = BeCPGQueryBuilder.createQuery().inDB().selectNodeByPath(repositoryHelper.getCompanyHome(),
-								METHODS_FOLDER);
-						List<ChildAssociationRef> methods = nodeService.getChildAssocs(methodsFolderNR);
-						logger.debug("methodsFolderNR (" + methodsFolderNR + ") has " + methods.size() + " child assocs");
-
 						String newMethod = getFileName(databaseFile);
-						for (ChildAssociationRef method : methods) {
-							String currentMethod = (String) nodeService.getProperty(method.getChildRef(), BeCPGModel.PROP_LV_VALUE);
-							boolean methodNameMatches = newMethod.contains(currentMethod);
-							logger.debug("Found method: " + currentMethod + " match->" + methodNameMatches);
-							if (methodNameMatches) {
-								nut.setMethod(currentMethod);
-								break;
+						PropertyDefinition methodDef = dictionaryService.getProperty(PLMModel.PROP_NUT_METHOD);
+
+						if (methodDef != null) {
+							List<ConstraintDefinition> methodConstraints = methodDef.getConstraints();
+							for (ConstraintDefinition constraint : methodConstraints) {
+								if (constraint.getConstraint() instanceof DynListConstraint) {
+									DynListConstraint dynConstraint = (DynListConstraint) constraint.getConstraint();
+									List<String> allowedValues = dynConstraint.getAllowedValues();
+									logger.debug("Allowed values: " + allowedValues);
+
+									for (String value : allowedValues) {
+										logger.debug("current value: " + value);
+										if (newMethod.contains(value) && !"".equals(value)) {
+											logger.debug("value matches method named " + newMethod);
+											nut.setMethod(value);
+											break;
+										}
+									}
+									break;
+								}
 							}
+						} else {
+							logger.debug("Can't find method definition for " + PLMModel.PROP_NUT_METHOD);
 						}
-						logger.debug("File name (method name): \"" + newMethod + "\"");
 
 						if (nutValue != null) {
 							nut.setManualValue(nutValue.doubleValue());
 						}
-						
+
 						ret.add(nut);
 					} catch (ParseException e) {
 						throw new RuntimeException("unable to parse value " + values[i], e);
@@ -190,8 +198,7 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 				}
 
 				for (int i = 1; i < headerRow.length; ++i) {
-					if (isInDictionary(headerRow[i]) || (headerRow[i].contains("_") && (isInDictionary(headerRow[i]
-							.split("_")[0]))) ) {
+					if (isInDictionary(headerRow[i]) || (headerRow[i].contains("_") && (isInDictionary(headerRow[i].split("_")[0])))) {
 						String value = extractValueById(file, idSplit, i);
 						logger.debug("setting property qnamed  \"" + headerRow[i] + "\" to value  \"" + value + "\"");
 						QName attributeQName = QName.createQName(headerRow[i], NamespaceService);
@@ -213,8 +220,7 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 							 * hierarchyService.getHierarchiesByPath(
 							 * HIERARCHY_RAWMATERIAL_PATH, null, value);
 							 */
-						} else if (dictionaryDAO.getProperty(attributeQName) != null) {
-
+						} else if (dictionaryService.getProperty(attributeQName) != null) {
 							nodeService.setProperty(productNode, QName.createQName(headerRow[i], NamespaceService), value);
 						}
 					}
@@ -417,14 +423,14 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 	}
 
 	private boolean nameMatches(String query, String name) {
-		return BeCPGQueryHelper.isQueryMatch(query, name, dictionaryDAO);
+		return BeCPGQueryHelper.isQueryMatch(query, name, dictionaryService);
 	}
 
 	private boolean isInDictionary(String str) {
 		try {
-		return ((dictionaryDAO.getProperty(QName.createQName(str, NamespaceService)) != null)
-				|| (dictionaryDAO.getAssociation(QName.createQName(str, NamespaceService)) != null));
-		} catch(NamespaceException e){
+			return ((dictionaryService.getProperty(QName.createQName(str, NamespaceService)) != null)
+					|| (dictionaryService.getAssociation(QName.createQName(str, NamespaceService)) != null));
+		} catch (NamespaceException e) {
 			return false;
 		}
 	}
