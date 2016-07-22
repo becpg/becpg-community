@@ -854,7 +854,7 @@
 					</source>
 					<target>
 						<class>bcpg:charact</class>
-						<mandatory enforced="false">false</mandatory>
+						<mandatory enforced="false">true</mandatory>
 						<many>true</many>
 					</target>
 				</association>
