@@ -32,7 +32,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.alfresco.repo.dictionary.DictionaryDAO;
-import org.alfresco.rest.framework.resource.parameters.where.QueryHelper;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
@@ -527,7 +526,7 @@ public class EntityListValuePlugin implements ListValuePlugin {
 
 	public boolean isQueryMatch(String query, String entityName) {
 
-		return BeCPGQueryHelper.isQueryMatch(query, entityName, dictionaryDAO);
+		return BeCPGQueryHelper.isQueryMatch(query, entityName, dictionaryService);
 	}
 
 	/**

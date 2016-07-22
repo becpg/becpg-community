@@ -5,8 +5,8 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.Locale;
 
-import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
+import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Analyzer;
@@ -21,14 +21,14 @@ public class BeCPGQueryHelper {
 	private static final Log logger = LogFactory.getLog(BeCPGQueryHelper.class);
 	protected static final String SUFFIX_ALL = "*";
 
-	public static boolean isQueryMatch(String query, String entityName, DictionaryDAO dictionaryDAO) {
+	public static boolean isQueryMatch(String query, String entityName, DictionaryService dictionaryService) {
 		if (query != null) {
 
 			if (SUFFIX_ALL.equals(query)) {
 				return true;
 			}
 
-			Analyzer analyzer = getTextAnalyzer(dictionaryDAO);
+			Analyzer analyzer = getTextAnalyzer(dictionaryService);
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("Analyzing " + entityName + " with query " + query + " using analyzer : " + analyzer.getClass().getName());
@@ -90,8 +90,8 @@ public class BeCPGQueryHelper {
 		return false;
 	}
 
-	private static Analyzer getTextAnalyzer(DictionaryDAO dictionaryDAO) {
-		DataTypeDefinition def = dictionaryDAO.getDataType(DataTypeDefinition.TEXT);
+	private static Analyzer getTextAnalyzer(DictionaryService dictionaryService) {
+		DataTypeDefinition def = dictionaryService.getDataType(DataTypeDefinition.TEXT);
 		try {
 			return (Analyzer) Class.forName(def.resolveAnalyserClassName(Locale.getDefault())).newInstance();
 		} catch (Exception e) {
