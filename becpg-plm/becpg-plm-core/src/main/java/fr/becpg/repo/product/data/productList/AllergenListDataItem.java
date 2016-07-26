@@ -16,11 +16,12 @@ import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.annotation.InternalField;
 import fr.becpg.repo.repository.model.AspectAwareDataItem;
+import fr.becpg.repo.repository.model.ControlableListDataItem;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 
 @AlfType
 @AlfQname(qname = "bcpg:allergenList")
-public class AllergenListDataItem extends AbstractManualVariantListDataItem implements SimpleCharactDataItem, AspectAwareDataItem {
+public class AllergenListDataItem extends AbstractManualVariantListDataItem implements SimpleCharactDataItem, AspectAwareDataItem, ControlableListDataItem {
 
 	private static final long serialVersionUID = -6746076643301742367L;
 	private Double qtyPerc;
@@ -101,6 +102,10 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 		this.voluntarySources = voluntarySources;
 	}
 	
+	@Override
+	public String getTextCriteria() {
+		return null;
+	}
 
 	@AlfMultiAssoc
 	@InternalField
@@ -208,6 +213,7 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 		return "AllergenListDataItem [voluntary=" + voluntary + ", inVoluntary=" + inVoluntary + ", voluntarySources=" + voluntarySources + ", inVoluntarySources="
 				+ inVoluntarySources + ", allergen=" + allergen + ", isManual=" + isManual + ", nodeRef=" + nodeRef + ", parentNodeRef=" + parentNodeRef + ", name=" + name + "]";
 	}
+
 
 
 

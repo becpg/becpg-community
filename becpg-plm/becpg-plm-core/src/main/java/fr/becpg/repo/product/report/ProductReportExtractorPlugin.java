@@ -367,10 +367,15 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		loadProductData(dataItem.getComponent(), partElt, images);
 		loadDataListItemAttributes(dataItem, partElt, images);
 		if (dataItem.getQtyResource() != null) {
+			Double qty = dataItem.getQty();
+			if(qty == null || qty == 0d){
+				qty = 1d;
+			}
+			
 			if ((dataItem.getRateProduct() != null) && (dataItem.getRateProduct() != 0)) {
-				partElt.addAttribute(ATTR_PROCESS_QTY_FOR_PRODUCT, Double.toString(dataItem.getQtyResource() / dataItem.getRateProduct()));
+				partElt.addAttribute(ATTR_PROCESS_QTY_FOR_PRODUCT, Double.toString(dataItem.getQtyResource() * qty / (dataItem.getRateProduct() )));
 			} else if ((parentRateProduct != null) && (parentRateProduct != 0)) {
-				partElt.addAttribute(ATTR_PROCESS_QTY_FOR_PRODUCT, Double.toString(dataItem.getQtyResource() / parentRateProduct));
+				partElt.addAttribute(ATTR_PROCESS_QTY_FOR_PRODUCT, Double.toString(dataItem.getQtyResource() * qty / parentRateProduct));
 			}
 		}
 		if ((dataItem.getResource() != null) && nodeService.exists(dataItem.getResource())) {
