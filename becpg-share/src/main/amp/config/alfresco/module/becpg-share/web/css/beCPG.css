@@ -618,6 +618,7 @@ span.compoList {
     padding-left: 20px;
     background-repeat: no-repeat
 }
+span.labelClaim,
 span.labelClaimList {
     background-image: url("../../components/images/filetypes/generic-labelClaim-16.png") !important;
     padding-left: 20px;
@@ -628,6 +629,7 @@ span.packagingList {
     padding-left: 20px;
     background-repeat: no-repeat
 }
+span.resourceParam,
 span.resourceParamList,
 span.processList {
     background-image: url("../../components/images/filetypes/generic-resourceProduct-16.png") !important;
