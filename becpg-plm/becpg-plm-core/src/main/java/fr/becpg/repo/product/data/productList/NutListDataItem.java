@@ -12,6 +12,7 @@ import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.annotation.InternalField;
 import fr.becpg.repo.repository.model.AbstractManualDataItem;
+import fr.becpg.repo.repository.model.ControlableListDataItem;
 import fr.becpg.repo.repository.model.FormulatedCharactDataItem;
 import fr.becpg.repo.repository.model.MinMaxValueDataItem;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
@@ -19,7 +20,7 @@ import fr.becpg.repo.repository.model.UnitAwareDataItem;
 
 @AlfType
 @AlfQname(qname = "bcpg:nutList")
-public class NutListDataItem extends AbstractManualDataItem  implements SimpleListDataItem, MinMaxValueDataItem, FormulatedCharactDataItem, UnitAwareDataItem {
+public class NutListDataItem extends AbstractManualDataItem  implements SimpleListDataItem, MinMaxValueDataItem, FormulatedCharactDataItem, UnitAwareDataItem, ControlableListDataItem {
 
 	/**
 	 * 
@@ -226,6 +227,12 @@ public class NutListDataItem extends AbstractManualDataItem  implements SimpleLi
 	public void setErrorLog(String errorLog) {
 		this.errorLog = errorLog;
 	}
+	
+
+	@Override
+	public String getTextCriteria() {
+		return null;
+	}	
 
 	/**
 	 * Instantiates a new nut list data item.
@@ -382,5 +389,7 @@ public class NutListDataItem extends AbstractManualDataItem  implements SimpleLi
 				+ parentNodeRef + ", nodeRef=" + nodeRef + ", name=" + name + ", isManual=" + isManual + ", sort=" + sort + ", manualValue=" + manualValue + ", formulatedValue=" + formulatedValue + ", unit=" + unit + ", mini=" + mini
 				+ ", maxi=" + maxi + ", valuePerServing=" + valuePerServing + ", gdaPerc=" + gdaPerc + ", lossPerc=" + lossPerc + ", group=" + group
 				+ ", method=" + method + ", nut=" + nut + ", isFormulated=" + isFormulated + ", errorLog=" + errorLog +"]";
-	}	
+	}
+
+
 }

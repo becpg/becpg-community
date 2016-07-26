@@ -170,7 +170,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 		propertyName : [ "qa:clCharacts" ],
 		renderer : function(oRecord, data, label, scope) {
 			var url = scope._buildCellUrl(data);
-			return '<span class="sample"><a href="' + url + '">' + Alfresco.util.encodeHTML(data.displayValue) + '</a></span>';
+			return '<span class="' + data.metadata + '">'+ Alfresco.util.encodeHTML(data.displayValue) + '</span>';
 
 		}
 

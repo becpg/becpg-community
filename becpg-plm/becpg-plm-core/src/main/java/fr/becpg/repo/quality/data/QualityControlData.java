@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.quality.data.dataList.ControlListDataItem;
 import fr.becpg.repo.quality.data.dataList.SamplingListDataItem;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
@@ -55,6 +56,8 @@ public class QualityControlData extends BeCPGDataObject {
 	NodeRef supplier;
 
 	List<SamplingListDataItem> samplingList = new LinkedList<>();
+	
+	List<ControlListDataItem> controlList = new LinkedList<>();
 
 	@AlfMultiAssoc
 	@AlfQname(qname = "qa:qcControlPlans")
@@ -164,6 +167,16 @@ public class QualityControlData extends BeCPGDataObject {
 
 	public void setSamplingList(List<SamplingListDataItem> samplingList) {
 		this.samplingList = samplingList;
+	}
+	
+	@DataList
+	@AlfQname(qname = "qa:controlList")
+	public List<ControlListDataItem> getControlList() {
+		return controlList;
+	}
+
+	public void setControlList(List<ControlListDataItem> controlList) {
+		this.controlList = controlList;
 	}
 
 	public QualityControlData() {

@@ -98,12 +98,13 @@
 					<value>bcpg_nutList</value>
 					<value>bcpg_physicoChemList</value>
 					<value>bcpg_organoList</value>
-					<value>Dimension</value>
-					<value>Poids</value>
-					<value>Composition</value>
-					<value>Conditionnement</value>
-					<value>Volume</value>
-					<value>Performance</value>
+					<value>dimension</value>
+					<value>weight</value>
+					<value>composition</value>
+					<value>packaging</value>
+					<value>volume</value>
+					<value>performance</value>
+					<value>counter_analysis</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -854,7 +855,7 @@
 					</source>
 					<target>
 						<class>bcpg:charact</class>
-						<mandatory enforced="false">false</mandatory>
+						<mandatory enforced="false">true</mandatory>
 						<many>true</many>
 					</target>
 				</association>

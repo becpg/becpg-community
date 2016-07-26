@@ -24,6 +24,7 @@ import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.Behaviour.NotificationFrequency;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.service.cmr.repository.AssociationRef;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -34,7 +35,7 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.quality.QualityControlService;
 
 public class QualityControlPolicies extends AbstractBeCPGPolicy implements NodeServicePolicies.OnCreateAssociationPolicy,
-				NodeServicePolicies.OnUpdatePropertiesPolicy{
+				NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnCreateNodePolicy{
 
 	private static final Log logger = LogFactory.getLog(QualityControlPolicies.class);
 	
@@ -63,6 +64,12 @@ public class QualityControlPolicies extends AbstractBeCPGPolicy implements NodeS
 				NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME,
 				QualityModel.TYPE_CONTROL_LIST, new JavaBehaviour(this,
 						"onUpdateProperties", NotificationFrequency.TRANSACTION_COMMIT));	
+		
+		policyComponent.bindClassBehaviour(
+				NodeServicePolicies.OnCreateNodePolicy.QNAME,
+				QualityModel.TYPE_SAMPLING_LIST, new JavaBehaviour(this,
+						"onCreateNode", NotificationFrequency.TRANSACTION_COMMIT));	
+		
 	}
 
 	@Override
@@ -86,5 +93,11 @@ public class QualityControlPolicies extends AbstractBeCPGPolicy implements NodeS
 			logger.debug("QualityControlPolicies onUpdateProperties.");
 			qualityControlService.updateControlListState(nodeRef);
 		}		
+	}
+
+	@Override
+	public void onCreateNode(ChildAssociationRef childAssocRef) {
+		qualityControlService.createSamplingListId(childAssocRef.getChildRef());
+		
 	}
 }
