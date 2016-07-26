@@ -156,6 +156,13 @@ public class QualityControlTest extends PLMBaseTestCase {
 				for (SamplingListDataItem sl : qualityControlData.getSamplingList()) {
 
 					switch (sl.getSampleId()) {
+						case "12247904/0":
+							assertEquals("check control point", controlPointNodeRef, sl.getControlPoint());
+							assertEquals("check control step", controlStepNodeRef, sl.getControlStep());
+							assertEquals("check state", null, sl.getSampleState());
+							assertEquals("check date", qualityControlData.getBatchStart(), sl.getDateTime());
+							checks++;
+							break;
 						case "12247904/1":
 							assertEquals("check control point", controlPointNodeRef, sl.getControlPoint());
 							assertEquals("check control step", controlStepNodeRef, sl.getControlStep());
@@ -167,17 +174,10 @@ public class QualityControlTest extends PLMBaseTestCase {
 							assertEquals("check control point", controlPointNodeRef, sl.getControlPoint());
 							assertEquals("check control step", controlStepNodeRef, sl.getControlStep());
 							assertEquals("check state", null, sl.getSampleState());
-							assertEquals("check date", qualityControlData.getBatchStart(), sl.getDateTime());
-							checks++;
-							break;
-						case "12247904/3":
-							assertEquals("check control point", controlPointNodeRef, sl.getControlPoint());
-							assertEquals("check control step", controlStepNodeRef, sl.getControlStep());
-							assertEquals("check state", null, sl.getSampleState());
 							assertEquals("check date", new Date(qualityControlData.getBatchStart().getTime() + 4 * HOUR), sl.getDateTime());
 							checks++;
 							break;
-						case "12247904/4":
+						case "12247904/3":
 							assertEquals("check control point", controlPointNodeRef, sl.getControlPoint());
 							assertEquals("check control step", controlStepNodeRef, sl.getControlStep());
 							assertEquals("check state", null, sl.getSampleState());
@@ -190,30 +190,26 @@ public class QualityControlTest extends PLMBaseTestCase {
 				assertEquals(4, checks);
 				
 				// check controlList
-				//List<ControlListDataItem> controlList = (List)alfrescoRepository.loadDataList(qualityControlNodeRef, QualityModel.TYPE_CONTROL_LIST, QualityModel.TYPE_CONTROL_LIST);
-				NodeRef controlListNodeRef = entityListDAO.getList(entityListDAO.getListContainer(qualityControlNodeRef), "Analyses");
-				
-				List<NodeRef> fileInfos = entityListDAO.getListItems(controlListNodeRef, QualityModel.TYPE_CONTROL_LIST);
-				logger.info("fileInfos.size() " + fileInfos.size());
+				List<ControlListDataItem> controlList = qualityControlData.getControlList();
 				
 				
-				assertEquals(6*10, fileInfos.size());
+				
+				assertEquals(6*10, controlList.size());
 				boolean isFirstCLOfSample3 = true;
 
 				// fill controlList (sample1)
 				logger.info("fill controlList");
-				for(NodeRef fileInfo : fileInfos){
-					ControlListDataItem cl = (ControlListDataItem)alfrescoRepository.findOne(fileInfo);
+				for(ControlListDataItem cl: controlList){
 					switch (cl.getSampleId()) {
-						case "12247904/1":
+						case "12247904/0":
 							cl.setState(QualityControlState.Compliant);
 							alfrescoRepository.save(cl);
 							break;
-						case "12247904/2":
+						case "12247904/1":
 							cl.setState(QualityControlState.NonCompliant);
 							alfrescoRepository.save(cl);
 							break;
-						case "12247904/3":
+						case "12247904/2":
 							if (isFirstCLOfSample3) {
 								cl.setState(QualityControlState.NonCompliant);
 							} else {
@@ -239,8 +235,12 @@ public class QualityControlTest extends PLMBaseTestCase {
 
 				for (SamplingListDataItem sl : qualityControlData.getSamplingList()) {
 					switch (sl.getSampleId()) {
-						case "12247904/1":
+						case "12247904/0":
 							assertEquals("check state", QualityControlState.Compliant, sl.getSampleState());
+							checks++;
+							break;
+						case "12247904/1":
+							assertEquals("check state", QualityControlState.NonCompliant, sl.getSampleState());
 							checks++;
 							break;
 						case "12247904/2":
@@ -248,10 +248,6 @@ public class QualityControlTest extends PLMBaseTestCase {
 							checks++;
 							break;
 						case "12247904/3":
-							assertEquals("check state", QualityControlState.NonCompliant, sl.getSampleState());
-							checks++;
-							break;
-						case "12247904/4":
 							assertEquals("check state", null, sl.getSampleState());
 							checks++;
 							break;
