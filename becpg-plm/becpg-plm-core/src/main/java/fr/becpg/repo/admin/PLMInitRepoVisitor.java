@@ -668,6 +668,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		// visit qualityControl
 		dataLists.clear();
 		dataLists.add(QualityModel.TYPE_SAMPLING_LIST);
+		dataLists.add(QualityModel.TYPE_CONTROL_LIST);
 		entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_QUALITY_CONTROL, null, true, true, dataLists, null);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 
