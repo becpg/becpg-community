@@ -275,7 +275,7 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 				
 					// check new endDate is before, otherwise we stop
 					// since a parallel branch is before
-					if (prevTask.getEnd() == null || prevTask.getEnd().after(endDate)) {
+					if (prevTask.getEnd() == null || (endDate!=null && prevTask.getEnd().after(endDate))) {
 						ProjectHelper.setTaskEndDate(prevTask, endDate);
 					}
 
@@ -293,6 +293,7 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 			
 			// start date is null if task is cancelled
 			Date d = TaskState.Cancelled.equals(prevTask.getTaskState()) ? endDate : ProjectHelper.calculatePrevEndDate(prevTask.getStart());
+
 			calculateRetroPlanningOfPrevTasks(projectData, prevTask, d);
 
 			calculateDatesOfParent(prevTask.getParent(), prevTask);

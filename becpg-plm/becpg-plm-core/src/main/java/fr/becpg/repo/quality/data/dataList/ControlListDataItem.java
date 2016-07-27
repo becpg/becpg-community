@@ -45,6 +45,7 @@ public class ControlListDataItem extends BeCPGDataObject{
 	Double value;
 	Double target;
 	String unit;
+	String textCriteria;
 	QualityControlState state;		
 	NodeRef method;
 	List<NodeRef> characts = new ArrayList<>();
@@ -58,6 +59,8 @@ public class ControlListDataItem extends BeCPGDataObject{
 	public void setType(String type) {
 		this.type = type;
 	}
+	
+	
 
 	@AlfProp
 	@AlfQname(qname = "qa:clMini")
@@ -107,6 +110,17 @@ public class ControlListDataItem extends BeCPGDataObject{
 
 	public void setValue(Double value) {
 		this.value = value;
+	}
+	
+	
+	@AlfProp
+	@AlfQname(qname = "qa:clTextCriteria")
+	public String getTextCriteria() {
+		return textCriteria;
+	}
+
+	public void setTextCriteria(String textCriteria) {
+		this.textCriteria = textCriteria;
 	}
 
 	@AlfProp
@@ -169,7 +183,7 @@ public class ControlListDataItem extends BeCPGDataObject{
 		super(nodeRef, name);
 	}
 
-	public ControlListDataItem(NodeRef nodeRef, String type, Double mini, Double maxi, Boolean required, String sampleId, Double value, Double target, String unit, QualityControlState state,  NodeRef method, List<NodeRef> characts){
+	public ControlListDataItem(NodeRef nodeRef, String type, Double mini, Double maxi, Boolean required, String sampleId, Double value, Double target, String unit,String textCriteria, QualityControlState state,  NodeRef method, List<NodeRef> characts){
 		
 		setNodeRef(nodeRef);
 		setType(type);
@@ -180,6 +194,7 @@ public class ControlListDataItem extends BeCPGDataObject{
 		setValue(value);
 		setTarget(target);
 		setUnit(unit);
+		setTextCriteria(textCriteria);
 		setState(state);
 		setMethod(method);
 		setCharacts(characts);
