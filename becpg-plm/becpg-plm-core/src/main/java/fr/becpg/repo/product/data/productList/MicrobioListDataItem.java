@@ -5,17 +5,20 @@ package fr.becpg.repo.product.data.productList;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
-import fr.becpg.repo.repository.annotation.InternalField;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
+import fr.becpg.repo.repository.annotation.InternalField;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
+import fr.becpg.repo.repository.model.ControlableListDataItem;
+import fr.becpg.repo.repository.model.MinMaxValueDataItem;
+import fr.becpg.repo.repository.model.UnitAwareDataItem;
 
 @AlfType
 @AlfQname(qname = "bcpg:microbioList")
-public class MicrobioListDataItem extends BeCPGDataObject {
+public class MicrobioListDataItem extends BeCPGDataObject implements ControlableListDataItem, UnitAwareDataItem, MinMaxValueDataItem {
 	
 	/**
 	 * 
@@ -66,6 +69,18 @@ public class MicrobioListDataItem extends BeCPGDataObject {
 		this.maxi = maxi;
 	}
 	
+	
+	@Override
+	public Double getMini() {
+		return null;
+	}
+
+
+	@Override
+	public void setMini(Double value) {
+		
+	}
+	
 	@AlfProp
 	@AlfQname(qname="bcpg:mblTextCriteria")
 	public String getTextCriteria() {
@@ -88,6 +103,19 @@ public class MicrobioListDataItem extends BeCPGDataObject {
 	public void setMicrobio(NodeRef microbio) {
 		this.microbio = microbio;
 	}
+	
+	@Override
+	public void setCharactNodeRef(NodeRef microbio) {
+		this.microbio = microbio;
+	}
+
+
+	@Override
+	public NodeRef getCharactNodeRef() {
+		return microbio;
+	}
+	
+	
 	
 	/**
 	 * Instantiates a new microbio list data item.
@@ -187,6 +215,10 @@ public class MicrobioListDataItem extends BeCPGDataObject {
 		return "MicrobioListDataItem [nodeRef=" + nodeRef + ", value=" + value + ", unit=" + unit + ", maxi=" + maxi + ", textCriteria=" + textCriteria + ", microbio=" + microbio
 				+ "]";
 	}
-	
+
+
+
+
+
 	
 }
