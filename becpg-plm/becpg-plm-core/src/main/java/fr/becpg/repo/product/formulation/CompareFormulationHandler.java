@@ -139,7 +139,8 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 									addCompareValueColumn(PLMModel.PROP_COMPARE_WITH_DYN_COLUMN, view, toCompareWith, dynamicColumnToTreat, true);
 
 									for (DynamicCharactListItem dynamicCharactListItem : view.getDynamicCharactList()) {
-										if (!Boolean.TRUE.equals(dynamicCharactListItem.getMultiLevelFormula())) {
+										if (!Boolean.TRUE.equals(dynamicCharactListItem.getMultiLevelFormula())
+												&& dynamicCharactListItem.getFormula()!= null && !dynamicCharactListItem.getFormula().isEmpty()) {
 
 											DynamicCharactListItem toCompareDynamicCharactListItem = getMatchingCharact(dynamicCharactListItem,
 													getMatchingView(toCompareWith, view).getDynamicCharactList());
