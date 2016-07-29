@@ -927,7 +927,8 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				|| qName.equals(BeCPGModel.PROP_END_EFFECTIVITY) || qName.equals(ReportModel.PROP_REPORT_ENTITY_GENERATED)
 				|| qName.equals(ReportModel.ASSOC_REPORTS) || qName.equals(BeCPGModel.PROP_VERSION_LABEL) || qName.equals(BeCPGModel.PROP_COLOR)
 				// TODO plugin
-				|| qName.getLocalName().contains("dynamicCharactColumn") || qName.getLocalName().contains("compareWithDynColumn")) {
+				|| qName.getLocalName().contains("dynamicCharactColumn") || qName.getLocalName().contains("compareWithDynColumn")
+				|| qName.getLocalName().contains("ErrorLog") || qName.getLocalName().contains("ErrorLog")) {
 
 			isCompareable = false;
 		}
