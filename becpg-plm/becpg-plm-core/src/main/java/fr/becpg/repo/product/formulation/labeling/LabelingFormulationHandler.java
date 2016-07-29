@@ -206,6 +206,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			}
 
 			if (!compositeLabeling.getIngList().isEmpty()) {
+				
+				if (logger.isTraceEnabled()) {
+					logger.trace(" Create merged composite labeling");
+				}
 
 				CompositeLabeling mergeCompositeLabeling = mergeCompositeLabeling(compositeLabeling, labelingFormulaContext);
 
@@ -511,6 +515,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	}
 
 	private void applyAggregateRules(CompositeLabeling parent, LabelingFormulaContext labelingFormulaContext, boolean recur) {
+		
 		if (!labelingFormulaContext.getAggregateRules().isEmpty()) {
 
 			Map<NodeRef, AbstractLabelingComponent> toAdd = new HashMap<>();
@@ -531,10 +536,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						if (!LabelingRuleType.Type.equals(aggregateRule.getLabelingRuleType())) {
 
 							NodeRef aggregateRuleNodeRef = aggregateRule.getKey();
-
+							
 							if ((aggregateRule.getReplacement() == null) || !aggregateRule.getReplacement().equals(component.getNodeRef())) {
-
-								if (toAdd.containsKey(aggregateRuleNodeRef) || aggregateRule.matchAll(ingList.values())) {
+								
+								if (toAdd.containsKey(aggregateRuleNodeRef) || aggregateRule.matchAll(ingList.values(),recur)) {
 
 									Double qty = component.getQty();
 									Double volume = component.getVolume();

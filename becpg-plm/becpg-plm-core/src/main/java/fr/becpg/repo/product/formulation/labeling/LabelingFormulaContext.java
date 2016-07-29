@@ -526,7 +526,16 @@ public class LabelingFormulaContext {
 					: ruleNodeRef != null ? ruleNodeRef : new NodeRef(RepoConsts.SPACES_STORE, "aggr-" + name.hashCode());
 		}
 
-		public boolean matchAll(Collection<AbstractLabelingComponent> values) {
+		public boolean matchAll(Collection<AbstractLabelingComponent> values, boolean recur) {
+			//#2352
+			if(!recur){
+				for(AbstractLabelingComponent abstractLabelingComponent : values){
+					if (getKey().equals(abstractLabelingComponent.getNodeRef())) {
+						return true;
+					}
+				}
+			}
+		
 			int matchCount = components.size();
 			for (AbstractLabelingComponent abstractLabelingComponent : values) {
 				if (components.contains(abstractLabelingComponent.getNodeRef())) {
