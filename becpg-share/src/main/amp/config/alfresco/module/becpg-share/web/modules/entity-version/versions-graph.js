@@ -236,11 +236,13 @@
          this.widgets.alfrescoDataTable.getDataTable().subscribe("postRenderEvent", function() {
 
             instance.widgets.canvas = Dom.get(instance.id + "-graphCanvas");
-
+            
             if (window.G_vmlCanvasManager) {
                instance.widgets.canvas = window.G_vmlCanvasManager.initElement(instance.widgets.canvas);
             }
             instance.ctx = instance.widgets.canvas.getContext('2d');
+
+            instance.ctx.clearRect(0, 0, instance.widgets.width, instance.widgets.height);
             instance.ctx.strokeStyle = 'rgb(0, 0, 0)';
             instance.ctx.fillStyle = 'rgb(0, 0, 0)';
 
@@ -257,18 +259,30 @@
        */
       renderCellVersion : function VersionsGraph_renderCellVersions(elCell, oRecord, oColumn, oData) {
          var html = "", doc = oRecord.getData(), current = (beCPG.module.getVersionsGraphInstance().options.nodeRef == doc.entityNodeRef),
-             compareURL = Alfresco.constants.PROXY_URI + 'becpg/entity/compare/' + beCPG.module.getVersionsGraphInstance().options.nodeRef
-                 .replace(":/", "") + '/' + encodeURIComponent(doc.label) + '/' + encodeURIComponent(doc.name) + ".pdf";
+          compareURL = null;
+         
+         if(!current || doc.label != beCPG.module.getVersionsGraphInstance().options.label){
+	         if(current ){
+	        	 compareURL = Alfresco.constants.PROXY_URI + 'becpg/entity/compare/' + beCPG.module.getVersionsGraphInstance().options.nodeRef
+	             .replace(":/", "") + '/' + encodeURIComponent(doc.label) + '/' + encodeURIComponent(doc.name) + ".pdf";
+	         } else {
+	        	 compareURL = Alfresco.constants.PROXY_URI + 'becpg/entity/compare/' + beCPG.module.getVersionsGraphInstance().options.nodeRef
+	        	 .replace(":/", "") + "/compare.pdf?entities="+doc.entityNodeRef;
+	         }
+         }
+         
 
          html += '<div id="graph-version-row-' + this.getRecordIndex(oRecord) + '" class="entity-branches">';
          html += '   <span class="document-version">' + $html(doc.label) + '</span>';
          html += '   <span class="' + doc.metadata + (current ? " current" : "") + '" ><a href="' + beCPG.util
                .entityURL(doc.siteId, doc.nodeRef, doc.itemType) + '">' + $html(doc.name) + '</a>';
-         if(current){
+         if(compareURL!=null){
              html += '   <a href="' + compareURL + '" class="compare" title="' + Alfresco.util.message("label.compare") + '">&nbsp;</a>';
-             html += '   <a href="#" name="'+$html(doc.name)+'" rel="' + doc.nodeRef + '" class="'+DOWNLOAD_EVENTCLASS+' download" title="'
-             + Alfresco.util.message("label.download") + '">&nbsp;</a>';
-         } 
+         }
+         if(current){
+	         html += '   <a href="#" name="'+$html(doc.name)+'" rel="' + doc.nodeRef + '" class="'+DOWNLOAD_EVENTCLASS+' download" title="'
+	           + Alfresco.util.message("label.download") + '">&nbsp;</a>';
+         }
         
          html += '</span><div class="version-details">';
          html += ((doc.description || "").length > 0) ? $html(doc.description, true)
