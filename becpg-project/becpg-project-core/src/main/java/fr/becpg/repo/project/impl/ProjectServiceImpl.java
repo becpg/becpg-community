@@ -251,8 +251,8 @@ public class ProjectServiceImpl implements ProjectService {
 			Date delegationStart = (Date) nodeService.getProperty(resource, ProjectModel.PROP_QNAME_DELEGATION_START);
 			Date delegationEnd = (Date) nodeService.getProperty(resource, ProjectModel.PROP_QNAME_DELEGATION_END);
 
-			if ((delegationStart != null) && (delegationEnd != null) && (delegationStart.before(new Date()) || delegationStart.equals(new Date()))
-					&& (delegationEnd.after(new Date()) || delegationEnd.equals(new Date()))) {
+			if ((delegationStart == null) || (delegationStart.before(new Date()) || delegationStart.equals(new Date()))
+					&& (delegationEnd == null || delegationEnd.after(new Date()) || delegationEnd.equals(new Date()))) {
 
 				NodeRef reassignResource = getReassignedResource(
 						associationService.getTargetAssoc(resource, ProjectModel.PROP_QNAME_REASSIGN_RESOURCE));
