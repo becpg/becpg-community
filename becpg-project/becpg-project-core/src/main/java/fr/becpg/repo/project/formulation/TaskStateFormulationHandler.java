@@ -294,10 +294,6 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 							nextTask.setCompletionPercent(taskCompletionPercent == 0 ? null : taskCompletionPercent);
 						}
 
-						// check workflow instance (task may be reopened) and
-						// workflow properties
-						projectWorkflowService.checkWorkflowInstance(projectData, nextTask, nextDeliverables);
-
 						if ((nextTask.getResources() != null) && !nextTask.getResources().isEmpty()) {
 
 							List<NodeRef> resources = new ArrayList<>();
@@ -314,8 +310,8 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 									if ((delegationStart != null)
 											&& (nextTask.getStart().after(delegationStart) || nextTask.getStart().equals(delegationStart))) {
 
-										if ((delegationEnd != null)
-												&& (nextTask.getStart().before(delegationEnd) || nextTask.getStart().equals(delegationEnd))) {
+										if ((delegationEnd == null)
+												|| (nextTask.getStart().before(delegationEnd) || nextTask.getStart().equals(delegationEnd))) {
 
 											// reassign new tasks
 											toAdd = reassignResource;
@@ -326,7 +322,6 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 										if ((boolean) nodeService.getProperty(resource, ProjectModel.PROP_QNAME_REASSIGN_TASK)) {
 											// reassign current tasks
 											toAdd = reassignResource;
-											projectWorkflowService.checkWorkflowInstance(projectData, nextTask, nextDeliverables);
 										}
 									}
 								}
@@ -338,6 +333,16 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 
 							nextTask.setResources(resources);
 
+						}
+
+
+						// check workflow instance (task may be reopened) and
+						// workflow properties
+						projectWorkflowService.checkWorkflowInstance(projectData, nextTask, nextDeliverables);
+
+						
+						if ((nextTask.getResources() != null) && !nextTask.getResources().isEmpty()) {
+
 							// workflow (task may have been set as InProgress
 							// with
 							// UI)
@@ -348,6 +353,8 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 								projectWorkflowService.startWorkflow(projectData, nextTask, nextDeliverables);
 							}
 						}
+						
+						
 					} else {
 						logger.debug("Task " + nextTask.getTaskName() + " reopen by script " + nextTask.getTaskState());
 						reformulate = true;
