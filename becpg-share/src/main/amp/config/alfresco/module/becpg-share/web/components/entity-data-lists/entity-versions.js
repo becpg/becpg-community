@@ -201,7 +201,7 @@
                      html += '   <span class="actions"><a href="' + compareURL + '" class="compare" title="' + this
                      .msg("label.compare") + '">&nbsp;</a></span>';
                    } else {
-                      html += '  <span class="actions"><a href="#" name=".onVersionsGraphClick" rel="' + this.options.nodeRef + '" class="' + this.id + ' versions-graph" title="' + this
+                      html += '  <span class="actions"><a href="#" name=".onVersionsGraphClick" rel="' + this.options.nodeRef+"@"+doc.label + '" class="' + this.id + ' versions-graph" title="' + this
                       .msg("label.versionsGraph") + '">&nbsp;</a></span>';
                    }
                      html += '</div>';
@@ -468,10 +468,17 @@
                    * @method onViewHistoricPropertiesClick
                    * @param version
                    */
-                  onVersionsGraphClick : function EntityVersions_onVersionsGraphClick(nodeRef) {
+                  onVersionsGraphClick : function EntityVersions_onVersionsGraphClick(param) {
 
+                	 var label , splitted  = param.split('@'), nodeRef = splitted[0];
+                	 
+                	 if(splitted.length>1){
+                		 label = splitted[1];
+                	 }
+                	 
                      beCPG.module.getVersionsGraphInstance().show({
-                        nodeRef : nodeRef                        
+                        nodeRef : nodeRef,
+                        label: label
                      });
 
                   },
