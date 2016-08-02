@@ -119,9 +119,6 @@ public class EntityCatalogWebScript extends AbstractWebScript {
 		} catch (JSONException e) {
 			logger.error(e, e);
 			throw new WebScriptException("Unable to serialize JSON", e);
-		} catch (Exception e) {
-			logger.error(e, e);
-			throw new WebScriptException("Cannot formulate product", e);
 		}
 
 	}
