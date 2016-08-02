@@ -44,6 +44,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
@@ -440,13 +441,16 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 										NodeRef n = nodeService.createNode(storeNodeRef, ContentModel.ASSOC_CHILDREN, QNAME_ENTITIES_HISTORY,
 												ContentModel.TYPE_FOLDER, props).getChildRef();
 
-										logger.debug("create folder 'EntitysHistory' " + n + " - " + nodeService.exists(n));
+										logger.debug("create folder 'EntitiesHistory' " + n + " - " + nodeService.exists(n));
 
 										return n;
 									}
 								});
 							}
 						} catch (Exception e) {
+							if (e instanceof ConcurrencyFailureException) {
+								throw (ConcurrencyFailureException) e;
+							}
 							logger.error("Failed to get entitysHistory", e);
 						}
 

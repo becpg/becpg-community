@@ -28,6 +28,7 @@ import org.dom4j.Element;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.common.BeCPGException;
@@ -133,6 +134,9 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 			beCPGReportEngine.createReport(templateNodeRef, new ByteArrayInputStream(exportElt.asXML().getBytes()), outputStream, params);
 
 		} catch (Exception e) {
+			if (e instanceof ConcurrencyFailureException) {
+				throw (ConcurrencyFailureException) e;
+			}
 			logger.error("Failed to run report: ", e);
 		}
 

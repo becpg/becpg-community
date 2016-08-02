@@ -11,6 +11,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.ecm.AsyncECOService;
@@ -108,6 +109,9 @@ public class AsyncECOServiceImpl implements AsyncECOService {
 				}, userName);
 
 			} catch (Exception e) {
+				if (e instanceof ConcurrencyFailureException) {
+					throw (ConcurrencyFailureException) e;
+				}
 				logger.error("Unable to apply eco ", e);
 			}
 		}
