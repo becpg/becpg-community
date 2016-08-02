@@ -3512,11 +3512,6 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="rep:reportTpls" set="mainInfo" />
-					<field id="rep:reportLocales" set="mainInfo" >
-						<control template="/org/alfresco/components/form/controls/mtlangue.ftl"/>
-					</field>
-					<field id="rep:reportParameters" set="mainInfo" />
 
 					<!-- formulation -->
 					<field id="bcpg:productQty" help-id="becpg.forms.help.productQty" set="formulation" />
