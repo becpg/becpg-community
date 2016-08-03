@@ -245,7 +245,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 
 						if (productData != null) {
 
-							if (cdl.getType().contains("_")) {
+							if (cdl.getType().startsWith("bcpg_")) {
 								QName dataListQName = QName.createQName(cdl.getType().replace("_", ":"), namespaceService);
 
 								logger.debug("Looking for list : " + dataListQName);
