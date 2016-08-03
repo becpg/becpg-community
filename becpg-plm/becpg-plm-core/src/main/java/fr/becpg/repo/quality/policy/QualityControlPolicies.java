@@ -45,6 +45,8 @@ public class QualityControlPolicies extends AbstractBeCPGPolicy implements NodeS
 
 	private TransactionService transactionService;
 
+	private String KEY_PREFIX = QualityControlPolicies.class.getName() + "_CONTROL_PLANS_ASSOC_";
+
 	public void setTransactionService(TransactionService transactionService) {
 		this.transactionService = transactionService;
 	}
@@ -77,7 +79,9 @@ public class QualityControlPolicies extends AbstractBeCPGPolicy implements NodeS
 
 		logger.debug("QualityControlPolicies onCreateAssociation");
 		if (assocRef.getTypeQName().equals(QualityModel.ASSOC_QC_CONTROL_PLANS)) {
-			qualityControlService.createSamplingList(assocRef.getSourceRef(), assocRef.getTargetRef());
+			// Needed as beCPG Code can be create beforeCommit
+			queueNode(KEY_PREFIX + assocRef.getSourceRef().toString(), assocRef.getTargetRef());
+
 		} else if (assocRef.getTypeQName().equals(QualityModel.ASSOC_SL_CONTROL_POINT)) {
 			qualityControlService.createControlList(assocRef.getSourceRef());
 		}
@@ -94,8 +98,8 @@ public class QualityControlPolicies extends AbstractBeCPGPolicy implements NodeS
 
 	@Override
 	public void onCreateNode(ChildAssociationRef childAssocRef) {
-		// Needed as beCPG Code can be create beforeCommit
-		queueNode(childAssocRef.getChildRef());
+
+		qualityControlService.createSamplingListId(childAssocRef.getChildRef());
 	}
 
 	@Override
@@ -104,7 +108,9 @@ public class QualityControlPolicies extends AbstractBeCPGPolicy implements NodeS
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			for (NodeRef nodeRef : pendingNodes) {
 				if (isNotLocked(nodeRef) && !isWorkingCopyOrVersion(nodeRef)) {
-					qualityControlService.createSamplingListId(nodeRef);
+
+					qualityControlService.createSamplingList(new NodeRef(key.replaceFirst(KEY_PREFIX, "")), nodeRef);
+
 				}
 			}
 			return null;

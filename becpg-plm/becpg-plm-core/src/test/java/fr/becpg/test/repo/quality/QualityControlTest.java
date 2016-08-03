@@ -113,10 +113,6 @@ public class QualityControlTest extends PLMBaseTestCase {
 
 		qualityControlNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), qualityControlData).getNodeRef();
 
-		// TODO : add a policy...
-		// qualityControlService.createSamplingList(qualityControlNodeRef,
-		// controlPlansNodeRef.get(0));
-
 	}
 
 	
