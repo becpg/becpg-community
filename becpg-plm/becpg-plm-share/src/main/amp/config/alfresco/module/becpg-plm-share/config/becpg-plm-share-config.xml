@@ -67,6 +67,7 @@
 			<!-- formId="bulk-edit-2" editSelectedFormId ="bulk-edit" /> -->
 			<!-- <itemType name="bcpg:allergenList" /> -->
 
+			<itemType name="qa:qualityControl" />
 			<itemType name="bcpg:supplier" />
 			<itemType name="bcpg:client" />
 			<itemType name="sec:aclGroup" />

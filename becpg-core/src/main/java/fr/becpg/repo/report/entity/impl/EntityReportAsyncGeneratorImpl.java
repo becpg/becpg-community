@@ -23,6 +23,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.dao.ConcurrencyFailureException;
 
 import fr.becpg.repo.report.entity.EntityReportAsyncGenerator;
 import fr.becpg.repo.report.entity.EntityReportService;
@@ -79,6 +80,9 @@ public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerato
 				entityReportService.generateReports(entityNodeRef);
 
 			} catch (Exception e) {
+				if (e instanceof ConcurrencyFailureException) {
+					throw (ConcurrencyFailureException) e;
+				}
 				logger.error("Unable to generate product reports ", e);
 			}
 		}
