@@ -2,6 +2,6 @@
 <config xmlns="http://zanata.org/namespace/config/">
   <url>https://translate.zanata.org/zanata/</url>
   <project>becpg</project>
-  <project-version>2.0</project-version>
+  <project-version>2.1</project-version>
   <project-type>properties</project-type>
 </config>
