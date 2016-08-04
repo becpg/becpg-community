@@ -19,6 +19,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.RepoConsts;
@@ -129,6 +130,9 @@ public class RepoServiceImpl implements RepoService {
 		try {
 			fileFolderService.move(nodeRefToMove, destionationNodeRef, name);
 		} catch (Exception e) {
+			if (e instanceof ConcurrencyFailureException) {
+				throw (ConcurrencyFailureException) e;
+			}
 			logger.error("Failed to move node", e);
 		}
 	}

@@ -24,6 +24,7 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.dao.ConcurrencyFailureException;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.QualityModel;
@@ -140,6 +141,9 @@ public class CreateNC extends BaseJavaDelegate {
 					nodeService.addChild(pkgNodeRef, ncNodeRef, WorkflowModel.ASSOC_PACKAGE_CONTAINS, qName);
 
 				} catch (Exception e) {
+					if (e instanceof ConcurrencyFailureException) {
+						throw (ConcurrencyFailureException) e;
+					}
 					logger.error("Failed to create nc", e);
 					throw e;
 				}

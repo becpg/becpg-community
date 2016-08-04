@@ -20,6 +20,7 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.dao.ConcurrencyFailureException;
 
 import com.sun.star.lang.NullPointerException;
 
@@ -180,6 +181,9 @@ public class CreateProduct extends BaseJavaDelegate {
 					nodeService.createAssociation(projectNodeRef, productNodeRef, ProjectModel.ASSOC_PROJECT_ENTITY);					
 					
 				} catch (Exception e) {
+					if (e instanceof ConcurrencyFailureException) {
+						throw (ConcurrencyFailureException) e;
+					}
 					logger.error("Failed to create product", e);
 					throw e;
 				}

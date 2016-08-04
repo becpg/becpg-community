@@ -1,7 +1,11 @@
 package fr.becpg.repo.ecm.impl;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
@@ -14,6 +18,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
@@ -184,6 +189,9 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 						try {
 							ecoService.calculateWUsedList(ecoNodeRef, true);
 						} catch (Exception e) {
+							if (e instanceof ConcurrencyFailureException) {
+								throw (ConcurrencyFailureException) e;
+							}
 							logger.error(e, e);
 							return false;
 						}
@@ -201,6 +209,9 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 							try {
 								ecoService.apply(ecoNodeRef);
 							} catch (Exception e) {
+								if (e instanceof ConcurrencyFailureException) {
+									throw (ConcurrencyFailureException) e;
+								}
 								logger.error(e, e);
 								return false;
 							}

@@ -20,6 +20,7 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.dao.ConcurrencyFailureException;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
@@ -76,6 +77,9 @@ public class ValidateProduct extends BaseJavaDelegate {
 						}
 					}
 				} catch (Exception e) {
+					if (e instanceof ConcurrencyFailureException) {
+						throw (ConcurrencyFailureException) e;
+					}
 					logger.error("Failed to approve product", e);
 					throw e;
 				}
