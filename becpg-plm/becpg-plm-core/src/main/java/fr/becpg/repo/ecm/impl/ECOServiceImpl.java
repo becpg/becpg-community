@@ -41,6 +41,7 @@ import org.alfresco.service.transaction.TransactionService;
 import org.alfresco.util.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.util.StopWatch;
 
@@ -416,6 +417,9 @@ public class ECOServiceImpl implements ECOService {
 								isSimulation, true);
 						AuthenticationUtil.runAsSystem(actionRunAs);
 					} catch (Exception e) {
+						if (e instanceof ConcurrencyFailureException) {
+							throw (ConcurrencyFailureException) e;
+						}
 
 						changeUnitDataItem.setTreated(false);
 						changeUnitDataItem.setErrorMsg(e.getMessage());

@@ -44,6 +44,7 @@ import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.stereotype.Repository;
 
 import fr.becpg.repo.entity.EntityListDAO;
@@ -423,8 +424,10 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 			return entity;
 
 		} catch (Exception e) {
+			if (e instanceof ConcurrencyFailureException) {
+				throw (ConcurrencyFailureException) e;
+			}
 			logger.error("Cannot load entity: " + id, e);
-
 			throw new UnsupportedOperationException(e);
 		}
 	}
