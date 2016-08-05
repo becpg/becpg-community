@@ -89,8 +89,14 @@
    </div>
 </#macro>   
 
+
+<#function isHiddenField field>
+	<#return field.transitory == true && field.dataType?? >
+</#function>
+
+
 <#macro renderField field>
-   <#if field.control?? && field.control.template?? && field.transitory != true>
+   <#if field.control?? && field.control.template?? && !isHiddenField(field)>
       <#assign fieldHtmlId=args.htmlid?html + "_" + field.id?html >
       <#include "${field.control.template}" />
    </#if>
@@ -103,7 +109,7 @@
 	
 		<#assign showSet=false>
 		<#list set.children as item>
-			<#if item?? && item.kind != "set" && form.fields[item.id].transitory == false >      
+			<#if item?? && item.kind != "set" && !isHiddenField(form.fields[item.id]) >      
 			   <#assign showSet=true>
 			</#if>
 			<#if item?? && item.kind == "set">
@@ -164,7 +170,7 @@
 	<#if set.children?has_content >
 		
 		<#list set.children as item>
-			<#if item?? && item.kind != "set" && fields?contains(item.id)  && form.fields[item.id].transitory == false>      
+			<#if item?? && item.kind != "set" && fields?contains(item.id)  && !isHiddenField(fields[item.id]) >      
 			   <#assign showSet=true>
 			</#if>
 			<#if item?? && item.kind == "set">
@@ -228,7 +234,7 @@
 </#macro>
 
 <#macro renderLocaleImage field textarea=false>
-  <#if field.transitory != true && field.dataType == "mltext" && form.mode == "edit" && form.arguments.itemKind == "node">
+  <#if !isHiddenField(field) && field.dataType == "mltext" && form.mode == "edit" && form.arguments.itemKind == "node">
     <#assign localeshort = locale?substring(0,2)?lower_case >
     <#if form.arguments.itemId??>
 	    <span class="locale-icon">
