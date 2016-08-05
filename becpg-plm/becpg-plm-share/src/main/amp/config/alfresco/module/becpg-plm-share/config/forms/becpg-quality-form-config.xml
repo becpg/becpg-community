@@ -726,6 +726,23 @@
 					<field id="cm:modified" set="audit" />
 				</appearance>
 			</form>
+			<form id="search">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:titled" />
+					<show id="cm:description" />
+					<show id="qa:qcState" />
+					<show id="qa:qcControlPlans" />
+
+					<!-- batch -->
+					<show id="qa:batchId" />
+					<show id="qa:orderId" />
+				
+					<!-- Product -->
+					<show id="qa:product" />
+
+				</field-visibility>
+			</form>
 		</forms>
 	</config>
 
