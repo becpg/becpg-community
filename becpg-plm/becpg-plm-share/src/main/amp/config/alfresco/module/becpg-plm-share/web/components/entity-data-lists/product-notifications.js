@@ -150,8 +150,8 @@
 										+ (dataType !== null ? (type !== undefined ? "," : "") + ("\"prop_bcpg_rclDataType\":\"" + dataType+"\"") : "")
 										+ "}");
 
-								args[0].stopPropagation();
-								args[1].decrepitate = true;
+								//args[0].stopPropagation();
+								//args[1].decrepitate = true;
 
 								instance.reloadDataTable();
 
