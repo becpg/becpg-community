@@ -295,7 +295,7 @@ public class LabelingFormulaContext {
 		if (messageFormat.getFormats() != null) {
 			for (Format format : messageFormat.getFormats()) {
 				if (format instanceof DecimalFormat) {
-					((DecimalFormat) format).setRoundingMode(RoundingMode.DOWN);
+					((DecimalFormat) format).setRoundingMode(RoundingMode.HALF_DOWN);
 				}
 			}
 		}

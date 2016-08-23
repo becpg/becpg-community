@@ -3,6 +3,8 @@
  */
 package fr.becpg.repo.product.formulation.labeling;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -206,7 +208,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			}
 
 			if (!compositeLabeling.getIngList().isEmpty()) {
-				
+
 				if (logger.isTraceEnabled()) {
 					logger.trace(" Create merged composite labeling");
 				}
@@ -300,12 +302,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		for (AbstractLabelingComponent component : parent.getIngList().values()) {
 			List<AbstractLabelingComponent> tmp = new ArrayList<>();
 			String name = labelingFormulaContext.getLegalIngName(component);
-			if(name!=null && !name.isEmpty()){
+			if ((name != null) && !name.isEmpty()) {
 				if (componentsByName.containsKey(name)) {
 					tmp = componentsByName.get(name);
 				}
 				tmp.add(component);
-	
+
 				componentsByName.put(name, tmp);
 			}
 			if (multiLevel && (component instanceof CompositeLabeling)) {
@@ -515,7 +517,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	}
 
 	private void applyAggregateRules(CompositeLabeling parent, LabelingFormulaContext labelingFormulaContext, boolean recur) {
-		
+
 		if (!labelingFormulaContext.getAggregateRules().isEmpty()) {
 
 			Map<NodeRef, AbstractLabelingComponent> toAdd = new HashMap<>();
@@ -536,10 +538,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						if (!LabelingRuleType.Type.equals(aggregateRule.getLabelingRuleType())) {
 
 							NodeRef aggregateRuleNodeRef = aggregateRule.getKey();
-							
+
 							if ((aggregateRule.getReplacement() == null) || !aggregateRule.getReplacement().equals(component.getNodeRef())) {
-								
-								if (toAdd.containsKey(aggregateRuleNodeRef) || aggregateRule.matchAll(ingList.values(),recur)) {
+
+								if (toAdd.containsKey(aggregateRuleNodeRef) || aggregateRule.matchAll(ingList.values(), recur)) {
 
 									Double qty = component.getQty();
 									Double volume = component.getVolume();
@@ -1181,18 +1183,34 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 					if ((ingLabelItem != null) && (ingLabelItem.getQty() != null)) {
 
-						Double diluentQty = (reconstituableData.getRate() * productLabelItem.getQty()) - productLabelItem.getQty();
-						Double diluentVolume = (reconstituableData.getRate() * productLabelItem.getVolume()) - productLabelItem.getVolume();
-						Double realDiluentQty = Math.min(ingLabelItem.getQty(), diluentQty);
-						Double readlDiluentvolume = Math.min(ingLabelItem.getVolume(), diluentVolume);
-						Double realQty = (realDiluentQty + productLabelItem.getQty()) / reconstituableData.getRate();
-						Double realVol = (readlDiluentvolume + productLabelItem.getVolume()) / reconstituableData.getRate();
+						BigDecimal rate = new BigDecimal(reconstituableData.getRate());
+						BigDecimal productQty = new BigDecimal(productLabelItem.getQty());
+						BigDecimal ingQty = new BigDecimal(ingLabelItem.getQty());
+						BigDecimal ingVol = new BigDecimal(ingLabelItem.getVolume());
+						BigDecimal productVol = new BigDecimal(productLabelItem.getVolume());
 
-						ingLabelItem.setQty(ingLabelItem.getQty() - realDiluentQty);
-						ingLabelItem.setVolume(ingLabelItem.getVolume() - readlDiluentvolume);
+						BigDecimal diluentQty = productQty.multiply(rate).subtract(productQty);
 
-						productLabelItem.setQty(productLabelItem.getQty() - realQty);
-						productLabelItem.setVolume(productLabelItem.getVolume() - realVol);
+						BigDecimal realDiluentQty = ingQty.min(diluentQty);
+
+						BigDecimal realDiluentQtyRatio = diluentQty.equals(BigDecimal.ZERO) ? (new BigDecimal(1d))
+								: realDiluentQty.divide(diluentQty, 10 ,  BigDecimal.ROUND_HALF_UP);
+
+						BigDecimal realQty = realDiluentQty.add(productQty.multiply(realDiluentQtyRatio)).divide(rate , 10 ,BigDecimal.ROUND_HALF_UP);
+
+						ingLabelItem.setQty(ingQty.subtract(realDiluentQty).doubleValue());
+						productLabelItem.setQty(productQty.subtract(realQty).doubleValue());
+
+						BigDecimal diluentVolume = rate.multiply(productVol).subtract(productVol);
+
+						BigDecimal readlDiluentvolume = ingVol.min(diluentVolume);
+						BigDecimal readlDiluentvolumeRatio = diluentVolume.equals(BigDecimal.ZERO) ? (new BigDecimal(1d))
+								: readlDiluentvolume.divide(diluentQty, 10, BigDecimal.ROUND_HALF_UP);
+
+						BigDecimal realVol = readlDiluentvolume.add(productVol.multiply(readlDiluentvolumeRatio)).divide(rate, 10, BigDecimal.ROUND_HALF_UP);
+
+						ingLabelItem.setVolume(ingVol.subtract(readlDiluentvolume).doubleValue());
+						productLabelItem.setVolume(productVol.subtract(realVol).doubleValue());
 
 						IngItem targetLabelItem = (IngItem) parent.get(reconstituableData.getTargetIngNodeRef());
 						if (targetLabelItem == null) {
@@ -1202,27 +1220,35 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							parent.add(targetLabelItem);
 						}
 
+						
+
+						targetLabelItem.setQty(new BigDecimal(targetLabelItem.getQty()).add(realQty).add(realDiluentQty).doubleValue());
+						targetLabelItem.setVolume(new BigDecimal(targetLabelItem.getVolume()).add(realVol).add(readlDiluentvolume).doubleValue());
+						
 						if (logger.isTraceEnabled()) {
 							logger.trace("Applying reconstitution:" + getName(productLabelItem) + " with " + getName(ingLabelItem) + " to "
 									+ getName(targetLabelItem));
 							logger.trace(" - rate: " + reconstituableData.getRate());
-							logger.trace(" - diluentQty: " + diluentQty);
-							logger.trace(" - realDiluentQty: " + realDiluentQty);
-							logger.trace(" - realQty: " + realQty);
+							logger.trace(" - diluentQty: " + diluentQty.doubleValue());
+							logger.trace(" - realDiluentQty: " + realDiluentQty.doubleValue());
+							logger.trace(" - realDiluentQtyRatio: " + realDiluentQtyRatio.doubleValue());
+							logger.trace(" - realQty: " + realQty.doubleValue());
+							logger.trace(" - diluent quantity: " + ingLabelItem.getQty());
+							logger.trace(" - orig quantity: " + productLabelItem.getQty());
+							logger.trace(" - new quantity: " + targetLabelItem.getQty());
 						}
 
-						targetLabelItem.setQty(targetLabelItem.getQty() + realQty + realDiluentQty);
-						targetLabelItem.setVolume(targetLabelItem.getVolume() + realVol + readlDiluentvolume);
-
-						if (targetLabelItem.getQty() == 0) {
+						Double TRESHOLD = 0.00001d;
+						
+						if (targetLabelItem.getQty() < TRESHOLD) {
 							parent.getIngList().remove(targetLabelItem.getNodeRef());
 						}
 
-						if (productLabelItem.getQty() == 0) {
+						if (productLabelItem.getQty() < TRESHOLD) {
 							parent.getIngList().remove(productLabelItem.getNodeRef());
 						}
 
-						if (ingLabelItem.getQty() == 0) {
+						if (ingLabelItem.getQty() < TRESHOLD) {
 							parent.getIngList().remove(ingLabelItem.getNodeRef());
 						}
 
