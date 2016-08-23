@@ -475,7 +475,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		// ├──[ing1 french - 2.0 ( vol : 2.0) ]
 		// └──[ing2 french - 4.0 ( vol : 4.0) ]
 
-		checkILL(finishedProductNodeRef2, labelingRuleList, "epices french: ing6 french 95%, legal Raw material 1 (<b>allergen1</b>) 4,9%",
+		checkILL(finishedProductNodeRef2, labelingRuleList, "epices french: ing6 french 93,7%, legal Raw material 1 (<b>allergen1</b>) 6,2%",
 				Locale.FRENCH);
 
 		/** Test with priority **/
@@ -510,7 +510,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 		}, false, true);
 
-		checkILL(finishedProductNodeRef3, labelingRuleList, "ing4 french 71,4%, epices french, legal Raw material 1 (<b>allergen1</b>) 8,5%",
+		checkILL(finishedProductNodeRef3, labelingRuleList, "ing4 french 71,4%, epices french, legal Raw material 1 (<b>allergen1</b>) 10,7%",
 				Locale.FRENCH);
 	}
 
