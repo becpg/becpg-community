@@ -29,7 +29,7 @@ function getTreeNode()
          maxItems = isNaN(argMax) ? -1 : argMax,
          maxNumChildren = 100;
       
-      if(args["perms"] == "false"){
+      if(!bcpg.isShowEntitiesInTree() && args["perms"] == "false"){
     	  var subEntityTypes = bcpg.getSubTypes("bcpg:entityV2");
     	  for(var i in subEntityTypes){
     		  ignoredTypes.push(subEntityTypes[i]);
