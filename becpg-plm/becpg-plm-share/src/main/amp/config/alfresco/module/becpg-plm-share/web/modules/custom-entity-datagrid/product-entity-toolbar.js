@@ -552,39 +552,6 @@ YAHOO.Bubbling
 			  }
 		  });
       
-      YAHOO.Bubbling
-		.fire(
-		  "registerToolbarButtonAction",
-		  {
-			  actionName : "product-notifications",
-			  right : true,
-			  evaluate : function(asset, entity) {
-				  return entity != null;
-			  },
-			  createWidget : function(containerDiv, instance) {
-
-                var divEl = document.createElement("div");
-
-                containerDiv.appendChild(divEl);
-
-                Dom.setAttribute(divEl, "id", instance.id + "-productNotifications");
-
-                Dom.addClass(divEl, "product-notifications");
-
-                var widget = new beCPG.component.ProductNotifications(instance.id + "-productNotifications").setOptions({
-                   entityNodeRef : instance.options.entityNodeRef,
-                   entity : instance.entity,
-                   list : encodeURIComponent(instance.datalistMeta.name != null ? instance.datalistMeta.name
-                           : instance.options.list),
-                   containerDiv : divEl,
-                   toolBarInstance : instance
-                });
-
-                return widget;
-             }
-		  });
-      
-      
      
    }   
 })();

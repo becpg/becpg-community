@@ -141,7 +141,7 @@
 
                   createYUIButton : function(instance, actionName, fn) {
 
-                     var template = Dom.get(this.options.toolBarInstance.id + "-toolBar-template-button"), buttonWidget = null;
+                     var template = Dom.get("custom-toolBar-template-button"), buttonWidget = null;
 
                      var spanEl = Dom.getFirstChild(template).cloneNode(true);
 
