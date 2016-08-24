@@ -72,11 +72,7 @@
 
 							reqCtrlListNodeRef : "",
 
-							entity : null,
-
 							containerDiv : null,
-
-							toolBarInstance : null,
 
 							list : null
 
@@ -160,7 +156,7 @@
 
 						createShowNotificationButton : function(instance, actionName, containerDiv, fn) {
 
-							var template = Dom.get(instance.options.toolBarInstance.id + "-toolBar-template-button"), buttonWidget = null;
+							var template = Dom.get("custom-toolBar-template-button"), buttonWidget = null;
 
 							var spanEl = Dom.getFirstChild(template).cloneNode(true);
 
