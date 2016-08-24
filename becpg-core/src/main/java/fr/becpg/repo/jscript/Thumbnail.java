@@ -127,7 +127,7 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 	}
 
 	public ScriptNode getReportNode(ScriptNode sourceNode) {
-		NodeRef reportNodeRef;
+
 		if (entityReportService.shouldGenerateReport(sourceNode.getNodeRef(), null)) {
 			
 			 RetryingTransactionHelper txnHelper = serviceRegistry.getRetryingTransactionHelper();
@@ -138,7 +138,7 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 		            //We can be in a read-only transaction, so force a new transaction 
 		            requiresNew = true;
 		        }
-		        txnHelper.doInTransaction(new RetryingTransactionCallback<NodeRef>()
+		       txnHelper.doInTransaction(new RetryingTransactionCallback<NodeRef>()
 		        {
 
 		            @Override
@@ -150,7 +150,7 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 		                    {
 		                    
 		                    	logger.debug("getReportNode: Entity report is not up to date for " + sourceNode.getNodeRef());
-		            			reportNodeRef = entityReportService.getSelectedReport(sourceNode.getNodeRef());
+		                    	NodeRef reportNodeRef = entityReportService.getSelectedReport(sourceNode.getNodeRef());
 		            			if (reportNodeRef != null) {
 		            				cleanThumbnails(reportNodeRef);
 		            			}
@@ -168,14 +168,14 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 			
 		}
 
-		reportNodeRef = entityReportService.getSelectedReport(sourceNode.getNodeRef());
+		NodeRef reportNodeRef = entityReportService.getSelectedReport(sourceNode.getNodeRef());
 
 		return reportNodeRef != null ? new ScriptNode(reportNodeRef, serviceRegistry, getScope()) : sourceNode;
 
 	}
 
 	public ScriptNode refreshReport(ScriptNode reportNode) {
-		NodeRef reportNodeRef = reportNode.getNodeRef();
+		final NodeRef reportNodeRef = reportNode.getNodeRef();
 
 		NodeRef entityNodeRef = entityReportService.getEntityNodeRef(reportNodeRef);
 		if ((entityNodeRef != null) && entityReportService.shouldGenerateReport(entityNodeRef, reportNodeRef)) {
