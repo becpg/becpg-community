@@ -148,6 +148,6 @@ public class RepoConsts {
 	public static final String FORMAT_XLSX = "xlsx";
 
 
-
+	public static final String[] SUPPORTED_LANGUAGES = {"fr", "en"};
 	
 }

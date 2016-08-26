@@ -198,8 +198,8 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 			Map<QName, Serializable> properties = new HashMap<>();
 			properties.put(ContentModel.PROP_NAME, name);
-			properties.put(ContentModel.PROP_TITLE, I18NUtil.getMessage("entity-datalist-wused-title"));
-			properties.put(ContentModel.PROP_DESCRIPTION, I18NUtil.getMessage("entity-datalist-wused-description"));
+			properties.put(ContentModel.PROP_TITLE, TranslateHelper.getTranslatedKey("entity-datalist-wused-title"));
+			properties.put(ContentModel.PROP_DESCRIPTION, TranslateHelper.getTranslatedKey("entity-datalist-wused-description"));
 			properties.put(DataListModel.PROP_DATALISTITEMTYPE, typeQName.toPrefixString(namespaceService));
 
 			listNodeRef = nodeService.createNode(listContainerNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS,
@@ -222,8 +222,8 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 			Map<QName, Serializable> properties = new HashMap<>();
 			properties.put(ContentModel.PROP_NAME, name);
-			properties.put(ContentModel.PROP_TITLE, I18NUtil.getMessage("entity-datalist-" + name.toLowerCase() + "-title"));
-			properties.put(ContentModel.PROP_DESCRIPTION, I18NUtil.getMessage("entity-datalist-" + name.toLowerCase() + "-description"));
+			properties.put(ContentModel.PROP_TITLE, TranslateHelper.getTranslatedKey("entity-datalist-" + name.toLowerCase() + "-title"));
+			properties.put(ContentModel.PROP_DESCRIPTION, TranslateHelper.getTranslatedKey("entity-datalist-" + name.toLowerCase() + "-description"));
 			properties.put(DataListModel.PROP_DATALISTITEMTYPE, typeQName.toPrefixString(namespaceService));
 
 			listNodeRef = nodeService.createNode(listContainerNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS,
