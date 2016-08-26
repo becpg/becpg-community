@@ -245,7 +245,7 @@
             return;
          }
          var containerRight = Dom.get(this.id + "-toolbar-buttons-right"), containerLeft = Dom
-               .get(this.id + "-toolbar-buttons-left"), template = Dom.get(this.id + "-toolBar-template-button");
+               .get(this.id + "-toolbar-buttons-left"), template = Dom.get("custom-toolBar-template-button");
          
          //Reset
          containerRight.innerHTML = "";

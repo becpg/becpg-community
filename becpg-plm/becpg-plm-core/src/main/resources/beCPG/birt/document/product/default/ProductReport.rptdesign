@@ -2862,12 +2862,19 @@ row["illValue"]
                 <structure>
                     <property name="columnName">allergenListVoluntary</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">allergenListVoluntary</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">allergenListInVoluntary</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">allergenListInVoluntary</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">allergenListInVoluntaryFromProcess</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">allergenListInVoluntaryFromProcess</text-property>
                 </structure>
             </list-property>
             <list-property name="parameters"/>
@@ -2881,6 +2888,11 @@ row["illValue"]
                     <structure>
                         <property name="position">2</property>
                         <property name="name">allergenListInVoluntary</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">allergenListInVoluntaryFromProcess</property>
                         <property name="dataType">string</property>
                     </structure>
                 </list-property>
@@ -2901,8 +2913,15 @@ row["illValue"]
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">allergenListInVoluntaryFromProcess</property>
+                    <property name="nativeName">allergenListInVoluntaryFromProcess</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/allergenLists]#:#{allergenListVoluntary;STRING;/@allergenListVoluntary},{allergenListInVoluntary;STRING;/@allergenListInVoluntary}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/allergenLists]#:#{allergenListVoluntary;STRING;/@allergenListVoluntary},{allergenListInVoluntary;STRING;/@allergenListInVoluntary},{allergenListInVoluntaryFromProcess;STRING;/@allergenListInVoluntaryFromProcess}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -8342,9 +8361,16 @@ else{
                                                         <expression name="expression" type="javascript">dataSetRow["allergenListInVoluntary"]</expression>
                                                         <property name="dataType">string</property>
                                                     </structure>
+                                                    <structure>
+                                                        <property name="name">allergenListInVoluntaryFromProcess</property>
+                                                        <text-property name="displayName">allergenListInVoluntaryFromProcess</text-property>
+                                                        <expression name="expression" type="javascript">dataSetRow["allergenListInVoluntaryFromProcess"]</expression>
+                                                        <property name="dataType">string</property>
+                                                        <property name="allowExport">true</property>
+                                                    </structure>
                                                 </list-property>
                                                 <property name="contentType">html</property>
-                                                <text-property name="content"><![CDATA[<U><VALUE-OF >reportContext.getMessage("canContain", reportContext.getLocale())</VALUE-OF></U> <VALUE-OF >row["allergenListInVoluntary"]</VALUE-OF>]]></text-property>
+                                                <text-property name="content"><![CDATA[<U><VALUE-OF >reportContext.getMessage("canContain", reportContext.getLocale())</VALUE-OF></U> <VALUE-OF >row["allergenListInVoluntaryFromProcess"]</VALUE-OF>]]></text-property>
                                             </text>
                                         </cell>
                                     </row>
@@ -9620,8 +9646,8 @@ en g</text-property>
                                         </cell>
                                         <cell id="2375">
                                             <label id="2393">
-                                                <text-property name="text" key="grossWeightKg">Poids brut 
-env en kg</text-property>
+                                                <text-property name="text" key="grossWeightG">Poids brut 
+env en g</text-property>
                                             </label>
                                         </cell>
                                         <cell id="2761">
@@ -9666,6 +9692,7 @@ else{
                                         </cell>
                                         <cell id="2363">
                                             <data id="2767">
+                                                <property name="fontSize">9pt</property>
                                                 <property name="dataSet">packFirstLevelMaster</property>
                                                 <list-property name="boundDataColumns">
                                                     <structure>
@@ -9756,6 +9783,7 @@ dataSetRow["productCompoQtyUsed"] * 1000
                                         </cell>
                                         <cell id="2368">
                                             <data id="2455">
+                                                <property name="fontSize">9pt</property>
                                                 <property name="dataSet">packSecondLevelMaster</property>
                                                 <list-property name="boundDataColumns">
                                                     <structure>

@@ -52,7 +52,9 @@
 			}
 			dataGridModuleCount++;
 		});
-
+		
+		
+	
 		YAHOO.Bubbling.on("dirtyDataTable", this.formulate, this);
 
 		return this;
@@ -131,6 +133,23 @@
 			// Select the preferred filter in the ui
 			this.widgets.customList.set("label", this.msg("dashlet.customList." + this.options.customListName + ".title") + " "
 					+ Alfresco.constants.MENU_ARROW_SYMBOL);
+			
+			
+			 var divEl = document.createElement("div");
+
+			 (new YAHOO.util.Element("toolbar-contribs-right")).appendChild(divEl);
+
+	         Dom.setAttribute(divEl, "id", instance.id + "-productNotifications");
+
+	         Dom.addClass(divEl, "product-notifications");
+
+	         this.widgets.productNotifications = new beCPG.component.ProductNotifications(instance.id + "-productNotifications").setOptions({
+	            entityNodeRef : instance.options.entityNodeRef,
+	            list : instance.options.list,
+	            containerDiv : divEl
+	         });
+
+
 			
 			 this.services.preferences = new Alfresco.service.Preferences();
 

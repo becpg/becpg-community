@@ -533,7 +533,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 		if ((assocDef != null) && (assocDef.getName() != null)) {
 			if (assocDef.getName().equals(PLMModel.ASSOC_PLANTS) || assocDef.getName().equals(PLMModel.ASSOC_STORAGE_CONDITIONS)
-					|| assocDef.getName().equals(PLMModel.ASSOC_PRECAUTION_OF_USE) || assocDef.getName().equals(PLMModel.ASSOC_SUPPLIERS)) {
+					|| assocDef.getName().equals(PLMModel.ASSOC_PRECAUTION_OF_USE) || assocDef.getName().equals(PLMModel.ASSOC_SUPPLIERS)
+					|| assocDef.getName().equals(PLMModel.ASSOC_SUBSIDIARY)) {
 
 				extractTargetAssoc(entityNodeRef, assocDef, entityElt, images);
 				return true;

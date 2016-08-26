@@ -84,6 +84,8 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	private EntityListDAO entityListDAO;
 
 	private CheckOutCheckInService checkOutCheckInService;
+	
+	private boolean showEntitiesInTree = false;
 
 	public void setOlapService(OlapService olapService) {
 		this.olapService = olapService;
@@ -139,6 +141,15 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	
 	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
 		this.entityDictionaryService = entityDictionaryService;
+	}
+
+	
+	public boolean isShowEntitiesInTree() {
+		return showEntitiesInTree;
+	}
+
+	public void setShowEntitiesInTree(boolean showEntitiesInTree) {
+		this.showEntitiesInTree = showEntitiesInTree;
 	}
 
 	public String getMLProperty(ScriptNode sourceNode, String propQName, String locale) {
@@ -197,6 +208,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public String getMessage(String messageKey, Object param) {
 		return I18NUtil.getMessage(messageKey, param, Locale.getDefault());
 	}
+	
 
 	public String getOlapSSOUrl() {
 		return olapService.getSSOUrl();
