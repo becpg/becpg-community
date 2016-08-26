@@ -903,7 +903,7 @@
 			<parent>bcpg:charact</parent>
 			<properties>
 				<property name="bcpg:bioOriginType">
-					<type>d:text</type>
+					<type>d:mltext</type>
 				</property>
 			</properties>
 		</type>

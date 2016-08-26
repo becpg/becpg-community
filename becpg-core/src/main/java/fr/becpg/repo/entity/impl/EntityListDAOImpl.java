@@ -37,6 +37,7 @@ import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.CopyService;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -145,7 +146,16 @@ public class EntityListDAOImpl implements EntityListDAO {
 			Map<QName, Serializable> properties = new HashMap<>();
 			properties.put(ContentModel.PROP_NAME, listQName.getLocalName());
 			properties.put(ContentModel.PROP_TITLE, classDef.getTitle(dictionaryService));
-			properties.put(ContentModel.PROP_DESCRIPTION, classDef.getDescription(dictionaryService));
+			
+			MLText classTitleMLText = TranslateHelper.getTemplateTitleMLText(classDef.getName());
+			MLText classDescritptionMLText = TranslateHelper.getTemplateDescriptionMLText(classDef.getName());
+
+			logger.debug("adding title: "+classTitleMLText+" for class:"+classDef.getName());
+			logger.debug("adding description: "+classDescritptionMLText+" for class:"+classDef.getName());
+				
+			I18NUtil.setLocale(Locale.getDefault());
+			properties.put(ContentModel.PROP_TITLE, classTitleMLText);
+			properties.put(ContentModel.PROP_DESCRIPTION, classDescritptionMLText);
 			properties.put(DataListModel.PROP_DATALISTITEMTYPE, listQName.toPrefixString(namespaceService));
 
 			return nodeService.createNode(listContainerNodeRef, ContentModel.ASSOC_CONTAINS, listQName, DataListModel.TYPE_DATALIST, properties)
