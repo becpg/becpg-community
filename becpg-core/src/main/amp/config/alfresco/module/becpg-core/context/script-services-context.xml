@@ -63,6 +63,7 @@
 		<property name="associationService" ref="associationService" />
 		<property name="checkOutCheckInService" ref="checkOutCheckInService" />
 		<property name="entityListDAO" ref="entityListDAO" />
+		<property name="showEntitiesInTree" value="${becpg.doclibtree.showEntities}"></property>
 	</bean>
 
 	<!-- Override Alfresco -->

@@ -34,6 +34,7 @@
 		      <div class="right">
 		   	 	<div id="${el}-toolbar-buttons-right" >
 		   	 	</div>
+		   	 	<div id="toolbar-contribs-right" ></div>
 				<#if nodeRef??>
 		   	 	<div>
 					<div class="action-set-menu doclist">
@@ -50,7 +51,7 @@
 		   </div>
 		</div>
 		<#-- template -->
-		<div id="${el}-toolBar-template-button" class="hidden" >
+		<div id="custom-toolBar-template-button" class="hidden" >
 			    <span class="yui-button yui-push-button">
 			       <span class="first-child">
 			             <button type="button" ></button>
