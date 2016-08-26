@@ -2831,6 +2831,10 @@
                                     oColumn.label = obj.label;
                                     this.widgets.dataTable.formatTheadCell(oColumn._elThLabel, oColumn,
                                             this.widgets.dataTable.get("sortedBy"));
+                                    
+                                    if(this.widgets.floatingHeader){
+                               		  this.widgets.floatingHeader.floatThead('reflow');
+                               	 	}
 
                                 }
                             }
