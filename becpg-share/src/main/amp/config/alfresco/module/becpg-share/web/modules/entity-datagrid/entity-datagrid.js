@@ -1570,6 +1570,24 @@
                                   
                                    if(this.options.floatingHeader){
                                 	   
+
+       	                            require([
+       	                        	         "jquery", "grid/floatthead"
+       	                        	       ], function(jQuery) {
+       	                            	
+       	                            		if(!me.widgets.floatingHeader){
+       	                            			me.widgets.floatingHeader = jQuery(me.widgets.dataTable._elTable);
+       	    	                            	me.widgets.floatingHeader.floatThead({zIndex:2, scrollContainer: function($table){
+       	    	                                    return me.widgets.floatingHeader.closest('.scrollableList');
+       	    	                                },floatContainerClass:"floatThead-container grid yui-dt"});
+       	                            		} else {
+       	                            			 me.widgets.floatingHeader.floatThead('reflow');
+       	                            		}
+       	                            		
+
+       	                            });
+                                	   
+                                	   
                                 	   this.widgets.itemSelect.getMenu().subscribe("show",function(){
                                 		   
                                 		   var floatTheadDiv = YAHOO.util.Selector.query('div.floatThead-container');
@@ -1870,21 +1888,15 @@
 
                             if(this.options.floatingHeader){
                             	
-	                            require([
-	                        	         "jquery", "grid/floatthead"
-	                        	       ], function(jQuery) {
-	                            	
-	                            	me.widgets.floatingHeader = jQuery(me.widgets.dataTable._elTable);
-	                            	me.widgets.floatingHeader.floatThead({zIndex:2, scrollContainer: function($table){
-	                                    return me.widgets.floatingHeader.closest('.scrollableList');
-	                                },floatContainerClass:"floatThead-container grid yui-dt"});
+	                          
 	                            	
 	                            	 YAHOO.Bubbling
 	                                 .on("refreshFloatingHeader", function(){
-	                                	 me.widgets.floatingHeader.floatThead('reflow');
+	                                	 if(me.widgets.floatingHeader){
+	                                		 me.widgets.floatingHeader.floatThead('reflow');
+	                                	 }
 	                                 },this);
 	                            
-	                            });
                             
                             }
 
