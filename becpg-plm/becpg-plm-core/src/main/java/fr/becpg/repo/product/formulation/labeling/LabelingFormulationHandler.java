@@ -891,15 +891,17 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				ProductData productData = (ProductData) alfrescoRepository.findOne(productNodeRef);
 
 				// Calculate qty
-				Double qty = FormulationHelper.getQtyInKg(compoListDataItem);
+				Double qty = FormulationHelper.getQtyInKg(compoListDataItem) ;
+				
 				if ((qty != null) && !(productData instanceof LocalSemiFinishedProductData)) {
 					qty *= FormulationHelper.getYield(compoListDataItem) / 100;
+					qty *= LabelingFormulaContext.PRECISION_FACTOR;
 				}
 
 				Double waterLost = 0d;
 				if ((ingsCalculatingWithYield || labelingFormulaContext.isIngsLabelingWithYield()) && (qty != null) && (yield != null)
 						&& (yield != 100d) && (recipeQtyUsed != null) && nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_WATER)) {
-					waterLost = (1 - (yield / 100d)) * recipeQtyUsed;
+					waterLost = (1 - (yield / 100d)) * recipeQtyUsed * LabelingFormulaContext.PRECISION_FACTOR;
 
 					if (logger.isTraceEnabled()) {
 						logger.trace("Detected water lost: " + waterLost + " for qty :" + qty);
@@ -918,9 +920,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				if (volume == null) {
 					volume = 0d;
 				}
+			
 
 				if ((volume != null) && !(productData instanceof LocalSemiFinishedProductData)) {
 					volume *= FormulationHelper.getYield(compoListDataItem) / 100;
+					volume *= LabelingFormulaContext.PRECISION_FACTOR;
 				}
 
 				if ((volume != null) && (ratio != null)) {

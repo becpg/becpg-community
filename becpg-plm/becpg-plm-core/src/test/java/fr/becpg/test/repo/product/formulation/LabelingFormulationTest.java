@@ -207,7 +207,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 				new LabelingRuleListDataItem("Aggr", null, LabelingRuleType.Group, Arrays.asList(rawMaterial13NodeRef, rawMaterial16NodeRef), null));
 
 		checkILL(finishedProductNodeRef1, labelingRuleList,
-				"<b>aggr (38,7%):</b> ing3 french 38,7%, ing1 french, ing2 french<br/><b>legal Finished product 1 (33,3%):</b> pâte french 50% (legal Raw material 12 33,3% (ing2 french 25%, ing1 french 8,3%), ing2 french 11,1%, ing1 french 5,6%), garniture french 50% (ing3 french 41,7%, ing4 french 8,3%)<br/><b>legal Finished product 1 (16,7%):</b> pâte french 50% (legal Raw material 12 33,3% (ing2 french 25%, ing1 french 8,3%), ing2 french 11,1%, ing1 french 5,6%), garniture french 50% (ing3 french 41,7%, ing4 french 8,3%)<br/>garniture french 11,3%",
+				"<b>aggr (38,7%):</b> ing3 french 38,7%, ing1 french, ing2 french<br/><b>legal Finished product 1 (33,3%):</b> pâte french 50% (legal Raw material 12 33,3% (ing2 french 25%, ing1 french 8,3%), ing2 french 11,1%, ing1 french 5,6%), garniture french 50% (ing3 french 41,7%, ing4 french 8,3%)<br/><b>legal Finished product 1 (16,7%):</b> pâte french 50% (legal Raw material 12 33,3% (ing2 french 25%, ing1 french 8,3%), ing2 french 11,1%, ing1 french 5,6%), garniture french 50% (ing3 french 41,7%, ing4 french 8,3%)<br/>garniture french 11,2%",
 				Locale.FRENCH);
 
 		checkError(finishedProductNodeRef1, labelingRuleList,
@@ -928,7 +928,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		// └──[ing4 french - 1.0]
 
 		checkILL(finishedProductNodeRef1, labelingRuleList,
-				"pâte french 50% (legal Raw material 12 33,3% (ing2 french 17,5%, comb 1 9,2% (ing2 french 7,5%, ing1 french 1,7%), ing1 french 6,7%), ing2 french 7,8%, ing1 french 4,4%, comb 1 4,4% (ing2 french 3,3%, ing1 french 1,1%)), garniture french 50% (ing3 french 41,7%, ing4 french 8,3%)",
+				"pâte french 50% (legal Raw material 12 33,3% (ing2 french 17,5%, comb 1 9,2% (ing2 french 7,5%, ing1 french 1,7%), ing1 french 6,7%), ing2 french 7,8%, comb 1 4,4% (ing2 french 3,3%, ing1 french 1,1%), ing1 french 4,4%), garniture french 50% (ing3 french 41,7%, ing4 french 8,3%)",
 				Locale.FRENCH);
 
 		labelingRuleList = new ArrayList<>();

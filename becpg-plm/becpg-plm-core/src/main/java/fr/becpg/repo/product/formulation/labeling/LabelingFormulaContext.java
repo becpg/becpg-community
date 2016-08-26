@@ -78,6 +78,8 @@ import fr.becpg.repo.repository.RepositoryEntity;
 public class LabelingFormulaContext {
 
 	private static final Log logger = LogFactory.getLog(LabelingFormulaContext.class);
+	
+	public static int PRECISION_FACTOR = 100;
 
 	private CompositeLabeling lblCompositeContext;
 
