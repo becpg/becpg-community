@@ -6737,6 +6737,26 @@
 					<field id="bcpg:costListValuePerProduct" read-only="true" />
 				</appearance>				
 			</form>
+			<form id="customListDatagrid">
+				<field-visibility>
+					<show id="bcpg:variantIds" force="true" />
+					<show id="bcpg:depthLevel" />
+					<show id="bcpg:costListCost" />
+					<show id="bcpg:costListValue" />
+					<show id="bcpg:costListUnit" />					
+					<show id="fm:commentCount" force="true" />
+					<show id="bcpg:costListIsFormulated" />
+					<show id="bcpg:costListFormulaErrorLog" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:variantIds" label="hidden"></field>
+					<field id="bcpg:depthLevel" label="hidden"></field>					
+					<field id="fm:commentCount" label="hidden" read-only="true" />
+					<field id="bcpg:costListIsFormulated"  label="hidden"/>
+					<field id="bcpg:costListFormulaErrorLog"  label="hidden"/>
+					<field id="bcpg:costListValuePerProduct" read-only="true" />
+				</appearance>				
+			</form>
 			<form id="datagridWUsed">
 				<field-visibility>
 					<show id="bcpg:variantIds" force="true" />
@@ -7343,6 +7363,33 @@
 					<field id="bcpg:nutListFormulaErrorLog" label="hidden"/>
 				</appearance>
 			</form>
+			<form id="customListDatagrid">
+				<field-visibility>
+					<show id="bcpg:variantIds" force="true" />
+					<show id="bcpg:depthLevel" />
+					<show id="bcpg:nutListNut" />
+					<show id="bcpg:nutListValue" />
+					<show id="bcpg:nutListFormulatedValue" />
+					<show id="bcpg:nutListUnit" />
+				
+					<show id="bcpg:nutListValuePerServing" force="true" />
+					<show id="bcpg:nutListGDAPerc" force="true" />
+				
+					<show id="fm:commentCount" force="true" />
+					<show id="bcpg:nutListIsFormulated" />
+					<show id="bcpg:nutListFormulaErrorLog" />					
+					<show id="entity_bcpg:nutListNut_bcpg:nut" force="true"/>
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:variantIds" label="hidden"></field>
+					<field id="bcpg:depthLevel" label="hidden"></field>
+					<field id="bcpg:nutListFormulatedValue" label="hidden" read-only="true" />
+					<field id="bcpg:nutListUnit" read-only="true" label="hidden"></field>
+					<field id="fm:commentCount" label="hidden" read-only="true" />
+					<field id="bcpg:nutListIsFormulated" label="hidden"/>
+					<field id="bcpg:nutListFormulaErrorLog" label="hidden"/>
+				</appearance>
+			</form>
 			<form id="datagridWUsed">
 				<field-visibility>
 					<show id="bcpg:variantIds" force="true" />
@@ -7526,6 +7573,24 @@
 					<show id="bcpg:pclMini" />
 					<show id="bcpg:pclMaxi" />
 					<show id="bcpg:pclTextCriteria" />
+					<show id="fm:commentCount" force="true" />
+					<show id="bcpg:physicoChemIsFormulated" />
+					<show id="bcpg:physicoChemFormulaErrorLog" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:variantIds" label="hidden"></field>
+					<field id="bcpg:pclUnit" read-only="true"></field>
+					<field id="fm:commentCount" label="hidden" read-only="true" />
+					<field id="bcpg:physicoChemIsFormulated" label="hidden"/>
+					<field id="bcpg:physicoChemFormulaErrorLog" label="hidden"/>
+				</appearance>
+			</form>
+			<form id="customListDatagrid">
+				<field-visibility>
+					<show id="bcpg:variantIds" force="true" />
+					<show id="bcpg:pclPhysicoChem" />
+					<show id="bcpg:pclValue" />
+					<show id="bcpg:pclUnit" />
 					<show id="fm:commentCount" force="true" />
 					<show id="bcpg:physicoChemIsFormulated" />
 					<show id="bcpg:physicoChemFormulaErrorLog" />
