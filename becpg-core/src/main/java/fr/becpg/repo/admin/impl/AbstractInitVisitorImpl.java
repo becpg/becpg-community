@@ -10,6 +10,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.action.evaluator.HasAspectEvaluator;
 import org.alfresco.repo.action.evaluator.IsSubTypeEvaluator;
 import org.alfresco.repo.action.executer.AddFeaturesActionExecuter;
@@ -91,6 +92,7 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 	    	//logger.debug("QName: " + QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, folderPath));
 	    	
 	    	folderNodeRef = repoService.getOrCreateFolderByPath(parentNodeRef, folderPath, folderName);
+	    	nodeService.setProperty(folderNodeRef, ContentModel.PROP_TITLE, TranslateHelper.getTranslatedPathMLText(folderPath));
 	    	
 	    	visitRules(folderNodeRef, folderPath);
 	    	visitWF(folderNodeRef, folderPath);	    	

@@ -25,10 +25,12 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.htmlparser.util.Translate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -65,6 +67,8 @@ public class EntitySystemServiceImpl implements EntitySystemService {
 			// disable policy in order to have getTranslatedPath in cm:name
 			policyBehaviourFilter.disableBehaviour(DataListModel.TYPE_DATALIST);
 
+			MLText translatedPathMLText = TranslateHelper.getTranslatedPathMLText(entityPath);
+			
 			String entityName = TranslateHelper.getTranslatedPath(entityPath);
 			if (entityName == null) {
 				entityName = entityPath;
@@ -72,6 +76,7 @@ public class EntitySystemServiceImpl implements EntitySystemService {
 
 			Map<QName, Serializable> properties = new HashMap<>();
 			properties.put(ContentModel.PROP_NAME, entityName);
+			properties.put(ContentModel.PROP_TITLE, translatedPathMLText);
 
 			NodeRef entityNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, entityName);
 
@@ -91,7 +96,10 @@ public class EntitySystemServiceImpl implements EntitySystemService {
 
 					NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, entityList.getKey());
 					if (listNodeRef == null) {
-						entityListDAO.createList(listContainerNodeRef, entityList.getKey(), entityList.getValue());
+						MLText entityListTranslated = TranslateHelper.getTranslatedPathMLText(entityList.getKey());
+						NodeRef newDataList = entityListDAO.createList(listContainerNodeRef, entityList.getKey(), entityList.getValue());
+						nodeService.setProperty(newDataList, ContentModel.PROP_TITLE, entityListTranslated);
+						
 					}
 				}
 			}

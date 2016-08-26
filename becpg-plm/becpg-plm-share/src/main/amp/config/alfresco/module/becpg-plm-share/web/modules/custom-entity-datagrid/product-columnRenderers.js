@@ -265,8 +265,10 @@ if (beCPG.module.EntityDataGridRenderers) {
         	  return beCPG.util.sigFigs(val,3).toLocaleString();
           }
           
+          var unit = oRecord._oData.itemData.prop_bcpg_nutListUnit.value;
+          
           if (data.value != null) {
-        	  ret+=exp(data.value);
+        	  ret+=exp(data.value)+" "+unit;
         	  
           }
           
@@ -275,7 +277,7 @@ if (beCPG.module.EntityDataGridRenderers) {
               if(ret.length>0){
                   ret+= '&nbsp;&nbsp;(' + exp(formulatedValue.value) + ')';
               } else {
-                ret+= exp(formulatedValue.value) ;
+                ret+= exp(formulatedValue.value)+" "+unit ;
               }
           }
           
@@ -937,35 +939,19 @@ if (beCPG.module.EntityDataGridRenderers) {
 		}
 	});
 	
-	
-	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-		propertyName : [ "bcpg:nutListValue" ],
-		renderer : function(oRecord, data, label, scope) {
-			//nut value is 2.3 mg/100g
-			
-			var unit = oRecord._oData.itemData.prop_bcpg_nutListUnit.value;
-			var msg = null;
-			
-			if(data.value !== null){
-				msg = data.displayValue+" "+unit;
-			}
-			
-			return Alfresco.util.encodeHTML(msg);
-		}
-	});
-	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : [ "bcpg:nutListValuePerServing" ],
 		renderer : function(oRecord, data, label, scope) {
 			//one serving is 56 g
 			
-			if(data.displayValue != null && data.displayValue > 0){
+			
+			if(data.value != null && data.value > 0){
 				var additionalProps = oRecord.getData("itemData")["dt_bcpg_nutListNut"][0].itemData;
 				var unit = additionalProps.prop_bcpg_nutUnit.displayValue;
 				var msg = null;
 				
 				if(data.value !== null){
-					msg = data.displayValue+" "+unit;
+					msg = beCPG.util.sigFigs(data.value,3).toLocaleString()+" "+unit;
 				}
 			}
 			

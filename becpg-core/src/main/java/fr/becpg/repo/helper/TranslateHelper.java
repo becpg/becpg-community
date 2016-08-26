@@ -19,9 +19,13 @@ package fr.becpg.repo.helper;
 
 import java.util.Locale;
 
+import org.alfresco.service.cmr.repository.MLText;
+import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
+
+import fr.becpg.repo.RepoConsts;
 
 public class TranslateHelper {
 
@@ -56,6 +60,10 @@ public class TranslateHelper {
 			I18NUtil.setLocale(currentLocal);
 		}
 	}
+	
+	public static MLText getTranslatedPathMLText(String name){
+		return getTranslatedKey(PATH_MSG_PFX + name.toLowerCase());
+	}
 
 	public static String getTranslatedBoolean(Boolean b, boolean useDefaultLocale) {
 
@@ -78,6 +86,49 @@ public class TranslateHelper {
 
 		return getConstraint(constraintName, value, null);
 
+	}
+	
+	/**
+	 * Returns the MLText with the translations for all the languages supported.
+	 * List defined in {@link RepoConsts}
+	 * @param key the key to search for translations
+	 * @return 
+	 */
+	public static MLText getTranslatedKey(String key){
+		MLText res = new MLText();
+		
+		logger.debug("Getting translations for key: "+key);
+		for(String localeString : RepoConsts.SUPPORTED_LANGUAGES){
+			Locale currentLocale = new Locale(localeString);
+			
+			String translation = I18NUtil.getMessage(key, currentLocale);
+			
+			logger.debug("Found translation: "+translation);
+			if(translation != null){
+				res.addValue(currentLocale, I18NUtil.getMessage(key, currentLocale));
+			}
+		}
+		
+		return res;
+	}
+	
+	public static MLText getTemplateModelMLText(QName classQName, String key){
+		String localName = classQName.getLocalName();
+		String shortPrefix = classQName.getPrefixString().split(":")[0];
+		
+		logger.debug("getting title mltext for class: "+classQName+" ("+localName+", pfx:"+shortPrefix+")");
+		logger.debug("Full path: "+shortPrefix+"_"+shortPrefix+"model.type."+shortPrefix+"_"+localName+"."+key);
+		
+		return getTranslatedKey(shortPrefix+"_"+shortPrefix+"model.type."+shortPrefix+"_"+localName+"."+key);
+	}
+	
+	
+	public static MLText getTemplateTitleMLText(QName classQName){
+		return getTemplateModelMLText(classQName, "title");
+	}
+	
+	public static MLText getTemplateDescriptionMLText(QName classQName){
+		return getTemplateModelMLText(classQName, "description");
 	}
 
 	public static String getConstraint(String constraintName, String value, Locale locale) {
