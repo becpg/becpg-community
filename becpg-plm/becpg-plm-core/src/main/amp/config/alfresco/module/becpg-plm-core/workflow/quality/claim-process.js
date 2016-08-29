@@ -48,6 +48,8 @@ function readNCName(){
         var nc = bpm_package.children[i];
         if (nc.isSubType("qa:nc")) {
             bpm_workflowDescription = extractName(nc);
+            bpm_description = bpm_workflowDescription;
+            task.description = bpm_workflowDescription;
             task.setVariable('bpm_workflowDescription', bpm_workflowDescription);
             task.setVariable('bpm_description', bpm_workflowDescription);
             execution.setVariable('bpm_workflowDescription', bpm_workflowDescription);

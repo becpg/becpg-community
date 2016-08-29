@@ -1133,7 +1133,7 @@ function getSearchResults(params)
                ' AND -ASPECT:"st:siteContainer" AND -ASPECT:"sys:hidden" AND -cm:creator:system AND -QNAME:comment\\-*');
       
       // beCPG
-      fqs.push(' AND -TYPE:"bcpg:entityListItem" AND -TYPE:"rep:report" AND -TYPE:" dl:dataList" AND -ASPECT:"bcpg:hiddenFolder" AND -ASPECT:"bcpg:compositeVersion" -ASPECT:"bcpg:entityTplAspect" AND -TYPE:"bcpg:systemEntity"');
+      fqs.push(' AND -TYPE:"bcpg:entityListItem" AND -TYPE:"rep:report" AND -ASPECT:"bcpg:hiddenFolder" AND -ASPECT:"bcpg:compositeVersion" -ASPECT:"bcpg:entityTplAspect" AND -TYPE:"bcpg:systemEntity"');
       
       
       // sort field - expecting field to in one of the following formats:
