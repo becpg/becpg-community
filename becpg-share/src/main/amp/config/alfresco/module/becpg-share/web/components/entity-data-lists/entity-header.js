@@ -210,7 +210,7 @@
                          { 
                         	 
                             var message = YAHOO.lang.JSON.parse(evt.data);
-                            if(message.type && message.type == "JOINING"){
+                            if(message.type && message.type == "JOINING" && message.user!=Alfresco.constants.USERNAME){
                             	
                             	if(YAHOO.util.Dom.get(me.id+"-chat-user-"+message.user)==null){
                             		 var ulEl = YAHOO.util.Dom.get(me.id+"-node-users");
@@ -223,13 +223,13 @@
 	                            	 ulEl.innerHTML = html;
                             	}
                             	
-                            } else if(message.type == "LEAVING"){
+                            } else if(message.type == "LEAVING" && message.user!=Alfresco.constants.USERNAME){
                             	 var child = document.getElementById(me.id+"-chat-user-"+message.user);
                             	 if(child!=null){
                             		 child.parentNode.removeChild(child);
                             	 }
                             	
-                            } else if(message.type == "UPDATE"){
+                            } else if(message.type == "UPDATE" && message.user!=Alfresco.constants.USERNAME){
                             	YAHOO.util.Dom.addClass(me.id+"-chat-user-"+message.user,"user-activiti");
                             	setTimeout(function(){
                             	   YAHOO.Bubbling.fire("refreshDataGrids");
