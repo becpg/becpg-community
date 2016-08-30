@@ -19,7 +19,9 @@ package fr.becpg.repo.entity.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
@@ -41,6 +43,9 @@ import fr.becpg.repo.repository.RepositoryEntityDefReader;
 @Service("entityDictionaryService")
 public class EntityDictionaryServiceImpl implements EntityDictionaryService {
 
+	private Map<QName,QName> propDefMapping = new HashMap<>();
+	
+	
 	@Autowired
 	public DictionaryService dictionaryService;
 
@@ -70,7 +75,12 @@ public class EntityDictionaryServiceImpl implements EntityDictionaryService {
 		return repositoryEntityDefReader.getMultiLevelSecondaryPivot(dataListItemType);
 	}
 	
-
+   @Override
+   public void registerPropDefMapping(QName orig, QName dest){
+	   propDefMapping.put(orig, dest);
+   }
+	
+	
 	@Override
 	public List<AssociationDefinition> getPivotAssocDefs(QName sourceType) {
 		List<AssociationDefinition> ret = new ArrayList<>();
@@ -90,6 +100,11 @@ public class EntityDictionaryServiceImpl implements EntityDictionaryService {
 
 	@Override
 	public ClassAttributeDefinition findMatchingPropDef(QName itemType, QName newItemType, QName fieldQname) {
+		
+		if(propDefMapping.containsKey(fieldQname)){
+			return getPropDef(propDefMapping.get(fieldQname));
+		}
+		
 		if( fieldQname.getLocalName().contains(itemType.getLocalName())){
 			QName newQname = QName.createQName(fieldQname.getNamespaceURI(),fieldQname.getLocalName().replace(itemType.getLocalName(), newItemType.getLocalName()) );
 			ClassAttributeDefinition ret = getPropDef(newQname);

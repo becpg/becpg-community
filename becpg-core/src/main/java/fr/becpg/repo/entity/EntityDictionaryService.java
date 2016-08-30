@@ -45,4 +45,6 @@ public interface EntityDictionaryService {
 	boolean isSubClass(QName subClass, QName subClassOf);
 
 	QName getMultiLevelSecondaryPivot(QName dataListItemType);
+
+	void registerPropDefMapping(QName orig, QName dest);
 }
