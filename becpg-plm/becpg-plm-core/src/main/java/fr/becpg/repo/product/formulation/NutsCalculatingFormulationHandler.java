@@ -191,6 +191,9 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 				checkRequirementsOfFormulatedProduct(formulatedProduct);
 
 			}
+		} else if(formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) && formulatedProduct.getNutList()!=null){
+			cleanSimpleList(formulatedProduct.getNutList());
+			
 		}
 		return true;
 	}
