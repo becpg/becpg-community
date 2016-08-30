@@ -253,6 +253,18 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)),
 					BeCPGModel.TYPE_LIST_VALUE, properties);
 		}
+		
+		// physicoUnits
+		System.out.println("==================== Creating physico units ====================");
+		NodeRef physicoUnitsFolder = entitySystemService.getSystemEntityDataList(listsFolder, PlmRepoConsts.PATH_PHYSICO_UNITS);
+		String[] physicoUnits = { "%" };
+		for (String physicoUnit : physicoUnits) {
+			properties = new HashMap<>();
+			properties.put(BeCPGModel.PROP_LV_VALUE, physicoUnit);
+			nodeService.createNode(physicoUnitsFolder, ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)),
+					BeCPGModel.TYPE_LIST_VALUE, properties);
+		}
 
 	}
 
