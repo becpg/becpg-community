@@ -52,6 +52,7 @@
 	
 	<bean id="dynamicCharactListPolicy" class="fr.becpg.repo.product.policy.DynamicCharactListPolicy"
 		parent="abstractBeCPGPolicy" depends-on="bcpg.plm.dictionaryBootstrap">
+		<property name="entityListDAO" ref="entityListDAO"/>
 	</bean>
 	
 	
