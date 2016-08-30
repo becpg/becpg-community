@@ -280,66 +280,23 @@
 			</parameter>
 		</constraint>
 
-		<constraint name="bcpg:physicoChemUnit" type="LIST">
-			<parameter name="allowedValues">
+		<constraint name="bcpg:physicoChemUnit" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
 				<list>
-					<value>-</value>
-					<value>L</value>
-					<value>mL</value>
-					<value>kg</value>
-					<value>g</value>
-					<value>m</value>
-					<value>cm</value>
-					<value>mm</value>
-					<value>µm</value>
-					<value>m2</value>
-					<value>m3</value>
-					<value>P</value>
-					<value>%</value>
-					<value>%Vol</value>
-					<value>°C</value>
-					<value>K</value>
-					<value>°Cent</value>
-					<value>°D</value>
-					<value>J</value>
-					<value>eV</value>
-					<value>g/kg</value>
-					<value>mg/kg</value>
-					<value>µg/kg</value>
-					<value>pg/kg</value>
-					<value>meqO2/kg</value>
-					<value>meq/kg</value>
-					<value>g/L</value>
-					<value>mg/L</value>
-					<value>µg/L</value> 
-					<value>g/mL</value>
-					<value>mosm/L</value>
-					<value>mol/L</value>
-					<value>mPa.s</value>
-					<value>Pa.s</value>
-					<value>s</value>
-					<value>min</value>
-					<value>°B</value>
-					<value>/0,2g</value>
-					<value>/25g</value>
-					<value>/100g</value>
-					<value>g/100g</value>
-					<value>mg/100g</value>
-					<value>g/2,2L</value>
-					<value>g/15g</value>	
-					<value>ppm</value>
-					<value>ppb</value>
-					<value>µg/g</value>
-					<value>mg/g</value>
-					<value>mL/g</value>
-					<value>UB</value>
-					<value>cps</value>
-					<value>mg KOH/g</value>
-					<value>mg NAOH/g</value>
-					<value>A/P</value>
+					<value>/System/Lists/bcpg:entityLists/PhysicoUnits</value>
 				</list>
 			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>bcpg:lvValue</value>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
 		</constraint>
+
 		<constraint name="bcpg:microbioUnit" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
