@@ -30,7 +30,6 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.JsonFormulaHelper;
-import fr.becpg.repo.product.ProductDictionaryService;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ResourceProductData;
@@ -99,9 +98,6 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	@Value("${beCPG.product.report.multiLevel}")
 	private Boolean extractInMultiLevel = false;
-
-	@Autowired
-	protected ProductDictionaryService productDictionaryService;
 
 	@Autowired
 	@Qualifier("mlAwareNodeService")

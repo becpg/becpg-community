@@ -27,11 +27,14 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.QName;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.model.ReportModel;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.product.data.CharactDetails;
@@ -45,7 +48,7 @@ import fr.becpg.repo.repository.L2CacheSupport;
  * @author querephi
  */
 @Service("productService")
-public class ProductServiceImpl implements ProductService {
+public class ProductServiceImpl implements ProductService, InitializingBean {
 
 	@Autowired
 	private AlfrescoRepository<ProductData> alfrescoRepository;
@@ -62,9 +65,13 @@ public class ProductServiceImpl implements ProductService {
 	@Autowired
 	private CharactDetailsVisitorFactory charactDetailsVisitorFactory;
 
+	@Autowired
+	private EntityDictionaryService entityDictionaryService;
 	
-	public void setFormulationService(FormulationService<ProductData> formulationService) {
-		this.formulationService = formulationService;
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		entityDictionaryService.registerPropDefMapping(PLMModel.PROP_PACKAGINGLIST_QTY,PLMModel.PROP_COMPOLIST_QTY_SUB_FORMULA);
+		
 	}
 	
 
