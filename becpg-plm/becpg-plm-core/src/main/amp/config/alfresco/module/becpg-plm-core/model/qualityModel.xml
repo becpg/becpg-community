@@ -187,6 +187,8 @@
 		<constraint name="qa:controlUnits" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
+					<value>/System/Lists/bcpg:entityLists/MicrobioUnits</value>
+					<value>/System/Lists/bcpg:entityLists/PhysicoUnits</value>
 					<value>/System/QualityLists/bcpg:entityLists/ControlUnits</value>
 				</list>
 			</parameter>
