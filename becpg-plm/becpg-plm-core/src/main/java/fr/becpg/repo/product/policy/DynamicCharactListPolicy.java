@@ -56,7 +56,7 @@ public class DynamicCharactListPolicy extends AbstractBeCPGPolicy implements Cop
 		public boolean getMustCopy(QName classQName, CopyDetails copyDetails) {	
 			String state = (String)nodeService.getProperty(copyDetails.getSourceNodeRef(), PLMModel.PROP_DYNAMICCHARACT_SYNCHRONIZABLE_STATE);
 			if(state != null && state.equals("Template") 
-					&& !nodeService.hasAspect(entityListDAO.getEntity(copyDetails.getSourceNodeRef()), BeCPGModel.ASPECT_ENTITY_TPL)){
+					&& !nodeService.hasAspect(entityListDAO.getEntityFromList(copyDetails.getTargetParentNodeRef()), BeCPGModel.ASPECT_ENTITY_TPL)){
 				return false;
 			}			
 			return true;
