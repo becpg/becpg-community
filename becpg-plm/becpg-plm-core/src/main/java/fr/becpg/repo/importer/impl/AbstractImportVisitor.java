@@ -309,7 +309,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 				if (column instanceof PropertyDefinition) {
 					PropertyDefinition propDef = (PropertyDefinition) column;
-					Serializable value;
+					Serializable value = null;
 					QName dataType = propDef.getDataType().getName();
 
 					if (ImportHelper.NULL_VALUE.equalsIgnoreCase(values.get(z_idx))) {
@@ -318,9 +318,6 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 						if (dataType.isMatch(DataTypeDefinition.NODE_REF)) {
 							if (propDef.isMultiValued()) {
-
-								value = null;
-
 								String[] arrValue = split(values.get(z_idx));
 
 								for (String v : arrValue) {
@@ -336,8 +333,9 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 								}
 
 							} else {
-
-								value = findPropertyTargetNodeByValue(importContext, propDef, attributeMapping, values.get(z_idx), properties);
+								if(values.get(z_idx)!=null && ! values.get(z_idx).isEmpty()){
+									value = findPropertyTargetNodeByValue(importContext, propDef, attributeMapping, values.get(z_idx), properties);
+								}
 							}
 						} else {
 
@@ -718,6 +716,9 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			QName typeQName = QName.createQName(mappingNode.valueOf(QUERY_ATTR_GET_NAME), namespaceService);
 			ClassMapping classMapping = new ClassMapping();
 			classMapping.setType(typeQName);
+			
+			logger.debug("Register mapping for : "+typeQName);
+			
 			importContext.getClassMappings().put(typeQName, classMapping);
 
 			// node keys
@@ -911,7 +912,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	public ImportContext loadMappingColumns(Element mappingElt, List<String> columns, ImportContext importContext) throws MappingException {
 
 		ClassMapping classMapping = importContext.getClassMappings().get(importContext.getType());
-		logger.debug("Type: " + importContext.getType() + "classMapping: " + classMapping);
+		logger.debug("Type: " + importContext.getType() + ", find matching class mapping: " + classMapping!=null);
 
 		// check COLUMNS respects the mapping and the class attributes
 		List<AbstractAttributeMapping> columnsAttributeMapping = new ArrayList<>();
@@ -925,8 +926,8 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			if (classMapping != null) {
 				// columns
 				for (AbstractAttributeMapping attrMapping : classMapping.getColumns()) {
-					logger.debug("columnId : " + columnId + " attrMapping.getId(): " + attrMapping.getId());
 					if (attrMapping.getId().equals(columnId)) {
+						logger.debug("Find matching attribute mapping columnId : " + columnId );
 						columnsAttributeMapping.add(attrMapping);
 						isAttributeMapped = true;
 						break;
@@ -946,7 +947,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 				PropertyDefinition propertyDefinition = dictionaryService.getProperty(qName);
 
 				if (propertyDefinition != null) {
-					logger.debug("loadMappingColumn property, id: " + columnId + " - name: " + propertyDefinition.getName());
+					logger.debug("Create mapping column for property, id: " + columnId + " - name: " + propertyDefinition.getName());
 					AbstractAttributeMapping attributeMapping = new AttributeMapping(columnId, propertyDefinition);
 					columnsAttributeMapping.add(attributeMapping);
 
@@ -962,12 +963,12 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 				} else {
 					AssociationDefinition assocDefinition = dictionaryService.getAssociation(qName);
 					if (assocDefinition != null) {
-						logger.debug("loadMappingColumn assoc, id: " + columnId + " - name: " + assocDefinition.getName());
+						logger.debug("Create mapping column for assoc, id: " + columnId + " - name: " + assocDefinition.getName());
 						AbstractAttributeMapping attributeMapping = new AttributeMapping(columnId, assocDefinition);
 						columnsAttributeMapping.add(attributeMapping);
 					} else if (isMLPropertyDef) {
 						// not defined in dictionary but, it is an mltext
-						logger.debug("MLText translation, id: " + columnId);
+						logger.debug("Create mapping column for MLText translation, id: " + columnId);
 						columnsAttributeMapping.add(new AttributeMapping(columnId, null));
 					} else {
 						unknownColumns.add(columnId);
@@ -1067,11 +1068,21 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 					logger.debug("attribute: " + attribute + " value: " + properties.get(attribute));
 				}
 
-				if (ContentModel.ASSOC_CONTAINS.isMatch(attribute)) {
+				if (ContentModel.ASSOC_CONTAINS.isMatch(attribute)
+						|| BeCPGModel.PROP_LV_VALUE.isMatch(attribute)) {
 					// query by path
 					NodeRef folderNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(),
 							importContext.getPath());
 					queryBuilder.parent(folderNodeRef);
+					
+					if(BeCPGModel.PROP_LV_VALUE.isMatch(attribute)){
+						if(properties.get(attribute)!=null && properties.get(attribute) instanceof MLText){
+							queryBuilder.andPropEquals(BeCPGModel.PROP_LV_VALUE, ((MLText) properties.get(attribute)).getDefaultValue());
+						} else if(properties.get(attribute)!=null ){
+							queryBuilder.andPropEquals(BeCPGModel.PROP_LV_VALUE,properties.get(attribute).toString());
+						}
+					}
+					
 					doQuery = true;
 				} else if (properties.get(attribute) != null) {
 

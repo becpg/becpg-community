@@ -145,15 +145,10 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 			Map<QName, Serializable> properties = new HashMap<>();
 			properties.put(ContentModel.PROP_NAME, listQName.getLocalName());
-			properties.put(ContentModel.PROP_TITLE, classDef.getTitle(dictionaryService));
 			
 			MLText classTitleMLText = TranslateHelper.getTemplateTitleMLText(classDef.getName());
 			MLText classDescritptionMLText = TranslateHelper.getTemplateDescriptionMLText(classDef.getName());
 
-			logger.debug("adding title: "+classTitleMLText+" for class:"+classDef.getName());
-			logger.debug("adding description: "+classDescritptionMLText+" for class:"+classDef.getName());
-				
-			I18NUtil.setLocale(Locale.getDefault());
 			properties.put(ContentModel.PROP_TITLE, classTitleMLText);
 			properties.put(ContentModel.PROP_DESCRIPTION, classDescritptionMLText);
 			properties.put(DataListModel.PROP_DATALISTITEMTYPE, listQName.toPrefixString(namespaceService));
@@ -455,13 +450,19 @@ public class EntityListDAOImpl implements EntityListDAO {
 		NodeRef listNodeRef = nodeService.getPrimaryParent(listItemNodeRef).getParentRef();
 
 		if (listNodeRef != null) {
-			NodeRef listContainerNodeRef = nodeService.getPrimaryParent(listNodeRef).getParentRef();
+			return getEntityFromList(listNodeRef);
+		}
 
-			if (listContainerNodeRef != null) {
-				NodeRef rootNodeRef = nodeService.getPrimaryParent(listContainerNodeRef).getParentRef();
-				logger.debug("rootNodeRef: " + rootNodeRef);
-				return rootNodeRef;
-			}
+		return null;
+	}
+	
+	@Override
+	public NodeRef getEntityFromList(NodeRef listNodeRef) {
+
+		NodeRef listContainerNodeRef = nodeService.getPrimaryParent(listNodeRef).getParentRef();
+
+		if (listContainerNodeRef != null) {
+				return nodeService.getPrimaryParent(listContainerNodeRef).getParentRef();
 		}
 
 		return null;

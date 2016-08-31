@@ -111,8 +111,6 @@
 			customListName : ""
 		},
 
-		formulationLock : false,
-
 		/**
 		 * Fired by YUI when parent element is available for scripting.
 		 * 
@@ -156,30 +154,31 @@
 		},
 
 		formulate : function FormulationView_formulate() {
-			if (!this.formulationLock) {
-
+			    
+			
 				var formulateButton = YAHOO.util.Selector.query('div.formulate'), me = this;
 
 				Dom.addClass(formulateButton, "loading");
 
-				me.formulationLock = true;
+				var localCount = beCPG.util.incLockCount();
+				
 				Alfresco.util.Ajax.request({
 					method : Alfresco.util.Ajax.GET,
 					url : Alfresco.constants.PROXY_URI + "becpg/product/formulate/node/" + this.options.entityNodeRef.replace(":/", ""),
 					successCallback : {
 						fn : function(response) {
-							YAHOO.Bubbling.fire("refreshDataGrids", {
-								updateOnly : true,
-								callback : function() {
-									me.formulationLock = false;
-									Dom.removeClass(formulateButton, "loading");
-								}
-							});
+							if(beCPG.util.lockCount() == localCount){
+								YAHOO.Bubbling.fire("refreshDataGrids", {
+									updateOnly : true,
+									callback : function() {
+										Dom.removeClass(formulateButton, "loading");
+									}
+								});
+							}
 						},
 						scope : this
 					}
 				});
-			}
 
 		},
 		onCustomListChange : function FormulationView_onCustomListChange(p_sType, p_aArgs) {
