@@ -255,7 +255,6 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 		}
 		
 		// physicoUnits
-		System.out.println("==================== Creating physico units ====================");
 		NodeRef physicoUnitsFolder = entitySystemService.getSystemEntityDataList(listsFolder, PlmRepoConsts.PATH_PHYSICO_UNITS);
 		String[] physicoUnits = { "%" };
 		for (String physicoUnit : physicoUnits) {

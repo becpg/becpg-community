@@ -47,9 +47,7 @@ public class AttributeMapping extends AbstractAttributeMapping {
 
 	@Override
 	public String toString() {
-		return "AttributeMapping [targetClass=" + targetClass + ", getId()=" + getId() + ", getAttribute()="
-				+ getAttribute() + ", getClass()=" + getClass() + ", hashCode()=" + hashCode() + ", toString()="
-				+ super.toString() + "]";
+		return "AttributeMapping [targetClass=" + targetClass + ", getId()=" + getId() + "]";
 	}
 
 	

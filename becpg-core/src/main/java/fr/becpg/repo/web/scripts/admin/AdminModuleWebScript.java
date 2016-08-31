@@ -1,5 +1,5 @@
 /*
- * 
+ *
  */
 package fr.becpg.repo.web.scripts.admin;
 
@@ -33,7 +33,7 @@ import fr.becpg.repo.security.SecurityService;
 
 /**
  * The Class AdminModuleWebScript.
- * 
+ *
  * @author querephi
  */
 public class AdminModuleWebScript extends DeclarativeWebScript {
@@ -111,7 +111,7 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 		Map<String, Object> ret = new HashMap<>();
 
 		// Check arg
-		if (action == null || action.isEmpty()) {
+		if ((action == null) || action.isEmpty()) {
 			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "'action' argument cannot be null or empty");
 		}
 
@@ -126,9 +126,12 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 		}
 
 		// #378 : force to use server locale
-		I18NUtil.setLocale(Locale.getDefault());
+		Locale currentLocal = I18NUtil.getLocale();
 
-		switch (action) {
+		try {
+			I18NUtil.setLocale(Locale.getDefault());
+
+			switch (action) {
 			case ACTION_INIT_REPO:
 				logger.debug("Init repository");
 				initVisitorService.run(repository.getCompanyHome());
@@ -158,6 +161,10 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 				break;
 			default:
 				throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Unsupported argument 'action'. action = " + action);
+			}
+
+		} finally {
+			I18NUtil.setLocale(currentLocal);
 		}
 
 		// Add status

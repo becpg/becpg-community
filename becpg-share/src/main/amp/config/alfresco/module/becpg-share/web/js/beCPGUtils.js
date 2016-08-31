@@ -25,13 +25,23 @@
 (function()
 {
 
+	var lockCount = 0;
 	
-	
+
     /**
      * Alfresco Slingshot aliases
      */
     var $siteURL = Alfresco.util.siteURL;
 
+    beCPG.util.incLockCount = function (){
+    	return ++lockCount;
+    };
+    
+    beCPG.util.lockCount = function (){
+    	return lockCount;
+    };
+    
+    
     beCPG.util.entityURL = function(siteId, pNodeRef, type, context, list)
     {
 
