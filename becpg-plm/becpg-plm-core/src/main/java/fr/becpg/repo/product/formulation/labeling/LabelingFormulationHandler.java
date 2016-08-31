@@ -895,6 +895,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				
 				if ((qty != null) && !(productData instanceof LocalSemiFinishedProductData)) {
 					qty *= FormulationHelper.getYield(compoListDataItem) / 100;
+				}
+				
+				if(qty!=null && !(productData instanceof LocalSemiFinishedProductData && !DeclarationType.Group.equals(declarationType))){
 					qty *= LabelingFormulaContext.PRECISION_FACTOR;
 				}
 
@@ -924,6 +927,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 				if ((volume != null) && !(productData instanceof LocalSemiFinishedProductData)) {
 					volume *= FormulationHelper.getYield(compoListDataItem) / 100;
+					
+				}
+			
+				if(volume!=null && !(productData instanceof LocalSemiFinishedProductData && !DeclarationType.Group.equals(declarationType))){
 					volume *= LabelingFormulaContext.PRECISION_FACTOR;
 				}
 
