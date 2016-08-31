@@ -43,8 +43,6 @@ public interface EntityListDAO {
      */
 	
 
-	void registerHiddenList(QName listTypeQname);
-
 	NodeRef getListContainer(NodeRef nodeRef);
     
 	NodeRef createListContainer(NodeRef dataNodeRef);
