@@ -52,18 +52,11 @@
 }
 
 
-.compoList .datagrid .body .grid table {
-	border: none;
-}
-
-.compoList .datagrid .body  .yui-dt thead {
-	display: none;
-}
-
-
 .compoList .datagrid .datagrid-bar .new-row,
 .compoList .datagrid .datagrid-bar .selected-items,
 .compoList .datagrid td.yui-dt-first,
+.compoList .datagrid th.yui-dt-first,
+.compoList .datagrid th.yui-dt-last,
 .compoList .datagrid td.yui-dt-last
  {
 	display: none;

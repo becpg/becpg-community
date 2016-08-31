@@ -79,7 +79,7 @@ model.widgets = [formulationView];
 
 model.widgets = model.widgets.concat(createDashlet("compoList-"+args.htmlid, "compoListDashlet"));
 model.widgets = model.widgets.concat(createDashlet("dynamicCharactList-"+args.htmlid, "dynamicCharactListDashlet",msg.get("dashlet.dynamicCharactList.title"),"bcpg:dynamicCharactList",true));
-model.widgets = model.widgets.concat(createDashlet("customList-"+args.htmlid, "customListDashlet",msg.get("dashlet.customList.title"),model.customListType, true , model.customListName, "datagrid", "&repo=true&guessContainer=true" ));
+model.widgets = model.widgets.concat(createDashlet("customList-"+args.htmlid, "customListDashlet",msg.get("dashlet.customList.title"),model.customListType, true , model.customListName, "customListDatagrid", "&repo=true&guessContainer=true" ));
 
 }
 

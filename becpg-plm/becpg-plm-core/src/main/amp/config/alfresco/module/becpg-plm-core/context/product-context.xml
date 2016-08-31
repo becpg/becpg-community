@@ -20,12 +20,6 @@
 
 <beans>
 
-	<!-- Product dictionary -->
-	<bean id="productDictionaryService" class="fr.becpg.repo.product.ProductDictionaryServiceImpl">
-		<property name="nodeService" ref="nodeService" />
-	</bean>
-
-
 	<!-- Product Policies -->
 	<bean id="productPolicy"
 		class="fr.becpg.repo.product.policy.ProductPolicy"
@@ -58,6 +52,7 @@
 	
 	<bean id="dynamicCharactListPolicy" class="fr.becpg.repo.product.policy.DynamicCharactListPolicy"
 		parent="abstractBeCPGPolicy" depends-on="bcpg.plm.dictionaryBootstrap">
+		<property name="entityListDAO" ref="entityListDAO"/>
 	</bean>
 	
 	

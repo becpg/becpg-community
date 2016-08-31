@@ -615,6 +615,8 @@
                };
 
                this.block();
+               
+               beCPG.util.incLockCount();
 
                var record = this.getRecord(), curCol = this.getColumn(), nodeRef = record.getData("nodeRef"), field = curCol.getField() ;
                
