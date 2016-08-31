@@ -24,10 +24,19 @@ import org.alfresco.repo.copy.DefaultCopyBehaviourCallback;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.service.namespace.QName;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
+import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
 public class DynamicCharactListPolicy extends AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyNodePolicy {
+
+	private EntityListDAO entityListDAO;
+	
+	
+	public void setEntityListDAO(EntityListDAO entityListDAO) {
+		this.entityListDAO = entityListDAO;
+	}
 
 	public void doInit() {
 		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyNodePolicy.QNAME, PLMModel.TYPE_DYNAMICCHARACTLIST, new JavaBehaviour(this, "getCopyCallback"));
@@ -46,7 +55,8 @@ public class DynamicCharactListPolicy extends AbstractBeCPGPolicy implements Cop
 		@Override
 		public boolean getMustCopy(QName classQName, CopyDetails copyDetails) {	
 			String state = (String)nodeService.getProperty(copyDetails.getSourceNodeRef(), PLMModel.PROP_DYNAMICCHARACT_SYNCHRONIZABLE_STATE);
-			if(state != null && state.equals("Template")){
+			if(state != null && state.equals("Template") 
+					&& !nodeService.hasAspect(entityListDAO.getEntityFromList(copyDetails.getTargetParentNodeRef()), BeCPGModel.ASPECT_ENTITY_TPL)){
 				return false;
 			}			
 			return true;

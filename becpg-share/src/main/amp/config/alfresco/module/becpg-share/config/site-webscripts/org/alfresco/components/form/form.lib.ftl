@@ -170,7 +170,7 @@
 	<#if set.children?has_content >
 		
 		<#list set.children as item>
-			<#if item?? && item.kind != "set" && fields?contains(item.id)  && !isHiddenField(fields[item.id]) >      
+			<#if item?? && item.kind != "set" && fields?contains(item.id)  && !isHiddenField(form.fields[item.id]) >      
 			   <#assign showSet=true>
 			</#if>
 			<#if item?? && item.kind == "set">

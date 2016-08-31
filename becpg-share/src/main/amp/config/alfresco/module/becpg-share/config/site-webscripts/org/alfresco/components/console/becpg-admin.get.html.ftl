@@ -85,7 +85,7 @@
 			      <#list systemEntities as item>
 				     		 <div class="action">				
 				     		 	${msg("label.characts.edit")}<a href="${url.context}/page/entity-data-lists?nodeRef=${item.nodeRef}"><span class="systemEntity">${item.name}</span></a>
-				     		 	<#if item.title?? && item.title?length &gt; 0 ><span>(${item.title})</span></#if>
+				     		 	<#if item.title?? && item.title?length &gt; 0 && item.title != item.name><span>(${item.title})</span></#if>
 				    		   <#if item.description??  && item.description?length &gt; 0 ><p>${item.description}</p></#if>
 					    	</div>
 					</#list>
@@ -99,7 +99,7 @@
 			        <#list systemFolders as item>
 						<div class="action">				
 							${msg("label.systemFolder.access")}<a href="${url.context}/page/repository#filter=path|${item.urlPath?url}"><span class="systemFolder">${item.name}</span></a>
-				    		<#if item.title?? && item.title?length &gt; 0 ><span>(${item.title})</span></#if>
+				    		<#if item.title?? && item.title?length &gt; 0 && item.title != item.name><span>(${item.title})</span></#if>
 				    		<#if item.description??  && item.description?length &gt; 0 ><p>${item.description}</p></#if>
 				    	</div>
 				    </#list>

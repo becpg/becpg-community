@@ -101,4 +101,12 @@ public class ClassMapping {
 	public void setColumns(List<AbstractAttributeMapping> columns) {
 		this.columns = columns;
 	}
+
+	@Override
+	public String toString() {
+		return "ClassMapping [type=" + type + ", nodeColumnKeys=" + nodeColumnKeys + ", dataListColumnKeys=" + dataListColumnKeys + ", columns="
+				+ columns + "]";
+	}
+	
+	
 }
