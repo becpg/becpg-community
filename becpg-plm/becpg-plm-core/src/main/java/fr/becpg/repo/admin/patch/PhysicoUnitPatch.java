@@ -26,28 +26,22 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
-import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.engine.TransactionHelper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
-import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.admin.patch.AbstractBeCPGPatch;
-import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.search.impl.AbstractBeCPGQueryBuilder;
 
 /**
- * Update claim mail templates
+ * Patch physico unit
  */
 public class PhysicoUnitPatch extends AbstractBeCPGPatch {
 

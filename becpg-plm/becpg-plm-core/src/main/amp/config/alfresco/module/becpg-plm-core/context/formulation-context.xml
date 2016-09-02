@@ -42,23 +42,24 @@
 	<bean id="charactDetailsVisitorFactory" class="fr.becpg.repo.product.CharactDetailsVisitorFactoryImpl">
 		<property name="visitorRegistry">
 			<map>
-				<entry key="nutList">
+				<entry key="bcpg:nutList">
 					<ref bean="simpleCharactDetailsVisitor" />
 				</entry>
-				<entry key="ingList">
+				<entry key="bcpg:ingList">
 					<ref bean="simpleCharactDetailsVisitor" />
 				</entry>
-				<entry key="costList">
+				<entry key="bcpg:costList">
 					<ref bean="costCharactDetailsVisitor" />
 				</entry>
-				<entry key="physicoChemList">
+				<entry key="bcpg:physicoChemList">
 					<ref bean="simpleCharactDetailsVisitor" />
 				</entry>	
-				<entry key="allergenList">
+				<entry key="bcpg:allergenList">
 					<ref bean="simpleCharactDetailsVisitor" />
 				</entry>				
 			</map>
 		</property>
+		<property name="namespaceService" ref="namespaceService"/>
 	</bean>
 
 	<!-- Formulation visitors -->
