@@ -4,7 +4,6 @@
 package fr.becpg.repo.product.formulation.labeling;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -897,7 +896,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					qty *= FormulationHelper.getYield(compoListDataItem) / 100;
 				}
 				
-				if(qty!=null && !(productData instanceof LocalSemiFinishedProductData && !DeclarationType.Group.equals(declarationType))){
+				if(qty!=null){
 					qty *= LabelingFormulaContext.PRECISION_FACTOR;
 				}
 
@@ -930,7 +929,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					
 				}
 			
-				if(volume!=null && !(productData instanceof LocalSemiFinishedProductData && !DeclarationType.Group.equals(declarationType))){
+				if(volume!=null){
 					volume *= LabelingFormulaContext.PRECISION_FACTOR;
 				}
 
@@ -1075,7 +1074,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						Double qtyTotal = FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT);
 
 						if ((qtyTotal != null) && (qtyTotal != 0d)) {
-							computedRatio = qty / qtyTotal;
+							computedRatio = qty / (qtyTotal * LabelingFormulaContext.PRECISION_FACTOR);
 						}
 						if (logger.isTraceEnabled()) {
 							logger.trace("Declare ratio for :" + productData.getName() + " " + computedRatio + " total:" + qtyTotal + " qty:" + qty);
@@ -1298,47 +1297,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				if (ingLabelItem == null) {
 					ingLabelItem = new IngItem((IngItem) alfrescoRepository.findOne(ingNodeRef));
 
-					if (!ingListItem.isLeaf()) {
-						// Only one level of subIngs
-						for (Composite<IngListDataItem> subIngListItem : ingListItem.getChildren()) {
-
-							DeclarationType subIngItemDeclarationType = getDeclarationType(compoListDataItem, subIngListItem.getData(),
-									labelingFormulaContext);
-							if (!DeclarationType.Omit.equals(subIngItemDeclarationType)
-									&& !DeclarationType.DoNotDeclare.equals(subIngItemDeclarationType)) {
-
-								IngItem subIngItem = new IngItem((IngItem) alfrescoRepository.findOne(subIngListItem.getData().getIng()));
-
-								if (subIngListItem.getData().getQtyPerc() != null) {
-									subIngItem.setQty(subIngListItem.getData().getQtyPerc() / 100);
-									subIngItem.setVolume(subIngListItem.getData().getQtyPerc() / 100);
-								}
-
-								if (ingLabelItem.getSubIngs().stream().filter(i -> (labelingFormulaContext.getLegalIngName(i) != null)
-										&& labelingFormulaContext.getLegalIngName(i).equals(labelingFormulaContext.getLegalIngName(subIngItem)))
-										.count() < 1) {
-									logger.trace("Adding subIng: " + subIngItem.getCharactName());
-									ingLabelItem.getSubIngs().add(subIngItem);
-								} else {
-									logger.trace("Merge subIng: " + subIngItem.getCharactName());
-									ingLabelItem.getSubIngs().stream().filter(i -> (labelingFormulaContext.getLegalIngName(i) != null)
-											&& labelingFormulaContext.getLegalIngName(i).equals(labelingFormulaContext.getLegalIngName(subIngItem)))
-
-											.forEach(i -> {
-												if ((i.getQty() != null) && (subIngItem.getQty() != null)) {
-													i.setQty(i.getQty() + subIngItem.getQty());
-												}
-												if ((i.getVolume() != null) && (subIngItem.getVolume() != null)) {
-													i.setVolume(i.getVolume() + subIngItem.getVolume());
-												}
-
-											});
-								}
-							}
-
-						}
-					}
-
 					compositeLabeling.add(ingLabelItem);
 
 					if (logger.isTraceEnabled()) {
@@ -1349,7 +1307,59 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					logger.trace("- Update ing value: " + ingLabelItem.getLegalName(I18NUtil.getContentLocaleLang()));
 					isNew = false;
 				}
+				
+				
+				if (!ingListItem.isLeaf()) {
+					// Only one level of subIngs
+					for (Composite<IngListDataItem> subIngListItem : ingListItem.getChildren()) {
 
+						DeclarationType subIngItemDeclarationType = getDeclarationType(compoListDataItem, subIngListItem.getData(),
+								labelingFormulaContext);
+						if (!DeclarationType.Omit.equals(subIngItemDeclarationType)
+								&& !DeclarationType.DoNotDeclare.equals(subIngItemDeclarationType)) {
+
+							IngItem subIngItem = new IngItem((IngItem) alfrescoRepository.findOne(subIngListItem.getData().getIng()));
+
+							if (subIngListItem.getData().getQtyPerc() != null) {
+								subIngItem.setQty(subIngListItem.getData().getQtyPerc() / 100);
+								subIngItem.setVolume(subIngListItem.getData().getQtyPerc() / 100);
+							} else {
+								subIngItem.setQty(null);
+								subIngItem.setVolume(null);
+							}
+
+							if (ingLabelItem.getSubIngs().stream().filter(i -> (labelingFormulaContext.getLegalIngName(i) != null)
+									&& labelingFormulaContext.getLegalIngName(i).equals(labelingFormulaContext.getLegalIngName(subIngItem)))
+									.count() < 1) {
+								logger.trace("Adding subIng: " + subIngItem.getCharactName());
+								ingLabelItem.getSubIngs().add(subIngItem);
+							} else {
+								logger.trace("Merge subIng: " + subIngItem.getCharactName());
+								ingLabelItem.getSubIngs().stream().filter(i -> (labelingFormulaContext.getLegalIngName(i) != null)
+										&& labelingFormulaContext.getLegalIngName(i).equals(labelingFormulaContext.getLegalIngName(subIngItem)))
+
+										.forEach(i -> {
+											if ((i.getQty() != null) && (subIngItem.getQty() != null)) {
+												i.setQty(i.getQty() + subIngItem.getQty());
+											} else {
+												//TODO add warning
+												i.setQty(null);
+											}
+											if ((i.getVolume() != null) && (subIngItem.getVolume() != null)) {
+												i.setVolume(i.getVolume() + subIngItem.getVolume());
+											} else  {
+												//TODO add warning
+												i.setVolume(null);
+											}
+
+										});
+							}
+						}
+
+					}
+				}
+
+				
 				if (product.getAllergenList() != null) {
 					for (AllergenListDataItem allergenListDataItem : product.getAllergenList()) {
 						if (allergenListDataItem.getVoluntary() && allergenListDataItem.getVoluntarySources().contains(ingNodeRef)) {

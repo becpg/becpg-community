@@ -474,4 +474,30 @@
         </property>
 	</bean>	
 	
+	 <bean id="patch.bcpg.plm.qualityControlTypePatch" class="fr.becpg.repo.admin.patch.QualityControlTypePatch" parent="beCPGBasePatch" >
+        <property name="id"><value>patch.bcpg.plm.qualityControlTypePatch</value></property>
+        <property name="description"><value>patch.bcpg.plm.qualityControlTypePatch.description</value></property>
+        <property name="fixesFromSchema" value="0"/>
+        <property name="fixesToSchema" value="8010" />
+        <property name="targetSchema" value="10170"/>
+        <property name="requiresTransaction"><value>true</value></property>
+        <property name="applyToTenants"><value>true</value></property>
+        <property name="ruleService" ref="ruleService"/>
+         <property name="patchDAO">
+            <ref bean="patchDAO"/>
+        </property>
+        <property name="nodeDAO">
+            <ref bean="nodeDAO"/>
+        </property>
+        <property name="qnameDAO">
+            <ref bean="qnameDAO"/>
+        </property>
+         <property name="policyBehaviourFilter">
+            <ref bean="policyBehaviourFilter"/>
+        </property>
+	</bean>	
+	
+	
+	
+	
 </beans>
