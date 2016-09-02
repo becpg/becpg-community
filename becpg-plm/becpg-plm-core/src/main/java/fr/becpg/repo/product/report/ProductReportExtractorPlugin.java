@@ -30,7 +30,6 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.JsonFormulaHelper;
-import fr.becpg.repo.product.ProductDictionaryService;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ResourceProductData;
@@ -99,6 +98,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	@Value("${beCPG.product.report.multiLevel}")
 	private Boolean extractInMultiLevel = false;
+	
+	@Value("${beCPG.product.report.assocsToExtract}")
+	private String assocsToExtract = "";
 
 	@Autowired
 	@Qualifier("mlAwareNodeService")
@@ -550,8 +552,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	}
 
 	private boolean isDetaillableAssoc(QName assocName) {
-		return assocName.equals(PLMModel.ASSOC_PLANTS) || assocName.equals(PLMModel.ASSOC_STORAGE_CONDITIONS)
-				|| assocName.equals(PLMModel.ASSOC_PRECAUTION_OF_USE) || assocName.equals(PLMModel.ASSOC_SUPPLIERS);
+		return assocsToExtract!=null && assocsToExtract.contains(assocName.toPrefixString(namespaceService));
 	}
 
 	private void loadPackagingList(ProductData productData, Element dataListsElt, NodeRef defaultVariantNodeRef, Map<String, byte[]> images) {
