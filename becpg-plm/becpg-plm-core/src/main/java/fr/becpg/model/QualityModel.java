@@ -66,6 +66,8 @@ public interface QualityModel {
 	QName TYPE_CONTROL_METHOD = QName.createQName(QUALITY_URI, "controlMethod");
 	
 	QName TYPE_CONTROL_CHARACT = QName.createQName(QUALITY_URI, "controlCharact");
+	
+	QName PROP_CONTROL_CHARACT_TYPE = QName.createQName(QUALITY_URI, "controlCharactType");
 
 	/** qualityListItem */
 	QName TYPE_QUALITYLIST_ITEM = QName.createQName(QUALITY_URI, "qualityListItem");
@@ -138,6 +140,8 @@ public interface QualityModel {
 	QName ASPECT_CLAIM_CLOSING = QName.createQName(QUALITY_URI, "claimClosingAspect");
 	
 	QName ASPECT_CLAIM = QName.createQName(QUALITY_URI, "claimAspect");
+
+	QName ASPECT_CONTROL_LIST = QName.createQName(QUALITY_URI, "controlListAspect");
 
 
 }

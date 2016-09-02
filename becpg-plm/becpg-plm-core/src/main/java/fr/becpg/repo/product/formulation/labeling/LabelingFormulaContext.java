@@ -868,15 +868,10 @@ public class LabelingFormulaContext {
 			tree.put("legal", component.getLegalName(I18NUtil.getContentLocaleLang()));
 			if ((component.getVolume() != null) && (totalVol != null) && (totalVol > 0)) {
 				tree.put("vol", (component.getVolume() / totalVol) * 100);
-			} else {
-				tree.put("vol", 0);
-			}
+			} 
 			if ((component.getQty() != null) && (totalQty != null) && (totalQty > 0)) {
 				tree.put("qte", (component.getQty() / totalQty) * 100);
-			} else {
-				tree.put("qte", 0);
 			}
-
 			if (!component.getAllergens().isEmpty()
 					&& (!(component instanceof CompositeLabeling) || ((CompositeLabeling) component).getIngList().isEmpty())) {
 				JSONArray allergens = new JSONArray();
@@ -906,14 +901,10 @@ public class LabelingFormulaContext {
 
 						if ((kv.getKey().getQty() != null) && (totalQty != null) && (totalQty > 0)) {
 							ingTypeJson.put("qte", (kv.getKey().getQty() / totalQty) * 100);
-						} else {
-							ingTypeJson.put("qte", 0);
-						}
+						} 
 						if ((kv.getKey().getVolume() != null) && (totalVol != null) && (totalVol > 0)) {
 							ingTypeJson.put("vol", (kv.getKey().getVolume() / totalVol) * 100);
 
-						} else {
-							ingTypeJson.put("vol", 0);
 						}
 						JSONArray ingTypeJsonChildren = new JSONArray();
 						for (AbstractLabelingComponent childComponent : kv.getValue()) {
