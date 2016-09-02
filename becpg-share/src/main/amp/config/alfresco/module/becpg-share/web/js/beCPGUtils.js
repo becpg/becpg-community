@@ -129,7 +129,7 @@
     };
     
     beCPG.util.sigFigs = function sigFigs(n, sig){
-        if(n != 0){
+        if(n && n != 0){
          var fact = 1;
          if(n<0){
         	 n = Math.abs(n);

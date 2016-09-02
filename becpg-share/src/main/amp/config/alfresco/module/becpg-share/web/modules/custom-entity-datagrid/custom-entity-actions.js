@@ -431,7 +431,7 @@
 			        html+='</ul>';
 			    }
 			    html+='</li></ul>';
-			    return html;
+			    return html.replace(/\{(1|2)\}\%/g,this.msg("label.labeling-details.none"));
 			};	   
 			if(items.length>0){
 				var noderef = items[0].nodeRef;

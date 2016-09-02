@@ -433,8 +433,6 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 					nutListsElt.addAttribute(generateKeyAttribute(nut), value != null ? value : "");
 					NodeRef nutNodeRef = dataListItem.getNut();
-					addCDATA(nutListElt, ContentModel.PROP_DESCRIPTION, (String) nodeService.getProperty(nutNodeRef, ContentModel.PROP_DESCRIPTION),
-							null);
 					addCDATA(nutListElt, PLMModel.PROP_NUTGDA, nodeService.getProperty(nutNodeRef, PLMModel.PROP_NUTGDA) != null
 							? ((Double) nodeService.getProperty(nutNodeRef, PLMModel.PROP_NUTGDA)).toString() : "", null);
 				}
@@ -532,8 +530,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	protected boolean loadTargetAssoc(NodeRef entityNodeRef, AssociationDefinition assocDef, Element entityElt, Map<String, byte[]> images) {
 
 		if ((assocDef != null) && (assocDef.getName() != null)) {
-			if (assocDef.getName().equals(PLMModel.ASSOC_PLANTS) || assocDef.getName().equals(PLMModel.ASSOC_STORAGE_CONDITIONS)
-					|| assocDef.getName().equals(PLMModel.ASSOC_PRECAUTION_OF_USE) || assocDef.getName().equals(PLMModel.ASSOC_SUPPLIERS)) {
+			if (isDetaillableAssoc(assocDef.getName())) {
 
 				extractTargetAssoc(entityNodeRef, assocDef, entityElt, images);
 				return true;
@@ -553,6 +550,11 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		}
 
 		return false;
+	}
+
+	private boolean isDetaillableAssoc(QName assocName) {
+		return assocName.equals(PLMModel.ASSOC_PLANTS) || assocName.equals(PLMModel.ASSOC_STORAGE_CONDITIONS)
+				|| assocName.equals(PLMModel.ASSOC_PRECAUTION_OF_USE) || assocName.equals(PLMModel.ASSOC_SUPPLIERS);
 	}
 
 	private void loadPackagingList(ProductData productData, Element dataListsElt, NodeRef defaultVariantNodeRef, Map<String, byte[]> images) {
