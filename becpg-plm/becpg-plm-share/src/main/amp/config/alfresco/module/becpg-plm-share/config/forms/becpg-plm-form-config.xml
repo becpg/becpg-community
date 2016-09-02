@@ -3364,7 +3364,9 @@
 					
 					<field id="bcpg:pclPhysicoChem" set="physicoChems-criteria">
 						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+								<control-param name="ds">becpg/autocomplete/physicoChem</control-param>
+							</control>
 					</field>
 					
 					<field id="bcpg:pclValue" set="physicoChems-criteria">
@@ -3911,7 +3913,9 @@
 					
 					<field id="bcpg:pclPhysicoChem" set="physicoChems-criteria">
 						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+							<control-param name="ds">becpg/autocomplete/physicoChem</control-param>
+							</control>
 					</field>
 					
 					<field id="bcpg:pclValue" set="physicoChems-criteria">
@@ -7555,7 +7559,9 @@
 				<appearance>
 					<field id="bcpg:pclPhysicoChem">
 						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+							<control-param name="ds">becpg/autocomplete/physicoChem</control-param>
+							</control>
 					</field>
 					<field id="bcpg:pclTextCriteria">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
@@ -7632,7 +7638,9 @@
 				<appearance>
 					<field id="bcpg:pclPhysicoChem">
 						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+							<control-param name="ds">becpg/autocomplete/physicoChem</control-param>
+							</control>
 					</field>
 				</appearance>
 			</form>
@@ -7655,7 +7663,9 @@
 				<appearance>
 					<field id="bcpg:pclPhysicoChem">
 						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+								<control-param name="ds">becpg/autocomplete/physicoChem</control-param>
+							</control>
 					</field>
 					<field id="bcpg:pclTextCriteria">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
