@@ -38,7 +38,6 @@ public interface EntityListDAO {
 
 	NodeRef getEntityFromList(NodeRef listNodeRef);
 	
-
     /*
      * TODO Get List and create List should directly take entityNodeRef
      */
@@ -183,9 +182,6 @@ public interface EntityListDAO {
 	 * @param targetNodeRef
 	 */
 	void moveDataLists(NodeRef sourceNodeRef, NodeRef targetNodeRef);
-
-
-
 
 
 
