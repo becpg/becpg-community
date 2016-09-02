@@ -10,28 +10,32 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.listvalue.impl.EntityListValuePlugin;
 
-@Service("nutListValuePlugin")
-public class NutListValuePlugin  extends  EntityListValuePlugin{
+@Service("charactListValuePlugin")
+public class CharactListValuePlugin extends EntityListValuePlugin {
 
-	
 	private static final String SOURCE_TYPE_NUT = "nut";
-	
+	private static final String SOURCE_TYPE_PHYSICO_CHEM = "physicoChem";
+
 	@Autowired
-	private NutValueExtractor nutValueExtractor;
-	
-	
+	private CharactValueExtractor charactValueExtractor;
+
+	@Override
 	public String[] getHandleSourceTypes() {
-		return new String[] { SOURCE_TYPE_NUT };
+		return new String[] { SOURCE_TYPE_NUT, SOURCE_TYPE_PHYSICO_CHEM };
 	}
-	
+
 	@Override
 	public ListValuePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
-			return suggestTargetAssoc(null,PLMModel.TYPE_NUT, query, pageNum, pageSize, null, props);
+		if (SOURCE_TYPE_NUT.equals(sourceType)) {
+			return suggestTargetAssoc(null, PLMModel.TYPE_NUT, query, pageNum, pageSize, null, props);
+		} else {
+			return suggestTargetAssoc(null, PLMModel.TYPE_PHYSICO_CHEM, query, pageNum, pageSize, null, props);
+		}
 	}
-	
+
 	@Override
 	protected ListValueExtractor<NodeRef> getTargetAssocValueExtractor() {
-		return nutValueExtractor;
+		return charactValueExtractor;
 	}
-	
+
 }
