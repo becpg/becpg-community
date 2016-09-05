@@ -82,7 +82,8 @@ td.ghead.current {
 	text-overflow: ellipsis;
 	overflow: hidden;
 	width: 120px;
-	display: inline-block;
+	display: block;
+    float: left;
 	background: url("../images/filetypes/generic-user-16.png") no-repeat
 		scroll 0 0 transparent;
 	padding-left: 20px;
