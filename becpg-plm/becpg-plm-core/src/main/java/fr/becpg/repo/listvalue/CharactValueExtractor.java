@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2016 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2016 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.listvalue;
@@ -34,20 +34,19 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.AttributeExtractorService;
 
 /**
- * 
+ *
  * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
- * 
+ *
  */
-@Service("nutValueExtractor")
-public class NutValueExtractor implements ListValueExtractor<NodeRef> {
+@Service("charactValueExtractor")
+public class CharactValueExtractor implements ListValueExtractor<NodeRef> {
 
 	@Autowired
 	private NodeService nodeService;
 
 	@Autowired
 	private NamespaceService namespaceService;
-	
-	
+
 	@Autowired
 	private AttributeExtractorService attributeExtractorService;
 
@@ -58,17 +57,24 @@ public class NutValueExtractor implements ListValueExtractor<NodeRef> {
 		if (nodeRefs != null) {
 			for (NodeRef nodeRef : nodeRefs) {
 
-				QName type = PLMModel.TYPE_NUT;
-				String name = attributeExtractorService.extractPropName(type,nodeRef);
-				String cssClass = attributeExtractorService.extractMetadata(type,nodeRef);
+				QName type = nodeService.getType(nodeRef);
+				String name = attributeExtractorService.extractPropName(type, nodeRef);
+				String cssClass = attributeExtractorService.extractMetadata(type, nodeRef);
 				Map<String, String> props = new HashMap<>(2);
 				props.put("type", type.toPrefixString(namespaceService));
-				
-				String unit = (String)nodeService.getProperty(nodeRef, PLMModel.PROP_NUTUNIT);
-				if(unit!=null && !unit.isEmpty()){
-					name += " ("+unit+")";
+
+				String unit = "";
+
+				if (PLMModel.TYPE_NUT.equals(type)) {
+					unit = (String) nodeService.getProperty(nodeRef, PLMModel.PROP_NUTUNIT);
+				} else if (PLMModel.TYPE_PHYSICO_CHEM.equals(type)) {
+					unit = (String) nodeService.getProperty(nodeRef, PLMModel.PROP_PHYSICO_CHEM_UNIT);
 				}
-				
+
+				if ((unit != null) && !unit.isEmpty()) {
+					name += " (" + unit + ")";
+				}
+
 				if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_COLOR)) {
 					props.put("color", (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_COLOR));
 				}
