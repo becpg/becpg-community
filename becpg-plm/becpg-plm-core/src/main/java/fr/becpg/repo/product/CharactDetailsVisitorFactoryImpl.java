@@ -19,6 +19,7 @@ package fr.becpg.repo.product;
 
 import java.util.Map;
 
+import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 
 import fr.becpg.repo.formulation.FormulateException;
@@ -28,14 +29,21 @@ public class CharactDetailsVisitorFactoryImpl implements CharactDetailsVisitorFa
 	
 	Map<String,CharactDetailsVisitor> visitorRegistry;
 	
+	NamespaceService namespaceService;
+	
 	public void setVisitorRegistry(Map<String, CharactDetailsVisitor> visitorRegistry) {
 		this.visitorRegistry = visitorRegistry;
 	}
 
+	public void setNamespaceService(NamespaceService namespaceService) {
+		this.namespaceService = namespaceService;
+	}
+
+
 	@Override
 	public CharactDetailsVisitor getCharactDetailsVisitor(QName dataType, String dataListName) throws FormulateException {
 		
-		CharactDetailsVisitor visitor = visitorRegistry.get(dataListName);
+		CharactDetailsVisitor visitor = visitorRegistry.get(dataType.toPrefixString(namespaceService));
 		if(visitor!=null){
 			visitor.setDataListType(dataType);
 			return visitor;

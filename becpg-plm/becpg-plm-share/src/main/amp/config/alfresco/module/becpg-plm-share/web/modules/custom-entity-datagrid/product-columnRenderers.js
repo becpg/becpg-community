@@ -763,16 +763,16 @@ if (beCPG.module.EntityDataGridRenderers) {
 		propertyName : "bcpg:compoListQty",
 		renderer : function(oRecord, data, label, scope) {
 
-			var qty = "";
-			if (data.value != null) {
-				var unit = "";
-				if (data.value < 0.0001) {
+			var qty = "";			
+			if (data.value != null) {				
+				var unit = "", absValue = Math.abs(data.value);
+				if (absValue < 0.0001) {
 					qty = data.value * 1000000;
 					unit = " mg";
-				} else if (data.value < 1) {
+				} else if (absValue < 1) {
 					qty = data.value * 1000;
 					unit = " g";
-				} else if (data.value > 1000) {
+				} else if (absValue > 1000) {
 					qty = data.value / 1000;
 					unit = " t";
 				} else {

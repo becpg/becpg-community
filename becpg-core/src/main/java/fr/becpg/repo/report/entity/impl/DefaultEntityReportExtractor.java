@@ -457,12 +457,19 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	protected void extractTargetAssoc(NodeRef entityNodeRef, AssociationDefinition assocDef, Element entityElt, Map<String, byte[]> images) {
 
 		Element rootElt = assocDef.isTargetMany() ? entityElt.addElement(assocDef.getName().getLocalName()) : entityElt;
+		if(assocDef.isTargetMany()){
+			appendPrefix(assocDef.getName(), rootElt);
+		}
+		
 		List<NodeRef> nodeRefs = associationService.getTargetAssocs(entityNodeRef, assocDef.getName());
 
 		for (NodeRef nodeRef : nodeRefs) {
 
 			QName qName = nodeService.getType(nodeRef);
 			Element nodeElt = rootElt.addElement(qName.getLocalName());
+			
+			appendPrefix(qName, nodeElt);
+			
 			loadNodeAttributes(nodeRef, nodeElt, true, images);
 		}
 	}
@@ -473,14 +480,20 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			localName += "_" + suffix;
 		}
 		Element cDATAElt = nodeElt.addElement(localName);
+		appendPrefix(propertyQName, cDATAElt);
+		
 		cDATAElt.addCDATA(eltValue);
 
-		Collection<String> prefixes = namespaceService.getPrefixes(propertyQName.getNamespaceURI());
-		if (prefixes.size() != 0) {
+		
+	}
 
+	private void appendPrefix(QName propertyQName, Element cDATAElt) {
+		Collection<String> prefixes = namespaceService.getPrefixes(propertyQName.getNamespaceURI());
+		if (!prefixes.isEmpty()) {
 			// TODO : manage prefix correctly
 			cDATAElt.addAttribute("prefix", prefixes.iterator().next());
 		}
+		
 	}
 
 	// Check that images has not been update
