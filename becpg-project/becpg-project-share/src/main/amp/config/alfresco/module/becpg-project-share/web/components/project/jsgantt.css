@@ -81,9 +81,9 @@ td.ghead.current {
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	overflow: hidden;
-	width: 120px;
-	display: block;
-    float: left;
+	margin-right: 10px;
+    max-width: 100px;
+	display: inline-block;
 	background: url("../images/filetypes/generic-user-16.png") no-repeat
 		scroll 0 0 transparent;
 	padding-left: 20px;
@@ -142,7 +142,7 @@ td.ggtaskCheckbox {
 .gcaption{
 	font-size:12px;
 	position:absolute; 
-	 width:250px;
+	width:360px;
 }
 
 .gday {
