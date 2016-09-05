@@ -21,106 +21,102 @@ package fr.becpg.repo.admin.patch;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.model.Repository;
-import org.alfresco.service.cmr.model.FileFolderService;
+import org.alfresco.repo.policy.BehaviourFilter;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.DataListModel;
+import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.search.impl.AbstractBeCPGQueryBuilder;
 
 /**
- * Patch physico unit
+ * Add physico chemical units on old systems
  */
 public class PhysicoUnitPatch extends AbstractBeCPGPatch {
 
 	private static final Log logger = LogFactory.getLog(PhysicoUnitPatch.class);
 
-	private Repository repositoryHelper;
-	
-	@Autowired
-	private FileFolderService fileFolderService;
+	private BehaviourFilter policyBehaviourFilter;
 
 	@Override
 	protected String applyInternal() throws Exception {
 
-		logger.info("Importing physico units");
+		AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
-		List<NodeRef> nodeRefs = BeCPGQueryBuilder.createQuery().selectNodesByPath(
-				nodeService.getRootNode(RepoConsts.SPACES_STORE),
-				"/app:company_home/" + AbstractBeCPGQueryBuilder.encodePath("/System/Lists/bcpg:entityLists/PhysicoUnits") + "/*");
+		try {
+			policyBehaviourFilter.disableBehaviour();
 
-		NodeRef entityListsFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath(
-				nodeService.getRootNode(RepoConsts.SPACES_STORE),
-				"/app:company_home/" + AbstractBeCPGQueryBuilder.encodePath("/System/Lists/bcpg:entityLists") + "/.");
+			logger.info("Importing physico chemical units");
 
-		NodeRef listsFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath(
-				nodeService.getRootNode(RepoConsts.SPACES_STORE),
-				"/app:company_home/" + AbstractBeCPGQueryBuilder.encodePath("/System/Lists/bcpg:entityLists/PhysicoUnits") + "/.");
-		
-		logger.info("nodeRefs: "+nodeRefs+", listsFolder: "+listsFolder+", entityListsFolder: "+entityListsFolder);
-		
-		// tester si list physico existe
-		if(nodeRefs.isEmpty()){
-			
-			
-			
-			transactionHelper.doInTransaction(() -> {  
+			NodeRef systemHome = BeCPGQueryBuilder.createQuery().selectNodeByPath(nodeService.getRootNode(RepoConsts.SPACES_STORE),
+					"/app:company_home/" + AbstractBeCPGQueryBuilder.encodePath("/System") + "/.");
+
+			List<NodeRef> nodeRefs = BeCPGQueryBuilder.createQuery().selectNodesByPath(nodeService.getRootNode(RepoConsts.SPACES_STORE),
+					"/app:company_home/" + AbstractBeCPGQueryBuilder.encodePath("/System/Lists/bcpg:entityLists/PhysicoUnits") + "/*");
+
+			NodeRef entityListsFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath(nodeService.getRootNode(RepoConsts.SPACES_STORE),
+					"/app:company_home/" + AbstractBeCPGQueryBuilder.encodePath("/System/Lists/bcpg:entityLists") + "/.");
+
+			NodeRef listsFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath(nodeService.getRootNode(RepoConsts.SPACES_STORE),
+					"/app:company_home/" + AbstractBeCPGQueryBuilder.encodePath("/System/Lists/bcpg:entityLists/PhysicoUnits") + "/.");
+
+			logger.debug("nodeRefs: " + nodeRefs + ", listsFolder: " + listsFolder + ", entityListsFolder: " + entityListsFolder);
+
+			// tester si list physico existe
+			if (nodeRefs.isEmpty()) {
 				Map<QName, Serializable> properties;
-				
+
 				NodeRef physicoListsFolder = listsFolder;
-				
-				if(listsFolder == null){
-					physicoListsFolder = fileFolderService.create(entityListsFolder, "PhysicoUnits", ContentModel.TYPE_FOLDER).getNodeRef();
-				}
-				
+
 				// si non la creer
-				logger.info("Creating folder, listsFolder: "+physicoListsFolder);
-				NodeRef physicoUnitsFolder = nodeService.createNode(physicoListsFolder, ContentModel.ASSOC_CONTAINS, 
-						ContentModel.ASSOC_CONTAINS, DataListModel.TYPE_DATALIST).getChildRef();
-	
-				logger.info("PhyUnits folder: " + physicoUnitsFolder);
-	
+				if (listsFolder == null) {
+					Map<String, QName> entityLists = new LinkedHashMap<>();
+					entityLists.put(PlmRepoConsts.PATH_PHYSICO_UNITS, BeCPGModel.TYPE_LIST_VALUE);
+					entitySystemService.createSystemEntity(systemHome, RepoConsts.PATH_LISTS, entityLists);
+
+					physicoListsFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath(nodeService.getRootNode(RepoConsts.SPACES_STORE),
+							"/app:company_home/" + AbstractBeCPGQueryBuilder.encodePath("/System/Lists/bcpg:entityLists/PhysicoUnits") + "/.");
+				}
+
 				// ajouter les valeurs comme ds test unitaire plm base test case
-				String[] physicoUnits = { "%", "-", "L", "mL", "kg", "g", "m", "cm", "mm", "µm", "m2", "m3", "P", "%", "%Vol", "°C", "K", "°Cent", "°D", "J",
-						"eV", "g/kg", "mg/kg", "µg/kg", "pg/kg", "meqO2/kg", "meq/kg", "g/L", "mg/L", "µg/L", "g/mL", "mosm/L", "mol/L", "mPa.s", "Pa.s", "s",
-						"min", "°B", "/0,2g", "/25g", "/100g", "g/100g", "mg/100g", "g/2,2L", "g/15g", "ppm", "ppb", "µg/g", "mg/g", "mL/g", "UB", "cps",
-						"mg KOH/g", "mg NAOH/g", "A/P" };
-	
+				String[] physicoUnits = { "%", "-", "L", "mL", "kg", "g", "m", "cm", "mm", "µm", "m2", "m3", "P", "%", "%Vol", "°C", "K", "°Cent",
+						"°D", "J", "eV", "g/kg", "mg/kg", "µg/kg", "pg/kg", "meqO2/kg", "meq/kg", "g/L", "mg/L", "µg/L", "g/mL", "mosm/L", "mol/L",
+						"mPa.s", "Pa.s", "s", "min", "°B", "/0,2g", "/25g", "/100g", "g/100g", "mg/100g", "g/2,2L", "g/15g", "ppm", "ppb", "µg/g",
+						"mg/g", "mL/g", "UB", "cps", "mg KOH/g", "mg NAOH/g", "A/P" };
+
 				for (String physicoUnit : physicoUnits) {
 					properties = new HashMap<>();
 					properties.put(BeCPGModel.PROP_LV_VALUE, physicoUnit);
-					nodeService.createNode(physicoUnitsFolder, ContentModel.ASSOC_CONTAINS,
+					nodeService.createNode(physicoListsFolder, ContentModel.ASSOC_CONTAINS,
 							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)),
 							BeCPGModel.TYPE_LIST_VALUE, properties);
 				}
-				
-				return true;
-			}, false, true);
-		}
+			}
 
-		logger.info("PhysicoUnits added");
+		} finally {
+			policyBehaviourFilter.enableBehaviour();
+		}
 
 		return "PhysicoUnit patch: Success";
 	}
 
-	public Repository getRepositoryHelper() {
-		return repositoryHelper;
+	public BehaviourFilter getPolicyBehaviourFilter() {
+		return policyBehaviourFilter;
 	}
 
-	public void setRepositoryHelper(Repository repositoryHelper) {
-		this.repositoryHelper = repositoryHelper;
+	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
+		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
 
 }
