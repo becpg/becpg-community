@@ -897,10 +897,12 @@ if (beCPG.module.EntityDataGridRenderers) {
 			        g: parseInt(hexColorSplit[2], 16),
 			        b: parseInt(hexColorSplit[3], 16)
 			    } : null;
+	
+			    var emptyBarColor = null;
 			    
 			    //background of unfilled part of progress bar
 			    if(percentValue <100){
-			    	var emptyBarColor = ulExceeded ? red : gray;
+			    	emptyBarColor = ulExceeded ? red : gray;
 			    }
 			    
 				var fontColor = "black";
@@ -920,12 +922,12 @@ if (beCPG.module.EntityDataGridRenderers) {
 					reminderColor = fontColor;
 				}
 
-				var html="<div class=\"progress-bar\" "+ (emptyBarColor !== undefined ? "style=\"background-color: " + emptyBarColor +";\" ": "") + " title=\"" + percentValue.toFixed(1)+"% " + gdaReminder + (ulExceeded?"\n"+scope.msg("becpg.forms.help.ul-exceeded") : "") +"\";\">";
+				var html="<div class=\"progress-bar\" "+ (emptyBarColor != null ? "style=\"background-color: " + emptyBarColor +";\" ": "") + " title=\"" + percentValue.toFixed(1)+"% " + gdaReminder + (ulExceeded?"\n"+scope.msg("becpg.forms.help.ul-exceeded") : "") +"\";\">";
 					if(gdaReminder !== null){
-						html += "<div class =\"nut-progress-bar\" style=\"float: right; color: " + reminderColor + "\">" + gdaReminder + "</div>";
+						html += "<div class =\"outer-progress-bar\" style=\"float: right; color: " + reminderColor + "\">" + gdaReminder + "</div>";
 					}
-						html += "<div style=\"width: " + Math.min(percentValue, 100) + "%; background-color: " + nutColor + (percentValue < 100 ? "; border-radius: 0 4px 4px 0" : "") + ";\">";
-						html += "<div class =\"nut-progress-bar\" style=\"text-align: left; color: " + fontColor + "; white-space: nowrap;\">" + percentValue.toFixed(1) + "%</div>";
+						html += "<div class =\"inner-progress-bar\" style=\"width: " + Math.min(percentValue, 100) + "%; background-color: " + nutColor + (percentValue < 100 ? ";" : "") + ";\">";
+						html += "	<div  style=\"color: " + fontColor + "; white-space: nowrap;\">" + percentValue.toFixed(1) + "%</div>";
 					html += "</div>";
 				html += "</div>";					        	
 
