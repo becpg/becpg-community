@@ -1280,6 +1280,16 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
+				<property name="bcpg:costListPreviousValuePerProduct">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:costListFutureValuePerProduct">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 				<property name="bcpg:costListMaxi">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
@@ -2824,6 +2834,7 @@
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 				</property>
+				
 				<property name="bcpg:priceCurrency">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
@@ -2845,6 +2856,14 @@
 					<mandatory>false</mandatory>
 				</property>
 				<property name="bcpg:unitTotalCost">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="bcpg:previousUnitTotalCost">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="bcpg:futureUnitTotalCost">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 				</property>
