@@ -134,7 +134,7 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 						filterValue = extractExpr(entityNodeRef, filterValue);
 					}
 				}
-				if ((filterValue != null) && !filterValue.isEmpty()) {
+				if ((filterValue != null) && !filterValue.isEmpty() && !filterValue.contains("{")) {
 					if(filterValue.contains(",")){
 						for(String tmp : filterValue.split(",")){
 							queryBuilder.andPropEquals(QName.createQName(splitted[0], namespaceService), tmp);
