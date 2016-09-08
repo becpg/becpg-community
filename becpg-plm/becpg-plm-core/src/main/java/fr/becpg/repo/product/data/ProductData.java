@@ -87,6 +87,8 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	 */
 	private Double unitTotalCost;
 	private Double unitPrice;
+	private Double previousUnitTotalCost;
+	private Double futureUnitTotalCost;
 	private Double profitability;
 	private Long breakEven;
 	private Long projectedQty;
@@ -448,6 +450,28 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		this.unitTotalCost = unitTotalCost;
 	}
 
+	
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:previousUnitTotalCost")
+	public Double getPreviousUnitTotalCost() {
+		return previousUnitTotalCost;
+	}
+
+	public void setPreviousUnitTotalCost(Double previousUnitTotalCost) {
+		this.previousUnitTotalCost = previousUnitTotalCost;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "bcpg:futureUnitTotalCost")
+	public Double getFutureUnitTotalCost() {
+		return futureUnitTotalCost;
+	}
+
+	public void setFutureUnitTotalCost(Double futureUnitTotalCost) {
+		this.futureUnitTotalCost = futureUnitTotalCost;
+	}
+
 	@AlfProp
 	@AlfQname(qname = "bcpg:unitPrice")
 	public Double getUnitPrice() {
@@ -457,6 +481,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	public void setUnitPrice(Double unitPrice) {
 		this.unitPrice = unitPrice;
 	}
+	
 
 	@AlfProp
 	@AlfQname(qname = "bcpg:profitability")
