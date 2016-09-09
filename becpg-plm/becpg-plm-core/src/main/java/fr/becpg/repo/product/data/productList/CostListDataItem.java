@@ -36,6 +36,8 @@ MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ForecastValue
 	private Double previousValue = 0d;
 	private Double futureValue = 0d;
 	private Double valuePerProduct = 0d;
+	private Double previousValuePerProduct = 0d;
+	private Double futureValuePerProduct = 0d;
 	private Double maxi = null;	
 	private NodeRef cost;	
 	private Boolean isFormulated;	
@@ -102,6 +104,30 @@ MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ForecastValue
 	public void setValuePerProduct(Double valuePerProduct) {
 		this.valuePerProduct = valuePerProduct;
 	}
+	
+	
+	@AlfProp
+	@AlfQname(qname="bcpg:costListPreviousValuePerProduct")
+	public Double getPreviousValuePerProduct() {
+		return previousValuePerProduct;
+	}
+
+
+	public void setPreviousValuePerProduct(Double previousValuePerProduct) {
+		this.previousValuePerProduct = previousValuePerProduct;
+	}
+
+	@AlfProp
+	@AlfQname(qname="bcpg:costListFutureValuePerProduct")
+	public Double getFutureValuePerProduct() {
+		return futureValuePerProduct;
+	}
+
+
+	public void setFutureValuePerProduct(Double futureValuePerProduct) {
+		this.futureValuePerProduct = futureValuePerProduct;
+	}
+
 
 	@AlfSingleAssoc
 	@AlfQname(qname="bcpg:costListCost")
