@@ -83,7 +83,7 @@ public class RemoveReqCtrlViewPatch extends AbstractBeCPGPatch {
 			}
 		};
 
-		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("RemoveQtyAfterProcessPatch", transactionService.getRetryingTransactionHelper(),
+		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("RemoveReqCtrlViewPatch", transactionService.getRetryingTransactionHelper(),
 				workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 1000);
 
 		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
