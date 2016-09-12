@@ -282,7 +282,7 @@
                        var dropdownOptions = [];
                        for(var j in column.constraints[i].parameters.allowedValues){
                            var val = column.constraints[i].parameters.allowedValues[j];
-                           if((typeof val === 'string' || val instanceof String) && val.indexOf("|")>0){
+                           if((typeof val === 'string' || val instanceof String) && val.indexOf("|")>-1){
                         	   val = val.split("|");
                         	   if(val.length>1){
                                    dropdownOptions.push({label:val[1],value:val[0]});
