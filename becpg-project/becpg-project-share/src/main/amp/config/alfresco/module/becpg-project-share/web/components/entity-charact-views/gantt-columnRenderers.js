@@ -86,9 +86,16 @@
 
                                                         var tlIsMilestone = task["itemData"]["prop_pjt_tlIsMilestone"].value;
                                                         var tlPercent = task["itemData"]["prop_pjt_completionPercent"].value;
-
-                                                        var taskOwner = task["itemData"]["assoc_pjt_tlResources"].length > 0 ? ('<span class="resource-title">' + task["itemData"]["assoc_pjt_tlResources"][0].displayValue + '</span>')
-                                                                : null;
+                                                        
+                                                        var taskOwner = null;
+                                                        
+                                                        if(task["itemData"]["assoc_pjt_tlResources"].length>0){
+                                                        	taskOwner = "";
+                                                        	for(var z in  task["itemData"]["assoc_pjt_tlResources"]){
+                                                        		taskOwner += '<span class="resource-title">' + task["itemData"]["assoc_pjt_tlResources"][z].displayValue + '</span>';                               	
+                                                        	}
+                                                        }
+                                                        
 
                                                         var tdates = this.cache[taskId];
                                                         if (!tdates)

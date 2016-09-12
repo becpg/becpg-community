@@ -528,7 +528,26 @@ div.filterButtonsBar {
 	background-repeat: no-repeat;
 }
 
-.nut-progress-bar {
-	margin-left: 2px;
+/* Progress bar */
+
+.datagrid .progress-bar {
+	
+}
+
+.datagrid .inner-progress-bar {
+	border-radius: 0 4px 4px 0;
+}
+
+.datagrid .outer-progress-bar {
 	margin-right: 2px;
 }
+
+
+.datagrid .inner-progress-bar > div {
+	margin-left: 2px;
+	margin-right: 2px;
+	text-align: left;
+}
+
+
+
