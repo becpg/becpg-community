@@ -25,7 +25,7 @@ YAHOO.Bubbling
                   {
                      actionName : "eco-calculate-wused",
                      evaluate : function(asset, entity) {
-                        return asset.name !== null && (asset.name === "replacementList" || asset.name === "wUsedList") && entity != null && entity.userAccess.edit;
+                        return asset.name != null && (asset.name === "replacementList" || asset.name === "wUsedList") && entity != null && entity.userAccess.edit;
                      },
                      fn : function(instance) {
 
@@ -49,7 +49,7 @@ YAHOO.Bubbling
                            },
                            failureCallback : {
                               fn : function EntityDataListthis_onECOCalculateWUsed_failure(response) {
-                                 if (response.message !== null) {
+                                 if (response.message != null) {
                                     Alfresco.util.PopupManager.displayPrompt({
                                        text : response.message
                                     });
@@ -71,7 +71,7 @@ YAHOO.Bubbling
                   {
                      actionName : "eco-do-simulation",
                      evaluate : function(asset, entity) {
-                        return asset.name !== null && (asset.name === "replacementList" || asset.name === "changeUnitList" || asset.name === "calculatedCharactList") && entity != null && entity.userAccess.edit;
+                        return asset.name != null && (asset.name === "replacementList" || asset.name === "changeUnitList" || asset.name === "calculatedCharactList") && entity != null && entity.userAccess.edit;
                      },
                      fn : function(instance) {
 
@@ -94,7 +94,7 @@ YAHOO.Bubbling
                            },
                            failureCallback : {
                               fn : function EntityDataListthis_onECODoSimulation_failure(response) {
-                                 if (response.message !== null) {
+                                 if (response.message != null) {
                                     Alfresco.util.PopupManager.displayPrompt({
                                        text : response.message
                                     });
@@ -117,7 +117,7 @@ YAHOO.Bubbling
                   {
                      actionName : "eco-apply",
                      evaluate : function(asset, entity) {
-                        return asset.name !== null && (asset.name === "replacementList" || asset.name === "changeUnitList" ) && entity != null && entity.userAccess.edit;
+                        return asset.name != null && (asset.name === "replacementList" || asset.name === "changeUnitList" ) && entity != null && entity.userAccess.edit;
                      },
                      fn : function(instance) {
 
@@ -149,7 +149,7 @@ YAHOO.Bubbling
                                      },
                                      failureCallback : {
                                         fn : function EntityDataListthis_onECOApply_failure(response) {
-                                           if (response.message !== null) {
+                                           if (response.message != null) {
                                               Alfresco.util.PopupManager.displayPrompt({
                                                  text : response.message
                                               });
@@ -184,7 +184,7 @@ YAHOO.Bubbling
                   {
                      actionName : "full-screen",
                      evaluate : function(asset, entity) {
-                        return asset.name !== null && (asset.name === "compoList" || asset.name === "packagingList" || asset.name === "processList") && entity != null && entity.userAccess.edit;
+                        return asset.name != null && (asset.name === "compoList" || asset.name === "packagingList" || asset.name === "processList") && entity != null && entity.userAccess.edit;
                      },
                      fn : function(instance) {
 
@@ -327,7 +327,7 @@ YAHOO.Bubbling
                   {
                      actionName : "formulate",
                      evaluate : function(asset, entity) {
-                        return asset.name !== null && 
+                        return asset.name != null && 
                              (asset.name === "compoList" || asset.name === "processList" || asset.name === "packagingList" || asset.name === "ingLabelingList" || asset.name === "nutList" || asset.name === "labelClaimList" || asset.name === "costList" || asset.name === "physicoChemList" || asset.name === "ingList" || asset.name === "allergenList")
                                && entity != null && beCPG.util.contains(entity.aspects,
                                        "bcpg:formulatedEntityAspect") && entity.userAccess.edit;
@@ -390,7 +390,7 @@ YAHOO.Bubbling
                   {
                      actionName : "product-metadata",
                      evaluate : function(asset, entity) {
-                        return asset.name !== null && (asset.name === "compoList" || asset.name === "processList" || asset.name === "packagingList" ) && entity != null && entity.userAccess.edit;
+                        return asset.name != null && (asset.name === "compoList" || asset.name === "processList" || asset.name === "packagingList" ) && entity != null && entity.userAccess.edit;
                      },
                      fn : function(instance) {
 
@@ -436,7 +436,7 @@ YAHOO.Bubbling
          actionName : "rapid-link",
          right : false,
          evaluate : function(asset, entity) {
-            return asset.name !== null && (asset.name === "compoList" || asset.name === "processList" || asset.name === "packagingList" ) && entity != null && entity.userAccess.edit;
+            return asset.name != null && (asset.name === "compoList" || asset.name === "processList" || asset.name === "packagingList" ) && entity != null && entity.userAccess.edit;
          },
          createWidget : function(containerDiv, instance) {
 
@@ -472,7 +472,7 @@ YAHOO.Bubbling
                      right : true,
                      evaluate : function(asset, entity) {
                         return entity != null && entity.userAccess.edit && (beCPG.util.contains(entity.aspects,
-                              "bcpg:entityVariantAspect") && (asset.name !== null && (asset.name === "compoList" || asset.name === "processList" || asset.name === "packagingList")));
+                              "bcpg:entityVariantAspect") && (asset.name != null && (asset.name === "compoList" || asset.name === "processList" || asset.name === "packagingList")));
 
                      },
                      createWidget : function(containerDiv, instance) {
@@ -504,7 +504,7 @@ YAHOO.Bubbling
 			  actionName : "import-nuts",
 			  right : false,
 			  evaluate : function(asset, entity) {
-				  return (entity !== null && entity.userAccess.edit && asset.name !== null && asset.name === "nutList");
+				  return (entity != null && entity.userAccess.edit && asset.name != null && asset.name === "nutList");
 				  
 			  },
 			  fn : function(instance) {

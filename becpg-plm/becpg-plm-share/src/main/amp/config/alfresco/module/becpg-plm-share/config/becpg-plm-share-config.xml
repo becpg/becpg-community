@@ -84,6 +84,7 @@
 			<itemType name="bcpg:nut" />
 			<itemType name="bcpg:allergen" />
 			<itemType name="bcpg:ing" />
+			<itemType name="bcpg:labelClaim" />
 			<itemType name="bcpg:organo" />
 			<itemType name="bcpg:physicoChem" />
 			<itemType name="bcpg:cost" />
@@ -111,9 +112,13 @@
 			<list id="organoList" index="160" />
 			<list id="physicoChemList" index="170" />
 			<list id="labelClaimList" index="180" />
+			<list id="replacementList" index="190" />
+            <list id="wUsedList" index="200" />
+            <list id="calculatedCharactList" index="210" />
+            <list id="changeUnitList" index="220" />
 		</lists>
 	</config>
-
+	
 
 	<config evaluator="string-compare" condition="wizard">
 		<wizards>
