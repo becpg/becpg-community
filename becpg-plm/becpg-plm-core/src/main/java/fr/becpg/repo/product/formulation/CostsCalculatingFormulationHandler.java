@@ -258,28 +258,76 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 
 		Double netQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct, 1d);
 		Double unitTotalVariableCost = 0d;// for 1 product
+		Double previousTotalVariableCost = 0d;
+		Double futureTotalVariableCost = 0d;
 		Double unitTotalFixedCost = 0d;
+		
 
 		for (CostListDataItem c : formulatedProduct.getCostList()) {
 
 			Boolean isFixed = (Boolean) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTFIXED);
 			Double costPerProduct = null;
+			Double previousCostPerProduct = null;
+			Double futureCostPerProduct = null;
 
 			if (c.getValue() != null) {
 				if ((isFixed != null) && (isFixed == Boolean.TRUE)) {
 					unitTotalFixedCost += c.getValue();
+					
 					if ((formulatedProduct.getProjectedQty() != null) && !formulatedProduct.getProjectedQty().equals(0)) {
 						costPerProduct = c.getValue() / formulatedProduct.getProjectedQty();
+						
+						if(c.getFutureValue()!=null){
+							futureCostPerProduct= c.getFutureValue() / formulatedProduct.getProjectedQty();
+						} else {
+							futureCostPerProduct= c.getValue() / formulatedProduct.getProjectedQty();
+						}
+						
+						if(c.getPreviousValue()!=null){
+							previousCostPerProduct= c.getPreviousValue() / formulatedProduct.getProjectedQty();
+						} else {
+							previousCostPerProduct= c.getValue() / formulatedProduct.getProjectedQty();
+						}
+						
 					}
 
 				} else if (FormulationHelper.isProductUnitP(formulatedProduct.getUnit())) {
 					costPerProduct = c.getValue();
+					
+					if(c.getFutureValue()!=null){
+						futureCostPerProduct= c.getFutureValue();
+					} else {
+						futureCostPerProduct= costPerProduct;
+					}
+					
+					if(c.getPreviousValue()!=null){
+						previousCostPerProduct= c.getPreviousValue();
+					} else {
+						previousCostPerProduct= costPerProduct;
+					}
+					
+					
 					if(formulatedProduct.getQty()!=null){
 						costPerProduct *=formulatedProduct.getQty();
+						futureCostPerProduct*=formulatedProduct.getQty();
+						previousCostPerProduct*=formulatedProduct.getQty();
 					}
 					
 				} else {
 					costPerProduct = netQty * c.getValue();
+					
+					if(c.getFutureValue()!=null){
+						futureCostPerProduct= netQty * c.getFutureValue();
+					} else {
+						futureCostPerProduct= costPerProduct;
+					}
+					
+					if(c.getPreviousValue()!=null){
+						previousCostPerProduct=  netQty * c.getPreviousValue();
+					} else {
+						previousCostPerProduct= costPerProduct;
+					}
+					
 				}
 			}
 
@@ -292,13 +340,36 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 					c.setValuePerProduct(costPerProduct);
 				}
 			}
+			
+			if (futureCostPerProduct != null) {
+				if ((c.getDepthLevel() == null) || (c.getDepthLevel() == 1)) {
+					futureTotalVariableCost += futureCostPerProduct;
+				}
+				if (formulatedProduct instanceof FinishedProductData || formulatedProduct instanceof SemiFinishedProductData) {
+					c.setFutureValuePerProduct(futureCostPerProduct);
+				}
+			}
+			
+			if (previousCostPerProduct != null) {
+				if ((c.getDepthLevel() == null) || (c.getDepthLevel() == 1)) {
+					previousTotalVariableCost += previousCostPerProduct;
+				}
+				if (formulatedProduct instanceof FinishedProductData || formulatedProduct instanceof SemiFinishedProductData) {
+					c.setPreviousValuePerProduct(previousCostPerProduct);
+				}
+			}
+			
 		}
 
 		if (formulatedProduct instanceof FinishedProductData) {
 			formulatedProduct.setUnitTotalCost(unitTotalVariableCost);
+			formulatedProduct.setPreviousUnitTotalCost(previousTotalVariableCost);
+			formulatedProduct.setFutureUnitTotalCost(futureTotalVariableCost);
 		} else {
 			// €/Kg, €/L or €/P
 			formulatedProduct.setUnitTotalCost(unitTotalVariableCost / netQty);
+			formulatedProduct.setPreviousUnitTotalCost(previousTotalVariableCost / netQty);
+			formulatedProduct.setFutureUnitTotalCost(futureTotalVariableCost / netQty);
 		}
 
 		if ((formulatedProduct.getUnitPrice() != null) && (formulatedProduct.getUnitTotalCost() != null)) {

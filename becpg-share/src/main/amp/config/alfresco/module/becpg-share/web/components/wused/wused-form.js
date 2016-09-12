@@ -183,7 +183,8 @@
 					YAHOO.Bubbling.fire("activeDataListChanged", {
 						dataList : {
 							name : "WUsed-" + me.options.assocType.replace(":", "_"),
-							itemType : me.options.itemType
+							itemType : me.options.itemType,
+							entity : null
 						}
 					});
 

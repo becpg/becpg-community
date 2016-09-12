@@ -363,7 +363,8 @@
                                                 
                                                 YAHOO.Bubbling.fire("simpleView-"+me.id + "-step-" + step.id+"scopedActiveDataListChanged", {
                                                          list : list.name,
-                                                          dataList : list
+                                                          dataList : list,
+                                                          entity : null
                                                  });
                                                 
                                             }

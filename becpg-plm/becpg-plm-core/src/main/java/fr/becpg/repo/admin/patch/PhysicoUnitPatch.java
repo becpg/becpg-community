@@ -62,45 +62,49 @@ public class PhysicoUnitPatch extends AbstractBeCPGPatch {
 			NodeRef systemHome = BeCPGQueryBuilder.createQuery().selectNodeByPath(nodeService.getRootNode(RepoConsts.SPACES_STORE),
 					"/app:company_home/" + AbstractBeCPGQueryBuilder.encodePath("/System") + "/.");
 
-			List<NodeRef> nodeRefs = BeCPGQueryBuilder.createQuery().selectNodesByPath(nodeService.getRootNode(RepoConsts.SPACES_STORE),
-					"/app:company_home/" + AbstractBeCPGQueryBuilder.encodePath("/System/Lists/bcpg:entityLists/PhysicoUnits") + "/*");
+			if (systemHome != null) {
 
-			NodeRef entityListsFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath(nodeService.getRootNode(RepoConsts.SPACES_STORE),
-					"/app:company_home/" + AbstractBeCPGQueryBuilder.encodePath("/System/Lists/bcpg:entityLists") + "/.");
+				List<NodeRef> nodeRefs = BeCPGQueryBuilder.createQuery().selectNodesByPath(nodeService.getRootNode(RepoConsts.SPACES_STORE),
+						"/app:company_home/" + AbstractBeCPGQueryBuilder.encodePath("/System/Lists/bcpg:entityLists/PhysicoUnits") + "/*");
 
-			NodeRef listsFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath(nodeService.getRootNode(RepoConsts.SPACES_STORE),
-					"/app:company_home/" + AbstractBeCPGQueryBuilder.encodePath("/System/Lists/bcpg:entityLists/PhysicoUnits") + "/.");
+				NodeRef entityListsFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath(nodeService.getRootNode(RepoConsts.SPACES_STORE),
+						"/app:company_home/" + AbstractBeCPGQueryBuilder.encodePath("/System/Lists/bcpg:entityLists") + "/.");
 
-			logger.debug("nodeRefs: " + nodeRefs + ", listsFolder: " + listsFolder + ", entityListsFolder: " + entityListsFolder);
+				NodeRef listsFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath(nodeService.getRootNode(RepoConsts.SPACES_STORE),
+						"/app:company_home/" + AbstractBeCPGQueryBuilder.encodePath("/System/Lists/bcpg:entityLists/PhysicoUnits") + "/.");
 
-			// tester si list physico existe
-			if (nodeRefs.isEmpty()) {
-				Map<QName, Serializable> properties;
+				logger.debug("nodeRefs: " + nodeRefs + ", listsFolder: " + listsFolder + ", entityListsFolder: " + entityListsFolder);
 
-				NodeRef physicoListsFolder = listsFolder;
+				// tester si list physico existe
+				if (nodeRefs.isEmpty()) {
+					Map<QName, Serializable> properties;
 
-				// si non la creer
-				if (listsFolder == null) {
-					Map<String, QName> entityLists = new LinkedHashMap<>();
-					entityLists.put(PlmRepoConsts.PATH_PHYSICO_UNITS, BeCPGModel.TYPE_LIST_VALUE);
-					entitySystemService.createSystemEntity(systemHome, RepoConsts.PATH_LISTS, entityLists);
+					NodeRef physicoListsFolder = listsFolder;
 
-					physicoListsFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath(nodeService.getRootNode(RepoConsts.SPACES_STORE),
-							"/app:company_home/" + AbstractBeCPGQueryBuilder.encodePath("/System/Lists/bcpg:entityLists/PhysicoUnits") + "/.");
-				}
+					// si non la creer
+					if (listsFolder == null) {
+						Map<String, QName> entityLists = new LinkedHashMap<>();
+						entityLists.put(PlmRepoConsts.PATH_PHYSICO_UNITS, BeCPGModel.TYPE_LIST_VALUE);
+						entitySystemService.createSystemEntity(systemHome, RepoConsts.PATH_LISTS, entityLists);
 
-				// ajouter les valeurs comme ds test unitaire plm base test case
-				String[] physicoUnits = { "%", "-", "L", "mL", "kg", "g", "m", "cm", "mm", "µm", "m2", "m3", "P", "%", "%Vol", "°C", "K", "°Cent",
-						"°D", "J", "eV", "g/kg", "mg/kg", "µg/kg", "pg/kg", "meqO2/kg", "meq/kg", "g/L", "mg/L", "µg/L", "g/mL", "mosm/L", "mol/L",
-						"mPa.s", "Pa.s", "s", "min", "°B", "/0,2g", "/25g", "/100g", "g/100g", "mg/100g", "g/2,2L", "g/15g", "ppm", "ppb", "µg/g",
-						"mg/g", "mL/g", "UB", "cps", "mg KOH/g", "mg NAOH/g", "A/P" };
+						physicoListsFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath(nodeService.getRootNode(RepoConsts.SPACES_STORE),
+								"/app:company_home/" + AbstractBeCPGQueryBuilder.encodePath("/System/Lists/bcpg:entityLists/PhysicoUnits") + "/.");
+					}
 
-				for (String physicoUnit : physicoUnits) {
-					properties = new HashMap<>();
-					properties.put(BeCPGModel.PROP_LV_VALUE, physicoUnit);
-					nodeService.createNode(physicoListsFolder, ContentModel.ASSOC_CONTAINS,
-							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)),
-							BeCPGModel.TYPE_LIST_VALUE, properties);
+					// ajouter les valeurs comme ds test unitaire plm base test
+					// case
+					String[] physicoUnits = { "%", "-", "L", "mL", "kg", "g", "m", "cm", "mm", "µm", "m2", "m3", "P", "%", "%Vol", "°C", "K", "°Cent",
+							"°D", "J", "eV", "g/kg", "mg/kg", "µg/kg", "pg/kg", "meqO2/kg", "meq/kg", "g/L", "mg/L", "µg/L", "g/mL", "mosm/L",
+							"mol/L", "mPa.s", "Pa.s", "s", "min", "°B", "/0,2g", "/25g", "/100g", "g/100g", "mg/100g", "g/2,2L", "g/15g", "ppm",
+							"ppb", "µg/g", "mg/g", "mL/g", "UB", "cps", "mg KOH/g", "mg NAOH/g", "A/P" };
+
+					for (String physicoUnit : physicoUnits) {
+						properties = new HashMap<>();
+						properties.put(BeCPGModel.PROP_LV_VALUE, physicoUnit);
+						nodeService.createNode(physicoListsFolder, ContentModel.ASSOC_CONTAINS,
+								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)),
+								BeCPGModel.TYPE_LIST_VALUE, properties);
+					}
 				}
 			}
 
