@@ -159,6 +159,7 @@ var g = null; // uggly gantt var
                 Dom.removeClass(this.id + "-grid", "hidden");
                 Dom.removeClass(this.id + "-datagridBarBottom", "hidden");
                 Dom.removeClass(this.id + "-itemSelect-div", "hidden");
+                YAHOO.Bubbling.fire("refreshFloatingHeader");
             }
 
         }
