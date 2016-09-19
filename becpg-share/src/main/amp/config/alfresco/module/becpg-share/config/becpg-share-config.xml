@@ -11,23 +11,137 @@
 
 	<config evaluator="string-compare" condition="Languages">
 		<!-- the list of available language files -->
-		<languages>
-			<language locale="en_US">English</language>
-			<language locale="de_DE">German</language>
-			<language locale="es_ES">Spanish</language>
-			<language locale="fr_FR">French</language>
-			<language locale="it_IT">Italian</language>
-			<language locale="ja_JP">Japanese</language>
-			<language locale="nl_NL">Dutch</language>
-			<language locale="ru_RU">Russian</language>
-			<language locale="zh_CN">Chinese (Simplified)</language>
-			<language locale="pt_PT">Portuguese</language>
-			<language locale="no_NO">Norwegian</language>
-			<language locale="sv_SE">Swedish</language>
-			<language locale="el_GR">Greek</language>
-			<language locale="pl_PL">Polish</language>
+		<languages> 
+			<language locale="en">English</language>
+			<language locale="de">German</language>
+			<language locale="es">Spanish</language>
+			<language locale="fr">French</language>
+			<language locale="it">Italian</language>
+			<language locale="ja_JP">Japanese - Japan</language>
+			<language locale="nl">Dutch</language>
+			<language locale="ru">Russian</language>
+			<language locale="zh_CN">Chinese (Simplified) - China</language>
+			<language locale="pt">Portuguese</language>
+			<language locale="no">Norwegian</language>
+			<language locale="sv_SE">Swedish - Sweden</language>
+			<language locale="el">Greek</language>
+			<language locale="pl">Polish</language>
+			
+			<!-- Others can be use in language only way if country is same than language 
+			
+			<language locale="ar_AE">Arabic - United Arab Emirates</language>
+			<language locale="ar_JO">Arabic - Jordan</language>
+			<language locale="ar_SY">Arabic - Syria</language>
+			<language locale="ar_BH">Arabic - Bahrain</language>
+			<language locale="ar_SA">Arabic - Saudi Arabia</language>
+			<language locale="ar_YE">Arabic - Yemen</language>
+			<language locale="ar_EG">Arabic - Egypt</language>
+			<language locale="ar_SD">Arabic - Sudan</language>
+			<language locale="ar_TN">Arabic - Tunisia</language>
+			<language locale="ar_IQ">Arabic - Iraq</language>
+			<language locale="ar_MA">Arabic - Morocco</language>
+			<language locale="ar_QA">Arabic - Qatar</language>
+			<language locale="ar_OM">Arabic - Oman</language>
+			<language locale="ar_KW">Arabic - Kuwait</language>
+			<language locale="ar_LY">Arabic - Libya</language>
+			<language locale="ar_DZ">Arabic - Algeria</language>
+			<language locale="ar_LB">Arabic - Lebanon</language>
+			<language locale="be_BY">Belarusian - Belarus</language>
+			<language locale="bg_BG">Bulgarian - Bulgaria</language>
+			<language locale="ca_ES">Catalan - Spain</language>
+			<language locale="cs_CZ">Czech - Czech Republic</language>
+			<language locale="da_DK">Danish - Denmark</language>
+			<language locale="de_CH">German - Switzerland</language>
+			<language locale="de_AT">German - Austria</language>
+			<language locale="de_LU">German - Luxembourg</language>
+			<language locale="de_DE">German - Germany</language>
+			<language locale="de_GR">German - Greece</language>
+			<language locale="el_CY">Greek - Cyprus</language>
+			<language locale="el_GR">Greek - Greece</language>
+			<language locale="en_US">English - United States</language>
+			<language locale="en_SG">English - Singapore</language>
+			<language locale="en_MT">English - Malta</language>
+			<language locale="en_PH">English - Philippines</language>
+			<language locale="en_NZ">English - New Zealand</language>
+			<language locale="en_ZA">English - South Africa</language>
+			<language locale="en_AU">English - Australia</language>
+			<language locale="en_IE">English - Ireland</language>
+			<language locale="en_CA">English - Canada</language>
+			<language locale="en_IN">English - India</language>
+			<language locale="en_GB">English - United Kingdom</language>
+			<language locale="es_PA">Spanish - Panama</language>
+			<language locale="es_VE">Spanish - Venezuela</language>
+			<language locale="es_PR">Spanish - Puerto Rico</language>
+			<language locale="es_BO">Spanish - Bolivia</language>
+			<language locale="es_AR">Spanish - Argentina</language>
+			<language locale="es_SV">Spanish - El Salvador</language>
+			<language locale="es_ES">Spanish - Spain</language>
+			<language locale="es_CO">Spanish - Colombia</language>
+			<language locale="es_PY">Spanish - Paraguay</language>
+			<language locale="es_EC">Spanish - Ecuador</language>
+			<language locale="es_US">Spanish - United States</language>
+			<language locale="es_GT">Spanish - Guatemala</language>
+			<language locale="es_MX">Spanish - Mexico</language>
+			<language locale="es_HN">Spanish - Honduras</language>
+			<language locale="es_CL">Spanish - Chile</language>
+			<language locale="es_DO">Spanish - Dominican Republic</language>
+			<language locale="es_CU">Spanish - Cuba</language>
+			<language locale="es_UY">Spanish - Uruguay</language>
+			<language locale="es_CR">Spanish - Costa Rica</language>
+			<language locale="es_NI">Spanish - Nicaragua</language>
+			<language locale="es_PE">Spanish - Peru</language>
+			<language locale="et_EE">Estonian - Estonia</language>
+			<language locale="fi_FI">Finnish - Finland</language>
+			<language locale="fr_BE">French - Belgium</language>
+			<language locale="fr_CH">French - Switzerland</language>
+			<language locale="fr_LU">French - Luxembourg</language>
+			<language locale="fr_FR">French - France</language>
+			<language locale="fr_CA">French - Canada</language>
+			<language locale="ga_IE">Irish - Ireland</language>
+			<language locale="hi_IN">Hindi - India</language>
+			<language locale="hr_HR">Croatian - Croatia</language>
+			<language locale="hu_HU">Hungarian - Hungary</language>
+			<language locale="in_ID">Indonesian - Indonesia</language>
+			<language locale="is_IS">Icelandic - Iceland</language>
+			<language locale="it_CH">Italian - Switzerland</language>
+			<language locale="it_IT">Italian - Italy</language>
+			<language locale="iw_IL">Hebrew - Israel</language>
+			<language locale="ja_JP">Japanese - Japan</language>
+			<language locale="ko_KR">Korean - South Korea</language>
+			<language locale="lt_LT">Lithuanian - Lithuania</language>
+			<language locale="lv_LV">Latvian - Latvia</language>
+			<language locale="mk_MK">Macedonian - Macedonia</language>
+			<language locale="ms_MY">Malay - Malaysia</language>
+			<language locale="mt_MT">Maltese - Malta</language>
+			<language locale="nl_NL">Dutch - Netherlands</language>
+			<language locale="nl_BE">Dutch - Belgium</language>
+			<language locale="no_NO">Norwegian - Norway</language>
+			<language locale="pl_PL">Polish - Poland</language>
+			<language locale="pt_BR">Portuguese - Brazil</language>
+			<language locale="pt_PT">Portuguese - Portugal</language>
+			<language locale="ro_RO">Romanian - Romania</language>
+			<language locale="ru_RU">Russian - Russia</language>
+			<language locale="sk_SK">Slovak - Slovakia</language>
+			<language locale="sl_SI">Slovenian - Slovenia</language>
+			<language locale="sq_AL">Albanian - Albania</language>
+			<language locale="sr_ME">Serbian - Montenegro</language>
+			<language locale="sr_BA">Serbian - Bosnia and Herzegovina</language>
+			<language locale="sr_CS">Serbian - Serbia and Montenegro</language>
+			<language locale="sr_RS">Serbian - Serbia</language>
+			<language locale="sv_SE">Swedish - Sweden</language>
+			<language locale="th_TH">Thai - Thailand</language>
+			<language locale="tr_TR">Turkish - Turkey</language>
+			<language locale="uk_UA">Ukrainian - Ukraine</language>
+			<language locale="vi_VN">Vietnamese - Vietnam</language>
+			<language locale="zh_TW">Chinese - Taiwan</language>
+			<language locale="zh_HK">Chinese - Hong Kong</language>
+			<language locale="zh_SG">Chinese - Singapore</language>
+			<language locale="zh_CN">Chinese - China</language> 
+			-->
 		</languages>
 	</config>
+
+
 
 
    <config evaluator="string-compare" condition="reports">
