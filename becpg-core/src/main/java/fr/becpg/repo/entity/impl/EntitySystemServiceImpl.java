@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2016 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2016 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.entity.impl;
@@ -39,11 +39,12 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntitySystemService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
+import fr.becpg.repo.search.impl.AbstractBeCPGQueryBuilder;
 
 /**
- * 
+ *
  * @author matthieu
- * 
+ *
  */
 @Service("entitySystemService")
 public class EntitySystemServiceImpl implements EntitySystemService {
@@ -57,7 +58,6 @@ public class EntitySystemServiceImpl implements EntitySystemService {
 	@Autowired
 	private NodeService nodeService;
 
-
 	@Override
 	public NodeRef createSystemEntity(NodeRef parentNodeRef, String entityPath, Map<String, QName> entitySystemDataLists) {
 
@@ -67,7 +67,7 @@ public class EntitySystemServiceImpl implements EntitySystemService {
 			policyBehaviourFilter.disableBehaviour(DataListModel.TYPE_DATALIST);
 
 			MLText translatedPathMLText = TranslateHelper.getTranslatedPathMLText(entityPath);
-			
+
 			String entityName = TranslateHelper.getTranslatedPath(entityPath);
 			if (entityName == null) {
 				entityName = entityPath;
@@ -77,11 +77,18 @@ public class EntitySystemServiceImpl implements EntitySystemService {
 			properties.put(ContentModel.PROP_NAME, entityName);
 			properties.put(ContentModel.PROP_TITLE, translatedPathMLText);
 
-			NodeRef entityNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, entityName);
+			NodeRef entityNodeRef = null;
+			List<NodeRef> matchingEntities = BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_SYSTEM_ENTITY)
+					.andPropEquals(ContentModel.PROP_TITLE, translatedPathMLText.getDefaultValue()).inDB().list();
+
+			if (!matchingEntities.isEmpty()) {
+				entityNodeRef = matchingEntities.get(0);
+			}
 
 			if (entityNodeRef == null) {
 				entityNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
-						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(entityPath)), BeCPGModel.TYPE_SYSTEM_ENTITY, properties).getChildRef();
+						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(entityPath)),
+						BeCPGModel.TYPE_SYSTEM_ENTITY, properties).getChildRef();
 			}
 
 			// entityLists
@@ -98,7 +105,7 @@ public class EntitySystemServiceImpl implements EntitySystemService {
 						MLText entityListTranslated = TranslateHelper.getTranslatedPathMLText(entityList.getKey());
 						NodeRef newDataList = entityListDAO.createList(listContainerNodeRef, entityList.getKey(), entityList.getValue());
 						nodeService.setProperty(newDataList, ContentModel.PROP_TITLE, entityListTranslated);
-						
+
 					}
 				}
 			}
@@ -112,7 +119,7 @@ public class EntitySystemServiceImpl implements EntitySystemService {
 
 	@Override
 	public NodeRef getSystemEntity(NodeRef parentNodeRef, String systemEntityPath) {
-		return BeCPGQueryBuilder.createQuery().selectNodeByPath(parentNodeRef, BeCPGQueryBuilder.encodePath(systemEntityPath));
+		return BeCPGQueryBuilder.createQuery().selectNodeByPath(parentNodeRef, AbstractBeCPGQueryBuilder.encodePath(systemEntityPath));
 	}
 
 	@Override
@@ -130,16 +137,16 @@ public class EntitySystemServiceImpl implements EntitySystemService {
 
 	@Override
 	public List<NodeRef> getSystemEntities() {
-		
-	List<NodeRef> tplsNodeRef = new LinkedList<>();
-		
-		for(NodeRef tpl : BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_SYSTEM_ENTITY).inDB().list()){
-			if(!nodeService.hasAspect(tpl, BeCPGModel.ASPECT_COMPOSITE_VERSION)){
+
+		List<NodeRef> tplsNodeRef = new LinkedList<>();
+
+		for (NodeRef tpl : BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_SYSTEM_ENTITY).inDB().list()) {
+			if (!nodeService.hasAspect(tpl, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
 				tplsNodeRef.add(tpl);
 			}
 		}
-		return tplsNodeRef ;
-		
+		return tplsNodeRef;
+
 	}
 
 	@Override
