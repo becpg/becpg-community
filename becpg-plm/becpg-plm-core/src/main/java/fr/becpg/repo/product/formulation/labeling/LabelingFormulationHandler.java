@@ -383,11 +383,22 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				} else {
 					((CompositeLabeling) prev).setVolumeTotal(null);
 				}
+				for(AbstractLabelingComponent  ing : ((CompositeLabeling) component).getIngList().values()){
+					if(((CompositeLabeling) prev).getIngList().containsKey(ing.getNodeRef())){
+						merge(((CompositeLabeling) prev).getIngList().get(ing.getNodeRef()),ing);
+					} else {
+						((CompositeLabeling) prev).add(ing);
+					}
+				}
+				
 			}
 
 			prev.getAllergens().addAll(component.getAllergens());
+			
+			
+			
 		}
-		// TODO merge childs
+	
 
 	}
 
