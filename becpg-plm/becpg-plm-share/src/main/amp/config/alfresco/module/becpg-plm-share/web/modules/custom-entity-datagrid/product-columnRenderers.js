@@ -176,6 +176,23 @@ if (beCPG.module.EntityDataGridRenderers) {
 
 	});
 
+	
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+		propertyName : [ "qa:clState","qa:slSampleState" ],
+		renderer : function(oRecord, data, label, scope) {
+			if(data.value!=null){
+				if(data.value=="Compliant"){
+					return '<span class="green">' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+				} else if(data.value=="NonCompliant"){
+					return '<span class="red">' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+				}
+				
+			}
+			return  Alfresco.util.encodeHTML(data.displayValue);
+		}
+
+	});
+	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : [ "bcpg:allergen",  "bcpg:ing", "bcpg:geoOrigin", "bcpg:bioOrigin", "bcpg:geo", "bcpg:microbio", "bcpg:organo" ],
 		renderer : function(oRecord, data, label, scope) {

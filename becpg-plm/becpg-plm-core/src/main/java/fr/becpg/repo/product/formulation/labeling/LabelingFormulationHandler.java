@@ -162,7 +162,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						} catch (Exception e) {
 							String message = I18NUtil.getMessage("message.formulate.labelRule.error", labelingRuleListDataItem.getName(),
 									e.getLocalizedMessage());
-							formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated,
+							formulatedProduct.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated,
 									message, null, new ArrayList<NodeRef>(), RequirementDataType.Labelling));
 							if (logger.isInfoEnabled()) {
 								logger.info("Error in formula :" + SpelHelper.formatFormula(labelingRuleListDataItem.getFormula()), e);
@@ -250,7 +250,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							} catch (Exception e) {
 								String message = I18NUtil.getMessage("message.formulate.labelRule.error", labelingRuleListDataItem.getName(),
 										e.getLocalizedMessage());
-								formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated,
+								formulatedProduct.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated,
 										message, null, new ArrayList<NodeRef>(), RequirementDataType.Labelling));
 
 								if (logger.isInfoEnabled()) {
@@ -269,10 +269,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					}
 				}
 
+			
 			}
-
-			}
-			formulatedProduct.getReqCtrlList().addAll(labelingFormulaContext.getErrors());
+			formulatedProduct.getCompoListView().getReqCtrlList().addAll(labelingFormulaContext.getErrors());
 
 		}
 

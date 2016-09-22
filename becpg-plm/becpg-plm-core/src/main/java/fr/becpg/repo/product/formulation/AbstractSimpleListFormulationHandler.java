@@ -437,6 +437,21 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 										}
 									}
 								}
+								
+								if (formula.contains(".value") && (formulatedCharactDataItem instanceof ForecastValueDataItem)) {
+									try {
+										exp = parser.parseExpression(formula.replace(".value", ".futureValue"));
+										((ForecastValueDataItem) formulatedCharactDataItem).setFutureValue((Double) exp.getValue(context));
+										exp = parser.parseExpression(formula.replace(".value", ".previousValue"));
+										((ForecastValueDataItem) formulatedCharactDataItem).setPreviousValue(((Double) exp.getValue(context)));
+									} catch (Exception e) {
+										((ForecastValueDataItem) formulatedCharactDataItem).setFutureValue(null);
+										((ForecastValueDataItem) formulatedCharactDataItem).setPreviousValue(null);
+										if (logger.isDebugEnabled()) {
+											logger.debug("Error in formula :" + formula, e);
+										}
+									}
+								}
 
 							} else {
 								error = I18NUtil.getMessage("message.formulate.formula.incorrect.type.double", Locale.getDefault());

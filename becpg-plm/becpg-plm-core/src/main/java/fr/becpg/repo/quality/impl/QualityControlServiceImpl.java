@@ -17,6 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.quality.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -24,6 +25,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -53,7 +55,6 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.repository.model.ControlableListDataItem;
 import fr.becpg.repo.repository.model.MinMaxValueDataItem;
 import fr.becpg.repo.repository.model.UnitAwareDataItem;
-import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 public class QualityControlServiceImpl implements QualityControlService {
 
@@ -135,8 +136,8 @@ public class QualityControlServiceImpl implements QualityControlService {
 					freqInHour = 8;
 					break;
 				}
-				
-				if (batchDuration != null && !"/batch".equals(freq)) {
+
+				if ((batchDuration != null) && !"/batch".equals(freq)) {
 					samplesToTake = (batchDuration / freqInHour) + 1;
 				}
 
@@ -150,7 +151,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 
 					// calculate next time
 					if (sampleDateTime != null) {
-						logger.debug("Update sample time add: "+freqInHour+" hour to "+ sampleDateTime );
+						logger.debug("Update sample time add: " + freqInHour + " hour to " + sampleDateTime);
 						sampleDateTime = new Date(sampleDateTime.getTime() + (freqInHour * HOUR));
 					}
 				}
@@ -249,7 +250,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 								QName dataListQName = QName.createQName(cdl.getType().replace("_", ":"), namespaceService);
 
 								logger.debug("Looking for list : " + dataListQName);
-								
+
 								Map<QName, List<? extends RepositoryEntity>> datalists = repositoryEntityDefReader.getDataLists(productData);
 								@SuppressWarnings("unchecked")
 								List<BeCPGDataObject> dataListItems = (List<BeCPGDataObject>) datalists.get(dataListQName);
@@ -260,8 +261,9 @@ public class QualityControlServiceImpl implements QualityControlService {
 										if (dataListItem instanceof ControlableListDataItem) {
 											ControlableListDataItem controlableListDataItem = (ControlableListDataItem) dataListItem;
 											if (n.equals(controlableListDataItem.getCharactNodeRef())) {
-												
-												logger.debug("Find matching charact in list : "+controlableListDataItem.getCharactNodeRef()+" "+dataListQName);
+
+												logger.debug("Find matching charact in list : " + controlableListDataItem.getCharactNodeRef() + " "
+														+ dataListQName);
 
 												target = controlableListDataItem.getValue();
 												textCriteria = controlableListDataItem.getTextCriteria();
@@ -338,81 +340,105 @@ public class QualityControlServiceImpl implements QualityControlService {
 
 		String sampleId = (String) nodeService.getProperty(controlListNodeRef, QualityModel.PROP_CL_SAMPLE_ID);
 		if (sampleId != null) {
-			NodeRef parentNodeRef = nodeService.getPrimaryParent(controlListNodeRef).getParentRef();
-			if (isSampleControled(parentNodeRef, sampleId)) {
-				NodeRef entityNodeRef = entityListDAO.getEntity(controlListNodeRef);
+
+			NodeRef entityNodeRef = entityListDAO.getEntity(controlListNodeRef);
+
+			if (!nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_PENDING_DELETE)) {
 				QualityControlData qualityControlData = (QualityControlData) alfrescoRepository.findOne(entityNodeRef);
+
 				boolean isQCControled = true;
 				boolean isQCCompliant = true;
 
+				for (ControlListDataItem controlListDataItem : qualityControlData.getControlList()) {
+					if (sampleId.equals(controlListDataItem.getSampleId())) {
+						if (QualityControlState.NonCompliant.equals(controlListDataItem.getState())) {
+							isQCCompliant = false;
+						} else if ((controlListDataItem.getState() == null) && Boolean.TRUE.equals(controlListDataItem.getRequired())) {
+							isQCControled = false;
+						}
+					}
+				}
+
 				for (SamplingListDataItem sl : qualityControlData.getSamplingList()) {
 					if (sampleId.equals(sl.getSampleId())) {
-						sl.setSampleState(calculateSampleState(parentNodeRef, sampleId));
-					}
-
-					if (sl.getSampleState() == null) {
-						isQCControled = false;
-					} else if (sl.getSampleState().equals(QualityControlState.NonCompliant)) {
-						isQCCompliant = false;
-					}
-				}
-
-				logger.debug("QC isQCControled : " + isQCControled + " isQCCompliant " + isQCCompliant);
-				qualityControlData.setState(null);
-				if (isQCControled) {
-					if (isQCCompliant) {
-						qualityControlData.setState(QualityControlState.Compliant);
-					} else {
-						qualityControlData.setState(QualityControlState.NonCompliant);
+						if (!isQCControled) {
+							sl.setSampleState(null);
+						} else {
+							if (isQCCompliant) {
+								sl.setSampleState(QualityControlState.Compliant);
+							} else {
+								sl.setSampleState(QualityControlState.NonCompliant);
+							}
+						}
 					}
 				}
+
 				alfrescoRepository.save(qualityControlData);
 			}
+
 		} else {
 			logger.warn("SampleId is null");
 		}
 	}
 
-	private boolean isSampleControled(NodeRef parentNodeRef, String sampleId) {
+	@Override
+	public void deleteSamplingListId(NodeRef sampleListNodeRef) {
+		NodeRef qcNodeRef = entityListDAO.getEntity(sampleListNodeRef);
 
-		boolean isSampleControled = true;
+		if (!nodeService.hasAspect(qcNodeRef, ContentModel.ASPECT_PENDING_DELETE)) {
+			QualityControlData qualityControlData = (QualityControlData) alfrescoRepository.findOne(qcNodeRef);
 
-		List<NodeRef> clNodeRefs = BeCPGQueryBuilder.createQuery().ofType(QualityModel.TYPE_CONTROL_LIST).parent(parentNodeRef)
-				.andPropEquals(QualityModel.PROP_CL_SAMPLE_ID, sampleId)
-				// unsupported in DB
-				// .andPropEquals(QualityModel.PROP_CL_REQUIRED, "true")
-				.isNull(QualityModel.PROP_CL_STATE).inDB().list();
+			List<ControlListDataItem> toRemove = new ArrayList<>();
 
-		for (NodeRef clNodeRef : clNodeRefs) {
-			Boolean isRequired = (Boolean) nodeService.getProperty(clNodeRef, QualityModel.PROP_CL_REQUIRED);
-			if ((isRequired != null) && isRequired) {
-				isSampleControled = false;
-				break;
+			String sampleId = (String) nodeService.getProperty(sampleListNodeRef, QualityModel.PROP_SL_SAMPLE_ID);
+			if (sampleId != null) {
+				for (ControlListDataItem item : qualityControlData.getControlList()) {
+					if (sampleId.equals(item.getSampleId())) {
+						toRemove.add(item);
+					}
+				}
+
 			}
-		}
+			qualityControlData.getControlList().removeAll(toRemove);
 
-		logger.debug("Is sample controled : " + isSampleControled);
-		return isSampleControled;
+			updateQualityControlState(qualityControlData);
+		}
 	}
 
-	private QualityControlState calculateSampleState(NodeRef parentNodeRef, String sampleId) {
+	@Override
+	public void updateQualityControlState(NodeRef sampleNodeRef) {
+		NodeRef entityNodeRef = entityListDAO.getEntity(sampleNodeRef);
+		if (!nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_PENDING_DELETE)) {
+			QualityControlData qualityControlData = (QualityControlData) alfrescoRepository.findOne(entityNodeRef);
+			updateQualityControlState(qualityControlData);
+		}
+	}
 
-		QualityControlState sampleState = QualityControlState.Compliant;
+	private void updateQualityControlState(QualityControlData qualityControlData) {
+		boolean isQCControled = true;
+		boolean isQCCompliant = true;
 
-		List<NodeRef> clNodeRefs = BeCPGQueryBuilder.createQuery().ofType(QualityModel.TYPE_CONTROL_LIST).parent(parentNodeRef)
-				.andPropEquals(QualityModel.PROP_CL_SAMPLE_ID, sampleId)
-				.andPropEquals(QualityModel.PROP_CL_STATE, QualityControlState.NonCompliant.toString()).inDB().list();
+		for (SamplingListDataItem sl : qualityControlData.getSamplingList()) {
 
-		for (NodeRef clNodeRef : clNodeRefs) {
-			Boolean isRequired = (Boolean) nodeService.getProperty(clNodeRef, QualityModel.PROP_CL_REQUIRED);
-			if ((isRequired != null) && isRequired) {
-				sampleState = QualityControlState.NonCompliant;
-				break;
+			if (sl.getSampleState() == null) {
+				isQCControled = false;
+			} else if (sl.getSampleState().equals(QualityControlState.NonCompliant)) {
+				isQCCompliant = false;
 			}
 		}
 
-		logger.debug("Sample state : " + sampleState);
-		return sampleState;
+		logger.debug("QC isQCControled : " + isQCControled + " isQCCompliant " + isQCCompliant);
+		qualityControlData.setState(null);
+		if (isQCControled) {
+			if (isQCCompliant) {
+				qualityControlData.setState(QualityControlState.Compliant);
+			} else {
+				qualityControlData.setState(QualityControlState.NonCompliant);
+			}
+		}
+
+		alfrescoRepository.save(qualityControlData);
+
 	}
 
 }
