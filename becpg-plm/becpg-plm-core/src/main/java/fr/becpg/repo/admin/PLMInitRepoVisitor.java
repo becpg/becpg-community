@@ -84,6 +84,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	public static final String PRODUCT_REPORT_RAWMATERIAL_PATH = "beCPG/birt/document/product/default/RawMaterialReport.rptdesign";
 	public static final String PRODUCT_REPORT_SUPPLIER_NAME = "path.rawmaterialreporttemplate";
 	private static final String NC_REPORT_PATH = "beCPG/birt/document/nonconformity/NCReport.rptdesign";
+	private static final String QUALITY_CONTROL_REPORT_PATH = "beCPG/birt/document/qualitycontrol/QualityControlReport.rptdesign";
 	private static final String ECO_REPORT_PATH = "beCPG/birt/document/ecm/ECOReport.rptdesign";
 	private static final String EXPORT_PRODUCTS_REPORT_RPTFILE_PATH = "beCPG/birt/exportsearch/product/ExportSearch.rptdesign";
 	private static final String EXPORT_PRODUCTS_REPORT_XMLFILE_PATH = "beCPG/birt/exportsearch/product/ExportSearchQuery.xml";
@@ -671,6 +672,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		dataLists.add(QualityModel.TYPE_CONTROL_LIST);
 		entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_QUALITY_CONTROL, null, true, true, dataLists, null);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
+		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_REPORTS);
 
 		// visit controlPoint
 		dataLists.clear();
@@ -769,6 +771,18 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			logger.error("Failed to create nc report tpl." + QualityModel.TYPE_NC, e);
 		}
 
+		
+		try {
+
+			ClassDefinition classDef = dictionaryService.getClass(QualityModel.TYPE_QUALITY_CONTROL);
+			NodeRef qualityFolderNodeRef = repoService.getOrCreateFolderByPath(qualityReportTplsNodeRef, classDef.getTitle(dictionaryService),
+					classDef.getTitle(dictionaryService));
+			reportTplService.createTplRptDesign(qualityFolderNodeRef, classDef.getTitle(dictionaryService), QUALITY_CONTROL_REPORT_PATH, ReportType.Document,
+					ReportFormat.PDF, QualityModel.TYPE_QUALITY_CONTROL, true, true, false);
+		} catch (Exception e) {
+			logger.error("Failed to create nc report tpl." + QualityModel.TYPE_QUALITY_CONTROL, e);
+		}
+		
 		// eco report
 		try {
 			NodeRef ecoFolderNodeRef = visitFolder(reportsNodeRef, PlmRepoConsts.PATH_REPORTS_ECO);
