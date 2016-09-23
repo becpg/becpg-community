@@ -279,14 +279,10 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 						
 						if(c.getFutureValue()!=null){
 							futureCostPerProduct= c.getFutureValue() / formulatedProduct.getProjectedQty();
-						} else {
-							futureCostPerProduct= c.getValue() / formulatedProduct.getProjectedQty();
-						}
+						} 
 						
 						if(c.getPreviousValue()!=null){
 							previousCostPerProduct= c.getPreviousValue() / formulatedProduct.getProjectedQty();
-						} else {
-							previousCostPerProduct= c.getValue() / formulatedProduct.getProjectedQty();
 						}
 						
 					}
@@ -296,15 +292,11 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 					
 					if(c.getFutureValue()!=null){
 						futureCostPerProduct= c.getFutureValue();
-					} else {
-						futureCostPerProduct= costPerProduct;
-					}
+					} 
 					
 					if(c.getPreviousValue()!=null){
 						previousCostPerProduct= c.getPreviousValue();
-					} else {
-						previousCostPerProduct= costPerProduct;
-					}
+					} 
 					
 					
 					if(formulatedProduct.getQty()!=null){
@@ -318,15 +310,11 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 					
 					if(c.getFutureValue()!=null){
 						futureCostPerProduct= netQty * c.getFutureValue();
-					} else {
-						futureCostPerProduct= costPerProduct;
 					}
 					
 					if(c.getPreviousValue()!=null){
 						previousCostPerProduct=  netQty * c.getPreviousValue();
-					} else {
-						previousCostPerProduct= costPerProduct;
-					}
+					} 
 					
 				}
 			}
