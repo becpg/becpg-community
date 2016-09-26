@@ -25,4 +25,6 @@ public interface QualityControlService {
 	void createControlList(NodeRef sampleListNodeRef);
 	void updateControlListState(NodeRef nodeRef);
 	void createSamplingListId(NodeRef sampleListNodeRef);
+	void updateQualityControlState(NodeRef nodeRef);
+	void deleteSamplingListId(NodeRef sampleListNodeRef);
 }
