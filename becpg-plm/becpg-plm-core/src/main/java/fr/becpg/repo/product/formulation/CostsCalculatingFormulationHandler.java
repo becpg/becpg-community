@@ -299,10 +299,16 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 					} 
 					
 					
-					if(formulatedProduct.getQty()!=null){
-						costPerProduct *=formulatedProduct.getQty();
-						futureCostPerProduct*=formulatedProduct.getQty();
-						previousCostPerProduct*=formulatedProduct.getQty();
+					if(formulatedProduct.getQty()!=null ){
+						if(costPerProduct!=null){
+							costPerProduct *=formulatedProduct.getQty();
+						}
+						if(futureCostPerProduct!=null){
+							futureCostPerProduct*=formulatedProduct.getQty();
+						}
+						if(previousCostPerProduct!=null){
+							previousCostPerProduct*=formulatedProduct.getQty();
+						}
 					}
 					
 				} else {
