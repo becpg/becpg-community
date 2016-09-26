@@ -37,7 +37,7 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.quality.QualityControlService;
 
 public class QualityControlPolicies extends AbstractBeCPGPolicy implements NodeServicePolicies.OnCreateAssociationPolicy,
-		NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnCreateNodePolicy {
+		NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.BeforeDeleteNodePolicy {
 
 	private static final Log logger = LogFactory.getLog(QualityControlPolicies.class);
 
@@ -69,9 +69,18 @@ public class QualityControlPolicies extends AbstractBeCPGPolicy implements NodeS
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, QualityModel.TYPE_CONTROL_LIST,
 				new JavaBehaviour(this, "onUpdateProperties", NotificationFrequency.TRANSACTION_COMMIT));
 
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, QualityModel.TYPE_SAMPLING_LIST,
+				new JavaBehaviour(this, "onUpdateProperties", NotificationFrequency.TRANSACTION_COMMIT));
+
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, QualityModel.TYPE_SAMPLING_LIST,
 				new JavaBehaviour(this, "onCreateNode", NotificationFrequency.TRANSACTION_COMMIT));
 
+		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME, QualityModel.TYPE_SAMPLING_LIST,
+				new JavaBehaviour(this, "beforeDeleteNode"));
+
+		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME, QualityModel.TYPE_CONTROL_LIST,
+				new JavaBehaviour(this, "beforeDeleteNode"));
+		
 	}
 
 	@Override
@@ -94,6 +103,9 @@ public class QualityControlPolicies extends AbstractBeCPGPolicy implements NodeS
 			logger.debug("QualityControlPolicies onUpdateProperties.");
 			qualityControlService.updateControlListState(nodeRef);
 		}
+		if (isPropChanged(before, after, QualityModel.PROP_SL_SAMPLE_STATE)) {
+			qualityControlService.updateQualityControlState(nodeRef);
+		}
 	}
 
 	@Override
@@ -115,6 +127,16 @@ public class QualityControlPolicies extends AbstractBeCPGPolicy implements NodeS
 			}
 			return null;
 		}, false, true);
+
+	}
+
+	@Override
+	public void beforeDeleteNode(NodeRef nodeRef) {
+			if (QualityModel.TYPE_CONTROL_LIST.equals(nodeService.getType(nodeRef))) {
+				qualityControlService.updateControlListState(nodeRef);
+			} else {
+				qualityControlService.deleteSamplingListId(nodeRef);
+			}
 
 	}
 }

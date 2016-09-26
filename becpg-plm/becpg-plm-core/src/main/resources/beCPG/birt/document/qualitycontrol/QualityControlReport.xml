@@ -1,0 +1,2159 @@
+<entity>
+	<images>
+		<image id="avatar" name="avatar-matthieu-small.png" />
+	</images>
+	<created prefix="cm"><![CDATA[2016-09-23T07:19:57.082Z]]></created>
+	<batchStart prefix="qa"><![CDATA[2016-09-08T22:00:00.000Z]]></batchStart>
+	<batchComment prefix="qa"><![CDATA[]]>
+	</batchComment>
+	<description prefix="cm"><![CDATA[]]>
+	</description>
+	<qcDateFab prefix="dvpqa"><![CDATA[]]>
+	</qcDateFab>
+	<qcSSCCId prefix="dvpqa"><![CDATA[]]>
+	</qcSSCCId>
+	<creator prefix="cm"><![CDATA[admin]]><email prefix="cm"><![CDATA[matthieu.laborie@becpg.fr]]></email>
+		<homeFolder prefix="cm"><![CDATA[Espace racine]]></homeFolder>
+		<homeFolderProvider prefix="cm"><![CDATA[bootstrapHomeFolderProvider]]></homeFolderProvider>
+		<skype prefix="cm"><![CDATA[]]>
+		</skype>
+		<companyaddress1 prefix="cm"><![CDATA[]]>
+		</companyaddress1>
+		<telephone prefix="cm"><![CDATA[]]>
+		</telephone>
+		<sizeQuota prefix="cm"><![CDATA[-1]]></sizeQuota>
+		<instantmsg prefix="cm"><![CDATA[]]>
+		</instantmsg>
+		<googleusername prefix="cm"><![CDATA[]]>
+		</googleusername>
+		<lastName prefix="cm"><![CDATA[]]>
+		</lastName>
+		<companytelephone prefix="cm"><![CDATA[]]>
+		</companytelephone>
+		<companyaddress2 prefix="cm"><![CDATA[]]>
+		</companyaddress2>
+		<node-dbid prefix="sys"><![CDATA[30]]></node-dbid>
+		<organization prefix="cm"><![CDATA[]]>
+		</organization>
+		<jobtitle prefix="cm"><![CDATA[]]>
+		</jobtitle>
+		<location prefix="cm"><![CDATA[]]>
+		</location>
+		<mobile prefix="cm"><![CDATA[]]>
+		</mobile>
+		<name prefix="cm"><![CDATA[56dbc016-a25d-4aac-b368-1e79c1aed6c4]]></name>
+		<userName prefix="cm"><![CDATA[admin]]></userName>
+		<owner prefix="cm"><![CDATA[admin]]></owner>
+		<companypostcode prefix="cm"><![CDATA[]]>
+		</companypostcode>
+		<companyaddress3 prefix="cm"><![CDATA[]]>
+		</companyaddress3>
+		<preferenceValues prefix="cm"><![CDATA[contentUrl=store://2016/9/23/9/23/623760a5-f30a-4db3-b991-e5802d257a5c.bin|mimetype=text/plain|size=3611|encoding=UTF-8|locale=fr_|id=38016]]></preferenceValues>
+		<organizationId prefix="cm"><![CDATA[]]>
+		</organizationId>
+		<companyemail prefix="cm"><![CDATA[]]>
+		</companyemail>
+		<persondescription prefix="cm"><![CDATA[contentUrl=store://2015/4/10/8/44/83d0d355-958c-4710-91b3-6ba379920bd5.bin|mimetype=application/octet-stream|size=0|encoding=UTF-8|locale=fr_FR_|id=3886]]></persondescription>
+		<sizeCurrent prefix="cm"><![CDATA[0]]></sizeCurrent>
+		<locale prefix="sys"><![CDATA[fr_FR]]></locale>
+		<companyfax prefix="cm"><![CDATA[]]>
+		</companyfax>
+		<emailFeedId prefix="cm"><![CDATA[81]]></emailFeedId>
+		<firstName prefix="cm"><![CDATA[Administrator]]></firstName>
+		<avatar prefix="cm"><![CDATA[avatar-matthieu-small.png]]></avatar>
+	</creator>
+	<qcState prefix="dvpqa"><![CDATA[A traiter]]></qcState>
+	<name prefix="cm"><![CDATA[QA-2016-11]]></name>
+	<batchId prefix="qa"><![CDATA[]]>
+	</batchId>
+	<startEffectivity prefix="bcpg"><![CDATA[2016-09-23T07:19:57.151Z]]></startEffectivity>
+	<qcRealizedBy prefix="dvpqa"><![CDATA[]]>
+	</qcRealizedBy>
+	<code prefix="bcpg"><![CDATA[QA5]]></code>
+	<qcProductionLine prefix="dvpqa"><![CDATA[Glaçons apéritif]]></qcProductionLine>
+	<qcBestBeforeDate prefix="dvpqa"><![CDATA[]]>
+	</qcBestBeforeDate>
+	<node-dbid prefix="sys"><![CDATA[547372]]></node-dbid>
+	<locale prefix="sys"><![CDATA[fr]]></locale>
+	<batchDuration prefix="qa"><![CDATA[]]>
+	</batchDuration>
+	<modifier prefix="cm"><![CDATA[admin]]></modifier>
+	<qcSamplesCounter prefix="qa"><![CDATA[9]]></qcSamplesCounter>
+	<modified prefix="cm"><![CDATA[2016-09-23T07:23:29.565Z]]></modified>
+	<qcState prefix="qa"><![CDATA[]]>
+	</qcState>
+	<orderId prefix="qa"><![CDATA[]]>
+	</orderId>
+	<product>
+		<finishedProduct>
+			<images>
+				<image id="avatar" name="avatar-matthieu-small.png" />
+			</images>
+			<legalName prefix="bcpg"><![CDATA[]]>
+			</legalName>
+			<legalName_fr prefix="bcpg"><![CDATA[]]>
+			</legalName_fr>
+			<productState prefix="bcpg"><![CDATA[Valid]]></productState>
+			<priceCurrency prefix="bcpg"><![CDATA[€]]></priceCurrency>
+			<tare prefix="pack"><![CDATA[0.0]]></tare>
+			<projectedQty prefix="bcpg"><![CDATA[]]>
+			</projectedQty>
+			<eanCodeLevel2 prefix="bcpg"><![CDATA[]]>
+			</eanCodeLevel2>
+			<creator prefix="cm"><![CDATA[admin]]><email prefix="cm"><![CDATA[matthieu.laborie@becpg.fr]]></email>
+				<homeFolder prefix="cm"><![CDATA[Espace racine]]></homeFolder>
+				<homeFolderProvider prefix="cm"><![CDATA[bootstrapHomeFolderProvider]]></homeFolderProvider>
+				<skype prefix="cm"><![CDATA[]]>
+				</skype>
+				<companyaddress1 prefix="cm"><![CDATA[]]>
+				</companyaddress1>
+				<telephone prefix="cm"><![CDATA[]]>
+				</telephone>
+				<sizeQuota prefix="cm"><![CDATA[-1]]></sizeQuota>
+				<instantmsg prefix="cm"><![CDATA[]]>
+				</instantmsg>
+				<googleusername prefix="cm"><![CDATA[]]>
+				</googleusername>
+				<lastName prefix="cm"><![CDATA[]]>
+				</lastName>
+				<companytelephone prefix="cm"><![CDATA[]]>
+				</companytelephone>
+				<companyaddress2 prefix="cm"><![CDATA[]]>
+				</companyaddress2>
+				<node-dbid prefix="sys"><![CDATA[30]]></node-dbid>
+				<organization prefix="cm"><![CDATA[]]>
+				</organization>
+				<jobtitle prefix="cm"><![CDATA[]]>
+				</jobtitle>
+				<location prefix="cm"><![CDATA[]]>
+				</location>
+				<mobile prefix="cm"><![CDATA[]]>
+				</mobile>
+				<name prefix="cm"><![CDATA[56dbc016-a25d-4aac-b368-1e79c1aed6c4]]></name>
+				<userName prefix="cm"><![CDATA[admin]]></userName>
+				<owner prefix="cm"><![CDATA[admin]]></owner>
+				<companypostcode prefix="cm"><![CDATA[]]>
+				</companypostcode>
+				<companyaddress3 prefix="cm"><![CDATA[]]>
+				</companyaddress3>
+				<preferenceValues prefix="cm"><![CDATA[contentUrl=store://2016/9/23/9/23/623760a5-f30a-4db3-b991-e5802d257a5c.bin|mimetype=text/plain|size=3611|encoding=UTF-8|locale=fr_|id=38016]]></preferenceValues>
+				<organizationId prefix="cm"><![CDATA[]]>
+				</organizationId>
+				<companyemail prefix="cm"><![CDATA[]]>
+				</companyemail>
+				<persondescription prefix="cm"><![CDATA[contentUrl=store://2015/4/10/8/44/83d0d355-958c-4710-91b3-6ba379920bd5.bin|mimetype=application/octet-stream|size=0|encoding=UTF-8|locale=fr_FR_|id=3886]]></persondescription>
+				<sizeCurrent prefix="cm"><![CDATA[0]]></sizeCurrent>
+				<locale prefix="sys"><![CDATA[fr_FR]]></locale>
+				<companyfax prefix="cm"><![CDATA[]]>
+				</companyfax>
+				<emailFeedId prefix="cm"><![CDATA[81]]></emailFeedId>
+				<firstName prefix="cm"><![CDATA[Administrator]]></firstName>
+				<avatar prefix="cm"><![CDATA[avatar-matthieu-small.png]]></avatar>
+			</creator>
+			<width prefix="pack"><![CDATA[]]>
+			</width>
+			<futureUnitTotalCost prefix="bcpg"><![CDATA[0.020109599999999995]]></futureUnitTotalCost>
+			<startEffectivity prefix="bcpg"><![CDATA[2015-03-16T08:19:44.767Z]]></startEffectivity>
+			<nutrientProfilingClass prefix="bcpg"><![CDATA[]]>
+			</nutrientProfilingClass>
+			<productCompoVolumeUsed prefix="bcpg"><![CDATA[12.0]]></productCompoVolumeUsed>
+			<netWeight prefix="bcpg"><![CDATA[]]>
+			</netWeight>
+			<productComments prefix="bcpg"><![CDATA[]]>
+			</productComments>
+			<code prefix="bcpg"><![CDATA[PF7]]></code>
+			<productUnit prefix="bcpg"><![CDATA[kg]]></productUnit>
+			<productDensity prefix="bcpg"><![CDATA[1.0]]></productDensity>
+			<eanCodeLevel3 prefix="bcpg"><![CDATA[]]>
+			</eanCodeLevel3>
+			<previousUnitTotalCost prefix="bcpg"><![CDATA[0.05477659228650139]]></previousUnitTotalCost>
+			<ingTypeV2 prefix="bcpg"><![CDATA[]]>
+			</ingTypeV2>
+			<netWeightUnit prefix="bcpg"><![CDATA[kg]]></netWeightUnit>
+			<useByDate prefix="bcpg"><![CDATA[]]>
+			</useByDate>
+			<productHierarchy2 prefix="bcpg"><![CDATA[]]>
+			</productHierarchy2>
+			<eanCode prefix="bcpg"><![CDATA[]]>
+			</eanCode>
+			<node-dbid prefix="sys"><![CDATA[64530]]></node-dbid>
+			<unitTotalCost prefix="bcpg"><![CDATA[1.4614547003205236]]></unitTotalCost>
+			<reportEntityGenerated prefix="rep"><![CDATA[2016-07-13T15:11:03.236Z]]></reportEntityGenerated>
+			<netVolume prefix="bcpg"><![CDATA[]]>
+			</netVolume>
+			<reportLocales prefix="rep"><![CDATA[en]]></reportLocales>
+			<unitPrice prefix="bcpg"><![CDATA[40.0]]></unitPrice>
+			<contractDate prefix="bcpg"><![CDATA[]]>
+			</contractDate>
+			<entityScore prefix="bcpg"><![CDATA[{"catalogs":[{"missingFields":[{"displayName":"Libellé légal","id":"bcpg:legalName"}],"score":80,"color":"hsl(0, 60%, 50%)","label":"EU 1169/2011 (INCO)","id":"incoFinishedProduct","locale":"en"}],"global":68.33333333333333,"details":{"componentsValidation":25,"mandatoryFields":80,"specifications":100}}]]></entityScore>
+			<breakEven prefix="bcpg"><![CDATA[0]]></breakEven>
+			<endEffectivity prefix="bcpg"><![CDATA[]]>
+			</endEffectivity>
+			<created prefix="cm"><![CDATA[2015-03-16T08:19:44.695Z]]></created>
+			<profitability prefix="bcpg"><![CDATA[96.34636324919869]]></profitability>
+			<packagingDescription prefix="bcpg"><![CDATA[]]>
+			</packagingDescription>
+			<description prefix="cm"><![CDATA[]]>
+			</description>
+			<commentCount prefix="fm"><![CDATA[1]]></commentCount>
+			<bestBeforeDate prefix="bcpg"><![CDATA[150]]></bestBeforeDate>
+			<periodAfterOpening prefix="bcpg"><![CDATA[500]]></periodAfterOpening>
+			<name prefix="cm"><![CDATA[Tarte abricôt]]></name>
+			<nutrientProfilingScore prefix="bcpg"><![CDATA[]]>
+			</nutrientProfilingScore>
+			<servingSize prefix="bcpg"><![CDATA[]]>
+			</servingSize>
+			<erpCode prefix="bcpg"><![CDATA[]]>
+			</erpCode>
+			<productHierarchy1 prefix="bcpg"><![CDATA[]]>
+			</productHierarchy1>
+			<length prefix="pack"><![CDATA[]]>
+			</length>
+			<title prefix="cm"><![CDATA[Tarte abricôt]]></title>
+			<title_fr prefix="cm"><![CDATA[Test]]></title_fr>
+			<title_en prefix="cm"><![CDATA[Test en]]></title_en>
+			<productQty prefix="bcpg"><![CDATA[]]>
+			</productQty>
+			<height prefix="pack"><![CDATA[]]>
+			</height>
+			<formulatedDate prefix="bcpg"><![CDATA[2016-09-22T17:00:06.841Z]]></formulatedDate>
+			<productCompoQtyUsed prefix="bcpg"><![CDATA[12.0]]></productCompoQtyUsed>
+			<locale prefix="sys"><![CDATA[fr]]></locale>
+			<tareUnit prefix="pack"><![CDATA[g]]></tareUnit>
+			<preparationTips prefix="bcpg"><![CDATA[]]>
+			</preparationTips>
+			<numberOfServings prefix="bcpg"><![CDATA[]]>
+			</numberOfServings>
+			<modifier prefix="cm"><![CDATA[admin]]></modifier>
+			<modified prefix="cm"><![CDATA[2016-09-22T16:58:53.873Z]]></modified>
+			<entityTplRef prefix="bcpg"><![CDATA[Produit fini]]></entityTplRef>
+			<clients prefix="bcpg"><![CDATA[CARREFOUR]]></clients>
+			<productSpecifications />
+			<comments>
+				<comment>
+					<created prefix="cm"><![CDATA[2015-03-16T08:20:43.007Z]]></created>
+					<title prefix="cm"><![CDATA[]]>
+					</title>
+					<title_fr prefix="cm"><![CDATA[]]>
+					</title_fr>
+					<creator prefix="cm"><![CDATA[admin]]></creator>
+					<name prefix="cm"><![CDATA[comment-1426494043005]]></name>
+					<node-dbid prefix="sys"><![CDATA[64624]]></node-dbid>
+					<locale prefix="sys"><![CDATA[fr]]></locale>
+					<modifier prefix="cm"><![CDATA[admin]]></modifier>
+					<modified prefix="cm"><![CDATA[2015-03-16T08:20:43.007Z]]></modified>
+					<content prefix="cm"><![CDATA[]]></content>
+				</comment>
+			</comments>
+			<aspects><![CDATA[formulatedEntityAspect, consumerAspect, tareAspect, erpCodeAspect, referenceable, contractDateAspect, entityScoreAspect, discussable, transformationAspect, titled, auditable, productAspect, nutrientProfilingScoreAspect, sizeAspect, effectivityAspect, productMicrobioCriteriaAspect, reportLocalesAspect, legalNameAspect, localized, entityTplRefAspect, entityListsAspect, codeAspect, reportEntityAspect, ingTypeAspect, profitabilityAspect, clientsAspect, palletAspect, pmMaterialAspect, eanAspect, commentsRollup]]></aspects>
+			<itemType><![CDATA[finishedProduct]]></itemType>
+			<dataLists>
+				<costLists>
+					<costList parentLevel="" costListPreviousValuePerProduct="0.05477659228650139" costListValuePerProduct="1.4614547003205236"
+						costListSimulatedValue="" name="9a43acce-8ab2-459f-9ad9-4c556016ddc3" costListFutureValue="0.0016757999999999996" costListFormulaErrorLog=""
+						costListUnit="€/kg" costListPreviousValue="0.004564716023875116" costListFutureValuePerProduct="0.020109599999999995" costListMaxi="0.0"
+						isManualListItem="false" node-dbid="547302" locale="fr" costListValue="0.12178789169337696" sort="104" depthLevel="1" costListIsFormulated="false"
+						costListCost="PRV+LOG">
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+					</costList>
+					<costList parentLevel="9a43acce-8ab2-459f-9ad9-4c556016ddc3" costListPreviousValuePerProduct="" costListValuePerProduct=""
+						costListSimulatedValue="" name="473e3ced-f144-48ff-bdd3-1b754dcf9c6b" costListFutureValue="" costListFormulaErrorLog="" costListUnit="€/kg"
+						costListPreviousValue="" costListFutureValuePerProduct="" costListMaxi="" isManualListItem="false" node-dbid="547300" locale="fr" costListValue=""
+						sort="105" depthLevel="2" costListIsFormulated="false" costListCost="Coût Logistique" legalName="">
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+					</costList>
+					<costList parentLevel="9a43acce-8ab2-459f-9ad9-4c556016ddc3" costListPreviousValuePerProduct="" costListValuePerProduct=""
+						costListSimulatedValue="" name="Coût MP" costListFutureValue="" costListFormulaErrorLog="Caractéristique 'Coût MP' non renseignée : Test"
+						costListUnit="€/kg" costListPreviousValue="" costListFutureValuePerProduct="" costListMaxi="" isManualListItem="false" node-dbid="547292"
+						locale="fr_FR" costListValue="" sort="106" depthLevel="2" costListIsFormulated="false" costListCost="Coût MP">
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+					</costList>
+					<costList parentLevel="9a43acce-8ab2-459f-9ad9-4c556016ddc3" costListPreviousValuePerProduct="0.009129432047750232"
+						costListValuePerProduct="0.01024245005342057" costListSimulatedValue="" name="Coût Emb" costListFutureValue="2.7929999999999996E-4"
+						costListFormulaErrorLog="" costListUnit="€/kg" costListPreviousValue="7.607860039791861E-4" costListFutureValuePerProduct="0.0033515999999999997"
+						costListMaxi="" isManualListItem="false" node-dbid="547295" locale="fr_FR" costListValue="8.535375044517141E-4" sort="107" depthLevel="2"
+						costListIsFormulated="false" costListCost="Coût Emb">
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+					</costList>
+					<costList parentLevel="9a43acce-8ab2-459f-9ad9-4c556016ddc3" costListPreviousValuePerProduct="1.4" costListValuePerProduct="1.4"
+						costListSimulatedValue="" name="Coût Production" costListFutureValue="" costListFormulaErrorLog="" costListUnit="€/kg" costListPreviousValue=""
+						costListFutureValuePerProduct="1.4" costListMaxi="" isManualListItem="false" node-dbid="547297" locale="fr_FR" costListValue="0.11666666666666667"
+						sort="108" depthLevel="2" costListIsFormulated="false" costListCost="Coût Production">
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+					</costList>
+					<costList parentLevel="9a43acce-8ab2-459f-9ad9-4c556016ddc3" costListPreviousValuePerProduct="0.045647160238751164"
+						costListValuePerProduct="0.05121225026710285" costListSimulatedValue="" name="9fedea84-4ae1-473d-821b-fa7de6ef4a61" costListFutureValue="0.0013964999999999997"
+						costListFormulaErrorLog="" costListUnit="€/kg" costListPreviousValue="0.0038039300198959305" costListFutureValuePerProduct="0.016757999999999995"
+						costListMaxi="" isManualListItem="false" node-dbid="547304" locale="fr" costListValue="0.004267687522258571" sort="109" depthLevel="2"
+						costListIsFormulated="true" costListCost="Coût Immobilisation" legalName="">
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+					</costList>
+				</costLists>
+				<allergenLists allergenListVoluntary="" allergenListInVoluntary="Arachides et produits à base d'arachide, lait"
+					allergenListInVoluntaryFromProcess="Arachides et produits à base d'arachide, lait" allergenListInVoluntaryFromRawMaterial="">
+					<allergenList allergenType="Major" allergenListQtyPerc="0.0" variantIds="" allergenListVoluntary="false" isManualListItem="false"
+						name="d2ce89db-218d-4d6a-b4a9-fba8f4759f3e" node-dbid="536791" locale="fr_FR" allergenListInVoluntary="false" sort="1"
+						allergenListAllergen="Anhydride sulfureux et sulfites" legalName="sulfites" isDefaultVariant="true">
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+					</allergenList>
+					<allergenList allergenType="Major" allergenListQtyPerc="" variantIds="" allergenListVoluntary="false" isManualListItem="false"
+						name="52a62a28-f35b-486f-9fb3-afce9fead7b7" node-dbid="534088" locale="fr_FR" allergenListInVoluntary="true" sort="2" allergenListInVolSources="Ligne 1"
+						allergenListAllergen="Arachides et produits à base d'arachide" legalName="Arachides et produits à base d'arachide" isDefaultVariant="true">
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+					</allergenList>
+					<allergenList allergenType="Major" allergenListQtyPerc="" variantIds="" allergenListVoluntary="false" isManualListItem="false"
+						name="6c2a64bb-918d-4ada-bf21-5879c6750de2" node-dbid="536783" locale="fr_FR" allergenListInVoluntary="false" sort="3"
+						allergenListAllergen="Crustacés et produits à base de crustacés" legalName="crustacé" isDefaultVariant="true">
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+					</allergenList>
+					<allergenList allergenType="Major" allergenListQtyPerc="" variantIds="" allergenListVoluntary="false" isManualListItem="false"
+						name="9fabeb3e-294d-4789-b035-40fc55b3432e" node-dbid="536788" locale="fr_FR" allergenListInVoluntary="false" sort="4"
+						allergenListAllergen="Céleri et produits à base de céleri" legalName="céleri" isDefaultVariant="true">
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+					</allergenList>
+					<allergenList allergenType="Major" allergenListQtyPerc="" variantIds="" allergenListVoluntary="false" isManualListItem="false"
+						name="1c484e59-c8f8-468c-b0ce-b543adc75f3f" node-dbid="536782" locale="fr_FR" allergenListInVoluntary="false" sort="5"
+						allergenListAllergen="Céréales contenant du gluten et produits à base de ces céréales" legalName="gluten" isDefaultVariant="true">
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+					</allergenList>
+					<allergenList allergenType="Major" allergenListQtyPerc="" variantIds="" allergenListVoluntary="false" isManualListItem="false"
+						name="bbe315a5-960f-42e1-b353-c3b545d52127" node-dbid="536786" locale="fr_FR" allergenListInVoluntary="false" sort="6"
+						allergenListAllergen="Fruits à Coque- (noix noisettes)" legalName="fruits à coque" isDefaultVariant="true">
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+					</allergenList>
+					<allergenList allergenType="Major" allergenListQtyPerc="" variantIds="" allergenListVoluntary="false" isManualListItem="false"
+						name="b0f85ce9-5cae-488c-ae5f-493a2fb26bff" node-dbid="536790" locale="fr_FR" allergenListInVoluntary="false" sort="7"
+						allergenListAllergen="Graines de sésame et produits à base de graines de sésame" legalName="sésame" isDefaultVariant="true">
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+					</allergenList>
+					<allergenList allergenType="Major" allergenListQtyPerc="" variantIds="" allergenListVoluntary="false" isManualListItem="false"
+						name="2c24273a-3604-45a1-ac1b-cff3cd4fd85f" node-dbid="534089" locale="fr_FR" allergenListInVoluntary="true" sort="8" allergenListInVolSources="Ligne 1"
+						allergenListAllergen="Lait et produit à base de (dont lactose)" legalName="lait" isDefaultVariant="true">
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+					</allergenList>
+					<allergenList allergenType="Major" allergenListQtyPerc="" variantIds="" allergenListVoluntary="false" isManualListItem="false"
+						name="9faeb4f4-ba71-44a1-84cf-6008051dfe59" node-dbid="536792" locale="fr_FR" allergenListInVoluntary="false" sort="9"
+						allergenListAllergen="Lupin  et produits à base de lupin" legalName="lupin" isDefaultVariant="true">
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+					</allergenList>
+					<allergenList allergenType="Major" allergenListQtyPerc="" variantIds="" allergenListVoluntary="false" isManualListItem="false"
+						name="377a98b5-95d6-43a2-95ad-fe4b4b286194" node-dbid="536793" locale="fr_FR" allergenListInVoluntary="false" sort="10"
+						allergenListAllergen="Mollusque  et produits à base de mollusque" legalName="mollusque" isDefaultVariant="true">
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+					</allergenList>
+					<allergenList allergenType="Major" allergenListQtyPerc="" variantIds="" allergenListVoluntary="false" isManualListItem="false"
+						name="0d16cd0f-d75f-4b93-b063-5a345fe6050c" node-dbid="536789" locale="fr_FR" allergenListInVoluntary="false" sort="11"
+						allergenListAllergen="Moutarde et produits à base de moutarde" legalName="moutarde" isDefaultVariant="true">
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+					</allergenList>
+					<allergenList allergenType="Major" allergenListQtyPerc="" variantIds="" allergenListVoluntary="false" isManualListItem="false"
+						name="7704dc20-dbd5-4017-88fd-e4cde717c0a8" node-dbid="536784" locale="fr_FR" allergenListInVoluntary="false" sort="12"
+						allergenListAllergen="Oeuf et produit à base d'oeuf" legalName="oeuf" isDefaultVariant="true">
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+					</allergenList>
+					<allergenList allergenType="Major" allergenListQtyPerc="" variantIds="" allergenListVoluntary="false" isManualListItem="false"
+						name="126c1254-b887-4f6b-983b-fa7bdbb6a17d" node-dbid="536787" locale="fr_FR" allergenListInVoluntary="false" sort="13"
+						allergenListAllergen="Poisson et produit à base de poisson" legalName="poisson" isDefaultVariant="true">
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+					</allergenList>
+					<allergenList allergenType="Major" allergenListQtyPerc="" variantIds="" allergenListVoluntary="false" isManualListItem="false"
+						name="ddd39d0e-b32b-4244-808e-0c38776ec0ba" node-dbid="536785" locale="fr_FR" allergenListInVoluntary="false" sort="14"
+						allergenListAllergen="Soja et produits à base de soja" legalName="soja" isDefaultVariant="true">
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+					</allergenList>
+				</allergenLists>
+				<labelClaimLists>
+					<labelClaimList lclType="Avec espace ét accent" lclFormulaErrorLog="" lclIsFormulated="false" isManualListItem="false"
+						name="09a88bdb-a05c-4913-aed1-0b1c7f0d5d5d" node-dbid="112692" locale="en" sort="100" lclClaimValue="" lclLabelClaim="Naturellement-naturel"
+						legalName="Naturellement/naturel">
+						<description prefix="cm"><![CDATA[Lorsqu'une denrée alimentaire remplit naturellement la ou les conditions fixées dans la présente annexe pour l'utilisation d'une allégation nutritionnelle, le terme «naturellement/naturel» peut accompagner cette allégation.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="e2558277-f959-47a1-87b0-8a35468d464b" node-dbid="112693" locale="en" sort="101" lclClaimValue="false" lclLabelClaim="Riche en Vitamine D"
+						legalName="Riche en Vitamine D">
+						<description prefix="cm"><![CDATA[30 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 15 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="EL1025E:(pos 91): The collection has '0' elements, index '0' is invalid"
+						lclIsFormulated="true" isManualListItem="false" name="df5c2ae5-0516-478a-8d57-516bafeeafe0" node-dbid="112694" locale="en" sort="102"
+						lclClaimValue="" lclLabelClaim="Sans sodium ou sans sel" legalName="Sans sodium ou sans sel">
+						<description prefix="cm"><![CDATA[Une allégation selon laquelle une denrée alimentaire ne contient pas de sodium ou de sel, ou toute autre allégation susceptible d'avoir le même sens pour le consommateur, ne peut être faite que si le produit ne contient pas plus de 0,005 g de sodium ou de l'équivalent en sel par 100 g.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="fa1a0f75-6616-4133-ad5a-4352a37b6579" node-dbid="112695" locale="en" sort="103" lclClaimValue="false" lclLabelClaim="Riche en protéines"
+						legalName="Riche en protéines">
+						<description prefix="cm"><![CDATA[Une allégation selon laquelle une denrée alimentaire est riche en protéines, ou toute autre allégation susceptible d'avoir le même sens pour le consommateur, ne peut être faite que si 20 % au moins de la valeur énergétique de la denrée alimentaire sont produits par des protéines.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Santé" lclFormulaErrorLog="" lclIsFormulated="false" isManualListItem="false"
+						name="3a089a82-2cc1-4185-a0ee-1f805f2ccbbf" node-dbid="113109" locale="fr" sort="104" lclClaimValue="" lclLabelClaim="Sans BPA" legalName="Sans BPA">
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+					</labelClaimList>
+					<labelClaimList lclType="Santé" lclFormulaErrorLog="" lclIsFormulated="false" isManualListItem="false"
+						name="21b84844-9719-4327-9f09-e436d24386e7" node-dbid="113110" locale="fr" sort="105" lclClaimValue="" lclLabelClaim="Sans huile de palme"
+						legalName="Sans huile de palme">
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+					</labelClaimList>
+					<labelClaimList lclType="Environnementale" lclFormulaErrorLog="" lclIsFormulated="false" isManualListItem="false"
+						name="16702a1f-5c85-4a22-8097-13cb7a8a9687" node-dbid="113111" locale="fr" sort="106" lclClaimValue=""
+						lclLabelClaim="Produit exempt de matières grasses de palme" legalName="Produit exempt de matières grasses de palme">
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+					</labelClaimList>
+					<labelClaimList lclType="Certification" lclFormulaErrorLog="" lclIsFormulated="false" isManualListItem="false"
+						name="0597d8c9-7e53-4d6b-9ce2-616ed77c30a2" node-dbid="113112" locale="fr" sort="107" lclClaimValue="" lclLabelClaim="Produit bio"
+						legalName="Produit issu de l'agriculture biologique">
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+					</labelClaimList>
+					<labelClaimList lclType="Certification" lclFormulaErrorLog="" lclIsFormulated="false" isManualListItem="false"
+						name="a5524f51-5ebd-4c08-8c63-9bbd4ca5f6ef" node-dbid="113113" locale="fr" sort="108" lclClaimValue="" lclLabelClaim="Commerce équitable"
+						legalName="Produit issu du commerce équitable">
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+					</labelClaimList>
+					<labelClaimList lclType="Certification" lclFormulaErrorLog="" lclIsFormulated="false" isManualListItem="false"
+						name="85a3011f-08fe-4520-83b5-991f53ab186d" node-dbid="113114" locale="fr" sort="109" lclClaimValue="" lclLabelClaim="Casher" legalName="Produit casher">
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+					</labelClaimList>
+					<labelClaimList lclType="Certification" lclFormulaErrorLog="" lclIsFormulated="false" isManualListItem="false"
+						name="5891c34e-7a1d-49db-8422-f18fe989eb3b" node-dbid="113115" locale="fr" sort="110" lclClaimValue="" lclLabelClaim="Halal" legalName="Produit halal">
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+					</labelClaimList>
+					<labelClaimList lclType="Certification" lclFormulaErrorLog="" lclIsFormulated="false" isManualListItem="false"
+						name="b92c4a1f-d8a1-49f5-9f9f-56bab52754b2" node-dbid="113116" locale="fr" sort="111" lclClaimValue="" lclLabelClaim="Agréé contact alimentaire"
+						legalName="Agréé contact alimentaire">
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="EL1025E:(pos 127): The collection has '0' elements, index '0' is invalid"
+						lclIsFormulated="true" isManualListItem="false" name="b4db2c0a-e451-4fd5-9c75-536b6b1d13dd" node-dbid="113117" locale="fr" sort="112"
+						lclClaimValue="" lclLabelClaim="Faible valeur énergétique" legalName="Faible valeur énergétique">
+						<description prefix="cm"><![CDATA[Une allégation selon laquelle une denrée alimentaire a une faible valeur énergétique, ou toute autre allégation susceptible d'avoir le même sens pour le consommateur, ne peut être faite que pour un produit contenant au maximum 40 kcal (170 kJ)/100 g dans le cas des solides ou au maximum 20 kcal (80 kJ)/100 ml dans le cas des liquides. Dans le cas des édulcorants de table, la limite de 4 kcal (17 kJ)/portion, avec des propriétés édulcorantes équivalentes à 6 g de saccharose (approximativement 1 petite cuillérée de saccharose), s'applique.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="false" isManualListItem="false"
+						name="2b91618e-4711-462c-8f5c-26d30a3371be" node-dbid="113118" locale="fr" sort="113" lclClaimValue="" lclLabelClaim="Valeur énergétique réduite"
+						legalName="Valeur énergétique réduite">
+						<description prefix="cm"><![CDATA[Une allégation selon laquelle une denrée alimentaire a une valeur énergétique réduite, ou toute autre allégation susceptible d'avoir le même sens pour le consommateur, ne peut être faite que si la valeur énergétique est réduite d'au moins 30 %, en indiquant la ou les caractéristiques entraînant la réduction de la valeur énergétique totale de la denrée alimentaire.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="EL1025E:(pos 91): The collection has '0' elements, index '0' is invalid"
+						lclIsFormulated="true" isManualListItem="false" name="aa025218-eb94-42ce-8ca4-3e2db50fdfd1" node-dbid="113119" locale="fr" sort="114"
+						lclClaimValue="" lclLabelClaim="Sans apport énergétique" legalName="Sans apport énergétique">
+						<description prefix="cm"><![CDATA[Une allégation selon laquelle une denrée alimentaire n'a pas d'apport énergétique, ou toute autre allégation susceptible d'avoir le même sens pour le consommateur, ne peut être faite que si le produit contient au maximum 4 kcal (17 kJ)/ 100 ml. Dans le cas des édulcorants de table, la limite de 0,4 kcal (1,7 kJ)/portion, ayant des propriétés édulcorantes équivalentes à 6 g de saccharose (approximativement 1 petite cuillérée de saccharose), s'applique.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="EL1025E:(pos 126): The collection has '0' elements, index '0' is invalid"
+						lclIsFormulated="true" isManualListItem="false" name="3ae41e64-c3f3-43c0-81cc-0db551bb2831" node-dbid="113120" locale="fr" sort="115"
+						lclClaimValue="" lclLabelClaim="Faible teneur en matières grasses" legalName="Faible teneur en matières grasses">
+						<description prefix="cm"><![CDATA[Une allégation selon laquelle une denrée alimentaire a une faible teneur en matières grasses, ou toute autre allégation susceptible d'avoir le même sens pour le consommateur, ne peut être faite que si le produit ne contient pas plus de 3 g de matières grasses par 100 g dans le cas des solides ou 1,5 g de matières grasses par 100 ml dans le cas des liquides (1,8 g de matières grasses par 100 ml pour le lait demi-écrémé).]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="EL1025E:(pos 91): The collection has '0' elements, index '0' is invalid"
+						lclIsFormulated="true" isManualListItem="false" name="32eabaf8-89af-49fd-ba93-6e1ed4f71c4d" node-dbid="113121" locale="fr" sort="116"
+						lclClaimValue="" lclLabelClaim="Sans matières grasses" legalName="Sans matières grasses">
+						<description prefix="cm"><![CDATA[Une allégation selon laquelle une denrée alimentaire ne contient pas de matières grasses, ou toute autre allégation susceptible d'avoir le même sens pour le consommateur, ne peut être faite que si le produit ne contient pas plus de 0,5 g de matières grasses par 100 g ou par 100 ml. Cependant, les allégations du type «à X % sans matières grasses» sont interdites.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="false" isManualListItem="false"
+						name="e3a70d29-cdbc-450e-887a-58f85ee3cce8" node-dbid="113122" locale="fr" sort="117" lclClaimValue="" lclLabelClaim="Faible teneur en graisses saturées"
+						legalName="Faible teneur en graisses saturées">
+						<description prefix="cm"><![CDATA[Une allégation selon laquelle une denrée alimentaire a une faible teneur en graisses saturées, ou toute autre allégation susceptible d'avoir le même sens pour le consommateur, ne peut être faite que si la somme des acides gras saturés et des acides gras trans contenus dans le produit n'est pas supérieure à 1,5 g par 100 g de solide ou à 0,75 g par 100 ml de liquide, la somme des acides gras saturés et des acides gras trans ne pouvant pas produire, dans les deux cas, plus de 10 % de l'énergie.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="false" isManualListItem="false"
+						name="9abc07ad-2446-441d-b8e7-7d4f02126bc0" node-dbid="113123" locale="fr" sort="118" lclClaimValue="" lclLabelClaim="Sans graisses saturées"
+						legalName="Sans graisses saturées">
+						<description prefix="cm"><![CDATA[Une allégation selon laquelle une denrée alimentaire ne contient pas de graisses saturées, ou toute autre allégation susceptible d'avoir le même sens pour le consommateur, ne peut être faite que si la somme des acides gras saturés et des acides gras trans n'excède pas 0,1 g de graisses saturées par 100 g ou par 100 ml.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="EL1025E:(pos 126): The collection has '0' elements, index '0' is invalid"
+						lclIsFormulated="true" isManualListItem="false" name="f8a98f64-a975-4dea-bdd8-5c8a6bcff0c2" node-dbid="113124" locale="fr" sort="119"
+						lclClaimValue="" lclLabelClaim="Faible teneur en sucres" legalName="Faible teneur en sucres">
+						<description prefix="cm"><![CDATA[Une allégation selon laquelle une denrée alimentaire a une faible teneur en sucres, ou toute autre allégation susceptible d'avoir le même sens pour le consommateur, ne peut être faite que si le produit ne contient pas plus de 5 g de sucres par 100 g dans le cas des solides ou 2,5 g de sucres par 100 ml dans le cas des liquides.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="EL1025E:(pos 91): The collection has '0' elements, index '0' is invalid"
+						lclIsFormulated="true" isManualListItem="false" name="9e557e6f-0bbb-4e9f-b0a6-facbef401329" node-dbid="113125" locale="fr" sort="120"
+						lclClaimValue="" lclLabelClaim="Sans sucres" legalName="Sans sucres">
+						<description prefix="cm"><![CDATA[Une allégation selon laquelle une denrée alimentaire ne contient pas de sucres, ou toute autre allégation susceptible d'avoir le même sens pour le consommateur, ne peut être faite que si le produit ne contient pas plus de 0,5 g de sucres par 100 g ou par 100 ml.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="false" isManualListItem="false"
+						name="ab6e97af-4fe4-4139-b1b8-42e9dd04ecf4" node-dbid="113126" locale="fr" sort="121" lclClaimValue="" lclLabelClaim="Sans sucres ajoutés"
+						legalName="Sans sucres ajoutés">
+						<description prefix="cm"><![CDATA[Une allégation selon laquelle il n'a pas été ajouté de sucres à une denrée alimentaire, ou toute autre allégation susceptible d'avoir le même sens pour le consommateur, ne peut être faite que si le produit ne contient pas de monosaccharides ou disaccharides ajoutés ou toute autre denrée alimentaire utilisée pour ses propriétés édulcorantes. Si les sucres sont naturellement présents dans la denrée alimentaire, l'indication suivante devrait également figurer sur l'étiquette: «CONTIENT DES SUCRES NATURELLEMENT PRÉSENTS».]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="EL1025E:(pos 101): The collection has '0' elements, index '0' is invalid"
+						lclIsFormulated="true" isManualListItem="false" name="e93a72d8-a96a-49b9-aa65-97af675eca02" node-dbid="113127" locale="fr" sort="122"
+						lclClaimValue="" lclLabelClaim="Pauvre en sodium ou en sel" legalName="Pauvre en sodium ou en sel">
+						<description prefix="cm"><![CDATA[Une allégation selon laquelle une denrée alimentaire est pauvre en sodium ou en sel, ou toute autre allégation susceptible d'avoir le même sens pour le consommateur, ne peut être faite que si le produit ne contient pas plus de 0,12 g de sodium ou de l'équivalent en sel par 100 g ou par 100 ml. En ce qui concerne les eaux, autres que les eaux minérales naturelles, cette valeur ne devrait pas être supérieure à 2 mg de sodium par 100 ml.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="EL1025E:(pos 101): The collection has '0' elements, index '0' is invalid"
+						lclIsFormulated="true" isManualListItem="false" name="471d3409-2e4e-4d44-b164-1f886542d87d" node-dbid="113128" locale="fr" sort="123"
+						lclClaimValue="" lclLabelClaim="Très pauvre en sodium ou en sel" legalName="Très pauvre en sodium ou en sel">
+						<description prefix="cm"><![CDATA[Une allégation selon laquelle une denrée alimentaire est très pauvre en sodium ou en sel, ou toute autre allégation susceptible d'avoir le même sens pour le consommateur, ne peut être faite que si le produit ne contient pas plus de 0,04 g de sodium ou de l'équivalent en sel par 100 g ou 100 ml. Il est interdit d'utiliser cette allégation pour les eaux minérales naturelles et les autres eaux.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="EL1025E:(pos 105): The collection has '0' elements, index '0' is invalid"
+						lclIsFormulated="true" isManualListItem="false" name="bbf55d18-1e3a-4611-bc74-bbcd7d2bc404" node-dbid="113129" locale="fr" sort="125"
+						lclClaimValue="" lclLabelClaim="Source de fibres" legalName="Source de fibres">
+						<description prefix="cm"><![CDATA[Une allégation selon laquelle une denrée alimentaire est une source de fibres, ou toute autre allégation susceptible d'avoir le même sens pour le consommateur, ne peut être faite que si le produit contient au moins 3 g de fibres par 100 g ou au moins 1,5 g de fibres par 100 kcals.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="533bed8f-c73c-495e-a7bd-e4e6653e5231" node-dbid="113130" locale="fr" sort="126" lclClaimValue="false" lclLabelClaim="Riche en fibres"
+						legalName="Riche en fibres">
+						<description prefix="cm"><![CDATA[Une allégation selon laquelle une denrée alimentaire est riche en fibres, ou toute autre allégation susceptible d'avoir le même sens pour le consommateur, ne peut être faite que si le produit contient au moins 6 g de fibres par 100 g ou au moins 3 g de fibres par 100 kcals.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="f5419dd1-b099-44e1-bc40-01aabd584541" node-dbid="113131" locale="fr" sort="127" lclClaimValue="false" lclLabelClaim="Source de protéines"
+						legalName="Source de protéines">
+						<description prefix="cm"><![CDATA[Une allégation selon laquelle une denrée alimentaire est une source de protéines, ou toute autre allégation susceptible d'avoir le même sens pour le consommateur, ne peut être faite que si 12 % au moins de la valeur énergétique de la denrée alimentaire sont produits par des protéines.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="false" isManualListItem="false"
+						name="80bd58c9-f7c4-4dc5-bffc-312f89626489" node-dbid="113132" locale="fr" sort="129" lclClaimValue=""
+						lclLabelClaim="Source de [nom des vitamines] et/ou [nom des minéraux]" legalName="Source de [nom des vitamines] et/ou [nom des minéraux]">
+						<description prefix="cm"><![CDATA[Une allégation selon laquelle une denrée alimentaire est une source de vitamines et/ou de minéraux, ou toute autre allégation susceptible d'avoir le même sens pour le consommateur, ne peut être faite que si le produit contient au moins la quantité significative.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="false" isManualListItem="false"
+						name="cb9b32f9-b4f2-461e-8596-32e03034954c" node-dbid="113133" locale="fr" sort="130" lclClaimValue=""
+						lclLabelClaim="Riche en [nom des vitamines] et/ou en [nom des minéraux]" legalName="Riche en [nom des vitamines] et/ou en [nom des minéraux]">
+						<description prefix="cm"><![CDATA[Une allégation selon laquelle une denrée alimentaire est riche en vitamines et/ou en minéraux, ou toute autre allégation susceptible d'avoir le même sens pour le consommateur, ne peut être faite que si le produit contient au moins deux fois la teneur requise pour l'allégation «source de [NOM DES VITAMINES] et/ou [NOM DES MINÉRAUX]».]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="false" isManualListItem="false"
+						name="e949c05c-c018-42d7-bf44-8b659ac0633e" node-dbid="113134" locale="fr" sort="131" lclClaimValue=""
+						lclLabelClaim="Contient [nom du nutriment ou d'une autre substance]" legalName="Contient [nom du nutriment ou d'une autre substance]">
+						<description prefix="cm"><![CDATA[Une allégation selon laquelle une denrée alimentaire contient un nutriment ou une autre substance pour lequel ou laquelle le présent règlement ne fixe pas de conditions particulières, ou toute autre allégation susceptible d'avoir le même sens pour le consommateur, ne peut être faite que si le produit respecte toutes les dispositions applicables du règlement européen. Pour les vitamines et les minéraux, les conditions prévues pour l'allégation «source de» s'appliquent]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="false" isManualListItem="false"
+						name="5e44b7e8-82bf-43b0-8418-d2635f477ac2" node-dbid="113135" locale="fr" sort="132" lclClaimValue="" lclLabelClaim="Enrichi en (nom du nutriment)"
+						legalName="Enrichi en (nom du nutriment)">
+						<description prefix="cm"><![CDATA[Une allégation affirmant que la teneur en un ou plusieurs nutriments, autres que des vitamines ou des minéraux, a été augmentée, ou toute autre allégation susceptible d'avoir le même sens pour le consommateur, ne peut être faite que si le produit remplit les conditions applicables à l'allégation «source de» et si l'augmentation de cette teneur est d'au moins 30 % par rapport à un produit similaire.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="false" isManualListItem="false"
+						name="494d7d90-e286-4f49-985c-4851edfafcad" node-dbid="113136" locale="fr" sort="133" lclClaimValue="" lclLabelClaim="Réduit en (nom du nutriment)"
+						legalName="Réduit en (nom du nutriment)">
+						<description prefix="cm"><![CDATA[Une allégation affirmant que la teneur en un ou plusieurs nutriments a été réduite, ou toute autre allégation susceptible d'avoir le même sens pour le consommateur, ne peut être faite que si la réduction de cette teneur est d'au moins 30 % par rapport à un produit similaire, sauf s'il s'agit de micronutriments, pour lesquels une différence de 10 % par rapport aux valeurs de référence est admissible, ou s'il s'agit de sodium ou d'équivalent en sel, pour lesquels une différence de 25 % est admissible.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="false" isManualListItem="false"
+						name="d391ff5b-2c0b-4698-b2c4-6de42a9b2676" node-dbid="113137" locale="fr" sort="134" lclClaimValue="" lclLabelClaim="Allégé/light" legalName="Allégé/light">
+						<description prefix="cm"><![CDATA[Une allégation selon laquelle un produit est «allégé» ou «light», ou toute autre allégation susceptible d'avoir le même sens pour le consommateur, doit remplir les mêmes conditions que celles applicables aux termes «réduit en»; elle doit aussi être accompagnée d'une indication de la ou les caractéristiques entraînant l'allégement de la denrée alimentaire.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Avec espace ét accent" lclFormulaErrorLog="" lclIsFormulated="false" isManualListItem="false"
+						name="06981fca-eb2c-4b44-85c5-06ffdc3da5eb" node-dbid="113138" locale="fr" sort="135" lclClaimValue="" lclLabelClaim="Naturellement/naturel"
+						legalName="Naturellement/naturel">
+						<description prefix="cm"><![CDATA[Lorsqu'une denrée alimentaire remplit naturellement la ou les conditions fixées dans la présente annexe pour l'utilisation d'une allégation nutritionnelle, le terme «naturellement/naturel» peut accompagner cette allégation.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="60a6bb72-0e39-4dbc-8ea0-2ddfbc943114" node-dbid="113139" locale="fr" sort="136" lclClaimValue="false" lclLabelClaim="Source d’acides gras oméga-3"
+						legalName="Source d’acides gras oméga-3">
+						<description prefix="cm"><![CDATA[Une allégation selon laquelle une denrée alimentaire est une source d’acide gras oméga-3 ou toute allégation susceptible d’avoir le même sens pour le consommateur ne peut être faite que si le produit contient au moins 0,3 g d’acide alphalinolénique pour 100 g et 100 kcal ou au moins 40 mg d’acide eicosapentaénoïque et d’acide docosahexénoïque combinés pour 100 g et 100 kcal.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="1c45bd91-d920-47c8-b0dc-c2f04ad133b7" node-dbid="113140" locale="fr" sort="137" lclClaimValue="false" lclLabelClaim="Riche en acides gras oméga-3"
+						legalName="Riche en acides gras oméga-3">
+						<description prefix="cm"><![CDATA[Une allégation selon laquelle une denrée alimentaire est riche en acide gras oméga-3 ou toute allégation susceptible d’avoir le même sens pour le consommateur ne peut être faite que si le produit contient au moins 0,6 g d’acide alphalinolénique pour 100 g et 100 kcal ou au moins 80 mg d’acide eicosapentaénoïque et d’acide docosahexénoïque combinés pour 100 g et 100 kcal.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="77ff2be0-2972-470e-bce7-f66b7d4e52c0" node-dbid="113141" locale="fr" sort="138" lclClaimValue="false" lclLabelClaim="Riche en graisses monoinsaturées"
+						legalName="Riche en graisses monoinsaturées">
+						<description prefix="cm"><![CDATA[Une allégation selon laquelle une denrée alimentaire est riche en graisses monoinsaturées ou toute allégation susceptible d’avoir le même sens pour le consommateur ne peut être faite que si le produit contient au moins 45 % d’acides gras dérivés de graisses monoinsaturées et si l’énergie fournie par les graisses monoinsaturées représente plus de 20 % de l’apport énergétique du produit.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="898f378b-0511-42f2-97ca-4b25076846e8" node-dbid="113142" locale="fr" sort="139" lclClaimValue="false" lclLabelClaim="Riche en graisses polyinsaturées"
+						legalName="Riche en graisses polyinsaturées">
+						<description prefix="cm"><![CDATA[Une allégation selon laquelle une denrée alimentaire est riche en graisses polyinsaturées ou toute allégation susceptible d’avoir le même sens pour le consommateur ne peut être faite que si le produit contient au moins 45 % d’acides gras dérivés de graisses polyinsaturées et si l’énergie fournie par les graisses polyinsaturées représente plus de 20 % de l’apport énergétique du produit.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="1b91ef8a-8ece-443c-a8f4-b29b88148cbb" node-dbid="113143" locale="fr" sort="140" lclClaimValue="false" lclLabelClaim="Riche en graisses insaturées"
+						legalName="Riche en graisses insaturées">
+						<description prefix="cm"><![CDATA[Une allégation selon laquelle une denrée alimentaire est riche en graisses insaturées ou toute allégation susceptible d’avoir le même sens pour le consommateur ne peut être faite que si le produit contient au moins 70 % d’acides gras dérivés de graisses insaturées et si l’énergie fournie par les graisses insaturées représente plus de 20 % de l’apport énergétique du produit.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="ed74d185-d625-4a5e-8f9e-4cb82dc7b8b7" node-dbid="113144" locale="fr" sort="141" lclClaimValue="false" lclLabelClaim="Source de Vitamine A"
+						legalName="Source de Vitamine A">
+						<description prefix="cm"><![CDATA[15 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 7,5 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="fab2be81-a968-4dcb-8249-c7d95640b03f" node-dbid="113145" locale="fr" sort="142" lclClaimValue="false" lclLabelClaim="Source de Vitamine D"
+						legalName="Source de Vitamine D">
+						<description prefix="cm"><![CDATA[15 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 7,5 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="3aeed36f-2ae4-40c2-a2a6-f8d43a8bc774" node-dbid="113146" locale="fr" sort="143" lclClaimValue="false" lclLabelClaim="Source de Vitamine E"
+						legalName="Source de Vitamine E">
+						<description prefix="cm"><![CDATA[15 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 7,5 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="8a22b982-dadc-4adf-9fc1-49fa5c2de132" node-dbid="113147" locale="fr" sort="144" lclClaimValue="false" lclLabelClaim="Source de Vitamine K"
+						legalName="Source de Vitamine K">
+						<description prefix="cm"><![CDATA[15 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 7,5 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="0ad2b8ca-9bd8-48a3-8cd5-3bb668855e01" node-dbid="113148" locale="fr" sort="145" lclClaimValue="false" lclLabelClaim="Source de Vitamine C"
+						legalName="Source de Vitamine C">
+						<description prefix="cm"><![CDATA[15 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 7,5 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="148444fb-7568-4b1e-b3e2-196e4ceca1dd" node-dbid="113149" locale="fr" sort="146" lclClaimValue="false" lclLabelClaim="Source de Vitamine B1"
+						legalName="Source de Vitamine B1">
+						<description prefix="cm"><![CDATA[15 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 7,5 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="29eb69f4-9869-4f88-a6e9-39c56a122501" node-dbid="113150" locale="fr" sort="147" lclClaimValue="false" lclLabelClaim="Source de Vitamine B2"
+						legalName="Source de Vitamine B2">
+						<description prefix="cm"><![CDATA[15 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 7,5 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="b2a01f66-5967-4036-9a62-69381c29b984" node-dbid="113151" locale="fr" sort="148" lclClaimValue="false" lclLabelClaim="Source de Vitamine B3"
+						legalName="Source de Vitamine B3">
+						<description prefix="cm"><![CDATA[15 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 7,5 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="9b25568e-53a6-4277-b906-a9f52f6d5d20" node-dbid="113152" locale="fr" sort="149" lclClaimValue="false" lclLabelClaim="Source de Vitamine B5"
+						legalName="Source de Vitamine B5">
+						<description prefix="cm"><![CDATA[15 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 7,5 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="694f687f-62bb-4af6-9987-80cb159c9210" node-dbid="113153" locale="fr" sort="150" lclClaimValue="false" lclLabelClaim="Source de Vitamine B6"
+						legalName="Source de Vitamine B6">
+						<description prefix="cm"><![CDATA[15 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 7,5 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="bc06e81d-e720-4408-82ad-9ae1d70fe471" node-dbid="113154" locale="fr" sort="151" lclClaimValue="false" lclLabelClaim="Source de Vitamine B12"
+						legalName="Source de Vitamine B12">
+						<description prefix="cm"><![CDATA[15 % des valeurs nutritionnelles " de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 7,5 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="11d5d188-7047-414e-8f4a-4de26325674d" node-dbid="113155" locale="fr" sort="152" lclClaimValue="false" lclLabelClaim="Source de Vitamine B9"
+						legalName="Source de Vitamine B9">
+						<description prefix="cm"><![CDATA[15 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 7,5 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="38c6c95f-2f56-491f-82e1-ddad54a57153" node-dbid="113156" locale="fr" sort="153" lclClaimValue="false" lclLabelClaim="Source de Vitamine B8"
+						legalName="Source de Vitamine B8">
+						<description prefix="cm"><![CDATA[15 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 7,5 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="fef251fd-b22a-405e-ae96-fba03f1bbd89" node-dbid="113157" locale="fr" sort="154" lclClaimValue="false" lclLabelClaim="Riche en Vitamine A"
+						legalName="Riche en Vitamine A">
+						<description prefix="cm"><![CDATA[30 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 15 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="60a10ba5-d3f6-4af5-9f9a-8c3a4ce2fbf5" node-dbid="113158" locale="fr" sort="156" lclClaimValue="false" lclLabelClaim="Riche en Vitamine E"
+						legalName="Riche en Vitamine E">
+						<description prefix="cm"><![CDATA[30 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 15 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="88f01cb8-e69e-4254-9674-ca7a1202202c" node-dbid="113159" locale="fr" sort="157" lclClaimValue="false" lclLabelClaim="Riche en Vitamine K"
+						legalName="Riche en Vitamine K">
+						<description prefix="cm"><![CDATA[30 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 15 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="c797f512-497d-496e-af27-6fa0c4e4c1f3" node-dbid="113160" locale="fr" sort="158" lclClaimValue="false" lclLabelClaim="Riche en Vitamine C"
+						legalName="Riche en Vitamine C">
+						<description prefix="cm"><![CDATA[30 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 15 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="0bf9838d-1c68-4ec4-b300-5468f5fca8a8" node-dbid="113161" locale="fr" sort="159" lclClaimValue="false" lclLabelClaim="Riche en Vitamine B1"
+						legalName="Riche en Vitamine B1">
+						<description prefix="cm"><![CDATA[30 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 15 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="2f266f44-114c-4fe9-863d-737976178113" node-dbid="113162" locale="fr" sort="160" lclClaimValue="false" lclLabelClaim="Riche en Vitamine B2"
+						legalName="Riche en Vitamine B2">
+						<description prefix="cm"><![CDATA[30 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 15 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="60d35194-0caf-4583-821c-cad23b21914c" node-dbid="113163" locale="fr" sort="161" lclClaimValue="false" lclLabelClaim="Riche en Vitamine B3"
+						legalName="Riche en Vitamine B3">
+						<description prefix="cm"><![CDATA[30 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 15 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="251d70d3-ae75-4144-a024-00e4eae34828" node-dbid="113164" locale="fr" sort="162" lclClaimValue="false" lclLabelClaim="Riche en Vitamine B5"
+						legalName="Riche en Vitamine B5">
+						<description prefix="cm"><![CDATA[30 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 15 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="34cc1bbc-6ec2-412a-acbd-297f0576e41d" node-dbid="113165" locale="fr" sort="163" lclClaimValue="false" lclLabelClaim="Riche en Vitamine B6"
+						legalName="Riche en Vitamine B6">
+						<description prefix="cm"><![CDATA[30 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 15 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="9e146f40-e499-4dfb-9633-a0cc5384fe64" node-dbid="113166" locale="fr" sort="164" lclClaimValue="false" lclLabelClaim="Riche en Vitamine B12"
+						legalName="Riche en Vitamine B12">
+						<description prefix="cm"><![CDATA[30 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 15 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="63eeba5c-fbe4-458d-913b-ea431e86899a" node-dbid="113167" locale="fr" sort="165" lclClaimValue="false" lclLabelClaim="Riche en Vitamine B9"
+						legalName="Riche en Vitamine B9">
+						<description prefix="cm"><![CDATA[30 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 15 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="a6d63bf6-64ad-4d03-bf6a-73be2b878dd1" node-dbid="113168" locale="fr" sort="166" lclClaimValue="false" lclLabelClaim="Riche en Vitamine B8"
+						legalName="Riche en Vitamine B9">
+						<description prefix="cm"><![CDATA[30 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 15 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="e4b6687c-1488-4468-8555-406f29548452" node-dbid="113169" locale="fr" sort="167" lclClaimValue="false" lclLabelClaim="Source de Magnésium"
+						legalName="Source de Magnésium">
+						<description prefix="cm"><![CDATA[15 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 7,5 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="8d9b9118-28ca-4095-8e30-658de2779447" node-dbid="113170" locale="fr" sort="168" lclClaimValue="false" lclLabelClaim="Source de Phosphore"
+						legalName="Source de Phosphore">
+						<description prefix="cm"><![CDATA[15 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 7,5 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="a97e344a-796c-40de-bd06-849f2b0c7132" node-dbid="113171" locale="fr" sort="169" lclClaimValue="false" lclLabelClaim="Source de Potassium"
+						legalName="Source de Potassium">
+						<description prefix="cm"><![CDATA[15 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 7,5 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="50c3bdf5-ae08-4e6b-879f-8cf6781928cd" node-dbid="113172" locale="fr" sort="170" lclClaimValue="false" lclLabelClaim="Source de Calcium"
+						legalName="Source de Calcium">
+						<description prefix="cm"><![CDATA[15 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 7,5 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="d7b65c42-c142-4fa6-bccb-ce898ec265a0" node-dbid="113173" locale="fr" sort="171" lclClaimValue="false" lclLabelClaim="Source de Manganèse"
+						legalName="Source de Manganèse">
+						<description prefix="cm"><![CDATA[15 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 7,5 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="77af3b9d-4573-4c55-933e-fbe12eaec21c" node-dbid="113174" locale="fr" sort="172" lclClaimValue="false" lclLabelClaim="Source de Fer"
+						legalName="Source de Fer">
+						<description prefix="cm"><![CDATA[15 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 7,5 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="2cb7c6cf-29cc-48a6-8275-5aee7c2b5df0" node-dbid="113175" locale="fr" sort="173" lclClaimValue="false" lclLabelClaim="Source de Cuivre"
+						legalName="Source de Cuivre">
+						<description prefix="cm"><![CDATA[15 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 7,5 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="36183d75-f26f-4f2c-b9ec-c2d6d92bed53" node-dbid="113176" locale="fr" sort="174" lclClaimValue="false" lclLabelClaim="Source de Zinc"
+						legalName="Source de Zinc">
+						<description prefix="cm"><![CDATA[15 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 7,5 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="3d534bfc-34f3-48a4-a0cc-53e963080706" node-dbid="113177" locale="fr" sort="175" lclClaimValue="false" lclLabelClaim="Source de Sélénium"
+						legalName="Source de Sélénium">
+						<description prefix="cm"><![CDATA[15 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 7,5 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="4ca1a60b-dd53-466b-891f-5c8abd4b9663" node-dbid="113178" locale="fr" sort="176" lclClaimValue="false" lclLabelClaim="Source de Iode"
+						legalName="Source de Iode">
+						<description prefix="cm"><![CDATA[15 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 7,5 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="f3bf627e-1cf2-48e1-b7c4-924f55f78e1a" node-dbid="113179" locale="fr" sort="177" lclClaimValue="false" lclLabelClaim="Source de Chrome"
+						legalName="Source de Chrome">
+						<description prefix="cm"><![CDATA[15 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 7,5 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="7770e576-e557-4e92-8674-3b9b48003ffc" node-dbid="113180" locale="fr" sort="178" lclClaimValue="false" lclLabelClaim="Riche en Magnésium"
+						legalName="Riche en Magnésium">
+						<description prefix="cm"><![CDATA[30 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 15 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="c8f112cb-c8e4-4b76-aece-ba53f99d1a2c" node-dbid="113181" locale="fr" sort="179" lclClaimValue="false" lclLabelClaim="Riche en Phosphore"
+						legalName="Riche en Phosphore">
+						<description prefix="cm"><![CDATA[30 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 15 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="1c0e17c8-db3a-4e42-b239-5b7d9883992d" node-dbid="113182" locale="fr" sort="180" lclClaimValue="false" lclLabelClaim="Riche en Potassium"
+						legalName="Riche en Potassium">
+						<description prefix="cm"><![CDATA[30 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 15 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="40602527-30a5-486f-ac48-394f3b635735" node-dbid="113183" locale="fr" sort="181" lclClaimValue="false" lclLabelClaim="Riche en Calcium"
+						legalName="Riche en Calcium">
+						<description prefix="cm"><![CDATA[30 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 15 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="f756e5ae-01d4-4ff7-aa18-3ac2cddfb1c4" node-dbid="113184" locale="fr" sort="182" lclClaimValue="false" lclLabelClaim="Riche en Manganèse"
+						legalName="Riche en Manganèse">
+						<description prefix="cm"><![CDATA[30 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 15 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="8091a296-b614-4e71-81b2-2772b659bfca" node-dbid="113185" locale="fr" sort="183" lclClaimValue="false" lclLabelClaim="Riche en Fer"
+						legalName="Riche en Fer">
+						<description prefix="cm"><![CDATA[30 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 15 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="d0f09905-e2ed-4577-bec8-49aea5101ff9" node-dbid="113186" locale="fr" sort="184" lclClaimValue="false" lclLabelClaim="Riche en Cuivre"
+						legalName="Riche en Cuivre">
+						<description prefix="cm"><![CDATA[30 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 15 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="abf48f99-b869-4c5c-bf8c-7c2d858abd41" node-dbid="113187" locale="fr" sort="185" lclClaimValue="false" lclLabelClaim="Riche en Zinc"
+						legalName="Riche en Zinc">
+						<description prefix="cm"><![CDATA[30 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 15 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="7e59a231-6375-4995-9a1b-fb1c442b189a" node-dbid="113188" locale="fr" sort="186" lclClaimValue="false" lclLabelClaim="Riche en Sélénium"
+						legalName="Riche en Sélénium">
+						<description prefix="cm"><![CDATA[30 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 15 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="24574085-8cae-40ee-b916-4a3c62741807" node-dbid="113189" locale="fr" sort="187" lclClaimValue="false" lclLabelClaim="Riche en Iode"
+						legalName="Riche en Iode">
+						<description prefix="cm"><![CDATA[30 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 15 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Nutritionnelle" lclFormulaErrorLog="" lclIsFormulated="true" isManualListItem="false"
+						name="29753aab-eddd-4d38-99ce-009bb2a89d8b" node-dbid="113190" locale="fr" sort="188" lclClaimValue="false" lclLabelClaim="Riche en Chrome"
+						legalName="Riche en Chrome">
+						<description prefix="cm"><![CDATA[30 % des valeurs nutritionnelles de référence visées par 100 g ou 100 ml dans le cas des produits autres que les boissons, 15 % des valeurs nutritionnelles de référence visées par 100 ml dans le cas des boissons, ou 15 % des valeurs nutritionnelles de référence visées par portion si l’emballage ne contient qu’une seule Portion.]]></description>
+					</labelClaimList>
+					<labelClaimList lclType="Santé" lclIsFormulated="false" name="a78820b8-c5a0-4c18-9b43-50fbdda81e59" lclComments=""
+						lclFormulaErrorLog="" isManualListItem="false" node-dbid="534086" locale="fr" sort="189" lclClaimValue="" certificateDate="" lclLabelClaim="Produit sans alcool"
+						legalName="Produit sans alcool">
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+					</labelClaimList>
+				</labelClaimLists>
+				<physicoChemLists>
+					<physicoChemList name="4df3f700-0680-49fd-b790-66982fc0d41a" pclMaxi="" physicoChemFormulaErrorLog="" pclUnit="-" pclMini=""
+						physicoChemIsFormulated="false" pclValue="" isManualListItem="false" node-dbid="159270" locale="fr" sort="100" pclPhysicoChem="Matière sèche">
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+					</physicoChemList>
+					<physicoChemList name="63eda12b-51ac-4f03-9cc8-aa0cb255ab46" pclMaxi=""
+						physicoChemFormulaErrorLog="EL1030E:(pos 0): The operator 'ADD' is not supported between objects of type 'null' and 'java.lang.Integer'"
+						pclUnit="kg" pclMini="" physicoChemIsFormulated="true" pclValue="" isManualListItem="false" node-dbid="159271" locale="fr" sort="101"
+						pclPhysicoChem="Test Formule" legalName="">
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+					</physicoChemList>
+					<physicoChemList name="c55d0a3e-d6cd-48b8-8453-7bba06929a8f" pclMaxi=""
+						physicoChemFormulaErrorLog="EL1030E:(pos 0): The operator 'SUBTRACT' is not supported between objects of type 'null' and 'java.lang.Integer'"
+						pclUnit="-" pclMini="" physicoChemIsFormulated="true" pclValue="" isManualListItem="false" node-dbid="159272" locale="fr" sort="102"
+						pclPhysicoChem="Test formule en erreur" legalName="">
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+					</physicoChemList>
+				</physicoChemLists>
+				<compoLists>
+					<compoList legalName="" legalName_fr="" productState="Valid" tare="" projectedQty="" creator="admin" startEffectivity="2015-03-16T08:20:08.249Z"
+						nutrientProfilingClass="" productCompoVolumeUsed="" netWeight="" code="MP4" productUnit="kg" productDensity="" ingTypeV2="" netWeightUnit="kg"
+						productHierarchy2="" node-dbid="64621" unitTotalCost="0.0" netVolume="" reportLocales="" unitPrice=""
+						entityScore="{&quot;catalogs&quot;:[{&quot;missingFields&quot;:[{&quot;displayName&quot;:&quot;Libellé légal&quot;,&quot;id&quot;:&quot;bcpg:legalName&quot;},{&quot;displayName&quot;:&quot;Précautions d'emploi&quot;,&quot;id&quot;:&quot;bcpg:precautionOfUseRef&quot;},{&quot;displayName&quot;:&quot;Conditions de conservation&quot;,&quot;id&quot;:&quot;bcpg:storageConditionsRef&quot;}],&quot;score&quot;:0,&quot;label&quot;:&quot;EU 1169/2011 (INCO)&quot;,&quot;id&quot;:&quot;inco&quot;,&quot;locale&quot;:&quot;fr&quot;}],&quot;global&quot;:66.66666666666667,&quot;details&quot;:{&quot;componentsValidation&quot;:100,&quot;mandatoryFields&quot;:0,&quot;specifications&quot;:100}}"
+						breakEven="" endEffectivity="" created="2015-03-16T08:20:08.221Z" profitability="" name="949c725c-e777-45ff-ba2a-75d4991870c7"
+						nutrientProfilingScore="" servingSize="" erpCode="" productHierarchy1="" title="" productQty="" formulatedDate="2016-03-15T13:38:14.799Z"
+						productCompoQtyUsed="" locale="fr" tareUnit="" modifier="admin" modified="2016-03-15T13:38:06.998Z" entityTplRef="Matière première" itemType="bcpg:rawMaterial"
+						aspects="formulatedEntityAspect, nutrientProfilingScoreAspect, consumerAspect, tareAspect, erpCodeAspect, effectivityAspect, productMicrobioCriteriaAspect, reportLocalesAspect, legalNameAspect, referenceable, entityScoreAspect, localized, entityTplRefAspect, entityListsAspect, codeAspect, incomplete, reportEntityAspect, suppliersAspect, titled, ingTypeAspect, profitabilityAspect, auditable, eanAspect, productAspect"
+						dynamicCharactColumn5="" compoListQty="12.0" compoListLossPerc="" dynamicCharactColumn2="" dynamicCharactColumn9="" dynamicCharactColumn10=""
+						compoListUnit="kg" dynamicCharactColumn4="" dynamicCharactColumn8="" compoListYieldPerc="" compoListQtySubFormula="12.0" sort="100" depthLevel="1"
+						dynamicCharactColumn1="" parentLevel="" variantIds="" compoListVolume="12.0" dynamicCharactColumn7="" compoListOverrunPerc=""
+						dynamicCharactColumn6="" compoListDeclType="Declare" dynamicCharactColumn3="" compoListProduct="Test" compoListQtyForProduct="12.0"
+						isDefaultVariant="true" nodeRef="workspace://SpacesStore/3f026e59-381f-4ed8-b051-b203aae39a28">
+						<suppliers prefix="bcpg" />
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+						<dataLists>
+							<nutLists energiekj="0.0" energiekcal="" lipides="" agsaturés="" agmonoinsaturés="" agpolyinsaturés="" glucides="" sucres="" amidon=""
+								protéines="" fibresalimentaires="" sodium="" sel="">
+								<nutList nutListGroup="Groupe 1" nutListValue="0.0" name="Energie kJ" nutListValuePerServing="" nutListIsFormulated="true"
+									nutListMini="0.0" nutListFormulatedValue="0.0" nutListLossPerc="" nutListGDAPerc="" nutListUnit="kJ/100g" nutListMethod=""
+									nutListFormulaErrorLog="" isManualListItem="false" node-dbid="64603" locale="fr_FR" sort="100" depthLevel="1" nutListMaxi="0.0" nutListNut="Energie kJ"
+									legalName="Energie">
+									<description prefix="cm"><![CDATA[]]>
+									</description>
+									<nutGDA prefix="bcpg"><![CDATA[8400.0]]></nutGDA>
+								</nutList>
+								<nutList nutListGroup="Groupe 1" nutListValue="" name="Energie kcal" nutListValuePerServing="" nutListIsFormulated="true" nutListMini=""
+									nutListFormulatedValue="" nutListLossPerc="" nutListGDAPerc="" nutListUnit="kcal/100g" nutListMethod=""
+									nutListFormulaErrorLog="EL1025E:(pos 223): The collection has '0' elements, index '0' is invalid. Erreur lors de la formulation du nutriment 'Energie kcal': - EL1025E:(pos 223): The collection has '0' elements, index '0' is invalid"
+									isManualListItem="false" node-dbid="64604" locale="fr_FR" sort="101" depthLevel="1" nutListMaxi="" nutListNut="Energie kcal" legalName="Energie">
+									<description prefix="cm"><![CDATA[]]>
+									</description>
+									<nutGDA prefix="bcpg"><![CDATA[2000.0]]></nutGDA>
+								</nutList>
+								<nutList nutListGroup="Groupe 1" nutListUnit="g/100g" name="Lipides" node-dbid="64605" locale="fr_FR" sort="102" depthLevel="1"
+									nutListIsFormulated="false" nutListNut="Lipides" legalName="Matières grasses" nutListValue="">
+									<description prefix="cm"><![CDATA[< 10 g ± 1,5 g
+10 à 40 g ± 20 %
+> 40 g ± 8]]></description>
+									<nutGDA prefix="bcpg"><![CDATA[70.0]]></nutGDA>
+								</nutList>
+								<nutList nutListGroup="Groupe 2" nutListUnit="g/100g" name="AG saturés" node-dbid="64606" locale="fr_FR" sort="103" depthLevel="1"
+									nutListIsFormulated="false" nutListNut="AG saturés" legalName="dont AG saturés" nutListValue="">
+									<description prefix="cm"><![CDATA[< 4 g ± 0,8 g>=  4 g ± 20 %]]></description>
+									<nutGDA prefix="bcpg"><![CDATA[20.0]]></nutGDA>
+								</nutList>
+								<nutList nutListGroup="Autre" nutListUnit="g/100g" name="AG monoinsaturés" node-dbid="64607" locale="fr_FR" sort="104" depthLevel="1"
+									nutListIsFormulated="false" nutListNut="AG monoinsaturés" legalName="dont AG mono-insaturés" nutListValue="">
+									<description prefix="cm"><![CDATA[]]>
+									</description>
+									<nutGDA prefix="bcpg"><![CDATA[]]>
+									</nutGDA>
+								</nutList>
+								<nutList nutListGroup="Autre" nutListUnit="g/100g" name="AG polyinsaturés" node-dbid="64608" locale="fr_FR" sort="105" depthLevel="1"
+									nutListIsFormulated="false" nutListNut="AG polyinsaturés" legalName="dont AG polyinsaturés" nutListValue="">
+									<description prefix="cm"><![CDATA[]]>
+									</description>
+									<nutGDA prefix="bcpg"><![CDATA[]]>
+									</nutGDA>
+								</nutList>
+								<nutList nutListGroup="Groupe 1" nutListUnit="g/100g" name="Glucides" node-dbid="64609" locale="fr_FR" sort="106" depthLevel="1"
+									nutListIsFormulated="false" nutListNut="Glucides" legalName="Glucides" nutListValue="">
+									<description prefix="cm"><![CDATA[< 10 g ± 2 g10 à 40 g ± 20 %> 40 g ± 8 g]]></description>
+									<nutGDA prefix="bcpg"><![CDATA[270.0]]></nutGDA>
+								</nutList>
+								<nutList nutListGroup="Groupe 2" nutListUnit="g/100g" name="Sucres" node-dbid="64610" locale="fr_FR" sort="107" depthLevel="1"
+									nutListIsFormulated="false" nutListNut="Sucres" legalName="dont sucres" nutListValue="">
+									<description prefix="cm"><![CDATA[< 10 g ± 2 g10 à 40 g ± 20 %> 40 g ± 8 g]]></description>
+									<nutGDA prefix="bcpg"><![CDATA[90.0]]></nutGDA>
+								</nutList>
+								<nutList nutListGroup="Autre" nutListUnit="g/100g" name="Amidon" node-dbid="64611" locale="fr_FR" sort="108" depthLevel="1"
+									nutListIsFormulated="false" nutListNut="Amidon" legalName="dont amidon" nutListValue="">
+									<description prefix="cm"><![CDATA[]]>
+									</description>
+									<nutGDA prefix="bcpg"><![CDATA[]]>
+									</nutGDA>
+								</nutList>
+								<nutList nutListGroup="Groupe 1" nutListUnit="g/100g" name="Protéines" node-dbid="64612" locale="fr_FR" sort="109" depthLevel="1"
+									nutListIsFormulated="false" nutListNut="Protéines" legalName="Protéines" nutListValue="">
+									<description prefix="cm"><![CDATA[< 10 g ± 2 g
+10 à 40 g ± 20 %
+> 40 g ± 8 g]]></description>
+									<nutGDA prefix="bcpg"><![CDATA[50.0]]></nutGDA>
+								</nutList>
+								<nutList nutListGroup="Groupe 2" nutListUnit="g/100g" name="Fibres alimentaires" node-dbid="64613" locale="fr_FR" sort="110"
+									depthLevel="1" nutListIsFormulated="false" nutListNut="Fibres alimentaires" legalName="Fibres alimentaires" nutListValue="">
+									<description prefix="cm"><![CDATA[< 10 g ± 2 g10 à 40 g ± 20 %> 40 g ± 8 g]]></description>
+									<nutGDA prefix="bcpg"><![CDATA[25.0]]></nutGDA>
+								</nutList>
+								<nutList nutListGroup="Groupe 2" nutListUnit="mg/100g" name="Sodium" node-dbid="64614" locale="fr_FR" sort="111" depthLevel="1"
+									nutListIsFormulated="false" nutListNut="Sodium" legalName="Sodium" nutListValue="">
+									<description prefix="cm"><![CDATA[< 0,5 g ± 0,15>= 0,5 g ± 20 %]]></description>
+									<nutGDA prefix="bcpg"><![CDATA[2400.0]]></nutGDA>
+								</nutList>
+								<nutList nutListGroup="Groupe 2" nutListValue="" name="Sel" nutListValuePerServing="" nutListIsFormulated="true" nutListMini="0.0"
+									nutListFormulatedValue="" nutListLossPerc="" nutListGDAPerc="" nutListUnit="g/100g" nutListMethod=""
+									nutListFormulaErrorLog="EL1025E:(pos 91): The collection has '0' elements, index '0' is invalid. Erreur lors de la formulation du nutriment 'Sel': - EL1025E:(pos 91): The collection has '0' elements, index '0' is invalid"
+									isManualListItem="false" node-dbid="64615" locale="fr_FR" sort="112" depthLevel="1" nutListMaxi="0.0" nutListNut="Sel" legalName="Sel">
+									<description prefix="cm"><![CDATA[< 1,25 g ± 0,375>=  1,25 g ± 20 %]]></description>
+									<nutGDA prefix="bcpg"><![CDATA[6.0]]></nutGDA>
+								</nutList>
+							</nutLists>
+							<dynamicCharactLists />
+						</dataLists>
+					</compoList>
+					<dynamicCharactLists>
+						<dynamicCharactList dynamicCharactTitle="Poids MeO (kg)" dynamicCharactValue="12.0" />
+						<dynamicCharactList dynamicCharactTitle="Test" dynamicCharactValue="0.11666666666666667" />
+						<dynamicCharactList dynamicCharactTitle="Entrée" dynamicCharactValue="" />
+						<dynamicCharactList dynamicCharactTitle="Nb jours immobilisation" dynamicCharactValue="5" />
+						<dynamicCharactList dynamicCharactTitle="test" dynamicCharactValue="5" />
+					</dynamicCharactLists>
+					<reqCtrlLists>
+						<reqCtrlList rclReqMessage="Champ obligatoire 'Libellé légal' manquant (catalogue 'EU 1169/2011 (INCO)')" rclReqType="Forbidden" />
+						<reqCtrlList
+							rclReqMessage="Impossible de calculer le pourcentage de l'allergène Anhydride sulfureux et sulfites: pourcentage non renseigné sur certaines entitées."
+							rclReqType="Forbidden" />
+						<reqCtrlList rclReqMessage="Caractéristique 'Lipides' non renseignée" rclReqType="Tolerated" />
+						<reqCtrlList rclReqMessage="Caractéristique 'Fibres alimentaires' non renseignée" rclReqType="Tolerated" />
+						<reqCtrlList rclReqMessage="Caractéristique 'AG polyinsaturés' non renseignée" rclReqType="Tolerated" />
+						<reqCtrlList rclReqMessage="Caractéristique 'Glucides' non renseignée" rclReqType="Tolerated" />
+						<reqCtrlList rclReqMessage="Caractéristique 'Protéines' non renseignée" rclReqType="Tolerated" />
+						<reqCtrlList rclReqMessage="Caractéristique 'AG saturés' non renseignée" rclReqType="Tolerated" />
+						<reqCtrlList rclReqMessage="Caractéristique 'Sucres' non renseignée" rclReqType="Tolerated" />
+						<reqCtrlList rclReqMessage="Caractéristique 'Sodium' non renseignée" rclReqType="Tolerated" />
+						<reqCtrlList rclReqMessage="Caractéristique 'Amidon' non renseignée" rclReqType="Tolerated" />
+						<reqCtrlList rclReqMessage="Caractéristique 'AG monoinsaturés' non renseignée" rclReqType="Tolerated" />
+						<reqCtrlList
+							rclReqMessage="Erreur lors de la formulation du nutriment 'Energie kcal': - EL1025E:(pos 223): The collection has '0' elements, index '0' is invalid"
+							rclReqType="Tolerated" />
+						<reqCtrlList rclReqMessage="Erreur lors de la formulation du nutriment 'Sel': - EL1025E:(pos 91): The collection has '0' elements, index '0' is invalid"
+							rclReqType="Tolerated" />
+						<reqCtrlList rclReqMessage="Caractéristique 'Energie kcal' non renseignée" rclReqType="Tolerated" />
+						<reqCtrlList
+							rclReqMessage="Erreur lors de la formulation du nutriment 'Energie kJ': - EL1030E:(pos 0): The operator 'MULTIPLY' is not supported between objects of type 'null' and 'java.lang.Double'"
+							rclReqType="Tolerated" />
+						<reqCtrlList rclReqMessage="Caractéristique 'Coût MP' non renseignée" rclReqType="Tolerated" />
+						<reqCtrlList rclReqMessage="Caractéristique 'Matière sèche' non renseignée" rclReqType="Tolerated" />
+						<reqCtrlList rclReqMessage="Erreur lors de la formulation de lélément '{0}': - {1}" rclReqType="Tolerated" />
+						<reqCtrlList
+							rclReqMessage="Erreur lors de la formulation de l'allégation 'Sans sodium ou sans sel': - EL1025E:(pos 91): The collection has '0' elements, index '0' is invalid"
+							rclReqType="Tolerated" />
+						<reqCtrlList
+							rclReqMessage="Erreur lors de la formulation de l'allégation 'Faible valeur énergétique': - EL1025E:(pos 127): The collection has '0' elements, index '0' is invalid"
+							rclReqType="Tolerated" />
+						<reqCtrlList
+							rclReqMessage="Erreur lors de la formulation de l'allégation 'Sans apport énergétique': - EL1025E:(pos 91): The collection has '0' elements, index '0' is invalid"
+							rclReqType="Tolerated" />
+						<reqCtrlList
+							rclReqMessage="Erreur lors de la formulation de l'allégation 'Faible teneur en matières grasses': - EL1025E:(pos 126): The collection has '0' elements, index '0' is invalid"
+							rclReqType="Tolerated" />
+						<reqCtrlList
+							rclReqMessage="Erreur lors de la formulation de l'allégation 'Sans matières grasses': - EL1025E:(pos 91): The collection has '0' elements, index '0' is invalid"
+							rclReqType="Tolerated" />
+						<reqCtrlList
+							rclReqMessage="Erreur lors de la formulation de l'allégation 'Faible teneur en sucres': - EL1025E:(pos 126): The collection has '0' elements, index '0' is invalid"
+							rclReqType="Tolerated" />
+						<reqCtrlList
+							rclReqMessage="Erreur lors de la formulation de l'allégation 'Sans sucres': - EL1025E:(pos 91): The collection has '0' elements, index '0' is invalid"
+							rclReqType="Tolerated" />
+						<reqCtrlList
+							rclReqMessage="Erreur lors de la formulation de l'allégation 'Pauvre en sodium ou en sel': - EL1025E:(pos 101): The collection has '0' elements, index '0' is invalid"
+							rclReqType="Tolerated" />
+						<reqCtrlList
+							rclReqMessage="Erreur lors de la formulation de l'allégation 'Très pauvre en sodium ou en sel': - EL1025E:(pos 101): The collection has '0' elements, index '0' is invalid"
+							rclReqType="Tolerated" />
+						<reqCtrlList
+							rclReqMessage="Erreur lors de la formulation de l'allégation 'Source de fibres': - EL1025E:(pos 105): The collection has '0' elements, index '0' is invalid"
+							rclReqType="Tolerated" />
+						<reqCtrlList rclReqMessage="La liste des ingrédients est vide" rclReqType="Tolerated" />
+					</reqCtrlLists>
+				</compoLists>
+				<rawMaterials>
+					<rawMaterial>
+						<legalName prefix="bcpg"><![CDATA[]]>
+						</legalName>
+						<legalName_fr prefix="bcpg"><![CDATA[]]>
+						</legalName_fr>
+						<productState prefix="bcpg"><![CDATA[Valid]]></productState>
+						<tare prefix="pack"><![CDATA[]]>
+						</tare>
+						<projectedQty prefix="bcpg"><![CDATA[]]>
+						</projectedQty>
+						<creator prefix="cm"><![CDATA[admin]]></creator>
+						<store-identifier prefix="sys"><![CDATA[SpacesStore]]></store-identifier>
+						<startEffectivity prefix="bcpg"><![CDATA[2015-03-16T08:20:08.249Z]]></startEffectivity>
+						<nutrientProfilingClass prefix="bcpg"><![CDATA[]]>
+						</nutrientProfilingClass>
+						<productCompoVolumeUsed prefix="bcpg"><![CDATA[]]>
+						</productCompoVolumeUsed>
+						<netWeight prefix="bcpg"><![CDATA[]]>
+						</netWeight>
+						<code prefix="bcpg"><![CDATA[MP4]]></code>
+						<productUnit prefix="bcpg"><![CDATA[kg]]></productUnit>
+						<productDensity prefix="bcpg"><![CDATA[]]>
+						</productDensity>
+						<ingTypeV2 prefix="bcpg"><![CDATA[]]>
+						</ingTypeV2>
+						<netWeightUnit prefix="bcpg"><![CDATA[kg]]></netWeightUnit>
+						<productHierarchy2 prefix="bcpg"><![CDATA[]]>
+						</productHierarchy2>
+						<store-protocol prefix="sys"><![CDATA[workspace]]></store-protocol>
+						<node-dbid prefix="sys"><![CDATA[64580]]></node-dbid>
+						<unitTotalCost prefix="bcpg"><![CDATA[0.0]]></unitTotalCost>
+						<netVolume prefix="bcpg"><![CDATA[]]>
+						</netVolume>
+						<reportLocales prefix="rep"><![CDATA[]]>
+						</reportLocales>
+						<unitPrice prefix="bcpg"><![CDATA[]]>
+						</unitPrice>
+						<entityScore prefix="bcpg"><![CDATA[{"catalogs":[{"missingFields":[{"displayName":"Libellé légal","id":"bcpg:legalName"},{"displayName":"Précautions d'emploi","id":"bcpg:precautionOfUseRef"},{"displayName":"Conditions de conservation","id":"bcpg:storageConditionsRef"}],"score":0,"label":"EU 1169/2011 (INCO)","id":"inco","locale":"fr"}],"global":66.66666666666667,"details":{"componentsValidation":100,"mandatoryFields":0,"specifications":100}}]]></entityScore>
+						<breakEven prefix="bcpg"><![CDATA[]]>
+						</breakEven>
+						<endEffectivity prefix="bcpg"><![CDATA[]]>
+						</endEffectivity>
+						<created prefix="cm"><![CDATA[2015-03-16T08:20:08.221Z]]></created>
+						<profitability prefix="bcpg"><![CDATA[]]>
+						</profitability>
+						<node-uuid prefix="sys"><![CDATA[efcfcaf8-1be6-443c-8655-31447415cec5]]></node-uuid>
+						<name prefix="cm"><![CDATA[Test]]></name>
+						<nutrientProfilingScore prefix="bcpg"><![CDATA[]]>
+						</nutrientProfilingScore>
+						<servingSize prefix="bcpg"><![CDATA[]]>
+						</servingSize>
+						<erpCode prefix="bcpg"><![CDATA[]]>
+						</erpCode>
+						<productHierarchy1 prefix="bcpg"><![CDATA[]]>
+						</productHierarchy1>
+						<title prefix="cm"><![CDATA[]]>
+						</title>
+						<title_fr prefix="cm"><![CDATA[]]>
+						</title_fr>
+						<productQty prefix="bcpg"><![CDATA[]]>
+						</productQty>
+						<formulatedDate prefix="bcpg"><![CDATA[2016-03-15T13:38:14.799Z]]></formulatedDate>
+						<productCompoQtyUsed prefix="bcpg"><![CDATA[]]>
+						</productCompoQtyUsed>
+						<locale prefix="sys"><![CDATA[fr]]></locale>
+						<tareUnit prefix="pack"><![CDATA[]]>
+						</tareUnit>
+						<modifier prefix="cm"><![CDATA[admin]]></modifier>
+						<modified prefix="cm"><![CDATA[2016-03-15T13:38:06.998Z]]></modified>
+						<entityTplRef prefix="bcpg"><![CDATA[Matière première]]></entityTplRef>
+						<suppliers prefix="bcpg" />
+						<compoListQty prefix="bcpg"><![CDATA[100.0]]></compoListQty>
+						<compoListQtyForProduct><![CDATA[100.0]]></compoListQtyForProduct>
+						<dataLists />
+						<variants />
+					</rawMaterial>
+				</rawMaterials>
+				<packagingLists>
+					<packagingLevelMeasures variantId="" isDefaultVariant="true" tarePkgLevel1="0.0" netWeightPkgLevel1="12.0"
+						grossWeightPkgLevel1="12.0" />
+					<packagingList legalName="" legalName_fr="" productState="Simulation" tare="6.000155" projectedQty="" creator="admin"
+						palletBoxesPerLastLayer="" futureUnitTotalCost="0.016758" palletHeight="" startEffectivity="2015-08-20T14:40:39.316Z" nutrientProfilingClass=""
+						productCompoVolumeUsed="" netWeight="" palletBoxesPerLayer="12" code="KE10" productUnit="P" productDensity="" palletStackingMaxWeight=""
+						previousUnitTotalCost="0.04564716023875116" ingTypeV2="" netWeightUnit="kg" productHierarchy2="" palletNumberOnGround="1" node-dbid="547360"
+						unitTotalCost="0.05121225026710285" palletLayers="11" netVolume="" reportLocales="" unitPrice=""
+						entityScore="{&quot;catalogs&quot;:[],&quot;global&quot;:73.33333333333333,&quot;details&quot;:{&quot;componentsValidation&quot;:20,&quot;mandatoryFields&quot;:100,&quot;specifications&quot;:100}}"
+						breakEven="" endEffectivity="" created="2016-05-24T14:02:40.407Z" profitability="" name="f3458008-61f0-4424-905e-dd05172459a9"
+						nutrientProfilingScore="" servingSize="" erpCode="" productHierarchy1="" title="" title_fr="" productQty="" formulatedDate="2016-09-22T16:54:19.395Z"
+						productCompoQtyUsed="" locale="fr" tareUnit="g" modifier="admin" palletBoxesPerPallet="132" modified="2016-09-22T16:54:17.732Z" entityTplRef="Kit d'emballage"
+						itemType="bcpg:packagingKit"
+						aspects="formulatedEntityAspect, nutrientProfilingScoreAspect, consumerAspect, tareAspect, erpCodeAspect, effectivityAspect, reportLocalesAspect, legalNameAspect, referenceable, entityScoreAspect, localized, entityTplRefAspect, entityListsAspect, codeAspect, imapFolder, reportEntityAspect, titled, ingTypeAspect, profitabilityAspect, auditable, palletAspect, productAspect"
+						dynamicCharactColumn5="" packagingListLossPerc="" variantIds="" packagingListQty="5.0" packagingListUnit="PP" dynamicCharactColumn2=""
+						dynamicCharactColumn9="" dynamicCharactColumn10="" dynamicCharactColumn7="" packagingListPkgLevel="" dynamicCharactColumn6=""
+						dynamicCharactColumn4="" dynamicCharactColumn8="" dynamicCharactColumn3="" sort="101" packagingListIsMaster="false" dynamicCharactColumn1=""
+						packagingListProduct="KIT Colis ENTREMETS" isDefaultVariant="true" depthLevel="1">
+						<productComments prefix="bcpg"><![CDATA[]]>
+						</productComments>
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+						<instruction prefix="bcpg"><![CDATA[]]>
+						</instruction>
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+					</packagingList>
+					<packagingList productState="Valid" tare="15.0" projectedQty="" pmStickerFormat="Laize" creator="admin" pmPrintVarnish=""
+						startEffectivity="2015-06-17T10:12:36.848Z" nutrientProfilingClass="" productCompoVolumeUsed="" netWeight="" code="E71" productUnit="kg"
+						productDensity="" pmPrintColor="" ingTypeV2="" netWeightUnit="kg" productHierarchy2="A2405010-FILM PALETTISATION" eanCode="" node-dbid="476661"
+						unitTotalCost="4.08307" netVolume="" reportLocales="" unitPrice=""
+						entityScore="{&quot;catalogs&quot;:[],&quot;global&quot;:100,&quot;details&quot;:{&quot;componentsValidation&quot;:100,&quot;mandatoryFields&quot;:100,&quot;specifications&quot;:100}}"
+						breakEven="" endEffectivity="" created="2016-05-24T14:02:41.655Z" profitability="" foodContact="true" name="f91512dc-0f08-4c89-a27f-a89b139fe28f"
+						nutrientProfilingScore="" pmMaterial="[PE fardelage]" servingSize="" erpCode="C10030" productHierarchy1="A24050-FILM ETIRABLE" pmThickness="22.0"
+						title="FILM ETIRABLE LAIZE 400MM 22M" title_fr="FILM ETIRABLE LAIZE 400MM 22M" productQty="" formulatedDate="2016-05-24T14:12:53.047Z"
+						productCompoQtyUsed="" locale="fr_FR" pmAdditionnalMaterial="" tareUnit="kg" modifier="admin" pmFlowMaterial="" modified="2016-05-24T14:05:29.598Z"
+						entityTplRef="Emballage Film" itemType="bcpg:packagingMaterial"
+						aspects="formulatedEntityAspect, pmQuantitiesAspect, consumerAspect, tareAspect, erpCodeAspect, referenceable, entityScoreAspect, pmCoilAspect, titled, pmThicknessAspect, pmFlowPackAspect, auditable, productAspect, pmStickerFlowFormatAspect, nutrientProfilingScoreAspect, sizeAspect, effectivityAspect, reportLocalesAspect, legalNameAspect, localized, entityTplRefAspect, entityListsAspect, codeAspect, imapFolder, reportEntityAspect, suppliersAspect, ingTypeAspect, profitabilityAspect, manufacturingAspect, pmMaterialAspect, eanAspect, pmPrintAspect"
+						dynamicCharactColumn5="" packagingListLossPerc="" variantIds="" packagingListQty="0.006" packagingListUnit="kg" dynamicCharactColumn2=""
+						dynamicCharactColumn9="" dynamicCharactColumn10="" dynamicCharactColumn7="" packagingListPkgLevel="Secondary" dynamicCharactColumn6=""
+						dynamicCharactColumn4="" dynamicCharactColumn8="" dynamicCharactColumn3="" sort="100" packagingListIsMaster="false" dynamicCharactColumn1="15.0"
+						packagingListProduct="C10030 - FILM ETIRABLE LAIZE 400MM 22M" isDefaultVariant="true" depthLevel="2">
+						<productComments prefix="bcpg"><![CDATA[]]>
+						</productComments>
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+						<suppliers prefix="bcpg">
+							<supplier prefix="bcpg">
+								<created prefix="cm"><![CDATA[2015-07-27T12:38:03.814Z]]></created>
+								<locationCity prefix="bcpg"><![CDATA[TOULOUSE CEDEX 1]]></locationCity>
+								<creator prefix="cm"><![CDATA[admin]]></creator>
+								<name prefix="cm"><![CDATA[ABC PLASTIK]]></name>
+								<locationAddress1 prefix="bcpg"><![CDATA[7 RUE RENE SIROT]]></locationAddress1>
+								<erpCode prefix="bcpg"><![CDATA[10743]]></erpCode>
+								<startEffectivity prefix="bcpg"><![CDATA[2015-07-27T12:38:03.887Z]]></startEffectivity>
+								<code prefix="bcpg"><![CDATA[F8]]></code>
+								<locationZip prefix="bcpg"><![CDATA[31094]]></locationZip>
+								<supplierState prefix="bcpg"><![CDATA[Simulation]]></supplierState>
+								<locationAddress2 prefix="bcpg"><![CDATA[]]>
+								</locationAddress2>
+								<node-dbid prefix="sys"><![CDATA[79457]]></node-dbid>
+								<locale prefix="sys"><![CDATA[fr_FR]]></locale>
+								<modifier prefix="cm"><![CDATA[admin]]></modifier>
+								<modified prefix="cm"><![CDATA[2015-07-27T12:57:45.492Z]]></modified>
+								<entityTplRef prefix="bcpg"><![CDATA[Fournisseur]]></entityTplRef>
+								<supplierAccountRef prefix="bcpg"><![CDATA[null ABC PLASTIK]]></supplierAccountRef>
+							</supplier>
+						</suppliers>
+						<plants prefix="bcpg">
+							<plant prefix="bcpg">
+								<created prefix="cm"><![CDATA[2015-01-20T15:20:42.989Z]]></created>
+								<plantTel prefix="bcpg"><![CDATA[]]>
+								</plantTel>
+								<locationCity prefix="bcpg"><![CDATA[]]>
+								</locationCity>
+								<description prefix="cm"><![CDATA[]]>
+								</description>
+								<creator prefix="cm"><![CDATA[admin]]></creator>
+								<name prefix="cm"><![CDATA[BONLOC]]></name>
+								<locationAddress1 prefix="bcpg"><![CDATA[]]>
+								</locationAddress1>
+								<title prefix="cm"><![CDATA[]]>
+								</title>
+								<title_fr prefix="cm"><![CDATA[]]>
+								</title_fr>
+								<locationCountry prefix="bcpg"><![CDATA[]]>
+								</locationCountry>
+								<locationZip prefix="bcpg"><![CDATA[]]>
+								</locationZip>
+								<locationAddress3 prefix="bcpg"><![CDATA[]]>
+								</locationAddress3>
+								<locationAddress2 prefix="bcpg"><![CDATA[]]>
+								</locationAddress2>
+								<node-dbid prefix="sys"><![CDATA[14666]]></node-dbid>
+								<locale prefix="sys"><![CDATA[fr]]></locale>
+								<plantPackerCode prefix="bcpg"><![CDATA[Code EMB]]></plantPackerCode>
+								<modifier prefix="cm"><![CDATA[admin]]></modifier>
+								<modified prefix="cm"><![CDATA[2015-12-07T10:14:51.599Z]]></modified>
+								<sort prefix="bcpg"><![CDATA[100]]></sort>
+							</plant>
+						</plants>
+						<instruction prefix="bcpg"><![CDATA[]]>
+						</instruction>
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+					</packagingList>
+					<packagingList productState="ToValidate" tare="" projectedQty="" pmStickerFormat="" creator="admin" pmPrintVarnish=""
+						startEffectivity="2015-06-17T10:13:40.307Z" nutrientProfilingClass="" productCompoVolumeUsed="" netWeight="" code="E371" productUnit="P"
+						productDensity="" pmPrintColor="jaune" ingTypeV2="" netWeightUnit="kg" productHierarchy2="" eanCode="" node-dbid="476690" unitTotalCost="0.01596"
+						netVolume="" reportLocales="" unitPrice=""
+						entityScore="{&quot;catalogs&quot;:[],&quot;global&quot;:100,&quot;details&quot;:{&quot;componentsValidation&quot;:100,&quot;mandatoryFields&quot;:100,&quot;specifications&quot;:100}}"
+						breakEven="" endEffectivity="" pmPrintNbColors="1" created="2016-05-24T14:02:48.108Z" profitability="" pmCoreDiameter="40.0" foodContact="false"
+						name="71473f16-2dde-464f-8699-ee515f0628e0" nutrientProfilingScore="" servingSize="" erpCode="C10528" pmStickerSupport="Velin"
+						productHierarchy1="" title="ETIQ 100 MM  X 100 MM JAUNE" title_fr="ETIQ 100 MM  X 100 MM JAUNE" productQty="" formulatedDate="2016-05-24T14:12:53.079Z"
+						productCompoQtyUsed="" pmReserveZone="" locale="fr_FR" pmStickerAdhesive="[Semi-congélation]" tareUnit="g" modifier="admin"
+						pmStickerFlowDirection="extérieur droite en avant" modified="2016-05-24T14:05:29.589Z" entityTplRef="Emballage Etiquettes" itemType="bcpg:packagingMaterial"
+						aspects="formulatedEntityAspect, pmQuantitiesAspect, consumerAspect, tareAspect, erpCodeAspect, pmStickerAspect, referenceable, entityScoreAspect, pmCoilAspect, titled, auditable, productAspect, pmStickerFlowFormatAspect, nutrientProfilingScoreAspect, effectivityAspect, reportLocalesAspect, legalNameAspect, localized, entityTplRefAspect, entityListsAspect, codeAspect, reportEntityAspect, suppliersAspect, ingTypeAspect, profitabilityAspect, manufacturingAspect, eanAspect, pmPrintAspect"
+						dynamicCharactColumn5="" packagingListLossPerc="5.0" variantIds="" packagingListQty="1.0" packagingListUnit="P" dynamicCharactColumn2=""
+						dynamicCharactColumn9="" dynamicCharactColumn10="" dynamicCharactColumn7="" packagingListPkgLevel="Secondary" dynamicCharactColumn6=""
+						dynamicCharactColumn4="" dynamicCharactColumn8="" dynamicCharactColumn3="" sort="101" packagingListIsMaster="false" dynamicCharactColumn1=""
+						packagingListProduct="C10528 - ETIQ 100 MM  X 100 MM JAUNE" isDefaultVariant="true" depthLevel="2">
+						<productComments prefix="bcpg"><![CDATA[2000 étiquettes par bobine]]></productComments>
+						<description prefix="cm"><![CDATA[Laize = 100 mm
+Développé = 100 mm]]></description>
+						<suppliers prefix="bcpg">
+							<supplier prefix="bcpg">
+								<created prefix="cm"><![CDATA[2015-07-27T12:38:15.917Z]]></created>
+								<locationCity prefix="bcpg"><![CDATA[TOULOUSE CEDEX 2]]></locationCity>
+								<creator prefix="cm"><![CDATA[admin]]></creator>
+								<name prefix="cm"><![CDATA[BONCOLAC, S.A]]></name>
+								<locationAddress1 prefix="bcpg"><![CDATA[183  AVENUE DES ETATS UNIS]]></locationAddress1>
+								<erpCode prefix="bcpg"><![CDATA[10761]]></erpCode>
+								<startEffectivity prefix="bcpg"><![CDATA[2015-07-27T12:38:16.134Z]]></startEffectivity>
+								<code prefix="bcpg"><![CDATA[F209]]></code>
+								<locationZip prefix="bcpg"><![CDATA[31018]]></locationZip>
+								<supplierState prefix="bcpg"><![CDATA[Simulation]]></supplierState>
+								<locationAddress2 prefix="bcpg"><![CDATA[]]>
+								</locationAddress2>
+								<node-dbid prefix="sys"><![CDATA[80458]]></node-dbid>
+								<locale prefix="sys"><![CDATA[fr_FR]]></locale>
+								<modifier prefix="cm"><![CDATA[admin]]></modifier>
+								<modified prefix="cm"><![CDATA[2015-07-27T12:57:47.171Z]]></modified>
+								<entityTplRef prefix="bcpg"><![CDATA[Fournisseur]]></entityTplRef>
+							</supplier>
+						</suppliers>
+						<plants prefix="bcpg">
+							<plant prefix="bcpg">
+								<created prefix="cm"><![CDATA[2015-01-27T09:10:58.875Z]]></created>
+								<plantTel prefix="bcpg"><![CDATA[]]>
+								</plantTel>
+								<locationCity prefix="bcpg"><![CDATA[]]>
+								</locationCity>
+								<description prefix="cm"><![CDATA[]]>
+								</description>
+								<creator prefix="cm"><![CDATA[admin]]></creator>
+								<name prefix="cm"><![CDATA[RIVESALTES]]></name>
+								<locationAddress1 prefix="bcpg"><![CDATA[]]>
+								</locationAddress1>
+								<title prefix="cm"><![CDATA[]]>
+								</title>
+								<title_fr prefix="cm"><![CDATA[]]>
+								</title_fr>
+								<locationCountry prefix="bcpg"><![CDATA[]]>
+								</locationCountry>
+								<locationZip prefix="bcpg"><![CDATA[]]>
+								</locationZip>
+								<locationAddress3 prefix="bcpg"><![CDATA[]]>
+								</locationAddress3>
+								<locationAddress2 prefix="bcpg"><![CDATA[]]>
+								</locationAddress2>
+								<node-dbid prefix="sys"><![CDATA[14787]]></node-dbid>
+								<locale prefix="sys"><![CDATA[fr]]></locale>
+								<modifier prefix="cm"><![CDATA[admin]]></modifier>
+								<modified prefix="cm"><![CDATA[2015-01-27T09:10:58.875Z]]></modified>
+								<sort prefix="bcpg"><![CDATA[101]]></sort>
+							</plant>
+						</plants>
+						<instruction prefix="bcpg"><![CDATA[]]>
+						</instruction>
+						<description prefix="cm"><![CDATA[Laize = 100 mm
+Développé = 100 mm]]></description>
+					</packagingList>
+					<packagingList productState="Simulation" tare="0.5" projectedQty="" creator="admin" startEffectivity="2015-06-17T10:12:54.309Z"
+						nutrientProfilingClass="" productCompoVolumeUsed="" netWeight="" code="E156" productUnit="P" productDensity="" ingTypeV2="" netWeightUnit="kg"
+						productHierarchy2="A2872000-RUBAN THERMIQUE" eanCode="" node-dbid="476740" unitTotalCost="8.4941" netVolume="" reportLocales="" unitPrice=""
+						entityScore="{&quot;catalogs&quot;:[],&quot;global&quot;:100,&quot;details&quot;:{&quot;componentsValidation&quot;:100,&quot;mandatoryFields&quot;:100,&quot;specifications&quot;:100}}"
+						breakEven="" endEffectivity="" created="2015-11-02T11:59:07.130Z" profitability="" foodContact="false" name="8451506c-2414-4a02-b167-6cf6b3e50864"
+						nutrientProfilingScore="" servingSize="" erpCode="C22309" productHierarchy1="A28720-RUBAN THERMIQUE" title="" productQty=""
+						formulatedDate="2016-05-24T14:12:53.116Z" productCompoQtyUsed="" locale="fr_FR" tareUnit="g" modifier="admin" modified="2016-04-26T07:47:40.543Z"
+						entityTplRef="Emballage" itemType="bcpg:packagingMaterial"
+						aspects="formulatedEntityAspect, nutrientProfilingScoreAspect, consumerAspect, tareAspect, erpCodeAspect, effectivityAspect, reportLocalesAspect, legalNameAspect, referenceable, entityScoreAspect, localized, entityTplRefAspect, entityListsAspect, codeAspect, reportEntityAspect, suppliersAspect, titled, ingTypeAspect, profitabilityAspect, auditable, manufacturingAspect, eanAspect, productAspect"
+						dynamicCharactColumn5="" packagingListLossPerc="" variantIds="" packagingListQty="3.1E-4" packagingListUnit="P" dynamicCharactColumn2=""
+						dynamicCharactColumn9="" dynamicCharactColumn10="" dynamicCharactColumn7="" packagingListPkgLevel="Secondary" dynamicCharactColumn6=""
+						dynamicCharactColumn4="" dynamicCharactColumn8="" dynamicCharactColumn3="" sort="102" packagingListIsMaster="false" dynamicCharactColumn1="0.5"
+						packagingListProduct="C22309 - RUBAN NOIR THERMIQUE 111 x 450" isDefaultVariant="true" depthLevel="2">
+						<productComments prefix="bcpg"><![CDATA[]]>
+						</productComments>
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+						<suppliers prefix="bcpg">
+							<supplier prefix="bcpg">
+								<created prefix="cm"><![CDATA[2015-07-27T12:38:04.427Z]]></created>
+								<locationCity prefix="bcpg"><![CDATA[SARTROUVILLE]]></locationCity>
+								<creator prefix="cm"><![CDATA[admin]]></creator>
+								<name prefix="cm"><![CDATA[MECAWEST TECHNOLOGIES]]></name>
+								<locationAddress1 prefix="bcpg"><![CDATA[1 RUE CALMETTE ET GUERIN]]></locationAddress1>
+								<erpCode prefix="bcpg"><![CDATA[13919]]></erpCode>
+								<startEffectivity prefix="bcpg"><![CDATA[2015-07-27T12:38:04.459Z]]></startEffectivity>
+								<code prefix="bcpg"><![CDATA[F25]]></code>
+								<locationZip prefix="bcpg"><![CDATA[78507]]></locationZip>
+								<supplierState prefix="bcpg"><![CDATA[Simulation]]></supplierState>
+								<locationAddress2 prefix="bcpg"><![CDATA[]]>
+								</locationAddress2>
+								<node-dbid prefix="sys"><![CDATA[79514]]></node-dbid>
+								<locale prefix="sys"><![CDATA[fr_FR]]></locale>
+								<modifier prefix="cm"><![CDATA[admin]]></modifier>
+								<modified prefix="cm"><![CDATA[2015-07-27T12:57:45.727Z]]></modified>
+								<entityTplRef prefix="bcpg"><![CDATA[Fournisseur]]></entityTplRef>
+								<supplierAccountRef prefix="bcpg"><![CDATA[null MECAWEST TECHNOLOGIES]]></supplierAccountRef>
+							</supplier>
+						</suppliers>
+						<plants prefix="bcpg">
+							<plant prefix="bcpg">
+								<created prefix="cm"><![CDATA[2015-01-20T15:20:42.989Z]]></created>
+								<plantTel prefix="bcpg"><![CDATA[]]>
+								</plantTel>
+								<locationCity prefix="bcpg"><![CDATA[]]>
+								</locationCity>
+								<description prefix="cm"><![CDATA[]]>
+								</description>
+								<creator prefix="cm"><![CDATA[admin]]></creator>
+								<name prefix="cm"><![CDATA[BONLOC]]></name>
+								<locationAddress1 prefix="bcpg"><![CDATA[]]>
+								</locationAddress1>
+								<title prefix="cm"><![CDATA[]]>
+								</title>
+								<title_fr prefix="cm"><![CDATA[]]>
+								</title_fr>
+								<locationCountry prefix="bcpg"><![CDATA[]]>
+								</locationCountry>
+								<locationZip prefix="bcpg"><![CDATA[]]>
+								</locationZip>
+								<locationAddress3 prefix="bcpg"><![CDATA[]]>
+								</locationAddress3>
+								<locationAddress2 prefix="bcpg"><![CDATA[]]>
+								</locationAddress2>
+								<node-dbid prefix="sys"><![CDATA[14666]]></node-dbid>
+								<locale prefix="sys"><![CDATA[fr]]></locale>
+								<plantPackerCode prefix="bcpg"><![CDATA[Code EMB]]></plantPackerCode>
+								<modifier prefix="cm"><![CDATA[admin]]></modifier>
+								<modified prefix="cm"><![CDATA[2015-12-07T10:14:51.599Z]]></modified>
+								<sort prefix="bcpg"><![CDATA[100]]></sort>
+							</plant>
+						</plants>
+						<instruction prefix="bcpg"><![CDATA[]]>
+						</instruction>
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+					</packagingList>
+					<packagingList legalName="Laize = 54 mm Développé = 140 mm " legalName_fr="Laize = 54 mm Développé = 140 mm " productState="ToValidate"
+						tare="" projectedQty="" pmStickerFormat="" creator="admin" pmPrintVarnish="" startEffectivity="2015-06-17T10:14:07.534Z" nutrientProfilingClass=""
+						productCompoVolumeUsed="" netWeight="" code="E480" productUnit="P" productDensity="" pmPrintColor="" ingTypeV2="" netWeightUnit="kg"
+						productHierarchy2="" eanCode="" node-dbid="476741" unitTotalCost="0.0069900000000000006" pmCoilDiameter="3000.0" netVolume="" reportLocales=""
+						unitPrice=""
+						entityScore="{&quot;catalogs&quot;:[],&quot;global&quot;:100,&quot;details&quot;:{&quot;componentsValidation&quot;:100,&quot;mandatoryFields&quot;:100,&quot;specifications&quot;:100}}"
+						breakEven="" endEffectivity="" created="2016-05-24T14:03:00.753Z" profitability="" pmCoreDiameter="76.0" foodContact="false"
+						name="b3d44629-7e3a-4fb8-b541-6a1d5de8384a" nutrientProfilingScore="" servingSize="" erpCode="C28154" pmStickerSupport="Velin"
+						productHierarchy1="" title="ETIQ NEUTRE 80 MM X 140 MM MAND 76 MM" title_fr="ETIQ NEUTRE 80 MM X 140 MM MAND 76 MM" productQty=""
+						formulatedDate="2016-05-24T14:12:53.141Z" productCompoQtyUsed="" pmReserveZone="" locale="fr_FR" pmStickerAdhesive="[Semi-congélation]"
+						tareUnit="g" modifier="admin" pmStickerFlowDirection="extérieur" modified="2016-05-24T14:05:29.592Z" entityTplRef="Emballage Etiquettes"
+						itemType="bcpg:packagingMaterial"
+						aspects="formulatedEntityAspect, pmQuantitiesAspect, consumerAspect, tareAspect, erpCodeAspect, pmStickerAspect, referenceable, entityScoreAspect, pmCoilAspect, titled, auditable, productAspect, pmStickerFlowFormatAspect, nutrientProfilingScoreAspect, effectivityAspect, reportLocalesAspect, legalNameAspect, localized, entityTplRefAspect, entityListsAspect, codeAspect, reportEntityAspect, suppliersAspect, ingTypeAspect, profitabilityAspect, manufacturingAspect, eanAspect, pmPrintAspect"
+						dynamicCharactColumn5="" packagingListLossPerc="5.0" variantIds="" packagingListQty="1.0" packagingListUnit="P" dynamicCharactColumn2=""
+						dynamicCharactColumn9="" dynamicCharactColumn10="" dynamicCharactColumn7="" packagingListPkgLevel="Secondary" dynamicCharactColumn6=""
+						dynamicCharactColumn4="" dynamicCharactColumn8="" dynamicCharactColumn3="" sort="103" packagingListIsMaster="false" dynamicCharactColumn1=""
+						packagingListProduct="C28154 - ETIQ NEUTRE 80 MM X 140 MM MAND 76 MM" isDefaultVariant="true" depthLevel="2">
+						<productComments prefix="bcpg"><![CDATA[]]>
+						</productComments>
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+						<suppliers prefix="bcpg">
+							<supplier prefix="bcpg">
+								<created prefix="cm"><![CDATA[2016-05-24T14:03:05.975Z]]></created>
+								<locationCity prefix="bcpg"><![CDATA[PREYSSAC D'EXCIDEUIL]]></locationCity>
+								<creator prefix="cm"><![CDATA[admin]]></creator>
+								<name prefix="cm"><![CDATA[IMPRIMERIE DE L'EPERON SA]]></name>
+								<locationAddress1 prefix="bcpg"><![CDATA[LA GARE]]></locationAddress1>
+								<erpCode prefix="bcpg"><![CDATA[43762]]></erpCode>
+								<startEffectivity prefix="bcpg"><![CDATA[2015-04-21T14:20:26.989Z]]></startEffectivity>
+								<code prefix="bcpg"><![CDATA[F317]]></code>
+								<locationZip prefix="bcpg"><![CDATA[24160]]></locationZip>
+								<supplierState prefix="bcpg"><![CDATA[Simulation]]></supplierState>
+								<locationAddress2 prefix="bcpg"><![CDATA[]]>
+								</locationAddress2>
+								<node-dbid prefix="sys"><![CDATA[476760]]></node-dbid>
+								<locale prefix="sys"><![CDATA[fr_FR]]></locale>
+								<modifier prefix="cm"><![CDATA[admin]]></modifier>
+								<modified prefix="cm"><![CDATA[2016-05-24T14:05:28.785Z]]></modified>
+								<entityTplRef prefix="bcpg"><![CDATA[Fournisseur]]></entityTplRef>
+								<supplierAccountRef prefix="bcpg"><![CDATA[null IMPRIMERIE DE L'EPERON S.A.]]></supplierAccountRef>
+							</supplier>
+						</suppliers>
+						<plants prefix="bcpg">
+							<plant prefix="bcpg">
+								<created prefix="cm"><![CDATA[2015-01-20T15:20:42.989Z]]></created>
+								<plantTel prefix="bcpg"><![CDATA[]]>
+								</plantTel>
+								<locationCity prefix="bcpg"><![CDATA[]]>
+								</locationCity>
+								<description prefix="cm"><![CDATA[]]>
+								</description>
+								<creator prefix="cm"><![CDATA[admin]]></creator>
+								<name prefix="cm"><![CDATA[BONLOC]]></name>
+								<locationAddress1 prefix="bcpg"><![CDATA[]]>
+								</locationAddress1>
+								<title prefix="cm"><![CDATA[]]>
+								</title>
+								<title_fr prefix="cm"><![CDATA[]]>
+								</title_fr>
+								<locationCountry prefix="bcpg"><![CDATA[]]>
+								</locationCountry>
+								<locationZip prefix="bcpg"><![CDATA[]]>
+								</locationZip>
+								<locationAddress3 prefix="bcpg"><![CDATA[]]>
+								</locationAddress3>
+								<locationAddress2 prefix="bcpg"><![CDATA[]]>
+								</locationAddress2>
+								<node-dbid prefix="sys"><![CDATA[14666]]></node-dbid>
+								<locale prefix="sys"><![CDATA[fr]]></locale>
+								<plantPackerCode prefix="bcpg"><![CDATA[Code EMB]]></plantPackerCode>
+								<modifier prefix="cm"><![CDATA[admin]]></modifier>
+								<modified prefix="cm"><![CDATA[2015-12-07T10:14:51.599Z]]></modified>
+								<sort prefix="bcpg"><![CDATA[100]]></sort>
+							</plant>
+						</plants>
+						<instruction prefix="bcpg"><![CDATA[]]>
+						</instruction>
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+					</packagingList>
+					<packagingList legalName="Emballages Palette ENTREMETS" legalName_fr="Emballages Palette ENTREMETS" productState="Simulation" tare="0.0"
+						projectedQty="" creator="admin" palletBoxesPerLastLayer="12" palletHeight="1789" startEffectivity="2015-08-20T14:32:34.403Z"
+						nutrientProfilingClass="" productCompoVolumeUsed="" netWeight="" palletBoxesPerLayer="12" code="KE9" productUnit="P" productDensity=""
+						ingTypeV2="" netWeightUnit="kg" productHierarchy2="" node-dbid="476768" unitTotalCost="0.019953023257575756" palletLayers="11" netVolume=""
+						reportLocales="" unitPrice=""
+						entityScore="{&quot;catalogs&quot;:[],&quot;global&quot;:66.66666666666667,&quot;details&quot;:{&quot;componentsValidation&quot;:0,&quot;mandatoryFields&quot;:100,&quot;specifications&quot;:100}}"
+						breakEven="" endEffectivity="" created="2016-05-24T14:03:08.183Z" profitability="" name="679d42cf-ba85-4ab6-a834-0972f6cf7bf4"
+						nutrientProfilingScore="" servingSize="" erpCode="" productHierarchy1="" title="" productQty="" formulatedDate="2016-05-24T14:12:53.446Z"
+						productCompoQtyUsed="" locale="fr_FR" tareUnit="g" modifier="admin" palletBoxesPerPallet="132" modified="2016-05-24T14:05:29.602Z" entityTplRef="Kit d'emballage"
+						itemType="bcpg:packagingKit"
+						aspects="formulatedEntityAspect, nutrientProfilingScoreAspect, consumerAspect, tareAspect, erpCodeAspect, effectivityAspect, reportLocalesAspect, legalNameAspect, referenceable, entityScoreAspect, localized, entityTplRefAspect, entityListsAspect, codeAspect, imapFolder, reportEntityAspect, titled, ingTypeAspect, profitabilityAspect, auditable, palletAspect, productAspect"
+						dynamicCharactColumn5="" packagingListLossPerc="" variantIds="" packagingListQty="1.0" packagingListUnit="P" dynamicCharactColumn2=""
+						dynamicCharactColumn9="" dynamicCharactColumn10="" dynamicCharactColumn7="" packagingListPkgLevel="Tertiary" dynamicCharactColumn6=""
+						dynamicCharactColumn4="" dynamicCharactColumn8="" dynamicCharactColumn3="" sort="104" packagingListIsMaster="false" dynamicCharactColumn1="0.0"
+						packagingListProduct="Emballages Palette ENTREMETS" isDefaultVariant="true" depthLevel="2">
+						<productComments prefix="bcpg"><![CDATA[]]>
+						</productComments>
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+						<instruction prefix="bcpg"><![CDATA[]]>
+						</instruction>
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+					</packagingList>
+					<packagingList productState="Simulation" tare="0.52" projectedQty="" creator="admin" startEffectivity="2015-06-17T10:12:36.847Z"
+						nutrientProfilingClass="" productCompoVolumeUsed="" netWeight="" code="E70" productUnit="kg" productDensity="" ingTypeV2="" netWeightUnit="kg"
+						productHierarchy2="A2405010-FILM PALETTISATION" eanCode="" node-dbid="476774" unitTotalCost="1.855" netVolume="" reportLocales="" unitPrice=""
+						entityScore="{&quot;catalogs&quot;:[],&quot;global&quot;:100,&quot;details&quot;:{&quot;componentsValidation&quot;:100,&quot;mandatoryFields&quot;:100,&quot;specifications&quot;:100}}"
+						breakEven="" endEffectivity="" created="2015-11-02T11:59:10.361Z" profitability="" foodContact="false" name="1b9cc178-a121-495e-90cb-9cec58e7a4ce"
+						nutrientProfilingScore="" servingSize="" erpCode="C0986" productHierarchy1="A24050-FILM ETIRABLE" title="" productQty="" formulatedDate="2016-05-24T14:12:53.183Z"
+						productCompoQtyUsed="" locale="fr_FR" tareUnit="kg" modifier="admin" modified="2016-04-26T07:47:39.767Z" entityTplRef="Emballage" itemType="bcpg:packagingMaterial"
+						aspects="formulatedEntityAspect, nutrientProfilingScoreAspect, consumerAspect, tareAspect, erpCodeAspect, effectivityAspect, reportLocalesAspect, legalNameAspect, referenceable, entityScoreAspect, localized, entityTplRefAspect, entityListsAspect, codeAspect, reportEntityAspect, suppliersAspect, titled, ingTypeAspect, profitabilityAspect, auditable, manufacturingAspect, eanAspect, productAspect"
+						dynamicCharactColumn5="" packagingListLossPerc="" variantIds="" packagingListQty="0.42" packagingListUnit="kg" dynamicCharactColumn2=""
+						dynamicCharactColumn9="" dynamicCharactColumn10="" dynamicCharactColumn7="" packagingListPkgLevel="Tertiary" dynamicCharactColumn6=""
+						dynamicCharactColumn4="" dynamicCharactColumn8="" dynamicCharactColumn3="" sort="100" packagingListIsMaster="false" dynamicCharactColumn1="0.52"
+						packagingListProduct="C0986 FILM ETIRABLE LAIZE 500MM" isDefaultVariant="true" depthLevel="3">
+						<productComments prefix="bcpg"><![CDATA[]]>
+						</productComments>
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+						<suppliers prefix="bcpg">
+							<supplier prefix="bcpg">
+								<created prefix="cm"><![CDATA[2015-07-27T12:38:03.814Z]]></created>
+								<locationCity prefix="bcpg"><![CDATA[TOULOUSE CEDEX 1]]></locationCity>
+								<creator prefix="cm"><![CDATA[admin]]></creator>
+								<name prefix="cm"><![CDATA[ABC PLASTIK]]></name>
+								<locationAddress1 prefix="bcpg"><![CDATA[7 RUE RENE SIROT]]></locationAddress1>
+								<erpCode prefix="bcpg"><![CDATA[10743]]></erpCode>
+								<startEffectivity prefix="bcpg"><![CDATA[2015-07-27T12:38:03.887Z]]></startEffectivity>
+								<code prefix="bcpg"><![CDATA[F8]]></code>
+								<locationZip prefix="bcpg"><![CDATA[31094]]></locationZip>
+								<supplierState prefix="bcpg"><![CDATA[Simulation]]></supplierState>
+								<locationAddress2 prefix="bcpg"><![CDATA[]]>
+								</locationAddress2>
+								<node-dbid prefix="sys"><![CDATA[79457]]></node-dbid>
+								<locale prefix="sys"><![CDATA[fr_FR]]></locale>
+								<modifier prefix="cm"><![CDATA[admin]]></modifier>
+								<modified prefix="cm"><![CDATA[2015-07-27T12:57:45.492Z]]></modified>
+								<entityTplRef prefix="bcpg"><![CDATA[Fournisseur]]></entityTplRef>
+								<supplierAccountRef prefix="bcpg"><![CDATA[null ABC PLASTIK]]></supplierAccountRef>
+							</supplier>
+						</suppliers>
+						<plants prefix="bcpg">
+							<plant prefix="bcpg">
+								<created prefix="cm"><![CDATA[2015-01-20T15:20:42.989Z]]></created>
+								<plantTel prefix="bcpg"><![CDATA[]]>
+								</plantTel>
+								<locationCity prefix="bcpg"><![CDATA[]]>
+								</locationCity>
+								<description prefix="cm"><![CDATA[]]>
+								</description>
+								<creator prefix="cm"><![CDATA[admin]]></creator>
+								<name prefix="cm"><![CDATA[BONLOC]]></name>
+								<locationAddress1 prefix="bcpg"><![CDATA[]]>
+								</locationAddress1>
+								<title prefix="cm"><![CDATA[]]>
+								</title>
+								<title_fr prefix="cm"><![CDATA[]]>
+								</title_fr>
+								<locationCountry prefix="bcpg"><![CDATA[]]>
+								</locationCountry>
+								<locationZip prefix="bcpg"><![CDATA[]]>
+								</locationZip>
+								<locationAddress3 prefix="bcpg"><![CDATA[]]>
+								</locationAddress3>
+								<locationAddress2 prefix="bcpg"><![CDATA[]]>
+								</locationAddress2>
+								<node-dbid prefix="sys"><![CDATA[14666]]></node-dbid>
+								<locale prefix="sys"><![CDATA[fr]]></locale>
+								<plantPackerCode prefix="bcpg"><![CDATA[Code EMB]]></plantPackerCode>
+								<modifier prefix="cm"><![CDATA[admin]]></modifier>
+								<modified prefix="cm"><![CDATA[2015-12-07T10:14:51.599Z]]></modified>
+								<sort prefix="bcpg"><![CDATA[100]]></sort>
+							</plant>
+						</plants>
+						<instruction prefix="bcpg"><![CDATA[]]>
+						</instruction>
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+					</packagingList>
+					<packagingList productState="ToValidate" tare="183.0" projectedQty="" creator="admin" pmBoxWindow="" pmPrintVarnish=""
+						startEffectivity="2015-06-17T10:12:26.732Z" pmIntWidth="1500.0" nutrientProfilingClass="" productCompoVolumeUsed="" netWeight="" code="E1766"
+						productUnit="P" productDensity="" pmPrintColor="bleu" ingTypeV2="" netWeightUnit="kg" productHierarchy2="A2403000-CORNIERE" eanCode=""
+						node-dbid="476775" unitTotalCost="0.18439" pmPrintType="[Flexographie]" netVolume="" reportLocales="" unitPrice="" pmPaperWeight="331.0"
+						pmEmbossing=""
+						entityScore="{&quot;catalogs&quot;:[],&quot;global&quot;:100,&quot;details&quot;:{&quot;componentsValidation&quot;:100,&quot;mandatoryFields&quot;:100,&quot;specifications&quot;:100}}"
+						breakEven="" endEffectivity="" pmPrintNbColors="1" created="2016-05-24T14:03:09.498Z" profitability="" pmFoilEmbossing="" foodContact="false"
+						name="c7c81b31-e4a9-4f7a-a2a3-11fe09616045" nutrientProfilingScore="" servingSize="" erpCode="C10871" productHierarchy1="A25520-CARTON PLAT"
+						pmThickness="3.0" pmBoxType="EMBALLAGE DECOUPE A LA PRESSE" title="10871 RENFORT D'ANGLE PALETTES 1500 mm" title_fr="10871 RENFORT D'ANGLE PALETTES 1500 mm"
+						productQty="" formulatedDate="2016-05-24T14:12:53.276Z" productCompoQtyUsed="" pmBoxEasyOpening="false" locale="fr_FR" tareUnit="kg" modifier="admin"
+						modified="2016-05-24T14:05:29.718Z" pmIntLength="1500.0" pmIntHeight="160.0" entityTplRef="Emballage Carton" itemType="bcpg:packagingMaterial"
+						aspects="formulatedEntityAspect, pmQuantitiesAspect, consumerAspect, tareAspect, erpCodeAspect, referenceable, entityScoreAspect, titled, pmThicknessAspect, auditable, productAspect, pmCuttingAspect, pmBoxAspect, nutrientProfilingScoreAspect, pmIntSizeAspect, effectivityAspect, reportLocalesAspect, legalNameAspect, localized, entityTplRefAspect, entityListsAspect, codeAspect, reportEntityAspect, suppliersAspect, ingTypeAspect, profitabilityAspect, manufacturingAspect, eanAspect, pmPrintAspect"
+						dynamicCharactColumn5="" packagingListLossPerc="" variantIds="" packagingListQty="8.0" packagingListUnit="P" dynamicCharactColumn2=""
+						dynamicCharactColumn9="" dynamicCharactColumn10="" dynamicCharactColumn7="" packagingListPkgLevel="Tertiary" dynamicCharactColumn6=""
+						dynamicCharactColumn4="" dynamicCharactColumn8="" dynamicCharactColumn3="" sort="101" packagingListIsMaster="false" dynamicCharactColumn1="183.0"
+						packagingListProduct="C10871 - 10871 RENFORT D'ANGLE PALETTES 1500 mm" isDefaultVariant="true" depthLevel="3">
+						<productComments prefix="bcpg"><![CDATA[]]>
+						</productComments>
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+						<suppliers prefix="bcpg">
+							<supplier prefix="bcpg">
+								<created prefix="cm"><![CDATA[2015-07-27T12:38:03.837Z]]></created>
+								<locationCity prefix="bcpg"><![CDATA[COGNAC CEDEX]]></locationCity>
+								<creator prefix="cm"><![CDATA[admin]]></creator>
+								<name prefix="cm"><![CDATA[DS SMITH PACKAGING - COGNAC]]></name>
+								<locationAddress1 prefix="bcpg"><![CDATA[ZI DE CHATEAUBERNARD]]></locationAddress1>
+								<erpCode prefix="bcpg"><![CDATA[10997]]></erpCode>
+								<startEffectivity prefix="bcpg"><![CDATA[2015-07-27T12:38:03.890Z]]></startEffectivity>
+								<code prefix="bcpg"><![CDATA[F11]]></code>
+								<locationZip prefix="bcpg"><![CDATA[16102]]></locationZip>
+								<supplierState prefix="bcpg"><![CDATA[Simulation]]></supplierState>
+								<locationAddress2 prefix="bcpg"><![CDATA[]]>
+								</locationAddress2>
+								<node-dbid prefix="sys"><![CDATA[79460]]></node-dbid>
+								<locale prefix="sys"><![CDATA[fr_FR]]></locale>
+								<modifier prefix="cm"><![CDATA[admin]]></modifier>
+								<modified prefix="cm"><![CDATA[2015-07-27T12:57:45.565Z]]></modified>
+								<entityTplRef prefix="bcpg"><![CDATA[Fournisseur]]></entityTplRef>
+								<supplierAccountRef prefix="bcpg"><![CDATA[null DS SMITH PACKAGING - COGNAC]]></supplierAccountRef>
+							</supplier>
+						</suppliers>
+						<plants prefix="bcpg">
+							<plant prefix="bcpg">
+								<created prefix="cm"><![CDATA[2015-01-20T15:20:42.989Z]]></created>
+								<plantTel prefix="bcpg"><![CDATA[]]>
+								</plantTel>
+								<locationCity prefix="bcpg"><![CDATA[]]>
+								</locationCity>
+								<description prefix="cm"><![CDATA[]]>
+								</description>
+								<creator prefix="cm"><![CDATA[admin]]></creator>
+								<name prefix="cm"><![CDATA[BONLOC]]></name>
+								<locationAddress1 prefix="bcpg"><![CDATA[]]>
+								</locationAddress1>
+								<title prefix="cm"><![CDATA[]]>
+								</title>
+								<title_fr prefix="cm"><![CDATA[]]>
+								</title_fr>
+								<locationCountry prefix="bcpg"><![CDATA[]]>
+								</locationCountry>
+								<locationZip prefix="bcpg"><![CDATA[]]>
+								</locationZip>
+								<locationAddress3 prefix="bcpg"><![CDATA[]]>
+								</locationAddress3>
+								<locationAddress2 prefix="bcpg"><![CDATA[]]>
+								</locationAddress2>
+								<node-dbid prefix="sys"><![CDATA[14666]]></node-dbid>
+								<locale prefix="sys"><![CDATA[fr]]></locale>
+								<plantPackerCode prefix="bcpg"><![CDATA[Code EMB]]></plantPackerCode>
+								<modifier prefix="cm"><![CDATA[admin]]></modifier>
+								<modified prefix="cm"><![CDATA[2015-12-07T10:14:51.599Z]]></modified>
+								<sort prefix="bcpg"><![CDATA[100]]></sort>
+							</plant>
+						</plants>
+						<instruction prefix="bcpg"><![CDATA[]]>
+						</instruction>
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+					</packagingList>
+					<packagingList productState="Simulation" tare="0.093" projectedQty="" creator="admin" startEffectivity="2015-06-17T10:12:50.671Z"
+						nutrientProfilingClass="" productCompoVolumeUsed="" netWeight="" code="E137" productUnit="P" productDensity="" ingTypeV2="" netWeightUnit="kg"
+						productHierarchy2="A2561000-INTERCALAIRE PALETTE" eanCode="" node-dbid="476804" unitTotalCost="0.05351" netVolume="" reportLocales="" unitPrice=""
+						entityScore="{&quot;catalogs&quot;:[],&quot;global&quot;:100,&quot;details&quot;:{&quot;componentsValidation&quot;:100,&quot;mandatoryFields&quot;:100,&quot;specifications&quot;:100}}"
+						breakEven="" endEffectivity="" created="2015-11-02T11:59:15.670Z" profitability="" foodContact="false" name="f41c727c-17f2-41ab-97c5-c468bb6634ae"
+						nutrientProfilingScore="" servingSize="" erpCode="C0855" productHierarchy1="A25610-INTERCALAIRE PALETTE" title="" productQty=""
+						formulatedDate="2016-05-24T14:12:53.316Z" productCompoQtyUsed="" locale="fr_FR" tareUnit="kg" modifier="admin" modified="2016-04-26T07:47:40.590Z"
+						entityTplRef="Emballage" itemType="bcpg:packagingMaterial"
+						aspects="formulatedEntityAspect, nutrientProfilingScoreAspect, consumerAspect, tareAspect, erpCodeAspect, effectivityAspect, reportLocalesAspect, legalNameAspect, referenceable, entityScoreAspect, localized, entityTplRefAspect, entityListsAspect, codeAspect, reportEntityAspect, suppliersAspect, titled, ingTypeAspect, profitabilityAspect, auditable, manufacturingAspect, eanAspect, productAspect"
+						dynamicCharactColumn5="" packagingListLossPerc="" variantIds="" packagingListQty="5.0" packagingListUnit="P" dynamicCharactColumn2=""
+						dynamicCharactColumn9="" dynamicCharactColumn10="" dynamicCharactColumn7="" packagingListPkgLevel="Tertiary" dynamicCharactColumn6=""
+						dynamicCharactColumn4="" dynamicCharactColumn8="" dynamicCharactColumn3="" sort="102" packagingListIsMaster="false" dynamicCharactColumn1="0.093"
+						packagingListProduct="C0855 PAPIER KRAFT INTERCAL. 70X112" isDefaultVariant="true" depthLevel="3">
+						<productComments prefix="bcpg"><![CDATA[]]>
+						</productComments>
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+						<suppliers prefix="bcpg">
+							<supplier prefix="bcpg">
+								<created prefix="cm"><![CDATA[2015-07-27T12:38:08.772Z]]></created>
+								<locationCity prefix="bcpg"><![CDATA[NANTES CEDEX 02]]></locationCity>
+								<creator prefix="cm"><![CDATA[admin]]></creator>
+								<name prefix="cm"><![CDATA[NorPaper - NANTES]]></name>
+								<locationAddress1 prefix="bcpg"><![CDATA[33 Boulevard Benoni Goulin]]></locationAddress1>
+								<erpCode prefix="bcpg"><![CDATA[48382]]></erpCode>
+								<startEffectivity prefix="bcpg"><![CDATA[2015-07-27T12:38:08.849Z]]></startEffectivity>
+								<code prefix="bcpg"><![CDATA[F99]]></code>
+								<locationZip prefix="bcpg"><![CDATA[44201]]></locationZip>
+								<supplierState prefix="bcpg"><![CDATA[Simulation]]></supplierState>
+								<locationAddress2 prefix="bcpg"><![CDATA[]]>
+								</locationAddress2>
+								<node-dbid prefix="sys"><![CDATA[79908]]></node-dbid>
+								<locale prefix="sys"><![CDATA[fr_FR]]></locale>
+								<modifier prefix="cm"><![CDATA[admin]]></modifier>
+								<modified prefix="cm"><![CDATA[2015-07-27T12:57:46.361Z]]></modified>
+								<entityTplRef prefix="bcpg"><![CDATA[Fournisseur]]></entityTplRef>
+								<supplierAccountRef prefix="bcpg"><![CDATA[null NorPaper - NANTES]]></supplierAccountRef>
+							</supplier>
+						</suppliers>
+						<plants prefix="bcpg">
+							<plant prefix="bcpg">
+								<created prefix="cm"><![CDATA[2015-01-20T15:20:42.989Z]]></created>
+								<plantTel prefix="bcpg"><![CDATA[]]>
+								</plantTel>
+								<locationCity prefix="bcpg"><![CDATA[]]>
+								</locationCity>
+								<description prefix="cm"><![CDATA[]]>
+								</description>
+								<creator prefix="cm"><![CDATA[admin]]></creator>
+								<name prefix="cm"><![CDATA[BONLOC]]></name>
+								<locationAddress1 prefix="bcpg"><![CDATA[]]>
+								</locationAddress1>
+								<title prefix="cm"><![CDATA[]]>
+								</title>
+								<title_fr prefix="cm"><![CDATA[]]>
+								</title_fr>
+								<locationCountry prefix="bcpg"><![CDATA[]]>
+								</locationCountry>
+								<locationZip prefix="bcpg"><![CDATA[]]>
+								</locationZip>
+								<locationAddress3 prefix="bcpg"><![CDATA[]]>
+								</locationAddress3>
+								<locationAddress2 prefix="bcpg"><![CDATA[]]>
+								</locationAddress2>
+								<node-dbid prefix="sys"><![CDATA[14666]]></node-dbid>
+								<locale prefix="sys"><![CDATA[fr]]></locale>
+								<plantPackerCode prefix="bcpg"><![CDATA[Code EMB]]></plantPackerCode>
+								<modifier prefix="cm"><![CDATA[admin]]></modifier>
+								<modified prefix="cm"><![CDATA[2015-12-07T10:14:51.599Z]]></modified>
+								<sort prefix="bcpg"><![CDATA[100]]></sort>
+							</plant>
+						</plants>
+						<instruction prefix="bcpg"><![CDATA[]]>
+						</instruction>
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+					</packagingList>
+					<packagingList productState="Simulation" tare="0.003" projectedQty="" creator="admin" startEffectivity="2015-06-17T10:12:58.952Z"
+						nutrientProfilingClass="" productCompoVolumeUsed="" netWeight="" code="E182" productUnit="P" productDensity="" ingTypeV2="" netWeightUnit="kg"
+						productHierarchy2="A2253030-ETIQUETTE PAL BLANCHE" eanCode="" node-dbid="476805" unitTotalCost="0.04581" netVolume="" reportLocales=""
+						unitPrice=""
+						entityScore="{&quot;catalogs&quot;:[],&quot;global&quot;:100,&quot;details&quot;:{&quot;componentsValidation&quot;:100,&quot;mandatoryFields&quot;:100,&quot;specifications&quot;:100}}"
+						breakEven="" endEffectivity="" created="2015-11-02T11:59:18.299Z" profitability="" foodContact="false" name="46b103cd-58f5-40f2-b330-a2db55086c97"
+						nutrientProfilingScore="" servingSize="" erpCode="C23469" productHierarchy1="A22530-ETIQUETTE ADH" title="" productQty=""
+						formulatedDate="2016-05-24T14:12:53.347Z" productCompoQtyUsed="" locale="fr_FR" tareUnit="kg" modifier="admin" modified="2016-04-26T07:52:42.160Z"
+						entityTplRef="Emballage" itemType="bcpg:packagingMaterial"
+						aspects="formulatedEntityAspect, nutrientProfilingScoreAspect, consumerAspect, tareAspect, erpCodeAspect, effectivityAspect, reportLocalesAspect, legalNameAspect, referenceable, entityScoreAspect, localized, entityTplRefAspect, entityListsAspect, codeAspect, reportEntityAspect, suppliersAspect, titled, ingTypeAspect, profitabilityAspect, auditable, manufacturingAspect, eanAspect, productAspect"
+						dynamicCharactColumn5="" packagingListLossPerc="" variantIds="" packagingListQty="2.0" packagingListUnit="P" dynamicCharactColumn2=""
+						dynamicCharactColumn9="" dynamicCharactColumn10="" dynamicCharactColumn7="" packagingListPkgLevel="Tertiary" dynamicCharactColumn6=""
+						dynamicCharactColumn4="" dynamicCharactColumn8="" dynamicCharactColumn3="" sort="103" packagingListIsMaster="false" dynamicCharactColumn1="0.003"
+						packagingListProduct="C23469 ETIQ BLANCHE PALETTE SSCC PREDECOUPEE" isDefaultVariant="true" depthLevel="3">
+						<productComments prefix="bcpg"><![CDATA[]]>
+						</productComments>
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+						<suppliers prefix="bcpg">
+							<supplier prefix="bcpg">
+								<created prefix="cm"><![CDATA[2015-07-27T12:38:10.123Z]]></created>
+								<locationCity prefix="bcpg"><![CDATA[FRANQUEVILLE ST PIERRE]]></locationCity>
+								<creator prefix="cm"><![CDATA[admin]]></creator>
+								<name prefix="cm"><![CDATA[AUTAJON LABELS ROUEN]]></name>
+								<locationAddress1 prefix="bcpg"><![CDATA[CS 10017]]></locationAddress1>
+								<erpCode prefix="bcpg"><![CDATA[52416]]></erpCode>
+								<startEffectivity prefix="bcpg"><![CDATA[2015-07-27T12:38:10.196Z]]></startEffectivity>
+								<code prefix="bcpg"><![CDATA[F118]]></code>
+								<locationZip prefix="bcpg"><![CDATA[76520]]></locationZip>
+								<supplierState prefix="bcpg"><![CDATA[Simulation]]></supplierState>
+								<locationAddress2 prefix="bcpg"><![CDATA[]]>
+								</locationAddress2>
+								<node-dbid prefix="sys"><![CDATA[80007]]></node-dbid>
+								<locale prefix="sys"><![CDATA[fr_FR]]></locale>
+								<modifier prefix="cm"><![CDATA[admin]]></modifier>
+								<modified prefix="cm"><![CDATA[2015-07-27T12:57:47.407Z]]></modified>
+								<entityTplRef prefix="bcpg"><![CDATA[Fournisseur]]></entityTplRef>
+								<supplierAccountRef prefix="bcpg"><![CDATA[null AUTAJON LABELS ROUEN]]></supplierAccountRef>
+							</supplier>
+						</suppliers>
+						<plants prefix="bcpg">
+							<plant prefix="bcpg">
+								<created prefix="cm"><![CDATA[2015-01-20T15:20:42.989Z]]></created>
+								<plantTel prefix="bcpg"><![CDATA[]]>
+								</plantTel>
+								<locationCity prefix="bcpg"><![CDATA[]]>
+								</locationCity>
+								<description prefix="cm"><![CDATA[]]>
+								</description>
+								<creator prefix="cm"><![CDATA[admin]]></creator>
+								<name prefix="cm"><![CDATA[BONLOC]]></name>
+								<locationAddress1 prefix="bcpg"><![CDATA[]]>
+								</locationAddress1>
+								<title prefix="cm"><![CDATA[]]>
+								</title>
+								<title_fr prefix="cm"><![CDATA[]]>
+								</title_fr>
+								<locationCountry prefix="bcpg"><![CDATA[]]>
+								</locationCountry>
+								<locationZip prefix="bcpg"><![CDATA[]]>
+								</locationZip>
+								<locationAddress3 prefix="bcpg"><![CDATA[]]>
+								</locationAddress3>
+								<locationAddress2 prefix="bcpg"><![CDATA[]]>
+								</locationAddress2>
+								<node-dbid prefix="sys"><![CDATA[14666]]></node-dbid>
+								<locale prefix="sys"><![CDATA[fr]]></locale>
+								<plantPackerCode prefix="bcpg"><![CDATA[Code EMB]]></plantPackerCode>
+								<modifier prefix="cm"><![CDATA[admin]]></modifier>
+								<modified prefix="cm"><![CDATA[2015-12-07T10:14:51.599Z]]></modified>
+								<sort prefix="bcpg"><![CDATA[100]]></sort>
+							</plant>
+						</plants>
+						<instruction prefix="bcpg"><![CDATA[]]>
+						</instruction>
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+					</packagingList>
+					<packagingList productState="Simulation" tare="1.0" projectedQty="" creator="admin" startEffectivity="2015-06-17T10:13:50.326Z"
+						nutrientProfilingClass="" productCompoVolumeUsed="" netWeight="" code="E409" productUnit="P" productDensity="" ingTypeV2="" netWeightUnit="kg"
+						productHierarchy2="A2872000-RUBAN THERMIQUE" eanCode="" node-dbid="476806" unitTotalCost="12.221" netVolume="" reportLocales="" unitPrice=""
+						entityScore="{&quot;catalogs&quot;:[],&quot;global&quot;:100,&quot;details&quot;:{&quot;componentsValidation&quot;:100,&quot;mandatoryFields&quot;:100,&quot;specifications&quot;:100}}"
+						breakEven="" endEffectivity="" created="2015-11-02T11:59:20.692Z" profitability="" foodContact="false" name="f9096466-cc2e-44b6-bc21-45132733369f"
+						nutrientProfilingScore="" servingSize="" erpCode="C21348" productHierarchy1="A28720-RUBAN THERMIQUE" title="" productQty=""
+						formulatedDate="2016-05-24T14:12:53.378Z" productCompoQtyUsed="" locale="fr_FR" tareUnit="g" modifier="admin" modified="2016-04-26T07:52:42.508Z"
+						entityTplRef="Emballage" itemType="bcpg:packagingMaterial"
+						aspects="formulatedEntityAspect, nutrientProfilingScoreAspect, consumerAspect, tareAspect, erpCodeAspect, effectivityAspect, reportLocalesAspect, legalNameAspect, referenceable, entityScoreAspect, localized, entityTplRefAspect, entityListsAspect, codeAspect, reportEntityAspect, suppliersAspect, titled, ingTypeAspect, profitabilityAspect, auditable, manufacturingAspect, eanAspect, productAspect"
+						dynamicCharactColumn5="" packagingListLossPerc="" variantIds="" packagingListQty="0.00167" packagingListUnit="P" dynamicCharactColumn2=""
+						dynamicCharactColumn9="" dynamicCharactColumn10="" dynamicCharactColumn7="" packagingListPkgLevel="Tertiary" dynamicCharactColumn6=""
+						dynamicCharactColumn4="" dynamicCharactColumn8="" dynamicCharactColumn3="" sort="104" packagingListIsMaster="false" dynamicCharactColumn1="1.0"
+						packagingListProduct="C21348 RUBAN NOIR THERMIQUE 152X450" isDefaultVariant="true" depthLevel="3">
+						<productComments prefix="bcpg"><![CDATA[]]>
+						</productComments>
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+						<suppliers prefix="bcpg">
+							<supplier prefix="bcpg">
+								<created prefix="cm"><![CDATA[2015-07-27T12:38:07.157Z]]></created>
+								<locationCity prefix="bcpg"><![CDATA[MASSY CEDEX]]></locationCity>
+								<creator prefix="cm"><![CDATA[admin]]></creator>
+								<name prefix="cm"><![CDATA[NCR FRANCE]]></name>
+								<locationAddress1 prefix="bcpg"><![CDATA[11, Rue du chemin des Femmes]]></locationAddress1>
+								<erpCode prefix="bcpg"><![CDATA[44830]]></erpCode>
+								<startEffectivity prefix="bcpg"><![CDATA[2015-07-27T12:38:07.208Z]]></startEffectivity>
+								<code prefix="bcpg"><![CDATA[F72]]></code>
+								<locationZip prefix="bcpg"><![CDATA[91749]]></locationZip>
+								<supplierState prefix="bcpg"><![CDATA[Simulation]]></supplierState>
+								<locationAddress2 prefix="bcpg"><![CDATA[]]>
+								</locationAddress2>
+								<node-dbid prefix="sys"><![CDATA[79761]]></node-dbid>
+								<locale prefix="sys"><![CDATA[fr_FR]]></locale>
+								<modifier prefix="cm"><![CDATA[admin]]></modifier>
+								<modified prefix="cm"><![CDATA[2015-07-27T12:57:47.338Z]]></modified>
+								<entityTplRef prefix="bcpg"><![CDATA[Fournisseur]]></entityTplRef>
+								<supplierAccountRef prefix="bcpg"><![CDATA[null NCR FRANCE]]></supplierAccountRef>
+							</supplier>
+						</suppliers>
+						<plants prefix="bcpg">
+							<plant prefix="bcpg">
+								<created prefix="cm"><![CDATA[2015-01-27T09:10:58.875Z]]></created>
+								<plantTel prefix="bcpg"><![CDATA[]]>
+								</plantTel>
+								<locationCity prefix="bcpg"><![CDATA[]]>
+								</locationCity>
+								<description prefix="cm"><![CDATA[]]>
+								</description>
+								<creator prefix="cm"><![CDATA[admin]]></creator>
+								<name prefix="cm"><![CDATA[RIVESALTES]]></name>
+								<locationAddress1 prefix="bcpg"><![CDATA[]]>
+								</locationAddress1>
+								<title prefix="cm"><![CDATA[]]>
+								</title>
+								<title_fr prefix="cm"><![CDATA[]]>
+								</title_fr>
+								<locationCountry prefix="bcpg"><![CDATA[]]>
+								</locationCountry>
+								<locationZip prefix="bcpg"><![CDATA[]]>
+								</locationZip>
+								<locationAddress3 prefix="bcpg"><![CDATA[]]>
+								</locationAddress3>
+								<locationAddress2 prefix="bcpg"><![CDATA[]]>
+								</locationAddress2>
+								<node-dbid prefix="sys"><![CDATA[14787]]></node-dbid>
+								<locale prefix="sys"><![CDATA[fr]]></locale>
+								<modifier prefix="cm"><![CDATA[admin]]></modifier>
+								<modified prefix="cm"><![CDATA[2015-01-27T09:10:58.875Z]]></modified>
+								<sort prefix="bcpg"><![CDATA[101]]></sort>
+							</plant>
+							<plant prefix="bcpg">
+								<created prefix="cm"><![CDATA[2015-01-27T09:11:16.519Z]]></created>
+								<plantTel prefix="bcpg"><![CDATA[]]>
+								</plantTel>
+								<locationCity prefix="bcpg"><![CDATA[]]>
+								</locationCity>
+								<description prefix="cm"><![CDATA[]]>
+								</description>
+								<creator prefix="cm"><![CDATA[admin]]></creator>
+								<name prefix="cm"><![CDATA[AGEN]]></name>
+								<locationAddress1 prefix="bcpg"><![CDATA[]]>
+								</locationAddress1>
+								<title prefix="cm"><![CDATA[]]>
+								</title>
+								<title_fr prefix="cm"><![CDATA[]]>
+								</title_fr>
+								<locationCountry prefix="bcpg"><![CDATA[]]>
+								</locationCountry>
+								<locationZip prefix="bcpg"><![CDATA[]]>
+								</locationZip>
+								<locationAddress3 prefix="bcpg"><![CDATA[]]>
+								</locationAddress3>
+								<locationAddress2 prefix="bcpg"><![CDATA[]]>
+								</locationAddress2>
+								<node-dbid prefix="sys"><![CDATA[14790]]></node-dbid>
+								<locale prefix="sys"><![CDATA[fr]]></locale>
+								<modifier prefix="cm"><![CDATA[admin]]></modifier>
+								<modified prefix="cm"><![CDATA[2015-01-27T09:11:16.519Z]]></modified>
+								<sort prefix="bcpg"><![CDATA[104]]></sort>
+							</plant>
+						</plants>
+						<instruction prefix="bcpg"><![CDATA[]]>
+						</instruction>
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+					</packagingList>
+					<dynamicCharactLists />
+				</packagingLists>
+				<processLists>
+					<processList productState="Simulation" tare="" projectedQty="" creator="admin" startEffectivity="2015-08-04T08:48:25.221Z"
+						nutrientProfilingClass="" productCompoVolumeUsed="" netWeight="" code="R2" productUnit="h" productDensity="" ingTypeV2="" netWeightUnit="kg"
+						productHierarchy2="" node-dbid="80776" unitTotalCost="100.0" netVolume="" reportLocales="" unitPrice=""
+						entityScore="{&quot;catalogs&quot;:[],&quot;global&quot;:100,&quot;details&quot;:{&quot;componentsValidation&quot;:100,&quot;mandatoryFields&quot;:100,&quot;specifications&quot;:100}}"
+						breakEven="" endEffectivity="" created="2015-08-04T08:48:25.189Z" profitability="" name="3e7c13e5-b586-48af-bcd9-3538fdfa3532"
+						nutrientProfilingScore="" servingSize="" erpCode="" productHierarchy1="" title="" productQty="" formulatedDate="2016-04-08T09:08:26.635Z"
+						productCompoQtyUsed="" locale="fr" tareUnit="" modifier="admin" modified="2016-04-08T09:08:19.805Z" entityTplRef="Ressource" itemType="bcpg:resourceProduct"
+						aspects="formulatedEntityAspect, nutrientProfilingScoreAspect, consumerAspect, tareAspect, erpCodeAspect, effectivityAspect, reportLocalesAspect, legalNameAspect, referenceable, entityScoreAspect, localized, entityTplRefAspect, entityListsAspect, codeAspect, incomplete, reportEntityAspect, suppliersAspect, titled, ingTypeAspect, profitabilityAspect, auditable, eanAspect, productAspect"
+						plRateProduct="100.0" dynamicCharactColumn5="" variantIds="" dynamicCharactColumn2="" dynamicCharactColumn9="" dynamicCharactColumn10=""
+						dynamicCharactColumn7="" plYield="" plQty="" dynamicCharactColumn6="" plRateResource="100.0" plQtyResource="1.0" dynamicCharactColumn4=""
+						dynamicCharactColumn8="" dynamicCharactColumn3="" sort="100" plUnit="P" dynamicCharactColumn1="" plResource="Ligne 1" processListQtyForProduct="0.01"
+						isDefaultVariant="true" depthLevel="1">
+						<suppliers prefix="bcpg" />
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+					</processList>
+					<processList legalName="" legalName_fr="" productState="Simulation" tare="" projectedQty="" creator="admin" startEffectivity="2015-08-04T08:48:33.956Z"
+						nutrientProfilingClass="" productCompoVolumeUsed="" netWeight="" code="R3" productUnit="h" productDensity="" ingTypeV2="" netWeightUnit="kg"
+						productHierarchy2="" eanCode="" node-dbid="80790" unitTotalCost="10.0" netVolume="" unitPrice="" breakEven="" endEffectivity=""
+						created="2015-08-04T08:48:33.920Z" profitability="" name="4d16aa91-8522-4033-b05d-f7c424849aea" nutrientProfilingScore="" servingSize=""
+						erpCode="" productHierarchy1="" title="" title_fr="" productQty="" formulatedDate="2016-02-09T16:21:22.012Z" productCompoQtyUsed="" locale="fr"
+						tareUnit="" modifier="admin" modified="2016-02-02T14:07:48.324Z" entityTplRef="Ressource" itemType="bcpg:resourceProduct"
+						aspects="formulatedEntityAspect, nutrientProfilingScoreAspect, consumerAspect, tareAspect, erpCodeAspect, effectivityAspect, legalNameAspect, referenceable, localized, entityTplRefAspect, entityListsAspect, codeAspect, incomplete, reportEntityAspect, suppliersAspect, titled, ingTypeAspect, profitabilityAspect, auditable, eanAspect, productAspect"
+						plRateProduct="50.0" dynamicCharactColumn5="" variantIds="" dynamicCharactColumn2="" dynamicCharactColumn9="" dynamicCharactColumn10=""
+						dynamicCharactColumn7="" plYield="" plQty="" dynamicCharactColumn6="" plRateResource="50.0" plQtyResource="2.0" dynamicCharactColumn4=""
+						dynamicCharactColumn8="" dynamicCharactColumn3="" sort="101" plUnit="P" dynamicCharactColumn1="" plResource="Opérateur"
+						processListQtyForProduct="0.04" isDefaultVariant="true" depthLevel="1">
+						<productComments prefix="bcpg"><![CDATA[]]>
+						</productComments>
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+						<suppliers prefix="bcpg" />
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+					</processList>
+					<dynamicCharactLists />
+				</processLists>
+				<ingLabelingLists />
+				<nutLists energiekj="" energiekcal="" lipides="" agsaturés="" agmonoinsaturés="" agpolyinsaturés="" glucides="" sucres="" amidon=""
+					protéines="" fibresalimentaires="" sodium="" sel="">
+					<nutList nutListGroup="Groupe 1" nutListValue="" name="Energie kJ" nutListValuePerServing="" nutListIsFormulated="true" nutListMini=""
+						nutListFormulatedValue="" nutListLossPerc="" nutListGDAPerc="" nutListUnit="kJ/100g" nutListMethod="Formulation"
+						nutListFormulaErrorLog="EL1030E:(pos 0): The operator 'MULTIPLY' is not supported between objects of type 'null' and 'java.lang.Double'. Erreur lors de la formulation du nutriment 'Energie kJ': - EL1030E:(pos 0): The operator 'MULTIPLY' is not supported between objects of type 'null' and 'java.lang.Double'"
+						isManualListItem="false" node-dbid="64558" locale="fr_FR" sort="100" depthLevel="1" nutListMaxi="" nutListNut="Energie kJ" legalName="Energie">
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+						<nutGDA prefix="bcpg"><![CDATA[8400.0]]></nutGDA>
+					</nutList>
+					<nutList nutListGroup="Groupe 1" nutListValue="" name="Energie kcal" nutListValuePerServing="" nutListIsFormulated="false" nutListMini=""
+						nutListFormulatedValue="" nutListLossPerc="" nutListGDAPerc="" nutListUnit="kcal/100g" nutListMethod="Formulation"
+						nutListFormulaErrorLog="Erreur lors de la formulation du nutriment 'Energie kcal': - EL1025E:(pos 223): The collection has '0' elements, index '0' is invalid. Caractéristique 'Energie kcal' non renseignée : Test"
+						isManualListItem="false" node-dbid="64559" locale="fr_FR" sort="101" depthLevel="1" nutListMaxi="" nutListNut="Energie kcal" legalName="Energie">
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+						<nutGDA prefix="bcpg"><![CDATA[2000.0]]></nutGDA>
+					</nutList>
+					<nutList nutListGroup="Groupe 1" name="Lipides" nutListIsFormulated="false" nutListUnit="g/100g" nutListMethod="Formulation"
+						nutListFormulaErrorLog="Caractéristique 'Lipides' non renseignée : Test" isManualListItem="false" node-dbid="64560" locale="fr_FR" sort="102"
+						depthLevel="1" nutListNut="Lipides" legalName="Matières grasses" nutListValue="">
+						<description prefix="cm"><![CDATA[< 10 g ± 1,5 g
+10 à 40 g ± 20 %
+> 40 g ± 8]]></description>
+						<nutGDA prefix="bcpg"><![CDATA[70.0]]></nutGDA>
+					</nutList>
+					<nutList nutListGroup="Groupe 2" name="AG saturés" nutListIsFormulated="false" nutListUnit="g/100g" nutListMethod="Formulation"
+						nutListFormulaErrorLog="Caractéristique 'AG saturés' non renseignée : Test" isManualListItem="false" node-dbid="64561" locale="fr_FR" sort="103"
+						depthLevel="1" nutListNut="AG saturés" legalName="dont AG saturés" nutListValue="">
+						<description prefix="cm"><![CDATA[< 4 g ± 0,8 g>=  4 g ± 20 %]]></description>
+						<nutGDA prefix="bcpg"><![CDATA[20.0]]></nutGDA>
+					</nutList>
+					<nutList nutListGroup="Autre" name="AG monoinsaturés" nutListIsFormulated="false" nutListUnit="g/100g" nutListMethod="Formulation"
+						nutListFormulaErrorLog="Caractéristique 'AG monoinsaturés' non renseignée : Test" isManualListItem="false" node-dbid="64562" locale="fr_FR"
+						sort="104" depthLevel="1" nutListNut="AG monoinsaturés" legalName="dont AG mono-insaturés" nutListValue="">
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+						<nutGDA prefix="bcpg"><![CDATA[]]>
+						</nutGDA>
+					</nutList>
+					<nutList nutListGroup="Autre" name="AG polyinsaturés" nutListIsFormulated="false" nutListUnit="g/100g" nutListMethod="Formulation"
+						nutListFormulaErrorLog="Caractéristique 'AG polyinsaturés' non renseignée : Test" isManualListItem="false" node-dbid="64563" locale="fr_FR"
+						sort="105" depthLevel="1" nutListNut="AG polyinsaturés" legalName="dont AG polyinsaturés" nutListValue="">
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+						<nutGDA prefix="bcpg"><![CDATA[]]>
+						</nutGDA>
+					</nutList>
+					<nutList nutListGroup="Groupe 1" name="Glucides" nutListIsFormulated="false" nutListUnit="g/100g" nutListMethod="Formulation"
+						nutListFormulaErrorLog="Caractéristique 'Glucides' non renseignée : Test" isManualListItem="false" node-dbid="64564" locale="fr_FR" sort="106"
+						depthLevel="1" nutListNut="Glucides" legalName="Glucides" nutListValue="">
+						<description prefix="cm"><![CDATA[< 10 g ± 2 g10 à 40 g ± 20 %> 40 g ± 8 g]]></description>
+						<nutGDA prefix="bcpg"><![CDATA[270.0]]></nutGDA>
+					</nutList>
+					<nutList nutListGroup="Groupe 2" name="Sucres" nutListIsFormulated="false" nutListUnit="g/100g" nutListMethod="Formulation"
+						nutListFormulaErrorLog="Caractéristique 'Sucres' non renseignée : Test" isManualListItem="false" node-dbid="64565" locale="fr_FR" sort="107"
+						depthLevel="1" nutListNut="Sucres" legalName="dont sucres" nutListValue="">
+						<description prefix="cm"><![CDATA[< 10 g ± 2 g10 à 40 g ± 20 %> 40 g ± 8 g]]></description>
+						<nutGDA prefix="bcpg"><![CDATA[90.0]]></nutGDA>
+					</nutList>
+					<nutList nutListGroup="Autre" name="Amidon" nutListIsFormulated="false" nutListUnit="g/100g" nutListMethod="Formulation"
+						nutListFormulaErrorLog="Caractéristique 'Amidon' non renseignée : Test" isManualListItem="false" node-dbid="64566" locale="fr_FR" sort="108"
+						depthLevel="1" nutListNut="Amidon" legalName="dont amidon" nutListValue="">
+						<description prefix="cm"><![CDATA[]]>
+						</description>
+						<nutGDA prefix="bcpg"><![CDATA[]]>
+						</nutGDA>
+					</nutList>
+					<nutList nutListGroup="Groupe 1" name="Protéines" nutListIsFormulated="false" nutListUnit="g/100g" nutListMethod="Formulation"
+						nutListFormulaErrorLog="Caractéristique 'Protéines' non renseignée : Test" isManualListItem="false" node-dbid="64567" locale="fr_FR" sort="109"
+						depthLevel="1" nutListNut="Protéines" legalName="Protéines" nutListValue="">
+						<description prefix="cm"><![CDATA[< 10 g ± 2 g
+10 à 40 g ± 20 %
+> 40 g ± 8 g]]></description>
+						<nutGDA prefix="bcpg"><![CDATA[50.0]]></nutGDA>
+					</nutList>
+					<nutList nutListGroup="Groupe 2" name="Fibres alimentaires" nutListIsFormulated="false" nutListUnit="g/100g" nutListMethod="Formulation"
+						nutListFormulaErrorLog="Caractéristique 'Fibres alimentaires' non renseignée : Test" isManualListItem="false" node-dbid="64568" locale="fr_FR"
+						sort="110" depthLevel="1" nutListNut="Fibres alimentaires" legalName="Fibres alimentaires" nutListValue="">
+						<description prefix="cm"><![CDATA[< 10 g ± 2 g10 à 40 g ± 20 %> 40 g ± 8 g]]></description>
+						<nutGDA prefix="bcpg"><![CDATA[25.0]]></nutGDA>
+					</nutList>
+					<nutList nutListGroup="Groupe 2" name="Sodium" nutListIsFormulated="false" nutListUnit="mg/100g" nutListMethod="Formulation"
+						nutListFormulaErrorLog="Caractéristique 'Sodium' non renseignée : Test" isManualListItem="false" node-dbid="64569" locale="fr_FR" sort="111"
+						depthLevel="1" nutListNut="Sodium" legalName="Sodium" nutListValue="">
+						<description prefix="cm"><![CDATA[< 0,5 g ± 0,15>= 0,5 g ± 20 %]]></description>
+						<nutGDA prefix="bcpg"><![CDATA[2400.0]]></nutGDA>
+					</nutList>
+					<nutList nutListGroup="Groupe 2" nutListValue="" name="Sel" nutListValuePerServing="" nutListIsFormulated="true" nutListMini=""
+						nutListFormulatedValue="" nutListLossPerc="" nutListGDAPerc="" nutListUnit="g/100g" nutListMethod="Formulation"
+						nutListFormulaErrorLog="EL1025E:(pos 91): The collection has '0' elements, index '0' is invalid. Erreur lors de la formulation du nutriment 'Sel': - EL1025E:(pos 91): The collection has '0' elements, index '0' is invalid"
+						isManualListItem="false" node-dbid="64570" locale="fr_FR" sort="112" depthLevel="1" nutListMaxi="" nutListNut="Sel" legalName="Sel">
+						<description prefix="cm"><![CDATA[< 1,25 g ± 0,375>=  1,25 g ± 20 %]]></description>
+						<nutGDA prefix="bcpg"><![CDATA[6.0]]></nutGDA>
+					</nutList>
+				</nutLists>
+			</dataLists>
+			<variants />
+			<versions />
+		</finishedProduct>
+	</product>
+	<qcControlPlans prefix="qa"><![CDATA[Plan contrôle STD]]></qcControlPlans>
+	<aspects><![CDATA[dvpqa:qualityControlAspect, cm:titled, bcpg:effectivityAspect, auditable, bcpg:manufacturingAspect, referenceable, qa:batchAspect, localized, bcpg:codeAspect, bcpg:entityListsAspect]]></aspects>
+	<itemType><![CDATA[qualityControl]]></itemType>
+	<dataLists>
+		<controlLists>
+			<controlList clType="bcpg_physicoChemList" clValue="3.0" name="560afd9d-0843-4177-9129-3ed03ab8ecf6" clTarget="3.0" clUnit="g" clMini="2.0"
+				clState="Compliant" clTextCriteria="OK" clMaxi="4.0" clSampleId="QA5/0 " clRequired="false" node-dbid="547385" locale="fr" sort="109" clCharacts="Volume" />
+			<controlList clTextCriteria="Sans allergène" clType="bcpg_allergenList" clSampleId="QA5/0 " name="25897405-a177-4f6e-ac30-7ed6a11f109f"
+				node-dbid="547386" locale="fr" sort="110" clCharacts="Lait et produit à base de (dont lactose)" />
+			<controlList clType="bcpg_microbioList" clSampleId="QA5/0 " name="6118cde0-8724-4b26-8c13-be0957f1f3b3" node-dbid="547387" locale="fr"
+				clTarget="50.0" clUnit="°C" clState="Compliant" sort="111" clCharacts="Flore Aérobie Mésophile 30°C" />
+			<controlList clType="bcpg_organoList" clSampleId="QA5/0 " name="35eeacaf-d5b1-4ecd-9f78-ba05b36d8dd7" node-dbid="547388" locale="fr"
+				sort="112" clCharacts="Odeur" />
+			<controlList clType="bcpg_nutList" clSampleId="QA5/0 " name="3749ea92-c4c2-43cb-b453-b4fcc3f9e723" node-dbid="547389" locale="fr"
+				clTarget="25.0" clState="NonCompliant" sort="113" clCharacts="Energie kJ" />
+			<controlList clType="counter_analysis" clSampleId="QA5/0 " name="77e38b28-0da6-47da-bb62-8bba5bb52cbb" node-dbid="547390" locale="fr"
+				clTarget="9.0" sort="114" clCharacts="Longeur" />
+			<controlList clType="bcpg_physicoChemList" name="e439de89-a130-4570-b498-4d33c5e46a9e" clTarget="3.0" clUnit="g" clMini="2.0"
+				clTextCriteria="OK" clMaxi="4.0" clSampleId="QA5/1 " clRequired="false" node-dbid="547391" locale="fr" sort="115" clCharacts="Volume" />
+			<controlList clTextCriteria="Sans allergène" clType="bcpg_allergenList" clSampleId="QA5/1 " name="964a95cd-5a02-4a87-9470-a4cce29ced77"
+				node-dbid="547392" locale="fr" sort="116" clCharacts="Lait et produit à base de (dont lactose)" />
+			<controlList clType="bcpg_microbioList" clSampleId="QA5/1 " name="72c03fc2-8f6e-44f6-96d7-629b7a2fe5a1" node-dbid="547393" locale="fr"
+				clTarget="50.0" clUnit="°C" sort="117" clCharacts="Flore Aérobie Mésophile 30°C" />
+			<controlList clType="bcpg_organoList" clSampleId="QA5/1 " name="c8bcd04d-4d75-48a5-9b8b-814d99871054" node-dbid="547394" locale="fr"
+				sort="118" clCharacts="Odeur" />
+			<controlList clType="bcpg_nutList" clSampleId="QA5/1 " name="6f365818-b4ef-4b5e-92a9-01eb0ae35c7c" node-dbid="547395" locale="fr"
+				clTarget="25.0" sort="119" clCharacts="Energie kJ" />
+			<controlList clType="counter_analysis" clSampleId="QA5/1 " name="c8614af8-b684-4702-9734-a6707db82d84" node-dbid="547396" locale="fr"
+				clTarget="9.0" sort="120" clCharacts="Longeur" />
+			<controlList clType="bcpg_physicoChemList" name="63cd66d6-6b1c-48f4-9964-6ea46cb28239" clTarget="3.0" clUnit="g" clMini="2.0"
+				clTextCriteria="OK" clMaxi="4.0" clSampleId="QA5/2 " clRequired="false" node-dbid="547397" locale="fr" sort="121" clCharacts="Volume" />
+			<controlList clTextCriteria="Sans allergène" clType="bcpg_allergenList" clSampleId="QA5/2 " name="7a74cf7a-e0b9-445e-ad65-68ec2e286502"
+				node-dbid="547398" locale="fr" sort="122" clCharacts="Lait et produit à base de (dont lactose)" />
+			<controlList clType="bcpg_microbioList" clSampleId="QA5/2 " name="6d83039a-41db-4233-a1c3-c683181c5f2d" node-dbid="547399" locale="fr"
+				clTarget="50.0" clUnit="°C" sort="123" clCharacts="Flore Aérobie Mésophile 30°C" />
+			<controlList clType="bcpg_organoList" clSampleId="QA5/2 " name="a4cf0832-211f-4f37-ab9f-3855b485c32a" node-dbid="547400" locale="fr"
+				sort="124" clCharacts="Odeur" />
+			<controlList clType="bcpg_nutList" clSampleId="QA5/2 " name="f885f611-4eb9-4902-8b00-85559c10f83e" node-dbid="547401" locale="fr"
+				clTarget="25.0" sort="125" clCharacts="Energie kJ" />
+			<controlList clType="counter_analysis" clSampleId="QA5/2 " name="8d41a8ea-658f-40c6-ad39-36982459a62e" node-dbid="547402" locale="fr"
+				clTarget="9.0" sort="126" clCharacts="Longeur" />
+			<controlList clType="bcpg_physicoChemList" name="561ff8fd-3b55-454f-b3e7-e162c3c8e84e" clTarget="3.0" clUnit="g" clMini="2.0"
+				clTextCriteria="OK" clMaxi="4.0" clSampleId="QA5/3 " clRequired="false" node-dbid="547403" locale="fr" sort="127" clCharacts="Volume" />
+			<controlList clTextCriteria="Sans allergène" clType="bcpg_allergenList" clSampleId="QA5/3 " name="e4883c3a-5261-43d7-bc6f-f62840c1dcf7"
+				node-dbid="547404" locale="fr" sort="128" clCharacts="Lait et produit à base de (dont lactose)" />
+			<controlList clType="bcpg_microbioList" clSampleId="QA5/3 " name="a84bd435-6a0c-4612-8858-89805304ff89" node-dbid="547405" locale="fr"
+				clTarget="50.0" clUnit="°C" sort="129" clCharacts="Flore Aérobie Mésophile 30°C" />
+			<controlList clType="bcpg_organoList" clSampleId="QA5/3 " name="eaa936b4-e685-4870-a256-0ca1e465bf2b" node-dbid="547406" locale="fr"
+				sort="130" clCharacts="Odeur" />
+			<controlList clType="bcpg_nutList" clSampleId="QA5/3 " name="2cad2d75-f860-4dca-9737-c549195edc57" node-dbid="547407" locale="fr"
+				clTarget="25.0" sort="131" clCharacts="Energie kJ" />
+			<controlList clType="counter_analysis" clSampleId="QA5/3 " name="1361b02f-cc04-4f17-bd5d-62d937719692" node-dbid="547408" locale="fr"
+				clTarget="9.0" sort="132" clCharacts="Longeur" />
+			<controlList clType="bcpg_physicoChemList" name="eef4e7c6-7cca-478a-b507-dc541455dbf4" clTarget="3.0" clUnit="g" clMini="2.0"
+				clTextCriteria="OK" clMaxi="4.0" clSampleId="QA5/4 " clRequired="false" node-dbid="547409" locale="fr" sort="133" clCharacts="Volume" />
+			<controlList clTextCriteria="Sans allergène" clType="bcpg_allergenList" clSampleId="QA5/4 " name="e4fd37e5-501c-4df9-8980-3707ca4aba1a"
+				node-dbid="547410" locale="fr" sort="134" clCharacts="Lait et produit à base de (dont lactose)" />
+			<controlList clType="bcpg_microbioList" clSampleId="QA5/4 " name="61224579-c55f-4011-b205-8b3a26a51d3b" node-dbid="547411" locale="fr"
+				clTarget="50.0" clUnit="°C" sort="135" clCharacts="Flore Aérobie Mésophile 30°C" />
+			<controlList clType="bcpg_organoList" clSampleId="QA5/4 " name="22381037-1fdf-4a6f-9cea-f985a69229b9" node-dbid="547412" locale="fr"
+				sort="136" clCharacts="Odeur" />
+			<controlList clType="bcpg_nutList" clSampleId="QA5/4 " name="10705b99-45e1-4583-89c4-eb1b948cf21f" node-dbid="547413" locale="fr"
+				clTarget="25.0" sort="137" clCharacts="Energie kJ" />
+			<controlList clType="counter_analysis" clSampleId="QA5/4 " name="fe77da62-8874-432c-9dbd-36fb96cf5238" node-dbid="547414" locale="fr"
+				clTarget="9.0" sort="138" clCharacts="Longeur" />
+			<controlList clType="bcpg_physicoChemList" name="308ed463-02c0-4a0a-872c-62d2cef3f507" clTarget="3.0" clUnit="g" clMini="2.0"
+				clTextCriteria="OK" clMaxi="4.0" clSampleId="QA5/5 " clRequired="false" node-dbid="547415" locale="fr" sort="139" clCharacts="Volume" />
+			<controlList clTextCriteria="Sans allergène" clType="bcpg_allergenList" clSampleId="QA5/5 " name="653ad0bb-783e-46d1-b5b8-8166716f87a8"
+				node-dbid="547416" locale="fr" sort="140" clCharacts="Lait et produit à base de (dont lactose)" />
+			<controlList clType="bcpg_microbioList" clSampleId="QA5/5 " name="93e9b386-ecb6-43a0-ba99-a3ac500ee8f2" node-dbid="547417" locale="fr"
+				clTarget="50.0" clUnit="°C" sort="141" clCharacts="Flore Aérobie Mésophile 30°C" />
+			<controlList clType="bcpg_organoList" clSampleId="QA5/5 " name="bbd27e72-dc64-43de-8083-af0f78d7b3ee" node-dbid="547418" locale="fr"
+				sort="142" clCharacts="Odeur" />
+			<controlList clType="bcpg_nutList" clSampleId="QA5/5 " name="1194101f-e2a7-4814-bcd7-dbe3195d8c66" node-dbid="547419" locale="fr"
+				clTarget="25.0" sort="143" clCharacts="Energie kJ" />
+			<controlList clType="counter_analysis" clSampleId="QA5/5 " name="7ea245cc-cf8e-41ce-8fb6-4287bea0ce5a" node-dbid="547420" locale="fr"
+				clTarget="9.0" sort="144" clCharacts="Longeur" />
+			<controlList clType="bcpg_physicoChemList" name="08f3785b-acf8-458a-8e63-1b74651147f7" clTarget="3.0" clUnit="g" clMini="2.0"
+				clTextCriteria="OK" clMaxi="4.0" clSampleId="QA5/6 " clRequired="false" node-dbid="547421" locale="fr" sort="145" clCharacts="Volume" />
+			<controlList clTextCriteria="Sans allergène" clType="bcpg_allergenList" clSampleId="QA5/6 " name="91b930f7-6088-45fa-92ec-483b75ddf357"
+				node-dbid="547422" locale="fr" sort="146" clCharacts="Lait et produit à base de (dont lactose)" />
+			<controlList clType="bcpg_microbioList" clSampleId="QA5/6 " name="9f34fd58-cad4-4443-aeb2-72ebcdc3aef3" node-dbid="547423" locale="fr"
+				clTarget="50.0" clUnit="°C" sort="147" clCharacts="Flore Aérobie Mésophile 30°C" />
+			<controlList clType="bcpg_organoList" clSampleId="QA5/6 " name="2a09d98d-7ed6-4c92-a576-75e259e9a2dc" node-dbid="547424" locale="fr"
+				sort="148" clCharacts="Odeur" />
+			<controlList clType="bcpg_nutList" clSampleId="QA5/6 " name="1868c08f-113d-4d9c-ae03-eec81fcfe39b" node-dbid="547425" locale="fr"
+				clTarget="25.0" sort="149" clCharacts="Energie kJ" />
+			<controlList clType="counter_analysis" clSampleId="QA5/6 " name="f965ba91-80c9-4378-83d5-56d23d056a56" node-dbid="547426" locale="fr"
+				clTarget="9.0" sort="150" clCharacts="Longeur" />
+			<controlList clType="bcpg_physicoChemList" name="399c95a9-0a52-4c14-bcca-18e6cdaeb22c" clTarget="3.0" clUnit="g" clMini="2.0"
+				clTextCriteria="OK" clMaxi="4.0" clSampleId="QA5/7 " clRequired="false" node-dbid="547427" locale="fr" sort="151" clCharacts="Volume" />
+			<controlList clTextCriteria="Sans allergène" clType="bcpg_allergenList" clSampleId="QA5/7 " name="17ccacf4-c1f1-41c5-87fb-9fd14f7b1f9a"
+				node-dbid="547428" locale="fr" sort="152" clCharacts="Lait et produit à base de (dont lactose)" />
+			<controlList clType="bcpg_microbioList" clSampleId="QA5/7 " name="38b8306e-e393-4c1e-b593-813f36943dd2" node-dbid="547429" locale="fr"
+				clTarget="50.0" clUnit="°C" sort="153" clCharacts="Flore Aérobie Mésophile 30°C" />
+			<controlList clType="bcpg_organoList" clSampleId="QA5/7 " name="8d8668fa-b8ba-4c78-937e-7015c8d9a4ac" node-dbid="547430" locale="fr"
+				sort="154" clCharacts="Odeur" />
+			<controlList clType="bcpg_nutList" clSampleId="QA5/7 " name="9d30c2ee-8b63-42de-8c7b-fda047f30d13" node-dbid="547431" locale="fr"
+				clTarget="25.0" sort="155" clCharacts="Energie kJ" />
+			<controlList clType="counter_analysis" clSampleId="QA5/7 " name="d07d60c9-64c8-4c93-be16-2511bc4cca8b" node-dbid="547432" locale="fr"
+				clTarget="9.0" sort="156" clCharacts="Longeur" />
+			<controlList clType="bcpg_physicoChemList" name="470b7202-9128-4124-bde9-8feca3b5bc00" clTarget="3.0" clUnit="g" clMini="2.0"
+				clTextCriteria="OK" clMaxi="4.0" clSampleId="QA5/8 " clRequired="false" node-dbid="547433" locale="fr" sort="157" clCharacts="Volume" />
+			<controlList clTextCriteria="Sans allergène" clType="bcpg_allergenList" clSampleId="QA5/8 " name="b4127954-f41a-4f2b-b42c-545256102689"
+				node-dbid="547434" locale="fr" sort="158" clCharacts="Lait et produit à base de (dont lactose)" />
+			<controlList clType="bcpg_microbioList" clSampleId="QA5/8 " name="6ea29625-3137-4a58-b5bc-ad850c933322" node-dbid="547435" locale="fr"
+				clTarget="50.0" clUnit="°C" sort="159" clCharacts="Flore Aérobie Mésophile 30°C" />
+			<controlList clType="bcpg_organoList" clSampleId="QA5/8 " name="312155ff-2ac7-45b2-8bfd-aa8599e15833" node-dbid="547436" locale="fr"
+				sort="160" clCharacts="Odeur" />
+			<controlList clType="bcpg_nutList" clSampleId="QA5/8 " name="0ae72a1a-9c0a-4db4-a181-43dbf14fcabf" node-dbid="547437" locale="fr"
+				clTarget="25.0" sort="161" clCharacts="Energie kJ" />
+			<controlList clType="counter_analysis" clSampleId="QA5/8 " name="46e26d0f-87a9-4d91-91c9-73783c28376b" node-dbid="547438" locale="fr"
+				clTarget="9.0" sort="162" clCharacts="Longeur" />
+		</controlLists>
+		<samplingLists>
+			<samplingList slReaction="" slDateTime="2016-09-08T22:00:00.000Z" slSampleId="QA5/0 " name="087e72f8-a649-42b3-8f58-dab9f6a415db"
+				node-dbid="547375" locale="fr" slSampleState="NonCompliant" sort="100" slControlPoint="Point Contrôle DVP 1" />
+			<samplingList slReaction="" slDateTime="2016-09-08T22:00:00.000Z" slSampleId="QA5/1 " name="8e4d311c-0b0d-4ca3-ae38-774849027eb4"
+				node-dbid="547376" locale="fr" sort="101" slControlPoint="Point Contrôle DVP 1" />
+			<samplingList slReaction="" slDateTime="2016-09-08T22:00:00.000Z" slSampleId="QA5/2 " name="0fbe065f-4a16-4fc0-8497-984ae03f4642"
+				node-dbid="547377" locale="fr" sort="102" slControlPoint="Point Contrôle DVP 1" />
+			<samplingList slReaction="" slDateTime="2016-09-08T22:00:00.000Z" slSampleId="QA5/3 " name="616bf682-9c8e-4f1a-ad12-bac0f2cf8d04"
+				node-dbid="547378" locale="fr" sort="103" slControlPoint="Point Contrôle DVP 1" />
+			<samplingList slReaction="" slDateTime="2016-09-08T22:00:00.000Z" slSampleId="QA5/4 " name="baaf79ba-09b0-4128-9401-1b9c205cfbf9"
+				node-dbid="547379" locale="fr" sort="104" slControlPoint="Point Contrôle DVP 1" />
+			<samplingList slReaction="" slDateTime="2016-09-08T22:00:00.000Z" slSampleId="QA5/5 " name="d97c3f98-c8e4-4cef-9fba-b7728b8fd35a"
+				node-dbid="547380" locale="fr" sort="105" slControlPoint="Point Contrôle DVP 1" />
+			<samplingList slReaction="" slDateTime="2016-09-08T22:00:00.000Z" slSampleId="QA5/6 " name="4016d524-ccb6-43c3-877a-21b304ef2049"
+				node-dbid="547381" locale="fr" sort="106" slControlPoint="Point Contrôle DVP 1" />
+			<samplingList slReaction="" slDateTime="2016-09-08T22:00:00.000Z" slSampleId="QA5/7 " name="b270deed-b5fc-4790-a61d-8778ac5f69bb"
+				node-dbid="547382" locale="fr" sort="107" slControlPoint="Point Contrôle DVP 1" />
+			<samplingList slReaction="" slDateTime="2016-09-08T22:00:00.000Z" slSampleId="QA5/8 " name="e3f8055f-aa1c-4b7b-ad32-21b3ca11e924"
+				node-dbid="547383" locale="fr" sort="108" slControlPoint="Point Contrôle DVP 1" />
+		</samplingLists>
+	</dataLists>
+	<versions />
+</entity>
