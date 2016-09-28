@@ -160,6 +160,9 @@ public class QualityControlTypePatch extends AbstractBeCPGPatch {
 					String type = (String) nodeService.getProperty(dataListNodeRef, QualityModel.PROP_CONTROL_CHARACT_TYPE);
 					if ((type != null) && !type.isEmpty()) {
 						nodeService.setProperty(dataListNodeRef, QualityModel.PROP_CONTROL_CHARACT_TYPE, type.toLowerCase());
+						if(type == "Poids"){
+							nodeService.setProperty(dataListNodeRef, QualityModel.PROP_CONTROL_CHARACT_TYPE, "weight");
+						}
 					}
 
 					type = (String) nodeService.getProperty(dataListNodeRef, QualityModel.PROP_CL_TYPE);

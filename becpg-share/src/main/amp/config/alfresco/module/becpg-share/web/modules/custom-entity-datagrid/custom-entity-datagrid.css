@@ -3,6 +3,10 @@
 	color: red;
 }
 
+.datagrid .green {
+	color: green;
+}
+
 .datagrid-bar .onActionShowDetails,.datagrid .onActionShowDetails a {
 	background-image: url("../../components/images/show-details-16.png");
 }

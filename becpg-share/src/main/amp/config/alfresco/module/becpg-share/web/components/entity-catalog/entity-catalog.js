@@ -78,15 +78,22 @@
 						var locale = json[key].locale;
 						var label = json[key].label;
 						var catalogId = json[key].id;
+						var country = null;
 						
 						if(locale !== undefined && locale != null ){
 							catalogId = catalogId+"_"+locale;
+							
+							 country = locale.toLowerCase();
+						  	if(locale.indexOf("_")>0){
+						  	 country = locale.split("_")[1].toLowerCase();
+						  	}
 						}
 						
 						html+="<div class=\"catalog "+(key==0?"first-catalog":"")+"\">";
 						html+="<div class=\"catalog-header set-bordered-panel-heading\">";
 							html+="<span class=\"catalog-name\">"+instance.msg("label.catalog")+" \""+label+
-							(locale!=null?"<img src=\"/share/res/components/images/flags/"+locale+".png\">":"")+"\"</span>";
+							(country!=null?"<img title="+instance.msg("locale.name."+locale)
+									+" src=\"/share/res/components/images/flags/"+country+".png\">":"")+"\"</span>";
 							
 							html+="<progress value=\""+(score/100)+"\">";							
 								//IE fix
@@ -104,10 +111,21 @@
 						if(json[key].missingFields !== undefined){
 							html+="<ul class=\"catalog-missing-propList\">";
 								for(var field in json[key].missingFields){
+									
+									var flag = null;
+									if(json[key].missingFields[field].locale!=null){
+										flag = json[key].missingFields[field].locale.toLowerCase();
+										  	if(json[key].missingFields[field].locale.indexOf("_")>0){
+										  		flag = json[key].missingFields[field].locale.split("_")[1].toLowerCase();
+										  	}
+									}
+									
+									
 									html+="<li class=\"missing-field\" >"
 											+json[key].missingFields[field].displayName+
-											(json[key].missingFields[field].locale!=null?"<img src=\"/share/res/components/images/flags/"
-													+json[key].missingFields[field].locale+".png\">":"")+"</li>";	
+											(flag!=null?"<img title="+instance.msg("locale.name."+json[key].missingFields[field].locale)
+													+" src=\"/share/res/components/images/flags/"
+													+flag+".png\">":"")+"</li>";	
 								}
 								
 							html+="</ul>";
