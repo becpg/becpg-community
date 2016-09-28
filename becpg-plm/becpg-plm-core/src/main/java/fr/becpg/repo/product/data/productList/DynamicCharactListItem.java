@@ -101,6 +101,11 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 	public Object getValue() {
 		return value;
 	}
+	
+	//usefull for spel
+	public Object getProtectedValue() {
+		return value;
+	}
 
 	public void setValue(Object value) {
 		this.value = value;

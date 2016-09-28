@@ -10,14 +10,13 @@
          <div class="form-fields">
 	         <div class="set">	         
 		         <div class="form-field">
-			         <select id="${el}-locale-picker" name="-" onChange="addFormFieldForLocale();">
+			         <select id="${el}-locale-picker" name="-" onChange="addFormFieldForLocale();return false;">
                             <option value="-" >${msg("locale.choose")}</option>
 							<#assign h = config.scoped["Languages"]["languages"]>
 							<#list  h.getChildren("language") as language>
-							     <#assign key = language.getAttribute("locale")>	
-							     <#assign keyValue = key?split("_")[0]>
+							  <#assign key = language.getAttribute("locale")>	
                               <#if !key?contains(locale)>
-								<option value=${keyValue}  >${msg("locale.name.${keyValue}")}</option>
+								<option value="${key}"  >${msg("locale.name.${key}")}</option>
                                </#if>
 							</#list>
 						</select>
@@ -29,7 +28,7 @@
                  <#if mlField.locale != locale>
 	         	<div class="form-field">
       				<label for="${el}-${mlField.locale}">${mlField.label!""?html}:&nbsp;
-      						<span class="locale-icon"><img class="icon16_11" title="${msg("locale.name.${mlField.locale}")}" tabindex="0" src="${url.context}/res/components/images/flags/${mlField.locale}.png"><span>&nbsp;&nbsp;
+      						<span class="locale-icon"><img class="icon16_11" title="${msg("locale.name.${mlField.locale}")}" tabindex="0" src="${url.context}/res/components/images/flags/${mlField.country?lower_case}.png"><span>&nbsp;&nbsp;
       						<span class="translate-icon" onClick="suggestTranslate('${el}-${mlField.locale}','${mlField.locale}');" ><img class="icon16" title="${msg("translate.suggest")}" tabindex="0" src="${url.context}/res/components/images/translate-16.png"><span>
       				</label>
 	      			<#if args.textarea??>
@@ -78,11 +77,15 @@ var addFormFieldForLocale = function(){
 	  	var lc = select.options[index].value;
 	  	var container = document.getElementById("${el}-added-locale-container");
 	  	var	varHtml = "";
+	  	var country = lc.toLowerCase();
+	  	if(lc.indexOf("_")>0){
+	  	 country = lc.split("_")[1].toLowerCase();
+	  	}
 	  	if(document.getElementById("${el}-"+lc) == null && lc!="-"){
    
 	   	 varHtml +="<div class=\"form-field\"><label for=\"${el}-"+lc
 	   	         +"\">${label?js_string}:&nbsp;<span class=\"locale-icon\">"
-	   	         +"<img class=\"icon16_11\" tabindex=\"0\" src=\"${url.context}/res/components/images/flags/"+lc+".png\"/></span>&nbsp;&nbsp;"
+	   	         +"<img class=\"icon16_11\" tabindex=\"0\" src=\"${url.context}/res/components/images/flags/"+country+".png\"/></span>&nbsp;&nbsp;"
 	   	         +"<span class=\"translate-icon\" onClick=\"suggestTranslate('${el}-"+lc+"','"+lc+"');\" >"
 	   	         +"<img class=\"icon16\" title=\"${msg("translate.suggest")}\" tabindex=\"0\" src=\"${url.context}/res/components/images/translate-16.png\">"
 	   	         +"<span></label>";

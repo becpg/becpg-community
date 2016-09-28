@@ -434,6 +434,32 @@ public class LabelingFormulaContext {
 		return applyRoundingMode(new MessageFormat(detailsDefaultFormat)).format(new Object[] { ingLegalName, null, ret.toString() });
 	}
 
+	private String renderAllergens(CompositeLabeling compositeLabeling) {
+		StringBuilder ret = new StringBuilder();
+		Set<NodeRef> allergens = new HashSet<>();
+		for (AbstractLabelingComponent ing : compositeLabeling.getIngList().values()) {
+			for (NodeRef allergen : ing.getAllergens()) {
+				allergens.add(allergen);
+			}
+		}
+
+		if (!allergens.isEmpty()) {
+
+			for (NodeRef allergen : allergens) {
+				if (getAllergens().contains(allergen)) {
+					String allergenName = uncapitalize(getAllergenName(allergen));
+					if ((allergenName != null) && !allergenName.isEmpty()) {
+						if (ret.length() > 0) {
+							ret.append(defaultSeparator);
+						}
+						ret.append(allergenName.replaceFirst("(.*)", allergenReplacementPattern));
+					}
+				}
+			}
+		}
+
+		return ret.toString();
+	}
 	private String getAllergenName(NodeRef allergen) {
 		String ret = null;
 
@@ -731,9 +757,12 @@ public class LabelingFormulaContext {
 				Double qtyPerc = computeQtyPerc(compositeLabeling, kv.getKey(), ratio);
 				kv.getKey().setQty(qtyPerc);
 
+				String allergens = renderAllergens(compositeLabeling) ;
+				
 				toAppend.append(getIngTextFormat(kv.getKey()).format(new Object[] { getLegalIngName(kv.getKey(), kv.getValue().size() > 1),
 						(useVolume ? kv.getKey().getVolume() : kv.getKey().getQty()),
-						renderLabelingComponent(compositeLabeling, kv.getValue(), ingTypeDefaultSeparator, ratio) }));
+						renderLabelingComponent(compositeLabeling, kv.getValue(), ingTypeDefaultSeparator, ratio), allergens
+						}));
 
 			} else {
 				toAppend.append(renderLabelingComponent(compositeLabeling, kv.getValue(), defaultSeparator, ratio));
@@ -868,7 +897,7 @@ public class LabelingFormulaContext {
 			tree.put("legal", component.getLegalName(I18NUtil.getContentLocaleLang()));
 			if ((component.getVolume() != null) && (totalVol != null) && (totalVol > 0)) {
 				tree.put("vol", (component.getVolume() / totalVol) * 100);
-			} 
+			}
 			if ((component.getQty() != null) && (totalQty != null) && (totalQty > 0)) {
 				tree.put("qte", (component.getQty() / totalQty) * 100);
 			}
