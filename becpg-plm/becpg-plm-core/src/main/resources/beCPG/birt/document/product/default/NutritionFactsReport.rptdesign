@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
     <property name="author">beCPG</property>
-    <property name="createdBy">Eclipse BIRT Designer Version 4.3.2.v20140211-1400 Build &lt;4.3.2.v20140225-1404></property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.4.2.v201410272105 Build &lt;4.4.2.v20150217-1805></property>
     <list-property name="userProperties">
         <structure>
             <property name="name">Data Cube.OrganoList.x</property>
@@ -2203,7 +2203,9 @@
                             <structure>
                                 <property name="name">cholestérol</property>
                                 <text-property name="displayName">cholestérol</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["cholestérol"] / 100 * dataSetRow["servingSize"]</expression>
+                                <expression name="expression" type="javascript">if(dataSetRow["cholestérol"]!=null){
+dataSetRow["cholestérol"] / 100 * dataSetRow["servingSize"]
+}</expression>
                                 <property name="dataType">float</property>
                                 <property name="allowExport">true</property>
                             </structure>
@@ -2229,7 +2231,9 @@
                             <structure>
                                 <property name="name">cholestérol</property>
                                 <text-property name="displayName">cholestérol</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["cholestérol"] * dataSetRow["servingSize"] / 300</expression>
+                                <expression name="expression" type="javascript">if(dataSetRow["cholestérol"]!=null){
+dataSetRow["cholestérol"] * dataSetRow["servingSize"] / 300
+}</expression>
                                 <property name="dataType">float</property>
                                 <property name="allowExport">true</property>
                             </structure>
@@ -2256,7 +2260,7 @@
                     <data id="3819">
                         <structure name="numberFormat">
                             <property name="category">Fixed</property>
-                            <property name="pattern">###0.000{RoundingMode=HALF_EVEN}</property>
+                            <property name="pattern">###0{RoundingMode=HALF_EVEN}</property>
                         </structure>
                         <property name="textAlign">right</property>
                         <property name="dataSet">nutList2</property>
@@ -2325,7 +2329,9 @@
                             <structure>
                                 <property name="name">potassium</property>
                                 <text-property name="displayName">potassium</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["potassium"] / 100 * dataSetRow["servingSize"]</expression>
+                                <expression name="expression" type="javascript">if(dataSetRow["potassium"]!=null){
+dataSetRow["potassium"] / 100 * dataSetRow["servingSize"]
+}</expression>
                                 <property name="dataType">float</property>
                                 <property name="allowExport">true</property>
                             </structure>
@@ -2351,7 +2357,9 @@
                             <structure>
                                 <property name="name">potassium</property>
                                 <text-property name="displayName">potassium</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["potassium"] * dataSetRow["servingSize"] /  3500</expression>
+                                <expression name="expression" type="javascript">if(dataSetRow["potassium"]!=null){
+dataSetRow["potassium"] * dataSetRow["servingSize"] /  3500
+}</expression>
                                 <property name="dataType">float</property>
                                 <property name="allowExport">true</property>
                             </structure>
@@ -2447,7 +2455,9 @@
                             <structure>
                                 <property name="name">fibresalimentaires</property>
                                 <text-property name="displayName">fibresalimentaires</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["fibresalimentaires"] / 100 * dataSetRow["servingSize"]</expression>
+                                <expression name="expression" type="javascript">if(dataSetRow["fibresalimentaires"]!=null){
+dataSetRow["fibresalimentaires"] / 100 * dataSetRow["servingSize"]
+}</expression>
                                 <property name="dataType">float</property>
                                 <property name="allowExport">true</property>
                             </structure>
@@ -2473,7 +2483,9 @@
                             <structure>
                                 <property name="name">fibresalimentaires</property>
                                 <text-property name="displayName">fibresalimentaires</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["fibresalimentaires"] * dataSetRow["servingSize"] / 25</expression>
+                                <expression name="expression" type="javascript">if(dataSetRow["fibresalimentaires"]!=null){
+dataSetRow["fibresalimentaires"] * dataSetRow["servingSize"] / 25
+}</expression>
                                 <property name="dataType">float</property>
                                 <property name="allowExport">true</property>
                             </structure>
@@ -2593,8 +2605,11 @@
                             <structure>
                                 <property name="name">vitaminea</property>
                                 <text-property name="displayName">vitaminea</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["vitaminea"]</expression>
+                                <expression name="expression" type="javascript">if(dataSetRow["vitaminea"]!=null){
+dataSetRow["vitaminea"]
+}</expression>
                                 <property name="dataType">float</property>
+                                <property name="allowExport">true</property>
                             </structure>
                         </list-property>
                         <property name="resultSetColumn">vitaminea</property>
