@@ -201,8 +201,12 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 
 	@Override
 	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
-
-		dataListSortService.computeDepthAndSort(pendingNodes);
+		try {
+			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+			dataListSortService.computeDepthAndSort(pendingNodes);
+		} finally {
+			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+		}
 	}
 
 	@Override
