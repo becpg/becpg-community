@@ -666,7 +666,7 @@
 			<associations>
 				<association name="bcpg:allergenSubset">
 					<source>
-						<mandatory>true</mandatory>
+						<mandatory>false</mandatory>
 						<many>true</many>
 					</source>
 					<target>
@@ -1173,7 +1173,7 @@
 			<associations>
 				<association name="bcpg:allergenListAllergen">
 					<source>
-						<mandatory>true</mandatory>
+						<mandatory>false</mandatory>
 						<many>true</many>
 					</source>
 					<target>
@@ -1270,7 +1270,7 @@
 			<associations>
 				<association name="bcpg:costListCost">
 					<source>
-						<mandatory>true</mandatory>
+						<mandatory>false</mandatory>
 						<many>true</many>
 					</source>
 					<target>
@@ -1334,7 +1334,7 @@
 			<associations>
 				<association name="bcpg:priceListCost">
 					<source>
-						<mandatory>true</mandatory>
+						<mandatory>false</mandatory>
 						<many>true</many>
 					</source>
 					<target>
@@ -1421,7 +1421,7 @@
 			<associations>
 				<association name="bcpg:lrComponents">
 					<source>
-						<mandatory>true</mandatory>
+						<mandatory>false</mandatory>
 						<many>true</many>
 					</source>
 					<target>
@@ -1492,7 +1492,7 @@
 			<associations>
 				<association name="bcpg:ingListIng">
 					<source>
-						<mandatory>true</mandatory>
+						<mandatory>false</mandatory>
 						<many>true</many>
 					</source>
 					<target>
@@ -1574,7 +1574,7 @@
 			<associations>
 				<association name="bcpg:mblMicrobio">
 					<source>
-						<mandatory>true</mandatory>
+						<mandatory>false</mandatory>
 						<many>true</many>
 					</source>
 					<target>
@@ -1658,7 +1658,7 @@
 			<associations>
 				<association name="bcpg:nutListNut">
 					<source>
-						<mandatory>true</mandatory>
+						<mandatory>false</mandatory>
 						<many>true</many>
 					</source>
 					<target>
@@ -1739,7 +1739,7 @@
 			<associations>
 				<association name="bcpg:pclPhysicoChem">
 					<source>
-						<mandatory>true</mandatory>
+						<mandatory>false</mandatory>
 						<many>true</many>
 					</source>
 					<target>
@@ -1878,7 +1878,7 @@
 			<associations>
 				<association name="bcpg:rclCharact">
 					<source>
-						<mandatory>true</mandatory>
+						<mandatory>false</mandatory>
 						<many>true</many>
 					</source>
 					<target>
@@ -1889,7 +1889,7 @@
 				</association>
 				<association name="bcpg:rclSources">
 					<source>
-						<mandatory>true</mandatory>
+						<mandatory>false</mandatory>
 						<many>true</many>
 					</source>
 					<target>
@@ -2161,7 +2161,7 @@
 			<properties>
 				<property name="bcpg:sort">
 					<type>d:int</type>
-					<mandatory>true</mandatory>
+					<mandatory>false</mandatory>
 				</property>
 			</properties>
 		</aspect>
@@ -2664,9 +2664,8 @@
 			</properties>
 			<associations>
 				<association name="bcpg:storageConditionsRef">
-					<title>Conditions de conservation</title>
 					<source>
-						<mandatory>true</mandatory>
+						<mandatory>false</mandatory>
 						<many>true</many>
 					</source>
 					<target>
@@ -2676,9 +2675,8 @@
 					</target>
 				</association>
 				<association name="bcpg:precautionOfUseRef">
-					<title>Précautions d’emploi</title>
 					<source>
-						<mandatory>true</mandatory>
+						<mandatory>false</mandatory>
 						<many>true</many>
 					</source>
 					<target>

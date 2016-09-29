@@ -78,7 +78,7 @@ import fr.becpg.repo.repository.RepositoryEntity;
 public class LabelingFormulaContext {
 
 	private static final Log logger = LogFactory.getLog(LabelingFormulaContext.class);
-	
+
 	public static int PRECISION_FACTOR = 100;
 
 	private CompositeLabeling lblCompositeContext;
@@ -343,21 +343,20 @@ public class LabelingFormulaContext {
 		return lblComponent.getName();
 	}
 
-	public String getLegalIngName(AbstractLabelingComponent lblComponent){
+	public String getLegalIngName(AbstractLabelingComponent lblComponent) {
 		String ingLegalName = lblComponent.getLegalName(I18NUtil.getLocale());
-		
+
 		if (renameRules.containsKey(lblComponent.getNodeRef())) {
 			ingLegalName = renameRules.get(lblComponent.getNodeRef()).getClosestValue(I18NUtil.getLocale());
 		}
-		
+
 		return ingLegalName;
 	}
-	
-	
+
 	private String getLegalIngName(AbstractLabelingComponent lblComponent, boolean plural) {
-		
+
 		String ingLegalName = lblComponent.getLegalName(I18NUtil.getLocale());
-		
+
 		if (renameRules.containsKey(lblComponent.getNodeRef())) {
 			ingLegalName = renameRules.get(lblComponent.getNodeRef()).getClosestValue(I18NUtil.getLocale());
 		} else {
@@ -365,7 +364,7 @@ public class LabelingFormulaContext {
 			if (plural && (lblComponent instanceof IngTypeItem)) {
 				return uncapitalize(((IngTypeItem) lblComponent).getPluralLegalName(I18NUtil.getLocale()));
 			}
-	
+
 			if (showIngCEECode && (lblComponent instanceof IngItem)) {
 				if ((((IngItem) lblComponent).getIngCEECode() != null) && !((IngItem) lblComponent).getIngCEECode().isEmpty()) {
 					return ((IngItem) lblComponent).getIngCEECode();
@@ -373,12 +372,9 @@ public class LabelingFormulaContext {
 			}
 		}
 
-		if(uncapitalizeLegalName){
+		if (uncapitalizeLegalName) {
 			ingLegalName = uncapitalize(ingLegalName);
 		}
-
-		
-		
 
 		if (!lblComponent.getAllergens().isEmpty()) {
 			if (((lblComponent instanceof CompositeLabeling) && ((CompositeLabeling) lblComponent).getIngList().isEmpty())
@@ -460,6 +456,7 @@ public class LabelingFormulaContext {
 
 		return ret.toString();
 	}
+
 	private String getAllergenName(NodeRef allergen) {
 		String ret = null;
 
@@ -557,15 +554,15 @@ public class LabelingFormulaContext {
 		}
 
 		public boolean matchAll(Collection<AbstractLabelingComponent> values, boolean recur) {
-			//#2352
-			if(!recur){
-				for(AbstractLabelingComponent abstractLabelingComponent : values){
+			// #2352
+			if (!recur) {
+				for (AbstractLabelingComponent abstractLabelingComponent : values) {
 					if (getKey().equals(abstractLabelingComponent.getNodeRef())) {
 						return true;
 					}
 				}
 			}
-		
+
 			int matchCount = components.size();
 			for (AbstractLabelingComponent abstractLabelingComponent : values) {
 				if (components.contains(abstractLabelingComponent.getNodeRef())) {
@@ -756,7 +753,6 @@ public class LabelingFormulaContext {
 
 				Double qtyPerc = computeQtyPerc(compositeLabeling, kv.getKey(), ratio);
 				kv.getKey().setQty(qtyPerc);
-
 				String allergens = renderAllergens(compositeLabeling) ;
 				
 				toAppend.append(getIngTextFormat(kv.getKey()).format(new Object[] { getLegalIngName(kv.getKey(), kv.getValue().size() > 1),
@@ -930,7 +926,7 @@ public class LabelingFormulaContext {
 
 						if ((kv.getKey().getQty() != null) && (totalQty != null) && (totalQty > 0)) {
 							ingTypeJson.put("qte", (kv.getKey().getQty() / totalQty) * 100);
-						} 
+						}
 						if ((kv.getKey().getVolume() != null) && (totalVol != null) && (totalVol > 0)) {
 							ingTypeJson.put("vol", (kv.getKey().getVolume() / totalVol) * 100);
 
