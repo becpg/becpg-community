@@ -93,7 +93,7 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 		if (formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 			Composite<CompoListDataItem> composite = CompositeHelper.getHierarchicalCompoList(
 					formulatedProduct.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())));
-			visitCompoListChildren(formulatedProduct, composite, ret, CostsCalculatingFormulationHandler.DEFAULT_LOSS_RATIO, subQuantity, netQty,
+			visitCompoListChildren(formulatedProduct, composite, ret, formulatedProduct.getProductLossPerc(), subQuantity, netQty,
 					currLevel, maxLevel, unitProvider);
 		}
 
