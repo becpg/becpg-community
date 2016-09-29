@@ -200,6 +200,11 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		return this;
 	}
 	
+	public BeCPGQueryBuilder includeAspect(QName aspect) {
+		excludedAspects.remove(aspect);
+		return this;
+	}
+	
 	public BeCPGQueryBuilder inParent(NodeRef parentNodeRef) {
 		parentNodeRefs.add(parentNodeRef);
 		return this;
