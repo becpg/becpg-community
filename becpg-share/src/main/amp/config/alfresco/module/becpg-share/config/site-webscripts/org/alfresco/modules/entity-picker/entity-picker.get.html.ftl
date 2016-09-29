@@ -12,7 +12,7 @@
  		mode: "edit",
         multipleSelectMode: false, 
  		targetLinkTemplate: "${targetLinkTemplate}" ,
- 		dsStr: "becpg/autocomplete/product?classNames=bcpg:rawMaterial,bcpg:finishedProduct,bcpg:semiFinishedProduct"
+ 		dsStr: "becpg/autocomplete/targetassoc/associations/bcpg:product?classNames=inc_bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse"
   });
 
 })();
