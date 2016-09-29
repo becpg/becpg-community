@@ -116,8 +116,11 @@ public class FormulationHelper {
 		return (1 + (lossPerc / 100)) * qty;
 	}
 
-	public static Double getQtyForCost(PackagingListDataItem packagingListDataItem) {
+	public static Double getQtyForCost(ProductData formulatedProduct, PackagingListDataItem packagingListDataItem) {
 		Double lossPerc = packagingListDataItem.getLossPerc() != null ? packagingListDataItem.getLossPerc() : 0d;
+		
+		lossPerc = calculateLossPerc(formulatedProduct.getProductLossPerc(),lossPerc);
+		
 		return FormulationHelper.getQtyWithLoss(FormulationHelper.getQty(packagingListDataItem), lossPerc);
 	}
 
@@ -561,7 +564,7 @@ public class FormulationHelper {
 
 	public static Double getQtyForCostByPackagingLevel(ProductData formulatedProduct, PackagingListDataItem packagingListDataItem,
 			NodeService nodeService) {
-		Double qty = FormulationHelper.getQtyForCost(packagingListDataItem);
+		Double qty = FormulationHelper.getQtyForCost(formulatedProduct, packagingListDataItem);
 
 		// secondary on packagingKit with pallet aspect -> nothing
 		// tertiary on packagingKit with pallet aspect -> divide by

@@ -47,7 +47,6 @@ import fr.becpg.repo.variant.filters.VariantFilters;
  */
 public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormulationHandler<CostListDataItem> {
 
-	public static final Double DEFAULT_LOSS_RATIO = 0d;
 
 	private static final Log logger = LogFactory.getLog(CostsCalculatingFormulationHandler.class);
 
@@ -138,7 +137,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 
 			Composite<CompoListDataItem> composite = CompositeHelper.getHierarchicalCompoList(
 					formulatedProduct.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())));
-			visitCompoListChildren(formulatedProduct, composite, costList, DEFAULT_LOSS_RATIO, netQty, mandatoryCharacts1);
+			visitCompoListChildren(formulatedProduct, composite, costList, formulatedProduct.getProductLossPerc() , netQty, mandatoryCharacts1);
 
 			addReqCtrlList(formulatedProduct.getReqCtrlList(), mandatoryCharacts1, getRequirementDataType());
 
@@ -619,7 +618,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		if(productData.hasPackagingListEl()){
 			for (PackagingListDataItem packList : productData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 				NodeRef productNodeRef = packList.getProduct();
-				Double qty = FormulationHelper.getQtyForCost(packList);
+				Double qty = FormulationHelper.getQtyForCost(productData, packList);
 				if (logger.isDebugEnabled()) {
 					logger.debug("Get component " + nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME) + "qty: " + qty);
 				}
