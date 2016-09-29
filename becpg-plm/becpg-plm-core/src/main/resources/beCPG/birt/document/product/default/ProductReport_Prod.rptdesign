@@ -7731,7 +7731,7 @@ true
                                 <cell id="3255">
                                     <text id="3173">
                                         <property name="contentType">html</property>
-                                        <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["instruction"]</VALUE-OF>]]></text-property>
+                                        <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["instruction"].replace("<p>","").replace("</p>","")</VALUE-OF>]]></text-property>
                                     </text>
                                 </cell>
                             </row>
@@ -7800,7 +7800,7 @@ true
                                 <cell id="3350">
                                     <text id="6040">
                                         <property name="contentType">html</property>
-                                        <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["instruction"]</VALUE-OF>]]></text-property>
+                                        <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["instruction"].replace("<p>","").replace("</p>","")</VALUE-OF>]]></text-property>
                                     </text>
                                 </cell>
                             </row>
@@ -8647,24 +8647,6 @@ false
                 </cell>
             </row>
         </grid>
-        <data id="3239">
-            <property name="dataSet">Product</property>
-            <list-property name="boundDataColumns">
-                <structure>
-                    <property name="name">netWeight</property>
-                    <text-property name="displayName">netWeight</text-property>
-                    <expression name="expression" type="javascript">if(dataSetRow["netWeight"] != null){
-dataSetRow["netWeight"] 
-}
-else{
-dataSetRow["productCompoQtyUsed"]
-}</expression>
-                    <property name="dataType">float</property>
-                    <property name="allowExport">true</property>
-                </structure>
-            </list-property>
-            <property name="resultSetColumn">netWeight</property>
-        </data>
     </body>
     <list-property name="images">
         <structure>
