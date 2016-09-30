@@ -72,6 +72,8 @@
 				<subtype name="bcpg:allergenList" />
 				<subtype name="bcpg:costList" />
 				<subtype name="bcpg:compoList" />
+				<subtype name="mpm:processList" />
+				<subtype name="bcpg:packagingList" />
 				<subtype name="bcpg:ingLabelingList" />
 				<subtype name="bcpg:ingList" />
 				<subtype name="bcpg:microBioList" />
