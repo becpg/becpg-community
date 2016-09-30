@@ -142,6 +142,8 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 				dynamicCharactListItems.add(new DynamicCharactListItem(" beCPG findOne","@beCPG.findOne(nodeRef).qty"));
 				
 				dynamicCharactListItems.add(new DynamicCharactListItem(" beCPG propValue","@beCPG.propValue(nodeRef,'bcpg:productQty')\n"));
+				
+				dynamicCharactListItems.add(new DynamicCharactListItem(" beCPG SUM ","@beCPG.sum(compoListView.compoList.?[parent == null],\"entity.costList[0].value + dataListItem.qty\")"));
 
 				//Formulate twice
 				dynamicCharactListItems.add(new DynamicCharactListItem("Formulate twice","reformulateCount=1"));

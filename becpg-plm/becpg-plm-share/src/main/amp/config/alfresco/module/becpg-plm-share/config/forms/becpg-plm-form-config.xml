@@ -6701,7 +6701,7 @@
 					</field>
 					<field id="bcpg:parentLevel">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/DataListCharact?className=bcpg:costList&#38;attributeName=bcpg:costListCost
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:costList&#38;attributeName=bcpg:costListCost
 							</control-param>
 						</control>
 					</field>
