@@ -182,9 +182,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 					qty += calculateQtyUsed(component,lossPerc, withLossPerc);
 				} else {
 					if(withLossPerc){
-					
-						
-						qty += (FormulationHelper.getQtyInKg(component.getData()) * FormulationHelper.getYield(component.getData())) / 100;
+						qty += (FormulationHelper.getQtyInKg(component.getData()) * FormulationHelper.getYield(component.getData())*(1-lossPerc/100)) / 100;
 					} else {
 						qty += (FormulationHelper.getQtyInKg(component.getData()) * FormulationHelper.getYield(component.getData())) / 100;
 					}

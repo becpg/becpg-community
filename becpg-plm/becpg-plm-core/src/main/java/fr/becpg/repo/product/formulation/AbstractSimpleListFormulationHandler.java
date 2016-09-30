@@ -437,7 +437,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 										}
 									}
 								}
-								
+
 								if (formula.contains(".value") && (formulatedCharactDataItem instanceof ForecastValueDataItem)) {
 									try {
 										exp = parser.parseExpression(formula.replace(".value", ".futureValue"));
@@ -547,13 +547,13 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 										nodeService.getProperty(listDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME),
 										(listDataItem.getValue() != null ? listDataItem.getValue() : I18NUtil.getMessage(MESSAGE_UNDEFINED_VALUE)),
 										(minMaxSpecValueDataItem.getMini() != null
-												? NumberFormat.getInstance(Locale.getDefault()).format(minMaxSpecValueDataItem.getMini()) + "<= " 
+												? NumberFormat.getInstance(Locale.getDefault()).format(minMaxSpecValueDataItem.getMini()) + "<= "
 												: ""),
 										(minMaxSpecValueDataItem.getMaxi() != null
-												?  " <=" + NumberFormat.getInstance(Locale.getDefault()).format(minMaxSpecValueDataItem.getMaxi()) 
+												? " <=" + NumberFormat.getInstance(Locale.getDefault()).format(minMaxSpecValueDataItem.getMaxi())
 												: ""));
-								formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden,
-										message, listDataItem.getCharactNodeRef(), new ArrayList<NodeRef>(), RequirementDataType.Specification));
+								formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message,
+										listDataItem.getCharactNodeRef(), new ArrayList<NodeRef>(), RequirementDataType.Specification));
 
 							}
 						}
@@ -574,13 +574,17 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 				}
 			}
 		}
-		
-		//if this spec has a datalist, merge it with the rest. Only applies to specs
-		if (getDataListVisited(formulatedProduct) != null && !getDataListVisited(formulatedProduct).isEmpty() && formulatedProduct instanceof ProductSpecificationData) {
-//			logger.info("formulatedProduct (c=" + formulatedProduct.getClass().getName() + ") has a dataList, visiting it)");
+
+		// if this spec has a datalist, merge it with the rest. Only applies to
+		// specs
+		if ((getDataListVisited(formulatedProduct) != null) && !getDataListVisited(formulatedProduct).isEmpty()
+				&& (formulatedProduct instanceof ProductSpecificationData)) {
+			if (logger.isTraceEnabled()) {
+				logger.trace("formulatedProduct (c=" + formulatedProduct.getClass().getName() + ") has a dataList, visiting it)");
+			}
 			mergeRequirements(ret, getDataListVisited(formulatedProduct));
 		}
-		
+
 		return ret;
 	}
 
@@ -594,7 +598,10 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 						if ((sl instanceof MinMaxValueDataItem) && (item instanceof MinMaxValueDataItem)) {
 							MinMaxValueDataItem castSl = (MinMaxValueDataItem) sl;
 							MinMaxValueDataItem castItem = (MinMaxValueDataItem) item;
-//							logger.info("Merging minMax values: sl=[" + castSl.getMini()+" - "+castSl.getMaxi()+"], item=["+castItem.getMini()+" - "+castItem.getMaxi()+"]");
+							if (logger.isTraceEnabled()) {
+								logger.trace("Merging minMax values: sl=[" + castSl.getMini() + " - " + castSl.getMaxi() + "], item=["
+										+ castItem.getMini() + " - " + castItem.getMaxi() + "]");
+							}
 							if ((castSl.getMini() != null) && (castItem.getMini() != null)) {
 								castSl.setMini(Math.max(castSl.getMini(), castItem.getMini()));
 							} else if (castItem.getMini() != null) {
@@ -606,7 +613,9 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 							} else if (castItem.getMaxi() != null) {
 								castSl.setMaxi(castItem.getMaxi());
 							}
-//							logger.info("Merged sl=[" + castSl.getMini()+" - "+castSl.getMaxi()+"]");
+							if (logger.isTraceEnabled()) {
+								logger.trace("Merged sl=[" + castSl.getMini() + " - " + castSl.getMaxi() + "]");
+							}
 						}
 						break;
 					}
@@ -616,6 +625,15 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 				}
 			}
 		});
+	}
+
+	protected T findParentByCharactName(List<T> simpleListDataList, NodeRef charactNodeRef) {
+		for (T listItem : simpleListDataList) {
+			if ((listItem.getCharactNodeRef() != null) && listItem.getCharactNodeRef().equals(charactNodeRef)) {
+				return listItem;
+			}
+		}
+		return null;
 	}
 
 }

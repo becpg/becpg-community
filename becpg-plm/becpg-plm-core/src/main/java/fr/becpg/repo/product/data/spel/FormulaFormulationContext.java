@@ -42,7 +42,7 @@ public class FormulaFormulationContext {
 	private final CompositionDataItem dataListItem;
 	private final AlfrescoRepository<ProductData> alfrescoRepository;
 	
-	private enum Operator {
+	public enum Operator {
 		SUM,AVG,PERC
 	}
 
@@ -79,15 +79,15 @@ public class FormulaFormulationContext {
 	}
 	
 	public Double sum(Collection<CompositionDataItem> range, String formula) {
-		return aggreate(range, formula, Operator.SUM);
+		return aggreate(alfrescoRepository, entity, range, formula, Operator.SUM);
 	}
 	
 	
 	public Double avg(Collection<CompositionDataItem> range, String formula) {
-		return aggreate(range, formula, Operator.AVG);
+		return aggreate(alfrescoRepository, entity, range, formula, Operator.AVG);
 	}
 	
-	private Double aggreate(Collection<CompositionDataItem> range, String formula, Operator operator){
+	public static Double aggreate(AlfrescoRepository<ProductData> alfrescoRepository , ProductData entity , Collection<CompositionDataItem> range, String formula, Operator operator){
 
 		if(logger.isDebugEnabled()){
 			logger.debug("Running aggregate fonction ["+formula+"] on range ("+range.size()+") for operator "+operator );
