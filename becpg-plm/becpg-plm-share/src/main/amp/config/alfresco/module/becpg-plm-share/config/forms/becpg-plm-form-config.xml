@@ -5331,9 +5331,9 @@
 				</field-visibility>
 				<appearance>
 					<field id="cm:description">
-						<control>
-							<control-param name="activateLinks">true</control-param>
-						</control>
+						 <control template="/org/alfresco/components/form/controls/textarea.ftl">
+	                       <control-param name="maxLength">10000</control-param>
+	                   </control>
 					</field>
 				</appearance>
 			</form>
@@ -5363,9 +5363,9 @@
 				</field-visibility>
 				<appearance>
 					<field id="cm:description">
-						<control>
-							<control-param name="activateLinks">true</control-param>
-						</control>
+						 <control template="/org/alfresco/components/form/controls/textarea.ftl">
+	                       <control-param name="maxLength">10000</control-param>
+	                   </control>
 					</field>
 				</appearance>
 			</form>
@@ -5540,9 +5540,9 @@
 				</field-visibility>
 				<appearance>
 					<field id="cm:description">
-						<control>
-							<control-param name="activateLinks">true</control-param>
-						</control>
+						 <control template="/org/alfresco/components/form/controls/textarea.ftl">
+	                       <control-param name="maxLength">10000</control-param>
+	                   </control>
 					</field>
 				</appearance>
 			</form>
@@ -5562,9 +5562,9 @@
 
 				<appearance>
 					<field id="cm:description">
-						<control>
-							<control-param name="activateLinks">true</control-param>
-						</control>
+						 <control template="/org/alfresco/components/form/controls/textarea.ftl">
+	                       <control-param name="maxLength">10000</control-param>
+	                   </control>
 					</field>
 				</appearance>
 			</form>
