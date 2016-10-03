@@ -79,8 +79,12 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		// Yield
 		visitYieldChildren(formulatedProduct, compositeDefaultVariant);
 
-		Double qtyUsed = calculateQtyUsed(compositeDefaultVariant);
+		Double qtyUsed = calculateQtyUsed(compositeDefaultVariant, formulatedProduct.getProductLossPerc(), false);
 		formulatedProduct.setRecipeQtyUsed(qtyUsed);
+		
+		Double qtyUsedWithLossPerc = calculateQtyUsed(compositeDefaultVariant, formulatedProduct.getProductLossPerc(), true);
+		formulatedProduct.setRecipeQtyUsedWithLossPerc(qtyUsedWithLossPerc);
+		
 		
 		if ((netWeight != null) && (qtyUsed != null) && (qtyUsed != 0d)) {
 			formulatedProduct.setYield((100 * netWeight) / qtyUsed);
@@ -89,6 +93,8 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		// Volume
 		Double volumeUsed = calculateVolumeFromChildren(compositeDefaultVariant);
 		formulatedProduct.setRecipeVolumeUsed(volumeUsed);
+		
+		
 		Double netVolume = FormulationHelper.getNetVolume(formulatedProduct);
 		if ((netVolume != null) && (volumeUsed != 0d)) {
 			formulatedProduct.setYieldVolume((100 * netVolume) / volumeUsed);
@@ -164,15 +170,22 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		return yieldPerc;
 	}
 
-	private Double calculateQtyUsed(Composite<CompoListDataItem> composite) throws FormulateException {
+	private Double calculateQtyUsed(Composite<CompoListDataItem> composite, Double parentLossRatio, boolean withLossPerc) throws FormulateException {
 
 		Double qty = 0d;
 		for (Composite<CompoListDataItem> component : composite.getChildren()) {
 			if (!DeclarationType.Omit.equals(component.getData().getDeclType())) {
+				Double lossPerc = FormulationHelper.calculateLossPerc(parentLossRatio,
+						(component.getData().getLossPerc() != null ? component.getData().getLossPerc() : 0d));
+				
 				if (!component.isLeaf()) {
-					qty += calculateQtyUsed(component);
+					qty += calculateQtyUsed(component,lossPerc, withLossPerc);
 				} else {
-					qty += (FormulationHelper.getQtyInKg(component.getData()) * FormulationHelper.getYield(component.getData())) / 100;
+					if(withLossPerc){
+						qty += (FormulationHelper.getQtyInKg(component.getData()) * FormulationHelper.getYield(component.getData())*(1-lossPerc/100)) / 100;
+					} else {
+						qty += (FormulationHelper.getQtyInKg(component.getData()) * FormulationHelper.getYield(component.getData())) / 100;
+					}
 				}
 			}
 		}

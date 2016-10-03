@@ -152,7 +152,7 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 						for (Iterator<String> iterator = json.keys(); iterator.hasNext();) {
 							String key = iterator.next();
 							if (!"-".equals(key)) {
-								Locale loc = new Locale(new Locale(key).getLanguage());
+								Locale loc = new Locale(key);
 								if (json.getString(key) != null) {
 									if (json.getString(key).length() > 0) {
 										mlText.addValue(loc, json.getString(key));
@@ -178,7 +178,17 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 							item.put("description", propertyDef.getDescription(serviceRegistry.getDictionaryService()));
 							item.put("name", fieldQname.toPrefixString(serviceRegistry.getNamespaceService()));
 							item.put("value", mlEntry.getValue());
-							item.put("locale", mlEntry.getKey().getLanguage());
+							
+							String lang = mlEntry.getKey().getLanguage();
+							String code = lang;
+							String country = lang.toUpperCase();
+							if(mlEntry.getKey().getCountry()!=null && !mlEntry.getKey().getCountry().isEmpty()){
+								country =mlEntry.getKey().getCountry();
+								code+="_"+country;
+							}
+							item.put("locale", code);
+							item.put("lang", lang);
+							item.put("country", country);
 							items.put(item);
 						}
 
@@ -212,10 +222,10 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 
 			Map<String, String> vars = new HashMap<>();
 			vars.put("key", googleApiKey);
-			vars.put("target", target);
+			vars.put("target", target.split("_")[0]);
 			vars.put("source", I18NUtil.getContentLocale().getLanguage());
 			vars.put("q", defaultValue);
-
+			
 			String url = "https://www.googleapis.com/language/translate/" + "v2?key={key}&source={source}&target={target}&q={q}";
 
 			RestTemplate restTemplate = new RestTemplate();

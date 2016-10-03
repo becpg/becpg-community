@@ -434,16 +434,19 @@ public class EntityTplServiceImpl implements EntityTplService {
 						for (final NodeRef entityNodeRef : subList) {
 							try {
 
-								policyBehaviourFilter.disableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
-								policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
-								policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
+								policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+								policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+								policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_VERSIONABLE);
+								policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+								
 
 								batchCallBack.run(entityNodeRef);
 
 							} finally {
-								policyBehaviourFilter.enableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
-								policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
-								policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
+								policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+								policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+								policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_VERSIONABLE);
+								policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 							}
 						}
 						return null;

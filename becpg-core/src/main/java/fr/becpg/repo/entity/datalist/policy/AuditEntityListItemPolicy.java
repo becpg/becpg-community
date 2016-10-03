@@ -68,7 +68,8 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy implements No
 	}
 
 	private void queueListNodeRef(String key, NodeRef listNodeRef) {
-		if (policyBehaviourFilter.isEnabled(BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
+		if (policyBehaviourFilter.isEnabled(BeCPGModel.TYPE_ENTITYLIST_ITEM)
+				&& policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE) ) {
 			queueNode(key, listNodeRef);
 		}
 	}
@@ -106,7 +107,8 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy implements No
 
 		for (NodeRef listContainerNodeRef : listContainerNodeRefs) {
 			NodeRef entityNodeRef = nodeService.getPrimaryParent(listContainerNodeRef).getParentRef();
-			if (entityNodeRef != null && !isVersionNode(entityNodeRef) && isNotLocked(entityNodeRef)) {
+			if (entityNodeRef != null && !isVersionNode(entityNodeRef) && isNotLocked(entityNodeRef)
+					&& policyBehaviourFilter.isEnabled(entityNodeRef,ContentModel.ASPECT_AUDITABLE)) {
 				try {
 					policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
 					nodeService.setProperty(entityNodeRef, ContentModel.PROP_MODIFIED, Calendar.getInstance().getTime());

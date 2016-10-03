@@ -79,6 +79,8 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private Double servingSize;
 	private Double recipeQtyUsed;
 	private Double recipeVolumeUsed;
+	private Double productLossPerc =  0d;
+	private Double recipeQtyUsedWithLossPerc;
 
 	private Double tare;
 	private TareUnit tareUnit;
@@ -371,6 +373,23 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	public void setYieldVolume(Double yieldVolume) {
 		this.yieldVolume = yieldVolume;
 	}
+	
+	public Double getProductLossPerc() {
+		return productLossPerc;
+	}
+
+	public void setProductLossPerc(Double lossPerc) {
+		this.productLossPerc = lossPerc;
+	}
+
+	public Double getRecipeQtyUsedWithLossPerc() {
+		return recipeQtyUsedWithLossPerc;
+	}
+
+	public void setRecipeQtyUsedWithLossPerc(Double recipeQtyUsedWithLossPerc) {
+		this.recipeQtyUsedWithLossPerc = recipeQtyUsedWithLossPerc;
+	}
+
 
 	@AlfProp
 	@AlfQname(qname = "bcpg:productCompoQtyUsed")
@@ -391,6 +410,8 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	public void setRecipeVolumeUsed(Double recipeVolumeUsed) {
 		this.recipeVolumeUsed = recipeVolumeUsed;
 	}
+	
+	
 
 	@AlfProp
 	@AlfQname(qname = "bcpg:netWeight")

@@ -168,7 +168,7 @@ public class EntityListValuePlugin implements ListValuePlugin {
 					String[] splitted = className.split("\\^");
 					classQName = QName.createQName(splitted[0], namespaceService);
 				} else {
-					classQName = QName.createQName(className, namespaceService);
+					classQName = QName.createQName(className.replace("inc_",""), namespaceService);
 				}
 				if (entityDictionaryService.isSubClass(classQName, BeCPGModel.TYPE_CHARACT)) {
 					template = mixedSearchTemplate;
@@ -425,6 +425,7 @@ public class EntityListValuePlugin implements ListValuePlugin {
 		if (arrClassNames != null) {
 
 			for (String className : arrClassNames) {
+				boolean include = false;
 				QName classQName;
 				Integer boost = null;
 				if (className.contains("^")) {
@@ -432,11 +433,20 @@ public class EntityListValuePlugin implements ListValuePlugin {
 					classQName = QName.createQName(splitted[0], namespaceService);
 					boost = Integer.valueOf(splitted[1]);
 				} else {
-					classQName = QName.createQName(className, namespaceService);
+					if(className.startsWith("inc_")){
+						include = true;
+						classQName = QName.createQName(className.replace("inc_", ""), namespaceService);
+					} else {
+						classQName = QName.createQName(className, namespaceService);
+					}
 				}
 				ClassDefinition classDef = dictionaryService.getClass(classQName);
 				if (classDef.isAspect()) {
-					queryBuilder.withAspect(classQName);
+					if(include){
+						queryBuilder.includeAspect(classQName);
+					} else {
+						queryBuilder.withAspect(classQName);
+					}
 				} else {
 					if (boost != null) {
 						queryBuilder.inBoostedType(classQName, boost);

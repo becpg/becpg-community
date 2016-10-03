@@ -24,7 +24,7 @@
     </parameters>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="1347">
-            <property name="FILELIST">/home/quere/Téléchargements/compDataSource.xml</property>
+            <property name="FILELIST">src/main/resources/beCPG/birt/system/compDataSource.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -1732,29 +1732,49 @@ row["properties2"]
                 <structure>
                     <property name="name">value1</property>
                     <text-property name="displayName">value1</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["value1"]*1000</expression>
-                    <property name="dataType">float</property>
+                    <expression name="expression" type="javascript">if(dataSetRow["value1"]&lt;1){
+BirtMath.round(dataSetRow["value1"]*1000,2)+" g"
+}
+else{
+BirtMath.round(dataSetRow["value1"],3)+" kg"
+}</expression>
+                    <property name="dataType">string</property>
                     <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">value2</property>
                     <text-property name="displayName">value2</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["value2"]*1000</expression>
-                    <property name="dataType">float</property>
+                    <expression name="expression" type="javascript">if(dataSetRow["value2"]&lt;1){
+BirtMath.round(dataSetRow["value2"]*1000,2)+" g"
+}
+else{
+BirtMath.round(dataSetRow["value2"],3)+" kg"
+}</expression>
+                    <property name="dataType">string</property>
                     <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">value3</property>
                     <text-property name="displayName">value3</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["value3"]*1000</expression>
-                    <property name="dataType">float</property>
+                    <expression name="expression" type="javascript">if(dataSetRow["value3"]&lt;1){
+BirtMath.round(dataSetRow["value3"]*1000,2)+" g"
+}
+else{
+BirtMath.round(dataSetRow["value3"],3)+" kg"
+}</expression>
+                    <property name="dataType">string</property>
                     <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">value4</property>
                     <text-property name="displayName">value4</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["value4"]*1000</expression>
-                    <property name="dataType">float</property>
+                    <expression name="expression" type="javascript">if(dataSetRow["value4"]&lt;1){
+BirtMath.round(dataSetRow["value4"]*1000,2)+" g"
+}
+else{
+BirtMath.round(dataSetRow["value4"],3)+" kg"
+}</expression>
+                    <property name="dataType">string</property>
                     <property name="allowExport">true</property>
                 </structure>
                 <structure>
@@ -1971,10 +1991,6 @@ previousCharact;</expression>
                             <property name="display">inline</property>
                             <property name="resultSetColumn">value1</property>
                         </data>
-                        <label id="3616">
-                            <property name="display">inline</property>
-                            <text-property name="text">g</text-property>
-                        </label>
                     </cell>
                     <cell id="3604">
                         <property name="paddingTop">1pt</property>
@@ -2005,10 +2021,6 @@ previousCharact;</expression>
                             <property name="display">inline</property>
                             <property name="resultSetColumn">value2</property>
                         </data>
-                        <label id="3658">
-                            <property name="display">inline</property>
-                            <text-property name="text">g</text-property>
-                        </label>
                     </cell>
                     <cell id="3606">
                         <property name="borderLeftColor">#3EA1E6</property>
@@ -2045,10 +2057,6 @@ previousCharact;</expression>
                             <property name="display">inline</property>
                             <property name="resultSetColumn">value3</property>
                         </data>
-                        <label id="3664">
-                            <property name="display">inline</property>
-                            <text-property name="text">g</text-property>
-                        </label>
                     </cell>
                     <cell id="3608">
                         <list-property name="highlightRules">
@@ -2075,10 +2083,6 @@ previousCharact;</expression>
                             <property name="display">inline</property>
                             <property name="resultSetColumn">value4</property>
                         </data>
-                        <label id="3665">
-                            <property name="display">inline</property>
-                            <text-property name="text">g</text-property>
-                        </label>
                     </cell>
                 </row>
             </detail>
