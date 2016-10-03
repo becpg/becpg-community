@@ -370,7 +370,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 				String subPath = path + "/" + pair.getFirst().getNodeRef().getId();
 
-				formulaService.registerCustomFunctions(dataContext);
+				formulaService.registerCustomFunctions(productData, dataContext);
 				Object subValue = exp.getValue(dataContext);
 				subObject.put(JsonFormulaHelper.JSON_VALUE, subValue);
 				subObject.put(JsonFormulaHelper.JSON_DISPLAY_VALUE, JsonFormulaHelper.formatValue(subValue));

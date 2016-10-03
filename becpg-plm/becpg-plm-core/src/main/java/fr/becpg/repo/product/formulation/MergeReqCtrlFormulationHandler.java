@@ -86,7 +86,7 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 			ProductData productData = alfrescoRepository.findOne(productNodeRef);
 			if ((productData instanceof SemiFinishedProductData) || (productData instanceof FinishedProductData)
 					|| (productData instanceof RawMaterialData)) {
-				if ((productData.getCompoListView() != null) && (productData.getReqCtrlList() != null)) {
+				if ((productData.getReqCtrlList() != null)) {
 					for (ReqCtrlListDataItem tmp : productData.getReqCtrlList()) {
 						// mandatory fields rclDataItem aren't put in parent
 						if (tmp.getReqDataType() != RequirementDataType.Completion) {
