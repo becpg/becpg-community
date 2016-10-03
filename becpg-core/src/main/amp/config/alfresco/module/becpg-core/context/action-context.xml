@@ -39,6 +39,8 @@
     	<property name="versionService" ref="versionService"/>
     	<property name="nodeService" ref="nodeService" />
     	<property name="ignoreLock" value="false" />
+    	<property name="entityDictionaryService" ref="entityDictionaryService" />
+    	<property name="entityVersionService" ref="entityVersionService" />
     </bean>
     
     <!-- I18N -->
