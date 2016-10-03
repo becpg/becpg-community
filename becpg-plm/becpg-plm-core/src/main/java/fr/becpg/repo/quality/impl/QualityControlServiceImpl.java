@@ -285,13 +285,35 @@ public class QualityControlServiceImpl implements QualityControlService {
 
 						if (cdl.getTarget() != null) {
 							target = cdl.getTarget();
+							
+							if (cdl.getMini() != null) {
+								mini = cdl.getMini();
+							}
+							if (cdl.getMaxi() != null) {
+								maxi = cdl.getMaxi();
+							}
+							
+						} else if( target!=null  && (cdl.getMini() != null || cdl.getMaxi()!=null)) {
+							
+							if (cdl.getMini() != null) {
+								mini =  target - cdl.getMini();
+							}
+							
+							if (cdl.getMaxi() != null) {
+								maxi = target +  cdl.getMaxi();
+							}
+							
+						} else {
+							if (cdl.getMini() != null) {
+								mini = cdl.getMini();
+							}
+							if (cdl.getMaxi() != null) {
+								maxi = cdl.getMaxi();
+							}
 						}
-						if (cdl.getMini() != null) {
-							mini = cdl.getMini();
-						}
-						if (cdl.getMaxi() != null) {
-							maxi = cdl.getMaxi();
-						}
+						
+						
+						
 						if ((cdl.getUnit() != null) && !cdl.getUnit().isEmpty()) {
 							unit = cdl.getUnit();
 						}
