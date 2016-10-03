@@ -606,11 +606,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 												toAdd.put(aggregateRuleNodeRef, current);
 											}
 
-											if (qty != null) {
+											if (qty != null && current.getQty()!=null) {
 												current.setQty(current.getQty() + qty);
 											}
 
-											if (volume != null) {
+											if (volume != null && current.getVolume()!=null) {
 												current.setVolume(current.getVolume() + volume);
 											}
 
@@ -694,9 +694,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 										}
 										iterator.remove();
 										break;
-									} else if (qty != null) {
+									} else if (qty != null && component.getQty()!=null) {
 										component.setQty(component.getQty() - qty);
-										if (volume != null) {
+										if (volume != null && component.getVolume()!=null) {
 											component.setVolume(component.getVolume() - volume);
 										}
 									}
