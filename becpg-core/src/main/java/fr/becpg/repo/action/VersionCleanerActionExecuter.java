@@ -38,6 +38,10 @@ import org.alfresco.service.cmr.version.VersionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.entity.EntityDictionaryService;
+import fr.becpg.repo.entity.version.EntityVersionService;
+
 /**
  * @author matthieu
  * 
@@ -56,6 +60,9 @@ public class VersionCleanerActionExecuter extends ActionExecuterAbstractBase {
 	private NodeService nodeService;
 	private RuleService ruleService;
 	private VersionService versionService;
+	private EntityVersionService entityVersionService;
+	
+	private EntityDictionaryService entityDictionaryService;
 
 	public void setVersionService(VersionService versionService) {
 		this.versionService = versionService;
@@ -67,6 +74,14 @@ public class VersionCleanerActionExecuter extends ActionExecuterAbstractBase {
 
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
+	}
+	
+	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
+		this.entityDictionaryService = entityDictionaryService;
+	}
+
+	public void setEntityVersionService(EntityVersionService entityVersionService) {
+		this.entityVersionService = entityVersionService;
 	}
 
 	/**
@@ -99,6 +114,10 @@ public class VersionCleanerActionExecuter extends ActionExecuterAbstractBase {
 				if (versionHistory != null) {
 					for (Version version : versionConfig.versionsToDelete(versionHistory.getAllVersions())) {
 						logger.info("Deleting version :" + version.getVersionLabel());
+						if(entityDictionaryService.isSubClass(nodeService.getType(actionedUponNodeRef), BeCPGModel.TYPE_ENTITY_V2)){
+							logger.info(" -- deleting  entity version ");
+							entityVersionService.deleteEntityVersion(version);
+						}
 						versionService.deleteVersion(actionedUponNodeRef, version);
 					}
 				}
