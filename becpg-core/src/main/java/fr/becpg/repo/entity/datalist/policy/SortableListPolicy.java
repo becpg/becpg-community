@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.copy.CopyBehaviourCallback;
 import org.alfresco.repo.copy.CopyDetails;
 import org.alfresco.repo.copy.CopyServicePolicies;
@@ -22,6 +23,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.entity.EntityDictionaryService;
+import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.datalist.DataListSortService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -39,8 +42,20 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 
 	private DataListSortService dataListSortService;
 
+	private EntityDictionaryService entityDictionaryService;
+
+	private EntityListDAO entityListDAO;
+
+	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
+		this.entityDictionaryService = entityDictionaryService;
+	}
+
 	public void setDataListSortService(DataListSortService dataListSortService) {
 		this.dataListSortService = dataListSortService;
+	}
+
+	public void setEntityListDAO(EntityListDAO entityListDAO) {
+		this.entityListDAO = entityListDAO;
 	}
 
 	/**
@@ -89,6 +104,29 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 		// has changed ?
 		boolean hasChanged;
 		if ((afterParentLevel != null) && !afterParentLevel.equals(beforeParentLevel)) {
+
+			if (entityDictionaryService.isSubClass(nodeService.getType(afterParentLevel), BeCPGModel.TYPE_ENTITY_V2)) {
+
+				NodeRef listContainerNodeRef = entityListDAO.getListContainer(afterParentLevel);
+				if (listContainerNodeRef != null) {
+					NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, nodeService.getType(nodeRef));
+					if (listNodeRef != null) {
+						nodeService.moveNode(nodeRef, listNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
+					}
+				}
+				nodeService.setProperty(nodeRef, BeCPGModel.PROP_PARENT_LEVEL, null);
+			} else if (entityDictionaryService.isSubClass(nodeService.getType(afterParentLevel), BeCPGModel.TYPE_ENTITYLIST_ITEM)
+					&& entityDictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
+
+				if (!nodeService.getPrimaryParent(afterParentLevel).getParentRef().equals(nodeService.getPrimaryParent(nodeRef).getParentRef())) {
+
+					nodeService.moveNode(nodeRef, nodeService.getPrimaryParent(afterParentLevel).getParentRef(), ContentModel.ASSOC_CONTAINS,
+							ContentModel.ASSOC_CONTAINS);
+
+				}
+
+			}
+
 			hasChanged = true;
 		} else if ((beforeParentLevel != null) && !beforeParentLevel.equals(afterParentLevel)) {// parentLevel
 																								// is
@@ -116,6 +154,23 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 			}
 
 			boolean addInQueue = false;
+
+			if (aspect.isMatch(BeCPGModel.ASPECT_DEPTH_LEVEL)) {
+				NodeRef parentNodeRef = (NodeRef) nodeService.getProperty(nodeRef, BeCPGModel.PROP_PARENT_LEVEL);
+				if ((parentNodeRef != null) && entityDictionaryService.isSubClass(nodeService.getType(parentNodeRef), BeCPGModel.TYPE_ENTITY_V2)) {
+
+					NodeRef listContainerNodeRef = entityListDAO.getListContainer(parentNodeRef);
+					if (listContainerNodeRef != null) {
+						NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, nodeService.getType(nodeRef));
+						if (listNodeRef != null) {
+							nodeService.moveNode(nodeRef, listNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
+						}
+					}
+					nodeService.setProperty(nodeRef, BeCPGModel.PROP_PARENT_LEVEL, null);
+				}
+
+			}
+
 			if ((nodeService.getProperty(nodeRef, BeCPGModel.PROP_SORT) == null) && aspect.isMatch(BeCPGModel.ASPECT_SORTABLE_LIST)
 					&& !nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_DEPTH_LEVEL)) {
 				addInQueue = true;
@@ -146,8 +201,12 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 
 	@Override
 	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
-
-		dataListSortService.computeDepthAndSort(pendingNodes);
+		try {
+			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+			dataListSortService.computeDepthAndSort(pendingNodes);
+		} finally {
+			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+		}
 	}
 
 	@Override

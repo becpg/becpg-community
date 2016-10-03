@@ -438,6 +438,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 								policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
 								policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 								policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_VERSIONABLE);
+								policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 
 								batchCallBack.run(entityNodeRef);
 
@@ -445,6 +446,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 								policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
 								policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
 								policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_VERSIONABLE);
+								policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 							}
 						}
 						return null;
