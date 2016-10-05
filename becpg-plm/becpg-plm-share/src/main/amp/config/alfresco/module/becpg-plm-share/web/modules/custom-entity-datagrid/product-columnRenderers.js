@@ -824,8 +824,8 @@ if (beCPG.module.EntityDataGridRenderers) {
 				}
 				Dom.setStyle(elCell, "width", "16px");
 				Dom.setStyle(elCell.parentNode, "width", "16px");
-				return "<span title=\"" + Alfresco.util.encodeHTML(data.displayValue.replace(/&nbsp;/gi," ")
-						.replace(/<(?:.|\n)*?>/gm, '').replace(/\n/gm," ")) 
+				return "<span title=\"" + data.displayValue.replace(/&nbsp;/gi," ")
+						.replace(/<(?:.|\n)*?>/gm, '').replace(/\n/gm," ").replace(/"/gm,"") 
 				+ "\" class='instructions'>&nbsp;</span>";
         	} else {
         		return data.displayValue;
