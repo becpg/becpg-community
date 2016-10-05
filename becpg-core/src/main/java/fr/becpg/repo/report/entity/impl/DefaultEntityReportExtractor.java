@@ -309,8 +309,14 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 					MLText mlValues = (MLText) mlNodeService.getProperty(nodeRef, propertyDef.getName());
 
 					for (Map.Entry<Locale, String> mlEntry : mlValues.entrySet()) {
-
-						addData(nodeElt, useCData, propertyDef.getName(), mlEntry.getValue(), mlEntry.getKey().getLanguage());
+						
+						String code = mlEntry.getKey().getLanguage();
+						if(mlEntry.getKey().getCountry()!=null && !mlEntry.getKey().getCountry().isEmpty()){
+							code+="_"+mlEntry.getKey().getCountry();
+						}
+						if(code!=null && !code.isEmpty()){
+							addData(nodeElt, useCData, propertyDef.getName(), mlEntry.getValue(), code);
+						}
 					}
 
 				}
