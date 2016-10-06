@@ -38,6 +38,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
+import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
@@ -488,6 +489,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	 * @param formulatedProduct
 	 * @param simpleListDataList
 	 */
+	@SuppressWarnings("unchecked")
 	protected void synchronizeTemplate(ProductData formulatedProduct, List<T> simpleListDataList) {
 
 		if ((formulatedProduct.getEntityTpl() != null) && !formulatedProduct.getEntityTpl().equals(formulatedProduct)) {
@@ -500,17 +502,35 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 					for (T sl : simpleListDataList) {
 						if (tsl.getCharactNodeRef().equals(sl.getCharactNodeRef())) {
 							isFound = true;
+							
+							sl.setSort(tsl.getSort());
+							if(sl instanceof CompositeDataItem
+									&& tsl instanceof CompositeDataItem){
+								if(((CompositeDataItem<T>)tsl).getParent()!=null
+										&& ((CompositeDataItem<T>)sl).getParent()==null){
+									((CompositeDataItem<T>)sl).setParent(findParentByCharactName(simpleListDataList, ((CompositeDataItem<T>)tsl).getParent().getCharactNodeRef()));
+								} else if(((CompositeDataItem<T>)tsl).getParent() ==null) {
+									((CompositeDataItem<T>)sl).setParent(null);
+								}
+							}
+							
 							break;
 						}
 					}
 					if (!isFound) {
-						@SuppressWarnings("unchecked")
 						T toAdd = (T) tsl.clone();
 						toAdd.setName(null);
 						toAdd.setNodeRef(null);
 						toAdd.setParentNodeRef(null);
+						
+						if(toAdd instanceof CompositeDataItem){
+							if(((CompositeDataItem<T>)toAdd).getParent()!=null){
+								((CompositeDataItem<T>)toAdd).setParent(findParentByCharactName(simpleListDataList, ((CompositeDataItem<T>)toAdd).getParent().getCharactNodeRef()));
+							}
+						}
+						
 						simpleListDataList.add(toAdd);
-					}
+					} 
 
 				}
 			}
