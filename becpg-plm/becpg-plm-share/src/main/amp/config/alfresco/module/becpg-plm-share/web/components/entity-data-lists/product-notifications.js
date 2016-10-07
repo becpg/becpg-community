@@ -43,7 +43,7 @@
 				"container" ]);
 
 		// message
-		this.name = "beCPG.component.FormulationView";
+		this.name = "beCPG.component.EntityDataListToolbar";
 
 		return this;
 	};
@@ -120,39 +120,37 @@
 
 							YAHOO.Bubbling.on("refreshDataGrids", this.loadPanelData, this);
 
-							YAHOO.Bubbling.addDefaultAction(REQFILTER_EVENTCLASS, function(layers, args) {
-								var owner = YAHOO.Bubbling.getOwnerByTagName(args[1].anchor, "span");
+							YAHOO.Bubbling.addDefaultAction(REQFILTER_EVENTCLASS,function(layers, args) {
+									var owner = YAHOO.Bubbling.getOwnerByTagName(args[1].anchor, "span");
 
-								
-								var selectedItems = document.getElementsByClassName("rclFilterSelected");
+									
+									var selectedItems = document.getElementsByClassName("rclFilterSelected");
 
-								// sets clicked item to selected
-								for (var i = 0; i < selectedItems.length; i++) {
-									selectedItems[i].classList.remove("rclFilterSelected");
-								}
-								var chgClass = owner;
-								if (owner.parentNode.nodeName == "LI") {
-									chgClass = owner.parentNode;
-								}
-								Dom.addClass(chgClass, "rclFilterSelected");
+									// sets clicked item to selected
+									for (var i = 0; i < selectedItems.length; i++) {
+										selectedItems[i].classList.remove("rclFilterSelected");
+									}
+									var chgClass = owner;
+									if (owner.parentNode.nodeName == "LI") {
+										chgClass = owner.parentNode;
+									}
+									Dom.addClass(chgClass, "rclFilterSelected");
 
-								// refreshes view by calling filter
-								var splits = owner.className.split(" ")[0].split("-");
-								var type = (splits.length > 2 ? splits[2] : undefined);
-								var dataType = splits[1].charAt(0).toUpperCase() + splits[1].slice(1);
-								instance.filterId = (type === "all" && dataType === "All" ? "all" : "filterform");
-								instance.filterData = (type === "all" && dataType === "All" ? undefined : "{"
-										+ (type !== undefined ? ("\"prop_bcpg_rclReqType\":\"" + type+"\"") : "")
-										+ (dataType !== null ? (type !== undefined ? "," : "") + ("\"prop_bcpg_rclDataType\":\"" + dataType+"\"") : "")
-										+ "}");
+									// refreshes view by calling filter
+									var splits = owner.className.split(" ")[0].split("-");
+									var type = (splits.length > 2 ? splits[2] : undefined);
+									var dataType = splits[1].charAt(0).toUpperCase() + splits[1].slice(1);
+									instance.filterId = (type === "all" && dataType === "All" ? "all" : "filterform");
+									instance.filterData = (type === "all" && dataType === "All" ? undefined : "{"
+											+ (type !== undefined ? ("\"prop_bcpg_rclReqType\":\"" + type+"\"") : "")
+											+ (dataType !== null ? (type !== undefined ? "," : "") + ("\"prop_bcpg_rclDataType\":\"" + dataType+"\"") : "")
+											+ "}");
 
-								//args[0].stopPropagation();
-								//args[1].decrepitate = true;
+									instance.reloadDataTable();
 
-								instance.reloadDataTable();
-
-							});
+							}, true );
 						},
+						
 
 						createShowNotificationButton : function(instance, actionName, containerDiv, fn) {
 
@@ -487,7 +485,20 @@
 						 */
 						reloadDataTable : function SimpleDocList_reloadDataTable() {
 							this.widgets.notificationsDataTable.loadDataTable(this.getParameters());
+						},
+						
+						destroy : function (){
+							
+							YAHOO.Bubbling.unsubscribe("refreshDataGrids",this.loadPanelData, this);
+							this.widgets.showNotificationsButton.destroy();
+							this.widgets.notificationsDataTable.destroy();
+							this.options.containerDiv.parentNode.removeChild(this.options.containerDiv);
+							this.options.containerDiv.innerHTML = "";
+							this.widgets.panelDiv.innerHTML = "";
+							
 						}
+						
+						
 
 					}, true);
 

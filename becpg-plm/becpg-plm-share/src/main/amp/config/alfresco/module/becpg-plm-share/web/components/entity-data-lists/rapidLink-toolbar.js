@@ -214,8 +214,8 @@
                            });
                      this.modules.entityImporter.show();
                   },
-
-                
+                  
+                  
                   addToDataList : function RapidLinkToolbar_addToDataList(nodeRef, msgKey) {
 
                      var instance = this, dataObj = null,
@@ -274,6 +274,11 @@
                               scope : this
                            }
                         });
+                     },
+                     
+                     destroy : function (){
+                    	 
+                    	 this.widgets.rapidLinkToolbar.destroy();
                      }
 
                }, true);
