@@ -32,7 +32,7 @@
 			{
 				"type": "${row.item.typeShort}",
 				"parentType": "${row.item.parentTypeShort!""}",
-				<#if row.item.parent??>"parentName": "${row.item.parent.name!""}",</#if>
+				<#if row.item.parent?? && row.item.parent.hasPermission("Read") >"parentName": "${row.item.parent.name!""}",</#if>
 				"isContainer": ${row.item.isContainer?string},
 				<#if row.container??>"container": "${row.container!""}",</#if>
 				<#if row.item.typeShort == "bcpg:dynamicCharactList" >
