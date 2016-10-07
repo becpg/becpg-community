@@ -145,7 +145,7 @@ public class DockBarWebScript extends AbstractWebScript {
 				logger.debug("Element.size(): " + elements.size());
 			}
 
-			if (productNodeRef != null) {
+			if (productNodeRef != null &&  serviceRegistry.getNodeService().exists(productNodeRef)) {
 
 				QName type = serviceRegistry.getNodeService().getType(productNodeRef);
 
