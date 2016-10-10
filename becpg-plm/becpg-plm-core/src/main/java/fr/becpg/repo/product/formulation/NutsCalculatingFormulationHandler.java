@@ -95,16 +95,16 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 
 					for (CompoListDataItem compoItem : formulatedProduct.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 
-						if(compoItem.getDeclType() != DeclarationType.Omit){
-						
+						if (compoItem.getDeclType() != DeclarationType.Omit) {
+
 							NodeRef part = compoItem.getProduct();
 							Double weight = FormulationHelper.getQtyInKg(compoItem);
 							Double vol = FormulationHelper.getNetVolume(compoItem, nodeService);
-	
+
 							ProductData partProduct = (ProductData) alfrescoRepository.findOne(part);
-	
+
 							Double qtyUsed = FormulationHelper.isProductUnitLiter(partProduct.getUnit()) ? vol : weight;
-	
+
 							if (qtyUsed != null) {
 								if (!(partProduct instanceof LocalSemiFinishedProductData)) {
 									visitPart(partProduct, formulatedProduct.getNutList(), retainNodes, qtyUsed, netQty, isGenericRawMaterial,
@@ -121,8 +121,8 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 							String message = I18NUtil.getMessage(MESSAGE_UNDEFINED_CHARACT,
 									nodeService.getProperty(mandatoryCharact.getKey(), BeCPGModel.PROP_CHARACT_NAME));
 
-							formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated,
-									message, mandatoryCharact.getKey(), mandatoryCharact.getValue(), RequirementDataType.Nutrient));
+							formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message,
+									mandatoryCharact.getKey(), mandatoryCharact.getValue(), RequirementDataType.Nutrient));
 						}
 					}
 
@@ -139,61 +139,63 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 						"message.formulate.nutList.error");
 
 				formulatedProduct.getNutList().forEach(n -> {
+					if (n.getNut() != null) {
 
-					n.setGroup((String) nodeService.getProperty(n.getNut(), PLMModel.PROP_NUTGROUP));
-					n.setUnit(calculateUnit(formulatedProduct.getUnit(), (String) nodeService.getProperty(n.getNut(), PLMModel.PROP_NUTUNIT)));
+						n.setGroup((String) nodeService.getProperty(n.getNut(), PLMModel.PROP_NUTGROUP));
+						n.setUnit(calculateUnit(formulatedProduct.getUnit(), (String) nodeService.getProperty(n.getNut(), PLMModel.PROP_NUTUNIT)));
 
-					if (n.getLossPerc() != null) {
-						if (n.getValue() != null) {
-							n.setValue((n.getValue() * (100 - n.getLossPerc())) / 100);
-						}
-						if (n.getMini() != null) {
-							n.setMini((n.getMini() * (100 - n.getLossPerc())) / 100);
-						}
-						if (n.getMaxi() != null) {
-							n.setMaxi((n.getMaxi() * (100 - n.getLossPerc())) / 100);
-						}
-					}
-
-					if ((formulatedProduct.getServingSize() != null) && (n.getValue() != null)) {
-						Double valuePerserving = (n.getValue() * formulatedProduct.getServingSize()) / 100;
-						n.setValuePerServing(valuePerserving);
-						Double gda = (Double) nodeService.getProperty(n.getNut(), PLMModel.PROP_NUTGDA);
-						if ((gda != null) && (gda != 0d)) {
-							n.setGdaPerc((100 * n.getValuePerServing()) / gda);
-						}
-						Double ul = (Double) nodeService.getProperty(n.getNut(), PLMModel.PROP_NUTUL);
-						if (ul != null) {
-							if (valuePerserving > ul) {
-								String message = I18NUtil.getMessage(MESSAGE_MAXIMAL_DAILY_VALUE,
-										nodeService.getProperty(n.getNut(), BeCPGModel.PROP_CHARACT_NAME));
-
-								formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden,
-										message, n.getNut(), new ArrayList<NodeRef>(), RequirementDataType.Specification));
+						if (n.getLossPerc() != null) {
+							if (n.getValue() != null) {
+								n.setValue((n.getValue() * (100 - n.getLossPerc())) / 100);
+							}
+							if (n.getMini() != null) {
+								n.setMini((n.getMini() * (100 - n.getLossPerc())) / 100);
+							}
+							if (n.getMaxi() != null) {
+								n.setMaxi((n.getMaxi() * (100 - n.getLossPerc())) / 100);
 							}
 						}
-					} else {
-						n.setValuePerServing(null);
-						n.setGdaPerc(null);
-					}
 
-					if (isCharactFormulated(n) && hasCompo) {
-						if (n.getManualValue() == null) {
-							n.setMethod(NUT_FORMULATED);
+						if ((formulatedProduct.getServingSize() != null) && (n.getValue() != null)) {
+							Double valuePerserving = (n.getValue() * formulatedProduct.getServingSize()) / 100;
+							n.setValuePerServing(valuePerserving);
+							Double gda = (Double) nodeService.getProperty(n.getNut(), PLMModel.PROP_NUTGDA);
+							if ((gda != null) && (gda != 0d)) {
+								n.setGdaPerc((100 * n.getValuePerServing()) / gda);
+							}
+							Double ul = (Double) nodeService.getProperty(n.getNut(), PLMModel.PROP_NUTUL);
+							if (ul != null) {
+								if (valuePerserving > ul) {
+									String message = I18NUtil.getMessage(MESSAGE_MAXIMAL_DAILY_VALUE,
+											nodeService.getProperty(n.getNut(), BeCPGModel.PROP_CHARACT_NAME));
+
+									formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message,
+											n.getNut(), new ArrayList<NodeRef>(), RequirementDataType.Specification));
+								}
+							}
+						} else {
+							n.setValuePerServing(null);
+							n.setGdaPerc(null);
 						}
-					}
 
-					if (transientFormulation) {
-						n.setTransient(true);
+						if (isCharactFormulated(n) && hasCompo) {
+							if (n.getManualValue() == null) {
+								n.setMethod(NUT_FORMULATED);
+							}
+						}
+
+						if (transientFormulation) {
+							n.setTransient(true);
+						}
 					}
 				});
 
 				checkRequirementsOfFormulatedProduct(formulatedProduct);
 
 			}
-		} else if(formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) && formulatedProduct.getNutList()!=null){
+		} else if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) && (formulatedProduct.getNutList() != null)) {
 			cleanSimpleList(formulatedProduct.getNutList());
-			
+
 		}
 		return true;
 	}
