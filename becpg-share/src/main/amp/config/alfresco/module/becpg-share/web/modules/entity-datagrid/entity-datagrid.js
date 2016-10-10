@@ -356,7 +356,7 @@
                             /**
                              * Floating header
                              */
-                            floatingHeader : true
+                            floatingHeader : !(YAHOO.env.ua.ie > 0)
                         },
 
                         /**
