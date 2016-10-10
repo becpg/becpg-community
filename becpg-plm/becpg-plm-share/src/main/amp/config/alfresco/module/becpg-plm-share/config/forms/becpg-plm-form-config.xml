@@ -7410,6 +7410,7 @@
 					<show id="fm:commentCount" force="true" />
 					<show id="bcpg:nutListIsFormulated" />
 					<show id="bcpg:nutListFormulaErrorLog" />
+					<show id="entity_bcpg:nutListNut_bcpg:nut" force="true"/>
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden"></field>
