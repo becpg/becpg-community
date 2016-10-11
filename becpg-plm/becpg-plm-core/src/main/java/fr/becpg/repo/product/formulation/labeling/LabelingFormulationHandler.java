@@ -1090,7 +1090,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 					if (!isMultiLevel && (productData.getIngList() != null) && !productData.getIngList().isEmpty()) {
 
-						loadIngList(productData, CompositeHelper.getHierarchicalCompoList(productData.getIngList()), applyYield(qty + waterLost, yield, labelingFormulaContext), applyYield(volume, yield, labelingFormulaContext),
+						loadIngList(productData, CompositeHelper.getHierarchicalCompoList(productData.getIngList()), qty, volume,
 								labelingFormulaContext, compoListDataItem, compositeLabeling, errors);
 
 					}
