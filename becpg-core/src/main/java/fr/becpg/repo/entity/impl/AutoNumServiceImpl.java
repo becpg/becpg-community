@@ -182,11 +182,7 @@ public class AutoNumServiceImpl implements AutoNumService {
 					.andNotID(nodeRef)
 					.inDB()
 					.singleValue()!=null;
-			
-			if(generateCode){
-				
-			}
-			
+	
 		}
 
 		// generate a new code
