@@ -56,7 +56,6 @@
 			</exclusions>
 		</dependency>
 
-
 		<!-- alfresco -->
 		<dependency>
 			<groupId>org.alfresco</groupId>
