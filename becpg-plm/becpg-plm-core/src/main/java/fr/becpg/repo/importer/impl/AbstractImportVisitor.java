@@ -1102,7 +1102,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			logger.debug("nodeColumnKeys is empty type: " + type);
 
 			// look for codeAspect
-			if (dictionaryService.getType(type).getDefaultAspects() != null) {
+			if (dictionaryService.getType(type)!=null && dictionaryService.getType(type).getDefaultAspects() != null) {
 				for (AspectDefinition aspectDef : dictionaryService.getType(type).getDefaultAspects()) {
 					if (aspectDef.getName().equals(BeCPGModel.ASPECT_CODE) && (properties.get(BeCPGModel.PROP_CODE) != null)) {
 						if (NodeRef.isNodeRef(properties.get(BeCPGModel.PROP_CODE).toString())) {
