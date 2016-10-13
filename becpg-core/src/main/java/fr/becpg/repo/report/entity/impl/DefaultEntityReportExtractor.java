@@ -460,7 +460,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	/**
 	 * Extract target(s) association
 	 */
-	protected void extractTargetAssoc(NodeRef entityNodeRef, AssociationDefinition assocDef, Element entityElt, Map<String, byte[]> images) {
+	protected void extractTargetAssoc(NodeRef entityNodeRef, AssociationDefinition assocDef, Element entityElt, Map<String, byte[]> images, boolean extractDataList) {
 
 		Element rootElt = assocDef.isTargetMany() ? entityElt.addElement(assocDef.getName().getLocalName()) : entityElt;
 		if(assocDef.isTargetMany()){
@@ -477,6 +477,11 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			appendPrefix(qName, nodeElt);
 			
 			loadNodeAttributes(nodeRef, nodeElt, true, images);
+			
+			if(extractDataList){
+				Element dataListsElt = nodeElt.addElement(TAG_DATALISTS);
+				loadDataLists(nodeRef, dataListsElt, new HashMap<String, byte[]>());
+			}
 		}
 	}
 
