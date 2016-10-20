@@ -28,7 +28,11 @@
 										<span class="nut">${nut.name}</span>
 									</td>
 								<#list nut.values as curValue>
-									<td>${curValue.value}</td>
+									<#if curValue.value??>
+										<td>${curValue.value}</td>
+									<#else>
+										<td></td>
+									</#if>
 								</#list>
 								</tr>
 							</#list>
