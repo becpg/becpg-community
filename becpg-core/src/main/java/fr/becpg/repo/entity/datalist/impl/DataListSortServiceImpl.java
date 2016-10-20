@@ -415,7 +415,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 		List<NodeRef> listItems = getChildren(null, listContainer, nodeRef, true);
 
 		for (NodeRef tmp : listItems) {
-			if (nodeService.exists(tmp)) {
+			if (nodeService.exists(tmp) && !nodeService.hasAspect(tmp, ContentModel.ASPECT_PENDING_DELETE)) {
 				nodeService.deleteNode(tmp);
 			}
 		}

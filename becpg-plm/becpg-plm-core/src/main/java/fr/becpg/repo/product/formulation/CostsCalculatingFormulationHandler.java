@@ -326,7 +326,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				if ((c.getDepthLevel() == null) || (c.getDepthLevel() == 1)) {
 					unitTotalVariableCost += costPerProduct;
 				}
-				if (formulatedProduct instanceof FinishedProductData || formulatedProduct instanceof SemiFinishedProductData) {
+				if ((formulatedProduct instanceof FinishedProductData) || (formulatedProduct instanceof SemiFinishedProductData)) {
 					c.setValuePerProduct(costPerProduct);
 				}
 			}
@@ -335,7 +335,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				if ((c.getDepthLevel() == null) || (c.getDepthLevel() == 1)) {
 					futureTotalVariableCost += futureCostPerProduct;
 				}
-				if (formulatedProduct instanceof FinishedProductData || formulatedProduct instanceof SemiFinishedProductData) {
+				if ((formulatedProduct instanceof FinishedProductData) || (formulatedProduct instanceof SemiFinishedProductData)) {
 					c.setFutureValuePerProduct(futureCostPerProduct);
 				}
 			}
@@ -344,7 +344,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				if ((c.getDepthLevel() == null) || (c.getDepthLevel() == 1)) {
 					previousTotalVariableCost += previousCostPerProduct;
 				}
-				if (formulatedProduct instanceof FinishedProductData || formulatedProduct instanceof SemiFinishedProductData) {
+				if ((formulatedProduct instanceof FinishedProductData) || (formulatedProduct instanceof SemiFinishedProductData)) {
 					c.setPreviousValuePerProduct(previousCostPerProduct);
 				}
 			}
@@ -422,6 +422,14 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 					if ((costList.getCost() != null) && costList.getCost().equals(templateCostList.getCost())) {
 						// manual
 						if ((costList.getIsManual() == null) || !costList.getIsManual()) {
+
+							if ((templateCostList.getParent() != null) && (costList.getParent() == null)) {
+								costList.setParent(findParentByCharactName(simpleListDataList, templateCostList.getParent().getCharactNodeRef()));
+							} else if (templateCostList.getParent() == null) {
+								costList.setParent(null);
+							}
+							costList.setSort(templateCostList.getSort());
+
 							copyTemplateCost(formulatedProduct, templateCostList, costList);
 						}
 						addCost = false;
@@ -435,11 +443,10 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				CostListDataItem costListDataItem = new CostListDataItem(templateCostList);
 				costListDataItem.setNodeRef(null);
 				costListDataItem.setParentNodeRef(null);
-				
-				if(costListDataItem.getParent()!=null){
+
+				if (costListDataItem.getParent() != null) {
 					costListDataItem.setParent(findParentByCharactName(simpleListDataList, costListDataItem.getParent().getCharactNodeRef()));
 				}
-				
 
 				copyTemplateCost(formulatedProduct, templateCostList, costListDataItem);
 				simpleListDataList.add(costListDataItem);
@@ -458,7 +465,6 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 
 	}
 
-
 	private void copyTemplateCost(ProductData formulatedProduct, CostListDataItem templateCostList, CostListDataItem costList) {
 
 		if (logger.isDebugEnabled()) {
@@ -474,8 +480,8 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 						calculateValues(templateCostList, costList, false, FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d));
 						isCalculated = true;
 					} else if (templateCostList.getUnit().endsWith("Pal")) {
-						if (formulatedProduct.getDefaultVariantPackagingData() != null
-								&& formulatedProduct.getDefaultVariantPackagingData().getProductPerPallet() != null) {
+						if ((formulatedProduct.getDefaultVariantPackagingData() != null)
+								&& (formulatedProduct.getDefaultVariantPackagingData().getProductPerPallet() != null)) {
 							calculateValues(templateCostList, costList, true,
 									(double) formulatedProduct.getDefaultVariantPackagingData().getProductPerPallet());
 						}
@@ -487,8 +493,8 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 						calculateValues(templateCostList, costList, true, FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d));
 						isCalculated = true;
 					} else if (templateCostList.getUnit().endsWith("Pal")) {
-						if (formulatedProduct.getDefaultVariantPackagingData() != null
-								&& formulatedProduct.getDefaultVariantPackagingData().getProductPerPallet() != null) {
+						if ((formulatedProduct.getDefaultVariantPackagingData() != null)
+								&& (formulatedProduct.getDefaultVariantPackagingData().getProductPerPallet() != null)) {
 							calculateValues(templateCostList, costList, true,
 									(double) formulatedProduct.getDefaultVariantPackagingData().getProductPerPallet()
 											* FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d));
@@ -670,7 +676,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	protected boolean accept(ProductData formulatedProduct) {
 
 		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)
-				|| (formulatedProduct.getCostList() == null && !alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_COSTLIST))) {
+				|| ((formulatedProduct.getCostList() == null) && !alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_COSTLIST))) {
 			return false;
 		}
 		return true;

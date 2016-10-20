@@ -98,7 +98,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	@Value("${beCPG.product.report.multiLevel}")
 	private Boolean extractInMultiLevel = false;
-	
+
 	@Value("${beCPG.product.report.assocsToExtract}")
 	private String assocsToExtract = "";
 
@@ -367,12 +367,12 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		loadDataListItemAttributes(dataItem, partElt, images);
 		if (dataItem.getQtyResource() != null) {
 			Double qty = dataItem.getQty();
-			if(qty == null || qty == 0d){
+			if (qty == null || qty == 0d) {
 				qty = 1d;
 			}
-			
+
 			if ((dataItem.getRateProduct() != null) && (dataItem.getRateProduct() != 0)) {
-				partElt.addAttribute(ATTR_PROCESS_QTY_FOR_PRODUCT, Double.toString(dataItem.getQtyResource() * qty / (dataItem.getRateProduct() )));
+				partElt.addAttribute(ATTR_PROCESS_QTY_FOR_PRODUCT, Double.toString(dataItem.getQtyResource() * qty / (dataItem.getRateProduct())));
 			} else if ((parentRateProduct != null) && (parentRateProduct != 0)) {
 				partElt.addAttribute(ATTR_PROCESS_QTY_FOR_PRODUCT, Double.toString(dataItem.getQtyResource() * qty / parentRateProduct));
 			}
@@ -497,27 +497,29 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 		for (CompoListDataItem compoList : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 			NodeRef productNodeRef = compoList.getProduct();
-			QName type = nodeService.getType(productNodeRef);
-			Double qty = FormulationHelper.getQtyInKg(compoList);
-			Double netWeight = FormulationHelper.getNetWeight(productData.getNodeRef(), nodeService, FormulationHelper.DEFAULT_NET_WEIGHT);
-			if (logger.isDebugEnabled()) {
-				logger.debug("Get rawMaterial " + nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME) + "qty: " + qty + " netWeight "
-						+ netWeight + " parentQty " + parentQty);
-			}
-			if ((qty != null) && (netWeight != 0d)) {
-				qty = (parentQty * qty * FormulationHelper.getYield(compoList)) / (100 * netWeight);
+			if (productNodeRef != null) {
+				QName type = nodeService.getType(productNodeRef);
+				Double qty = FormulationHelper.getQtyInKg(compoList);
+				Double netWeight = FormulationHelper.getNetWeight(productData.getNodeRef(), nodeService, FormulationHelper.DEFAULT_NET_WEIGHT);
+				if (logger.isDebugEnabled()) {
+					logger.debug("Get rawMaterial " + nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME) + "qty: " + qty + " netWeight "
+							+ netWeight + " parentQty " + parentQty);
+				}
+				if ((qty != null) && (netWeight != 0d)) {
+					qty = (parentQty * qty * FormulationHelper.getYield(compoList)) / (100 * netWeight);
 
-				if (type.isMatch(PLMModel.TYPE_RAWMATERIAL)) {
-					Double rmQty = rawMaterials.get(productNodeRef);
-					if (rmQty == null) {
-						rmQty = 0d;
+					if (type.isMatch(PLMModel.TYPE_RAWMATERIAL)) {
+						Double rmQty = rawMaterials.get(productNodeRef);
+						if (rmQty == null) {
+							rmQty = 0d;
+						}
+						rmQty += qty;
+						rawMaterials.put(productNodeRef, rmQty);
+					} else if (type.isMatch(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT)) {
+						continue;
+					} else {
+						getRawMaterials(alfrescoRepository.findOne(productNodeRef), rawMaterials, qty);
 					}
-					rmQty += qty;
-					rawMaterials.put(productNodeRef, rmQty);
-				} else if (type.isMatch(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT)) {
-					continue;
-				} else {
-					getRawMaterials(alfrescoRepository.findOne(productNodeRef), rawMaterials, qty);
 				}
 			}
 		}
@@ -531,9 +533,18 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		if ((assocDef != null) && (assocDef.getName() != null)) {
 			if (isDetaillableAssoc(assocDef.getName())) {
 
-				extractTargetAssoc(entityNodeRef, assocDef, entityElt, images);
+				boolean extractDataList = false;
+				if(assocDef.getName().equals(PLMModel.ASSOC_PRODUCT_MICROBIO_CRITERIA)){
+					extractDataList = true;
+				}
+				
+				extractTargetAssoc(entityNodeRef, assocDef, entityElt, images, extractDataList);
+
+				
 				return true;
 			} else if (assocDef.getName().equals(PLMModel.ASSOC_PRODUCT_SPECIFICATIONS)) {
+				
+				//TODO MERGE with previous if
 				extractProductSpecifications(entityNodeRef, entityElt, images);
 				return true;
 			} else if (assocDef.getName().equals(PLMModel.ASSOC_CLIENTS)) {
@@ -552,7 +563,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	}
 
 	private boolean isDetaillableAssoc(QName assocName) {
-		return assocsToExtract!=null && assocsToExtract.contains(assocName.toPrefixString(namespaceService));
+		return assocsToExtract != null && assocsToExtract.contains(assocName.toPrefixString(namespaceService));
 	}
 
 	private void loadPackagingList(ProductData productData, Element dataListsElt, NodeRef defaultVariantNodeRef, Map<String, byte[]> images) {
@@ -732,7 +743,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 		// we want labeling template <labelingTemplate>...</labelingTemplate>
 		if (nodeService.hasAspect(dataItem.getNodeRef(), PackModel.ASPECT_LABELING)) {
-			extractTargetAssoc(dataItem.getNodeRef(), dictionaryService.getAssociation(PackModel.ASSOC_LABELING_TEMPLATE), partElt, images);
+			extractTargetAssoc(dataItem.getNodeRef(), dictionaryService.getAssociation(PackModel.ASSOC_LABELING_TEMPLATE), partElt, images, false);
 		}
 
 		partElt.addAttribute(BeCPGModel.PROP_DEPTH_LEVEL.getLocalName(), Integer.toString(level));

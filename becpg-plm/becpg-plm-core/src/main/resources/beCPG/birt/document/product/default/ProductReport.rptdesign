@@ -830,7 +830,7 @@
                 </structure>
                 <structure>
                     <property name="name">nutListGDAPercFor100g</property>
-                    <expression name="expression">row["nutListGDAPerc"] != null ? row["nutListGDAPerc"] * row["nutListValue"] / row["nutListValuePerServing"] : null</expression>
+                    <expression name="expression">row["nutListGDAPerc"] != null &amp;&amp; row["nutListValuePerServing"] != null &amp;&amp; row["nutListValuePerServing"] != 0 ? row["nutListGDAPerc"] * row["nutListValue"] / row["nutListValuePerServing"] : row["nutListValuePerServing"] == 0 ? 0 : null</expression>
                     <property name="dataType">float</property>
                 </structure>
                 <structure>
@@ -903,6 +903,7 @@
                 <structure>
                     <property name="columnName">description</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">description</text-property>
                 </structure>
             </list-property>

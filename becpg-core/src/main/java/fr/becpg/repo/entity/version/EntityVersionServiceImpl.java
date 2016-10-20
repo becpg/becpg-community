@@ -466,8 +466,26 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			if (logger.isDebugEnabled()) {
 				logger.debug("delete versionHistoryRef " + versionHistoryRef);
 			}
-			nodeService.addAspect(versionHistoryRef, ContentModel.ASPECT_TEMPORARY, null);
-			nodeService.deleteNode(versionHistoryRef);
+			try {
+				policyBehaviourFilter.disableBehaviour();
+				nodeService.addAspect(versionHistoryRef, ContentModel.ASPECT_TEMPORARY, null);
+				nodeService.deleteNode(versionHistoryRef);
+			} finally {
+				policyBehaviourFilter.enableBehaviour();
+			}
+		}
+	}
+	
+	
+	@Override
+	public void deleteEntityVersion(Version version) {
+		NodeRef entityVersion = getEntityVersion(getVersionAssocs(version.getVersionedNodeRef()), version);
+		if (entityVersion != null) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("delete entityVersion " + entityVersion);
+			}
+			nodeService.addAspect(entityVersion, ContentModel.ASPECT_TEMPORARY, null);
+			nodeService.deleteNode(entityVersion);
 		}
 	}
 

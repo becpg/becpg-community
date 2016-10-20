@@ -34,9 +34,8 @@
                		 <option value="" <#if field.control.params.isSearch?? >selected="selected"</#if> ></option>
                </#if>
 			   <#list  h.getChildren("language") as language>
-				    <#assign key = language.getAttribute("locale")>	
-				    <#assign keyValue = key?split("_")[0]>			
-					<option value=${keyValue} <#if isSelected(key?split("_")[0])>selected="true"</#if> >${msg("locale.name.${keyValue}")}</option>
+				    <#assign key = language.getAttribute("locale")>			
+					<option value=${key} <#if isSelected(key)>selected="true"</#if> >${msg("locale.name.${key}")}</option>
 			  </#list>             
          </select>
          <@formLib.renderFieldHelp field=field />

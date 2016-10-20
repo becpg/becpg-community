@@ -248,6 +248,16 @@
                .get(this.id + "-toolbar-buttons-left"), template = Dom.get("custom-toolBar-template-button");
          
          //Reset
+         if( this.widgets.actionButtons!=null){
+ 	         for (var actionName in this.widgets.actionButtons) {
+ 	        	var widget =  this.widgets.actionButtons[actionName];
+ 	        	if( typeof widget.destroy === 'function' ){
+ 	        		widget.destroy();
+ 	        	}
+ 	        	this.widgets.actionButtons[actionName] = null;
+ 	         }
+          }
+          
          containerRight.innerHTML = "";
          containerLeft.innerHTML = "";
          this.widgets.actionButtons = {};

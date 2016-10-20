@@ -1090,7 +1090,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 					if (!isMultiLevel && (productData.getIngList() != null) && !productData.getIngList().isEmpty()) {
 
-						loadIngList(productData, CompositeHelper.getHierarchicalCompoList(productData.getIngList()), applyYield(qty + waterLost, yield, labelingFormulaContext), applyYield(volume, yield, labelingFormulaContext),
+						loadIngList(productData, CompositeHelper.getHierarchicalCompoList(productData.getIngList()), qty, volume,
 								labelingFormulaContext, compoListDataItem, compositeLabeling, errors);
 
 					}
@@ -1123,6 +1123,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							}
 
 							recurRecipeQtyUsed = productData.getRecipeQtyUsed();
+						} else if(!DeclarationType.Declare.equals(declarationType)){
+							recurYield = 100d;
 						}
 
 						if (logger.isTraceEnabled()) {
@@ -1351,6 +1353,18 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 								subIngItem.setQty(null);
 								subIngItem.setVolume(null);
 							}
+							
+							if (product.getAllergenList() != null) {
+								for (AllergenListDataItem allergenListDataItem : product.getAllergenList()) {
+									if (allergenListDataItem.getVoluntary() && allergenListDataItem.getVoluntarySources().contains(subIngItem.getNodeRef())) {
+										if (AllergenType.Major.toString()
+												.equals(nodeService.getProperty(allergenListDataItem.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE))) {
+											subIngItem.getAllergens().add(allergenListDataItem.getAllergen());
+										}
+									}
+								}
+							}
+							
 
 							if (ingLabelItem.getSubIngs().stream()
 									.filter(i -> (labelingFormulaContext.getLegalIngName(i) != null)
@@ -1376,6 +1390,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 												// TODO add warning
 												i.setVolume(null);
 											}
+											
+											i.getAllergens().addAll(subIngItem.getAllergens());
 
 										});
 							}

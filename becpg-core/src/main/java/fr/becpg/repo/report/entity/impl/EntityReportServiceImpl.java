@@ -58,6 +58,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityService;
@@ -615,6 +616,12 @@ public class EntityReportServiceImpl implements EntityReportService {
 		}
 		try {
 			Date modified = (Date) nodeService.getProperty(entityNodeRef, ContentModel.PROP_MODIFIED);
+			Date formulatedDate = (Date) nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_FORMULATED_DATE);
+			
+			if(formulatedDate!=null && modified!=null && formulatedDate.getTime()>modified.getTime()){
+				modified = formulatedDate;
+			}
+			
 			Date generatedReportDate = (Date) nodeService.getProperty(entityNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED);
 
 			if (documentNodeRef != null) {

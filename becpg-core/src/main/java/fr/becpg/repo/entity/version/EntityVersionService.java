@@ -49,4 +49,6 @@ public interface EntityVersionService {
 
 	NodeRef createBranch(NodeRef entityNodeRef, NodeRef parentRef);
 
+	void deleteEntityVersion(Version version);
+
 }
