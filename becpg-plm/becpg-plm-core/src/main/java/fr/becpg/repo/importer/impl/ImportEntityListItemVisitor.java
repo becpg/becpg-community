@@ -148,6 +148,7 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 
 					if (qName.isMatch(a.getAttribute().getName())) {
 						z_idx = i;
+						break;
 					}
 					i++;
 				}

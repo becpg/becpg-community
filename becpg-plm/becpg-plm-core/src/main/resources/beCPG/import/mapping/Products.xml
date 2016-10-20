@@ -244,6 +244,17 @@
 		</columns>
 	</mapping>
 	
+	<mapping name="bcpg:ingLabelingList">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:erpCode" />
+		</nodeColumnKeys>
+		<dataListColumnKeys>
+			<dataListColumnKey attribute="bcpg:illGrp" />
+		</dataListColumnKeys>
+		<columns>
+		</columns>
+	</mapping>	
+	
 	<mapping name="bcpg:client">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="bcpg:erpCode" />
