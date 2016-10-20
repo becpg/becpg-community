@@ -333,7 +333,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 								}
 
 							} else {
-								if(values.get(z_idx)!=null && ! values.get(z_idx).isEmpty()){
+								if (values.get(z_idx) != null && !values.get(z_idx).isEmpty()) {
 									value = findPropertyTargetNodeByValue(importContext, propDef, attributeMapping, values.get(z_idx), properties);
 								}
 							}
@@ -475,7 +475,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 							logger.debug("Add assocs :" + assocDef.getName());
 							nodeService.createAssociation(nodeRef, targetRef, assocDef.getName());
 						}
-					} else if(assocDef.isTargetMandatory()){
+					} else if (assocDef.isTargetMandatory()) {
 						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_GET_ASSOC_TARGET, assocDef.getName(), value));
 					}
 				}
@@ -626,7 +626,8 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	private void importFileContent(String value, NodeRef targetFolderNodeRef, String mappingFileName, String mappingId) throws ImporterException {
 		InputStream in = null;
 		try {
-			if ((value.startsWith("classpath:") || value.startsWith("file:") || value.startsWith("http:") || value.startsWith("ftp:"))) {
+			if ((value.startsWith("classpath:") || value.startsWith("file:") || value.startsWith("http:") || value.startsWith("https:")
+					|| value.startsWith("ftp:") || value.startsWith("sftp:"))) {
 
 				try {
 					Resource resource = applicationContext.getResource(value);
@@ -716,9 +717,9 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			QName typeQName = QName.createQName(mappingNode.valueOf(QUERY_ATTR_GET_NAME), namespaceService);
 			ClassMapping classMapping = new ClassMapping();
 			classMapping.setType(typeQName);
-			
-			logger.debug("Register mapping for : "+typeQName);
-			
+
+			logger.debug("Register mapping for : " + typeQName);
+
 			importContext.getClassMappings().put(typeQName, classMapping);
 
 			// node keys
@@ -912,7 +913,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	public ImportContext loadMappingColumns(Element mappingElt, List<String> columns, ImportContext importContext) throws MappingException {
 
 		ClassMapping classMapping = importContext.getClassMappings().get(importContext.getType());
-		logger.debug("Type: " + importContext.getType() + ", find matching class mapping: " + classMapping!=null);
+		logger.debug("Type: " + importContext.getType() + ", find matching class mapping: " + classMapping != null);
 
 		// check COLUMNS respects the mapping and the class attributes
 		List<AbstractAttributeMapping> columnsAttributeMapping = new ArrayList<>();
@@ -927,7 +928,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 				// columns
 				for (AbstractAttributeMapping attrMapping : classMapping.getColumns()) {
 					if (attrMapping.getId().equals(columnId)) {
-						logger.debug("Find matching attribute mapping columnId : " + columnId );
+						logger.debug("Find matching attribute mapping columnId : " + columnId);
 						columnsAttributeMapping.add(attrMapping);
 						isAttributeMapped = true;
 						break;
@@ -1068,21 +1069,20 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 					logger.debug("attribute: " + attribute + " value: " + properties.get(attribute));
 				}
 
-				if (ContentModel.ASSOC_CONTAINS.isMatch(attribute)
-						|| BeCPGModel.PROP_LV_VALUE.isMatch(attribute)) {
+				if (ContentModel.ASSOC_CONTAINS.isMatch(attribute) || BeCPGModel.PROP_LV_VALUE.isMatch(attribute)) {
 					// query by path
 					NodeRef folderNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(),
 							importContext.getPath());
 					queryBuilder.parent(folderNodeRef);
-					
-					if(BeCPGModel.PROP_LV_VALUE.isMatch(attribute)){
-						if(properties.get(attribute)!=null && properties.get(attribute) instanceof MLText){
+
+					if (BeCPGModel.PROP_LV_VALUE.isMatch(attribute)) {
+						if (properties.get(attribute) != null && properties.get(attribute) instanceof MLText) {
 							queryBuilder.andPropEquals(BeCPGModel.PROP_LV_VALUE, ((MLText) properties.get(attribute)).getDefaultValue());
-						} else if(properties.get(attribute)!=null ){
-							queryBuilder.andPropEquals(BeCPGModel.PROP_LV_VALUE,properties.get(attribute).toString());
+						} else if (properties.get(attribute) != null) {
+							queryBuilder.andPropEquals(BeCPGModel.PROP_LV_VALUE, properties.get(attribute).toString());
 						}
 					}
-					
+
 					doQuery = true;
 				} else if (properties.get(attribute) != null) {
 
@@ -1113,7 +1113,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			logger.debug("nodeColumnKeys is empty type: " + type);
 
 			// look for codeAspect
-			if (dictionaryService.getType(type)!=null && dictionaryService.getType(type).getDefaultAspects() != null) {
+			if (dictionaryService.getType(type) != null && dictionaryService.getType(type).getDefaultAspects() != null) {
 				for (AspectDefinition aspectDef : dictionaryService.getType(type).getDefaultAspects()) {
 					if (aspectDef.getName().equals(BeCPGModel.ASPECT_CODE) && (properties.get(BeCPGModel.PROP_CODE) != null)) {
 						if (NodeRef.isNodeRef(properties.get(BeCPGModel.PROP_CODE).toString())) {
