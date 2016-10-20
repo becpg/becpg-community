@@ -125,7 +125,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 	// private String detailsDefaultFormat = "{0} {1,number,0.#%} ({2})";
 
-	// @test
+	@Test
 	public void testNullIng() throws Exception {
 
 		NodeRef finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -351,7 +351,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 			finishedProduct1.setUnit(ProductUnit.kg);
 
 			List<CompoListDataItem> compoList1 = new ArrayList<>();
-			compoList1.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, finishedProductNodeRefC));
+			compoList1.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, finishedProductNodeRefC));
 			compoList1.add(new CompoListDataItem(null, null, null, 2d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial2NodeRef));
 
 			finishedProduct1.getCompoListView().setCompoList(compoList1);
@@ -390,11 +390,11 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 //			    └──[ing2 french - 225.0 ( vol : 225.0) ]
 
 		
-		checkILL(finishedProductNodeRef1, labelingRuleList, "ing2 french 70,8%, ing1 french 29,2%", Locale.FRENCH);
+		checkILL(finishedProductNodeRef1, labelingRuleList, "ing2 french 137,5%, ing1 french 50%", Locale.FRENCH);
 
 	}
 
-	// @test
+	@Test
 	public void testMultiLevelSFGroup() throws Exception {
 
 		final NodeRef finishProduct1 = createTestProduct(null);
@@ -498,7 +498,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 	}
 
-	// @test
+	@Test
 	public void testReconstitutionLabeling() throws Exception {
 		// 1. Liste d'ingrédients par ordre pondéral
 		//
@@ -649,7 +649,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 				Locale.FRENCH);
 	}
 
-	// @test
+	@Test
 	public void testRenderAllergens() throws Exception {
 
 		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -677,7 +677,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 	}
 
-	// @test
+	@Test
 	public void testRawMaterialIngType() throws Exception {
 
 		final NodeRef finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -723,7 +723,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		}, false, true);
 	}
 
-	// @test
+	@Test
 	public void testAggregateAndRename() throws Exception {
 
 		// Par défaut
@@ -799,7 +799,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 	 * @throws Exception
 	 *             the exception
 	 */
-	// @test
+	@Test
 	public void testCalculateILL() throws Exception {
 
 		// Par défaut
@@ -1415,7 +1415,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 	}
 
-	// @test
+	@Test
 	public void testMultiLingualLabelingFormulation() throws Exception {
 
 		logger.info("testLabelingFormulation");
@@ -1465,7 +1465,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		}, false, true);
 	}
 
-	// @test
+	@Test
 	public void testIncTypeThreshold() throws Exception {
 
 		List<LabelingRuleListDataItem> labelingRuleList;
@@ -1508,7 +1508,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 	}
 
-	// @test
+	@Test
 	public void testMultiThreadFormulation() throws Exception {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			BeCPGTestHelper.createUser("labellingUser1");
