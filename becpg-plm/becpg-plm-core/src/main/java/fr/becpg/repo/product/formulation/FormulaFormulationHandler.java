@@ -183,52 +183,49 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 					try {
 						if ((dynamicCharactListItem.getFormula() != null) && !dynamicCharactListItem.getFormula().isEmpty()) {
 							if ((dynamicCharactListItem.getColumnName() != null) && !dynamicCharactListItem.getColumnName().isEmpty()) {
-								String[] formulas = SpelHelper.formatMTFormulas(dynamicCharactListItem.getFormula());
+								String formula = SpelHelper.formatFormula(dynamicCharactListItem.getFormula());
+								logger.debug("Parse formula : " + formula + " (" + dynamicCharactListItem.getName() + ")");
+								Expression exp = parser.parseExpression(formula);
+
 								QName columnName = QName.createQName(dynamicCharactListItem.getColumnName().replaceFirst("_", ":"), namespaceService);
 								if (nullDynColumnNames.contains(columnName)) {
 									nullDynColumnNames.remove(columnName);
 								}
-								for (int i = 0; i < formulas.length; i++) {
-									String formula = formulas[i];
-									logger.debug("Parse formula : " + formula + " (" + dynamicCharactListItem.getName() + ")");
-									Expression exp = parser.parseExpression(formula);
+								for (CompositionDataItem dataListItem : view.getMainDataList()) {
 
-									for (CompositionDataItem dataListItem : view.getMainDataList()) {
+									Double origQty = dataListItem.getQty();
+									Double qtyPerProduct = getQtyPerProduct(productData, dataListItem);
+									dataListItem.setQty(qtyPerProduct);
 
-										Double origQty = dataListItem.getQty();
-										Double qtyPerProduct = getQtyPerProduct(productData, dataListItem);
-										dataListItem.setQty(qtyPerProduct);
-
-										StandardEvaluationContext dataContext = new StandardEvaluationContext(
-												new FormulaFormulationContext(alfrescoRepository, productData, dataListItem));
-										formulaService.registerCustomFunctions(dataContext);
-										Object value = null;
-										try {
-											value = exp.getValue(dataContext);
-										} finally {
-											if ((qtyPerProduct != null) && qtyPerProduct.equals(dataListItem.getQty())) {
-												dataListItem.setQty(origQty);
-											}
+									StandardEvaluationContext dataContext = new StandardEvaluationContext(
+											new FormulaFormulationContext(alfrescoRepository, productData, dataListItem));
+									formulaService.registerCustomFunctions(productData, dataContext);
+									Object value = null;
+									try {
+										value = exp.getValue(dataContext);
+									} finally {
+										if ((qtyPerProduct != null) && qtyPerProduct.equals(dataListItem.getQty())) {
+											dataListItem.setQty(origQty);
 										}
+									}
 
-										if ((i == (formulas.length-1)) && !L2CacheSupport.isCacheOnlyEnable()
-												&& ((dynamicCharactListItem.getMultiLevelFormula() != null)
-														&& Boolean.TRUE.equals(dynamicCharactListItem.getMultiLevelFormula()))
-												&& ((view instanceof CompoListView) || (view instanceof PackagingListView))
-												&& ((dataListItem.getComponent() != null) && (PLMModel.TYPE_SEMIFINISHEDPRODUCT
-														.equals(nodeService.getType(dataListItem.getComponent()))
-														|| PLMModel.TYPE_FINISHEDPRODUCT.equals(nodeService.getType(dataListItem.getComponent()))
-														|| PLMModel.TYPE_PACKAGINGKIT.equals(nodeService.getType(dataListItem.getComponent()))))) {
+									if (!L2CacheSupport.isCacheOnlyEnable()
+											&& ((dynamicCharactListItem.getMultiLevelFormula() != null)
+													&& Boolean.TRUE.equals(dynamicCharactListItem.getMultiLevelFormula()))
+											&& ((view instanceof CompoListView) || (view instanceof PackagingListView))
+											&& ((dataListItem.getComponent() != null) && (PLMModel.TYPE_SEMIFINISHEDPRODUCT
+													.equals(nodeService.getType(dataListItem.getComponent()))
+													|| PLMModel.TYPE_FINISHEDPRODUCT.equals(nodeService.getType(dataListItem.getComponent()))
+													|| PLMModel.TYPE_PACKAGINGKIT.equals(nodeService.getType(dataListItem.getComponent()))))) {
 
-											JSONObject jsonTree = extractJSONTree(productData, dataListItem, value, exp);
-											dataListItem.getExtraProperties().put(columnName, jsonTree.toString());
-											if (logger.isDebugEnabled()) {
-												logger.debug("JsonTree :" + value);
-											}
-										} else {
-											dataListItem.getExtraProperties().put(columnName, (Serializable) value);
-											logger.debug("Value :" + value);
+										JSONObject jsonTree = extractJSONTree(productData, dataListItem, value, exp);
+										dataListItem.getExtraProperties().put(columnName, jsonTree.toString());
+										if (logger.isDebugEnabled()) {
+											logger.debug("JsonTree :" + value);
 										}
+									} else {
+										dataListItem.getExtraProperties().put(columnName, (Serializable) value);
+										logger.debug("Value :" + value);
 									}
 								}
 								dynamicCharactListItem.setValue(null);
