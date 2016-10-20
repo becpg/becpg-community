@@ -163,8 +163,8 @@ public class EntityServiceImpl implements EntityService {
 		NodeRef imagesFolderNodeRef = nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS,
 				TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
 		if (imagesFolderNodeRef == null) {
-			imagesFolderNodeRef = fileFolderService.create(entityNodeRef, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES),
-					ContentModel.TYPE_FOLDER).getNodeRef();
+			imagesFolderNodeRef = fileFolderService
+					.create(entityNodeRef, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES), ContentModel.TYPE_FOLDER).getNodeRef();
 		}
 		return imagesFolderNodeRef;
 	}
@@ -189,9 +189,10 @@ public class EntityServiceImpl implements EntityService {
 				Image image = ImageIO.read(in);
 				out = new ByteArrayOutputStream();
 				if (image != null) {
-					ImageIO.write((RenderedImage) image, MimetypeMap.MIMETYPE_IMAGE_PNG.equals(reader.getMimetype()) ? "png" : "jpg", out);
+					ImageIO.write((RenderedImage) image, guessImageFormat(reader.getMimetype()), out);
 					imageBytes = ((ByteArrayOutputStream) out).toByteArray();
 				}
+
 			} catch (IOException e) {
 				logger.error("Failed to get the content for " + nodeRef, e);
 			} finally {
@@ -201,6 +202,20 @@ public class EntityServiceImpl implements EntityService {
 		}
 
 		return imageBytes;
+	}
+
+	private String guessImageFormat(String mimeType) {
+
+		switch (mimeType) {
+		case MimetypeMap.MIMETYPE_IMAGE_PNG:
+			return "png";
+		case MimetypeMap.MIMETYPE_IMAGE_TIFF:
+			return "tiff";
+		case MimetypeMap.MIMETYPE_IMAGE_GIF:
+			return "gif";
+		}
+
+		return "jpg";
 	}
 
 	@Override
@@ -285,8 +300,9 @@ public class EntityServiceImpl implements EntityService {
 		props.put(ContentModel.PROP_NAME, name);
 
 		logger.info("Create new Image node: " + name + " under " + imagesFolderNodeRef);
-		return nodeService.createNode(imagesFolderNodeRef, ContentModel.ASSOC_CONTAINS,
-				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name)), ContentModel.TYPE_CONTENT, props)
+		return nodeService
+				.createNode(imagesFolderNodeRef, ContentModel.ASSOC_CONTAINS,
+						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name)), ContentModel.TYPE_CONTENT, props)
 				.getChildRef();
 	}
 
@@ -327,8 +343,9 @@ public class EntityServiceImpl implements EntityService {
 
 		} else {
 			logger.debug("Create new entity with name " + entityName);
-			ret = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(entityName)), entityType, props)
+			ret = nodeService
+					.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(entityName)), entityType, props)
 					.getChildRef();
 		}
 
@@ -398,24 +415,23 @@ public class EntityServiceImpl implements EntityService {
 		}
 	}
 
-
 	private void copyOrMoveFile(FileInfo file, NodeRef parentNodeRef, boolean isCopy) {
 
 		NodeRef documentNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, file.getName());
 		if (documentNodeRef == null) {
 
 			logger.debug("copy or move file in Documents: " + file.getName() + " parentNodeRef: " + parentNodeRef);
-	
-				if (isCopy) {
-					NodeRef subFolderNodeRef = copyService.copy(file.getNodeRef(), parentNodeRef, ContentModel.ASSOC_CONTAINS,
-							ContentModel.ASSOC_CHILDREN, true);
-					nodeService.setProperty(subFolderNodeRef, ContentModel.PROP_NAME, file.getName());
-				} else {
 
-					nodeService.moveNode(file.getNodeRef(), parentNodeRef, ContentModel.ASSOC_CONTAINS,
-							nodeService.getPrimaryParent(file.getNodeRef()).getQName());
+			if (isCopy) {
+				NodeRef subFolderNodeRef = copyService.copy(file.getNodeRef(), parentNodeRef, ContentModel.ASSOC_CONTAINS,
+						ContentModel.ASSOC_CHILDREN, true);
+				nodeService.setProperty(subFolderNodeRef, ContentModel.PROP_NAME, file.getName());
+			} else {
 
-				}
+				nodeService.moveNode(file.getNodeRef(), parentNodeRef, ContentModel.ASSOC_CONTAINS,
+						nodeService.getPrimaryParent(file.getNodeRef()).getQName());
+
+			}
 
 		} else {
 			logger.debug("file already exists so no copy, neither move file: " + file.getName() + " in parentNodeRef: " + parentNodeRef);

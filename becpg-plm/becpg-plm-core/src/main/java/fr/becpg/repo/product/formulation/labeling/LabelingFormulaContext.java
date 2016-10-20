@@ -800,12 +800,12 @@ public class LabelingFormulaContext {
 			String ingName = getLegalIngName(component, false);
 
 			if (logger.isDebugEnabled()) {
-				logger.debug(" --" + ingName + " qtyRMUsed: " + parent.getQtyTotal() + " qtyPerc " + qtyPerc);
+				logger.debug(" --" + ingName + " qtyRMUsed: " + parent.getQtyTotal() + " qtyPerc " + qtyPerc + " precision "+(qtyPerc - (1d/PRECISION_FACTOR)));
 			}
 
 			qtyPerc = (useVolume ? volumePerc : qtyPerc);
 
-			if ((qtyPerc == null) || (qtyPerc > 0d)) {
+			if ((qtyPerc == null) || ((qtyPerc - (1d/PRECISION_FACTOR))  > 0d)) {
 
 				String toAppend = new String();
 
@@ -818,8 +818,13 @@ public class LabelingFormulaContext {
 							subIngBuff.append(subIngsSeparator);
 						}
 						Double subIngQtyPerc = (useVolume ? subIngItem.getVolume() : subIngItem.getQty());
+						
+						if(subIngQtyPerc== null || ((subIngQtyPerc - (1d/PRECISION_FACTOR))  > 0d)){
 
-						subIngBuff.append(getIngTextFormat(subIngItem).format(new Object[] { getLegalIngName(subIngItem, false), subIngQtyPerc }));
+							subIngBuff.append(getIngTextFormat(subIngItem).format(new Object[] { getLegalIngName(subIngItem, false), subIngQtyPerc, null }));
+						} else {
+							logger.debug("Removing subIng with qty of 0: " + subIngItem);
+						}
 					}
 
 					toAppend = getIngTextFormat(component).format(new Object[] { ingName, qtyPerc, subIngBuff.toString() });

@@ -318,8 +318,34 @@ YAHOO.Bubbling
                   });
       
       
-   
-      
+      YAHOO.Bubbling.fire("registerToolbarButtonAction", {
+          actionName : "product-notifications",
+          right : true,
+          evaluate : function(asset, entity) {
+        	  return asset.name != null && 
+              (asset.name === "compoList" || asset.name === "processList" || asset.name === "packagingList" 
+            	  || asset.name === "ingLabelingList" || asset.name === "nutList" || asset.name === "labelClaimList" 
+                  || asset.name === "costList" || asset.name === "physicoChemList" || asset.name === "ingList" || asset.name === "allergenList") ;
+          },
+          createWidget : function(containerDiv, instance) {
+
+        	 var divEl = document.createElement("div");
+
+             Dom.setAttribute(divEl, "id", instance.id + "-productNotifications");
+             Dom.addClass(divEl, "product-notifications");
+             
+             containerDiv.appendChild(divEl);
+
+             var productNotifications = new beCPG.component.ProductNotifications(instance.id + "-productNotifications").setOptions({
+                entityNodeRef : instance.options.entityNodeRef,
+                list : instance.options.list,
+                containerDiv : divEl
+             });
+
+             return productNotifications;
+          }
+       });
+
 
       YAHOO.Bubbling
             .fire(

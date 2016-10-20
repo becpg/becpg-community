@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -50,6 +51,7 @@ public class UploadQueryCommand extends AbstractHttpCommand {
 
 		MultipartEntityBuilder entity = MultipartEntityBuilder.create();
 		entity.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+		entity.setCharset(Charset.forName(FILEBODY_CHARSET));
 
 		if (params.length > 2) {
 			// Case create

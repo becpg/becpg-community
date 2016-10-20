@@ -133,20 +133,7 @@
 					+ Alfresco.constants.MENU_ARROW_SYMBOL);
 			
 			
-			 var divEl = document.createElement("div");
-
-			 (new YAHOO.util.Element("toolbar-contribs-right")).appendChild(divEl);
-
-	         Dom.setAttribute(divEl, "id", instance.id + "-productNotifications");
-
-	         Dom.addClass(divEl, "product-notifications");
-
-	         this.widgets.productNotifications = new beCPG.component.ProductNotifications(instance.id + "-productNotifications").setOptions({
-	            entityNodeRef : instance.options.entityNodeRef,
-	            list : instance.options.list,
-	            containerDiv : divEl
-	         });
-
+			
 
 			
 			 this.services.preferences = new Alfresco.service.Preferences();

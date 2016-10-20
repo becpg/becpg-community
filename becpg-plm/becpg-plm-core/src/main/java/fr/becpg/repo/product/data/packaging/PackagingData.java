@@ -25,7 +25,9 @@ public class PackagingData {
 		}
 		List<VariantPackagingData> selectedVariants = new ArrayList<>();
 		for (NodeRef variantNodeRef : variantNodeRefs) {
-			selectedVariants.add(variants.get(variantNodeRef));
+			if(variants.get(variantNodeRef)!=null){
+				selectedVariants.add(variants.get(variantNodeRef));
+			}
 		}
 		return selectedVariants;
 	}

@@ -826,8 +826,8 @@ if (beCPG.module.EntityDataGridRenderers) {
 				}
 				Dom.setStyle(elCell, "width", "16px");
 				Dom.setStyle(elCell.parentNode, "width", "16px");
-				return "<span title=\"" + Alfresco.util.encodeHTML(data.displayValue.replace(/&nbsp;/gi," ")
-						.replace(/<(?:.|\n)*?>/gm, '').replace(/\n/gm," ")) 
+				return "<span title=\"" + data.displayValue.replace(/&nbsp;/gi," ")
+						.replace(/<(?:.|\n)*?>/gm, '').replace(/\n/gm," ").replace(/"/gm,"") 
 				+ "\" class='instructions'>&nbsp;</span>";
         	} else {
         		return data.displayValue;
@@ -890,18 +890,24 @@ if (beCPG.module.EntityDataGridRenderers) {
 		renderer : function(oRecord, data, label, scope) {
 			
 			var percentValue = data.value;
-			var additionalProps = oRecord.getData("itemData")["dt_bcpg_nutListNut"][0].itemData;
-			var nutColor = oRecord.getData("itemData")["dt_bcpg_nutListNut"][0].color;
-			var nutValue = oRecord.getData("itemData")["prop_bcpg_nutListValue"].displayValue;
-			var gda = additionalProps.prop_bcpg_nutGDA.value;
-			var ul = additionalProps.prop_bcpg_nutUL.value;
-			var unit = additionalProps.prop_bcpg_nutUnit.displayValue;
-
-			var ulExceeded = false;
-			var red = "#F44336";
-			var gray = "#cccccc";
-						
-			if(percentValue !== null && percentValue > 0 && nutColor !== undefined){
+			var nutColor = null;
+			
+			if(oRecord.getData("itemData")["dt_bcpg_nutListNut"] && 
+					oRecord.getData("itemData")["dt_bcpg_nutListNut"].length>0){
+			   nutColor = oRecord.getData("itemData")["dt_bcpg_nutListNut"][0].color;
+			}
+			
+			if(percentValue !== null && percentValue > 0 && nutColor!=null && nutColor !== undefined){
+				
+				var additionalProps = oRecord.getData("itemData")["dt_bcpg_nutListNut"][0].itemData;
+				var nutValue = oRecord.getData("itemData")["prop_bcpg_nutListValue"].displayValue;
+				var gda = additionalProps.prop_bcpg_nutGDA.value;
+				var ul = additionalProps.prop_bcpg_nutUL.value;
+				var unit = additionalProps.prop_bcpg_nutUnit.displayValue;
+	
+				var ulExceeded = false;
+				var red = "#F44336";
+				var gray = "#cccccc";
 				
 				if(nutValue !== null && ul !== null && (nutValue > ul)){
 					ulExceeded = true;
@@ -951,9 +957,9 @@ if (beCPG.module.EntityDataGridRenderers) {
 
 				return html;
 			} else if(percentValue !== null && percentValue > 0){
-				return Alfresco.util.encodeHTML(data.value.toFixed(1)+" %");
+				return Alfresco.util.encodeHTML(percentValue.toFixed(1)+" %");
 			} else {
-				return Alfresco.util.encodeHTML(null);
+				return "";
 			}
 		}
 	});

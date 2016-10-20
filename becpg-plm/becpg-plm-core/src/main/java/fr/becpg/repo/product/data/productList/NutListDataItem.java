@@ -5,6 +5,7 @@ package fr.becpg.repo.product.data.productList;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
@@ -20,7 +21,7 @@ import fr.becpg.repo.repository.model.UnitAwareDataItem;
 
 @AlfType
 @AlfQname(qname = "bcpg:nutList")
-public class NutListDataItem extends AbstractManualDataItem  implements SimpleListDataItem, MinMaxValueDataItem, FormulatedCharactDataItem, UnitAwareDataItem, ControlableListDataItem {
+public class NutListDataItem extends AbstractManualDataItem  implements SimpleListDataItem, MinMaxValueDataItem, FormulatedCharactDataItem, UnitAwareDataItem, ControlableListDataItem, CompositeDataItem<NutListDataItem> {
 
 	/**
 	 * 
@@ -52,7 +53,38 @@ public class NutListDataItem extends AbstractManualDataItem  implements SimpleLi
 	private Boolean isFormulated;
 	
 	private String errorLog;
-			
+	
+	private Integer depthLevel;
+	
+	private NutListDataItem parent;
+	
+	
+	
+	@Override
+	@AlfProp
+	@InternalField
+	@AlfQname(qname = "bcpg:depthLevel")
+	public Integer getDepthLevel() {
+		return depthLevel;
+	}
+
+	public void setDepthLevel(Integer depthLevel) {
+		this.depthLevel = depthLevel;
+	}
+
+	@Override
+	@AlfProp
+	@InternalField
+	@AlfQname(qname = "bcpg:parentLevel")
+	public NutListDataItem getParent() {
+		return this.parent;
+	}
+
+	@Override
+	public void setParent(NutListDataItem parent) {
+		this.parent = parent;
+	}
+	
 		
 	public Double getValue() {
 		return manualValue!=null ? manualValue : formulatedValue;

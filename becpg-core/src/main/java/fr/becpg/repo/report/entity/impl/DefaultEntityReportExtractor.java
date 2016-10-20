@@ -309,8 +309,14 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 					MLText mlValues = (MLText) mlNodeService.getProperty(nodeRef, propertyDef.getName());
 
 					for (Map.Entry<Locale, String> mlEntry : mlValues.entrySet()) {
-
-						addData(nodeElt, useCData, propertyDef.getName(), mlEntry.getValue(), mlEntry.getKey().getLanguage());
+						
+						String code = mlEntry.getKey().getLanguage();
+						if(mlEntry.getKey().getCountry()!=null && !mlEntry.getKey().getCountry().isEmpty()){
+							code+="_"+mlEntry.getKey().getCountry();
+						}
+						if(code!=null && !code.isEmpty()){
+							addData(nodeElt, useCData, propertyDef.getName(), mlEntry.getValue(), code);
+						}
 					}
 
 				}
@@ -454,7 +460,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	/**
 	 * Extract target(s) association
 	 */
-	protected void extractTargetAssoc(NodeRef entityNodeRef, AssociationDefinition assocDef, Element entityElt, Map<String, byte[]> images) {
+	protected void extractTargetAssoc(NodeRef entityNodeRef, AssociationDefinition assocDef, Element entityElt, Map<String, byte[]> images, boolean extractDataList) {
 
 		Element rootElt = assocDef.isTargetMany() ? entityElt.addElement(assocDef.getName().getLocalName()) : entityElt;
 		if(assocDef.isTargetMany()){
@@ -471,6 +477,11 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			appendPrefix(qName, nodeElt);
 			
 			loadNodeAttributes(nodeRef, nodeElt, true, images);
+			
+			if(extractDataList){
+				Element dataListsElt = nodeElt.addElement(TAG_DATALISTS);
+				loadDataLists(nodeRef, dataListsElt, new HashMap<String, byte[]>());
+			}
 		}
 	}
 
