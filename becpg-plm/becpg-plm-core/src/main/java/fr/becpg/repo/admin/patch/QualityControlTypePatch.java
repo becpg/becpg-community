@@ -158,7 +158,7 @@ public class QualityControlTypePatch extends AbstractBeCPGPatch {
 					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 					policyBehaviourFilter.disableBehaviour();
 					String type = (String) nodeService.getProperty(dataListNodeRef, QualityModel.PROP_CONTROL_CHARACT_TYPE);
-					if ((type != null) && !type.isEmpty()) {
+					if ((type != null) && !type.isEmpty() && !type.startsWith("bcpg_")) {
 						nodeService.setProperty(dataListNodeRef, QualityModel.PROP_CONTROL_CHARACT_TYPE, type.toLowerCase());
 						if(type == "Poids"){
 							nodeService.setProperty(dataListNodeRef, QualityModel.PROP_CONTROL_CHARACT_TYPE, "weight");
