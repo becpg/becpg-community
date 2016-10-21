@@ -805,7 +805,7 @@ public class LabelingFormulaContext {
 
 			qtyPerc = (useVolume ? volumePerc : qtyPerc);
 
-			if ((qtyPerc == null) || ((qtyPerc - (1d/PRECISION_FACTOR))  > 0d)) {
+			if ((qtyPerc == null) || (qtyPerc  > (1d/(PRECISION_FACTOR*PRECISION_FACTOR)))) {
 
 				String toAppend = new String();
 
