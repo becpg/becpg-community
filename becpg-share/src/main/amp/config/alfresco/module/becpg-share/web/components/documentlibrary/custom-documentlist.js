@@ -473,7 +473,17 @@
 
                 if (beCPG.util.isEntity(record))
                 {
-                    html = scope.getActionUrls(record).documentDetailsUrl.replace("document-details?","entity-data-lists?list=View-properties&");
+                	var actionUrls = scope.getActionUrls(record);
+                	if($isValueSet(scope.options.siteId) &&
+                	   (( record.location.repoPath!=null && record.location.repoPath.length > 0 
+                			   && record.location.repoPath.indexOf("/Sites/"+scope.options.siteId) == 0) || 
+                		( record.location.path!=null     &&  record.location.path.length > 0 
+                				&& !$isValueSet(record.location.site) ))  ){
+                		actionUrls = scope.getActionUrls(record, scope.options.siteId);
+                	}
+                	
+                	html = actionUrls.documentDetailsUrl.replace("document-details?","entity-data-lists?list=View-properties&");
+                	
                 }
                 else
                 {
