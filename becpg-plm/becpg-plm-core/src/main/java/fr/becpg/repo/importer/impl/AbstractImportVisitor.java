@@ -626,14 +626,14 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	private void importFileContent(String value, NodeRef targetFolderNodeRef, String mappingFileName, String mappingId) throws ImporterException {
 		InputStream in = null;
 		try {
-			if ((value.startsWith("classpath:") || value.startsWith("file:") || value.startsWith("http:") || value.startsWith("https:")
-					|| value.startsWith("ftp:") || value.startsWith("sftp:"))) {
+			if ((value.startsWith("classpath:") || value.startsWith("file:") || value.startsWith("url:") || value.startsWith("http:")
+					|| value.startsWith("ftp:"))) {
 
 				try {
 					Resource resource = applicationContext.getResource(value);
 					in = resource.getInputStream();
 				} catch (IOException e) {
-					logger.error("No resource found in path " + value);
+					logger.error("No resource found in path " + value, e);
 					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_LOAD_FILE, value));
 				}
 
