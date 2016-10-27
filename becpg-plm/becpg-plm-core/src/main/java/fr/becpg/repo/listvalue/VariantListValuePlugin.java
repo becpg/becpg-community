@@ -18,6 +18,7 @@
 package fr.becpg.repo.listvalue;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +32,6 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.listvalue.impl.EntityListValuePlugin;
-import fr.becpg.repo.listvalue.impl.NodeRefListValueExtractor;
 
 @Service
 public class VariantListValuePlugin extends EntityListValuePlugin {
@@ -51,14 +51,34 @@ public class VariantListValuePlugin extends EntityListValuePlugin {
 
 	@Override
 	public ListValuePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
-
 		NodeRef entityNodeRef = new NodeRef((String) props.get(ListValueService.PROP_NODEREF));
 		logger.debug("VariantListValuePlugin sourceType: " + sourceType + " - entityNodeRef: " + entityNodeRef);
 
 		List<NodeRef> ret = associationService.getChildAssocs(entityNodeRef, PLMModel.ASSOC_VARIANTS);
-		
-		return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(ContentModel.PROP_NAME, nodeService));
+	
+		return new ListValuePage(ret, pageNum, pageSize, new VariantListValueExtractor());
 
+	}
+	
+	
+	
+	public class VariantListValueExtractor implements ListValueExtractor<NodeRef> {
+
+		@Override
+		public List<ListValueEntry> extract(List<NodeRef> nodeRefs) {
+			List<ListValueEntry> suggestions = new ArrayList<>();
+	    	if(nodeRefs!=null){
+	    		for(NodeRef nodeRef : nodeRefs){
+	    			
+	    			String name = (String)nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
+	    			Boolean isDefault = (Boolean) nodeService.getProperty(nodeRef, PLMModel.PROP_IS_DEFAULT_VARIANT);
+	    			
+	    			suggestions.add(new ListValueEntry(nodeRef.toString(),name, Boolean.TRUE.equals(isDefault) ? "variant-default": "variant"));
+	    			
+	    		}
+	    	}
+			return suggestions;
+		}
 	}
 
 }
