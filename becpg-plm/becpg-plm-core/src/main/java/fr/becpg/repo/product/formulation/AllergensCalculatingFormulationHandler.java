@@ -70,16 +70,18 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 			if (formulatedProduct.getAllergenList() != null) {
 				formulatedProduct.getAllergenList().forEach(a -> {
-					// reset
-					a.setQtyPerc(null);
-					a.setVoluntary(false);
-					a.setInVoluntary(false);
-					a.getVoluntarySources().clear();
-					a.getInVoluntarySources().clear();
+					if (!a.getIsManual()) {
+						// reset
+						a.setQtyPerc(null);
+						a.setVoluntary(false);
+						a.setInVoluntary(false);
+						a.getVoluntarySources().clear();
+						a.getInVoluntarySources().clear();
 
-					// add detailable aspect
-					if (!a.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM)) {
-						a.getAspects().add(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
+						// add detailable aspect
+						if (!a.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM)) {
+							a.getAspects().add(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
+						}
 					}
 				});
 			} else {
@@ -143,7 +145,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 			}
 
 			formulatedProduct.getAllergenList().forEach(allergenListDataItem -> {
-				if (allergenListDataItem.getVoluntary() || allergenListDataItem.getInVoluntary()) {
+				if (!allergenListDataItem.getIsManual() && (allergenListDataItem.getVoluntary() || allergenListDataItem.getInVoluntary())) {
 					Double regulatoryThreshold = getRegulatoryThreshold(formulatedProduct, allergenListDataItem.getAllergen());
 					if ((regulatoryThreshold != null) && (allergenListDataItem.getQtyPerc() != null)
 							&& (regulatoryThreshold >= allergenListDataItem.getQtyPerc())) {
@@ -219,6 +221,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 		List<ReqCtrlListDataItem> ret = new ArrayList<>();
 
 		for (AllergenListDataItem allergenListDataItem : partProduct.getAllergenList()) {
+
 			// Look for allergen
 			NodeRef allergenNodeRef = allergenListDataItem.getAllergen();
 			if (allergenNodeRef != null) {
@@ -234,127 +237,132 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 				if (!retainNodes.contains(newAllergenListDataItem)) {
 					// Reset existing variants
-					newAllergenListDataItem.setVariants(null);
+					if(!newAllergenListDataItem.getIsManual()){
+						newAllergenListDataItem.setVariants(null);
+					}
 					retainNodes.add(newAllergenListDataItem);
 				}
 
-				// Define voluntary presence
-				if (allergenListDataItem.getVoluntary()) {
-					newAllergenListDataItem.setVoluntary(true);
-					if (!newAllergenListDataItem.getVoluntarySources().contains(partProduct.getNodeRef())
-							&& !(partProduct instanceof SemiFinishedProductData)) {
-						newAllergenListDataItem.getVoluntarySources().add(partProduct.getNodeRef());
-					}
-					for (NodeRef p : allergenListDataItem.getVoluntarySources()) {
-						if (!newAllergenListDataItem.getVoluntarySources().contains(p)) {
-							newAllergenListDataItem.getVoluntarySources().add(p);
+				if (!newAllergenListDataItem.getIsManual()) {
+
+					// Define voluntary presence
+					if (allergenListDataItem.getVoluntary()) {
+						newAllergenListDataItem.setVoluntary(true);
+						if (!newAllergenListDataItem.getVoluntarySources().contains(partProduct.getNodeRef())
+								&& !(partProduct instanceof SemiFinishedProductData)) {
+							newAllergenListDataItem.getVoluntarySources().add(partProduct.getNodeRef());
+						}
+						for (NodeRef p : allergenListDataItem.getVoluntarySources()) {
+							if (!newAllergenListDataItem.getVoluntarySources().contains(p)) {
+								newAllergenListDataItem.getVoluntarySources().add(p);
+							}
 						}
 					}
-				}
 
-				// Define involuntary
-				if (allergenListDataItem.getInVoluntary()) {
-					newAllergenListDataItem.setInVoluntary(true);
-					if (!newAllergenListDataItem.getInVoluntarySources().contains(partProduct.getNodeRef())
-							&& !(partProduct instanceof SemiFinishedProductData)) {
-						newAllergenListDataItem.getInVoluntarySources().add(partProduct.getNodeRef());
-					}
-					for (NodeRef p : allergenListDataItem.getInVoluntarySources()) {
-						if (!newAllergenListDataItem.getInVoluntarySources().contains(p)) {
-							newAllergenListDataItem.getInVoluntarySources().add(p);
+					// Define involuntary
+					if (allergenListDataItem.getInVoluntary()) {
+						newAllergenListDataItem.setInVoluntary(true);
+						if (!newAllergenListDataItem.getInVoluntarySources().contains(partProduct.getNodeRef())
+								&& !(partProduct instanceof SemiFinishedProductData)) {
+							newAllergenListDataItem.getInVoluntarySources().add(partProduct.getNodeRef());
+						}
+						for (NodeRef p : allergenListDataItem.getInVoluntarySources()) {
+							if (!newAllergenListDataItem.getInVoluntarySources().contains(p)) {
+								newAllergenListDataItem.getInVoluntarySources().add(p);
+							}
 						}
 					}
-				}
 
-				// Add qty
-				if (isRawMaterial != null) {
-					if (isRawMaterial) {
-						// Generic raw material
-						if (allergenListDataItem.getQtyPerc() != null) {
-							if ((newAllergenListDataItem.getQtyPerc() == null)
-									|| (newAllergenListDataItem.getQtyPerc() < allergenListDataItem.getQtyPerc())) {
-								newAllergenListDataItem.setQtyPerc(allergenListDataItem.getQtyPerc());
+					// Add qty
+					if (isRawMaterial != null) {
+						if (isRawMaterial) {
+							// Generic raw material
+							if (allergenListDataItem.getQtyPerc() != null) {
+								if ((newAllergenListDataItem.getQtyPerc() == null)
+										|| (newAllergenListDataItem.getQtyPerc() < allergenListDataItem.getQtyPerc())) {
+									newAllergenListDataItem.setQtyPerc(allergenListDataItem.getQtyPerc());
+								}
 							}
-						}
-					} else {
-						String message = I18NUtil.getMessage("message.formulate.allergen.error.nullQtyPerc", extractName(allergenNodeRef));
-						ReqCtrlListDataItem error = errors.get(message);
-
-						if ((allergenListDataItem.getQtyPerc() != null) && (qtyUsed != null)
-								&& ((newAllergenListDataItem.getQtyPerc() != null) || (error == null))) {
-							if (newAllergenListDataItem.getQtyPerc() == null) {
-								newAllergenListDataItem.setQtyPerc(0d);
-							}
-
-							Double value = allergenListDataItem.getQtyPerc() * qtyUsed;
-							if ((netQty != null) && (netQty != 0d)) {
-								value = value / netQty;
-							}
-
-							if (logger.isDebugEnabled()) {
-								logger.debug("Add " + extractName(allergenNodeRef) + "[" + partProduct.getName() + "] - "
-										+ allergenListDataItem.getQtyPerc() + "% * " + qtyUsed + " / " + netQty + "(=" + value + " ) kg to "
-										+ newAllergenListDataItem.getQtyPerc());
-							}
-
-							value += newAllergenListDataItem.getQtyPerc();
-
-							if (value > 100d) {
-								value = 100d;
-							}
-
-							newAllergenListDataItem.setQtyPerc(value);
-
 						} else {
+							String message = I18NUtil.getMessage("message.formulate.allergen.error.nullQtyPerc", extractName(allergenNodeRef));
+							ReqCtrlListDataItem error = errors.get(message);
 
-							Double regulatoryThreshold = (Double) nodeService.getProperty(allergenListDataItem.getAllergen(),
-									PLMModel.PROP_ALLERGEN_REGULATORY_THRESHOLD);
-
-							if (error != null) {
-								if ((allergenListDataItem.getQtyPerc() == null) || (qtyUsed == null)) {
-									if (!error.getSources().contains(partProduct.getNodeRef())) {
-										error.getSources().add(partProduct.getNodeRef());
-									}
+							if ((allergenListDataItem.getQtyPerc() != null) && (qtyUsed != null)
+									&& ((newAllergenListDataItem.getQtyPerc() != null) || (error == null))) {
+								if (newAllergenListDataItem.getQtyPerc() == null) {
+									newAllergenListDataItem.setQtyPerc(0d);
 								}
+
+								Double value = allergenListDataItem.getQtyPerc() * qtyUsed;
+								if ((netQty != null) && (netQty != 0d)) {
+									value = value / netQty;
+								}
+
+								if (logger.isDebugEnabled()) {
+									logger.debug("Add " + extractName(allergenNodeRef) + "[" + partProduct.getName() + "] - "
+											+ allergenListDataItem.getQtyPerc() + "% * " + qtyUsed + " / " + netQty + "(=" + value + " ) kg to "
+											+ newAllergenListDataItem.getQtyPerc());
+								}
+
+								value += newAllergenListDataItem.getQtyPerc();
+
+								if (value > 100d) {
+									value = 100d;
+								}
+
+								newAllergenListDataItem.setQtyPerc(value);
+
 							} else {
-								List<NodeRef> sourceNodeRefs = new ArrayList<>();
-								sourceNodeRefs.add(partProduct.getNodeRef());
 
-								error = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, allergenNodeRef, sourceNodeRefs,
-										RequirementDataType.Allergen);
-								errors.put(message, error);
+								Double regulatoryThreshold = (Double) nodeService.getProperty(allergenListDataItem.getAllergen(),
+										PLMModel.PROP_ALLERGEN_REGULATORY_THRESHOLD);
 
-								if (regulatoryThreshold != null) {
-									if (logger.isDebugEnabled()) {
-										logger.debug("Adding allergen error " + error.toString());
+								if (error != null) {
+									if ((allergenListDataItem.getQtyPerc() == null) || (qtyUsed == null)) {
+										if (!error.getSources().contains(partProduct.getNodeRef())) {
+											error.getSources().add(partProduct.getNodeRef());
+										}
 									}
+								} else {
+									List<NodeRef> sourceNodeRefs = new ArrayList<>();
+									sourceNodeRefs.add(partProduct.getNodeRef());
 
-									ret.add(error);
+									error = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, allergenNodeRef, sourceNodeRefs,
+											RequirementDataType.Allergen);
+									errors.put(message, error);
+
+									if (regulatoryThreshold != null) {
+										if (logger.isDebugEnabled()) {
+											logger.debug("Adding allergen error " + error.toString());
+										}
+
+										ret.add(error);
+									}
+								}
+								if (regulatoryThreshold == null) {
+									// Reset
+									newAllergenListDataItem.setQtyPerc(null);
+								} else if (newAllergenListDataItem.getQtyPerc() == null) {
+									newAllergenListDataItem.setQtyPerc(0d);
 								}
 							}
-							if (regulatoryThreshold == null) {
-								// Reset
-								newAllergenListDataItem.setQtyPerc(null);
-							} else if (newAllergenListDataItem.getQtyPerc() == null) {
-								newAllergenListDataItem.setQtyPerc(0d);
+						}
+					}
+
+					// Add variants if it adds an allergen
+					if ((variantDataItem.getVariants() != null) && (allergenListDataItem.getVoluntary() || allergenListDataItem.getInVoluntary())) {
+						if (newAllergenListDataItem.getVariants() == null) {
+							newAllergenListDataItem.setVariants(new ArrayList<NodeRef>());
+						}
+
+						for (NodeRef variant : variantDataItem.getVariants()) {
+							if (!newAllergenListDataItem.getVariants().contains(variant)) {
+								newAllergenListDataItem.getVariants().add(variant);
 							}
 						}
 					}
+
 				}
-
-				// Add variants if it adds an allergen
-				if ((variantDataItem.getVariants() != null) && (allergenListDataItem.getVoluntary() || allergenListDataItem.getInVoluntary())) {
-					if (newAllergenListDataItem.getVariants() == null) {
-						newAllergenListDataItem.setVariants(new ArrayList<NodeRef>());
-					}
-
-					for (NodeRef variant : variantDataItem.getVariants()) {
-						if (!newAllergenListDataItem.getVariants().contains(variant)) {
-							newAllergenListDataItem.getVariants().add(variant);
-						}
-					}
-				}
-
 			}
 		}
 
