@@ -94,6 +94,7 @@
 			<itemType name="bcpg:semiFinishedProduct"  />
 			<itemType name="bcpg:rawMaterial"  />
 			<itemType name="bcpg:packagingMaterial"  />
+			<itemType name="bcpg:resourceProduct"  />
 		</filterTypes>
 	</config>
 
