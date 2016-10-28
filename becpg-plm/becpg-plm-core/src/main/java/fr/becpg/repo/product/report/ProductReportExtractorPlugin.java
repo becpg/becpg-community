@@ -539,16 +539,23 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		boolean isExtracted = false;
 		if ((assocDef != null) && (assocDef.getName() != null)) {
 			boolean extractDataList = false;
-			if(assocsToExtractWithDataList != null && assocsToExtractWithDataList.contains(assocName.toPrefixString(namespaceService))){
+			if(assocsToExtractWithDataList != null && assocsToExtractWithDataList.contains(assocDef.getName().toPrefixString(namespaceService))){
 				extractDataList = true;
 			}
 			
-			if((assocsToExtract != null && assocsToExtract.contains(assocName.toPrefixString(namespaceService))) || extractDataList){				
-				extractTargetAssoc(entityNodeRef, assocDef, entityElt, images, extractDataList);
+			if((assocsToExtract != null && assocsToExtract.contains(assocDef.getName().toPrefixString(namespaceService))) || extractDataList){
+				
+				Element assocElt = entityElt;
+				//compatibility with existing reports
+				if(!assocDef.getName().equals(PLMModel.ASSOC_STORAGE_CONDITIONS) && !assocDef.getName().equals(PLMModel.ASSOC_PRECAUTION_OF_USE)){
+					assocElt = entityElt.addElement(assocDef.getName().getLocalName());
+					appendPrefix(assocDef.getName(), assocElt);
+				}
+				extractTargetAssoc(entityNodeRef, assocDef, assocElt, images, extractDataList);
 				isExtracted = true;								
 			}
 			
-			if(assocsToExtractWithImage != null && assocsToExtractWithImage.contains(assocName.toPrefixString(namespaceService))){
+			if(assocsToExtractWithImage != null && assocsToExtractWithImage.contains(assocDef.getName().toPrefixString(namespaceService))){
 				List<NodeRef> nodeRefs = associationService.getTargetAssocs(entityNodeRef, assocDef.getName());
 				for (NodeRef nodeRef : nodeRefs) {
 					Element imgsElt = (Element) entityElt.getDocument().selectSingleNode(TAG_ENTITY + "/" + TAG_IMAGES);
