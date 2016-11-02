@@ -430,10 +430,10 @@ public class LabelingFormulaContext {
 		return applyRoundingMode(new MessageFormat(detailsDefaultFormat)).format(new Object[] { ingLegalName, null, ret.toString() });
 	}
 
-	private String renderAllergens(CompositeLabeling compositeLabeling) {
+	private String renderAllergens(List<AbstractLabelingComponent> ingList) {
 		StringBuilder ret = new StringBuilder();
 		Set<NodeRef> allergens = new HashSet<>();
-		for (AbstractLabelingComponent ing : compositeLabeling.getIngList().values()) {
+		for (AbstractLabelingComponent ing : ingList) {
 			for (NodeRef allergen : ing.getAllergens()) {
 				allergens.add(allergen);
 			}
@@ -745,6 +745,9 @@ public class LabelingFormulaContext {
 	private String renderCompositeIng(CompositeLabeling compositeLabeling, Double ratio) {
 		StringBuffer ret = new StringBuffer();
 		boolean appendEOF = false;
+		
+		
+		
 		for (Map.Entry<IngTypeItem, List<AbstractLabelingComponent>> kv : getSortedIngListByType(compositeLabeling).entrySet()) {
 
 			StringBuilder toAppend = new StringBuilder();
@@ -753,12 +756,13 @@ public class LabelingFormulaContext {
 
 				Double qtyPerc = computeQtyPerc(compositeLabeling, kv.getKey(), ratio);
 				kv.getKey().setQty(qtyPerc);
-				String allergens = renderAllergens(compositeLabeling) ;
+				String allergens = renderAllergens(kv.getValue());
 				
 				toAppend.append(getIngTextFormat(kv.getKey()).format(new Object[] { getLegalIngName(kv.getKey(), kv.getValue().size() > 1),
 						(useVolume ? kv.getKey().getVolume() : kv.getKey().getQty()),
 						renderLabelingComponent(compositeLabeling, kv.getValue(), ingTypeDefaultSeparator, ratio), allergens
 						}));
+				
 
 			} else {
 				toAppend.append(renderLabelingComponent(compositeLabeling, kv.getValue(), defaultSeparator, ratio));
