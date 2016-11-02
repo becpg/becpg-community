@@ -172,7 +172,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 		return getDisplayLabel(constraintAllowableValue);
 	}
 
-	private Map<String, MLText> getMLAwareAllowedValues() {
+	public Map<String, MLText> getMLAwareAllowedValues() {
 		return beCPGCacheService.getFromCache(DYN_LIST_CACHE_NAME, getShortName(),
 				() -> serviceRegistry.getTransactionService().getRetryingTransactionHelper().doInTransaction(() -> {
 
