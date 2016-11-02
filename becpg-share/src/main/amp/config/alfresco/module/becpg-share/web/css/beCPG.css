@@ -288,6 +288,10 @@ span.variant-default {
     padding-left: 14px
 }
 
+.yui-ac span.variant, .yui-ac span.variant-default  {
+	 padding-left: 20px
+}
+
 
 /** Commons **/
 

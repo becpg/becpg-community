@@ -34,6 +34,7 @@ import org.alfresco.model.ForumModel;
 import org.alfresco.repo.rule.RuleModel;
 import org.alfresco.repo.version.Version2Model;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
+import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
@@ -66,6 +67,7 @@ import org.springframework.stereotype.Service;
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
@@ -304,18 +306,47 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				addData(nodeElt, useCData, propertyDef.getName(),
 						attributeExtractorService.extractPropertyForReport(propertyDef, property.getValue(), propertyFormats, false), null);
 
-				if ((mlTextFields != null) && !mlTextFields.isEmpty() && DataTypeDefinition.MLTEXT.equals(propertyDef.getDataType().getName())
+				if ((mlTextFields != null) && !mlTextFields.isEmpty()
 						&& mlTextFields.contains(propertyDef.getName().toPrefixString(namespaceService))) {
-					MLText mlValues = (MLText) mlNodeService.getProperty(nodeRef, propertyDef.getName());
 
-					for (Map.Entry<Locale, String> mlEntry : mlValues.entrySet()) {
-						
-						String code = mlEntry.getKey().getLanguage();
-						if(mlEntry.getKey().getCountry()!=null && !mlEntry.getKey().getCountry().isEmpty()){
-							code+="_"+mlEntry.getKey().getCountry();
+					MLText mlValues = null;
+
+					if (DataTypeDefinition.MLTEXT.equals(propertyDef.getDataType().getName())) {
+						mlValues = (MLText) mlNodeService.getProperty(nodeRef, propertyDef.getName());
+
+					} else if (DataTypeDefinition.TEXT.equals(propertyDef.getDataType().getName())) {
+
+						DynListConstraint dynListConstraint = null;
+
+						if (!propertyDef.getConstraints().isEmpty()) {
+
+							for (ConstraintDefinition constraint : propertyDef.getConstraints()) {
+								if (constraint.getConstraint() instanceof DynListConstraint) {
+									dynListConstraint = (DynListConstraint) constraint.getConstraint();
+									break;
+
+								}
+							}
+
 						}
-						if(code!=null && !code.isEmpty()){
-							addData(nodeElt, useCData, propertyDef.getName(), mlEntry.getValue(), code);
+
+						if (dynListConstraint != null) {
+
+							mlValues = dynListConstraint.getMLAwareAllowedValues().get(property.getValue());
+						}
+
+					}
+
+					if (mlValues != null) {
+						for (Map.Entry<Locale, String> mlEntry : mlValues.entrySet()) {
+
+							String code = mlEntry.getKey().getLanguage();
+							if ((mlEntry.getKey().getCountry() != null) && !mlEntry.getKey().getCountry().isEmpty()) {
+								code += "_" + mlEntry.getKey().getCountry();
+							}
+							if ((code != null) && !code.isEmpty()) {
+								addData(nodeElt, useCData, propertyDef.getName(), mlEntry.getValue(), code);
+							}
 						}
 					}
 
@@ -460,25 +491,21 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	/**
 	 * Extract target(s) association
 	 */
-	protected void extractTargetAssoc(NodeRef entityNodeRef, AssociationDefinition assocDef, Element entityElt, Map<String, byte[]> images, boolean extractDataList) {
+	protected void extractTargetAssoc(NodeRef entityNodeRef, AssociationDefinition assocDef, Element assocElt, Map<String, byte[]> images,
+			boolean extractDataList) {
 
-		Element rootElt = assocDef.isTargetMany() ? entityElt.addElement(assocDef.getName().getLocalName()) : entityElt;
-		if(assocDef.isTargetMany()){
-			appendPrefix(assocDef.getName(), rootElt);
-		}
-		
 		List<NodeRef> nodeRefs = associationService.getTargetAssocs(entityNodeRef, assocDef.getName());
 
 		for (NodeRef nodeRef : nodeRefs) {
 
 			QName qName = nodeService.getType(nodeRef);
-			Element nodeElt = rootElt.addElement(qName.getLocalName());
-			
+			Element nodeElt = assocElt.addElement(qName.getLocalName());
+
 			appendPrefix(qName, nodeElt);
-			
+
 			loadNodeAttributes(nodeRef, nodeElt, true, images);
-			
-			if(extractDataList){
+
+			if (extractDataList) {
 				Element dataListsElt = nodeElt.addElement(TAG_DATALISTS);
 				loadDataLists(nodeRef, dataListsElt, new HashMap<String, byte[]>());
 			}
@@ -492,19 +519,18 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		}
 		Element cDATAElt = nodeElt.addElement(localName);
 		appendPrefix(propertyQName, cDATAElt);
-		
+
 		cDATAElt.addCDATA(eltValue);
 
-		
 	}
 
-	private void appendPrefix(QName propertyQName, Element cDATAElt) {
+	protected void appendPrefix(QName propertyQName, Element cDATAElt) {
 		Collection<String> prefixes = namespaceService.getPrefixes(propertyQName.getNamespaceURI());
 		if (!prefixes.isEmpty()) {
 			// TODO : manage prefix correctly
 			cDATAElt.addAttribute("prefix", prefixes.iterator().next());
 		}
-		
+
 	}
 
 	// Check that images has not been update

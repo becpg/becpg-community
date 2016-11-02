@@ -15,7 +15,7 @@
 							<#assign h = config.scoped["Languages"]["languages"]>
 							<#list  h.getChildren("language") as language>
 							  <#assign key = language.getAttribute("locale")>	
-                              <#if !key?contains(locale)>
+                              <#if locale != key>
 								<option value="${key}"  >${msg("locale.name.${key}")}</option>
                                </#if>
 							</#list>

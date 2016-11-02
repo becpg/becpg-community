@@ -161,8 +161,10 @@ public class EntityReportServiceImpl implements EntityReportService {
 									watch = new StopWatch();
 									watch.start();
 								}
+								
+								List<Locale> entityReportLocales = getEntityReportLocales(entityNodeRef);
 
-								for (Locale locale : getEntityReportLocales(entityNodeRef)) {
+								for (Locale locale : entityReportLocales) {
 
 									I18NUtil.setLocale(locale);
 
@@ -213,9 +215,11 @@ public class EntityReportServiceImpl implements EntityReportService {
 														
 														nodeService.setProperty(documentNodeRef, ContentModel.PROP_NAME, documentName);
 
-														if (!Locale.getDefault().getLanguage().equals(locale.getLanguage())) {
+														if (!(Locale.getDefault().getLanguage().equals(locale.getLanguage()) && entityReportLocales.size()==1)) {
 															nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_LOCALES,
 																	locale.getLanguage());
+														} else {
+															nodeService.removeProperty(documentNodeRef, ReportModel.PROP_REPORT_LOCALES);
 														}
 
 													}
@@ -343,11 +347,6 @@ public class EntityReportServiceImpl implements EntityReportService {
 									nodeService.setProperty(documentNodeRef, ContentModel.PROP_MODIFIED, generatedDate);
 									
 									nodeService.setProperty(documentNodeRef, ContentModel.PROP_NAME, documentName);
-
-									if (!Locale.getDefault().getLanguage().equals(locale.getLanguage())) {
-										nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_LOCALES, locale.getLanguage());
-									}
-
 								}
 
 							} catch (ReportException e) {
@@ -466,7 +465,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 			documentName = documentName.replace(RepoConsts.REPORT_EXTENSION_BIRT, extension.toLowerCase());
 		}
 
-		if (!Locale.getDefault().getLanguage().equals(locale.getLanguage())) {
+		if (!(Locale.getDefault().getLanguage().equals(locale.getLanguage()) && getEntityReportLocales(entityNodeRef).size() == 1)) {
 			documentName = documentName.substring(0, documentName.lastIndexOf(".")) + " - " + locale.getLanguage()
 					+ documentName.substring(documentName.lastIndexOf("."), documentName.length());
 		}

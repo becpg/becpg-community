@@ -101,6 +101,12 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	@Value("${beCPG.product.report.assocsToExtract}")
 	private String assocsToExtract = "";
+	
+	@Value("${beCPG.product.report.assocsToExtractWithDataList}")
+	private String assocsToExtractWithDataList = "";
+	
+	@Value("${beCPG.product.report.assocsToExtractWithImage}")
+	private String assocsToExtractWithImage = "";
 
 	@Autowired
 	@Qualifier("mlAwareNodeService")
@@ -149,7 +155,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			for (QName dataListQName : datalists.keySet()) {
 
 				if (alfrescoRepository.hasDataList(entityNodeRef, dataListQName)) {
-					if ((isExtractedProduct && !DATALIST_SPECIFIC_EXTRACTOR.contains(dataListQName))) {
+					if (((isExtractedProduct || PLMModel.TYPE_LABELCLAIMLIST.equals(dataListQName))  && !DATALIST_SPECIFIC_EXTRACTOR.contains(dataListQName))) {
 						Element dataListElt = dataListsElt.addElement(dataListQName.getLocalName() + "s");
 
 						@SuppressWarnings({ "rawtypes" })
@@ -530,40 +536,34 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	@Override
 	protected boolean loadTargetAssoc(NodeRef entityNodeRef, AssociationDefinition assocDef, Element entityElt, Map<String, byte[]> images) {
 
+		boolean isExtracted = false;
 		if ((assocDef != null) && (assocDef.getName() != null)) {
-			if (isDetaillableAssoc(assocDef.getName())) {
-
-				boolean extractDataList = false;
-				if(assocDef.getName().equals(PLMModel.ASSOC_PRODUCT_MICROBIO_CRITERIA)){
-					extractDataList = true;
+			boolean extractDataList = false;
+			if(assocsToExtractWithDataList != null && assocsToExtractWithDataList.contains(assocDef.getName().toPrefixString(namespaceService))){
+				extractDataList = true;
+			}
+			
+			if((assocsToExtract != null && assocsToExtract.contains(assocDef.getName().toPrefixString(namespaceService))) || extractDataList){
+				
+				Element assocElt = entityElt;
+				//compatibility with existing reports
+				if(!assocDef.getName().equals(PLMModel.ASSOC_STORAGE_CONDITIONS) && !assocDef.getName().equals(PLMModel.ASSOC_PRECAUTION_OF_USE)){
+					assocElt = entityElt.addElement(assocDef.getName().getLocalName());
+					appendPrefix(assocDef.getName(), assocElt);
 				}
-				
-				extractTargetAssoc(entityNodeRef, assocDef, entityElt, images, extractDataList);
-
-				
-				return true;
-			} else if (assocDef.getName().equals(PLMModel.ASSOC_PRODUCT_SPECIFICATIONS)) {
-				
-				//TODO MERGE with previous if
-				extractProductSpecifications(entityNodeRef, entityElt, images);
-				return true;
-			} else if (assocDef.getName().equals(PLMModel.ASSOC_CLIENTS)) {
-
+				extractTargetAssoc(entityNodeRef, assocDef, assocElt, images, extractDataList);
+				isExtracted = true;								
+			}
+			
+			if(assocsToExtractWithImage != null && assocsToExtractWithImage.contains(assocDef.getName().toPrefixString(namespaceService))){
 				List<NodeRef> nodeRefs = associationService.getTargetAssocs(entityNodeRef, assocDef.getName());
-
 				for (NodeRef nodeRef : nodeRefs) {
 					Element imgsElt = (Element) entityElt.getDocument().selectSingleNode(TAG_ENTITY + "/" + TAG_IMAGES);
 					extractEntityImages(nodeRef, imgsElt, images);
 				}
-
-			}
+			}			
 		}
-
-		return false;
-	}
-
-	private boolean isDetaillableAssoc(QName assocName) {
-		return assocsToExtract != null && assocsToExtract.contains(assocName.toPrefixString(namespaceService));
+		return isExtracted;
 	}
 
 	private void loadPackagingList(ProductData productData, Element dataListsElt, NodeRef defaultVariantNodeRef, Map<String, byte[]> images) {
@@ -881,16 +881,5 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	@Override
 	public EntityReportExtractorPriority getMatchPriority(QName type) {
 		return dictionaryService.isSubClass(type, PLMModel.TYPE_PRODUCT) ? EntityReportExtractorPriority.NORMAL : EntityReportExtractorPriority.NONE;
-	}
-
-	private void extractProductSpecifications(NodeRef productNodeRef, Element productElt, Map<String, byte[]> images) {
-		Element productSpecificationsElt = productElt.addElement(PLMModel.ASSOC_PRODUCT_SPECIFICATIONS.getLocalName());
-		List<NodeRef> nodeRefs = associationService.getTargetAssocs(productNodeRef, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
-		for (NodeRef nodeRef : nodeRefs) {
-			Element productSpecificationElt = productSpecificationsElt.addElement(PLMModel.TYPE_PRODUCT_SPECIFICATION.getLocalName());
-			loadNodeAttributes(nodeRef, productSpecificationElt, true, images);
-			Element dataListsElt = productSpecificationElt.addElement(TAG_DATALISTS);
-			loadDataLists(nodeRef, dataListsElt, new HashMap<String, byte[]>());
-		}
 	}
 }
