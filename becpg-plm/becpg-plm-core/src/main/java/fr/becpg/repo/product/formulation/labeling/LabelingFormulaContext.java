@@ -184,6 +184,8 @@ public class LabelingFormulaContext {
 	private boolean useVolume = false;
 	private boolean ingsLabelingWithYield = false;
 	private boolean uncapitalizeLegalName = false;
+	
+	private Double qtyPrecisionThreshold = (1d/(PRECISION_FACTOR*PRECISION_FACTOR));
 
 	public void setUseVolume(boolean useVolume) {
 		this.useVolume = useVolume;
@@ -251,6 +253,11 @@ public class LabelingFormulaContext {
 
 	public void setAllergenReplacementPattern(String allergenReplacementPattern) {
 		this.allergenReplacementPattern = allergenReplacementPattern;
+	}
+	
+
+	public void setQtyPrecisionThreshold(Double qtyPrecisionThreshold) {
+		this.qtyPrecisionThreshold = qtyPrecisionThreshold;
 	}
 
 	// Exemple <b>{1}</b> : {2}
@@ -809,7 +816,7 @@ public class LabelingFormulaContext {
 
 			qtyPerc = (useVolume ? volumePerc : qtyPerc);
 
-			if ((qtyPerc == null) || (qtyPerc  > (1d/(PRECISION_FACTOR*PRECISION_FACTOR)))) {
+			if ((qtyPerc == null) || (qtyPerc  > qtyPrecisionThreshold)) {
 
 				String toAppend = new String();
 
