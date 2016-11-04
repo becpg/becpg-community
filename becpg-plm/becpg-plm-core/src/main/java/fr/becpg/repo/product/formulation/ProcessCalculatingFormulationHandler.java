@@ -85,14 +85,16 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 				}
 			}
 
-			for (ProcessListDataItem p : formulatedProduct.getProcessList(new VariantFilters<>())) {
+			for (ProcessListDataItem p : formulatedProduct.getProcessList()) {
 				if (p.getResource() != null) {
 					ResourceProductData resource = alfrescoRepository.findOne(p.getResource());
 					for (ResourceParamListItem param : resource.getResourceParamList()) {
 						boolean isFound = false;
 						for (ResourceParamListItem param2 : formulatedProduct.getResourceParamList()) {
 							if (Objects.equals(param2.getParam(), param.getParam()) && Objects.equals(param2.getResource(), resource.getNodeRef())
-									&& Objects.equals(param2.getStep(), p.getStep()) && Objects.equals(param2.getParamType(), param.getParamType())) {
+									&& Objects.equals(param2.getStep(), p.getStep()) && Objects.equals(param2.getParamType(), param.getParamType())
+									&& Objects.equals(param2.getVariants(), p.getVariants())
+									) {
 								param2.setSort(sort++);
 
 								toAdd.add(param2);
@@ -106,6 +108,7 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 							param.setParentNodeRef(null);
 							param.setStep(p.getStep());
 							param.setResource(resource.getNodeRef());
+							param.setVariants(p.getVariants());
 							toAdd.add(param);
 						}
 					}
@@ -122,7 +125,8 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 							if (Objects.equals(param.getParam(), paramTpl.getParam()) && Objects.equals(param.getResource(), paramTpl.getResource())
 									&& Objects.equals(param.getStep(), paramTpl.getStep())
 									&& Objects.equals(param.getParamType(), paramTpl.getParamType()) && paramTpl.getParamValue() != null
-									&& !paramTpl.getParamValue().isEmpty()) {
+									&& !paramTpl.getParamValue().isEmpty()
+									&& param.getVariants().isEmpty()) {
 								param.setParamValue(paramTpl.getParamValue());
 							}
 						}
