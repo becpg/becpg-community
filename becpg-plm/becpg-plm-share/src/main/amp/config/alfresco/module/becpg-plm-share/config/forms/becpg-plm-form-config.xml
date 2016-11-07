@@ -3410,6 +3410,7 @@
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:entityTplRef" force="true" />
+					<show id="bcpg:plants" force="true"  />
 					
 
 					<!-- formulation -->
@@ -3514,7 +3515,7 @@
 							</control-param>
 						</control>
 					</field>
-
+					<field id="bcpg:plants" set="mainInfo" />
 					<!-- formulation -->
 					<field id="bcpg:productQty" help-id="becpg.forms.help.productQty" set="formulation" />
 					<field id="bcpg:productUnit" set="formulation">
@@ -3943,6 +3944,7 @@
 					<show id="bcpg:productState" />
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:plants" force="true"  />
 
 					<!-- Consumer -->
 					<show id="bcpg:useByDate" force="true" />
@@ -4024,6 +4026,7 @@
 							</control-param>
 						</control>
 					</field>
+					<field id="bcpg:plants" set="mainInfo" />
 
 					<!-- consumer -->
 					<field id="bcpg:useByDate" help-id="becpg.forms.help.useByDate" set="consumer" />
