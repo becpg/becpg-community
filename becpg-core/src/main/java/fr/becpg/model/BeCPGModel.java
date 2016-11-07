@@ -38,6 +38,11 @@ public interface BeCPGModel {
 	QName PROP_LV_VALUE = QName.createQName(BECPG_URI, "lvValue");
 	QName PROP_LV_CODE = QName.createQName(BECPG_URI, "lvCode");
 	
+	QName TYPE_ACTIVITY_LIST = QName.createQName(BECPG_URI, "activityList");
+	QName PROP_ACTIVITYLIST_TYPE =  QName.createQName(BECPG_URI, "alType");
+	QName PROP_ACTIVITYLIST_DATA =  QName.createQName(BECPG_URI, "alData");
+	QName PROP_ACTIVITYLIST_USERID=  QName.createQName(BECPG_URI, "alUserId");
+	
 	// entity
 	QName TYPE_ENTITY_V2 = QName.createQName(BECPG_URI, "entityV2");
 
@@ -128,6 +133,7 @@ public interface BeCPGModel {
 	QName ASSOC_BRANCH_FROM_ENTITY = QName.createQName(BECPG_URI, "branchFromEntity");
 	QName PROP_BRANCH_FROM_VERSION_LABEL = QName.createQName(BECPG_URI, "branchFromVersionLabel");
 	QName ASSOC_AUTO_MERGE_TO = QName.createQName(BECPG_URI, "autoMergeTo");
+	
 	
 	
 }

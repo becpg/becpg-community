@@ -46,6 +46,20 @@
 				</list>
 			</parameter>
 		</constraint>
+		
+		<constraint name="bcpg:activityTypes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>State</value>
+					<value>Entity</value>
+					<value>Datalist</value>
+					<value>Formulation</value>
+					<value>Report</value>
+					<value>Comment</value>
+					<value>Content</value>
+				</list>
+			</parameter>
+		</constraint>
 	</constraints>
 	<types>
 		<type name="bcpg:listValue">
@@ -132,6 +146,28 @@
 				<aspect>bcpg:legalNameAspect</aspect>
 				<aspect>bcpg:isDeletedAspect</aspect>
 			</mandatory-aspects>
+		</type>
+		
+		<type name="bcpg:activityList">
+			<parent>bcpg:entityListItem</parent>
+			<properties>
+				<property name="bcpg:alType">
+					<type>d:text</type>
+					<mandatory enforced="true">true</mandatory>
+					<constraints>
+						<constraint ref="bcpg:activityTypes" />
+					</constraints>
+				</property>
+				<property name="bcpg:alData">
+					<type>d:text</type>
+					<mandatory enforced="true">true</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:alUserId">
+					<type>d:text</type>
+					<mandatory enforced="true">true</mandatory>
+				</property>
+			</properties>
 		</type>
 		
 	</types>
