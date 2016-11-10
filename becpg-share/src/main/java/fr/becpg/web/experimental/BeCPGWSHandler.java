@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import javax.websocket.CloseReason;
 import javax.websocket.OnClose;
+import javax.websocket.OnError;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
@@ -69,6 +70,13 @@ public class BeCPGWSHandler {
 			}
 		} catch (IOException e) {
 			logger.error("onMessage failed", e);
+		}
+	}
+	
+	@OnError
+	public void onError(Session session, Throwable thr) {
+		if(logger.isDebugEnabled()){
+			logger.debug(thr,thr);
 		}
 	}
 

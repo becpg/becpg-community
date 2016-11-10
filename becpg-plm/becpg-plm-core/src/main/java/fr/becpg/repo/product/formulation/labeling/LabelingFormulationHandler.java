@@ -235,7 +235,14 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							&& Boolean.TRUE.equals(labelingRuleListDataItem.getIsActive())) {
 
 						MLText label = new MLText();
-						for (Locale locale : labelingFormulaContext.getLocales()) {
+						
+						Set<Locale> locales  =  labelingFormulaContext.getLocales();
+						
+						if(locales.isEmpty()){
+							locales.add(new Locale(Locale.getDefault().getLanguage()));
+						}
+								
+						for (Locale locale : locales) {
 							Locale currentLocal = I18NUtil.getLocale();
 
 							try {

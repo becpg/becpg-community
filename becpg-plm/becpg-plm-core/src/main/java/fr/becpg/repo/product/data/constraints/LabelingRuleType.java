@@ -42,6 +42,10 @@ public enum LabelingRuleType {
 	
 	DoNotDetails,
 	
+	DetailComponents,
+	
+	DoNotDetailsComponents,
+	
 	Group,
 	
 	DoNotDeclare, 

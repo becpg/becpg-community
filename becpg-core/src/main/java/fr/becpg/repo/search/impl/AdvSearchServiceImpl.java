@@ -198,7 +198,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 								} catch (Exception e) {
 									// do nothing
 								}
-								if (maxLevel != null) {
+								if (maxLevel != null && maxLevel > 0) {
 									queryBuilder.andBetween(QName.createQName(propName, namespaceService), "0", propValue);
 
 								}

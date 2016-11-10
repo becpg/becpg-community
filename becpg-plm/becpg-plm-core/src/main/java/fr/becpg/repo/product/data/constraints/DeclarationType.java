@@ -29,4 +29,5 @@ public enum DeclarationType {
 	Kit,
 	DoNotDeclare, 
 	DoNotDetails
+	
 }
