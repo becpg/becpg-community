@@ -21,6 +21,7 @@ import java.util.Locale;
 
 import org.alfresco.service.cmr.repository.MLText;
 
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -86,14 +87,7 @@ public class IngTypeItem extends AbstractLabelingComponent{
 	
 	
 	public String getPluralLegalName(Locale locale) {
-		String ret = null;
-		if (pluralLegalName != null) {
-			if (pluralLegalName.containsKey(locale)) {
-				ret =  pluralLegalName.get(locale);
-			} else {
-				ret =  pluralLegalName.getClosestValue(locale);
-			}	
-		}
+		String ret = MLTextHelper.getClosestValue(pluralLegalName, locale);
 		
 		if(ret==null || ret.isEmpty()){
 			return getLegalName(locale);
@@ -105,14 +99,7 @@ public class IngTypeItem extends AbstractLabelingComponent{
 	
 	@Override
 	public String getLegalName(Locale locale) {
-		String ret = null;
-		if (legalName != null) {
-			if (legalName.containsKey(locale)) {
-				ret =  legalName.get(locale);
-			} else {
-				ret =  legalName.getClosestValue(locale);
-			}
-		}
+		String ret = MLTextHelper.getClosestValue(legalName, locale);
 
 		if(ret==null || ret.isEmpty()){
 			return lvValue;

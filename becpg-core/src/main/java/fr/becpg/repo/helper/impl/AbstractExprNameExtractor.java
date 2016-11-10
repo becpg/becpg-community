@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.extensions.surf.util.I18NUtil;
 
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorPlugin;
 
 public abstract class AbstractExprNameExtractor implements AttributeExtractorPlugin{
@@ -61,13 +62,10 @@ public abstract class AbstractExprNameExtractor implements AttributeExtractorPlu
 	private String extractPropText(NodeRef nodeRef, String propQname) {
 		if(propQname.startsWith(ML_PREFIX)){
 		     MLText tmp = (MLText) mlNodeService.getProperty(nodeRef, QName.createQName(propQname.substring(3), namespaceService));
-		     if(tmp!=null){
-		    	return tmp.getClosestValue(I18NUtil.getContentLocale());
-		     }
+		     return  MLTextHelper.getClosestValue(tmp, I18NUtil.getContentLocale());
 		} else {
 			return (String) nodeService.getProperty(nodeRef, QName.createQName(propQname, namespaceService));
 		}
-		return null;
 	}
 	
 	

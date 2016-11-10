@@ -47,11 +47,9 @@ public class IngTypeNameExtractorPlugin extends AbstractExprNameExtractor {
 
 	@Override
 	public String extractPropName(QName type, NodeRef nodeRef) {
-		 MLText tmp = (MLText) mlNodeService.getProperty(nodeRef, BeCPGModel.PROP_LV_VALUE);
-	     if(tmp!=null){
-	    	return tmp.getClosestValue(I18NUtil.getContentLocale());
-	     }
-		return null;
+		MLText tmp = (MLText) mlNodeService.getProperty(nodeRef, BeCPGModel.PROP_LV_VALUE);
+	   
+		return  MLTextHelper.getClosestValue(tmp, I18NUtil.getContentLocale());
 	}
 
 
