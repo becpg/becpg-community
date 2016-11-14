@@ -235,7 +235,14 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							&& Boolean.TRUE.equals(labelingRuleListDataItem.getIsActive())) {
 
 						MLText label = new MLText();
-						for (Locale locale : labelingFormulaContext.getLocales()) {
+						
+						Set<Locale> locales  =  labelingFormulaContext.getLocales();
+						
+						if(locales.isEmpty()){
+							locales.add(new Locale(Locale.getDefault().getLanguage()));
+						}
+								
+						for (Locale locale : locales) {
 							Locale currentLocal = I18NUtil.getLocale();
 
 							try {
@@ -330,6 +337,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 						merge(prev, component);
 						parent.remove(component.getNodeRef());
+						
+						if(labelingFormulaContext.getToApplyThresholdItems().contains(component.getNodeRef())){
+							labelingFormulaContext.getToApplyThresholdItems().add(prev.getNodeRef());
+						}
 
 					} else if ((prev instanceof CompositeLabeling) && (component instanceof IngItem)
 							&& DeclarationType.DoNotDetails.equals(((CompositeLabeling) prev).getDeclarationType())
@@ -337,6 +348,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 						merge(prev, component);
 						parent.remove(component.getNodeRef());
+						
+						if(labelingFormulaContext.getToApplyThresholdItems().contains(component.getNodeRef())){
+							labelingFormulaContext.getToApplyThresholdItems().add(prev.getNodeRef());
+						}
 
 					} else if ((prev instanceof IngItem) && (component instanceof CompositeLabeling)
 							&& DeclarationType.DoNotDetails.equals(((CompositeLabeling) component).getDeclarationType())
@@ -344,7 +359,13 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 						merge(component, prev);
 						parent.remove(prev.getNodeRef());
+						
+						if(labelingFormulaContext.getToApplyThresholdItems().contains(prev.getNodeRef())){
+							labelingFormulaContext.getToApplyThresholdItems().add(component.getNodeRef());
+						}
+						
 						prev = component;
+						
 
 					} else {
 						// DO nothing
@@ -393,6 +414,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				}
 				
 			}
+			
 
 			prev.getAllergens().addAll(component.getAllergens());
 			
@@ -932,9 +954,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						&& (yield != 100d) && (recipeQtyUsed != null) && nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_WATER)) {
 					waterLost = (1 - (yield / 100d)) * recipeQtyUsed * LabelingFormulaContext.PRECISION_FACTOR;
 
+
 					if (logger.isTraceEnabled()) {
 						logger.trace("Detected water lost: " + waterLost + " for qty :" + qty);
 					}
+					
+					labelingFormulaContext.getToApplyThresholdItems().add(productNodeRef);
 
 					qty -= waterLost;
 				}
@@ -981,6 +1006,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 									.add(new ReconstituableDataItem(productNodeRef, reconstitionRate,
 											(Integer) nodeService.getProperty(productNodeRef, PLMModel.PROP_RECONSTITUTION_PRIORITY), diluentNodeRef,
 											targetNodeRef));
+							
+							
+							labelingFormulaContext.getToApplyThresholdItems().add(diluentNodeRef);
+							labelingFormulaContext.getToApplyThresholdItems().add(targetNodeRef);
 
 						} else {
 							logger.warn("Diluent or Target ing is null for: " + productData.getName());
@@ -1310,6 +1339,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	private void loadIngList(ProductData product, Composite<IngListDataItem> compositeIngList, Double qty, Double volume,
 			LabelingFormulaContext labelingFormulaContext, CompoListDataItem compoListDataItem, CompositeLabeling compositeLabeling,
 			Map<String, ReqCtrlListDataItem> errors) {
+		
+		boolean applyThreshold = false;
+		if(nodeService.hasAspect(product.getNodeRef(), PLMModel.ASPECT_WATER)) {
+			applyThreshold = true;
+		}
+		
 
 		for (Composite<IngListDataItem> ingListItem : compositeIngList.getChildren()) {
 
@@ -1325,6 +1360,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					ingLabelItem = new IngItem((IngItem) alfrescoRepository.findOne(ingNodeRef));
 
 					compositeLabeling.add(ingLabelItem);
+					
+					if(applyThreshold){
+						labelingFormulaContext.getToApplyThresholdItems().add(ingNodeRef);
+					}
 
 					if (logger.isTraceEnabled()) {
 						logger.trace("- Add new ing " + getName(ingLabelItem) + " to current Label " + getName(compositeLabeling));

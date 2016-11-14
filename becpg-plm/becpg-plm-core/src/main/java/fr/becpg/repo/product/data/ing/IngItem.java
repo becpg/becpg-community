@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
@@ -58,14 +59,7 @@ public class IngItem extends AbstractLabelingComponent {
 
 	@Override
 	public String getLegalName(Locale locale) {
-		String ret = null;
-		if (legalName != null) {
-			if (legalName.containsKey(locale)) {
-				ret =  legalName.get(locale);
-			} else {
-				ret =  legalName.getClosestValue(locale);
-			}
-		}
+		String ret = MLTextHelper.getClosestValue(legalName, locale);
 
 		if(ret==null || ret.isEmpty()){
 			return charactName;

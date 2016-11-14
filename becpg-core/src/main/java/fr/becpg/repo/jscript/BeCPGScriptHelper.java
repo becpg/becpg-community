@@ -50,6 +50,7 @@ import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.olap.OlapService;
 
@@ -155,7 +156,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public String getMLProperty(ScriptNode sourceNode, String propQName, String locale) {
 		MLText mlText = (MLText) mlNodeService.getProperty(sourceNode.getNodeRef(), QName.createQName(propQName, namespaceService));
 		if (mlText != null) {
-			return mlText.getClosestValue(new Locale(locale));
+			return MLTextHelper.getClosestValue(mlText, new Locale(locale));
 		}
 		return null;
 	}

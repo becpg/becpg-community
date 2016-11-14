@@ -23,7 +23,9 @@ import java.util.Set;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.springframework.extensions.surf.util.I18NUtil;
 
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -68,14 +70,8 @@ public abstract class AbstractLabelingComponent extends BeCPGDataObject implemen
 
 	@Override
 	public String getLegalName(Locale locale) {
-		String ret = null;
-		if (legalName != null) {
-			if (legalName.containsKey(locale)) {
-				ret =  legalName.get(locale);
-			} else {
-				ret =  legalName.getClosestValue(locale);
-			}
-		}
+		String ret = MLTextHelper.getClosestValue(legalName, locale);
+		
 		if(ret==null || ret.isEmpty()){
 			return name;
 		}

@@ -126,7 +126,7 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 									&& Objects.equals(param.getStep(), paramTpl.getStep())
 									&& Objects.equals(param.getParamType(), paramTpl.getParamType()) && paramTpl.getParamValue() != null
 									&& !paramTpl.getParamValue().isEmpty()
-									&& param.getVariants().isEmpty()) {
+									&& (param.getVariants()== null || param.getVariants().isEmpty())) {
 								param.setParamValue(paramTpl.getParamValue());
 							}
 						}
