@@ -100,6 +100,8 @@ public class LabelingFormulaContext {
 
 	private Set<NodeRef> allergens = new HashSet<>();
 
+	private Set<NodeRef> toApplyThresholdItems = new HashSet<>();
+
 	public List<ReqCtrlListDataItem> getErrors() {
 		return errors;
 	}
@@ -122,6 +124,10 @@ public class LabelingFormulaContext {
 
 	public CompositeLabeling getCompositeLabeling() {
 		return lblCompositeContext;
+	}
+
+	public Set<NodeRef> getToApplyThresholdItems() {
+		return toApplyThresholdItems;
 	}
 
 	public void setCompositeLabeling(CompositeLabeling compositeLabeling) {
@@ -324,7 +330,14 @@ public class LabelingFormulaContext {
 				mlText = label;
 			} else if (formula != null) {
 				mlText = new MLText();
-				for (Locale locale : getLocales()) {
+				
+				Set<Locale> locales  = getLocales();
+				
+				if(locales.isEmpty()){
+					locales.add(new Locale(Locale.getDefault().getLanguage()));
+				}
+						
+				for (Locale locale : locales) {
 					String val = I18NUtil.getMessage(formula, locale);
 					if (val == null) {
 						if (logger.isDebugEnabled()) {
@@ -804,13 +817,14 @@ public class LabelingFormulaContext {
 			String ingName = getLegalIngName(component, false);
 
 			if (logger.isDebugEnabled()) {
-				logger.debug(" --" + ingName + " qtyRMUsed: " + parent.getQtyTotal() + " qtyPerc " + qtyPerc + " precision "
-						+ (qtyPerc - (1d / PRECISION_FACTOR)));
+				
+				logger.debug(" --" + ingName +"("+component.getNodeRef()+") qtyRMUsed: " + parent.getQtyTotal() + " qtyPerc " + qtyPerc + " apply precision ("
+						+ (toApplyThresholdItems.contains(component.getNodeRef()) && (qtyPerc - qtyPrecisionThreshold >0)) + ") ");
 			}
 
 			qtyPerc = (useVolume ? volumePerc : qtyPerc);
 
-			if ((qtyPerc == null) || (qtyPerc > qtyPrecisionThreshold)) {
+			if (!shouldSkip(component.getNodeRef(), qtyPerc)) {
 
 				String toAppend = new String();
 
@@ -824,7 +838,7 @@ public class LabelingFormulaContext {
 						}
 						Double subIngQtyPerc = (useVolume ? subIngItem.getVolume() : subIngItem.getQty());
 
-						if (subIngQtyPerc == null || ((subIngQtyPerc - (1d / PRECISION_FACTOR)) > 0d)) {
+						if (!shouldSkip(subIngItem.getNodeRef(),subIngQtyPerc)) {
 
 							subIngBuff.append(
 									getIngTextFormat(subIngItem).format(new Object[] { getLegalIngName(subIngItem, false), subIngQtyPerc, null }));
@@ -874,6 +888,11 @@ public class LabelingFormulaContext {
 		}
 
 		return ret;
+	}
+
+	private boolean shouldSkip(NodeRef nodeRef, Double qtyPerc) {
+		return  !((qtyPerc == null) ||  (toApplyThresholdItems.contains(nodeRef) && qtyPerc > qtyPrecisionThreshold)
+				|| (!toApplyThresholdItems.contains(nodeRef) && qtyPerc > 0));
 	}
 
 	public String createJsonLog(boolean mergedLabeling) {
