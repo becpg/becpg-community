@@ -32,6 +32,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.cache.BeCPGCacheService;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.search.impl.AbstractBeCPGQueryBuilder;
 
@@ -160,8 +161,10 @@ public class DynListConstraint extends ListOfValuesConstraint {
 
 		MLText mlText = getMLAwareAllowedValues().get(constraintAllowableValue);
 
-		if ((mlText != null) && (mlText.getClosestValue(locale) != null) && !mlText.getClosestValue(locale).isEmpty()) {
-			return mlText.getClosestValue(locale);
+		String ret = MLTextHelper.getClosestValue(mlText, locale);
+		
+		if ((ret != null) &&  !ret.isEmpty()) {
+			return ret;
 		}
 
 		return constraintAllowableValue;

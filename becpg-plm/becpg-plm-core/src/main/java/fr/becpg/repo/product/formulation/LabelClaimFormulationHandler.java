@@ -98,15 +98,8 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 						ProductData partProduct = alfrescoRepository.findOne(part);
 						if (partProduct.getLabelClaimList() != null) {
 							for (LabelClaimListDataItem labelClaim : partProduct.getLabelClaimList()) {
-								if (logger.isDebugEnabled()) {
-									logger.debug("Shall we visit " + extractName(labelClaim.getLabelClaim()) + " ?");
-								}
-								if (!LabelClaimListDataItem.VALUE_NA.equals(labelClaim.getLabelClaimValue())) {
-									if (logger.isDebugEnabled()) {
-										logger.debug("yes we should");
-									}
-									visitPart(productData, partProduct, labelClaim);
-								}
+								visitPart(productData, partProduct, labelClaim);
+								
 							}
 						}
 						visitedProducts.add(part);
@@ -139,6 +132,11 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 					case LabelClaimListDataItem.VALUE_TRUE:
 						if (labelClaimItem.getLabelClaimValue() == null) {
 							labelClaimItem.setIsClaimed(true);
+						}
+						break;
+					case LabelClaimListDataItem.VALUE_NA:
+						if (labelClaimItem.getLabelClaimValue() == null) {
+							labelClaimItem.setLabelClaimValue(LabelClaimListDataItem.VALUE_NA);
 						}
 						break;
 					case LabelClaimListDataItem.VALUE_FALSE:

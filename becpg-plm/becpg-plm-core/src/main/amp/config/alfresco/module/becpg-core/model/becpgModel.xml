@@ -215,6 +215,8 @@
 					<value>Render</value>
 					<value>Declare</value>
 					<value>Detail</value>
+					<value>DetailComponents</value>
+					<value>DoNotDetailsComponents</value>
 					<value>Group</value>
 					<value>Omit</value>
 					<value>DoNotDeclare</value>
