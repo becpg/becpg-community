@@ -31,23 +31,17 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 	protected static final String KEY_QUEUE_DELETED = "EntityActivity_deleted";
 	protected static final String KEY_QUEUE_CREATED = "EntityActivity_created";
 
-	
 	private EntityActivityService entityActivityService;
-	
+
 	private EntityDictionaryService entityDictionaryService;
-	
-	
+
 	public void setEntityActivityService(EntityActivityService entityActivityService) {
 		this.entityActivityService = entityActivityService;
 	}
 
-	
-	
 	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
 		this.entityDictionaryService = entityDictionaryService;
 	}
-
-
 
 	/**
 	 * Inits the.
@@ -61,16 +55,14 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 				new JavaBehaviour(this, "onCreateNode"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2,
 				new JavaBehaviour(this, "beforeDeleteNode"));
-		
-		
+
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM,
 				new JavaBehaviour(this, "onUpdateProperties"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM,
 				new JavaBehaviour(this, "onCreateNode"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM,
 				new JavaBehaviour(this, "beforeDeleteNode"));
-		
-		
+
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, ForumModel.TYPE_POST,
 				new JavaBehaviour(this, "onUpdateProperties"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, ForumModel.TYPE_POST,
@@ -89,15 +81,15 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
-		
+
 		if (L2CacheSupport.isThreadLockEnable()) {
-			if(logger.isDebugEnabled()){
-				logger.debug("Entity ["+Thread.currentThread().getName()+"] is locked  :" + nodeRef);
+			if (logger.isDebugEnabled()) {
+				logger.debug("Entity [" + Thread.currentThread().getName() + "] is locked  :" + nodeRef);
 			}
 			return;
 		}
-		
-		if ((before != null && before.equals(after)) || before == after) {
+
+		if (((before != null) && before.equals(after)) || (before == after)) {
 			return;
 		}
 		QName type = nodeService.getType(nodeRef);
@@ -105,7 +97,6 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 			queueNode(KEY_QUEUE_UPDATED, nodeRef);
 		}
 	}
-
 
 	@Override
 	public void onContentUpdate(NodeRef nodeRef, boolean newContent) {
@@ -118,14 +109,14 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 
 	@Override
 	public void onCreateNode(ChildAssociationRef childAssocRef) {
-		
+
 		if (L2CacheSupport.isThreadLockEnable()) {
-			if(logger.isDebugEnabled()){
-				logger.debug("Entity ["+Thread.currentThread().getName()+"] is locked  ");
+			if (logger.isDebugEnabled()) {
+				logger.debug("Entity [" + Thread.currentThread().getName() + "] is locked  ");
 			}
 			return;
 		}
-		
+
 		QName type = nodeService.getType(childAssocRef.getChildRef());
 		if (accept(type)) {
 			queueNode(KEY_QUEUE_CREATED, childAssocRef.getChildRef());
@@ -134,14 +125,14 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 
 	@Override
 	public void beforeDeleteNode(NodeRef nodeRef) {
-		
+
 		if (L2CacheSupport.isThreadLockEnable()) {
-			if(logger.isDebugEnabled()){
-				logger.debug("Entity ["+Thread.currentThread().getName()+"] is locked  :" + nodeRef);
+			if (logger.isDebugEnabled()) {
+				logger.debug("Entity [" + Thread.currentThread().getName() + "] is locked  :" + nodeRef);
 			}
 			return;
 		}
-		
+
 		QName type = nodeService.getType(nodeRef);
 		if (accept(type)) {
 			registerActivity(nodeRef, ActivityEvent.Delete);
@@ -167,43 +158,44 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 		}
 
 	}
-	
+
 	private boolean accept(QName type) {
 		return ForumModel.TYPE_POST.equals(type) || ContentModel.TYPE_CONTENT.equals(type)
 				|| entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITY_V2)
 				|| entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM);
 	}
-	
-	
 
 	private void registerActivity(NodeRef actionedUponNodeRef, ActivityEvent activityEvent) {
-		
-		QName type = nodeService.getType(actionedUponNodeRef);
-		NodeRef entityNodeRef = entityActivityService.getEntityNodeRef(actionedUponNodeRef, type);
-		
-		if (entityNodeRef!=null) {
-			try {
-				policyBehaviourFilter.disableBehaviour();
-				
-				if (activityEvent != null) {
-					if (ForumModel.TYPE_POST.equals(type)) {
-						logger.debug("Action upon comment, post activity");
-						entityActivityService.postCommentActivity(entityNodeRef, actionedUponNodeRef, activityEvent);
-					} else if (ContentModel.TYPE_CONTENT.equals(type)) {
-						logger.debug("Action upon content, post activity");
-						entityActivityService.postContentActivity(entityNodeRef,actionedUponNodeRef, activityEvent);
-					} else if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
-						logger.debug("Action upon content, post activity");
-						entityActivityService.postDatalistActivity(entityNodeRef, actionedUponNodeRef, activityEvent);
-					} else if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITY_V2)) {
-						logger.debug("Action upon content, post activity");
-						entityActivityService.postEntityActivity(actionedUponNodeRef, activityEvent);
-					}
-				}
-			} finally {
-				policyBehaviourFilter.enableBehaviour();
-			}
 
+		if (nodeService.exists(actionedUponNodeRef)) {
+
+			QName type = nodeService.getType(actionedUponNodeRef);
+			NodeRef entityNodeRef = entityActivityService.getEntityNodeRef(actionedUponNodeRef, type);
+
+			if (entityNodeRef != null) {
+				try {
+					policyBehaviourFilter.disableBehaviour();
+
+					if (activityEvent != null) {
+						if (ForumModel.TYPE_POST.equals(type)) {
+							logger.debug("Action upon comment, post activity");
+							entityActivityService.postCommentActivity(entityNodeRef, actionedUponNodeRef, activityEvent);
+						} else if (ContentModel.TYPE_CONTENT.equals(type)) {
+							logger.debug("Action upon content, post activity");
+							entityActivityService.postContentActivity(entityNodeRef, actionedUponNodeRef, activityEvent);
+						} else if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
+							logger.debug("Action upon content, post activity");
+							entityActivityService.postDatalistActivity(entityNodeRef, actionedUponNodeRef, activityEvent);
+						} else if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITY_V2)) {
+							logger.debug("Action upon content, post activity");
+							entityActivityService.postEntityActivity(actionedUponNodeRef, activityEvent);
+						}
+					}
+				} finally {
+					policyBehaviourFilter.enableBehaviour();
+				}
+
+			}
 		}
 	}
 
