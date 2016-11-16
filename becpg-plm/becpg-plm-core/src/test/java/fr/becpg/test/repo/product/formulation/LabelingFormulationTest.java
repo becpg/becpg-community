@@ -47,7 +47,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.extensions.surf.util.I18NUtil;
 
-
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.AssociationService;
@@ -224,41 +223,223 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 	}
 
-	// @Test
-	// public void testIngsLabelingWithYield() throws Exception {
-	// final NodeRef finishedProductNodeRef1 = createTestProduct(null);
-	//
-	// finishedProductNodeRef1
-	//
-	// // Declare
-	// List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
-	//
-	// labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()",
-	// LabelingRuleType.Render));
-	// labelingRuleList.add(new LabelingRuleListDataItem("Declare", null,
-	// LabelingRuleType.Declare,
-	// Arrays.asList(localSF11NodeRef, rawMaterial12NodeRef, localSF12NodeRef),
-	// null));
-	// labelingRuleList
-	// .add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}",
-	// LabelingRuleType.Format, Arrays.asList(ing1, ing2, ing3, ing4), null));
-	// labelingRuleList.add(
-	// new LabelingRuleListDataItem("Param1", "detailsDefaultFormat = \"{0}
-	// {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
-	//
-	// // └──[root - 0.0 (9.0)]
-	// // ├──[ing1 french - 0.8333333333333334]
-	// // ├──[ing2 french - 2.166666666666667]
-	// // ├──[ing3 french - 5.0]
-	// // └──[ing4 french - 1.0]
-	//
-	// checkILL(finishedProductNodeRef1, labelingRuleList, "ing3 french 55,6%,
-	// ing2 french 24,1%, ing4 french 11,1%, ing1 french 9,3%",
-	// Locale.FRENCH);
-	//
-	//
-	//
-	// }
+	@Test
+	public void testIngsLabelingWithYield() throws Exception {
+
+		// En libellé légal:
+		// A -> Rdm1
+		// --- EAU
+		// --- MP1
+		// --- MP2
+		//
+		//
+
+		NodeRef finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			FinishedProductData finishedProduct1 = new FinishedProductData();
+			finishedProduct1.setName("Test Yield 1 " + Calendar.getInstance().getTimeInMillis());
+			finishedProduct1.setQty(2d);
+			finishedProduct1.setUnit(ProductUnit.kg);
+
+			List<CompoListDataItem> compoList1 = new ArrayList<>();
+			compoList1.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.DoNotDetails, rawMaterialWaterNodeRef));
+			compoList1.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.DoNotDetails, rawMaterial1NodeRef));
+			compoList1.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.DoNotDetails, rawMaterial2NodeRef));
+
+			finishedProduct1.getCompoListView().setCompoList(compoList1);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
+		}, false, true);
+
+		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
+
+		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
+		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param1", "ingsLabelingWithYield=true", LabelingRuleType.Prefs, null, null));
+
+		checkILL(finishedProductNodeRef1, labelingRuleList,
+				"legal Raw material 1 (<b>allergen1</b>) 50%, legal Raw material 2 (<b>allergen1</b>) 50%", Locale.FRENCH);
+
+		finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			FinishedProductData finishedProduct1 = new FinishedProductData();
+			finishedProduct1.setName("Test Yield 1b " + Calendar.getInstance().getTimeInMillis());
+			finishedProduct1.setQty(2d);
+			finishedProduct1.setUnit(ProductUnit.kg);
+
+			List<CompoListDataItem> compoList1 = new ArrayList<>();
+
+			compoList1.add(new CompoListDataItem(null, null, null, 2d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF11NodeRef));
+			compoList1.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.DoNotDetails, rawMaterialWaterNodeRef));
+			compoList1.add(new CompoListDataItem(null, compoList1.get(0), null, 1d, CompoListUnit.kg, 0d, DeclarationType.DoNotDetails,
+					rawMaterial1NodeRef));
+			compoList1.add(new CompoListDataItem(null, compoList1.get(0), null, 1d, CompoListUnit.kg, 0d, DeclarationType.DoNotDetails,
+					rawMaterial2NodeRef));
+
+			finishedProduct1.getCompoListView().setCompoList(compoList1);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
+		}, false, true);
+
+		labelingRuleList = new ArrayList<>();
+
+		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
+		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param1", "ingsLabelingWithYield=true", LabelingRuleType.Prefs, null, null));
+
+		checkILL(finishedProductNodeRef1, labelingRuleList,
+				"pâte french (legal Raw material 1 (<b>allergen1</b>) 50%, legal Raw material 2 (<b>allergen1</b>) 50%)", Locale.FRENCH);
+
+		// En ingrédient:
+		// A -> Rdm1
+		// --- EAU
+		// --- MP1
+		// --- MP2
+		//
+
+		finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			FinishedProductData finishedProduct1 = new FinishedProductData();
+			finishedProduct1.setName("Test Yield 2 " + Calendar.getInstance().getTimeInMillis());
+			finishedProduct1.setQty(2d);
+			finishedProduct1.setUnit(ProductUnit.kg);
+
+			List<CompoListDataItem> compoList1 = new ArrayList<>();
+			compoList1.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterialWaterNodeRef));
+			compoList1.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+			compoList1.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial2NodeRef));
+
+			finishedProduct1.getCompoListView().setCompoList(compoList1);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
+		}, false, true);
+
+		labelingRuleList = new ArrayList<>();
+
+		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
+		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param1", "ingsLabelingWithYield=true", LabelingRuleType.Prefs, null, null));
+
+		checkILL(finishedProductNodeRef1, labelingRuleList, "ing2 french 70,8%, ing1 french 29,2%", Locale.FRENCH);
+
+		//
+		// En ingrédient:
+		// A -> Rdm1 Decl.
+		// --- B -> Rdm2 Decl.
+		// --- C
+		// ---- MP1
+		// ---- EAU
+		// --- MP2
+
+		NodeRef finishedProductNodeRefC = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			FinishedProductData finishedProduct1 = new FinishedProductData();
+			finishedProduct1.setName("Test yield Sub - C " + Calendar.getInstance().getTimeInMillis());
+			finishedProduct1.setLegalName("Test yield Sub - C");
+			finishedProduct1.setQty(2d);
+			finishedProduct1.setUnit(ProductUnit.kg);
+
+			List<CompoListDataItem> compoList1 = new ArrayList<>();
+			compoList1.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterialWaterNodeRef));
+			compoList1.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+
+			finishedProduct1.getCompoListView().setCompoList(compoList1);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
+		}, false, true);
+		
+		
+		NodeRef finishedProductNodeRefB = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			FinishedProductData finishedProduct1 = new FinishedProductData();
+			finishedProduct1.setName("Test yield Sub - B " + Calendar.getInstance().getTimeInMillis());
+			finishedProduct1.setLegalName("Test yield Sub - B");
+			finishedProduct1.setQty(2d);
+			finishedProduct1.setUnit(ProductUnit.kg);
+
+			List<CompoListDataItem> compoList1 = new ArrayList<>();
+			compoList1.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, finishedProductNodeRefC));
+			compoList1.add(new CompoListDataItem(null, null, null, 2d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial2NodeRef));
+
+			finishedProduct1.getCompoListView().setCompoList(compoList1);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
+		}, false, true);
+
+		
+		finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			FinishedProductData finishedProduct1 = new FinishedProductData();
+			finishedProduct1.setName("Test yield 3 " + Calendar.getInstance().getTimeInMillis());
+			finishedProduct1.setQty(2d);
+			finishedProduct1.setUnit(ProductUnit.kg);
+
+			List<CompoListDataItem> compoList1 = new ArrayList<>();
+			compoList1.add(new CompoListDataItem(null, null, null, 3d, CompoListUnit.kg, 0d, DeclarationType.Declare, finishedProductNodeRefB));
+
+			finishedProduct1.getCompoListView().setCompoList(compoList1);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
+		}, false, true);
+		
+		labelingRuleList = new ArrayList<>();
+
+		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
+		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param1", "ingsLabelingWithYield=true", LabelingRuleType.Prefs, null, null));
+
+		
+//		└──[root - 0.0 (200.00000000000006, vol: 200.00000000000006) ]
+//			    ├──[Test yield Sub - C 1476452333120 - 150.0 (88.8888888888889, vol: 88.8888888888889) Detail]
+//			    │   ├──[eau - -11.111111111111112 ( vol : 100.0) ]
+//			    │   ├──[ing1 french - 33.333333333333336 ( vol : 33.333333333333336) ]
+//			    │   └──[ing2 french - 66.66666666666667 ( vol : 66.66666666666667) ]
+//			    ├──[ing1 french - 75.0 ( vol : 75.0) ]
+//			    └──[ing2 french - 225.0 ( vol : 225.0) ]
+
+		
+		checkILL(finishedProductNodeRef1, labelingRuleList, "ing2 french 137,5%, ing1 french 50%", Locale.FRENCH);
+		
+		
+		//
+		// En group:
+		// #2640
+		
+		
+//		└──[root - 0.0 (19.0, vol: 20.9) ]
+//			    ├──[Test yield Sub - C - 16.0 (200.0, vol: 190.0) Group]
+//			    │   ├──[eau - 89.99999999999999 ( vol : 100.0) ]
+//			    │   ├──[ing1 french - 33.333333333333336 ( vol : 33.333333333333336) ]
+//			    │   └──[ing2 french - 66.66666666666667 ( vol : 66.66666666666667) ]
+//			    └──[Test yield Sub - B - 4.0 (200.0, vol: 190.0) Group]
+//			        ├──[eau - 13.333333333333329 ( vol : 50.0) ]
+//			        ├──[ing1 french - 66.66666666666667 ( vol : 66.66666666666667) ]
+//			        └──[ing2 french - 183.33333333333334 ( vol : 183.33333333333334) ]
+
+	//	ing1 = 200÷190×160÷200×0.333333333÷2 --> 0,140350877
+			
+		
+		finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			FinishedProductData finishedProduct1 = new FinishedProductData();
+			finishedProduct1.setName("Test yield 4 " + Calendar.getInstance().getTimeInMillis());
+			finishedProduct1.setQty(190d);
+			finishedProduct1.setUnit(ProductUnit.g);
+
+			List<CompoListDataItem> compoList1 = new ArrayList<>();
+			compoList1.add(new CompoListDataItem(null, null, null, 160d, CompoListUnit.g, 0d, DeclarationType.Group, finishedProductNodeRefC));
+			compoList1.add(new CompoListDataItem(null, null, null, 40d, CompoListUnit.g, 0d, DeclarationType.Group, finishedProductNodeRefB));
+			
+			finishedProduct1.getCompoListView().setCompoList(compoList1);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
+		}, false, true);
+		
+		labelingRuleList = new ArrayList<>();
+
+		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
+		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param1", "ingsLabelingWithYield=true", LabelingRuleType.Prefs, null, null));
+		
+
+		checkILL(finishedProductNodeRef1, labelingRuleList, "<b>test yield Sub - C (84,2%):</b> eau 42,1%, ing2 french 28,1%, ing1 french 14%<br/><b>test yield Sub - B (21,1%):</b> ing2 french 12,9%, ing1 french 4,7%, eau 3,5%", Locale.FRENCH);
+		
+		
+
+	}
 
 	@Test
 	public void testMultiLevelSFGroup() throws Exception {
@@ -647,18 +828,18 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		labelingRuleList = new ArrayList<>();
 
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format,
-				Arrays.asList(ing2), null));
+		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format, Arrays.asList(ing2), null));
 
 		labelingRuleList.add(new LabelingRuleListDataItem("Declare 1", null, LabelingRuleType.Declare,
 				Arrays.asList(rawMaterial1NodeRef, rawMaterial2NodeRef), null));
-		
-		labelingRuleList.add(new LabelingRuleListDataItem("Aggregate 1", null, LabelingRuleType.DoNotDetails,
-				Arrays.asList(ing1, ing2), Collections.singletonList(ing2)));
+
+		labelingRuleList.add(new LabelingRuleListDataItem("Aggregate 1", null, LabelingRuleType.DoNotDetails, Arrays.asList(ing1, ing2),
+				Collections.singletonList(ing2)));
 
 		checkILL(finishedProductNodeRef1, labelingRuleList, "ing2 french 100%", Locale.FRENCH);
 
 	}
+
 	/**
 	 * Test ingredients calculating.
 	 *
@@ -1212,18 +1393,16 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			try {
-			ProductData formulatedProduct = alfrescoRepository.findOne(productNodeRef);
-			labelingRuleList.add(new LabelingRuleListDataItem("Pref7", "uncapitalizeLegalName = true", LabelingRuleType.Prefs));
+				ProductData formulatedProduct = alfrescoRepository.findOne(productNodeRef);
+				labelingRuleList.add(new LabelingRuleListDataItem("Pref7", "uncapitalizeLegalName = true", LabelingRuleType.Prefs));
 
-			formulatedProduct.getLabelingListView().setLabelingRuleList(labelingRuleList);
+				formulatedProduct.getLabelingListView().setLabelingRuleList(labelingRuleList);
 
-			productService.formulate(formulatedProduct);
+				productService.formulate(formulatedProduct);
 
-			Assert.assertTrue(formulatedProduct.getLabelingListView().getLabelingRuleList().size() > 0);
+				Assert.assertTrue(formulatedProduct.getLabelingListView().getLabelingRuleList().size() > 0);
 
-			// verify IngLabelingList
-
-		
+				// verify IngLabelingList
 
 				Assert.assertNotNull("IngLabelingList is null", formulatedProduct.getLabelingListView().getIngLabelingList());
 				Assert.assertTrue(formulatedProduct.getLabelingListView().getIngLabelingList().size() > 0);
@@ -1235,7 +1414,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 				}
 			} catch (Throwable e) {
-				logger.error(e,e);
+				logger.error(e, e);
 				throw e;
 			}
 
