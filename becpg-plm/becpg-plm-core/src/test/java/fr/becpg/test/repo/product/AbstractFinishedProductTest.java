@@ -115,6 +115,8 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 	protected NodeRef rawMaterial14NodeRef;
 	protected NodeRef rawMaterial15NodeRef;
 	protected NodeRef rawMaterial16NodeRef;
+	
+	protected NodeRef rawMaterialWaterNodeRef;
 
 	protected NodeRef packagingMaterial1NodeRef;
 	protected NodeRef packagingMaterial2NodeRef;
@@ -181,6 +183,8 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 	protected NodeRef ing5;
 
 	protected NodeRef ing6;
+	
+	protected NodeRef ingWater;
 
 	protected NodeRef ingType1;
 
@@ -438,6 +442,15 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			mlName.addValue(Locale.FRENCH, "ing6 french");
 			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
 			ing6 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					PLMModel.TYPE_ING, properties).getChildRef();
+			properties.clear();
+			properties.put(BeCPGModel.PROP_CHARACT_NAME, "water");
+			mlName = new MLText();
+			mlName.addValue(Locale.ENGLISH, "water");
+			mlName.addValue(Locale.FRENCH, "eau");
+			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
+			ingWater = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_ING, properties).getChildRef();
 			// Geo origins
@@ -792,6 +805,22 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			ingList.add(new IngListDataItem(null, ingList.get(0), 30d, null, null, null, false, false, false, false, ing4, false));
 			rawMaterial7.setIngList(ingList);
 			rawMaterial7NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial7).getNodeRef();
+			
+			/** Water **/
+			RawMaterialData waterRawMaterial = new RawMaterialData();
+			waterRawMaterial.setName("Water");
+			legalName = new MLText();
+			legalName.addValue(Locale.FRENCH, "eau");
+			legalName.addValue(Locale.ENGLISH, "water");
+			waterRawMaterial.setLegalName(legalName);
+			waterRawMaterial.setUnit(ProductUnit.kg);
+			waterRawMaterial.setDensity(1d);
+			// ingList : ing5
+			ingList = new ArrayList<>();
+			ingList.add(new IngListDataItem(null, 100d, null, null, false, false, false, ingWater, false));
+			waterRawMaterial.setIngList(ingList);
+			rawMaterialWaterNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), waterRawMaterial).getNodeRef();
+			nodeService.addAspect(rawMaterialWaterNodeRef, PLMModel.ASPECT_WATER, null);
 
 			/*-- Local semi finished product 1 --*/
 			LocalSemiFinishedProductData localSF1 = new LocalSemiFinishedProductData();
