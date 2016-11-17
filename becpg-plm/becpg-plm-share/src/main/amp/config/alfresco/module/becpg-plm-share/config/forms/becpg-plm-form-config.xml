@@ -6117,6 +6117,7 @@
 					</field>
 				</appearance>
 			</form>
+			
 			<form id="full-screen">
 				<field-visibility>
 					<show id="bcpg:compoListProduct" />

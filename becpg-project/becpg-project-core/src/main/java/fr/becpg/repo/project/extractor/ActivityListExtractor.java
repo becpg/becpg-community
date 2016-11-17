@@ -44,8 +44,6 @@ import fr.becpg.repo.project.data.projectList.ActivityType;
  */
 public class ActivityListExtractor extends SimpleExtractor {
 
-	private static final String ACTIVITY_LIST = "activityList";
-
 	private static Log logger = LogFactory.getLog(ActivityListExtractor.class);
 	
 	private ProjectActivityService projectActivityService;
@@ -104,7 +102,7 @@ public class ActivityListExtractor extends SimpleExtractor {
 
 	@Override
 	public boolean applyTo(DataListFilter dataListFilter) {
-		return dataListFilter.getDataListName() != null && dataListFilter.getDataListName().equals(ACTIVITY_LIST);
+		return dataListFilter.getDataListName() != null &&  ProjectModel.TYPE_ACTIVITY_LIST.equals(dataListFilter.getDataType());
 	}
 
 	@Override

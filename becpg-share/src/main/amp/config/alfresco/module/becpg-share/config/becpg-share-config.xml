@@ -202,6 +202,7 @@
 		   <list id="View-reports" index="10" view="true"/>
 		   <list id="View-documents" index="15" view="true" />
 		   <list id="aclEntry" index="200" />
+		   <list id="activityList" index="900" />
 		   <list id="WUsed" index="1000" view="true"/>
 		</lists>
 	</config>
