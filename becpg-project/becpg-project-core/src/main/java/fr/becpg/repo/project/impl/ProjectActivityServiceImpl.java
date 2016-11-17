@@ -268,8 +268,49 @@ public class ProjectActivityServiceImpl implements ProjectActivityService {
 		}
 
 	}
+	
+	
+	//TODO
+	class ProjectActivityHook {
+		
+		
+		public void postCommentActivity(){
+			
+//			
+//			NodeRef projectNodeRef = itemNodeRef;
+//			QName itemType = nodeService.getType(itemNodeRef);
+//			if (ProjectModel.TYPE_PROJECT.equals(itemType)) {
+//				projectNotificationService.notifyComment(commentNodeRef, activityEvent, projectNodeRef, null, null);
+//			} else if (ProjectModel.TYPE_TASK_LIST.equals(itemType)) {
+//				projectNodeRef = getProjectNodeRefFromList(itemNodeRef);
+//				//activityListDataItem.setTask(itemNodeRef);
+//				projectNotificationService.notifyComment(commentNodeRef, activityEvent, projectNodeRef, itemNodeRef, null);
+//
+//			} else if (ProjectModel.TYPE_DELIVERABLE_LIST.equals(itemType)) {
+//				projectNodeRef = getProjectNodeRefFromList(itemNodeRef);
+////				activityListDataItem.setDeliverable(itemNodeRef);
+////				NodeRef taskNodeRef = getTaskNodeRef(itemNodeRef);
+////				activityListDataItem.setTask(taskNodeRef);
+//				projectNotificationService.notifyComment(commentNodeRef, activityEvent, projectNodeRef, taskNodeRef, itemNodeRef);
+//			} else if ( entityDictionaryService.isSubClass(itemType, BeCPGModel.TYPE_ENTITY_V2) ) {
+//			   projectNodeRef = getProjectNodeRef(itemNodeRef,null);
+//			   projectNotificationService.notifyComment(commentNodeRef, activityEvent, projectNodeRef, null, null);
+//			  
+//		    } else {
+//				return;					
+//			}
+			
+	//		associationService.update(projectNodeRef, ProjectModel.ASSOC_PROJECT_CUR_COMMENTS, Collections.singletonList(activityListDataItem.getNodeRef()));
+		}
+		
+		
+	}
+	
+	
+	
 
 	@Override
+	//A supprimer identique
 	public void postContentActivity(NodeRef contentNodeRef, ActivityEvent activityEvent) {
 
 		if (contentNodeRef != null && !nodeService.hasAspect(contentNodeRef, ContentModel.ASPECT_WORKING_COPY)) {

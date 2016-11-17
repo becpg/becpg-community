@@ -70,7 +70,6 @@
 		   <list id="expenseList" index="50" />
 		   <list id="invoiceList" index="60" />
 		   <list id="logTimeList" index="70" />
-		   <list id="activityList" index="80" view="true" />
 		</lists>
 	</config>
 	

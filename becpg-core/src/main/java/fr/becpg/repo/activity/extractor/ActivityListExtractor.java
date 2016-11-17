@@ -104,7 +104,7 @@ public class ActivityListExtractor extends SimpleExtractor {
 
 	@Override
 	public boolean applyTo(DataListFilter dataListFilter) {
-		return dataListFilter.getDataType() != null && dataListFilter.getDataType().equals(BeCPGModel.TYPE_ACTIVITY_LIST);
+		return dataListFilter.getDataType() != null && dataListFilter.getDataType().equals(BeCPGModel.TYPE_ACTIVITY_LIST) ;
 	}
 
 	@Override
