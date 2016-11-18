@@ -1,16 +1,29 @@
 package fr.becpg.repo.helper;
 
 import java.util.Locale;
+import java.util.Set;
 
 import org.alfresco.service.cmr.repository.MLText;
-import org.springframework.extensions.surf.util.I18NUtil;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 /**
  * 
  * @author matthieu
  *
  */
+@Component
 public class MLTextHelper {
+	
+	
+	
+	private static String supportedLocales;
+	
+	
+	@Value("${beCPG.multilinguale.supportedLocales}")
+	public void setSupportedLocales(String supportedLocales) {
+		MLTextHelper.supportedLocales = supportedLocales;
+	}  
 
 	/**
 	 * Try to find the best match for locale or try with default server local 
@@ -25,20 +38,15 @@ public class MLTextHelper {
 			if (mltext.containsKey(locale)) {
 				ret = mltext.get(locale);
 			} else {
-
-				Locale match = I18NUtil.getNearestLocale(locale, mltext.getLocales());
-				if (match == null) {
-					// No close matches for the locale - go for the default
-					// locale
-					locale = Locale.getDefault();
-					match = I18NUtil.getNearestLocale(locale, mltext.getLocales());
-
-				}
+         		Locale match = getNearestLocale(locale, mltext.getLocales());
+         		
 				// Did we get a match
 				if (match == null) {
+					
 					// We could find no locale matches
 					return null;
 				} else {
+					
 					return mltext.get(match);
 				}
 
@@ -47,6 +55,55 @@ public class MLTextHelper {
 
 		return ret;
 
+	}
+	
+
+	 public static Locale getNearestLocale(Locale templateLocale, Set<Locale> options)
+	    {
+	        if (options.isEmpty())                          // No point if there are no options
+	        {
+	            return null;
+	        }
+	        else if (templateLocale == null)
+	        {
+	        	 return null;
+	        }
+	        else if (options.contains(templateLocale))      // First see if there is an exact match
+	        {
+	            return templateLocale;
+	        }
+	        
+	        
+	        Locale lastMatchingOption = null;
+	        Locale languageMatchingOption = null;
+	        
+	        //First test language only 
+	        for(Locale temp :options ){
+	        	 if(temp.getLanguage()!=null && temp.getLanguage().equals(templateLocale.getLanguage())){
+	        		if(temp.getCountry()!=null && temp.getCountry().equals(templateLocale.getCountry())){
+	        			return temp;
+	        		} 
+	        		
+	        		if(temp.getCountry() == null ||temp.getCountry().isEmpty() ){
+	        			languageMatchingOption = temp;
+	        		}
+	        		
+	        		if(lastMatchingOption == null){
+	        			lastMatchingOption = temp;
+	        		}
+	        	}
+	        	
+	        }	
+	        
+	        return languageMatchingOption!=null ? languageMatchingOption : lastMatchingOption;
+	        
+	    }
+
+	public static boolean isSupportedLocale(Locale contentLocale) {
+		if(supportedLocales.contains(contentLocale.toString())){
+			return true;
+		}
+		return false;
 	}
 
 }

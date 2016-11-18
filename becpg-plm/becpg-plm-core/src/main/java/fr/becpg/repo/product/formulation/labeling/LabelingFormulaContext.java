@@ -158,7 +158,11 @@ public class LabelingFormulaContext {
 	public void addLocale(String value) {
 		String[] locales = value.split(",");
 		for (String tmp : locales) {
-			availableLocales.add(new Locale(tmp));
+			if(tmp.contains("_")){
+				availableLocales.add(new Locale(tmp.split("_")[0],tmp.split("_")[1]));
+			} else {
+				availableLocales.add(new Locale(tmp));
+			}
 		}
 	}
 
