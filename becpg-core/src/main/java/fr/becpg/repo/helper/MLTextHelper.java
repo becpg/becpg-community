@@ -4,7 +4,11 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.alfresco.service.cmr.repository.MLText;
+import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Component;
 
 /**
@@ -39,6 +43,13 @@ public class MLTextHelper {
 				ret = mltext.get(locale);
 			} else {
          		Locale match = getNearestLocale(locale, mltext.getLocales());
+         		
+         		//Try with system local
+         		if(match == null) {
+         			
+         			match = getNearestLocale(Locale.getDefault(), mltext.getLocales());
+         		}
+         		
          		
 				// Did we get a match
 				if (match == null) {
@@ -104,6 +115,23 @@ public class MLTextHelper {
 			return true;
 		}
 		return false;
+	}
+
+	public static String getValueOrDefault(NodeService nodeService, NodeRef nodeRef, QName propCharactName) {
+		String ret = (String) nodeService.getProperty(nodeRef, propCharactName);
+		
+		if(ret == null){
+			Locale locale = I18NUtil.getLocale();
+			try {
+				I18NUtil.setLocale(Locale.getDefault());
+				ret = (String) nodeService.getProperty(nodeRef, propCharactName);
+			} finally {
+				I18NUtil.setLocale(locale);
+			}
+			
+		}
+		
+		return ret;
 	}
 
 }
