@@ -101,10 +101,10 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	@Value("${beCPG.product.report.assocsToExtract}")
 	private String assocsToExtract = "";
-	
+
 	@Value("${beCPG.product.report.assocsToExtractWithDataList}")
 	private String assocsToExtractWithDataList = "";
-	
+
 	@Value("${beCPG.product.report.assocsToExtractWithImage}")
 	private String assocsToExtractWithImage = "";
 
@@ -155,7 +155,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			for (QName dataListQName : datalists.keySet()) {
 
 				if (alfrescoRepository.hasDataList(entityNodeRef, dataListQName)) {
-					if (((isExtractedProduct || PLMModel.TYPE_LABELCLAIMLIST.equals(dataListQName))  && !DATALIST_SPECIFIC_EXTRACTOR.contains(dataListQName))) {
+					if (((isExtractedProduct || PLMModel.TYPE_LABELCLAIMLIST.equals(dataListQName))
+							&& !DATALIST_SPECIFIC_EXTRACTOR.contains(dataListQName))) {
 						Element dataListElt = dataListsElt.addElement(dataListQName.getLocalName() + "s");
 
 						@SuppressWarnings({ "rawtypes" })
@@ -213,6 +214,10 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 						if ((allergen == null) || allergen.isEmpty()) {
 							allergen = (String) nodeService.getProperty(dataItem.getAllergen(), BeCPGModel.PROP_CHARACT_NAME);
+						}
+
+						if (allergen == null) {
+							allergen = "###";
 						}
 
 						// concat allergens
@@ -423,23 +428,30 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 			for (NutListDataItem dataListItem : productData.getNutList()) {
 
-				Element nutListElt = nutListsElt.addElement(PLMModel.TYPE_NUTLIST.getLocalName());
+				if (dataListItem.getNut() != null) {
 
-				loadDataListItemAttributes(dataListItem, nutListElt, images);
+					Element nutListElt = nutListsElt.addElement(PLMModel.TYPE_NUTLIST.getLocalName());
 
-				String nut = nutListElt.valueOf("@" + PLMModel.ASSOC_NUTLIST_NUT.getLocalName());
-				if (nut != null) {
-					String value = nutListElt.valueOf("@" + PLMModel.PROP_NUTLIST_VALUE.getLocalName());
-					if ((value == null) || value.isEmpty()) {
-						value = nutListElt.valueOf("@" + PLMModel.PROP_NUTLIST_FORMULATED_VALUE.getLocalName());
-						nutListElt.addAttribute(PLMModel.PROP_NUTLIST_VALUE.getLocalName(), value);
+					loadDataListItemAttributes(dataListItem, nutListElt, images);
 
+					String nut = nutListElt.valueOf("@" + PLMModel.ASSOC_NUTLIST_NUT.getLocalName());
+					if (nut != null) {
+						String value = nutListElt.valueOf("@" + PLMModel.PROP_NUTLIST_VALUE.getLocalName());
+						if ((value == null) || value.isEmpty()) {
+							value = nutListElt.valueOf("@" + PLMModel.PROP_NUTLIST_FORMULATED_VALUE.getLocalName());
+							nutListElt.addAttribute(PLMModel.PROP_NUTLIST_VALUE.getLocalName(), value);
+
+						}
+
+						nutListsElt.addAttribute(generateKeyAttribute(nut), value != null ? value : "");
+						NodeRef nutNodeRef = dataListItem.getNut();
+
+						addCDATA(nutListElt, PLMModel.PROP_NUTGDA, nodeService.getProperty(nutNodeRef, PLMModel.PROP_NUTGDA) != null
+								? ((Double) nodeService.getProperty(nutNodeRef, PLMModel.PROP_NUTGDA)).toString() : "", null);
+
+					} else {
+						logger.warn("Nut is null for " + dataListItem.getNut());
 					}
-
-					nutListsElt.addAttribute(generateKeyAttribute(nut), value != null ? value : "");
-					NodeRef nutNodeRef = dataListItem.getNut();
-					addCDATA(nutListElt, PLMModel.PROP_NUTGDA, nodeService.getProperty(nutNodeRef, PLMModel.PROP_NUTGDA) != null
-							? ((Double) nodeService.getProperty(nutNodeRef, PLMModel.PROP_NUTGDA)).toString() : "", null);
 				}
 			}
 		}
@@ -539,29 +551,29 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		boolean isExtracted = false;
 		if ((assocDef != null) && (assocDef.getName() != null)) {
 			boolean extractDataList = false;
-			if(assocsToExtractWithDataList != null && assocsToExtractWithDataList.contains(assocDef.getName().toPrefixString(namespaceService))){
+			if (assocsToExtractWithDataList != null && assocsToExtractWithDataList.contains(assocDef.getName().toPrefixString(namespaceService))) {
 				extractDataList = true;
 			}
-			
-			if((assocsToExtract != null && assocsToExtract.contains(assocDef.getName().toPrefixString(namespaceService))) || extractDataList){
-				
+
+			if ((assocsToExtract != null && assocsToExtract.contains(assocDef.getName().toPrefixString(namespaceService))) || extractDataList) {
+
 				Element assocElt = entityElt;
-				//compatibility with existing reports
-				if(!assocDef.getName().equals(PLMModel.ASSOC_STORAGE_CONDITIONS) && !assocDef.getName().equals(PLMModel.ASSOC_PRECAUTION_OF_USE)){
+				// compatibility with existing reports
+				if (!assocDef.getName().equals(PLMModel.ASSOC_STORAGE_CONDITIONS) && !assocDef.getName().equals(PLMModel.ASSOC_PRECAUTION_OF_USE)) {
 					assocElt = entityElt.addElement(assocDef.getName().getLocalName());
 					appendPrefix(assocDef.getName(), assocElt);
 				}
 				extractTargetAssoc(entityNodeRef, assocDef, assocElt, images, extractDataList);
-				isExtracted = true;								
+				isExtracted = true;
 			}
-			
-			if(assocsToExtractWithImage != null && assocsToExtractWithImage.contains(assocDef.getName().toPrefixString(namespaceService))){
+
+			if (assocsToExtractWithImage != null && assocsToExtractWithImage.contains(assocDef.getName().toPrefixString(namespaceService))) {
 				List<NodeRef> nodeRefs = associationService.getTargetAssocs(entityNodeRef, assocDef.getName());
 				for (NodeRef nodeRef : nodeRefs) {
 					Element imgsElt = (Element) entityElt.getDocument().selectSingleNode(TAG_ENTITY + "/" + TAG_IMAGES);
 					extractEntityImages(nodeRef, imgsElt, images);
 				}
-			}			
+			}
 		}
 		return isExtracted;
 	}

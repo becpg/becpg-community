@@ -165,4 +165,20 @@
 	
 	<bean id="applicationContextHelper" class="fr.becpg.util.ApplicationContextHelper"/>
 
+    
+    <!-- Alfresco patch for country support under MLText -->
+    
+    <bean id="mlPropertyInterceptor" class="fr.becpg.repo.multilingual.BeCPGMLPropertyInterceptor">
+      <property name="nodeService">
+         <ref bean="mlAwareNodeService" />
+      </property>
+      <property name="multilingualContentService">
+         <ref bean="multilingualContentService" />
+      </property>
+      <property name="dictionaryService">
+         <ref bean="dictionaryService" />
+      </property>
+   </bean>
+
+
 </beans>

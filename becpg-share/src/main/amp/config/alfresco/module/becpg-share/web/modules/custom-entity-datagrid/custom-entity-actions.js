@@ -193,12 +193,13 @@
 			var templateUrl = YAHOO.lang
 					.substitute(
 							Alfresco.constants.URL_SERVICECONTEXT
-									+ "components/form?formId={formId}&bulkEdit=true&fields={fields}&submissionUrl={submissionUrl}&itemKind={itemKind}&itemId={itemId}&mode={mode}&submitType={submitType}&showCancelButton=true",
+									+ "components/form?formId={formId}&bulkEdit=true&entityNodeRef={entityNodeRef}&fields={fields}&submissionUrl={submissionUrl}&itemKind={itemKind}&itemId={itemId}&mode={mode}&submitType={submitType}&showCancelButton=true",
 							{
 								itemKind : "type",
 								formId : "create",
 								itemId : itemType,
 								mode : "create",
+								entityNodeRef : me.options.entityNodeRef,
 								submitType : "json",
 								submissionUrl : "/becpg/bulkedit/type/" + itemType.replace(":", "_")
 										+ "/bulksave?nodeRefs=" + nodeRefs.join(),
