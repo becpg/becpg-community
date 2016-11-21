@@ -416,8 +416,9 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
                 if (match == null)
                 {
                     // just get any locale
-                    match = MLTextHelper.getNearestLocale(null, locales);
+                    match = MLTextHelper.getNearestLocale(Locale.getDefault(), locales);
                 }
+               
             }
         }
         return match;
