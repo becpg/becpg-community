@@ -630,8 +630,10 @@ if (beCPG.module.EntityDataGridRenderers) {
 					scope.widgets.dataTable.showColumn(oColumn);
 					Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
 				}
-				Dom.setStyle(elCell, "width", "16px");
-				Dom.setStyle(elCell.parentNode, "width", "16px");
+				if(oColumn.label == ""){
+					Dom.setStyle(elCell, "width", "16px");
+					Dom.setStyle(elCell.parentNode, "width", "16px");
+				}
 			}
 
 			if (isInDefault) {
@@ -649,11 +651,17 @@ if (beCPG.module.EntityDataGridRenderers) {
 				}
 			}
 
+			var title = "&nbsp;";
+			
+			if(oColumn.label != ""){
+				title += data.displayValue;
+			}	
+			
 			if (isInDefault) {
-				return "<span title=\"" + data.displayValue + "\" class='variant-default'>&nbsp;</span>";
+				return "<span title=\"" + data.displayValue + "\" class='variant-default'>"+title+"</span>";
 			}
 
-			return "<span title=\"" + data.displayValue + "\" class='variant'>&nbsp;</span>";
+			return "<span title=\"" + data.displayValue + "\" class='variant'>"+title+"</span>";
 
 		}
 
