@@ -61,10 +61,9 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 	@Autowired
 	ContentService contentService;
-	
-	@Autowired 
+
+	@Autowired
 	NamespaceService namespaceService;
-	
 
 	@Autowired
 	EntityDictionaryService entityDictionaryService;
@@ -72,7 +71,9 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	private static final String PROP_COMMENT_NODEREF = "commentNodeRef";
 	private static final String PROP_CONTENT_NODEREF = "contentNodeRef";
 	private static final String PROP_DATALIST_NODEREF = "datalistNodeRef";
+	private static final String PROP_ENTITY_NODEREF = "entityNodeRef";
 	private static final String PROP_ACTIVITY_EVENT = "activityEvent";
+	private static final String PROP_CLASSNAME = "className";
 	private static final String PROP_TITLE = "title";
 
 	private static Integer MAX_DEPTH_LEVEL = 6;
@@ -106,7 +107,32 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 					NodeRef itemNodeRef = commentService.getDiscussableAncestor(commentNodeRef);
 
-					data.put(PROP_TITLE, attributeExtractorService.extractPropName(itemNodeRef));
+					QName itemType = nodeService.getType(itemNodeRef);
+
+					if (entityDictionaryService.isSubClass(itemType, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
+						data.put(PROP_DATALIST_NODEREF, itemNodeRef);
+
+						NodeRef charactNodeRef = getMatchingCharactNodeRef(itemNodeRef);
+
+						if (charactNodeRef != null) {
+							data.put(PROP_TITLE, attributeExtractorService.extractPropName(charactNodeRef));
+						} else {
+							data.put(PROP_TITLE, itemType.toPrefixString());
+						}
+
+					} else if (entityDictionaryService.isSubClass(itemType, BeCPGModel.TYPE_ENTITY_V2)) {
+						if (itemNodeRef != entityNodeRef) {
+							data.put(PROP_ENTITY_NODEREF, itemNodeRef);
+						}
+					} else {
+						// Case comment on other nodes under entity
+						return;
+					}
+
+					if (data.get(PROP_TITLE) == null) {
+						data.put(PROP_TITLE, attributeExtractorService.extractPropName(itemType, itemNodeRef));
+					}
+					data.put(PROP_CLASSNAME, attributeExtractorService.extractMetadata(itemType, itemNodeRef));
 
 					activityListDataItem.setActivityType(ActivityType.Comment);
 					activityListDataItem.setActivityData(data.toString());
@@ -169,7 +195,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 	@Override
 	public void postDatalistActivity(NodeRef entityNodeRef, NodeRef datalistNodeRef, ActivityEvent activityEvent) {
-		if ((datalistNodeRef != null) ) {
+		if ((datalistNodeRef != null)) {
 			try {
 
 				NodeRef activityListNodeRef = getActivityList(entityNodeRef);
@@ -189,7 +215,17 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					data.put(PROP_DATALIST_NODEREF, datalistNodeRef);
 					data.put(PROP_ACTIVITY_EVENT, activityEvent.toString());
 
-					data.put(PROP_TITLE, nodeService.getType(datalistNodeRef).toPrefixString(namespaceService));
+					QName type = nodeService.getType(datalistNodeRef);
+
+					data.put(PROP_CLASSNAME, attributeExtractorService.extractMetadata(type, datalistNodeRef));
+
+					NodeRef charactNodeRef = getMatchingCharactNodeRef(datalistNodeRef);
+
+					if (charactNodeRef != null) {
+						data.put(PROP_TITLE, attributeExtractorService.extractPropName(charactNodeRef));
+					} else {
+						data.put(PROP_TITLE, type.toPrefixString());
+					}
 
 					activityListDataItem.setActivityType(ActivityType.Datalist);
 					activityListDataItem.setActivityData(data.toString());
@@ -251,12 +287,28 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		return getEntityNodeRef(nodeRef, itemType, new HashSet<NodeRef>());
 	}
 
+	private NodeRef getMatchingCharactNodeRef(NodeRef listItemNodeRef) {
+		QName pivotAssoc = entityDictionaryService.getDefaultPivotAssoc(nodeService.getType(listItemNodeRef));
+		if (pivotAssoc != null) {
+			NodeRef part = associationService.getTargetAssoc(listItemNodeRef, pivotAssoc);
+			if ((part != null)) {
+				return part;
+			}
+		}
+
+		return null;
+	}
+
 	private NodeRef getEntityNodeRef(NodeRef nodeRef, QName itemType, Set<NodeRef> visitedNodeRefs) {
 		if (nodeService.exists(nodeRef) && !nodeService.hasAspect(nodeRef, ContentModel.ASPECT_WORKING_COPY)
 				&& !nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
 
 			if (entityDictionaryService.isSubClass(itemType, BeCPGModel.TYPE_ENTITY_V2)) {
 				return nodeRef;
+			}
+
+			if (entityDictionaryService.isSubClass(itemType, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
+				return entityListDAO.getEntity(nodeRef);
 			}
 
 			// Create the visited nodes set if it has not already been created
@@ -277,7 +329,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 						continue;
 					}
 
-					NodeRef entityNodeRef = getEntityNodeRef(parent.getParentRef(), parent.getTypeQName(), visitedNodeRefs);
+					NodeRef entityNodeRef = getEntityNodeRef(parent.getParentRef(), nodeService.getType(parent.getParentRef()), visitedNodeRefs);
 					if (entityNodeRef != null) {
 						return entityNodeRef;
 					}
@@ -328,6 +380,5 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		}
 		return null;
 	}
-
 
 }
