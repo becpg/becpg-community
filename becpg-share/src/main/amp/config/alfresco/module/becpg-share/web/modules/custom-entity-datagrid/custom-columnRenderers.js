@@ -72,12 +72,14 @@ if (beCPG.module.EntityDataGridRenderers) {
 	    	  var html = "";
               if(data.title){
             	  var title = "";
-            	  var className = "entity"; 
+            	  var className = data.className!=null ? data.className : "entity"; 
             	  title = "<span class=\""+className+"\">"+Alfresco.util.encodeHTML(data.title)+"</span>";
             	  if(activityType == "State"){
-            		  title = scope.msg("project.activity.state.change", title, scope.msg("data."+className+"state." +data.beforeState.toLowerCase()), scope.msg("data."+className+"state."+data.afterState.toLowerCase()));
+            		  title = scope.msg("entity.activity.state.change", title, scope.msg("data."+className+"state." +data.beforeState.toLowerCase()), scope.msg("data."+className+"state."+data.afterState.toLowerCase()));
+            	  } else if(activityType == "Datalist" || activityType == "Entity"|| activityType == "Formulation" || activityType == "Report"){
+            		  title  = scope.msg("entity.activity."+activityType.toLowerCase(), title);
             	  } else if(activityType == "Comment"){
-            		 title  = scope.msg("project.activity.comment."+data.activityEvent.toLowerCase(), title);
+            		 title  = scope.msg("entity.activity.comment."+data.activityEvent.toLowerCase(), title);
             	  } else if(activityType == "Content"){
             		  if(data.activityEvent == "Delete"){
             			  title = '<span class="doc-file"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' + Alfresco.util
@@ -87,9 +89,10 @@ if (beCPG.module.EntityDataGridRenderers) {
 	            		 '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' + Alfresco.util
 	                     .getFileIcon(data.title, "cm:content", 16) + '" />'+Alfresco.util.encodeHTML(data.title)+'</a></span>';
             		  }
-            		 title  = scope.msg("project.activity.content."+data.activityEvent.toLowerCase(), title);
+            		 title  = scope.msg("entity.activity.content."+data.activityEvent.toLowerCase(), title);
             	  }
-            	  html += '<div class="project-activity-details">';
+            	  
+            	  html += '<div class="entity-activity-details">';
     	          html += '   <div class="icon">' + Alfresco.Share.userAvatar(user.value,32) + '</div>';
     	          html += '   <div class="details">';
     	          html += '      <span class="user-info">';

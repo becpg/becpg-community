@@ -1,6 +1,7 @@
 package fr.becpg.repo.activity.policy;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,6 +31,13 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 	protected static final String KEY_QUEUE_UPDATED = "EntityActivity_updated";
 	protected static final String KEY_QUEUE_DELETED = "EntityActivity_deleted";
 	protected static final String KEY_QUEUE_CREATED = "EntityActivity_created";
+
+	private static final Set<QName> isIgnoredTypes = new HashSet<>();
+
+	static {
+		isIgnoredTypes.add(ContentModel.PROP_MODIFIED);
+		isIgnoredTypes.add(ContentModel.PROP_MODIFIER);
+	}
 
 	private EntityActivityService entityActivityService;
 
@@ -92,16 +100,44 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 		if (((before != null) && before.equals(after)) || (before == after)) {
 			return;
 		}
-		QName type = nodeService.getType(nodeRef);
-		if (accept(type)) {
-			queueNode(KEY_QUEUE_UPDATED, nodeRef);
+
+		boolean isDifferent = false;
+
+		if ((before != null) && (after != null) && (before.size() == after.size())) {
+			for (QName beforeType : before.keySet()) {
+				if (!isIgnoredTypes.contains(beforeType)) {
+					if (((before.get(beforeType) != null) && !before.get(beforeType).equals(after.get(beforeType)))
+							|| ((before.get(beforeType) == null) && (after.get(beforeType) != null))) {
+						isDifferent = true;
+						break;
+					}
+
+				}
+			}
+		}
+
+		if (isDifferent) {
+			QName type = nodeService.getType(nodeRef);
+			if (accept(type)) {
+
+				queueNode(KEY_QUEUE_UPDATED, nodeRef);
+			}
 		}
 	}
 
 	@Override
 	public void onContentUpdate(NodeRef nodeRef, boolean newContent) {
+
+		if (L2CacheSupport.isThreadLockEnable()) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Entity [" + Thread.currentThread().getName() + "] is locked :" + nodeRef);
+			}
+			return;
+		}
+
 		QName type = nodeService.getType(nodeRef);
-		if (accept(type)) {
+		if (ContentModel.TYPE_CONTENT.equals(type)) {
+
 			queueNode(KEY_QUEUE_UPDATED, nodeRef);
 		}
 
@@ -112,7 +148,7 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 
 		if (L2CacheSupport.isThreadLockEnable()) {
 			if (logger.isDebugEnabled()) {
-				logger.debug("Entity [" + Thread.currentThread().getName() + "] is locked  ");
+				logger.debug("Entity [" + Thread.currentThread().getName() + "] is locked  :" + childAssocRef.getChildRef());
 			}
 			return;
 		}
@@ -135,25 +171,38 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 
 		QName type = nodeService.getType(nodeRef);
 		if (accept(type)) {
-			registerActivity(nodeRef, ActivityEvent.Delete);
+			registerActivity(nodeRef, type, ActivityEvent.Delete);
 			queueNode(KEY_QUEUE_DELETED, nodeRef);
 		}
 	}
 
 	@Override
 	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
+
+		Set<QName> types = new HashSet<>();
+
 		for (NodeRef nodeRef : pendingNodes) {
-			switch (key) {
-			case KEY_QUEUE_UPDATED:
-				if (!containsNodeInQueue(KEY_QUEUE_CREATED, nodeRef) && !containsNodeInQueue(KEY_QUEUE_DELETED, nodeRef)) {
-					registerActivity(nodeRef, ActivityEvent.Update);
+			if (nodeService.exists(nodeRef)) {
+
+				QName type = nodeService.getType(nodeRef);
+				if (!(entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM) && types.contains(type))) {
+
+					switch (key) {
+					case KEY_QUEUE_UPDATED:
+						if (!containsNodeInQueue(KEY_QUEUE_CREATED, nodeRef) && !containsNodeInQueue(KEY_QUEUE_DELETED, nodeRef)) {
+							registerActivity(nodeRef, type, ActivityEvent.Update);
+						}
+						break;
+					case KEY_QUEUE_CREATED:
+						registerActivity(nodeRef, type, ActivityEvent.Create);
+						break;
+					default:
+						break;
+					}
+
 				}
-				break;
-			case KEY_QUEUE_CREATED:
-				registerActivity(nodeRef, ActivityEvent.Create);
-				break;
-			default:
-				break;
+				types.add(type);
+
 			}
 		}
 
@@ -165,37 +214,33 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 				|| entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM);
 	}
 
-	private void registerActivity(NodeRef actionedUponNodeRef, ActivityEvent activityEvent) {
+	private void registerActivity(NodeRef actionedUponNodeRef, QName type, ActivityEvent activityEvent) {
 
-		if (nodeService.exists(actionedUponNodeRef)) {
+		NodeRef entityNodeRef = entityActivityService.getEntityNodeRef(actionedUponNodeRef, type);
 
-			QName type = nodeService.getType(actionedUponNodeRef);
-			NodeRef entityNodeRef = entityActivityService.getEntityNodeRef(actionedUponNodeRef, type);
+		if (entityNodeRef != null) {
+			try {
+				policyBehaviourFilter.disableBehaviour();
 
-			if (entityNodeRef != null) {
-				try {
-					policyBehaviourFilter.disableBehaviour();
-
-					if (activityEvent != null) {
-						if (ForumModel.TYPE_POST.equals(type)) {
-							logger.debug("Action upon comment, post activity");
-							entityActivityService.postCommentActivity(entityNodeRef, actionedUponNodeRef, activityEvent);
-						} else if (ContentModel.TYPE_CONTENT.equals(type)) {
-							logger.debug("Action upon content, post activity");
-							entityActivityService.postContentActivity(entityNodeRef, actionedUponNodeRef, activityEvent);
-						} else if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
-							logger.debug("Action upon content, post activity");
-							entityActivityService.postDatalistActivity(entityNodeRef, actionedUponNodeRef, activityEvent);
-						} else if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITY_V2)) {
-							logger.debug("Action upon content, post activity");
-							entityActivityService.postEntityActivity(actionedUponNodeRef, activityEvent);
-						}
+				if (activityEvent != null) {
+					if (ForumModel.TYPE_POST.equals(type)) {
+						logger.debug("Action upon comment, post activity");
+						entityActivityService.postCommentActivity(entityNodeRef, actionedUponNodeRef, activityEvent);
+					} else if (ContentModel.TYPE_CONTENT.equals(type)) {
+						logger.debug("Action upon content, post activity");
+						entityActivityService.postContentActivity(entityNodeRef, actionedUponNodeRef, activityEvent);
+					} else if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
+						logger.debug("Action upon datalist, post activity");
+						entityActivityService.postDatalistActivity(entityNodeRef, actionedUponNodeRef, activityEvent);
+					} else if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITY_V2)) {
+						logger.debug("Action upon entity, post activity");
+						entityActivityService.postEntityActivity(actionedUponNodeRef, activityEvent);
 					}
-				} finally {
-					policyBehaviourFilter.enableBehaviour();
 				}
-
+			} finally {
+				policyBehaviourFilter.enableBehaviour();
 			}
+
 		}
 	}
 

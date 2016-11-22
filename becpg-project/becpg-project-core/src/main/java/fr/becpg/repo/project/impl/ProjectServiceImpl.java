@@ -59,6 +59,7 @@ import fr.becpg.repo.project.data.projectList.DeliverableState;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskState;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
@@ -140,7 +141,14 @@ public class ProjectServiceImpl implements ProjectService {
 	public void formulate(NodeRef projectNodeRef) throws FormulateException {
 		if (nodeService.getType(projectNodeRef).equals(ProjectModel.TYPE_PROJECT)) {
 			logger.debug("Formulate project : " + projectNodeRef);
-			formulationService.formulate(projectNodeRef);
+			
+			L2CacheSupport.doInCacheContext(() -> {
+				AuthenticationUtil.runAsSystem(() -> {
+					formulationService.formulate(projectNodeRef);
+					return true;
+				});
+
+			} , false, true);
 		}
 	}
 

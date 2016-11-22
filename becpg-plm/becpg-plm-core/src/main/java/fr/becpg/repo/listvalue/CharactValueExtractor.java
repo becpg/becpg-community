@@ -52,7 +52,7 @@ public class CharactValueExtractor implements ListValueExtractor<NodeRef> {
 
 	@Override
 	public List<ListValueEntry> extract(List<NodeRef> nodeRefs) {
-
+		
 		List<ListValueEntry> suggestions = new ArrayList<>();
 		if (nodeRefs != null) {
 			for (NodeRef nodeRef : nodeRefs) {
@@ -87,5 +87,8 @@ public class CharactValueExtractor implements ListValueExtractor<NodeRef> {
 		}
 		return suggestions;
 	}
+	
+	
+	
 
 }
