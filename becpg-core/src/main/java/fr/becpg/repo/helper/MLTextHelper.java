@@ -46,14 +46,17 @@ public class MLTextHelper {
          		
          		//Try with system local
          		if(match == null) {
-         			
          			match = getNearestLocale(Locale.getDefault(), mltext.getLocales());
+         		}
+         		
+         		//Any locale
+         		if(match == null) {
+         			match = getNearestLocale(null, mltext.getLocales());
          		}
          		
          		
 				// Did we get a match
 				if (match == null) {
-					
 					// We could find no locale matches
 					return null;
 				} else {
@@ -77,7 +80,11 @@ public class MLTextHelper {
 	        }
 	        else if (templateLocale == null)
 	        {
-	        	 return null;
+	        	//Return first locale found
+	        	for (Locale locale : options)
+	            {
+	                return locale;
+	            }
 	        }
 	        else if (options.contains(templateLocale))      // First see if there is an exact match
 	        {
