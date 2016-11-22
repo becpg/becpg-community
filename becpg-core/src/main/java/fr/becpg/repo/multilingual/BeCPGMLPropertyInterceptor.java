@@ -648,16 +648,15 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
 	        while (locales.hasNext())
 	        {
 	            Locale locale = locales.next();
-	            if (locale.getLanguage().equals(language) && (!MLTextHelper.isSupportedLocale(locale) || mlText.getValue(locale) == null || mlText.getValue(locale).isEmpty() ) )
+	            if (locale.getLanguage().equals(language) && (!MLTextHelper.isSupportedLocale(locale) ) )
 	            {
 	                locales.remove();
 	            }
 	        }
 	        
 	        // Add the new value for the specific language
-	        if(updatedText != null && !updatedText.isEmpty()){
-	        	 mlText.addValue(toSaveUnderLocale, updatedText);
-	        }
+	         mlText.addValue(toSaveUnderLocale, updatedText);
+	        
 	        
     }
 }
