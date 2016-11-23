@@ -35,7 +35,8 @@
 				</list>
 			</parameter>
 		</constraint>
-
+		
+		<!-- Deprecated to remove in 2.3 -->
 		<constraint name="pjt:activityTypes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -344,7 +345,7 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>pjt:activityList</class>
+						<class>bcpg:activityList</class>
 						<mandatory>false</mandatory>
 						<many>true</many>
 					</target>
@@ -679,6 +680,7 @@
 		</type>
 
 
+		<!-- Deprecated to remove in 2.3 -->
 		<type name="pjt:activityList">
 			<parent>bcpg:entityListItem</parent>
 			<properties>

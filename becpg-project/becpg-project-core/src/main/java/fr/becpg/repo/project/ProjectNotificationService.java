@@ -19,7 +19,7 @@ package fr.becpg.repo.project;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.repo.project.data.projectList.ActivityEvent;
+import fr.becpg.repo.activity.data.ActivityEvent;
 
 /**
  * Class used to manage notification

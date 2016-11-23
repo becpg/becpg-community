@@ -121,19 +121,11 @@
 	<bean id="projectListPolicy" class="fr.becpg.repo.project.policy.ProjectListPolicy" parent="projectPolicy" depends-on="bcpg.project.dictionaryBootstrap">
 	</bean>
 	
-	<bean id="projectActivityPolicy" class="fr.becpg.repo.project.policy.ProjectActivityPolicy" parent="projectPolicy" depends-on="bcpg.project.dictionaryBootstrap">
-	</bean>
-
 
 	<!-- DataList Extractor -->
 
-    <bean id="projectActivityListExtractor" class="fr.becpg.repo.project.extractor.ActivityListExtractor" parent="simpleExtractor">
-		<property name="projectActivityService" ref="projectActivityService"/>
-		<property name="defaultExtractor" value="false"/>
-	</bean>
 
-
-	<bean id="projectListExtractor" parent="projectActivityListExtractor" class="fr.becpg.repo.project.extractor.ProjectListExtractor">
+	<bean id="projectListExtractor" parent="activityListExtractor" class="fr.becpg.repo.project.extractor.ProjectListExtractor">
 		<property name="personService" ref="personService" />
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="associationService" ref="associationService" />
@@ -192,11 +184,6 @@
         </property>
     </bean>
     
-    <!-- action -->
-    <bean id="project-activity" class="fr.becpg.repo.project.action.ProjectActivityActionExecuter" parent="action-executer">
-      <property name="nodeService" ref="nodeService" />  
-      <property name="projectActivityService" ref="projectActivityService" />     
-    </bean>
     
     	<!-- Supplier portal -->
 	<bean id="bProjectScript" parent="baseJavaScriptExtension" class="fr.becpg.repo.project.jscript.ProjectScriptHelper">

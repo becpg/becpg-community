@@ -18,10 +18,6 @@
 package fr.becpg.repo.project;
 
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.json.JSONObject;
-
-import fr.becpg.repo.project.data.projectList.ActivityEvent;
-import fr.becpg.repo.project.data.projectList.ActivityType;
 
 public interface ProjectActivityService {
 
@@ -30,13 +26,6 @@ public interface ProjectActivityService {
 	void postProjectStateChangeActivity(NodeRef projectNodeRef,String beforeState,String afterState);
 	
 	void postDeliverableStateChangeActivity(NodeRef deliverableNodeRef,String beforeState,String afterState);
-	
-	void postCommentActivity(NodeRef commentNodeRef, ActivityEvent activityAction);
 
-	JSONObject postActivityLookUp(ActivityType activityType, String value);
-
-	void postContentActivity(NodeRef actionedUponNodeRef, ActivityEvent activityAction);
-
-	boolean isInProject(NodeRef nodeRef);
 
 }
