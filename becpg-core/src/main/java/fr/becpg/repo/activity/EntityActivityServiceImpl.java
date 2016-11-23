@@ -67,14 +67,11 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 	@Autowired
 	EntityDictionaryService entityDictionaryService;
+	
+	@Autowired
+	EntityActivityListener[]  entityActivityListeners;
 
-	private static final String PROP_COMMENT_NODEREF = "commentNodeRef";
-	private static final String PROP_CONTENT_NODEREF = "contentNodeRef";
-	private static final String PROP_DATALIST_NODEREF = "datalistNodeRef";
-	private static final String PROP_ENTITY_NODEREF = "entityNodeRef";
-	private static final String PROP_ACTIVITY_EVENT = "activityEvent";
-	private static final String PROP_CLASSNAME = "className";
-	private static final String PROP_TITLE = "title";
+	
 
 	private static Integer MAX_DEPTH_LEVEL = 6;
 
@@ -85,7 +82,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	}
 
 	@Override
-	public void postCommentActivity(NodeRef entityNodeRef, NodeRef commentNodeRef, ActivityEvent activityEvent) {
+	public boolean postCommentActivity(NodeRef entityNodeRef, NodeRef commentNodeRef, ActivityEvent activityEvent) {
 		if (commentNodeRef != null) {
 			try {
 
@@ -97,7 +94,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)
 							|| nodeService.hasAspect(activityListNodeRef, ContentModel.ASPECT_PENDING_DELETE)) {
 						logger.debug("No activity on entity template or pending delete node");
-						return;
+						return false;
 					}
 
 					ActivityListDataItem activityListDataItem = new ActivityListDataItem();
@@ -126,7 +123,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 						}
 					} else {
 						// Case comment on other nodes under entity
-						return;
+						return false;
 					}
 
 					if (data.get(PROP_TITLE) == null) {
@@ -138,22 +135,24 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					activityListDataItem.setActivityData(data.toString());
 					activityListDataItem.setParentNodeRef(activityListNodeRef);
 
-					if (logger.isDebugEnabled()) {
-						logger.debug("Post Activity :" + activityListDataItem.toString());
-					}
-
 					alfrescoRepository.save(activityListDataItem);
-				}
+					
+					
+					notifyListeners(entityNodeRef, activityListDataItem);
 
+					return true;
+				}
 			} catch (JSONException e) {
 				logger.error(e, e);
 			}
 		}
 
+		return true;
+
 	}
 
 	@Override
-	public void postContentActivity(NodeRef entityNodeRef, NodeRef contentNodeRef, ActivityEvent activityEvent) {
+	public boolean postContentActivity(NodeRef entityNodeRef, NodeRef contentNodeRef, ActivityEvent activityEvent) {
 		if ((contentNodeRef != null) && !nodeService.hasAspect(contentNodeRef, ContentModel.ASPECT_WORKING_COPY)) {
 			try {
 
@@ -165,7 +164,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)
 							|| nodeService.hasAspect(activityListNodeRef, ContentModel.ASPECT_PENDING_DELETE)) {
 						logger.debug("No activity on entity template or pending delete node");
-						return;
+						return false;
 					}
 
 					// Project activity
@@ -180,21 +179,25 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					activityListDataItem.setActivityData(data.toString());
 					activityListDataItem.setParentNodeRef(activityListNodeRef);
 
-					if (logger.isDebugEnabled()) {
-						logger.debug("Post Activity :" + activityListDataItem.toString());
-					}
 
 					alfrescoRepository.save(activityListDataItem);
+					
+					
+					notifyListeners(entityNodeRef, activityListDataItem);
+
+					return true;
 				}
 			} catch (JSONException e) {
 				logger.error(e, e);
 			}
 		}
 
+		return false;
+
 	}
 
 	@Override
-	public void postDatalistActivity(NodeRef entityNodeRef, NodeRef datalistNodeRef, ActivityEvent activityEvent) {
+	public boolean postDatalistActivity(NodeRef entityNodeRef, NodeRef datalistNodeRef, ActivityEvent activityEvent) {
 		if ((datalistNodeRef != null)) {
 			try {
 
@@ -206,7 +209,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)
 							|| nodeService.hasAspect(activityListNodeRef, ContentModel.ASPECT_PENDING_DELETE)) {
 						logger.debug("No activity on entity template or pending delete node");
-						return;
+						return false;
 					}
 
 					// Project activity
@@ -231,21 +234,91 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					activityListDataItem.setActivityData(data.toString());
 					activityListDataItem.setParentNodeRef(activityListNodeRef);
 
-					if (logger.isDebugEnabled()) {
-						logger.debug("Post Activity :" + activityListDataItem.toString());
-					}
-
+					
 					alfrescoRepository.save(activityListDataItem);
+					
+					
+					notifyListeners(entityNodeRef, activityListDataItem);
+					
+					return true;
 				}
 			} catch (JSONException e) {
 				logger.error(e, e);
 			}
 		}
+		return false;
 
 	}
 
 	@Override
-	public void postEntityActivity(NodeRef entityNodeRef, ActivityEvent activityEvent) {
+	public boolean postStateChangeActivity(NodeRef entityNodeRef, NodeRef datalistNodeRef, String beforeState, String afterState) {
+		if ((entityNodeRef != null) && (beforeState != null) && (afterState != null)) {
+			try {
+
+				NodeRef activityListNodeRef = getActivityList(entityNodeRef);
+
+				// No list no activity
+				if (activityListNodeRef != null) {
+
+					if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)
+							|| nodeService.hasAspect(activityListNodeRef, ContentModel.ASPECT_PENDING_DELETE)) {
+						logger.debug("No activity on entity template or pending delete node");
+						return false;
+					}
+
+					ActivityListDataItem activityListDataItem = new ActivityListDataItem();
+					JSONObject data = new JSONObject();
+
+					data.put(PROP_ENTITY_NODEREF, entityNodeRef);
+
+					if (datalistNodeRef != null) {
+
+						data.put(PROP_DATALIST_NODEREF, datalistNodeRef);
+
+						QName type = nodeService.getType(datalistNodeRef);
+
+						data.put(PROP_CLASSNAME, attributeExtractorService.extractMetadata(type, datalistNodeRef));
+
+						NodeRef charactNodeRef = getMatchingCharactNodeRef(datalistNodeRef);
+
+						if (charactNodeRef != null) {
+							data.put(PROP_TITLE, attributeExtractorService.extractPropName(charactNodeRef));
+						} else {
+							data.put(PROP_TITLE, attributeExtractorService.extractPropName(datalistNodeRef));
+						}
+
+					} else {
+						data.put(PROP_TITLE, attributeExtractorService.extractPropName(entityNodeRef));
+					}
+
+					data.put("beforeState", beforeState);
+					data.put("afterState", afterState);
+
+					activityListDataItem.setActivityType(ActivityType.State);
+					activityListDataItem.setActivityData(data.toString());
+					activityListDataItem.setParentNodeRef(activityListNodeRef);
+
+
+					alfrescoRepository.save(activityListDataItem);
+					
+					
+					notifyListeners(entityNodeRef, activityListDataItem);
+
+					return true;
+
+				}
+
+			} catch (JSONException e) {
+				logger.error(e, e);
+			}
+		}
+
+		return false;
+
+	}
+
+	@Override
+	public boolean postEntityActivity(NodeRef entityNodeRef, ActivityEvent activityEvent) {
 		try {
 
 			NodeRef activityListNodeRef = getActivityList(entityNodeRef);
@@ -256,7 +329,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 				if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)
 						|| nodeService.hasAspect(activityListNodeRef, ContentModel.ASPECT_PENDING_DELETE)) {
 					logger.debug("No activity on entity template or pending delete node");
-					return;
+					return false;
 				}
 
 				// Project activity
@@ -270,16 +343,29 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 				activityListDataItem.setActivityData(data.toString());
 				activityListDataItem.setParentNodeRef(activityListNodeRef);
 
-				if (logger.isDebugEnabled()) {
-					logger.debug("Post Activity :" + activityListDataItem.toString());
-				}
+				
 
 				alfrescoRepository.save(activityListDataItem);
+				
+				
+				notifyListeners(entityNodeRef, activityListDataItem);
+				return true;
 			}
 		} catch (JSONException e) {
 			logger.error(e, e);
 		}
+		return false;
+	}
 
+	private void notifyListeners(NodeRef entityNodeRef, ActivityListDataItem activityListDataItem) {
+		
+		
+		for(EntityActivityListener entityActivityListener : entityActivityListeners){
+			
+			entityActivityListener.notify(entityNodeRef, activityListDataItem);
+		}
+		
+		
 	}
 
 	@Override

@@ -9,17 +9,26 @@ import fr.becpg.repo.activity.data.ActivityType;
 
 public interface EntityActivityService {
 
-	void postCommentActivity(NodeRef entityNodeRef, NodeRef commentNodeRef, ActivityEvent activityEvent);
+	static final String PROP_COMMENT_NODEREF = "commentNodeRef";
+	static final String PROP_CONTENT_NODEREF = "contentNodeRef";
+	static final String PROP_DATALIST_NODEREF = "datalistNodeRef";
+	static final String PROP_ENTITY_NODEREF = "entityNodeRef";
+	static final String PROP_ACTIVITY_EVENT = "activityEvent";
+	static final String PROP_CLASSNAME = "className";
+	static final String PROP_TITLE = "title";
 
-	void postContentActivity(NodeRef entityNodeRef,NodeRef contentNodeRef, ActivityEvent activityEvent);
+	boolean postCommentActivity(NodeRef entityNodeRef, NodeRef commentNodeRef, ActivityEvent activityEvent);
 
-	void postDatalistActivity(NodeRef entityNodeRef, NodeRef datalistItemNodeRef, ActivityEvent activityEvent);
+	boolean postContentActivity(NodeRef entityNodeRef, NodeRef contentNodeRef, ActivityEvent activityEvent);
 
-	void postEntityActivity(NodeRef entityNodeRef, ActivityEvent activityEvent);
+	boolean postDatalistActivity(NodeRef entityNodeRef, NodeRef datalistItemNodeRef, ActivityEvent activityEvent);
+
+	boolean postEntityActivity(NodeRef entityNodeRef, ActivityEvent activityEvent);
+
+	boolean postStateChangeActivity(NodeRef entityNodeRef, NodeRef datalistItemNodeRef, String beforeState, String afterState);
 
 	JSONObject postActivityLookUp(ActivityType activityType, String value);
 
 	NodeRef getEntityNodeRef(NodeRef nodeRef, QName itemType);
 
-	
 }

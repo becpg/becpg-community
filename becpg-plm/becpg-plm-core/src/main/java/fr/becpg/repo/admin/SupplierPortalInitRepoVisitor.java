@@ -73,7 +73,7 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 			Set<QName> dataLists = new LinkedHashSet<>();
 			dataLists.add(ProjectModel.TYPE_TASK_LIST);
 			dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
-			dataLists.add(ProjectModel.TYPE_ACTIVITY_LIST);
+			dataLists.add(BeCPGModel.TYPE_ACTIVITY_LIST);
 			entityTplNodeRef = entityTplService.createEntityTpl(entityTplsNodeRef, ProjectModel.TYPE_PROJECT,
 					I18NUtil.getMessage(SUPPLIER_PJT_TPL_NAME), true, false, dataLists, null);
 

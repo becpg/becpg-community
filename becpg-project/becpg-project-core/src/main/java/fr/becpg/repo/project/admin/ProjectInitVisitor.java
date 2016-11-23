@@ -113,7 +113,7 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 		dataLists.add(ProjectModel.TYPE_TASK_LIST);
 		dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
 		dataLists.add(ProjectModel.TYPE_SCORE_LIST);
-		dataLists.add(ProjectModel.TYPE_ACTIVITY_LIST);
+		dataLists.add(BeCPGModel.TYPE_ACTIVITY_LIST);
 		dataLists.add(ProjectModel.TYPE_LOG_TIME_LIST);
 		dataLists.add(ProjectModel.TYPE_BUDGET_LIST);
 		dataLists.add(ProjectModel.TYPE_INVOICE_LIST);

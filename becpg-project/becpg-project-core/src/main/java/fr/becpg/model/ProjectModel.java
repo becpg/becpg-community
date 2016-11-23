@@ -89,14 +89,6 @@ public interface ProjectModel {
 	QName ASPECT_WORKFLOW_ASPECT = QName.createQName(PROJECT_URI, "workflowAspect");
 	QName ASSOC_WORKFLOW_TASK = QName.createQName(PROJECT_URI, "workflowTask");
 
-	QName TYPE_ACTIVITY_LIST  = QName.createQName(PROJECT_URI, "activityList");
-
-	QName PROP_ACTIVITYLIST_USERID = QName.createQName(PROJECT_URI, "alUserId");
-
-	QName PROP_ACTIVITYLIST_TYPE = QName.createQName(PROJECT_URI, "alType");
-	
-	QName PROP_ACTIVITYLIST_DATA = QName.createQName(PROJECT_URI, "alData");
-
 	QName ASSOC_PROJECT_MANAGER = QName.createQName(PROJECT_URI, "projectManager");
 	
 	QName TYPE_LOG_TIME_LIST  = QName.createQName(PROJECT_URI, "logTimeList");

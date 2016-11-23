@@ -36,8 +36,10 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.activity.extractor.ActivityListExtractor;
 import fr.becpg.repo.entity.datalist.DataListSortPlugin;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
@@ -278,10 +280,10 @@ public class ProjectListExtractor extends ActivityListExtractor {
 						
 						
 							if ((ProjectModel.TYPE_TASK_LIST.equals(field.getFieldQname()) && pagination.getPageSize()>10)
-									|| ProjectModel.TYPE_ACTIVITY_LIST.equals(field.getFieldQname())) {
+									|| BeCPGModel.TYPE_ACTIVITY_LIST.equals(field.getFieldQname())) {
 								// Only in progress tasks
 								List<NodeRef> assocRefs;
-								if (ProjectModel.TYPE_ACTIVITY_LIST.equals(field.getFieldQname())) {
+								if (BeCPGModel.TYPE_ACTIVITY_LIST.equals(field.getFieldQname())) {
 									assocRefs = associationService.getTargetAssocs(nodeRef, ProjectModel.ASSOC_PROJECT_CUR_COMMENTS);
 								} else {
 									assocRefs = associationService.getTargetAssocs(nodeRef, ProjectModel.ASSOC_PROJECT_CUR_TASKS);
@@ -305,7 +307,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 										tmp.put(PROP_TYPE, itemType.toPrefixString(services.getNamespaceService()));
 										tmp.put(PROP_NODE, itemNodeRef);
 										tmp.put(PROP_PERMISSIONS, permissions);
-										if (ProjectModel.TYPE_ACTIVITY_LIST.equals(field.getFieldQname())) {
+										if (BeCPGModel.TYPE_ACTIVITY_LIST.equals(field.getFieldQname())) {
 											Map<String, Object> tmp2 = doExtract(itemNodeRef, itemType, field.getChildrens(), mode, properties,
 													props, cache);
 											postLookupActivity(tmp2, properties, mode);

@@ -16,12 +16,12 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
+import fr.becpg.repo.activity.data.ActivityEvent;
+import fr.becpg.repo.activity.data.ActivityType;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.mail.BeCPGMailService;
 import fr.becpg.repo.project.ProjectNotificationService;
 import fr.becpg.repo.project.ProjectService;
-import fr.becpg.repo.project.data.projectList.ActivityEvent;
-import fr.becpg.repo.project.data.projectList.ActivityType;
 
 /**
  * Class used to manage notification
