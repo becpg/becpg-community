@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.content.encoding.ContentCharsetFinder;
 import org.alfresco.repo.model.Repository;
+import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.service.cmr.dictionary.AspectDefinition;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
@@ -138,6 +139,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	protected static final String MSG_ERROR_TARGET_ASSOC_SEVERAL = "import_service.error.err_target_assoc_several";
 	protected static final String MSG_ERROR_GET_ASSOC_TARGET = "import_service.error.err_get_assoc_target";
 	protected static final String MSG_ERROR_NO_DOCS_BASE_PATH_SET = "import_service.error.err_no_docs_base_path_set";
+	protected static final String MSG_ERROR_NO_PARENT = "import_service.error.err_no_parent";
 
 	private static final Log logger = LogFactory.getLog(AbstractImportVisitor.class);
 
@@ -237,6 +239,11 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 				assocName = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name));
 			}
 
+			
+			if (importContext.getParentNodeRef() == null) {
+				throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_NO_PARENT));
+			}
+			
 			nodeRef = nodeService.createNode(importContext.getParentNodeRef(), ContentModel.ASSOC_CONTAINS, assocName, importContext.getType(),
 					ImportHelper.cleanProperties(properties)).getChildRef();
 		} else if (importContext.isDoUpdate()) {
@@ -250,7 +257,18 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 				if ((entry.getValue() != null) && ImportHelper.NULL_VALUE.equals(entry.getValue())) {
 					nodeService.removeProperty(nodeRef, entry.getKey());
 				} else {
-					nodeService.setProperty(nodeRef, entry.getKey(), entry.getValue());
+					
+					if(entry.getValue()!=null && entry.getValue() instanceof MLText){
+						boolean mlAware = MLPropertyInterceptor.isMLAware();
+						MLPropertyInterceptor.setMLAware(true);
+						try {
+							nodeService.setProperty(nodeRef, entry.getKey(), ImportHelper.mergeMLText((MLText)entry.getValue(),(MLText)nodeService.getProperty(nodeRef, entry.getKey())));
+						} finally {
+							MLPropertyInterceptor.setMLAware(mlAware);
+						}
+					} else {
+						nodeService.setProperty(nodeRef, entry.getKey(), entry.getValue());
+					}
 				}
 
 			}
@@ -1022,7 +1040,9 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 			String name = (String) properties.get(ContentModel.PROP_NAME);
 			if ((name != null) && !name.isEmpty()) {
-
+				if (importContext.getParentNodeRef() == null) {
+					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_NO_PARENT));
+				}
 				// look in import folder
 				nodeRef = nodeService.getChildByName(importContext.getParentNodeRef(), ContentModel.ASSOC_CONTAINS, name);
 			} else if (!dictionaryService.isSubClass(type, BeCPGModel.TYPE_LINKED_VALUE)
