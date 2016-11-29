@@ -2253,7 +2253,11 @@ row["propertyQName"] == "bcpg:illValue" ||
 row["propertyQName"] == "bcpg:illManualValue" ||
 row["propertyQName"] == "bcpg:mblValue" ||
 row["propertyQName"] == "bcpg:mblMaxi" ||
-row["propertyQName"] == "bcpg:microbioUnit")</expression>
+row["propertyQName"] == "bcpg:microbioUnit" ||
+row["propertyQName"] == "bcpg:ingListQtyPerc" ||
+row["propertyQName"] == "bcpg:ingListGeoOrigin" ||
+row["propertyQName"] == "bcpg:ingListQtyTransfo" ||
+row["propertyQName"] == "bcpg:ingListBioOrigin")</expression>
                     <property name="updateAggregation">true</property>
                 </structure>
             </list-property>
