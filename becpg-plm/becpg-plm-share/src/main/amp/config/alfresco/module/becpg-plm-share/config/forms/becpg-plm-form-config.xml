@@ -4431,6 +4431,53 @@
 					</field>
 				</appearance>
 			</form>
+			<form id="search">
+				<field-visibility>
+
+					<!-- mainInfo -->
+					<show id="cm:name" />
+		
+					<show id="bcpg:productHierarchy1" />
+					<show id="bcpg:productHierarchy2" />
+					<show id="bcpg:productState" />
+				
+					<show id="bcpg:code" force="true" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:eanCode" />
+					
+				</field-visibility>
+				<appearance>
+					<set appearance="bordered-panel" id="product-criteria" label-id="becpg.forms.set.product-criteria.label"/>
+				
+					<!-- Main info -->
+					<field id="cm:name" set="product-criteria" />
+					<field id="bcpg:productHierarchy1" help-id="becpg.forms.help.productHierarchy1" set="product-criteria">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/resourceProduct_Hierarchy
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productHierarchy2" help-id="becpg.forms.help.productHierarchy2" set="product-criteria">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/resourceProduct_Hierarchy
+							</control-param>
+							<control-param name="parent">bcpg_productHierarchy1
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productState" set="product-criteria" >
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:code" read-only="true" set="product-criteria" />
+					<field id="bcpg:erpCode" set="product-criteria" />
+					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="product-criteria" />
+		
+				</appearance>
+			</form>
+			
 			<form id="formulation">
 				<field-visibility>
 					<show id="cm:name" />
