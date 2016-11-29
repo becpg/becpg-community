@@ -252,10 +252,12 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 								&& !(partProduct instanceof SemiFinishedProductData)) {
 							newAllergenListDataItem.getVoluntarySources().add(partProduct.getNodeRef());
 						}
-						for (NodeRef p : allergenListDataItem.getVoluntarySources()) {
-							if (!newAllergenListDataItem.getVoluntarySources().contains(p)) {
-								newAllergenListDataItem.getVoluntarySources().add(p);
-							}
+					}
+					
+					
+					for (NodeRef p : allergenListDataItem.getVoluntarySources()) {
+						if (!newAllergenListDataItem.getVoluntarySources().contains(p)) {
+							newAllergenListDataItem.getVoluntarySources().add(p);
 						}
 					}
 
@@ -266,10 +268,12 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 								&& !(partProduct instanceof SemiFinishedProductData)) {
 							newAllergenListDataItem.getInVoluntarySources().add(partProduct.getNodeRef());
 						}
-						for (NodeRef p : allergenListDataItem.getInVoluntarySources()) {
-							if (!newAllergenListDataItem.getInVoluntarySources().contains(p)) {
-								newAllergenListDataItem.getInVoluntarySources().add(p);
-							}
+					}
+					
+					
+					for (NodeRef p : allergenListDataItem.getInVoluntarySources()) {
+						if (!newAllergenListDataItem.getInVoluntarySources().contains(p)) {
+							newAllergenListDataItem.getInVoluntarySources().add(p);
 						}
 					}
 

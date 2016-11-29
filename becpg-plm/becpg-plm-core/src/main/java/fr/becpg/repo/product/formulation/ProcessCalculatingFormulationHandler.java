@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2016 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2016 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.product.formulation;
@@ -46,7 +46,7 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 	private static final Log logger = LogFactory.getLog(ProcessCalculatingFormulationHandler.class);
 
 	private AlfrescoRepository<ResourceProductData> alfrescoRepository;
-	
+
 	private PackagingHelper packagingHelper;
 
 	public void setAlfrescoRepository(AlfrescoRepository<ResourceProductData> alfrescoRepository) {
@@ -67,12 +67,12 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 			logger.debug("no process => no formulation");
 			return true;
 		}
-		
-		if(formulatedProduct.getDefaultVariantPackagingData() == null){
+
+		if (formulatedProduct.getDefaultVariantPackagingData() == null) {
 			formulatedProduct.setDefaultVariantPackagingData(packagingHelper.getDefaultVariantPackagingData(formulatedProduct));
 		}
-		
-		if (formulatedProduct instanceof ResourceProductData || formulatedProduct.getResourceParamList()!=null) {
+
+		if ((formulatedProduct instanceof ResourceProductData) || (formulatedProduct.getResourceParamList() != null)) {
 
 			int sort = 0;
 
@@ -88,11 +88,20 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 			for (ProcessListDataItem p : formulatedProduct.getProcessList(new VariantFilters<>())) {
 				if (p.getResource() != null) {
 					ResourceProductData resource = alfrescoRepository.findOne(p.getResource());
+
+					boolean isMultiLevel = resource.hasProcessListEl(new VariantFilters<>());
+					
 					for (ResourceParamListItem param : resource.getResourceParamList()) {
 						boolean isFound = false;
 						for (ResourceParamListItem param2 : formulatedProduct.getResourceParamList()) {
-							if (Objects.equals(param2.getParam(), param.getParam()) && Objects.equals(param2.getResource(), resource.getNodeRef())
-									&& Objects.equals(param2.getStep(), p.getStep()) && Objects.equals(param2.getParamType(), param.getParamType())) {
+							if ((Objects.equals(param2.getParam(), param.getParam()) && Objects.equals(param2.getResource(), resource.getNodeRef())
+									&& Objects.equals(param2.getStep(), p.getStep()) && Objects.equals(param2.getParamType(), param.getParamType()))
+									|| (isMultiLevel && Objects.equals(param2.getParam(), param.getParam())
+											&& Objects.equals(param2.getResource(), param.getResource())
+											&& Objects.equals(param2.getStep(), param.getStep())
+											&& Objects.equals(param2.getParamType(), param.getParamType())
+									)
+							) {
 								param2.setSort(sort++);
 
 								toAdd.add(param2);
@@ -104,8 +113,12 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 							param.setName(null);
 							param.setNodeRef(null);
 							param.setParentNodeRef(null);
-							param.setStep(p.getStep());
-							param.setResource(resource.getNodeRef());
+							if (!isMultiLevel || (param.getStep() == null)) {
+								param.setStep(p.getStep());
+							}
+							if (!isMultiLevel || (param.getResource() == null)) {
+								param.setResource(resource.getNodeRef());
+							}
 							toAdd.add(param);
 						}
 					}
@@ -113,7 +126,7 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 
 			}
 
-			if (formulatedProduct.getEntityTpl() != null && !formulatedProduct.getEntityTpl().equals(formulatedProduct)) {
+			if ((formulatedProduct.getEntityTpl() != null) && !formulatedProduct.getEntityTpl().equals(formulatedProduct)) {
 				// Set default params
 				List<ResourceParamListItem> templatePl = formulatedProduct.getEntityTpl().getResourceParamList();
 				if (templatePl != null) {
@@ -121,7 +134,7 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 						for (ResourceParamListItem param : formulatedProduct.getResourceParamList()) {
 							if (Objects.equals(param.getParam(), paramTpl.getParam()) && Objects.equals(param.getResource(), paramTpl.getResource())
 									&& Objects.equals(param.getStep(), paramTpl.getStep())
-									&& Objects.equals(param.getParamType(), paramTpl.getParamType()) && paramTpl.getParamValue() != null
+									&& Objects.equals(param.getParamType(), paramTpl.getParamType()) && (paramTpl.getParamValue() != null)
 									&& !paramTpl.getParamValue().isEmpty()) {
 								param.setParamValue(paramTpl.getParamValue());
 							}
@@ -133,7 +146,7 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 
 			formulatedProduct.getResourceParamList().clear();
 			formulatedProduct.getResourceParamList().addAll(toAdd);
-			if(formulatedProduct instanceof ResourceProductData){
+			if (formulatedProduct instanceof ResourceProductData) {
 				formulatedProduct.setUnit(ProductUnit.h);
 			}
 
@@ -145,21 +158,17 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 			if (p.getRateResource() != null) {
 				if (ProcessListUnit.P.equals(p.getUnit())) {
 					p.setRateProduct(p.getRateResource());
-				}
-				else if(ProcessListUnit.Box.equals(p.getUnit())){
-					if(formulatedProduct.getDefaultVariantPackagingData() != null && formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() != null){
+				} else if (ProcessListUnit.Box.equals(p.getUnit())) {
+					if ((formulatedProduct.getDefaultVariantPackagingData() != null)
+							&& (formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() != null)) {
 						p.setRateProduct(p.getRateResource() * formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes());
-					}
-					else{
+					} else {
 						String message = I18NUtil.getMessage(FormulationHelper.MISSING_NUMBER_OF_PRODUCT_PER_BOX);
-						formulatedProduct.getProcessListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, 
-								RequirementType.Forbidden, 
-								message, 
+						formulatedProduct.getProcessListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message,
 								null, new ArrayList<NodeRef>(), RequirementDataType.Packaging));
-					}					 
-				}
-				else {
-					Double productQtyToTransform = p.getQty() != null ? p.getQty() : FormulationHelper.getNetWeight(formulatedProduct, null);										
+					}
+				} else {
+					Double productQtyToTransform = p.getQty() != null ? p.getQty() : FormulationHelper.getNetWeight(formulatedProduct, null);
 					if (productQtyToTransform != null) {
 						p.setRateProduct(p.getRateResource() / productQtyToTransform);
 					} else {
@@ -174,5 +183,4 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 
 	}
 
-	
 }
