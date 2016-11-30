@@ -102,6 +102,7 @@
 				<aspect name="rep:reportParametersAspect" />
 				<aspect name="bp:cataloguable" />
 				<aspect name="bcpg:entityTplAspect" />
+				<aspect name="bcpg:entityBranchAspect" />
 				<aspect name="bcpg:docLinkedEntitiesAspect" />
 			</visible>
 
