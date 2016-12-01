@@ -7,7 +7,7 @@
    <div class="bd">
       <div id="${el}-versionsGraph"> 
 	       <div id="${el}-graphNodes"  class="graph-nodes">
-				<canvas id="${el}-graphCanvas" height="877" width="100"></canvas>
+				<canvas id="${el}-graphCanvas" height="2000" width="100"></canvas>
 			</div>
 			<div id="${el}-graphContent" class="graph-content datagrid"></div>
 		</div>
