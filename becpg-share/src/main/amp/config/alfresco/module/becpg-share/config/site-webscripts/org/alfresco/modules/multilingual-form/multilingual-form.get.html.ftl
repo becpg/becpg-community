@@ -28,7 +28,7 @@
                  <#if mlField.locale != locale>
 	         	<div class="form-field">
       				<label for="${el}-${mlField.locale}">${mlField.label!""?html}:&nbsp;
-      						<span class="locale-icon"><img class="icon16_11" title="${msg("locale.name.${mlField.locale}")}" tabindex="0" src="${url.context}/res/components/images/flags/${mlField.country?lower_case}.png"><span>&nbsp;&nbsp;
+      						<span class="locale-icon"><img class="icon16_11" title="${msg("locale.name.${mlField.locale}")}" tabindex="0" src="${url.context}/res/components/images/flags/${mlField.country?lower_case}.png">&nbsp;(${msg("locale.name.${mlField.locale}")})<span>&nbsp;&nbsp;
       						<span class="translate-icon" onClick="suggestTranslate('${el}-${mlField.locale}','${mlField.locale}');" ><img class="icon16" title="${msg("translate.suggest")}" tabindex="0" src="${url.context}/res/components/images/translate-16.png"><span>
       				</label>
 	      			<#if args.textarea??>
@@ -95,7 +95,10 @@ var addFormFieldForLocale = function(){
 	   	 varHtml+="<input type=\"text\" title=\"${description?js_string}\" tabindex=\"0\"	 name=\""+lc+"\" id=\"${el}-"+lc+"\"></input>";
 	  	 </#if>
 	  	 varHtml +="</div>";
-	  	 container.innerHTML += varHtml;
+	  	 var htmlEl = document.createElement("div");
+			htmlEl.innerHTML = varHtml;
+	  	 
+	  	 container.appendChild(htmlEl);
  };
   		
 
