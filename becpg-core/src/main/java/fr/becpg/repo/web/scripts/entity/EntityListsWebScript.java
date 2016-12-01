@@ -311,7 +311,7 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 		// filter list with perms
 		if (!skipFilter) {
 			
-			boolean isExtrenalUser = isCurrentUserExternal();
+			boolean isExternalUser = isCurrentUserExternal();
 			
 			Iterator<NodeRef> it = listsNodeRef.iterator();
 			while (it.hasNext()) {
@@ -324,7 +324,7 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 						logger.trace("Don't display dataList:" + dataListType);
 					}
 					it.remove();
-				} else if (!isExtrenalUser && SecurityService.WRITE_ACCESS == access_mode
+				} else if (!isExternalUser && SecurityService.WRITE_ACCESS == access_mode
 						&& permissionService.hasPermission(temp, PermissionService.WRITE) == AccessStatus.ALLOWED
 						 ) {
 					hasChangeStatePermission = true;
