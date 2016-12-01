@@ -47,7 +47,6 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 
 	private AlfrescoRepository<ResourceProductData> alfrescoRepository;
 
-	
 	private PackagingHelper packagingHelper;
 
 	public void setAlfrescoRepository(AlfrescoRepository<ResourceProductData> alfrescoRepository) {
@@ -91,19 +90,19 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 					ResourceProductData resource = alfrescoRepository.findOne(p.getResource());
 
 					boolean isMultiLevel = resource.hasProcessListEl(new VariantFilters<>());
-					
+
 					for (ResourceParamListItem param : resource.getResourceParamList()) {
 						boolean isFound = false;
 						for (ResourceParamListItem param2 : formulatedProduct.getResourceParamList()) {
 							if ((Objects.equals(param2.getParam(), param.getParam()) && Objects.equals(param2.getResource(), resource.getNodeRef())
 									&& Objects.equals(param2.getStep(), p.getStep()) && Objects.equals(param2.getParamType(), param.getParamType())
-                                                        && Objects.equals(param2.getVariants(), p.getVariants())
+									&& Objects.equals(param2.getVariants(), p.getVariants()))
+
 									|| (isMultiLevel && Objects.equals(param2.getParam(), param.getParam())
 											&& Objects.equals(param2.getResource(), param.getResource())
 											&& Objects.equals(param2.getStep(), param.getStep())
 											&& Objects.equals(param2.getParamType(), param.getParamType())
-									)
-							) {
+											&& Objects.equals(param2.getVariants(), p.getVariants()))) {
 								param2.setSort(sort++);
 
 								toAdd.add(param2);
@@ -121,7 +120,7 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 							if (!isMultiLevel || (param.getResource() == null)) {
 								param.setResource(resource.getNodeRef());
 							}
-param.setVariants(p.getVariants());
+							param.setVariants(p.getVariants());
 
 							toAdd.add(param);
 						}
@@ -138,9 +137,8 @@ param.setVariants(p.getVariants());
 						for (ResourceParamListItem param : formulatedProduct.getResourceParamList()) {
 							if (Objects.equals(param.getParam(), paramTpl.getParam()) && Objects.equals(param.getResource(), paramTpl.getResource())
 									&& Objects.equals(param.getStep(), paramTpl.getStep())
-									&& Objects.equals(param.getParamType(), paramTpl.getParamType()) && paramTpl.getParamValue() != null
-									&& !paramTpl.getParamValue().isEmpty()
-									&& (param.getVariants()== null || param.getVariants().isEmpty())) {
+									&& Objects.equals(param.getParamType(), paramTpl.getParamType()) && (paramTpl.getParamValue() != null)
+									&& !paramTpl.getParamValue().isEmpty() && ((param.getVariants() == null) || param.getVariants().isEmpty())) {
 								param.setParamValue(paramTpl.getParamValue());
 							}
 						}
@@ -163,21 +161,17 @@ param.setVariants(p.getVariants());
 			if (p.getRateResource() != null) {
 				if (ProcessListUnit.P.equals(p.getUnit())) {
 					p.setRateProduct(p.getRateResource());
-				}
-				else if(ProcessListUnit.Box.equals(p.getUnit())){
-					if(formulatedProduct.getDefaultVariantPackagingData() != null && formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() != null){
+				} else if (ProcessListUnit.Box.equals(p.getUnit())) {
+					if ((formulatedProduct.getDefaultVariantPackagingData() != null)
+							&& (formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() != null)) {
 						p.setRateProduct(p.getRateResource() * formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes());
-					}
-					else{
+					} else {
 						String message = I18NUtil.getMessage(FormulationHelper.MISSING_NUMBER_OF_PRODUCT_PER_BOX);
-						formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, 
-								RequirementType.Forbidden, 
-								message, 
-								null, new ArrayList<NodeRef>(), RequirementDataType.Packaging));
-					}					 
-				}
-				else {
-					Double productQtyToTransform = p.getQty() != null ? p.getQty() : FormulationHelper.getNetWeight(formulatedProduct, null);										
+						formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, null,
+								new ArrayList<NodeRef>(), RequirementDataType.Packaging));
+					}
+				} else {
+					Double productQtyToTransform = p.getQty() != null ? p.getQty() : FormulationHelper.getNetWeight(formulatedProduct, null);
 					if (productQtyToTransform != null) {
 						p.setRateProduct(p.getRateResource() / productQtyToTransform);
 					} else {
