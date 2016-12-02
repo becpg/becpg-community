@@ -15,6 +15,7 @@ import org.alfresco.repo.node.NodeServicePolicies.OnRestoreNodePolicy;
 import org.alfresco.repo.node.db.NodeHierarchyWalker;
 import org.alfresco.repo.node.db.NodeHierarchyWalker.VisitedNode;
 import org.alfresco.repo.policy.JavaBehaviour;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentIOException;
 import org.alfresco.service.cmr.repository.ContentReader;
@@ -83,7 +84,6 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 	@Override
 	public void onRestoreNode(ChildAssociationRef childAssocRef) {
 		try {
-			
 
 			Pair<Long, NodeRef> nodePair = nodeDAO.getNodePair(childAssocRef.getChildRef());
 
@@ -115,7 +115,7 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 						if (reader != null) {
 							try (InputStream in = reader.getContentInputStream()) {
 								policyBehaviourFilter.disableBehaviour(entityNodeRef);
-								
+
 								remoteEntityService.createOrUpdateEntity(entityNodeRef, in, RemoteEntityFormat.xml, null);
 							} catch (IOException e) {
 								logger.error(e, e);
@@ -147,23 +147,31 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 			logger.debug("Creating " + REMOTE_FILE_NAME + " for " + entityNodeRef);
 		}
 
-		NodeRef rootArchiveRef = nodeService.getStoreArchiveNode(entityNodeRef.getStoreRef());
+		AuthenticationUtil.runAsSystem(() -> {
 
-		NodeRef entityDeletedFileNodeRef = nodeService.createNode(rootArchiveRef, ContentModel.ASSOC_CONTAINS,
-				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(REMOTE_FILE_NAME + "_" + entityNodeRef.getId())),
-				ContentModel.TYPE_CONTENT).getChildRef();
+			NodeRef rootArchiveRef = nodeService.getStoreArchiveNode(entityNodeRef.getStoreRef());
 
-		nodeService.setProperty(entityDeletedFileNodeRef, ContentModel.PROP_NAME, REMOTE_FILE_NAME + "_" + entityNodeRef.getId());
+			NodeRef entityDeletedFileNodeRef = nodeService
+					.createNode(rootArchiveRef, ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+									QName.createValidLocalName(REMOTE_FILE_NAME + "_" + entityNodeRef.getId())),
+							ContentModel.TYPE_CONTENT)
+					.getChildRef();
 
-		ContentWriter writer = contentService.getWriter(entityDeletedFileNodeRef, ContentModel.PROP_CONTENT, true);
+			nodeService.setProperty(entityDeletedFileNodeRef, ContentModel.PROP_NAME, REMOTE_FILE_NAME + "_" + entityNodeRef.getId());
 
-		writer.setMimetype(MimetypeMap.MIMETYPE_XML);
+			ContentWriter writer = contentService.getWriter(entityDeletedFileNodeRef, ContentModel.PROP_CONTENT, true);
 
-		try (OutputStream out = writer.getContentOutputStream()) {
-			remoteEntityService.getEntity(entityNodeRef, out, RemoteEntityFormat.xml);
-		} catch (ContentIOException | IOException | BeCPGException e) {
-			logger.error(e, e);
-		}
+			writer.setMimetype(MimetypeMap.MIMETYPE_XML);
+
+			try (OutputStream out = writer.getContentOutputStream()) {
+				remoteEntityService.getEntity(entityNodeRef, out, RemoteEntityFormat.xml);
+			} catch (ContentIOException | IOException | BeCPGException e) {
+				logger.error(e, e);
+			}
+
+			return null;
+		});
 
 	}
 
