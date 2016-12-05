@@ -167,8 +167,9 @@
 					<property name="dictionaryService" ref="dictionaryService"/>
 					<property name="associationService" ref="associationService" />
 					<property name="mlNodeService" ref="mlAwareNodeService" />
-					<property name="mandatoryFields"
-						value="${beCPG.formulation.score.mandatoryFields}" />
+					<property name="formulaService" ref="formulaService" />
+					<property name="repository" ref="repositoryHelper" />
+					<property name="fileFolderService" ref="fileFolderService" />
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.CompareFormulationHandler" >
 					<property name="alfrescoRepository" ref="alfrescoRepository" />

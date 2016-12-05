@@ -310,15 +310,30 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 					assertEquals(1, reqCtrlList.getSources().size());
 					assertTrue(reqCtrlList.getSources().contains(formulatedProduct.getNodeRef()));
 					checks++;
-				} else if (I18NUtil.getMessage(ScoreCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Conditions de conservation",
-						"EU 1169/2011 (INCO)").equals(reqCtrlList.getReqMessage())) {
+					} else if (I18NUtil.getMessage(ScoreCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Conditions de conservation",
+							"EU 1169/2011 (INCO)").equals(reqCtrlList.getReqMessage())) {
 
-					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
-					assertEquals(1, reqCtrlList.getSources().size());
-					assertTrue(reqCtrlList.getSources().contains(formulatedProduct.getNodeRef()));
-					checks++;
-				} else if (I18NUtil.getMessage(AllergensCalculatingFormulationHandler.MESSAGE_NOT_VALIDATED_ALLERGEN)
-						.equals(reqCtrlList.getReqMessage())) {
+						assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
+						assertEquals(1, reqCtrlList.getSources().size());
+						assertTrue(reqCtrlList.getSources().contains(formulatedProduct.getNodeRef()));
+						checks++;
+					} else if (I18NUtil.getMessage(ScoreCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING,
+							"DLC (J) ou DDM/DLUO (J)", "EU 1169/2011 (INCO)").equals(
+							reqCtrlList.getReqMessage())) {
+
+						assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
+						assertEquals(1, reqCtrlList.getSources().size());
+						assertTrue(reqCtrlList.getSources().contains(formulatedProduct.getNodeRef()));
+						checks++;
+					} else if (I18NUtil.getMessage(ScoreCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Titre",
+							"EU 1169/2011 (INCO)").equals(reqCtrlList.getReqMessage())) {
+
+						assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
+						assertEquals(1, reqCtrlList.getSources().size());
+						assertTrue(reqCtrlList.getSources().contains(formulatedProduct.getNodeRef()));
+						checks++;
+					} else if (I18NUtil.getMessage(AllergensCalculatingFormulationHandler.MESSAGE_NOT_VALIDATED_ALLERGEN).equals(
+							reqCtrlList.getReqMessage())) {
 
 					assertEquals(RequirementType.Tolerated, reqCtrlList.getReqType());
 					checks++;
@@ -328,8 +343,8 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 				}
 			}
 
-			logger.info("/*-- Done checking, checks=" + checks + " (should be 11) --*/");
-			assertEquals(12, checks);
+			logger.info("/*-- Done checking, checks=" + checks + " (should be 14) --*/");
+			assertEquals(14, checks);
 
 			/*
 			 * #257: check reqCtrlList is clear if all req are respected (we
@@ -347,13 +362,13 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 			formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
 
 			/*
-			 * 4 rclDataItem remains : one for non validated product, and three
-			 * for INCO missing fields: legal name, conservation conditions, and
-			 * precautions for use
+			 * 7 rclDataItem remains : one for non validated product, and three
+			 * for INCO missing fields: legal name, conservation conditions, 
+			 * precautions for use, title, use by date| best before date, and DLC
 			 */
 
 			logger.debug("After removing specs, " + formulatedProduct.getReqCtrlList().size() + " remain");
-			assertEquals(5, formulatedProduct.getReqCtrlList().size());
+			assertEquals(7, formulatedProduct.getReqCtrlList().size());
 
 			return null;
 

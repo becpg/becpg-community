@@ -1,0 +1,34 @@
+[
+
+    {
+        "id":"incoFinishedProduct",
+        "label":"EU 1169/2011 (INCO)",
+        "entityType":[
+            "bcpg:finishedProduct"
+        ],
+        "uniqueFields":[
+            "bcpg:erpCode"
+        ],
+        "fields":[
+            "bcpg:legalName",
+            "bcpg:precautionOfUseRef",
+            "bcpg:useByDate|bcpg:bestBeforeDate",
+            "bcpg:storageConditionsRef",
+            "cm:title"
+        ]
+    },
+    {
+        "id":"incoRawMaterials",
+        "label":"EU 1169/2011 (INCO)",
+        "entityType":[
+            "bcpg:rawMaterial"
+        ],
+        "uniqueFields":[
+            "bcpg:erpCode"
+        ],
+        "fields":[
+            "bcpg:legalName"
+        ]
+    }
+
+]
