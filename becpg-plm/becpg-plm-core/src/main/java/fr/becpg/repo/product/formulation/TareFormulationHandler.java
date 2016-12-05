@@ -24,6 +24,7 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.GS1Model;
 import fr.becpg.model.PackModel;
 import fr.becpg.repo.formulation.FormulateException;
@@ -53,8 +54,9 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 		logger.debug("Tare visitor");
 
 		// no compo => no formulation
-		if (!formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))
-				&& !formulatedProduct.hasPackagingListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
+		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || (
+				!formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))
+				&& !formulatedProduct.hasPackagingListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())))) {
 			logger.debug("no compoList, no packagingList => no formulation");
 			return true;
 		}
@@ -80,7 +82,7 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 
 			VariantPackagingData variantPackagingData = formulatedProduct.getDefaultVariantPackagingData();
 
-			if (variantPackagingData.getProductPerBoxes() != null) {
+			if (variantPackagingData!=null && variantPackagingData.getProductPerBoxes() != null) {
 
 				BigDecimal tareSecondary = tarePrimary.multiply(new BigDecimal(variantPackagingData.getProductPerBoxes()))
 						.add(variantPackagingData.getTareSecondary());

@@ -53,10 +53,6 @@
 				</list>
 			</parameter>
 		</constraint>
-		 <constraint name="ecm:percentCstrt" type="MINMAX">
-      	 <parameter name="minValue"><value>0</value></parameter>
-          <parameter name="maxValue"><value>100</value></parameter>
-      </constraint>
 	</constraints>
 
 	<types>
@@ -122,9 +118,6 @@
 					<mandatory>true</mandatory>
 					<default>100</default>
 					<index enabled="false"/>
-					<constraints>
-						<constraint ref="ecm:percentCstrt"></constraint>
-					</constraints>
 				</property>
 			</properties>
 			<associations>
