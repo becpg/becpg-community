@@ -1,5 +1,6 @@
 package fr.becpg.test.repo.product.formulation;
 
+import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,6 +11,12 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.model.Repository;
+import org.alfresco.service.cmr.model.FileFolderService;
+import org.alfresco.service.cmr.model.FileInfo;
+import org.alfresco.service.cmr.repository.ContentReader;
+import org.alfresco.service.cmr.repository.ContentService;
+import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
@@ -17,9 +24,12 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.helper.AssociationService;
@@ -34,6 +44,7 @@ import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
 public class ScoreCalculatingTest extends AbstractFinishedProductTest {
@@ -43,9 +54,29 @@ public class ScoreCalculatingTest extends AbstractFinishedProductTest {
 	@Resource
 	private AssociationService associationService;
 
+	@Autowired
+	private Repository repositoryHelper;
+	
+	@Autowired
+	private FileFolderService fileFolderService;
+	
+	@Autowired
+	private ContentService contentService;
+	
+	private NodeRef familyNodeRef;
+	
+	private String oldJsonString="";
+	
+	public void setRepository(Repository repository) {
+		this.repositoryHelper = repository;
+	}
+
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
+		
+		familyNodeRef = getFamilyNodeRef();
+		setUpCatalogs(familyNodeRef);
 		// create RM and lSF
 		initParts();
 	}
@@ -111,6 +142,7 @@ public class ScoreCalculatingTest extends AbstractFinishedProductTest {
 			finishedProduct.getPackagingListView().setPackagingList(packagingList);
 
 			finishedProduct.setLegalName(new MLText(Locale.FRENCH, "Produit fini 1"));
+			finishedProduct.setHierarchy1(familyNodeRef);
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
@@ -162,8 +194,8 @@ public class ScoreCalculatingTest extends AbstractFinishedProductTest {
 
 			logger.info("ValidationScore=" + validationScore + " (expecting 37)");
 			logger.info("SpecificationsScore=" + specificationsScore + " (expecting 90)");
-			logger.info("MandatoryFieldsScore=" + mandatoryFieldsScore + " (expecting 33)");
-			logger.info("GlobalScore=" + globalScore + " (expecting 53)");
+			logger.info("MandatoryFieldsScore=" + mandatoryFieldsScore + " (expecting 20)");
+			logger.info("GlobalScore=" + globalScore + " (expecting 49)");
 
 			//3 /8 valid products (37.5%)
 			assertEquals(37, validationScore);
@@ -171,19 +203,20 @@ public class ScoreCalculatingTest extends AbstractFinishedProductTest {
 			// 1 spec requirement is not respected : -10%
 			assertEquals(90, specificationsScore);
 			
-			// 1/3 mandatory fields filled (33.33%)
-			assertEquals(33, mandatoryFieldsScore);
+			// 1/5 mandatory fields filled (20%)
+			assertEquals(20, mandatoryFieldsScore);
 			
-			// 37.5 + 90 + 33 = 53.5 % global score
-			assertEquals(53, globalScore);
+			// 37.5 + 90 + 20 = 49.1 % global score
+			assertEquals(49, globalScore);
 
 			JSONArray missingFieldsArray = scoresObject.getJSONArray("catalogs").getJSONObject(0).getJSONArray("missingFields");
 			assertNotNull(missingFieldsArray);
 
-			assertEquals(2, missingFieldsArray.length());
-			logger.info("score=" + scoresObject.getJSONArray("catalogs").getJSONObject(0).getDouble("score") + " (expecting 33)");
+			// 1/5 mandatory fields -> 4 missing
+			assertEquals(4, missingFieldsArray.length());
+			logger.info("score=" + scoresObject.getJSONArray("catalogs").getJSONObject(0).getDouble("score") + " (expecting 20)");
 
-			assertEquals(33, (int) scoresObject.getJSONArray("catalogs").getJSONObject(0).getDouble("score"));
+			assertEquals(20, (int) scoresObject.getJSONArray("catalogs").getJSONObject(0).getDouble("score"));
 
 			String missingFieldsString = missingFieldsArray.toString();
 			logger.info("Missing fields: " + missingFieldsString);
@@ -191,6 +224,102 @@ public class ScoreCalculatingTest extends AbstractFinishedProductTest {
 			assertTrue(missingFieldsString.contains("bcpg:storageConditionsRef"));
 
 			return null;
+		}, false, true);
+	}
+	
+	private void setUpCatalogs(NodeRef family){
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			String catalogJSONString = "[{\"entityType\":[\"bcpg:finishedProduct\"],\"uniqueFields\":[\"bcpg:erpCode\"],\"id\":\"incoFinishedProduct\",\"label\":\"EU 1169/2011 (INCO)\",\"fields\":[\"bcpg:legalName\",\"bcpg:precautionOfUseRef\",\"bcpg:useByDate|bcpg:bestBeforeDate\",\"bcpg:storageConditionsRef\",\"cm:title\"]},{\"entityType\":[\"bcpg:rawMaterial\"],\"uniqueFields\":[\"bcpg:erpCode\"],\"id\":\"incoRawMaterials\",\"label\":\"EU 1169/2011 (INCO)\",\"fields\":[\"bcpg:legalName\"]}]";
+			
+		JSONArray properCatalogs = new JSONArray(catalogJSONString);
+		logger.info("properCatalog: "+properCatalogs);
+		 NodeRef folder = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(), "/app:company_home/cm:System/cm:PropertyCatalogs");
+		 
+		 List<FileInfo> files = fileFolderService.list(folder);
+		 if(!files.isEmpty()) {
+			 
+			 NodeRef catalogFile = files.get(0).getNodeRef();
+			 ContentReader reader = contentService.getReader(catalogFile, ContentModel.PROP_CONTENT);
+			 
+			 String content = reader.getContentString();
+			 
+			 JSONArray catalogs = new JSONArray();
+			 
+			 try {
+				 catalogs = new JSONArray(content);
+				 JSONObject catalog = catalogs.getJSONObject(0);
+				 catalog.put("entityFilter", "hierarchy1.toString() == '"+family+"' ? true : false");
+				 logger.info("Catalog before writing: "+catalogs);
+				 ContentWriter writer = contentService.getWriter(catalogFile, ContentModel.PROP_CONTENT, true);
+				 PrintWriter printWriter = new PrintWriter(writer.getContentOutputStream());
+				 
+				 printWriter.write(catalogs.toString());
+				 printWriter.flush();
+				 printWriter.close();
+			} catch (JSONException e) {
+				logger.error("unable to parse content "+content+" to jsonarray",e);
+			}
+			 
+		 } else {
+			 logger.error("No catalog in folder, do init repo");	 
+		 }
+		 
+		 return null;
+		}, false, true);
+	}
+	
+	private void restoreCatalogs(){
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			String catalogJSONString = "[{\"entityType\":[\"bcpg:finishedProduct\"],\"uniqueFields\":[\"bcpg:erpCode\"],\"id\":\"incoFinishedProduct\",\"label\":\"EU 1169/2011 (INCO)\",\"fields\":[\"bcpg:legalName\",\"bcpg:precautionOfUseRef\",\"bcpg:useByDate|bcpg:bestBeforeDate\",\"bcpg:storageConditionsRef\",\"cm:title\"]},{\"entityType\":[\"bcpg:rawMaterial\"],\"uniqueFields\":[\"bcpg:erpCode\"],\"id\":\"incoRawMaterials\",\"label\":\"EU 1169/2011 (INCO)\",\"fields\":[\"bcpg:legalName\"]}]";
+			
+		 NodeRef folder = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(), "/app:company_home/cm:System/cm:PropertyCatalogs");
+		 
+		 List<FileInfo> files = fileFolderService.list(folder);
+		 if(!files.isEmpty()) {
+			 
+			 NodeRef catalogFile = files.get(0).getNodeRef();
+			 ContentReader reader = contentService.getReader(catalogFile, ContentModel.PROP_CONTENT);
+			 
+			 String content = reader.getContentString();
+			 
+			 JSONArray catalogs = new JSONArray();
+			 
+			 try {
+				 catalogs = new JSONArray(catalogJSONString);
+				 ContentWriter writer = contentService.getWriter(catalogFile, ContentModel.PROP_CONTENT, true);
+				 PrintWriter printWriter = new PrintWriter(writer.getContentOutputStream());
+				 
+				 printWriter.write(catalogs.toString());
+				 printWriter.flush();
+				 printWriter.close();
+			} catch (JSONException e) {
+				logger.error("unable to parse content "+content+" to jsonarray",e);
+			}
+			 
+		 } else {
+			 logger.error("No catalog in folder, do init repo");	 
+		 }
+		 
+		 return null;
+		}, false, true);
+	}
+	
+	
+	@Override
+	public void tearDown() throws Exception{
+		super.tearDown();
+		
+		restoreCatalogs();
+	}
+	
+	private NodeRef getFamilyNodeRef(){
+		
+		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			Map<QName, Serializable> props = new HashMap<QName, Serializable>(1);
+		    props.put(BeCPGModel.PROP_LKV_VALUE, "Famille 1");
+		    return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) props.get(BeCPGModel.PROP_LKV_VALUE)),
+					BeCPGModel.TYPE_LINKED_VALUE, props).getChildRef();
 		}, false, true);
 	}
 }

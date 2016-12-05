@@ -4,9 +4,11 @@
 package fr.becpg.repo.admin;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -40,6 +42,7 @@ import fr.becpg.model.PLMGroup;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
 import fr.becpg.model.QualityModel;
+import fr.becpg.model.ReportModel;
 import fr.becpg.model.SecurityModel;
 import fr.becpg.model.SystemGroup;
 import fr.becpg.model.VariantModel;
@@ -212,6 +215,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		
 		//NutDatabases
 		visitFolder(systemNodeRef, PlmRepoConsts.PATH_NUT_DATABASES);
+		
+		//Property catalogs
+		visitFolder(systemNodeRef, PlmRepoConsts.PATH_CATALOGS);
 	}
 
 	/**
@@ -234,6 +240,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			} else {
 				contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/databases/nuts/en/*.csv");
 			}
+		}
+		if( Objects.equals(folderName, PlmRepoConsts.PATH_CATALOGS)) {
+			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/catalogs/*.json");
 		}
 	}
 
@@ -719,7 +728,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			String[] otherReport = { PRODUCT_REPORT_PRODUCTION_PATH, null, null, null };
 			String[] otherReportName = { productReportProductionName, null, null, null };
 			String[] productReportResource = { PRODUCT_REPORT_FR_RESOURCE, PRODUCT_REPORT_EN_RESOURCE };
-
+			//String associatedLocales =  "fr en" ;
+			
 			int i = 0;
 
 			for (QName productType : productTypes) {
@@ -732,13 +742,28 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 							classDef.getTitle(dictionaryService));
 
 					if ((defaultReport[i] != null) && (defaultReportName[i] != null)) {
-						reportTplService.createTplRptDesign(folderNodeRef, defaultReportName[i], defaultReport[i], ReportType.Document,
+						/*NodeRef template = */reportTplService.createTplRptDesign(folderNodeRef, defaultReportName[i], defaultReport[i], ReportType.Document,
 								ReportFormat.PDF, productType, true, true, false);
+						
+						//List<NodeRef> resources = new ArrayList<>();
 						if (defaultReportName[i].equals(productReportSupplierName) || defaultReportName[i].equals(productReportClientName)) {
 							for (String element : productReportResource) {
 								reportTplService.createTplRessource(productReportTplsNodeRef, element, true);
+								//resources.add(reportTplService.createTplRessource(productReportTplsNodeRef, element, true));
 							}
 						}
+						
+						/*
+						if(!resources.isEmpty()){
+							for(NodeRef resource : resources){
+								logger.debug("Associating resource: "+resource+" to template: "+template);
+								nodeService.createAssociation(template, resource, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES);
+							}
+							
+							nodeService.setProperty(template, ReportModel.PROP_REPORT_LOCALES, associatedLocales);
+							
+						}
+						*/
 					}
 
 					if ((otherReport[i] != null) && (otherReportName[i] != null)) {
