@@ -67,6 +67,7 @@
 			<column id="bcpg:productHierarchy2" type="Hierarchy"
 				attribute="bcpg:productHierarchy2" parentLevel="bcpg:productHierarchy1"
 				parentLevelAttribute="bcpg:parentLevel" />
+			<column id="bcpg:ingTypeV2" attribute="bcpg:ingTypeV2" type="Attribute" targetClass="bcpg:ingTypeItem" />
 		</columns>
 	</mapping>
 	
@@ -81,6 +82,7 @@
 			<column id="bcpg:productHierarchy2" type="Hierarchy"
 				attribute="bcpg:productHierarchy2" parentLevel="bcpg:productHierarchy1"
 				parentLevelAttribute="bcpg:parentLevel" />
+			<column id="bcpg:ingTypeV2" attribute="bcpg:ingTypeV2" type="Attribute" targetClass="bcpg:ingTypeItem" />
 		</columns>
 	</mapping>
 

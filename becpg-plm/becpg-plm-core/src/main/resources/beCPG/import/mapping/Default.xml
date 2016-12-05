@@ -59,6 +59,10 @@
 		</nodeColumnKeys>
 		<columns>
 
+			<column id="bcpg:clientHierarchy1" type="Hierarchy" attribute="bcpg:clientHierarchy1"  path="/System/ProductHierarchy/bcpg:entityLists/client_Hierarchy" />
+			<column id="bcpg:clientHierarchy2" type="Hierarchy" attribute="bcpg:clientHierarchy2" path="/System/ProductHierarchy/bcpg:entityLists/client_Hierarchy"
+				parentLevel="bcpg:clientHierarchy1" />
+				
 			<column id="img1Path" attribute="cm:content" path="Images/logo.jpg"
 				type="File" />
 			<column id="img1Title" attribute="cm:title" path="Images/logo.jpg"
