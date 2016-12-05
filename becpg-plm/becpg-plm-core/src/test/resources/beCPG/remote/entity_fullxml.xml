@@ -760,54 +760,7 @@
           <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
           <cm:modified type="d:datetime">2014-08-07T17:30:00.760+02:00</cm:modified>
         </dl:dataList>
-        <dl:dataList xmlns:dl="http://www.alfresco.org/model/datalist/1.0" path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists" type="node" name="activityList" nodeRef="workspace://SpacesStore/644f0265-6633-4548-8ced-db4d904dc4dd">
-          <cm:contains type="childAssoc">
-            <pjt:activityList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="75d64dda-4b19-44dd-8860-9ab98aeca168" nodeRef="workspace://SpacesStore/8133cd9a-3270-464f-b7c1-328702c07cd7">
-              <pjt:alUserId type="d:text"><![CDATA[admin]]></pjt:alUserId>
-              <pjt:alData type="d:text"><![CDATA[{"title":"Fiche essais.doc","contentNodeRef":"workspace://SpacesStore/efff552e-15df-4a40-9690-4c3c73651f2a","activityEvent":"Create"}]]></pjt:alData>
-              <cm:created type="d:datetime">2014-08-07T17:30:00.841+02:00</cm:created>
-              <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
-              <cm:name type="d:text"><![CDATA[75d64dda-4b19-44dd-8860-9ab98aeca168]]></cm:name>
-              <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
-              <pjt:alType type="d:text"><![CDATA[Content]]></pjt:alType>
-              <cm:modified type="d:datetime">2014-08-07T17:30:00.841+02:00</cm:modified>
-              <bcpg:sort type="d:int"><![CDATA[100]]></bcpg:sort>
-            </pjt:activityList>
-            <pjt:activityList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="d2d5a46e-4adf-44e9-81cc-4598d3dae706" nodeRef="workspace://SpacesStore/e5c79a09-e512-4b1f-9000-ea57d183c4d6">
-              <pjt:alUserId type="d:text"><![CDATA[admin]]></pjt:alUserId>
-              <pjt:alData type="d:text"><![CDATA[{"afterState":"InProgress","beforeState":"Planned","title":"Validation "}]]></pjt:alData>
-              <cm:created type="d:datetime">2014-08-07T17:31:12.846+02:00</cm:created>
-              <pjt:alTaskId type="d:noderef">
-                <pjt:taskList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="e2601047-ce2c-42b6-ab79-44bbd406020d" nodeRef="workspace://SpacesStore/cabc53bc-a21b-4f4d-94a8-4ba5672a701a"/>
-              </pjt:alTaskId>
-              <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
-              <cm:name type="d:text"><![CDATA[d2d5a46e-4adf-44e9-81cc-4598d3dae706]]></cm:name>
-              <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
-              <pjt:alType type="d:text"><![CDATA[State]]></pjt:alType>
-              <cm:modified type="d:datetime">2014-08-07T17:31:12.846+02:00</cm:modified>
-              <bcpg:sort type="d:int"><![CDATA[101]]></bcpg:sort>
-            </pjt:activityList>
-            <pjt:activityList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="eb1e1eaa-d4b4-4adb-b44b-daaac4679e13" nodeRef="workspace://SpacesStore/ba868d90-570d-4aaa-beee-0b442e9a8814">
-              <pjt:alUserId type="d:text"><![CDATA[admin]]></pjt:alUserId>
-              <pjt:alData type="d:text"><![CDATA[{"afterState":"InProgress","beforeState":"Planned","title":"test"}]]></pjt:alData>
-              <cm:created type="d:datetime">2014-08-07T17:31:13.004+02:00</cm:created>
-              <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
-              <cm:name type="d:text"><![CDATA[eb1e1eaa-d4b4-4adb-b44b-daaac4679e13]]></cm:name>
-              <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
-              <pjt:alType type="d:text"><![CDATA[State]]></pjt:alType>
-              <cm:modified type="d:datetime">2014-08-07T17:31:13.004+02:00</cm:modified>
-              <bcpg:sort type="d:int"><![CDATA[102]]></bcpg:sort>
-            </pjt:activityList>
-          </cm:contains>
-          <cm:created type="d:datetime">2014-08-07T17:30:00.806+02:00</cm:created>
-          <cm:title type="d:mltext"><![CDATA[Activités]]></cm:title>
-          <cm:description type="d:mltext"><![CDATA[Activités projet]]></cm:description>
-          <dl:dataListItemType type="d:text"><![CDATA[pjt:activityList]]></dl:dataListItemType>
-          <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
-          <cm:name type="d:text"><![CDATA[activityList]]></cm:name>
-          <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
-          <cm:modified type="d:datetime">2014-08-07T17:31:13.379+02:00</cm:modified>
-        </dl:dataList>
+      
       </cm:contains>
       <cm:created type="d:datetime">2014-08-07T17:30:00.250+02:00</cm:created>
       <cm:title type="d:mltext"><![CDATA[DataLists]]></cm:title>
