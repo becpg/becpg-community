@@ -215,14 +215,16 @@ public class ReportTplServiceImpl implements ReportTplService {
 	 * @throws IOException
 	 */
 	@Override
-	public void createTplRessource(NodeRef parentNodeRef, String xmlFilePath, boolean overrideRessource) throws IOException {
+	public NodeRef createTplRessource(NodeRef parentNodeRef, String xmlFilePath, boolean overrideRessource) throws IOException {
 
 		ClassPathResource resource = new ClassPathResource(xmlFilePath);
 		InputStream in = null;
+		
+		NodeRef fileNodeRef = null;
 		if (resource.exists()) {
 			try {
 				in = new BufferedInputStream(resource.getInputStream());
-				NodeRef fileNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, resource.getFilename());
+				fileNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, resource.getFilename());
 
 				if ((fileNodeRef == null) || overrideRessource) {
 
@@ -252,6 +254,8 @@ public class ReportTplServiceImpl implements ReportTplService {
 		} else {
 			logger.error("Resource not found. Path: " + xmlFilePath);
 		}
+		
+		return fileNodeRef;
 	}
 
 	@Override

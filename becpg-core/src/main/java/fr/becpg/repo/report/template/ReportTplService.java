@@ -88,8 +88,9 @@ public interface ReportTplService {
 	 * @param xmlFilePath
 	 * @param overrideRessource
 	 * @throws IOException
+	 * @return the created resource
 	 */
-	void createTplRessource(NodeRef parentNodeRef, String xmlFilePath, boolean overrideRessource) throws IOException;
+	NodeRef createTplRessource(NodeRef parentNodeRef, String xmlFilePath, boolean overrideRessource) throws IOException;
 	
 	/**
 	 * Check the default reports (return one default tpl)
