@@ -1,5 +1,7 @@
 package fr.becpg.repo.helper;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -23,12 +25,23 @@ public class MLTextHelper {
 	
 	private static String supportedLocales;
 	
-	
+	private static boolean shouldExtractMLText;
+
 	@Value("${beCPG.multilinguale.supportedLocales}")
 	public void setSupportedLocales(String supportedLocales) {
 		MLTextHelper.supportedLocales = supportedLocales;
 	}  
 
+	
+	@Value("${beCPG.multilinguale.shouldExtractMLText}")
+	public void setshouldExtractMLText(boolean shouldExtractMLText) {
+		MLTextHelper.shouldExtractMLText = shouldExtractMLText;
+	}  
+	
+	public static boolean shouldExtractMLText() {
+		return shouldExtractMLText;
+	}
+	
 	/**
 	 * Try to find the best match for locale or try with default server local 
 	 * @param mltext
@@ -123,6 +136,24 @@ public class MLTextHelper {
 		}
 		return false;
 	}
+	
+	public static List<Locale> getSupportedLocales() {
+		
+		List<Locale> ret = new LinkedList<Locale>();
+		
+		if(supportedLocales!=null){
+			String[] locales = supportedLocales.split(",");
+			for (String tmp : locales) {
+				if(tmp.contains("_")){
+					ret.add(new Locale(tmp.split("_")[0],tmp.split("_")[1]));
+				} else {
+					ret.add(new Locale(tmp));
+				}
+			}
+		}
+		
+		return ret;
+	}
 
 	public static String getValueOrDefault(NodeService nodeService, NodeRef nodeRef, QName propCharactName) {
 		String ret = (String) nodeService.getProperty(nodeRef, propCharactName);
@@ -140,5 +171,23 @@ public class MLTextHelper {
 		
 		return ret;
 	}
+
+	public static String localeKey(Locale locale) {
+		String ret = locale.getLanguage();
+		if(locale.getCountry()!=null){
+			ret+="_"+locale.getCountry();
+		}
+		return ret;
+	}
+
+	public static String localeLabel(Locale locale) {
+		String ret = locale.getDisplayLanguage();
+		if(locale.getCountry()!=null){
+			ret+=" - "+locale.getDisplayCountry();
+		}
+		return ret;
+	}
+
+	
 
 }

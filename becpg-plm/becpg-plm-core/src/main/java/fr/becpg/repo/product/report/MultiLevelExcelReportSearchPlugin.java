@@ -114,7 +114,7 @@ public class MultiLevelExcelReportSearchPlugin extends DefaultExcelReportSearchP
 						cell.setCellValue(String.valueOf(key));
 					}
 
-					cellNum = ExcelHelper.appendExcelField(metadataFields, null, item, row, cellNum);
+					cellNum = ExcelHelper.appendExcelField(metadataFields, null, item, row, cellNum,null);
 
 //					Row headerRow = sheet.getRow(1);
 //					if(cellNum < headerRow.getLastCellNum()){
