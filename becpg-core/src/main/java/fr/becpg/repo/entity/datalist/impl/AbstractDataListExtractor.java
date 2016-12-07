@@ -234,30 +234,30 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 			if (cache.containsKey(nodeRef)) {
 				return cache.get(nodeRef);
 			}
-			
+
+			QName itemType = nodeService.getType(nodeRef);
+			Map<QName, Serializable> properties = null;
+
 			boolean isMLAware = MLPropertyInterceptor.isMLAware();
 
 			try {
-				
-
 				if (MLTextHelper.shouldExtractMLText()) {
 					MLPropertyInterceptor.setMLAware(true);
 				}
 
-				QName itemType = nodeService.getType(nodeRef);
-				Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
-
-				Map<String, Object> ret = doExtract(nodeRef, itemType, metadataFields, mode, properties, props, cache);
-
-				cache.put(nodeRef, ret);
-
-				return ret;
+				properties = nodeService.getProperties(nodeRef);
 
 			} finally {
 				if (MLTextHelper.shouldExtractMLText()) {
 					MLPropertyInterceptor.setMLAware(isMLAware);
 				}
 			}
+
+			Map<String, Object> ret = doExtract(nodeRef, itemType, metadataFields, mode, properties, props, cache);
+
+			cache.put(nodeRef, ret);
+
+			return ret;
 
 		} finally {
 			if (logger.isDebugEnabled()) {
