@@ -44,13 +44,14 @@ public class ExcelHelper {
 				}
 
 				if ((supportedLocales != null) && !supportedLocales.isEmpty() && (field.getFieldDef() instanceof PropertyDefinition)
-						&& DataTypeDefinition.MLTEXT.equals(((PropertyDefinition) field.getFieldDef()).getDataType())) {
+						&& DataTypeDefinition.MLTEXT.toString().equals(((PropertyDefinition) field.getFieldDef()).getDataType().toString())) {
 
 					for (Locale locale : supportedLocales) {
 						Cell cell = row.createCell(cellnum++);
 						if ((obj != null) && (obj instanceof MLText)) {
 
 							String value = ((MLText) obj).get(locale);
+							
 							if (value != null) {
 								cell.setCellValue(value);
 							}
@@ -82,7 +83,7 @@ public class ExcelHelper {
 	}
 
 	public static boolean isExcelType(Serializable value) {
-		return (value instanceof Date) || (value instanceof Boolean) || (value instanceof Double);
+		return (value instanceof Date) || (value instanceof Boolean) || (value instanceof Double) || (value instanceof MLText);
 	}
 
 	public static int appendExcelHeader(List<AttributeExtractorStructure> fields, String prefix, String titlePrefix, Row headerRow, Row labelRow,
@@ -94,12 +95,15 @@ public class ExcelHelper {
 					cellnum = appendExcelHeader(field.getChildrens(), field.getFieldName(), titleProvider.getTitle(field), headerRow, labelRow, style,
 							cellnum, titleProvider, supportedLocales);
 				} else {
-					Cell cell = headerRow.createCell(cellnum);
-
+					
 					if ((supportedLocales != null) && !supportedLocales.isEmpty() && (field.getFieldDef() instanceof PropertyDefinition)
-							&& DataTypeDefinition.MLTEXT.equals(((PropertyDefinition) field.getFieldDef()).getDataType())) {
+							&& DataTypeDefinition.MLTEXT.toString().equals(((PropertyDefinition) field.getFieldDef()).getDataType().toString())) {
 
+						
+						
 						for (Locale locale : supportedLocales) {
+							
+							Cell cell = headerRow.createCell(cellnum);
 
 							if (prefix != null) {
 								cell.setCellValue(
@@ -110,15 +114,17 @@ public class ExcelHelper {
 
 							cell = labelRow.createCell(cellnum++);
 							if (titlePrefix != null) {
-								cell.setCellValue(titlePrefix + " - " + titleProvider.getTitle(field) + "-" + MLTextHelper.localeLabel(locale));
+								cell.setCellValue(titlePrefix + " - " + titleProvider.getTitle(field) + " - " + MLTextHelper.localeLabel(locale));
 							} else {
-								cell.setCellValue(titleProvider.getTitle(field) + "-" + MLTextHelper.localeLabel(locale));
+								cell.setCellValue(titleProvider.getTitle(field) + " - " + MLTextHelper.localeLabel(locale));
 							}
 							cell.setCellStyle(style);
 
 						}
 
 					} else {
+						
+						Cell cell = headerRow.createCell(cellnum);
 
 						if (prefix != null) {
 							cell.setCellValue(prefix + "_" + field.getFieldDef().getName().toPrefixString());
