@@ -170,6 +170,7 @@
         <property name="entityListDAO" ref="entityListDAO"/>
         <property name="associationService" ref="associationService"/>
        <property name="attributeExtractorService" ref="attributeExtractorService"/>
+        <property name="ruleService" ref="ruleService"/>
          <property name="patchDAO">
             <ref bean="patchDAO"/>
         </property>
@@ -178,6 +179,9 @@
         </property>
         <property name="qnameDAO">
             <ref bean="qnameDAO"/>
+        </property>
+          <property name="policyBehaviourFilter">
+            <ref bean="policyBehaviourFilter"/>
         </property>
 	</bean>
 	
