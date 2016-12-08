@@ -1,11 +1,13 @@
 package fr.becpg.repo.activity;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.forum.CommentService;
+import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.activities.ActivityService;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentReader;
@@ -14,6 +16,8 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.service.transaction.TransactionService;
+import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
@@ -32,6 +36,8 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.L2CacheSupport;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 @Service("entityActivityService")
 public class EntityActivityServiceImpl implements EntityActivityService {
@@ -39,39 +45,43 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	private static Log logger = LogFactory.getLog(EntityActivityServiceImpl.class);
 
 	@Autowired
-	ActivityService activityService;
+	private ActivityService activityService;
 
 	@Autowired
-	EntityListDAO entityListDAO;
+	private EntityListDAO entityListDAO;
 
 	@Autowired
-	AssociationService associationService;
+	private AssociationService associationService;
 
 	@Autowired
-	NodeService nodeService;
+	private NodeService nodeService;
 
 	@Autowired
-	AttributeExtractorService attributeExtractorService;
+	private AttributeExtractorService attributeExtractorService;
 
 	@Autowired
-	AlfrescoRepository<ActivityListDataItem> alfrescoRepository;
+	private AlfrescoRepository<ActivityListDataItem> alfrescoRepository;
 
 	@Autowired
-	CommentService commentService;
+	private CommentService commentService;
 
 	@Autowired
-	ContentService contentService;
+	private ContentService contentService;
 
 	@Autowired
-	NamespaceService namespaceService;
+	private NamespaceService namespaceService;
 
 	@Autowired
-	EntityDictionaryService entityDictionaryService;
-	
-	@Autowired
-	EntityActivityListener[]  entityActivityListeners;
+	private EntityDictionaryService entityDictionaryService;
 
-	
+	@Autowired
+	private EntityActivityListener[] entityActivityListeners;
+
+	@Autowired
+	private BehaviourFilter policyBehaviourFilter;
+
+	@Autowired
+	private TransactionService transactionService;
 
 	private static Integer MAX_DEPTH_LEVEL = 6;
 
@@ -136,8 +146,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					activityListDataItem.setParentNodeRef(activityListNodeRef);
 
 					alfrescoRepository.save(activityListDataItem);
-					
-					
+
 					notifyListeners(entityNodeRef, activityListDataItem);
 
 					return true;
@@ -179,10 +188,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					activityListDataItem.setActivityData(data.toString());
 					activityListDataItem.setParentNodeRef(activityListNodeRef);
 
-
 					alfrescoRepository.save(activityListDataItem);
-					
-					
+
 					notifyListeners(entityNodeRef, activityListDataItem);
 
 					return true;
@@ -234,12 +241,10 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					activityListDataItem.setActivityData(data.toString());
 					activityListDataItem.setParentNodeRef(activityListNodeRef);
 
-					
 					alfrescoRepository.save(activityListDataItem);
-					
-					
+
 					notifyListeners(entityNodeRef, activityListDataItem);
-					
+
 					return true;
 				}
 			} catch (JSONException e) {
@@ -298,10 +303,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					activityListDataItem.setActivityData(data.toString());
 					activityListDataItem.setParentNodeRef(activityListNodeRef);
 
-
 					alfrescoRepository.save(activityListDataItem);
-					
-					
+
 					notifyListeners(entityNodeRef, activityListDataItem);
 
 					return true;
@@ -343,11 +346,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 				activityListDataItem.setActivityData(data.toString());
 				activityListDataItem.setParentNodeRef(activityListNodeRef);
 
-				
-
 				alfrescoRepository.save(activityListDataItem);
-				
-				
+
 				notifyListeners(entityNodeRef, activityListDataItem);
 				return true;
 			}
@@ -358,14 +358,12 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	}
 
 	private void notifyListeners(NodeRef entityNodeRef, ActivityListDataItem activityListDataItem) {
-		
-		
-		for(EntityActivityListener entityActivityListener : entityActivityListeners){
-			
+
+		for (EntityActivityListener entityActivityListener : entityActivityListeners) {
+
 			entityActivityListener.notify(entityNodeRef, activityListDataItem);
 		}
-		
-		
+
 	}
 
 	@Override
@@ -465,6 +463,45 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public void cleanActivities() {
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_ACTIVITY_LIST)
+					.andBetween(ContentModel.PROP_CREATED, "MIN", ISO8601DateFormat.format(new Date()));
+
+			//Algo
+			// ON recherche toutes les entités modifié depuis le dernier cron et avec une liste d'activités
+			// Si moins de 50 activités on ne fait rien
+			// Si plus
+			//  --> Les activités de moins d'une semaine sont gardés
+			//  --> Les activités de plus d'une semaine sont regroupé par type par semaine
+			//  --> Si plus de 50 
+			//  	--> Les activités de plus d'un mois sont regroupé par type par mois 
+			
+			// Si l'activité est référencé on ne fait rien (commentaire dans les projets) --> Ne pas supprimer de commentaires ?? 
+			// Les activités sur les versions sont supprimés
+			
+			
+			
+			List<NodeRef> activityNodeRefs = queryBuilder.list();
+
+			try {
+				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+				L2CacheSupport.doInCacheContext(() -> {
+					for (NodeRef activityNodeRef : activityNodeRefs) {
+						logger.debug("Not yet implemented");
+					}
+				}, false, true);
+
+			} finally {
+
+				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+			}
+			return null;
+		}, false, true);
 	}
 
 }

@@ -31,4 +31,6 @@ public interface EntityActivityService {
 
 	NodeRef getEntityNodeRef(NodeRef nodeRef, QName itemType);
 
+	void cleanActivities();
+
 }

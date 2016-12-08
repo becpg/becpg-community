@@ -9,6 +9,8 @@
 <@markup id="js">
    <#include "../form/form.js.ftl"/>
 	<@script src="${url.context}/res/modules/entity-datagrid/entity-columnRenderer.js" group="project-list" />
+	<@script src="${url.context}/res/modules/custom-entity-datagrid/custom-columnRenderer.js" group="project-list" />
+
 	<@script src="${url.context}/res/components/project/columnRenderers.js" group="project-list" />
 	<@script src="${url.context}/res/modules/entity-datagrid/entity-actions.js" group="project-list" />
 	<@script src="${url.context}/res/modules/custom-entity-datagrid/custom-entity-actions.js" group="project-list"></@script>

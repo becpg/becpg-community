@@ -12,16 +12,20 @@ import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
 import org.alfresco.repo.domain.node.NodeDAO;
 import org.alfresco.repo.domain.patch.PatchDAO;
 import org.alfresco.repo.domain.qname.QNameDAO;
+import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.rule.RuleService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.DataListModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.activity.data.ActivityListDataItem;
@@ -37,12 +41,12 @@ public class ProjectActivityPatch extends AbstractBeCPGPatch {
 	private static final Log logger = LogFactory.getLog(ProjectActivityPatch.class);
 	private static final String MSG_SUCCESS = "patch.bcpg.projet.projectActivityPatch.result";
 
-	QName TYPE_ACTIVITY_LIST = QName.createQName(ProjectModel.PROJECT_URI, "activityList");
-	QName PROP_ACTIVITYLIST_USERID = QName.createQName(ProjectModel.PROJECT_URI, "alUserId");
-	QName PROP_ACTIVITYLIST_TYPE = QName.createQName(ProjectModel.PROJECT_URI, "alType");
-	QName PROP_ACTIVITYLIST_TASKID = QName.createQName(ProjectModel.PROJECT_URI, "alTaskId");
-	QName PROP_ACTIVITYLIST_DELIVERABLEID = QName.createQName(ProjectModel.PROJECT_URI, "alDeliverableId");
-	QName PROP_ACTIVITYLIST_DATA = QName.createQName(ProjectModel.PROJECT_URI, "alData");
+	private static final QName TYPE_ACTIVITY_LIST = QName.createQName(ProjectModel.PROJECT_URI, "activityList");
+	private static final QName PROP_ACTIVITYLIST_USERID = QName.createQName(ProjectModel.PROJECT_URI, "alUserId");
+	private static final QName PROP_ACTIVITYLIST_TYPE = QName.createQName(ProjectModel.PROJECT_URI, "alType");
+	private static final QName PROP_ACTIVITYLIST_TASKID = QName.createQName(ProjectModel.PROJECT_URI, "alTaskId");
+	private static final QName PROP_ACTIVITYLIST_DELIVERABLEID = QName.createQName(ProjectModel.PROJECT_URI, "alDeliverableId");
+	private static final QName PROP_ACTIVITYLIST_DATA = QName.createQName(ProjectModel.PROJECT_URI, "alData");
 
 	private NodeDAO nodeDAO;
 	private PatchDAO patchDAO;
@@ -51,6 +55,27 @@ public class ProjectActivityPatch extends AbstractBeCPGPatch {
 	private EntityListDAO entityListDAO;
 	private AssociationService associationService;
 	private AttributeExtractorService attributeExtractorService;
+	private BehaviourFilter policyBehaviourFilter;
+	private RuleService ruleService;
+	
+	
+	
+
+	public BehaviourFilter getPolicyBehaviourFilter() {
+		return policyBehaviourFilter;
+	}
+
+	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
+		this.policyBehaviourFilter = policyBehaviourFilter;
+	}
+
+	public RuleService getRuleService() {
+		return ruleService;
+	}
+
+	public void setRuleService(RuleService ruleService) {
+		this.ruleService = ruleService;
+	}
 
 	public void setAlfrescoRepository(AlfrescoRepository<ActivityListDataItem> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
@@ -123,14 +148,15 @@ public class ProjectActivityPatch extends AbstractBeCPGPatch {
 
 		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
 
-			@Override
 			public void afterProcess() throws Throwable {
+				ruleService.disableRules();
+				
 			}
 
-			@Override
 			public void beforeProcess() throws Throwable {
+				ruleService.enableRules();
+				
 			}
-
 			@Override
 			public String getIdentifier(NodeRef entry) {
 				return entry.toString();
@@ -141,12 +167,19 @@ public class ProjectActivityPatch extends AbstractBeCPGPatch {
 
 				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
+				
+				policyBehaviourFilter.disableBehaviour();
 				if (nodeService.exists(activityNodeRef)) {
 					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
 					NodeRef entityNodeRef = entityListDAO.getEntity(activityNodeRef);
+					
+					String oldData = (String) nodeService.getProperty(activityNodeRef, PROP_ACTIVITYLIST_DATA);
+					
+					logger.info("Convert  : "+oldData);
 
-					JSONObject data = new JSONObject(nodeService.getProperty(activityNodeRef, PROP_ACTIVITYLIST_DATA));
+					JSONTokener tokener = new JSONTokener(oldData);
+					JSONObject data = new JSONObject(tokener);
 
 					NodeRef itemNodeRef = (NodeRef) nodeService.getProperty(activityNodeRef, PROP_ACTIVITYLIST_DELIVERABLEID);
 					if (itemNodeRef == null) {
@@ -173,6 +206,8 @@ public class ProjectActivityPatch extends AbstractBeCPGPatch {
 
 					nodeService.setProperty(activityListDataItem.getNodeRef(), ContentModel.PROP_CREATED,
 							nodeService.getProperty(activityNodeRef, ContentModel.PROP_CREATED));
+					
+					logger.info("Storing : "+activityListDataItem.toString());
 
 					for (NodeRef projectNodeRef : associationService.getSourcesAssocs(activityNodeRef, ProjectModel.ASSOC_PROJECT_CUR_COMMENTS)) {
 
@@ -180,10 +215,15 @@ public class ProjectActivityPatch extends AbstractBeCPGPatch {
 								Collections.singletonList(activityListDataItem.getNodeRef()));
 
 					}
+					
+					// Delete Node
+					nodeService.deleteNode(activityNodeRef);
 
 				} else {
 					logger.warn("activityNodeRef doesn't exist : " + activityNodeRef);
 				}
+				
+				policyBehaviourFilter.enableBehaviour();
 
 			}
 
@@ -195,6 +235,8 @@ public class ProjectActivityPatch extends AbstractBeCPGPatch {
 				}
 				if (listNodeRef == null) {
 					listNodeRef = entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
+				} else {
+					nodeService.setProperty(listNodeRef, DataListModel.PROP_DATALISTITEMTYPE,  BeCPGModel.TYPE_ACTIVITY_LIST.toPrefixString(namespaceService));
 				}
 
 				return listNodeRef;

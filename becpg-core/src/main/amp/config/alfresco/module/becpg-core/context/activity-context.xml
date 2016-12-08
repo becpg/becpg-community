@@ -34,5 +34,36 @@
 		<property name="entityActivityService" ref="entityActivityService"/>
 		<property name="defaultExtractor" value="false"/>
 	</bean>
+	
+	<!-- Job  -->
+	
+	  <bean id="entityActivityJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass">
+            <value>fr.becpg.repo.activity.EntityActivityJob</value>
+        </property>
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="entityActivityService">
+                    <ref bean="entityActivityService" />
+                </entry>
+                <entry key="tenantAdminService">
+                    <ref bean="tenantAdminService" />
+                </entry>
+            </map>
+        </property>
+    </bean>
+    
+    <bean id="entityActivityJobTrigger" class="org.alfresco.util.CronTriggerBean"  >
+        <property name="jobDetail">
+            <ref bean="entityActivityJob"/>
+        </property>
+        <property name="scheduler">
+            <ref bean="schedulerFactory"/>
+        </property>
+        <property name="cronExpression">
+            <value>${beCPG.activity.cleaner.cronExpression}</value>
+        </property>
+    </bean>
+    
         
 </beans>
