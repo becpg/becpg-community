@@ -130,6 +130,24 @@
 								
 							html+="</ul>";
 						} 
+						
+						
+						//Non unique props
+						html+="<h3>"+instance.msg("label.non-unique-properties")+"</h3>";
+						console.log("non unique fields: ",json[key].nonUniqueFields);
+						if(json[key].nonUniqueFields !== undefined){
+							
+							
+							html+="<ul class=\"catalog-missing-propList\">";
+								for(var field in json[key].nonUniqueFields){	
+									html+="<li class=\"non-unique-field\" >"
+											+json[key].nonUniqueFields[field]
+											+"</li>";	
+								}
+								
+							html+="</ul>";
+						}
+						
 						html+="</div>";
 						html+="</div>";
 					}
