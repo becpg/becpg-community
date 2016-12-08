@@ -87,10 +87,6 @@ public class FormulationCheckPropsOfCompTest extends AbstractFinishedProductTest
 			int checks = 0;
 			for (ReqCtrlListDataItem r : formulatedProduct1.getReqCtrlList()) {
 
-				logger.info("Product: " + nodeService.getProperty(r.getSources().get(0), ContentModel.PROP_NAME));
-				logger.info("Msg: " + r.getReqMessage());
-				logger.info("Sources (" + r.getSources().size() + "): " + r.getSources());
-
 				if (!r.getReqMessage().startsWith("Impossible")) {
 					for (NodeRef source : r.getSources()) {
 						if (r.getReqMessage().equals("Composant non validé")) {
@@ -99,11 +95,11 @@ public class FormulationCheckPropsOfCompTest extends AbstractFinishedProductTest
 							assertTrue(r.getSources().contains(rawMaterial1NodeRef) && r.getSources().contains(rawMaterial5NodeRef)
 									&& r.getSources().contains(rawMaterial6NodeRef) && r.getSources().contains(rawMaterial7NodeRef));
 						} else if (source.equals(finishedProductNodeRef1)) {
+							//only legal name is filled
 							assertTrue(r.getReqMessage().equals("Champ obligatoire 'Précautions d'emploi' manquant (catalogue 'EU 1169/2011 (INCO)')")
-									|| r.getReqMessage()
-											.equals("Champ obligatoire 'Conditions de conservation' manquant (catalogue 'EU 1169/2011 (INCO)')")
-									|| r.getReqMessage()
-											.equals("Champ obligatoire 'Origine géographique' manquant (catalogue 'EU 1169/2011 (INCO)')"));
+									|| r.getReqMessage().equals("Champ obligatoire 'Conditions de conservation' manquant (catalogue 'EU 1169/2011 (INCO)')")
+							|| r.getReqMessage().equals("Champ obligatoire 'DLC (J) ou DDM/DLUO (J)' manquant (catalogue 'EU 1169/2011 (INCO)')")
+							|| r.getReqMessage().equals("Champ obligatoire 'Titre' manquant (catalogue 'EU 1169/2011 (INCO)')"));
 						} else if (source.equals(rawMaterial5NodeRef)) {
 							assertEquals("L'unité utilisée n'est pas la bonne.", r.getReqMessage());
 							checks++;
@@ -112,6 +108,7 @@ public class FormulationCheckPropsOfCompTest extends AbstractFinishedProductTest
 							checks++;
 						} else {
 							// should not occur
+							
 							assertTrue(false);
 						}
 					}

@@ -3,6 +3,7 @@
 
 .entity-catalog .catalog .catalog-missing-propList {
 	margin-top: 0.5em;
+	margin-left: 1em;
 }
 
 .entity-catalog .catalog .details-button {
@@ -29,7 +30,7 @@
 	float: right;
 }
 
-.entity-catalog .catalog .missing-field {
+.entity-catalog .catalog li {
 	background-image: url("../../components/images/states/refused-10.png");
 	padding-left: 20px;
 	background-repeat: no-repeat;
@@ -58,6 +59,11 @@
 .entity-catalog .catalog-missing-propList ul li {
 	margin-top: 0.3em;
 	margin-bottom: 0.3em;
+}
+
+.entity-catalog ul {
+	margin-top: 0.3em;
+	margin-bottom: 0.6em;
 }
 
 .entity-catalog .catalog img {
