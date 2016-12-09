@@ -351,9 +351,12 @@ public class XmlEntityVisitor {
 
 			SiteInfo site = siteService.getSite(siteId);
 
+			
 			xmlw.writeStartElement("metadata", "siteName", path.toPrefixString(namespaceService));
 			xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE, "d:text");
-			xmlw.writeCData(site.getTitle());
+			if(site!=null){
+				xmlw.writeCData(site.getTitle());
+			}
 			xmlw.writeEndElement();
 		}
 

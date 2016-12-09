@@ -27,6 +27,7 @@ import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.helper.AttachmentHelper;
 import fr.becpg.repo.helper.ExcelHelper;
 import fr.becpg.repo.helper.ExcelHelper.ExcelFieldTitleProvider;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 
 @Service
@@ -37,6 +38,8 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 	
 	@Autowired
 	private NodeService nodeService;
+	
+	
 
 	@Override
 	public void write(WebScriptRequest req, WebScriptResponse res, DataListFilter dataListFilter, PaginatedExtractedItems extractedItems) throws IOException {
@@ -83,7 +86,7 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 			List<AttributeExtractorStructure> fields = extractedItems.getComputedFields().stream()
 					.filter(field -> titleProvider.isAllowed(field)).collect(Collectors.toList());
 	
-			ExcelHelper.appendExcelHeader(fields, null, null, headerRow, labelRow, style, cellnum, titleProvider);
+			ExcelHelper.appendExcelHeader(fields, null, null, headerRow, labelRow, style, cellnum, titleProvider, MLTextHelper.shouldExtractMLText() ? MLTextHelper.getSupportedLocales() : null);
 	
 			for (Map<String, Object> item : plugin.decorate(extractedItems.getPageItems())) {
 				Row row = sheet.createRow(rownum++);
@@ -91,7 +94,7 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 				cell = row.createCell(0);
 				cell.setCellValue("VALUES");
 	
-				ExcelHelper.appendExcelField(fields, null, item, row, 1);
+				ExcelHelper.appendExcelField(fields, null, item, row, 1, MLTextHelper.shouldExtractMLText() ? MLTextHelper.getSupportedLocales() : null);
 	
 			}
 
