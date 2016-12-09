@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -42,6 +43,7 @@ import fr.becpg.repo.entity.datalist.DataListExtractor;
 import fr.becpg.repo.entity.datalist.DataListExtractorFactory;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorMode;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.helper.extractors.AbstractNodeDataExtractor;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
@@ -234,7 +236,22 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 			}
 
 			QName itemType = nodeService.getType(nodeRef);
-			Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
+			Map<QName, Serializable> properties = null;
+
+			boolean isMLAware = MLPropertyInterceptor.isMLAware();
+
+			try {
+				if (MLTextHelper.shouldExtractMLText()) {
+					MLPropertyInterceptor.setMLAware(true);
+				}
+
+				properties = nodeService.getProperties(nodeRef);
+
+			} finally {
+				if (MLTextHelper.shouldExtractMLText()) {
+					MLPropertyInterceptor.setMLAware(isMLAware);
+				}
+			}
 
 			Map<String, Object> ret = doExtract(nodeRef, itemType, metadataFields, mode, properties, props, cache);
 
