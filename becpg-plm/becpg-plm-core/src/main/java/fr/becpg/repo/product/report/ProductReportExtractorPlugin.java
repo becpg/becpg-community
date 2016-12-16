@@ -1,5 +1,6 @@
 package fr.becpg.repo.product.report;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -158,12 +159,13 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					if (((isExtractedProduct || PLMModel.TYPE_LABELCLAIMLIST.equals(dataListQName))
 							&& !DATALIST_SPECIFIC_EXTRACTOR.contains(dataListQName))) {
 						Element dataListElt = dataListsElt.addElement(dataListQName.getLocalName() + "s");
-
+						
 						@SuppressWarnings({ "rawtypes" })
 						List<BeCPGDataObject> dataListItems = (List) datalists.get(dataListQName);
 
 						for (BeCPGDataObject dataListItem : dataListItems) {
-
+							
+							addDataListState(dataListElt, dataListItem.getParentNodeRef());
 							Element nodeElt = dataListElt.addElement(dataListQName.getLocalName());
 
 							if (dataListItem instanceof CompositionDataItem) {
@@ -206,6 +208,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				String inVolAllergensRawMaterial = "";
 
 				for (AllergenListDataItem dataItem : allergenList) {
+					
+					addDataListState(allergenListElt, dataItem.getParentNodeRef());
 
 					// #1815: takes in account major
 					String allergenType = (String) nodeService.getProperty(dataItem.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE);
@@ -284,6 +288,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 				for (IngLabelingListDataItem dataItem : productData.getLabelingListView().getIngLabelingList()) {
 
+					addDataListState(ingListElt, dataItem.getParentNodeRef());
 					MLText labelingText = dataItem.getValue();
 
 					if (labelingText != null) {
@@ -351,6 +356,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				}
 				for (MicrobioListDataItem dataItem : microbioList) {
 					Element nodeElt = microbioListElt.addElement(PLMModel.TYPE_MICROBIOLIST.getLocalName());
+					addDataListState(microbioListElt, dataItem.getParentNodeRef());
 					loadDataListItemAttributes(dataItem, nodeElt, images);
 				}
 			}
@@ -362,6 +368,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			Element processListElt = dataListsElt.addElement(MPMModel.TYPE_PROCESSLIST.getLocalName() + "s");
 
 			for (ProcessListDataItem dataItem : productData.getProcessList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+
+				addDataListState(processListElt, dataItem.getParentNodeRef());
 				loadProcessListItem(dataItem, processListElt, defaultVariantNodeRef, 1, null, images);
 			}
 
@@ -427,7 +435,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			Element nutListsElt = dataListsElt.addElement(PLMModel.TYPE_NUTLIST.getLocalName() + "s");
 
 			for (NutListDataItem dataListItem : productData.getNutList()) {
-
+				
+				addDataListState(nutListsElt, dataListItem.getParentNodeRef());
 				if (dataListItem.getNut() != null) {
 
 					Element nutListElt = nutListsElt.addElement(PLMModel.TYPE_NUTLIST.getLocalName());
@@ -460,7 +469,10 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	private void loadOrganoLists(ProductData productData, Element dataListsElt, Map<String, byte[]> images) {
 		if ((productData.getOrganoList() != null) && !productData.getOrganoList().isEmpty()) {
 			Element organoListsElt = dataListsElt.addElement(PLMModel.TYPE_ORGANOLIST.getLocalName() + "s");
+			
 			for (OrganoListDataItem dataListItem : productData.getOrganoList()) {
+
+				addDataListState(organoListsElt, dataListItem.getParentNodeRef());
 				Element organoListElt = organoListsElt.addElement(PLMModel.TYPE_ORGANOLIST.getLocalName());
 				loadDataListItemAttributes(dataListItem, organoListElt, images);
 			}
@@ -470,7 +482,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	private void loadIngLists(ProductData productData, Element dataListsElt, Map<String, byte[]> images) {
 		if ((productData.getIngList() != null) && !productData.getIngList().isEmpty()) {
 			Element ingListsElt = dataListsElt.addElement(PLMModel.TYPE_INGLIST.getLocalName() + "s");
+
 			for (IngListDataItem dataListItem : productData.getIngList()) {
+				addDataListState(ingListsElt, dataListItem.getParentNodeRef());
 				Element ingListElt = ingListsElt.addElement(PLMModel.TYPE_INGLIST.getLocalName());
 				String ingCEECode = (String) nodeService.getProperty(dataListItem.getIng(), PLMModel.PROP_ING_CEECODE);
 				if (ingCEECode != null) {
@@ -597,8 +611,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 			PackagingData packagingData = packagingHelper.getPackagingData(productData);
 			for (Map.Entry<NodeRef, VariantPackagingData> kv : packagingData.getVariants().entrySet()) {
+				
 				VariantPackagingData variantPackagingData = kv.getValue();
-
+				
 				Element packgLevelMesuresElt = packagingListElt.addElement(TAG_PACKAGING_LEVEL_MEASURES);
 				if (kv.getKey() != null) {
 					packgLevelMesuresElt.addAttribute(ATTR_VARIANT_ID, (String) nodeService.getProperty(kv.getKey(), ContentModel.PROP_NAME));
@@ -682,6 +697,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			Element compoListElt = dataListsElt.addElement(PLMModel.TYPE_COMPOLIST.getLocalName() + "s");
 
 			for (CompoListDataItem dataItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+				addDataListState(compoListElt, dataItem.getParentNodeRef());
 				loadCompoListItem(null, dataItem, compoListElt, defaultVariantNodeRef, 0, dataItem.getQty() != null ? dataItem.getQty() : 0d, images);
 			}
 
@@ -893,5 +909,18 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	@Override
 	public EntityReportExtractorPriority getMatchPriority(QName type) {
 		return dictionaryService.isSubClass(type, PLMModel.TYPE_PRODUCT) ? EntityReportExtractorPriority.NORMAL : EntityReportExtractorPriority.NONE;
+	}
+	
+	public void addDataListState(Element xmlNode, NodeRef listNodeRef) {
+
+		if (xmlNode.valueOf(BeCPGModel.PROP_ENTITYLIST_STATE.getLocalName()) == null) {
+			Serializable state = nodeService.getProperty(listNodeRef, BeCPGModel.PROP_ENTITYLIST_STATE);
+			if (state != null) {
+				xmlNode.addAttribute(BeCPGModel.PROP_ENTITYLIST_STATE.getLocalName(), (String) state);
+			} else {
+				xmlNode.addAttribute(BeCPGModel.PROP_ENTITYLIST_STATE.getLocalName(), "");
+			}
+
+		}
 	}
 }
