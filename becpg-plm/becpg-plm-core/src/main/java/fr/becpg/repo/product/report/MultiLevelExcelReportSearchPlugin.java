@@ -22,6 +22,7 @@ import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.helper.ExcelHelper;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
+import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.report.search.impl.DefaultExcelReportSearchPlugin;
 
 @Service
@@ -90,10 +91,11 @@ public class MultiLevelExcelReportSearchPlugin extends DefaultExcelReportSearchP
 				
 					Double qty = (Double) item.get("prop_bcpg_packagingListQty");
 					
-					if(qty!=null && PLMModel.TYPE_PACKAGINGKIT.equals(nodeService.getType(listData.getEntityNodeRef()))){
+					if(qty!=null  && PLMModel.TYPE_PACKAGINGKIT.equals(nodeService.getType(listData.getEntityNodeRef()))
+							&& PackagingLevel.Tertiary.toString().equals(nodeService.getProperty(itemNodeRef, PLMModel.PROP_PACKAGINGLIST_PKG_LEVEL))){
 						Integer nbByPalet = (Integer) nodeService.getProperty(listData.getEntityNodeRef(), PackModel.PROP_PALLET_BOXES_PER_PALLET);
 						if(nbByPalet!=null && nbByPalet>0){
-							qty = qty/nbByPalet;
+							qty = qty/(nbByPalet*1d);
 						}
 					}
 					
