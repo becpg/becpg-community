@@ -90,6 +90,8 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 	private static final String MODEL_PROP_KEY_LIST_TYPES = "listTypes";
 
 	private static final String MODEL_KEY_NAME_ENTITY_PATH = "entityPath";
+	
+	private static final String  MODEL_ACCESS_MAP = "accessMap";
 
 	private static final Log logger = LogFactory.getLog(EntityListsWebScript.class);
 
@@ -183,7 +185,7 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 		QName nodeType = nodeService.getType(nodeRef);
 		boolean hasChangeStatePermission = false;
 		boolean hasWritePermission = false;// admin
-																														// can
+		Map<NodeRef, Boolean> accessRights = new HashMap<>();																		// can
 																														// delete
 																														// entity
 																														// lists
@@ -313,6 +315,8 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 			
 			boolean isExternalUser = isCurrentUserExternal();
 			
+			
+			
 			Iterator<NodeRef> it = listsNodeRef.iterator();
 			while (it.hasNext()) {
 				NodeRef temp = it.next();
@@ -327,10 +331,14 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 				} else if (!isExternalUser && SecurityService.WRITE_ACCESS == access_mode
 						&& permissionService.hasPermission(temp, PermissionService.WRITE) == AccessStatus.ALLOWED
 						 ) {
-					hasChangeStatePermission = true;
+					accessRights.put(temp, true);
+				} else {
+					accessRights.put(temp, false);
 				}
 			}
 		}
+		
+		
 
 //		if (lastModified == null) {
 //			lastModified = new Date();
@@ -355,6 +363,7 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 		model.put(MODEL_HAS_WRITE_PERMISSION, hasWritePermission || authorityService.isAdminAuthority(AuthenticationUtil.getFullyAuthenticatedUser()));
 		model.put(MODEL_HAS_CHANGE_STATE_PERMISSION, hasChangeStatePermission);
 		model.put(MODEL_KEY_NAME_LISTS, listsNodeRef);
+		model.put(MODEL_ACCESS_MAP, accessRights);
 
 		return model;
 	}
