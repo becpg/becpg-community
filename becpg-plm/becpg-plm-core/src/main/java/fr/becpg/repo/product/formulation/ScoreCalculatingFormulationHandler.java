@@ -499,7 +499,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 				}
 
 				if (logger.isDebugEnabled()) {
-					logger.info("Test missing field qname: " + fieldQname + ", lang: " + lang);
+					logger.debug("Test missing field qname: " + fieldQname + ", lang: " + lang);
 				}
 
 				PropertyDefinition propDef = dictionaryService.getProperty(fieldQname);
@@ -542,7 +542,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 			}
 
 			if (!present && !ignore) {
-				logger.info("\tfield " + field + " is absent...");
+				logger.debug("\tfield " + field + " is absent...");
 				ret.put(createMissingFields(productData, catalogName, splitFields));
 			}
 
