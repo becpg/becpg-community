@@ -204,13 +204,14 @@ public class FormulationProductWithoutQtyTest extends AbstractFinishedProductTes
 				for(CostListDataItem costListDataItem : formulatedProduct.getCostList()){
 					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
 					logger.info(trace);
+
 					if(costListDataItem.getCost().equals(cost1)){
-						assertEquals("check cost", df.format(0.177d), df.format(costListDataItem.getValue()));
+						assertEquals("check cost", df.format(0.402d), df.format(costListDataItem.getValue()));
 						assertEquals("check cost unit", "€/P", costListDataItem.getUnit());
 						checks++;
 					}
 					if(costListDataItem.getCost().equals(cost2)){
-						assertEquals("check cost", df.format(0.174d), df.format(costListDataItem.getValue()));
+						assertEquals("check cost", df.format(0.444d), df.format(costListDataItem.getValue()));
 						assertEquals("check cost unit", "€/P", costListDataItem.getUnit());
 						checks++;
 					}
