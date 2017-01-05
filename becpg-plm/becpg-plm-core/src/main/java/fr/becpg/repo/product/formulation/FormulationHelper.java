@@ -91,8 +91,9 @@ public class FormulationHelper {
 				}
 
 				return FormulationHelper.getQtyWithLossAndYield(qtySubFormuala, lossPerc, yieldPerc);
-			} else if (compoListUnit.toString().equals(productUnit.toString())) {
-				// compoListUnit is P
+			} else if (isCompoUnitP(compoListUnit) || isProductUnitP(productUnit)) {
+				// refs #2683 costs don't work on SF with P unit
+				// unit is P
 				return FormulationHelper.getQtyWithLossAndYield(qtySubFormuala, lossPerc, yieldPerc);
 			} else if (isProductUnitKg(productUnit)) {
 				// compoListUnit is %
