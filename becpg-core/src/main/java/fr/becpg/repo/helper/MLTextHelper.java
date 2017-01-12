@@ -143,18 +143,23 @@ public class MLTextHelper {
 		
 		if(supportedLocales!=null){
 			String[] locales = supportedLocales.split(",");
-			for (String tmp : locales) {
-				if(tmp.contains("_")){
-					ret.add(new Locale(tmp.split("_")[0],tmp.split("_")[1]));
-				} else {
-					ret.add(new Locale(tmp));
-				}
+			for (String key : locales) {
+					ret.add(parseLocale(key));
 			}
 		}
 		
 		return ret;
 	}
 
+	public static Locale parseLocale(String key){
+		if(key.contains("_")){
+			return new Locale(key.split("_")[0],key.split("_")[1]);
+		} 
+		return new Locale(key);
+		
+	}
+	
+	
 	public static String getValueOrDefault(NodeService nodeService, NodeRef nodeRef, QName propCharactName) {
 		String ret = (String) nodeService.getProperty(nodeRef, propCharactName);
 		

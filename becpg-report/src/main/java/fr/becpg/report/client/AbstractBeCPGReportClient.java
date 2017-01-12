@@ -91,6 +91,7 @@ public abstract class AbstractBeCPGReportClient {
 			return null;
 		}
 	}
+	
 
 	protected void saveTemplate(ReportSession reportSession, InputStream in) throws IOException, ReportException {
 		String saveTemplateUrl = reportSession.getSaveTemplateUrl();

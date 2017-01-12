@@ -44,6 +44,8 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 import org.springframework.util.StopWatch;
 import org.springframework.web.client.RestTemplate;
 
+import fr.becpg.repo.helper.MLTextHelper;
+
 /**
  * Return or save MLText field
  *
@@ -152,7 +154,7 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 						for (Iterator<String> iterator = json.keys(); iterator.hasNext();) {
 							String key = iterator.next();
 							if (!"-".equals(key)) {
-								Locale loc = new Locale(key);
+								Locale loc = MLTextHelper.parseLocale(key);
 								if (json.getString(key) != null) {
 									if (json.getString(key).length() > 0) {
 										mlText.addValue(loc, json.getString(key));
