@@ -2,9 +2,7 @@
 <projectDescription>
   <name>becpg-report</name>
   <comment>BeCPG Parent Project. NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
-  <projects>
-    <project>org.alfresco.alfresco-repository-5.0.c</project>
-  </projects>
+  <projects/>
   <buildSpec>
     <buildCommand>
       <name>org.eclipse.wst.jsdt.core.javascriptValidator</name>
