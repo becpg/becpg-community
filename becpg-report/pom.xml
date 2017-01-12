@@ -6,10 +6,10 @@
 	<parent>
 		<groupId>fr.becpg</groupId>
 		<artifactId>becpg-parent</artifactId>
-		<version>2.1.1</version>
+		<version>2.2.0</version>
 	</parent>
 	<artifactId>becpg-report</artifactId>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 	<name>beCPG Report Server</name>
 	<licenses>
 		<license>
@@ -60,13 +60,6 @@
 	</repositories>
 	<dependencies>
 
-		<!-- Servlet -->
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<scope>provided</scope>
-		</dependency>
-
 		<!-- Birt -->
 		
 		<dependency>
@@ -74,14 +67,13 @@
 		  <artifactId>org.eclipse.birt.runtime</artifactId>
 		  <version>${birt.version}</version>
 		</dependency>
-
+ 
 		
 		<!-- Commons -->
 		
 	    <dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
-			<version>4.3.3</version>
 			<scope>provided</scope>
 		</dependency>
 		
@@ -151,38 +143,6 @@
 		        <artifactId>tomcat-maven-plugin</artifactId>
 				  <version>1.1</version>
 		    </plugin>
-		<!-- 	<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<version>2.0</version>
-				<executions>
-					<execution>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>shade</goal>
-						</goals>
-						<configuration>
-						<promoteTransitiveDependencies>false</promoteTransitiveDependencies>
-		                <shadedArtifactAttached>true</shadedArtifactAttached>
-		                <outputFile>${project.build.directory}/${project.artifactId}-${project.version}/WEB-INF/lib/org.eclipse.birt.runtime-${birt.version}.jar</outputFile>	
-		                <createDependencyReducedPom>false</createDependencyReducedPom>
-						<artifactSet>
-							<includes>
-								<include>org.eclipse.birt.runtime:org.eclipse.birt.runtime</include>
-							</includes>
-						</artifactSet>
-						<filters>
-							<filter>
-								<artifact>org.eclipse.birt.runtime:org.eclipse.birt.runtime</artifact>
-								<excludes>																	
-										<exclude>uk/co/spudsoft/**/**</exclude>
-									</excludes>
-								</filter>
-							</filters>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin> -->
 	  </plugins>
 	</build>
 

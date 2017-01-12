@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>becpg-parent</artifactId>
 		<groupId>fr.becpg</groupId>
-		<version>2.1.1</version>
+		<version>2.2.0</version>
 		<relativePath>../</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
@@ -32,10 +32,15 @@
 	</licenses>
 	<properties>
           <alfresco.client.war>share</alfresco.client.war>
-          <alfresco.version>${alfresco.share.version}</alfresco.version>
          <!--  <app.filtering.enabled>false</app.filtering.enabled> -->
     </properties>
 	<dependencies>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.4</version>
+			<scope>provided</scope>
+		</dependency>
 	 	 <dependency>
             <groupId>org.alfresco</groupId>
             <artifactId>alfresco-repository</artifactId>
@@ -49,6 +54,7 @@
         <dependency>
             <groupId>org.alfresco</groupId>
             <artifactId>share</artifactId>
+            <version>${alfresco.share.version}</version>
             <classifier>classes</classifier>
             <scope>provided</scope>
             <exclusions>
@@ -61,6 +67,7 @@
       <dependency>
             <groupId>org.alfresco</groupId>
             <artifactId>alfresco-web-framework-commons</artifactId>
+            <version>${alfresco.share.version}</version>
             <classifier>classes</classifier>
             <scope>provided</scope>
        </dependency> 

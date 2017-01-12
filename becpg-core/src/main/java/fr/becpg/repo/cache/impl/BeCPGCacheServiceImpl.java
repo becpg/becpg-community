@@ -20,8 +20,6 @@ package fr.becpg.repo.cache.impl;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -30,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.alfresco.repo.cache.DefaultSimpleCache;
 import org.alfresco.repo.cache.SimpleCache;
 import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.repo.tenant.TenantService;
@@ -41,16 +40,16 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 
-import com.googlecode.concurrentlinkedhashmap.ConcurrentLinkedHashMap;
-
 import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
 import fr.becpg.repo.cache.BeCPGCacheService;
 
 /**
  *
  * @author matthieu
- *
+ * TODO : refactor for 5.2 
  */
+
+@Deprecated
 public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBean {
 
 	private static final Log logger = LogFactory.getLog(BeCPGCacheServiceImpl.class);
@@ -224,88 +223,89 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 
 	@Override
 	public void printCacheInfos() {
-		for (String cacheName : caches.keySet()) {
-			logger.info("Cache - " + cacheName);
-			logger.info(" - Elements - " + caches.get(cacheName).getBackingMap().size());
-			logger.info(" - Capacity - " + caches.get(cacheName).getBackingMap().capacity());
-			logger.info(" - WeightedSize - " + caches.get(cacheName).getBackingMap().weightedSize());
-			try {
-				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				ObjectOutputStream oos = new ObjectOutputStream(baos);
-				oos.writeObject(caches.get(cacheName).getBackingMap());
-				oos.close();
-				logger.info(" - Data Size: " + baos.size() + "bytes");
-			} catch (IOException e) {
-				logger.warn(" - Data Size: (no serializable data)");
-			}
-		}
+//		for (String cacheName : caches.keySet()) {
+//			logger.info("Cache - " + cacheName);
+//			logger.info(" - Elements - " + caches.get(cacheName).getBackingMap().size());
+//			logger.info(" - Capacity - " + caches.get(cacheName).getBackingMap().capacity());
+//			logger.info(" - WeightedSize - " + caches.get(cacheName).getBackingMap().weightedSize());
+//			try {
+//				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//				ObjectOutputStream oos = new ObjectOutputStream(baos);
+//				oos.writeObject(caches.get(cacheName).getBackingMap());
+//				oos.close();
+//				logger.info(" - Data Size: " + baos.size() + "bytes");
+//			} catch (IOException e) {
+//				logger.warn(" - Data Size: (no serializable data)");
+//			}
+//		}
 
 	}
 
-	public final class DefaultSimpleCache<K extends Serializable, V> implements SimpleCache<K, V> {
-		private ConcurrentLinkedHashMap<K, AbstractMap.SimpleImmutableEntry<K, V>> map;
-
-		/**
-		 * Construct a cache using the specified capacity and name.
-		 *
-		 * @param maxItems
-		 *            The cache capacity.
-		 */
-		public DefaultSimpleCache(int maxItems, String cacheName) {
-			if (maxItems < 1) {
-				throw new IllegalArgumentException("maxItems must be a positive integer, but was " + maxItems);
-			}
-
-			// The map will have a bounded size determined by the maxItems
-			// member variable.
-			map = new ConcurrentLinkedHashMap.Builder<K, AbstractMap.SimpleImmutableEntry<K, V>>().maximumWeightedCapacity(maxItems).build();
-		}
-
-		@Override
-		public boolean contains(K key) {
-			return map.containsKey(key);
-		}
-
-		@Override
-		public Collection<K> getKeys() {
-			return map.keySet();
-		}
-
-		public ConcurrentLinkedHashMap<K, AbstractMap.SimpleImmutableEntry<K, V>> getBackingMap() {
-			return map;
-		}
-
-		@Override
-		public V get(K key) {
-			AbstractMap.SimpleImmutableEntry<K, V> kvp = map.get(key);
-			if (kvp == null) {
-				return null;
-			}
-			return kvp.getValue();
-		}
-
-		@Override
-		public void put(K key, V value) {
-			AbstractMap.SimpleImmutableEntry<K, V> kvp = new AbstractMap.SimpleImmutableEntry<>(key, value);
-			map.put(key, kvp);
-		}
-
-		@Override
-		public void remove(K key) {
-			map.remove(key);
-		}
-
-		@Override
-		public void clear() {
-			map.clear();
-		}
-
-		@Override
-		public String toString() {
-			return "DefaultSimpleCache[maxItems=" + map.capacity() + "]";
-		}
-
-	}
+//	
+//	public final class DefaultSimpleCache<K extends Serializable, V> implements SimpleCache<K, V> {
+//		private ConcurrentLinkedHashMap<K, AbstractMap.SimpleImmutableEntry<K, V>> map;
+//
+//		/**
+//		 * Construct a cache using the specified capacity and name.
+//		 *
+//		 * @param maxItems
+//		 *            The cache capacity.
+//		 */
+//		public DefaultSimpleCache(int maxItems, String cacheName) {
+//			if (maxItems < 1) {
+//				throw new IllegalArgumentException("maxItems must be a positive integer, but was " + maxItems);
+//			}
+//
+//			// The map will have a bounded size determined by the maxItems
+//			// member variable.
+//			map = new ConcurrentLinkedHashMap.Builder<K, AbstractMap.SimpleImmutableEntry<K, V>>().maximumWeightedCapacity(maxItems).build();
+//		}
+//
+//		@Override
+//		public boolean contains(K key) {
+//			return map.containsKey(key);
+//		}
+//
+//		@Override
+//		public Collection<K> getKeys() {
+//			return map.keySet();
+//		}
+//
+//		public ConcurrentLinkedHashMap<K, AbstractMap.SimpleImmutableEntry<K, V>> getBackingMap() {
+//			return map;
+//		}
+//
+//		@Override
+//		public V get(K key) {
+//			AbstractMap.SimpleImmutableEntry<K, V> kvp = map.get(key);
+//			if (kvp == null) {
+//				return null;
+//			}
+//			return kvp.getValue();
+//		}
+//
+//		@Override
+//		public void put(K key, V value) {
+//			AbstractMap.SimpleImmutableEntry<K, V> kvp = new AbstractMap.SimpleImmutableEntry<>(key, value);
+//			map.put(key, kvp);
+//		}
+//
+//		@Override
+//		public void remove(K key) {
+//			map.remove(key);
+//		}
+//
+//		@Override
+//		public void clear() {
+//			map.clear();
+//		}
+//
+//		@Override
+//		public String toString() {
+//			return "DefaultSimpleCache[maxItems=" + map.capacity() + "]";
+//		}
+//
+//	}
 
 	
 
