@@ -5,7 +5,7 @@
 	<groupId>fr.becpg</groupId>
 	<artifactId>becpg-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>2.1.1</version>
+	<version>2.2.0</version>
 	<name>beCPG</name>
 	<parent>
 		<groupId>org.alfresco.maven</groupId>
@@ -76,22 +76,24 @@
 	    <app.log.root.level>WARN</app.log.root.level>
         <alfresco.data.location>/tmp/alf_data_dev</alfresco.data.location>
         <env>local</env>
-		<alfresco.version>5.1.g</alfresco.version>
+		<alfresco.version>5.2.d</alfresco.version>
 		<alfresco.repo.artifactId>alfresco-platform</alfresco.repo.artifactId>
-		<alfresco.share.version>5.1.f</alfresco.share.version>
+		<alfresco.share.version>5.2.c</alfresco.share.version>
 		<app.testing.jvm.args>-Xms256m -Xmx1524m -Duser.language=fr</app.testing.jvm.args>
 		<argLine>-Xms256m -Xmx1524m -Duser.language=fr</argLine>
 		
 		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
+		<!-- <birt.version>4.6.0-20160607</birt.version> -->
 		<birt.version>4.4.2</birt.version>
 		<sonar.language>java</sonar.language>
+		<maven.compiler.source>1.8</maven.compiler.source>
 		
 		<springloaded.version>1.2.1.RELEASE</springloaded.version>
 		<alfresco.db.url>jdbc:h2:${alfresco.data.location}/h2_data/${alfresco.db.name};${alfresco.db.params}</alfresco.db.url>
-
 	</properties>
 	<dependencyManagement>
 		<dependencies>
+			
 			<dependency>
 				<groupId>${alfresco.groupId}</groupId>
 				<artifactId>alfresco-platform-distribution</artifactId>
@@ -99,20 +101,21 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
+		
 			<dependency>
 				<groupId>org.alfresco.surf</groupId>
 				<artifactId>spring-surf-api</artifactId>
-				<version>6.3</version>
+				<version>6.9</version>
 				<type>jar</type>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.alfresco.surf</groupId>
 				<artifactId>spring-surf</artifactId>
-				<version>6.3</version>
+				<version>6.9</version>
 				<type>jar</type>
 				<scope>provided</scope>
-			</dependency>
+			</dependency> 
 		</dependencies>
 	</dependencyManagement>
 	
@@ -236,12 +239,13 @@
 
 	<dependencies>
 	    <!-- Tests -->
+		
+		<!-- Servlet -->
 		<dependency>
-			<groupId>org.alfresco</groupId>
-			<artifactId>alfresco-repository</artifactId>
-			<version>${alfresco.version}</version>
-			<classifier>h2scripts</classifier>
-			<scope>test</scope>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.4</version>
+			<scope>provided</scope>
 		</dependency>
 		
 
