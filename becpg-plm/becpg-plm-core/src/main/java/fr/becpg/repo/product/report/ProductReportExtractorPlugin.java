@@ -155,7 +155,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 		if (entity instanceof ProductData) {
 			productData = (ProductData) entity;
-			loadVariants(productData, dataListsElt.getParent());
+			defaultVariantNodeRef = loadVariants(productData, dataListsElt.getParent());
 		}
 
 		if ((datalists != null) && !datalists.isEmpty()) {
