@@ -37,7 +37,9 @@
 	   {
 	      "edit": <#if hasWritePermission && !entity.isLocked>true<#else>false</#if>,
 	      "delete": <#if hasWritePermission && !entity.isLocked>true<#else>false</#if>,
-	      "changeState": <#if hasChangeStatePermission && !entity.isLocked>true<#else>false</#if>
+	      "changeState": <#if  (hasChangeStatePermission || (accessMap[list.nodeRef]?? &&  accessMap[list.nodeRef])) && !entity.isLocked>true<#else>false</#if>
+
+
 	   }
 	}<#if list_has_next>,</#if>
    </#list>
