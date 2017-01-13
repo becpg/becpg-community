@@ -144,12 +144,19 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	@SuppressWarnings("unchecked")
 	private void loadDataLists(NodeRef entityNodeRef, Element dataListsElt, Map<String, byte[]> images, boolean isExtractedProduct) {
 
-		ProductData productData = alfrescoRepository.findOne(entityNodeRef);
-		Map<QName, List<? extends RepositoryEntity>> datalists = repositoryEntityDefReader.getDataLists(productData);
+		RepositoryEntity entity = alfrescoRepository.findOne(entityNodeRef);
+
+		Map<QName, List<? extends RepositoryEntity>> datalists = repositoryEntityDefReader.getDataLists(entity);
 
 		// TODO make it more generic!!!!
 
-		NodeRef defaultVariantNodeRef = loadVariants(productData, dataListsElt.getParent());
+		NodeRef defaultVariantNodeRef = null;
+		ProductData productData = null;
+
+		if (entity instanceof ProductData) {
+			productData = (ProductData) entity;
+			loadVariants(productData, dataListsElt.getParent());
+		}
 
 		if ((datalists != null) && !datalists.isEmpty()) {
 
@@ -191,173 +198,176 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				}
 			}
 		}
-		// lists extracted on entity and raw materials
-		loadOrganoLists(productData, dataListsElt, images);
-		loadIngLists(productData, dataListsElt, images);
 
-		if (isExtractedProduct) {
+		if (productData != null) {
+			// lists extracted on entity and raw materials
+			loadOrganoLists(productData, dataListsElt, images);
+			loadIngLists(productData, dataListsElt, images);
 
-			// allergen
-			Element allergenListElt = (Element) dataListsElt.selectSingleNode(PLMModel.TYPE_ALLERGENLIST.getLocalName() + "s");
-			if (allergenListElt != null) {
+			if (isExtractedProduct) {
 
-				List<AllergenListDataItem> allergenList = (List<AllergenListDataItem>) datalists.get(PLMModel.TYPE_ALLERGENLIST);
-				String volAllergens = "";
-				String inVolAllergens = "";
-				String inVolAllergensProcess = "";
-				String inVolAllergensRawMaterial = "";
+				// allergen
+				Element allergenListElt = (Element) dataListsElt.selectSingleNode(PLMModel.TYPE_ALLERGENLIST.getLocalName() + "s");
+				if (allergenListElt != null) {
 
-				for (AllergenListDataItem dataItem : allergenList) {
+					List<AllergenListDataItem> allergenList = (List<AllergenListDataItem>) datalists.get(PLMModel.TYPE_ALLERGENLIST);
+					String volAllergens = "";
+					String inVolAllergens = "";
+					String inVolAllergensProcess = "";
+					String inVolAllergensRawMaterial = "";
 
-					addDataListState(allergenListElt, dataItem.getParentNodeRef());
+					for (AllergenListDataItem dataItem : allergenList) {
 
-					// #1815: takes in account major
-					String allergenType = (String) nodeService.getProperty(dataItem.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE);
-					if ((allergenType != null) && allergenType.equals("Major")) {
-						String allergen = (String) nodeService.getProperty(dataItem.getAllergen(), BeCPGModel.PROP_LEGAL_NAME);
+						addDataListState(allergenListElt, dataItem.getParentNodeRef());
 
-						if ((allergen == null) || allergen.isEmpty()) {
-							allergen = (String) nodeService.getProperty(dataItem.getAllergen(), BeCPGModel.PROP_CHARACT_NAME);
-						}
+						// #1815: takes in account major
+						String allergenType = (String) nodeService.getProperty(dataItem.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE);
+						if ((allergenType != null) && allergenType.equals("Major")) {
+							String allergen = (String) nodeService.getProperty(dataItem.getAllergen(), BeCPGModel.PROP_LEGAL_NAME);
 
-						if (allergen == null) {
-							allergen = "###";
-						}
-
-						// concat allergens
-						if (dataItem.getVoluntary()) {
-							if (volAllergens.isEmpty()) {
-								volAllergens = allergen;
-							} else {
-								volAllergens += RepoConsts.LABEL_SEPARATOR + allergen;
+							if ((allergen == null) || allergen.isEmpty()) {
+								allergen = (String) nodeService.getProperty(dataItem.getAllergen(), BeCPGModel.PROP_CHARACT_NAME);
 							}
-						} else if (dataItem.getInVoluntary()) {
-							if (inVolAllergens.isEmpty()) {
-								inVolAllergens = allergen;
-							} else {
-								inVolAllergens += RepoConsts.LABEL_SEPARATOR + allergen;
-							}
-							boolean presentInRawMaterial = false;
-							boolean presentInProcess = false;
-							for (NodeRef inVoluntarySource : dataItem.getInVoluntarySources()) {
-								QName inVoluntarySourceType = nodeService.getType(inVoluntarySource);
 
-								if (!presentInRawMaterial && PLMModel.TYPE_RAWMATERIAL.equals(inVoluntarySourceType)) {
-									if (inVolAllergensRawMaterial.isEmpty()) {
-										inVolAllergensRawMaterial = allergen;
-									} else {
-										inVolAllergensRawMaterial += RepoConsts.LABEL_SEPARATOR + allergen;
+							if (allergen == null) {
+								allergen = "###";
+							}
+
+							// concat allergens
+							if (dataItem.getVoluntary()) {
+								if (volAllergens.isEmpty()) {
+									volAllergens = allergen;
+								} else {
+									volAllergens += RepoConsts.LABEL_SEPARATOR + allergen;
+								}
+							} else if (dataItem.getInVoluntary()) {
+								if (inVolAllergens.isEmpty()) {
+									inVolAllergens = allergen;
+								} else {
+									inVolAllergens += RepoConsts.LABEL_SEPARATOR + allergen;
+								}
+								boolean presentInRawMaterial = false;
+								boolean presentInProcess = false;
+								for (NodeRef inVoluntarySource : dataItem.getInVoluntarySources()) {
+									QName inVoluntarySourceType = nodeService.getType(inVoluntarySource);
+
+									if (!presentInRawMaterial && PLMModel.TYPE_RAWMATERIAL.equals(inVoluntarySourceType)) {
+										if (inVolAllergensRawMaterial.isEmpty()) {
+											inVolAllergensRawMaterial = allergen;
+										} else {
+											inVolAllergensRawMaterial += RepoConsts.LABEL_SEPARATOR + allergen;
+										}
+										presentInRawMaterial = true;
+									} else if (!presentInProcess && PLMModel.TYPE_RESOURCEPRODUCT.equals(inVoluntarySourceType)) {
+										if (inVolAllergensProcess.isEmpty()) {
+											inVolAllergensProcess = allergen;
+										} else {
+											inVolAllergensProcess += RepoConsts.LABEL_SEPARATOR + allergen;
+										}
+										presentInProcess = true;
 									}
-									presentInRawMaterial = true;
-								} else if (!presentInProcess && PLMModel.TYPE_RESOURCEPRODUCT.equals(inVoluntarySourceType)) {
-									if (inVolAllergensProcess.isEmpty()) {
-										inVolAllergensProcess = allergen;
-									} else {
-										inVolAllergensProcess += RepoConsts.LABEL_SEPARATOR + allergen;
+								}
+
+							}
+						}
+					}
+
+					allergenListElt.addAttribute(PLMModel.PROP_ALLERGENLIST_VOLUNTARY.getLocalName(), volAllergens);
+					allergenListElt.addAttribute(PLMModel.PROP_ALLERGENLIST_INVOLUNTARY.getLocalName(), inVolAllergens);
+					allergenListElt.addAttribute(ATTR_ALLERGENLIST_INVOLUNTARY_FROM_PROCESS, inVolAllergensProcess);
+					allergenListElt.addAttribute(ATTR_ALLERGENLIST_INVOLUNTARY_FROM_RAW_MATERIAL, inVolAllergensRawMaterial);
+
+				}
+
+				loadCompoList(productData, dataListsElt, defaultVariantNodeRef, images);
+
+				// extract RawMaterials
+				extractRawMaterials(productData, dataListsElt, images);
+
+				// packList
+				loadPackagingList(productData, dataListsElt, defaultVariantNodeRef, images);
+
+				// processList
+
+				loadProcessList(productData, dataListsElt, defaultVariantNodeRef, images);
+
+				// IngLabelingList
+				if (productData.getLabelingListView().getIngLabelingList() != null) {
+					Element ingListElt = dataListsElt.addElement(PLMModel.TYPE_INGLABELINGLIST.getLocalName() + "s");
+
+					for (IngLabelingListDataItem dataItem : productData.getLabelingListView().getIngLabelingList()) {
+
+						addDataListState(ingListElt, dataItem.getParentNodeRef());
+						MLText labelingText = dataItem.getValue();
+
+						if (labelingText != null) {
+							List<String> locales = new ArrayList<>();
+							for (Locale locale : labelingText.getLocales()) {
+
+								logger.debug("ill, locale: " + locale);
+
+								if (!locales.contains(locale.getLanguage())) {
+
+									locales.add(locale.getLanguage());
+
+									String grpName = "";
+									if (dataItem.getGrp() != null) {
+										MLText grpMLText = (MLText) mlNodeService.getProperty(dataItem.getGrp(), PLMModel.PROP_LABELING_RULE_LABEL);
+										if ((grpMLText != null) && (grpMLText.getValue(locale) != null) && !grpMLText.getValue(locale).isEmpty()) {
+											grpName = grpMLText.getValue(locale);
+										} else {
+											grpName = (String) nodeService.getProperty(dataItem.getGrp(), ContentModel.PROP_NAME);
+										}
 									}
-									presentInProcess = true;
+
+									Element ingLabelingElt = ingListElt.addElement(PLMModel.TYPE_INGLABELINGLIST.getLocalName());
+									ingLabelingElt.addAttribute(ATTR_LANGUAGE, locale.getDisplayLanguage());
+									addCDATA(ingLabelingElt, PLMModel.ASSOC_ILL_GRP, grpName, null);
+									addCDATA(ingLabelingElt, PLMModel.PROP_ILL_VALUE,
+											dataItem.getValue() != null ? dataItem.getValue().getValue(locale) : VALUE_NULL, null);
+									addCDATA(ingLabelingElt, PLMModel.PROP_ILL_MANUAL_VALUE,
+											dataItem.getManualValue() != null ? dataItem.getManualValue().getValue(locale) : VALUE_NULL, null);
+
+									if (logger.isDebugEnabled()) {
+										logger.debug("ingLabelingElt: " + ingLabelingElt.asXML());
+									}
 								}
 							}
-
 						}
 					}
 				}
 
-				allergenListElt.addAttribute(PLMModel.PROP_ALLERGENLIST_VOLUNTARY.getLocalName(), volAllergens);
-				allergenListElt.addAttribute(PLMModel.PROP_ALLERGENLIST_INVOLUNTARY.getLocalName(), inVolAllergens);
-				allergenListElt.addAttribute(ATTR_ALLERGENLIST_INVOLUNTARY_FROM_PROCESS, inVolAllergensProcess);
-				allergenListElt.addAttribute(ATTR_ALLERGENLIST_INVOLUNTARY_FROM_RAW_MATERIAL, inVolAllergensRawMaterial);
+				// NutList
+				loadNutLists(productData, dataListsElt, images);
 
-			}
+				// MicrobioList
+				List<MicrobioListDataItem> microbioList = null;
+				NodeRef productMicrobioCriteriaNodeRef = null;
 
-			loadCompoList(productData, dataListsElt, defaultVariantNodeRef, images);
-
-			// extract RawMaterials
-			extractRawMaterials(productData, dataListsElt, images);
-
-			// packList
-			loadPackagingList(productData, dataListsElt, defaultVariantNodeRef, images);
-
-			// processList
-
-			loadProcessList(productData, dataListsElt, defaultVariantNodeRef, images);
-
-			// IngLabelingList
-			if (productData.getLabelingListView().getIngLabelingList() != null) {
-				Element ingListElt = dataListsElt.addElement(PLMModel.TYPE_INGLABELINGLIST.getLocalName() + "s");
-
-				for (IngLabelingListDataItem dataItem : productData.getLabelingListView().getIngLabelingList()) {
-
-					addDataListState(ingListElt, dataItem.getParentNodeRef());
-					MLText labelingText = dataItem.getValue();
-
-					if (labelingText != null) {
-						List<String> locales = new ArrayList<>();
-						for (Locale locale : labelingText.getLocales()) {
-
-							logger.debug("ill, locale: " + locale);
-
-							if (!locales.contains(locale.getLanguage())) {
-
-								locales.add(locale.getLanguage());
-
-								String grpName = "";
-								if (dataItem.getGrp() != null) {
-									MLText grpMLText = (MLText) mlNodeService.getProperty(dataItem.getGrp(), PLMModel.PROP_LABELING_RULE_LABEL);
-									if ((grpMLText != null) && (grpMLText.getValue(locale) != null) && !grpMLText.getValue(locale).isEmpty()) {
-										grpName = grpMLText.getValue(locale);
-									} else {
-										grpName = (String) nodeService.getProperty(dataItem.getGrp(), ContentModel.PROP_NAME);
-									}
-								}
-
-								Element ingLabelingElt = ingListElt.addElement(PLMModel.TYPE_INGLABELINGLIST.getLocalName());
-								ingLabelingElt.addAttribute(ATTR_LANGUAGE, locale.getDisplayLanguage());
-								addCDATA(ingLabelingElt, PLMModel.ASSOC_ILL_GRP, grpName, null);
-								addCDATA(ingLabelingElt, PLMModel.PROP_ILL_VALUE,
-										dataItem.getValue() != null ? dataItem.getValue().getValue(locale) : VALUE_NULL, null);
-								addCDATA(ingLabelingElt, PLMModel.PROP_ILL_MANUAL_VALUE,
-										dataItem.getManualValue() != null ? dataItem.getManualValue().getValue(locale) : VALUE_NULL, null);
-
-								if (logger.isDebugEnabled()) {
-									logger.debug("ingLabelingElt: " + ingLabelingElt.asXML());
-								}
-							}
+				if (!productData.getMicrobioList().isEmpty()) {
+					microbioList = productData.getMicrobioList();
+				} else {
+					List<NodeRef> productMicrobioCriteriaNodeRefs = associationService.getTargetAssocs(entityNodeRef,
+							PLMModel.ASSOC_PRODUCT_MICROBIO_CRITERIA);
+					if (!productMicrobioCriteriaNodeRefs.isEmpty()) {
+						productMicrobioCriteriaNodeRef = productMicrobioCriteriaNodeRefs.get(0);
+						if (productMicrobioCriteriaNodeRef != null) {
+							ProductData pmcData = alfrescoRepository.findOne(productMicrobioCriteriaNodeRef);
+							microbioList = pmcData.getMicrobioList();
 						}
 					}
 				}
-			}
 
-			// NutList
-			loadNutLists(productData, dataListsElt, images);
-
-			// MicrobioList
-			List<MicrobioListDataItem> microbioList = null;
-			NodeRef productMicrobioCriteriaNodeRef = null;
-
-			if (!productData.getMicrobioList().isEmpty()) {
-				microbioList = productData.getMicrobioList();
-			} else {
-				List<NodeRef> productMicrobioCriteriaNodeRefs = associationService.getTargetAssocs(entityNodeRef,
-						PLMModel.ASSOC_PRODUCT_MICROBIO_CRITERIA);
-				if (!productMicrobioCriteriaNodeRefs.isEmpty()) {
-					productMicrobioCriteriaNodeRef = productMicrobioCriteriaNodeRefs.get(0);
+				if ((microbioList != null) && !microbioList.isEmpty()) {
+					Element microbioListElt = dataListsElt.addElement(PLMModel.TYPE_MICROBIOLIST.getLocalName() + "s");
 					if (productMicrobioCriteriaNodeRef != null) {
-						ProductData pmcData = alfrescoRepository.findOne(productMicrobioCriteriaNodeRef);
-						microbioList = pmcData.getMicrobioList();
+						loadNodeAttributes(productMicrobioCriteriaNodeRef, microbioListElt, false, images);
 					}
-				}
-			}
-
-			if ((microbioList != null) && !microbioList.isEmpty()) {
-				Element microbioListElt = dataListsElt.addElement(PLMModel.TYPE_MICROBIOLIST.getLocalName() + "s");
-				if (productMicrobioCriteriaNodeRef != null) {
-					loadNodeAttributes(productMicrobioCriteriaNodeRef, microbioListElt, false, images);
-				}
-				for (MicrobioListDataItem dataItem : microbioList) {
-					Element nodeElt = microbioListElt.addElement(PLMModel.TYPE_MICROBIOLIST.getLocalName());
-					addDataListState(microbioListElt, dataItem.getParentNodeRef());
-					loadDataListItemAttributes(dataItem, nodeElt, images);
+					for (MicrobioListDataItem dataItem : microbioList) {
+						Element nodeElt = microbioListElt.addElement(PLMModel.TYPE_MICROBIOLIST.getLocalName());
+						addDataListState(microbioListElt, dataItem.getParentNodeRef());
+						loadDataListItemAttributes(dataItem, nodeElt, images);
+					}
 				}
 			}
 		}
