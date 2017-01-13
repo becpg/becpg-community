@@ -26,10 +26,11 @@ import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.annotation.InternalField;
 import fr.becpg.repo.repository.model.AbstractManualDataItem;
+import fr.becpg.repo.repository.model.SimpleListDataItem;
 
 @AlfType
 @AlfQname(qname = "bcpg:labelClaimList")
-public class LabelClaimListDataItem extends AbstractManualDataItem {
+public class LabelClaimListDataItem extends AbstractManualDataItem implements SimpleListDataItem{
 
 	/**
 	 * 
@@ -179,6 +180,37 @@ public class LabelClaimListDataItem extends AbstractManualDataItem {
 	public String toString() {
 		return "LabelClaimListDataItem [labelClaim=" + labelClaim + ", type=" + type + ", labelClaimValue=" + labelClaimValue + ", isFormulated="
 				+ isFormulated + ", errorLog=" + errorLog + "]";
+	}
+	
+	@Override
+	public void setCharactNodeRef(NodeRef nodeRef) {
+		this.labelClaim = nodeRef;		
+	}
+	
+	@Override
+	public void setValue(Double value) {
+		if(value > 0) {
+			this.labelClaimValue = "true";
+		} else {
+			this.labelClaimValue = "false";
+		}
+	}
+	
+	@Override
+	public NodeRef getCharactNodeRef() {
+		return labelClaim;
+	}
+	
+	@Override
+	public Double getValue() {
+		if(VALUE_TRUE.equals(labelClaimValue)){
+			return 1d;
+		} else return 0d;
+	}
+	
+	@Override
+	public SimpleListDataItem clone() {
+		return new LabelClaimListDataItem(this);
 	}
 		
 

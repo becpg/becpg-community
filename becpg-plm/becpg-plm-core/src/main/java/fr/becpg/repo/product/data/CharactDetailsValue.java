@@ -36,9 +36,19 @@ public class CharactDetailsValue {
 	}
 
 	public void add(Double val) {
+		System.out.println("ADD between "+value+" and "+val);
 		if ((value != null) && (val != null)) {
 			value += val;
 		}
+	}
+	
+	public void and(Double val){
+		System.out.println("AND between "+value+" and "+val);
+		if(val >= 0 && value >= 0){
+			value = 1d;
+		} else value = 0d;
+		
+		System.out.println("Res="+value);
 	}
 
 	@Override
