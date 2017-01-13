@@ -49,7 +49,7 @@ public class CharactDetailsVisitorFactoryImpl implements CharactDetailsVisitorFa
 			return visitor;
 		}
 		
-		throw new FormulateException("No visitor found");
+		throw new FormulateException("No visitor found for type "+dataType);
 	}
 
 }

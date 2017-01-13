@@ -23,6 +23,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import fr.becpg.model.PLMModel;
 
 /**
  * Contains charact details
@@ -32,6 +37,8 @@ import org.alfresco.service.cmr.repository.NodeRef;
  */
 public class CharactDetails {
 
+	private NodeService nodeService;
+	
 	List<NodeRef> computedCharacts = null;
 	
 	final Map<NodeRef, List<CharactDetailsValue>> data = new LinkedHashMap<>();
@@ -41,7 +48,7 @@ public class CharactDetails {
 		this.computedCharacts = computedCharacts;
 	}
 	
-	public void addKeyValue(NodeRef charactNodeRef, CharactDetailsValue value) {
+	public void addKeyValue(NodeRef charactNodeRef, CharactDetailsValue value, boolean shouldDoAndOp) {
 		List<CharactDetailsValue> tmp = data.get(charactNodeRef);
 		if(tmp == null){
 			tmp = new LinkedList<>();
@@ -49,7 +56,12 @@ public class CharactDetails {
 		boolean match = false;
 		for(CharactDetailsValue existingValue : tmp){
 			if(existingValue.equals(value)){
-				existingValue.add(value.getValue());
+				//Check if it's a labelClaim value, do an AND operation and not a plus
+				if(shouldDoAndOp){
+					existingValue.and(value.getValue());
+				} else {
+					existingValue.add(value.getValue());
+				}
 				match = true;
 				break;
 			}
