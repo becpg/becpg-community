@@ -1051,6 +1051,16 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							composite.addChild(sfChild);
 						}
 						isMultiLevel = true;
+					} 
+					
+					
+				    // Case show ings and is empty use legalName instead #2558
+					if (!isMultiLevel && !DeclarationType.DoNotDetails.equals(declarationType) && !DeclarationType.DoNotDeclare.equals(declarationType)) {
+
+						if ( (productData.getIngList() == null) || productData.getIngList().isEmpty()) {
+							declarationType =  DeclarationType.DoNotDetails;
+						}
+						
 					}
 
 					if (!DeclarationType.Declare.equals(declarationType) || !aggregateRules.isEmpty()) {
