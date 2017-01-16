@@ -41,6 +41,7 @@ import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
+import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.AllergenType;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
@@ -1055,12 +1056,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					
 					
 				    // Case show ings and is empty use legalName instead #2558
-					if (!isMultiLevel && !DeclarationType.DoNotDetails.equals(declarationType) && !DeclarationType.DoNotDeclare.equals(declarationType)) {
-
-						if ( (productData.getIngList() == null) || productData.getIngList().isEmpty()) {
-							declarationType =  DeclarationType.DoNotDetails;
+					if (!isMultiLevel && DeclarationType.Declare.equals(declarationType)) {
+						if ( ((productData.getIngList() == null) || productData.getIngList().isEmpty()) && (productData instanceof RawMaterialData)) {	
+						   declarationType =  DeclarationType.DoNotDetails;
 						}
-						
 					}
 
 					if (!DeclarationType.Declare.equals(declarationType) || !aggregateRules.isEmpty()) {
