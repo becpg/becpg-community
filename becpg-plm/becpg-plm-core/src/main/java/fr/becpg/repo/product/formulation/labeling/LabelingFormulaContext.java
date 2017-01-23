@@ -913,10 +913,13 @@ public class LabelingFormulaContext {
 
 		JSONObject tree = new JSONObject();
 
-		if (visited.contains(component)) {
+		if ( visited.contains(component)) {
 			return tree;
 		}
-		visited.add(component);
+		
+		if(!(component instanceof IngItem)){
+			visited.add(component);
+		}
 
 		if (component != null) {
 
