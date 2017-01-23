@@ -91,7 +91,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 				ChangeOrderData changeOrderData = currentUserChangeOrderData;
 
 				if (changeOrderData == null) {
-					changeOrderData = new ChangeOrderData(generateEcoName(null), ECOState.Automatic, ChangeOrderType.Simulation, null);
+					changeOrderData = new ChangeOrderData(generateEcoName(null), ECOState.Automatic, ChangeOrderType.Replacement, null);
 
 					NodeRef ret = getAutomaticECONoderef(parentNodeRef);
 
@@ -228,7 +228,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 	public ChangeOrderData createAutomaticEcoForUser(String name) {
 		NodeRef parentNodeRef = getChangeOrderFolder();
 
-		ChangeOrderData changeOrderData = new ChangeOrderData(generateEcoName(name), ECOState.ToCalculateWUsed, ChangeOrderType.Simulation, null);
+		ChangeOrderData changeOrderData = new ChangeOrderData(generateEcoName(name), ECOState.ToCalculateWUsed, ChangeOrderType.Replacement, null);
 
 		changeOrderData = (ChangeOrderData) alfrescoRepository.create(parentNodeRef, changeOrderData);
 		String curUserName = AuthenticationUtil.getFullyAuthenticatedUser();

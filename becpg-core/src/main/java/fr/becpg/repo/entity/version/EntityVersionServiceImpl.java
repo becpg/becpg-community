@@ -19,6 +19,7 @@ import org.alfresco.repo.version.VersionBaseModel;
 import org.alfresco.repo.version.VersionModel;
 import org.alfresco.repo.version.common.VersionImpl;
 import org.alfresco.repo.version.common.versionlabel.SerialVersionLabelPolicy;
+import org.alfresco.service.cmr.coci.CheckOutCheckInService;
 import org.alfresco.service.cmr.coci.CheckOutCheckInServiceException;
 import org.alfresco.service.cmr.lock.LockService;
 import org.alfresco.service.cmr.lock.LockStatus;
@@ -39,6 +40,7 @@ import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.service.namespace.QNamePattern;
 import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -124,6 +126,10 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 	@Autowired
 	private RepoService repoService;
+	
+	@Autowired
+	private CheckOutCheckInService checkOutCheckInService;
+	
 
 	@Autowired
 	@Qualifier("ruleService")
@@ -784,7 +790,30 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	}
 
 	@Override
-	public void prepareBranchBeforeMerge(NodeRef branchNodeRef, NodeRef branchToNodeRef) {
+	public NodeRef mergeBranch(NodeRef branchNodeRef, NodeRef branchToNodeRef, VersionType versionType, String description){
+	
+		if (branchToNodeRef == null) {
+		  branchToNodeRef = associationService.getTargetAssoc(branchNodeRef, BeCPGModel.ASSOC_AUTO_MERGE_TO);
+		}
+		if(branchToNodeRef != null){
+			
+			//Update all existing assocs
+			//TODO
+			
+			
+			prepareBranchBeforeMerge(branchNodeRef, branchToNodeRef);
+	
+			Map<String, Serializable> properties = new HashMap<>();
+			properties.put(VersionBaseModel.PROP_VERSION_TYPE, versionType);
+			properties.put(Version.PROP_DESCRIPTION, description);
+
+			return checkOutCheckInService.checkin(branchNodeRef, properties);
+		}
+		return null;
+	}
+	
+	
+	private void prepareBranchBeforeMerge(NodeRef branchNodeRef, NodeRef branchToNodeRef) {
 		if (nodeService.hasAspect(branchToNodeRef, ContentModel.ASPECT_CHECKED_OUT)) {
 			throw new CheckOutCheckInServiceException(MSG_ALREADY_CHECKEDOUT);
 		}

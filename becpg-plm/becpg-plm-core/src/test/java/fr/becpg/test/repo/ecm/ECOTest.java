@@ -234,7 +234,7 @@ public class ECOTest extends AbstractFinishedProductTest {
 			calculatedCharacts.add(cost2);
 			calculatedCharacts.add(nut1);
 			calculatedCharacts.add(nut2);
-			ChangeOrderData changeOrderData = new ChangeOrderData("ECO", ECOState.ToCalculateWUsed, ChangeOrderType.Simulation, calculatedCharacts);
+			ChangeOrderData changeOrderData = new ChangeOrderData("ECO", ECOState.ToCalculateWUsed, ChangeOrderType.Replacement, calculatedCharacts);
 
 			List<ReplacementListDataItem> replacementList = new ArrayList<>();
 
@@ -393,7 +393,7 @@ public class ECOTest extends AbstractFinishedProductTest {
 			logger.debug("create Change order to replace RM4: " + rawMaterial4NodeRef + " by null: " + rawMaterial5NodeRef);
 
 			List<NodeRef> calculatedCharacts = new ArrayList<>();
-			ChangeOrderData changeOrderData = new ChangeOrderData("ECO", ECOState.ToCalculateWUsed, ChangeOrderType.Simulation, calculatedCharacts);
+			ChangeOrderData changeOrderData = new ChangeOrderData("ECO", ECOState.ToCalculateWUsed, ChangeOrderType.Replacement, calculatedCharacts);
 
 			List<ReplacementListDataItem> replacementList = new ArrayList<>();
 
@@ -461,7 +461,7 @@ public class ECOTest extends AbstractFinishedProductTest {
 			logger.debug("create Change order to replace RM4: " + rawMaterial4NodeRef + " by null: " + rawMaterial5NodeRef);
 
 			List<NodeRef> calculatedCharacts = new ArrayList<>();
-			ChangeOrderData changeOrderData = new ChangeOrderData("ECO", ECOState.ToCalculateWUsed, ChangeOrderType.Simulation, calculatedCharacts);
+			ChangeOrderData changeOrderData = new ChangeOrderData("ECO", ECOState.ToCalculateWUsed, ChangeOrderType.Replacement, calculatedCharacts);
 
 			List<ReplacementListDataItem> replacementList = new ArrayList<>();
 
@@ -617,7 +617,7 @@ public class ECOTest extends AbstractFinishedProductTest {
 			calculatedCharacts.add(cost2);
 			calculatedCharacts.add(nut1);
 			calculatedCharacts.add(nut2);
-			ChangeOrderData changeOrderData = new ChangeOrderData("ECO", ECOState.ToCalculateWUsed, ChangeOrderType.Simulation, calculatedCharacts);
+			ChangeOrderData changeOrderData = new ChangeOrderData("ECO", ECOState.ToCalculateWUsed, ChangeOrderType.Replacement, calculatedCharacts);
 
 			List<ReplacementListDataItem> replacementList = new ArrayList<>();
 			replacementList
@@ -819,7 +819,7 @@ public class ECOTest extends AbstractFinishedProductTest {
 					logger.debug("create Change order to replace RM4: " + rawMaterial4NodeRef + " by RM5: " + rawMaterial5NodeRef);
 
 					ChangeOrderData changeOrderData = new ChangeOrderData("ECO " + threadName + " " + adder.doubleValue(), ECOState.ToCalculateWUsed,
-							ChangeOrderType.Simulation, new ArrayList<>());
+							ChangeOrderType.Replacement, new ArrayList<>());
 
 					List<ReplacementListDataItem> replacementList = new ArrayList<>();
 
