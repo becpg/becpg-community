@@ -793,6 +793,8 @@
 								MAX(IF(prop.prop_name = "bcpg:nutListGroup",prop.string_value,NULL)) as nutGroup,
 								MAX(IF(prop.prop_name = "bcpg:nutListValue",prop.double_value,NULL)) as nutValue,
 								MAX(IF(prop.prop_name = "bcpg:nutListFormulatedValue",prop.double_value,NULL)) as nutFormulatedValue,
+								MAX(IF(prop.prop_name = "bcpg:nutListGDAPerc",prop.double_value,NULL)) as nutListGDAPerc,
+								MAX(IF(prop.prop_name = "bcpg:nutListValuePerServing",prop.double_value,NULL)) as nutListValuePerServing,
 								entity.is_last_version as isLastVersion,
 								datalist.entity_fact_id as entity_fact_id
 							from
@@ -835,6 +837,7 @@
 								entity.entity_id as entity_noderef,
 								entity.entity_name as name,
 								entity.is_last_version as isLastVersion,
+								MAX(IF(prop.prop_name = "bcpg:productState",prop.string_value,NULL)) as productState,
 								MAX(IF(prop.prop_name = "bcpg:productHierarchy1",prop.string_value,NULL)) as productHierarchy1,
 								MAX(IF(prop.prop_name = "bcpg:productHierarchy2",prop.string_value,NULL)) as productHierarchy2,
 								MAX(IF(prop.prop_name = "bcpg:code",prop.string_value,NULL)) as code,
@@ -848,6 +851,18 @@
 							group by id
 					</SQL>
 				</View>
+				<Level approxRowCount="5" name="productState" caption="${msg("jsolap.state.title")}"  column="productState"  type="String"   >
+				  <NameExpression>
+					  <SQL dialect="generic" >
+					  <![CDATA[CASE WHEN productState='Simulation' THEN '${msg("listconstraint.bcpg_systemState.Simulation")}'
+	                            WHEN productState='ToValidate' THEN '${msg("listconstraint.bcpg_systemState.ToValidate")}'
+	                            WHEN productState='Valid' THEN '${msg("listconstraint.bcpg_systemState.Valid")}'
+	                            WHEN productState='Refused' THEN '${msg("listconstraint.bcpg_systemState.Refused")}'
+	                            WHEN productState='Archived' THEN '${msg("listconstraint.bcpg_systemState.Archived")}'
+	                            ELSE 'Vide'
+	                           END]]></SQL>
+             		 </NameExpression>
+				</Level>
 				<Level name="productHierarchy1" caption="${msg("jsolap.family.title")}" column="productHierarchy1"  type="String"    />
 				<Level name="productHierarchy2" caption="${msg("jsolap.subFamily.title")}" column="productHierarchy2"  type="String"    />
 				<Level name="name" caption="${msg("jsolap.productName.title")}" column="name"  type="String"    />
@@ -866,7 +881,9 @@
 		</Dimension>	
 		<Measure name="nutValue" caption="${msg("jsolap.nutritionalValues.title")}" column="nutValue" datatype="Numeric" aggregator="avg" visible="true"></Measure>	
 		<Measure name="nutFormulatedValue" caption="${msg("jsolap.nutritionalFormulatedValues.title")}" column="nutFormulatedValue" datatype="Numeric" aggregator="avg" visible="true"></Measure>	
-		</Cube>				
+		<Measure name="nutListValuePerServing" caption="${msg("jsolap.nutListValuePerServing.title")}" column="nutListValuePerServing" datatype="Numeric" aggregator="avg" visible="true"></Measure>
+		<Measure name="nutListGDAPerc" caption="${msg("jsolap.nnutListGDAPerc.title")}" column="nutListGDAPerc" datatype="Numeric" aggregator="avg" visible="true"></Measure>
+	</Cube>				
 	
 
 	<Cube name="products" caption="${msg("jsolap.products.title")}" cache="true" enabled="true" defaultMeasure="${msg("jsolap.productsNumber.title")}">
