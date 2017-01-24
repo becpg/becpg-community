@@ -996,8 +996,7 @@
 								datalist.id as id,
 								MAX(IF(prop.prop_name = "bcpg:nutListNut",prop.string_value,NULL)) as nutName,
 								MAX(IF(prop.prop_name = "bcpg:nutListNut",prop.prop_id,NULL)) as nutNodeRef,
-								MAX(IF(prop.prop_name = "bcpg:nutListGroup",prop.string_value,NULL)) as nutGroup,
-								MAX(IF(prop.prop_name = "bcpg:nutListValue",prop.double_value,NULL)) as nutValue,								
+								MAX(IF(prop.prop_name = "bcpg:nutListGroup",prop.string_value,NULL)) as nutGroup							
 								datalist.entity_fact_id as entity_fact_id
 							from
 									becpg_datalist AS datalist LEFT JOIN becpg_property AS prop ON prop.datalist_id = datalist.id
@@ -1089,6 +1088,28 @@
 			</Hierarchy>
 		</Dimension>
 		
+		<Dimension type="StandardDimension" foreignKey="id"  name="labelClaim" caption="${msg("jsolap.labelClaim.title")}">
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.labelClaim.caption")}" primaryKey="entity_fact_id">
+				<View alias="labelClaimList">
+					<SQL dialect="generic">
+						select
+							prop.prop_id as nodeRef, 
+							prop.string_value as name,
+							datalist.entity_fact_id as entity_fact_id
+							from
+								becpg_datalist AS datalist 
+								LEFT JOIN becpg_property AS prop ON prop.datalist_id = datalist.id
+								LEFT JOIN becpg_property AS prop2 ON prop2.datalist_id = datalist.id
+                          		AND prop2.prop_name = "bcpg:lclClaimValue"
+							where datalist.datalist_name = "labelClaimList" and datalist.item_type = "bcpg:labelClaimList" and prop.prop_name="bcpg:lclLabelClaim"
+								and datalist.instance_id = ${instanceId}
+								and prop2.string_value = "true"
+					</SQL>
+				</View>
+				<Level name="lclLabelClaimName" caption="${msg("jsolap.labelClaim.title")}" column="nodeRef" nameColumn="name" type="String" ></Level>
+			</Hierarchy>
+		</Dimension>
+		
 		
 		<Dimension type="StandardDimension" foreignKey="id"  name="composition" caption="${msg("jsolap.composition.title")}">
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.composition.caption")}" primaryKey="entity_fact_id">
@@ -1106,7 +1127,7 @@
 							from
 									becpg_datalist AS datalist LEFT JOIN becpg_property AS prop_datalist  ON prop_datalist.datalist_id = datalist.id
 																	   LEFT JOIN becpg_entity AS entity  ON entity.entity_id = prop_datalist.prop_id
-																		LEFT JOIN becpg_property AS prop ON prop.entity_id = entity.id
+																	   LEFT JOIN becpg_property AS prop ON prop.entity_id = entity.id
 							where
 									datalist.datalist_name = "compoList" 
 										and datalist.item_type = "bcpg:compoList" 
