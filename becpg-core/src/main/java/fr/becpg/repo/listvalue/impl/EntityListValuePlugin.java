@@ -78,7 +78,7 @@ public class EntityListValuePlugin implements ListValuePlugin {
 	protected static final String SOURCE_TYPE_LINKED_VALUE_ALL = "allLinkedvalue";
 	protected static final String SOURCE_TYPE_LIST_VALUE = "listvalue";
 	protected static final String searchTemplate = "%(cm:name  bcpg:erpCode bcpg:code bcpg:legalName)";
-	protected static final String mixedSearchTemplate = "%(cm:name  bcpg:erpCode bcpg:code bcpg:charactName bcpg:legalName)";
+	protected static final String mixedSearchTemplate = "%(cm:name  bcpg:erpCode bcpg:code bcpg:charactName bcpg:legalName bcpg:lvValue)";
 	protected static final String charactSearchTemplate = "%(bcpg:charactName bcpg:legalName)";
 	protected static final String listValueSearchTemplate = "%(bcpg:lvValue bcpg:legalName)";
 
@@ -176,6 +176,8 @@ public class EntityListValuePlugin implements ListValuePlugin {
 				}
 			}
 		}
+		
+		logger.info("template " + template);
 
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(type).excludeDefaults().inSearchTemplate(template)
 				.locale(I18NUtil.getContentLocale()).andOperator().ftsLanguage();
