@@ -156,7 +156,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						labelingFormulaContext.rename(labelingRuleListDataItem.getComponents(), labelingRuleListDataItem.getReplacements(),
 								labelingRuleListDataItem.getLabel(), labelingRuleListDataItem.getFormula());
 					} else if (LabelingRuleType.Locale.equals(type)) {
-						labelingFormulaContext.addLocale(labelingRuleListDataItem.getFormula());
+						labelingFormulaContext.addLocale(labelingRuleListDataItem.getFormula(), labelingRuleListDataItem.getLocales());
 					} else if (LabelingRuleType.Prefs.equals(type)) {
 						try {
 							Expression exp = parser.parseExpression(SpelHelper.formatFormula(labelingRuleListDataItem.getFormula()));
@@ -174,7 +174,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					} else if (!LabelingRuleType.Render.equals(type)) {
 						labelingFormulaContext.addRule(labelingRuleListDataItem.getNodeRef(), labelingRuleListDataItem.getName(),
 								labelingRuleListDataItem.getComponents(), labelingRuleListDataItem.getReplacements(),
-								labelingRuleListDataItem.getLabel(), labelingRuleListDataItem.getFormula(), type);
+								labelingRuleListDataItem.getLabel(), labelingRuleListDataItem.getFormula(), type, labelingRuleListDataItem.getLocales() );
 					} else if (LabelingRuleType.Render.equals(type)) {
 						shouldSkip = false;
 					}
@@ -510,6 +510,20 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				}
 			}
 		}
+		
+		if(ret.size()>1){
+			List<LabelingRuleListDataItem> defaultRules = ret.get(LabelingRuleListDataItem.DEFAULT_LABELING_GROUP);
+			if(defaultRules!=null){
+				for (Map.Entry<String, List<LabelingRuleListDataItem>> labelingRuleListsGroup : ret.entrySet()) {
+					labelingRuleListsGroup.getValue().addAll(defaultRules);
+				}
+				
+				ret.remove(LabelingRuleListDataItem.DEFAULT_LABELING_GROUP);
+			}
+			
+		}
+		
+		
 		return ret;
 	}
 
