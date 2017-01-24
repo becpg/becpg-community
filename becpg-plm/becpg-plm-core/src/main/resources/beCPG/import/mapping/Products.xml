@@ -273,4 +273,15 @@
 		<columns />
 	</mapping>
 
+	<mapping name="bcpg:plant">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:erpCode" />
+		</nodeColumnKeys>
+		<dataListColumnKeys>
+			<dataListColumnKey attribute="cm:name" />
+		</dataListColumnKeys>
+		<columns>
+		</columns>
+	</mapping>
+	
 </mappings>
