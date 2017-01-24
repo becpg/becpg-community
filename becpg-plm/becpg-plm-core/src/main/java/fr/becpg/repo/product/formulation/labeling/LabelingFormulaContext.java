@@ -22,6 +22,7 @@ import java.text.DecimalFormat;
 import java.text.Format;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -155,15 +156,14 @@ public class LabelingFormulaContext {
 	 * LOCALE
 	 */
 
-	public void addLocale(String value) {
-		if(value!=null){
-			String[] locales = value.split(",");
+	public void addLocale(String value, List<String> locales) {
+		if (((locales == null) || locales.isEmpty()) && (value != null)) {
+			locales = Arrays.asList(value.split(","));
+		}
+
+		if (locales != null) {
 			for (String tmp : locales) {
-				if(tmp.contains("_")){
-					availableLocales.add(new Locale(tmp.split("_")[0],tmp.split("_")[1]));
-				} else {
-					availableLocales.add(new Locale(tmp));
-				}
+				availableLocales.add(MLTextHelper.parseLocale(tmp));
 			}
 		}
 	}
@@ -336,13 +336,13 @@ public class LabelingFormulaContext {
 				mlText = label;
 			} else if (formula != null) {
 				mlText = new MLText();
-				
-				Set<Locale> locales  = getLocales();
-				
-				if(locales.isEmpty()){
+
+				Set<Locale> locales = getLocales();
+
+				if (locales.isEmpty()) {
 					locales.add(new Locale(Locale.getDefault().getLanguage()));
 				}
-						
+
 				for (Locale locale : locales) {
 					String val = I18NUtil.getMessage(formula, locale);
 					if (val == null) {
@@ -509,10 +509,18 @@ public class LabelingFormulaContext {
 		Double qty = 100d;
 		LabelingRuleType labelingRuleType;
 		List<NodeRef> components;
+		Set<Locale> locales = new HashSet<>();
 
-		public AggregateRule(NodeRef ruleNodeRef, String name) {
+		public AggregateRule(NodeRef ruleNodeRef, String name, List<String> locales) {
 			super();
 			this.name = name;
+
+			if (locales != null) {
+				for (String tmp : locales) {
+					this.locales.add(MLTextHelper.parseLocale(tmp));
+				}
+			}
+
 		}
 
 		public String getName() {
@@ -525,6 +533,10 @@ public class LabelingFormulaContext {
 
 		public void setReplacement(NodeRef replacement) {
 			this.replacement = replacement;
+		}
+
+		public boolean matchLocale(Locale locale) {
+			return locales.isEmpty() || locales.contains(locale);
 		}
 
 		public MLText getLabel() {
@@ -626,14 +638,14 @@ public class LabelingFormulaContext {
 	}
 
 	public boolean addRule(NodeRef ruleNodeRef, String name, List<NodeRef> components, List<NodeRef> replacement, MLText label, String formula,
-			LabelingRuleType labeLabelingRuleType) {
+			LabelingRuleType labeLabelingRuleType, List<String> locales) {
 
 		if (labeLabelingRuleType != null) {
 			if (LabelingRuleType.Type.equals(labeLabelingRuleType)
 					|| ((((components != null) && (components.size() > 1)) || ((replacement != null) && !replacement.isEmpty()))
 							&& (LabelingRuleType.Detail.equals(labeLabelingRuleType) || LabelingRuleType.Group.equals(labeLabelingRuleType)
 									|| LabelingRuleType.DoNotDetails.equals(labeLabelingRuleType)))) {
-				aggregate(ruleNodeRef, name, components, replacement, label, formula, labeLabelingRuleType);
+				aggregate(ruleNodeRef, name, components, replacement, label, formula, labeLabelingRuleType, locales);
 			} else {
 
 				DeclarationType type = null;
@@ -648,10 +660,10 @@ public class LabelingFormulaContext {
 
 				if ((components != null) && !components.isEmpty()) {
 					for (NodeRef component : components) {
-						nodeDeclarationFilters.put(component, new DeclarationFilter(formula, type));
+						nodeDeclarationFilters.put(component, new DeclarationFilter(formula, type, locales));
 					}
 				} else {
-					declarationFilters.add(new DeclarationFilter(formula, type));
+					declarationFilters.add(new DeclarationFilter(formula, type, locales));
 				}
 
 			}
@@ -661,13 +673,13 @@ public class LabelingFormulaContext {
 	}
 
 	private void aggregate(NodeRef ruleNodeRef, String name, List<NodeRef> components, List<NodeRef> replacement, MLText label, String formula,
-			LabelingRuleType labelingRuleType) {
+			LabelingRuleType labelingRuleType, List<String> locales) {
 		String[] qtys = (formula != null) && !formula.isEmpty() ? formula.split(",") : null;
 
 		// components peut être ING, SF ou MP
 		int i = 0;
 		for (NodeRef component : components) {
-			AggregateRule aggregateRule = new AggregateRule(ruleNodeRef, name);
+			AggregateRule aggregateRule = new AggregateRule(ruleNodeRef, name, locales);
 
 			if ((replacement != null) && !replacement.isEmpty()) {
 				aggregateRule.setReplacement(replacement.get(0));
@@ -823,9 +835,10 @@ public class LabelingFormulaContext {
 			String ingName = getLegalIngName(component, false);
 
 			if (logger.isDebugEnabled()) {
-				
-				logger.debug(" --" + ingName +"("+component.getNodeRef()+") qtyRMUsed: " + parent.getQtyTotal() + " qtyPerc " + qtyPerc + " apply precision ("
-						+ (toApplyThresholdItems.contains(component.getNodeRef()) && (qtyPerc - qtyPrecisionThreshold >0)) + ") ");
+
+				logger.debug(" --" + ingName + "(" + component.getNodeRef() + ") qtyRMUsed: " + parent.getQtyTotal() + " qtyPerc " + qtyPerc
+						+ " apply precision (" + (toApplyThresholdItems.contains(component.getNodeRef()) && ((qtyPerc - qtyPrecisionThreshold) > 0))
+						+ ") ");
 			}
 
 			qtyPerc = (useVolume ? volumePerc : qtyPerc);
@@ -844,7 +857,7 @@ public class LabelingFormulaContext {
 						}
 						Double subIngQtyPerc = (useVolume ? subIngItem.getVolume() : subIngItem.getQty());
 
-						if (!shouldSkip(subIngItem.getNodeRef(),subIngQtyPerc)) {
+						if (!shouldSkip(subIngItem.getNodeRef(), subIngQtyPerc)) {
 
 							subIngBuff.append(
 									getIngTextFormat(subIngItem).format(new Object[] { getLegalIngName(subIngItem, false), subIngQtyPerc, null }));
@@ -897,8 +910,8 @@ public class LabelingFormulaContext {
 	}
 
 	private boolean shouldSkip(NodeRef nodeRef, Double qtyPerc) {
-		return  !((qtyPerc == null) ||  (toApplyThresholdItems.contains(nodeRef) && qtyPerc > qtyPrecisionThreshold)
-				|| (!toApplyThresholdItems.contains(nodeRef) && qtyPerc > 0));
+		return !((qtyPerc == null) || (toApplyThresholdItems.contains(nodeRef) && (qtyPerc > qtyPrecisionThreshold))
+				|| (!toApplyThresholdItems.contains(nodeRef) && (qtyPerc > 0)));
 	}
 
 	public String createJsonLog(boolean mergedLabeling) {
@@ -913,11 +926,11 @@ public class LabelingFormulaContext {
 
 		JSONObject tree = new JSONObject();
 
-		if ( visited.contains(component)) {
+		if (visited.contains(component)) {
 			return tree;
 		}
-		
-		if(!(component instanceof IngItem)){
+
+		if (!(component instanceof IngItem)) {
 			visited.add(component);
 		}
 
@@ -1033,6 +1046,8 @@ public class LabelingFormulaContext {
 
 	Map<IngTypeItem, List<AbstractLabelingComponent>> getSortedIngListByType(CompositeLabeling compositeLabeling) {
 
+		Locale currentLocale = I18NUtil.getLocale();
+
 		Map<IngTypeItem, List<AbstractLabelingComponent>> tmp = new LinkedHashMap<>();
 
 		boolean keepOrder = false;
@@ -1048,7 +1063,7 @@ public class LabelingFormulaContext {
 
 			if (aggregateRules.containsKey(lblComponent.getNodeRef())) {
 				for (AggregateRule aggregateRule : aggregateRules.get(lblComponent.getNodeRef())) {
-					if (LabelingRuleType.Type.equals(aggregateRule.getLabelingRuleType())) {
+					if (LabelingRuleType.Type.equals(aggregateRule.getLabelingRuleType()) && aggregateRule.matchLocale(currentLocale)) {
 						ingType = getReplacementIngType(aggregateRule);
 					}
 				}
@@ -1059,7 +1074,7 @@ public class LabelingFormulaContext {
 				// Type replacement
 				if (aggregateRules.containsKey(ingType.getNodeRef())) {
 					for (AggregateRule aggregateRule : aggregateRules.get(ingType.getNodeRef())) {
-						if (LabelingRuleType.Type.equals(aggregateRule.getLabelingRuleType())) {
+						if (LabelingRuleType.Type.equals(aggregateRule.getLabelingRuleType()) && aggregateRule.matchLocale(currentLocale)) {
 							ingType = getReplacementIngType(aggregateRule);
 						}
 					}
@@ -1070,10 +1085,12 @@ public class LabelingFormulaContext {
 				if (nodeDeclarationFilters.containsKey(ingType.getNodeRef())) {
 					DeclarationFilter declarationFilter = nodeDeclarationFilters.get(ingType.getNodeRef());
 					if (DeclarationType.Omit.equals(declarationFilter.getDeclarationType())
-							&& matchFormule(declarationFilter.getFormula(), new DeclarationFilterContext())) {
+							&& matchFormule(declarationFilter.getFormula(), new DeclarationFilterContext())
+							&& declarationFilter.matchLocale(currentLocale)) {
 						break;
 					} else if (DeclarationType.DoNotDeclare.equals(declarationFilter.getDeclarationType())
-							&& matchFormule(declarationFilter.getFormula(), new DeclarationFilterContext())) {
+							&& matchFormule(declarationFilter.getFormula(), new DeclarationFilterContext())
+							&& declarationFilter.matchLocale(currentLocale)) {
 						ingType = null;
 					}
 
