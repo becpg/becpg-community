@@ -687,17 +687,30 @@
 								MAX(IF(prop.prop_name = "bcpg:erpCode",prop.string_value,NULL)) as erpCode,
 								MAX(IF(prop.prop_name = "bcpg:productHierarchy1",prop.string_value,NULL)) as productHierarchy1,
 								MAX(IF(prop.prop_name = "bcpg:productHierarchy2",prop.string_value,NULL)) as productHierarchy2,
+								MAX(IF(prop.prop_name = "bcpg:productState",prop.string_value,NULL)) as productState,
 								prop_entity.entity_id as entity_id
 							from
 								becpg_property AS prop_entity  LEFT JOIN becpg_entity AS entity  ON entity.entity_id = prop_entity.prop_id
 															   LEFT JOIN becpg_property AS prop ON prop.entity_id = entity.id
 							where
 								prop_entity.prop_name="pjt:projectEntity"
-								and (prop.prop_name = "bcpg:productHierarchy1" or prop.prop_name = "bcpg:productHierarchy2" or prop.prop_name = "bcpg:erpCode") and entity.instance_id = ${instanceId}
+								and (prop.prop_name = "bcpg:productHierarchy1" or prop.prop_name = "bcpg:productHierarchy2" or prop.prop_name = "bcpg:erpCode" or prop.prop_name = "bcpg:productState") and entity.instance_id = ${instanceId}
 							 group by entity_id
 							]]>
 						</SQL>
-				</View>		
+				</View>
+				<Level approxRowCount="5" name="productState" caption="${msg("jsolap.state.title")}"  column="productState"  type="String"   >
+				  <NameExpression>
+					  <SQL dialect="generic" >
+					  <![CDATA[CASE WHEN productState='Simulation' THEN '${msg("listconstraint.bcpg_systemState.Simulation")}'
+	                            WHEN productState='ToValidate' THEN '${msg("listconstraint.bcpg_systemState.ToValidate")}'
+	                            WHEN productState='Valid' THEN '${msg("listconstraint.bcpg_systemState.Valid")}'
+	                            WHEN productState='Refused' THEN '${msg("listconstraint.bcpg_systemState.Refused")}'
+	                            WHEN productState='Archived' THEN '${msg("listconstraint.bcpg_systemState.Archived")}'
+	                            ELSE 'Vide'
+	                           END]]></SQL>
+             		 </NameExpression>
+				</Level>		
 				<Level name="productHierarchy1" caption="${msg("jsolap.family.title")}" column="productHierarchy1" type="String"   >
 				</Level>
 				<Level name="productHierarchy2" caption="${msg("jsolap.subFamily.title")}" column="productHierarchy2" type="String"   >
