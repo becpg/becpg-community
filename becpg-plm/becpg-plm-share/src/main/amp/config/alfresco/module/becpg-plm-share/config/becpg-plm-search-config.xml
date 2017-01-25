@@ -48,6 +48,7 @@
 				<form labelId="search.form.label.bcpg_packagingMaterial" descriptionId="search.form.desc.bcpg_packagingMaterial">bcpg:packagingMaterial</form>
 				<form labelId="search.form.label.bcpg_rawMaterial" descriptionId="search.form.desc.bcpg_rawMaterial">bcpg:rawMaterial</form>
 				<form labelId="search.form.label.bcpg_resourceProduct" descriptionId="search.form.desc.bcpg_resourceProduct">bcpg:resourceProduct</form>
+				<form labelId="search.form.label.bcpg_supplier" descriptionId="search.form.desc.bcpg_supplier">bcpg:supplier</form>
 				<form labelId="search.form.label.qa_nc" descriptionId="search.form.desc.qa_nc">qa:nc</form>
 				<form labelId="search.form.label.qa_qualityControl" descriptionId="search.form.desc.qa_qualityControl">qa:qualityControl</form>
 			</forms>
