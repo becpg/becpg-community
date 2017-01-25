@@ -56,10 +56,7 @@
 				</entry>	
 				<entry key="bcpg:allergenList">
 					<ref bean="simpleCharactDetailsVisitor" />
-				</entry>	
-				<entry key="bcpg:labelClaimList">
-					<ref bean="simpleCharactDetailsVisitor" />
-				</entry>			
+				</entry>				
 			</map>
 		</property>
 		<property name="namespaceService" ref="namespaceService"/>
