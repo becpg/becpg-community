@@ -7056,6 +7056,7 @@
 					<show id="bcpg:lrReplacements" />
 					<show id="bcpg:lrType" />
 					<show id="bcpg:lrGroup" />
+					<show id="bcpg:lrLocales" />
 					<show id="bcpg:lrIsActive" />
 					<show id="bcpg:isManualListItem" force="true"/>
 				</field-visibility>
@@ -7076,6 +7077,9 @@
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:semiFinishedProduct,bcpg:localSemiFinishedProduct,bcpg:rawMaterial,bcpg:ing,bcpg:ingTypeItem&#38;excludeClassNames=bcpg:entityTplAspect
 							</control-param>
 						</control>
+					</field>
+					<field id="bcpg:lrLocales" >
+						<control template="/org/alfresco/components/form/controls/mtlangue.ftl"/>
 					</field>
 				</appearance>
 			</form>
@@ -7121,6 +7125,7 @@
 					<show id="bcpg:lrReplacements" />
 					<show id="bcpg:lrType" />
 					<show id="bcpg:lrGroup" />
+					<show id="bcpg:lrLocales" />
 					<show id="bcpg:lrIsActive" />
 					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
@@ -7141,6 +7146,9 @@
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:semiFinishedProduct,bcpg:localSemiFinishedProduct,bcpg:rawMaterial,bcpg:ing,bcpg:ingTypeItem&#38;excludeClassNames=bcpg:entityTplAspect
 							</control-param>
 						</control>
+					</field>
+					<field id="bcpg:lrLocales" >
+						<control template="/org/alfresco/components/form/controls/mtlangue.ftl"/>
 					</field>
 				</appearance>
 			</form>

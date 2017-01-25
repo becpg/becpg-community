@@ -48,8 +48,10 @@
 			<parameter name="allowedValues">
 				<list>
 					<value>Replacement</value>
+					<value>Merge</value>
+					<!-- 
 					<value>Simulation</value>
-					<value>Variant</value>									
+					<value>Variant</value>	 -->							
 				</list>
 			</parameter>
 		</constraint>

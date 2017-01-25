@@ -716,12 +716,9 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 					@Override
 					public NodeRef execute() throws Throwable {
 
-						entityVersionService.prepareBranchBeforeMerge(branchNodeRef, rawMaterialNodeRef);
-						// Check in
-						Map<String, Serializable> versionProperties = new HashMap<>();
-						versionProperties.put(Version.PROP_DESCRIPTION, "This is a test version");
-						versionProperties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
-						return checkOutCheckInService.checkin(branchNodeRef, versionProperties);
+						
+					
+						return entityVersionService.mergeBranch(branchNodeRef, rawMaterialNodeRef,VersionType.MAJOR, "This is a test version");
 					}
 
 				}, false, true);

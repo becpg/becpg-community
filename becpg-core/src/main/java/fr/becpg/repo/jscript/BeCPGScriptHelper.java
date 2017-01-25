@@ -83,8 +83,6 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	private AssociationService associationService;
 
 	private EntityListDAO entityListDAO;
-
-	private CheckOutCheckInService checkOutCheckInService;
 	
 	private boolean showEntitiesInTree = false;
 
@@ -136,10 +134,6 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		this.entityListDAO = entityListDAO;
 	}
 
-	public void setCheckOutCheckInService(CheckOutCheckInService checkOutCheckInService) {
-		this.checkOutCheckInService = checkOutCheckInService;
-	}
-	
 	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
 		this.entityDictionaryService = entityDictionaryService;
 	}
@@ -230,25 +224,9 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	}
 
 	public ScriptNode mergeBranch(ScriptNode entity, ScriptNode branchTo, String description, String type) {
-
-		NodeRef nodeRef = entity.getNodeRef();
-		NodeRef branchToNodeRef = null;
-
-		if (branchTo != null) {
-			branchToNodeRef = branchTo.getNodeRef();
-		} else {
-			branchToNodeRef = associationService.getTargetAssoc(entity.getNodeRef(), BeCPGModel.ASSOC_AUTO_MERGE_TO);
-		}
-
-		VersionType versionType = VersionType.valueOf(type);
-
-		entityVersionService.prepareBranchBeforeMerge(nodeRef, branchToNodeRef);
-
-		Map<String, Serializable> properties = new HashMap<>();
-		properties.put(VersionBaseModel.PROP_VERSION_TYPE, versionType);
-		properties.put(Version.PROP_DESCRIPTION, description);
-
-		return new ScriptNode(checkOutCheckInService.checkin(nodeRef, properties), serviceRegistry);
+		NodeRef retNodeRef = entityVersionService.mergeBranch(entity.getNodeRef(), branchTo != null ? branchTo.getNodeRef() : null , VersionType.valueOf(type), description);
+		
+		return 	new ScriptNode(retNodeRef, serviceRegistry);
 	}
 
 	public boolean changeEntityListStates(ScriptNode entity, String state) {

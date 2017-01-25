@@ -1433,6 +1433,10 @@
 						<constraint ref="bcpg:lrGroups" />
 					</constraints>
 				</property>
+				<property name="bcpg:lrLocales">
+					<type>d:text</type>
+					<multiple>true</multiple>					
+				</property>
 				<property name="bcpg:lrFormula">
 					<type>d:text</type>
 					<index enabled="false" />

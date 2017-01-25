@@ -75,6 +75,7 @@ var addFormFieldForLocale = function(){
   	  	var select = document.getElementById("${el}-locale-picker");
 	  	var index = select.selectedIndex;
 	  	var lc = select.options[index].value;
+	  	var lbl = select.options[index].text;
 	  	var container = document.getElementById("${el}-added-locale-container");
 	  	var	varHtml = "";
 	  	var country = lc.toLowerCase();
@@ -85,7 +86,7 @@ var addFormFieldForLocale = function(){
    
 	   	 varHtml +="<div class=\"form-field\"><label for=\"${el}-"+lc
 	   	         +"\">${label?js_string}:&nbsp;<span class=\"locale-icon\">"
-	   	         +"<img class=\"icon16_11\" tabindex=\"0\" src=\"${url.context}/res/components/images/flags/"+country+".png\"/></span>&nbsp;&nbsp;"
+	   	         +"<img class=\"icon16_11\" tabindex=\"0\" src=\"${url.context}/res/components/images/flags/"+country+".png\"/>&nbsp;("+lbl+")</span>&nbsp;&nbsp;"
 	   	         +"<span class=\"translate-icon\" onClick=\"suggestTranslate('${el}-"+lc+"','"+lc+"');\" >"
 	   	         +"<img class=\"icon16\" title=\"${msg("translate.suggest")}\" tabindex=\"0\" src=\"${url.context}/res/components/images/translate-16.png\">"
 	   	         +"<span></label>";

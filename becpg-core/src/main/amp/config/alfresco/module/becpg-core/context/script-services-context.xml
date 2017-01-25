@@ -61,7 +61,6 @@
 		<property name="entityVersionService" ref="entityVersionService"/>
 		<property name="serviceRegistry" ref="ServiceRegistry"/>
 		<property name="associationService" ref="associationService" />
-		<property name="checkOutCheckInService" ref="checkOutCheckInService" />
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="showEntitiesInTree" value="${becpg.doclibtree.showEntities}"></property>
 	</bean>

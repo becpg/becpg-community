@@ -17,6 +17,12 @@
  ******************************************************************************/
 package fr.becpg.repo.product.data.ing;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 
 /**
@@ -29,12 +35,19 @@ public class DeclarationFilter {
 	private final String formula;
 	
 	private final DeclarationType declarationType;
+
+	private final Set<Locale> locales = new HashSet<>();
 	
 
-	public DeclarationFilter(String formula, DeclarationType declarationType) {
+	public DeclarationFilter(String formula, DeclarationType declarationType, List<String> locales) {
 		super();
 		this.formula = formula;
 		this.declarationType = declarationType;
+		if(locales!=null){
+			for (String tmp : locales) {	
+				this.locales.add(MLTextHelper.parseLocale(tmp));
+			}
+		}
 	}
 
 
@@ -45,6 +58,11 @@ public class DeclarationFilter {
 
 	public DeclarationType getDeclarationType() {
 		return declarationType;
+	}
+
+
+	public boolean matchLocale(Locale locale) {
+		return locales.isEmpty() || locales.contains(locale);
 	}
 
 	
