@@ -1,0 +1,194 @@
+/*
+ *  Copyright (C) 2010-2011 beCPG. All rights reserved.
+ */
+ /* ------------------ */
+ /* ----- HEADER ----- */
+ /* used*/
+.becpg-header-type 
+{
+    color: black;
+    font-weight: bold;
+    font-size: 14pt;
+    text-align: center;
+    font-family: arial;
+    margin-bottom: 4.5pt;
+}
+/* used */
+.becpg-meta-grid
+{
+	font-size: 8pt;
+	font-family: arial;
+	text-align: left;
+	width: 100%;
+}
+.becpg-meta-cell-label 
+{
+	
+}
+
+.becpg-meta-cell-data
+{
+	font-weight: bold;
+}
+ /* used*/
+.becpg-header-table 
+{
+	width: 100%;
+	text-align: center;
+}
+ /* used*/
+ .becpg-header-title
+{
+	margin-top: 4.5pt;
+}
+
+/* used */
+.becpg-header-image
+{
+	width: 1.931in;
+	height: auto;
+}
+/* --------------- */
+/* ---- BODY ----- */
+/* used */
+.becpg-chapter-header
+{
+	background-color: #074d99; /* #EEEEEE; */
+	font-size: 12pt;
+	font-weight: bold;
+	color: #FFFFFF;/* #000000;*/
+	border-bottom-style: solid;
+	border-bottom-width: thin;
+	border-left-style: solid;
+	border-left-width: thin;
+	border-right-style: solid;
+	border-right-width: thin;
+	border-top-style: solid;
+	border-top-width: thin;
+	text-align: center;
+}
+/* table & grid*/
+.becpg-table {
+	width: 100%;
+	border-bottom-style: solid;
+	border-bottom-width: thin;
+	border-left-style: solid;
+	border-left-width: thin;
+	border-right-style: solid;
+	border-right-width: thin;
+	border-top-style: solid;
+	border-top-width: thin;
+}
+
+.becpg-col-header
+{
+	font-weight: bold;
+	text-align: left;
+}
+/* used */
+.becpg-cell-header 
+{
+	text-align: center;
+	font-weight: bold;
+	background-color: #1264bc; /* test */
+	color: #FFFFFF; /* test */
+	border-bottom-style: solid;
+	border-bottom-width: thin;
+	border-left-style: solid;
+	border-left-width: thin;
+	border-right-style: solid;
+	border-right-width: thin;
+	border-top-style: solid;
+	border-top-width: thin;
+}
+
+.becpg-cell-footer 
+{
+	text-align: center;
+	font-weight: bold;
+	background-color: #7bb7f7;
+	border-bottom-style: solid;
+	border-bottom-width: thin;
+	border-left-style: solid;
+	border-left-width: thin;
+	border-right-style: solid;
+	border-right-width: thin;
+	border-top-style: solid;
+	border-top-width: thin;
+}
+.becpg-grid-designation 
+{
+	font-size: 10pt;
+	width: 100%;
+}
+
+/* used */
+.becpg-row-header
+{
+	font-weight: bold;
+	font-style: normal;
+	text-align: center;
+	vertical-align: middle;
+	
+	border-bottom-style: solid;
+	border-bottom-width: thin;
+	border-left-style: solid;
+	border-left-width: thin;
+	border-right-style: solid;
+	border-right-width: thin;
+	border-top-style: solid;
+	border-top-width: thin;
+}
+/* used */
+.becpg-col-border
+{
+	border-left-color: #000000;
+	border-left-style: solid;
+	border-left-width: thin;
+	border-right-style: none;
+	border-right-width: medium;
+	border-top-color: #000000;
+	
+}
+.becpg-row-border
+{
+	border-bottom-style: solid;
+	border-bottom-width: thin;
+	border-left-style: solid;
+	border-left-width: thin;
+	border-right-style: solid;
+	border-right-width: thin;
+	border-top-style: solid;
+	border-top-width: thin;
+	border-top-color: #000000;
+}
+
+.becpg-group-header
+{
+	background-color: #EEEEEE;
+}
+
+/* data */
+.becpg-data-unit
+{
+	text-align: center;
+}
+
+.becpg-cell-data-header
+{
+	/*background-color : green;  test */
+	text-align: center;
+}
+
+.becpg-cell-dynamic-header
+{
+	/*background-color : red;*/
+}
+/* used */
+.becpg-cell-data
+{
+	text-align: center;
+}
+/* ------------------ */
+/* ----- FOOTER ----- */
+

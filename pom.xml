@@ -76,9 +76,9 @@
 	    <app.log.root.level>WARN</app.log.root.level>
         <alfresco.data.location>/tmp/alf_data_dev</alfresco.data.location>
         <env>local</env>
-		<alfresco.version>5.2.d</alfresco.version>
+		<alfresco.version>5.2.e</alfresco.version>
 		<alfresco.repo.artifactId>alfresco-platform</alfresco.repo.artifactId>
-		<alfresco.share.version>5.2.c</alfresco.share.version>
+		<alfresco.share.version>5.2.d</alfresco.share.version>
 		<app.testing.jvm.args>-Xms256m -Xmx1524m -Duser.language=fr</app.testing.jvm.args>
 		<argLine>-Xms256m -Xmx1524m -Duser.language=fr</argLine>
 		

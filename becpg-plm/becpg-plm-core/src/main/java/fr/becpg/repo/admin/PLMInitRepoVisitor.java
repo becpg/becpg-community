@@ -15,7 +15,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.action.evaluator.CompareMimeTypeEvaluator;
@@ -33,6 +32,8 @@ import org.alfresco.service.cmr.rule.RuleType;
 import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
@@ -80,13 +81,16 @@ import fr.becpg.report.client.ReportFormat;
  */
 @Service
 public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
+	
+	protected static final Log logger = LogFactory.getLog(PLMInitRepoVisitor.class);
 
-	public static final String PRODUCT_REPORT_CLIENT_PATH = "beCPG/birt/document/product/default/ProductReport.rptdesign";
-	public static final String PRODUCT_REPORT_CLIENT_NAME = "path.productreportclienttemplate";
-	public static final String PRODUCT_REPORT_PRODUCTION_PATH = "beCPG/birt/document/product/default/ProductReport_Prod.rptdesign";
-	public static final String PRODUCT_REPORT_PRODUCTION_NAME = "path.productreportproductiontemplate";
-	public static final String PRODUCT_REPORT_RAWMATERIAL_PATH = "beCPG/birt/document/product/default/RawMaterialReport.rptdesign";
-	public static final String PRODUCT_REPORT_SUPPLIER_NAME = "path.rawmaterialreporttemplate";
+	private static final String PRODUCT_REPORT_CLIENT_PATH = "beCPG/birt/document/product/default/ProductReport.rptdesign";
+	private static final String PRODUCT_REPORT_CLIENT_NAME = "path.productreportclienttemplate";
+	private static final String PRODUCT_REPORT_PRODUCTION_PATH = "beCPG/birt/document/product/default/ProductReport_Prod.rptdesign";
+	private static final String PRODUCT_REPORT_PRODUCTION_NAME = "path.productreportproductiontemplate";
+	private static final String PRODUCT_REPORT_RAWMATERIAL_PATH = "beCPG/birt/document/product/default/RawMaterialReport.rptdesign";
+	private static final String PRODUCT_REPORT_SUPPLIER_NAME = "path.rawmaterialreporttemplate";
+	
 	private static final String NC_REPORT_PATH = "beCPG/birt/document/nonconformity/NCReport.rptdesign";
 	private static final String QUALITY_CONTROL_REPORT_PATH = "beCPG/birt/document/qualitycontrol/QualityControlReport.rptdesign";
 	private static final String ECO_REPORT_PATH = "beCPG/birt/document/ecm/ECOReport.rptdesign";
@@ -94,12 +98,22 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	private static final String EXPORT_PRODUCTS_REPORT_XMLFILE_PATH = "beCPG/birt/exportsearch/product/ExportSearchQuery.xml";
 	private static final String EXPORT_NC_REPORT_RPTFILE_PATH = "beCPG/birt/exportsearch/nonconformity/NonConformitySynthesis.rptdesign";
 	private static final String EXPORT_NC_REPORT_XMLFILE_PATH = "beCPG/birt/exportsearch/nonconformity/ExportSearchQuery.xml";
+	
 	private static final String EXPORT_RAWMATERIAL_INGLIST_XLSX_PATH = "beCPG/birt/exportsearch/product/ExportRawMaterialIngList.xlsx";
+	
+	//TODO
+//	private static final String EXPORT_SUPPLIER_XLSX_PATH = "beCPG/birt/exportsearch/product/ExportSuppliers.xlsx";
+//	private static final String EXPORT_PRODUCT_COSTLIST_XLSX_PATH = "beCPG/birt/exportsearch/product/ExportProductCostList.xlsx";
+//	private static final String EXPORT_RAWMATERIAL_COSTLIST_XLSX_PATH = "beCPG/birt/exportsearch/product/ExportRawMaterialCostList.xlsx";
+//	private static final String EXPORT_RAWMATERIAL_NUTLIST_XLSX_PATH = "beCPG/birt/exportsearch/product/ExportRawMaterialNutList.xlsx";
+//	private static final String EXPORT_RAWMATERIAL_ALLERGENLIST_XLSX_PATH = "beCPG/birt/exportsearch/product/ExportRawMaterialAllergenList.xlsx";
+	
 	private static final String EXPORT_INGLABELING_XLSX_PATH = "beCPG/birt/exportsearch/product/ExportIngLabellingList.xlsx";
 
 	private static final String PRODUCT_REPORT_FR_RESOURCE = "beCPG/birt/document/product/default/ProductReport_fr.properties";
 	private static final String PRODUCT_REPORT_EN_RESOURCE = "beCPG/birt/document/product/default/ProductReport_en.properties";
-
+	private static final String PRODUCT_REPORT_CSS_RESOURCE = "beCPG/birt/document/product/default/becpg-report.css";
+	
 	@Autowired
 	private PermissionService permissionService;
 
@@ -730,7 +744,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			String[] defaultReportName = { productReportClientName, productReportSupplierName, productReportProductionName, productReportClientName };
 			String[] otherReport = { PRODUCT_REPORT_PRODUCTION_PATH, null, null, null };
 			String[] otherReportName = { productReportProductionName, null, null, null };
-			String[] productReportResource = { PRODUCT_REPORT_FR_RESOURCE, PRODUCT_REPORT_EN_RESOURCE };
+			String[] productReportResource = { PRODUCT_REPORT_FR_RESOURCE, PRODUCT_REPORT_EN_RESOURCE, PRODUCT_REPORT_CSS_RESOURCE };
 			
 			
 			int i = 0;
