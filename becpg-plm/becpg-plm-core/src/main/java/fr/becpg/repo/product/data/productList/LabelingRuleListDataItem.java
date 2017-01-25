@@ -50,6 +50,7 @@ public class LabelingRuleListDataItem extends AbstractManualDataItem implements 
 	private List<NodeRef> replacements = new ArrayList<>();
 	private Boolean isActive = true;
 	private String group;
+	private List<String> locales;
 
 	@AlfProp
 	@AlfQname(qname="bcpg:lrGroup")
@@ -59,6 +60,17 @@ public class LabelingRuleListDataItem extends AbstractManualDataItem implements 
 
 	public void setGroup(String group) {
 		this.group = group;
+	}
+
+	
+	@AlfProp
+	@AlfQname(qname="bcpg:lrLocales")
+	public List<String> getLocales() {
+		return locales;
+	}
+
+	public void setLocales(List<String> locales) {
+		this.locales = locales;
 	}
 
 	@AlfProp

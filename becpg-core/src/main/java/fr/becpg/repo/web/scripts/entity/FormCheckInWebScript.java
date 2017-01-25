@@ -43,22 +43,16 @@ public class FormCheckInWebScript extends DeclarativeWebScript {
 	private static final Log logger = LogFactory.getLog(FormCheckInWebScript.class);
 
 	private CheckOutCheckInService checkOutCheckInService;
-	
-	
+
 	private EntityVersionService entityVersionService;
-	
-	
-	
 
 	public void setEntityVersionService(EntityVersionService entityVersionService) {
 		this.entityVersionService = entityVersionService;
 	}
 
-
 	public void setCheckOutCheckInService(CheckOutCheckInService checkOutCheckInService) {
 		this.checkOutCheckInService = checkOutCheckInService;
 	}
-
 
 	@Override
 	protected Map<String, Object> executeImpl(WebScriptRequest req, Status status, Cache cache) {
@@ -73,14 +67,12 @@ public class FormCheckInWebScript extends DeclarativeWebScript {
 			nodeRef = new NodeRef((String) json.get(PARAM_NODEREF));
 			description = (String) json.get(PARAM_DESCRIPTION);
 			versionType = json.get(PARAM_MAJOR_VERSION).equals(VALUE_TRUE) ? VersionType.MAJOR : VersionType.MINOR;
-			
-			if(json.has(PARAM_BRANCH_TO_NODEREF)){
+
+			if (json.has(PARAM_BRANCH_TO_NODEREF)) {
 				branchToNodeRef = new NodeRef((String) json.get(PARAM_BRANCH_TO_NODEREF));
-				entityVersionService.prepareBranchBeforeMerge(nodeRef, branchToNodeRef);
-				
 			}
-			
-			if(logger.isDebugEnabled()){
+
+			if (logger.isDebugEnabled()) {
 				logger.debug("branchToNodeRef: " + branchToNodeRef);
 				logger.debug("nodeRef: " + nodeRef);
 				logger.debug("description: " + description);
@@ -90,12 +82,17 @@ public class FormCheckInWebScript extends DeclarativeWebScript {
 			logger.error("Failed to parse form fields", e);
 			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Failed to parse form fields ", e);
 		}
+		NodeRef newEntityNodeRef = null;
 
-		// Calculate new version
-		Map<String, Serializable> properties = new HashMap<>();
-		properties.put(VersionModel.PROP_VERSION_TYPE, versionType);
-		properties.put(Version.PROP_DESCRIPTION, description);
-		NodeRef newEntityNodeRef = checkOutCheckInService.checkin(nodeRef, properties);
+		if (branchToNodeRef != null) {
+			entityVersionService.mergeBranch(nodeRef, branchToNodeRef, versionType, description);
+		} else {
+			// Calculate new version
+			Map<String, Serializable> properties = new HashMap<>();
+			properties.put(VersionModel.PROP_VERSION_TYPE, versionType);
+			properties.put(Version.PROP_DESCRIPTION, description);
+			newEntityNodeRef = checkOutCheckInService.checkin(nodeRef, properties);
+		}
 
 		Map<String, Object> model = new HashMap<>();
 		model.put(MODEL_KEY_NAME_NODEREF, newEntityNodeRef);

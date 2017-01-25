@@ -41,6 +41,7 @@ import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
+import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.AllergenType;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
@@ -155,7 +156,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						labelingFormulaContext.rename(labelingRuleListDataItem.getComponents(), labelingRuleListDataItem.getReplacements(),
 								labelingRuleListDataItem.getLabel(), labelingRuleListDataItem.getFormula());
 					} else if (LabelingRuleType.Locale.equals(type)) {
-						labelingFormulaContext.addLocale(labelingRuleListDataItem.getFormula());
+						labelingFormulaContext.addLocale(labelingRuleListDataItem.getFormula(), labelingRuleListDataItem.getLocales());
 					} else if (LabelingRuleType.Prefs.equals(type)) {
 						try {
 							Expression exp = parser.parseExpression(SpelHelper.formatFormula(labelingRuleListDataItem.getFormula()));
@@ -173,7 +174,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					} else if (!LabelingRuleType.Render.equals(type)) {
 						labelingFormulaContext.addRule(labelingRuleListDataItem.getNodeRef(), labelingRuleListDataItem.getName(),
 								labelingRuleListDataItem.getComponents(), labelingRuleListDataItem.getReplacements(),
-								labelingRuleListDataItem.getLabel(), labelingRuleListDataItem.getFormula(), type);
+								labelingRuleListDataItem.getLabel(), labelingRuleListDataItem.getFormula(), type, labelingRuleListDataItem.getLocales() );
 					} else if (LabelingRuleType.Render.equals(type)) {
 						shouldSkip = false;
 					}
@@ -509,6 +510,20 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				}
 			}
 		}
+		
+		if(ret.size()>1){
+			List<LabelingRuleListDataItem> defaultRules = ret.get(LabelingRuleListDataItem.DEFAULT_LABELING_GROUP);
+			if(defaultRules!=null){
+				for (Map.Entry<String, List<LabelingRuleListDataItem>> labelingRuleListsGroup : ret.entrySet()) {
+					labelingRuleListsGroup.getValue().addAll(defaultRules);
+				}
+				
+				ret.remove(LabelingRuleListDataItem.DEFAULT_LABELING_GROUP);
+			}
+			
+		}
+		
+		
 		return ret;
 	}
 
@@ -1051,6 +1066,14 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							composite.addChild(sfChild);
 						}
 						isMultiLevel = true;
+					} 
+					
+					
+				    // Case show ings and is empty use legalName instead #2558
+					if (!isMultiLevel && DeclarationType.Declare.equals(declarationType)) {
+						if ( ((productData.getIngList() == null) || productData.getIngList().isEmpty()) && (productData instanceof RawMaterialData)) {	
+						   declarationType =  DeclarationType.DoNotDetails;
+						}
 					}
 
 					if (!DeclarationType.Declare.equals(declarationType) || !aggregateRules.isEmpty()) {

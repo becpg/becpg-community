@@ -39,6 +39,7 @@ import org.alfresco.repo.rule.RuleModel;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
+import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentIOException;
@@ -254,58 +255,65 @@ public class XmlEntityVisitor {
 
 	private void visitAssocs(NodeRef nodeRef, XMLStreamWriter xmlw) throws XMLStreamException {
 
-		Map<QName, AssociationDefinition> assocs = new HashMap<>(dictionaryService.getType(nodeService.getType(nodeRef)).getAssociations());
-		for (QName aspect : nodeService.getAspects(nodeRef)) {
-			if (dictionaryService.getAspect(aspect) != null) {
-				assocs.putAll(dictionaryService.getAspect(aspect).getAssociations());
-			} else {
-				logger.warn("No definition for :" + aspect);
-			}
-		}
-		// First childs
-		for (Map.Entry<QName, AssociationDefinition> entry : assocs.entrySet()) {
-			AssociationDefinition assocDef = entry.getValue();
+		TypeDefinition typeDef = dictionaryService.getType(nodeService.getType(nodeRef));
+		if (typeDef != null) {
 
-			if (!assocDef.getName().getNamespaceURI().equals(NamespaceService.RENDITION_MODEL_1_0_URI)
-					&& !assocDef.getName().getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
-					&& !assocDef.getName().equals(ContentModel.ASSOC_ORIGINAL) && !assocDef.getName().equals(RuleModel.ASSOC_RULE_FOLDER)
-					&& assocDef.isChild()) {
-				QName nodeType = assocDef.getName().getPrefixedQName(namespaceService);
-				String prefix = nodeType.getPrefixString().split(":")[0];
-				xmlw.writeStartElement(prefix, nodeType.getLocalName(), nodeType.getNamespaceURI());
-				xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE, RemoteEntityService.CHILD_ASSOC_TYPE);
-				List<ChildAssociationRef> assocRefs = nodeService.getChildAssocs(nodeRef);
-				for (ChildAssociationRef assocRef : assocRefs) {
-					if (assocRef.getTypeQName().equals(assocDef.getName())) {
-						NodeRef childRef = assocRef.getChildRef();
-						visitNode(childRef, xmlw, true, true, false);
+			Map<QName, AssociationDefinition> assocs = new HashMap<>(typeDef.getAssociations());
+			for (QName aspect : nodeService.getAspects(nodeRef)) {
+				if (dictionaryService.getAspect(aspect) != null) {
+					assocs.putAll(dictionaryService.getAspect(aspect).getAssociations());
+				} else {
+					logger.warn("No definition for :" + aspect);
+				}
+			}
+			// First childs
+			for (Map.Entry<QName, AssociationDefinition> entry : assocs.entrySet()) {
+				AssociationDefinition assocDef = entry.getValue();
+
+				if (!assocDef.getName().getNamespaceURI().equals(NamespaceService.RENDITION_MODEL_1_0_URI)
+						&& !assocDef.getName().getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
+						&& !assocDef.getName().equals(ContentModel.ASSOC_ORIGINAL) && !assocDef.getName().equals(RuleModel.ASSOC_RULE_FOLDER)
+						&& assocDef.isChild()) {
+					QName nodeType = assocDef.getName().getPrefixedQName(namespaceService);
+					String prefix = nodeType.getPrefixString().split(":")[0];
+					xmlw.writeStartElement(prefix, nodeType.getLocalName(), nodeType.getNamespaceURI());
+					xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE, RemoteEntityService.CHILD_ASSOC_TYPE);
+					List<ChildAssociationRef> assocRefs = nodeService.getChildAssocs(nodeRef);
+					for (ChildAssociationRef assocRef : assocRefs) {
+						if (assocRef.getTypeQName().equals(assocDef.getName())) {
+							NodeRef childRef = assocRef.getChildRef();
+							visitNode(childRef, xmlw, true, true, false);
+						}
 					}
+					xmlw.writeEndElement();
 				}
-				xmlw.writeEndElement();
+
 			}
 
-		}
+			for (Map.Entry<QName, AssociationDefinition> entry : assocs.entrySet()) {
+				AssociationDefinition assocDef = entry.getValue();
 
-		for (Map.Entry<QName, AssociationDefinition> entry : assocs.entrySet()) {
-			AssociationDefinition assocDef = entry.getValue();
+				if (!assocDef.getName().getNamespaceURI().equals(NamespaceService.RENDITION_MODEL_1_0_URI)
+						&& !assocDef.getName().getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
+						&& !assocDef.getName().equals(RuleModel.ASSOC_RULE_FOLDER) && !assocDef.getName().equals(ContentModel.ASSOC_ORIGINAL)
+						&& !assocDef.isChild()) {
+					QName nodeType = assocDef.getName().getPrefixedQName(namespaceService);
+					String prefix = nodeType.getPrefixString().split(":")[0];
+					xmlw.writeStartElement(prefix, nodeType.getLocalName(), nodeType.getNamespaceURI());
 
-			if (!assocDef.getName().getNamespaceURI().equals(NamespaceService.RENDITION_MODEL_1_0_URI)
-					&& !assocDef.getName().getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
-					&& !assocDef.getName().equals(RuleModel.ASSOC_RULE_FOLDER) && !assocDef.getName().equals(ContentModel.ASSOC_ORIGINAL)
-					&& !assocDef.isChild()) {
-				QName nodeType = assocDef.getName().getPrefixedQName(namespaceService);
-				String prefix = nodeType.getPrefixString().split(":")[0];
-				xmlw.writeStartElement(prefix, nodeType.getLocalName(), nodeType.getNamespaceURI());
-
-				xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE, RemoteEntityService.ASSOC_TYPE);
-				List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, assocDef.getName());
-				for (AssociationRef assocRef : assocRefs) {
-					NodeRef childRef = assocRef.getTargetRef();
-					visitNode(childRef, xmlw, shouldDumpAll(childRef), shouldDumpAll(childRef), false);
+					xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE, RemoteEntityService.ASSOC_TYPE);
+					List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, assocDef.getName());
+					for (AssociationRef assocRef : assocRefs) {
+						NodeRef childRef = assocRef.getTargetRef();
+						visitNode(childRef, xmlw, shouldDumpAll(childRef), shouldDumpAll(childRef), false);
+					}
+					xmlw.writeEndElement();
 				}
-				xmlw.writeEndElement();
+
 			}
 
+		} else {
+			logger.warn("No typeDef found for :" + nodeRef);
 		}
 
 	}
@@ -351,10 +359,9 @@ public class XmlEntityVisitor {
 
 			SiteInfo site = siteService.getSite(siteId);
 
-			
 			xmlw.writeStartElement("metadata", "siteName", path.toPrefixString(namespaceService));
 			xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE, "d:text");
-			if(site!=null){
+			if (site != null) {
 				xmlw.writeCData(site.getTitle());
 			}
 			xmlw.writeEndElement();

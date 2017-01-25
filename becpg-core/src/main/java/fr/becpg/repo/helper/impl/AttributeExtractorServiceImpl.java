@@ -136,7 +136,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		QName fieldQname;
 		QName itemType;
 
-		public AttributeExtractorStructure(String fieldName, QName fieldQname, List<String> dLFields, boolean isEntityField,QName itemType) {
+		public AttributeExtractorStructure(String fieldName, QName fieldQname, List<String> dLFields, boolean isEntityField, QName itemType) {
 			this.fieldName = fieldName;
 			this.isEntityField = isEntityField;
 			this.fieldQname = fieldQname;
@@ -144,14 +144,15 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			this.childrens = readExtractStructure(fieldQname, dLFields);
 		}
 
-		public AttributeExtractorStructure(String fieldName, ClassAttributeDefinition fieldDef,QName itemType) {
+		public AttributeExtractorStructure(String fieldName, ClassAttributeDefinition fieldDef, QName itemType) {
 			this.fieldDef = fieldDef;
 			this.fieldQname = fieldDef.getName();
 			this.fieldName = fieldName;
 			this.itemType = itemType;
 		}
 
-		public AttributeExtractorStructure(String fieldName, QName fieldQname, ClassAttributeDefinition fieldDef, List<String> dLFields, QName itemType) {
+		public AttributeExtractorStructure(String fieldName, QName fieldQname, ClassAttributeDefinition fieldDef, List<String> dLFields,
+				QName itemType) {
 			this.fieldName = fieldName;
 			this.fieldDef = fieldDef;
 			this.fieldQname = fieldDef.getName();
@@ -186,7 +187,6 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		public QName getFieldQname() {
 			return fieldQname;
 		}
-		
 
 		public QName getItemType() {
 			return itemType;
@@ -385,6 +385,85 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		return value;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public String extractPropertyForReport(PropertyDefinition propertyDef, Serializable value, PropertyFormats propertyFormats, boolean formatData) {
+
+		if (value != null) {
+
+			if ((value instanceof NodeRef) || (value instanceof String) || (value instanceof List)) {
+				if (DataTypeDefinition.ANY.toString().equals(propertyDef.getDataType().toString()) && (value instanceof String)) {
+					value = (Serializable) JsonFormulaHelper.cleanCompareJSON((String) value);
+				}
+				if (propertyDef.getConstraints().isEmpty()) {
+					return getStringValue(propertyDef, value, propertyFormats);
+				} else if (DataTypeDefinition.TEXT.toString().equals(propertyDef.getDataType().toString())) {
+					DynListConstraint dynListConstraint = null;
+					for (ConstraintDefinition constraint : propertyDef.getConstraints()) {
+						if (constraint.getConstraint() instanceof DynListConstraint) {
+							dynListConstraint = (DynListConstraint) constraint.getConstraint();
+							break;
+						}
+					}
+
+					String ret = "";
+
+					if (propertyDef.isMultiValued()) {
+						List<String> values;
+
+						if (value instanceof String) {
+							values = Collections.singletonList((String) value);
+						} else {
+							values = (List<String>) value;
+						}
+
+						for (String tempValue : values) {
+							if (tempValue != null) {
+								if (ret != null) {
+									ret += RepoConsts.LABEL_SEPARATOR;
+								} else {
+									ret = "";
+								}
+
+								if (dynListConstraint != null) {
+									ret += dynListConstraint.getDisplayLabel(tempValue);
+								} else {
+									ret += tempValue;
+								}
+							}
+
+						}
+					} else {
+						if (dynListConstraint != null) {
+							ret = dynListConstraint.getDisplayLabel(value.toString());
+						} else {
+							ret = value.toString();
+						}
+					}
+
+					return ret;
+				} else {
+					return value.toString();
+				}
+			} else if (value instanceof Date) {
+				if (formatData) {
+					return getStringValue(propertyDef, value, propertyFormats);
+				} else {
+					return ISO8601DateFormat.format((Date) value);
+				}
+
+			} else {
+				if (formatData) {
+					return getStringValue(propertyDef, value, propertyFormats);
+				} else {
+					return value.toString();
+				}
+			}
+		} else {
+			return "";
+		}
+	}
+
 	@Override
 	public List<AttributeExtractorStructure> readExtractStructure(QName itemType, List<String> metadataFields) {
 		List<AttributeExtractorStructure> ret = new LinkedList<>();
@@ -472,7 +551,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 					}
 				}
 			} else {
-				ret.put(field.getFieldName(), extractNodeData(nodeRef, properties, getFieldDef(itemType,field), mode, order++));
+				ret.put(field.getFieldName(), extractNodeData(nodeRef, properties, getFieldDef(itemType, field), mode, order++));
 			}
 
 		}
@@ -484,9 +563,9 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	}
 
 	private ClassAttributeDefinition getFieldDef(QName itemType, AttributeExtractorStructure field) {
-		
-		if(!field.getItemType().equals(itemType)){
-			return entityDictionaryService.findMatchingPropDef(field.getItemType(),itemType, field.getFieldQname());
+
+		if (!field.getItemType().equals(itemType)) {
+			return entityDictionaryService.findMatchingPropDef(field.getItemType(), itemType, field.getFieldQname());
 		}
 		return field.getFieldDef();
 	}
@@ -701,53 +780,6 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		return securityService.computeAccessMode(nodeType, propName) != SecurityService.NONE_ACCESS;
 
 	}
-
-	@Override
-	public String extractPropertyForReport(PropertyDefinition propertyDef, Serializable value, PropertyFormats propertyFormats, boolean formatData) {
-
-		if (value != null) {
-
-			if ((value instanceof NodeRef) || (value instanceof String) || (value instanceof List)) {
-				if (DataTypeDefinition.ANY.toString().equals(propertyDef.getDataType().toString()) && (value instanceof String)) {
-					value = (Serializable) JsonFormulaHelper.cleanCompareJSON((String) value);
-				}
-				if (propertyDef.getConstraints().isEmpty()) {
-					return getStringValue(propertyDef, value, propertyFormats);
-				} else {
-					DynListConstraint dynListConstraint = null;
-					for (ConstraintDefinition constraint : propertyDef.getConstraints()) {
-						if (constraint.getConstraint() instanceof DynListConstraint) {
-							dynListConstraint = (DynListConstraint) constraint.getConstraint();
-							break;
-						}
-					}
-
-					if (dynListConstraint != null) {
-						return dynListConstraint.getDisplayLabel(value.toString());
-					}
-
-					return value.toString();
-				}
-			} else if (value instanceof Date) {
-				if (formatData) {
-					return getStringValue(propertyDef, value, propertyFormats);
-				} else {
-					return ISO8601DateFormat.format((Date) value);
-				}
-
-			} else {
-				if (formatData) {
-					return getStringValue(propertyDef, value, propertyFormats);
-				} else {
-					return value.toString();
-				}
-			}
-		} else {
-			return "";
-		}
-	}
-
-	
 
 	@Override
 	public String getPersonDisplayName(String userId) {

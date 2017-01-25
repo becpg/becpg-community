@@ -53,6 +53,7 @@ import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.ecm.ECOService;
 import fr.becpg.repo.ecm.ECOState;
 import fr.becpg.repo.ecm.data.ChangeOrderData;
+import fr.becpg.repo.ecm.data.ChangeOrderType;
 import fr.becpg.repo.ecm.data.RevisionType;
 import fr.becpg.repo.ecm.data.dataList.ChangeUnitDataItem;
 import fr.becpg.repo.ecm.data.dataList.ReplacementListDataItem;
@@ -213,26 +214,34 @@ public class ECOServiceImpl implements ECOService {
 
 				for (ReplacementListDataItem replacementListDataItem : ecoData.getReplacementList()) {
 
-					if ((replacementListDataItem.getSourceItems() != null) && !replacementListDataItem.getSourceItems().isEmpty()) {
+					List<NodeRef> replacements = new ArrayList<>();
+					if (ChangeOrderType.Merge.equals(ecoData.getEcoType())) {
+						if (replacementListDataItem.getTargetItem() != null) {
+							replacements.add(replacementListDataItem.getTargetItem());
+						}
+					} else {
+						replacements = replacementListDataItem.getSourceItems();
+					}
 
-						List<NodeRef> sourceList = new ArrayList<>(replacementListDataItem.getSourceItems());
+					if ((replacements != null) && !replacements.isEmpty()) {
 
 						WUsedListDataItem parent = new WUsedListDataItem();
-						parent.setSourceItems(sourceList);
+						parent.setSourceItems(replacements);
 						parent.setIsWUsedImpacted(true);
 						// parent.setLink(replacementListDataItem.getNodeRef());
 
 						ecoData.getWUsedList().add(parent);
 
-						List<QName> associationQNames = evaluateWUsedAssociations(sourceList);
+						List<QName> associationQNames = evaluateWUsedAssociations(replacements);
 
 						for (QName associationQName : associationQNames) {
 
-							MultiLevelListData wUsedData = wUsedListService.getWUsedEntity(sourceList, WUsedOperator.AND, associationQName,
+							MultiLevelListData wUsedData = wUsedListService.getWUsedEntity(replacements, WUsedOperator.AND, associationQName,
 									RepoConsts.MAX_DEPTH_LEVEL);
 
 							QName datalistQName = evaluateListFromAssociation(associationQName);
-							calculateWUsedList(ecoData, wUsedData, datalistQName, parent, isWUsedImpacted);
+							calculateWUsedList(ecoData, wUsedData, datalistQName, parent,
+									ChangeOrderType.Merge.equals(ecoData.getEcoType()) ? true : isWUsedImpacted);
 						}
 					}
 				}
@@ -370,7 +379,7 @@ public class ECOServiceImpl implements ECOService {
 
 							// Level 2
 							if (component.getData().getDepthLevel() == 2) {
-								applyReplacementList(ecoData, productToFormulateData);
+								applyReplacementList(ecoData, productToFormulateData, isSimulation);
 							}
 
 							productService.formulate(productToFormulateData);
@@ -462,12 +471,41 @@ public class ECOServiceImpl implements ECOService {
 		return skip;
 	}
 
-	private void applyReplacementList(ChangeOrderData ecoData, ProductData product) {
+	private void applyReplacementList(ChangeOrderData ecoData, ProductData product, boolean isSimulation) {
 
 		if (ecoData.getReplacementList() != null) {
 
-			applyToListV2(ecoData, product.getCompoList());
-			applyToListV2(ecoData, product.getPackagingList());
+			if (ChangeOrderType.Merge.equals(ecoData.getEcoType()) && !isSimulation ) {
+
+				for (ReplacementListDataItem replacementListDataItem : ecoData.getReplacementList()) {
+					if ((replacementListDataItem.getSourceItems() != null) && (replacementListDataItem.getTargetItem() != null)
+							&& (replacementListDataItem.getSourceItems().size() == 1)) {
+
+						if (entityVersionService.getAllVersionBranches(replacementListDataItem.getTargetItem())
+								.contains(replacementListDataItem.getSourceItems().get(0))) {
+
+							VersionType versionType = VersionType.MINOR;
+							if (RevisionType.Major.equals(replacementListDataItem.getRevision())) {
+								versionType = VersionType.MAJOR;
+							}
+
+							String description = I18NUtil.getMessage("plm.ecm.apply.version.label", ecoData.getCode() + " - " + ecoData.getName());
+
+							entityVersionService.mergeBranch(replacementListDataItem.getSourceItems().get(0), replacementListDataItem.getTargetItem(),
+									versionType, description);
+
+						} else {
+							logger.warn("Source item " + replacementListDataItem.getTargetItem() + " is not a branch of target item "
+									+ replacementListDataItem.getSourceItems().get(0));
+						}
+					}
+
+				}
+
+			} else {
+				applyToListV2(ecoData, product.getCompoList());
+				applyToListV2(ecoData, product.getPackagingList());
+			}
 
 		}
 
@@ -486,10 +524,21 @@ public class ECOServiceImpl implements ECOService {
 					&& replacementListDataItem.getSourceItems().contains(replacementListDataItem.getTargetItem())
 					&& (replacementListDataItem.getQtyPerc() == 100))) {
 
+				List<NodeRef> replacementsList = new ArrayList<>();
+				if (ChangeOrderType.Merge.equals(ecoData.getEcoType())) {
+					if (replacementListDataItem.getTargetItem() != null) {
+						replacementsList.add(replacementListDataItem.getTargetItem());
+					}
+				} else {
+					replacementsList = replacementListDataItem.getSourceItems();
+				}
+
+				
+				
 				// if rule match compoList
-				if (items.stream().map(c -> c.getComponent()).collect(Collectors.toSet()).containsAll(replacementListDataItem.getSourceItems())) {
+				if (items.stream().map(c -> c.getComponent()).collect(Collectors.toSet()).containsAll(replacementsList)) {
 					boolean first = true;
-					for (NodeRef sourceItem : replacementListDataItem.getSourceItems()) {
+					for (NodeRef sourceItem : replacementsList) {
 
 						if (toDelete.stream().map(c -> c.getComponent()).collect(Collectors.toSet()).contains(sourceItem)) {
 							logger.warn("Cannot add rule: " + sourceItem + " deleted by another rule");
@@ -501,11 +550,18 @@ public class ECOServiceImpl implements ECOService {
 							if (targetItems == null) {
 								targetItems = new HashSet<>();
 							}
-							if (replacementListDataItem.getTargetItem() != null) {
-								targetItems.add(
-										new Pair<NodeRef, Integer>(replacementListDataItem.getTargetItem(), replacementListDataItem.getQtyPerc()));
-							} else {
-								toDelete.addAll(items.stream().filter(c -> sourceItem.equals(c.getComponent())).collect(Collectors.toSet()));
+							if (ChangeOrderType.Merge.equals(ecoData.getEcoType())) {
+								if (replacementListDataItem.getSourceItems() != null) {
+									targetItems.add(
+											new Pair<NodeRef, Integer>(replacementListDataItem.getSourceItems().get(0), replacementListDataItem.getQtyPerc()));
+								} 
+							} else {			
+								if (replacementListDataItem.getTargetItem() != null) {
+									targetItems.add(
+											new Pair<NodeRef, Integer>(replacementListDataItem.getTargetItem(), replacementListDataItem.getQtyPerc()));
+								} else {
+									toDelete.addAll(items.stream().filter(c -> sourceItem.equals(c.getComponent())).collect(Collectors.toSet()));
+								}
 							}
 							replacements.put(sourceItem, targetItems);
 

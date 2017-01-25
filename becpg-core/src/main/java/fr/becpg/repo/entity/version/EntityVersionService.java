@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.version.Version;
+import org.alfresco.service.cmr.version.VersionType;
 
 /**
  * The Interface EntityVersionService.
@@ -39,8 +40,6 @@ public interface EntityVersionService {
 
 	List<NodeRef> getAllVersionBranches(NodeRef entityNodeRef);
 
-	void prepareBranchBeforeMerge(NodeRef nodeRef, NodeRef branchToNodeRef);
-
 	NodeRef createVersion(NodeRef entityNodeRef, Map<String, Serializable> versionProperties);
 
 	void createInitialVersion(NodeRef entityNodeRef);
@@ -50,5 +49,7 @@ public interface EntityVersionService {
 	NodeRef createBranch(NodeRef entityNodeRef, NodeRef parentRef);
 
 	void deleteEntityVersion(Version version);
+
+	NodeRef mergeBranch(NodeRef branchNodeRef, NodeRef branchToNodeRef, VersionType versionType, String description);
 
 }
