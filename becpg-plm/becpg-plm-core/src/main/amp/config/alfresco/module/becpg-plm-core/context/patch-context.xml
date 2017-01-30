@@ -497,7 +497,7 @@
 	</bean>	
 	
 	
-	 <bean id="patch.bcpg.plm.removeReqCtrlViewPatch.result" class="fr.becpg.repo.admin.patch.RemoveReqCtrlViewPatch" parent="beCPGBasePatch" >
+	 <bean id="patch.bcpg.plm.removeReqCtrlViewPatch" class="fr.becpg.repo.admin.patch.RemoveReqCtrlViewPatch" parent="beCPGBasePatch" >
         <property name="id"><value>patch.bcpg.plm.removeReqCtrlViewPatch</value></property>
         <property name="description"><value>patch.bcpg.plm.removeReqCtrlViewPatch.description</value></property>
         <property name="fixesFromSchema" value="0"/>
@@ -520,7 +520,7 @@
         </property>
 	</bean>
 	
-	 <bean id="patch.bcpg.plm.physicoUnitPatch.result" class="fr.becpg.repo.admin.patch.PhysicoUnitPatch" parent="beCPGBasePatch" >
+	 <bean id="patch.bcpg.plm.physicoUnitPatch" class="fr.becpg.repo.admin.patch.PhysicoUnitPatch" parent="beCPGBasePatch" >
         <property name="id"><value>patch.bcpg.plm.physicoUnitPatch</value></property>
         <property name="description"><value>patch.bcpg.plm.physicoUnitPatch.description</value></property>
         <property name="fixesFromSchema" value="0"/>
@@ -529,6 +529,29 @@
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
         <property name="policyBehaviourFilter">
+            <ref bean="policyBehaviourFilter"/>
+        </property>
+	</bean>
+	
+	 <bean id="patch.bcpg.plm.pluralLegalNamePatch" class="fr.becpg.repo.admin.patch.PluralLegalNamePatch" parent="beCPGBasePatch" >
+        <property name="id"><value>patch.bcpg.pluralLegalNamePatch</value></property>
+        <property name="description"><value>patch.bcpg.plm.pluralLegalNamePatch.description</value></property>
+        <property name="fixesFromSchema" value="0"/>
+        <property name="fixesToSchema" value="10001" />
+        <property name="targetSchema" value="10180 "/>
+        <property name="requiresTransaction"><value>true</value></property>
+        <property name="applyToTenants"><value>true</value></property>
+       <property name="ruleService" ref="ruleService"/>
+         <property name="patchDAO">
+            <ref bean="patchDAO"/>
+        </property>
+        <property name="nodeDAO">
+            <ref bean="nodeDAO"/>
+        </property>
+        <property name="qnameDAO">
+            <ref bean="qnameDAO"/>
+        </property>
+         <property name="policyBehaviourFilter">
             <ref bean="policyBehaviourFilter"/>
         </property>
 	</bean>

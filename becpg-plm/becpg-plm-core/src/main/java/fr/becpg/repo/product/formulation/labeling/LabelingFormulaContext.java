@@ -380,7 +380,8 @@ public class LabelingFormulaContext {
 
 	private String getLegalIngName(AbstractLabelingComponent lblComponent, boolean plural) {
 
-		String ingLegalName = lblComponent.getLegalName(I18NUtil.getLocale());
+		String ingLegalName = lblComponent.isPlural()  ? lblComponent.getPluralLegalName(I18NUtil.getLocale())
+				:  lblComponent.getLegalName(I18NUtil.getLocale());
 
 		if (renameRules.containsKey(lblComponent.getNodeRef())) {
 			ingLegalName = MLTextHelper.getClosestValue(renameRules.get(lblComponent.getNodeRef()), I18NUtil.getLocale());

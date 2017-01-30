@@ -394,6 +394,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				prev.setVolume(null);
 			}
 
+			
+			
 			if ((prev instanceof CompositeLabeling) && (component instanceof CompositeLabeling)) {
 				if ((((CompositeLabeling) prev).getQtyTotal() != null) && (((CompositeLabeling) component).getQtyTotal() != null)) {
 					((CompositeLabeling) prev).setQtyTotal(((CompositeLabeling) prev).getQtyTotal() + ((CompositeLabeling) component).getQtyTotal());
@@ -417,13 +419,15 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			}
 			
 
+			if(prev.getPluralLegalName() == null && component.getPluralLegalName()!=null){
+				prev.setPluralLegalName(component.getPluralLegalName());
+			}
+			prev.setPlural(true);
+			
+			
 			prev.getAllergens().addAll(component.getAllergens());
 			
-			
-			
 		}
-	
-
 	}
 
 	private CompositeLabeling mergeCompositeLabeling(CompositeLabeling lblCompositeContext, LabelingFormulaContext labelingFormulaContext) {
@@ -1081,11 +1085,15 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						AbstractLabelingComponent lc = parent.get(productData.getNodeRef());
 						if ((lc != null) && (lc instanceof CompositeLabeling)) {
 							compositeLabeling = (CompositeLabeling) lc;
+							compositeLabeling.setPlural(true);
+							
 							if (qty != null) {
 
 								if (compositeLabeling.getQty() != null) {
 									compositeLabeling.setQty(qty + compositeLabeling.getQty());
 								}
+								
+								
 
 								if (composite.isLeaf() && (compositeLabeling.getQtyTotal() != null)) {
 									if (logger.isTraceEnabled()) {
@@ -1392,9 +1400,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						logger.trace("- Add new ing " + getName(ingLabelItem) + " to current Label " + getName(compositeLabeling));
 					}
 
-				} else if (logger.isDebugEnabled()) {
-					logger.trace("- Update ing value: " + ingLabelItem.getLegalName(I18NUtil.getContentLocaleLang()));
+				} else {
+					if (logger.isTraceEnabled()) {
+						logger.trace("- Update ing value: " + ingLabelItem.getLegalName(I18NUtil.getContentLocaleLang()));
+					}
 					isNew = false;
+					ingLabelItem.setPlural(true);
 				}
 
 				if (!ingListItem.isLeaf()) {

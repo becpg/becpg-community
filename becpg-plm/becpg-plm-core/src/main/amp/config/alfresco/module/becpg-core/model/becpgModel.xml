@@ -715,6 +715,7 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
+				<!-- Deprecated To remove in 2.2-->
 				<property name="bcpg:ingTypePluralLegalName">
 					<type>d:mltext</type>
 					<mandatory>false</mandatory>
@@ -2139,6 +2140,9 @@
 		<aspect name="bcpg:legalNameAspect">
 			<properties>
 				<property name="bcpg:legalName">
+					<type>d:mltext</type>
+				</property>
+				<property name="bcpg:pluralLegalName">
 					<type>d:mltext</type>
 				</property>
 			</properties>

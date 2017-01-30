@@ -29,6 +29,7 @@ public class IngItem extends AbstractLabelingComponent {
 	private IngTypeItem ingType;
 
 	private List<IngItem> subIngs  = new ArrayList<>();
+
 	
 	
 	public IngItem() {
@@ -52,10 +53,10 @@ public class IngItem extends AbstractLabelingComponent {
 	}
 	
 	
-	
 	public void setCharactName(String charactName) {
 		this.charactName = charactName;
 	}
+	
 
 	@Override
 	public String getLegalName(Locale locale) {
