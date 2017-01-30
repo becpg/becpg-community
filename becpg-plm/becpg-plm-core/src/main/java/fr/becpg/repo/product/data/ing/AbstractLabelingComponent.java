@@ -41,6 +41,9 @@ public abstract class AbstractLabelingComponent extends BeCPGDataObject implemen
 
 	protected MLText legalName;
 	
+	private boolean isPlural = false;
+	
+	private MLText pluralLegalName;
 	
 	private Set<NodeRef> allergens = new HashSet<NodeRef>();
 	
@@ -51,11 +54,13 @@ public abstract class AbstractLabelingComponent extends BeCPGDataObject implemen
 	public AbstractLabelingComponent(AbstractLabelingComponent abstractLabelingComponent) 
 	{
 		super(abstractLabelingComponent);
+		this.pluralLegalName = abstractLabelingComponent.pluralLegalName;
 	    this.qty = abstractLabelingComponent.qty;
 	    this.volume = abstractLabelingComponent.volume;
 	    this.legalName = abstractLabelingComponent.legalName;
 	    this.allergens = abstractLabelingComponent.allergens;
 	}
+
 	
 	@AlfMlText
 	@AlfProp
@@ -77,6 +82,37 @@ public abstract class AbstractLabelingComponent extends BeCPGDataObject implemen
 		}
 		
 		return ret;
+	}
+
+	
+	@AlfMlText
+	@AlfProp
+	@AlfQname(qname = "bcpg:pluralLegalName")
+	public MLText getPluralLegalName() {
+		return pluralLegalName;
+	}
+
+	public void setPluralLegalName(MLText pluralLegalName) {
+		this.pluralLegalName = pluralLegalName;
+	}
+	
+	
+	public String getPluralLegalName(Locale locale) {
+		String ret = MLTextHelper.getClosestValue(pluralLegalName, locale);
+		
+		if(ret==null || ret.isEmpty()){
+			return getLegalName(locale);
+		}
+		
+		return ret;
+	}
+	
+	public boolean isPlural() {
+		return isPlural;
+	}
+
+	public void setPlural(boolean isPlural) {
+		this.isPlural = isPlural;
 	}
 
 	@Override
@@ -115,7 +151,9 @@ public abstract class AbstractLabelingComponent extends BeCPGDataObject implemen
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
+		result = prime * result + ((allergens == null) ? 0 : allergens.hashCode());
 		result = prime * result + ((legalName == null) ? 0 : legalName.hashCode());
+		result = prime * result + ((pluralLegalName == null) ? 0 : pluralLegalName.hashCode());
 		result = prime * result + ((qty == null) ? 0 : qty.hashCode());
 		result = prime * result + ((volume == null) ? 0 : volume.hashCode());
 		return result;
@@ -130,10 +168,20 @@ public abstract class AbstractLabelingComponent extends BeCPGDataObject implemen
 		if (getClass() != obj.getClass())
 			return false;
 		AbstractLabelingComponent other = (AbstractLabelingComponent) obj;
+		if (allergens == null) {
+			if (other.allergens != null)
+				return false;
+		} else if (!allergens.equals(other.allergens))
+			return false;
 		if (legalName == null) {
 			if (other.legalName != null)
 				return false;
 		} else if (!legalName.equals(other.legalName))
+			return false;
+		if (pluralLegalName == null) {
+			if (other.pluralLegalName != null)
+				return false;
+		} else if (!pluralLegalName.equals(other.pluralLegalName))
 			return false;
 		if (qty == null) {
 			if (other.qty != null)

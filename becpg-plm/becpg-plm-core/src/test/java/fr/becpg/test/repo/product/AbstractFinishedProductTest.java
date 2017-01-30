@@ -365,7 +365,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			plmlName.addValue(I18NUtil.getContentLocaleLang(), "Epaississants default");
 			plmlName.addValue(Locale.ENGLISH, "Epaississants english");
 			plmlName.addValue(Locale.FRENCH, "Epaississants french");
-			properties.put(PLMModel.PROP_ING_TYPE_LEGAL_NAME_PLURAL, plmlName);
+			properties.put(PLMModel.PROP_PLURAL_LEGAL_NAME, plmlName);
 			ingType1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)),
 					PLMModel.TYPE_ING_TYPE_ITEM, properties).getChildRef();

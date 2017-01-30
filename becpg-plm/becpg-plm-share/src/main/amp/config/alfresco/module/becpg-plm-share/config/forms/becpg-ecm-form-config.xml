@@ -37,7 +37,7 @@
 							<control-param name="rows">3</control-param>
 						</control>
 					</field>		
-					<field id="ecm:ecoType" read-only="true">
+					<field id="ecm:ecoType">
 						<control
 							template="/org/alfresco/components/form/controls/selectone.ftl" >
 						</control>
