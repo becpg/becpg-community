@@ -847,7 +847,7 @@
 					<target>
 						<class>qa:controlMethod</class>
 						<mandatory enforced="false">false</mandatory>
-						<many>false</many>
+						<many>true</many>
 					</target>
 				</association>
 				<association name="qa:clCharacts">
