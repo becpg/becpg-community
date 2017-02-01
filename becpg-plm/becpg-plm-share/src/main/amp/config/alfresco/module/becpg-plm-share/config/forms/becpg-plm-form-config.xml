@@ -3470,7 +3470,7 @@
 
 					<!-- Main info -->
 					<field id="cm:name" set="mainInfo" />
-					<field id="cm:title" set="mainInfo">
+					<field id="cm:title" set="mainInfo" label-id="becpg.forms.field.tradeName">
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:legalName" help-id="becpg.forms.help.legalName" set="mainInfo" />
@@ -3981,7 +3981,7 @@
 
 					<!-- Main info -->
 					<field id="cm:name" set="mainInfo" />
-					<field id="cm:title" set="mainInfo">
+					<field id="cm:title" set="mainInfo" label-id="becpg.forms.field.tradeName">
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:legalName" help-id="becpg.forms.help.legalName" set="mainInfo" />

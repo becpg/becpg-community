@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
@@ -79,6 +81,8 @@ public class AlfrescoRepository {
 	private static final Log log = LogFactory.getLog(AlfrescoRepository.class);
 
 	InstanceManager instanceManager;
+	
+	Pattern alfNamePattern = Pattern.compile("(.*[\\\"\\*\\\\\\>\\<\\?\\/\\:\\|]+.*)|(.*[\\.]?.*[\\.]+$)|(.*[ ]+$)");
 
 	public void setInstanceManager(InstanceManager instanceManager) {
 		this.instanceManager = instanceManager;
@@ -201,10 +205,15 @@ public class AlfrescoRepository {
 	}
 
 	private void checkFileName(String path) {
-		if (path != null && (path.startsWith("/") || path.startsWith("."))) {
-			throw new IllegalArgumentException("Path cannot be null or start with \"/\" or \".\" - Illegal Path: " + path);
+		Matcher matcher = alfNamePattern.matcher(path);
+		
+		if(matcher.matches()){
+			throw new IllegalArgumentException("Name contains invalid characters: " + path);
 		}
-
+		
+		/*if (path != null && (path.startsWith("/") || path.startsWith("."))) {
+			throw new IllegalArgumentException("Path cannot be null or start with \"/\" or \".\" - Illegal Path: " + path);
+		}*/
 	}
 
 	@GET
