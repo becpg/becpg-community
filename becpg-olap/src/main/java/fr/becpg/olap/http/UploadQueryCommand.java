@@ -24,6 +24,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 
+import org.apache.commons.logging.Log;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.ContentType;
@@ -38,7 +39,7 @@ public class UploadQueryCommand extends AbstractHttpCommand {
 
 	private static final String COMMAND_URL_TEMPLATE = "/api/upload";
 	private static final String FILEBODY_CHARSET = "UTF-8";
-
+	
 	public UploadQueryCommand(String serverUrl) {
 		super(serverUrl);
 		setHttpMethod(HttpCommandMethod.METHOD_POST);
@@ -138,8 +139,7 @@ public class UploadQueryCommand extends AbstractHttpCommand {
 				try {
 					return filecontent.getBytes(FILEBODY_CHARSET).length;
 				} catch (UnsupportedEncodingException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					throw new IllegalArgumentException("Unsupported stream encoding",e);
 				}
 				return -1;
 			}
