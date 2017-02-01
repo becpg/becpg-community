@@ -176,8 +176,6 @@ public class EntityListValuePlugin implements ListValuePlugin {
 				}
 			}
 		}
-		
-		logger.info("template " + template);
 
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(type).excludeDefaults().inSearchTemplate(template)
 				.locale(I18NUtil.getContentLocale()).andOperator().ftsLanguage();
