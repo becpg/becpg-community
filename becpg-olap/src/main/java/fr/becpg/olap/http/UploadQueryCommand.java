@@ -141,7 +141,6 @@ public class UploadQueryCommand extends AbstractHttpCommand {
 				} catch (UnsupportedEncodingException e) {
 					throw new IllegalArgumentException("Unsupported stream encoding",e);
 				}
-				return -1;
 			}
 
 			@Override
