@@ -351,7 +351,8 @@
 					datalist.datalist_id as noderef,
 					datalist.entity_fact_id as entity_fact_id,					
 					MAX(IF(prop.prop_name = "pjt:tlTaskName",prop.string_value,NULL)) as tlTaskName,
-					MAX(IF(prop.prop_name = "pjt:tlRealDuration",prop.long_value,NULL)) as tlDuration,
+					MAX(IF(prop.prop_name = "pjt:tlDuration",prop.long_value,NULL)) as tlDuration,
+					MAX(IF(prop.prop_name = "pjt:tlRealDuration",prop.long_value,NULL)) as tlRealDuration,
 					MAX(IF(prop.prop_name = "pjt:tlStart",prop.date_value,NULL)) as tlStart,
 					MAX(IF(prop.prop_name = "pjt:tlEnd",prop.date_value,NULL)) as tlEnd,
 					MAX(IF(prop.prop_name = "pjt:tlState",prop.string_value,NULL)) as tlState,
@@ -359,8 +360,7 @@
 					MAX(IF(prop.prop_name = "pjt:tlWork",prop.double_value,NULL)) as tlWork,
 					MAX(IF(prop.prop_name = "pjt:tlLoggedTime",prop.string_value,NULL)) as tlLoggedTime,
 					MAX(IF(prop.prop_name = "bcpg:sort",prop.long_value,NULL)) as sortOrder,
-					MAX(IF(prop.prop_name = "cm:modified",prop.date_value,NULL)) as projectDateModified,
-					DATEDIFF(MAX(IF(prop.prop_name = "pjt:tlEnd",prop.date_value,NULL)),MAX(IF(prop.prop_name = "pjt:tlStart",prop.date_value,NULL))) as duration,					
+					MAX(IF(prop.prop_name = "cm:modified",prop.date_value,NULL)) as projectDateModified,					
 					datalist.instance_id as instance_id
 				from
 					becpg_datalist AS datalist LEFT JOIN becpg_property AS prop ON prop.datalist_id = datalist.id
@@ -475,7 +475,7 @@
 		<DimensionUsage name="projectDateModified" caption="${msg("jsolap.modificationDate.title")}" source="timeDimension"  foreignKey="projectDateModified" />	
 		<Measure name="stepsNumber" caption="${msg("jsolap.stepsNumber.title")}" column="noderef" datatype="Numeric" aggregator="distinct-count" visible="true" />
 		<Measure name="averageForecastDurations" caption="${msg("jsolap.averageForecastDurations.title")}" column="tlDuration" datatype="Numeric" aggregator="avg" visible="true"  />
-		<Measure name="averageActualDurations" caption="${msg("jsolap.averageActualDurations.title")}" column="duration" datatype="Numeric" aggregator="avg" visible="true"  />
+		<Measure name="averageActualDurations" caption="${msg("jsolap.averageActualDurations.title")}" column="tlRealDuration" datatype="Numeric" aggregator="avg" visible="true"  />
 		<Measure name="workload" caption="${msg("jsolap.workload.title")}" column="tlWork" datatype="Integer" aggregator="sum" visible="true"></Measure>
 		<Measure name="loggedTime" caption="${msg("jsolap.loggedTime.title")}" column="tlLoggedTime" datatype="Integer" aggregator="sum" visible="true"></Measure>
 		<Measure name="avgLoggedTime" caption="${msg("jsolap.avgLoggedTime.title")}" column="tlLoggedTime" datatype="Integer" aggregator="avg" visible="true"></Measure>		
