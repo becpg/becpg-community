@@ -205,10 +205,12 @@ public class AlfrescoRepository {
 	}
 
 	private void checkFileName(String path) {
-		Matcher matcher = alfNamePattern.matcher(path);
-		
-		if(matcher.matches()){
-			throw new IllegalArgumentException("Name contains invalid characters: " + path);
+		if(path!=null){
+			Matcher matcher = alfNamePattern.matcher(path);
+			
+			if(matcher.matches()){
+				throw new IllegalArgumentException("Name contains invalid characters: " + path);
+			}
 		}
 		
 		/*if (path != null && (path.startsWith("/") || path.startsWith("."))) {
