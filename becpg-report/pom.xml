@@ -9,7 +9,7 @@
 		<version>2.2.0</version>
 	</parent>
 	<artifactId>becpg-report</artifactId>
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 	<name>beCPG Report Server</name>
 	<licenses>
 		<license>
@@ -30,6 +30,11 @@
 		</license>
 	</licenses>
     <repositories>
+        <repository>
+		  <id>Local repository</id>
+		  <url>file://${basedir}/lib</url>
+		</repository>
+    
 		<repository>
 		    <releases>
 		      <enabled>false</enabled>
@@ -75,6 +80,18 @@
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
 			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+		  <groupId>fr.becpg.birt</groupId>
+		  <artifactId>birt-controls-lib</artifactId>
+		  <version>2.5.2.2</version>
+		 </dependency>
+		
+		<dependency>
+		  <groupId>fr.becpg.birt</groupId>
+		  <artifactId>birt-controls-lib-ui</artifactId>
+		  <version>2.5.2.1</version>
 		</dependency>
 		
 		<!-- Log4j -->
