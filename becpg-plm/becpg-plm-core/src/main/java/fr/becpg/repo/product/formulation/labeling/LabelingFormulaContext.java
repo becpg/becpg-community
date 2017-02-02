@@ -17,6 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.product.formulation.labeling;
 
+import java.beans.Expression;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.Format;
@@ -35,22 +36,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.alfresco.service.cmr.repository.MLText;
-import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.springframework.expression.Expression;
-import org.springframework.expression.ExpressionParser;
-import org.springframework.expression.spel.SpelEvaluationException;
-import org.springframework.expression.spel.SpelParseException;
-import org.springframework.expression.spel.standard.SpelExpressionParser;
-import org.springframework.expression.spel.support.StandardEvaluationContext;
-import org.springframework.extensions.surf.util.I18NUtil;
-import org.springframework.util.StringUtils;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
@@ -380,8 +365,8 @@ public class LabelingFormulaContext {
 
 	private String getLegalIngName(AbstractLabelingComponent lblComponent, boolean plural) {
 
-		String ingLegalName = lblComponent.isPlural()  ? lblComponent.getPluralLegalName(I18NUtil.getLocale())
-				:  lblComponent.getLegalName(I18NUtil.getLocale());
+		String ingLegalName = lblComponent.isPlural() ? lblComponent.getPluralLegalName(I18NUtil.getLocale())
+				: lblComponent.getLegalName(I18NUtil.getLocale());
 
 		if (renameRules.containsKey(lblComponent.getNodeRef())) {
 			ingLegalName = MLTextHelper.getClosestValue(renameRules.get(lblComponent.getNodeRef()), I18NUtil.getLocale());
@@ -792,9 +777,16 @@ public class LabelingFormulaContext {
 				kv.getKey().setQty(qtyPerc);
 				String allergens = renderAllergens(kv.getValue());
 
-				toAppend.append(getIngTextFormat(kv.getKey()).format(new Object[] { getLegalIngName(kv.getKey(), kv.getValue().size() > 1),
-						(useVolume ? kv.getKey().getVolume() : kv.getKey().getQty()),
-						renderLabelingComponent(compositeLabeling, kv.getValue(), ingTypeDefaultSeparator, ratio), allergens }));
+				toAppend.append(
+						getIngTextFormat(
+								kv.getKey())
+										.format(new Object[] {
+												getLegalIngName(kv.getKey(),
+														((kv.getValue().size() > 1)
+																|| (!kv.getValue().isEmpty() && kv.getValue().get(0).isPlural()))),
+												(useVolume ? kv.getKey().getVolume() : kv.getKey().getQty()),
+												renderLabelingComponent(compositeLabeling, kv.getValue(), ingTypeDefaultSeparator, ratio),
+												allergens }));
 
 			} else {
 				toAppend.append(renderLabelingComponent(compositeLabeling, kv.getValue(), defaultSeparator, ratio));
@@ -975,7 +967,8 @@ public class LabelingFormulaContext {
 						ingTypeJson.put("nodeRef", kv.getKey().getNodeRef().toString());
 						ingTypeJson.put("cssClass", "ingType");
 						ingTypeJson.put("name", getName(kv.getKey()));
-						ingTypeJson.put("legal", getLegalIngName(kv.getKey(), kv.getValue().size() > 1));
+						ingTypeJson.put("legal", getLegalIngName(kv.getKey(),
+								(kv.getValue().size() > 1) || (!kv.getValue().isEmpty() && kv.getValue().get(0).isPlural())));
 
 						if ((kv.getKey().getQty() != null) && (totalQty != null) && (totalQty > 0)) {
 							ingTypeJson.put("qte", (kv.getKey().getQty() / totalQty) * 100);
