@@ -24,7 +24,7 @@ import fr.becpg.tools.http.AbstractHttpCommand;
 public class DeleteQueryCommand  extends AbstractHttpCommand {
 
 
-	private static final String COMMAND_URL_TEMPLATE = "/api/node/%s";
+	private static final String COMMAND_URL_TEMPLATE = "/becpg/remote/entity?nodeRef=%s";
 
 	
 	public DeleteQueryCommand(String serverUrl) {
@@ -36,9 +36,7 @@ public class DeleteQueryCommand  extends AbstractHttpCommand {
 
 	@Override
 	public String getHttpUrl(Object... params) {
-	
-		String nodeRef =((String)params[0]).replace(":/", "");
-		return getServerUrl() + String.format(COMMAND_URL_TEMPLATE, nodeRef );
+		return getServerUrl() + String.format(COMMAND_URL_TEMPLATE, (String)params[0] );
 	}
 	
 	

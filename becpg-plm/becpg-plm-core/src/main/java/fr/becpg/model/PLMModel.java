@@ -185,7 +185,7 @@ public interface PLMModel {
 	QName PROP_ING_TYPE_V2 = QName.createQName(BeCPGModel.BECPG_URI, "ingTypeV2");
 	QName TYPE_ING_TYPE_ITEM = QName.createQName(BeCPGModel.BECPG_URI, "ingTypeItem");
 	QName PROP_ING_TYPE_DEC_THRESHOLD = QName.createQName(BeCPGModel.BECPG_URI, "ingTypeDecThreshold");
-	QName PROP_ING_TYPE_LEGAL_NAME_PLURAL = QName.createQName(BeCPGModel.BECPG_URI, "ingTypePluralLegalName");
+	QName PROP_PLURAL_LEGAL_NAME = QName.createQName(BeCPGModel.BECPG_URI, "pluralLegalName");
 
 	// microbio
 	QName TYPE_MICROBIO = QName.createQName(BeCPGModel.BECPG_URI, "microbio");
