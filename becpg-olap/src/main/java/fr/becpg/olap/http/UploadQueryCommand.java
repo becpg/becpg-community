@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2016 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2016 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.olap.http;
@@ -38,7 +38,7 @@ public class UploadQueryCommand extends AbstractHttpCommand {
 
 	private static final String COMMAND_URL_TEMPLATE = "/api/upload";
 	private static final String FILEBODY_CHARSET = "UTF-8";
-	
+
 	public UploadQueryCommand(String serverUrl) {
 		super(serverUrl);
 		setHttpMethod(HttpCommandMethod.METHOD_POST);
@@ -53,34 +53,38 @@ public class UploadQueryCommand extends AbstractHttpCommand {
 		entity.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
 		entity.setCharset(Charset.forName(FILEBODY_CHARSET));
 
-		if (params.length > 2) {
-			// Case create
-			entity.addPart("destination", new StringBody((String) params[0], ContentType.MULTIPART_FORM_DATA));
-			entity.addPart("filename", new StringBody((String) params[1], ContentType.MULTIPART_FORM_DATA));
-			entity.addPart("filedata", getFileBody((String) params[1], (String) params[2]));
+		if (params.length > 2) {		
+			
 
-			if (logger.isDebugEnabled()) {
-				logger.debug("Create upload post request");
-				logger.debug("destination=" + params[0]);
-				logger.debug("filename=" + params[1]);
-				logger.debug("filedata=" + params[2]);
-			}
+				// Case create
+				entity.addPart("destination", new StringBody((String) params[0], ContentType.MULTIPART_FORM_DATA));
+				//entity.addPart("filename", new StringBody(fileName, ContentType.MULTIPART_FORM_DATA));
+				entity.addPart("filedata", getFileBody(((String) params[1]), (String) params[2]));
+
+				if (logger.isDebugEnabled()) {
+					logger.debug("Create upload post request");
+					logger.debug("destination=" + params[0]);
+					logger.debug("filename=" + params[1]);
+					logger.debug("filedata=" + params[2]);
+				}
+
+				postRequest.setEntity(entity.build());
+
 
 		} else {
-
 			// Case update
 
-			entity.addPart("updatenoderef", new StringBody((String) params[0], ContentType.MULTIPART_FORM_DATA));
-			entity.addPart("filedata", getFileBody(null, (String) params[1]));
+			entity.addPart("updateNodeRef", new StringBody((String) params[0], ContentType.MULTIPART_FORM_DATA));
+			entity.addPart("filedata", getFileBody("update.saiku", (String) params[1]));
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("Update upload post request");
-				logger.debug("updatenoderef=" + params[0]);
+				logger.debug("updateNodeRef=" + params[0]);
 				logger.debug("filedata=" + params[1]);
 			}
-		}
 
-		postRequest.setEntity(entity.build());
+			postRequest.setEntity(entity.build());
+		}
 
 		return postRequest;
 	}
@@ -138,7 +142,7 @@ public class UploadQueryCommand extends AbstractHttpCommand {
 				try {
 					return filecontent.getBytes(FILEBODY_CHARSET).length;
 				} catch (UnsupportedEncodingException e) {
-					throw new IllegalArgumentException("Unsupported stream encoding",e);
+					throw new IllegalArgumentException("Unsupported stream encoding", e);
 				}
 			}
 
