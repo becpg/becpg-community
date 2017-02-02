@@ -2573,7 +2573,7 @@
 					<!-- <field id="bcpg:productQty" set="consumer" /> -->
 					<field id="bcpg:productUnit"  set="consumer">
 						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
-							<control-param name="options">kg,g,L,cL,mL,P|becpg.forms.field.productUnit
+							<control-param name="options">kg,g,L,cL,mL,m,m2,P|becpg.forms.field.productUnit
 							</control-param>
 						</control>
 					</field>
@@ -2921,7 +2921,7 @@
 				<appearance>
 					<field id="bcpg:productUnit">
 						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
-							<control-param name="options">kg,g,L,cL,mL,P|becpg.forms.field.productUnit
+							<control-param name="options">kg,g,L,cL,mL,m,m2,P|becpg.forms.field.productUnit
 							</control-param>
 						</control>
 					</field>
@@ -3070,7 +3070,7 @@
 					<!-- <field id="bcpg:productQty" set="consumer" /> -->
 					<field id="bcpg:productUnit"  set="consumer">
 						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
-							<control-param name="options">kg,g,L,cL,mL,P|becpg.forms.field.productUnit
+							<control-param name="options">kg,g,L,cL,mL,m,m2,P|becpg.forms.field.productUnit
 							</control-param>
 						</control>
 					</field>
@@ -3180,7 +3180,7 @@
 				<appearance>
 					<field id="bcpg:productUnit">
 						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
-							<control-param name="options">kg,g,L,cL,mL,P|becpg.forms.field.productUnit
+							<control-param name="options">kg,g,L,cL,mL,m,m2,P|becpg.forms.field.productUnit
 							</control-param>
 						</control>
 					</field>
@@ -3470,7 +3470,7 @@
 
 					<!-- Main info -->
 					<field id="cm:name" set="mainInfo" />
-					<field id="cm:title" set="mainInfo">
+					<field id="cm:title" set="mainInfo" label-id="becpg.forms.field.tradeName">
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:legalName" help-id="becpg.forms.help.legalName" set="mainInfo" />
@@ -3981,7 +3981,7 @@
 
 					<!-- Main info -->
 					<field id="cm:name" set="mainInfo" />
-					<field id="cm:title" set="mainInfo">
+					<field id="cm:title" set="mainInfo" label-id="becpg.forms.field.tradeName">
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:legalName" help-id="becpg.forms.help.legalName" set="mainInfo" />
@@ -4705,6 +4705,7 @@
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
+					<show id="bcpg:pluralLegalName"/>
 					<show id="bcpg:ingCEECode" />
 					<show id="bcpg:ingTypeV2"  force="true"/>
 				</field-visibility>
@@ -4738,6 +4739,7 @@
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
+					<show id="bcpg:pluralLegalName"/>
 					<show id="bcpg:ingCEECode" />
 					<show id="bcpg:ingTypeV2"  force="true"/>
 				</field-visibility>
@@ -5991,6 +5993,33 @@
 					<field id="cm:description">
 						<control>
 							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:code" read-only="true" />
+				</appearance>
+			</form>
+			<form id="search">
+				<field-visibility>	
+					<show id="bcpg:supplierHierarchy1" />
+					<show id="bcpg:supplierHierarchy2" />
+					<show id="bcpg:supplierState" />
+				
+					<show id="bcpg:code" />
+					<show id="bcpg:erpCode" force="true" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:supplierHierarchy1">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/supplier_Hierarchy
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:supplierHierarchy2">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/supplier_Hierarchy
+							</control-param>
+							<control-param name="parent">bcpg_supplierHierarchy1
+							</control-param>
 						</control>
 					</field>
 					<field id="bcpg:code" read-only="true" />
@@ -8250,7 +8279,7 @@
 				<field-visibility>
 					<show id="bcpg:lvValue" />
 					<show id="bcpg:legalName" />
-					<show id="bcpg:ingTypePluralLegalName"/>
+					<show id="bcpg:pluralLegalName"/>
 					<show id="bcpg:ingTypeDecThreshold" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
@@ -8265,7 +8294,7 @@
 				<field-visibility>
 					<show id="bcpg:lvValue" />
 					<show id="bcpg:legalName" />
-					<show id="bcpg:ingTypePluralLegalName"/>
+					<show id="bcpg:pluralLegalName"/>
 					<show id="bcpg:ingTypeDecThreshold" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
@@ -8284,7 +8313,7 @@
 				<field-visibility>
 					<show id="bcpg:lvValue" />
 					<show id="bcpg:legalName" />
-					<show id="bcpg:ingTypePluralLegalName"/>
+					<show id="bcpg:pluralLegalName"/>
 					<show id="bcpg:ingTypeDecThreshold" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>

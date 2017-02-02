@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
@@ -79,6 +81,8 @@ public class AlfrescoRepository {
 	private static final Log log = LogFactory.getLog(AlfrescoRepository.class);
 
 	InstanceManager instanceManager;
+	
+	Pattern alfNamePattern = Pattern.compile("(.*[\\\"\\*\\\\\\>\\<\\?\\/\\:\\|]+.*)|(.*[\\.]?.*[\\.]+$)|(.*[ ]+$)");
 
 	public void setInstanceManager(InstanceManager instanceManager) {
 		this.instanceManager = instanceManager;
@@ -201,11 +205,23 @@ public class AlfrescoRepository {
 	}
 
 	private void checkFileName(String path) {
-		if (path != null && (path.startsWith("/") || path.startsWith("."))) {
-			throw new IllegalArgumentException("Path cannot be null or start with \"/\" or \".\" - Illegal Path: " + path);
+		if(path!=null){
+			Matcher matcher = alfNamePattern.matcher(path);
+			
+			if(matcher.matches()){
+				throw new IllegalArgumentException("Name contains invalid characters: " + path);
+			}
 		}
-
+		
+		/*if (path != null && (path.startsWith("/") || path.startsWith("."))) {
+			throw new IllegalArgumentException("Path cannot be null or start with \"/\" or \".\" - Illegal Path: " + path);
+		}*/
 	}
+	
+	private String  cleanFileName(String name) {
+		return name!=null? name.replace(".saiku", "").replaceAll("([\"*\\><?/:|])", "-").trim(): null;
+	}
+
 
 	@GET
 	@Produces({ "application/json" })
@@ -235,7 +251,7 @@ public class AlfrescoRepository {
 	@Path("/resource")
 	public Response getResource(@QueryParam("file") final String file) {
 
-		checkFileName(file);
+		checkFileName(cleanFileName(file));
 
 		return runInAlfrescoSession(new AlfrescoSessionCallBack<Response>() {
 
@@ -244,7 +260,7 @@ public class AlfrescoRepository {
 					QueryList queryList = retrieveQueries(instance, httpClient, httpContext);
 					if (queryList != null) {
 
-						String nodeRef = queryList.getQueryNodeRef(file.replace(".saiku", ""));
+						String nodeRef = queryList.getQueryNodeRef(cleanFileName(file));
 						if (nodeRef != null) {
 
 							DownloadQueryCommand downloadQueryCommand = new DownloadQueryCommand(instance.getInstanceUrl());
@@ -295,7 +311,7 @@ public class AlfrescoRepository {
 	@Path("/resource")
 	public Response saveResource(@FormParam("file") final String file, @FormParam("content") final String content) {
 
-		checkFileName(file);
+		checkFileName(cleanFileName(file));
 
 		return runInAlfrescoSession(new AlfrescoSessionCallBack<Response>() {
 
@@ -304,10 +320,14 @@ public class AlfrescoRepository {
 					QueryList queryList = retrieveQueries(instance, httpClient, httpContext);
 					if (queryList != null) {
 
-						String nodeRef = queryList.getQueryNodeRef(file.replace(".saiku", ""));
+						String nodeRef = queryList.getQueryNodeRef(cleanFileName(file));
 						UploadQueryCommand uploadQueryCommand = new UploadQueryCommand(instance.getInstanceUrl());
 						if (nodeRef != null) {
 
+							if(log.isDebugEnabled()){
+								log.debug("Found nodeRef to update :"+nodeRef);
+							}
+							
 							try (CloseableHttpResponse resp = uploadQueryCommand.runCommand(httpClient, httpContext, nodeRef, content)) {
 								HttpEntity entity = resp.getEntity();
 								if (entity != null) {
@@ -323,7 +343,12 @@ public class AlfrescoRepository {
 							}
 
 						} else {
-							try (CloseableHttpResponse resp = uploadQueryCommand.runCommand(httpClient, httpContext, queryList.getParentNodeRef(), file.replace(".saiku", "") + ".saiku", content)) {
+							
+							if(log.isDebugEnabled()){
+								log.debug("Creating new query :"+cleanFileName(file));
+							}
+							
+							try (CloseableHttpResponse resp = uploadQueryCommand.runCommand(httpClient, httpContext, queryList.getParentNodeRef(), cleanFileName(file) + ".saiku", content)) {
 								HttpEntity entity = resp.getEntity();
 								if (entity != null) {
 
@@ -350,6 +375,7 @@ public class AlfrescoRepository {
 
 	}
 
+	
 	/**
 	 * Delete a resource.
 	 * 
@@ -363,8 +389,8 @@ public class AlfrescoRepository {
 	@Path("/resource")
 	public Response deleteResource(@QueryParam("file") final String file) {
 
-		checkFileName(file);
-
+		checkFileName(cleanFileName(file));
+		
 		return runInAlfrescoSession(new AlfrescoSessionCallBack<Response>() {
 
 			public Response execute(Instance instance, CloseableHttpClient httpClient, HttpClientContext httpContext) {
@@ -372,21 +398,37 @@ public class AlfrescoRepository {
 					QueryList queryList = retrieveQueries(instance, httpClient, httpContext);
 					if (queryList != null) {
 
-						String nodeRef = queryList.getQueryNodeRef(file.replace(".saiku", ""));
+						String nodeRef = queryList.getQueryNodeRef(cleanFileName(file));
 
 						DeleteQueryCommand deleteQueryCommand = new DeleteQueryCommand(instance.getInstanceUrl());
 						if (nodeRef != null) {
+							
+							if(log.isDebugEnabled()){
+								log.debug("Found nodeRef to delete :"+nodeRef);
+							}
 
 							try (CloseableHttpResponse resp = deleteQueryCommand.runCommand(httpClient, httpContext, nodeRef)) {
-								return Response.ok().build();
+								
+								HttpEntity entity = resp.getEntity();
+								if (entity != null) {
+
+									try (InputStream in = entity.getContent()) {
+
+										if (log.isDebugEnabled()) {
+											IOUtils.copy(in, System.out);
+										}
+
+										return Response.ok().build();
+									}
+								}
 							}
 						}
 					}
 
 				} catch (Exception e) {
-					log.error("Cannot save resource to ( file: " + file + ")", e);
+					log.error("Cannot delete resource to ( file: " + file + ")", e);
 				}
-				return Response.serverError().build();
+				return Response.serverError().entity("Cannot delete resource to ( file: " + file + ")").build();
 			}
 		});
 
