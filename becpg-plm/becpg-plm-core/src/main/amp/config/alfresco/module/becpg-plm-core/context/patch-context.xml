@@ -502,7 +502,7 @@
         <property name="description"><value>patch.bcpg.plm.removeReqCtrlViewPatch.description</value></property>
         <property name="fixesFromSchema" value="0"/>
         <property name="fixesToSchema" value="10001" />
-        <property name="targetSchema" value="10180 "/>
+        <property name="targetSchema" value="10170"/>
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
         <property name="ruleService" ref="ruleService"/>
@@ -525,7 +525,7 @@
         <property name="description"><value>patch.bcpg.plm.physicoUnitPatch.description</value></property>
         <property name="fixesFromSchema" value="0"/>
         <property name="fixesToSchema" value="10001" />
-        <property name="targetSchema" value="10180 "/>
+        <property name="targetSchema" value="10170"/>
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
         <property name="policyBehaviourFilter">
@@ -538,7 +538,7 @@
         <property name="description"><value>patch.bcpg.plm.pluralLegalNamePatch.description</value></property>
         <property name="fixesFromSchema" value="0"/>
         <property name="fixesToSchema" value="10001" />
-        <property name="targetSchema" value="10180 "/>
+        <property name="targetSchema" value="10170"/>
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
        <property name="ruleService" ref="ruleService"/>

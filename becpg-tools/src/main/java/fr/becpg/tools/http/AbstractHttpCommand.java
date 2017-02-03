@@ -59,7 +59,7 @@ public abstract class AbstractHttpCommand {
 
 		String url  = getHttpUrl( params);
 		if(logger.isDebugEnabled()){
-		 logger.debug("Run http command:"+url);
+		 logger.debug("Run http command:"+url+" method "+ httpMethod.toString());
 		}
 	
 		return client.execute(getHttpMethod(url,params), context);
