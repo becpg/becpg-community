@@ -21,7 +21,7 @@ for each(var entityTpl in entityTpls){
 				for each(var folderTpl in entityTpl.children){
 					if(folderTpl.name !="DataLists" &&  sourceNodes[k].childByNamePath(folderTpl.name) == null){
 						logger.log("copy folder tpl " + folderTpl.name);
-						folderTpl.copy(sourceNodes[k]);
+						folderTpl.copy(sourceNodes[k],true);
 					}
 				}
 			}				
