@@ -324,6 +324,10 @@ public class AlfrescoRepository {
 						UploadQueryCommand uploadQueryCommand = new UploadQueryCommand(instance.getInstanceUrl());
 						if (nodeRef != null) {
 
+							if(log.isDebugEnabled()){
+								log.debug("Found nodeRef to update :"+nodeRef);
+							}
+							
 							try (CloseableHttpResponse resp = uploadQueryCommand.runCommand(httpClient, httpContext, nodeRef, content)) {
 								HttpEntity entity = resp.getEntity();
 								if (entity != null) {
@@ -339,6 +343,11 @@ public class AlfrescoRepository {
 							}
 
 						} else {
+							
+							if(log.isDebugEnabled()){
+								log.debug("Creating new query :"+cleanFileName(file));
+							}
+							
 							try (CloseableHttpResponse resp = uploadQueryCommand.runCommand(httpClient, httpContext, queryList.getParentNodeRef(), cleanFileName(file) + ".saiku", content)) {
 								HttpEntity entity = resp.getEntity();
 								if (entity != null) {
@@ -381,7 +390,7 @@ public class AlfrescoRepository {
 	public Response deleteResource(@QueryParam("file") final String file) {
 
 		checkFileName(cleanFileName(file));
-
+		
 		return runInAlfrescoSession(new AlfrescoSessionCallBack<Response>() {
 
 			public Response execute(Instance instance, CloseableHttpClient httpClient, HttpClientContext httpContext) {
@@ -393,17 +402,33 @@ public class AlfrescoRepository {
 
 						DeleteQueryCommand deleteQueryCommand = new DeleteQueryCommand(instance.getInstanceUrl());
 						if (nodeRef != null) {
+							
+							if(log.isDebugEnabled()){
+								log.debug("Found nodeRef to delete :"+nodeRef);
+							}
 
 							try (CloseableHttpResponse resp = deleteQueryCommand.runCommand(httpClient, httpContext, nodeRef)) {
-								return Response.ok().build();
+								
+								HttpEntity entity = resp.getEntity();
+								if (entity != null) {
+
+									try (InputStream in = entity.getContent()) {
+
+										if (log.isDebugEnabled()) {
+											IOUtils.copy(in, System.out);
+										}
+
+										return Response.ok().build();
+									}
+								}
 							}
 						}
 					}
 
 				} catch (Exception e) {
-					log.error("Cannot save resource to ( file: " + file + ")", e);
+					log.error("Cannot delete resource to ( file: " + file + ")", e);
 				}
-				return Response.serverError().build();
+				return Response.serverError().entity("Cannot delete resource to ( file: " + file + ")").build();
 			}
 		});
 
