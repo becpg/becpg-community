@@ -533,6 +533,30 @@
         </property>
 	</bean>
 	
+	
+	<bean id="patch.bcpg.ecoTypePatch" class="fr.becpg.repo.admin.patch.ECOTypePatch" parent="beCPGBasePatch" >
+        <property name="id"><value>patch.bcpg.ecoTypePatch</value></property>
+        <property name="description"><value>patch.bcpg.ecoTypePatch.description</value></property>
+        <property name="fixesFromSchema" value="0"/>
+        <property name="fixesToSchema" value="10001" />
+        <property name="targetSchema" value="10170"/>
+        <property name="requiresTransaction"><value>true</value></property>
+        <property name="applyToTenants"><value>true</value></property>
+         <property name="patchDAO">
+            <ref bean="patchDAO"/>
+        </property>
+        <property name="nodeDAO">
+            <ref bean="nodeDAO"/>
+        </property>
+        <property name="qnameDAO">
+            <ref bean="qnameDAO"/>
+        </property>
+         <property name="policyBehaviourFilter">
+            <ref bean="policyBehaviourFilter"/>
+        </property>
+        <property name="ruleService" ref="ruleService"/>
+	</bean>
+	
 	 <bean id="patch.bcpg.plm.pluralLegalNamePatch" class="fr.becpg.repo.admin.patch.PluralLegalNamePatch" parent="beCPGBasePatch" >
         <property name="id"><value>patch.bcpg.pluralLegalNamePatch</value></property>
         <property name="description"><value>patch.bcpg.plm.pluralLegalNamePatch.description</value></property>
