@@ -105,6 +105,7 @@
 					<value>volume</value>
 					<value>performance</value>
 					<value>counter_analysis</value>
+					<value>contaminant</value>
 				</list>
 			</parameter>
 		</constraint>
