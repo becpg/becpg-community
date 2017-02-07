@@ -1,30 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  Copyright (C) 2010-2016 beCPG. 
-   
-  This file is part of beCPG 
-   
-  beCPG is free software: you can redistribute it and/or modify 
-  it under the terms of the GNU Lesser General Public License as published by 
-  the Free Software Foundation, either version 3 of the License, or 
-  (at your option) any later version. 
-   
-  beCPG is distributed in the hope that it will be useful, 
-  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-  GNU Lesser General Public License for more details. 
-   
-  You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
--->
-<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.22" id="1">
-    <property name="createdBy">Eclipse BIRT Designer Version 3.7.1.v20110905 Build &lt;3.7.1.v20110905-1820></property>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 4.4.2.v201410272105 Build &lt;4.4.2.v20150217-1805></property>
     <property name="units">in</property>
     <property name="iconFile">/templates/blank_report.gif</property>
     <property name="bidiLayoutOrientation">ltr</property>
     <property name="imageDPI">131</property>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="7">
-            <property name="FILELIST">http://localhost:8080/alfresco/service/becpg/report/datasource?nodeRef=workspace://SpacesStore/2d1faac9-ea78-4bc7-bcec-60c653518251</property>
+            <property name="FILELIST">src/main/resources/beCPG/birt/document/nonconformity/NCReport.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -1919,8 +1902,8 @@
                 <cell id="1690"/>
             </row>
             <row id="1685">
-                <property name="height">0.2824427480916031in</property>
                 <property name="style">becpg-row-border</property>
+                <property name="height">0.2824427480916031in</property>
                 <cell id="1709">
                     <label id="1723">
                         <property name="style">becpg-row-header</property>
@@ -2137,16 +2120,16 @@
                 <property name="width">1.4045801526717556in</property>
             </column>
             <column id="1865">
-                <property name="width">2.5801526717557253in</property>
                 <property name="style">becpg-col-border</property>
+                <property name="width">2.5801526717557253in</property>
             </column>
             <column id="1866">
-                <property name="width">1.9923664122137406in</property>
                 <property name="style">becpg-col-border</property>
+                <property name="width">1.9923664122137406in</property>
             </column>
             <column id="1867">
-                <property name="width">1.9923664122137406in</property>
                 <property name="style">becpg-col-border</property>
+                <property name="width">1.9923664122137406in</property>
             </column>
             <header>
                 <row id="1849">
@@ -2404,7 +2387,7 @@
                 quVuumQmWXUH953Cn7IAZwI/z+cVPX+fOoULrF1rypyi8y/r1h2bvGwgLd1QsmoVPcoCA+oCivXoCOVS
                 EBABASHKID9w+/O48c5I8bjoX9WLH0opAeRJHVgRwfv3rGG5/POuCLEYmCT1YcXjoZQeRLFSrRyA/fvS
                 INz+eedOOOOdurHTjjjho1//2Q==
-            </property>
+</property>
         </structure>
     </list-property>
 </report>
