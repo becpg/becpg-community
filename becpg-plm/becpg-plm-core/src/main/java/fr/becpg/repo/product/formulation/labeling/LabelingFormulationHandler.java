@@ -151,10 +151,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				if (Boolean.TRUE.equals(labelingRuleListDataItem.getIsActive())) {
 					LabelingRuleType type = labelingRuleListDataItem.getLabelingRuleType();
 					if (LabelingRuleType.Format.equals(type)) {
-						labelingFormulaContext.formatText(labelingRuleListDataItem.getComponents(), labelingRuleListDataItem.getFormula());
+						labelingFormulaContext.formatText(labelingRuleListDataItem.getComponents(), labelingRuleListDataItem.getFormula(),labelingRuleListDataItem.getLocales());
 					} else if (LabelingRuleType.Rename.equals(type)) {
 						labelingFormulaContext.rename(labelingRuleListDataItem.getComponents(), labelingRuleListDataItem.getReplacements(),
-								labelingRuleListDataItem.getLabel(), labelingRuleListDataItem.getFormula());
+								labelingRuleListDataItem.getLabel(), labelingRuleListDataItem.getFormula(),labelingRuleListDataItem.getLocales());
 					} else if (LabelingRuleType.Locale.equals(type)) {
 						labelingFormulaContext.addLocale(labelingRuleListDataItem.getFormula(), labelingRuleListDataItem.getLocales());
 					} else if (LabelingRuleType.Prefs.equals(type)) {
