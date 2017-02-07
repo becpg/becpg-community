@@ -19,6 +19,7 @@ package fr.becpg.repo.ecm.impl;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -214,14 +215,7 @@ public class ECOServiceImpl implements ECOService {
 
 				for (ReplacementListDataItem replacementListDataItem : ecoData.getReplacementList()) {
 
-					List<NodeRef> replacements = new ArrayList<>();
-					if (ChangeOrderType.Merge.equals(ecoData.getEcoType())) {
-						if (replacementListDataItem.getTargetItem() != null) {
-							replacements.add(replacementListDataItem.getTargetItem());
-						}
-					} else {
-						replacements = replacementListDataItem.getSourceItems();
-					}
+					List<NodeRef> replacements = getSourceItems(ecoData, replacementListDataItem);
 
 					if ((replacements != null) && !replacements.isEmpty()) {
 
@@ -253,6 +247,18 @@ public class ECOServiceImpl implements ECOService {
 			alfrescoRepository.save(ecoData);
 
 		}
+	}
+
+	private List<NodeRef> getSourceItems(ChangeOrderData ecoData, ReplacementListDataItem replacementListDataItem) {
+		List<NodeRef> ret = new ArrayList<>();
+		if (ChangeOrderType.Merge.equals(ecoData.getEcoType())) {
+			if (replacementListDataItem.getTargetItem() != null) {
+				ret.add(replacementListDataItem.getTargetItem());
+			}
+		} else {
+			return replacementListDataItem.getSourceItems();
+		}
+		return ret;
 	}
 
 	// Keep only common assocs
@@ -308,7 +314,7 @@ public class ECOServiceImpl implements ECOService {
 			RevisionType revisionType = RevisionType.NoRevision;
 
 			for (ReplacementListDataItem replacementListDataItem : ecoData.getReplacementList()) {
-				if (replacementListDataItem.getSourceItems().equals(data.getRoot().getSourceItems())) {
+				if (getSourceItems(ecoData, replacementListDataItem).equals(data.getRoot().getSourceItems())) {
 					if (RevisionType.Major.equals(replacementListDataItem.getRevision())) {
 						revisionType = RevisionType.Major;
 						break;
@@ -472,43 +478,45 @@ public class ECOServiceImpl implements ECOService {
 	}
 
 	private void applyReplacementList(ChangeOrderData ecoData, ProductData product, boolean isSimulation) {
-
 		if (ecoData.getReplacementList() != null) {
-
-			if (ChangeOrderType.Merge.equals(ecoData.getEcoType()) && !isSimulation ) {
-
-				for (ReplacementListDataItem replacementListDataItem : ecoData.getReplacementList()) {
-					if ((replacementListDataItem.getSourceItems() != null) && (replacementListDataItem.getTargetItem() != null)
-							&& (replacementListDataItem.getSourceItems().size() == 1)) {
-
-						if (entityVersionService.getAllVersionBranches(replacementListDataItem.getTargetItem())
-								.contains(replacementListDataItem.getSourceItems().get(0))) {
-
-							VersionType versionType = VersionType.MINOR;
-							if (RevisionType.Major.equals(replacementListDataItem.getRevision())) {
-								versionType = VersionType.MAJOR;
-							}
-
-							String description = I18NUtil.getMessage("plm.ecm.apply.version.label", ecoData.getCode() + " - " + ecoData.getName());
-
-							entityVersionService.mergeBranch(replacementListDataItem.getSourceItems().get(0), replacementListDataItem.getTargetItem(),
-									versionType, description);
-
-						} else {
-							logger.warn("Source item " + replacementListDataItem.getTargetItem() + " is not a branch of target item "
-									+ replacementListDataItem.getSourceItems().get(0));
-						}
-					}
-
-				}
-
+			if (!isSimulation && ChangeOrderType.Merge.equals(ecoData.getEcoType())) {
+				merge(ecoData);
 			} else {
 				applyToListV2(ecoData, product.getCompoList());
 				applyToListV2(ecoData, product.getPackagingList());
 			}
-
 		}
 
+	}
+
+	private void merge(ChangeOrderData ecoData) {
+		for (ReplacementListDataItem replacementListDataItem : ecoData.getReplacementList()) {
+			if ((replacementListDataItem.getSourceItems() != null) && (replacementListDataItem.getTargetItem() != null)
+					&& (replacementListDataItem.getSourceItems().size() == 1)
+					&& !replacementListDataItem.getTargetItem().equals(replacementListDataItem.getSourceItems().get(0))) {
+
+				if (entityVersionService.getAllVersionBranches(replacementListDataItem.getTargetItem())
+						.contains(replacementListDataItem.getSourceItems().get(0))) {
+
+					VersionType versionType = VersionType.MINOR;
+					if (RevisionType.Major.equals(replacementListDataItem.getRevision())) {
+						versionType = VersionType.MAJOR;
+					}
+
+					String description = I18NUtil.getMessage("plm.ecm.apply.version.label", ecoData.getCode() + " - " + ecoData.getName());
+
+					entityVersionService.mergeBranch(replacementListDataItem.getSourceItems().get(0), replacementListDataItem.getTargetItem(),
+							versionType, description);
+
+					replacementListDataItem.setSourceItems(Arrays.asList(replacementListDataItem.getTargetItem()));
+
+				} else {
+					logger.warn("Source item " + replacementListDataItem.getTargetItem() + " is not a branch of target item "
+							+ replacementListDataItem.getSourceItems().get(0));
+				}
+			}
+
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -524,17 +532,8 @@ public class ECOServiceImpl implements ECOService {
 					&& replacementListDataItem.getSourceItems().contains(replacementListDataItem.getTargetItem())
 					&& (replacementListDataItem.getQtyPerc() == 100))) {
 
-				List<NodeRef> replacementsList = new ArrayList<>();
-				if (ChangeOrderType.Merge.equals(ecoData.getEcoType())) {
-					if (replacementListDataItem.getTargetItem() != null) {
-						replacementsList.add(replacementListDataItem.getTargetItem());
-					}
-				} else {
-					replacementsList = replacementListDataItem.getSourceItems();
-				}
+				List<NodeRef> replacementsList = getSourceItems(ecoData, replacementListDataItem);
 
-				
-				
 				// if rule match compoList
 				if (items.stream().map(c -> c.getComponent()).collect(Collectors.toSet()).containsAll(replacementsList)) {
 					boolean first = true;
@@ -552,13 +551,13 @@ public class ECOServiceImpl implements ECOService {
 							}
 							if (ChangeOrderType.Merge.equals(ecoData.getEcoType())) {
 								if (replacementListDataItem.getSourceItems() != null) {
-									targetItems.add(
-											new Pair<NodeRef, Integer>(replacementListDataItem.getSourceItems().get(0), replacementListDataItem.getQtyPerc()));
-								} 
-							} else {			
+									targetItems.add(new Pair<NodeRef, Integer>(replacementListDataItem.getSourceItems().get(0),
+											replacementListDataItem.getQtyPerc()));
+								}
+							} else {
 								if (replacementListDataItem.getTargetItem() != null) {
-									targetItems.add(
-											new Pair<NodeRef, Integer>(replacementListDataItem.getTargetItem(), replacementListDataItem.getQtyPerc()));
+									targetItems.add(new Pair<NodeRef, Integer>(replacementListDataItem.getTargetItem(),
+											replacementListDataItem.getQtyPerc()));
 								} else {
 									toDelete.addAll(items.stream().filter(c -> sourceItem.equals(c.getComponent())).collect(Collectors.toSet()));
 								}
