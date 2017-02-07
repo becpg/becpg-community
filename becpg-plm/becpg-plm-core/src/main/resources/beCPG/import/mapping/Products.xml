@@ -284,4 +284,15 @@
 		</columns>
 	</mapping>
 	
+	<mapping name="qa:controlDefList">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:erpCode" />
+		</nodeColumnKeys>
+		<dataListColumnKeys>
+			<dataListColumnKey attribute="qa:clCharacts" />
+		</dataListColumnKeys>
+		<columns>
+		</columns>
+	</mapping>
+	
 </mappings>
