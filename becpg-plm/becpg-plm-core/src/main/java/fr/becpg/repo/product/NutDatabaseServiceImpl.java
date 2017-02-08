@@ -94,78 +94,86 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 
 			int nameColumn = extractNameColumnIndex(headerRow);
 
-			matches.addAll(getColumn(dataBaseFile, nameColumn).stream().filter(res -> nameMatches(query, res.getValue())).limit(100)
+			matches.addAll(getColumn(dataBaseFile, nameColumn)
+					.stream()
+					.filter(res -> nameMatches(query, res.toString())).limit(100)
 					.collect(Collectors.toList()));
 
 			logger.debug("suggestion for " + query + ", found " + matches.size() + " results");
-			return new ListValuePage(matches, pageNum, pageSize, new IdentifiedValueListExtractor());
+		} else {
+			logger.debug("database noderef is null");	
 		}
-		logger.debug("database noderef is null");
-		return null;
+		
+		return new ListValuePage(matches, pageNum, pageSize, new IdentifiedValueListExtractor());
 	}
 
 	@Override
 	public List<NutListDataItem> getNuts(NodeRef databaseFile, String id) {
 		List<NutListDataItem> ret = new ArrayList<>();
 		logger.debug("getting nut list for RM of id " + id + " in file " + nodeService.getProperty(databaseFile, ContentModel.PROP_NAME));
-		String[] headerRow = getHeaderRow(databaseFile);
-		int idColumn = extractIdentifierColumnIndex(headerRow);
-		int nameColumn = extractNameColumnIndex(headerRow);
-		PropertyFormats propertyFormats = new PropertyFormats(true);
-
-		String[] values = getLineByIndex(databaseFile, id, idColumn);
-		for (int i = 0; i < headerRow.length; ++i) {
-
-			if (!"COLUMNS".equals(headerRow[i]) && (i != idColumn) && (i != nameColumn)
-					&& (!isInDictionary(headerRow[i]) || !headerRow[i].contains("_"))) {
-				NodeRef nutNodeRef = getNutNodeRef(headerRow[i]);
-				if (nutNodeRef != null) {
-					try {
-						String nutValueToken = values[i];
-						Number nutValue = null;
-						if ((nutValueToken != null) && !nutValueToken.isEmpty()) {
-
-							nutValue = propertyFormats.parseDecimal(nutValueToken);
-						}
-
-						NutListDataItem nut = new NutListDataItem(null, null, null, null, null, null, nutNodeRef, false);
-
-						String newMethod = getFileName(databaseFile);
-						PropertyDefinition methodDef = dictionaryService.getProperty(PLMModel.PROP_NUT_METHOD);
-
-						if (methodDef != null) {
-							List<ConstraintDefinition> methodConstraints = methodDef.getConstraints();
-							for (ConstraintDefinition constraint : methodConstraints) {
-								if (constraint.getConstraint() instanceof DynListConstraint) {
-									DynListConstraint dynConstraint = (DynListConstraint) constraint.getConstraint();
-									List<String> allowedValues = dynConstraint.getAllowedValues();
-									logger.debug("Allowed values: " + allowedValues);
-
-									for (String value : allowedValues) {
-										logger.debug("current value: " + value);
-										if (newMethod.contains(value) && !"".equals(value)) {
-											logger.debug("value matches method named " + newMethod);
-											nut.setMethod(value);
-											break;
-										}
-									}
-									break;
-								}
+		
+		if(id != null && id.length() > 0){
+			String[] headerRow = getHeaderRow(databaseFile);
+			int idColumn = extractIdentifierColumnIndex(headerRow);
+			int nameColumn = extractNameColumnIndex(headerRow);
+			PropertyFormats propertyFormats = new PropertyFormats(true);
+	
+			String[] values = getLineByIndex(databaseFile, id, idColumn);
+			for (int i = 0; i < headerRow.length; ++i) {
+	
+				if (!"COLUMNS".equals(headerRow[i]) && (i != idColumn) && (i != nameColumn)
+						&& (!isInDictionary(headerRow[i]) || !headerRow[i].contains("_"))) {
+					NodeRef nutNodeRef = getNutNodeRef(headerRow[i]);
+					if (nutNodeRef != null) {
+						try {
+							String nutValueToken = values[i];
+							Number nutValue = null;
+							if ((nutValueToken != null) && !nutValueToken.isEmpty()) {
+	
+								nutValue = propertyFormats.parseDecimal(nutValueToken);
 							}
-						} else {
-							logger.debug("Can't find method definition for " + PLMModel.PROP_NUT_METHOD);
+	
+							NutListDataItem nut = new NutListDataItem(null, null, null, null, null, null, nutNodeRef, false);
+	
+							String newMethod = getFileName(databaseFile);
+							PropertyDefinition methodDef = dictionaryService.getProperty(PLMModel.PROP_NUT_METHOD);
+	
+							if (methodDef != null) {
+								List<ConstraintDefinition> methodConstraints = methodDef.getConstraints();
+								for (ConstraintDefinition constraint : methodConstraints) {
+									if (constraint.getConstraint() instanceof DynListConstraint) {
+										DynListConstraint dynConstraint = (DynListConstraint) constraint.getConstraint();
+										List<String> allowedValues = dynConstraint.getAllowedValues();
+										logger.debug("Allowed values: " + allowedValues);
+	
+										for (String value : allowedValues) {
+											logger.debug("current value: " + value);
+											if (newMethod.contains(value) && !"".equals(value)) {
+												logger.debug("value matches method named " + newMethod);
+												nut.setMethod(value);
+												break;
+											}
+										}
+										break;
+									}
+								}
+							} else {
+								logger.debug("Can't find method definition for " + PLMModel.PROP_NUT_METHOD);
+							}
+	
+							if (nutValue != null) {
+								nut.setManualValue(nutValue.doubleValue());
+							}
+	
+							ret.add(nut);
+						} catch (ParseException e) {
+							throw new RuntimeException("unable to parse value " + values[i], e);
 						}
-
-						if (nutValue != null) {
-							nut.setManualValue(nutValue.doubleValue());
-						}
-
-						ret.add(nut);
-					} catch (ParseException e) {
-						throw new RuntimeException("unable to parse value " + values[i], e);
 					}
 				}
 			}
+		} else {
+			logger.debug("invalid id (null or empty string) ");
 		}
 
 		return ret;
