@@ -105,10 +105,11 @@
 						html+="</div>";
 
 						html+="<div class=\"catalog-details\">";
-						html+="<h3 >"+instance.msg("label.missing_properties")+"</h3>";
+						
 
 						//display missing props, if any
 						if(json[key].missingFields !== undefined){
+							html+="<h3 >"+instance.msg("label.missing_properties")+"</h3>";
 							html+="<ul class=\"catalog-missing-propList\">";
 								for(var field in json[key].missingFields){
 									
@@ -133,10 +134,9 @@
 						
 						
 						//Non unique props
-						html+="<h3>"+instance.msg("label.non-unique-properties")+"</h3>";
-						console.log("non unique fields: ",json[key].nonUniqueFields);
+						
 						if(json[key].nonUniqueFields !== undefined){
-							
+							html+="<h3>"+instance.msg("label.non-unique-properties")+"</h3>";
 							
 							html+="<ul class=\"catalog-missing-propList\">";
 								for(var field in json[key].nonUniqueFields){	

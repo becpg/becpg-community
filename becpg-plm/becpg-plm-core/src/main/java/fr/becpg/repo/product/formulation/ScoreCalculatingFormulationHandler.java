@@ -449,12 +449,14 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 		JSONArray res = new JSONArray();
 
 		for (int i = 0; i < uniqueFields.length(); i++) {
+			
 			String field = uniqueFields.getString(i);
 
 			QName propQName = QName.createQName(field, namespaceService);
 			Serializable propValue = nodeService.getProperty(productData.getNodeRef(), propQName);
 			List<NodeRef> propDuplicates = getPropertyDuplicates(propQName, (String) propValue);
 
+			
 			if(!(propDuplicates.size() <= 1)){
 
 				ClassAttributeDefinition classDef = formatQnameString(field);
@@ -717,27 +719,31 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 
 	private List<NodeRef> getPropertyDuplicates(QName propQName, String value){		
 
-		BeCPGQueryBuilder query = BeCPGQueryBuilder.createQuery().andPropEquals(propQName, value);
-		query = query.excludeAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION);
-		//query = query.excludeAspect(BeCPGModel.ASPECT_ENTITY_BRANCH);
-		query = query.excludeAspect(ContentModel.ASPECT_WORKING_COPY);
-		logger.debug("Query: "+query.toString());
-		List<NodeRef> queryResults = query.list();
-		List<NodeRef> falsePositives = new ArrayList<>();
-
-		//Lucene equals is actually  contains, remove results that contain but do not equal value
-		for(NodeRef result : queryResults){
-			Serializable resultProp = nodeService.getProperty(result, propQName);
-			logger.debug("result: "+result+" prop value: "+resultProp);
-
-			if(resultProp != null && !resultProp.equals(value)){
-				logger.debug("Result "+result+" does not match value "+value+" (its value: "+resultProp+"), removing from res");
-				falsePositives.add(result);
+		List<NodeRef> queryResults = new ArrayList<>();
+		if(value != null && !value.isEmpty()){
+		
+			BeCPGQueryBuilder query = BeCPGQueryBuilder.createQuery().andPropEquals(propQName, value);
+			query = query.excludeAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION);
+			//query = query.excludeAspect(BeCPGModel.ASPECT_ENTITY_BRANCH);
+			query = query.excludeAspect(ContentModel.ASPECT_WORKING_COPY);
+			logger.debug("Query: "+query.toString());
+			queryResults = query.list();
+			List<NodeRef> falsePositives = new ArrayList<>();
+	
+			//Lucene equals is actually  contains, remove results that contain but do not equal value
+			for(NodeRef result : queryResults){
+				Serializable resultProp = nodeService.getProperty(result, propQName);
+				logger.debug("result: "+result+" prop value: "+resultProp);
+	
+				if(resultProp != null && !resultProp.equals(value)){
+					logger.debug("Result "+result+" does not match value "+value+" (its value: "+resultProp+"), removing from res");
+					falsePositives.add(result);
+				}
 			}
-		}
-
-		for(NodeRef falsePositive : falsePositives){
-			queryResults.remove(falsePositive);
+	
+			for(NodeRef falsePositive : falsePositives){
+				queryResults.remove(falsePositive);
+			}
 		}
 
 		logger.debug("Number of properties of name: "+propQName+" and value: "+value+" = "+queryResults.size()+", res="+queryResults+", is unique ? "+(queryResults.size() <= 1));
