@@ -5212,6 +5212,7 @@
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:geoOriginISOCode" />
+					<show id="bcpg:linkedSearchAssociation" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:charactName" />
@@ -5220,6 +5221,14 @@
 							<control-param name="activateLinks">true</control-param>
 						</control>
 					</field>
+					<field id="bcpg:linkedSearchAssociation">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:geoOrigin
+							</control-param>
+						</control>
+					</field>
+					
 				</appearance>
 			</form>
 		</forms>
@@ -5235,6 +5244,7 @@
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:geoOriginISOCode" />
+					<show id="bcpg:linkedSearchAssociation" force="true" />
 				</field-visibility>
 
 				<appearance>
@@ -5247,6 +5257,13 @@
 					</field>
 					<field id="bcpg:legalName" />
 					<field id="bcpg:geoOriginISOCode" />
+					<field id="bcpg:linkedSearchAssociation">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:geoOrigin
+							</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 
@@ -5268,6 +5285,7 @@
 					<show id="bcpg:charactName" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:geoOriginISOCode" />
+					<show id="bcpg:linkedSearchAssociation" force="true" />
 				</field-visibility>
 			</form>
 		</forms>
@@ -5282,12 +5300,19 @@
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:bioOriginType" />
+					<show id="bcpg:linkedSearchAssociation" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:charactName" />
 					<field id="cm:description">
 						<control>
 							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:linkedSearchAssociation">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:bioOrigin</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -5305,6 +5330,7 @@
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:bioOriginType" />
+					<show id="bcpg:linkedSearchAssociation" force="true" />
 				</field-visibility>
 
 				<appearance>
@@ -5317,6 +5343,12 @@
 					</field>
 					<field id="bcpg:legalName" />
 					<field id="bcpg:bioOriginType" />
+					<field id="bcpg:linkedSearchAssociation">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:bioOrigin</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 
@@ -5338,6 +5370,7 @@
 					<show id="bcpg:charactName" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:bioOriginType" />
+					<show id="bcpg:linkedSearchAssociation" force="true" />
 				</field-visibility>
 			</form>
 		</forms>
