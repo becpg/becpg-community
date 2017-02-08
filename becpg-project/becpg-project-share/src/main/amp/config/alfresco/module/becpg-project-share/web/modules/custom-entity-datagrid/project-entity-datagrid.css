@@ -178,3 +178,47 @@
 	height: 150px;
 	overflow: auto;
 }
+
+.datagrid span.score-red {
+	background-color:#f44336;
+	border-radius: 50%;
+	padding-left:7px;
+	padding-top:7px;
+	padding-right:7px;
+	padding-bottom:7px;
+	font;color:white;
+	font-weight:bold;
+}
+
+.datagrid span.score-orange {
+	background-color:orange;
+	border-radius: 50%;
+	padding-left:7px;
+	padding-top:7px;
+	padding-right:7px;
+	padding-bottom:7px;
+	font;color:white;
+	font-weight:bold;
+}
+
+.datagrid span.score-blue {
+	background-color:rgb(73, 134, 231);
+	border-radius: 50%;
+	padding-left:7px;
+	padding-top:7px;
+	padding-right:7px;
+	padding-bottom:7px;
+	font;color:white;
+	font-weight:bold;
+}
+
+.datagrid span.score-green {
+	background-color:rgb(123, 209, 72);
+	border-radius: 50%;
+	padding-left:7px;
+	padding-top:7px;
+	padding-right:7px;
+	padding-bottom:7px;
+	font;color:white;
+	font-weight:bold;
+}
