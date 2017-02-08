@@ -18,6 +18,7 @@
 package fr.becpg.repo.security.impl;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -90,15 +91,29 @@ public class SecurityServiceImpl implements SecurityService {
 
 			String key = computeAclKey(nodeType, propName);
 			logger.debug("Compute acl for: " + key);
-
-			if (getAcls().containsKey(key)) {
-
-				List<ACLEntryDataItem.PermissionModel> perms = getAcls().get(key);
+			Map<String, List<PermissionModel>> acls = getAcls();
+			
+			if (acls.containsKey(key)) {
+				
+				List<ACLEntryDataItem.PermissionModel> perms = acls.get(key);
 				int ret = SecurityService.WRITE_ACCESS;
 				if (!isAdmin()) {
 
 					// Rule to override if one of the rule says that is has a
 					// better right
+					perms.sort(new Comparator<PermissionModel>() {
+
+						@Override
+						public int compare(PermissionModel p1, PermissionModel p2) {
+							// Read is first, write second
+							// refs #2674
+							if(p1.isReadOnly() || p2.isWrite()){
+								return -1;
+							} else return 0;
+						}
+						
+					});
+					
 					for (PermissionModel permissionModel : perms) {
 
 						if (permissionModel.isReadOnly() && isInGroup(permissionModel)) {
@@ -117,7 +132,7 @@ public class SecurityServiceImpl implements SecurityService {
 						}
 					}
 
-				} 
+				}
 
 				return ret;
 			}
