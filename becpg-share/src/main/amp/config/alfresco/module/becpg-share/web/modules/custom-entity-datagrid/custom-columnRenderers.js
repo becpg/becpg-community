@@ -119,11 +119,9 @@ if (beCPG.module.EntityDataGridRenderers) {
    YAHOO.Bubbling.fire("registerDataGridRenderer", {
 	      propertyName : "sec:groupsAssignee",
 	      renderer : function(oRecord, data, label, scope) {
-	    	  
 	         if (data.displayValue != null) {
 	            return Alfresco.util.encodeHTML(data.displayValue);
 	         }
-	         
 	         return Alfresco.util.encodeHTML(data.metadata);
 
 	      }
