@@ -2,6 +2,7 @@ package fr.becpg.repo.search;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,6 +25,7 @@ import fr.becpg.model.PackModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.helper.AssociationService;
 
 @Service
 public class ProductAdvSearchPlugin implements AdvSearchPlugin {
@@ -32,6 +34,9 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 	@Autowired
 	private NodeService nodeService;
+	
+	@Autowired
+	private AssociationService associationService;
 
 	@Autowired
 	private NamespaceService namespaceService;
@@ -232,12 +237,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 				List<NodeRef> ingListGeoOrigins = new ArrayList<>();
 
-				String[] arrValues = propValue.split(RepoConsts.MULTI_VALUES_SEPARATOR);
-				for (String strNodeRef : arrValues) {
-
-					NodeRef nodeRef = new NodeRef(strNodeRef);
-
-					if (nodeService.exists(nodeRef)) {
+				for (NodeRef nodeRef : extractOriginNodeRefs(propValue)) {
 
 						List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, PLMModel.ASSOC_INGLIST_GEO_ORIGIN);
 
@@ -248,7 +248,6 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 								ingListGeoOrigins.add(n);
 							}
 						}
-					}
 				}
 
 				if (ingListItems == null) {
@@ -263,12 +262,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 				List<NodeRef> ingListBioOrigins = new ArrayList<>();
 
-				String[] arrValues = propValue.split(RepoConsts.MULTI_VALUES_SEPARATOR);
-				for (String strNodeRef : arrValues) {
-
-					NodeRef nodeRef = new NodeRef(strNodeRef);
-
-					if (nodeService.exists(nodeRef)) {
+				for (NodeRef nodeRef : extractOriginNodeRefs(propValue)) {
 
 						List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, PLMModel.ASSOC_INGLIST_BIO_ORIGIN);
 
@@ -279,7 +273,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 								ingListBioOrigins.add(n);
 							}
 						}
-					}
+					
 				}
 
 				if (ingListItems == null) {
@@ -318,6 +312,30 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		}
 
 		return nodes;
+	}
+
+	private List<NodeRef>  extractOriginNodeRefs(String propValue) {
+		List<NodeRef> ret = new LinkedList<NodeRef>();
+		
+		String[] arrValues = propValue.split(RepoConsts.MULTI_VALUES_SEPARATOR);
+		for (String strNodeRef : arrValues) {
+			NodeRef nodeRef =new NodeRef(strNodeRef);
+			if (nodeService.exists(nodeRef)) {
+				 ret.add(nodeRef);
+				 
+					 if(logger.isDebugEnabled()){
+						 logger.debug("Adding associated search :"+associationService.getSourcesAssocs(nodeRef, BeCPGModel.ASSOC_LINKED_SEARCH_ASSOCIATION).size());
+						 
+					 }
+					 
+					 
+				 ret.addAll(associationService.getSourcesAssocs(nodeRef, BeCPGModel.ASSOC_LINKED_SEARCH_ASSOCIATION));
+				 
+			}
+			
+		}
+
+		return ret;
 	}
 
 	/**
