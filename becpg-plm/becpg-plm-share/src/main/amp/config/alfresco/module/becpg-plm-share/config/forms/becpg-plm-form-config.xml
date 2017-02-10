@@ -8165,12 +8165,14 @@
 					<show id="entity_bcpg:lclLabelClaim_bcpg:labelClaim" />
 					<show id="bcpg:lclType" />
 					<show id="bcpg:lclClaimValue" />
+					<show id="bcpg:lclMissingLabelClaims" force="true"/>
 					<show id="bcpg:lclComments" force="true" />
 					<show id="fm:commentCount" force="true" />
 					<show id="bcpg:lclIsFormulated" />
 					<show id="bcpg:lclFormulaErrorLog" />
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:lclMissingLabelClaims" read-only="true"/>
 					<field id="entity_bcpg:lclLabelClaim_bcpg:labelClaim" label="hidden"/>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 					<field id="bcpg:lclIsFormulated" label="hidden" />
@@ -8188,9 +8190,11 @@
 					<show id="bcpg:lclLabelClaim" />
 					<show id="bcpg:lclClaimValue" />
 					<show id="bcpg:lclComments" />
+					<show id="bcpg:lclMissingLabelClaims" force="true"/>
 					<show id="bcpg:certificateDate" force="true" />
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:lclMissingLabelClaims" read-only="true"/>
 					<field id="bcpg:lclComments">
 						<control template="/org/alfresco/components/form/controls/richtext.ftl">
 							<control-param name="rows">10</control-param>
