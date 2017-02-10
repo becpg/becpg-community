@@ -437,6 +437,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : "bcpg:labelClaim",
 		renderer : function(oRecord, data, label, scope) {
+
 			var isFormulated = oRecord.getData("itemData")["prop_bcpg_lclIsFormulated"]!=null 
 						? oRecord.getData("itemData")["prop_bcpg_lclIsFormulated"].value : false;
 			if (isFormulated) {
@@ -453,7 +454,8 @@ if (beCPG.module.EntityDataGridRenderers) {
 
 				return '<span class="lcl-formulated-error" title="' + Alfresco.util.encodeHTML(error) + '">'
 						+ Alfresco.util.encodeHTML(data.displayValue) + '</span>';
-			}
+			}			
+			
 			return '<span>' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
 		}
 
@@ -857,6 +859,30 @@ if (beCPG.module.EntityDataGridRenderers) {
 	         return "";
 	      }
 	  });	
+	
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+	      propertyName : "cm:cmobject_bcpg:lclMissingLabelClaims",
+	      renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+	    	 
+	    	 var missingSources = oRecord.getData("itemData")["assoc_bcpg_lclMissingLabelClaims"];
+	    	 
+	    	 //only put text on first result
+	         if(data.value != null && data.value.length>0 && missingSources.length > 0 && i==0){
+					var description = scope.msg("becpg.forms.help.lclMissingSources", missingSources.length);
+					var tooltip = "";
+					
+					for(var source in missingSources){
+						tooltip+=missingSources[source].displayValue+"\n";
+						
+					}
+					
+					var tooltipText = scope.msg("becpg.forms.help.lclMissingSources.list", tooltip);
+					
+				return "<span class=\"lcl-formulated-error\" title=\"" + tooltipText +"\">"+description+"</span>";
+	         }
+	         return "";
+	      }
+	  });
 	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : "bcpg:compoListVolume",

@@ -17,8 +17,12 @@
  ******************************************************************************/
 package fr.becpg.repo.product.data.productList;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
@@ -46,6 +50,7 @@ public class LabelClaimListDataItem extends AbstractManualDataItem {
 	private String labelClaimValue;
 	private Boolean isFormulated;
 	private String errorLog;
+	private List<NodeRef> missingLabelClaims = new ArrayList<>();
 	
 	@AlfSingleAssoc
 	@AlfQname(qname="bcpg:lclLabelClaim")
@@ -109,7 +114,15 @@ public class LabelClaimListDataItem extends AbstractManualDataItem {
 		this.errorLog = errorLog;
 	}
 	
-	
+	@AlfMultiAssoc
+	@InternalField
+	@AlfQname(qname="bcpg:lclMissingLabelClaims")
+	public List<NodeRef> getMissingLabelClaims() {
+		return missingLabelClaims;
+	}
+	public void setMissingLabelClaims(List<NodeRef> missingLabelClaims) {
+		this.missingLabelClaims = missingLabelClaims;
+	}
 	public LabelClaimListDataItem(){
 		super();
 	}
