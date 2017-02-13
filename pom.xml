@@ -240,6 +240,16 @@
 	<dependencies>
 	    <!-- Tests -->
 		
+		
+		  <dependency>
+		    <groupId>org.alfresco</groupId>
+		    <artifactId>alfresco-repository</artifactId>
+		    <version>${alfresco.version}</version>
+		    <classifier>h2scripts</classifier>
+		    <scope>test</scope>
+		  </dependency>
+		
+		
 		<!-- Servlet -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -247,6 +257,8 @@
 			<version>2.4</version>
 			<scope>provided</scope>
 		</dependency>
+		
+		
 		
 
 	</dependencies>

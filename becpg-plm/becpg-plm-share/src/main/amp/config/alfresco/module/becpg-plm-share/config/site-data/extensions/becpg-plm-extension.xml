@@ -16,10 +16,6 @@
 					   <webscript>share-header</webscript>
 				   </alwaysApply>
 		        </customization>
-		        <customization>
-					<targetPackageRoot>org.alfresco.modules</targetPackageRoot>
-					<sourcePackageRoot>org.alfresco.components.custom-presets-plm</sourcePackageRoot>
-				</customization>
 				<customization>
 					<targetPackageRoot>org.alfresco.components.search</targetPackageRoot>
 					<sourcePackageRoot>org.alfresco.components.custom-search</sourcePackageRoot>

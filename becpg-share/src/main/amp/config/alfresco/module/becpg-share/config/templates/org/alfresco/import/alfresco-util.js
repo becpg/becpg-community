@@ -421,6 +421,7 @@ var AlfrescoUtil =
    },
 
    /**
+    * @deprecated Use share-header.lib.js getPages function
     * @method getPages
     * @param includeUnusedPages IF true all pages will be returned, if false only the pages used by the current site
     * @return the pages used in the site and optionally unused as well, if so at the end of list.
@@ -484,7 +485,6 @@ var AlfrescoUtil =
             {
                pageMetadata = {};
             }
-
 
             // Get the page urls from config
             for (var i = 0; i < configPages.size(); i++)
@@ -643,7 +643,7 @@ var AlfrescoUtil =
          {
             href: targetPage + (path == "/" && item.location.file.length > 0 ? "?file=" + encodeURIComponent(item.fileName) : ""),
             label: msg.get(targetPageLabel),
-            cssClass: "folder-link" 
+            cssClass: "folder-link"
          });
 
          path = AlfrescoUtil.combinePaths(path, item.location.file);
@@ -753,7 +753,7 @@ var AlfrescoUtil =
    /**
     * Gets icon resource path string specified in the {component.style} configuration for specified by {iconSize} attribute.
     * See ["CommonComponentStyle"]["component-config"] configuration from share-document-library-config.xml. As an example for {browse.folder} component configuration 
-    * and for {iconSize} "32x32" the result will be "components/documentlibrary/images/virtual-folder-32.png" 
+    * and for {iconSize} "32x32" the result will be "components/documentlibrary/images/smart-folder-32.png" 
     * @param component
     * @param iconSize
     */
@@ -888,7 +888,7 @@ var AlfrescoUtil =
    /**
     * Gets true if any of {supressConfig} filters are matching, or false otherwise.
     * 
-    * This function is used for suppressing Social components {favorites, likes and comments}, Tags, Date. Currently only used for folders in Virtual Folders context.
+    * This function is used for suppressing Social components {favorites, likes and comments}, Tags, Date. Currently only used for folders in Smart Folders context.
     * 
     * @returns {Boolean} - true if any of {supressConfig} filters are matching, or false otherwise.
     */

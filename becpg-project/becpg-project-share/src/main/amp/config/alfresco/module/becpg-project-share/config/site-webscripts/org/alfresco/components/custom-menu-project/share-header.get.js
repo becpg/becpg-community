@@ -16,3 +16,14 @@
               });
         }
    }
+
+   
+   var siteService = widgetUtils.findObject(model.jsonModel, "id", "SITE_SERVICE");
+   if (siteService && siteService.config)
+   {
+	   if(siteService.config.additionalSitePresets == null){
+		   siteService.config.additionalSitePresets = [];
+	   }
+   	
+     siteService.config.additionalSitePresets.push({ label: "title.projectSite", value: "project-site-dashboard" });
+   }

@@ -51,7 +51,6 @@ function main()
    addLink("user-sites-link", "user-sites", "link.sites");
    // Add User Content link
    addLink("user-content-link", "user-content", "link.content");
-   
 
    if (model.activeUserProfile)
    {
