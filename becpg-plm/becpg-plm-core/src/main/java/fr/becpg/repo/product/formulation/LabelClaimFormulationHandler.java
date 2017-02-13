@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -82,6 +83,8 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 
 				productData.getLabelClaimList().forEach(l -> {
 					
+					l.getMissingLabelClaims().clear();
+					
 					l.setType((String) nodeService.getProperty(l.getLabelClaim(), PLMModel.PROP_LABEL_CLAIM_TYPE));
 					
 					if ((l.getIsManual() == null) || !l.getIsManual()) {
@@ -98,6 +101,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 						ProductData partProduct = alfrescoRepository.findOne(part);
 						if (partProduct.getLabelClaimList() != null) {
 							for (LabelClaimListDataItem labelClaim : partProduct.getLabelClaimList()) {
+
 								visitPart(productData, partProduct, labelClaim);
 								
 							}
@@ -141,6 +145,15 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 						break;
 					case LabelClaimListDataItem.VALUE_FALSE:
 						if (labelClaimItem.getIsClaimed() || (labelClaimItem.getLabelClaimValue() == null)) {
+							
+							if(!labelClaimItem.getIsFormulated()){
+								labelClaimItem.getMissingLabelClaims().add(partProduct.getNodeRef());
+								List<LabelClaimListDataItem> partMatchingLclItems = getLclItemFromProduct(partProduct, labelClaimItem.getLabelClaim());
+								for(LabelClaimListDataItem matchingLclItem : partMatchingLclItems){
+									labelClaimItem.getMissingLabelClaims().addAll(matchingLclItem.getMissingLabelClaims());
+								}
+							}
+							
 							labelClaimItem.setIsClaimed(false);
 						}
 						break;
@@ -151,6 +164,19 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 									+ subLabelClaimItem.getLabelClaimValue() + "\")");
 						}
 						addMissingLabelClaimReq(productData, partProduct, labelClaimItem);
+						
+						if(!labelClaimItem.getIsFormulated()){
+							logger.debug("Adding part "+partProduct.getName()+" ("+partProduct.getNodeRef()+") to missing list");
+							
+							labelClaimItem.getMissingLabelClaims().add(partProduct.getNodeRef());
+							List<LabelClaimListDataItem> partMatchingLclItems = getLclItemFromProduct(partProduct, labelClaimItem.getLabelClaim());
+							
+							for(LabelClaimListDataItem matchingLclItem : partMatchingLclItems){
+								labelClaimItem.getMissingLabelClaims().addAll(matchingLclItem.getMissingLabelClaims());
+							}
+							
+						}
+						
 						labelClaimItem.setLabelClaimValue(LabelClaimListDataItem.VALUE_EMPTY);
 						break;
 					}
@@ -159,6 +185,16 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 						logger.debug(extractName(subLabelClaimItem.getLabelClaim()) + " has null label claim value");
 					}
 					addMissingLabelClaimReq(productData, partProduct, labelClaimItem);
+					if(!labelClaimItem.getIsFormulated()){
+						logger.debug("Adding part "+partProduct.getName()+" ("+partProduct.getNodeRef()+") to missing list");
+						labelClaimItem.getMissingLabelClaims().add(partProduct.getNodeRef());
+						List<LabelClaimListDataItem> partMatchingLclItems = getLclItemFromProduct(partProduct, labelClaimItem.getLabelClaim());
+						for(LabelClaimListDataItem matchingLclItem : partMatchingLclItems){
+							labelClaimItem.getMissingLabelClaims().addAll(matchingLclItem.getMissingLabelClaims());
+						}
+						
+					}
+					
 					labelClaimItem.setLabelClaimValue(LabelClaimListDataItem.VALUE_EMPTY);
 				}
 			}
@@ -170,6 +206,13 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 		productData.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Info, message,
 				labelClaimItem.getLabelClaim(), new ArrayList<NodeRef>(Arrays.asList(partProduct.getNodeRef())), RequirementDataType.Labelclaim));
 
+	}
+	
+	private List<LabelClaimListDataItem> getLclItemFromProduct(ProductData product, NodeRef lclCharact){
+		return product.getLabelClaimList()
+				.stream()
+				.filter(lcl -> lclCharact.equals(lcl.getLabelClaim()))
+				.collect(Collectors.toList());
 	}
 
 	private String extractName(NodeRef labelClaim) {
