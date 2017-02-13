@@ -102,8 +102,9 @@ function main()
    }
 
    var documentDetails = AlfrescoUtil.getNodeDetails(model.nodeRef, model.site);
+   var suppressSocial = documentDetails && AlfrescoUtil.isComponentSuppressed(documentDetails.item.node, AlfrescoUtil.getSupressSocialfolderDetailsConfig());
    var activityParameters = null;
-   if (documentDetails)
+   if (documentDetails && !suppressSocial)
    {
       activityParameters = getActivityParameters(model.nodeRef, null);
    }

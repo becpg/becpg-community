@@ -51,6 +51,7 @@
    <style type="org.alfresco.datalists.list-deleted" css="datalist" />
    <style type="org.alfresco.subscription.followed" css="user" />
    <style type="org.alfresco.subscription.subscribed" css="user" />
+   <style type="org.alfresco.doclink.link-created" css="link" />
    <!-- beCPG -->
    <style type="org.alfresco.datalists.list-item-liked" css="like" />
    <style type="fr.becpg.project.project-state" css="project" />

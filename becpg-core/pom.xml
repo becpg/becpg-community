@@ -68,7 +68,7 @@
 			<artifactId>alfresco-remote-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
-
+		
 	</dependencies>
 	<build>
 		<plugins>

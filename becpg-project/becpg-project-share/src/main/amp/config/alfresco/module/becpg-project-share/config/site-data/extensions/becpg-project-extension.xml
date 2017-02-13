@@ -15,10 +15,6 @@
 					  <webscript>share-header</webscript>
 				   </alwaysApply>
 		        </customization>
-		        <customization>
-					<targetPackageRoot>org.alfresco.modules</targetPackageRoot>
-					<sourcePackageRoot>org.alfresco.components.custom-presets-project</sourcePackageRoot>
-				</customization>
 				 <customization>
 					<targetPackageRoot>org.alfresco.components.entity-charact-views</targetPackageRoot>
 					<sourcePackageRoot>org.alfresco.components.custom-views-project</sourcePackageRoot>
