@@ -269,6 +269,9 @@
 								// current settings...
 								Dom.setStyle(this.id + "-navBar", "display", this.options.hideNavBar ? "none" : "block");
 
+
+
+
 								// RSS Feed link button
 								this.widgets.rssFeed = Alfresco.util.createYUIButton(this, "rssFeed-button", null, {
 									type : "link"
