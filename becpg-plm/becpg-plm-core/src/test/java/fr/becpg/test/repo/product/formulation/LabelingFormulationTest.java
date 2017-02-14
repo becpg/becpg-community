@@ -33,6 +33,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.LongAdder;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
@@ -1442,13 +1443,15 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 					if (RequirementDataType.Validation.equals(reqCtrlListDataItem.getReqDataType())) {
 						Assert.assertEquals("Composant non validé", error);
 					} else if (RequirementDataType.Completion.equals(reqCtrlListDataItem.getReqDataType())) {
-						System.out.println("Found rcl: "+error);
-						assertTrue(error.equals("Champ obligatoire 'Libellé légal' manquant (catalogue 'EU 1169/2011 (INCO)')")
-								|| error.equals("Champ obligatoire 'Poids net (kg)' manquant (catalogue 'EU 1169/2011 (INCO)')")
-								|| error.equals("Champ obligatoire 'Précautions d'emploi' manquant (catalogue 'EU 1169/2011 (INCO)')")
-								|| error.equals("Champ obligatoire 'Conditions de conservation' manquant (catalogue 'EU 1169/2011 (INCO)')")
-								|| error.equals("Champ obligatoire 'DLC (J) ou DDM/DLUO (J)' manquant (catalogue 'EU 1169/2011 (INCO)')")
-								|| error.equals("Champ obligatoire 'Origine géographique' manquant (catalogue 'EU 1169/2011 (INCO)')"));
+						
+						boolean ret = Pattern.matches("Champ obligatoire '(.*)' manquant \\(catalogue 'EU 1169/2011 \\(INCO\\)'\\)", error);
+						
+						if(!ret){
+							logger.error("Incorrect requirement:" +error);
+						}
+								
+								
+						Assert.assertTrue(ret);
 					} else {
 						Assert.assertEquals("Incorrect label :" + error + "\n   - compare to " + errorMessage, error, errorMessage);
 					}

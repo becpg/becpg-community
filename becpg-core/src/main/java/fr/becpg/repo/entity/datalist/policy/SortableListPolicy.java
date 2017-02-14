@@ -81,7 +81,7 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 		logger.debug("Init SortableListPolicy...");
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnAddAspectPolicy.QNAME, BeCPGModel.ASPECT_SORTABLE_LIST,
 				new JavaBehaviour(this, "onAddAspect", NotificationFrequency.TRANSACTION_COMMIT));
-
+		
 		// super.disableOnCopyBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
 	}
 
