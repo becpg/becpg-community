@@ -351,7 +351,9 @@ public class MetaModelVisitor {
 				}
 			 }
 			}
-		logger.error("Cannot find method for name:"+methodNames[0]+" under "+clazz.getSimpleName());
+		 if(logger.isDebugEnabled()){
+			 logger.debug("Cannot find method for name:"+methodNames[0]+" under "+clazz.getSimpleName());
+		 }
 		return null;
 	}
 

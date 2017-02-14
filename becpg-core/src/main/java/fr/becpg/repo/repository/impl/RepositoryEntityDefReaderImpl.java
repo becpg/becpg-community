@@ -210,7 +210,9 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 				}
 			}
 		}
-		logger.warn("No default pivot assoc found for "+entityDataListQname);
+		if(logger.isDebugEnabled()){
+			logger.debug("No default pivot assoc found for "+entityDataListQname);
+		}
 		return null;
 	}
 
