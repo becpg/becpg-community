@@ -130,7 +130,8 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 				if (subLabelClaimItem.getLabelClaimValue() != null) {
 					switch (subLabelClaimItem.getLabelClaimValue()) {
 					case LabelClaimListDataItem.VALUE_TRUE:
-						if (labelClaimItem.getLabelClaimValue() == null) {
+						if (labelClaimItem.getLabelClaimValue() == null || 
+						LabelClaimListDataItem.VALUE_NA.toString().equals(labelClaimItem.getLabelClaimValue())) {
 							labelClaimItem.setIsClaimed(true);
 						}
 						break;
