@@ -101,9 +101,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 						ProductData partProduct = alfrescoRepository.findOne(part);
 						if (partProduct.getLabelClaimList() != null) {
 							for (LabelClaimListDataItem labelClaim : partProduct.getLabelClaimList()) {
-
 								visitPart(productData, partProduct, labelClaim);
-								
 							}
 						}
 						visitedProducts.add(part);
@@ -134,7 +132,8 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 				if (subLabelClaimItem.getLabelClaimValue() != null) {
 					switch (subLabelClaimItem.getLabelClaimValue()) {
 					case LabelClaimListDataItem.VALUE_TRUE:
-						if (labelClaimItem.getLabelClaimValue() == null) {
+						if (labelClaimItem.getLabelClaimValue() == null 
+							|| LabelClaimListDataItem.VALUE_NA.toString().equals(labelClaimItem.getLabelClaimValue())) {
 							labelClaimItem.setIsClaimed(true);
 						}
 						break;
@@ -147,11 +146,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 						if (labelClaimItem.getIsClaimed() || (labelClaimItem.getLabelClaimValue() == null)) {
 							
 							if(!labelClaimItem.getIsFormulated()){
-								labelClaimItem.getMissingLabelClaims().add(partProduct.getNodeRef());
-								List<LabelClaimListDataItem> partMatchingLclItems = getLclItemFromProduct(partProduct, labelClaimItem.getLabelClaim());
-								for(LabelClaimListDataItem matchingLclItem : partMatchingLclItems){
-									labelClaimItem.getMissingLabelClaims().addAll(matchingLclItem.getMissingLabelClaims());
-								}
+								addMissingLabelClaims(partProduct,labelClaimItem );
 							}
 							
 							labelClaimItem.setIsClaimed(false);
@@ -163,18 +158,9 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 							logger.debug("case empty/default for " + extractName(subLabelClaimItem.getLabelClaim()) + " (value is: \""
 									+ subLabelClaimItem.getLabelClaimValue() + "\")");
 						}
-						addMissingLabelClaimReq(productData, partProduct, labelClaimItem);
-						
 						if(!labelClaimItem.getIsFormulated()){
-							logger.debug("Adding part "+partProduct.getName()+" ("+partProduct.getNodeRef()+") to missing list");
-							
-							labelClaimItem.getMissingLabelClaims().add(partProduct.getNodeRef());
-							List<LabelClaimListDataItem> partMatchingLclItems = getLclItemFromProduct(partProduct, labelClaimItem.getLabelClaim());
-							
-							for(LabelClaimListDataItem matchingLclItem : partMatchingLclItems){
-								labelClaimItem.getMissingLabelClaims().addAll(matchingLclItem.getMissingLabelClaims());
-							}
-							
+							addMissingLabelClaimReq(productData, partProduct, labelClaimItem);
+							addMissingLabelClaims(partProduct,labelClaimItem );
 						}
 						
 						labelClaimItem.setLabelClaimValue(LabelClaimListDataItem.VALUE_EMPTY);
@@ -184,14 +170,10 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 					if (logger.isDebugEnabled()) {
 						logger.debug(extractName(subLabelClaimItem.getLabelClaim()) + " has null label claim value");
 					}
-					addMissingLabelClaimReq(productData, partProduct, labelClaimItem);
+					
 					if(!labelClaimItem.getIsFormulated()){
-						logger.debug("Adding part "+partProduct.getName()+" ("+partProduct.getNodeRef()+") to missing list");
-						labelClaimItem.getMissingLabelClaims().add(partProduct.getNodeRef());
-						List<LabelClaimListDataItem> partMatchingLclItems = getLclItemFromProduct(partProduct, labelClaimItem.getLabelClaim());
-						for(LabelClaimListDataItem matchingLclItem : partMatchingLclItems){
-							labelClaimItem.getMissingLabelClaims().addAll(matchingLclItem.getMissingLabelClaims());
-						}
+						addMissingLabelClaimReq(productData, partProduct, labelClaimItem);
+						addMissingLabelClaims(partProduct,labelClaimItem );
 						
 					}
 					
@@ -200,6 +182,16 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 			}
 		}
 	}
+	
+	private void addMissingLabelClaims(ProductData partProduct, LabelClaimListDataItem labelClaimItem){
+		logger.debug("Adding part "+partProduct.getName()+" ("+partProduct.getNodeRef()+") to missing list");
+		labelClaimItem.getMissingLabelClaims().add(partProduct.getNodeRef());
+		List<LabelClaimListDataItem> partMatchingLclItems = getLclItemFromProduct(partProduct, labelClaimItem.getLabelClaim());
+		for(LabelClaimListDataItem matchingLclItem : partMatchingLclItems){
+			labelClaimItem.getMissingLabelClaims().addAll(matchingLclItem.getMissingLabelClaims());
+		}		
+	}
+	
 
 	private void addMissingLabelClaimReq(ProductData productData, ProductData partProduct, LabelClaimListDataItem labelClaimItem) {
 		String message = I18NUtil.getMessage(MESSAGE_MISSING_CLAIM, extractName(labelClaimItem.getLabelClaim()));
