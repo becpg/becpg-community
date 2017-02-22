@@ -146,60 +146,17 @@
         <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="nc" id="1656">
             <list-property name="columnHints">
                 <structure>
-                    <property name="columnName">ncCreated</property>
+                    <property name="columnName">creator</property>
                     <property name="analysis">attribute</property>
                     <property name="onColumnLayout">false</property>
-                    <text-property name="heading">ncCreated</text-property>
-                    <property name="analysisColumn">ncCreated</property>
+                    <text-property name="heading">creator</text-property>
+                    <property name="analysisColumn">creator</property>
                 </structure>
                 <structure>
-                    <property name="columnName">ncCost</property>
-                    <property name="analysis">attribute</property>
+                    <property name="columnName">claimOriginHierarchy1</property>
+                    <property name="analysis">dimension</property>
                     <property name="onColumnLayout">false</property>
-                    <text-property name="heading">ncCost</text-property>
-                    <property name="analysisColumn">ncCost</property>
-                </structure>
-                <structure>
-                    <property name="columnName">ncQuantityNc</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">ncQuantityNc</text-property>
-                    <property name="analysisColumn">ncQuantityNc</property>
-                </structure>
-                <structure>
-                    <property name="columnName">ncQuantityNcUnit</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">ncQuantityNcUnit</text-property>
-                    <property name="analysisColumn">ncQuantityNcUnit</property>
-                </structure>
-                <structure>
-                    <property name="columnName">ncCause</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">ncCause</text-property>
-                    <property name="analysisColumn">ncCause</property>
-                </structure>
-                <structure>
-                    <property name="columnName">ncCreationStep</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">ncCreationStep</text-property>
-                    <property name="analysisColumn">ncCreationStep</property>
-                </structure>
-                <structure>
-                    <property name="columnName">ncDetectionStep</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">ncDetectionStep</text-property>
-                    <property name="analysisColumn">ncDetectionStep</property>
-                </structure>
-                <structure>
-                    <property name="columnName">ncPriority</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">ncPriority</text-property>
-                    <property name="analysisColumn">ncPriority</property>
+                    <text-property name="heading">claimOriginHierarchy1</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">ncType</property>
@@ -209,130 +166,117 @@
                     <property name="analysisColumn">ncType</property>
                 </structure>
                 <structure>
-                    <property name="columnName">ncService</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">ncService</text-property>
-                    <property name="analysisColumn">ncService</property>
-                </structure>
-                <structure>
-                    <property name="columnName">ncDetected</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">ncDetected</text-property>
-                    <property name="analysisColumn">ncDetected</property>
-                </structure>
-                <structure>
-                    <property name="columnName">acEfficiency</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">acEfficiency</text-property>
-                    <property name="analysisColumn">acEfficiency</property>
-                </structure>
-                <structure>
-                    <property name="columnName">clients</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">clients</text-property>
-                    <property name="analysisColumn">clients</property>
-                </structure>
-                <structure>
-                    <property name="columnName">modifier</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">modifier</text-property>
-                    <property name="analysisColumn">modifier</property>
-                </structure>
-                <structure>
-                    <property name="columnName">modified</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">modified</text-property>
-                    <property name="analysisColumn">modified</property>
-                </structure>
-                <structure>
-                    <property name="columnName">batchId</property>
+                    <property name="columnName">claimResponseDate</property>
                     <property name="analysis">dimension</property>
                     <property name="onColumnLayout">false</property>
-                    <text-property name="heading">batchId</text-property>
-                    <property name="analysisColumn">batchId</property>
+                    <text-property name="heading">claimResponseDate</text-property>
                 </structure>
                 <structure>
-                    <property name="columnName">code</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">code</text-property>
-                    <property name="analysisColumn">code</property>
-                </structure>
-                <structure>
-                    <property name="columnName">orderId</property>
+                    <property name="columnName">claimDescription</property>
                     <property name="analysis">dimension</property>
                     <property name="onColumnLayout">false</property>
-                    <text-property name="heading">orderId</text-property>
-                    <property name="analysisColumn">orderId</property>
+                    <text-property name="heading">claimDescription</text-property>
                 </structure>
                 <structure>
-                    <property name="columnName">locale</property>
-                    <property name="analysis">attribute</property>
+                    <property name="columnName">claimAnalysisComment</property>
+                    <property name="analysis">dimension</property>
                     <property name="onColumnLayout">false</property>
-                    <text-property name="heading">locale</text-property>
-                    <property name="analysisColumn">locale</property>
+                    <text-property name="heading">claimAnalysisComment</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">claimResponseComment</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">claimResponseComment</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">claimTreatementComment</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">claimTreatementComment</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">claimOriginHierarchy2</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">claimOriginHierarchy2</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">claimTreatementDetails</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">claimTreatementDetails</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">claimTreatementPrevActions</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">claimTreatementPrevActions</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">claimStartComment</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">claimStartComment</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">claimResponseState</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">claimResponseState</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">claimResponseDetails</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">claimResponseDetails</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">claimTreatmentActor</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">claimTreatmentActor</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">claimResponseActor</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">claimResponseActor</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">claimTreatementDate</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">claimTreatementDate</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">claimType</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">claimType</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">claimClassificationComment</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">claimClassificationComment</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">claimClosingComment</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">claimClosingComment</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">name</property>
-                    <property name="analysis">attribute</property>
+                    <property name="analysis">dimension</property>
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">name</text-property>
-                    <property name="analysisColumn">name</property>
                 </structure>
                 <structure>
                     <property name="columnName">created</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
+                    <property name="analysis">dimension</property>
                     <text-property name="heading">created</text-property>
-                    <property name="analysisColumn">created</property>
-                </structure>
-                <structure>
-                    <property name="columnName">creator</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">creator</text-property>
-                    <property name="analysisColumn">creator</property>
-                </structure>
-                <structure>
-                    <property name="columnName">description</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">description</text-property>
-                    <property name="analysisColumn">description</property>
-                </structure>
-                <structure>
-                    <property name="columnName">batchComment</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">batchComment</text-property>
-                    <property name="analysisColumn">batchComment</property>
-                </structure>
-                <structure>
-                    <property name="columnName">suppliers</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">suppliers</text-property>
-                    <property name="analysisColumn">suppliers</property>
-                </structure>
-                <structure>
-                    <property name="columnName">product</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">product</text-property>
-                    <property name="analysisColumn">product</property>
-                </structure>
-                <structure>
-                    <property name="columnName">ncState</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">ncState</text-property>
-                    <property name="analysisColumn">ncState</property>
                 </structure>
             </list-property>
             <list-property name="parameters"/>
@@ -340,138 +284,113 @@
                 <list-property name="resultSet">
                     <structure>
                         <property name="position">1</property>
-                        <property name="name">ncCreated</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">2</property>
-                        <property name="name">ncCost</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">3</property>
-                        <property name="name">ncQuantityNc</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">4</property>
-                        <property name="name">ncQuantityNcUnit</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">5</property>
-                        <property name="name">ncCause</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">6</property>
-                        <property name="name">ncCreationStep</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">7</property>
-                        <property name="name">ncDetectionStep</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">8</property>
-                        <property name="name">ncPriority</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">9</property>
-                        <property name="name">ncType</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">10</property>
-                        <property name="name">ncService</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">11</property>
-                        <property name="name">ncDetected</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">12</property>
-                        <property name="name">acEfficiency</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">13</property>
-                        <property name="name">clients</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">14</property>
-                        <property name="name">modifier</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">15</property>
-                        <property name="name">modified</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">16</property>
-                        <property name="name">batchId</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">17</property>
-                        <property name="name">code</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">18</property>
-                        <property name="name">orderId</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">19</property>
-                        <property name="name">locale</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">20</property>
-                        <property name="name">name</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">21</property>
-                        <property name="name">created</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">22</property>
                         <property name="name">creator</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">23</property>
-                        <property name="name">description</property>
+                        <property name="position">2</property>
+                        <property name="name">claimOriginHierarchy1</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">24</property>
-                        <property name="name">batchComment</property>
+                        <property name="position">3</property>
+                        <property name="name">ncType</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">25</property>
-                        <property name="name">suppliers</property>
+                        <property name="position">4</property>
+                        <property name="name">claimResponseDate</property>
+                        <property name="dataType">date</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">claimDescription</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">26</property>
-                        <property name="name">product</property>
+                        <property name="position">6</property>
+                        <property name="name">claimAnalysisComment</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">27</property>
-                        <property name="name">ncState</property>
+                        <property name="position">7</property>
+                        <property name="name">claimResponseComment</property>
                         <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">claimTreatementComment</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">claimOriginHierarchy2</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">claimTreatementDetails</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">claimTreatementPrevActions</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">claimStartComment</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">claimResponseState</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">14</property>
+                        <property name="name">claimResponseDetails</property>
+                        <property name="dataType">date</property>
+                    </structure>
+                    <structure>
+                        <property name="position">15</property>
+                        <property name="name">claimTreatmentActor</property>
+                        <property name="dataType">date</property>
+                    </structure>
+                    <structure>
+                        <property name="position">16</property>
+                        <property name="name">claimResponseActor</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">17</property>
+                        <property name="name">claimTreatementDate</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">18</property>
+                        <property name="name">claimType</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">19</property>
+                        <property name="name">claimClassificationComment</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">20</property>
+                        <property name="name">claimClosingComment</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">21</property>
+                        <property name="name">name</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">22</property>
+                        <property name="name">created</property>
+                        <property name="dataType">date</property>
                     </structure>
                 </list-property>
             </structure>
@@ -479,195 +398,160 @@
             <list-property name="resultSet">
                 <structure>
                     <property name="position">1</property>
-                    <property name="name">ncCreated</property>
-                    <property name="nativeName">ncCreated</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">2</property>
-                    <property name="name">ncCost</property>
-                    <property name="nativeName">ncCost</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">3</property>
-                    <property name="name">ncQuantityNc</property>
-                    <property name="nativeName">ncQuantityNc</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">4</property>
-                    <property name="name">ncQuantityNcUnit</property>
-                    <property name="nativeName">ncQuantityNcUnit</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">5</property>
-                    <property name="name">ncCause</property>
-                    <property name="nativeName">ncCause</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">6</property>
-                    <property name="name">ncCreationStep</property>
-                    <property name="nativeName">ncCreationStep</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">7</property>
-                    <property name="name">ncDetectionStep</property>
-                    <property name="nativeName">ncDetectionStep</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">8</property>
-                    <property name="name">ncPriority</property>
-                    <property name="nativeName">ncPriority</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">9</property>
-                    <property name="name">ncType</property>
-                    <property name="nativeName">ncType</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">10</property>
-                    <property name="name">ncService</property>
-                    <property name="nativeName">ncService</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">11</property>
-                    <property name="name">ncDetected</property>
-                    <property name="nativeName">ncDetected</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">12</property>
-                    <property name="name">acEfficiency</property>
-                    <property name="nativeName">acEfficiency</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">13</property>
-                    <property name="name">clients</property>
-                    <property name="nativeName">clients</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">14</property>
-                    <property name="name">modifier</property>
-                    <property name="nativeName">modifier</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">15</property>
-                    <property name="name">modified</property>
-                    <property name="nativeName">modified</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">16</property>
-                    <property name="name">batchId</property>
-                    <property name="nativeName">batchId</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">17</property>
-                    <property name="name">code</property>
-                    <property name="nativeName">code</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">18</property>
-                    <property name="name">orderId</property>
-                    <property name="nativeName">orderId</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">19</property>
-                    <property name="name">locale</property>
-                    <property name="nativeName">locale</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">20</property>
-                    <property name="name">name</property>
-                    <property name="nativeName">name</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">21</property>
-                    <property name="name">created</property>
-                    <property name="nativeName">created</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">22</property>
                     <property name="name">creator</property>
                     <property name="nativeName">creator</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">23</property>
-                    <property name="name">description</property>
-                    <property name="nativeName">description</property>
+                    <property name="position">2</property>
+                    <property name="name">claimOriginHierarchy1</property>
+                    <property name="nativeName">claimOriginHierarchy1</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">24</property>
-                    <property name="name">batchComment</property>
-                    <property name="nativeName">batchComment</property>
+                    <property name="position">3</property>
+                    <property name="name">ncType</property>
+                    <property name="nativeName">ncType</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">25</property>
-                    <property name="name">suppliers</property>
-                    <property name="nativeName">suppliers</property>
+                    <property name="position">4</property>
+                    <property name="name">claimResponseDate</property>
+                    <property name="nativeName">claimResponseDate</property>
+                    <property name="dataType">date</property>
+                    <property name="nativeDataType">91</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">claimDescription</property>
+                    <property name="nativeName">claimDescription</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">26</property>
-                    <property name="name">product</property>
-                    <property name="nativeName">product</property>
+                    <property name="position">6</property>
+                    <property name="name">claimAnalysisComment</property>
+                    <property name="nativeName">claimAnalysisComment</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">27</property>
-                    <property name="name">ncState</property>
-                    <property name="nativeName">ncState</property>
+                    <property name="position">7</property>
+                    <property name="name">claimResponseComment</property>
+                    <property name="nativeName">claimResponseComment</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">claimTreatementComment</property>
+                    <property name="nativeName">claimTreatementComment</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">claimOriginHierarchy2</property>
+                    <property name="nativeName">claimOriginHierarchy2</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">claimTreatementDetails</property>
+                    <property name="nativeName">claimTreatementDetails</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">claimTreatementPrevActions</property>
+                    <property name="nativeName">claimTreatementPrevActions</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">claimStartComment</property>
+                    <property name="nativeName">claimStartComment</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">claimResponseState</property>
+                    <property name="nativeName">claimResponseState</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">14</property>
+                    <property name="name">claimResponseDetails</property>
+                    <property name="nativeName">claimResponseDetails</property>
+                    <property name="dataType">date</property>
+                    <property name="nativeDataType">91</property>
+                </structure>
+                <structure>
+                    <property name="position">15</property>
+                    <property name="name">claimTreatmentActor</property>
+                    <property name="nativeName">claimTreatmentActor</property>
+                    <property name="dataType">date</property>
+                    <property name="nativeDataType">91</property>
+                </structure>
+                <structure>
+                    <property name="position">16</property>
+                    <property name="name">claimResponseActor</property>
+                    <property name="nativeName">claimResponseActor</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">17</property>
+                    <property name="name">claimTreatementDate</property>
+                    <property name="nativeName">claimTreatementDate</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">18</property>
+                    <property name="name">claimType</property>
+                    <property name="nativeName">claimType</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">19</property>
+                    <property name="name">claimClassificationComment</property>
+                    <property name="nativeName">claimClassificationComment</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">20</property>
+                    <property name="name">claimClosingComment</property>
+                    <property name="nativeName">claimClosingComment</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">21</property>
+                    <property name="name">name</property>
+                    <property name="nativeName">name</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">22</property>
+                    <property name="name">created</property>
+                    <property name="nativeName">created</property>
+                    <property name="dataType">date</property>
+                    <property name="nativeDataType">91</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{ncCreated;STRING;/@ncCreated},{ncCost;STRING;/@ncCost},{ncQuantityNc;STRING;/@ncQuantityNc},{ncQuantityNcUnit;STRING;/@ncQuantityNcUnit},{ncCause;STRING;/@ncCause},{ncCreationStep;STRING;/@ncCreationStep},{ncDetectionStep;STRING;/@ncDetectionStep},{ncPriority;STRING;/@ncPriority},{ncType;STRING;/@ncType},{ncService;STRING;/@ncService},{ncDetected;STRING;/@ncDetected},{acEfficiency;STRING;/@acEfficiency},{clients;STRING;/@clients},{modifier;STRING;/@modifier},{modified;STRING;/@modified},{batchId;STRING;/@batchId},{code;STRING;/@code},{orderId;STRING;/@orderId},{locale;STRING;/@locale},{name;STRING;/@name},{created;STRING;/@created},{creator;STRING;/@creator},{description;STRING;/@description},{batchComment;STRING;/@batchComment},{suppliers;STRING;/@suppliers},{product;STRING;/@product},{ncState;STRING;/@ncState}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{creator;STRING;/creator},{claimOriginHierarchy1;STRING;/claimOriginHierarchy1},{ncType;STRING;/ncType},{claimResponseDate;DATE;/claimResponseDate},{claimDescription;STRING;/claimDescription},{claimAnalysisComment;STRING;/claimAnalysisComment},{claimResponseComment;STRING;/claimResponseComment},{claimTreatementComment;STRING;/claimTreatementComment},{claimOriginHierarchy2;STRING;/claimOriginHierarchy2},{claimTreatementDetails;STRING;/claimTreatementDetails},{claimTreatementPrevActions;STRING;/claimTreatementPrevActions},{claimStartComment;STRING;/claimStartComment},{claimResponseState;STRING;/claimResponseState},{claimResponseDetails;DATE;/claimResponseDetails},{claimTreatmentActor;DATE;/claimTreatmentActor},{claimResponseActor;STRING;/claimResponseActor},{claimTreatementDate;STRING;/claimTreatementDate},{claimType;STRING;/claimType},{claimClassificationComment;STRING;/claimClassificationComment},{claimClosingComment;STRING;/claimClosingComment},{name;STRING;/name},{created;DATE;/created}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -1395,49 +1279,62 @@
             <property name="borderTopStyle">solid</property>
             <property name="borderTopWidth">1pt</property>
         </style>
-        <style name="becpg-col-header" id="1479">
-            <property name="fontWeight">bold</property>
-            <property name="color">#339966</property>
-            <property name="textAlign">left</property>
-        </style>
         <style name="becpg-chapter-header" id="1482">
-            <property name="backgroundColor">#F2ECD2</property>
-            <property name="fontSize">14pt</property>
+            <property name="backgroundColor">#EEEEEE</property>
+            <property name="fontSize">12pt</property>
             <property name="fontWeight">bold</property>
-            <property name="color">#339966</property>
+            <property name="color">#000000</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
             <property name="textAlign">center</property>
         </style>
         <style name="becpg-row-header" id="1483">
             <property name="fontWeight">bold</property>
-            <property name="color">#808080</property>
+            <property name="fontStyle">italic</property>
         </style>
         <style name="becpg-col-border" id="1500">
-            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftColor">#000000</property>
             <property name="borderLeftStyle">solid</property>
             <property name="borderLeftWidth">thin</property>
+            <property name="borderRightStyle">none</property>
+            <property name="borderRightWidth">medium</property>
+            <property name="borderTopColor">#000000</property>
         </style>
         <style name="becpg-row-border" id="1501">
-            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderTopColor">#000000</property>
             <property name="borderTopStyle">solid</property>
             <property name="borderTopWidth">thin</property>
         </style>
         <style name="becpg-table" id="1502">
-            <property name="borderBottomColor">#339966</property>
             <property name="borderBottomStyle">solid</property>
             <property name="borderBottomWidth">thin</property>
-            <property name="borderLeftColor">#339966</property>
             <property name="borderLeftStyle">solid</property>
             <property name="borderLeftWidth">thin</property>
-            <property name="borderRightColor">#339966</property>
             <property name="borderRightStyle">solid</property>
             <property name="borderRightWidth">thin</property>
-            <property name="borderTopColor">#339966</property>
             <property name="borderTopStyle">solid</property>
             <property name="borderTopWidth">thin</property>
         </style>
         <style name="becpg-group-header" id="1575">
-            <property name="backgroundColor">#669999</property>
-            <property name="color">#FFFFFF</property>
+            <property name="backgroundColor">#EEEEEE</property>
+        </style>
+        <style name="becpg-data-unit" id="2604">
+            <property name="textAlign">center</property>
+        </style>
+        <style name="becpg-data" id="3015">
+            <property name="textAlign">center</property>
         </style>
     </styles>
     <page-setup>
@@ -1495,11 +1392,24 @@
                             <property name="textAlign">center</property>
                             <label id="773">
                                 <property name="fontFamily">"arial"</property>
+                                <property name="fontSize">14pt</property>
                                 <property name="fontWeight">bold</property>
-                                <property name="color">#999999</property>
+                                <property name="color">#000000</property>
                                 <property name="textAlign">center</property>
                                 <text-property name="text">Non conformité</text-property>
                             </label>
+                            <data id="3132">
+                                <property name="dataSet">nc</property>
+                                <list-property name="boundDataColumns">
+                                    <structure>
+                                        <property name="name">name</property>
+                                        <text-property name="displayName">name</text-property>
+                                        <expression name="expression" type="javascript">dataSetRow["name"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                </list-property>
+                                <property name="resultSetColumn">name</property>
+                            </data>
                         </cell>
                         <cell id="776">
                             <property name="borderBottomColor">#FFFFFF</property>
@@ -1516,6 +1426,7 @@
                             <property name="borderTopWidth">thin</property>
                             <grid id="777">
                                 <property name="borderTopStyle">none</property>
+                                <property name="height">0.5in</property>
                                 <property name="width">3.25in</property>
                                 <column id="778">
                                     <property name="width">0.7678571428571429in</property>
@@ -1524,6 +1435,7 @@
                                     <property name="width">2.482142857142857in</property>
                                 </column>
                                 <row id="779">
+                                    <property name="height">0.10416666666666667in</property>
                                     <cell id="780">
                                         <property name="borderBottomColor">#FFFFFF</property>
                                         <property name="borderBottomStyle">solid</property>
@@ -1537,9 +1449,6 @@
                                         <property name="borderTopColor">#FFFFFF</property>
                                         <property name="borderTopStyle">solid</property>
                                         <property name="borderTopWidth">thin</property>
-                                        <label id="1520">
-                                            <text-property name="text">Créé le</text-property>
-                                        </label>
                                     </cell>
                                     <cell id="1516">
                                         <property name="borderBottomColor">#FFFFFF</property>
@@ -1554,63 +1463,6 @@
                                         <property name="borderTopColor">#FFFFFF</property>
                                         <property name="borderTopStyle">solid</property>
                                         <property name="borderTopWidth">thin</property>
-                                        <data id="1877">
-                                            <property name="dataSet">nc</property>
-                                            <list-property name="boundDataColumns">
-                                                <structure>
-                                                    <property name="name">created</property>
-                                                    <text-property name="displayName">created</text-property>
-                                                    <expression name="expression" type="javascript">dataSetRow["created"]</expression>
-                                                    <property name="dataType">string</property>
-                                                </structure>
-                                            </list-property>
-                                            <property name="resultSetColumn">created</property>
-                                        </data>
-                                    </cell>
-                                </row>
-                                <row id="783">
-                                    <cell id="784">
-                                        <property name="borderBottomColor">#FFFFFF</property>
-                                        <property name="borderBottomStyle">solid</property>
-                                        <property name="borderBottomWidth">thin</property>
-                                        <property name="borderLeftColor">#FFFFFF</property>
-                                        <property name="borderLeftStyle">solid</property>
-                                        <property name="borderLeftWidth">thin</property>
-                                        <property name="borderRightColor">#FFFFFF</property>
-                                        <property name="borderRightStyle">solid</property>
-                                        <property name="borderRightWidth">thin</property>
-                                        <property name="borderTopColor">#FFFFFF</property>
-                                        <property name="borderTopStyle">solid</property>
-                                        <property name="borderTopWidth">thin</property>
-                                        <label id="1521">
-                                            <text-property name="text">Code</text-property>
-                                        </label>
-                                    </cell>
-                                    <cell id="1517">
-                                        <property name="borderBottomColor">#FFFFFF</property>
-                                        <property name="borderBottomStyle">solid</property>
-                                        <property name="borderBottomWidth">thin</property>
-                                        <property name="borderLeftColor">#FFFFFF</property>
-                                        <property name="borderLeftStyle">solid</property>
-                                        <property name="borderLeftWidth">thin</property>
-                                        <property name="borderRightColor">#FFFFFF</property>
-                                        <property name="borderRightStyle">solid</property>
-                                        <property name="borderRightWidth">thin</property>
-                                        <property name="borderTopColor">#FFFFFF</property>
-                                        <property name="borderTopStyle">solid</property>
-                                        <property name="borderTopWidth">thin</property>
-                                        <data id="1658">
-                                            <property name="dataSet">nc</property>
-                                            <list-property name="boundDataColumns">
-                                                <structure>
-                                                    <property name="name">code</property>
-                                                    <text-property name="displayName">code</text-property>
-                                                    <expression name="expression" type="javascript">dataSetRow["code"]</expression>
-                                                    <property name="dataType">string</property>
-                                                </structure>
-                                            </list-property>
-                                            <property name="resultSetColumn">code</property>
-                                        </data>
                                     </cell>
                                 </row>
                                 <row id="923">
@@ -1649,18 +1501,18 @@
                                         <property name="borderTopStyle">solid</property>
                                         <property name="borderTopWidth">thin</property>
                                         <auto-text id="933">
-                                            <property name="color">#339966</property>
+                                            <property name="color">#000000</property>
                                             <property name="display">inline</property>
                                             <property name="type">page-number</property>
                                         </auto-text>
                                         <text id="935">
-                                            <property name="color">#339966</property>
+                                            <property name="color">#000000</property>
                                             <property name="display">inline</property>
                                             <property name="contentType">plain</property>
                                             <text-property name="content"><![CDATA[/]]></text-property>
                                         </text>
                                         <auto-text id="937">
-                                            <property name="color">#339966</property>
+                                            <property name="color">#000000</property>
                                             <property name="display">inline</property>
                                             <property name="type">total-page</property>
                                         </auto-text>
@@ -1682,518 +1534,413 @@
     <body>
         <label id="1576">
             <property name="style">becpg-chapter-header</property>
-            <property name="backgroundColor">#F2ECD2</property>
-            <property name="fontSize">14pt</property>
-            <property name="fontWeight">bold</property>
-            <property name="textAlign">center</property>
-            <text-property name="text">Identification de la non-conformité</text-property>
+            <text-property name="text">SAISIE</text-property>
         </label>
-        <label id="1786"/>
-        <grid id="1659">
-            <property name="style">becpg-table</property>
-            <property name="height">1.9465648854961832in</property>
-            <column id="1712">
-                <property name="fontWeight">bold</property>
+        <grid id="3021">
+            <property name="width">7.947916666666667in</property>
+            <column id="3022">
+                <property name="width">3.9583333333333335in</property>
             </column>
-            <column id="1661">
-                <property name="style">becpg-col-border</property>
+            <column id="3023">
+                <property name="width">3.9895833333333335in</property>
             </column>
-            <column id="1721">
-                <property name="style">becpg-col-border</property>
-                <property name="fontWeight">bold</property>
-            </column>
-            <column id="1662">
-                <property name="style">becpg-col-border</property>
-            </column>
-            <row id="1663">
-                <cell id="1704">
-                    <label id="1691">
+            <row id="3133">
+                <cell id="3134">
+                    <label id="3136">
                         <property name="style">becpg-row-header</property>
-                        <text-property name="text">Type</text-property>
+                        <text-property name="text">Créateur</text-property>
                     </label>
-                </cell>
-                <cell id="1665">
-                    <data id="1671">
+                    <data id="3139">
                         <property name="dataSet">nc</property>
                         <list-property name="boundDataColumns">
                             <structure>
-                                <property name="name">ncType</property>
-                                <text-property name="displayName">ncType</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["ncType"]</expression>
+                                <property name="name">creator</property>
+                                <text-property name="displayName">creator</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["creator"]</expression>
                                 <property name="dataType">string</property>
                             </structure>
                         </list-property>
-                        <property name="resultSetColumn">ncType</property>
+                        <property name="resultSetColumn">creator</property>
                     </data>
                 </cell>
-                <cell id="1713">
-                    <label id="1692">
+                <cell id="3135">
+                    <label id="3137">
                         <property name="style">becpg-row-header</property>
-                        <text-property name="text">Priorité</text-property>
+                        <text-property name="text">Date</text-property>
                     </label>
-                </cell>
-                <cell id="1666">
-                    <data id="1672">
-                        <property name="dataSet">nc</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">ncPriority</property>
-                                <text-property name="displayName">ncPriority</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["ncPriority"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">ncPriority</property>
-                    </data>
-                </cell>
-            </row>
-            <row id="1667">
-                <property name="style">becpg-row-border</property>
-                <cell id="1705">
-                    <label id="1693">
-                        <property name="style">becpg-row-header</property>
-                        <text-property name="text">Etape de création</text-property>
-                    </label>
-                </cell>
-                <cell id="1669">
-                    <data id="1701">
-                        <property name="dataSet">nc</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">ncCreationStep</property>
-                                <text-property name="displayName">ncCreationStep</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["ncCreationStep"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">ncCreationStep</property>
-                    </data>
-                </cell>
-                <cell id="1714">
-                    <label id="1694">
-                        <property name="style">becpg-row-header</property>
-                        <text-property name="text">Etape de détection</text-property>
-                    </label>
-                </cell>
-                <cell id="1670">
-                    <data id="1700">
-                        <property name="dataSet">nc</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">ncDetectionStep</property>
-                                <text-property name="displayName">ncDetectionStep</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["ncDetectionStep"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">ncDetectionStep</property>
-                    </data>
-                </cell>
-            </row>
-            <row id="1676">
-                <property name="style">becpg-row-border</property>
-                <cell id="1706">
-                    <label id="1696">
-                        <property name="style">becpg-row-header</property>
-                        <text-property name="text">Création</text-property>
-                    </label>
-                </cell>
-                <cell id="1677">
-                    <data id="1846">
+                    <data id="3138">
                         <property name="dataSet">nc</property>
                         <list-property name="boundDataColumns">
                             <structure>
                                 <property name="name">created</property>
                                 <text-property name="displayName">created</text-property>
                                 <expression name="expression" type="javascript">dataSetRow["created"]</expression>
-                                <property name="dataType">string</property>
+                                <property name="dataType">date</property>
+                                <property name="allowExport">true</property>
                             </structure>
                         </list-property>
                         <property name="resultSetColumn">created</property>
                     </data>
                 </cell>
-                <cell id="1715">
-                    <label id="1697">
-                        <property name="style">becpg-row-header</property>
-                        <text-property name="text">Modification</text-property>
-                    </label>
-                </cell>
-                <cell id="1678">
-                    <data id="1847">
-                        <property name="dataSet">nc</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">modified</property>
-                                <text-property name="displayName">modified</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["modified"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">modified</property>
-                    </data>
-                </cell>
             </row>
-            <row id="1673">
-                <property name="style">becpg-row-border</property>
-                <cell id="1707">
-                    <label id="1695">
-                        <property name="style">becpg-row-header</property>
-                        <text-property name="text">Quantité non conforme</text-property>
-                    </label>
-                </cell>
-                <cell id="1674">
-                    <data id="1727">
-                        <property name="dataSet">nc</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">ncQuantityNc</property>
-                                <text-property name="displayName">ncQuantityNc</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["ncQuantityNc"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">ncQuantityNc</property>
-                    </data>
-                </cell>
-                <cell id="1716">
-                    <label id="1698">
-                        <property name="style">becpg-row-header</property>
-                        <text-property name="text">Unité</text-property>
-                    </label>
-                </cell>
-                <cell id="1675">
-                    <data id="1728">
-                        <property name="dataSet">nc</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">ncQuantityNcUnit</property>
-                                <text-property name="displayName">ncQuantityNcUnit</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["ncQuantityNcUnit"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">ncQuantityNcUnit</property>
-                    </data>
-                </cell>
-            </row>
-            <row id="1688">
-                <property name="style">becpg-row-border</property>
-                <cell id="1708">
-                    <label id="1722">
-                        <property name="style">becpg-row-header</property>
-                        <text-property name="text">Montant (€)</text-property>
-                    </label>
-                </cell>
-                <cell id="1689">
-                    <data id="1732">
-                        <property name="dataSet">nc</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">ncCost</property>
-                                <text-property name="displayName">ncCost</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["ncCost"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">ncCost</property>
-                    </data>
-                </cell>
-                <cell id="1717"/>
-                <cell id="1690"/>
-            </row>
-            <row id="1685">
-                <property name="style">becpg-row-border</property>
-                <property name="height">0.2824427480916031in</property>
-                <cell id="1709">
-                    <label id="1723">
-                        <property name="style">becpg-row-header</property>
-                        <text-property name="text">Description</text-property>
-                    </label>
-                </cell>
-                <cell id="1686">
-                    <property name="colSpan">3</property>
+            <row id="3030">
+                <cell id="3031">
+                    <property name="colSpan">2</property>
                     <property name="rowSpan">1</property>
-                    <data id="1731">
+                    <label id="3051">
+                        <property name="style">becpg-row-header</property>
+                        <text-property name="text">Descriptif du problème</text-property>
+                    </label>
+                    <data id="3048">
                         <property name="dataSet">nc</property>
                         <list-property name="boundDataColumns">
                             <structure>
-                                <property name="name">description</property>
-                                <text-property name="displayName">description</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["description"]</expression>
+                                <property name="name">claimDescription</property>
+                                <text-property name="displayName">claimDescription</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["claimDescription"]</expression>
                                 <property name="dataType">string</property>
                             </structure>
                         </list-property>
-                        <property name="resultSetColumn">description</property>
+                        <property name="resultSetColumn">claimDescription</property>
+                    </data>
+                </cell>
+            </row>
+            <row id="3033">
+                <cell id="3034">
+                    <property name="colSpan">2</property>
+                    <property name="rowSpan">1</property>
+                    <label id="3052">
+                        <property name="style">becpg-row-header</property>
+                        <text-property name="text">Commentaires étape saisie</text-property>
+                    </label>
+                    <data id="3047">
+                        <property name="dataSet">nc</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">claimStartComment</property>
+                                <text-property name="displayName">claimStartComment</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["claimStartComment"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">claimStartComment</property>
+                    </data>
+                </cell>
+            </row>
+            <row id="3075">
+                <cell id="3076">
+                    <property name="colSpan">2</property>
+                    <property name="rowSpan">1</property>
+                    <label id="3070">
+                        <property name="style">becpg-row-header</property>
+                        <text-property name="text">Commentaires étape orientation</text-property>
+                    </label>
+                    <data id="3073">
+                        <property name="dataSet">nc</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">claimAnalysisComment</property>
+                                <text-property name="displayName">claimAnalysisComment</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["claimAnalysisComment"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">claimAnalysisComment</property>
                     </data>
                 </cell>
             </row>
         </grid>
-        <label id="1787"/>
-        <label id="1733">
+        <label id="3016">
             <property name="style">becpg-chapter-header</property>
-            <property name="backgroundColor">#F2ECD2</property>
-            <property name="fontSize">14pt</property>
-            <property name="fontWeight">bold</property>
-            <property name="textAlign">center</property>
-            <text-property name="text">Lot</text-property>
+            <text-property name="text">TRAITEMENT</text-property>
         </label>
-        <label id="1789"/>
-        <grid id="1746">
-            <property name="style">becpg-table</property>
-            <column id="1747">
-                <property name="fontWeight">bold</property>
-            </column>
-            <column id="1748">
-                <property name="style">becpg-col-border</property>
-            </column>
-            <column id="1749">
-                <property name="style">becpg-col-border</property>
-                <property name="fontWeight">bold</property>
-            </column>
-            <column id="1750">
-                <property name="style">becpg-col-border</property>
-            </column>
-            <row id="1751">
-                <cell id="1752">
-                    <label id="1744">
+        <grid id="3053">
+            <column id="3054"/>
+            <column id="3055"/>
+            <row id="3056">
+                <cell id="3057">
+                    <label id="3068">
                         <property name="style">becpg-row-header</property>
-                        <text-property name="text">Produit</text-property>
+                        <text-property name="text">Pilote étape Traitement</text-property>
                     </label>
-                </cell>
-                <cell id="1753">
-                    <data id="1783">
+                    <data id="3074">
                         <property name="dataSet">nc</property>
                         <list-property name="boundDataColumns">
                             <structure>
-                                <property name="name">product</property>
-                                <text-property name="displayName">product</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["product"]</expression>
+                                <property name="name">claimTreatmentActor</property>
+                                <text-property name="displayName">claimTreatmentActor</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["claimTreatmentActor"]</expression>
                                 <property name="dataType">string</property>
                             </structure>
                         </list-property>
-                        <property name="resultSetColumn">product</property>
+                        <property name="resultSetColumn">claimTreatmentActor</property>
                     </data>
                 </cell>
-                <cell id="1754">
-                    <label id="1745">
+                <cell id="3058">
+                    <label id="3071">
                         <property name="style">becpg-row-header</property>
-                        <text-property name="text">Lot</text-property>
+                        <text-property name="text">Echéance</text-property>
                     </label>
-                </cell>
-                <cell id="1755">
-                    <data id="1781">
+                    <data id="3078">
                         <property name="dataSet">nc</property>
                         <list-property name="boundDataColumns">
                             <structure>
-                                <property name="name">batchId</property>
-                                <text-property name="displayName">batchId</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["batchId"]</expression>
-                                <property name="dataType">string</property>
+                                <property name="name">claimTreatementDate</property>
+                                <text-property name="displayName">claimTreatementDate</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["claimTreatementDate"]</expression>
+                                <property name="dataType">date</property>
+                                <property name="allowExport">true</property>
                             </structure>
                         </list-property>
-                        <property name="resultSetColumn">batchId</property>
+                        <property name="resultSetColumn">claimTreatementDate</property>
                     </data>
                 </cell>
             </row>
-            <row id="1756">
-                <property name="style">becpg-row-border</property>
-                <cell id="1757">
-                    <label id="1776">
-                        <property name="style">becpg-row-header</property>
-                        <text-property name="text">N° commande</text-property>
-                    </label>
-                </cell>
-                <cell id="1758">
-                    <data id="1782">
-                        <property name="dataSet">nc</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">orderId</property>
-                                <text-property name="displayName">orderId</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["orderId"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">orderId</property>
-                    </data>
-                </cell>
-                <cell id="1759">
-                    <label id="1777">
-                        <property name="style">becpg-row-header</property>
-                        <text-property name="text">Client / Fournisseur</text-property>
-                    </label>
-                </cell>
-                <cell id="1760">
-                    <data id="1784">
-                        <property name="dataSet">nc</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">clients</property>
-                                <text-property name="displayName">clients</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["clients"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">clients</property>
-                    </data>
-                    <data id="1785">
-                        <property name="dataSet">nc</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">suppliers</property>
-                                <text-property name="displayName">suppliers</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["suppliers"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">suppliers</property>
-                    </data>
-                </cell>
-            </row>
-            <row id="1761">
-                <property name="style">becpg-row-border</property>
-                <cell id="1762">
-                    <label id="1778">
-                        <property name="style">becpg-row-header</property>
-                        <text-property name="text">Observation</text-property>
-                    </label>
-                </cell>
-                <cell id="1763">
-                    <property name="colSpan">3</property>
+            <row id="3059">
+                <cell id="3060">
+                    <property name="colSpan">2</property>
                     <property name="rowSpan">1</property>
-                    <data id="1780">
+                    <label id="3069">
+                        <property name="style">becpg-row-header</property>
+                        <text-property name="text">Détails du traitement effectué (analyse des causes, traçabilité)</text-property>
+                    </label>
+                    <data id="3091">
                         <property name="dataSet">nc</property>
                         <list-property name="boundDataColumns">
                             <structure>
-                                <property name="name">batchComment</property>
-                                <text-property name="displayName">batchComment</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["batchComment"]</expression>
+                                <property name="name">claimTreatementDetails</property>
+                                <text-property name="displayName">claimTreatementDetails</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["claimTreatementDetails"]</expression>
                                 <property name="dataType">string</property>
                             </structure>
                         </list-property>
-                        <property name="resultSetColumn">batchComment</property>
+                        <property name="resultSetColumn">claimTreatementDetails</property>
+                    </data>
+                </cell>
+            </row>
+            <row id="3062">
+                <cell id="3063">
+                    <property name="colSpan">2</property>
+                    <property name="rowSpan">1</property>
+                    <label id="3072">
+                        <property name="style">becpg-row-header</property>
+                        <text-property name="text">Actions préventives éventuellement lancées</text-property>
+                    </label>
+                    <data id="3092">
+                        <property name="dataSet">nc</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">claimTreatementPrevActions</property>
+                                <text-property name="displayName">claimTreatementPrevActions</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["claimTreatementPrevActions"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">claimTreatementPrevActions</property>
+                    </data>
+                </cell>
+            </row>
+            <row id="3065">
+                <cell id="3066">
+                    <property name="colSpan">2</property>
+                    <property name="rowSpan">1</property>
+                    <label id="1691">
+                        <property name="style">becpg-row-header</property>
+                        <text-property name="text">Commentaires étape traitement</text-property>
+                    </label>
+                    <data id="3093">
+                        <property name="dataSet">nc</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">claimTreatementComment</property>
+                                <text-property name="displayName">claimTreatementComment</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["claimTreatementComment"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">claimTreatementComment</property>
                     </data>
                 </cell>
             </row>
         </grid>
-        <label id="1790"/>
-        <label id="1791">
+        <label id="3018">
             <property name="style">becpg-chapter-header</property>
-            <property name="backgroundColor">#F2ECD2</property>
-            <property name="fontSize">14pt</property>
-            <property name="fontWeight">bold</property>
-            <property name="textAlign">center</property>
-            <text-property name="text">Action</text-property>
+            <text-property name="text">RÉPONSE</text-property>
         </label>
-        <label id="1792"/>
-        <table id="1848">
-            <property name="style">becpg-table</property>
-            <property name="width">7.969465648854962in</property>
-            <property name="dataSet">workLog</property>
-            <list-property name="boundDataColumns">
-                <structure>
-                    <property name="name">wlState</property>
-                    <text-property name="displayName">wlState</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["wlState"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">wlComment</property>
-                    <text-property name="displayName">wlComment</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["wlComment"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">creator</property>
-                    <text-property name="displayName">creator</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["creator"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">created</property>
-                    <text-property name="displayName">created</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["created"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-            </list-property>
-            <column id="1864">
-                <property name="width">1.4045801526717556in</property>
-            </column>
-            <column id="1865">
-                <property name="style">becpg-col-border</property>
-                <property name="width">2.5801526717557253in</property>
-            </column>
-            <column id="1866">
-                <property name="style">becpg-col-border</property>
-                <property name="width">1.9923664122137406in</property>
-            </column>
-            <column id="1867">
-                <property name="style">becpg-col-border</property>
-                <property name="width">1.9923664122137406in</property>
-            </column>
-            <header>
-                <row id="1849">
-                    <property name="style">becpg-row-border</property>
-                    <cell id="1850">
-                        <label id="1869">
-                            <property name="style">becpg-col-header</property>
-                            <text-property name="text">Etat</text-property>
-                        </label>
-                    </cell>
-                    <cell id="1851">
-                        <label id="1871">
-                            <property name="style">becpg-col-header</property>
-                            <text-property name="text">Commentaire</text-property>
-                        </label>
-                    </cell>
-                    <cell id="1852">
-                        <label id="1873">
-                            <property name="style">becpg-col-header</property>
-                            <text-property name="text">Createur</text-property>
-                        </label>
-                    </cell>
-                    <cell id="1853">
-                        <label id="1875">
-                            <property name="style">becpg-col-header</property>
-                            <text-property name="text">Création</text-property>
-                        </label>
-                    </cell>
-                </row>
-            </header>
-            <detail>
-                <row id="1854">
-                    <property name="style">becpg-row-border</property>
-                    <cell id="1855">
-                        <data id="1870">
-                            <property name="resultSetColumn">wlState</property>
-                        </data>
-                    </cell>
-                    <cell id="1856">
-                        <data id="1872">
-                            <property name="resultSetColumn">wlComment</property>
-                        </data>
-                    </cell>
-                    <cell id="1857">
-                        <data id="1874">
-                            <property name="resultSetColumn">creator</property>
-                        </data>
-                    </cell>
-                    <cell id="1858">
-                        <data id="1876">
-                            <property name="resultSetColumn">created</property>
-                        </data>
-                    </cell>
-                </row>
-            </detail>
-            <footer>
-                <row id="1859">
-                    <cell id="1860"/>
-                    <cell id="1861"/>
-                    <cell id="1862"/>
-                    <cell id="1863"/>
-                </row>
-            </footer>
-        </table>
+        <grid id="3079">
+            <column id="3080"/>
+            <column id="3081"/>
+            <row id="3082">
+                <cell id="3083">
+                    <label id="3094">
+                        <property name="style">becpg-row-header</property>
+                        <text-property name="text">Pilote étape Réponse</text-property>
+                    </label>
+                </cell>
+                <cell id="3084">
+                    <label id="3095">
+                        <property name="style">becpg-row-header</property>
+                        <text-property name="text">Echéance</text-property>
+                    </label>
+                    <data id="3096">
+                        <property name="dataSet">nc</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">claimResponseDate</property>
+                                <text-property name="displayName">claimResponseDate</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["claimResponseDate"]</expression>
+                                <property name="dataType">date</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">claimResponseDate</property>
+                    </data>
+                </cell>
+            </row>
+            <row id="3085">
+                <cell id="3086">
+                    <label id="3097">
+                        <property name="style">becpg-row-header</property>
+                        <text-property name="text">Etat réponse</text-property>
+                    </label>
+                </cell>
+                <cell id="3087"/>
+            </row>
+            <row id="3088">
+                <cell id="3089">
+                    <label id="3098">
+                        <property name="style">becpg-row-header</property>
+                        <text-property name="text">Réponse apportée</text-property>
+                    </label>
+                </cell>
+                <cell id="3090"/>
+            </row>
+            <row id="3099">
+                <cell id="3100">
+                    <label id="3102">
+                        <property name="style">becpg-row-header</property>
+                        <text-property name="text">Commentaires étape réponse</text-property>
+                    </label>
+                </cell>
+                <cell id="3101"/>
+            </row>
+        </grid>
+        <label id="3019">
+            <property name="style">becpg-chapter-header</property>
+            <text-property name="text">CLASSIFICATION</text-property>
+        </label>
+        <grid id="3108">
+            <column id="3109"/>
+            <column id="3110"/>
+            <row id="3111">
+                <cell id="3112">
+                    <label id="3049">
+                        <property name="style">becpg-row-header</property>
+                        <text-property name="text">Processus responsable de la réclamation - Famille</text-property>
+                    </label>
+                    <data id="3045">
+                        <property name="dataSet">nc</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">claimOriginHierarchy1</property>
+                                <text-property name="displayName">claimOriginHierarchy1</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["claimOriginHierarchy1"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">claimOriginHierarchy1</property>
+                    </data>
+                </cell>
+                <cell id="3113">
+                    <label id="3050">
+                        <property name="style">becpg-row-header</property>
+                        <text-property name="text">Processus responsable de la réclamation - Sous-Famille</text-property>
+                    </label>
+                    <data id="3046">
+                        <property name="dataSet">nc</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">claimOriginHierarchy2</property>
+                                <text-property name="displayName">claimOriginHierarchy2</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["claimOriginHierarchy2"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">claimOriginHierarchy2</property>
+                    </data>
+                </cell>
+            </row>
+            <row id="3114">
+                <cell id="3115">
+                    <property name="colSpan">2</property>
+                    <property name="rowSpan">1</property>
+                    <label id="3106">
+                        <property name="style">becpg-row-header</property>
+                        <text-property name="text">Type d'incident</text-property>
+                    </label>
+                    <data id="3124">
+                        <property name="dataSet">nc</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">claimType</property>
+                                <text-property name="displayName">claimType</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["claimType"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">claimType</property>
+                    </data>
+                </cell>
+            </row>
+            <row id="3117">
+                <cell id="3118">
+                    <property name="colSpan">2</property>
+                    <property name="rowSpan">1</property>
+                    <label id="3123">
+                        <property name="style">becpg-row-header</property>
+                        <text-property name="text">Commentaires étape classification</text-property>
+                    </label>
+                    <data id="3125">
+                        <property name="dataSet">nc</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">claimClassificationComment</property>
+                                <text-property name="displayName">claimClassificationComment</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["claimClassificationComment"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">claimClassificationComment</property>
+                    </data>
+                </cell>
+            </row>
+        </grid>
+        <label id="3020">
+            <property name="style">becpg-chapter-header</property>
+            <text-property name="text">CLÔTURE</text-property>
+        </label>
+        <grid id="3126">
+            <column id="3127"/>
+            <row id="3128">
+                <cell id="3129">
+                    <label id="3130">
+                        <property name="style">becpg-row-header</property>
+                        <text-property name="text">Commentaires étape clôture</text-property>
+                    </label>
+                    <data id="3131">
+                        <property name="dataSet">nc</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">claimClosingComment</property>
+                                <text-property name="displayName">claimClosingComment</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["claimClosingComment"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">claimClosingComment</property>
+                    </data>
+                </cell>
+            </row>
+        </grid>
     </body>
     <list-property name="images">
         <structure>
