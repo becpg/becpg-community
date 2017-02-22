@@ -55,7 +55,7 @@
                                              	${document.shareUrl?replace("document-details", "entity-data-lists")}
                                              <#else>
                                              	${document.shareUrl}
-                                             <#if>                                             
+                                             </#if>                                             
                                              </p>
                                              
                                              <p>Cordialement,<br />
