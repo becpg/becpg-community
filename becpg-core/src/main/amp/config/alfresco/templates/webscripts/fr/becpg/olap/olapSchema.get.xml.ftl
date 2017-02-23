@@ -796,12 +796,14 @@
 								MAX(IF(prop.prop_name = "bcpg:nutListGDAPerc",prop.double_value,NULL)) as nutListGDAPerc,
 								MAX(IF(prop.prop_name = "bcpg:nutListValuePerServing",prop.double_value,NULL)) as nutListValuePerServing,
 								entity.is_last_version as isLastVersion,
+								entity.entity_type as productType,
 								datalist.entity_fact_id as entity_fact_id
 							from
 									becpg_datalist AS datalist LEFT JOIN becpg_property AS prop ON prop.datalist_id = datalist.id
 									                LEFT JOIN becpg_entity AS entity ON datalist.entity_fact_id = entity.id
 							where datalist.datalist_name = "nutList" and datalist.item_type = "bcpg:nutList" and datalist.instance_id = ${instanceId} 
-							      and  entity.is_last_version = true
+							      and  entity.is_last_version = true 
+							      and entity.entity_type IN ("bcpg:finishedProduct","bcpg:semiFinishedProduct","bcpg:localSemiFinishedProduct","bcpg:rawMaterial","bcpg:packagingKit","bcpg:packagingMaterial") 
 							group by datalist.id
 
 			</SQL>
@@ -869,6 +871,13 @@
 				<Level name="code" caption="${msg("jsolap.productCode.title")}" column="code"  type="String"   />
 				<Level name="erpCode" caption="${msg("jsolap.erpCode.title")}" column="erpCode"  type="String"   />
 				<Level name="legalName" caption="${msg("jsolap.legalName.title")}" column="legalName" type="String"    />
+			</Hierarchy>
+		</Dimension>
+		
+		<Dimension foreignKey="productType"  name="productType" caption="${msg("jsolap.productType.title")}">
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.productType.caption")}" primaryKey="entity_type" >
+			<Table name="becpg_entity_type"></Table>
+			<Level approxRowCount="10" name="entity_type" caption="${msg("jsolap.type.title")}" column="entity_type" nameColumn="entity_label" type="String"   ></Level>
 			</Hierarchy>
 		</Dimension>
 
