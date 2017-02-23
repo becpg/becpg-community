@@ -114,7 +114,7 @@ public class BulkEditExtractor extends SimpleExtractor {
 		results = advSearchService.queryAdvSearch(dataListFilter.getDataType(), queryBuilder, dataListFilter.getCriteriaMap(),
 				pagination.getMaxResults());
 
-		
+		pagination.setQueryExecutionId(queryBuilder.getQueryExecutionId());
 
 		return pagination.paginate(results);
 

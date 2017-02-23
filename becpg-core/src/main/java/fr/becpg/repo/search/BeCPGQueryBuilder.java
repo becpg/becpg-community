@@ -55,6 +55,7 @@ import org.alfresco.service.cmr.search.SearchParameters;
 import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.util.GUID;
 import org.alfresco.util.ISO9075;
 import org.alfresco.util.Pair;
 import org.alfresco.util.registry.NamedObjectRegistry;
@@ -139,6 +140,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	private String searchTemplate = null;
 	private SearchParameters.Operator operator = null;
 	private Locale locale = Locale.getDefault();
+	private String queryExecutionId = GUID.generate();
+	
+	public String getQueryExecutionId() {
+		return queryExecutionId;
+	}
+
 	
 	
 	@Override
@@ -1027,6 +1034,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		}
 		return pageOfNodeInfos;
 	}
+	
 	
 	
 	private PagingResults<NodeRef>  internalList(NodeRef rootNodeRef, Set<QName> searchTypeQNames, Set<QName> ignoreAspectQNames, List<Pair<QName, Boolean>> sortProps, PagingRequest pagingRequest) {
