@@ -49,7 +49,6 @@
  .bulk-edit .bulk-edit-props-container  li.column-23 { margin-left: 460em; }
  .bulk-edit .bulk-edit-props-container  li.column-24 { margin-left: 480em; }
          
- 
 
 /* bulk-edit Metadata */
 .bulk-edit .bulk-edit-meta
@@ -125,10 +124,13 @@
    padding: 2px 0px 1px 24px;
 }
 
-.bulk-edit .item-select .selectAll
+.bulk-edit .item-select .selectAll,
+.bulk-edit .item-select .selectAllPages
 {
    background-image: url(../images/select-rows-all-16.png);
 }
+
+
 
 .bulk-edit .item-select .selectNone
 {
@@ -228,6 +230,23 @@
    width: 35px;
 }
 
+.bulk-edit div.warning {
+    margin: 0 0 10px 0;
+    padding: 0.5em 0;
+    color: black;
+    text-align: left;
+    padding-left: 20px;
+    background: none repeat scroll 0 0 #fefdca;
+    box-shadow: -2px 2px 2px #c8c8c8;
+    font-size: 108%;
+}
+
+
+.bulk-edit div.warning span.info {
+   background: url("../images/states/warning-16.png") no-repeat scroll 0 0 transparent;
+   display: inline;
+   padding-left: 20px;
+}
 
 /* Data Types */
 

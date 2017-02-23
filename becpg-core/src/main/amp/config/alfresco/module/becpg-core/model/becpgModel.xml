@@ -71,6 +71,11 @@
 				<property name="bcpg:lvValue">
 					<type>d:mltext</type>
 					<mandatory>true</mandatory>
+					<index enabled="true">
+	                  <atomic>true</atomic>
+	                  <stored>false</stored> 
+	                  <tokenised>both</tokenised>
+	               </index>
 				</property>
 			</properties>
 		</type>
@@ -140,6 +145,11 @@
 				<property name="bcpg:charactName">
 				    <type>d:mltext</type>
 				    <mandatory>true</mandatory>
+				    <index enabled="true">
+	                  <atomic>true</atomic>
+	                  <stored>false</stored> 
+	                  <tokenised>both</tokenised>
+	               </index>
 				</property>
 			</properties>
 			<mandatory-aspects>
@@ -258,6 +268,11 @@
 			<properties>
 				<property name="bcpg:legalName">
 					<type>d:mltext</type>
+					<index enabled="true">
+	                  <atomic>true</atomic>
+	                  <stored>false</stored> 
+	                  <tokenised>both</tokenised>
+	               </index>
 				</property>
 			</properties>
 		</aspect>
