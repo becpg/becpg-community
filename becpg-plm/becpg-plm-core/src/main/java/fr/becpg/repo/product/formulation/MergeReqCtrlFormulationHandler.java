@@ -71,7 +71,7 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 	public boolean process(ProductData productData) throws FormulateException {
 
 		// Add child requirements
-		appendChildReq(productData.getCompoListView().getReqCtrlList(), productData.getCompoListView().getCompoList());
+		appendChildReq(productData, productData.getCompoListView().getReqCtrlList(), productData.getCompoListView().getCompoList());
 
 		mergeReqCtrlList(productData.getCompoListView().getReqCtrlList());
 		mergeReqCtrlList(productData.getPackagingListView().getReqCtrlList());
@@ -82,18 +82,20 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 		return true;
 	}
 
-	private void appendChildReq(List<ReqCtrlListDataItem> reqCtrlList, List<CompoListDataItem> compoList) {
+	private void appendChildReq(ProductData productData, List<ReqCtrlListDataItem> reqCtrlList, List<CompoListDataItem> compoList) {
 		for (CompoListDataItem compoListDataItem : compoList) {
 			NodeRef productNodeRef = compoListDataItem.getProduct();
-			ProductData productData = alfrescoRepository.findOne(productNodeRef);
-			if ((productData instanceof SemiFinishedProductData) || (productData instanceof FinishedProductData)
-					|| (productData instanceof RawMaterialData)) {
-				if ((productData.getCompoListView() != null) && (productData.getCompoListView().getReqCtrlList() != null)) {
-					for (ReqCtrlListDataItem tmp : productData.getCompoListView().getReqCtrlList()) {
-						// mandatory fields rclDataItem aren't put in parent
-						if (tmp.getReqDataType() != RequirementDataType.Completion) {
-							reqCtrlList.add(new ReqCtrlListDataItem(null, tmp.getReqType(), tmp.getReqMlMessage(), tmp.getCharact(), tmp.getSources(),
-									tmp.getReqDataType() != null ? tmp.getReqDataType() : RequirementDataType.Nutrient));
+			if (productNodeRef != null) {
+				ProductData componentProductData = alfrescoRepository.findOne(productNodeRef);
+				if (!productNodeRef.equals(productData.getNodeRef()) && (componentProductData instanceof SemiFinishedProductData)
+						|| (componentProductData instanceof FinishedProductData) || (componentProductData instanceof RawMaterialData)) {
+					if ((componentProductData.getCompoListView() != null) && (componentProductData.getCompoListView().getReqCtrlList() != null)) {
+						for (ReqCtrlListDataItem tmp : componentProductData.getCompoListView().getReqCtrlList()) {
+							// mandatory fields rclDataItem aren't put in parent
+							if (tmp.getReqDataType() != RequirementDataType.Completion) {
+								reqCtrlList.add(new ReqCtrlListDataItem(null, tmp.getReqType(), tmp.getReqMlMessage(), tmp.getCharact(),
+										tmp.getSources(), tmp.getReqDataType() != null ? tmp.getReqDataType() : RequirementDataType.Nutrient));
+							}
 						}
 					}
 				}
@@ -160,7 +162,6 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 			sort(reqCtrlList);
 		}
 	}
-
 
 	@SuppressWarnings("unchecked")
 	private void updateFormulatedCharactInError(ProductData productData, List<ReqCtrlListDataItem> reqCtrlList) {
