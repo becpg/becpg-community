@@ -193,7 +193,16 @@
 							 * @type int
 							 */
 							pageSize : 75,
-							
+							/**
+							 * @property queryExecutionId
+							 * @type string
+							 */
+							queryExecutionId: null,
+							/**
+							 * @property pageSize
+							 * @type int
+							 */
+							totalRecords : null,
 							/**
 							 * Max search results
 							 */
@@ -248,6 +257,8 @@
 							 * Display thumbnail column
 							 */
 							showThumbnails : false
+							
+							
 						},
 
 						/**
@@ -267,6 +278,11 @@
 						 */
 						currentPage : null,
 
+						
+						currentSort : null,
+						
+						currentSortDir : null,
+						
 						/**
 						 * Total number of records (documents + folders) in the
 						 * currentPath.
@@ -285,6 +301,15 @@
 						 * @type object
 						 */
 						selectedItems : null,
+					
+						/**
+						 * Is all page selected
+						 * (indexed by nodeRef).
+						 * 
+						 * @property allPages
+						 * @type boolean
+						 */
+						allPages: false,
 
 						/**
 						 * Deferred function calls for after a data grid update
@@ -340,19 +365,12 @@
 						widgets : {},
 
 						dataUrl : Alfresco.constants.PROXY_URI_RELATIVE + "becpg/entity/datalists/data/node",
-						// dataUrl : Alfresco.constants.PROXY_URI_RELATIVE+
-						// "becpg/bulkedit/data",
-
-						// Alfresco.constants.PROXY_URI_RELATIVE
-						// + "becpg/bulkedit/data
-
+			
 						itemUrl : Alfresco.constants.PROXY_URI_RELATIVE + "becpg/entity/datalists/item/node/",
 
 						columnsUrl : Alfresco.constants.URL_SERVICECONTEXT + "module/entity-datagrid/config/columns",
 
 						saveFieldUrl : Alfresco.constants.PROXY_URI_RELATIVE + "becpg/bulkedit/save",
-
-						// Alfresco.constants.URL_SERVICECONTEXT,"components/bulk-edit/config/columns
 
 						/**
 						 * DataTable Cell Renderers
@@ -503,6 +521,14 @@
 						 */
 						onSelectedItemsChanged : function() {
 
+							if(this.allPages){
+								Dom.get(this.id + "-message").innerHTML = '<span class="info">'+this.msg("message.edit.allPages",this.totalRecords)+'</span>';
+								Dom.removeClass(this.id + "-message", "hidden");
+							} else {
+								Dom.addClass(this.id + "-message", "hidden");
+							}
+							
+							
 							if (this.getSelectedItems().length > 0) {
 								this.widgets.editSelected.set("disabled", false);
 							} else {
@@ -684,14 +710,15 @@
 						_buildDataParamsUrl : function BulkEdit__buildDataParamsUrl(pageSize,maxResults) {
 
 							var site = this.options.initialSearchAllSites ? "" : this.options.siteId;
-							var params = YAHOO.lang.substitute("dataListName=bulk-edit&site={site}&repo={repo}&itemType={itemType}&sort={sort}&pageSize={pageSize}&maxResults={maxResults}", {
+							var params = YAHOO.lang.substitute("dataListName=bulk-edit&site={site}&repo={repo}&itemType={itemType}&pageSize={pageSize}&maxResults={maxResults}", {
 								site : encodeURIComponent(site),
 								repo : (this.options.initialSearchRepository || this.options.searchQuery.length !== 0).toString(), // always
 								maxResults : maxResults? maxResults : this.options.maxResults,
-								sort : encodeURIComponent(this.options.initialSort),
 								itemType : encodeURIComponent(this.options.itemType),
 								pageSize : pageSize? pageSize : this.options.pageSize
 							});
+							
+							
 							
 							if(this.options.entityNodeRefs!=null) {
 								params+="&entityNodeRef="+this.options.entityNodeRefs;
@@ -834,8 +861,7 @@
 									columnDefinitions.push({
 										key : this.dataResponseFields[i],
 										label : column.label,
-
-										sortable : true,
+										sortable : (column.type == "property"),
 										sortOptions : {
 											field : this.dataResponseFields[i],
 											sortFunction : this.rendererHelper.getSortFunction()
@@ -904,6 +930,11 @@
 									me.widgets.paginator.set('totalRecords', oResponse.meta.totalRecords);
 									me.widgets.paginator.setPage(oResponse.meta.startIndex, true);
 								}
+								if(me.currentSort!=null){
+									me.widgets.dataTable.set("sortedBy", {key:me.currentSort, dir:me.currentSortDir}); 
+								}
+								
+								me.totalRecords =  oResponse.meta.totalRecords;
 								me.queryExecutionId = oResponse.meta.queryExecutionId;
 								return oResponse.meta;
 							};
@@ -937,7 +968,18 @@
 							// Override default function so the "Loading..."
 							// message is suppressed
 							this.widgets.dataTable.doBeforeSortColumn = function BulkEdit_doBeforeSortColumn(oColumn, sSortDir) {
-								return true;
+								
+								if(oColumn.key.indexOf("prop_")==0){
+									me.currentSort = oColumn.key;
+									me.currentSortDir = sSortDir;	
+									me.currentPage = 1;
+									me._updateBulkEdit.call(me);						
+									return false;
+								
+								} else {
+									me.currentSort = null;
+									return true;
+								}
 							};
 
 							// File checked handler
@@ -957,11 +999,8 @@
 							this.widgets.dataTable.subscribe("cellClickEvent", this.widgets.dataTable.onEventShowCellEditor);
 							this.widgets.dataTable.subscribe("cellUpdateEvent", this.onCellChanged);
 
-							// To save onEventSaveCellEditor
 
 							
-							var me = this;
-
 							if (me.options.usePagination) {
 
 								me.currentPage = parseInt(me.options.initialPage, 10);
@@ -1094,6 +1133,7 @@
                             switch (p_selectType)
                             {
                                 case "selectAll":
+                                case "selectAllPages":
                                     fnCheck = function(assetType, isChecked)
                                     {
                                         return true;
@@ -1113,7 +1153,6 @@
                                         return !isChecked;
                                     };
                                     break;
-
                                 default:
                                     fnCheck = function(assetType, isChecked)
                                     {
@@ -1121,6 +1160,14 @@
                                     };
                             }
 
+                            
+                            if(p_selectType == "selectAllPages"){
+                            	this.allPages = true;
+                            } else {
+                            	this.allPages = false;
+                            }
+                            
+                            
                             for (i = 0; i < len; i++)
                             {
                                 record = recordSet.getRecord(i + startRecord);
@@ -1283,11 +1330,6 @@
 
 							// Update the DataSource
 							var requestParams = this._buildBulkEditParams();
-							Alfresco.logger.debug("DataSource requestParams: ", requestParams);
-
-							// TODO: No-cache? - add to URL retrieved from
-							// DataSource
-							// "&noCache=" + new Date().getTime();
 
 							 this.widgets.dataSource.connMgr.setDefaultPostHeader(Alfresco.util.Ajax.JSON);
 
@@ -1319,6 +1361,10 @@
 								fields : this.dataRequestFields,
 								page :  page ? page : this.currentPage
 							};
+							
+							if(this.currentSort!=null){
+								request.sort = this.currentSort.replace("prop_","").replace("_",":")+"|"+((this.currentSortDir == "yui-dt-asc") ? "true" : "false");
+							}
 							
 							if (this.options.nodeRef != null && this.options.nodeRef.length > 0) {
 								request.filter = {
@@ -1386,6 +1432,13 @@
 						},
 
 						onEditSelected : function BulkEdit_onEditSelected() {
+							
+							if(this.allPages){
+								Alfresco.util.PopupManager.displayMessage({
+									text : this.msg("Not Yet implemented")
+								});
+								return false;
+							}
 
 							// Intercept before dialog show
 							var doBeforeDialogShow = function BulkEdit_onNewRow_doBeforeDialogShow(p_form, p_dialog) {
@@ -1431,7 +1484,7 @@
 												mode : "create",
 												submitType : "json",
 												submissionUrl : encodeURIComponent("/becpg/bulkedit/type/" + this.options.itemType.replace(":", "_")
-														+ "/bulksave?nodeRefs=" + submissionParams),
+														+ "/bulksave?nodeRefs=" + submissionParams+"&allPages="+this.allPages+"&queryExecutionId="+this.queryExecutionId),
 												fields : displayFields
 											});
 

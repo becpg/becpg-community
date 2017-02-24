@@ -478,6 +478,11 @@
 				<property name="bcpg:lvValue">
 					<type>d:mltext</type>
 					<mandatory>true</mandatory>
+					<index enabled="true">
+	                  <atomic>true</atomic>
+	                  <stored>false</stored> 
+	                  <tokenised>both</tokenised>
+	               </index>
 				</property>
 			</properties>
 		</type>
@@ -488,6 +493,11 @@
 				<property name="bcpg:lkvValue">
 					<type>d:mltext</type>
 					<mandatory>true</mandatory>
+					<index enabled="true">
+	                  <atomic>true</atomic>
+	                  <stored>false</stored> 
+	                  <tokenised>both</tokenised>
+	               </index>
 				</property>
 			</properties>
 			<mandatory-aspects>
@@ -577,9 +587,19 @@
 			<properties>
 				<property name="bcpg:pmcRegulation">
 					<type>d:mltext</type>
+					<index enabled="true">
+	                  <atomic>true</atomic>
+	                  <stored>false</stored> 
+	                  <tokenised>both</tokenised>
+	               </index>
 				</property>
 				<property name="bcpg:pmcConcernedProducts">
 					<type>d:mltext</type>
+					<index enabled="true">
+	                  <atomic>true</atomic>
+	                  <stored>false</stored> 
+	                  <tokenised>both</tokenised>
+	               </index>
 				</property>
 			</properties>
 			<mandatory-aspects>
@@ -668,6 +688,11 @@
 				<property name="bcpg:charactName">
 				    <type>d:mltext</type>
 				    <mandatory>true</mandatory>
+				    <index enabled="true">
+	                  <atomic>true</atomic>
+	                  <stored>false</stored> 
+	                  <tokenised>both</tokenised>
+	               </index>
 				</property>
 			</properties>
 			<mandatory-aspects>
@@ -898,6 +923,11 @@
 			<properties>
 				<property name="bcpg:bioOriginType">
 					<type>d:mltext</type>
+					<index enabled="true">
+	                  <atomic>true</atomic>
+	                  <stored>false</stored> 
+	                  <tokenised>both</tokenised>
+	               </index>
 				</property>
 			</properties>
 		</type>
@@ -1813,6 +1843,11 @@
 				<property name="bcpg:filReqMessage">
 					<type>d:mltext</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+	                  <atomic>true</atomic>
+	                  <stored>false</stored> 
+	                  <tokenised>both</tokenised>
+	               </index>
 				</property>
 				<property name="bcpg:filQtyPercMaxi">
 					<type>d:double</type>
@@ -2149,9 +2184,19 @@
 			<properties>
 				<property name="bcpg:storageConditionsMode">
 					<type>d:mltext</type>
+					<index enabled="true">
+	                  <atomic>true</atomic>
+	                  <stored>false</stored> 
+	                  <tokenised>both</tokenised>
+	               </index>
 				</property>
 				<property name="bcpg:storageConditionsTemperature">
 					<type>d:mltext</type>
+					<index enabled="true">
+	                  <atomic>true</atomic>
+	                  <stored>false</stored> 
+	                  <tokenised>both</tokenised>
+	               </index>
 				</property>
 			</properties>
 		</type>
@@ -2188,9 +2233,19 @@
 			<properties>
 				<property name="bcpg:legalName">
 					<type>d:mltext</type>
+					<index enabled="true">
+	                  <atomic>true</atomic>
+	                  <stored>false</stored> 
+	                  <tokenised>both</tokenised>
+	               </index>
 				</property>
 				<property name="bcpg:pluralLegalName">
 					<type>d:mltext</type>
+					<index enabled="true">
+	                  <atomic>true</atomic>
+	                  <stored>false</stored> 
+	                  <tokenised>both</tokenised>
+	               </index>
 				</property>
 			</properties>
 		</aspect>
@@ -2531,6 +2586,11 @@
 			<properties>
 				<property name="bcpg:productComments">
 					<type>d:mltext</type>
+					<index enabled="true">
+	                  <atomic>true</atomic>
+	                  <stored>false</stored> 
+	                  <tokenised>both</tokenised>
+	               </index>
 				</property>
 				<property name="bcpg:productHierarchy1">
 					<type>d:noderef</type>

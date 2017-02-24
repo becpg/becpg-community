@@ -51,6 +51,7 @@
 			                     <li><a href="#"><span class="selectAll">${msg("menu.select.all")}</span></a></li>
 			                     <li><a href="#"><span class="selectInvert">${msg("menu.select.invert")}</span></a></li>
 			                     <li><a href="#"><span class="selectNone">${msg("menu.select.none")}</span></a></li>
+			                     <li><a href="#"><span class="selectAllPages">${msg("menu.select.allPages")}</span></a></li>
 			                  </ul>
 			               </div>
 			            </div>
@@ -86,6 +87,8 @@
 			   </div>
 			
 			   <div id="${el}-bulk-editor"></div>
+			   
+			   <div id="${el}-message" class="warning hidden"></div>
 				
 			   <div id="${el}-grid" class="grid"></div>
 			
