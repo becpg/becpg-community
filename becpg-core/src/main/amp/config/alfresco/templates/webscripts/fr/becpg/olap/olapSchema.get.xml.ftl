@@ -803,7 +803,7 @@
 									                LEFT JOIN becpg_entity AS entity ON datalist.entity_fact_id = entity.id
 							where datalist.datalist_name = "nutList" and datalist.item_type = "bcpg:nutList" and datalist.instance_id = ${instanceId} 
 							      and  entity.is_last_version = true 
-							      and entity.entity_type IN ("bcpg:finishedProduct","bcpg:semiFinishedProduct","bcpg:localSemiFinishedProduct","bcpg:rawMaterial","bcpg:packagingKit","bcpg:packagingMaterial") 
+							      and entity.entity_type IN ("bcpg:finishedProduct","bcpg:semiFinishedProduct","bcpg:rawMaterial") 
 							group by datalist.id
 
 			</SQL>
