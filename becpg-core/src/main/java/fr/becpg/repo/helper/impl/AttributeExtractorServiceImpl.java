@@ -469,7 +469,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		List<AttributeExtractorStructure> ret = new LinkedList<>();
 
 		for (String field : metadataFields) {
-
+			
 			if (field.contains("|")) {
 				StringTokenizer tokeniser = new StringTokenizer(field, "|");
 				String dlField = tokeniser.nextToken();
@@ -505,11 +505,13 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				if (hasReadAccess(itemType, field)) {
 
 					ClassAttributeDefinition prodDef = entityDictionaryService.getPropDef(fieldQname);
-					String prefix = "prop_";
-					if (isAssoc(prodDef)) {
-						prefix = "assoc_";
+					if(prodDef!=null){
+						String prefix = "prop_";
+						if (isAssoc(prodDef)) {
+							prefix = "assoc_";
+						}
+						ret.add(new AttributeExtractorStructure(prefix + field.replaceFirst(":", "_"), prodDef, itemType));
 					}
-					ret.add(new AttributeExtractorStructure(prefix + field.replaceFirst(":", "_"), prodDef, itemType));
 				}
 			}
 		}

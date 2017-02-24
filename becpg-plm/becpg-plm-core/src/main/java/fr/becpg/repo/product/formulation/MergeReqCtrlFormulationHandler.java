@@ -23,7 +23,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -72,7 +71,7 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 	public boolean process(ProductData productData) throws FormulateException {
 
 		// Add child requirements
-		appendChildReq(productData.getReqCtrlList(), productData.getCompoListView().getCompoList());
+		appendChildReq(productData, productData.getReqCtrlList(), productData.getCompoListView().getCompoList());
 
 		mergeReqCtrlList(productData.getReqCtrlList());
 
@@ -81,19 +80,18 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 		return true;
 	}
 
-	private void appendChildReq(List<ReqCtrlListDataItem> reqCtrlList, List<CompoListDataItem> compoList) {
+	private void appendChildReq(ProductData productData, List<ReqCtrlListDataItem> reqCtrlList, List<CompoListDataItem> compoList) {
 		for (CompoListDataItem compoListDataItem : compoList) {
-			NodeRef productNodeRef = compoListDataItem.getProduct();
-			ProductData productData = alfrescoRepository.findOne(productNodeRef);
-			if ((productData instanceof SemiFinishedProductData) || (productData instanceof FinishedProductData)
-					|| (productData instanceof RawMaterialData)) {
-				if ((productData.getReqCtrlList() != null)) {
-					for (ReqCtrlListDataItem tmp : productData.getReqCtrlList()) {
-						// mandatory fields rclDataItem aren't put in parent						
-						
-						if (tmp.getReqDataType() != RequirementDataType.Completion) {
-							
-							//identifies this rclDataItem (can't use equals because of sources list)
+			NodeRef componentProductNodeRef = compoListDataItem.getProduct();
+			if (componentProductNodeRef != null) {
+				ProductData componentProductData = alfrescoRepository.findOne(componentProductNodeRef);
+				if (!componentProductNodeRef.equals(productData.getNodeRef()) && (componentProductData instanceof SemiFinishedProductData)
+						|| (componentProductData instanceof FinishedProductData) || (componentProductData instanceof RawMaterialData)) {
+					if ((componentProductData.getCompoListView() != null) && (componentProductData.getReqCtrlList() != null)) {
+						for (ReqCtrlListDataItem tmp : componentProductData.getReqCtrlList()) {
+							// mandatory fields rclDataItem aren't put in parent
+							if (tmp.getReqDataType() != RequirementDataType.Completion) {
+								//identifies this rclDataItem (can't use equals because of sources list)
 							List<ReqCtrlListDataItem> matchingRclDataItems = reqCtrlList.stream()
 									.filter(rcl -> rcl.getReqDataType().equals(tmp.getReqDataType())
 											&& rcl.getReqType().equals(tmp.getReqType())
@@ -110,6 +108,7 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 								ReqCtrlListDataItem currentRclDataItem = matchingRclDataItems.get(0);
 								logger.debug("Found a match, adding sources (msg="+currentRclDataItem.getReqMessage()+")");
 								currentRclDataItem.getSources().addAll(tmp.getSources());
+							}
 							}
 						}
 					}

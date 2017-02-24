@@ -1001,28 +1001,15 @@ if (beCPG.module.EntityDataGridRenderers) {
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : [ "bcpg:nutListValuePerServing" ],
 		renderer : function(oRecord, data, label, scope) {
-			//one serving is 56 g
-			
-			
 			if(data.value != null && data.value > 0){
 				var additionalProps = oRecord.getData("itemData")["dt_bcpg_nutListNut"][0].itemData;
 				var unit = additionalProps.prop_bcpg_nutUnit.displayValue;
-				var msg = null;
 				
-				if(data.value !== null){
-					msg = beCPG.util.sigFigs(data.value,3).toLocaleString()+" "+unit;
-				}
+				return Alfresco.util.encodeHTML(beCPG.util.sigFigs(data.value,3).toLocaleString()+" "+unit);
+				
 			}
-			
-			return Alfresco.util.encodeHTML(msg);
+			return "";
 		}
 	});
 	
-	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-		propertyName : [ "bcpg:nutListUnit" ],
-		renderer : function(oRecord, data, label, scope) {
-			
-			return Alfresco.util.encodeHTML(null);
-		}
-	});
 }

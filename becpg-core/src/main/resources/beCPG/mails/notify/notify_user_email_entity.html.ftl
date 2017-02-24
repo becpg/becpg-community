@@ -51,7 +51,13 @@
                                              has added a new content item, ${document.name}, in the ${document.siteShortName!""} site.
 
                                              <p>Click this link to view the item:<br />
-                                             <br />${document.shareUrl?replace("document-details", "entity-data-lists")}</p>
+                                             <br />
+                                             <#if document.hasAspect("bcpg:entityListsAspect")>
+                                             	${document.shareUrl?replace("document-details", "entity-data-lists")}
+                                             <#else>
+                                             	${document.shareUrl}
+                                             </#if>
+                                             </p>
                                              
                                              <p>Sincerely,<br />
                                              Alfresco</p>
