@@ -256,12 +256,15 @@ public class FormulationHelper {
 	public static Double getNetWeight(NodeRef nodeRef, NodeService nodeService, Double defaultValue) {
 
 		Double netWeight = (Double) nodeService.getProperty(nodeRef, PLMModel.PROP_PRODUCT_NET_WEIGHT);
+		ProductUnit productUnit = getProductUnit(nodeRef, nodeService);
+		Double qty = getProductQty(nodeRef, nodeService);
 		if (netWeight != null) {
+			if (ProductUnit.P.equals(productUnit) && qty != null && qty != 0 ) {
+				return netWeight / qty;
+			}
 			return netWeight;
 		} else {
-			ProductUnit productUnit = getProductUnit(nodeRef, nodeService);
 			if (productUnit != null) {
-				Double qty = getProductQty(nodeRef, nodeService);
 				if (qty != null) {
 					if (FormulationHelper.isProductUnitKg(productUnit) || FormulationHelper.isProductUnitLiter(productUnit)) {
 						if (productUnit.equals(ProductUnit.g) || productUnit.equals(ProductUnit.mL)) {
