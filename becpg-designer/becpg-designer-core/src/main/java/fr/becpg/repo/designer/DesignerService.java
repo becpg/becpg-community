@@ -56,8 +56,14 @@ public interface DesignerService {
 	NodeRef findOrCreateModel(String modelName, String modelTemplate, Map<String, Object> templateContext);
 
 	NodeRef findOrCreateConfig(String configName, String modelTemplate, Map<String, Object> templateContext);
+	
+	void createAndPublishConfig(NodeRef nodeRef);
 
 	void unpublish(NodeRef parentNodeRef);
+	
+	void unpublish(String fileName);
+
+	
 
 	
 }

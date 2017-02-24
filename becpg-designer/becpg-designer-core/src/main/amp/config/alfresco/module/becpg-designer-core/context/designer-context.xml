@@ -91,6 +91,11 @@
 		<property name="policyComponent" ref="policyComponent" />
 		<property name="designerWorkflowDeployer" ref="designerWorkflowDeployer" />
 	</bean>
+	
+	<bean id="designerContentUpdatePolicy" class="fr.becpg.repo.designer.policy.DesignerContentUpdatePolicy"
+		parent="abstractBeCPGPolicy">
+		<property name="designerService" ref="designerService" />
+	</bean>
 
 
 	<!-- Webscripts -->

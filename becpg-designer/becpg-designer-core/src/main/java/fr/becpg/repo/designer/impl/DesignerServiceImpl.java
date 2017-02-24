@@ -341,13 +341,13 @@ public class DesignerServiceImpl implements DesignerService {
 		NodeRef treeNodeRef = null;
 		if (nodeService.hasAspect(nodeRef, DesignerModel.ASPECT_MODEL)) {
 			treeNodeRef = findModelNodeRef(nodeRef);
-			if (logger.isWarnEnabled() && treeNodeRef == null) {
-				logger.warn("No assoc model found for this nodeRef");
+			if (logger.isDebugEnabled() && treeNodeRef == null) {
+				logger.debug("No assoc model found for this nodeRef");
 			}
 		} else if (nodeService.hasAspect(nodeRef, DesignerModel.ASPECT_CONFIG)) {
 			treeNodeRef = findConfigNodeRef(nodeRef);
-			if (logger.isWarnEnabled() && treeNodeRef == null) {
-				logger.warn("No assoc config found for this nodeRef");
+			if (logger.isDebugEnabled() && treeNodeRef == null) {
+				logger.debug("No assoc config found for this nodeRef");
 			}
 		} else if (nodeService.getType(nodeRef).getNamespaceURI().equals(DesignerModel.M2_URI)
 				|| nodeService.getType(nodeRef).getNamespaceURI().equals(DesignerModel.DESIGNER_URI)) {
@@ -706,19 +706,51 @@ public class DesignerServiceImpl implements DesignerService {
 			dictionaryDAO.reset();
 		} else if (nodeService.hasAspect(nodeRef, DesignerModel.ASPECT_CONFIG)) {
 			String name = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
-			File configDir = new File(configPath);
-			if (!configDir.exists()) {
-				configDir.mkdirs();
-			}
-			String path = configPath + System.getProperty("file.separator") + name;
-
-			File file = new File(path);
-			if (file.exists()) {
-				file.delete();
-			}
-
+			unpublish(name);
 		}
 
+	}
+
+	@Override
+	public void createAndPublishConfig(NodeRef nodeRef) {
+		logger.debug("Creating and publishing: "+nodeRef);
+		
+		NodeRef configNodeRef = null;
+		
+		if (nodeService.hasAspect(nodeRef, DesignerModel.ASPECT_MODEL)) {
+			configNodeRef = findModelNodeRef(nodeRef);
+		} else if (nodeService.hasAspect(nodeRef, DesignerModel.ASPECT_CONFIG)) {
+			configNodeRef = findConfigNodeRef(nodeRef);
+		} 
+		
+		
+		if(configNodeRef!=null){
+			nodeService.deleteNode(configNodeRef);
+		}
+		getDesignerTree(nodeRef);
+		
+		if (nodeService.hasAspect(nodeRef, DesignerModel.ASPECT_CONFIG)) {
+			publish(nodeRef);
+		}
+		
+		
+	}
+
+	@Override
+	public void unpublish(String fileName) {
+		File configDir = new File(configPath);
+		if (!configDir.exists()) {
+			configDir.mkdirs();
+		}
+		String path = configPath + System.getProperty("file.separator") + fileName;
+		
+		File file = new File(path);
+		logger.debug("Deleting file at path "+path+", exists ? "+file.exists());
+		if (file.exists()) {
+			file.delete();
+		}
+
+		
 	}
 
 }
