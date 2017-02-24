@@ -71,7 +71,7 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 	public boolean process(ProductData productData) throws FormulateException {
 
 		// Add child requirements
-		appendChildReq(productData.getReqCtrlList(), productData.getCompoListView().getCompoList());
+		appendChildReq(productData, productData.getReqCtrlList(), productData.getCompoListView().getCompoList());
 
 		mergeReqCtrlList(productData.getReqCtrlList());
 
@@ -87,8 +87,8 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 				ProductData componentProductData = alfrescoRepository.findOne(componentProductNodeRef);
 				if (!componentProductNodeRef.equals(productData.getNodeRef()) && (componentProductData instanceof SemiFinishedProductData)
 						|| (componentProductData instanceof FinishedProductData) || (componentProductData instanceof RawMaterialData)) {
-					if ((componentProductData.getCompoListView() != null) && (componentProductData.getCompoListView().getReqCtrlList() != null)) {
-						for (ReqCtrlListDataItem tmp : componentProductData.getCompoListView().getReqCtrlList()) {
+					if ((componentProductData.getCompoListView() != null) && (componentProductData.getReqCtrlList() != null)) {
+						for (ReqCtrlListDataItem tmp : componentProductData.getReqCtrlList()) {
 							// mandatory fields rclDataItem aren't put in parent
 							if (tmp.getReqDataType() != RequirementDataType.Completion) {
 								reqCtrlList.add(new ReqCtrlListDataItem(null, tmp.getReqType(), tmp.getReqMlMessage(), tmp.getCharact(),
