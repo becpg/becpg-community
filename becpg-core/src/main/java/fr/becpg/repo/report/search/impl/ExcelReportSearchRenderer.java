@@ -96,7 +96,7 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 		int rownum = 0;
 		Row headerRow = sheet.getRow(rownum++);
 
-		if ("TYPE".equals(headerRow.getCell(0).getStringCellValue())) {
+		if (headerRow.getCell(0)!=null && "TYPE".equals(headerRow.getCell(0).getStringCellValue())) {
 			sheet.setColumnHidden(0, true);
 
 			QName itemType = QName.createQName(headerRow.getCell(1).getStringCellValue(), namespaceService);

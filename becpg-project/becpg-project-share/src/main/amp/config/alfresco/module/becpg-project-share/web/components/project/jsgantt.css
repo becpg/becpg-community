@@ -77,6 +77,14 @@ td.ghead.current {
 	}
 }
 
+
+.projects  span.task-title a:hover,
+ .projects .ggroup span.task-title a:hover {
+	overflow: visible;
+	position: relative;
+	z-index:99;
+}
+
 .projects  span.resource-title {
 	white-space: nowrap;
 	text-overflow: ellipsis;

@@ -5745,6 +5745,7 @@
 					<show id="bcpg:labelClaimType" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:labelClaimFormula" />
+					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:charactName" />	
@@ -5778,6 +5779,7 @@
 					<show id="bcpg:labelClaimType" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:labelClaimFormula" />
+					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:charactName" />
@@ -8132,6 +8134,7 @@
 					<show id="bcpg:lclClaimValue" />
 					<show id="bcpg:lclComments"  />
 					<show id="bcpg:certificateDate" force="true" />
+					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 				<appearance>
 				   <field id="bcpg:lclComments">
@@ -8192,6 +8195,7 @@
 					<show id="bcpg:lclComments" />
 					<show id="bcpg:lclMissingLabelClaims" force="true"/>
 					<show id="bcpg:certificateDate" force="true" />
+					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:lclMissingLabelClaims" read-only="true"/>
