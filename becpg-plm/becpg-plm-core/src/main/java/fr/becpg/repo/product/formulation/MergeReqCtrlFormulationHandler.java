@@ -84,10 +84,10 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 
 	private void appendChildReq(ProductData productData, List<ReqCtrlListDataItem> reqCtrlList, List<CompoListDataItem> compoList) {
 		for (CompoListDataItem compoListDataItem : compoList) {
-			NodeRef productNodeRef = compoListDataItem.getProduct();
-			if (productNodeRef != null) {
-				ProductData componentProductData = alfrescoRepository.findOne(productNodeRef);
-				if (!productNodeRef.equals(productData.getNodeRef()) && (componentProductData instanceof SemiFinishedProductData)
+			NodeRef componentProductNodeRef = compoListDataItem.getProduct();
+			if (componentProductNodeRef != null) {
+				ProductData componentProductData = alfrescoRepository.findOne(componentProductNodeRef);
+				if (!componentProductNodeRef.equals(productData.getNodeRef()) && (componentProductData instanceof SemiFinishedProductData)
 						|| (componentProductData instanceof FinishedProductData) || (componentProductData instanceof RawMaterialData)) {
 					if ((componentProductData.getCompoListView() != null) && (componentProductData.getCompoListView().getReqCtrlList() != null)) {
 						for (ReqCtrlListDataItem tmp : componentProductData.getCompoListView().getReqCtrlList()) {
