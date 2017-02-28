@@ -2,6 +2,7 @@ package fr.becpg.repo.admin.patch;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import org.alfresco.repo.batch.BatchProcessWorkProvider;
@@ -125,6 +126,11 @@ public class RemovePalletNbOfBoxesPatch extends AbstractBeCPGPatch {
 				
 				if (nodeService.exists(productNodeRef)) {
 					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
+					
+					if(!nodeService.hasAspect(productNodeRef, BeCPGModel.ASPECT_FORMULATED_ENTITY)){
+						nodeService.addAspect(productNodeRef, BeCPGModel.ASPECT_FORMULATED_ENTITY, new HashMap<>());
+					}
+					
 					nodeService.removeProperty(productNodeRef, QName.createQName(PackModel.PACK_URI, "palletNbOfBoxes"));
 					nodeService.removeProperty(productNodeRef,  QName.createQName(BeCPGModel.BECPG_URI, "productYield"));
 				} else {
