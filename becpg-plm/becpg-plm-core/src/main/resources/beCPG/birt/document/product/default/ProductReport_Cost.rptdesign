@@ -805,6 +805,11 @@ row["compoListProduct"]
 }</expression>
                     <property name="dataType">string</property>
                 </structure>
+                <structure>
+                    <property name="name">runningCount</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">RUNNINGCOUNT</property>
+                </structure>
             </list-property>
             <list-property name="columnHints">
                 <structure>
@@ -867,6 +872,7 @@ row["compoListProduct"]
                 <structure>
                     <property name="columnName">compoListYieldPerc</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">compoListYieldPerc</text-property>
                 </structure>
                 <structure>
@@ -1047,6 +1053,11 @@ row["compoListProduct"]
                         <property name="position">23</property>
                         <property name="name">compoListProductLabel</property>
                         <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">24</property>
+                        <property name="name">runningCount</property>
+                        <property name="dataType">integer</property>
                     </structure>
                 </list-property>
             </structure>
@@ -1873,6 +1884,11 @@ row["packagingListProduct"]
 }</expression>
                     <property name="dataType">string</property>
                 </structure>
+                <structure>
+                    <property name="name">runningCount</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">RUNNINGCOUNT</property>
+                </structure>
             </list-property>
             <list-property name="columnHints">
                 <structure>
@@ -1962,6 +1978,7 @@ row["packagingListProduct"]
                 <structure>
                     <property name="columnName">productCompoQtyUsed</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">productCompoQtyUsed</text-property>
                 </structure>
             </list-property>
@@ -2058,6 +2075,11 @@ row["packagingListProduct"]
                         <property name="position">18</property>
                         <property name="name">packagingListProductLabel</property>
                         <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">19</property>
+                        <property name="name">runningCount</property>
+                        <property name="dataType">integer</property>
                     </structure>
                 </list-property>
             </structure>
@@ -2293,6 +2315,11 @@ row["plResource"]
 }</expression>
                     <property name="dataType">string</property>
                 </structure>
+                <structure>
+                    <property name="name">runningCount</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">RUNNINGCOUNT</property>
+                </structure>
             </list-property>
             <list-property name="columnHints">
                 <structure>
@@ -2382,6 +2409,7 @@ row["plResource"]
                 <structure>
                     <property name="columnName">productCompoQtyUsed</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">productCompoQtyUsed</text-property>
                 </structure>
             </list-property>
@@ -2486,6 +2514,11 @@ row["plResource"]
                         <property name="position">18</property>
                         <property name="name">plResourceLabel</property>
                         <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">19</property>
+                        <property name="name">runningCount</property>
+                        <property name="dataType">integer</property>
                     </structure>
                 </list-property>
             </structure>
@@ -3511,6 +3544,12 @@ dataSetRow["versionLabel"]
             <property name="fontSize">8pt</property>
             <property name="width">100%</property>
             <property name="dataSet">cost</property>
+            <list-property name="visibility">
+                <structure>
+                    <property name="format">all</property>
+                    <expression name="valueExpr" type="javascript">( row["runningCount"]== null || row["runningCount"]== 0 )</expression>
+                </structure>
+            </list-property>
             <list-property name="boundDataColumns">
                 <structure>
                     <property name="name">costListCost</property>
@@ -3619,6 +3658,18 @@ dataSetRow["costListValue"]
                     <text-property name="displayName">itemType</text-property>
                     <expression name="expression" type="javascript">dataSetRow["itemType"]</expression>
                     <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">runningCount</property>
+                    <text-property name="displayName">runningCount</text-property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">RUNNINGCOUNT</property>
+                    <list-property name="arguments">
+                        <structure>
+                            <property name="name">Expression</property>
+                        </structure>
+                    </list-property>
+                    <property name="allowExport">true</property>
                 </structure>
             </list-property>
             <list-property name="filter">
@@ -3836,6 +3887,12 @@ dataSetRow["costListValue"]
             <property name="pageBreakInside">avoid</property>
             <property name="width">100%</property>
             <property name="dataSet">CompoList</property>
+            <list-property name="visibility">
+                <structure>
+                    <property name="format">all</property>
+                    <expression name="valueExpr" type="javascript">( row["runningCount"]== null || row["runningCount"] == 0)</expression>
+                </structure>
+            </list-property>
             <list-property name="boundDataColumns">
                 <structure>
                     <property name="name">compoListProduct</property>
@@ -3996,6 +4053,36 @@ dataSetRow["costListValue"]
                     <text-property name="displayName">title</text-property>
                     <expression name="expression" type="javascript">dataSetRow["title"]</expression>
                     <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">compoListQtySubFormula_1</property>
+                    <text-property name="displayName">compoListQtySubFormula</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["compoListQtySubFormula"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">compoListQty_1</property>
+                    <text-property name="displayName">compoListQty</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["compoListQty"]</expression>
+                    <property name="dataType">float</property>
+                </structure>
+                <structure>
+                    <property name="name">compoListUnit_1</property>
+                    <text-property name="displayName">compoListUnit</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["compoListUnit"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">compoListQtyForProduct_1</property>
+                    <text-property name="displayName">compoListQtyForProduct</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["compoListQtyForProduct"]</expression>
+                    <property name="dataType">float</property>
+                </structure>
+                <structure>
+                    <property name="name">runningCount</property>
+                    <text-property name="displayName">runningCount</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["runningCount"]</expression>
+                    <property name="dataType">integer</property>
                 </structure>
             </list-property>
             <column id="2910">
@@ -4303,6 +4390,12 @@ matière
             <property name="fontSize">8pt</property>
             <property name="width">100%</property>
             <property name="dataSet">packList</property>
+            <list-property name="visibility">
+                <structure>
+                    <property name="format">all</property>
+                    <expression name="valueExpr" type="javascript">( row["runningCount"]== null  || row["runningCount"]== 0 )</expression>
+                </structure>
+            </list-property>
             <list-property name="boundDataColumns">
                 <structure>
                     <property name="name">erpCode</property>
@@ -4423,6 +4516,12 @@ dataSetRow["packagingListPkgLevel"]
                     <text-property name="displayName">itemTypeEntity</text-property>
                     <expression name="expression" type="javascript">dataSetRow["itemTypeEntity"]</expression>
                     <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">runningCount</property>
+                    <text-property name="displayName">runningCount</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["runningCount"]</expression>
+                    <property name="dataType">integer</property>
                 </structure>
             </list-property>
             <column id="3528">
@@ -4712,6 +4811,12 @@ dataSetRow["packagingListPkgLevel"]
             <property name="pageBreakInside">avoid</property>
             <property name="width">100%</property>
             <property name="dataSet">processList</property>
+            <list-property name="visibility">
+                <structure>
+                    <property name="format">all</property>
+                    <expression name="valueExpr" type="javascript">( row["runningCount"] == null || row["runningCount"]== 0)</expression>
+                </structure>
+            </list-property>
             <list-property name="boundDataColumns">
                 <structure>
                     <property name="name">plStep</property>
@@ -4810,6 +4915,12 @@ dataSetRow["packagingListPkgLevel"]
                     <text-property name="displayName">itemTypeEntity</text-property>
                     <expression name="expression" type="javascript">dataSetRow["itemTypeEntity"]</expression>
                     <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">runningCount</property>
+                    <text-property name="displayName">runningCount</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["runningCount"]</expression>
+                    <property name="dataType">integer</property>
                 </structure>
             </list-property>
             <column id="3621">

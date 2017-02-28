@@ -1157,6 +1157,11 @@
                     <property name="aggregateFunction">COUNT</property>
                     <expression name="filterExpr">row["variants"] != null</expression>
                 </structure>
+                <structure>
+                    <property name="name">runningCount</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">RUNNINGCOUNT</property>
+                </structure>
             </list-property>
             <list-property name="columnHints">
                 <structure>
@@ -1224,6 +1229,7 @@
                 <structure>
                     <property name="columnName">itemType</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">itemType</text-property>
                 </structure>
             </list-property>
@@ -1293,6 +1299,11 @@
                     <structure>
                         <property name="position">13</property>
                         <property name="name">count variant</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">14</property>
+                        <property name="name">runningCount</property>
                         <property name="dataType">integer</property>
                     </structure>
                 </list-property>
@@ -6763,6 +6774,12 @@ BirtMath.round(dataSetRow["compoListQty"] * 1000000, 2)+ " mg";
                                 <expression name="expression" type="javascript">dataSetRow["itemType"]</expression>
                                 <property name="dataType">string</property>
                             </structure>
+                            <structure>
+                                <property name="name">runningCount</property>
+                                <text-property name="displayName">runningCount</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["runningCount"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
                         </list-property>
                         <structure name="toc"/>
                         <column id="2910">
@@ -8289,6 +8306,13 @@ true
                         </structure>
                     </list-property>
                     <property name="allowExport">true</property>
+                </structure>
+            </list-property>
+            <list-property name="filter">
+                <structure>
+                    <property name="operator">is-true</property>
+                    <expression name="expr" type="javascript">( (row["rplParamValue"] != null) &amp;&amp; (row["rplParamValue"].length > 0) )</expression>
+                    <property name="updateAggregation">true</property>
                 </structure>
             </list-property>
             <column id="9035">
