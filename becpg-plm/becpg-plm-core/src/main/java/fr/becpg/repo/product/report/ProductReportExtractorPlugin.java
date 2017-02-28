@@ -338,13 +338,24 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 				// extract RawMaterials
 				extractRawMaterials(productData, dataListsElt, images);
+				
+			}
+			
+			if (isExtractedProduct  || componentDatalistsToExtract.contains(PLMModel.TYPE_PACKAGINGLIST.toPrefixString(namespaceService)) ) {
 
 				// packList
 				loadPackagingList(productData, dataListsElt, defaultVariantNodeRef, images);
 
+			}
+			
+			if (isExtractedProduct  || componentDatalistsToExtract.contains(MPMModel.TYPE_PROCESSLIST.toPrefixString(namespaceService)) ) {
+				
 				// processList
 				loadProcessList(productData, dataListsElt, defaultVariantNodeRef, images);
 
+			}
+			
+			if (isExtractedProduct || componentDatalistsToExtract.contains(PLMModel.TYPE_INGLABELINGLIST.toPrefixString(namespaceService)) ){
 				// IngLabelingList
 				if (productData.getLabelingListView().getIngLabelingList() != null) {
 					Element ingListElt = dataListsElt.addElement(PLMModel.TYPE_INGLABELINGLIST.getLocalName() + "s");
