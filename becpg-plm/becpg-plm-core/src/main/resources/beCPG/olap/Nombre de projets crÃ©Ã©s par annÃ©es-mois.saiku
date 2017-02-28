@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Query name="4FD75DF2-9B18-4023-A011-B70CE48CC087" type="QM" connection="beCPG" cube="[projects]" catalog="beCPG OLAP Schema" schema="beCPG OLAP Schema">
+  <QueryModel>
+    <Axes>
+      <Axis location="ROWS" nonEmpty="true">
+        <Dimensions>
+          <Dimension name="Measures">
+            <Inclusions>
+              <Selection dimension="Measures" type="member" node="[Measures].[projectsNumber]" operator="MEMBER" />
+            </Inclusions>
+            <Exclusions />
+          </Dimension>
+        </Dimensions>
+      </Axis>
+      <Axis location="COLUMNS" nonEmpty="true">
+        <Dimensions>
+          <Dimension name="projectDateCreated" hierarchizeMode="PRE" hierarchyConsistent="true">
+            <Inclusions>
+              <Selection dimension="projectDateCreated" type="level" node="[projectDateCreated.date].[Year]" operator="MEMBERS" />
+              <Selection dimension="projectDateCreated" type="level" node="[projectDateCreated.date].[Month]" operator="MEMBERS" />
+            </Inclusions>
+            <Exclusions />
+          </Dimension>
+        </Dimensions>
+      </Axis>
+      <Axis location="FILTER" nonEmpty="false" />
+    </Axes>
+  </QueryModel>
+  <MDX>SELECT
+NON EMPTY {Hierarchize({{[projectDateCreated.date].[Year].Members}, {[projectDateCreated.date].[Month].Members}})} ON COLUMNS,
+NON EMPTY {[Measures].[projectsNumber]} ON ROWS
+FROM [projects]</MDX>
+  <Properties>
+    <Property name="saiku.ui.render.mode" value="table" />
+    <Property name="org.saiku.query.explain" value="true" />
+    <Property name="saiku.olap.query.nonempty.columns" value="true" />
+    <Property name="saiku.olap.query.nonempty.rows" value="true" />
+    <Property name="org.saiku.connection.scenario" value="false" />
+    <Property name="saiku.olap.query.automatic_execution" value="true" />
+    <Property name="saiku.olap.query.drillthrough" value="true" />
+    <Property name="saiku.olap.query.filter" value="true" />
+    <Property name="saiku.olap.query.limit" value="true" />
+    <Property name="saiku.olap.query.nonempty" value="true" />
+  </Properties>
+</Query>
+

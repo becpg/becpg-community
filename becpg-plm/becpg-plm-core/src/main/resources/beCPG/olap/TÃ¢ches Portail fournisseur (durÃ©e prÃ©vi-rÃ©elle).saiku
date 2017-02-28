@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Query name="FD954714-2140-4F22-B265-ED8AFEF7DE57" type="QM" connection="beCPG" cube="[projectsSteps]" catalog="beCPG OLAP Schema" schema="beCPG OLAP Schema">
+  <QueryModel>
+    <Axes>
+      <Axis location="ROWS" nonEmpty="true">
+        <Dimensions>
+          <Dimension name="project" hierarchizeMode="PRE" hierarchyConsistent="true">
+            <Inclusions>
+              <Selection dimension="project" type="level" node="[project].[entity_noderef]" operator="MEMBERS" />
+            </Inclusions>
+            <Exclusions />
+          </Dimension>
+          <Dimension name="designation" hierarchizeMode="PRE" hierarchyConsistent="true">
+            <Inclusions>
+              <Selection dimension="designation" type="member" node="[designation.taskPerName].[Demande de référencement]" operator="MEMBER" />
+              <Selection dimension="designation" type="member" node="[designation.taskPerName].[Validation référencement]" operator="MEMBER" />
+            </Inclusions>
+            <Exclusions />
+          </Dimension>
+        </Dimensions>
+      </Axis>
+      <Axis location="COLUMNS" nonEmpty="true">
+        <Dimensions>
+          <Dimension name="Measures">
+            <Inclusions>
+              <Selection dimension="Measures" type="member" node="[Measures].[averageActualDurations]" operator="MEMBER" />
+              <Selection dimension="Measures" type="member" node="[Measures].[averageForecastDurations]" operator="MEMBER" />
+            </Inclusions>
+            <Exclusions />
+          </Dimension>
+        </Dimensions>
+      </Axis>
+      <Axis location="FILTER" nonEmpty="false" />
+    </Axes>
+  </QueryModel>
+  <MDX>SELECT
+NON EMPTY {[Measures].[averageActualDurations], [Measures].[averageForecastDurations]} ON COLUMNS,
+NON EMPTY Hierarchize(Union(CrossJoin([project].[entity_noderef].Members, {[designation.taskPerName].[Demande de référencement]}), CrossJoin([project].[entity_noderef].Members, {[designation.taskPerName].[Validation référencement]}))) ON ROWS
+FROM [projectsSteps]</MDX>
+  <Properties>
+    <Property name="saiku.ui.render.mode" value="table" />
+    <Property name="org.saiku.query.explain" value="true" />
+    <Property name="saiku.olap.query.nonempty.columns" value="true" />
+    <Property name="saiku.olap.query.nonempty.rows" value="true" />
+    <Property name="org.saiku.connection.scenario" value="false" />
+    <Property name="saiku.olap.query.automatic_execution" value="true" />
+    <Property name="saiku.olap.query.drillthrough" value="true" />
+    <Property name="saiku.olap.query.filter" value="true" />
+    <Property name="saiku.olap.query.limit" value="true" />
+    <Property name="saiku.olap.query.nonempty" value="true" />
+  </Properties>
+</Query>
+

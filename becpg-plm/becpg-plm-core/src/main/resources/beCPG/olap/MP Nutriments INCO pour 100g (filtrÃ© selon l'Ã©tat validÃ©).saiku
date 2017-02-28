@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Query name="8B9C2E34-D558-F518-B4D9-F8D4DB3510A6" type="QM" connection="beCPG" cube="[nutrients]" catalog="beCPG OLAP Schema" schema="beCPG OLAP Schema">
+  <QueryModel>
+    <Axes>
+      <Axis location="ROWS" nonEmpty="true">
+        <Dimensions>
+          <Dimension name="designation" hierarchizeMode="PRE" hierarchyConsistent="true">
+            <Inclusions>
+              <Selection dimension="designation" type="member" node="[designation].[Validé]" operator="MEMBER" />
+              <Selection dimension="designation" type="level" node="[designation].[name]" operator="MEMBERS" />
+            </Inclusions>
+            <Exclusions />
+          </Dimension>
+        </Dimensions>
+      </Axis>
+      <Axis location="COLUMNS" nonEmpty="true" sortOrder="BASC" sortEvaluationLiteral="[nutrient.nutrientPerGroup].CurrentMember.Name">
+        <Dimensions>
+          <Dimension name="Measures">
+            <Inclusions>
+              <Selection dimension="Measures" type="member" node="[Measures].[nutValue]" operator="MEMBER" />
+            </Inclusions>
+            <Exclusions />
+          </Dimension>
+          <Dimension name="nutrient" hierarchizeMode="PRE" hierarchyConsistent="true">
+            <Inclusions>
+              <Selection dimension="nutrient" type="member" node="[nutrient.nutrientPerGroup].[Groupe 1].[Energie kJ]" operator="MEMBER" />
+              <Selection dimension="nutrient" type="member" node="[nutrient.nutrientPerGroup].[Groupe 1].[Energie kcal]" operator="MEMBER" />
+              <Selection dimension="nutrient" type="member" node="[nutrient.nutrientPerGroup].[Groupe 1].[Lipides]" operator="MEMBER" />
+              <Selection dimension="nutrient" type="member" node="[nutrient.nutrientPerGroup].[Groupe 2].[AG saturés]" operator="MEMBER" />
+              <Selection dimension="nutrient" type="member" node="[nutrient.nutrientPerGroup].[Groupe 1].[Glucides]" operator="MEMBER" />
+              <Selection dimension="nutrient" type="member" node="[nutrient.nutrientPerGroup].[Groupe 2].[Sucres]" operator="MEMBER" />
+              <Selection dimension="nutrient" type="member" node="[nutrient.nutrientPerGroup].[Groupe 1].[Protéines]" operator="MEMBER" />
+              <Selection dimension="nutrient" type="member" node="[nutrient.nutrientPerGroup].[Groupe 2].[Sel]" operator="MEMBER" />
+            </Inclusions>
+            <Exclusions />
+          </Dimension>
+        </Dimensions>
+      </Axis>
+      <Axis location="FILTER" nonEmpty="false">
+        <Dimensions>
+          <Dimension name="productType">
+            <Inclusions>
+              <Selection dimension="productType" type="member" node="[productType].[Matière première]" operator="MEMBER" />
+            </Inclusions>
+            <Exclusions />
+          </Dimension>
+        </Dimensions>
+      </Axis>
+    </Axes>
+  </QueryModel>
+  <MDX>SELECT
+NON EMPTY Order(Hierarchize(Union(CrossJoin({[Measures].[nutValue]}, {[nutrient.nutrientPerGroup].[Groupe 1].[Energie kJ]}), Union(CrossJoin({[Measures].[nutValue]}, {[nutrient.nutrientPerGroup].[Groupe 1].[Energie kcal]}), Union(CrossJoin({[Measures].[nutValue]}, {[nutrient.nutrientPerGroup].[Groupe 1].[Lipides]}), Union(CrossJoin({[Measures].[nutValue]}, {[nutrient.nutrientPerGroup].[Groupe 2].[AG saturés]}), Union(CrossJoin({[Measures].[nutValue]}, {[nutrient.nutrientPerGroup].[Groupe 1].[Glucides]}), Union(CrossJoin({[Measures].[nutValue]}, {[nutrient.nutrientPerGroup].[Groupe 2].[Sucres]}), Union(CrossJoin({[Measures].[nutValue]}, {[nutrient.nutrientPerGroup].[Groupe 1].[Protéines]}), CrossJoin({[Measures].[nutValue]}, {[nutrient.nutrientPerGroup].[Groupe 2].[Sel]}))))))))), [nutrient.nutrientPerGroup].CurrentMember.Name, BASC) ON COLUMNS,
+NON EMPTY {Hierarchize({{[designation].[Validé]}, Filter({{[designation].[name].Members}}, (Exists(Ancestor([designation].CurrentMember, [designation].[productState]), {[designation].[Validé]}).Count  &gt; 0))})} ON ROWS
+FROM [nutrients]
+WHERE {[productType].[Matière première]}</MDX>
+  <Properties>
+    <Property name="saiku.ui.render.mode" value="table" />
+    <Property name="org.saiku.query.explain" value="true" />
+    <Property name="saiku.olap.query.nonempty.columns" value="true" />
+    <Property name="saiku.olap.query.nonempty.rows" value="true" />
+    <Property name="org.saiku.connection.scenario" value="false" />
+    <Property name="saiku.olap.query.automatic_execution" value="true" />
+    <Property name="saiku.olap.query.drillthrough" value="true" />
+    <Property name="saiku.olap.query.filter" value="true" />
+    <Property name="saiku.olap.query.limit" value="true" />
+    <Property name="saiku.olap.query.nonempty" value="true" />
+  </Properties>
+</Query>
+
