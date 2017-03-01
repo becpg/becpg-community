@@ -299,6 +299,11 @@ public class EntityDataListWebScript extends AbstractWebScript {
 				dataListFilter.setSortMap(WebscriptHelper.extractSortMap((String) json.get(PARAM_SORT), namespaceService));
 			}
 
+			if (json != null && json.has(PARAM_QUERY_EXECUTION_ID)) {
+				dataListFilter.getPagination().setQueryExecutionId( (String) json.get(PARAM_QUERY_EXECUTION_ID));;
+			}
+			
+			
 			if (filterId.equals(DataListFilter.FORM_FILTER) && filterData != null) {
 				JSONObject jsonObject = new JSONObject(filterData);
 				dataListFilter.setCriteriaMap(JsonHelper.extractCriteria(jsonObject));

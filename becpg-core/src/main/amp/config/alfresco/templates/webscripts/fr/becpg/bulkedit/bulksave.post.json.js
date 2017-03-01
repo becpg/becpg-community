@@ -60,8 +60,17 @@ function main()
     var persistedObject = null;
     try
     {
-    	if(nodeRefs!=null){
-    		var splitted =  nodeRefs.split(",");
+    	
+    	var splitted = null;
+    	
+    	if(args.allPages && args.queryExecutionId!=null){
+    		splitted = bcpg.getSearchResults(args.queryExecutionId);
+    	} else if(nodeRefs!=null){
+    		splitted =  nodeRefs.split(",")
+    	}
+    	
+    	
+    	if(splitted!=null){
 	    	for(var i in splitted){
 	    		var nodeRef = splitted[i];
 	    		for(var j in assocToRemoves){

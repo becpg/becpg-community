@@ -17,18 +17,14 @@
  ******************************************************************************/
 package fr.becpg.repo.jscript;
 
-import java.io.Serializable;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.repo.jscript.BaseScopableProcessorExtension;
 import org.alfresco.repo.jscript.ScriptNode;
-import org.alfresco.repo.version.VersionBaseModel;
 import org.alfresco.service.ServiceRegistry;
-import org.alfresco.service.cmr.coci.CheckOutCheckInService;
 import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
@@ -36,10 +32,11 @@ import org.alfresco.service.cmr.quickshare.QuickShareService;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.version.Version;
 import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
@@ -53,6 +50,7 @@ import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.olap.OlapService;
+import fr.becpg.repo.search.PaginatedSearchCache;
 
 /**
  * Utility script methods
@@ -61,6 +59,8 @@ import fr.becpg.repo.olap.OlapService;
  *
  */
 public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
+
+	private static Log logger = LogFactory.getLog(BeCPGScriptHelper.class);
 
 	private AutoNumService autoNumService;
 
@@ -73,7 +73,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	private NamespaceService namespaceService;
 
 	private DictionaryService dictionaryService;
-	
+
 	private EntityDictionaryService entityDictionaryService;
 
 	private EntityVersionService entityVersionService;
@@ -83,7 +83,9 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	private AssociationService associationService;
 
 	private EntityListDAO entityListDAO;
-	
+
+	private PaginatedSearchCache paginatedSearchCache;
+
 	private boolean showEntitiesInTree = false;
 
 	public void setOlapService(OlapService olapService) {
@@ -138,7 +140,10 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		this.entityDictionaryService = entityDictionaryService;
 	}
 
-	
+	public void setPaginatedSearchCache(PaginatedSearchCache paginatedSearchCache) {
+		this.paginatedSearchCache = paginatedSearchCache;
+	}
+
 	public boolean isShowEntitiesInTree() {
 		return showEntitiesInTree;
 	}
@@ -203,7 +208,6 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public String getMessage(String messageKey, Object param) {
 		return I18NUtil.getMessage(messageKey, param, Locale.getDefault());
 	}
-	
 
 	public String getOlapSSOUrl() {
 		return olapService.getSSOUrl();
@@ -224,9 +228,10 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	}
 
 	public ScriptNode mergeBranch(ScriptNode entity, ScriptNode branchTo, String description, String type) {
-		NodeRef retNodeRef = entityVersionService.mergeBranch(entity.getNodeRef(), branchTo != null ? branchTo.getNodeRef() : null , VersionType.valueOf(type), description);
-		
-		return 	new ScriptNode(retNodeRef, serviceRegistry);
+		NodeRef retNodeRef = entityVersionService.mergeBranch(entity.getNodeRef(), branchTo != null ? branchTo.getNodeRef() : null,
+				VersionType.valueOf(type), description);
+
+		return new ScriptNode(retNodeRef, serviceRegistry);
 	}
 
 	public boolean changeEntityListStates(ScriptNode entity, String state) {
@@ -241,16 +246,27 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 		return true;
 	}
-	
-	public String[] getSubTypes(String type){
+
+	public String[] getSubTypes(String type) {
 		Set<String> ret = new HashSet<>();
 
-		for(QName typeQname : entityDictionaryService.getSubTypes(QName.createQName(type,namespaceService))){
+		for (QName typeQname : entityDictionaryService.getSubTypes(QName.createQName(type, namespaceService))) {
 			ret.add(typeQname.toPrefixString(namespaceService));
 		}
-		
+
 		return ret.toArray(new String[ret.size()]);
-		
+
+	}
+
+	public String[] getSearchResults(String queryId) {
+		List<NodeRef> ret = paginatedSearchCache.getSearchResults(queryId);
+		if (ret != null) {
+			return ret.stream().map(n -> n.toString()).toArray(String[]::new);
+		} else {
+			logger.warn("No results found for queryId: " + queryId);
+		}
+
+		return null;
 	}
 
 }

@@ -104,11 +104,11 @@
 		<property name="entityDictionaryService" ref="entityDictionaryService"/>
 	</bean>
 
-
    <bean id="simpleExtractor" class="fr.becpg.repo.entity.datalist.impl.SimpleExtractor" parent="abstractDataListExtractor">
 		<property name="entityListDAO" ref="entityListDAO"/>
 		<property name="dataListSortRegistry" ref="dataListSortRegistry"/>		
 		<property name="associationService" ref="associationService"/>
+		<property name="paginatedSearchCache" ref="paginatedSearchCache"/>
 		<property name="defaultExtractor" value="true"/>
 	</bean>
 
@@ -118,7 +118,6 @@
 		<property name="defaultExtractor" value="false"/>
 	</bean>
 
-	
 	<bean id="wUsedExtractor" class="fr.becpg.repo.entity.datalist.impl.WUsedExtractor" parent="multiLevelExtractor">
 		<property name="wUsedListService" ref="wUsedListService" />
 		<property name="namespaceService" ref="namespaceService" />
@@ -158,6 +157,7 @@
 			  <entry key="fr.becpg.repo.helper.AssociationService.childs" value="10000" />
 			  <entry key="fr.becpg.repo.helper.AssociationService.assocs" value="200000" />
 			  <entry key="fr.becpg.repo.jscript.Thumbnail" value="20" />
+			  <entry key="fr.becpg.repo.search.PaginatedSearchCache" value="100" />
 			</map>
 		</property>
 	</bean>
