@@ -45,6 +45,7 @@ import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorMode;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
+import fr.becpg.repo.search.PaginatedSearchCache;
 
 public class SimpleExtractor extends AbstractDataListExtractor {
 
@@ -54,7 +55,14 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 	protected DataListSortRegistry dataListSortRegistry;
 
+	protected PaginatedSearchCache paginatedSearchCache;
+
 	private static final Log logger = LogFactory.getLog(SimpleExtractor.class);
+	
+
+	public void setPaginatedSearchCache(PaginatedSearchCache paginatedSearchCache) {
+		this.paginatedSearchCache = paginatedSearchCache;
+	}
 
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;

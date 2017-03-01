@@ -39,5 +39,9 @@ public interface BeCPGCacheService {
 
 	void clearCache(String cacheName);
 
+	<T> T getFromCache(String cacheName, String cacheKey);
+
+	<T> void storeInCache(String cacheName, String cacheKey, T data);
+
 	
 }

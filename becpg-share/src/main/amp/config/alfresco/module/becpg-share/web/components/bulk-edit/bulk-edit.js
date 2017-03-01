@@ -194,11 +194,6 @@
 							 */
 							pageSize : 75,
 							/**
-							 * @property queryExecutionId
-							 * @type string
-							 */
-							queryExecutionId: null,
-							/**
 							 * @property pageSize
 							 * @type int
 							 */
@@ -278,10 +273,13 @@
 						 */
 						currentPage : null,
 
-						
 						currentSort : null,
 						
 						currentSortDir : null,
+						
+						queryExecutionId : null,
+						
+						currentQueryExecutionId : null,
 						
 						/**
 						 * Total number of records (documents + folders) in the
@@ -973,6 +971,7 @@
 									me.currentSort = oColumn.key;
 									me.currentSortDir = sSortDir;	
 									me.currentPage = 1;
+									me.currentQueryExecutionId = null;						
 									me._updateBulkEdit.call(me);						
 									return false;
 								
@@ -1018,6 +1017,7 @@
 
 								var handlePagination = function EntityDataGrid_handlePagination(state, me) {
 									me.currentPage = state.page;
+									me.currentQueryExecutionId = me.queryExecutionId;
 									me._updateBulkEdit.call(me);
 								};
 
@@ -1300,6 +1300,7 @@
 								destroyLoaderMessage();
 
 								this.currentPage = p_obj.page || 1;
+								this.currentQueryExecutionId = null;
 								this.widgets.dataTable.onDataReturnInitializeTable.call(this.widgets.dataTable, sRequest, oResponse, oPayload);
 							};
 
@@ -1364,6 +1365,10 @@
 							
 							if(this.currentSort!=null){
 								request.sort = this.currentSort.replace("prop_","").replace("_",":")+"|"+((this.currentSortDir == "yui-dt-asc") ? "true" : "false");
+							}
+							
+							if(this.currentQueryExecutionId != null) {
+								request.queryExecutionId = this.currentQueryExecutionId;
 							}
 							
 							if (this.options.nodeRef != null && this.options.nodeRef.length > 0) {
@@ -1433,12 +1438,6 @@
 
 						onEditSelected : function BulkEdit_onEditSelected() {
 							
-							if(this.allPages){
-								Alfresco.util.PopupManager.displayMessage({
-									text : this.msg("Not Yet implemented")
-								});
-								return false;
-							}
 
 							// Intercept before dialog show
 							var doBeforeDialogShow = function BulkEdit_onNewRow_doBeforeDialogShow(p_form, p_dialog) {

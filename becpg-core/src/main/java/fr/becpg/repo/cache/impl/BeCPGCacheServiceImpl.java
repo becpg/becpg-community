@@ -46,7 +46,7 @@ import fr.becpg.repo.cache.BeCPGCacheService;
 /**
  *
  * @author matthieu
- * 
+ *
  */
 public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBean {
 
@@ -96,11 +96,29 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	public <T> void storeInCache(String cacheName, String cacheKey, T data) {
+		if (!disableAllCache) {
+			cacheKey = computeCacheKey(cacheKey);
+			@SuppressWarnings("unchecked")
+			SimpleCache<String, T> cache = (DefaultSimpleCache<String, T>) getCache(cacheName);
+			cache.put(cacheKey, data);
+		}
+	}
+
+	@Override
+	public <T> T getFromCache(String cacheName, String cacheKey) {
+		return getFromCache(cacheName, cacheKey, () -> {
+			return null;
+		}, false);
+	}
+
+	@Override
+
 	public <T> T getFromCache(final String cacheName, String cacheKey, BeCPGCacheDataProviderCallBack<T> cacheDataProviderCallBack,
 			boolean deleteOnTxRollback) {
 
 		cacheKey = computeCacheKey(cacheKey);
+		@SuppressWarnings("unchecked")
 		SimpleCache<String, T> cache = (DefaultSimpleCache<String, T>) getCache(cacheName);
 		T ret = null;
 		try {
@@ -176,11 +194,11 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 
 	@Override
 	public void clearCache(String cacheName) {
-		logger.debug("Clear specific cache: "+cacheName);
+		logger.debug("Clear specific cache: " + cacheName);
 		SimpleCache<String, ?> cache = getCache(cacheName);
 		cache.clear();
 	}
-	
+
 	@Override
 	public void clearAllCaches() {
 		logger.debug("Clear all cache");
@@ -237,6 +255,5 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 		}
 
 	}
-
 
 }
