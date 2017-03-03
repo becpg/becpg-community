@@ -51,6 +51,7 @@ public class PhysicoChemListDataItem extends AbstractManualDataItem implements S
 		this.value = value;
 	}
 	
+	
 	@AlfProp
 	@AlfQname(qname="bcpg:pclUnit")
 	public String getUnit() {
@@ -132,6 +133,12 @@ public class PhysicoChemListDataItem extends AbstractManualDataItem implements S
 	public Double getFormulatedValue() {
 		return getValue();
 	}
+	
+	@Override
+	public void setFormulatedValue(Double formulatedValue) {
+		 setValue(formulatedValue);
+	}
+
 	
 	
 	@Override

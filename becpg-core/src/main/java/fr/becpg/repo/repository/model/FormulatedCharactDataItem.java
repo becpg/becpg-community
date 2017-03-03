@@ -4,6 +4,8 @@ public interface FormulatedCharactDataItem extends SimpleCharactDataItem, Manual
 
 	Double getFormulatedValue();
 	
+	void setFormulatedValue(Double formulatedValue);
+	
 	Boolean getIsFormulated();
 	
 	void setIsFormulated(Boolean isFormulated);
