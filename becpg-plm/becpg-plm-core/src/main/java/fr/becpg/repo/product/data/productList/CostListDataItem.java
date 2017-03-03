@@ -65,6 +65,14 @@ MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ForecastValue
 	}
 	
 	
+	@Override
+	public void setFormulatedValue(Double formulatedValue) {
+		setValue(formulatedValue);
+	}
+
+
+	
+	
 	@AlfProp
 	@AlfQname(qname="bcpg:costListUnit")
 	public String getUnit() {
