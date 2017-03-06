@@ -210,9 +210,9 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 	}
 
 	private boolean accept(QName type) {
-		return ForumModel.TYPE_POST.equals(type) || ContentModel.TYPE_CONTENT.equals(type)
+		return (ForumModel.TYPE_POST.equals(type) || ContentModel.TYPE_CONTENT.equals(type)
 				|| entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITY_V2)
-				|| (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM) && !BeCPGModel.PROP_ACTIVITYLIST_TYPE.equals(type));
+				|| (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM)) && !BeCPGModel.TYPE_ACTIVITY_LIST.equals(type));
 	}
 
 	private void registerActivity(NodeRef actionedUponNodeRef, QName type, ActivityEvent activityEvent) {

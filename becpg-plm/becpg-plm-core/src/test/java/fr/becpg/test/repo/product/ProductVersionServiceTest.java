@@ -714,10 +714,7 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 		final NodeRef newRawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(
 				new RetryingTransactionCallback<NodeRef>() {
 					@Override
-					public NodeRef execute() throws Throwable {
-
-						
-					
+					public NodeRef execute() throws Throwable {	
 						return entityVersionService.mergeBranch(branchNodeRef, rawMaterialNodeRef,VersionType.MAJOR, "This is a test version");
 					}
 
