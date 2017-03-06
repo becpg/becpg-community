@@ -20,6 +20,7 @@ package fr.becpg.repo.quality.data;
 import java.util.LinkedList;
 import java.util.List;
 
+import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.quality.data.dataList.WorkLogDataItem;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -29,7 +30,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 @AlfType
 @AlfQname(qname = "qa:nc")
-public class NonConformityData extends BeCPGDataObject {
+public class NonConformityData extends ProjectData {
 
 	/**
 	 * 
