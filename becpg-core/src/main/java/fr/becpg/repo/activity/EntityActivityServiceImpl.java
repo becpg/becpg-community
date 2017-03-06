@@ -8,13 +8,12 @@ import java.util.Set;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.forum.CommentService;
 import org.alfresco.repo.policy.BehaviourFilter;
-import org.alfresco.service.cmr.activities.ActivityService;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.namespace.NamespaceService;
+import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
 import org.alfresco.util.ISO8601DateFormat;
@@ -45,9 +44,6 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	private static Log logger = LogFactory.getLog(EntityActivityServiceImpl.class);
 
 	@Autowired
-	private ActivityService activityService;
-
-	@Autowired
 	private EntityListDAO entityListDAO;
 
 	@Autowired
@@ -67,9 +63,6 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 	@Autowired
 	private ContentService contentService;
-
-	@Autowired
-	private NamespaceService namespaceService;
 
 	@Autowired
 	private EntityDictionaryService entityDictionaryService;
@@ -156,7 +149,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 			}
 		}
 
-		return true;
+		return false;
 
 	}
 
@@ -202,6 +195,48 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		return false;
 
 	}
+	
+	@Override
+	public boolean postMergeBranchActivity(NodeRef branchNodeRef, NodeRef branchToNodeRef, VersionType versionType, String description) {
+		if (branchNodeRef != null && branchToNodeRef!=null) {
+			try {
+
+				NodeRef activityListNodeRef = getActivityList(branchToNodeRef);
+
+				// No list no activity
+				if (activityListNodeRef != null) {
+
+					if (nodeService.hasAspect(branchToNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)
+							|| nodeService.hasAspect(activityListNodeRef, ContentModel.ASPECT_PENDING_DELETE)) {
+						logger.debug("No activity on entity template or pending delete node");
+						return false;
+					}
+
+					// Project activity
+					ActivityListDataItem activityListDataItem = new ActivityListDataItem();
+					JSONObject data = new JSONObject();
+
+					data.put(PROP_TITLE, nodeService.getProperty(branchToNodeRef, ContentModel.PROP_NAME));
+					data.put(PROP_BRANCH_TITLE, nodeService.getProperty(branchNodeRef, ContentModel.PROP_NAME));
+
+					activityListDataItem.setActivityType(ActivityType.Merge);
+					activityListDataItem.setActivityData(data.toString());
+					activityListDataItem.setParentNodeRef(activityListNodeRef);
+
+					alfrescoRepository.save(activityListDataItem);
+
+					notifyListeners(branchToNodeRef, activityListDataItem);
+					return true;
+				}
+			} catch (JSONException e) {
+				logger.error(e, e);
+			}
+		}
+
+		return false;
+
+	}
+
 
 	@Override
 	public boolean postDatalistActivity(NodeRef entityNodeRef, NodeRef datalistNodeRef, ActivityEvent activityEvent) {
@@ -320,8 +355,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 	}
 
-	@Override
-	public boolean postEntityActivity(NodeRef entityNodeRef, ActivityEvent activityEvent) {
+	@Override 
+	public boolean postEntityActivity(NodeRef entityNodeRef, ActivityType activityType,  ActivityEvent activityEvent) {
 		try {
 
 			NodeRef activityListNodeRef = getActivityList(entityNodeRef);
@@ -338,11 +373,13 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 				// Project activity
 				ActivityListDataItem activityListDataItem = new ActivityListDataItem();
 				JSONObject data = new JSONObject();
-				data.put(PROP_ACTIVITY_EVENT, activityEvent.toString());
+				if(activityEvent!=null){
+					data.put(PROP_ACTIVITY_EVENT, activityEvent.toString());
+				}
 
 				data.put(PROP_TITLE, nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
 
-				activityListDataItem.setActivityType(ActivityType.Entity);
+				activityListDataItem.setActivityType(activityType);
 				activityListDataItem.setActivityData(data.toString());
 				activityListDataItem.setParentNodeRef(activityListNodeRef);
 
@@ -503,5 +540,6 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 			return null;
 		}, false, true);
 	}
+
 
 }

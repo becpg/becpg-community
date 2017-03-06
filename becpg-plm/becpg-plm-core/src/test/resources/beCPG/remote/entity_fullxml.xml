@@ -1456,22 +1456,22 @@
             </dl:dataList>
             <dl:dataList xmlns:dl="http://www.alfresco.org/model/datalist/1.0" path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/bcpg:entityLists" type="node" name="activityList" nodeRef="workspace://SpacesStore/8a0d7260-696f-4ed3-b2e0-c520dec8e421">
               <cm:contains type="childAssoc">
-                <pjt:activityList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/bcpg:entityLists/cm:contains" type="node" name="75d64dda-4b19-44dd-8860-9ab98aeca168" nodeRef="workspace://SpacesStore/19ab5f16-bca4-467f-ac64-65505db72131">
-                  <pjt:alUserId type="d:text"><![CDATA[admin]]></pjt:alUserId>
-                  <pjt:alData type="d:text"><![CDATA[{"title":"Fiche essais.doc","contentNodeRef":"workspace://SpacesStore/efff552e-15df-4a40-9690-4c3c73651f2a","activityEvent":"Create"}]]></pjt:alData>
+                <bcpg:activityList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/bcpg:entityLists/cm:contains" type="node" name="75d64dda-4b19-44dd-8860-9ab98aeca168" nodeRef="workspace://SpacesStore/19ab5f16-bca4-467f-ac64-65505db72131">
+                  <bcpg:alUserId type="d:text"><![CDATA[admin]]></bcpg:alUserId>
+                  <bcpg:alData type="d:text"><![CDATA[{"title":"Fiche essais.doc","contentNodeRef":"workspace://SpacesStore/efff552e-15df-4a40-9690-4c3c73651f2a","activityEvent":"Create"}]]></bcpg:alData>
                   <cm:created type="d:datetime">2014-07-17T17:25:50.200+02:00</cm:created>
                   <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
                   <cm:name type="d:text"><![CDATA[75d64dda-4b19-44dd-8860-9ab98aeca168]]></cm:name>
                   <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
-                  <pjt:alType type="d:text"><![CDATA[Content]]></pjt:alType>
+                  <bcpg:alType type="d:text"><![CDATA[Content]]></bcpg:alType>
                   <cm:modified type="d:datetime">2014-07-17T17:25:50.200+02:00</cm:modified>
                   <bcpg:sort type="d:int"><![CDATA[100]]></bcpg:sort>
-                </pjt:activityList>
+                </bcpg:activityList>
               </cm:contains>
               <cm:created type="d:datetime">2014-07-17T17:25:49.982+02:00</cm:created>
               <cm:title type="d:mltext"><![CDATA[Activités]]></cm:title>
               <cm:description type="d:mltext"><![CDATA[Activités projet]]></cm:description>
-              <dl:dataListItemType type="d:text"><![CDATA[pjt:activityList]]></dl:dataListItemType>
+              <dl:dataListItemType type="d:text"><![CDATA[bcpg:activityList]]></dl:dataListItemType>
               <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
               <cm:name type="d:text"><![CDATA[activityList]]></cm:name>
               <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>

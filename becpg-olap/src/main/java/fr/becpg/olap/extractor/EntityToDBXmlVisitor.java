@@ -201,7 +201,7 @@ public class EntityToDBXmlVisitor {
 		ignoredLists.add("bcpg:microbioList");
 		ignoredLists.add("bcpg:physicoChemList");
 		ignoredLists.add("bcpg:ingLabelingList");
-		ignoredLists.add("pjt:activityList");
+		ignoredLists.add("bcpg:activityList");
 	}
 
 	public void visit(InputStream in) throws IOException, SAXException, ParserConfigurationException, DOMException, ParseException, SQLException {

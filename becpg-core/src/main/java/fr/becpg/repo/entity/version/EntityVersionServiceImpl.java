@@ -53,6 +53,7 @@ import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityListDAO;
@@ -130,6 +131,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	@Autowired
 	private CheckOutCheckInService checkOutCheckInService;
 	
+	@Autowired
+	private EntityActivityService entityActivityService;
 
 	@Autowired
 	@Qualifier("ruleService")
@@ -797,16 +800,14 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		}
 		if(branchToNodeRef != null){
 			
-			//Update all existing assocs
-			//TODO
-			
-			
 			prepareBranchBeforeMerge(branchNodeRef, branchToNodeRef);
 	
 			Map<String, Serializable> properties = new HashMap<>();
 			properties.put(VersionBaseModel.PROP_VERSION_TYPE, versionType);
 			properties.put(Version.PROP_DESCRIPTION, description);
-
+			
+			entityActivityService.postMergeBranchActivity(branchNodeRef, branchToNodeRef, versionType, description );
+			
 			return checkOutCheckInService.checkin(branchNodeRef, properties);
 		}
 		return null;
@@ -880,6 +881,21 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 						policyBehaviourFilter.enableBehaviour(sourceNodeRef, ContentModel.ASPECT_AUDITABLE);
 					}
 				}
+				
+				
+				//Update all association refering to this branch to point to branchToNodeRef
+				List<AssociationRef> assocRefs = nodeService.getSourceAssocs(branchNodeRef, null);
+				
+				for (AssociationRef assocRef : assocRefs) {
+					policyBehaviourFilter.disableBehaviour(assocRef.getSourceRef(), ContentModel.ASPECT_AUDITABLE);
+					try {
+						nodeService.removeAssociation(assocRef.getSourceRef(), assocRef.getTargetRef(), assocRef.getTypeQName());
+						nodeService.createAssociation(assocRef.getSourceRef(), branchToNodeRef, assocRef.getTypeQName());
+					} finally {
+						policyBehaviourFilter.enableBehaviour(assocRef.getSourceRef(), ContentModel.ASPECT_AUDITABLE);
+					}
+				}
+				
 
 			} finally {
 				((RuleService) ruleService).enableRuleType(RuleType.UPDATE);

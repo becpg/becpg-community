@@ -1,19 +1,19 @@
 /*******************************************************************************
- * Copyright (C) 2010-2016 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
- * You should have received a copy of the GNU Lesser General Public License along with beCPG. 
+ * Copyright (C) 2010-2016 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with beCPG.
  * If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.entity.remote.impl;
@@ -22,8 +22,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
@@ -54,11 +56,12 @@ import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.entity.remote.extractor.ExcelXmlEntityVisitor;
 import fr.becpg.repo.entity.remote.extractor.ImportEntityXmlVisitor;
 import fr.becpg.repo.entity.remote.extractor.XmlEntityVisitor;
+import fr.becpg.repo.repository.L2CacheSupport;
 
 /**
- * 
+ *
  * @author matthieu
- * 
+ *
  */
 @Service("remoteEntityService")
 public class RemoteEntityServiceImpl implements RemoteEntityService {
@@ -66,7 +69,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	@Autowired
 	@Qualifier("ServiceRegistry")
 	private ServiceRegistry serviceRegistry;
-	
+
 	@Autowired
 	private SiteService siteService;
 
@@ -117,30 +120,39 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	@Override
 	public NodeRef createOrUpdateEntity(NodeRef entityNodeRef, InputStream in, RemoteEntityFormat format,
 			EntityProviderCallBack entityProviderCallBack) throws BeCPGException {
-		return createOrUpdateEntity(entityNodeRef, null, null, in, format, entityProviderCallBack);
+		if (format.equals(RemoteEntityFormat.xml)) {
+
+			final Set<NodeRef> rets = new HashSet<>();
+			L2CacheSupport.doInCacheContext(() -> {
+				rets.add(createOrUpdateEntity(entityNodeRef, null, null, in, format, entityProviderCallBack));
+
+			}, false, true);
+
+			if (rets.isEmpty()) {
+				throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format);
+			}
+
+			return rets.iterator().next();
+		}
+
+		throw new BeCPGException("Unknown format " + format.toString());
 	}
 
 	@Override
+	@Deprecated
 	public NodeRef createOrUpdateEntity(NodeRef entityNodeRef, NodeRef destNodeRef, Map<QName, Serializable> properties, InputStream in,
-			RemoteEntityFormat format, EntityProviderCallBack entityProviderCallBack) throws BeCPGException {
+			RemoteEntityFormat format, EntityProviderCallBack entityProviderCallBack) {
 
-		if (format.equals(RemoteEntityFormat.xml)) {
-			ImportEntityXmlVisitor xmlEntityVisitor = new ImportEntityXmlVisitor(serviceRegistry, entityDictionaryService);
-			xmlEntityVisitor.setEntityProviderCallBack(entityProviderCallBack);
-			NodeRef ret = null;
-			try {
-				ret = xmlEntityVisitor.visit(entityNodeRef,destNodeRef, properties , in);
+		ImportEntityXmlVisitor xmlEntityVisitor = new ImportEntityXmlVisitor(serviceRegistry, entityDictionaryService);
+		xmlEntityVisitor.setEntityProviderCallBack(entityProviderCallBack);
 
-			} catch (IOException | ParserConfigurationException | SAXException e) {
-				throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
-			} finally {
-				if (ret == null) {
-					logger.error("Cannot create or update entity :" + entityNodeRef + " at format " + format);
-				}
-			}
-			return ret;
+		try {
+			return xmlEntityVisitor.visit(entityNodeRef, destNodeRef, properties, in);
+		} catch (IOException | ParserConfigurationException | SAXException e) {
+			logger.error("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
 		}
-		throw new BeCPGException("Unknown format " + format.toString());
+		return null;
+
 	}
 
 	@Override

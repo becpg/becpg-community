@@ -34,6 +34,9 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.ReportModel;
+import fr.becpg.repo.activity.EntityActivityService;
+import fr.becpg.repo.activity.data.ActivityEvent;
+import fr.becpg.repo.activity.data.ActivityType;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationService;
@@ -67,13 +70,15 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 
 	@Autowired
 	private EntityDictionaryService entityDictionaryService;
-	
+
+	@Autowired
+	private EntityActivityService entityActivityService;
+
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		entityDictionaryService.registerPropDefMapping(PLMModel.PROP_PACKAGINGLIST_QTY,PLMModel.PROP_COMPOLIST_QTY_SUB_FORMULA);
-		
+		entityDictionaryService.registerPropDefMapping(PLMModel.PROP_PACKAGINGLIST_QTY, PLMModel.PROP_COMPOLIST_QTY_SUB_FORMULA);
+
 	}
-	
 
 	@Override
 	public void formulate(NodeRef productNodeRef) throws FormulateException {
@@ -90,15 +95,15 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 
 				L2CacheSupport.doInCacheContext(() -> {
 					AuthenticationUtil.runAsSystem(() -> {
-//						if (fast) {
-//							formulationService.formulate(productNodeRef, "fastProductFormulationChain");
-//						} else {
-							formulationService.formulate(productNodeRef);
-	//					}
+						formulationService.formulate(productNodeRef);
+						if (!fast) {
+							entityActivityService.postEntityActivity(productNodeRef, ActivityType.Formulation, ActivityEvent.Update);
+						}
+
 						return true;
 					});
 
-				} , false, true);
+				}, false, true);
 
 			} finally {
 				policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
