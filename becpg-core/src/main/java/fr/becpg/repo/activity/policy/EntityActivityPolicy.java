@@ -19,6 +19,7 @@ import org.apache.commons.logging.LogFactory;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.activity.data.ActivityEvent;
+import fr.becpg.repo.activity.data.ActivityType;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.repository.L2CacheSupport;
@@ -234,7 +235,7 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 						entityActivityService.postDatalistActivity(entityNodeRef, actionedUponNodeRef, activityEvent);
 					} else if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITY_V2)) {
 						logger.debug("Action upon entity, post activity");
-						entityActivityService.postEntityActivity(actionedUponNodeRef, activityEvent);
+						entityActivityService.postEntityActivity(actionedUponNodeRef, ActivityType.Entity ,  activityEvent);
 					}
 				}
 			} finally {

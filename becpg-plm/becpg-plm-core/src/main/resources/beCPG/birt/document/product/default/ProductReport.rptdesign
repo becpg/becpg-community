@@ -6539,7 +6539,6 @@ row["illValue"]
                             <property name="paddingLeft">1pt</property>
                             <image id="771">
                                 <property name="style">becpg-header-image</property>
-                                <property name="width">1.931in</property>
                                 <property name="source">embed</property>
                                 <property name="imageName">logo.png</property>
                             </image>
@@ -6838,110 +6837,363 @@ dataSetRow["versionLabel"]
         </simple-master-page>
     </page-setup>
     <body>
-        <grid id="2524">
-            <property name="style">becpg-grid-designation</property>
-            <property name="dataSet">Product</property>
-            <list-property name="boundDataColumns">
-                <structure>
-                    <property name="name">productQty</property>
-                    <text-property name="displayName">productQty</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["productQty"]</expression>
-                    <property name="dataType">float</property>
-                </structure>
-                <structure>
-                    <property name="name">description</property>
-                    <text-property name="displayName">description</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["description"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">clients</property>
-                    <text-property name="displayName">clients</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["clients"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">productHierarchy1</property>
-                    <text-property name="displayName">productHierarchy1</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["productHierarchy1"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">productHierarchy2</property>
-                    <text-property name="displayName">productHierarchy2</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["productHierarchy2"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">legalName</property>
-                    <text-property name="displayName">legalName</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["legalName"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">useByDate</property>
-                    <text-property name="displayName">useByDate</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["useByDate"]</expression>
-                    <property name="dataType">integer</property>
-                </structure>
-                <structure>
-                    <property name="name">eanCode</property>
-                    <text-property name="displayName">eanCode</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["eanCode"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">numberOfServings</property>
-                    <text-property name="displayName">numberOfServings</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["numberOfServings"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">bestBeforeDate</property>
-                    <text-property name="displayName">bestBeforeDate</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["bestBeforeDate"]</expression>
-                    <property name="dataType">integer</property>
-                </structure>
-            </list-property>
-            <column id="2525">
-                <property name="style">becpg-col-header</property>
-                <property name="width">1.385in</property>
+        <grid id="7353">
+            <property name="width">7.28125in</property>
+            <column id="7354">
+                <property name="width">4.072916666666667in</property>
             </column>
-            <column id="7296">
-                <property name="width">2.354in</property>
+            <column id="7355">
+                <property name="width">3.2083333333333335in</property>
             </column>
-            <column id="2526">
-                <property name="width">3.015267175572519in</property>
-            </column>
-            <row id="2527">
-                <list-property name="visibility">
-                    <structure>
-                        <property name="format">all</property>
-                        <expression name="valueExpr" type="javascript">(row["legalName"]=="" || row["legalName"]==null)</expression>
-                    </structure>
-                </list-property>
-                <cell id="2528">
-                    <label id="3331">
-                        <text-property name="text" key="legalName">Libellé légal</text-property>
-                    </label>
-                </cell>
-                <cell id="7287">
-                    <data id="3332">
+            <row id="7356">
+                <cell id="7357">
+                    <grid id="2524">
+                        <property name="style">becpg-grid-designation</property>
                         <property name="dataSet">Product</property>
                         <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">productQty</property>
+                                <text-property name="displayName">productQty</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["productQty"]</expression>
+                                <property name="dataType">float</property>
+                            </structure>
+                            <structure>
+                                <property name="name">description</property>
+                                <text-property name="displayName">description</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["description"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">clients</property>
+                                <text-property name="displayName">clients</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["clients"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">productHierarchy1</property>
+                                <text-property name="displayName">productHierarchy1</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["productHierarchy1"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">productHierarchy2</property>
+                                <text-property name="displayName">productHierarchy2</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["productHierarchy2"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
                             <structure>
                                 <property name="name">legalName</property>
                                 <text-property name="displayName">legalName</text-property>
                                 <expression name="expression" type="javascript">dataSetRow["legalName"]</expression>
                                 <property name="dataType">string</property>
                             </structure>
+                            <structure>
+                                <property name="name">useByDate</property>
+                                <text-property name="displayName">useByDate</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["useByDate"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
+                            <structure>
+                                <property name="name">eanCode</property>
+                                <text-property name="displayName">eanCode</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["eanCode"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">numberOfServings</property>
+                                <text-property name="displayName">numberOfServings</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["numberOfServings"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">bestBeforeDate</property>
+                                <text-property name="displayName">bestBeforeDate</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["bestBeforeDate"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
                         </list-property>
-                        <property name="resultSetColumn">legalName</property>
-                    </data>
+                        <column id="2525">
+                            <property name="style">becpg-col-header</property>
+                            <property name="width">1.385in</property>
+                        </column>
+                        <column id="7296">
+                            <property name="width">2.354in</property>
+                        </column>
+                        <row id="2527">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">(row["legalName"]=="" || row["legalName"]==null)</expression>
+                                </structure>
+                            </list-property>
+                            <cell id="2528">
+                                <label id="3331">
+                                    <text-property name="text" key="legalName">Libellé légal</text-property>
+                                </label>
+                            </cell>
+                            <cell id="7287">
+                                <data id="3332">
+                                    <property name="dataSet">Product</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">legalName</property>
+                                            <text-property name="displayName">legalName</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["legalName"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">legalName</property>
+                                </data>
+                            </cell>
+                        </row>
+                        <row id="7263">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">(row["productHierarchy1"]=="" || row["productHierarchy1"]==null)</expression>
+                                </structure>
+                            </list-property>
+                            <cell id="7264">
+                                <label id="2500">
+                                    <text-property name="text" key="productHierarchy1">Famille</text-property>
+                                </label>
+                            </cell>
+                            <cell id="7288">
+                                <data id="2522">
+                                    <property name="dataSet">Product</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">productHierarchy1</property>
+                                            <text-property name="displayName">productHierarchy1</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["productHierarchy1"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">productHierarchy1</property>
+                                </data>
+                            </cell>
+                        </row>
+                        <row id="7266">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">(row["productHierarchy2"]=="" || row["productHierarchy2"] ==null)</expression>
+                                </structure>
+                            </list-property>
+                            <cell id="7267">
+                                <label id="2501">
+                                    <text-property name="text" key="productHierarchy2">Sous-famille</text-property>
+                                </label>
+                            </cell>
+                            <cell id="7289">
+                                <data id="2523">
+                                    <property name="dataSet">Product</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">productHierarchy2</property>
+                                            <text-property name="displayName">productHierarchy2</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["productHierarchy2"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">productHierarchy2</property>
+                                </data>
+                            </cell>
+                        </row>
+                        <row id="7269">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">(row["clients"]=="" ||row["clients"]==null)</expression>
+                                </structure>
+                            </list-property>
+                            <cell id="7270">
+                                <label id="2502">
+                                    <text-property name="text" key="clients">Client</text-property>
+                                </label>
+                            </cell>
+                            <cell id="7290">
+                                <data id="2521">
+                                    <property name="dataSet">Product</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">clients</property>
+                                            <text-property name="displayName">clients</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["clients"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">clients</property>
+                                </data>
+                            </cell>
+                        </row>
+                        <row id="7272">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">(row["eanCode"]=="" || row["eanCode"]==null)</expression>
+                                </structure>
+                            </list-property>
+                            <cell id="7273">
+                                <label id="2505">
+                                    <text-property name="text" key="eanCode">Code EAN</text-property>
+                                </label>
+                            </cell>
+                            <cell id="7291">
+                                <data id="2778">
+                                    <property name="dataSet">Product</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">eanCode</property>
+                                            <text-property name="displayName">eanCode</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["eanCode"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">eanCode</property>
+                                </data>
+                            </cell>
+                        </row>
+                        <row id="7275">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">(row["useByDate"]=="" || row["useByDate"]==null)</expression>
+                                </structure>
+                            </list-property>
+                            <cell id="7276">
+                                <label id="2553">
+                                    <text-property name="text" key="useByDate">DLC (J)</text-property>
+                                </label>
+                            </cell>
+                            <cell id="7292">
+                                <data id="2554">
+                                    <property name="dataSet">Product</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">useByDate</property>
+                                            <text-property name="displayName">useByDate</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["useByDate"]</expression>
+                                            <property name="dataType">string</property>
+                                            <property name="allowExport">true</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">useByDate</property>
+                                </data>
+                            </cell>
+                        </row>
+                        <row id="7278">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">(row["bestBeforeDate"]=="" || row["bestBeforeDate"]==null)</expression>
+                                </structure>
+                            </list-property>
+                            <cell id="7279">
+                                <label id="3326">
+                                    <text-property name="text" key="bestBeforeDate">DLUO (J)</text-property>
+                                </label>
+                            </cell>
+                            <cell id="7293">
+                                <data id="3327">
+                                    <property name="dataSet">Product</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">bestBeforeDate</property>
+                                            <text-property name="displayName">bestBeforeDate</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["bestBeforeDate"]</expression>
+                                            <property name="dataType">integer</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">bestBeforeDate</property>
+                                </data>
+                            </cell>
+                        </row>
+                        <row id="7281">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">(row["numberOfServings"]=="" || row["numberOfServings"]==null)</expression>
+                                </structure>
+                            </list-property>
+                            <cell id="7282">
+                                <label id="3210">
+                                    <text-property name="text" key="numberOfServing">Nombre de parts</text-property>
+                                </label>
+                            </cell>
+                            <cell id="7294">
+                                <data id="3209">
+                                    <property name="dataSet">Product</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">numberOfServings</property>
+                                            <text-property name="displayName">numberOfServings</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["numberOfServings"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">numberOfServings</property>
+                                </data>
+                            </cell>
+                        </row>
+                        <row id="7284">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">(row["productQty"]=="" || row["productQty"]==null)</expression>
+                                </structure>
+                            </list-property>
+                            <cell id="7285">
+                                <label id="5717">
+                                    <text-property name="text" key="productQty">Poids / Volume</text-property>
+                                </label>
+                            </cell>
+                            <cell id="7295">
+                                <data id="2872">
+                                    <property name="dataSet">Product</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">productQty</property>
+                                            <text-property name="displayName">productQty</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["productQty"] + " " + dataSetRow["productUnit"] + (dataSetRow["productUnit"] != "kg" &amp;&amp; dataSetRow["productUnit"] != "g"  ? " - " + dataSetRow["netWeight"] + "kg" : "")</expression>
+                                            <property name="dataType">string</property>
+                                            <property name="allowExport">true</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">productQty</property>
+                                </data>
+                            </cell>
+                        </row>
+                        <row id="7297">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">(row["description"]=="" || row["description"]==null)</expression>
+                                </structure>
+                            </list-property>
+                            <cell id="7298">
+                                <label id="2519">
+                                    <text-property name="text" key="description">Description</text-property>
+                                </label>
+                            </cell>
+                            <cell id="7299">
+                                <data id="2775">
+                                    <property name="dataSet">Product</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">description</property>
+                                            <text-property name="displayName">description</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["description"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">description</property>
+                                </data>
+                            </cell>
+                        </row>
+                    </grid>
                 </cell>
-                <cell id="2529">
-                    <property name="colSpan">1</property>
-                    <property name="rowSpan">10</property>
+                <cell id="7358">
                     <table id="2464">
                         <property name="borderBottomColor">#FFFFFF</property>
                         <property name="borderLeftColor">#FFFFFF</property>
@@ -7022,251 +7274,6 @@ dataSetRow["versionLabel"]
                             </row>
                         </footer>
                     </table>
-                </cell>
-            </row>
-            <row id="7263">
-                <list-property name="visibility">
-                    <structure>
-                        <property name="format">all</property>
-                        <expression name="valueExpr" type="javascript">(row["productHierarchy1"]=="" || row["productHierarchy1"]==null)</expression>
-                    </structure>
-                </list-property>
-                <cell id="7264">
-                    <label id="2500">
-                        <text-property name="text" key="productHierarchy1">Famille</text-property>
-                    </label>
-                </cell>
-                <cell id="7288">
-                    <data id="2522">
-                        <property name="dataSet">Product</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">productHierarchy1</property>
-                                <text-property name="displayName">productHierarchy1</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["productHierarchy1"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">productHierarchy1</property>
-                    </data>
-                </cell>
-            </row>
-            <row id="7266">
-                <list-property name="visibility">
-                    <structure>
-                        <property name="format">all</property>
-                        <expression name="valueExpr" type="javascript">(row["productHierarchy2"]=="" || row["productHierarchy2"] ==null)</expression>
-                    </structure>
-                </list-property>
-                <cell id="7267">
-                    <label id="2501">
-                        <text-property name="text" key="productHierarchy2">Sous-famille</text-property>
-                    </label>
-                </cell>
-                <cell id="7289">
-                    <data id="2523">
-                        <property name="dataSet">Product</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">productHierarchy2</property>
-                                <text-property name="displayName">productHierarchy2</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["productHierarchy2"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">productHierarchy2</property>
-                    </data>
-                </cell>
-            </row>
-            <row id="7269">
-                <list-property name="visibility">
-                    <structure>
-                        <property name="format">all</property>
-                        <expression name="valueExpr" type="javascript">(row["clients"]=="" ||row["clients"]==null)</expression>
-                    </structure>
-                </list-property>
-                <cell id="7270">
-                    <label id="2502">
-                        <text-property name="text" key="clients">Client</text-property>
-                    </label>
-                </cell>
-                <cell id="7290">
-                    <data id="2521">
-                        <property name="dataSet">Product</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">clients</property>
-                                <text-property name="displayName">clients</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["clients"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">clients</property>
-                    </data>
-                </cell>
-            </row>
-            <row id="7272">
-                <list-property name="visibility">
-                    <structure>
-                        <property name="format">all</property>
-                        <expression name="valueExpr" type="javascript">(row["eanCode"]=="" || row["eanCode"]==null)</expression>
-                    </structure>
-                </list-property>
-                <cell id="7273">
-                    <label id="2505">
-                        <text-property name="text" key="eanCode">Code EAN</text-property>
-                    </label>
-                </cell>
-                <cell id="7291">
-                    <data id="2778">
-                        <property name="dataSet">Product</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">eanCode</property>
-                                <text-property name="displayName">eanCode</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["eanCode"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">eanCode</property>
-                    </data>
-                </cell>
-            </row>
-            <row id="7275">
-                <list-property name="visibility">
-                    <structure>
-                        <property name="format">all</property>
-                        <expression name="valueExpr" type="javascript">(row["useByDate"]=="" || row["useByDate"]==null)</expression>
-                    </structure>
-                </list-property>
-                <cell id="7276">
-                    <label id="2553">
-                        <text-property name="text" key="useByDate">DLC (J)</text-property>
-                    </label>
-                </cell>
-                <cell id="7292">
-                    <data id="2554">
-                        <property name="dataSet">Product</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">useByDate</property>
-                                <text-property name="displayName">useByDate</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["useByDate"]</expression>
-                                <property name="dataType">string</property>
-                                <property name="allowExport">true</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">useByDate</property>
-                    </data>
-                </cell>
-            </row>
-            <row id="7278">
-                <list-property name="visibility">
-                    <structure>
-                        <property name="format">all</property>
-                        <expression name="valueExpr" type="javascript">(row["bestBeforeDate"]=="" || row["bestBeforeDate"]==null)</expression>
-                    </structure>
-                </list-property>
-                <cell id="7279">
-                    <label id="3326">
-                        <text-property name="text" key="bestBeforeDate">DLUO (J)</text-property>
-                    </label>
-                </cell>
-                <cell id="7293">
-                    <data id="3327">
-                        <property name="dataSet">Product</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">bestBeforeDate</property>
-                                <text-property name="displayName">bestBeforeDate</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["bestBeforeDate"]</expression>
-                                <property name="dataType">integer</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">bestBeforeDate</property>
-                    </data>
-                </cell>
-            </row>
-            <row id="7281">
-                <list-property name="visibility">
-                    <structure>
-                        <property name="format">all</property>
-                        <expression name="valueExpr" type="javascript">(row["numberOfServings"]=="" || row["numberOfServings"]==null)</expression>
-                    </structure>
-                </list-property>
-                <cell id="7282">
-                    <label id="3210">
-                        <text-property name="text" key="numberOfServing">Nombre de parts</text-property>
-                    </label>
-                </cell>
-                <cell id="7294">
-                    <data id="3209">
-                        <property name="dataSet">Product</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">numberOfServings</property>
-                                <text-property name="displayName">numberOfServings</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["numberOfServings"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">numberOfServings</property>
-                    </data>
-                </cell>
-            </row>
-            <row id="7284">
-                <list-property name="visibility">
-                    <structure>
-                        <property name="format">all</property>
-                        <expression name="valueExpr" type="javascript">(row["productQty"]=="" || row["productQty"]==null)</expression>
-                    </structure>
-                </list-property>
-                <cell id="7285">
-                    <label id="5717">
-                        <text-property name="text" key="productQty">Poids / Volume</text-property>
-                    </label>
-                </cell>
-                <cell id="7295">
-                    <data id="2872">
-                        <property name="dataSet">Product</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">productQty</property>
-                                <text-property name="displayName">productQty</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["productQty"] + " " + dataSetRow["productUnit"] + (dataSetRow["productUnit"] != "kg" &amp;&amp; dataSetRow["productUnit"] != "g"  ? " - " + dataSetRow["netWeight"] + "kg" : "")</expression>
-                                <property name="dataType">string</property>
-                                <property name="allowExport">true</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">productQty</property>
-                    </data>
-                </cell>
-            </row>
-            <row id="7297">
-                <list-property name="visibility">
-                    <structure>
-                        <property name="format">all</property>
-                        <expression name="valueExpr" type="javascript">(row["description"]=="" || row["description"]==null)</expression>
-                    </structure>
-                </list-property>
-                <cell id="7298">
-                    <label id="2519">
-                        <text-property name="text" key="description">Description</text-property>
-                    </label>
-                </cell>
-                <cell id="7299">
-                    <data id="2775">
-                        <property name="dataSet">Product</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">description</property>
-                                <text-property name="displayName">description</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["description"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">description</property>
-                    </data>
                 </cell>
             </row>
         </grid>

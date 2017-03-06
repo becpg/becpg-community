@@ -61,6 +61,9 @@ import org.springframework.util.StopWatch;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.activity.EntityActivityService;
+import fr.becpg.repo.activity.data.ActivityEvent;
+import fr.becpg.repo.activity.data.ActivityType;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
@@ -128,6 +131,9 @@ public class EntityReportServiceImpl implements EntityReportService {
 	@Autowired
 	private EntityService entityService;
 
+	@Autowired
+	private EntityActivityService entityActivityService;
+	
 	@Override
 	public void generateReports(final NodeRef entityNodeRef) {
 
@@ -251,6 +257,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 							updateReportsAssoc(entityNodeRef, newReports);
 							// set reportNodeGenerated property to now
 							nodeService.setProperty(entityNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED, generatedDate);
+							
+							entityActivityService.postEntityActivity(entityNodeRef, ActivityType.Report, ActivityEvent.Update);
 
 						} finally {
 							policyBehaviourFilter.enableBehaviour(entityNodeRef);

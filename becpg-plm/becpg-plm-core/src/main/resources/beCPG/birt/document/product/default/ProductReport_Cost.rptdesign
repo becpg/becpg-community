@@ -3012,7 +3012,6 @@ row["plResource"]
                         <cell id="770">
                             <image id="771">
                                 <property name="style">becpg-header-image</property>
-                                <property name="width">1.931in</property>
                                 <property name="source">embed</property>
                                 <property name="imageName">logo.png</property>
                             </image>

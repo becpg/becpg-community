@@ -5156,22 +5156,21 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                     <property name="borderRightColor">#FFFFFF</property>
                     <property name="borderTopColor">#FFFFFF</property>
                     <property name="pageBreakAfter">auto</property>
-                    <property name="width">100%</property>
+                    <property name="width">7.177083333333333in</property>
                     <column id="766">
-                        <property name="width">1.8in</property>
+                        <property name="width">2.1354166666666665in</property>
                     </column>
                     <column id="767">
-                        <property name="width">2.8in</property>
+                        <property name="width">2.9479166666666665in</property>
                     </column>
                     <column id="768">
-                        <property name="width">2.26in</property>
+                        <property name="width">2.0833333333333335in</property>
                     </column>
                     <row id="769">
                         <cell id="770">
                             <property name="textAlign">center</property>
                             <image id="771">
                                 <property name="style">becpg-header-image</property>
-                                <property name="width">1.931in</property>
                                 <property name="source">embed</property>
                                 <property name="imageName">logo.png</property>
                             </image>
@@ -5218,7 +5217,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                             <grid id="777">
                                 <property name="style">becpg-meta-grid</property>
                                 <property name="borderTopStyle">none</property>
-                                <property name="marginLeft">18%</property>
+                                <property name="marginLeft">12%</property>
                                 <property name="dataSet">Product</property>
                                 <list-property name="boundDataColumns">
                                     <structure>
