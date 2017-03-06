@@ -366,8 +366,16 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						}
 						
 						prev = component;
-						
 
+					} else if ((prev instanceof IngItem) && (component instanceof IngItem)) {
+
+						merge(prev, component);
+						parent.remove(prev.getNodeRef());
+						
+						if(labelingFormulaContext.getToApplyThresholdItems().contains(prev.getNodeRef())){
+							labelingFormulaContext.getToApplyThresholdItems().add(component.getNodeRef());
+						}
+						
 					} else {
 						// DO nothing
 						prev = component;
