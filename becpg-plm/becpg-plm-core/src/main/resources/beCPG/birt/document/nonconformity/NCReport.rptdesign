@@ -232,12 +232,6 @@
                     <text-property name="heading">claimResponseDetails</text-property>
                 </structure>
                 <structure>
-                    <property name="columnName">claimTreatmentActor</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">claimTreatmentActor</text-property>
-                </structure>
-                <structure>
                     <property name="columnName">claimResponseActor</property>
                     <property name="analysis">dimension</property>
                     <property name="onColumnLayout">false</property>
@@ -276,7 +270,13 @@
                 <structure>
                     <property name="columnName">created</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">created</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">claimTreatmentActor</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">claimTreatmentActor</text-property>
                 </structure>
             </list-property>
             <list-property name="parameters"/>
@@ -354,43 +354,43 @@
                     </structure>
                     <structure>
                         <property name="position">15</property>
-                        <property name="name">claimTreatmentActor</property>
-                        <property name="dataType">date</property>
-                    </structure>
-                    <structure>
-                        <property name="position">16</property>
                         <property name="name">claimResponseActor</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">17</property>
+                        <property name="position">16</property>
                         <property name="name">claimTreatementDate</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">18</property>
+                        <property name="position">17</property>
                         <property name="name">claimType</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">19</property>
+                        <property name="position">18</property>
                         <property name="name">claimClassificationComment</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">20</property>
+                        <property name="position">19</property>
                         <property name="name">claimClosingComment</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">21</property>
+                        <property name="position">20</property>
                         <property name="name">name</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">22</property>
+                        <property name="position">21</property>
                         <property name="name">created</property>
                         <property name="dataType">date</property>
+                    </structure>
+                    <structure>
+                        <property name="position">22</property>
+                        <property name="name">claimTreatmentActor</property>
+                        <property name="dataType">string</property>
                     </structure>
                 </list-property>
             </structure>
@@ -496,62 +496,62 @@
                 </structure>
                 <structure>
                     <property name="position">15</property>
-                    <property name="name">claimTreatmentActor</property>
-                    <property name="nativeName">claimTreatmentActor</property>
-                    <property name="dataType">date</property>
-                    <property name="nativeDataType">91</property>
-                </structure>
-                <structure>
-                    <property name="position">16</property>
                     <property name="name">claimResponseActor</property>
                     <property name="nativeName">claimResponseActor</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">17</property>
+                    <property name="position">16</property>
                     <property name="name">claimTreatementDate</property>
                     <property name="nativeName">claimTreatementDate</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">18</property>
+                    <property name="position">17</property>
                     <property name="name">claimType</property>
                     <property name="nativeName">claimType</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">19</property>
+                    <property name="position">18</property>
                     <property name="name">claimClassificationComment</property>
                     <property name="nativeName">claimClassificationComment</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">20</property>
+                    <property name="position">19</property>
                     <property name="name">claimClosingComment</property>
                     <property name="nativeName">claimClosingComment</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">21</property>
+                    <property name="position">20</property>
                     <property name="name">name</property>
                     <property name="nativeName">name</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">22</property>
+                    <property name="position">21</property>
                     <property name="name">created</property>
                     <property name="nativeName">created</property>
                     <property name="dataType">date</property>
                     <property name="nativeDataType">91</property>
                 </structure>
+                <structure>
+                    <property name="position">22</property>
+                    <property name="name">claimTreatmentActor</property>
+                    <property name="nativeName">claimTreatmentActor</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{creator;STRING;/creator},{claimOriginHierarchy1;STRING;/claimOriginHierarchy1},{ncType;STRING;/ncType},{claimResponseDate;DATE;/claimResponseDate},{claimDescription;STRING;/claimDescription},{claimAnalysisComment;STRING;/claimAnalysisComment},{claimResponseComment;STRING;/claimResponseComment},{claimTreatementComment;STRING;/claimTreatementComment},{claimOriginHierarchy2;STRING;/claimOriginHierarchy2},{claimTreatementDetails;STRING;/claimTreatementDetails},{claimTreatementPrevActions;STRING;/claimTreatementPrevActions},{claimStartComment;STRING;/claimStartComment},{claimResponseState;STRING;/claimResponseState},{claimResponseDetails;DATE;/claimResponseDetails},{claimTreatmentActor;DATE;/claimTreatmentActor},{claimResponseActor;STRING;/claimResponseActor},{claimTreatementDate;STRING;/claimTreatementDate},{claimType;STRING;/claimType},{claimClassificationComment;STRING;/claimClassificationComment},{claimClosingComment;STRING;/claimClosingComment},{name;STRING;/name},{created;DATE;/created}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{creator;STRING;/creator},{claimOriginHierarchy1;STRING;/claimOriginHierarchy1},{ncType;STRING;/ncType},{claimResponseDate;DATE;/claimResponseDate},{claimDescription;STRING;/claimDescription},{claimAnalysisComment;STRING;/claimAnalysisComment},{claimResponseComment;STRING;/claimResponseComment},{claimTreatementComment;STRING;/claimTreatementComment},{claimOriginHierarchy2;STRING;/claimOriginHierarchy2},{claimTreatementDetails;STRING;/claimTreatementDetails},{claimTreatementPrevActions;STRING;/claimTreatementPrevActions},{claimStartComment;STRING;/claimStartComment},{claimResponseState;STRING;/claimResponseState},{claimResponseDetails;DATE;/claimResponseDetails},{claimResponseActor;STRING;/claimResponseActor},{claimTreatementDate;STRING;/claimTreatementDate},{claimType;STRING;/claimType},{claimClassificationComment;STRING;/claimClassificationComment},{claimClosingComment;STRING;/claimClosingComment},{name;STRING;/name},{created;DATE;/created},{claimTreatmentActor;STRING;/claimTreatmentActor}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -1663,7 +1663,7 @@
                         <property name="style">becpg-row-header</property>
                         <text-property name="text">Pilote étape Traitement</text-property>
                     </label>
-                    <data id="3074">
+                    <data id="3141">
                         <property name="dataSet">nc</property>
                         <list-property name="boundDataColumns">
                             <structure>
@@ -1776,6 +1776,18 @@
                         <property name="style">becpg-row-header</property>
                         <text-property name="text">Pilote étape Réponse</text-property>
                     </label>
+                    <data id="3140">
+                        <property name="dataSet">nc</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">claimResponseActor</property>
+                                <text-property name="displayName">claimResponseActor</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["claimResponseActor"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">claimResponseActor</property>
+                    </data>
                 </cell>
                 <cell id="3084">
                     <label id="3095">
