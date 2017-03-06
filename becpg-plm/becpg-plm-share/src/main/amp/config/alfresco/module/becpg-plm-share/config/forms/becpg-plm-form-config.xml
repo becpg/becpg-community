@@ -4795,6 +4795,7 @@
 				<field-visibility>
 					<show id="bcpg:charactName" />
 					<show id="bcpg:legalName" />
+					<show id="bcpg:pluralLegalName"/>
 					<show id="bcpg:ingCEECode" />
 					<show id="bcpg:ingTypeV2"  force="true"/>
 				</field-visibility>
