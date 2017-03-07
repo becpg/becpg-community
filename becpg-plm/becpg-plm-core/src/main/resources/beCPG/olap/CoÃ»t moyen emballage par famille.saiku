@@ -1,10 +1,55 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Query name="8CAA8FF5-827E-4123-B58D-440C447AD591" type="QM" connection="beCPG" cube="[Analyse des coûts]" catalog="beCPG OLAP Schema" schema="beCPG OLAP Schema">
+<?xml version="1.0" encoding="UTF-8"?>
+<Query name="7A7713C5-A261-8C03-A7CE-9804B1850B21" type="QM" connection="beCPG" cube="[products]" catalog="beCPG OLAP Schema" schema="beCPG OLAP Schema">
+  <QueryModel>
+    <Axes>
+      <Axis location="ROWS" nonEmpty="true">
+        <Dimensions>
+          <Dimension name="designation" hierarchizeMode="PRE" hierarchyConsistent="true">
+            <Inclusions>
+              <Selection dimension="designation" type="level" node="[designation.productPerFamily].[productHierarchy1]" operator="MEMBERS" />
+            </Inclusions>
+            <Exclusions />
+          </Dimension>
+        </Dimensions>
+      </Axis>
+      <Axis location="COLUMNS" nonEmpty="true">
+        <Dimensions>
+          <Dimension name="Measures">
+            <Inclusions>
+              <Selection dimension="Measures" type="member" node="[Measures].[unitTotalCost]" operator="MEMBER" />
+            </Inclusions>
+            <Exclusions />
+          </Dimension>
+        </Dimensions>
+      </Axis>
+      <Axis location="FILTER" nonEmpty="false">
+        <Dimensions>
+          <Dimension name="productType">
+            <Inclusions>
+              <Selection dimension="productType" type="member" node="[productType].[Emballage]" operator="MEMBER" />
+            </Inclusions>
+            <Exclusions />
+          </Dimension>
+        </Dimensions>
+      </Axis>
+    </Axes>
+  </QueryModel>
   <MDX>SELECT
 NON EMPTY {[Measures].[unitTotalCost]} ON COLUMNS,
 NON EMPTY {Hierarchize({[designation.productPerFamily].[productHierarchy1].Members})} ON ROWS
 FROM [products]
 WHERE {[productType].[Emballage]}</MDX>
+  <Properties>
+    <Property name="saiku.ui.render.mode" value="table" />
+    <Property name="org.saiku.query.explain" value="true" />
+    <Property name="saiku.olap.query.nonempty.columns" value="true" />
+    <Property name="saiku.olap.query.nonempty.rows" value="true" />
+    <Property name="org.saiku.connection.scenario" value="false" />
+    <Property name="saiku.olap.query.automatic_execution" value="true" />
+    <Property name="saiku.olap.query.drillthrough" value="true" />
+    <Property name="saiku.olap.query.filter" value="true" />
+    <Property name="saiku.olap.query.limit" value="true" />
+    <Property name="saiku.olap.query.nonempty" value="true" />
+  </Properties>
 </Query>
-
 
