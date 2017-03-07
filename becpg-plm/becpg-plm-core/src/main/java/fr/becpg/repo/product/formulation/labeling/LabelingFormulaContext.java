@@ -354,11 +354,14 @@ public class LabelingFormulaContext {
 
 	private class RenameRule {
 		MLText mlText;
+		MLText pluralMlText;
+		
 		Set<Locale> locales = new HashSet<>();
 
-		public RenameRule(MLText mlText, List<String> locales) {
+		public RenameRule(MLText mlText, MLText pluralMlText, List<String> locales) {
 			this.mlText = mlText;
-
+			this.pluralMlText = pluralMlText;
+			
 			if (locales != null) {
 				for (String tmp : locales) {
 					this.locales.add(MLTextHelper.parseLocale(tmp));
@@ -370,7 +373,11 @@ public class LabelingFormulaContext {
 			return locales.isEmpty() || locales.contains(locale);
 		}
 
-		public String getClosestValue(Locale locale) {
+		public String getClosestValue(Locale locale, boolean plural) {
+			if(plural && pluralMlText!=null){
+				return MLTextHelper.getClosestValue(pluralMlText, locale);
+			}
+			
 			return MLTextHelper.getClosestValue(mlText, locale);
 		}
 	}
@@ -380,8 +387,10 @@ public class LabelingFormulaContext {
 	public boolean rename(List<NodeRef> components, List<NodeRef> replacement, MLText label, String formula, List<String> locales) {
 		for (NodeRef component : components) {
 			MLText mlText = null;
+			MLText pluralMlText = null;
 			if ((replacement != null) && !replacement.isEmpty()) {
 				mlText = (MLText) mlNodeService.getProperty(replacement.get(0), BeCPGModel.PROP_LEGAL_NAME);
+				pluralMlText = (MLText) mlNodeService.getProperty(replacement.get(0), BeCPGModel.PROP_PLURAL_LEGAL_NAME);
 			} else if (label != null) {
 				mlText = label;
 			} else if (formula != null) {
@@ -405,7 +414,7 @@ public class LabelingFormulaContext {
 				}
 			}
 			if (mlText != null) {
-				renameRules.put(component, new RenameRule(mlText, locales));
+				renameRules.put(component, new RenameRule(mlText,pluralMlText, locales));
 			}
 		}
 		return true;
@@ -424,7 +433,7 @@ public class LabelingFormulaContext {
 		if (renameRules.containsKey(lblComponent.getNodeRef())) {
 			RenameRule renameRule = renameRules.get(lblComponent.getNodeRef());
 			if (renameRule.matchLocale(I18NUtil.getLocale())) {
-				ingLegalName = renameRule.getClosestValue(I18NUtil.getLocale());
+				ingLegalName = renameRule.getClosestValue(I18NUtil.getLocale(),false);
 			}
 		}
 
@@ -439,7 +448,7 @@ public class LabelingFormulaContext {
 		if (renameRules.containsKey(lblComponent.getNodeRef())) {
 			RenameRule renameRule = renameRules.get(lblComponent.getNodeRef());
 			if (renameRule.matchLocale(I18NUtil.getLocale())) {
-				ingLegalName = renameRule.getClosestValue(I18NUtil.getLocale());
+				ingLegalName = renameRule.getClosestValue(I18NUtil.getLocale(),lblComponent.isPlural());
 			}
 		} else {
 
@@ -986,7 +995,7 @@ public class LabelingFormulaContext {
 			}
 
 			tree.put("name", getName(component));
-			tree.put("legal", component.getLegalName(I18NUtil.getContentLocaleLang()));
+			tree.put("legal", getLegalIngName(component,false));
 			if ((component.getVolume() != null) && (totalVol != null) && (totalVol > 0)) {
 				tree.put("vol", (component.getVolume() / totalVol) * 100);
 			}

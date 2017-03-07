@@ -27,6 +27,8 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,6 +52,8 @@ import fr.becpg.repo.repository.L2CacheSupport;
 @Service("productService")
 public class ProductServiceImpl implements ProductService, InitializingBean {
 
+	private static Log logger = LogFactory.getLog(ProductService.class);
+	
 	@Autowired
 	private AlfrescoRepository<ProductData> alfrescoRepository;
 
@@ -134,6 +138,10 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 	@Override
 	public ProductData formulateText(String recipe, ProductData productData) throws FormulateException {
 
+		if(logger.isDebugEnabled()){
+			logger.debug("Formulate text: "+recipe);
+		}
+		
 		productData.getCompoListView().setCompoList(CompositionLexer.lexMultiLine(recipe));
 		productData.getPackagingListView().setPackagingList(new ArrayList<PackagingListDataItem>());
 
