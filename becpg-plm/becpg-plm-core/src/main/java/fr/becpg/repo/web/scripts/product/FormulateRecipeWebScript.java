@@ -34,7 +34,8 @@ import fr.becpg.repo.product.data.ProductData;
 
 public class FormulateRecipeWebScript extends AbstractProductWebscript {
 
-	protected static final String PARAM_RECIPE = "recipe";
+	private static final String PARAM_RECIPE = "recipe";
+	private static final String PARAM_NAME = "name";
 
 	private static final String PARAM_METADATA = "metadata";
 
@@ -59,10 +60,14 @@ public class FormulateRecipeWebScript extends AbstractProductWebscript {
 			}
 			
 			String recipe = "";
-			if (json != null && json.has("PARAM_RECIPE")) {
-				recipe = (String) json.get("PARAM_RECIPE");
+			if (json != null && json.has(PARAM_RECIPE)) {
+				recipe = (String) json.get(PARAM_RECIPE);
 			}
-
+			
+			if (json != null && json.has(PARAM_NAME)) {
+				productData.setName((String) json.get(PARAM_NAME));
+			}
+			
 			JSONObject ret = new JSONObject();
 
 			
