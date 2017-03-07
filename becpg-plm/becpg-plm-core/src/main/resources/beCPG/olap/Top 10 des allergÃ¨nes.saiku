@@ -1,8 +1,55 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Query name="CB36E1D7-70E8-FA5A-99F9-AE3D1D9A6938" type="MDX" connection="beCPG" cube="[products]" catalog="beCPG OLAP Schema" schema="beCPG OLAP Schema">
+<?xml version="1.0" encoding="UTF-8"?>
+<Query name="7A7713C5-A261-8C03-A7CE-9804B1850B21" type="QM" connection="beCPG" cube="[products]" catalog="beCPG OLAP Schema" schema="beCPG OLAP Schema">
+  <QueryModel>
+    <Axes>
+      <Axis location="ROWS" nonEmpty="true" limitFunction="TopCount" limitFunctionN="10" limitFunctionSortLiteral="[Measures].[productNumber]">
+        <Dimensions>
+          <Dimension name="allergenVoluntary" hierarchizeMode="PRE" hierarchyConsistent="true">
+            <Inclusions>
+              <Selection dimension="allergenVoluntary" type="level" node="[allergenVoluntary].[name]" operator="MEMBERS" />
+            </Inclusions>
+            <Exclusions />
+          </Dimension>
+        </Dimensions>
+      </Axis>
+      <Axis location="COLUMNS" nonEmpty="true">
+        <Dimensions>
+          <Dimension name="Measures">
+            <Inclusions>
+              <Selection dimension="Measures" type="member" node="[Measures].[productNumber]" operator="MEMBER" />
+            </Inclusions>
+            <Exclusions />
+          </Dimension>
+        </Dimensions>
+      </Axis>
+      <Axis location="FILTER" nonEmpty="false">
+        <Dimensions>
+          <Dimension name="productType">
+            <Inclusions>
+              <Selection dimension="productType" type="member" node="[productType].[Produit fini]" operator="MEMBER" />
+            </Inclusions>
+            <Exclusions />
+          </Dimension>
+        </Dimensions>
+      </Axis>
+    </Axes>
+  </QueryModel>
   <MDX>SELECT
 NON EMPTY {[Measures].[productNumber]} ON COLUMNS,
-NON EMPTY Topcount([allergenVoluntary].[allergenVoluntary].Members,10,[Measures].[productNumber]) ON ROWS
+NON EMPTY TopCount({Hierarchize({[allergenVoluntary].[name].Members})}, 10, [Measures].[productNumber]) ON ROWS
 FROM [products]
 WHERE {[productType].[Produit fini]}</MDX>
+  <Properties>
+    <Property name="saiku.ui.render.mode" value="table" />
+    <Property name="org.saiku.query.explain" value="true" />
+    <Property name="saiku.olap.query.nonempty.columns" value="true" />
+    <Property name="saiku.olap.query.nonempty.rows" value="true" />
+    <Property name="org.saiku.connection.scenario" value="false" />
+    <Property name="saiku.olap.query.automatic_execution" value="true" />
+    <Property name="saiku.olap.query.drillthrough" value="true" />
+    <Property name="saiku.olap.query.filter" value="true" />
+    <Property name="saiku.olap.query.limit" value="true" />
+    <Property name="saiku.olap.query.nonempty" value="true" />
+  </Properties>
 </Query>
+

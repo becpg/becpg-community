@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Query name="53DB9405-6B9C-FAB9-8922-39423BAC5ECB" type="MDX" connection="beCPG" cube="[Analyse des coûts]" catalog="beCPG OLAP Schema" schema="beCPG OLAP Schema">
-  <MDX>SELECT
-NON EMPTY {Hierarchize({[Measures].[Total des coûts]})} ON COLUMNS,
-NON EMPTY Topcount([Produits.Produit par famille].[Nom produit].Members,20,[Measures].[Total des coûts]) ON ROWS
-FROM [Analyse des coûts]
-WHERE {Hierarchize({{[Type de coût].[Coût MP], [Type de coût].[Coût Emb]}})}</MDX>
-</Query>
-
