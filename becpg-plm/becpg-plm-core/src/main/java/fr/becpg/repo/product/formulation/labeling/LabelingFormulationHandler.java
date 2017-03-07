@@ -331,10 +331,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					prev = component;
 				} else {
 					// Same type same declaration
-					if ((prev instanceof CompositeLabeling) && (component instanceof CompositeLabeling)
+					if (((prev instanceof CompositeLabeling) && (component instanceof CompositeLabeling)
 							&& (((CompositeLabeling) prev).getDeclarationType() != null)
 							&& ((CompositeLabeling) prev).getDeclarationType().equals(((CompositeLabeling) component).getDeclarationType())
-							&& !((CompositeLabeling) prev).isGroup()) {
+							&& !((CompositeLabeling) prev).isGroup()) || ((prev instanceof IngItem) && (component instanceof IngItem))) {
 
 						merge(prev, component);
 						parent.remove(component.getNodeRef());
@@ -367,16 +367,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						
 						prev = component;
 
-					} else if ((prev instanceof IngItem) && (component instanceof IngItem)) {
-
-						merge(prev, component);
-						parent.remove(prev.getNodeRef());
-						
-						if(labelingFormulaContext.getToApplyThresholdItems().contains(prev.getNodeRef())){
-							labelingFormulaContext.getToApplyThresholdItems().add(component.getNodeRef());
-						}
-						
-					} else {
+					}  else {
 						// DO nothing
 						prev = component;
 					}
