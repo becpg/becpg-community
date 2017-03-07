@@ -18,6 +18,7 @@
 package org.saiku.web.rest.resources;
 
 import java.sql.Connection;
+import java.sql.Statement;
 import java.util.Calendar;
 
 import javax.ws.rs.GET;
@@ -90,6 +91,12 @@ public class AdminSaikuRestClient {
 				}
 
 				instanceManager.updateBatchAndDate(connection, instance);
+				
+				
+				//CALL feed all to recreate tables
+				Statement statement = connection.createStatement();
+				statement.executeQuery("CALL feed_all();");
+				
 			}});
 
 		}
