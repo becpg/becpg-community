@@ -218,11 +218,13 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 			if (!compositeLabeling.getIngList().isEmpty()) {
 
-				if (logger.isTraceEnabled()) {
-					logger.trace(" Create merged composite labeling");
-				}
 
 				CompositeLabeling mergeCompositeLabeling = mergeCompositeLabeling(compositeLabeling, labelingFormulaContext);
+				
+
+				if (logger.isTraceEnabled()) {
+					logger.trace(" Create merged composite labeling\n " + mergeCompositeLabeling.toString());
+				}
 
 				// Store results
 				labelingFormulaContext.setCompositeLabeling(compositeLabeling);
@@ -433,7 +435,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		CompositeLabeling merged = new CompositeLabeling();
 		merged.setQtyTotal(lblCompositeContext.getQtyTotal());
 		merged.setVolumeTotal(lblCompositeContext.getVolumeTotal());
-
+		
 		// Start adding all the components
 		for (AbstractLabelingComponent component : lblCompositeContext.getIngList().values()) {
 			if (!labelingFormulaContext.isGroup(component)) {

@@ -23,7 +23,6 @@ import java.util.Set;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.repository.annotation.AlfMlText;
@@ -59,6 +58,7 @@ public abstract class AbstractLabelingComponent extends BeCPGDataObject implemen
 	    this.volume = abstractLabelingComponent.volume;
 	    this.legalName = abstractLabelingComponent.legalName;
 	    this.allergens = abstractLabelingComponent.allergens;
+	    this.isPlural = abstractLabelingComponent.isPlural;
 	}
 
 	
