@@ -16,7 +16,7 @@
 
 
 	<Cube name="requirements" caption="${msg("jsolap.requirements.title")}" cache="true" enabled="true" defaultMeasure="${msg("jsolap.requirementsNumber.title")}">
-		<Table name="requirements" />
+		<Table name="becpg_public_requirements" />
 		
 		<Dimension name="rclReqMessage" caption="${msg("jsolap.message.title")}" >
 			<Hierarchy name="rclReqMessage" caption="${msg("jsolap.message.title")}" hasAll="true" allMemberCaption="${msg("jsolap.message.caption")}">
@@ -42,7 +42,7 @@
 		<Dimension type="StandardDimension" foreignKey="entity_fact_id"  name="targetProducts" caption="${msg("jsolap.targetProducts.title")}">
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.targetProducts.caption")}" primaryKey="id">
 
-				<Table name="products" />
+				<Table name="becpg_public_products" />
 				<Level approxRowCount="5" name="productState" caption="${msg("jsolap.productState.title")}"  column="productState"  type="String"  >
 				  <NameExpression>
 					  <SQL dialect="generic" >
@@ -80,7 +80,7 @@
 		
 		<Dimension type="StandardDimension" foreignKey="rclSources"  name="sourceProducts" caption="${msg("jsolap.sourceProducts.title")}">
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.sourceProducts.caption")}" primaryKey="noderef">
-				<Table name="products" />
+				<Table name="becpg_public_products" />
 				<Level approxRowCount="5" name="productState" caption="${msg("jsolap.state.title")}"  column="productState"  type="String"   >
 				  <NameExpression>
 					  <SQL dialect="generic" >
@@ -122,15 +122,13 @@
 
 
 	<Cube name="incidents" caption="${msg("jsolap.incidents.title")}" cache="true" enabled="true" defaultMeasure="${msg("jsolap.incidentsNumber.title")}">
-		<Table name="incidents" />
+		<Table name="becpg_public_nc" />
 		
 		<Dimension name="site" caption="${msg("jsolap.site.title")}">
 			<Hierarchy name="site" caption="${msg("jsolap.site.title")}" hasAll="true" allMemberCaption="${msg("jsolap.site.caption")}">
 				<Level name="site" caption="${msg("jsolap.site.title")}" column="siteName"  type="String" />
 			</Hierarchy>
 		</Dimension>
-		
-		
 		
 		<Dimension  name="designation" caption="${msg("jsolap.designation.title")}" >
 			<Hierarchy name="incident" caption="${msg("jsolap.incident.title")}" hasAll="true" allMemberCaption="${msg("jsolap.incident.caption")}">
@@ -208,20 +206,24 @@
 
 		
 		<Dimension type="StandardDimension" foreignKey="id"  name="products" caption="${msg("jsolap.products.title")}">
-			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.products.caption")}" primaryKey="entity_id">
-				<Table name="incidents_products" />
-				<Level name="productHierarchy1" caption="${msg("jsolap.family.title")}" column="productHierarchy1" type="String"   >
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.products.caption")}" primaryKeyTable="becpg_public_nc_products" primaryKey="entity_id">
+				<Join leftKey="id" rightKey="id" >
+					<Table name="becpg_public_nc_products" />
+					<Table name="becpg_public_products" />
+				</Join>
+				
+				<Level name="productHierarchy1" caption="${msg("jsolap.family.title")}" table="becpg_public_products" column="productHierarchy1" type="String"   >
 				</Level>
-				<Level name="productHierarchy2" caption="${msg("jsolap.subFamily.title")}" column="productHierarchy2" type="String"   >
+				<Level name="productHierarchy2" caption="${msg("jsolap.subFamily.title")}" table="becpg_public_products" column="productHierarchy2" type="String"   >
 				</Level>
-				<Level name="entity_noderef" caption="${msg("jsolap.product.title")}" column="nodeRef" nameColumn="name" type="String"   >
+				<Level name="entity_noderef" caption="${msg("jsolap.product.title")}" table="becpg_public_products" column="nodeRef" nameColumn="name" type="String"   >
 				</Level>
 			</Hierarchy>
 		</Dimension>
 		
 		<Dimension type="StandardDimension" foreignKey="id"  name="client" caption="${msg("jsolap.client.title")}">
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.client.caption")}" primaryKey="entity_fact_id">
-				<Table name="clients" />
+				<Table name="becpg_public_clients" />
 				<Level name="name" caption="${msg("jsolap.clientName.title")}" nameColumn="name" column="nodeRef"  type="String" >
 				</Level>
 			</Hierarchy>
@@ -233,18 +235,17 @@
 		<DimensionUsage name="claimClosingDate" caption="${msg("jsolap.closingDate.title")}" source="timeDimension" foreignKey="claimClosingDate" />
 		
 		
-		
 		<Measure name="noderef" caption="${msg("jsolap.incidentsNumber.title")}" column="noderef" datatype="Numeric" aggregator="distinct-count" visible="true" />
 		<Measure name="ncQuantityNc" caption="${msg("jsolap.nonConformQuantity.title")}" column="ncQuantityNc" datatype="Numeric" aggregator="sum" visible="true"  />
 		<Measure name="ncCost" caption="${msg("jsolap.nonConformityCost.title")}" column="ncCost" datatype="Numeric" aggregator="sum" visible="true"  />
 	</Cube>
 	
 	<Cube name="projectsSteps" caption="${msg("jsolap.projectsSteps.title")}" cache="true" enabled="true" defaultMeasure="${msg("jsolap.projectsSteps.title")}">
-		<Table name="project_steps" />
+		<Table name="becpg_public_project_steps" />
 		
 		<Dimension type="StandardDimension" foreignKey="entity_fact_id"   name="site" caption="${msg("jsolap.site.title")}">
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.site.caption")}" primaryKey="id">
-				<Table name="projects" />
+				<Table name="becpg_public_projects" />
 				<Level name="site" caption="${msg("jsolap.site.title")}" column="siteName"  type="String" />
 			</Hierarchy>
 		</Dimension>			
@@ -274,7 +275,7 @@
 		
 		<Dimension type="StandardDimension" foreignKey="entity_fact_id"  name="project" caption="${msg("jsolap.project.title")}">
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.project.caption")}" primaryKey="id">
-				<Table name="projects" />	
+				<Table name="becpg_public_projects" />	
 			     <Level approxRowCount="5" name="projectState" caption="${msg("jsolap.state.title")}" column="projectState" type="String"   >
 				     <NameExpression>
 						  <SQL dialect="generic" >
@@ -322,11 +323,11 @@
 	</Cube>
 	
 	<Cube name="projectsEvaluation" caption="${msg("jsolap.projectsEvaluation.title")}" cache="true" enabled="true" defaultMeasure="${msg("jsolap.note.title")}">
-		<Table name="project_score" />
+		<Table name="becpg_public_project_score" />
 		
 		<Dimension type="StandardDimension" foreignKey="entity_fact_id"  name="site" caption="${msg("jsolap.site.title")}">
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.site.caption")}" primaryKey="id">
-					<Table name="projects" />
+					<Table name="becpg_public_projects" />
 					<Level name="site" caption="${msg("jsolap.site.title")}" column="siteName"  type="String" />
 			</Hierarchy>
 		</Dimension>
@@ -339,7 +340,7 @@
 		
 		<Dimension type="StandardDimension" foreignKey="entity_fact_id"  name="project" caption="${msg("jsolap.project.title")}">
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.project.caption")}" primaryKey="id">
-				<Table name="projects" />
+				<Table name="becpg_public_projects" />
 				<Level name="projectHierarchy1" caption="${msg("jsolap.family.title")}" column="projectHierarchy1" type="String"   >
 				</Level>
 				<Level name="projectHierarchy2" caption="${msg("jsolap.subFamily.title")}" column="projectHierarchy2" type="String"   >
@@ -360,7 +361,7 @@
 	</Cube>
 
 	<Cube name="projects" caption="${msg("jsolap.projects.title")}" cache="true" enabled="true" defaultMeasure="${msg("jsolap.projectsNumberDistinct.title")}">
-		<Table name="projects" />
+		<Table name="becpg_public_projects" />
 		
 
 		<Dimension name="site" caption="${msg("jsolap.site.title")}">
@@ -417,7 +418,7 @@
 		
 		<Dimension type="StandardDimension" foreignKey="id" name="entities" caption="${msg("jsolap.entities.title")}">
 			<Hierarchy hasAll="true" primaryKey="entity_id">
-				<Table name="products" />
+				<Table name="becpg_public_products" />
 				<Level approxRowCount="5" name="productState" caption="${msg("jsolap.state.title")}"  column="productState"  type="String"   >
 				  <NameExpression>
 					  <SQL dialect="generic" >
@@ -503,18 +504,18 @@
 	</Cube>
 	
 	<Cube name="nutrients" caption="${msg("jsolap.nutrients.title")}" cache="true" enabled="true" >
-		<Table name="nutrients" />
+		<Table name="becpg_public_nutrients" />
 
 		<Dimension  name="site" caption="${msg("jsolap.site.title")}" type="StandardDimension" foreignKey="entity_fact_id" >
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.site.caption")}" primaryKey="id">
-			<Table name="products" />
+			<Table name="becpg_public_products" />
 				<Level name="site" caption="${msg("jsolap.site.title")}" column="siteName"  type="String" />
 			</Hierarchy>
 		</Dimension>
 
 		<Dimension  name="designation" caption="${msg("jsolap.designation.title")}" type="StandardDimension" foreignKey="entity_fact_id" >
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.products.caption")}" primaryKey="id">
-			<Table name="products" />
+			<Table name="becpg_public_products" />
 				<Level approxRowCount="5" name="productState" caption="${msg("jsolap.state.title")}"  column="productState"  type="String"   >
 				  <NameExpression>
 					  <SQL dialect="generic" >
@@ -571,7 +572,7 @@
 	
 
 	<Cube name="products" caption="${msg("jsolap.products.title")}" cache="true" enabled="true" defaultMeasure="${msg("jsolap.productsNumber.title")}">
-		<Table name="products" />
+		<Table name="becpg_public_products" />
 		
 		<Dimension name="site" caption="${msg("jsolap.site.title")}">
 			<Hierarchy name="site" caption="${msg("jsolap.site.title")}" hasAll="true" allMemberCaption="${msg("jsolap.site.caption")}">
@@ -612,7 +613,7 @@
 		 
 		<Dimension foreignKey="id"  name="geoOrigin" caption="${msg("jsolap.geoOrigin.title")}">
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.geoOrigin.caption")}" primaryKey="entity_fact_id">
-				<Table name="geo_origins" />
+				<Table name="becpg_public_geo_origins" />
 				<Level name="name" caption="${msg("jsolap.country.title")}" column="nodeRef" nameColumn="name" type="String"  >
 				</Level>
 			</Hierarchy>
@@ -638,21 +639,21 @@
 		</Dimension>
 		<Dimension type="StandardDimension" foreignKey="id" name="client" caption="${msg("jsolap.client.title")}">
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.client.caption")}" primaryKey="entity_fact_id">
-				<Table name="clients" />
+				<Table name="becpg_public_clients" />
 				<Level name="name" caption="${msg("jsolap.clientName.title")}" nameColumn="name" column="nodeRef"  type="String"   >
 				</Level>
 			</Hierarchy>
 		</Dimension>
 		<Dimension type="StandardDimension" foreignKey="id"  name="supplier" caption="${msg("jsolap.supplier.title")}">
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.supplier.caption")}" primaryKey="entity_fact_id">
-				<Table name="suppliers"/>
+				<Table name="becpg_public_suppliers"/>
 				<Level name="name" caption="${msg("jsolap.supplierName.title")}" nameColumn="name" column="nodeRef" type="String"   >
 				</Level>
 			</Hierarchy>
 		</Dimension>
 		<Dimension type="StandardDimension" foreignKey="id"  name="nutrient" caption="${msg("jsolap.nutrient.title")}">
 			<Hierarchy name="nutrientPerGroup" caption="${msg("jsolap.nutrientPerGroup.title")}" hasAll="true" allMemberCaption="${msg("jsolap.nutrient.caption")}" primaryKey="entity_fact_id">
-				<Table name="nutrients" />
+				<Table name="becpg_public_nutrients" />
 				<Level approxRowCount="3" name="nutGroup" caption="${msg("jsolap.nutrientGroup.title")}" column="nutGroup" type="String"   >
 				</Level>
 				<Level approxRowCount="20" name="nutName" caption="${msg("jsolap.nutrient.title")}" column="nutNodeRef"  nameColumn="nutName" type="String"   >
@@ -667,7 +668,7 @@
 
 		<Dimension type="StandardDimension" foreignKey="id" name="allergenVoluntary" caption="${msg("jsolap.allergenVoluntary.title")}">
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.allergen.caption")}" primaryKey="entity_fact_id" >
-				<Table name="allergens">
+				<Table name="becpg_public_allergens">
 					<SQL dialect="generic">
 						isVoluntary = 1
 					</SQL>
@@ -679,9 +680,9 @@
 
 		<Dimension type="StandardDimension" foreignKey="id"  name="allergenInVoluntary" caption="${msg("jsolap.allergenInVoluntary.title")}">
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.allergen.caption")}" primaryKey="entity_fact_id" >
-				<Table name="allergens">
+				<Table name="becpg_public_allergens">
 					<SQL dialect="generic">
-						isInVoluntary = 1
+						isVoluntary = 0
 					</SQL>
 				</Table>
 				<Level approxRowCount="100" name="name" caption="${msg("jsolap.allergenInVoluntary.title")}" column="nodeRef"  nameColumn="name" type="String"   >
@@ -692,7 +693,7 @@
 		
 		<Dimension type="StandardDimension" foreignKey="id"  name="ingredient" caption="${msg("jsolap.ingredient.title")}">
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.ingredient.caption")}" primaryKey="entity_fact_id">
-				<Table name="ingredients" />
+				<Table name="becpg_public_ingredients" />
 				<Level name="name" caption="${msg("jsolap.ingredient.title")}" column="nodeRef" nameColumn="name" type="String"   >
 				</Level>
 			</Hierarchy>
@@ -700,32 +701,39 @@
 		
 		<Dimension type="StandardDimension" foreignKey="id"  name="labelClaim" caption="${msg("jsolap.labelClaim.title")}">
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.labelClaim.caption")}" primaryKey="entity_fact_id">
-				<Table name="label_claim" />
+				<Table name="becpg_public_label_claim" />
 				<Level name="lclLabelClaimName" caption="${msg("jsolap.labelClaim.title")}" column="nodeRef" nameColumn="name" type="String" ></Level>
 			</Hierarchy>
 		</Dimension>
 		
 		
 		<Dimension type="StandardDimension" foreignKey="id"  name="composition" caption="${msg("jsolap.composition.title")}">
-			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.composition.caption")}" primaryKey="entity_fact_id">
-				<Table name="composition" />
-				<Level name="productHierarchy1" caption="${msg("jsolap.family.title")}" column="productHierarchy1" type="String"   >
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.composition.caption")}" primaryKeyTable="becpg_public_composition" primaryKey="entity_fact_id">
+				<Join leftKey="entity_id" rightKey="id">
+					<Table name="becpg_public_composition" />
+					<Table name="becpg_public_products" />
+				</Join>
+				<Level name="productHierarchy1" caption="${msg("jsolap.family.title")}" table="becpg_public_products" column="productHierarchy1" type="String"   >
 				</Level>
-				<Level name="productHierarchy2" caption="${msg("jsolap.subFamily.title")}" column="productHierarchy2" type="String"   >
+				<Level name="productHierarchy2" caption="${msg("jsolap.subFamily.title")}" table="becpg_public_products" column="productHierarchy2" type="String"   >
 				</Level>
-				<Level name="entity_noderef" caption="${msg("jsolap.component.title")}" column="nodeRef" nameColumn="name" type="String"   >
+				<Level name="entity_noderef" caption="${msg("jsolap.component.title")}" table="becpg_public_products" column="nodeRef" nameColumn="name" type="String"   >
 				</Level>
 			</Hierarchy>
 		</Dimension>
 	
 		<Dimension type="StandardDimension" foreignKey="id"  name="packaging" caption="${msg("jsolap.packaging.title")}">
-			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.packaging.caption")}" primaryKey="entity_fact_id">
-				<Table name="packaging" />
-				<Level name="productHierarchy1" caption="${msg("jsolap.family.title")}" column="productHierarchy1" type="String"   >
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.packaging.caption")}" primaryKeyTable="becpg_public_packaging" primaryKey="entity_fact_id">
+				<Join leftKey="entity_id" rightKey="id">
+						<Table name="becpg_public_packaging" />
+						<Table name="becpg_public_products" />
+				</Join>
+				
+				<Level name="productHierarchy1" caption="${msg("jsolap.family.title")}" table="becpg_public_products" column="productHierarchy1" type="String"   >
 				</Level>
-				<Level name="productHierarchy2" caption="${msg("jsolap.subFamily.title")}" column="productHierarchy2" type="String"   >
+				<Level name="productHierarchy2" caption="${msg("jsolap.subFamily.title")}" table="becpg_public_products" column="productHierarchy2" type="String"   >
 				</Level>
-				<Level name="entity_noderef" caption="${msg("jsolap.packaging.title")}" column="nodeRef" nameColumn="name" type="String"   >
+				<Level name="entity_noderef" caption="${msg("jsolap.packaging.title")}" table="becpg_public_products" column="nodeRef" nameColumn="name" type="String"   >
 				</Level>
 			</Hierarchy>
 		</Dimension>
