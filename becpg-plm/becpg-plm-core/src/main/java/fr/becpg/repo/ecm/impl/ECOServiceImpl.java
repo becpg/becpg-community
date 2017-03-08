@@ -119,17 +119,17 @@ public class ECOServiceImpl implements ECOService {
 	}
 
 	@Override
-	public void doSimulation(NodeRef ecoNodeRef) {
-		doRun(ecoNodeRef, ECOState.Simulated);
+	public boolean doSimulation(NodeRef ecoNodeRef) {
+		return doRun(ecoNodeRef, ECOState.Simulated);
 	}
 
 	@Override
-	public void apply(NodeRef ecoNodeRef) {
-		doRun(ecoNodeRef, ECOState.Applied);
+	public boolean apply(NodeRef ecoNodeRef) {
+		return doRun(ecoNodeRef, ECOState.Applied);
 	}
 
-	private void doRun(NodeRef ecoNodeRef, final ECOState state) {
-
+	private boolean doRun(NodeRef ecoNodeRef, final ECOState state) {
+		
 		final ChangeOrderData ecoData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
 
 		// Do not run if already applied
@@ -190,10 +190,18 @@ public class ECOServiceImpl implements ECOService {
 					logger.warn("Impact Where Used [" + state.toString() + "] executed in  " + watch.getTotalTimeSeconds() + " seconds");
 				}
 			}, ECOState.Simulated.equals(state), true);
+			
+			
 
 			alfrescoRepository.save(ecoData);
+			
+			if(state.equals(ecoData.getEcoState())){
+				return true;
+			}
 
 		}
+		
+		return false;
 
 	}
 
