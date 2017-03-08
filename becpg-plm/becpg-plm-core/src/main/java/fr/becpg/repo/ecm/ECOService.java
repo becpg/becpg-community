@@ -28,9 +28,9 @@ public interface ECOService {
 	
 	void calculateWUsedList(NodeRef ecoNodeRef, boolean selectToApply);
 	
-	void apply(NodeRef ecoNodeRef);
+	boolean apply(NodeRef ecoNodeRef);
 	
-	void doSimulation(NodeRef ecoNodeRef);
+	boolean doSimulation(NodeRef ecoNodeRef);
 
 	Boolean setInProgress(NodeRef ecoNodeRef);
 
