@@ -59,6 +59,9 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 	
 	@Value("${beCPG.eco.automatic.states}")
 	private String statesToRegister = "";
+	
+	@Value("${beCPG.eco.automatic.deleteOnApply}")
+	private Boolean deleteOnApply = false;
 
 	@Autowired
 	private TransactionService transactionService;
@@ -158,7 +161,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 	public boolean applyAutomaticEco() {
 
 		boolean ret;
-
+		
 		if (shouldApplyAutomaticECO) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Try to apply automatic change order");
@@ -180,6 +183,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 					}
 				}, false, true);
 
+				
 				ret = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
 					public Boolean execute() throws Throwable {
 
@@ -207,7 +211,13 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 								logger.debug("Found automatic change order to apply :" + ecoNodeRef);
 							}
 							try {
-								ecoService.apply(ecoNodeRef);
+								
+								
+								if(ecoService.apply(ecoNodeRef) && deleteOnApply){
+									logger.debug("It's applied and deleteOnApply is set to true, deleting ECO with NR="+ecoNodeRef);
+									nodeService.deleteNode(ecoNodeRef);
+								}
+								
 							} catch (Exception e) {
 								if (e instanceof ConcurrencyFailureException) {
 									throw (ConcurrencyFailureException) e;
