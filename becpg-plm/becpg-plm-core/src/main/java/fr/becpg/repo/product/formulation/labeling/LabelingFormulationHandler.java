@@ -1558,6 +1558,16 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 				}
 
+			} else if(DeclarationType.Omit.equals(ingDeclarationType)){
+				Double qtyPerc = ingListItem.getData().getQtyPerc();
+				if(qtyPerc!=null && qty!=null && compositeLabeling.getQtyTotal()!=null){
+					
+					if (logger.isTraceEnabled()) {
+						logger.trace("Removing ingredient "+ingListItem.getData().getName()+" qty "+((qty * qtyPerc) / 100));
+					}
+					
+					compositeLabeling.setQtyTotal(compositeLabeling.getQtyTotal() - ((qty * qtyPerc) / 100));
+				}
 			}
 
 		}
