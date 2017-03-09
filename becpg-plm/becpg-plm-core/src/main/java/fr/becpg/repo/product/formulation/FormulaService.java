@@ -2,6 +2,7 @@ package fr.becpg.repo.product.formulation;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -11,6 +12,9 @@ import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.expression.AccessException;
 import org.springframework.expression.BeanResolver;
 import org.springframework.expression.EvaluationContext;
+import org.springframework.expression.Expression;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 import fr.becpg.repo.product.data.ProductData;
@@ -101,11 +105,29 @@ public class FormulaService {
 			return FormulaFormulationContext.aggreate(alfrescoRepository, productData, range, formula, Operator.SUM);
 		}
 		
+		public Double sum(Collection<Double> range) {
+			return range.stream().mapToDouble(Double::doubleValue).sum();
+		}
+		
 		
 		public Double avg(Collection<CompositionDataItem> range, String formula) {
 			return FormulaFormulationContext.aggreate(alfrescoRepository, productData, range, formula, Operator.AVG);
 		}
 		
+		
+		public <T> Collection<T> filter(Collection<T> range, String formula){
+
+			ExpressionParser parser = new SpelExpressionParser();
+			Expression exp = parser.parseExpression(formula);
+			
+			return range.stream().filter(p  -> {
+				StandardEvaluationContext dataContext = new StandardEvaluationContext(p);
+				registerCustomFunctions(productData, dataContext);
+				return exp.getValue(dataContext, Boolean.class);
+			}).collect(Collectors.toList());
+			
+			
+		}
 		
 	}
 
