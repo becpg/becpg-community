@@ -385,6 +385,7 @@ public class LabelingFormulaContext {
 			}
 			
 			return ret;
+		}
 			
 	}
 
