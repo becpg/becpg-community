@@ -374,12 +374,18 @@ public class LabelingFormulaContext {
 		}
 
 		public String getClosestValue(Locale locale, boolean plural) {
-			if(plural && pluralMlText!=null){
-				return MLTextHelper.getClosestValue(pluralMlText, locale);
+			String ret = null;
+			
+			if(plural && pluralMlText!=null && ! pluralMlText.isEmpty()){
+				ret = MLTextHelper.getClosestValue(pluralMlText, locale);
+			}
+
+			if(ret==null || ret.isEmpty()){
+				 ret =  MLTextHelper.getClosestValue(mlText, locale) ;
 			}
 			
-			return MLTextHelper.getClosestValue(mlText, locale);
-		}
+			return ret;
+			
 	}
 
 	private final Map<NodeRef, RenameRule> renameRules = new HashMap<>();
