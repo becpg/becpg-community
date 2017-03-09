@@ -928,7 +928,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	 * @param workingCopyLabel
 	 * @return
 	 */
-	public static String createWorkingCopyName(String name, final String workingCopyLabel) {
+	private String createWorkingCopyName(String name, final String workingCopyLabel) {
 		if (workingCopyLabel != null && workingCopyLabel.length() != 0) {
 			if (name != null && name.length() != 0) {
 				int index = name.lastIndexOf(EXTENSION_CHARACTER);

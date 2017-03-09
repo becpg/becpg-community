@@ -152,7 +152,7 @@ public class SimulationWebScript extends AbstractWebScript {
 							logger.debug("Update root " + productData.getName());
 							associationService.update(item.getNodeRef(), item.getComponentAssocName(), simulationNodeRef);
 						} else {
-							NodeRef parentSimulationNodeRef = createCopyNodeRef(parentNodeRef,
+							NodeRef parentSimulationNodeRef = createSimulationNodeRef(parentNodeRef,
 									nodeService.getPrimaryParent(entityNodeRef).getParentRef());
 							ProductData newProductData = alfrescoRepository.findOne(parentSimulationNodeRef);
 							logger.debug("Create new SF " + newProductData.getName());
@@ -178,7 +178,7 @@ public class SimulationWebScript extends AbstractWebScript {
 
 		if ((dataListItem != null) && dataListItemsNodeRefs.contains(dataListItem.getNodeRef())) {
 			logger.debug("Found item to simulate:" + dataListItem.getNodeRef());
-			return createCopyNodeRef(dataListItem.getComponent(), nodeService.getPrimaryParent(entityNodeRef).getParentRef());
+			return createSimulationNodeRef(dataListItem.getComponent(), nodeService.getPrimaryParent(entityNodeRef).getParentRef());
 		}
 
 		return null;
@@ -186,26 +186,8 @@ public class SimulationWebScript extends AbstractWebScript {
 	}
 
 	private NodeRef createSimulationNodeRef(NodeRef entityNodeRef, NodeRef parentRef) {
-
-		NodeRef simulationNodeRef = entityVersionService.createBranch(entityNodeRef, parentRef);
-
-		nodeService.setProperty(simulationNodeRef, PLMModel.PROP_PRODUCT_STATE, SystemState.Simulation);
-		if (nodeService.hasAspect(simulationNodeRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT)) {
-			nodeService.removeAspect(simulationNodeRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT);
-		}
-
-		return simulationNodeRef;
+		return entityVersionService.createBranch(entityNodeRef, parentRef);
 	}
 
-	private NodeRef createCopyNodeRef(NodeRef entityNodeRef, NodeRef parentRef) {
-
-		NodeRef simulationNodeRef = copyService.copyAndRename(entityNodeRef, parentRef, ContentModel.ASSOC_CONTAINS, null, true);
-		nodeService.setProperty(simulationNodeRef, PLMModel.PROP_PRODUCT_STATE, SystemState.Simulation);
-		if (nodeService.hasAspect(simulationNodeRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT)) {
-			nodeService.removeAspect(simulationNodeRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT);
-		}
-		return simulationNodeRef;
-
-	}
 
 }

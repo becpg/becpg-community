@@ -9,7 +9,9 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
+import fr.becpg.model.PLMWorkflowModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.entity.policy.CodePolicy;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
@@ -34,6 +36,13 @@ public class ProductPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 	public void onCopyComplete(QName classRef, NodeRef sourceNodeRef, NodeRef destinationRef, boolean copyToNewNode, Map<NodeRef, NodeRef> copyMap) {
 		if (isNotLocked(destinationRef) && !isWorkingCopyOrVersion(sourceNodeRef) && !isWorkingCopyOrVersion(destinationRef)) {
 			nodeService.setProperty(destinationRef, PLMModel.PROP_PRODUCT_STATE, SystemState.Simulation);
+			nodeService.setProperty(destinationRef, PLMModel.PROP_ERP_CODE, null);
+			if (nodeService.hasAspect(destinationRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT)) {
+				nodeService.removeAspect(destinationRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT);
+			}
+			if(nodeService.hasAspect(destinationRef, BeCPGModel.ASPECT_ENTITY_BRANCH)){
+				nodeService.removeAspect(destinationRef, BeCPGModel.ASPECT_ENTITY_BRANCH);
+			}
 		}
 	}
 	
