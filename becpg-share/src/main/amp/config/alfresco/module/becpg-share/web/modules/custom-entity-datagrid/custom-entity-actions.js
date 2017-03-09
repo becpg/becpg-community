@@ -475,6 +475,11 @@
 				}
 				nodeRefs += items[i].nodeRef;
 			}
+			
+			 Alfresco.util.PopupManager.displayMessage({
+             	 text : this.msg("message.simulate-entity.inprogress")
+    		  });
+			
 
 			Alfresco.util.Ajax.request({
 				method : Alfresco.util.Ajax.POST,
@@ -488,6 +493,10 @@
 									nodeRef : items[i].nodeRef
 								});
 							}
+							 Alfresco.util.PopupManager.displayMessage({
+				             	 text : this.msg("message.simulate-entity.success")
+				    		  });
+							
 						}
 					},
 					scope : this
