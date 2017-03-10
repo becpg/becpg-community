@@ -108,7 +108,7 @@ public abstract class AbstractLabelingComponent extends BeCPGDataObject implemen
 	}
 	
 	public boolean isPlural() {
-		return isPlural && pluralLegalName!=null && !pluralLegalName.isEmpty();
+		return isPlural && pluralLegalName!=null && !MLTextHelper.isEmpty(pluralLegalName);
 	}
 
 	public void setPlural(boolean isPlural) {
