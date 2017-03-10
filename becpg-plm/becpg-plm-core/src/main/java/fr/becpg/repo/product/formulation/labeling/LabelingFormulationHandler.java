@@ -1390,7 +1390,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 				if (ingLabelItem == null) {
 					ingLabelItem = new IngItem((IngItem) alfrescoRepository.findOne(ingNodeRef));
-
+					ingLabelItem.getPluralParents().add(ingListItem.getData().getNodeRef());
+					
 					compositeLabeling.add(ingLabelItem);
 					
 					if(applyThreshold){
@@ -1406,7 +1407,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						logger.trace("- Update ing value: " + ingLabelItem.getLegalName(I18NUtil.getContentLocaleLang()));
 					}
 					isNew = false;
-					ingLabelItem.setPlural(true);
+					if(!ingLabelItem.getPluralParents().contains(ingListItem.getData().getNodeRef())){
+						ingLabelItem.getPluralParents().add(ingListItem.getData().getNodeRef());
+						ingLabelItem.setPlural(true);
+					}
 				}
 
 				if (!ingListItem.isLeaf()) {

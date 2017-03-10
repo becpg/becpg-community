@@ -11,34 +11,17 @@
    <@script src="${url.context}/res/modules/custom-entity-datagrid/product-entity-toolbar.js" group="entity-datalists"/>
    <@script src="${url.context}/res/components/entity-data-lists/product-notifications.js" group="entity-datalists"/>
    <@script src="${url.context}/res/components/entity-charact-views/dashlet-resizer.js" group="entity-datalists"/>
+   <@script src="${url.context}/res/components/entity-charact-views/labeling-view.js" group="entity-datalists"/>
 </@>
 
 <@markup id="resources">
    <!-- Additional entity resources -->
 </@markup>
 
-<@markup id="widgets">
-  		<@createWidgets group="entity-datalists"/>
-  		<@inlineScript group="entity-datalists">
-  		  (function() {
-		      var dataGridModuleCount = 1;
-		      YAHOO.Bubbling.on("dataGridReady", function(layer, args) {
-		         if (dataGridModuleCount == 3) {
-		            try {
-		               YAHOO.util.History.initialize("yui-history-field", "yui-history-iframe");
-		            } catch (e2) {
-		               var obj = args[1];
-		               if ((obj !== null) && (obj.entityDataGridModule !== null)) {
-		                  obj.entityDataGridModule.onHistoryManagerReady();
-		               }
-		            }
-		         }
-		         dataGridModuleCount++;
-	      });
-			})();
-  		</@>
-</@>
 
+<@markup id="widgets">
+  	<@createWidgets group="entity-datalists"/>
+</@>
 
 <@markup id="html">
    <@uniqueIdDiv>
