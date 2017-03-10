@@ -13,6 +13,60 @@
 			<Level name="Day" caption="${msg("jsolap.day.title")}" column="Day" nameColumn="NDay" ordinalColumn="Day" type="Numeric"  levelType="TimeDays"  />
 		</Hierarchy>		
 	</Dimension>
+	
+	<Cube name="software_usage" caption="${msg("jsolap.statistics.title")}" cache="false" enabled="true">
+		<View alias="stats_transformed_date">
+			<SQL dialect="generic">
+				<![CDATA[
+					select id, total_memory, free_memory, max_memory, connected_users, DATE(statistics_date) AS statistics_date, instance_id
+					from becpg_statistics
+				]]>
+			</SQL>
+		</View>
+		
+		<Dimension type="TimeDimension" name="frequency" caption="${msg("jsolap.date.title")}" foreignKey="statistics_date">	
+			<Hierarchy name="date" hasAll="true" allMemberName="${msg("jsolap.allPeriods.title")}" allMemberCaption="${msg("jsolap.date.caption")}"  primaryKey="Date" caption="${msg("jsolap.date.title")}">
+				<Table name="becpg_dimdate" alias="olapDate"/>
+				<Level name="Year" caption="${msg("jsolap.year.title")}" column="Year" type="Numeric"  levelType="TimeYears"  />
+				<Level name="Quarter" caption="${msg("jsolap.quarter.title")}" column="Quarter" nameColumn="NQuarter" type="String"  levelType="TimeQuarters"  />
+				<Level name="Month" caption="${msg("jsolap.month.title")}" column="Month" nameColumn="NMonth4L" ordinalColumn="Month" type="Numeric"  levelType="TimeMonths"  />
+				<Level name="Week" caption="${msg("jsolap.week.title")}" column="Week" nameColumn="NWeek" type="String"  levelType="TimeWeeks"  />
+				<Level name="Day" caption="${msg("jsolap.day.title")}" column="Day" nameColumn="NDay" ordinalColumn="Day" type="Numeric"  levelType="TimeDays"  />
+			</Hierarchy>		
+		</Dimension>
+	
+		<Measure name="avgUsers" caption="${msg("jsolap.users-avg.title")}" column="connected_users" datatype="Numeric" aggregator="avg" visible="true"></Measure>
+		<Measure name="maxUsers" caption="${msg("jsolap.users-max.title")}" column="connected_users" datatype="Numeric" aggregator="max" visible="true"></Measure>
+		<Measure name="avgMemory" caption="${msg("jsolap.memory-avg.title")}" datatype="Numeric" aggregator="avg" visible="true">
+			<MeasureExpression>
+				<SQL dialect="generic">
+					total_memory - free_memory
+				</SQL>
+			</MeasureExpression>
+		</Measure>
+		<Measure name="maxMemory" caption="${msg("jsolap.memory-max.title")}" datatype="Numeric" aggregator="max" visible="true">
+			<MeasureExpression>
+				<SQL dialect="generic">
+					total_memory - free_memory
+				</SQL>
+			</MeasureExpression>
+		</Measure>
+		<Measure name="avgMemoryPct" caption="${msg("jsolap.mempct-avg.title")}" datatype="Numeric" aggregator="avg" visible="true">
+			<MeasureExpression>
+				<SQL dialect="generic">
+					(1 - free_memory/total_memory)*100
+				</SQL>
+			</MeasureExpression>
+		</Measure>
+		<Measure name="maxMemoryPct" caption="${msg("jsolap.mempct-max.title")}" datatype="Numeric" aggregator="max" visible="true">
+			<MeasureExpression>
+				<SQL dialect="generic">
+					(1 - free_memory/total_memory)*100
+				</SQL>
+			</MeasureExpression>
+		</Measure>
+	
+	</Cube>
 
 
 	<Cube name="requirements" caption="${msg("jsolap.requirements.title")}" cache="true" enabled="true" defaultMeasure="${msg("jsolap.requirementsNumber.title")}">
