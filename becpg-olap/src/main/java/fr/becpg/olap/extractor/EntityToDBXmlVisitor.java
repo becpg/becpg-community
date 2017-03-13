@@ -180,6 +180,13 @@ public class EntityToDBXmlVisitor {
 		ignoredProperties.add("bcpg:isManualListItem");
 		ignoredProperties.add("bcpg:depthLevel");
 		ignoredProperties.add("fm:commentCount");
+		ignoredProperties.add("bcpg:rclDataType");
+		ignoredProperties.add("bcpg:allergenListDecisionTree");
+		ignoredProperties.add("bcpg:nutListFormulaErrorLog");
+		ignoredProperties.add("bcpg:nutListIsFormulated");
+		ignoredProperties.add("bcpg:lclIsFormulated");
+		ignoredProperties.add("bcpg:ingListQtyMaxi");
+		ignoredProperties.add("bcpg:ingListQtyMini");
 		
 	}
 
