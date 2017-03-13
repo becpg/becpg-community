@@ -94,9 +94,66 @@
 		</Dimension>
 		
 		<Dimension type="StandardDimension" foreignKey="entity_fact_id"  name="targetProducts" caption="${msg("jsolap.targetProducts.title")}">
-			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.targetProducts.caption")}" primaryKey="id">
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.targetProducts.caption")}" primaryKey="target_id">
 
-				<Table name="becpg_public_products" />
+				<View alias="req_target">
+					<SQL dialect="generic">
+						<![CDATA[
+							select productHierarchy1, productHierarchy2, becpg_public_products.noderef AS noderef, productState, productType, target_id, name
+							from becpg_public_requirement_sources, becpg_public_products
+							where becpg_public_requirement_sources.target_id = becpg_public_products.id
+						]]>
+					</SQL>
+				</View>
+				
+				<Level approxRowCount="5" name="productState" caption="${msg("jsolap.productState.title")}"  column="productState"  type="String"  >
+				  <NameExpression>
+					  <SQL dialect="generic" >
+					  <![CDATA[CASE WHEN productState='Simulation' THEN '${msg("listconstraint.bcpg_systemState.Simulation")}'
+	                            WHEN productState='ToValidate' THEN '${msg("listconstraint.bcpg_systemState.ToValidate")}'
+	                            WHEN productState='Valid' THEN '${msg("listconstraint.bcpg_systemState.Valid")}'
+	                            WHEN productState='Refused' THEN '${msg("listconstraint.bcpg_systemState.Refused")}'
+	                            WHEN productState='Archived' THEN '${msg("listconstraint.bcpg_systemState.Archived")}'
+	                            ELSE 'Vide'
+	                           END]]></SQL>
+             		 </NameExpression>
+				</Level>	
+				<Level approxRowCount="10" name="entity_type" caption="${msg("jsolap.type.title")}"  column="productType" nameColumn="productType" type="String"   >
+					<NameExpression>
+					  <SQL dialect="generic" >
+					  <![CDATA[CASE WHEN productType='bcpg:rawMaterial' THEN "${msg('bcpg_bcpgmodel.type.bcpg_rawMaterial.title')}"
+	                            WHEN productType='bcpg:finishedProduct' THEN "${msg('bcpg_bcpgmodel.type.bcpg_finishedProduct.title')}"
+	                            WHEN productType='bcpg:semiFinishedProduct' THEN "${msg('bcpg_bcpgmodel.type.bcpg_semiFinishedProduct.title')}"
+	                            WHEN productType='bcpg:packagingMaterial' THEN "${msg('bcpg_bcpgmodel.type.bcpg_packagingMaterial.title')}"
+	                            WHEN productType='bcpg:packagingKit' THEN "${msg('bcpg_bcpgmodel.type.bcpg_packagingKit.title')}"
+	                            WHEN productType='bcpg:localSemiFinishedProduct' THEN "${msg('bcpg_bcpgmodel.type.bcpg_localSemiFinishedProduct.title')}"
+	                            ELSE 'Vide'
+	                           END]]></SQL>
+             		 </NameExpression>
+				</Level>		
+				<Level name="productHierarchy1" caption="${msg("jsolap.family.title")}" column="productHierarchy1" type="String"   >
+				</Level>
+				<Level name="productHierarchy2" caption="${msg("jsolap.subFamily.title")}" column="productHierarchy2" type="String"   >
+				</Level>
+				
+				<Level name="entity_noderef" caption="${msg("jsolap.product.title")}" column="noderef" nameColumn="name" type="String"   >
+				</Level>
+			</Hierarchy>
+		</Dimension>
+		
+		<Dimension type="StandardDimension" foreignKey="entity_fact_id"  name="sourceProducts" caption="${msg("jsolap.sourceProducts.title")}">
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.sourceProducts.caption")}" primaryKey="target_id">
+
+				<View alias="req_src">
+					<SQL dialect="generic">
+						<![CDATA[
+							select productHierarchy1, productHierarchy2, becpg_public_products.noderef AS noderef, productState, productType, target_id, name
+							from becpg_public_requirement_sources, becpg_public_products
+							where becpg_public_requirement_sources.source_id = becpg_public_products.id
+						]]>
+					</SQL>
+				</View>
+				
 				<Level approxRowCount="5" name="productState" caption="${msg("jsolap.productState.title")}"  column="productState"  type="String"  >
 				  <NameExpression>
 					  <SQL dialect="generic" >
@@ -122,44 +179,6 @@
 	                           END]]></SQL>
              		 </NameExpression>
 				</Level>		
-				<Level name="productHierarchy1" caption="${msg("jsolap.family.title")}" column="productHierarchy1" type="String"   >
-				</Level>
-				<Level name="productHierarchy2" caption="${msg("jsolap.subFamily.title")}" column="productHierarchy2" type="String"   >
-				</Level>
-				
-				<Level name="entity_noderef" caption="${msg("jsolap.product.title")}" column="noderef" nameColumn="name" type="String"   >
-				</Level>
-			</Hierarchy>
-		</Dimension>
-		
-		<Dimension type="StandardDimension" foreignKey="rclSources"  name="sourceProducts" caption="${msg("jsolap.sourceProducts.title")}">
-			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.sourceProducts.caption")}" primaryKey="noderef">
-				<Table name="becpg_public_products" />
-				<Level approxRowCount="5" name="productState" caption="${msg("jsolap.state.title")}"  column="productState"  type="String"   >
-				  <NameExpression>
-					  <SQL dialect="generic" >
-					  <![CDATA[CASE WHEN productState='Simulation' THEN '${msg("listconstraint.bcpg_systemState.Simulation")}'
-	                            WHEN productState='ToValidate' THEN '${msg("listconstraint.bcpg_systemState.ToValidate")}'
-	                            WHEN productState='Valid' THEN '${msg("listconstraint.bcpg_systemState.Valid")}'
-	                            WHEN productState='Refused' THEN '${msg("listconstraint.bcpg_systemState.Refused")}'
-	                            WHEN productState='Archived' THEN '${msg("listconstraint.bcpg_systemState.Archived")}'
-	                            ELSE 'Vide'
-	                           END]]></SQL>
-             		 </NameExpression>
-				</Level>
-				<Level approxRowCount="10" name="entity_type" caption="${msg("jsolap.type.title")}" column="productType" nameColumn="productType" type="String"   >
-					<NameExpression>
-					  <SQL dialect="generic" >
-					  <![CDATA[CASE WHEN productType='bcpg:rawMaterial' THEN "${msg('bcpg_bcpgmodel.type.bcpg_rawMaterial.title')}"
-	                            WHEN productType='bcpg:finishedProduct' THEN "${msg('bcpg_bcpgmodel.type.bcpg_finishedProduct.title')}"
-	                            WHEN productType='bcpg:semiFinishedProduct' THEN "${msg('bcpg_bcpgmodel.type.bcpg_semiFinishedProduct.title')}"
-	                            WHEN productType='bcpg:packagingMaterial' THEN "${msg('bcpg_bcpgmodel.type.bcpg_packagingMaterial.title')}"
-	                            WHEN productType='bcpg:packagingKit' THEN "${msg('bcpg_bcpgmodel.type.bcpg_packagingKit.title')}"
-	                            WHEN productType='bcpg:localSemiFinishedProduct' THEN "${msg('bcpg_bcpgmodel.type.bcpg_localSemiFinishedProduct.title')}"
-	                            ELSE 'Vide'
-	                           END]]></SQL>
-             		 </NameExpression>
-				</Level>	
 				<Level name="productHierarchy1" caption="${msg("jsolap.family.title")}" column="productHierarchy1" type="String"   >
 				</Level>
 				<Level name="productHierarchy2" caption="${msg("jsolap.subFamily.title")}" column="productHierarchy2" type="String"   >
