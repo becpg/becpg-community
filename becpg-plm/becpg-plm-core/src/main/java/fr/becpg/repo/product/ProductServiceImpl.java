@@ -144,8 +144,21 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 		
 		productData.getCompoListView().setCompoList(CompositionLexer.lexMultiLine(recipe));
 		productData.getPackagingListView().setPackagingList(new ArrayList<PackagingListDataItem>());
+		
+		if(logger.isDebugEnabled()){
+			logger.debug("Lexer result: "+productData);
+		}
+		
+		
+		L2CacheSupport.doInCacheContext(() -> {
+			AuthenticationUtil.runAsSystem(() -> {
+				formulationService.formulate(productData);
+				return true;
+			});
+			
+		},true);
 
-		return formulate(productData);
+		return productData;
 	}
 
 }
