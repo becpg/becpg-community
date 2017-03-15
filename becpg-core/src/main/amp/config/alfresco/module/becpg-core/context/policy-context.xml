@@ -20,12 +20,11 @@
 
 <beans>
 
-	<!-- Override Alfresco bean -->
+   <!-- Override Alfresco bean -->
    <bean id="incompleteNodeTagger" class="org.alfresco.repo.node.integrity.IncompleteNodeTagger" ></bean>
 
 
 	<!-- Entity Policies -->
-
 	<bean id="abstractBeCPGPolicy" abstract="true" class="fr.becpg.repo.policy.AbstractBeCPGPolicy" init-method="init">
 		<property name="policyComponent" ref="policyComponent" />
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />

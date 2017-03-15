@@ -763,19 +763,52 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 		if (branchToNodeRef == null) {
 			branchToNodeRef = associationService.getTargetAssoc(branchNodeRef, BeCPGModel.ASSOC_AUTO_MERGE_TO);
-		}
+		} 
+
 		if (branchToNodeRef != null) {
 
-			// Update all existing assocs
-			// TODO
+			StopWatch watch = null;
 
-			prepareBranchBeforeMerge(branchNodeRef, branchToNodeRef);
+			boolean mlAware = MLPropertyInterceptor.isMLAware();
+			try {
 
-			Map<String, Serializable> properties = new HashMap<>();
-			properties.put(VersionBaseModel.PROP_VERSION_TYPE, versionType);
-			properties.put(Version.PROP_DESCRIPTION, description);
+				if (logger.isDebugEnabled()) {
+					watch = new StopWatch();
+					watch.start();
+				}
 
-			return checkOutCheckInService.checkin(branchNodeRef, properties);
+				MLPropertyInterceptor.setMLAware(true);
+
+				final NodeRef internalBranchToNodeRef = branchToNodeRef;
+				
+				return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+					// Only for transaction do not reenable it
+					policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+					policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
+
+					// Update all existing assocs
+					// TODO
+
+					prepareBranchBeforeMerge(branchNodeRef, internalBranchToNodeRef);
+
+					Map<String, Serializable> properties = new HashMap<>();
+					properties.put(VersionBaseModel.PROP_VERSION_TYPE, versionType);
+					properties.put(Version.PROP_DESCRIPTION, description);
+
+					return checkOutCheckInService.checkin(internalBranchToNodeRef, properties);
+
+				}, false, false);
+
+			} finally {
+				MLPropertyInterceptor.setMLAware(mlAware);
+
+				if (logger.isDebugEnabled()) {
+					watch.stop();
+					logger.debug("createBranch run in  " + watch.getTotalTimeSeconds() + " seconds ");
+
+				}
+			}
 		}
 		return null;
 	}
@@ -868,7 +901,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		boolean mlAware = MLPropertyInterceptor.isMLAware();
 		try {
 
-			if (logger.isInfoEnabled()) {
+			if (logger.isDebugEnabled()) {
 				watch = new StopWatch();
 				watch.start();
 			}
@@ -877,32 +910,30 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 			return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-					//Only for transaction do not reenable it
-					policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-					policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
+				// Only for transaction do not reenable it
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
 
-					String newEntityName = repoService.getAvailableName(parentRef,
-							(String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
-					NodeRef branchNodeRef = entityService.createOrCopyFrom(entityNodeRef, parentRef, nodeService.getType(entityNodeRef),
-							newEntityName);
-					if (nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
-						nodeService.setProperty(branchNodeRef, BeCPGModel.PROP_BRANCH_FROM_VERSION_LABEL,
-								nodeService.getProperty(entityNodeRef, ContentModel.PROP_VERSION_LABEL));
-					} else {
-						nodeService.setProperty(branchNodeRef, BeCPGModel.PROP_BRANCH_FROM_VERSION_LABEL, RepoConsts.INITIAL_VERSION);
-					}
-					nodeService.setAssociations(branchNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY, Collections.singletonList(entityNodeRef));
-					return branchNodeRef;
-
+				String newEntityName = repoService.getAvailableName(parentRef,
+						(String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
+				NodeRef branchNodeRef = entityService.createOrCopyFrom(entityNodeRef, parentRef, nodeService.getType(entityNodeRef), newEntityName);
+				if (nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
+					nodeService.setProperty(branchNodeRef, BeCPGModel.PROP_BRANCH_FROM_VERSION_LABEL,
+							nodeService.getProperty(entityNodeRef, ContentModel.PROP_VERSION_LABEL));
+				} else {
+					nodeService.setProperty(branchNodeRef, BeCPGModel.PROP_BRANCH_FROM_VERSION_LABEL, RepoConsts.INITIAL_VERSION);
+				}
+				nodeService.setAssociations(branchNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY, Collections.singletonList(entityNodeRef));
+				return branchNodeRef;
 
 			}, false, false);
 
 		} finally {
 			MLPropertyInterceptor.setMLAware(mlAware);
 
-			if (logger.isInfoEnabled()) {
+			if (logger.isDebugEnabled()) {
 				watch.stop();
-				logger.info("createBranch run in  " + watch.getTotalTimeSeconds() + " seconds ");
+				logger.debug("createBranch run in  " + watch.getTotalTimeSeconds() + " seconds ");
 
 			}
 		}
