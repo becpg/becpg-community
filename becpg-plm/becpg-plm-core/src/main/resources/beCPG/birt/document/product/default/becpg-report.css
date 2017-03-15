@@ -89,8 +89,8 @@
 {
 	text-align: center;
 	font-weight: bold;
-	background-color: #1264bc; /* test */
-	color: #FFFFFF; /* test */
+	/*background-color: #1264bc; /* test */
+	/*color: #FFFFFF; /* test */
 	border-bottom-style: solid;
 	border-bottom-width: thin;
 	border-left-style: solid;
@@ -190,4 +190,3 @@
 }
 /* ------------------ */
 /* ----- FOOTER ----- */
-
