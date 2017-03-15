@@ -80,86 +80,34 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnAddAspectPolicy.QNAME, BeCPGModel.ASPECT_SORTABLE_LIST,
 				new JavaBehaviour(this, "onAddAspect", NotificationFrequency.TRANSACTION_COMMIT));
 
-		// super.disableOnCopyBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
 	}
 
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
-
-		logger.debug("SortableListPolicy.onUpdateProperties");
-		// createNode
-		if (before.isEmpty()) {
-			// nothing to do, work is done in addAspect, otherwise it duplicates
-			// nodeRef in lucene index !!!
-			return;
-		}
-
-		NodeRef beforeParentLevel = (NodeRef) before.get(BeCPGModel.PROP_PARENT_LEVEL);
-		NodeRef afterParentLevel = (NodeRef) after.get(BeCPGModel.PROP_PARENT_LEVEL);
-
-		if (logger.isDebugEnabled()) {
-			logger.debug("call SortableListPolicy");
-		}
-
-		// has changed ?
-		boolean hasChanged;
-		if ((afterParentLevel != null) && !afterParentLevel.equals(beforeParentLevel)) {
-
-			if (entityDictionaryService.isSubClass(nodeService.getType(afterParentLevel), BeCPGModel.TYPE_ENTITY_V2)) {
-
-				NodeRef listContainerNodeRef = entityListDAO.getListContainer(afterParentLevel);
-				if (listContainerNodeRef != null) {
-					NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, nodeService.getType(nodeRef));
-					if (listNodeRef != null) {
-						nodeService.moveNode(nodeRef, listNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
-					}
-				}
-				nodeService.setProperty(nodeRef, BeCPGModel.PROP_PARENT_LEVEL, null);
-			} else if (entityDictionaryService.isSubClass(nodeService.getType(afterParentLevel), BeCPGModel.TYPE_ENTITYLIST_ITEM)
-					&& entityDictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
-
-				if (!nodeService.getPrimaryParent(afterParentLevel).getParentRef().equals(nodeService.getPrimaryParent(nodeRef).getParentRef())) {
-
-					nodeService.moveNode(nodeRef, nodeService.getPrimaryParent(afterParentLevel).getParentRef(), ContentModel.ASSOC_CONTAINS,
-							ContentModel.ASSOC_CONTAINS);
-
-				}
-
+		if (policyBehaviourFilter.isEnabled(BeCPGModel.ASPECT_DEPTH_LEVEL)) {
+			// createNode
+			if (before.isEmpty()) {
+				// nothing to do, work is done in addAspect, otherwise it
+				// duplicates
+				// nodeRef in lucene index !!!
+				return;
 			}
 
-			hasChanged = true;
-		} else if ((beforeParentLevel != null) && !beforeParentLevel.equals(afterParentLevel)) {// parentLevel
-																								// is
-																								// null
-			hasChanged = true;
-		} else {
-			hasChanged = false;
-		}
-
-		if (hasChanged) {
-			logger.debug("onUpdateProperties has changed");
-			queueNode(nodeRef);
-		}
-	}
-
-	@Override
-	public void onAddAspect(NodeRef nodeRef, QName aspect) {
-
-		// try to avoid to do two times the work, otherwise it duplicates
-		// nodeRef in lucene index !!!
-		if (nodeService.exists(nodeRef)) {
+			NodeRef beforeParentLevel = (NodeRef) before.get(BeCPGModel.PROP_PARENT_LEVEL);
+			NodeRef afterParentLevel = (NodeRef) after.get(BeCPGModel.PROP_PARENT_LEVEL);
 
 			if (logger.isDebugEnabled()) {
-				logger.debug("onAddAspect");
+				logger.debug("call SortableListPolicy");
+
 			}
 
-			boolean addInQueue = false;
+			// has changed ?
+			boolean hasChanged;
+			if ((afterParentLevel != null) && !afterParentLevel.equals(beforeParentLevel)) {
 
-			if (aspect.isMatch(BeCPGModel.ASPECT_DEPTH_LEVEL)) {
-				NodeRef parentNodeRef = (NodeRef) nodeService.getProperty(nodeRef, BeCPGModel.PROP_PARENT_LEVEL);
-				if ((parentNodeRef != null) && entityDictionaryService.isSubClass(nodeService.getType(parentNodeRef), BeCPGModel.TYPE_ENTITY_V2)) {
+				if (entityDictionaryService.isSubClass(nodeService.getType(afterParentLevel), BeCPGModel.TYPE_ENTITY_V2)) {
 
-					NodeRef listContainerNodeRef = entityListDAO.getListContainer(parentNodeRef);
+					NodeRef listContainerNodeRef = entityListDAO.getListContainer(afterParentLevel);
 					if (listContainerNodeRef != null) {
 						NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, nodeService.getType(nodeRef));
 						if (listNodeRef != null) {
@@ -167,34 +115,92 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 						}
 					}
 					nodeService.setProperty(nodeRef, BeCPGModel.PROP_PARENT_LEVEL, null);
+				} else if (entityDictionaryService.isSubClass(nodeService.getType(afterParentLevel), BeCPGModel.TYPE_ENTITYLIST_ITEM)
+						&& entityDictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
+
+					if (!nodeService.getPrimaryParent(afterParentLevel).getParentRef().equals(nodeService.getPrimaryParent(nodeRef).getParentRef())) {
+
+						nodeService.moveNode(nodeRef, nodeService.getPrimaryParent(afterParentLevel).getParentRef(), ContentModel.ASSOC_CONTAINS,
+								ContentModel.ASSOC_CONTAINS);
+
+					}
+
 				}
 
+				hasChanged = true;
+			} else if ((beforeParentLevel != null) && !beforeParentLevel.equals(afterParentLevel)) {// parentLevel
+																									// is
+																									// null
+				hasChanged = true;
+			} else {
+				hasChanged = false;
 			}
 
-			if ((nodeService.getProperty(nodeRef, BeCPGModel.PROP_SORT) == null) && aspect.isMatch(BeCPGModel.ASPECT_SORTABLE_LIST)
-					&& !nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_DEPTH_LEVEL)) {
-				addInQueue = true;
-				if (logger.isDebugEnabled()) {
-					logger.debug("Add sortable aspect policy ");
-				}
-			}
-
-			if (((nodeService.getProperty(nodeRef, BeCPGModel.PROP_SORT) == null)
-					|| (nodeService.getProperty(nodeRef, BeCPGModel.PROP_DEPTH_LEVEL) == null)) && aspect.isMatch(BeCPGModel.ASPECT_DEPTH_LEVEL)) {
-				addInQueue = true;
-				// queue parent before
-				NodeRef parentNodeRef = (NodeRef) nodeService.getProperty(nodeRef, BeCPGModel.PROP_PARENT_LEVEL);
-				if ((parentNodeRef != null) && ((nodeService.getProperty(parentNodeRef, BeCPGModel.PROP_SORT) == null)
-						|| (nodeService.getProperty(parentNodeRef, BeCPGModel.PROP_DEPTH_LEVEL) == null))) {
-					queueNode(parentNodeRef);
-				}
-				if (logger.isDebugEnabled()) {
-					logger.debug("Add depthLevel aspect policy ");
-				}
-			}
-
-			if (addInQueue) {
+			if (hasChanged) {
+				logger.debug("onUpdateProperties has changed");
 				queueNode(nodeRef);
+			}
+
+		}
+	}
+
+	@Override
+	public void onAddAspect(NodeRef nodeRef, QName aspect) {
+
+		if (policyBehaviourFilter.isEnabled(BeCPGModel.ASPECT_DEPTH_LEVEL)) {
+			// try to avoid to do two times the work, otherwise it duplicates
+			// nodeRef in lucene index !!!
+			if (nodeService.exists(nodeRef)) {
+
+				if (logger.isDebugEnabled()) {
+					logger.debug("onAddAspect");
+				}
+
+				boolean addInQueue = false;
+
+				if (aspect.isMatch(BeCPGModel.ASPECT_DEPTH_LEVEL)) {
+					NodeRef parentNodeRef = (NodeRef) nodeService.getProperty(nodeRef, BeCPGModel.PROP_PARENT_LEVEL);
+					if ((parentNodeRef != null)
+							&& entityDictionaryService.isSubClass(nodeService.getType(parentNodeRef), BeCPGModel.TYPE_ENTITY_V2)) {
+
+						NodeRef listContainerNodeRef = entityListDAO.getListContainer(parentNodeRef);
+						if (listContainerNodeRef != null) {
+							NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, nodeService.getType(nodeRef));
+							if (listNodeRef != null) {
+								nodeService.moveNode(nodeRef, listNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
+							}
+						}
+						nodeService.setProperty(nodeRef, BeCPGModel.PROP_PARENT_LEVEL, null);
+					}
+
+				}
+
+				if ((nodeService.getProperty(nodeRef, BeCPGModel.PROP_SORT) == null) && aspect.isMatch(BeCPGModel.ASPECT_SORTABLE_LIST)
+						&& !nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_DEPTH_LEVEL)) {
+					addInQueue = true;
+					if (logger.isDebugEnabled()) {
+						logger.debug("Add sortable aspect policy ");
+					}
+				}
+
+				if (((nodeService.getProperty(nodeRef, BeCPGModel.PROP_SORT) == null)
+						|| (nodeService.getProperty(nodeRef, BeCPGModel.PROP_DEPTH_LEVEL) == null))
+						&& aspect.isMatch(BeCPGModel.ASPECT_DEPTH_LEVEL)) {
+					addInQueue = true;
+					// queue parent before
+					NodeRef parentNodeRef = (NodeRef) nodeService.getProperty(nodeRef, BeCPGModel.PROP_PARENT_LEVEL);
+					if ((parentNodeRef != null) && ((nodeService.getProperty(parentNodeRef, BeCPGModel.PROP_SORT) == null)
+							|| (nodeService.getProperty(parentNodeRef, BeCPGModel.PROP_DEPTH_LEVEL) == null))) {
+						queueNode(parentNodeRef);
+					}
+					if (logger.isDebugEnabled()) {
+						logger.debug("Add depthLevel aspect policy ");
+					}
+				}
+
+				if (addInQueue) {
+					queueNode(nodeRef);
+				}
 			}
 		}
 	}
@@ -275,6 +281,7 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 		@Override
 		public boolean getMustCopy(QName classQName, CopyDetails copyDetails) {
 			policyBehaviourFilter.disableBehaviour(copyDetails.getTargetNodeRef(), BeCPGModel.ASPECT_DEPTH_LEVEL);
+
 			return true;
 		}
 	}
