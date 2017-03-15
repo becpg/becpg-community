@@ -28,7 +28,6 @@ import org.alfresco.repo.copy.CopyServicePolicies;
 import org.alfresco.repo.copy.DefaultCopyBehaviourCallback;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
-import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
@@ -40,17 +39,12 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 public class EffectivityAspectPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnAddAspectPolicy, CopyServicePolicies.OnCopyNodePolicy {
 
 	private EffectivityAspectCopyBehaviourCallback effectivityAspectCopyBehaviourCallback;
-	private DictionaryService dictionaryService;
 	private EntityDictionaryService entityDictionaryService;
 	private AssociationService associationService;
 
-	public void setDictionaryService(DictionaryService dictionaryService) {
-		this.dictionaryService = dictionaryService;
-		effectivityAspectCopyBehaviourCallback = new EffectivityAspectCopyBehaviourCallback(dictionaryService);
-	}
-
 	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
 		this.entityDictionaryService = entityDictionaryService;
+		effectivityAspectCopyBehaviourCallback = new EffectivityAspectCopyBehaviourCallback(entityDictionaryService);
 	}
 	
 	
@@ -76,7 +70,7 @@ public class EffectivityAspectPolicy extends AbstractBeCPGPolicy implements Node
 			if (isNotLocked(nodeRef) && !isWorkingCopyOrVersion(nodeRef)) {
 				if (nodeService.getProperty(nodeRef, BeCPGModel.PROP_START_EFFECTIVITY) == null) {
 					Date startEffectivity = new Date();
-					if (dictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
+					if (entityDictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
 						QName dataListItemType = nodeService.getType(nodeRef);
 						QName pivotCharactAssoc = entityDictionaryService.getDefaultPivotAssoc(dataListItemType);
 						if (pivotCharactAssoc != null) {
@@ -102,10 +96,10 @@ public class EffectivityAspectPolicy extends AbstractBeCPGPolicy implements Node
 
 	private static class EffectivityAspectCopyBehaviourCallback extends DefaultCopyBehaviourCallback {
 
-		private final DictionaryService dictionaryService;
+		private final EntityDictionaryService entityDictionaryService;
 
-		public EffectivityAspectCopyBehaviourCallback(DictionaryService dictionaryService) {
-			this.dictionaryService = dictionaryService;
+		public EffectivityAspectCopyBehaviourCallback(EntityDictionaryService dictionaryService) {
+			this.entityDictionaryService = dictionaryService;
 		}
 
 		/**
@@ -115,7 +109,7 @@ public class EffectivityAspectPolicy extends AbstractBeCPGPolicy implements Node
 		public Map<QName, Serializable> getCopyProperties(QName classQName, CopyDetails copyDetails, Map<QName, Serializable> properties) {
 
 			if (classQName.equals(BeCPGModel.ASPECT_EFFECTIVITY)) {
-				if (!dictionaryService.isSubClass(copyDetails.getSourceNodeTypeQName(), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
+				if (!entityDictionaryService.isSubClass(copyDetails.getSourceNodeTypeQName(), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
 					// Have the key properties reset by the aspect
 					properties.remove(BeCPGModel.PROP_START_EFFECTIVITY);
 				} 

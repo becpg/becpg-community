@@ -27,8 +27,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.alfresco.repo.node.MLPropertyInterceptor;
+import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
@@ -57,7 +58,6 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.SiteHelper;
-import fr.becpg.repo.policy.BeCPGPolicyHelper;
 import fr.becpg.repo.security.SecurityService;
 
 /**
@@ -90,8 +90,8 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 	private static final String MODEL_PROP_KEY_LIST_TYPES = "listTypes";
 
 	private static final String MODEL_KEY_NAME_ENTITY_PATH = "entityPath";
-	
-	private static final String  MODEL_ACCESS_MAP = "accessMap";
+
+	private static final String MODEL_ACCESS_MAP = "accessMap";
 
 	private static final Log logger = LogFactory.getLog(EntityListsWebScript.class);
 
@@ -114,6 +114,8 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 	private PermissionService permissionService;
 
 	private AssociationService associationService;
+
+	private BehaviourFilter policyBehaviourFilter;
 
 	public void setPermissionService(PermissionService permissionService) {
 		this.permissionService = permissionService;
@@ -155,6 +157,10 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 		this.associationService = associationService;
 	}
 
+	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
+		this.policyBehaviourFilter = policyBehaviourFilter;
+	}
+
 	/**
 	 * Suggest values according to query
 	 *
@@ -185,18 +191,18 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 		QName nodeType = nodeService.getType(nodeRef);
 		boolean hasChangeStatePermission = false;
 		boolean hasWritePermission = false;// admin
-		Map<NodeRef, Boolean> accessRights = new HashMap<>();																		// can
-																														// delete
-																														// entity
-																														// lists
+		Map<NodeRef, Boolean> accessRights = new HashMap<>(); // can
+		// delete
+		// entity
+		// lists
 		boolean skipFilter = false;
 
-	//	Date lastModified = null;
+		// Date lastModified = null;
 
 		Map<String, Object> model = new HashMap<>();
 
 		// We get datalist for a given aclGroup
-		if (aclMode != null && SecurityModel.TYPE_ACL_GROUP.equals(nodeType)) {
+		if ((aclMode != null) && SecurityModel.TYPE_ACL_GROUP.equals(nodeType)) {
 			logger.debug("We want to get datalist for current ACL entity");
 			String aclType = (String) nodeService.getProperty(nodeRef, SecurityModel.PROP_ACL_GROUP_NODE_TYPE);
 			QName aclTypeQname = QName.createQName(aclType, namespaceService);
@@ -247,23 +253,28 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 				entityTplNodeRef = entityTplService.getEntityTpl(nodeType);
 			}
 
-//         #1763  Do not work on permissions changed or when node is locked			
-//			
-//			Date propModified = (Date) nodeService.getProperty(nodeRef, ContentModel.PROP_MODIFIED);
-//			lastModified = entityTplNodeRef != null ? (Date) nodeService.getProperty(entityTplNodeRef, ContentModel.PROP_MODIFIED) : null;
-//			if (lastModified == null || (propModified != null && lastModified.getTime() < propModified.getTime())) {
-//				lastModified = propModified;
-//			}
-//
-//			if (lastModified != null && BrowserCacheHelper.shouldReturnNotModified(req, lastModified)) {
-//				status.setCode(HttpServletResponse.SC_NOT_MODIFIED);
-//				status.setRedirect(true);
-//
-//				if (logger.isDebugEnabled()) {
-//					logger.debug("Send Not_MODIFIED status");
-//				}
-//				return model;
-//			}
+			// #1763 Do not work on permissions changed or when node is locked
+			//
+			// Date propModified = (Date) nodeService.getProperty(nodeRef,
+			// ContentModel.PROP_MODIFIED);
+			// lastModified = entityTplNodeRef != null ? (Date)
+			// nodeService.getProperty(entityTplNodeRef,
+			// ContentModel.PROP_MODIFIED) : null;
+			// if (lastModified == null || (propModified != null &&
+			// lastModified.getTime() < propModified.getTime())) {
+			// lastModified = propModified;
+			// }
+			//
+			// if (lastModified != null &&
+			// BrowserCacheHelper.shouldReturnNotModified(req, lastModified)) {
+			// status.setCode(HttpServletResponse.SC_NOT_MODIFIED);
+			// status.setRedirect(true);
+			//
+			// if (logger.isDebugEnabled()) {
+			// logger.debug("Send Not_MODIFIED status");
+			// }
+			// return model;
+			// }
 
 			if (entityTplNodeRef != null) {
 
@@ -271,34 +282,34 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 				// Redmine #59 : copy missing datalists as admin, otherwise, if
 				// a datalist is added in product template, users cannot see
 				// datalists of valid products
-				RunAsWork<Object> actionRunAs = () -> {
-					RetryingTransactionCallback<Object> actionCallback = () -> {
+				StopWatch watch = null;
+				if (logger.isDebugEnabled()) {
+					watch = new StopWatch();
+					watch.start();
+				}
+				boolean mlAware = MLPropertyInterceptor.isMLAware();
 
-						StopWatch watch = null;
-						if (logger.isDebugEnabled()) {
-							watch = new StopWatch();
-							watch.start();
-						}
-						try {
-							BeCPGPolicyHelper.enableCopyBehaviourForTransaction();
-
+				try {
+					MLPropertyInterceptor.setMLAware(true);
+					AuthenticationUtil.runAs(() -> {
+						RetryingTransactionCallback<Object> actionCallback = () -> {
+							policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+							policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
 							entityListDAO.copyDataLists(templateNodeRef, nodeRef, false);
 
-						} finally {
-							BeCPGPolicyHelper.disableCopyBehaviourForTransaction();
-						}
+							return null;
+						};
+						return transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback);
+					}, AuthenticationUtil.getAdminUserName());
 
-						if (logger.isDebugEnabled()) {
-							watch.stop();
-							logger.debug(
-									"copyDataLists executed in  " + watch.getTotalTimeSeconds() + " seconds - templateNodeRef " + templateNodeRef);
-						}
+				} finally {
+					MLPropertyInterceptor.setMLAware(mlAware);
+				}
 
-						return null;
-					};
-					return transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback);
-				};
-				AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getAdminUserName());
+				if (logger.isDebugEnabled()) {
+					watch.stop();
+					logger.debug("copyDataLists executed in  " + watch.getTotalTimeSeconds() + " seconds - templateNodeRef " + templateNodeRef);
+				}
 
 			}
 
@@ -312,11 +323,9 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 
 		// filter list with perms
 		if (!skipFilter) {
-			
+
 			boolean isExternalUser = isCurrentUserExternal();
-			
-			
-			
+
 			Iterator<NodeRef> it = listsNodeRef.iterator();
 			while (it.hasNext()) {
 				NodeRef temp = it.next();
@@ -328,27 +337,24 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 						logger.trace("Don't display dataList:" + dataListType);
 					}
 					it.remove();
-				} else if (!isExternalUser && SecurityService.WRITE_ACCESS == access_mode
-						&& permissionService.hasPermission(temp, PermissionService.WRITE) == AccessStatus.ALLOWED
-						 ) {
+				} else if (!isExternalUser && (SecurityService.WRITE_ACCESS == access_mode)
+						&& (permissionService.hasPermission(temp, PermissionService.WRITE) == AccessStatus.ALLOWED)) {
 					accessRights.put(temp, true);
 				} else {
 					accessRights.put(temp, false);
 				}
 			}
 		}
-		
-		
 
-//		if (lastModified == null) {
-//			lastModified = new Date();
-//		}
-//
-//		cache.setIsPublic(false);
-//		cache.setMustRevalidate(true);
-//		cache.setNeverCache(false);
-//		cache.setMaxAge(0L);
-//		cache.setLastModified(lastModified);
+		// if (lastModified == null) {
+		// lastModified = new Date();
+		// }
+		//
+		// cache.setIsPublic(false);
+		// cache.setMustRevalidate(true);
+		// cache.setNeverCache(false);
+		// cache.setMaxAge(0L);
+		// cache.setLastModified(lastModified);
 
 		Path path = nodeService.getPath(nodeRef);
 
@@ -360,17 +366,18 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 		model.put(MODEL_KEY_NAME_ENTITY_PATH, retPath);
 		model.put(MODEL_KEY_NAME_ENTITY, nodeRef);
 		model.put(MODEL_KEY_NAME_CONTAINER, listContainerNodeRef);
-		model.put(MODEL_HAS_WRITE_PERMISSION, hasWritePermission || authorityService.isAdminAuthority(AuthenticationUtil.getFullyAuthenticatedUser()));
+		model.put(MODEL_HAS_WRITE_PERMISSION,
+				hasWritePermission || authorityService.isAdminAuthority(AuthenticationUtil.getFullyAuthenticatedUser()));
 		model.put(MODEL_HAS_CHANGE_STATE_PERMISSION, hasChangeStatePermission);
 		model.put(MODEL_KEY_NAME_LISTS, listsNodeRef);
 		model.put(MODEL_ACCESS_MAP, accessRights);
 
 		return model;
 	}
-	
+
 	private boolean isCurrentUserExternal() {
 		for (String currAuth : authorityService.getAuthorities()) {
-			if((PermissionService.GROUP_PREFIX+SystemGroup.ExternalUser.toString()).equals(currAuth)){
+			if ((PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser.toString()).equals(currAuth)) {
 				return true;
 			}
 		}

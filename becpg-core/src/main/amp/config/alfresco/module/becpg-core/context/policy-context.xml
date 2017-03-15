@@ -20,6 +20,10 @@
 
 <beans>
 
+	<!-- Override Alfresco bean -->
+   <bean id="incompleteNodeTagger" class="org.alfresco.repo.node.integrity.IncompleteNodeTagger" ></bean>
+
+
 	<!-- Entity Policies -->
 
 	<bean id="abstractBeCPGPolicy" abstract="true" class="fr.becpg.repo.policy.AbstractBeCPGPolicy" init-method="init">
@@ -52,7 +56,6 @@
 	</bean>
 
 	<bean id="effectivityAspectPolicy" class="fr.becpg.repo.entity.policy.EffectivityAspectPolicy" init-method="init" parent="abstractBeCPGPolicy">
-		<property name="dictionaryService" ref="dictionaryService" />
 		<property name="entityDictionaryService" ref="entityDictionaryService" />
 		<property name="associationService" ref="associationService" />
 	</bean>
@@ -77,7 +80,7 @@
 		<property name="namespaceService" ref="namespaceService" />
 		<property name="dictionaryService" ref="dictionaryService" />
 	</bean>
-	<bean id="auditEntityListItemPolicies" class="fr.becpg.repo.entity.datalist.policy.AuditEntityListItemPolicy" parent="abstractBeCPGPolicy">
+	<bean id="auditEntityListItemPolicy" class="fr.becpg.repo.entity.datalist.policy.AuditEntityListItemPolicy" parent="abstractBeCPGPolicy">
 		<property name="authenticationService" ref="authenticationService" />
 	</bean>
 	<bean id="sortableListPolicy" class="fr.becpg.repo.entity.datalist.policy.SortableListPolicy" parent="abstractBeCPGPolicy">
