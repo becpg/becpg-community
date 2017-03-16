@@ -94,8 +94,9 @@ public class AdminSaikuRestClient {
 				
 				
 				//CALL feed all to recreate tables
-				Statement statement = connection.createStatement();
-				statement.executeQuery("CALL feed_all();");
+				try (Statement statement = connection.createStatement()){
+					statement.executeQuery("CALL feed_all();");
+				}
 				
 			}});
 
