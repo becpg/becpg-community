@@ -41,23 +41,13 @@ public class ProductPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 				&& !isWorkingCopyOrVersion(sourceNodeRef)
 
 		) {
-			queueNode(destinationRef);
-		}
-
-	}
-
-	@Override
-	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
-
-		for (NodeRef destinationRef : pendingNodes) {
-
-			if (isNotLocked(destinationRef) && !isWorkingCopyOrVersion(destinationRef)) {
-
-				nodeService.setProperty(destinationRef, PLMModel.PROP_PRODUCT_STATE, SystemState.Simulation);
-				nodeService.setProperty(destinationRef, PLMModel.PROP_ERP_CODE, null);
-				if (nodeService.hasAspect(destinationRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT)) {
-					nodeService.removeAspect(destinationRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT);
-				}
+			nodeService.setProperty(destinationRef, PLMModel.PROP_PRODUCT_STATE, SystemState.Simulation);
+			nodeService.setProperty(destinationRef, PLMModel.PROP_ERP_CODE, null);
+			if (nodeService.hasAspect(destinationRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT)) {
+				nodeService.removeAspect(destinationRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT);
+			}
+			// Allow to determine if is a branch or a version
+			if (!policyBehaviourFilter.isEnabled(BeCPGModel.ASPECT_ENTITY_BRANCH)) {
 				if (nodeService.hasAspect(destinationRef, BeCPGModel.ASPECT_ENTITY_BRANCH)) {
 					nodeService.removeAspect(destinationRef, BeCPGModel.ASPECT_ENTITY_BRANCH);
 				}
@@ -65,4 +55,5 @@ public class ProductPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 		}
 
 	}
+
 }
