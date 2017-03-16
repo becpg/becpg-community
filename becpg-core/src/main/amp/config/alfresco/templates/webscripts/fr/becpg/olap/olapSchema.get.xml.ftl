@@ -16,8 +16,9 @@
 	</Dimension>
 	
 	<Dimension name="instancesDimension" caption="Instances">
-		<Hierarchy name="instancesInfo" hasAll="true" allMemberCaption="${msg("jsolap.instance.caption")}" caption="${msg("jsolap.instance.title")}" primaryKey="id">
+		<Hierarchy name="instancesInfo" hasAll="true" allMemberCaption="${msg("jsolap.instance.caption")}"  defaultMember="[instancesDimension.instancesInfo].[${instanceId}]" caption="${msg("jsolap.instance.title")}" primaryKey="id">
 			<Table name="becpg_instance" />
+			<Level name="instance_id" column="id" visible="false" />
 			<Level name="instance_name" column="instance_name" caption="${msg("jsolap.instance.title")}" />
 			<Level name="tenant_name" column="tenant_name" caption="${msg("jsolap.tenant.title")}" />
 		</Hierarchy>
