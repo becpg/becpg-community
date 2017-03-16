@@ -35,10 +35,12 @@ public class ProductPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 
 	@Override
 	public void onCopyComplete(QName classRef, NodeRef sourceNodeRef, NodeRef destinationRef, boolean copyToNewNode, Map<NodeRef, NodeRef> copyMap) {
-		if (policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE) && policyBehaviourFilter.isEnabled(sourceNodeRef, ContentModel.ASPECT_AUDITABLE)
-				&& !isWorkingCopyOrVersion(destinationRef) && !isWorkingCopyOrVersion(sourceNodeRef)
-				
-				) {
+
+		if (policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE)
+				&& policyBehaviourFilter.isEnabled(sourceNodeRef, ContentModel.ASPECT_AUDITABLE) && !isWorkingCopyOrVersion(destinationRef)
+				&& !isWorkingCopyOrVersion(sourceNodeRef)
+
+		) {
 			queueNode(destinationRef);
 		}
 
@@ -50,17 +52,16 @@ public class ProductPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 		for (NodeRef destinationRef : pendingNodes) {
 
 			if (isNotLocked(destinationRef) && !isWorkingCopyOrVersion(destinationRef)) {
-			
 
-					nodeService.setProperty(destinationRef, PLMModel.PROP_PRODUCT_STATE, SystemState.Simulation);
-					nodeService.setProperty(destinationRef, PLMModel.PROP_ERP_CODE, null);
-					if (nodeService.hasAspect(destinationRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT)) {
-						nodeService.removeAspect(destinationRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT);
-					}
-					if (nodeService.hasAspect(destinationRef, BeCPGModel.ASPECT_ENTITY_BRANCH)) {
-						nodeService.removeAspect(destinationRef, BeCPGModel.ASPECT_ENTITY_BRANCH);
-					}
+				nodeService.setProperty(destinationRef, PLMModel.PROP_PRODUCT_STATE, SystemState.Simulation);
+				nodeService.setProperty(destinationRef, PLMModel.PROP_ERP_CODE, null);
+				if (nodeService.hasAspect(destinationRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT)) {
+					nodeService.removeAspect(destinationRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT);
 				}
+				if (nodeService.hasAspect(destinationRef, BeCPGModel.ASPECT_ENTITY_BRANCH)) {
+					nodeService.removeAspect(destinationRef, BeCPGModel.ASPECT_ENTITY_BRANCH);
+				}
+			}
 		}
 
 	}
