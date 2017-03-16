@@ -789,6 +789,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 					// Only for transaction do not reenable it
 					policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 					policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
+					policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ENTITY_BRANCH);
 
 					// Update all existing assocs
 					// TODO
@@ -885,6 +886,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 						policyBehaviourFilter.enableBehaviour(sourceNodeRef, ContentModel.ASPECT_AUDITABLE);
 					}
 				}
+				
 
 			} finally {
 				((RuleService) ruleService).enableRuleType(RuleType.UPDATE);
@@ -918,6 +920,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				// Only for transaction do not reenable it
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ENTITY_BRANCH);
 
 				String newEntityName = repoService.getAvailableName(parentRef,
 						(String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
