@@ -161,7 +161,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 									watch = new StopWatch();
 									watch.start();
 								}
-								
+
 								List<Locale> entityReportLocales = getEntityReportLocales(entityNodeRef);
 
 								for (Locale locale : entityReportLocales) {
@@ -212,10 +212,11 @@ public class EntityReportServiceImpl implements EntityReportService {
 																writer.getContentOutputStream(), params);
 
 														nodeService.setProperty(documentNodeRef, ContentModel.PROP_MODIFIED, generatedDate);
-														
+
 														nodeService.setProperty(documentNodeRef, ContentModel.PROP_NAME, documentName);
 
-														if (!(Locale.getDefault().getLanguage().equals(locale.getLanguage()) && entityReportLocales.size()==1)) {
+														if (!(Locale.getDefault().getLanguage().equals(locale.getLanguage())
+																&& (entityReportLocales.size() == 1))) {
 															nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_LOCALES,
 																	locale.getLanguage());
 														} else {
@@ -345,7 +346,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 											writer.getContentOutputStream(), params);
 
 									nodeService.setProperty(documentNodeRef, ContentModel.PROP_MODIFIED, generatedDate);
-									
+
 									nodeService.setProperty(documentNodeRef, ContentModel.PROP_NAME, documentName);
 								}
 
@@ -465,7 +466,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 			documentName = documentName.replace(RepoConsts.REPORT_EXTENSION_BIRT, extension.toLowerCase());
 		}
 
-		if (!(Locale.getDefault().getLanguage().equals(locale.getLanguage()) && getEntityReportLocales(entityNodeRef).size() == 1)) {
+		if (!(Locale.getDefault().getLanguage().equals(locale.getLanguage()) && (getEntityReportLocales(entityNodeRef).size() == 1))) {
 			documentName = documentName.substring(0, documentName.lastIndexOf(".")) + " - " + locale.getLanguage()
 					+ documentName.substring(documentName.lastIndexOf("."), documentName.length());
 		}
@@ -493,8 +494,13 @@ public class EntityReportServiceImpl implements EntityReportService {
 			}
 		}
 		if (documentNodeRef == null) {
-			documentNodeRef = fileFolderService.create(documentsFolderNodeRef, documentName, ReportModel.TYPE_REPORT).getNodeRef();
-			// We don't update permissions. If permissions are modified -> admin
+			documentNodeRef = nodeService.getChildByName(documentsFolderNodeRef, ContentModel.ASSOC_CONTAINS, documentName);
+			if (documentNodeRef == null) {
+				documentNodeRef = fileFolderService.create(documentsFolderNodeRef, documentName, ReportModel.TYPE_REPORT).getNodeRef();
+			}
+			
+			// We don't update permissions. If permissions are modified ->
+			// admin
 			// should use the action update-permissions from the reportTpl
 			setPermissions(tplNodeRef, documentNodeRef);
 			associationService.update(documentNodeRef, ReportModel.ASSOC_REPORT_TPL, tplNodeRef);
@@ -616,11 +622,11 @@ public class EntityReportServiceImpl implements EntityReportService {
 		try {
 			Date modified = (Date) nodeService.getProperty(entityNodeRef, ContentModel.PROP_MODIFIED);
 			Date formulatedDate = (Date) nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_FORMULATED_DATE);
-			
-			if(formulatedDate!=null && modified!=null && formulatedDate.getTime()>modified.getTime()){
+
+			if ((formulatedDate != null) && (modified != null) && (formulatedDate.getTime() > modified.getTime())) {
 				modified = formulatedDate;
 			}
-			
+
 			Date generatedReportDate = (Date) nodeService.getProperty(entityNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED);
 
 			if (documentNodeRef != null) {
@@ -631,11 +637,11 @@ public class EntityReportServiceImpl implements EntityReportService {
 				}
 			}
 
-			if(logger.isDebugEnabled() ){
-				logger.debug(" generated date :" +generatedReportDate);
-				logger.debug(" modified date :" +modified);
+			if (logger.isDebugEnabled()) {
+				logger.debug(" generated date :" + generatedReportDate);
+				logger.debug(" modified date :" + modified);
 			}
-			
+
 			if ((modified == null) || (generatedReportDate == null) || (modified.getTime() > generatedReportDate.getTime())) {
 				return true;
 			}
@@ -724,8 +730,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 	@Override
 	public NodeRef getOrRefreshReport(NodeRef entityNodeRef, NodeRef documentNodeRef) {
 		if (shouldGenerateReport(entityNodeRef, documentNodeRef)) {
-			logger.debug("Entity report is not up to date for entity " + entityNodeRef+" document "+documentNodeRef);
-			if(documentNodeRef == null){
+			logger.debug("Entity report is not up to date for entity " + entityNodeRef + " document " + documentNodeRef);
+			if (documentNodeRef == null) {
 				generateReports(entityNodeRef);
 			} else {
 				generateReport(entityNodeRef, documentNodeRef);
