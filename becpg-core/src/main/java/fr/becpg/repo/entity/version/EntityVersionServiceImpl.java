@@ -156,11 +156,12 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 			try {
 				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
-				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
+				
 				entityListDAO.copyDataLists(origNodeRef, workingCopyNodeRef, true);
 				entityService.moveFiles(origNodeRef, workingCopyNodeRef);
 			} finally {
-				policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
+				policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
 				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
 			}
 
@@ -245,6 +246,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 				try {
 					policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+					policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
 
 					// version is a copy of working copy or orig for 1st
 					// version
@@ -287,6 +289,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 					return versionNodeRef1;
 
 				} finally {
+					policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
 					policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
 				}
 
@@ -795,8 +798,9 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 					Map<String, Serializable> properties = new HashMap<>();
 					properties.put(VersionBaseModel.PROP_VERSION_TYPE, versionType);
 					properties.put(Version.PROP_DESCRIPTION, description);
+				
 
-					return checkOutCheckInService.checkin(internalBranchToNodeRef, properties);
+					return checkOutCheckInService.checkin(branchNodeRef, properties);
 
 				}, false, false);
 
@@ -858,6 +862,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				Map<QName, Serializable> workingCopyProperties = new HashMap<>(1);
 				workingCopyProperties.put(ContentModel.PROP_WORKING_COPY_OWNER, userName);
 				workingCopyProperties.put(ContentModel.PROP_WORKING_COPY_LABEL, workingCopyLabel);
+				
 				nodeService.addAspect(branchNodeRef, ContentModel.ASPECT_WORKING_COPY, workingCopyProperties);
 				nodeService.addAspect(branchNodeRef, ContentModel.ASPECT_LOCKABLE, null);
 				nodeService.addAspect(branchToNodeRef, ContentModel.ASPECT_CHECKED_OUT, null);

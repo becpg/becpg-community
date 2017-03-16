@@ -1,5 +1,5 @@
 /*
- * 
+ *
  */
 package fr.becpg.repo.entity.policy;
 
@@ -21,18 +21,17 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
 /**
  * The Class EntityFolderPolicy.
- * 
+ *
  * @author querephi
  */
-public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnCreateAssociationPolicy,
-		NodeServicePolicies.OnAddAspectPolicy {
+public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy
+		implements NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnAddAspectPolicy {
 
 	private static final Log logger = LogFactory.getLog(EntityTplRefAspectPolicy.class);
 
 	private AssociationService associationService;
 
 	private EntityTplService entityTplService;
-
 
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
@@ -42,15 +41,15 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy implements Nod
 		this.entityTplService = entityTplService;
 	}
 
-    @Override
+	@Override
 	public void doInit() {
 		logger.debug("Init EntityTplPolicy...");
 
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2,
 				BeCPGModel.ASSOC_ENTITY_TPL_REF, new JavaBehaviour(this, "onCreateAssociation"));
 
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnAddAspectPolicy.QNAME, BeCPGModel.ASPECT_ENTITY_TPL_REF, new JavaBehaviour(this,
-				"onAddAspect"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnAddAspectPolicy.QNAME, BeCPGModel.ASPECT_ENTITY_TPL_REF,
+				new JavaBehaviour(this, "onAddAspect"));
 
 		super.disableOnCopyBehaviour(BeCPGModel.ASPECT_ENTITY_TPL_REF);
 
@@ -59,27 +58,28 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy implements Nod
 	@Override
 	public void onAddAspect(NodeRef entityNodeRef, QName aspectTypeQName) {
 
-		if (aspectTypeQName != null && aspectTypeQName.equals(BeCPGModel.ASPECT_ENTITY_TPL_REF)) {
-
+		if ((aspectTypeQName != null) && aspectTypeQName.equals(BeCPGModel.ASPECT_ENTITY_TPL_REF)) {
 			queueNode(entityNodeRef);
 		}
 	}
 
 	@Override
 	public void onCreateAssociation(AssociationRef assocRef) {
+		if (policyBehaviourFilter.isEnabled(BeCPGModel.ASPECT_ENTITY_TPL_REF)) {
 
-		NodeRef entityNodeRef = assocRef.getSourceRef();
+			NodeRef entityNodeRef = assocRef.getSourceRef();
 
-		if (assocRef.getTypeQName().equals(BeCPGModel.ASSOC_ENTITY_TPL_REF)) {
+			if (assocRef.getTypeQName().equals(BeCPGModel.ASSOC_ENTITY_TPL_REF)) {
 
-			NodeRef entityTplNodeRef = assocRef.getTargetRef();
-			if (logger.isDebugEnabled()) {
-				logger.debug("Call synchronizeEntity with template '"+ nodeService.getProperty(entityTplNodeRef, ContentModel.PROP_NAME)
-									+ "' for entity "+nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
+				NodeRef entityTplNodeRef = assocRef.getTargetRef();
+				if (logger.isDebugEnabled()) {
+					logger.debug("Call synchronizeEntity with template '" + nodeService.getProperty(entityTplNodeRef, ContentModel.PROP_NAME)
+							+ "' for entity " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
+				}
+
+				entityTplService.synchronizeEntity(entityNodeRef, entityTplNodeRef);
+
 			}
-			
-			entityTplService.synchronizeEntity(entityNodeRef, entityTplNodeRef);
-
 		}
 	}
 
@@ -87,16 +87,16 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy implements Nod
 	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 
 		for (NodeRef entityNodeRef : pendingNodes) {
-			if (nodeService.exists(entityNodeRef)) {
+			if (nodeService.exists(entityNodeRef) && !isWorkingCopyOrVersion(entityNodeRef)) {
 				NodeRef entityTplNodeRef = associationService.getTargetAssoc(entityNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
 
 				if (entityTplNodeRef == null) {
 					QName entityType = nodeService.getType(entityNodeRef);
 					entityTplNodeRef = entityTplService.getEntityTpl(entityType);
-					if (entityTplNodeRef != null && nodeService.exists(entityTplNodeRef)) {
+					if ((entityTplNodeRef != null) && nodeService.exists(entityTplNodeRef)) {
 						if (logger.isDebugEnabled()) {
 							logger.debug("Found default entity template '" + nodeService.getProperty(entityTplNodeRef, ContentModel.PROP_NAME)
-									+ "' to assoc to "+nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
+									+ "' to assoc to " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
 						}
 						associationService.update(entityNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF, entityTplNodeRef);
 					}
