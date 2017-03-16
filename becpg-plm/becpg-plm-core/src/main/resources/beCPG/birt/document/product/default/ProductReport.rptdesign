@@ -1176,6 +1176,12 @@
                     <text-property name="heading">legalName</text-property>
                 </structure>
             </list-property>
+            <list-property name="filter">
+                <structure>
+                    <property name="operator">is-true</property>
+                    <expression name="expr" type="javascript">(row["organoListValue"] !=null &amp;&amp; row["organoListValue"] != "")</expression>
+                </structure>
+            </list-property>
             <list-property name="parameters"/>
             <structure name="cachedMetaData">
                 <list-property name="resultSet">
@@ -7978,12 +7984,6 @@ else{
                         </header>
                         <detail>
                             <row id="5434">
-                                <list-property name="visibility">
-                                    <structure>
-                                        <property name="format">all</property>
-                                        <expression name="valueExpr" type="javascript">(row["organoListValue"] == null  || row["organoListValue"] == "")</expression>
-                                    </structure>
-                                </list-property>
                                 <cell id="5435">
                                     <data id="5443">
                                         <property name="fontWeight">bold</property>

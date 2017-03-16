@@ -19,17 +19,17 @@
     <simple-property-list name="includeResource">
         <value>./ProductReport</value>
     </simple-property-list>
+    <property name="units">in</property>
+    <property name="iconFile">/templates/dual_column_chart_listing.gif</property>
+    <property name="cheatSheet">org.eclipse.birt.report.designer.ui.cheatsheet.dualchartlisting</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <property name="imageDPI">112</property>
     <list-property name="cssStyleSheets">
         <structure>
             <property name="fileName">./becpg-report.css</property>
             <property name="useExternalCss">true</property>
         </structure>
     </list-property>
-    <property name="units">in</property>
-    <property name="iconFile">/templates/dual_column_chart_listing.gif</property>
-    <property name="cheatSheet">org.eclipse.birt.report.designer.ui.cheatsheet.dualchartlisting</property>
-    <property name="bidiLayoutOrientation">ltr</property>
-    <property name="imageDPI">112</property>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="452">
             <property name="FILELIST">/opt/becpg/workspace/becpg/becpg-plm/becpg-plm-core/src/main/resources/beCPG/birt/document/product/default/ProductReport.xml</property>
@@ -2775,6 +2775,7 @@ true
                                 <cell id="3254">
                                     <text id="3449">
                                         <property name="fontSize">9pt</property>
+                                        <property name="fontWeight">bold</property>
                                         <property name="contentType">html</property>
                                         <text-property name="content"><![CDATA[<div style="font-size: 1px; display: inline; float: left; width: <VALUE-OF>(row["depthLevel"]-1)*20</VALUE-OF>px;">&amp;nbsp;</div><VALUE-OF>row["compoListProduct"]</VALUE-OF>]]></text-property>
                                     </text>
