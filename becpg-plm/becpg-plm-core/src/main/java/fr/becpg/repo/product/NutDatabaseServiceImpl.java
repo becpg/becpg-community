@@ -210,73 +210,75 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 			MLPropertyInterceptor.setMLAware(true);
 			return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-					//Only for transaction do not reenable it
-					policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-					policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
+				// Only for transaction do not reenable it
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
 
-					String[] headerRow = getHeaderRow(file);
+				String[] headerRow = getHeaderRow(file);
 
-					int idColumn = extractIdentifierColumnIndex(headerRow);
-					int nameColumn = extractNameColumnIndex(headerRow);
+				int idColumn = extractIdentifierColumnIndex(headerRow);
+				int nameColumn = extractNameColumnIndex(headerRow);
 
-					NodeRef productNode = null;
+				NodeRef productNode = null;
 
-					String[] idSplits = id.split(",");
-					for (String idSplit : idSplits) {
-						productNode = nodeService
-								.createNode(dest, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, PLMModel.TYPE_RAWMATERIAL).getChildRef();
+				String[] idSplits = id.split(",");
+				for (String idSplit : idSplits) {
+					productNode = nodeService.createNode(dest, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, PLMModel.TYPE_RAWMATERIAL)
+							.getChildRef();
 
-						ProductData productData = alfrescoRepository.findOne(productNode);
-						RawMaterialData dat = (RawMaterialData) productData;
+					ProductData productData = alfrescoRepository.findOne(productNode);
+					RawMaterialData dat = (RawMaterialData) productData;
 
-						if (dat != null) {
+					if (dat != null) {
 
-							String name = getProductName(file, idSplit, idColumn, nameColumn);
+						String name = getProductName(file, idSplit, idColumn, nameColumn);
 
-							if (name != null) {
-								dat.setName(PropertiesHelper.cleanName(name));
-							}
+						if (name != null) {
+							dat.setName(PropertiesHelper.cleanName(name));
+						}
 
-							for (int i = 1; i < headerRow.length; ++i) {
-								if (isInDictionary(headerRow[i]) || (headerRow[i].contains("_") && (isInDictionary(headerRow[i].split("_")[0])))) {
-									String value = extractValueById(file, idSplit, i);
-									logger.debug("setting property qnamed  \"" + headerRow[i] + "\" to value  \"" + value + "\"");
-									QName attributeQName = QName.createQName(headerRow[i], NamespaceService);
+						for (int i = 1; i < headerRow.length; ++i) {
+							if (isInDictionary(headerRow[i]) || (headerRow[i].contains("_") && (isInDictionary(headerRow[i].split("_")[0])))) {
+								String value = extractValueById(file, idSplit, i);
+								logger.debug("setting property qnamed  \"" + headerRow[i] + "\" to value  \"" + value + "\"");
+								QName attributeQName = QName.createQName(headerRow[i], NamespaceService);
 
-									if (PLMModel.TYPE_SUPPLIER.equals(attributeQName)) {
-										// supplier
-										BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(PLMModel.TYPE_SUPPLIER)
-												.andPropEquals(PLMModel.TYPE_SUPPLIER, extractValueById(file, idSplit, i));
-										List<NodeRef> suppliers = queryBuilder.list();
-										if (!suppliers.isEmpty()) {
-											logger.debug("Setting suppliers to " + suppliers);
-											dat.setSuppliers(suppliers);
-										}
+								if (PLMModel.TYPE_SUPPLIER.equals(attributeQName)) {
+									// supplier
+									BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(PLMModel.TYPE_SUPPLIER)
+											.andPropEquals(PLMModel.TYPE_SUPPLIER, extractValueById(file, idSplit, i));
+									List<NodeRef> suppliers = queryBuilder.list();
+									if (!suppliers.isEmpty()) {
+										logger.debug("Setting suppliers to " + suppliers);
+										dat.setSuppliers(suppliers);
 									}
 								}
 							}
+						}
 
-							List<NutListDataItem> nutList = getNuts(file, idSplit);
-			dat.setNutList(nutList);
-			alfrescoRepository.save(dat);
-			productNode = dat.getNodeRef();
+						List<NutListDataItem> nutList = getNuts(file, idSplit);
+						dat.setNutList(nutList);
+						alfrescoRepository.save(dat);
+						productNode = dat.getNodeRef();
 
-			for (int i = 1; i < headerRow.length; ++i) {
-				if (isInDictionary(headerRow[i]) || (headerRow[i].contains("_") && (isInDictionary(headerRow[i].split("_")[0])))) {
-					String value = extractValueById(file, idSplit, i);
-					logger.debug("setting property qnamed  \"" + headerRow[i] + "\" to value  \"" + value + "\"");
-					QName attributeQName = QName.createQName(headerRow[i], NamespaceService);
+						for (int i = 1; i < headerRow.length; ++i) {
+							if (isInDictionary(headerRow[i]) || (headerRow[i].contains("_") && (isInDictionary(headerRow[i].split("_")[0])))) {
+								String value = extractValueById(file, idSplit, i);
+								logger.debug("setting property qnamed  \"" + headerRow[i] + "\" to value  \"" + value + "\"");
+								QName attributeQName = QName.createQName(headerRow[i], NamespaceService);
 
-					if (!(PLMModel.TYPE_SUPPLIER.equals(attributeQName) || PLMModel.PROP_PRODUCT_HIERARCHY1.equals(attributeQName)
-							|| PLMModel.PROP_PRODUCT_HIERARCHY2.equals(attributeQName)) && (dictionaryService.getProperty(attributeQName) != null)) {
-						nodeService.setProperty(productNode, QName.createQName(headerRow[i], NamespaceService), value);
+								if (!(PLMModel.TYPE_SUPPLIER.equals(attributeQName) || PLMModel.PROP_PRODUCT_HIERARCHY1.equals(attributeQName)
+										|| PLMModel.PROP_PRODUCT_HIERARCHY2.equals(attributeQName))
+										&& (dictionaryService.getProperty(attributeQName) != null)) {
+									nodeService.setProperty(productNode, QName.createQName(headerRow[i], NamespaceService), value);
+								}
+							}
+						}
+
 					}
 				}
 
-        } }
-
-
-					return productNode;
+				return productNode;
 
 			}, false, false);
 
