@@ -52,6 +52,7 @@ import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
@@ -128,7 +129,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	@Autowired
 	private CheckOutCheckInService checkOutCheckInService;
 
-        @Autowired
+	@Autowired
 	private EntityActivityService entityActivityService;
 
 	@Autowired
@@ -160,7 +161,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			try {
 				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
-				
+
 				entityListDAO.copyDataLists(origNodeRef, workingCopyNodeRef, true);
 				entityService.moveFiles(origNodeRef, workingCopyNodeRef);
 			} finally {
@@ -769,7 +770,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 		if (branchToNodeRef == null) {
 			branchToNodeRef = associationService.getTargetAssoc(branchNodeRef, BeCPGModel.ASSOC_AUTO_MERGE_TO);
-		} 
+		}
 
 		if (branchToNodeRef != null) {
 
@@ -784,9 +785,9 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				}
 
 				MLPropertyInterceptor.setMLAware(true);
-
-				final NodeRef internalBranchToNodeRef = branchToNodeRef;
 				
+				final NodeRef internalBranchToNodeRef = branchToNodeRef;
+
 				return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 					// Only for transaction do not reenable it
@@ -794,15 +795,15 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 					policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
 					policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ENTITY_BRANCH);
 
-					prepareBranchBeforeMerge(branchNodeRef, branchToNodeRef);
+					prepareBranchBeforeMerge(branchNodeRef, internalBranchToNodeRef);
 
-			                Map<String, Serializable> properties = new HashMap<>();
-			                properties.put(VersionBaseModel.PROP_VERSION_TYPE, versionType);
-			                properties.put(Version.PROP_DESCRIPTION, description);
+					Map<String, Serializable> properties = new HashMap<>();
+					properties.put(VersionBaseModel.PROP_VERSION_TYPE, versionType);
+					properties.put(Version.PROP_DESCRIPTION, description);
 
-	                		entityActivityService.postMergeBranchActivity(branchNodeRef, branchToNodeRef, versionType, description);
+					entityActivityService.postMergeBranchActivity(branchNodeRef, internalBranchToNodeRef, versionType, description);
 
-		                	return checkOutCheckInService.checkin(branchNodeRef, properties);
+					return checkOutCheckInService.checkin(branchNodeRef, properties);
 
 				}, false, false);
 
@@ -864,7 +865,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				Map<QName, Serializable> workingCopyProperties = new HashMap<>(1);
 				workingCopyProperties.put(ContentModel.PROP_WORKING_COPY_OWNER, userName);
 				workingCopyProperties.put(ContentModel.PROP_WORKING_COPY_LABEL, workingCopyLabel);
-				
+
 				nodeService.addAspect(branchNodeRef, ContentModel.ASPECT_WORKING_COPY, workingCopyProperties);
 				nodeService.addAspect(branchNodeRef, ContentModel.ASPECT_LOCKABLE, null);
 				nodeService.addAspect(branchToNodeRef, ContentModel.ASPECT_CHECKED_OUT, null);
@@ -894,8 +895,10 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				for (AssociationRef assocRef : assocRefs) {
 					policyBehaviourFilter.disableBehaviour(assocRef.getSourceRef(), ContentModel.ASPECT_AUDITABLE);
 					try {
-						nodeService.removeAssociation(assocRef.getSourceRef(), assocRef.getTargetRef(), assocRef.getTypeQName());
-						nodeService.createAssociation(assocRef.getSourceRef(), branchToNodeRef, assocRef.getTypeQName());
+						if(assocRef!=null && assocRef.getTargetRef()!=null && !assocRef.getTargetRef().equals(branchNodeRef)){
+							nodeService.removeAssociation(assocRef.getSourceRef(), assocRef.getTargetRef(), assocRef.getTypeQName());
+							nodeService.createAssociation(assocRef.getSourceRef(), branchToNodeRef, assocRef.getTypeQName());
+						}
 					} finally {
 						policyBehaviourFilter.enableBehaviour(assocRef.getSourceRef(), ContentModel.ASPECT_AUDITABLE);
 					}
