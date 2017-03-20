@@ -63,7 +63,7 @@ function main()
     	
     	var splitted = null;
     	
-    	if(args.allPages && args.queryExecutionId!=null){
+    	if(args.allPages && args.allPages=="true" && args.queryExecutionId!=null){
     		splitted = bcpg.getSearchResults(args.queryExecutionId);
     	} else if(nodeRefs!=null){
     		splitted =  nodeRefs.split(",")
