@@ -5,7 +5,17 @@
 
 function main()
 {
-    model.widgets = [];
+	
+	// Widget instantiation metadata...
+	var labelingView = {
+	   id : "LabelingView", 
+	   name : "beCPG.component.LabelingView",
+	   options : {
+	      entityNodeRef : (page.url.args.nodeRef != null) ? page.url.args.nodeRef : ""
+	   }
+	};
+	
+    model.widgets = [labelingView];
     model.widgets = model.widgets.concat(createDashlet("ingLabelingList-"+args.htmlid, "ingLabelingListDashlet"));
     model.widgets = model.widgets.concat(createDashlet("labelingRuleList-"+args.htmlid, "labelingRuleListDashlet",msg.get("dashlet.labelingRuleList.title"),"bcpg:labelingRuleList",true));
     model.widgets = model.widgets.concat(createDashlet("compoList-"+args.htmlid, "compoListDashlet",msg.get("dashlet.compoList.title"),"bcpg:compoList", true ,"compoList", "labeling", "&repo=true&guessContainer=true" ));

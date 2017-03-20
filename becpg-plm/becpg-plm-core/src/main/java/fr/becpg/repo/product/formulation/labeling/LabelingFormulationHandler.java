@@ -218,11 +218,13 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 			if (!compositeLabeling.getIngList().isEmpty()) {
 
-				if (logger.isTraceEnabled()) {
-					logger.trace(" Create merged composite labeling");
-				}
 
 				CompositeLabeling mergeCompositeLabeling = mergeCompositeLabeling(compositeLabeling, labelingFormulaContext);
+				
+
+				if (logger.isTraceEnabled()) {
+					logger.trace(" Create merged composite labeling\n " + mergeCompositeLabeling.toString());
+				}
 
 				// Store results
 				labelingFormulaContext.setCompositeLabeling(compositeLabeling);
@@ -433,7 +435,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		CompositeLabeling merged = new CompositeLabeling();
 		merged.setQtyTotal(lblCompositeContext.getQtyTotal());
 		merged.setVolumeTotal(lblCompositeContext.getVolumeTotal());
-
+		
 		// Start adding all the components
 		for (AbstractLabelingComponent component : lblCompositeContext.getIngList().values()) {
 			if (!labelingFormulaContext.isGroup(component)) {
@@ -1388,7 +1390,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 				if (ingLabelItem == null) {
 					ingLabelItem = new IngItem((IngItem) alfrescoRepository.findOne(ingNodeRef));
-
+					ingLabelItem.getPluralParents().add(ingListItem.getData().getNodeRef());
+					
 					compositeLabeling.add(ingLabelItem);
 					
 					if(applyThreshold){
@@ -1404,7 +1407,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						logger.trace("- Update ing value: " + ingLabelItem.getLegalName(I18NUtil.getContentLocaleLang()));
 					}
 					isNew = false;
-					ingLabelItem.setPlural(true);
+					if(!ingLabelItem.getPluralParents().contains(ingListItem.getData().getNodeRef())){
+						ingLabelItem.getPluralParents().add(ingListItem.getData().getNodeRef());
+						ingLabelItem.setPlural(true);
+					}
 				}
 
 				if (!ingListItem.isLeaf()) {
@@ -1556,6 +1562,16 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 				}
 
+			} else if(DeclarationType.Omit.equals(ingDeclarationType)){
+				Double qtyPerc = ingListItem.getData().getQtyPerc();
+				if(qtyPerc!=null && qty!=null && compositeLabeling.getQtyTotal()!=null){
+					
+					if (logger.isTraceEnabled()) {
+						logger.trace("Removing ingredient "+ingListItem.getData().getName()+" qty "+((qty * qtyPerc) / 100));
+					}
+					
+					compositeLabeling.setQtyTotal(compositeLabeling.getQtyTotal() - ((qty * qtyPerc) / 100));
+				}
 			}
 
 		}

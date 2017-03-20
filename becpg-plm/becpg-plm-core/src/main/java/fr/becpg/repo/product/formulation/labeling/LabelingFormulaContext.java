@@ -374,12 +374,19 @@ public class LabelingFormulaContext {
 		}
 
 		public String getClosestValue(Locale locale, boolean plural) {
-			if(plural && pluralMlText!=null){
-				return MLTextHelper.getClosestValue(pluralMlText, locale);
+			String ret = null;
+			
+			if(plural && pluralMlText!=null && ! pluralMlText.isEmpty()){
+				ret = MLTextHelper.getClosestValue(pluralMlText, locale);
+			}
+
+			if(ret==null || ret.isEmpty()){
+				 ret =  MLTextHelper.getClosestValue(mlText, locale) ;
 			}
 			
-			return MLTextHelper.getClosestValue(mlText, locale);
+			return ret;
 		}
+			
 	}
 
 	private final Map<NodeRef, RenameRule> renameRules = new HashMap<>();
@@ -766,18 +773,13 @@ public class LabelingFormulaContext {
 
 	public String render(boolean showGroup) {
 
-		if (logger.isDebugEnabled()) {
-			logger.debug(" Render label (showGroup:" + showGroup + "): ");
+		if (logger.isTraceEnabled()) {
+			logger.trace(" Render label (showGroup:" + showGroup + "): ");
 		}
 
 		if (showGroup) {
 			return renderCompositeIng(lblCompositeContext, 1d);
 		} else {
-
-			if (logger.isDebugEnabled()) {
-				logger.debug("Merged labeling :" + mergedLblCompositeContext.toString());
-			}
-
 			return renderCompositeIng(mergedLblCompositeContext, 1d);
 		}
 
@@ -786,8 +788,8 @@ public class LabelingFormulaContext {
 	public String renderGroupList() {
 		StringBuffer ret = new StringBuffer();
 
-		if (logger.isDebugEnabled()) {
-			logger.debug(" Render Group list ");
+		if (logger.isTraceEnabled()) {
+			logger.trace(" Render Group list ");
 		}
 
 		List<AbstractLabelingComponent> components = new LinkedList<>(lblCompositeContext.getIngList().values());
@@ -813,8 +815,8 @@ public class LabelingFormulaContext {
 	public String renderAllergens() {
 		StringBuffer ret = new StringBuffer();
 
-		if (logger.isDebugEnabled()) {
-			logger.debug(" Render Allergens list ");
+		if (logger.isTraceEnabled()) {
+			logger.trace(" Render Allergens list ");
 		}
 
 		for (NodeRef allergen : allergens) {

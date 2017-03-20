@@ -33,6 +33,7 @@ import org.alfresco.util.transaction.TransactionListener;
 import org.alfresco.util.transaction.TransactionListenerAdapter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
@@ -101,36 +102,34 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 
 	@Override
 	public void onCreateAssociation(AssociationRef assocRef) {
-
-		// Bind the listener to the transaction
-		AlfrescoTransactionSupport.bindListener(transactionListener);
-		// Get the set of nodes read
-		Set<AssociationRef> assocRefs = AlfrescoTransactionSupport.getResource(KEY_PRODUCT_LISTITEMS);
-		if (assocRefs == null) {
-			assocRefs = new HashSet<>(5);
-			AlfrescoTransactionSupport.bindResource(KEY_PRODUCT_LISTITEMS, assocRefs);
-		}
-		assocRefs.add(assocRef);
+			// Bind the listener to the transaction
+			AlfrescoTransactionSupport.bindListener(transactionListener);
+			// Get the set of nodes read
+			Set<AssociationRef> assocRefs = AlfrescoTransactionSupport.getResource(KEY_PRODUCT_LISTITEMS);
+			if (assocRefs == null) {
+				assocRefs = new HashSet<>(5);
+				AlfrescoTransactionSupport.bindResource(KEY_PRODUCT_LISTITEMS, assocRefs);
+			}
+			assocRefs.add(assocRef);
 	}
 
 	@Override
 	public void onUpdateProperties(NodeRef productNodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
-
-		String beforeProductUnit = (String) before.get(PLMModel.PROP_PRODUCT_UNIT);
-		String afterProductUnit = (String) after.get(PLMModel.PROP_PRODUCT_UNIT);
-
-		if (afterProductUnit != null && !afterProductUnit.equals(beforeProductUnit)) {
-
-			// Bind the listener to the transaction
-			AlfrescoTransactionSupport.bindListener(transactionListener);
-			// Get the set of nodes read
-			Set<NodeRef> nodeRefs = AlfrescoTransactionSupport.getResource(KEY_PRODUCTS);
-			if (nodeRefs == null) {
-				nodeRefs = new HashSet<>(3);
-				AlfrescoTransactionSupport.bindResource(KEY_PRODUCTS, nodeRefs);
+			String beforeProductUnit = (String) before.get(PLMModel.PROP_PRODUCT_UNIT);
+			String afterProductUnit = (String) after.get(PLMModel.PROP_PRODUCT_UNIT);
+	
+			if (afterProductUnit != null && !afterProductUnit.equals(beforeProductUnit)) {
+	
+				// Bind the listener to the transaction
+				AlfrescoTransactionSupport.bindListener(transactionListener);
+				// Get the set of nodes read
+				Set<NodeRef> nodeRefs = AlfrescoTransactionSupport.getResource(KEY_PRODUCTS);
+				if (nodeRefs == null) {
+					nodeRefs = new HashSet<>(3);
+					AlfrescoTransactionSupport.bindResource(KEY_PRODUCTS, nodeRefs);
+				}
+				nodeRefs.add(productNodeRef);
 			}
-			nodeRefs.add(productNodeRef);
-		}
 	}
 
 	private class ProductListPolicyTransactionListener extends TransactionListenerAdapter {
@@ -140,13 +139,14 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 
 		@Override
 		public void beforeCommit(boolean readOnly) {
-
-			final Set<NodeRef> products = AlfrescoTransactionSupport.getResource(KEY_PRODUCTS);
-
-			final Set<AssociationRef> assocRefs = AlfrescoTransactionSupport.getResource(KEY_PRODUCT_LISTITEMS);
-
-			updateProducts(products);
-			updateProductListItems(assocRefs);
+			
+				final Set<NodeRef> products = AlfrescoTransactionSupport.getResource(KEY_PRODUCTS);
+	
+				final Set<AssociationRef> assocRefs = AlfrescoTransactionSupport.getResource(KEY_PRODUCT_LISTITEMS);
+	
+				updateProducts(products);
+				updateProductListItems(assocRefs);
+			
 		}
 
 		/*
@@ -155,6 +155,12 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		private void updateProducts(Set<NodeRef> productNodeRefs) {
 
 			if (productNodeRefs != null) {
+				StopWatch watch = null;
+				
+				if (logger.isDebugEnabled()) {
+					watch = new StopWatch();
+					watch.start();
+				}
 
 				for (NodeRef productNodeRef : productNodeRefs) {
 					if (nodeService.exists(productNodeRef)) {
@@ -218,6 +224,11 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 						}
 					}
 				}
+				
+				if (logger.isDebugEnabled()) {
+					watch.stop();
+					logger.debug("BeforeCommit run in  " + watch.getTotalTimeSeconds() + " seconds for key " + KEY_PRODUCTS+"  - pendingNodesSize : "+productNodeRefs.size());
+				}
 			}
 		}
 
@@ -228,6 +239,13 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 
 			if (assocRefs != null) {
 
+				StopWatch watch = null;
+				
+				if (logger.isDebugEnabled()) {
+					watch = new StopWatch();
+					watch.start();
+				}
+				
 				for (AssociationRef assocRef : assocRefs) {
 
 					NodeRef targetNodeRef = assocRef.getTargetRef();
@@ -297,6 +315,11 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 							nodeService.setProperty(productListItemNodeRef, PackModel.PROP_LL_TYPE, labelType);
 						}
 					}
+				}
+				
+				if (logger.isDebugEnabled()) {
+					watch.stop();
+					logger.debug("BeforeCommit run in  " + watch.getTotalTimeSeconds() + " seconds for key " + KEY_PRODUCT_LISTITEMS+"  - pendingNodesSize : "+assocRefs.size());
 				}
 			}
 		}

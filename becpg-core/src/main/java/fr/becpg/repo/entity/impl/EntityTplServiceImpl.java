@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.rule.RuleModel;
 import org.alfresco.repo.rule.RuntimeRuleService;
@@ -485,6 +486,8 @@ public class EntityTplServiceImpl implements EntityTplService {
 	public void synchronizeEntity(NodeRef entityNodeRef, NodeRef entityTplNodeRef) {
 		if (entityTplNodeRef != null) {
 
+			
+			
 			StopWatch watch = null;
 			if (logger.isDebugEnabled()) {
 				watch = new StopWatch();
@@ -493,7 +496,8 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 			try {
 				((RuleService) ruleService).disableRules(entityNodeRef);
-
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
 				// copy files
 				entityService.copyFiles(entityTplNodeRef, entityNodeRef);
 
@@ -514,7 +518,9 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 			} finally {
 				((RuleService) ruleService).enableRules(entityNodeRef);
-
+				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+				policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
+				
 			}
 
 			// Copy rules

@@ -79,6 +79,7 @@
 		<property name="authorityService" ref="AuthorityService" />
 		<property name="permissionService" ref="PermissionService" />
 		<property name="associationService" ref="associationService" />
+		<property name="policyBehaviourFilter" ref="policyBehaviourFilter"/>
 	</bean>
 
 	<bean id="webscript.fr.becpg.entity.entityDictionnary.get" class="fr.becpg.repo.web.scripts.entity.EntityDictionnaryWebScript" parent="webscript">

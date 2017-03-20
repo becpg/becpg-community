@@ -195,7 +195,7 @@ public class ECOServiceImpl implements ECOService {
 
 			alfrescoRepository.save(ecoData);
 			
-			if(state.equals(ecoData.getEcoState())){
+			if(state!=null && state.equals(ecoData.getEcoState())){
 				return true;
 			}
 

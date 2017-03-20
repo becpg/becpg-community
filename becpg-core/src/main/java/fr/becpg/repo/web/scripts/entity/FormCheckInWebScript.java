@@ -85,7 +85,7 @@ public class FormCheckInWebScript extends DeclarativeWebScript {
 		NodeRef newEntityNodeRef = null;
 
 		if (branchToNodeRef != null) {
-			entityVersionService.mergeBranch(nodeRef, branchToNodeRef, versionType, description);
+			newEntityNodeRef =  entityVersionService.mergeBranch(nodeRef, branchToNodeRef, versionType, description);
 		} else {
 			// Calculate new version
 			Map<String, Serializable> properties = new HashMap<>();

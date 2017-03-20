@@ -37,6 +37,7 @@ public class ProductVersionPlugin implements EntityVersionPlugin {
 	public void doBeforeCheckin(NodeRef origNodeRef, NodeRef workingCopyNodeRef) {
 		if(entityDictionaryService.isSubClass(nodeService.getType(origNodeRef), PLMModel.TYPE_PRODUCT)){
 	        nodeService.setProperty(workingCopyNodeRef, PLMModel.PROP_PRODUCT_STATE, nodeService.getProperty(origNodeRef, PLMModel.PROP_PRODUCT_STATE));
+	        nodeService.setProperty(workingCopyNodeRef, PLMModel.PROP_ERP_CODE,  nodeService.getProperty(origNodeRef, PLMModel.PROP_ERP_CODE));
 		}
 		
 	}
@@ -45,5 +46,6 @@ public class ProductVersionPlugin implements EntityVersionPlugin {
 	public void cancelCheckout(NodeRef origNodeRef, NodeRef workingCopyNodeRef) {
 		
 	}
+
 
 }
