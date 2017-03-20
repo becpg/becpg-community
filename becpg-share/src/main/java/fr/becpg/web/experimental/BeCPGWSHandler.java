@@ -40,7 +40,7 @@ public class BeCPGWSHandler {
 	}
 
 	@OnMessage
-	public String onMessage(String message, Session session) {
+	public void onMessage(String message, Session session) {
 
 		logger.debug("Receiving ... " + session.getId());
 		String room = (String) session.getUserProperties().get("room");
@@ -54,7 +54,6 @@ public class BeCPGWSHandler {
 			logger.error("onMessage failed", e);
 		}
 
-		return message;
 	}
 
 	@OnClose

@@ -25,26 +25,36 @@ public class ProductStateTest extends PLMBaseTestCase {
 	@Resource
 	private CopyService copyService;
 
-
 	@Test
 	public void testCopyProduct() throws InterruptedException {
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			/*-- Create raw material --*/
-			NodeRef rawMaterialNodeRef = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP state test");
+			NodeRef ret = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP state test");
 
 			// Valid it
-			nodeService.setProperty(rawMaterialNodeRef, PLMModel.PROP_PRODUCT_STATE, SystemState.Valid);
+			nodeService.setProperty(ret, PLMModel.PROP_PRODUCT_STATE, SystemState.Valid);
 
-			NodeRef copiedNodeRef = copyService.copy(rawMaterialNodeRef, getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					ContentModel.ASSOC_CONTAINS);
+			nodeService.setProperty(ret, PLMModel.PROP_ERP_CODE, "0001");
 
-			assertEquals("Check state", SystemState.Simulation.toString(),
-					nodeService.getProperty(copiedNodeRef, PLMModel.PROP_PRODUCT_STATE));
+			return ret;
+		}, false, true);
 
-			assertEquals("Check state", SystemState.Valid.toString(),
-					nodeService.getProperty(rawMaterialNodeRef, PLMModel.PROP_PRODUCT_STATE));
+		NodeRef copiedNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			NodeRef ret = copyService.copy(rawMaterialNodeRef, getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
+
+			return ret;
+		}, false, true);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			assertEquals("Check state", SystemState.Simulation.toString(), nodeService.getProperty(copiedNodeRef, PLMModel.PROP_PRODUCT_STATE));
+
+			assertNull("Check Erp Code", nodeService.getProperty(copiedNodeRef, PLMModel.PROP_ERP_CODE));
+
+			assertEquals("Check state", SystemState.Valid.toString(), nodeService.getProperty(rawMaterialNodeRef, PLMModel.PROP_PRODUCT_STATE));
 
 			return rawMaterialNodeRef;
 		}, false, true);

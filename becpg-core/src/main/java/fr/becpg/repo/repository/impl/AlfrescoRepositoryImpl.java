@@ -118,7 +118,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 					}
 
 					String name = entity.getName();
-					if (entity.getName() == null) {
+					if (name == null || name.isEmpty()) {
 						name = UUID.randomUUID().toString();
 					}
 

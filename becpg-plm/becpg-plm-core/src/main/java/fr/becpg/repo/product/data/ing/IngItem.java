@@ -4,8 +4,12 @@
 package fr.becpg.repo.product.data.ing;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
+
+import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.repository.annotation.AlfProp;
@@ -29,6 +33,8 @@ public class IngItem extends AbstractLabelingComponent {
 	private IngTypeItem ingType;
 
 	private List<IngItem> subIngs  = new ArrayList<>();
+	
+	private Set<NodeRef> pluralParents = new HashSet<>();
 
 	
 	
@@ -98,8 +104,12 @@ public class IngItem extends AbstractLabelingComponent {
 	public void setSubIngs(List<IngItem> subIngs) {
 		this.subIngs = subIngs;
 	}
-
 	
+	
+	public Set<NodeRef> getPluralParents() {
+		return pluralParents;
+	}
+
 	@Override
 	public IngItem clone()  {
 		return new IngItem(this);

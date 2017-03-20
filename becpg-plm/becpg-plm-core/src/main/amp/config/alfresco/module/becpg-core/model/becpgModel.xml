@@ -1698,7 +1698,7 @@
 				</property>
 				<property name="bcpg:nutListGroup">
 					<type>d:text</type>
-					<mandatory>true</mandatory>
+					<mandatory>false</mandatory>
 					<index enabled="true">
 						<atomic>false</atomic>
 						<stored>false</stored>

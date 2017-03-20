@@ -69,7 +69,7 @@ public class FormulationHelper {
 				&& !compoListDataItem.getYieldPerc().isInfinite() ? compoListDataItem.getYieldPerc() : DEFAULT_YIELD;
 	}
 
-	public static Double getQtyForCost(CompoListDataItem compoListDataItem, Double parentLossRatio, ProductUnit productUnit) {
+	public static Double getQtyForCost(CompoListDataItem compoListDataItem, Double parentLossRatio, ProductUnit componentProductUnit) {
 		double lossPerc = FormulationHelper.calculateLossPerc(parentLossRatio,
 				compoListDataItem.getLossPerc() != null ? compoListDataItem.getLossPerc() : 0d);
 		double yieldPerc = compoListDataItem.getYieldPerc() != null ? compoListDataItem.getYieldPerc() : 100d;
@@ -77,11 +77,11 @@ public class FormulationHelper {
 		Double qtyInKg = compoListDataItem.getQty() != null ? compoListDataItem.getQty() : DEFAULT_COMPONANT_QUANTITY;
 		CompoListUnit compoListUnit = compoListDataItem.getCompoListUnit();
 
-		if ((compoListUnit != null) && (productUnit != null)) {
+		if ((compoListUnit != null) && (componentProductUnit != null)) {
 
-			if (isCompoUnitKg(compoListUnit) && isProductUnitKg(productUnit)) {
+			if (isCompoUnitKg(compoListUnit) && isProductUnitKg(componentProductUnit)) {
 				return FormulationHelper.getQtyWithLoss(qtyInKg, lossPerc);
-			} else if (isCompoUnitLiter(compoListUnit) && isProductUnitLiter(productUnit)) {
+			} else if (isCompoUnitLiter(compoListUnit) && isProductUnitLiter(componentProductUnit)) {
 				if (CompoListUnit.mL.equals(compoListUnit)) {
 					qtySubFormula = qtySubFormula / 1000;
 				}
@@ -91,15 +91,18 @@ public class FormulationHelper {
 				}
 
 				return FormulationHelper.getQtyWithLossAndYield(qtySubFormula, lossPerc, yieldPerc);
-			} else if (isCompoUnitP(compoListUnit) || isProductUnitP(productUnit)) {
-				// refs #2683 costs don't work on SF with P unit
-				// unit is P
+			} else if (isCompoUnitP(compoListUnit) && isProductUnitP(componentProductUnit)) {
+				// compoListUnit is P
 				return FormulationHelper.getQtyWithLossAndYield(qtySubFormula, lossPerc, yieldPerc);
-			} else if (isProductUnitKg(productUnit)) {
+			} else if (isProductUnitKg(componentProductUnit)) {
 				// compoListUnit is %
 				return FormulationHelper.getQtyWithLoss(qtyInKg, lossPerc);
-			} else if (isProductUnitLiter(productUnit)) {
+			} else if (isProductUnitLiter(componentProductUnit)) {
+				// compoListUnit is %
 				return FormulationHelper.getQtyWithLoss(compoListDataItem.getVolume(), lossPerc);
+			} else if( isProductUnitP(componentProductUnit) ) {
+				// compoListUnit is %
+				return FormulationHelper.getQtyWithLossAndYield(qtySubFormula, lossPerc, yieldPerc);
 			}
 		}
 		return DEFAULT_COMPONANT_QUANTITY;

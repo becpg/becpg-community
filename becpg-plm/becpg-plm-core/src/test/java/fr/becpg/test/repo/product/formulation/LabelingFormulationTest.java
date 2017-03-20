@@ -903,6 +903,28 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		// └──[ing1 french - 0.5]
 
 		checkILL(finishedProductNodeRef1, labelingRuleList,
+				"pâte french 100% (legal Raw material 12 66,7% (ing1 french 66,7%), ing2 french 22,2%, ing1 french 11,1%)", Locale.FRENCH);
+
+		// Do not declare
+		labelingRuleList = new ArrayList<>();
+		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
+		labelingRuleList.add(new LabelingRuleListDataItem("Omit", null, LabelingRuleType.Omit, Collections.singletonList(localSF12NodeRef), null));
+		// Ing2 dans rawMaterial 12 est un auxiliare
+		labelingRuleList
+				.add(new LabelingRuleListDataItem("Auxiliare", "ingListDataItem.isProcessingAid == true", LabelingRuleType.DoNotDeclare, null, null));
+		labelingRuleList
+				.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format, Arrays.asList(ing1, ing2, ing3, ing4), null));
+		labelingRuleList.add(
+				new LabelingRuleListDataItem("Param1", "detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
+
+		// └──[root - 0.0 (1.0)]
+		// └──[pâte french - 1.0 (3.0)]
+		// ├──[ing1 french - 0.33333333333333337]
+		// ├──[ing2 french - 0.6666666666666667]
+		// └──[legal Raw material 12 - 2.0 (2.0)]
+		// └──[ing1 french - 0.5]
+
+		checkILL(finishedProductNodeRef1, labelingRuleList,
 				"pâte french 100% (legal Raw material 12 66,7% (ing1 french 16,7%), ing2 french 22,2%, ing1 french 11,1%)", Locale.FRENCH);
 
 		// Test Do not Declare IngType

@@ -109,16 +109,18 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
     @SuppressWarnings("unchecked")
     public Object invoke(final MethodInvocation invocation) throws Throwable
     {
-        if (logger.isDebugEnabled())
-        {
-            logger.debug("Intercepting method " + invocation.getMethod().getName() + " using content filter " + I18NUtil.getContentLocale());
-        }
+       
         
         // If isMLAware then no treatment is done, just return
         if (isMLAware())
         {    
             // Don't interfere
             return invocation.proceed();
+        }
+        
+        if (logger.isDebugEnabled())
+        {
+            logger.debug("Intercepting method " + invocation.getMethod().getName() + " using content filter " + I18NUtil.getContentLocale());
         }
         
         Locale contentLangLocale = I18NUtil.getContentLocaleLang();

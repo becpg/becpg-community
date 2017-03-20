@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
+import org.alfresco.repo.node.MLPropertyInterceptor;
+import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
@@ -21,11 +23,13 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceException;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StopWatch;
 
 import com.sun.star.uno.RuntimeException;
 
@@ -68,6 +72,12 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 
 	@Autowired
 	private NamespaceService NamespaceService;
+
+	@Autowired
+	private TransactionService transactionService;
+
+	@Autowired
+	private BehaviourFilter policyBehaviourFilter;
 
 	private final static Log logger = LogFactory.getLog(NutDatabaseServiceImpl.class);
 	private final static String DATABASES_FOLDER = "/app:company_home/cm:System/cm:NutritionalDatabases";
@@ -162,7 +172,14 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 							if (nutValue != null) {
 								nut.setManualValue(nutValue.doubleValue());
 							}
+							;
 
+							// nutListGroup
+							String nutGroup = (String) nodeService.getProperty(nutNodeRef, PLMModel.PROP_NUTGROUP);
+
+							nut.setGroup(nutGroup);
+							nut.setSort(i);
+							nut.setDepthLevel(1);
 							ret.add(nut);
 						} catch (ParseException e) {
 							throw new RuntimeException("unable to parse value " + values[i], e);
@@ -180,45 +197,66 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 	@Override
 	public NodeRef createProduct(NodeRef file, String id, NodeRef dest) {
 
-		String[] headerRow = getHeaderRow(file);
+		StopWatch watch = null;
 
-		int idColumn = extractIdentifierColumnIndex(headerRow);
-		int nameColumn = extractNameColumnIndex(headerRow);
+		boolean mlAware = MLPropertyInterceptor.isMLAware();
+		try {
 
-		NodeRef productNode = null;
-
-		String[] idSplits = id.split(",");
-		for (String idSplit : idSplits) {
-
-			RawMaterialData dat = new RawMaterialData();
-			dat.setParentNodeRef(dest);
-
-			String name = getProductName(file, idSplit, idColumn, nameColumn);
-
-			if (name != null) {
-				dat.setName(PropertiesHelper.cleanName(name));
+			if (logger.isInfoEnabled()) {
+				watch = new StopWatch();
+				watch.start();
 			}
 
-			for (int i = 1; i < headerRow.length; ++i) {
-				if (isInDictionary(headerRow[i]) || (headerRow[i].contains("_") && (isInDictionary(headerRow[i].split("_")[0])))) {
-					String value = extractValueById(file, idSplit, i);
-					logger.debug("setting property qnamed  \"" + headerRow[i] + "\" to value  \"" + value + "\"");
-					QName attributeQName = QName.createQName(headerRow[i], NamespaceService);
+			MLPropertyInterceptor.setMLAware(true);
+			return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-					if (PLMModel.TYPE_SUPPLIER.equals(attributeQName)) {
-						// supplier
-						BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(PLMModel.TYPE_SUPPLIER)
-								.andPropEquals(PLMModel.TYPE_SUPPLIER, extractValueById(file, idSplit, i));
-						List<NodeRef> suppliers = queryBuilder.list();
-						if (!suppliers.isEmpty()) {
-							logger.debug("Setting suppliers to " + suppliers);
-							dat.setSuppliers(suppliers);
-						}
-					}
-				}
-			}
+					//Only for transaction do not reenable it
+					policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+					policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
 
-			List<NutListDataItem> nutList = getNuts(file, idSplit);
+					String[] headerRow = getHeaderRow(file);
+
+					int idColumn = extractIdentifierColumnIndex(headerRow);
+					int nameColumn = extractNameColumnIndex(headerRow);
+
+					NodeRef productNode = null;
+
+					String[] idSplits = id.split(",");
+					for (String idSplit : idSplits) {
+						productNode = nodeService
+								.createNode(dest, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, PLMModel.TYPE_RAWMATERIAL).getChildRef();
+
+						ProductData productData = alfrescoRepository.findOne(productNode);
+						RawMaterialData dat = (RawMaterialData) productData;
+
+						if (dat != null) {
+
+							String name = getProductName(file, idSplit, idColumn, nameColumn);
+
+							if (name != null) {
+								dat.setName(PropertiesHelper.cleanName(name));
+							}
+
+							for (int i = 1; i < headerRow.length; ++i) {
+								if (isInDictionary(headerRow[i]) || (headerRow[i].contains("_") && (isInDictionary(headerRow[i].split("_")[0])))) {
+									String value = extractValueById(file, idSplit, i);
+									logger.debug("setting property qnamed  \"" + headerRow[i] + "\" to value  \"" + value + "\"");
+									QName attributeQName = QName.createQName(headerRow[i], NamespaceService);
+
+									if (PLMModel.TYPE_SUPPLIER.equals(attributeQName)) {
+										// supplier
+										BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(PLMModel.TYPE_SUPPLIER)
+												.andPropEquals(PLMModel.TYPE_SUPPLIER, extractValueById(file, idSplit, i));
+										List<NodeRef> suppliers = queryBuilder.list();
+										if (!suppliers.isEmpty()) {
+											logger.debug("Setting suppliers to " + suppliers);
+											dat.setSuppliers(suppliers);
+										}
+									}
+								}
+							}
+
+							List<NutListDataItem> nutList = getNuts(file, idSplit);
 			dat.setNutList(nutList);
 			alfrescoRepository.save(dat);
 			productNode = dat.getNodeRef();
@@ -234,11 +272,24 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 						nodeService.setProperty(productNode, QName.createQName(headerRow[i], NamespaceService), value);
 					}
 				}
+
+        } }
+
+
+					return productNode;
+
+			}, false, false);
+
+		} finally {
+			MLPropertyInterceptor.setMLAware(mlAware);
+
+			if (logger.isInfoEnabled()) {
+				watch.stop();
+				logger.info("createProduct run in  " + watch.getTotalTimeSeconds() + " seconds ");
+
 			}
 
 		}
-
-		return productNode;
 	}
 
 	private CSVReader getCSVReaderFromNodeRef(NodeRef file) {

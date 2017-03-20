@@ -56,6 +56,9 @@
 				<Level name="Day" caption="${msg("jsolap.day.title")}" column="Day" nameColumn="NDay" ordinalColumn="Day" type="Numeric"  levelType="TimeDays"  />
 			</Hierarchy>		
 		</Dimension>
+		<#if isAdmin>
+			<DimensionUsage name="instance" caption="${msg("jsolap.instance.title")}" source="instancesDimension" foreignKey="instanceId" />
+		</#if>
 	
 		<Measure name="avgUsers" caption="${msg("jsolap.users-avg.title")}" column="connected_users" datatype="Numeric" aggregator="avg" visible="true"></Measure>
 		<Measure name="maxUsers" caption="${msg("jsolap.users-max.title")}" column="connected_users" datatype="Numeric" aggregator="max" visible="true"></Measure>

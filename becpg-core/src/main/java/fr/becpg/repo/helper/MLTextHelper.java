@@ -193,6 +193,16 @@ public class MLTextHelper {
 		return ret;
 	}
 
+
+	public static boolean isEmpty(MLText mlText) {
+		for(String value : mlText.values()){
+			if(value!=null && !value.isEmpty()){
+				return false;
+			}
+		}
+		return true;
+	}
+
 	
 
 }
