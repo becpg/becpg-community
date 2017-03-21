@@ -73,12 +73,18 @@ public class ImportEntityXmlVisitor {
 
 	private EntityProviderCallBack entityProviderCallBack;
 
+	private  Map<NodeRef, NodeRef> cache = new HashMap<>();
+	
 	private final EntityDictionaryService entityDictionaryService;
 
 	private final ServiceRegistry serviceRegistry;
 
 	public void setEntityProviderCallBack(EntityProviderCallBack entityProviderCallBack) {
 		this.entityProviderCallBack = entityProviderCallBack;
+	}
+	
+	public void setCache(Map<NodeRef, NodeRef> cache) {
+		this.cache = cache;
 	}
 
 	private static final Log logger = LogFactory.getLog(ImportEntityXmlVisitor.class);
@@ -169,8 +175,6 @@ public class ImportEntityXmlVisitor {
 		private NodeRef destNodeRef = null;
 
 		private Map<QName, Serializable> properties = null;
-
-		private final Map<NodeRef, NodeRef> cache = new HashMap<>();
 
 		private final Stack<NodeRef> curNodeRef = new Stack<>();
 
@@ -269,7 +273,7 @@ public class ImportEntityXmlVisitor {
 								if (entityProviderCallBack != null) {
 									logger.debug("Node not found calling provider");
 									try {
-										node = entityProviderCallBack.provideNode(new NodeRef(nodeRef));
+										node = entityProviderCallBack.provideNode(new NodeRef(nodeRef),cache);
 										cache.put(new NodeRef(nodeRef), node);
 									} catch (BeCPGException e) {
 										throw new SAXException("Cannot call entityProviderCallBack for nodeRef: " + nodeRef, e);
@@ -494,7 +498,7 @@ public class ImportEntityXmlVisitor {
 							} else if (entityProviderCallBack != null) {
 								logger.debug("Node not found calling provider");
 								try {
-									replacementNode = entityProviderCallBack.provideNode(origNodeRef);
+									replacementNode = entityProviderCallBack.provideNode(origNodeRef, cache);
 									cache.put(origNodeRef, replacementNode);
 								} catch (BeCPGException e) {
 									throw new SAXException("Cannot call entityProviderCallBack for nodeRef: " + origNodeRef, e);

@@ -81,7 +81,8 @@
 	padding: 2px 0px 1px 24px;
 }
 
-.datagrid .item-select .selectAll {
+.datagrid .item-select .selectAll,
+.datagrid .item-select .selectAllPages {
 	background-image: url(../../components/images/select-rows-all-16.png);
 }
 

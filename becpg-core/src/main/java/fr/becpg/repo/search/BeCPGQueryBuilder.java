@@ -995,7 +995,11 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		List<Pair<QName, Boolean>> tmp = new LinkedList<>();
 
 		for (Map.Entry<String, Boolean> entry : sortProps.entrySet()) {
-			tmp.add(new Pair<>(QName.createQName(entry.getKey().replace("@", ""), namespaceService), entry.getValue()));
+			if(entry.getKey().indexOf(QName.NAMESPACE_BEGIN)!=-1){
+				tmp.add(new Pair<>(QName.createQName(entry.getKey().replace("@", "")), entry.getValue()));
+			} else {
+				tmp.add(new Pair<>(QName.createQName(entry.getKey().replace("@", ""), namespaceService), entry.getValue()));
+			}
 		}
 
 		try {

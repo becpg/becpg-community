@@ -27,9 +27,9 @@ import fr.becpg.common.BeCPGException;
 
 public interface EntityProviderCallBack {
 
-	NodeRef provideNode(NodeRef nodeRef, NodeRef destNodeRef, Map<QName, Serializable> properties) throws BeCPGException;
+	NodeRef provideNode(NodeRef nodeRef, NodeRef destNodeRef, Map<QName, Serializable> properties, Map<NodeRef, NodeRef> cache) throws BeCPGException;
 	
-	NodeRef provideNode(NodeRef nodeRef) throws BeCPGException;
+	NodeRef provideNode(NodeRef nodeRef,Map<NodeRef, NodeRef> cache) throws BeCPGException;
 
 	void provideContent(NodeRef origNodeRef, NodeRef destNodeRef) throws BeCPGException;
 

@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.node.MLPropertyInterceptor;
+import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.ContentService;
@@ -41,14 +44,17 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StopWatch;
 import org.xml.sax.SAXException;
 
 import fr.becpg.common.BeCPGException;
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.remote.EntityProviderCallBack;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
@@ -89,6 +95,12 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	private MimetypeService mimetypeService;
 
 	@Autowired
+	private TransactionService transactionService;
+
+	@Autowired
+	private BehaviourFilter policyBehaviourFilter;
+
+	@Autowired
 	private EntityDictionaryService entityDictionaryService;
 
 	private static final Log logger = LogFactory.getLog(RemoteEntityServiceImpl.class);
@@ -124,7 +136,10 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 
 			final Set<NodeRef> rets = new HashSet<>();
 			L2CacheSupport.doInCacheContext(() -> {
-				rets.add(createOrUpdateEntity(entityNodeRef, null, null, in, format, entityProviderCallBack));
+				
+				Map<NodeRef, NodeRef> cache = new HashMap<>();
+				
+				rets.add(createOrUpdateEntity(entityNodeRef, null, null, in, format, entityProviderCallBack, cache));
 
 			}, false, true);
 
@@ -133,6 +148,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 			}
 
 			return rets.iterator().next();
+
 		}
 
 		throw new BeCPGException("Unknown format " + format.toString());
@@ -141,17 +157,39 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	@Override
 	@Deprecated
 	public NodeRef createOrUpdateEntity(NodeRef entityNodeRef, NodeRef destNodeRef, Map<QName, Serializable> properties, InputStream in,
-			RemoteEntityFormat format, EntityProviderCallBack entityProviderCallBack) {
+			RemoteEntityFormat format, EntityProviderCallBack entityProviderCallBack, Map<NodeRef, NodeRef> cache) {
 
-		ImportEntityXmlVisitor xmlEntityVisitor = new ImportEntityXmlVisitor(serviceRegistry, entityDictionaryService);
-		xmlEntityVisitor.setEntityProviderCallBack(entityProviderCallBack);
+		StopWatch watch = null;
 
 		try {
-			return xmlEntityVisitor.visit(entityNodeRef, destNodeRef, properties, in);
-		} catch (IOException | ParserConfigurationException | SAXException e) {
-			logger.error("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
+
+			if (logger.isDebugEnabled()) {
+				watch = new StopWatch();
+				watch.start();
+			}
+			return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+				// Only for transaction do not reenable it
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
+
+				ImportEntityXmlVisitor xmlEntityVisitor = new ImportEntityXmlVisitor(serviceRegistry, entityDictionaryService);
+				xmlEntityVisitor.setEntityProviderCallBack(entityProviderCallBack);
+				try {
+					return xmlEntityVisitor.visit(entityNodeRef, destNodeRef, properties, in);
+				} catch (IOException | ParserConfigurationException | SAXException e) {
+					logger.error("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
+				}
+				return null;
+			}, false, false);
+
+		} finally {
+			if (logger.isDebugEnabled()) {
+				watch.stop();
+				logger.debug("createOrUpdateEntity run in  " + watch.getTotalTimeSeconds() + " seconds ");
+
+			}
 		}
-		return null;
 
 	}
 

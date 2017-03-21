@@ -51,12 +51,12 @@ public class HttpEntityProviderCallback implements EntityProviderCallBack {
 	}
 
 	@Override
-	public NodeRef provideNode(NodeRef nodeRef) throws BeCPGException {
-		return provideNode(nodeRef, null, null);
+	public NodeRef provideNode(NodeRef nodeRef, Map<NodeRef, NodeRef> cache) throws BeCPGException {
+		return provideNode(nodeRef, null, null, cache);
 	}
 
 	@Override
-	public NodeRef provideNode(NodeRef nodeRef, NodeRef destNodeRef, Map<QName, Serializable> properties) throws BeCPGException {
+	public NodeRef provideNode(NodeRef nodeRef, NodeRef destNodeRef, Map<QName, Serializable> properties, Map<NodeRef, NodeRef> cache) throws BeCPGException {
 		try {
 			String url = remoteServer + "?nodeRef=" + nodeRef.toString();
 			logger.debug("Try getting nodeRef  from : " + url);
@@ -69,7 +69,7 @@ public class HttpEntityProviderCallback implements EntityProviderCallBack {
 			HttpEntity responseEntity = httpResponse.getEntity();
 
 			try (InputStream entityStream = responseEntity.getContent()) {
-				return remoteEntityService.createOrUpdateEntity(nodeRef, destNodeRef, properties, entityStream, RemoteEntityFormat.xml, this);
+				return remoteEntityService.createOrUpdateEntity(nodeRef, destNodeRef, properties, entityStream, RemoteEntityFormat.xml, this, cache);
 			}
 
 		} catch (IOException | KeyManagementException | NoSuchAlgorithmException | KeyStoreException e) {
