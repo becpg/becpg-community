@@ -21,32 +21,23 @@
 			<Level name="instance_id" column="id" visible="false" />
 			<Level name="instance_name" column="instance_name" caption="${msg("jsolap.instance.title")}" />
 			<Level name="tenant_name" column="tenant_name" caption="${msg("jsolap.tenant.title")}" />
+			
 		</Hierarchy>
 	</Dimension>
 	
 	<Cube name="software_usage" caption="${msg("jsolap.statistics.title")}" cache="false" enabled="true">
 		<#if isAdmin>
-			<View alias="stats_transformed_date">
-				<SQL dialect="generic">
-					<![CDATA[
-						select id, total_memory, free_memory, max_memory, connected_users, DATE(statistics_date) AS statistics_date, instance_id
-						from becpg_statistics
-					]]>
-				</SQL>
-			</View>
+			<Table name="becpg_statistics" />
 		<#else>
-			<View alias="stats_transformed_date">
-				<SQL dialect="generic">
-					<![CDATA[
-						select id, total_memory, free_memory, max_memory, connected_users, DATE(statistics_date) AS statistics_date, instance_id
-						from becpg_statistics
-						where instance_id = ${instanceId}
+			<Table name="becpg_statistics" >
+				instance_id = ${instanceId}
+			</Table>
 					]]>
 				</SQL>
 			</View>
 		</#if>
 		
-		<Dimension type="TimeDimension" name="frequency" caption="${msg("jsolap.date.title")}" foreignKey="statistics_date">	
+		<Dimension type="TimeDimension" name="frequency" caption="${msg("jsolap.date.title")}" foreignKey="olap_date">	
 			<Hierarchy name="date" hasAll="true" allMemberName="${msg("jsolap.allPeriods.title")}" allMemberCaption="${msg("jsolap.date.caption")}"  primaryKey="Date" caption="${msg("jsolap.date.title")}">
 				<Table name="becpg_dimdate" alias="olapDate"/>
 				<Level name="Year" caption="${msg("jsolap.year.title")}" column="Year" type="Numeric"  levelType="TimeYears"  />
@@ -56,9 +47,10 @@
 				<Level name="Day" caption="${msg("jsolap.day.title")}" column="Day" nameColumn="NDay" ordinalColumn="Day" type="Numeric"  levelType="TimeDays"  />
 			</Hierarchy>		
 		</Dimension>
+		
 		<#if isAdmin>
-			<DimensionUsage name="instance" caption="${msg("jsolap.instance.title")}" source="instancesDimension" foreignKey="instanceId" />
-		</#if>
+			<DimensionUsage name="instance" caption="${msg("jsolap.instance.title")}" source="instancesDimension" foreignKey="instance_id" />
+		</#if>		
 	
 		<Measure name="avgUsers" caption="${msg("jsolap.users-avg.title")}" column="connected_users" datatype="Numeric" aggregator="avg" visible="true"></Measure>
 		<Measure name="maxUsers" caption="${msg("jsolap.users-max.title")}" column="connected_users" datatype="Numeric" aggregator="max" visible="true"></Measure>
@@ -114,9 +106,9 @@
 				<Level name="rclReqType" caption="${msg("jsolap.requirementsLevels.title")}" column="rclReqType"  type="String"    >
 					 <NameExpression>
 					  <SQL dialect="generic" >
-					  <![CDATA[CASE WHEN rclReqType='Forbidden' THEN '${msg("listconstraint.bcpg_rclReqType.Forbidden")}'
-	                            WHEN rclReqType='Tolerated' THEN '${msg("listconstraint.bcpg_rclReqType.Tolerated")}'
-	                            WHEN rclReqType='Info' THEN '${msg("listconstraint.bcpg_rclReqType.Info")}'
+					  <![CDATA[CASE WHEN rclReqType='Forbidden' THEN '${msg("listconstraint.bcpg_reqTypes.Forbidden")}'
+	                            WHEN rclReqType='Tolerated' THEN '${msg("listconstraint.bcpg_reqTypes.Tolerated")}'
+	                            WHEN rclReqType='Info' THEN '${msg("listconstraint.bcpg_reqTypes.Info")}'
 	                            ELSE 'Vide'
 	                           END]]></SQL>
               		 </NameExpression>
@@ -591,9 +583,9 @@
 				<Level name="projectPriority" caption="${msg("jsolap.priority.title")}" column="projectPriority"  type="String"    >
 				 <NameExpression>
 					  <SQL dialect="generic" >
-					  <![CDATA[CASE WHEN ncPriority=1 THEN '${msg("listconstraint.qa_ncPriority.1")}'
-	                            WHEN ncPriority=2 THEN '${msg("listconstraint.qa_ncPriority.2")}'
-	                            WHEN ncPriority=3 THEN '${msg("listconstraint.qa_ncPriority.3")}'
+					  <![CDATA[CASE WHEN projectPriority=1 THEN '${msg("listconstraint.qa_ncPriority.1")}'
+	                            WHEN projectPriority=2 THEN '${msg("listconstraint.qa_ncPriority.2")}'
+	                            WHEN projectPriority=3 THEN '${msg("listconstraint.qa_ncPriority.3")}'
 	                            ELSE 'Vide'
 	                           END]]></SQL>
               </NameExpression>
@@ -618,7 +610,7 @@
 		</Dimension>
 		
 		<Dimension type="StandardDimension" foreignKey="id" name="entities" caption="${msg("jsolap.entities.title")}">
-			<Hierarchy hasAll="true" primaryKey="entity_id">
+			<Hierarchy hasAll="true" primaryKey="id">
 			
 				<#if isAdmin>
 					<Table name="becpg_public_products"/>
@@ -644,7 +636,7 @@
 				<Level name="productHierarchy2" caption="${msg("jsolap.subFamily.title")}" column="productHierarchy2" type="String"   >
 				</Level>
 				<Level name="erpCode" caption="${msg("jsolap.erpCode.title")}" column="erpCode"  type="String"   />
-				<Level name="entity_noderef" caption="${msg("jsolap.entity.caption")}" column="entity_noderef" nameColumn="name" type="String"   >
+				<Level name="entity_noderef" caption="${msg("jsolap.entity.caption")}" column="noderef" nameColumn="name" type="String"   >
 				</Level>
 			</Hierarchy>
 		</Dimension>
@@ -930,7 +922,7 @@
 		</Dimension>
 
 		<Dimension type="StandardDimension" foreignKey="id" name="allergenVoluntary" caption="${msg("jsolap.allergenVoluntary.title")}">
-			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.allergen.caption")}" primaryKey="entity_fact_id" >
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.allergen.caption")}" primaryKey="id" >
 				<#if isAdmin>
 					<Table name="becpg_public_allergens"/>
 				<#else>
@@ -958,6 +950,7 @@
 				</#if>
 				<Level approxRowCount="100" name="name" caption="${msg("jsolap.allergenInVoluntary.title")}" column="nodeRef"  nameColumn="name" type="String"   >
 				</Level>
+
 			</Hierarchy>
 		</Dimension>							
 		
