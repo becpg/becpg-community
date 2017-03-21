@@ -2544,7 +2544,7 @@
 					<target>
 						<class>bcpg:geoOrigin</class>
 						<mandatory>false</mandatory>
-						<many>false</many>
+						<many>true</many>
 					</target>
 				</association>
 			</associations>
