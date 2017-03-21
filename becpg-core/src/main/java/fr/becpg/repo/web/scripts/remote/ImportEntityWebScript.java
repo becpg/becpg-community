@@ -97,7 +97,7 @@ public class ImportEntityWebScript extends AbstractEntityWebScript implements In
 			for (final String entity : entities.split(",")) {
 				NodeRef entityNodeRef;
 				try {
-					entityNodeRef = entityProviderCallBack.provideNode(new NodeRef(entity), destNodeRef, props);
+					entityNodeRef = entityProviderCallBack.provideNode(new NodeRef(entity), destNodeRef, props, new HashMap<>());
 				} catch (BeCPGException e) {
 					logger.error("Cannot import entity ", e);
 					throw new WebScriptException(e.getMessage());

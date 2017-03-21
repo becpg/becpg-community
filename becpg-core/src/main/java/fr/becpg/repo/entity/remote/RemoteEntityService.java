@@ -82,7 +82,7 @@ public interface RemoteEntityService {
 	 * @throws BeCPGException
 	 */
 	NodeRef createOrUpdateEntity(NodeRef entityNodeRef, NodeRef destNodeRef, Map<QName, Serializable> properties, InputStream in,
-			RemoteEntityFormat format, EntityProviderCallBack callback) throws BeCPGException;
+			RemoteEntityFormat format, EntityProviderCallBack callback, Map<NodeRef, NodeRef> cache) throws BeCPGException;
 
 	/**
 	 * List entities at format

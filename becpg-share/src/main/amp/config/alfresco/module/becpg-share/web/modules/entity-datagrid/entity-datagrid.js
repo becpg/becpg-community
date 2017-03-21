@@ -369,9 +369,24 @@
                         currentPage : null,
 
                         /**
+                         * Current sort
+                         */
+						currentSort : null,
+						
+						/**
+                         * Current sort dir
+                         */
+						currentSortDir : null,
+						
+						/**
                          * Used to speedUp path pagination
                          */
-                        queryExecutionId : null,
+						queryExecutionId : null,
+						
+						/**
+                         * Current queryExecutionId
+                         */
+						currentQueryExecutionId : null,
 
                         /**
                          * Current filter to filter document list.
@@ -390,6 +405,16 @@
                          */
                         selectedItems : null,
 
+
+						/**
+						 * Is all page selected
+						 * (indexed by nodeRef).
+						 * 
+						 * @property allPages
+						 * @type boolean
+						 */
+						allPages: false,
+                        
                         /**
                          * Current actions menu being shown
                          * 
@@ -553,6 +578,7 @@
                             ret+="         <li><a href=\"#\"><span class=\"selectAll\">"+this.msg("menu.select.all")+"</span></a></li>";
                             ret+="         <li><a href=\"#\"><span class=\"selectInvert\">"+this.msg("menu.select.invert")+"</span></a></li>";
                             ret+="         <li><a href=\"#\"><span class=\"selectNone\">"+this.msg("menu.select.none")+"</span></a></li>";
+                            ret+="         <li><a href=\"#\"><span class=\"selectAllPages\">"+this.msg("menu.select.allPages")+"</span></a></li>";
                             ret+="      </ul>";
                             ret+="   </div>";
                             ret+=" </div>";
@@ -1287,7 +1313,7 @@
                                         key : key,
                                         label : column.label == "hidden" ? "" : column.label,
                                         hidden : column.label == "hidden",
-                                        sortable : true,
+                                        sortable : (column.type == "property"),
                                         sortOptions :
                                         {
                                             field : column.formsName,
@@ -1403,6 +1429,10 @@
                                     me.widgets.paginator.set('totalRecords', oResponse.meta.totalRecords);
                                     me.widgets.paginator.setPage(oResponse.meta.startIndex, true);
                                     
+                                    if(me.currentSort!=null){
+    									me.widgets.dataTable.set("sortedBy", {key:me.currentSort, dir:me.currentSortDir}); 
+    								}
+                                    
                                     if(oResponse.meta.totalRecords > me.options.pageSize){
                                         Dom.removeClass(me.id + "-paginator", "hidden");
                                         if (me.options.displayBottomPagination)
@@ -1418,6 +1448,7 @@
                                     }
                                     
                                 }
+                                me.totalRecords =  oResponse.meta.totalRecords;
                                 me.queryExecutionId = oResponse.meta.queryExecutionId;
                                 return oResponse.meta;
                             };
@@ -1464,52 +1495,68 @@
                             this.widgets.dataTable.doBeforeSortColumn = function DataGrid_doBeforeSortColumn(oColumn,
                                     sSortDir)
                             {
-                                me.currentSort =
-                                {
-                                    oColumn : oColumn,
-                                    sSortDir : sSortDir
-                                };
-                                // Change when dynamic sort
-
-                                var oSortedBy = this.get("sortedBy") || {};
-                                var bSorted = (oSortedBy.key === oColumn.key) ? true : false;
-
-                                // Is there a custom sort handler function
-                                // defined?
-                                var sortFnc = (oColumn.sortOptions && YAHOO.lang
-                                        .isFunction(oColumn.sortOptions.sortFunction)) ?
-                                // Custom sort function
-                                oColumn.sortOptions.sortFunction : null;
-
-                                // Sort the Records
-                                if (!bSorted || sortFnc)
-                                {
-                                    // Default sort function if necessary
-                                    sortFnc = sortFnc || this.get("sortFunction");
-                                    // Get the field to sort
-                                    var sField = (oColumn.sortOptions && oColumn.sortOptions.field) ? oColumn.sortOptions.field
-                                            : oColumn.field;
-
-                                    // Sort the Records
-                                    this._oRecordSet.sortRecords(sortFnc,
-                                            ((sSortDir == YAHOO.widget.DataTable.CLASS_DESC) ? true : false), sField);
-                                }
-                                // Just reverse the Records
-                                else
-                                {
-                                    this._oRecordSet.reverseRecords();
-                                }
-
-                                // Update UI via sortedBy
-                                this.render();
-                                this.set("sortedBy",
-                                {
-                                    key : oColumn.key,
-                                    dir : sSortDir,
-                                    column : oColumn
-                                });
-
-                                return false;
+                            	
+                            	
+                            	if(oColumn.key.indexOf("prop_")==0){
+									me.currentSort = oColumn.key;
+									me.currentSortDir = sSortDir;	
+									me.currentPage = 1;
+									me.currentQueryExecutionId = null;						
+									me._updateDataGrid.call(me);
+									
+									return false;
+								
+								} else {
+									me.currentSort = null;
+									return true;
+								}
+                            	
+//                                me.currentSort =
+//                                {
+//                                    oColumn : oColumn,
+//                                    sSortDir : sSortDir
+//                                };
+//                                // Change when dynamic sort
+//
+//                                var oSortedBy = this.get("sortedBy") || {};
+//                                var bSorted = (oSortedBy.key === oColumn.key) ? true : false;
+//
+//                                // Is there a custom sort handler function
+//                                // defined?
+//                                var sortFnc = (oColumn.sortOptions && YAHOO.lang
+//                                        .isFunction(oColumn.sortOptions.sortFunction)) ?
+//                                // Custom sort function
+//                                oColumn.sortOptions.sortFunction : null;
+//
+//                                // Sort the Records
+//                                if (!bSorted || sortFnc)
+//                                {
+//                                    // Default sort function if necessary
+//                                    sortFnc = sortFnc || this.get("sortFunction");
+//                                    // Get the field to sort
+//                                    var sField = (oColumn.sortOptions && oColumn.sortOptions.field) ? oColumn.sortOptions.field
+//                                            : oColumn.field;
+//
+//                                    // Sort the Records
+//                                    this._oRecordSet.sortRecords(sortFnc,
+//                                            ((sSortDir == YAHOO.widget.DataTable.CLASS_DESC) ? true : false), sField);
+//                                }
+//                                // Just reverse the Records
+//                                else
+//                                {
+//                                    this._oRecordSet.reverseRecords();
+//                                }
+//
+//                                // Update UI via sortedBy
+//                                this.render();
+//                                this.set("sortedBy",
+//                                {
+//                                    key : oColumn.key,
+//                                    dir : sSortDir,
+//                                    column : oColumn
+//                                });
+//
+//                                return false;
                             };
 
                             // File checked handler
@@ -1521,38 +1568,38 @@
                             }, this, true);
 
                             // Before render event handler
-                            this.widgets.dataTable
-                                    .subscribe(
-                                            "beforeRenderEvent",
-                                            function()
-                                            {
-                                                if (me.currentSort)
-                                                {
-                                                    // Is there a custom sort
-                                                    // handler
-                                                    // function defined?
-                                                    var oColumn = me.currentSort.oColumn, sSortDir = me.currentSort.sSortDir, sortFnc = (oColumn.sortOptions && YAHOO.lang
-                                                            .isFunction(oColumn.sortOptions.sortFunction)) ?
-                                                    // Custom sort function
-                                                    oColumn.sortOptions.sortFunction : null;
-
-                                                    // Sort the Records
-                                                    if (sSortDir || sortFnc)
-                                                    {
-                                                        // Default sort function
-                                                        // if necessary
-                                                        sortFnc = sortFnc || this.rendererHelper.get("sortFunction");
-                                                        // Get the field to sort
-                                                        var sField = (oColumn.sortOptions && oColumn.sortOptions.field) ? oColumn.sortOptions.field
-                                                                : oColumn.field;
-
-                                                        // Sort the Records
-                                                        this._oRecordSet.sortRecords(sortFnc,
-                                                                ((sSortDir == YAHOO.widget.DataTable.CLASS_DESC) ? true
-                                                                        : false), sField);
-                                                    }
-                                                }
-                                            }, this.widgets.dataTable, true);
+//                            this.widgets.dataTable
+//                                    .subscribe(
+//                                            "beforeRenderEvent",
+//                                            function()
+//                                            {
+//                                                if (me.currentSort)
+//                                                {
+//                                                    // Is there a custom sort
+//                                                    // handler
+//                                                    // function defined?
+//                                                    var oColumn = me.currentSort.oColumn, sSortDir = me.currentSort.sSortDir, sortFnc = (oColumn.sortOptions && YAHOO.lang
+//                                                            .isFunction(oColumn.sortOptions.sortFunction)) ?
+//                                                    // Custom sort function
+//                                                    oColumn.sortOptions.sortFunction : null;
+//
+//                                                    // Sort the Records
+//                                                    if (sSortDir || sortFnc)
+//                                                    {
+//                                                        // Default sort function
+//                                                        // if necessary
+//                                                        sortFnc = sortFnc || this.rendererHelper.get("sortFunction");
+//                                                        // Get the field to sort
+//                                                        var sField = (oColumn.sortOptions && oColumn.sortOptions.field) ? oColumn.sortOptions.field
+//                                                                : oColumn.field;
+//
+//                                                        // Sort the Records
+//                                                        this._oRecordSet.sortRecords(sortFnc,
+//                                                                ((sSortDir == YAHOO.widget.DataTable.CLASS_DESC) ? true
+//                                                                        : false), sField);
+//                                                    }
+//                                                }
+//                                            }, this.widgets.dataTable, true);
 
                             // Rendering complete event handler
                             this.widgets.dataTable.subscribe("renderEvent", function()
@@ -2151,6 +2198,7 @@
                             switch (p_selectType)
                             {
                                 case "selectAll":
+                                case "selectAllPages":
                                     fnCheck = function(assetType, isChecked)
                                     {
                                         return true;
@@ -2177,6 +2225,12 @@
                                         return isChecked;
                                     };
                             }
+                            
+                            if(p_selectType == "selectAllPages"){
+                            	this.allPages = true;
+                            } else {
+                            	this.allPages = false;
+                            }
 
                             for (i = 0; i < len; i++)
                             {
@@ -2201,6 +2255,14 @@
                          */
                         onSelectedItemsChanged : function DataListToolbar_onSelectedItemsChanged(layer, args)
                         {
+                        	
+                        	if(this.allPages){
+								Dom.get(this.id + "-message").innerHTML = '<span class="info">'+this.msg("message.edit.allPages",this.totalRecords)+'</span>';
+								Dom.removeClass(this.id + "-message", "hidden");
+							} else {
+								Dom.addClass(this.id + "-message", "hidden");
+							}
+                        	
                             var items = this.getSelectedItems(), item, userAccess = {}, itemAccess, menuItems = this.widgets.selectedItems
                                     .getMenu().getItems(), menuItem, actionPermissions, disabled, i, ii;
 
@@ -3132,6 +3194,14 @@
                                 queryExecutionId : this.queryExecutionId,
                                 extraParams : this.options.extraParams
                             };
+                            
+                            if(this.currentSort!=null){
+								request.sort = this.currentSort.replace("prop_","").replace("_",":")+"|"+((this.currentSortDir == "yui-dt-asc") ? "true" : "false");
+							}
+							
+							if(this.currentQueryExecutionId != null) {
+								request.queryExecutionId = this.currentQueryExecutionId;
+							}
 
                             if (p_obj && p_obj.filter)
                             {
