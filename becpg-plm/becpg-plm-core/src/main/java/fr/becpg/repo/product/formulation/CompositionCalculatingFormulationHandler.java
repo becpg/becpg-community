@@ -81,11 +81,10 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 
 		Double qtyUsed = calculateQtyUsed(compositeDefaultVariant, formulatedProduct.getProductLossPerc(), false);
 		formulatedProduct.setRecipeQtyUsed(qtyUsed);
-		
+
 		Double qtyUsedWithLossPerc = calculateQtyUsed(compositeDefaultVariant, formulatedProduct.getProductLossPerc(), true);
 		formulatedProduct.setRecipeQtyUsedWithLossPerc(qtyUsedWithLossPerc);
-		
-		
+
 		if ((netWeight != null) && (qtyUsed != null) && (qtyUsed != 0d)) {
 			formulatedProduct.setYield((100 * netWeight) / qtyUsed);
 		}
@@ -93,8 +92,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		// Volume
 		Double volumeUsed = calculateVolumeFromChildren(compositeDefaultVariant);
 		formulatedProduct.setRecipeVolumeUsed(volumeUsed);
-		
-		
+
 		Double netVolume = FormulationHelper.getNetVolume(formulatedProduct);
 		if ((netVolume != null) && (volumeUsed != 0d)) {
 			formulatedProduct.setYieldVolume((100 * netVolume) / volumeUsed);
@@ -177,12 +175,13 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 			if (!DeclarationType.Omit.equals(component.getData().getDeclType())) {
 				Double lossPerc = FormulationHelper.calculateLossPerc(parentLossRatio,
 						(component.getData().getLossPerc() != null ? component.getData().getLossPerc() : 0d));
-				
+
 				if (!component.isLeaf()) {
-					qty += calculateQtyUsed(component,lossPerc, withLossPerc);
+					qty += calculateQtyUsed(component, lossPerc, withLossPerc);
 				} else {
-					if(withLossPerc){
-						qty += (FormulationHelper.getQtyInKg(component.getData()) * FormulationHelper.getYield(component.getData())*(1-lossPerc/100)) / 100;
+					if (withLossPerc) {
+						qty += (FormulationHelper.getQtyInKg(component.getData()) * FormulationHelper.getYield(component.getData())
+								* (1 - (lossPerc / 100))) / 100;
 					} else {
 						qty += (FormulationHelper.getQtyInKg(component.getData()) * FormulationHelper.getYield(component.getData())) / 100;
 					}
@@ -218,6 +217,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		List<NodeRef> supplierNodeRefs = new ArrayList<>();
 		List<NodeRef> plantNodeRefs = new ArrayList<>();
 		List<NodeRef> supplierPlantNodeRefs = new ArrayList<>();
+		List<NodeRef> geoOriginsNodeRefs = new ArrayList<>();
 		Double density = 0d;
 		int rawMaterialsWithDensity = 0;
 		for (Composite<CompoListDataItem> component : composite.getChildren()) {
@@ -236,6 +236,13 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 							plantNodeRefs.add(plantNodeRef);
 						}
 					}
+
+					for (NodeRef originGeoNodeRef : ((RawMaterialData) productData).getGeoOrigins()) {
+						if (!geoOriginsNodeRefs.contains(originGeoNodeRef)) {
+							geoOriginsNodeRefs.add(originGeoNodeRef);
+						}
+					}
+
 					for (NodeRef supplierPlantNodeRef : ((RawMaterialData) productData).getSupplierPlants()) {
 						if (!supplierPlantNodeRefs.contains(supplierPlantNodeRef)) {
 							supplierPlantNodeRefs.add(supplierPlantNodeRef);
@@ -256,6 +263,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		rawMaterialData.setSuppliers(supplierNodeRefs);
 		rawMaterialData.setPlants(plantNodeRefs);
 		rawMaterialData.setSupplierPlants(supplierPlantNodeRefs);
+		rawMaterialData.setGeoOrigins(geoOriginsNodeRefs);
 	}
 
 }
