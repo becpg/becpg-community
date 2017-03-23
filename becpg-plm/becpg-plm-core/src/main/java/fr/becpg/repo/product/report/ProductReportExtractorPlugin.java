@@ -345,6 +345,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 				// packList
 				loadPackagingList(productData, dataListsElt, defaultVariantNodeRef, images);
+				
 
 			}
 			
@@ -526,7 +527,6 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	private void loadIngLists(ProductData productData, Element dataListsElt, Map<String, byte[]> images) {
 		if ((productData.getIngList() != null) && !productData.getIngList().isEmpty()) {
 			Element ingListsElt = dataListsElt.addElement(PLMModel.TYPE_INGLIST.getLocalName() + "s");
-
 			for (IngListDataItem dataListItem : productData.getIngList()) {
 				addDataListState(ingListsElt, dataListItem.getParentNodeRef());
 				Element ingListElt = ingListsElt.addElement(PLMModel.TYPE_INGLIST.getLocalName());
@@ -641,7 +641,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		if (productData.hasPackagingListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 
 			Element packagingListElt = dataListsElt.addElement(PLMModel.TYPE_PACKAGINGLIST.getLocalName() + "s");
-
+			
 			// display tare, net weight and gross weight
 			BigDecimal tarePrimary = FormulationHelper.getTareInKg(productData.getTare(), productData.getTareUnit());
 			if (tarePrimary == null) {
@@ -702,6 +702,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			VariantPackagingData defaultVariantPackagingData = packagingData.getVariants().get(defaultVariantNodeRef);
 			if (productData.hasPackagingListEl()) {
 				for (PackagingListDataItem dataItem : productData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+					addDataListState(packagingListElt, dataItem.getParentNodeRef());
 					loadPackagingItem(1d, dataItem, packagingListElt, defaultVariantNodeRef, defaultVariantPackagingData, images, 1);
 				}
 			}
@@ -972,15 +973,16 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	}
 
 	public void addDataListState(Element xmlNode, NodeRef listNodeRef) {
-
-		if (xmlNode.valueOf(BeCPGModel.PROP_ENTITYLIST_STATE.getLocalName()) == null) {
+		String xmlNodeStateValue = xmlNode.valueOf("@" + BeCPGModel.PROP_ENTITYLIST_STATE.getLocalName());		
+		
+		if (!"ToValidate".equals(xmlNodeStateValue)) {
 			Serializable state = nodeService.getProperty(listNodeRef, BeCPGModel.PROP_ENTITYLIST_STATE);
+
 			if (state != null) {
 				xmlNode.addAttribute(BeCPGModel.PROP_ENTITYLIST_STATE.getLocalName(), (String) state);
 			} else {
-				xmlNode.addAttribute(BeCPGModel.PROP_ENTITYLIST_STATE.getLocalName(), "");
+				xmlNode.addAttribute(BeCPGModel.PROP_ENTITYLIST_STATE.getLocalName(), "ToValidate");
 			}
-
 		}
 	}
 }
