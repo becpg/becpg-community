@@ -66,6 +66,18 @@
 		<property name="authenticationService" ref="authenticationService" />
 		<property name="authorityService" ref="authorityService" />
 	</bean>
+	
+	<bean id="webscript.fr.becpg.admin.purgeNodes.get" class="fr.becpg.repo.web.scripts.admin.PurgeNodesWebscript" parent="webscript">
+		<property name="nodeService" ref="nodeService" />
+		<property name="ruleService" ref="ruleService" />
+		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
+		<property name="transactionService" ref="transactionService" />
+		<property name="entityDictionaryService" ref="entityDictionaryService" />
+		<property name="tenantService" ref="tenantService" />
+	</bean>
+
+
+
 
 	<!-- Entity lists -->
 	<bean id="webscript.fr.becpg.entity.entityLists.get" class="fr.becpg.repo.web.scripts.entity.EntityListsWebScript" parent="webscript">
