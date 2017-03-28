@@ -32,7 +32,7 @@
     <repositories>
         <repository>
 		  <id>Local repository</id>
-		  <url>file://${basedir}/lib</url>
+		  <url>file://${basedir}/birt-lib</url>
 		</repository>
     
 		<repository>
