@@ -63,6 +63,7 @@ import fr.becpg.config.mapping.HierarchyMapping;
 import fr.becpg.config.mapping.MappingException;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
+import fr.becpg.model.PackModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.entity.EntityListDAO;
@@ -1178,7 +1179,8 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 					&& !dictionaryService.isSubClass(type, BeCPGModel.TYPE_LIST_VALUE) && !dictionaryService.isSubClass(type, PLMModel.TYPE_PLANT)
 					&& !dictionaryService.isSubClass(type, PLMModel.TYPE_TRADEMARK) && !dictionaryService.isSubClass(type, PLMModel.TYPE_CERTIFICATION)
 					&& !dictionaryService.isSubClass(type, PLMModel.TYPE_APPROVAL_NUMBER) && !dictionaryService.isSubClass(type, PLMModel.TYPE_SUBSIDIARY)
-					&& !dictionaryService.isSubClass(type, PLMModel.TYPE_CONTACTLIST)) {
+					&& !dictionaryService.isSubClass(type, PLMModel.TYPE_CONTACTLIST)
+					&& !dictionaryService.isSubClass(type, PackModel.TYPE_LABELING_TEMPLATE)) {
 				for (NodeRef tmpNodeRef : queryBuilder.inDB().ftsLanguage().list()) {
 					if (nodeService.getPrimaryParent(tmpNodeRef).getParentRef().equals(importContext.getParentNodeRef())
 							&& !nodeService.hasAspect(tmpNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)
