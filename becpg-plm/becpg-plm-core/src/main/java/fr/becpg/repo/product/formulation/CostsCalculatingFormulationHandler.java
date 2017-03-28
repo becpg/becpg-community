@@ -54,6 +54,14 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	private PackagingHelper packagingHelper;
 
 	private AlfrescoRepository<ProductData> alfrescoRepositoryProductData;
+	
+
+	public static boolean keepProductUnit = false;
+	
+
+	public void setKeepProductUnit(boolean keepProductUnit) {
+		CostsCalculatingFormulationHandler.keepProductUnit = keepProductUnit;
+	}
 
 	public void setEntityTplService(EntityTplService entityTplService) {
 		this.entityTplService = entityTplService;
@@ -204,7 +212,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			} else {
 				CompoListDataItem compoListDataItem = component.getData();
 				Double qty = FormulationHelper.getQtyForCost(compoListDataItem, parentLossRatio,
-						ProductUnit.getUnit((String) nodeService.getProperty(compoListDataItem.getProduct(), PLMModel.PROP_PRODUCT_UNIT)));
+						ProductUnit.getUnit((String) nodeService.getProperty(compoListDataItem.getProduct(), PLMModel.PROP_PRODUCT_UNIT)),keepProductUnit);
 				visitPart(compoListDataItem.getProduct(), costList, qty, qty, netQty, mandatoryCharacts, totalQtiesValue,
 						formulatedProduct instanceof RawMaterialData);
 			}
@@ -243,13 +251,15 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	 * @return
 	 */
 	public static String calculateSuffixUnit(ProductUnit productUnit) {
-		if ((productUnit == null) || productUnit.equals(ProductUnit.kg) || productUnit.equals(ProductUnit.g)) {
-			return UNIT_SEPARATOR + ProductUnit.kg;
-		} else if (productUnit.equals(ProductUnit.L) || productUnit.equals(ProductUnit.mL) || productUnit.equals(ProductUnit.cL)) {
-			return UNIT_SEPARATOR + ProductUnit.L;
-		} else {
-			return UNIT_SEPARATOR + productUnit.toString();
+		if(!keepProductUnit){
+			if ((productUnit == null) || productUnit.equals(ProductUnit.kg) || productUnit.equals(ProductUnit.g)) {
+				return UNIT_SEPARATOR + ProductUnit.kg;
+			} else if (productUnit.equals(ProductUnit.L) || productUnit.equals(ProductUnit.mL) || productUnit.equals(ProductUnit.cL)) {
+				return UNIT_SEPARATOR + ProductUnit.L;
+			} 
 		}
+		
+		return UNIT_SEPARATOR + productUnit.toString();
 	}
 
 	private void calculateProfitability(ProductData formulatedProduct) {
@@ -603,7 +613,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		for (CompoListDataItem compoList : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 			NodeRef productNodeRef = compoList.getProduct();
 			Double qty = FormulationHelper.getQtyForCost(compoList, 0d,
-					ProductUnit.getUnit((String) nodeService.getProperty(productNodeRef, PLMModel.PROP_PRODUCT_UNIT)));
+					ProductUnit.getUnit((String) nodeService.getProperty(productNodeRef, PLMModel.PROP_PRODUCT_UNIT)),keepProductUnit);
 			if (logger.isDebugEnabled()) {
 				logger.debug("Get component " + nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME) + "qty: " + qty + " recipeQtyUsed "
 						+ productData.getRecipeQtyUsed());
