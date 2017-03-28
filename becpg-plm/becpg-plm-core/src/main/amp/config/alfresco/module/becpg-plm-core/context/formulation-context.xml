@@ -124,6 +124,7 @@
 					<property name="formulaService" ref="formulaService"/>
 					<property name="packagingHelper" ref="packagingHelper" />
 					<property name="alfrescoRepositoryProductData" ref="alfrescoRepository" />
+					<property name="keepProductUnit" value="${beCPG.formulation.costList.keepProductUnit}" />
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.IngsCalculatingFormulationHandler" >
 					<property name="nodeService" ref="nodeService" />

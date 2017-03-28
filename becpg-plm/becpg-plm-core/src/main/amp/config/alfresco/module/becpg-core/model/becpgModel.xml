@@ -232,6 +232,7 @@
 					<value>€</value>
 					<value>$</value>
 					<value>£</value>
+					<value>SFr</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -256,7 +257,10 @@
 				<list>
 					<value>€</value>
 					<value>€/L</value>
+					<value>€/cL</value>
+					<value>€/mL</value>
 					<value>€/kg</value>
+					<value>€/g</value>
 					<value>€/P</value>
 					<value>€/m</value>
 					<value>€/m2</value>
@@ -264,7 +268,10 @@
 					<value>€/Pal</value>
 					<value>$</value>
 					<value>$/L</value>
+					<value>$/cL</value>
+					<value>$/mL</value>
 					<value>$/kg</value>
+					<value>$/g</value>
 					<value>$/P</value>
 					<value>$/m</value>
 					<value>$/m2</value>
@@ -272,12 +279,26 @@
 					<value>$/Pal</value>
 					<value>£</value>
 					<value>£/L</value>
+					<value>£/cL</value>
+					<value>£/mL</value>
 					<value>£/kg</value>
+					<value>£/g</value>
 					<value>£/P</value>
 					<value>£/m</value>
 					<value>£/m2</value>
 					<value>£/h</value>
 					<value>£/Pal</value>
+					<value>SFr</value>
+					<value>SFr/L</value>
+					<value>SFr/cL</value>
+					<value>SFr/mL</value>
+					<value>SFr/kg</value>
+					<value>SFr/g</value>
+					<value>SFr/P</value>
+					<value>SFr/m</value>
+					<value>SFr/m2</value>
+					<value>SFr/h</value>
+					<value>SFr/Pal</value>
 				</list>
 			</parameter>
 		</constraint>
