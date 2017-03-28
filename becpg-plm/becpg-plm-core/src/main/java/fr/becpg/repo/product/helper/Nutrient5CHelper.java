@@ -14,45 +14,47 @@ public class Nutrient5CHelper {
 		Cheeses, Fats, Beverages, Others
 	}
 
-	private static final double[][] othersACategories = new double[][] { 
-		    { 3350d, 3015d, 2680d, 2345d, 2010d, 1675d, 1340d, 1005d, 670d, 335d },
-			{ 10d, 9d, 8d, 7d, 6d, 5d, 4d, 3d, 2d, 1d },
-			{ 45d, 40d, 36d, 31d, 27d, 22.5d, 18d, 13.5d, 9d, 4.5d },
-			{ 900d, 810d, 720d, 630d, 540d, 450d, 360d, 270d, 180d, 90d }
-		};
+	private static final double[][] othersACategories = new double[][] {
+	    { 3350d, 3015d, 2680d, 2345d, 2010d, 1675d, 1340d, 1005d, 670d, 335d },
+		{ 10d, 9d, 8d, 7d, 6d, 5d, 4d, 3d, 2d, 1d },
+		{ 45d, 40d, 36d, 31d, 27d, 22.5d, 18d, 13.5d, 9d, 4.5d },
+		{ 900d, 810d, 720d, 630d, 540d, 450d, 360d, 270d, 180d, 90d }
+	};
 
-	private static final double[][] othersCCategories = new double[][] { 
-		    { 80d, 80d, 80d , 80d, 80d, 80d, 80d, 80d, 60d, 40d },
+	private static final double[][] othersCCategories = new double[][] {
+		    { -1d, -1d, -1d , -1d, -1d, 80d, -1d, -1d, 60d, 40d },
 		    { 4.7d, 3.7d, 2.8d, 1.9d, 0.9d },
 			{ 8.0d, 6.4d, 4.8d, 3.2d, 1.6d } };
-
-	private static final double[][] cheeseACategories = new double[][] { 
+	
+	private static final double[][] cheeseACategories = new double[][] {
 		    { 3350d, 3015d, 2680d, 2345d, 2010d, 1675d, 1340d, 1005d, 670d, 335d },
 			{ 10d, 9d, 8d, 7d, 6d, 5d, 4d, 3d, 2d, 1d }, { 45d, 40d, 36d, 31d, 27d, 22.5d, 18d, 13.5d, 9d, 4.5d},
 			{ 900d, 810d, 720d, 630d, 540d, 450d, 360d, 270d, 180d, 90d } };
-
-	private static final double[][] cheeseCCategories = new double[][] { { 80d, 80d, 80d , 80d, 80d, 80d, 80d, 80d, 60d, 40d }, {4.7d, 3.7d, 2.8d, 1.9d, 0.9d },
+	
+	private static final double[][] cheeseCCategories = new double[][] { { -1d, -1d, -1d , -1d, -1d, 80d, -1d, -1d, 60d, 40d }, {4.7d, 3.7d, 2.8d, 1.9d, 0.9d },
 			{8.0d, 6.4d, 4.8d, 3.2d, 1.6d } };
-
+	
 	private static final double[][] fatsACategories = new double[][] { { 3350d, 3015d, 2680d, 2345d, 2010d, 1675d, 1340d, 1005d, 670d, 335d },
-			{ 63d, 57d, 51d, 45d, 39d, 33d, 27d, 21d, 15d, 9d }, { 5d, 40d, 36d, 31d, 27d, 22.5d, 18d, 13.5d, 9d, 4.5d},
+			{ 63d, 57d, 51d, 45d, 39d, 33d, 27d, 21d, 15d, 9d }, {45d, 40d, 36d, 31d, 27d, 22.5d, 18d, 13.5d, 9d, 4.5d},
 			{  900d, 810d, 720d, 630d, 540d, 450d, 360d, 270d, 180d, 90d } };
-
-	private static final double[][] fatsCCategories = new double[][] { 
-		    { 80d, 80d, 80d , 80d, 80d, 80d, 80d, 80d, 60d, 40d },
+	
+	private static final double[][] fatsCCategories = new double[][] {
+		    { -1d, -1d, -1d , -1d, -1d, 80d, -1d, -1d, 60d, 40d },
 		    { 4.7d, 3.7d, 2.8d, 1.9d, 0.9d },
 			{ 8.0d, 6.4d, 4.8d, 3.2d, 1.6d } };
-
-	private static final double[][] beveragesACategories = new double[][] { 
-		    { 270d, 270d, 240d, 210d, 180d, 150d, 120d, 90d, 60d, 30d },
-			{ 10d, 9d, 8d, 7d, 6d, 5d, 4d, 3d, 2d, 1d }, 
-			{ 13.5d, 13.5d, 12d, 10.5d, 9d, 7.5d, 6d, 4.5d, 3d, 1.5d },
+	
+	private static final double[][] beveragesACategories = new double[][] {
+		    { 270d, 240d, 210d, 180d, 150d, 120d, 90d, 60d, 30d, 0d },
+			{ 10d, 9d, 8d, 7d, 6d, 5d, 4d, 3d, 2d, 1d },
+			{ 13.5d, 12d, 10.5d, 9d, 7.5d, 6d, 4.5d, 3d, 1.5d, 0d },
 			{ 900d, 810d, 720d, 630d, 540d, 450d, 360d, 270d, 180d, 90d} };
-
-	private static final double[][] beveragesCCategories = new double[][] { 
-		    { 80d, 60d, 60d, 60d, 60d, 60d, 60d, 40d, 40d, 39d  },
+	
+	private static final double[][] beveragesCCategories = new double[][] {
+		    { 80d, -1d, -1d, -1d, -1d, -1d, 60d, -1d, 40d, -1d },
 		    { 4.7d, 3.7d, 2.8d, 1.9d, 0.9d  },
 			{8.0d, 6.4d, 4.8d, 3.2d, 1.6d } };
+
+			
 
 	private static double[][] getACategory(NutrientCategory category) {
 		switch (category) {
@@ -81,16 +83,17 @@ public class Nutrient5CHelper {
 		}
 	}
 
+
 	/**
-	 *
-	 * @param energy
-	 *            (kJ)
+	 * 
+	 * @param energyKj
 	 * @param satFat
-	 *            (g)
 	 * @param totalSugar
-	 *            (g)
 	 * @param sodium
-	 *            (mg)
+	 * @param percFruitsAndVetgs
+	 * @param fibre
+	 * @param protein
+	 * @param category
 	 * @return
 	 */
 	public static int compute5CScore(Double energyKj, Double satFat, Double totalSugar, Double sodium, Double percFruitsAndVetgs, Double fibre,
@@ -106,7 +109,7 @@ public class Nutrient5CHelper {
 		if (energyKj != null) {
 
 			for (double val : aCategories[0]) {
-				if (energyKj > val) {
+				if (energyKj > val && val > 0) {
 					break;
 				}
 				score--;
@@ -117,7 +120,7 @@ public class Nutrient5CHelper {
 		if (satFat != null) {
 			score = 10;
 			for (double val : aCategories[1]) {
-				if (satFat > val) {
+				if (satFat > val && val > 0) {
 					break;
 				}
 				score--;
@@ -129,7 +132,7 @@ public class Nutrient5CHelper {
 		if (totalSugar != null) {
 			score = 10;
 			for (double val : aCategories[2]) {
-				if (totalSugar > val) {
+				if (totalSugar > val && val > 0) {
 					break;
 				}
 				score--;
@@ -141,7 +144,7 @@ public class Nutrient5CHelper {
 		if (sodium != null) {
 			score = 10;
 			for (double val : aCategories[3]) {
-				if (sodium > val) {
+				if (sodium > val && val > 0) {
 					break;
 				}
 				score--;
@@ -153,7 +156,7 @@ public class Nutrient5CHelper {
 		if (percFruitsAndVetgs != null) {
 			score = 10;
 			for (double val : cCategories[0]) {
-				if (percFruitsAndVetgs > val) {
+				if (percFruitsAndVetgs > val && val > 0) {
 					break;
 				}
 				score--;
@@ -164,7 +167,7 @@ public class Nutrient5CHelper {
 		if (fibre != null) {
 			score = 5;
 			for (double val : cCategories[1]) {
-				if (fibre > val) {
+				if (fibre > val && val > 0) {
 					break;
 				}
 				score--;
@@ -177,7 +180,7 @@ public class Nutrient5CHelper {
 			if (protein != null) {
 				score = 5;
 				for (double val : cCategories[2]) {
-					if (protein > val) {
+					if (protein > val && val > 0) {
 						break;
 					}
 					score--;
