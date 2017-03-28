@@ -32,9 +32,6 @@
 			<Table name="becpg_statistics" >
 				instance_id = ${instanceId}
 			</Table>
-					]]>
-				</SQL>
-			</View>
 		</#if>
 		
 		<Dimension type="TimeDimension" name="frequency" caption="${msg("jsolap.date.title")}" foreignKey="olap_date">	
