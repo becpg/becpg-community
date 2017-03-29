@@ -252,7 +252,7 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 				CompoListDataItem compoListDataItem = component.getData();
 
 				Double qty = (FormulationHelper.getQtyForCost(compoListDataItem, parentLossRatio,
-						ProductUnit.getUnit((String) nodeService.getProperty(compoListDataItem.getProduct(), PLMModel.PROP_PRODUCT_UNIT)))
+						ProductUnit.getUnit((String) nodeService.getProperty(compoListDataItem.getProduct(), PLMModel.PROP_PRODUCT_UNIT)), CostsCalculatingFormulationHandler.keepProductUnit)
 						/ FormulationHelper.getNetQtyForCost(productData)) * subQty;
 
 				visitPart(productData.getNodeRef(), compoListDataItem.getProduct(), ret, qty, qty, netQty, currLevel, unitProvider);
