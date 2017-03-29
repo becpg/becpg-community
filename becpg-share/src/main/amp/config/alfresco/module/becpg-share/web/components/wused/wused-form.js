@@ -56,7 +56,8 @@
 			filterType : null,
 			nodeRefs : null,
 			searchQuery : null,
-			searchTerm : null
+			searchTerm : null,
+			aspectSubstitutions : null
 		},
 
 		/**
@@ -193,7 +194,7 @@
 				this.widgets.showButton = Alfresco.util.createYUIButton(this, "show-button", onShow, {
 					disabled : true
 				});
-
+				
 				if (!me.options.searchQuery) {
 
 					this.widgets.entitiesPicker = new beCPG.component.AutoCompletePicker(this.id + '-entities', this.id + '-entities-field', true)
@@ -205,29 +206,8 @@
 							});
 				}
 
-				// select first
+				var	 items = this.widgets.typeSelect.getMenu().getItems();
 
-
-				var items = this.widgets.typeFilterSelect.getMenu().getItems();
-
-				for ( var i in items) {
-					var typeSelected = items[i];
-					if (typeSelected) {
-						me.widgets.typeFilterSelect.set("label", typeSelected.cfg.getProperty("text")+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
-						var className = typeSelected._oAnchor.children[0].attributes[0].nodeValue;
-						this.options.filterType = className.split("#")[0];
-						if (className.indexOf("selected") > -1) {
-							break;
-						}
-					}
-				}
-				
-				
-				 items = this.widgets.typeSelect.getMenu().getItems();
-
-				if (items && items.length > 0) {
-					me.widgets.showButton.set("disabled", false);
-				}
 
 				for ( var i in items) {
 					var typeSelected = items[i];
@@ -236,7 +216,6 @@
 						var className = typeSelected._oAnchor.children[0].attributes[0].nodeValue;
 						this._extractValues(className);
 						if (className.indexOf("selected") > -1) {
-							onShow();
 							break;
 						}
 					}
@@ -259,6 +238,10 @@
 			var className = Alfresco.util.findEventClass(eventTarget);
 			this.options.filterType = className.split("#")[0];
 			
+			if(this.options.itemType!=null && this.options.assocType!=null){
+				this.widgets.showButton.set("disabled", false);
+			}
+			
 		},
 
 		onWusedTypeSelect : function WUsedForm_onItemTypeSelect(sType, aArgs, p_obj) {
@@ -272,6 +255,16 @@
 
 		_extractValues : function WUsedForm__extractValues(className) {
 			this.options.itemType = className.split("#")[0];
+			
+			if(this.options.aspectSubstitutions!=null){
+				for(var i in this.options.aspectSubstitutions){
+					if(this.options.aspectSubstitutions[i].name == this.options.itemType){
+						this.options.itemType = this.options.aspectSubstitutions[i].type;
+						break;
+					}
+				}
+			}
+			
 			this.options.assocType = className.split("#")[1];
 		},
 
