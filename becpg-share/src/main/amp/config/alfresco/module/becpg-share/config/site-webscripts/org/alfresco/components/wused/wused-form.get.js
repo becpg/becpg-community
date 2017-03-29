@@ -99,7 +99,21 @@ function main()
 	  	}
 	  		
 	 model.filterTypes = filterTypes;
+	 
+	 // Aspect type replacements 
+	 
+	 var aspectSubstitutionsConfig = config.scoped["wused-search"]["aspectSubstitutions"].childrenMap["aspect"];
+	 var aspectSubstitutions = [];
+	 for (var i = 0, aspectSubstitution; i < aspectSubstitutionsConfig.size(); i++) {
+		   aspectSubstitution = aspectSubstitutionsConfig.get(i);
 
+	  		aspectSubstitutions.push({
+	  			name : aspectSubstitution.attributes["name"],
+	  			type : aspectSubstitution.attributes["type"]
+	  		});
+	  	}
+	  		
+	 model.aspectSubstitutions = aspectSubstitutions;
  }
     
   
@@ -112,7 +126,8 @@ function main()
        type: model.type,
        nodeRefs : model.nodeRefs, 
        searchQuery :  model.searchQuery,
-       searchTerm : model.searchTerm
+       searchTerm : model.searchTerm,
+       aspectSubstitutions :  model.aspectSubstitutions
       }
    };
     

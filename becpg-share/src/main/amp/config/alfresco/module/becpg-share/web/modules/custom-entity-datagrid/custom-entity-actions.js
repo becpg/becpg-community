@@ -253,7 +253,7 @@
 		
 		
 		_showWusedPopup : function EntityDataGrid___showWusedPopup(popupKind, items, callBack) {
-			var showPopup = false, entryCount = 0, entryKey =null;
+			var showPopup = false, entryCount = 0, entryKey =null, isCharact = false;
 
 			var html = '<div class="hd">' + this.msg("header." + popupKind + ".picker") + '</div>';
 			html += '<div class="bd">';
@@ -276,6 +276,8 @@
 						entryCount++;
 						entryKey = key;
 					}
+				} else if( key == "prop_bcpg_charactName"){
+					isCharact = true;
 				}
 			}
 			html += '            </select>';
@@ -286,7 +288,7 @@
 			html += '</div>';
 			html += '</form></div>';
 			
-		   if (popupKind == "bulk-edit" || (showPopup && this.datalistMeta.name.indexOf("WUsed") != 0)) {
+		   if (popupKind == "bulk-edit" || (showPopup && !isCharact  && this.datalistMeta.name.indexOf("WUsed") != 0)) {
 				
 			   if(popupKind == "wused" && entryCount==1){
 				   callBack.call(this, entryKey, entryKey);

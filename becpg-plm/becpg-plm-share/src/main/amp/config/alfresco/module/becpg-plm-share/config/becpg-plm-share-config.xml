@@ -88,14 +88,20 @@
 			<itemType name="bcpg:organo" />
 			<itemType name="bcpg:physicoChem" />
 			<itemType name="bcpg:cost" />
+			<itemType name="bcpg:geoOrigin" />
+			<itemType name="bcpg:bioOrigin" />
 		</itemTypes>
 		<filterTypes>
-			<itemType name="bcpg:finishedProduct"  selected="true"/>
+		<!-- <itemType name="bcpg:finishedProduct selected="true"  />-->
+			<itemType name="bcpg:finishedProduct"   />
 			<itemType name="bcpg:semiFinishedProduct"  />
 			<itemType name="bcpg:rawMaterial"  />
 			<itemType name="bcpg:packagingMaterial"  />
 			<itemType name="bcpg:resourceProduct"  />
 		</filterTypes>
+		<aspectSubstitutions>
+			<aspect name="qa:controlListAspect" type="qa:controlDefList"/>
+		</aspectSubstitutions>
 	</config>
 
 	<config evaluator="string-compare" condition="EntityDataLists">
