@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -42,7 +43,10 @@ public class HttpEntityProviderCallback implements EntityProviderCallBack {
 
 	private final RemoteEntityService remoteEntityService;
 
-	public HttpEntityProviderCallback(String remoteServer, String remoteUser, String remotePwd, RemoteEntityService remoteEntityService) {
+	private Map<NodeRef, NodeRef> visitedNodes = new HashMap<>();
+
+	public HttpEntityProviderCallback(String remoteServer, String remoteUser, String remotePwd,
+			RemoteEntityService remoteEntityService) {
 		super();
 		this.remoteServer = remoteServer;
 		this.remoteUser = remoteUser;
@@ -56,7 +60,8 @@ public class HttpEntityProviderCallback implements EntityProviderCallBack {
 	}
 
 	@Override
-	public NodeRef provideNode(NodeRef nodeRef, NodeRef destNodeRef, Map<QName, Serializable> properties, Map<NodeRef, NodeRef> cache) throws BeCPGException {
+	public NodeRef provideNode(NodeRef nodeRef, NodeRef destNodeRef, Map<QName, Serializable> properties,
+			Map<NodeRef, NodeRef> cache) throws BeCPGException {
 		try {
 			String url = remoteServer + "?nodeRef=" + nodeRef.toString();
 			logger.debug("Try getting nodeRef  from : " + url);
@@ -68,8 +73,23 @@ public class HttpEntityProviderCallback implements EntityProviderCallBack {
 			HttpResponse httpResponse = getResponse(entityUrl);
 			HttpEntity responseEntity = httpResponse.getEntity();
 
-			try (InputStream entityStream = responseEntity.getContent()) {
-				return remoteEntityService.createOrUpdateEntity(nodeRef, destNodeRef, properties, entityStream, RemoteEntityFormat.xml, this, cache);
+			// case 1 : it's added to the map and has no value (being visited
+			// somewhere in time)
+			if (visitedNodes.containsKey(nodeRef) && visitedNodes.get(nodeRef) == null) {
+				return nodeRef;
+				// case 2 : it's added and already visited
+			} else if (visitedNodes.containsKey(nodeRef) && visitedNodes.get(nodeRef) != null) {
+				return visitedNodes.get(nodeRef);
+			} else {
+				// case 3 : not visited yet, put in map and visit
+				visitedNodes.put(nodeRef, null);
+				try (InputStream entityStream = responseEntity.getContent()) {
+					NodeRef res = remoteEntityService.createOrUpdateEntity(nodeRef, destNodeRef, properties,
+							entityStream, RemoteEntityFormat.xml, this, cache);
+					visitedNodes.put(nodeRef, res);
+
+					return res;
+				}
 			}
 
 		} catch (IOException | KeyManagementException | NoSuchAlgorithmException | KeyStoreException e) {
@@ -101,19 +121,20 @@ public class HttpEntityProviderCallback implements EntityProviderCallBack {
 
 	}
 
-	private HttpResponse getResponse(HttpGet entityUrl)
-			throws ClientProtocolException, IOException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+	private HttpResponse getResponse(HttpGet entityUrl) throws ClientProtocolException, IOException,
+			NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
 
 		HttpClientBuilder cb = HttpClientBuilder.create();
 
 		HttpClientContext httpContext = HttpClientContext.create();
 
-//		SSLContextBuilder sslcb = new SSLContextBuilder();
-//		sslcb.loadTrustMaterial(KeyStore.getInstance(KeyStore.getDefaultType()), new TrustSelfSignedStrategy());
-//		cb.setSslcontext(sslcb.build());
+		// SSLContextBuilder sslcb = new SSLContextBuilder();
+		// sslcb.loadTrustMaterial(KeyStore.getInstance(KeyStore.getDefaultType()),
+		// new TrustSelfSignedStrategy());
+		// cb.setSslcontext(sslcb.build());
 
 		HttpClient httpClient = cb.build();
-		
+
 		entityUrl.addHeader("Accept-Language", I18NUtil.getLocale().getLanguage());
 
 		UsernamePasswordCredentials creds = new UsernamePasswordCredentials(remoteUser, remotePwd);

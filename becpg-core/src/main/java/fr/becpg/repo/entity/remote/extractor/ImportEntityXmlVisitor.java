@@ -36,6 +36,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.model.ForumModel;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
@@ -312,13 +313,15 @@ public class ImportEntityXmlVisitor {
 										serviceRegistry.getNodeService().setProperty(curNodeRef.peek(), currAssoc.peek(), node);
 									}
 								} else {
-
-									logger.debug("Node found creating assoc: " + currAssoc.peek() + " for node " + curNodeRef.peek());
-
 									serviceRegistry.getNodeService().createAssociation(curNodeRef.peek(), node, currAssoc.peek());
 
 								}
 
+							}
+							
+							if(ContentModel.ASPECT_TAGGABLE.equals(currProp)){
+								multipleValues.add(node);
+								logger.debug("Adding value "+node+" to multiple values, new MV array = "+multipleValues);
 							}
 
 							curNodeRef.push(node);
@@ -569,21 +572,31 @@ public class ImportEntityXmlVisitor {
 			NodeRef parentNodeRef = findNodeByPath(parentPath);
 
 			if (parentNodeRef != null) {
-				return createNode(parentNodeRef, type, name);
+				return createNode(parentNodeRef, type, removeTrailingSpecialChar(name));
 			}
 			throw new SAXException("Path doesn't exist on repository :" + parentPath);
 		}
 
 		private NodeRef createNode(NodeRef parentNodeRef, QName type, String name) {
+			name = removeTrailingSpecialChar(name);
 			NodeRef ret = serviceRegistry.getNodeService().getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, name);
 
 			if (ret == null) {
 				Map<QName, Serializable> properties = new HashMap<>();
 				properties.put(ContentModel.PROP_NAME, PropertiesHelper.cleanName(name));
-				logger.debug("Creating missing node :" + name + " at path :" + parentNodeRef);
-				ret = serviceRegistry.getNodeService().createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
+				
+				QName assocName = ContentModel.ASSOC_CONTAINS;
+				logger.debug("Creating missing node :" + name + " at path :" + parentNodeRef+", type = "+type+", assocName = "+assocName);
+				
+				if(ContentModel.TYPE_CATEGORY.equals(type)){
+					//fixes tag creation
+					assocName = ContentModel.ASSOC_SUBCATEGORIES;
+				}
+				
+				ret = serviceRegistry.getNodeService().createNode(parentNodeRef, assocName,
 						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(PropertiesHelper.cleanName(name))), type,
 						properties).getChildRef();
+				
 			} else {
 				if (!serviceRegistry.getNodeService().getType(ret).equals(type)) {
 					logger.error("Found node with same name: " + name + " but incorrect type :" + serviceRegistry.getNodeService().getType(ret) + "/"
@@ -609,6 +622,21 @@ public class ImportEntityXmlVisitor {
 			if ((existingNodeRef == null) || !serviceRegistry.getNodeService().exists(existingNodeRef) 
 					|| type.equals(serviceRegistry.getNodeService().getType(existingNodeRef))) {
 				NodeRef ret = serviceRegistry.getNodeService().getChildByName(parentNodeRef, assocName, name);
+				
+				logger.debug("AssocName: "+assocName+", discussion qname: "+ForumModel.ASSOC_DISCUSSION);
+				
+				// rendre générique ?
+				if(ForumModel.ASSOC_DISCUSSION.equals(assocName)){
+					List<ChildAssociationRef> childAssocs = serviceRegistry.getNodeService().getChildAssocs(parentNodeRef);
+					for(ChildAssociationRef childAssoc: childAssocs){
+						if(childAssoc.getTypeQName().equals(assocName)){
+							ret = childAssoc.getChildRef();
+							logger.debug("Found discussion assoc");
+						}
+					}
+				}
+				
+				logger.debug("Getting assoc of type "+assocName+" on "+parentNodeRef+", name= "+name+" -> "+ret);
 				if (ret == null) {
 					
 					logger.debug("Creating child assoc: " + assocName + " add type :" + type + " name :" + name);
@@ -701,7 +729,7 @@ public class ImportEntityXmlVisitor {
 			if ((code != null) && (code.length() > 0)) {
 				beCPGQueryBuilder.andPropEquals(BeCPGModel.PROP_CODE, code);
 			} else if ((name != null) && (name.length() > 0)) {
-				beCPGQueryBuilder.andPropEquals(RemoteHelper.getPropName(type, entityDictionaryService), cleanName(name));
+				beCPGQueryBuilder.andPropEquals(RemoteHelper.getPropName(type, entityDictionaryService), removeTrailingSpecialChar(cleanName(name)));
 			}
 
 			if (inBD) {
@@ -712,9 +740,8 @@ public class ImportEntityXmlVisitor {
 
 			List<NodeRef> ret = beCPGQueryBuilder.list();
 			if (!ret.isEmpty()) {
-				for (NodeRef node : ret) {
-					if (serviceRegistry.getNodeService().exists(node) && name
-							.equals(serviceRegistry.getNodeService().getProperty(node, RemoteHelper.getPropName(type, entityDictionaryService)))) {
+				for (NodeRef node : ret) {				
+					if (serviceRegistry.getNodeService().exists(node) && removeTrailingSpecialChar(cleanName(name)).equals(removeTrailingSpecialChar(cleanName((String)serviceRegistry.getNodeService().getProperty(node, RemoteHelper.getPropName(type, entityDictionaryService)))))) {
 						logger.debug("Found node for query :" + beCPGQueryBuilder.toString());
 						return node;
 					}
@@ -736,7 +763,13 @@ public class ImportEntityXmlVisitor {
 		}
 
 		private String cleanName(String propValue) {
-			return propValue.replaceAll("'", "");
+			return propValue.replaceAll("\n", "").replaceAll("'", " ");
+		}
+		
+		private String removeTrailingSpecialChar(String prop){
+			Pattern p = Pattern.compile("\\.$");
+			
+			return p.matcher(prop).replaceAll("");
 		}
 	}
 }
