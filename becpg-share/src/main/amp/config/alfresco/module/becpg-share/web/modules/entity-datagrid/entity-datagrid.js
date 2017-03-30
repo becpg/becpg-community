@@ -1393,6 +1393,9 @@
                                 var handlePagination = function EntityDataGrid_handlePagination(state, me)
                                 {
 
+                                	me.currentQueryExecutionId = me.queryExecutionId;
+                                	me.currentPage = state.page;
+                                	
                                     me._updateDataGrid.call(me,
                                     {
                                         page : state.page
@@ -2256,7 +2259,10 @@
                         onSelectedItemsChanged : function DataListToolbar_onSelectedItemsChanged(layer, args)
                         {
                         	
-                        	if(this.allPages){
+                        	if(this.allPages && Dom.get(this.id + "-message")!=null){
+                        		this.widgets.dataTable.set("MSG_EMPTY", msg("message.empty", "beCPG.module.EntityDataGrid"));
+                        		
+                        		
 								Dom.get(this.id + "-message").innerHTML = '<span class="info">'+this.msg("message.edit.allPages",this.totalRecords)+'</span>';
 								Dom.removeClass(this.id + "-message", "hidden");
 							} else {
@@ -2264,7 +2270,7 @@
 							}
                         	
                             var items = this.getSelectedItems(), item, userAccess = {}, itemAccess, menuItems = this.widgets.selectedItems
-                                    .getMenu().getItems(), menuItem, actionPermissions, disabled, i, ii;
+                                    .getMenu().getItems(), menuItem, actionPermissions, disabled, i, ii, disabledForAllPage;
 
                             // Check each item for user permissions
                             for (i = 0, ii = items.length; i < ii; i++)
@@ -2295,6 +2301,7 @@
                                     // Defaulting to enabled
                                     menuItem = menuItems[index];
                                     disabled = false;
+                                    disabledForAllPages = true;
 
                                     if (menuItem.element.firstChild)
                                     {
@@ -2311,14 +2318,22 @@
                                                 // Disable if the user doesn't
                                                 // have ALL the
                                                 // permissions
-                                                if (!userAccess[actionPermissions[i]])
-                                                {
-                                                    disabled = true;
-                                                    break;
-                                                }
+                                            	if(actionPermissions[i] != "allPages"){
+	                                                if ((!userAccess[actionPermissions[i]] ))
+	                                                {
+	                                                    disabled = true;
+	                                                    break;
+	                                                }
+                                            	} else {
+                                            		disabledForAllPages = false;
+                                            	}
                                             }
                                         }
 
+                                        if(this.allPages && this.currentQueryExecutionId!=null && disabledForAllPages){
+                                        	disabled = true;
+                                        }
+                                        
                                         menuItem.cfg.setProperty("disabled", disabled);
                                     }
                                 }
@@ -2564,6 +2579,7 @@
                                 
                                 this.entity = obj.entity;
                                 this.currentPage = 1;
+                                this.currentQueryExecutionId = null;
                                 this.isFilterFormLoaded = false;
                                 this.showingMoreActions = false;
                                 if (this.options.usePagination)
@@ -2643,6 +2659,7 @@
                          */
                         onDataGridRefresh : function EntityDataGrid_onDataGridRefresh(layer, args)
                         {
+                        	this.currentQueryExecutionId = null;
                             this._updateDataGrid.call(this,
                             {
                                 page : this.currentPage,
@@ -2694,6 +2711,7 @@
                                     if (this.options.usePagination)
                                     {
                                         this.currentPage = 1;
+                                        this.currentQueryExecutionId = null;
                                     }
                                     objNav[this.scopeId + "filter"] = strFilter;
                                     YAHOO.util.History.multiNavigate(objNav);
@@ -2861,6 +2879,8 @@
                                         Alfresco.util.Anim.fadeOut(el);
                                     }
                                 }
+                                
+                                this.currentQueryExecutionId = null;
                                 
                                 var fnAfterDelete = function EntityDataGrid_onDataItemCreated_refreshSuccess_fnAfterUpdate()
                                 {
@@ -3191,7 +3211,6 @@
                             {
                                 fields : this.dataRequestFields,
                                 page : p_obj && p_obj.page ? p_obj.page : this.currentPage,
-                                queryExecutionId : this.queryExecutionId,
                                 extraParams : this.options.extraParams
                             };
                             

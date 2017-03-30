@@ -106,7 +106,11 @@ public class MultiLevelExtractor extends SimpleExtractor {
 
 		PaginatedExtractedItems ret = new PaginatedExtractedItems(pageSize);
 
-		MultiLevelListData listData = getMultiLevelListData(dataListFilter);
+		MultiLevelListData listData = paginatedSearchCache.getSearchMultiLevelResults(dataListFilter.getPagination().getQueryExecutionId());
+		if(listData==null){
+			 listData = getMultiLevelListData(dataListFilter);
+			 dataListFilter.getPagination().setQueryExecutionId(paginatedSearchCache.storeMultiLevelSearchResults(listData));
+		}
 
 		Map<String, Object> props = new HashMap<>();
 		props.put(PROP_ROOT_ENTITYNODEREF, dataListFilter.getEntityNodeRef());

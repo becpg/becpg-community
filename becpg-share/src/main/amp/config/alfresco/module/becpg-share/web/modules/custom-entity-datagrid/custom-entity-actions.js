@@ -158,7 +158,7 @@
 
 		},
 
-		_onEditSelected : function EntityDataGrid___onEditSelected(nodeRefs,containerEl) {
+		_onEditSelected : function EntityDataGrid___onEditSelected(nodeRefs ,containerEl) {
 
 			 var me = this;
 			 var selectedFields = Selector.query('input[type="checkbox"]', containerEl);
@@ -201,8 +201,8 @@
 								mode : "create",
 								entityNodeRef : me.options.entityNodeRef,
 								submitType : "json",
-								submissionUrl : "/becpg/bulkedit/type/" + itemType.replace(":", "_")
-										+ "/bulksave?nodeRefs=" + nodeRefs.join(),
+								submissionUrl : encodeURIComponent("/becpg/bulkedit/type/" + itemType.replace(":", "_")
+										+ "/bulksave?nodeRefs=" + nodeRefs.join()+"&allPages="+me.allPages+"&queryExecutionId="+me.queryExecutionId),
 								fields : displayFields
 							});
 

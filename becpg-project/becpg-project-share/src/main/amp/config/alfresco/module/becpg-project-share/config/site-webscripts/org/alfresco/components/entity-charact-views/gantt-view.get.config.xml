@@ -1,6 +1,6 @@
 <datagrid-view>
    <actionSetToolbar>
-   		<action type="action-link" id="onActionBulkEdit"  permission="edit" label="actions.bulk-edit" />
+   		<action type="action-link" id="onActionBulkEdit"  permission="edit,allPages" label="actions.bulk-edit" />
 	    <action type="action-link" id="onActionDuplicate" permission="create" label="menu.selected-items.duplicate" />
 	    <action type="action-link" id="onActionDelete" permission="delete" label="menu.selected-items.delete" />
 	  	<action type="action-link" id="onActionUp" permission="sort" label="menu.selected-items.up" />

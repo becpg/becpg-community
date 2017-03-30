@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2016 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2016 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.entity.datalist.impl;
@@ -21,6 +21,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -58,7 +59,6 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 	protected PaginatedSearchCache paginatedSearchCache;
 
 	private static final Log logger = LogFactory.getLog(SimpleExtractor.class);
-	
 
 	public void setPaginatedSearchCache(PaginatedSearchCache paginatedSearchCache) {
 		this.paginatedSearchCache = paginatedSearchCache;
@@ -94,9 +94,10 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 				if (ret.getComputedFields() == null) {
 					ret.setComputedFields(attributeExtractorService.readExtractStructure(nodeService.getType(nodeRef), metadataFields));
 				}
-				if (RepoConsts.FORMAT_CSV.equals(dataListFilter.getFormat())
-						|| RepoConsts.FORMAT_XLSX.equals(dataListFilter.getFormat())) {
-					ret.addItem(extractExport( RepoConsts.FORMAT_XLSX.equals(dataListFilter.getFormat())? AttributeExtractorMode.XLSX: AttributeExtractorMode.CSV ,nodeRef, ret.getComputedFields(), props, cache));
+				if (RepoConsts.FORMAT_CSV.equals(dataListFilter.getFormat()) || RepoConsts.FORMAT_XLSX.equals(dataListFilter.getFormat())) {
+					ret.addItem(extractExport(
+							RepoConsts.FORMAT_XLSX.equals(dataListFilter.getFormat()) ? AttributeExtractorMode.XLSX : AttributeExtractorMode.CSV,
+							nodeRef, ret.getComputedFields(), props, cache));
 				} else {
 					ret.addItem(extractJSON(nodeRef, ret.getComputedFields(), props, cache));
 				}
@@ -110,66 +111,70 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 	protected List<NodeRef> getListNodeRef(DataListFilter dataListFilter, DataListPagination pagination) {
 
-		List<NodeRef> results = new ArrayList<>();
-		
-		
-		if (dataListFilter.isGuessContainer() && (dataListFilter.getEntityNodeRef() != null)) {
-			NodeRef listsContainerNodeRef = entityListDAO.getListContainer(dataListFilter.getEntityNodeRef());
-			if (listsContainerNodeRef != null) {
-				NodeRef dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, dataListFilter.getDataType());
-				if (dataListNodeRef != null) {
-					dataListFilter.setParentNodeRef(dataListNodeRef);
-				}
-			}
-		}
-		
-		
-		if (dataListFilter.isAllFilter() && entityDictionaryService.isSubClass(dataListFilter.getDataType(), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
+		List<NodeRef> results = paginatedSearchCache.getSearchResults(pagination.getQueryExecutionId());
 
-			BeCPGQueryBuilder queryBuilder = dataListFilter.getSearchQuery();
+		if (results == null) {
 
-			if (logger.isDebugEnabled()) {
-				logger.debug("DataType to filter :" + dataListFilter.getDataType());
-			}
-
-
-			int skipOffset = (pagination.getPage() - 1) * pagination.getPageSize();
-			int requestTotalCountMax = skipOffset + RepoConsts.MAX_RESULTS_1000;
-
-			PagingRequest pageRequest = new PagingRequest(skipOffset, pagination.getPageSize(), pagination.getQueryExecutionId());
-			pageRequest.setRequestTotalCountMax(requestTotalCountMax);
-
-			results = pagination.paginate(queryBuilder.childFileFolders(pageRequest));
-
-		} else if (dataListFilter.isSimpleItem()) {
-			results.add(dataListFilter.getNodeRef());
-		} else {
-
-			BeCPGQueryBuilder queryBuilder = dataListFilter.getSearchQuery();
-
-			// Look for Version
-			if (dataListFilter.isVersionFilter()) {
-				NodeRef listsContainerNodeRef = entityListDAO.getListContainer(new NodeRef(dataListFilter.getFilterData()));
+			results = new LinkedList<NodeRef>();
+			
+			if (dataListFilter.isGuessContainer() && (dataListFilter.getEntityNodeRef() != null)) {
+				NodeRef listsContainerNodeRef = entityListDAO.getListContainer(dataListFilter.getEntityNodeRef());
 				if (listsContainerNodeRef != null) {
-
-					NodeRef dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, dataListFilter.getDataListName());
+					NodeRef dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, dataListFilter.getDataType());
 					if (dataListNodeRef != null) {
-						queryBuilder = dataListFilter.getSearchQuery(dataListNodeRef);
+						dataListFilter.setParentNodeRef(dataListNodeRef);
 					}
 				}
 			}
 
-			results = advSearchService.queryAdvSearch(dataListFilter.getDataType(), queryBuilder, dataListFilter.getCriteriaMap(),
-					pagination.getMaxResults());
+			if (dataListFilter.isAllFilter() && entityDictionaryService.isSubClass(dataListFilter.getDataType(), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
 
-			if (dataListFilter.getSortId() != null) {
-				DataListSortPlugin plugin = dataListSortRegistry.getPluginById(dataListFilter.getSortId());
-				if (plugin != null) {
-					plugin.sort(results);
+				BeCPGQueryBuilder queryBuilder = dataListFilter.getSearchQuery();
+
+				if (logger.isDebugEnabled()) {
+					logger.debug("DataType to filter :" + dataListFilter.getDataType());
 				}
-			}
 
-			results = pagination.paginate(results);
+				int skipOffset = (pagination.getPage() - 1) * pagination.getPageSize();
+				int requestTotalCountMax = skipOffset + RepoConsts.MAX_RESULTS_1000;
+
+				PagingRequest pageRequest = new PagingRequest(skipOffset, pagination.getPageSize(), pagination.getQueryExecutionId());
+				pageRequest.setRequestTotalCountMax(requestTotalCountMax);
+
+				results = pagination.paginate(queryBuilder.childFileFolders(pageRequest));
+
+			} else if (dataListFilter.isSimpleItem()) {
+				results.add(dataListFilter.getNodeRef());
+			} else {
+
+				BeCPGQueryBuilder queryBuilder = dataListFilter.getSearchQuery();
+
+				// Look for Version
+				if (dataListFilter.isVersionFilter()) {
+					NodeRef listsContainerNodeRef = entityListDAO.getListContainer(new NodeRef(dataListFilter.getFilterData()));
+					if (listsContainerNodeRef != null) {
+
+						NodeRef dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, dataListFilter.getDataListName());
+						if (dataListNodeRef != null) {
+							queryBuilder = dataListFilter.getSearchQuery(dataListNodeRef);
+						}
+					}
+				}
+
+				results = advSearchService.queryAdvSearch(dataListFilter.getDataType(), queryBuilder, dataListFilter.getCriteriaMap(),
+						pagination.getMaxResults());
+
+				if (dataListFilter.getSortId() != null) {
+					DataListSortPlugin plugin = dataListSortRegistry.getPluginById(dataListFilter.getSortId());
+					if (plugin != null) {
+						plugin.sort(results);
+					}
+				}
+
+				pagination.setQueryExecutionId(paginatedSearchCache.storeSearchResults(results));
+
+				results = pagination.paginate(results);
+			}
 		}
 
 		return results;
@@ -235,7 +240,7 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 							ret.add(cache.get(itemNodeRef));
 						} else {
 							if (permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED) {
-								if (AttributeExtractorMode.CSV.equals(mode) ||AttributeExtractorMode.XLSX.equals(mode) ) {
+								if (AttributeExtractorMode.CSV.equals(mode) || AttributeExtractorMode.XLSX.equals(mode)) {
 									ret.add(extractExport(mode, itemNodeRef, field.getChildrens(), props, cache));
 								} else {
 									ret.add(extractJSON(itemNodeRef, field.getChildrens(), props, cache));

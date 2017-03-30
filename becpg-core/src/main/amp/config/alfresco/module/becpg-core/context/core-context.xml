@@ -158,6 +158,7 @@
 			  <entry key="fr.becpg.repo.helper.AssociationService.assocs" value="200000" />
 			  <entry key="fr.becpg.repo.jscript.Thumbnail" value="20" />
 			  <entry key="fr.becpg.repo.search.PaginatedSearchCache" value="100" />
+			  <entry key="fr.becpg.repo.search.PaginatedSearchCache.multiLevel" value="100" />
 			</map>
 		</property>
 	</bean>

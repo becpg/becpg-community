@@ -984,6 +984,15 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		return ret;
 	}
 
+	public QName extractSortQname(String sortProp){
+		if(sortProp.indexOf(QName.NAMESPACE_BEGIN)!=-1){
+			return QName.createQName(sortProp.replace("@", ""));
+		} else {
+			return QName.createQName(sortProp.replace("@", ""), namespaceService);
+		}
+		
+	}
+	
 	
 	public PagingResults<NodeRef> childFileFolders(PagingRequest pageRequest) {
 
@@ -1041,7 +1050,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
   
 	        GetChildrenCannedQuery cq = (GetChildrenCannedQuery)getChildrenCannedQueryFactory.getCannedQuery(rootNodeRef, null, Collections.singleton(ContentModel.ASSOC_CONTAINS), searchTypeQNames, ignoreAspectQNames, null, sortProps, pagingRequest);
 	        
-	         // execute canned query
+	        // execute canned query
 	        CannedQueryResults<NodeRef> results = cq.execute();
 	    	        
 	        return getPagingResults(pagingRequest,results);
@@ -1079,7 +1088,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	            @Override
 	            public String getQueryExecutionId()
 	            {
-	                return results.getQueryExecutionId();
+	                return null; //TODO use Paginated Cache results //results.getQueryExecutionId();
 	            }
 	            @Override
 	            public List<NodeRef> getPage()

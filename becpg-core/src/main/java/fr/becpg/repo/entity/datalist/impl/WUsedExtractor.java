@@ -99,9 +99,17 @@ public class WUsedExtractor extends MultiLevelExtractor {
 
 		int pageSize = dataListFilter.getPagination().getPageSize();
 		int startIndex = (dataListFilter.getPagination().getPage() - 1) * dataListFilter.getPagination().getPageSize();
+		
+		MultiLevelListData wUsedData = paginatedSearchCache.getSearchMultiLevelResults(dataListFilter.getPagination().getQueryExecutionId());
 
-		MultiLevelListData wUsedData = wUsedListService.getWUsedEntity(getWusedNodeRefs(dataListFilter), getWUsedOperator(dataListFilter),
-				getWUsedFilter(dataListFilter, associationName), associationName, dataListFilter.getMaxDepth());
+		if (wUsedData == null) {
+			
+			wUsedData = wUsedListService.getWUsedEntity(getWusedNodeRefs(dataListFilter), getWUsedOperator(dataListFilter),
+					getWUsedFilter(dataListFilter, associationName), associationName, dataListFilter.getMaxDepth());
+			
+			dataListFilter.getPagination().setQueryExecutionId(paginatedSearchCache.storeMultiLevelSearchResults(wUsedData));
+		
+		}
 
 		appendNextLevel(ret, metadataFields, wUsedData, 0, startIndex, pageSize, props, dataListFilter);
 
