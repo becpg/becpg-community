@@ -94,6 +94,25 @@
 	background-image: url(../../components/images/select-invert-16.png);
 }
 
+
+.datagrid div.warning {
+    margin: 0 0 10px 0;
+    padding: 0.5em 0;
+    color: black;
+    text-align: left;
+    padding-left: 20px;
+    background: none repeat scroll 0 0 #fefdca;
+    box-shadow: -2px 2px 2px #c8c8c8;
+    font-size: 108%;
+}
+
+.datagrid div.warning span.info {
+   background: url("../../components/states/warning-16.png") no-repeat scroll 0 0 transparent;
+   display: inline;
+   padding-left: 20px;
+}
+
+
 /* Data Table */
 .datagrid .grid table {
 	border-color: #e0e0e0;

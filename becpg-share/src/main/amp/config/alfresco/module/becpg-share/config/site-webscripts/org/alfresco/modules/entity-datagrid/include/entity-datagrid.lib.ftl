@@ -17,7 +17,6 @@
             <#list actionSetToolbar as action>
                <li><a type="${action.asset!""}" rel="${action.permission!""}" href="${action.href}"><span class="${action.id}">${msg(action.label)}</span></a></li>
             </#list>
-               <li><a href="#"><span class="onActionDeselectAll">${msg("menu.selected-items.deselect-all")}</span></a></li>
             </ul>
          </div>
       </div>			
@@ -47,6 +46,9 @@
 
 <#macro entityDataGrid showToolBar=false showDataListTitle=true>
 <div id="${el}-body" class="datagrid<#if listName??> ${listName}</#if>">
+  
+   <div id="${el}-message" class="hidden warning"></div>
+  
    <#if showDataListTitle>
    <div class="datagrid-meta">
       <h2 id="${el}-title"></h2>
@@ -66,6 +68,8 @@
          </div>
       </div>
    </div>
+   
+  
 
    <div id="${el}-grid" class="grid"></div>
 
