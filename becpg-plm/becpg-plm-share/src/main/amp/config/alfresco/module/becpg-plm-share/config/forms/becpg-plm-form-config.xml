@@ -6768,14 +6768,14 @@
 					</field>
 					<field id="bcpg:parentLevel">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/DataListCharact?className=bcpg:costList&#38;attributeName=bcpg:costListCost
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:costList&#38;attributeName=bcpg:costListCost
 							</control-param>
 						</control>
 					</field>
 					<field id="bcpg:costListComponent">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/DataListCharact?classNames=bcpg:rawMaterial,bcpg:packagingMaterial</control-param>
+							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial,bcpg:packagingMaterial</control-param>
 						</control>
 					</field>
 				</appearance>
