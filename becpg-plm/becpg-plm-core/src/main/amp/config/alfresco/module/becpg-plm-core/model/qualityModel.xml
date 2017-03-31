@@ -498,16 +498,13 @@
 			<properties >
 				<property name="qa:cdlQty">
 					<type>d:int</type>
-					<mandatory>true</mandatory>
 					<index enabled="false" />
 				</property>
 				<property name="qa:cdlFreq">
-					<type>d:int</type>
-					<mandatory>true</mandatory>					
+					<type>d:int</type>				
 				</property>
 				<property name="qa:cdlFreqUnit">
 					<type>d:text</type>
-					<mandatory>true</mandatory>
 					<index enabled="false" />
 					<constraints>
 						<constraint ref="qa:freqUnits" />
