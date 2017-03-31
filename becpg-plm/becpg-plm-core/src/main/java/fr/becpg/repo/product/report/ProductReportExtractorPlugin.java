@@ -29,6 +29,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.MPMModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
+import fr.becpg.model.SystemState;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.JsonFormulaHelper;
 import fr.becpg.repo.product.data.EffectiveFilters;
@@ -972,17 +973,17 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		return dictionaryService.isSubClass(type, PLMModel.TYPE_PRODUCT) ? EntityReportExtractorPriority.NORMAL : EntityReportExtractorPriority.NONE;
 	}
 
-	public void addDataListState(Element xmlNode, NodeRef listNodeRef) {
-		String xmlNodeStateValue = xmlNode.valueOf("@" + BeCPGModel.PROP_ENTITYLIST_STATE.getLocalName());		
+	public void addDataListState(Element xmlNode, NodeRef listNodeRef) {	
 		
-		if (!"ToValidate".equals(xmlNodeStateValue)) {
+		if (xmlNode.valueOf("@" + BeCPGModel.PROP_ENTITYLIST_STATE.getLocalName()).isEmpty()) {
 			Serializable state = nodeService.getProperty(listNodeRef, BeCPGModel.PROP_ENTITYLIST_STATE);
 
 			if (state != null) {
 				xmlNode.addAttribute(BeCPGModel.PROP_ENTITYLIST_STATE.getLocalName(), (String) state);
 			} else {
-				xmlNode.addAttribute(BeCPGModel.PROP_ENTITYLIST_STATE.getLocalName(), "ToValidate");
+				xmlNode.addAttribute(BeCPGModel.PROP_ENTITYLIST_STATE.getLocalName(), SystemState.ToValidate.toString());
 			}
+
 		}
 	}
 }
