@@ -977,10 +977,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		
 		if (xmlNode.valueOf("@" + BeCPGModel.PROP_ENTITYLIST_STATE.getLocalName()).isEmpty()) {
 			Serializable state = nodeService.getProperty(listNodeRef, BeCPGModel.PROP_ENTITYLIST_STATE);
-
-		if (xmlNode.valueOf(BeCPGModel.PROP_ENTITYLIST_STATE.getLocalName()) == null) {
-			Serializable state = nodeService.getProperty(listNodeRef, BeCPGModel.PROP_ENTITYLIST_STATE);
-			if (state != null) {
+   		   if (state != null) {
 				xmlNode.addAttribute(BeCPGModel.PROP_ENTITYLIST_STATE.getLocalName(), (String) state);
 			} else {
 				xmlNode.addAttribute(BeCPGModel.PROP_ENTITYLIST_STATE.getLocalName(), SystemState.ToValidate.toString());
