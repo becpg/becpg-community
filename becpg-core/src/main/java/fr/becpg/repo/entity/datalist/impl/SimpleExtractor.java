@@ -141,7 +141,7 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 				PagingRequest pageRequest = new PagingRequest(skipOffset, pagination.getPageSize(), pagination.getQueryExecutionId());
 				pageRequest.setRequestTotalCountMax(requestTotalCountMax);
 
-				results = pagination.paginate(queryBuilder.childFileFolders(pageRequest));
+				return pagination.paginate(queryBuilder.childFileFolders(pageRequest));
 
 			} else if (dataListFilter.isSimpleItem()) {
 				results.add(dataListFilter.getNodeRef());
@@ -173,11 +173,10 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 				pagination.setQueryExecutionId(paginatedSearchCache.storeSearchResults(results));
 
-				results = pagination.paginate(results);
 			}
 		}
 
-		return results;
+		return pagination.paginate(results);
 	}
 
 	@Override

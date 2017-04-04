@@ -383,11 +383,7 @@
                          */
 						queryExecutionId : null,
 						
-						/**
-                         * Current queryExecutionId
-                         */
-						currentQueryExecutionId : null,
-
+						
                         /**
                          * Current filter to filter document list.
                          * 
@@ -1393,7 +1389,6 @@
                                 var handlePagination = function EntityDataGrid_handlePagination(state, me)
                                 {
 
-                                	me.currentQueryExecutionId = me.queryExecutionId;
                                 	me.currentPage = state.page;
                                 	
                                     me._updateDataGrid.call(me,
@@ -1504,7 +1499,7 @@
 									me.currentSort = oColumn.key;
 									me.currentSortDir = sSortDir;	
 									me.currentPage = 1;
-									me.currentQueryExecutionId = null;						
+									me.queryExecutionId = null;						
 									me._updateDataGrid.call(me);
 									
 									return false;
@@ -2260,17 +2255,14 @@
                         {
                         	
                         	if(this.allPages && Dom.get(this.id + "-message")!=null){
-                        		this.widgets.dataTable.set("MSG_EMPTY", msg("message.empty", "beCPG.module.EntityDataGrid"));
-                        		
-                        		
-								Dom.get(this.id + "-message").innerHTML = '<span class="info">'+this.msg("message.edit.allPages",this.totalRecords)+'</span>';
+                        		Dom.get(this.id + "-message").innerHTML = '<span class="info">'+this.msg("message.edit.allPages",this.totalRecords)+'</span>';
 								Dom.removeClass(this.id + "-message", "hidden");
 							} else {
 								Dom.addClass(this.id + "-message", "hidden");
 							}
                         	
                             var items = this.getSelectedItems(), item, userAccess = {}, itemAccess, menuItems = this.widgets.selectedItems
-                                    .getMenu().getItems(), menuItem, actionPermissions, disabled, i, ii, disabledForAllPage;
+                                    .getMenu().getItems(), menuItem, actionPermissions, disabled, i, ii, disabledForAllPages;
 
                             // Check each item for user permissions
                             for (i = 0, ii = items.length; i < ii; i++)
@@ -2330,7 +2322,7 @@
                                             }
                                         }
 
-                                        if(this.allPages && this.currentQueryExecutionId!=null && disabledForAllPages){
+                                        if(this.allPages && (this.queryExecutionId==null || disabledForAllPages)){
                                         	disabled = true;
                                         }
                                         
@@ -2579,7 +2571,7 @@
                                 
                                 this.entity = obj.entity;
                                 this.currentPage = 1;
-                                this.currentQueryExecutionId = null;
+                                this.queryExecutionId = null;
                                 this.isFilterFormLoaded = false;
                                 this.showingMoreActions = false;
                                 if (this.options.usePagination)
@@ -2659,7 +2651,7 @@
                          */
                         onDataGridRefresh : function EntityDataGrid_onDataGridRefresh(layer, args)
                         {
-                        	this.currentQueryExecutionId = null;
+                        	this.queryExecutionId = null;
                             this._updateDataGrid.call(this,
                             {
                                 page : this.currentPage,
@@ -2711,7 +2703,7 @@
                                     if (this.options.usePagination)
                                     {
                                         this.currentPage = 1;
-                                        this.currentQueryExecutionId = null;
+                                        this.queryExecutionId = null;
                                     }
                                     objNav[this.scopeId + "filter"] = strFilter;
                                     YAHOO.util.History.multiNavigate(objNav);
@@ -2880,7 +2872,7 @@
                                     }
                                 }
                                 
-                                this.currentQueryExecutionId = null;
+                                this.queryExecutionId = null;
                                 
                                 var fnAfterDelete = function EntityDataGrid_onDataItemCreated_refreshSuccess_fnAfterUpdate()
                                 {
@@ -3218,8 +3210,8 @@
 								request.sort = this.currentSort.replace("prop_","").replace("_",":")+"|"+((this.currentSortDir == "yui-dt-asc") ? "true" : "false");
 							}
 							
-							if(this.currentQueryExecutionId != null) {
-								request.queryExecutionId = this.currentQueryExecutionId;
+							if(this.queryExecutionId != null) {
+								request.queryExecutionId = this.queryExecutionId;
 							}
 
                             if (p_obj && p_obj.filter)
