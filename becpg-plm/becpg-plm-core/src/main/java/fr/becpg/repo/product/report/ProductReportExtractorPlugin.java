@@ -35,6 +35,7 @@ import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ResourceProductData;
 import fr.becpg.repo.product.data.constraints.CompoListUnit;
+import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.PackagingListUnit;
 import fr.becpg.repo.product.data.packaging.PackagingData;
@@ -498,6 +499,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 		for (CompoListDataItem compoList : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 			NodeRef productNodeRef = compoList.getProduct();
+			if (productNodeRef != null && !DeclarationType.Omit.equals(compoList.getDeclType())) {
 			QName type = nodeService.getType(productNodeRef);
 			Double qty = FormulationHelper.getQtyInKg(compoList);
 			Double netWeight = FormulationHelper.getNetWeight(productData.getNodeRef(), nodeService, FormulationHelper.DEFAULT_NET_WEIGHT);
@@ -520,6 +522,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				} else {
 					getRawMaterials(alfrescoRepository.findOne(productNodeRef), rawMaterials, qty);
 				}
+			}
 			}
 		}
 
