@@ -22,10 +22,10 @@
 						</select>
 					</div>
 
-	         <#list mlFields?reverse as mlField>
-	        		 <#assign label=mlField.label!""?html>
-					<#assign description=mlField.description!""?html>
-                 <#if mlField.locale != locale>
+	         <#list mlFields as mlField>
+	        	<#assign label=mlField.label!""?html>
+				<#assign description=mlField.description!""?html>
+                <#if mlField.locale != locale>
 	         	<div class="form-field">
       				<label for="${el}-${mlField.locale}">${mlField.label!""?html}:&nbsp;
       						<span class="locale-icon"><img class="icon16_11" title="${msg("locale.name.${mlField.locale}")}" tabindex="0" src="${url.context}/res/components/images/flags/${mlField.country?lower_case}.png">&nbsp;(${msg("locale.name.${mlField.locale}")})<span>&nbsp;&nbsp;
