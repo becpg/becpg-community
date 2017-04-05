@@ -27,9 +27,9 @@
 	
 	<Cube name="software_usage" caption="${msg("jsolap.statistics.title")}" cache="false" enabled="true">
 		<#if isAdmin>
-			<Table name="becpg_statistics" />
+			<Table name="becpg_public_statistics" />
 		<#else>
-			<Table name="becpg_statistics" >
+			<Table name="becpg_public_statistics" >
 				instance_id = ${instanceId}
 			</Table>
 		</#if>

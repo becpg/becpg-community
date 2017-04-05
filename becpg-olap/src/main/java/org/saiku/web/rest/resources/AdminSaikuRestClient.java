@@ -17,7 +17,6 @@
  ******************************************************************************/
 package org.saiku.web.rest.resources;
 
-import java.sql.Connection;
 import java.sql.Statement;
 import java.util.Calendar;
 
@@ -40,7 +39,6 @@ import fr.becpg.olap.extractor.EntityToDBXmlVisitor;
 import fr.becpg.tools.InstanceManager;
 import fr.becpg.tools.InstanceManager.Instance;
 import fr.becpg.tools.jdbc.JdbcConnectionManager;
-import fr.becpg.tools.jdbc.JdbcConnectionManager.JdbcConnectionManagerCallBack;
 
 /**
  *
@@ -75,9 +73,7 @@ public class AdminSaikuRestClient {
 				logger.info("Start importing from instance/tenant: " + instance.getId() + "/" + instance.getInstanceName() + "/"
 						+ instance.getTenantName());
 			}
-			jdbcConnectionManager.doInTransaction(new JdbcConnectionManagerCallBack() {
-				@Override
-				public void execute(Connection connection) throws Exception {
+			jdbcConnectionManager.doInTransaction(connection -> {
 
 				instanceManager.createBatch(connection, instance);
 
@@ -91,16 +87,21 @@ public class AdminSaikuRestClient {
 				}
 
 				instanceManager.updateBatchAndDate(connection, instance);
-				
-				
-				//CALL feed all to recreate tables
-				try (Statement statement = connection.createStatement()){
-					statement.executeQuery("CALL feed_all();");
-				}
-				
-			}});
+
+			});
 
 		}
+
+		if (logger.isInfoEnabled()) {
+			logger.info("Running post feed All procs");
+		}
+		jdbcConnectionManager.doInTransaction(connection -> {
+			// CALL feed all to recreate tables
+			try (Statement statement = connection.createStatement()) {
+				statement.executeQuery("CALL feed_all();");
+			}
+
+		});
 
 		return Response.ok().build();
 	}
