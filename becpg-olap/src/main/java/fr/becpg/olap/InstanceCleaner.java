@@ -38,7 +38,7 @@ public class InstanceCleaner {
 		this.jdbcConnectionManager = jdbcConnectionManager;
 	}
 
-	public void purgeEntities(Instance instance) throws Exception {
+	public void purgeEntities(final Instance instance) throws Exception {
 
 		try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
 			HttpContext httpContext = instance.createHttpContext();
@@ -60,7 +60,7 @@ public class InstanceCleaner {
 
 	}
 
-	public void purgeEntityHistoric(Instance instance) throws Exception {
+	public void purgeEntityHistoric(final Instance instance) throws Exception {
 
 		jdbcConnectionManager.doInTransaction(new JdbcConnectionManagerCallBack() {
 			@Override
@@ -71,7 +71,7 @@ public class InstanceCleaner {
 		}});
 	}
 
-	public void purgeDataListHistoric(Instance instance) throws Exception {
+	public void purgeDataListHistoric(final Instance instance) throws Exception {
 		jdbcConnectionManager.doInTransaction(new JdbcConnectionManagerCallBack() {
 			@Override
 			public void execute(Connection connection) throws Exception {
@@ -80,7 +80,7 @@ public class InstanceCleaner {
 		}});
 	}
 
-	public void purgeStatistics(Instance instance, Date date) throws Exception {
+	public void purgeStatistics(final Instance instance, final Date date) throws Exception {
 		jdbcConnectionManager.doInTransaction(new JdbcConnectionManagerCallBack() {
 			@Override
 			public void execute(Connection connection) throws Exception {
