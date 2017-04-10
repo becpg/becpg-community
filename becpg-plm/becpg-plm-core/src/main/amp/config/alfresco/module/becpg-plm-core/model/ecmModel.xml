@@ -90,7 +90,7 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>bcpg:charact</class>
+						<class>bcpg:entityListItem</class>
 						<mandatory>false</mandatory>
 						<many>true</many>
 					</target>
@@ -275,16 +275,16 @@
 			</associations>	
 		</type>
 		
-		<!-- wUsedList -->
+		
 		<type name="ecm:calculatedCharactList">
 			<parent>bcpg:entityListItem</parent>			
 			<properties>
 				<property name="ecm:cclSourceValue">
-					<type>d:double</type>					
+					<type>d:any</type>					
 					<index enabled="false"/>
 				</property>
 				<property name="ecm:cclTargetValue">
-					<type>d:double</type>			
+					<type>d:any</type>			
 					<index enabled="false"/>
 				</property>			
 			</properties>
@@ -306,7 +306,7 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>bcpg:charact</class>
+						<class>bcpg:entityListItem</class>
 						<mandatory>false</mandatory>
 						<many>false</many>
 					</target>

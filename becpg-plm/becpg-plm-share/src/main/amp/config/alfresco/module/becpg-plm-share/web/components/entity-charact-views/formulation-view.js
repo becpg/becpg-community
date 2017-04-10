@@ -133,9 +133,6 @@
 					+ Alfresco.constants.MENU_ARROW_SYMBOL);
 			
 			
-			
-
-			
 			 this.services.preferences = new Alfresco.service.Preferences();
 
 		},
