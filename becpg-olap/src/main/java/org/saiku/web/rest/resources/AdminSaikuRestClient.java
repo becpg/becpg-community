@@ -79,28 +79,37 @@ public class AdminSaikuRestClient {
 				@Override
 				public void execute(Connection connection) throws Exception {
 
-				instanceManager.createBatch(connection, instance);
+					instanceManager.createBatch(connection, instance);
 
-				InstanceImporter remoteETLClient = new InstanceImporter(instance.getInstanceUrl());
+					InstanceImporter remoteETLClient = new InstanceImporter(instance.getInstanceUrl());
 
-				remoteETLClient.setEntityToDBXmlVisitor(new EntityToDBXmlVisitor(connection, instance));
+					remoteETLClient.setEntityToDBXmlVisitor(new EntityToDBXmlVisitor(connection, instance));
 
-				try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
+					try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
 
-					remoteETLClient.loadEntities(remoteETLClient.buildQuery(instance.getLastImport()), httpClient, instance.createHttpContext());
+						remoteETLClient.loadEntities(remoteETLClient.buildQuery(instance.getLastImport()), httpClient, instance.createHttpContext());
+					}
+
+					instanceManager.updateBatchAndDate(connection, instance);
+
 				}
-
-				instanceManager.updateBatchAndDate(connection, instance);
-				
-				
-				//CALL feed all to recreate tables
-				try (Statement statement = connection.createStatement()){
-					statement.executeQuery("CALL feed_all();");
-				}
-				
-			}});
+			});
 
 		}
+
+		if (logger.isInfoEnabled()) {
+			logger.info("Running post feed All procs");
+		}
+		jdbcConnectionManager.doInTransaction(new JdbcConnectionManagerCallBack() {
+			@Override
+			public void execute(Connection connection) throws Exception {
+				// CALL feed all to recreate tables
+				try (Statement statement = connection.createStatement()) {
+					statement.executeQuery("CALL feed_all();");
+				}
+
+			}
+		});
 
 		return Response.ok().build();
 	}
