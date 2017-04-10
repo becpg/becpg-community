@@ -699,6 +699,18 @@ if (beCPG.module.EntityDataGridRenderers) {
 
 	});
 	
+	
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+		propertyName : [ "ecm:cclSourceValue", "ecm:cclTargetValue" ],
+		renderer : function(oRecord, data, label, scope) {
+			if (data.displayValue != null && data.displayValue.length>0) {
+				return  data.displayValue;
+			}
+			return "";
+		}
+
+	});
+	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 	    propertyName : "boolean_bcpg:lrIsActive",
 	    renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {

@@ -1480,7 +1480,11 @@
 			<properties>
 				<property name="bcpg:lrLabel">
 					<type>d:mltext</type>
-					<index enabled="false" />
+					 <index enabled="true">
+		                  <atomic>true</atomic>
+		                  <stored>false</stored> 
+		                  <tokenised>both</tokenised>
+		               </index>
 				</property>
 				<property name="bcpg:lrGroup">
 					<type>d:text</type>

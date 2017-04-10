@@ -35,8 +35,8 @@ public class SimulationListDataItem extends BeCPGDataObject{
 	private static final long serialVersionUID = -5349047677356009299L;
 	private NodeRef sourceItem;
 	private NodeRef charact;
-	private Double sourceValue;
-	private Double targetValue;
+	private Object sourceValue;
+	private Object targetValue;
 	
 	@AlfSingleAssoc
 	@AlfQname(qname="ecm:cclSourceItem")
@@ -58,21 +58,21 @@ public class SimulationListDataItem extends BeCPGDataObject{
 	
 	@AlfProp
 	@AlfQname(qname="ecm:cclSourceValue")
-	public Double getSourceValue() {
+	public Object getSourceValue() {
 		return sourceValue;
 	}
 	
-	public void setSourceValue(Double sourceValue) {
+	public void setSourceValue(Object sourceValue) {
 		this.sourceValue = sourceValue;
 	}
 	
 	@AlfProp
 	@AlfQname(qname="ecm:cclTargetValue")
-	public Double getTargetValue() {
+	public Object getTargetValue() {
 		return targetValue;
 	}
 	
-	public void setTargetValue(Double targetValue) {
+	public void setTargetValue(Object targetValue) {
 		this.targetValue = targetValue;
 	}
 
@@ -80,7 +80,7 @@ public class SimulationListDataItem extends BeCPGDataObject{
 		super();
 	}
 	
-	public SimulationListDataItem(NodeRef nodeRef, NodeRef sourceItem, NodeRef charact, Double sourceValue, Double targetValue){
+	public SimulationListDataItem(NodeRef nodeRef, NodeRef sourceItem, NodeRef charact, Object sourceValue, Object targetValue){
 		this.nodeRef=nodeRef;
 		this.sourceItem=sourceItem;
 		this.charact=charact;

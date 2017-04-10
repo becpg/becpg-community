@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -64,11 +65,16 @@ import fr.becpg.repo.entity.datalist.WUsedListService;
 import fr.becpg.repo.entity.datalist.WUsedListService.WUsedOperator;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.entity.version.EntityVersionService;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.ProductService;
+import fr.becpg.repo.product.data.AbstractProductDataView;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompositionDataItem;
+import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
+import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
+import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
@@ -129,7 +135,7 @@ public class ECOServiceImpl implements ECOService {
 	}
 
 	private boolean doRun(NodeRef ecoNodeRef, final ECOState state) {
-		
+
 		final ChangeOrderData ecoData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
 
 		// Do not run if already applied
@@ -190,17 +196,15 @@ public class ECOServiceImpl implements ECOService {
 					logger.warn("Impact Where Used [" + state.toString() + "] executed in  " + watch.getTotalTimeSeconds() + " seconds");
 				}
 			}, ECOState.Simulated.equals(state), true);
-			
-			
 
 			alfrescoRepository.save(ecoData);
-			
-			if(state!=null && state.equals(ecoData.getEcoState())){
+
+			if ((state != null) && state.equals(ecoData.getEcoState())) {
 				return true;
 			}
 
 		}
-		
+
 		return false;
 
 	}
@@ -288,13 +292,6 @@ public class ECOServiceImpl implements ECOService {
 			boolean isWUsedImpacted) {
 
 		for (Map.Entry<NodeRef, MultiLevelListData> kv : wUsedData.getTree().entrySet()) {
-
-			//
-			// TODO
-			// Ici les liens doivent être multiple cas 2 vers 1false
-			// Les liens doivent être mis à jour ou supprimer lors de la
-			// création d'une version
-			// sinon impossible de sauvegarder l'ECM
 
 			WUsedListDataItem wUsedListDataItem = new WUsedListDataItem();
 			wUsedListDataItem.setParent(parent);
@@ -421,13 +418,13 @@ public class ECOServiceImpl implements ECOService {
 							logger.warn("Product to impact is empty");
 						}
 
-						changeUnitDataItem.setTreated(Boolean.TRUE);
 						changeUnitDataItem.setErrorMsg(null);
-						
-						//Store current state of ecoData
-						alfrescoRepository.save(ecoData);
+						changeUnitDataItem.setTreated(Boolean.TRUE);
 
 						if (!isSimulation) {
+
+							// Store current state of ecoData
+							alfrescoRepository.save(ecoData);
 							if (logger.isDebugEnabled()) {
 								logger.debug("Applied Treated to item "
 										+ nodeService.getProperty(changeUnitDataItem.getSourceItem(), ContentModel.PROP_NAME));
@@ -643,7 +640,6 @@ public class ECOServiceImpl implements ECOService {
 				}
 			}
 		}
-
 		return productToImpact;
 	}
 
@@ -661,7 +657,7 @@ public class ECOServiceImpl implements ECOService {
 
 		for (NodeRef charactNodeRef : ecoData.getCalculatedCharacts()) {
 			QName charactType = nodeService.getType(charactNodeRef);
-			Double sourceValue = getCharactValue(charactNodeRef, charactType, sourceData);
+			Object sourceValue = getCharactValue(charactNodeRef, charactType, sourceData);
 			if (logger.isDebugEnabled()) {
 				logger.debug("create calculated charact: " + nodeService.getProperty(sourceData.getNodeRef(), ContentModel.PROP_NAME) + " - "
 						+ charactNodeRef + " - sourceValue: " + sourceValue);
@@ -673,13 +669,20 @@ public class ECOServiceImpl implements ECOService {
 
 	private void updateCalculatedCharactValues(ChangeOrderData ecoData, ProductData targetData) {
 
+		List<SimulationListDataItem> toRemove = new ArrayList<>();
+		
 		for (NodeRef charactNodeRef : ecoData.getCalculatedCharacts()) {
 			QName charactType = nodeService.getType(charactNodeRef);
-			Double targetValue = getCharactValue(charactNodeRef, charactType, targetData);
+			Object targetValue = getCharactValue(charactNodeRef, charactType, targetData);
 			for (SimulationListDataItem simulationListDataItem : ecoData.getSimulationList()) {
 				if (simulationListDataItem.getCharact().equals(charactNodeRef)
 						&& simulationListDataItem.getSourceItem().equals(targetData.getNodeRef())) {
 					simulationListDataItem.setTargetValue(targetValue);
+					
+					if(simulationListDataItem.getTargetValue() == null && simulationListDataItem.getSourceValue() == null){
+						toRemove.add(simulationListDataItem);
+					}
+					
 					if (logger.isDebugEnabled()) {
 						logger.debug("calculated charact: " + nodeService.getProperty(targetData.getNodeRef(), ContentModel.PROP_NAME) + " - "
 								+ charactNodeRef + " - sourceValue: " + simulationListDataItem.getSourceValue() + " - targetValue: " + targetValue);
@@ -688,6 +691,8 @@ public class ECOServiceImpl implements ECOService {
 
 			}
 		}
+		
+		ecoData.getSimulationList().removeAll(toRemove);
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("simList size: " + ecoData.getSimulationList().size());
@@ -736,7 +741,6 @@ public class ECOServiceImpl implements ECOService {
 
 		if (nodeType.isMatch(PLMModel.TYPE_RAWMATERIAL) || nodeType.isMatch(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT)
 				|| nodeType.isMatch(PLMModel.TYPE_SEMIFINISHEDPRODUCT) || nodeType.isMatch(PLMModel.TYPE_FINISHEDPRODUCT)) {
-
 			wUsedAssociations.add(PLMModel.ASSOC_COMPOLIST_PRODUCT);
 		} else if (nodeType.isMatch(PLMModel.TYPE_PACKAGINGMATERIAL) || nodeType.isMatch(PLMModel.TYPE_PACKAGINGKIT)) {
 			wUsedAssociations.add(PLMModel.ASSOC_PACKAGINGLIST_PRODUCT);
@@ -764,7 +768,8 @@ public class ECOServiceImpl implements ECOService {
 	}
 
 	@Deprecated
-	private Double getCharactValue(NodeRef charactNodeRef, QName charactType, ProductData productData) {
+	private Object getCharactValue(NodeRef charactNodeRef, QName charactType, ProductData productData) {
+
 		// TODO make more generic use an annotation instead
 		if (charactType.equals(PLMModel.TYPE_COST)) {
 			return getCharactValue(charactNodeRef, productData.getCostList());
@@ -772,6 +777,35 @@ public class ECOServiceImpl implements ECOService {
 			return getCharactValue(charactNodeRef, productData.getNutList());
 		} else if (charactType.equals(PLMModel.TYPE_ING)) {
 			return getCharactValue(charactNodeRef, productData.getIngList());
+		} else if (charactType.equals(PLMModel.TYPE_PHYSICO_CHEM)) {
+			return getCharactValue(charactNodeRef, productData.getPhysicoChemList());
+		} else if (charactType.equals(PLMModel.TYPE_DYNAMICCHARACTLIST)) {
+			String charactName = (String) nodeService.getProperty(charactNodeRef, PLMModel.PROP_DYNAMICCHARACT_TITLE);
+			if (charactName != null) {
+				for (AbstractProductDataView view : productData.getViews()) {
+					for (DynamicCharactListItem dynamicCharactListItem : view.getDynamicCharactList()) {
+						if (charactName.equals(dynamicCharactListItem.getTitle())) {
+							return dynamicCharactListItem.getValue();
+						}
+
+					}
+				}
+			}
+		} else if (charactType.equals(PLMModel.TYPE_LABELING_RULE_LIST)) {
+			for (IngLabelingListDataItem labelingListItem : productData.getLabelingListView().getIngLabelingList()) {
+				if (charactNodeRef.equals(labelingListItem.getGrp())) {
+					return MLTextHelper.getClosestValue(labelingListItem.getValue(), Locale.getDefault());
+				}
+
+			}
+		} else if (charactType.equals(PLMModel.TYPE_LABEL_CLAIM)) {
+			for (LabelClaimListDataItem labelClaimListDataItem : productData.getLabelClaimList()) {
+				if (charactNodeRef.equals(labelClaimListDataItem.getLabelClaim())) {
+					return labelClaimListDataItem.getLabelClaimValue();
+				}
+
+			}
+			
 		}
 		return null;
 	}

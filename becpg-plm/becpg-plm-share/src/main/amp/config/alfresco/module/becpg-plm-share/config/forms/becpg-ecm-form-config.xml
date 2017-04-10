@@ -41,7 +41,13 @@
 						<control
 							template="/org/alfresco/components/form/controls/selectone.ftl" >
 						</control>
-					</field>					
+					</field>
+					<field id="ecm:calculatedCharacts" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+							<control-param name="ds">becpg/autocomplete/eco</control-param>
+						</control>		
+					</field>						
 				</appearance>
 			</form>
 
@@ -82,7 +88,14 @@
 						<control
 							template="/org/alfresco/components/form/controls/selectone.ftl" >
 							 </control>
-					</field>					
+					</field>	
+					
+					<field id="ecm:calculatedCharacts" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+							<control-param name="ds">becpg/autocomplete/eco</control-param>
+						</control>		
+					</field>				
 				</appearance>
 			</form>
 		</forms>
