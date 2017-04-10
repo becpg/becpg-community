@@ -423,6 +423,9 @@ public class ECOServiceImpl implements ECOService {
 
 						changeUnitDataItem.setTreated(Boolean.TRUE);
 						changeUnitDataItem.setErrorMsg(null);
+						
+						//Store current state of ecoData
+						alfrescoRepository.save(ecoData);
 
 						if (!isSimulation) {
 							if (logger.isDebugEnabled()) {

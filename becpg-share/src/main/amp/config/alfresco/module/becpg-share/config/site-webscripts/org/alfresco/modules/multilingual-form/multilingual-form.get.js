@@ -6,6 +6,7 @@ function main()
 {
  AlfrescoUtil.param('nodeRef', null);
  AlfrescoUtil.param('field', null);
+ 
 
    model.mlFields = [];
    
@@ -18,14 +19,27 @@ function main()
       {
          // Create javascript objects from the repo response
          var obj = eval('(' + json + ')');
-         if (obj && obj.items)
+         if (obj && obj.items && obj.items.length > 0)
          {
-           model.mlFields = obj.items;
-         } 
-      }
+           var langs = config.scoped["Languages"]["languages"].childrenMap["language"];
+           for (var i = 0, lang ; i < langs.size(); i++) {
+        		lang = langs.get(i);
+        		if(lang.getAttribute("locale")!=null){
+        			for(var j=0, field; j < obj.items.length;j++ ){
+        				field = obj.items[j];
+        				if(field.locale == lang.getAttribute("locale")){
+        					model.mlFields.push(field);
+        				}
+        			}
+        		
+        		}
+        		
+           }
+           
+         }
       
+      }
    }
-
 }
 
 main();

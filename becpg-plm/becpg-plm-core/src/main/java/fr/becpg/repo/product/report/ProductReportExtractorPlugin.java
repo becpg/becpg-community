@@ -36,6 +36,7 @@ import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ResourceProductData;
 import fr.becpg.repo.product.data.constraints.CompoListUnit;
+import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.PackagingListUnit;
 import fr.becpg.repo.product.data.packaging.PackagingData;
@@ -346,7 +347,6 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 				// packList
 				loadPackagingList(productData, dataListsElt, defaultVariantNodeRef, images);
-				
 
 			}
 			
@@ -528,6 +528,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	private void loadIngLists(ProductData productData, Element dataListsElt, Map<String, byte[]> images) {
 		if ((productData.getIngList() != null) && !productData.getIngList().isEmpty()) {
 			Element ingListsElt = dataListsElt.addElement(PLMModel.TYPE_INGLIST.getLocalName() + "s");
+
 			for (IngListDataItem dataListItem : productData.getIngList()) {
 				addDataListState(ingListsElt, dataListItem.getParentNodeRef());
 				Element ingListElt = ingListsElt.addElement(PLMModel.TYPE_INGLIST.getLocalName());
@@ -574,7 +575,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 		for (CompoListDataItem compoList : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 			NodeRef productNodeRef = compoList.getProduct();
-			if (productNodeRef != null) {
+			if (productNodeRef != null && !DeclarationType.Omit.equals(compoList.getDeclType())) {
 				QName type = nodeService.getType(productNodeRef);
 				Double qty = FormulationHelper.getQtyInKg(compoList);
 				Double netWeight = FormulationHelper.getNetWeight(productData.getNodeRef(), nodeService, FormulationHelper.DEFAULT_NET_WEIGHT);
@@ -642,7 +643,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		if (productData.hasPackagingListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 
 			Element packagingListElt = dataListsElt.addElement(PLMModel.TYPE_PACKAGINGLIST.getLocalName() + "s");
-			
+
 			// display tare, net weight and gross weight
 			BigDecimal tarePrimary = FormulationHelper.getTareInKg(productData.getTare(), productData.getTareUnit());
 			if (tarePrimary == null) {
@@ -977,7 +978,6 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		
 		if (xmlNode.valueOf("@" + BeCPGModel.PROP_ENTITYLIST_STATE.getLocalName()).isEmpty()) {
 			Serializable state = nodeService.getProperty(listNodeRef, BeCPGModel.PROP_ENTITYLIST_STATE);
-
 			if (state != null) {
 				xmlNode.addAttribute(BeCPGModel.PROP_ENTITYLIST_STATE.getLocalName(), (String) state);
 			} else {

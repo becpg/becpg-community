@@ -6824,7 +6824,7 @@
 					<field id="bcpg:costListComponent">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/DataListCharact?classNames=bcpg:rawMaterial,bcpg:packagingMaterial</control-param>
+							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial,bcpg:packagingMaterial</control-param>
 						</control>
 					</field>
 				</appearance>

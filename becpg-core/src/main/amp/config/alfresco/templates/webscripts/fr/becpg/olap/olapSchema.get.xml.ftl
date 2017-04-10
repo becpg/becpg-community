@@ -27,9 +27,9 @@
 	
 	<Cube name="software_usage" caption="${msg("jsolap.statistics.title")}" cache="false" enabled="true">
 		<#if isAdmin>
-			<Table name="becpg_statistics" />
+			<Table name="becpg_public_statistics" />
 		<#else>
-			<Table name="becpg_statistics" >
+			<Table name="becpg_public_statistics" >
 				instance_id = ${instanceId}
 			</Table>
 		</#if>
@@ -761,7 +761,7 @@
 			<Level approxRowCount="10" name="entity_type" caption="${msg("jsolap.type.title")}" column="productType" nameColumn="entity_label" type="String"   >
 				<NameExpression>
 					  <SQL dialect="generic" >
-					  <![CDATA[CASE WHEN productType='bcpg:rawMaterial' THEN "${msg("bcpg_bcpgmodel.type.bcpg_rawMaterial.title'")}"
+					  <![CDATA[CASE WHEN productType='bcpg:rawMaterial' THEN "${msg('bcpg_bcpgmodel.type.bcpg_rawMaterial.title')}"
 	                            WHEN productType='bcpg:finishedProduct' THEN "${msg('bcpg_bcpgmodel.type.bcpg_finishedProduct.title')}"
 	                            WHEN productType='bcpg:semiFinishedProduct' THEN "${msg('bcpg_bcpgmodel.type.bcpg_semiFinishedProduct.title')}"
 	                            WHEN productType='bcpg:packagingMaterial' THEN "${msg('bcpg_bcpgmodel.type.bcpg_packagingMaterial.title')}"
