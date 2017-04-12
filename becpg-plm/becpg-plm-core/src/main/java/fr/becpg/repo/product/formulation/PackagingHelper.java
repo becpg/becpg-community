@@ -77,9 +77,9 @@ public class PackagingHelper {
 		if ((dataItem.getPkgLevel() != null) && !PLMModel.TYPE_PACKAGINGKIT.equals(nodeType)) {
 
 			BigDecimal tare = FormulationHelper.getTareInKg(dataItem, nodeService);
-
-			if (PackagingLevel.Secondary.equals(dataItem.getPkgLevel())) {
-
+			if (PackagingLevel.Primary.equals(dataItem.getPkgLevel())) {
+				packagingData.addTarePrimary(currentVariants, tare);
+			} else if (PackagingLevel.Secondary.equals(dataItem.getPkgLevel())) {
 				packagingData.addTareSecondary(currentVariants, tare);
 			} else if (PackagingLevel.Tertiary.equals(dataItem.getPkgLevel())) {
 				packagingData.addTareTertiary(currentVariants, tare);

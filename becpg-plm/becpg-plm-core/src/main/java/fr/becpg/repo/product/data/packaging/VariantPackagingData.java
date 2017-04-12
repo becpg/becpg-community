@@ -9,11 +9,20 @@ import java.math.BigDecimal;
  */
 public class VariantPackagingData {
 	
+	private BigDecimal tarePrimary = new BigDecimal(0d);
 	private BigDecimal tareSecondary = new BigDecimal(0d);
 	private BigDecimal tareTertiary = new BigDecimal(0d);
 	private Integer productPerBoxes;
 	private Integer boxesPerPallet;
 	private Integer palletNumberOnGround;
+
+	public BigDecimal getTarePrimary() {
+		return tarePrimary;
+	}
+
+	public void setTarePrimary(BigDecimal tarePrimary) {
+		this.tarePrimary = tarePrimary;
+	}
 
 	public BigDecimal getTareSecondary() {
 		return tareSecondary;
@@ -73,7 +82,9 @@ public class VariantPackagingData {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((boxesPerPallet == null) ? 0 : boxesPerPallet.hashCode());
+		result = prime * result + ((palletNumberOnGround == null) ? 0 : palletNumberOnGround.hashCode());
 		result = prime * result + ((productPerBoxes == null) ? 0 : productPerBoxes.hashCode());
+		result = prime * result + ((tarePrimary == null) ? 0 : tarePrimary.hashCode());
 		result = prime * result + ((tareSecondary == null) ? 0 : tareSecondary.hashCode());
 		result = prime * result + ((tareTertiary == null) ? 0 : tareTertiary.hashCode());
 		return result;
@@ -93,10 +104,20 @@ public class VariantPackagingData {
 				return false;
 		} else if (!boxesPerPallet.equals(other.boxesPerPallet))
 			return false;
+		if (palletNumberOnGround == null) {
+			if (other.palletNumberOnGround != null)
+				return false;
+		} else if (!palletNumberOnGround.equals(other.palletNumberOnGround))
+			return false;
 		if (productPerBoxes == null) {
 			if (other.productPerBoxes != null)
 				return false;
 		} else if (!productPerBoxes.equals(other.productPerBoxes))
+			return false;
+		if (tarePrimary == null) {
+			if (other.tarePrimary != null)
+				return false;
+		} else if (!tarePrimary.equals(other.tarePrimary))
 			return false;
 		if (tareSecondary == null) {
 			if (other.tareSecondary != null)
