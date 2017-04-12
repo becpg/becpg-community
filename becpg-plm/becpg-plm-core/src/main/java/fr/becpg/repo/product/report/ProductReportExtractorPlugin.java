@@ -644,22 +644,17 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 			Element packagingListElt = dataListsElt.addElement(PLMModel.TYPE_PACKAGINGLIST.getLocalName() + "s");
 
-			// display tare, net weight and gross weight
-			BigDecimal tarePrimary = FormulationHelper.getTareInKg(productData.getTare(), productData.getTareUnit());
-			if (tarePrimary == null) {
-				tarePrimary = new BigDecimal(0d);
-			}
-
 			BigDecimal netWeightPrimary = new BigDecimal(
 					FormulationHelper.getNetWeight(productData.getNodeRef(), nodeService, FormulationHelper.DEFAULT_NET_WEIGHT).toString());
 
-			BigDecimal grossWeightPrimary = tarePrimary.add(netWeightPrimary);
-
 			PackagingData packagingData = packagingHelper.getPackagingData(productData);
 			for (Map.Entry<NodeRef, VariantPackagingData> kv : packagingData.getVariants().entrySet()) {
-
 				VariantPackagingData variantPackagingData = kv.getValue();
-
+				
+				// display tare, net weight and gross weight
+				BigDecimal tarePrimary = variantPackagingData.getTarePrimary();
+				BigDecimal grossWeightPrimary = tarePrimary.add(netWeightPrimary);
+				
 				Element packgLevelMesuresElt = packagingListElt.addElement(TAG_PACKAGING_LEVEL_MEASURES);
 				if (kv.getKey() != null) {
 					packgLevelMesuresElt.addAttribute(ATTR_VARIANT_ID, (String) nodeService.getProperty(kv.getKey(), ContentModel.PROP_NAME));

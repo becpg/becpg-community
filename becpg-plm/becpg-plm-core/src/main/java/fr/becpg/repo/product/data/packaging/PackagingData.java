@@ -52,6 +52,18 @@ public class PackagingData {
 	public Map<NodeRef, VariantPackagingData> getVariants() {
 		return variants;
 	}
+	
+	public void addTarePrimary(List<NodeRef> variantNodeRefs, BigDecimal value) {
+		if (value != null) {
+			for (VariantPackagingData variantPackagingData : getVariantPackagingData(variantNodeRefs)) {
+				if (variantPackagingData.getTarePrimary() != null) {
+					variantPackagingData.setTarePrimary(variantPackagingData.getTarePrimary().add(value));
+				} else {
+					variantPackagingData.setTarePrimary(value);
+				}
+			}
+		}
+	}
 
 	public void addTareSecondary(List<NodeRef> variantNodeRefs, BigDecimal value) {
 		if (value != null) {
