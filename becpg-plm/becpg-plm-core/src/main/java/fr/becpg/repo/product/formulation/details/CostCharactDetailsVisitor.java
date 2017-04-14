@@ -110,12 +110,12 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 
 				visitPart(formulatedProduct.getNodeRef(), packagingListDataItem.getProduct(), ret, qty, null, netQty, currLevel, unitProvider);
 
-				// if ((maxLevel < 0) || (currLevel < maxLevel)) {
-				//
-				// visitRecur((ProductData)
-				// alfrescoRepository.findOne(compoListDataItem.getProduct()),
-				// ret, currLevel++, maxLevel, qty);
-				// }
+				 if ((maxLevel < 0) || (currLevel < maxLevel)) {
+					 logger.debug("Finding one packaging with nr=" + packagingListDataItem.getProduct());
+					 
+					 visitRecurCost((ProductData) alfrescoRepository.findOne(packagingListDataItem.getProduct()), ret, currLevel + 1, maxLevel, qty,
+								netQty, unitProvider);
+				 }
 
 			}
 
@@ -138,12 +138,11 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 
 					visitPart(formulatedProduct.getNodeRef(), processListDataItem.getResource(), ret, qty, null, netQty, currLevel, unitProvider);
 
-					// if ((maxLevel < 0) || (currLevel < maxLevel)) {
-					//
-					// visitRecur((ProductData)
-					// alfrescoRepository.findOne(compoListDataItem.getProduct()),
-					// ret, currLevel++, maxLevel, qty);
-					// }
+					 if ((maxLevel < 0) || (currLevel < maxLevel)) {
+					
+						 visitRecurCost((ProductData) alfrescoRepository.findOne(processListDataItem.getResource()), ret, currLevel + 1, maxLevel, qty,
+									netQty, unitProvider);
+					 }
 
 				}
 			}
