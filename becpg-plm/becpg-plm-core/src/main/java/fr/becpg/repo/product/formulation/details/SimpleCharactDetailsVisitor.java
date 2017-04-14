@@ -40,6 +40,8 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
+import fr.becpg.repo.repository.model.ForecastValueDataItem;
+import fr.becpg.repo.repository.model.MinMaxValueDataItem;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 import fr.becpg.repo.repository.model.UnitAwareDataItem;
 import fr.becpg.repo.variant.filters.VariantFilters;
@@ -181,9 +183,9 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 				boolean isVol = FormulationHelper.isCharactFormulatedFromVol(nodeService, simpleCharact)
 						|| FormulationHelper.isProductUnitLiter(FormulationHelper.getProductUnit(entityNodeRef, nodeService)) ? true : false;
 				Double qtyUsed = isVol ? volUsed : weightUsed;
-
 				Double value = FormulationHelper.calculateValue(0d, qtyUsed, simpleCharact.getValue(), netQty, unit);
-
+				CharactDetailsValue currentCharactDetailsValue = null;
+				
 				if ((value != null) && (value != 0d)) {
 					if (logger.isDebugEnabled()) {
 						logger.debug("Add new charact detail. Charact: "
@@ -192,8 +194,37 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 								+ " - value: " + value);
 					}
 
-					charactDetails.addKeyValue(simpleCharact.getCharactNodeRef(),
-							new CharactDetailsValue(parent, entityNodeRef, value, currLevel, unit));
+					currentCharactDetailsValue = new CharactDetailsValue(parent, entityNodeRef, value, currLevel, unit);
+					
+					if(simpleCharact instanceof ForecastValueDataItem){
+						ForecastValueDataItem forecastValue = (ForecastValueDataItem) simpleCharact;
+						
+						logger.debug("ForecastDataItem, prev="+forecastValue.getPreviousValue()+", future="+forecastValue.getFutureValue());
+						// add future and past values
+						if(forecastValue.getPreviousValue() != null){
+							currentCharactDetailsValue.setPreviousValue(FormulationHelper.calculateValue(0d, qtyUsed, forecastValue.getPreviousValue(), netQty, unit));
+						}
+						
+						if(forecastValue.getFutureValue() != null){
+							currentCharactDetailsValue.setFutureValue(FormulationHelper.calculateValue(0d, qtyUsed, forecastValue.getFutureValue(), netQty, unit));
+						}
+					}
+					
+					if(simpleCharact instanceof MinMaxValueDataItem){
+						MinMaxValueDataItem minMaxValue = (MinMaxValueDataItem) simpleCharact;
+						
+						logger.debug("minMaxValue, prev="+minMaxValue.getMini()+", maxi="+minMaxValue.getMaxi());
+						// add future and past values
+						if(minMaxValue.getMini() != null){
+							currentCharactDetailsValue.setMini(FormulationHelper.calculateValue(0d, qtyUsed, minMaxValue.getMini(), netQty, unit));
+						}
+						
+						if(minMaxValue.getMaxi() != null){
+							currentCharactDetailsValue.setMaxi(FormulationHelper.calculateValue(0d, qtyUsed, minMaxValue.getMaxi(), netQty, unit));
+						}
+					}
+					
+					charactDetails.addKeyValue(simpleCharact.getCharactNodeRef(), currentCharactDetailsValue);
 				}
 			}
 		}
