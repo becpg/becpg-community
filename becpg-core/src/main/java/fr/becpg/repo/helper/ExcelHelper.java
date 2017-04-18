@@ -50,8 +50,14 @@ public class ExcelHelper {
 						Cell cell = row.createCell(cellnum++);
 						if ((obj != null) && (obj instanceof MLText)) {
 
-							String value = ((MLText) obj).get(locale);
-							
+							String value = null;
+
+							if (MLTextHelper.isDefaultLocale(locale)) {
+								value = MLTextHelper.getClosestValue(((MLText) obj), locale);
+							} else {
+								value = ((MLText) obj).get(locale);
+							}
+
 							if (value != null) {
 								cell.setCellValue(value);
 							}
@@ -95,14 +101,12 @@ public class ExcelHelper {
 					cellnum = appendExcelHeader(field.getChildrens(), field.getFieldName(), titleProvider.getTitle(field), headerRow, labelRow, style,
 							cellnum, titleProvider, supportedLocales);
 				} else {
-					
+
 					if ((supportedLocales != null) && !supportedLocales.isEmpty() && (field.getFieldDef() instanceof PropertyDefinition)
 							&& DataTypeDefinition.MLTEXT.toString().equals(((PropertyDefinition) field.getFieldDef()).getDataType().toString())) {
 
-						
-						
 						for (Locale locale : supportedLocales) {
-							
+
 							Cell cell = headerRow.createCell(cellnum);
 
 							if (prefix != null) {
@@ -123,7 +127,7 @@ public class ExcelHelper {
 						}
 
 					} else {
-						
+
 						Cell cell = headerRow.createCell(cellnum);
 
 						if (prefix != null) {
