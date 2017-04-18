@@ -112,6 +112,12 @@
 		                  url : templateUrl,
 		                  successCallback : {
 		                     fn : function() {
+			                     YAHOO.Bubbling.fire("selectedModelChanged", { 
+			                    	 	nodeRef: this.tree.modelNodeRef,
+			                    	 	readOnly: this.tree.isReadOnly
+			                     });
+			                     
+			                     
 			                     Alfresco.util.Ajax.request({
 			                        url : Alfresco.constants.URL_SERVICECONTEXT + "components/console/config/reload",
 			                        method : Alfresco.util.Ajax.GET,
@@ -502,7 +508,7 @@
 						 */
 	               onDesignerModelNodeChange : function DesignerForm_onNodeClicked(layer, args) {
 		               var obj = args[1], node = obj.node;
-
+		               
 		               if (obj.tree != null) {
 			               this.tree = obj.tree;
 			               this.readOnly = obj.tree.isReadOnly;
