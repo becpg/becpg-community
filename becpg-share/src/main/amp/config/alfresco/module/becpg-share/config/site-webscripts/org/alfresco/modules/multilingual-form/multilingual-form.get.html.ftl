@@ -12,23 +12,21 @@
 		         <div class="form-field">
 			         <select id="${el}-locale-picker" name="-" onChange="addFormFieldForLocale();return false;">
                             <option value="-" >${msg("locale.choose")}</option>
-							<#assign h = config.scoped["Languages"]["languages"]>
-							<#list  h.getChildren("language") as language>
-							  <#assign key = language.getAttribute("locale")>	
-                              <#if locale != key>
-								<option value="${key}"  >${msg("locale.name.${key}")}</option>
+							<#list langs?sort_by(["label"]) as language>
+                              <#if locale != language.key>
+								<option value="${language.key}"  >${language.label}</option>
                                </#if>
 							</#list>
 						</select>
 					</div>
 
-	         <#list mlFields as mlField>
+	         <#list mlFields?sort_by(["localeLabel"]) as mlField>
 	        	<#assign label=mlField.label!""?html>
 				<#assign description=mlField.description!""?html>
                 <#if mlField.locale != locale>
 	         	<div class="form-field">
       				<label for="${el}-${mlField.locale}">${mlField.label!""?html}:&nbsp;
-      						<span class="locale-icon"><img class="icon16_11" title="${msg("locale.name.${mlField.locale}")}" tabindex="0" src="${url.context}/res/components/images/flags/${mlField.country?lower_case}.png">&nbsp;(${msg("locale.name.${mlField.locale}")})<span>&nbsp;&nbsp;
+      						<span class="locale-icon"><img class="icon16_11" title="${mlField.localeLabel}" tabindex="0" src="${url.context}/res/components/images/flags/${mlField.country?lower_case}.png">&nbsp;(${mlField.localeLabel})<span>&nbsp;&nbsp;
       						<span class="translate-icon" onClick="suggestTranslate('${el}-${mlField.locale}','${mlField.locale}');" ><img class="icon16" title="${msg("translate.suggest")}" tabindex="0" src="${url.context}/res/components/images/translate-16.png"><span>
       				</label>
 	      			<#if args.textarea??>
