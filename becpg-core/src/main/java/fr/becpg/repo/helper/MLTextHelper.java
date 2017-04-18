@@ -1,5 +1,6 @@
 package fr.becpg.repo.helper;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -85,6 +86,12 @@ public class MLTextHelper {
 	}
 	
 
+	public static boolean isDefaultLocale(Locale locale) {
+		return locale!=null && locale.equals(getNearestLocale(Locale.getDefault(),new HashSet<>(getSupportedLocales())));
+	}
+
+	
+
 	 public static Locale getNearestLocale(Locale templateLocale, Set<Locale> options)
 	    {
 	        if (options.isEmpty())                          // No point if there are no options
@@ -148,6 +155,11 @@ public class MLTextHelper {
 			}
 		}
 		
+		ret.sort( (a, b) -> {
+			return localeLabel(a).compareTo(localeLabel(b));
+			
+		} );
+		
 		return ret;
 	}
 
@@ -202,6 +214,7 @@ public class MLTextHelper {
 		}
 		return true;
 	}
+
 
 	
 
