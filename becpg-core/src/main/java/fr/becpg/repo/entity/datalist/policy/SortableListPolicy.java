@@ -86,7 +86,7 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
-		if (policyBehaviourFilter.isEnabled(BeCPGModel.ASPECT_SORTABLE_LIST)) {
+		if (policyBehaviourFilter.isEnabled(BeCPGModel.ASPECT_DEPTH_LEVEL)) {
 			// createNode
 			if (before.isEmpty()) {
 				// nothing to do, work is done in addAspect, otherwise it
@@ -149,7 +149,7 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 	@Override
 	public void onAddAspect(NodeRef nodeRef, QName aspect) {
 
-		if (policyBehaviourFilter.isEnabled(BeCPGModel.ASPECT_DEPTH_LEVEL) && policyBehaviourFilter.isEnabled(BeCPGModel.ASPECT_SORTABLE_LIST)) {
+		if (policyBehaviourFilter.isEnabled(BeCPGModel.ASPECT_DEPTH_LEVEL) ) {
 			// try to avoid to do two times the work, otherwise it duplicates
 			// nodeRef in lucene index !!!
 			if (nodeService.exists(nodeRef)) {
@@ -225,9 +225,7 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 
 	@Override
 	public void onDeleteNode(ChildAssociationRef childRef, boolean isNodeArchived) {
-
 		logger.debug("SortableListPolicy.onDeleteNode");
-		if (policyBehaviourFilter.isEnabled(BeCPGModel.ASPECT_SORTABLE_LIST)) {
 	
 			// if folder is deleted, all children are
 			if (nodeService.exists(childRef.getParentRef())) {
@@ -238,7 +236,6 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 					policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
 				}
 			}
-		}
 	}
 
 	@Override
