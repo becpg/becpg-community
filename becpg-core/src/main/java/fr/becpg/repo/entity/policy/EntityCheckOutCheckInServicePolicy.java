@@ -118,7 +118,6 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy
 
 	@Override
 	public void beforeCheckIn(NodeRef workingCopyNodeRef, Map<String, Serializable> versionProperties, String contentUrl, boolean keepCheckedOut) {
-		policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
 		ruleService.disableRules();
 		try {
 			NodeRef origNodeRef = getCheckedOut(workingCopyNodeRef);
@@ -135,7 +134,6 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy
 			nodeService.removeProperty(nodeRef, BeCPGModel.PROP_END_EFFECTIVITY);
 		}
 		queueNode(nodeRef);
-		policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
 	}
 
 	@Override
