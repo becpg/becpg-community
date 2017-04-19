@@ -108,6 +108,8 @@
 			         YAHOO.Bubbling.fire(me.scopeId + "dataItemCreated", {
 			            nodeRef : response.json.persistedObject,
 			            callback : function(item) {
+			            	
+			            	YAHOO.Bubbling.fire("refreshFloatingHeader");
 
 				            Alfresco.util.PopupManager.displayMessage({
 					            text : me.msg("message.new-row.success")
