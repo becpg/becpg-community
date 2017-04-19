@@ -86,8 +86,6 @@
 
 						currentPage : 1,
 
-						queryExecutionId : null,
-
 						/**
 						 * Fired by YUI when parent element is available for scripting.
 						 * 
@@ -145,7 +143,7 @@
 											+ (type !== undefined ? ("\"prop_bcpg_rclReqType\":\"" + type+"\"") : "")
 											+ (dataType !== null ? (type !== undefined ? "," : "") + ("\"prop_bcpg_rclDataType\":\"" + dataType+"\"") : "")
 											+ "}");
-
+									
 									instance.reloadDataTable();
 
 							}, true );
@@ -188,8 +186,7 @@
 									resultsList : "items",
 									metaFields : {
 										startIndex : "startIndex",
-										totalRecords : "totalRecords",
-										queryExecutionId : "queryExecutionId"
+										totalRecords : "totalRecords"
 									}
 								}
 							});
@@ -235,7 +232,6 @@
 											instance.widgets.paginator.set('totalRecords', oResponse.meta.totalRecords);
 											instance.widgets.paginator.setPage(oResponse.meta.startIndex, true);
 										}
-										instance.queryExecutionId = oResponse.meta.queryExecutionId;
 
 									},
 									failure : instance.widgets.notificationsDataTable.onDataReturnReplaceRows,
@@ -405,7 +401,6 @@
 							var request = {
 								fields : [ "bcpg_rclReqType", "bcpg_rclReqMessage", "bcpg_rclSources", "bcpg_rclDataType" ],
 								page : this.currentPage,
-								queryExecutionId : this.queryExecutionId,
 								filter : {
 									filterId : this.filterId,
 									filterOwner : null,

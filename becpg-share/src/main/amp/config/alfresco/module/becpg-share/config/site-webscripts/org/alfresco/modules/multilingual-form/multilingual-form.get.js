@@ -9,6 +9,17 @@ function main()
  
 
    model.mlFields = [];
+   model.langs = [];
+   
+   
+   var langs = config.scoped["Languages"]["languages"].childrenMap["language"];
+   for (var i = 0, lang ; i < langs.size(); i++) {
+		lang = langs.get(i);
+		if(lang.getAttribute("locale")!=null){
+			model.langs.push({key : lang.getAttribute("locale"), label: msg.get("locale.name."+lang.getAttribute("locale"))});
+		}
+		
+   }
    
    if (model.nodeRef && model.field)
    {
@@ -21,23 +32,18 @@ function main()
          var obj = eval('(' + json + ')');
          if (obj && obj.items && obj.items.length > 0)
          {
-           var langs = config.scoped["Languages"]["languages"].childrenMap["language"];
-           for (var i = 0, lang ; i < langs.size(); i++) {
-        		lang = langs.get(i);
-        		if(lang.getAttribute("locale")!=null){
-        			for(var j=0, field; j < obj.items.length;j++ ){
-        				field = obj.items[j];
-        				if(field.locale == lang.getAttribute("locale")){
-        					model.mlFields.push(field);
-        				}
-        			}
-        		
-        		}
-        		
-           }
-           
+              for (var i = 0, lang ; i < model.langs.length; i++) {
+           		   lang = model.langs[i];
+           			for(var j=0, field; j < obj.items.length;j++ ){
+           				field = obj.items[j];
+           				if(field.locale == lang.key){
+           					field.localeLabel = lang.label;
+           					model.mlFields.push(field);
+           				}
+           			}
+           		
+              }
          }
-      
       }
    }
 }
