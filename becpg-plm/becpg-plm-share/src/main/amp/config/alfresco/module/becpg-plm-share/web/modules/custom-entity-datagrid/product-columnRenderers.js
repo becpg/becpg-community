@@ -625,15 +625,15 @@ if (beCPG.module.EntityDataGridRenderers) {
 			var variants = data.value, isInDefault = !variants || variants.length < 1;
 
 			if (data.value != null && data.value.length > 0) {
-
-				if (oColumn.hidden) {
-					scope.widgets.dataTable.showColumn(oColumn);
-					Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
-				}
 				if(oColumn.label == ""){
 					Dom.setStyle(elCell, "width", "16px");
 					Dom.setStyle(elCell.parentNode, "width", "16px");
 				}
+				if (oColumn.hidden) {
+					scope.widgets.dataTable.showColumn(oColumn);
+					Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
+				}
+				
 			}
 
 			if (isInDefault) {
@@ -673,12 +673,12 @@ if (beCPG.module.EntityDataGridRenderers) {
 		propertyName : "pack:labelingPosition",
 		renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
 			if (data.value != null) {
+				Dom.setStyle(elCell, "width", "16px");
+				Dom.setStyle(elCell.parentNode, "width", "16px");
 				if (oColumn.hidden) {
 					scope.widgets.dataTable.showColumn(oColumn);
 					Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
 				}
-				Dom.setStyle(elCell, "width", "16px");
-				Dom.setStyle(elCell.parentNode, "width", "16px");
 				return "<span title=\"" + data.displayValue + "\" class='labeling-aspect'>&nbsp;</span>";
 			}
 			return "";
@@ -700,13 +700,12 @@ if (beCPG.module.EntityDataGridRenderers) {
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 	    propertyName : "boolean_bcpg:lrIsActive",
 	    renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
-    	        if (oColumn.hidden) {
+	    	Dom.setStyle(elCell, "width", "16px");
+	        Dom.setStyle(elCell.parentNode, "width", "16px");    
+	    	if (oColumn.hidden) {
                     scope.widgets.dataTable.showColumn(oColumn);
                     Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
-                }
-    	        
-	            Dom.setStyle(elCell, "width", "16px");
-	            Dom.setStyle(elCell.parentNode, "width", "16px");
+            }
 	        if(data.value){
 	            return "<span  class='rule-enabled'>&nbsp;</span>";
 	        } 
@@ -828,12 +827,13 @@ if (beCPG.module.EntityDataGridRenderers) {
       renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
          if(data.value != null && data.value.length>0){
         	if(oColumn.label == ""){
-	        	 if (oColumn.hidden) {
+        		Dom.setStyle(elCell, "width", "16px");
+				Dom.setStyle(elCell.parentNode, "width", "16px");
+        		if (oColumn.hidden) {
 						scope.widgets.dataTable.showColumn(oColumn);
 						Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
 				}
-				Dom.setStyle(elCell, "width", "16px");
-				Dom.setStyle(elCell.parentNode, "width", "16px");
+				
 				return "<span title=\"" + data.displayValue.replace(/&nbsp;/gi," ")
 						.replace(/<(?:.|\n)*?>/gm, '').replace(/\n/gm," ").replace(/"/gm,"") 
 				+ "\" class='instructions'>&nbsp;</span>";

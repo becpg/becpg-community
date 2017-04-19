@@ -52,7 +52,6 @@ import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
@@ -128,9 +127,6 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 	@Autowired
 	private CheckOutCheckInService checkOutCheckInService;
-
-	@Autowired
-	private EntityActivityService entityActivityService;
 
 	@Autowired
 	private TransactionService transactionService;
@@ -800,8 +796,6 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 					Map<String, Serializable> properties = new HashMap<>();
 					properties.put(VersionBaseModel.PROP_VERSION_TYPE, versionType);
 					properties.put(Version.PROP_DESCRIPTION, description);
-
-					entityActivityService.postMergeBranchActivity(branchNodeRef, internalBranchToNodeRef, versionType, description);
 
 					return checkOutCheckInService.checkin(branchNodeRef, properties);
 

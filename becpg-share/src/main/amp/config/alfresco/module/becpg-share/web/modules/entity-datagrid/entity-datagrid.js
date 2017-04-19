@@ -1886,20 +1886,23 @@
                             }
                             
 
-                            if(this.options.floatingHeader){
-                            	
-	                          
-	                            	
-	                            	 YAHOO.Bubbling
+                            if(this.options.floatingHeader){	
+	                           YAHOO.Bubbling
 	                                 .on("refreshFloatingHeader", function(){
 	                                	 if(me.widgets.floatingHeader){
 	                                		 me.widgets.floatingHeader.floatThead('reflow');
 	                                	 }
 	                                 },this);
-	                            
-                            
+	                            	 
+	                           this.widgets.dataTable.subscribe("columnShowEvent", function(e)
+	                            {   
+	                        	   if(me.widgets.floatingHeader){
+	                                  me.widgets.floatingHeader.floatThead('reflow');
+	                               	}
+	                        	  
+	                            });
+	                           
                             }
-
 
                         },
 
