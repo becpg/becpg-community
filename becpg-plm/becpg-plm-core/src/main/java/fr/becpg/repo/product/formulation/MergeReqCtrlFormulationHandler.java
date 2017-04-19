@@ -142,9 +142,13 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 			}
 
 			for (Map.Entry<String, ReqCtrlListDataItem> dbKV : dbReqCtrlList.entrySet()) {
-				if (!newReqCtrlList.containsKey(dbKV.getKey())) {
-					// remove
-					reqCtrlList.remove(dbKV.getValue());
+				if (!newReqCtrlList.containsKey(dbKV.getKey()) 
+						) {
+					if(! RequirementDataType.Completion.equals(dbKV.getValue().getReqDataType()) 
+							&& ! RequirementDataType.Validation.equals(dbKV.getValue().getReqDataType())){
+						// remove
+						reqCtrlList.remove(dbKV.getValue());
+					}
 				} else {
 					// update
 					ReqCtrlListDataItem newReqCtrlListDataItem = newReqCtrlList.get(dbKV.getKey());
