@@ -503,7 +503,6 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 						if (tsl.getCharactNodeRef().equals(sl.getCharactNodeRef())) {
 							isFound = true;
 							
-							sl.setSort(tsl.getSort());
 							if(sl instanceof CompositeDataItem
 									&& tsl instanceof CompositeDataItem){
 								if(((CompositeDataItem<T>)tsl).getParent()!=null
@@ -532,6 +531,26 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 						simpleListDataList.add(toAdd);
 					} 
 
+				}
+			}
+			
+			//check sorting
+			int lastSort = 0;
+			for (T sl : simpleListDataList) {
+				if(sl.getCharactNodeRef() != null){
+					boolean isFound = false;
+					
+					for (T tsl : templateSimpleListDataList) {
+						if(sl.getCharactNodeRef().equals(tsl.getCharactNodeRef())){
+							isFound = true;
+							lastSort = tsl.getSort();
+							sl.setSort(lastSort);
+						}
+					}
+					
+					if(!isFound){
+						sl.setSort(++lastSort);
+					}
 				}
 			}
 
