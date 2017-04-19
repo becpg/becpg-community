@@ -172,7 +172,13 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 								// add new rcl or add sources to existing
 								// validation rcl
 								if (productNonValidatedRcl.size() > 0) {
-									productNonValidatedRcl.get(0).getSources().addAll(nonValidatedRclDataItem.getSources());
+									
+									for(NodeRef tmpNodeRef  : nonValidatedRclDataItem.getSources()){
+										if(!productNonValidatedRcl.get(0).getSources().contains(tmpNodeRef)){
+											productNonValidatedRcl.get(0).getSources().add(tmpNodeRef);
+										
+										}
+									}
 								} else {
 									product.getReqCtrlList().add(nonValidatedRclDataItem);
 								}
@@ -634,7 +640,9 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 
 		if (matchingRclDataItems.size() > 0) {
 			// add sources
-			matchingRclDataItems.get(0).getSources().add(productData.getNodeRef());
+			if(!matchingRclDataItems.get(0).getSources().contains(productData.getNodeRef())){
+				matchingRclDataItems.get(0).getSources().add(productData.getNodeRef());
+			}
 		} else {
 			// rcl not found in visited list, add it to the product
 			ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, null, new ArrayList<NodeRef>(),
