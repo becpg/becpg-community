@@ -114,7 +114,7 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 
 		if (ret == null) {
 			if (isDebugEnable) {
-				logger.debug("Cache miss " + cacheKey);
+				logger.error("Cache miss " + cacheKey);
 			}
 
 			ret = cacheDataProviderCallBack.getData();
@@ -152,6 +152,8 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 				}
 
 				cache.put(cacheKey, ret);
+			} else if(isDebugEnable && ret==null ){
+				logger.error("Data provider is null for "+cacheKey);
 			}
 		} else if (isDebugEnable) {
 			logger.debug("Cache Hit " + cacheKey);
@@ -163,9 +165,12 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 	@Override
 	public void removeFromCache(String cacheName, String cacheKey) {
 		cacheKey = computeCacheKey(cacheKey);
+		if(isDebugEnable){
+			logger.debug("Delete from cache " + cacheKey );
+		}
 		SimpleCache<String, ?> cache = getCache(cacheName);
 		if (isDebugEnable && (cache.get(cacheKey) == null)) {
-			logger.debug("Cache " + cacheKey + " object doesn't exists");
+			logger.info("Cache " + cacheKey + " object doesn't exists");
 		}
 		cache.remove(cacheKey);
 
