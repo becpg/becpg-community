@@ -160,12 +160,12 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 			try {
 				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
-				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
 
 				entityListDAO.copyDataLists(origNodeRef, workingCopyNodeRef, true);
 				entityService.moveFiles(origNodeRef, workingCopyNodeRef);
 			} finally {
-				policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
+				policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
 				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
 			}
 
@@ -250,7 +250,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 				try {
 					policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
-					policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
+					policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
 
 					// version is a copy of working copy or orig for 1st
 					// version
@@ -293,7 +293,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 					return versionNodeRef1;
 
 				} finally {
-					policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
+					policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
 					policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
 				}
 
@@ -792,8 +792,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 					// Only for transaction do not reenable it
 					policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-					policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
 					policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ENTITY_BRANCH);
+					policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
 
 					prepareBranchBeforeMerge(branchNodeRef, internalBranchToNodeRef);
 
@@ -935,7 +935,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 				// Only for transaction do not reenable it
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ENTITY_BRANCH);
 
 				String newEntityName = repoService.getAvailableName(parentRef,

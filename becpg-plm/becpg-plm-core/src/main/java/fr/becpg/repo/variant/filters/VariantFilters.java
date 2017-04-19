@@ -17,6 +17,8 @@
  ******************************************************************************/
 package fr.becpg.repo.variant.filters;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -28,7 +30,7 @@ import fr.becpg.repo.variant.model.VariantDataItem;
 
 public class VariantFilters<T extends VariantDataItem> implements DataListFilter<ProductData, T> {
 
-	private NodeRef variantNodeRef;
+	private Set<NodeRef> variantNodeRefs = new HashSet<>();
 
 	private Boolean isDefaultVariant = true;
 
@@ -38,7 +40,7 @@ public class VariantFilters<T extends VariantDataItem> implements DataListFilter
 
 	public VariantFilters(NodeRef variantNodeRef) {
 		super();
-		this.variantNodeRef = variantNodeRef;
+		this.variantNodeRefs.add(variantNodeRef);
 	}
 
 	public VariantFilters(Boolean isDefaultVariant) {
@@ -50,17 +52,16 @@ public class VariantFilters<T extends VariantDataItem> implements DataListFilter
 	@Override
 	public Predicate<T> createPredicate(final ProductData entity) {
 
-		if ((variantNodeRef == null) && (entity.getVariants() != null)) {
+		if ((variantNodeRefs.isEmpty()) && (entity.getVariants() != null)) {
 			for (VariantData variant : entity.getVariants()) {
 				if (variant.getIsDefaultVariant()) {
-					this.variantNodeRef = variant.getNodeRef();
-					break;
+					this.variantNodeRefs.add(variant.getNodeRef());
 				}
 			}
 		}
 
 		return obj -> {
-			if ((variantNodeRef != null) && (obj instanceof VariantDataItem)) {
+			if ((!variantNodeRefs.isEmpty()) && (obj instanceof VariantDataItem)) {
 				VariantDataItem item = (obj);
 
 				if (isDefaultVariant != null) {
@@ -71,12 +72,20 @@ public class VariantFilters<T extends VariantDataItem> implements DataListFilter
 						}
 					}
 
-					if (isDefaultVariant && item.getVariants().contains(variantNodeRef)) {
-						return true;
+					for(NodeRef variantNodeRef : variantNodeRefs) {
+						if (isDefaultVariant && item.getVariants().contains(variantNodeRef)) {
+							return true;
+						}
 					}
 
-				} else if ((variantNodeRef != null) && item.getVariants().contains(variantNodeRef)) {
-					return true;
+				} else if (!variantNodeRefs.isEmpty()) {
+					for(NodeRef variantNodeRef : variantNodeRefs) {
+						if (item.getVariants().contains(variantNodeRef)) {
+							return true;
+						}
+					}
+					
+		
 				}
 				return false;
 			}
