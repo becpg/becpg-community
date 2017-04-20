@@ -253,7 +253,7 @@
 		
 		
 		_showWusedPopup : function EntityDataGrid___showWusedPopup(popupKind, items, callBack) {
-			var showPopup = false, entryCount = 0, entryKey =null, isCharact = false;
+			var showPopup = false, entryCount = 0, entryKey =null, isCharact = (this.entity!=null && this.entity.type!=null && this.entity.type == "bcpg:systemEntity");
 
 			var html = '<div class="hd">' + this.msg("header." + popupKind + ".picker") + '</div>';
 			html += '<div class="bd">';
@@ -263,7 +263,7 @@
 			html += '        <div class="form-field">';
 			html += '            <select  id="'+this.id+'-wused-selected-picker">';
 			html += '                  <option value="">' + this.msg(popupKind + ".picker.choose") + '</option>';
-			if(popupKind == "bulk-edit") {
+			if(popupKind == "bulk-edit" ) {
 				html += '                  <option value="selectlines">' + this.msg(popupKind + ".picker.selectedlines") + '</option>';
 			}
 			for ( var key in items[0].itemData) {
