@@ -211,6 +211,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			}
 
 			reorderCompositeLabeling(compositeLabeling, true);
+			
+			// If yield group SUM maybe not 100%
+			flatYieldedGroup(compositeLabeling, labelingFormulaContext);
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("\n" + compositeLabeling.toString());
@@ -292,6 +295,35 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 
 		return true;
+	}
+
+	private void flatYieldedGroup(CompositeLabeling lblCompositeContext,LabelingFormulaContext labelingFormulaContext) {
+		Double totalQty  = 0d;
+		Double totalVolume  = 0d;
+		boolean containsGroup = false;
+		
+		for (AbstractLabelingComponent component : lblCompositeContext.getIngList().values()) {
+			if (labelingFormulaContext.isGroup(component)) {
+				containsGroup = true;
+			}
+			if(component.getQty()!=null){
+				totalQty +=component.getQty();
+			}
+			if(component.getVolume()!=null){
+				totalVolume +=component.getVolume();
+			}
+		}
+		
+		if(containsGroup){
+			if(lblCompositeContext.getQtyTotal()!=null &&  lblCompositeContext.getQtyTotal()<totalQty ){
+				lblCompositeContext.setQtyTotal(totalQty);
+			}
+			if(lblCompositeContext.getVolumeTotal()!=null &&  lblCompositeContext.getVolumeTotal()<totalVolume ){
+				lblCompositeContext.setVolumeTotal(totalVolume);
+			}
+		}
+		
+		
 	}
 
 	private void extractAllergens(LabelingFormulaContext labelingFormulaContext, ProductData productData) {
@@ -1176,7 +1208,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 						Double recurYield = yield;
 						Double recurRecipeQtyUsed = recipeQtyUsed;
-						if (!(productData instanceof LocalSemiFinishedProductData) && !DeclarationType.Group.equals(declarationType)) {
+						if (!(productData instanceof LocalSemiFinishedProductData) /*&& !DeclarationType.Group.equals(declarationType) */) {
 							recurYield = computeYield(productData);
 
 							if ((yield != null) && (yield != 100d) && (recurYield != null)) {
@@ -1189,7 +1221,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						}
 
 						if (logger.isTraceEnabled()) {
-							logger.trace(" -- Recur call " + productData.getName() + " yield " + productData.getYield() + " ratio " + ratio);
+							logger.trace(" -- Recur call " + productData.getName() + " yield " + computeYield(productData) + " ratio " + ratio);
 							logger.trace(" -- Recur yield " + recurYield + " recur recipeQtyUsed " + recurRecipeQtyUsed);
 						}
 

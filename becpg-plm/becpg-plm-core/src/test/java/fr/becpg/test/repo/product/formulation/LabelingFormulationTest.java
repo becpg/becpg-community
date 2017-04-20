@@ -410,8 +410,12 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 //			        ├──[ing1 french - 66.66666666666667 ( vol : 66.66666666666667) ]
 //			        └──[ing2 french - 183.33333333333334 ( vol : 183.33333333333334) ]
 
-	//	ing1 = 200÷190×160÷200×0.333333333÷2 --> 0,140350877
-			
+	 // C
+	//	 - ing1 = 200÷190×160÷200×0.333333333÷2 --> 0,140350877
+	//	 - ing2 = 200÷190×160÷200×0.666666666÷2 --> 0.28070
+	//  B
+	//   - ing1 = 200÷190×40÷200×0.666666666÷2 --> 0,070
+	//	 - ing2 = 200÷190×40÷200×1.83÷2 --> 0.192
 		
 		finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			FinishedProductData finishedProduct1 = new FinishedProductData();
@@ -435,10 +439,52 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		labelingRuleList.add(new LabelingRuleListDataItem("Param1", "ingsLabelingWithYield=true", LabelingRuleType.Prefs, null, null));
 		
 
-		checkILL(finishedProductNodeRef1, labelingRuleList, "<b>test yield Sub - C (84,2%):</b> eau 42,1%, ing2 french 28,1%, ing1 french 14%<br/><b>test yield Sub - B (21,1%):</b> ing2 french 12,9%, ing1 french 4,7%, eau 3,5%", Locale.FRENCH);
-		
+		checkILL(finishedProductNodeRef1, labelingRuleList, "<b>test yield Sub - C (80%):</b> eau 37,9%, ing2 french 28,1%, ing1 french 14%<br/><b>test yield Sub - B (20%):</b> ing2 french 19,3%, ing1 french 7%, eau 1,4%", Locale.FRENCH);
 		
 
+		//#2944
+
+		NodeRef finishedProductNodeRefD = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			FinishedProductData finishedProduct1 = new FinishedProductData();
+			finishedProduct1.setName("Test yield Sub - D " + Calendar.getInstance().getTimeInMillis());
+			finishedProduct1.setLegalName("Test yield Sub - D");
+			finishedProduct1.setQty(2d);
+			finishedProduct1.setUnit(ProductUnit.kg);
+
+			List<CompoListDataItem> compoList1 = new ArrayList<>();
+			compoList1.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterialWaterNodeRef));
+			compoList1.add(new CompoListDataItem(null, null, null, 3d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+
+			finishedProduct1.getCompoListView().setCompoList(compoList1);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
+		}, false, true);
+		
+
+		finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			FinishedProductData finishedProduct1 = new FinishedProductData();
+			finishedProduct1.setName("Test yield 5 " + Calendar.getInstance().getTimeInMillis());
+			finishedProduct1.setQty(190d);
+			finishedProduct1.setUnit(ProductUnit.g);
+
+			List<CompoListDataItem> compoList1 = new ArrayList<>();
+			compoList1.add(new CompoListDataItem(null, null, null, 160d, CompoListUnit.g, 0d, DeclarationType.Group, finishedProductNodeRefD));
+			compoList1.add(new CompoListDataItem(null, null, null, 40d, CompoListUnit.g, 0d, DeclarationType.Group, finishedProductNodeRefB));
+			
+			finishedProduct1.getCompoListView().setCompoList(compoList1);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
+		}, false, true);
+		
+		labelingRuleList = new ArrayList<>();
+
+		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
+		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param1", "ingsLabelingWithYield=true", LabelingRuleType.Prefs, null, null));
+		
+		
+		checkILL(finishedProductNodeRef1, labelingRuleList, "<b>test yield Sub - D (80%):</b> ing2 french 84,2%, ing1 french 42,1%<br/><b>test yield Sub - B (20%):</b> ing2 french 19,3%, ing1 french 7%, eau 1,4%", Locale.FRENCH);
+		
 	}
 
 	@Test
