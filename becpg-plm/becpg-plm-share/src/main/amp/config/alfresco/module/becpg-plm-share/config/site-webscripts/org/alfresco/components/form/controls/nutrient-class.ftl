@@ -1,7 +1,7 @@
 <div class="form-field">
    <div class="viewmode-field">
       <span class="viewmode-label">${field.label?html}:</span>
-      <span class="viewmode-value">
+      <span class="viewmode-value nutrient-class">
       	<#if field.value != "" 
       	   && (
       	       field.value == "A"
