@@ -1090,17 +1090,18 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 					logger.debug("attribute: " + attribute + " value: " + properties.get(attribute));
 				}
 
-				if (ContentModel.ASSOC_CONTAINS.isMatch(attribute) || BeCPGModel.PROP_LV_VALUE.isMatch(attribute)) {
-					// query by path
+				if (ContentModel.ASSOC_CONTAINS.isMatch(attribute) || BeCPGModel.PROP_LV_VALUE.isMatch(attribute) || BeCPGModel.PROP_LKV_VALUE.isMatch(attribute)) {
+					// query by path				
 					NodeRef folderNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(),
 							importContext.getPath());
+					
 					queryBuilder.parent(folderNodeRef);
 
-					if (BeCPGModel.PROP_LV_VALUE.isMatch(attribute)) {
+					if (BeCPGModel.PROP_LV_VALUE.isMatch(attribute) || BeCPGModel.PROP_LKV_VALUE.isMatch(attribute)) {
 						if (properties.get(attribute) != null && properties.get(attribute) instanceof MLText) {
-							queryBuilder.andPropEquals(BeCPGModel.PROP_LV_VALUE, ((MLText) properties.get(attribute)).getDefaultValue());
+							queryBuilder.andPropEquals(attribute, ((MLText) properties.get(attribute)).getDefaultValue());
 						} else if (properties.get(attribute) != null) {
-							queryBuilder.andPropEquals(BeCPGModel.PROP_LV_VALUE, properties.get(attribute).toString());
+							queryBuilder.andPropEquals(attribute, properties.get(attribute).toString());
 						}
 					}
 
