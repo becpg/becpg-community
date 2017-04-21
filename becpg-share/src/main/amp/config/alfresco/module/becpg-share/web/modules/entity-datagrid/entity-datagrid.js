@@ -79,8 +79,8 @@
         // Data Lists components events
         Bubbling.on("activeDataListChanged", this.onActiveDataListChanged, this);
         Bubbling.on("dataListDetailsUpdated", this.onDataListDetailsUpdated, this);
-
         Bubbling.on("refreshDataGrids", this.onDataGridRefresh, this);
+        Bubbling.on("versionChangeFilter", this.onChangeFilter, this);
 
         Bubbling.on(this.scopeId + "columnRenamed", this.onColumnRenamed, this);
 
@@ -89,7 +89,7 @@
         Bubbling.on(this.scopeId + "userAccess", this.onUserAccess, this);
         Bubbling.on(this.scopeId + "filterChanged", this.onFilterChanged, this);
         Bubbling.on(this.scopeId + "changeFilter", this.onChangeFilter, this);
-        Bubbling.on(this.scopeId + "versionChangeFilter", this.onChangeFilter, this);
+      
         Bubbling.on(this.scopeId + "dataItemCreated", this.onDataItemCreated, this);
         Bubbling.on(this.scopeId + "dataItemUpdated", this.onDataItemUpdated, this);
         Bubbling.on(this.scopeId + "dataItemsDeleted", this.onDataItemsDeleted, this);
@@ -1931,20 +1931,23 @@
                             }
                             
 
-                            if(this.options.floatingHeader){
-                            	
-	                          
-	                            	
-	                            	 YAHOO.Bubbling
+                            if(this.options.floatingHeader){	
+	                           YAHOO.Bubbling
 	                                 .on("refreshFloatingHeader", function(){
 	                                	 if(me.widgets.floatingHeader){
 	                                		 me.widgets.floatingHeader.floatThead('reflow');
 	                                	 }
 	                                 },this);
-	                            
-                            
+	                            	 
+	                           this.widgets.dataTable.subscribe("columnShowEvent", function(e)
+	                            {   
+	                        	   if(me.widgets.floatingHeader){
+	                                  me.widgets.floatingHeader.floatThead('reflow');
+	                               	}
+	                        	  
+	                            });
+	                           
                             }
-
 
                         },
 
