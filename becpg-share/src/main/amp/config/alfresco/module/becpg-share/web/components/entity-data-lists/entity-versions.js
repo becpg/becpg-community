@@ -244,7 +244,8 @@
 
                        var filterObj =
                        {
-                             filterId: "all"
+                             filterId: "all",
+                             datagridFirstTimeNav : true
                        };
          
                      if(this.latestVersion.nodeRef != newNodeRef){
@@ -252,7 +253,8 @@
                         {
                            filterOwner: "beCPG.component.EntityVersions",
                            filterId: "version",
-                           filterData : newNodeRef
+                           filterData : newNodeRef,
+                           datagridFirstTimeNav : true
                         };
                      }
                       
