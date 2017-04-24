@@ -175,8 +175,8 @@ public class Nutrient5CHelper {
 			cScore += score;
 		}
 
-		if ((aScore >= 11) && ((percFruitsAndVetgs != null) && (percFruitsAndVetgs <= 80d))
-				&& !NutrientCategory.Cheeses.equals(NutrientCategory.valueOf(category))) {
+		if (!((aScore >= 11) && ((percFruitsAndVetgs != null) && (percFruitsAndVetgs <= 80d))
+				&& !NutrientCategory.Cheeses.equals(NutrientCategory.valueOf(category)))) {
 			if (protein != null) {
 				score = 5;
 				for (double val : cCategories[2]) {
