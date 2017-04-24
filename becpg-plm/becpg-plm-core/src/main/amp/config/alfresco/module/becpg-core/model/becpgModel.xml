@@ -469,7 +469,7 @@
 				</list>
 			</parameter>
 		</constraint>
-		<constraint name="bcpg:dynamicCharactSynchronisableStates" type="LIST">
+		<constraint name="bcpg:synchronisableStates" type="LIST">
 			<parameter name="allowedValues">
 				<list>
 					<value>Template</value>
@@ -1516,6 +1516,13 @@
 					<mandatory enforced="true">true</mandatory>
 					<default>true</default>
 				</property>
+				<property name="bcpg:lrSyncState">
+					<type>d:text</type>
+					<default>Manual</default>
+					<constraints>
+						<constraint ref="bcpg:synchronisableStates" />
+					</constraints>
+				</property>
 			</properties>
 			<associations>
 				<association name="bcpg:lrComponents">
@@ -2156,7 +2163,7 @@
 					<type>d:text</type>
 					<default>Manual</default>
 					<constraints>
-						<constraint ref="bcpg:dynamicCharactSynchronisableStates" />
+						<constraint ref="bcpg:synchronisableStates" />
 					</constraints>
 				</property>
 				<property name="bcpg:dynamicCharactExecOrder">

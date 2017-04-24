@@ -41,7 +41,7 @@ public class LabelingRuleListPolicy extends AbstractBeCPGPolicy implements CopyS
 	}
 
 	public void doInit() {
-		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyNodePolicy.QNAME, PLMModel.TYPE_LABELING_RULE_LIST, new JavaBehaviour(this, "getCopyCallback"));
+		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyNodePolicy.QNAME, PLMModel.TYPE_LABELINGRULELIST, new JavaBehaviour(this, "getCopyCallback"));
 	}
 
 

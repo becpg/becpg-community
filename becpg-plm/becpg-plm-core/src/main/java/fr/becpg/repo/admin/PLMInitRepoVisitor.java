@@ -680,7 +680,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		// visit productSpecification
 		dataLists.clear();
 		dataLists.add(PLMModel.TYPE_FORBIDDENINGLIST);
-		dataLists.add(PLMModel.TYPE_LABELING_RULE_LIST);
+		dataLists.add(PLMModel.TYPE_LABELINGRULELIST);
 		entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, PLMModel.TYPE_PRODUCT_SPECIFICATION, null, true, true, dataLists, null);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 

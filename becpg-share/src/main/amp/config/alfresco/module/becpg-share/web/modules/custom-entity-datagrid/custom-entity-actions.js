@@ -418,6 +418,13 @@
 	    			              html+=     '</span>';
 	    			          }
         			    }
+        			    if(tree.geoOrigins){
+	    			         for(var i = 0; i < tree.geoOrigins.length ; i++){
+	    			              html+=     '&nbsp;<span class="geoOrigin">';
+	    			              html+= tree.geoOrigins[i];
+	    			              html+=     '</span>';
+	    			          }
+        			    }
 			        } else {
 			            html += '<span class="packagingMaterial">'; 
                         html +=  this.msg("label.labeling-details.tree.item",tree.legal, beCPG.util.sigFigs(tree.vol,4), beCPG.util.sigFigs(tree.qte,4), tree.decl);

@@ -30,10 +30,10 @@ import fr.becpg.repo.product.data.productList.SynchronisableState;
  * @author matthieu
  * 
  */
-public class DynCharactPatch extends AbstractBeCPGPatch {
+public class LabelingRulePatch extends AbstractBeCPGPatch {
 
-	private static final Log logger = LogFactory.getLog(DynCharactPatch.class);
-	private static final String MSG_SUCCESS = "patch.bcpg.plm.dynCharactPatch.result";
+	private static final Log logger = LogFactory.getLog(LabelingRulePatch.class);
+	private static final String MSG_SUCCESS = "patch.bcpg.plm.labelingRulePatch.result";
 
 	private NodeDAO nodeDAO;
 	private PatchDAO patchDAO;
@@ -56,9 +56,8 @@ public class DynCharactPatch extends AbstractBeCPGPatch {
 				final long maxNodeId = getPatchDAO().getMaxAdmNodeID();
 
 				long minSearchNodeId = 0;
-				long maxSearchNodeId = count;
 
-				final Pair<Long, QName> val = getQnameDAO().getQName(PLMModel.TYPE_DYNAMICCHARACTLIST);
+				final Pair<Long, QName> val = getQnameDAO().getQName(PLMModel.TYPE_LABELINGRULELIST);
 
 				public int getTotalEstimatedWorkSize() {
 					return result.size();
@@ -71,7 +70,7 @@ public class DynCharactPatch extends AbstractBeCPGPatch {
 						result.clear();
 
 						while (result.isEmpty() && minSearchNodeId < maxNodeId) {
-							List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, maxSearchNodeId);
+							List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, minSearchNodeId + count);
 
 							for (Long nodeid : nodeids) {
 								NodeRef.Status status = getNodeDAO().getNodeIdStatus(nodeid);
@@ -80,7 +79,6 @@ public class DynCharactPatch extends AbstractBeCPGPatch {
 								}
 							}
 							minSearchNodeId = minSearchNodeId + count;
-							maxSearchNodeId = maxSearchNodeId + count;
 						}
 					}
 
@@ -88,7 +86,7 @@ public class DynCharactPatch extends AbstractBeCPGPatch {
 				}
 			};
 
-			BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("DynCharactPatch",
+			BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("LabelingRulePatch",
 					transactionService.getRetryingTransactionHelper(), workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 1000);
 
 			BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
@@ -114,12 +112,17 @@ public class DynCharactPatch extends AbstractBeCPGPatch {
 						AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 						Boolean isManual = (Boolean) nodeService.getProperty(dataListNodeRef, BeCPGModel.PROP_IS_MANUAL_LISTITEM);
 						if (Boolean.TRUE.equals(isManual)) {
-							nodeService.setProperty(dataListNodeRef, PLMModel.PROP_DYNAMICCHARACT_SYNCHRONIZABLE_STATE,
+							nodeService.setProperty(dataListNodeRef, PLMModel.PROP_LABELINGRULELIST_SYNC_STATE,
 									SynchronisableState.Manual);
+							logger.info("Set sync state : "+SynchronisableState.Manual);
 						} else {
-							nodeService.setProperty(dataListNodeRef, PLMModel.PROP_DYNAMICCHARACT_SYNCHRONIZABLE_STATE,
-									SynchronisableState.Synchronized);
+							nodeService.setProperty(dataListNodeRef, PLMModel.PROP_LABELINGRULELIST_SYNC_STATE,
+									SynchronisableState.Template);
+							
+							logger.info("Set sync state : "+SynchronisableState.Template);
 						}
+						
+						
 						nodeService.removeAspect(dataListNodeRef, BeCPGModel.ASPECT_IS_MANUAL_LISTITEM);
 
 					} else {

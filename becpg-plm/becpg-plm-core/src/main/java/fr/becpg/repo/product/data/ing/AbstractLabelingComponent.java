@@ -46,6 +46,8 @@ public abstract class AbstractLabelingComponent extends BeCPGDataObject implemen
 	
 	private Set<NodeRef> allergens = new HashSet<NodeRef>();
 	
+	private Set<NodeRef> geoOrigins = new HashSet<NodeRef>();
+	
 	public AbstractLabelingComponent() {
 		super();
 	}
@@ -58,6 +60,7 @@ public abstract class AbstractLabelingComponent extends BeCPGDataObject implemen
 	    this.volume = abstractLabelingComponent.volume;
 	    this.legalName = abstractLabelingComponent.legalName;
 	    this.allergens = abstractLabelingComponent.allergens;
+	    this.geoOrigins = abstractLabelingComponent.geoOrigins;
 	    this.isPlural = abstractLabelingComponent.isPlural;
 	}
 
@@ -144,6 +147,15 @@ public abstract class AbstractLabelingComponent extends BeCPGDataObject implemen
 		this.allergens = allergens;
 	}
 
+	@Override
+	public Set<NodeRef> getGeoOrigins() {
+		return geoOrigins;
+	}
+
+	public void setGeoOrigins(Set<NodeRef> geoOrigins) {
+		this.geoOrigins = geoOrigins;
+	}
+
 	public abstract AbstractLabelingComponent clone();
 	
 
@@ -152,6 +164,7 @@ public abstract class AbstractLabelingComponent extends BeCPGDataObject implemen
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + ((allergens == null) ? 0 : allergens.hashCode());
+		result = prime * result + ((geoOrigins == null) ? 0 : geoOrigins.hashCode());
 		result = prime * result + ((legalName == null) ? 0 : legalName.hashCode());
 		result = prime * result + ((pluralLegalName == null) ? 0 : pluralLegalName.hashCode());
 		result = prime * result + ((qty == null) ? 0 : qty.hashCode());
@@ -172,6 +185,11 @@ public abstract class AbstractLabelingComponent extends BeCPGDataObject implemen
 			if (other.allergens != null)
 				return false;
 		} else if (!allergens.equals(other.allergens))
+			return false;
+		if (geoOrigins == null) {
+			if (other.geoOrigins != null)
+				return false;
+		} else if (!geoOrigins.equals(other.geoOrigins))
 			return false;
 		if (legalName == null) {
 			if (other.legalName != null)

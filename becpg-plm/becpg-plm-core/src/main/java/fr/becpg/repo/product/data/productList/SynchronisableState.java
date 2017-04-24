@@ -1,5 +1,5 @@
 package fr.becpg.repo.product.data.productList;
 
-public enum DynamicCharactSynchronisableState {
+public enum SynchronisableState {
 	Template,Manual,Synchronized
 }

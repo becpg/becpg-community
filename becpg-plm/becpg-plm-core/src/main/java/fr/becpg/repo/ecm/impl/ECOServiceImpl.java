@@ -791,7 +791,7 @@ public class ECOServiceImpl implements ECOService {
 					}
 				}
 			}
-		} else if (charactType.equals(PLMModel.TYPE_LABELING_RULE_LIST)) {
+		} else if (charactType.equals(PLMModel.TYPE_LABELINGRULELIST)) {
 			for (IngLabelingListDataItem labelingListItem : productData.getLabelingListView().getIngLabelingList()) {
 				if (charactNodeRef.equals(labelingListItem.getGrp())) {
 					return MLTextHelper.getClosestValue(labelingListItem.getValue(), Locale.getDefault());

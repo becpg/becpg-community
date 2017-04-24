@@ -107,9 +107,10 @@ public interface PLMModel {
 	QName TYPE_INGLABELINGLIST = QName.createQName(BeCPGModel.BECPG_URI, "ingLabelingList");
 
 	// labelingRuleList
-	QName TYPE_LABELING_RULE_LIST = QName.createQName(BeCPGModel.BECPG_URI, "labelingRuleList");
-	QName PROP_LABELING_RULE_LABEL = QName.createQName(BeCPGModel.BECPG_URI, "lrLabel");
-	QName PROP_LABELING_RULE_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "lrType");
+	QName TYPE_LABELINGRULELIST = QName.createQName(BeCPGModel.BECPG_URI, "labelingRuleList");
+	QName PROP_LABELINGRULELIST_LABEL = QName.createQName(BeCPGModel.BECPG_URI, "lrLabel");
+	QName PROP_LABELINGRULELIST_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "lrType");
+	QName PROP_LABELINGRULELIST_SYNC_STATE = QName.createQName(BeCPGModel.BECPG_URI, "lrSyncState");
 
 	QName ASSOC_ILL_GRP = QName.createQName(BeCPGModel.BECPG_URI, "illGrp");
 	QName PROP_ILL_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "illValue");
