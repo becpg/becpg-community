@@ -794,8 +794,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 						for (CompoListDataItem subDataItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 							loadCompoListItem(dataItem, subDataItem, compoListElt, defaultVariantNodeRef, level + 1,
-									(productData.getRecipeQtyUsed() != null) && (productData.getRecipeQtyUsed() != 0d) && (subDataItem.getQty() != null)
-											? (compoListQty * subDataItem.getQty()) / productData.getRecipeQtyUsed() : 0d,
+									(FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT) != 0) && (subDataItem.getQty() != null)
+											? (compoListQty * subDataItem.getQty()) / FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT) : 0d,
 									images);
 						}
 					}
