@@ -29,12 +29,14 @@ import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
-import fr.becpg.repo.repository.model.AbstractManualDataItem;
+import fr.becpg.repo.repository.annotation.InternalField;
+import fr.becpg.repo.repository.model.BeCPGDataObject;
+import fr.becpg.repo.repository.model.ManualDataItem;
 import fr.becpg.repo.repository.model.Synchronisable;
 
 @AlfType
 @AlfQname(qname = "bcpg:labelingRuleList")
-public class LabelingRuleListDataItem extends AbstractManualDataItem implements Synchronisable {
+public class LabelingRuleListDataItem extends BeCPGDataObject implements Synchronisable, ManualDataItem {
 	
 	/**
 	 * 
@@ -51,6 +53,11 @@ public class LabelingRuleListDataItem extends AbstractManualDataItem implements 
 	private Boolean isActive = true;
 	private String group;
 	private List<String> locales;
+	private SynchronisableState synchronisableState = SynchronisableState.Synchronized;
+
+	
+
+	
 
 	@AlfProp
 	@AlfQname(qname="bcpg:lrGroup")
@@ -136,7 +143,41 @@ public class LabelingRuleListDataItem extends AbstractManualDataItem implements 
 	}
 
 	
+	@AlfProp
+	@InternalField
+	@AlfQname(qname = "bcpg:lrSyncState")
+	public SynchronisableState getSynchronisableState() {
+		return synchronisableState;
+	}
 
+	public void setSynchronisableState(SynchronisableState synchronisableState) {
+		this.synchronisableState = synchronisableState;
+	}
+	
+
+	
+	@Override
+	public boolean isSynchronisable() {
+		return !SynchronisableState.Template.equals(synchronisableState);
+	}
+
+
+	@Override
+	@InternalField
+	public Boolean getIsManual() {
+		return SynchronisableState.Manual.equals(synchronisableState);
+	}
+
+	@Override
+	public void setIsManual(Boolean isManual) {
+		if(Boolean.TRUE.equals(isManual)){
+			this.synchronisableState = SynchronisableState.Manual;
+		} else {
+			this.synchronisableState = SynchronisableState.Synchronized;
+		}
+		
+	}
+	
 	public LabelingRuleListDataItem() {
 		super();
 	}
@@ -170,6 +211,16 @@ public class LabelingRuleListDataItem extends AbstractManualDataItem implements 
 		this.components = components;
 		this.replacements = replacements;
 	}
+	
+
+	public void update(LabelingRuleListDataItem target) {
+		this.formula = target.formula;
+		this.label = target.label;
+		this.labelingRuleType = target.labelingRuleType;
+		this.components = target.components;
+		this.replacements = target.replacements;
+		this.locales = target.locales;
+	}
 
 	@Override
 	public int hashCode() {
@@ -181,7 +232,9 @@ public class LabelingRuleListDataItem extends AbstractManualDataItem implements 
 		result = prime * result + ((isActive == null) ? 0 : isActive.hashCode());
 		result = prime * result + ((label == null) ? 0 : label.hashCode());
 		result = prime * result + ((labelingRuleType == null) ? 0 : labelingRuleType.hashCode());
+		result = prime * result + ((locales == null) ? 0 : locales.hashCode());
 		result = prime * result + ((replacements == null) ? 0 : replacements.hashCode());
+		result = prime * result + ((synchronisableState == null) ? 0 : synchronisableState.hashCode());
 		return result;
 	}
 
@@ -221,24 +274,28 @@ public class LabelingRuleListDataItem extends AbstractManualDataItem implements 
 			return false;
 		if (labelingRuleType != other.labelingRuleType)
 			return false;
+		if (locales == null) {
+			if (other.locales != null)
+				return false;
+		} else if (!locales.equals(other.locales))
+			return false;
 		if (replacements == null) {
 			if (other.replacements != null)
 				return false;
 		} else if (!replacements.equals(other.replacements))
+			return false;
+		if (synchronisableState != other.synchronisableState)
 			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "LabelingRuleListDataItem [formula=" + formula + ", label=" + label + ", labelingRuleType=" + labelingRuleType + ", components=" + components + ", replacements="
-				+ replacements + "]";
+		return "LabelingRuleListDataItem [formula=" + formula + ", label=" + label + ", labelingRuleType=" + labelingRuleType + ", components="
+				+ components + ", replacements=" + replacements + ", isActive=" + isActive + ", group=" + group + ", locales=" + locales
+				+ ", synchronisableState=" + synchronisableState + "]";
 	}
 
-	@Override
-	public boolean isSynchronisable() {
-		return Boolean.TRUE.equals(getIsManual());
-	}
 
 
 	

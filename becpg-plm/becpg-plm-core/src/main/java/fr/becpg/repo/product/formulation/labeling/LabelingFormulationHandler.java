@@ -459,7 +459,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			
 			
 			prev.getAllergens().addAll(component.getAllergens());
-			
+			prev.getGeoOrigins().addAll(component.getGeoOrigins());
 		}
 	}
 
@@ -503,6 +503,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						}
 
 						toMerged.getAllergens().addAll(subComponent.getAllergens());
+						toMerged.getGeoOrigins().addAll(subComponent.getGeoOrigins());
+						
 
 						// TODO else add warning
 					}
@@ -586,9 +588,13 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					for (LabelingRuleListDataItem labelingRuleListDataItem : formulatedProduct.getLabelingListView().getLabelingRuleList()) {
 						if (labelingRuleListDataItem.getName().equals(modelLabelingRuleListDataItem.getName())) {
 							contains = true;
+							if ((labelingRuleListDataItem.getIsManual() == null) || !labelingRuleListDataItem.getIsManual()) {
+								labelingRuleListDataItem.update(modelLabelingRuleListDataItem);
+							}
 							break;
 						}
 					}
+					
 					if (!contains) {
 						modelLabelingRuleListDataItem.setNodeRef(null);
 						modelLabelingRuleListDataItem.setParentNodeRef(null);
@@ -631,6 +637,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 									Double qty = component.getQty();
 									Double volume = component.getVolume();
 									Set<NodeRef> allergens = component.getAllergens();
+									Set<NodeRef> geoOrigins = component.getGeoOrigins();
 
 									boolean is100Perc = (aggregateRule.getQty() == null) || (aggregateRule.getQty() == 100d);
 									// Add ing to group
@@ -689,6 +696,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 											}
 
 											current.getAllergens().addAll(allergens);
+											current.getGeoOrigins().addAll(geoOrigins);
 
 										}
 
@@ -740,11 +748,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 												}
 
 												error = appendToAggregate(childComponent, compositeLabeling, aggregateRule, subQty, subVolume,
-														childComponent.getAllergens());
+														childComponent.getAllergens(), childComponent.getGeoOrigins());
 											}
 
 										} else {
-											error = appendToAggregate(component, compositeLabeling, aggregateRule, qty, volume, allergens);
+											error = appendToAggregate(component, compositeLabeling, aggregateRule, qty, volume, allergens, geoOrigins);
 										}
 
 										if (error != null) {
@@ -792,7 +800,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	}
 
 	private ReqCtrlListDataItem appendToAggregate(AbstractLabelingComponent component, CompositeLabeling compositeLabeling,
-			AggregateRule aggregateRule, Double qty, Double volume, Set<NodeRef> allergens) {
+			AggregateRule aggregateRule, Double qty, Double volume, Set<NodeRef> allergens, Set<NodeRef> geoOrigins) {
 		AbstractLabelingComponent current = compositeLabeling.getIngList().get(component.getNodeRef());
 		boolean is100Perc = (aggregateRule.getQty() == null) || (aggregateRule.getQty() == 100d);
 
@@ -841,6 +849,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				}
 
 				current.getAllergens().addAll(allergens);
+				current.getGeoOrigins().addAll(geoOrigins);
 
 			}
 
@@ -1076,7 +1085,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				if (parent == null) {
 					parent = new CompositeLabeling(productData);
 
-					fillAllergens(parent, productData);
+					fillAllergensAndGeos(parent, productData);
 
 					parent.setQty(qty);
 					parent.setVolume(volume);
@@ -1155,7 +1164,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						} else {
 							compositeLabeling = new CompositeLabeling(productData);
 
-							fillAllergens(compositeLabeling, productData);
+							fillAllergensAndGeos(compositeLabeling, productData);
 
 							compositeLabeling.setQty(qty);
 							compositeLabeling.setVolume(volume);
@@ -1261,13 +1270,19 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		return parent;
 	}
 
-	private void fillAllergens(CompositeLabeling compositeLabeling, ProductData productData) {
+	private void fillAllergensAndGeos(CompositeLabeling compositeLabeling, ProductData productData) {
 		for (AllergenListDataItem allergenListDataItem : productData.getAllergenList()) {
 
 			if (allergenListDataItem.getVoluntary()) {
 				if (AllergenType.Major.toString().equals(nodeService.getProperty(allergenListDataItem.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE))) {
 					compositeLabeling.getAllergens().add(allergenListDataItem.getAllergen());
 				}
+			}
+		}
+		
+		if (productData instanceof RawMaterialData){
+			if(((RawMaterialData)productData).getGeoOrigins()!=null){
+				compositeLabeling.getGeoOrigins().addAll(((RawMaterialData)productData).getGeoOrigins());
 			}
 		}
 
@@ -1476,6 +1491,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							}
 							
 
+							if(subIngListItem.getData().getGeoOrigin()!=null){
+								subIngItem.getGeoOrigins().addAll(subIngListItem.getData().getGeoOrigin());	
+							}
+							
+							
 							if (ingLabelItem.getSubIngs().stream()
 									.filter(i -> (labelingFormulaContext.getLegalIngName(i) != null)
 											&& labelingFormulaContext.getLegalIngName(i).equals(labelingFormulaContext.getLegalIngName(subIngItem)))
@@ -1520,6 +1540,18 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						}
 					}
 				}
+				
+				
+				if(ingListItem.getData().getGeoOrigin()!=null){
+					ingLabelItem.getGeoOrigins().addAll(ingListItem.getData().getGeoOrigin());	
+				}
+				
+				if (product instanceof RawMaterialData){
+					if(((RawMaterialData)product).getGeoOrigins()!=null){
+						ingLabelItem.getGeoOrigins().addAll(((RawMaterialData)product).getGeoOrigins());
+					}
+				}
+				
 
 				Double qtyPerc = ingListItem.getData().getQtyPerc();
 

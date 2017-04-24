@@ -50,7 +50,7 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 	
 	private String color;
 	
-	private DynamicCharactSynchronisableState synchronisableState = DynamicCharactSynchronisableState.Synchronized;
+	private SynchronisableState synchronisableState = SynchronisableState.Synchronized;
 
 	private DynamicCharactExecOrder execOrder = DynamicCharactExecOrder.Post;
 	
@@ -137,11 +137,11 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 	@AlfProp
 	@InternalField
 	@AlfQname(qname = "bcpg:dynamicCharactSynchronisableState")
-	public DynamicCharactSynchronisableState getSynchronisableState() {
+	public SynchronisableState getSynchronisableState() {
 		return synchronisableState;
 	}
 
-	public void setSynchronisableState(DynamicCharactSynchronisableState synchronisableState) {
+	public void setSynchronisableState(SynchronisableState synchronisableState) {
 		this.synchronisableState = synchronisableState;
 	}
 
@@ -175,7 +175,7 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 
 	@Override
 	public boolean isSynchronisable() {
-		return !DynamicCharactSynchronisableState.Template.equals(synchronisableState);
+		return !SynchronisableState.Template.equals(synchronisableState);
 	}
 
 	
@@ -183,15 +183,15 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 	@Override
 	@InternalField
 	public Boolean getIsManual() {
-		return DynamicCharactSynchronisableState.Manual.equals(synchronisableState);
+		return SynchronisableState.Manual.equals(synchronisableState);
 	}
 
 	@Override
 	public void setIsManual(Boolean isManual) {
 		if(Boolean.TRUE.equals(isManual)){
-			this.synchronisableState = DynamicCharactSynchronisableState.Manual;
+			this.synchronisableState = SynchronisableState.Manual;
 		} else {
-			this.synchronisableState = DynamicCharactSynchronisableState.Synchronized;
+			this.synchronisableState = SynchronisableState.Synchronized;
 		}
 		
 	}

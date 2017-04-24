@@ -845,10 +845,11 @@ public class LabelingFormulaContext {
 				String ingTypeLegalName = getLegalIngName(kv.getKey(),
 						((kv.getValue().size() > 1) || (!kv.getValue().isEmpty() && kv.getValue().get(0).isPlural())));
 				String allergenAwareLegalName = createAllergenAwareLabel(ingTypeLegalName, kv.getValue());
+				String geoOriginsLabel = createGeoOriginsLabel(kv.getValue());
 
 				toAppend.append(getIngTextFormat(kv.getKey())
 						.format(new Object[] { ingTypeLegalName, (useVolume ? kv.getKey().getVolume() : kv.getKey().getQty()),
-								renderLabelingComponent(compositeLabeling, kv.getValue(), ingTypeDefaultSeparator, ratio), allergenAwareLegalName }));
+								renderLabelingComponent(compositeLabeling, kv.getValue(), ingTypeDefaultSeparator, ratio), allergenAwareLegalName, geoOriginsLabel }));
 
 			} else {
 				toAppend.append(renderLabelingComponent(compositeLabeling, kv.getValue(), defaultSeparator, ratio));
@@ -876,6 +877,8 @@ public class LabelingFormulaContext {
 		return cleanLabel(ret);
 	}
 
+	
+
 	private StringBuilder renderLabelingComponent(CompositeLabeling parent, List<AbstractLabelingComponent> subComponents, String separator,
 			Double ratio) {
 
@@ -888,6 +891,7 @@ public class LabelingFormulaContext {
 			Double volumePerc = computeVolumePerc(parent, component, ratio);
 
 			String ingName = getLegalIngName(component, false);
+			String geoOriginsLabel = createGeoOriginsLabel(component.getGeoOrigins());
 
 			if (logger.isDebugEnabled()) {
 
@@ -911,17 +915,19 @@ public class LabelingFormulaContext {
 							subIngBuff.append(subIngsSeparator);
 						}
 						Double subIngQtyPerc = (useVolume ? subIngItem.getVolume() : subIngItem.getQty());
+						
+						String subIngGeoOriginsLabel = createGeoOriginsLabel(subIngItem.getGeoOrigins());
 
 						if (!shouldSkip(subIngItem.getNodeRef(), subIngQtyPerc)) {
 
 							subIngBuff.append(
-									getIngTextFormat(subIngItem).format(new Object[] { getLegalIngName(subIngItem, false), subIngQtyPerc, null }));
+									getIngTextFormat(subIngItem).format(new Object[] { getLegalIngName(subIngItem, false), subIngQtyPerc, null, subIngGeoOriginsLabel }));
 						} else {
 							logger.debug("Removing subIng with qty of 0: " + subIngItem);
 						}
 					}
 
-					toAppend = getIngTextFormat(component).format(new Object[] { ingName, qtyPerc, subIngBuff.toString() });
+					toAppend = getIngTextFormat(component).format(new Object[] { ingName, qtyPerc, subIngBuff.toString(), geoOriginsLabel });
 
 				} else if (component instanceof CompositeLabeling) {
 
@@ -962,6 +968,47 @@ public class LabelingFormulaContext {
 		}
 
 		return ret;
+	}
+	
+	
+	private String createGeoOriginsLabel(List<AbstractLabelingComponent> components) {
+		if(components!=null && !components.isEmpty()){
+			StringBuilder geoOriginsBuffer = new StringBuilder();
+			for (AbstractLabelingComponent component : components) {
+				String tmp = createGeoOriginsLabel(component.getGeoOrigins());
+				if(tmp!=null){
+					if (geoOriginsBuffer.length() > 0) {
+						geoOriginsBuffer.append(defaultSeparator);
+					}
+					geoOriginsBuffer.append(tmp);
+				}
+			}
+			return geoOriginsBuffer.toString();
+		}
+		
+		
+		return null;
+	}
+	
+
+	private String createGeoOriginsLabel(Set<NodeRef> geoOrigins) {
+		if(geoOrigins!=null && !geoOrigins.isEmpty()){
+			StringBuilder geoOriginsBuffer = new StringBuilder();
+			for (NodeRef geoOrigin : geoOrigins) {
+				if (geoOriginsBuffer.length() > 0) {
+					geoOriginsBuffer.append(defaultSeparator);
+				}
+				geoOriginsBuffer.append(getGeoOriginName(geoOrigin));
+			}
+			return geoOriginsBuffer.toString();
+		}
+		
+		return null;
+	}
+	
+
+	private String getGeoOriginName(NodeRef geoOrigin) {
+		return MLTextHelper.getClosestValue((MLText) mlNodeService.getProperty(geoOrigin, BeCPGModel.PROP_CHARACT_NAME), I18NUtil.getLocale());
 	}
 
 	private boolean shouldSkip(NodeRef nodeRef, Double qtyPerc) {
@@ -1012,6 +1059,16 @@ public class LabelingFormulaContext {
 				}
 				tree.put("allergens", allergens);
 			}
+			
+			if (!component.getGeoOrigins().isEmpty()
+					&& (!(component instanceof CompositeLabeling) || ((CompositeLabeling) component).getIngList().isEmpty())) {
+				JSONArray geoOrigins = new JSONArray();
+				for (NodeRef geoOrigin : component.getGeoOrigins()) {
+					geoOrigins.add(getGeoOriginName(geoOrigin));
+				}
+				tree.put("geoOrigins", geoOrigins);
+			}
+			
 
 			if (component instanceof CompositeLabeling) {
 				CompositeLabeling composite = (CompositeLabeling) component;
@@ -1067,6 +1124,7 @@ public class LabelingFormulaContext {
 
 		return tree;
 	}
+
 
 	private String cleanLabel(StringBuffer buffer) {
 		return buffer.toString().replaceAll(" null| \\(null\\)| \\(\\)", "").trim();

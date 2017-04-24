@@ -41,8 +41,8 @@ public class CalculatedCharactsValuePlugin extends EntityListValuePlugin {
 					    .ftsLanguage()
 						.maxResults(RepoConsts.MAX_SUGGESTIONS).list());
 					
-					ret.addAll(BeCPGQueryBuilder.createQuery().ofType(PLMModel.TYPE_LABELING_RULE_LIST).andPropQuery(PLMModel.PROP_LABELING_RULE_LABEL, prepareQuery(query))
-						    .andPropEquals(PLMModel.PROP_LABELING_RULE_TYPE, LabelingRuleType.Render.toString())
+					ret.addAll(BeCPGQueryBuilder.createQuery().ofType(PLMModel.TYPE_LABELINGRULELIST).andPropQuery(PLMModel.PROP_LABELINGRULELIST_LABEL, prepareQuery(query))
+						    .andPropEquals(PLMModel.PROP_LABELINGRULELIST_TYPE, LabelingRuleType.Render.toString())
 						    .inPath(nodeService.getPath(tplNodeRef).toPrefixString(namespaceService) + "/*/*")
 						    .ftsLanguage()
 							.maxResults(RepoConsts.MAX_SUGGESTIONS).list());

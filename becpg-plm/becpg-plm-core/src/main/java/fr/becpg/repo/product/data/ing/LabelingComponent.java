@@ -20,5 +20,7 @@ public interface LabelingComponent extends RepositoryEntity {
 	Double getVolume();
 	
 	Set<NodeRef> getAllergens();
+	
+	Set<NodeRef> getGeoOrigins();
 
 }
