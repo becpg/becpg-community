@@ -242,15 +242,21 @@
                      } else {
                     	 
                     	 var unit = "kg";
+                    	 var declType = "Declare";
                     	 if (typeof (Storage) !== "undefined" && localStorage && localStorage.getItem('prop_bcpg_compoListUnit') != null) {
        					   unit = localStorage.getItem('prop_bcpg_compoListUnit');
-       					}
+       					 }
+                    	 
+                    	 if (typeof (Storage) !== "undefined" && localStorage && localStorage.getItem('prop_bcpg_compoListDeclType') != null) {
+                    		declType = localStorage.getItem('prop_bcpg_compoListDeclType');
+         				 }
                     	 
                         dataObj = {
                               "alf_destination" : instance.options.dataListNodeRef,
                               "assoc_bcpg_compoListProduct_added" : nodeRef,
                               "prop_bcpg_compoListUnit" : unit,
-                              "prop_bcpg_compoListQtySubFormula" : "0"
+                              "prop_bcpg_compoListQtySubFormula" : "0",
+                              "prop_bcpg_compoListDeclType" : declType
                            };
                      }
                      
