@@ -70,7 +70,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	protected static final List<QName> DATALIST_SPECIFIC_EXTRACTOR = Arrays.asList(PLMModel.TYPE_COMPOLIST, PLMModel.TYPE_PACKAGINGLIST,
 			MPMModel.TYPE_PROCESSLIST, PLMModel.TYPE_MICROBIOLIST, PLMModel.TYPE_INGLABELINGLIST, PLMModel.TYPE_NUTLIST, PLMModel.TYPE_ORGANOLIST,
-			PLMModel.TYPE_INGLIST, PLMModel.TYPE_FORBIDDENINGLIST, PLMModel.TYPE_LABELING_RULE_LIST);
+			PLMModel.TYPE_INGLIST, PLMModel.TYPE_FORBIDDENINGLIST, PLMModel.TYPE_LABELING_RULE_LIST,  PLMModel.TYPE_REQCTRLLIST);
 
 	private static final Log logger = LogFactory.getLog(ProductReportExtractorPlugin.class);
 
@@ -778,9 +778,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			}
 			
 			
-			
+			Element dataListsElt  = null;
 			if(componentDatalistsToExtract!=null && !componentDatalistsToExtract.isEmpty()){
-				Element dataListsElt  = partElt.addElement(TAG_DATALISTS);
+				 dataListsElt  = partElt.addElement(TAG_DATALISTS);
 				loadDataLists(dataItem.getProduct(), dataListsElt, images, false);
 			}
 
@@ -792,12 +792,17 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					ProductData productData = alfrescoRepository.findOne(dataItem.getProduct());
 					
 					if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+						if(dataListsElt!=null){
+							loadDynamicCharactList(productData.getCompoListView().getDynamicCharactList(), dataListsElt);
+						}
+						
 						for (CompoListDataItem subDataItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 							loadCompoListItem(dataItem, subDataItem, compoListElt, defaultVariantNodeRef, level + 1,
 									(FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT) != 0) && (subDataItem.getQty() != null)
 											? (compoListQty * subDataItem.getQty()) / FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT) : 0d,
 									images);
 						}
+					
 					}
 				}
 			}
