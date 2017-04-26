@@ -940,6 +940,12 @@ public class FormulationTest extends AbstractFinishedProductTest {
 					NutListDataItem nutListDataItem = new NutListDataItem();
 					nutListDataItem.setNut(nut5);
 					nutListDataItem.setIsManual(false);
+					
+					
+					//One nut added by the template and the synchronize
+					productService.formulate(rmData1);
+					assertEquals("check nutList", 5, rmData1.getNutList().size());
+					
 					rmData1.getNutList().add(nutListDataItem);
 					
 					assertNotNull("check allergenList", rmData1.getAllergenList());
@@ -952,7 +958,8 @@ public class FormulationTest extends AbstractFinishedProductTest {
 					productService.formulate(rmData1);
 					
 					assertNotNull("check costList", rmData1.getCostList());
-					assertEquals("check costList", 2, rmData1.getCostList().size());
+					//one cost added from template
+					assertEquals("check costList", 3, rmData1.getCostList().size());
 					assertNotNull("check nutList", rmData1.getNutList());
 					
 					int assertCount =0;
@@ -967,7 +974,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 						}
 					}
 					assertEquals( 2, assertCount);
-					assertEquals("check nutList", 5, rmData1.getNutList().size());
+					assertEquals("check nutList", 6, rmData1.getNutList().size());
 					assertNotNull("check allergenList", rmData1.getAllergenList());
 					assertEquals("check allergenList", 4, rmData1.getAllergenList().size());
 					assertNotNull("check ingList", rmData1.getIngList());

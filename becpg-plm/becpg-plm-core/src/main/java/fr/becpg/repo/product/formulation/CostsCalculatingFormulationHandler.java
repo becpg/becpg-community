@@ -94,15 +94,17 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			if (formulatedProduct.getDefaultVariantPackagingData() == null) {
 				formulatedProduct.setDefaultVariantPackagingData(packagingHelper.getDefaultVariantPackagingData(formulatedProduct));
 			}
-
-			if (formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))
+			
+			boolean hasCompoEl = formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))
 					|| formulatedProduct.hasPackagingListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))
-					|| formulatedProduct.hasProcessListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-
-				formulateSimpleList(formulatedProduct, formulatedProduct.getCostList());
-
+					|| formulatedProduct.hasProcessListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE));
+				
+			formulateSimpleList(formulatedProduct, formulatedProduct.getCostList(), hasCompoEl);
+				
 				// simulation: take in account cost of components defined on
 				// formulated product
+			
+			if(hasCompoEl){
 				calculateSimulationCosts(formulatedProduct);
 			}
 
