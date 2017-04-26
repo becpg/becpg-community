@@ -72,14 +72,16 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 			}
 
 			boolean hasCompo = formulatedProduct.hasCompoListEl(new VariantFilters<>());
+			
+			cleanSimpleList(formulatedProduct.getNutList(), hasCompo || formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL));
+			
+			synchronizeTemplate(formulatedProduct, formulatedProduct.getNutList());
+			
 
 			if (hasCompo) {
 
-				cleanSimpleList(formulatedProduct.getNutList());
 
 				if (!propagateModeEnable) {
-
-					synchronizeTemplate(formulatedProduct, formulatedProduct.getNutList());
 
 					visitChildren(formulatedProduct, formulatedProduct.getNutList());
 
@@ -193,10 +195,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 				checkRequirementsOfFormulatedProduct(formulatedProduct);
 
 			}
-		} else if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) && (formulatedProduct.getNutList() != null)) {
-			cleanSimpleList(formulatedProduct.getNutList());
-
-		}
+		} 
 		return true;
 	}
 
