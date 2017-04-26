@@ -46,11 +46,9 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 				formulatedProduct.setPhysicoChemList(new LinkedList<PhysicoChemListDataItem>());
 			}
 
-			// has compo
-			if (formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-				formulateSimpleList(formulatedProduct, formulatedProduct.getPhysicoChemList());
-			}
-
+			formulateSimpleList(formulatedProduct, formulatedProduct.getPhysicoChemList(),
+					formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)));
+	
 			computeFormulatedList(formulatedProduct, formulatedProduct.getPhysicoChemList(), PLMModel.PROP_PHYSICO_CHEM_FORMULA,
 					"message.formulate.physicoChemList.error");
 

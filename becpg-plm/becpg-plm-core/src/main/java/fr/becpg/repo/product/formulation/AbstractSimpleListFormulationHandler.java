@@ -125,20 +125,22 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		return mandatoryCharacts;
 	}
 
-	protected void formulateSimpleList(ProductData formulatedProduct, List<T> simpleListDataList) throws FormulateException {
+	protected void formulateSimpleList(ProductData formulatedProduct, List<T> simpleListDataList, boolean isFormulatedProduct) throws FormulateException {
 		logger.debug("formulateSimpleList");
 
-		cleanSimpleList(simpleListDataList);
-
+		cleanSimpleList(simpleListDataList, isFormulatedProduct);
+		
 		synchronizeTemplate(formulatedProduct, simpleListDataList);
 
-		visitChildren(formulatedProduct, simpleListDataList);
+		if(isFormulatedProduct){
+			visitChildren(formulatedProduct, simpleListDataList);
+		}
 
 	}
 
-	protected void cleanSimpleList(List<T> simpleListDataList) {
+	protected void cleanSimpleList(List<T> simpleListDataList, boolean isFormulatedProduct) {
 
-		if (simpleListDataList != null) {
+		if (simpleListDataList != null  && isFormulatedProduct) {
 			simpleListDataList.forEach(sl -> {
 				// reset value if formulated
 				if (isCharactFormulated(sl)) {
@@ -491,7 +493,6 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	 */
 	@SuppressWarnings("unchecked")
 	protected void synchronizeTemplate(ProductData formulatedProduct, List<T> simpleListDataList) {
-
 		if ((formulatedProduct.getEntityTpl() != null) && !formulatedProduct.getEntityTpl().equals(formulatedProduct)) {
 
 			List<T> templateSimpleListDataList = getDataListVisited(formulatedProduct.getEntityTpl());
