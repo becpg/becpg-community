@@ -229,8 +229,8 @@ YAHOO.Bubbling
                         
                         
 
-                        if (Dom.hasClass("alf-hd", "hidden")) {
-                           Dom.removeClass("alf-hd", "hidden");
+                        if (Dom.hasClass("share-header", "hidden")) {
+                           Dom.removeClass("share-header", "hidden");
                            Dom.removeClass("alf-filters", "hidden");
                            Dom.removeClass("alf-ft", "hidden");
                            Dom.removeClass("Share", "full-screen");
@@ -243,7 +243,7 @@ YAHOO.Bubbling
                            
                            YAHOO.Bubbling.fire("refreshFloatingHeader");
                         } else {
-                           Dom.addClass("alf-hd", "hidden");
+                           Dom.addClass("share-header", "hidden");
                            Dom.addClass("alf-ft", "hidden");
                            Dom.addClass("Share", "full-screen");
                            Dom.addClass("alf-ft", "hidden");
