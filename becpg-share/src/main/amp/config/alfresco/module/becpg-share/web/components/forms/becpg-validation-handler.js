@@ -113,11 +113,30 @@
 		   	for(var i in args){
 		   		var propName = form.formId.substring(0,form.formId.length-5)+"_"+args[i].prop;
 		   		var inputEl =  YAHOO.util.Dom.get(propName);
+		   			while(inputEl!=null){
+		   				inputEl = inputEl.parentNode;
+		   				if(YAHOO.util.Dom.hasClass(inputEl,"form-field")){
+		   					break;
+		   				}
+		   			}
 		   		if(inputEl!=null){
-			   		if(args[i].condition == field.value){
-			   			YAHOO.util.Dom.addClass(inputEl.parentNode,"hidden");
+		   			
+		   			var  match = (args[i].condition == field.value);
+		   			
+		   			if(args[i].condition.indexOf("|")>0){
+		   				var conds = args[i].condition.split("|");
+		   				for(var j in conds){
+		   					if(conds[j] == field.value){
+		   						match = true;
+		   						break;
+		   					}
+		   				}
+		   			}
+		   			
+			   		if(match){
+			   			YAHOO.util.Dom.addClass(inputEl,"hidden");
 				   	} else {
-				   		YAHOO.util.Dom.removeClass(inputEl.parentNode,"hidden");
+				   		YAHOO.util.Dom.removeClass(inputEl,"hidden");
 				   	}
 		   		} 
 		   	} 	

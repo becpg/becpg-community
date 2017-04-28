@@ -7184,23 +7184,11 @@
 				<appearance>
 					<field id="bcpg:lrType">
 						<constraint-handlers>
-							 <constraint type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf" event='keyup,change|[
-		                  		{"prop":"prop_bcpg_lrLabel", "condition" : "Format"},
-		                  		{"prop":"prop_bcpg_lrLabel", "condition" : "Render"},
-		                  		{"prop":"prop_bcpg_lrLabel", "condition" : "DetailComponents"},
-		                  		{"prop":"prop_bcpg_lrLabel", "condition" : "DoNotDetailsComponents"},
-		                  		{"prop":"prop_bcpg_lrLabel", "condition" : "Locale"},
-		                  		{"prop":"prop_bcpg_lrLabel", "condition" : "Perfs"},
-		                  		{"prop":"assoc_bcpg_lrComponents", "condition" : "Render"},
-		                  		{"prop":"assoc_bcpg_lrComponents", "condition" : "Locale"},
-		                  		{"prop":"assoc_bcpg_lrComponents", "condition" : "Prefs"},
-		                  		{"prop":"assoc_bcpg_lrReplacements", "condition" : "Format"},
-		                  		{"prop":"assoc_bcpg_lrReplacements", "condition" : "Render"},
-		                  		{"prop":"assoc_bcpg_lrReplacements", "condition" : "DetailComponents"},
-		                  		{"prop":"assoc_bcpg_lrReplacements", "condition" : "DoNotDetailsComponents"},
-		                  		{"prop":"assoc_bcpg_lrReplacements", "condition" : "Locale"},
-		                  		{"prop":"assoc_bcpg_lrReplacements", "condition" : "Perfs"},
-		                  		{"prop":"prop_bcpg_lrLocales", "condition" : "Perfs"}
+							 <constraint type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf" event='keyup,change@[
+		                  		{"prop":"prop_bcpg_lrLabel", "condition" : "Format|Render|DetailComponents|DoNotDetailsComponents|Locale|Prefs|Omit|DoNotDeclare"},
+		                  		{"prop":"assoc_bcpg_lrComponents", "condition" : "Render|Locale|Prefs"},
+		                  		{"prop":"assoc_bcpg_lrReplacements", "condition" : "Format|Render|DetailComponents|DoNotDetailsComponents|Locale|Prefs|Omit|DoNotDeclare"},
+		                  		{"prop":"prop_bcpg_lrLocales", "condition" : "Prefs"}
 		                  		]'/>
 		                  	</constraint-handlers>
 					</field>
@@ -7280,23 +7268,11 @@
 				<appearance>
 					<field id="bcpg:lrType">
 						<constraint-handlers>
-							 <constraint type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf" event='keyup,change|[
-		                  		{"prop":"prop_bcpg_lrLabel", "condition" : "Format"},
-		                  		{"prop":"prop_bcpg_lrLabel", "condition" : "Render"},
-		                  		{"prop":"prop_bcpg_lrLabel", "condition" : "DetailComponents"},
-		                  		{"prop":"prop_bcpg_lrLabel", "condition" : "DoNotDetailsComponents"},
-		                  		{"prop":"prop_bcpg_lrLabel", "condition" : "Locale"},
-		                  		{"prop":"prop_bcpg_lrLabel", "condition" : "Perfs"},
-		                  		{"prop":"assoc_bcpg_lrComponents", "condition" : "Render"},
-		                  		{"prop":"assoc_bcpg_lrComponents", "condition" : "Locale"},
-		                  		{"prop":"assoc_bcpg_lrComponents", "condition" : "Prefs"},
-		                  		{"prop":"assoc_bcpg_lrReplacements", "condition" : "Format"},
-		                  		{"prop":"assoc_bcpg_lrReplacements", "condition" : "Render"},
-		                  		{"prop":"assoc_bcpg_lrReplacements", "condition" : "DetailComponents"},
-		                  		{"prop":"assoc_bcpg_lrReplacements", "condition" : "DoNotDetailsComponents"},
-		                  		{"prop":"assoc_bcpg_lrReplacements", "condition" : "Locale"},
-		                  		{"prop":"assoc_bcpg_lrReplacements", "condition" : "Perfs"},
-		                  		{"prop":"prop_bcpg_lrLocales", "condition" : "Perfs"}
+							 <constraint type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf" event='keyup,change@[
+		                  		{"prop":"prop_bcpg_lrLabel", "condition" : "Format|Render|DetailComponents|DoNotDetailsComponents|Locale|Prefs|Omit|DoNotDeclare"},
+		                  		{"prop":"assoc_bcpg_lrComponents", "condition" : "Render|Locale|Prefs"},
+		                  		{"prop":"assoc_bcpg_lrReplacements", "condition" : "Format|Render|DetailComponents|DoNotDetailsComponents|Locale|Prefs|Omit|DoNotDeclare"},
+		                  		{"prop":"prop_bcpg_lrLocales", "condition" : "Prefs"}
 		                  		]'/>
 		                  	</constraint-handlers>
 					</field>
