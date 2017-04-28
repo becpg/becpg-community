@@ -662,6 +662,15 @@ public class EntityReportServiceImpl implements EntityReportService {
 					return true;
 				}
 			}
+			
+			for (NodeRef tplNodeRef : tplsNodeRef) {
+				for(NodeRef associatedTplFile : associationService.getTargetAssocs(tplNodeRef, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES)){
+					modified = (Date) nodeService.getProperty(associatedTplFile, ContentModel.PROP_MODIFIED);
+					if ((modified == null) || (generatedReportDate == null) || (modified.getTime() > generatedReportDate.getTime())) {
+						return true;
+					}
+				}
+			}
 
 			logger.debug("Check from extractor");
 
