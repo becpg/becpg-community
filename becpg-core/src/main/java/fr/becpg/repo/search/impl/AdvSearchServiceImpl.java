@@ -17,12 +17,16 @@
  ******************************************************************************/
 package fr.becpg.repo.search.impl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -55,10 +59,13 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 	@Autowired(required = false)
 	private AdvSearchPlugin[] advSearchPlugins;
+	
+	@Autowired
+	private NodeService nodeService;
 
 	@Override
 	public List<NodeRef> queryAdvSearch(QName datatype, BeCPGQueryBuilder beCPGQueryBuilder, Map<String, String> criteria, int maxResults) {
-
+		logger.debug("advSearch, dataType="+datatype+", \ncriteria="+criteria+"\nplugins: "+Arrays.asList(advSearchPlugins));
 		if(isAssocSearch(criteria) || maxResults > RepoConsts.MAX_RESULTS_1000){
 			maxResults = RepoConsts.MAX_RESULTS_UNLIMITED;
 		} else if (maxResults <= 0 ) {
@@ -183,11 +190,61 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 								}
 
-							} else if (propName.contains("productHierarchy")) {
+							} else if (propName.contains("Hierarchy")) {								
 								String hierarchyQuery = getHierarchyQuery(propName, propValue);
+								
 								if (hierarchyQuery != null && hierarchyQuery.length() > 0) {
+									List<String> hierarchy1Nodes = new ArrayList<>();
+									List<String> hierarchy2Nodes = new ArrayList<>();
+									String[] results = hierarchyQuery.split(",");
+									
+									for(String result : results){
+										result = result.replaceAll("\"", "");
+										if(isHierarchyLeaf(result)){
+											hierarchy2Nodes.add(result);
+										} else {
+											hierarchy1Nodes.add(result);
+										}
+									}									
+									
+									String hierarchy1PropReplaced = propName.replaceAll("[0-9]+", "1");
+									String hierarchy2PropReplaced = propName.replaceAll("[0-9]+", "2");
+									
+									String hierarchy1NodesString = hierarchy1Nodes.toString()
+											.replaceAll(", ", "\" OR @" + hierarchy1PropReplaced + ":\"").replaceAll(Pattern.quote("["), "\"")
+											.replaceAll(Pattern.quote("]"), "\"");
+									
+									String hierarchy2NodesString = hierarchy2Nodes.toString()
+											.replaceAll(", ", "\" OR @" + hierarchy2PropReplaced + ":\"").replaceAll(Pattern.quote("["), "\"")
+											.replaceAll(Pattern.quote("]"), "\"");
 
-									queryBuilder.andPropQuery(QName.createQName(propName, namespaceService), hierarchyQuery);
+									StringBuilder hierarchy1Query = new StringBuilder();
+									hierarchy1Query.append("@");
+									hierarchy1Query.append(hierarchy1PropReplaced);
+									hierarchy1Query.append(":");
+									hierarchy1Query.append(hierarchy1NodesString);
+
+									StringBuilder hierarchy2Query = new StringBuilder();
+									hierarchy2Query.append("@");
+									hierarchy2Query.append(hierarchy2PropReplaced);
+									hierarchy2Query.append(":");
+									hierarchy2Query.append(hierarchy2NodesString);
+
+									StringBuilder hierarchyFTSQuery = new StringBuilder();
+									
+									if(!hierarchy1Nodes.isEmpty()){
+										hierarchyFTSQuery.append(hierarchy1Query);
+									}
+									
+									if(!hierarchy2Nodes.isEmpty() && !hierarchy1Nodes.isEmpty()){
+										hierarchyFTSQuery.append(" OR ");
+									}
+									
+									if(!hierarchy2Nodes.isEmpty()){
+										hierarchyFTSQuery.append(hierarchy2Query);
+									}
+									
+									queryBuilder.andFTSQuery(hierarchyFTSQuery.toString());
 
 								}
 
@@ -252,7 +309,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		return buf.toString();
 	}
 
-	private String getHierarchyQuery(String propName, String hierachyName) {
+	private String getHierarchyQuery(String propName, String hierarchyName) {
 		List<NodeRef> nodes = null;
 
 		StopWatch watch = null;
@@ -261,7 +318,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 			watch.start();
 		}
 
-		if (!NodeRef.isNodeRef(hierachyName)) {
+		if (!NodeRef.isNodeRef(hierarchyName)) {
 
 			// TODO use HierarchyService, not generic
 			// " +PATH:\"/app:company_home/%s//*\" +TYPE:\"bcpg:linkedValue\"
@@ -270,11 +327,12 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery()
 					.inSubPath(RepoConsts.PATH_SYSTEM + "/" + RepoConsts.PATH_PRODUCT_HIERARCHY + "/"
 							+ BeCPGModel.ASSOC_ENTITYLISTS.toPrefixString(namespaceService))
-					.inType(BeCPGModel.TYPE_LINKED_VALUE).andPropQuery(BeCPGModel.PROP_LKV_VALUE, hierachyName);
-
-			if (propName.endsWith("productHierarchy1")) {
+					.inType(BeCPGModel.TYPE_LINKED_VALUE).andPropQuery(BeCPGModel.PROP_LKV_VALUE, hierarchyName);
+			
+			if (propName.endsWith("Hierarchy1")) {
 				queryBuilder.andPropEquals(BeCPGModel.PROP_DEPTH_LEVEL, "1");
 			}
+			
 			nodes = queryBuilder.list();
 		}
 
@@ -284,7 +342,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 				ret += " \"" + node.toString() + "\"";
 			}
 		} else {
-			ret += "\"" + hierachyName + "\"";
+			ret += "\"" + hierarchyName + "\"";
 		}
 
 		if (logger.isDebugEnabled()) {
@@ -306,5 +364,17 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 			}
 		}
 		return false;
+	}
+	
+	private boolean isHierarchyLeaf(String hierarchyName){
+//		boolean res = false;
+//		
+//		if(nodeService.getProperty(new NodeRef(hierarchyName), BeCPGModel.PROP_PARENT_LEVEL) != null){
+//		
+//			List<NodeRef> results = BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_LINKED_VALUE).andPropEquals(BeCPGModel.PROP_PARENT_LEVEL, hierarchyName).inDB().list();
+//			res = results.isEmpty();
+//		}
+		
+		return nodeService.getProperty(new NodeRef(hierarchyName), BeCPGModel.PROP_PARENT_LEVEL) != null;
 	}
 }
