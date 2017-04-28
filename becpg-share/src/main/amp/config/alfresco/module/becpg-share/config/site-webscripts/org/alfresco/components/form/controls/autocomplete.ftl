@@ -1,4 +1,5 @@
 <#if field.control.params.ds?exists><#assign ds=field.control.params.ds><#else><#assign ds=''></#if>
+<#if field.control.params.multiple?exists><#assign multiple=field.control.params.multiple?matches('true')><#else><#assign multiple=false></#if>
 <#if field.control.params.style?exists><#assign style=field.control.params.style></#if>
 <#if args.entityNodeRef?? >
 	<#if ds?contains("?")>
@@ -18,6 +19,8 @@
 			<#if field.control.params.parentMode?exists>				 		
                     multipleSelectMode:true,
                     isParentMode : true,
+			<#elseif multiple>
+					multipleSelectMode: true,
 			<#else>
 			      multipleSelectMode: ${field.repeating?string}, 
 			</#if>
@@ -77,8 +80,8 @@
       <div  class="yui-ac" style="display:inline-block;">
         <div id="${fieldHtmlId}-autocomplete" class="ac-body" <#if style??>style="${style}"</#if>>
         <span id="${fieldHtmlId}-toggle-autocomplete" class="ac-toogle" ></span>
-	         <#if field.repeating || field.dataType == 'noderef' || field.control.params.parentMode?exists >
-	         	<#if field.dataType != 'noderef' || field.repeating || field.control.params.parentMode?exists >
+	         <#if field.repeating || field.dataType == 'noderef' || field.control.params.parentMode?exists || multiple>
+	         	<#if field.dataType != 'noderef' || field.repeating || field.control.params.parentMode?exists || multiple>
 			 			<span id="${fieldHtmlId}-basket" class="viewmode-value current-values"></span>
 			 		</#if>
 			 		<input id="${fieldHtmlId}" type="text" name="-" onfocus="this.hasFocus=true" onblur="this.hasFocus=false" tabindex="0"
@@ -102,7 +105,7 @@
 	
 	
          <div id="${fieldHtmlId}-container"></div>
-         <#if field.repeating ||  field.dataType == 'noderef' || field.control.params.parentMode?exists>
+         <#if field.repeating ||  field.dataType == 'noderef' || field.control.params.parentMode?exists || multiple>
         	<input type="hidden" id="${fieldHtmlId}-added" name="${field.name}" <#if field.value?is_number>value="${field.value?c}"<#else>value="${field.value?html}"</#if> />
          </#if>
       </div>
