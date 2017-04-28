@@ -110,7 +110,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	protected static final ArrayList<QName> hiddenNodeAttributes = new ArrayList<>(
 			Arrays.asList(ContentModel.PROP_NODE_REF, ContentModel.PROP_NODE_UUID, ContentModel.PROP_STORE_IDENTIFIER, ContentModel.PROP_STORE_NAME,
-					ContentModel.PROP_STORE_PROTOCOL, ContentModel.PROP_CONTENT));
+					ContentModel.PROP_STORE_PROTOCOL, ContentModel.PROP_CONTENT, BeCPGModel.PROP_ENTITY_SCORE));
 
 	protected static final ArrayList<QName> hiddenDataListItemAttributes = new ArrayList<>(
 			Arrays.asList(ContentModel.PROP_CREATED, ContentModel.PROP_CREATOR, ContentModel.PROP_MODIFIED, ContentModel.PROP_MODIFIER));
