@@ -304,9 +304,21 @@
 					<field id="bcpg:productState" set="mainInfo" />
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
-					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo" />
-					<field id="bcpg:eanCodeLevel2" help-id="becpg.forms.help.eanCodeLevel2" set="mainInfo" />
-					<field id="bcpg:eanCodeLevel3" help-id="becpg.forms.help.eanCodeLevel3" set="mainInfo" />
+					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo" >
+						<constraint-handlers>
+		                  	<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.GTIN" event="keyup,change"/>
+		            	</constraint-handlers>
+					</field>
+					<field id="bcpg:eanCodeLevel2" help-id="becpg.forms.help.eanCodeLevel2" set="mainInfo">
+						<constraint-handlers>
+		                  	<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.GTIN" event="keyup,change"/>
+		            	</constraint-handlers>
+					</field>
+					<field id="bcpg:eanCodeLevel3" help-id="becpg.forms.help.eanCodeLevel3" set="mainInfo" >
+						<constraint-handlers>
+		                  	<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.GTIN" event="keyup,change"/>
+		            	</constraint-handlers>
+					</field>
 					<field id="bcpg:customsCodeRef" set="mainInfo" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -974,9 +986,21 @@
 					<field id="bcpg:productState" set="mainInfo" />
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
-					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo" />
-					<field id="bcpg:eanCodeLevel2" help-id="becpg.forms.help.eanCodeLevel2" set="mainInfo" />
-					<field id="bcpg:eanCodeLevel3" help-id="becpg.forms.help.eanCodeLevel3" set="mainInfo" />
+					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo"  >
+						<constraint-handlers>
+		                  	<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.GTIN" event="keyup,change"/>
+		            	</constraint-handlers>
+					</field>
+					<field id="bcpg:eanCodeLevel2" help-id="becpg.forms.help.eanCodeLevel2" set="mainInfo"  >
+						<constraint-handlers>
+		                  	<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.GTIN" event="keyup,change"/>
+		            	</constraint-handlers>
+					</field>
+					<field id="bcpg:eanCodeLevel3" help-id="becpg.forms.help.eanCodeLevel3" set="mainInfo"  >
+						<constraint-handlers>
+		                  	<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.GTIN" event="keyup,change"/>
+		            	</constraint-handlers>
+					</field>
 					
 					<field id="bcpg:customsCodeRef" set="mainInfo" >
 						<control
@@ -1868,7 +1892,11 @@
 					<field id="bcpg:productUnit" set="mainInfo" />
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
-					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo" />
+					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo"  >
+						<constraint-handlers>
+		                  	<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.GTIN" event="keyup,change"/>
+		            	</constraint-handlers>
+					</field>
 					<field id="bcpg:certificateDate" set="mainInfo" />
 					<field id="bcpg:suppliers" set="mainInfo" />
 					<field id="bcpg:plants" set="mainInfo" />
@@ -2083,7 +2111,11 @@
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>					
-					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo" />
+					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo"  >
+						<constraint-handlers>
+		                  	<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.GTIN" event="keyup,change"/>
+		            	</constraint-handlers>
+					</field>
 					<field id="bcpg:certificateDate" set="mainInfo" />				
 					<field id="bcpg:plants" set="mainInfo" />
 					<field id="bcpg:productGeoOrigin"  set="mainInfo"  />
@@ -2295,7 +2327,11 @@
 					<field id="bcpg:productUnit" set="mainInfo" />
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
-					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo" />
+					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo"  >
+						<constraint-handlers>
+		                  	<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.GTIN" event="keyup,change"/>
+		            	</constraint-handlers>
+					</field>
 					<field id="bcpg:suppliers" set="mainInfo" />
 					<field id="bcpg:plants" set="mainInfo" />
 					<field id="bcpg:productGeoOrigin"  set="mainInfo"  />
@@ -2547,7 +2583,11 @@
 					</field>
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
-					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo" />
+					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo"  >
+						<constraint-handlers>
+		                  	<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.GTIN" event="keyup,change"/>
+		            	</constraint-handlers>
+					</field>
 					<field id="bcpg:productState" set="mainInfo" />
 					<field id="bcpg:suppliers" set="mainInfo" />
 					<field id="bcpg:plants" set="mainInfo" />
@@ -2788,7 +2828,11 @@
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
-					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo" />
+					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo"  >
+						<constraint-handlers>
+		                  	<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.GTIN" event="keyup,change"/>
+		            	</constraint-handlers>
+					</field>
 					<field id="bcpg:supplierPlants" set="mainInfo" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -3045,7 +3089,11 @@
 					<field id="bcpg:productState" set="mainInfo" />
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
-					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo" />					
+					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo"  >
+						<constraint-handlers>
+		                  	<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.GTIN" event="keyup,change"/>
+		            	</constraint-handlers>
+					</field>					
 					<field id="bcpg:suppliers" set="mainInfo" />
 					<field id="bcpg:plants" set="mainInfo" />
 					<field id="bcpg:supplierPlants" set="mainInfo" >
@@ -4249,7 +4297,11 @@
 					</field>
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
-					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo" />
+					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo"  >
+						<constraint-handlers>
+		                  	<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.GTIN" event="keyup,change"/>
+		            	</constraint-handlers>
+					</field>
 					<field id="bcpg:suppliers" set="mainInfo" />
 					<field id="bcpg:entityTplRef" set="mainInfo">
 						<control
@@ -4408,7 +4460,11 @@
 					</field>
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
-					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo" />
+					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo"  >
+						<constraint-handlers>
+		                  	<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.GTIN" event="keyup,change"/>
+		            	</constraint-handlers>
+					</field>
 					<field id="bcpg:suppliers" set="mainInfo" />
 					<field id="bcpg:entityTplRef" set="mainInfo">
 						<control
@@ -7114,18 +7170,41 @@
 			<!-- Create item form -->
 			<form>
 				<field-visibility>
+					<show id="bcpg:lrType" />
 					<show id="cm:name" />
 					<show id="bcpg:lrLabel" />
 					<show id="bcpg:lrFormula" />
 					<show id="bcpg:lrComponents" />
 					<show id="bcpg:lrReplacements" />
-					<show id="bcpg:lrType" />
 					<show id="bcpg:lrGroup" />
 					<show id="bcpg:lrLocales" />
 					<show id="bcpg:lrIsActive" />
 					<show id="bcpg:lrSyncState" />
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:lrType">
+						<constraint-handlers>
+							 <constraint type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf" event='keyup,change|[
+		                  		{"prop":"prop_bcpg_lrLabel", "condition" : "Format"},
+		                  		{"prop":"prop_bcpg_lrLabel", "condition" : "Render"},
+		                  		{"prop":"prop_bcpg_lrLabel", "condition" : "DetailComponents"},
+		                  		{"prop":"prop_bcpg_lrLabel", "condition" : "DoNotDetailsComponents"},
+		                  		{"prop":"prop_bcpg_lrLabel", "condition" : "Locale"},
+		                  		{"prop":"prop_bcpg_lrLabel", "condition" : "Perfs"},
+		                  		{"prop":"assoc_bcpg_lrComponents", "condition" : "Render"},
+		                  		{"prop":"assoc_bcpg_lrComponents", "condition" : "Locale"},
+		                  		{"prop":"assoc_bcpg_lrComponents", "condition" : "Prefs"},
+		                  		{"prop":"assoc_bcpg_lrReplacements", "condition" : "Format"},
+		                  		{"prop":"assoc_bcpg_lrReplacements", "condition" : "Render"},
+		                  		{"prop":"assoc_bcpg_lrReplacements", "condition" : "DetailComponents"},
+		                  		{"prop":"assoc_bcpg_lrReplacements", "condition" : "DoNotDetailsComponents"},
+		                  		{"prop":"assoc_bcpg_lrReplacements", "condition" : "Locale"},
+		                  		{"prop":"assoc_bcpg_lrReplacements", "condition" : "Perfs"},
+		                  		{"prop":"prop_bcpg_lrLocales", "condition" : "Perfs"}
+		                  		]'/>
+		                  	</constraint-handlers>
+					</field>
+				
 					<field id="bcpg:lrFormula">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
@@ -7135,6 +7214,8 @@
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:semiFinishedProduct,bcpg:localSemiFinishedProduct,bcpg:rawMaterial,bcpg:ing,bcpg:ingTypeItem&#38;excludeClassNames=bcpg:entityTplAspect
 							</control-param>
 						</control>
+						
+						
 					</field>
 					<field id="bcpg:lrReplacements">
 						<control
@@ -7142,9 +7223,11 @@
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:semiFinishedProduct,bcpg:localSemiFinishedProduct,bcpg:rawMaterial,bcpg:ing,bcpg:ingTypeItem&#38;excludeClassNames=bcpg:entityTplAspect
 							</control-param>
 						</control>
+						
 					</field>
 					<field id="bcpg:lrLocales" >
 						<control template="/org/alfresco/components/form/controls/mtlangue.ftl"/>
+						
 					</field>
 				</appearance>
 			</form>
@@ -7183,18 +7266,41 @@
 			<!-- Data List pop-up edit form -->
 			<form>
 				<field-visibility>
+					<show id="bcpg:lrType" />
 					<show id="cm:name" />
 					<show id="bcpg:lrLabel" />
 					<show id="bcpg:lrFormula" />
 					<show id="bcpg:lrComponents" />
 					<show id="bcpg:lrReplacements" />
-					<show id="bcpg:lrType" />
 					<show id="bcpg:lrGroup" />
 					<show id="bcpg:lrLocales" />
 					<show id="bcpg:lrIsActive" />
 					<show id="bcpg:lrSyncState" />
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:lrType">
+						<constraint-handlers>
+							 <constraint type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf" event='keyup,change|[
+		                  		{"prop":"prop_bcpg_lrLabel", "condition" : "Format"},
+		                  		{"prop":"prop_bcpg_lrLabel", "condition" : "Render"},
+		                  		{"prop":"prop_bcpg_lrLabel", "condition" : "DetailComponents"},
+		                  		{"prop":"prop_bcpg_lrLabel", "condition" : "DoNotDetailsComponents"},
+		                  		{"prop":"prop_bcpg_lrLabel", "condition" : "Locale"},
+		                  		{"prop":"prop_bcpg_lrLabel", "condition" : "Perfs"},
+		                  		{"prop":"assoc_bcpg_lrComponents", "condition" : "Render"},
+		                  		{"prop":"assoc_bcpg_lrComponents", "condition" : "Locale"},
+		                  		{"prop":"assoc_bcpg_lrComponents", "condition" : "Prefs"},
+		                  		{"prop":"assoc_bcpg_lrReplacements", "condition" : "Format"},
+		                  		{"prop":"assoc_bcpg_lrReplacements", "condition" : "Render"},
+		                  		{"prop":"assoc_bcpg_lrReplacements", "condition" : "DetailComponents"},
+		                  		{"prop":"assoc_bcpg_lrReplacements", "condition" : "DoNotDetailsComponents"},
+		                  		{"prop":"assoc_bcpg_lrReplacements", "condition" : "Locale"},
+		                  		{"prop":"assoc_bcpg_lrReplacements", "condition" : "Perfs"},
+		                  		{"prop":"prop_bcpg_lrLocales", "condition" : "Perfs"}
+		                  		]'/>
+		                  	</constraint-handlers>
+					</field>
+				
 					<field id="bcpg:lrFormula">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
@@ -7204,6 +7310,8 @@
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:semiFinishedProduct,bcpg:localSemiFinishedProduct,bcpg:rawMaterial,bcpg:ing,bcpg:ingTypeItem&#38;excludeClassNames=bcpg:entityTplAspect
 							</control-param>
 						</control>
+						
+						
 					</field>
 					<field id="bcpg:lrReplacements">
 						<control
@@ -7211,9 +7319,11 @@
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:semiFinishedProduct,bcpg:localSemiFinishedProduct,bcpg:rawMaterial,bcpg:ing,bcpg:ingTypeItem&#38;excludeClassNames=bcpg:entityTplAspect
 							</control-param>
 						</control>
+						
 					</field>
 					<field id="bcpg:lrLocales" >
 						<control template="/org/alfresco/components/form/controls/mtlangue.ftl"/>
+						
 					</field>
 				</appearance>
 			</form>
