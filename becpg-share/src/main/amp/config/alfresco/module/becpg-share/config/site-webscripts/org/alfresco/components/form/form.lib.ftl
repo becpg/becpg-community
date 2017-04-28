@@ -27,8 +27,13 @@
             {
                fieldId : "${args.htmlid?js_string}_${constraint.fieldId}", 
                handler : ${constraint.validationHandler}, 
-               params : ${constraint.params}, 
-               event : "${constraint.event}",
+               	<#if constraint.event?contains('|')>
+				params : ${constraint.event?split('|')[1]},
+			   	event : "${constraint.event?split('|')[0]}",
+				<#else>
+				params : ${constraint.params}, 
+                event : "${constraint.event}",
+				</#if>
                message : <#if constraint.message??>"${constraint.message?js_string}"<#else>null</#if>
             }
             <#if constraint_has_next>,</#if>
