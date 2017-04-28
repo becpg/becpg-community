@@ -212,16 +212,16 @@
 				<list>
 					<value>Format</value>
 					<value>Rename</value>
-					<value>Type</value>
-					<value>Render</value>
-					<value>Declare</value>
 					<value>Detail</value>
+					<value>DoNotDetails</value>
+					<value>Group</value>
+					<value>Declare</value>
 					<value>DetailComponents</value>
 					<value>DoNotDetailsComponents</value>
-					<value>Group</value>
 					<value>Omit</value>
 					<value>DoNotDeclare</value>
-					<value>DoNotDetails</value>
+					<value>Type</value>
+					<value>Render</value>
 					<value>Locale</value>
 					<value>Prefs</value>
 				</list>

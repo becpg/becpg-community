@@ -27,9 +27,9 @@
             {
                fieldId : "${args.htmlid?js_string}_${constraint.fieldId}", 
                handler : ${constraint.validationHandler}, 
-               	<#if constraint.event?contains('|')>
-				params : ${constraint.event?split('|')[1]},
-			   	event : "${constraint.event?split('|')[0]}",
+               	<#if constraint.event?contains('@')>
+				params : ${constraint.event?split('@')[1]},
+			   	event : "${constraint.event?split('@')[0]}",
 				<#else>
 				params : ${constraint.params}, 
                 event : "${constraint.event}",
