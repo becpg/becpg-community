@@ -6,10 +6,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
@@ -366,39 +368,41 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 						addDataListState(ingListElt, dataItem.getParentNodeRef());
 						MLText labelingText = dataItem.getValue();
+						MLText manualLabelingText = dataItem.getManualValue();
 
+						Set<Locale> locales = new HashSet<>();
 						if (labelingText != null) {
-							List<String> locales = new ArrayList<>();
-							for (Locale locale : labelingText.getLocales()) {
+							locales.addAll(labelingText.getLocales());
+						}
 
-								logger.debug("ill, locale: " + locale);
+						if (manualLabelingText != null) {
+							locales.addAll(manualLabelingText.getLocales());
+						}
 
-								if (!locales.contains(locale.getLanguage())) {
+						for (Locale locale : locales) {
 
-									locales.add(locale.getLanguage());
+							logger.debug("ill, locale: " + locale);
 
-									String grpName = "";
-									if (dataItem.getGrp() != null) {
-										MLText grpMLText = (MLText) mlNodeService.getProperty(dataItem.getGrp(), PLMModel.PROP_LABELING_RULE_LABEL);
-										if ((grpMLText != null) && (grpMLText.getValue(locale) != null) && !grpMLText.getValue(locale).isEmpty()) {
-											grpName = grpMLText.getValue(locale);
-										} else {
-											grpName = (String) nodeService.getProperty(dataItem.getGrp(), ContentModel.PROP_NAME);
-										}
-									}
-
-									Element ingLabelingElt = ingListElt.addElement(PLMModel.TYPE_INGLABELINGLIST.getLocalName());
-									ingLabelingElt.addAttribute(ATTR_LANGUAGE, locale.getDisplayLanguage());
-									addCDATA(ingLabelingElt, PLMModel.ASSOC_ILL_GRP, grpName, null);
-									addCDATA(ingLabelingElt, PLMModel.PROP_ILL_VALUE,
-											dataItem.getValue() != null ? dataItem.getValue().getValue(locale) : VALUE_NULL, null);
-									addCDATA(ingLabelingElt, PLMModel.PROP_ILL_MANUAL_VALUE,
-											dataItem.getManualValue() != null ? dataItem.getManualValue().getValue(locale) : VALUE_NULL, null);
-
-									if (logger.isDebugEnabled()) {
-										logger.debug("ingLabelingElt: " + ingLabelingElt.asXML());
-									}
+							String grpName = "";
+							if (dataItem.getGrp() != null) {
+								MLText grpMLText = (MLText) mlNodeService.getProperty(dataItem.getGrp(), PLMModel.PROP_LABELINGRULELIST_LABEL);
+								if ((grpMLText != null) && (grpMLText.getValue(locale) != null) && !grpMLText.getValue(locale).isEmpty()) {
+									grpName = grpMLText.getValue(locale);
+								} else {
+									grpName = (String) nodeService.getProperty(dataItem.getGrp(), ContentModel.PROP_NAME);
 								}
+							}
+
+							Element ingLabelingElt = ingListElt.addElement(PLMModel.TYPE_INGLABELINGLIST.getLocalName());
+							ingLabelingElt.addAttribute(ATTR_LANGUAGE, locale.getDisplayLanguage());
+							addCDATA(ingLabelingElt, PLMModel.ASSOC_ILL_GRP, grpName, null);
+							addCDATA(ingLabelingElt, PLMModel.PROP_ILL_VALUE,
+									dataItem.getValue() != null ? dataItem.getValue().getValue(locale) : VALUE_NULL, null);
+							addCDATA(ingLabelingElt, PLMModel.PROP_ILL_MANUAL_VALUE,
+									dataItem.getManualValue() != null ? dataItem.getManualValue().getValue(locale) : VALUE_NULL, null);
+
+							if (logger.isDebugEnabled()) {
+								logger.debug("ingLabelingElt: " + ingLabelingElt.asXML());
 							}
 						}
 					}
