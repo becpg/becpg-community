@@ -42,7 +42,6 @@ import org.alfresco.service.cmr.preference.PreferenceService;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
-import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -70,7 +69,6 @@ import fr.becpg.repo.activity.data.ActivityEvent;
 import fr.becpg.repo.activity.data.ActivityType;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AssociationService;
-import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
 import fr.becpg.repo.report.entity.EntityReportData;
 import fr.becpg.repo.report.entity.EntityReportExtractorPlugin;
@@ -504,14 +502,12 @@ public class EntityReportServiceImpl implements EntityReportService {
 		}
 		patternMatcher.appendTail(sb);
 		
-		String documentName = sb.toString().trim().replaceAll("\\-$|\\(\\)","").trim();
+		String documentName = sb.toString().trim().replaceAll("\\-$|\\(\\)","").replaceAll("\\."+RepoConsts.REPORT_EXTENSION_BIRT,"").trim();
 		
 	
 		String extension = (String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
-		if (documentName.endsWith(RepoConsts.REPORT_EXTENSION_BIRT) && (extension != null)) {
-			documentName = documentName.replace(RepoConsts.REPORT_EXTENSION_BIRT, extension.toLowerCase());
-		}
-
+		documentName+="."+extension.toLowerCase();
+		
 		return documentName;
 	}
 	
@@ -525,7 +521,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 			if(propQname.indexOf("report_") == 0){
 				return (String) nodeService.getProperty(tplNodeRef, QName.createQName(propQname.replace("report_", ""), namespaceService));
 			} else if(propQname.indexOf("entity_") == 0){
-				return (String) nodeService.getProperty(nodeRef, QName.createQName(propQname.replace("{entity_", ""), namespaceService));
+				return (String) nodeService.getProperty(nodeRef, QName.createQName(propQname.replace("entity_", ""), namespaceService));
 			} else if("locale".equals(propQname)){
 				return lang;
 			}

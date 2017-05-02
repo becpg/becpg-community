@@ -530,12 +530,14 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 			for (IngListDataItem dataListItem : productData.getIngList()) {
 				addDataListState(ingListsElt, dataListItem.getParentNodeRef());
-				Element ingListElt = ingListsElt.addElement(PLMModel.TYPE_INGLIST.getLocalName());
-				String ingCEECode = (String) nodeService.getProperty(dataListItem.getIng(), PLMModel.PROP_ING_CEECODE);
-				if (ingCEECode != null) {
-					ingListElt.addAttribute(PLMModel.PROP_ING_CEECODE.getLocalName(), ingCEECode);
+				if(dataListItem.getIng()!=null){
+					Element ingListElt = ingListsElt.addElement(PLMModel.TYPE_INGLIST.getLocalName());
+					String ingCEECode = (String) nodeService.getProperty(dataListItem.getIng(), PLMModel.PROP_ING_CEECODE);
+					if (ingCEECode != null) {
+						ingListElt.addAttribute(PLMModel.PROP_ING_CEECODE.getLocalName(), ingCEECode);
+					}
+					loadDataListItemAttributes(dataListItem, ingListElt, images);
 				}
-				loadDataListItemAttributes(dataListItem, ingListElt, images);
 			}
 		}
 	}
