@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
@@ -40,6 +42,7 @@ import org.alfresco.service.cmr.preference.PreferenceService;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -54,6 +57,7 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
@@ -63,6 +67,7 @@ import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
 import fr.becpg.repo.report.entity.EntityReportData;
 import fr.becpg.repo.report.entity.EntityReportExtractorPlugin;
@@ -78,12 +83,16 @@ import fr.becpg.report.client.ReportParams;
 @Service("entityReportService")
 public class EntityReportServiceImpl implements EntityReportService {
 
-	private static final String REPORT_NAME = "%s - %s";
+	//private static final String REPORT_NAME = "%s - %s";
 
 	private static final String PREF_REPORT_PREFIX = "fr.becpg.repo.report.";
 	private static final String PREF_REPORT_SUFFIX = ".view";
 
 	private static final Log logger = LogFactory.getLog(EntityReportServiceImpl.class);
+	
+
+	@Value("${beCPG.report.name.format}")
+	private String reportNameFormat;
 
 	@Autowired
 	private NamespaceService namespaceService;
@@ -458,21 +467,67 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	private String getReportDocumentName(NodeRef entityNodeRef, NodeRef tplNodeRef, String reportFormat, Locale locale) {
 
-		String documentName = String.format(REPORT_NAME, nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME),
-				nodeService.getProperty(tplNodeRef, ContentModel.PROP_NAME));
+		String lang = null;
 
+		if (!(Locale.getDefault().getLanguage().equals(locale.getLanguage()) && (getEntityReportLocales(entityNodeRef).size() == 1))) {
+			lang = locale.getLanguage();
+		}
+		
+		Matcher patternMatcher = Pattern.compile("\\{([^}]+)\\}").matcher(reportNameFormat);
+		StringBuffer sb = new StringBuffer();
+		while (patternMatcher.find()) {
+
+			String propQname = patternMatcher.group(1);
+			String replacement = "";
+			if (propQname.contains("|")) {
+				for (String propQnameAlt : propQname.split("\\|")) {
+					replacement = extractPropText(entityNodeRef, tplNodeRef, lang, propQnameAlt);
+					if (replacement != null && !replacement.isEmpty()) {
+						break;
+					}
+				}
+
+			} else {
+				replacement = extractPropText(entityNodeRef, tplNodeRef, lang, propQname);
+			}
+
+			patternMatcher.appendReplacement(sb, replacement != null ? replacement.replace("$", "") : "");
+
+		}
+		patternMatcher.appendTail(sb);
+		
+		String documentName = sb.toString().trim().replaceAll("\\-$|\\(\\)","").trim();
+		
+	
 		String extension = (String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
 		if (documentName.endsWith(RepoConsts.REPORT_EXTENSION_BIRT) && (extension != null)) {
 			documentName = documentName.replace(RepoConsts.REPORT_EXTENSION_BIRT, extension.toLowerCase());
 		}
 
-		if (!(Locale.getDefault().getLanguage().equals(locale.getLanguage()) && (getEntityReportLocales(entityNodeRef).size() == 1))) {
-			documentName = documentName.substring(0, documentName.lastIndexOf(".")) + " - " + locale.getLanguage()
-					+ documentName.substring(documentName.lastIndexOf("."), documentName.length());
-		}
-
 		return documentName;
 	}
+	
+	
+	
+	
+
+
+	private String extractPropText(NodeRef nodeRef, NodeRef tplNodeRef, String lang, String propQname) {
+		if(propQname!=null){
+			if(propQname.indexOf("report_") == 0){
+				return (String) nodeService.getProperty(tplNodeRef, QName.createQName(propQname.replace("report_", ""), namespaceService));
+			} else if(propQname.indexOf("entity_") == 0){
+				return (String) nodeService.getProperty(nodeRef, QName.createQName(propQname.replace("{entity_", ""), namespaceService));
+			} else if("locale".equals(propQname)){
+				return lang;
+			}
+			
+			return (String) nodeService.getProperty(nodeRef, QName.createQName(propQname, namespaceService));
+		}
+		return null;
+	}
+
+	
 
 	private NodeRef getReportDocumenNodeRef(NodeRef entityNodeRef, NodeRef tplNodeRef, String documentName, Locale locale) {
 
