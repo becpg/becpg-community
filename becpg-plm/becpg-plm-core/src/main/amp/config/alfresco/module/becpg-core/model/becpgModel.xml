@@ -2132,6 +2132,11 @@
 				<property name="bcpg:dynamicCharactTitle">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>false</tokenised>
+					</index>
 				</property>
 				<property name="bcpg:dynamicCharactFormula">
 					<type>d:text</type>
