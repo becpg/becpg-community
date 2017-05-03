@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.model.ForumModel;
@@ -32,8 +33,14 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 	protected static final String KEY_QUEUE_UPDATED = "EntityActivity_updated";
 	protected static final String KEY_QUEUE_DELETED = "EntityActivity_deleted";
 	protected static final String KEY_QUEUE_CREATED = "EntityActivity_created";
-
+	protected static final String KEY_QUEUE_UPDATED_STATUS = "EntityActivity_UpdatedStatus";
+	
 	private static final Set<QName> isIgnoredTypes = new HashSet<>();
+
+	private static final String DELIMITER  = "###";
+	private static final Pattern pattern = Pattern.compile(Pattern.quote(DELIMITER));
+
+	
 
 	static {
 		isIgnoredTypes.add(ContentModel.PROP_MODIFIED);
@@ -91,6 +98,10 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 
+		QName entityState = null;
+		String beforeState = null;
+		String afterState = null;
+
 		if (L2CacheSupport.isThreadLockEnable()) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Entity [" + Thread.currentThread().getName() + "] is locked  :" + nodeRef);
@@ -109,7 +120,15 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 				if (!isIgnoredTypes.contains(beforeType)) {
 					if (((before.get(beforeType) != null) && !before.get(beforeType).equals(after.get(beforeType)))
 							|| ((before.get(beforeType) == null) && (after.get(beforeType) != null))) {
+
+						if (entityActivityService.isMatchingStateProperty(beforeType)) {
+							entityState = beforeType;
+							beforeState = before.get(entityState).toString();
+							afterState = after.get(entityState).toString();
+						}
+
 						isDifferent = true;
+					
 						break;
 					}
 
@@ -120,10 +139,14 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 		if (isDifferent) {
 			QName type = nodeService.getType(nodeRef);
 			if (accept(type)) {
-
-				queueNode(KEY_QUEUE_UPDATED, nodeRef);
+				if (entityState != null) {
+					queueNode(KEY_QUEUE_UPDATED_STATUS + DELIMITER + beforeState + DELIMITER + afterState, nodeRef );
+				} else {
+					queueNode(KEY_QUEUE_UPDATED, nodeRef);
+				}
 			}
 		}
+
 	}
 
 	@Override
@@ -158,6 +181,7 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 		if (accept(type)) {
 			queueNode(KEY_QUEUE_CREATED, childAssocRef.getChildRef());
 		}
+
 	}
 
 	@Override
@@ -175,6 +199,7 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 			registerActivity(nodeRef, type, ActivityEvent.Delete);
 			queueNode(KEY_QUEUE_DELETED, nodeRef);
 		}
+		
 	}
 
 	@Override
@@ -184,7 +209,6 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 
 		for (NodeRef nodeRef : pendingNodes) {
 			if (nodeService.exists(nodeRef)) {
-
 				QName type = nodeService.getType(nodeRef);
 				if (!(entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM) && types.contains(type))) {
 
@@ -198,6 +222,10 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 						registerActivity(nodeRef, type, ActivityEvent.Create);
 						break;
 					default:
+						if( key.contains(KEY_QUEUE_UPDATED_STATUS) ){
+							String[] strState =  pattern.split(key);
+							entityActivityService.postStateChangeActivity(nodeRef, null, strState[1], strState[2]);			
+						}
 						break;
 					}
 
@@ -207,22 +235,22 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 			}
 		}
 
+
 	}
 
 	private boolean accept(QName type) {
 		return (ForumModel.TYPE_POST.equals(type) || ContentModel.TYPE_CONTENT.equals(type)
 				|| entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITY_V2)
-				|| (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM)) && !BeCPGModel.TYPE_ACTIVITY_LIST.equals(type));
+				|| ((entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM)) && !BeCPGModel.TYPE_ACTIVITY_LIST.equals(type)));
 	}
 
 	private void registerActivity(NodeRef actionedUponNodeRef, QName type, ActivityEvent activityEvent) {
-
+		
 		NodeRef entityNodeRef = entityActivityService.getEntityNodeRef(actionedUponNodeRef, type);
 
 		if (entityNodeRef != null) {
 			try {
 				policyBehaviourFilter.disableBehaviour();
-
 				if (activityEvent != null) {
 					if (ForumModel.TYPE_POST.equals(type)) {
 						logger.debug("Action upon comment, post activity");
@@ -235,7 +263,7 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 						entityActivityService.postDatalistActivity(entityNodeRef, actionedUponNodeRef, activityEvent);
 					} else if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITY_V2)) {
 						logger.debug("Action upon entity, post activity");
-						entityActivityService.postEntityActivity(actionedUponNodeRef, ActivityType.Entity ,  activityEvent);
+						entityActivityService.postEntityActivity(actionedUponNodeRef, ActivityType.Entity, activityEvent);
 					}
 				}
 			} finally {
@@ -243,6 +271,7 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 			}
 
 		}
+
 	}
 
 }

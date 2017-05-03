@@ -42,5 +42,7 @@ public interface EntityActivityService {
 
 	void cleanActivities();
 
+	boolean isMatchingStateProperty(QName propName);
+
 	
 }

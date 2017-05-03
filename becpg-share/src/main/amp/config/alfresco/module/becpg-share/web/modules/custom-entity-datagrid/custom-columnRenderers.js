@@ -72,11 +72,18 @@ if (beCPG.module.EntityDataGridRenderers) {
 	    	  var html = "";
               if(data.title){
             	  var title = "";
-            	  var className = data.className!=null ? data.className : "entity"; 
+            	  var className = data.className!=null ? data.className : "entity"; 	  
             	  title = "<span class=\""+className+"\">"+Alfresco.util.encodeHTML(data.title)+"</span>";
             	  if(activityType == "State"){
             		  title = scope.msg("entity.activity.state.change", title, scope.msg("data."+className+"state." +data.beforeState.toLowerCase()), scope.msg("data."+className+"state."+data.afterState.toLowerCase()));
-            	  } else if(activityType == "Datalist" || activityType == "Entity"|| activityType == "Formulation" || activityType == "Report"){
+            	  } else if (activityType == "Datalist" ){
+            		  if (data.title === className){
+            			  title  = scope.msg("entity.activity.allInOne.dataList", scope.msg("data.list."+className));
+            		  } else{
+            			  title  = scope.msg("entity.activity."+activityType.toLowerCase(), title, scope.msg("data.list."+className) );
+            		  }
+            		  
+            	  } else if(activityType == "Entity"|| activityType == "Formulation" || activityType == "Report"){
             		  title  = scope.msg("entity.activity."+activityType.toLowerCase(), title);
             	  } else if(activityType == "Comment"){
             		 title  = scope.msg("entity.activity.comment."+data.activityEvent.toLowerCase(), title);
@@ -99,7 +106,7 @@ if (beCPG.module.EntityDataGridRenderers) {
     	          html += Alfresco.util.userProfileLink(user.value, user.displayValue, 'class="theme-color-1"') + ' ';
     	          html += '      </span>';
     	          html += '      <span class="date-info">';
-    	          html += Alfresco.util.relativeTime(Alfresco.util.fromISO8601(dateCreated.value)) + '<br/>';
+    	          html += Alfresco.util.relativeTime(Alfresco.util.fromISO8601(dateCreated.value)) +' ( '+  Alfresco.util.formatDate(dateCreated.value	, Alfresco.util.message(scope.msg("date.format"))) + ' ) <br/>';
     	          html += '      </span>';
     	          html += '      <div class="activity-title">' + title + '</div>';
     	          if(data.content){
