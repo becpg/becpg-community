@@ -291,6 +291,7 @@
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/finishedProduct_Hierarchy
 							</control-param>
+							<control-param name="parentMode">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" help-id="becpg.forms.help.productHierarchy2" set="mainInfo">
@@ -685,7 +686,6 @@
 					<!-- bcpg:productAspect -->
 					<show id="bcpg:legalName" force="true"/>
 					<show id="bcpg:productHierarchy1" force="true"/>
-					<show id="bcpg:productHierarchy2" force="true"/>
 					<show id="bcpg:productState" force="true"/>
 					<!-- we need bcpg:code for bulk-edit in order to navigate on the entity -->
 					<show id="bcpg:code" />
@@ -760,16 +760,9 @@
 					</field>
 					<field id="bcpg:productHierarchy1" help-id="becpg.forms.help.productHierarchy1" set="2-col-product-criteria">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/finishedProduct_Hierarchy
+							<control-param name="ds">becpg/autocomplete/hierarchyMultiLevel/values/System/ProductHierarchy/bcpg:entityLists/finishedProduct_Hierarchy
 							</control-param>
-						</control>
-					</field>
-					<field id="bcpg:productHierarchy2" help-id="becpg.forms.help.productHierarchy2" set="2-col-product-criteria">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/finishedProduct_Hierarchy
-							</control-param>
-							<control-param name="parent">bcpg_productHierarchy1
-							</control-param>
+							<control-param name="multiple">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productState" set="2-col-product-criteria">
@@ -973,6 +966,7 @@
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/finishedProduct_Hierarchy
 							</control-param>
+							<control-param name="parentMode">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" help-id="becpg.forms.help.productHierarchy2" set="mainInfo">
@@ -2382,7 +2376,6 @@
 			<form id="search">
 				<field-visibility>
 					<show id="bcpg:productHierarchy1" />
-					<show id="bcpg:productHierarchy2" />
 					<show id="bcpg:productState" />
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
@@ -2408,16 +2401,9 @@
 
 					<field id="bcpg:productHierarchy1" set="product-criteria">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy
+							<control-param name="ds">becpg/autocomplete/hierarchyMultiLevel/values/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy
 							</control-param>
-						</control>
-					</field>
-					<field id="bcpg:productHierarchy2" set="product-criteria">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy
-							</control-param>
-							<control-param name="parent">bcpg_productHierarchy1
-							</control-param>
+							<control-param name="multiple">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productState" set="product-criteria">
@@ -3251,7 +3237,6 @@
 					<!-- bcpg:productAspect -->
 					<show id="bcpg:legalName" force="true"/>
 					<show id="bcpg:productHierarchy1" force="true"/>
-					<show id="bcpg:productHierarchy2" force="true"/>
 					<show id="bcpg:productState" force="true"/>
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
@@ -3323,16 +3308,9 @@
 					</field>
 					<field id="bcpg:productHierarchy1" help-id="becpg.forms.help.productHierarchy1" set="2-col-product-criteria">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/rawMaterial_Hierarchy
+							<control-param name="ds">becpg/autocomplete/hierarchyMultiLevel/values/System/ProductHierarchy/bcpg:entityLists/rawMaterial_Hierarchy
 							</control-param>
-						</control>
-					</field>
-					<field id="bcpg:productHierarchy2" help-id="becpg.forms.help.productHierarchy2" set="2-col-product-criteria">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/rawMaterial_Hierarchy
-							</control-param>
-							<control-param name="parent">bcpg_productHierarchy1
-							</control-param>
+							<control-param name="multiple">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productState" set="2-col-product-criteria">
@@ -3803,7 +3781,6 @@
 					<!-- bcpg:productAspect -->
 					<show id="bcpg:legalName" force="true"/>
 					<show id="bcpg:productHierarchy1" force="true"/>
-					<show id="bcpg:productHierarchy2" force="true"/>
 					<show id="bcpg:productState" force="true"/>
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
@@ -3869,16 +3846,9 @@
 					</field>
 					<field id="bcpg:productHierarchy1" help-id="becpg.forms.help.productHierarchy1" set="2-col-product-criteria">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/semiFinishedProduct_Hierarchy
+							<control-param name="ds">becpg/autocomplete/hierarchyMultiLevel/values/System/ProductHierarchy/bcpg:entityLists/semiFinishedProduct_Hierarchy
 							</control-param>
-						</control>
-					</field>
-					<field id="bcpg:productHierarchy2" help-id="becpg.forms.help.productHierarchy2" set="2-col-product-criteria">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/semiFinishedProduct_Hierarchy
-							</control-param>
-							<control-param name="parent">bcpg_productHierarchy1
-							</control-param>
+							<control-param name="multiple">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productState" set="2-col-product-criteria">
@@ -4501,7 +4471,6 @@
 					<show id="cm:name" />
 		
 					<show id="bcpg:productHierarchy1" />
-					<show id="bcpg:productHierarchy2" />
 					<show id="bcpg:productState" />
 				
 					<show id="bcpg:code" force="true" />
@@ -4516,16 +4485,9 @@
 					<field id="cm:name" set="product-criteria" />
 					<field id="bcpg:productHierarchy1" help-id="becpg.forms.help.productHierarchy1" set="product-criteria">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/resourceProduct_Hierarchy
+							<control-param name="ds">becpg/autocomplete/hierarchyMultiLevel/values/System/ProductHierarchy/bcpg:entityLists/resourceProduct_Hierarchy
 							</control-param>
-						</control>
-					</field>
-					<field id="bcpg:productHierarchy2" help-id="becpg.forms.help.productHierarchy2" set="product-criteria">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/resourceProduct_Hierarchy
-							</control-param>
-							<control-param name="parent">bcpg_productHierarchy1
-							</control-param>
+							<control-param name="multiple">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productState" set="product-criteria" >
@@ -6093,7 +6055,6 @@
 			<form id="search">
 				<field-visibility>	
 					<show id="bcpg:supplierHierarchy1" />
-					<show id="bcpg:supplierHierarchy2" />
 					<show id="bcpg:supplierState" />
 				
 					<show id="bcpg:code" />
@@ -6102,16 +6063,9 @@
 				<appearance>
 					<field id="bcpg:supplierHierarchy1">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/supplier_Hierarchy
+							<control-param name="ds">becpg/autocomplete/hierarchyMultiLevel/values/System/ProductHierarchy/bcpg:entityLists/supplier_Hierarchy
 							</control-param>
-						</control>
-					</field>
-					<field id="bcpg:supplierHierarchy2">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/supplier_Hierarchy
-							</control-param>
-							<control-param name="parent">bcpg_supplierHierarchy1
-							</control-param>
+							<control-param name="multiple">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:code" read-only="true" />
