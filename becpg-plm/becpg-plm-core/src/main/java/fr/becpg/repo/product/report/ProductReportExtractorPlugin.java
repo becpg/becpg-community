@@ -2,7 +2,6 @@ package fr.becpg.repo.product.report;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -385,7 +384,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 							String grpName = "";
 							if (dataItem.getGrp() != null) {
-								MLText grpMLText = (MLText) mlNodeService.getProperty(dataItem.getGrp(), PLMModel.PROP_LABELINGRULELIST_LABEL);
+								MLText grpMLText = (MLText) mlNodeService.getProperty(dataItem.getGrp(), PLMModel.PROP_LABELING_RULE_LABEL);
 								if ((grpMLText != null) && (grpMLText.getValue(locale) != null) && !grpMLText.getValue(locale).isEmpty()) {
 									grpName = grpMLText.getValue(locale);
 								} else {
