@@ -283,7 +283,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 	}
 
 	@Override
-	public void onCreateChildAssociation(ChildAssociationRef associationRef, boolean arg1) {
+	public void onCreateChildAssociation(ChildAssociationRef associationRef, boolean isNewNode) {
 		logger.debug("onCreateChildAssociation");
 		removeCachedAssoc(childAssocCacheName(), associationRef.getParentRef(), associationRef.getTypeQName());
 

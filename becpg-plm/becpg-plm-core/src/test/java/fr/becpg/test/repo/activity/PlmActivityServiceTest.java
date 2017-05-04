@@ -1,13 +1,22 @@
 package fr.becpg.test.repo.activity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.forum.CommentService;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.version.VersionBaseModel;
+import org.alfresco.service.cmr.coci.CheckOutCheckInService;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.version.Version;
+import org.alfresco.service.cmr.version.VersionType;
+import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
@@ -15,18 +24,21 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.activity.EntityActivityService;
+import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.CompoListUnit;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
+import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
-import fr.becpg.repo.search.BeCPGQueryBuilder;
+import fr.becpg.test.BeCPGPLMTestHelper;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
 public class PlmActivityServiceTest extends AbstractFinishedProductTest {
@@ -46,6 +58,13 @@ public class PlmActivityServiceTest extends AbstractFinishedProductTest {
 
 	@Autowired
 	private CommentService commentService;
+	
+	@Autowired
+	private EntityVersionService entityVersionService;
+
+	
+	@Autowired
+	private CheckOutCheckInService checkOutCheckInService;
 
 	private NodeRef getActivityList(NodeRef productNodeRef) {
 		NodeRef listNodeRef = null;
@@ -58,12 +77,30 @@ public class PlmActivityServiceTest extends AbstractFinishedProductTest {
 	}
 
 	private List<NodeRef> getActivities(NodeRef entityNodeRef) {
-		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_ACTIVITY_LIST).inDB();
-		return queryBuilder.list();
+		//beCPGCacheService.clearAllCaches();
+		
+		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			List<NodeRef> ret = new ArrayList<>();
+			NodeRef activityListNodeRef = getActivityList(entityNodeRef);
+			if (activityListNodeRef != null) {
+				// All activities of product
+				ret =  entityListDAO.getListItems(activityListNodeRef,
+						BeCPGModel.TYPE_ACTIVITY_LIST);
+				for(NodeRef tmp : ret){
+					logger.info("Data: "+nodeService.getProperty(tmp, BeCPGModel.PROP_ACTIVITYLIST_DATA));
+					logger.info("User: "+nodeService.getProperty(tmp, BeCPGModel.PROP_ACTIVITYLIST_USERID));
+				}
+			} else {
+				logger.error("No activity list");
+			}
+			
+			return ret;
+		}, true, false);
 	}
 
 	@Test
-	public void postActivityOnProductTest() {
+	public void checkEntityCommentActivity() {
 
 		// Create finished composite product with ActivityList
 		NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -114,8 +151,150 @@ public class PlmActivityServiceTest extends AbstractFinishedProductTest {
 		Assert.assertEquals("Activity 4: delete comment", 4, getActivities(finishedProductNodeRef).size());
 
 	}
+	
+	
 
 	@Test
+	public void checkEntityVersionActivity() {
+		
+		AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
+		
+		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			/*-- Create raw material --*/
+			NodeRef r = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test version activity");
+			
+			// Add Activity List to product
+			NodeRef listContainerNodeRef = entityListDAO.getListContainer(r);
+			entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
+			
+			return r;
+		}, false, true);
+
+		// 6 activities on creation
+
+		if (!nodeService.hasAspect(rawMaterialNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				logger.debug("Add versionnable aspect");
+				Map<QName, Serializable> aspectProperties = new HashMap<>();
+				aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
+				nodeService.addAspect(rawMaterialNodeRef, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
+				return rawMaterialNodeRef;
+			}, false, true);
+
+		}
+
+		
+		// Check if No Activity was created
+ 		assertEquals("Check create Activity", 6, getActivities(rawMaterialNodeRef).size());
+
+		
+		final NodeRef workingCopyNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			return checkOutCheckInService.checkout(rawMaterialNodeRef);
+
+		}, false, true);
+
+		
+		assertEquals("Check if No Activity", 0, getActivities(workingCopyNodeRef).size());
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			nodeService.setProperty(workingCopyNodeRef, PLMModel.PROP_PRODUCT_UNIT, ProductUnit.mL.toString());
+			return null;
+		}, false, true);
+		
+		// No activity on working copy
+		assertEquals("Check update Activity", 0, getActivities(workingCopyNodeRef).size());
+
+		final NodeRef newRawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			// Check in
+			Map<String, Serializable> versionProperties = new HashMap<>();
+			versionProperties.put(Version.PROP_DESCRIPTION, "This is a test version");
+			versionProperties.put(VersionBaseModel.PROP_VERSION_TYPE, VersionType.MAJOR);
+			return checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
+		}, false, true);
+
+		//Version activity
+		assertEquals("Check if No Activity", 8, getActivities(newRawMaterialNodeRef).size());
+		
+	}
+	
+	
+	@Test
+	public void checkEntityBranchActivity() throws InterruptedException {
+		
+		AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
+
+		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			/*-- Create raw material --*/
+			NodeRef r = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test branch activity");
+			
+			// Add Activity List to product
+			NodeRef listContainerNodeRef = entityListDAO.getListContainer(r);
+			entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
+			return r;
+		}, false, true);
+
+
+		final NodeRef branchNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			return entityVersionService.createBranch(rawMaterialNodeRef, getTestFolderNodeRef());
+			
+		}, false, true);
+		
+		// Activity reset on branch
+		assertEquals("Check if No Activity", 0, getActivities(branchNodeRef).size());
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			nodeService.setProperty(branchNodeRef, PLMModel.PROP_PRODUCT_UNIT, ProductUnit.mL.toString());
+			return null;
+		}, false, true);
+		
+		// Activity recorded on branch
+		assertEquals("Check update Activity", 1, getActivities(branchNodeRef).size());
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			return entityVersionService.mergeBranch(branchNodeRef, rawMaterialNodeRef, VersionType.MAJOR, "Tests");
+		}, false, true);
+
+		//Version activity
+		assertEquals("Check if No Activity", 9, getActivities(rawMaterialNodeRef).size());
+
+	}
+
+	@Test
+	public void checkChangeStateActivity() throws InterruptedException {
+		
+		AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
+
+		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			/*-- Create raw material --*/
+			NodeRef r = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test branch activity");
+			
+			// Add Activity List to product
+			NodeRef listContainerNodeRef = entityListDAO.getListContainer(r);
+			entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
+			return r;
+		}, false, true);
+
+
+		// Activity reset on branch
+		assertEquals("Check if No Activity", 6, getActivities(rawMaterialNodeRef).size());
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			nodeService.setProperty(rawMaterialNodeRef, PLMModel.PROP_PRODUCT_STATE, SystemState.Valid);
+			return null;
+		}, false, true);
+		
+		// Activity recorded on branch
+		assertEquals("Check update Activity", 7, getActivities(rawMaterialNodeRef).size());
+		
+		
+
+	}
+	
+
+	//@Test
 	public void cleanActivityServiceTest() {
 
 		// Init Variables

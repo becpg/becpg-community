@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2016 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2016 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.product.policy.productListUnits;
@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
@@ -31,6 +32,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.transaction.TransactionListener;
 import org.alfresco.util.transaction.TransactionListenerAdapter;
+import org.alfresco.util.transaction.TransactionSupportUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.StopWatch;
@@ -46,8 +48,8 @@ import fr.becpg.repo.product.formulation.AbstractSimpleListFormulationHandler;
 import fr.becpg.repo.product.formulation.CostsCalculatingFormulationHandler;
 import fr.becpg.repo.product.formulation.NutsCalculatingFormulationHandler;
 
-public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnCreateAssociationPolicy,
-		NodeServicePolicies.OnUpdatePropertiesPolicy {
+public class ProductListPolicy extends AbstractBeCPGPolicy
+		implements NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnUpdatePropertiesPolicy {
 
 	private static final String KEY_PRODUCT_LISTITEMS = "ProductListPolicy.productListItems";
 	private static final String KEY_PRODUCTS = "ProductListPolicy.products";
@@ -86,8 +88,8 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, PackModel.TYPE_LABELING_LIST,
 				PackModel.ASSOC_LL_LABEL, new JavaBehaviour(this, "onCreateAssociation"));
 
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, PLMModel.TYPE_PRODUCT, new JavaBehaviour(this,
-				"onUpdateProperties"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, PLMModel.TYPE_PRODUCT,
+				new JavaBehaviour(this, "onUpdateProperties"));
 
 		super.disableOnCopyBehaviour(PLMModel.TYPE_COSTLIST);
 		super.disableOnCopyBehaviour(PLMModel.TYPE_NUTLIST);
@@ -102,34 +104,34 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 
 	@Override
 	public void onCreateAssociation(AssociationRef assocRef) {
-			// Bind the listener to the transaction
-			AlfrescoTransactionSupport.bindListener(transactionListener);
-			// Get the set of nodes read
-			Set<AssociationRef> assocRefs = AlfrescoTransactionSupport.getResource(KEY_PRODUCT_LISTITEMS);
-			if (assocRefs == null) {
-				assocRefs = new HashSet<>(5);
-				AlfrescoTransactionSupport.bindResource(KEY_PRODUCT_LISTITEMS, assocRefs);
-			}
-			assocRefs.add(assocRef);
+		// Bind the listener to the transaction
+		AlfrescoTransactionSupport.bindListener(transactionListener);
+		// Get the set of nodes read
+		Set<AssociationRef> assocRefs = TransactionSupportUtil.getResource(KEY_PRODUCT_LISTITEMS);
+		if (assocRefs == null) {
+			assocRefs = new HashSet<>(5);
+			TransactionSupportUtil.bindResource(KEY_PRODUCT_LISTITEMS, assocRefs);
+		}
+		assocRefs.add(assocRef);
 	}
 
 	@Override
 	public void onUpdateProperties(NodeRef productNodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
-			String beforeProductUnit = (String) before.get(PLMModel.PROP_PRODUCT_UNIT);
-			String afterProductUnit = (String) after.get(PLMModel.PROP_PRODUCT_UNIT);
-	
-			if (afterProductUnit != null && !afterProductUnit.equals(beforeProductUnit)) {
-	
-				// Bind the listener to the transaction
-				AlfrescoTransactionSupport.bindListener(transactionListener);
-				// Get the set of nodes read
-				Set<NodeRef> nodeRefs = AlfrescoTransactionSupport.getResource(KEY_PRODUCTS);
-				if (nodeRefs == null) {
-					nodeRefs = new HashSet<>(3);
-					AlfrescoTransactionSupport.bindResource(KEY_PRODUCTS, nodeRefs);
-				}
-				nodeRefs.add(productNodeRef);
+		String beforeProductUnit = (String) before.get(PLMModel.PROP_PRODUCT_UNIT);
+		String afterProductUnit = (String) after.get(PLMModel.PROP_PRODUCT_UNIT);
+
+		if ((afterProductUnit != null) && !afterProductUnit.equals(beforeProductUnit)) {
+
+			// Bind the listener to the transaction
+			AlfrescoTransactionSupport.bindListener(transactionListener);
+			// Get the set of nodes read
+			Set<NodeRef> nodeRefs = TransactionSupportUtil.getResource(KEY_PRODUCTS);
+			if (nodeRefs == null) {
+				nodeRefs = new HashSet<>(3);
+				TransactionSupportUtil.bindResource(KEY_PRODUCTS, nodeRefs);
 			}
+			nodeRefs.add(productNodeRef);
+		}
 	}
 
 	private class ProductListPolicyTransactionListener extends TransactionListenerAdapter {
@@ -139,14 +141,20 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 
 		@Override
 		public void beforeCommit(boolean readOnly) {
-			
-				final Set<NodeRef> products = AlfrescoTransactionSupport.getResource(KEY_PRODUCTS);
-	
-				final Set<AssociationRef> assocRefs = AlfrescoTransactionSupport.getResource(KEY_PRODUCT_LISTITEMS);
-	
+
+			final Set<NodeRef> products = TransactionSupportUtil.getResource(KEY_PRODUCTS);
+
+			final Set<AssociationRef> assocRefs = TransactionSupportUtil.getResource(KEY_PRODUCT_LISTITEMS);
+
+			try {
+				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 				updateProducts(products);
 				updateProductListItems(assocRefs);
-			
+
+			} finally {
+				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+			}
+
 		}
 
 		/*
@@ -156,7 +164,7 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 
 			if (productNodeRefs != null) {
 				StopWatch watch = null;
-				
+
 				if (logger.isDebugEnabled()) {
 					watch = new StopWatch();
 					watch.start();
@@ -171,25 +179,25 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 						if (listContainerNodeRef != null) {
 
 							// costList
-							NodeRef costListNodeRef = entityListDAO.getList(listContainerNodeRef, PLMModel.TYPE_COSTLIST);							
-							if (costListNodeRef != null && !isTemplate(productNodeRef)) {
+							NodeRef costListNodeRef = entityListDAO.getList(listContainerNodeRef, PLMModel.TYPE_COSTLIST);
+							if ((costListNodeRef != null) && !isTemplate(productNodeRef)) {
 
 								productsUnit.put(costListNodeRef, productUnit);
-								
+
 								for (NodeRef productListItemNodeRef : entityListDAO.getListItems(costListNodeRef, PLMModel.TYPE_COSTLIST)) {
 
 									NodeRef costNodeRef = associationService.getTargetAssoc(productListItemNodeRef, PLMModel.ASSOC_COSTLIST_COST);
 									if (costNodeRef != null) {
 										Boolean costFixed = (Boolean) nodeService.getProperty(costNodeRef, PLMModel.PROP_COSTFIXED);
 
-										if (costFixed == null || !costFixed) {
+										if ((costFixed == null) || !costFixed) {
 
 											String costCurrency = (String) nodeService.getProperty(costNodeRef, PLMModel.PROP_COSTCURRENCY);
 											String costListUnit = (String) nodeService.getProperty(productListItemNodeRef,
 													PLMModel.PROP_COSTLIST_UNIT);
 
-											if (!(costListUnit != null && !costListUnit.isEmpty() && costListUnit
-													.endsWith(CostsCalculatingFormulationHandler.calculateSuffixUnit(productUnit)))) {
+											if (!((costListUnit != null) && !costListUnit.isEmpty()
+													&& costListUnit.endsWith(CostsCalculatingFormulationHandler.calculateSuffixUnit(productUnit)))) {
 												nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_COSTLIST_UNIT,
 														CostsCalculatingFormulationHandler.calculateUnit(productUnit, costCurrency, costFixed));
 											}
@@ -204,7 +212,7 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 
 								productsUnit.put(nutListNodeRef, productUnit);
 
-								for (NodeRef productListItemNodeRef : entityListDAO.getListItems(nutListNodeRef,  PLMModel.TYPE_NUTLIST)) {
+								for (NodeRef productListItemNodeRef : entityListDAO.getListItems(nutListNodeRef, PLMModel.TYPE_NUTLIST)) {
 
 									String nutListUnit = (String) nodeService.getProperty(productListItemNodeRef, PLMModel.PROP_NUTLIST_UNIT);
 
@@ -212,8 +220,8 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 									if (nutNodeRef != null) {
 										String nutUnit = (String) nodeService.getProperty(nutNodeRef, PLMModel.PROP_NUTUNIT);
 
-										if (!(nutListUnit != null && !nutListUnit.isEmpty() && nutListUnit.endsWith(NutsCalculatingFormulationHandler
-												.calculateSuffixUnit(productUnit)))) {
+										if (!((nutListUnit != null) && !nutListUnit.isEmpty()
+												&& nutListUnit.endsWith(NutsCalculatingFormulationHandler.calculateSuffixUnit(productUnit)))) {
 
 											nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_NUTLIST_UNIT,
 													NutsCalculatingFormulationHandler.calculateUnit(productUnit, nutUnit));
@@ -224,10 +232,11 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 						}
 					}
 				}
-				
+
 				if (logger.isDebugEnabled()) {
 					watch.stop();
-					logger.debug("BeforeCommit run in  " + watch.getTotalTimeSeconds() + " seconds for key " + KEY_PRODUCTS+"  - pendingNodesSize : "+productNodeRefs.size());
+					logger.debug("BeforeCommit run in  " + watch.getTotalTimeSeconds() + " seconds for key " + KEY_PRODUCTS
+							+ "  - pendingNodesSize : " + productNodeRefs.size());
 				}
 			}
 		}
@@ -240,12 +249,12 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 			if (assocRefs != null) {
 
 				StopWatch watch = null;
-				
+
 				if (logger.isDebugEnabled()) {
 					watch = new StopWatch();
 					watch.start();
 				}
-				
+
 				for (AssociationRef assocRef : assocRefs) {
 
 					NodeRef targetNodeRef = assocRef.getTargetRef();
@@ -260,24 +269,23 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 							Boolean costFixed = (Boolean) nodeService.getProperty(targetNodeRef, PLMModel.PROP_COSTFIXED);
 							String costCurrency = (String) nodeService.getProperty(targetNodeRef, PLMModel.PROP_COSTCURRENCY);
 							String costListUnit = (String) nodeService.getProperty(productListItemNodeRef, PLMModel.PROP_COSTLIST_UNIT);
-						
-							if (costFixed != null && costFixed) {
 
-								if (!(costListUnit != null && costListUnit.equals(costCurrency))) {
+							if ((costFixed != null) && costFixed) {
+
+								if (!((costListUnit != null) && costListUnit.equals(costCurrency))) {
 									nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_COSTLIST_UNIT, costCurrency);
 								}
 							} else {
 
-								if (!(costListUnit != null && !costListUnit.isEmpty() && costListUnit.startsWith(costCurrency
-										+ AbstractSimpleListFormulationHandler.UNIT_SEPARATOR))) {
+								if (!((costListUnit != null) && !costListUnit.isEmpty()
+										&& costListUnit.startsWith(costCurrency + AbstractSimpleListFormulationHandler.UNIT_SEPARATOR))) {
 
 									NodeRef listNodeRef = nodeService.getPrimaryParent(productListItemNodeRef).getParentRef();
 
 									if (listNodeRef != null) {
 
 										nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_COSTLIST_UNIT,
-												CostsCalculatingFormulationHandler.calculateUnit(getProductUnit(listNodeRef), 
-														costCurrency, 
+												CostsCalculatingFormulationHandler.calculateUnit(getProductUnit(listNodeRef), costCurrency,
 														costFixed));
 									}
 								}
@@ -287,8 +295,8 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 							String nutListUnit = (String) nodeService.getProperty(productListItemNodeRef, PLMModel.PROP_NUTLIST_UNIT);
 
 							// nutListUnit
-							if (!(nutListUnit != null && !nutListUnit.isEmpty() && nutListUnit.startsWith(nutUnit
-									+ AbstractSimpleListFormulationHandler.UNIT_SEPARATOR))) {
+							if (!((nutListUnit != null) && !nutListUnit.isEmpty()
+									&& nutListUnit.startsWith(nutUnit + AbstractSimpleListFormulationHandler.UNIT_SEPARATOR))) {
 
 								NodeRef listNodeRef = nodeService.getPrimaryParent(productListItemNodeRef).getParentRef();
 
@@ -316,10 +324,11 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 						}
 					}
 				}
-				
+
 				if (logger.isDebugEnabled()) {
 					watch.stop();
-					logger.debug("BeforeCommit run in  " + watch.getTotalTimeSeconds() + " seconds for key " + KEY_PRODUCT_LISTITEMS+"  - pendingNodesSize : "+assocRefs.size());
+					logger.debug("BeforeCommit run in  " + watch.getTotalTimeSeconds() + " seconds for key " + KEY_PRODUCT_LISTITEMS
+							+ "  - pendingNodesSize : " + assocRefs.size());
 				}
 			}
 		}
@@ -340,10 +349,10 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 
 			return productUnit;
 		}
-		
-		private NodeRef getProduct(NodeRef listNodeRef){
+
+		private NodeRef getProduct(NodeRef listNodeRef) {
 			NodeRef productNodeRef = productNodeRefs.get(listNodeRef);
-			if(productNodeRef == null){
+			if (productNodeRef == null) {
 				NodeRef listContainerNodeRef = nodeService.getPrimaryParent(listNodeRef).getParentRef();
 				if (listContainerNodeRef != null) {
 
@@ -353,8 +362,8 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 			}
 			return productNodeRef;
 		}
-		
-		private boolean isTemplate(NodeRef productNodeRef){
+
+		private boolean isTemplate(NodeRef productNodeRef) {
 			return nodeService.hasAspect(productNodeRef, BeCPGModel.ASPECT_ENTITY_TPL);
 		}
 	}

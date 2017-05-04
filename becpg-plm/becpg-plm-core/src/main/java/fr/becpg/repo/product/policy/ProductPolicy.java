@@ -1,7 +1,6 @@
 package fr.becpg.repo.product.policy;
 
 import java.util.Map;
-import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.copy.CopyServicePolicies;

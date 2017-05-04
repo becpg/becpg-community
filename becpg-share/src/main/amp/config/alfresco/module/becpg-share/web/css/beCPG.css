@@ -253,6 +253,7 @@ span.dynaCompNone {
 }
 span.cost-formulated-error,
 span.dynaError,
+span.reqCtrlList,
 span.lcl-formulated-error,
 span.nut-formulated-error,
 span.physicoChem-formulated-error,
@@ -268,11 +269,7 @@ span.reqTypeAuthorized {
     background-repeat: no-repeat
 }
 
-span.deliverableList,
-span.reqCtrlList,
-span.taskList,
-span.scoreList,
-span.invoiceList,
+
 span.dynamicCharactList,
 span.cost-formulated,
 span.lcl-formulated,
@@ -656,6 +653,20 @@ span.project,
     background-image: url("../../components/images/filetypes/generic-project-16.png") !important;
     padding-left: 20px;
     background-repeat: no-repeat
+}
+
+span.deliverableList,
+span.scoreList,
+span.invoiceList {
+    background-image: url("../../components/images/generic-file-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+
+span.taskList {
+	background-image: url("../../components/images/filetypes/generic-task-16.png") !important;
+	padding-left: 20px;
+	background-repeat: no-repeat
 }
 
 

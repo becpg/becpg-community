@@ -77,10 +77,10 @@ if (beCPG.module.EntityDataGridRenderers) {
             	  if(activityType == "State"){
             		  title = scope.msg("entity.activity.state.change", title, scope.msg("data."+className+"state." +data.beforeState.toLowerCase()), scope.msg("data."+className+"state."+data.afterState.toLowerCase()));
             	  } else if (activityType == "Datalist" ){
-            		  if (data.title === className){
-            			  title  = scope.msg("entity.activity.allInOne.dataList", scope.msg("data.list."+className));
+            		  if (data.title.indexOf(className)>0){
+            			  title  = scope.msg("entity.activity.datalist.simple", scope.msg("data.list."+className));
             		  } else{
-            			  title  = scope.msg("entity.activity."+activityType.toLowerCase(), title, scope.msg("data.list."+className) );
+            			  title  = scope.msg("entity.activity.datalist", title, scope.msg("data.list."+className) );
             		  }
             		  
             	  } else if(activityType == "Entity"|| activityType == "Formulation" || activityType == "Report"){
@@ -97,6 +97,10 @@ if (beCPG.module.EntityDataGridRenderers) {
 	                     .getFileIcon(data.title, "cm:content", 16) + '" />'+Alfresco.util.encodeHTML(data.title)+'</a></span>';
             		  }
             		 title  = scope.msg("entity.activity.content."+data.activityEvent.toLowerCase(), title);
+            	  }  else if(activityType == "Merge"){
+            		  title  = scope.msg("entity.activity.merge", title, data.branchTitle );
+            	  } else if(activityType == "Version"){
+            		  title  = scope.msg("entity.activity.version", title, data.versionLabel, data.versionNodeRef );
             	  }
             	  
             	  html += '<div class="entity-activity-details">';

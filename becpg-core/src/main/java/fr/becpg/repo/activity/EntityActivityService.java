@@ -23,12 +23,16 @@ public interface EntityActivityService {
 	static final String PROP_CLASSNAME = "className";
 	static final String PROP_TITLE = "title";
 	static final String PROP_BRANCH_TITLE = "branchTitle";
+	static final String PROP_VERSION_NODEREF="versionNodeRef";
+	static final String PROP_VERSION_LABEL="versionLabel";
 
 	boolean postCommentActivity(NodeRef entityNodeRef, NodeRef commentNodeRef, ActivityEvent activityEvent);
 
 	boolean postContentActivity(NodeRef entityNodeRef, NodeRef contentNodeRef, ActivityEvent activityEvent);
 
 	boolean postDatalistActivity(NodeRef entityNodeRef, NodeRef datalistItemNodeRef, ActivityEvent activityEvent);
+	
+	boolean postVersionActivity(NodeRef origNodeRef, NodeRef versionNodeRef, String versionLabel);
 	
 	boolean postMergeBranchActivity(NodeRef branchNodeRef, NodeRef branchToNodeRef, VersionType versionType, String description);
 
@@ -42,7 +46,12 @@ public interface EntityActivityService {
 
 	void cleanActivities();
 
+	void mergeActivities(NodeRef fromNodeRef, NodeRef toNodeRef);
+
 	boolean isMatchingStateProperty(QName propName);
+
+
+
 
 	
 }

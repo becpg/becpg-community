@@ -57,6 +57,7 @@
 					<value>Comment</value>
 					<value>Content</value>
 					<value>Merge</value>
+					<value>Version</value>
 				</list>
 			</parameter>
 		</constraint>
