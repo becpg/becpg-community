@@ -628,8 +628,8 @@
                      for (j in resources) {
                         var resource = resources[j];
                         ret += "<li>";
-                        ret += '<span class="avatar" title="' + resource.metadata + '">';
-                        ret += Alfresco.Share.userAvatar(resource.displayValue, 32);
+                        ret += '<span class="avatar" title="' + resource.displayValue + '">';
+                        ret += Alfresco.Share.userAvatar(resource.metadata, 32);
                         ret += "</span></li>";
                      }
                      ret += "</ul>";
@@ -645,8 +645,8 @@
                      var ret = "";
 
                      if (resource && resource[0]) {
-                        ret += '<div class="project-manager avatar" title="' + resource[0].metadata + '">';
-                        ret += Alfresco.Share.userAvatar(resource[0].displayValue, 16);
+                        ret += '<div class="project-manager avatar" title="' + resource[0].displayValue + '">';
+                        ret += Alfresco.Share.userAvatar(resource[0].metadata, 16);
                         ret += "</div>";
                      }
 
