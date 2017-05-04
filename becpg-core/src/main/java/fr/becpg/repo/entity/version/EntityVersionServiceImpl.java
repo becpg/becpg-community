@@ -266,6 +266,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 						// remove assoc (copy used to checkin doesn't do it)
 						removeRemovedAssociation(workingCopyNodeRef, origNodeRef);
 
+						entityActivityService.mergeActivities(origNodeRef, workingCopyNodeRef);
+						
 						// Move workingCopyNodeRef DataList to origNodeRef
 						entityService.deleteDataLists(origNodeRef, true);
 						entityListDAO.moveDataLists(workingCopyNodeRef, origNodeRef);
@@ -289,6 +291,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 						// exits
 						entityService.deleteFiles(workingCopyNodeRef, true);
 					}
+					
 
 					return versionNodeRef1;
 
@@ -310,6 +313,11 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			nodeService.addAspect(versionNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION, aspectProperties);
 
 			updateVersionEffectivity(origNodeRef, versionNodeRef);
+			
+			if(!isInitialVersion){
+				entityActivityService.postVersionActivity(origNodeRef, versionNodeRef, versionLabel);
+			}	
+		    
 
 			return versionNodeRef;
 
@@ -801,7 +809,9 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 					properties.put(VersionBaseModel.PROP_VERSION_TYPE, versionType);
 					properties.put(Version.PROP_DESCRIPTION, description);
 
-					entityActivityService.postMergeBranchActivity(branchNodeRef, internalBranchToNodeRef, versionType, description);
+					
+					entityActivityService.postMergeBranchActivity(branchNodeRef, branchNodeRef, versionType, description);
+					
 
 					return checkOutCheckInService.checkin(branchNodeRef, properties);
 
