@@ -63,6 +63,8 @@ public interface EntityService {
 
 	NodeRef createDefaultImage(NodeRef nodeRef);
 
+	NodeRef getEntityNodeRef(NodeRef childNodeRef, QName itemType);
+
 	
 
 }

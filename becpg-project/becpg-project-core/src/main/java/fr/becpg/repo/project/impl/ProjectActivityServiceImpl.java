@@ -97,7 +97,7 @@ public class ProjectActivityServiceImpl implements ProjectActivityService, Entit
 
 		QName itemType = nodeService.getType(taskNodeRef);
 
-		NodeRef entityNodeRef = entityActivityService.getEntityNodeRef(taskNodeRef, itemType);
+		NodeRef entityNodeRef = entityActivityService.getEntityNodeRefForActivity(taskNodeRef, itemType);
 
 		if (entityNodeRef != null) {
 			if (entityActivityService.postStateChangeActivity(entityNodeRef, taskNodeRef, beforeState, afterState)) {
@@ -128,7 +128,7 @@ public class ProjectActivityServiceImpl implements ProjectActivityService, Entit
 
 		QName itemType = nodeService.getType(deliverableNodeRef);
 
-		NodeRef entityNodeRef = entityActivityService.getEntityNodeRef(deliverableNodeRef, itemType);
+		NodeRef entityNodeRef = entityActivityService.getEntityNodeRefForActivity(deliverableNodeRef, itemType);
 
 		if (entityNodeRef != null) {
 			if (entityActivityService.postStateChangeActivity(entityNodeRef, deliverableNodeRef, beforeState, afterState)) {

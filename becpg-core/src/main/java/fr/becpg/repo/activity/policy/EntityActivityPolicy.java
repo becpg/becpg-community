@@ -141,7 +141,6 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 									beforeState = before.get(entityState).toString();
 									afterState = after.get(entityState).toString();
 								}
-								logger.info("beforeType :" + beforeType);
 
 								isDifferent = true;
 
@@ -263,7 +262,7 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 
 	private void registerActivity(NodeRef actionedUponNodeRef, QName type, ActivityEvent activityEvent) {
 
-		NodeRef entityNodeRef = entityActivityService.getEntityNodeRef(actionedUponNodeRef, type);
+		NodeRef entityNodeRef = entityActivityService.getEntityNodeRefForActivity(actionedUponNodeRef, type);
 
 		if (entityNodeRef != null) {
 			try {

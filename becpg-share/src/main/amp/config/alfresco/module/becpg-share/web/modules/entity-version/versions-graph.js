@@ -274,7 +274,12 @@
 
          html += '<div id="graph-version-row-' + this.getRecordIndex(oRecord) + '" class="entity-branches">';
          html += '   <span class="document-version">' + $html(doc.label) + '</span>';
-         html += '   <span class="' + doc.metadata + (current ? " current" : "") + '" >' + $html(doc.name);
+         html += '   <span class="' + doc.metadata + (current ? " current" : "") + '" >';
+         if(current){
+        	 html +=  $html(doc.name);
+         } else {
+        	 html += '<a href="' + beCPG.util.entityURL(null,doc.nodeRef) + '&bcPath=true">'+$html(doc.name)+'</a>';
+         }
          if(compareURL!=null){
              html += '   <a href="' + compareURL + '" class="compare" title="' + Alfresco.util.message("label.compare") + '">&nbsp;</a>';
          }

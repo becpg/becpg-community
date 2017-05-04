@@ -2689,6 +2689,12 @@
                                 {
                                     strFilter = aFilters[0];
                                 }
+                                
+                                if (this.options.usePagination)
+                                {
+                                    this.currentPage = 1;
+                                    this.queryExecutionId = null;
+                                }
 
                                 // Initial navigation won't fire the History
                                 // event
@@ -2703,11 +2709,6 @@
                                 else
                                 {
                                     var objNav = {};
-                                    if (this.options.usePagination)
-                                    {
-                                        this.currentPage = 1;
-                                        this.queryExecutionId = null;
-                                    }
                                     objNav[this.scopeId + "filter"] = strFilter;
                                     YAHOO.util.History.multiNavigate(objNav);
                                 }

@@ -338,6 +338,7 @@ public class EntityDataListWebScript extends AbstractWebScript {
 				hasWriteAccess = 
 						extractor.hasWriteAccess()
 						&& !nodeService.hasAspect(entityNodeRefsList.get(0), ContentModel.ASPECT_CHECKED_OUT)
+						&& !nodeService.hasAspect(entityNodeRefsList.get(0), BeCPGModel.ASPECT_COMPOSITE_VERSION)
 						&& lockService.getLockStatus(entityNodeRefsList.get(0)) == LockStatus.NO_LOCK 
 						&& securityService.computeAccessMode(nodeService.getType(entityNodeRefsList.get(0)), itemType) == SecurityService.WRITE_ACCESS
 						&& isExternalUserAllowed(dataListFilter);
