@@ -42,7 +42,7 @@ public interface EntityActivityService {
 
 	JSONObject postActivityLookUp(ActivityType activityType, String value);
 
-	NodeRef getEntityNodeRef(NodeRef nodeRef, QName itemType);
+	NodeRef getEntityNodeRefForActivity(NodeRef nodeRef, QName itemType);
 
 	void cleanActivities();
 

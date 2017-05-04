@@ -28,8 +28,10 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 
@@ -40,6 +42,7 @@ import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
@@ -59,6 +62,7 @@ import fr.becpg.common.BeCPGException;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.TranslateHelper;
@@ -92,8 +96,23 @@ public class EntityServiceImpl implements EntityService {
 	@Autowired
 	private ContentService contentService;
 
+//	@Autowired
+//	private DictionaryService dictionaryService;
+//	
+	
 	@Autowired
-	private DictionaryService dictionaryService;
+	private EntityDictionaryService entityDictionaryService;
+	
+	
+
+	private static Integer MAX_DEPTH_LEVEL = 6;
+
+	private static final Set<QName> IGNORE_PARENT_ASSOC_TYPES = new HashSet<>(7);
+	static {
+		IGNORE_PARENT_ASSOC_TYPES.add(ContentModel.ASSOC_MEMBER);
+		IGNORE_PARENT_ASSOC_TYPES.add(ContentModel.ASSOC_IN_ZONE);
+	}
+
 
 	/**
 	 * Load an image in the folder Images.
@@ -306,10 +325,9 @@ public class EntityServiceImpl implements EntityService {
 				.getChildRef();
 	}
 
-	// TODO Supprimer
 	@Override
 	public boolean hasAssociatedImages(QName type) {
-		return dictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITY_V2);
+		return entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITY_V2);
 	}
 
 	@Override
@@ -467,5 +485,55 @@ public class EntityServiceImpl implements EntityService {
 			deleteNode(listContainerNodeRef, deleteArchivedNodes);
 		}
 	}
+	
+
+
+	@Override
+	public NodeRef getEntityNodeRef(NodeRef nodeRef, QName itemType) {
+		return getEntityNodeRef(nodeRef, itemType, new HashSet<NodeRef>());
+	}
+	
+
+	private NodeRef getEntityNodeRef(NodeRef nodeRef, QName itemType, Set<NodeRef> visitedNodeRefs) {
+		if (nodeService.exists(nodeRef)) {
+
+			if (entityDictionaryService.isSubClass(itemType, BeCPGModel.TYPE_ENTITY_V2)) {
+				return nodeRef;
+			}
+
+			if (entityDictionaryService.isSubClass(itemType, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
+				return entityListDAO.getEntity(nodeRef);
+			}
+
+			// Create the visited nodes set if it has not already been created
+			if (visitedNodeRefs == null) {
+				visitedNodeRefs = new HashSet<>();
+			}
+
+			// This check prevents stack over flow when we have a cyclic node
+			// graph
+			if ((visitedNodeRefs.contains(nodeRef) == false) && (visitedNodeRefs.size() < MAX_DEPTH_LEVEL)) {
+				visitedNodeRefs.add(nodeRef);
+
+				List<ChildAssociationRef> parents = nodeService.getParentAssocs(nodeRef);
+				for (ChildAssociationRef parent : parents) {
+					// We are not interested in following potentially massive
+					// person group membership trees!
+					if (IGNORE_PARENT_ASSOC_TYPES.contains(parent.getTypeQName())) {
+						continue;
+					}
+
+					NodeRef entityNodeRef = getEntityNodeRef(parent.getParentRef(), nodeService.getType(parent.getParentRef()), visitedNodeRefs);
+					if (entityNodeRef != null) {
+						return entityNodeRef;
+					}
+
+				}
+
+			}
+		}
+		return null;
+	}
+
 
 }

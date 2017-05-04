@@ -36,6 +36,7 @@ import fr.becpg.repo.activity.data.ActivityListDataItem;
 import fr.becpg.repo.activity.data.ActivityType;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -51,6 +52,9 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	@Autowired
 	private EntityListDAO entityListDAO;
 
+	@Autowired
+	private EntityService entityService;
+	
 	@Autowired
 	private AssociationService associationService;
 
@@ -83,14 +87,6 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 	@Autowired
 	private TransactionService transactionService;
-
-	private static Integer MAX_DEPTH_LEVEL = 6;
-
-	private static final Set<QName> IGNORE_PARENT_ASSOC_TYPES = new HashSet<>(7);
-	static {
-		IGNORE_PARENT_ASSOC_TYPES.add(ContentModel.ASSOC_MEMBER);
-		IGNORE_PARENT_ASSOC_TYPES.add(ContentModel.ASSOC_IN_ZONE);
-	}
 
 	@Override
 	public boolean isMatchingStateProperty(QName propName) {
@@ -487,10 +483,6 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 	}
 
-	@Override
-	public NodeRef getEntityNodeRef(NodeRef nodeRef, QName itemType) {
-		return getEntityNodeRef(nodeRef, itemType, new HashSet<NodeRef>());
-	}
 
 	private NodeRef getMatchingCharactNodeRef(NodeRef listItemNodeRef) {
 		QName pivotAssoc = entityDictionaryService.getDefaultPivotAssoc(nodeService.getType(listItemNodeRef));
@@ -503,49 +495,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 		return null;
 	}
-
-	private NodeRef getEntityNodeRef(NodeRef nodeRef, QName itemType, Set<NodeRef> visitedNodeRefs) {
-		if (nodeService.exists(nodeRef) && !nodeService.hasAspect(nodeRef, ContentModel.ASPECT_WORKING_COPY)
-				&& !nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
-
-			if (entityDictionaryService.isSubClass(itemType, BeCPGModel.TYPE_ENTITY_V2)) {
-				return nodeRef;
-			}
-
-			if (entityDictionaryService.isSubClass(itemType, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
-				return entityListDAO.getEntity(nodeRef);
-			}
-
-			// Create the visited nodes set if it has not already been created
-			if (visitedNodeRefs == null) {
-				visitedNodeRefs = new HashSet<>();
-			}
-
-			// This check prevents stack over flow when we have a cyclic node
-			// graph
-			if ((visitedNodeRefs.contains(nodeRef) == false) && (visitedNodeRefs.size() < MAX_DEPTH_LEVEL)) {
-				visitedNodeRefs.add(nodeRef);
-
-				List<ChildAssociationRef> parents = nodeService.getParentAssocs(nodeRef);
-				for (ChildAssociationRef parent : parents) {
-					// We are not interested in following potentially massive
-					// person group membership trees!
-					if (IGNORE_PARENT_ASSOC_TYPES.contains(parent.getTypeQName())) {
-						continue;
-					}
-
-					NodeRef entityNodeRef = getEntityNodeRef(parent.getParentRef(), nodeService.getType(parent.getParentRef()), visitedNodeRefs);
-					if (entityNodeRef != null) {
-						return entityNodeRef;
-					}
-
-				}
-
-			}
-		}
-		return null;
-	}
-
+	
+	
 	private NodeRef getActivityList(NodeRef projectNodeRef) {
 		NodeRef listNodeRef = null;
 		NodeRef listContainerNodeRef = entityListDAO.getListContainer(projectNodeRef);
@@ -728,6 +679,15 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 		// TODO groupByWeek refactoring !!
 
+		return null;
+	}
+
+	@Override
+	public NodeRef getEntityNodeRefForActivity(NodeRef nodeRef, QName itemType) {
+		if( nodeService.exists(nodeRef) && !nodeService.hasAspect(nodeRef, ContentModel.ASPECT_WORKING_COPY)
+		&& !nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)){
+			return entityService.getEntityNodeRef(nodeRef, itemType);
+		}
 		return null;
 	}
 

@@ -24,6 +24,7 @@ import org.alfresco.service.cmr.lock.LockService;
 import org.alfresco.service.cmr.lock.LockStatus;
 import org.alfresco.service.cmr.lock.LockType;
 import org.alfresco.service.cmr.lock.NodeLockedException;
+import org.alfresco.service.cmr.repository.AssociationExistsException;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.CopyService;
@@ -292,6 +293,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 						entityService.deleteFiles(workingCopyNodeRef, true);
 					}
 					
+					
+					
 
 					return versionNodeRef1;
 
@@ -314,6 +317,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 			updateVersionEffectivity(origNodeRef, versionNodeRef);
 			
+			updateEntitiesHistory(origNodeRef, versionNodeRef);
+			
 			if(!isInitialVersion){
 				entityActivityService.postVersionActivity(origNodeRef, versionNodeRef, versionLabel);
 			}	
@@ -329,6 +334,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		}
 	}
 
+	
+
 	private void updateVersionEffectivity(NodeRef entityNodeRef, NodeRef versionNodeRef) {
 		Date newEffectivity = new Date();
 		Date oldEffectivity = (Date) nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_START_EFFECTIVITY);
@@ -339,6 +346,32 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		nodeService.setProperty(versionNodeRef, BeCPGModel.PROP_END_EFFECTIVITY, newEffectivity);
 	}
 
+	
+	private void updateEntitiesHistory(NodeRef origNodeRef, NodeRef versionNodeRef) {
+		List<AssociationRef> assocRefs = nodeService.getSourceAssocs(origNodeRef, RegexQNamePattern.MATCH_ALL);
+
+		for (AssociationRef assocRef : assocRefs) {
+			policyBehaviourFilter.disableBehaviour(assocRef.getSourceRef(), ContentModel.ASPECT_AUDITABLE);
+			try {
+					
+				if(assocRef!=null && assocRef.getTargetRef()!=null && !assocRef.getTargetRef().equals(versionNodeRef)){
+					NodeRef entityNodeRef = entityService.getEntityNodeRef(assocRef.getSourceRef(), nodeService.getType(assocRef.getSourceRef()));
+					
+					if( entityNodeRef!=null && nodeService.hasAspect(entityNodeRef,BeCPGModel.ASPECT_COMPOSITE_VERSION)){
+						
+						nodeService.removeAssociation(assocRef.getSourceRef(), assocRef.getTargetRef(), assocRef.getTypeQName());
+						nodeService.createAssociation(assocRef.getSourceRef(), versionNodeRef, assocRef.getTypeQName());
+					}
+				}
+			} catch(AssociationExistsException e){
+				logger.error("Cannot update assoc : "+assocRef);
+			}	finally {
+				policyBehaviourFilter.enableBehaviour(assocRef.getSourceRef(), ContentModel.ASPECT_AUDITABLE);
+			}
+		}
+		
+	}
+	
 	private void removeRemovedAssociation(NodeRef sourceCopy, NodeRef targetCopy) {
 
 		/*
@@ -503,7 +536,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	public List<EntityVersion> getAllVersions(NodeRef entityNodeRef) {
 
 		List<EntityVersion> entityVersions = new ArrayList<>();
-		if (!nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_WORKING_COPY)) {
+		if (!nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_WORKING_COPY) && !nodeService.hasAspect(entityNodeRef,BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
 			VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
 
 			if (versionHistory != null) {
