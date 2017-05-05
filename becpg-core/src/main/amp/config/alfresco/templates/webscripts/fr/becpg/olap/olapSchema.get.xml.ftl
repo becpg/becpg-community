@@ -607,13 +607,13 @@
 		</Dimension>
 		
 		<Dimension type="StandardDimension" foreignKey="id" name="entities" caption="${msg("jsolap.entities.title")}">
-			<Hierarchy hasAll="true" primaryKey="id">
+			<Hierarchy hasAll="true" primaryKey="entity_id">
 			
 				<#if isAdmin>
-					<Table name="becpg_public_products"/>
+					<Table name="becpg_public_project_entities"/>
 				<#else>
-					<Table name="becpg_public_products">
-						becpg_public_products.instanceId = ${instanceId}
+					<Table name="becpg_public_project_entities">
+						becpg_public_project_entities.instanceId = ${instanceId}
 					</Table>
 				</#if>
 				<Level approxRowCount="5" name="productState" caption="${msg("jsolap.state.title")}"  column="productState"  type="String"   >
