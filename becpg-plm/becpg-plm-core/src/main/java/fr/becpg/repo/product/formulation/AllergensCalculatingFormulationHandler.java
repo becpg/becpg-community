@@ -73,11 +73,16 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 					if (!a.getIsManual()) {
 						// reset
 						a.setQtyPerc(null);
-						a.setVoluntary(false);
-						a.setInVoluntary(false);
-						a.getVoluntarySources().clear();
-						a.getInVoluntarySources().clear();
-
+						if(formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))){
+							a.setVoluntary(false);
+							a.setInVoluntary(false);
+							a.getVoluntarySources().clear();
+							a.getInVoluntarySources().clear();
+						} else if(formulatedProduct.hasProcessListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))){
+							a.setInVoluntary(false);
+							a.getInVoluntarySources().clear();
+						}
+						
 						// add detailable aspect
 						if (!a.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM)) {
 							a.getAspects().add(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
