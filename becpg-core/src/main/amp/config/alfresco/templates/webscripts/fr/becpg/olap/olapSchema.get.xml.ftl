@@ -21,7 +21,6 @@
 			<Level name="instance_id" column="id" visible="false" />
 			<Level name="instance_name" column="instance_name" caption="${msg("jsolap.instance.title")}" />
 			<Level name="tenant_name" column="tenant_name" caption="${msg("jsolap.tenant.title")}" />
-			
 		</Hierarchy>
 	</Dimension>
 	
@@ -119,7 +118,7 @@
 				<View alias="req_target">
 					<SQL dialect="generic">
 						<![CDATA[
-							select productHierarchy1, productHierarchy2, becpg_public_products.noderef AS noderef, productState, productType, target_id, name
+							select productHierarchy1, productHierarchy2, becpg_public_products.noderef AS noderef, productState, productType, target_id, name, versionLabel
 							from becpg_public_requirement_sources, becpg_public_products
 							where becpg_public_requirement_sources.target_id = becpg_public_products.id
 						]]>
@@ -158,6 +157,7 @@
 				
 				<Level name="entity_noderef" caption="${msg("jsolap.product.title")}" column="noderef" nameColumn="name" type="String"   >
 				</Level>
+				<Level name="versionLabel" caption="${msg("jsolap.versionLabel.title")}" column="versionLabel" type="String" />
 			</Hierarchy>
 		</Dimension>
 		
@@ -168,7 +168,7 @@
 					<View alias="req_src">
 						<SQL dialect="generic">
 							<![CDATA[
-								select productHierarchy1, productHierarchy2, becpg_public_products.noderef AS noderef, productState, productType, target_id, name
+								select productHierarchy1, productHierarchy2, becpg_public_products.noderef AS noderef, productState, productType, target_id, name, versionLabel
 								from becpg_public_requirement_sources, becpg_public_products
 								where becpg_public_requirement_sources.source_id = becpg_public_products.id
 								
@@ -220,6 +220,7 @@
 				
 				<Level name="entity_noderef" caption="${msg("jsolap.product.title")}" column="noderef" nameColumn="name" type="String"   >
 				</Level>
+				<Level name="versionLabel" caption="${msg("jsolap.versionLabel.title")}" column="versionLabel" type="String" />
 			</Hierarchy>
 		</Dimension>
 		<#if isAdmin>
@@ -345,6 +346,7 @@
 				</Level>
 				<Level name="entity_noderef" caption="${msg("jsolap.product.title")}" table="becpg_public_products" column="nodeRef" nameColumn="name" type="String"   >
 				</Level>
+				<Level name="versionLabel" caption="${msg("jsolap.versionLabel.title")}" table="becpg_public_products" column="versionLabel" type="String" />
 			</Hierarchy>
 		</Dimension>
 		
@@ -607,16 +609,26 @@
 		</Dimension>
 		
 		<Dimension type="StandardDimension" foreignKey="id" name="entities" caption="${msg("jsolap.entities.title")}">
-			<Hierarchy hasAll="true" primaryKey="entity_id">
+			<Hierarchy hasAll="true" primaryKey="project_id" primaryKeyTable="becpg_public_project_entities">
 			
-				<#if isAdmin>
-					<Table name="becpg_public_project_entities"/>
+				<#if isAdmin>		
+					<Join leftKey="id" rightKey="id" >
+						<Table name="becpg_public_project_entities">
+						</Table>
+						<Table name="becpg_public_products">
+						</Table>
+					</Join>
 				<#else>
-					<Table name="becpg_public_project_entities">
-						becpg_public_project_entities.instanceId = ${instanceId}
-					</Table>
+					<Join leftKey="id" rightKey="id" >
+						<Table name="becpg_public_project_entities">
+							becpg_public_project_entities.instanceId = ${instanceId}
+						</Table>
+						<Table name="becpg_public_products">
+							becpg_public_products.instanceId = ${instanceId}
+						</Table>
+					</Join>
 				</#if>
-				<Level approxRowCount="5" name="productState" caption="${msg("jsolap.state.title")}"  column="productState"  type="String"   >
+				<Level approxRowCount="5" name="productState" caption="${msg("jsolap.state.title")}"  table="becpg_public_products" column="productState"  type="String"   >
 				  <NameExpression>
 					  <SQL dialect="generic" >
 					  <![CDATA[CASE WHEN productState='Simulation' THEN '${msg("listconstraint.bcpg_systemState.Simulation")}'
@@ -628,13 +640,14 @@
 	                           END]]></SQL>
              		 </NameExpression>
 				</Level>		
-				<Level name="productHierarchy1" caption="${msg("jsolap.family.title")}" column="productHierarchy1" type="String"   >
+				<Level name="productHierarchy1" caption="${msg("jsolap.family.title")}" table="becpg_public_products" column="productHierarchy1" type="String"   >
 				</Level>
-				<Level name="productHierarchy2" caption="${msg("jsolap.subFamily.title")}" column="productHierarchy2" type="String"   >
+				<Level name="productHierarchy2" caption="${msg("jsolap.subFamily.title")}" table="becpg_public_products" column="productHierarchy2" type="String"   >
 				</Level>
-				<Level name="erpCode" caption="${msg("jsolap.erpCode.title")}" column="erpCode"  type="String"   />
-				<Level name="entity_noderef" caption="${msg("jsolap.entity.caption")}" column="noderef" nameColumn="name" type="String"   >
+				<Level name="erpCode" caption="${msg("jsolap.erpCode.title")}" table="becpg_public_products" column="erpCode"  type="String"   />
+				<Level name="entity_noderef" caption="${msg("jsolap.entity.caption")}" table="becpg_public_products" column="noderef" nameColumn="name" type="String"   >
 				</Level>
+				<Level name="versionLabel" caption="${msg("jsolap.versionLabel.title")}" column="versionLabel" table="becpg_public_products" type="String" />
 			</Hierarchy>
 		</Dimension>
 		
@@ -752,6 +765,7 @@
 				<Level name="code" caption="${msg("jsolap.productCode.title")}" column="code"  type="String"   />
 				<Level name="erpCode" caption="${msg("jsolap.erpCode.title")}" column="erpCode"  type="String"   />
 				<Level name="legalName" caption="${msg("jsolap.legalName.title")}" column="legalName" type="String"    />
+				<Level name="versionLabel" caption="${msg("jsolap.versionLabel.title")}" column="versionLabel" type="String" />
 			</Hierarchy>
 		</Dimension>
 		
@@ -816,6 +830,7 @@
 				<Level name="name" caption="${msg("jsolap.productName.title")}" column="name"  type="String" />
 			    <Level name="erpCode" caption="${msg("jsolap.erpCode.title")}" column="erpCode"  type="String" />
 				<Level name="legalName" caption="${msg("jsolap.legalName.title")}" column="legalName"  type="String" />
+				<Level name="versionLabel" caption="${msg("jsolap.versionLabel.title")}" column="versionLabel" type="String" />
 			</Hierarchy>
 		</Dimension>
 		
@@ -1030,6 +1045,7 @@
 				</Level>
 				<Level name="entity_noderef" caption="${msg("jsolap.packaging.title")}" table="becpg_public_products" column="nodeRef" nameColumn="name" type="String"   >
 				</Level>
+				<Level name="versionLabel" caption="${msg("jsolap.versionLabel.title")}" table="becpg_public_products" column="versionLabel" type="String" />
 			</Hierarchy>
 		</Dimension>
 		
