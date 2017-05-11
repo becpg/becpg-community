@@ -10,6 +10,17 @@
     clear: both;
 }
 
+.yui-ge .wizard  .yui-g {
+    width: auto;
+}
+.yui-ge .wizard  .yui-g{
+    float: none;
+}
+
+div.wizard-comments {
+	  margin-top: 20px;
+}
+
 .wizard .form-container .form-buttons {
 	display:none;
 }

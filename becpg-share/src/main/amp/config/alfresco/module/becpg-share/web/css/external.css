@@ -12,6 +12,10 @@
     display: none;
 }
 
+#HEADER_MY_FILES {
+    display: none;
+}
+
 .reassign {
     display: none;
 }
