@@ -40,6 +40,8 @@
         this.controlId = controlId;
         this.fieldHtmlId = fieldHtmlId;
         this.isAssoc = isAssoc;
+        
+        YAHOO.Bubbling.on(this.fieldHtmlId + "refreshContent", this.refreshContent, this);
 
         return this;
     };
@@ -746,6 +748,12 @@
                             }
 
                             return ret.join();
+                        },
+                        
+                        refreshContent : function(layer, args)
+                        {
+                        	this.options.currentValue = args[1];
+                        	loadItems(args);
                         },
 
                         beforeFormRuntimeInit : function(layer, args)

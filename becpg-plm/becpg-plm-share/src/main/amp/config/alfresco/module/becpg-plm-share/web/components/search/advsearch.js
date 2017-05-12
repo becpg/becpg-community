@@ -286,14 +286,15 @@
 		repopulateCurrentForm : function ADVSearch_repopulateCurrentForm() {
 			if (this.options.savedQuery.length !== 0) {
 				var savedQuery = YAHOO.lang.JSON.parse(this.options.savedQuery);
-				var elForm = Dom.get(this.currentForm.runtime.formId);
-
+				var elForm = Dom.get(this.currentForm.runtime.formId);				
+				
 				for (var i = 0, j = elForm.elements.length; i < j; i++) {
 					var element = elForm.elements[i];
 					var name = element.name;
 					if (name != undefined && name !== "-") {
 						var savedValue = savedQuery[name];
-						if (savedValue !== undefined) {
+						
+						if (savedValue !== undefined && savedValue !== "") {
 							if (element.type === "checkbox" || element.type === "radio") {
 								element.checked = (savedValue === "true");
 							} else if (name.match("-range$") == "-range") {
@@ -316,17 +317,14 @@
 									element.value = savedValue;
 								}
 							}
-							// beCPG : clear the value,
-							// otherwise value is
-							// keeped in a hidden field and we
-							// don't understand
-							// the results
-							// TODO : assoc, now we clear saved
-							// value, but we
-							// should rendered it instead of
-							// clearing it
-							else if (name.indexOf("assoc_") != 0) {
+							
+							var cleanElementId = element.id.split("-")[0];
+							var autocompleteId = cleanElementId + "-autocomplete";
+							var autocompleteElement = Dom.get(autocompleteId);
+							
+							if(autocompleteElement != null){
 								element.value = savedValue;
+								Bubbling.fire(cleanElementId + "refreshContent", savedValue, this );
 							}
 
 							// reverse value setting doesn't
@@ -445,10 +443,19 @@
 		onAfterFormRuntimeInit : function ADVSearch_onAfterFormRuntimeInit(layer, args) {
 			// extract the current form runtime - so we can
 			// reference it later
+			var me = this;
+			
 			this.currentForm.runtime = args[1].runtime;
 			var form = (Dom.get(this.currentForm.runtime.formId));
 			Event.removeListener(form, "submit");
 			form.setAttribute("onsubmit", "return false;");
+			
+			form.onkeypress = function(e){
+				if(e.keyCode == 13){
+					
+					me._searchEnterHandler();
+				}
+			};
 		},
 
 		/**

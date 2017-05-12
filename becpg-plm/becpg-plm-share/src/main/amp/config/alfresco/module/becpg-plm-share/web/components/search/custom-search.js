@@ -334,6 +334,68 @@
                             // artifacts on YUI button decoration
                             Dom.setStyle(this.id + "-body", "visibility", "visible");
                         },
+                        /**
+                         * Refresh the search page by full URL refresh
+                         *
+                         * @method refreshSearch
+                         * @param args {object} search args
+                         */
+                        refreshSearch: function Search_refreshSearch(args)
+                        {
+                           var searchTerm = this.searchTerm;
+                           if (args.searchTerm !== undefined)
+                           {
+                              searchTerm = args.searchTerm;
+                           }
+                           var searchTag = this.searchTag;
+                           if (args.searchTag !== undefined)
+                           {
+                              searchTag = args.searchTag;
+                           }
+                           var searchAllSites = this.searchAllSites;
+                           if (args.searchAllSites !== undefined)
+                           {
+                              searchAllSites = args.searchAllSites;
+                           }
+                           var searchRepository = this.searchRepository;
+                           if (args.searchRepository !== undefined)
+                           {
+                              searchRepository = args.searchRepository;
+                           }
+                           var searchSort = this.searchSort;
+                           if (args.searchSort !== undefined)
+                           {
+                              searchSort = args.searchSort;
+                           }
+                           var searchQuery = this.options.searchQuery;
+                           if (args.searchQuery !== undefined)
+                           {
+                              searchQuery = args.searchQuery;
+                           }
+                           
+                           // redirect back to the search page - with appropriate site context
+                           var url = Alfresco.constants.URL_PAGECONTEXT;
+                           if (this.options.siteId.length !== 0)
+                           {
+                              url += "site/" + this.options.siteId + "/";
+                           }
+                           
+                           // add search data webscript arguments
+                           url += "search?t=" + encodeURIComponent(searchTerm);
+                           url += "&s=" + searchSort;
+                           if (searchQuery.length !== 0)
+                           {
+                              // if we have a query (already encoded), then apply it
+                              // most other options such as tag, terms are trumped
+                              url += "&q=" + encodeURIComponent(searchQuery);
+                           }
+                           else if (searchTag.length !== 0)
+                           {
+                              url += "&tag=" + encodeURIComponent(searchTag);
+                           }
+                           url += "&a=" + searchAllSites + "&r=" + searchRepository;
+                           window.location = url;
+                        },
 
                         _setupDataTable : function Search_setupDataTable()
                         {
