@@ -163,7 +163,11 @@ public class CharactDetailsHelper {
 				colUnit = value.getUnit();
 			}
 			cell = row.createCell(cellnum++);
-			cell.setCellValue(attributeExtractorService.extractPropName(entry.getKey())+" ("+colUnit+")");
+			if(colUnit!=null && !colUnit.isEmpty()){
+				cell.setCellValue(attributeExtractorService.extractPropName(entry.getKey())+" ("+colUnit+")");
+			} else {
+				cell.setCellValue(attributeExtractorService.extractPropName(entry.getKey()));
+			}
 			cell.setCellStyle(style);
 
 		}

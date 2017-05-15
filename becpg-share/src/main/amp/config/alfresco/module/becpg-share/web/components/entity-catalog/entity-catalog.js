@@ -276,7 +276,21 @@
 					},
 					scope : instance
 				},
-				failureMessage : "Could not load entity catalog",
+				failureCallback : {
+                    fn : function(response) {
+                       if (response.json && response.json.message) {
+                          Alfresco.util.PopupManager.displayPrompt({
+                             title : this.msg("message.formulate.failure"),
+                             text : response.json.message
+                          });
+                       } else {
+                          Alfresco.util.PopupManager.displayMessage({
+                             text : this.msg("message.formulate.failure")
+                          });
+                       }
+                    },
+                    scope : this
+                 },
 				execScripts : true
 			}); 
 		}
