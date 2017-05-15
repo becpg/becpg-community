@@ -164,7 +164,22 @@
 							}
 						},
 						scope : this
-					}
+					},
+					failureCallback : {
+	                    fn : function(response) {
+	                       if (response.json && response.json.message) {
+	                          Alfresco.util.PopupManager.displayPrompt({
+	                             title : me.msg("message.formulate.failure"),
+	                             text : response.json.message
+	                          });
+	                       } else {
+	                          Alfresco.util.PopupManager.displayMessage({
+	                             text : me.msg("message.formulate.failure")
+	                          });
+	                       }
+	                    },
+	                    scope : this
+	                 }
 				});
 
 		},
