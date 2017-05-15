@@ -98,6 +98,7 @@
 				Alfresco.util.Ajax.request({
 					method : Alfresco.util.Ajax.GET,
 					url : Alfresco.constants.PROXY_URI + "becpg/product/formulate/node/" + this.options.entityNodeRef.replace(":/", ""),
+					responseContentType : Alfresco.util.Ajax.JSON,
 					successCallback : {
 						fn : function(response) {
 							if(beCPG.util.lockCount() == localCount){
@@ -109,19 +110,18 @@
 								});
 							}
 						},
-						failureMessage : me.msg("error.formulation"),
 						scope : this
 					},
 					failureCallback : {
 	                    fn : function(response) {
 	                       if (response.json && response.json.message) {
 	                          Alfresco.util.PopupManager.displayPrompt({
-	                             title : me.msg("message.formulate.failure"),
+	                             title : this.msg("message.formulate.failure"),
 	                             text : response.json.message
 	                          });
 	                       } else {
 	                          Alfresco.util.PopupManager.displayMessage({
-	                             text : me.msg("message.formulate.failure")
+	                             text : this.msg("message.formulate.failure")
 	                          });
 	                       }
 	                    },
