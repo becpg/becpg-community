@@ -20,38 +20,27 @@ package fr.becpg.repo.product.data.spel;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.expression.EvaluationContext;
-import org.springframework.expression.Expression;
-import org.springframework.expression.ExpressionParser;
-import org.springframework.expression.spel.standard.SpelExpressionParser;
-import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompositionDataItem;
-import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.product.formulation.FormulaService;
 
 public class FormulaFormulationContext {
 	
-	private static final Log logger = LogFactory.getLog(FormulaFormulationContext.class);
-	
 	private final ProductData entity;
 	private final CompositionDataItem dataListItem;
-	private final AlfrescoRepository<ProductData> alfrescoRepository;
+	private final FormulaService formulaService;
 	
 	public enum Operator {
 		SUM,AVG,PERC
 	}
 
-	public FormulaFormulationContext(AlfrescoRepository<ProductData> alfrescoRepository, ProductData entity, CompositionDataItem dataListItem) {
+	public FormulaFormulationContext(FormulaService formulaService, ProductData entity, CompositionDataItem dataListItem) {
 		super();
 		this.entity = entity;
 		this.dataListItem = dataListItem;
-		this.alfrescoRepository = alfrescoRepository;
+		this.formulaService = formulaService;
 	}
 
 	public ProductData getEntity() {
@@ -63,7 +52,7 @@ public class FormulaFormulationContext {
 	}
 
 	public ProductData getDataListItemEntity() {
-		return dataListItem.getComponent() != null ? alfrescoRepository.findOne(dataListItem.getComponent()) : null;
+		return dataListItem.getComponent() != null ? formulaService.findOne(dataListItem.getComponent()) : null;
 	}
 
 	
@@ -80,41 +69,14 @@ public class FormulaFormulationContext {
 	}
 	
 	public Double sum(Collection<CompositionDataItem> range, String formula) {
-		return aggreate(alfrescoRepository, entity, range, formula, Operator.SUM);
+		return formulaService.aggreate(entity, range, formula, Operator.SUM);
 	}
 	
 	
 	public Double avg(Collection<CompositionDataItem> range, String formula) {
-		return aggreate(alfrescoRepository, entity, range, formula, Operator.AVG);
+		return formulaService.aggreate(entity, range, formula, Operator.AVG);
 	}
 	
-	public static Double aggreate(AlfrescoRepository<ProductData> alfrescoRepository , ProductData entity , Collection<CompositionDataItem> range, String formula, Operator operator){
-
-		if(logger.isDebugEnabled()){
-			logger.debug("Running aggregate fonction ["+formula+"] on range ("+range.size()+") for operator "+operator );
-		}
-		
-		ExpressionParser parser = new SpelExpressionParser();
-		Expression exp = parser.parseExpression(formula);
-		Double sum = 0d;
-        int count = 0;
-		for (CompositionDataItem item : range) {
-			EvaluationContext dataContext = new StandardEvaluationContext(new FormulaFormulationContext(alfrescoRepository, entity, item));
-			Double value = exp.getValue(dataContext, Double.class);
-			if (value != null) {
-				sum += value;
-				count++;
-			} else {
-				logger.debug("Value is null for ["+formula+"] on "+item.toString());
-			}
-		}
-		if(Operator.AVG.equals(operator)){
-			sum /=count;
-		}
-		
-		return sum;
-	}
-
 
 }
 
