@@ -124,6 +124,7 @@
 	                             text : this.msg("message.formulate.failure")
 	                          });
 	                       }
+	                       Dom.removeClass(formulateButton, "loading");
 	                    },
 	                    scope : this
 	                 }
