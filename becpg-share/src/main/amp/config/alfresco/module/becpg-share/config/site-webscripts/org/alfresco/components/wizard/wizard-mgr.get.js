@@ -21,11 +21,14 @@ function main() {
 
     var wizardStruct = [];
     
+    model.comments = false;
+    
     var wizards = config.scoped["wizard"]["wizards"].childrenMap["wizard"];
     for (var i = 0, wizard; i < wizards.size(); i++) {
         wizard = wizards.get(i);
         if(wizard.attributes["id"] == page.url.args.id){
-            var steps = wizard.childrenMap["step"]
+        	model.comments =  wizard.attributes["comments"] == "true";
+            var steps = wizard.childrenMap["step"];
             for(var j = 0, step; j < steps.size(); j++){
                 step = steps.get(j);
                 wizardStruct.push({
@@ -40,9 +43,10 @@ function main() {
                         nextStepWebScript:  step.attributes["nextStepWebScript"]   
                 });
             }
+            break;
         }
+      
     }
-    
     
     // Widget instantiation metadata...
    var widget = {
@@ -56,5 +60,25 @@ function main() {
       }
    };
    model.widgets = [widget];
+   
+   if(model.comments){
+	   var commentList = {
+			      id : "CommentsList",
+			      name : "Alfresco.CommentsList",
+			      options : {
+			    	 nodeRef :  (page.url.args.nodeRef != null) ? page.url.args.nodeRef : "",
+			         siteId : (page.url.templateArgs.site != null) ? page.url.templateArgs.site : "",
+			         maxItems : 10,
+			         editorConfig : {
+			            menu: {},
+			            toolbar: "bold italic underline | bullist numlist | forecolor backcolor | undo redo removeformat",
+			            language: locale,
+			            statusbar: false
+			         }
+			      }
+			   };
+	   model.widgets.push(commentList);
+   } 
+   
 }
 main();
