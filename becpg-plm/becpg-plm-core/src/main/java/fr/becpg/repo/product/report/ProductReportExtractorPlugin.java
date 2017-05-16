@@ -76,6 +76,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	private static final Log logger = LogFactory.getLog(ProductReportExtractorPlugin.class);
 
 	protected static final String ATTR_LANGUAGE = "language";
+	protected static final String ATTR_LANGUAGE_CODE = "languageCode";
 
 	private static final String ATTR_PKG_TARE_LEVEL_1 = "tarePkgLevel1";
 	private static final String ATTR_PKG_TARE_LEVEL_2 = "tarePkgLevel2";
@@ -394,6 +395,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 							Element ingLabelingElt = ingListElt.addElement(PLMModel.TYPE_INGLABELINGLIST.getLocalName());
 							ingLabelingElt.addAttribute(ATTR_LANGUAGE, locale.getDisplayLanguage());
+							ingLabelingElt.addAttribute(ATTR_LANGUAGE_CODE, locale.toString());
 							addCDATA(ingLabelingElt, PLMModel.ASSOC_ILL_GRP, grpName, null);
 							addCDATA(ingLabelingElt, PLMModel.PROP_ILL_VALUE,
 									dataItem.getValue() != null ? dataItem.getValue().getValue(locale) : VALUE_NULL, null);
