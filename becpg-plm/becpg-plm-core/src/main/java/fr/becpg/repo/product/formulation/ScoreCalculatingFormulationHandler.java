@@ -154,6 +154,8 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 			Double specificationScore = 100d;
 			Double mandatoryFieldsScore = 100d;
 
+			cleanOldRclSources(product);
+
 			// visits all refs and adds rclDataItem to them if required
 			for (AbstractProductDataView view : product.getViews()) {
 				if (view.getMainDataList() != null) {
@@ -163,18 +165,19 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 
 								final ReqCtrlListDataItem nonValidatedRclDataItem = createValidationRclDataItem(dataItem.getComponent());
 
-								List<ReqCtrlListDataItem> productNonValidatedRcl = product.getReqCtrlList().stream()
+								List<ReqCtrlListDataItem> productNonValidatedRcl = product
+										.getReqCtrlList()
+										.stream()
 										.filter(rcl -> nonValidatedRclDataItem.getReqMessage().equals(rcl.getReqMessage())
 												&& nonValidatedRclDataItem.getReqDataType().equals(rcl.getReqDataType())
-												&& nonValidatedRclDataItem.getReqType().equals(rcl.getReqType()))
-												.collect(Collectors.toList());
+												&& nonValidatedRclDataItem.getReqType().equals(rcl.getReqType())).collect(Collectors.toList());
 
 								// add new rcl or add sources to existing
 								// validation rcl
 								if (productNonValidatedRcl.size() > 0) {
-									
-									for(NodeRef tmpNodeRef  : nonValidatedRclDataItem.getSources()){
-										if(!productNonValidatedRcl.get(0).getSources().contains(tmpNodeRef)){
+
+									for (NodeRef tmpNodeRef : nonValidatedRclDataItem.getSources()) {
+										if (!productNonValidatedRcl.get(0).getSources().contains(tmpNodeRef)) {
 											productNonValidatedRcl.get(0).getSources().add(tmpNodeRef);
 										
 										}
@@ -255,25 +258,26 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 			ctrlArray.sort((o1, o2) -> {
 				// sort on keys (fbd > all)
 
-				try {
-					JSONObject o1Values = o1.getJSONObject((String) o1.keys().next());
-					JSONObject o2Values = o2.getJSONObject((String) o2.keys().next());
+					try {
+						JSONObject o1Values = o1.getJSONObject((String) o1.keys().next());
+						JSONObject o2Values = o2.getJSONObject((String) o2.keys().next());
 
-					if ((o1Values.has("Forbidden") && !(o2Values.has("Forbidden"))) || (o1Values.has("Forbidden") && o2Values.has("Forbidden")
-							&& (o1Values.getInt("Forbidden") >= o2Values.getInt("Forbidden")))) {
-						return -1;
-					} else {
-						return 1;
+						if ((o1Values.has("Forbidden") && !(o2Values.has("Forbidden")))
+								|| (o1Values.has("Forbidden") && o2Values.has("Forbidden") && (o1Values.getInt("Forbidden") >= o2Values
+										.getInt("Forbidden")))) {
+							return -1;
+						} else {
+							return 1;
+						}
+					} catch (JSONException e) {
+						if (logger.isDebugEnabled()) {
+							logger.debug("JSONException, returning equals");
+						}
+						return 0;
 					}
-				} catch (JSONException e) {
-					if (logger.isDebugEnabled()) {
-						logger.debug("JSONException, returning equals");
-					}
-					return 0;
-				}
-			});
+				});
 
-			logger.debug("Ctrl sorted array: " + ctrlArray );
+			logger.debug("Ctrl sorted array: " + ctrlArray);
 
 			scores.put("ctrlCount", ctrlArray);
 			scores.put("totalForbidden", getForbiddenCtrlAmount(ctrlCount));
@@ -291,6 +295,16 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 		product.setEntityScore(scores.toString());
 
 		return true;
+	}
+
+	private void cleanOldRclSources(ProductData product) {
+		List<ReqCtrlListDataItem> matchingRcl = product.getReqCtrlList().stream()
+				.filter(rcl -> RequirementDataType.Completion.equals(rcl.getReqDataType()) || RequirementDataType.Validation.equals(rcl.getReqDataType()))
+				.collect(Collectors.toList());
+		
+		for(ReqCtrlListDataItem tmp : matchingRcl){
+			tmp.getSources().clear();
+		}
 	}
 
 	/**
@@ -340,59 +354,63 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 				
 				//if( apply(catalog, productData)){
 
-				//check if product matches various criteria, such as family, subfamily, etc.
+				// if( apply(catalog, productData)){
+
+				// check if product matches various criteria, such as family,
+				// subfamily, etc.
 				boolean productPassesFilter = productMatches(catalog, productData, productType);
-				
-						if (logger.isDebugEnabled()) {
-							logger.debug("\n\t\t== Catalog \"" + catalog.getString(JsonScoreHelper.PROP_LABEL) + "\" ==");
-							logger.debug("Type of product: " + productType);
-							logger.debug("Catalog json: " + catalog);
-							logger.debug("ProductPassesFilter: "+ productPassesFilter);
+
+				if (logger.isDebugEnabled()) {
+					logger.debug("\n\t\t== Catalog \"" + catalog.getString(JsonScoreHelper.PROP_LABEL) + "\" ==");
+					logger.debug("Type of product: " + productType);
+					logger.debug("Catalog json: " + catalog);
+					logger.debug("ProductPassesFilter: " + productPassesFilter);
+				}
+
+				// if this catalog applies to this type, or this catalog has no
+				// type defined (it applies to every entity type)
+				if (productPassesFilter) {
+					if (logger.isDebugEnabled()) {
+						logger.debug("Formulating for catalog \"" + catalog.getString(JsonScoreHelper.PROP_LABEL) + "\"");
+					}
+					List<String> langs = new LinkedList<>(getLocales(productData.getReportLocales(), catalog));
+
+					langs.sort((o1, o2) -> {
+						if (o1.equals(defaultLocale)) {
+							return -1;
+						}
+						if (o2.equals(defaultLocale)) {
+							return 1;
+						}
+						return 0;
+					});
+
+					String color = getCatalogColor(catalog, i);
+
+					JSONArray reqFields = catalog.getJSONArray(JsonScoreHelper.PROP_FIELDS);
+					JSONArray uniqueFields = catalog.getJSONArray(JsonScoreHelper.PROP_UNIQUE_FIELDS);
+
+					JSONArray nonUniqueFields = extractNonUniqueFields(productData, catalog.getString(JsonScoreHelper.PROP_LABEL), properties,
+							uniqueFields);
+
+					for (String lang : langs) {
+
+						JSONArray missingFields = extractMissingFields(productData, catalog.getString(JsonScoreHelper.PROP_LABEL), properties,
+								reqFields, defaultLocale.equals(lang) ? null : lang);
+						if (missingFields.length() > 0 || nonUniqueFields.length() > 0) {
+							JSONObject catalogDesc = new JSONObject();
+							catalogDesc.put(JsonScoreHelper.PROP_MISSING_FIELDS, missingFields.length() > 0 ? missingFields : null);
+							catalogDesc.put(JsonScoreHelper.PROP_NON_UNIQUE_FIELDS, nonUniqueFields.length() > 0 ? nonUniqueFields : null);
+							catalogDesc.put(JsonScoreHelper.PROP_LOCALE, defaultLocale.equals(lang) ? null : lang);
+							catalogDesc.put(JsonScoreHelper.PROP_SCORE, ((reqFields.length() - missingFields.length()) * 100d) / reqFields.length());
+							catalogDesc.put(JsonScoreHelper.PROP_LABEL, catalog.getString(JsonScoreHelper.PROP_LABEL));
+							catalogDesc.put(JsonScoreHelper.PROP_ID, catalog.getString(JsonScoreHelper.PROP_ID));
+							catalogDesc.put(JsonScoreHelper.PROP_COLOR, color);
+							ret.put(catalogDesc);
 						}
 
-						// if this catalog applies to this type, or this catalog has no
-						// type defined (it applies to every entity type)
-						if (productPassesFilter) {
-							if (logger.isDebugEnabled()) {
-								logger.debug("Formulating for catalog \"" + catalog.getString(JsonScoreHelper.PROP_LABEL) + "\"");
-							}
-							List<String> langs = new LinkedList<>(getLocales(productData.getReportLocales(), catalog));
-
-							langs.sort((o1, o2) -> {
-								if (o1.equals(defaultLocale)) {
-									return -1;
-								}
-								if (o2.equals(defaultLocale)) {
-									return 1;
-								}
-								return 0;
-							});
-
-							String color = getCatalogColor(catalog, i);
-
-							JSONArray reqFields = catalog.getJSONArray(JsonScoreHelper.PROP_FIELDS);
-							JSONArray uniqueFields = catalog.getJSONArray(JsonScoreHelper.PROP_UNIQUE_FIELDS);
-
-							JSONArray nonUniqueFields = extractNonUniqueFields(productData, catalog.getString(JsonScoreHelper.PROP_LABEL), properties, uniqueFields);
-
-							for (String lang : langs) {
-
-								JSONArray missingFields = extractMissingFields(productData, catalog.getString(JsonScoreHelper.PROP_LABEL), properties,
-										reqFields, defaultLocale.equals(lang) ? null : lang);
-								if (missingFields.length() > 0 || nonUniqueFields.length() > 0) {
-									JSONObject catalogDesc = new JSONObject();
-									catalogDesc.put(JsonScoreHelper.PROP_MISSING_FIELDS, missingFields.length() > 0 ? missingFields : null);
-									catalogDesc.put(JsonScoreHelper.PROP_NON_UNIQUE_FIELDS, nonUniqueFields.length() > 0 ? nonUniqueFields : null);
-									catalogDesc.put(JsonScoreHelper.PROP_LOCALE, defaultLocale.equals(lang) ? null : lang);
-									catalogDesc.put(JsonScoreHelper.PROP_SCORE, ((reqFields.length() - missingFields.length()) * 100d) / reqFields.length());
-									catalogDesc.put(JsonScoreHelper.PROP_LABEL, catalog.getString(JsonScoreHelper.PROP_LABEL));
-									catalogDesc.put(JsonScoreHelper.PROP_ID, catalog.getString(JsonScoreHelper.PROP_ID));
-									catalogDesc.put(JsonScoreHelper.PROP_COLOR, color);
-									ret.put(catalogDesc);
-								}
-
-							}
-						}
+					}
+				}
 			}
 		}
 
@@ -400,58 +418,61 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 	}
 
 	private JSONArray getCatalogDef() {
-	
-		logger.debug("getCatalogDef, cacheService: "+beCPGCacheService);
-		
-		return beCPGCacheService.getFromCache(ScoreCalculatingFormulationHandler.class.getName(), CATALOG_DEFS, new BeCPGCacheDataProviderCallBack<JSONArray>() {
+
+		logger.debug("getCatalogDef, cacheService: " + beCPGCacheService);
+
+		return beCPGCacheService.getFromCache(ScoreCalculatingFormulationHandler.class.getName(), CATALOG_DEFS,
+				new BeCPGCacheDataProviderCallBack<JSONArray>() {
 
 					@Override
 					public JSONArray getData() {
-						
-						//get JSON from file in system
+
+						// get JSON from file in system
 						NodeRef folder = getCatalogFolderNodeRef();
-						logger.debug("Catalogs folder: "+folder);
-						
+						logger.debug("Catalogs folder: " + folder);
+
 						List<FileInfo> files = fileFolderService.list(folder);
-						logger.debug("Number of catalogs: "+files.size());
-						
-						if(!files.isEmpty()){
+						logger.debug("Number of catalogs: " + files.size());
+
+						if (!files.isEmpty()) {
 							FileInfo file = files.get(0);
-							
-							logger.debug("File in catalog folder nr: "+file.getNodeRef());
+
+							logger.debug("File in catalog folder nr: " + file.getNodeRef());
 							ContentReader reader = contentService.getReader(file.getNodeRef(), ContentModel.PROP_CONTENT);
 							String content = reader.getContentString();
-							logger.debug("Content: "+content);
-							//Serializable content = nodeService.getProperty(file.getNodeRef(), ContentModel.PROP_CONTENT);
+							logger.debug("Content: " + content);
+							// Serializable content =
+							// nodeService.getProperty(file.getNodeRef(),
+							// ContentModel.PROP_CONTENT);
 							JSONArray res = new JSONArray();
-							
+
 							try {
 								res = new JSONArray(content);
 							} catch (JSONException e) {
-								logger.error("Unable to parse content to catalog, content: "+content,e);
+								logger.error("Unable to parse content to catalog, content: " + content, e);
 							}
 							
 							return res;
 						} else {
-							//no file in catalog folder
+							// no file in catalog folder
 							return new JSONArray();
 						}
 					}
-		});
+				});
 	}
-	
-	private String getCatalogColor(JSONObject catalog, int i) throws JSONException{
-		String color = catalog.has(JsonScoreHelper.PROP_COLOR) ? catalog.getString(JsonScoreHelper.PROP_COLOR)
-				: "hsl(" + (i * (360 / 7)) + ", 60%, 50%)";
+
+	private String getCatalogColor(JSONObject catalog, int i) throws JSONException {
+		String color = catalog.has(JsonScoreHelper.PROP_COLOR) ? catalog.getString(JsonScoreHelper.PROP_COLOR) : "hsl(" + (i * (360 / 7))
+				+ ", 60%, 50%)";
 		if (logger.isDebugEnabled()) {
-			logger.debug("Color of catalog is: " + color
-					+ (catalog.has(JsonScoreHelper.PROP_COLOR) ? " (fetched from catalog)" : " (generated)"));
+			logger.debug("Color of catalog is: " + color + (catalog.has(JsonScoreHelper.PROP_COLOR) ? " (fetched from catalog)" : " (generated)"));
 		}
 		
 		return color;
 	}
 
-	private JSONArray extractNonUniqueFields(ProductData productData, String catalogName, Map<QName, Serializable> properties, JSONArray uniqueFields) throws JSONException{
+	private JSONArray extractNonUniqueFields(ProductData productData, String catalogName, Map<QName, Serializable> properties, JSONArray uniqueFields)
+			throws JSONException {
 		JSONArray res = new JSONArray();
 
 		for (int i = 0; i < uniqueFields.length(); i++) {
@@ -462,15 +483,14 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 			Serializable propValue = nodeService.getProperty(productData.getNodeRef(), propQName);
 			List<NodeRef> propDuplicates = getPropertyDuplicates(propQName, (String) propValue);
 
-			
-			if(!(propDuplicates.size() <= 1)){
+			if (!(propDuplicates.size() <= 1)) {
 
 				ClassAttributeDefinition classDef = formatQnameString(field);
 				String propTitle = classDef.getTitle(dictionaryService);
 
 				res.put(propTitle);
 
-				String message = I18NUtil.getMessage(MESSAGE_NON_UNIQUE_FIELD, propTitle)+" ("+propValue+")";
+				String message = I18NUtil.getMessage(MESSAGE_NON_UNIQUE_FIELD, propTitle) + " (" + propValue + ")";
 				ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, null, new ArrayList<NodeRef>(),
 						RequirementDataType.Completion);
 				rclDataItem.getSources().add(productData.getNodeRef());
@@ -570,8 +590,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 					|| mlText.getValue(new Locale(fieldSpecificLang)).isEmpty()) {
 				res = false;
 			}
-		} else if ((lang != null)
-				&& ((mlText == null) || (mlText.getValue(new Locale(lang)) == null) || mlText.getValue(new Locale(lang)).isEmpty())) {
+		} else if ((lang != null) && ((mlText == null) || (mlText.getValue(new Locale(lang)) == null) || mlText.getValue(new Locale(lang)).isEmpty())) {
 			res = false;
 		} else {
 			res = (properties.get(fieldQname) != null) && !properties.get(fieldQname).toString().isEmpty();
@@ -623,9 +642,8 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 			displayName += classDef.getTitle(dictionaryService) + (i == (fields.size() - 1) ? "" : " " + I18NUtil.getMessage(MESSAGE_OR) + " ");
 		}
 
-		final String message = (lang != null
-				? I18NUtil.getMessage(MESSAGE_MANDATORY_FIELD_MISSING_LOCALIZED, displayName, catalogName, "(" + lang + ")")
-						: I18NUtil.getMessage(MESSAGE_MANDATORY_FIELD_MISSING, displayName, catalogName));
+		final String message = (lang != null ? I18NUtil.getMessage(MESSAGE_MANDATORY_FIELD_MISSING_LOCALIZED, displayName, catalogName, "(" + lang
+				+ ")") : I18NUtil.getMessage(MESSAGE_MANDATORY_FIELD_MISSING, displayName, catalogName));
 
 		if (lang != null) {
 			field.put(JsonScoreHelper.PROP_LOCALE, lang);
@@ -633,14 +651,16 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 
 		field.put(JsonScoreHelper.PROP_ID, id);
 		field.put(JsonScoreHelper.PROP_DISPLAY_NAME, displayName);
-		
-		List<ReqCtrlListDataItem> matchingRclDataItems = productData.getReqCtrlList().stream().filter(rcl -> rcl.getReqMessage().equals(message)
-				&& RequirementType.Forbidden.equals(rcl.getReqType()) && RequirementDataType.Completion.equals(rcl.getReqDataType()))
-				.collect(Collectors.toList());
+
+		List<ReqCtrlListDataItem> matchingRclDataItems = productData
+				.getReqCtrlList()
+				.stream()
+				.filter(rcl -> rcl.getReqMessage().equals(message) && RequirementType.Forbidden.equals(rcl.getReqType())
+						&& RequirementDataType.Completion.equals(rcl.getReqDataType())).collect(Collectors.toList());
 
 		if (matchingRclDataItems.size() > 0) {
 			// add sources
-			if(!matchingRclDataItems.get(0).getSources().contains(productData.getNodeRef())){
+			if (!matchingRclDataItems.get(0).getSources().contains(productData.getNodeRef())) {
 				matchingRclDataItems.get(0).getSources().add(productData.getNodeRef());
 			}
 		} else {
@@ -725,36 +745,38 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 		return res;
 	}
 
-	private List<NodeRef> getPropertyDuplicates(QName propQName, String value){		
+	private List<NodeRef> getPropertyDuplicates(QName propQName, String value) {
 
 		List<NodeRef> queryResults = new ArrayList<>();
-		if(value != null && !value.isEmpty()){
-		
+		if (value != null && !value.isEmpty()) {
+
 			BeCPGQueryBuilder query = BeCPGQueryBuilder.createQuery().andPropEquals(propQName, value);
 			query = query.excludeAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION);
-			//query = query.excludeAspect(BeCPGModel.ASPECT_ENTITY_BRANCH);
+			// query = query.excludeAspect(BeCPGModel.ASPECT_ENTITY_BRANCH);
 			query = query.excludeAspect(ContentModel.ASPECT_WORKING_COPY);
-			logger.debug("Query: "+query.toString());
+			logger.debug("Query: " + query.toString());
 			queryResults = query.list();
 			List<NodeRef> falsePositives = new ArrayList<>();
-	
-			//Lucene equals is actually  contains, remove results that contain but do not equal value
-			for(NodeRef result : queryResults){
+
+			// Lucene equals is actually contains, remove results that contain
+			// but do not equal value
+			for (NodeRef result : queryResults) {
 				Serializable resultProp = nodeService.getProperty(result, propQName);
-				logger.debug("result: "+result+" prop value: "+resultProp);
-	
-				if(resultProp != null && !resultProp.equals(value)){
-					logger.debug("Result "+result+" does not match value "+value+" (its value: "+resultProp+"), removing from res");
+				logger.debug("result: " + result + " prop value: " + resultProp);
+
+				if (resultProp != null && !resultProp.equals(value)) {
+					logger.debug("Result " + result + " does not match value " + value + " (its value: " + resultProp + "), removing from res");
 					falsePositives.add(result);
 				}
 			}
-	
-			for(NodeRef falsePositive : falsePositives){
+
+			for (NodeRef falsePositive : falsePositives) {
 				queryResults.remove(falsePositive);
 			}
 		}
 
-		logger.debug("Number of properties of name: "+propQName+" and value: "+value+" = "+queryResults.size()+", res="+queryResults+", is unique ? "+(queryResults.size() <= 1));
+		logger.debug("Number of properties of name: " + propQName + " and value: " + value + " = " + queryResults.size() + ", res=" + queryResults
+				+ ", is unique ? " + (queryResults.size() <= 1));
 
 		return queryResults;
 	}
@@ -762,11 +784,11 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 	private boolean productMatches(JSONObject catalog, ProductData product, QName productType) throws JSONException {
 
 		boolean matchesOnType = productMatchesOnType(product, catalog, productType);
-		if(catalog.has(JsonScoreHelper.PROP_ENTITY_FILTER)){
+		if (catalog.has(JsonScoreHelper.PROP_ENTITY_FILTER)) {
 			String filterFormula = catalog.getString(JsonScoreHelper.PROP_ENTITY_FILTER);
 			return matchesOnType && productMatchesOnFormula(filterFormula, product);
 		} else {
-			//no entity filter in catalog
+			// no entity filter in catalog
 			return matchesOnType;
 		}
 	}
@@ -775,47 +797,48 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 		
 		boolean res = true;
 
-			StandardEvaluationContext context = formulaService.createEvaluationContext(product);
-			
-			if(context != null){
-				ExpressionParser parser = new SpelExpressionParser();
-				Expression expression = parser.parseExpression(formula);
-				
-				try {
-					Boolean result = (Boolean)(expression.getValue(context));
-					logger.debug("Expression "+expression+" returned "+result);
-					res = result.booleanValue();
-				} catch(Exception e){
-					logger.error("Unable to parse expression "+expression,e);
-					ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Tolerated, "Unable to parse formula "+formula, null, new ArrayList<NodeRef>(), RequirementDataType.Completion);
-					product.getReqCtrlList().add(rclDataItem);
-					res = false;
-				}
+		StandardEvaluationContext context = formulaService.createEvaluationContext(product);
+
+		if (context != null) {
+			ExpressionParser parser = new SpelExpressionParser();
+			Expression expression = parser.parseExpression(formula);
+
+			try {
+				Boolean result = (Boolean) (expression.getValue(context));
+				logger.debug("Expression " + expression + " returned " + result);
+				res = result.booleanValue();
+			} catch (Exception e) {
+				logger.error("Unable to parse expression " + expression, e);
+				ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Tolerated, "Unable to parse formula " + formula,
+						null, new ArrayList<NodeRef>(), RequirementDataType.Completion);
+				product.getReqCtrlList().add(rclDataItem);
+				res = false;
 			}
+		}
 
 		return res;
 	}
 	
 	private boolean productMatchesOnType(ProductData product, JSONObject catalog, QName productType) throws JSONException {
-		JSONArray catalogEntityTypes = (catalog.has(JsonScoreHelper.PROP_ENTITY_TYPE))
-				? catalog.getJSONArray(JsonScoreHelper.PROP_ENTITY_TYPE) : new JSONArray();
-				List<QName> qnameCatalogEntityTypeList = new ArrayList<QName>();
+		JSONArray catalogEntityTypes = (catalog.has(JsonScoreHelper.PROP_ENTITY_TYPE)) ? catalog.getJSONArray(JsonScoreHelper.PROP_ENTITY_TYPE)
+				: new JSONArray();
+		List<QName> qnameCatalogEntityTypeList = new ArrayList<QName>();
 
-				logger.debug("catalog has " + catalogEntityTypes.length() + " entities: " + catalogEntityTypes);
+		logger.debug("catalog has " + catalogEntityTypes.length() + " entities: " + catalogEntityTypes);
 
-				for (int catalogEntityTypeIndex = 0; catalogEntityTypeIndex < catalogEntityTypes.length(); ++catalogEntityTypeIndex) {
-					QName qname = QName.createQName(catalogEntityTypes.getString(catalogEntityTypeIndex), namespaceService);
+		for (int catalogEntityTypeIndex = 0; catalogEntityTypeIndex < catalogEntityTypes.length(); ++catalogEntityTypeIndex) {
+			QName qname = QName.createQName(catalogEntityTypes.getString(catalogEntityTypeIndex), namespaceService);
 
-					qnameCatalogEntityTypeList.add(qname);
-				}
-		logger.debug("CatalogEntityTypeList: "+qnameCatalogEntityTypeList+", productType: "+productType);
-		
+			qnameCatalogEntityTypeList.add(qname);
+		}
+		logger.debug("CatalogEntityTypeList: " + qnameCatalogEntityTypeList + ", productType: " + productType);
+
 		return qnameCatalogEntityTypeList.contains(productType);
 	}
-	
-	private NodeRef getCatalogFolderNodeRef(){
-		logger.debug("CatalogFileNR: "+BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(), CATALOGS_PATH));
-		
+
+	private NodeRef getCatalogFolderNodeRef() {
+		logger.debug("CatalogFileNR: " + BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(), CATALOGS_PATH));
+
 		return BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(), CATALOGS_PATH);
 	}
 
