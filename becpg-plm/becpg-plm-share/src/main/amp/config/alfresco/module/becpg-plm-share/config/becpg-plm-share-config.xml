@@ -129,7 +129,7 @@
 
 	<config evaluator="string-compare" condition="wizard">
 		<wizards>
-			<wizard id="supplier-mp">
+			<wizard id="supplier-mp" comments="true" >
 				<step id="step1" labelId="becpg.wizard.supplier.mp.step1.label"
 					titleId="becpg.wizard.supplier.mp.step1.title" type="form" formId="supplier-mp"
 					itemId="bcpg:rawMaterial"></step>

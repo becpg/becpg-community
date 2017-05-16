@@ -162,12 +162,6 @@
 						</control>
 						
 					</field>
-					
-					<field id="bpm:comment" label-id="workflow.field.comment" set="project">
-						<control template="/org/alfresco/components/form/controls/textarea.ftl">
-							<control-param name="style">width: 95%</control-param>
-						</control>
-					</field>
 									
 					<set appearance="title" id="product" label-id="becpg.forms.set.new-product.label" 
 					template="/org/alfresco/components/form/2-column-set.ftl" />									
@@ -201,7 +195,12 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>	
 					
-					<set appearance="title" id="response" label-id="workflow.set.response" />								
+					<set appearance="title" id="response" label-id="workflow.set.response" />
+					<field id="bpm:comment" label-id="workflow.field.comment" set="response">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="style">width: 95%</control-param>
+						</control>
+					</field>								
 					<field id="npdwf:npdAction" label-id="workflow.field.outcome" set="response" >
 							<control template="/org/alfresco/components/form/controls/workflow/activiti-transitions.ftl" />
 					</field>
