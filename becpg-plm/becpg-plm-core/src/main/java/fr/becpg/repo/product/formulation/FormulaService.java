@@ -8,6 +8,8 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.expression.AccessException;
 import org.springframework.expression.BeanResolver;
@@ -26,6 +28,7 @@ import fr.becpg.repo.security.aop.SecurityMethodBeforeAdvice;
 
 public class FormulaService {
 	
+	private static Log logger = LogFactory.getLog(FormulaService.class);
 	
 	private SecurityMethodBeforeAdvice securityMethodBeforeAdvice;
 
@@ -102,7 +105,7 @@ public class FormulaService {
 		
 		
 		public Double sum(Collection<CompositionDataItem> range, String formula) {
-			return FormulaFormulationContext.aggreate(alfrescoRepository, productData, range, formula, Operator.SUM);
+			return aggreate(productData, range, formula, Operator.SUM);
 		}
 		
 		public Double sum(Collection<Double> range) {
@@ -111,7 +114,7 @@ public class FormulaService {
 		
 		
 		public Double avg(Collection<CompositionDataItem> range, String formula) {
-			return FormulaFormulationContext.aggreate(alfrescoRepository, productData, range, formula, Operator.AVG);
+			return aggreate( productData, range, formula, Operator.AVG);
 		}
 		
 		
@@ -138,4 +141,54 @@ public class FormulaService {
 
 		return context;
 	}
+	
+	
+
+	public StandardEvaluationContext createEvaluationContext(ProductData productData, CompositionDataItem dataListItem) {
+		StandardEvaluationContext dataContext = new StandardEvaluationContext(new FormulaFormulationContext(this, createSecurityProxy(productData), dataListItem));
+		
+		registerCustomFunctions(productData, dataContext);
+		
+		return dataContext;
+	}
+
+	
+	
+	public Double aggreate(ProductData entity , Collection<CompositionDataItem> range, String formula, Operator operator){
+
+		if(logger.isDebugEnabled()){
+			logger.debug("Running aggregate fonction ["+formula+"] on range ("+range.size()+") for operator "+operator );
+		}
+		
+		ExpressionParser parser = new SpelExpressionParser();
+		Expression exp = parser.parseExpression(formula);
+		Double sum = 0d;
+        int count = 0;
+		for (CompositionDataItem item : range) {
+			StandardEvaluationContext context = new StandardEvaluationContext(new FormulaFormulationContext(this, entity, item));
+			
+			registerCustomFunctions(entity, context);
+			
+			Double value = exp.getValue(context, Double.class);
+			if (value != null) {
+				sum += value;
+				count++;
+			} else {
+				logger.debug("Value is null for ["+formula+"] on "+item.toString());
+			}
+		}
+		if(Operator.AVG.equals(operator)){
+			sum /=count;
+		}
+		
+		return sum;
+	}
+	
+
+	public ProductData findOne(NodeRef nodeRef) {
+		return createSecurityProxy(alfrescoRepository.findOne(nodeRef));
+	}
+
+
+
 }

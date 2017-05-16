@@ -22,7 +22,7 @@ package fr.becpg.repo.formulation;
  * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
  *
  */
-public class FormulateException extends Exception {
+public class FormulateException extends RuntimeException {
 
 	/**
 	 * 
