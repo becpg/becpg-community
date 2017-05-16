@@ -92,7 +92,7 @@ public class FormulaService {
 		}
 
 		public ProductData findOne(NodeRef nodeRef) {
-			return findOne(nodeRef);
+			return createSecurityProxy(alfrescoRepository.findOne(nodeRef));
 		}
 
 		public Serializable propValue(NodeRef nodeRef, String qname) {
