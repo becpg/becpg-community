@@ -61,7 +61,6 @@ import fr.becpg.repo.product.data.productList.CompositionDataItem;
 import fr.becpg.repo.product.data.productList.DynamicCharactExecOrder;
 import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
-import fr.becpg.repo.product.data.spel.FormulaFormulationContext;
 import fr.becpg.repo.product.data.spel.SpelHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
@@ -197,9 +196,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 									Double qtyPerProduct = getQtyPerProduct(productData, dataListItem);
 									dataListItem.setQty(qtyPerProduct);
 
-									StandardEvaluationContext dataContext = new StandardEvaluationContext(
-											new FormulaFormulationContext(alfrescoRepository, productData, dataListItem));
-									formulaService.registerCustomFunctions(productData, dataContext);
+									StandardEvaluationContext dataContext =  formulaService.createEvaluationContext( productData, dataListItem);
 									Object value = null;
 									try {
 										value = exp.getValue(dataContext);
@@ -362,12 +359,11 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 			try {
 				JSONObject subObject = new JSONObject();
 
-				StandardEvaluationContext dataContext = new StandardEvaluationContext(
-						new FormulaFormulationContext(alfrescoRepository, productData, pair.getFirst()));
+				StandardEvaluationContext 
+						dataContext =  formulaService.createEvaluationContext( productData, pair.getFirst());
 
 				String subPath = path + "/" + pair.getFirst().getNodeRef().getId();
 
-				formulaService.registerCustomFunctions(productData, dataContext);
 				Object subValue = exp.getValue(dataContext);
 				subObject.put(JsonFormulaHelper.JSON_VALUE, subValue);
 				subObject.put(JsonFormulaHelper.JSON_DISPLAY_VALUE, JsonFormulaHelper.formatValue(subValue));
