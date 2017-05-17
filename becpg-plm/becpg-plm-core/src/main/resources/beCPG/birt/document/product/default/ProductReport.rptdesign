@@ -32,7 +32,7 @@
     </list-property>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="452">
-            <property name="FILELIST">src/main/resources/beCPG/birt/document/product/default/datasource_nut.xml</property>
+            <property name="FILELIST">becpg-plm/becpg-plm-core/src/main/resources/beCPG/birt/document/product/default/ProductReport.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -7838,7 +7838,6 @@ dataSetRow["nutListUnit"]
                             <row id="5969">
                                 <property name="style">becpg-row-border</property>
                                 <property name="verticalAlign">middle</property>
-                                <property name="height">0.625in</property>
                                 <cell id="6002">
                                     <property name="style">becpg-cell-dynamic-header</property>
                                     <text id="6003">
@@ -7885,7 +7884,9 @@ dataSetRow["nutListUnit"]
                                     <property name="paddingRight">1pt</property>
                                     <grid id="7378">
                                         <property name="backgroundPositionX">-90%</property>
+                                        <property name="marginTop">3pt</property>
                                         <property name="marginLeft">1pt</property>
+                                        <property name="marginBottom">3pt</property>
                                         <property name="marginRight">1pt</property>
                                         <property name="height">0.1875in</property>
                                         <property name="width">100%</property>
