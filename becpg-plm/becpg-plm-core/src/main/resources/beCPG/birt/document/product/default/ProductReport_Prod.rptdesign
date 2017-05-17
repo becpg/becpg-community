@@ -6656,7 +6656,7 @@ else{
                 <cell id="6027">
                     <label id="2877">
                         <property name="style">becpg-col-header</property>
-                        <text-property name="text">Description du produit</text-property>
+                        <text-property name="text" key="descrPack">Description du produit</text-property>
                     </label>
                 </cell>
             </row>
@@ -6683,7 +6683,7 @@ else{
                 <cell id="6033">
                     <table id="2890">
                         <property name="style">becpg-table</property>
-                        <property name="pageBreakInside">avoid</property>
+                        <property name="pageBreakInside">auto</property>
                         <property name="width">100%</property>
                         <property name="dataSet">CompoList</property>
                         <list-property name="boundDataColumns">
@@ -6835,6 +6835,7 @@ BirtMath.round(dataSetRow["compoListQty"] * 1000000, 2)+ " mg";
                                 </list-property>
                                 <cell id="2908">
                                     <data id="2946">
+                                        <property name="fontWeight">normal</property>
                                         <property name="textAlign">center</property>
                                         <property name="resultSetColumn">erpCode</property>
                                     </data>
