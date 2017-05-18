@@ -7649,7 +7649,7 @@ else{
                             <structure>
                                 <property name="name">nutListUnit</property>
                                 <text-property name="displayName">nutListUnit</text-property>
-                                <expression name="expression" type="javascript">if(dataSetRow["nutListNut"] == "Sodium" &amp;&amp; BirtStr.left(dataSetRow["nutListUnit"],3) == "mg/"){
+                                <expression name="expression" type="javascript">if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.sodium", reportContext.getLocale()) &amp;&amp; BirtStr.left(dataSetRow["nutListUnit"],3) == "mg/"){
 dataSetRow["nutListUnit"].replace("mg/","g/")
 }
 else{
