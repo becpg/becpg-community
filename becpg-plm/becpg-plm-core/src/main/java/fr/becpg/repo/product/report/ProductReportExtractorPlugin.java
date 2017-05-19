@@ -500,7 +500,12 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 						}
 
 						nutListsElt.addAttribute(generateKeyAttribute(nut), value != null ? value : "");
+						
 						NodeRef nutNodeRef = dataListItem.getNut();
+						String colorString = (String) nodeService.getProperty(nutNodeRef, BeCPGModel.PROP_COLOR);
+						if(!colorString.isEmpty()){
+							nutListElt.addAttribute(BeCPGModel.PROP_COLOR.getLocalName(), colorString );
+						}
 
 						addCDATA(nutListElt, PLMModel.PROP_NUTGDA, nodeService.getProperty(nutNodeRef, PLMModel.PROP_NUTGDA) != null
 								? ((Double) nodeService.getProperty(nutNodeRef, PLMModel.PROP_NUTGDA)).toString() : "", null);
