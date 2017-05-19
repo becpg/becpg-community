@@ -32,7 +32,7 @@
     </list-property>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="452">
-            <property name="FILELIST">becpg-plm/becpg-plm-core/src/main/resources/beCPG/birt/document/product/default/ProductReport.xml</property>
+            <property name="FILELIST">src/main/resources/beCPG/birt/document/product/default/datasource_nut.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -2305,6 +2305,12 @@ row["illValue"]
                     <text-property name="heading">language</text-property>
                 </structure>
                 <structure>
+                    <property name="columnName">languageCode</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">languageCode</text-property>
+                </structure>
+                <structure>
                     <property name="columnName">illValue</property>
                     <property name="analysis">attribute</property>
                     <property name="onColumnLayout">false</property>
@@ -2342,21 +2348,26 @@ row["illValue"]
                     </structure>
                     <structure>
                         <property name="position">2</property>
-                        <property name="name">illValue</property>
+                        <property name="name">languageCode</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
                         <property name="position">3</property>
-                        <property name="name">illManualValue</property>
+                        <property name="name">illValue</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
                         <property name="position">4</property>
-                        <property name="name">illGrp</property>
+                        <property name="name">illManualValue</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
                         <property name="position">5</property>
+                        <property name="name">illGrp</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
                         <property name="name">illValueToShow</property>
                         <property name="dataType">string</property>
                     </structure>
@@ -2373,27 +2384,34 @@ row["illValue"]
                 </structure>
                 <structure>
                     <property name="position">2</property>
+                    <property name="name">languageCode</property>
+                    <property name="nativeName">languageCode</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
                     <property name="name">illValue</property>
                     <property name="nativeName">illValue</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">3</property>
+                    <property name="position">4</property>
                     <property name="name">illManualValue</property>
                     <property name="nativeName">illManualValue</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">4</property>
+                    <property name="position">5</property>
                     <property name="name">illGrp</property>
                     <property name="nativeName">illGrp</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/ingLabelingLists/ingLabelingList]#:#{language;STRING;/@language},{illValue;STRING;/illValue},{illManualValue;STRING;/illManualValue},{illGrp;STRING;/illGrp}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/ingLabelingLists/ingLabelingList]#:#{language;STRING;/@language},{languageCode;STRING;/@languageCode},{illValue;STRING;/illValue},{illManualValue;STRING;/illManualValue},{illGrp;STRING;/illGrp}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -7838,6 +7856,7 @@ dataSetRow["nutListUnit"]
                             <row id="5969">
                                 <property name="style">becpg-row-border</property>
                                 <property name="verticalAlign">middle</property>
+                                <property name="height">0.625in</property>
                                 <cell id="6002">
                                     <property name="style">becpg-cell-dynamic-header</property>
                                     <text id="6003">
@@ -7884,9 +7903,7 @@ dataSetRow["nutListUnit"]
                                     <property name="paddingRight">1pt</property>
                                     <grid id="7378">
                                         <property name="backgroundPositionX">-90%</property>
-                                        <property name="marginTop">3pt</property>
                                         <property name="marginLeft">1pt</property>
-                                        <property name="marginBottom">3pt</property>
                                         <property name="marginRight">1pt</property>
                                         <property name="height">0.1875in</property>
                                         <property name="width">100%</property>
@@ -8579,19 +8596,18 @@ dataSetRow["illValue"]
                                 <expression name="expression" type="javascript">dataSetRow["illValueToShow"]</expression>
                                 <property name="dataType">string</property>
                             </structure>
+                            <structure>
+                                <property name="name">languageCode</property>
+                                <text-property name="displayName">languageCode</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["languageCode"]</expression>
+                                <property name="dataType">string</property>
+                                <property name="allowExport">true</property>
+                            </structure>
                         </list-property>
                         <list-property name="filter">
                             <structure>
-                                <property name="operator">eq</property>
-                                <expression name="expr" type="javascript">row["language"]</expression>
-                                <simple-property-list name="value1">
-                                    <value>if(reportContext.getLocale() == "fr"){
-"français"
-}
-else{
-"anglais"
-}</value>
-                                </simple-property-list>
+                                <property name="operator">is-true</property>
+                                <expression name="expr" type="javascript">row["languageCode"] == reportContext.getLocale()</expression>
                                 <property name="updateAggregation">true</property>
                             </structure>
                         </list-property>
