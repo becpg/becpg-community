@@ -32,7 +32,7 @@
     </list-property>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="452">
-            <property name="FILELIST">becpg-plm/becpg-plm-core/src/main/resources/beCPG/birt/document/product/default/ProductReport.xml</property>
+            <property name="FILELIST">datasource.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -1857,7 +1857,7 @@ row["costListValuePerProduct"] * row["nbProductsPkgLevel3"]
                     <property name="name">costPerProduct</property>
                     <expression name="expression">var qty = 0;
 
-if(row["itemType"] == "finishedProduct"){
+if(row["itemTypeEntity"] == "bcpg:finishedProduct"){
 qty= row["packagingListQtyForProduct"];
 }
 else if(row["packagingListUnit"]=="g"){
@@ -2416,7 +2416,7 @@ row["plResource"]
             <list-property name="filter">
                 <structure>
                     <property name="operator">gt</property>
-                    <expression name="expr" type="javascript">row["processListQtyForProduct"]</expression>
+                    <expression name="expr" type="javascript">row["plQtyResource"]</expression>
                     <simple-property-list name="value1">
                         <value>0</value>
                     </simple-property-list>
@@ -3357,6 +3357,10 @@ dataSetRow["versionLabel"]
                 </cell>
                 <cell id="7106">
                     <data id="3673">
+                        <structure name="numberFormat">
+                            <property name="category">Custom</property>
+                            <property name="pattern">#0.####</property>
+                        </structure>
                         <property name="dataSet">Product</property>
                         <list-property name="boundDataColumns">
                             <structure>
@@ -3883,7 +3887,7 @@ dataSetRow["costListValue"]
         <label id="3503"/>
         <table id="2890">
             <property name="fontSize">8pt</property>
-            <property name="pageBreakInside">avoid</property>
+            <property name="pageBreakInside">auto</property>
             <property name="width">100%</property>
             <property name="dataSet">CompoList</property>
             <list-property name="visibility">
@@ -4219,6 +4223,13 @@ matière
             <detail>
                 <row id="2891">
                     <property name="style">becpg-row-border</property>
+                    <list-property name="highlightRules">
+                        <structure>
+                            <property name="operator">is-true</property>
+                            <property name="fontWeight">bold</property>
+                            <expression name="testExpr" type="javascript">row["itemType"]=="bcpg:semiFinishedProduct" || row["itemType"]=="bcpg:localSemiFinishedProduct"</expression>
+                        </structure>
+                    </list-property>
                     <cell id="2908">
                         <property name="style">becpg-cell-data-header</property>
                         <data id="2946">
