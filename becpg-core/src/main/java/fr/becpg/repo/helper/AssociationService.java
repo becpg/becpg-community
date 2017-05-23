@@ -25,6 +25,7 @@ import org.alfresco.service.namespace.QNamePattern;
 
 public interface AssociationService {
 
+	void update(NodeRef nodeRef, QName qName, List<NodeRef> assocNodeRefs, boolean resetCache);
 	void update(NodeRef nodeRef, QName qName, List<NodeRef> assocNodeRefs);
 	void update(NodeRef nodeRef, QName qName, NodeRef assocNodeRef);
 	NodeRef getTargetAssoc(NodeRef nodeRef, QName qName);
@@ -35,6 +36,7 @@ public interface AssociationService {
 	List<NodeRef> getChildAssocs(NodeRef nodeRef, QName qName);
 	List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QNamePattern qName);
 	String createCacheKey(NodeRef nodeRef, QName qName);
+
 	
 	
 }

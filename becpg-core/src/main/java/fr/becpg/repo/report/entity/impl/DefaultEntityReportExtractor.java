@@ -389,6 +389,11 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	}
 
 	private String extractName(QName targetClass, NodeRef nodeRef) {
+		
+		if(!nodeService.exists(nodeRef)){
+			logger.info("Extract name : "+targetClass);
+		}
+		
 		QName propNameOfType = getPropNameOfType(targetClass);
 
 		if (propNameOfType != null) {
