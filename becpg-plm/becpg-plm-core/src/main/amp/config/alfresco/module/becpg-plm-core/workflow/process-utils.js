@@ -1,19 +1,20 @@
-function sendMail(authority, from, subject, message, templatePath, workflowDocuments)
+function sendMail(userOrGroup, from, subject, message, templatePath, workflowDocuments)
 {
     try
     {
-        if (authority.exists)
+        if (userOrGroup != null)
         {
             var mail = actions.create("mail");
             mail.parameters.template_model = templateModel;
-            if (authority.typeShort == "cm:authorityContainer")
-            {
-                mail.parameters.to_many = new Array(authority.properties["cm:authorityName"]);
+            
+            if (userOrGroup.typeShort && userOrGroup.typeShort == "cm:authorityContainer") {
+            	mail.parameters.to_many = new Array(userOrGroup.properties["cm:authorityName"]);
+            } else if(userOrGroup.typeShort && userOrGroup.typeShort == "cm:person") {
+               mail.parameters.to_many = new Array(userOrGroup.properties["cm:userName"]);
+            }else {
+               mail.parameters.to_many = new Array(userOrGroup);
             }
-            else
-            {
-                mail.parameters.to_many = new Array(authority.properties["cm:userName"]);
-            }
+           
             mail.parameters.subject = subject;
             if (from != null)
             {
@@ -55,4 +56,32 @@ function sendMail(authority, from, subject, message, templatePath, workflowDocum
         logger.error(" - subject: " + subject);
         logger.error(" - e: " + e);
     }
+}
+
+function getMemberNames(assignees){
+	
+	var memberNames = null;
+	if(assignees != null){
+		var memberNames = new java.util.ArrayList();
+		
+		for (var i=0; i<assignees.size(); i++) {
+			if(assignees.get(i).isSubType("cm:authorityContainer")){
+				var members = people.getMembers(assignees.get(i));
+				for(var j in members) 
+				{
+				  memberNames.add(members[j].properties.userName);
+				}
+			}
+			else if(assignees.get(i).isSubType("cm:person")){
+				memberNames.add(assignees.get(i).properties.userName);
+			}		
+		}
+	}
+	return memberNames;
+}
+
+function sendMailToAssignees(assignees, from, subject, message, templatePath, workflowDocuments){
+	for (var i = 0; i < assignees.size(); i++){
+		sendMail(assignees.get(i), from, subject, message, templatePath, workflowDocuments)
+	}
 }
