@@ -6,12 +6,20 @@
       <extensionElements>
         <activiti:executionListener event="start" class="org.alfresco.repo.workflow.activiti.listener.ScriptExecutionListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[execution.setVariable('bpm_comment',bcpgwf_pvTransmitterComment);
+            <activiti:string><![CDATA[
+            		<import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js">
+            		execution.setVariable('bpm_comment',bcpgwf_pvTransmitterComment);
 	               execution.setVariable('bcpgwf_reviewRDApproval',null);
+	               execution.setVariable('bcpgwf_reviewPackagingApproval',null);
 	               execution.setVariable('bcpgwf_reviewProductionApproval',null);
 	               execution.setVariable('bcpgwf_reviewQualityApproval',null);
+	               execution.setVariable('bcpgwf_reviewCallerApproval',null);
+	               execution.setVariable('bcpgwf_reviewCaller2Approval',null);
 	               if(execution.getVariable('bcpgwf_pvRDApprovalActor')==null){
 	               	execution.setVariable('bcpgwf_pvRDApprovalActor',null);
+	               }
+	               if(execution.getVariable('bcpgwf_pvPackagingApprovalActor')==null){
+	               	execution.setVariable('bcpgwf_pvPackagingApprovalActor',null);
 	               }
 	               if(execution.getVariable('bcpgwf_pvProductionApprovalActor')==null){
 	               	execution.setVariable('bcpgwf_pvProductionApprovalActor',null);
@@ -19,31 +27,49 @@
 	               if(execution.getVariable('bcpgwf_pvQualityApprovalActor')==null){
 	               	execution.setVariable('bcpgwf_pvQualityApprovalActor',null);
 	               }
-	               if(execution.getVariable('bcpgwf_notifyUsers')==null){
+                  if(execution.getVariable('bcpgwf_pvCallerActor')==null){
+							execution.setVariable('bcpgwf_pvCallerActor',null) ;
+                  }
+                  if(execution.getVariable('bcpgwf_pvCaller2Actor')==null){
+							execution.setVariable('bcpgwf_pvCaller2Actor',null) ;
+                  }
+                  if(execution.getVariable('bcpgwf_notifyUsers')==null){
 	               	execution.setVariable('bcpgwf_notifyUsers',null);
 	               }
-                      if(execution.getVariable('bcpgwf_pvCallerActor')==null){
-			execution.setVariable('bcpgwf_pvCallerActor',execution.getVariable('initiator')) ;
-                       }
-]]></activiti:string>
+	               
+	               execution.setVariable('bcpgwf_pvRDApprovalActorAssignee',null);
+	               execution.setVariable('bcpgwf_pvPackagingApprovalActorAssignee',null);
+	               execution.setVariable('bcpgwf_pvProductionApprovalActorAssignee',null);
+	               execution.setVariable('bcpgwf_pvQualityApprovalActorAssignee',null);
+	               execution.setVariable('bcpgwf_pvCallerActorAssignee',null);
+	               execution.setVariable('bcpgwf_pvCaller2ActorAssignee',null);
+                  
+                  execution.setVariable('bcpgwf_pvRDApprovalActors',getMemberNames(execution.getVariable('bcpgwf_pvRDApprovalActor')));
+                  execution.setVariable('bcpgwf_pvPackagingApprovalActors',getMemberNames(execution.getVariable('bcpgwf_pvPackagingApprovalActor')));
+                  execution.setVariable('bcpgwf_pvProductionApprovalActors',getMemberNames(execution.getVariable('bcpgwf_pvProductionApprovalActor')));
+                  execution.setVariable('bcpgwf_pvQualityApprovalActors',getMemberNames(execution.getVariable('bcpgwf_pvQualityApprovalActor')));
+                  execution.setVariable('bcpgwf_pvCallerActors',getMemberNames(execution.getVariable('bcpgwf_pvCallerActor')));
+                  execution.setVariable('bcpgwf_pvCaller2Actors',getMemberNames(execution.getVariable('bcpgwf_pvCaller2Actor')));
+                  
+                  ]]></activiti:string>
           </activiti:field>
         </activiti:executionListener>
       </extensionElements>
     </sequenceFlow>
     <inclusiveGateway id="startGateway" name="Exclusive Gateway"></inclusiveGateway>
-    <sequenceFlow id="doProductValidationCaller1" sourceRef="startGateway" targetRef="doProductValidationCallerTask">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${(bcpgwf_pvRDApprovalActor ==null ||  bcpgwf_reviewRDApproval == "Approved" ) && (bcpgwf_pvQualityApprovalActor ==null ||  bcpgwf_reviewQualityApproval == "Approved" )   && (bcpgwf_pvProductionApprovalActor ==null ||  bcpgwf_reviewProductionApproval == "Approved" )}]]></conditionExpression>
+    <sequenceFlow id="doProductValidationReviews" sourceRef="startGateway" targetRef="testParallelValidation">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${(bcpgwf_pvRDApprovalActor ==null ||  bcpgwf_reviewRDApproval == "Approved" ) && (bcpgwf_pvPackagingApprovalActor ==null ||  bcpgwf_reviewPackagingApproval == "Approved" ) && (bcpgwf_pvQualityApprovalActor ==null ||  bcpgwf_reviewQualityApproval == "Approved" )   && (bcpgwf_pvProductionApprovalActor ==null ||  bcpgwf_reviewProductionApproval == "Approved" )}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="doProductValidationRD" sourceRef="startGateway" targetRef="doProductValidationRDTask">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${bcpgwf_pvRDApprovalActor !=null && ( bcpgwf_reviewRDApproval == null || bcpgwf_reviewRDApproval == "Rejected")}]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${bcpgwf_pvRDApprovalActor !=null && ( bcpgwf_reviewRDApproval == null || bcpgwf_reviewRDApproval == "Rejected" || bcpgwf_reviewProductionApproval == "Rejected" || bcpgwf_reviewQualityApproval == "Rejected" || bcpgwf_reviewPackagingApproval == "Rejected")}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="doProductValidationProduction" sourceRef="startGateway" targetRef="doProductValidationProductionTask">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${bcpgwf_pvProductionApprovalActor !=null && ( bcpgwf_reviewProductionApproval == null || bcpgwf_reviewProductionApproval == "Rejected")}]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${bcpgwf_pvProductionApprovalActor !=null && ( bcpgwf_reviewProductionApproval == null || bcpgwf_reviewRDApproval == "Rejected" || bcpgwf_reviewProductionApproval == "Rejected" || bcpgwf_reviewQualityApproval == "Rejected" || bcpgwf_reviewPackagingApproval == "Rejected")}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="doProductValidationQuality" sourceRef="startGateway" targetRef="doProductValidationQualityTask">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${bcpgwf_pvQualityApprovalActor !=null && ( bcpgwf_reviewQualityApproval == null || bcpgwf_reviewQualityApproval == "Rejected")}]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${bcpgwf_pvQualityApprovalActor !=null && ( bcpgwf_reviewQualityApproval == null || bcpgwf_reviewRDApproval == "Rejected" || bcpgwf_reviewProductionApproval == "Rejected" || bcpgwf_reviewQualityApproval == "Rejected" || bcpgwf_reviewPackagingApproval == "Rejected")}]]></conditionExpression>
     </sequenceFlow>
-    <userTask id="doProductValidationQualityTask" name="Product Validation Quality Task" activiti:assignee="${bcpgwf_pvQualityApprovalActor.properties.userName}" activiti:formKey="bcpgwf:doProductValidationQualityTask">
+    <userTask id="doProductValidationQualityTask" name="Review Quality" activiti:candidateUsers="${bcpgwf_pvQualityApprovalActors}" activiti:formKey="bcpgwf:doProductValidationQualityTask">
       <extensionElements>
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
@@ -52,25 +78,27 @@
                if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority;
                if (bcpgwf_notifyAssignee)
 						{
-						sendMail(bcpgwf_pvQualityApprovalActor, initiator,
+						sendMailToAssignees(bcpgwf_pvQualityApprovalActors, initiator,
 							bcpg.getMessage('productValidationWF.mail.notify.subject', bpm_workflowDescription),
 							bcpg.getMessage('productValidationWF.mail.notify.message'), 
 							"/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:product-validation-notify-task-email.ftl",
 							bpm_package.children);
 						
-		          }]]></activiti:string>
+		          }
+		          ]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
         <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
             <activiti:string><![CDATA[task.setVariableLocal('bpm_comment',task.getVariable('bcpgwf_reviewQualityComment'));
                execution.setVariable('bcpgwf_reviewQualityComment',task.getVariable('bcpgwf_reviewQualityComment'));
-            	execution.setVariable('bcpgwf_reviewQualityApproval',task.getVariable('bcpgwf_reviewQualityApproval'));]]></activiti:string>
+            	execution.setVariable('bcpgwf_reviewQualityApproval',task.getVariable('bcpgwf_reviewQualityApproval'));
+            	execution.setVariable('bcpgwf_pvQualityApprovalActorAssignee', task.getAssignee());]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
       </extensionElements>
     </userTask>
-    <userTask id="doProductValidationProductionTask" name="Product Validation Production Task" activiti:assignee="${bcpgwf_pvProductionApprovalActor.properties.userName}" activiti:formKey="bcpgwf:doProductValidationProductionTask">
+    <userTask id="doProductValidationProductionTask" name="Review Production" activiti:candidateUsers="${bcpgwf_pvProductionApprovalActors}" activiti:formKey="bcpgwf:doProductValidationProductionTask">
       <extensionElements>
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
@@ -79,24 +107,26 @@
                if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority;
                if (bcpgwf_notifyAssignee)
 						{
-							sendMail(bcpgwf_pvProductionApprovalActor, initiator,
+							sendMailToAssignees(bcpgwf_pvProductionApprovalActors, initiator,
 								bcpg.getMessage('productValidationWF.mail.notify.subject', bpm_workflowDescription),
 								bcpg.getMessage('productValidationWF.mail.notify.message'), 
 								"/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:product-validation-notify-task-email.ftl",
 								bpm_package.children);							
-		          }]]></activiti:string>
+		          }
+		          ]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
         <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
             <activiti:string><![CDATA[task.setVariableLocal('bpm_comment',task.getVariable('bcpgwf_reviewProductionComment'));
             				execution.setVariable('bcpgwf_reviewProductionComment',task.getVariable('bcpgwf_reviewProductionComment'));
-            				execution.setVariable('bcpgwf_reviewProductionApproval',task.getVariable('bcpgwf_reviewProductionApproval'));]]></activiti:string>
+            				execution.setVariable('bcpgwf_reviewProductionApproval',task.getVariable('bcpgwf_reviewProductionApproval'));
+            				execution.setVariable('bcpgwf_pvProductionApprovalActorAssignee', task.getAssignee());]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
       </extensionElements>
     </userTask>
-    <userTask id="doProductValidationRDTask" name="Product Validation R&amp;D Task" activiti:assignee="${bcpgwf_pvRDApprovalActor.properties.userName}" activiti:formKey="bcpgwf:doProductValidationRDTask">
+    <userTask id="doProductValidationRDTask" name="Review R&amp;D" activiti:candidateUsers="${bcpgwf_pvRDApprovalActors}" activiti:formKey="bcpgwf:doProductValidationRDTask">
       <extensionElements>
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
@@ -104,19 +134,21 @@
             if (typeof bpm_workflowDueDate != 'undefined') task.dueDate = bpm_workflowDueDate;
                if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority;
                if (bcpgwf_notifyAssignee) {
-               		sendMail(bcpgwf_pvRDApprovalActor, initiator,
+               		sendMailToAssignees(bcpgwf_pvRDApprovalActors, initiator,
 								bcpg.getMessage('productValidationWF.mail.notify.subject', bpm_workflowDescription),
 								bcpg.getMessage('productValidationWF.mail.notify.message'), 
 								"/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:product-validation-notify-task-email.ftl",
 								bpm_package.children);							
-		          }]]></activiti:string>
+		          }
+		          ]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
         <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
             <activiti:string><![CDATA[task.setVariableLocal('bpm_comment',task.getVariable('bcpgwf_reviewRDComment'));
              execution.setVariable('bcpgwf_reviewRDComment',task.getVariable('bcpgwf_reviewRDComment'));
-             execution.setVariable('bcpgwf_reviewRDApproval',task.getVariable('bcpgwf_reviewRDApproval'));]]></activiti:string>
+             execution.setVariable('bcpgwf_reviewRDApproval',task.getVariable('bcpgwf_reviewRDApproval'));
+             execution.setVariable('bcpgwf_pvRDApprovalActorAssignee', task.getAssignee());]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
       </extensionElements>
@@ -126,12 +158,12 @@
     <sequenceFlow id="endDoProductValidationRD" sourceRef="doProductValidationRDTask" targetRef="testParallelValidation"></sequenceFlow>
     <inclusiveGateway id="testParallelValidation" name="Exclusive Gateway"></inclusiveGateway>
     <sequenceFlow id="rejectedParallelValidation" sourceRef="testParallelValidation" targetRef="rejectProductTask">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${bcpgwf_reviewQualityApproval == "Rejected" || bcpgwf_reviewProductionApproval == "Rejected" || bcpgwf_reviewRDApproval == "Rejected"}]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${bcpgwf_reviewQualityApproval == "Rejected" || bcpgwf_reviewProductionApproval == "Rejected" || bcpgwf_reviewRDApproval == "Rejected" || bcpgwf_reviewPackagingApproval == "Rejected"}]]></conditionExpression>
     </sequenceFlow>
-    <sequenceFlow id="doProductValidationCaller2" sourceRef="testParallelValidation" targetRef="doProductValidationCallerTask">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${(bcpgwf_reviewQualityApproval == "Approved" || bcpgwf_reviewQualityApproval==null) && (bcpgwf_reviewProductionApproval == "Approved" || bcpgwf_reviewProductionApproval==null)  && (bcpgwf_reviewRDApproval == "Approved" || bcpgwf_reviewRDApproval==null)}]]></conditionExpression>
+    <sequenceFlow id="doProductValidationCaller" sourceRef="testParallelValidation" targetRef="doProductValidationCallerTask">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${bcpgwf_pvCallerActor !=null && ( bcpgwf_reviewCallerApproval == null || bcpgwf_reviewCallerApproval == "Rejected" || bcpgwf_reviewCaller2Approval == "Rejected") && (bcpgwf_reviewQualityApproval != "Rejected" && bcpgwf_reviewProductionApproval != "Rejected" && bcpgwf_reviewRDApproval != "Rejected" && bcpgwf_reviewPackagingApproval != "Rejected")}]]></conditionExpression>
     </sequenceFlow>
-    <userTask id="doProductValidationCallerTask" name="Product Validation Caller Task" activiti:assignee="${bcpgwf_pvCallerActor.properties.userName}" activiti:formKey="bcpgwf:doProductValidationCallerTask">
+    <userTask id="doProductValidationCallerTask" name="Validation Task 1" activiti:candidateUsers="${bcpgwf_pvCallerActors}" activiti:formKey="bcpgwf:doProductValidationCallerTask">
       <extensionElements>
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
@@ -140,12 +172,13 @@
                if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority;
                if (bcpgwf_notifyAssignee)
 						{
-							sendMail(bcpgwf_pvCallerActor, initiator,
+							sendMailToAssignees(bcpgwf_pvCallerActors, initiator,
 								bcpg.getMessage('productValidationWF.mail.notify.subject', bpm_workflowDescription),
 								bcpg.getMessage('productValidationWF.mail.notify.message'), 
 								"/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:product-validation-notify-task-email.ftl",
 								bpm_package.children);
-		          }]]></activiti:string>
+		          }
+		          ]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
         <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
@@ -153,17 +186,18 @@
             <activiti:string><![CDATA[task.setVariableLocal('bpm_comment',task.getVariable('bcpgwf_reviewCallerComment'));
             		execution.setVariable('bcpgwf_reviewCallerComment',task.getVariable('bcpgwf_reviewCallerComment'));
             		execution.setVariable('bcpgwf_reviewRDComment',task.getVariable('bcpgwf_reviewRDComment'));
-            		execution.setVariable('bcpgwf_reviewCallerApproval',task.getVariable('bcpgwf_reviewCallerApproval'));]]></activiti:string>
+            		execution.setVariable('bcpgwf_reviewCallerApproval',task.getVariable('bcpgwf_reviewCallerApproval'));
+            		execution.setVariable('bcpgwf_pvCallerActorAssignee', task.getAssignee());]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
       </extensionElements>
     </userTask>
     <sequenceFlow id="doTestCallerValidation" sourceRef="doProductValidationCallerTask" targetRef="testCallerValidation"></sequenceFlow>
-    <exclusiveGateway id="testCallerValidation" name="Exclusive Gateway"></exclusiveGateway>
+    <inclusiveGateway id="testCallerValidation" name="Inclusive Gateway"></inclusiveGateway>
     <sequenceFlow id="rejectedCallerValidation" sourceRef="testCallerValidation" targetRef="rejectProductTask">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${bcpgwf_reviewCallerApproval == "Rejected"}]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${bcpgwf_reviewCallerApproval == "Rejected" || bcpgwf_reviewCaller2Approval == "Rejected"}]]></conditionExpression>
     </sequenceFlow>
-    <userTask id="rejectProductTask" name="Reject Product  Task" activiti:assignee="${initiator.properties.userName}" activiti:formKey="bcpgwf:rejectProductTask">
+    <userTask id="rejectProductTask" name="Rejected  Task" activiti:assignee="${initiator.properties.userName}" activiti:formKey="bcpgwf:rejectProductTask">
       <extensionElements>
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
@@ -181,18 +215,21 @@
         </activiti:taskListener>
         <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[task.setVariableLocal('bpm_comment',task.getVariable('bcpgwf_pvTransmitterComment'));]]></activiti:string>
+            <activiti:string><![CDATA[
+            task.setVariableLocal('bpm_comment',task.getVariable('bcpgwf_pvTransmitterComment'));
+            execution.setVariable('bcpgwf_pvTransmitterComment',task.getVariable('bcpgwf_pvTransmitterComment'));
+            ]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
       </extensionElements>
     </userTask>
     <sequenceFlow id="restartValidation" sourceRef="rejectProductTask" targetRef="startGateway"></sequenceFlow>
     <sequenceFlow id="approvedCallerValidation" sourceRef="testCallerValidation" targetRef="alfrescoScripttask1">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${bcpgwf_reviewCallerApproval == "Approved"}]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${(bcpgwf_pvCallerActor ==null ||  bcpgwf_reviewCallerApproval == "Approved" ) && (bcpgwf_pvCaller2Actor ==null ||  bcpgwf_reviewCaller2Approval == "Approved" )}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="flow1" sourceRef="alfrescoScripttask1" targetRef="approveProductTask"></sequenceFlow>
-    <serviceTask id="alfrescoScripttask1" name="Classify and Validate Product" activiti:delegateExpression="${ValidateProduct}"></serviceTask>
-    <userTask id="approveProductTask" name="Approve Product  Task" activiti:assignee="${initiator.properties.userName}" activiti:formKey="bcpgwf:approveProductTask">
+    <serviceTask id="alfrescoScripttask1" name="Classify and Validate" activiti:delegateExpression="${ValidateProduct}"></serviceTask>
+    <userTask id="approveProductTask" name="Approved  Task" activiti:assignee="${initiator.properties.userName}" activiti:formKey="bcpgwf:approveProductTask">
       <extensionElements>
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="runAs">
@@ -225,8 +262,8 @@
 		             		if(product.isSubType("bcpg:product"))
 		             		{
 		             			             		
-			             		var assocNames =  ["bcpgwf:pvCallerActor","bcpgwf:pvRDApprovalActor","bcpgwf:pvQualityApprovalActor","bcpgwf:pvProductionApprovalActor","bcpgwf:pvTransmitterActor"];
-				             	var assocActors = [bcpgwf_pvCallerActor,bcpgwf_pvRDApprovalActor,bcpgwf_pvQualityApprovalActor,bcpgwf_pvProductionApprovalActor, initiator];
+			             		var assocNames =  ["bcpgwf:pvCallerActor","bcpgwf:pvCaller2Actor","bcpgwf:pvRDApprovalActor","bcpgwf:pvPackagingApprovalActor","bcpgwf:pvQualityApprovalActor","bcpgwf:pvProductionApprovalActor","bcpgwf:pvTransmitterActor"];
+				             	var assocActors = [bcpgwf_pvCallerActorAssignee,bcpgwf_pvCaller2ActorAssignee,bcpgwf_pvRDApprovalActorAssignee,bcpgwf_pvPackagingApprovalActorAssignee,bcpgwf_pvQualityApprovalActorAssignee,bcpgwf_pvProductionApprovalActorAssignee, initiator];
 									for (var j = 0; j < assocNames.length; j++)
 									{
 										var assocName = assocNames[j];
@@ -243,9 +280,11 @@
 										}
 										
 										/* add assocs */
-										logger.log("add assocs " + assocName + " actor " + assocActor);
 										if(assocActor != null)
-										{																
+										{
+											if(assocActor.typeShort == null) {
+							               assocActor = people.getPerson(assocActor);
+							            }
 											product.createAssociation(assocActor, assocName);
 										}            		
 									}
@@ -265,6 +304,72 @@
     </userTask>
     <sequenceFlow id="endValidation" sourceRef="approveProductTask" targetRef="endevent1"></sequenceFlow>
     <endEvent id="endevent1" name="End"></endEvent>
+    <userTask id="doProductValidationCaller2Task" name="Validation Task 2" activiti:candidateUsers="${bcpgwf_pvCaller2Actors}" activiti:formKey="bcpgwf:doProductValidationCaller2Task">
+      <extensionElements>
+        <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+          <activiti:field name="script">
+            <activiti:string><![CDATA[<import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js">
+            	if (typeof bpm_workflowDueDate != 'undefined') task.dueDate = bpm_workflowDueDate;
+               if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority;
+               if (bcpgwf_notifyAssignee)
+						{
+							sendMailToAssignees(bcpgwf_pvCaller2Actors, initiator,
+								bcpg.getMessage('productValidationWF.mail.notify.subject', bpm_workflowDescription),
+								bcpg.getMessage('productValidationWF.mail.notify.message'), 
+								"/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:product-validation-notify-task-email.ftl",
+								bpm_package.children);
+		          }]]></activiti:string>
+          </activiti:field>
+        </activiti:taskListener>
+        <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+          <activiti:field name="script">
+            <activiti:string><![CDATA[task.setVariableLocal('bpm_comment',task.getVariable('bcpgwf_reviewCaller2Comment'));
+            		execution.setVariable('bcpgwf_reviewCaller2Comment',task.getVariable('bcpgwf_reviewCaller2Comment'));
+            		execution.setVariable('bcpgwf_reviewRDComment',task.getVariable('bcpgwf_reviewRDComment'));
+            		execution.setVariable('bcpgwf_reviewCaller2Approval',task.getVariable('bcpgwf_reviewCaller2Approval'));
+            		execution.setVariable('bcpgwf_pvCaller2ActorAssignee', task.getAssignee());]]></activiti:string>
+          </activiti:field>
+        </activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="doProductValidationCaller2" sourceRef="testParallelValidation" targetRef="doProductValidationCaller2Task">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${bcpgwf_pvCaller2Actor !=null && ( bcpgwf_reviewCaller2Approval == null || bcpgwf_reviewCallerApproval == "Rejected" || bcpgwf_reviewCaller2Approval == "Rejected") && (bcpgwf_reviewQualityApproval != "Rejected" && bcpgwf_reviewProductionApproval != "Rejected" && bcpgwf_reviewRDApproval != "Rejected" && bcpgwf_reviewPackagingApproval != "Rejected")}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="doTestCaller2Validation" sourceRef="doProductValidationCaller2Task" targetRef="testCallerValidation"></sequenceFlow>
+    <userTask id="doProductValidationPackagingTask" name="Review Packaging" activiti:candidateUsers="${bcpgwf_pvPackagingApprovalActors}" activiti:formKey="bcpgwf:doProductValidationPackagingTask">
+      <extensionElements>
+        <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+          <activiti:field name="script">
+            <activiti:string><![CDATA[<import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js">
+            if (typeof bpm_workflowDueDate != 'undefined') task.dueDate = bpm_workflowDueDate;
+               if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority;
+               if (bcpgwf_notifyAssignee) {
+               		sendMailToAssignees(bcpgwf_pvPackagingApprovalActors, initiator,
+								bcpg.getMessage('productValidationWF.mail.notify.subject', bpm_workflowDescription),
+								bcpg.getMessage('productValidationWF.mail.notify.message'), 
+								"/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:product-validation-notify-task-email.ftl",
+								bpm_package.children);							
+		          }
+		           ]]></activiti:string>
+          </activiti:field>
+        </activiti:taskListener>
+        <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+          <activiti:field name="script">
+            <activiti:string><![CDATA[task.setVariableLocal('bpm_comment',task.getVariable('bcpgwf_reviewPackagingComment'));
+             execution.setVariable('bcpgwf_reviewPackagingComment',task.getVariable('bcpgwf_reviewPackagingComment'));
+             execution.setVariable('bcpgwf_reviewPackagingApproval',task.getVariable('bcpgwf_reviewPackagingApproval'));
+             execution.setVariable('bcpgwf_pvPackagingApprovalActorAssignee', task.getAssignee());]]></activiti:string>
+          </activiti:field>
+        </activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="doProductValidationPackaging" sourceRef="startGateway" targetRef="doProductValidationPackagingTask">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${bcpgwf_pvPackagingApprovalActor !=null && ( bcpgwf_reviewPackagingApproval == null || bcpgwf_reviewRDApproval == "Rejected" || bcpgwf_reviewProductionApproval == "Rejected" || bcpgwf_reviewQualityApproval == "Rejected" || bcpgwf_reviewPackagingApproval == "Rejected")}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="endDoProductValidationPackaging" sourceRef="doProductValidationPackagingTask" targetRef="testParallelValidation"></sequenceFlow>
+    <sequenceFlow id="doProductValidationCallers" sourceRef="testParallelValidation" targetRef="testCallerValidation">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${(bcpgwf_pvCallerActor ==null ||  bcpgwf_reviewCallerApproval == "Approved" ) && (bcpgwf_pvCaller2Actor ==null ||  bcpgwf_reviewCaller2Approval == "Approved" )}]]></conditionExpression>
+    </sequenceFlow>
   </process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_productValidationWF">
     <bpmndi:BPMNPlane bpmnElement="productValidationWF" id="BPMNPlane_productValidationWF">
@@ -304,15 +409,21 @@
       <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
         <omgdc:Bounds height="35.0" width="35.0" x="1087.0" y="143.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="doProductValidationCaller2Task" id="BPMNShape_doProductValidationCaller2Task">
+        <omgdc:Bounds height="55.0" width="105.0" x="551.0" y="40.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="doProductValidationPackagingTask" id="BPMNShape_doProductValidationPackagingTask">
+        <omgdc:Bounds height="55.0" width="105.0" x="281.0" y="310.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge bpmnElement="initiate" id="BPMNEdge_initiate">
         <omgdi:waypoint x="36.0" y="160.0"></omgdi:waypoint>
         <omgdi:waypoint x="181.0" y="160.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="doProductValidationCaller1" id="BPMNEdge_doProductValidationCaller1">
+      <bpmndi:BPMNEdge bpmnElement="doProductValidationReviews" id="BPMNEdge_doProductValidationReviews">
         <omgdi:waypoint x="201.0" y="140.0"></omgdi:waypoint>
         <omgdi:waypoint x="201.0" y="8.0"></omgdi:waypoint>
-        <omgdi:waypoint x="603.0" y="8.0"></omgdi:waypoint>
-        <omgdi:waypoint x="603.0" y="133.0"></omgdi:waypoint>
+        <omgdi:waypoint x="471.0" y="8.0"></omgdi:waypoint>
+        <omgdi:waypoint x="471.0" y="140.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="doProductValidationRD" id="BPMNEdge_doProductValidationRD">
         <omgdi:waypoint x="201.0" y="180.0"></omgdi:waypoint>
@@ -346,7 +457,7 @@
         <omgdi:waypoint x="471.0" y="180.0"></omgdi:waypoint>
         <omgdi:waypoint x="638.0" y="360.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="doProductValidationCaller2" id="BPMNEdge_doProductValidationCaller2">
+      <bpmndi:BPMNEdge bpmnElement="doProductValidationCaller" id="BPMNEdge_doProductValidationCaller">
         <omgdi:waypoint x="491.0" y="160.0"></omgdi:waypoint>
         <omgdi:waypoint x="551.0" y="160.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
@@ -375,6 +486,33 @@
       <bpmndi:BPMNEdge bpmnElement="endValidation" id="BPMNEdge_endValidation">
         <omgdi:waypoint x="1046.0" y="160.0"></omgdi:waypoint>
         <omgdi:waypoint x="1087.0" y="160.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="doProductValidationCaller2" id="BPMNEdge_doProductValidationCaller2">
+        <omgdi:waypoint x="471.0" y="140.0"></omgdi:waypoint>
+        <omgdi:waypoint x="471.0" y="68.0"></omgdi:waypoint>
+        <omgdi:waypoint x="551.0" y="67.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="doTestCaller2Validation" id="BPMNEdge_doTestCaller2Validation">
+        <omgdi:waypoint x="656.0" y="67.0"></omgdi:waypoint>
+        <omgdi:waypoint x="727.0" y="67.0"></omgdi:waypoint>
+        <omgdi:waypoint x="727.0" y="140.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="doProductValidationPackaging" id="BPMNEdge_doProductValidationPackaging">
+        <omgdi:waypoint x="201.0" y="180.0"></omgdi:waypoint>
+        <omgdi:waypoint x="201.0" y="337.0"></omgdi:waypoint>
+        <omgdi:waypoint x="281.0" y="337.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="endDoProductValidationPackaging" id="BPMNEdge_endDoProductValidationPackaging">
+        <omgdi:waypoint x="386.0" y="337.0"></omgdi:waypoint>
+        <omgdi:waypoint x="471.0" y="337.0"></omgdi:waypoint>
+        <omgdi:waypoint x="471.0" y="180.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="doProductValidationCallers" id="BPMNEdge_doProductValidationCallers">
+        <omgdi:waypoint x="471.0" y="140.0"></omgdi:waypoint>
+        <omgdi:waypoint x="471.0" y="6.0"></omgdi:waypoint>
+        <omgdi:waypoint x="601.0" y="6.0"></omgdi:waypoint>
+        <omgdi:waypoint x="726.0" y="6.0"></omgdi:waypoint>
+        <omgdi:waypoint x="727.0" y="140.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
