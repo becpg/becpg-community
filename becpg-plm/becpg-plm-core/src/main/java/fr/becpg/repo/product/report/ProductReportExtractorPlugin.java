@@ -33,7 +33,6 @@ import fr.becpg.model.PackModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.JsonFormulaHelper;
-import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ResourceProductData;
@@ -390,7 +389,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 							Element ingLabelingElt = ingListElt.addElement(PLMModel.TYPE_INGLABELINGLIST.getLocalName());
 							ingLabelingElt.addAttribute(ATTR_LANGUAGE, locale.getDisplayLanguage());
-							ingLabelingElt.addAttribute(ATTR_LANGUAGE_CODE, MLTextHelper.localeKey(locale));
+							ingLabelingElt.addAttribute(ATTR_LANGUAGE_CODE, locale.toString());
 							addCDATA(ingLabelingElt, PLMModel.ASSOC_ILL_GRP, grpName, null);
 							addCDATA(ingLabelingElt, PLMModel.PROP_ILL_VALUE,
 									dataItem.getValue() != null ? dataItem.getValue().getValue(locale) : VALUE_NULL, null);
@@ -501,12 +500,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 						}
 
 						nutListsElt.addAttribute(generateKeyAttribute(nut), value != null ? value : "");
-						
 						NodeRef nutNodeRef = dataListItem.getNut();
-						String colorString = (String) nodeService.getProperty(nutNodeRef, BeCPGModel.PROP_COLOR);
-						if(!colorString.isEmpty()){
-							nutListElt.addAttribute(BeCPGModel.PROP_COLOR.getLocalName(), colorString );
-						}
 
 						addCDATA(nutListElt, PLMModel.PROP_NUTGDA, nodeService.getProperty(nutNodeRef, PLMModel.PROP_NUTGDA) != null
 								? ((Double) nodeService.getProperty(nutNodeRef, PLMModel.PROP_NUTGDA)).toString() : "", null);
