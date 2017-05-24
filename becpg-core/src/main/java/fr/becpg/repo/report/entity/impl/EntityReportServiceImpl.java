@@ -612,7 +612,9 @@ public class EntityReportServiceImpl implements EntityReportService {
 				}
 			}
 		}
-		associationService.update(entityNodeRef, ReportModel.ASSOC_REPORTS, newReports);
+		//Foec
+		
+		associationService.update(entityNodeRef, ReportModel.ASSOC_REPORTS, newReports, true);
 	}
 
 	/**

@@ -335,7 +335,27 @@
 			
 		},
 		
-		
+		onActionShowWorkflows : function EntityDataGrid_onActionShowComments(item) {
+
+			 Alfresco.util.Ajax.request({
+				    method : Alfresco.util.Ajax.GET,
+					url : Alfresco.constants.URL_SERVICECONTEXT + "modules/entity-workflows/entity-workflows?nodeRef="+item.nodeRef+"&htmlid="+this.id ,
+					successCallback : {
+						fn : function(resp){
+							var containerDiv = document.createElement("div");     
+                         containerDiv.innerHTML = resp.serverResponse.responseText;
+                         var panelDiv = Dom.getFirstChild(containerDiv);
+                         this.widgets.entityWorkflows = Alfresco.util.createYUIPanel(panelDiv, {
+								draggable : true,
+								width : "40em"
+							});
+							this.widgets.entityWorkflows.show();
+						},
+						scope : this
+					}
+			   });
+			
+		},
 		
 
 		
