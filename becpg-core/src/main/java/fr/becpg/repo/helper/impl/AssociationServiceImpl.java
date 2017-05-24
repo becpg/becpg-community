@@ -59,13 +59,14 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 		this.beCPGCacheService = beCPGCacheService;
 	}
 
+
 	@Override
-	public void update(NodeRef nodeRef, QName qName, List<NodeRef> assocNodeRefs) {
+	public void update(NodeRef nodeRef, QName qName, List<NodeRef> assocNodeRefs, boolean resetCache) {
 
 		List<AssociationRef> dbAssocNodeRefs = getTargetAssocsImpl(nodeRef, qName, false);
 		List<NodeRef> dbTargetNodeRefs = new ArrayList<>();
 
-		boolean hasChanged = false;
+		boolean hasChanged = resetCache;
 
 		if (dbAssocNodeRefs != null) {
 			// remove from db
@@ -97,6 +98,12 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 		if (hasChanged) {
 			removeCachedAssoc(assocCacheName(), nodeRef, qName);
 		}
+		
+	}
+	
+	@Override
+	public void update(NodeRef nodeRef, QName qName, List<NodeRef> assocNodeRefs) {
+		update(nodeRef, qName, assocNodeRefs, false);
 	}
 
 	@Override
@@ -276,7 +283,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 
 	@Override
 	public void onDeleteChildAssociation(ChildAssociationRef associationRef) {
-		logger.debug("onDeleteChildAssociation");
+		logger.debug("onDeleteChildAssociation: "+associationRef.getTypeQName());
 		removeCachedAssoc(childAssocCacheName(), associationRef.getParentRef(), associationRef.getTypeQName());
 		
 
@@ -284,15 +291,14 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 
 	@Override
 	public void onCreateChildAssociation(ChildAssociationRef associationRef, boolean arg1) {
-		logger.debug("onCreateChildAssociation");
+		logger.debug("onCreateChildAssociation: "+associationRef.getTypeQName());
 		removeCachedAssoc(childAssocCacheName(), associationRef.getParentRef(), associationRef.getTypeQName());
 
 	}
 
 	@Override
 	public void onDeleteNode(ChildAssociationRef associationRef, boolean arg1) {
-		logger.debug("onDeleteNode");
-		// TODO test est appels onDeleteAssociation
+		logger.debug("onDeleteNode: "+associationRef.getTypeQName());
 
 		removeCachedAssoc(childAssocCacheName(), associationRef.getParentRef(), associationRef.getTypeQName());
 	}
@@ -313,5 +319,6 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 		}
 
 	}
+
 
 }
