@@ -370,7 +370,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 					&& !associationDef.getName().equals(RuleModel.ASSOC_RULE_FOLDER) && !associationDef.getName().equals(ContentModel.ASSOC_ORIGINAL)
 					&& !associationDef.isChild()) {
 
-				if (!loadTargetAssoc(nodeRef, associationDef, nodeElt, images)) {
+				if (!loadTargetAssoc(nodeRef, associationDef, nodeElt, images) || useCData == false) {
 
 					List<NodeRef> assocNodes = associationService.getTargetAssocs(nodeRef, associationDef.getName());
 
