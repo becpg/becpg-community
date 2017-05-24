@@ -212,7 +212,7 @@
 	    <providers>
 			<provider index="2">
 				<provider-id>beCPG</provider-id>
-				<provider-url>http://www.becpg.fr/becpg-vm-community-2.2.0.png</provider-url>
+				<provider-url>http://www.becpg.fr/becpg-vm-community-2.2.1.png</provider-url>
 			</provider>
 		</providers>	
 	</config>
