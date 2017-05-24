@@ -8503,11 +8503,12 @@
 			<form>
 				<field-visibility>
 					<show id="bcpgwf:pvValidationDate" for-mode="view" />
-					<show id="bcpgwf:pvCallerActor" for-mode="view" />
 					<show id="bcpgwf:pvRDApprovalActor" for-mode="view" />
 					<show id="bcpgwf:pvPackagingApprovalActor" for-mode="view" />
 					<show id="bcpgwf:pvQualityApprovalActor" for-mode="view" />
-					<show id="bcpgwf:pvProductionApprovalActor" for-mode="view" />					
+					<show id="bcpgwf:pvProductionApprovalActor" for-mode="view" />		
+					<show id="bcpgwf:pvCallerActor" for-mode="view" />
+					<show id="bcpgwf:pvCaller2Actor" for-mode="view" />			
 				</field-visibility>
 				<appearance>
 					<set id="productValidation" appearance="bordered-panel"
@@ -8517,11 +8518,12 @@
 							<control-param name="showTime">false</control-param>
 						</control>
 					</field>
-					<field id="bcpgwf:pvCallerActor" set="productValidation" />
 					<field id="bcpgwf:pvRDApprovalActor" set="productValidation" />
 					<field id="bcpgwf:pvPackagingApprovalActor" set="productValidation" />
 					<field id="bcpgwf:pvQualityApprovalActor" set="productValidation" />
 					<field id="bcpgwf:pvProductionApprovalActor" set="productValidation" />					
+					<field id="bcpgwf:pvCallerActor" set="productValidation" />
+					<field id="bcpgwf:pvCaller2Actor" set="productValidation" />
 				</appearance>
 			</form>
 		</forms>
