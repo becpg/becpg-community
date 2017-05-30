@@ -460,7 +460,11 @@ public class LabelingFormulaContext {
 		} else {
 
 			if (plural && (lblComponent instanceof IngTypeItem)) {
-				return uncapitalize(((IngTypeItem) lblComponent).getPluralLegalName(I18NUtil.getLocale()));
+				if(uncapitalizeLegalName){
+					return uncapitalize(((IngTypeItem) lblComponent).getPluralLegalName(I18NUtil.getLocale()));
+				} else {
+					return ((IngTypeItem) lblComponent).getPluralLegalName(I18NUtil.getLocale());
+			   }
 			}
 
 			if (showIngCEECode && (lblComponent instanceof IngItem)) {
