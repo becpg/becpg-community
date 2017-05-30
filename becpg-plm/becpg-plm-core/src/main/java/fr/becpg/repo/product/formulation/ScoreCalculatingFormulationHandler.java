@@ -299,15 +299,15 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 		return true;
 	}
 
-	private void cleanOldRclSources(ProductData product) {
-		List<ReqCtrlListDataItem> matchingRcl = product.getReqCtrlList().stream()
-				.filter(rcl -> RequirementDataType.Completion.equals(rcl.getReqDataType()) || RequirementDataType.Validation.equals(rcl.getReqDataType()))
-				.collect(Collectors.toList());
-		
-		for(ReqCtrlListDataItem tmp : matchingRcl){
-			tmp.getSources().clear();
-		}
-	}
+//	private void cleanOldRclSources(ProductData product) {
+//		List<ReqCtrlListDataItem> matchingRcl = product.getReqCtrlList().stream()
+//				.filter(rcl -> RequirementDataType.Completion.equals(rcl.getReqDataType()) || RequirementDataType.Validation.equals(rcl.getReqDataType()))
+//				.collect(Collectors.toList());
+//		
+//		for(ReqCtrlListDataItem tmp : matchingRcl){
+//			tmp.getSources().clear();
+//		}
+//	}
 
 	/**
 	 * Creates a new ReqCtrlListDataItem for node for validation issues
