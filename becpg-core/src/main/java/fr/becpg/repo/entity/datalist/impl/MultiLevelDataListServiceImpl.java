@@ -86,6 +86,7 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 			watch = new StopWatch();
 			watch.start();
 		}
+		
 		try {
 			return getMultiLevelListData(dataListFilter, dataListFilter.getEntityNodeRef(), 0, dataListFilter.getMaxDepth(), new HashSet<NodeRef>());
 		} finally {
@@ -107,7 +108,7 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 		MultiLevelListData ret = new MultiLevelListData(entityNodeRef, currDepth);
 
 		// This check prevents stack over flow when we have a cyclic node
-		if (!visitedNodeRefs.contains(entityNodeRef) || (currDepth < 100)) {
+		if (!visitedNodeRefs.contains(entityNodeRef)) {
 			visitedNodeRefs.add(entityNodeRef);
 			if ((maxDepthLevel < 0) || (currDepth < maxDepthLevel)) {
 				logger.debug("getMultiLevelListData depth :" + currDepth + " max " + maxDepthLevel);
@@ -135,7 +136,7 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 				}
 			}
 		} else {
-			logger.debug("Detected cycle for: " + entityNodeRef);
+			logger.info("Detected cycle for: " + entityNodeRef);
 		}
 		return ret;
 	}
@@ -157,7 +158,7 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 
 				for (NodeRef childRef : childRefs) {
 					entityNodeRef = getEntityNodeRef(childRef);
-					if (entityNodeRef != null) {
+					if (entityNodeRef != null && !visitedNodeRefs.contains(entityNodeRef)) {
 						Integer depthLevel = (Integer) nodeService.getProperty(childRef, BeCPGModel.PROP_DEPTH_LEVEL);
 						if (logger.isDebugEnabled()) {
 							logger.debug("Append level:" + depthLevel + " at currLevel " + currDepth + " for "
