@@ -154,7 +154,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 			Double specificationScore = 100d;
 			Double mandatoryFieldsScore = 100d;
 
-			cleanOldRclSources(product);
+			//cleanOldRclSources(product);
 
 			// visits all refs and adds rclDataItem to them if required
 			for (AbstractProductDataView view : product.getViews()) {
@@ -163,6 +163,8 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 						if (dataItem.getComponent() != null) {
 							if (!checkProductValidity(dataItem.getComponent())) {
 
+								
+								//TODO Why we recreate it each times ?
 								final ReqCtrlListDataItem nonValidatedRclDataItem = createValidationRclDataItem(dataItem.getComponent());
 
 								List<ReqCtrlListDataItem> productNonValidatedRcl = product
