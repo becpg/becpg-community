@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--
-  Copyright (C) 2010-2017 beCPG. 
+  Copyright (C) 2010-2016 beCPG. 
    
   This file is part of beCPG 
    
@@ -77,12 +77,14 @@
             <template-instance>dashboard-2-columns-wide-right</template-instance>
             <authentication>user</authentication>
             <properties>
-               <sitePages>[{"pageId":"documentlibrary"}, {"pageId":"data-lists"}]</sitePages>
+               <sitePages>[{"pageId":"dashboard"},{"pageId":"documentlibrary"}, {"pageId":"data-lists"}]</sitePages>
                <pageMetadata>
                					{
                					"documentlibrary":{"titleId":"page.productDocumentLibrary.title", "descriptionId":"page.productDocumentLibrary.description", "type":"productManagement"}
                					}
                </pageMetadata>
+                <dashboardSitePage>true</dashboardSitePage>
+     
             </properties>
          </page>
       </pages>
@@ -124,6 +126,7 @@
                <height>504</height>
             </properties>
          </component>
+         
          <component>
             <scope>page</scope>
             <region-id>component-2-1</region-id>
@@ -146,13 +149,14 @@
             <template-instance>dashboard-2-columns-wide-right</template-instance>
             <authentication>user</authentication>
             <properties>
-               <sitePages>[{"pageId":"documentlibrary"}, {"pageId":"project-list"}, {"pageId":"data-lists"}]</sitePages>
+               <sitePages>[{"pageId":"dashboard"},{"pageId":"documentlibrary"}, {"pageId":"project-list"}, {"pageId":"data-lists"}]</sitePages>
                <pageMetadata>
                					{
                					"documentlibrary":{"titleId":"page.projectDocumentLibrary.title", "descriptionId":"page.projectDocumentLibrary.description", "type":"projectManagement"},
                					"project-list":{"titleId":"page.projectProjectList.title", "descriptionId":"page.projectProjectList.description", "type":"projectManagement"}
                					}
                </pageMetadata>
+                <dashboardSitePage>true</dashboardSitePage>
             </properties>
          </page>
       </pages>
