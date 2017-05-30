@@ -32,9 +32,11 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.alfresco.repo.dictionary.DictionaryDAO;
+import org.alfresco.repo.dictionary.IndexTokenisationMode;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
+import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -553,12 +555,21 @@ public class EntityListValuePlugin implements ListValuePlugin {
 	protected ListValuePage suggestDatalistItem(NodeRef entityNodeRef, QName datalistType, QName propertyQName, String query, Integer pageNum,
 			Integer pageSize) {
 
-		List<NodeRef> ret = BeCPGQueryBuilder.createQuery().ofType(datalistType).andPropQuery(propertyQName, prepareQuery(query))
-				.inPath(nodeService.getPath(entityNodeRef).toPrefixString(namespaceService) + "/*/*")
-				// .addSort(propertyQName,true) unsupported by solr we need
-				// Tokenised "false" or "both"
-				.maxResults(RepoConsts.MAX_SUGGESTIONS).list();
+		
+		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(datalistType).andPropQuery(propertyQName, prepareQuery(query))
+				.inPath(nodeService.getPath(entityNodeRef).toPrefixString(namespaceService) + "/*/*").maxResults(RepoConsts.MAX_SUGGESTIONS);
+		
+		
+		PropertyDefinition propertyDef = dictionaryService.getProperty(propertyQName);
+		// Tokenised "false" or "both"
+		if(propertyDef!=null){
+			if(IndexTokenisationMode.BOTH.equals(propertyDef.getIndexTokenisationMode())
+					|| IndexTokenisationMode.FALSE.equals(propertyDef.getIndexTokenisationMode())){
+				queryBuilder.addSort(propertyQName,true);
+			}
+		}
+		
 
-		return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(propertyQName, nodeService));
+		return new ListValuePage(queryBuilder.list(), pageNum, pageSize, new NodeRefListValueExtractor(propertyQName, nodeService));
 	}
 }
