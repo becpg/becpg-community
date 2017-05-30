@@ -31,6 +31,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.repo.dictionary.IndexTokenisationMode;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
@@ -158,11 +159,15 @@ public class EntityListValuePlugin implements ListValuePlugin {
 			}
 		}
 
+		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery();
+		
 		String template = searchTemplate;
 		if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_CHARACT)) {
 			template = charactSearchTemplate;
+			queryBuilder.addSort(BeCPGModel.PROP_CHARACT_NAME,true);	
 		} else if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_LIST_VALUE)) {
 			template = listValueSearchTemplate;
+			queryBuilder.addSort(BeCPGModel.PROP_LV_VALUE,true);
 		} else if(arrClassNames!=null ){
 			for (String className : arrClassNames) {
 				QName classQName;
@@ -177,9 +182,11 @@ public class EntityListValuePlugin implements ListValuePlugin {
 					break;
 				}
 			}
+		} else {
+			queryBuilder.addSort(ContentModel.PROP_NAME,true);
 		}
 
-		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(type).excludeDefaults().inSearchTemplate(template)
+		queryBuilder.ofType(type).excludeDefaults().inSearchTemplate(template)
 				.locale(I18NUtil.getContentLocale()).andOperator().ftsLanguage();
 
 		if (!isAllQuery(query)) {
@@ -332,6 +339,8 @@ public class EntityListValuePlugin implements ListValuePlugin {
 			queryBuilder.andPropQuery(BeCPGModel.PROP_LV_VALUE, prepareQuery(query));
 
 		}
+		
+		queryBuilder.addSort(BeCPGModel.PROP_LV_VALUE, true);
 
 		List<NodeRef> ret = queryBuilder.list();
 
@@ -558,18 +567,19 @@ public class EntityListValuePlugin implements ListValuePlugin {
 		
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(datalistType).andPropQuery(propertyQName, prepareQuery(query))
 				.inPath(nodeService.getPath(entityNodeRef).toPrefixString(namespaceService) + "/*/*").maxResults(RepoConsts.MAX_SUGGESTIONS);
-		
-		
+	
 		PropertyDefinition propertyDef = dictionaryService.getProperty(propertyQName);
 		// Tokenised "false" or "both"
 		if(propertyDef!=null){
+			
 			if(IndexTokenisationMode.BOTH.equals(propertyDef.getIndexTokenisationMode())
 					|| IndexTokenisationMode.FALSE.equals(propertyDef.getIndexTokenisationMode())){
 				queryBuilder.addSort(propertyQName,true);
 			}
-		}
+		} 
 		
-
 		return new ListValuePage(queryBuilder.list(), pageNum, pageSize, new NodeRefListValueExtractor(propertyQName, nodeService));
 	}
+	
+	
 }
