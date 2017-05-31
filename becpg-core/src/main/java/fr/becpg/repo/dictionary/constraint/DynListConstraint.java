@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2010-2016 beCPG. All rights reserved.
+ *  Copyright (C) 2010-2017 beCPG. All rights reserved.
  */
 package fr.becpg.repo.dictionary.constraint;
 

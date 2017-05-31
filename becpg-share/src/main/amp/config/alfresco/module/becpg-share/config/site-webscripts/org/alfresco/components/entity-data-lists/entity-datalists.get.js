@@ -1,6 +1,6 @@
 <import resource="classpath:/alfresco/templates/org/alfresco/import/alfresco-util.js">
 /*******************************************************************************
- * Copyright (C) 2010-2016 beCPG.
+ * Copyright (C) 2010-2017 beCPG.
  * 
  * This file is part of beCPG
  * 
