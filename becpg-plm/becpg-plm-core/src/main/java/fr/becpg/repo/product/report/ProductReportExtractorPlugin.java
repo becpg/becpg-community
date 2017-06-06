@@ -2,6 +2,7 @@ package fr.becpg.repo.product.report;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,20 +33,25 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.data.hierarchicalList.Composite;
+import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.helper.JsonFormulaHelper;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.ResourceProductData;
 import fr.becpg.repo.product.data.constraints.CompoListUnit;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.PackagingListUnit;
+import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.packaging.PackagingData;
 import fr.becpg.repo.product.data.packaging.VariantPackagingData;
 import fr.becpg.repo.product.data.productList.AbstractManualVariantListDataItem;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompositionDataItem;
+import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
@@ -53,6 +59,7 @@ import fr.becpg.repo.product.data.productList.MicrobioListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.OrganoListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
+import fr.becpg.repo.product.data.productList.PriceListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.productList.ResourceParamListItem;
@@ -62,6 +69,7 @@ import fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
+import fr.becpg.repo.variant.filters.VariantFilters;
 import fr.becpg.repo.variant.model.VariantData;
 
 @Service
@@ -114,6 +122,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	@Value("${beCPG.product.report.assocsToExtractWithImage}")
 	private String assocsToExtractWithImage = "";
+
+	@Value("${beCPG.product.report.priceBreaks}")
+	private Boolean extractPriceBreaks = false;
 
 	@Autowired
 	@Qualifier("mlAwareNodeService")
@@ -346,6 +357,11 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 			}
 
+			if (isExtractedProduct && extractPriceBreaks) {
+
+				extractPriceBreaks(productData, dataListsElt);
+			}
+
 			if (isExtractedProduct || componentDatalistsToExtract.contains(MPMModel.TYPE_PROCESSLIST.toPrefixString(namespaceService))) {
 
 				// processList
@@ -406,9 +422,10 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			}
 
 		}
-	
 
 	}
+
+
 
 	private void loadProcessList(ProductData productData, Element dataListsElt, NodeRef defaultVariantNodeRef, Map<String, byte[]> images) {
 		if (productData.hasProcessListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
@@ -532,7 +549,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 			for (IngListDataItem dataListItem : productData.getIngList()) {
 				addDataListState(ingListsElt, dataListItem.getParentNodeRef());
-				if(dataListItem.getIng()!=null){
+				if (dataListItem.getIng() != null) {
 					Element ingListElt = ingListsElt.addElement(PLMModel.TYPE_INGLIST.getLocalName());
 					String ingCEECode = (String) nodeService.getProperty(dataListItem.getIng(), PLMModel.PROP_ING_CEECODE);
 					if (ingCEECode != null) {
@@ -572,6 +589,116 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			Element rawMaterialDataListsElt = rawMaterialElt.addElement(TAG_DATALISTS);
 			loadDataLists(entry.getKey(), rawMaterialDataListsElt, images, false);
 		}
+	}
+	
+	
+	private void extractPriceBreaks(ProductData productData, Element dataListsElt) {
+		// TODO Auto-generated method stub
+		List<PriceBreakReportData> priceBreaks = new ArrayList<>();
+		
+		extractPriceBreaks(productData, 1d, 1d, priceBreaks);
+		
+	}
+
+	
+	private void extractPriceBreaks(ProductData productData, Double parentLossRatio,  Double parentQty, List<PriceBreakReportData> priceBreaks) {
+	
+		for (CompoListDataItem compoList : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+			NodeRef productNodeRef = compoList.getProduct();
+			if ((productNodeRef != null) && !DeclarationType.Omit.equals(compoList.getDeclType())) {
+				QName type = nodeService.getType(productNodeRef);
+				Double qty = FormulationHelper.getQtyInKg(compoList);
+				Double qtyForCost = FormulationHelper.getQtyForCost(compoList, parentLossRatio,
+						ProductUnit.getUnit((String) nodeService.getProperty(compoList.getProduct(), PLMModel.PROP_PRODUCT_UNIT)),false);
+				
+				Double netWeight = FormulationHelper.getNetWeight(productData.getNodeRef(), nodeService, FormulationHelper.DEFAULT_NET_WEIGHT);
+
+				if (logger.isDebugEnabled()) {
+					logger.debug("Get rawMaterial " + nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME) + "qty: " + qty + " netWeight "
+							+ netWeight + " parentQty " + parentQty);
+				}
+				if ((qty != null) && (netWeight != 0d)) {
+					qty = (parentQty * qty * FormulationHelper.getYield(compoList)) / (100 * netWeight);
+
+					ProductData componentProduct = alfrescoRepository.findOne(productNodeRef);
+
+					if (type.isMatch(PLMModel.TYPE_RAWMATERIAL)) {
+
+						createPriceBreakReportData(productData,componentProduct, qty, qtyForCost, priceBreaks);
+						
+					} else if (type.isMatch(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT)) {
+						continue;
+					} else {
+						
+						Double lossPerc = compoList.getLossPerc() != null ? compoList.getLossPerc() : 0d;
+						Double newLossPerc = FormulationHelper.calculateLossPerc(parentLossRatio, lossPerc);
+						
+						extractPriceBreaks(componentProduct, newLossPerc,  qty , priceBreaks);
+					}
+				}
+			}
+		}
+		
+		for (PackagingListDataItem packagingListDataItem : productData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+			Double qtyForCost = FormulationHelper.getQtyForCostByPackagingLevel(productData, packagingListDataItem, nodeService);
+			ProductData componentProduct = alfrescoRepository.findOne(packagingListDataItem.getNodeRef());
+			createPriceBreakReportData(productData,componentProduct, qtyForCost, qtyForCost, priceBreaks);
+			//TODO packagingKit
+		}
+		
+
+	}
+
+	private void createPriceBreakReportData(ProductData productData, ProductData componentProduct, Double qty, Double qtyForCost, List<PriceBreakReportData> priceBreaks) {
+		if (componentProduct.getPriceList() != null) {
+			for (PriceListDataItem item : componentProduct.getPriceList()) {
+				PriceBreakReportData priceBreakReportData = new PriceBreakReportData();
+
+				priceBreakReportData.setCost(item.getCost());
+				priceBreakReportData.setProduct(componentProduct.getNodeRef());
+				priceBreakReportData.setSuppliers(item.getSuppliers());
+				Double qtyForProductInKg = (100 * qty)
+						/ FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT);
+			
+				Double purchaseValue = item.getPurchaseValue();
+
+				if (item.getPurchaseUnit() != null) {
+					ProductUnit purchaseUnit = ProductUnit.valueOf(item.getPurchaseUnit());
+
+					if (purchaseValue != null) {
+
+						if (FormulationHelper.isProductUnitKg(purchaseUnit) || FormulationHelper.isProductUnitLiter(purchaseUnit)) {
+							if (purchaseUnit.equals(ProductUnit.g) || purchaseUnit.equals(ProductUnit.mL)) {
+								purchaseValue = purchaseValue / 1000;
+							} else if (purchaseUnit.equals(ProductUnit.cL)) {
+								purchaseValue = purchaseValue / 100;
+							}
+						} else if (FormulationHelper.isProductUnitP(purchaseUnit)) {
+							purchaseValue = purchaseValue * FormulationHelper.getNetWeight(productData, 1d);
+						}
+
+					}
+				}
+
+				if (purchaseValue != null) {
+					priceBreakReportData.setProjectedQty(qtyForProductInKg * item.getPurchaseValue());
+				}
+
+				for (CostListDataItem cost : componentProduct.getCostList()) {
+					if ((cost.getNodeRef() != null) && cost.getNodeRef().equals(item.getCost())) {
+
+						Double simulatedValue = (item.getValue() - cost.getValue()) * qtyForCost;
+						priceBreakReportData.setSimulatedValue(simulatedValue);
+						break;
+					}
+
+				}
+
+				priceBreaks.add(priceBreakReportData);
+			}
+
+		}
+		
 	}
 
 	private Map<NodeRef, Double> getRawMaterials(ProductData productData, Map<NodeRef, Double> rawMaterials, Double parentQty) {
