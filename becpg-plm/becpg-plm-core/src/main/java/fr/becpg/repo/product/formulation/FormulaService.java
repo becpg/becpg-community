@@ -24,6 +24,7 @@ import fr.becpg.repo.product.data.productList.CompositionDataItem;
 import fr.becpg.repo.product.data.spel.FormulaFormulationContext;
 import fr.becpg.repo.product.data.spel.FormulaFormulationContext.Operator;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.security.aop.SecurityMethodBeforeAdvice;
 
 public class FormulaService {
@@ -103,6 +104,10 @@ public class FormulaService {
 			return QName.createQName(qName, namespaceService);
 		}
 		
+		public Serializable setValue(RepositoryEntity item, String qname, Serializable value) {
+			item.getExtraProperties().put(QName.createQName(qname, namespaceService),value);
+			return value;
+		}
 		
 		public Double sum(Collection<CompositionDataItem> range, String formula) {
 			return aggreate(productData, range, formula, Operator.SUM);
