@@ -37,6 +37,7 @@ import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.helper.JsonFormulaHelper;
 import fr.becpg.repo.product.data.EffectiveFilters;
+import fr.becpg.repo.product.data.PackagingKitData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.ResourceProductData;
@@ -593,10 +594,43 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	
 	
 	private void extractPriceBreaks(ProductData productData, Element dataListsElt) {
-		// TODO Auto-generated method stub
-		List<PriceBreakReportData> priceBreaks = new ArrayList<>();
 		
+		List<PriceBreakReportData> priceBreaks = new ArrayList<>();
 		extractPriceBreaks(productData, 1d, 1d, priceBreaks);
+		
+		Collections.sort(priceBreaks, (r1, r2) -> r1.getProjectedQty().compareTo(r2.getProjectedQty()));
+		Element priceBreaksElt = dataListsElt.addElement("priceBreaks");
+		
+		Double unitTotalCost = productData.getUnitTotalCost() !=null ? productData.getUnitTotalCost() : 0d;
+		
+		for(PriceBreakReportData priceBreakReportData : priceBreaks){
+			Element priceBreakElt = priceBreaksElt.addElement("priceBreak");
+			priceBreakElt.addAttribute("cost", (String) nodeService.getProperty(priceBreakReportData.getCost(),BeCPGModel.PROP_CHARACT_NAME));
+			priceBreakElt.addAttribute("product", (String) nodeService.getProperty(priceBreakReportData.getProduct(),ContentModel.PROP_NAME));
+			String suppliers = "";
+			if(priceBreakReportData.getSuppliers()!=null){
+				for(NodeRef supplier : priceBreakReportData.getSuppliers()){
+					if(!suppliers.isEmpty()){
+						suppliers+=",";
+					}
+					suppliers+=(String) nodeService.getProperty(supplier,ContentModel.PROP_NAME);
+					
+				}
+				
+			}
+			priceBreakElt.addAttribute("suppliers",suppliers );
+			priceBreakElt.addAttribute("projectedQty",priceBreakReportData.getProjectedQty()!=null ? priceBreakReportData.getProjectedQty().toString() : "");
+			priceBreakElt.addAttribute("simulatedValue",priceBreakReportData.getSimulatedValue()!=null ? priceBreakReportData.getSimulatedValue().toString() : "" );
+			
+			if(priceBreakReportData.getSimulatedValue()!=null){
+				unitTotalCost+=priceBreakReportData.getSimulatedValue();
+			}
+			
+			priceBreakElt.addAttribute("unitTotalCost",unitTotalCost.toString() );
+		
+			
+		}
+		
 		
 	}
 
@@ -620,6 +654,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				if ((qty != null) && (netWeight != 0d)) {
 					qty = (parentQty * qty * FormulationHelper.getYield(compoList)) / (100 * netWeight);
 
+					qtyForCost = (parentQty * qtyForCost * FormulationHelper.getYield(compoList)) / (100 * netWeight);
+					
 					ProductData componentProduct = alfrescoRepository.findOne(productNodeRef);
 
 					if (type.isMatch(PLMModel.TYPE_RAWMATERIAL)) {
@@ -641,9 +677,18 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		
 		for (PackagingListDataItem packagingListDataItem : productData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 			Double qtyForCost = FormulationHelper.getQtyForCostByPackagingLevel(productData, packagingListDataItem, nodeService);
-			ProductData componentProduct = alfrescoRepository.findOne(packagingListDataItem.getNodeRef());
-			createPriceBreakReportData(productData,componentProduct, qtyForCost, qtyForCost, priceBreaks);
-			//TODO packagingKit
+			ProductData componentProduct = alfrescoRepository.findOne(packagingListDataItem.getComponent());
+			if(componentProduct instanceof PackagingKitData){
+				//TODO recur
+				for (PackagingListDataItem packagingListDataItem2 : componentProduct.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+					ProductData componentProduct2 = alfrescoRepository.findOne(packagingListDataItem2.getComponent());
+					createPriceBreakReportData(productData,componentProduct2, qtyForCost, qtyForCost, priceBreaks);
+				}
+				
+			} else  {
+				createPriceBreakReportData(productData,componentProduct, qtyForCost, qtyForCost, priceBreaks);
+			}
+			
 		}
 		
 
@@ -685,7 +730,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				}
 
 				for (CostListDataItem cost : componentProduct.getCostList()) {
-					if ((cost.getNodeRef() != null) && cost.getNodeRef().equals(item.getCost())) {
+					if ((cost.getCost() != null) && cost.getCost().equals(item.getCost())) {
 
 						Double simulatedValue = (item.getValue() - cost.getValue()) * qtyForCost;
 						priceBreakReportData.setSimulatedValue(simulatedValue);
