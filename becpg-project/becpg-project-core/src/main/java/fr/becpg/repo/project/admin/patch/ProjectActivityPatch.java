@@ -57,9 +57,6 @@ public class ProjectActivityPatch extends AbstractBeCPGPatch {
 	private AttributeExtractorService attributeExtractorService;
 	private BehaviourFilter policyBehaviourFilter;
 	private RuleService ruleService;
-	
-	
-	
 
 	public BehaviourFilter getPolicyBehaviourFilter() {
 		return policyBehaviourFilter;
@@ -148,15 +145,18 @@ public class ProjectActivityPatch extends AbstractBeCPGPatch {
 
 		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
 
+			@Override
 			public void afterProcess() throws Throwable {
 				ruleService.disableRules();
-				
+
 			}
 
+			@Override
 			public void beforeProcess() throws Throwable {
 				ruleService.enableRules();
-				
+
 			}
+
 			@Override
 			public String getIdentifier(NodeRef entry) {
 				return entry.toString();
@@ -167,16 +167,15 @@ public class ProjectActivityPatch extends AbstractBeCPGPatch {
 
 				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
-				
 				policyBehaviourFilter.disableBehaviour();
 				if (nodeService.exists(activityNodeRef)) {
 					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
 					NodeRef entityNodeRef = entityListDAO.getEntity(activityNodeRef);
-					
+
 					String oldData = (String) nodeService.getProperty(activityNodeRef, PROP_ACTIVITYLIST_DATA);
-					
-					logger.info("Convert  : "+oldData);
+
+					logger.info("Convert  : " + oldData);
 
 					JSONTokener tokener = new JSONTokener(oldData);
 					JSONObject data = new JSONObject(tokener);
@@ -206,8 +205,8 @@ public class ProjectActivityPatch extends AbstractBeCPGPatch {
 
 					nodeService.setProperty(activityListDataItem.getNodeRef(), ContentModel.PROP_CREATED,
 							nodeService.getProperty(activityNodeRef, ContentModel.PROP_CREATED));
-					
-					logger.info("Storing : "+activityListDataItem.toString());
+
+					logger.info("Storing : " + activityListDataItem.toString());
 
 					for (NodeRef projectNodeRef : associationService.getSourcesAssocs(activityNodeRef, ProjectModel.ASSOC_PROJECT_CUR_COMMENTS)) {
 
@@ -215,38 +214,116 @@ public class ProjectActivityPatch extends AbstractBeCPGPatch {
 								Collections.singletonList(activityListDataItem.getNodeRef()));
 
 					}
-					
+
 					// Delete Node
 					nodeService.deleteNode(activityNodeRef);
 
 				} else {
 					logger.warn("activityNodeRef doesn't exist : " + activityNodeRef);
 				}
-				
+
 				policyBehaviourFilter.enableBehaviour();
 
-			}
-
-			private NodeRef getOrCreateActivityList(NodeRef entityNodeRef) {
-				NodeRef listNodeRef = null;
-				NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
-				if (listContainerNodeRef != null) {
-					listNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
-				}
-				if (listNodeRef == null) {
-					listNodeRef = entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
-				} else {
-					nodeService.setProperty(listNodeRef, DataListModel.PROP_DATALISTITEMTYPE,  BeCPGModel.TYPE_ACTIVITY_LIST.toPrefixString(namespaceService));
-				}
-
-				return listNodeRef;
 			}
 
 		};
 
 		batchProcessor.process(worker, true);
 
+		new BatchProcessor<>("ProjectActivityPatch2", transactionService.getRetryingTransactionHelper(), new BatchProcessWorkProvider<NodeRef>() {
+			final List<NodeRef> result = new ArrayList<>();
+
+			final long maxNodeId = getPatchDAO().getMaxAdmNodeID();
+
+			long minSearchNodeId = 1;
+			long maxSearchNodeId = count;
+
+			final Pair<Long, QName> val = getQnameDAO().getQName(DataListModel.TYPE_DATALIST);
+
+			@Override
+			public int getTotalEstimatedWorkSize() {
+				return result.size();
+			}
+
+			@Override
+			public Collection<NodeRef> getNextWork() {
+				if (val != null) {
+					Long typeQNameId = val.getFirst();
+
+					result.clear();
+
+					while (result.isEmpty() && (minSearchNodeId < maxNodeId)) {
+
+						List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, maxSearchNodeId);
+
+						for (Long nodeid : nodeids) {
+							NodeRef.Status status = getNodeDAO().getNodeIdStatus(nodeid);
+							if (!status.isDeleted()) {
+								result.add(status.getNodeRef());
+							}
+						}
+						minSearchNodeId = minSearchNodeId + count;
+						maxSearchNodeId = maxSearchNodeId + count;
+					}
+				}
+
+				return result;
+			}
+		}, batchThreads, batchSize, applicationEventPublisher, logger, 1000).process(new BatchProcessWorker<NodeRef>() {
+
+			@Override
+			public void afterProcess() throws Throwable {
+				ruleService.disableRules();
+
+			}
+
+			@Override
+			public void beforeProcess() throws Throwable {
+				ruleService.enableRules();
+
+			}
+
+			@Override
+			public String getIdentifier(NodeRef entry) {
+				return entry.toString();
+			}
+
+			@Override
+			public void process(NodeRef dataListNodeRef) throws Throwable {
+
+				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
+
+				policyBehaviourFilter.disableBehaviour();
+				if (nodeService.exists(dataListNodeRef)) {
+					if (TYPE_ACTIVITY_LIST.toPrefixString(namespaceService)
+							.equals(nodeService.getProperty(dataListNodeRef, DataListModel.PROP_DATALISTITEMTYPE))) {
+						nodeService.setProperty(dataListNodeRef, DataListModel.PROP_DATALISTITEMTYPE,
+								BeCPGModel.TYPE_ACTIVITY_LIST.toPrefixString(namespaceService));
+					}
+
+				}
+				policyBehaviourFilter.enableBehaviour();
+
+			}
+
+		}, true);
+
 		return I18NUtil.getMessage(MSG_SUCCESS);
+	}
+
+	private NodeRef getOrCreateActivityList(NodeRef entityNodeRef) {
+		NodeRef listNodeRef = null;
+		NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
+		if (listContainerNodeRef != null) {
+			listNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
+		}
+		if (listNodeRef == null) {
+			listNodeRef = entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
+		} else {
+			nodeService.setProperty(listNodeRef, DataListModel.PROP_DATALISTITEMTYPE, BeCPGModel.TYPE_ACTIVITY_LIST.toPrefixString(namespaceService));
+		}
+
+		return listNodeRef;
 	}
 
 	public NodeDAO getNodeDAO() {
