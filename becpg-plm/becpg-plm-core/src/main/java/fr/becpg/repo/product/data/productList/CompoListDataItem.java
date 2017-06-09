@@ -314,7 +314,10 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 	@Override
 	public String toString() {
 		return "CompoListDataItem [depthLevel=" + depthLevel + ", qty=" + qty + ", qtySubFormula=" + qtySubFormula + ", compoListUnit="
-				+ compoListUnit + ", lossPerc=" + lossPerc + ", yieldPerc=" + yieldPerc + ", declType=" + declType + ", product=" + product + ", parent=" +parent + "]";
+				+ compoListUnit + ", lossPerc=" + lossPerc + ", yieldPerc=" + yieldPerc + ", declType=" + declType + ", overrunPerc=" + overrunPerc
+				+ ", volume=" + volume + ", product=" + product + ", parent=" + parent + ", startEffectivity=" + startEffectivity
+				+ ", endEffectivity=" + endEffectivity + ", nodeRef=" + nodeRef + ", aspects=" + aspects + ", extraProperties=" + extraProperties
+				+ "]";
 	}
 
 	@Override
