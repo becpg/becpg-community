@@ -152,14 +152,19 @@ public class HierarchyServiceImpl implements HierarchyService {
 
 		if (parentNodeRef != null) {
 			ret.andPropEquals(BeCPGModel.PROP_PARENT_LEVEL, parentNodeRef.toString());
+			ret.addSort(BeCPGModel.PROP_LKV_VALUE,true);	
 		} else if (!all) {
 			ret.andPropEquals(BeCPGModel.PROP_DEPTH_LEVEL, "1");
+			ret.addSort(BeCPGModel.PROP_LKV_VALUE,true);
+		} else {
+			ret.addSort(BeCPGModel.PROP_SORT,true);
 		}
 
+		
 		// value == * -> return all
 		if (!isAllQuery(value)) {
 			if (value.contains(SUFFIX_ALL)) {
-				ret.andPropQuery(property, value);
+				ret.andPropQuery(property, value).ftsLanguage();
 			} else {
 				ret.andPropEquals(property, value).inDB();
 			}

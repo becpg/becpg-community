@@ -104,6 +104,8 @@ public class EntityListValuePlugin implements ListValuePlugin {
 	@Autowired
 	private HierarchyService hierarchyService;
 	@Autowired
+	private HierarchyValueExtractor hierarchyValueExtractor;
+	@Autowired
 	protected TargetAssocValueExtractor targetAssocValueExtractor;
 
 	private final Analyzer luceneAnaLyzer = null;
@@ -303,6 +305,7 @@ public class EntityListValuePlugin implements ListValuePlugin {
 			NodeRef parentNodeRef = (parent != null) && NodeRef.isNodeRef(parent) ? new NodeRef(parent) : null;
 			ret = hierarchyService.getHierarchiesByPath(path, parentNodeRef, query);
 		} else {
+			
 			ret = hierarchyService.getAllHierarchiesByPath(path, query);
 		}
 
@@ -311,7 +314,7 @@ public class EntityListValuePlugin implements ListValuePlugin {
 			ret.remove(itemIdNodeRef);
 		}
 
-		return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(BeCPGModel.PROP_LKV_VALUE, nodeService));
+		return new ListValuePage(ret, pageNum, pageSize,all ? hierarchyValueExtractor : new NodeRefListValueExtractor(BeCPGModel.PROP_LKV_VALUE, nodeService));
 	}
 
 	/**
