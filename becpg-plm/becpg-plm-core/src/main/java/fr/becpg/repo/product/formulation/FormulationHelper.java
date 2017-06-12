@@ -362,6 +362,12 @@ public class FormulationHelper {
 
 		return defaultValue;
 	}
+	
+	public static Double getQtyFromComposition(ProductData formulatedProduct, Double defaultValue) {
+		 return getQtyFromComposition(formulatedProduct, formulatedProduct.getUnit(), defaultValue);
+		
+	}
+	
 
 	private static Double getQtyFromComposition(ProductData formulatedProduct, ProductUnit productUnit, Double defaultValue) {
 		Double qty = defaultValue;
