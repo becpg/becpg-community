@@ -11,4 +11,11 @@ public class DefaultEntityActivityPlugin implements EntityActivityPlugin {
 		return false;
 	}
 
+	@Override
+	public boolean isMatchingEntityType(QName entityName) {
+		return false;
+	}
+
+	
+
 }
