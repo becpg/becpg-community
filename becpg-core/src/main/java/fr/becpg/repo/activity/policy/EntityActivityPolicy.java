@@ -149,6 +149,8 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 
 						}
 					}
+				} else if ((before != null) && (after != null) && before.size() < after.size()) {
+					isDifferent = true;
 				}
 
 				if (isDifferent) {
