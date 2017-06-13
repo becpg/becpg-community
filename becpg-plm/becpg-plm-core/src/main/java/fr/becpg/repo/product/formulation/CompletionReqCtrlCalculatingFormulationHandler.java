@@ -725,16 +725,16 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 				ReqCtrlListDataItem validationRclDataItem = rclDataItems.get(0);
 				logger.debug("Validation data item has "+validationRclDataItem.getSources().size()+" sources before clean");
 				
-				List<NodeRef> sourceClone = new ArrayList<NodeRef>(validationRclDataItem.getSources());
+				List<NodeRef> toRemove = new ArrayList<NodeRef>();
 				
-				for(NodeRef source : sourceClone){
-					if(!checkProductValidity(source)){
-						validationRclDataItem.getSources().remove(source);
+				for(NodeRef source : validationRclDataItem.getSources()){
+					if(checkProductValidity(source)){
+						toRemove.add(source);
 					}
 				}
 				
-				logger.debug("After clean, it has "+sourceClone.size()+" sources");
-				validationRclDataItem.setSources(sourceClone);
+				validationRclDataItem.getSources().removeAll(toRemove);
+				logger.debug("After clean, it has "+toRemove.size()+" sources");
 			}
 		}
 	}
