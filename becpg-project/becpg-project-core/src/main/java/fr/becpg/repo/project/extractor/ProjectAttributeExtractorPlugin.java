@@ -38,44 +38,42 @@ import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorPlugin;
  */
 @Service
 public class ProjectAttributeExtractorPlugin implements AttributeExtractorPlugin {
+	
 
 	@Autowired
 	private NodeService nodeService;
-	
+
 	@Autowired
-	private  NamespaceService namespaceService;
-	 
+	private NamespaceService namespaceService;
+
 	@Override
 	public Collection<QName> getMatchingTypes() {
-		return Arrays.asList(ProjectModel.TYPE_TASK_LIST, ProjectModel.TYPE_DELIVERABLE_LIST, ProjectModel.TYPE_BUDGET_LIST);
+		return Arrays.asList(ProjectModel.TYPE_TASK_LIST, ProjectModel.TYPE_DELIVERABLE_LIST, ProjectModel.TYPE_BUDGET_LIST,
+				ProjectModel.TYPE_INVOICE_LIST, ProjectModel.TYPE_LOG_TIME_LIST);
 	}
-	
 
 	@Override
 	public String extractPropName(QName type, NodeRef nodeRef) {
-		if(ProjectModel.TYPE_DELIVERABLE_LIST.equals(type)){
-			return (String) nodeService.getProperty(nodeRef,ProjectModel.PROP_DL_DESCRIPTION);
-		}
-		else if(ProjectModel.TYPE_BUDGET_LIST.equals(type)){
-			return (String) nodeService.getProperty(nodeRef,ProjectModel.PROP_BL_ITEM);
-		}
+		if (ProjectModel.TYPE_DELIVERABLE_LIST.equals(type)) {
+			return (String) nodeService.getProperty(nodeRef, ProjectModel.PROP_DL_DESCRIPTION);
+		} else if (ProjectModel.TYPE_BUDGET_LIST.equals(type)) {
+			return (String) nodeService.getProperty(nodeRef, ProjectModel.PROP_BL_ITEM);
+		}else if (ProjectModel.TYPE_INVOICE_LIST.equals(type) || ProjectModel.TYPE_LOG_TIME_LIST.equals(type)) {
+			return type.toPrefixString();
+		} 
 		return (String) nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_TASK_NAME);
 	}
 
-	
 	@Override
 	public String extractMetadata(QName type, NodeRef nodeRef) {
-		//TODO task state
-		//TODO Handle also project state (search results)
+		// TODO task state
+		// TODO Handle also project state (search results)
 		return type.toPrefixString(namespaceService).split(":")[1];
 	}
-
 
 	@Override
 	public Integer getPriority() {
 		return 0;
 	}
-
-	
 
 }
