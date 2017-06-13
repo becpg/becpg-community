@@ -89,7 +89,7 @@
 							template="/org/alfresco/components/form/controls/selectone.ftl" >
 							 </control>
 					</field>	
-					
+					<field id="ecm:effectiveDate" read-only="true"/>
 					<field id="ecm:calculatedCharacts" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
