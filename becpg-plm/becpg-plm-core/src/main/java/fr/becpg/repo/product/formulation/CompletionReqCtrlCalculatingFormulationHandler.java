@@ -172,6 +172,7 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
  				}
  			}
 			
+ 			cleanOldSources(product);
 			scores.put(JsonScoreHelper.PROP_CATALOGS, mandatoryFields);
 
 		} catch (JSONException e) {
@@ -707,6 +708,35 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 		}
 
 		return res;
+	}
+	
+	/**
+	 * Ensures old validation rclDataItem sources are still not validated
+	 * @param product
+	 */
+	private void cleanOldSources(ProductData product){
+		if(product.getReqCtrlList() != null){
+			List<ReqCtrlListDataItem> rclDataItems = product.getReqCtrlList()
+					.stream()
+					.filter(rcl -> rcl.getReqDataType().equals(RequirementDataType.Validation))
+					.collect(Collectors.toList());
+			
+			if(!rclDataItems.isEmpty()){
+				ReqCtrlListDataItem validationRclDataItem = rclDataItems.get(0);
+				logger.debug("Validation data item has "+validationRclDataItem.getSources().size()+" sources before clean");
+				
+				List<NodeRef> sourceClone = new ArrayList<NodeRef>(validationRclDataItem.getSources());
+				
+				for(NodeRef source : sourceClone){
+					if(!checkProductValidity(source)){
+						validationRclDataItem.getSources().remove(source);
+					}
+				}
+				
+				logger.debug("After clean, it has "+sourceClone.size()+" sources");
+				validationRclDataItem.setSources(sourceClone);
+			}
+		}
 	}
 
 }

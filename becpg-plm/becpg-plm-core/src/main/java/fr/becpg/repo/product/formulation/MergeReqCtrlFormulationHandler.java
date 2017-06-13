@@ -44,7 +44,6 @@ import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
-import fr.becpg.repo.repository.impl.LazyLoadingDataList;
 import fr.becpg.repo.repository.model.FormulatedCharactDataItem;
 
 /**
@@ -92,7 +91,7 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 					if (componentProductData.getReqCtrlList() != null) {
 						for (ReqCtrlListDataItem tmp : componentProductData.getReqCtrlList()) {
 							// mandatory fields rclDataItem aren't put in parent
-							if (tmp.getReqDataType() != RequirementDataType.Completion) {
+							if (tmp.getReqDataType() != RequirementDataType.Completion && tmp.getReqDataType() != RequirementDataType.Validation) {
 								// identifies this rclDataItem (can't use equals
 								// because of sources list)
 								List<ReqCtrlListDataItem> matchingRclDataItems = reqCtrlList
