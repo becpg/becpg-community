@@ -256,8 +256,11 @@ public class PhysicoChemListDataItem extends AbstractManualDataItem implements S
 				+ ", nodeRef=" + nodeRef + ", name=" + name + "]";
 	}
 
-
-
+	@Override
+	public Boolean shouldDetailIfZero() {
+		return true;
+	}
+	
 
 	
 	
