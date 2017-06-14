@@ -187,7 +187,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 				Double value = FormulationHelper.calculateValue(0d, qtyUsed, simpleCharact.getValue(), netQty, unit);
 				CharactDetailsValue currentCharactDetailsValue = null;
 				
-				if (value != null && (nodeService.getType(simpleCharact.getCharactNodeRef()).equals(PLMModel.TYPE_ING) || value != 0d)) {
+				if (value != null && (simpleCharact.shouldDetailIfZero() || value != 0d)) {
 					if (logger.isDebugEnabled()) {
 						logger.debug("Add new charact detail. Charact: "
 								+ nodeService.getProperty(simpleCharact.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME) + " - entityNodeRef: "
