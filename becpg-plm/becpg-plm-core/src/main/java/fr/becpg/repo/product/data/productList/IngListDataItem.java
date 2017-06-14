@@ -438,4 +438,9 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 				+ ", isProcessingAid=" + isProcessingAid + ", isSupport=" + isSupport + ", depthLevel=" + depthLevel + ", parent=" + parent
 				+ ", mini=" + mini + ", maxi=" + maxi + "]";
 	}
+
+	@Override
+	public Boolean shouldDetailIfZero() {
+		return true;
+	}
 }

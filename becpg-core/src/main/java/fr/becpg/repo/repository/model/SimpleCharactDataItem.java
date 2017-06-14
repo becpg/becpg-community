@@ -30,4 +30,8 @@ public interface SimpleCharactDataItem extends RepositoryEntity {
 	NodeRef getCharactNodeRef();
 
 	Double getValue();
+	
+	default Boolean shouldDetailIfZero(){
+		return false;
+	}
 }
