@@ -91,24 +91,22 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 					if (componentProductData.getReqCtrlList() != null) {
 						for (ReqCtrlListDataItem tmp : componentProductData.getReqCtrlList()) {
 							// mandatory fields rclDataItem aren't put in parent
-							if (tmp.getReqDataType() != RequirementDataType.Completion && tmp.getReqDataType() != RequirementDataType.Validation) {
-								// identifies this rclDataItem (can't use equals
-								// because of sources list)
-								List<ReqCtrlListDataItem> matchingRclDataItems = reqCtrlList
-										.stream().filter(rcl -> rcl.getReqDataType().equals(tmp.getReqDataType())
-												&& rcl.getReqType().equals(tmp.getReqType()) && rcl.getReqMlMessage().equals(tmp.getReqMlMessage()))
-										.collect(Collectors.toList());
+							// identifies this rclDataItem (can't use equals
+							// because of sources list)
+							List<ReqCtrlListDataItem> matchingRclDataItems = reqCtrlList
+									.stream().filter(rcl -> rcl.getReqDataType().equals(tmp.getReqDataType())
+											&& rcl.getReqType().equals(tmp.getReqType()) && rcl.getReqMlMessage().equals(tmp.getReqMlMessage()))
+									.collect(Collectors.toList());
 
-								if (matchingRclDataItems.isEmpty()) {
-									logger.debug("No match, creating new RclDataItem");
-									reqCtrlList.add(new ReqCtrlListDataItem(null, tmp.getReqType(), tmp.getReqMlMessage(), tmp.getCharact(),
-											tmp.getSources(), tmp.getReqDataType() != null ? tmp.getReqDataType() : RequirementDataType.Nutrient));
-								} else {
+							if (matchingRclDataItems.isEmpty()) {
+								logger.debug("No match, creating new RclDataItem");
+								reqCtrlList.add(new ReqCtrlListDataItem(null, tmp.getReqType(), tmp.getReqMlMessage(), tmp.getCharact(),
+										tmp.getSources(), tmp.getReqDataType() != null ? tmp.getReqDataType() : RequirementDataType.Nutrient));
+							} else {
 
-									ReqCtrlListDataItem currentRclDataItem = matchingRclDataItems.get(0);
-									logger.debug("Found a match, adding sources (msg=" + currentRclDataItem.getReqMessage() + ")");
-									currentRclDataItem.getSources().addAll(tmp.getSources());
-								}
+								ReqCtrlListDataItem currentRclDataItem = matchingRclDataItems.get(0);
+								logger.debug("Found a match, adding sources (msg=" + currentRclDataItem.getReqMessage() + ")");
+								currentRclDataItem.getSources().addAll(tmp.getSources());
 							}
 						}
 					}
@@ -158,13 +156,11 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 			}
 
 			for (Map.Entry<String, ReqCtrlListDataItem> dbKV : dbReqCtrlList.entrySet()) {
-				if (!newReqCtrlList.containsKey(dbKV.getKey()) 
-						) {
-					if(! RequirementDataType.Completion.equals(dbKV.getValue().getReqDataType()) 
-							&& ! RequirementDataType.Validation.equals(dbKV.getValue().getReqDataType())){
-						// remove
-						reqCtrlList.remove(dbKV.getValue());
-					}
+				if (!newReqCtrlList.containsKey(dbKV.getKey())) {
+
+					// remove
+					reqCtrlList.remove(dbKV.getValue());
+
 				} else {
 					// update
 					ReqCtrlListDataItem newReqCtrlListDataItem = newReqCtrlList.get(dbKV.getKey());
