@@ -180,7 +180,16 @@ function specialize(item, activity, summary)
          item.custom0 = msg.get("data.deliverablestate." + summary.beforeState.toLowerCase());
          item.custom1 = msg.get("data.deliverablestate." + summary.afterState.toLowerCase());
          break;
-         
+      case "fr.becpg.entity.state-changed":
+          if(activity.siteNetwork== null || activity.siteNetwork.length==0){
+             item.suppressSite = true;
+          }
+          item.title = summary.title;
+          item.itemPage = url.context + "/page/site/" + encodeURI(activity.siteNetwork)+"/entity-data-lists?list=compoList&nodeRef="+summary.entityNodeRef;
+          item.custom0 = msg.get("data.state." + summary.beforeState.toLowerCase());
+          item.custom1 = msg.get("data.state." + summary.afterState.toLowerCase());
+          break;
+        
    }
    
    return item;
@@ -188,7 +197,7 @@ function specialize(item, activity, summary)
 
 
 /**
- * Call remote Repo script to get relevant activities
+ * Call remotOPe Repo script to get relevant activities
  */
 function getActivities()
 {
