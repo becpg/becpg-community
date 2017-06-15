@@ -496,7 +496,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					loadDataListItemAttributes(dataListItem, nutListElt, images);
 
 					String nut = nutListElt.valueOf("@" + PLMModel.ASSOC_NUTLIST_NUT.getLocalName());
-					if (nut != null) {
+					if (nut != null && !nut.isEmpty()) {
 						String value = nutListElt.valueOf("@" + PLMModel.PROP_NUTLIST_VALUE.getLocalName());
 						if ((value == null) || value.isEmpty()) {
 							value = nutListElt.valueOf("@" + PLMModel.PROP_NUTLIST_FORMULATED_VALUE.getLocalName());
