@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2016 beCPG.
+ * Copyright (C) 2010-2017 beCPG.
  *
  * This file is part of beCPG
  *
@@ -99,53 +99,83 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 		if (!L2CacheSupport.isCacheOnlyEnable()) {
 
-			if ((entity.getNodeRef() == null) || ((entity.getExtraProperties() != null) && (entity.getExtraProperties().size() > 0))
+			if ((entity.getNodeRef() == null) || ((entity.getExtraProperties() != null) && (!entity.getExtraProperties().isEmpty()))
 					|| (createCollisionSafeHashCode(entity) != entity.getDbHashCode())) {
 
-				Map<QName, Serializable> properties = extractProperties(entity);
+				boolean shouldUpdate = true;
 
-				if (entity.getNodeRef() == null) {
-					if (logger.isDebugEnabled()) {
-						logger.debug("Create instanceOf :" + entity.getClass().getName());
-					}
+				if ((entity.getNodeRef() != null) && (entity.getExtraProperties() != null) && !entity.getExtraProperties().isEmpty()) {
+					if (createCollisionSafeHashCode(entity) == entity.getDbHashCode()) {
+						shouldUpdate = false;
 
-					for (Iterator<Map.Entry<QName, Serializable>> iterator = properties.entrySet().iterator(); iterator.hasNext();) {
-						Map.Entry<QName, Serializable> prop = iterator.next();
-						if (prop.getValue() == null) {
-							iterator.remove();
-						}
-
-					}
-
-					String name = entity.getName();
-					if (name == null || name.isEmpty()) {
-						name = UUID.randomUUID().toString();
-					}
-
-					properties.put(ContentModel.PROP_NAME, name);
-
-					NodeRef productNodeRef = nodeService.createNode(entity.getParentNodeRef(), ContentModel.ASSOC_CONTAINS,
-							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name)),
-							repositoryEntityDefReader.getType(entity.getClass()), properties).getChildRef();
-					entity.setNodeRef(productNodeRef);
-
-				} else {
-
-					if (logger.isDebugEnabled()) {
-						logger.debug("Update instanceOf :" + entity.getClass().getName() + " " + entity.getName());
-						if (logger.isTraceEnabled()) {
-							logger.trace(" HashDiff :"
-									+ BeCPGHashCodeBuilder.printDiff(entity, findOne(entity.getNodeRef(), new HashMap<NodeRef, RepositoryEntity>())));
+						for (Map.Entry<QName, Serializable> extraProperty : entity.getExtraProperties().entrySet()) {
+							Serializable prop= nodeService.getProperty(entity.getNodeRef(), extraProperty.getKey());
+							
+							if (!((prop == null && extraProperty.getValue() == null) || (prop!=null && prop.equals(extraProperty.getValue())))) {
+								shouldUpdate = true;
+								if (logger.isDebugEnabled()) {
+									logger.debug("Change detected in " + extraProperty.getKey()+ " - actual: "+ prop
+									+ " - new: "+ extraProperty.getValue());
+								}
+								break;
+							}
 						}
 					}
-
-					nodeService.addProperties(entity.getNodeRef(), properties);
 				}
 
-				saveAssociations(entity);
-				saveAspects(entity);
+				if (shouldUpdate) {
 
-				entity.setDbHashCode(createCollisionSafeHashCode(entity));
+					Map<QName, Serializable> properties = extractProperties(entity);
+
+					if (entity.getNodeRef() == null) {
+						if (logger.isDebugEnabled()) {
+							logger.debug("Create instanceOf :" + entity.getClass().getName());
+						}
+
+						for (Iterator<Map.Entry<QName, Serializable>> iterator = properties.entrySet().iterator(); iterator.hasNext();) {
+							Map.Entry<QName, Serializable> prop = iterator.next();
+							if (prop.getValue() == null) {
+								iterator.remove();
+							}
+
+						}
+
+						String name = entity.getName();
+						if ((name == null) || name.isEmpty()) {
+							name = UUID.randomUUID().toString();
+						}
+
+						properties.put(ContentModel.PROP_NAME, name);
+
+						NodeRef productNodeRef = nodeService.createNode(entity.getParentNodeRef(), ContentModel.ASSOC_CONTAINS,
+								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name)),
+								repositoryEntityDefReader.getType(entity.getClass()), properties).getChildRef();
+						entity.setNodeRef(productNodeRef);
+
+					} else {
+
+						if (logger.isDebugEnabled()) {
+							logger.debug("Update instanceOf :" + entity.getClass().getName() + " " + entity.getName());
+							if (logger.isTraceEnabled()) {
+								logger.trace(" HashDiff :" + BeCPGHashCodeBuilder.printDiff(entity,
+										findOne(entity.getNodeRef(), new HashMap<NodeRef, RepositoryEntity>())));
+
+							}
+
+						}
+
+						nodeService.addProperties(entity.getNodeRef(), properties);
+					}
+
+					saveAssociations(entity);
+					saveAspects(entity);
+
+					entity.setDbHashCode(createCollisionSafeHashCode(entity));
+				} else {
+					if (logger.isDebugEnabled()) {
+						logger.debug("Entity " + entity.getName() + " has no change  to save (same extra properties) ");
+					}
+				}
 
 			} else {
 				if (logger.isDebugEnabled()) {
@@ -326,9 +356,9 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 					((LazyLoadingDataList<? extends RepositoryEntity>) dataList).getDeletedNodes().clear();
 				}
 				for (RepositoryEntity dataListItem : dataList) {
-					if(dataListItem.getNodeRef()==null || nodeService.exists(dataListItem.getNodeRef())){
+					if ((dataListItem.getNodeRef() == null) || nodeService.exists(dataListItem.getNodeRef())) {
 						dataListItem.setParentNodeRef(dataListNodeRef);
-	
+
 						if (logger.isTraceEnabled()) {
 							logger.trace("Save dataList item: " + dataListItem.toString());
 						}

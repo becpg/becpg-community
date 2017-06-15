@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2016 beCPG.
+ * Copyright (C) 2010-2017 beCPG.
  *
  * This file is part of beCPG
  *
@@ -616,12 +616,18 @@ public class ECOServiceImpl implements ECOService {
 		component.setComponent(target);
 		if (component instanceof CompoListDataItem) {
 			if ((((CompoListDataItem) component).getQtySubFormula() != null) && (qtyPerc != null)) {
-				((CompoListDataItem) component).setQtySubFormula((qtyPerc / 100) * ((CompoListDataItem) component).getQtySubFormula());
+				
+				Double newQty = (qtyPerc / 100d) * ((CompoListDataItem) component).getQtySubFormula();
+				
+				((CompoListDataItem) component).setQtySubFormula(newQty);
 			}
 		} else {
 
 			if ((component.getQty() != null) && (qtyPerc != null)) {
-				component.setQty((qtyPerc / 100) * component.getQty());
+				
+				Double newQty = (qtyPerc / 100d) * component.getQty();
+				
+				component.setQty(newQty);
 			}
 		}
 

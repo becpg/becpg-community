@@ -13,6 +13,7 @@ import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransacti
 import org.alfresco.service.cmr.preference.PreferenceService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -86,6 +87,16 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 			}
 			return false;
 		}
+		
+		QName nodeType = nodeService.getType(entityNodeRef);
+		
+		if(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.equals(nodeType)){
+			if (logger.isDebugEnabled()) {
+				logger.debug("Skipping local semi finished product");
+			}
+			return false;
+		}
+		
 
 		return AuthenticationUtil.runAsSystem(new RunAsWork<Boolean>() {
 			public Boolean doWork() throws Exception {
