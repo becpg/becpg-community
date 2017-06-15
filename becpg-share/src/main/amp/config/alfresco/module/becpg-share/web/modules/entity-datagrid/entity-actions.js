@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (C) 2010-2016 beCPG. 
+ *  Copyright (C) 2010-2017 beCPG. 
  *   
  *  This file is part of beCPG 
  *   
@@ -432,10 +432,11 @@
 		 *           be actioned, or an Array thereof
 		 */
 	   onActionDuplicate : function EntityDataGrid_onActionDuplicate(p_items) {
-		   var items = YAHOO.lang.isArray(p_items) ? p_items : [ p_items ], destinationNodeRef = this.modules.dataGrid.datalistMeta.nodeRef!=null ? new Alfresco.util.NodeRef(
+		   var me = this, items = YAHOO.lang.isArray(p_items) ? p_items : [ p_items ], destinationNodeRef = this.modules.dataGrid.datalistMeta.nodeRef!=null ? new Alfresco.util.NodeRef(
 		         this.modules.dataGrid.datalistMeta.nodeRef): new Alfresco.util.NodeRef(
 				         this.modules.dataGrid.options.parentNodeRef), nodeRefs = [];
 
+		   var fnActionDuplicateConfirm = function EntityDataGrid__onActionDuplicate_confirm(items) {
 		   for ( var i = 0, ii = items.length; i < ii; i++) {
 			   nodeRefs.push(items[i].nodeRef);
 		   }
@@ -464,6 +465,25 @@
 		         }
 		      }
 		   });
+	   }
+		   Alfresco.util.PopupManager.displayPrompt({
+			      title : this.msg("message.confirm.duplicate.title", items.length),
+			      text : this.msg("message.confirm.duplicate.description", items.length),
+			      buttons : [ {
+			         text : this.msg("button.duplicate"),
+			         handler : function EntityDataGrid__onActionDelete_delete() {
+				         this.destroy();
+				         fnActionDuplicateConfirm.call(me, items);
+			         }
+			      }, {
+			         text : this.msg("button.cancel"),
+			         handler : function EntityDataGrid__onActionDelete_cancel() {
+				         this.destroy();
+			         },
+			         isDefault : true
+			      } ]
+			   });   
+		   
 	   }
 
 	};

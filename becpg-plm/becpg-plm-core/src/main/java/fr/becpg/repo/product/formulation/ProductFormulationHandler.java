@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2016 beCPG.
+ * Copyright (C) 2010-2017 beCPG.
  *
  * This file is part of beCPG
  *
@@ -37,6 +37,7 @@ import fr.becpg.model.PackModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.ProductService;
+import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.PackagingKitData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ResourceProductData;
@@ -138,7 +139,8 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 				logger.debug("checkShouldFormulateComponents: " + productData.getName());
 			}
 
-			if ((productData.getNodeRef() == null) || (lockService.getLockStatus(productData.getNodeRef()) == LockStatus.NO_LOCK)) {
+			if (((productData.getNodeRef() == null) || (lockService.getLockStatus(productData.getNodeRef()) == LockStatus.NO_LOCK))
+					&& !(productData instanceof LocalSemiFinishedProductData)) {
 
 				boolean shouldFormulate = false;
 
@@ -147,7 +149,8 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 						if ((c.getComponent() != null)) {
 							ProductData subComponent = alfrescoRepository.findOne(c.getComponent());
 							if (checkShouldFormulateComponents(false, subComponent) || ((productData.getFormulatedDate() == null)
-									|| (productData.getFormulatedDate().getTime() < subComponent.getFormulatedDate().getTime()))) {
+									|| (subComponent.getFormulatedDate()!=null && 
+										productData.getFormulatedDate().getTime() < subComponent.getFormulatedDate().getTime()))) {
 								shouldFormulate = true;
 							}
 						}
@@ -158,7 +161,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 						if ((c.getComponent() != null)) {
 							ProductData subComponent = alfrescoRepository.findOne(c.getComponent());
 							if (checkShouldFormulateComponents(false, subComponent) || ((productData.getFormulatedDate() == null)
-									|| (productData.getFormulatedDate().getTime() < subComponent.getFormulatedDate().getTime()))) {
+									|| (subComponent.getFormulatedDate()!=null &&  productData.getFormulatedDate().getTime() < subComponent.getFormulatedDate().getTime()))) {
 								shouldFormulate = true;
 							}
 						}
@@ -169,7 +172,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 						if ((c.getComponent() != null)) {
 							ProductData subComponent = alfrescoRepository.findOne(c.getComponent());
 							if (checkShouldFormulateComponents(false, subComponent) || ((productData.getFormulatedDate() == null)
-									|| (productData.getFormulatedDate().getTime() < subComponent.getFormulatedDate().getTime()))) {
+									|| (subComponent.getFormulatedDate()!=null &&  productData.getFormulatedDate().getTime() < subComponent.getFormulatedDate().getTime()))) {
 								shouldFormulate = true;
 							}
 						}
