@@ -212,7 +212,7 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 
 		Set<String> zones = new HashSet<>();
 		zones.add(AuthorityService.ZONE_APP_DEFAULT);
-		zones.add(AuthorityService.ZONE_APP_SHARE);
+		//#3204 zones.add(AuthorityService.ZONE_APP_SHARE);
 		zones.add(AuthorityService.ZONE_AUTH_ALFRESCO);
 
 		for (String group : groups) {
