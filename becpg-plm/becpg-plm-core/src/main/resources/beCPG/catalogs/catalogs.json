@@ -7,7 +7,8 @@
             "bcpg:finishedProduct"
         ],
         "uniqueFields":[
-            "bcpg:erpCode"
+            "bcpg:erpCode",
+            "cm:name"
         ],
         "fields":[
             "bcpg:legalName",
@@ -24,7 +25,8 @@
             "bcpg:rawMaterial"
         ],
         "uniqueFields":[
-            "bcpg:erpCode"
+            "bcpg:erpCode",
+            "cm:name"
         ],
         "fields":[
             "bcpg:legalName"
