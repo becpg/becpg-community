@@ -7059,10 +7059,16 @@
 				<appearance>
 					<field id="bcpg:illGrp" read-only="true" />
 					<field id="bcpg:illValue">
-						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">5</control-param>
+    						<control-param name="maxLength">10000</control-param>
+   						</control>
 					</field>
 					<field id="bcpg:illManualValue">
-						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">5</control-param>
+    						<control-param name="maxLength">10000</control-param>
+   						</control>
 					</field>
 				</appearance>
 			</form>
@@ -7097,10 +7103,16 @@
 				<appearance>
 					<field id="bcpg:illGrp" read-only="true" />
 					<field id="bcpg:illValue">
-						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">5</control-param>
+    						<control-param name="maxLength">10000</control-param>
+   						</control>
 					</field>
 					<field id="bcpg:illManualValue">
-						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">5</control-param>
+    						<control-param name="maxLength">10000</control-param>
+   						</control>
 					</field>
 				</appearance>
 			</form>
