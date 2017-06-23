@@ -39,7 +39,9 @@ public class ImportContext {
 	private NodeRef parentNodeRef;
 
 	private NodeRef entityNodeRef;
-
+	
+	private QName listType;
+	
 	private QName type;
 
 	private QName entityType;
@@ -81,6 +83,15 @@ public class ImportContext {
 		this.parentNodeRef = parentNodeRef;
 	}
 
+	
+	public QName getListType() {
+		return listType;
+	}
+
+	public void setListType(QName listType) {
+		this.listType = listType;
+	}
+	
 
 	public QName getType() {
 		return type;
