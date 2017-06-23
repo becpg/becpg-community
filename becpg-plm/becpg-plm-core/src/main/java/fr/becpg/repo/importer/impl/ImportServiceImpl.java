@@ -75,6 +75,8 @@ public class ImportServiceImpl implements ImportService {
 	private static final String PFX_PATH = "PATH";
 
 	private static final String PFX_TYPE = "TYPE";
+	
+	private static final String PFX_LIST_TYPE = "LIST_TYPE";
 
 	private static final String PFX_ENTITY_TYPE = "ENTITY_TYPE";
 
@@ -107,6 +109,7 @@ public class ImportServiceImpl implements ImportService {
 	private static final int COLUMN_MAPPING = 1;
 	private static final int COLUMN_PATH = 1;
 	private static final int COLUMN_TYPE = 1;
+	private static final int COLUMN_LIST_TYPE = 1;
 	private static final int COLUMN_ENTITY_TYPE = 1;
 	private static final int COLUMN_IMPORT_TYPE = 1;
 	private static final int COLUMN_DISABLED_POLICIES = 1;
@@ -380,7 +383,19 @@ public class ImportServiceImpl implements ImportService {
 					}
 
 				}
-			} else if (prefix.equals(PFX_TYPE)) {
+			} else if (prefix.equals(PFX_LIST_TYPE)) {
+
+				importContext.setListType(null);
+
+				String typeValue = arrStr[COLUMN_LIST_TYPE];
+				if (typeValue.isEmpty()) {
+					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_LIST_TYPE, importContext.getImportIndex()));
+				}
+
+				QName type = QName.createQName(typeValue, serviceRegistry.getNamespaceService());
+				importContext.setListType(type);
+
+			}  else if (prefix.equals(PFX_TYPE)) {
 
 				importContext.setType(null);
 
