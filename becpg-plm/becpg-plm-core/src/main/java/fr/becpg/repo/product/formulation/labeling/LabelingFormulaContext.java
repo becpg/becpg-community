@@ -880,7 +880,6 @@ public class LabelingFormulaContext {
 		}
 		return cleanLabel(ret);
 	}
-
 	
 
 	private StringBuilder renderLabelingComponent(CompositeLabeling parent, List<AbstractLabelingComponent> subComponents, String separator,
