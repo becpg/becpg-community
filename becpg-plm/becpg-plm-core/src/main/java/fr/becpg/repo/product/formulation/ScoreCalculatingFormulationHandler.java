@@ -124,24 +124,34 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 				if (view.getMainDataList() != null) {
 					for (CompositionDataItem dataItem : view.getMainDataList()) {
 						if (dataItem.getComponent() != null) {
+							
+							List<NodeRef> productNonValidatedRclSources = getValidationRclSources(product);
+							
 							if (!checkProductValidity(dataItem.getComponent())) {
-
+								
 								final ReqCtrlListDataItem nonValidatedRclDataItem = createValidationRclDataItem(dataItem.getComponent());
-
-								List<ReqCtrlListDataItem> productNonValidatedRcl = product.getReqCtrlList().stream()
-										.filter(rcl -> nonValidatedRclDataItem.getReqMessage().equals(rcl.getReqMessage())
-												&& nonValidatedRclDataItem.getReqDataType().equals(rcl.getReqDataType())
-												&& nonValidatedRclDataItem.getReqType().equals(rcl.getReqType()))
-										.collect(Collectors.toList());
-
+								
 								// add new rcl or add sources to existing
 								// validation rcl
-								if (productNonValidatedRcl.size() > 0) {
-									productNonValidatedRcl.get(0).getSources().addAll(nonValidatedRclDataItem.getSources());
+								if (productNonValidatedRclSources != null) {
+									productNonValidatedRclSources.addAll(nonValidatedRclDataItem.getSources());
 								} else {
 									product.getReqCtrlList().add(nonValidatedRclDataItem);
 								}
 							} else {
+								if(productNonValidatedRclSources != null){
+									//verify all unvalidated products are still not validated
+									List<NodeRef> sourcesToRemove = new ArrayList<>();
+									
+									for(NodeRef source : productNonValidatedRclSources){
+										if(checkProductValidity(source)){
+											sourcesToRemove.add(source);
+										}
+									}
+									
+									productNonValidatedRclSources.removeAll(sourcesToRemove);
+								}
+								
 								childScore += 1;
 							}
 							childrenSize += 1;
@@ -246,6 +256,8 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 		}
 
 		product.setEntityScore(scores.toString());
+		
+		
 
 		return true;
 	}
@@ -609,6 +621,19 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 		logger.debug("Map " + reqCtrlList + " yields " + res + " forbidden ctrls");
 
 		return res;
+	}
+	
+	/**
+	 * Finds the Validation reqCtrlListDataItem (should be unique) on the product and returns its sources, if any.
+	 * @param product
+	 * @return
+	 */
+	public List<NodeRef> getValidationRclSources(ProductData product){
+		return product.getReqCtrlList().stream()
+				.filter(rcl -> RequirementDataType.Validation.equals(rcl.getReqDataType()))
+				.map(ReqCtrlListDataItem::getSources)
+				.findAny()
+				.orElse(null);
 	}
 
 }
