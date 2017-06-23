@@ -136,6 +136,18 @@
 		</columns>
 	</mapping>
 	
+	
+	<mapping name="bcpg:dynamicCharactList">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:erpCode" />
+		</nodeColumnKeys>
+		<dataListColumnKeys>
+			<dataListColumnKey attribute="bcpg:dynamicCharactTitle" />
+		</dataListColumnKeys>
+		<columns>
+		</columns>
+	</mapping>
+	
 	<mapping name="bcpg:packagingList">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="bcpg:erpCode" />
