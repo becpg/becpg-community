@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2010-2016 beCPG. 
+  Copyright (C) 2010-2017 beCPG. 
    
   This file is part of beCPG 
    
@@ -319,7 +319,6 @@
 			<form>
 				<field-visibility>
 					<show id="message" />
-					<show id="taskOwner" />
 					<show id="bcpgwf:pvQualityApprovalActor" />
 					<show id="bcpgwf:pvProductionApprovalActor" />
 					<show id="bcpgwf:pvRDApprovalActor" />
@@ -327,8 +326,7 @@
 					<show id="bcpgwf:pvCallerActor" />
 					<show id="bcpgwf:pvCaller2Actor" />
 					<show id="bpm:workflowPriority" />
-					<show id="bpm:workflowDueDate" />
-					<show id="bpm:taskId" />					
+					<show id="bpm:workflowDueDate" />					
 					<show id="packageItems" />
 					<show id="bcpgwf:notifyAssignee" />
 					<show id="bcpgwf:notifyMe" />               
@@ -350,10 +348,6 @@
 					<field id="bcpgwf:pvPackagingApprovalActor" set="info" />
 					<field id="bcpgwf:pvCallerActor" set="info" />
 					<field id="bcpgwf:pvCaller2Actor" set="info" />
-					<field id="taskOwner" set="info" />
-					<field id="bpm:taskId" set="info">
-						<control template="/org/alfresco/components/form/controls/info.ftl" />
-					</field>
 					<field id="bpm:workflowPriority" label-id="workflow.field.priority"
 						set="info" read-only="true">
 						<control
@@ -383,10 +377,8 @@
 				<field-visibility>
 					<show id="message" />
 					<show id="bcpgwf:pvTransmitterComment" />
-					<show id="taskOwner" />
 					<show id="bpm:priority" />
 					<show id="bpm:dueDate" />
-					<show id="bpm:taskId" />					
 					<show id="packageItems" />
 					<show id="bcpgwf:reviewQualityApproval"/>
 					<show id="bcpgwf:reviewQualityComment"/>
@@ -404,10 +396,6 @@
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
 					<field id="bcpgwf:pvTransmitterComment">
-						<control template="/org/alfresco/components/form/controls/info.ftl" />
-					</field>					
-					<field id="taskOwner" set="info" />
-					<field id="bpm:taskId" set="info">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
 					<field id="bpm:priority" set="info" read-only="true">
@@ -445,10 +433,8 @@
 				<field-visibility>
 					<show id="message" />
 					<show id="bcpgwf:pvTransmitterComment" />
-					<show id="taskOwner" />
 					<show id="bpm:priority" />
 					<show id="bpm:dueDate" />
-					<show id="bpm:taskId" />					
 					<show id="packageItems" />
 					<show id="bcpgwf:reviewProductionApproval"/>
 					<show id="bcpgwf:reviewProductionComment"/>			
@@ -466,10 +452,6 @@
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
 					<field id="bcpgwf:pvTransmitterComment">
-						<control template="/org/alfresco/components/form/controls/info.ftl" />
-					</field>
-					<field id="taskOwner" set="info" />
-					<field id="bpm:taskId" set="info">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
 					<field id="bpm:priority" set="info" read-only="true">
@@ -507,10 +489,8 @@
 				<field-visibility>
 					<show id="message" />
 					<show id="bcpgwf:pvTransmitterComment" />
-					<show id="taskOwner" />
 					<show id="bpm:priority" />
 					<show id="bpm:dueDate" />
-					<show id="bpm:taskId" />					
 					<show id="packageItems" />
 					<show id="bcpgwf:reviewRDApproval"/>
 					<show id="bcpgwf:reviewRDComment"/>			
@@ -528,10 +508,6 @@
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
 					<field id="bcpgwf:pvTransmitterComment">
-						<control template="/org/alfresco/components/form/controls/info.ftl" />
-					</field>
-					<field id="taskOwner" set="info" />
-					<field id="bpm:taskId" set="info">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
 					<field id="bpm:priority" set="info" read-only="true">
@@ -569,10 +545,8 @@
 				<field-visibility>
 					<show id="message" />
 					<show id="bcpgwf:pvTransmitterComment" />
-					<show id="taskOwner" />
 					<show id="bpm:priority" />
-					<show id="bpm:dueDate" />
-					<show id="bpm:taskId" />					
+					<show id="bpm:dueDate" />			
 					<show id="packageItems" />
 					<show id="bcpgwf:reviewPackagingApproval"/>
 					<show id="bcpgwf:reviewPackagingComment"/>			
@@ -590,10 +564,6 @@
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
 					<field id="bcpgwf:pvTransmitterComment">
-						<control template="/org/alfresco/components/form/controls/info.ftl" />
-					</field>
-					<field id="taskOwner" set="info" />
-					<field id="bpm:taskId" set="info">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
 					<field id="bpm:priority" set="info" read-only="true">
@@ -631,10 +601,8 @@
 				<field-visibility>
 					<show id="message" />
 					<show id="bcpgwf:pvTransmitterComment" />
-					<show id="taskOwner" />
 					<show id="bpm:priority" />
-					<show id="bpm:dueDate" />
-					<show id="bpm:taskId" />					
+					<show id="bpm:dueDate" />		
 					<show id="packageItems" />
 					<show id="bcpgwf:reviewCallerApproval"/>
 					<show id="bcpgwf:reviewCallerComment"/>			
@@ -652,10 +620,6 @@
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
 					<field id="bcpgwf:pvTransmitterComment">
-						<control template="/org/alfresco/components/form/controls/info.ftl" />
-					</field>
-					<field id="taskOwner" set="info" />
-					<field id="bpm:taskId" set="info">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
 					<field id="bpm:priority" set="info" read-only="true">
@@ -693,10 +657,8 @@
 				<field-visibility>
 					<show id="message" />
 					<show id="bcpgwf:pvTransmitterComment" />
-					<show id="taskOwner" />
 					<show id="bpm:priority" />
 					<show id="bpm:dueDate" />
-					<show id="bpm:taskId" />					
 					<show id="packageItems" />
 					<show id="bcpgwf:reviewCaller2Approval"/>
 					<show id="bcpgwf:reviewCaller2Comment"/>			
@@ -714,10 +676,6 @@
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
 					<field id="bcpgwf:pvTransmitterComment">
-						<control template="/org/alfresco/components/form/controls/info.ftl" />
-					</field>
-					<field id="taskOwner" set="info" />
-					<field id="bpm:taskId" set="info">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
 					<field id="bpm:priority" set="info" read-only="true">
@@ -754,10 +712,8 @@
 			<form>
 				<field-visibility>
 					<show id="message" />
-					<show id="taskOwner" />
 					<show id="bpm:priority" />
 					<show id="bpm:dueDate" />
-					<show id="bpm:taskId" />					
 					<show id="bcpgwf:pvQualityApprovalActor" />					
 					<show id="bcpgwf:reviewQualityApproval" />	
 					<show id="bcpgwf:reviewQualityComment"/>									
@@ -791,10 +747,6 @@
 					<set id="response" appearance="title" label-id="workflow.set.response" />
 
 					<field id="message">
-						<control template="/org/alfresco/components/form/controls/info.ftl" />
-					</field>
-					<field id="taskOwner" set="info" />
-					<field id="bpm:taskId" set="info">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
 					<field id="bpm:priority" set="info" read-only="true">
@@ -881,10 +833,8 @@
 			<form>
 				<field-visibility>
 					<show id="message" />
-					<show id="taskOwner" />
 					<show id="bpm:priority" />
 					<show id="bpm:dueDate" />
-					<show id="bpm:taskId" />					
 					<show id="bcpgwf:pvQualityApprovalActor" />					
 					<show id="bcpgwf:reviewQualityApproval" />	
 					<show id="bcpgwf:reviewQualityComment"/>									
@@ -919,10 +869,6 @@
 					
 
 					<field id="message">
-						<control template="/org/alfresco/components/form/controls/info.ftl" />
-					</field>
-					<field id="taskOwner" set="info" />
-					<field id="bpm:taskId" set="info">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
 					<field id="bpm:priority" set="info" read-only="true">
