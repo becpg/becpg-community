@@ -18,9 +18,6 @@ import fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor;
 @Service
 public class ProjectReportExtractor extends DefaultEntityReportExtractor {
 	
-	@Autowired
-	private EntityReportService entityReportService;
-	
 	@Override
 	protected boolean loadTargetAssoc(NodeRef entityNodeRef, AssociationDefinition assocDef, Element entityElt, Map<String, byte[]> images) {
 		
@@ -39,6 +36,9 @@ public class ProjectReportExtractor extends DefaultEntityReportExtractor {
 					}
 				}				
 				return true;
+			}
+			else{
+				super.loadTargetAssoc(entityNodeRef, assocDef, entityElt, images);
 			}
 		}
 
