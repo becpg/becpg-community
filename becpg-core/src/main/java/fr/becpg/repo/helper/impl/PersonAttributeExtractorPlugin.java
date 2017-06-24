@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2010-2016 beCPG. 
+Copyright (C) 2010-2017 beCPG. 
  
 This file is part of beCPG 
  
@@ -70,12 +70,13 @@ public class PersonAttributeExtractorPlugin implements AttributeExtractorPlugin 
 	@Override
 	public Collection<QName> getMatchingTypes() {
 	
-		return Arrays.asList(ContentModel.TYPE_PERSON,ContentModel.TYPE_AUTHORITY_CONTAINER);
+		return Arrays.asList(ContentModel.TYPE_PERSON,ContentModel.TYPE_AUTHORITY_CONTAINER,ContentModel.TYPE_AUTHORITY);
 	}
 	
 
 	@Override
 	public String extractPropName(QName type, NodeRef nodeRef) {
+		type = nodeService.getType(nodeRef);
 		if (type.equals(ContentModel.TYPE_AUTHORITY_CONTAINER)) {
 			return (String) nodeService.getProperty(nodeRef, ContentModel.PROP_AUTHORITY_DISPLAY_NAME);
 		} 
@@ -85,6 +86,7 @@ public class PersonAttributeExtractorPlugin implements AttributeExtractorPlugin 
 	
 	@Override
 	public String extractMetadata(QName type, NodeRef nodeRef) {
+		type = nodeService.getType(nodeRef);
 		if (type.equals(ContentModel.TYPE_AUTHORITY_CONTAINER)) {
 			return (String) nodeService.getProperty(nodeRef, ContentModel.PROP_AUTHORITY_NAME);
 		} 

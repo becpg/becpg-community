@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2016 beCPG.
+ * Copyright (C) 2010-2017 beCPG.
  *
  * This file is part of beCPG
  *
@@ -79,7 +79,7 @@ public class EntitySystemServiceImpl implements EntitySystemService {
 
 			NodeRef entityNodeRef = null;
 			List<NodeRef> matchingEntities = BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_SYSTEM_ENTITY)
-					.andPropEquals(ContentModel.PROP_TITLE, translatedPathMLText.getDefaultValue()).inDB().list();
+					.andPropEquals(ContentModel.PROP_NAME, entityName).inDB().list();
 
 			if (!matchingEntities.isEmpty()) {
 				entityNodeRef = matchingEntities.get(0);

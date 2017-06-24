@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2016 beCPG. 
+ * Copyright (C) 2010-2017 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -30,4 +30,8 @@ public interface SimpleCharactDataItem extends RepositoryEntity {
 	NodeRef getCharactNodeRef();
 
 	Double getValue();
+	
+	default Boolean shouldDetailIfZero(){
+		return false;
+	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2016 beCPG. 
+ * Copyright (C) 2010-2017 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -437,5 +437,10 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 				+ ", bioOrigin=" + bioOrigin + ", isGMO=" + isGMO + ", isIonized=" + isIonized + ", ing=" + ing + ", isManual=" + isManual
 				+ ", isProcessingAid=" + isProcessingAid + ", isSupport=" + isSupport + ", depthLevel=" + depthLevel + ", parent=" + parent
 				+ ", mini=" + mini + ", maxi=" + maxi + "]";
+	}
+
+	@Override
+	public Boolean shouldDetailIfZero() {
+		return true;
 	}
 }
