@@ -214,6 +214,8 @@ public class LabelingFormulaContext {
 	private String groupDefaultSeparator = RepoConsts.LABEL_SEPARATOR;
 	private String ingTypeDefaultSeparator = RepoConsts.LABEL_SEPARATOR;
 	private String subIngsSeparator = RepoConsts.LABEL_SEPARATOR;
+	private String allergensSeparator = RepoConsts.LABEL_SEPARATOR;
+	private String geoOriginsSeparator = RepoConsts.LABEL_SEPARATOR;
 
 	private boolean showIngCEECode = false;
 	private boolean useVolume = false;
@@ -284,6 +286,14 @@ public class LabelingFormulaContext {
 
 	public void setSubIngsSeparator(String subIngsSeparator) {
 		this.subIngsSeparator = subIngsSeparator;
+	}
+
+	public void setAllergensSeparator(String allergensSeparator) {
+		this.allergensSeparator = allergensSeparator;
+	}
+
+	public void setGeoOriginsSeparator(String geoOriginsSeparator) {
+		this.geoOriginsSeparator = geoOriginsSeparator;
 	}
 
 	public void setAllergenReplacementPattern(String allergenReplacementPattern) {
@@ -508,7 +518,7 @@ public class LabelingFormulaContext {
 				String allergenName = uncapitalize(getAllergenName(allergen));
 				if ((allergenName != null) && !allergenName.isEmpty()) {
 					if (ret.length() > 0) {
-						ret.append(defaultSeparator);
+						ret.append(allergensSeparator);
 					} else {
 						Matcher ma = Pattern.compile("\\b(" + Pattern.quote(allergenName) + "(s?))\\b").matcher(uncapitalize(ingLegalName));
 						if (ma.find() && (ma.group(1) != null)) {
@@ -825,7 +835,7 @@ public class LabelingFormulaContext {
 
 		for (NodeRef allergen : allergens) {
 			if (ret.length() > 0) {
-				ret.append(defaultSeparator);
+				ret.append(allergensSeparator);
 			}
 			ret.append(getAllergenName(allergen));
 		}
@@ -981,7 +991,7 @@ public class LabelingFormulaContext {
 				String tmp = createGeoOriginsLabel(component.getGeoOrigins());
 				if(tmp!=null){
 					if (geoOriginsBuffer.length() > 0) {
-						geoOriginsBuffer.append(defaultSeparator);
+						geoOriginsBuffer.append(geoOriginsSeparator);
 					}
 					geoOriginsBuffer.append(tmp);
 				}
@@ -999,7 +1009,7 @@ public class LabelingFormulaContext {
 			StringBuilder geoOriginsBuffer = new StringBuilder();
 			for (NodeRef geoOrigin : geoOrigins) {
 				if (geoOriginsBuffer.length() > 0) {
-					geoOriginsBuffer.append(defaultSeparator);
+					geoOriginsBuffer.append(geoOriginsSeparator);
 				}
 				geoOriginsBuffer.append(getGeoOriginName(geoOrigin));
 			}
