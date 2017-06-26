@@ -13,6 +13,16 @@ public class PriceBreakReportData {
 
 	private NodeRef cost;
 
+	private Double priceListValue;
+
+	private String priceListUnit;
+
+	private Double priceListPurchaseValue;
+
+	private String priceListPurchaseUnit;
+
+	private Integer priceListPrefRank;
+
 	private List<NodeRef> suppliers = new ArrayList<>();
 
 	private NodeRef product;
@@ -55,6 +65,46 @@ public class PriceBreakReportData {
 
 	public void setProduct(NodeRef product) {
 		this.product = product;
+	}
+
+	public Double getPriceListValue() {
+		return priceListValue;
+	}
+
+	public void setPriceListValue(Double priceListValue) {
+		this.priceListValue = priceListValue;
+	}
+
+	public String getPriceListUnit() {
+		return priceListUnit;
+	}
+
+	public void setPriceListUnit(String priceListUnit) {
+		this.priceListUnit = priceListUnit;
+	}
+
+	public Double getPriceListPurchaseValue() {
+		return priceListPurchaseValue;
+	}
+
+	public void setPriceListPurchaseValue(Double priceListPurchaseValue) {
+		this.priceListPurchaseValue = priceListPurchaseValue;
+	}
+
+	public String getPriceListPurchaseUnit() {
+		return priceListPurchaseUnit;
+	}
+
+	public void setPriceListPurchaseUnit(String priceListPurchaseUnit) {
+		this.priceListPurchaseUnit = priceListPurchaseUnit;
+	}
+
+	public Integer getPriceListPrefRank() {
+		return priceListPrefRank;
+	}
+
+	public void setPriceListPrefRank(Integer priceListPrefRank) {
+		this.priceListPrefRank = priceListPrefRank;
 	}
 
 }

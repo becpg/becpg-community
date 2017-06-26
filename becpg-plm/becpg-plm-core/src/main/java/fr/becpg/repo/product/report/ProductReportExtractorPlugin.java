@@ -659,10 +659,17 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				priceBreakEltDetailElt.addAttribute("cost",
 						(String) nodeService.getProperty(priceBreakReportData.getCost(), BeCPGModel.PROP_CHARACT_NAME));
 
-
 				String product = (String) nodeService.getProperty(priceBreakReportData.getProduct(), ContentModel.PROP_NAME);
 				priceBreakEltDetailElt.addAttribute("product", product);
 				priceBreakEltDetailElt.addAttribute("projectedQtyByKg", Math.round(priceBreakReportData.getProjectedQty())+"");
+				priceBreakEltDetailElt.addAttribute("projectedQty", Math.round(priceBreakReportData.getProjectedQty()/netWeight)+"");
+				
+				priceBreakEltDetailElt.addAttribute("priceListValue",""+priceBreakReportData.getPriceListValue());
+				priceBreakEltDetailElt.addAttribute("priceListUnit",priceBreakReportData.getPriceListUnit());
+				priceBreakEltDetailElt.addAttribute("priceListPurchaseValue",""+priceBreakReportData.getPriceListPurchaseValue());
+				priceBreakEltDetailElt.addAttribute("priceListPrefRank",""+priceBreakReportData.getPriceListPrefRank());
+				priceBreakEltDetailElt.addAttribute("priceListPurchaseUnit",priceBreakReportData.getPriceListPurchaseUnit());
+							
 
 				String suppliers = "";
 				if (priceBreakReportData.getSuppliers() != null) {
@@ -779,6 +786,12 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				priceBreakReportData.setCost(item.getCost());
 				priceBreakReportData.setProduct(componentProduct.getNodeRef());
 				priceBreakReportData.setSuppliers(item.getSuppliers());
+				priceBreakReportData.setPriceListValue(item.getValue());
+				priceBreakReportData.setPriceListUnit(item.getUnit());
+				priceBreakReportData.setPriceListPrefRank(item.getPrefRank());
+				priceBreakReportData.setPriceListPurchaseValue(item.getPurchaseValue());
+				priceBreakReportData.setPriceListPurchaseUnit(item.getPurchaseUnit());
+				
 
 				Double purchaseValue = item.getPurchaseValue();
 
