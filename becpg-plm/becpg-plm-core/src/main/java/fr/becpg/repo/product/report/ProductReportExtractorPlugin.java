@@ -1,13 +1,10 @@
 package fr.becpg.repo.product.report;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -32,25 +29,21 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.MPMModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
-import fr.becpg.model.SystemState;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.JsonFormulaHelper;
 import fr.becpg.repo.product.data.EffectiveFilters;
-import fr.becpg.repo.product.data.PackagingKitData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ResourceProductData;
 import fr.becpg.repo.product.data.constraints.CompoListUnit;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.PackagingListUnit;
-import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.packaging.PackagingData;
 import fr.becpg.repo.product.data.packaging.VariantPackagingData;
 import fr.becpg.repo.product.data.productList.AbstractManualVariantListDataItem;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompositionDataItem;
-import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
@@ -58,14 +51,12 @@ import fr.becpg.repo.product.data.productList.MicrobioListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.OrganoListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
-import fr.becpg.repo.product.data.productList.PriceListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.productList.ResourceParamListItem;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.product.formulation.PackagingHelper;
 import fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor;
-import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.variant.model.VariantData;
@@ -112,24 +103,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	@Value("${beCPG.product.report.componentDatalistsToExtract}")
 	private String componentDatalistsToExtract = "";
 
-	@Value("${beCPG.product.report.assocsToExtract}")
-	private String assocsToExtract = "";
-
-	@Value("${beCPG.product.report.assocsToExtractWithDataList}")
-	private String assocsToExtractWithDataList = "";
-
-	@Value("${beCPG.product.report.assocsToExtractWithImage}")
-	private String assocsToExtractWithImage = "";
-
-	@Value("${beCPG.product.report.priceBreaks}")
-	private Boolean extractPriceBreaks = false;
-
 	@Autowired
 	@Qualifier("mlAwareNodeService")
 	private NodeService mlNodeService;
-
-	@Autowired
-	protected AlfrescoRepository<ProductData> alfrescoRepository;
 
 	@Autowired
 	protected PackagingHelper packagingHelper;
@@ -244,7 +220,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					if (!productMicrobioCriteriaNodeRefs.isEmpty()) {
 						productMicrobioCriteriaNodeRef = productMicrobioCriteriaNodeRefs.get(0);
 						if (productMicrobioCriteriaNodeRef != null) {
-							ProductData pmcData = alfrescoRepository.findOne(productMicrobioCriteriaNodeRef);
+							ProductData pmcData = (ProductData)alfrescoRepository.findOne(productMicrobioCriteriaNodeRef);
 							microbioList = pmcData.getMicrobioList();
 						}
 					}
@@ -420,6 +396,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			}
 
 		}
+	
 
 	}
 
@@ -458,7 +435,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		}
 		if ((dataItem.getResource() != null) && nodeService.exists(dataItem.getResource())) {
 			loadResourceParams(dataItem.getResource(), partElt, images);
-			ProductData productData = alfrescoRepository.findOne(dataItem.getResource());
+			ProductData productData = (ProductData)alfrescoRepository.findOne(dataItem.getResource());
 			if (productData.hasProcessListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 				for (ProcessListDataItem subDataItem : productData.getProcessList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 					loadProcessListItem(subDataItem, processListElt, defaultVariantNodeRef, level + 1, dataItem.getRateProduct(), images);
@@ -504,7 +481,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					loadDataListItemAttributes(dataListItem, nutListElt, images);
 
 					String nut = nutListElt.valueOf("@" + PLMModel.ASSOC_NUTLIST_NUT.getLocalName());
-					if (nut != null && !nut.isEmpty()) {
+					if (nut != null) {
 						String value = nutListElt.valueOf("@" + PLMModel.PROP_NUTLIST_VALUE.getLocalName());
 						if ((value == null) || value.isEmpty()) {
 							value = nutListElt.valueOf("@" + PLMModel.PROP_NUTLIST_FORMULATED_VALUE.getLocalName());
@@ -545,7 +522,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 			for (IngListDataItem dataListItem : productData.getIngList()) {
 				addDataListState(ingListsElt, dataListItem.getParentNodeRef());
-				if (dataListItem.getIng() != null) {
+				if(dataListItem.getIng()!=null){
 					Element ingListElt = ingListsElt.addElement(PLMModel.TYPE_INGLIST.getLocalName());
 					String ingCEECode = (String) nodeService.getProperty(dataListItem.getIng(), PLMModel.PROP_ING_CEECODE);
 					if (ingCEECode != null) {
@@ -833,7 +810,6 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		}
 
 	}
-
 	private Map<NodeRef, Double> getRawMaterials(ProductData productData, Map<NodeRef, Double> rawMaterials, Double parentQty) {
 
 		for (CompoListDataItem compoList : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
@@ -859,7 +835,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					} else if (type.isMatch(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT)) {
 						continue;
 					} else {
-						getRawMaterials(alfrescoRepository.findOne(productNodeRef), rawMaterials, qty);
+						getRawMaterials((ProductData)alfrescoRepository.findOne(productNodeRef), rawMaterials, qty);
 					}
 				}
 			}
@@ -871,34 +847,14 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	@Override
 	protected boolean loadTargetAssoc(NodeRef entityNodeRef, AssociationDefinition assocDef, Element entityElt, Map<String, byte[]> images) {
 
-		boolean isExtracted = false;
-		if ((assocDef != null) && (assocDef.getName() != null)) {
-			boolean extractDataList = false;
-			if ((assocsToExtractWithDataList != null) && assocsToExtractWithDataList.contains(assocDef.getName().toPrefixString(namespaceService))) {
-				extractDataList = true;
-			}
-
-			if (((assocsToExtract != null) && assocsToExtract.contains(assocDef.getName().toPrefixString(namespaceService))) || extractDataList) {
-
-				Element assocElt = entityElt;
-				// compatibility with existing reports
-				if (!assocDef.getName().equals(PLMModel.ASSOC_STORAGE_CONDITIONS) && !assocDef.getName().equals(PLMModel.ASSOC_PRECAUTION_OF_USE)) {
-					assocElt = entityElt.addElement(assocDef.getName().getLocalName());
-					appendPrefix(assocDef.getName(), assocElt);
-				}
-				extractTargetAssoc(entityNodeRef, assocDef, assocElt, images, extractDataList);
-				isExtracted = true;
-			}
-
-			if ((assocsToExtractWithImage != null) && assocsToExtractWithImage.contains(assocDef.getName().toPrefixString(namespaceService))) {
-				List<NodeRef> nodeRefs = associationService.getTargetAssocs(entityNodeRef, assocDef.getName());
-				for (NodeRef nodeRef : nodeRefs) {
-					Element imgsElt = (Element) entityElt.getDocument().selectSingleNode(TAG_ENTITY + "/" + TAG_IMAGES);
-					extractEntityImages(nodeRef, imgsElt, images);
-				}
-			}
+		// compatibility with existing reports
+		if (assocDef.getName().equals(PLMModel.ASSOC_STORAGE_CONDITIONS) || assocDef.getName().equals(PLMModel.ASSOC_PRECAUTION_OF_USE)) {
+			extractTargetAssoc(entityNodeRef, assocDef, entityElt, images, false);
+			return true;
 		}
-		return isExtracted;
+		else{
+			return super.loadTargetAssoc(entityNodeRef, assocDef, entityElt, images);
+		}
 	}
 
 	private void loadPackagingList(ProductData productData, Element dataListsElt, NodeRef defaultVariantNodeRef, Map<String, byte[]> images) {
@@ -971,7 +927,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				for (CompoListDataItem dataItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 					if ((nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT)
 							|| nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_FINISHEDPRODUCT)) && extractInMultiLevel) {
-						ProductData sfProductData = alfrescoRepository.findOne(dataItem.getProduct());
+						ProductData sfProductData = (ProductData)alfrescoRepository.findOne(dataItem.getProduct());
 						if (sfProductData.hasPackagingListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 							for (PackagingListDataItem subDataItem : sfProductData
 									.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
@@ -1043,7 +999,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				if ((nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT)
 						|| nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_FINISHEDPRODUCT))) {
 
-					ProductData productData = alfrescoRepository.findOne(dataItem.getProduct());
+					ProductData productData = (ProductData)alfrescoRepository.findOne(dataItem.getProduct());
 
 					if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 						if (dataListsElt != null) {
@@ -1117,7 +1073,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	private void loadPackagingKit(double sfQty, PackagingListDataItem dataItem, Element packagingListElt, NodeRef defaultVariantNodeRef,
 			VariantPackagingData defaultVariantPackagingData, Map<String, byte[]> images, int level) {
 		loadPackaging(sfQty, dataItem, packagingListElt, defaultVariantNodeRef, defaultVariantPackagingData, images, level);
-		ProductData packagingKitData = alfrescoRepository.findOne(dataItem.getProduct());
+		ProductData packagingKitData = (ProductData)alfrescoRepository.findOne(dataItem.getProduct());
 		if (packagingKitData.hasPackagingListEl()) {
 			for (PackagingListDataItem p : packagingKitData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 				loadPackagingItem(sfQty, p, packagingListElt, defaultVariantNodeRef, defaultVariantPackagingData, images, level + 1);
@@ -1234,18 +1190,5 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	@Override
 	public EntityReportExtractorPriority getMatchPriority(QName type) {
 		return dictionaryService.isSubClass(type, PLMModel.TYPE_PRODUCT) ? EntityReportExtractorPriority.NORMAL : EntityReportExtractorPriority.NONE;
-	}
-
-	public void addDataListState(Element xmlNode, NodeRef listNodeRef) {
-
-		if (xmlNode.valueOf("@" + BeCPGModel.PROP_ENTITYLIST_STATE.getLocalName()).isEmpty()) {
-			Serializable state = nodeService.getProperty(listNodeRef, BeCPGModel.PROP_ENTITYLIST_STATE);
-			if (state != null) {
-				xmlNode.addAttribute(BeCPGModel.PROP_ENTITYLIST_STATE.getLocalName(), (String) state);
-			} else {
-				xmlNode.addAttribute(BeCPGModel.PROP_ENTITYLIST_STATE.getLocalName(), SystemState.ToValidate.toString());
-			}
-
-		}
 	}
 }
