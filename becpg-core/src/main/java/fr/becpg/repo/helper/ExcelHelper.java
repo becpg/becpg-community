@@ -10,8 +10,10 @@ import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.MLText;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 
@@ -28,12 +30,12 @@ public class ExcelHelper {
 
 		boolean isAllowed(AttributeExtractorStructure field);
 	}
-
-	public static int appendExcelField(List<AttributeExtractorStructure> computedFields, String prefix, Map<String, Object> item, Row row,
+	
+	public static int appendExcelField(List<AttributeExtractorStructure> computedFields, String prefix, Map<String, Object> item, XSSFWorkbook workbook , Row row,
 			int cellnum, List<Locale> supportedLocales) {
 		for (AttributeExtractorStructure field : computedFields) {
 			if (field.isNested()) {
-				cellnum = appendExcelField(field.getChildrens(), field.getFieldName(), item, row, cellnum, supportedLocales);
+				cellnum = appendExcelField(field.getChildrens(), field.getFieldName(), item, workbook, row, cellnum, supportedLocales);
 			} else {
 
 				Object obj;
@@ -72,6 +74,11 @@ public class ExcelHelper {
 					if (obj != null) {
 						if (obj instanceof Date) {
 							cell.setCellValue((Date) obj);
+							if(DataTypeDefinition.DATETIME.toString().equals(((PropertyDefinition) field.getFieldDef()).getDataType().toString())){
+								cell.setCellStyle(createDateStyle(workbook, true));	
+							} else {
+								cell.setCellStyle(createDateStyle(workbook, true));	
+							}
 						} else if (obj instanceof Boolean) {
 							cell.setCellValue((boolean) obj);
 						} else if (obj instanceof String) {
@@ -86,6 +93,17 @@ public class ExcelHelper {
 			}
 		}
 		return cellnum;
+	}
+
+	private static CellStyle createDateStyle(XSSFWorkbook workbook, boolean full) {
+		
+		XSSFCellStyle style = workbook.createCellStyle();
+		if(full){
+			style.setDataFormat((short)14);
+		} else {
+			style.setDataFormat((short)22);
+		}
+		return style;
 	}
 
 	public static boolean isExcelType(Serializable value) {

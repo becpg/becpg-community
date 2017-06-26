@@ -94,7 +94,7 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 				cell = row.createCell(0);
 				cell.setCellValue("VALUES");
 	
-				ExcelHelper.appendExcelField(fields, null, item, row, 1, MLTextHelper.shouldExtractMLText() ? MLTextHelper.getSupportedLocales() : null);
+				ExcelHelper.appendExcelField(fields, null, item, workbook,row, 1, MLTextHelper.shouldExtractMLText() ? MLTextHelper.getSupportedLocales() : null);
 	
 			}
 
