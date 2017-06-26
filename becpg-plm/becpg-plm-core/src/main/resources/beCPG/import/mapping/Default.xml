@@ -29,7 +29,16 @@
 				type="File" />
 		</columns>
 	</mapping>
+	
+	<mapping name="pjt:project">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:code" />
+		</nodeColumnKeys>
+		<columns>
+			<column id="hierarchy1" type="Hierarchy" attribute="pjt:projectHierarchy1" path="/System/ProjectLists/bcpg:entityLists/project_Hierarchy"  />
 
+		</columns>
+	</mapping>
 
 
 	<!-- Allergens -->
@@ -96,6 +105,7 @@
 
 	<mapping name="bcpg:listValue">
 		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:lvCode" />
 			<nodeColumnKey attribute="bcpg:lvValue" />
 		</nodeColumnKeys>
 	</mapping>
