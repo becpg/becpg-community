@@ -260,6 +260,8 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		}
 	}
 
+
+	
 	// render target assocs (plants...special cases)
 	protected boolean loadTargetAssoc(NodeRef entityNodeRef, AssociationDefinition assocDef, Element entityElt, Map<String, byte[]> images) {
 		boolean isExtracted = false;
@@ -292,6 +294,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		return false;
 	}
 
+	@SuppressWarnings("deprecation")
 	protected void loadDataLists(NodeRef entityNodeRef, Element dataListsElt, Map<String, byte[]> images) {
 		
 		NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
@@ -303,7 +306,6 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				
 				Class<RepositoryEntity> entityClass = repositoryEntityDefReader.getEntityClass(dataListQName);
 				if (entityClass != null) {
-					@SuppressWarnings({ "rawtypes" })
 					List<BeCPGDataObject> dataListItems = alfrescoRepository.loadDataList(entityNodeRef, dataListQName, dataListQName);
 					
 					if ((dataListItems != null) && !dataListItems.isEmpty()) {
