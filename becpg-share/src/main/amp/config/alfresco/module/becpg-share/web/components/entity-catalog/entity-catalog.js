@@ -199,59 +199,81 @@
 						for(var field in json[key].missingFields){							
 							//try to find a prop or assoc with this field
 							
-							var fieldCode = json[key].missingFields[field].id.replace(":", "_");
-							var fieldId="";
 							
-							var found = YAHOO.util.Dom.get(id+"_assoc_"+fieldCode);
-							fieldId=id+"_assoc_"+fieldCode+"-cntrl";
+							var fieldArray = new Array();
+							var fieldCode = json[key].missingFields[field].id;
 							
-							if(found === undefined || found == null){
-								found = YAHOO.util.Dom.get(id+"_prop_"+fieldCode);
-								fieldId=id+"_prop_"+fieldCode;
+							
+							
+							
+							if(fieldCode.indexOf("|") > -1 ){
+								fieldArray = fieldCode.split("|");
+							} else {
+								fieldArray.push(fieldCode);
 							}
-
-							if(found !== undefined && found != null){
-								if(found.className.indexOf("multi-assoc") != -1){
-									found = found.parentNode;
+							
+							console.log("fieldArray: ",fieldArray);
+							
+							for(var field in fieldArray){
+								
+								var fieldId="";
+								var curField = fieldArray[field].replace(":", "_");
+								
+								console.log("colorizing field ",curField);
+								
+								var found = YAHOO.util.Dom.get(id+"_assoc_"+curField);
+								fieldId=id+"_assoc_"+curField+"-cntrl";
+								
+								if(found === undefined || found == null){
+									found = YAHOO.util.Dom.get(id+"_prop_"+curField);
+									fieldId=id+"_prop_"+curField;
 								}
 								
-								//put color tip
-								var labels = document.getElementsByTagName("label");
-								
-
-								for(var labelIndex = 0; labelIndex < labels.length; labelIndex++){
-									var currentLabel = labels[labelIndex];									
+								console.log("found = ",found);
+	
+								if(found !== undefined && found != null){
+									if(found.className.indexOf("multi-assoc") != -1){
+										found = found.parentNode;
+									}
 									
-									//checks if we're on the right label, and the catalog is not already labelled
-									var hasLocaleIcon = false;
-									if(currentLabel.htmlFor.indexOf(fieldId) != -1  && currentLabel.parentNode.innerHTML.indexOf(colorTipElement.style.backgroundColor) == -1){
-										if(currentLabel.childNodes){
-											for(var child in currentLabel.childNodes){
-												var currentChildNode = currentLabel.childNodes[child];
-												if(currentChildNode.nodeType == Node.ELEMENT_NODE && currentChildNode.className.indexOf("locale-icon") != -1){
-													hasLocaleIcon = true;
-													break;
+									//put color tip
+									var labels = document.getElementsByTagName("label");
+									
+	
+									for(var labelIndex = 0; labelIndex < labels.length; labelIndex++){
+										var currentLabel = labels[labelIndex];									
+										
+										//checks if we're on the right label, and the catalog is not already labelled
+										var hasLocaleIcon = false;
+										if(currentLabel.htmlFor.indexOf(fieldId) != -1  && currentLabel.parentNode.innerHTML.indexOf(colorTipElement.style.backgroundColor) == -1){
+											if(currentLabel.childNodes){
+												for(var child in currentLabel.childNodes){
+													var currentChildNode = currentLabel.childNodes[child];
+													if(currentChildNode.nodeType == Node.ELEMENT_NODE && currentChildNode.className.indexOf("locale-icon") != -1){
+														hasLocaleIcon = true;
+														break;
+													}
 												}
 											}
+											
+											if(hasLocaleIcon){
+												currentLabel.appendChild(colorTipElement.cloneNode(false));
+											} else {
+												currentLabel.innerHTML+=colorTipElement.outerHTML;
+											}
 										}
-										
-										if(hasLocaleIcon){
-											currentLabel.appendChild(colorTipElement.cloneNode(false));
-										} else {
-											currentLabel.innerHTML+=colorTipElement.outerHTML;
-										}
+									}							
+								} else {
+									var absentMissingFieldId = "missing-field_"+json[key]+"_"+json[key].missingFields[field].displayName;
+									
+									var absentMissingFieldHTMLElement = YAHOO.util.Dom.get(absentMissingFieldId);
+									
+									if(absentMissingFieldHTMLElement !== undefined && absentMissingFieldHTMLElement != null){
+										absentMissingFieldHTMLElement.outerHTML = "";
 									}
-								}							
-							} else {
-								
-								var absentMissingFieldId = "missing-field_"+json[key]+"_"+json[key].missingFields[field].displayName;
-								
-								var absentMissingFieldHTMLElement = YAHOO.util.Dom.get(absentMissingFieldId);
-								
-								if(absentMissingFieldHTMLElement !== undefined && absentMissingFieldHTMLElement != null){
-									absentMissingFieldHTMLElement.outerHTML = "";
-								}
-							}							
+								}	
+							
+							}
 						}
 					}
 					i++;

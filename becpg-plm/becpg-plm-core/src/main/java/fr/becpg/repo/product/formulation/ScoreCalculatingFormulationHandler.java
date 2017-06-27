@@ -52,7 +52,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 		if (logger.isDebugEnabled()) {
 			logger.debug("===== Calculating score of product " + product.getName() + " =====");
 		}
-
+		
 		JSONObject scores = new JSONObject();
 
 		try {
