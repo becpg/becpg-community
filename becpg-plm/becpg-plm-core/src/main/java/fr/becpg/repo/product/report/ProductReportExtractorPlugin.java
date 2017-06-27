@@ -108,18 +108,11 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	@Value("${beCPG.product.report.componentDatalistsToExtract}")
 	private String componentDatalistsToExtract = "";
-
-	@Value("${beCPG.product.report.assocsToExtract}")
-	private String assocsToExtract = "";
-
-	@Value("${beCPG.product.report.assocsToExtractWithDataList}")
-	private String assocsToExtractWithDataList = "";
-
-	@Value("${beCPG.product.report.assocsToExtractWithImage}")
-	private String assocsToExtractWithImage = "";
-
+	
+	
 	@Value("${beCPG.product.report.priceBreaks}")
 	private Boolean extractPriceBreaks = false;
+	
 	@Autowired
 	@Qualifier("mlAwareNodeService")
 	private NodeService mlNodeService;
@@ -864,34 +857,14 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	@Override
 	protected boolean loadTargetAssoc(NodeRef entityNodeRef, AssociationDefinition assocDef, Element entityElt, Map<String, byte[]> images) {
 
-		boolean isExtracted = false;
-		if ((assocDef != null) && (assocDef.getName() != null)) {
-			boolean extractDataList = false;
-			if ((assocsToExtractWithDataList != null) && assocsToExtractWithDataList.contains(assocDef.getName().toPrefixString(namespaceService))) {
-				extractDataList = true;
-			}
-
-			if (((assocsToExtract != null) && assocsToExtract.contains(assocDef.getName().toPrefixString(namespaceService))) || extractDataList) {
-
-				Element assocElt = entityElt;
-				// compatibility with existing reports
-				if (!assocDef.getName().equals(PLMModel.ASSOC_STORAGE_CONDITIONS) && !assocDef.getName().equals(PLMModel.ASSOC_PRECAUTION_OF_USE)) {
-					assocElt = entityElt.addElement(assocDef.getName().getLocalName());
-					appendPrefix(assocDef.getName(), assocElt);
-				}
-				extractTargetAssoc(entityNodeRef, assocDef, assocElt, images, extractDataList);
-				isExtracted = true;
-			}
-
-			if ((assocsToExtractWithImage != null) && assocsToExtractWithImage.contains(assocDef.getName().toPrefixString(namespaceService))) {
-				List<NodeRef> nodeRefs = associationService.getTargetAssocs(entityNodeRef, assocDef.getName());
-				for (NodeRef nodeRef : nodeRefs) {
-					Element imgsElt = (Element) entityElt.getDocument().selectSingleNode(TAG_ENTITY + "/" + TAG_IMAGES);
-					extractEntityImages(nodeRef, imgsElt, images);
-				}
-			}
+		// compatibility with existing reports
+		if (assocDef.getName().equals(PLMModel.ASSOC_STORAGE_CONDITIONS) || assocDef.getName().equals(PLMModel.ASSOC_PRECAUTION_OF_USE)) {
+			extractTargetAssoc(entityNodeRef, assocDef, entityElt, images, false);
+			return true;
 		}
-		return isExtracted;
+		else{
+			return super.loadTargetAssoc(entityNodeRef, assocDef, entityElt, images);
+		}
 	}
 
 	private void loadPackagingList(ProductData productData, Element dataListsElt, NodeRef defaultVariantNodeRef, Map<String, byte[]> images) {
