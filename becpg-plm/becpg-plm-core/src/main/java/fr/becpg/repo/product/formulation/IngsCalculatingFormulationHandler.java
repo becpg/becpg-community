@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -639,7 +638,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 					if (RequirementType.Authorized.equals(fil.getReqType())) {
 						if (checkRuleMatchIng(ingListDataItem, fil)) {
 							autorized = true;
-							if ((fil.getReqMessage() != null) && fil.getReqMessage().getDefaultValue()!=null && (!fil.getReqMessage().getDefaultValue().isEmpty())) {
+							if ((fil.getReqMessage() != null) && (fil.getReqMessage().getDefaultValue() != null)
+									&& (!fil.getReqMessage().getDefaultValue().isEmpty())) {
 								addReqCtrl(reqCtrlMap, fil.getNodeRef(), RequirementType.Authorized, fil.getReqMessage(), ingListDataItem.getIng(),
 										RequirementDataType.Specification);
 							}
@@ -713,12 +713,9 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		Collections.sort(ingList, (i1, i2) -> {
 
 			// increase
-			if (((i1.getParent() == null) && (i2.getParent() == null)) || ((i1.getParent() != null) && i1.getParent().equals(i2.getParent()))) {
-				if (i2.getQtyPerc() != null) {
-					return i2.getQtyPerc().compareTo(i1.getQtyPerc());
-				} else {
-					return Objects.equals(i2.getQtyPerc(), i1.getQtyPerc()) ? 0 : -1;
-				}
+			if (((i1.getParent() == null) && (i2.getParent() == null))
+					|| ((i1.getParent() != null) && (i2.getParent() != null) && i1.getParent().equals(i2.getParent()))) {
+				return Double.compare(i2.getQtyPerc() != null ? i2.getQtyPerc() : -1d, i1.getQtyPerc() != null ? i1.getQtyPerc() : -1d);
 			} else {
 				IngListDataItem root1 = findRoot(i1);
 				IngListDataItem root2 = findRoot(i2);
