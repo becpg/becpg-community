@@ -80,7 +80,7 @@ public class CompositionQtyCalculatingFormulationHandler extends FormulationBase
 			}
 
 		}
-		Double netWeight = formulatedProduct.getNetWeight();
+		Double netWeight = formulatedProduct.getNetWeight()!=null ? formulatedProduct.getNetWeight() : 100d ;
 		Composite<CompoListDataItem> compositeAll = CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList());
 
 		// calculate on every item
