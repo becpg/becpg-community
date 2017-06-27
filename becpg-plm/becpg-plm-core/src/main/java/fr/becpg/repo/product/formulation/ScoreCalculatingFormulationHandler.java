@@ -52,6 +52,16 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 		if (logger.isDebugEnabled()) {
 			logger.debug("===== Calculating score of product " + product.getName() + " =====");
 		}
+		
+		//remove old rclDataItems
+		List<ReqCtrlListDataItem> toRemove = new ArrayList<>();
+		for(ReqCtrlListDataItem rcl : product.getReqCtrlList()){
+			if(rcl.getReqDataType().equals(RequirementDataType.Completion)){
+				toRemove.add(rcl);
+			}
+		}
+		
+		product.getReqCtrlList().removeAll(toRemove);
 
 		JSONObject scores = new JSONObject();
 
