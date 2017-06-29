@@ -53,4 +53,9 @@ public class EntityReportData {
 	}
 	
 	
+	public void setParameters(EntityReportParameters reportParameters) {
+		reportParameters.updateDataSource(xmlDataSource);
+	}
+	
+	
 }

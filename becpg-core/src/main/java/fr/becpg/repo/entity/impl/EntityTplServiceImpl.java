@@ -26,7 +26,6 @@ import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.rule.RuleModel;
 import org.alfresco.repo.rule.RuntimeRuleService;

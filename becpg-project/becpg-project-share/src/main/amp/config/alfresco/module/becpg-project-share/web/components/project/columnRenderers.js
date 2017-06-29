@@ -39,11 +39,11 @@
 		});
 		
 		YAHOO.Bubbling.fire("registerDataGridRenderer", {
-	           propertyName : "pjt:activityList",
+	           propertyName : "bcpg:activityList",
 	           renderer : function(oRecord, data, label, scope, idx, length) {
 	               if( data["itemData"]){
-	                   var user =data["itemData"]["prop_pjt_alUserId"];
-	                   var alData = data["itemData"]["prop_pjt_alData"] ? data["itemData"]["prop_pjt_alData"] : null;
+	                   var user =data["itemData"]["prop_bcpg_alUserId"];
+	                   var alData = data["itemData"]["prop_bcpg_alData"] ? data["itemData"]["prop_bcpg_alData"] : null;
 	                   var html = "";
 	                   if(alData!=null && alData.title){
 	                       html += '<div class="project-activity-details">';
