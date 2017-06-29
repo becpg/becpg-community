@@ -34,22 +34,15 @@ import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
 
 import fr.becpg.model.ReportModel;
-import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.report.entity.EntityReportService;
-import fr.becpg.repo.report.template.ReportTplService;
 
 public class ReportAssociationDecorator extends fr.becpg.repo.jscript.app.BaseAssociationDecorator {
 	private static final Log logger = LogFactory.getLog(ReportAssociationDecorator.class);
 
-	private ReportTplService reportTplService;
 
 	private EntityReportService entityReportService;
 
 	private final static String CONTENT_DOWNLOAD_API_URL = "becpg/report/node/content/{0}/{1}/{2}/{3}?entityNodeRef={4}";
-
-	public void setReportTplService(ReportTplService reportTplService) {
-		this.reportTplService = reportTplService;
-	}
 
 	public void setEntityReportService(EntityReportService entityReportService) {
 		this.entityReportService = entityReportService;
@@ -70,37 +63,24 @@ public class ReportAssociationDecorator extends fr.becpg.repo.jscript.app.BaseAs
 
 						String name = (String) this.nodeService.getProperty(reportNodeRef, ContentModel.PROP_NAME);
 
-							
 						jsonObj.put("name", name);
-						NodeRef reportTemplateNodeRef = reportTplService.getAssociatedReportTemplate(reportNodeRef);
-						if (reportTemplateNodeRef != null  && permissionService.hasPermission(reportTemplateNodeRef, "Read") == AccessStatus.ALLOWED ) {
-							String templateName = (String) this.nodeService.getProperty(reportTemplateNodeRef, ContentModel.PROP_NAME);
-							
-							if (templateName.endsWith(RepoConsts.REPORT_EXTENSION_BIRT)) {
-								templateName = templateName.replace("." + RepoConsts.REPORT_EXTENSION_BIRT, "");
-							}
-							
-							Boolean isDefault = (Boolean) this.nodeService.getProperty(reportTemplateNodeRef, ReportModel.PROP_REPORT_TPL_IS_DEFAULT);
-							
-							
-							if(nodeService.hasAspect(reportNodeRef, ReportModel.ASPECT_REPORT_LOCALES)){
-								List<String> langs =  (List<String>) nodeService.getProperty(reportNodeRef, ReportModel.PROP_REPORT_LOCALES);
-								if(langs!=null && !langs.isEmpty()){
-									templateName += " - "+langs.get(0);
-									isDefault = false;
-								}
-							}
-							
-							jsonObj.put("templateName", templateName);
-							jsonObj.put("isDefault", isDefault);
-							
-							if (templateName.equalsIgnoreCase(prefsReportName)) {
-								jsonObj.put("isSelected", true);
-							} else {
-								jsonObj.put("isSelected", false);
-							}
+						String reportTitle = (String) nodeService.getProperty(reportNodeRef, ContentModel.PROP_TITLE);
+						if(reportTitle == null){
+							reportTitle = name;
 						}
+						
+						Boolean isDefault = (Boolean) this.nodeService.getProperty(reportNodeRef, ReportModel.PROP_REPORT_IS_DEFAULT);
+						
 
+						jsonObj.put("templateName", reportTitle);
+						jsonObj.put("isDefault", isDefault);
+							
+						if ( reportTitle.equalsIgnoreCase(prefsReportName)) {
+							jsonObj.put("isSelected", true);
+						} else {
+							jsonObj.put("isSelected", false);
+						}
+							
 						jsonObj.put("nodeRef", reportNodeRef.toString());
 
 						try {

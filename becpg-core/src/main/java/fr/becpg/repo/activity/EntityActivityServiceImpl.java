@@ -104,7 +104,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	public boolean postCommentActivity(NodeRef entityNodeRef, NodeRef commentNodeRef, ActivityEvent activityEvent) {
 		if (commentNodeRef != null) {
 			try {
-
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 				NodeRef activityListNodeRef = getActivityList(entityNodeRef);
 
 				// No list no activity
@@ -162,6 +162,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 				}
 			} catch (JSONException e) {
 				logger.error(e, e);
+			} finally {
+				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 			}
 		}
 
@@ -173,7 +175,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	public boolean postContentActivity(NodeRef entityNodeRef, NodeRef contentNodeRef, ActivityEvent activityEvent) {
 		if ((contentNodeRef != null) && !nodeService.hasAspect(contentNodeRef, ContentModel.ASPECT_WORKING_COPY)) {
 			try {
-
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 				NodeRef activityListNodeRef = getActivityList(entityNodeRef);
 
 				// No list no activity
@@ -205,6 +207,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 				}
 			} catch (JSONException e) {
 				logger.error(e, e);
+			} finally {
+				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 			}
 		}
 
@@ -216,7 +220,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	public boolean postMergeBranchActivity(NodeRef branchNodeRef, NodeRef branchToNodeRef, VersionType versionType, String description) {
 		if ((branchNodeRef != null) && (branchToNodeRef != null)) {
 			try {
-
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 				NodeRef activityListNodeRef = getActivityList(branchToNodeRef);
 
 				// No list no activity
@@ -246,6 +250,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 				}
 			} catch (JSONException e) {
 				logger.error(e, e);
+			} finally {
+				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 			}
 		}
 
@@ -257,7 +263,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	public boolean postDatalistActivity(NodeRef entityNodeRef, NodeRef datalistNodeRef, ActivityEvent activityEvent) {
 		if ((datalistNodeRef != null)) {
 			try {
-
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 				NodeRef activityListNodeRef = getActivityList(entityNodeRef);
 
 				// No list no activity
@@ -301,6 +307,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 				}
 			} catch (JSONException e) {
 				logger.error(e, e);
+			} finally {
+				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 			}
 		}
 		return false;
@@ -333,7 +341,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	public boolean postStateChangeActivity(NodeRef entityNodeRef, NodeRef datalistNodeRef, String beforeState, String afterState) {
 		if ((entityNodeRef != null) && (beforeState != null) && (afterState != null)) {
 			try {
-
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 				NodeRef activityListNodeRef = getActivityList(entityNodeRef);
 
 				// No list no activity
@@ -387,6 +395,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 			} catch (JSONException e) {
 				logger.error(e, e);
+			} finally {
+				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 			}
 		}
 
@@ -398,7 +408,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	public boolean postVersionActivity(NodeRef entityNodeRef, NodeRef versionNodeRef, String versionLabel) {
 		if ((entityNodeRef != null) && (versionNodeRef != null)) {
 			try {
-
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 				NodeRef activityListNodeRef = getActivityList(entityNodeRef);
 
 				// No list no activity
@@ -429,6 +439,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 				}
 			} catch (JSONException e) {
 				logger.error(e, e);
+			} finally {
+				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 			}
 		}
 
@@ -460,6 +472,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	public boolean postEntityActivity(NodeRef entityNodeRef, ActivityType activityType, ActivityEvent activityEvent) {
 
 		try {
+			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 
 			NodeRef activityListNodeRef = getActivityList(entityNodeRef);
 
@@ -497,6 +510,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 			}
 		} catch (JSONException e) {
 			logger.error(e, e);
+		} finally {
+			policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 		}
 		return false;
 	}
@@ -564,7 +579,6 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		return null;
 	}
 
-
 	@Override
 	public void cleanActivities() {
 
@@ -606,7 +620,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 									activitiesByType.get(activity.getActivityType()).add(activityListItemNodeRef);
 									users.add(activity.getUserId());
 								}
-								
+
 								// Delete Report/Formulation
 								if (nbrActivity > MAX_PAGE) {
 									if (activitiesByType.containsKey(ActivityType.Formulation)) {
@@ -626,7 +640,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 								// Group by week/month/day
 								int[] groupTime = { Calendar.WEEK_OF_YEAR, Calendar.MONTH, Calendar.DAY_OF_WEEK };
-								for (int i = 0; i < groupTime.length && nbrActivity > MAX_PAGE; i++) {
+								for (int i = 0; (i < groupTime.length) && (nbrActivity > MAX_PAGE); i++) {
 
 									if (activitiesByType.containsKey(ActivityType.Comment)) {
 										nbrActivity = activitiesByType.get(ActivityType.Comment).size();
@@ -704,7 +718,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					// Delete ignored Activity
 					ActivityListDataItem firstDeletedActivity = alfrescoRepository.findOne(deletedNodes.get(0));
 					ActivityListDataItem activity = new ActivityListDataItem();
-					
+
 					// Group deleted activities
 					activity.setParentNodeRef(getActivityList(entityNodeRef));
 					activity.setActivityData(firstDeletedActivity.getActivityData());
