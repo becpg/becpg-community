@@ -54,6 +54,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.DataListModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.entity.EntityDictionaryService;
@@ -290,6 +291,23 @@ public class EntityListValuePlugin implements ListValuePlugin {
 				} else if (extras.get("itemId") != null) {
 					itemIdNodeRef = new NodeRef(extras.get("itemId"));
 					entityNodeRef = nodeService.getPrimaryParent(itemIdNodeRef).getParentRef();
+				} else if(extras.get("list") != null){
+					
+					NodeRef hierarchyListNode = new NodeRef((String) props.get("nodeRef"));
+					NodeRef dataListNode = null;
+					
+					if(hierarchyListNode != null){
+						dataListNode = nodeService.getChildByName(hierarchyListNode, BeCPGModel.ASSOC_ENTITYLISTS, "DataLists");
+					}
+					
+					logger.debug("DataList node: "+dataListNode);
+					if(dataListNode != null){
+						entityNodeRef = nodeService.getChildByName(dataListNode, ContentModel.ASSOC_CONTAINS, extras.get("list"));
+					}
+					
+					logger.debug("Found dataList, node = "+entityNodeRef);
+					
+					
 				}
 				if (entityNodeRef != null) {
 					path = nodeService.getPath(entityNodeRef).toPrefixString(namespaceService);
