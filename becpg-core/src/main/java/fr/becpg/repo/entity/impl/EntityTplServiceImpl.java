@@ -74,7 +74,6 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.repository.model.Synchronisable;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
-
 @Service("entityTplService")
 public class EntityTplServiceImpl implements EntityTplService {
 
@@ -115,7 +114,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 	@Autowired
 	private EntityTplPlugin[] entityTplPlugins;
-	
+
 	@Autowired
 	private FileFolderService fileFolderService;
 
@@ -142,7 +141,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 		properties.put(BeCPGModel.PROP_ENTITY_TPL_IS_DEFAULT, isDefault);
 
 		NodeRef entityTplNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, entityTplName);
-		//#1911 do not update existing templates
+		// #1911 do not update existing templates
 		if (entityTplNodeRef == null) {
 			logger.debug("Creating a new entity template: " + entityTplName);
 			entityTplNodeRef = nodeService
@@ -383,28 +382,36 @@ public class EntityTplServiceImpl implements EntityTplService {
 							}
 
 						}
-						
-						//synchronize folders
-						//clean empty folders
-						for(FileInfo folder : fileFolderService.listFolders(entityNodeRef)){           							
-							logger.debug("Synchro, checking empty folder "+folder.getName()+" of node "+nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME)+", template = "+nodeService.getProperty(tplNodeRef, ContentModel.PROP_NAME));
-							if(fileFolderService.list(folder.getNodeRef()).size() == 0){
+
+						// synchronize folders
+						// clean empty folders
+						for (FileInfo folder : fileFolderService.listFolders(entityNodeRef)) {
+							if (logger.isDebugEnabled()) {
+								logger.debug("Synchro, checking empty folder " + folder.getName() + " of node "
+										+ nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + ", template = "
+										+ nodeService.getProperty(tplNodeRef, ContentModel.PROP_NAME));
+							}
+							if (fileFolderService.list(folder.getNodeRef()).size() == 0) {
 								fileFolderService.delete(folder.getNodeRef());
 							}
 						}
-			
-						
-						//copy folders of template
+
+						// copy folders of template
 						List<AssociationRef> products = nodeService.getSourceAssocs(tplNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
 						boolean exists = products.stream().anyMatch(assoc -> assoc.getSourceRef().equals(entityNodeRef));
-						
-						if(exists){
-							for(FileInfo folder : fileFolderService.listFolders(tplNodeRef)){
-								logger.debug("Synchro, copying folder "+folder.getName()+" to node "+nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME)+", template = "+nodeService.getProperty(tplNodeRef, ContentModel.PROP_NAME));
+
+						if (exists) {
+							for (FileInfo folder : fileFolderService.listFolders(tplNodeRef)) {
+								if (logger.isDebugEnabled()) {
+									logger.debug("Synchro, copying folder " + folder.getName() + " to node "
+											+ nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + ", template = "
+											+ nodeService.getProperty(tplNodeRef, ContentModel.PROP_NAME));
+								}
 								try {
 									fileFolderService.copy(folder.getNodeRef(), entityNodeRef, null);
 								} catch (Exception e) {
-									logger.warn("Unable to synchronize folder "+folder.getName()+" of node "+entityNodeRef+": "+e.getMessage());
+									logger.warn(
+											"Unable to synchronize folder " + folder.getName() + " of node " + entityNodeRef + ": " + e.getMessage());
 								}
 							}
 						}
@@ -469,7 +476,6 @@ public class EntityTplServiceImpl implements EntityTplService {
 								policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 								policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_VERSIONABLE);
 								policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-								
 
 								batchCallBack.run(entityNodeRef);
 
@@ -489,7 +495,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 			}
 
-		} , false, true);
+		}, false, true);
 
 		if (logger.isInfoEnabled()) {
 			watch.stop();
@@ -516,8 +522,6 @@ public class EntityTplServiceImpl implements EntityTplService {
 	public void synchronizeEntity(NodeRef entityNodeRef, NodeRef entityTplNodeRef) {
 		if (entityTplNodeRef != null) {
 
-			
-			
 			StopWatch watch = null;
 			if (logger.isDebugEnabled()) {
 				watch = new StopWatch();
