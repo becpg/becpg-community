@@ -166,6 +166,16 @@
 					<show id="bcpg:parentLevel" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:parentLevel">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/allLinkedvalue
+							</control-param>
+							<control-param name="urlParamsToPass">list
+							</control-param>
+						</control>
+					</field>
+				</appearance>
 			</form>
 
 			<form id="datagrid">
