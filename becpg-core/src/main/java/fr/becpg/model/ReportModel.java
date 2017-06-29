@@ -45,6 +45,16 @@ public class ReportModel {
 	"reportTplFormat");
 	public static final QName PROP_REPORT_TPL_IS_DISABLED = QName.createQName(REPORT_URI,
 			"reportTplIsDisabled");
+	
+	public static final QName PROP_REPORT_TPL_ITERATION_PARAMETER = QName.createQName(REPORT_URI,
+			"reportTplIterationParameter");
+	
+	public static final QName PROP_REPORT_TEXT_PARAMETERS = QName.createQName(REPORT_URI,
+			"reportTextParameters");
+	
+	public static final QName PROP_REPORT_PARAMETERS = QName.createQName(REPORT_URI,
+			"reportParameters");
+
 		
 	// reportEntity
 	public static final QName ASPECT_REPORT_ENTITY = QName.createQName(REPORT_URI,
@@ -71,6 +81,9 @@ public class ReportModel {
 			"reportTplsAspect");
 	public static final QName ASSOC_REPORT_TEMPLATES = QName.createQName(REPORT_URI,
 			"reportTpls");
+
+	public static final QName PROP_REPORT_IS_DEFAULT =  QName.createQName(REPORT_URI,
+	"reportIsDefault");;
 
 	
 	
