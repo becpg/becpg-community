@@ -9,8 +9,6 @@ import org.springframework.stereotype.Service;
 import fr.becpg.repo.activity.data.ActivityListDataItem;
 import fr.becpg.repo.activity.data.ActivityType;
 import fr.becpg.repo.helper.AttributeExtractorService;
-import fr.becpg.repo.repository.AlfrescoRepository;
-import fr.becpg.repo.repository.RepositoryEntity;
 
 @Service
 public class EntityActivityStateListener implements EntityActivityListener {
