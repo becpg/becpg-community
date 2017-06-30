@@ -14,28 +14,23 @@ import fr.becpg.repo.importer.ImportFileReader;
 
 public class ImportCSVFileReader implements ImportFileReader {
 
-
-	
 	private List<String[]> lines = null;
 
-
-	public ImportCSVFileReader(InputStream is, Charset charset, char separator) throws IOException{
-		CSVReader csvReader = new CSVReader(new InputStreamReader(new BOMInputStream(is,false), charset), separator);
-		lines = csvReader.readAll();
+	public ImportCSVFileReader(InputStream is, Charset charset, char separator) throws IOException {
+		try (CSVReader csvReader = new CSVReader(new InputStreamReader(new BOMInputStream(is, false), charset), separator)) {
+			lines = csvReader.readAll();
+		}
 	}
-
-
 
 	public List<String[]> getLines() {
 		return lines;
 	}
 
-
 	@Override
 	public String[] getLineAt(int importIndex) {
 		String[] line = null;
 
-		if (lines != null && importIndex < lines.size()) {
+		if ((lines != null) && (importIndex < lines.size())) {
 			line = lines.get(importIndex);
 		}
 
@@ -47,26 +42,21 @@ public class ImportCSVFileReader implements ImportFileReader {
 		return lines.size();
 	}
 
-
 	@Override
 	public void reportError(int index, String errorMsg, int columnIdx) {
 		// DO nothing for CSV
 	}
 
-
 	@Override
 	public void writeErrorInFile(ContentWriter writer) {
 		// DO nothing for CSV
-		
+
 	}
-
-
 
 	@Override
 	public void reportSuccess(int index, int columnIdx) {
 		// DO nothing for CSV
-		
+
 	}
-	
-	
+
 }
