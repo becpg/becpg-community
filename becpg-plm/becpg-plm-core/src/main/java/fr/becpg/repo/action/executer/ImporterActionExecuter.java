@@ -4,7 +4,6 @@
 package fr.becpg.repo.action.executer;
 
 import java.io.PrintWriter;
-import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.Calendar;
 import java.util.HashSet;
