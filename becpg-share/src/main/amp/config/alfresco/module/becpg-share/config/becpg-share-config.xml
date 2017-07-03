@@ -181,7 +181,7 @@
 	<!-- Define elements that are bulk editable -->
 	<config evaluator="string-compare" condition="bulk-edit">
 		<itemTypes>
-			<itemType name="cm:content" />
+			<itemType name="cm:content" editSelectedFormId="bulk-edit" />
 		</itemTypes>
 	</config>
 	

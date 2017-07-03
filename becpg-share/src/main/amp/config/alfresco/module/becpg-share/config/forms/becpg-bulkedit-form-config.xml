@@ -36,6 +36,8 @@
 					<show id="cm:name" />
 					<show force="true" id="cm:title" />
 					<show force="true" id="cm:description" />
+					<show force="true" id="cm:from" />
+					<show force="true" id="cm:to" />
 				</field-visibility>
 			</form>
 		</forms>
