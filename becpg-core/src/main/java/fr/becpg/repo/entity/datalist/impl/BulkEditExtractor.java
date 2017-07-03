@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2016 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2017 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.entity.datalist.impl;
@@ -20,6 +20,7 @@ package fr.becpg.repo.entity.datalist.impl;
 import java.util.Date;
 import java.util.List;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.apache.commons.logging.Log;
@@ -27,21 +28,22 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.DataListPagination;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
- * 
+ *
  * @author matthieu
- * 
+ *
  */
 public class BulkEditExtractor extends SimpleExtractor {
 
 	private final String BULK_EDIT_NAME = "bulk-edit";
 
 	private NamespaceService namespaceService;
-	
+
 	private final Log logger = LogFactory.getLog(BulkEditExtractor.class);
 
 	public void setNamespaceService(NamespaceService namespaceService) {
@@ -71,51 +73,60 @@ public class BulkEditExtractor extends SimpleExtractor {
 	@Override
 	protected List<NodeRef> getListNodeRef(DataListFilter dataListFilter, DataListPagination pagination) {
 
-		if(dataListFilter.getEntityNodeRefs()!=null &&
-				dataListFilter.getEntityNodeRefs().size()>1){
-			return dataListFilter.getEntityNodeRefs();
-		}
-		
-		List<NodeRef> results;
+		List<NodeRef> results = paginatedSearchCache.getSearchResults(pagination.getQueryExecutionId());
 
-		if(logger.isDebugEnabled()){
-			logger.debug("Getting bulk-edit results for :"+dataListFilter.toString());
-		}
-		
-		
-		BeCPGQueryBuilder queryBuilder = dataListFilter.getSearchQuery();
-		
+		if (results == null) {
 
-		// Look for path
-		if (dataListFilter.getFilterId().equals(DataListFilter.NODE_PATH_FILTER)) {
-			String path = nodeService.getPath(new NodeRef(dataListFilter.getFilterData())).toPrefixString(namespaceService);
-			if(logger.isDebugEnabled()){
-				logger.debug("Getting bulk-edit results  in path:"+path);
-			}
-			
-			queryBuilder.inPath(path+"/");
-		}
-		
-		
-		try {
-			if (dataListFilter.getExtraParams() != null && dataListFilter.getCriteriaMap() != null) {
-				JSONObject jsonObject = new JSONObject(dataListFilter.getExtraParams());
-				if (jsonObject != null && jsonObject.has("searchTerm")) {
-					String searchTerm = (String) jsonObject.get("searchTerm");
-					if(searchTerm!=null && searchTerm.length()>0){
-						queryBuilder.andFTSQuery(searchTerm);
-					}
+			if ((dataListFilter.getEntityNodeRefs() != null) && (dataListFilter.getEntityNodeRefs().size() > 1)) {
+				results = dataListFilter.getEntityNodeRefs();
+			} else {
+
+				if (logger.isDebugEnabled()) {
+					logger.debug("Getting bulk-edit results for :" + dataListFilter.toString());
 				}
+
+				BeCPGQueryBuilder queryBuilder = dataListFilter.getSearchQuery();
+
+
+                                
+				if(ContentModel.TYPE_CONTENT.equals(dataListFilter.getDataType())){
+					queryBuilder.excludeSearch();
+				}
+				
+
+				// Look for path
+				if (dataListFilter.getFilterId().equals(DataListFilter.NODE_PATH_FILTER)) {
+					String path = nodeService.getPath(new NodeRef(dataListFilter.getFilterData())).toPrefixString(namespaceService);
+					if (logger.isDebugEnabled()) {
+						logger.debug("Getting bulk-edit results  in path:" + path);
+					}
+
+					queryBuilder.inPath(path + "/");
+				}
+
+				try {
+					if ((dataListFilter.getExtraParams() != null) && (dataListFilter.getCriteriaMap() != null)) {
+						JSONObject jsonObject = new JSONObject(dataListFilter.getExtraParams());
+						if ((jsonObject != null) && jsonObject.has("searchTerm")) {
+							String searchTerm = (String) jsonObject.get("searchTerm");
+							if ((searchTerm != null) && (searchTerm.length() > 0)) {
+								queryBuilder.andFTSQuery(searchTerm);
+							}
+						}
+					}
+				} catch (JSONException e) {
+					logger.error(e);
+				}
+
+				results = advSearchService.queryAdvSearch(dataListFilter.getDataType(), queryBuilder, dataListFilter.getCriteriaMap(),
+						pagination.getMaxResults());
 			}
-		} catch (JSONException e) {
-			logger.error(e);
+
+			pagination.setQueryExecutionId(paginatedSearchCache.storeSearchResults(results));
+
+		} else if (logger.isDebugEnabled()) {
+			logger.debug("Retrieve results from queryId for pagination :" + pagination.getQueryExecutionId());
 		}
-
-		results = advSearchService.queryAdvSearch(dataListFilter.getDataType(), queryBuilder, dataListFilter.getCriteriaMap(),
-				pagination.getMaxResults());
-
-		
-
 		return pagination.paginate(results);
 
 	}
