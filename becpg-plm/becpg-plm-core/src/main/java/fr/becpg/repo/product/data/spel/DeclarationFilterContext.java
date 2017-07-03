@@ -48,4 +48,11 @@ public class DeclarationFilterContext {
 		return ingListDataItem;
 	}
 
+	@Override
+	public String toString() {
+		return "DeclarationFilterContext [compoListDataItem=" + compoListDataItem + ", ingListDataItem=" + ingListDataItem + "]";
+	}
+
+	
+	
 }

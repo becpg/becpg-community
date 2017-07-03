@@ -13,6 +13,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
@@ -111,27 +112,40 @@ public class ExcelHelper {
 	}
 
 	public static int appendExcelHeader(List<AttributeExtractorStructure> fields, String prefix, String titlePrefix, Row headerRow, Row labelRow,
-			XSSFCellStyle style, int cellnum, ExcelFieldTitleProvider titleProvider, List<Locale> supportedLocales) {
+			XSSFCellStyle style, XSSFSheet sheet , int cellnum, ExcelFieldTitleProvider titleProvider, List<Locale> supportedLocales) {
+		
+	
+		
+		
 		if (fields != null) {
 			for (AttributeExtractorStructure field : fields) {
 				if (field.isNested()) {
 
-					cellnum = appendExcelHeader(field.getChildrens(), field.getFieldName(), titleProvider.getTitle(field), headerRow, labelRow, style,
+					cellnum = appendExcelHeader(field.getChildrens(), field.getFieldName(), titleProvider.getTitle(field), headerRow, labelRow, style, sheet,
 							cellnum, titleProvider, supportedLocales);
 				} else {
 
 					if ((supportedLocales != null) && !supportedLocales.isEmpty() && (field.getFieldDef() instanceof PropertyDefinition)
 							&& DataTypeDefinition.MLTEXT.toString().equals(((PropertyDefinition) field.getFieldDef()).getDataType().toString())) {
 
+						
+						
+						int groupFirstColumn = cellnum;
+						
 						for (Locale locale : supportedLocales) {
 
 							Cell cell = headerRow.createCell(cellnum);
+							
 
 							if (prefix != null) {
 								cell.setCellValue(
 										prefix + "_" + field.getFieldDef().getName().toPrefixString() + "_" + MLTextHelper.localeKey(locale));
 							} else {
-								cell.setCellValue(field.getFieldDef().getName().toPrefixString() + "_" + MLTextHelper.localeKey(locale));
+								if (MLTextHelper.isDefaultLocale(locale)) {
+									cell.setCellValue(field.getFieldDef().getName().toPrefixString());
+								} else {
+									cell.setCellValue(field.getFieldDef().getName().toPrefixString() + "_" + MLTextHelper.localeKey(locale));
+								}
 							}
 
 							cell = labelRow.createCell(cellnum++);
@@ -143,6 +157,8 @@ public class ExcelHelper {
 							cell.setCellStyle(style);
 
 						}
+						
+						sheet.groupColumn(groupFirstColumn, cellnum-1);
 
 					} else {
 
