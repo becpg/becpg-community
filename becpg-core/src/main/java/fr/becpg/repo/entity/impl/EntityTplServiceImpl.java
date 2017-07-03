@@ -74,7 +74,6 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.repository.model.Synchronisable;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
-
 @Service("entityTplService")
 public class EntityTplServiceImpl implements EntityTplService {
 
@@ -115,9 +114,6 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 	@Autowired
 	private EntityTplPlugin[] entityTplPlugins;
-	
-	@Autowired
-	private FileFolderService fileFolderService;
 
 	@Autowired
 	private FileFolderService fileFolderService;
@@ -267,17 +263,6 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 		}
 		return null;
-
-		// TODO
-		/*
-		 * return
-		 * BeCPGQueryBuilder.createQuery().ofExactType(nodeType).withAspect(
-		 * BeCPGModel.ASPECT_ENTITY_TPL)
-		 * .andPropEquals(BeCPGModel.PROP_ENTITY_TPL_ENABLED,
-		 * Boolean.TRUE.toString())
-		 * .andPropEquals(BeCPGModel.PROP_ENTITY_TPL_IS_DEFAULT,
-		 * Boolean.TRUE.toString()).excludeVersions().singleValue();
-		 */
 	}
 
 	@Override
@@ -386,40 +371,13 @@ public class EntityTplServiceImpl implements EntityTplService {
 							}
 
 						}
-						
-						//synchronize folders
-						//clean empty folders
-						for(FileInfo folder : fileFolderService.listFolders(entityNodeRef)){           							
-							logger.debug("Synchro, checking empty folder "+folder.getName()+" of node "+nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME)+", template = "+nodeService.getProperty(tplNodeRef, ContentModel.PROP_NAME));
-							if(fileFolderService.list(folder.getNodeRef()).size() == 0){
-								fileFolderService.delete(folder.getNodeRef());
-							}
-						}
-			
-						
-						//copy folders of template
-						List<AssociationRef> products = nodeService.getSourceAssocs(tplNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
-						boolean exists = products.stream().anyMatch(assoc -> assoc.getSourceRef().equals(entityNodeRef));
-						
-						if(exists){
-							for(FileInfo folder : fileFolderService.listFolders(tplNodeRef)){
-								logger.debug("Synchro, copying folder "+folder.getName()+" to node "+nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME)+", template = "+nodeService.getProperty(tplNodeRef, ContentModel.PROP_NAME));
-								try {
-									fileFolderService.copy(folder.getNodeRef(), entityNodeRef, null);
-								} catch (Exception e) {
-									logger.warn("Unable to synchronize folder "+folder.getName()+" of node "+entityNodeRef+": "+e.getMessage());
-								}
-							}
-						}
 
 						// synchronize folders
 						// clean empty folders
 						for (FileInfo folder : fileFolderService.listFolders(entityNodeRef)) {
-							if (logger.isDebugEnabled()) {
-								logger.debug("Synchro, checking empty folder " + folder.getName() + " of node "
-										+ nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + ", template = "
-										+ nodeService.getProperty(tplNodeRef, ContentModel.PROP_NAME));
-							}
+							logger.debug("Synchro, checking empty folder " + folder.getName() + " of node "
+									+ nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + ", template = "
+									+ nodeService.getProperty(tplNodeRef, ContentModel.PROP_NAME));
 							if (fileFolderService.list(folder.getNodeRef()).size() == 0) {
 								fileFolderService.delete(folder.getNodeRef());
 							}
@@ -431,11 +389,9 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 						if (exists) {
 							for (FileInfo folder : fileFolderService.listFolders(tplNodeRef)) {
-								if (logger.isDebugEnabled()) {
-									logger.debug("Synchro, copying folder " + folder.getName() + " to node "
-											+ nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + ", template = "
-											+ nodeService.getProperty(tplNodeRef, ContentModel.PROP_NAME));
-								}
+								logger.debug("Synchro, copying folder " + folder.getName() + " to node "
+										+ nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + ", template = "
+										+ nodeService.getProperty(tplNodeRef, ContentModel.PROP_NAME));
 								try {
 									fileFolderService.copy(folder.getNodeRef(), entityNodeRef, null);
 								} catch (Exception e) {
@@ -446,7 +402,6 @@ public class EntityTplServiceImpl implements EntityTplService {
 						}
 
 					});
-
 				}
 			} finally {
 				lock.unlock();
