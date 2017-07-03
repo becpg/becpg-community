@@ -1341,7 +1341,7 @@ public class LabelingFormulaContext {
 
 				return exp.getValue(dataContext, Boolean.class);
 			} catch (SpelParseException | SpelEvaluationException e) {
-				logger.error("Cannot evaluate formula :" + formula, e);
+				logger.error("Cannot evaluate formula :" + formula +" on "+declarationFilterContext.toString() , e);
 			}
 		}
 		return true;
