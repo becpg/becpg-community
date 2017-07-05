@@ -1223,6 +1223,15 @@ public class LabelingFormulaContext {
 				if (IngTypeItem.DEFAULT_GROUP.equals(b.getKey())) {
 					return 1;
 				}
+				
+				
+				if (IngTypeItem.LAST_GROUP.equals(a.getKey().getLvValue())){
+					return 1;
+				}
+				
+				if (IngTypeItem.LAST_GROUP.equals(b.getKey().getLvValue())){
+					return -1;
+				}
 
 				if (useVolume) {
 					return b.getKey().getVolume().compareTo(a.getKey().getVolume());
