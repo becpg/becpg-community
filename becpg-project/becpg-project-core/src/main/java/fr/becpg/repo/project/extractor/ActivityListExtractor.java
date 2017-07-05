@@ -76,27 +76,29 @@ public class ActivityListExtractor extends SimpleExtractor {
 		}
 
 		return ret;
-
 	}
 	
 	protected void postLookupActivity(Map<String, Object> ret, Map<QName, Serializable> properties, AttributeExtractorMode mode) {
 		ret.put("prop_pjt_alUserId", extractPerson((String) properties.get(ProjectModel.PROP_ACTIVITYLIST_USERID)));
 		
-		JSONObject postLookup = projectActivityService.postActivityLookUp(
-				ActivityType.valueOf((String) properties.get(ProjectModel.PROP_ACTIVITYLIST_TYPE)),
-				(String)properties.get(ProjectModel.PROP_ACTIVITYLIST_DATA));
-		
-		if(AttributeExtractorMode.JSON.equals(mode)){
-		 ret.put("prop_pjt_alData", postLookup);
-		} else {
-			 try {
-				 if(postLookup.has("content")){
-					 ret.put("prop_pjt_alData", postLookup.get("content"));
-				 } else {
-					 ret.put("prop_pjt_alData", "");
-				 }
-			} catch (JSONException e) {
-				logger.error(e,e);
+		if((String) properties.get(ProjectModel.PROP_ACTIVITYLIST_TYPE)!=null){
+			
+			JSONObject postLookup = projectActivityService.postActivityLookUp(
+					ActivityType.valueOf((String) properties.get(ProjectModel.PROP_ACTIVITYLIST_TYPE)),
+					(String)properties.get(ProjectModel.PROP_ACTIVITYLIST_DATA));
+			
+			if(AttributeExtractorMode.JSON.equals(mode)){
+			 ret.put("prop_pjt_alData", postLookup);
+			} else {
+				 try {
+					 if(postLookup.has("content")){
+						 ret.put("prop_pjt_alData", postLookup.get("content"));
+					 } else {
+						 ret.put("prop_pjt_alData", "");
+					 }
+				} catch (JSONException e) {
+					logger.error(e,e);
+				}
 			}
 		}
 		
