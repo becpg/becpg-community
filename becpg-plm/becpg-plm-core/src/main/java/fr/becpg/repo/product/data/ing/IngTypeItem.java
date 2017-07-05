@@ -31,10 +31,14 @@ public class IngTypeItem extends AbstractLabelingComponent{
 	private static final long serialVersionUID = 182156222574786727L;
 
     public static final IngTypeItem DEFAULT_GROUP = new IngTypeItem();
+
+	public static final String LAST_GROUP = "LastGroup";
 	
 	private Double decThreshold;
 	
 	private String lvValue;
+
+	private String lvCode;
 	
 	
 	public IngTypeItem(){
@@ -48,6 +52,16 @@ public class IngTypeItem extends AbstractLabelingComponent{
 	}
 
 	
+	@AlfProp
+	@AlfQname(qname = "bcpg:lvCode")
+	public String getLvCode() {
+		return lvCode;
+	}
+
+	public void setLvCode(String lvCode) {
+		this.lvCode = lvCode;
+	}
+
 	@AlfProp
 	@AlfQname(qname = "bcpg:lvValue")
 	public String getLvValue() {
