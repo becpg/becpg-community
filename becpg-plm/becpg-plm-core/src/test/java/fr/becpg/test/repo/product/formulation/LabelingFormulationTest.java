@@ -815,6 +815,94 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 			return null;
 		}, false, true);
 	}
+	
+	
+	@Test
+	public void testThresholdRules() throws Exception {
+
+		final NodeRef finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			logger.debug("/*-- Create finished product --*/");
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName("Produit fini 1");
+			finishedProduct.setLegalName("Legal Produit fini 1");
+			finishedProduct.setUnit(ProductUnit.kg);
+			finishedProduct.setQty(4d);
+			finishedProduct.setDensity(1d);
+			List<CompoListDataItem> compoList = new ArrayList<>();
+
+			compoList.add(new CompoListDataItem(null, null, null, 10d, CompoListUnit.kg, 0d, DeclarationType.DoNotDetails, rawMaterial7NodeRef));
+			compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+
+			Map<QName, Serializable> props = new HashMap<>();
+			props.put(PLMModel.PROP_ING_TYPE_V2, ingType2);
+			nodeService.addAspect(rawMaterial7NodeRef, PLMModel.ASPECT_ING_TYPE, props);
+
+			finishedProduct.getCompoListView().setCompoList(compoList);
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+		}, false, true);
+
+		// Declare
+		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
+
+		labelingRuleList.add(new LabelingRuleListDataItem("Pref2", "ingDefaultFormat = \"{0} {1,number,0.#%}\"", LabelingRuleType.Prefs));
+		labelingRuleList
+				.add(new LabelingRuleListDataItem("Pref3", "groupDefaultFormat = \"<b>{0} ({1,number,0.#%}):</b> {2}\"", LabelingRuleType.Prefs));
+		labelingRuleList.add(new LabelingRuleListDataItem("Pref4", "detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs));
+		labelingRuleList.add(new LabelingRuleListDataItem("Pref5", "ingTypeDefaultFormat = \"{0}: {2};\"", LabelingRuleType.Prefs));
+		labelingRuleList.add(new LabelingRuleListDataItem("Pref6", "subIngsDefaultFormat = \"{0} ({2})\"", LabelingRuleType.Prefs));
+
+		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
+		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format, null, null));
+		
+		labelingRuleList.add(new LabelingRuleListDataItem("Threshold", "6.2", LabelingRuleType.DeclareThreshold, Arrays.asList(ing2), null));
+		
+
+		checkILL(finishedProductNodeRef1, labelingRuleList, "epices french: legal Raw material 7 90,9%;, ing1 french 3%",
+				Locale.FRENCH);
+
+		
+		labelingRuleList = new ArrayList<>();
+
+		labelingRuleList.add(new LabelingRuleListDataItem("Pref2", "ingDefaultFormat = \"{0} {1,number,0.#%}\"", LabelingRuleType.Prefs));
+		labelingRuleList
+				.add(new LabelingRuleListDataItem("Pref3", "groupDefaultFormat = \"<b>{0} ({1,number,0.#%}):</b> {2}\"", LabelingRuleType.Prefs));
+		labelingRuleList.add(new LabelingRuleListDataItem("Pref4", "detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs));
+		labelingRuleList.add(new LabelingRuleListDataItem("Pref5", "ingTypeDefaultFormat = \"{0}: {2};\"", LabelingRuleType.Prefs));
+		labelingRuleList.add(new LabelingRuleListDataItem("Pref6", "subIngsDefaultFormat = \"{0} ({2})\"", LabelingRuleType.Prefs));
+
+		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
+		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format, null, null));
+		
+		labelingRuleList.add(new LabelingRuleListDataItem("Threshold", "6.0", LabelingRuleType.DeclareThreshold, Arrays.asList(ing2), null));
+		
+
+		checkILL(finishedProductNodeRef1, labelingRuleList, "epices french: legal Raw material 7 90,9%;, ing2 french 6,1%, ing1 french 3%",
+				Locale.FRENCH);
+		
+		labelingRuleList = new ArrayList<>();
+
+		labelingRuleList.add(new LabelingRuleListDataItem("Pref2", "ingDefaultFormat = \"{0} {1,number,0.#%}\"", LabelingRuleType.Prefs));
+		labelingRuleList
+				.add(new LabelingRuleListDataItem("Pref3", "groupDefaultFormat = \"<b>{0} ({1,number,0.#%}):</b> {2}\"", LabelingRuleType.Prefs));
+		labelingRuleList.add(new LabelingRuleListDataItem("Pref4", "detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs));
+		labelingRuleList.add(new LabelingRuleListDataItem("Pref5", "ingTypeDefaultFormat = \"{0}: {2};\"", LabelingRuleType.Prefs));
+		labelingRuleList.add(new LabelingRuleListDataItem("Pref6", "subIngsDefaultFormat = \"{0} ({2})\"", LabelingRuleType.Prefs));
+
+		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
+		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format, null, null));
+		
+		labelingRuleList.add(new LabelingRuleListDataItem("Threshold", "6.2", LabelingRuleType.DeclareThreshold,null, null));
+		
+
+		checkILL(finishedProductNodeRef1, labelingRuleList, "epices french: legal Raw material 7 90,9%;",
+				Locale.FRENCH);
+		
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			nodeService.removeAspect(rawMaterial7NodeRef, PLMModel.ASPECT_ING_TYPE);
+			return null;
+		}, false, true);
+	}
 
 	@Test
 	public void testAggregateAndRename() throws Exception {

@@ -355,13 +355,13 @@ public class LabelingFormulaContext {
 	private class RenameRule {
 		MLText mlText;
 		MLText pluralMlText;
-		
+
 		Set<Locale> locales = new HashSet<>();
 
 		public RenameRule(MLText mlText, MLText pluralMlText, List<String> locales) {
 			this.mlText = mlText;
 			this.pluralMlText = pluralMlText;
-			
+
 			if (locales != null) {
 				for (String tmp : locales) {
 					this.locales.add(MLTextHelper.parseLocale(tmp));
@@ -375,18 +375,18 @@ public class LabelingFormulaContext {
 
 		public String getClosestValue(Locale locale, boolean plural) {
 			String ret = null;
-			
-			if(plural && pluralMlText!=null && ! pluralMlText.isEmpty()){
+
+			if (plural && (pluralMlText != null) && !pluralMlText.isEmpty()) {
 				ret = MLTextHelper.getClosestValue(pluralMlText, locale);
 			}
 
-			if(ret==null || ret.isEmpty()){
-				 ret =  MLTextHelper.getClosestValue(mlText, locale) ;
+			if ((ret == null) || ret.isEmpty()) {
+				ret = MLTextHelper.getClosestValue(mlText, locale);
 			}
-			
+
 			return ret;
 		}
-			
+
 	}
 
 	private final Map<NodeRef, RenameRule> renameRules = new HashMap<>();
@@ -421,7 +421,7 @@ public class LabelingFormulaContext {
 				}
 			}
 			if (mlText != null) {
-				renameRules.put(component, new RenameRule(mlText,pluralMlText, locales));
+				renameRules.put(component, new RenameRule(mlText, pluralMlText, locales));
 			}
 		}
 		return true;
@@ -440,7 +440,7 @@ public class LabelingFormulaContext {
 		if (renameRules.containsKey(lblComponent.getNodeRef())) {
 			RenameRule renameRule = renameRules.get(lblComponent.getNodeRef());
 			if (renameRule.matchLocale(I18NUtil.getLocale())) {
-				ingLegalName = renameRule.getClosestValue(I18NUtil.getLocale(),false);
+				ingLegalName = renameRule.getClosestValue(I18NUtil.getLocale(), false);
 			}
 		}
 
@@ -455,16 +455,16 @@ public class LabelingFormulaContext {
 		if (renameRules.containsKey(lblComponent.getNodeRef())) {
 			RenameRule renameRule = renameRules.get(lblComponent.getNodeRef());
 			if (renameRule.matchLocale(I18NUtil.getLocale())) {
-				ingLegalName = renameRule.getClosestValue(I18NUtil.getLocale(),lblComponent.isPlural());
+				ingLegalName = renameRule.getClosestValue(I18NUtil.getLocale(), lblComponent.isPlural());
 			}
 		} else {
 
 			if (plural && (lblComponent instanceof IngTypeItem)) {
-				if(uncapitalizeLegalName){
+				if (uncapitalizeLegalName) {
 					return uncapitalize(((IngTypeItem) lblComponent).getPluralLegalName(I18NUtil.getLocale()));
 				} else {
 					return ((IngTypeItem) lblComponent).getPluralLegalName(I18NUtil.getLocale());
-			   }
+				}
 			}
 
 			if (showIngCEECode && (lblComponent instanceof IngItem)) {
@@ -710,21 +710,30 @@ public class LabelingFormulaContext {
 			} else {
 
 				DeclarationType type = null;
+				boolean isThreshold = false;
 
 				if (LabelingRuleType.DetailComponents.equals(labeLabelingRuleType)) {
 					type = DeclarationType.Detail;
 				} else if (LabelingRuleType.DoNotDetailsComponents.equals(labeLabelingRuleType)) {
 					type = DeclarationType.DoNotDetails;
+				} else if (LabelingRuleType.DeclareThreshold.equals(labeLabelingRuleType)) {
+					type = DeclarationType.DoNotDeclare;
+					isThreshold = true;
 				} else {
 					type = DeclarationType.valueOf(labeLabelingRuleType.toString());
 				}
 
+				DeclarationFilter declarationFilter = new DeclarationFilter(formula, type, locales);
+				if (isThreshold) {
+					declarationFilter.setThreshold(Double.parseDouble(formula));
+				}
+
 				if ((components != null) && !components.isEmpty()) {
 					for (NodeRef component : components) {
-						nodeDeclarationFilters.put(component, new DeclarationFilter(formula, type, locales));
+						nodeDeclarationFilters.put(component, declarationFilter);
 					}
 				} else {
-					declarationFilters.add(new DeclarationFilter(formula, type, locales));
+					declarationFilters.add(declarationFilter);
 				}
 
 			}
@@ -969,8 +978,33 @@ public class LabelingFormulaContext {
 	}
 
 	private boolean shouldSkip(NodeRef nodeRef, Double qtyPerc) {
-		return !((qtyPerc == null) || (toApplyThresholdItems.contains(nodeRef) && (qtyPerc > qtyPrecisionThreshold))
+
+		boolean shouldSkip = !((qtyPerc == null) || (toApplyThresholdItems.contains(nodeRef) && (qtyPerc > qtyPrecisionThreshold))
 				|| (!toApplyThresholdItems.contains(nodeRef) && (qtyPerc > 0)));
+
+		if (!shouldSkip) {
+
+			Locale currentLocale = I18NUtil.getLocale();
+
+			if (nodeDeclarationFilters.containsKey(nodeRef)) {
+				DeclarationFilter declarationFilter = nodeDeclarationFilters.get(nodeRef);
+				if (declarationFilter.isThreshold() && (qtyPerc < (declarationFilter.getThreshold() / 100d))
+						&& declarationFilter.matchLocale(currentLocale)) {
+					return true;
+				}
+			}
+
+			for (DeclarationFilter declarationFilter : declarationFilters) {
+				if (declarationFilter.isThreshold() && (qtyPerc < (declarationFilter.getThreshold() / 100d))
+						&& declarationFilter.matchLocale(currentLocale)) {
+					return true;
+				}
+
+			}
+
+		}
+
+		return shouldSkip;
 	}
 
 	public String createJsonLog(boolean mergedLabeling) {
@@ -1001,7 +1035,7 @@ public class LabelingFormulaContext {
 			}
 
 			tree.put("name", getName(component));
-			tree.put("legal", getLegalIngName(component,false));
+			tree.put("legal", getLegalIngName(component, false));
 			if ((component.getVolume() != null) && (totalVol != null) && (totalVol > 0)) {
 				tree.put("vol", (component.getVolume() / totalVol) * 100);
 			}
@@ -1148,7 +1182,7 @@ public class LabelingFormulaContext {
 							&& matchFormule(declarationFilter.getFormula(), new DeclarationFilterContext())
 							&& declarationFilter.matchLocale(currentLocale)) {
 						break;
-					} else if (DeclarationType.DoNotDeclare.equals(declarationFilter.getDeclarationType())
+					} else if (DeclarationType.DoNotDeclare.equals(declarationFilter.getDeclarationType()) && !declarationFilter.isThreshold()
 							&& matchFormule(declarationFilter.getFormula(), new DeclarationFilterContext())
 							&& declarationFilter.matchLocale(currentLocale)) {
 						ingType = null;
@@ -1223,13 +1257,12 @@ public class LabelingFormulaContext {
 				if (IngTypeItem.DEFAULT_GROUP.equals(b.getKey())) {
 					return 1;
 				}
-				
-				
-				if (IngTypeItem.LAST_GROUP.equals(a.getKey().getLvValue())){
+
+				if (IngTypeItem.LAST_GROUP.equals(a.getKey().getLvValue())) {
 					return 1;
 				}
-				
-				if (IngTypeItem.LAST_GROUP.equals(b.getKey().getLvValue())){
+
+				if (IngTypeItem.LAST_GROUP.equals(b.getKey().getLvValue())) {
 					return -1;
 				}
 

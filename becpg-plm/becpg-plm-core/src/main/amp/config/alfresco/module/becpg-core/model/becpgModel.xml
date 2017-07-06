@@ -208,6 +208,7 @@
 					<value>Group</value>
 					<value>Omit</value>
 					<value>DoNotDeclare</value>
+					<value>DeclareThreshold</value>
 					<value>DoNotDetails</value>
 					<value>Locale</value>
 					<value>Prefs</value>
