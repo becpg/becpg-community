@@ -221,6 +221,7 @@
 					<value>DoNotDetailsComponents</value>
 					<value>Omit</value>
 					<value>DoNotDeclare</value>
+                                        <value>DeclareThreshold</value>
 					<value>Type</value>
 					<value>Render</value>
 					<value>Locale</value>
