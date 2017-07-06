@@ -38,6 +38,8 @@ public class DeclarationFilter {
 
 	private final Set<Locale> locales = new HashSet<>();
 	
+	private Double threshold = null;
+	
 
 	public DeclarationFilter(String formula, DeclarationType declarationType, List<String> locales) {
 		super();
@@ -49,7 +51,20 @@ public class DeclarationFilter {
 			}
 		}
 	}
+	
+	public boolean isThreshold(){
+		return threshold!=null;
+	}
+	
+	
+	public void setThreshold(Double threshold) {
+		this.threshold = threshold;
+	}
+	
 
+	public Double getThreshold() {
+		return threshold;
+	}
 
 	public String getFormula() {
 		return formula;
