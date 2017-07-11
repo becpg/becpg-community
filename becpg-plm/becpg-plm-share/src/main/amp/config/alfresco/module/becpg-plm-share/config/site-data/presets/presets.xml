@@ -128,6 +128,13 @@
             <source-id>user/${userid}/dashboard</source-id>
             <url>/components/dashlets/my-tasks</url>
          </component>
+         <component>
+            <scope>page</scope>
+            <region-id>component-1-2</region-id>
+            <source-id>user/${userid}/dashboard</source-id>
+            <url>/components/dashlets/forum-summary</url>
+         </component>
+         
       </components>
       <pages>
          <page id="user/${userid}/dashboard">
@@ -135,7 +142,7 @@
             <title-id>page.userDashboard.title</title-id>
             <description>Users dashboard page</description>
             <description-id>page.userDashboard.description</description-id>
-            <template-instance>dashboard-1-column</template-instance>
+            <template-instance>dashboard-2-columns-wide-right</template-instance>
             <authentication>user</authentication>
          </page>
       </pages>

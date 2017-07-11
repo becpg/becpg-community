@@ -39,6 +39,11 @@ function main()
       model.node = documentDetails.item.node;
       model.allowMetaDataUpdate = (!documentDetails.item.node.isLocked && documentDetails.item.node.permissions.user["Write"]) || false;
       model.thumbnailUrl= "/share/proxy/alfresco/api/node/" + model.nodeRef.replace(':/','') + "/content/thumbnails/doclib?c=queue&ph=true";
+     if(documentDetails.item.node.properties["cm:modified"]!=null){
+    	 model.thumbnailUrl+="&lastModified=" + documentDetails.item.node.properties["cm:modified"].iso8601;
+     }
+      
+      
       model.displayName =  (model.item.displayName != null) ? model.item.displayName : model.item.fileName;
       activityParameters = getActivityParameters(model.nodeRef, null);
       var count = documentDetails.item.node.properties["fm:commentCount"];

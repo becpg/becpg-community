@@ -345,6 +345,8 @@ YAHOO.Bubbling
              return productNotifications;
           }
        });
+      
+
 
 
       YAHOO.Bubbling
@@ -490,6 +492,8 @@ YAHOO.Bubbling
             return picker;
          }
       });
+      
+
 
       YAHOO.Bubbling
             .fire(

@@ -145,6 +145,7 @@
 			</associations>
 			<mandatory-aspects>
 				<aspect>bcpg:sortableListAspect</aspect>
+				<aspect>bcpg:effectivityAspect</aspect>
 			</mandatory-aspects>
 		</type>
 	
