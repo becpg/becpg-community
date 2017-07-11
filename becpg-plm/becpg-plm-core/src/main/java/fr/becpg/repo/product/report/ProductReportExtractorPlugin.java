@@ -651,11 +651,11 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				priceBreakEltDetailElt.addAttribute("projectedQtyByKg", Math.round(priceBreakReportData.getProjectedQty())+"");
 				priceBreakEltDetailElt.addAttribute("projectedQty", Math.round(priceBreakReportData.getProjectedQty()/netWeight)+"");
 				
-				priceBreakEltDetailElt.addAttribute("priceListValue",""+priceBreakReportData.getPriceListValue());
-				priceBreakEltDetailElt.addAttribute("priceListUnit",priceBreakReportData.getPriceListUnit());
-				priceBreakEltDetailElt.addAttribute("priceListPurchaseValue",""+priceBreakReportData.getPriceListPurchaseValue());
-				priceBreakEltDetailElt.addAttribute("priceListPrefRank",""+priceBreakReportData.getPriceListPrefRank());
-				priceBreakEltDetailElt.addAttribute("priceListPurchaseUnit",priceBreakReportData.getPriceListPurchaseUnit());
+				priceBreakEltDetailElt.addAttribute(PLMModel.PROP_PRICELIST_VALUE.getLocalName(),""+priceBreakReportData.getPriceListValue());
+				priceBreakEltDetailElt.addAttribute(PLMModel.PROP_PRICELIST_UNIT.getLocalName(),priceBreakReportData.getPriceListUnit());
+				priceBreakEltDetailElt.addAttribute(PLMModel.PROP_PRICELIST_PURCHASE_QTY.getLocalName(),""+priceBreakReportData.getPriceListPurchaseValue());
+				priceBreakEltDetailElt.addAttribute(PLMModel.PROP_PRICELIST_PREF_RANK.getLocalName(),""+priceBreakReportData.getPriceListPrefRank());
+				priceBreakEltDetailElt.addAttribute(PLMModel.PROP_PRICELIST_PURCHASE_UNIT.getLocalName(),priceBreakReportData.getPriceListPurchaseUnit());
 							
 
 				String suppliers = "";
@@ -782,7 +782,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 				Double purchaseValue = item.getPurchaseValue();
 
-				if (item.getPurchaseUnit() != null) {
+				if (item.getPurchaseUnit() != null && item.getPurchaseUnit() != "") {
 					ProductUnit purchaseUnit = ProductUnit.valueOf(item.getPurchaseUnit());
 
 					if (purchaseValue != null) {
