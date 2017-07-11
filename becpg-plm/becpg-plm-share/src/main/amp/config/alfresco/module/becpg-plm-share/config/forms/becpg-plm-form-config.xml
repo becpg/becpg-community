@@ -6302,6 +6302,8 @@
 					<show id="bcpg:dynamicCharactColumn8" force="true" />
 					<show id="bcpg:dynamicCharactColumn9" force="true" />
 					<show id="bcpg:dynamicCharactColumn10" force="true" />
+					<show id="bcpg:startEffectivity" force="true" />
+					<show id="bcpg:endEffectivity" force="true" />
 					<show id="bcpg:instruction" force="true" />
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
@@ -6347,6 +6349,8 @@
 					<show id="bcpg:compoListYieldPerc" />
 					<show id="bcpg:compoListLossPerc" />
 					<show id="bcpg:compoListDeclType" />
+					<show id="bcpg:startEffectivity" force="true" />
+					<show id="bcpg:endEffectivity" force="true" />
 				</field-visibility>
 			</form>
 		</forms>
@@ -6508,6 +6512,8 @@
 					<show id="bcpg:dynamicCharactColumn8" force="true" />
 					<show id="bcpg:dynamicCharactColumn9" force="true" />
 					<show id="bcpg:dynamicCharactColumn10" force="true" />
+					<show id="bcpg:startEffectivity" force="true" />
+					<show id="bcpg:endEffectivity" force="true" />
 					<show id="bcpg:instruction" force="true" />
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
@@ -6561,6 +6567,8 @@
 					<show id="bcpg:packagingListLossPerc" />
 					<show id="bcpg:packagingListPkgLevel" />
 					<show id="bcpg:packagingListIsMaster" />
+					<show id="bcpg:startEffectivity" force="true" />
+					<show id="bcpg:endEffectivity" force="true" />
 				</field-visibility>
 			</form>
 		</forms>
