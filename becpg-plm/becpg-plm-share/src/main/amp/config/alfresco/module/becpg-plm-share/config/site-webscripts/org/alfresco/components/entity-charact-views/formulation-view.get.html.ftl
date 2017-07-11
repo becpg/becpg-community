@@ -54,7 +54,9 @@
 			</div>
 			<div id="main-view-${el}" class="formulation-view">
 					<div id="full-screen-form" class=" hidden"></div>
-					<@dataGridDashlet dashletName="compoListDashlet" dashletId="compoList-${el}" hideTitle="true" hideToolbar="true" />
+					<@dataGridDashlet dashletName="compoListDashlet" dashletId="compoList-${el}" hideTitle="true" hideToolbar="true" >
+						<div class="effectivityCheckbox" id="${el}-effectivityCheckbox"></div>
+					</@dataGridDashlet>
 					<div class="yui-gd">
 						<div class="yui-u first dynamicCharactList">
 							<@dataGridDashlet  dashletName="dynamicCharactListDashlet"
