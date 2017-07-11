@@ -65,7 +65,7 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy
 
 	@Override
 	public void onCreateAssociation(AssociationRef assocRef) {
-		if (policyBehaviourFilter.isEnabled(BeCPGModel.ASPECT_ENTITY_TPL_REF)) {
+		if (policyBehaviourFilter.isEnabled(BeCPGModel.ASPECT_ENTITY_TPL_REF)  && policyBehaviourFilter.isEnabled(assocRef.getSourceRef(), BeCPGModel.ASPECT_ENTITY_TPL_REF)) {
 
 			NodeRef entityNodeRef = assocRef.getSourceRef();
 
@@ -87,7 +87,7 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy
 	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 
 		for (NodeRef entityNodeRef : pendingNodes) {
-			if (nodeService.exists(entityNodeRef) && !isWorkingCopyOrVersion(entityNodeRef)) {
+			if (nodeService.exists(entityNodeRef) && !isWorkingCopyOrVersion(entityNodeRef) ) {
 				NodeRef entityTplNodeRef = associationService.getTargetAssoc(entityNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
 
 				if (entityTplNodeRef == null) {

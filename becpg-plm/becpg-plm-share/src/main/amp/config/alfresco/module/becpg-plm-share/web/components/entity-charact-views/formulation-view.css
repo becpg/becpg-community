@@ -140,6 +140,20 @@ div.constraintsList .scrollableList {
 }
 
 
+
+.formulation-view  .effectivityCheckbox  span.yui-checkbox-button button
+{
+   background: url("../images/calendar-disabled-20.png") no-repeat 4px 4px;
+}
+
+
+.formulation-view  .effectivityCheckbox span.yui-checkbox-button.yui-checkbox-button-checked button
+{
+   background: url("../images/calendar-20.png") no-repeat 4px 4px;
+}
+
+
+
 /** Full screen form */
 div#full-screen-form {
 	border: 1px solid #CCCCCC;

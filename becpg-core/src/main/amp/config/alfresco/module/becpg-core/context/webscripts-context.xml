@@ -110,6 +110,7 @@
 		<property name="namespaceService" ref="NamespaceService" />
 		<property name="authorityService" ref="authorityService"/>
 		<property name="lockService" ref="lockService" />
+		<property name="effectiveFilterEnabled" value="${beCPG.datalist.effectiveFilterEnabled}"/>
 	</bean>
 
 
