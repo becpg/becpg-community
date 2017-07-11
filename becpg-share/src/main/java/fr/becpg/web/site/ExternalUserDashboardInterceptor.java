@@ -51,11 +51,10 @@ public class ExternalUserDashboardInterceptor extends AbstractWebFrameworkInterc
 	//beCPG
 	private static final Pattern PATTERN_FORBIDDEN_PATH = Pattern.compile("(.*/page/customise-user-dashboard)"
 			+ "|(.*/page/start-workflow)"
-			+ "|(.*/page/site)"
+			+ "|(.*/page/site/.*)"
 			+ "|(.*/page/people-finder)"
 			+ "|(.*/page/start-workflow)"
 			+ "|(.*/page/advsearch)"
-			+ "|(.*/page/site)"
 			+ "|(.*/page/create-content)"
 			+ "|(.*/page/repository)"
 			+ "|(.*/page/documentlibrary)"
@@ -63,7 +62,10 @@ public class ExternalUserDashboardInterceptor extends AbstractWebFrameworkInterc
 			+ "|(.*/page/bulk-edit)"
 			+ "|(.*/page/nc-list)"
 			+ "|(.*/page/model-designer)"
-			+ "|(.*/page/project-list)");
+			+ "|(.*/page/project-list)"
+			+ "|(.*/page/entity-data-lists)"
+			+ "|(.*/page/user/admin/profile)"
+			+ "|(.*/page/context/mine/entity-data-lists)");
 
 	private static final String IS_BECPG_EXTERNAL_USER = "isbeCPGExternalUser";
 
@@ -117,7 +119,7 @@ public class ExternalUserDashboardInterceptor extends AbstractWebFrameworkInterc
 					// still do this by visiting the index page
 				}
 			}
-		} else if((pathInfo != null && (matcher = PATTERN_FORBIDDEN_PATH.matcher(pathInfo)).matches())){
+		} else if((pathInfo != null && (matcher = PATTERN_FORBIDDEN_PATH.matcher(pathInfo)).matches() && !pathInfo.contains("discussions-topicview"))){
 			HttpServletRequest req = MTAuthenticationFilter.getCurrentServletRequest();
 			if (req != null) {
 				try {

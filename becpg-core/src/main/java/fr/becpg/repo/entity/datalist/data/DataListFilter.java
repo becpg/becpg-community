@@ -32,10 +32,11 @@ import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO9075;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 public class DataListFilter {
-	
+
 	public static final String PATH_FILTER = "path";
 
 	public static final String NODE_PATH_FILTER = "nodePath";
@@ -71,8 +72,8 @@ public class DataListFilter {
 	private QName dataType = null;
 
 	private boolean isRepo = true;
-	
-	private boolean guessContainer = false; 
+
+	private boolean guessContainer = false;
 
 	private String siteId = null;
 
@@ -85,6 +86,8 @@ public class DataListFilter {
 	private String sortId = null;
 
 	private String format = null;
+
+	private boolean effectiveFilterOn = false;
 
 	DataListPagination pagination = new DataListPagination();
 
@@ -138,8 +141,7 @@ public class DataListFilter {
 	public void setParentNodeRef(NodeRef parentNodeRef) {
 		this.parentNodeRef = parentNodeRef;
 	}
-	
-	
+
 	public boolean isGuessContainer() {
 		return guessContainer;
 	}
@@ -154,6 +156,14 @@ public class DataListFilter {
 
 	public void setRepo(boolean isRepo) {
 		this.isRepo = isRepo;
+	}
+	
+	public boolean isEffectiveFilterOn() {
+		return effectiveFilterOn;
+	}
+
+	public void setEffectiveFilterOn(boolean effectiveFilterOn) {
+		this.effectiveFilterOn = effectiveFilterOn;
 	}
 
 	public String getSiteId() {
@@ -298,7 +308,7 @@ public class DataListFilter {
 			} else {
 				if (!isRepo && !DataListFilter.NODE_PATH_FILTER.equals(filterId) && !DataListFilter.PATH_FILTER.equals(filterId)) {
 					queryBuilder.inSite(siteId, containerId);
-				} else if(DataListFilter.PATH_FILTER.equals(filterId)){
+				} else if (DataListFilter.PATH_FILTER.equals(filterId)) {
 					queryBuilder.inPath(filterData);
 				}
 				queryBuilder.excludeDefaults();
@@ -320,6 +330,17 @@ public class DataListFilter {
 		Pattern ftsQueryPattern = Pattern.compile("fts\\((.*)\\)");
 
 		queryBuilder.ofType(dataType);
+
+		if (effectiveFilterOn) {
+
+			Calendar startCal = Calendar.getInstance();
+
+			String fromQuery = startCal.get(Calendar.YEAR) + "\\-" + (startCal.get(Calendar.MONTH) + 1) + "\\-" + startCal.get(Calendar.DAY_OF_MONTH);
+			
+			queryBuilder.andBetweenOrNull(BeCPGModel.PROP_START_EFFECTIVITY, "MIN", fromQuery);
+			queryBuilder.andBetweenOrNull(BeCPGModel.PROP_END_EFFECTIVITY,  fromQuery, "MAX");
+			
+		}
 
 		if (filterId != null) {
 
@@ -386,7 +407,7 @@ public class DataListFilter {
 	}
 
 	public boolean isAllFilter() {
-		return (filterId != null) && filterId.equals(ALL_FILTER) && (parentNodeRef != null);
+		return (filterId != null) && filterId.equals(ALL_FILTER) && (parentNodeRef != null) && effectiveFilterOn == false;
 	}
 
 	public boolean isVersionFilter() {
@@ -403,7 +424,7 @@ public class DataListFilter {
 				+ entityNodeRefs + ", parentNodeRef=" + parentNodeRef + ", nodeRef=" + nodeRef + ", criteriaMap=" + criteriaMap + ", sortMap="
 				+ sortMap + ", dataType=" + dataType + ", isRepo=" + isRepo + ", guessContainer=" + guessContainer + ", siteId=" + siteId
 				+ ", containerId=" + containerId + ", filterData=" + filterData + ", extraParams=" + extraParams + ", sortId=" + sortId + ", format="
-				+ format + ", hasWriteAccess=" + hasWriteAccess + "]";
+				+ format + ", effectiveFilterOn=" + effectiveFilterOn + ", pagination=" + pagination + ", hasWriteAccess=" + hasWriteAccess + "]";
 	}
 
 	@Override
