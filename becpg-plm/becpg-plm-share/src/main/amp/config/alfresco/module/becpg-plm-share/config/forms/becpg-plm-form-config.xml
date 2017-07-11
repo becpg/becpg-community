@@ -6067,6 +6067,12 @@
 						</control>
 					</field>
 					<field id="bcpg:code" read-only="true" />
+					<field id="bcpg:supplierState">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 		</forms>
