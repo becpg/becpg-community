@@ -32,7 +32,7 @@
     </list-property>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="452">
-            <property name="FILELIST">src/main/resources/beCPG/birt/document/product/default/datasource_nut.xml</property>
+            <property name="FILELIST">src/main/resources/beCPG/birt/document/product/default/ProductReport.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -7856,10 +7856,11 @@ dataSetRow["nutListUnit"]
                             <row id="5969">
                                 <property name="style">becpg-row-border</property>
                                 <property name="verticalAlign">middle</property>
-                                <property name="height">0.625in</property>
                                 <cell id="6002">
                                     <property name="style">becpg-cell-dynamic-header</property>
                                     <text id="6003">
+                                        <property name="marginTop">2pt</property>
+                                        <property name="marginBottom">2pt</property>
                                         <property name="contentType">html</property>
                                         <text-property name="content"><![CDATA[<div style="font-size: 1px; display: inline; float: left; width: <VALUE-OF>(row["depthLevel"]-1)*20</VALUE-OF>px;">&amp;nbsp;</div><VALUE-OF>row["legalName"] != null &amp;&amp; row["legalName"] != "" ?row["legalName"] : row["nutListNut"]</VALUE-OF>]]></text-property>
                                     </text>
