@@ -12,12 +12,24 @@
     display: none;
 }
 
+#HEADER_NAVIGATION_MENU_BAR {
+    display: none;
+}
+
+#HEADER_TITLE_MENU {
+	display: none;
+}
+
 #HEADER_MY_FILES {
     display: none;
 }
 
 .reassign {
     display: none;
+}
+
+div.discussions-toolbar {
+	display: none;
 }
 
 #page_x002e_data-form_x002e_task-edit_x0023_default_assoc_packageItems-cntrl {
@@ -92,6 +104,14 @@
     display: none;
 }
 
+
+#page_x002e_data-form_x002e_task-details_x0023_default_assoc_packageItems-cntrl {
+    display: none;
+}
+
+.task-details-header div.links {
+	display: none;
+}
 
 label[for="page_x002e_data-form_x002e_task-edit_x0023_default_assoc_packageItems-cntrl"] {
     display: none!important;

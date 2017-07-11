@@ -221,6 +221,7 @@
 					<value>DoNotDetailsComponents</value>
 					<value>Omit</value>
 					<value>DoNotDeclare</value>
+                                        <value>DeclareThreshold</value>
 					<value>Type</value>
 					<value>Render</value>
 					<value>Locale</value>
@@ -1183,6 +1184,7 @@
 			</associations>
 			<mandatory-aspects>
 				<aspect>bcpg:depthLevelAspect</aspect>
+				<aspect>bcpg:effectivityAspect</aspect>
 			</mandatory-aspects>
 		</type>
 
@@ -1232,6 +1234,9 @@
 					</target>
 				</association>
 			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:effectivityAspect</aspect>
+			</mandatory-aspects>
 		</type>
 
 		<type name="bcpg:productListItem">
