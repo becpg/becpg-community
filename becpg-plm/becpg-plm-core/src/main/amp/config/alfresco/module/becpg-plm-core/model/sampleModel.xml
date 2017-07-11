@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model xmlns="http://www.alfresco.org/model/dictionary/1.0" name="smp:samplemodel">
+	<description>Sample data model</description>
+	<author>Philippe Quéré</author>
+	<published>2017-06-26</published>
+	<version>1.0</version>
+	<imports>
+		<import uri="http://www.alfresco.org/model/dictionary/1.0"
+			prefix="d" />
+		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
+		<import uri="http://www.alfresco.org/model/datalist/1.0"
+			prefix="dl" />
+		<import uri="http://www.bcpg.fr/model/becpg/1.0" prefix="bcpg" />
+	</imports>
+	<namespaces>
+		<namespace uri="http://www.bcpg.fr/model/sample/1.0"
+			prefix="smp" />
+	</namespaces>
+	<data-types />
+	
+	<types>
+		<type name="smp:sampleList">
+			<title>Samples</title>
+			<parent>bcpg:entityListItem</parent>
+			<properties>
+				<property name="smp:slUnitWeight">
+					<title>Unit weight (kg)</title>
+					<type>d:double</type>
+				</property>
+				<property name="smp:slTotalWeight">
+					<title>Total weight (kg)</title>
+					<type>d:double</type>
+				</property>
+			</properties>
+			<associations>
+				<association name="smp:slProduct">
+					<title>Product</title>
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:product</class>
+						<mandatory>true</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:codeAspect</aspect>
+			</mandatory-aspects>
+		</type>
+	</types>
+</model>
