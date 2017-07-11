@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2016 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2016 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.entity.policy;
@@ -33,30 +33,24 @@ import org.alfresco.service.namespace.QName;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
-import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
-public class EffectivityAspectPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnAddAspectPolicy, CopyServicePolicies.OnCopyNodePolicy {
+public class EffectivityAspectPolicy extends AbstractBeCPGPolicy
+		implements NodeServicePolicies.OnAddAspectPolicy, CopyServicePolicies.OnCopyNodePolicy {
 
-	private EffectivityAspectCopyBehaviourCallback effectivityAspectCopyBehaviourCallback;
+	private EffectivityAspectCopyBehaviourCallback effectivityAspectCopyBehaviourCallback = new EffectivityAspectCopyBehaviourCallback();
 	private EntityDictionaryService entityDictionaryService;
-	private AssociationService associationService;
 
 	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
 		this.entityDictionaryService = entityDictionaryService;
-		effectivityAspectCopyBehaviourCallback = new EffectivityAspectCopyBehaviourCallback(entityDictionaryService);
-	}
-	
-	
-
-	public void setAssociationService(AssociationService associationService) {
-		this.associationService = associationService;
 	}
 
 	@Override
 	public void doInit() {
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnAddAspectPolicy.QNAME, BeCPGModel.ASPECT_EFFECTIVITY, new JavaBehaviour(this, "onAddAspect"));
-		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyNodePolicy.QNAME, BeCPGModel.ASPECT_EFFECTIVITY, new JavaBehaviour(this, "getCopyCallback"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnAddAspectPolicy.QNAME, BeCPGModel.ASPECT_EFFECTIVITY,
+				new JavaBehaviour(this, "onAddAspect"));
+		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyNodePolicy.QNAME, BeCPGModel.ASPECT_EFFECTIVITY,
+				new JavaBehaviour(this, "getCopyCallback"));
 	}
 
 	@Override
@@ -70,19 +64,6 @@ public class EffectivityAspectPolicy extends AbstractBeCPGPolicy implements Node
 			if (isNotLocked(nodeRef) && !isWorkingCopyOrVersion(nodeRef)) {
 				if (nodeService.getProperty(nodeRef, BeCPGModel.PROP_START_EFFECTIVITY) == null) {
 					Date startEffectivity = new Date();
-					if (entityDictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
-						QName dataListItemType = nodeService.getType(nodeRef);
-						QName pivotCharactAssoc = entityDictionaryService.getDefaultPivotAssoc(dataListItemType);
-						if (pivotCharactAssoc != null) {
-							NodeRef charactNodeRef = associationService.getTargetAssoc(nodeRef, pivotCharactAssoc);
-							if (charactNodeRef != null && nodeService.hasAspect(charactNodeRef, BeCPGModel.ASPECT_EFFECTIVITY)) {
-								startEffectivity = (Date) nodeService.getProperty(charactNodeRef, BeCPGModel.PROP_START_EFFECTIVITY);
-								if (nodeService.getProperty(nodeRef, BeCPGModel.PROP_END_EFFECTIVITY) == null) {
-									nodeService.setProperty(nodeRef, BeCPGModel.PROP_END_EFFECTIVITY, nodeService.getProperty(charactNodeRef, BeCPGModel.PROP_END_EFFECTIVITY));
-								}
-							}
-						}
-					}
 					nodeService.setProperty(nodeRef, BeCPGModel.PROP_START_EFFECTIVITY, startEffectivity);
 				}
 			}
@@ -94,13 +75,7 @@ public class EffectivityAspectPolicy extends AbstractBeCPGPolicy implements Node
 		return effectivityAspectCopyBehaviourCallback;
 	}
 
-	private static class EffectivityAspectCopyBehaviourCallback extends DefaultCopyBehaviourCallback {
-
-		private final EntityDictionaryService entityDictionaryService;
-
-		public EffectivityAspectCopyBehaviourCallback(EntityDictionaryService dictionaryService) {
-			this.entityDictionaryService = dictionaryService;
-		}
+	private class EffectivityAspectCopyBehaviourCallback extends DefaultCopyBehaviourCallback {
 
 		/**
 		 * Don't copy certain auditable p
@@ -112,8 +87,7 @@ public class EffectivityAspectPolicy extends AbstractBeCPGPolicy implements Node
 				if (!entityDictionaryService.isSubClass(copyDetails.getSourceNodeTypeQName(), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
 					// Have the key properties reset by the aspect
 					properties.remove(BeCPGModel.PROP_START_EFFECTIVITY);
-				} 
-
+				}
 			}
 
 			return properties;
@@ -121,7 +95,7 @@ public class EffectivityAspectPolicy extends AbstractBeCPGPolicy implements Node
 
 		/**
 		 * Do copy the aspects
-		 * 
+		 *
 		 * @return Returns <tt>true</tt> always
 		 */
 		@Override

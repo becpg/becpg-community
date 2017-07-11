@@ -188,7 +188,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				return true;
 			}
 
-			List<CompoListDataItem> compoList = formulatedProduct.getCompoList(new VariantFilters<>());
+			List<CompoListDataItem> compoList = formulatedProduct.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()));
 
 			// Compute composite
 			Composite<CompoListDataItem> compositeDefaultVariant = CompositeHelper.getHierarchicalCompoList(compoList);
@@ -1086,7 +1086,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					if (!DeclarationType.DoNotDetails.equals(declarationType)
 							&& ((productData instanceof SemiFinishedProductData) || (productData instanceof FinishedProductData))) {
 						Composite<CompoListDataItem> sfComposite = CompositeHelper
-								.getHierarchicalCompoList(productData.getCompoList(new VariantFilters<>()));
+								.getHierarchicalCompoList(productData.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())));
 
 						for (Composite<CompoListDataItem> sfChild : sfComposite.getChildren()) {
 							CompoListDataItem clone = sfChild.getData().clone();

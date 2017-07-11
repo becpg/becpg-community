@@ -39,6 +39,8 @@ public abstract class AbstractBeCPGQueryBuilder {
 	private final String QUERY_COND_PROP_EQUAL_VALUE = "%s:\"%s\"";
 	private final String QUERY_COND_PROP_CONTAINS_VALUE = "%s:%s";
 	private final String QUERY_COND_PROP_ISNULL_VALUE = "ISNULL:\"%s\"";
+	private final String QUERY_COND_PROP_ISNULL_OR_ISUNSET_VALUE = "(ISNULL:\"%s\" OR ISUNSET:\"%s\")";
+	
 	private final String QUERY_COND_PATH = "PATH:\"/app:company_home/%s/*\"";
 	private final String QUERY_SUB_PATH = "PATH:\"/app:company_home/%s//*\"";
 	private final String QUERY_COND_EXACT_PATH = "PATH:\"%s\"";
@@ -53,9 +55,7 @@ public abstract class AbstractBeCPGQueryBuilder {
 
 	protected String language = SearchService.LANGUAGE_LUCENE;
 
-	// TODO should not be public
-	@Deprecated
-	public String getCondEqualValue(QName property, String value) {
+	protected String getCondEqualValue(QName property, String value) {
 		if (value == null || value.isEmpty()) {
 			return getCondIsNullValue(property);
 		} else {
@@ -77,6 +77,10 @@ public abstract class AbstractBeCPGQueryBuilder {
 
 	protected String getCondIsNullValue(QName property) {
 		return String.format(QUERY_COND_PROP_ISNULL_VALUE, property);
+	}
+	
+	protected String getCondIsNullOrIsUnsetValue(QName property) {
+		return String.format(QUERY_COND_PROP_ISNULL_OR_ISUNSET_VALUE, property, property);
 	}
 	
 	protected String getCondExactPath(String path) {
@@ -145,6 +149,10 @@ public abstract class AbstractBeCPGQueryBuilder {
 
 	protected String getGroup(String op1, String op2) {
 		return " (" + op1 + " " + op2 + ")";
+	}
+	
+	protected String getMandatoryOrGroup(String op1, String op2) {
+		return " AND (" + op1 + " OR " + op2 + ")";
 	}
 
 	protected String getSortProp(QName field) {

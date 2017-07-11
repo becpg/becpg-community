@@ -41,6 +41,12 @@ function main()
 	if(model.preferences.list!=null ){
 		model.customListName = model.preferences.list;
 	}
+	
+	if(model.preferences.effectiveFilterOn!=null ){
+		model.effectiveFilterOn = model.preferences.effectiveFilterOn;
+	} else {
+		model.effectiveFilterOn = true;
+	}
 
 	for(var j in model.customLists){
 		var customList = model.customLists[j];
@@ -69,7 +75,8 @@ var formulationView = {
       entityNodeRef : (page.url.args.nodeRef != null) ? page.url.args.nodeRef : "",
       list : (page.url.args.list != null) ? page.url.args.list : "",
       customLists : model.customLists,
-      customListName : model.customListName
+      customListName : model.customListName,
+      effectiveFilterOn : model.effectiveFilterOn
    }
 };
 
@@ -77,9 +84,15 @@ var formulationView = {
 
 model.widgets = [formulationView];
 
-model.widgets = model.widgets.concat(createDashlet("compoList-"+args.htmlid, "compoListDashlet"));
+var compoListDashlet  = createDashlet("compoList-"+args.htmlid, "compoListDashlet",null,null,null,null,null,"&repo=true&effectiveFilterOn="+model.effectiveFilterOn);
+compoListDashlet[0].options.hiddenOnlyColumns = ["prop_bcpg_startEffectivity","prop_bcpg_endEffectivity"];
+
+
+model.widgets = model.widgets.concat(compoListDashlet);
 model.widgets = model.widgets.concat(createDashlet("dynamicCharactList-"+args.htmlid, "dynamicCharactListDashlet",msg.get("dashlet.dynamicCharactList.title"),"bcpg:dynamicCharactList",true));
 model.widgets = model.widgets.concat(createDashlet("customList-"+args.htmlid, "customListDashlet",msg.get("dashlet.customList.title"),model.customListType, true , model.customListName, "customListDatagrid", "&repo=true&guessContainer=true" ));
+
+
 
 }
 

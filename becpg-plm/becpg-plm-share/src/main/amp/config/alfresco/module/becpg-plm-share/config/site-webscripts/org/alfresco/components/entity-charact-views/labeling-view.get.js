@@ -18,7 +18,7 @@ function main()
     model.widgets = [labelingView];
     model.widgets = model.widgets.concat(createDashlet("ingLabelingList-"+args.htmlid, "ingLabelingListDashlet"));
     model.widgets = model.widgets.concat(createDashlet("labelingRuleList-"+args.htmlid, "labelingRuleListDashlet",msg.get("dashlet.labelingRuleList.title"),"bcpg:labelingRuleList",true));
-    model.widgets = model.widgets.concat(createDashlet("compoList-"+args.htmlid, "compoListDashlet",msg.get("dashlet.compoList.title"),"bcpg:compoList", true ,"compoList", "labeling", "&repo=true&guessContainer=true" ));
+    model.widgets = model.widgets.concat(createDashlet("compoList-"+args.htmlid, "compoListDashlet",msg.get("dashlet.compoList.title"),"bcpg:compoList", true ,"compoList", "labeling", "&repo=true&guessContainer=true&effectiveFilterOn=true" ));
 }
 
 parseActions(page.url.args.list!=null ?page.url.args.list : null);   

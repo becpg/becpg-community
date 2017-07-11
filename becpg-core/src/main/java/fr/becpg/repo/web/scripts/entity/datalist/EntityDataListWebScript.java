@@ -1,5 +1,5 @@
 /*
- * 
+ *
  */
 package fr.becpg.repo.web.scripts.entity.datalist;
 
@@ -48,7 +48,7 @@ import fr.becpg.repo.web.scripts.WebscriptHelper;
 
 /**
  * Webscript that send the result of a datalist
- * 
+ *
  * @author matthieu
  */
 public class EntityDataListWebScript extends AbstractWebScript {
@@ -98,8 +98,8 @@ public class EntityDataListWebScript extends AbstractWebScript {
 	protected static final String PARAM_ENTITY_NODEREF = "entityNodeRef";
 
 	protected static final String PARAM_ITEMTYPE = "itemType";
-	
-	protected static final String PARAM_EXTRA_PARAMS =  "extraParams";
+
+	protected static final String PARAM_EXTRA_PARAMS = "extraParams";
 
 	/** Pagination **/
 
@@ -114,24 +114,30 @@ public class EntityDataListWebScript extends AbstractWebScript {
 	protected static final String PARAM_MAX_RESULTS = "maxResults";
 
 	protected static final String PARAM_QUERY_EXECUTION_ID = "queryExecutionId";
-	
-    protected static final String PARAM_GUESS_CONTAINER = "guessContainer";
+
+	protected static final String PARAM_GUESS_CONTAINER = "guessContainer";
+
+	protected static final String PARAM_EFFECTIVE_FILTER_ON = "effectiveFilterOn";
 
 	private NodeService nodeService;
 
 	private SecurityService securityService;
 
 	private LockService lockService;
-	
+
 	private NamespaceService namespaceService;
 
 	private DataListExtractorFactory dataListExtractorFactory;
 
 	private AuthorityService authorityService;
-	
-	private DataListOutputWriterFactory datalistOutputWriterFactory; 
-	
-	
+
+	private DataListOutputWriterFactory datalistOutputWriterFactory;
+
+	private boolean effectiveFilterEnabled = false;
+
+	public void setEffectiveFilterEnabled(boolean effectiveFilterEnabled) {
+		this.effectiveFilterEnabled = effectiveFilterEnabled;
+	}
 
 	public void setDatalistOutputWriterFactory(DataListOutputWriterFactory datalistOutputWriterFactory) {
 		this.datalistOutputWriterFactory = datalistOutputWriterFactory;
@@ -153,11 +159,10 @@ public class EntityDataListWebScript extends AbstractWebScript {
 		this.dataListExtractorFactory = dataListExtractorFactory;
 	}
 
-
 	public void setAuthorityService(AuthorityService authorityService) {
 		this.authorityService = authorityService;
 	}
-	
+
 	public void setLockService(LockService lockService) {
 		this.lockService = lockService;
 	}
@@ -180,7 +185,6 @@ public class EntityDataListWebScript extends AbstractWebScript {
 			logger.debug("EntityDataListWebScript executeImpl()");
 		}
 
-		
 		DataListFilter dataListFilter = new DataListFilter();
 		dataListFilter.getPagination().setMaxResults(getNumParameter(req, PARAM_MAX_RESULTS));
 		dataListFilter.getPagination().setPageSize(getNumParameter(req, PARAM_PAGE_SIZE));
@@ -209,21 +213,19 @@ public class EntityDataListWebScript extends AbstractWebScript {
 			isRepo = false;
 		}
 		dataListFilter.setRepo(isRepo);
-		
-		
+
 		String guessContainer = req.getParameter(PARAM_GUESS_CONTAINER);
 
 		if ("true".equals(guessContainer)) {
 			dataListFilter.setGuessContainer(true);
 		}
-		
 
 		Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();
 		if (templateArgs != null) {
 			String storeType = templateArgs.get(PARAM_STORE_TYPE);
 			String storeId = templateArgs.get(PARAM_STORE_ID);
 			String nodeId = templateArgs.get(PARAM_ID);
-			if (storeType != null && storeId != null && nodeId != null) {
+			if ((storeType != null) && (storeId != null) && (nodeId != null)) {
 				NodeRef nodeRef = new NodeRef(storeType, storeId, nodeId);
 				if (req.getServiceMatch().getPath().contains("/item/node")) {
 					dataListFilter.setNodeRef(nodeRef);
@@ -236,7 +238,7 @@ public class EntityDataListWebScript extends AbstractWebScript {
 
 		String entityNodeRefs = req.getParameter(PARAM_ENTITY_NODEREF);
 		List<NodeRef> entityNodeRefsList = new ArrayList<>();
-		if (entityNodeRefs != null && !entityNodeRefs.isEmpty()) {
+		if ((entityNodeRefs != null) && !entityNodeRefs.isEmpty()) {
 			for (String entityNodeRef : entityNodeRefs.split(",")) {
 				entityNodeRefsList.add(new NodeRef(entityNodeRef));
 			}
@@ -247,7 +249,6 @@ public class EntityDataListWebScript extends AbstractWebScript {
 		String filterData = req.getParameter(PARAM_FILTER_DATA);
 		String filterParams = req.getParameter(PARAM_FILTER_PARAMS);
 		String extraParams = req.getParameter(PARAM_EXTRA_PARAMS);
-		
 
 		try {
 
@@ -260,7 +261,7 @@ public class EntityDataListWebScript extends AbstractWebScript {
 			}
 
 			if (filterId == null) {
-				if (json != null && json.has(PARAM_FILTER)) {
+				if ((json != null) && json.has(PARAM_FILTER)) {
 					JSONObject filterJSON = (JSONObject) json.get(PARAM_FILTER);
 					if (filterJSON != null) {
 						filterId = (String) filterJSON.get(PARAM_FILTER_ID);
@@ -276,9 +277,9 @@ public class EntityDataListWebScript extends AbstractWebScript {
 					filterId = DataListFilter.ALL_FILTER;
 				}
 			}
-			
-			if(extraParams == null){
-				if (json != null && json.has(PARAM_EXTRA_PARAMS) && !json.isNull(PARAM_EXTRA_PARAMS)) {
+
+			if (extraParams == null) {
+				if ((json != null) && json.has(PARAM_EXTRA_PARAMS) && !json.isNull(PARAM_EXTRA_PARAMS)) {
 					extraParams = (String) json.get(PARAM_EXTRA_PARAMS);
 				}
 			}
@@ -288,25 +289,25 @@ public class EntityDataListWebScript extends AbstractWebScript {
 			} else {
 				Integer page = getNumParameter(req, PARAM_PAGE);
 
-				if (page == null && json != null && json.has(PARAM_PAGE)) {
+				if ((page == null) && (json != null) && json.has(PARAM_PAGE)) {
 					page = (Integer) json.get(PARAM_PAGE);
 				}
 				dataListFilter.getPagination().setPage(page);
 			}
 
-			if (json != null && json.has(PARAM_SORT)) {
+			if ((json != null) && json.has(PARAM_SORT)) {
 
 				dataListFilter.setSortMap(WebscriptHelper.extractSortMap((String) json.get(PARAM_SORT), namespaceService));
 			}
 
-			if (filterId.equals(DataListFilter.FORM_FILTER) && filterData != null) {
+			if (filterId.equals(DataListFilter.FORM_FILTER) && (filterData != null)) {
 				JSONObject jsonObject = new JSONObject(filterData);
 				dataListFilter.setCriteriaMap(JsonHelper.extractCriteria(jsonObject));
 			}
 
 			List<String> metadataFields = new LinkedList<>();
 
-			if (json != null && json.has(PARAM_FIELDS)) {
+			if ((json != null) && json.has(PARAM_FIELDS)) {
 				JSONArray jsonFields = (JSONArray) json.get(PARAM_FIELDS);
 
 				for (int i = 0; i < jsonFields.length(); i++) {
@@ -318,6 +319,7 @@ public class EntityDataListWebScript extends AbstractWebScript {
 			dataListFilter.setFilterData(filterData);
 			dataListFilter.setFilterParams(filterParams);
 			dataListFilter.setExtraParams(extraParams);
+			dataListFilter.setEffectiveFilterOn(effectiveFilterEnabled && "true".equals(req.getParameter(PARAM_EFFECTIVE_FILTER_ON)));
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("Filter:" + dataListFilter.toString());
@@ -330,15 +332,13 @@ public class EntityDataListWebScript extends AbstractWebScript {
 
 			boolean hasWriteAccess = !dataListFilter.isVersionFilter();
 			if (hasWriteAccess && !entityNodeRefsList.isEmpty()) {
-				hasWriteAccess = 
-						extractor.hasWriteAccess()
-						&& !nodeService.hasAspect(entityNodeRefsList.get(0), ContentModel.ASPECT_CHECKED_OUT)
-						&& lockService.getLockStatus(entityNodeRefsList.get(0)) == LockStatus.NO_LOCK 
-						&& securityService.computeAccessMode(nodeService.getType(entityNodeRefsList.get(0)), itemType) == SecurityService.WRITE_ACCESS
+				hasWriteAccess = extractor.hasWriteAccess() && !nodeService.hasAspect(entityNodeRefsList.get(0), ContentModel.ASPECT_CHECKED_OUT)
+						&& (lockService.getLockStatus(entityNodeRefsList.get(0)) == LockStatus.NO_LOCK) && (securityService
+								.computeAccessMode(nodeService.getType(entityNodeRefsList.get(0)), itemType) == SecurityService.WRITE_ACCESS)
 						&& isExternalUserAllowed(dataListFilter);
-				
+
 			}
-			
+
 			dataListFilter.setHasWriteAccess(hasWriteAccess);
 
 			// TODO : #546
@@ -361,9 +361,8 @@ public class EntityDataListWebScript extends AbstractWebScript {
 			res.setCache(cache);
 
 			PaginatedExtractedItems extractedItems = extractor.extract(dataListFilter, metadataFields);
-			
-			datalistOutputWriterFactory.write(req, res,dataListFilter, extractedItems);
-			
+
+			datalistOutputWriterFactory.write(req, res, dataListFilter, extractedItems);
 
 		} catch (JSONException e) {
 			throw new WebScriptException("Unable to parse JSON", e);
@@ -373,34 +372,28 @@ public class EntityDataListWebScript extends AbstractWebScript {
 				logger.debug("EntityDataListWebScript execute in " + watch.getTotalTimeSeconds() + "s");
 			}
 		}
-			
 
 	}
 
-	
-
 	private boolean isExternalUserAllowed(DataListFilter dataListFilter) {
-		if(dataListFilter.getParentNodeRef() !=null 
+		if ((dataListFilter.getParentNodeRef() != null)
 				&& nodeService.hasAspect(dataListFilter.getParentNodeRef(), BeCPGModel.ASPECT_ENTITYLIST_STATE)
 				&& SystemState.Valid.toString().equals(nodeService.getProperty(dataListFilter.getParentNodeRef(), BeCPGModel.PROP_ENTITYLIST_STATE))
-				&& isCurrentUserExternal()
-				){
+				&& isCurrentUserExternal()) {
 			return false;
-			
+
 		}
 		return true;
 	}
 
 	private boolean isCurrentUserExternal() {
 		for (String currAuth : authorityService.getAuthorities()) {
-			if((PermissionService.GROUP_PREFIX+SystemGroup.ExternalUser.toString()).equals(currAuth)){
+			if ((PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser.toString()).equals(currAuth)) {
 				return true;
 			}
 		}
 		return false;
 	}
-
-
 
 	protected Integer getNumParameter(WebScriptRequest req, String paramName) {
 		String param = req.getParameter(paramName);

@@ -269,7 +269,10 @@
 					<show id="bcpg:dynamicCharactColumn8" force="true" />
 					<show id="bcpg:dynamicCharactColumn9" force="true" />
 					<show id="bcpg:dynamicCharactColumn10" force="true" />
+					<show id="bcpg:startEffectivity" force="true" />
+					<show id="bcpg:endEffectivity" force="true" />
 					<show id="bcpg:instruction" force="true"/>
+					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden" ></field>
@@ -285,6 +288,7 @@
 					<field id="bcpg:dynamicCharactColumn9" read-only="true" label="hidden"></field>
 					<field id="bcpg:dynamicCharactColumn10" read-only="true" label="hidden"></field>
 					<field id="bcpg:instruction" label="hidden" ></field>
+					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
 			</form>
 			

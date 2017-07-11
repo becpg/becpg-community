@@ -1118,6 +1118,7 @@
 			</associations>
 			<mandatory-aspects>
 				<aspect>bcpg:depthLevelAspect</aspect>
+				<aspect>bcpg:effectivityAspect</aspect>
 			</mandatory-aspects>
 		</type>
 
@@ -1167,6 +1168,9 @@
 					</target>
 				</association>
 			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:effectivityAspect</aspect>
+			</mandatory-aspects>
 		</type>
 
 		<type name="bcpg:productListItem">
