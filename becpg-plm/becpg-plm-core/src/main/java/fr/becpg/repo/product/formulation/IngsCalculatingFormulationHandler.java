@@ -53,10 +53,11 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	public static final String NO_GRP = "-";
 	private static final String MESSAGE_MISSING_INGLIST = "message.formulate.missing.ingList";
 	private static final String MESSAGE_NOTAUTHORIZED_ING = "message.formulate.notauhorized.ing";
+	private static final String MESSAGE_INCORRECT_INGLIST_TOTAL = "message.formulate.incorrect.ingList.total";
 
 	/** The logger. */
 	private static final Log logger = LogFactory.getLog(IngsCalculatingFormulationHandler.class);
-
+	
 	private NodeService nodeService;
 
 	private boolean ingsCalculatingWithYield = false;
@@ -87,6 +88,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		if (!formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))
 				|| (!alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_INGLIST)
 						&& !alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_INGLABELINGLIST))) {
+				
+			
 			return true;
 		}
 
@@ -121,6 +124,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 		return true;
 	}
+
 
 	/**
 	 * Calculate the ingredient list of a product.
@@ -446,6 +450,25 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 							productNodeRef, RequirementDataType.Ingredient);
 				}
 			} else {
+				
+				if ((declType == null) || !declType.equals(DeclarationType.DoNotDetails)) {
+			      Double total  = 0d;
+			      for(IngListDataItem ingListDataItem : componentProductData.getIngList()){
+			    	  if(ingListDataItem.getQtyPerc()!=null && (ingListDataItem.getDepthLevel() == null || ingListDataItem.getDepthLevel() == 1)){
+			    		  total+= ingListDataItem.getQtyPerc();
+			    	  }
+			    	  
+			      }
+			      
+			      if(total!=100d){
+			    	  String message = I18NUtil.getMessage(MESSAGE_INCORRECT_INGLIST_TOTAL);
+						addReqCtrl(reqCtrlMap, new NodeRef(RepoConsts.SPACES_STORE, "incorrect-inglist-total"), RequirementType.Tolerated, new MLText(message),
+								productNodeRef, RequirementDataType.Ingredient);
+			      }
+			      
+				}
+			
+				
 				forbiddenIngredientsList.forEach(fil -> {
 
 					componentProductData.getIngList().forEach(ingListDataItem -> {
