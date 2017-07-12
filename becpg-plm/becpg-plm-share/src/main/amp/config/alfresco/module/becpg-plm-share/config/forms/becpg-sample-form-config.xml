@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<alfresco-config>
+	<!-- œsampleList type -->
+	<config evaluator="model-type" condition="smp:sampleList">
+		<forms>
+			<!-- Create item form -->
+			<form>
+				<field-visibility>
+					<show id="smp:slProduct" />
+					<show id="smp:slUnitWeight" />
+					<show id="smp:slTotalWeight" />
+				</field-visibility>
+				<appearance>
+				</appearance>
+			</form>
+
+			<!-- Data Grid view -->
+			<form id="datagrid">
+				<field-visibility>
+					<show id="bcpg:code" force="true" />
+					<show id="smp:slProduct" />
+					<show id="smp:slUnitWeight" />
+					<show id="smp:slTotalWeight" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:code" read-only="true" set="mainInfo" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<!-- smp:sampleList type (existing nodes) -->
+	<config evaluator="node-type" condition="smp:sampleList">
+		<forms>
+			<!-- Data List pop-up edit form -->
+			<form>
+				<field-visibility>
+					<show id="bcpg:code" force="true" />
+					<show id="smp:slProduct" />
+					<show id="smp:slUnitWeight" />
+					<show id="smp:slTotalWeight" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:code" read-only="true" set="mainInfo" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+</alfresco-config>

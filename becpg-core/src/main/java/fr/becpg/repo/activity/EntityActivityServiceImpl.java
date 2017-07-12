@@ -526,11 +526,17 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	}
 
 	private NodeRef getMatchingCharactNodeRef(NodeRef listItemNodeRef) {
-		QName pivotAssoc = entityDictionaryService.getDefaultPivotAssoc(nodeService.getType(listItemNodeRef));
-		if (pivotAssoc != null) {
-			NodeRef part = associationService.getTargetAssoc(listItemNodeRef, pivotAssoc);
-			if ((part != null)) {
-				return part;
+		try {
+			QName pivotAssoc = entityDictionaryService.getDefaultPivotAssoc(nodeService.getType(listItemNodeRef));
+			if (pivotAssoc != null) {
+				NodeRef part = associationService.getTargetAssoc(listItemNodeRef, pivotAssoc);
+				if ((part != null)) {
+					return part;
+				}
+			}
+		} catch (IllegalArgumentException e) {
+			if (logger.isDebugEnabled()) {
+				logger.debug(e, e);
 			}
 		}
 
