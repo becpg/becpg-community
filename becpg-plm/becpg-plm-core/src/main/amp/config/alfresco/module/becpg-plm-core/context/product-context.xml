@@ -56,4 +56,10 @@
 	</bean>
 	
 	
+
+	<bean id="ingListExtractor" parent="simpleExtractor" class="fr.becpg.repo.product.extractor.IngListExtractor">
+		<property name="defaultExtractor" value="false"/>
+	</bean>
+	
+	
 </beans>
