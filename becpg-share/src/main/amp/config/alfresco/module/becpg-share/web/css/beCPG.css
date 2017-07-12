@@ -280,6 +280,7 @@ span.physicoChem-formulated {
     background-repeat: no-repeat
 }
 
+
 span.variant {
     background-image: url("../../components/images/enabled-indicator-off-16.png") !important;
     background-repeat: no-repeat;
@@ -556,8 +557,6 @@ span.resourceProduct-Refused {
 
 
 
-
-
 /** Characts **/
 
 span.physicoChem,
@@ -608,6 +607,11 @@ span.ingList {
     padding-left: 20px;
     background-repeat: no-repeat
 }
+
+.ingList span.total {
+ font-weight: bold;
+}
+
 span.microbio,
 span.microbioList {
     background-image: url("../../components/images/filetypes/generic-microbio-16.png") !important;

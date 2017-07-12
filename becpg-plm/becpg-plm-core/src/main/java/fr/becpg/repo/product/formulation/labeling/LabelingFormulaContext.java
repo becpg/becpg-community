@@ -312,6 +312,7 @@ public class LabelingFormulaContext {
 			}
 		} else {
 			ingDefaultFormat = textFormat;
+			detailsDefaultFormat = textFormat;
 		}
 		return true;
 	}
@@ -957,9 +958,10 @@ public class LabelingFormulaContext {
 					if (DeclarationType.Kit.equals(((CompositeLabeling) component).getDeclarationType())) {
 						subRatio = 1d;
 					}
+					
 
 					toAppend = getIngTextFormat(component)
-							.format(new Object[] { ingName, qtyPerc, renderCompositeIng((CompositeLabeling) component, subRatio) });
+							.format(new Object[] { ingName, qtyPerc, renderCompositeIng((CompositeLabeling) component, subRatio),geoOriginsLabel });
 
 				} else {
 					logger.error("Unsupported ing type. Name: " + component.getName());

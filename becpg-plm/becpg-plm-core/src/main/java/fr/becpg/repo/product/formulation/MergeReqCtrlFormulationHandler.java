@@ -23,7 +23,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -86,27 +85,13 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 			NodeRef componentProductNodeRef = compoListDataItem.getProduct();
 			if (componentProductNodeRef != null) {
 				ProductData componentProductData = alfrescoRepository.findOne(componentProductNodeRef);
-				if ((!componentProductNodeRef.equals(productData.getNodeRef()) && (componentProductData instanceof SemiFinishedProductData))
+				if (!componentProductNodeRef.equals(productData.getNodeRef()) && (componentProductData instanceof SemiFinishedProductData)
 						|| (componentProductData instanceof FinishedProductData) || (componentProductData instanceof RawMaterialData)) {
-					if (componentProductData.getReqCtrlList() != null) {
+					if ((componentProductData.getCompoListView() != null) && (componentProductData.getReqCtrlList() != null)) {
 						for (ReqCtrlListDataItem tmp : componentProductData.getReqCtrlList()) {
-							// mandatory fields rclDataItem aren't put in parent
-							// identifies this rclDataItem (can't use equals
-							// because of sources list)
-							List<ReqCtrlListDataItem> matchingRclDataItems = reqCtrlList
-									.stream().filter(rcl -> rcl.getReqDataType().equals(tmp.getReqDataType())
-											&& rcl.getReqType().equals(tmp.getReqType()) && rcl.getReqMlMessage().equals(tmp.getReqMlMessage()))
-									.collect(Collectors.toList());
-
-							if (matchingRclDataItems.isEmpty()) {
-								logger.debug("No match, creating new RclDataItem");
+							if (tmp.getReqDataType() != RequirementDataType.Completion) {
 								reqCtrlList.add(new ReqCtrlListDataItem(null, tmp.getReqType(), tmp.getReqMlMessage(), tmp.getCharact(),
 										tmp.getSources(), tmp.getReqDataType() != null ? tmp.getReqDataType() : RequirementDataType.Nutrient));
-							} else {
-
-								ReqCtrlListDataItem currentRclDataItem = matchingRclDataItems.get(0);
-								logger.debug("Found a match, adding sources (msg=" + currentRclDataItem.getReqMessage() + ")");
-								currentRclDataItem.getSources().addAll(tmp.getSources());
 							}
 						}
 					}
@@ -157,10 +142,8 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 
 			for (Map.Entry<String, ReqCtrlListDataItem> dbKV : dbReqCtrlList.entrySet()) {
 				if (!newReqCtrlList.containsKey(dbKV.getKey())) {
-
 					// remove
 					reqCtrlList.remove(dbKV.getValue());
-
 				} else {
 					// update
 					ReqCtrlListDataItem newReqCtrlListDataItem = newReqCtrlList.get(dbKV.getKey());
