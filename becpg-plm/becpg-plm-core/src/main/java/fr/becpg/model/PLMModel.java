@@ -75,7 +75,7 @@ public interface PLMModel {
 	QName PROP_PRICELIST_PREF_RANK = QName.createQName(BeCPGModel.BECPG_URI, "priceListPrefRank");
 	QName PROP_PRICELIST_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "priceListValue");
 	QName PROP_PRICELIST_UNIT = QName.createQName(BeCPGModel.BECPG_URI, "priceListUnit");
-	QName PROP_PRICELIST_PURCHASE_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "priceListPurchaseQty");
+	QName PROP_PRICELIST_PURCHASE_QTY = QName.createQName(BeCPGModel.BECPG_URI, "priceListPurchaseQty");
 	QName PROP_PRICELIST_PURCHASE_UNIT = QName.createQName(BeCPGModel.BECPG_URI, "priceListPurchaseUnit");
 
 	// ingList
