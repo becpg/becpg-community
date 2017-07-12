@@ -82,6 +82,7 @@
                             parentFieldHtmlId : null,
                             isMandatory : false,
                             isLocalProxy : false,
+                            showColor: false,
                             showToolTip : false,
                             showPage : true,
                             saveTitle : true,
@@ -138,14 +139,13 @@
                                         fullListSize : "fullListSize"
                                     }
                                 };
-
                                 // Instantiate the AutoComplete
                                 oAC = new YAHOO.widget.AutoComplete(me.fieldHtmlId, me.fieldHtmlId + "-container", oDS);
-
                                 oAC.queryDelay = .1;
                                 oAC.page = 1;
                                 oAC.maxResultsDisplayed = 15;
                                 oAC.forceSelection = false;
+
                                 
                                 if(Dom.get(me.fieldHtmlId).hasFocus){
                                 	oAC._onTextboxFocus(this,oAC);
@@ -298,7 +298,26 @@
                                         previewTooltips.push("ac-choice-" + me.fieldHtmlId + "-" + oResultData[0]);
                                         previewTooltipsData["ac-choice-" + me.fieldHtmlId + "-" + oResultData[0]] = oResultData[3];
                                     }
-                                    return "<span id='ac-choice-" + me.fieldHtmlId + "-" + oResultData[0] + "' class='" + oResultData[2] + "'  ><span class='ctn-fav'></span>" + oResultData[1] + "</span>";
+                                    
+                                    
+                                    getColor = function (metadatas){
+                                    	var color = null;
+                                    	for(key in metadatas){
+                                    		obj = metadatas[key];
+                                    		if (obj["key"] == "color"){
+                                    			color = obj["value"];
+                                    		}
+                                    	} 
+                                    	return color;
+                                    }
+                        
+                                    var showColorSpan = ""; 
+                                    if(me.options.showColor){
+                                    	showColorSpan = "<span class='show-color' style='background:" + getColor(oResultData[3]) + "'>&nbsp;</span>";
+                                    }
+                                    
+                                    return  showColorSpan + "<span id='ac-choice-" + me.fieldHtmlId + "-" + oResultData[0] + "' class='" + oResultData[2] + "'>" +
+                                    		"<span class='ctn-fav'></span> " + oResultData[1] + "</span>";
                                 };
 
                                 // Toggle button
