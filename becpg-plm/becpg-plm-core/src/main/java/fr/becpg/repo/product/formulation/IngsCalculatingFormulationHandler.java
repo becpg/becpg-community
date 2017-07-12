@@ -460,7 +460,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			    	  
 			      }
 			      
-			      if(total!=100d){
+			      //Due to double precision
+			      if(Math.abs(total - 100d) > 0.00001){
 			    	  String message = I18NUtil.getMessage(MESSAGE_INCORRECT_INGLIST_TOTAL);
 						addReqCtrl(reqCtrlMap, new NodeRef(RepoConsts.SPACES_STORE, "incorrect-inglist-total"), RequirementType.Tolerated, new MLText(message),
 								productNodeRef, RequirementDataType.Ingredient);
