@@ -210,6 +210,10 @@ public class LabelingFormulaContext {
 	private String subIngsDefaultFormat = "{0} ({2})";
 	private String allergenReplacementPattern = "<b>$1</b>";
 
+	private String htmlTableRowFormat = "<tr><td style=\"border: solid 1px !important;padding: 5px;\" >{0}</td>"
+			+ "<td style=\"border: solid 1px !important;padding: 5px;\" >{2}</td>"
+			+ "<td style=\"border: solid 1px !important;padding: 5px;text-align:center;\">{1,number,0.#%}</td></tr>";
+
 	private String defaultSeparator = RepoConsts.LABEL_SEPARATOR;
 	private String groupDefaultSeparator = RepoConsts.LABEL_SEPARATOR;
 	private String ingTypeDefaultSeparator = RepoConsts.LABEL_SEPARATOR;
@@ -266,6 +270,10 @@ public class LabelingFormulaContext {
 
 	public void setSubIngsDefaultFormat(String subIngsDefaultFormat) {
 		this.subIngsDefaultFormat = subIngsDefaultFormat;
+	}
+
+	public void setHtmlTableRowFormat(String htmlTableRowFormat) {
+		this.htmlTableRowFormat = htmlTableRowFormat;
 	}
 
 	public void setIngTypeDecThresholdFormat(String ingTypeDecThresholdFormat) {
@@ -853,6 +861,123 @@ public class LabelingFormulaContext {
 		return ret.toString();
 	}
 
+	public String renderAsHtmlTable() {
+		return renderAsHtmlTable("border-collapse:collapse", false);
+	}
+
+	public String renderAsHtmlTable(String styleCss, boolean showTotal) {
+		StringBuffer ret = new StringBuffer();
+
+		MessageFormat rowFormat = new MessageFormat(htmlTableRowFormat);
+
+		Double total = 0d;
+
+		ret.append("<table cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"" + styleCss + "\" rules=\"none\">");
+
+		for (Map.Entry<IngTypeItem, List<AbstractLabelingComponent>> kv : getSortedIngListByType(lblCompositeContext).entrySet()) {
+
+			if ((kv.getKey() != null) && (getLegalIngName(kv.getKey(), false) != null)) {
+
+				Double qtyPerc = computeQtyPerc(lblCompositeContext, kv.getKey(), 1d);
+				Double volumePerc = computeVolumePerc(lblCompositeContext, kv.getKey(), 1d);
+				qtyPerc = (useVolume ? volumePerc : qtyPerc);
+
+				String ingTypeLegalName = getLegalIngName(kv.getKey(),
+						((kv.getValue().size() > 1) || (!kv.getValue().isEmpty() && kv.getValue().get(0).isPlural())));
+				String allergenAwareLegalName = createAllergenAwareLabel(ingTypeLegalName, kv.getValue());
+				String geoOriginsLabel = createGeoOriginsLabel(kv.getValue());
+
+				String subLabel = getIngTextFormat(kv.getKey()).format(new Object[] { ingTypeLegalName, qtyPerc,
+						renderLabelingComponent(lblCompositeContext, kv.getValue(), ingTypeDefaultSeparator, 1d), allergenAwareLegalName,
+						geoOriginsLabel });
+
+				if ((subLabel != null) && !subLabel.isEmpty()) {
+					ret.append(rowFormat.format(new Object[] { subLabel, qtyPerc, geoOriginsLabel != null ? geoOriginsLabel : "" }));
+					if (qtyPerc != null) {
+						total += qtyPerc;
+					}
+
+				}
+
+			} else {
+
+				for (AbstractLabelingComponent component : kv.getValue()) {
+
+					Double qtyPerc = computeQtyPerc(lblCompositeContext, component, 1d);
+					Double volumePerc = computeVolumePerc(lblCompositeContext, component, 1d);
+
+					String ingName = getLegalIngName(component, false);
+					String geoOriginsLabel = createGeoOriginsLabel(component.getGeoOrigins());
+
+					qtyPerc = (useVolume ? volumePerc : qtyPerc);
+
+					if (!shouldSkip(component.getNodeRef(), qtyPerc)) {
+
+						String subLabel = new String();
+
+						if (component instanceof IngItem) {
+							IngItem ingItem = (IngItem) component;
+
+							StringBuilder subIngBuff = new StringBuilder();
+							for (IngItem subIngItem : ingItem.getSubIngs()) {
+								if (subIngBuff.length() > 0) {
+									subIngBuff.append(subIngsSeparator);
+								}
+								Double subIngQtyPerc = (useVolume ? subIngItem.getVolume() : subIngItem.getQty());
+
+								String subIngGeoOriginsLabel = createGeoOriginsLabel(subIngItem.getGeoOrigins());
+
+								if (!shouldSkip(subIngItem.getNodeRef(), subIngQtyPerc)) {
+
+									subIngBuff.append(getIngTextFormat(subIngItem)
+											.format(new Object[] { getLegalIngName(subIngItem, false), subIngQtyPerc, null, subIngGeoOriginsLabel }));
+								} else {
+									logger.debug("Removing subIng with qty of 0: " + subIngItem);
+								}
+							}
+
+							subLabel = getIngTextFormat(component).format(new Object[] { ingName, qtyPerc, subIngBuff.toString(), geoOriginsLabel });
+
+						} else if (component instanceof CompositeLabeling) {
+
+							Double subRatio = qtyPerc;
+							if (DeclarationType.Kit.equals(((CompositeLabeling) component).getDeclarationType())) {
+								subRatio = 1d;
+							}
+
+							subLabel = getIngTextFormat(component).format(
+									new Object[] { ingName, qtyPerc, renderCompositeIng((CompositeLabeling) component, subRatio), geoOriginsLabel });
+
+						} else {
+							logger.error("Unsupported ing type. Name: " + component.getName());
+						}
+
+						if ((subLabel != null) && !subLabel.toString().isEmpty()) {
+
+							ret.append(rowFormat.format(new Object[] { subLabel, qtyPerc, geoOriginsLabel != null ? geoOriginsLabel : "" }));
+							if (qtyPerc != null) {
+								total += qtyPerc;
+							}
+						}
+
+					} else {
+						logger.debug("Removing ing with qty of 0: " + ingName);
+					}
+
+				}
+			}
+
+		}
+
+		if (showTotal && (total > 0)) {
+			ret.append(rowFormat.format(new Object[] { "<b>" + I18NUtil.getMessage("entity.datalist.item.details.total") + "</b>", total, "" }));
+		}
+
+		ret.append("</table>");
+		return cleanLabel(ret);
+
+	}
+
 	private String renderCompositeIng(CompositeLabeling compositeLabeling, Double ratio) {
 		StringBuffer ret = new StringBuffer();
 		boolean appendEOF = false;
@@ -873,7 +998,8 @@ public class LabelingFormulaContext {
 
 				toAppend.append(getIngTextFormat(kv.getKey())
 						.format(new Object[] { ingTypeLegalName, (useVolume ? kv.getKey().getVolume() : kv.getKey().getQty()),
-								renderLabelingComponent(compositeLabeling, kv.getValue(), ingTypeDefaultSeparator, ratio), allergenAwareLegalName, geoOriginsLabel }));
+								renderLabelingComponent(compositeLabeling, kv.getValue(), ingTypeDefaultSeparator, ratio), allergenAwareLegalName,
+								geoOriginsLabel }));
 
 			} else {
 				toAppend.append(renderLabelingComponent(compositeLabeling, kv.getValue(), defaultSeparator, ratio));
@@ -900,7 +1026,6 @@ public class LabelingFormulaContext {
 		}
 		return cleanLabel(ret);
 	}
-	
 
 	private StringBuilder renderLabelingComponent(CompositeLabeling parent, List<AbstractLabelingComponent> subComponents, String separator,
 			Double ratio) {
@@ -938,13 +1063,13 @@ public class LabelingFormulaContext {
 							subIngBuff.append(subIngsSeparator);
 						}
 						Double subIngQtyPerc = (useVolume ? subIngItem.getVolume() : subIngItem.getQty());
-						
+
 						String subIngGeoOriginsLabel = createGeoOriginsLabel(subIngItem.getGeoOrigins());
 
 						if (!shouldSkip(subIngItem.getNodeRef(), subIngQtyPerc)) {
 
-							subIngBuff.append(
-									getIngTextFormat(subIngItem).format(new Object[] { getLegalIngName(subIngItem, false), subIngQtyPerc, null, subIngGeoOriginsLabel }));
+							subIngBuff.append(getIngTextFormat(subIngItem)
+									.format(new Object[] { getLegalIngName(subIngItem, false), subIngQtyPerc, null, subIngGeoOriginsLabel }));
 						} else {
 							logger.debug("Removing subIng with qty of 0: " + subIngItem);
 						}
@@ -958,10 +1083,9 @@ public class LabelingFormulaContext {
 					if (DeclarationType.Kit.equals(((CompositeLabeling) component).getDeclarationType())) {
 						subRatio = 1d;
 					}
-					
 
 					toAppend = getIngTextFormat(component)
-							.format(new Object[] { ingName, qtyPerc, renderCompositeIng((CompositeLabeling) component, subRatio),geoOriginsLabel });
+							.format(new Object[] { ingName, qtyPerc, renderCompositeIng((CompositeLabeling) component, subRatio), geoOriginsLabel });
 
 				} else {
 					logger.error("Unsupported ing type. Name: " + component.getName());
@@ -993,14 +1117,13 @@ public class LabelingFormulaContext {
 
 		return ret;
 	}
-	
-	
+
 	private String createGeoOriginsLabel(List<AbstractLabelingComponent> components) {
-		if(components!=null && !components.isEmpty()){
+		if ((components != null) && !components.isEmpty()) {
 			StringBuilder geoOriginsBuffer = new StringBuilder();
 			for (AbstractLabelingComponent component : components) {
 				String tmp = createGeoOriginsLabel(component.getGeoOrigins());
-				if(tmp!=null){
+				if (tmp != null) {
 					if (geoOriginsBuffer.length() > 0) {
 						geoOriginsBuffer.append(geoOriginsSeparator);
 					}
@@ -1009,14 +1132,12 @@ public class LabelingFormulaContext {
 			}
 			return geoOriginsBuffer.toString();
 		}
-		
-		
+
 		return null;
 	}
-	
 
 	private String createGeoOriginsLabel(Set<NodeRef> geoOrigins) {
-		if(geoOrigins!=null && !geoOrigins.isEmpty()){
+		if ((geoOrigins != null) && !geoOrigins.isEmpty()) {
 			StringBuilder geoOriginsBuffer = new StringBuilder();
 			for (NodeRef geoOrigin : geoOrigins) {
 				if (geoOriginsBuffer.length() > 0) {
@@ -1026,10 +1147,9 @@ public class LabelingFormulaContext {
 			}
 			return geoOriginsBuffer.toString();
 		}
-		
+
 		return null;
 	}
-	
 
 	private String getGeoOriginName(NodeRef geoOrigin) {
 		return MLTextHelper.getClosestValue((MLText) mlNodeService.getProperty(geoOrigin, BeCPGModel.PROP_CHARACT_NAME), I18NUtil.getLocale());
@@ -1108,7 +1228,7 @@ public class LabelingFormulaContext {
 				}
 				tree.put("allergens", allergens);
 			}
-			
+
 			if (!component.getGeoOrigins().isEmpty()
 					&& (!(component instanceof CompositeLabeling) || ((CompositeLabeling) component).getIngList().isEmpty())) {
 				JSONArray geoOrigins = new JSONArray();
@@ -1117,7 +1237,6 @@ public class LabelingFormulaContext {
 				}
 				tree.put("geoOrigins", geoOrigins);
 			}
-			
 
 			if (component instanceof CompositeLabeling) {
 				CompositeLabeling composite = (CompositeLabeling) component;
@@ -1173,7 +1292,6 @@ public class LabelingFormulaContext {
 
 		return tree;
 	}
-
 
 	private String cleanLabel(StringBuffer buffer) {
 		return buffer.toString().replaceAll(" null| \\(null\\)| \\(\\)", "").trim();
@@ -1385,7 +1503,7 @@ public class LabelingFormulaContext {
 
 				return exp.getValue(dataContext, Boolean.class);
 			} catch (SpelParseException | SpelEvaluationException e) {
-				logger.error("Cannot evaluate formula :" + formula +" on "+declarationFilterContext.toString() , e);
+				logger.error("Cannot evaluate formula :" + formula + " on " + declarationFilterContext.toString(), e);
 			}
 		}
 		return true;
