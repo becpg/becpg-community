@@ -106,6 +106,7 @@ public class PlmRepoConsts {
 	public static final String PATH_REPORTS_EXPORT_SEARCH_RAWMATERIAL_INGLIST = "ExportRawMaterialIngList";
 	public static final String PATH_REPORTS_EXPORT_SEARCH_INGLABELING = "ExportIngLabeling";
 	public static final String PATH_REPORTS_EXPORT_SEARCH_NON_CONFORMITIES = "ExportNCSynthesis";
+	public static final String PATH_REPORTS_EXPORT_SEARCH_SUPPLIERS_CONTACTS = "ExportSuppliersContacts";
 	public static final String PATH_REPORTS_ECO = "ECOReports";
 	
 		
@@ -115,6 +116,7 @@ public class PlmRepoConsts {
 	public static final String PATH_PRODUCT_HIERARCHY = "/app:company_home/cm:System/cm:ProductHierarchy/bcpg:entityLists/";
 	
 	public static final String PATH_NUT_DATABASES = "NutritionalDatabases";
+	
 	
 	
 	
