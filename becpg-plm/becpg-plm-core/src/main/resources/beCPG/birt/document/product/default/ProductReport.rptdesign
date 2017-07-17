@@ -32,7 +32,7 @@
     </list-property>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="452">
-            <property name="FILELIST">src/main/resources/beCPG/birt/document/product/default/datasource_labeling_lang.xml</property>
+            <property name="FILELIST">src/main/resources/beCPG/birt/document/product/default/ProductReport.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -7478,12 +7478,7 @@ else{
                         <list-property name="visibility">
                             <structure>
                                 <property name="format">all</property>
-                                <expression name="valueExpr" type="javascript">if (row["tableCheck"] == null){
-	true
-}
-else{
-	false
-}</expression>
+                                <expression name="valueExpr" type="javascript">( row["runningCount"] == null ||  row["runningCount"] == 0 )</expression>
                             </structure>
                         </list-property>
                         <list-property name="boundDataColumns">
@@ -7712,6 +7707,18 @@ dataSetRow["nutListUnit"]
                                 <expression name="expression" type="javascript">dataSetRow["color"]</expression>
                                 <property name="dataType">string</property>
                             </structure>
+                            <structure>
+                                <property name="name">runningCount</property>
+                                <text-property name="displayName">runningCount</text-property>
+                                <property name="dataType">integer</property>
+                                <property name="aggregateFunction">RUNNINGCOUNT</property>
+                                <list-property name="arguments">
+                                    <structure>
+                                        <property name="name">Expression</property>
+                                    </structure>
+                                </list-property>
+                                <property name="allowExport">true</property>
+                            </structure>
                         </list-property>
                         <structure name="toc"/>
                         <property name="repeatHeader">false</property>
@@ -7856,7 +7863,6 @@ dataSetRow["nutListUnit"]
                             <row id="5969">
                                 <property name="style">becpg-row-border</property>
                                 <property name="verticalAlign">middle</property>
-                                <property name="height">1.4166666666666667in</property>
                                 <cell id="6002">
                                     <property name="style">becpg-cell-dynamic-header</property>
                                     <text id="6003">
@@ -7999,7 +8005,7 @@ if(nutListGDAPerc != null &amp;&amp; nutListGDAPerc != "") {
                                         <list-property name="visibility">
                                             <structure>
                                                 <property name="format">all</property>
-                                                <expression name="valueExpr" type="javascript">( row["nutListGDAPerc"] == null || row["nutListGDAPerc"] == "")</expression>
+                                                <expression name="valueExpr" type="javascript">true</expression>
                                             </structure>
                                         </list-property>
                                         <column id="7402">
@@ -8134,12 +8140,7 @@ if(nutListGDAPerc != null &amp;&amp; nutListGDAPerc != "") {
                         <list-property name="visibility">
                             <structure>
                                 <property name="format">all</property>
-                                <expression name="valueExpr" type="javascript">if (row["tableCheck"] == null){
-	true
-}
-else{
-	false
-}</expression>
+                                <expression name="valueExpr" type="javascript">( row["runningCount"] == null || row["runningCount"] == 0 )</expression>
                             </structure>
                         </list-property>
                         <list-property name="boundDataColumns">
@@ -8160,6 +8161,18 @@ else{
                                 <text-property name="displayName">tableCheck</text-property>
                                 <expression name="expression" type="javascript">dataSetRow["tableCheck"]</expression>
                                 <property name="dataType">integer</property>
+                            </structure>
+                            <structure>
+                                <property name="name">runningCount</property>
+                                <text-property name="displayName">runningCount</text-property>
+                                <property name="dataType">integer</property>
+                                <property name="aggregateFunction">RUNNINGCOUNT</property>
+                                <list-property name="arguments">
+                                    <structure>
+                                        <property name="name">Expression</property>
+                                    </structure>
+                                </list-property>
+                                <property name="allowExport">true</property>
                             </structure>
                         </list-property>
                         <property name="repeatHeader">false</property>
@@ -8778,12 +8791,7 @@ dataSetRow["illValue"]
                         <list-property name="visibility">
                             <structure>
                                 <property name="format">all</property>
-                                <expression name="valueExpr" type="javascript">if (row["tableCheck"] == null){
-	true
-}
-else{
-	false
-}</expression>
+                                <expression name="valueExpr" type="javascript">(row["tableCheck"] == null || row["tableCheck"] == 0)</expression>
                             </structure>
                         </list-property>
                         <list-property name="boundDataColumns">
@@ -9003,12 +9011,7 @@ dataSetRow["mblMaxi"]
                         <list-property name="visibility">
                             <structure>
                                 <property name="format">all</property>
-                                <expression name="valueExpr" type="javascript">if (row["tableCheck"] == null){
-	true
-}
-else{
-	false
-}</expression>
+                                <expression name="valueExpr" type="javascript">( row["runningCount"] == null || row["runningCount"] == 0 )</expression>
                             </structure>
                         </list-property>
                         <list-property name="boundDataColumns">
@@ -9048,6 +9051,18 @@ else{
                                 <text-property name="displayName">tableCheck</text-property>
                                 <expression name="expression" type="javascript">dataSetRow["tableCheck"]</expression>
                                 <property name="dataType">integer</property>
+                            </structure>
+                            <structure>
+                                <property name="name">runningCount</property>
+                                <text-property name="displayName">runningCount</text-property>
+                                <property name="dataType">integer</property>
+                                <property name="aggregateFunction">RUNNINGCOUNT</property>
+                                <list-property name="arguments">
+                                    <structure>
+                                        <property name="name">Expression</property>
+                                    </structure>
+                                </list-property>
+                                <property name="allowExport">true</property>
                             </structure>
                         </list-property>
                         <column id="1034">
