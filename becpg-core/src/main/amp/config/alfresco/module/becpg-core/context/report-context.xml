@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--
-  Copyright (C) 2010-2016 beCPG. 
+  Copyright (C) 2010-2017 beCPG. 
    
   This file is part of beCPG 
    
@@ -52,8 +52,7 @@
 	
 	<!-- Report property decorator -->
 	 <bean id="reportAssociationDecorator" parent="baseAssocDecorator" class="fr.becpg.repo.report.jscript.ReportAssociationDecorator">    
-        <property name="associationName" value="rep:reports" />    
-        <property name="reportTplService" ref="reportTplService"/>
+        <property name="associationName" value="rep:reports" />
         <property name="entityReportService" ref="entityReportService"/>
     </bean>
     

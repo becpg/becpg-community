@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2010-2016 beCPG. 
+  Copyright (C) 2010-2017 beCPG. 
    
   This file is part of beCPG 
    
@@ -24,7 +24,7 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="cm:description" />
-					<show id="cm:titled" />
+					<show id="cm:title" />
 					
 					<show id="rep:reportTplType" />
 					<show id="rep:reportTplClassName" />
@@ -35,6 +35,8 @@
 					<show id="rep:reportTplAssociatedFiles" />
 					
 					<show id="rep:reportLocales" force="true"/>
+					
+					<show id="rep:reportTextParameters" force="true" />
 					
 					<!-- auditable -->
 					<show id="cm:creator" for-mode="view" />
@@ -58,7 +60,49 @@
 						<control template="/org/alfresco/components/form/controls/mtlangue.ftl">
         		 				 <control-param name="insertBlank">true</control-param>
 						</control>
-					</field>							
+					</field>	
+					<field id="rep:reportTextParameters">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">5</control-param>
+						</control>
+					</field>	
+											
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	
+	
+	<config evaluator="node-type" condition="rep:report">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:description" />
+					<show id="cm:title" />
+					
+					<show id="rep:reportIsDefault" />
+					<show id="rep:reportLocales"/>
+					
+					<!-- auditable -->
+					<show id="cm:creator" for-mode="view" />
+					<show id="cm:created" for-mode="view" />
+					<show id="cm:modifier" for-mode="view" />
+					<show id="cm:modified" for-mode="view" />								
+				</field-visibility>
+				<appearance>
+					<field id="cm:description">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">3</control-param>
+						</control>
+					</field>	
+					<field id="rep:reportIsDefault" read-only="true"/>
+					<field id="rep:reportLocales" read-only="true">
+						<control template="/org/alfresco/components/form/controls/mtlangue.ftl">
+        		 				 <control-param name="insertBlank">true</control-param>
+						</control>
+					</field>					
 				</appearance>
 			</form>
 		</forms>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2016 beCPG. 
+ * Copyright (C) 2010-2017 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -48,4 +48,11 @@ public class DeclarationFilterContext {
 		return ingListDataItem;
 	}
 
+	@Override
+	public String toString() {
+		return "DeclarationFilterContext [compoListDataItem=" + compoListDataItem + ", ingListDataItem=" + ingListDataItem + "]";
+	}
+
+	
+	
 }

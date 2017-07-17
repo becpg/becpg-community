@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright (C) 2010-2016 beCPG. 
+  Copyright (C) 2010-2017 beCPG. 
    
   This file is part of beCPG 
    
@@ -33,6 +33,7 @@
 				<value>alfresco/module/${artifactId}/model/publicationModel.xml</value>
 				<value>alfresco/module/${artifactId}/model/qualityModel.xml</value>
 				<value>alfresco/module/${artifactId}/model/variantModel.xml</value>
+				<value>alfresco/module/${artifactId}/model/sampleModel.xml</value>
 			</list>
 		</property>
 
@@ -46,6 +47,7 @@
 				<value>alfresco/module/${artifactId}/model/publicationModel</value>
 				<value>alfresco/module/${artifactId}/model/qualityModel</value>
 				<value>alfresco/module/${artifactId}/model/variantModel</value>
+				<value>alfresco/module/${artifactId}/model/sampleModel</value>
 			</list>
 		</property>
 	</bean>

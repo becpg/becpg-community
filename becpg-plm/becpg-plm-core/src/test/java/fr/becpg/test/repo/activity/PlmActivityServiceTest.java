@@ -28,8 +28,8 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.entity.version.EntityVersionService;
-import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.FinishedProductData;
+import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.CompoListUnit;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
@@ -51,18 +51,14 @@ public class PlmActivityServiceTest extends AbstractFinishedProductTest {
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
 	@Autowired
-	private ProductService productService;
-
-	@Autowired
 	private EntityActivityService entityActivityService;
 
 	@Autowired
 	private CommentService commentService;
-	
+
 	@Autowired
 	private EntityVersionService entityVersionService;
 
-	
 	@Autowired
 	private CheckOutCheckInService checkOutCheckInService;
 
@@ -77,24 +73,24 @@ public class PlmActivityServiceTest extends AbstractFinishedProductTest {
 	}
 
 	private List<NodeRef> getActivities(NodeRef entityNodeRef) {
-		//beCPGCacheService.clearAllCaches();
-		
+		// beCPGCacheService.clearAllCaches();
+
 		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			List<NodeRef> ret = new ArrayList<>();
 			NodeRef activityListNodeRef = getActivityList(entityNodeRef);
 			if (activityListNodeRef != null) {
 				// All activities of product
-				ret =  entityListDAO.getListItems(activityListNodeRef,
-						BeCPGModel.TYPE_ACTIVITY_LIST);
-				for(NodeRef tmp : ret){
-					logger.info("Data: "+nodeService.getProperty(tmp, BeCPGModel.PROP_ACTIVITYLIST_DATA));
-					logger.info("User: "+nodeService.getProperty(tmp, BeCPGModel.PROP_ACTIVITYLIST_USERID));
-				}
+				ret = entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
+				ret.forEach(tmp -> {
+					logger.info("Data: " + nodeService.getProperty(tmp, BeCPGModel.PROP_ACTIVITYLIST_DATA));
+					logger.info("User: " + nodeService.getProperty(tmp, BeCPGModel.PROP_ACTIVITYLIST_USERID));
+				});
+
 			} else {
 				logger.error("No activity list");
 			}
-			
+
 			return ret;
 		}, true, false);
 	}
@@ -122,15 +118,13 @@ public class PlmActivityServiceTest extends AbstractFinishedProductTest {
 		assertEquals("Check if No Activity", 1, getActivities(finishedProductNodeRef).size());
 
 		// Add comment to finished product
-		NodeRef commentOnFinishedProductNodeRef = transactionService.getRetryingTransactionHelper()
-				.doInTransaction(() -> {
-					NodeRef commentNodeRef = commentService.createComment(finishedProductNodeRef, COMMENT_TITLE_TEXT,
-							COMMENT_DATA_TEXT, false);
-					return commentNodeRef;
-				}, false, true);
+		NodeRef commentOnFinishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			NodeRef commentNodeRef = commentService.createComment(finishedProductNodeRef, COMMENT_TITLE_TEXT, COMMENT_DATA_TEXT, false);
+			return commentNodeRef;
+		}, false, true);
 
 		// Check if comment activity was created
-		assertEquals("Activity 2: comment creation", 2, getActivities(finishedProductNodeRef).size());
+		assertEquals("Activity 3: comment creation", 3, getActivities(finishedProductNodeRef).size());
 
 		// Update comment on finished product
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -139,7 +133,7 @@ public class PlmActivityServiceTest extends AbstractFinishedProductTest {
 		}, false, true);
 
 		// Check if comment activity was updated
-		assertEquals("Activity 3: update comment", 3, getActivities(finishedProductNodeRef).size());
+		assertEquals("Activity 4: update comment", 4, getActivities(finishedProductNodeRef).size());
 
 		// Delete finished product comment
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -148,30 +142,28 @@ public class PlmActivityServiceTest extends AbstractFinishedProductTest {
 		}, false, true);
 
 		// Check if comment activity was deleted
-		Assert.assertEquals("Activity 4: delete comment", 4, getActivities(finishedProductNodeRef).size());
+		Assert.assertEquals("Activity 5: delete comment", 5, getActivities(finishedProductNodeRef).size());
 
 	}
-	
-	
 
 	@Test
 	public void checkEntityVersionActivity() {
-		
+
 		AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
-		
+
 		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			/*-- Create raw material --*/
 			NodeRef r = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test version activity");
-			
+
 			// Add Activity List to product
 			NodeRef listContainerNodeRef = entityListDAO.getListContainer(r);
 			entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
-			
+
 			return r;
 		}, false, true);
 
-		// 6 activities on creation
+		// 7 activities on creation
 
 		if (!nodeService.hasAspect(rawMaterialNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
 			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -184,24 +176,21 @@ public class PlmActivityServiceTest extends AbstractFinishedProductTest {
 
 		}
 
-		
 		// Check if No Activity was created
- 		assertEquals("Check create Activity", 6, getActivities(rawMaterialNodeRef).size());
+		assertEquals("Check create Activity", 7, getActivities(rawMaterialNodeRef).size());
 
-		
 		final NodeRef workingCopyNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			return checkOutCheckInService.checkout(rawMaterialNodeRef);
 
 		}, false, true);
 
-		
 		assertEquals("Check if No Activity", 0, getActivities(workingCopyNodeRef).size());
-		
+
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			nodeService.setProperty(workingCopyNodeRef, PLMModel.PROP_PRODUCT_UNIT, ProductUnit.mL.toString());
 			return null;
 		}, false, true);
-		
+
 		// No activity on working copy
 		assertEquals("Check update Activity", 0, getActivities(workingCopyNodeRef).size());
 
@@ -214,42 +203,40 @@ public class PlmActivityServiceTest extends AbstractFinishedProductTest {
 			return checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
 		}, false, true);
 
-		//Version activity
+		// Version activity
 		assertEquals("Check if No Activity", 8, getActivities(newRawMaterialNodeRef).size());
-		
+
 	}
-	
-	
-	@Test
+
+	// @Test
 	public void checkEntityBranchActivity() throws InterruptedException {
-		
+
 		AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
 		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			/*-- Create raw material --*/
 			NodeRef r = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test branch activity");
-			
+
 			// Add Activity List to product
 			NodeRef listContainerNodeRef = entityListDAO.getListContainer(r);
 			entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
 			return r;
 		}, false, true);
 
-
 		final NodeRef branchNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			return entityVersionService.createBranch(rawMaterialNodeRef, getTestFolderNodeRef());
-			
+
 		}, false, true);
-		
+
 		// Activity reset on branch
 		assertEquals("Check if No Activity", 0, getActivities(branchNodeRef).size());
-		
+
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			nodeService.setProperty(branchNodeRef, PLMModel.PROP_PRODUCT_UNIT, ProductUnit.mL.toString());
 			return null;
 		}, false, true);
-		
+
 		// Activity recorded on branch
 		assertEquals("Check update Activity", 1, getActivities(branchNodeRef).size());
 
@@ -257,51 +244,81 @@ public class PlmActivityServiceTest extends AbstractFinishedProductTest {
 			return entityVersionService.mergeBranch(branchNodeRef, rawMaterialNodeRef, VersionType.MAJOR, "Tests");
 		}, false, true);
 
-		//Version activity
+		// Version activity
 		assertEquals("Check if No Activity", 9, getActivities(rawMaterialNodeRef).size());
 
 	}
 
 	@Test
 	public void checkChangeStateActivity() throws InterruptedException {
-		
+
 		AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
 		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			/*-- Create raw material --*/
-			NodeRef r = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test branch activity");
-			
+			NodeRef r = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test change state activity");
+
 			// Add Activity List to product
 			NodeRef listContainerNodeRef = entityListDAO.getListContainer(r);
 			entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
 			return r;
 		}, false, true);
 
-
-		// Activity reset on branch
+		// Activity recorded on entity ( by default 6)
 		assertEquals("Check if No Activity", 6, getActivities(rawMaterialNodeRef).size());
-		
+
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			nodeService.setProperty(rawMaterialNodeRef, PLMModel.PROP_PRODUCT_STATE, SystemState.Valid);
 			return null;
 		}, false, true);
-		
+
 		// Activity recorded on branch
 		assertEquals("Check update Activity", 7, getActivities(rawMaterialNodeRef).size());
-		
-		
 
 	}
-	
 
-	//@Test
+	@Test
+	public void checkEntityDatalistActivity() {
+
+		final NodeRef lSF1NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			LocalSemiFinishedProductData lSF1 = new LocalSemiFinishedProductData();
+			lSF1.setName("Local semi finished 1");
+			return alfrescoRepository.create(getTestFolderNodeRef(), lSF1).getNodeRef();
+
+		}, false, true);
+
+		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			/*-- Create finished product --*/
+			logger.debug("/*-- Create finished product --*/");
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName("Finished Product");
+			NodeRef product = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+			// Add Activity List to product
+			NodeRef listContainerNodeRef = entityListDAO.getListContainer(product);
+			entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
+			return product;
+
+		}, false, true);
+
+		assertEquals("Check create Activity", 1, getActivities(finishedProductNodeRef).size());
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			List<CompoListDataItem> compoList = new ArrayList<>();
+			compoList.add(new CompoListDataItem(null, null, 1d, 1d, CompoListUnit.P, 0d, DeclarationType.Declare, lSF1NodeRef));
+			FinishedProductData finishedProduct;
+			finishedProduct = ((FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef));
+			finishedProduct.getCompoListView().setCompoList(compoList);
+			alfrescoRepository.save(finishedProduct);
+			return null;
+		}, false, true);
+
+		assertEquals("Check update Activity", 2, getActivities(finishedProductNodeRef).size());
+	}
+
+	@Test
 	public void cleanActivityServiceTest() {
 
-		// Init Variables
-		Calendar thisMonth = Calendar.getInstance();
-		thisMonth.setTime(new Date());
-
-		// Create semiFinished product and add it to product
+		// Create semiFinished product
 		NodeRef semiFinishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			SemiFinishedProductData semiFinishedProductData = new SemiFinishedProductData();
 			semiFinishedProductData.setName("semiFinished-product");
@@ -315,8 +332,7 @@ public class PlmActivityServiceTest extends AbstractFinishedProductTest {
 			productData.setParentNodeRef(getTestFolderNodeRef());
 			productData.setName("activity-test-product");
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, 1d, 1d, CompoListUnit.P, 0d, DeclarationType.Declare,
-					semiFinishedProductNodeRef));
+			compoList.add(new CompoListDataItem(null, null, 1d, 1d, CompoListUnit.P, 0d, DeclarationType.Declare, semiFinishedProductNodeRef));
 			productData.getCompoListView().setCompoList(compoList);
 			alfrescoRepository.save(productData);
 
@@ -327,90 +343,81 @@ public class PlmActivityServiceTest extends AbstractFinishedProductTest {
 			return productData.getNodeRef();
 		}, false, true);
 
+		assertEquals("Check update Activity", 2, getActivities(productNodeRef).size());
+
 		// Add some activities to product
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			// Get product
 			FinishedProductData productData = (FinishedProductData) alfrescoRepository.findOne(productNodeRef);
 
-			// Add formulation activity
-			for (int i = 0; i < 200; i++) {
-				productService.formulate(productNodeRef);
-			}
-
-			// Add Comment activity
-			for (int i = 0; i < 50; i++) {
+			for (int i = 0; i < 20; i++) {
 				commentService.createComment(productNodeRef, COMMENT_TITLE_TEXT, COMMENT_DATA_TEXT, false);
 			}
-
-			// // Add State Activity, but..!! it doesn't work !!??
-			 for (int i = 0; i < 50; i++) {
-			 productData.setState(SystemState.Refused);
-			 }
-			//
-			// // Add DataList activity
-			 for (int i = 0; i < 4; i++) {
-			 productData.getCostList().add(new CostListDataItem(null, 10d,
-			 "kg", null, costs.get(0), false));
-			 }
-
-			// Save product
+			productData.getCostList().add(new CostListDataItem(null, 10d, "kg", null, costs.get(0), false));
 			alfrescoRepository.save(productData);
 
-			// Return Product Reference
-			return productData.getNodeRef();
-		}, false, true);
-
-		// Change activity creation time
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			// Get Activity list
-			NodeRef activityListNodeRef = getActivityList(productNodeRef);
-			if (activityListNodeRef != null) {
-				// For all activities of product
-				for (NodeRef activityListItemNodeRef : entityListDAO.getListItems(activityListNodeRef,
-						BeCPGModel.TYPE_ACTIVITY_LIST)) {
-					policyBehaviourFilter.disableBehaviour(activityListItemNodeRef, ContentModel.ASPECT_AUDITABLE);
-					nodeService.setProperty(activityListItemNodeRef, ContentModel.PROP_CREATED, thisMonth.getTime());
-					policyBehaviourFilter.enableBehaviour(activityListItemNodeRef, ContentModel.ASPECT_AUDITABLE);
-					thisMonth.add(Calendar.DAY_OF_MONTH, -1);
-				}
-			}
 			return null;
 		}, false, true);
 
-		int activitiesBeforeClean = 0;
-		int activitiesAfterClean = 0;
+		assertEquals("Check generated Activity", 24, getActivities(productNodeRef).size());
 
-		NodeRef activityListNodeRef = getActivityList(productNodeRef);
-		if (activityListNodeRef != null) {
-			// All activities of product
-			List<NodeRef> productListactivity = entityListDAO.getListItems(activityListNodeRef,
-					BeCPGModel.TYPE_ACTIVITY_LIST);
-			activitiesBeforeClean = productListactivity.size();
-			// Activities number
-			logger.info("Activities number before clean : " + activitiesBeforeClean);
+		entityActivityService.cleanActivities();
+
+		assertEquals("Check generated Activity", 24, getActivities(productNodeRef).size());
+
+		for (int i = 0; i < 50; i++) {
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				FinishedProductData productData = (FinishedProductData) alfrescoRepository.findOne(productNodeRef);
+				//Formulation
+				productService.formulate(productNodeRef);
+				//DataList
+				productData.getCostList().add(new CostListDataItem(null, 10d,"kg", null, costs.get(0), false));
+				//State
+				if(productData.getState().equals(SystemState.Simulation)){
+					productData.setState(SystemState.Refused);
+				} else{
+					productData.setState(SystemState.Simulation);
+				}
+				
+				alfrescoRepository.save(productData);
+				return null;
+			}, false, true);
+			
+			changeCreatedDate(productNodeRef);
 		}
 
+		//assertEquals("Check generated Activity", 175, getActivities(productNodeRef).size());
+		
+		int activitiesBeforeClean = getActivities(productNodeRef).size();
+		
 		// Clean Activities
 		entityActivityService.cleanActivities();
 
-		activityListNodeRef = getActivityList(productNodeRef);
-		if (activityListNodeRef != null) {
-			List<NodeRef> productListactivity = entityListDAO.getListItems(activityListNodeRef,
-					BeCPGModel.TYPE_ACTIVITY_LIST);
-			activitiesAfterClean = productListactivity.size();
-			// Activities number
-			logger.info("Activities number after clean : " + activitiesAfterClean);
-		}
+		assertTrue(activitiesBeforeClean > getActivities(productNodeRef).size());
+		
+		assertTrue(getActivities(productNodeRef).size() > 0);
+		
 
-		// Check Clean activityService
-		if (activitiesBeforeClean > 50) {
-			assertTrue(activitiesBeforeClean > activitiesAfterClean);
-			assertTrue(activitiesAfterClean > 0);
-			assertFalse(activitiesAfterClean == 50);
-		} else {
-			assertTrue(activitiesBeforeClean == activitiesAfterClean);
-		}
+	}
 
+	private void changeCreatedDate(NodeRef nodeRef) {
+
+		Calendar thisMonth = Calendar.getInstance();
+		thisMonth.setTime(new Date());
+
+		// Change activity creation time
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+			NodeRef activityListNodeRef = getActivityList(nodeRef);
+			if (activityListNodeRef != null) {
+				for (NodeRef activityListItemNodeRef : entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST)) {
+					nodeService.setProperty(activityListItemNodeRef, ContentModel.PROP_CREATED, thisMonth.getTime());	
+					thisMonth.add(Calendar.DAY_OF_MONTH, -1);
+				}
+			}
+			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+			return null;
+		}, false, true);
 
 	}
 

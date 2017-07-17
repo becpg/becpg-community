@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2010-2016 beCPG. 
+Copyright (C) 2010-2017 beCPG. 
  
 This file is part of beCPG 
  
@@ -129,6 +129,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	private final Set<QName> nullProps = new HashSet<>();
 	private final Map<QName, String> propQueriesMap = new HashMap<>();
 	private final Map<QName, Pair<String, String>> propBetweenQueriesMap = new HashMap<>();
+	private final Map<QName, Pair<String, String>> propBetweenOrNullQueriesMap = new HashMap<>();
 	private final Map<QName, String> propQueriesEqualMap = new HashMap<>();
 	private final Set<String> ftsQueries = new HashSet<>();
 	private final Set<QName> excludedAspects = new HashSet<>();
@@ -384,6 +385,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		propBetweenQueriesMap.put(propQName, new Pair<>(start, end));
 		return this;
 	}
+	
+	public BeCPGQueryBuilder andBetweenOrNull(QName propQName, String start, String end) {
+		propBetweenOrNullQueriesMap.put(propQName, new Pair<>(start, end));
+		return this;
+	}
+	
 
 	public BeCPGQueryBuilder excludeProp(QName propName, String query) {
 		excludedPropQueriesMap.put(propName, query);
@@ -672,6 +679,11 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			runnedQuery.append(mandatory(getCondContainsValue(propQueryEntry.getKey(),
 					String.format("[%s TO %s]", propQueryEntry.getValue().getFirst(), propQueryEntry.getValue().getSecond()))));
 		}
+		
+		for (Map.Entry<QName, Pair<String, String>> propQueryEntry : propBetweenOrNullQueriesMap.entrySet()) {
+			runnedQuery.append(getMandatoryOrGroup(getCondIsNullOrIsUnsetValue(propQueryEntry.getKey()),getCondContainsValue(propQueryEntry.getKey(),
+					String.format("[%s TO %s]", propQueryEntry.getValue().getFirst(), propQueryEntry.getValue().getSecond()))));
+		}
 
 		if (!ftsQueries.isEmpty()) {
 			runnedQuery.append(mandatory(startGroup()));
@@ -691,6 +703,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		return ret;
 	}
+
 
 	private String buildCmisQuery() {
 		StringBuilder runnedQuery = new StringBuilder();
@@ -783,6 +796,21 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 				whereClause.append(" AND ").append(getCmisPrefix(propQueryEntry.getKey())).append(" <= ").append(second).append("");
 			}
 		}
+		
+		
+		for (Map.Entry<QName, Pair<String, String>> propQueryEntry : propBetweenOrNullQueriesMap.entrySet()) {
+
+			String first = propQueryEntry.getValue().getFirst();
+			String second = propQueryEntry.getValue().getSecond();
+			if (!"MIN".equals(first)) {
+				whereClause.append(" AND ").append(getCmisPrefix(propQueryEntry.getKey())).append(" >= ").append(first).append("");
+			}
+			if (!"MAX".equals(second)) {
+				whereClause.append(" AND ").append(getCmisPrefix(propQueryEntry.getKey())).append(" <= ").append(second).append("");
+			}
+			
+			whereClause.append(" OR ").append(getCmisPrefix(propQueryEntry.getKey())).append(" IS NULL");
+		}
 
 		if (!ftsQueries.isEmpty()) {
 			throw new IllegalStateException("fts contains not supported yet");
@@ -822,7 +850,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 	private String getCmisPrefix(QName tmpQName) {
 		String ret = tmpQName.toPrefixString(namespaceService);
-		if (dictionaryService.getProperty(tmpQName).getContainerClass().isAspect()) {
+		if (dictionaryService.getProperty(tmpQName)!=null && dictionaryService.getProperty(tmpQName).getContainerClass().isAspect()) {
 			QName aspect = dictionaryService.getProperty(tmpQName).getContainerClass().getName();
 			this.aspects.add(aspect);
 			ret = aspect.getLocalName() + "." + ret;

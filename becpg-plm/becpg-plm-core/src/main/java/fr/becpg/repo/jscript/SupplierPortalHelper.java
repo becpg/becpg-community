@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2016 beCPG. 
+ * Copyright (C) 2010-2017 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -79,8 +79,13 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 	public void setPermissionService(PermissionService permissionService) {
 		this.permissionService = permissionService;
 	}
-
+	
 	public void assignToSupplier(final ProjectData project, final TaskListDataItem task, final ScriptNode entityNodeRef) {
+		assignToSupplier(project, task, entityNodeRef,true);
+	}
+	
+
+	public void assignToSupplier(final ProjectData project, final TaskListDataItem task, final ScriptNode entityNodeRef, boolean moveSupplier) {
 
 		if (task != null) {
 			if (entityNodeRef != null) {
@@ -92,7 +97,9 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 				} else {
 				    supplierNodeRef = associationService.getTargetAssoc(entityNodeRef.getNodeRef(), PLMModel.ASSOC_SUPPLIERS);
 				    if(supplierNodeRef!=null){
-				    	nodeService.setProperty(supplierNodeRef, PLMModel.PROP_SUPPLIER_STATE, SystemState.Simulation);
+				    	if(moveSupplier){
+				    		nodeService.setProperty(supplierNodeRef, PLMModel.PROP_SUPPLIER_STATE, SystemState.Simulation);
+				    	}
 				    }
 				    nodeService.setProperty(entityNodeRef.getNodeRef(), PLMModel.PROP_PRODUCT_STATE, SystemState.Simulation);
 				}
@@ -109,6 +116,7 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 							task.setResources(new ArrayList<NodeRef>());
 						}
 						task.getResources().add(accountNodeRef);
+						
 
 					} else {
 						logger.info("No account provided for supplier");
@@ -129,9 +137,15 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 							permissionService.setPermission(userHome, PermissionService.GROUP_PREFIX + PLMGroup.ReferencingMgr.toString(), PermissionService.COORDINATOR, true);
 
 							NodeRef supplierNodeRef = associationService.getTargetAssoc(entityNodeRef.getNodeRef(), PLMModel.ASSOC_SUPPLIERS);
-							if (supplierNodeRef != null ) {
-								nodeService.moveNode(supplierNodeRef, userHome, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
-								permissionService.setInheritParentPermissions(supplierNodeRef, true);
+							if (supplierNodeRef != null) {
+								if(moveSupplier){
+									nodeService.moveNode(supplierNodeRef, userHome, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
+									permissionService.setInheritParentPermissions(supplierNodeRef, true);
+								} else {
+									permissionService.setPermission(supplierNodeRef
+												, (String) nodeService.getProperty(resourceRef, ContentModel.PROP_USERNAME), PermissionService.CONSUMER,
+												true);
+								}
 							}
 
 							nodeService.moveNode(entityNodeRef.getNodeRef(), userHome, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
@@ -174,16 +188,23 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 	}
 	
 	public void validateProjectEntity(final ScriptNode entityNodeRef){
+		validateProjectEntity(entityNodeRef,true);
+	}
+	
+	
+	public void validateProjectEntity(final ScriptNode entityNodeRef, boolean moveSupplier){
 		if (entityNodeRef != null) {
 			if(PLMModel.TYPE_SUPPLIER.equals(nodeService.getType(entityNodeRef.getNodeRef()))){
 				nodeService.setProperty(entityNodeRef.getNodeRef(), PLMModel.PROP_SUPPLIER_STATE, SystemState.Valid);
 			} else {
 				nodeService.setProperty(entityNodeRef.getNodeRef(), PLMModel.PROP_PRODUCT_STATE, SystemState.Valid);
-			    NodeRef supplierNodeRef = associationService.getTargetAssoc(entityNodeRef.getNodeRef(), PLMModel.ASSOC_SUPPLIERS);
-			    if (supplierNodeRef != null) {
-			    	nodeService.setProperty(supplierNodeRef, PLMModel.PROP_SUPPLIER_STATE, SystemState.Valid);
-			    	nodeService.setProperty(supplierNodeRef, ContentModel.PROP_MODIFIED, new Date());
-			    }
+				if(moveSupplier){
+				    NodeRef supplierNodeRef = associationService.getTargetAssoc(entityNodeRef.getNodeRef(), PLMModel.ASSOC_SUPPLIERS);
+				    if (supplierNodeRef != null) {
+				    	nodeService.setProperty(supplierNodeRef, PLMModel.PROP_SUPPLIER_STATE, SystemState.Valid);
+				    	nodeService.setProperty(supplierNodeRef, ContentModel.PROP_MODIFIED, new Date());
+				    }
+				}
 			}
 		}
     }

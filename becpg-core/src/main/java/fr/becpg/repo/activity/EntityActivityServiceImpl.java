@@ -13,7 +13,6 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.forum.CommentService;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -47,6 +46,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 public class EntityActivityServiceImpl implements EntityActivityService {
 
 	private static Log logger = LogFactory.getLog(EntityActivityServiceImpl.class);
+
 	private static final int MAX_PAGE = 50;
 
 	@Autowired
@@ -54,7 +54,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 	@Autowired
 	private EntityService entityService;
-	
+
 	@Autowired
 	private AssociationService associationService;
 
@@ -104,7 +104,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	public boolean postCommentActivity(NodeRef entityNodeRef, NodeRef commentNodeRef, ActivityEvent activityEvent) {
 		if (commentNodeRef != null) {
 			try {
-
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 				NodeRef activityListNodeRef = getActivityList(entityNodeRef);
 
 				// No list no activity
@@ -133,7 +133,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 						if (charactNodeRef != null) {
 							data.put(PROP_TITLE, attributeExtractorService.extractPropName(charactNodeRef));
 						} else {
-							data.put(PROP_TITLE, itemType.toPrefixString());
+							data.put(PROP_TITLE, attributeExtractorService.extractPropName(itemNodeRef));
 						}
 
 					} else if (entityDictionaryService.isSubClass(itemType, BeCPGModel.TYPE_ENTITY_V2)) {
@@ -162,6 +162,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 				}
 			} catch (JSONException e) {
 				logger.error(e, e);
+			} finally {
+				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 			}
 		}
 
@@ -173,7 +175,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	public boolean postContentActivity(NodeRef entityNodeRef, NodeRef contentNodeRef, ActivityEvent activityEvent) {
 		if ((contentNodeRef != null) && !nodeService.hasAspect(contentNodeRef, ContentModel.ASPECT_WORKING_COPY)) {
 			try {
-
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 				NodeRef activityListNodeRef = getActivityList(entityNodeRef);
 
 				// No list no activity
@@ -205,6 +207,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 				}
 			} catch (JSONException e) {
 				logger.error(e, e);
+			} finally {
+				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 			}
 		}
 
@@ -216,7 +220,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	public boolean postMergeBranchActivity(NodeRef branchNodeRef, NodeRef branchToNodeRef, VersionType versionType, String description) {
 		if ((branchNodeRef != null) && (branchToNodeRef != null)) {
 			try {
-
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 				NodeRef activityListNodeRef = getActivityList(branchToNodeRef);
 
 				// No list no activity
@@ -246,6 +250,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 				}
 			} catch (JSONException e) {
 				logger.error(e, e);
+			} finally {
+				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 			}
 		}
 
@@ -257,7 +263,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	public boolean postDatalistActivity(NodeRef entityNodeRef, NodeRef datalistNodeRef, ActivityEvent activityEvent) {
 		if ((datalistNodeRef != null)) {
 			try {
-
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 				NodeRef activityListNodeRef = getActivityList(entityNodeRef);
 
 				// No list no activity
@@ -284,12 +290,14 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					if (charactNodeRef != null) {
 						data.put(PROP_TITLE, attributeExtractorService.extractPropName(charactNodeRef));
 					} else {
-						data.put(PROP_TITLE, type.toPrefixString());
+						data.put(PROP_TITLE, attributeExtractorService.extractPropName(datalistNodeRef));
 					}
 
 					activityListDataItem.setActivityType(ActivityType.Datalist);
 					activityListDataItem.setActivityData(data.toString());
 					activityListDataItem.setParentNodeRef(activityListNodeRef);
+
+					mergeWihtLastActivity(activityListDataItem);
 
 					alfrescoRepository.save(activityListDataItem);
 
@@ -299,9 +307,33 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 				}
 			} catch (JSONException e) {
 				logger.error(e, e);
+			} finally {
+				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 			}
 		}
 		return false;
+
+	}
+
+	private void mergeWihtLastActivity(ActivityListDataItem item) {
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.HOUR, -1);
+
+		NodeRef activityListNodeRef = item.getParentNodeRef();
+
+		for (NodeRef activityListItemNodeRef : entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST)) {
+			Date created = (Date) nodeService.getProperty(activityListItemNodeRef, ContentModel.PROP_CREATED);
+
+			if (created.after(cal.getTime())) {
+				ActivityListDataItem activity = alfrescoRepository.findOne(activityListItemNodeRef);
+				if (activity.getActivityData().equals(item.getActivityData()) && activity.getUserId().equals(item.getUserId())
+						&& activity.getActivityType().equals(item.getActivityType())) {
+					nodeService.deleteNode(activityListItemNodeRef);
+					break;
+				}
+			}
+
+		}
 
 	}
 
@@ -309,7 +341,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	public boolean postStateChangeActivity(NodeRef entityNodeRef, NodeRef datalistNodeRef, String beforeState, String afterState) {
 		if ((entityNodeRef != null) && (beforeState != null) && (afterState != null)) {
 			try {
-
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 				NodeRef activityListNodeRef = getActivityList(entityNodeRef);
 
 				// No list no activity
@@ -339,7 +371,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 						if (charactNodeRef != null) {
 							data.put(PROP_TITLE, attributeExtractorService.extractPropName(charactNodeRef));
 						} else {
-							data.put(PROP_TITLE, type.toPrefixString());
+							data.put(PROP_TITLE, attributeExtractorService.extractPropName(datalistNodeRef));
 						}
 
 					} else {
@@ -363,6 +395,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 			} catch (JSONException e) {
 				logger.error(e, e);
+			} finally {
+				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 			}
 		}
 
@@ -372,9 +406,9 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 	@Override
 	public boolean postVersionActivity(NodeRef entityNodeRef, NodeRef versionNodeRef, String versionLabel) {
-		if ((versionNodeRef != null) && (versionNodeRef != null)) {
+		if ((entityNodeRef != null) && (versionNodeRef != null)) {
 			try {
-
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 				NodeRef activityListNodeRef = getActivityList(entityNodeRef);
 
 				// No list no activity
@@ -405,6 +439,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 				}
 			} catch (JSONException e) {
 				logger.error(e, e);
+			} finally {
+				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 			}
 		}
 
@@ -420,6 +456,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 			if (toActivityListNodeRef != null) {
 				NodeRef activityListNodeRef = getActivityList(fromNodeRef);
 				if (activityListNodeRef != null) {
+
 					for (NodeRef listItem : entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST)) {
 						nodeService.moveNode(listItem, toActivityListNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
 					}
@@ -435,6 +472,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	public boolean postEntityActivity(NodeRef entityNodeRef, ActivityType activityType, ActivityEvent activityEvent) {
 
 		try {
+			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 
 			NodeRef activityListNodeRef = getActivityList(entityNodeRef);
 
@@ -461,6 +499,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					activityListDataItem.setActivityData(data.toString());
 					activityListDataItem.setParentNodeRef(activityListNodeRef);
 
+					mergeWihtLastActivity(activityListDataItem);
+
 					alfrescoRepository.save(activityListDataItem);
 
 					notifyListeners(entityNodeRef, activityListDataItem);
@@ -470,6 +510,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 			}
 		} catch (JSONException e) {
 			logger.error(e, e);
+		} finally {
+			policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 		}
 		return false;
 	}
@@ -483,20 +525,24 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 	}
 
-
 	private NodeRef getMatchingCharactNodeRef(NodeRef listItemNodeRef) {
-		QName pivotAssoc = entityDictionaryService.getDefaultPivotAssoc(nodeService.getType(listItemNodeRef));
-		if (pivotAssoc != null) {
-			NodeRef part = associationService.getTargetAssoc(listItemNodeRef, pivotAssoc);
-			if ((part != null)) {
-				return part;
+		try {
+			QName pivotAssoc = entityDictionaryService.getDefaultPivotAssoc(nodeService.getType(listItemNodeRef));
+			if (pivotAssoc != null) {
+				NodeRef part = associationService.getTargetAssoc(listItemNodeRef, pivotAssoc);
+				if ((part != null)) {
+					return part;
+				}
+			}
+		} catch (IllegalArgumentException e) {
+			if (logger.isDebugEnabled()) {
+				logger.debug(e, e);
 			}
 		}
 
 		return null;
 	}
-	
-	
+
 	private NodeRef getActivityList(NodeRef projectNodeRef) {
 		NodeRef listNodeRef = null;
 		NodeRef listContainerNodeRef = entityListDAO.getListContainer(projectNodeRef);
@@ -540,9 +586,6 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	}
 
 	@Override
-	//TODO
-	// Supprimer également toutes les activités de formulation / rapport (pas la peine de les mergers)
-	// Prévoir un webscript pour apeller la methode pour les tests
 	public void cleanActivities() {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -553,10 +596,11 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 			try {
 				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+
 				L2CacheSupport.doInCacheContext(() -> {
 
-					// Clean by Entity (product, project, ..)
 					for (NodeRef entityNodeRef : entityNodeRefs) {
+
 						NodeRef activityListNodeRef = getActivityList(entityNodeRef);
 						if (activityListNodeRef != null) {
 							// Get Activity List
@@ -564,8 +608,9 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 							Set<String> users = new HashSet<>();
 							Date cronDate = new Date();
 
+							int nbrActivity = activityListNodeRefs.size();
 							// Clean if more than 50 Activity
-							if (activityListNodeRefs.size() > MAX_PAGE) {
+							if (nbrActivity > MAX_PAGE) {
 								Map<ActivityType, List<NodeRef>> activitiesByType = new HashMap<>();
 								ActivityListDataItem activity;
 								for (NodeRef activityListItemNodeRef : activityListNodeRefs) {
@@ -574,34 +619,51 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 									if (cronDate.after(created)) {
 										cronDate = created;
 									}
-
 									activity = alfrescoRepository.findOne(activityListItemNodeRef);
-
-									// Group by type
 									if (!activitiesByType.containsKey(activity.getActivityType())) {
 										activitiesByType.put(activity.getActivityType(), new ArrayList<>());
 									}
 									activitiesByType.get(activity.getActivityType()).add(activityListItemNodeRef);
 									users.add(activity.getUserId());
-
 								}
-								int activityNumberAfterGroupByMonth = 0;
-								// Group by week foreach ActivityList type
-								for (Map.Entry<ActivityType, List<NodeRef>> entry : activitiesByType.entrySet()) {
 
-									if (!entry.getKey().equals(ActivityType.Comment)) {
-										activitiesByType.put(entry.getKey(), groupByWeek(entityNodeRef, entry.getValue(), users, cronDate));
+								// Delete Report/Formulation
+								if (nbrActivity > MAX_PAGE) {
+									if (activitiesByType.containsKey(ActivityType.Formulation)) {
+										for (NodeRef nodeRef : activitiesByType.get(ActivityType.Formulation)) {
+											nodeService.deleteNode(nodeRef);
+										}
+										activitiesByType.remove(ActivityType.Formulation);
 									}
-									activityNumberAfterGroupByMonth += activitiesByType.get(entry.getKey()).size();
+
+									if (activitiesByType.containsKey(ActivityType.Report)) {
+										for (NodeRef nodeRef : activitiesByType.get(ActivityType.Report)) {
+											nodeService.deleteNode(nodeRef);
+										}
+										activitiesByType.remove(ActivityType.Report);
+									}
 								}
 
-								// Still more than 50 activity > groupByMonth
-								if (activityNumberAfterGroupByMonth > MAX_PAGE) {
-									groupByMonth(null, null, null);
+								// Group by week/month/day
+								int[] groupTime = { Calendar.WEEK_OF_YEAR, Calendar.MONTH, Calendar.DAY_OF_WEEK };
+								for (int i = 0; (i < groupTime.length) && (nbrActivity > MAX_PAGE); i++) {
+
+									if (activitiesByType.containsKey(ActivityType.Comment)) {
+										nbrActivity = activitiesByType.get(ActivityType.Comment).size();
+									}
+
+									for (Map.Entry<ActivityType, List<NodeRef>> entry : activitiesByType.entrySet()) {
+										if (!entry.getKey().equals(ActivityType.Comment)) {
+											activitiesByType.put(entry.getKey(),
+													group(entityNodeRef, entry.getValue(), users, groupTime[i], cronDate));
+											nbrActivity += activitiesByType.get(entry.getKey()).size();
+
+										}
+									}
 								}
 
-								// Finally delete non important older activities
-								// (Still under R&D)
+								// Clean comments activities
+								// Finally delete others (Under R&D)
 							}
 						}
 					}
@@ -618,28 +680,37 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 	}
 
-	// Group activities by type and week and user
-	private List<NodeRef> groupByWeek(NodeRef entityNodeRef, List<NodeRef> activitiesNodeRefs, Set<String> users, Date cronDate) {
+	// Group activities
+	private List<NodeRef> group(NodeRef entityNodeRef, List<NodeRef> activitiesNodeRefs, Set<String> users, int timePeriod, Date cronDate) {
 
-		// Ignore the last week
-		Calendar endWeek = Calendar.getInstance();
-		endWeek.setTime(new Date());
-		endWeek.add(Calendar.WEEK_OF_YEAR, -1);
+		// Ignore the last day/week/month
+		Calendar maxLimit = Calendar.getInstance();
+		maxLimit.setTime(new Date());
+		Calendar minLimit = Calendar.getInstance();
+		minLimit.setTime(new Date());
 
-		Calendar startWeek = Calendar.getInstance();
-		startWeek.setTime(new Date());
-		startWeek.add(Calendar.WEEK_OF_YEAR, -2);
+		if (timePeriod == Calendar.MONTH) {
+			maxLimit.set(Calendar.DAY_OF_MONTH, 1);
+			minLimit.set(Calendar.DAY_OF_MONTH, 1);
+			minLimit.add(timePeriod, -1);
+		} else if (timePeriod == Calendar.WEEK_OF_YEAR) {
+			maxLimit.set(Calendar.DAY_OF_WEEK, maxLimit.getFirstDayOfWeek());
+			minLimit.set(Calendar.DAY_OF_WEEK, minLimit.getFirstDayOfWeek());
+			minLimit.add(timePeriod, -1);
+		} else if (timePeriod == Calendar.DAY_OF_WEEK) {
+			minLimit.add(timePeriod, -2);
+		}
 
 		// Repeat till the oldest activity
-		while (endWeek.getTime().after(cronDate)) {
+		while (maxLimit.getTime().after(cronDate)) {
 
 			for (String userId : users) {
 				List<NodeRef> deletedNodes = new ArrayList<>();
 
 				for (NodeRef activityNodeRef : activitiesNodeRefs) {
 					Date createdDate = (Date) nodeService.getProperty(activityNodeRef, ContentModel.PROP_CREATED);
-					// Group by week each activity match user and week criteria
-					if (createdDate.after(startWeek.getTime()) && createdDate.before(endWeek.getTime())
+
+					if (createdDate.after(minLimit.getTime()) && createdDate.before(maxLimit.getTime())
 							&& alfrescoRepository.findOne(activityNodeRef).getUserId().equals(userId)) {
 						deletedNodes.add(activityNodeRef);
 						if (deletedNodes.size() > 1) {
@@ -653,42 +724,35 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					// Delete ignored Activity
 					ActivityListDataItem firstDeletedActivity = alfrescoRepository.findOne(deletedNodes.get(0));
 					ActivityListDataItem activity = new ActivityListDataItem();
-					// Group deleted activities by new activity
-					activity.setParentNodeRef(entityNodeRef);
+
+					// Group deleted activities
+					activity.setParentNodeRef(getActivityList(entityNodeRef));
 					activity.setActivityData(firstDeletedActivity.getActivityData());
 					activity.setActivityType(firstDeletedActivity.getActivityType());
 					activity.setUserId(firstDeletedActivity.getUserId());
+					NodeRef groupActivityNodeRef = alfrescoRepository.save(activity).getNodeRef();
+					activitiesNodeRefs.add(groupActivityNodeRef);
+					nodeService.setProperty(groupActivityNodeRef, ContentModel.PROP_CREATED, maxLimit.getTime());
 
-					activitiesNodeRefs.removeAll(deletedNodes);
 					nodeService.deleteNode(deletedNodes.get(0));
-					activitiesNodeRefs.add(alfrescoRepository.save(activity).getNodeRef());
+					activitiesNodeRefs.removeAll(deletedNodes);
 				}
-
 			}
 
-			// Move to previous week
-			endWeek.add(Calendar.WEEK_OF_MONTH, -1);
-			startWeek.add(Calendar.WEEK_OF_MONTH, -1);
+			// Move to previous period
+			maxLimit.add(timePeriod, -1);
+			minLimit.add(timePeriod, -1);
 		}
 
 		return activitiesNodeRefs;
 	}
 
-	// Group activities by month
-	private List<NodeRef> groupByMonth(List<NodeRef> activityList, Set<String> users, Date cronDate) {
-
-		// TODO groupByWeek refactoring !!
-
-		return null;
-	}
-
 	@Override
 	public NodeRef getEntityNodeRefForActivity(NodeRef nodeRef, QName itemType) {
-		if( nodeService.exists(nodeRef) && !nodeService.hasAspect(nodeRef, ContentModel.ASPECT_WORKING_COPY)
-		&& !nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)){
+		if (nodeService.exists(nodeRef) && !nodeService.hasAspect(nodeRef, ContentModel.ASPECT_WORKING_COPY)
+				&& !nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
 			return entityService.getEntityNodeRef(nodeRef, itemType);
 		}
 		return null;
 	}
-
 }

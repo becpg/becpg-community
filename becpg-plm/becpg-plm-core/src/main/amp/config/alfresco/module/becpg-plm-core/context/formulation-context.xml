@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--
-  Copyright (C) 2010-2016 beCPG. 
+  Copyright (C) 2010-2017 beCPG. 
    
   This file is part of beCPG 
    
@@ -157,20 +157,25 @@
 					<property name="nodeService" ref="nodeService" />
 					<property name="execOrder" value="Post"/>
 				</bean>
-				<bean class="fr.becpg.repo.product.formulation.MergeReqCtrlFormulationHandler" >
-					<property name="alfrescoRepository" ref="alfrescoRepository" />
-					<property name="nodeService" ref="nodeService" />
-				</bean>
-				<bean class="fr.becpg.repo.product.formulation.ScoreCalculatingFormulationHandler">
+				<bean class="fr.becpg.repo.product.formulation.CompletionReqCtrlCalculatingFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="namespaceService" ref="namespaceService" />
 					<property name="nodeService" ref="nodeService" />
+					<property name="beCPGCacheService" ref="beCPGCacheService"/>
 					<property name="dictionaryService" ref="dictionaryService"/>
 					<property name="associationService" ref="associationService" />
 					<property name="mlNodeService" ref="mlAwareNodeService" />
 					<property name="formulaService" ref="formulaService" />
 					<property name="repository" ref="repositoryHelper" />
 					<property name="fileFolderService" ref="fileFolderService" />
+					<property name="contentService" ref="contentService" />
+				</bean>
+				<bean class="fr.becpg.repo.product.formulation.MergeReqCtrlFormulationHandler" >
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+					<property name="nodeService" ref="nodeService" />
+				</bean>
+				<bean class="fr.becpg.repo.product.formulation.ScoreCalculatingFormulationHandler">
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.CompareFormulationHandler" >
 					<property name="alfrescoRepository" ref="alfrescoRepository" />

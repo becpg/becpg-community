@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2016 beCPG.
+ * Copyright (C) 2010-2017 beCPG.
  *
  * This file is part of beCPG
  *
@@ -89,9 +89,11 @@ public class BeCPGReportServiceImpl implements BeCPGReportService {
 				options = new RenderOption();
 				options.setOutputFormat(IRenderOption.OUTPUT_FORMAT_PDF);
 			} else if (format.equals(ReportFormat.DOCX.toString())) {
-
 				options = new DocxRenderOption();
 				options.setOutputFormat(ReportFormat.DOCX.toString());
+			} else if (format.equals(ReportFormat.ODT.toString())) {
+				options = new RenderOption();
+				options.setOutputFormat(ReportFormat.ODT.toString());			
 			} else {
 				// default format excel
 				options = new EXCELRenderOption();
@@ -139,6 +141,8 @@ public class BeCPGReportServiceImpl implements BeCPGReportService {
 		}
 
 	}
+	
+	
 
 	private IResourceLocator createRessourceLocator(final String templateId) {
 		return new IResourceLocator() {

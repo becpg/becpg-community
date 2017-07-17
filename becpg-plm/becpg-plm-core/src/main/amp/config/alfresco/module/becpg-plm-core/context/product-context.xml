@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--
-  Copyright (C) 2010-2016 beCPG. 
+  Copyright (C) 2010-2017 beCPG. 
    
   This file is part of beCPG 
    
@@ -53,6 +53,12 @@
 	<bean id="dynamicCharactListPolicy" class="fr.becpg.repo.product.policy.DynamicCharactListPolicy"
 		parent="abstractBeCPGPolicy" depends-on="bcpg.plm.dictionaryBootstrap">
 		<property name="entityListDAO" ref="entityListDAO"/>
+	</bean>
+	
+	
+
+	<bean id="ingListExtractor" parent="simpleExtractor" class="fr.becpg.repo.product.extractor.IngListExtractor">
+		<property name="defaultExtractor" value="false"/>
 	</bean>
 	
 	

@@ -33,6 +33,9 @@
 			<#if field.control.params.local?exists>
 			 		,isLocalProxy:${field.control.params.local?string}
 			</#if>
+			<#if field.control.params.showColor?exists>
+			 		,showColor:${field.control.params.showColor?string}
+			</#if>
 			<#if field.control.params.showTooltip?exists>
 			 		,showToolTip:${field.control.params.showTooltip?string}
 			</#if>

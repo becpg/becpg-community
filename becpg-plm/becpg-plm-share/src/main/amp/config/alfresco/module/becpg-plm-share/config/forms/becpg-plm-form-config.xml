@@ -1,4 +1,4 @@
-<!-- Copyright (C) 2010-2016 beCPG. This file is part of beCPG beCPG is free 
+<!-- Copyright (C) 2010-2017 beCPG. This file is part of beCPG beCPG is free 
 	software: you can redistribute it and/or modify it under the terms of the 
 	GNU Lesser General Public License as published by the Free Software Foundation, 
 	either version 3 of the License, or (at your option) any later version. beCPG 
@@ -291,7 +291,6 @@
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/finishedProduct_Hierarchy
 							</control-param>
-							<control-param name="parentMode">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" help-id="becpg.forms.help.productHierarchy2" set="mainInfo">
@@ -760,7 +759,7 @@
 					</field>
 					<field id="bcpg:productHierarchy1" help-id="becpg.forms.help.productHierarchy1" set="2-col-product-criteria">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/hierarchyMultiLevel/values/System/ProductHierarchy/bcpg:entityLists/finishedProduct_Hierarchy
+							<control-param name="ds">becpg/autocomplete/allLinkedvalue/values/System/ProductHierarchy/bcpg:entityLists/finishedProduct_Hierarchy
 							</control-param>
 							<control-param name="multiple">true</control-param>
 						</control>
@@ -966,7 +965,6 @@
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/finishedProduct_Hierarchy
 							</control-param>
-							<control-param name="parentMode">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" help-id="becpg.forms.help.productHierarchy2" set="mainInfo">
@@ -2401,7 +2399,7 @@
 
 					<field id="bcpg:productHierarchy1" set="product-criteria">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/hierarchyMultiLevel/values/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy
+							<control-param name="ds">becpg/autocomplete/allLinkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy
 							</control-param>
 							<control-param name="multiple">true</control-param>
 						</control>
@@ -3308,7 +3306,7 @@
 					</field>
 					<field id="bcpg:productHierarchy1" help-id="becpg.forms.help.productHierarchy1" set="2-col-product-criteria">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/hierarchyMultiLevel/values/System/ProductHierarchy/bcpg:entityLists/rawMaterial_Hierarchy
+							<control-param name="ds">becpg/autocomplete/allLinkedvalue/values/System/ProductHierarchy/bcpg:entityLists/rawMaterial_Hierarchy
 							</control-param>
 							<control-param name="multiple">true</control-param>
 						</control>
@@ -3846,7 +3844,7 @@
 					</field>
 					<field id="bcpg:productHierarchy1" help-id="becpg.forms.help.productHierarchy1" set="2-col-product-criteria">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/hierarchyMultiLevel/values/System/ProductHierarchy/bcpg:entityLists/semiFinishedProduct_Hierarchy
+							<control-param name="ds">becpg/autocomplete/allLinkedvalue/values/System/ProductHierarchy/bcpg:entityLists/semiFinishedProduct_Hierarchy
 							</control-param>
 							<control-param name="multiple">true</control-param>
 						</control>
@@ -4485,7 +4483,7 @@
 					<field id="cm:name" set="product-criteria" />
 					<field id="bcpg:productHierarchy1" help-id="becpg.forms.help.productHierarchy1" set="product-criteria">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/hierarchyMultiLevel/values/System/ProductHierarchy/bcpg:entityLists/resourceProduct_Hierarchy
+							<control-param name="ds">becpg/autocomplete/allLinkedvalue/values/System/ProductHierarchy/bcpg:entityLists/resourceProduct_Hierarchy
 							</control-param>
 							<control-param name="multiple">true</control-param>
 						</control>
@@ -6063,12 +6061,18 @@
 				<appearance>
 					<field id="bcpg:supplierHierarchy1">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/hierarchyMultiLevel/values/System/ProductHierarchy/bcpg:entityLists/supplier_Hierarchy
+							<control-param name="ds">becpg/autocomplete/allLinkedvalue/values/System/ProductHierarchy/bcpg:entityLists/supplier_Hierarchy
 							</control-param>
 							<control-param name="multiple">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:code" read-only="true" />
+					<field id="bcpg:supplierState">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 		</forms>
@@ -6313,6 +6317,8 @@
 					<show id="bcpg:dynamicCharactColumn8" force="true" />
 					<show id="bcpg:dynamicCharactColumn9" force="true" />
 					<show id="bcpg:dynamicCharactColumn10" force="true" />
+					<show id="bcpg:startEffectivity" force="true" />
+					<show id="bcpg:endEffectivity" force="true" />
 					<show id="bcpg:instruction" force="true" />
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
@@ -6358,6 +6364,8 @@
 					<show id="bcpg:compoListYieldPerc" />
 					<show id="bcpg:compoListLossPerc" />
 					<show id="bcpg:compoListDeclType" />
+					<show id="bcpg:startEffectivity" force="true" />
+					<show id="bcpg:endEffectivity" force="true" />
 				</field-visibility>
 			</form>
 		</forms>
@@ -6519,6 +6527,8 @@
 					<show id="bcpg:dynamicCharactColumn8" force="true" />
 					<show id="bcpg:dynamicCharactColumn9" force="true" />
 					<show id="bcpg:dynamicCharactColumn10" force="true" />
+					<show id="bcpg:startEffectivity" force="true" />
+					<show id="bcpg:endEffectivity" force="true" />
 					<show id="bcpg:instruction" force="true" />
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
@@ -6572,6 +6582,8 @@
 					<show id="bcpg:packagingListLossPerc" />
 					<show id="bcpg:packagingListPkgLevel" />
 					<show id="bcpg:packagingListIsMaster" />
+					<show id="bcpg:startEffectivity" force="true" />
+					<show id="bcpg:endEffectivity" force="true" />
 				</field-visibility>
 			</form>
 		</forms>
@@ -7070,10 +7082,16 @@
 				<appearance>
 					<field id="bcpg:illGrp" read-only="true" />
 					<field id="bcpg:illValue">
-						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">5</control-param>
+    						<control-param name="maxLength">10000</control-param>
+   						</control>
 					</field>
 					<field id="bcpg:illManualValue">
-						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">5</control-param>
+    						<control-param name="maxLength">10000</control-param>
+   						</control>
 					</field>
 				</appearance>
 			</form>
@@ -7108,10 +7126,16 @@
 				<appearance>
 					<field id="bcpg:illGrp" read-only="true" />
 					<field id="bcpg:illValue">
-						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">5</control-param>
+    						<control-param name="maxLength">10000</control-param>
+   						</control>
 					</field>
 					<field id="bcpg:illManualValue">
-						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">5</control-param>
+    						<control-param name="maxLength">10000</control-param>
+   						</control>
 					</field>
 				</appearance>
 			</form>
@@ -7139,7 +7163,7 @@
 					<field id="bcpg:lrType">
 						<constraint-handlers>
 							 <constraint type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf" event='keyup,change@[
-		                  		{"prop":"prop_bcpg_lrLabel", "condition" : "Format|Render|DetailComponents|DoNotDetailsComponents|Locale|Prefs|Omit|DoNotDeclare"},
+		                  		{"prop":"prop_bcpg_lrLabel", "condition" : "Format|DetailComponents|DoNotDetailsComponents|Locale|Prefs|Omit|DoNotDeclare"},
 		                  		{"prop":"assoc_bcpg_lrComponents", "condition" : "Render|Locale|Prefs"},
 		                  		{"prop":"assoc_bcpg_lrReplacements", "condition" : "Format|Render|DetailComponents|DoNotDetailsComponents|Locale|Prefs|Omit|DoNotDeclare"},
 		                  		{"prop":"prop_bcpg_lrLocales", "condition" : "Prefs"}
@@ -8503,11 +8527,12 @@
 			<form>
 				<field-visibility>
 					<show id="bcpgwf:pvValidationDate" for-mode="view" />
-					<show id="bcpgwf:pvCallerActor" for-mode="view" />
 					<show id="bcpgwf:pvRDApprovalActor" for-mode="view" />
 					<show id="bcpgwf:pvPackagingApprovalActor" for-mode="view" />
 					<show id="bcpgwf:pvQualityApprovalActor" for-mode="view" />
-					<show id="bcpgwf:pvProductionApprovalActor" for-mode="view" />					
+					<show id="bcpgwf:pvProductionApprovalActor" for-mode="view" />		
+					<show id="bcpgwf:pvCallerActor" for-mode="view" />
+					<show id="bcpgwf:pvCaller2Actor" for-mode="view" />			
 				</field-visibility>
 				<appearance>
 					<set id="productValidation" appearance="bordered-panel"
@@ -8517,11 +8542,12 @@
 							<control-param name="showTime">false</control-param>
 						</control>
 					</field>
-					<field id="bcpgwf:pvCallerActor" set="productValidation" />
 					<field id="bcpgwf:pvRDApprovalActor" set="productValidation" />
 					<field id="bcpgwf:pvPackagingApprovalActor" set="productValidation" />
 					<field id="bcpgwf:pvQualityApprovalActor" set="productValidation" />
 					<field id="bcpgwf:pvProductionApprovalActor" set="productValidation" />					
+					<field id="bcpgwf:pvCallerActor" set="productValidation" />
+					<field id="bcpgwf:pvCaller2Actor" set="productValidation" />
 				</appearance>
 			</form>
 		</forms>

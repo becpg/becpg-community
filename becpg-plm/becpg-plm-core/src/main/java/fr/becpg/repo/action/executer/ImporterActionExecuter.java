@@ -37,6 +37,7 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase {
 	public static final String NAME = "import-content";
 	public static final String PARAM_DO_NOT_MOVE_NODE = "doNotMoveNodeParam";
 	public static final String CSV_EXTENSION = ".csv";
+	public static final String XLSX_EXTENSION = ".xlsx";
 
 	private static final String LOG_STARTING_DATE = "Starting date: ";
 	private static final String LOG_ENDING_DATE = "Ending date: ";
@@ -47,6 +48,7 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase {
 	private static final String KEY_FILES_TO_IMPORT = "keyFilesToImport";
 
 	private static final Log logger = LogFactory.getLog(ImporterActionExecuter.class);
+
 
 	private ImportService importService;
 	private final TransactionListenerAdapter transactionListener;

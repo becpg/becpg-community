@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2016 beCPG.
+ * Copyright (C) 2010-2017 beCPG.
  *
  * This file is part of beCPG
  *
@@ -80,7 +80,7 @@ public class CompositionQtyCalculatingFormulationHandler extends FormulationBase
 			}
 
 		}
-		Double netWeight = formulatedProduct.getNetWeight();
+		Double netWeight = formulatedProduct.getNetWeight()!=null ? formulatedProduct.getNetWeight() : 100d ;
 		Composite<CompoListDataItem> compositeAll = CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList());
 
 		// calculate on every item

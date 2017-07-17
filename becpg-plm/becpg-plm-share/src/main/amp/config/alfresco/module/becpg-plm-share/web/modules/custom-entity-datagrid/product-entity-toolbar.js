@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (C) 2010-2016 beCPG. 
+ *  Copyright (C) 2010-2017 beCPG. 
  *   
  *  This file is part of beCPG 
  *   
@@ -345,6 +345,8 @@ YAHOO.Bubbling
              return productNotifications;
           }
        });
+      
+
 
 
       YAHOO.Bubbling
@@ -490,6 +492,8 @@ YAHOO.Bubbling
             return picker;
          }
       });
+      
+
 
       YAHOO.Bubbling
             .fire(

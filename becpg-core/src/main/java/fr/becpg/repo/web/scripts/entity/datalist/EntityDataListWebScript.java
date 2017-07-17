@@ -98,8 +98,8 @@ public class EntityDataListWebScript extends AbstractWebScript {
 	protected static final String PARAM_ENTITY_NODEREF = "entityNodeRef";
 
 	protected static final String PARAM_ITEMTYPE = "itemType";
-	
-	protected static final String PARAM_EXTRA_PARAMS =  "extraParams";
+
+	protected static final String PARAM_EXTRA_PARAMS = "extraParams";
 
 	/** Pagination **/
 
@@ -114,8 +114,10 @@ public class EntityDataListWebScript extends AbstractWebScript {
 	protected static final String PARAM_MAX_RESULTS = "maxResults";
 
 	protected static final String PARAM_QUERY_EXECUTION_ID = "queryExecutionId";
-	
-    protected static final String PARAM_GUESS_CONTAINER = "guessContainer";
+
+	protected static final String PARAM_GUESS_CONTAINER = "guessContainer";
+
+	protected static final String PARAM_EFFECTIVE_FILTER_ON = "effectiveFilterOn";
 
 	private NodeService nodeService;
 
@@ -128,10 +130,14 @@ public class EntityDataListWebScript extends AbstractWebScript {
 	private DataListExtractorFactory dataListExtractorFactory;
 
 	private AuthorityService authorityService;
-	
-	private DataListOutputWriterFactory datalistOutputWriterFactory; 
-	
-	
+
+	private DataListOutputWriterFactory datalistOutputWriterFactory;
+
+	private boolean effectiveFilterEnabled = false;
+
+	public void setEffectiveFilterEnabled(boolean effectiveFilterEnabled) {
+		this.effectiveFilterEnabled = effectiveFilterEnabled;
+	}
 
 	public void setDatalistOutputWriterFactory(DataListOutputWriterFactory datalistOutputWriterFactory) {
 		this.datalistOutputWriterFactory = datalistOutputWriterFactory;
@@ -323,6 +329,7 @@ public class EntityDataListWebScript extends AbstractWebScript {
 			dataListFilter.setFilterData(filterData);
 			dataListFilter.setFilterParams(filterParams);
 			dataListFilter.setExtraParams(extraParams);
+			dataListFilter.setEffectiveFilterOn(effectiveFilterEnabled && "true".equals(req.getParameter(PARAM_EFFECTIVE_FILTER_ON)));
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("Filter:" + dataListFilter.toString());

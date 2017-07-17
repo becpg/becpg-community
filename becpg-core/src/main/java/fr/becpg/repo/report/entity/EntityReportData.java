@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2016 beCPG. 
+ * Copyright (C) 2010-2017 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -50,6 +50,11 @@ public class EntityReportData {
 	 */
 	public void setDataObjects(Map<String, byte[]> dataObjects) {
 		this.dataObjects = dataObjects;
+	}
+	
+	
+	public void setParameters(EntityReportParameters reportParameters) {
+		reportParameters.updateDataSource(xmlDataSource);
 	}
 	
 	

@@ -10,8 +10,11 @@ import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.MLText;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 
@@ -28,12 +31,12 @@ public class ExcelHelper {
 
 		boolean isAllowed(AttributeExtractorStructure field);
 	}
-
-	public static int appendExcelField(List<AttributeExtractorStructure> computedFields, String prefix, Map<String, Object> item, Row row,
+	
+	public static int appendExcelField(List<AttributeExtractorStructure> computedFields, String prefix, Map<String, Object> item, XSSFWorkbook workbook , Row row,
 			int cellnum, List<Locale> supportedLocales) {
 		for (AttributeExtractorStructure field : computedFields) {
 			if (field.isNested()) {
-				cellnum = appendExcelField(field.getChildrens(), field.getFieldName(), item, row, cellnum, supportedLocales);
+				cellnum = appendExcelField(field.getChildrens(), field.getFieldName(), item, workbook, row, cellnum, supportedLocales);
 			} else {
 
 				Object obj;
@@ -72,6 +75,11 @@ public class ExcelHelper {
 					if (obj != null) {
 						if (obj instanceof Date) {
 							cell.setCellValue((Date) obj);
+							if(DataTypeDefinition.DATETIME.toString().equals(((PropertyDefinition) field.getFieldDef()).getDataType().toString())){
+								cell.setCellStyle(createDateStyle(workbook, true));	
+							} else {
+								cell.setCellStyle(createDateStyle(workbook, true));	
+							}
 						} else if (obj instanceof Boolean) {
 							cell.setCellValue((boolean) obj);
 						} else if (obj instanceof String) {
@@ -88,32 +96,56 @@ public class ExcelHelper {
 		return cellnum;
 	}
 
+	private static CellStyle createDateStyle(XSSFWorkbook workbook, boolean full) {
+		
+		XSSFCellStyle style = workbook.createCellStyle();
+		if(full){
+			style.setDataFormat((short)14);
+		} else {
+			style.setDataFormat((short)22);
+		}
+		return style;
+	}
+
 	public static boolean isExcelType(Serializable value) {
 		return (value instanceof Date) || (value instanceof Boolean) || (value instanceof Double) || (value instanceof MLText);
 	}
 
 	public static int appendExcelHeader(List<AttributeExtractorStructure> fields, String prefix, String titlePrefix, Row headerRow, Row labelRow,
-			XSSFCellStyle style, int cellnum, ExcelFieldTitleProvider titleProvider, List<Locale> supportedLocales) {
+			XSSFCellStyle style, XSSFSheet sheet , int cellnum, ExcelFieldTitleProvider titleProvider, List<Locale> supportedLocales) {
+		
+	
+		
+		
 		if (fields != null) {
 			for (AttributeExtractorStructure field : fields) {
 				if (field.isNested()) {
 
-					cellnum = appendExcelHeader(field.getChildrens(), field.getFieldName(), titleProvider.getTitle(field), headerRow, labelRow, style,
+					cellnum = appendExcelHeader(field.getChildrens(), field.getFieldName(), titleProvider.getTitle(field), headerRow, labelRow, style, sheet,
 							cellnum, titleProvider, supportedLocales);
 				} else {
 
 					if ((supportedLocales != null) && !supportedLocales.isEmpty() && (field.getFieldDef() instanceof PropertyDefinition)
 							&& DataTypeDefinition.MLTEXT.toString().equals(((PropertyDefinition) field.getFieldDef()).getDataType().toString())) {
 
+						
+						
+						int groupFirstColumn = cellnum;
+						
 						for (Locale locale : supportedLocales) {
 
 							Cell cell = headerRow.createCell(cellnum);
+							
 
 							if (prefix != null) {
 								cell.setCellValue(
 										prefix + "_" + field.getFieldDef().getName().toPrefixString() + "_" + MLTextHelper.localeKey(locale));
 							} else {
-								cell.setCellValue(field.getFieldDef().getName().toPrefixString() + "_" + MLTextHelper.localeKey(locale));
+								if (MLTextHelper.isDefaultLocale(locale)) {
+									cell.setCellValue(field.getFieldDef().getName().toPrefixString());
+								} else {
+									cell.setCellValue(field.getFieldDef().getName().toPrefixString() + "_" + MLTextHelper.localeKey(locale));
+								}
 							}
 
 							cell = labelRow.createCell(cellnum++);
@@ -125,6 +157,8 @@ public class ExcelHelper {
 							cell.setCellStyle(style);
 
 						}
+						
+						sheet.groupColumn(groupFirstColumn, cellnum-1);
 
 					} else {
 

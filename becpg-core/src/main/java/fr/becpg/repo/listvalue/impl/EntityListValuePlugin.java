@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2016 beCPG.
+ * Copyright (C) 2010-2017 beCPG.
  *
  * This file is part of beCPG
  *
@@ -31,10 +31,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.dictionary.DictionaryDAO;
+import org.alfresco.repo.dictionary.IndexTokenisationMode;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
+import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -54,6 +57,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.entity.EntityDictionaryService;
+import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.BeCPGQueryHelper;
 import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.listvalue.ListValueExtractor;
@@ -100,6 +104,10 @@ public class EntityListValuePlugin implements ListValuePlugin {
 	protected AutoNumService autoNumService;
 	@Autowired
 	private HierarchyService hierarchyService;
+	@Autowired
+	private HierarchyValueExtractor hierarchyValueExtractor;
+	@Autowired
+	private EntityListDAO entityListDAO;
 	@Autowired
 	protected TargetAssocValueExtractor targetAssocValueExtractor;
 
@@ -156,29 +164,34 @@ public class EntityListValuePlugin implements ListValuePlugin {
 			}
 		}
 
+		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery();
+
 		String template = searchTemplate;
 		if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_CHARACT)) {
 			template = charactSearchTemplate;
+			queryBuilder.addSort(BeCPGModel.PROP_CHARACT_NAME, true);
 		} else if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_LIST_VALUE)) {
 			template = listValueSearchTemplate;
-		} else if(arrClassNames!=null ){
+			queryBuilder.addSort(BeCPGModel.PROP_LV_VALUE, true);
+		} else if (arrClassNames != null) {
 			for (String className : arrClassNames) {
 				QName classQName;
 				if (className.contains("^")) {
 					String[] splitted = className.split("\\^");
 					classQName = QName.createQName(splitted[0], namespaceService);
 				} else {
-					classQName = QName.createQName(className.replace("inc_",""), namespaceService);
+					classQName = QName.createQName(className.replace("inc_", ""), namespaceService);
 				}
 				if (entityDictionaryService.isSubClass(classQName, BeCPGModel.TYPE_CHARACT)) {
 					template = mixedSearchTemplate;
 					break;
 				}
 			}
+		} else {
+			queryBuilder.addSort(ContentModel.PROP_NAME, true);
 		}
 
-		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(type).excludeDefaults().inSearchTemplate(template)
-				.locale(I18NUtil.getContentLocale()).andOperator().ftsLanguage();
+		queryBuilder.ofType(type).excludeDefaults().inSearchTemplate(template).locale(I18NUtil.getContentLocale()).andOperator().ftsLanguage();
 
 		if (!isAllQuery(query)) {
 			if (query.length() > 2) {
@@ -187,11 +200,10 @@ public class EntityListValuePlugin implements ListValuePlugin {
 			queryBuilder.andFTSQuery(query);
 		}
 
-		if(path !=null && !path.isEmpty()){
+		if ((path != null) && !path.isEmpty()) {
 			queryBuilder.inPath(path);
 		}
 
-		
 		// filter by classNames
 		filterByClass(queryBuilder, arrClassNames);
 
@@ -279,6 +291,18 @@ public class EntityListValuePlugin implements ListValuePlugin {
 				} else if (extras.get("itemId") != null) {
 					itemIdNodeRef = new NodeRef(extras.get("itemId"));
 					entityNodeRef = nodeService.getPrimaryParent(itemIdNodeRef).getParentRef();
+				} else if (extras.get("list") != null) {
+
+					QName dataListQName = QName.createQName(extras.get("list"), namespaceService);
+
+					entityNodeRef = new NodeRef((String) props.get(ListValueService.PROP_NODEREF));
+
+					NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
+
+					if (listContainerNodeRef != null) {
+						entityNodeRef = entityListDAO.getList(listContainerNodeRef, dataListQName);
+					}
+
 				}
 				if (entityNodeRef != null) {
 					path = nodeService.getPath(entityNodeRef).toPrefixString(namespaceService);
@@ -294,6 +318,7 @@ public class EntityListValuePlugin implements ListValuePlugin {
 			NodeRef parentNodeRef = (parent != null) && NodeRef.isNodeRef(parent) ? new NodeRef(parent) : null;
 			ret = hierarchyService.getHierarchiesByPath(path, parentNodeRef, query);
 		} else {
+
 			ret = hierarchyService.getAllHierarchiesByPath(path, query);
 		}
 
@@ -302,7 +327,8 @@ public class EntityListValuePlugin implements ListValuePlugin {
 			ret.remove(itemIdNodeRef);
 		}
 
-		return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(BeCPGModel.PROP_LKV_VALUE, nodeService));
+		return new ListValuePage(ret, pageNum, pageSize,
+				all ? hierarchyValueExtractor : new NodeRefListValueExtractor(BeCPGModel.PROP_LKV_VALUE, nodeService));
 	}
 
 	/**
@@ -330,6 +356,8 @@ public class EntityListValuePlugin implements ListValuePlugin {
 			queryBuilder.andPropQuery(BeCPGModel.PROP_LV_VALUE, prepareQuery(query));
 
 		}
+
+		queryBuilder.addSort(BeCPGModel.PROP_LV_VALUE, true);
 
 		List<NodeRef> ret = queryBuilder.list();
 
@@ -433,7 +461,7 @@ public class EntityListValuePlugin implements ListValuePlugin {
 					classQName = QName.createQName(splitted[0], namespaceService);
 					boost = Integer.valueOf(splitted[1]);
 				} else {
-					if(className.startsWith("inc_")){
+					if (className.startsWith("inc_")) {
 						include = true;
 						classQName = QName.createQName(className.replace("inc_", ""), namespaceService);
 					} else {
@@ -442,7 +470,7 @@ public class EntityListValuePlugin implements ListValuePlugin {
 				}
 				ClassDefinition classDef = dictionaryService.getClass(classQName);
 				if (classDef.isAspect()) {
-					if(include){
+					if (include) {
 						queryBuilder.includeAspect(classQName);
 					} else {
 						queryBuilder.withAspect(classQName);
@@ -523,9 +551,9 @@ public class EntityListValuePlugin implements ListValuePlugin {
 
 	@SuppressWarnings("unchecked")
 	protected String extractPropText(NodeRef nodeRef, String propQname) {
-		if(nodeService.getProperty(nodeRef, QName.createQName(propQname, namespaceService)) instanceof List){
-			return ((List<String>)nodeService.getProperty(nodeRef, QName.createQName(propQname, namespaceService))).stream()
-					  .collect(Collectors.joining(","));
+		if (nodeService.getProperty(nodeRef, QName.createQName(propQname, namespaceService)) instanceof List) {
+			return ((List<String>) nodeService.getProperty(nodeRef, QName.createQName(propQname, namespaceService))).stream()
+					.collect(Collectors.joining(","));
 		}
 		return (String) nodeService.getProperty(nodeRef, QName.createQName(propQname, namespaceService));
 	}
@@ -553,12 +581,20 @@ public class EntityListValuePlugin implements ListValuePlugin {
 	protected ListValuePage suggestDatalistItem(NodeRef entityNodeRef, QName datalistType, QName propertyQName, String query, Integer pageNum,
 			Integer pageSize) {
 
-		List<NodeRef> ret = BeCPGQueryBuilder.createQuery().ofType(datalistType).andPropQuery(propertyQName, prepareQuery(query))
-				.inPath(nodeService.getPath(entityNodeRef).toPrefixString(namespaceService) + "/*/*")
-				// .addSort(propertyQName,true) unsupported by solr we need
-				// Tokenised "false" or "both"
-				.maxResults(RepoConsts.MAX_SUGGESTIONS).list();
+		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(datalistType).andPropQuery(propertyQName, prepareQuery(query))
+				.inPath(nodeService.getPath(entityNodeRef).toPrefixString(namespaceService) + "/*/*").maxResults(RepoConsts.MAX_SUGGESTIONS);
 
-		return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(propertyQName, nodeService));
+		PropertyDefinition propertyDef = dictionaryService.getProperty(propertyQName);
+		// Tokenised "false" or "both"
+		if (propertyDef != null) {
+
+			if (IndexTokenisationMode.BOTH.equals(propertyDef.getIndexTokenisationMode())
+					|| IndexTokenisationMode.FALSE.equals(propertyDef.getIndexTokenisationMode())) {
+				queryBuilder.addSort(propertyQName, true);
+			}
+		}
+
+		return new ListValuePage(queryBuilder.list(), pageNum, pageSize, new NodeRefListValueExtractor(propertyQName, nodeService));
 	}
+
 }

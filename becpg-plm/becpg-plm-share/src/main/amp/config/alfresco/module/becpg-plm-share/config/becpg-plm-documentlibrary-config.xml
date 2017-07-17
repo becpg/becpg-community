@@ -225,7 +225,7 @@
 				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isSystemEntity</evaluator>
 				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isWorkingCopy</evaluator>
 				<evaluator negate="true">evaluator.doclib.action.notEditable</evaluator>
-				<evaluator>evaluator.becpg.doclib.action.product</evaluator>
+				<evaluator>evaluator.becpg.doclib.action.entity</evaluator>
 			</action>
 		
 			<action id="entity-branch" type="javascript" label="actions.document.branch-entity">
@@ -233,7 +233,7 @@
 				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isSystemEntity</evaluator>
 				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isWorkingCopy</evaluator>
 				<evaluator negate="true">evaluator.doclib.action.notEditable</evaluator>
-				<evaluator>evaluator.becpg.doclib.action.product</evaluator>
+				<evaluator>evaluator.becpg.doclib.action.entity</evaluator>
 			</action>
 
 			<action id="entity-compare" type="javascript" label="actions.entity.compare">

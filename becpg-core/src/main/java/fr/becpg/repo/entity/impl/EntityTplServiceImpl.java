@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2016 beCPG.
+ * Copyright (C) 2010-2017 beCPG.
  *
  * This file is part of beCPG
  *
@@ -26,7 +26,6 @@ import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.rule.RuleModel;
 import org.alfresco.repo.rule.RuntimeRuleService;
@@ -36,6 +35,8 @@ import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransacti
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.InvalidAspectException;
 import org.alfresco.service.cmr.dictionary.TypeDefinition;
+import org.alfresco.service.cmr.model.FileFolderService;
+import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.InvalidNodeRefException;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -114,6 +115,9 @@ public class EntityTplServiceImpl implements EntityTplService {
 	@Autowired
 	private EntityTplPlugin[] entityTplPlugins;
 
+	@Autowired
+	private FileFolderService fileFolderService;
+
 	private ReentrantLock lock = new ReentrantLock();
 
 	/**
@@ -137,7 +141,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 		properties.put(BeCPGModel.PROP_ENTITY_TPL_IS_DEFAULT, isDefault);
 
 		NodeRef entityTplNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, entityTplName);
-		//#1911 do not update existing templates
+		// #1911 do not update existing templates
 		if (entityTplNodeRef == null) {
 			logger.debug("Creating a new entity template: " + entityTplName);
 			entityTplNodeRef = nodeService
@@ -259,17 +263,6 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 		}
 		return null;
-
-		// TODO
-		/*
-		 * return
-		 * BeCPGQueryBuilder.createQuery().ofExactType(nodeType).withAspect(
-		 * BeCPGModel.ASPECT_ENTITY_TPL)
-		 * .andPropEquals(BeCPGModel.PROP_ENTITY_TPL_ENABLED,
-		 * Boolean.TRUE.toString())
-		 * .andPropEquals(BeCPGModel.PROP_ENTITY_TPL_IS_DEFAULT,
-		 * Boolean.TRUE.toString()).excludeVersions().singleValue();
-		 */
 	}
 
 	@Override
@@ -379,8 +372,36 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 						}
 
-					});
+						// synchronize folders
+						// clean empty folders
+						for (FileInfo folder : fileFolderService.listFolders(entityNodeRef)) {
+							logger.debug("Synchro, checking empty folder " + folder.getName() + " of node "
+									+ nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + ", template = "
+									+ nodeService.getProperty(tplNodeRef, ContentModel.PROP_NAME));
+							if (fileFolderService.list(folder.getNodeRef()).size() == 0) {
+								fileFolderService.delete(folder.getNodeRef());
+							}
+						}
 
+						// copy folders of template
+						List<AssociationRef> products = nodeService.getSourceAssocs(tplNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
+						boolean exists = products.stream().anyMatch(assoc -> assoc.getSourceRef().equals(entityNodeRef));
+
+						if (exists) {
+							for (FileInfo folder : fileFolderService.listFolders(tplNodeRef)) {
+								logger.debug("Synchro, copying folder " + folder.getName() + " to node "
+										+ nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + ", template = "
+										+ nodeService.getProperty(tplNodeRef, ContentModel.PROP_NAME));
+								try {
+									fileFolderService.copy(folder.getNodeRef(), entityNodeRef, null);
+								} catch (Exception e) {
+									logger.warn(
+											"Unable to synchronize folder " + folder.getName() + " of node " + entityNodeRef + ": " + e.getMessage());
+								}
+							}
+						}
+
+					});
 				}
 			} finally {
 				lock.unlock();
@@ -439,7 +460,6 @@ public class EntityTplServiceImpl implements EntityTplService {
 								policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 								policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_VERSIONABLE);
 								policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-								
 
 								batchCallBack.run(entityNodeRef);
 
@@ -459,7 +479,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 			}
 
-		} , false, true);
+		}, false, true);
 
 		if (logger.isInfoEnabled()) {
 			watch.stop();
@@ -486,8 +506,6 @@ public class EntityTplServiceImpl implements EntityTplService {
 	public void synchronizeEntity(NodeRef entityNodeRef, NodeRef entityTplNodeRef) {
 		if (entityTplNodeRef != null) {
 
-			
-			
 			StopWatch watch = null;
 			if (logger.isDebugEnabled()) {
 				watch = new StopWatch();
