@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2016 beCPG.
+ * Copyright (C) 2010-2017 beCPG.
  *
  * This file is part of beCPG
  *
@@ -20,6 +20,7 @@ package fr.becpg.repo.entity.datalist.impl;
 import java.util.Date;
 import java.util.List;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.apache.commons.logging.Log;
@@ -27,6 +28,7 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.DataListPagination;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -85,6 +87,12 @@ public class BulkEditExtractor extends SimpleExtractor {
 
 				BeCPGQueryBuilder queryBuilder = dataListFilter.getSearchQuery();
 
+				
+				if(ContentModel.TYPE_CONTENT.equals(dataListFilter.getDataType())){
+					queryBuilder.excludeSearch();
+				}
+				
+				
 				// Look for path
 				if (dataListFilter.getFilterId().equals(DataListFilter.NODE_PATH_FILTER)) {
 					String path = nodeService.getPath(new NodeRef(dataListFilter.getFilterData())).toPrefixString(namespaceService);

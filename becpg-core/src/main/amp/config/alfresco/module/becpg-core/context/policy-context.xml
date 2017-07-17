@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--
-  Copyright (C) 2010-2016 beCPG. 
+  Copyright (C) 2010-2017 beCPG. 
    
   This file is part of beCPG 
    
@@ -56,7 +56,6 @@
 
 	<bean id="effectivityAspectPolicy" class="fr.becpg.repo.entity.policy.EffectivityAspectPolicy" init-method="init" parent="abstractBeCPGPolicy">
 		<property name="entityDictionaryService" ref="entityDictionaryService" />
-		<property name="associationService" ref="associationService" />
 	</bean>
 
 	<bean id="entityCheckOutCheckInServicePolicy" class="fr.becpg.repo.entity.policy.EntityCheckOutCheckInServicePolicy" parent="abstractBeCPGPolicy">

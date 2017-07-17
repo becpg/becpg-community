@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright (C) 2010-2016 beCPG. 
+  Copyright (C) 2010-2017 beCPG. 
    
   This file is part of beCPG 
    
@@ -128,6 +128,20 @@
 			</mandatory-aspects>
 		</type>
 		
+		<type name="bcpgwf:doProductValidationPackagingTask">
+			<parent>bpm:workflowTask</parent>			
+			<overrides>
+				<property name="bpm:packageItemActionGroup">
+					<default>edit_package_item_actions</default>
+				</property>
+			</overrides>
+			<mandatory-aspects>
+				<aspect>bcpgwf:productValidationAspect</aspect>
+				<aspect>bcpgwf:productValidationCommentAspect</aspect>
+				<aspect>bcpgwf:reviewPackagingApprovalAspect</aspect>
+			</mandatory-aspects>
+		</type>
+		
 		<type name="bcpgwf:doProductValidationCallerTask">
 			<parent>bpm:workflowTask</parent>			
 			<overrides>
@@ -141,6 +155,20 @@
 				<aspect>bcpgwf:reviewCallerApprovalAspect</aspect>
 			</mandatory-aspects>
 		</type>
+		
+		<type name="bcpgwf:doProductValidationCaller2Task">
+			<parent>bpm:workflowTask</parent>			
+			<overrides>
+				<property name="bpm:packageItemActionGroup">
+					<default>edit_package_item_actions</default>
+				</property>
+			</overrides>
+			<mandatory-aspects>
+				<aspect>bcpgwf:productValidationAspect</aspect>
+				<aspect>bcpgwf:productValidationCommentAspect</aspect>
+				<aspect>bcpgwf:reviewCaller2ApprovalAspect</aspect>
+			</mandatory-aspects>
+		</type>
 																
 
 		<type name="bcpgwf:approveProductTask">
@@ -151,7 +179,9 @@
 				<aspect>bcpgwf:reviewQualityApprovalAspect</aspect>
 				<aspect>bcpgwf:reviewProductionApprovalAspect</aspect>
 				<aspect>bcpgwf:reviewRDApprovalAspect</aspect>
+				<aspect>bcpgwf:reviewPackagingApprovalAspect</aspect>
 				<aspect>bcpgwf:reviewCallerApprovalAspect</aspect>
+				<aspect>bcpgwf:reviewCaller2ApprovalAspect</aspect>
 			</mandatory-aspects>
 		</type>
 
@@ -163,7 +193,9 @@
 				<aspect>bcpgwf:reviewQualityApprovalAspect</aspect>
 				<aspect>bcpgwf:reviewProductionApprovalAspect</aspect>
 				<aspect>bcpgwf:reviewRDApprovalAspect</aspect>
+				<aspect>bcpgwf:reviewPackagingApprovalAspect</aspect>
 				<aspect>bcpgwf:reviewCallerApprovalAspect</aspect>
+				<aspect>bcpgwf:reviewCaller2ApprovalAspect</aspect>
 			</mandatory-aspects>
 		</type>
 		
@@ -249,6 +281,23 @@
 			</properties>
 		</aspect>
 		
+		<aspect name="bcpgwf:reviewPackagingApprovalAspect">
+			<properties>													
+             <property name="bcpgwf:reviewPackagingApproval">
+               <type>d:text</type>
+               <constraints>
+						<constraint ref="bcpgwf:approvalDecision" />
+					</constraints>
+            </property>
+            <property name="bcpgwf:reviewPackagingComment">
+               <type>d:text</type>
+               <constraints>
+                   <constraint ref="bpm:allowedDescriptionLength"/>
+               </constraints>               
+            </property>             			
+			</properties>
+		</aspect>
+		
 		<aspect name="bcpgwf:reviewCallerApprovalAspect">
 			<properties>													
              <property name="bcpgwf:reviewCallerApproval">
@@ -258,6 +307,23 @@
 					</constraints>
             </property>
             <property name="bcpgwf:reviewCallerComment">
+               <type>d:text</type>
+               <constraints>
+                   <constraint ref="bpm:allowedDescriptionLength"/>
+               </constraints>               
+            </property>             			
+			</properties>
+		</aspect>
+		
+		<aspect name="bcpgwf:reviewCaller2ApprovalAspect">
+			<properties>													
+             <property name="bcpgwf:reviewCaller2Approval">
+               <type>d:text</type>
+               <constraints>
+						<constraint ref="bcpgwf:approvalDecision" />
+					</constraints>
+            </property>
+            <property name="bcpgwf:reviewCaller2Comment">
                <type>d:text</type>
                <constraints>
                    <constraint ref="bpm:allowedDescriptionLength"/>
@@ -290,64 +356,75 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>cm:person</class>
+						<class>cm:authority</class>
 						<mandatory>false</mandatory>
-						<many>false</many>
+						<many>true</many>
 					</target>
 				</association>				
+				<association name="bcpgwf:pvCaller2Actor">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>cm:authority</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
 				<association name="bcpgwf:pvQualityApprovalActor">
 					<source>
 						<mandatory>false</mandatory>
 						<many>true</many>
 					</source>
 					<target>
-						<class>cm:person</class>
+						<class>cm:authority</class>
 						<mandatory>false</mandatory>
-						<many>false</many>
+						<many>true</many>
 					</target>
 				</association>
 				<association name="bcpgwf:pvProductionApprovalActor">
 					<source>
-						<mandatory>true</mandatory>
+						<mandatory>false</mandatory>
 						<many>true</many>
 					</source>
 					<target>
-						<class>cm:person</class>
+						<class>cm:authority</class>
 						<mandatory>false</mandatory>
-						<many>false</many>
+						<many>true</many>
 					</target>
 				</association>
 				<association name="bcpgwf:pvRDApprovalActor">
 					<source>
-						<mandatory>true</mandatory>
+						<mandatory>false</mandatory>
 						<many>true</many>
 					</source>
 					<target>
-						<class>cm:person</class>
+						<class>cm:authority</class>
 						<mandatory>false</mandatory>
-						<many>false</many>
+						<many>true</many>
 					</target>
 				</association>
 				<association name="bcpgwf:pvTransmitterActor">
 					<source>
-						<mandatory>true</mandatory>
+						<mandatory>false</mandatory>
 						<many>true</many>
 					</source>
 					<target>
 						<class>cm:person</class>
 						<mandatory>false</mandatory>
-						<many>false</many>
+						<many>true</many>
 					</target>
 				</association>		
 				<association name="bcpgwf:pvPackagingApprovalActor">
 					<source>
-						<mandatory>true</mandatory>
+						<mandatory>false</mandatory>
 						<many>true</many>
 					</source>
 					<target>
-						<class>cm:person</class>
+						<class>cm:authority</class>
 						<mandatory>false</mandatory>
-						<many>false</many>
+						<many>true</many>
 					</target>
 				</association>		
 			</associations>			

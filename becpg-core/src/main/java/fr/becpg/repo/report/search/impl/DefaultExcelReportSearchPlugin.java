@@ -102,7 +102,7 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 			cell.setCellValue(String.valueOf(key));
 		}
 
-		cellNum = ExcelHelper.appendExcelField(metadataFields, null, item, row, cellNum,null);
+		cellNum = ExcelHelper.appendExcelField(metadataFields, null, item, sheet.getWorkbook(), row, cellNum,null);
 
 		
 		return rownum;

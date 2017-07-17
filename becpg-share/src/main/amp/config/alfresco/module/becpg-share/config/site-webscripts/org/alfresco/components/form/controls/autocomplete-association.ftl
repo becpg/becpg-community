@@ -42,6 +42,9 @@
 					<#assign parentFieldHtmlId=args.htmlid + "_prop_" + field.control.params.parent >
 		 		,parentFieldHtmlId:"${parentFieldHtmlId}"
 				</#if>
+				<#if field.control.params.showColor?exists>
+			 	,showColor:${field.control.params.showColor?string}
+				</#if>
 				<#if field.control.params.showTooltip??>
 				 ,showToolTip:${field.control.params.showTooltip?string}
 				</#if>

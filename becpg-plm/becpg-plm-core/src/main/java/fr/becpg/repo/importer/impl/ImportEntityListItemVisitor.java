@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2016 beCPG. 
+ * Copyright (C) 2010-2017 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -120,12 +120,14 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 			listContainerNodeRef = entityListDAO.createListContainer(entityNodeRef);
 		}
 
-		NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, importContext.getType());
+		QName listType = importContext.getListType() !=null ? importContext.getListType() : importContext.getType();
+		
+		NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, listType);
 
 		if (listNodeRef == null) {
-			listNodeRef = entityListDAO.createList(listContainerNodeRef, importContext.getType());
+			listNodeRef = entityListDAO.createList(listContainerNodeRef, listType);
 		} else if (importContext.isDeleteDataList(entityNodeRef)) {
-			List<NodeRef> dataListItems = entityListDAO.getListItems(listNodeRef, importContext.getType());
+			List<NodeRef> dataListItems = entityListDAO.getListItems(listNodeRef, listType);
 			for (NodeRef dataListItem : dataListItems) {
 				nodeService.deleteNode(dataListItem);
 			}

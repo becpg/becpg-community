@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright (C) 2010-2016 beCPG. 
+  Copyright (C) 2010-2017 beCPG. 
    
   This file is part of beCPG 
    
@@ -36,7 +36,7 @@
 					<prop key="engineId">activiti</prop>
 					<prop key="location">alfresco/module/${pom.artifactId}/workflow/product-validation.bpmn</prop>
 					<prop key="mimetype">text/xml</prop>
-					<prop key="redeploy">false</prop>
+					<prop key="redeploy">true</prop>
 				</props>
 				<props>
 					<prop key="engineId">activiti</prop>

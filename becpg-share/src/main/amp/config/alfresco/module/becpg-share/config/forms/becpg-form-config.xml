@@ -1,4 +1,4 @@
-<!-- Copyright (C) 2010-2016 beCPG. This file is part of beCPG beCPG is free 
+<!-- Copyright (C) 2010-2017 beCPG. This file is part of beCPG beCPG is free 
 	software: you can redistribute it and/or modify it under the terms of the 
 	GNU Lesser General Public License as published by the Free Software Foundation, 
 	either version 3 of the License, or (at your option) any later version. beCPG 
@@ -166,6 +166,16 @@
 					<show id="bcpg:parentLevel" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:parentLevel">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/allLinkedvalue
+							</control-param>
+							<control-param name="urlParamsToPass">list
+							</control-param>
+						</control>
+					</field>
+				</appearance>
 			</form>
 
 			<form id="datagrid">

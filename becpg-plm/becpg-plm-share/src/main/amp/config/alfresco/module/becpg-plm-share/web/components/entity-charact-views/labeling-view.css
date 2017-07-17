@@ -68,6 +68,13 @@
 	border-right: 0px;
 }
 
+.compoList .datagrid .scrollableList {
+	 min-height: 355px;
+}
+
+.labelingRuleList .datagrid .scrollableList {
+	 min-height: 230px;
+}
 
 
 /**

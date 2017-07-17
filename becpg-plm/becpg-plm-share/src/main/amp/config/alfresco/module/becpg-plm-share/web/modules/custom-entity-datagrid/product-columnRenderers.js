@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2016 beCPG.
+ * Copyright (C) 2010-2017 beCPG.
  * 
  * This file is part of beCPG
  * 
@@ -670,6 +670,55 @@ if (beCPG.module.EntityDataGridRenderers) {
 	});
 	
 
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+		propertyName : ["bcpg:startEffectivity","bcpg:endEffectivity"],
+		renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+			
+			
+			if(scope.options.extraDataParams!=null && scope.options.extraDataParams.indexOf("effectiveFilterOn="+(!oColumn.hidden))>0){
+				if (oColumn.hidden) {
+					Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
+					scope.widgets.dataTable.showColumn(oColumn);
+				} else {
+					Dom.addClass(elCell.parentNode, "yui-dt-hidden");
+					scope.widgets.dataTable.hideColumn(oColumn);
+				}
+			}
+			
+			if(label == "bcpg:startEffectivity" ){
+				var now = new Date();
+				var past = false;
+				var future = false;
+				var startEffectivity = data.value;
+				var endEffectivity = oRecord.getData("itemData")["prop_bcpg_endEffectivity"];
+				
+				if(startEffectivity !=null && now.getTime() < Alfresco.util.fromISO8601(startEffectivity).getTime()){
+					future = true ;
+				}
+				
+				if(!future && endEffectivity!=null && endEffectivity.value!=null && now.getTime() > Alfresco.util.fromISO8601(endEffectivity.value).getTime()) {
+					past = true;
+				}
+				
+				if(past || future){
+					var elTr = scope.widgets.dataTable.getTrEl(elCell);
+					if(past){
+						Dom.setStyle(elTr, 'background-color', "#ffebee");
+					} else {
+						Dom.setStyle(elTr, 'background-color', "#e8f5e9");
+					}
+					 Dom.setStyle(elTr, "opacity" ,"0.5");
+				}
+			}
+			
+			if (data.value != null) {
+				return Alfresco.util.formatDate(data.value,"yyyy-mm-dd");
+			} 
+			return "";
+		}
+	});
+	
+	
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : "pack:labelingPosition",

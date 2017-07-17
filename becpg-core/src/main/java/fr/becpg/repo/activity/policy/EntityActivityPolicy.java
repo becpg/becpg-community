@@ -109,7 +109,8 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 
-		if (policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE) && policyBehaviourFilter.isEnabled(BeCPGModel.ASPECT_SORTABLE_LIST)) {
+		if (policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE) && policyBehaviourFilter.isEnabled(BeCPGModel.ASPECT_SORTABLE_LIST)
+				&& policyBehaviourFilter.isEnabled(nodeRef, ContentModel.ASPECT_AUDITABLE)) {
 
 			QName entityState = null;
 			String beforeState = null;
@@ -149,6 +150,8 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 
 						}
 					}
+				} else if ((before != null) && (after != null) && before.size() < after.size()) {
+					isDifferent = true;
 				}
 
 				if (isDifferent) {

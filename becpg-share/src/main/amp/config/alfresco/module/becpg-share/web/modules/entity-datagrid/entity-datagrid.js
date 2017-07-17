@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (C) 2010-2016 beCPG. 
+ *  Copyright (C) 2010-2017 beCPG. 
  *   
  *  This file is part of beCPG 
  *   
@@ -311,9 +311,14 @@
                              */
                             groupFormater : null,
                             /**
-                             * Specify hidden column
+                             * Specify hidden columns
                              */
                             hiddenColumns : [],
+                            /**
+                             * Specify hidden only columns
+                             */
+                            hiddenOnlyColumns : [],
+                            
                             /**
                              * Extra data Params
                              */
@@ -371,17 +376,17 @@
                         /**
                          * Current sort
                          */
-						currentSort : null,
+			currentSort : null,
 						
 						/**
                          * Current sort dir
                          */
-						currentSortDir : null,
+		        currentSortDir : null,
 						
 						/**
                          * Used to speedUp path pagination
                          */
-						queryExecutionId : null,
+		        queryExecutionId : null,
 						
 						
                         /**
@@ -1308,7 +1313,9 @@
                                     {
                                         key : key,
                                         label : column.label == "hidden" ? "" : column.label,
-                                        hidden : column.label == "hidden",
+                                       hidden : column.label == "hidden" || (beCPG.util.contains(
+                                                this.options.hiddenOnlyColumns, key)),
+                                     
                                         sortable : (column.type == "property"),
                                         sortOptions :
                                         {
@@ -1646,6 +1653,17 @@
                                 		   Dom.removeClass(floatTheadDiv,"itemSelect-open");
                                 		   
                                 	   },  this.widgets.itemSelect, this);
+                                	   
+                                	   
+                                	   
+//                                	    var reFlowAfterUpdate = function EntityDataGrid_reFlowAfterUpdate()
+//                                        {
+//                                	    	if(me.widgets.floatingHeader){
+//          	                                  me.widgets.floatingHeader.floatThead('reflow');
+//          	                               	}
+//                                        };
+//                                        this.extraAfterDataGridUpdate.push(reFlowAfterUpdate);
+                                	   
                                    }
                                    
      
@@ -2552,27 +2570,38 @@
                          */
                         onActiveDataListChanged : function EntityDataGrid_onActiveDataListChanged(layer, args)
                         {
-                            var obj = args[1];
-                            if ((obj !== null) && (obj.dataList !== null))
+                           var obj = args[1];
+                          
+                            if ((obj !== null))
                             {
-                            	if( this.datalistMeta!=null && this.datalistMeta.name!=null){
-                            		Dom.removeClass(this.id+"-body",this.datalistMeta.name);
-                            		if(obj.dataList.name!=null){
-                            			Dom.addClass(this.id+"-body",obj.dataList.name);
-                            		}
+	                            	
+	                            if(obj.dataList){	
+	                            	if( this.datalistMeta!=null && this.datalistMeta.name!=null){
+	                            		Dom.removeClass(this.id+"-body",this.datalistMeta.name);
+	                            		if(obj.dataList.name!=null){
+	                            			Dom.addClass(this.id+"-body",obj.dataList.name);
+	                            		}
+	                            	}
+	                            
+                            	
+	                                this.datalistMeta = obj.dataList;
+	                                if(obj.dataList.itemType!=null && obj.force == true){
+	                                	this.options.itemType = obj.dataList.itemType;
+	                                }
+	                            }
+
+                            	if(obj.extraDataParams!=null) {
+                            		this.options.extraDataParams = obj.extraDataParams;
                             	}
                             	
-                                this.datalistMeta = obj.dataList;
-                                if(obj.dataList.itemType!=null && obj.force == true){
-                                	this.options.itemType = obj.dataList.itemType;
-                                }
-                                
                                 if(this.widgets.floatingHeader!=null ){
                                 	this.widgets.floatingHeader.floatThead('destroy');
                                 	this.widgets.floatingHeader = null;
                                 }
                                 
-                                this.entity = obj.entity;
+                                if(obj.entity){
+                                	this.entity = obj.entity;
+                                }
                                 this.currentPage = 1;
                                 this.queryExecutionId = null;
                                 this.isFilterFormLoaded = false;
@@ -2622,6 +2651,7 @@
                                     this.populateDataGrid();
                                 }
                             }
+                            
                         },
 
                         /**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2016 beCPG. 
+ * Copyright (C) 2010-2017 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -69,7 +69,7 @@ public class ProjectFormulationWorker {
         				.ofType(ProjectModel.TYPE_PROJECT)
         				.andPropEquals(ProjectModel.PROP_PROJECT_STATE, ProjectState.InProgress.toString());
         		
-        		List<NodeRef> projectNodeRefs = queryBuilder.list();
+        		List<NodeRef> projectNodeRefs = queryBuilder.inDB().list();
         		
         		// query
         		 queryBuilder = BeCPGQueryBuilder.createQuery()
@@ -77,7 +77,7 @@ public class ProjectFormulationWorker {
          				.andPropEquals(ProjectModel.PROP_PROJECT_STATE, ProjectState.Planned.toString())
          				.andBetween(ProjectModel.PROP_PROJECT_START_DATE, "MIN", ISO8601DateFormat.format(new Date()));
         		
-        		 projectNodeRefs.addAll(queryBuilder.list());
+        		 projectNodeRefs.addAll(queryBuilder.ftsLanguage().list());
         		 
         		try{
         			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);

@@ -688,6 +688,18 @@
 			</Hierarchy>
 		</Dimension>
 		
+		<Dimension  name="creation" caption="${msg("jsolap.creation.title")}" >
+			<Hierarchy name="creators" caption="${msg("jsolap.creators.title")}" hasAll="true" >
+				<Level name="creator"  caption="${msg("jsolap.creator.title")}"  column="projectCreator"  type="String" />
+			</Hierarchy>
+		</Dimension>
+		
+		<Dimension  name="modification" caption="${msg("jsolap.modification.title")}" >
+			<Hierarchy name="modifiers" caption="${msg("jsolap.modifiers.title")}" hasAll="true" >
+				<Level name="modifier" caption="${msg("jsolap.modifier.title")}" column="projectModifier"  type="String" />
+			</Hierarchy>
+		</Dimension>
+		
 		<#if isAdmin>
 			<DimensionUsage name="instance" caption="${msg("jsolap.instance.title")}" source="instancesDimension" foreignKey="instanceId" />
 		</#if>
@@ -1053,6 +1065,18 @@
 	    <Dimension  name="history" caption="${msg("jsolap.history.title")}"  >
 			<Hierarchy name="currentVersion" caption="${msg("jsolap.currentVersion.title")}" hasAll="true" defaultMember="[history.currentVersion].[true]" >
 				<Level name="isLastVersion" caption="${msg("jsolap.currentVersion.title")}" column="isLastVersion"  type="Boolean"    />
+			</Hierarchy>
+		</Dimension>
+		
+		<Dimension  name="creation" caption="${msg("jsolap.creation.title")}" >
+			<Hierarchy name="creators" caption="${msg("jsolap.creators.title")}" hasAll="true" >
+				<Level name="creator"  caption="${msg("jsolap.creator.title")}"  column="creator"  type="String" />
+			</Hierarchy>
+		</Dimension>
+		
+		<Dimension  name="modification" caption="${msg("jsolap.modification.title")}" >
+			<Hierarchy name="modifiers" caption="${msg("jsolap.modifiers.title")}" hasAll="true" >
+				<Level name="modifier" caption="${msg("jsolap.modifier.title")}" column="modifier"  type="String" />
 			</Hierarchy>
 		</Dimension>
 		

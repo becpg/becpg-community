@@ -108,7 +108,11 @@
 			/**
 			 * Selected customList
 			 */
-			customListName : ""
+			customListName : "",
+			/**
+			 *  Effective filter
+			 */
+			effectiveFilterOn : true
 		},
 
 		/**
@@ -132,8 +136,37 @@
 			this.widgets.customList.set("label", this.msg("dashlet.customList." + this.options.customListName + ".title") + " "
 					+ Alfresco.constants.MENU_ARROW_SYMBOL);
 			
+  
+			this.widgets.effectivityCkeckbox = new YAHOO.widget.Button(
+			            {
+			                type : "checkbox",
+			                title : instance.msg("actions.toggle-effectivity"),
+			                container : this.id+"-effectivityCheckbox",
+			                checked : !this.options.effectiveFilterOn
+			            });
 			
-			 this.services.preferences = new Alfresco.service.Preferences();
+			
+
+			this.widgets.effectivityCkeckbox.on("checkedChange", function (){
+				var prefs = "fr.becpg.formulation.dashlet.custom";
+
+				if (instance.options.list != null && instance.options.list.length > 0) {
+					prefs += "." + instance.options.list;
+				}
+				
+				instance.options.effectiveFilterOn = !instance.options.effectiveFilterOn;
+
+				instance.services.preferences.set(prefs, {list:instance.widgets.customList.value, effectiveFilterOn : instance.options.effectiveFilterOn});
+		 
+				YAHOO.Bubbling.fire("scopedActiveDataListChanged", 
+						{
+		                  extraDataParams : "&repo=true&effectiveFilterOn="+instance.options.effectiveFilterOn
+						}
+					);
+				
+			});
+
+			this.services.preferences = new Alfresco.service.Preferences();
 
 		},
 
@@ -211,7 +244,7 @@
 
 					}
 
-					this.services.preferences.set(prefs, {list:this.widgets.customList.value});
+					this.services.preferences.set(prefs, {list:this.widgets.customList.value, effectiveFilterOn : this.options.effectiveFilterOn});
 
 				} catch (e) {
 					alert(e);

@@ -2311,12 +2311,6 @@ row["illValue"]
                     <text-property name="heading">languageCode</text-property>
                 </structure>
                 <structure>
-                    <property name="columnName">languageCode</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">languageCode</text-property>
-                </structure>
-                <structure>
                     <property name="columnName">illValue</property>
                     <property name="analysis">attribute</property>
                     <property name="onColumnLayout">false</property>
@@ -7866,6 +7860,8 @@ dataSetRow["nutListUnit"]
                                 <cell id="6002">
                                     <property name="style">becpg-cell-dynamic-header</property>
                                     <text id="6003">
+                                        <property name="marginTop">2pt</property>
+                                        <property name="marginBottom">2pt</property>
                                         <property name="contentType">html</property>
                                         <text-property name="content"><![CDATA[<div style="font-size: 1px; display: inline; float: left; width: <VALUE-OF>(row["depthLevel"]-1)*20</VALUE-OF>px;">&amp;nbsp;</div><VALUE-OF>row["legalName"] != null &amp;&amp; row["legalName"] != "" ?row["legalName"] : row["nutListNut"]</VALUE-OF>]]></text-property>
                                     </text>
@@ -7913,6 +7909,7 @@ dataSetRow["nutListUnit"]
                                         <property name="marginLeft">1pt</property>
                                         <property name="marginBottom">2pt</property>
                                         <property name="marginRight">1pt</property>
+                                        <property name="height">0.1875in</property>
                                         <property name="width">100%</property>
                                         <list-property name="visibility">
                                             <structure>
@@ -7941,11 +7938,11 @@ if(nutListGDAPerc != null &amp;&amp; nutListGDAPerc != "") {
 }]]></method>
                                             <property name="backgroundImageType">embed</property>
                                             <property name="backgroundRepeat">no-repeat</property>
-                                            <property name="height">0.188in</property>
+                                            <property name="height">0.1875in</property>
                                             <cell id="7381">
-                                                <property name="paddingTop">0pt</property>
+                                                <property name="paddingTop">1pt</property>
                                                 <property name="paddingLeft">2pt</property>
-                                                <property name="paddingBottom">0pt</property>
+                                                <property name="paddingBottom">1pt</property>
                                                 <property name="paddingRight">2pt</property>
                                                 <grid id="7382">
                                                     <property name="height">0.34375in</property>

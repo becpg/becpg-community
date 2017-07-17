@@ -186,7 +186,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				return true;
 			}
 
-			List<CompoListDataItem> compoList = formulatedProduct.getCompoList(new VariantFilters<>());
+			List<CompoListDataItem> compoList = formulatedProduct.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()));
 
 			// Compute composite
 			Composite<CompoListDataItem> compositeDefaultVariant = CompositeHelper.getHierarchicalCompoList(compoList);
@@ -1103,7 +1103,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					if (!DeclarationType.DoNotDetails.equals(declarationType)
 							&& ((productData instanceof SemiFinishedProductData) || (productData instanceof FinishedProductData))) {
 						Composite<CompoListDataItem> sfComposite = CompositeHelper
-								.getHierarchicalCompoList(productData.getCompoList(new VariantFilters<>()));
+								.getHierarchicalCompoList(productData.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())));
 
 						for (Composite<CompoListDataItem> sfChild : sfComposite.getChildren()) {
 							CompoListDataItem clone = sfChild.getData().clone();
@@ -1199,7 +1199,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 					Double computedRatio = 1d;
 					if (DeclarationType.Declare.equals(declarationType) && isMultiLevel && (qty != null)) {
-						Double qtyTotal = FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT);
+						//
+						
+						Double qtyTotal = (ingsCalculatingWithYield || labelingFormulaContext.isIngsLabelingWithYield()) ?
+								FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT) : 
+									FormulationHelper.getQtyFromComposition(productData, FormulationHelper.DEFAULT_NET_WEIGHT);
+							
 
 						if ((qtyTotal != null) && (qtyTotal != 0d)) {
 							computedRatio = qty / (qtyTotal * LabelingFormulaContext.PRECISION_FACTOR);
@@ -1657,8 +1662,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		if (ingListDataItem == null) {
 			if (labelingFormulaContext.getNodeDeclarationFilters().containsKey(compoListDataItem.getProduct())) {
 				DeclarationFilter declarationFilter = labelingFormulaContext.getNodeDeclarationFilters().get(compoListDataItem.getProduct());
-				if ((declarationFilter.getFormula() == null) || labelingFormulaContext.matchFormule(declarationFilter.getFormula(),
-						new DeclarationFilterContext(compoListDataItem, ingListDataItem))) {
+				if (!declarationFilter.isThreshold() && ((declarationFilter.getFormula() == null) || labelingFormulaContext
+						.matchFormule(declarationFilter.getFormula(), new DeclarationFilterContext(compoListDataItem, ingListDataItem)))) {
 
 					if (logger.isTraceEnabled()) {
 						logger.trace(" -- Found declType : " + declarationFilter.getDeclarationType() + " for "
@@ -1672,8 +1677,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 			if (labelingFormulaContext.getNodeDeclarationFilters().containsKey(ingListDataItem.getIng())) {
 				DeclarationFilter declarationFilter = labelingFormulaContext.getNodeDeclarationFilters().get(ingListDataItem.getIng());
-				if ((declarationFilter.getFormula() == null) || labelingFormulaContext.matchFormule(declarationFilter.getFormula(),
-						new DeclarationFilterContext(compoListDataItem, ingListDataItem))) {
+				if (!declarationFilter.isThreshold() && ((declarationFilter.getFormula() == null) || labelingFormulaContext
+						.matchFormule(declarationFilter.getFormula(), new DeclarationFilterContext(compoListDataItem, ingListDataItem)))) {
 					if (logger.isTraceEnabled()) {
 						logger.trace(" -- Found declType : " + declarationFilter.getDeclarationType() + " for "
 								+ nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME));
@@ -1683,8 +1688,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			}
 
 			for (DeclarationFilter declarationFilter : labelingFormulaContext.getDeclarationFilters()) {
-				if ((declarationFilter.getFormula() != null) && labelingFormulaContext.matchFormule(declarationFilter.getFormula(),
-						new DeclarationFilterContext(compoListDataItem, ingListDataItem))) {
+				if (!declarationFilter.isThreshold() && (declarationFilter.getFormula() != null) && labelingFormulaContext
+						.matchFormule(declarationFilter.getFormula(), new DeclarationFilterContext(compoListDataItem, ingListDataItem))) {
 					if (logger.isTraceEnabled()) {
 						logger.trace(" -- Found declType : " + declarationFilter.getDeclarationType() + " for "
 								+ nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME));
