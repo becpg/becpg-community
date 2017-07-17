@@ -1294,7 +1294,7 @@ public class LabelingFormulaContext {
 	}
 
 	private String cleanLabel(StringBuffer buffer) {
-		return buffer.toString().replaceAll(" null| \\(null\\)| \\(\\)", "").trim();
+		return buffer.toString().replaceAll(" null| \\(null\\)| \\(\\)", "").replaceAll(">null<","><").trim();
 	}
 
 	public boolean isGroup(AbstractLabelingComponent component) {
