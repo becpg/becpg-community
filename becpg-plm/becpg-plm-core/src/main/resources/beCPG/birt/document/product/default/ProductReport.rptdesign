@@ -32,7 +32,7 @@
     </list-property>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="452">
-            <property name="FILELIST">src/main/resources/beCPG/birt/document/product/default/datasource_nut.xml</property>
+            <property name="FILELIST">src/main/resources/beCPG/birt/document/product/default/datasource_labeling_lang.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -2303,6 +2303,12 @@ row["illValue"]
                     <property name="analysis">attribute</property>
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">language</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">languageCode</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">languageCode</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">languageCode</property>
@@ -7856,7 +7862,7 @@ dataSetRow["nutListUnit"]
                             <row id="5969">
                                 <property name="style">becpg-row-border</property>
                                 <property name="verticalAlign">middle</property>
-                                <property name="height">0.625in</property>
+                                <property name="height">1.4166666666666667in</property>
                                 <cell id="6002">
                                     <property name="style">becpg-cell-dynamic-header</property>
                                     <text id="6003">
@@ -7903,9 +7909,10 @@ dataSetRow["nutListUnit"]
                                     <property name="paddingRight">1pt</property>
                                     <grid id="7378">
                                         <property name="backgroundPositionX">-90%</property>
+                                        <property name="marginTop">2pt</property>
                                         <property name="marginLeft">1pt</property>
+                                        <property name="marginBottom">2pt</property>
                                         <property name="marginRight">1pt</property>
-                                        <property name="height">0.1875in</property>
                                         <property name="width">100%</property>
                                         <list-property name="visibility">
                                             <structure>
@@ -7934,11 +7941,11 @@ if(nutListGDAPerc != null &amp;&amp; nutListGDAPerc != "") {
 }]]></method>
                                             <property name="backgroundImageType">embed</property>
                                             <property name="backgroundRepeat">no-repeat</property>
-                                            <property name="height">0.1875in</property>
+                                            <property name="height">0.188in</property>
                                             <cell id="7381">
-                                                <property name="paddingTop">1pt</property>
+                                                <property name="paddingTop">0pt</property>
                                                 <property name="paddingLeft">2pt</property>
-                                                <property name="paddingBottom">1pt</property>
+                                                <property name="paddingBottom">0pt</property>
                                                 <property name="paddingRight">2pt</property>
                                                 <grid id="7382">
                                                     <property name="height">0.34375in</property>
@@ -7976,6 +7983,129 @@ if(nutListGDAPerc != null &amp;&amp; nutListGDAPerc != "") {
                                                                 <property name="contentType">html</property>
                                                                 <text-property name="content"><![CDATA[<VALUE-OF>reportContext.getMessage( "of", reportContext.getLocale()) + row["GDA"] + row["nutListUnit"].replace("/100g", "");</VALUE-OF>]]></text-property>
                                                             </text>
+                                                        </cell>
+                                                    </row>
+                                                </grid>
+                                            </cell>
+                                        </row>
+                                    </grid>
+                                    <grid id="7401">
+                                        <property name="backgroundPositionX">-90%</property>
+                                        <property name="backgroundSizeHeight">contain</property>
+                                        <property name="backgroundSizeWidth">contain</property>
+                                        <property name="marginTop">2pt</property>
+                                        <property name="marginLeft">1pt</property>
+                                        <property name="marginBottom">2pt</property>
+                                        <property name="marginRight">1pt</property>
+                                        <property name="height">0.188in</property>
+                                        <property name="width">100%</property>
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr" type="javascript">( row["nutListGDAPerc"] == null || row["nutListGDAPerc"] == "")</expression>
+                                            </structure>
+                                        </list-property>
+                                        <column id="7402">
+                                            <property name="width">2.25in</property>
+                                        </column>
+                                        <row id="7403">
+                                            <method name="onRender"><![CDATA[//If the width of the column changes, adjust the value of the coefficient.
+var coef = -488;
+var nutListGDAPerc = this.getRowData().getColumnValue("nutListGDAPerc");
+
+if(nutListGDAPerc != null &amp;&amp; nutListGDAPerc != "") {
+	this.getStyle().backgroundImage = "./cccccc-200X30.png";
+	this.getStyle().backgroundPositionX = ((parseFloat(nutListGDAPerc)/100) * coef) + "%";
+	this.getStyle().backgroundRepeat = "no-repeat";
+}]]></method>
+                                            <property name="backgroundColor">#CCCCCC</property>
+                                            <property name="backgroundImageType">embed</property>
+                                            <property name="backgroundRepeat">no-repeat</property>
+                                            <property name="height">0.188in</property>
+                                            <cell id="7404">
+                                                <property name="paddingTop">0pt</property>
+                                                <property name="paddingLeft">0pt</property>
+                                                <property name="paddingBottom">0pt</property>
+                                                <property name="paddingRight">0pt</property>
+                                                <grid id="7413">
+                                                    <property name="backgroundPositionX">-90%</property>
+                                                    <property name="marginTop">0pt</property>
+                                                    <property name="marginLeft">0pt</property>
+                                                    <property name="marginBottom">0pt</property>
+                                                    <property name="marginRight">0pt</property>
+                                                    <property name="width">100%</property>
+                                                    <list-property name="visibility">
+                                                        <structure>
+                                                            <property name="format">all</property>
+                                                            <expression name="valueExpr" type="javascript">( row["nutListGDAPerc"] == null || row["nutListGDAPerc"] == "")</expression>
+                                                        </structure>
+                                                    </list-property>
+                                                    <column id="7414">
+                                                        <property name="width">2.25in</property>
+                                                    </column>
+                                                    <row id="7415">
+                                                        <method name="onRender"><![CDATA[//If the width of the column changes, adjust the value of the coefficient.
+var coef = -488;
+var nutListGDAPerc = this.getRowData().getColumnValue("nutListGDAPerc");
+var color = this.getRowData().getColumnValue("color");
+
+if (color == "" || color == null  ) {
+	color = "#CCCCCC";
+}
+
+if(nutListGDAPerc != null &amp;&amp; nutListGDAPerc != "") {
+	this.getStyle().backgroundImage = "./cccccc-200X30.png";
+	this.getStyle().backgroundPositionX = ((parseFloat(nutListGDAPerc)/100) * coef) + "%";
+	this.getStyle().backgroundRepeat = "no-repeat";
+	this.getStyle().backgroundColor = color;
+}]]></method>
+                                                        <property name="backgroundImageType">embed</property>
+                                                        <property name="backgroundRepeat">no-repeat</property>
+                                                        <property name="height">0.188in</property>
+                                                        <cell id="7416">
+                                                            <property name="paddingTop">0pt</property>
+                                                            <property name="paddingLeft">0pt</property>
+                                                            <property name="paddingBottom">0pt</property>
+                                                            <property name="paddingRight">0pt</property>
+                                                            <grid id="7417">
+                                                                <property name="height">0.34375in</property>
+                                                                <property name="width">100%</property>
+                                                                <column id="7418">
+                                                                    <property name="textAlign">left</property>
+                                                                </column>
+                                                                <column id="7419">
+                                                                    <property name="textAlign">right</property>
+                                                                </column>
+                                                                <row id="7420">
+                                                                    <property name="backgroundImageType">embed</property>
+                                                                    <cell id="7421">
+                                                                        <property name="paddingTop">0pt</property>
+                                                                        <property name="paddingLeft">0pt</property>
+                                                                        <property name="paddingBottom">0pt</property>
+                                                                        <property name="paddingRight">0pt</property>
+                                                                        <text id="7422">
+                                                                            <property name="fontSize">9pt</property>
+                                                                            <property name="fontWeight">bold</property>
+                                                                            <property name="color">#000000</property>
+                                                                            <property name="contentType">html</property>
+                                                                            <text-property name="content"><![CDATA[<VALUE-OF>Formatter.format(row["nutListGDAPerc"], "#0.##" )+ "%"</VALUE-OF>]]></text-property>
+                                                                        </text>
+                                                                    </cell>
+                                                                    <cell id="7423">
+                                                                        <property name="paddingTop">0pt</property>
+                                                                        <property name="paddingLeft">0pt</property>
+                                                                        <property name="paddingBottom">0pt</property>
+                                                                        <property name="paddingRight">0pt</property>
+                                                                        <text id="7424">
+                                                                            <property name="fontSize">9pt</property>
+                                                                            <property name="fontWeight">bold</property>
+                                                                            <property name="color">#000000</property>
+                                                                            <property name="contentType">html</property>
+                                                                            <text-property name="content"><![CDATA[<VALUE-OF>reportContext.getMessage( "of", reportContext.getLocale()) + row["GDA"] + row["nutListUnit"].replace("/100g", "");</VALUE-OF>]]></text-property>
+                                                                        </text>
+                                                                    </cell>
+                                                                </row>
+                                                            </grid>
                                                         </cell>
                                                     </row>
                                                 </grid>

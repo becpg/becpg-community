@@ -16,6 +16,9 @@
     </list-property>
     <property name="Data Cube.OrganoList.x">135</property>
     <property name="Data Cube.OrganoList.y">80</property>
+    <simple-property-list name="includeResource">
+        <value>./ProductReport</value>
+    </simple-property-list>
     <property name="units">in</property>
     <property name="iconFile">/templates/dual_column_chart_listing.gif</property>
     <property name="cheatSheet">org.eclipse.birt.report.designer.ui.cheatsheet.dualchartlisting</property>
@@ -23,7 +26,7 @@
     <property name="imageDPI">112</property>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="452">
-            <property name="FILELIST">/opt/becpg/workspace/becpg/becpg-plm/becpg-plm-core/src/main/resources/beCPG/birt/document/product/default/ProductReport.xml</property>
+            <property name="FILELIST">/opt/becpg/workspace/becpg/becpg-plm/becpg-plm-core/src/main/resources/beCPG/birt/document/product/default/datasource_nut_en.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -993,49 +996,49 @@
             <list-property name="columnHints">
                 <structure>
                     <property name="columnName">energiekj</property>
-                    <property name="analysis">dimension</property>
+                    <property name="analysis">measure</property>
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">energiekj</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">energiekcal</property>
-                    <property name="analysis">dimension</property>
+                    <property name="analysis">measure</property>
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">energiekcal</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">glucides</property>
-                    <property name="analysis">dimension</property>
+                    <property name="analysis">measure</property>
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">glucides</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">lipides</property>
-                    <property name="analysis">dimension</property>
+                    <property name="analysis">measure</property>
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">lipides</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">protéines</property>
-                    <property name="analysis">dimension</property>
+                    <property name="analysis">measure</property>
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">protéines</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">agsaturés</property>
-                    <property name="analysis">dimension</property>
+                    <property name="analysis">measure</property>
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">agsaturés</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">sodium</property>
-                    <property name="analysis">dimension</property>
+                    <property name="analysis">measure</property>
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">sodium</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">sucres</property>
-                    <property name="analysis">dimension</property>
+                    <property name="analysis">measure</property>
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">sucres</text-property>
                 </structure>
@@ -1070,18 +1073,6 @@
                     <text-property name="heading">fibresalimentaires</text-property>
                 </structure>
                 <structure>
-                    <property name="columnName">vitaminea</property>
-                    <property name="analysis">measure</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">vitaminea</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">vitaminec</property>
-                    <property name="analysis">measure</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">vitaminec</text-property>
-                </structure>
-                <structure>
                     <property name="columnName">calcium</property>
                     <property name="analysis">measure</property>
                     <property name="onColumnLayout">false</property>
@@ -1096,7 +1087,134 @@
                 <structure>
                     <property name="columnName">potassium</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">potassium</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">energykcal</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">energykcal</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">energykj</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">energykj</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">protein</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">protein</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">totallipidfat</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">totallipidfat</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">fattyacidstotalsaturated</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">fattyacidstotalsaturated</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">fattyacidstotalmonounsaturated</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">fattyacidstotalmonounsaturated</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">carbohydratebydifference</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">carbohydratebydifference</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">sugarstotal</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">sugarstotal</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">fibertotaldietary</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">fibertotaldietary</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">sodiumna</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">sodiumna</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">vitaminaiu</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">vitaminaiu</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">saturated</property>
+                    <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">saturated</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">potassiumk</property>
+                    <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">potassiumk</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">cholesterol</property>
+                    <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">cholesterol</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">calciumca</property>
+                    <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">calciumca</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">fer</property>
+                    <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">fer</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">ironfe</property>
+                    <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">ironfe</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">vitaminectotale</property>
+                    <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">vitaminectotale</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">rétinol</property>
+                    <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">rétinol</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">retinol</property>
+                    <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">retinol</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">vitaminctotalascorbicacid</property>
+                    <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">vitaminctotalascorbicacid</text-property>
                 </structure>
             </list-property>
             <list-property name="parameters"/>
@@ -1105,42 +1223,42 @@
                     <structure>
                         <property name="position">1</property>
                         <property name="name">energiekj</property>
-                        <property name="dataType">string</property>
+                        <property name="dataType">float</property>
                     </structure>
                     <structure>
                         <property name="position">2</property>
                         <property name="name">energiekcal</property>
-                        <property name="dataType">string</property>
+                        <property name="dataType">float</property>
                     </structure>
                     <structure>
                         <property name="position">3</property>
                         <property name="name">glucides</property>
-                        <property name="dataType">string</property>
+                        <property name="dataType">float</property>
                     </structure>
                     <structure>
                         <property name="position">4</property>
                         <property name="name">lipides</property>
-                        <property name="dataType">string</property>
+                        <property name="dataType">float</property>
                     </structure>
                     <structure>
                         <property name="position">5</property>
                         <property name="name">protéines</property>
-                        <property name="dataType">string</property>
+                        <property name="dataType">float</property>
                     </structure>
                     <structure>
                         <property name="position">6</property>
                         <property name="name">agsaturés</property>
-                        <property name="dataType">string</property>
+                        <property name="dataType">float</property>
                     </structure>
                     <structure>
                         <property name="position">7</property>
                         <property name="name">sodium</property>
-                        <property name="dataType">string</property>
+                        <property name="dataType">float</property>
                     </structure>
                     <structure>
                         <property name="position">8</property>
                         <property name="name">sucres</property>
-                        <property name="dataType">string</property>
+                        <property name="dataType">float</property>
                     </structure>
                     <structure>
                         <property name="position">9</property>
@@ -1169,27 +1287,122 @@
                     </structure>
                     <structure>
                         <property name="position">14</property>
-                        <property name="name">vitaminea</property>
-                        <property name="dataType">float</property>
-                    </structure>
-                    <structure>
-                        <property name="position">15</property>
-                        <property name="name">vitaminec</property>
-                        <property name="dataType">float</property>
-                    </structure>
-                    <structure>
-                        <property name="position">16</property>
                         <property name="name">calcium</property>
                         <property name="dataType">float</property>
                     </structure>
                     <structure>
-                        <property name="position">17</property>
+                        <property name="position">15</property>
                         <property name="name">fertotal</property>
                         <property name="dataType">float</property>
                     </structure>
                     <structure>
-                        <property name="position">18</property>
+                        <property name="position">16</property>
                         <property name="name">potassium</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">17</property>
+                        <property name="name">energykcal</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">18</property>
+                        <property name="name">energykj</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">19</property>
+                        <property name="name">protein</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">20</property>
+                        <property name="name">totallipidfat</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">21</property>
+                        <property name="name">fattyacidstotalsaturated</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">22</property>
+                        <property name="name">fattyacidstotalmonounsaturated</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">23</property>
+                        <property name="name">carbohydratebydifference</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">24</property>
+                        <property name="name">sugarstotal</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">25</property>
+                        <property name="name">fibertotaldietary</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">26</property>
+                        <property name="name">sodiumna</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">27</property>
+                        <property name="name">vitaminaiu</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">28</property>
+                        <property name="name">saturated</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">29</property>
+                        <property name="name">potassiumk</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">30</property>
+                        <property name="name">cholesterol</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">31</property>
+                        <property name="name">calciumca</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">32</property>
+                        <property name="name">fer</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">33</property>
+                        <property name="name">ironfe</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">34</property>
+                        <property name="name">vitaminectotale</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">35</property>
+                        <property name="name">rétinol</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">36</property>
+                        <property name="name">retinol</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">37</property>
+                        <property name="name">vitaminctotalascorbicacid</property>
                         <property name="dataType">float</property>
                     </structure>
                 </list-property>
@@ -1200,57 +1413,57 @@
                     <property name="position">1</property>
                     <property name="name">energiekj</property>
                     <property name="nativeName">energiekj</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
                 </structure>
                 <structure>
                     <property name="position">2</property>
                     <property name="name">energiekcal</property>
                     <property name="nativeName">energiekcal</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
                 </structure>
                 <structure>
                     <property name="position">3</property>
                     <property name="name">glucides</property>
                     <property name="nativeName">glucides</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
                 </structure>
                 <structure>
                     <property name="position">4</property>
                     <property name="name">lipides</property>
                     <property name="nativeName">lipides</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
                 </structure>
                 <structure>
                     <property name="position">5</property>
                     <property name="name">protéines</property>
                     <property name="nativeName">protéines</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
                 </structure>
                 <structure>
                     <property name="position">6</property>
                     <property name="name">agsaturés</property>
                     <property name="nativeName">agsaturés</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
                 </structure>
                 <structure>
                     <property name="position">7</property>
                     <property name="name">sodium</property>
                     <property name="nativeName">sodium</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
                 </structure>
                 <structure>
                     <property name="position">8</property>
                     <property name="name">sucres</property>
                     <property name="nativeName">sucres</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
                 </structure>
                 <structure>
                     <property name="position">9</property>
@@ -1289,41 +1502,174 @@
                 </structure>
                 <structure>
                     <property name="position">14</property>
-                    <property name="name">vitaminea</property>
-                    <property name="nativeName">vitaminea</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
-                </structure>
-                <structure>
-                    <property name="position">15</property>
-                    <property name="name">vitaminec</property>
-                    <property name="nativeName">vitaminec</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
-                </structure>
-                <structure>
-                    <property name="position">16</property>
                     <property name="name">calcium</property>
                     <property name="nativeName">calcium</property>
                     <property name="dataType">float</property>
                     <property name="nativeDataType">8</property>
                 </structure>
                 <structure>
-                    <property name="position">17</property>
+                    <property name="position">15</property>
                     <property name="name">fertotal</property>
                     <property name="nativeName">fertotal</property>
                     <property name="dataType">float</property>
                     <property name="nativeDataType">8</property>
                 </structure>
                 <structure>
-                    <property name="position">18</property>
+                    <property name="position">16</property>
                     <property name="name">potassium</property>
                     <property name="nativeName">potassium</property>
                     <property name="dataType">float</property>
                     <property name="nativeDataType">8</property>
                 </structure>
+                <structure>
+                    <property name="position">17</property>
+                    <property name="name">energykcal</property>
+                    <property name="nativeName">energykcal</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">18</property>
+                    <property name="name">energykj</property>
+                    <property name="nativeName">energykj</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">19</property>
+                    <property name="name">protein</property>
+                    <property name="nativeName">protein</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">20</property>
+                    <property name="name">totallipidfat</property>
+                    <property name="nativeName">totallipidfat</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">21</property>
+                    <property name="name">fattyacidstotalsaturated</property>
+                    <property name="nativeName">fattyacidstotalsaturated</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">22</property>
+                    <property name="name">fattyacidstotalmonounsaturated</property>
+                    <property name="nativeName">fattyacidstotalmonounsaturated</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">23</property>
+                    <property name="name">carbohydratebydifference</property>
+                    <property name="nativeName">carbohydratebydifference</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">24</property>
+                    <property name="name">sugarstotal</property>
+                    <property name="nativeName">sugarstotal</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">25</property>
+                    <property name="name">fibertotaldietary</property>
+                    <property name="nativeName">fibertotaldietary</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">26</property>
+                    <property name="name">sodiumna</property>
+                    <property name="nativeName">sodiumna</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">27</property>
+                    <property name="name">vitaminaiu</property>
+                    <property name="nativeName">vitaminaiu</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">28</property>
+                    <property name="name">saturated</property>
+                    <property name="nativeName">saturated</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">29</property>
+                    <property name="name">potassiumk</property>
+                    <property name="nativeName">potassiumk</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">30</property>
+                    <property name="name">cholesterol</property>
+                    <property name="nativeName">cholesterol</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">31</property>
+                    <property name="name">calciumca</property>
+                    <property name="nativeName">calciumca</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">32</property>
+                    <property name="name">fer</property>
+                    <property name="nativeName">fer</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">33</property>
+                    <property name="name">ironfe</property>
+                    <property name="nativeName">ironfe</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">34</property>
+                    <property name="name">vitaminectotale</property>
+                    <property name="nativeName">vitaminectotale</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">35</property>
+                    <property name="name">rétinol</property>
+                    <property name="nativeName">rétinol</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">36</property>
+                    <property name="name">retinol</property>
+                    <property name="nativeName">retinol</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">37</property>
+                    <property name="name">vitaminctotalascorbicacid</property>
+                    <property name="nativeName">vitaminctotalascorbicacid</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/nutLists]#:#{energiekj;STRING;/@energiekj},{energiekcal;STRING;/@energiekcal},{glucides;STRING;/@glucides},{lipides;STRING;/@lipides},{protéines;STRING;/@protéines},{agsaturés;STRING;/@agsaturés},{sodium;STRING;/@sodium},{sucres;STRING;/@sucres},{phosphore;DOUBLE;/@phosphore},{alcooléthanol;DOUBLE;/@alcooléthanol},{servingSize;DOUBLE;../../servingSize},{cholestérol;DOUBLE;/@cholestérol},{fibresalimentaires;DOUBLE;/@fibresalimentaires},{vitaminea;DOUBLE;/@vitaminea},{vitaminec;DOUBLE;/@vitaminec},{calcium;DOUBLE;/@calcium},{fertotal;DOUBLE;/@fertotal},{potassium;DOUBLE;/@potassium}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/nutLists]#:#{energiekj;DOUBLE;/@energiekj},{energiekcal;DOUBLE;/@energiekcal},{glucides;DOUBLE;/@glucides},{lipides;DOUBLE;/@lipides},{protéines;DOUBLE;/@protéines},{agsaturés;DOUBLE;/@agsaturés},{sodium;DOUBLE;/@sodium},{sucres;DOUBLE;/@sucres},{phosphore;DOUBLE;/@phosphore},{alcooléthanol;DOUBLE;/@alcooléthanol},{servingSize;DOUBLE;../../servingSize},{cholestérol;DOUBLE;/@cholestérol},{fibresalimentaires;DOUBLE;/@fibresalimentaires},{calcium;DOUBLE;/@calcium},{fertotal;DOUBLE;/@fertotal},{potassium;DOUBLE;/@potassium},{energykcal;DOUBLE;/@energykcal},{energykj;DOUBLE;/@energykj},{protein;DOUBLE;/@protein},{totallipidfat;DOUBLE;/@totallipidfat},{fattyacidstotalsaturated;DOUBLE;/@fattyacidstotalsaturated},{fattyacidstotalmonounsaturated;DOUBLE;/@fattyacidstotalmonounsaturated},{carbohydratebydifference;DOUBLE;/@carbohydratebydifference},{sugarstotal;DOUBLE;/@sugarstotal},{fibertotaldietary;DOUBLE;/@fibertotaldietary},{sodiumna;DOUBLE;/@sodiumna},{vitaminaiu;DOUBLE;/@vitaminaiu},{saturated;DOUBLE;/@saturated},{potassiumk;DOUBLE;/@potassiumk},{cholesterol;DOUBLE;/@cholesterol},{calciumca;DOUBLE;/@calciumca},{fer;DOUBLE;/@fer},{ironfe;DOUBLE;/@ironfe},{vitaminectotale;DOUBLE;/@vitaminectotale},{rétinol;DOUBLE;/@rétinol},{retinol;DOUBLE;/@retinol},{vitaminctotalascorbicacid;DOUBLE;/@vitaminctotalascorbicacid}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -1641,7 +1987,8 @@
             <property name="leftMargin">2cm</property>
             <property name="bottomMargin">1cm</property>
             <property name="rightMargin">2cm</property>
-            <property name="headerHeight">1.5in</property>
+            <property name="headerHeight">0in</property>
+            <property name="footerHeight">0in</property>
             <page-header>
                 <grid id="765">
                     <property name="style">becpg-table</property>
@@ -1892,1133 +2239,1082 @@
         </simple-master-page>
     </page-setup>
     <body>
-        <grid id="3408">
-            <property name="borderBottomStyle">solid</property>
-            <property name="borderBottomWidth">medium</property>
-            <property name="borderLeftStyle">solid</property>
-            <property name="borderLeftWidth">medium</property>
-            <property name="borderRightStyle">solid</property>
-            <property name="borderRightWidth">medium</property>
-            <property name="borderTopStyle">solid</property>
-            <property name="borderTopWidth">medium</property>
-            <property name="width">6.885416666666667in</property>
-            <column id="3409">
-                <property name="width">1.5in</property>
-            </column>
-            <column id="3410">
-                <property name="width">0.8020833333333334in</property>
-            </column>
-            <column id="3784">
-                <property name="width">1.1458333333333333in</property>
-            </column>
-            <column id="3411">
-                <property name="width">1.1458333333333333in</property>
-            </column>
-            <column id="3412">
-                <property name="width">1.1458333333333333in</property>
-            </column>
-            <column id="3813">
-                <property name="width">1.1458333333333333in</property>
-            </column>
-            <row id="3415">
-                <property name="backgroundColor">#000000</property>
-                <cell id="3416">
-                    <property name="colSpan">6</property>
-                    <property name="rowSpan">1</property>
-                    <label id="3555">
-                        <property name="backgroundColor">#000000</property>
-                        <property name="fontSize">14pt</property>
-                        <property name="fontWeight">bold</property>
-                        <property name="color">#FFFFFF</property>
-                        <property name="textAlign">center</property>
-                        <text-property name="text">Nutrition Facts</text-property>
-                    </label>
-                </cell>
-            </row>
-            <row id="3422">
-                <cell id="3423">
-                    <label id="3556">
-                        <text-property name="text">Serving size:</text-property>
-                    </label>
-                </cell>
-                <cell id="3424">
-                    <data id="3814">
-                        <property name="textAlign">right</property>
-                        <property name="dataSet">Product</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">servingSize</property>
-                                <text-property name="displayName">servingSize</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["servingSize"]</expression>
-                                <property name="dataType">float</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">servingSize</property>
-                    </data>
-                </cell>
-                <cell id="3757">
-                    <label id="3815">
-                        <text-property name="text">g</text-property>
-                    </label>
-                </cell>
-                <cell id="3425"/>
-                <cell id="3426"/>
-                <cell id="3786"/>
-            </row>
-            <row id="3429">
-                <property name="borderTopStyle">solid</property>
-                <property name="borderTopWidth">medium</property>
-                <cell id="3430">
-                    <property name="colSpan">1</property>
-                    <property name="rowSpan">1</property>
-                    <label id="3557">
-                        <property name="fontWeight">bold</property>
-                        <text-property name="text">Amount per serving</text-property>
-                    </label>
-                </cell>
-                <cell id="3755"/>
-                <cell id="3758"/>
-                <cell id="3432"/>
-                <cell id="3433"/>
-                <cell id="3787"/>
-            </row>
-            <row id="3436">
-                <property name="borderBottomStyle">solid</property>
-                <property name="borderBottomWidth">medium</property>
-                <cell id="3437">
-                    <label id="3558">
-                        <property name="fontWeight">bold</property>
-                        <text-property name="text">Calories</text-property>
-                    </label>
-                </cell>
-                <cell id="3438">
-                    <data id="3816">
-                        <structure name="numberFormat">
-                            <property name="category">Fixed</property>
-                            <property name="pattern">###0{RoundingMode=HALF_EVEN}</property>
-                        </structure>
-                        <property name="textAlign">right</property>
-                        <property name="dataSet">nutList2</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">energiekcal</property>
-                                <text-property name="displayName">energiekcal</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["energiekcal"] / 100 * dataSetRow["servingSize"]</expression>
-                                <property name="dataType">float</property>
-                                <property name="allowExport">true</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">energiekcal</property>
-                    </data>
-                </cell>
-                <cell id="3759">
-                    <label id="3821">
-                        <text-property name="text">g</text-property>
-                    </label>
-                </cell>
-                <cell id="3439">
-                    <label id="3559">
-                        <text-property name="text">Calories from Fat</text-property>
-                    </label>
-                </cell>
-                <cell id="3440">
-                    <data id="3902">
-                        <structure name="numberFormat">
-                            <property name="category">Fixed</property>
-                            <property name="pattern">###0{RoundingMode=HALF_EVEN}</property>
-                        </structure>
-                        <property name="textAlign">right</property>
-                        <property name="dataSet">nutList2</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">lipides</property>
-                                <text-property name="displayName">lipides</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["lipides"] / 100 * dataSetRow["servingSize"] * 4</expression>
-                                <property name="dataType">float</property>
-                                <property name="allowExport">true</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">lipides</property>
-                    </data>
-                </cell>
-                <cell id="3788">
-                    <label id="3903">
-                        <text-property name="text">g</text-property>
-                    </label>
-                </cell>
-            </row>
-            <row id="3443">
-                <property name="borderBottomStyle">solid</property>
-                <property name="borderBottomWidth">thin</property>
-                <cell id="3444"/>
-                <cell id="3445"/>
-                <cell id="3760"/>
-                <cell id="3446"/>
-                <cell id="3447">
-                    <property name="colSpan">2</property>
-                    <property name="rowSpan">1</property>
-                    <label id="3560">
-                        <property name="fontWeight">bold</property>
-                        <property name="textAlign">center</property>
-                        <text-property name="text">% Daily Value *</text-property>
-                    </label>
-                </cell>
-            </row>
-            <row id="3450">
-                <property name="borderBottomStyle">solid</property>
-                <property name="borderBottomWidth">thin</property>
-                <cell id="3451">
-                    <label id="3561">
-                        <property name="fontWeight">bold</property>
-                        <text-property name="text">Total Fat</text-property>
-                    </label>
-                </cell>
-                <cell id="3452">
-                    <data id="3817">
-                        <structure name="numberFormat">
-                            <property name="category">Fixed</property>
-                            <property name="pattern">###0{RoundingMode=HALF_EVEN}</property>
-                        </structure>
-                        <property name="textAlign">right</property>
-                        <property name="dataSet">nutList2</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">lipides</property>
-                                <text-property name="displayName">lipides</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["lipides"] / 100 * dataSetRow["servingSize"]</expression>
-                                <property name="dataType">float</property>
-                                <property name="allowExport">true</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">lipides</property>
-                    </data>
-                </cell>
-                <cell id="3761">
-                    <label id="3822">
-                        <text-property name="text">g</text-property>
-                    </label>
-                </cell>
-                <cell id="3453"/>
-                <cell id="3454">
-                    <data id="3893">
-                        <structure name="numberFormat">
-                            <property name="category">Fixed</property>
-                            <property name="pattern">###0{RoundingMode=HALF_EVEN}</property>
-                        </structure>
-                        <property name="textAlign">right</property>
-                        <property name="dataSet">nutList2</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">lipides</property>
-                                <text-property name="displayName">lipides</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["lipides"] * dataSetRow["servingSize"] / 65</expression>
-                                <property name="dataType">float</property>
-                                <property name="allowExport">true</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">lipides</property>
-                    </data>
-                </cell>
-                <cell id="3790">
-                    <label id="3835">
-                        <text-property name="text">%</text-property>
-                    </label>
-                </cell>
-            </row>
-            <row id="3457">
-                <property name="borderBottomStyle">solid</property>
-                <property name="borderBottomWidth">thin</property>
-                <cell id="3458">
-                    <label id="3562">
-                        <property name="paddingLeft">20pt</property>
-                        <text-property name="text">Saturated Fat</text-property>
-                    </label>
-                </cell>
-                <cell id="3459">
-                    <data id="3818">
-                        <structure name="numberFormat">
-                            <property name="category">Fixed</property>
-                            <property name="pattern">###0{RoundingMode=HALF_EVEN}</property>
-                        </structure>
-                        <property name="textAlign">right</property>
-                        <property name="dataSet">nutList2</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">agsaturés</property>
-                                <text-property name="displayName">agsaturés</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["agsaturés"] / 100 * dataSetRow["servingSize"]</expression>
-                                <property name="dataType">float</property>
-                                <property name="allowExport">true</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">agsaturés</property>
-                    </data>
-                </cell>
-                <cell id="3762">
-                    <label id="3823">
-                        <text-property name="text">g</text-property>
-                    </label>
-                </cell>
-                <cell id="3460"/>
-                <cell id="3461">
-                    <data id="3894">
-                        <structure name="numberFormat">
-                            <property name="category">Fixed</property>
-                            <property name="pattern">###0{RoundingMode=HALF_EVEN}</property>
-                        </structure>
-                        <property name="textAlign">right</property>
-                        <property name="dataSet">nutList2</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">agsaturés</property>
-                                <text-property name="displayName">agsaturés</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["agsaturés"] * dataSetRow["servingSize"] / 20</expression>
-                                <property name="dataType">float</property>
-                                <property name="allowExport">true</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">agsaturés</property>
-                    </data>
-                </cell>
-                <cell id="3791">
-                    <label id="3836">
-                        <text-property name="text">%</text-property>
-                    </label>
-                </cell>
-            </row>
-            <row id="3471">
-                <property name="borderBottomStyle">solid</property>
-                <property name="borderBottomWidth">thin</property>
-                <cell id="3472">
-                    <label id="3563">
-                        <property name="fontWeight">bold</property>
-                        <text-property name="text">Cholesterol</text-property>
-                    </label>
-                </cell>
-                <cell id="3473">
-                    <data id="3820">
-                        <property name="textAlign">right</property>
-                        <property name="dataSet">nutList2</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">cholestérol</property>
-                                <text-property name="displayName">cholestérol</text-property>
-                                <expression name="expression" type="javascript">if(dataSetRow["cholestérol"]!=null){
-dataSetRow["cholestérol"] / 100 * dataSetRow["servingSize"]
-}</expression>
-                                <property name="dataType">float</property>
-                                <property name="allowExport">true</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">cholestérol</property>
-                    </data>
-                </cell>
-                <cell id="3764">
-                    <label id="3824">
-                        <text-property name="text">mg</text-property>
-                    </label>
-                </cell>
-                <cell id="3474"/>
-                <cell id="3475">
-                    <data id="3895">
-                        <structure name="numberFormat">
-                            <property name="category">Fixed</property>
-                            <property name="pattern">###0{RoundingMode=HALF_EVEN}</property>
-                        </structure>
-                        <property name="textAlign">right</property>
-                        <property name="dataSet">nutList2</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">cholestérol</property>
-                                <text-property name="displayName">cholestérol</text-property>
-                                <expression name="expression" type="javascript">if(dataSetRow["cholestérol"]!=null){
-dataSetRow["cholestérol"] * dataSetRow["servingSize"] / 300
-}</expression>
-                                <property name="dataType">float</property>
-                                <property name="allowExport">true</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">cholestérol</property>
-                    </data>
-                </cell>
-                <cell id="3793">
-                    <label id="3837">
-                        <text-property name="text">%</text-property>
-                    </label>
-                </cell>
-            </row>
-            <row id="3478">
-                <property name="borderBottomStyle">solid</property>
-                <property name="borderBottomWidth">thin</property>
-                <cell id="3479">
-                    <label id="3564">
-                        <property name="fontWeight">bold</property>
-                        <text-property name="text">Sodium</text-property>
-                    </label>
-                </cell>
-                <cell id="3480">
-                    <data id="3819">
-                        <structure name="numberFormat">
-                            <property name="category">Fixed</property>
-                            <property name="pattern">###0{RoundingMode=HALF_EVEN}</property>
-                        </structure>
-                        <property name="textAlign">right</property>
-                        <property name="dataSet">nutList2</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">sodium</property>
-                                <text-property name="displayName">sodium</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["sodium"] / 100 * dataSetRow["servingSize"]</expression>
-                                <property name="dataType">float</property>
-                                <property name="allowExport">true</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">sodium</property>
-                    </data>
-                </cell>
-                <cell id="3765">
-                    <label id="3825">
-                        <text-property name="text">mg</text-property>
-                    </label>
-                </cell>
-                <cell id="3481"/>
-                <cell id="3482">
-                    <data id="3896">
-                        <structure name="numberFormat">
-                            <property name="category">Fixed</property>
-                            <property name="pattern">###0{RoundingMode=HALF_EVEN}</property>
-                        </structure>
-                        <property name="textAlign">right</property>
-                        <property name="dataSet">nutList2</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">sodium</property>
-                                <text-property name="displayName">sodium</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["sodium"] * dataSetRow["servingSize"] / 2400</expression>
-                                <property name="dataType">float</property>
-                                <property name="allowExport">true</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">sodium</property>
-                    </data>
-                </cell>
-                <cell id="3794">
-                    <label id="3838">
-                        <text-property name="text">%</text-property>
-                    </label>
-                </cell>
-            </row>
-            <row id="3485">
-                <property name="borderBottomStyle">solid</property>
-                <property name="borderBottomWidth">thin</property>
-                <cell id="3486">
-                    <label id="3565">
-                        <property name="fontWeight">bold</property>
-                        <text-property name="text">Potassium</text-property>
-                    </label>
-                </cell>
-                <cell id="3487">
-                    <data id="3898">
-                        <structure name="numberFormat">
-                            <property name="category">Fixed</property>
-                            <property name="pattern">###0{RoundingMode=HALF_EVEN}</property>
-                        </structure>
-                        <property name="textAlign">right</property>
-                        <property name="dataSet">nutList2</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">potassium</property>
-                                <text-property name="displayName">potassium</text-property>
-                                <expression name="expression" type="javascript">if(dataSetRow["potassium"]!=null){
-dataSetRow["potassium"] / 100 * dataSetRow["servingSize"]
-}</expression>
-                                <property name="dataType">float</property>
-                                <property name="allowExport">true</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">potassium</property>
-                    </data>
-                </cell>
-                <cell id="3766">
-                    <label id="3897">
-                        <text-property name="text">mg</text-property>
-                    </label>
-                </cell>
-                <cell id="3488"/>
-                <cell id="3489">
-                    <data id="3899">
-                        <structure name="numberFormat">
-                            <property name="category">Fixed</property>
-                            <property name="pattern">###0{RoundingMode=HALF_EVEN}</property>
-                        </structure>
-                        <property name="textAlign">right</property>
-                        <property name="dataSet">nutList2</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">potassium</property>
-                                <text-property name="displayName">potassium</text-property>
-                                <expression name="expression" type="javascript">if(dataSetRow["potassium"]!=null){
-dataSetRow["potassium"] * dataSetRow["servingSize"] /  3500
-}</expression>
-                                <property name="dataType">float</property>
-                                <property name="allowExport">true</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">potassium</property>
-                    </data>
-                </cell>
-                <cell id="3795">
-                    <label id="3839">
-                        <text-property name="text">%</text-property>
-                    </label>
-                </cell>
-            </row>
-            <row id="3492">
-                <property name="borderBottomStyle">solid</property>
-                <property name="borderBottomWidth">thin</property>
-                <cell id="3493">
-                    <label id="3566">
-                        <property name="fontWeight">bold</property>
-                        <text-property name="text">Total Carbohydrate</text-property>
-                    </label>
-                </cell>
-                <cell id="3494">
-                    <data id="3830">
-                        <structure name="numberFormat">
-                            <property name="category">Fixed</property>
-                            <property name="pattern">###0{RoundingMode=HALF_EVEN}</property>
-                        </structure>
-                        <property name="textAlign">right</property>
-                        <property name="dataSet">nutList2</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">glucides</property>
-                                <text-property name="displayName">glucides</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["glucides"] / 100 * dataSetRow["servingSize"]</expression>
-                                <property name="dataType">float</property>
-                                <property name="allowExport">true</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">glucides</property>
-                    </data>
-                </cell>
-                <cell id="3767">
-                    <label id="3826">
-                        <text-property name="text">g</text-property>
-                    </label>
-                </cell>
-                <cell id="3495"/>
-                <cell id="3496">
-                    <data id="3900">
-                        <structure name="numberFormat">
-                            <property name="category">Fixed</property>
-                            <property name="pattern">###0{RoundingMode=HALF_EVEN}</property>
-                        </structure>
-                        <property name="textAlign">right</property>
-                        <property name="dataSet">nutList2</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">glucides</property>
-                                <text-property name="displayName">glucides</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["glucides"] * dataSetRow["servingSize"] / 300</expression>
-                                <property name="dataType">float</property>
-                                <property name="allowExport">true</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">glucides</property>
-                    </data>
-                </cell>
-                <cell id="3796">
-                    <label id="3840">
-                        <text-property name="text">%</text-property>
-                    </label>
-                </cell>
-            </row>
-            <row id="3499">
-                <property name="borderBottomStyle">solid</property>
-                <property name="borderBottomWidth">thin</property>
-                <cell id="3500">
-                    <label id="3567">
-                        <property name="paddingLeft">20pt</property>
-                        <text-property name="text">Dietery Fiber</text-property>
-                    </label>
-                </cell>
-                <cell id="3501">
-                    <data id="3831">
-                        <structure name="numberFormat">
-                            <property name="category">Fixed</property>
-                            <property name="pattern">###0{RoundingMode=HALF_EVEN}</property>
-                        </structure>
-                        <property name="textAlign">right</property>
-                        <property name="dataSet">nutList2</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">fibresalimentaires</property>
-                                <text-property name="displayName">fibresalimentaires</text-property>
-                                <expression name="expression" type="javascript">if(dataSetRow["fibresalimentaires"]!=null){
-dataSetRow["fibresalimentaires"] / 100 * dataSetRow["servingSize"]
-}</expression>
-                                <property name="dataType">float</property>
-                                <property name="allowExport">true</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">fibresalimentaires</property>
-                    </data>
-                </cell>
-                <cell id="3768">
-                    <label id="3827">
-                        <text-property name="text">g</text-property>
-                    </label>
-                </cell>
-                <cell id="3502"/>
-                <cell id="3503">
-                    <data id="3901">
-                        <structure name="numberFormat">
-                            <property name="category">Fixed</property>
-                            <property name="pattern">###0{RoundingMode=HALF_EVEN}</property>
-                        </structure>
-                        <property name="textAlign">right</property>
-                        <property name="dataSet">nutList2</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">fibresalimentaires</property>
-                                <text-property name="displayName">fibresalimentaires</text-property>
-                                <expression name="expression" type="javascript">if(dataSetRow["fibresalimentaires"]!=null){
-dataSetRow["fibresalimentaires"] * dataSetRow["servingSize"] / 25
-}</expression>
-                                <property name="dataType">float</property>
-                                <property name="allowExport">true</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">fibresalimentaires</property>
-                    </data>
-                </cell>
-                <cell id="3797">
-                    <label id="3841">
-                        <text-property name="text">%</text-property>
-                    </label>
-                </cell>
-            </row>
-            <row id="3506">
-                <property name="borderBottomStyle">solid</property>
-                <property name="borderBottomWidth">thin</property>
-                <cell id="3507">
-                    <label id="3568">
-                        <property name="paddingLeft">20pt</property>
-                        <text-property name="text">Sugars</text-property>
-                    </label>
-                </cell>
-                <cell id="3508">
-                    <data id="3832">
-                        <structure name="numberFormat">
-                            <property name="category">Fixed</property>
-                            <property name="pattern">###0.0{RoundingMode=HALF_DOWN}</property>
-                        </structure>
-                        <property name="textAlign">right</property>
-                        <property name="dataSet">nutList2</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">sucres</property>
-                                <text-property name="displayName">sucres</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["sucres"] / 100 * dataSetRow["servingSize"]</expression>
-                                <property name="dataType">float</property>
-                                <property name="allowExport">true</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">sucres</property>
-                    </data>
-                </cell>
-                <cell id="3769">
-                    <label id="3829">
-                        <text-property name="text">g</text-property>
-                    </label>
-                </cell>
-                <cell id="3509"/>
-                <cell id="3510"/>
-                <cell id="3798">
-                    <label id="3842">
-                        <text-property name="text">%</text-property>
-                    </label>
-                </cell>
-            </row>
-            <row id="3513">
-                <property name="borderBottomStyle">solid</property>
-                <property name="borderBottomWidth">medium</property>
-                <cell id="3514">
-                    <label id="3569">
-                        <property name="fontWeight">bold</property>
-                        <text-property name="text">Protein</text-property>
-                    </label>
-                </cell>
-                <cell id="3515">
-                    <data id="3833">
-                        <structure name="numberFormat">
-                            <property name="category">Fixed</property>
-                            <property name="pattern">###0{RoundingMode=HALF_EVEN}</property>
-                        </structure>
-                        <property name="textAlign">right</property>
-                        <property name="dataSet">nutList2</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">protéines</property>
-                                <text-property name="displayName">protéines</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["protéines"] / 100 * dataSetRow["servingSize"]</expression>
-                                <property name="dataType">float</property>
-                                <property name="allowExport">true</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">protéines</property>
-                    </data>
-                </cell>
-                <cell id="3770">
-                    <label id="3834">
-                        <text-property name="text">g</text-property>
-                    </label>
-                </cell>
-                <cell id="3516"/>
-                <cell id="3517"/>
-                <cell id="3799">
-                    <label id="3843">
-                        <text-property name="text">%</text-property>
-                    </label>
-                </cell>
-            </row>
-            <row id="3527">
-                <property name="borderBottomStyle">solid</property>
-                <property name="borderBottomWidth">thin</property>
-                <property name="borderTopStyle">solid</property>
-                <property name="borderTopWidth">medium</property>
-                <cell id="3528">
-                    <label id="3570">
-                        <text-property name="text">Vitamin A</text-property>
-                    </label>
-                </cell>
-                <cell id="3529">
-                    <data id="3889">
-                        <structure name="numberFormat">
-                            <property name="category">Fixed</property>
-                            <property name="pattern">###0{RoundingMode=HALF_EVEN}</property>
-                        </structure>
-                        <property name="textAlign">right</property>
-                        <property name="dataSet">nutList2</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">vitaminea</property>
-                                <text-property name="displayName">vitaminea</text-property>
-                                <expression name="expression" type="javascript">if(dataSetRow["vitaminea"]!=null){
-dataSetRow["vitaminea"]
-}</expression>
-                                <property name="dataType">float</property>
-                                <property name="allowExport">true</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">vitaminea</property>
-                    </data>
-                </cell>
-                <cell id="3772">
-                    <label id="3885">
-                        <text-property name="text">%</text-property>
-                    </label>
-                </cell>
-                <cell id="3530">
-                    <label id="3572">
-                        <text-property name="text">Vitamin C</text-property>
-                    </label>
-                </cell>
-                <cell id="3531">
-                    <data id="3890">
-                        <structure name="numberFormat">
-                            <property name="category">Fixed</property>
-                            <property name="pattern">###0{RoundingMode=HALF_EVEN}</property>
-                        </structure>
-                        <property name="textAlign">right</property>
-                        <property name="dataSet">nutList2</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">vitaminec</property>
-                                <text-property name="displayName">vitaminec</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["vitaminec"]</expression>
-                                <property name="dataType">float</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">vitaminec</property>
-                    </data>
-                </cell>
-                <cell id="3801">
-                    <label id="3888">
-                        <text-property name="text">%</text-property>
-                    </label>
-                </cell>
-            </row>
-            <row id="3534">
-                <property name="borderBottomStyle">solid</property>
-                <property name="borderBottomWidth">thin</property>
-                <cell id="3535">
-                    <label id="3571">
-                        <text-property name="text">Calcium</text-property>
-                    </label>
-                </cell>
-                <cell id="3536">
-                    <data id="3891">
-                        <structure name="numberFormat">
-                            <property name="category">Fixed</property>
-                            <property name="pattern">###0{RoundingMode=HALF_EVEN}</property>
-                        </structure>
-                        <property name="textAlign">right</property>
-                        <property name="dataSet">nutList2</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">calcium</property>
-                                <text-property name="displayName">calcium</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["calcium"]</expression>
-                                <property name="dataType">float</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">calcium</property>
-                    </data>
-                </cell>
-                <cell id="3773">
-                    <label id="3886">
-                        <text-property name="text">%</text-property>
-                    </label>
-                </cell>
-                <cell id="3537">
-                    <label id="3573">
-                        <text-property name="text">Iron</text-property>
-                    </label>
-                </cell>
-                <cell id="3538">
-                    <data id="3892">
-                        <structure name="numberFormat">
-                            <property name="category">Fixed</property>
-                            <property name="pattern">###0{RoundingMode=HALF_EVEN}</property>
-                        </structure>
-                        <property name="textAlign">right</property>
-                        <property name="dataSet">nutList2</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">fertotal</property>
-                                <text-property name="displayName">fertotal</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["fertotal"]</expression>
-                                <property name="dataType">float</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">fertotal</property>
-                    </data>
-                </cell>
-                <cell id="3802">
-                    <label id="3887">
-                        <text-property name="text">%</text-property>
-                    </label>
-                </cell>
-            </row>
-            <row id="3541">
-                <cell id="3542">
-                    <property name="colSpan">6</property>
-                    <property name="rowSpan">1</property>
-                    <property name="fontSize">9pt</property>
-                    <label id="3739">
-                        <property name="fontSize">8pt</property>
-                        <text-property name="text">* Percent Daily Values are based on a 2,000 calorie diet. Your daily values may be higher or lower depending on your calorie needs.</text-property>
-                    </label>
-                </cell>
-            </row>
-            <row id="3548">
-                <cell id="3549"/>
-                <cell id="3550">
-                    <label id="3740">
-                        <text-property name="text">Calories</text-property>
-                    </label>
-                </cell>
-                <cell id="3775">
-                    <property name="colSpan">2</property>
-                    <property name="rowSpan">1</property>
-                    <label id="3741">
-                        <property name="textAlign">center</property>
-                        <text-property name="text">2000</text-property>
-                    </label>
-                </cell>
-                <cell id="3552">
-                    <property name="colSpan">2</property>
-                    <property name="rowSpan">1</property>
-                    <property name="textAlign">center</property>
-                    <label id="3742">
-                        <text-property name="text">2500</text-property>
-                    </label>
-                </cell>
-            </row>
-            <row id="3734">
-                <property name="borderTopStyle">solid</property>
-                <property name="borderTopWidth">thin</property>
-                <cell id="3735">
-                    <label id="3743">
-                        <text-property name="text">Total Fat</text-property>
-                    </label>
-                </cell>
-                <cell id="3736">
-                    <label id="3844">
-                        <text-property name="text">Less than</text-property>
-                    </label>
-                </cell>
-                <cell id="3776">
-                    <label id="3870">
-                        <property name="textAlign">right</property>
-                        <text-property name="text">65</text-property>
-                    </label>
-                </cell>
-                <cell id="3737">
-                    <label id="3856">
-                        <text-property name="text">g</text-property>
-                    </label>
-                </cell>
-                <cell id="3738">
-                    <label id="3878">
-                        <property name="textAlign">right</property>
-                        <text-property name="text">85</text-property>
-                    </label>
-                </cell>
-                <cell id="3805">
-                    <label id="3863">
-                        <text-property name="text">g</text-property>
-                    </label>
-                </cell>
-            </row>
-            <row id="3729">
-                <cell id="3730">
-                    <label id="3744">
-                        <text-property name="text">Sat Fat</text-property>
-                    </label>
-                </cell>
-                <cell id="3731">
-                    <label id="3845">
-                        <text-property name="text">Less than</text-property>
-                    </label>
-                </cell>
-                <cell id="3777">
-                    <label id="3872">
-                        <property name="textAlign">right</property>
-                        <text-property name="text">20</text-property>
-                    </label>
-                </cell>
-                <cell id="3732">
-                    <label id="3857">
-                        <text-property name="text">g</text-property>
-                    </label>
-                </cell>
-                <cell id="3733">
-                    <label id="3879">
-                        <property name="textAlign">right</property>
-                        <text-property name="text">25</text-property>
-                    </label>
-                </cell>
-                <cell id="3806">
-                    <label id="3862">
-                        <text-property name="text">g</text-property>
-                    </label>
-                </cell>
-            </row>
-            <row id="3724">
-                <cell id="3725">
-                    <label id="3745">
-                        <text-property name="text">Cholesterol</text-property>
-                    </label>
-                </cell>
-                <cell id="3726">
-                    <label id="3846">
-                        <text-property name="text">Less than</text-property>
-                    </label>
-                </cell>
-                <cell id="3778">
-                    <label id="3873">
-                        <property name="textAlign">right</property>
-                        <text-property name="text">300</text-property>
-                    </label>
-                </cell>
-                <cell id="3727">
-                    <label id="3864">
-                        <text-property name="text">mg</text-property>
-                    </label>
-                </cell>
-                <cell id="3728">
-                    <label id="3880">
-                        <property name="textAlign">right</property>
-                        <text-property name="text">300</text-property>
-                    </label>
-                </cell>
-                <cell id="3807">
-                    <label id="3869">
-                        <text-property name="text">mg</text-property>
-                    </label>
-                </cell>
-            </row>
-            <row id="3719">
-                <cell id="3720">
-                    <label id="3746">
-                        <text-property name="text">Sodium</text-property>
-                    </label>
-                </cell>
-                <cell id="3721">
-                    <label id="3847">
-                        <text-property name="text">Less than</text-property>
-                    </label>
-                </cell>
-                <cell id="3779">
-                    <label id="3874">
-                        <property name="textAlign">right</property>
-                        <text-property name="text">2400</text-property>
-                    </label>
-                </cell>
-                <cell id="3722">
-                    <label id="3865">
-                        <text-property name="text">mg</text-property>
-                    </label>
-                </cell>
-                <cell id="3723">
-                    <label id="3881">
-                        <property name="textAlign">right</property>
-                        <text-property name="text">2400</text-property>
-                    </label>
-                </cell>
-                <cell id="3808">
-                    <label id="3868">
-                        <text-property name="text">mg</text-property>
-                    </label>
-                </cell>
-            </row>
-            <row id="3714">
-                <cell id="3715">
-                    <label id="3747">
-                        <text-property name="text">Potassium</text-property>
-                    </label>
-                </cell>
-                <cell id="3716">
-                    <label id="3848">
-                        <text-property name="text">Less than</text-property>
-                    </label>
-                </cell>
-                <cell id="3780">
-                    <label id="3875">
-                        <property name="textAlign">right</property>
-                        <text-property name="text">3500</text-property>
-                    </label>
-                </cell>
-                <cell id="3717">
-                    <label id="3866">
-                        <text-property name="text">mg</text-property>
-                    </label>
-                </cell>
-                <cell id="3718">
-                    <label id="3882">
-                        <property name="textAlign">right</property>
-                        <text-property name="text">3500</text-property>
-                    </label>
-                </cell>
-                <cell id="3809">
-                    <label id="3867">
-                        <text-property name="text">mg</text-property>
-                    </label>
-                </cell>
-            </row>
-            <row id="3849">
-                <cell id="3850">
-                    <label id="3748">
-                        <text-property name="text">Total Carbohydrate</text-property>
-                    </label>
-                </cell>
-                <cell id="3851"/>
-                <cell id="3852">
-                    <label id="3876">
-                        <property name="textAlign">right</property>
-                        <text-property name="text">300</text-property>
-                    </label>
-                </cell>
-                <cell id="3853">
-                    <label id="3859">
-                        <text-property name="text">g</text-property>
-                    </label>
-                </cell>
-                <cell id="3854">
-                    <label id="3883">
-                        <property name="textAlign">right</property>
-                        <text-property name="text">375</text-property>
-                    </label>
-                </cell>
-                <cell id="3855">
-                    <label id="3861">
-                        <text-property name="text">g</text-property>
-                    </label>
-                </cell>
-            </row>
-            <row id="3709">
-                <cell id="3710">
-                    <label id="3749">
-                        <text-property name="text">dietery fiber</text-property>
-                    </label>
-                </cell>
-                <cell id="3711"/>
-                <cell id="3781">
-                    <label id="3877">
-                        <property name="textAlign">right</property>
-                        <text-property name="text">25</text-property>
-                    </label>
-                </cell>
-                <cell id="3712">
-                    <label id="3858">
-                        <text-property name="text">g</text-property>
-                    </label>
-                </cell>
-                <cell id="3713">
-                    <label id="3884">
-                        <property name="textAlign">right</property>
-                        <text-property name="text">30</text-property>
-                    </label>
-                </cell>
-                <cell id="3810">
-                    <label id="3860">
-                        <text-property name="text">g</text-property>
-                    </label>
-                </cell>
-            </row>
-            <row id="3704">
-                <property name="borderTopStyle">solid</property>
-                <property name="borderTopWidth">thin</property>
-                <cell id="3705">
-                    <label id="3750">
-                        <text-property name="text">Calories per gram:</text-property>
-                    </label>
-                </cell>
-                <cell id="3706"/>
-                <cell id="3782"/>
-                <cell id="3707"/>
-                <cell id="3708"/>
-                <cell id="3811"/>
-            </row>
-            <row id="3699">
-                <cell id="3700">
-                    <property name="colSpan">1</property>
-                    <property name="rowSpan">1</property>
-                </cell>
-                <cell id="3904">
-                    <label id="3751">
-                        <property name="textAlign">left</property>
-                        <text-property name="text">Fat: 9</text-property>
-                    </label>
-                </cell>
-                <cell id="3783">
-                    <property name="colSpan">2</property>
-                    <property name="rowSpan">1</property>
-                    <label id="3752">
-                        <property name="textAlign">center</property>
-                        <text-property name="text">Carbohydrate: 4</text-property>
-                    </label>
-                </cell>
-                <cell id="3703">
-                    <property name="colSpan">2</property>
-                    <property name="rowSpan">1</property>
-                    <label id="3753">
-                        <property name="textAlign">center</property>
-                        <text-property name="text">Protein: 4</text-property>
-                    </label>
+        <grid id="3905">
+            <property name="height">21cm</property>
+            <column id="3906"/>
+            <row id="3907">
+                <property name="textAlign">center</property>
+                <property name="verticalAlign">middle</property>
+                <property name="height">21cm</property>
+                <cell id="3908">
+                    <grid id="3408">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">medium</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">medium</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">medium</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">medium</property>
+                        <property name="width">3.1145833333333335in</property>
+                        <column id="3409">
+                            <property name="textAlign">left</property>
+                            <property name="width">0.9166666666666666in</property>
+                        </column>
+                        <column id="3410">
+                            <property name="textAlign">right</property>
+                            <property name="width">0.65625in</property>
+                        </column>
+                        <column id="3813">
+                            <property name="width">1.5416666666666667in</property>
+                        </column>
+                        <row id="3415">
+                            <property name="backgroundColor">#000000</property>
+                            <cell id="3416">
+                                <property name="colSpan">3</property>
+                                <property name="rowSpan">1</property>
+                                <property name="textAlign">center</property>
+                                <label id="3555">
+                                    <property name="backgroundColor">#000000</property>
+                                    <property name="fontSize">14pt</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="color">#FFFFFF</property>
+                                    <property name="textAlign">center</property>
+                                    <text-property name="text" key="nut.chapter">Nutrition Facts</text-property>
+                                </label>
+                                <label id="3556">
+                                    <property name="color">#FFFFFF</property>
+                                    <property name="display">inline</property>
+                                    <text-property name="text" key="nut.portionOf">Portion de :</text-property>
+                                </label>
+                                <data id="3814">
+                                    <property name="color">#FFFFFF</property>
+                                    <property name="textAlign">right</property>
+                                    <property name="display">inline</property>
+                                    <property name="dataSet">Product</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">servingSize</property>
+                                            <text-property name="displayName">servingSize</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["servingSize"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">servingSize</property>
+                                </data>
+                                <label id="3815">
+                                    <property name="color">#FFFFFF</property>
+                                    <property name="marginLeft">2pt</property>
+                                    <property name="display">inline</property>
+                                    <text-property name="text">g</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="3436">
+                            <property name="borderBottomStyle">solid</property>
+                            <property name="borderBottomWidth">1.8px</property>
+                            <property name="verticalAlign">middle</property>
+                            <cell id="3437">
+                                <text id="3955">
+                                    <property name="fontSize">10pt</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="textAlign">center</property>
+                                    <property name="display">block</property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<VALUE-OF>reportContext.getMessage("nut.content", reportContext.getLocale())</VALUE-OF>]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3438"/>
+                            <cell id="3788">
+                                <text id="3956">
+                                    <property name="fontSize">10pt</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="textAlign">center</property>
+                                    <property name="display">block</property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<VALUE-OF>reportContext.getMessage("nut.dailyValue", reportContext.getLocale())</VALUE-OF>]]></text-property>
+                                </text>
+                            </cell>
+                        </row>
+                        <row id="3443">
+                            <property name="borderBottomStyle">solid</property>
+                            <property name="borderBottomWidth">thin</property>
+                            <cell id="3444">
+                                <text id="3925">
+                                    <property name="fontWeight">bold</property>
+                                    <property name="display">block</property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<VALUE-OF>reportContext.getMessage("nut.calories.nut", reportContext.getLocale())</VALUE-OF>]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3445">
+                                <text id="3954">
+                                    <property name="display">block</property>
+                                    <property name="dataSet">nutList2</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">servingSize</property>
+                                            <text-property name="displayName">servingSize</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["servingSize"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">energykcal</property>
+                                            <text-property name="displayName">energykcal</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["energykcal"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">energiekcal</property>
+                                            <text-property name="displayName">energiekcal</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["energiekcal"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<VALUE-OF>
+
+var nut = reportContext.getMessage("nut.energykcal.param" , reportContext.getLocale());
+if(row[nut] != null ) {
+ Formatter.format(row[nut] / 100 * row["servingSize"], "#0") + " kcal";
+}
+</VALUE-OF>]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3447">
+                                <property name="colSpan">1</property>
+                                <property name="rowSpan">1</property>
+                                <data id="3902">
+                                    <property name="backgroundColor">#FF0000</property>
+                                    <structure name="numberFormat">
+                                        <property name="category">Fixed</property>
+                                        <property name="pattern">###0{RoundingMode=HALF_EVEN}</property>
+                                    </structure>
+                                    <property name="textAlign">right</property>
+                                    <property name="display">inline</property>
+                                    <property name="dataSet">nutList2</property>
+                                    <list-property name="visibility">
+                                        <structure>
+                                            <property name="format">all</property>
+                                            <expression name="valueExpr" type="javascript">true</expression>
+                                        </structure>
+                                    </list-property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">lipides</property>
+                                            <text-property name="displayName">lipides</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["lipides"] / 100 * dataSetRow["servingSize"] * 4</expression>
+                                            <property name="dataType">float</property>
+                                            <property name="allowExport">true</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">lipides</property>
+                                </data>
+                                <label id="3903">
+                                    <property name="backgroundColor">#FF0000</property>
+                                    <property name="marginLeft">1pt</property>
+                                    <property name="display">inline</property>
+                                    <list-property name="visibility">
+                                        <structure>
+                                            <property name="format">all</property>
+                                            <expression name="valueExpr" type="javascript">true</expression>
+                                        </structure>
+                                    </list-property>
+                                    <text-property name="text">g</text-property>
+                                </label>
+                                <text id="3926">
+                                    <property name="backgroundColor">#FF0000</property>
+                                    <property name="display">block</property>
+                                    <property name="dataSet">nutList2</property>
+                                    <list-property name="visibility">
+                                        <structure>
+                                            <property name="format">all</property>
+                                            <expression name="valueExpr" type="javascript">true</expression>
+                                        </structure>
+                                    </list-property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">lipides</property>
+                                            <text-property name="displayName">lipides</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["lipides"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">servingSize</property>
+                                            <text-property name="displayName">servingSize</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["servingSize"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">lipids</property>
+                                            <text-property name="displayName">lipids</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["lipids"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<VALUE-OF>var nut = reportContext.getMessage("nut.lipids.param" , reportContext.getLocale());
+if(row[nut] != null ) {
+	Formatter.format(row[nut] / 100 * row["servingSize"] * 4, "#0") + " %";
+}
+</VALUE-OF>]]></text-property>
+                                </text>
+                            </cell>
+                        </row>
+                        <row id="3450">
+                            <property name="borderBottomStyle">solid</property>
+                            <property name="borderBottomWidth">thin</property>
+                            <cell id="3451">
+                                <text id="3927">
+                                    <property name="fontWeight">bold</property>
+                                    <property name="display">inline</property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<VALUE-OF>reportContext.getMessage("nut.lipids", reportContext.getLocale())</VALUE-OF>]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3452">
+                                <text id="3929">
+                                    <property name="display">block</property>
+                                    <property name="dataSet">nutList2</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">lipides</property>
+                                            <text-property name="displayName">lipides</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["lipides"]</expression>
+                                            <property name="dataType">float</property>
+                                            <property name="allowExport">true</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">servingSize</property>
+                                            <text-property name="displayName">servingSize</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["servingSize"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">totallipidfat</property>
+                                            <text-property name="displayName">totallipidfat</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["totallipidfat"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<VALUE-OF>
+
+var nut = reportContext.getMessage("nut.lipids.param" , reportContext.getLocale());
+if(row[nut] != null ) {
+ Formatter.format(row[nut] / 100 * row["servingSize"], "#0") + " g";
+}
+</VALUE-OF>]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3790">
+                                <text id="3928">
+                                    <property name="display">block</property>
+                                    <property name="dataSet">nutList2</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">lipides</property>
+                                            <text-property name="displayName">lipides</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["lipides"]</expression>
+                                            <property name="dataType">float</property>
+                                            <property name="allowExport">true</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">servingSize</property>
+                                            <text-property name="displayName">servingSize</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["servingSize"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">totallipidfat</property>
+                                            <text-property name="displayName">totallipidfat</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["totallipidfat"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<VALUE-OF>
+
+var nut = reportContext.getMessage("nut.lipids.param" , reportContext.getLocale());
+if(row[nut] != null ) {
+ Formatter.format(row[nut] * row["servingSize"]/ 65, "#0") + " %";
+}
+
+</VALUE-OF>]]></text-property>
+                                </text>
+                            </cell>
+                        </row>
+                        <row id="3457">
+                            <property name="borderBottomStyle">solid</property>
+                            <property name="borderBottomWidth">thin</property>
+                            <cell id="3458">
+                                <text id="3960">
+                                    <property name="fontWeight">normal</property>
+                                    <property name="marginLeft">15pt</property>
+                                    <property name="paddingLeft">1pt</property>
+                                    <property name="display">block</property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<VALUE-OF>reportContext.getMessage("nut.fattyacidstotalsaturated.nut", reportContext.getLocale())</VALUE-OF>]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3459">
+                                <text id="3961">
+                                    <property name="display">block</property>
+                                    <property name="dataSet">nutList2</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">servingSize</property>
+                                            <text-property name="displayName">servingSize</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["servingSize"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">agsaturés</property>
+                                            <text-property name="displayName">agsaturés</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["agsaturés"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">fattyacidstotalsaturated</property>
+                                            <text-property name="displayName">fattyacidstotalsaturated</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["fattyacidstotalsaturated"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<VALUE-OF>
+
+var nut = reportContext.getMessage("nut.fattyacidstotalsaturated.param" , reportContext.getLocale());
+if(row[nut] != null ) {
+ Formatter.format(row[nut] / 100 * row["servingSize"], "#0") + " g";
+}
+</VALUE-OF>]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3791">
+                                <text id="3962">
+                                    <property name="display">block</property>
+                                    <property name="dataSet">nutList2</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">servingSize</property>
+                                            <text-property name="displayName">servingSize</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["servingSize"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">agsaturés</property>
+                                            <text-property name="displayName">agsaturés</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["agsaturés"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">fattyacidstotalsaturated</property>
+                                            <text-property name="displayName">fattyacidstotalsaturated</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["fattyacidstotalsaturated"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<VALUE-OF>
+
+var nut = reportContext.getMessage("nut.fattyacidstotalsaturated.param" , reportContext.getLocale());
+if(row[nut] != null ) {
+ Formatter.format(row[nut] * row["servingSize"]/ 20, "#0") + " %";
+}
+
+</VALUE-OF>]]></text-property>
+                                </text>
+                            </cell>
+                        </row>
+                        <row id="3471">
+                            <property name="borderBottomStyle">solid</property>
+                            <property name="borderBottomWidth">thin</property>
+                            <cell id="3472">
+                                <text id="3970">
+                                    <property name="fontWeight">bold</property>
+                                    <property name="display">inline</property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<VALUE-OF>reportContext.getMessage("nut.cholesterol.nut", reportContext.getLocale())</VALUE-OF>]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3473">
+                                <text id="3967">
+                                    <property name="display">block</property>
+                                    <property name="dataSet">nutList2</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">servingSize</property>
+                                            <text-property name="displayName">servingSize</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["servingSize"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">cholestérol</property>
+                                            <text-property name="displayName">cholestérol</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["cholestérol"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">cholesterol</property>
+                                            <text-property name="displayName">cholesterol</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["cholesterol"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<VALUE-OF>
+var nut = reportContext.getMessage("nut.cholesterol.param" , reportContext.getLocale());
+if(row[nut] != null ) {
+	Formatter.format(row[nut] / 100 * row["servingSize"], "#0.##") +" mg";
+}
+</VALUE-OF>]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3793">
+                                <text id="3969">
+                                    <property name="display">block</property>
+                                    <property name="dataSet">nutList2</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">servingSize</property>
+                                            <text-property name="displayName">servingSize</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["servingSize"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">cholestérol</property>
+                                            <text-property name="displayName">cholestérol</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["cholestérol"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">cholesterol</property>
+                                            <text-property name="displayName">cholesterol</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["cholesterol"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<VALUE-OF>
+var nut = reportContext.getMessage("nut.cholesterol.param" , reportContext.getLocale());
+if(row[nut] != null ) {
+	Formatter.format(row[nut] * row["servingSize"]/ 300, "#0") + " %";
+}
+
+</VALUE-OF>]]></text-property>
+                                </text>
+                            </cell>
+                        </row>
+                        <row id="3478">
+                            <property name="borderBottomStyle">solid</property>
+                            <property name="borderBottomWidth">thin</property>
+                            <cell id="3479">
+                                <text id="3930">
+                                    <property name="fontWeight">bold</property>
+                                    <property name="display">inline</property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<VALUE-OF>reportContext.getMessage("nut.sodium", reportContext.getLocale())</VALUE-OF>]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3480">
+                                <text id="3932">
+                                    <property name="display">block</property>
+                                    <property name="dataSet">nutList2</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">servingSize</property>
+                                            <text-property name="displayName">servingSize</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["servingSize"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">sodium</property>
+                                            <text-property name="displayName">sodium</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["sodium"]</expression>
+                                            <property name="dataType">float</property>
+                                            <property name="allowExport">true</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">sodiumna</property>
+                                            <text-property name="displayName">sodiumna</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["sodiumna"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<VALUE-OF>
+var nut = reportContext.getMessage("nut.sodium.param" , reportContext.getLocale());
+if(row[nut] != null ) {
+	Formatter.format(row[nut] / 100 * row["servingSize"], "#0") +" mg";
+}
+</VALUE-OF>]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3794">
+                                <text id="3931">
+                                    <property name="display">block</property>
+                                    <property name="dataSet">nutList2</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">servingSize</property>
+                                            <text-property name="displayName">servingSize</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["servingSize"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">sodium</property>
+                                            <text-property name="displayName">sodium</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["sodium"]</expression>
+                                            <property name="dataType">float</property>
+                                            <property name="allowExport">true</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">sodiumna</property>
+                                            <text-property name="displayName">sodiumna</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["sodiumna"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<VALUE-OF>
+var nut = reportContext.getMessage("nut.sodium.param" , reportContext.getLocale());
+if(row[nut] != null ) {
+	Formatter.format(row[nut] * row["servingSize"]/ 2400, "#0") + " %";
+}
+
+</VALUE-OF>]]></text-property>
+                                </text>
+                            </cell>
+                        </row>
+                        <row id="3485">
+                            <property name="borderBottomStyle">solid</property>
+                            <property name="borderBottomWidth">thin</property>
+                            <cell id="3486">
+                                <text id="3965">
+                                    <property name="fontWeight">bold</property>
+                                    <property name="display">inline</property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<VALUE-OF>reportContext.getMessage("nut.potassiumk.nut", reportContext.getLocale())</VALUE-OF>]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3487">
+                                <text id="3963">
+                                    <property name="display">block</property>
+                                    <property name="dataSet">nutList2</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">servingSize</property>
+                                            <text-property name="displayName">servingSize</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["servingSize"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">potassium</property>
+                                            <text-property name="displayName">potassium</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["potassium"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">potassiumk</property>
+                                            <text-property name="displayName">potassiumk</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["potassiumk"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<VALUE-OF>
+var nut = reportContext.getMessage("nut.potassiumk.param" , reportContext.getLocale());
+if(row[nut] != null ) {
+	Formatter.format(row[nut] / 100 * row["servingSize"], "#0") + " mg";
+}
+</VALUE-OF>]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3795">
+                                <text id="3964">
+                                    <property name="display">block</property>
+                                    <property name="dataSet">nutList2</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">servingSize</property>
+                                            <text-property name="displayName">servingSize</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["servingSize"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">potassium</property>
+                                            <text-property name="displayName">potassium</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["potassium"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">potassiumk</property>
+                                            <text-property name="displayName">potassiumk</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["potassiumk"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<VALUE-OF>
+var nut = reportContext.getMessage("nut.potassiumk.param" , reportContext.getLocale());
+if(row[nut] != null ) {
+	Formatter.format(row[nut] * row["servingSize"]/ 3500, "#0") + " %";
+}
+</VALUE-OF>]]></text-property>
+                                </text>
+                            </cell>
+                        </row>
+                        <row id="3492">
+                            <property name="borderBottomStyle">solid</property>
+                            <property name="borderBottomWidth">thin</property>
+                            <cell id="3493">
+                                <text id="3933">
+                                    <property name="fontWeight">bold</property>
+                                    <property name="display">block</property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<VALUE-OF>reportContext.getMessage("nut.carbohydrate.nut", reportContext.getLocale())</VALUE-OF>]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3494">
+                                <text id="3934">
+                                    <property name="display">block</property>
+                                    <property name="dataSet">nutList2</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">servingSize</property>
+                                            <text-property name="displayName">servingSize</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["servingSize"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">glucides</property>
+                                            <text-property name="displayName">glucides</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["glucides"]</expression>
+                                            <property name="dataType">float</property>
+                                            <property name="allowExport">true</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">carbohydratebydifference</property>
+                                            <text-property name="displayName">carbohydratebydifference</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["carbohydratebydifference"]</expression>
+                                            <property name="dataType">float</property>
+                                            <property name="allowExport">true</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<VALUE-OF>
+var nut = reportContext.getMessage("nut.carbohydrate.param" , reportContext.getLocale());
+if(row[nut] != null ) {
+	Formatter.format(row[nut] / 100 * row["servingSize"], "#0") + " g";
+}
+</VALUE-OF>]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3796">
+                                <text id="3935">
+                                    <property name="display">block</property>
+                                    <property name="dataSet">nutList2</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">servingSize</property>
+                                            <text-property name="displayName">servingSize</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["servingSize"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">glucides</property>
+                                            <text-property name="displayName">glucides</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["glucides"]</expression>
+                                            <property name="dataType">float</property>
+                                            <property name="allowExport">true</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">carbohydratebydifference</property>
+                                            <text-property name="displayName">carbohydratebydifference</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["carbohydratebydifference"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<VALUE-OF>
+var nut = reportContext.getMessage("nut.carbohydrate.param" , reportContext.getLocale());
+if(row[nut] != null ) {
+	Formatter.format(row[nut] * row["servingSize"]/ 300, "#0") + " %";
+}
+</VALUE-OF>]]></text-property>
+                                </text>
+                            </cell>
+                        </row>
+                        <row id="3499">
+                            <property name="borderBottomStyle">solid</property>
+                            <property name="borderBottomWidth">thin</property>
+                            <cell id="3500">
+                                <text id="3937">
+                                    <property name="fontWeight">normal</property>
+                                    <property name="marginLeft">15pt</property>
+                                    <property name="paddingLeft">1pt</property>
+                                    <property name="display">block</property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<VALUE-OF>reportContext.getMessage("nut.fiber.nut", reportContext.getLocale())</VALUE-OF>]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3501">
+                                <text id="3936">
+                                    <property name="display">block</property>
+                                    <property name="dataSet">nutList2</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">servingSize</property>
+                                            <text-property name="displayName">servingSize</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["servingSize"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">fibresalimentaires</property>
+                                            <text-property name="displayName">fibresalimentaires</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["fibresalimentaires"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">fibertotaldietary</property>
+                                            <text-property name="displayName">fibertotaldietary</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["fibertotaldietary"]</expression>
+                                            <property name="dataType">float</property>
+                                            <property name="allowExport">true</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<VALUE-OF>
+var nut = reportContext.getMessage("nut.fiber.param" , reportContext.getLocale());
+if(row[nut]!= null){
+	Formatter.format(row[nut] / 100 * row["servingSize"], "#0") + " g";
+}
+</VALUE-OF>]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3797">
+                                <text id="3938">
+                                    <property name="display">block</property>
+                                    <property name="dataSet">nutList2</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">servingSize</property>
+                                            <text-property name="displayName">servingSize</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["servingSize"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">fibresalimentaires</property>
+                                            <text-property name="displayName">fibresalimentaires</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["fibresalimentaires"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">fibertotaldietary</property>
+                                            <text-property name="displayName">fibertotaldietary</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["fibertotaldietary"]</expression>
+                                            <property name="dataType">float</property>
+                                            <property name="allowExport">true</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<VALUE-OF>
+var nut = reportContext.getMessage("nut.fiber.param" , reportContext.getLocale());
+if(row[nut]!=null){
+	Formatter.format(row[nut] * row["servingSize"] / 25, "#0") + " %";
+}
+</VALUE-OF>]]></text-property>
+                                </text>
+                            </cell>
+                        </row>
+                        <row id="3506">
+                            <property name="borderBottomStyle">solid</property>
+                            <property name="borderBottomWidth">thin</property>
+                            <cell id="3507">
+                                <text id="3939">
+                                    <property name="fontWeight">normal</property>
+                                    <property name="marginLeft">15pt</property>
+                                    <property name="paddingLeft">1pt</property>
+                                    <property name="display">block</property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<VALUE-OF>reportContext.getMessage("nut.sugars.nut", reportContext.getLocale())</VALUE-OF>]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3508">
+                                <text id="3940">
+                                    <property name="display">block</property>
+                                    <property name="dataSet">nutList2</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">servingSize</property>
+                                            <text-property name="displayName">servingSize</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["servingSize"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">sucres</property>
+                                            <text-property name="displayName">sucres</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["sucres"]</expression>
+                                            <property name="dataType">float</property>
+                                            <property name="allowExport">true</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">sugarstotal</property>
+                                            <text-property name="displayName">sugarstotal</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["sugarstotal"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<VALUE-OF>
+var nut = reportContext.getMessage("nut.sugars.param" , reportContext.getLocale());
+if(row[nut] != null ) {
+	Formatter.format(row[nut] / 100 * row["servingSize"], "#0.#") + " g";
+}
+</VALUE-OF>]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3798"/>
+                        </row>
+                        <row id="3513">
+                            <property name="borderBottomStyle">solid</property>
+                            <property name="borderBottomWidth">medium</property>
+                            <cell id="3514">
+                                <text id="3942">
+                                    <property name="fontWeight">bold</property>
+                                    <property name="paddingLeft">1pt</property>
+                                    <property name="display">inline</property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<VALUE-OF>reportContext.getMessage("nut.proteins.nut", reportContext.getLocale())</VALUE-OF>]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3515">
+                                <text id="3944">
+                                    <property name="display">block</property>
+                                    <property name="dataSet">nutList2</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">servingSize</property>
+                                            <text-property name="displayName">servingSize</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["servingSize"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">protéines</property>
+                                            <text-property name="displayName">protéines</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["protéines"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">protein</property>
+                                            <text-property name="displayName">protein</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["protein"]</expression>
+                                            <property name="dataType">float</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<VALUE-OF>
+var nut = reportContext.getMessage("nut.proteins.param" , reportContext.getLocale());
+Formatter.format(row[nut] / 100 * row["servingSize"], "#0") + " g";
+
+</VALUE-OF>]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3799"/>
+                        </row>
+                        <row id="3527">
+                            <property name="borderBottomStyle">solid</property>
+                            <property name="borderBottomWidth">thin</property>
+                            <property name="borderTopStyle">solid</property>
+                            <property name="borderTopWidth">medium</property>
+                            <cell id="3528">
+                                <property name="colSpan">3</property>
+                                <property name="rowSpan">1</property>
+                                <grid id="3909">
+                                    <property name="width">100%</property>
+                                    <column id="3910">
+                                        <property name="textAlign">left</property>
+                                        <property name="width">0.9270833333333334in</property>
+                                    </column>
+                                    <column id="3923">
+                                        <property name="textAlign">right</property>
+                                        <property name="width">0.4583333333333333in</property>
+                                    </column>
+                                    <column id="3959">
+                                        <property name="textAlign">left</property>
+                                        <property name="width">0.13541666666666666in</property>
+                                    </column>
+                                    <column id="3911">
+                                        <property name="textAlign">left</property>
+                                        <property name="width">0.8125in</property>
+                                    </column>
+                                    <column id="3920">
+                                        <property name="textAlign">right</property>
+                                        <property name="width">0.5625in</property>
+                                    </column>
+                                    <row id="3912">
+                                        <cell id="3913">
+                                            <property name="borderBottomStyle">solid</property>
+                                            <property name="borderBottomWidth">thin</property>
+                                            <text id="3952">
+                                                <property name="fontWeight">normal</property>
+                                                <property name="paddingLeft">1pt</property>
+                                                <property name="display">block</property>
+                                                <property name="contentType">html</property>
+                                                <text-property name="content"><![CDATA[<VALUE-OF>reportContext.getMessage("nut.vitamina.nut", reportContext.getLocale())</VALUE-OF>]]></text-property>
+                                            </text>
+                                        </cell>
+                                        <cell id="3921">
+                                            <property name="borderBottomStyle">solid</property>
+                                            <property name="borderBottomWidth">thin</property>
+                                            <text id="3953">
+                                                <property name="display">block</property>
+                                                <property name="dataSet">nutList2</property>
+                                                <list-property name="boundDataColumns">
+                                                    <structure>
+                                                        <property name="name">rétinol</property>
+                                                        <text-property name="displayName">rétinol</text-property>
+                                                        <expression name="expression" type="javascript">dataSetRow["rétinol"]</expression>
+                                                        <property name="dataType">float</property>
+                                                    </structure>
+                                                    <structure>
+                                                        <property name="name">retinol</property>
+                                                        <text-property name="displayName">retinol</text-property>
+                                                        <expression name="expression" type="javascript">dataSetRow["retinol"]</expression>
+                                                        <property name="dataType">float</property>
+                                                    </structure>
+                                                </list-property>
+                                                <property name="contentType">html</property>
+                                                <text-property name="content"><![CDATA[<VALUE-OF>
+var nut = reportContext.getMessage("nut.vitamina.param" , reportContext.getLocale());
+if(row[nut] != null) {
+	Formatter.format(row[nut], "#0") + " %";
+}
+</VALUE-OF>]]></text-property>
+                                            </text>
+                                        </cell>
+                                        <cell id="3957"/>
+                                        <cell id="3914">
+                                            <property name="borderBottomStyle">solid</property>
+                                            <property name="borderBottomWidth">thin</property>
+                                            <text id="3951">
+                                                <property name="fontWeight">normal</property>
+                                                <property name="paddingLeft">1pt</property>
+                                                <property name="display">inline</property>
+                                                <property name="contentType">html</property>
+                                                <text-property name="content"><![CDATA[<VALUE-OF>reportContext.getMessage("nut.vitaminc.nut", reportContext.getLocale())</VALUE-OF>]]></text-property>
+                                            </text>
+                                        </cell>
+                                        <cell id="3918">
+                                            <property name="borderBottomStyle">solid</property>
+                                            <property name="borderBottomWidth">thin</property>
+                                            <text id="3950">
+                                                <property name="display">block</property>
+                                                <property name="dataSet">nutList2</property>
+                                                <list-property name="boundDataColumns">
+                                                    <structure>
+                                                        <property name="name">vitaminectotale</property>
+                                                        <text-property name="displayName">vitaminectotale</text-property>
+                                                        <expression name="expression" type="javascript">dataSetRow["vitaminectotale"]</expression>
+                                                        <property name="dataType">float</property>
+                                                    </structure>
+                                                    <structure>
+                                                        <property name="name">vitaminctotalascorbicacid</property>
+                                                        <text-property name="displayName">vitaminctotalascorbicacid</text-property>
+                                                        <expression name="expression" type="javascript">dataSetRow["vitaminctotalascorbicacid"]</expression>
+                                                        <property name="dataType">float</property>
+                                                    </structure>
+                                                </list-property>
+                                                <property name="contentType">html</property>
+                                                <text-property name="content"><![CDATA[<VALUE-OF>
+var nut = reportContext.getMessage("nut.vitaminc.param" , reportContext.getLocale());
+if(row[nut] != null) {
+	Formatter.format(row[nut], "#0") + " %";
+}
+</VALUE-OF>]]></text-property>
+                                            </text>
+                                        </cell>
+                                    </row>
+                                    <row id="3915">
+                                        <cell id="3916">
+                                            <text id="3947">
+                                                <property name="fontWeight">normal</property>
+                                                <property name="paddingLeft">1pt</property>
+                                                <property name="display">block</property>
+                                                <property name="contentType">html</property>
+                                                <text-property name="content"><![CDATA[<VALUE-OF>reportContext.getMessage("nut.calciumca.nut", reportContext.getLocale())</VALUE-OF>]]></text-property>
+                                            </text>
+                                        </cell>
+                                        <cell id="3922">
+                                            <text id="3946">
+                                                <property name="display">block</property>
+                                                <property name="dataSet">nutList2</property>
+                                                <list-property name="boundDataColumns">
+                                                    <structure>
+                                                        <property name="name">calcium</property>
+                                                        <text-property name="displayName">calcium</text-property>
+                                                        <expression name="expression" type="javascript">dataSetRow["calcium"]</expression>
+                                                        <property name="dataType">float</property>
+                                                    </structure>
+                                                    <structure>
+                                                        <property name="name">calciumca</property>
+                                                        <text-property name="displayName">calciumca</text-property>
+                                                        <expression name="expression" type="javascript">dataSetRow["calciumca"]</expression>
+                                                        <property name="dataType">float</property>
+                                                    </structure>
+                                                </list-property>
+                                                <property name="contentType">html</property>
+                                                <text-property name="content"><![CDATA[<VALUE-OF>
+var nut = reportContext.getMessage("nut.calciumca.param" , reportContext.getLocale());
+if(row[nut] != null) {
+	Formatter.format(row[nut], "#0") + " %";
+}
+</VALUE-OF>]]></text-property>
+                                            </text>
+                                        </cell>
+                                        <cell id="3958"/>
+                                        <cell id="3917">
+                                            <text id="3948">
+                                                <property name="fontWeight">normal</property>
+                                                <property name="paddingLeft">1pt</property>
+                                                <property name="display">inline</property>
+                                                <property name="contentType">html</property>
+                                                <text-property name="content"><![CDATA[<VALUE-OF>reportContext.getMessage("nut.iron.nut", reportContext.getLocale())</VALUE-OF>]]></text-property>
+                                            </text>
+                                        </cell>
+                                        <cell id="3919">
+                                            <text id="3949">
+                                                <property name="display">block</property>
+                                                <property name="dataSet">nutList2</property>
+                                                <list-property name="boundDataColumns">
+                                                    <structure>
+                                                        <property name="name">fer</property>
+                                                        <text-property name="displayName">fer</text-property>
+                                                        <expression name="expression" type="javascript">dataSetRow["fer"]</expression>
+                                                        <property name="dataType">float</property>
+                                                    </structure>
+                                                    <structure>
+                                                        <property name="name">ironfe</property>
+                                                        <text-property name="displayName">ironfe</text-property>
+                                                        <expression name="expression" type="javascript">dataSetRow["ironfe"]</expression>
+                                                        <property name="dataType">float</property>
+                                                    </structure>
+                                                </list-property>
+                                                <property name="contentType">html</property>
+                                                <text-property name="content"><![CDATA[<VALUE-OF>
+var nut = reportContext.getMessage("nut.iron.param" , reportContext.getLocale());
+if(row[nut] != null) {
+	Formatter.format(row[nut], "#0") + " %";
+}
+</VALUE-OF>]]></text-property>
+                                            </text>
+                                        </cell>
+                                    </row>
+                                </grid>
+                            </cell>
+                        </row>
+                    </grid>
                 </cell>
             </row>
         </grid>
