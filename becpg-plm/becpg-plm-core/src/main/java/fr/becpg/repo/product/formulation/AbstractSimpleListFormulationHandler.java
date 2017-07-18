@@ -544,7 +544,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 					for (T tsl : templateSimpleListDataList) {
 						if(sl.getCharactNodeRef().equals(tsl.getCharactNodeRef())){
 							isFound = true;
-							lastSort = tsl.getSort();
+							lastSort = tsl.getSort()*100;
 							sl.setSort(lastSort);
 						}
 					}
