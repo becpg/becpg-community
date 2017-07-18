@@ -1990,12 +1990,19 @@
                 <structure>
                     <property name="columnName">pfName</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">pfName</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">pfTitle</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">pfTitle</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">preparationTips</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">preparationTips</text-property>
                 </structure>
             </list-property>
             <list-property name="parameters"/>
@@ -2034,6 +2041,11 @@
                     <structure>
                         <property name="position">7</property>
                         <property name="name">pfTitle</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">preparationTips</property>
                         <property name="dataType">string</property>
                     </structure>
                 </list-property>
@@ -2089,8 +2101,15 @@
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">preparationTips</property>
+                    <property name="nativeName">preparationTips</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/sampleLists/sampleList]#:#{code;STRING;/@code},{slTotalWeight;STRING;/@slTotalWeight},{slUnitWeight;STRING;/@slUnitWeight},{legalName;STRING;/@legalName},{erpCode_product;STRING;slProduct/finishedProduct/erpCode},{pfName;STRING;/slProduct/finishedProduct/name},{pfTitle;STRING;/slProduct/finishedProduct/title}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/sampleLists/sampleList]#:#{code;STRING;/@code},{slTotalWeight;STRING;/@slTotalWeight},{slUnitWeight;STRING;/@slUnitWeight},{legalName;STRING;/@legalName},{erpCode_product;STRING;slProduct/finishedProduct/erpCode},{pfName;STRING;/slProduct/finishedProduct/name},{pfTitle;STRING;/slProduct/finishedProduct/title},{preparationTips;STRING;/slProduct/finishedProduct/preparationTips}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -2455,7 +2474,7 @@
                                     <cell id="784">
                                         <property name="style">becpg-meta-cell-label</property>
                                         <label id="1521">
-                                            <text-property name="text" key="projectCode">Code project :</text-property>
+                                            <text-property name="text" key="projectCode">Code projet :</text-property>
                                         </label>
                                     </cell>
                                     <cell id="1517">
@@ -2475,18 +2494,9 @@
                     <property name="style">becpg-header-table</property>
                     <property name="backgroundImageType">url</property>
                     <property name="pageBreakAfter">auto</property>
-                    <property name="width">7.354166666666667in</property>
-                    <column id="7302">
-                        <property name="width">0.573in</property>
-                    </column>
+                    <property name="width">100%</property>
                     <column id="7303"/>
-                    <column id="7304">
-                        <property name="width">0.5729166666666666in</property>
-                    </column>
                     <row id="7305">
-                        <cell id="7306">
-                            <property name="paddingLeft">1pt</property>
-                        </cell>
                         <cell id="7308">
                             <text id="7421">
                                 <property name="fontSize">9pt</property>
@@ -2494,46 +2504,6 @@
                                 <text-property name="content"><![CDATA[<B> Usine: </B>  Z.A Danton - 32120 Montrouge <BR>
 Tel: 05 15 75 15 05 - Fax: 00 75 15 15 95]]></text-property>
                             </text>
-                        </cell>
-                        <cell id="7311">
-                            <grid id="7312">
-                                <property name="style">becpg-meta-grid</property>
-                                <property name="dataSet">Product</property>
-                                <list-property name="boundDataColumns">
-                                    <structure>
-                                        <property name="name">pvValidationDate</property>
-                                        <text-property name="displayName">pvValidationDate</text-property>
-                                        <expression name="expression" type="javascript">dataSetRow["pvValidationDate"]</expression>
-                                        <property name="dataType">date-time</property>
-                                    </structure>
-                                </list-property>
-                                <column id="7314"/>
-                                <row id="7345">
-                                    <property name="fontSize">9pt</property>
-                                    <property name="textAlign">left</property>
-                                    <cell id="7348">
-                                        <property name="borderBottomColor">#FFFFFF</property>
-                                        <property name="borderLeftColor">#FFFFFF</property>
-                                        <property name="borderRightColor">#FFFFFF</property>
-                                        <property name="borderTopColor">#FFFFFF</property>
-                                        <property name="paddingLeft">40pt</property>
-                                        <property name="textAlign">left</property>
-                                        <auto-text id="7349">
-                                            <property name="display">inline</property>
-                                            <property name="type">page-number</property>
-                                        </auto-text>
-                                        <text id="7350">
-                                            <property name="display">inline</property>
-                                            <property name="contentType">plain</property>
-                                            <text-property name="content"><![CDATA[/]]></text-property>
-                                        </text>
-                                        <auto-text id="7351">
-                                            <property name="display">inline</property>
-                                            <property name="type">total-page</property>
-                                        </auto-text>
-                                    </cell>
-                                </row>
-                            </grid>
                         </cell>
                     </row>
                 </grid>
@@ -2679,26 +2649,26 @@ Fax : 000+5544-4777-99432<BR><BR>]]></text-property>
             <column id="7412">
                 <property name="style">becpg-col-border</property>
                 <property name="textAlign">center</property>
-                <property name="width">0.9583333333333334in</property>
+                <property name="width">0.6in</property>
             </column>
             <column id="7386">
                 <property name="style">becpg-col-border</property>
                 <property name="textAlign">center</property>
-                <property name="width">1.4479166666666667in</property>
+                <property name="width">1.1in</property>
             </column>
             <column id="7387">
                 <property name="style">becpg-col-border</property>
-                <property name="width">2.71875in</property>
+                <property name="width">3in</property>
             </column>
             <column id="7388">
                 <property name="style">becpg-col-border</property>
                 <property name="textAlign">center</property>
-                <property name="width">0.59375in</property>
+                <property name="width">0.45in</property>
             </column>
             <column id="7389">
                 <property name="style">becpg-col-border</property>
                 <property name="textAlign">center</property>
-                <property name="width">0.5208333333333334in</property>
+                <property name="width">0.45in</property>
             </column>
             <header>
                 <row id="7400">
@@ -2805,22 +2775,152 @@ Fax : 000+5544-4777-99432<BR><BR>]]></text-property>
                 </row>
             </detail>
         </table>
+        <table id="7720">
+            <property name="marginTop">10pt</property>
+            <property name="marginBottom">10pt</property>
+            <property name="textAlign">left</property>
+            <property name="pageBreakInside">avoid</property>
+            <property name="width">100%</property>
+            <property name="dataSet">SampleList</property>
+            <list-property name="visibility">
+                <structure>
+                    <property name="format">all</property>
+                    <expression name="valueExpr" type="javascript">( row["runningCount"] == null || row["runningCount"] == 0 )</expression>
+                </structure>
+            </list-property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">slTotalWeight</property>
+                    <text-property name="displayName">slTotalWeight</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["slTotalWeight"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">slUnitWeight</property>
+                    <text-property name="displayName">slUnitWeight</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["slUnitWeight"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">code</property>
+                    <text-property name="displayName">code</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["code"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">erpCode_product</property>
+                    <text-property name="displayName">erpCode_product</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["erpCode_product"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">pfName</property>
+                    <text-property name="displayName">pfName</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["pfName"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">pfTitle</property>
+                    <text-property name="displayName">pfTitle</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["pfTitle"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">runningCount</property>
+                    <text-property name="displayName">runningCount</text-property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">RUNNINGCOUNT</property>
+                    <list-property name="arguments">
+                        <structure>
+                            <property name="name">Expression</property>
+                        </structure>
+                    </list-property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">preparationTips</property>
+                    <text-property name="displayName">preparationTips</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["preparationTips"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <column id="7749">
+                <property name="textAlign">center</property>
+                <property name="width">0.9583333333333334in</property>
+            </column>
+            <header>
+                <row id="7724">
+                    <cell id="7725">
+                        <property name="style">becpg-cell-header</property>
+                        <property name="borderBottomStyle">none</property>
+                        <property name="borderLeftStyle">none</property>
+                        <property name="borderRightStyle">none</property>
+                        <property name="borderTopStyle">none</property>
+                        <label id="7754">
+                            <property name="fontSize">12pt</property>
+                            <property name="textUnderline">underline</property>
+                            <property name="marginBottom">5pt</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text" key="preparationTips">Conseils de préparation</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="7727">
+                    <cell id="7728">
+                        <label id="7758">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text" key="sample">Échantillon</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="7738">
+                    <list-property name="highlightRules">
+                        <structure>
+                            <property name="operator">is-true</property>
+                            <property name="fontWeight">bold</property>
+                            <expression name="testExpr" type="javascript">row["itemType"]=="bcpg:semiFinishedProduct" || row["itemType"]=="bcpg:localSemiFinishedProduct"</expression>
+                        </structure>
+                    </list-property>
+                    <cell id="7739">
+                        <property name="textAlign">left</property>
+                        <data id="7740">
+                            <property name="resultSetColumn">code</property>
+                        </data>
+                        <data id="7756">
+                            <property name="marginBottom">7pt</property>
+                            <property name="paddingTop">5pt</property>
+                            <property name="paddingLeft">10pt</property>
+                            <property name="resultSetColumn">preparationTips</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+        </table>
         <grid id="7437">
             <property name="marginTop">15pt</property>
             <property name="pageBreakAfter">always</property>
-            <property name="width">7.28125in</property>
+            <property name="width">100%</property>
             <column id="7438">
-                <property name="width">4in</property>
+                <property name="width">3.8in</property>
             </column>
-            <column id="7439">
-                <property name="width">3.28125in</property>
-            </column>
+            <column id="7439"/>
+            <column id="7718"/>
             <row id="7440">
                 <cell id="7441"/>
                 <cell id="7442">
                     <label id="7444">
                         <property name="style">becpg-col-header</property>
                         <text-property name="text">Visa expéditeur: </text-property>
+                    </label>
+                </cell>
+                <cell id="7717">
+                    <label id="7719">
+                        <property name="fontWeight">bold</property>
+                        <property name="textAlign">center</property>
+                        <text-property name="text">Date: </text-property>
                     </label>
                 </cell>
             </row>
@@ -3398,6 +3498,7 @@ Formatter.format( (row["dynamicCharactValue"] * row._outer["compoListQtyForProdu
                                         </cell>
                                         <cell id="7570">
                                             <text id="7609">
+                                                <property name="textAlign">justify</property>
                                                 <property name="contentType">html</property>
                                                 <text-property name="content"><![CDATA[<VALUE-OF format="HTML">(row["instruction"] != null)? row["instruction"].replace("<p>", "").replace("</p>", ""): "";</VALUE-OF>]]></text-property>
                                             </text>
@@ -3543,6 +3644,7 @@ Formatter.format( (row["dynamicCharactValue"] * row._outer["compoListQtyForProdu
                                             <property name="paddingBottom">0pt</property>
                                             <property name="paddingRight">0pt</property>
                                             <grid id="7643">
+                                                <property name="marginTop">7pt</property>
                                                 <property name="width">100%</property>
                                                 <column id="7644">
                                                     <property name="width">2.3854166666666665in</property>
@@ -3553,15 +3655,40 @@ Formatter.format( (row["dynamicCharactValue"] * row._outer["compoListQtyForProdu
                                                 <column id="7646">
                                                     <property name="width">2.0416666666666665in</property>
                                                 </column>
-                                                <row id="7647">
-                                                    <cell id="7648">
+                                                <row id="7713">
+                                                    <cell id="7714">
+                                                        <property name="colSpan">2</property>
+                                                        <property name="rowSpan">1</property>
                                                         <property name="paddingTop">0pt</property>
                                                         <property name="paddingLeft">0pt</property>
                                                         <property name="paddingBottom">0pt</property>
                                                         <property name="paddingRight">0pt</property>
+                                                        <label id="7651">
+                                                            <property name="fontWeight">bold</property>
+                                                            <property name="textAlign">left</property>
+                                                            <text-property name="text" key="productMeetsRequirements">Dont 200g pour l’échantillon témoin</text-property>
+                                                        </label>
+                                                    </cell>
+                                                    <cell id="7716">
+                                                        <label id="7652">
+                                                            <property name="fontWeight">bold</property>
+                                                            <text-property name="text">Date: </text-property>
+                                                        </label>
+                                                    </cell>
+                                                </row>
+                                                <row id="7647">
+                                                    <cell id="7648">
+                                                        <property name="colSpan">3</property>
+                                                        <property name="rowSpan">1</property>
+                                                        <property name="paddingTop">0pt</property>
+                                                        <property name="paddingLeft">0pt</property>
+                                                        <property name="paddingBottom">0pt</property>
+                                                        <property name="paddingRight">0pt</property>
+                                                        <property name="textAlign">left</property>
                                                         <table id="7629">
+                                                            <property name="marginTop">5pt</property>
                                                             <property name="pageBreakInside">auto</property>
-                                                            <property name="width">2.3125in</property>
+                                                            <property name="width">7.0625in</property>
                                                             <property name="dataSet">OrganoList</property>
                                                             <list-property name="boundDataColumns">
                                                                 <structure>
@@ -3591,13 +3718,19 @@ Formatter.format( (row["dynamicCharactValue"] * row._outer["compoListQtyForProdu
                                                                 </structure>
                                                             </list-property>
                                                             <column id="7635">
-                                                                <property name="width">0.78125in</property>
+                                                                <property name="width">1.53125in</property>
                                                             </column>
                                                             <column id="7636">
-                                                                <property name="width">1.53125in</property>
+                                                                <property name="width">5.53125in</property>
                                                             </column>
                                                             <detail>
                                                                 <row id="7630">
+                                                                    <list-property name="visibility">
+                                                                        <structure>
+                                                                            <property name="format">all</property>
+                                                                            <expression name="valueExpr" type="javascript">( row["organoListValue"]== null ||  row["organoListValue"] == "")</expression>
+                                                                        </structure>
+                                                                    </list-property>
                                                                     <cell id="7631">
                                                                         <data id="7632">
                                                                             <property name="fontWeight">bold</property>
@@ -3615,18 +3748,6 @@ Formatter.format( (row["dynamicCharactValue"] * row._outer["compoListQtyForProdu
                                                                 </row>
                                                             </detail>
                                                         </table>
-                                                    </cell>
-                                                    <cell id="7649">
-                                                        <label id="7651">
-                                                            <property name="fontWeight">bold</property>
-                                                            <text-property name="text" key="productMeetsRequirements">Produit conforme aux exigences spéci</text-property>
-                                                        </label>
-                                                    </cell>
-                                                    <cell id="7650">
-                                                        <label id="7652">
-                                                            <property name="fontWeight">bold</property>
-                                                            <text-property name="text">Date: </text-property>
-                                                        </label>
                                                     </cell>
                                                 </row>
                                             </grid>
