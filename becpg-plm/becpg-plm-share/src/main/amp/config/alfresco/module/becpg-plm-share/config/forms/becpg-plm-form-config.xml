@@ -5480,7 +5480,11 @@
 					<show id="bcpg:plantPackerCode" />
 					<show id="bcpg:plantCertifications" />
 					<show id="bcpg:plantApprovalNumbers" />
+					<show id="fm:commentCount" />
 				</field-visibility>
+				<appearance>
+					<field id="fm:commentCount" label="hidden" read-only="true" />
+				</appearance>
 			</form>
 		</forms>
 	</config>
@@ -8096,6 +8100,7 @@
 					<show id="bcpg:contactListPhoneMobile" />
 					<show id="bcpg:contactListFax" />
 					<show id="bcpg:contactListNotes" />
+					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:contactListNotes">
@@ -8115,7 +8120,11 @@
 					<show id="bcpg:contactListPhoneMobile" />
 					<show id="bcpg:contactListFax" />
 					<show id="bcpg:contactListNotes" />
+					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</field-visibility>
+				<appearance>
+					<field id="fm:commentCount" label="hidden" read-only="true" />
+				</appearance>
 			</form>
 		</forms>
 	</config>
