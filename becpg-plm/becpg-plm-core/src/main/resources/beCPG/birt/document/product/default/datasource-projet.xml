@@ -48,7 +48,37 @@
   <projectCurrentTasks prefix="pjt"><![CDATA[Etude R&D]]></projectCurrentTasks>
   <projectCurrentComments prefix="pjt"><![CDATA[d774cde5-a9f7-4a0c-95c7-86a98ffb11d9]]></projectCurrentComments>
   <entityTplRef prefix="bcpg"><![CDATA[Développement nouveau produit]]></entityTplRef>
-  <clients prefix="bcpg"><![CDATA[Intermarché]]></clients>
+  <clients prefix="bcpg">
+  	<client prefix="bcpg">
+  		<clientFax prefix="bcpg"></clientFax>
+  		<created prefix="cm">2017-06-13T08:36:18.357Z</created>
+  		<locationCity prefix="bcpg">BONDOUFLE</locationCity>
+  		<clientHierarchy1 prefix="bcpg">BtoC</clientHierarchy1>
+  		<description prefix="cm"></description>
+  		<creator prefix="cm">fallier</creator>
+  		<name prefix="cm">ITM Catégorie Biscuiterie</name>
+  		<locationAddress1 prefix="bcpg"></locationAddress1>
+  		<cascadeCRC prefix="sys">3655835820</cascadeCRC>
+  		<erpCode prefix="bcpg"></erpCode>
+  		<startEffectivity prefix="bcpg">2017-06-13T08:36:18.700Z</startEffectivity>
+  		<clientEmail prefix="bcpg"></clientEmail>
+  		<code prefix="bcpg">C4</code>
+  		<title prefix="cm"></title>
+  		<cascadeTx prefix="sys">9534</cascadeTx>
+  		<locationCountry prefix="bcpg">FRANCE</locationCountry>
+  		<locationZip prefix="bcpg">91000</locationZip>
+  		<clientTel prefix="bcpg"></clientTel>
+  		<locationAddress3 prefix="bcpg"></locationAddress3>
+  		<clientHierarchy2 prefix="bcpg"></clientHierarchy2>
+  		<locationAddress2 prefix="bcpg"></locationAddress2>
+  		<node-dbid prefix="sys">24300</node-dbid>
+  		<locale prefix="sys">fr</locale>
+  		<modifier prefix="cm">admin</modifier>
+  		<modified prefix="cm">2017-06-21T08:18:07.457Z</modified>
+  		<clientState prefix="bcpg">Valid</clientState>
+  		<entityTplRef prefix="bcpg">Client</entityTplRef>
+  	</client>
+  </clients>
   <aspects><![CDATA[formulatedEntityAspect, completionAspect, generalclassifiable, effectivityAspect, referenceable, taggable, localized, entityTplRefAspect, codeAspect, entityListsAspect, imapFolder, reportEntityAspect, copiedfrom, titled, linked, clientsAspect, cascadeUpdate, auditable]]></aspects>
   <itemType><![CDATA[pjt:project]]></itemType>
   <dataLists>
