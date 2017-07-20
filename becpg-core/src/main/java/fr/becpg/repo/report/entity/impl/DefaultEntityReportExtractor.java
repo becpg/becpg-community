@@ -70,6 +70,7 @@ import fr.becpg.model.DataListModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.dictionary.constraint.DynListConstraint;
+import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
@@ -293,6 +294,19 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 					}
 				}
 			}
+		}
+	}
+	
+	protected void addDataListState(Element xmlNode, NodeRef listNodeRef) {
+
+		if (xmlNode.valueOf("@" + BeCPGModel.PROP_ENTITYLIST_STATE.getLocalName()).isEmpty()) {
+			Serializable state = nodeService.getProperty(listNodeRef, BeCPGModel.PROP_ENTITYLIST_STATE);
+			if (state != null) {
+				xmlNode.addAttribute(BeCPGModel.PROP_ENTITYLIST_STATE.getLocalName(), (String) state);
+			} else {
+				xmlNode.addAttribute(BeCPGModel.PROP_ENTITYLIST_STATE.getLocalName(), SystemState.ToValidate.toString());
+			}
+
 		}
 	}
 
