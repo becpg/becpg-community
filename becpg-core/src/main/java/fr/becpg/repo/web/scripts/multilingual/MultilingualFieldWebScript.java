@@ -117,18 +117,27 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 			if (dataType.isMatch(DataTypeDefinition.MLTEXT)) {
 				// Save
 				MLText mlText = null;
+				
+				Locale contentLocale = I18NUtil.getContentLocaleLang();
+				String language = contentLocale.getLanguage();
+		    	Locale  toSaveUnderLocale= new Locale(language);
+		    	if(MLTextHelper.isSupportedLocale(contentLocale)){
+		    		toSaveUnderLocale = contentLocale;
+		    	}
 
 				boolean wasMLAware = MLPropertyInterceptor.setMLAware(true);
 				try {
+					
+
 					Serializable value = serviceRegistry.getNodeService().getProperty(formNodeRef, fieldQname);
 					if (value instanceof MLText) {
 						mlText = (MLText) value;
 					} else if ((value != null) && (value instanceof String)) {
 						mlText = new MLText();
-						mlText.addValue(I18NUtil.getContentLocaleLang(), (String) value);
+						mlText.addValue(toSaveUnderLocale, (String) value);
 					} else {
 						mlText = new MLText();
-						mlText.addValue(I18NUtil.getContentLocaleLang(), "");
+						mlText.addValue(toSaveUnderLocale, "");
 					}
 
 				} finally {
@@ -195,6 +204,7 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 						}
 
 						ret.put("items", items);
+						ret.put("currentLocale",MLTextHelper.localeKey(toSaveUnderLocale));
 					}
 
 				}

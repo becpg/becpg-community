@@ -250,7 +250,7 @@
 				Alfresco.util.useAsButton("${fieldHtmlId}-locale-icon", function (event, fieldId)
 		            {
 		                new Alfresco.module.SimpleDialog("${fieldHtmlId}-multilingualForm").setOptions({
-		                  templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/multilingual-form/multilingual-form?nodeRef=${form.arguments.itemId}&field="+fieldId<#if textarea >+"&textarea=true"</#if>,
+		                  templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/multilingual-form/multilingual-form?nodeRef=${form.arguments.itemId}&label=${field.label?html}&field="+fieldId<#if textarea >+"&textarea=true"</#if>,
 		                  actionUrl : Alfresco.constants.PROXY_URI + "becpg/form/multilingual/field/"+fieldId+"?nodeRef=${form.arguments.itemId}",
 		                  validateOnSubmit : false,
 		                  destroyOnHide : true,
