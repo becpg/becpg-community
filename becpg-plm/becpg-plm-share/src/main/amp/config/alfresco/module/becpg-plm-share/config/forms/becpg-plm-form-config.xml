@@ -5568,6 +5568,7 @@
 			<form>
 				<field-visibility>
 					<show id="cm:name" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:trademarkType"  />
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
@@ -5592,6 +5593,7 @@
 				<field-visibility>
 					
 					<show id="cm:name" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:trademarkType"  />
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
@@ -5626,6 +5628,7 @@
 
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:erpCode" force="true" />
 					<show id="cm:name" />
 					<show id="bcpg:trademarkType"  />
 					<show id="cm:title" force="true" />
