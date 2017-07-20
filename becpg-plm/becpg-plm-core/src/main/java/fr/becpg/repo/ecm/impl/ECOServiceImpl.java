@@ -43,10 +43,13 @@ import org.alfresco.service.transaction.TransactionService;
 import org.alfresco.util.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.extensions.surf.util.I18NUtil;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
+import fr.becpg.model.ECMGroup;
 import fr.becpg.model.MPMModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.RepoConsts;
@@ -80,6 +83,8 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
+import fr.becpg.repo.security.BeCPGAccessDeniedException;
+import fr.becpg.repo.security.SecurityService;
 
 /**
  * Engineering change order service implementation
@@ -87,42 +92,31 @@ import fr.becpg.repo.repository.model.SimpleCharactDataItem;
  * @author quere
  *
  */
+@Service("ecoService")
 public class ECOServiceImpl implements ECOService {
 
 	private static final Log logger = LogFactory.getLog(ECOServiceImpl.class);
 
+	@Autowired
 	private WUsedListService wUsedListService;
+	
+	@Autowired
 	private EntityVersionService entityVersionService;
 
+	@Autowired
 	private NodeService nodeService;
+	
+	@Autowired
 	private TransactionService transactionService;
 
+	@Autowired
 	private ProductService productService;
+	@Autowired
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
+	
+	@Autowired
+	private SecurityService securityService;
 
-	public void setEntityVersionService(EntityVersionService entityVersionService) {
-		this.entityVersionService = entityVersionService;
-	}
-
-	public void setTransactionService(TransactionService transactionService) {
-		this.transactionService = transactionService;
-	}
-
-	public void setwUsedListService(WUsedListService wUsedListService) {
-		this.wUsedListService = wUsedListService;
-	}
-
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
-
-	public void setProductService(ProductService productService) {
-		this.productService = productService;
-	}
-
-	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
-		this.alfrescoRepository = alfrescoRepository;
-	}
 
 	@Override
 	public boolean doSimulation(NodeRef ecoNodeRef) {
@@ -131,7 +125,11 @@ public class ECOServiceImpl implements ECOService {
 
 	@Override
 	public boolean apply(NodeRef ecoNodeRef) {
-		return doRun(ecoNodeRef, ECOState.Applied);
+		if(securityService.isCurrentUserAllowed(ECMGroup.ApplyChangeOrder.toString())){
+			return doRun(ecoNodeRef, ECOState.Applied);
+		} else {
+			throw new BeCPGAccessDeniedException(ECMGroup.ApplyChangeOrder.toString());
+		}
 	}
 
 	private boolean doRun(NodeRef ecoNodeRef, final ECOState state) {
