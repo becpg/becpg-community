@@ -102,7 +102,7 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 			}
 		}
 
-		createGroups(new String[] { SystemGroup.SystemMgr.toString(), SystemGroup.ExternalUser.toString() });
+		createGroups(new String[] { SystemGroup.SystemMgr.toString(), SystemGroup.ExternalUser.toString(), SystemGroup.SecurityRole.toString() });
 
 		// System
 		NodeRef systemNodeRef = visitFolder(companyHome, RepoConsts.PATH_SYSTEM);
