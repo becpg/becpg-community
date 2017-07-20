@@ -117,7 +117,9 @@ YAHOO.Bubbling
                   {
                      actionName : "eco-apply",
                      evaluate : function(asset, entity) {
-                        return asset.name != null && (asset.name === "replacementList" || asset.name === "changeUnitList" ) && entity != null && entity.userAccess.edit;
+                        return asset.name != null && (asset.name === "replacementList" || asset.name === "changeUnitList" ) && entity != null && entity.userAccess.edit 
+                        	&& beCPG.util.contains(entity.userSecurityRoles,
+                            "ApplyChangeOrder");
                      },
                      fn : function(instance) {
 

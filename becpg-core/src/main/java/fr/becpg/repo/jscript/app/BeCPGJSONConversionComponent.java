@@ -34,10 +34,18 @@ import org.json.JSONException;
 import org.json.simple.JSONObject;
 
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.security.SecurityService;
 
 public class BeCPGJSONConversionComponent extends JSONConversionComponent {
 
 	private AssociationService associationService;
+	
+	private SecurityService securityService;
+	
+
+	public void setSecurityService(SecurityService securityService) {
+		this.securityService = securityService;
+	}
 
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
@@ -162,5 +170,16 @@ public class BeCPGJSONConversionComponent extends JSONConversionComponent {
 		return result;
 	}
 
+	@Override
+	protected JSONObject userPermissionsToJSON(final NodeRef nodeRef)  {        
+	
+		 final JSONObject userPermissionJSON =  super.userPermissionsToJSON(nodeRef);
+	        for (String userPermission : securityService.getUserSecurityRoles())
+	        {
+	            userPermissionJSON.put(userPermission, true);
+	        }
+	        return userPermissionJSON;
+	}
+	  
 
 }

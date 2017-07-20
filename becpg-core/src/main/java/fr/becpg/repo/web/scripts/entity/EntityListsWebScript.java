@@ -78,6 +78,8 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 	private static final String MODEL_KEY_NAME_ENTITY = "entity";
 
 	private static final String MODEL_KEY_NAME_CONTAINER = "container";
+	
+	private static final String MODEL_KEY_USER_SECURITY_ROLES = "userSecurityRoles";
 
 	private static final String MODEL_KEY_NAME_LISTS = "lists";
 
@@ -366,6 +368,8 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 		model.put(MODEL_KEY_NAME_ENTITY_PATH, retPath);
 		model.put(MODEL_KEY_NAME_ENTITY, nodeRef);
 		model.put(MODEL_KEY_NAME_CONTAINER, listContainerNodeRef);
+		model.put(MODEL_KEY_USER_SECURITY_ROLES, securityService.getUserSecurityRoles());
+		
 		model.put(MODEL_HAS_WRITE_PERMISSION,
 				hasWritePermission || authorityService.isAdminAuthority(AuthenticationUtil.getFullyAuthenticatedUser()));
 		model.put(MODEL_HAS_CHANGE_STATE_PERMISSION, hasChangeStatePermission);
