@@ -3,5 +3,6 @@ package fr.becpg.model;
 public enum SystemGroup {
 
 	SystemMgr,
-	ExternalUser
+	ExternalUser,
+	SecurityRole
 }

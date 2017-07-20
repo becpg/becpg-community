@@ -54,6 +54,11 @@
             "edit": <#if entity.hasPermission("Write") && !entity.isLocked>true<#else>false</#if>,
             "delete":<#if entity.hasPermission("Delete") && !entity.isLocked>true<#else>false</#if>
          },
+         "userSecurityRoles":[
+         <#list userSecurityRoles as securityRole>
+         	"${securityRole}"<#if securityRole_has_next>,</#if>
+         </#list>
+         ],
          "aspects": 
          [
          <#list entity.aspects as aspect>
