@@ -65,13 +65,17 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.DataListModel;
+import fr.becpg.model.SystemState;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.report.entity.EntityReportData;
 import fr.becpg.repo.report.entity.EntityReportExtractorPlugin;
+import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.RepositoryEntityDefReader;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
@@ -153,6 +157,12 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	@Autowired
 	protected ContentService contentService;
+	
+	@Autowired
+	protected EntityListDAO entityListDAO;
+	
+	@Autowired
+	protected AlfrescoRepository<BeCPGDataObject> alfrescoRepository;
 
 	@Override
 	public EntityReportData extract(NodeRef entityNodeRef) {
@@ -243,8 +253,62 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		return false;
 	}
 
+	@SuppressWarnings("deprecation")
 	protected void loadDataLists(NodeRef entityNodeRef, Element dataListsElt, Map<String, byte[]> images) {
+		
+		NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
+		if(listContainerNodeRef != null){
+			List<NodeRef> listNodeRefs = entityListDAO.getExistingListsNodeRef(listContainerNodeRef);
+			
+			for(NodeRef listNodeRef : listNodeRefs){
+				QName dataListQName = QName.createQName((String) nodeService.getProperty(listNodeRef, DataListModel.PROP_DATALISTITEMTYPE), namespaceService);
+				
+				Class<RepositoryEntity> entityClass = repositoryEntityDefReader.getEntityClass(dataListQName);
+				if (entityClass != null) {
+					List<BeCPGDataObject> dataListItems = alfrescoRepository.loadDataList(entityNodeRef, dataListQName, dataListQName);
+					
+					if ((dataListItems != null) && !dataListItems.isEmpty()) {
+						Element dataListElt = dataListsElt.addElement(dataListQName.getLocalName() + "s");
+
+						for (BeCPGDataObject dataListItem : dataListItems) {
+
+							addDataListState(dataListElt, dataListItem.getParentNodeRef());
+							Element nodeElt = dataListElt.addElement(dataListQName.getLocalName());
+							loadDataListItemAttributes(dataListItem, nodeElt, images);
+						}
+					}
+				}
+				else{
+					List<NodeRef> dataListItems = entityListDAO.getListItems(listNodeRef, dataListQName);
+					if ((dataListItems != null) && !dataListItems.isEmpty()) {
+						Element dataListElt = dataListsElt.addElement(dataListQName.getLocalName() + "s");
+
+						for (NodeRef dataListItem : dataListItems) {
+
+							addDataListState(dataListElt, dataListItem);
+							Element nodeElt = dataListElt.addElement(dataListQName.getLocalName());
+							loadDataListItemAttributes(dataListItem, nodeElt, images);
+						}
+					}
+				}
+			}
+		}
 	}
+	
+	
+	public void addDataListState(Element xmlNode, NodeRef listNodeRef) {
+
+		if (xmlNode.valueOf("@" + BeCPGModel.PROP_ENTITYLIST_STATE.getLocalName()).isEmpty()) {
+			Serializable state = nodeService.getProperty(listNodeRef, BeCPGModel.PROP_ENTITYLIST_STATE);
+			if (state != null) {
+				xmlNode.addAttribute(BeCPGModel.PROP_ENTITYLIST_STATE.getLocalName(), (String) state);
+			} else {
+				xmlNode.addAttribute(BeCPGModel.PROP_ENTITYLIST_STATE.getLocalName(), SystemState.ToValidate.toString());
+			}
+
+		}
+	}
+	
 
 	protected void loadNodeAttributes(NodeRef nodeRef, Element nodeElt, boolean useCData, Map<String, byte[]> images) {
 		if ((nodeRef != null) && nodeService.exists(nodeRef)) {
@@ -252,6 +316,18 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			loadComments(nodeRef, nodeElt, images);
 		}
 	}
+	
+	protected void loadDataListItemAttributes(NodeRef nodeRef, Element nodeElt, Map<String, byte[]> images) {
+		List<QName> hiddentAttributes = new ArrayList<>();
+		hiddentAttributes.addAll(hiddenNodeAttributes);
+		hiddentAttributes.addAll(hiddenDataListItemAttributes);
+
+		if ((nodeRef != null) && nodeService.exists(nodeRef)) {
+			loadAttributes(nodeRef, nodeElt, false, hiddentAttributes, images);
+			loadComments(nodeRef, nodeElt, images);
+		}
+	}
+
 
 	protected void loadDataListItemAttributes(BeCPGDataObject dataListItem, Element nodeElt, Map<String, byte[]> images) {
 		List<QName> hiddentAttributes = new ArrayList<>();
