@@ -419,10 +419,8 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 						for (String tempValue : values) {
 							if (tempValue != null) {
-								if (ret != null) {
+								if (!ret.isEmpty()) {
 									ret += RepoConsts.LABEL_SEPARATOR;
-								} else {
-									ret = "";
 								}
 
 								if (dynListConstraint != null) {
