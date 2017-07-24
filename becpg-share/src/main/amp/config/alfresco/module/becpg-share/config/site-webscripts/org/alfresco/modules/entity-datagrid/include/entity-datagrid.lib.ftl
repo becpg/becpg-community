@@ -28,14 +28,14 @@
          <div class="filter-form" >
 				<button id="${el}-filterform-button">${msg("filterform.header")}&nbsp;&#9662;</button>
 				<div id="${el}-filterform-panel"  class="yuimenu" >
-					 <div class="bd">
-					 		<div id="${el}-filterform"  class="filterform" >
-					 		  	<img class="icon16" src="${url.context}/components/images/lightbox/loading.gif" />
-					 		</div>
+					 <div class="bd">	 		
 					 		<div class="filterButtonsBar">
 					 			<button id="${el}-filterform-clear"   >${msg("filterform.clear")}</button>
 					  			<button id="${el}-filterform-submit"  >${msg("filterform.submit")}</button>
 					  		</div>
+					 		<div id="${el}-filterform"  class="filterform" >
+					 		  	<img class="icon16" src="${url.context}/components/images/lightbox/loading.gif" />
+					 		</div>					 		
 					  </div>
 				</div>
 			</div>
