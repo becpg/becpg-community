@@ -119,6 +119,7 @@
 					<show id="bcpg:lkvValue" />
 					<show id="bcpg:parentLevel" />
 					<show id="bcpg:code" />
+					<show id="bcpg:erpCode" force="true" />					
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
 				<appearance>
@@ -143,6 +144,7 @@
 			<form>
 				<field-visibility>
 					<show id="bcpg:lkvValue" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:parentLevel" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
@@ -182,6 +184,7 @@
 				<field-visibility>
 					<show id="bcpg:depthLevel" />
 					<show id="bcpg:code" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:lkvValue" />
 					<show id="bcpg:parentLevel" />
 					<show id="bcpg:isDeleted" />

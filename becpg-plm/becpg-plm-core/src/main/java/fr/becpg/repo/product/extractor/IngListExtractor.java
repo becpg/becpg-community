@@ -42,6 +42,7 @@ public class IngListExtractor extends SimpleExtractor {
 			userAccess.put("create", false);
 			userAccess.put("edit", false);
 			userAccess.put("sort", false);
+			userAccess.put("wused", false);
 			userAccess.put("details", false);
 
 			totalRow.put(PROP_PERMISSIONS, permissions);
