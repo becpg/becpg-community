@@ -2858,7 +2858,7 @@
                                     <cell id="784">
                                         <property name="style">becpg-meta-cell-label</property>
                                         <label id="1521">
-                                            <text-property name="text" key="projectCode">Code projet :</text-property>
+                                            <text-property name="text" key="beCPGCode">Code projet :</text-property>
                                         </label>
                                     </cell>
                                     <cell id="1517">
@@ -3359,14 +3359,14 @@ Tel: 05 15 75 15 05 - Fax: 00 75 15 15 95]]></text-property>
                 <cell id="7442">
                     <label id="7444">
                         <property name="style">becpg-col-header</property>
-                        <text-property name="text">Visa expéditeur: </text-property>
+                        <text-property name="text" key="sampleSignature">Visa expéditeur: </text-property>
                     </label>
                 </cell>
                 <cell id="7717">
                     <label id="7719">
                         <property name="fontWeight">bold</property>
                         <property name="textAlign">center</property>
-                        <text-property name="text">Date: </text-property>
+                        <text-property name="text" key="sampleDate">Date: </text-property>
                     </label>
                 </cell>
             </row>
@@ -3799,9 +3799,6 @@ row["compoListQtyForProduct"] / productWeight</expression>
                                     <property name="style">becpg-col-border</property>
                                     <property name="width">0.15in</property>
                                 </column>
-                                <column id="7576">
-                                    <property name="width">0.15in</property>
-                                </column>
                                 <column id="7564">
                                     <property name="style">becpg-col-border</property>
                                     <property name="width">0.46875in</property>
@@ -3828,15 +3825,6 @@ row["compoListQtyForProduct"] / productWeight</expression>
                                         </cell>
                                         <cell id="7571">
                                             <property name="style">becpg-cell-header</property>
-                                            <label id="7577">
-                                                <text-property name="text">1</text-property>
-                                            </label>
-                                        </cell>
-                                        <cell id="7574">
-                                            <property name="style">becpg-cell-header</property>
-                                            <label id="7578">
-                                                <text-property name="text">2</text-property>
-                                            </label>
                                         </cell>
                                         <cell id="7544">
                                             <property name="colSpan">1</property>
@@ -3849,7 +3837,7 @@ row["compoListQtyForProduct"] / productWeight</expression>
                                         <cell id="7580">
                                             <property name="style">becpg-cell-header</property>
                                             <label id="7583">
-                                                <text-property name="text" key="detail">Détails</text-property>
+                                                <text-property name="text" key="instruction">Instruction</text-property>
                                             </label>
                                         </cell>
                                     </row>
@@ -3882,9 +3870,6 @@ row["compoListQtyForProduct"] / productWeight</expression>
                                             </text>
                                         </cell>
                                         <cell id="7572">
-                                            <property name="style">becpg-col-border</property>
-                                        </cell>
-                                        <cell id="7575">
                                             <property name="style">becpg-col-border</property>
                                         </cell>
                                         <cell id="7568">
@@ -3956,7 +3941,7 @@ Formatter.format( (row["dynamicCharactValue"] * row._outer["compoListQtyForProdu
                                         <cell id="7600"/>
                                         <cell id="7601"/>
                                         <cell id="7602">
-                                            <property name="colSpan">2</property>
+                                            <property name="colSpan">1</property>
                                             <property name="rowSpan">1</property>
                                             <property name="borderBottomStyle">solid</property>
                                             <property name="borderBottomWidth">thin</property>
@@ -4062,12 +4047,6 @@ Formatter.format( (row["dynamicCharactValue"] * row._outer["compoListQtyForProdu
                                             <property name="borderRightStyle">none</property>
                                             <property name="borderTopStyle">none</property>
                                         </cell>
-                                        <cell id="7661">
-                                            <property name="borderBottomStyle">none</property>
-                                            <property name="borderLeftStyle">none</property>
-                                            <property name="borderRightStyle">none</property>
-                                            <property name="borderTopStyle">none</property>
-                                        </cell>
                                         <cell id="7662">
                                             <property name="borderBottomStyle">none</property>
                                             <property name="borderLeftStyle">none</property>
@@ -4083,7 +4062,7 @@ Formatter.format( (row["dynamicCharactValue"] * row._outer["compoListQtyForProdu
                                     </row>
                                     <row id="7621">
                                         <cell id="7622">
-                                            <property name="colSpan">6</property>
+                                            <property name="colSpan">5</property>
                                             <property name="rowSpan">1</property>
                                             <property name="paddingTop">0pt</property>
                                             <property name="paddingLeft">0pt</property>
@@ -4101,30 +4080,9 @@ Formatter.format( (row["dynamicCharactValue"] * row._outer["compoListQtyForProdu
                                                 <column id="7646">
                                                     <property name="width">2.0416666666666665in</property>
                                                 </column>
-                                                <row id="7713">
-                                                    <cell id="7714">
-                                                        <property name="colSpan">2</property>
-                                                        <property name="rowSpan">1</property>
-                                                        <property name="paddingTop">0pt</property>
-                                                        <property name="paddingLeft">0pt</property>
-                                                        <property name="paddingBottom">0pt</property>
-                                                        <property name="paddingRight">0pt</property>
-                                                        <label id="7651">
-                                                            <property name="fontWeight">bold</property>
-                                                            <property name="textAlign">left</property>
-                                                            <text-property name="text" key="productMeetsRequirements">Dont 200g pour l’échantillon témoin</text-property>
-                                                        </label>
-                                                    </cell>
-                                                    <cell id="7716">
-                                                        <label id="7652">
-                                                            <property name="fontWeight">bold</property>
-                                                            <text-property name="text">Date: </text-property>
-                                                        </label>
-                                                    </cell>
-                                                </row>
                                                 <row id="7647">
                                                     <cell id="7648">
-                                                        <property name="colSpan">3</property>
+                                                        <property name="colSpan">2</property>
                                                         <property name="rowSpan">1</property>
                                                         <property name="paddingTop">0pt</property>
                                                         <property name="paddingLeft">0pt</property>
@@ -4132,9 +4090,8 @@ Formatter.format( (row["dynamicCharactValue"] * row._outer["compoListQtyForProdu
                                                         <property name="paddingRight">0pt</property>
                                                         <property name="textAlign">left</property>
                                                         <table id="7629">
-                                                            <property name="marginTop">5pt</property>
                                                             <property name="pageBreakInside">auto</property>
-                                                            <property name="width">7.0625in</property>
+                                                            <property name="width">100%</property>
                                                             <property name="dataSet">OrganoList</property>
                                                             <list-property name="boundDataColumns">
                                                                 <structure>
@@ -4164,10 +4121,10 @@ Formatter.format( (row["dynamicCharactValue"] * row._outer["compoListQtyForProdu
                                                                 </structure>
                                                             </list-property>
                                                             <column id="7635">
-                                                                <property name="width">1.53125in</property>
+                                                                <property name="width">1.4375in</property>
                                                             </column>
                                                             <column id="7636">
-                                                                <property name="width">5.53125in</property>
+                                                                <property name="width">3.5833333333333335in</property>
                                                             </column>
                                                             <detail>
                                                                 <row id="7630">
@@ -4194,6 +4151,17 @@ Formatter.format( (row["dynamicCharactValue"] * row._outer["compoListQtyForProdu
                                                                 </row>
                                                             </detail>
                                                         </table>
+                                                    </cell>
+                                                    <cell id="7761">
+                                                        <property name="paddingTop">0pt</property>
+                                                        <property name="paddingLeft">0pt</property>
+                                                        <property name="paddingBottom">0pt</property>
+                                                        <property name="paddingRight">0pt</property>
+                                                        <property name="textAlign">left</property>
+                                                        <label id="7652">
+                                                            <property name="fontWeight">bold</property>
+                                                            <text-property name="text" key="sampleDate">Date: </text-property>
+                                                        </label>
                                                     </cell>
                                                 </row>
                                             </grid>
