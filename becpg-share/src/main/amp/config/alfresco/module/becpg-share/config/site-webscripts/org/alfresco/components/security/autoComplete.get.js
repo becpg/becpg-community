@@ -293,7 +293,11 @@ function main()
    
    for(var i in aclInfo.datalists){
 	   if(q==null || q==undefined || q=="*" || aclInfo.datalists[i].title.toLowerCase().indexOf(q.toLowerCase())!=-1){
-		   results.push({name :  aclInfo.datalists[i].itemType,label : aclInfo.datalists[i].title, type :"dataList" });
+		   if(aclInfo.datalists[i].name.indexOf("WUsed") != -1 || aclInfo.datalists[i].name.indexOf("View") != -1){
+			  results.push({name :  aclInfo.datalists[i].name ,label : aclInfo.datalists[i].title, type :"dataList" });
+		   } else {
+			  results.push({name :  aclInfo.datalists[i].itemType,label : aclInfo.datalists[i].title, type :"dataList" });
+	   	   }
 	   }
    }
    
