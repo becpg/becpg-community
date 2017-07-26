@@ -36,6 +36,7 @@ public interface RemoteEntityService {
 	String NODEREF_TYPE = "d:noderef";
 	String CATEGORY_TYPE = "d:category";
 	String NODE_TYPE = "node";
+	String MLTEXT_TYPE = "d:mltext";
 	String ATTR_TYPE = "type";
 	String ATTR_PATH = "path";
 	String ATTR_NAME = "name";

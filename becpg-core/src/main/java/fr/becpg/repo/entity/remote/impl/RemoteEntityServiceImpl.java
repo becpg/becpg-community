@@ -29,6 +29,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.ContentService;
@@ -39,6 +40,7 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,9 +58,9 @@ import fr.becpg.repo.entity.remote.extractor.ImportEntityXmlVisitor;
 import fr.becpg.repo.entity.remote.extractor.XmlEntityVisitor;
 
 /**
- * 
+ *
  * @author matthieu
- * 
+ *
  */
 @Service("remoteEntityService")
 public class RemoteEntityServiceImpl implements RemoteEntityService {
@@ -66,13 +68,17 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	@Autowired
 	@Qualifier("ServiceRegistry")
 	private ServiceRegistry serviceRegistry;
-	
+
 	@Autowired
 	private SiteService siteService;
 
 	@Autowired
 	private NodeService nodeService;
-
+	
+	@Autowired
+	@Qualifier("mlAwareNodeService")
+	protected NodeService mlNodeService;
+	
 	@Autowired
 	private NamespaceService namespaceService;
 
@@ -86,6 +92,12 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	private MimetypeService mimetypeService;
 
 	@Autowired
+	private TransactionService transactionService;
+
+	@Autowired
+	private BehaviourFilter policyBehaviourFilter;
+
+	@Autowired
 	private EntityDictionaryService entityDictionaryService;
 
 	private static final Log logger = LogFactory.getLog(RemoteEntityServiceImpl.class);
@@ -93,7 +105,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	@Override
 	public void getEntity(NodeRef entityNodeRef, OutputStream out, RemoteEntityFormat format) throws BeCPGException {
 		if (format.equals(RemoteEntityFormat.xml) || format.equals(RemoteEntityFormat.xml_all)) {
-			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(nodeService, namespaceService, dictionaryService, contentService, siteService);
+			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(mlNodeService, nodeService, namespaceService, dictionaryService, contentService, siteService);
 			if (format.equals(RemoteEntityFormat.xml_all)) {
 				xmlEntityVisitor.setDumpAll(true);
 			}
@@ -137,16 +149,18 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 				if (ret == null) {
 					logger.error("Cannot create or update entity :" + entityNodeRef + " at format " + format);
 				}
+
 			}
 			return ret;
 		}
+
 		throw new BeCPGException("Unknown format " + format.toString());
 	}
 
 	@Override
 	public void listEntities(List<NodeRef> entities, OutputStream result, RemoteEntityFormat format) throws BeCPGException {
 		if (format.equals(RemoteEntityFormat.xml)) {
-			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(nodeService, namespaceService, dictionaryService, contentService, siteService);
+			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(mlNodeService, nodeService, namespaceService, dictionaryService, contentService, siteService);
 			try {
 				xmlEntityVisitor.visit(entities, result);
 			} catch (XMLStreamException e) {
@@ -161,7 +175,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	@Override
 	public void getEntityData(NodeRef entityNodeRef, OutputStream result, RemoteEntityFormat format) throws BeCPGException {
 		if (RemoteEntityFormat.xml.equals(format)) {
-			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(nodeService, namespaceService, dictionaryService, contentService, siteService);
+			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(mlNodeService, nodeService, namespaceService, dictionaryService, contentService, siteService);
 			try {
 				xmlEntityVisitor.visitData(entityNodeRef, result);
 			} catch (XMLStreamException e) {
