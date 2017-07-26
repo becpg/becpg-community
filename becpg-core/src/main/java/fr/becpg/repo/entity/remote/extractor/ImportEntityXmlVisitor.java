@@ -26,6 +26,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Stack;
 import java.util.regex.Matcher;
@@ -40,12 +41,14 @@ import org.alfresco.model.ForumModel;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceException;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.codec.binary.Base64OutputStream;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.LocaleUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.xml.sax.Attributes;
@@ -180,6 +183,8 @@ public class ImportEntityXmlVisitor {
 		private final Stack<NodeRef> curNodeRef = new Stack<>();
 
 		private StringBuffer currValue = new StringBuffer();
+		
+		private Map<Locale, String> mltextAttributes = new HashMap();
 
 		private final Stack<String> typeStack = new Stack<>();
 
@@ -337,7 +342,23 @@ public class ImportEntityXmlVisitor {
 						queueExistingAssociations(curNodeRef.peek(), currAssoc.peek(), type);
 					}
 				} else if ((type != null) && (type.length() > 0)) {
+					
+					if(RemoteEntityService.MLTEXT_TYPE.equals(type)){
+						Locale locale;
+						String strLocale = "";
+						for(int i=0; i<attributes.getLength(); i++){
+							strLocale = attributes.getQName(i);
+							locale = strLocale.contains("_")? new Locale(strLocale.split("_")[0], strLocale.split("_")[1]) : new Locale(strLocale);
+							if(!attributes.getValue(i).equals(RemoteEntityService.MLTEXT_TYPE) && attributes.getQName(i)!=null
+									&& LocaleUtils.isAvailableLocale(locale)){
+								mltextAttributes.put(new Locale(attributes.getQName(i)), attributes.getValue(i).toString());
+							}
+						}
+						
+					}
+					
 					currProp = parseQName(qName);
+					
 				} else if (RemoteEntityService.ELEM_LIST.equals(qName)) {
 					logger.trace("init multipleValues");
 					multipleValues = new ArrayList<>();
@@ -449,7 +470,16 @@ public class ImportEntityXmlVisitor {
 											serviceRegistry.getNodeService().setProperty(curNodeRef.peek(), currProp,
 													PropertiesHelper.cleanName(currValue.toString()));
 										} else {
-											serviceRegistry.getNodeService().setProperty(curNodeRef.peek(), currProp, currValue.toString());
+											if(RemoteEntityService.MLTEXT_TYPE.equals(type)){
+												MLText mltext = new MLText();
+												mltext.addValue(Locale.getDefault(), currValue.toString());
+												mltextAttributes.forEach(mltext::addValue);
+												serviceRegistry.getNodeService().setProperty(curNodeRef.peek(), currProp, mltext);
+												mltextAttributes.clear();
+											}else{
+												serviceRegistry.getNodeService().setProperty(curNodeRef.peek(), currProp, currValue.toString());
+											}
+											
 										}
 									}
 								} else {
@@ -763,7 +793,7 @@ public class ImportEntityXmlVisitor {
 		}
 
 		private String cleanName(String propValue) {
-			return propValue.replaceAll("\n", "").replaceAll("'", " ");
+			return propValue!=null ? propValue.replaceAll("\n", "").replaceAll("'", " ") : "";
 		}
 		
 		private String removeTrailingSpecialChar(String prop){
