@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -37,6 +38,7 @@ import javax.xml.stream.XMLStreamWriter;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.rule.RuleModel;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
+import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.dictionary.TypeDefinition;
@@ -45,6 +47,7 @@ import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentIOException;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.Path;
@@ -71,6 +74,7 @@ import fr.becpg.repo.helper.SiteHelper;
  */
 public class XmlEntityVisitor {
 
+	private final NodeService mlNodeService;
 	private final NodeService nodeService;
 	private final NamespaceService namespaceService;
 	private final DictionaryService dictionaryService;
@@ -87,9 +91,10 @@ public class XmlEntityVisitor {
 
 	private static final Log logger = LogFactory.getLog(XmlEntityVisitor.class);
 
-	public XmlEntityVisitor(NodeService nodeService, NamespaceService namespaceService, DictionaryService dictionaryService,
+	public XmlEntityVisitor(NodeService mlNodeService, NodeService nodeService, NamespaceService namespaceService, DictionaryService dictionaryService,
 			ContentService contentService, SiteService siteService) {
 		super();
+		this.mlNodeService = mlNodeService;
 		this.nodeService = nodeService;
 		this.namespaceService = namespaceService;
 		this.dictionaryService = dictionaryService;
@@ -196,8 +201,9 @@ public class XmlEntityVisitor {
 		xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE, RemoteEntityService.NODE_TYPE);
 
 		String name = (String) nodeService.getProperty(nodeRef, RemoteHelper.getPropName(nodeType, dictionaryService));
-
-		xmlw.writeAttribute(RemoteEntityService.ATTR_NAME, name);
+		if (name!=null){
+			xmlw.writeAttribute(RemoteEntityService.ATTR_NAME, name);
+		}
 		xmlw.writeAttribute(RemoteEntityService.ATTR_NODEREF, nodeRef.toString());
 
 		if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_CODE)) {
@@ -334,8 +340,17 @@ public class XmlEntityVisitor {
 						xmlw.writeStartElement(prefix, propName.getLocalName(), propName.getNamespaceURI());
 						xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE,
 								propertyDefinition.getDataType().getName().toPrefixString(namespaceService));
+						
+						MLText mlValues = null;
+						if (DataTypeDefinition.MLTEXT.equals(propertyDefinition.getDataType().getName())) {
+							mlValues = (MLText) mlNodeService.getProperty(nodeRef, propertyDefinition.getName());							
+							visitMltextAttributes(xmlw, mlValues);
+						}
+						
 						visitPropValue(entry.getValue(), xmlw);
+
 						xmlw.writeEndElement();
+								
 					} else {
 						logger.warn("Properties not in dictionnary: " + entry.getKey());
 					}
@@ -346,7 +361,33 @@ public class XmlEntityVisitor {
 		}
 
 	}
+	
+	private void visitMltextAttributes(XMLStreamWriter xmlw, MLText mlValues)throws XMLStreamException{
+		if (mlValues != null) {
+			
+			for (Map.Entry<Locale, String> mlEntry : mlValues.entrySet()) {
 
+				String code = mlEntry.getKey().getLanguage();
+				if ((mlEntry.getKey().getCountry() != null) && !mlEntry.getKey().getCountry().isEmpty()) {
+					code += "_" + mlEntry.getKey().getCountry();
+				}
+				if ((code != null) && !code.isEmpty()) {
+					xmlw.writeAttribute(code, writeCDATA(mlEntry.getValue()));
+				}
+			}
+			
+		}
+	}
+	
+	private String writeCDATA(String attribute){
+		return attribute != null ? 
+				attribute.replace("&", "&amp;")
+				 		 .replace("\"", "&quot;")
+				 		 .replace("\'", "&apos;")
+				 		 .replace("<", "&lt;")
+				 		 .replace(">", "&gt;") : "";
+	}
+	
 	private void visitSite(NodeRef nodeRef, XMLStreamWriter xmlw, Path path) throws XMLStreamException {
 
 		String siteId = SiteHelper.extractSiteId(path.toPrefixString(namespaceService));
