@@ -476,7 +476,7 @@ public class EntityListValuePlugin implements ListValuePlugin {
 		return BeCPGQueryHelper.prepareQuery(dictionaryService, query);
 	}
 
-	protected boolean isQueryMatch(String query, String entityName) {
+	public boolean isQueryMatch(String query, String entityName) {
 
 		return BeCPGQueryHelper.isQueryMatch(query, entityName, dictionaryService);
 	}
