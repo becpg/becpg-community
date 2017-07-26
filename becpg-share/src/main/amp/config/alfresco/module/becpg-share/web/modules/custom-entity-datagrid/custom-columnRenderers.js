@@ -70,14 +70,14 @@ if (beCPG.module.EntityDataGridRenderers) {
 	    	  var user = oRecord.getData("itemData")["prop_bcpg_alUserId"];
 	    	  var dateCreated = oRecord.getData("itemData")["prop_cm_created"];
 	    	  var html = "";
-              if(data.title){
+              if(data.title || activityType == "Datalist" ){
             	  var title = "";
             	  var className = data.className!=null ? data.className : "entity"; 	  
             	  title = "<span class=\""+className+"\">"+Alfresco.util.encodeHTML(data.title)+"</span>";
             	  if(activityType == "State"){
             		  title = scope.msg("entity.activity.state.change", title, scope.msg("data.state." +data.beforeState.toLowerCase()), scope.msg("data.state."+data.afterState.toLowerCase()));
             	  } else if (activityType == "Datalist" ){
-            		  if (data.title.indexOf(className)>0){
+            		  if (data.title == null || data.title.indexOf(className)>0){
             			  title  = scope.msg("entity.activity.datalist.simple", scope.msg("data.list."+className));
             		  } else{
             			  title  = scope.msg("entity.activity.datalist."+data.activityEvent.toLowerCase(), title, scope.msg("data.list."+className) );

@@ -133,7 +133,11 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 						if (charactNodeRef != null) {
 							data.put(PROP_TITLE, attributeExtractorService.extractPropName(charactNodeRef));
 						} else {
-							data.put(PROP_TITLE, attributeExtractorService.extractPropName(itemNodeRef));
+							if(attributeExtractorService.hasAttributeExtractorPlugin(itemNodeRef)){
+								data.put(PROP_TITLE, attributeExtractorService.extractPropName(itemNodeRef));
+							} else {
+								data.put(PROP_TITLE, attributeExtractorService.extractMetadata(itemType, itemNodeRef));
+							}
 						}
 
 					} else if (entityDictionaryService.isSubClass(itemType, BeCPGModel.TYPE_ENTITY_V2)) {
@@ -290,7 +294,9 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					if (charactNodeRef != null) {
 						data.put(PROP_TITLE, attributeExtractorService.extractPropName(charactNodeRef));
 					} else {
-						data.put(PROP_TITLE, attributeExtractorService.extractPropName(datalistNodeRef));
+						if(attributeExtractorService.hasAttributeExtractorPlugin(datalistNodeRef)){
+							data.put(PROP_TITLE, attributeExtractorService.extractPropName(datalistNodeRef));
+						}
 					}
 
 					activityListDataItem.setActivityType(ActivityType.Datalist);

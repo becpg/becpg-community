@@ -8399,6 +8399,8 @@
 					<show id="bcpg:legalName" />
 					<show id="bcpg:pluralLegalName"/>
 					<show id="bcpg:ingTypeDecThreshold" />
+					<show id="bcpg:ingTypeDoNotDeclare" />
+					<show id="bcpg:ingTypeIsLastGroup" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
@@ -8414,6 +8416,8 @@
 					<show id="bcpg:legalName" />
 					<show id="bcpg:pluralLegalName"/>
 					<show id="bcpg:ingTypeDecThreshold" />
+					<show id="bcpg:ingTypeDoNotDeclare" />
+					<show id="bcpg:ingTypeIsLastGroup" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
@@ -8433,6 +8437,8 @@
 					<show id="bcpg:legalName" />
 					<show id="bcpg:pluralLegalName"/>
 					<show id="bcpg:ingTypeDecThreshold" />
+					<show id="bcpg:ingTypeDoNotDeclare" />
+					<show id="bcpg:ingTypeIsLastGroup" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>

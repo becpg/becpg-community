@@ -49,23 +49,68 @@ td.ghead.current {
 }
 
 
+
+#leftside > table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+col.ggtaskCheckbox{
+	width : 30px;
+}
+
+col.ggCol4 {
+	width : 15%;
+}
+
+col.ggTaskTitle.ggCol4 {
+	width: 70%;
+
+}
+
+col.ggCol3 {
+	width : 15%;
+}
+
+col.ggTaskTitle.ggCol3 {
+	width: 85%;
+
+}
+ 
+td.ggtaskCheckbox {
+	padding:2px!important;
+}
+
+
+.ggtaskCheckbox label{
+ 	display:none;	
+}
+
+
+.projects projects td.ggTaskTitle.ggCol4 span {
+	display: inline-block;
+}
+
+
 .projects  span.task-title {
 	display: inline-block;
 }
 
+
 .projects  span.task-title a {
     cursor: pointer;
     display: inline-block;
-    max-width: 140px;
     overflow: hidden;
     text-overflow: ellipsis;
+    max-width: 140px;
     white-space: nowrap;
     vertical-align: middle;
+    max-height: none;
 }
 
 .projects .ggroup span.task-title a {
 		max-width: 140px;
-	}
+}
 
 @media screen and (min-width: 1400px) {
 	.projects  span.task-title a {
@@ -77,13 +122,13 @@ td.ghead.current {
 	}
 }
 
-
 .projects  span.task-title a:hover,
- .projects .ggroup span.task-title a:hover {
-	overflow: visible;
-	position: relative;
-	z-index:99;
-}
+ .projects .ggroup span.task-title a:hover,
+ .projects  span.resource-title:hover {
+	text-overflow: clip;
+    white-space: normal;
+    word-break: break-all;
+} 
 
 .projects  span.resource-title {
 	white-space: nowrap;
@@ -114,15 +159,6 @@ td.ghead.current {
 	visibility: visible;
 }
 
-td.ggtaskCheckbox {
-	width: 16px;
-	padding:2px!important;
-}
-
-
-.ggtaskCheckbox label{
- 	display:none;	
-}
 
 .ggtask {
 	background: none repeat scroll 0 0 #FFBC00;

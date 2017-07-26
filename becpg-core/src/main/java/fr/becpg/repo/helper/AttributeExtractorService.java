@@ -86,6 +86,8 @@ public interface AttributeExtractorService {
 
 	String extractSiteId(NodeRef entityNodeRef);
 
+	boolean hasAttributeExtractorPlugin(NodeRef nodeRef);
+
 	
 	
 
