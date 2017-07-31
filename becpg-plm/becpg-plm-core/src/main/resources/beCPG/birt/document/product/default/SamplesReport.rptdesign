@@ -17,7 +17,7 @@
     <property name="Data Cube.OrganoList.x">135</property>
     <property name="Data Cube.OrganoList.y">80</property>
     <simple-property-list name="includeResource">
-        <value>./SamplesReport</value>
+        <value>./ProductReport</value>
     </simple-property-list>
     <property name="units">in</property>
     <property name="iconFile">/templates/dual_column_chart_listing.gif</property>
