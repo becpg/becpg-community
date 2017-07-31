@@ -729,6 +729,13 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	}
 
 	@Override
+	public boolean hasAttributeExtractorPlugin(NodeRef nodeRef) {
+		QName type = nodeService.getType(nodeRef);
+		return  getAttributeExtractorPlugin(type, nodeRef)!=null;
+	}
+	
+	
+	@Override
 	public String extractPropName(QName type, NodeRef nodeRef) {
 		String value;
 

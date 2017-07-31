@@ -32,13 +32,17 @@ public class IngTypeItem extends AbstractLabelingComponent{
 
     public static final IngTypeItem DEFAULT_GROUP = new IngTypeItem();
 
-	public static final String LAST_GROUP = "LastGroup";
+	private static final String LAST_GROUP = "LastGroup";
 	
 	private Double decThreshold;
 	
 	private String lvValue;
 
 	private String lvCode;
+	
+	private Boolean isDoNotDeclare;
+	
+	private Boolean isLastGroup;
 	
 	
 	public IngTypeItem(){
@@ -49,9 +53,41 @@ public class IngTypeItem extends AbstractLabelingComponent{
 		super(ingTypeItem);
 		this.decThreshold = ingTypeItem.decThreshold;
 		this.lvValue = ingTypeItem.lvValue;
+		this.isDoNotDeclare = ingTypeItem.isDoNotDeclare;
+		this.isLastGroup = ingTypeItem.isLastGroup;
 	}
 
 	
+	@AlfProp
+	@AlfQname(qname = "bcpg:ingTypeDoNotDeclare")
+	public Boolean getIsDoNotDeclare() {
+		return isDoNotDeclare;
+	}
+	
+	
+	public boolean doNotDeclare() {
+		return Boolean.TRUE.equals(this.isDoNotDeclare);
+	}
+
+	public void setIsDoNotDeclare(Boolean doNotDeclare) {
+		this.isDoNotDeclare = doNotDeclare;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "bcpg:ingTypeIsLastGroup")
+	public Boolean getIsLastGroup() {
+		return isLastGroup;
+	}
+	
+	
+	public boolean lastGroup() {
+		return Boolean.TRUE.equals(isLastGroup) || LAST_GROUP.equals(lvValue);
+	}
+
+	public void setIsLastGroup(Boolean isLastGroup) {
+		this.isLastGroup = isLastGroup;
+	}
+
 	@AlfProp
 	@AlfQname(qname = "bcpg:lvCode")
 	public String getLvCode() {
@@ -111,6 +147,9 @@ public class IngTypeItem extends AbstractLabelingComponent{
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + ((decThreshold == null) ? 0 : decThreshold.hashCode());
+		result = prime * result + ((isDoNotDeclare == null) ? 0 : isDoNotDeclare.hashCode());
+		result = prime * result + ((isLastGroup == null) ? 0 : isLastGroup.hashCode());
+		result = prime * result + ((lvCode == null) ? 0 : lvCode.hashCode());
 		result = prime * result + ((lvValue == null) ? 0 : lvValue.hashCode());
 		return result;
 	}
@@ -128,6 +167,21 @@ public class IngTypeItem extends AbstractLabelingComponent{
 			if (other.decThreshold != null)
 				return false;
 		} else if (!decThreshold.equals(other.decThreshold))
+			return false;
+		if (isDoNotDeclare == null) {
+			if (other.isDoNotDeclare != null)
+				return false;
+		} else if (!isDoNotDeclare.equals(other.isDoNotDeclare))
+			return false;
+		if (isLastGroup == null) {
+			if (other.isLastGroup != null)
+				return false;
+		} else if (!isLastGroup.equals(other.isLastGroup))
+			return false;
+		if (lvCode == null) {
+			if (other.lvCode != null)
+				return false;
+		} else if (!lvCode.equals(other.lvCode))
 			return false;
 		if (lvValue == null) {
 			if (other.lvValue != null)

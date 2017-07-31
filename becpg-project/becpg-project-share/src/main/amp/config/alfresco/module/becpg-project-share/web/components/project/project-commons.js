@@ -226,12 +226,12 @@
              .msg("overdue.day")+ '</span>';
          } 
 
-         if(duration.length>0){
-             ret +=' ('+duration+')';
-         }
-
          if(task.permissions.userAccess.edit){
         	 ret += '</a>';
+         }
+
+         if(duration.length>0){
+             ret +=' ('+duration+')';
          }
          
           ret += '</span>';
