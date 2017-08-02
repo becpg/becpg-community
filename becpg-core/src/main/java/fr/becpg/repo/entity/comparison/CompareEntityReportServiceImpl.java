@@ -159,10 +159,10 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 			if (documentName.endsWith(RepoConsts.REPORT_EXTENSION_BIRT)) {
 				documentName = documentName.replace(RepoConsts.REPORT_EXTENSION_BIRT, extension.toLowerCase());
 			} else if (!documentName.endsWith(extension.toLowerCase())) {
-				documentName +="."+extension.toLowerCase();
+				documentName = documentName.replace( ".pdf" , "") + "." + extension.toLowerCase();
 			}
 		}
-
+		
 		return documentName;
 	}
 
