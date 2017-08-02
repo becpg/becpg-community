@@ -83,7 +83,7 @@
   <productDensity prefix="bcpg"><![CDATA[0.9383966430796251]]></productDensity>
   <taggable prefix="cm"><![CDATA[]]></taggable>
   <previousUnitTotalCost prefix="bcpg"><![CDATA[0.014300000000000002]]></previousUnitTotalCost>
-  <useByDate prefix="bcpg"><![CDATA[20]]></useByDate>
+  <useByDate prefix="bcpg"><![CDATA[390]]></useByDate>
   <publicationDate prefix="gs1"><![CDATA[]]></publicationDate>
   <ingTypeV2 prefix="bcpg"><![CDATA[]]></ingTypeV2>
   <tertiaryWeight prefix="gs1"><![CDATA[379.9776]]></tertiaryWeight>
@@ -101,7 +101,7 @@
   <description prefix="cm"><![CDATA[Quiche pour la MDD. Pour 4 personnes]]></description>
   <productHierarchy2 prefix="gs1"><![CDATA[]]></productHierarchy2>
   <commentCount prefix="fm"><![CDATA[0]]></commentCount>
-  <bestBeforeDate prefix="bcpg"><![CDATA[]]></bestBeforeDate>
+  <bestBeforeDate prefix="bcpg"><![CDATA[361]]></bestBeforeDate>
   <isTradeItemAnOrderableUnit prefix="gs1"><![CDATA[false]]></isTradeItemAnOrderableUnit>
   <nutrientProfilingScore prefix="bcpg"><![CDATA[12.0]]></nutrientProfilingScore>
   <erpCode prefix="bcpg"><![CDATA[ERPCODE]]></erpCode>
