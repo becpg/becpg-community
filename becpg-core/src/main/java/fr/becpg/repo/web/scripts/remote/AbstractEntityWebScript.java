@@ -85,6 +85,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
+	
 
 	protected List<NodeRef> findEntities(WebScriptRequest req) {
 
@@ -100,10 +101,11 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 				logger.error("Cannot parse page argument", e);
 			}
 		}
-
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery();
 
-		queryBuilder.ofType(BeCPGModel.TYPE_ENTITY_V2).excludeDefaults();
+		if(!query.toUpperCase().contains("TYPE")){
+			queryBuilder.ofType(BeCPGModel.TYPE_ENTITY_V2).excludeDefaults();
+		}
 
 		if (maxResults == null) {
 			queryBuilder.maxResults(RepoConsts.MAX_RESULTS_256);
@@ -120,6 +122,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 
 		}
 
+		
 		List<NodeRef> refs = queryBuilder.list();
 
 		if (refs != null && !refs.isEmpty()) {
