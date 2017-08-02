@@ -295,6 +295,22 @@
                     <text-property name="heading">unitTotalCost</text-property>
                 </structure>
             </list-property>
+            <list-property name="filter">
+                <structure>
+                    <property name="operator">ge</property>
+                    <expression name="expr" type="javascript">row["projectedQty"]</expression>
+                    <simple-property-list name="value1">
+                        <value>25000</value>
+                    </simple-property-list>
+                </structure>
+                <structure>
+                    <property name="operator">le</property>
+                    <expression name="expr" type="javascript">row["projectedQty"]</expression>
+                    <simple-property-list name="value1">
+                        <value>100000</value>
+                    </simple-property-list>
+                </structure>
+            </list-property>
             <list-property name="parameters"/>
             <structure name="cachedMetaData">
                 <list-property name="resultSet">
@@ -2934,6 +2950,24 @@ if(dph.getBaseValue() == 25000 || dph.getBaseValue() == 50000 || dph.getBaseValu
 </model:ChartWithAxes>
 ]]></xml-property>
             <property name="outputFormat">SVG</property>
+            <list-property name="filter">
+                <structure>
+                    <property name="operator">ge</property>
+                    <expression name="expr" type="javascript">row["projectedQty"]</expression>
+                    <simple-property-list name="value1">
+                        <value>25000</value>
+                    </simple-property-list>
+                    <property name="updateAggregation">true</property>
+                </structure>
+                <structure>
+                    <property name="operator">le</property>
+                    <expression name="expr" type="javascript">row["projectedQty"]</expression>
+                    <simple-property-list name="value1">
+                        <value>100000</value>
+                    </simple-property-list>
+                    <property name="updateAggregation">true</property>
+                </structure>
+            </list-property>
             <property name="inheritColumns">true</property>
             <property name="height">4.177083333333333in</property>
             <property name="width">7.260416666666667in</property>

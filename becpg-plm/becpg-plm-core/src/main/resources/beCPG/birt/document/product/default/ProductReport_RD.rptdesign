@@ -2299,12 +2299,7 @@ dataSetRow["versionLabel"]
                         <column id="3447"/>
                         <header>
                             <row id="3439">
-                                <cell id="3440">
-                                    <label id="3448">
-                                        <property name="fontWeight">bold</property>
-                                        <text-property name="text" key="photo">Photo du produit</text-property>
-                                    </label>
-                                </cell>
+                                <cell id="3440"/>
                             </row>
                         </header>
                         <detail>
