@@ -440,8 +440,6 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 							} else if (templateCostList.getParent() == null) {
 								costList.setParent(null);
 							}
-							costList.setSort(templateCostList.getSort());
-
 							copyTemplateCost(formulatedProduct, templateCostList, costList);
 						}
 						addCost = false;
@@ -464,9 +462,34 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				simpleListDataList.add(costListDataItem);
 			}
 		};
+		
+	
+
+		
 
 		if ((formulatedProduct.getEntityTpl() != null) && !formulatedProduct.getEntityTpl().equals(formulatedProduct)) {
 			formulatedProduct.getEntityTpl().getCostList().forEach(synchConsumer);
+			
+			
+			//check sorting
+			int lastSort = 0;
+			for (CostListDataItem sl : simpleListDataList) {
+				if(sl.getCharactNodeRef() != null){
+					boolean isFound = false;
+					
+					for (CostListDataItem tsl : formulatedProduct.getEntityTpl().getCostList()) {
+						if(sl.getCharactNodeRef().equals(tsl.getCharactNodeRef())){
+							isFound = true;
+							lastSort = tsl.getSort()*100;
+							sl.setSort(lastSort);
+						}
+					}
+					
+					if(!isFound){
+						sl.setSort(++lastSort);
+					}
+				}
+			}
 
 		}
 		if (formulatedProduct.getClients() != null) {

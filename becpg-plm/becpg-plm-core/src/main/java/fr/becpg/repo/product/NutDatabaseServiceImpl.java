@@ -103,9 +103,27 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 			String[] headerRow = getHeaderRow(dataBaseFile);
 
 			int nameColumn = extractNameColumnIndex(headerRow);
+			
+			String preparedQuery = BeCPGQueryHelper.prepareQuery(dictionaryService, query).replace("*", ""); 
+			
+			
 
 			matches.addAll(getColumn(dataBaseFile, nameColumn).stream().filter(res -> nameMatches(query, res.toString())).limit(100)
 					.collect(Collectors.toList()));
+
+				matches.sort((o1, o2) -> {
+					
+					if(BeCPGQueryHelper.isAllQuery(query)){
+						return  o1.getValue().compareTo(o2.getValue());
+					}
+					
+					String value =  BeCPGQueryHelper.prepareQuery(dictionaryService,o1.getValue()).replace("*", "").replace(preparedQuery, "A");
+					String value2 =  BeCPGQueryHelper.prepareQuery(dictionaryService,o2.getValue()).replace("*", "").replace(preparedQuery, "A");
+					
+					return value.compareTo(value2);
+					
+				});
+
 
 			logger.debug("suggestion for " + query + ", found " + matches.size() + " results");
 		} else {
@@ -454,6 +472,10 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 
 		public String getId() {
 			return id;
+		}
+		
+		public String getValue() {
+			return value;
 		}
 
 		@Override

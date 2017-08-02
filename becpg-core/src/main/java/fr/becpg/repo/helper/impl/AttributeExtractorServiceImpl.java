@@ -419,10 +419,8 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 						for (String tempValue : values) {
 							if (tempValue != null) {
-								if (ret != null) {
+								if (!ret.isEmpty()) {
 									ret += RepoConsts.LABEL_SEPARATOR;
-								} else {
-									ret = "";
 								}
 
 								if (dynListConstraint != null) {
@@ -730,6 +728,13 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		return extractPropName(type, v);
 	}
 
+	@Override
+	public boolean hasAttributeExtractorPlugin(NodeRef nodeRef) {
+		QName type = nodeService.getType(nodeRef);
+		return  getAttributeExtractorPlugin(type, nodeRef)!=null;
+	}
+	
+	
 	@Override
 	public String extractPropName(QName type, NodeRef nodeRef) {
 		String value;

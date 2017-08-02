@@ -55,4 +55,17 @@ public interface SecurityService {
 	 */
 	List<String> getAvailablePropNames();
 
+	/**
+	 * Check user is in currentSecurityGroup or isAdmin
+	 * @param securityGroup
+	 * @return
+	 */
+	boolean isCurrentUserAllowed(String securityGroup);
+
+	/**
+	 * List available security roles for user
+	 * @return
+	 */
+	List<String> getUserSecurityRoles();
+
 }

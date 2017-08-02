@@ -477,6 +477,10 @@ public class LabelingFormulaContext {
 				ingLegalName = renameRule.getClosestValue(I18NUtil.getLocale(), lblComponent.isPlural());
 			}
 		} else {
+			
+			if(lblComponent instanceof IngTypeItem && ((IngTypeItem) lblComponent).doNotDeclare()){
+				return null;
+			}
 
 			if (plural && (lblComponent instanceof IngTypeItem)) {
 				if (uncapitalizeLegalName) {
@@ -1294,7 +1298,7 @@ public class LabelingFormulaContext {
 	}
 
 	private String cleanLabel(StringBuffer buffer) {
-		return buffer.toString().replaceAll(" null| \\(null\\)| \\(\\)", "").trim();
+		return buffer.toString().replaceAll(" null| \\(null\\)| \\(\\)", "").replaceAll(">null<", "><").trim();
 	}
 
 	public boolean isGroup(AbstractLabelingComponent component) {
@@ -1369,13 +1373,16 @@ public class LabelingFormulaContext {
 							&& matchFormule(declarationFilter.getFormula(), new DeclarationFilterContext())
 							&& declarationFilter.matchLocale(currentLocale)) {
 						break;
-					} else if (DeclarationType.DoNotDeclare.equals(declarationFilter.getDeclarationType()) && !declarationFilter.isThreshold()
-							&& matchFormule(declarationFilter.getFormula(), new DeclarationFilterContext())
-							&& declarationFilter.matchLocale(currentLocale)) {
+					} else if ((DeclarationType.DoNotDeclare.equals(declarationFilter.getDeclarationType()) && !declarationFilter.isThreshold()
+									&& matchFormule(declarationFilter.getFormula(), new DeclarationFilterContext())
+									&& declarationFilter.matchLocale(currentLocale))) {
 						ingType = null;
 					}
 
+				} else if(ingType.doNotDeclare() && !ingType.lastGroup()){
+					ingType = null;
 				}
+				
 
 			}
 
@@ -1445,11 +1452,11 @@ public class LabelingFormulaContext {
 					return 1;
 				}
 
-				if (IngTypeItem.LAST_GROUP.equals(a.getKey().getLvValue())) {
+				if (a.getKey().lastGroup()) {
 					return 1;
 				}
 
-				if (IngTypeItem.LAST_GROUP.equals(b.getKey().getLvValue())) {
+				if (b.getKey().lastGroup()) {
 					return -1;
 				}
 
