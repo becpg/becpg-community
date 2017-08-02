@@ -81,7 +81,11 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 
 	@Autowired
 	private NodeService nodeService;
-
+	
+	@Autowired
+	@Qualifier("mlAwareNodeService")
+	protected NodeService mlNodeService;
+	
 	@Autowired
 	private NamespaceService namespaceService;
 
@@ -108,7 +112,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	@Override
 	public void getEntity(NodeRef entityNodeRef, OutputStream out, RemoteEntityFormat format) throws BeCPGException {
 		if (format.equals(RemoteEntityFormat.xml) || format.equals(RemoteEntityFormat.xml_all)) {
-			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(nodeService, namespaceService, dictionaryService, contentService, siteService);
+			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(mlNodeService, nodeService, namespaceService, dictionaryService, contentService, siteService);
 			if (format.equals(RemoteEntityFormat.xml_all)) {
 				xmlEntityVisitor.setDumpAll(true);
 			}
@@ -196,7 +200,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	@Override
 	public void listEntities(List<NodeRef> entities, OutputStream result, RemoteEntityFormat format) throws BeCPGException {
 		if (format.equals(RemoteEntityFormat.xml)) {
-			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(nodeService, namespaceService, dictionaryService, contentService, siteService);
+			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(mlNodeService, nodeService, namespaceService, dictionaryService, contentService, siteService);
 			try {
 				xmlEntityVisitor.visit(entities, result);
 			} catch (XMLStreamException e) {
@@ -211,7 +215,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	@Override
 	public void getEntityData(NodeRef entityNodeRef, OutputStream result, RemoteEntityFormat format) throws BeCPGException {
 		if (RemoteEntityFormat.xml.equals(format)) {
-			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(nodeService, namespaceService, dictionaryService, contentService, siteService);
+			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(mlNodeService, nodeService, namespaceService, dictionaryService, contentService, siteService);
 			try {
 				xmlEntityVisitor.visitData(entityNodeRef, result);
 			} catch (XMLStreamException e) {

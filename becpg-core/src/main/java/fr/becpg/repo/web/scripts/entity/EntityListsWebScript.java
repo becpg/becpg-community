@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -78,6 +79,8 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 	private static final String MODEL_KEY_NAME_ENTITY = "entity";
 
 	private static final String MODEL_KEY_NAME_CONTAINER = "container";
+	
+	private static final String MODEL_KEY_USER_SECURITY_ROLES = "userSecurityRoles";
 
 	private static final String MODEL_KEY_NAME_LISTS = "lists";
 
@@ -331,6 +334,12 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 				NodeRef temp = it.next();
 				String dataListType = (String) nodeService.getProperty(temp, DataListModel.PROP_DATALISTITEMTYPE);
 				int access_mode = securityService.computeAccessMode(nodeType, dataListType);
+				
+				if(SecurityService.NONE_ACCESS != access_mode) {
+					String dataListName = (String) nodeService.getProperty(temp, ContentModel.PROP_NAME);
+					access_mode = securityService.computeAccessMode(nodeType, dataListName);
+				}
+				
 
 				if (SecurityService.NONE_ACCESS == access_mode) {
 					if (logger.isTraceEnabled()) {
@@ -366,6 +375,8 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 		model.put(MODEL_KEY_NAME_ENTITY_PATH, retPath);
 		model.put(MODEL_KEY_NAME_ENTITY, nodeRef);
 		model.put(MODEL_KEY_NAME_CONTAINER, listContainerNodeRef);
+		model.put(MODEL_KEY_USER_SECURITY_ROLES, securityService.getUserSecurityRoles());
+		
 		model.put(MODEL_HAS_WRITE_PERMISSION,
 				hasWritePermission || authorityService.isAdminAuthority(AuthenticationUtil.getFullyAuthenticatedUser()));
 		model.put(MODEL_HAS_CHANGE_STATE_PERMISSION, hasChangeStatePermission);

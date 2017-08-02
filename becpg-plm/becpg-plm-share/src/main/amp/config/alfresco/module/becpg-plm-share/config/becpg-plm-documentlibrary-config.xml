@@ -202,8 +202,10 @@
 				</param>
 			</content>
 			<content id="changeOrder" label="menu.create-content.eco" type="pagelink" index="170" icon="changeOrder">
-				<param name="page">create-content?destination={nodeRef}&amp;itemId=ecm:changeOrder&amp;formId=create&amp;isEntity=true
-				</param>
+				<param name="page">create-content?destination={nodeRef}&amp;itemId=ecm:changeOrder&amp;formId=create&amp;isEntity=true</param>
+				<permissions>
+			       <permission allow="true">CreateChangeOrder</permission>
+			    </permissions>
 			</content>
 			<content id="entity" label="menu.create-content.entity" type="pagelink" index="180" icon="entity">
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:entityV2&amp;formId=create-entity&amp;isEntity=true

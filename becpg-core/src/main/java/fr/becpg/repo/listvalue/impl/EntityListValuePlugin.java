@@ -17,25 +17,19 @@
  ******************************************************************************/
 package fr.becpg.repo.listvalue.impl;
 
-import java.io.IOException;
-import java.io.Reader;
 import java.io.Serializable;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.repo.dictionary.IndexTokenisationMode;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
-import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.AssociationRef;
@@ -45,9 +39,6 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.Token;
-import org.apache.lucene.analysis.TokenStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.extensions.surf.util.I18NUtil;
@@ -65,17 +56,12 @@ import fr.becpg.repo.listvalue.ListValuePage;
 import fr.becpg.repo.listvalue.ListValuePlugin;
 import fr.becpg.repo.listvalue.ListValueService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
-import fr.becpg.repo.search.lucene.analysis.AbstractBeCPGAnalyzer;
-import fr.becpg.repo.search.lucene.analysis.EnglishBeCPGAnalyser;
-import fr.becpg.repo.search.lucene.analysis.FrenchBeCPGAnalyser;
 
 @Service
 public class EntityListValuePlugin implements ListValuePlugin {
 
 	private static final Log logger = LogFactory.getLog(EntityListValuePlugin.class);
-	private static final String SUFFIX_SPACE = " ";
-	private static final String SUFFIX_DOUBLE_QUOTE = "\"";
-	private static final String SUFFIX_SIMPLE_QUOTE = "'";
+
 	private static final String PROP_FILTER_BY_ASSOC = "filterByAssoc";
 	protected static final String SOURCE_TYPE_TARGET_ASSOC = "targetassoc";
 	protected static final String SOURCE_TYPE_LINKED_VALUE = "linkedvalue";
@@ -86,7 +72,6 @@ public class EntityListValuePlugin implements ListValuePlugin {
 	protected static final String charactSearchTemplate = "%(bcpg:charactName bcpg:legalName)";
 	protected static final String listValueSearchTemplate = "%(bcpg:lvValue bcpg:legalName)";
 
-	protected static final String SUFFIX_ALL = "*";
 	protected static final String PARAM_VALUES_SEPARATOR = ",";
 
 	@Autowired
@@ -99,8 +84,6 @@ public class EntityListValuePlugin implements ListValuePlugin {
 	@Autowired
 	protected EntityDictionaryService entityDictionaryService;
 	@Autowired
-	private DictionaryDAO dictionaryDAO;
-	@Autowired
 	protected AutoNumService autoNumService;
 	@Autowired
 	private HierarchyService hierarchyService;
@@ -111,7 +94,6 @@ public class EntityListValuePlugin implements ListValuePlugin {
 	@Autowired
 	protected TargetAssocValueExtractor targetAssocValueExtractor;
 
-	private final Analyzer luceneAnaLyzer = null;
 
 	@Override
 	public String[] getHandleSourceTypes() {
@@ -169,10 +151,14 @@ public class EntityListValuePlugin implements ListValuePlugin {
 		String template = searchTemplate;
 		if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_CHARACT)) {
 			template = charactSearchTemplate;
-			queryBuilder.addSort(BeCPGModel.PROP_CHARACT_NAME, true);
+			if(isAllQuery(query)){
+				queryBuilder.addSort(BeCPGModel.PROP_CHARACT_NAME, true);
+			}
 		} else if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_LIST_VALUE)) {
 			template = listValueSearchTemplate;
-			queryBuilder.addSort(BeCPGModel.PROP_LV_VALUE, true);
+			if(isAllQuery(query)){
+				queryBuilder.addSort(BeCPGModel.PROP_LV_VALUE, true);
+			}	
 		} else if (arrClassNames != null) {
 			for (String className : arrClassNames) {
 				QName classQName;
@@ -188,14 +174,16 @@ public class EntityListValuePlugin implements ListValuePlugin {
 				}
 			}
 		} else {
-			queryBuilder.addSort(ContentModel.PROP_NAME, true);
+			if(isAllQuery(query)){
+				queryBuilder.addSort(ContentModel.PROP_NAME, true);
+			}
 		}
 
 		queryBuilder.ofType(type).excludeDefaults().inSearchTemplate(template).locale(I18NUtil.getContentLocale()).andOperator().ftsLanguage();
 
 		if (!isAllQuery(query)) {
 			if (query.length() > 2) {
-				queryBuilder.andFTSQuery(prepareQuery(query.trim() + SUFFIX_ALL));
+				queryBuilder.andFTSQuery(prepareQuery(query.trim() + BeCPGQueryHelper.SUFFIX_ALL));
 			}
 			queryBuilder.andFTSQuery(query);
 		}
@@ -255,6 +243,8 @@ public class EntityListValuePlugin implements ListValuePlugin {
 		return new ListValuePage(ret, pageNum, pageSize, getTargetAssocValueExtractor());
 
 	}
+
+
 
 	protected ListValueExtractor<NodeRef> getTargetAssocValueExtractor() {
 		return targetAssocValueExtractor;
@@ -354,10 +344,12 @@ public class EntityListValuePlugin implements ListValuePlugin {
 
 		if (!isAllQuery(query)) {
 			queryBuilder.andPropQuery(BeCPGModel.PROP_LV_VALUE, prepareQuery(query));
-
+			queryBuilder.andOperator();
+		} else {
+			queryBuilder.addSort(BeCPGModel.PROP_LV_VALUE, true);
 		}
 
-		queryBuilder.addSort(BeCPGModel.PROP_LV_VALUE, true);
+		
 
 		List<NodeRef> ret = queryBuilder.list();
 
@@ -365,88 +357,6 @@ public class EntityListValuePlugin implements ListValuePlugin {
 
 	}
 
-	/**
-	 * Prepare query. //TODO escape + - && || ! ( ) { } [ ] ^ " ~ * ? : \
-	 *
-	 * @param query
-	 *            the query
-	 * @return the string
-	 * @throws IOException
-	 */
-	protected String prepareQuery(String query) {
-
-		logger.debug("Query before prepare:" + query);
-		if ((query != null) && !(query.endsWith(SUFFIX_ALL) || query.endsWith(SUFFIX_SPACE) || query.endsWith(SUFFIX_DOUBLE_QUOTE)
-				|| query.endsWith(SUFFIX_SIMPLE_QUOTE))) {
-			// Query with wildcard are not getting analyzed by stemmers
-			// so do it manually
-			Analyzer analyzer = getTextAnalyzer();
-
-			if (logger.isDebugEnabled()) {
-				logger.debug("Using analyzer : " + analyzer.getClass().getName());
-			}
-			TokenStream source = null;
-			Reader reader;
-			try {
-
-				reader = new StringReader(query.trim());
-
-				if (analyzer instanceof AbstractBeCPGAnalyzer) {
-					source = ((AbstractBeCPGAnalyzer) analyzer).tokenStream(null, reader, true);
-				} else {
-					source = analyzer.tokenStream(null, reader);
-				}
-
-				StringBuilder buff = new StringBuilder();
-				Token reusableToken = new Token();
-				while ((reusableToken = source.next(reusableToken)) != null) {
-					if (buff.length() > 0) {
-						buff.append(' ');
-					}
-					buff.append(reusableToken.term());
-				}
-				source.reset();
-				buff.append(SUFFIX_ALL);
-				query = buff.toString();
-			} catch (Exception e) {
-				logger.error(e, e);
-			} finally {
-
-				try {
-					if (source != null) {
-						source.close();
-					}
-
-				} catch (IOException e) {
-					// Nothing todo here
-					logger.error(e, e);
-				}
-
-			}
-
-		}
-
-		logger.debug("Query after prepare:" + query);
-
-		return query;
-	}
-
-	protected Analyzer getTextAnalyzer() {
-		if (luceneAnaLyzer == null) {
-			DataTypeDefinition def = dictionaryDAO.getDataType(DataTypeDefinition.TEXT);
-			try {
-				return (Analyzer) Class.forName(def.resolveAnalyserClassName(Locale.getDefault())).newInstance();
-			} catch (Exception e) {
-				logger.error(e, e);
-				if (Locale.FRENCH.equals(Locale.getDefault())) {
-					return new FrenchBeCPGAnalyser();
-				} else {
-					return new EnglishBeCPGAnalyser();
-				}
-			}
-		}
-		return luceneAnaLyzer;
-	}
 
 	protected BeCPGQueryBuilder filterByClass(BeCPGQueryBuilder queryBuilder, String[] arrClassNames) {
 
@@ -559,7 +469,11 @@ public class EntityListValuePlugin implements ListValuePlugin {
 	}
 
 	protected boolean isAllQuery(String query) {
-		return (query != null) && query.trim().equals(SUFFIX_ALL);
+		return BeCPGQueryHelper.isAllQuery(query);
+	}
+	
+	protected String prepareQuery(String query) {
+		return BeCPGQueryHelper.prepareQuery(dictionaryService, query);
 	}
 
 	public boolean isQueryMatch(String query, String entityName) {
@@ -589,7 +503,7 @@ public class EntityListValuePlugin implements ListValuePlugin {
 		if (propertyDef != null) {
 
 			if (IndexTokenisationMode.BOTH.equals(propertyDef.getIndexTokenisationMode())
-					|| IndexTokenisationMode.FALSE.equals(propertyDef.getIndexTokenisationMode())) {
+					|| IndexTokenisationMode.FALSE.equals(propertyDef.getIndexTokenisationMode()) && isAllQuery(query)) {
 				queryBuilder.addSort(propertyQName, true);
 			}
 		}

@@ -762,7 +762,7 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
        * @default 1
        * @private
        */
-      var vShowComp = 1;
+      var vShowComp = 0;
       /**
        * Show start date column
        * 
@@ -1117,9 +1117,35 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
          vDepId = 1;
       };
 
-      this.scrollToY = function(yPos) {
+      this.scrollToY = function(yPos, vDiv) {
+	         var size = parseInt(YAHOO.util.Dom.getStyle(vDiv, 'width').replace("px",""), 10);
+	         var col1 = YAHOO.util.Dom.get('leftside');
+	         var scrollDiv = YAHOO.util.Dom.get('rightside');
+	         var max = (size - 350);
+	         var resize = new YAHOO.util.Resize('leftside', {
+	             handles: ['r'],
+	             minWidth: 350,
+	             maxWidth: max
+	         });
+	         resize.on('resize', function(ev) {
+	             var w = ev.width;
+	             var sizeDiv = parseInt(YAHOO.util.Dom.getStyle(vDiv, 'width').replace("px",""), 10);
+	             YAHOO.util.Dom.setStyle(col1, 'height', '');
+	             YAHOO.util.Dom.setStyle(scrollDiv, 'width', (sizeDiv - w - 6) + 'px');
+	             
+	             var nodes = YAHOO.util.Selector.query('td.ggTaskTitle span.task-title a.theme-color-1');
+	             if(nodes.length>0){
+	            	 var tdNode = nodes[0].parentNode.parentNode.parentNode.parentNode;
+	            	 var sizeTd = YAHOO.util.Dom.getRegion(tdNode);
+		             for(var i in nodes){  	 
+		            	 YAHOO.util.Dom.setStyle(nodes[i], 'max-width', (sizeTd.width - 110) + 'px');
+		             }
+	             }
+	             
+	         });
+	
+	         
          if(yPos){
-            var scrollDiv = document.getElementById('rightside');
             scrollDiv.scrollLeft = yPos;
          }
       };
@@ -1296,6 +1322,23 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
          var vNumDays = 0;
          var vDayWidth = 0;
          var vStr = "";
+         var colNumber = 2;
+         
+          if (vShowRes === 1){
+        	 colNumber++;
+          }
+          if (vShowDur === 1) {
+        	  colNumber++;
+          }
+          if (vShowComp === 1) {
+        	  colNumber++;
+       	  }
+          if (vShowStartDate === 1) {
+        	  colNumber++;
+          }
+          if (vShowEndDate === 1) {
+        	  colNumber++;
+          }
 
          if (vTaskList.length > 0) {
 
@@ -1341,9 +1384,28 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
             vMainTable = '<div class="yui-gd yui-dt">';
 
             // DRAW the Left-side of the chart (names, resources, comp%)
-            vLeftTable = '<div class="yui-u first" id="leftside"><table cellSpacing="0" cellPadding="0" border="0"><thead>';
-
-            vLeftTable += '<tr class="gheader">';
+            vLeftTable = '<div class="yui-u first" id="leftside"><table cellSpacing="0" cellPadding="0" border="0"><colgroup>';
+            	
+            vLeftTable +='<col class="ggtaskCheckbox"/><col class="ggTaskTitle  ggCol'+colNumber+'"></col>';
+            
+            if (vShowRes === 1){
+            	 vLeftTable +='<col class="ggCol'+colNumber+'"></col>';
+             }
+             if (vShowDur === 1) {
+            	 vLeftTable +='<col class="ggCol'+colNumber+'"></col>';
+             }
+             if (vShowComp === 1) {
+            	 vLeftTable +='<col class="ggCol'+colNumber+'"></col>';
+          	  }
+             if (vShowStartDate === 1) {
+            	 vLeftTable +='<col class="ggCol'+colNumber+'"></col>';
+             }
+             if (vShowEndDate === 1) {
+            	 vLeftTable +='<col class="ggCol'+colNumber+'"></col>';
+             }
+            
+            	
+            vLeftTable += '</colgroup><thead><tr class="gheader">';
             
 //            if (vShowSelect === 1 ) {
 //                vLeftTable +="<th width=\"16px\">";
@@ -1364,7 +1426,7 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
 //                vLeftTable +="</th>";
 //            }
             
-            vLeftTable += '<th  colspan="5">'+JSGantt.msg("jsgantt.format")+':&nbsp;';
+            vLeftTable += '<th  colspan="'+colNumber+'">'+JSGantt.msg("jsgantt.format")+':&nbsp;';
        
 
             if (vFormatArr.join().indexOf("minute") != -1) {
@@ -1416,16 +1478,23 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
 
             vLeftTable += '<tr class="gheader">' + ' <th colspan="2"><nobr></nobr></th>';
 
-            if (vShowRes === 1)
-               vLeftTable += '  <th nowrap >'+JSGantt.msg("jsgantt.resource")+'</th>';
-            if (vShowDur === 1)
-               vLeftTable += '  <th  nowrap >'+JSGantt.msg("jsgantt.duration")+'</th>';
-            if (vShowComp === 1)
-               vLeftTable += '  <th  nowrap >'+JSGantt.msg("jsgantt.percomp")+'</th>';
-            if (vShowStartDate === 1)
-               vLeftTable += '  <th nowrap >'+JSGantt.msg("jsgantt.begin")+'</th>';
-            if (vShowEndDate === 1)
+           
+            
+            if (vShowRes === 1){
+               vLeftTable += '  <th class="nowrap" >'+JSGantt.msg("jsgantt.resource")+'</th>';
+            }
+            if (vShowDur === 1) {
+               vLeftTable += '  <th  class="nowrap" >'+JSGantt.msg("jsgantt.duration")+'</th>';
+            }
+            if (vShowComp === 1) {
+               vLeftTable += '  <th  class="nowrap" >'+JSGantt.msg("jsgantt.percomp")+'</th>';
+         	}
+            if (vShowStartDate === 1) {
+               vLeftTable += '  <th class="nowrap" >'+JSGantt.msg("jsgantt.begin")+'</th>';
+            }
+            if (vShowEndDate === 1) {
                vLeftTable += '  <th>'+JSGantt.msg("jsgantt.end")+'</th>';
+            }
 
             vLeftTable += '</tr></thead><tbody class="yui-dt-data">';
 
@@ -1454,7 +1523,7 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
                 }
                
                
-               vLeftTable += '  <td class="gname nowrap"><span style="color: #aaaaaa">';
+               vLeftTable += '  <td class="ggTaskTitle ggCol'+colNumber+'"><span style="color: #aaaaaa">';
 
                for ( var j = 1; j < vTaskList[i].getLevel(); j++) {
                   vLeftTable += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
@@ -1476,21 +1545,21 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
                vLeftTable += '<span class="task-title" > ' + vTaskList[i].getName() + '</span></td>';
 
                if (vShowRes === 1 ) {
-                  vLeftTable += '  <td class=gname  ><nobr>' + vTaskList[i].getResource() + '</nobr></td>';
+                  vLeftTable += '  <td class="ggCol'+colNumber+'"  ><nobr>' + vTaskList[i].getResource() + '</nobr></td>';
                }
                if (vShowDur === 1) {
-                  vLeftTable += '  <td class=gname  ><nobr>' + vTaskList[i].getDuration(vFormat) + '</nobr></td>';
+                  vLeftTable += '  <td class="ggCol'+colNumber+'"  ><nobr>' + vTaskList[i].getDuration(vFormat) + '</nobr></td>';
                }
                if (vShowComp === 1) {
                
-                  vLeftTable += '  <td class=gname  ><nobr>' + vTaskList[i].getCompStr() + '</nobr></td>';
+                  vLeftTable += '  <td class="ggCol'+colNumber+'"  ><nobr>' + vTaskList[i].getCompStr() + '</nobr></td>';
                }
                if (vShowStartDate === 1) {
-                  vLeftTable += '  <td class=gname  ><nobr>' + JSGantt.formatDateStr(vTaskList[i].getStart(),
+                  vLeftTable += '  <td class="ggCol'+colNumber+'"  ><nobr>' + JSGantt.formatDateStr(vTaskList[i].getStart(),
                         vDateDisplayFormat) + '</nobr></td>';
                }
                if (vShowEndDate === 1) {
-                  vLeftTable += '  <td class=gname  ><nobr>' + JSGantt.formatDateStr(vTaskList[i].getEnd(),
+                  vLeftTable += '  <td class="ggCol'+colNumber+'"  ><nobr>' + JSGantt.formatDateStr(vTaskList[i].getEnd(),
                         vDateDisplayFormat) + '</nobr></td>';
                }
 
@@ -1824,9 +1893,9 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
 //         // Enable item select menu
 //         Dom.removeClass(JSGantt.scope.id+"-JSGantt-itemSelect-div", "hidden");
 
-        
+
             
-         this.scrollToY(vCurrPosY);
+         this.scrollToY(vCurrPosY,vDiv);
          
          } catch (e){
              alert(e);

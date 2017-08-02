@@ -798,6 +798,17 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
+				<property name="bcpg:ingTypeDoNotDeclare">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:ingTypeIsLastGroup">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				
 				<!-- Deprecated To remove in 2.2-->
 				<property name="bcpg:ingTypePluralLegalName">
 					<type>d:mltext</type>

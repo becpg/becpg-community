@@ -275,6 +275,7 @@ public class WUsedExtractor extends MultiLevelExtractor {
 		userAccess.put("edit", userAccess.get("edit"));
 		userAccess.put("sort", false);
 		userAccess.put("details", false);
+		userAccess.put("wused", true);
 
 		ret.put(PROP_PERMISSIONS, permissions);
 

@@ -21,16 +21,6 @@
 <beans>
 
 	
-	<!-- ecoService -->	
-	<bean id="ecoService" class="fr.becpg.repo.ecm.impl.ECOServiceImpl">
-    	<property name="wUsedListService" ref="wUsedListService"/>
-    	<property name="nodeService" ref="nodeService"/>
-    	<property name="entityVersionService" ref="entityVersionService"/>
-    	<property name="productService" ref="productService"/>
-    	<property name="alfrescoRepository" ref="alfrescoRepository" />
-    	<property name="transactionService" ref="transactionService" />
-	</bean>
-	
   
   <!-- ChangeOrder Webscript -->
   <bean id="webscript.fr.becpg.ecm.changeOrder.get" class="fr.becpg.repo.web.scripts.ecm.ChangeOrderWebScript" parent="webscript">

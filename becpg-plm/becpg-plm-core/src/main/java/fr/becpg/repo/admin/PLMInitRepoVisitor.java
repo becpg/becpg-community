@@ -41,6 +41,7 @@ import org.springframework.stereotype.Service;
 import com.sun.star.report.ReportControlFormat;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.ECMGroup;
 import fr.becpg.model.ECMModel;
 import fr.becpg.model.MPMModel;
 import fr.becpg.model.NCGroup;
@@ -920,7 +921,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				PLMGroup.PurchasingMgr.toString(), PLMGroup.Production.toString(), PLMGroup.ProductionUser.toString(),
 				PLMGroup.ProductionMgr.toString(), PLMGroup.ReferencingMgr.toString(), PLMGroup.Trade.toString(), PLMGroup.TradeUser.toString(),
 				PLMGroup.TradeMgr.toString(), NCGroup.ClaimStart.toString(), NCGroup.ClaimAnalysis.toString(), NCGroup.ClaimClassification.toString(),
-				NCGroup.ClaimTreatment.toString(), NCGroup.ClaimResponse.toString(), NCGroup.ClaimClosing.toString() };
+				NCGroup.ClaimTreatment.toString(), NCGroup.ClaimResponse.toString(), NCGroup.ClaimClosing.toString(), ECMGroup.CreateChangeOrder.toString(),
+				ECMGroup.ApplyChangeOrder.toString() };
 
 		createGroups(groups);
 
@@ -978,6 +980,20 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			authorityService.addAuthority(PermissionService.GROUP_PREFIX + PLMGroup.Trade.toString(),
 					PermissionService.GROUP_PREFIX + PLMGroup.TradeUser.toString());
 		}
+		
+		
+		
+		authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP, PermissionService.GROUP_PREFIX + SystemGroup.SecurityRole.toString(),
+				true);
+		if (!authorities.contains(PermissionService.GROUP_PREFIX + ECMGroup.ApplyChangeOrder.toString())) {
+			authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.SecurityRole.toString(),
+					PermissionService.GROUP_PREFIX + ECMGroup.ApplyChangeOrder.toString());
+		}
+		if (!authorities.contains(PermissionService.GROUP_PREFIX + ECMGroup.CreateChangeOrder.toString())) {
+			authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.SecurityRole.toString(),
+					PermissionService.GROUP_PREFIX + ECMGroup.CreateChangeOrder.toString());
+		}
+		
 	}
 
 	@Override

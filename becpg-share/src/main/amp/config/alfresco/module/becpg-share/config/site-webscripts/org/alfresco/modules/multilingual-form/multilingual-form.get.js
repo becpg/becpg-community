@@ -43,6 +43,8 @@ function main()
            			}
            		
               }
+              model.currentLocale = obj.currentLocale;
+              
          }
       }
    }
