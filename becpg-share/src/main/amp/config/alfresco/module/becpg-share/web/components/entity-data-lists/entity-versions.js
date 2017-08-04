@@ -191,7 +191,7 @@
                    */
                   getDocumentVersionMarkup : function EntityVersions_getDocumentVersionMarkup(doc) {
                      var compareURL =  Alfresco.constants.PROXY_URI + 'becpg/entity/compare/'
-                     + this.options.nodeRef.replace(":/", "") + "/compare.pdf?entities="+doc.nodeRef, html = '', current = ( this.options.nodeRef == doc.nodeRef),
+                     + this.options.nodeRef.replace(":/", "") + "/compare?entities="+doc.nodeRef, html = '', current = ( this.options.nodeRef == doc.nodeRef),
                      url = beCPG.util.entityURL(doc.siteId, doc.nodeRef, doc.itemType, null, this.options.list);
                      
                      html += '<div class="entity-branches'+(current ? " current":"")+'">';
