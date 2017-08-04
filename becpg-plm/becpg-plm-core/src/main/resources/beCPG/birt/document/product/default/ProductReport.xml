@@ -28,7 +28,7 @@
   <isTradeItemAReturnableItem prefix="gs1"><![CDATA[false]]></isTradeItemAReturnableItem>
   <netWeight prefix="bcpg"><![CDATA[0.2]]></netWeight>
   <productComments prefix="bcpg"><![CDATA[]]></productComments>
-  <productUnit prefix="bcpg"><![CDATA[kg]]></productUnit>
+  <productUnit prefix="bcpg"><![CDATA[L]]></productUnit>
   <reportParameters prefix="rep"><![CDATA[]]></reportParameters>
   <cascadeTx prefix="sys"><![CDATA[418894]]></cascadeTx>
   <eanCodeLevel3 prefix="bcpg"><![CDATA[]]></eanCodeLevel3>
@@ -515,7 +515,7 @@
       </ingList>
     </ingLists>
     <nutLists entityDataListState="ToValidate" energiekcal="273.39506004804133" energiekj="1142.7913510008127" lipides="15.522500007748604" agsaturés="3.9599600114440916" glucides="25.06613999547005" sucres="0.10746" protéines="8.30699999910593" fibresalimentaires="0.09999999999999999" sodium="600.895" sel="1.5262733000000002" vitaminectotale="">
-      <nutList nutListGroup="Groupe 1" parentLevel="" nutListValue="273.39506004804133" name="Energie kcal" nutListValuePerServing="546.7901200960827" nutListIsFormulated="true" nutListMini="" nutListFormulatedValue="273.39506004804133" nutListLossPerc="" nutListGDAPerc="27.339506004804136" nutListUnit="kcal/100g" nutListMethod="Formulation" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="1481502" locale="fr_FR" sort="200" depthLevel="1" nutListMaxi="" nutListNut="Energie kcal" legalName="Energie">
+      <nutList nutListGroup="Groupe 1" parentLevel="" nutListValue="-1" name="Energie kcal" nutListValuePerServing="546.7901200960827" nutListIsFormulated="true" nutListMini="" nutListFormulatedValue="273.39506004804133" nutListLossPerc="" nutListGDAPerc="27.339506004804136" nutListUnit="kcal/100g" nutListMethod="Formulation" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="1481502" locale="fr_FR" sort="200" depthLevel="1" nutListMaxi="" nutListNut="Energie kcal" legalName="Energie">
         <nutListNut prefix="bcpg">
           <nut prefix="bcpg">
             <nutType prefix="bcpg"><![CDATA[Valeur énergétique]]></nutType>
@@ -837,6 +837,12 @@
     <microbioLists created="2011-08-29T12:01:35.517Z" maxUid="0" pmcConcernedProducts="" creator="admin" name="Microbio - Quiches" startEffectivity="2012-09-08T08:48:48.151Z" code="1" title="" pmcRegulation="R&#xE8;glement 1" node-dbid="101896" locale="fr_FR" modifier="admin" reportEntityGenerated="2012-11-12T17:58:28.876Z" modified="2015-12-18T10:27:09.079Z" changeToken="a5793e19-0030-427f-8f7d-837fb0271788" entityDataListState="ToValidate">
       <description prefix="cm"><![CDATA[]]></description>
       <microbioList mblMaxi="500000.0" name="31850fe6-07ba-45e6-b4e5-925cbca70d74" node-dbid="101903" locale="fr_FR" mblValue="300000.0" sort="1" mblUnit="UFC/g" mblMicrobio="Flore a&#xE9;robie m&#xE9;sophile revivifiable" legalName="">
+        <description prefix="cm"><![CDATA[]]></description>
+      </microbioList>
+      <microbioList mblMaxi="" name="31850fe6-07ba-45e6-b4e5-925cbca70d74" node-dbid="101903" locale="fr_FR" mblValue="-1" sort="1" mblUnit="UFC/g" mblMicrobio="Flore Test 1" legalName="">
+        <description prefix="cm"><![CDATA[]]></description>
+      </microbioList>
+      <microbioList mblMaxi="" name="31850fe6-07ba-45e6-b4e5-925cbca70d74" node-dbid="101903" locale="fr_FR" mblValue="-1" sort="1" mblUnit="UFC/g" mblMicrobio=" M&#xE9;sophile Test 2" legalName="">
         <description prefix="cm"><![CDATA[]]></description>
       </microbioList>
       <microbioList mblMaxi="" name="1b6ac726-8a43-4340-a57a-9590ce1e8a17" node-dbid="101904" locale="fr_FR" mblValue="" sort="2" mblUnit="UFC/10g" mblMicrobio="Levure" legalName="">
