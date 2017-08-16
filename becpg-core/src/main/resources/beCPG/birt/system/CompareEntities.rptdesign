@@ -917,13 +917,14 @@ row["properties2"]
         </simple-master-page>
     </page-setup>
     <body>
-        <label id="1587">
+        <label name="Properties" id="1587">
             <property name="fontStyle">italic</property>
             <property name="color">#FF0000</property>
             <property name="paddingTop">2pt</property>
             <property name="paddingLeft">2pt</property>
             <property name="paddingBottom">3pt</property>
             <property name="paddingRight">2pt</property>
+            <property name="textAlign">left</property>
             <text-property name="text" key="label.introduction">Seules les informations différentes sont affichées.</text-property>
         </label>
         <table id="1483">
@@ -1021,6 +1022,7 @@ row["properties2"]
                     <property name="allowExport">true</property>
                 </structure>
             </list-property>
+            <property name="pageBreakInterval">100000</property>
             <list-property name="sort">
                 <structure>
                     <expression name="key" type="javascript">row["characteristic"]</expression>
@@ -1327,8 +1329,238 @@ row["properties2"]
                 </row>
             </detail>
         </table>
-        <table id="3437">
+        <table name="Compo - Pack - Doc" id="1678">
             <property name="style">beCPG-Table-border</property>
+            <property name="pageBreakBefore">always</property>
+            <property name="width">100%</property>
+            <property name="dataSet">StructComparison</property>
+            <list-property name="visibility">
+                <structure>
+                    <property name="format">all</property>
+                    <expression name="valueExpr" type="javascript">if (row["tableCheck"] == null){
+	true
+}
+else{
+	false
+}</expression>
+                </structure>
+            </list-property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">comparison</property>
+                    <text-property name="displayName">comparison</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["comparison"]</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">entityList</property>
+                    <text-property name="displayName">entityList</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["entityList"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">depthLevel</property>
+                    <text-property name="displayName">depthLevel</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["depthLevel"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">operator</property>
+                    <text-property name="displayName">operator</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["operator"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">item1</property>
+                    <text-property name="displayName">item1</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["item1"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">item2</property>
+                    <text-property name="displayName">item2</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["item2"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">properties1</property>
+                    <text-property name="displayName">properties1</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["properties1"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">properties2</property>
+                    <text-property name="displayName">properties2</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["properties2"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">tableCheck</property>
+                    <text-property name="displayName">tableCheck</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["tableCheck"]</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">displayProperties1</property>
+                    <text-property name="displayName">displayProperties1</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["displayProperties1"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">displayProperties2</property>
+                    <text-property name="displayName">displayProperties2</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["displayProperties2"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="pageBreakInterval">100000</property>
+            <column id="1697">
+                <property name="width">0.2916666666666667in</property>
+            </column>
+            <column id="1699">
+                <property name="style">beCPG-table-col</property>
+                <property name="width">5.053571428571429in</property>
+            </column>
+            <column id="1700">
+                <property name="style">beCPG-table-col</property>
+                <property name="width">4.857142857142857in</property>
+            </column>
+            <group id="1721">
+                <property name="groupName">NewTableGroup1</property>
+                <expression name="keyExpr" type="javascript">row["comparison"]</expression>
+                <structure name="toc">
+                    <expression name="expressionValue" type="javascript">row["comparison"]</expression>
+                </structure>
+                <property name="hideDetail">false</property>
+            </group>
+            <group id="1749">
+                <property name="groupName">NewTableGroup2</property>
+                <expression name="keyExpr" type="javascript">row["entityList"]</expression>
+                <structure name="toc">
+                    <expression name="expressionValue" type="javascript">row["entityList"]</expression>
+                </structure>
+                <property name="hideDetail">false</property>
+                <header>
+                    <row id="1750">
+                        <property name="style">beCPG-Group</property>
+                        <cell id="1751">
+                            <property name="colSpan">3</property>
+                            <property name="rowSpan">1</property>
+                            <data id="1734">
+                                <property name="fontSize">10pt</property>
+                                <property name="paddingTop">2pt</property>
+                                <property name="paddingLeft">2pt</property>
+                                <property name="paddingBottom">2pt</property>
+                                <property name="paddingRight">2pt</property>
+                                <structure name="stringFormat">
+                                    <property name="category">Unformatted</property>
+                                </structure>
+                                <property name="textAlign">center</property>
+                                <property name="display">block</property>
+                                <property name="resultSetColumn">comparison</property>
+                            </data>
+                        </cell>
+                    </row>
+                </header>
+            </group>
+            <detail>
+                <row id="1685">
+                    <property name="style">beCPG-table-row</property>
+                    <cell id="1686">
+                        <property name="textAlign">center</property>
+                        <image id="1771">
+                            <property name="height">16px</property>
+                            <property name="width">16px</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["operator"]!="Modified"</expression>
+                                </structure>
+                            </list-property>
+                            <property name="source">embed</property>
+                            <property name="imageName">Modified.png</property>
+                        </image>
+                        <image id="1825">
+                            <property name="height">16px</property>
+                            <property name="width">16px</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["operator"]!="Removed"</expression>
+                                </structure>
+                            </list-property>
+                            <property name="source">embed</property>
+                            <property name="imageName">Removed.png</property>
+                        </image>
+                        <image id="1824">
+                            <property name="height">16px</property>
+                            <property name="width">16px</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["operator"]!="Added"</expression>
+                                </structure>
+                            </list-property>
+                            <property name="source">embed</property>
+                            <property name="imageName">Added.png</property>
+                        </image>
+                        <image id="1823">
+                            <property name="height">16px</property>
+                            <property name="width">16px</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["operator"]!="Replaced"</expression>
+                                </structure>
+                            </list-property>
+                            <property name="source">embed</property>
+                            <property name="imageName">Replaced.png</property>
+                        </image>
+                        <image id="1826">
+                            <property name="height">16px</property>
+                            <property name="width">16px</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["operator"]!="Equal"</expression>
+                                </structure>
+                            </list-property>
+                            <property name="source">embed</property>
+                            <property name="imageName">Equal.png</property>
+                        </image>
+                    </cell>
+                    <cell id="1688">
+                        <text id="3300">
+                            <property name="style">beCPG-table-row-header</property>
+                            <property name="fontSize">9pt</property>
+                            <property name="fontWeight">normal</property>
+                            <property name="fontStyle">normal</property>
+                            <property name="color">black</property>
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[&amp;nbsp;&amp;nbsp;<div style="font-size: 1px; display: inline; float: left; width: <VALUE-OF>(row["depthLevel"]-1)*20</VALUE-OF>px;">&amp;nbsp;</div><B><I><VALUE-OF>row["item1"]</VALUE-OF>&amp;nbsp;&amp;nbsp;</I></B><VALUE-OF>if(row["entityList"] != "Contenu"){row["displayProperties1"];}</VALUE-OF>]]></text-property>
+                        </text>
+                    </cell>
+                    <cell id="1689">
+                        <property name="borderLeftColor">#3EA1E6</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">thin</property>
+                        <text id="3302">
+                            <property name="style">beCPG-table-row-header</property>
+                            <property name="fontSize">9pt</property>
+                            <property name="fontWeight">normal</property>
+                            <property name="fontStyle">normal</property>
+                            <property name="color">black</property>
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[&amp;nbsp;&amp;nbsp;<div style="font-size: 1px; display: inline; float: left; width: <VALUE-OF>(row["depthLevel"]-1)*20</VALUE-OF>px;">&amp;nbsp;</div><B><I><VALUE-OF>row["item2"]</VALUE-OF>&amp;nbsp;&amp;nbsp;</I></B><VALUE-OF>if(row["entityList"] != "Contenu"){row["displayProperties2"];}</VALUE-OF>]]></text-property>
+                        </text>
+                    </cell>
+                </row>
+            </detail>
+        </table>
+        <table name="Characteristics" id="3437">
+            <property name="style">beCPG-Table-border</property>
+            <property name="pageBreakBefore">always</property>
             <property name="dataSet">ComparisonDataSet</property>
             <list-property name="boundDataColumns">
                 <structure>
@@ -1464,6 +1696,7 @@ color;</expression>
                     <property name="allowExport">true</property>
                 </structure>
             </list-property>
+            <property name="pageBreakInterval">100000</property>
             <list-property name="sort">
                 <structure>
                     <expression name="key" type="javascript">row["characteristic"]</expression>
@@ -1774,233 +2007,6 @@ color;</expression>
             </detail>
         </table>
         <label id="3580"/>
-        <table id="1678">
-            <property name="style">beCPG-Table-border</property>
-            <property name="width">100%</property>
-            <property name="dataSet">StructComparison</property>
-            <list-property name="visibility">
-                <structure>
-                    <property name="format">all</property>
-                    <expression name="valueExpr" type="javascript">if (row["tableCheck"] == null){
-	true
-}
-else{
-	false
-}</expression>
-                </structure>
-            </list-property>
-            <list-property name="boundDataColumns">
-                <structure>
-                    <property name="name">comparison</property>
-                    <text-property name="displayName">comparison</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["comparison"]</expression>
-                    <property name="dataType">string</property>
-                    <property name="allowExport">true</property>
-                </structure>
-                <structure>
-                    <property name="name">entityList</property>
-                    <text-property name="displayName">entityList</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["entityList"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">depthLevel</property>
-                    <text-property name="displayName">depthLevel</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["depthLevel"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">operator</property>
-                    <text-property name="displayName">operator</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["operator"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">item1</property>
-                    <text-property name="displayName">item1</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["item1"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">item2</property>
-                    <text-property name="displayName">item2</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["item2"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">properties1</property>
-                    <text-property name="displayName">properties1</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["properties1"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">properties2</property>
-                    <text-property name="displayName">properties2</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["properties2"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">tableCheck</property>
-                    <text-property name="displayName">tableCheck</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["tableCheck"]</expression>
-                    <property name="dataType">integer</property>
-                </structure>
-                <structure>
-                    <property name="name">displayProperties1</property>
-                    <text-property name="displayName">displayProperties1</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["displayProperties1"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">displayProperties2</property>
-                    <text-property name="displayName">displayProperties2</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["displayProperties2"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-            </list-property>
-            <column id="1697">
-                <property name="width">0.2916666666666667in</property>
-            </column>
-            <column id="1699">
-                <property name="style">beCPG-table-col</property>
-                <property name="width">5.053571428571429in</property>
-            </column>
-            <column id="1700">
-                <property name="style">beCPG-table-col</property>
-                <property name="width">4.857142857142857in</property>
-            </column>
-            <group id="1721">
-                <property name="groupName">NewTableGroup1</property>
-                <expression name="keyExpr" type="javascript">row["comparison"]</expression>
-                <structure name="toc">
-                    <expression name="expressionValue" type="javascript">row["comparison"]</expression>
-                </structure>
-                <property name="hideDetail">false</property>
-            </group>
-            <group id="1749">
-                <property name="groupName">NewTableGroup2</property>
-                <expression name="keyExpr" type="javascript">row["entityList"]</expression>
-                <structure name="toc">
-                    <expression name="expressionValue" type="javascript">row["entityList"]</expression>
-                </structure>
-                <property name="hideDetail">false</property>
-                <header>
-                    <row id="1750">
-                        <property name="style">beCPG-Group</property>
-                        <cell id="1751">
-                            <property name="colSpan">3</property>
-                            <property name="rowSpan">1</property>
-                            <data id="1734">
-                                <property name="fontSize">10pt</property>
-                                <property name="paddingTop">2pt</property>
-                                <property name="paddingLeft">2pt</property>
-                                <property name="paddingBottom">2pt</property>
-                                <property name="paddingRight">2pt</property>
-                                <structure name="stringFormat">
-                                    <property name="category">Unformatted</property>
-                                </structure>
-                                <property name="textAlign">center</property>
-                                <property name="display">block</property>
-                                <property name="resultSetColumn">comparison</property>
-                            </data>
-                        </cell>
-                    </row>
-                </header>
-            </group>
-            <detail>
-                <row id="1685">
-                    <property name="style">beCPG-table-row</property>
-                    <cell id="1686">
-                        <property name="textAlign">center</property>
-                        <image id="1771">
-                            <property name="height">16px</property>
-                            <property name="width">16px</property>
-                            <list-property name="visibility">
-                                <structure>
-                                    <property name="format">all</property>
-                                    <expression name="valueExpr" type="javascript">row["operator"]!="Modified"</expression>
-                                </structure>
-                            </list-property>
-                            <property name="source">embed</property>
-                            <property name="imageName">Modified.png</property>
-                        </image>
-                        <image id="1825">
-                            <property name="height">16px</property>
-                            <property name="width">16px</property>
-                            <list-property name="visibility">
-                                <structure>
-                                    <property name="format">all</property>
-                                    <expression name="valueExpr" type="javascript">row["operator"]!="Removed"</expression>
-                                </structure>
-                            </list-property>
-                            <property name="source">embed</property>
-                            <property name="imageName">Removed.png</property>
-                        </image>
-                        <image id="1824">
-                            <property name="height">16px</property>
-                            <property name="width">16px</property>
-                            <list-property name="visibility">
-                                <structure>
-                                    <property name="format">all</property>
-                                    <expression name="valueExpr" type="javascript">row["operator"]!="Added"</expression>
-                                </structure>
-                            </list-property>
-                            <property name="source">embed</property>
-                            <property name="imageName">Added.png</property>
-                        </image>
-                        <image id="1823">
-                            <property name="height">16px</property>
-                            <property name="width">16px</property>
-                            <list-property name="visibility">
-                                <structure>
-                                    <property name="format">all</property>
-                                    <expression name="valueExpr" type="javascript">row["operator"]!="Replaced"</expression>
-                                </structure>
-                            </list-property>
-                            <property name="source">embed</property>
-                            <property name="imageName">Replaced.png</property>
-                        </image>
-                        <image id="1826">
-                            <property name="height">16px</property>
-                            <property name="width">16px</property>
-                            <list-property name="visibility">
-                                <structure>
-                                    <property name="format">all</property>
-                                    <expression name="valueExpr" type="javascript">row["operator"]!="Equal"</expression>
-                                </structure>
-                            </list-property>
-                            <property name="source">embed</property>
-                            <property name="imageName">Equal.png</property>
-                        </image>
-                    </cell>
-                    <cell id="1688">
-                        <text id="3300">
-                            <property name="style">beCPG-table-row-header</property>
-                            <property name="fontSize">9pt</property>
-                            <property name="fontWeight">normal</property>
-                            <property name="fontStyle">normal</property>
-                            <property name="color">black</property>
-                            <property name="contentType">html</property>
-                            <text-property name="content"><![CDATA[&amp;nbsp;&amp;nbsp;<div style="font-size: 1px; display: inline; float: left; width: <VALUE-OF>(row["depthLevel"]-1)*20</VALUE-OF>px;">&amp;nbsp;</div><B><I><VALUE-OF>row["item1"]</VALUE-OF>&amp;nbsp;&amp;nbsp;</I></B><VALUE-OF>if(row["entityList"] != "Contenu"){row["displayProperties1"];}</VALUE-OF>]]></text-property>
-                        </text>
-                    </cell>
-                    <cell id="1689">
-                        <property name="borderLeftColor">#3EA1E6</property>
-                        <property name="borderLeftStyle">solid</property>
-                        <property name="borderLeftWidth">thin</property>
-                        <text id="3302">
-                            <property name="style">beCPG-table-row-header</property>
-                            <property name="fontSize">9pt</property>
-                            <property name="fontWeight">normal</property>
-                            <property name="fontStyle">normal</property>
-                            <property name="color">black</property>
-                            <property name="contentType">html</property>
-                            <text-property name="content"><![CDATA[&amp;nbsp;&amp;nbsp;<div style="font-size: 1px; display: inline; float: left; width: <VALUE-OF>(row["depthLevel"]-1)*20</VALUE-OF>px;">&amp;nbsp;</div><B><I><VALUE-OF>row["item2"]</VALUE-OF>&amp;nbsp;&amp;nbsp;</I></B><VALUE-OF>if(row["entityList"] != "Contenu"){row["displayProperties2"];}</VALUE-OF>]]></text-property>
-                        </text>
-                    </cell>
-                </row>
-            </detail>
-        </table>
     </body>
     <list-property name="images">
         <structure>

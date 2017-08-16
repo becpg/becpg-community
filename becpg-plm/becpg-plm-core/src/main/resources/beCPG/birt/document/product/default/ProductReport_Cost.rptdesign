@@ -32,7 +32,7 @@
     </list-property>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="452">
-            <property name="FILELIST">/opt/becpg/workspace/compagnie-patissiere/reports/datasource.xml</property>
+            <property name="FILELIST">src/main/resources/beCPG/birt/document/product/default/ProductReport.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -1590,7 +1590,7 @@ row["compoListProduct"]
             <list-property name="computedColumns">
                 <structure>
                     <property name="name">costPerKilo</property>
-                    <expression name="expression">if(row["itemType"] == "finishedProduct"){
+                    <expression name="expression">if(row["itemType"] == "bcpg:finishedProduct"){
 row["costListValuePerProduct"] / row["netWeight"]
 }
 else if(row["costListUnit"].indexOf("/kg") > 0){
@@ -1899,7 +1899,7 @@ row["costListValuePerProduct"] * row["nbProductsPkgLevel3"]
                     <property name="name">costPerProduct</property>
                     <expression name="expression">var qty = 0;
 
-if(row["itemTypeEntity"] == "finishedProduct"){
+if(row["itemTypeEntity"] == "bcpg:finishedProduct"){
 qty= row["packagingListQtyForProduct"];
 }
 else if(row["packagingListUnit"]=="g"){
@@ -3645,7 +3645,7 @@ dataSetRow["versionLabel"]
                 <structure>
                     <property name="name">costListValuePerProduct</property>
                     <text-property name="displayName">costListValuePerProduct</text-property>
-                    <expression name="expression" type="javascript">if(dataSetRow["itemType"] == "finishedProduct"){
+                    <expression name="expression" type="javascript">if(dataSetRow["itemType"] == "bcpg:finishedProduct"){
 dataSetRow["costListValuePerProduct"]
 }
 else if(dataSetRow["costListUnit"].indexOf("/P") > 0){
