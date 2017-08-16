@@ -53,6 +53,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	protected static final String PARAM_PATH = "path";
 	protected static final String PARAM_FORMAT = "format";
 	protected static final String PARAM_NODEREF = "nodeRef";
+	protected static final String PARAM_ALL_VERSION = "allVersion";
 
 	/** http://localhost:8080/alfresco/services/becpg/remote/entity **/
 	protected static final String PARAM_CALLBACK = "callback";
@@ -85,6 +86,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
+	
 
 	protected List<NodeRef> findEntities(WebScriptRequest req) {
 
@@ -100,10 +102,18 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 				logger.error("Cannot parse page argument", e);
 			}
 		}
-
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery();
 
-		queryBuilder.ofType(BeCPGModel.TYPE_ENTITY_V2).excludeDefaults();
+		if(query!=null && !query.toUpperCase().contains("TYPE")){
+			queryBuilder.ofType(BeCPGModel.TYPE_ENTITY_V2);
+		}
+		
+		if(req.getParameter(PARAM_ALL_VERSION)== null || "false".equalsIgnoreCase(req.getParameter(PARAM_ALL_VERSION))){
+			queryBuilder.excludeDefaults();
+		} else {
+			queryBuilder.excludeSystems();
+		}
+		
 
 		if (maxResults == null) {
 			queryBuilder.maxResults(RepoConsts.MAX_RESULTS_256);
@@ -120,6 +130,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 
 		}
 
+		
 		List<NodeRef> refs = queryBuilder.list();
 
 		if (refs != null && !refs.isEmpty()) {
