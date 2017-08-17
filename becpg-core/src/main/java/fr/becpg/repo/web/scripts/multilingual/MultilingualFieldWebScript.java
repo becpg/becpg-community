@@ -118,7 +118,7 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 				// Save
 				MLText mlText = null;
 				
-				Locale contentLocale = I18NUtil.getContentLocaleLang();
+				Locale contentLocale = I18NUtil.getContentLocale();
 				String language = contentLocale.getLanguage();
 		    	Locale  toSaveUnderLocale= new Locale(language);
 		    	if(MLTextHelper.isSupportedLocale(contentLocale)){

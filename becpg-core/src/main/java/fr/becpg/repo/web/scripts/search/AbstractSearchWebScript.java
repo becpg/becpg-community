@@ -125,7 +125,8 @@ public abstract class AbstractSearchWebScript extends AbstractWebScript {
 			queryBuilder = advSearchService.createSearchQuery(datatype, term, tag, isRepo, siteId, containerId);
 		}
 
-		queryBuilder.addSort(sortMap);
+		queryBuilder.andOperator().addSort(sortMap);
+		
 
 		return advSearchService.queryAdvSearch(datatype, queryBuilder, criteriaMap, maxResults != null ? maxResults : RepoConsts.MAX_RESULTS_256);
 
