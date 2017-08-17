@@ -181,13 +181,18 @@ public class EntityListValuePlugin implements ListValuePlugin {
 
 		queryBuilder.ofType(type).excludeDefaults().inSearchTemplate(template).locale(I18NUtil.getContentLocale()).andOperator().ftsLanguage();
 
+		
+
 		if (!isAllQuery(query)) {
+			StringBuilder ftsQuery = new StringBuilder();
 			if (query.length() > 2) {
-				queryBuilder.andFTSQuery(prepareQuery(query.trim() + BeCPGQueryHelper.SUFFIX_ALL));
+				ftsQuery.append("("+prepareQuery(query.trim())+") OR ");
 			}
-			queryBuilder.andFTSQuery(query);
+			ftsQuery.append("("+query+")");
+			queryBuilder.andFTSQuery(ftsQuery.toString());
 		}
 
+		
 		if ((path != null) && !path.isEmpty()) {
 			queryBuilder.inPath(path);
 		}
