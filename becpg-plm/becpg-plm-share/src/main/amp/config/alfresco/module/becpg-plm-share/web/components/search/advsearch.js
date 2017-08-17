@@ -293,7 +293,7 @@
 					var name = element.name;
 					if (name != undefined && name !== "-") {
 						var savedValue = savedQuery[name];
-						
+		
 						if (savedValue !== undefined && savedValue !== "") {
 							if (element.type === "checkbox" || element.type === "radio") {
 								element.checked = (savedValue === "true");
@@ -316,6 +316,8 @@
 									// control will handle it
 									element.value = savedValue;
 								}
+							} else if (name.indexOf("assoc_") != 0) {
+								element.value = savedValue;
 							}
 							
 							var cleanElementId = element.id.split("-")[0];
