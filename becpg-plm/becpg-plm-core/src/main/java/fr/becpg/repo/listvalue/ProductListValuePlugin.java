@@ -90,10 +90,9 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 
 		if (!isAllQuery(query)) {
 			if (query.length() > 2) {
-				ftsQuery.append(prepareQuery(query.trim()));
-				ftsQuery.append(" ");
+				ftsQuery.append("("+prepareQuery(query.trim())+") OR ");
 			}
-			ftsQuery.append(query);
+			ftsQuery.append("("+query+")");
 
 			ftsQuery.append(")^10 AND +(");
 		}
