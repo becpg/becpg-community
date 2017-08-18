@@ -8,12 +8,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.repo.model.Repository;
-import org.alfresco.repo.node.MLPropertyInterceptor;
-import org.alfresco.repo.policy.BehaviourFilter;
-import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
-import org.alfresco.service.cmr.dictionary.DictionaryService;
-import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.ContentReader;
@@ -23,21 +19,15 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceException;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.service.transaction.TransactionService;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StopWatch;
-
-import com.sun.star.uno.RuntimeException;
 
 import fr.becpg.common.csv.CSVReader;
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
-import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.helper.BeCPGQueryHelper;
 import fr.becpg.repo.helper.PropertiesHelper;
 import fr.becpg.repo.listvalue.ListValueEntry;
@@ -68,16 +58,10 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 	private Repository repositoryHelper;
 
 	@Autowired
-	private DictionaryService dictionaryService;
+	private DictionaryDAO dictionaryDAO;
 
 	@Autowired
 	private NamespaceService NamespaceService;
-
-	@Autowired
-	private TransactionService transactionService;
-
-	@Autowired
-	private BehaviourFilter policyBehaviourFilter;
 
 	private final static Log logger = LogFactory.getLog(NutDatabaseServiceImpl.class);
 	private final static String DATABASES_FOLDER = "/app:company_home/cm:System/cm:NutritionalDatabases";
@@ -104,91 +88,53 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 
 			int nameColumn = extractNameColumnIndex(headerRow);
 
-			matches.addAll(getColumn(dataBaseFile, nameColumn).stream().filter(res -> nameMatches(query, res.toString())).limit(100)
+			matches.addAll(getColumn(dataBaseFile, nameColumn).stream().filter(res -> nameMatches(query, res.getValue())).limit(100)
 					.collect(Collectors.toList()));
 
 			logger.debug("suggestion for " + query + ", found " + matches.size() + " results");
-		} else {
-			logger.debug("database noderef is null");
+			return new ListValuePage(matches, pageNum, pageSize, new IdentifiedValueListExtractor());
 		}
-
-		return new ListValuePage(matches, pageNum, pageSize, new IdentifiedValueListExtractor());
+		logger.debug("database noderef is null");
+		return null;
 	}
 
 	@Override
 	public List<NutListDataItem> getNuts(NodeRef databaseFile, String id) {
 		List<NutListDataItem> ret = new ArrayList<>();
 		logger.debug("getting nut list for RM of id " + id + " in file " + nodeService.getProperty(databaseFile, ContentModel.PROP_NAME));
+		String[] headerRow = getHeaderRow(databaseFile);
+		int idColumn = extractIdentifierColumnIndex(headerRow);
+		int nameColumn = extractNameColumnIndex(headerRow);
+		PropertyFormats propertyFormats = new PropertyFormats(true);
 
-		if ((id != null) && (id.length() > 0)) {
-			String[] headerRow = getHeaderRow(databaseFile);
-			int idColumn = extractIdentifierColumnIndex(headerRow);
-			int nameColumn = extractNameColumnIndex(headerRow);
-			PropertyFormats propertyFormats = new PropertyFormats(true);
+		String[] values = getLineByIndex(databaseFile, id, idColumn);
+		for (int i = 0; i < headerRow.length; ++i) {
 
-			String[] values = getLineByIndex(databaseFile, id, idColumn);
-			for (int i = 0; i < headerRow.length; ++i) {
+			if (!"COLUMNS".equals(headerRow[i]) && (i != idColumn) && (i != nameColumn)
+					&& (!isInDictionary(headerRow[i]) || !headerRow[i].contains("_"))) {
+				NodeRef nutNodeRef = getNutNodeRef(headerRow[i]);
+				if (nutNodeRef != null) {
+					try {
+						String nutValueToken = values[i];
+						Number nutValue = null;
+						if ((nutValueToken != null) && !nutValueToken.isEmpty()) {
 
-				if (!"COLUMNS".equals(headerRow[i]) && (i != idColumn) && (i != nameColumn)
-						&& (!isInDictionary(headerRow[i]) || !headerRow[i].contains("_"))) {
-					NodeRef nutNodeRef = getNutNodeRef(headerRow[i]);
-					if (nutNodeRef != null) {
-						try {
-							String nutValueToken = values[i];
-							Number nutValue = null;
-							if ((nutValueToken != null) && !nutValueToken.isEmpty()) {
-
-								nutValue = propertyFormats.parseDecimal(nutValueToken);
-							}
-
-							NutListDataItem nut = new NutListDataItem(null, null, null, null, null, null, nutNodeRef, false);
-
-							String newMethod = getFileName(databaseFile);
-							PropertyDefinition methodDef = dictionaryService.getProperty(PLMModel.PROP_NUT_METHOD);
-
-							if (methodDef != null) {
-								List<ConstraintDefinition> methodConstraints = methodDef.getConstraints();
-								for (ConstraintDefinition constraint : methodConstraints) {
-									if (constraint.getConstraint() instanceof DynListConstraint) {
-										DynListConstraint dynConstraint = (DynListConstraint) constraint.getConstraint();
-										List<String> allowedValues = dynConstraint.getAllowedValues();
-										logger.debug("Allowed values: " + allowedValues);
-
-										for (String value : allowedValues) {
-											logger.debug("current value: " + value);
-											if (newMethod.contains(value) && !"".equals(value)) {
-												logger.debug("value matches method named " + newMethod);
-												nut.setMethod(value);
-												break;
-											}
-										}
-										break;
-									}
-								}
-							} else {
-								logger.debug("Can't find method definition for " + PLMModel.PROP_NUT_METHOD);
-							}
-
-							if (nutValue != null) {
-								nut.setManualValue(nutValue.doubleValue());
-							}
-							;
-
-							// nutListGroup
-							String nutGroup = (String) nodeService.getProperty(nutNodeRef, PLMModel.PROP_NUTGROUP);
-
-							nut.setGroup(nutGroup);
-							nut.setSort(i);
-							nut.setDepthLevel(1);
-							ret.add(nut);
-						} catch (ParseException e) {
-							throw new RuntimeException("unable to parse value " + values[i], e);
+							nutValue = propertyFormats.parseDecimal(nutValueToken);
 						}
+
+						NutListDataItem nut = new NutListDataItem(null, null, null, null, null, null, nutNodeRef,
+								false);
+						
+						if(nutValue != null){
+							nut.setManualValue(nutValue.doubleValue());
+						}
+						
+						ret.add(nut);
+					} catch (ParseException e) {
+						throw new IllegalStateException("unable to parse value " + values[i], e);
 					}
 				}
 			}
-		} else {
-			logger.debug("invalid id (null or empty string) ");
 		}
 
 		return ret;
@@ -197,98 +143,68 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 	@Override
 	public NodeRef createProduct(NodeRef file, String id, NodeRef dest) {
 
-		StopWatch watch = null;
+		String[] headerRow = getHeaderRow(file);
 
-		boolean mlAware = MLPropertyInterceptor.isMLAware();
-		try {
+		int idColumn = extractIdentifierColumnIndex(headerRow);
+		int nameColumn = extractNameColumnIndex(headerRow);
 
-			if (logger.isInfoEnabled()) {
-				watch = new StopWatch();
-				watch.start();
-			}
+		NodeRef productNode = null;
 
-			MLPropertyInterceptor.setMLAware(true);
-			return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		String[] idSplits = id.split(",");
+		for (String idSplit : idSplits) {
+			productNode = nodeService.createNode(dest, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, PLMModel.TYPE_RAWMATERIAL)
+					.getChildRef();
 
-					//Only for transaction do not reenable it
-					policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-					policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
+			ProductData productData = alfrescoRepository.findOne(productNode);
+			RawMaterialData dat = (RawMaterialData) productData;
 
-					String[] headerRow = getHeaderRow(file);
+			if (dat != null) {
 
-					int idColumn = extractIdentifierColumnIndex(headerRow);
-					int nameColumn = extractNameColumnIndex(headerRow);
+				String name = getProductName(file, idSplit, idColumn, nameColumn);
 
-					NodeRef productNode = null;
+				if (name != null) {
+					dat.setName(PropertiesHelper.cleanName(name));
+				}
 
-					String[] idSplits = id.split(",");
-					for (String idSplit : idSplits) {
-						productNode = nodeService
-								.createNode(dest, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, PLMModel.TYPE_RAWMATERIAL).getChildRef();
+				for (int i = 1; i < headerRow.length; ++i) {
+					if (isInDictionary(headerRow[i]) || (headerRow[i].contains("_") && (isInDictionary(headerRow[i]
+							.split("_")[0]))) ) {
+						String value = extractValueById(file, idSplit, i);
+						logger.debug("setting property qnamed  \"" + headerRow[i] + "\" to value  \"" + value + "\"");
+						QName attributeQName = QName.createQName(headerRow[i], NamespaceService);
 
-						ProductData productData = alfrescoRepository.findOne(productNode);
-						RawMaterialData dat = (RawMaterialData) productData;
-
-						if (dat != null) {
-
-							String name = getProductName(file, idSplit, idColumn, nameColumn);
-
-							if (name != null) {
-								dat.setName(PropertiesHelper.cleanName(name));
+						if (PLMModel.TYPE_SUPPLIER.equals(attributeQName)) {
+							// supplier
+							BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(PLMModel.TYPE_SUPPLIER)
+									.andPropEquals(PLMModel.TYPE_SUPPLIER, extractValueById(file, idSplit, i));
+							List<NodeRef> suppliers = queryBuilder.list();
+							if (!suppliers.isEmpty()) {
+								logger.info("Setting suppliers to " + suppliers);
+								dat.setSuppliers(suppliers);
 							}
+						} else if (PLMModel.PROP_PRODUCT_HIERARCHY1.equals(attributeQName)
+								|| PLMModel.PROP_PRODUCT_HIERARCHY2.equals(attributeQName)) {
+							// hierarchy
+							/*
+							 * HierarchyService hierarchyService;
+							 * hierarchyService.getHierarchiesByPath(
+							 * HIERARCHY_RAWMATERIAL_PATH, null, value);
+							 */
+						} else if (dictionaryDAO.getProperty(attributeQName) != null) {
 
-							for (int i = 1; i < headerRow.length; ++i) {
-								if (isInDictionary(headerRow[i]) || (headerRow[i].contains("_") && (isInDictionary(headerRow[i].split("_")[0])))) {
-									String value = extractValueById(file, idSplit, i);
-									logger.debug("setting property qnamed  \"" + headerRow[i] + "\" to value  \"" + value + "\"");
-									QName attributeQName = QName.createQName(headerRow[i], NamespaceService);
-
-									if (PLMModel.TYPE_SUPPLIER.equals(attributeQName)) {
-										// supplier
-										BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(PLMModel.TYPE_SUPPLIER)
-												.andPropEquals(PLMModel.TYPE_SUPPLIER, extractValueById(file, idSplit, i));
-										List<NodeRef> suppliers = queryBuilder.list();
-										if (!suppliers.isEmpty()) {
-											logger.debug("Setting suppliers to " + suppliers);
-											dat.setSuppliers(suppliers);
-										}
-									} else if (PLMModel.PROP_PRODUCT_HIERARCHY1.equals(attributeQName)
-											|| PLMModel.PROP_PRODUCT_HIERARCHY2.equals(attributeQName)) {
-										// hierarchy
-										/*
-										 * HierarchyService hierarchyService;
-										 * hierarchyService.
-										 * getHierarchiesByPath(
-										 * HIERARCHY_RAWMATERIAL_PATH, null,
-										 * value);
-										 */
-									} else if (dictionaryService.getProperty(attributeQName) != null) {
-										nodeService.setProperty(productNode, QName.createQName(headerRow[i], NamespaceService), value);
-									}
-								}
-							}
-
-							List<NutListDataItem> nutList = getNuts(file, idSplit);
-							dat.setNutList(nutList);
-							alfrescoRepository.save(dat);
+							nodeService.setProperty(productNode, QName.createQName(headerRow[i], NamespaceService), value);
 						}
-
 					}
+				}
 
-					return productNode;
-
-			}, false, false);
-
-		} finally {
-			MLPropertyInterceptor.setMLAware(mlAware);
-
-			if (logger.isInfoEnabled()) {
-				watch.stop();
-				logger.info("createProduct run in  " + watch.getTotalTimeSeconds() + " seconds ");
-
+				List<NutListDataItem> nutList = getNuts(file, idSplit);
+				dat.setNutList(nutList);
+				alfrescoRepository.save(dat);
 			}
 
 		}
+
+		return productNode;
 	}
 
 	private CSVReader getCSVReaderFromNodeRef(NodeRef file) {
@@ -324,7 +240,7 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 			}
 			return res;
 		} catch (IOException e) {
-			throw new RuntimeException("Error reading column " + columnIndex, e);
+			throw new IllegalStateException("Error reading column " + columnIndex, e);
 		}
 
 	}
@@ -374,7 +290,7 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 			}
 			return new String[0];
 		} catch (IOException e) {
-			throw new RuntimeException("Error reading line", e);
+			throw new IllegalStateException("Error reading line", e);
 		}
 	}
 
@@ -397,7 +313,7 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 			csvReader.close();
 			return res;
 		} catch (IOException e) {
-			throw new RuntimeException("Error reading product name", e);
+			throw new IllegalStateException("Error reading product name", e);
 		}
 	}
 
@@ -453,6 +369,10 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 			return id;
 		}
 
+		public String getValue() {
+			return value;
+		}
+
 		@Override
 		public String toString() {
 			return id + " - " + value;
@@ -474,14 +394,14 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 	}
 
 	private boolean nameMatches(String query, String name) {
-		return BeCPGQueryHelper.isQueryMatch(query, name, dictionaryService);
+		return BeCPGQueryHelper.isQueryMatch(query, name, dictionaryDAO);
 	}
 
 	private boolean isInDictionary(String str) {
 		try {
-			return ((dictionaryService.getProperty(QName.createQName(str, NamespaceService)) != null)
-					|| (dictionaryService.getAssociation(QName.createQName(str, NamespaceService)) != null));
-		} catch (NamespaceException e) {
+		return ((dictionaryDAO.getProperty(QName.createQName(str, NamespaceService)) != null)
+				|| (dictionaryDAO.getAssociation(QName.createQName(str, NamespaceService)) != null));
+		} catch(NamespaceException e){
 			return false;
 		}
 	}
@@ -492,7 +412,7 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 		if ((line != null) && (line.length > column)) {
 			return line[column];
 		} else {
-			throw new RuntimeException("error extracting value from cell from id " + id + " and column " + column);
+			throw new IllegalStateException("error extracting value from cell from id " + id + " and column " + column);
 		}
 	}
 
@@ -500,10 +420,6 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 	public String getProductName(NodeRef file, String id) {
 		String[] headerRow = getHeaderRow(file);
 		return getProductName(file, id, extractIdentifierColumnIndex(headerRow), extractNameColumnIndex(headerRow));
-	}
-
-	public String getFileName(NodeRef node) {
-		return FilenameUtils.removeExtension((String) nodeService.getProperty(node, ContentModel.PROP_NAME));
 	}
 
 }
