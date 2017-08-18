@@ -505,19 +505,19 @@ public class LabelingFormulaContext {
 		StringBuilder ret = new StringBuilder();
 		for (NodeRef allergen : allergens) {
 			if (getAllergens().contains(allergen)) {
-				String allergenName = uncapitalize(getAllergenName(allergen));
+				String allergenName = getAllergenName(allergen);
 				if ((allergenName != null) && !allergenName.isEmpty()) {
 					if (ret.length() > 0) {
 						ret.append(defaultSeparator);
 					} else {
-						Matcher ma = Pattern.compile("\\b(" + Pattern.quote(allergenName) + "(s?))\\b").matcher(uncapitalize(ingLegalName));
+						Matcher ma = Pattern.compile("\\b(" + Pattern.quote(allergenName) + "(s?))\\b", Pattern.CASE_INSENSITIVE).matcher(ingLegalName);
 						if (ma.find() && (ma.group(1) != null)) {
 							return ma.replaceAll(allergenReplacementPattern);
 						} else {
 							for (NodeRef subAllergen : associationService.getTargetAssocs(allergen, PLMModel.ASSOC_ALLERGENSUBSETS)) {
 								String subAllergenName = uncapitalize(getAllergenName(subAllergen));
 								if ((subAllergenName != null) && !subAllergenName.isEmpty()) {
-									ma = Pattern.compile("\\b(" + Pattern.quote(subAllergenName) + "(s?))\\b").matcher(uncapitalize(ingLegalName));
+									ma = Pattern.compile("\\b(" + Pattern.quote(subAllergenName) + "(s?))\\b", Pattern.CASE_INSENSITIVE).matcher(ingLegalName);
 									if (ma.find() && (ma.group(1) != null)) {
 										return ma.replaceAll(allergenReplacementPattern);
 									}
