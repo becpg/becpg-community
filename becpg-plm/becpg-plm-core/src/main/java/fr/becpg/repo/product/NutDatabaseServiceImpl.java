@@ -170,7 +170,7 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 					if (isInDictionary(headerRow[i]) || (headerRow[i].contains("_") && (isInDictionary(headerRow[i]
 							.split("_")[0]))) ) {
 						String value = extractValueById(file, idSplit, i);
-						logger.info("setting property qnamed  \"" + headerRow[i] + "\" to value  \"" + value + "\"");
+						logger.debug("setting property qnamed  \"" + headerRow[i] + "\" to value  \"" + value + "\"");
 						QName attributeQName = QName.createQName(headerRow[i], NamespaceService);
 
 						if (PLMModel.TYPE_SUPPLIER.equals(attributeQName)) {
