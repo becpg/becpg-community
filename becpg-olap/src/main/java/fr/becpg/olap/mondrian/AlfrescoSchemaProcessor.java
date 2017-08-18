@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2017 beCPG. 
+ * Copyright (C) 2010-2016 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -62,13 +62,18 @@ public class AlfrescoSchemaProcessor implements DynamicSchemaProcessor {
 			try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
 				HttpClientContext httpContext = HttpClientContext.create();
 
-				UsernamePasswordCredentials creds = new UsernamePasswordCredentials(instance.getTenantUser(), instance.getTenantPassword());
-				CredentialsProvider credsProvider = new BasicCredentialsProvider();
-				credsProvider.setCredentials(new AuthScope(AuthScope.ANY_HOST, AuthScope.ANY_PORT), creds);
-				httpContext.setCredentialsProvider(credsProvider);
+				String ticket = ((AlfrescoUserDetails) auth.getPrincipal()).getPassword();
+				
+				if(ticket==null || ticket.isEmpty()){
+					UsernamePasswordCredentials creds = new UsernamePasswordCredentials(instance.getTenantUser(), instance.getTenantPassword());
+					CredentialsProvider credsProvider = new BasicCredentialsProvider();
+					credsProvider.setCredentials(new AuthScope(AuthScope.ANY_HOST, AuthScope.ANY_PORT), creds);
+					httpContext.setCredentialsProvider(credsProvider);
+				}
 				GetMondrianSchemaCommand schemaCommand = new GetMondrianSchemaCommand(instance.getInstanceUrl());
 
-				return schemaCommand.getSchema(httpClient, httpContext, instance.getId());
+				return schemaCommand.getSchema(httpClient, httpContext, instance.getId(), ticket);
+				
 			}
 
 		}
