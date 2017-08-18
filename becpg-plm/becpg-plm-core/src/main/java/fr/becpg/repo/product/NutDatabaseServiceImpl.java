@@ -220,7 +220,7 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 		boolean mlAware = MLPropertyInterceptor.isMLAware();
 		try {
 
-			if (logger.isInfoEnabled()) {
+			if (logger.isDebugEnabled()) {
 				watch = new StopWatch();
 				watch.start();
 			}
@@ -303,9 +303,9 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 		} finally {
 			MLPropertyInterceptor.setMLAware(mlAware);
 
-			if (logger.isInfoEnabled()) {
+			if (logger.isDebugEnabled()) {
 				watch.stop();
-				logger.info("createProduct run in  " + watch.getTotalTimeSeconds() + " seconds ");
+				logger.debug("createProduct run in  " + watch.getTotalTimeSeconds() + " seconds ");
 
 			}
 
