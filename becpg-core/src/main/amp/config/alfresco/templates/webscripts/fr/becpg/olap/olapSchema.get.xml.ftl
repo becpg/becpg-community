@@ -29,9 +29,9 @@
 		<#if isAdmin>
 			<Table name="becpg_public_statistics" />
 		<#else>
-			<Table name="becpg_public_statistics" >
+			<Table name="becpg_public_statistics" alias="becpg_public_statistics" >
 				<SQL dialect="generic">
-					instance_id = ${instanceId}
+					becpg_public_statistics.instance_id = ${instanceId}
 				</SQL>
 			</Table>
 		</#if>
@@ -90,9 +90,9 @@
 		<#if isAdmin>
 			<Table name="becpg_public_requirements" />
 		<#else>
-			<Table name="becpg_public_requirements">
+			<Table name="becpg_public_requirements" alias="becpg_public_requirements">
 				<SQL dialect="generic">
-					instanceId = ${instanceId}
+					becpg_public_requirements.instanceId = ${instanceId}
 				</SQL>
 			</Table>
 		</#if>
@@ -240,9 +240,9 @@
 		<#if isAdmin>
 			<Table name="becpg_public_nc"/>
 		<#else>
-			<Table name="becpg_public_nc">
+			<Table name="becpg_public_nc" alias="becpg_public_nc">
 				<SQL dialect="generic">
-					instanceId = ${instanceId}
+					becpg_public_nc.instanceId = ${instanceId}
 				</SQL>
 			</Table>
 		</#if>
@@ -338,14 +338,14 @@
 					</Join>
 				<#else>
 					<Join leftKey="id" rightKey="id" >
-						<Table name="becpg_public_nc_products">
+						<Table name="becpg_public_nc_products" alias="becpg_public_nc_products">
 							<SQL dialect="generic">
-								instanceId = ${instanceId}
+								becpg_public_nc_products.instanceId = ${instanceId}
 							</SQL>
 						</Table>
-						<Table name="becpg_public_products">
+						<Table name="becpg_public_products" alias="becpg_public_products">
 							<SQL dialect="generic">
-								instanceId = ${instanceId}
+								becpg_public_products.instanceId = ${instanceId}
 							</SQL>
 						</Table>
 					</Join>
@@ -366,9 +366,9 @@
 				<#if isAdmin>
 					<Table name="becpg_public_clients" />
 				<#else>
-					<Table name="becpg_public_clients">
+					<Table name="becpg_public_clients" alias="becpg_public_clients">
 						<SQL dialect="generic">
-							instanceId = ${instanceId}
+							becpg_public_clients.instanceId = ${instanceId}
 						</SQL>
 					</Table>
 				</#if>
@@ -395,9 +395,9 @@
 		<#if isAdmin>
 			<Table name="becpg_public_project_steps" />
 		<#else>
-			<Table name="becpg_public_project_steps">
+			<Table name="becpg_public_project_steps" alias="becpg_public_project_steps">
 				<SQL dialect="generic">
-					instanceId = ${instanceId}
+					becpg_public_project_steps.instanceId = ${instanceId}
 				</SQL>
 			</Table>
 		</#if>
@@ -408,9 +408,9 @@
 				<#if isAdmin>
 					<Table name="becpg_public_projects" />
 				<#else>
-					<Table name="becpg_public_projects">
+					<Table name="becpg_public_projects" alias="becpg_public_projects">
 						<SQL dialect="generic">
-							instanceId = ${instanceId}
+							becpg_public_projects.instanceId = ${instanceId}
 						</SQL>
 					</Table>
 				</#if>
@@ -447,9 +447,9 @@
 				<#if isAdmin>
 					<Table name="becpg_public_projects"/>
 				<#else>
-					<Table name="becpg_public_projects">
+					<Table name="becpg_public_projects" alias="becpg_public_projects">
 						<SQL dialect="generic">
-							instanceId = ${instanceId}
+							becpg_public_projects.instanceId = ${instanceId}
 						</SQL>
 					</Table>	
 				</#if>
@@ -508,9 +508,9 @@
 		<#if isAdmin>
 			<Table name="becpg_public_project_score"/>
 		<#else>
-			<Table name="becpg_public_project_score">
+			<Table name="becpg_public_project_score" alias="becpg_public_project_score">
 				<SQL dialect="generic">
-					instanceId = ${instanceId}
+					becpg_public_project_score.instanceId = ${instanceId}
 				</SQL>
 			</Table>
 		</#if>
@@ -520,9 +520,9 @@
 				<#if isAdmin>
 					<Table name="becpg_public_projects" />
 				<#else>
-					<Table name="becpg_public_projects">
+					<Table name="becpg_public_projects" alias="becpg_public_projects">
 						<SQL dialect="generic">
-							instanceId = ${instanceId}
+							projects.instanceId = ${instanceId}
 						</SQL>
 					</Table>
 				</#if>
@@ -542,9 +542,9 @@
 				<#if isAdmin>
 					<Table name="becpg_public_projects"/>
 				<#else>
-					<Table name="becpg_public_projects">
+					<Table name="becpg_public_projects" alias="becpg_public_projects">
 						<SQL dialect="generic">
-							instanceId = ${instanceId}
+							becpg_public_projects.instanceId = ${instanceId}
 						</SQL>
 					</Table>
 				
@@ -575,9 +575,9 @@
 		<#if isAdmin>
 			<Table name="becpg_public_projects" />
 		<#else>
-			<Table name="becpg_public_projects">
+			<Table name="becpg_public_projects" alias="becpg_public_projects">
 				<SQL dialect="generic">
-					instanceId = ${instanceId}
+					becpg_public_projects.instanceId = ${instanceId}
 				</SQL>
 			</Table>
 		</#if>
@@ -647,14 +647,14 @@
 					</Join>
 				<#else>
 					<Join leftKey="id" rightKey="id" >
-						<Table name="becpg_public_project_entities">
+						<Table name="becpg_public_project_entities" alias="becpg_public_project_entities">
 							<SQL dialect="generic">
-							instanceId = ${instanceId}
+							becpg_public_project_entities.instanceId = ${instanceId}
 							</SQL>
 						</Table>
-						<Table name="becpg_public_products">
+						<Table name="becpg_public_products" alias="becpg_public_products">
 							<SQL dialect="generic">
-							instanceId = ${instanceId}
+							becpg_public_products.instanceId = ${instanceId}
 							</SQL>
 						</Table>
 					</Join>
@@ -750,9 +750,9 @@
 		<#if isAdmin>
 			<Table name="becpg_public_nutrients"/>
 		<#else>
-			<Table name="becpg_public_nutrients">
+			<Table name="becpg_public_nutrients" alias="becpg_public_nutrients">
 				<SQL dialect="generic">
-					instanceId = ${instanceId}
+					becpg_public_nutrients.instanceId = ${instanceId}
 				</SQL>
 			</Table>
 		</#if>
@@ -762,9 +762,9 @@
 			<#if isAdmin>
 				<Table name="becpg_public_products"/>
 			<#else>
-				<Table name="becpg_public_products">
+				<Table name="becpg_public_products" alias="becpg_public_products">
 					<SQL dialect="generic">
-						instanceId = ${instanceId}
+						becpg_public_products.instanceId = ${instanceId}
 					</SQL>
 				</Table>
 			</#if>
@@ -778,9 +778,9 @@
 			<#if isAdmin>
 				<Table name="becpg_public_products"/>
 			<#else>
-				<Table name="becpg_public_products">
+				<Table name="becpg_public_products" alias="becpg_public_products">
 					<SQL dialect="generic">
-						instanceId = ${instanceId}
+						becpg_public_products.instanceId = ${instanceId}
 					</SQL>
 				</Table>
 			</#if>
@@ -848,9 +848,9 @@
 		<#if isAdmin>
 			<Table name="becpg_public_products" />
 		<#else>
-			<Table name="becpg_public_products">
+			<Table name="becpg_public_products" alias="becpg_public_products">
 				<SQL dialect="generic">
-					instanceId = ${instanceId}
+					becpg_public_products.instanceId = ${instanceId}
 				</SQL>
 			</Table>
 		</#if>
@@ -898,9 +898,9 @@
 				<#if isAdmin>
 					<Table name="becpg_public_geo_origins"/>
 				<#else>
-					<Table name="becpg_public_geo_origins">
+					<Table name="becpg_public_geo_origins" alias="becpg_public_geo_origins">
 						<SQL dialect="generic">
-							instanceId = ${instanceId}
+							becpg_public_geo_origins.instanceId = ${instanceId}
 						</SQL>
 					</Table>
 				</#if>
@@ -932,9 +932,9 @@
 				<#if isAdmin>
 					<Table name="becpg_public_clients"/>
 				<#else>
-					<Table name="becpg_public_clients">
+					<Table name="becpg_public_clients" alias="becpg_public_clients">
 						<SQL dialect="generic">
-						instanceId = ${instanceId}
+						becpg_public_clients.instanceId = ${instanceId}
 						</SQL>
 					</Table>
 				</#if>
@@ -947,9 +947,9 @@
 				<#if isAdmin>
 					<Table name="becpg_public_suppliers"/>
 				<#else>
-					<Table name="becpg_public_suppliers">
+					<Table name="becpg_public_suppliers" alias="becpg_public_suppliers">
 						<SQL dialect="generic">
-							instanceId = ${instanceId}
+							becpg_public_suppliers.instanceId = ${instanceId}
 						</SQL>
 					</Table>
 				</#if>
@@ -962,9 +962,9 @@
 				<#if isAdmin>
 					<Table name="becpg_public_nutrients"/>
 				<#else>
-					<Table name="becpg_public_nutrients">
+					<Table name="becpg_public_nutrients" alias="becpg_public_nutrients">
 						<SQL dialect="generic">
-							instanceId = ${instanceId}
+							becpg_public_nutrients.instanceId = ${instanceId}
 						</SQL>
 					</Table>
 				</#if>
@@ -983,15 +983,15 @@
 		<Dimension type="StandardDimension" foreignKey="id" name="allergenVoluntary" caption="${msg("jsolap.allergenVoluntary.title")}">
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.allergen.caption")}" primaryKey="id" >
 				<#if isAdmin>
-					<Table name="becpg_public_allergens">
+					<Table name="becpg_public_allergens" alias="becpg_public_allergens">
 						<SQL dialect="generic">
-							isVoluntary = 1
+							becpg_public_allergens.isVoluntary = 1
 						</SQL>
 					</Table>
 				<#else>
-					<Table name="becpg_public_allergens">
-						<SQL dialect="generic">
-							isVoluntary = 1 AND instanceId = ${instanceId}
+					<Table name="becpg_public_allergens" alias="becpg_public_allergens">
+						<SQL dialect="generic" >
+							becpg_public_allergens.isVoluntary = 1 AND becpg_public_allergens.instanceId = ${instanceId}
 						</SQL>
 					</Table>
 				</#if>
@@ -1003,15 +1003,15 @@
 		<Dimension type="StandardDimension" foreignKey="id"  name="allergenInVoluntary" caption="${msg("jsolap.allergenInVoluntary.title")}">
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.allergen.caption")}" primaryKey="entity_fact_id" >
 				<#if isAdmin>
-					<Table name="becpg_public_allergens">
+					<Table name="becpg_public_allergens" alias="becpg_public_allergens">
 						<SQL dialect="generic">
-							isVoluntary = 0
+							becpg_public_allergens.isVoluntary = 0
 						</SQL>
 					</Table>
 				<#else>
-					<Table name="becpg_public_allergens">
+					<Table name="becpg_public_allergens" alias="becpg_public_allergens">
 						<SQL dialect="generic">
-							isVoluntary = 0 AND instanceId = ${instanceId}
+							becpg_public_allergens.isVoluntary = 0 AND becpg_public_allergens.instanceId = ${instanceId}
 						</SQL>
 					</Table>
 				</#if>
@@ -1027,9 +1027,9 @@
 				<#if isAdmin>
 					<Table name="becpg_public_ingredients" />
 				<#else>
-					<Table name="becpg_public_ingredients" >
+					<Table name="becpg_public_ingredients" alias="becpg_public_ingredients">
 						<SQL dialect="generic">
-							instanceId = ${instanceId}
+							becpg_public_ingredients.instanceId = ${instanceId}
 						</SQL>
 					</Table>
 				</#if>
@@ -1043,9 +1043,9 @@
 				<#if isAdmin>
 					<Table name="becpg_public_labelclaims" />
 				<#else>
-					<Table name="becpg_public_labelclaims" >
+					<Table name="becpg_public_labelclaims" alias="becpg_public_labelclaims" >
 						<SQL dialect="generic">
-							instanceId = ${instanceId}
+							becpg_public_labelclaims.instanceId = ${instanceId}
 						</SQL>
 					</Table>
 				</#if>
@@ -1063,14 +1063,14 @@
 					</Join>					
 				<#else>
 					<Join leftKey="entity_id" rightKey="id">
-						<Table name="becpg_public_composition">
+						<Table name="becpg_public_composition" alias="becpg_public_composition">
 							<SQL dialect="generic">
-								instanceId = ${instanceId}
+								becpg_public_composition.instanceId = ${instanceId}
 							</SQL>
 						</Table>
-						<Table name="becpg_public_products">
+						<Table name="becpg_public_products" alias="becpg_public_products">
 							<SQL dialect="generic">
-								instanceId = ${instanceId}
+								becpg_public_products.instanceId = ${instanceId}
 							</SQL>
 						</Table>
 					</Join>
@@ -1093,14 +1093,14 @@
 					</Join>				
 				<#else>
 					<Join leftKey="entity_id" rightKey="id">
-							<Table name="becpg_public_packaging">
+							<Table name="becpg_public_packaging" alias="becpg_public_packaging">
 								<SQL dialect="generic">
-									instanceId = ${instanceId}
+									becpg_public_packaging.instanceId = ${instanceId}
 								</SQL>
 							</Table>
-							<Table name="becpg_public_products">
+							<Table name="becpg_public_products" alias="becpg_public_products">
 								<SQL dialect="generic">
-									instanceId = ${instanceId}
+									becpg_public_products.instanceId = ${instanceId}
 								</SQL>
 							</Table>
 					</Join>

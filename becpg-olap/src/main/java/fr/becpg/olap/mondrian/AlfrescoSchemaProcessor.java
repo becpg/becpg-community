@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2017 beCPG. 
+ * Copyright (C) 2010-2016 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -62,7 +62,7 @@ public class AlfrescoSchemaProcessor implements DynamicSchemaProcessor {
 			try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
 				HttpClientContext httpContext = HttpClientContext.create();
 
-				String ticket = ((AlfrescoUserDetails) auth).getPassword();
+				String ticket = ((AlfrescoUserDetails) auth.getPrincipal()).getPassword();
 				
 				if(ticket==null || ticket.isEmpty()){
 					UsernamePasswordCredentials creds = new UsernamePasswordCredentials(instance.getTenantUser(), instance.getTenantPassword());
@@ -73,6 +73,7 @@ public class AlfrescoSchemaProcessor implements DynamicSchemaProcessor {
 				GetMondrianSchemaCommand schemaCommand = new GetMondrianSchemaCommand(instance.getInstanceUrl());
 
 				return schemaCommand.getSchema(httpClient, httpContext, instance.getId(), ticket);
+				
 			}
 
 		}
