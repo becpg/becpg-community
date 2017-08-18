@@ -14,7 +14,7 @@
 			<Level name="Day" caption="${msg("jsolap.day.title")}" column="Day" nameColumn="NDay" ordinalColumn="Day" type="Numeric"  levelType="TimeDays"  />
 		</Hierarchy>		
 	</Dimension>
-	
+	<#if isAdmin>
 	<Dimension name="instancesDimension" caption="Instances">
 		<Hierarchy name="instancesInfo" hasAll="true" allMemberCaption="${msg("jsolap.instance.caption")}"  defaultMember="[instancesDimension.instancesInfo].[${instanceId}]" caption="${msg("jsolap.instance.title")}" primaryKey="id">
 			<Table name="becpg_instance" />
@@ -23,13 +23,16 @@
 			<Level name="tenant_name" column="tenant_name" caption="${msg("jsolap.tenant.title")}" />
 		</Hierarchy>
 	</Dimension>
+	</#if>
 	
 	<Cube name="software_usage" caption="${msg("jsolap.statistics.title")}" cache="false" enabled="true">
 		<#if isAdmin>
 			<Table name="becpg_public_statistics" />
 		<#else>
 			<Table name="becpg_public_statistics" >
-				instance_id = ${instanceId}
+				<SQL dialect="generic">
+					instance_id = ${instanceId}
+				</SQL>
 			</Table>
 		</#if>
 		
@@ -88,7 +91,9 @@
 			<Table name="becpg_public_requirements" />
 		<#else>
 			<Table name="becpg_public_requirements">
-				becpg_public_requirements.instanceId = ${instanceId}
+				<SQL dialect="generic">
+					instanceId = ${instanceId}
+				</SQL>
 			</Table>
 		</#if>
 		<Dimension name="rclReqMessage" caption="${msg("jsolap.message.title")}" >
@@ -236,7 +241,9 @@
 			<Table name="becpg_public_nc"/>
 		<#else>
 			<Table name="becpg_public_nc">
-				becpg_public_nc.instanceId = ${instanceId}
+				<SQL dialect="generic">
+					instanceId = ${instanceId}
+				</SQL>
 			</Table>
 		</#if>
 		
@@ -332,10 +339,14 @@
 				<#else>
 					<Join leftKey="id" rightKey="id" >
 						<Table name="becpg_public_nc_products">
-							becpg_public_nc_products.instanceId = ${instanceId}
+							<SQL dialect="generic">
+								instanceId = ${instanceId}
+							</SQL>
 						</Table>
 						<Table name="becpg_public_products">
-							becpg_public_products.instanceId = ${instanceId}
+							<SQL dialect="generic">
+								instanceId = ${instanceId}
+							</SQL>
 						</Table>
 					</Join>
 				</#if>
@@ -356,7 +367,9 @@
 					<Table name="becpg_public_clients" />
 				<#else>
 					<Table name="becpg_public_clients">
-						becpg_public_clients.instanceId = ${instanceId}
+						<SQL dialect="generic">
+							instanceId = ${instanceId}
+						</SQL>
 					</Table>
 				</#if>
 				<Level name="name" caption="${msg("jsolap.clientName.title")}" nameColumn="name" column="nodeRef"  type="String" >
@@ -383,7 +396,9 @@
 			<Table name="becpg_public_project_steps" />
 		<#else>
 			<Table name="becpg_public_project_steps">
-				becpg_public_project_steps.instanceId = ${instanceId}
+				<SQL dialect="generic">
+					instanceId = ${instanceId}
+				</SQL>
 			</Table>
 		</#if>
 		
@@ -394,7 +409,9 @@
 					<Table name="becpg_public_projects" />
 				<#else>
 					<Table name="becpg_public_projects">
-						becpg_public_projects.instanceId = ${instanceId}
+						<SQL dialect="generic">
+							instanceId = ${instanceId}
+						</SQL>
 					</Table>
 				</#if>
 				<Level name="site" caption="${msg("jsolap.site.title")}" column="siteName"  type="String" />
@@ -431,7 +448,9 @@
 					<Table name="becpg_public_projects"/>
 				<#else>
 					<Table name="becpg_public_projects">
-						becpg_public_projects.instanceId = ${instanceId}
+						<SQL dialect="generic">
+							instanceId = ${instanceId}
+						</SQL>
 					</Table>	
 				</#if>
 				
@@ -490,7 +509,9 @@
 			<Table name="becpg_public_project_score"/>
 		<#else>
 			<Table name="becpg_public_project_score">
-				becpg_public_project_score.instanceId = ${instanceId}
+				<SQL dialect="generic">
+					instanceId = ${instanceId}
+				</SQL>
 			</Table>
 		</#if>
 		
@@ -500,7 +521,9 @@
 					<Table name="becpg_public_projects" />
 				<#else>
 					<Table name="becpg_public_projects">
-						becpg_public_projects.instanceId = ${instanceId}
+						<SQL dialect="generic">
+							instanceId = ${instanceId}
+						</SQL>
 					</Table>
 				</#if>
 					<Level name="site" caption="${msg("jsolap.site.title")}" column="siteName"  type="String" />
@@ -520,7 +543,9 @@
 					<Table name="becpg_public_projects"/>
 				<#else>
 					<Table name="becpg_public_projects">
-						becpg_public_projects.instanceId = ${instanceId}
+						<SQL dialect="generic">
+							instanceId = ${instanceId}
+						</SQL>
 					</Table>
 				
 				</#if>
@@ -551,7 +576,9 @@
 			<Table name="becpg_public_projects" />
 		<#else>
 			<Table name="becpg_public_projects">
-				becpg_public_projects.instanceId = ${instanceId}
+				<SQL dialect="generic">
+					instanceId = ${instanceId}
+				</SQL>
 			</Table>
 		</#if>
 		
@@ -621,10 +648,14 @@
 				<#else>
 					<Join leftKey="id" rightKey="id" >
 						<Table name="becpg_public_project_entities">
-							becpg_public_project_entities.instanceId = ${instanceId}
+							<SQL dialect="generic">
+							instanceId = ${instanceId}
+							</SQL>
 						</Table>
 						<Table name="becpg_public_products">
-							becpg_public_products.instanceId = ${instanceId}
+							<SQL dialect="generic">
+							instanceId = ${instanceId}
+							</SQL>
 						</Table>
 					</Join>
 				</#if>
@@ -720,7 +751,9 @@
 			<Table name="becpg_public_nutrients"/>
 		<#else>
 			<Table name="becpg_public_nutrients">
-				becpg_public_nutrients.instanceId = ${instanceId}
+				<SQL dialect="generic">
+					instanceId = ${instanceId}
+				</SQL>
 			</Table>
 		</#if>
 
@@ -730,7 +763,9 @@
 				<Table name="becpg_public_products"/>
 			<#else>
 				<Table name="becpg_public_products">
-					becpg_public_products.instanceId = ${instanceId}
+					<SQL dialect="generic">
+						instanceId = ${instanceId}
+					</SQL>
 				</Table>
 			</#if>
 				<Level name="site" caption="${msg("jsolap.site.title")}" column="siteName"  type="String" />
@@ -744,7 +779,9 @@
 				<Table name="becpg_public_products"/>
 			<#else>
 				<Table name="becpg_public_products">
-					becpg_public_products.instanceId = ${instanceId}
+					<SQL dialect="generic">
+						instanceId = ${instanceId}
+					</SQL>
 				</Table>
 			</#if>
 				<Level approxRowCount="5" name="productState" caption="${msg("jsolap.state.title")}"  column="productState"  type="String"   >
@@ -812,7 +849,9 @@
 			<Table name="becpg_public_products" />
 		<#else>
 			<Table name="becpg_public_products">
-				becpg_public_products.instanceId = ${instanceId}
+				<SQL dialect="generic">
+					instanceId = ${instanceId}
+				</SQL>
 			</Table>
 		</#if>
 		
@@ -860,7 +899,9 @@
 					<Table name="becpg_public_geo_origins"/>
 				<#else>
 					<Table name="becpg_public_geo_origins">
-						becpg_public_geo_origins.instanceId = ${instanceId}
+						<SQL dialect="generic">
+							instanceId = ${instanceId}
+						</SQL>
 					</Table>
 				</#if>
 				<Level name="name" caption="${msg("jsolap.country.title")}" column="nodeRef" nameColumn="name" type="String"  >
@@ -892,7 +933,9 @@
 					<Table name="becpg_public_clients"/>
 				<#else>
 					<Table name="becpg_public_clients">
-						becpg_public_clients.instanceId = ${instanceId}
+						<SQL dialect="generic">
+						instanceId = ${instanceId}
+						</SQL>
 					</Table>
 				</#if>
 				<Level name="name" caption="${msg("jsolap.clientName.title")}" nameColumn="name" column="nodeRef"  type="String"   >
@@ -905,7 +948,9 @@
 					<Table name="becpg_public_suppliers"/>
 				<#else>
 					<Table name="becpg_public_suppliers">
-						becpg_public_suppliers.instanceId = ${instanceId}
+						<SQL dialect="generic">
+							instanceId = ${instanceId}
+						</SQL>
 					</Table>
 				</#if>
 				<Level name="name" caption="${msg("jsolap.supplierName.title")}" nameColumn="name" column="nodeRef" type="String"   >
@@ -918,7 +963,9 @@
 					<Table name="becpg_public_nutrients"/>
 				<#else>
 					<Table name="becpg_public_nutrients">
-						becpg_public_nutrients.instanceId = ${instanceId}
+						<SQL dialect="generic">
+							instanceId = ${instanceId}
+						</SQL>
 					</Table>
 				</#if>
 				<Level approxRowCount="3" name="nutGroup" caption="${msg("jsolap.nutrientGroup.title")}" column="nutGroup" type="String"   >
@@ -936,11 +983,15 @@
 		<Dimension type="StandardDimension" foreignKey="id" name="allergenVoluntary" caption="${msg("jsolap.allergenVoluntary.title")}">
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.allergen.caption")}" primaryKey="id" >
 				<#if isAdmin>
-					<Table name="becpg_public_allergens"/>
+					<Table name="becpg_public_allergens">
+						<SQL dialect="generic">
+							isVoluntary = 1
+						</SQL>
+					</Table>
 				<#else>
 					<Table name="becpg_public_allergens">
 						<SQL dialect="generic">
-							isVoluntary = 1 AND becpg_public_allergens.instanceId = ${instanceId}
+							isVoluntary = 1 AND instanceId = ${instanceId}
 						</SQL>
 					</Table>
 				</#if>
@@ -952,11 +1003,15 @@
 		<Dimension type="StandardDimension" foreignKey="id"  name="allergenInVoluntary" caption="${msg("jsolap.allergenInVoluntary.title")}">
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.allergen.caption")}" primaryKey="entity_fact_id" >
 				<#if isAdmin>
-					<Table name="becpg_public_allergens"/>
+					<Table name="becpg_public_allergens">
+						<SQL dialect="generic">
+							isVoluntary = 0
+						</SQL>
+					</Table>
 				<#else>
 					<Table name="becpg_public_allergens">
 						<SQL dialect="generic">
-							isVoluntary = 0 AND becpg_public_allergens.instanceId = ${instanceId}
+							isVoluntary = 0 AND instanceId = ${instanceId}
 						</SQL>
 					</Table>
 				</#if>
@@ -973,7 +1028,9 @@
 					<Table name="becpg_public_ingredients" />
 				<#else>
 					<Table name="becpg_public_ingredients" >
-								becpg_public_ingredients.instanceId = ${instanceId}
+						<SQL dialect="generic">
+							instanceId = ${instanceId}
+						</SQL>
 					</Table>
 				</#if>
 				<Level name="name" caption="${msg("jsolap.ingredient.title")}" column="nodeRef" nameColumn="name" type="String"   >
@@ -987,7 +1044,9 @@
 					<Table name="becpg_public_labelclaims" />
 				<#else>
 					<Table name="becpg_public_labelclaims" >
-								becpg_public_labelclaims.instanceId = ${instanceId}
+						<SQL dialect="generic">
+							instanceId = ${instanceId}
+						</SQL>
 					</Table>
 				</#if>
 				<Level name="lclLabelClaimName" caption="${msg("jsolap.labelClaim.title")}" column="nodeRef" nameColumn="name" type="String" ></Level>
@@ -1005,10 +1064,14 @@
 				<#else>
 					<Join leftKey="entity_id" rightKey="id">
 						<Table name="becpg_public_composition">
-							becpg_public_composition.instanceId = ${instanceId}
+							<SQL dialect="generic">
+								instanceId = ${instanceId}
+							</SQL>
 						</Table>
 						<Table name="becpg_public_products">
-							becpg_public_products.instanceId = ${instanceId}
+							<SQL dialect="generic">
+								instanceId = ${instanceId}
+							</SQL>
 						</Table>
 					</Join>
 				</#if>
@@ -1031,10 +1094,14 @@
 				<#else>
 					<Join leftKey="entity_id" rightKey="id">
 							<Table name="becpg_public_packaging">
-								becpg_public_packaging.instanceId = ${instanceId}
+								<SQL dialect="generic">
+									instanceId = ${instanceId}
+								</SQL>
 							</Table>
 							<Table name="becpg_public_products">
-								becpg_public_products.instanceId = ${instanceId}
+								<SQL dialect="generic">
+									instanceId = ${instanceId}
+								</SQL>
 							</Table>
 					</Join>
 				</#if>
