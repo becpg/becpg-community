@@ -368,7 +368,7 @@
                                         // Validate
                                         if (YAHOO.lang.isNumber(number))
                                         {
-                                            return beCPG.util.sigFigs(number,3);
+                                            return number.toFixed(4);
                                         }
                                         return oData;
                                     }
