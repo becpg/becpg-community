@@ -31,7 +31,7 @@ public class GetMondrianSchemaCommand extends AbstractHttpCommand {
 
 	private static final String COMMAND_URL_TEMPLATE = "/becpg/olap/schema?instance=%s&alf_ticket=%s";
 
-	public GetMondrianSchemaCommand(String serverUr) {
+	public GetMondrianSchemaCommand(String serverUrl) {
 		super(serverUrl);
 	}
 
