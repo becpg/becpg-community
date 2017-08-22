@@ -106,42 +106,58 @@
 			if (containerEl != null) {
 				var inc = 0;
 				var colCount = 0;
+				
+				var itemType =  this.options.itemType != null ? this.options.itemType : this.datalistMeta.itemType;
+				
+				if (itemType != null) {
+					// Query the visible columns for this list's
+					// item type
+					Alfresco.util.Ajax.jsonGet({
+						url : Alfresco.constants.URL_SERVICECONTEXT + "module/entity-datagrid/config/columns?mode=bulk-edit&itemType=" + encodeURIComponent(itemType)
+								+ "&formId=bulk-edit",
+						successCallback : {
+							fn : function (response) {
 
-				for (var i = 0, ii = this.datalistColumns.length; i < ii; i++) {
+								for (var i = 0, ii = response.json.columns.length; i < ii; i++) {
 
-					var column = this.datalistColumns[i];
+									var column = response.json.columns[i];
 
-					var propName = this._buildFormsName(column);
-					var propLabel = column.label;
-					if (!column.protectedField && !column.disabled && propLabel!="hidden" && !column.readOnly ) {
+									var propName = this._buildFormsName(column);
+									var propLabel = column.label;
+									if (!column.protectedField && !column.disabled && propLabel!="hidden" && !column.readOnly ) {
 
-						var className = "";
-						if (colCount < Math.floor(inc / 5)) {
-							className = "reset ";
+										var className = "";
+										if (colCount < Math.floor(inc / 5)) {
+											className = "reset ";
+										}
+										colCount = Math.floor(inc / 5);
+										className += "column-" + colCount;
+
+										html += '<li class="' + className + '"><input id="propSelected-' + i + '" type="checkbox" name="propChecked" value="'
+												+ propName + '" /><label for="propSelected-' + i + '" >' + propLabel + '</label></li>';
+										inc++;
+									}
+								}
+
+								 html = "<span>"+this.msg("label.select-prop.title")
+								 	+"</span><br/><br/><ul style=\"width:" + ((colCount + 1) * 20) + "em;\">" + html + "</ul>";
+								
+							    containerEl.innerHTML = html;
+
+					           
+								var divEl = Dom.get(this.id+'-bulk-edit-ft');
+								divEl.innerHTML = '<input id="'+this.id+'-bulk-edit-ok" type="button" value="'+this.msg("button.ok")+'" />';
+								
+					            this.widgets.okBkButton = Alfresco.util.createYUIButton(this, "bulk-edit-ok", function (){
+					            	this.widgets.wUsedPanel.hide();
+									this._onEditSelected(nodeRefs, containerEl);
+					            });
+
+							},
+							scope : this
 						}
-						colCount = Math.floor(inc / 5);
-						className += "column-" + colCount;
-
-						html += '<li class="' + className + '"><input id="propSelected-' + i + '" type="checkbox" name="propChecked" value="'
-								+ propName + '" /><label for="propSelected-' + i + '" >' + propLabel + '</label></li>';
-						inc++;
-					}
+					});
 				}
-
-				 html = "<span>"+this.msg("label.select-prop.title")
-				 	+"</span><br/><br/><ul style=\"width:" + ((colCount + 1) * 20) + "em;\">" + html + "</ul>";
-				
-			    containerEl.innerHTML = html;
-
-	           
-				var divEl = Dom.get(this.id+'-bulk-edit-ft');
-				divEl.innerHTML = '<input id="'+this.id+'-bulk-edit-ok" type="button" value="'+this.msg("button.ok")+'" />';
-				
-	            this.widgets.okBkButton = Alfresco.util.createYUIButton(this, "bulk-edit-ok", function (){
-	            	this.widgets.wUsedPanel.hide();
-					this._onEditSelected(nodeRefs, containerEl);
-	            });
-
 			}
 		},
 		
