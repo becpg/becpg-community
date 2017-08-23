@@ -133,11 +133,28 @@
                                 }
                                 
                             }
+                            
+                            YAHOO.Bubbling.fire("registerToolbarButtonAction", {
+                                actionName : "entity-print-report",
+                                evaluate : function(asset, entity) {
+                                    return asset.name !== null && asset.name.indexOf("View-reports") == 0;
+                                },
+                                fn : function(instance){
+                                	me.onPrintClick(me);
+                                }
+                             });
+
 
                             beCPG.component.ReportViewer.superclass.onReady.call(this);
 
                         },
 
+                        onPrintClick : function (scope){
+                        	var nodeRefAsLink = scope.options.nodeRef.replace(":/", ""),
+                        	noCache = "noCache=" + new Date().getTime();
+                        	printJS(Alfresco.constants.PROXY_URI + "api/node/"+nodeRefAsLink + "/content/"+ encodeURIComponent(scope.options.name)+ "?c=force&" + noCache + "&a=false");
+                        },
+                        
                         /**
                          * @param menuItem
                          */
@@ -167,6 +184,7 @@
                                                                     		
                                                                     	}
                                                                     }
+                                                                   
                                                                    
                                                                     if(scope.options.name.split('.').pop()!=scope.options.report.name.split('.').pop()){
                                                                     	 window.location.href = window.location.href.split("#")[0];

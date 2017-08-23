@@ -91,7 +91,8 @@
    padding-left: 24px;
 }
 
-.datalist-toolbar .entity-print-metadata span.first-child
+.datalist-toolbar .entity-print-metadata span.first-child,
+.datalist-toolbar .entity-print-report span.first-child
 {
    background: url(../images/printer-16.png) no-repeat 12px 4px;
    padding-left: 24px;
