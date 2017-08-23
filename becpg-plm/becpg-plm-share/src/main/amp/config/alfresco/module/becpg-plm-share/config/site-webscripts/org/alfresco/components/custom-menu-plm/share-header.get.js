@@ -74,6 +74,24 @@ if(isExternalUser(user)){
     }
     
     
+    var siteConfig =  widgetUtils.findObject(model.jsonModel, "id", "HEADER_SITE_CONFIGURATION_DROPDOWN");
+    
+    // If on the dashboard then add the customize dashboard option...
+    if (siteConfig && page.titleId == "page.productSiteDashboard.title" )
+    {
+       // Add Customize Dashboard
+       siteConfig.config.widgets.push({
+          id: "HEADER_CUSTOMIZE_SITE_DASHBOARD",
+          name: "alfresco/menus/AlfMenuItem",
+          config: {
+             id: "HEADER_CUSTOMIZE_SITE_DASHBOARD",
+             label: "customize_dashboard.label",
+             iconClass: "alf-cog-icon",
+             targetUrl: "site/" + page.url.templateArgs.site + "/customise-site-dashboard"
+          }
+       });
+    }
+  
 }
 	
 

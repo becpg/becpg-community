@@ -73,6 +73,7 @@
                     Dom.removeClass("alf-ft", "hidden");
                     Dom.removeClass("Share", "full-screen");
                     Dom.addClass("alf-content", "yui-b");
+                    Dom.setStyle("alf-content", "margin-left", "200px");
 
                 }
                 else
@@ -109,10 +110,20 @@
                 Dom.addClass("Share", "full-screen");
                 Dom.addClass("alf-ft", "hidden");
                 Dom.addClass("alf-filters", "hidden");
+                Dom.addClass(this.id, "hidden");
                 Dom.removeClass("alf-content", "yui-b");
                 Dom.setStyle("alf-content", "margin-left", null);
 
                 print();
+                
+                Dom.removeClass("alf-hd", "hidden");
+                Dom.removeClass("alf-ft", "hidden");
+                Dom.removeClass("Share", "full-screen");
+                Dom.removeClass("alf-ft", "hidden");
+                Dom.removeClass("alf-filters", "hidden");
+                Dom.removeClass(this.id, "hidden");
+                Dom.addClass("alf-content", "yui-b");
+                Dom.setStyle("alf-content", "margin-left", "200px");
             }
         });
 
