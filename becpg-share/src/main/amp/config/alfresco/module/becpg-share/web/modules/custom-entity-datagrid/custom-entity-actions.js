@@ -439,8 +439,8 @@
 	    			          }
         			    }
 			        } else {
-			            html += '<span class="packagingMaterial">'; 
-                        html +=  this.msg("label.labeling-details.tree.item",tree.legal, beCPG.util.sigFigs(tree.vol,4), beCPG.util.sigFigs(tree.qte,4), tree.decl);
+			            html += '<span class="aggregation">'; 
+                        html +=  this.msg("label.labeling-details.tree.item",tree.legal, beCPG.util.sigFigs(tree.qte,4), beCPG.util.sigFigs(tree.vol,4), tree.decl);
                         html += '</span>';
 			        }
 			    }
