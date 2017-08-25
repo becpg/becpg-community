@@ -1,3 +1,9 @@
+/*
+ * @Deprecated
+ * ATTENTION ce script supprime les variantes !!! 
+ * WARNING this script delete also variants !!!
+ * 
+ */ 
 var entityTpls = search.luceneSearch("+ASPECT:\"bcpg:entityTplAspect\" +ASPECT:\"bcpg:productAspect\"");
 // var entityTpls = search.findNode('workspace://SpacesStore/d26d1a97-5c30-4f39-960f-7f911457ece0');
 
