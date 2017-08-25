@@ -28,7 +28,7 @@ import fr.becpg.model.PLMModel;
 public class ApprovalNumbersPatch extends AbstractBeCPGPatch {
 	
 	private static final Log logger = LogFactory.getLog(ApprovalNumbersPatch.class);
-	private static final String MSG_SUCCESS = "patch.bcpg.ingTypePatch.result";
+	private static final String MSG_SUCCESS = "patch.bcpg.approvalNumbersPatch.result";
 	
 	private NodeDAO nodeDAO;
 	private PatchDAO patchDAO;
@@ -86,7 +86,7 @@ public class ApprovalNumbersPatch extends AbstractBeCPGPatch {
 			
 		};
 		
-		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("IngTypePatch", transactionService.getRetryingTransactionHelper(),
+		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("ApprovalNumbersPatch", transactionService.getRetryingTransactionHelper(),
 				workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 500);
 		
 		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
