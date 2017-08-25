@@ -23,6 +23,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.omg.CORBA.OMGVMCID;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
@@ -1429,12 +1430,35 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			applyThreshold = true;
 		}
 		
+		Double omitQtyPerc = 0d;
+		List<Composite<IngListDataItem>> toAddIngListItem = new ArrayList<>();
+		
 
 		for (Composite<IngListDataItem> ingListItem : compositeIngList.getChildren()) {
 
 			DeclarationType ingDeclarationType = getDeclarationType(compoListDataItem, ingListItem.getData(), labelingFormulaContext);
 
 			if (!DeclarationType.Omit.equals(ingDeclarationType) && !DeclarationType.DoNotDeclare.equals(ingDeclarationType)) {
+				toAddIngListItem.add(ingListItem);
+			}   else if(DeclarationType.Omit.equals(ingDeclarationType)){
+				Double qtyPerc = ingListItem.getData().getQtyPerc();
+				if(qtyPerc!=null){
+					
+					if (logger.isTraceEnabled()) {
+						logger.trace("Removing ingredient "+ingListItem.getData().getName()+" qtyPerc "+ qtyPerc);
+					}
+					
+					omitQtyPerc += qtyPerc;
+				}
+			}
+		}
+		
+		if(toAddIngListItem.size()>0){
+			omitQtyPerc /= toAddIngListItem.size();
+		}
+
+
+		for (Composite<IngListDataItem>  ingListItem : toAddIngListItem) {
 
 				NodeRef ingNodeRef = ingListItem.getData().getIng();
 				IngItem ingLabelItem = (IngItem) compositeLabeling.get(ingNodeRef);
@@ -1586,6 +1610,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					ingLabelItem.setVolume(null);
 				} else {
 
+					qtyPerc += omitQtyPerc;
+					
 					// if one ingItem has null perc -> must be null
 					if ((ingLabelItem.getQty() != null) && (qty != null)) {
 
@@ -1628,21 +1654,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						}
 
 					}
-
 				}
-
-			} else if(DeclarationType.Omit.equals(ingDeclarationType)){
-				Double qtyPerc = ingListItem.getData().getQtyPerc();
-				if(qtyPerc!=null && qty!=null && compositeLabeling.getQtyTotal()!=null){
-					
-					if (logger.isTraceEnabled()) {
-						logger.trace("Removing ingredient "+ingListItem.getData().getName()+" qty "+((qty * qtyPerc) / 100));
-					}
-					
-					compositeLabeling.setQtyTotal(compositeLabeling.getQtyTotal() - ((qty * qtyPerc) / 100));
-				}
-			}
-
 		}
 	}
 

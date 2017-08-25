@@ -378,6 +378,12 @@ span.packagingMaterial-ToValidate,
     padding-left: 20px;
     background-repeat: no-repeat
 }
+span.aggregation {
+    background-image: url("../../components/images/filetypes/generic-product-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+
 span.rawMaterial,
 span.rawMaterial-ToValidate,
 .entity.bcpg-rawMaterial,
