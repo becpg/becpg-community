@@ -196,14 +196,18 @@ if (beCPG.module.EntityDataGridRenderers) {
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : [ "bcpg:allergen",  "bcpg:ing", "bcpg:geoOrigin", "bcpg:bioOrigin", "bcpg:geo", "bcpg:microbio", "bcpg:organo" ],
 		renderer : function(oRecord, data, label, scope) {
-
+			var url = null;
+			if(scope.datalistMeta && scope.datalistMeta && scope.datalistMeta.name.indexOf("WUsed")>-1){
+				url = beCPG.util.entityURL(data.siteId, data.value);
+			}
+			
 			if (oRecord.getData("itemData")["prop_bcpg_depthLevel"] != null) {
 				var padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 25;
-				return '<span class="' + data.metadata + '" style="margin-left:' + padding + 'px;">' + Alfresco.util.encodeHTML(data.displayValue)
-						+ '</span>';
+				return '<span class="' + data.metadata + '" style="margin-left:' + padding + 'px;">'+(url!=null?'<a href="' + url + '">':'') 
+				+ Alfresco.util.encodeHTML(data.displayValue) + (url!=null?'</a>':'')+'</span>';
 			}
-
-			return '<span class="' + data.metadata + '" >' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+			
+			return '<span class="' + data.metadata + '" >'+(url!=null?'<a href="' + url + '">':'') + Alfresco.util.encodeHTML(data.displayValue) + (url!=null?'</a>':'')+'</span>';
 		}
 
 	});
@@ -211,6 +215,11 @@ if (beCPG.module.EntityDataGridRenderers) {
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
         propertyName : "bcpg:physicoChem",
         renderer : function(oRecord, data, label, scope) {
+        	
+        	var url = null;
+			if(scope.datalistMeta && scope.datalistMeta && scope.datalistMeta.name.indexOf("WUsed")>-1){
+				url = beCPG.util.entityURL(data.siteId, data.value);
+			}
             
             var title = Alfresco.util.encodeHTML(data.metadata);
             var cssClass = data.metadata;
@@ -226,11 +235,11 @@ if (beCPG.module.EntityDataGridRenderers) {
             if (oRecord.getData("itemData")["prop_bcpg_depthLevel"] != null) {
                 var padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 25;
                 return '<span class="' + cssClass + '" style="margin-left:' + padding + 'px;" title="'+title+'">' 
-                + Alfresco.util.encodeHTML(data.displayValue)
-                        + '</span>';
+                +(url!=null?'<a href="' + url + '">':'') + Alfresco.util.encodeHTML(data.displayValue)
+                        + (url!=null?'</a>':'')+ '</span>';
             }
 
-            return '<span class="' + cssClass + '" title="'+title+'">' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+            return '<span class="' + cssClass + '" title="'+title+'">' +(url!=null?'<a href="' + url + '">':'') + Alfresco.util.encodeHTML(data.displayValue) + (url!=null?'</a>':'')+ '</span>';
         }
 
     });
@@ -238,6 +247,11 @@ if (beCPG.module.EntityDataGridRenderers) {
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
         propertyName : "bcpg:nut",
         renderer : function(oRecord, data, label, scope) {
+        	
+        	var url = null;
+			if(scope.datalistMeta && scope.datalistMeta && scope.datalistMeta.name.indexOf("WUsed")>-1){
+				url = beCPG.util.entityURL(data.siteId, data.value);
+			}
             
             var title = Alfresco.util.encodeHTML(data.metadata);
             var cssClass = data.metadata;
@@ -253,11 +267,11 @@ if (beCPG.module.EntityDataGridRenderers) {
             if (oRecord.getData("itemData")["prop_bcpg_depthLevel"] != null) {
                 var padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 25;
                 return '<span class="' + cssClass + '" style="margin-left:' + padding + 'px;" title="'+title+'">' 
-                + Alfresco.util.encodeHTML(data.displayValue)
-                        + '</span>';
+                +(url!=null?'<a href="' + url + '">':'') +  Alfresco.util.encodeHTML(data.displayValue)
+                        + (url!=null?'</a>':'')+ '</span>';
             }
 
-            return '<span class="' + cssClass + '" title="'+title+'">' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+            return '<span class="' + cssClass + '" title="'+title+'">' +(url!=null?'<a href="' + url + '">':'') +  Alfresco.util.encodeHTML(data.displayValue) + (url!=null?'</a>':'')+ '</span>';
         }
 
     });
@@ -350,6 +364,11 @@ if (beCPG.module.EntityDataGridRenderers) {
       propertyName : "bcpg:cost",
       renderer : function(oRecord, data, label, scope) {
           
+    	  var url = null;
+			if(scope.datalistMeta && scope.datalistMeta && scope.datalistMeta.name.indexOf("WUsed")>-1){
+				url = beCPG.util.entityURL(data.siteId, data.value);
+			}
+    	  
           var title = Alfresco.util.encodeHTML(data.metadata);
           var cssClass = data.metadata;
           
@@ -367,11 +386,11 @@ if (beCPG.module.EntityDataGridRenderers) {
           if (oRecord.getData("itemData")["prop_bcpg_depthLevel"] != null) {
               var padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 25;
               return '<span class="' + cssClass + '" style="margin-left:' + padding + 'px;" title="'+title+'">' 
-              + Alfresco.util.encodeHTML(data.displayValue)
-                      + '</span>';
+              +(url!=null?'<a href="' + url + '">':'') + Alfresco.util.encodeHTML(data.displayValue)
+                      + (url!=null?'</a>':'')+ '</span>';
           }
 
-          return '<span class="' + cssClass + '" title="'+title+'">' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+          return '<span class="' + cssClass + '" title="'+title+'">' +(url!=null?'<a href="' + url + '">':'') + Alfresco.util.encodeHTML(data.displayValue) + (url!=null?'</a>':'')+ '</span>';
       }
 
   });
