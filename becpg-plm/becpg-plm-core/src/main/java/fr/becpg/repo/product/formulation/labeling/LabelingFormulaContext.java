@@ -920,7 +920,7 @@ public class LabelingFormulaContext {
 
 					qtyPerc = (useVolume ? volumePerc : qtyPerc);
 
-					if (!shouldSkip(component.getNodeRef(), qtyPerc)) {
+					if (!component.shouldSkip() && !shouldSkip(component.getNodeRef(), qtyPerc)) {
 
 						String subLabel = new String();
 
@@ -1059,7 +1059,7 @@ public class LabelingFormulaContext {
 
 			qtyPerc = (useVolume ? volumePerc : qtyPerc);
 
-			if (!shouldSkip(component.getNodeRef(), qtyPerc)) {
+			if (!component.shouldSkip() && !shouldSkip(component.getNodeRef(), qtyPerc)) {
 
 				String toAppend = new String();
 
@@ -1075,7 +1075,7 @@ public class LabelingFormulaContext {
 
 						String subIngGeoOriginsLabel = createGeoOriginsLabel(subIngItem.getGeoOrigins());
 
-						if (!shouldSkip(subIngItem.getNodeRef(), subIngQtyPerc)) {
+						if (!subIngItem.shouldSkip() && !shouldSkip(subIngItem.getNodeRef(), subIngQtyPerc)) {
 
 							subIngBuff.append(getIngTextFormat(subIngItem)
 									.format(new Object[] { getLegalIngName(subIngItem, false), subIngQtyPerc, null, subIngGeoOriginsLabel }));
