@@ -527,6 +527,7 @@ public class LabelingFormulaContext {
 
 		StringBuilder ret = new StringBuilder();
 		for (NodeRef allergen : allergens) {
+			boolean shouldAppend = true;
 			if (getAllergens().contains(allergen)) {
 				String allergenName = getAllergenName(allergen);
 				if ((allergenName != null) && !allergenName.isEmpty()) {
@@ -535,20 +536,24 @@ public class LabelingFormulaContext {
 					} else {
 						Matcher ma = Pattern.compile("\\b(" + Pattern.quote(allergenName) + "(s?))\\b", Pattern.CASE_INSENSITIVE).matcher(ingLegalName);
 						if (ma.find() && (ma.group(1) != null)) {
-							return ma.replaceAll(allergenReplacementPattern);
+							ingLegalName =  ma.replaceAll(allergenReplacementPattern);
+							shouldAppend = false;
 						} else {
 							for (NodeRef subAllergen : associationService.getTargetAssocs(allergen, PLMModel.ASSOC_ALLERGENSUBSETS)) {
 								String subAllergenName = uncapitalize(getAllergenName(subAllergen));
 								if ((subAllergenName != null) && !subAllergenName.isEmpty()) {
 									ma = Pattern.compile("\\b(" + Pattern.quote(subAllergenName) + "(s?))\\b", Pattern.CASE_INSENSITIVE).matcher(ingLegalName);
 									if (ma.find() && (ma.group(1) != null)) {
-										return ma.replaceAll(allergenReplacementPattern);
+										ingLegalName = ma.replaceAll(allergenReplacementPattern);
+										shouldAppend =false;
 									}
 								}
 							}
 						}
 					}
-					ret.append(allergenName.replaceFirst("(.*)", allergenReplacementPattern));
+					if(shouldAppend){
+						ret.append(allergenName.replaceFirst("(.*)", allergenReplacementPattern));
+					}
 				}
 			}
 		}
