@@ -804,16 +804,18 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					priceBreakReportData.setProjectedQty(item.getPurchaseValue() / qty  );
 				} 
 
-				for (CostListDataItem cost : componentProduct.getCostList()) {
-					if ((cost.getCost() != null) && cost.getCost().equals(item.getCost())) {
+				if(item.getValue() != null && qtyForCost != null){
+					for (CostListDataItem cost : componentProduct.getCostList()) {
+						if ((cost.getCost() != null && cost.getValue() != null) && cost.getCost().equals(item.getCost())) {
 
-						Double simulatedValue = (item.getValue() - cost.getValue()) * qtyForCost;
-						priceBreakReportData.setSimulatedValue(simulatedValue);
-						break;
+							Double simulatedValue = (item.getValue() - cost.getValue()) * qtyForCost;
+							priceBreakReportData.setSimulatedValue(simulatedValue);
+							break;
+						}
+
 					}
-
 				}
-
+				
 				priceBreaks.add(priceBreakReportData);
 			}
 
