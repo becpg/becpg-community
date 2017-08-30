@@ -42,6 +42,8 @@ public abstract class AbstractLabelingComponent extends BeCPGDataObject implemen
 	
 	private boolean isPlural = false;
 	
+	private boolean shouldSkip = false;
+	
 	private MLText pluralLegalName;
 	
 	private Set<NodeRef> allergens = new HashSet<NodeRef>();
@@ -159,6 +161,14 @@ public abstract class AbstractLabelingComponent extends BeCPGDataObject implemen
 	public abstract AbstractLabelingComponent clone();
 	
 
+	public boolean shouldSkip() {
+		return shouldSkip;
+	}
+
+	public void setShouldSkip(boolean shouldSkip) {
+		this.shouldSkip = shouldSkip;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -243,5 +253,6 @@ public abstract class AbstractLabelingComponent extends BeCPGDataObject implemen
 		}
 		return 0;// equals
 	}
+
 
 }
