@@ -23,7 +23,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.omg.CORBA.OMGVMCID;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
@@ -1438,7 +1437,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 			DeclarationType ingDeclarationType = getDeclarationType(compoListDataItem, ingListItem.getData(), labelingFormulaContext);
 
-			if (!DeclarationType.Omit.equals(ingDeclarationType) && !DeclarationType.DoNotDeclare.equals(ingDeclarationType)) {
+			if (!DeclarationType.Omit.equals(ingDeclarationType) ) {
 				toAddIngListItem.add(ingListItem);
 			}   else if(DeclarationType.Omit.equals(ingDeclarationType)){
 				Double qtyPerc = ingListItem.getData().getQtyPerc();
@@ -1459,7 +1458,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 
 		for (Composite<IngListDataItem>  ingListItem : toAddIngListItem) {
-
+			
+				DeclarationType ingDeclarationType = getDeclarationType(compoListDataItem, ingListItem.getData(), labelingFormulaContext);
+			
 				NodeRef ingNodeRef = ingListItem.getData().getIng();
 				IngItem ingLabelItem = (IngItem) compositeLabeling.get(ingNodeRef);
 				boolean isNew = true;
@@ -1489,7 +1490,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					}
 				}
 
-				if (!ingListItem.isLeaf()) {
+				if (!ingListItem.isLeaf() &&  !DeclarationType.DoNotDeclare.equals(ingDeclarationType)) {
 					// Only one level of subIngs
 					for (Composite<IngListDataItem> subIngListItem : ingListItem.getChildren()) {
 
@@ -1581,7 +1582,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					}
 				}
 				
-
+				
 				Double qtyPerc = ingListItem.getData().getQtyPerc();
 
 				if (qtyPerc == null) {
@@ -1654,6 +1655,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						}
 
 					}
+				}
+				
+
+				if(DeclarationType.DoNotDeclare.equals(ingDeclarationType)){
+					ingLabelItem.setShouldSkip(true);
 				}
 		}
 	}
