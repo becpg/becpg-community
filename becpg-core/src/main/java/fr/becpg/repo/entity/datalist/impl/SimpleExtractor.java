@@ -112,6 +112,13 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 				if (dataListNodeRef != null) {
 					dataListFilter.setParentNodeRef(dataListNodeRef);
 				}
+			} 
+			
+			if(dataListFilter.getParentNodeRef() == null){
+				if(logger.isDebugEnabled()){
+					logger.debug("No container found return empty results");
+				}
+				return results;
 			}
 		}
 		
