@@ -53,6 +53,7 @@ import org.alfresco.service.cmr.version.VersionHistory;
 import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
@@ -568,8 +569,6 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
 		Element versionsElt = entityElt.addElement(TAG_VERSIONS);
 
-		PropertyFormats propertyFormats = new PropertyFormats(false);
-
 		if ((versionHistory != null) && (versionHistory.getAllVersions() != null)) {
 
 			for (Version version : versionHistory.getAllVersions()) {
@@ -578,7 +577,9 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				versionElt.addAttribute(Version2Model.PROP_QNAME_VERSION_DESCRIPTION.getLocalName(), version.getDescription());
 				versionElt.addAttribute(ContentModel.PROP_CREATOR.getLocalName(),
 						attributeExtractorService.getPersonDisplayName(version.getFrozenModifier()));
-				versionElt.addAttribute(ContentModel.PROP_CREATED.getLocalName(), propertyFormats.formatDate(version.getFrozenModifiedDate()));
+				versionElt.addAttribute(ContentModel.PROP_CREATED.getLocalName(), 
+						ISO8601DateFormat.format((Date) version.getFrozenModifiedDate()));
+				
 			}
 		}
 	}
