@@ -557,7 +557,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	private boolean isDetaillableAssoc(QName assocName) {
 		return assocName.equals(PLMModel.ASSOC_PLANTS) || assocName.equals(PLMModel.ASSOC_STORAGE_CONDITIONS)
-				|| assocName.equals(PLMModel.ASSOC_PRECAUTION_OF_USE) || assocName.equals(PLMModel.ASSOC_SUPPLIERS);
+				|| assocName.equals(PLMModel.ASSOC_PRECAUTION_OF_USE) || assocName.equals(PLMModel.ASSOC_SUPPLIERS) || assocName.equals(PLMModel.ASSOC_SUPPLIER_PLANTS);
 	}
 
 	private void loadPackagingList(ProductData productData, Element dataListsElt, NodeRef defaultVariantNodeRef, Map<String, byte[]> images) {
