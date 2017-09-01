@@ -116,7 +116,7 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 		if (results == null) {
 
 			results = new LinkedList<NodeRef>();
-			
+
 			if (dataListFilter.isGuessContainer() && (dataListFilter.getEntityNodeRef() != null)) {
 				NodeRef listsContainerNodeRef = entityListDAO.getListContainer(dataListFilter.getEntityNodeRef());
 				if (listsContainerNodeRef != null) {
@@ -126,13 +126,12 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 					}
 				}
 
-                        if(dataListFilter.getParentNodeRef() == null){
-				if(logger.isDebugEnabled()){
-					logger.debug("No container found return empty results");
+				if (dataListFilter.getParentNodeRef() == null) {
+					if (logger.isDebugEnabled()) {
+						logger.debug("No container found return empty results");
+					}
+					return results;
 				}
-				return results;
-			}
-
 
 			}
 

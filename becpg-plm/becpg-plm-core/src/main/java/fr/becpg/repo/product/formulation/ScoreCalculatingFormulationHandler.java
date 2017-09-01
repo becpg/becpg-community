@@ -196,30 +196,32 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 		Map<String, Map<String, Integer>> counts = new HashMap<>();
 		List<ReqCtrlListDataItem> visitedRclItems = new ArrayList<>();
 
-		for (ReqCtrlListDataItem rclDataItem : product.getReqCtrlList()) {
-			RequirementDataType key = rclDataItem.getReqDataType();
-
-			// make sure we don't put duplicates rclDataItems
-			if (counts.containsKey(key.toString()) && !visitedRclItems.contains(rclDataItem)) {
-				Map<String, Integer> currentCount = counts.get(key.toString());
-				if (currentCount == null) {
-					currentCount = new HashMap<String, Integer>();
+		if(product.getReqCtrlList()!=null){
+			for (ReqCtrlListDataItem rclDataItem : product.getReqCtrlList()) {
+				RequirementDataType key = rclDataItem.getReqDataType();
+	
+				// make sure we don't put duplicates rclDataItems
+				if (counts.containsKey(key.toString()) && !visitedRclItems.contains(rclDataItem)) {
+					Map<String, Integer> currentCount = counts.get(key.toString());
+					if (currentCount == null) {
+						currentCount = new HashMap<String, Integer>();
+					}
+	
+					if (currentCount.containsKey(rclDataItem.getReqType().toString())) {
+						currentCount.put(rclDataItem.getReqType().toString(), currentCount.get(rclDataItem.getReqType().toString()) + 1);
+					} else {
+						currentCount.put(rclDataItem.getReqType().toString(), 1);
+					}
+					visitedRclItems.add(rclDataItem);
+	
+				} else if (!counts.containsKey(key.toString())) {
+					// this dataType was not found before, adding it
+					Map<String, Integer> newMap = new HashMap<String, Integer>();
+					newMap.put(rclDataItem.getReqType().toString(), 1);
+					counts.put(key.toString(), newMap);
+	
+					visitedRclItems.add(rclDataItem);
 				}
-
-				if (currentCount.containsKey(rclDataItem.getReqType().toString())) {
-					currentCount.put(rclDataItem.getReqType().toString(), currentCount.get(rclDataItem.getReqType().toString()) + 1);
-				} else {
-					currentCount.put(rclDataItem.getReqType().toString(), 1);
-				}
-				visitedRclItems.add(rclDataItem);
-
-			} else if (!counts.containsKey(key.toString())) {
-				// this dataType was not found before, adding it
-				Map<String, Integer> newMap = new HashMap<String, Integer>();
-				newMap.put(rclDataItem.getReqType().toString(), 1);
-				counts.put(key.toString(), newMap);
-
-				visitedRclItems.add(rclDataItem);
 			}
 		}
 
