@@ -56,7 +56,7 @@ public interface ProductService {
 	/**
 	 * Formulate a text recipe in Memory
 	 */
-	ProductData formulateText(String recipe, ProductData productData) throws FormulateException;
+	ProductData formulateText(String recipe) throws FormulateException;
 
 
    

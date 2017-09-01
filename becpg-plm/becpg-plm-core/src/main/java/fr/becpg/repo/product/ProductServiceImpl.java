@@ -40,9 +40,11 @@ import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.activity.data.ActivityEvent;
 import fr.becpg.repo.activity.data.ActivityType;
 import fr.becpg.repo.entity.EntityDictionaryService;
+import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.product.data.CharactDetails;
+import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.lexer.CompositionLexer;
@@ -56,7 +58,7 @@ import fr.becpg.repo.repository.L2CacheSupport;
 public class ProductServiceImpl implements ProductService, InitializingBean {
 
 	private static Log logger = LogFactory.getLog(ProductService.class);
-	
+
 	@Autowired
 	private AlfrescoRepository<ProductData> alfrescoRepository;
 
@@ -77,6 +79,9 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 
 	@Autowired
 	private EntityActivityService entityActivityService;
+
+	@Autowired
+	private EntityTplService entityTplService;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -141,27 +146,33 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 	}
 
 	@Override
-	public ProductData formulateText(String recipe, ProductData productData) throws FormulateException {
+	public ProductData formulateText(String recipe) throws FormulateException {
 
-		if(logger.isDebugEnabled()){
-			logger.debug("Formulate text: "+recipe);
+		if (logger.isDebugEnabled()) {
+			logger.debug("Formulate text: " + recipe);
 		}
-		
+
+		ProductData productData = new FinishedProductData();
+
+		NodeRef defaultTplNodeRef = entityTplService.getEntityTpl(PLMModel.TYPE_FINISHEDPRODUCT);
+		if (defaultTplNodeRef != null) {
+			productData.setEntityTpl(alfrescoRepository.findOne(defaultTplNodeRef));
+		}
+
 		productData.getCompoListView().setCompoList(CompositionLexer.lexMultiLine(recipe));
 		productData.getPackagingListView().setPackagingList(new ArrayList<PackagingListDataItem>());
-		
-		if(logger.isDebugEnabled()){
-			logger.debug("Lexer result: "+productData);
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("Lexer result: " + productData);
 		}
-		
-		
+
 		L2CacheSupport.doInCacheContext(() -> {
 			AuthenticationUtil.runAsSystem(() -> {
 				formulationService.formulate(productData);
 				return true;
 			});
-			
-		},true);
+
+		}, true);
 
 		return productData;
 	}
