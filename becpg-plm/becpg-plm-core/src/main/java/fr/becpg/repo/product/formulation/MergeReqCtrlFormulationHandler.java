@@ -71,12 +71,14 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 	public boolean process(ProductData productData) throws FormulateException {
 
 		// Add child requirements
-		appendChildReq(productData, productData.getReqCtrlList(), productData.getCompoListView().getCompoList());
-
-		mergeReqCtrlList(productData.getReqCtrlList());
-
-		updateFormulatedCharactInError(productData, productData.getReqCtrlList());
-
+		if(productData.getReqCtrlList()!=null){
+			appendChildReq(productData, productData.getReqCtrlList(), productData.getCompoListView().getCompoList());
+	
+			mergeReqCtrlList(productData.getReqCtrlList());
+	
+			updateFormulatedCharactInError(productData, productData.getReqCtrlList());
+		}
+		
 		return true;
 	}
 
