@@ -47,6 +47,10 @@ function customSearchMain()
 
     model.showWused = datatype != null;
 
+	var repoconfig = config.scoped['Search']['search'].getChildValue('repository-search');
+    // config override can force repository search on/off
+    model.searchRepo = ((page.url.args["r"] == "true") || repoconfig == "always") && repoconfig != "none" && repoconfig != "context";
+
     var metadatas = config.scoped["Search"]["metadata"].childrenMap["show"];
     var metadataFields = "";
     for (var i = 0, metadata; i < metadatas.size(); i++)
@@ -65,6 +69,7 @@ function customSearchMain()
         {
             model.widgets[i].name = "beCPG.custom.Search";
             model.widgets[i].options.metadataFields = metadataFields;
+			model.widgets[i].options.initialSearchRepository = model.searchRepo;
         }
     }
 }
@@ -131,7 +136,8 @@ function advSearch()
 
     // Prepare the model
     var repoconfig = config.scoped['Search']['search'].getChildValue('repository-search');
-
+    // config override can force repository search on/off
+    model.searchRepo = ((page.url.args["r"] == "true") || repoconfig == "always") && repoconfig != "none" && repoconfig != "context";
     model.searchScope = model.searchRepo? "repo" : model.searchAllSites?  "all_sites" : siteId;
     
     model.siteId = siteId;
