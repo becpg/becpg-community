@@ -103,7 +103,7 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 		}
 
 		QName entityType = importContext.getEntityType() != null ? importContext.getEntityType() : PLMModel.TYPE_PRODUCT;
-		NodeRef entityNodeRef = findNodeByKeyOrCode(importContext, entityType, entityProperties);
+		NodeRef entityNodeRef = findNodeByKeyOrCode(importContext,null, entityType, entityProperties);
 
 		if (entityNodeRef == null) {
 			throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_FIND_ENTITY, values));
