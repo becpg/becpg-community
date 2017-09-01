@@ -18,6 +18,7 @@
 package fr.becpg.repo.report.entity.impl;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -26,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 import org.alfresco.model.ApplicationModel;
@@ -566,8 +568,8 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
 		Element versionsElt = entityElt.addElement(TAG_VERSIONS);
 
-		PropertyFormats propertyFormats = new PropertyFormats(false);
-
+		final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+		
 		if ((versionHistory != null) && (versionHistory.getAllVersions() != null)) {
 
 			for (Version version : versionHistory.getAllVersions()) {
@@ -576,7 +578,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				versionElt.addAttribute(Version2Model.PROP_QNAME_VERSION_DESCRIPTION.getLocalName(), version.getDescription());
 				versionElt.addAttribute(ContentModel.PROP_CREATOR.getLocalName(),
 						attributeExtractorService.getPersonDisplayName(version.getFrozenModifier()));
-				versionElt.addAttribute(ContentModel.PROP_CREATED.getLocalName(), propertyFormats.formatDate(version.getFrozenModifiedDate()));
+				versionElt.addAttribute(ContentModel.PROP_CREATED.getLocalName(), dateFormat.format((version.getFrozenModifiedDate())));
 			}
 		}
 	}
