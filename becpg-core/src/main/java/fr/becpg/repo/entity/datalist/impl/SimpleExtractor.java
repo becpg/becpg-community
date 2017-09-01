@@ -125,6 +125,15 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 						dataListFilter.setParentNodeRef(dataListNodeRef);
 					}
 				}
+
+                        if(dataListFilter.getParentNodeRef() == null){
+				if(logger.isDebugEnabled()){
+					logger.debug("No container found return empty results");
+				}
+				return results;
+			}
+
+
 			}
 
 			if (dataListFilter.isAllFilter() && entityDictionaryService.isSubClass(dataListFilter.getDataType(), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {

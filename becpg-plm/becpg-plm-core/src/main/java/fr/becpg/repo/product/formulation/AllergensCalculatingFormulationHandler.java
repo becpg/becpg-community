@@ -99,17 +99,15 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 			Map<String, ReqCtrlListDataItem> errors = new HashMap<>();
 			Map<String, ReqCtrlListDataItem> rclCtrlMap = new HashMap<>();
 			// compoList
-			Double netQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
+			Double netQty = FormulationHelper.getNetWeight(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
 
 			for (CompoListDataItem compoItem : formulatedProduct.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 
 				NodeRef part = compoItem.getProduct();
-				Double weight = FormulationHelper.getQtyInKg(compoItem);
-				Double vol = FormulationHelper.getNetVolume(compoItem, nodeService);
 
 				ProductData partProduct = (ProductData) alfrescoRepository.findOne(part);
 
-				Double qtyUsed = FormulationHelper.isProductUnitLiter(partProduct.getUnit()) ? vol : weight;
+				Double qtyUsed = FormulationHelper.getQtyInKg(compoItem);
 
 				if ((qtyUsed != null) && (qtyUsed > 0)) {
 					if (!(partProduct instanceof LocalSemiFinishedProductData)) {
