@@ -211,7 +211,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		aspectsElt.addCDATA(extractAspects(entityNodeRef));
 
 		Element itemTypeElt = entityElt.addElement(ATTR_ITEM_TYPE);
-		itemTypeElt.addCDATA(nodeService.getType(entityNodeRef).getPrefixString());
+		itemTypeElt.addCDATA(nodeService.getType(entityNodeRef).toPrefixString(namespaceService));
 
 		loadCreator(entityNodeRef, entityElt, imgsElt, images);
 
@@ -601,7 +601,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			if (!value.isEmpty()) {
 				value += RepoConsts.LABEL_SEPARATOR;
 			}
-			value += aspect.toPrefixString();
+			value += aspect.toPrefixString(namespaceService);
 		}
 		return value;
 	}
