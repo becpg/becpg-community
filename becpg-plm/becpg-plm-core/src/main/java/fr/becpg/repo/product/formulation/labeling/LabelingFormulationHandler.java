@@ -128,10 +128,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		boolean shouldSkip = true;
 
 		// Keep Manual ingList
-		for (IngLabelingListDataItem tmp : formulatedProduct.getLabelingListView().getIngLabelingList()) {
-			if ((tmp.getManualValue() != null) && !tmp.getManualValue().isEmpty()) {
-				tmp.setValue(null);
-				retainNodes.add(tmp);
+		if(formulatedProduct.getLabelingListView().getIngLabelingList()!=null){
+			for (IngLabelingListDataItem tmp : formulatedProduct.getLabelingListView().getIngLabelingList()) {
+				if ((tmp.getManualValue() != null) && !tmp.getManualValue().isEmpty()) {
+					tmp.setValue(null);
+					retainNodes.add(tmp);
+				}
 			}
 		}
 
