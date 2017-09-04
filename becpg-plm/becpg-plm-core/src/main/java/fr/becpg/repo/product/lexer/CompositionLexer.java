@@ -8,9 +8,12 @@ import java.util.regex.Pattern;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.product.data.constraints.CompoListUnit;
+import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
@@ -26,6 +29,9 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 public class CompositionLexer {
 
+	private static Log logger = LogFactory.getLog(CompositionLexer.class);
+	
+	
 	public enum TokenType {
 
 		QTY("[-+]?([0-9]*(\\.|,)[0-9]+|[0-9]+)"), PRODUCTNAME("(.*)^"), COMPOUNIT("([ \t\f\r\n]+)(kg|g|gr|ml|l|p|m2|m|perc|%)([ \t\f\r\n]+)"), WHITESPACE(
@@ -89,7 +95,17 @@ public class CompositionLexer {
 		}
 		matcher.appendTail(productName);
 
-		compoListDataItem.setProduct(extractProduct(productName.toString()));
+		NodeRef productNodeRef = extractProduct(productName.toString());
+		
+		if(productNodeRef!=null){
+			compoListDataItem.setProduct(productNodeRef);
+		} else {
+			logger.warn("No product found for name : "+productName.toString());
+			return null;
+		}
+		
+		compoListDataItem.setDeclType(DeclarationType.DoNotDetails);
+		
 		return compoListDataItem;
 	}
 
@@ -99,7 +115,13 @@ public class CompositionLexer {
 		List<CompoListDataItem> compoList = new ArrayList<>();
 
 		while (st.hasMoreElements()) {
-			compoList.add(lex(st.nextToken()));
+			CompoListDataItem ret = lex(st.nextToken());
+			if(ret!=null){
+				if(logger.isDebugEnabled()){
+					logger.debug("Adding compolistItem : "+ret);
+				}
+				compoList.add(ret);
+			}
 		}
 
 		return compoList;
@@ -108,7 +130,6 @@ public class CompositionLexer {
 	private static NodeRef extractProduct(String productName) {
 		return BeCPGQueryBuilder.createQuery().ofType(PLMModel.TYPE_PRODUCT).excludeDefaults().andPropEquals(ContentModel.PROP_NAME, productName)
 				.singleValue();
-
 	}
 
 	private static CompoListUnit extractUnit(String unit) {
