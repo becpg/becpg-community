@@ -32,7 +32,7 @@ public class TaskOverdueFormulationHandler extends FormulationBaseHandler<Projec
 	private static final Log logger = LogFactory.getLog(TaskOverdueFormulationHandler.class);
 	
 	private static final String MAIL_TEMPLATE = "/app:company_home/app:dictionary/app:email_templates/cm:project/cm:task-overdue.ftl";
-	private static final String MAIL_SUBJECT= "notification.emailSubject";	
+	private static final String MAIL_SUBJECT= "project.notification.overdue.subject";	
 
 	private BeCPGMailService beCPGMailService;
 	private WorkflowService workflowService;
