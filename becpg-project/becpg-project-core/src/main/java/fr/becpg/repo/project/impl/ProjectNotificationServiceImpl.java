@@ -48,6 +48,8 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 	
 
 	private static final String PREFIX_LOCALIZATION_TASK_NAME = "listconstraint.pjt_taskStates.";
+	
+	private static final String MAIL_SUBJECT_KEY = "project.notification.mail.subject";
 
 	@Autowired
 	private ProjectService projectService;
@@ -81,10 +83,16 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 
 	@Override
 	public String createSubject(NodeRef projectNodeRef, NodeRef taskNodeRef, String afterStateMsg) {
+		
 		String code = (String) nodeService.getProperty(projectNodeRef, BeCPGModel.PROP_CODE);
+		String projectName = (String) nodeService.getProperty(projectNodeRef, ContentModel.PROP_NAME);
+		
 		String taskName = taskNodeRef != null ? (String) nodeService.getProperty(taskNodeRef, ProjectModel.PROP_TL_TASK_NAME) : null;
-		return "[" + nodeService.getProperty(projectNodeRef, ContentModel.PROP_NAME) + (code != null ? " - " + code : "") + "]"
-				+ (taskName != null ? " " + taskName : "") + (afterStateMsg != null ? " (" + afterStateMsg + ")" : "");
+	
+		return I18NUtil.getMessage(MAIL_SUBJECT_KEY , "[" + projectName + (code != null ? " - " + code : "") + "]"
+				+ (taskName != null ? " " + taskName : "") + (afterStateMsg != null ? " (" + afterStateMsg + ")" : "") );
+		
+		
 	}
 
 	@Override
