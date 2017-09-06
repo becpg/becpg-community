@@ -518,7 +518,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			if ((name == null) || name.isEmpty()) {
 				name = (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_CHARACT_NAME);
 			}
-		
+			return name;
 		}
 		
 
