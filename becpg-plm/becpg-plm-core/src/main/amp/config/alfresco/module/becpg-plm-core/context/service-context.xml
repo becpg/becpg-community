@@ -145,7 +145,6 @@
 		<property name="nodeService" ref="NodeService" />		
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
 		<property name="entityVersionService" ref="entityVersionService"/>
-		<property name="copyService" ref="CopyService" />
 	</bean>
 
 
