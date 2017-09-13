@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
@@ -34,9 +33,6 @@ import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
-import fr.becpg.model.PLMModel;
-import fr.becpg.model.PLMWorkflowModel;
-import fr.becpg.model.SystemState;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.AssociationService;
@@ -64,8 +60,6 @@ public class SimulationWebScript extends AbstractWebScript {
 
 	private AlfrescoRepository<ProductData> alfrescoRepository;
 
-	private CopyService copyService;
-
 	private static Log logger = LogFactory.getLog(SimulationWebScript.class);
 
 	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
@@ -87,9 +81,6 @@ public class SimulationWebScript extends AbstractWebScript {
 		this.nodeService = nodeService;
 	}
 
-	public void setCopyService(CopyService copyService) {
-		this.copyService = copyService;
-	}
 
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
