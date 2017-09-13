@@ -23,8 +23,6 @@ import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.namespace.QName;
-import org.springframework.extensions.surf.util.I18NUtil;
-
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.PropertiesHelper;
