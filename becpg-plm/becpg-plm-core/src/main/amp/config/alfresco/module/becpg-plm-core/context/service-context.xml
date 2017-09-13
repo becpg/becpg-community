@@ -42,8 +42,6 @@
 		</property>
 	</bean>
 
-
-	
 	<!-- Abstract bean -->
 	<bean id="parentImportVisitor" abstract="true" class="fr.becpg.repo.importer.impl.AbstractImportVisitor">
 		<property name="nodeService" ref="nodeService" />
@@ -141,10 +139,7 @@
 	<!-- Simulation webscript -->
 
 	<bean id="webscript.fr.becpg.simulation.simulation-create.post" class="fr.becpg.repo.web.scripts.simulation.SimulationWebScript" parent="webscript">
-		<property name="associationService" ref="associationService" />
-		<property name="nodeService" ref="NodeService" />		
-		<property name="alfrescoRepository" ref="alfrescoRepository" />
-		<property name="entityVersionService" ref="entityVersionService"/>
+		<property name="simulationService" ref="simulationService" />
 	</bean>
 
 
