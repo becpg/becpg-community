@@ -26,6 +26,7 @@ import org.alfresco.service.namespace.QName;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.PropertiesHelper;
 import fr.becpg.repo.importer.ImportContext;
 
@@ -88,14 +89,14 @@ public class ImportHelper {
 									? transColumn.split(RepoConsts.MODEL_PREFIX_SEPARATOR)[1] : null;
 							// default locale
 							if (first) {
-								mlText.addValue(I18NUtil.getContentLocaleLang(), values.get(z_idx));
+								mlText.addValue(Locale.getDefault(), values.get(z_idx));
 								first = false;
 							}
 							// other locales
 							else if ((transLocalName != null) && transLocalName.startsWith(qName.getLocalName() + MLTEXT_SEPARATOR)) {
 
 								String strLocale = transLocalName.replace(qName.getLocalName() + MLTEXT_SEPARATOR, "");
-								Locale locale = new Locale(strLocale);
+								Locale locale = MLTextHelper.parseLocale(strLocale);
 								mlText.addValue(locale, values.get(z_idx));
 							} else {
 								// the translation is finished
