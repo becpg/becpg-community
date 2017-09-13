@@ -1078,7 +1078,7 @@
 		</Dimension>
 
 		<Dimension type="StandardDimension" foreignKey="id" name="allergenVoluntary" caption="${msg("jsolap.allergenVoluntary.title")}">
-			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.allergen.caption")}" primaryKey="id" >
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.allergen.caption")}" primaryKey="entity_fact_id" >
 				<#if isAdmin>
 					<Table name="becpg_public_allergens" alias="becpg_public_allergens">
 						<SQL dialect="generic">
