@@ -89,7 +89,7 @@ public class ImportHelper {
 									? transColumn.split(RepoConsts.MODEL_PREFIX_SEPARATOR)[1] : null;
 							// default locale
 							if (first) {
-								mlText.addValue(Locale.getDefault(), values.get(z_idx));
+								mlText.addValue(I18NUtil.getContentLocaleLang(), values.get(z_idx));
 								first = false;
 							}
 							// other locales
