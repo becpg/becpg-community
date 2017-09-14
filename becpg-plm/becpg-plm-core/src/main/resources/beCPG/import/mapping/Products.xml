@@ -307,4 +307,15 @@
 		</columns>
 	</mapping>
 	
+	<mapping name="mpm:processList">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:erpCode" />
+		</nodeColumnKeys>
+		<dataListColumnKeys>
+			<dataListColumnKey attribute="mpm:plResource" />
+		</dataListColumnKeys>
+		<columns>
+		</columns>
+	</mapping>
+	
 </mappings>
