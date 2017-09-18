@@ -136,13 +136,6 @@
 	</bean>
 
 
-	<!-- Simulation webscript -->
-
-	<bean id="webscript.fr.becpg.simulation.simulation-create.post" class="fr.becpg.repo.web.scripts.simulation.SimulationWebScript" parent="webscript">
-		<property name="simulationService" ref="simulationService" />
-		<property name="nodeService" ref="NodeService" />
-	</bean>
-
 
 	<!-- Search -->
 	<bean id="webscript.fr.becpg.search.search.get" class="fr.becpg.repo.web.scripts.search.SearchWebScript" parent="webscript">

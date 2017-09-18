@@ -158,36 +158,40 @@ public class ImportServiceTest extends PLMBaseTestCase {
 		assertNotNull("abricot ing should exist", ingNodeRef);
 		MLText mlText = (MLText) mlNodeServiceImpl.getProperty(ingNodeRef, BeCPGModel.PROP_LEGAL_NAME);
 		assertNotNull("MLText exist", mlText);
-		assertEquals("MLText exist has 2 Locales", 2, mlText.getLocales().size());
+		assertEquals("MLText exist has 2 Locales", 3, mlText.getLocales().size());
 		assertEquals("Check default value", "Abricot french", mlText.getValue(I18NUtil.getContentLocaleLang()));
 		assertEquals("Check english value", "Abricot english", mlText.getValue(Locale.ENGLISH));
+		assertEquals("Check english value", "Abricot english US", mlText.getValue(Locale.US));
 
 		// Acerola
 		ingNodeRef = nodeService.getChildByName(ingsFolder, ContentModel.ASSOC_CONTAINS, "Acerola");
 		assertNotNull("Acerola ing should exist", ingNodeRef);
 		mlText = (MLText) mlNodeServiceImpl.getProperty(ingNodeRef, BeCPGModel.PROP_LEGAL_NAME);
 		assertNotNull("MLText exist", mlText);
-		assertEquals("MLText exist has 3 Locales", 2, mlText.getLocales().size());
+		assertEquals("MLText exist has 3 Locales", 3, mlText.getLocales().size());
 		assertEquals("Check default value", "Acerola french", mlText.getValue(I18NUtil.getContentLocaleLang()));
 		assertEquals("Check english value", "Acerola english", mlText.getValue(Locale.ENGLISH));
+		assertEquals("Check english value", "Acerola english US", mlText.getValue(Locale.US));
 
 		// Abricot1
 		ingNodeRef = nodeService.getChildByName(ingsFolder, ContentModel.ASSOC_CONTAINS, "Abricot1");
 		assertNotNull("Abricot1 ing should exist", ingNodeRef);
 		mlText = (MLText) mlNodeServiceImpl.getProperty(ingNodeRef, BeCPGModel.PROP_LEGAL_NAME);
 		assertNotNull("MLText exist", mlText);
-		assertEquals("MLText exist has 3 Locales", 2, mlText.getLocales().size());
+		assertEquals("MLText exist has 3 Locales", 3, mlText.getLocales().size());
 		assertEquals("Check default value", "Abricot1 french", mlText.getValue(I18NUtil.getContentLocaleLang()));
 		assertEquals("Check english value", "Abricot1 english", mlText.getValue(Locale.ENGLISH));
+		assertEquals("Check english value", "Abricot1 english US", mlText.getValue(Locale.US));
 
 		// Acerola1
 		ingNodeRef = nodeService.getChildByName(ingsFolder, ContentModel.ASSOC_CONTAINS, "Acerola1");
 		assertNotNull("Acerola1 ing should exist", ingNodeRef);
 		mlText = (MLText) mlNodeServiceImpl.getProperty(ingNodeRef, BeCPGModel.PROP_LEGAL_NAME);
 		assertNotNull("MLText exist", mlText);
-		assertEquals("MLText exist has 3 Locales", 2, mlText.getLocales().size());
+		assertEquals("MLText exist has 3 Locales", 3, mlText.getLocales().size());
 		assertEquals("Check default value", "Acerola1 french", mlText.getValue(I18NUtil.getContentLocaleLang()));
 		assertEquals("Check english value", "Acerola1 english", mlText.getValue(Locale.ENGLISH));
+		assertEquals("Check english value", "Acerola1 english US", mlText.getValue(Locale.US));
 	}
 
 	/**
