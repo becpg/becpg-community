@@ -183,6 +183,15 @@
       <property name="contentService" ref="contentService" />
       <property name="repository" ref="repositoryHelper" />
 	</bean>
+	
+
+	<!-- Simulation webscript -->
+
+	<bean id="webscript.fr.becpg.simulation.simulation-create.post" class="fr.becpg.repo.web.scripts.simulation.SimulationWebScript" parent="webscript">
+		<property name="simulationService" ref="simulationService" />
+		<property name="nodeService" ref="NodeService" />
+		<property name="paginatedSearchCache" ref="paginatedSearchCache"/>
+	</bean>
 
 	<!-- beCPG Remote API -->
 

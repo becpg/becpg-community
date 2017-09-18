@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.antlr.grammar.v3.ANTLRParser.throwsSpec_return;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.extensions.webscripts.AbstractWebScript;
@@ -30,7 +31,8 @@ import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
-import fr.becpg.repo.simulation.SimulationService;
+import fr.becpg.repo.entity.simulation.EntitySimulationService;
+import fr.becpg.repo.search.PaginatedSearchCache;
 
 /**
  *
@@ -43,9 +45,22 @@ public class SimulationWebScript extends AbstractWebScript {
 
 	private static final String PARAM_DATALISTITEMS = "dataListItems";
 
+	private static final String PARAM_ALLPAGES = "allPages";
+
+	private static final String PARAM_QUERY_EXECUTION_ID = "queryExecutionId";
+
+	private static final String PARAM_NODEREFS = "nodeRefs";
+
+	private static final String PARAM_MODE = "mode";
+
+	private static final String PARAM_DEST_NODEREF = "destNodeRef";
+
 	private NodeService nodeService;
 	
-	private SimulationService simulationService;
+	private EntitySimulationService simulationService;
+	
+
+	private PaginatedSearchCache paginatedSearchCache;
 
 
 	public void setNodeService(NodeService nodeService) {
@@ -53,8 +68,15 @@ public class SimulationWebScript extends AbstractWebScript {
 	}
 	
 	
-	public void setSimulationService(SimulationService simulationService) {
+	public void setSimulationService(EntitySimulationService simulationService) {
 		this.simulationService = simulationService;
+	}
+
+	
+	
+
+	public void setPaginatedSearchCache(PaginatedSearchCache paginatedSearchCache) {
+		this.paginatedSearchCache = paginatedSearchCache;
 	}
 
 
@@ -62,28 +84,71 @@ public class SimulationWebScript extends AbstractWebScript {
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
 
 		String entityNodeRefParam = req.getParameter(PARAM_ENTITY_NODEREF);
+		String destNodeRefParam = req.getParameter(PARAM_DEST_NODEREF);
+		
 		String dataListItems = req.getParameter(PARAM_DATALISTITEMS);
-
+		String allPagesParam = req.getParameter(PARAM_ALLPAGES);
+		String queryExecutionId  = req.getParameter(PARAM_QUERY_EXECUTION_ID);
+		String nodeRefsParam = req.getParameter(PARAM_NODEREFS);
+		String mode  = req.getParameter(PARAM_MODE);
+		
+		
+		List<NodeRef> nodeRefs = new ArrayList<>();
+		
+		if(allPagesParam!=null && "true".equalsIgnoreCase(allPagesParam) && queryExecutionId!=null){
+			nodeRefs = paginatedSearchCache.getSearchResults(queryExecutionId);
+    	} else if(nodeRefsParam!=null&& !nodeRefsParam.isEmpty()) {
+			for (String nodeRefItem : nodeRefsParam.split(",")) {
+				nodeRefs.add(new NodeRef(nodeRefItem));
+			}
+		}
+		
 		List<NodeRef> dataListItemsNodeRefs = new ArrayList<>();
 		if ((dataListItems != null) && !dataListItems.isEmpty()) {
 			for (String dataListItem : dataListItems.split(",")) {
 				dataListItemsNodeRefs.add(new NodeRef(dataListItem));
 			}
 		}
-
+	
 		NodeRef simulationNodeRef = null;
 
 		NodeRef entityNodeRef = null;
 		if ((entityNodeRefParam != null) && !entityNodeRefParam.isEmpty()) {
 			entityNodeRef = new NodeRef(entityNodeRefParam);
 		}
+		
+		NodeRef destNodeRef = null;
+		if ((destNodeRefParam != null) && !destNodeRefParam.isEmpty()) {
+			destNodeRef = new NodeRef(destNodeRefParam);
+		}
+		
+		if(destNodeRef == null && entityNodeRef!=null) {
+			destNodeRef = nodeService.getPrimaryParent(entityNodeRef).getParentRef();
+		}
 
-		if (!dataListItemsNodeRefs.isEmpty()) {
-
-			simulationService.recurSimule(entityNodeRef, null, dataListItemsNodeRefs);
+		if(!nodeRefs.isEmpty()) {
+			
+			if(destNodeRef==null) {
+				throw new IllegalStateException("destNodeRef is Mandatory");
+			}
+			
+			if(mode==null) {
+				throw new IllegalStateException("mode is Mandatory");
+			}
+			
+			simulationNodeRef = simulationService.createSimulationNodeRefs(nodeRefs,destNodeRef, mode);
+		} else if (!dataListItemsNodeRefs.isEmpty()) {
+			simulationService.simuleDataListItems(entityNodeRef, dataListItemsNodeRefs);
 
 		} else if (entityNodeRef != null) {
-			simulationNodeRef = simulationService.createSimulationNodeRef(entityNodeRef, nodeService.getPrimaryParent(entityNodeRef).getParentRef());
+			
+			if(destNodeRef==null) {
+				throw new IllegalStateException("destNodeRef is Mandatory");
+			}
+			
+			simulationNodeRef = simulationService.createSimulationNodeRef(entityNodeRef,destNodeRef );
+		} else {
+			throw new IllegalStateException("Parameters are incorrects");
 		}
 
 		try {
