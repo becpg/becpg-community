@@ -356,7 +356,7 @@ public class EntityListValuePlugin implements ListValuePlugin {
 
 		
 
-		List<NodeRef> ret = queryBuilder.list();
+		List<NodeRef> ret = queryBuilder.ftsLanguage().list();
 
 		return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(BeCPGModel.PROP_LV_VALUE, nodeService));
 
