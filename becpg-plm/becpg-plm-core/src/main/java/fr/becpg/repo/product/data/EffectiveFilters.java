@@ -30,19 +30,31 @@ public class EffectiveFilters<T extends EffectiveDataItem> implements DataListFi
 	public final static String ALL = "ALL";
 
 	private String effectiveState = EFFECTIVE;
+	
+	private Date currentDate = null;
 
 	public EffectiveFilters(String effectiveState) {
 		super();
 		this.effectiveState = effectiveState;
 	}
+	
+	
+
+	public EffectiveFilters(Date currentDate) {
+		super();
+		this.currentDate = currentDate;
+		this.effectiveState = EFFECTIVE;
+	}
+
+
 
 	@Override
 	public Predicate<T> createPredicate(final ProductData data) {
 
-		final Date now = new Date();
+		final Date now = currentDate!=null ? currentDate : new Date();
 		final Date startEffectivity = (data.getStartEffectivity() != null) && (data.getStartEffectivity().getTime() > now.getTime())
 				? data.getStartEffectivity() : now;
-
+				
 		return item -> {
 
 			if (FUTUR.equals(effectiveState)) {
