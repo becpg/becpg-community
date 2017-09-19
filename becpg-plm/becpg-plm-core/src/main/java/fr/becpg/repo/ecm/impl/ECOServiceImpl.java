@@ -29,7 +29,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -536,14 +535,12 @@ public class ECOServiceImpl implements ECOService {
 		Predicate<EffectiveDataItem> filter = null;
 
 		boolean isFuture = isFuture(ecoData);
-		
-		if(isFuture) {
+
+		if (!isFuture) {
 			filter = (new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)).createPredicate(productData);
 		} else {
-			filter =  (new EffectiveFilters<>(ecoData.getEffectiveDate())).createPredicate(productData);
+			filter = (new EffectiveFilters<>(ecoData.getEffectiveDate())).createPredicate(productData);
 		}
-		
-		Stream<T> filteredItems = items.stream().filter(filter);
 
 		Map<NodeRef, Set<Pair<NodeRef, Integer>>> replacements = new HashMap<>();
 		Set<T> toDelete = new HashSet<>();
@@ -558,8 +555,7 @@ public class ECOServiceImpl implements ECOService {
 				List<NodeRef> replacementsList = getSourceItems(ecoData, replacementListDataItem);
 
 				// if rule match compoList
-				if (filteredItems.map(c -> c.getComponent()).collect(Collectors.toSet())
-						.containsAll(replacementsList)) {
+				if (items.stream().filter(filter).map(c -> c.getComponent()).collect(Collectors.toSet()).containsAll(replacementsList)) {
 					boolean first = true;
 					for (NodeRef sourceItem : replacementsList) {
 
@@ -575,15 +571,15 @@ public class ECOServiceImpl implements ECOService {
 							}
 							if (ChangeOrderType.Merge.equals(ecoData.getEcoType())) {
 								if (replacementListDataItem.getSourceItems() != null) {
-									targetItems.add(new Pair<>(replacementListDataItem.getSourceItems().get(0),
-											replacementListDataItem.getQtyPerc()));
+									targetItems
+											.add(new Pair<>(replacementListDataItem.getSourceItems().get(0), replacementListDataItem.getQtyPerc()));
 								}
 							} else {
 								if (replacementListDataItem.getTargetItem() != null) {
-									targetItems.add(new Pair<>(replacementListDataItem.getTargetItem(),
-											replacementListDataItem.getQtyPerc()));
+									targetItems.add(new Pair<>(replacementListDataItem.getTargetItem(), replacementListDataItem.getQtyPerc()));
 								} else {
-									toDelete.addAll(filteredItems.filter(c -> sourceItem.equals(c.getComponent())).collect(Collectors.toSet()));
+									toDelete.addAll(items.stream().filter(filter).filter(c -> sourceItem.equals(c.getComponent()))
+											.collect(Collectors.toSet()));
 								}
 							}
 							replacements.put(sourceItem, targetItems);
@@ -591,7 +587,8 @@ public class ECOServiceImpl implements ECOService {
 							first = false;
 						} else {
 							if ((targetItems == null) || targetItems.isEmpty()) {
-								toDelete.addAll(filteredItems.filter(c -> sourceItem.equals(c.getComponent())).collect(Collectors.toSet()));
+								toDelete.addAll(
+										items.stream().filter(filter).filter(c -> sourceItem.equals(c.getComponent())).collect(Collectors.toSet()));
 							} else {
 								logger.warn("Cannot delete target item: " + sourceItem + " used in another rule");
 							}
@@ -601,10 +598,10 @@ public class ECOServiceImpl implements ECOService {
 				}
 			}
 		}
-		if(isFuture) {
-			for(T item : items ) {
-				for(T itemToDelete : toDelete) {
-					if(item.equals(itemToDelete)) {
+		if (isFuture) {
+			for (T item : items) {
+				for (T itemToDelete : toDelete) {
+					if (item.equals(itemToDelete)) {
 						item.setEndEffectivity(ecoData.getEffectiveDate());
 					}
 				}
@@ -614,7 +611,7 @@ public class ECOServiceImpl implements ECOService {
 		}
 
 		for (Map.Entry<NodeRef, Set<Pair<NodeRef, Integer>>> replacement : replacements.entrySet()) {
-			Set<T> components = filteredItems.filter(c -> replacement.getKey().equals(c.getComponent())).collect(Collectors.toSet());
+			Set<T> components = items.stream().filter(filter).filter(c -> replacement.getKey().equals(c.getComponent())).collect(Collectors.toSet());
 			if (components.size() > 0) {
 				boolean first = true;
 				for (Pair<NodeRef, Integer> target : replacement.getValue()) {
@@ -629,8 +626,8 @@ public class ECOServiceImpl implements ECOService {
 						T newCompoListDataItem = (T) origComponent.clone();
 						newCompoListDataItem.setNodeRef(null);
 						updateComponent(newCompoListDataItem, target.getFirst(), target.getSecond());
-						if(isFuture) {
-							if(!first) {
+						if (isFuture) {
+							if (first) {
 								origComponent.setEndEffectivity(ecoData.getEffectiveDate());
 							}
 							newCompoListDataItem.setStartEffectivity(ecoData.getEffectiveDate());
@@ -647,7 +644,7 @@ public class ECOServiceImpl implements ECOService {
 
 	private boolean isFuture(ChangeOrderData ecoData) {
 		Date now = new Date();
-		return ecoData.getEffectiveDate()!=null && ecoData.getEffectiveDate().getTime() > now.getTime();
+		return (ecoData.getEffectiveDate() != null) && (ecoData.getEffectiveDate().getTime() > now.getTime());
 	}
 
 	private <T extends CompositionDataItem> void updateComponent(T component, NodeRef target, Integer qtyPerc) {
@@ -777,7 +774,6 @@ public class ECOServiceImpl implements ECOService {
 		changeUnitDataItem.setReqDetails(reqDetails);
 	}
 
-	@Deprecated
 	private List<QName> evaluateWUsedAssociations(NodeRef targetAssocNodeRef) {
 		List<QName> wUsedAssociations = new ArrayList<>();
 
