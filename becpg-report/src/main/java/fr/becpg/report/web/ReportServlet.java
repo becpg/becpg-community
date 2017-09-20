@@ -18,13 +18,9 @@
 package fr.becpg.report.web;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.ConnectException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,19 +29,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import fr.becpg.report.client.ReportFormat;
 import fr.becpg.report.client.ReportParams;
 import fr.becpg.report.services.BeCPGReportService;
 import fr.becpg.report.services.impl.BeCPGReportServiceImpl;
-import net.sf.jooreports.converter.DocumentConverter;
-import net.sf.jooreports.converter.DocumentFamily;
-import net.sf.jooreports.converter.DocumentFormat;
-import net.sf.jooreports.openoffice.connection.OpenOfficeConnection;
-import net.sf.jooreports.openoffice.connection.SocketOpenOfficeConnection;
-import net.sf.jooreports.openoffice.converter.OpenOfficeDocumentConverter;
 
 public class ReportServlet extends AbstractReportServlet {
 
@@ -53,8 +40,6 @@ public class ReportServlet extends AbstractReportServlet {
 
 	private final static int BUFFER_SIZE = 2048;
 
-	private static Log logger = LogFactory.getLog(ReportServlet.class);
-	
 	private static final long serialVersionUID = 609805146293149060L;
 
 	public ReportServlet() {
@@ -96,22 +81,7 @@ public class ReportServlet extends AbstractReportServlet {
 
 			OutputStream out = resp.getOutputStream();
 
-			if (format.equals(ReportFormat.DOCX.toString())) {
-				File tmpFile = File.createTempFile("tmpBirtODT", "odt");
-				try {
-					try (OutputStream birtOut = new FileOutputStream(tmpFile)) {
-						beCPGReportService.generateReport(templateId, ReportFormat.ODT.toString(), lang, req.getInputStream(), birtOut, images);
-					}
-					try (FileInputStream inTmp = new FileInputStream(tmpFile)) {
-						convertODTStreamToDocx(inTmp, out);
-					}
-				} finally {
-					tmpFile.delete();
-				}
-
-			} else {
-				beCPGReportService.generateReport(templateId, format, lang, req.getInputStream(), out, images);
-			}
+			beCPGReportService.generateReport(templateId, format, lang, req.getInputStream(), out, images);
 
 			// Invalidate session to avoid keeping inMemory images
 			session.invalidate();
@@ -131,34 +101,6 @@ public class ReportServlet extends AbstractReportServlet {
 			out.close();
 
 		}
-	}
-
-	private void convertODTStreamToDocx(InputStream in, OutputStream ou) throws ConnectException {
-
-		OpenOfficeConnection connection = new SocketOpenOfficeConnection();
-		try {
-			connection.connect();
-
-			if(connection.isConnected()){
-				DocumentConverter converter = new OpenOfficeDocumentConverter(connection);
-	
-				DocumentFormat odt = new DocumentFormat("OpenDocument Text", DocumentFamily.TEXT, "application/vnd.oasis.opendocument.text", "odt");
-				odt.setExportFilter(DocumentFamily.TEXT,"Office Open XML Text");
-				DocumentFormat docx = new DocumentFormat("Microsoft Word 2007 XML", DocumentFamily.TEXT,
-						"application/vnd.openxmlformats-officedocument.wordprocessingml.document", "docx");
-				docx.setExportFilter(DocumentFamily.TEXT,"Office Open XML Text");
-
-				converter.convert(in, odt, ou, docx);
-			} else {
-				logger.error("Cannot connect to soffice");
-			}
-
-		} finally {
-			if(connection.isConnected()){
-				connection.disconnect();
-			}
-		}
-
 	}
 
 }
