@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2016 beCPG. 
+ * Copyright (C) 2010-2017 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -209,6 +209,7 @@ public class EntityToDBXmlVisitor {
 		ignoredLists.add("bcpg:physicoChemList");
 		ignoredLists.add("bcpg:ingLabelingList");
 		ignoredLists.add("pjt:activityList");
+		ignoredLists.add("bcpg:activityList");
 	}
 
 	public void visit(InputStream in) throws IOException, SAXException, ParserConfigurationException, DOMException, ParseException, SQLException {
@@ -217,36 +218,37 @@ public class EntityToDBXmlVisitor {
 		domFactory.setNamespaceAware(true); // never forget this!
 		DocumentBuilder builder = domFactory.newDocumentBuilder();
 		Document doc = builder.parse(in);
+		
+		if(doc.getFirstChild() instanceof Element){
+			Element entity = (Element) doc.getFirstChild();
 
-		Element entity = (Element) doc.getFirstChild();
+			String nodeRef = entity.getAttribute(ATTR_NODEREF);
+			String name = entity.getAttribute(ATTR_NAME);
+			String type = entity.getNodeName();
 
-		String nodeRef = entity.getAttribute(ATTR_NODEREF);
-		String name = entity.getAttribute(ATTR_NAME);
-		String type = entity.getNodeName();
+			if (!ignoredTypes.contains(type)) {
+				Long dbId = createDBEntity(nodeRef, type, name, readProperties(entity));
 
-		if (!ignoredTypes.contains(type)) {
-			Long dbId = createDBEntity(nodeRef, type, name, readProperties(entity));
-
-			NodeList dataLists = entity.getElementsByTagName("dl:dataList");
-			for (int i = 0; i < dataLists.getLength(); i++) {
-				Element dataList = ((Element) dataLists.item(i));
-				String dataListname = dataList.getAttribute(ATTR_NAME);
-
-				NodeList contains = dataList.getElementsByTagName("cm:contains");
-				Element container = (Element) contains.item(0);
-
-				NodeList dataListItems = container.getChildNodes();
-				for (int j = 0; j < dataListItems.getLength(); j++) {
-					Element dataListItem = ((Element) dataListItems.item(j));
-					String dataListItemNodeRef = dataListItem.getAttribute(ATTR_NODEREF);
-
-					if (!ignoredLists.contains(dataListItem.getNodeName())) {
-						createDBDataListItem(dbId, dataListItemNodeRef, dataListname, dataListItem.getNodeName(), readProperties(dataListItem));
-					}
+				NodeList dataLists = entity.getElementsByTagName("dl:dataList");
+				for (int i = 0; i < dataLists.getLength(); i++) {
+						Element dataList = ((Element) dataLists.item(i));
+						String dataListname = dataList.getAttribute(ATTR_NAME);
+	
+						NodeList contains = dataList.getElementsByTagName("cm:contains");
+						Element container = (Element) contains.item(0);
+	
+						NodeList dataListItems = container.getChildNodes();
+						for (int j = 0; j < dataListItems.getLength(); j++) {
+								Element dataListItem = ((Element) dataListItems.item(j));
+								String dataListItemNodeRef = dataListItem.getAttribute(ATTR_NODEREF);
+		
+								if (!ignoredLists.contains(dataListItem.getNodeName())) {
+									createDBDataListItem(dbId, dataListItemNodeRef, dataListname, dataListItem.getNodeName(), readProperties(dataListItem));
+								}
+						}
 				}
-
 			}
-		}
+		} 
 
 	}
 
@@ -387,6 +389,16 @@ public class EntityToDBXmlVisitor {
 						}
 
 						break;
+					case "d:category":
+						NodeList children = property.getChildNodes().item(0).getChildNodes();
+						
+						for(int i = 0; i<children.getLength(); ++i){
+							Element curChild = (Element) children.item(i).getChildNodes().item(0);
+							String curTag = curChild.getAttribute(ATTR_NAME);
+							ret.add(new Column(property.getNodeName(), curTag));
+						}						
+						
+						break;
 
 					default:
 						break;
@@ -500,5 +512,4 @@ public class EntityToDBXmlVisitor {
 
 		return parsed;
 	}
-
 }
