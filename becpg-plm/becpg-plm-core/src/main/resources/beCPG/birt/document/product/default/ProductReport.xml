@@ -28,7 +28,7 @@
   <isTradeItemAReturnableItem prefix="gs1"><![CDATA[false]]></isTradeItemAReturnableItem>
   <netWeight prefix="bcpg"><![CDATA[0.2]]></netWeight>
   <productComments prefix="bcpg"><![CDATA[]]></productComments>
-  <productUnit prefix="bcpg"><![CDATA[L]]></productUnit>
+  <productUnit prefix="bcpg"><![CDATA[kg]]></productUnit>
   <reportParameters prefix="rep"><![CDATA[]]></reportParameters>
   <cascadeTx prefix="sys"><![CDATA[418894]]></cascadeTx>
   <eanCodeLevel3 prefix="bcpg"><![CDATA[]]></eanCodeLevel3>
@@ -42,7 +42,9 @@
   <reportEntityGenerated prefix="rep"><![CDATA[2017-07-07T07:33:00.950Z]]></reportEntityGenerated>
   <netVolume prefix="bcpg"><![CDATA[]]></netVolume>
   <height prefix="gs1"><![CDATA[]]></height>
-  <contractDate prefix="bcpg"><![CDATA[10]]></contractDate>
+  <contractDate prefix="bcpg"><![CDATA[360]]></contractDate>
+  <bestBeforeDate prefix="bcpg"><![CDATA[361]]></bestBeforeDate>
+  <useByDate prefix="bcpg"><![CDATA[391]]></useByDate>
   <endEffectivity prefix="bcpg"><![CDATA[]]></endEffectivity>
   <profitability prefix="bcpg"><![CDATA[87.63992579648438]]></profitability>
   <isTradeItemADivisibleItem prefix="gs1"><![CDATA[false]]></isTradeItemADivisibleItem>
@@ -83,7 +85,6 @@
   <productDensity prefix="bcpg"><![CDATA[0.9383966430796251]]></productDensity>
   <taggable prefix="cm"><![CDATA[]]></taggable>
   <previousUnitTotalCost prefix="bcpg"><![CDATA[0.014300000000000002]]></previousUnitTotalCost>
-  <useByDate prefix="bcpg"><![CDATA[390]]></useByDate>
   <publicationDate prefix="gs1"><![CDATA[]]></publicationDate>
   <ingTypeV2 prefix="bcpg"><![CDATA[]]></ingTypeV2>
   <tertiaryWeight prefix="gs1"><![CDATA[379.9776]]></tertiaryWeight>
@@ -101,7 +102,6 @@
   <description prefix="cm"><![CDATA[Quiche pour la MDD. Pour 4 personnes]]></description>
   <productHierarchy2 prefix="gs1"><![CDATA[]]></productHierarchy2>
   <commentCount prefix="fm"><![CDATA[0]]></commentCount>
-  <bestBeforeDate prefix="bcpg"><![CDATA[361]]></bestBeforeDate>
   <isTradeItemAnOrderableUnit prefix="gs1"><![CDATA[false]]></isTradeItemAnOrderableUnit>
   <nutrientProfilingScore prefix="bcpg"><![CDATA[12.0]]></nutrientProfilingScore>
   <erpCode prefix="bcpg"><![CDATA[ERPCODE]]></erpCode>
@@ -515,7 +515,7 @@
       </ingList>
     </ingLists>
     <nutLists entityDataListState="ToValidate" energiekcal="273.39506004804133" energiekj="1142.7913510008127" lipides="15.522500007748604" agsaturés="3.9599600114440916" glucides="25.06613999547005" sucres="0.10746" protéines="8.30699999910593" fibresalimentaires="0.09999999999999999" sodium="600.895" sel="1.5262733000000002" vitaminectotale="">
-      <nutList nutListGroup="Groupe 1" parentLevel="" nutListValue="-1" name="Energie kcal" nutListValuePerServing="546.7901200960827" nutListIsFormulated="true" nutListMini="" nutListFormulatedValue="273.39506004804133" nutListLossPerc="" nutListGDAPerc="27.339506004804136" nutListUnit="kcal/100g" nutListMethod="Formulation" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="1481502" locale="fr_FR" sort="200" depthLevel="1" nutListMaxi="" nutListNut="Energie kcal" legalName="Energie">
+      <nutList nutListGroup="Groupe 1" parentLevel="" nutListValue="273.39506004804133" name="Energie kcal" nutListValuePerServing="546.7901200960827" nutListIsFormulated="true" nutListMini="" nutListFormulatedValue="273.39506004804133" nutListLossPerc="" nutListGDAPerc="27.339506004804136" nutListUnit="kcal/100g" nutListMethod="Formulation" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="1481502" locale="fr_FR" sort="200" depthLevel="1" nutListMaxi="" nutListNut="Energie kcal" legalName="Energie">
         <nutListNut prefix="bcpg">
           <nut prefix="bcpg">
             <nutType prefix="bcpg"><![CDATA[Valeur énergétique]]></nutType>
@@ -569,7 +569,7 @@
         <description prefix="cm"><![CDATA[]]></description>
         <nutGDA prefix="bcpg"><![CDATA[8400.0]]></nutGDA>
       </nutList>
-      <nutList nutListGroup="Groupe 1" parentLevel="" nutListValue="15.522500007748604" name="Lipides" nutListValuePerServing="31.04500001549721" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="15.522500007748604" nutListLossPerc="" nutListGDAPerc="44.350000022138865" nutListUnit="g/100g" nutListMethod="Formulation" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="1481501" locale="fr_FR" sort="300" depthLevel="1" nutListMaxi="" nutListNut="Lipides" legalName="Mati&#xE8;res grasses">
+      <nutList nutListGroup="Groupe 1" parentLevel="" nutListValue="15.3333" name="Lipides" nutListValuePerServing="31.04500001549721" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="15.522500007748604" nutListLossPerc="" nutListGDAPerc="44.350000022138865" nutListUnit="g/100g" nutListMethod="Formulation" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="1481501" locale="fr_FR" sort="300" depthLevel="1" nutListMaxi="" nutListNut="Lipides" legalName="Mati&#xE8;res grasses">
         <nutListNut prefix="bcpg">
           <nut prefix="bcpg">
             <nutType prefix="bcpg"><![CDATA[Nutriment]]></nutType>
@@ -689,7 +689,7 @@
 > 40 g ± 8 g]]></description>
         <nutGDA prefix="bcpg"><![CDATA[90.0]]></nutGDA>
       </nutList>
-      <nutList nutListGroup="Groupe 1" parentLevel="" nutListValue="8.30699999910593" name="Prot&#xE9;ines" nutListValuePerServing="16.61399999821186" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="8.30699999910593" nutListLossPerc="" nutListGDAPerc="33.22799999642372" nutListUnit="g/100g" nutListMethod="Formulation" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="1481503" locale="fr_FR" sort="700" depthLevel="1" nutListMaxi="" nutListNut="Prot&#xE9;ines" legalName="Prot&#xE9;ines">
+      <nutList nutListGroup="Groupe 1" parentLevel="" nutListValue="-1" name="Prot&#xE9;ines" nutListValuePerServing="16.61399999821186" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="8.30699999910593" nutListLossPerc="" nutListGDAPerc="33.22799999642372" nutListUnit="g/100g" nutListMethod="Formulation" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="1481503" locale="fr_FR" sort="700" depthLevel="1" nutListMaxi="" nutListNut="Prot&#xE9;ines" legalName="Prot&#xE9;ines">
         <nutListNut prefix="bcpg">
           <nut prefix="bcpg">
             <nutType prefix="bcpg"><![CDATA[Nutriment]]></nutType>
@@ -839,12 +839,6 @@
       <microbioList mblMaxi="500000.0" name="31850fe6-07ba-45e6-b4e5-925cbca70d74" node-dbid="101903" locale="fr_FR" mblValue="300000.0" sort="1" mblUnit="UFC/g" mblMicrobio="Flore a&#xE9;robie m&#xE9;sophile revivifiable" legalName="">
         <description prefix="cm"><![CDATA[]]></description>
       </microbioList>
-      <microbioList mblMaxi="" name="31850fe6-07ba-45e6-b4e5-925cbca70d74" node-dbid="101903" locale="fr_FR" mblValue="-1" sort="1" mblUnit="UFC/g" mblMicrobio="Flore Test 1" legalName="">
-        <description prefix="cm"><![CDATA[]]></description>
-      </microbioList>
-      <microbioList mblMaxi="" name="31850fe6-07ba-45e6-b4e5-925cbca70d74" node-dbid="101903" locale="fr_FR" mblValue="-1" sort="1" mblUnit="UFC/g" mblMicrobio=" M&#xE9;sophile Test 2" legalName="">
-        <description prefix="cm"><![CDATA[]]></description>
-      </microbioList>
       <microbioList mblMaxi="" name="1b6ac726-8a43-4340-a57a-9590ce1e8a17" node-dbid="101904" locale="fr_FR" mblValue="" sort="2" mblUnit="UFC/10g" mblMicrobio="Levure" legalName="">
         <description prefix="cm"><![CDATA[]]></description>
       </microbioList>
@@ -860,7 +854,7 @@
       <microbioList mblMaxi="" name="6115f00b-9e75-43e9-a01f-f1c524050abe" node-dbid="101908" locale="fr_FR" mblValue="" sort="6" mblUnit="UFC/25g" mblMicrobio="Salmonelle" legalName="">
         <description prefix="cm"><![CDATA[]]></description>
       </microbioList>
-      <microbioList mblMaxi="500.0" name="d276c87e-02fa-43d0-89eb-5f0bfb1776dc" node-dbid="101909" locale="fr_FR" mblValue="100.0" sort="7" mblUnit="UFC/g" mblMicrobio="Staphylocoque" legalName="">
+      <microbioList mblMaxi="-1" name="d276c87e-02fa-43d0-89eb-5f0bfb1776dc" node-dbid="101909" locale="fr_FR" mblValue="-1" sort="7" mblUnit="UFC/g" mblMicrobio="Staphylocoque" legalName="">
         <description prefix="cm"><![CDATA[]]></description>
       </microbioList>
       <microbioList mblMaxi="1000.0" mblTextCriteria="" name="800fd1be-956f-4251-9f3a-d9578f14dee8" node-dbid="103086" locale="fr_FR" mblValue="100.0" sort="8" mblUnit="/g" mblMicrobio="ASR">
@@ -868,7 +862,7 @@
       </microbioList>
     </microbioLists>
     <compoLists entityDataListState="Valid">
-      <compoList legalName="p&#xE2;te" productState="Valid" tare="0.0" projectedQty="" creator="admin" futureUnitTotalCost="0.14300000000000002" versionLabel="1.1" autoVersion="true" startEffectivity="2012-09-08T08:48:57.928Z" nutrientProfilingClass="C" productCompoVolumeUsed="230.6226207172911" netWeight="200.0" productUnit="kg" code="SF1089" autoVersionOnUpdateProps="false" productDensity="0.8672176188873082" taggable="" previousUnitTotalCost="0.14300000000000002" useByDate="" netWeightUnit="kg" ingTypeV2="" productHierarchy2="-" node-dbid="1481409" unitTotalCost="0.7537225" reportEntityGenerated="2016-04-06T13:35:14.463Z" netVolume="" unitPrice="" reportLocales="" contractDate="" categories="" breakEven="" endEffectivity="" created="2011-08-30T07:29:11.724Z" profitability="" packagingDescription="-" bestBeforeDate="" periodAfterOpening="" name="caf1c118-2673-488d-9ba2-4a00460aaa57" owner="" nutrientProfilingScore="20.0" initialVersion="true" erpCode="12356" servingSize="" productHierarchy1="P&#xE2;tisserie" title="" productQty="200.0" formulatedDate="2017-07-07T07:06:56.287Z" productCompoQtyUsed="230.5" locale="fr" tareUnit="g" preparationTips="" modifier="utilisateur.rd" modified="2017-06-02T15:36:42.514Z" entityTplRef="Produit semi fini" reports="Fond de quiche - Fiche Technique Production.pdf, Fond de quiche - FT Prix de revient.pdf" itemType="bcpg:semiFinishedProduct" aspects="formulatedEntityAspect, consumerAspect, versionable, generalclassifiable, tareAspect, erpCodeAspect, referenceable, entityScoreAspect, contractDateAspect, titled, transformationAspect, ownable, auditable, productAspect, nutrientProfilingScoreAspect, effectivityAspect, productMicrobioCriteriaAspect, reportLocalesAspect, legalNameAspect, taggable, localized, entityTplRefAspect, codeAspect, entityListsAspect, imapFolder, reportEntityAspect, ingTypeAspect, profitabilityAspect" dynamicCharactColumn5="" compoListQty="0.1" compoListLossPerc="" dynamicCharactColumn2="0,7471" dynamicCharactColumn10="" dynamicCharactColumn9="" compoListUnit="g" compareWithDynColumn="" dynamicCharactColumn4="" dynamicCharactColumn8="" compoListYieldPerc="" compoListQtySubFormula="100.0" sort="100" depthLevel="1" dynamicCharactColumn1="50" parentLevel="" variantIds="" compoListVolume="0.11531131035864556" dynamicCharactColumn7="" compoListOverrunPerc="" dynamicCharactColumn6="" compoListDeclType="Group" dynamicCharactColumn3="0,0747" compoListProduct="Fond de quiche" compoListQtyForProduct="0.1" isDefaultVariant="true" nodeRef="workspace://SpacesStore/5601b44e-971c-4556-8e24-b81f6ea120b5">
+      <compoList legalName="p&#xE2;te" productState="Valid" tare="0.0" projectedQty="" creator="admin" futureUnitTotalCost="0.14300000000000002" versionLabel="1.1" autoVersion="true" startEffectivity="2012-09-08T08:48:57.928Z" nutrientProfilingClass="C" productCompoVolumeUsed="230.6226207172911" netWeight="200.0" productUnit="kg" code="SF1089" autoVersionOnUpdateProps="false" productDensity="0.8672176188873082" taggable="" previousUnitTotalCost="0.14300000000000002" useByDate="" netWeightUnit="kg" ingTypeV2="" productHierarchy2="-" node-dbid="1481409" unitTotalCost="0.7537225" reportEntityGenerated="2016-04-06T13:35:14.463Z" netVolume="" unitPrice="" reportLocales="" contractDate="" categories="" breakEven="" endEffectivity="" created="2011-08-30T07:29:11.724Z" profitability="" packagingDescription="-" bestBeforeDate="" periodAfterOpening="" name="caf1c118-2673-488d-9ba2-4a00460aaa57" owner="" nutrientProfilingScore="20.0" initialVersion="true" erpCode="AAAAN00406" servingSize="" productHierarchy1="P&#xE2;tisserie" title="" productQty="200.0" formulatedDate="2017-07-07T07:06:56.287Z" productCompoQtyUsed="230.5" locale="fr" tareUnit="g" preparationTips="" modifier="utilisateur.rd" modified="2017-06-02T15:36:42.514Z" entityTplRef="Produit semi fini" reports="Fond de quiche - Fiche Technique Production.pdf, Fond de quiche - FT Prix de revient.pdf" itemType="bcpg:semiFinishedProduct" aspects="formulatedEntityAspect, consumerAspect, versionable, generalclassifiable, tareAspect, erpCodeAspect, referenceable, entityScoreAspect, contractDateAspect, titled, transformationAspect, ownable, auditable, productAspect, nutrientProfilingScoreAspect, effectivityAspect, productMicrobioCriteriaAspect, reportLocalesAspect, legalNameAspect, taggable, localized, entityTplRefAspect, codeAspect, entityListsAspect, imapFolder, reportEntityAspect, ingTypeAspect, profitabilityAspect" dynamicCharactColumn5="" compoListQty="0.1" compoListLossPerc="" dynamicCharactColumn2="0,7471" dynamicCharactColumn10="" dynamicCharactColumn9="" compoListUnit="g" compareWithDynColumn="" dynamicCharactColumn4="" dynamicCharactColumn8="" compoListYieldPerc="" compoListQtySubFormula="100.0" sort="100" depthLevel="1" dynamicCharactColumn1="50" parentLevel="" variantIds="" compoListVolume="0.11531131035864556" dynamicCharactColumn7="" compoListOverrunPerc="" dynamicCharactColumn6="" compoListDeclType="Group" dynamicCharactColumn3="0,0747" compoListProduct="Fond de quiche" compoListQtyForProduct="0.1" isDefaultVariant="true" nodeRef="workspace://SpacesStore/5601b44e-971c-4556-8e24-b81f6ea120b5">
         <productComments prefix="bcpg"><![CDATA[]]></productComments>
         <description prefix="cm"><![CDATA[]]></description>
         <instruction prefix="bcpg"><![CDATA[<p>Etaler sur le plat</p>]]></instruction>
