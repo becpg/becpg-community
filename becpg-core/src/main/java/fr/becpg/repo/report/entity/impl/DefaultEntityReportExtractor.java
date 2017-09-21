@@ -53,6 +53,7 @@ import org.alfresco.service.cmr.version.VersionHistory;
 import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
@@ -210,7 +211,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		aspectsElt.addCDATA(extractAspects(entityNodeRef));
 
 		Element itemTypeElt = entityElt.addElement(ATTR_ITEM_TYPE);
-		itemTypeElt.addCDATA(nodeService.getType(entityNodeRef).getPrefixString());
+		itemTypeElt.addCDATA(nodeService.getType(entityNodeRef).toPrefixString(namespaceService));
 
 		loadCreator(entityNodeRef, entityElt, imgsElt, images);
 
@@ -509,6 +510,17 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		if (propNameOfType != null) {
 			return (String) nodeService.getProperty(nodeRef, propNameOfType);
 		}
+		
+		
+		if(ContentModel.TYPE_CMOBJECT.equals(targetClass) && dictionaryService.isSubClass(nodeService.getType(nodeRef),BeCPGModel.TYPE_CHARACT) ){
+			String name = (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_LEGAL_NAME);
+	
+			if ((name == null) || name.isEmpty()) {
+				name = (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_CHARACT_NAME);
+			}
+			return name;
+		}
+		
 
 		return attributeExtractorService.extractPropName(targetClass, nodeRef);
 	}
@@ -565,9 +577,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 		VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
 		Element versionsElt = entityElt.addElement(TAG_VERSIONS);
-
-		PropertyFormats propertyFormats = new PropertyFormats(false);
-
+	
 		if ((versionHistory != null) && (versionHistory.getAllVersions() != null)) {
 
 			for (Version version : versionHistory.getAllVersions()) {
@@ -576,7 +586,9 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				versionElt.addAttribute(Version2Model.PROP_QNAME_VERSION_DESCRIPTION.getLocalName(), version.getDescription());
 				versionElt.addAttribute(ContentModel.PROP_CREATOR.getLocalName(),
 						attributeExtractorService.getPersonDisplayName(version.getFrozenModifier()));
-				versionElt.addAttribute(ContentModel.PROP_CREATED.getLocalName(), propertyFormats.formatDate(version.getFrozenModifiedDate()));
+				versionElt.addAttribute(ContentModel.PROP_CREATED.getLocalName(), 
+						ISO8601DateFormat.format((Date) version.getFrozenModifiedDate()));
+				
 			}
 		}
 	}
@@ -598,7 +610,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			if (!value.isEmpty()) {
 				value += RepoConsts.LABEL_SEPARATOR;
 			}
-			value += aspect.toPrefixString();
+			value += aspect.toPrefixString(namespaceService);
 		}
 		return value;
 	}

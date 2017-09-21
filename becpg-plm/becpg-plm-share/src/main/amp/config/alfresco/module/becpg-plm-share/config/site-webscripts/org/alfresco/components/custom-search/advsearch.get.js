@@ -55,10 +55,10 @@ function main()
    
    // Prepare the model
    var repoconfig = config.scoped['Search']['search'].getChildValue('repository-search');
-
-   
    // config override can force repository search on/off
-   model.searchScope = siteId || "all_sites";
+   model.searchRepo = ((page.url.args["r"] == "true") || repoconfig == "always") && repoconfig != "none" && repoconfig != "context";
+   model.searchScope = model.searchRepo? "repo" : model.searchAllSites?  "all_sites" : siteId;
+   
    model.siteId = siteId;
    model.searchForms = searchForms;
    model.searchPath = "{site}search?t={terms}&q={query}&r=true";

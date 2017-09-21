@@ -467,33 +467,49 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		List<AttributeExtractorStructure> ret = new LinkedList<>();
 
 		for (String field : metadataFields) {
-			
+
 			if (field.contains("|")) {
 				StringTokenizer tokeniser = new StringTokenizer(field, "|");
 				String dlField = tokeniser.nextToken();
+				
+				if ("entity".equals(dlField)) {
+					field = tokeniser.nextToken();
+					QName fieldQname = QName.createQName(field, namespaceService);
 
-				QName fieldQname = QName.createQName(dlField, namespaceService);
+					if (hasReadAccess(itemType, field)) {
 
-				List<String> dLFields = new ArrayList<>();
-				while (tokeniser.hasMoreTokens()) {
-					dLFields.add(tokeniser.nextToken());
-				}
-
-				if (entityDictionaryService.isSubClass(fieldQname, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
-					ret.add(new AttributeExtractorStructure("dt_" + dlField.replaceFirst(":", "_"), fieldQname, dLFields, false, itemType));
-
-				} else if (entityDictionaryService.isSubClass(fieldQname, BeCPGModel.TYPE_ENTITY_V2)) {
-					ret.add(new AttributeExtractorStructure("dt_" + dlField.replaceFirst(":", "_"), fieldQname, dLFields, true, itemType));
-				} else {
-					// nested assoc
-					ClassAttributeDefinition propDef = entityDictionaryService.getPropDef(fieldQname);
-					if (hasReadAccess(itemType, dlField)) {
-						if (isAssoc(propDef)) {
-							ret.add(new AttributeExtractorStructure("dt_" + dlField.replaceFirst(":", "_"),
-									((AssociationDefinition) propDef).getTargetClass().getName(), propDef, dLFields, itemType));
+						ClassAttributeDefinition prodDef = entityDictionaryService.getPropDef(fieldQname);
+						if (prodDef != null) {
+							String prefix = "entity_";
+							ret.add(new AttributeExtractorStructure(prefix + field.replaceFirst(":", "_"), prodDef, itemType));
 						}
 					}
 
+				} else {
+
+					QName fieldQname = QName.createQName(dlField, namespaceService);
+
+					List<String> dLFields = new ArrayList<>();
+					while (tokeniser.hasMoreTokens()) {
+						dLFields.add(tokeniser.nextToken());
+					}
+
+					if (entityDictionaryService.isSubClass(fieldQname, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
+						ret.add(new AttributeExtractorStructure("dt_" + dlField.replaceFirst(":", "_"), fieldQname, dLFields, false, itemType));
+
+					} else if (entityDictionaryService.isSubClass(fieldQname, BeCPGModel.TYPE_ENTITY_V2)) {
+						ret.add(new AttributeExtractorStructure("dt_" + dlField.replaceFirst(":", "_"), fieldQname, dLFields, true, itemType));
+					} else {
+						// nested assoc
+						ClassAttributeDefinition propDef = entityDictionaryService.getPropDef(fieldQname);
+						if (hasReadAccess(itemType, dlField)) {
+							if (isAssoc(propDef)) {
+								ret.add(new AttributeExtractorStructure("dt_" + dlField.replaceFirst(":", "_"),
+										((AssociationDefinition) propDef).getTargetClass().getName(), propDef, dLFields, itemType));
+							}
+						}
+
+					}
 				}
 
 			} else {
@@ -503,7 +519,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				if (hasReadAccess(itemType, field)) {
 
 					ClassAttributeDefinition prodDef = entityDictionaryService.getPropDef(fieldQname);
-					if(prodDef!=null){
+					if (prodDef != null) {
 						String prefix = "prop_";
 						if (isAssoc(prodDef)) {
 							prefix = "assoc_";
@@ -731,10 +747,9 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	@Override
 	public boolean hasAttributeExtractorPlugin(NodeRef nodeRef) {
 		QName type = nodeService.getType(nodeRef);
-		return  getAttributeExtractorPlugin(type, nodeRef)!=null;
+		return getAttributeExtractorPlugin(type, nodeRef) != null;
 	}
-	
-	
+
 	@Override
 	public String extractPropName(QName type, NodeRef nodeRef) {
 		String value;

@@ -43,6 +43,8 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.ibm.icu.util.Calendar;
+
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.ecm.ECOService;
 import fr.becpg.repo.ecm.ECOState;
@@ -215,7 +217,7 @@ public class ECOTest extends AbstractFinishedProductTest {
 	 * @throws Exception
 	 *             the exception
 	 */
-	@Test
+	//@Test
 	public void testECOService() throws Exception {
 
 		final NodeRef finishedProduct1NodeRef = createFinishedProduct("PF1");
@@ -379,7 +381,7 @@ public class ECOTest extends AbstractFinishedProductTest {
 
 	}
 
-	@Test
+	//@Test
 	public void testDeleteNode() throws Exception {
 
 		final NodeRef finishedProduct1NodeRef = createFinishedProduct("PF1");
@@ -447,7 +449,7 @@ public class ECOTest extends AbstractFinishedProductTest {
 
 	}
 
-	@Test
+	//@Test
 	public void testTwoToOne() throws Exception {
 
 		final NodeRef finishedProduct1NodeRef = createFinishedProduct("PF1");
@@ -515,6 +517,278 @@ public class ECOTest extends AbstractFinishedProductTest {
 		}, false, true);
 
 	}
+	
+	
+	
+	
+	
+	@Test
+	public void testEffectivity() throws Exception {
+
+		final NodeRef finishedProduct1NodeRef = createFinishedProduct("PF1");
+
+		final NodeRef ecoNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			/*
+			 * create a change order to replace RM4 by null
+			 */
+
+			logger.debug("create Change order to replace RM4: " + rawMaterial4NodeRef + " by RM5: " + rawMaterial5NodeRef);
+
+			List<NodeRef> calculatedCharacts = new ArrayList<>();
+			ChangeOrderData changeOrderData = new ChangeOrderData("ECO1", ECOState.ToCalculateWUsed, ChangeOrderType.Replacement, calculatedCharacts);
+			
+			Calendar cal = Calendar.getInstance();
+			cal.add(Calendar.DAY_OF_MONTH, 1);
+			
+			changeOrderData.setEffectiveDate(cal.getTime());
+
+			List<ReplacementListDataItem> replacementList = new ArrayList<>();
+
+			replacementList.add(new ReplacementListDataItem(RevisionType.Minor, Arrays.asList(rawMaterial4NodeRef),
+					rawMaterial5NodeRef, 100));
+			changeOrderData.setReplacementList(replacementList);
+
+			NodeRef ecoNodeRef1 = alfrescoRepository.create(getTestFolderNodeRef(), changeOrderData).getNodeRef();
+
+			// calculate WUsed
+			ecoService.calculateWUsedList(ecoNodeRef1, false);
+
+			// verify WUsed
+			ChangeOrderData dbECOData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef1);
+			assertNotNull("check ECO exist in DB", dbECOData);
+			assertNotNull("Check WUsed list", dbECOData.getWUsedList());
+
+			assertEquals("Check 2 WUsed are impacted", 2, dbECOData.getWUsedList().size());
+
+			for (WUsedListDataItem wul : dbECOData.getWUsedList()) {
+
+				wul.setIsWUsedImpacted(true);
+				alfrescoRepository.save(wul);
+
+				assertNotNull(wul.getSourceItems().get(0));
+				logger.info("Source item " + wul.getSourceItems().get(0));
+
+			}
+
+			return ecoNodeRef1;
+
+		}, false, true);
+	
+	
+		
+		
+		logger.info("BEFORE");
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			FinishedProductData productData = (FinishedProductData) alfrescoRepository.findOne(finishedProduct1NodeRef);
+			
+			for(CompoListDataItem compoListDataItem : productData.getCompoList()) {
+				logger.info(nodeService.getProperty(compoListDataItem.getComponent(),ContentModel.PROP_NAME)
+						+" "+compoListDataItem.getStartEffectivity() + " - " +compoListDataItem.getEndEffectivity());
+				
+			}
+
+			return null;
+
+		}, false, true);
+
+		
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			// apply
+			ecoService.apply(ecoNodeRef);
+
+			return null;
+
+		}, false, true);
+
+		logger.info("APTER");
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			FinishedProductData productData = (FinishedProductData) alfrescoRepository.findOne(finishedProduct1NodeRef);
+			
+			for(CompoListDataItem compoListDataItem : productData.getCompoList()) {
+				logger.info(nodeService.getProperty(compoListDataItem.getComponent(),ContentModel.PROP_NAME)
+						+" "+compoListDataItem.getStartEffectivity() + " - " +compoListDataItem.getEndEffectivity());
+				
+			}
+			
+
+			assertTrue(productData.getCompoList().size() == 7);
+			
+			
+			
+
+			return null;
+
+		}, false, true);
+		
+		
+		final NodeRef ecoNodeRef2 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			/*
+			 * create a change order to replace RM4 by null
+			 */
+
+			logger.debug("create Change order to replace RM4: " + rawMaterial5NodeRef + " by RM5: " + rawMaterial4NodeRef);
+
+			List<NodeRef> calculatedCharacts = new ArrayList<>();
+			ChangeOrderData changeOrderData = new ChangeOrderData("ECO2", ECOState.ToCalculateWUsed, ChangeOrderType.Replacement, calculatedCharacts);
+			
+			Calendar cal = Calendar.getInstance();
+			cal.add(Calendar.DAY_OF_MONTH, 2);
+			
+			changeOrderData.setEffectiveDate(cal.getTime());
+
+			List<ReplacementListDataItem> replacementList = new ArrayList<>();
+
+			replacementList.add(new ReplacementListDataItem(RevisionType.Minor, Arrays.asList(rawMaterial5NodeRef),
+					rawMaterial4NodeRef, 100));
+			changeOrderData.setReplacementList(replacementList);
+
+			NodeRef ecoNodeRef1 = alfrescoRepository.create(getTestFolderNodeRef(), changeOrderData).getNodeRef();
+
+			// calculate WUsed
+			ecoService.calculateWUsedList(ecoNodeRef1, false);
+
+			// verify WUsed
+			ChangeOrderData dbECOData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef1);
+			assertNotNull("check ECO exist in DB", dbECOData);
+			assertNotNull("Check WUsed list", dbECOData.getWUsedList());
+
+			assertEquals("Check 2 WUsed are impacted", 2, dbECOData.getWUsedList().size());
+
+			for (WUsedListDataItem wul : dbECOData.getWUsedList()) {
+
+				wul.setIsWUsedImpacted(true);
+				alfrescoRepository.save(wul);
+
+				assertNotNull(wul.getSourceItems().get(0));
+				logger.info("Source item " + wul.getSourceItems().get(0));
+
+			}
+
+			return ecoNodeRef1;
+
+		}, false, true);
+		
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			// apply
+			ecoService.apply(ecoNodeRef2);
+
+			return null;
+
+		}, false, true);
+
+		logger.info("APTER 2");
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			FinishedProductData productData = (FinishedProductData) alfrescoRepository.findOne(finishedProduct1NodeRef);
+			
+			for(CompoListDataItem compoListDataItem : productData.getCompoList()) {
+				logger.info(nodeService.getProperty(compoListDataItem.getComponent(),ContentModel.PROP_NAME)
+						+" "+compoListDataItem.getStartEffectivity() + " - " +compoListDataItem.getEndEffectivity());
+				
+			}
+
+			
+			
+
+			return null;
+
+		}, false, true);
+		
+
+		final NodeRef ecoNodeRef3 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			/*
+			 * create a change order to replace RM4 by null
+			 */
+
+			logger.debug("create Change order to replace RM4: " + rawMaterial4NodeRef + " by RM5: " + rawMaterial5NodeRef);
+
+			List<NodeRef> calculatedCharacts = new ArrayList<>();
+			ChangeOrderData changeOrderData = new ChangeOrderData("ECO3", ECOState.ToCalculateWUsed, ChangeOrderType.Replacement, calculatedCharacts);
+			
+			List<ReplacementListDataItem> replacementList = new ArrayList<>();
+
+			replacementList.add(new ReplacementListDataItem(RevisionType.Minor, Arrays.asList(rawMaterial4NodeRef),
+					rawMaterial5NodeRef, 100));
+			changeOrderData.setReplacementList(replacementList);
+
+			NodeRef ecoNodeRef1 = alfrescoRepository.create(getTestFolderNodeRef(), changeOrderData).getNodeRef();
+
+			// calculate WUsed
+			ecoService.calculateWUsedList(ecoNodeRef1, false);
+
+			// verify WUsed
+			ChangeOrderData dbECOData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef1);
+			assertNotNull("check ECO exist in DB", dbECOData);
+			assertNotNull("Check WUsed list", dbECOData.getWUsedList());
+
+			assertEquals("Check 3 WUsed are impacted", 3, dbECOData.getWUsedList().size());
+
+			for (WUsedListDataItem wul : dbECOData.getWUsedList()) {
+
+				wul.setIsWUsedImpacted(true);
+				alfrescoRepository.save(wul);
+
+				assertNotNull(wul.getSourceItems().get(0));
+				logger.info("Source item " + wul.getSourceItems().get(0));
+
+			}
+
+			return ecoNodeRef1;
+
+		}, false, true);
+		
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			// apply
+			ecoService.apply(ecoNodeRef3);
+
+			return null;
+
+		}, false, true);
+
+		logger.info("APTER 3");
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			FinishedProductData productData = (FinishedProductData) alfrescoRepository.findOne(finishedProduct1NodeRef);
+			
+			for(CompoListDataItem compoListDataItem : productData.getCompoList()) {
+				logger.info(nodeService.getProperty(compoListDataItem.getComponent(),ContentModel.PROP_NAME)
+						+" "+compoListDataItem.getStartEffectivity() + " - " +compoListDataItem.getEndEffectivity());
+				
+			}
+			
+
+			assertTrue(productData.getCompoList().size() == 8);
+			
+			
+			
+
+			return null;
+
+		}, false, true);
+		
+
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 	/**
 	 * Test ecoService in multi level compo
@@ -522,7 +796,7 @@ public class ECOTest extends AbstractFinishedProductTest {
 	 * @throws Exception
 	 *             the exception
 	 */
-	@Test
+	//@Test
 	public void testECOInMultiLeveCompo() throws Exception {
 		final NodeRef finishedProduct1NodeRef = createFinishedProduct("PF1");
 		final NodeRef finishedProduct2NodeRef = createFinishedProduct("PF2");
@@ -786,7 +1060,7 @@ public class ECOTest extends AbstractFinishedProductTest {
 
 	}
 
-	@Test
+	//@Test
 	public void testReformulate() throws Exception {
 		final NodeRef finishedProduct1NodeRef = createFinishedProduct("PF1");
 		final NodeRef testNodeRef = getTestFolderNodeRef();

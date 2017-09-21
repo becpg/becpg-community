@@ -26,7 +26,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
-import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.CompoListUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -90,7 +89,7 @@ public class CompositionLexerTest extends AbstractFinishedProductTest {
 
 				String recipe = "5 P Raw material 1\n 12,9 gr Raw material 2\n 25.5005 g Raw material 3\n50 Raw material 5";
 
-				ProductData productData = productService.formulateText(recipe, new FinishedProductData());
+				ProductData productData = productService.formulateText(recipe);
 
 				org.junit.Assert.assertNotNull(productData);
 				return null;

@@ -342,7 +342,8 @@ public class XmlEntityVisitor {
 								propertyDefinition.getDataType().getName().toPrefixString(namespaceService));
 						
 						MLText mlValues = null;
-						if (DataTypeDefinition.MLTEXT.equals(propertyDefinition.getDataType().getName())) {
+						if (DataTypeDefinition.MLTEXT.equals(propertyDefinition.getDataType().getName()) 
+								&& mlNodeService.getProperty(nodeRef, propertyDefinition.getName()) instanceof MLText) {
 							mlValues = (MLText) mlNodeService.getProperty(nodeRef, propertyDefinition.getName());							
 							visitMltextAttributes(xmlw, mlValues);
 						}

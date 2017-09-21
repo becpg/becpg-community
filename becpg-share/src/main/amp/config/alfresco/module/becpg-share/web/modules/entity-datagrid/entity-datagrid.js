@@ -376,17 +376,17 @@
                         /**
                          * Current sort
                          */
-			currentSort : null,
+                        currentSort : null,
 						
 						/**
                          * Current sort dir
                          */
-		        currentSortDir : null,
+                        currentSortDir : null,
 						
 						/**
                          * Used to speedUp path pagination
                          */
-		        queryExecutionId : null,
+                        queryExecutionId : null,
 						
 						
                         /**
@@ -2761,6 +2761,8 @@
                             if (obj && (obj.nodeRef !== null))
                             {
 
+                            	this.queryExecutionId = null;
+                            	
                                 var nodeRef = new Alfresco.util.NodeRef(obj.nodeRef), url = this.options.itemUrl + nodeRef.uri + ((this.options.entityNodeRef != null && this.options.entityNodeRef.length > 0) ? "?entityNodeRef=" + this.options.entityNodeRef + "&"
                                         : "?") + "itemType=" + encodeURIComponent(this.options.itemType != null ? this.options.itemType
                                         : this.datalistMeta.itemType) + "&dataListName=" + encodeURIComponent(this.datalistMeta.name != null ? this.datalistMeta.name

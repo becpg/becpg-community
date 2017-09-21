@@ -274,17 +274,20 @@
 					<field id="bcpg:legalName" help-id="becpg.forms.help.legalName" set="mainInfo" />
 					<field id="bcpg:productComments" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
-							<control-param name="rows">2</control-param>
+							 <control-param name="rows">2</control-param>
+							<control-param name="maxLength">20000</control-param>
 						</control>
 					</field>
 					<field id="cm:description" set="mainInfo">
-						<control>
-							<control-param name="activateLinks">true</control-param>
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
+							<control-param name="maxLength">20000</control-param>
 						</control>
 					</field>
 					<field id="bcpg:packagingDescription" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">2</control-param>
+							<control-param name="maxLength">20000</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy1" help-id="becpg.forms.help.productHierarchy1" set="mainInfo">
@@ -650,8 +653,9 @@
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="cm:description">
-						<control>
-							<control-param name="activateLinks">true</control-param>
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
+							<control-param name="maxLength">20000</control-param>
 						</control>
 					</field>
 					<field id="cm:taggable">
@@ -949,16 +953,19 @@
 					<field id="bcpg:productComments" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">2</control-param>
+							<control-param name="maxLength">20000</control-param>
 						</control>
 					</field>
 					<field id="cm:description" set="mainInfo">
-						<control>
-							<control-param name="activateLinks">true</control-param>
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
+							<control-param name="maxLength">20000</control-param>
 						</control>
 					</field>
 					<field id="bcpg:packagingDescription" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">2</control-param>
+							<control-param name="maxLength">20000</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy1" help-id="becpg.forms.help.productHierarchy1" set="mainInfo">
@@ -3499,18 +3506,21 @@
 					</field>
 					<field id="bcpg:legalName" help-id="becpg.forms.help.legalName" set="mainInfo" />
 					<field id="cm:description" set="mainInfo">
-						<control>
-							<control-param name="activateLinks">true</control-param>
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
+							<control-param name="maxLength">20000</control-param>
 						</control>
 					</field>
 					<field id="bcpg:packagingDescription" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">2</control-param>
+							<control-param name="maxLength">20000</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productComments" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">2</control-param>
+							<control-param name="maxLength">20000</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy1" help-id="becpg.forms.help.productHierarchy1" set="mainInfo">
@@ -3744,8 +3754,9 @@
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="cm:description">
-						<control>
-							<control-param name="activateLinks">true</control-param>
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
+							<control-param name="maxLength">20000</control-param>
 						</control>
 					</field>
 					<field id="cm:taggable">
@@ -4002,18 +4013,21 @@
 					</field>
 					<field id="bcpg:legalName" help-id="becpg.forms.help.legalName" set="mainInfo" />
 					<field id="cm:description" set="mainInfo">
-						<control>
-							<control-param name="activateLinks">true</control-param>
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
+							<control-param name="maxLength">20000</control-param>
 						</control>
 					</field>
 					<field id="bcpg:packagingDescription" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">2</control-param>
+							<control-param name="maxLength">20000</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productComments" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">2</control-param>
+							<control-param name="maxLength">20000</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy1" help-id="becpg.forms.help.productHierarchy1" set="mainInfo">

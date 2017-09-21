@@ -1405,6 +1405,7 @@ row["properties2"]
                     <property name="allowExport">true</property>
                 </structure>
             </list-property>
+            <property name="pageBreakInterval">100000</property>
             <list-property name="sort">
                 <structure>
                     <expression name="key" type="javascript">row["characteristic"]</expression>
@@ -1853,6 +1854,7 @@ previousCharact;</expression>
                     <property name="allowExport">true</property>
                 </structure>
             </list-property>
+            <property name="pageBreakInterval">100000</property>
             <column id="3610">
                 <property name="suppressDuplicates">false</property>
                 <property name="width">30%</property>
@@ -2226,6 +2228,7 @@ color;</expression>
                     <property name="allowExport">true</property>
                 </structure>
             </list-property>
+            <property name="pageBreakInterval">100000</property>
             <list-property name="sort">
                 <structure>
                     <expression name="key" type="javascript">row["characteristic"]</expression>

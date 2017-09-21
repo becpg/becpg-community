@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
@@ -30,6 +31,7 @@ import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtracto
 
 @Service
 public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
+	
 	@Autowired
 	protected NodeService nodeService;
 
@@ -54,7 +56,7 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 	@Override
 	public void fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum,
 			AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache) {
-
+		
 		for (NodeRef entityNodeRef : searchResults) {
 			if (entityDictionaryService.isSubClass(nodeService.getType(entityNodeRef), mainType)) {
 				if (keyColumn != null) {
@@ -69,28 +71,46 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 					NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
 					NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, itemType);
 					if (listNodeRef != null) {
+						Map<String, Object> entityItems = getEntityProperties(entityNodeRef, mainType, metadataFields, cache);
 						List<NodeRef> results = entityListDAO.getListItems(listNodeRef, itemType);
 						for (NodeRef itemNodeRef : results) {
 							if (itemType.equals(nodeService.getType(itemNodeRef))) {
-								if (permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED) {
-									rownum = fillRow(sheet, itemNodeRef, itemType, metadataFields, cache, rownum, key);
+								if (permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED) {	
+									rownum = fillRow(sheet, itemNodeRef, itemType, metadataFields, cache, rownum, key, entityItems);
 								}
 							}
 						}
-					}
+					}	
 				} else {
-					rownum = fillRow(sheet, entityNodeRef, itemType, metadataFields, cache, rownum, null);
+					rownum = fillRow(sheet, entityNodeRef, itemType, metadataFields, cache, rownum, null, null);
 				}
 			}
 		}
 
 	}
 
-	protected int fillRow(XSSFSheet sheet, NodeRef itemNodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields,
-			Map<NodeRef, Map<String, Object>> cache, int rownum, Serializable key) {
-
+	private Map<String, Object> getEntityProperties(NodeRef itemNodeRef,QName itemType, List<AttributeExtractorStructure> metadataFields,
+			Map<NodeRef, Map<String, Object>> cache){
+		
 		Map<QName, Serializable> properties = nodeService.getProperties(itemNodeRef);
 		Map<String, Object> item = doExtract(itemNodeRef, itemType, metadataFields, properties, cache);
+		Map<String, Object> tmp = item.entrySet()
+				.stream()
+				.filter(map -> map.getKey().contains("entity_") && map.getValue()!= null)
+				.collect(Collectors.toMap(p -> p.getKey(), p-> p.getValue()));
+		return tmp;
+	}
+	
+	protected int fillRow(XSSFSheet sheet, NodeRef itemNodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields,
+			Map<NodeRef, Map<String, Object>> cache, int rownum, Serializable key, Map<String, Object> entityItems) {
+
+		
+		Map<QName, Serializable> properties = nodeService.getProperties(itemNodeRef);
+		Map<String, Object> item = doExtract(itemNodeRef, itemType, metadataFields, properties, cache);
+		if(entityItems != null){
+			item.putAll(entityItems);
+		}
+		
 		Row row = sheet.createRow(rownum++);
 
 		int cellNum = 0;

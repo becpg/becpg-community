@@ -114,15 +114,11 @@ public class LabelingRulePatch extends AbstractBeCPGPatch {
 						if (Boolean.TRUE.equals(isManual)) {
 							nodeService.setProperty(dataListNodeRef, PLMModel.PROP_LABELINGRULELIST_SYNC_STATE,
 									SynchronisableState.Manual);
-							logger.info("Set sync state : "+SynchronisableState.Manual);
 						} else {
 							nodeService.setProperty(dataListNodeRef, PLMModel.PROP_LABELINGRULELIST_SYNC_STATE,
 									SynchronisableState.Template);
-							
-							logger.info("Set sync state : "+SynchronisableState.Template);
 						}
-						
-						
+			
 						nodeService.removeAspect(dataListNodeRef, BeCPGModel.ASPECT_IS_MANUAL_LISTITEM);
 
 					} else {
