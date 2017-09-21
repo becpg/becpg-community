@@ -32,7 +32,7 @@
     </list-property>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="452">
-            <property name="FILELIST">src/main/resources/beCPG/birt/document/product/default/ProductReport.xml</property>
+            <property name="FILELIST">/home/jerome_bonil/Documents/Projects BeCPG/Standard/#3267/ProductReport.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -7999,7 +7999,7 @@ dataSetRow["nutListUnit"]
                                         <list-property name="visibility">
                                             <structure>
                                                 <property name="format">all</property>
-                                                <expression name="valueExpr" type="javascript">( row["nutListValue"] == "" )</expression>
+                                                <expression name="valueExpr" type="javascript">( row["nutListValue"] == ""  || row["nutListValue"] == "-1" || row["nutListValue"] == null)</expression>
                                             </structure>
                                         </list-property>
                                         <property name="resultSetColumn">nutListValuePerServing</property>
@@ -8030,7 +8030,7 @@ dataSetRow["nutListUnit"]
                                         <list-property name="visibility">
                                             <structure>
                                                 <property name="format">all</property>
-                                                <expression name="valueExpr" type="javascript">( row["nutListGDAPerc"] == null || row["nutListGDAPerc"] == "") || ( row["nutListValue"] == "" )</expression>
+                                                <expression name="valueExpr" type="javascript">( row["nutListGDAPerc"] == null || row["nutListGDAPerc"] == "") || ( row["nutListValue"] == ""  || row["nutListValue"] == "-1" || row["nutListValue"] == null )</expression>
                                             </structure>
                                         </list-property>
                                         <column id="7379">
