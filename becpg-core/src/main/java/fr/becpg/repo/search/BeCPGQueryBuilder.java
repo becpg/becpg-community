@@ -423,12 +423,18 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 	public BeCPGQueryBuilder excludeDefaults() {		
 		excludeVersions();
+		excludeSystems();
+		return this;
+	}
+	
+	public BeCPGQueryBuilder excludeSystems() {		
 		excludeAspect(BeCPGModel.ASPECT_ENTITY_TPL);
 		excludeAspect(BeCPGModel.ASPECT_HIDDEN_FOLDER);
 		excludeType(BeCPGModel.TYPE_SYSTEM_ENTITY);			
 		excludeAspect(ContentModel.ASPECT_CHECKED_OUT);
 		return this;
 	}
+	
 	
 	public BeCPGQueryBuilder excludeSearch() {
 
@@ -582,8 +588,14 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 				runnedQuery.append(mandatory(getCondParent(parentNodeRefs.iterator().next())));
 			} else {
 				runnedQuery.append(mandatory(startGroup()));
+				boolean first = true;
 				for (NodeRef tmp : parentNodeRefs) {
-					runnedQuery.append(optional(getCondParent(tmp)));
+					if(first){
+						runnedQuery.append(getCondParent(tmp));
+					} else {
+						runnedQuery.append(or(getCondParent(tmp)));
+					}
+					first = false;
 				}
 				runnedQuery.append(endGroup());
 			}
@@ -605,11 +617,22 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 				runnedQuery.append(mandatory(boost(getCondType(boostedTypes.iterator().next().getFirst()),boostedTypes.iterator().next().getSecond())));
 			} else {
 				runnedQuery.append(mandatory(startGroup()));
+				boolean first = true;
 				for (QName tmpQName : types) {
-					runnedQuery.append(optional(getCondType(tmpQName)));
+					if(first){
+						runnedQuery.append(getCondType(tmpQName));
+					} else {
+						runnedQuery.append(or(getCondType(tmpQName)));
+					}
+					first = false;
 				}
 				for (Pair<QName,Integer> typePair : boostedTypes) {
-					runnedQuery.append(optional(boost(getCondType(typePair.getFirst()),typePair.getSecond())));
+					if(first){
+						runnedQuery.append(boost(getCondType(typePair.getFirst()),typePair.getSecond()));
+					} else {
+						runnedQuery.append(or(boost(getCondType(typePair.getFirst()),typePair.getSecond())));
+					}
+					first = false;
 				}
 				runnedQuery.append(endGroup());
 			}
@@ -910,7 +933,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			sp.setDefaultFieldName(DEFAULT_FIELD_NAME);
 			
 			if(operator!=null){
+				if(logger.isDebugEnabled()){
+					logger.debug("Use operator:" +operator.toString());
+				}
 				sp.setDefaultFTSFieldConnective(operator);
+				sp.setDefaultFTSOperator(operator);
+				sp.setDefaultOperator(operator);
 			}
 			if(searchTemplate!=null){
 				sp.addQueryTemplate(DEFAULT_FIELD_NAME, searchTemplate);

@@ -67,8 +67,8 @@ public class EntityListValuePlugin implements ListValuePlugin {
 	protected static final String SOURCE_TYPE_LINKED_VALUE = "linkedvalue";
 	protected static final String SOURCE_TYPE_LINKED_VALUE_ALL = "allLinkedvalue";
 	protected static final String SOURCE_TYPE_LIST_VALUE = "listvalue";
-	protected static final String searchTemplate = "%(cm:name  bcpg:erpCode bcpg:code bcpg:legalName)";
-	protected static final String mixedSearchTemplate = "%(cm:name  bcpg:erpCode bcpg:code bcpg:charactName bcpg:legalName bcpg:lvValue)";
+	protected static final String searchTemplate = "%(cm:name bcpg:erpCode bcpg:code bcpg:legalName)";
+	protected static final String mixedSearchTemplate = "%(cm:name bcpg:erpCode bcpg:code bcpg:charactName bcpg:legalName bcpg:lvValue)";
 	protected static final String charactSearchTemplate = "%(bcpg:charactName bcpg:legalName)";
 	protected static final String listValueSearchTemplate = "%(bcpg:lvValue bcpg:legalName)";
 
@@ -181,13 +181,18 @@ public class EntityListValuePlugin implements ListValuePlugin {
 
 		queryBuilder.ofType(type).excludeDefaults().inSearchTemplate(template).locale(I18NUtil.getContentLocale()).andOperator().ftsLanguage();
 
+		
+
 		if (!isAllQuery(query)) {
+			StringBuilder ftsQuery = new StringBuilder();
 			if (query.length() > 2) {
-				queryBuilder.andFTSQuery(prepareQuery(query.trim() + BeCPGQueryHelper.SUFFIX_ALL));
+				ftsQuery.append("("+prepareQuery(query.trim())+") OR ");
 			}
-			queryBuilder.andFTSQuery(query);
+			ftsQuery.append("("+query+")");
+			queryBuilder.andFTSQuery(ftsQuery.toString());
 		}
 
+		
 		if ((path != null) && !path.isEmpty()) {
 			queryBuilder.inPath(path);
 		}
@@ -351,7 +356,7 @@ public class EntityListValuePlugin implements ListValuePlugin {
 
 		
 
-		List<NodeRef> ret = queryBuilder.list();
+		List<NodeRef> ret = queryBuilder.ftsLanguage().list();
 
 		return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(BeCPGModel.PROP_LV_VALUE, nodeService));
 

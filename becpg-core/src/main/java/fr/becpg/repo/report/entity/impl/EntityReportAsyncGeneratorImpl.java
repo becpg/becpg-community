@@ -78,7 +78,6 @@ public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerato
 		public void run() {
 			try {
 				entityReportService.generateReports(entityNodeRef);
-
 			} catch (Exception e) {
 				if (e instanceof ConcurrencyFailureException) {
 					throw (ConcurrencyFailureException) e;

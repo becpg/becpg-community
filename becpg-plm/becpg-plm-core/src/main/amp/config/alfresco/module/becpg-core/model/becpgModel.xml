@@ -1000,20 +1000,8 @@
 					<type>d:text</type>
 				</property>
 			</properties>
-			<associations>
-			  <association name="bcpg:supplierAccountRef" >
-			        <source>
-						<mandatory>false</mandatory>
-						<many>true</many>
-					</source>
-					<target>
-						<class>cm:person</class>
-						<mandatory>false</mandatory>
-						<many>false</many>
-					</target>
-			  </association>
-			</associations>
 			<mandatory-aspects>
+				<aspect>bcpg:supplierAccountRefAspect</aspect>
 				<aspect>bcpg:codeAspect</aspect>
 				<aspect>bcpg:location</aspect>
 				<aspect>bcpg:entityListsAspect</aspect>
@@ -1069,6 +1057,9 @@
 				<property name="bcpg:plantPackerCode">
 					<type>d:text</type>
 				</property>
+				<property name="bcpg:plantApprovalNumbers">
+					<type>d:text</type>
+				</property>
 			</properties>
 			<associations>
 				<association name="bcpg:plantCertifications">
@@ -1082,17 +1073,17 @@
 						<many>true</many>
 					</target>
 				</association>
-				<association name="bcpg:plantApprovalNumbers">
-					<source>
-						<mandatory>false</mandatory>
-						<many>true</many>
-					</source>
-					<target>
-						<class>bcpg:approvalNumber</class>
-						<mandatory>false</mandatory>
-						<many>true</many>
-					</target>
-				</association>
+<!-- 				<association name="bcpg:plantApprovalNumbers"> -->
+<!-- 					<source> -->
+<!-- 						<mandatory>false</mandatory> -->
+<!-- 						<many>true</many> -->
+<!-- 					</source> -->
+<!-- 					<target> -->
+<!-- 						<class>bcpg:approvalNumber</class> -->
+<!-- 						<mandatory>false</mandatory> -->
+<!-- 						<many>true</many> -->
+<!-- 					</target> -->
+<!-- 				</association> -->
 			</associations>
 			<mandatory-aspects>
 				<aspect>bcpg:location</aspect>
@@ -2616,7 +2607,22 @@
 		</aspect>
 		
 		
-		
+		<aspect name="bcpg:supplierAccountRefAspect">
+			<associations>
+				<association name="bcpg:supplierAccountRef">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>cm:person</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+		</aspect>
+
 
 		<aspect name="bcpg:entityListsAspect">
 			<associations>

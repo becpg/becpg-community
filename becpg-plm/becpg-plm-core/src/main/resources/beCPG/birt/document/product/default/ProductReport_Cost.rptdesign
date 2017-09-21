@@ -32,7 +32,7 @@
     </list-property>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="452">
-            <property name="FILELIST">/opt/becpg/workspace/compagnie-patissiere/reports/datasource.xml</property>
+            <property name="FILELIST">src/main/resources/beCPG/birt/document/product/default/ProductReport.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -1590,7 +1590,7 @@ row["compoListProduct"]
             <list-property name="computedColumns">
                 <structure>
                     <property name="name">costPerKilo</property>
-                    <expression name="expression">if(row["itemType"] == "finishedProduct"){
+                    <expression name="expression">if(row["itemType"] == "bcpg:finishedProduct"){
 row["costListValuePerProduct"] / row["netWeight"]
 }
 else if(row["costListUnit"].indexOf("/kg") > 0){
@@ -1899,7 +1899,7 @@ row["costListValuePerProduct"] * row["nbProductsPkgLevel3"]
                     <property name="name">costPerProduct</property>
                     <expression name="expression">var qty = 0;
 
-if(row["itemTypeEntity"] == "finishedProduct"){
+if(row["itemTypeEntity"] == "bcpg:finishedProduct"){
 qty= row["packagingListQtyForProduct"];
 }
 else if(row["packagingListUnit"]=="g"){
@@ -3408,8 +3408,9 @@ dataSetRow["versionLabel"]
                             <structure>
                                 <property name="name">netWeight</property>
                                 <text-property name="displayName">netWeight</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["netWeight"]</expression>
+                                <expression name="expression" type="javascript">dataSetRow["netWeight"] != null ? dataSetRow["netWeight"]*1000 : null</expression>
                                 <property name="dataType">float</property>
+                                <property name="allowExport">true</property>
                             </structure>
                         </list-property>
                         <property name="resultSetColumn">netWeight</property>
@@ -3645,7 +3646,7 @@ dataSetRow["versionLabel"]
                 <structure>
                     <property name="name">costListValuePerProduct</property>
                     <text-property name="displayName">costListValuePerProduct</text-property>
-                    <expression name="expression" type="javascript">if(dataSetRow["itemType"] == "finishedProduct"){
+                    <expression name="expression" type="javascript">if(dataSetRow["itemType"] == "bcpg:finishedProduct"){
 dataSetRow["costListValuePerProduct"]
 }
 else if(dataSetRow["costListUnit"].indexOf("/P") > 0){
@@ -4132,7 +4133,7 @@ dataSetRow["costListValue"]
             </list-property>
             <column id="2910">
                 <property name="style">becpg-col-border</property>
-                <property name="width">0.6458333333333334in</property>
+                <property name="width">0.8in</property>
             </column>
             <column id="2906">
                 <property name="style">becpg-col-border</property>
@@ -4440,7 +4441,7 @@ matière
         <label id="3174"/>
         <table id="3506">
             <property name="fontSize">8pt</property>
-            <property name="width">100%</property>
+            <property name="width">7.28125in</property>
             <property name="dataSet">packList</property>
             <list-property name="visibility">
                 <structure>
@@ -4577,11 +4578,11 @@ dataSetRow["packagingListPkgLevel"]
                 </structure>
             </list-property>
             <column id="3528">
-                <property name="width">0.48in</property>
+                <property name="width">0.8in</property>
             </column>
             <column id="3529">
                 <property name="style">becpg-col-border</property>
-                <property name="width">2.5in</property>
+                <property name="width">2.4166666666666665in</property>
             </column>
             <column id="3530">
                 <property name="style">becpg-col-border</property>

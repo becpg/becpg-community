@@ -128,10 +128,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		boolean shouldSkip = true;
 
 		// Keep Manual ingList
-		for (IngLabelingListDataItem tmp : formulatedProduct.getLabelingListView().getIngLabelingList()) {
-			if ((tmp.getManualValue() != null) && !tmp.getManualValue().isEmpty()) {
-				tmp.setValue(null);
-				retainNodes.add(tmp);
+		if(formulatedProduct.getLabelingListView().getIngLabelingList()!=null){
+			for (IngLabelingListDataItem tmp : formulatedProduct.getLabelingListView().getIngLabelingList()) {
+				if ((tmp.getManualValue() != null) && !tmp.getManualValue().isEmpty()) {
+					tmp.setValue(null);
+					retainNodes.add(tmp);
+				}
 			}
 		}
 
@@ -1429,13 +1431,38 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			applyThreshold = true;
 		}
 		
+		Double omitQtyPerc = 0d;
+		List<Composite<IngListDataItem>> toAddIngListItem = new ArrayList<>();
+		
 
 		for (Composite<IngListDataItem> ingListItem : compositeIngList.getChildren()) {
 
 			DeclarationType ingDeclarationType = getDeclarationType(compoListDataItem, ingListItem.getData(), labelingFormulaContext);
 
-			if (!DeclarationType.Omit.equals(ingDeclarationType) && !DeclarationType.DoNotDeclare.equals(ingDeclarationType)) {
+			if (!DeclarationType.Omit.equals(ingDeclarationType) ) {
+				toAddIngListItem.add(ingListItem);
+			}   else if(DeclarationType.Omit.equals(ingDeclarationType)){
+				Double qtyPerc = ingListItem.getData().getQtyPerc();
+				if(qtyPerc!=null){
+					
+					if (logger.isTraceEnabled()) {
+						logger.trace("Removing ingredient "+ingListItem.getData().getName()+" qtyPerc "+ qtyPerc);
+					}
+					
+					omitQtyPerc += qtyPerc;
+				}
+			}
+		}
+		
+		if(toAddIngListItem.size()>0){
+			omitQtyPerc /= toAddIngListItem.size();
+		}
 
+
+		for (Composite<IngListDataItem>  ingListItem : toAddIngListItem) {
+			
+				DeclarationType ingDeclarationType = getDeclarationType(compoListDataItem, ingListItem.getData(), labelingFormulaContext);
+			
 				NodeRef ingNodeRef = ingListItem.getData().getIng();
 				IngItem ingLabelItem = (IngItem) compositeLabeling.get(ingNodeRef);
 				boolean isNew = true;
@@ -1465,7 +1492,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					}
 				}
 
-				if (!ingListItem.isLeaf()) {
+				if (!ingListItem.isLeaf() &&  !DeclarationType.DoNotDeclare.equals(ingDeclarationType)) {
 					// Only one level of subIngs
 					for (Composite<IngListDataItem> subIngListItem : ingListItem.getChildren()) {
 
@@ -1557,7 +1584,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					}
 				}
 				
-
+				
 				Double qtyPerc = ingListItem.getData().getQtyPerc();
 
 				if (qtyPerc == null) {
@@ -1586,6 +1613,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					ingLabelItem.setVolume(null);
 				} else {
 
+					qtyPerc += omitQtyPerc;
+					
 					// if one ingItem has null perc -> must be null
 					if ((ingLabelItem.getQty() != null) && (qty != null)) {
 
@@ -1628,21 +1657,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						}
 
 					}
-
 				}
+				
 
-			} else if(DeclarationType.Omit.equals(ingDeclarationType)){
-				Double qtyPerc = ingListItem.getData().getQtyPerc();
-				if(qtyPerc!=null && qty!=null && compositeLabeling.getQtyTotal()!=null){
-					
-					if (logger.isTraceEnabled()) {
-						logger.trace("Removing ingredient "+ingListItem.getData().getName()+" qty "+((qty * qtyPerc) / 100));
-					}
-					
-					compositeLabeling.setQtyTotal(compositeLabeling.getQtyTotal() - ((qty * qtyPerc) / 100));
+				if(DeclarationType.DoNotDeclare.equals(ingDeclarationType)){
+					ingLabelItem.setShouldSkip(true);
 				}
-			}
-
 		}
 	}
 

@@ -29,7 +29,6 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.repo.formulation.FormulateException;
-import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 
 public class FormulateRecipeWebScript extends AbstractProductWebscript {
@@ -46,8 +45,6 @@ public class FormulateRecipeWebScript extends AbstractProductWebscript {
 		logger.debug("start formulate webscript");
 
 		
-		ProductData productData = new FinishedProductData();
-
 		try 
 		{
 			
@@ -63,16 +60,20 @@ public class FormulateRecipeWebScript extends AbstractProductWebscript {
 			if (json != null && json.has(PARAM_RECIPE)) {
 				recipe = (String) json.get(PARAM_RECIPE);
 			}
-			
-			if (json != null && json.has(PARAM_NAME)) {
-				productData.setName((String) json.get(PARAM_NAME));
-			}
+		
 			
 			JSONObject ret = new JSONObject();
 
 			
 			if (recipe != null && recipe.length()>0) {
-				ret.put("productData", productService.formulateText(recipe,productData));
+				
+				ProductData productData = productService.formulateText(recipe);
+				
+				if (json != null && json.has(PARAM_NAME)) {
+					productData.setName((String) json.get(PARAM_NAME));
+				}
+				
+				ret.put("productData", productData);
 			}
 
 			res.setContentType("application/json");

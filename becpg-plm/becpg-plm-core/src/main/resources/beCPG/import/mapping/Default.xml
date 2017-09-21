@@ -19,8 +19,8 @@
 			<nodeColumnKey attribute="bcpg:code" />
 		</nodeColumnKeys>
 		<columns>
-			<column id="hierarchy1" type="Hierarchy" attribute="bcpg:productHierarchy1" />
-			<column id="hierarchy2" type="Hierarchy" attribute="bcpg:productHierarchy2"
+			<column id="bcpg:productHierarchy1" type="Hierarchy" attribute="bcpg:productHierarchy1" />
+			<column id="bcpg:productHierarchy2" type="Hierarchy" attribute="bcpg:productHierarchy2"
 				parentLevel="bcpg:productHierarchy1" />
 
 			<column id="img1Path" attribute="cm:content" path="Images/product.jpg"
@@ -35,7 +35,7 @@
 			<nodeColumnKey attribute="bcpg:code" />
 		</nodeColumnKeys>
 		<columns>
-			<column id="hierarchy1" type="Hierarchy" attribute="pjt:projectHierarchy1" path="/System/ProjectLists/bcpg:entityLists/project_Hierarchy"  />
+			<column id="pjt:projectHierarchy1" type="Hierarchy" attribute="pjt:projectHierarchy1" path="/System/ProjectLists/bcpg:entityLists/project_Hierarchy"  />
 
 		</columns>
 	</mapping>
@@ -85,8 +85,8 @@
 			<nodeColumnKey attribute="cm:name" />
 		</nodeColumnKeys>
 		<columns>
-			<column id="hierarchy1" type="Hierarchy" attribute="bcpg:supplierHierarchy1"  path="/System/ProductHierarchy/bcpg:entityLists/supplier_Hierarchy" />
-			<column id="hierarchy2" type="Hierarchy" attribute="bcpg:supplierHierarchy2" path="/System/ProductHierarchy/bcpg:entityLists/supplier_Hierarchy"
+			<column id="bcpg:supplierHierarchy1" type="Hierarchy" attribute="bcpg:supplierHierarchy1"  path="/System/ProductHierarchy/bcpg:entityLists/supplier_Hierarchy" />
+			<column id="bcpg:supplierHierarchy2" type="Hierarchy" attribute="bcpg:supplierHierarchy2" path="/System/ProductHierarchy/bcpg:entityLists/supplier_Hierarchy"
 				parentLevel="bcpg:supplierHierarchy1" />
 
 			<column id="img1Path" attribute="cm:content" path="Images/logo.jpg"

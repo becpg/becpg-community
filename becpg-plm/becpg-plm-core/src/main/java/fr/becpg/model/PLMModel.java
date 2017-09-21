@@ -223,11 +223,17 @@ public interface PLMModel {
 	// supplier aspect
 	QName ASPECT_SUPPLIERS = QName.createQName(BeCPGModel.BECPG_URI, "suppliersAspect");
 	QName ASSOC_SUPPLIERS = QName.createQName(BeCPGModel.BECPG_URI, "suppliers");
+	QName ASSOC_SUPPLIER_PLANTS = QName.createQName(BeCPGModel.BECPG_URI, "supplierPlants");
 	QName PROP_SUPPLIER_STATE = QName.createQName(BeCPGModel.BECPG_URI, "supplierState");
 
 	// supplier
 	QName TYPE_SUPPLIER = QName.createQName(BeCPGModel.BECPG_URI, "supplier");
+	
+	// supplierAccountRef aspect
+	QName ASPECT_SUPPLIERS_ACCOUNTREF = QName.createQName(BeCPGModel.BECPG_URI, "supplierAccountRefAspect");
 	QName ASSOC_SUPPLIER_ACCOUNT = QName.createQName(BeCPGModel.BECPG_URI, "supplierAccountRef");
+	
+
 
 	// client aspect
 	QName ASPECT_CLIENTS = QName.createQName(BeCPGModel.BECPG_URI, "clientsAspect");
@@ -294,6 +300,7 @@ public interface PLMModel {
 	// plant
 	QName TYPE_PLANT = QName.createQName(BeCPGModel.BECPG_URI, "plant");
 	QName ASSOC_PLANT_CERTIFICATIONS = QName.createQName(BeCPGModel.BECPG_URI, "plantCertifications");
+	@Deprecated
 	QName ASSOC_PLANT_APPROVAL_NUMBERS = QName.createQName(BeCPGModel.BECPG_URI, "plantApprovalNumbers");
 
 	// trademark

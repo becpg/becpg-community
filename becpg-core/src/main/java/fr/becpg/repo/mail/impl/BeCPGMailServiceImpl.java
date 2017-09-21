@@ -117,7 +117,7 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 
 	@Override
 	public void sendMailNewUser(NodeRef personNodeRef, String userName, String password) {
-		_logger.info("Email new user");
+		_logger.debug("Email new user");
 		Map<String, Object> templateModel = new HashMap<>(8, 1.0f);
 
 		templateModel.put("person", new TemplateNode(personNodeRef, serviceRegistry, null));
@@ -139,7 +139,7 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 
 	@Override
 	public NodeRef findTemplateNodeRef(String templateName, NodeRef folderNR){
-		_logger.info("Finding template named "+templateName+" in folder "+folderNR);
+		_logger.debug("Finding template named "+templateName+" in folder "+folderNR);
 		NodeRef templateNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(folderNR, templateName);
 		if(templateNodeRef == null){
 			throw new RuntimeException("Template "+templateName+" not found in folder");
@@ -149,7 +149,7 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 	}
 
 	private NodeRef findLocalizedTemplateNodeRef(NodeRef templateNodeRef){	
-		_logger.info("Finding sibling of template "+templateNodeRef);
+		_logger.debug("Finding sibling of template "+templateNodeRef);
 		return fileFolderService.getLocalizedSibling(templateNodeRef);
 	}
 
@@ -176,8 +176,8 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 			}
 
 		}
-		_logger.info("TemplateNodeRef: "+templateNodeRef);
-		_logger.info("TemplateArgs: "+templateArgs);
+		_logger.debug("TemplateNodeRef: "+templateNodeRef);
+		_logger.debug("TemplateArgs: "+templateArgs);
 
 		Action mailAction = actionService.createAction(MailActionExecuter.NAME);
 		mailAction.setParameterValue(MailActionExecuter.PARAM_SUBJECT, subject);
@@ -200,7 +200,7 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 				ret.add(userAuth);
 			}
 		}
-		_logger.info("Found "+ret.size()+" users in the group: "+ret);
+		_logger.debug("Found "+ret.size()+" users in the group: "+ret);
 
 		return ret;
 	}

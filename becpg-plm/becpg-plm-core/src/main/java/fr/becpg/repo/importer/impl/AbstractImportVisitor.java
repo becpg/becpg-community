@@ -62,8 +62,6 @@ import fr.becpg.config.mapping.FormulaMapping;
 import fr.becpg.config.mapping.HierarchyMapping;
 import fr.becpg.config.mapping.MappingException;
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.PLMModel;
-import fr.becpg.model.PackModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.entity.EntityListDAO;
@@ -1035,7 +1033,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	 */
 	protected NodeRef findNode(ImportContext importContext, QName type, Map<QName, Serializable> properties) throws ImporterException {
 
-		NodeRef nodeRef = findNodeByKeyOrCode(importContext, type, properties);
+		NodeRef nodeRef = findNodeByKeyOrCode(importContext, null, type, properties);
 
 		if (nodeRef == null) {
 
@@ -1062,6 +1060,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	 *
 	 * @param importContext
 	 *            the import context
+	 * @param propDef 
 	 * @param type
 	 *            the type
 	 * @param codeQName
@@ -1071,7 +1070,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	 * @return the node ref
 	 * @throws ImporterException
 	 */
-	protected NodeRef findNodeByKeyOrCode(ImportContext importContext, QName type, Map<QName, Serializable> properties) throws ImporterException {
+	protected NodeRef findNodeByKeyOrCode(ImportContext importContext, PropertyDefinition propDef, QName type, Map<QName, Serializable> properties) throws ImporterException {
 
 		NodeRef nodeRef = null;
 
@@ -1174,14 +1173,8 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		if (doQuery) {
 			logger.debug("findNodeByKeyOrCode: " + queryBuilder.toString());
 
-			// TODO Refactor used to lookup for parent in the same list
-			if (dictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM) && !dictionaryService.isSubClass(type, BeCPGModel.TYPE_CHARACT)
-					&& !dictionaryService.isSubClass(type, BeCPGModel.TYPE_LINKED_VALUE)
-					&& !dictionaryService.isSubClass(type, BeCPGModel.TYPE_LIST_VALUE) && !dictionaryService.isSubClass(type, PLMModel.TYPE_PLANT)
-					&& !dictionaryService.isSubClass(type, PLMModel.TYPE_TRADEMARK) && !dictionaryService.isSubClass(type, PLMModel.TYPE_CERTIFICATION)
-					&& !dictionaryService.isSubClass(type, PLMModel.TYPE_APPROVAL_NUMBER) && !dictionaryService.isSubClass(type, PLMModel.TYPE_SUBSIDIARY)
-					&& !dictionaryService.isSubClass(type, PLMModel.TYPE_CONTACTLIST)
-					&& !dictionaryService.isSubClass(type, PackModel.TYPE_LABELING_TEMPLATE)) {
+			//#3433
+			if (dictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM) && propDef!=null && BeCPGModel.PROP_PARENT_LEVEL.equals(propDef.getName())) {
 				for (NodeRef tmpNodeRef : queryBuilder.inDB().ftsLanguage().list()) {
 					if (nodeService.getPrimaryParent(tmpNodeRef).getParentRef().equals(importContext.getParentNodeRef())
 							&& !nodeService.hasAspect(tmpNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)
@@ -1226,14 +1219,14 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 				for (String v : arrValue) {
 					if (!v.isEmpty()) {
-						NodeRef targetNodeRef = findTargetNodeByValue(importContext, targetClass, v);
+						NodeRef targetNodeRef = findTargetNodeByValue(importContext,null, targetClass, v);
 						if (targetNodeRef != null) {
 							targetRefs.add(targetNodeRef);
 						}
 					}
 				}
 			} else {
-				NodeRef targetNodeRef = findTargetNodeByValue(importContext, targetClass, value);
+				NodeRef targetNodeRef = findTargetNodeByValue(importContext,null, targetClass, value);
 				if (targetNodeRef != null) {
 					targetRefs.add(targetNodeRef);
 				}
@@ -1305,7 +1298,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		if ((attributeMapping instanceof AttributeMapping) && (((AttributeMapping) attributeMapping).getTargetClass() != null)) {
 			targetClass = ((AttributeMapping) attributeMapping).getTargetClass();
 		}
-		return findTargetNodeByValue(importContext, targetClass, value);
+		return findTargetNodeByValue(importContext, propDef, targetClass, value);
 
 	}
 
@@ -1315,6 +1308,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	 *
 	 * @param importContext
 	 *            the import context
+	 * @param propDef 
 	 * @param type
 	 *            the type
 	 * @param value
@@ -1323,7 +1317,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	 * @throws InvalidTargetNodeException
 	 * @throws ImporterException
 	 */
-	protected NodeRef findTargetNodeByValue(ImportContext importContext, QName type, String value) throws ImporterException {
+	protected NodeRef findTargetNodeByValue(ImportContext importContext, PropertyDefinition propDef, QName type, String value) throws ImporterException {
 
 		NodeRef nodeRef = null;
 
@@ -1369,7 +1363,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 			if (doQuery) {
 
-				nodeRef = findNodeByKeyOrCode(importContext, type, properties);
+				nodeRef = findNodeByKeyOrCode(importContext, propDef, type, properties);
 
 				if (nodeRef == null) {
 					String typeTitle = type.toString();

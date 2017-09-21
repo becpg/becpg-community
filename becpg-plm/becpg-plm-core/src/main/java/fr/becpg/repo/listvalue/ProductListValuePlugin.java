@@ -28,6 +28,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
@@ -48,7 +49,12 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 	private static final String SOURCE_TYPE_PRODUCT_REPORT = "productreport";
 
 	private final static Log logger = LogFactory.getLog(ProductListValuePlugin.class);
-
+	
+	
+	@Value("${beCPG.product.searchTemplate}")
+	private String productSearchTemplate = "%(cm:name  bcpg:erpCode bcpg:code bcpg:legalName)";
+	
+	
 	@Autowired
 	private ReportTplService reportTplService;
 
@@ -84,16 +90,15 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 		}
 
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(PLMModel.TYPE_PRODUCT).excludeDefaults()
-				.inSearchTemplate(searchTemplate).locale(I18NUtil.getContentLocale()).andOperator().ftsLanguage();
+				.inSearchTemplate(productSearchTemplate).locale(I18NUtil.getContentLocale()).andOperator().ftsLanguage();
 
 		StringBuilder ftsQuery = new StringBuilder();
 
 		if (!isAllQuery(query)) {
 			if (query.length() > 2) {
-				ftsQuery.append(prepareQuery(query.trim()));
-				ftsQuery.append(" ");
+				ftsQuery.append("("+prepareQuery(query.trim())+") OR ");
 			}
-			ftsQuery.append(query);
+			ftsQuery.append("("+query+")");
 
 			ftsQuery.append(")^10 AND +(");
 		}

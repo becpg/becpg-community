@@ -527,28 +527,33 @@ public class LabelingFormulaContext {
 
 		StringBuilder ret = new StringBuilder();
 		for (NodeRef allergen : allergens) {
+			boolean shouldAppend = true;
 			if (getAllergens().contains(allergen)) {
-				String allergenName = uncapitalize(getAllergenName(allergen));
+				String allergenName = getAllergenName(allergen);
 				if ((allergenName != null) && !allergenName.isEmpty()) {
 					if (ret.length() > 0) {
 						ret.append(allergensSeparator);
 					} else {
-						Matcher ma = Pattern.compile("\\b(" + Pattern.quote(allergenName) + "(s?))\\b").matcher(uncapitalize(ingLegalName));
+						Matcher ma = Pattern.compile("\\b(" + Pattern.quote(allergenName) + "(s?))\\b", Pattern.CASE_INSENSITIVE).matcher(ingLegalName);
 						if (ma.find() && (ma.group(1) != null)) {
-							return ma.replaceAll(allergenReplacementPattern);
+							ingLegalName =  ma.replaceAll(allergenReplacementPattern);
+							shouldAppend = false;
 						} else {
 							for (NodeRef subAllergen : associationService.getTargetAssocs(allergen, PLMModel.ASSOC_ALLERGENSUBSETS)) {
 								String subAllergenName = uncapitalize(getAllergenName(subAllergen));
 								if ((subAllergenName != null) && !subAllergenName.isEmpty()) {
-									ma = Pattern.compile("\\b(" + Pattern.quote(subAllergenName) + "(s?))\\b").matcher(uncapitalize(ingLegalName));
+									ma = Pattern.compile("\\b(" + Pattern.quote(subAllergenName) + "(s?))\\b", Pattern.CASE_INSENSITIVE).matcher(ingLegalName);
 									if (ma.find() && (ma.group(1) != null)) {
-										return ma.replaceAll(allergenReplacementPattern);
+										ingLegalName = ma.replaceAll(allergenReplacementPattern);
+										shouldAppend =false;
 									}
 								}
 							}
 						}
 					}
-					ret.append(allergenName.replaceFirst("(.*)", allergenReplacementPattern));
+					if(shouldAppend){
+						ret.append(allergenName.replaceFirst("(.*)", allergenReplacementPattern));
+					}
 				}
 			}
 		}
@@ -915,7 +920,7 @@ public class LabelingFormulaContext {
 
 					qtyPerc = (useVolume ? volumePerc : qtyPerc);
 
-					if (!shouldSkip(component.getNodeRef(), qtyPerc)) {
+					if (!component.shouldSkip() && !shouldSkip(component.getNodeRef(), qtyPerc)) {
 
 						String subLabel = new String();
 
@@ -1054,7 +1059,7 @@ public class LabelingFormulaContext {
 
 			qtyPerc = (useVolume ? volumePerc : qtyPerc);
 
-			if (!shouldSkip(component.getNodeRef(), qtyPerc)) {
+			if (!component.shouldSkip() && !shouldSkip(component.getNodeRef(), qtyPerc)) {
 
 				String toAppend = new String();
 
@@ -1070,7 +1075,7 @@ public class LabelingFormulaContext {
 
 						String subIngGeoOriginsLabel = createGeoOriginsLabel(subIngItem.getGeoOrigins());
 
-						if (!shouldSkip(subIngItem.getNodeRef(), subIngQtyPerc)) {
+						if (!subIngItem.shouldSkip() && !shouldSkip(subIngItem.getNodeRef(), subIngQtyPerc)) {
 
 							subIngBuff.append(getIngTextFormat(subIngItem)
 									.format(new Object[] { getLegalIngName(subIngItem, false), subIngQtyPerc, null, subIngGeoOriginsLabel }));

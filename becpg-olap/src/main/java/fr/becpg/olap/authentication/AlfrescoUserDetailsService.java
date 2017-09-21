@@ -99,7 +99,7 @@ public class AlfrescoUserDetailsService implements UserDetailsService {
 								authorities.add(new GrantedAuthorityImpl(node.path("itemName").getTextValue()));
 							}
 
-							return new AlfrescoUserDetails(username, "no-password", rootNode.path("enabled").asBoolean(), authorities, instance);
+							return new AlfrescoUserDetails(username, ticket, rootNode.path("enabled").asBoolean(), authorities, instance);
 
 						}
 					} else {
@@ -110,7 +110,7 @@ public class AlfrescoUserDetailsService implements UserDetailsService {
 			}
 
 		} catch (Exception e) {
-			logger.error(e, e);
+			logger.error("Error getting auth for: "+authToken, e);
 			throw new UsernameNotFoundException(e.getMessage());
 		}
 
