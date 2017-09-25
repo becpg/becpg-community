@@ -101,6 +101,8 @@ public class SecurityServiceImpl implements SecurityService {
 				List<ACLEntryDataItem.PermissionModel> perms = acls.get(key);
 				int ret = SecurityService.WRITE_ACCESS;
 				if (!isAdmin()) {
+					
+					ret = SecurityService.NONE_ACCESS;
 
 					// Rule to override if one of the rule says that is has a
 					// better right
@@ -115,7 +117,7 @@ public class SecurityServiceImpl implements SecurityService {
 					});
 
 					for (PermissionModel permissionModel : perms) {
-
+						
 						if (permissionModel.isReadOnly() && isInGroup(permissionModel)) {
 							ret = SecurityService.READ_ACCESS;
 							// Continue we can get better;
@@ -126,7 +128,7 @@ public class SecurityServiceImpl implements SecurityService {
 						if (permissionModel.isWrite() && !isInGroup(permissionModel) && (ret != SecurityService.NONE_ACCESS)) {
 							ret = SecurityService.READ_ACCESS;
 							// Continue we can get better;
-						} else if (permissionModel.isWrite()) {
+						} else if (permissionModel.isWrite() && isInGroup(permissionModel)) {
 							return SecurityService.WRITE_ACCESS;
 							// return we cannot get better
 						}
