@@ -1091,5 +1091,20 @@ if (beCPG.module.EntityDataGridRenderers) {
 			return "";
 		}
 	});
+
+        YAHOO.Bubbling.fire("registerDataGridRenderer", {
+		      propertyName : [ "bcpg:costListValue","bcpg:costListMaxi","bcpg:costListFutureValue"
+		    	  ,"bcpg:costListPreviousValue","bcpg:costListValuePerProduct","bcpg:costListPreviousValuePerProduct",
+		    	  "bcpg:costListFutureValuePerProduct" ],
+		      renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+		      	
+		    	 if(data.value!=null){
+		    		 Dom.setStyle(elCell, "text-align", "right");  
+		    		 return (new Intl.NumberFormat(Alfresco.constants.JS_LOCALE ,{minimumFractionDigits : 4, maximumFractionDigits : 4 })).format( data.value);
+		    	 }
+		    	 return "";
+		    	  
+		    }
+	 });
 	
 }
