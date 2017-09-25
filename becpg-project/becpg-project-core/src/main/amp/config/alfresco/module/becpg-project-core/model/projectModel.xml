@@ -628,56 +628,25 @@
 
 		<!-- Data List - Request List -->
 		<type name="pjt:requestList">
-			<parent>dl:dataListItem</parent>
-			<properties>
-				<property name="pjt:rlState">
-					<type>d:text</type>
-					<constraints>
-						<constraint ref="pjt:requestStates" />
-					</constraints>
-				</property>
-				<property name="pjt:rlOrigin">
-					<type>d:text</type>
-					<constraints>
-						<constraint ref="pjt:requestOrigins" />
-					</constraints>
-				</property>
-				<property name="pjt:rlPriority">
-					<type>d:text</type>
-					<default>Normal</default>
-					<constraints>
-						<constraint ref="dl:priority_value" />
-					</constraints>
-				</property>
-				<property name="pjt:rlDueDate">
-					<type>d:date</type>
-					<mandatory>false</mandatory>
-				</property>
-				<property name="pjt:rlComments">
-					<type>d:text</type>
-					<mandatory>false</mandatory>
-				</property>
-			</properties>
-			<associations>
-				<association name="pjt:rlAssignedTo">
-					<source>
-						<mandatory>false</mandatory>
-						<many>true</many>
-					</source>
-					<target>
-						<class>cm:person</class>
-						<mandatory>false</mandatory>
-						<many>true</many>
-					</target>
-				</association>
-			</associations>
+			<parent>dl:dataListItem</parent>	
 			<mandatory-aspects>
+				<aspect>pjt:requestListAspect</aspect>
 				<aspect>cm:titled</aspect>
 				<aspect>cm:attachable</aspect>
 				<aspect>cm:likesRatingSchemeRollups</aspect>
 			</mandatory-aspects>
 		</type>
 
+		
+		<type name="pjt:entityRequestList">
+			<parent>bcpg:entityListItem</parent>
+			<mandatory-aspects>
+				<aspect>pjt:requestListAspect</aspect>
+				<aspect>cm:titled</aspect>
+				<aspect>cm:attachable</aspect>
+				<aspect>cm:likesRatingSchemeRollups</aspect>
+			</mandatory-aspects>
+		</type>
 
 		<type name="pjt:activityList">
 			<parent>bcpg:entityListItem</parent>
@@ -1083,6 +1052,52 @@
 					<mandatory>true</mandatory>
 				</property>				
 			</properties>
+		</aspect>
+
+                
+		<aspect name="pjt:requestListAspect">
+			<properties>
+				<property name="pjt:rlState">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="pjt:requestStates" />
+					</constraints>
+				</property>
+				<property name="pjt:rlOrigin">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="pjt:requestOrigins" />
+					</constraints>
+				</property>
+				<property name="pjt:rlPriority">
+					<type>d:text</type>
+					<default>Normal</default>
+					<constraints>
+						<constraint ref="dl:priority_value" />
+					</constraints>
+				</property>
+				<property name="pjt:rlDueDate">
+					<type>d:date</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="pjt:rlComments">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+				</property>
+			</properties>
+			<associations>
+				<association name="pjt:rlAssignedTo">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>cm:person</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>
 		</aspect>
 	</aspects>
 </model>

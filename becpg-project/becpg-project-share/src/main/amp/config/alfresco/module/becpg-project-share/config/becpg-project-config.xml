@@ -66,6 +66,7 @@
 		   <list id="taskList" index="10" view="true" />
 		   <list id="deliverableList" index="20" />
 		   <list id="scoreList" index="30" />
+		   <list id="entityRequestList" index="35" />
 		   <list id="budgetList" index="40" />
 		   <list id="expenseList" index="50" />
 		   <list id="invoiceList" index="60" />

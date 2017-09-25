@@ -1290,15 +1290,15 @@
 			<!-- Create item form -->
 			<form>
 				<field-visibility>
-					<show id="cm:title" />
-					<show id="cm:description" />
+					<show id="cm:title" force="true"/>
+					<show id="cm:description" force="true"/>
 					<show id="pjt:rlAssignedTo" />
 					<show id="pjt:rlOrigin" />
 					<show id="pjt:rlState" />
 					<show id="pjt:rlPriority" />
 					<show id="pjt:rlDueDate" />
 					<show id="pjt:rlComments" />
-					<show id="cm:attachments" />
+					<show id="cm:attachments" force="true"/>
 				</field-visibility>
 				<create-form template="../data-lists/forms/dataitem.ftl" />
 				<appearance>
@@ -1318,18 +1318,25 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
-					<show id="cm:title" />
-					<show id="cm:likesRatingSchemeCount" />
-					<show id="cm:description" />
+					<show id="cm:title" force="true"/>
+					<show id="cm:likesRatingSchemeCount" force="true"/>
+					<show id="cm:description" force="true"/>
 					<show id="pjt:rlAssignedTo" />
 					<show id="pjt:rlOrigin" />
 					<show id="pjt:rlState" />
 					<show id="pjt:rlPriority" />
 					<show id="pjt:rlDueDate" />
-					<show id="cm:attachments" />
+					<show id="cm:attachments" force="true"/>
 					<show id="cm:creator" />
 					<show id="cm:created" />
 				</field-visibility>
+				<appearance>
+					<field id="cm:created" read-only="true">
+						<control template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
+				</appearance>
 			</form>
 		</forms>
 	</config>
@@ -1340,15 +1347,111 @@
 			<!-- Create item form -->
 			<form>
 				<field-visibility>
-					<show id="cm:title" />
-					<show id="cm:description" />
+					<show id="cm:title" force="true"/>
+					<show id="cm:description" force="true"/>
 					<show id="pjt:rlAssignedTo" />
 					<show id="pjt:rlOrigin" />
 					<show id="pjt:rlState" />
 					<show id="pjt:rlPriority" />
 					<show id="pjt:rlDueDate" />
 					<show id="pjt:rlComments" />
-					<show id="cm:attachments" />
+					<show id="cm:attachments" force="true"/>
+				</field-visibility>
+				<create-form template="../data-lists/forms/dataitem.ftl" />
+				<appearance>
+					<field id="cm:title">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="pjt:rlComments">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="cm:attachments">
+						<control>
+							<control-param name="startLocation">{doclib}</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	
+	
+	<!-- pjt:requestList type create form config -->
+	<config evaluator="model-type" condition="pjt:entityRequestList">
+		<forms>
+			<!-- Create item form -->
+			<form>
+				<field-visibility>
+					<show id="cm:title" force="true"/>
+					<show id="cm:description" force="true"/>
+					<show id="pjt:rlAssignedTo" />
+					<show id="pjt:rlOrigin" />
+					<show id="pjt:rlState" />
+					<show id="pjt:rlPriority" />
+					<show id="pjt:rlDueDate" />
+					<show id="pjt:rlComments" />
+					<show id="cm:attachments" force="true"/>
+				</field-visibility>
+				<create-form template="../data-lists/forms/dataitem.ftl" />
+				<appearance>
+					<field id="cm:title">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="pjt:rlComments">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="cm:attachments">
+						<control>
+							<control-param name="startLocation">{doclib}</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+			<!-- Data Grid view -->
+			<form id="datagrid">
+				<field-visibility>
+					<show id="cm:title" force="true"/>
+					<show id="cm:likesRatingSchemeCount" force="true"/>
+					<show id="cm:description" force="true"/>
+					<show id="pjt:rlAssignedTo" />
+					<show id="pjt:rlOrigin" />
+					<show id="pjt:rlState" />
+					<show id="pjt:rlPriority" />
+					<show id="pjt:rlDueDate" />
+					<show id="cm:attachments" force="true"/>
+					<show id="cm:creator" />
+					<show id="cm:created" />
+					<show id="fm:commentCount" force="true" />
+				</field-visibility>
+				<appearance>
+					<field id="cm:likesRatingSchemeCount" read-only="true"/>
+					<field id="fm:commentCount" label="hidden"/>
+					<field id="cm:created" read-only="true">
+						<control template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<!-- pjt:requestList type edit form config -->
+	<config evaluator="node-type" condition="pjt:entityRequestList">
+		<forms>
+			<!-- Create item form -->
+			<form>
+				<field-visibility>
+					<show id="cm:title" force="true"/>
+					<show id="cm:description" force="true"/>
+					<show id="pjt:rlAssignedTo" />
+					<show id="pjt:rlOrigin" />
+					<show id="pjt:rlState" />
+					<show id="pjt:rlPriority" />
+					<show id="pjt:rlDueDate" />
+					<show id="pjt:rlComments" />
+					<show id="cm:attachments" force="true"/>
 				</field-visibility>
 				<create-form template="../data-lists/forms/dataitem.ftl" />
 				<appearance>
