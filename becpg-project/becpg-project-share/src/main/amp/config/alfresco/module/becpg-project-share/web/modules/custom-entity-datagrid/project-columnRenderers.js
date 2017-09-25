@@ -191,4 +191,19 @@ if (beCPG.module.EntityDataGridRenderers) {
 
    });
    
+   
+   YAHOO.Bubbling.fire("registerDataGridRenderer", {
+	      propertyName : [ "pjt:invoice","pjt:expense","pjt:blBudgetedExpense", "pjt:blBudgetedInvoice","pjt:projectBudgetedCost","pjt:tlFixedCost","pjt:resourceCostValue" ],
+	      renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+	      	
+	    	  if(data.value!=null){
+	    		  Dom.setStyle(elCell, "text-align", "right");  
+	    		  return (new Intl.NumberFormat(Alfresco.constants.JS_LOCALE ,{minimumFractionDigits : 2, maximumFractionDigits : 2 })).format( data.value);
+	    	  }
+	    	  return "";
+	    	  
+	      }
+
+	   });
+   
 }

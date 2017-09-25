@@ -102,6 +102,7 @@
 		<property name="dataListExtractorFactory" ref="dataListExtractorFactory"/>
 		<property name="permissionService" ref="permissionService" />
 		<property name="entityDictionaryService" ref="entityDictionaryService"/>
+		<property name="ratingService" ref="ratingService"/>
 	</bean>
 
 
