@@ -368,17 +368,44 @@
                                         // Validate
                                         if (YAHOO.lang.isNumber(number))
                                         {
-                                            return number.toFixed(4);
+                                            return (new Intl.NumberFormat(Alfresco.constants.JS_LOCALE ,{minimumFractionDigits : 4, maximumFractionDigits : 4 })).format(number);
                                         }
                                         return oData;
                                     }
-                                });
-                                this.columnDefs.push(
-                                {
-                                    key : "col" + i,
-                                    label : colName
                                     
                                 });
+                                
+                                
+                                var columnDef = {
+                                		key : "col" + i,
+                                        label : colName
+                                		
+                                }
+                                	
+                                if(i ==0 ){
+                                	columnDef.formatter = function (elCell, oRecord, oColumn, oData) {
+                                       	
+                                    	if(oRecord.getData("cssClass")){
+                                    		var padding = oRecord.getData("level") * 25;
+                                    		
+                                            elCell.innerHTML = '<span class="'+ oRecord.getData("cssClass") + '" style="margin-left:' + padding + 'px;">'+oData+'</span>';
+                                        } else {
+                                            elCell.innerHTML = '<b>'+oData+'</b>';
+                                        }
+                                    };
+                                } else {
+                                	columnDef.formatter = function (elCell, oRecord, oColumn, oData) {
+                                		Dom.setStyle(elCell, "text-align", "right");  
+                                      	if(oRecord.getData("cssClass")){
+                                      		elCell.innerHTML = oData;
+                                      	} else {
+                                      		elCell.innerHTML = '<b>'+oData+'</b>';
+                                      	}
+                                	};
+                                	
+                                }
+                                
+                                this.columnDefs.push(columnDef);
                                 
                                 
                                 if (i > 0)
@@ -412,19 +439,7 @@
                              {
                                  key : "level"
                              });
-
-                            this.columnDefs[0].formatter = function (elCell, oRecord, oColumn, oData) {
-                            	
-                            	
-                            	if(oRecord.getData("cssClass")){
-                            		var padding = oRecord.getData("level") * 25;
-                            		
-                                    elCell.innerHTML = '<span class="'+ oRecord.getData("cssClass") + '" style="margin-left:' + padding + 'px;">'+oData+'</span>';
-                                } else {
-                                    elCell.innerHTML = '<b>'+oData+'</b>';
-                                }
-                            };
-                            
+                    
                             if(this.widgets.chartTypePicker.value != "chartData"){
                                //Remove totals
                                 data.resultsets.pop();
