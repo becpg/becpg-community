@@ -42,7 +42,9 @@
   <reportEntityGenerated prefix="rep"><![CDATA[2017-07-07T07:33:00.950Z]]></reportEntityGenerated>
   <netVolume prefix="bcpg"><![CDATA[]]></netVolume>
   <height prefix="gs1"><![CDATA[]]></height>
-  <contractDate prefix="bcpg"><![CDATA[10]]></contractDate>
+  <contractDate prefix="bcpg"><![CDATA[360]]></contractDate>
+  <bestBeforeDate prefix="bcpg"><![CDATA[361]]></bestBeforeDate>
+  <useByDate prefix="bcpg"><![CDATA[391]]></useByDate>
   <endEffectivity prefix="bcpg"><![CDATA[]]></endEffectivity>
   <profitability prefix="bcpg"><![CDATA[87.63992579648438]]></profitability>
   <isTradeItemADivisibleItem prefix="gs1"><![CDATA[false]]></isTradeItemADivisibleItem>
@@ -83,7 +85,6 @@
   <productDensity prefix="bcpg"><![CDATA[0.9383966430796251]]></productDensity>
   <taggable prefix="cm"><![CDATA[]]></taggable>
   <previousUnitTotalCost prefix="bcpg"><![CDATA[0.014300000000000002]]></previousUnitTotalCost>
-  <useByDate prefix="bcpg"><![CDATA[390]]></useByDate>
   <publicationDate prefix="gs1"><![CDATA[]]></publicationDate>
   <ingTypeV2 prefix="bcpg"><![CDATA[]]></ingTypeV2>
   <tertiaryWeight prefix="gs1"><![CDATA[379.9776]]></tertiaryWeight>
@@ -101,7 +102,6 @@
   <description prefix="cm"><![CDATA[Quiche pour la MDD. Pour 4 personnes]]></description>
   <productHierarchy2 prefix="gs1"><![CDATA[]]></productHierarchy2>
   <commentCount prefix="fm"><![CDATA[0]]></commentCount>
-  <bestBeforeDate prefix="bcpg"><![CDATA[361]]></bestBeforeDate>
   <isTradeItemAnOrderableUnit prefix="gs1"><![CDATA[false]]></isTradeItemAnOrderableUnit>
   <nutrientProfilingScore prefix="bcpg"><![CDATA[12.0]]></nutrientProfilingScore>
   <erpCode prefix="bcpg"><![CDATA[ERPCODE]]></erpCode>
@@ -569,7 +569,7 @@
         <description prefix="cm"><![CDATA[]]></description>
         <nutGDA prefix="bcpg"><![CDATA[8400.0]]></nutGDA>
       </nutList>
-      <nutList nutListGroup="Groupe 1" parentLevel="" nutListValue="15.522500007748604" name="Lipides" nutListValuePerServing="31.04500001549721" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="15.522500007748604" nutListLossPerc="" nutListGDAPerc="44.350000022138865" nutListUnit="g/100g" nutListMethod="Formulation" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="1481501" locale="fr_FR" sort="300" depthLevel="1" nutListMaxi="" nutListNut="Lipides" legalName="Mati&#xE8;res grasses">
+      <nutList nutListGroup="Groupe 1" parentLevel="" nutListValue="15.3333" name="Lipides" nutListValuePerServing="31.04500001549721" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="15.522500007748604" nutListLossPerc="" nutListGDAPerc="44.350000022138865" nutListUnit="g/100g" nutListMethod="Formulation" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="1481501" locale="fr_FR" sort="300" depthLevel="1" nutListMaxi="" nutListNut="Lipides" legalName="Mati&#xE8;res grasses">
         <nutListNut prefix="bcpg">
           <nut prefix="bcpg">
             <nutType prefix="bcpg"><![CDATA[Nutriment]]></nutType>
@@ -689,7 +689,7 @@
 > 40 g ± 8 g]]></description>
         <nutGDA prefix="bcpg"><![CDATA[90.0]]></nutGDA>
       </nutList>
-      <nutList nutListGroup="Groupe 1" parentLevel="" nutListValue="8.30699999910593" name="Prot&#xE9;ines" nutListValuePerServing="16.61399999821186" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="8.30699999910593" nutListLossPerc="" nutListGDAPerc="33.22799999642372" nutListUnit="g/100g" nutListMethod="Formulation" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="1481503" locale="fr_FR" sort="700" depthLevel="1" nutListMaxi="" nutListNut="Prot&#xE9;ines" legalName="Prot&#xE9;ines">
+      <nutList nutListGroup="Groupe 1" parentLevel="" nutListValue="-1" name="Prot&#xE9;ines" nutListValuePerServing="16.61399999821186" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="8.30699999910593" nutListLossPerc="" nutListGDAPerc="33.22799999642372" nutListUnit="g/100g" nutListMethod="Formulation" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="1481503" locale="fr_FR" sort="700" depthLevel="1" nutListMaxi="" nutListNut="Prot&#xE9;ines" legalName="Prot&#xE9;ines">
         <nutListNut prefix="bcpg">
           <nut prefix="bcpg">
             <nutType prefix="bcpg"><![CDATA[Nutriment]]></nutType>
@@ -854,7 +854,7 @@
       <microbioList mblMaxi="" name="6115f00b-9e75-43e9-a01f-f1c524050abe" node-dbid="101908" locale="fr_FR" mblValue="" sort="6" mblUnit="UFC/25g" mblMicrobio="Salmonelle" legalName="">
         <description prefix="cm"><![CDATA[]]></description>
       </microbioList>
-      <microbioList mblMaxi="500.0" name="d276c87e-02fa-43d0-89eb-5f0bfb1776dc" node-dbid="101909" locale="fr_FR" mblValue="100.0" sort="7" mblUnit="UFC/g" mblMicrobio="Staphylocoque" legalName="">
+      <microbioList mblMaxi="-1" name="d276c87e-02fa-43d0-89eb-5f0bfb1776dc" node-dbid="101909" locale="fr_FR" mblValue="-1" sort="7" mblUnit="UFC/g" mblMicrobio="Staphylocoque" legalName="">
         <description prefix="cm"><![CDATA[]]></description>
       </microbioList>
       <microbioList mblMaxi="1000.0" mblTextCriteria="" name="800fd1be-956f-4251-9f3a-d9578f14dee8" node-dbid="103086" locale="fr_FR" mblValue="100.0" sort="8" mblUnit="/g" mblMicrobio="ASR">
