@@ -892,7 +892,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 		      	
 		    	 if(data.value!=null){
 		    		 Dom.setStyle(elCell, "text-align", "right");  
-		    		 return (new Intl.NumberFormat(Alfresco.constants.JS_LOCALE ,{minimumFractionDigits : 4, maximumFractionDigits : 4 })).format( data.value);
+		    		 return (new Intl.NumberFormat(Alfresco.constants.JS_LOCALE.replace("_","-") ,{minimumFractionDigits : 4, maximumFractionDigits : 4 })).format( data.value);
 		    	 }
 		    	 return "";
 		    	  
