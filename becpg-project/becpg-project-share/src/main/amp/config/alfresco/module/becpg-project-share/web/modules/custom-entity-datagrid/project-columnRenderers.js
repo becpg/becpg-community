@@ -175,7 +175,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 	      	
 	    	  if(data.value!=null){
 	    		  Dom.setStyle(elCell, "text-align", "right");  
-	    		  return (new Intl.NumberFormat(Alfresco.constants.JS_LOCALE ,{minimumFractionDigits : 2, maximumFractionDigits : 2 })).format( data.value);
+	    		  return  (new Intl.NumberFormat(Alfresco.constants.JS_LOCALE.replace("_","-") ,{minimumFractionDigits : 2, maximumFractionDigits : 2 })).format( data.value);
 	    	  }
 	    	  return "";
 	    	  
