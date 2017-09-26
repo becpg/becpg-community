@@ -650,11 +650,11 @@ public class EntityReportServiceImpl implements EntityReportService {
 			// Add a fake parameter
 			EntityReportParameters reportParameters = new EntityReportParameters();
 			EntityReportParameter param1 = new EntityReportParameter();
-			param1.setId("param1");
+			param1.setId("sampleParam1");
 			param1.setNodeRef(entityNodeRef);
 			param1.setProp("ext1:sampleParam");
 			param1.setValue("sampleValue");
-			reportParameters.getParameters().add(new EntityReportParameter());
+			reportParameters.getParameters().add(param1);
 
 			reportData.setParameters(reportParameters);
 
