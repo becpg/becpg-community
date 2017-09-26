@@ -99,39 +99,33 @@ public class SecurityServiceImpl implements SecurityService {
 			if (acls.containsKey(key)) {
 
 				List<ACLEntryDataItem.PermissionModel> perms = acls.get(key);
-				int ret = SecurityService.WRITE_ACCESS;
-				if (!isAdmin()) {
 
-					// Rule to override if one of the rule says that is has a
-					// better right
-					perms.sort((p1, p2) -> {
-						// Read is first, write second
-						// refs #2674
-						if (p1.isReadOnly() || p2.isWrite()) {
-							return -1;
-						} else {
-							return 0;
-						}
-					});
+				if (isAdmin()) {
+					return SecurityService.WRITE_ACCESS;
+				}
 
-					for (PermissionModel permissionModel : perms) {
+				int ret = SecurityService.NONE_ACCESS;
 
-						if (permissionModel.isReadOnly() && isInGroup(permissionModel)) {
-							ret = SecurityService.READ_ACCESS;
-							// Continue we can get better;
-						} else if (permissionModel.isReadOnly()) {
-							ret = SecurityService.NONE_ACCESS;
-						}
+				boolean isReadOnly = true;
 
-						if (permissionModel.isWrite() && !isInGroup(permissionModel) && (ret != SecurityService.NONE_ACCESS)) {
-							ret = SecurityService.READ_ACCESS;
-							// Continue we can get better;
-						} else if (permissionModel.isWrite()) {
+				for (PermissionModel permissionModel : perms) {
+
+					if (isInGroup(permissionModel)) {
+						if (permissionModel.isWrite()) {
 							return SecurityService.WRITE_ACCESS;
-							// return we cannot get better
+						} else if (permissionModel.isReadOnly()) {
+							ret = SecurityService.READ_ACCESS;
+						}
+					} else {
+						if (permissionModel.isReadOnly()) {
+							isReadOnly = false;
 						}
 					}
 
+				}
+
+				if ((ret == SecurityService.NONE_ACCESS) && isReadOnly) {
+					ret = SecurityService.READ_ACCESS;
 				}
 
 				return ret;
