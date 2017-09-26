@@ -201,7 +201,7 @@ public class EntityReportParameters {
 
 	public void updateDataSource(Element xmlDataSource) {
 
-		Element entityEl = (Element) xmlDataSource.selectSingleNode("entity");
+		Element entityEl = (Element) xmlDataSource.getDocument().selectSingleNode("entity");
 		if (entityEl != null) {
 
 			Element reportParamsEl = (Element) entityEl.selectSingleNode("reportParams");
@@ -212,14 +212,22 @@ public class EntityReportParameters {
 			reportParamsEl = entityEl.addElement("reportParams");
 
 			for (EntityReportParameter param : getParameters()) {
-
-				Element reportParam = reportParamsEl.addElement(param.getId());
-				reportParam.addAttribute("nodeRef", param.getNodeRef().toString());
-				reportParam.addAttribute("prop", param.getProp());
-				reportParam.addAttribute("value", param.getValue());
+				if(param.getId()!=null) {
+					Element reportParam = reportParamsEl.addElement(param.getId());
+					if(param.getNodeRef()!=null) {
+						reportParam.addAttribute("nodeRef", param.getNodeRef().toString());
+					}
+					reportParam.addAttribute("prop", param.getProp());
+					reportParam.addAttribute("value", param.getValue());
+				} else {
+					logger.warn("No param id for parameter : "+ param);
+				}
 
 			}
+		} else {
+			logger.warn("Cannot find entity in XML");
 		}
+		
 
 	}
 
