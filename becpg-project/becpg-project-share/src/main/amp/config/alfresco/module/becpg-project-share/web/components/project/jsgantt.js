@@ -2160,6 +2160,8 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
             vDate.setTime(pList[i].getEnd().getTime());
          }
       }
+      
+      
 
       if (pFormat == 'minute') {
          vDate.setHours(vDate.getHours() + 1);
@@ -2173,8 +2175,14 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
       // Adjust max date to specific format boundaries (end of week or end of
       // month)
       if (pFormat == 'day') {
-         vDate.setDate(vDate.getDate() + 1);
-
+    	  
+    	  
+        vDate.setDate(vDate.getDate() + 1);
+         
+   	  	if(vDate.getDay() == 0){
+        	vDate.setDate(vDate.getDate() + 1);
+        } 
+   	  
          while (vDate.getDay() % 6 > 0) {
             vDate.setDate(vDate.getDate() + 1);
          }

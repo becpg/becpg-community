@@ -375,9 +375,11 @@ public class EntityTplServiceImpl implements EntityTplService {
 						// synchronize folders
 						// clean empty folders
 						for (FileInfo folder : fileFolderService.listFolders(entityNodeRef)) {
-							logger.debug("Synchro, checking empty folder " + folder.getName() + " of node "
-									+ nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + ", template = "
-									+ nodeService.getProperty(tplNodeRef, ContentModel.PROP_NAME));
+							if (logger.isDebugEnabled()) {
+								logger.debug("Synchro, checking empty folder " + folder.getName() + " of node "
+										+ nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + ", template = "
+										+ nodeService.getProperty(tplNodeRef, ContentModel.PROP_NAME));
+							}
 							if (fileFolderService.list(folder.getNodeRef()).size() == 0) {
 								fileFolderService.delete(folder.getNodeRef());
 							}
@@ -389,9 +391,11 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 						if (exists) {
 							for (FileInfo folder : fileFolderService.listFolders(tplNodeRef)) {
-								logger.debug("Synchro, copying folder " + folder.getName() + " to node "
-										+ nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + ", template = "
-										+ nodeService.getProperty(tplNodeRef, ContentModel.PROP_NAME));
+								if (logger.isDebugEnabled()) {
+									logger.debug("Synchro, copying folder " + folder.getName() + " to node "
+											+ nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + ", template = "
+											+ nodeService.getProperty(tplNodeRef, ContentModel.PROP_NAME));
+								}
 								try {
 									fileFolderService.copy(folder.getNodeRef(), entityNodeRef, null);
 								} catch (Exception e) {

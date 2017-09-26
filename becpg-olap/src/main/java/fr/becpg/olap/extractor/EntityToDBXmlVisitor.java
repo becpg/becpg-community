@@ -38,7 +38,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.extensions.surf.exception.PlatformRuntimeException;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -395,11 +394,8 @@ public class EntityToDBXmlVisitor {
 						for(int i = 0; i<children.getLength(); ++i){
 							Element curChild = (Element) children.item(i).getChildNodes().item(0);
 							String curTag = curChild.getAttribute(ATTR_NAME);
-							logger.debug("found : "+curChild.getAttribute(ATTR_NAME));
 							ret.add(new Column(property.getNodeName(), curTag));
-
-						}
-						
+						}						
 						
 						break;
 
