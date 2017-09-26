@@ -48,6 +48,8 @@ public class SecurityServiceTest extends RepoBaseTestCase {
 	protected static final String USER_ONE = "matthieu_secu";
 
 	protected static final String USER_TWO = "philippe_secu";
+	
+	protected static final String USER_THREE = "steven_secu";
 
 	private String grp1;
 	private String grp2;
@@ -104,6 +106,12 @@ public class SecurityServiceTest extends RepoBaseTestCase {
 
 			authorityService.addAuthority(grp3, USER_TWO);
 		}
+		
+		if (!authenticationDAO.userExists(USER_THREE)) {
+			BeCPGTestHelper.createUser(USER_THREE);
+
+			authorityService.addAuthority(grp2, USER_THREE);
+		}
 	}
 
 	private NodeRef createACLGroup() {
@@ -116,19 +124,26 @@ public class SecurityServiceTest extends RepoBaseTestCase {
 		// aclGroupData.setNodeAspects(Arrays.asList(new
 		// String[]{BeCPGModel.ASPECT_CLIENTS.toString(),BeCPGModel.ASPECT_CODE.toString()}));
 
-		List<NodeRef> groups = new ArrayList<>();
-		groups.add(authorityService.getAuthorityNodeRef(grp3));
+		List<NodeRef> group3s = new ArrayList<>();
+		group3s.add(authorityService.getAuthorityNodeRef(grp3));
 		List<ACLEntryDataItem> acls = new ArrayList<>();
 
-		acls.add(new ACLEntryDataItem("cm:name", PermissionModel.READ_ONLY, groups));
+		acls.add(new ACLEntryDataItem("cm:name", PermissionModel.READ_ONLY, group3s));
 
-		groups = new ArrayList<>();
-		groups.add(authorityService.getAuthorityNodeRef(grp1));
+		List<NodeRef> group1s = new ArrayList<>();
+		group1s = new ArrayList<>();
+		group1s.add(authorityService.getAuthorityNodeRef(grp1));
 
-		acls.add(new ACLEntryDataItem("sec:propName", PermissionModel.READ_WRITE, groups));
+		acls.add(new ACLEntryDataItem("sec:propName", PermissionModel.READ_WRITE, group1s));
 
-		acls.add(new ACLEntryDataItem("sec:aclPermission", PermissionModel.READ_ONLY, groups));
+		acls.add(new ACLEntryDataItem("sec:aclPermission", PermissionModel.READ_ONLY, group1s));
 
+		acls.add(new ACLEntryDataItem("cm:titled", PermissionModel.READ_ONLY, group3s));
+		acls.add(new ACLEntryDataItem("cm:titled", PermissionModel.READ_WRITE, group1s));
+		
+		acls.add(new ACLEntryDataItem("cm:description", PermissionModel.READ_WRITE, group1s));
+		acls.add(new ACLEntryDataItem("cm:description", PermissionModel.READ_ONLY, group3s));
+		
 		aclGroupData.setAcls(acls);
 		alfrescoRepository.create(getTestFolderNodeRef(), aclGroupData);
 
@@ -159,6 +174,10 @@ public class SecurityServiceTest extends RepoBaseTestCase {
 		assertEquals(securityService.computeAccessMode(SecurityModel.TYPE_ACL_ENTRY, "sec:propName"), SecurityService.READ_ACCESS);
 
 		assertEquals(securityService.computeAccessMode(SecurityModel.TYPE_ACL_ENTRY, "sec:aclPermission"), SecurityService.NONE_ACCESS);
+		
+		assertEquals(securityService.computeAccessMode(SecurityModel.TYPE_ACL_ENTRY, "cm:description"), SecurityService.READ_ACCESS);
+		
+		assertEquals(securityService.computeAccessMode(SecurityModel.TYPE_ACL_ENTRY, "cm:titled"), SecurityService.READ_ACCESS);
 
 		authenticationComponent.setCurrentUser(USER_ONE);
 
@@ -167,6 +186,16 @@ public class SecurityServiceTest extends RepoBaseTestCase {
 		assertEquals(securityService.computeAccessMode(SecurityModel.TYPE_ACL_ENTRY, "sec:propName"), SecurityService.WRITE_ACCESS);
 
 		assertEquals(securityService.computeAccessMode(SecurityModel.TYPE_ACL_ENTRY, "sec:aclPermission"), SecurityService.READ_ACCESS);
+		
+	    assertEquals(securityService.computeAccessMode(SecurityModel.TYPE_ACL_ENTRY, "cm:description"), SecurityService.WRITE_ACCESS);
+		
+		assertEquals(securityService.computeAccessMode(SecurityModel.TYPE_ACL_ENTRY, "cm:titled"), SecurityService.WRITE_ACCESS);
+		
+		authenticationComponent.setCurrentUser(USER_THREE);
+		
+		assertEquals(securityService.computeAccessMode(SecurityModel.TYPE_ACL_ENTRY, "cm:description"), SecurityService.NONE_ACCESS);
+			
+		assertEquals(securityService.computeAccessMode(SecurityModel.TYPE_ACL_ENTRY, "cm:titled"), SecurityService.NONE_ACCESS);
 
 		authenticationComponent.setCurrentUser("admin");
 
