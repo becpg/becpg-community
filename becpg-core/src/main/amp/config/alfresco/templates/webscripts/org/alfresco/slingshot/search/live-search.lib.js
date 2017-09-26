@@ -305,7 +305,7 @@ function getEntityResults(params)
       ftsQuery = 'PATH:"' + rootNode.qnamePath + '//*" AND (' + ftsQuery + ')';
    } 
    
-   ftsQuery = '(' + ftsQuery + ') AND -ASPECT:"sys:hidden" AND -ASPECT:"bcpg:compositeVersion" AND -cm:creator:system -ASPECT:"bcpg:entityTplAspect" AND -ASPECT:"bcpg:hiddenFolder" AND -TYPE:"bcpg:systemEntity"';
+   ftsQuery = '(' + ftsQuery + ') AND -ASPECT:"sys:hidden" AND -ASPECT:"cm:checkedOut" AND -ASPECT:"bcpg:compositeVersion" AND -cm:creator:system -ASPECT:"bcpg:entityTplAspect" AND -ASPECT:"bcpg:hiddenFolder" AND -TYPE:"bcpg:systemEntity"';
    
    
    if (logger.isLoggingEnabled())
