@@ -34,7 +34,7 @@ import fr.becpg.repo.RepoConsts;
  */
 public class PropertyFormats {
 
-	private static final String FORMAT_DECIMAL_VALUE = "0.####";
+	private static final String FORMAT_DECIMAL_VALUE = "###,###.####";
 	
     private final ThreadLocal<SimpleDateFormat> s_localDateFormat = new ThreadLocal<SimpleDateFormat>(){
     	protected SimpleDateFormat initialValue() {
@@ -60,7 +60,12 @@ public class PropertyFormats {
     
     private final ThreadLocal<DecimalFormat> s_localDecimalFormat = new ThreadLocal<DecimalFormat>(){
     	protected DecimalFormat initialValue() {
-    		return new DecimalFormat(decimalFormat);
+    		if(useDefaultLocale){
+    			return new DecimalFormat(decimalFormat);
+    		} else {
+    			return (DecimalFormat) DecimalFormat.getInstance(I18NUtil.getLocale());
+    		}
+    		
     	}
 
 	};

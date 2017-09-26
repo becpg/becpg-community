@@ -26,6 +26,7 @@ import java.util.Map;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.service.ServiceRegistry;
+import org.alfresco.service.cmr.rating.RatingService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.Path;
@@ -64,6 +65,8 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 	protected DataListExtractorFactory dataListExtractorFactory;
 
 	protected EntityDictionaryService entityDictionaryService;
+	
+	protected RatingService ratingService;
 
 	private boolean isDefaultExtractor = false;
 
@@ -103,6 +106,12 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 	public void setPermissionService(PermissionService permissionService) {
 		this.permissionService = permissionService;
 	}
+	
+	public void setRatingService(RatingService ratingService) {
+		this.ratingService = ratingService;
+	}
+
+
 
 	public static final String PROP_NODE = "nodeRef";
 	public static final String PROP_TITLE = "title";
@@ -180,6 +189,17 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 			ret.put(PROP_PERMISSIONS, permissions);
 
 			ret.put(PROP_NODEDATA, doExtract(nodeRef, itemType, metadataFields, AttributeExtractorMode.JSON, properties, props, cache));
+			
+			if(nodeService.hasAspect(nodeRef,ContentModel.ASPECT_LIKES_RATING_SCHEME_ROLLUPS)) {
+				
+				Map<String, Object> likes = new HashMap<>(20);
+				
+				likes.put("isLiked",ratingService.getRatingByCurrentUser(nodeRef, "likesRatingScheme")!=null);
+				likes.put("totalLikes",ratingService.getTotalRating(nodeRef, "likesRatingScheme"));
+				
+				ret.put("likes", likes);
+			}
+			
 
 			if (!entityDictionaryService.isSubClass(itemType, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
 				Path path = nodeService.getPath(nodeRef);
