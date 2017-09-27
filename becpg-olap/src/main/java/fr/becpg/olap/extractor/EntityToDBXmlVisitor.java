@@ -217,6 +217,9 @@ public class EntityToDBXmlVisitor {
 		domFactory.setNamespaceAware(true); // never forget this!
 		DocumentBuilder builder = domFactory.newDocumentBuilder();
 		Document doc = builder.parse(in);
+		
+		if(doc.getFirstChild() instanceof Element){
+			Element entity = (Element) doc.getFirstChild();
 
 		Element entity = (Element) doc.getFirstChild();
 
@@ -246,7 +249,7 @@ public class EntityToDBXmlVisitor {
 				}
 
 			}
-		}
+		} 
 
 	}
 
@@ -386,6 +389,16 @@ public class EntityToDBXmlVisitor {
 							ret.add(new Column(property.getNodeName(), Boolean.parseBoolean(property.getTextContent())));
 						}
 
+						break;
+					case "d:category":
+						NodeList children = property.getChildNodes().item(0).getChildNodes();
+						
+						for(int i = 0; i<children.getLength(); ++i){
+							Element curChild = (Element) children.item(i).getChildNodes().item(0);
+							String curTag = curChild.getAttribute(ATTR_NAME);
+							ret.add(new Column(property.getNodeName(), curTag));
+						}						
+						
 						break;
 
 					default:
