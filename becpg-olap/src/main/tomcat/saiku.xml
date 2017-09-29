@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Context >
+
+	  <!-- PROD --> 
+	   <Resource defaultTransactionIsolation="READ_COMMITTED" 
+			defaultAutoCommit="true"
+			password="becpg"
+			username="becpg"
+			url="jdbc:mysql://olap-db:3306/becpg_olap?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=utf8&amp;retainStatementAfterResultSetClose=true&amp;useSSL=false"
+			driverClassName="com.mysql.jdbc.Driver" 
+			type="javax.sql.DataSource"
+			auth="Container"
+			name="jdbc/saikuDataSource"
+			testWhileIdle="false" 
+			testOnBorrow="true" 
+			testOnReturn="false" 
+			validationQuery="SELECT 1" 
+			validationInterval="30000" 	
+			maxActive="50"  
+			minIdle="0"  
+			maxIdle="10" 
+		    timeBetweenEvictionRunsMillis="-1" 
+			minEvictableIdleTimeMillis="1800000" 
+			maxWait="30000"  
+			initialSize="10" 
+			removeAbandonedTimeout="300" 
+			removeAbandoned="true" 
+			logAbandoned="true" 
+		    jmxEnabled="true" 
+		    factory="org.apache.tomcat.jdbc.pool.DataSourceFactory" />
+	   
+</Context>
