@@ -161,6 +161,7 @@
 	<bean id="webscript.fr.becpg.entity.entityTpl.get" class="fr.becpg.repo.web.scripts.entity.EntityTplWebScript" parent="webscript">
 		<property name="nodeService" ref="nodeService" />
 		<property name="entityTplService" ref="entityTplService" />
+		<property name="namespaceService" ref="NamespaceService" />
 	</bean>
 	
 	<bean id="webscript.fr.becpg.entity.entityCatalog.get" class="fr.becpg.repo.web.scripts.entity.EntityCatalogWebScript" parent="webscript">

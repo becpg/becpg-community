@@ -410,6 +410,22 @@
 									Event.stopEvent(e || window.event);
 								};
 							};
+							
+							/**
+							 * Click handler for edit Data List
+							 * 
+							 * @method fnDeleteOnClick
+							 * @param listName
+							 *            {String} Name of the Data List
+							 */
+							var fnDeleteChildrenOnClick = function DataLists_renderDataLists_fnDeleteChildrenOnClick(listName, enabled) {
+								return function DataLists_renderDataLists_onEditClick(e) {
+									if (enabled) {
+										me.onDeleteChildrenList(listName);
+									}
+									Event.stopEvent(e || window.event);
+								};
+							};
 
 							try {
 								var lists = this.dataLists, list, permissions, elHighlight = null, container, el, elLink, elText;
@@ -466,7 +482,28 @@
 												elDelete.className = "delete";
 												elDelete.title = this.msg("label.delete-list");
 												Event.addListener(elDelete, "click",  fnDeleteOnClick(list.name, true));
-												elLink.appendChild(elDelete);
+												
+												var isTemplate = false;
+												for(var index in this.entity.aspects){
+													if(this.entity.aspects[index] === "bcpg:entityTplAspect"){
+														isTemplate = true;
+													}
+												}
+												
+												var elDeleteChildren = null;
+												
+												if(isTemplate){
+													var elDeleteChildren = document.createElement("span");
+													elDeleteChildren.className = "delete";
+													elDeleteChildren.title = this.msg("label.delete-list");
+													Event.addListener(elDeleteChildren, "click",  fnDeleteChildrenOnClick(list.name, true));
+													elLink.appendChild(elDeleteChildren);
+												} else {
+												
+													
+													elLink.appendChild(elDelete);
+												}
+												
 											}
 											
 											elState = document.createElement("span");
@@ -740,6 +777,151 @@
 					               {
 					                  this.destroy();
 					                  fnActionDeleteConfirm.call(me, datalist);
+					               }
+					            },
+					            {
+					               text: this.msg("button.cancel"),
+					               handler: function DataLists_onDeleteList_cancel()
+					               {
+					                  this.destroy();
+					               },
+					               isDefault: true
+					            }]
+					         });
+					      },
+	
+					/**
+					       * Delete List and children event handler
+					       *
+					       * @method onDeleteChildrenList
+					       * @param listName {string} Name of the list to edit
+					       */
+					     onDeleteChildrenList: function DataLists_onDeleteChildrenList(p_listName)
+					      {
+					         var datalist = this.dataLists[p_listName],
+					            me = this;
+					         
+
+					         var fnActionDeleteConfirm = function DataLists_onDeleteList_confirm(p_datalist)
+					         {
+					            var nodeRef = new Alfresco.util.NodeRef(p_datalist.nodeRef),
+					               listTypeTitle = this.getListTypeTitle(p_datalist.itemType);
+					            
+					            //get children here
+					            
+					            Alfresco.util.Ajax.request(
+					            {
+					               method: Alfresco.util.Ajax.DELETE,
+					               url: Alfresco.constants.PROXY_URI + "slingshot/datalists/list/node/" + nodeRef.uri,
+					               successCallback:
+					               {
+					                  fn: function DataLists_onDeleteList_confirm_success(response, p_obj)
+					                  {
+					                  
+					                        // If we deleted the current list, then redirect to "data-lists"
+					                        if (p_obj.name == this.options.listId)
+					                        {
+					                           window.location = "entity-data-lists?nodeRef="
+                                                    + $html(me.options.entityNodeRef);
+					                           return;
+					                        }
+
+					                        Alfresco.util.PopupManager.displayMessage(
+					                        {
+					                           text: this.msg("message.delete-list.success")
+					                        });
+					                     
+					                        delete this.dataLists[p_datalist.name];
+					                        this.dataListsLength--;
+					                        this.renderDataLists();
+					                  },
+					                  obj: p_datalist,
+					                  scope: this
+					                    
+					               },
+					               failureCallback:
+					               {
+					                  fn: function DataLists_onDeleteList_confirm_failure(response)
+					                  {
+					                     Alfresco.util.PopupManager.displayMessage(
+					                     {
+					                        text: this.msg("message.delete-list.failure")
+					                     });
+					                  },
+					                  scope: this
+					               }
+					            });
+					         };
+					         
+					         var fnActionDeleteChildrenConfirm = function DataLists_onDeleteList_confirm(p_datalist)
+					         {
+					            var nodeRef = new Alfresco.util.NodeRef(p_datalist.nodeRef),
+					               listTypeTitle = this.getListTypeTitle(p_datalist.itemType);
+					            
+					            Alfresco.util.Ajax.request(
+					            {
+					               method: Alfresco.util.Ajax.GET,
+					               url: Alfresco.constants.PROXY_URI + "becpg/entity/entityTpl/" + this.options.entityNodeRef.replace(":/", "")
+						            + "/datalistRecursiveDelete?datalist=" + datalist.itemType,
+					               successCallback:
+					               {
+					                  fn: function DataLists_onDeleteList_confirm_success(response, p_obj)
+					                  {
+					                  
+					                        // If we deleted the current list, then redirect to "data-lists"
+					                        if (p_obj.name == this.options.listId)
+					                        {
+					                           window.location = "entity-data-lists?nodeRef="
+                                                    + $html(me.options.entityNodeRef);
+					                           return;
+					                        }
+
+					                        Alfresco.util.PopupManager.displayMessage(
+					                        {
+					                           text: this.msg("message.delete-list.success")
+					                        });
+					                     
+					                        delete this.dataLists[p_datalist.name];
+					                        this.dataListsLength--;
+					                        this.renderDataLists();
+					                  },
+					                  obj: p_datalist,
+					                  scope: this
+					                    
+					               },
+					               failureCallback:
+					               {
+					                  fn: function DataLists_onDeleteList_confirm_failure(response)
+					                  {
+					                     Alfresco.util.PopupManager.displayMessage(
+					                     {
+					                        text: this.msg("message.delete-list.failure")
+					                     });
+					                  },
+					                  scope: this
+					               }
+					            });
+					         };
+
+					         Alfresco.util.PopupManager.displayPrompt(
+					         {
+					            title: this.msg("message.delete-list.title"),
+					            text: this.msg("message.delete-list.description", $html(datalist.title)),
+					            buttons: [
+					            {
+					               text: this.msg("button.delete-template"),
+					               handler: function DataLists_onDeleteList_delete()
+					               {
+					                  this.destroy();
+					                  fnActionDeleteConfirm.call(me, datalist);
+					               }
+					            },
+					            {
+					               text: this.msg("button.delete-children"),
+					               handler: function DataLists_onDeleteChildrenList_delete()
+					               {
+					                  this.destroy();
+					                  fnActionDeleteChildrenConfirm.call(me, datalist);
 					               }
 					            },
 					            {
