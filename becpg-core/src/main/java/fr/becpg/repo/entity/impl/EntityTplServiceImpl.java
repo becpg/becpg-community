@@ -593,4 +593,40 @@ public class EntityTplServiceImpl implements EntityTplService {
 		}
 
 	}
+	
+	@Override
+	public void removeDataListOnEntities(NodeRef entityTplNodeRef, QName entityList){
+		List<NodeRef> entities = getEntitiesToUpdate(entityTplNodeRef);		
+
+		doInBatch(entities, 10, entityNodeRef -> {
+			
+			NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
+			NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, entityList);
+			
+			if (listNodeRef != null) {
+				logger.debug("Deleting list with node: "+listNodeRef+" on entity: "+entityNodeRef+" ("+nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME)+")");
+				nodeService.deleteNode(listNodeRef);
+			}
+
+		});
+		
+		NodeRef tplListContainerNodeRef = entityListDAO.getListContainer(entityTplNodeRef);
+		NodeRef tplListNodeRef = entityListDAO.getList(tplListContainerNodeRef, entityList);
+		
+		if (tplListNodeRef != null) {
+			logger.debug("Deleting list with node: "+tplListNodeRef+" on template: "+entityTplNodeRef+" ("+nodeService.getProperty(entityTplNodeRef, ContentModel.PROP_NAME)+")");
+			nodeService.deleteNode(tplListNodeRef);
+		}
+	}
+
+	/*/
+	 * TODO faire en s'inspirant du synchronizeEntities
+	@Override
+	public void removeDataListItemsOnEntities(NodeRef entityTplNodeRef, List<NodeRef> dataListItems) {
+		List<NodeRef> entities = getEntitiesToUpdate(entityTplNodeRef);
+		
+		
+		
+	}
+	*/
 }
