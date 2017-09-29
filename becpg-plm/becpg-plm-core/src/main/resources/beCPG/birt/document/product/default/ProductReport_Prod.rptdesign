@@ -6656,7 +6656,7 @@ else{
                 <cell id="6027">
                     <label id="2877">
                         <property name="style">becpg-col-header</property>
-                        <text-property name="text" key="descrPack">Description du produit</text-property>
+                        <text-property name="text" key="description">Description du produit</text-property>
                     </label>
                 </cell>
             </row>
@@ -6794,31 +6794,31 @@ BirtMath.round(dataSetRow["compoListQty"] * 1000000, 2)+ " mg";
                                 <cell id="2912">
                                     <property name="style">becpg-cell-header</property>
                                     <label id="2915">
-                                        <text-property name="text">Code ERP</text-property>
+                                        <text-property name="text" key="erpCode">Code ERP</text-property>
                                     </label>
                                 </cell>
                                 <cell id="2913">
                                     <property name="style">becpg-cell-header</property>
                                     <label id="2916">
-                                        <text-property name="text">Nom</text-property>
+                                        <text-property name="text" key="name">Nom</text-property>
                                     </label>
                                 </cell>
                                 <cell id="2976">
                                     <property name="style">becpg-cell-header</property>
                                     <label id="2985">
-                                        <text-property name="text">Qté MeO</text-property>
+                                        <text-property name="text" key="qteMeo">Qté MeO</text-property>
                                     </label>
                                 </cell>
                                 <cell id="2966">
                                     <property name="style">becpg-cell-header</property>
                                     <label id="2917">
-                                        <text-property name="text">Poids</text-property>
+                                        <text-property name="text" key="netWeight">Poids</text-property>
                                     </label>
                                 </cell>
                                 <cell id="2999">
                                     <property name="style">becpg-cell-header</property>
                                     <label id="3002">
-                                        <text-property name="text">Variantes</text-property>
+                                        <text-property name="text" key="variante">Variantes</text-property>
                                     </label>
                                 </cell>
                             </row>
@@ -6924,7 +6924,7 @@ else{
                 <cell id="6003">
                     <label id="3216">
                         <property name="style">becpg-col-header</property>
-                        <text-property name="text">Description du conditionnement</text-property>
+                        <text-property name="text" key="packagingDescription">Description du conditionnement</text-property>
                     </label>
                 </cell>
             </row>
@@ -7089,37 +7089,37 @@ value = value + " x " + dataSetRow["height"];
                                 <cell id="2784">
                                     <property name="style">becpg-cell-header</property>
                                     <label id="2788">
-                                        <text-property name="text">Code ERP</text-property>
+                                        <text-property name="text" key="erpCode">Code ERP</text-property>
                                     </label>
                                 </cell>
                                 <cell id="2704">
                                     <property name="style">becpg-cell-header</property>
                                     <label id="2722">
-                                        <text-property name="text">Nom</text-property>
+                                        <text-property name="text" key="name">Nom</text-property>
                                     </label>
                                 </cell>
                                 <cell id="2706">
                                     <property name="style">becpg-cell-header</property>
                                     <label id="2726">
-                                        <text-property name="text">Quantité / unité</text-property>
+                                        <text-property name="text" key="hQtyPerUnit">Quantité / unité</text-property>
                                     </label>
                                 </cell>
                                 <cell id="2933">
                                     <property name="style">becpg-cell-header</property>
                                     <label id="2937">
-                                        <text-property name="text">Dimension (Lxlxh) en mm</text-property>
+                                        <text-property name="text" key="pmDim">Dimension (Lxlxh) en mm</text-property>
                                     </label>
                                 </cell>
                                 <cell id="2707">
                                     <property name="style">becpg-cell-header</property>
                                     <label id="2728">
-                                        <text-property name="text">Tare</text-property>
+                                        <text-property name="text" key="tarePkgLevel1">Tare</text-property>
                                     </label>
                                 </cell>
                                 <cell id="2994">
                                     <property name="style">becpg-cell-header</property>
                                     <label id="2997">
-                                        <text-property name="text">Variantes</text-property>
+                                        <text-property name="text" key="variante">Variantes</text-property>
                                     </label>
                                 </cell>
                             </row>
@@ -7217,7 +7217,8 @@ value = value + " x " + dataSetRow["height"];
                                 <property name="rowSpan">1</property>
                                 <property name="style">becpg-cell-header</property>
                                 <label id="2992">
-                                    <text-property name="text">CONDITIONNEMENT UVC</text-property>
+                                    <property name="textAlign">center</property>
+                                    <text-property name="text" key="primaryPack">CONDITIONNEMENT UVC</text-property>
                                 </label>
                             </cell>
                             <cell id="2759">
@@ -7225,7 +7226,8 @@ value = value + " x " + dataSetRow["height"];
                                 <property name="rowSpan">1</property>
                                 <property name="style">becpg-cell-header</property>
                                 <label id="2993">
-                                    <text-property name="text">COLIS</text-property>
+                                    <property name="textAlign">center</property>
+                                    <text-property name="text" key="secondaryPack">COLIS</text-property>
                                 </label>
                             </cell>
                         </row>
@@ -7235,27 +7237,27 @@ value = value + " x " + dataSetRow["height"];
                             <property name="textAlign">center</property>
                             <cell id="2755">
                                 <label id="2758">
-                                    <text-property name="text">SPCB (nb UV)</text-property>
+                                    <text-property name="text" key="numberUnits">SPCB (nb UV)</text-property>
                                 </label>
                             </cell>
                             <cell id="2372">
                                 <label id="2390">
-                                    <text-property name="text">Dimension (Lxlxh) en mm</text-property>
+                                    <text-property name="text" key="pmDim">Dimension (Lxlxh) en mm</text-property>
                                 </label>
                             </cell>
                             <cell id="2373">
                                 <label id="2391">
-                                    <text-property name="text">Tare en g</text-property>
+                                    <text-property name="text" key="tarePkgLevel1">Tare en g</text-property>
                                 </label>
                             </cell>
                             <cell id="2374">
                                 <label id="2392">
-                                    <text-property name="text">Poids net en g</text-property>
+                                    <text-property name="text" key="productQty">Poids net en g</text-property>
                                 </label>
                             </cell>
                             <cell id="2375">
                                 <label id="2393">
-                                    <text-property name="text">Poids brut en g</text-property>
+                                    <text-property name="text" key="grossWeightG">Poids brut en g</text-property>
                                 </label>
                             </cell>
                             <cell id="2761">
@@ -7265,12 +7267,12 @@ value = value + " x " + dataSetRow["height"];
                             </cell>
                             <cell id="2377">
                                 <label id="2395">
-                                    <text-property name="text">Dimension (Lxlxh) en mm</text-property>
+                                    <text-property name="text" key="pmDim">Dimension (Lxlxh) en mm</text-property>
                                 </label>
                             </cell>
                             <cell id="2378">
                                 <label id="2396">
-                                    <text-property name="text">Poids brut en kg</text-property>
+                                    <text-property name="text" key="grossWeightPkgLevel2">Poids brut en kg</text-property>
                                 </label>
                             </cell>
                         </row>
@@ -7492,35 +7494,35 @@ dataSetRow["productCompoQtyUsed"] * 1000
                             <property name="textAlign">center</property>
                             <cell id="2731">
                                 <label id="2446">
-                                    <text-property name="text">Nombre emb/couche</text-property>
+                                    <text-property name="text" key="palletBoxesPerLayer">Nombre emb/couche</text-property>
                                 </label>
                             </cell>
                             <cell id="2732">
                                 <label id="2447">
-                                    <text-property name="text">Nombre 
+                                    <text-property name="text" key="palletLayers">Nombre 
 couche/palette</text-property>
                                 </label>
                             </cell>
                             <cell id="2733">
                                 <label id="2448">
-                                    <text-property name="text">Nombre 
+                                    <text-property name="text" key="palletBoxesPerPallet">Nombre 
 emb/palette </text-property>
                                 </label>
                             </cell>
                             <cell id="2734">
                                 <label id="2449">
-                                    <text-property name="text">Nombre UVC/palette</text-property>
+                                    <text-property name="text" key="nbProductsPkgLevel3">Nombre UVC/palette</text-property>
                                 </label>
                             </cell>
                             <cell id="2735">
                                 <label id="2450">
-                                    <text-property name="text">Poids brut 
+                                    <text-property name="text" key="grossWeightKg">Poids brut 
 env en kg</text-property>
                                 </label>
                             </cell>
                             <cell id="2736">
                                 <label id="2451">
-                                    <text-property name="text">Hauteur maxi
+                                    <text-property name="text" key="palletHeight">Hauteur maxi
 en mm</text-property>
                                 </label>
                             </cell>
@@ -8151,31 +8153,31 @@ true
                                 <cell id="3437">
                                     <property name="style">becpg-cell-header</property>
                                     <label id="3522">
-                                        <text-property name="text">Caractéristique</text-property>
+                                        <text-property name="text" key="charact">Caractéristique</text-property>
                                     </label>
                                 </cell>
                                 <cell id="3438">
                                     <property name="style">becpg-cell-header</property>
                                     <label id="3524">
-                                        <text-property name="text">Cible</text-property>
+                                        <text-property name="text" key="target">Cible</text-property>
                                     </label>
                                 </cell>
                                 <cell id="3439">
                                     <property name="style">becpg-cell-header</property>
                                     <label id="3544">
-                                        <text-property name="text">Unité</text-property>
+                                        <text-property name="text" key="unit">Unité</text-property>
                                     </label>
                                 </cell>
                                 <cell id="3538">
                                     <property name="style">becpg-cell-header</property>
                                     <label id="3542">
-                                        <text-property name="text">Mini</text-property>
+                                        <text-property name="text" key="mini">Mini</text-property>
                                     </label>
                                 </cell>
                                 <cell id="3440">
                                     <property name="style">becpg-cell-header</property>
                                     <label id="3534">
-                                        <text-property name="text">Maxi</text-property>
+                                        <text-property name="text" key="maxi">Maxi</text-property>
                                     </label>
                                 </cell>
                             </row>
@@ -8360,7 +8362,7 @@ true
                         <property name="borderRightStyle">solid</property>
                         <property name="borderRightWidth">thin</property>
                         <label id="8999">
-                            <text-property name="text">Étape</text-property>
+                            <text-property name="text" key="step">Étape</text-property>
                         </label>
                     </cell>
                     <cell id="9047">
@@ -8368,7 +8370,7 @@ true
                         <property name="borderRightStyle">solid</property>
                         <property name="borderRightWidth">thin</property>
                         <label id="8995">
-                            <text-property name="text">Ressource</text-property>
+                            <text-property name="text" key="resource">Ressource</text-property>
                         </label>
                     </cell>
                     <cell id="9048">
@@ -8376,7 +8378,7 @@ true
                         <property name="borderRightStyle">solid</property>
                         <property name="borderRightWidth">thin</property>
                         <label id="8993">
-                            <text-property name="text">Type de paramètre</text-property>
+                            <text-property name="text" key="typeParam">Type de paramètre</text-property>
                         </label>
                     </cell>
                     <cell id="9049">
@@ -8384,13 +8386,13 @@ true
                         <property name="borderRightStyle">solid</property>
                         <property name="borderRightWidth">thin</property>
                         <label id="8997">
-                            <text-property name="text">Paramètre</text-property>
+                            <text-property name="text" key="parameters">Paramètre</text-property>
                         </label>
                     </cell>
                     <cell id="9050">
                         <property name="style">becpg-cell-header</property>
                         <label id="8991">
-                            <text-property name="text">Valeur</text-property>
+                            <text-property name="text" key="value">Valeur</text-property>
                         </label>
                     </cell>
                 </row>
@@ -8978,35 +8980,35 @@ true
                     <label id="2306">
                         <property name="fontWeight">normal</property>
                         <property name="textAlign">center</property>
-                        <text-property name="text">Demandeur</text-property>
+                        <text-property name="text" key="Applicant">Demandeur</text-property>
                     </label>
                 </cell>
                 <cell id="1952">
                     <label id="1960">
                         <property name="fontWeight">normal</property>
                         <property name="textAlign">center</property>
-                        <text-property name="text">Rédacteur</text-property>
+                        <text-property name="text" key="pvTransmitter">Rédacteur</text-property>
                     </label>
                 </cell>
                 <cell id="1953">
                     <label id="1961">
                         <property name="fontWeight">normal</property>
                         <property name="textAlign">center</property>
-                        <text-property name="text">Resp. production</text-property>
+                        <text-property name="text" key="mgrProduction">Resp. production</text-property>
                     </label>
                 </cell>
                 <cell id="1954">
                     <label id="1962">
                         <property name="fontWeight">normal</property>
                         <property name="textAlign">center</property>
-                        <text-property name="text">Resp. qualité</text-property>
+                        <text-property name="text" key="mgrQuality">Resp. qualité</text-property>
                     </label>
                 </cell>
                 <cell id="2695">
                     <label id="2699">
                         <property name="fontWeight">normal</property>
                         <property name="textAlign">center</property>
-                        <text-property name="text">Resp. R&amp;D</text-property>
+                        <text-property name="text" key="mgrRD">Resp. R&amp;D</text-property>
                     </label>
                 </cell>
             </row>

@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2017 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2017 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.olap.extractor;
@@ -48,9 +48,9 @@ import fr.becpg.tools.InstanceManager.Instance;
 import fr.becpg.tools.jdbc.JdbcUtils;
 
 /**
- * 
+ *
  * @author matthieu
- * 
+ *
  */
 public class EntityToDBXmlVisitor {
 
@@ -90,39 +90,49 @@ public class EntityToDBXmlVisitor {
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + getOuterType().hashCode();
-			result = prime * result + ((key == null) ? 0 : key.hashCode());
-			result = prime * result + ((nodeRef == null) ? 0 : nodeRef.hashCode());
-			result = prime * result + ((value == null) ? 0 : value.hashCode());
+			result = (prime * result) + getOuterType().hashCode();
+			result = (prime * result) + ((key == null) ? 0 : key.hashCode());
+			result = (prime * result) + ((nodeRef == null) ? 0 : nodeRef.hashCode());
+			result = (prime * result) + ((value == null) ? 0 : value.hashCode());
 			return result;
 		}
 
 		@Override
 		public boolean equals(Object obj) {
-			if (this == obj)
+			if (this == obj) {
 				return true;
-			if (obj == null)
+			}
+			if (obj == null) {
 				return false;
-			if (getClass() != obj.getClass())
+			}
+			if (getClass() != obj.getClass()) {
 				return false;
+			}
 			Column other = (Column) obj;
-			if (!getOuterType().equals(other.getOuterType()))
+			if (!getOuterType().equals(other.getOuterType())) {
 				return false;
+			}
 			if (key == null) {
-				if (other.key != null)
+				if (other.key != null) {
 					return false;
-			} else if (!key.equals(other.key))
+				}
+			} else if (!key.equals(other.key)) {
 				return false;
+			}
 			if (nodeRef == null) {
-				if (other.nodeRef != null)
+				if (other.nodeRef != null) {
 					return false;
-			} else if (!nodeRef.equals(other.nodeRef))
+				}
+			} else if (!nodeRef.equals(other.nodeRef)) {
 				return false;
+			}
 			if (value == null) {
-				if (other.value != null)
+				if (other.value != null) {
 					return false;
-			} else if (!value.equals(other.value))
+				}
+			} else if (!value.equals(other.value)) {
 				return false;
+			}
 			return true;
 		}
 
@@ -139,7 +149,7 @@ public class EntityToDBXmlVisitor {
 	private static final Log logger = LogFactory.getLog(EntityToDBXmlVisitor.class);
 
 	private static final List<String> ignoredProperties = new ArrayList<>();
-	
+
 	private static final List<String> ignoredListProperties = new ArrayList<>();
 
 	private static final List<String> ignoredLists = new ArrayList<>();
@@ -164,7 +174,7 @@ public class EntityToDBXmlVisitor {
 		ignoredListProperties.add("bcpg:startEffectivity");
 		ignoredListProperties.add("bcpg:endEffectivity");
 	}
-	
+
 	static {
 		ignoredProperties.add("cm:name");
 		ignoredProperties.add("cm:owner");
@@ -187,7 +197,7 @@ public class EntityToDBXmlVisitor {
 		ignoredProperties.add("bcpg:lclIsFormulated");
 		ignoredProperties.add("bcpg:ingListQtyMaxi");
 		ignoredProperties.add("bcpg:ingListQtyMini");
-		
+
 	}
 
 	static {
@@ -217,8 +227,8 @@ public class EntityToDBXmlVisitor {
 		domFactory.setNamespaceAware(true); // never forget this!
 		DocumentBuilder builder = domFactory.newDocumentBuilder();
 		Document doc = builder.parse(in);
-		
-		if(doc.getFirstChild() instanceof Element){
+
+		if (doc.getFirstChild() instanceof Element) {
 			Element entity = (Element) doc.getFirstChild();
 
 			String nodeRef = entity.getAttribute(ATTR_NODEREF);
@@ -230,24 +240,24 @@ public class EntityToDBXmlVisitor {
 
 				NodeList dataLists = entity.getElementsByTagName("dl:dataList");
 				for (int i = 0; i < dataLists.getLength(); i++) {
-						Element dataList = ((Element) dataLists.item(i));
-						String dataListname = dataList.getAttribute(ATTR_NAME);
-	
-						NodeList contains = dataList.getElementsByTagName("cm:contains");
-						Element container = (Element) contains.item(0);
-	
-						NodeList dataListItems = container.getChildNodes();
-						for (int j = 0; j < dataListItems.getLength(); j++) {
-								Element dataListItem = ((Element) dataListItems.item(j));
-								String dataListItemNodeRef = dataListItem.getAttribute(ATTR_NODEREF);
-		
-								if (!ignoredLists.contains(dataListItem.getNodeName())) {
-									createDBDataListItem(dbId, dataListItemNodeRef, dataListname, dataListItem.getNodeName(), readProperties(dataListItem));
-								}
+					Element dataList = ((Element) dataLists.item(i));
+					String dataListname = dataList.getAttribute(ATTR_NAME);
+
+					NodeList contains = dataList.getElementsByTagName("cm:contains");
+					Element container = (Element) contains.item(0);
+
+					NodeList dataListItems = container.getChildNodes();
+					for (int j = 0; j < dataListItems.getLength(); j++) {
+						Element dataListItem = ((Element) dataListItems.item(j));
+						String dataListItemNodeRef = dataListItem.getAttribute(ATTR_NODEREF);
+
+						if (!ignoredLists.contains(dataListItem.getNodeName())) {
+							createDBDataListItem(dbId, dataListItemNodeRef, dataListname, dataListItem.getNodeName(), readProperties(dataListItem));
 						}
+					}
 				}
 			}
-		} 
+		}
 
 	}
 
@@ -268,7 +278,7 @@ public class EntityToDBXmlVisitor {
 
 		for (Column column : properties) {
 			logger.debug(" --  Property :" + column.toString());
-			if (column.value != null && !ignoredListProperties.contains(column.key)) {
+			if ((column.value != null) && !ignoredListProperties.contains(column.key)) {
 
 				JdbcUtils.update(connection,
 						"insert into `becpg_property` " + "(`datalist_id`,`prop_name`,`prop_id`,`" + getColumnTypeName(column.value)
@@ -284,7 +294,7 @@ public class EntityToDBXmlVisitor {
 		if (value instanceof Date) {
 			Calendar cal = Calendar.getInstance();
 			cal.setTime((Date) value);
-			return cal.get(Calendar.YEAR) * 10000 + (cal.get(Calendar.MONTH) + 1) * 100 + cal.get(Calendar.DAY_OF_MONTH);
+			return (cal.get(Calendar.YEAR) * 10000) + ((cal.get(Calendar.MONTH) + 1) * 100) + cal.get(Calendar.DAY_OF_MONTH);
 		}
 		return value;
 	}
@@ -303,8 +313,9 @@ public class EntityToDBXmlVisitor {
 
 		JdbcUtils.update(connection, "update  `becpg_entity` set is_last_version = ? where  entity_id = ? and instance_id = ?",
 				new Object[] { false, nodeRef, instance.getId() });
-		
-		JdbcUtils.update(connection, "delete from  `becpg_datalist` where  entity_fact_id in (select id from becpg_entity where entity_id = ? and instance_id = ? )  ",
+
+		JdbcUtils.update(connection,
+				"delete from  `becpg_datalist` where  entity_fact_id in (select id from becpg_entity where entity_id = ? and instance_id = ? )  ",
 				new Object[] { nodeRef, instance.getId() });
 
 		Long columnId = JdbcUtils.update(connection, "insert into `becpg_entity` "
@@ -390,13 +401,13 @@ public class EntityToDBXmlVisitor {
 						break;
 					case "d:category":
 						NodeList children = property.getChildNodes().item(0).getChildNodes();
-						
-						for(int i = 0; i<children.getLength(); ++i){
+
+						for (int i = 0; i < children.getLength(); ++i) {
 							Element curChild = (Element) children.item(i).getChildNodes().item(0);
 							String curTag = curChild.getAttribute(ATTR_NAME);
 							ret.add(new Column(property.getNodeName(), curTag));
-						}						
-						
+						}
+
 						break;
 
 					default:
@@ -420,7 +431,7 @@ public class EntityToDBXmlVisitor {
 
 	/**
 	 * Parse date from ISO formatted string
-	 * 
+	 *
 	 * @param isoDate
 	 *            ISO string to parse
 	 * @return the date
@@ -468,7 +479,7 @@ public class EntityToDBXmlVisitor {
 		// extract timezone
 		String timezoneId;
 		char timezoneIndicator = isoDate.charAt(offset);
-		if (timezoneIndicator == '+' || timezoneIndicator == '-') {
+		if ((timezoneIndicator == '+') || (timezoneIndicator == '-')) {
 			timezoneId = "GMT" + isoDate.substring(offset);
 		} else if (timezoneIndicator == 'Z') {
 			timezoneId = "GMT";
@@ -511,4 +522,5 @@ public class EntityToDBXmlVisitor {
 
 		return parsed;
 	}
+
 }
