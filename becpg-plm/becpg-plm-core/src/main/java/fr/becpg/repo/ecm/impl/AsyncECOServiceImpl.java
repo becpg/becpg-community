@@ -1,27 +1,48 @@
 package fr.becpg.repo.ecm.impl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.ConcurrencyFailureException;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StopWatch;
 
 import fr.becpg.repo.ecm.AsyncECOService;
 import fr.becpg.repo.ecm.ECOService;
+import fr.becpg.repo.mail.BeCPGMailService;
 
 @Service("asyncECOService")
 public class AsyncECOServiceImpl implements AsyncECOService {
 
+	public static final String MAIL_TEMPLATE = "/app:company_home/app:dictionary/app:email_templates/cm:asynchrone-actions-email.html.ftl";
+	private static final String ARG_ACTION_TYPE = "actionType";
+	private static final String ARG_ACTION_STATE = "actionState";
+	private static final String ARG_ACTION_DESTINATION = "destination";
+	private static final String ARG_ACTION_RUN_TIME = "runTime";
+	
 	@Autowired
 	ECOService ecoService;
+	
+	@Autowired
+	BeCPGMailService beCPGMailService;
+	
+	@Autowired
+	PersonService personService;
+	
 
 	private static final Log logger = LogFactory.getLog(AsyncECOServiceImpl.class);
 
@@ -51,13 +72,13 @@ public class AsyncECOServiceImpl implements AsyncECOService {
 			logger.warn("AsyncECOGenerator job already in queue for " + ecoNodeRef);
 			logger.info("AsyncECOGenerator active task size " + threadExecuter.getActiveCount());
 			logger.info("AsyncECOGenerator queue size " + threadExecuter.getTaskCount());
-		}
-
+		}			
+		
 	}
 
 	private class AsyncECOGenerator implements Runnable {
 
-		private final NodeRef ecoNodeRef;
+		private final NodeRef ecoNodeRef;		
 		private boolean apply = false;
 		private final String userName;
 
@@ -70,6 +91,10 @@ public class AsyncECOServiceImpl implements AsyncECOService {
 
 		@Override
 		public void run() {
+			StopWatch watch = new StopWatch();
+			watch.start();
+			boolean runState = false;
+			
 			try {
 
 				AuthenticationUtil.runAs(new RunAsWork<Object>() {
@@ -107,12 +132,35 @@ public class AsyncECOServiceImpl implements AsyncECOService {
 						return null;
 					}
 				}, userName);
+				
+				runState = true;
 
 			} catch (Exception e) {
 				if (e instanceof ConcurrencyFailureException) {
 					throw (ConcurrencyFailureException) e;
 				}
 				logger.error("Unable to apply eco ", e);
+			
+			} finally {
+				// Send mail after ECO
+				Map<String, Object> templateArgs = new HashMap<>();
+				templateArgs.put(ARG_ACTION_TYPE, "OM");
+				templateArgs.put(ARG_ACTION_STATE, runState);
+				templateArgs.put(ARG_ACTION_DESTINATION, ecoNodeRef);
+				templateArgs.put(ARG_ACTION_RUN_TIME, watch.getTotalTimeSeconds());
+				templateArgs.put("apply", apply);
+				
+				List<NodeRef> recipientNodeRefs = new ArrayList<>();
+				recipientNodeRefs.add(personService.getPerson(userName));
+				Map<String, Object> templateModel = new HashMap<>();
+				templateModel.put("args", templateArgs);
+				String subject = "[Notification]" + I18NUtil.getMessage("message.eco-mail.subject");
+				
+				AuthenticationUtil.runAsSystem(()->{
+					beCPGMailService.sendMail(recipientNodeRefs, subject, MAIL_TEMPLATE, templateModel, false);
+					return null;
+				});
+				
 			}
 		}
 
