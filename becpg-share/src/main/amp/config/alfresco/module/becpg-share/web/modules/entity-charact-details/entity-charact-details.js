@@ -368,7 +368,7 @@
                                         // Validate
                                         if (YAHOO.lang.isNumber(number))
                                         {
-                                            return (new Intl.NumberFormat(Alfresco.constants.JS_LOCALE ,{minimumFractionDigits : 4, maximumFractionDigits : 4 })).format(number);
+                                            return number.toFixed(4);
                                         }
                                         return oData;
                                     }
@@ -397,7 +397,13 @@
                                 	columnDef.formatter = function (elCell, oRecord, oColumn, oData) {
                                 		Dom.setStyle(elCell, "text-align", "right");  
                                       	if(oRecord.getData("cssClass")){
-                                      		elCell.innerHTML = oData;
+                                      		
+                                      		if (YAHOO.lang.isNumber(oData))
+                                            {
+                                      			elCell.innerHTML = (new Intl.NumberFormat(Alfresco.constants.JS_LOCALE.replace("_","-") ,{minimumFractionDigits : 4, maximumFractionDigits : 4 })).format(oData);
+                                            } else {
+                                            	elCell.innerHTML = oData;
+                                            }
                                       	} else {
                                       		elCell.innerHTML = '<b>'+oData+'</b>';
                                       	}
