@@ -17,6 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.entity;
 
+import java.util.List;
 import java.util.Set;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -40,5 +41,11 @@ public interface EntityTplService {
 	void synchronizeEntity(NodeRef entityNodeRef, NodeRef entityTplNodeRef);
 
 	NodeRef createView(NodeRef entityTplNodeRef, QName typeQName, String name);
+	
+	void removeDataListOnEntities(NodeRef entityTplNodeRef, QName entityList);
+	
+	/** TODO
+	void removeDataListItemsOnEntities(NodeRef entityTplNodeRef, List<NodeRef> dataListItems);
+	*/
 
 }
