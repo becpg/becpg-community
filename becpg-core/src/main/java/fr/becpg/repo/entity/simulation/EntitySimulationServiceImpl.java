@@ -1,18 +1,30 @@
 package fr.becpg.repo.entity.simulation;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.repository.Path;
+import org.alfresco.service.cmr.security.PermissionService;
+import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.ConcurrencyFailureException;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StopWatch;
+
+import fr.becpg.repo.mail.BeCPGMailService;
 
 @Service("simulationService")
 public class EntitySimulationServiceImpl implements EntitySimulationService {
@@ -23,6 +35,18 @@ public class EntitySimulationServiceImpl implements EntitySimulationService {
 
 	@Autowired
 	private TransactionService transactionService;
+	
+	@Autowired
+	private BeCPGMailService beCPGMailService;
+	
+	@Autowired
+	private PersonService personService;
+	
+	@Autowired
+	private NodeService nodeService;
+	
+	@Autowired
+	private PermissionService permissionService;
 
 	@Autowired
 	private EntitySimulationPlugin[] entitySimulationPlugins;
@@ -30,7 +54,15 @@ public class EntitySimulationServiceImpl implements EntitySimulationService {
 	private static Log logger = LogFactory.getLog(EntitySimulationServiceImpl.class);
 
 	private class AsyncCreateSimulationNodeRefsCommand implements Runnable {
-
+		
+		public static final String MAIL_TEMPLATE = "/app:company_home/app:dictionary/app:email_templates/cm:asynchrone-actions-email.html.ftl";
+		private static final String ARG_ACTION_TYPE = "actionType";
+		private static final String ARG_ACTION_STATE = "actionState";
+		private static final String ARG_ACTION_DESTINATION = "destination";
+		private static final String ARG_ACTION_DESTINATION_PATH = "path";
+		private static final String ARG_ACTION_RUN_TIME = "runTime";
+		private String subject = "[Notification]" + I18NUtil.getMessage("message.simulate-entity.subject");
+		
 		private final NodeRef destNodeRef;
 		private final List<NodeRef> nodeRefs;
 		private final String mode;
@@ -46,8 +78,12 @@ public class EntitySimulationServiceImpl implements EntitySimulationService {
 
 		@Override
 		public void run() {
+			StopWatch watch = new StopWatch();
+			watch.start();
+			boolean runState = false;
+			
 			try {
-
+				
 				AuthenticationUtil.runAs(() -> {
 
 					EntitySimulationPlugin entitySimulationPlugin = findPlugin(mode);
@@ -63,12 +99,40 @@ public class EntitySimulationServiceImpl implements EntitySimulationService {
 					return false;
 
 				}, userName);
+				
+				runState = true;
 
 			} catch (Exception e) {
 				if (e instanceof ConcurrencyFailureException) {
 					throw (ConcurrencyFailureException) e;
 				}
 				logger.error("Unable to simulate entities ", e);
+				
+			} finally {
+				// Send Mail after simulation 
+				watch.stop();
+				Path folderPath = nodeService.getPath(destNodeRef);
+				String destinationPath = folderPath.subPath(2, folderPath.size()-1).toDisplayPath(nodeService, permissionService) + "/"
+						+ nodeService.getProperty(destNodeRef, ContentModel.PROP_NAME);
+								
+				Map<String, Object> templateArgs = new HashMap<>();
+				templateArgs.put(ARG_ACTION_TYPE, "Simulate");
+				templateArgs.put(ARG_ACTION_STATE, runState);
+				templateArgs.put(ARG_ACTION_DESTINATION, destNodeRef);
+				templateArgs.put(ARG_ACTION_DESTINATION_PATH, destinationPath);
+				templateArgs.put(ARG_ACTION_RUN_TIME, watch.getTotalTimeSeconds());
+				
+				List<NodeRef> recipientNodeRefs = new ArrayList<>();
+				recipientNodeRefs.add(personService.getPerson(userName));
+				Map<String, Object> templateModel = new HashMap<>();
+				templateModel.put("args", templateArgs);
+				
+				
+				AuthenticationUtil.runAsSystem(()->{
+					beCPGMailService.sendMail(recipientNodeRefs, subject, MAIL_TEMPLATE, templateModel, false);
+					return null;
+				});
+				
 			}
 
 		}
