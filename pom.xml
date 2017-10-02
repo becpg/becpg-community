@@ -223,7 +223,6 @@
 	<modules>
 		<module>becpg-tools</module>
 		<module>becpg-report</module>
-		<module>becpg-olap</module>
 		<module>becpg-core</module>
 		<module>becpg-project/becpg-project-core</module>
 		<module>becpg-designer/becpg-designer-core</module>
