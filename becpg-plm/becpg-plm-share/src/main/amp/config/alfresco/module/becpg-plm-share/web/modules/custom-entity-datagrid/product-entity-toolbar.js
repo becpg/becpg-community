@@ -86,7 +86,8 @@ YAHOO.Bubbling
                            successCallback : {
                               fn : function EntityDataListthis_onECODoSimulation_success(response) {
                                  Alfresco.util.PopupManager.displayMessage({
-                                    text : this.msg("message.eco-do-simulation.success")
+                                    text : this.msg("message.eco-do-simulation.success"),
+                                    displayTime : 5
                                  });
                                  YAHOO.Bubbling.fire("refreshDataGrids");
                               },
@@ -143,7 +144,8 @@ YAHOO.Bubbling
                                      successCallback : {
                                         fn : function EntityDataListthis_onECOApply_success(response) {
                                            Alfresco.util.PopupManager.displayMessage({
-                                              text : me.msg("message.eco-apply.success")
+                                              text : me.msg("message.eco-apply.success"),
+                                              displayTime : 5
                                            });
                                            YAHOO.Bubbling.fire("refreshDataGrids");
                                         },
