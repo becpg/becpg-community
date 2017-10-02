@@ -522,7 +522,8 @@
 			}
 			
 			 Alfresco.util.PopupManager.displayMessage({
-             	 text : this.msg("message.simulate-entity.inprogress")
+             	 text : this.msg("message.simulate-entity.inprogress"),
+             	 displayTime : 5
     		  });
 			
 

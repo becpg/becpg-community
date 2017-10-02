@@ -337,7 +337,8 @@
 	   actionName : "onActionReportTplRefresh",
 	   fn : function onActionReportTplRefresh(asset) {
 		   Alfresco.util.PopupManager.displayMessage({
-			   text : this.msg("message.generate-reports.please-wait")
+			   text : this.msg("message.generate-reports.please-wait-mail"),
+			   displayTime : 5
 		   });
 
 		   Alfresco.util.Ajax.request({
