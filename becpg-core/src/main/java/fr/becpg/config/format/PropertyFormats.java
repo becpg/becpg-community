@@ -63,11 +63,11 @@ public class PropertyFormats {
     		if(useDefaultLocale){
     			return new DecimalFormat(decimalFormat);
     		} else {
-    			return (DecimalFormat) DecimalFormat.getInstance(I18NUtil.getLocale());
+    			DecimalFormat ret = (DecimalFormat) DecimalFormat.getInstance(I18NUtil.getLocale());
+    			ret.applyPattern(decimalFormat);
+    			return ret;
     		}
-    		
     	}
-
 	};
 	
 	private boolean useDefaultLocale = true;
