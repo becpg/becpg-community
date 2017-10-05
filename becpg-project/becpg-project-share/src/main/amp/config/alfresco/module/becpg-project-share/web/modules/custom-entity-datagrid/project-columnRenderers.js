@@ -191,9 +191,9 @@ if (beCPG.module.EntityDataGridRenderers) {
 
    });
    
-   
+   /* Align cost to the right
    YAHOO.Bubbling.fire("registerDataGridRenderer", {
-	      propertyName : [ "pjt:invoice","pjt:expense","pjt:blBudgetedExpense", "pjt:blBudgetedInvoice","pjt:projectBudgetedCost","pjt:tlFixedCost","pjt:resourceCostValue" ],
+	      propertyName : [ "pjt:invoice","pjt:expense","pjt:blBudgetedExpense", "pjt:blBudgetedInvoice",, "pjt:blProfit" ,"pjt:projectBudgetedCost","pjt:tlFixedCost","pjt:resourceCostValue" ],
 	      renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
 	      	
 	    	  if(data.value!=null){
@@ -204,6 +204,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 	    	  
 	      }
 
-	   });
+	 });
+	*/
    
 }
