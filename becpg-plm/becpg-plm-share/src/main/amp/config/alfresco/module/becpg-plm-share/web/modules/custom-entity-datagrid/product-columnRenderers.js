@@ -1091,7 +1091,8 @@ if (beCPG.module.EntityDataGridRenderers) {
 			return "";
 		}
 	});
-
+	
+/* Align cost to the right
         YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		      propertyName : [ "bcpg:costListValue","bcpg:costListMaxi","bcpg:costListFutureValue"
 		    	  ,"bcpg:costListPreviousValue","bcpg:costListValuePerProduct","bcpg:costListPreviousValuePerProduct",
@@ -1106,5 +1107,5 @@ if (beCPG.module.EntityDataGridRenderers) {
 		    	  
 		    }
 	 });
-	
+	*/
 }
