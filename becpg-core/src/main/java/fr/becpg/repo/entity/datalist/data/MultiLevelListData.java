@@ -78,6 +78,17 @@ public class MultiLevelListData {
 		}
 		return currSize;
 	}
+	
+	
+	public List<NodeRef> getAllChilds() {
+		List<NodeRef> ret = new ArrayList<>();
+		
+		for (Entry<NodeRef, MultiLevelListData> entry : getTree().entrySet()) {
+			ret.add(entry.getValue().getEntityNodeRef());
+			ret.addAll(entry.getValue().getAllChilds());
+		}
+		return ret;
+	}
 
 	@Override
 	public String toString() {
