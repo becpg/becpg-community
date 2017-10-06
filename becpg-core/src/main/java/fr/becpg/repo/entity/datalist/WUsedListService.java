@@ -26,7 +26,7 @@ import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 
 public interface WUsedListService {
 	
-	enum WUsedOperator {
+	public enum WUsedOperator {
 		AND,OR
 	}
 

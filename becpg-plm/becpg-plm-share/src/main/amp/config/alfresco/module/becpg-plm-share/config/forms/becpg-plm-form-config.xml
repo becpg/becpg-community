@@ -686,6 +686,11 @@
 					<show id="bcpg:customsCodeRef"  />
 
 					<show id="bcpg:clients" force="true" />
+					<show id="bcpg:compoListProduct" force="true" />
+					<show id="bcpg:packagingListProduct" force="true" />
+					<show id="bcpg:allergenListAllergen" force="true" />
+					<show id="bcpg:lclLabelClaim" force="true" />
+					
 
 					<!-- modified -->
 					<show id="cm:modified" />
@@ -709,13 +714,7 @@
 					<show id="bcpg:pclValue" force="true" />
 					
 					<!-- Packaging -->
-					<show id="bcpg:packagingListProduct" force="true" />
 					
-					<!-- Allergen -->
-					<show id="bcpg:allergenListAllergen" force="true" />
-					
-					<!-- Claim -->
-					<show id="bcpg:lclLabelClaim" force="true" />
 
 				</field-visibility>
 				<appearance>
@@ -782,6 +781,13 @@
 					<field id="bcpg:clients" set="2-col-product-criteria">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					
+					<field id="bcpg:compoListProduct" set="2-col-product-criteria">
+							<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial%5E4,bcpg:finishedProduct,bcpg:localSemiFinishedProduct%5E2,bcpg:semiFinishedProduct%5E2</control-param>
+						</control>
 					</field>
 
 					<field id="bcpg:packagingListProduct" set="3-col-product-criteria">
