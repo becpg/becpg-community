@@ -25,6 +25,9 @@ import fr.becpg.model.PackModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.entity.datalist.WUsedListService;
+import fr.becpg.repo.entity.datalist.WUsedListService.WUsedOperator;
+import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.helper.AssociationService;
 
 @Service
@@ -44,6 +47,9 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 	@Autowired
 	private EntityDictionaryService entityDictionaryService;
 
+	@Autowired
+	private WUsedListService wUsedListService;
+	
 	@Autowired
 	private EntityListDAO entityListDAO;
 
@@ -74,6 +80,8 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 	private static final String CRITERIA_PACK_LABEL = "assoc_pack_llLabel_added";
 
 	private static final String CRITERIA_PACKAGING_LIST_PRODUCT = "assoc_bcpg_packagingListProduct_added";
+	
+	private static final String CRITERIA_COMPO_LIST_PRODUCT = "assoc_bcpg_compoListProduct_added";
 
 	private static final String CRITERIA_LABEL_CLAIM = "assoc_bcpg_lclLabelClaim_added";
 
@@ -94,6 +102,8 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 						PLMModel.PROP_LCL_CLAIM_VALUE, "true");
 				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_PACKAGING_LIST_PRODUCT, PLMModel.ASSOC_PACKAGINGLIST_PRODUCT, null,
 						null);
+				nodes = getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_COMPO_LIST_PRODUCT, PLMModel.ASSOC_COMPOLIST_PRODUCT, null,
+						null);
 				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_ALLERGEN, PLMModel.ASSOC_ALLERGENLIST_ALLERGEN,
 						PLMModel.PROP_ALLERGENLIST_VOLUNTARY, "true");
 				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_COST, PLMModel.ASSOC_COSTLIST_COST, PLMModel.PROP_COSTLIST_VALUE,
@@ -110,6 +120,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		return nodes;
 	}
 
+	
 	@Override
 	public Set<String> getIgnoredFields(QName datatype) {
 		Set<String> ret = new HashSet<>();
@@ -151,6 +162,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 					if (!entityDictionaryService.isSubClass(datatype, PLMModel.TYPE_PRODUCT) 
 							|| ( !key.equals(CRITERIA_ING) && !key.equals(CRITERIA_GEO_ORIGIN) && !key.equals(CRITERIA_BIO_ORIGIN)
 							&& !key.equals(CRITERIA_PACK_LABEL) && !key.equals(CRITERIA_LABEL_CLAIM) && !key.equals(CRITERIA_PACKAGING_LIST_PRODUCT)
+							&& !key.equals(CRITERIA_COMPO_LIST_PRODUCT)
 							&& !key.equals(CRITERIA_ALLERGEN) && !key.equals(CRITERIA_COST) && !key.equals(CRITERIA_PHYSICO)
 							&& !key.equals(CRITERIA_NUTS))) {
 
@@ -527,6 +539,57 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		return nodes;
 	}
 
+	
+	
+	private List<NodeRef> getSearchNodesByWUsedCriteria(List<NodeRef> nodes, Map<String, String> criteria, String criteriaAssocString,
+			QName criteriaAssoc, QName criteriaAssocValue, String criteriaValue) {
+
+		StopWatch watch = null;
+		if (logger.isDebugEnabled()) {
+			watch = new StopWatch();
+			watch.start();
+		}
+
+		List<NodeRef> toFilterByNodes = new ArrayList<>(); 
+		
+		if (criteria.containsKey(criteriaAssocString)) {
+
+			String propValue = criteria.get(criteriaAssocString);
+			
+			if(propValue!=null && !propValue.isEmpty()) {
+				String[] arrValues = propValue.split(RepoConsts.MULTI_VALUES_SEPARATOR);
+			
+				for (String strNodeRef : arrValues) {
+	
+					NodeRef nodeRef = new NodeRef(strNodeRef);
+					if (nodeService.exists(nodeRef)) {
+						toFilterByNodes.add(nodeRef);
+						
+					}
+						
+				}
+			}
+		}
+		
+		if(!toFilterByNodes.isEmpty()) {
+			
+			MultiLevelListData ret =  wUsedListService.getWUsedEntity(toFilterByNodes, WUsedOperator.OR, criteriaAssoc, -1);
+			if(ret!=null) {
+				nodes.retainAll(ret.getAllChilds());
+			}
+		}
+
+		
+
+		if (logger.isDebugEnabled()) {
+			watch.stop();
+			logger.debug("getSearchNodesByWUsedCriteria executed in  " + watch.getTotalTimeSeconds() + " seconds ");
+		}
+
+		return nodes;
+	}
+
+	
 	private boolean isWorkSpaceProtocol(NodeRef nodeRef) {
 
 		if (nodeRef.getStoreRef().getProtocol().equals(StoreRef.PROTOCOL_WORKSPACE)) {
