@@ -175,7 +175,7 @@ public class ProjectActivityPatch extends AbstractBeCPGPatch {
 
 					String oldData = (String) nodeService.getProperty(activityNodeRef, PROP_ACTIVITYLIST_DATA);
 
-					logger.info("Convert  : " + oldData);
+					logger.debug("Convert  : " + oldData);
 
 					JSONTokener tokener = new JSONTokener(oldData);
 					JSONObject data = new JSONObject(tokener);
@@ -206,7 +206,7 @@ public class ProjectActivityPatch extends AbstractBeCPGPatch {
 					nodeService.setProperty(activityListDataItem.getNodeRef(), ContentModel.PROP_CREATED,
 							nodeService.getProperty(activityNodeRef, ContentModel.PROP_CREATED));
 
-					logger.info("Storing : " + activityListDataItem.toString());
+					logger.debug("Storing : " + activityListDataItem.toString());
 
 					for (NodeRef projectNodeRef : associationService.getSourcesAssocs(activityNodeRef, ProjectModel.ASSOC_PROJECT_CUR_COMMENTS)) {
 
