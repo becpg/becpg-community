@@ -28,6 +28,7 @@ import java.util.Map;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -35,8 +36,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.DataListModel;
 import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.search.impl.AbstractBeCPGQueryBuilder;
 
@@ -48,6 +52,12 @@ public class PhysicoUnitPatch extends AbstractBeCPGPatch {
 	private static final Log logger = LogFactory.getLog(PhysicoUnitPatch.class);
 
 	private BehaviourFilter policyBehaviourFilter;
+	
+	private EntityListDAO entityListDAO;
+	
+	public void setEntityListDAO(EntityListDAO entityListDAO) {
+		this.entityListDAO = entityListDAO;
+	}
 
 	@Override
 	protected String applyInternal() throws Exception {
@@ -70,25 +80,21 @@ public class PhysicoUnitPatch extends AbstractBeCPGPatch {
 				NodeRef entityListsFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath(nodeService.getRootNode(RepoConsts.SPACES_STORE),
 						"/app:company_home/" + AbstractBeCPGQueryBuilder.encodePath("/System/Lists/bcpg:entityLists") + "/.");
 
-				NodeRef listsFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath(nodeService.getRootNode(RepoConsts.SPACES_STORE),
+				NodeRef physicoListsFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath(nodeService.getRootNode(RepoConsts.SPACES_STORE),
 						"/app:company_home/" + AbstractBeCPGQueryBuilder.encodePath("/System/Lists/bcpg:entityLists/PhysicoUnits") + "/.");
 
-				logger.debug("nodeRefs: " + nodeRefs + ", listsFolder: " + listsFolder + ", entityListsFolder: " + entityListsFolder);
+				logger.debug("nodeRefs: " + nodeRefs + ", listsFolder: " + physicoListsFolder + ", entityListsFolder: " + entityListsFolder);
 
 				// tester si list physico existe
 				if (nodeRefs.isEmpty()) {
 					Map<QName, Serializable> properties;
 
-					NodeRef physicoListsFolder = listsFolder;
 
 					// si non la creer
-					if (listsFolder == null) {
-						Map<String, QName> entityLists = new LinkedHashMap<>();
-						entityLists.put(PlmRepoConsts.PATH_PHYSICO_UNITS, BeCPGModel.TYPE_LIST_VALUE);
-						entitySystemService.createSystemEntity(systemHome, RepoConsts.PATH_LISTS, entityLists);
-
-						physicoListsFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath(nodeService.getRootNode(RepoConsts.SPACES_STORE),
-								"/app:company_home/" + AbstractBeCPGQueryBuilder.encodePath("/System/Lists/bcpg:entityLists/PhysicoUnits") + "/.");
+					if (physicoListsFolder == null) {
+						MLText entityListTranslated = TranslateHelper.getTranslatedPathMLText(PlmRepoConsts.PATH_PHYSICO_UNITS);
+						physicoListsFolder = entityListDAO.createList(entityListsFolder, PlmRepoConsts.PATH_PHYSICO_UNITS,  BeCPGModel.TYPE_LIST_VALUE);
+						nodeService.setProperty(physicoListsFolder, ContentModel.PROP_TITLE, entityListTranslated);						
 					}
 
 					// ajouter les valeurs comme ds test unitaire plm base test
@@ -123,4 +129,47 @@ public class PhysicoUnitPatch extends AbstractBeCPGPatch {
 		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
 
+	
+	
+	public NodeRef createSystemEntity(NodeRef parentNodeRef, String entityPath, Map<String, QName> entitySystemDataLists) {
+
+		try {
+
+			// disable policy in order to have getTranslatedPath in cm:name
+			policyBehaviourFilter.disableBehaviour(DataListModel.TYPE_DATALIST);
+
+			MLText translatedPathMLText = TranslateHelper.getTranslatedPathMLText(entityPath);
+
+			String entityName = TranslateHelper.getTranslatedPath(entityPath);
+			if (entityName == null) {
+				entityName = entityPath;
+			}
+
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(ContentModel.PROP_NAME, entityName);
+			properties.put(ContentModel.PROP_TITLE, translatedPathMLText);
+
+			NodeRef entityNodeRef = null;
+			List<NodeRef> matchingEntities = BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_SYSTEM_ENTITY)
+					.andPropEquals(ContentModel.PROP_NAME, entityName).inDB().list();
+
+			if (!matchingEntities.isEmpty()) {
+				entityNodeRef = matchingEntities.get(0);
+			}
+
+			if (entityNodeRef == null) {
+				entityNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
+						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(entityPath)),
+						BeCPGModel.TYPE_SYSTEM_ENTITY, properties).getChildRef();
+			}
+
+			// entityLists
+		
+			return entityNodeRef;
+
+		} finally {
+			policyBehaviourFilter.enableBehaviour(DataListModel.TYPE_DATALIST);
+		}
+	}
+	
 }
