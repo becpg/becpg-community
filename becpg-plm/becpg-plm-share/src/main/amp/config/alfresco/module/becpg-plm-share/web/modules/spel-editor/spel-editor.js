@@ -258,7 +258,8 @@
                         			             '@beCPG.filter($range,$formula)',
                         			             '@beCPG.children($compoListDataItem)',
                         			             '@beCPG.findOne($nodeRef)',
-                        			             '@beCPG.propValue($nodeRef,"bcpg:productQty")'],
+                        			             '@beCPG.propValue($nodeRef,"bcpg:productQty")',
+                        			             '@beCPG.copy($fromNodeRef,propQnames,listQNames)'],
                         			      from: CodeMirror.Pos(cur.line, start),
                         			      to: CodeMirror.Pos(cur.line, end)
                         			    };

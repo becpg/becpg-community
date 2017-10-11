@@ -69,6 +69,10 @@
 		<property name="namespaceService" ref="namespaceService"/>
 		<property name="securityMethodBeforeAdvice" ref="securityMethodBeforeAdvice"/>
 		<property name="nodeService" ref="nodeService" />
+		<property name="entityListDAO" ref="entityListDAO" />
+		<property name="associationService" ref="associationService" />
+		<property name="repositoryEntityDefReader" ref="repositoryEntityDefReader" />
+		<property name="dictionaryService" ref="dictionaryService" />
 	</bean>
 
 
