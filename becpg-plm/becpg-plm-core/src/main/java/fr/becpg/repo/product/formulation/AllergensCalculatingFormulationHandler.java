@@ -71,9 +71,9 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 			if (formulatedProduct.getAllergenList() != null) {
 				formulatedProduct.getAllergenList().forEach(a -> {
 					if (!a.getIsManual()) {
-						// reset
-						a.setQtyPerc(null);
 						if(formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))){
+							// reset
+							a.setQtyPerc(null);
 							a.setVoluntary(false);
 							a.setInVoluntary(false);
 							a.getVoluntarySources().clear();

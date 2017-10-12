@@ -162,7 +162,7 @@
         <property name="id"><value>patch.bcpg.project.projectActivityPatch</value></property>
         <property name="description"><value>patch.bcpg.project.projectActivityPatch.description</value></property>
         <property name="fixesFromSchema" value="0"/>
-        <property name="fixesToSchema" value="8010" />
+        <property name="fixesToSchema" value="10001" />
         <property name="targetSchema" value="10170"/>
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>

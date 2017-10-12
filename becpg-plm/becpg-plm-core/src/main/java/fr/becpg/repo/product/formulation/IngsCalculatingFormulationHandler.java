@@ -443,7 +443,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			// datalist ingList is null or empty
 			if ((componentProductData.getIngList() == null) || componentProductData.getIngList().isEmpty()) {
 
-				if ((declType == null) || !declType.equals(DeclarationType.DoNotDetails)) {
+				if ((declType == null) || (!declType.equals(DeclarationType.DoNotDetails)  && ! declType.equals(DeclarationType.Omit)) ) {
 					// req not respected
 					String message = I18NUtil.getMessage(MESSAGE_MISSING_INGLIST);
 					addReqCtrl(reqCtrlMap, new NodeRef(RepoConsts.SPACES_STORE, "missing-inglist"), RequirementType.Tolerated, new MLText(message),
@@ -451,7 +451,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				}
 			} else {
 				
-				if ((declType == null) || !declType.equals(DeclarationType.DoNotDetails)) {
+				if ((declType == null) || (!declType.equals(DeclarationType.DoNotDetails)  && ! declType.equals(DeclarationType.Omit))) {
 			      Double total  = 0d;
 			      for(IngListDataItem ingListDataItem : componentProductData.getIngList()){
 			    	  if(ingListDataItem.getQtyPerc()!=null && (ingListDataItem.getDepthLevel() == null || ingListDataItem.getDepthLevel() == 1)){
