@@ -2,7 +2,6 @@ package fr.becpg.repo.product.formulation;
 
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashSet;
@@ -155,88 +154,91 @@ public class FormulaService {
 			return aggreate(productData, range, formula, Operator.AVG);
 		}
 
-		public void copy(NodeRef fromNodeRef, String[] propQNames, String[] listQNames)
-				throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+		public void copy(NodeRef fromNodeRef, String[] propQNames, String[] listQNames) {
+			try {
+				Set<QName> treatedProp = new HashSet<>();
+				Set<QName> treatedList = new HashSet<>();
 
-			Set<QName> treatedProp = new HashSet<>();
-			Set<QName> treatedList = new HashSet<>();
+				ProductData from = alfrescoRepository.findOne(fromNodeRef);
 
-			ProductData from = alfrescoRepository.findOne(fromNodeRef);
+				if (from != null) {
+					BeanWrapper beanWrapper = new BeanWrapperImpl(productData);
 
-			if (from != null) {
-				BeanWrapper beanWrapper = new BeanWrapperImpl(productData);
+					for (final PropertyDescriptor pd : beanWrapper.getPropertyDescriptors()) {
 
-				for (final PropertyDescriptor pd : beanWrapper.getPropertyDescriptors()) {
+						Method readMethod = pd.getReadMethod();
 
-					Method readMethod = pd.getReadMethod();
+						if (readMethod != null) {
+							if (readMethod.isAnnotationPresent(AlfProp.class)) {
+								QName qname = repositoryEntityDefReader.readQName(readMethod);
+								for (String propQName2 : propQNames) {
+									QName propQName = QName.createQName(propQName2, namespaceService);
+									if (qname.equals(propQName)) {
+										logger.debug("Setting property : " + propQName + " from repository entity");
 
-					if (readMethod != null) {
-						if (readMethod.isAnnotationPresent(AlfProp.class)) {
-							QName qname = repositoryEntityDefReader.readQName(readMethod);
-							for (String propQName2 : propQNames) {
-								QName propQName = QName.createQName(propQName2, namespaceService);
-								if (qname.equals(propQName)) {
-									logger.debug("Setting property : " + propQName + " from repository entity");
-									PropertyUtils.setProperty(from, pd.getName(), PropertyUtils.getProperty(from, pd.getName()));
-									treatedProp.add(propQName);
+										PropertyUtils.setProperty(from, pd.getName(), PropertyUtils.getProperty(from, pd.getName()));
+
+										treatedProp.add(propQName);
+									}
+
+								}
+
+								for (int i = 0; i < listQNames.length; i++) {
+									QName listQName = QName.createQName(propQNames[i], namespaceService);
+									if (qname.equals(listQName)) {
+										logger.debug("Setting list : " + listQName + " from repository entity");
+										PropertyUtils.setProperty(from, pd.getName(), PropertyUtils.getProperty(from, pd.getName()));
+										treatedList.add(listQName);
+									}
+
 								}
 
 							}
-
-							for (int i = 0; i < listQNames.length; i++) {
-								QName listQName = QName.createQName(propQNames[i], namespaceService);
-								if (qname.equals(listQName)) {
-									logger.debug("Setting list : " + listQName + " from repository entity");
-									PropertyUtils.setProperty(from, pd.getName(), PropertyUtils.getProperty(from, pd.getName()));
-									treatedList.add(listQName);
-								}
-
-							}
-
 						}
 					}
-				}
 
-				Map<QName, Serializable> extraPropToCopy = nodeService.getProperties(from.getNodeRef());
+					Map<QName, Serializable> extraPropToCopy = nodeService.getProperties(from.getNodeRef());
 
-				for (String propQName2 : propQNames) {
-					QName propQName = QName.createQName(propQName2, namespaceService);
-					if (!treatedProp.contains(propQName)) {
-						PropertyDefinition propertyDef = dictionaryService.getProperty(propQName);
-						if (propertyDef != null) {
-							if (extraPropToCopy.containsKey(propQName)) {
-								logger.debug("Setting property : " + propQName + " from nodeRef");
-								nodeService.setProperty(productData.getNodeRef(), propQName, extraPropToCopy.get(propQName));
+					for (String propQName2 : propQNames) {
+						QName propQName = QName.createQName(propQName2, namespaceService);
+						if (!treatedProp.contains(propQName)) {
+							PropertyDefinition propertyDef = dictionaryService.getProperty(propQName);
+							if (propertyDef != null) {
+								if (extraPropToCopy.containsKey(propQName)) {
+									logger.debug("Setting property : " + propQName + " from nodeRef");
+									nodeService.setProperty(productData.getNodeRef(), propQName, extraPropToCopy.get(propQName));
+								} else {
+									logger.debug("Removing property : " + propQName);
+									nodeService.removeProperty(productData.getNodeRef(), propQName);
+								}
+
 							} else {
-								logger.debug("Removing property : " + propQName);
-								nodeService.removeProperty(productData.getNodeRef(), propQName);
+								logger.debug("Setting association : " + propQName + " from nodeRef");
+								associationService.update(productData.getNodeRef(), propQName,
+										associationService.getTargetAssocs(from.getNodeRef(), propQName));
 							}
+							treatedProp.add(propQName);
 
-						} else {
-							logger.debug("Setting association : " + propQName + " from nodeRef");
-							associationService.update(productData.getNodeRef(), propQName,
-									associationService.getTargetAssocs(from.getNodeRef(), propQName));
 						}
-						treatedProp.add(propQName);
 
 					}
 
-				}
+					NodeRef listContainerNodeRef = entityListDAO.getListContainer(from.getNodeRef());
 
-				NodeRef listContainerNodeRef = entityListDAO.getListContainer(from.getNodeRef());
+					for (String listQName2 : listQNames) {
+						QName listQName = QName.createQName(listQName2, namespaceService);
 
-				for (String listQName2 : listQNames) {
-					QName listQName = QName.createQName(listQName2, namespaceService);
+						if (!treatedList.contains(listQName)) {
+							logger.debug("Copy list : " + listQName + " from nodeRef");
+							entityListDAO.copyDataList(entityListDAO.getList(listContainerNodeRef, listQName), productData.getNodeRef(), true);
 
-					if (!treatedList.contains(listQName)) {
-						logger.debug("Copy list : " + listQName + " from nodeRef");
-						entityListDAO.copyDataList(entityListDAO.getList(listContainerNodeRef, listQName), productData.getNodeRef(), true);
-
-						treatedList.add(listQName);
+							treatedList.add(listQName);
+						}
 					}
 				}
+			} catch (Exception e) {
+				logger.error(e, e);
 			}
-
 		}
 
 		public <T> Collection<T> filter(Collection<T> range, String formula) {
