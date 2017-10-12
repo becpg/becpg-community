@@ -506,6 +506,7 @@
         <property name="targetSchema" value="10170"/>
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
+        <property name="entityListDAO" ref="entityListDAO"/>
         <property name="policyBehaviourFilter">
             <ref bean="policyBehaviourFilter"/>
         </property>
