@@ -150,7 +150,23 @@
                           }
                        },
                        scope : this
-                    }
+                    } ,
+                    failureCallback : {
+                        fn : function(response) {
+                           if (response.json && response.json.message) {
+                              Alfresco.util.PopupManager.displayPrompt({
+                                 title : this.msg("message.branch-entity.failure"),
+                                 text : response.json.message
+                              });
+                           } else {
+                              Alfresco.util.PopupManager.displayMessage({
+                                 text : this.msg("message.branch-entity.failure")
+                              });
+                           }
+                        },
+                        scope : this
+                     }
+
                  });
 
              }

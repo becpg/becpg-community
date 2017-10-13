@@ -4,13 +4,13 @@
    <div id="${el}-dialogTitle" class="hd">${msg("header.workflows")}</div>
    <div class="bd entity-workflows">
 		 <div class="info">
-               <#if workflows?size == 0>
-                  ${msg("label.partOfNoWorkflows")}
+               <#if workflows?? && workflows?size &gt; 0>
+          	      ${msg("label.partOfWorkflows")}
                <#else>
-                  ${msg("label.partOfWorkflows")}
+                  ${msg("label.partOfNoWorkflows")}
                </#if>
            </div>
-        <#if workflows?size &gt; 0>
+        <#if workflows?? && workflows?size &gt; 0>
            <hr/>
            <div class="workflows">
                   <#list workflows as workflow>
