@@ -3736,7 +3736,7 @@ dataSetRow["costListValue"]
                 <list-property name="visibility">
                     <structure>
                         <property name="format">all</property>
-                        <expression name="valueExpr" type="javascript">row["itemTypeEntity"].indexOf("finishedProduct") == -1</expression>
+                        <expression name="valueExpr" type="javascript">row["itemType"] != "bcpg:finishedProduct"</expression>
                     </structure>
                 </list-property>
                 <property name="style">becpg-col-border</property>
@@ -3745,7 +3745,7 @@ dataSetRow["costListValue"]
                 <list-property name="visibility">
                     <structure>
                         <property name="format">all</property>
-                        <expression name="valueExpr" type="javascript">row["itemTypeEntity"].indexOf("finishedProduct") == -1</expression>
+                        <expression name="valueExpr" type="javascript">row["itemType"] != "bcpg:finishedProduct"</expression>
                     </structure>
                 </list-property>
                 <property name="style">becpg-col-border</property>
@@ -3754,7 +3754,7 @@ dataSetRow["costListValue"]
                 <list-property name="visibility">
                     <structure>
                         <property name="format">all</property>
-                        <expression name="valueExpr" type="javascript">row["itemTypeEntity"].indexOf("finishedProduct") == -1</expression>
+                        <expression name="valueExpr" type="javascript">row["itemType"] != "bcpg:finishedProduct"</expression>
                     </structure>
                 </list-property>
                 <property name="style">becpg-col-border</property>
