@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -154,7 +155,7 @@ public class FormulaService {
 			return aggreate(productData, range, formula, Operator.AVG);
 		}
 
-		public void copy(NodeRef fromNodeRef, String[] propQNames, String[] listQNames) {
+		public void copy(NodeRef fromNodeRef, Collection<String> propQNames,Collection<String> listQNames) {
 			try {
 				Set<QName> treatedProp = new HashSet<>();
 				Set<QName> treatedList = new HashSet<>();
@@ -183,8 +184,8 @@ public class FormulaService {
 
 								}
 
-								for (int i = 0; i < listQNames.length; i++) {
-									QName listQName = QName.createQName(propQNames[i], namespaceService);
+								for (String listQName1 : listQNames) {
+									QName listQName = QName.createQName(listQName1, namespaceService);
 									if (qname.equals(listQName)) {
 										logger.debug("Setting list : " + listQName + " from repository entity");
 										PropertyUtils.setProperty(from, pd.getName(), PropertyUtils.getProperty(from, pd.getName()));
