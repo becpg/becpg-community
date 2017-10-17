@@ -23,6 +23,13 @@
 		<#assign ds=ds+"?entityNodeRef="+args.entityNodeRef>
 	</#if>
 </#if>
+
+<#if field.control.params.multipleSelectMode?? && "true" == field.control.params.multipleSelectMode>
+	<#assign multipleSelectMode=true>
+<#else>
+	<#assign multipleSelectMode=field.endpointMany />
+</#if>
+
 <#assign controlId = fieldHtmlId + "-cntrl">
 <script type="text/javascript">//<![CDATA[
 (function()
@@ -32,7 +39,7 @@
 		 		currentValue: "${field.value}",
 		 		mode: "${form.mode}",
 		 		readOnly : ${field.disabled?string},
-		        multipleSelectMode: ${field.endpointMany?string}, 
+		        multipleSelectMode: ${multipleSelectMode?string}, 
 		        isMandatory : ${field.mandatory?string},
 		      <#if pageLinkTemplate??>
 		 		targetLinkTemplate: "${pageLinkTemplate}" ,
@@ -82,7 +89,7 @@
 			<div class="yui-ac" style="display:inline-block;" >
 					 <div id="${fieldHtmlId}-autocomplete" class="ac-body" <#if style??>style="${style}"</#if>>
 					 <span id="${fieldHtmlId}-toggle-autocomplete" class="ac-toogle"></span>
-					  <#if field.endpointMany>
+					  <#if multipleSelectMode>
 					  		<span id="${controlId}-basket" class="viewmode-value current-values"></span>										
 					  </#if>
 				      <input id="${fieldHtmlId}" type="text" name="-" onfocus="this.hasFocus=true" onblur="this.hasFocus=false" tabindex="0"
@@ -90,7 +97,7 @@
 				             <#if field.control.params.maxLength??>maxlength="${field.control.params.maxLength}"</#if> 
 				             <#if field.control.params.size??>size="${field.control.params.size}"</#if> 
 				             <#if field.disabled>disabled="true"</#if> 
-				             class="yui-ac-input<#if field.endpointMany> multi-assoc</#if>" <#if !field.endpointMany>value="${field.value}" </#if> />
+				             class="yui-ac-input<#if multipleSelectMode> multi-assoc</#if>" <#if !multipleSelectMode>value="${field.value}" </#if> />
 				        <span class="clear" ></span>				      
 			      </div>			
 			      <div id="${fieldHtmlId}-container"></div>
