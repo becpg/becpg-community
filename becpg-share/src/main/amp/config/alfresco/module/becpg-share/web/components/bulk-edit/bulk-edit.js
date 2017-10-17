@@ -1417,7 +1417,7 @@
 								if (submissionParams.length > 0) {
 									submissionParams += ",";
 								}
-								submissionParams += selectedNodeRef[i].nodeRef;
+								submissionParams += selectedNodeRef[i].nodeRef.replace(/workspace:\/\/SpacesStore\//g,"");
 							}
 
 							var templateUrl = YAHOO.lang
