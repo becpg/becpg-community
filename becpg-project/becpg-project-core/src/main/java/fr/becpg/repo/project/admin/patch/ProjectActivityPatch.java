@@ -98,6 +98,8 @@ public class ProjectActivityPatch extends AbstractBeCPGPatch {
 	protected String applyInternal() throws Exception {
 
 		AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
+		
+		ruleService.disableRules();
 
 		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
 			final List<NodeRef> result = new ArrayList<>();
@@ -307,6 +309,8 @@ public class ProjectActivityPatch extends AbstractBeCPGPatch {
 			}
 
 		}, true);
+		
+		ruleService.enableRules();
 
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}
