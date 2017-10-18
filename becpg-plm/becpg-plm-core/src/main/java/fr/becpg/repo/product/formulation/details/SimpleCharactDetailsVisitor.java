@@ -36,6 +36,7 @@ import fr.becpg.repo.product.data.CharactDetails;
 import fr.becpg.repo.product.data.CharactDetailsValue;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -105,26 +106,28 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 			for (CompoListDataItem compoListDataItem : subProductData
 					.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 
-				Double weightUsed = FormulationHelper.getQtyInKg(compoListDataItem);
-				if ((FormulationHelper.getNetWeight(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT) != 0d) && (subWeight != null)) {
-					weightUsed = (weightUsed / FormulationHelper.getNetWeight(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT)) * subWeight;
-
+				if (!DeclarationType.Omit.equals(compoListDataItem.getDeclType())) {
+				
+					Double weightUsed = FormulationHelper.getQtyInKg(compoListDataItem);
+					if ((FormulationHelper.getNetWeight(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT) != 0d) && (subWeight != null)) {
+						weightUsed = (weightUsed / FormulationHelper.getNetWeight(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT)) * subWeight;
+	
+					}
+	
+					Double volUsed = FormulationHelper.getNetVolume(compoListDataItem, nodeService);
+					if ((FormulationHelper.getNetVolume(compoListDataItem, nodeService) != null)
+							&& (FormulationHelper.getNetVolume(subProductData) != null) && (subVol != null)) {
+						volUsed = (volUsed / FormulationHelper.getNetVolume(subProductData)) * subVol;
+					}
+	
+					visitPart(subProductData.getNodeRef(), compoListDataItem.getProduct(), ret, weightUsed, volUsed, netQty, currLevel, null);
+	
+					if (((maxLevel < 0) || (currLevel < maxLevel))
+							&& !entityDictionaryService.isMultiLevelLeaf(nodeService.getType(compoListDataItem.getProduct()))) {
+						visitRecur((ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct()), ret, currLevel + 1, maxLevel, weightUsed,
+								volUsed, netQty);
+					}
 				}
-
-				Double volUsed = FormulationHelper.getNetVolume(compoListDataItem, nodeService);
-				if ((FormulationHelper.getNetVolume(compoListDataItem, nodeService) != null)
-						&& (FormulationHelper.getNetVolume(subProductData) != null) && (subVol != null)) {
-					volUsed = (volUsed / FormulationHelper.getNetVolume(subProductData)) * subVol;
-				}
-
-				visitPart(subProductData.getNodeRef(), compoListDataItem.getProduct(), ret, weightUsed, volUsed, netQty, currLevel, null);
-
-				if (((maxLevel < 0) || (currLevel < maxLevel))
-						&& !entityDictionaryService.isMultiLevelLeaf(nodeService.getType(compoListDataItem.getProduct()))) {
-					visitRecur((ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct()), ret, currLevel + 1, maxLevel, weightUsed,
-							volUsed, netQty);
-				}
-
 			}
 		}
 

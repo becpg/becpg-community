@@ -499,28 +499,21 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 
 		// ReqCtrlList
 		checks = 0;
-		String message1 = I18NUtil.getMessage(AbstractSimpleListFormulationHandler.MESSAGE_UNDEFINED_CHARACT, nodeService.getProperty(nut3, BeCPGModel.PROP_CHARACT_NAME));
-		logger.info(message1);
 		String message2 = I18NUtil.getMessage(NutsCalculatingFormulationHandler.MESSAGE_MAXIMAL_DAILY_VALUE, nodeService.getProperty(nut3, BeCPGModel.PROP_CHARACT_NAME));
 		logger.info(formulatedProduct.getReqCtrlList().size());
 		for (ReqCtrlListDataItem r : formulatedProduct.getReqCtrlList()) {
 
 			logger.info("reqCtrl " + r.getReqMessage() + r.getReqType() + r.getSources());
 
-			if (message1.equals(r.getReqMessage()) ) {
-				assertEquals(1, r.getSources().size());
-				assertEquals(rawMaterial4NodeRef, r.getSources().get(0));
-				checks++;
-			}
-			else if (message2.equals(r.getReqMessage()) ) {
+			 if (message2.equals(r.getReqMessage()) ) {
 				assertEquals(0, r.getSources().size());
 				checks++;
 			}
 		}
-		assertEquals(2, checks);
+		assertEquals(1, checks);
 
 		assertEquals(nut3, formulatedProduct.getNutList().get(2).getNut());
-		assertTrue(formulatedProduct.getNutList().get(2).getErrorLog().contains("Caractéristique 'nut3' non renseignée : Raw material 4"));
+		assertFalse(formulatedProduct.getNutList().get(2).getErrorLog().contains("Caractéristique 'nut3' non renseignée : Raw material 4"));
 		assertTrue(formulatedProduct.getNutList().get(2).getErrorLog().contains(message2));		
 		
 		// Claim label list
