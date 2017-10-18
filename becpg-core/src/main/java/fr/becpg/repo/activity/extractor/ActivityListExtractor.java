@@ -72,32 +72,38 @@ public class ActivityListExtractor extends SimpleExtractor {
 			AttributeExtractorMode mode, Map<QName, Serializable> properties, Map<String, Object> props, Map<NodeRef, Map<String, Object>> cache) {
 		Map<String, Object> ret = super.doExtract(nodeRef, itemType, metadataFields, mode, properties, props, cache);
 		if(BeCPGModel.TYPE_ACTIVITY_LIST.equals(itemType)){
-			postLookupActivity(ret,properties, mode);
+			postLookupActivity(nodeRef, ret,properties, mode);
 		}
 
 		return ret;
 
 	}
 	
-	protected void postLookupActivity(Map<String, Object> ret, Map<QName, Serializable> properties, AttributeExtractorMode mode) {
-		ret.put("prop_bcpg_alUserId", extractPerson((String) properties.get(BeCPGModel.PROP_ACTIVITYLIST_USERID)));
-		
-		JSONObject postLookup = entityActivityService.postActivityLookUp(
-				ActivityType.valueOf((String) properties.get(BeCPGModel.PROP_ACTIVITYLIST_TYPE)),
-				(String)properties.get(BeCPGModel.PROP_ACTIVITYLIST_DATA));
-		
-		if(AttributeExtractorMode.JSON.equals(mode)){
-		 ret.put("prop_bcpg_alData", postLookup);
-		} else {
-			 try {
-				 if(postLookup.has("content")){
-					 ret.put("prop_bcpg_alData", postLookup.get("content"));
-				 } else {
-					 ret.put("prop_bcpg_alData", "");
-				 }
-			} catch (JSONException e) {
-				logger.error(e,e);
+	protected void postLookupActivity(NodeRef nodeRef, Map<String, Object> ret, Map<QName, Serializable> properties, AttributeExtractorMode mode) {
+	
+		String activityType = (String) properties.get(BeCPGModel.PROP_ACTIVITYLIST_TYPE);
+		if(activityType!=null) {
+			
+			ret.put("prop_bcpg_alUserId", extractPerson((String) properties.get(BeCPGModel.PROP_ACTIVITYLIST_USERID)));
+			JSONObject postLookup = entityActivityService.postActivityLookUp(
+					ActivityType.valueOf((String) properties.get(BeCPGModel.PROP_ACTIVITYLIST_TYPE)),
+					(String)properties.get(BeCPGModel.PROP_ACTIVITYLIST_DATA));
+			
+			if(AttributeExtractorMode.JSON.equals(mode)){
+			 ret.put("prop_bcpg_alData", postLookup);
+			} else {
+				 try {
+					 if(postLookup.has("content")){
+						 ret.put("prop_bcpg_alData", postLookup.get("content"));
+					 } else {
+						 ret.put("prop_bcpg_alData", "");
+					 }
+				} catch (JSONException e) {
+					logger.error(e,e);
+				}
 			}
+		} else {
+			logger.warn("No activity type for node :"+nodeRef);
 		}
 		
 	}
