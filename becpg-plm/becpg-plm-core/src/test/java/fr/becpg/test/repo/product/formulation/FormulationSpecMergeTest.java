@@ -377,8 +377,8 @@ public class FormulationSpecMergeTest extends AbstractFinishedProductTest {
 					nodeService.getProperty(nut2, BeCPGModel.PROP_CHARACT_NAME), "6", "7<= ", "");
 			String message2 = I18NUtil.getMessage(NutsCalculatingFormulationHandler.MESSAGE_NUT_NOT_IN_RANGE,
 					nodeService.getProperty(nut3, BeCPGModel.PROP_CHARACT_NAME), "14", "", " <=10");
-			String message3 = I18NUtil.getMessage(AbstractSimpleListFormulationHandler.MESSAGE_UNDEFINED_CHARACT,
-					nodeService.getProperty(nut3, BeCPGModel.PROP_CHARACT_NAME));
+//			String message3 = I18NUtil.getMessage(AbstractSimpleListFormulationHandler.MESSAGE_UNDEFINED_CHARACT,
+//					nodeService.getProperty(nut3, BeCPGModel.PROP_CHARACT_NAME));
 			String message4 = I18NUtil.getMessage(NutsCalculatingFormulationHandler.MESSAGE_MAXIMAL_DAILY_VALUE,
 					nodeService.getProperty(nut3, BeCPGModel.PROP_CHARACT_NAME));
 			String message5 = I18NUtil.getMessage(NutsCalculatingFormulationHandler.MESSAGE_NUT_NOT_IN_RANGE,
@@ -386,7 +386,6 @@ public class FormulationSpecMergeTest extends AbstractFinishedProductTest {
 
 			logger.debug("Message 1: " + message1);
 			logger.debug("Message 2: " + message2);
-			logger.debug("Message 3: " + message3);
 			logger.debug("Message 4: " + message4);
 
 			int checks = 0;
@@ -403,12 +402,7 @@ public class FormulationSpecMergeTest extends AbstractFinishedProductTest {
 					checks++;
 				} else if (message0.equals(r.getReqMessage())) {
 					fail();
-				} else if (message3.equals(r.getReqMessage())) {
-					assertEquals(1, r.getSources().size());
-					assertEquals(rawMaterial4NodeRef, r.getSources().get(0));
-					;
-					checks++;
-				} else if (message4.equals(r.getReqMessage())) {
+				}  else if (message4.equals(r.getReqMessage())) {
 					assertEquals(0, r.getSources().size());
 					checks++;
 				} else if (message5.equals(r.getReqMessage())) {
@@ -419,7 +413,7 @@ public class FormulationSpecMergeTest extends AbstractFinishedProductTest {
 
 			logger.debug("checks: " + checks + "(should be 5)");
 
-			assertEquals(5, checks);
+			assertEquals(4, checks);
 
 			return null;
 		}, false, true);

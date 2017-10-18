@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.MPMModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
 import fr.becpg.repo.RepoConsts;
@@ -37,7 +38,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 	@Autowired
 	private NodeService nodeService;
-	
+
 	@Autowired
 	private AssociationService associationService;
 
@@ -49,7 +50,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 	@Autowired
 	private WUsedListService wUsedListService;
-	
+
 	@Autowired
 	private EntityListDAO entityListDAO;
 
@@ -68,7 +69,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 	private static final String CRITERIA_NUTS = "assoc_bcpg_nutListNut_added";
 
 	private static final String CRITERIA_NUTS_RANGE = "prop_bcpg_nutListValue-range";
-	
+
 	private static final String CRITERIA_MICROBIO = "assoc_bcpg_mblMicrobio_added";
 
 	private static final String CRITERIA_MICROBIO_RANGE = "prop_bcpg_mblValue-range";
@@ -80,7 +81,9 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 	private static final String CRITERIA_PACK_LABEL = "assoc_pack_llLabel_added";
 
 	private static final String CRITERIA_PACKAGING_LIST_PRODUCT = "assoc_bcpg_packagingListProduct_added";
-	
+
+	private static final String CRITERIA_PROCESS_LIST_RESSOURCE = "assoc_mpm_plResource_added";
+
 	private static final String CRITERIA_COMPO_LIST_PRODUCT = "assoc_bcpg_compoListProduct_added";
 
 	private static final String CRITERIA_LABEL_CLAIM = "assoc_bcpg_lclLabelClaim_added";
@@ -100,10 +103,11 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 				nodes = getSearchNodesByLabelingCriteria(nodes, criteria);
 				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_LABEL_CLAIM, PLMModel.ASSOC_LCL_LABELCLAIM,
 						PLMModel.PROP_LCL_CLAIM_VALUE, "true");
-				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_PACKAGING_LIST_PRODUCT, PLMModel.ASSOC_PACKAGINGLIST_PRODUCT, null,
+				nodes = getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_PACKAGING_LIST_PRODUCT, PLMModel.ASSOC_PACKAGINGLIST_PRODUCT, null,
 						null);
-				nodes = getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_COMPO_LIST_PRODUCT, PLMModel.ASSOC_COMPOLIST_PRODUCT, null,
-						null);
+				nodes = getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_COMPO_LIST_PRODUCT, PLMModel.ASSOC_COMPOLIST_PRODUCT, null, null);
+				nodes = getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_PROCESS_LIST_RESSOURCE, MPMModel.ASSOC_PL_RESOURCE, null, null);
+
 				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_ALLERGEN, PLMModel.ASSOC_ALLERGENLIST_ALLERGEN,
 						PLMModel.PROP_ALLERGENLIST_VOLUNTARY, "true");
 				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_COST, PLMModel.ASSOC_COSTLIST_COST, PLMModel.PROP_COSTLIST_VALUE,
@@ -120,7 +124,6 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		return nodes;
 	}
 
-	
 	@Override
 	public Set<String> getIgnoredFields(QName datatype) {
 		Set<String> ret = new HashSet<>();
@@ -136,7 +139,8 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 	/**
 	 * Take in account criteria on associations (ie :
 	 * assoc_bcpg_supplierAssoc_added)
-	 * @param datatype 
+	 * 
+	 * @param datatype
 	 *
 	 * @return filtered list of nodes by associations
 	 */
@@ -159,12 +163,12 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 				String assocName = key.substring(6);
 				if (assocName.endsWith("_added")) {
 					// TODO : should be generic
-					if (!entityDictionaryService.isSubClass(datatype, PLMModel.TYPE_PRODUCT) 
-							|| ( !key.equals(CRITERIA_ING) && !key.equals(CRITERIA_GEO_ORIGIN) && !key.equals(CRITERIA_BIO_ORIGIN)
-							&& !key.equals(CRITERIA_PACK_LABEL) && !key.equals(CRITERIA_LABEL_CLAIM) && !key.equals(CRITERIA_PACKAGING_LIST_PRODUCT)
-							&& !key.equals(CRITERIA_COMPO_LIST_PRODUCT)
-							&& !key.equals(CRITERIA_ALLERGEN) && !key.equals(CRITERIA_COST) && !key.equals(CRITERIA_PHYSICO)
-							&& !key.equals(CRITERIA_NUTS))) {
+					if (!entityDictionaryService.isSubClass(datatype, PLMModel.TYPE_PRODUCT)
+							|| (!key.equals(CRITERIA_ING) && !key.equals(CRITERIA_GEO_ORIGIN) && !key.equals(CRITERIA_BIO_ORIGIN)
+									&& !key.equals(CRITERIA_PACK_LABEL) && !key.equals(CRITERIA_LABEL_CLAIM)
+									&& !key.equals(CRITERIA_PACKAGING_LIST_PRODUCT) && !key.equals(CRITERIA_COMPO_LIST_PRODUCT)
+									&& !key.equals(CRITERIA_PROCESS_LIST_RESSOURCE) && !key.equals(CRITERIA_ALLERGEN) && !key.equals(CRITERIA_COST)
+									&& !key.equals(CRITERIA_PHYSICO) && !key.equals(CRITERIA_NUTS))) {
 
 						assocName = assocName.substring(0, assocName.length() - 6);
 						assocName = assocName.replace("_", ":");
@@ -251,15 +255,15 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 				for (NodeRef nodeRef : extractOriginNodeRefs(propValue)) {
 
-						List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, PLMModel.ASSOC_INGLIST_GEO_ORIGIN);
+					List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, PLMModel.ASSOC_INGLIST_GEO_ORIGIN);
 
-						for (AssociationRef assocRef : assocRefs) {
+					for (AssociationRef assocRef : assocRefs) {
 
-							NodeRef n = assocRef.getSourceRef();
-							if (isWorkSpaceProtocol(n)) {
-								ingListGeoOrigins.add(n);
-							}
+						NodeRef n = assocRef.getSourceRef();
+						if (isWorkSpaceProtocol(n)) {
+							ingListGeoOrigins.add(n);
 						}
+					}
 				}
 
 				if (ingListItems == null) {
@@ -276,16 +280,16 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 				for (NodeRef nodeRef : extractOriginNodeRefs(propValue)) {
 
-						List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, PLMModel.ASSOC_INGLIST_BIO_ORIGIN);
+					List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, PLMModel.ASSOC_INGLIST_BIO_ORIGIN);
 
-						for (AssociationRef assocRef : assocRefs) {
+					for (AssociationRef assocRef : assocRefs) {
 
-							NodeRef n = assocRef.getSourceRef();
-							if (isWorkSpaceProtocol(n)) {
-								ingListBioOrigins.add(n);
-							}
+						NodeRef n = assocRef.getSourceRef();
+						if (isWorkSpaceProtocol(n)) {
+							ingListBioOrigins.add(n);
 						}
-					
+					}
+
 				}
 
 				if (ingListItems == null) {
@@ -326,25 +330,25 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		return nodes;
 	}
 
-	private List<NodeRef>  extractOriginNodeRefs(String propValue) {
-		List<NodeRef> ret = new LinkedList<NodeRef>();
-		
+	private List<NodeRef> extractOriginNodeRefs(String propValue) {
+		List<NodeRef> ret = new LinkedList<>();
+
 		String[] arrValues = propValue.split(RepoConsts.MULTI_VALUES_SEPARATOR);
 		for (String strNodeRef : arrValues) {
-			NodeRef nodeRef =new NodeRef(strNodeRef);
+			NodeRef nodeRef = new NodeRef(strNodeRef);
 			if (nodeService.exists(nodeRef)) {
-				 ret.add(nodeRef);
-				 
-					 if(logger.isDebugEnabled()){
-						 logger.debug("Adding associated search :"+associationService.getSourcesAssocs(nodeRef, BeCPGModel.ASSOC_LINKED_SEARCH_ASSOCIATION).size());
-						 
-					 }
-					 
-					 
-				 ret.addAll(associationService.getSourcesAssocs(nodeRef, BeCPGModel.ASSOC_LINKED_SEARCH_ASSOCIATION));
-				 
+				ret.add(nodeRef);
+
+				if (logger.isDebugEnabled()) {
+					logger.debug("Adding associated search :"
+							+ associationService.getSourcesAssocs(nodeRef, BeCPGModel.ASSOC_LINKED_SEARCH_ASSOCIATION).size());
+
+				}
+
+				ret.addAll(associationService.getSourcesAssocs(nodeRef, BeCPGModel.ASSOC_LINKED_SEARCH_ASSOCIATION));
+
 			}
-			
+
 		}
 
 		return ret;
@@ -452,56 +456,59 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 			String propValue = criteria.get(criteriaAssocString);
 
-			// criteria on label
-			if (!propValue.isEmpty()) {
+			if ((propValue != null) && !propValue.isEmpty()) {
+				String[] arrValues = propValue.split(RepoConsts.MULTI_VALUES_SEPARATOR);
 
-				NodeRef nodeRef = new NodeRef(propValue);
+				for (String strNodeRef : arrValues) {
 
-				if (nodeService.exists(nodeRef)) {
+					NodeRef nodeRef = new NodeRef(strNodeRef);
 
-					List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, criteriaAssoc);
-					labelClaimListItems = new ArrayList<>(assocRefs.size());
+					if (nodeService.exists(nodeRef)) {
 
-					for (AssociationRef assocRef : assocRefs) {
+						List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, criteriaAssoc);
+						labelClaimListItems = new ArrayList<>(assocRefs.size());
 
-						NodeRef n = assocRef.getSourceRef();
-						if (isWorkSpaceProtocol(n)) {
-							if ((criteriaAssocValue != null) && (criteriaValue != null) && !criteriaValue.isEmpty()) {
-								Object value = nodeService.getProperty(n, criteriaAssocValue);
-								if (PLMModel.PROP_NUTLIST_VALUE.equals(criteriaAssocValue) && (value == null)) {
-									value = nodeService.getProperty(n, PLMModel.PROP_NUTLIST_FORMULATED_VALUE);
-								}
+						for (AssociationRef assocRef : assocRefs) {
 
-								if (value != null) {
-									if (value instanceof String) {
-										if (criteriaValue.equals(value)) {
-											labelClaimListItems.add(n);
-										}
+							NodeRef n = assocRef.getSourceRef();
+							if (isWorkSpaceProtocol(n)) {
+								if ((criteriaAssocValue != null) && (criteriaValue != null) && !criteriaValue.isEmpty()) {
+									Object value = nodeService.getProperty(n, criteriaAssocValue);
+									if (PLMModel.PROP_NUTLIST_VALUE.equals(criteriaAssocValue) && (value == null)) {
+										value = nodeService.getProperty(n, PLMModel.PROP_NUTLIST_FORMULATED_VALUE);
+									}
 
-									} else if (value instanceof Boolean) {
-										if (Boolean.valueOf(criteriaValue).equals(value)) {
-											labelClaimListItems.add(n);
-										}
-
-									} else if (value instanceof Double) {
-										String[] splitted = criteriaValue.split("\\|");
-										if (splitted.length == 2) {
-											if (logger.isDebugEnabled()) {
-												logger.debug("filter by range: " + splitted[0] + " " + splitted[1]);
-											}
-											if ((splitted[0].isEmpty() || (((Double) value) >= Double.valueOf(splitted[0])))
-													&& (splitted[1].isEmpty() || (((Double) value) <= Double.valueOf(splitted[1])))) {
+									if (value != null) {
+										if (value instanceof String) {
+											if (criteriaValue.equals(value)) {
 												labelClaimListItems.add(n);
 											}
-										} else if (splitted.length == 1) {
-											if ((splitted[0].isEmpty() || (((Double) value) >= Double.valueOf(splitted[0])))) {
+
+										} else if (value instanceof Boolean) {
+											if (Boolean.valueOf(criteriaValue).equals(value)) {
 												labelClaimListItems.add(n);
+											}
+
+										} else if (value instanceof Double) {
+											String[] splitted = criteriaValue.split("\\|");
+											if (splitted.length == 2) {
+												if (logger.isDebugEnabled()) {
+													logger.debug("filter by range: " + splitted[0] + " " + splitted[1]);
+												}
+												if ((splitted[0].isEmpty() || (((Double) value) >= Double.valueOf(splitted[0])))
+														&& (splitted[1].isEmpty() || (((Double) value) <= Double.valueOf(splitted[1])))) {
+													labelClaimListItems.add(n);
+												}
+											} else if (splitted.length == 1) {
+												if ((splitted[0].isEmpty() || (((Double) value) >= Double.valueOf(splitted[0])))) {
+													labelClaimListItems.add(n);
+												}
 											}
 										}
 									}
+								} else {
+									labelClaimListItems.add(n);
 								}
-							} else {
-								labelClaimListItems.add(n);
 							}
 						}
 					}
@@ -539,8 +546,6 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		return nodes;
 	}
 
-	
-	
 	private List<NodeRef> getSearchNodesByWUsedCriteria(List<NodeRef> nodes, Map<String, String> criteria, String criteriaAssocString,
 			QName criteriaAssoc, QName criteriaAssocValue, String criteriaValue) {
 
@@ -550,36 +555,34 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 			watch.start();
 		}
 
-		List<NodeRef> toFilterByNodes = new ArrayList<>(); 
-		
+		List<NodeRef> toFilterByNodes = new ArrayList<>();
+
 		if (criteria.containsKey(criteriaAssocString)) {
 
 			String propValue = criteria.get(criteriaAssocString);
-			
-			if(propValue!=null && !propValue.isEmpty()) {
+
+			if ((propValue != null) && !propValue.isEmpty()) {
 				String[] arrValues = propValue.split(RepoConsts.MULTI_VALUES_SEPARATOR);
-			
+
 				for (String strNodeRef : arrValues) {
-	
+
 					NodeRef nodeRef = new NodeRef(strNodeRef);
 					if (nodeService.exists(nodeRef)) {
 						toFilterByNodes.add(nodeRef);
-						
+
 					}
-						
+
 				}
 			}
 		}
-		
-		if(!toFilterByNodes.isEmpty()) {
-			
-			MultiLevelListData ret =  wUsedListService.getWUsedEntity(toFilterByNodes, WUsedOperator.OR, criteriaAssoc, -1);
-			if(ret!=null) {
+
+		if (!toFilterByNodes.isEmpty()) {
+
+			MultiLevelListData ret = wUsedListService.getWUsedEntity(toFilterByNodes, WUsedOperator.OR, criteriaAssoc, -1);
+			if (ret != null) {
 				nodes.retainAll(ret.getAllChilds());
 			}
 		}
-
-		
 
 		if (logger.isDebugEnabled()) {
 			watch.stop();
@@ -589,7 +592,6 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		return nodes;
 	}
 
-	
 	private boolean isWorkSpaceProtocol(NodeRef nodeRef) {
 
 		if (nodeRef.getStoreRef().getProtocol().equals(StoreRef.PROTOCOL_WORKSPACE)) {

@@ -73,6 +73,10 @@ function main()
     	if(splitted!=null){
 	    	for(var i in splitted){
 	    		var nodeRef = splitted[i];
+	    		if(nodeRef.indexOf("workspace")!=0){
+	    			 nodeRef = "workspace://SpacesStore/"+nodeRef;
+	    		}
+	    		
 	    		for(var j in assocToRemoves){
 	    			var node = search.findNode(nodeRef);
 	    			var assocToRemove = assocToRemoves[j].replace("_",":");
