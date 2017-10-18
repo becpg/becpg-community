@@ -419,17 +419,18 @@
 
 			// remove Forms Runtime validators on the advanced search form
 			this.currentForm.runtime.validations = {};
-			var nodes = this.currentForm.runtime.getFieldsByType("select");
-			for (var i = 0, ii = nodes.length; i < ii; i++) {
-				if (nodes[i].classList.contains("non-tokenised")) {
-					var options = nodes[i].options;
-					for (var j = 0, jj = options.length; j < jj; j++) {
-						if (options[j].value != "") {
-							options[j].value = '\"' + options[j].value + '\"';
-						}
-					}
-				}
-			}
+// beCPG  TODO if we keep that we need to remove isSearch from all advSearch forms
+//			var nodes = this.currentForm.runtime.getFieldsByType("select");
+//			for (var i = 0, ii = nodes.length; i < ii; i++) {
+//				if (nodes[i].classList.contains("non-tokenised")) {
+//					var options = nodes[i].options;
+//					for (var j = 0, jj = options.length; j < jj; j++) {
+//						if (options[j].value != "") {
+//							options[j].value = '\"' + options[j].value + '\"';
+//						}
+//					}
+//				}
+//			}
 
 			// Repopulate current form from url query data?
 			if (this.currentForm.repopulate) {

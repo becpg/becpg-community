@@ -701,6 +701,7 @@
 					<show id="bcpg:customsCodeRef"  />
 
 					<show id="bcpg:clients" force="true" />
+					<show id="mpm:plResource" force="true" />
 					<show id="bcpg:compoListProduct" force="true" />
 					<show id="bcpg:packagingListProduct" force="true" />
 					<show id="bcpg:allergenListAllergen" force="true" />
@@ -798,6 +799,11 @@
 						</control>
 					</field>
 
+					<field id="mpm:plResource" set="2-col-product-criteria">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+
 					<field id="bcpg:packagingListProduct" set="3-col-product-criteria">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -806,6 +812,8 @@
 						</control>
 					</field>
 					
+					
+					
 					<field id="bcpg:allergenListAllergen" set="3-col-product-criteria">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
@@ -813,7 +821,9 @@
 
 					<field id="bcpg:lclLabelClaim" set="3-col-product-criteria">
 						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+							<control-param name="multipleSelectMode">true</control-param>	
+						</control>
 					</field>
 
 
@@ -7208,7 +7218,7 @@
 		                  		{"prop":"prop_bcpg_lrLabel", "condition" : "Format|DetailComponents|DoNotDetailsComponents|Locale|Prefs|Omit|DoNotDeclare"},
 		                  		{"prop":"assoc_bcpg_lrComponents", "condition" : "Render|Locale|Prefs"},
 		                  		{"prop":"assoc_bcpg_lrReplacements", "condition" : "Format|Render|DetailComponents|DoNotDetailsComponents|Locale|Prefs|Omit|DoNotDeclare"},
-		                  		{"prop":"prop_bcpg_lrLocales", "condition" : "Prefs"}
+		                  		{"prop":"prop_bcpg_lrLocales", "condition" : "Prefs|Group|Detail|DoNotDetails|DetailComponents|DoNotDetailsComponents"}
 		                  		]'/>
 		                  	</constraint-handlers>
 					</field>
