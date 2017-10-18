@@ -466,13 +466,13 @@ public class FormulationTest extends AbstractFinishedProductTest {
 					String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
 					logger.debug(trace);
 					if(nutListDataItem.getNut().equals(nut1)){
-						assertEquals("check nut", df.format(0.77d), df.format(nutListDataItem.getValue()));
+						assertEquals("check nut", df.format(0.72d), df.format(nutListDataItem.getValue()));
 						assertEquals("check nut unit", "kJ/100g", nutListDataItem.getUnit());
 						assertEquals("must be group1", GROUP1, nutListDataItem.getGroup());
 						checks++;
 					}
 					if(nutListDataItem.getNut().equals(nut2)){
-						assertEquals("check nut", df.format(1.59d), df.format(nutListDataItem.getValue()));
+						assertEquals("check nut", df.format(1.44d), df.format(nutListDataItem.getValue()));
 						assertEquals("check nut unit", "kcal/100g", nutListDataItem.getUnit());
 						assertEquals("must be group2", GROUP2, nutListDataItem.getGroup());
 						checks++;

@@ -50,7 +50,6 @@ import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
-import fr.becpg.repo.product.formulation.AbstractSimpleListFormulationHandler;
 import fr.becpg.repo.product.formulation.NutsCalculatingFormulationHandler;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
@@ -131,8 +130,6 @@ public class FormulationNutsTest extends AbstractFinishedProductTest {
 				nodeService.getProperty(nut2, BeCPGModel.PROP_CHARACT_NAME), "6", "7<= ", "");
 		String message2 = I18NUtil.getMessage(NutsCalculatingFormulationHandler.MESSAGE_NUT_NOT_IN_RANGE,
 				nodeService.getProperty(nut3, BeCPGModel.PROP_CHARACT_NAME), "14", "", " <=10");
-		String message3 = I18NUtil.getMessage(AbstractSimpleListFormulationHandler.MESSAGE_UNDEFINED_CHARACT,
-				nodeService.getProperty(nut3, BeCPGModel.PROP_CHARACT_NAME));
 		String message4 = I18NUtil.getMessage(NutsCalculatingFormulationHandler.MESSAGE_MAXIMAL_DAILY_VALUE,
 				nodeService.getProperty(nut3, BeCPGModel.PROP_CHARACT_NAME));
 
@@ -149,25 +146,14 @@ public class FormulationNutsTest extends AbstractFinishedProductTest {
 				checks++;
 			} else if (message0.equals(r.getReqMessage())) {
 				fail();
-			} else if (message3.equals(r.getReqMessage())) {
-				if (propagateMode) {
-					fail();
-				}
-				assertEquals(1, r.getSources().size());
-				assertEquals(rawMaterial4NodeRef, r.getSources().get(0));
-				checks++;
 			} else if (message4.equals(r.getReqMessage())) {
 				assertEquals(0, r.getSources().size());
 				checks++;
 			}
 		}
 
-		logger.info("checks: " + checks);
-		if (propagateMode) {
-			assertEquals(3, checks);
-		} else {
-			assertEquals(4, checks);
-		}
+		assertEquals(3, checks);
+		
 	}
 
 	protected NodeRef createFullProductNodeRef(final String name) {
