@@ -259,7 +259,7 @@
 			<form id="filter">
 				<field-visibility>
 					<show id="ecm:culRevision" />
-					<show id="ecm:culSourceItem" />	
+					<show id="entity_ecm:culSourceItem_bcpg:product" />
 					<show id="ecm:culTreated" />
 					<show id="ecm:culReqType" />	
 				</field-visibility>
@@ -346,6 +346,12 @@
 					<show id="ecm:cclCharact" />
 					<show id="ecm:cclSourceValue" />
 					<show id="ecm:cclTargetValue" />					
+				</field-visibility>
+			</form>
+			<form id="filter">
+				<field-visibility>
+					<show id="entity_ecm:cclSourceItem_bcpg:product" />
+					<show id="ecm:cclCharact" />	
 				</field-visibility>
 			</form>
 		</forms>

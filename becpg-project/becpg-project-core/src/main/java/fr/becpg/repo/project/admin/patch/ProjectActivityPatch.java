@@ -15,6 +15,7 @@ import org.alfresco.repo.domain.qname.QNameDAO;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.cmr.rule.RuleService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.Pair;
@@ -98,6 +99,7 @@ public class ProjectActivityPatch extends AbstractBeCPGPatch {
 	protected String applyInternal() throws Exception {
 
 		AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
+		
 
 		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
 			final List<NodeRef> result = new ArrayList<>();
@@ -147,28 +149,27 @@ public class ProjectActivityPatch extends AbstractBeCPGPatch {
 
 			@Override
 			public void afterProcess() throws Throwable {
-				ruleService.disableRules();
-
+				ruleService.enableRules();
 			}
 
 			@Override
 			public void beforeProcess() throws Throwable {
-				ruleService.enableRules();
-
+				ruleService.disableRules();
 			}
+			
 
 			@Override
 			public String getIdentifier(NodeRef entry) {
 				return entry.toString();
 			}
-
+			
 			@Override
 			public void process(NodeRef activityNodeRef) throws Throwable {
 
 				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
 				policyBehaviourFilter.disableBehaviour();
-				if (nodeService.exists(activityNodeRef)) {
+				if (nodeService.exists(activityNodeRef) && activityNodeRef.getStoreRef().getProtocol().equals(StoreRef.PROTOCOL_WORKSPACE)) {
 					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
 					NodeRef entityNodeRef = entityListDAO.getEntity(activityNodeRef);
@@ -273,14 +274,12 @@ public class ProjectActivityPatch extends AbstractBeCPGPatch {
 
 			@Override
 			public void afterProcess() throws Throwable {
-				ruleService.disableRules();
-
+				ruleService.enableRules();
 			}
 
 			@Override
 			public void beforeProcess() throws Throwable {
-				ruleService.enableRules();
-
+				ruleService.disableRules();
 			}
 
 			@Override
@@ -294,7 +293,7 @@ public class ProjectActivityPatch extends AbstractBeCPGPatch {
 				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
 				policyBehaviourFilter.disableBehaviour();
-				if (nodeService.exists(dataListNodeRef)) {
+				if (nodeService.exists(dataListNodeRef) && dataListNodeRef.getStoreRef().getProtocol().equals(StoreRef.PROTOCOL_WORKSPACE)) {
 					if (TYPE_ACTIVITY_LIST.toPrefixString(namespaceService)
 							.equals(nodeService.getProperty(dataListNodeRef, DataListModel.PROP_DATALISTITEMTYPE))) {
 						nodeService.setProperty(dataListNodeRef, DataListModel.PROP_DATALISTITEMTYPE,
@@ -307,6 +306,7 @@ public class ProjectActivityPatch extends AbstractBeCPGPatch {
 			}
 
 		}, true);
+		
 
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}

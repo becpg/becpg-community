@@ -43,6 +43,7 @@ var g; // gantt var
             this.setOptions(
             {
                 sortable : false,
+                localSort : true,
                 usePagination : true,
                 useFilter : true,
                 itemType : "pjt:taskList",
@@ -60,6 +61,7 @@ var g; // gantt var
                     .setOptions(
                     {
                         sortable : false,
+                        localSort : true,
                         usePagination : true,
                         useFilter : true,
                         itemType : "pjt:project",
