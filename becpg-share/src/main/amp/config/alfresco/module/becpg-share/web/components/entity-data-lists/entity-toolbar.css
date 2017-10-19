@@ -3,6 +3,12 @@
 	float:left;
 }
 
+
+.datalist-toolbar .left  div.yuimenu > div {
+	float: none;
+}
+
+
 .datalist-toolbar .entity-view-details span.first-child
 {
    background: url(../documentlibrary/actions/entity-view-details-16.png) no-repeat 12px 4px;

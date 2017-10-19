@@ -185,6 +185,10 @@
                              */
                             sortable : false,
                             /**
+                             * 
+                             */
+                            localSort : false,
+                            /**
                              * Sort Url
                              */
                             sortUrl : null,
@@ -1501,67 +1505,70 @@
                                     sSortDir)
                             {
                             	
-                            	
-                            	if(oColumn.key.indexOf("prop_")==0){
-									me.currentSort = oColumn.key;
-									me.currentSortDir = sSortDir;	
-									me.currentPage = 1;
-									me.queryExecutionId = null;						
-									me._updateDataGrid.call(me);
+                            	if(!me.options.localSort){
+	                            	if(oColumn.key.indexOf("prop_")==0){
+										me.currentSort = oColumn.key;
+										me.currentSortDir = sSortDir;	
+										me.currentPage = 1;
+										me.queryExecutionId = null;						
+										me._updateDataGrid.call(me);
+										
+										return false;
 									
-									return false;
-								
-								} else {
-									me.currentSort = null;
-									return true;
-								}
+									} else {
+										me.currentSort = null;
+										return true;
+									}
+                            	} else {
                             	
-//                                me.currentSort =
-//                                {
-//                                    oColumn : oColumn,
-//                                    sSortDir : sSortDir
-//                                };
-//                                // Change when dynamic sort
-//
-//                                var oSortedBy = this.get("sortedBy") || {};
-//                                var bSorted = (oSortedBy.key === oColumn.key) ? true : false;
-//
-//                                // Is there a custom sort handler function
-//                                // defined?
-//                                var sortFnc = (oColumn.sortOptions && YAHOO.lang
-//                                        .isFunction(oColumn.sortOptions.sortFunction)) ?
-//                                // Custom sort function
-//                                oColumn.sortOptions.sortFunction : null;
-//
-//                                // Sort the Records
-//                                if (!bSorted || sortFnc)
-//                                {
-//                                    // Default sort function if necessary
-//                                    sortFnc = sortFnc || this.get("sortFunction");
-//                                    // Get the field to sort
-//                                    var sField = (oColumn.sortOptions && oColumn.sortOptions.field) ? oColumn.sortOptions.field
-//                                            : oColumn.field;
-//
-//                                    // Sort the Records
-//                                    this._oRecordSet.sortRecords(sortFnc,
-//                                            ((sSortDir == YAHOO.widget.DataTable.CLASS_DESC) ? true : false), sField);
-//                                }
-//                                // Just reverse the Records
-//                                else
-//                                {
-//                                    this._oRecordSet.reverseRecords();
-//                                }
-//
-//                                // Update UI via sortedBy
-//                                this.render();
-//                                this.set("sortedBy",
-//                                {
-//                                    key : oColumn.key,
-//                                    dir : sSortDir,
-//                                    column : oColumn
-//                                });
-//
-//                                return false;
+	                                me.currentSort =
+	                                {
+	                                    oColumn : oColumn,
+	                                    sSortDir : sSortDir
+	                                };
+	                                // Change when dynamic sort
+	
+	                                var oSortedBy = this.get("sortedBy") || {};
+	                                var bSorted = (oSortedBy.key === oColumn.key) ? true : false;
+	
+	                                // Is there a custom sort handler function
+	                                // defined?
+	                                var sortFnc = (oColumn.sortOptions && YAHOO.lang
+	                                        .isFunction(oColumn.sortOptions.sortFunction)) ?
+	                                // Custom sort function
+	                                oColumn.sortOptions.sortFunction : null;
+	
+	                                // Sort the Records
+	                                if (!bSorted || sortFnc)
+	                                {
+	                                    // Default sort function if necessary
+	                                    sortFnc = sortFnc || this.get("sortFunction");
+	                                    // Get the field to sort
+	                                    var sField = (oColumn.sortOptions && oColumn.sortOptions.field) ? oColumn.sortOptions.field
+	                                            : oColumn.field;
+	
+	                                    // Sort the Records
+	                                    this._oRecordSet.sortRecords(sortFnc,
+	                                            ((sSortDir == YAHOO.widget.DataTable.CLASS_DESC) ? true : false), sField);
+	                                }
+	                                // Just reverse the Records
+	                                else
+	                                {
+	                                    this._oRecordSet.reverseRecords();
+	                                }
+	
+	                                // Update UI via sortedBy
+	                                this.render();
+	                                this.set("sortedBy",
+	                                {
+	                                    key : oColumn.key,
+	                                    dir : sSortDir,
+	                                    column : oColumn
+	                                });
+	
+	                                return false;
+                            	}
+                            		
                             };
 
                             // File checked handler
@@ -2594,7 +2601,7 @@
                             		this.options.extraDataParams = obj.extraDataParams;
                             	}
                             	
-                                if(this.widgets.floatingHeader!=null ){
+                                if(this.widgets.floatingHeader && this.widgets.floatingHeader!=null ){
                                 	this.widgets.floatingHeader.floatThead('destroy');
                                 	this.widgets.floatingHeader = null;
                                 }
@@ -2942,7 +2949,7 @@
                                     this.widgets.dataTable.formatTheadCell(oColumn._elThLabel, oColumn,
                                             this.widgets.dataTable.get("sortedBy"));
                                     
-                                    if(this.widgets.floatingHeader){
+                                    if(this.widgets.floatingHeader && this.widgets.floatingHeader!=null){
                                		  this.widgets.floatingHeader.floatThead('reflow');
                                	 	}
 
