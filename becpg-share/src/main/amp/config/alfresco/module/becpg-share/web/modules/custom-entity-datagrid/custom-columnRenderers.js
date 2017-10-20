@@ -58,10 +58,10 @@ if (beCPG.module.EntityDataGridRenderers) {
 
    
    YAHOO.Bubbling.fire("registerDataGridRenderer", {
-	      propertyName : [ "cm:created" ],
+	      propertyName : [ "cm:created","pjt:rlDueDate" ],
 	      renderer : function(oRecord, data, label, scope) {
 	    	  if (data.value != null){
-	    		  return Alfresco.util.formatDate(data.value,"ddd. d mmm. yyyy").toLowerCase();
+	    		  return Alfresco.util.formatDate(data.value,"dd/mm/yyyy").toLowerCase();
 	    	  }
 	         return "";
 	      }
