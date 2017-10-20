@@ -86,7 +86,8 @@ public class NestedAdvSearchPlugin implements AdvSearchPlugin {
 					if (!key.startsWith(ASSOC_SUFFIX) && !key.startsWith(NESTED_PROP)) {
 						ret.put(key.replace(PROP_SUFFIX, "").replace("_", ":"), criteriaMap.get(key));
 					} else if (key.endsWith("_added")) {
-						ret.put(key.replace(ASSOC_SUFFIX, "").replace("_added", "").replace("_", ":"), criteriaMap.get(key));
+						ret.put(key.replace(ASSOC_SUFFIX, "").replace(NESTED_PROP, "")
+								.replace("_added", "").replace("_", ":"), criteriaMap.get(key));
 					}
 				}
 			}
@@ -153,7 +154,7 @@ public class NestedAdvSearchPlugin implements AdvSearchPlugin {
 	@SuppressWarnings("unchecked")
 	public boolean match(NodeRef nodeRef, Map<String, String> criteriaMap) {
 		if (!criteriaMap.isEmpty()) {
-
+			
 			Map<String, Object> comp = attributeExtractorService.extractNodeData(nodeRef, nodeService.getType(nodeRef),
 					new ArrayList<>(criteriaMap.keySet()), AttributeExtractorMode.JSON);
 			for (String key : comp.keySet()) {
