@@ -215,14 +215,26 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 						}
 					}
 
+					//All sorts of cost that would be unfiltered land here
 					Double value = FormulationHelper.calculateValue(0d, qtyUsed, templateCostList.getValue(), netQty, templateCostList.getUnit());
-
+					Double previous = templateCostList.getPreviousValue() != null ? FormulationHelper.calculateValue(0d, qtyUsed, templateCostList.getPreviousValue(), netQty, templateCostList.getUnit()) : null;
+					Double future = templateCostList.getFutureValue() != null ? FormulationHelper.calculateValue(0d, qtyUsed, templateCostList.getFutureValue(), netQty, templateCostList.getUnit()) : null;
+					Double mini = templateCostList.getMini() != null ? FormulationHelper.calculateValue(0d, qtyUsed, templateCostList.getMini(), netQty, templateCostList.getUnit()) : null;
+					Double maxi = templateCostList.getMaxi() != null ? FormulationHelper.calculateValue(0d, qtyUsed, templateCostList.getMaxi(), netQty, templateCostList.getUnit()) : null;
+					
 					String unit = CostsCalculatingFormulationHandler.calculateUnit(formulatedProduct.getUnit(),
 							(String) nodeService.getProperty(templateCostList.getCost(), PLMModel.PROP_COSTCURRENCY),
 							(Boolean) nodeService.getProperty(templateCostList.getCost(), PLMModel.PROP_COSTFIXED));
 
-					ret.addKeyValue(templateCostList.getCharactNodeRef(),
-							new CharactDetailsValue(formulatedProduct.getNodeRef(), entityNodeRef, value, 0, unit));
+					CharactDetailsValue key = new CharactDetailsValue(formulatedProduct.getNodeRef(), entityNodeRef, value, 0, unit);
+					key.setPreviousValue(previous);
+					key.setFutureValue(future);
+					key.setMini(mini);
+					key.setMaxi(maxi);
+					
+					
+					logger.debug("Adding keyValue "+key);
+					ret.addKeyValue(templateCostList.getCharactNodeRef(), key);
 
 				}
 			}
