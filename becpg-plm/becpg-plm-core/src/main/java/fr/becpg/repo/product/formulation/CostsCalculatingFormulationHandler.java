@@ -409,7 +409,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 
 			for (CostListDataItem costListDataItem : formulatedProduct.getCostList()) {
 				for (CostListDataItem c : costList) {
-					if ((c.getCost() != null) && c.getCost().equals(costListDataItem.getCost())) {
+					if ((c.getCost() != null) && c.getCost().equals(costListDataItem.getCost()) && isCharactFormulated(costListDataItem)) {
 						mandatoryCharacts.put(c.getCost(), new ArrayList<NodeRef>());
 						break;
 					}

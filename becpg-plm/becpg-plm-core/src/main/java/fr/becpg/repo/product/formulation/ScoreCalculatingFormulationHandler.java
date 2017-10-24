@@ -570,9 +570,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 			for (int j = 0; j < catalogLocales.length(); j++) {
 				langs.add(catalogLocales.getString(j));
 			}
-		}
-
-		if (reportLocales != null) {
+		} else if (reportLocales != null) {
 			langs.addAll(reportLocales);
 		}
 
