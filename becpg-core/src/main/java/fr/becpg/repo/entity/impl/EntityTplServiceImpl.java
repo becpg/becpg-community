@@ -287,12 +287,12 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 				}
 
-				if ((datalistsTpl != null) && !datalistsTpl.isEmpty()) {
+				List<NodeRef> entityNodeRefs = getEntitiesToUpdate(tplNodeRef);
+				logger.debug("synchronize entityNodeRefs, size " + entityNodeRefs.size());
 
-					List<NodeRef> entityNodeRefs = getEntitiesToUpdate(tplNodeRef);
-					logger.debug("synchronize entityNodeRefs, size " + entityNodeRefs.size());
-
-					doInBatch(entityNodeRefs, 10, entityNodeRef -> {
+				doInBatch(entityNodeRefs, 10, entityNodeRef -> {
+					
+					if ((datalistsTpl != null) && !datalistsTpl.isEmpty()) {
 
 						RepositoryEntity entity = alfrescoRepository.findOne(entityNodeRef);
 						Map<QName, List<? extends RepositoryEntity>> datalists = repositoryEntityDefReader.getDataLists(entity);
@@ -371,42 +371,43 @@ public class EntityTplServiceImpl implements EntityTplService {
 							}
 
 						}
+					}
 
-						// synchronize folders
-						// clean empty folders
-						for (FileInfo folder : fileFolderService.listFolders(entityNodeRef)) {
+					// synchronize folders
+					// remove empty folders that are not in the template
+					for (FileInfo folder : fileFolderService.listFolders(entityNodeRef)) {
+						if (folder.getName() != "DataLists" && 
+								folder.getType().equals(ContentModel.TYPE_FOLDER) && 
+								nodeService.getChildByName(tplNodeRef, ContentModel.ASSOC_CONTAINS, folder.getName()) == null &&
+								fileFolderService.list(folder.getNodeRef()).size() == 0) {
+
 							if (logger.isDebugEnabled()) {
-								logger.debug("Synchro, checking empty folder " + folder.getName() + " of node "
-										+ nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + ", template = "
-										+ nodeService.getProperty(tplNodeRef, ContentModel.PROP_NAME));
+								logger.debug("Remove folder " + folder.getName() + " of node " + entityNodeRef);
 							}
-							if (fileFolderService.list(folder.getNodeRef()).size() == 0) {
-								fileFolderService.delete(folder.getNodeRef());
+							fileFolderService.delete(folder.getNodeRef());
+						}
+					}
+
+					// copy folders of template that are not in the entity
+					for (FileInfo folder : fileFolderService.listFolders(tplNodeRef)) {
+						if (folder.getName() != "DataLists" && 
+								folder.getType().equals(ContentModel.TYPE_FOLDER) && 
+								nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS, folder.getName()) == null){
+							
+							if (logger.isDebugEnabled()) {
+								logger.debug("Copying folder " + folder.getName() + " to node " + entityNodeRef);
+							}
+							
+							try {
+								fileFolderService.copy(folder.getNodeRef(), entityNodeRef, null);
+							} catch (Exception e) {
+								logger.warn(
+										"Unable to synchronize folder " + folder.getName() + " of node " + entityNodeRef + ": " + e.getMessage());
 							}
 						}
+					}
 
-						// copy folders of template
-						List<AssociationRef> products = nodeService.getSourceAssocs(tplNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
-						boolean exists = products.stream().anyMatch(assoc -> assoc.getSourceRef().equals(entityNodeRef));
-
-						if (exists) {
-							for (FileInfo folder : fileFolderService.listFolders(tplNodeRef)) {
-								if (logger.isDebugEnabled()) {
-									logger.debug("Synchro, copying folder " + folder.getName() + " to node "
-											+ nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + ", template = "
-											+ nodeService.getProperty(tplNodeRef, ContentModel.PROP_NAME));
-								}
-								try {
-									fileFolderService.copy(folder.getNodeRef(), entityNodeRef, null);
-								} catch (Exception e) {
-									logger.warn(
-											"Unable to synchronize folder " + folder.getName() + " of node " + entityNodeRef + ": " + e.getMessage());
-								}
-							}
-						}
-
-					});
-				}
+				});
 			} finally {
 				lock.unlock();
 			}
