@@ -233,7 +233,6 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 					key.setMaxi(maxi);
 					
 					
-					logger.debug("Adding keyValue "+key);
 					ret.addKeyValue(templateCostList.getCharactNodeRef(), key);
 
 				}
