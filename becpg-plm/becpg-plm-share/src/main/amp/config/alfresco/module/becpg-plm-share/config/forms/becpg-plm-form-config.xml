@@ -19,6 +19,7 @@
 					<show id="bcpg:erpCode" force="true"/>
 					<show id="bcpg:productHierarchy1" />
 					<show id="bcpg:productHierarchy2" />
+					<show id="bcpg:entityTplRef" force="true"/>
 					<show id="bcpg:productState" />
 				</field-visibility>
 				<appearance>
@@ -29,6 +30,12 @@
 					<field id="bcpg:productHierarchy2" label-id="becpg.forms.field.productHierarchy2">
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
+					<field id="bcpg:entityTplRef" mandatory="false" read-only="false" >
+			            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+			              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:product?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse</control-param>
+			              <control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
+			            </control>
+			        </field>
 					<field id="bcpg:productState" label-id="becpg.forms.field.productState">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="isSearch">true</control-param>
