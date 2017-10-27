@@ -249,7 +249,6 @@
 					<permission allow="true">Write</permission>
 				</permissions>
 				<evaluator>evaluator.becpg.doclib.action.entityTpl</evaluator>
-				<evaluator>evaluator.becpg.doclib.action.product</evaluator>
 			</action>
 
 			<action id="entityTpl-formulate-entities" type="javascript" icon="entity-refresh-reports" label="actions.entityTpl-formulate-entities">
