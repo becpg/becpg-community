@@ -83,8 +83,6 @@
 		<argLine>-Xms256m -Xmx1524m -Duser.language=fr</argLine>
 		
 		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
-		<!-- <birt.version>4.6.0-20160607</birt.version> -->
-		<birt.version>4.4.2</birt.version>
 		<sonar.language>java</sonar.language>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		
@@ -222,7 +220,6 @@
 
 	<modules>
 		<module>becpg-tools</module>
-		<module>becpg-report</module>
 		<module>becpg-core</module>
 		<module>becpg-project/becpg-project-core</module>
 		<module>becpg-designer/becpg-designer-core</module>
