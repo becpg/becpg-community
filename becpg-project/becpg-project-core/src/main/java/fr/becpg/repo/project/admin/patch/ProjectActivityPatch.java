@@ -219,9 +219,7 @@ public class ProjectActivityPatch extends AbstractBeCPGPatch {
 					// Delete Node
 					nodeService.deleteNode(activityNodeRef);
 
-				} else {
-					logger.warn("activityNodeRef doesn't exist : " + activityNodeRef);
-				}
+				} 
 
 				policyBehaviourFilter.enableBehaviour();
 
