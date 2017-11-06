@@ -411,6 +411,9 @@
         <property name="ruleService" ref="ruleService"/>
 	</bean>
 	
+	
+	
+	
 	<bean id="patch.bcpg.ingTypeAspectPatch" class="fr.becpg.repo.admin.patch.IngTypeAspectPatch" parent="beCPGBasePatch" >
         <property name="id"><value>patch.bcpg.ingTypeAspectPatch</value></property>
         <property name="description"><value>patch.bcpg.ingTypeAspectPatchdescription</value></property>
@@ -473,6 +476,32 @@
             <ref bean="entityTplService"/>
         </property>
 	</bean>	
+	
+	
+	
+	<bean id="patch.bcpg.qualityControlTypePatch" class="fr.becpg.repo.admin.patch.QualityControlTypePatch" parent="beCPGBasePatch" >
+        <property name="id"><value>patch.bcpg.qualityControlTypePatch</value></property>
+        <property name="description"><value>patch.bcpg.qualityControlTypePatch.description</value></property>
+        <property name="fixesFromSchema" value="0"/>
+        <property name="fixesToSchema" value="8022" />
+        <property name="targetSchema" value="10170"/>
+        <property name="requiresTransaction"><value>true</value></property>
+        <property name="applyToTenants"><value>true</value></property>
+         <property name="patchDAO">
+            <ref bean="patchDAO"/>
+        </property>
+        <property name="nodeDAO">
+            <ref bean="nodeDAO"/>
+        </property>
+        <property name="qnameDAO">
+            <ref bean="qnameDAO"/>
+        </property>
+         <property name="policyBehaviourFilter">
+            <ref bean="policyBehaviourFilter"/>
+        </property>
+        <property name="ruleService" ref="ruleService"/>
+	</bean>
+	
 	
 	
 	 <bean id="patch.bcpg.plm.removeReqCtrlViewPatch" class="fr.becpg.repo.admin.patch.RemoveReqCtrlViewPatch" parent="beCPGBasePatch" >
@@ -559,7 +588,7 @@
         </property>
 	</bean>
 
-        <bean id="patch.bcpg.plm.redeployProductValidationProcess2" class="fr.becpg.repo.admin.patch.PLMWorkflowPatch" parent="basePatch" >
+     <bean id="patch.bcpg.plm.redeployProductValidationProcess2" class="fr.becpg.repo.admin.patch.PLMWorkflowPatch" parent="basePatch" >
         <property name="id"><value>patch.bcpg.plm.redeployProductValidationProcess2</value></property>
         <property name="description"><value>patch.bcpg.plm.redeployProductValidationProcess.description</value></property>
         <property name="fixesFromSchema" value="0"/>
