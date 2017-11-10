@@ -1346,7 +1346,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 						BigDecimal realDiluentQty = ingQty.min(diluentQty);
 
-						BigDecimal realDiluentQtyRatio = diluentQty.equals(BigDecimal.ZERO) ? (new BigDecimal(1d))
+						BigDecimal realDiluentQtyRatio = (diluentQty.compareTo(BigDecimal.ZERO) == 0)? (new BigDecimal(1d))
 								: realDiluentQty.divide(diluentQty, 10, BigDecimal.ROUND_HALF_UP);
 
 						BigDecimal realQty = realDiluentQty.add(productQty.multiply(realDiluentQtyRatio)).divide(rate, 10, BigDecimal.ROUND_HALF_UP);
@@ -1357,7 +1357,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						BigDecimal diluentVolume = rate.multiply(productVol).subtract(productVol);
 
 						BigDecimal readlDiluentvolume = ingVol.min(diluentVolume);
-						BigDecimal readlDiluentvolumeRatio = diluentVolume.equals(BigDecimal.ZERO) ? (new BigDecimal(1d))
+						BigDecimal readlDiluentvolumeRatio = (diluentVolume.compareTo(BigDecimal.ZERO) == 0) ? (new BigDecimal(1d))
 								: readlDiluentvolume.divide(diluentVolume, 10, BigDecimal.ROUND_HALF_UP);
 
 						BigDecimal realVol = readlDiluentvolume.add(productVol.multiply(readlDiluentvolumeRatio)).divide(rate, 10,
