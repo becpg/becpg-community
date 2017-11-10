@@ -1334,7 +1334,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 					AbstractLabelingComponent ingLabelItem = parent.get(reconstituableData.getDiluentIngNodeRef());
 
-					if ((ingLabelItem != null) && (ingLabelItem.getQty() != null)) {
+					if ((ingLabelItem != null) && (ingLabelItem.getQty() != null) && reconstituableData.getRate()!=0d) {
 
 						BigDecimal rate = new BigDecimal(reconstituableData.getRate());
 						BigDecimal productQty = new BigDecimal(productLabelItem.getQty());
@@ -1358,7 +1358,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 						BigDecimal readlDiluentvolume = ingVol.min(diluentVolume);
 						BigDecimal readlDiluentvolumeRatio = diluentVolume.equals(BigDecimal.ZERO) ? (new BigDecimal(1d))
-								: readlDiluentvolume.divide(diluentQty, 10, BigDecimal.ROUND_HALF_UP);
+								: readlDiluentvolume.divide(diluentVolume, 10, BigDecimal.ROUND_HALF_UP);
 
 						BigDecimal realVol = readlDiluentvolume.add(productVol.multiply(readlDiluentvolumeRatio)).divide(rate, 10,
 								BigDecimal.ROUND_HALF_UP);
