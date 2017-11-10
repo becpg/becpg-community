@@ -318,9 +318,10 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 			updateVersionEffectivity(origNodeRef, versionNodeRef);
 			
-			updateEntitiesHistory(origNodeRef, versionNodeRef);
-			
 			if(!isInitialVersion){
+			
+				updateEntitiesHistory(origNodeRef, versionNodeRef);
+			
 				entityActivityService.postVersionActivity(origNodeRef, versionNodeRef, versionLabel);
 			}	
 		    
@@ -349,31 +350,6 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 	
 	
-	
-	//	
-	//	
-	//	PF (MP ) [4.0] (MP)
-	//			[3.0] (MP)
-	//			[2.0] (MP1.0)
-	//			[1.0](MP1.0)
-	//
-	//	MP -> MP 2.0
-	//	
-	//	
-	//	PF (MP ) [4.0] (MP2.0)
-	//	[3.0] (MP2.0)
-	//	[2.0] (MP1.0)
-	//	[1.0] (MP1.0)
-	//	
-	//	PF -> PF 5
-	//	
-	//	PF (MP ) [5.0] (MP)
-	//	[4.0] (MP2.0)
-	//	[3.0] (MP2.0)
-	//	[2.0] (MP1.0)
-	//	[1.0] (MP1.0)
-	//	
-	
 	private void updateEntitiesHistory(NodeRef origNodeRef, NodeRef versionNodeRef) {
 		List<AssociationRef> assocRefs = nodeService.getSourceAssocs(origNodeRef, RegexQNamePattern.MATCH_ALL);
 
@@ -387,13 +363,16 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 					if( versionEntityNodeRef!=null && nodeService.hasAspect(versionEntityNodeRef,BeCPGModel.ASPECT_COMPOSITE_VERSION)){
 						
 
-						NodeRef entityNodeRef = new NodeRef( StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, nodeService.getPrimaryParent(versionEntityNodeRef).getParentRef().getId());
+						NodeRef entityNodeRef = new NodeRef( StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, (String) nodeService.getProperty(
+								nodeService.getPrimaryParent(versionEntityNodeRef).getParentRef(),ContentModel.PROP_NAME));
 						
 						if(nodeService.exists(entityNodeRef)) {
-						
+							
 							String entityVersionLabel = (String) nodeService.getProperty(versionEntityNodeRef, BeCPGModel.PROP_VERSION_LABEL);
 							String versionLabel = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_VERSION_LABEL);
+							
 							if(entityVersionLabel!=null && !entityVersionLabel.equals(versionLabel)) {	
+															
 								nodeService.removeAssociation(assocRef.getSourceRef(), assocRef.getTargetRef(), assocRef.getTypeQName());
 								nodeService.createAssociation(assocRef.getSourceRef(), versionNodeRef, assocRef.getTypeQName());
 							}
