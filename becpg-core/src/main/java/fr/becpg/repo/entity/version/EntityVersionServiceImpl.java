@@ -30,6 +30,7 @@ import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.cmr.rule.RuleService;
 import org.alfresco.service.cmr.rule.RuleType;
 import org.alfresco.service.cmr.security.AuthenticationService;
@@ -347,6 +348,32 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	}
 
 	
+	
+	
+	//	
+	//	
+	//	PF (MP ) [4.0] (MP)
+	//			[3.0] (MP)
+	//			[2.0] (MP1.0)
+	//			[1.0](MP1.0)
+	//
+	//	MP -> MP 2.0
+	//	
+	//	
+	//	PF (MP ) [4.0] (MP2.0)
+	//	[3.0] (MP2.0)
+	//	[2.0] (MP1.0)
+	//	[1.0] (MP1.0)
+	//	
+	//	PF -> PF 5
+	//	
+	//	PF (MP ) [5.0] (MP)
+	//	[4.0] (MP2.0)
+	//	[3.0] (MP2.0)
+	//	[2.0] (MP1.0)
+	//	[1.0] (MP1.0)
+	//	
+	
 	private void updateEntitiesHistory(NodeRef origNodeRef, NodeRef versionNodeRef) {
 		List<AssociationRef> assocRefs = nodeService.getSourceAssocs(origNodeRef, RegexQNamePattern.MATCH_ALL);
 
@@ -355,12 +382,22 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			try {
 					
 				if(assocRef!=null && assocRef.getTargetRef()!=null && !assocRef.getTargetRef().equals(versionNodeRef)){
-					NodeRef entityNodeRef = entityService.getEntityNodeRef(assocRef.getSourceRef(), nodeService.getType(assocRef.getSourceRef()));
-					
-					if( entityNodeRef!=null && nodeService.hasAspect(entityNodeRef,BeCPGModel.ASPECT_COMPOSITE_VERSION)){
+					NodeRef versionEntityNodeRef = entityService.getEntityNodeRef(assocRef.getSourceRef(), nodeService.getType(assocRef.getSourceRef()));
+				
+					if( versionEntityNodeRef!=null && nodeService.hasAspect(versionEntityNodeRef,BeCPGModel.ASPECT_COMPOSITE_VERSION)){
 						
-						nodeService.removeAssociation(assocRef.getSourceRef(), assocRef.getTargetRef(), assocRef.getTypeQName());
-						nodeService.createAssociation(assocRef.getSourceRef(), versionNodeRef, assocRef.getTypeQName());
+
+						NodeRef entityNodeRef = new NodeRef( StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, nodeService.getPrimaryParent(versionEntityNodeRef).getParentRef().getId());
+						
+						if(nodeService.exists(entityNodeRef)) {
+						
+							String entityVersionLabel = (String) nodeService.getProperty(versionEntityNodeRef, BeCPGModel.PROP_VERSION_LABEL);
+							String versionLabel = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_VERSION_LABEL);
+							if(entityVersionLabel!=null && !entityVersionLabel.equals(versionLabel)) {	
+								nodeService.removeAssociation(assocRef.getSourceRef(), assocRef.getTargetRef(), assocRef.getTypeQName());
+								nodeService.createAssociation(assocRef.getSourceRef(), versionNodeRef, assocRef.getTypeQName());
+							}
+						}
 					}
 				}
 			} catch(AssociationExistsException e){
@@ -560,6 +597,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		return entityVersions;
 	}
 
+	
+
 	/**
 	 * Get the versions sort by date and node-ide.
 	 *
@@ -736,9 +775,9 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 			NodeRef versionNodeRef = versionAssoc.getChildRef();
 			String entityVersionLabel = (String) nodeService.getProperty(versionNodeRef, BeCPGModel.PROP_VERSION_LABEL);
-			logger.debug("versionLabel: " + version.getVersionLabel() + " - entityVersionLabel: " + entityVersionLabel);
-
+		
 			if (version.getVersionLabel().equals(entityVersionLabel)) {
+				logger.debug("versionNodeRef:"+ versionNodeRef + " - versionLabel: " + version.getVersionLabel() + " - entityVersionLabel: " + entityVersionLabel);
 				return versionNodeRef;
 			}
 		}
