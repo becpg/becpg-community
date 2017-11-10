@@ -15,6 +15,7 @@ import org.alfresco.repo.domain.qname.QNameDAO;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.version.Version2Model;
+import org.alfresco.repo.version.VersionModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.cmr.rule.RuleService;
@@ -119,7 +120,7 @@ public class SupplierAccountRefPatch extends AbstractBeCPGPatch {
 				@Override
 				public void process(NodeRef dataListNodeRef) throws Throwable {
 					if (nodeService.exists(dataListNodeRef)  && dataListNodeRef.getStoreRef().getProtocol().equals(StoreRef.PROTOCOL_WORKSPACE)
-							&&  ! dataListNodeRef.getStoreRef().getIdentifier().equals( Version2Model.STORE_ID)) {
+							&&  ! ( dataListNodeRef.getStoreRef().getProtocol().equals(VersionModel.STORE_PROTOCOL) || dataListNodeRef.getStoreRef().getIdentifier().equals(Version2Model.STORE_ID))) {
 						AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 						policyBehaviourFilter.disableBehaviour();
 						nodeService.addAspect(dataListNodeRef, PLMModel.ASPECT_SUPPLIERS_ACCOUNTREF, new HashMap<>());
