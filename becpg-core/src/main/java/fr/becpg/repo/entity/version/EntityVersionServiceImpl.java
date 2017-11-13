@@ -320,7 +320,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			
 			if(!isInitialVersion){
 			
-				updateEntitiesHistory(origNodeRef, versionNodeRef);
+				updateEntitiesHistory(origNodeRef);
 			
 				entityActivityService.postVersionActivity(origNodeRef, versionNodeRef, versionLabel);
 			}	
@@ -350,9 +350,15 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 	
 	
-	private void updateEntitiesHistory(NodeRef origNodeRef, NodeRef versionNodeRef) {
+	private void updateEntitiesHistory(NodeRef origNodeRef) {
 		List<AssociationRef> assocRefs = nodeService.getSourceAssocs(origNodeRef, RegexQNamePattern.MATCH_ALL);
 
+		List<EntityVersion> versions  = getAllVersions(origNodeRef);
+		
+		if(versions!=null && versions.size()>0) {
+		
+		NodeRef versionNodeRef = versions.get(0).getEntityVersionNodeRef();
+			
 		for (AssociationRef assocRef : assocRefs) {
 			policyBehaviourFilter.disableBehaviour(assocRef.getSourceRef(), ContentModel.ASPECT_AUDITABLE);
 			try {
@@ -372,6 +378,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 							String versionLabel = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_VERSION_LABEL);
 							
 							if(entityVersionLabel!=null && !entityVersionLabel.equals(versionLabel)) {	
+								
 															
 								nodeService.removeAssociation(assocRef.getSourceRef(), assocRef.getTargetRef(), assocRef.getTypeQName());
 								nodeService.createAssociation(assocRef.getSourceRef(), versionNodeRef, assocRef.getTypeQName());
@@ -384,6 +391,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			}	finally {
 				policyBehaviourFilter.enableBehaviour(assocRef.getSourceRef(), ContentModel.ASPECT_AUDITABLE);
 			}
+		}
 		}
 		
 	}
@@ -551,7 +559,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	@Override
 	public List<EntityVersion> getAllVersions(NodeRef entityNodeRef) {
 
-		List<EntityVersion> entityVersions = new ArrayList<>();
+		List<EntityVersion> entityVersions = new LinkedList<>();
 		if (!nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_WORKING_COPY) && !nodeService.hasAspect(entityNodeRef,BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
 			VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
 
@@ -591,7 +599,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	public List<NodeRef> buildVersionHistory(NodeRef versionHistoryRef, NodeRef nodeRef) {
 
 		List<ChildAssociationRef> versionAssocs = getVersionAssocs(versionHistoryRef, true);
-		List<NodeRef> versionRefs = new ArrayList<>();
+		List<NodeRef> versionRefs = new LinkedList<>();
 
 		for (ChildAssociationRef versionAssoc : versionAssocs) {
 

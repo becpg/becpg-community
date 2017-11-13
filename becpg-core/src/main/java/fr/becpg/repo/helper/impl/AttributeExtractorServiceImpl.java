@@ -631,7 +631,9 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				} else if (type != null) {
 					tmp.put("metadata", extractMetadata(type, nodeRef));
 				}
-				if (nodeService.hasAspect(nodeRef, ContentModel.ASPECT_VERSIONABLE)) {
+				if(nodeService.hasAspect(nodeRef,BeCPGModel.ASPECT_COMPOSITE_VERSION)){
+					tmp.put("version", properties.get(BeCPGModel.PROP_VERSION_LABEL));
+				} else if (nodeService.hasAspect(nodeRef, ContentModel.ASPECT_VERSIONABLE)) {
 					tmp.put("version", properties.get(ContentModel.PROP_VERSION_LABEL));
 				}
 				tmp.put("displayValue", displayName);
@@ -702,9 +704,13 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		QName type = nodeService.getType(nodeRef);
 
 		tmp.put("metadata", extractMetadata(type, nodeRef));
-		if (nodeService.hasAspect(nodeRef, ContentModel.ASPECT_VERSIONABLE)) {
+		
+		if(nodeService.hasAspect(nodeRef,BeCPGModel.ASPECT_COMPOSITE_VERSION)){
+			tmp.put("version",nodeService.getProperty(nodeRef,BeCPGModel.PROP_VERSION_LABEL));
+		} else if (nodeService.hasAspect(nodeRef, ContentModel.ASPECT_VERSIONABLE)) {
 			tmp.put("version", nodeService.getProperty(nodeRef, ContentModel.PROP_VERSION_LABEL));
 		}
+		
 
 		tmp.put("displayValue", extractPropName(type, nodeRef));
 		tmp.put("value", nodeRef.toString());
