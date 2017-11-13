@@ -33,6 +33,7 @@ import org.alfresco.service.cmr.model.FileExistsException;
 import org.alfresco.service.cmr.model.FileNotFoundException;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.datatype.DefaultTypeConverter;
 import org.alfresco.service.cmr.repository.datatype.TypeConverter;
 import org.alfresco.service.namespace.QName;
@@ -108,14 +109,14 @@ public class NCWorkflowUtils {
 				String assocName =assocQname.toPrefixString(serviceRegistry.getNamespaceService()).replaceFirst(":", "_");
 				if (task.getVariable(assocName) instanceof ActivitiScriptNode) {
 					ActivitiScriptNode node = (ActivitiScriptNode) task.getVariable(assocName);
-					if (node != null) {
+					if (node != null && serviceRegistry.getNodeService().exists(node.getNodeRef())) {
 						associationService.update(ncNodeRef, assocQname, node.getNodeRef());
 					} 
 				} else {
 					@SuppressWarnings("unchecked")
 					List<ActivitiScriptNode> nodes = (ArrayList<ActivitiScriptNode>) task.getVariable(assocName);
 					if (nodes != null) {
-						associationService.update(ncNodeRef, assocQname, convertList(nodes));
+						associationService.update(ncNodeRef, assocQname, convertList(nodes, serviceRegistry.getNodeService()));
 					}
 				}
 			}
@@ -143,11 +144,13 @@ public class NCWorkflowUtils {
 
 	}
 
-	private static List<NodeRef> convertList(List<ActivitiScriptNode> nodes) {
+	private static List<NodeRef> convertList(List<ActivitiScriptNode> nodes, NodeService nodeService) {
 		List<NodeRef> ret = new ArrayList<>();
 		
 		for(ActivitiScriptNode node : nodes){
-			ret.add(node.getNodeRef());
+			if( nodeService.exists(node.getNodeRef())) {
+				ret.add(node.getNodeRef());
+			}
 		}
 		
 		return ret;
