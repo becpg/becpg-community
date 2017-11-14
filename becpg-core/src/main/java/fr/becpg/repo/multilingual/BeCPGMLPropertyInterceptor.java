@@ -248,7 +248,7 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
             Map<QName, Serializable> convertedProperties = convertInboundProperties(
                     null,
                     newProperties,
-                    contentLangLocale,
+                    contentLocale,
                     nodeRef,
                     pivotNodeRef);
             // Now complete the call by passing the converted properties
@@ -270,7 +270,7 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
             Map<QName, Serializable> convertedProperties = convertInboundProperties(
                     currentProperties,
                     newProperties,
-                    contentLangLocale,
+                    contentLocale,
                     nodeRef,
                     pivotNodeRef);
             // Now complete the call by passing the converted properties
@@ -415,6 +415,7 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
                 // No close matches for the locale - go for the default locale
                 locale = I18NUtil.getLocale();
                 match = MLTextHelper.getNearestLocale(locale, locales);
+             
                 if (match == null)
                 {
                     // just get any locale
