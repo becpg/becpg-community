@@ -848,7 +848,7 @@
       <microbioList mblMaxi="4000.0" name="721beacf-71ff-4730-8b22-42341d56ade2" node-dbid="101906" locale="fr_FR" mblValue="1000.0" sort="4" mblUnit="UFC/g" mblMicrobio="Coliforme totaux" legalName="">
         <description prefix="cm"><![CDATA[]]></description>
       </microbioList>
-      <microbioList mblMaxi="1000.0" name="e0c9b242-f2d3-4634-9f8a-d9f9b108bd08" node-dbid="101907" locale="fr_FR" mblValue="100.0" sort="5" mblUnit="UFC/g" mblMicrobio="Escherichia coli">
+      <microbioList mblMaxi="1000.1" name="e0c9b242-f2d3-4634-9f8a-d9f9b108bd08" node-dbid="101907" locale="fr_FR" mblValue="100.0" sort="5" mblUnit="UFC/g" mblMicrobio="Escherichia coli">
         <description prefix="cm"><![CDATA[]]></description>
       </microbioList>
       <microbioList mblMaxi="" name="6115f00b-9e75-43e9-a01f-f1c524050abe" node-dbid="101908" locale="fr_FR" mblValue="" sort="6" mblUnit="UFC/25g" mblMicrobio="Salmonelle" legalName="">
