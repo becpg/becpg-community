@@ -1847,6 +1847,8 @@
                                                                             fn : function EntityDataGrid_onActionEdit_refreshFailure(
                                                                                     response)
                                                                             {
+                                                                            	me.queryExecutionId = null;
+                                                                            	
                                                                                 // Insert
                                                                                 // after
                                                                                 me._updateDataGrid.call(me,
