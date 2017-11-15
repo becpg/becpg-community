@@ -32,6 +32,12 @@
 					<targetPackageRoot>org.alfresco.components.wizard</targetPackageRoot>
 					<sourcePackageRoot>org.alfresco.components.custom-wizard</sourcePackageRoot>
 				</customization>
+				<customization>
+					<targetPackageRoot>org.alfresco.components.discussions
+					</targetPackageRoot>
+					<sourcePackageRoot>org.alfresco.components.custom-create-topic
+					</sourcePackageRoot>
+				</customization>
 			</customizations>
 		</module>
 	</modules>
