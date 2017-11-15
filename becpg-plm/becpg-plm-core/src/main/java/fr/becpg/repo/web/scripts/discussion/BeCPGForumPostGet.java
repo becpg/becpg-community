@@ -53,7 +53,7 @@ public class BeCPGForumPostGet extends AbstractDiscussionWebScript {
 			
 			String supplierUserName = supplierAccountRef.get("userName") != null ? supplierAccountRef.get("userName") : "";
 			if(isCurrentUserExternal() && !AuthenticationUtil.getFullyAuthenticatedUser().equals(supplierUserName)) {
-				String error = "Not allawed for this user";
+				String error = "Not allowed for this user";
 				throw new WebScriptException(Status.STATUS_BAD_REQUEST, error);
 			}
 			
