@@ -387,6 +387,10 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 							}
 
 							Element ingLabelingElt = ingListElt.addElement(PLMModel.TYPE_INGLABELINGLIST.getLocalName());
+							
+
+							loadDataListItemAttributes(dataItem, ingLabelingElt, images);
+							
 							ingLabelingElt.addAttribute(ATTR_LANGUAGE, locale.getDisplayLanguage());
 							ingLabelingElt.addAttribute(ATTR_LANGUAGE_CODE, locale.toString());
 							addCDATA(ingLabelingElt, PLMModel.ASSOC_ILL_GRP, grpName, null);
