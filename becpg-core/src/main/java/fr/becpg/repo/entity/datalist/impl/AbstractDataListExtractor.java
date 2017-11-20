@@ -159,7 +159,9 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 
 			ret.put(PROP_NODE, nodeRef);
 
-			if (nodeService.hasAspect(nodeRef, ContentModel.ASPECT_VERSIONABLE)) {
+			if(nodeService.hasAspect(nodeRef,BeCPGModel.ASPECT_COMPOSITE_VERSION)){
+				ret.put(PROP_VERSION, properties.get(BeCPGModel.PROP_VERSION_LABEL));
+			} else if (nodeService.hasAspect(nodeRef, ContentModel.ASPECT_VERSIONABLE)) {
 				ret.put(PROP_VERSION, properties.get(ContentModel.PROP_VERSION_LABEL));
 			}
 

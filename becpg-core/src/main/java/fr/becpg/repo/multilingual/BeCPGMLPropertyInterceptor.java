@@ -123,7 +123,7 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
             logger.debug("Intercepting method " + invocation.getMethod().getName() + " using content filter " + I18NUtil.getContentLocale());
         }
         
-        Locale contentLangLocale = I18NUtil.getContentLocaleLang();
+        Locale contentLocale = I18NUtil.getContentLocale();
         
         Object ret = null;
         
@@ -184,7 +184,7 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
             Map<QName, Serializable> convertedProperties = convertInboundProperties(
                     currentProperties,
                     newProperties,
-                    contentLangLocale,
+                    contentLocale,
                     nodeRef,
                     pivotNodeRef);
             // Now complete the call by passing the converted properties
@@ -205,7 +205,7 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
             Map<QName, Serializable> convertedProperties = convertInboundProperties(
                     currentProperties,
                     newProperties,
-                    contentLangLocale,
+                    contentLocale,
                     nodeRef,
                     pivotNodeRef);
             // Now complete the call by passing the converted properties
@@ -222,7 +222,7 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
             NodeRef pivotNodeRef = getPivotNodeRef(nodeRef);
             
             // Convert the property
-            inboundValue = convertInboundProperty(contentLangLocale, nodeRef, pivotNodeRef, propertyQName, inboundValue, null);
+            inboundValue = convertInboundProperty(contentLocale, nodeRef, pivotNodeRef, propertyQName, inboundValue, null);
             
             // Pass this through to the node service
             nodeService.setProperty(nodeRef, propertyQName, inboundValue);
@@ -248,7 +248,7 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
             Map<QName, Serializable> convertedProperties = convertInboundProperties(
                     null,
                     newProperties,
-                    contentLangLocale,
+                    contentLocale,
                     nodeRef,
                     pivotNodeRef);
             // Now complete the call by passing the converted properties
@@ -270,7 +270,7 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
             Map<QName, Serializable> convertedProperties = convertInboundProperties(
                     currentProperties,
                     newProperties,
-                    contentLangLocale,
+                    contentLocale,
                     nodeRef,
                     pivotNodeRef);
             // Now complete the call by passing the converted properties
