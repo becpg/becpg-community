@@ -1,6 +1,6 @@
 <import resource="classpath:/alfresco/templates/org/alfresco/import/alfresco-util.js">
 
-function getActivityParameters(nodeRef, entityNodeRef)
+function getActivityParameters(nodeRef, entityNodeRef, defaultValue)
 {
    var cm = "{http://www.alfresco.org/model/content/1.0}";
    var pjt = "{http://www.bcpg.fr/model/project/1.0}";
@@ -27,9 +27,9 @@ function getActivityParameters(nodeRef, entityNodeRef)
       {
          metadata = AlfrescoUtil.getMetaData(nodeRef, {});
          entityNodeRefMetadata = AlfrescoUtil.getMetaData(entityNodeRef, {});
-         if (metadata.properties && entityNodeRefMetadata.properties)
+         if ( entityNodeRefMetadata.properties)
          {
-              if(metadata.type == pjt+"taskList"){
+              if(metadata.properties && metadata.type == pjt+"taskList"){
                 return (
                 {
                   
@@ -42,7 +42,7 @@ function getActivityParameters(nodeRef, entityNodeRef)
                    }
                 });
                
-            } else  if (metadata.type == pjt+"deliverableList") {
+            } else  if (metadata.properties && metadata.type == pjt+"deliverableList") {
                return (
                {
                   itemTitle: metadata.properties[pjt+"dlDescription"]+" ["+entityNodeRefMetadata.properties[cm + 'name']+"]",
@@ -70,7 +70,7 @@ function getActivityParameters(nodeRef, entityNodeRef)
       }
       
    
-   return null;
+   return defaultValue;
 }
 
 function main()
@@ -106,7 +106,7 @@ function main()
    var documentDetails = AlfrescoUtil.getNodeDetails(model.nodeRef , model.site);
    if (documentDetails)
    {
-      model.activityParameters = getActivityParameters(model.nodeRef, model.entityNodeRef );
+      model.activityParameters = getActivityParameters(model.nodeRef, model.entityNodeRef, null );
       
       if(model.site == null && documentDetails.item.location !=null && documentDetails.item.location.path !=null){
          

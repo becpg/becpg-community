@@ -20,27 +20,32 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
-import fr.becpg.model.QualityModel;
+import fr.becpg.model.ReportModel;
+import fr.becpg.report.client.ReportFormat;
 
 /**
- *
+ * 
  * @author matthieu
- *
+ * 
  */
-public class QualityControlTypePatch extends AbstractBeCPGPatch {
+public class ReportTypePatch extends AbstractBeCPGPatch {
 
-	private static final Log logger = LogFactory.getLog(QualityControlTypePatch.class);
-	private static final String MSG_SUCCESS = "patch.bcpg.qualityControlTypePatch.result";
+	private static final Log logger = LogFactory.getLog(ReportTypePatch.class);
+	private static final String MSG_SUCCESS = "patch.bcpg.reportTypePatch.result";
 
 	private NodeDAO nodeDAO;
 	private PatchDAO patchDAO;
 	private QNameDAO qnameDAO;
 	private BehaviourFilter policyBehaviourFilter;
 	private RuleService ruleService;
+	
+	
 
 	private final int batchThreads = 3;
 	private final int batchSize = 40;
 	private final long count = batchThreads * batchSize;
+	
+	
 
 	public void setRuleService(RuleService ruleService) {
 		this.ruleService = ruleService;
@@ -55,63 +60,22 @@ public class QualityControlTypePatch extends AbstractBeCPGPatch {
 			final long maxNodeId = getPatchDAO().getMaxAdmNodeID();
 
 			long minSearchNodeId = 0;
-
-			final Pair<Long, QName> val = getQnameDAO().getQName(QualityModel.TYPE_CONTROL_CHARACT);
-
-			@Override
-			public int getTotalEstimatedWorkSize() {
-				return result.size();
-			}
-
-			@Override
-			public Collection<NodeRef> getNextWork() {
-				if (val != null) {
-					Long typeQNameId = val.getFirst();
-
-					result.clear();
-
-					while (result.isEmpty() && (minSearchNodeId < maxNodeId)) {
-						List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, minSearchNodeId + count);
-
-						for (Long nodeid : nodeids) {
-							NodeRef.Status status = getNodeDAO().getNodeIdStatus(nodeid);
-							if (!status.isDeleted()) {
-								result.add(status.getNodeRef());
-							}
-						}
-						minSearchNodeId = minSearchNodeId + count;
-					}
-				}
-
-				return result;
-			}
-		};
-
-		BatchProcessWorkProvider<NodeRef> workProvider2 = new BatchProcessWorkProvider<NodeRef>() {
-			final List<NodeRef> result = new ArrayList<>();
-
-			final long maxNodeId = getPatchDAO().getMaxAdmNodeID();
-
-			long minSearchNodeId = 0;
 			long maxSearchNodeId = count;
 
-			final Pair<Long, QName> val = getQnameDAO().getQName(QualityModel.ASPECT_CONTROL_LIST);
+			final Pair<Long, QName> val = getQnameDAO().getQName(ReportModel.TYPE_REPORT_TPL);
 
-			@Override
 			public int getTotalEstimatedWorkSize() {
 				return result.size();
 			}
 
-			@Override
 			public Collection<NodeRef> getNextWork() {
 				if (val != null) {
 					Long typeQNameId = val.getFirst();
 
 					result.clear();
 
-					while (result.isEmpty() && (minSearchNodeId < maxNodeId)) {
-
-						List<Long> nodeids = getPatchDAO().getNodesByAspectQNameId(typeQNameId, minSearchNodeId, maxSearchNodeId);
+					while (result.isEmpty() && minSearchNodeId < maxNodeId) {
+						List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, maxSearchNodeId);
 
 						for (Long nodeid : nodeids) {
 							NodeRef.Status status = getNodeDAO().getNodeIdStatus(nodeid);
@@ -128,47 +92,35 @@ public class QualityControlTypePatch extends AbstractBeCPGPatch {
 			}
 		};
 
-		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("QualityControlTypePatch", transactionService.getRetryingTransactionHelper(),
-				workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 500);
-
-		BatchProcessor<NodeRef> batchProcessor2 = new BatchProcessor<>("QualityControlTypePatch", transactionService.getRetryingTransactionHelper(),
-				workProvider2, batchThreads, batchSize, applicationEventPublisher, logger, 500);
+		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("ReportTypePatch", transactionService.getRetryingTransactionHelper(),
+				workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 1000);
 
 		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
 
-			@Override
 			public void afterProcess() throws Throwable {
 				ruleService.enableRules();
-
+				
 			}
 
-			@Override
 			public void beforeProcess() throws Throwable {
 				ruleService.disableRules();
 			}
 
-			@Override
 			public String getIdentifier(NodeRef entry) {
 				return entry.toString();
 			}
 
-			@Override
 			public void process(NodeRef dataListNodeRef) throws Throwable {
 				if (nodeService.exists(dataListNodeRef)) {
 					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 					policyBehaviourFilter.disableBehaviour();
-					String type = (String) nodeService.getProperty(dataListNodeRef, QualityModel.PROP_CONTROL_CHARACT_TYPE);
-					if ((type != null) && !type.isEmpty() && !type.startsWith("bcpg_")) {
-						nodeService.setProperty(dataListNodeRef, QualityModel.PROP_CONTROL_CHARACT_TYPE, type.toLowerCase());
-						if(type == "Poids"){
-							nodeService.setProperty(dataListNodeRef, QualityModel.PROP_CONTROL_CHARACT_TYPE, "weight");
-						}
+					String format = (String) nodeService.getProperty(dataListNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
+					if (format != null && "XLS".equals(format)) {
+						nodeService.setProperty(dataListNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT, ReportFormat.XLSX.toString());
 					}
-
-					type = (String) nodeService.getProperty(dataListNodeRef, QualityModel.PROP_CL_TYPE);
-
-					if ((type != null) && !type.isEmpty() && !type.startsWith("bcpg_")) {
-						nodeService.setProperty(dataListNodeRef, QualityModel.PROP_CL_TYPE, type.toLowerCase());
+					
+					if (format != null && "DOC".equals(format)) {
+						nodeService.setProperty(dataListNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT, ReportFormat.DOCX.toString());
 					}
 
 				} else {
@@ -177,11 +129,12 @@ public class QualityControlTypePatch extends AbstractBeCPGPatch {
 			}
 
 		};
+
+		// Now set the batch processor to work
+
 		batchProcessor.process(worker, true);
-		batchProcessor2.process(worker, true);
 
 		return I18NUtil.getMessage(MSG_SUCCESS);
-
 	}
 
 	public NodeDAO getNodeDAO() {
