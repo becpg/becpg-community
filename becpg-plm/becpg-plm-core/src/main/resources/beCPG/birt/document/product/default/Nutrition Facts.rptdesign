@@ -1005,8 +1005,7 @@
                 </structure>
                 <structure>
                     <property name="columnName">carbohydratebydifference</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
+                    <property name="analysis">measure</property>
                     <text-property name="heading">carbohydratebydifference</text-property>
                 </structure>
                 <structure>
@@ -1029,7 +1028,7 @@
                 </structure>
                 <structure>
                     <property name="columnName">sodiumna</property>
-                    <property name="analysis">dimension</property>
+                    <property name="analysis">measure</property>
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">sodiumna</text-property>
                 </structure>
@@ -1102,6 +1101,7 @@
                 <structure>
                     <property name="columnName">salt</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">salt</text-property>
                 </structure>
             </list-property>
@@ -1121,7 +1121,7 @@
                     <structure>
                         <property name="position">3</property>
                         <property name="name">carbohydratebydifference</property>
-                        <property name="dataType">string</property>
+                        <property name="dataType">float</property>
                     </structure>
                     <structure>
                         <property name="position">4</property>
@@ -1141,7 +1141,7 @@
                     <structure>
                         <property name="position">7</property>
                         <property name="name">sodiumna</property>
-                        <property name="dataType">string</property>
+                        <property name="dataType">float</property>
                     </structure>
                     <structure>
                         <property name="position">8</property>
@@ -1225,8 +1225,8 @@
                     <property name="position">3</property>
                     <property name="name">carbohydratebydifference</property>
                     <property name="nativeName">carbohydratebydifference</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
                 </structure>
                 <structure>
                     <property name="position">4</property>
@@ -1253,8 +1253,8 @@
                     <property name="position">7</property>
                     <property name="name">sodiumna</property>
                     <property name="nativeName">sodiumna</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
                 </structure>
                 <structure>
                     <property name="position">8</property>
@@ -1341,7 +1341,7 @@
                     <property name="nativeDataType">8</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/nutLists]#:#{energykj;STRING;/@energykj},{energykcal;STRING;/@energykcal},{carbohydratebydifference;STRING;/@carbohydratebydifference},{totallipidfat;STRING;/@totallipidfat},{protein;STRING;/@protein},{fattyacidstotalsaturated;STRING;/@fattyacidstotalsaturated},{sodiumna;STRING;/@sodiumna},{sugarstotal;STRING;/@sugarstotal},{phosphore;DOUBLE;/@phosphore},{alcooléthanol;DOUBLE;/@alcooléthanol},{servingSize;DOUBLE;../../servingSize},{cholesterol;DOUBLE;/@cholesterol},{fibertotaldietary;DOUBLE;/@fibertotaldietary},{vitaminea;DOUBLE;/@vitaminea},{vitaminectotal;DOUBLE;/@vitaminectotal},{calcium;DOUBLE;/@calcium},{irontotal;DOUBLE;/@irontotal},{potassiumk;DOUBLE;/@potassiumk},{salt;DOUBLE;/@salt}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/nutLists]#:#{energykj;STRING;/@energykj},{energykcal;STRING;/@energykcal},{carbohydratebydifference;DOUBLE;/@carbohydratebydifference},{totallipidfat;STRING;/@totallipidfat},{protein;STRING;/@protein},{fattyacidstotalsaturated;STRING;/@fattyacidstotalsaturated},{sodiumna;DOUBLE;/@sodiumna},{sugarstotal;STRING;/@sugarstotal},{phosphore;DOUBLE;/@phosphore},{alcooléthanol;DOUBLE;/@alcooléthanol},{servingSize;DOUBLE;../../servingSize},{cholesterol;DOUBLE;/@cholesterol},{fibertotaldietary;DOUBLE;/@fibertotaldietary},{vitaminea;DOUBLE;/@vitaminea},{vitaminectotal;DOUBLE;/@vitaminectotal},{calcium;DOUBLE;/@calcium},{irontotal;DOUBLE;/@irontotal},{potassiumk;DOUBLE;/@potassiumk},{salt;DOUBLE;/@salt}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -1660,7 +1660,7 @@
             <property name="leftMargin">0.5cm</property>
             <property name="bottomMargin">0.5cm</property>
             <property name="rightMargin">0.5cm</property>
-            <property name="height">125mm</property>
+            <property name="height">140mm</property>
             <property name="width">87mm</property>
             <property name="headerHeight">0in</property>
         </simple-master-page>
@@ -1717,8 +1717,9 @@
                 <structure>
                     <property name="name">sodiumna</property>
                     <text-property name="displayName">sodiumna</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["sodiumna"]</expression>
-                    <property name="dataType">string</property>
+                    <expression name="expression" type="javascript">dataSetRow["sodiumna"]/ 100 * dataSetRow["servingSize"]</expression>
+                    <property name="dataType">float</property>
+                    <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">sugarstotal</property>
@@ -1796,6 +1797,24 @@
                     <property name="dataType">float</property>
                     <property name="allowExport">true</property>
                 </structure>
+                <structure>
+                    <property name="name">sodiumna_1</property>
+                    <text-property name="displayName">sodiumna</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["sodiumna"]</expression>
+                    <property name="dataType">float</property>
+                </structure>
+                <structure>
+                    <property name="name">totalcarbohydrate</property>
+                    <expression name="expression" type="javascript">(dataSetRow["carbohydratebydifference"]+dataSetRow["fibertotaldietary"])/ 100 * dataSetRow["servingSize"]</expression>
+                    <property name="dataType">float</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">totalcarbohydrateGDA</property>
+                    <expression name="expression" type="javascript">(dataSetRow["carbohydratebydifference"]+dataSetRow["fibertotaldietary"])* dataSetRow["servingSize"] / 300</expression>
+                    <property name="dataType">float</property>
+                    <property name="allowExport">true</property>
+                </structure>
             </list-property>
             <column id="3409">
                 <property name="width">2.28125in</property>
@@ -1866,84 +1885,81 @@
                 <cell id="3433"/>
                 <cell id="3787"/>
             </row>
-            <row id="3912">
-                <property name="borderTopStyle">solid</property>
-                <property name="borderTopWidth">medium</property>
-                <cell id="3913">
-                    <label id="3558">
-                        <property name="fontWeight">bold</property>
-                        <property name="display">inline</property>
-                        <text-property name="text">Calories</text-property>
-                    </label>
-                    <label id="3953">
-                        <property name="display">inline</property>
-                    </label>
-                    <data id="3816">
-                        <structure name="numberFormat">
-                            <property name="category">Fixed</property>
-                            <property name="pattern">###0{RoundingMode=HALF_EVEN}</property>
-                        </structure>
-                        <property name="textAlign">right</property>
-                        <property name="display">inline</property>
-                        <property name="dataSet">nutList2</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">energykcal</property>
-                                <text-property name="displayName">energykcal</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["energykcal"] / 100 * dataSetRow["servingSize"]</expression>
-                                <property name="dataType">float</property>
-                                <property name="allowExport">true</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">energykcal</property>
-                    </data>
-                    <label id="3821">
-                        <property name="display">inline</property>
-                        <text-property name="text">g</text-property>
-                    </label>
-                </cell>
-                <cell id="3917"/>
-                <cell id="3918"/>
-            </row>
-            <row id="3436">
+            <row id="3986">
                 <property name="borderBottomStyle">solid</property>
                 <property name="borderBottomWidth">medium</property>
-                <cell id="3437">
-                    <property name="paddingLeft">20pt</property>
+                <property name="borderTopStyle">solid</property>
+                <property name="borderTopWidth">thin</property>
+                <cell id="3987">
+                    <property name="colSpan">3</property>
+                    <property name="rowSpan">1</property>
+                    <property name="paddingLeft">1pt</property>
                     <property name="textAlign">left</property>
-                    <label id="3559">
-                        <property name="display">inline</property>
-                        <text-property name="text">from Fat</text-property>
-                    </label>
-                    <label id="3955">
-                        <property name="display">inline</property>
-                    </label>
-                    <data id="3902">
-                        <structure name="numberFormat">
-                            <property name="category">Fixed</property>
-                            <property name="pattern">###0{RoundingMode=HALF_EVEN}</property>
-                        </structure>
-                        <property name="textAlign">right</property>
-                        <property name="display">inline</property>
-                        <property name="dataSet">nutList2</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">totallipidfat</property>
-                                <text-property name="displayName">totallipidfat</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["totallipidfat"] / 100 * dataSetRow["servingSize"] * 4</expression>
-                                <property name="dataType">float</property>
-                                <property name="allowExport">true</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">totallipidfat</property>
-                    </data>
-                    <label id="3903">
-                        <property name="display">inline</property>
-                        <text-property name="text">g</text-property>
-                    </label>
+                    <grid id="3990">
+                        <property name="width">100%</property>
+                        <column id="3991"/>
+                        <column id="3992"/>
+                        <row id="3993">
+                            <cell id="3994">
+                                <label id="3558">
+                                    <property name="fontWeight">bold</property>
+                                    <property name="display">inline</property>
+                                    <text-property name="text">Calories</text-property>
+                                </label>
+                                <label id="3953">
+                                    <property name="display">inline</property>
+                                </label>
+                                <data id="3816">
+                                    <structure name="numberFormat">
+                                        <property name="category">Fixed</property>
+                                        <property name="pattern">###0{RoundingMode=HALF_EVEN}</property>
+                                    </structure>
+                                    <property name="textAlign">right</property>
+                                    <property name="display">inline</property>
+                                    <property name="dataSet">nutList2</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">energykcal</property>
+                                            <text-property name="displayName">energykcal</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["energykcal"] / 100 * dataSetRow["servingSize"]</expression>
+                                            <property name="dataType">float</property>
+                                            <property name="allowExport">true</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">energykcal</property>
+                                </data>
+                            </cell>
+                            <cell id="3995">
+                                <label id="3559">
+                                    <property name="display">inline</property>
+                                    <text-property name="text">Calories from Fat</text-property>
+                                </label>
+                                <label id="3955">
+                                    <property name="display">inline</property>
+                                </label>
+                                <data id="3902">
+                                    <structure name="numberFormat">
+                                        <property name="category">Fixed</property>
+                                        <property name="pattern">###0{RoundingMode=HALF_EVEN}</property>
+                                    </structure>
+                                    <property name="textAlign">right</property>
+                                    <property name="display">inline</property>
+                                    <property name="dataSet">nutList2</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">totallipidfat</property>
+                                            <text-property name="displayName">totallipidfat</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["totallipidfat"] / 100 * dataSetRow["servingSize"] * 9</expression>
+                                            <property name="dataType">float</property>
+                                            <property name="allowExport">true</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">totallipidfat</property>
+                                </data>
+                            </cell>
+                        </row>
+                    </grid>
                 </cell>
-                <cell id="3440"/>
-                <cell id="3788"/>
             </row>
             <row id="3443">
                 <property name="borderBottomStyle">solid</property>
@@ -2153,32 +2169,23 @@
                     <label id="3564">
                         <property name="fontWeight">bold</property>
                         <property name="display">inline</property>
-                        <text-property name="text">Salt</text-property>
+                        <text-property name="text">Sodium</text-property>
                     </label>
                     <label id="3959">
                         <property name="display">inline</property>
                     </label>
-                    <data id="3919">
+                    <data id="3997">
                         <structure name="numberFormat">
                             <property name="category">Custom</property>
-                            <property name="pattern">#0.#</property>
+                            <property name="pattern">#0</property>
+                            <property name="locale">af</property>
                         </structure>
-                        <property name="textAlign">right</property>
                         <property name="display">inline</property>
-                        <property name="dataSet">nutList2</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">salt</property>
-                                <text-property name="displayName">salt</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["salt"]</expression>
-                                <property name="dataType">float</property>
-                            </structure>
-                        </list-property>
-                        <property name="resultSetColumn">salt</property>
+                        <property name="resultSetColumn">sodiumna</property>
                     </data>
                     <label id="3825">
                         <property name="display">inline</property>
-                        <text-property name="text">g</text-property>
+                        <text-property name="text">mg</text-property>
                     </label>
                 </cell>
                 <cell id="3482">
@@ -2193,7 +2200,7 @@
                             <structure>
                                 <property name="name">sodiumna</property>
                                 <text-property name="displayName">sodiumna</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["salt"] * dataSetRow["servingSize"] / 6</expression>
+                                <expression name="expression" type="javascript">dataSetRow["sodiumna"] * dataSetRow["servingSize"] / 2400</expression>
                                 <property name="dataType">float</property>
                                 <property name="allowExport">true</property>
                             </structure>
@@ -2278,31 +2285,50 @@
                 <property name="borderBottomStyle">solid</property>
                 <property name="borderBottomWidth">thin</property>
                 <cell id="3493">
+                    <property name="whiteSpace">pre</property>
                     <label id="3566">
                         <property name="fontWeight">bold</property>
+                        <property name="display">inline</property>
                         <text-property name="text">Total Carbohydrate</text-property>
                     </label>
                     <label id="3962">
                         <property name="display">inline</property>
                     </label>
-                    <data id="3830">
+                    <data id="4103">
                         <structure name="numberFormat">
-                            <property name="category">Fixed</property>
-                            <property name="pattern">###0{RoundingMode=HALF_EVEN}</property>
+                            <property name="category">Custom</property>
+                            <property name="pattern">#0</property>
                         </structure>
-                        <property name="textAlign">right</property>
                         <property name="display">inline</property>
                         <property name="dataSet">nutList2</property>
                         <list-property name="boundDataColumns">
                             <structure>
                                 <property name="name">carbohydratebydifference</property>
                                 <text-property name="displayName">carbohydratebydifference</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["carbohydratebydifference"] / 100 * dataSetRow["servingSize"]</expression>
+                                <expression name="expression" type="javascript">dataSetRow["carbohydratebydifference"]</expression>
+                                <property name="dataType">float</property>
+                                <property name="allowExport">true</property>
+                            </structure>
+                            <structure>
+                                <property name="name">servingSize</property>
+                                <text-property name="displayName">servingSize</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["servingSize"]</expression>
+                                <property name="dataType">float</property>
+                            </structure>
+                            <structure>
+                                <property name="name">fibertotaldietary</property>
+                                <text-property name="displayName">fibertotaldietary</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["fibertotaldietary"]</expression>
+                                <property name="dataType">float</property>
+                            </structure>
+                            <structure>
+                                <property name="name">totalcarbohydrate</property>
+                                <expression name="expression" type="javascript">(dataSetRow["carbohydratebydifference"]+dataSetRow["fibertotaldietary"])/100*dataSetRow["servingSize"]</expression>
                                 <property name="dataType">float</property>
                                 <property name="allowExport">true</property>
                             </structure>
                         </list-property>
-                        <property name="resultSetColumn">carbohydratebydifference</property>
+                        <property name="resultSetColumn">totalcarbohydrate</property>
                     </data>
                     <label id="3826">
                         <property name="display">inline</property>
@@ -2310,23 +2336,43 @@
                     </label>
                 </cell>
                 <cell id="3496">
-                    <data id="3900">
+                    <property name="textAlign">right</property>
+                    <data id="4106">
                         <structure name="numberFormat">
-                            <property name="category">Fixed</property>
-                            <property name="pattern">###0{RoundingMode=HALF_EVEN}</property>
+                            <property name="category">Custom</property>
+                            <property name="pattern">#0</property>
                         </structure>
                         <property name="textAlign">right</property>
+                        <property name="display">inline</property>
                         <property name="dataSet">nutList2</property>
                         <list-property name="boundDataColumns">
                             <structure>
                                 <property name="name">carbohydratebydifference</property>
                                 <text-property name="displayName">carbohydratebydifference</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["carbohydratebydifference"] * dataSetRow["servingSize"] / 300</expression>
+                                <expression name="expression" type="javascript">dataSetRow["carbohydratebydifference"]</expression>
+                                <property name="dataType">float</property>
+                                <property name="allowExport">true</property>
+                            </structure>
+                            <structure>
+                                <property name="name">servingSize</property>
+                                <text-property name="displayName">servingSize</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["servingSize"]</expression>
+                                <property name="dataType">float</property>
+                            </structure>
+                            <structure>
+                                <property name="name">fibertotaldietary</property>
+                                <text-property name="displayName">fibertotaldietary</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["fibertotaldietary"]</expression>
+                                <property name="dataType">float</property>
+                            </structure>
+                            <structure>
+                                <property name="name">totalcarbohydrate</property>
+                                <expression name="expression" type="javascript">(dataSetRow["carbohydratebydifference"]+dataSetRow["fibertotaldietary"])*dataSetRow["servingSize"]/300</expression>
                                 <property name="dataType">float</property>
                                 <property name="allowExport">true</property>
                             </structure>
                         </list-property>
-                        <property name="resultSetColumn">carbohydratebydifference</property>
+                        <property name="resultSetColumn">totalcarbohydrate</property>
                     </data>
                 </cell>
                 <cell id="3796">
@@ -2594,10 +2640,271 @@
                     <property name="colSpan">3</property>
                     <property name="rowSpan">1</property>
                     <property name="fontSize">9pt</property>
-                    <label id="3739">
+                    <property name="borderBottomStyle">none</property>
+                    <property name="borderLeftStyle">none</property>
+                    <property name="borderRightStyle">none</property>
+                    <property name="borderTopStyle">none</property>
+                    <grid id="3998">
                         <property name="fontSize">8pt</property>
-                        <text-property name="text">* Percent Daily Values are based on a 2,000 calorie diet. Your daily values may be higher or lower depending on your calorie needs.</text-property>
-                    </label>
+                        <property name="borderBottomStyle">none</property>
+                        <property name="borderLeftStyle">none</property>
+                        <property name="borderRightStyle">none</property>
+                        <property name="borderTopStyle">none</property>
+                        <property name="width">2.8958333333333335in</property>
+                        <column id="3999">
+                            <property name="width">1.0833333333333333in</property>
+                        </column>
+                        <column id="3410">
+                            <property name="width">0.5520833333333334in</property>
+                        </column>
+                        <column id="3784">
+                            <property name="width">0.3333333333333333in</property>
+                        </column>
+                        <column id="3411">
+                            <property name="width">0.3229166666666667in</property>
+                        </column>
+                        <column id="4000">
+                            <property name="width">0.375in</property>
+                        </column>
+                        <column id="4001">
+                            <property name="width">0.22916666666666666in</property>
+                        </column>
+                        <row id="4100">
+                            <cell id="4101">
+                                <property name="colSpan">6</property>
+                                <property name="rowSpan">1</property>
+                                <property name="fontSize">9pt</property>
+                                <label id="4102">
+                                    <property name="fontSize">8pt</property>
+                                    <text-property name="text">* Percent Daily Values are based on a 2,000 calorie diet. Your daily values may be higher or lower depending on your calorie needs.</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="3548">
+                            <cell id="3549"/>
+                            <cell id="3550">
+                                <label id="3740">
+                                    <text-property name="text">Calories</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3775">
+                                <property name="colSpan">2</property>
+                                <property name="rowSpan">1</property>
+                                <label id="3741">
+                                    <property name="textAlign">center</property>
+                                    <text-property name="text">2000</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3552">
+                                <property name="colSpan">2</property>
+                                <property name="rowSpan">1</property>
+                                <property name="textAlign">center</property>
+                                <label id="3742">
+                                    <text-property name="text">2500</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="3734">
+                            <property name="borderTopStyle">solid</property>
+                            <property name="borderTopWidth">thin</property>
+                            <cell id="3735">
+                                <label id="3743">
+                                    <text-property name="text">Total Fat</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3736">
+                                <label id="3844">
+                                    <text-property name="text">Less than</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3776">
+                                <label id="3870">
+                                    <property name="textAlign">right</property>
+                                    <text-property name="text">65</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3737">
+                                <label id="3856">
+                                    <text-property name="text">g</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3738">
+                                <label id="3878">
+                                    <property name="textAlign">right</property>
+                                    <text-property name="text">85</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3805">
+                                <label id="3863">
+                                    <text-property name="text">g</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="3729">
+                            <cell id="3730">
+                                <label id="3744">
+                                    <property name="paddingLeft">10pt</property>
+                                    <text-property name="text">Saturated Fat</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3731">
+                                <label id="3845">
+                                    <text-property name="text">Less than</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3777">
+                                <label id="3872">
+                                    <property name="textAlign">right</property>
+                                    <text-property name="text">20</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3732">
+                                <label id="3857">
+                                    <text-property name="text">g</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3733">
+                                <label id="3879">
+                                    <property name="textAlign">right</property>
+                                    <text-property name="text">25</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3806">
+                                <label id="3862">
+                                    <text-property name="text">g</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="3724">
+                            <cell id="3725">
+                                <label id="3745">
+                                    <text-property name="text">Cholesterol</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3726">
+                                <label id="3846">
+                                    <text-property name="text">Less than</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3778">
+                                <label id="3873">
+                                    <property name="textAlign">right</property>
+                                    <text-property name="text">300</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3727">
+                                <label id="3864">
+                                    <text-property name="text">mg</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3728">
+                                <label id="3880">
+                                    <property name="textAlign">right</property>
+                                    <text-property name="text">300</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3807">
+                                <label id="3869">
+                                    <text-property name="text">mg</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="3719">
+                            <cell id="3720">
+                                <label id="3746">
+                                    <text-property name="text">Sodium</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3721">
+                                <label id="3847">
+                                    <text-property name="text">Less than</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3779">
+                                <label id="3874">
+                                    <property name="textAlign">right</property>
+                                    <text-property name="text">2400</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3722">
+                                <label id="3865">
+                                    <text-property name="text">mg</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3723">
+                                <label id="3881">
+                                    <property name="textAlign">right</property>
+                                    <text-property name="text">2400</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3808">
+                                <label id="3868">
+                                    <text-property name="text">mg</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="3849">
+                            <cell id="3850">
+                                <label id="3748">
+                                    <text-property name="text">Total Carbohydrate</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3851"/>
+                            <cell id="3852">
+                                <label id="3876">
+                                    <property name="textAlign">right</property>
+                                    <text-property name="text">300</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3853">
+                                <label id="3859">
+                                    <text-property name="text">g</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3854">
+                                <label id="3883">
+                                    <property name="textAlign">right</property>
+                                    <text-property name="text">375</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3855">
+                                <label id="3861">
+                                    <text-property name="text">g</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="3709">
+                            <cell id="3710">
+                                <label id="3749">
+                                    <property name="paddingLeft">10pt</property>
+                                    <text-property name="text">Dietery fiber</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3711"/>
+                            <cell id="3781">
+                                <label id="3877">
+                                    <property name="textAlign">right</property>
+                                    <text-property name="text">25</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3712">
+                                <label id="3858">
+                                    <text-property name="text">g</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3713">
+                                <label id="3884">
+                                    <property name="textAlign">right</property>
+                                    <text-property name="text">30</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3810">
+                                <label id="3860">
+                                    <text-property name="text">g</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                    </grid>
                 </cell>
             </row>
         </grid>
