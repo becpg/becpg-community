@@ -435,11 +435,16 @@
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.site.caption")}" primaryKey="id">
 			
 				<#if isAdmin>
-					<Table name="becpg_public_projects" />
+					<Table name="becpg_public_projects" alias="becpg_public_projects">
+						<SQL dialect="generic">
+						 	becpg_public_projects.isLastVersion IS TRUE
+						</SQL>
+					</Table>
 				<#else>
 					<Table name="becpg_public_projects" alias="becpg_public_projects">
 						<SQL dialect="generic">
 							becpg_public_projects.instanceId = ${instanceId}
+							AND becpg_public_projects.isLastVersion IS TRUE
 						</SQL>
 					</Table>
 				</#if>
