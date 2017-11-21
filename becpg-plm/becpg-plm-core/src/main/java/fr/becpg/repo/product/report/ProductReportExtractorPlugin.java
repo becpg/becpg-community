@@ -34,10 +34,12 @@ import fr.becpg.model.PackModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.JsonFormulaHelper;
 import fr.becpg.repo.product.data.EffectiveFilters;
+import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.PackagingKitData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ResourceProductData;
 import fr.becpg.repo.product.data.constraints.CompoListUnit;
+import fr.becpg.repo.product.data.constraints.CostType;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.PackagingListUnit;
@@ -60,11 +62,13 @@ import fr.becpg.repo.product.data.productList.PriceListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.productList.ResourceParamListItem;
+import fr.becpg.repo.product.formulation.CostsCalculatingFormulationHandler;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.product.formulation.PackagingHelper;
 import fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.variant.model.VariantData;
 
 @Service
@@ -175,7 +179,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 								if (dataListItem instanceof CompositionDataItem) {
 									CompositionDataItem compositionDataItem = (CompositionDataItem) dataListItem;
-									loadProductData(compositionDataItem.getComponent(), nodeElt, images);
+									loadProductData(compositionDataItem.getComponent(), nodeElt, images, null);
 								}
 
 								if (dataListItem instanceof AllergenListDataItem) {
@@ -416,22 +420,61 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		if (productData.hasProcessListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 			Element processListElt = dataListsElt.addElement(MPMModel.TYPE_PROCESSLIST.getLocalName() + "s");
 
+			loadProcessList(productData,processListElt, 1 ,1d, 1d, images);
+					
+			loadDynamicCharactList(productData.getProcessListView().getDynamicCharactList(), processListElt);
+		}
+
+	}
+	
+	private void loadProcessList(ProductData productData, Element processListElt, int level, Double parentRateProduct, Double  parentLossRatio, Map<String, byte[]> images) {
+		if (productData.hasProcessListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+		
 			for (ProcessListDataItem dataItem : productData.getProcessList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 
 				addDataListState(processListElt, dataItem.getParentNodeRef());
-				loadProcessListItem(dataItem, processListElt, 1, null, images);
+				loadProcessListItem(dataItem, processListElt, level, parentRateProduct, images);
 			}
+			
+			
+			if (extractInMultiLevel) {
+				for (CompoListDataItem dataItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+					if ((nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT)
+							|| nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_FINISHEDPRODUCT))) {
+						ProductData sfProductData = (ProductData) alfrescoRepository.findOne(dataItem.getProduct());
+						
+						Double qty =  (FormulationHelper.getQtyForCost(dataItem, parentLossRatio,
+								sfProductData.getUnit(), CostsCalculatingFormulationHandler.keepProductUnit)
+								/ FormulationHelper.getNetQtyForCost(productData)) * parentRateProduct;
+						
+						
+						Element partElt = processListElt.addElement(MPMModel.TYPE_PROCESSLIST.getLocalName());
+						loadProductData(dataItem.getComponent(), partElt, images, CostType.Process);
+						loadDataListItemAttributes(dataItem, partElt, images);
+						partElt.addAttribute(ATTR_PROCESS_QTY_FOR_PRODUCT, ""+qty );
+						
+						extractVariants(dataItem.getVariants(), partElt);
+						partElt.addAttribute(BeCPGModel.PROP_DEPTH_LEVEL.getLocalName(), "" + level);
+						
+						loadProcessList(sfProductData, processListElt,level+1,qty, dataItem.getLossPerc() ,images  );
+					
+					}
+				}
+			}
+			
+			
 
 			loadDynamicCharactList(productData.getProcessListView().getDynamicCharactList(), processListElt);
 		}
 
 	}
+	
 
 	private void loadProcessListItem(ProcessListDataItem dataItem, Element processListElt, int level, Double parentRateProduct,
 			Map<String, byte[]> images) {
 
 		Element partElt = processListElt.addElement(MPMModel.TYPE_PROCESSLIST.getLocalName());
-		loadProductData(dataItem.getComponent(), partElt, images);
+		loadProductData(dataItem.getComponent(), partElt, images, CostType.Process);
 		loadDataListItemAttributes(dataItem, partElt, images);
 		if (dataItem.getQtyResource() != null) {
 			Double qty = dataItem.getQty();
@@ -986,7 +1029,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		if ((dataItem.getProduct() != null) && nodeService.exists(dataItem.getProduct())) {
 
 			Element partElt = compoListElt.addElement(PLMModel.TYPE_COMPOLIST.getLocalName());
-			loadProductData(dataItem.getComponent(), partElt, images);
+			loadProductData(dataItem.getComponent(), partElt, images, CostType.Composition);
 			loadDataListItemAttributes(dataItem, partElt, images);
 			partElt.addAttribute(ATTR_COMPOLIST_QTY_FOR_PRODUCT, Double.toString(compoListQty));
 
@@ -1053,7 +1096,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			VariantPackagingData defaultVariantPackagingData, Map<String, byte[]> images, int level) {
 
 		Element partElt = packagingListElt.addElement(PLMModel.TYPE_PACKAGINGLIST.getLocalName());
-		loadProductData(dataItem.getComponent(), partElt, images);
+		loadProductData(dataItem.getComponent(), partElt, images, CostType.Packaging);
 		loadDataListItemAttributes(dataItem, partElt, images);
 
 		extractVariants(dataItem.getVariants(), partElt);
@@ -1173,13 +1216,132 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		}
 	}
 
-	protected void loadProductData(NodeRef nodeRef, Element dataListItemElt, Map<String, byte[]> images) {
+	protected void loadProductData(NodeRef nodeRef, Element dataListItemElt, Map<String, byte[]> images, CostType costType) {
 		if (nodeRef != null) {
 			loadNodeAttributes(nodeRef, dataListItemElt, false, images);
-
+			
+			if(shouldExtractCost()) {
+				extractCost(nodeRef, dataListItemElt , costType);
+			}
+			
 			dataListItemElt.addAttribute(ATTR_ITEM_TYPE, nodeService.getType(nodeRef).toPrefixString(namespaceService));
 			dataListItemElt.addAttribute(ATTR_ASPECTS, extractAspects(nodeRef));
 		}
+	}
+
+	private boolean shouldExtractCost() {
+		return !BeCPGQueryBuilder.createQuery().ofType(PLMModel.TYPE_COST)
+					.andPropEquals(PLMModel.PROP_COSTTYPE, CostType.Composition.toString()).inDB().list().isEmpty();
+	}
+
+	private void extractCost(NodeRef nodeRef, Element dataListItemElt, CostType type) {
+
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(nodeRef);
+		
+			Double netQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct, 1d);
+			Double unitTotalVariableCost = 0d;// for 1 product
+			Double previousTotalVariableCost = 0d;
+			Double futureTotalVariableCost = 0d;
+			Double unitTotalFixedCost = 0d;
+
+			for (CostListDataItem c : formulatedProduct.getCostList()) {
+
+				Boolean isFixed = (Boolean) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTFIXED);
+				String costType = (String) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTTYPE);
+				if(type.toString().equals(costType)) {
+				Double costPerProduct = null;
+				Double previousCostPerProduct = null;
+				Double futureCostPerProduct = null;
+
+				if (c.getValue() != null) {
+					if ((isFixed != null) && (isFixed == Boolean.TRUE)) {
+						unitTotalFixedCost += c.getValue();
+
+						if ((formulatedProduct.getProjectedQty() != null) && !formulatedProduct.getProjectedQty().equals(0L)) {
+							costPerProduct = c.getValue() / formulatedProduct.getProjectedQty();
+
+							if (c.getFutureValue() != null) {
+								futureCostPerProduct = c.getFutureValue() / formulatedProduct.getProjectedQty();
+							}
+
+							if (c.getPreviousValue() != null) {
+								previousCostPerProduct = c.getPreviousValue() / formulatedProduct.getProjectedQty();
+							}
+
+						}
+
+					} else if (FormulationHelper.isProductUnitP(formulatedProduct.getUnit())) {
+						costPerProduct = c.getValue();
+
+						if (c.getFutureValue() != null) {
+							futureCostPerProduct = c.getFutureValue();
+						}
+
+						if (c.getPreviousValue() != null) {
+							previousCostPerProduct = c.getPreviousValue();
+						}
+
+						if (formulatedProduct.getQty() != null) {
+							if (costPerProduct != null) {
+								costPerProduct *= formulatedProduct.getQty();
+							}
+							if (futureCostPerProduct != null) {
+								futureCostPerProduct *= formulatedProduct.getQty();
+							}
+							if (previousCostPerProduct != null) {
+								previousCostPerProduct *= formulatedProduct.getQty();
+							}
+						}
+
+					} else {
+						costPerProduct = netQty * c.getValue();
+
+						if (c.getFutureValue() != null) {
+							futureCostPerProduct = netQty * c.getFutureValue();
+						}
+
+						if (c.getPreviousValue() != null) {
+							previousCostPerProduct = netQty * c.getPreviousValue();
+						}
+
+					}
+				}
+
+				c.setValuePerProduct(null);
+				if (costPerProduct != null) {
+					if ((c.getDepthLevel() == null) || (c.getDepthLevel() == 1)) {
+						unitTotalVariableCost += costPerProduct;
+					}
+				}
+
+				if (futureCostPerProduct != null) {
+					if ((c.getDepthLevel() == null) || (c.getDepthLevel() == 1)) {
+						futureTotalVariableCost += futureCostPerProduct;
+					}
+				}
+
+				if (previousCostPerProduct != null) {
+					if ((c.getDepthLevel() == null) || (c.getDepthLevel() == 1)) {
+						previousTotalVariableCost += previousCostPerProduct;
+					}
+				}
+				}
+			}
+
+			if (formulatedProduct instanceof FinishedProductData) {
+				dataListItemElt.addAttribute("unitTotalCost",""+unitTotalVariableCost);
+				dataListItemElt.addAttribute("previousUnitTotalCost",""+previousTotalVariableCost);
+				dataListItemElt.addAttribute("futureUnitTotalCost",""+futureTotalVariableCost);
+				
+				
+			} else {
+				
+				dataListItemElt.addAttribute("unitTotalCost",""+(unitTotalVariableCost/netQty));
+				dataListItemElt.addAttribute("previousUnitTotalCost",""+(previousTotalVariableCost/netQty));
+				dataListItemElt.addAttribute("futureUnitTotalCost",""+(futureTotalVariableCost/netQty));
+				
+			}
+		
 	}
 
 	@Override
