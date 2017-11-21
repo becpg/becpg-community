@@ -177,6 +177,7 @@ public interface PLMModel {
 	QName PROP_COST_FORMULA = QName.createQName(BeCPGModel.BECPG_URI, "costFormula");
 	QName PROP_COSTCURRENCY = QName.createQName(BeCPGModel.BECPG_URI, "costCurrency");
 	QName PROP_COSTFIXED = QName.createQName(BeCPGModel.BECPG_URI, "costFixed");
+	QName PROP_COSTTYPE = QName.createQName(BeCPGModel.BECPG_URI, "costType");
 
 	// ing
 	QName TYPE_ING = QName.createQName(BeCPGModel.BECPG_URI, "ing");

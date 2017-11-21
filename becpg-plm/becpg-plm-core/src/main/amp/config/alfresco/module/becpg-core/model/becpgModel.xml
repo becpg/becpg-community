@@ -251,6 +251,18 @@
 				</list>
 			</parameter>
 		</constraint>
+		
+		<constraint name="bcpg:costTypes" type="LIST">
+			<parameter name="allowedValues">
+			<list>
+					<value></value>
+					<value>Composition</value>
+					<value>Packaging</value>
+					<value>Process</value>
+					
+				</list>
+			</parameter>
+		</constraint>
 		<constraint name="bcpg:compoListUnit" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -776,6 +788,18 @@
 					</index>
 					<constraints>
 						<constraint ref="bcpg:currency" />
+					</constraints>
+				</property>
+				<property name="bcpg:costType">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>false</tokenised>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:costTypes" />
 					</constraints>
 				</property>
 				<property name="bcpg:costFixed">
