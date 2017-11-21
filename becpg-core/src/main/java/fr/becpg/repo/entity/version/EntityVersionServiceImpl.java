@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.query.PagingRequest;
+import org.alfresco.query.PagingResults;
+import org.alfresco.repo.forum.CommentService;
 import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.rule.RuntimeRuleService;
@@ -27,6 +30,8 @@ import org.alfresco.service.cmr.lock.NodeLockedException;
 import org.alfresco.service.cmr.repository.AssociationExistsException;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
+import org.alfresco.service.cmr.repository.ContentReader;
+import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -136,6 +141,12 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 	@Autowired
 	private TransactionService transactionService;
+	
+	@Autowired
+	private CommentService commentService;
+	
+	@Autowired
+	private ContentService contentService;
 
 	@Autowired
 	@Qualifier("ruleService")
@@ -871,9 +882,20 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 					
 					entityActivityService.postMergeBranchActivity(branchNodeRef, branchNodeRef, versionType, description);
 					
+					NodeRef branchFromNodeRef =  null;
+					
+					if(nodeService.hasAspect(internalBranchToNodeRef, BeCPGModel.ASPECT_ENTITY_BRANCH) ) {
+						branchFromNodeRef = associationService.getTargetAssoc( internalBranchToNodeRef,  BeCPGModel.ASSOC_BRANCH_FROM_ENTITY);
+					}
 
-					return checkOutCheckInService.checkin(branchNodeRef, properties);
+					NodeRef ret =  checkOutCheckInService.checkin(branchNodeRef, properties);
 
+					if(branchFromNodeRef !=null ) {
+						associationService.update(ret, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY, branchFromNodeRef);
+					}
+					
+					return ret;
+					
 				}, false, false);
 
 			} finally {
@@ -925,6 +947,10 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 			((RuleService) ruleService).disableRuleType(RuleType.UPDATE);
 			try {
+				
+				//Remove comments		
+				mergeComments(branchNodeRef, branchToNodeRef);
+				
 
 				String copyName = (String) this.nodeService.getProperty(branchToNodeRef, ContentModel.PROP_NAME);
 				String workingCopyLabel = I18NUtil.getMessage(MSG_WORKING_COPY_LABEL);
@@ -984,6 +1010,33 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			policyBehaviourFilter.enableBehaviour(branchToNodeRef, ContentModel.ASPECT_AUDITABLE);
 		}
 
+	}
+
+	private void mergeComments(NodeRef branchNodeRef, NodeRef branchToNodeRef) {
+		PagingResults<NodeRef> comments =   commentService.listComments(branchNodeRef, new PagingRequest(5000, null));
+		if(comments!=null) {
+			for(NodeRef commentNodeRef : comments.getPage()) {
+				NodeRef newComment = null;
+				try {
+					
+					MLPropertyInterceptor.setMLAware(false);
+					ContentReader reader = contentService.getReader(commentNodeRef, ContentModel.PROP_CONTENT);
+					String comment = reader.getContentString();
+					newComment=  commentService.createComment(branchToNodeRef, (String) nodeService.getProperty(commentNodeRef, ContentModel.PROP_TITLE), comment, false);
+					
+					policyBehaviourFilter.disableBehaviour(newComment, ContentModel.ASPECT_AUDITABLE);
+					nodeService.setProperty(newComment, ContentModel.PROP_CREATED,  nodeService.getProperty(commentNodeRef,ContentModel.PROP_CREATED));
+					nodeService.setProperty(newComment, ContentModel.PROP_CREATOR,  nodeService.getProperty(commentNodeRef,ContentModel.PROP_CREATOR));
+					nodeService.setProperty(newComment, ContentModel.PROP_MODIFIED,  nodeService.getProperty(commentNodeRef,ContentModel.PROP_MODIFIED));
+					commentService.deleteComment(commentNodeRef);
+				} finally {
+					MLPropertyInterceptor.setMLAware(true);
+					if(newComment!=null) {
+						policyBehaviourFilter.enableBehaviour(newComment, ContentModel.ASPECT_AUDITABLE);
+					}
+				}
+			}
+		}
 	}
 
 	@Override

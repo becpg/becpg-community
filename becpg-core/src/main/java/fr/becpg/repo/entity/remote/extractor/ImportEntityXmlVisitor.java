@@ -793,7 +793,7 @@ public class ImportEntityXmlVisitor {
 		}
 
 		private String cleanName(String propValue) {
-			return propValue!=null ? propValue.replaceAll("\n", "").replaceAll("'", " ") : "";
+			return propValue!=null ? propValue.replaceAll("\n", "").replaceAll("'", " ").replaceAll("\"", " ") .replaceAll(Pattern.quote("*"), " "): "";
 		}
 		
 		private String removeTrailingSpecialChar(String prop){
