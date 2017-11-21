@@ -4677,6 +4677,7 @@
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
+					<show id="bcpg:costType" />
 					<show id="bcpg:costCurrency" />
 					<show id="bcpg:costFixed" />
 					<show id="bcpg:costFormula" />
@@ -4706,6 +4707,7 @@
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
+					<show id="bcpg:costType" />
 					<show id="bcpg:costCurrency" />
 					<show id="bcpg:costFixed" />
 					<show id="bcpg:costFormula" />
@@ -4742,6 +4744,7 @@
 				<field-visibility>
 					<show id="bcpg:charactName" />
 					<show id="bcpg:legalName" />
+					<show id="bcpg:costType" />
 					<show id="bcpg:costCurrency" />
 					<show id="bcpg:costFixed" />
 				</field-visibility>
