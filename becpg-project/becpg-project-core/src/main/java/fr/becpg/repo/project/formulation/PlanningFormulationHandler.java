@@ -227,6 +227,14 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 		// end date is null if task is cancelled		
 		Date d = TaskState.Cancelled.equals(nextTask.getTaskState()) ? startDate : ProjectHelper.calculateNextStartDate(nextTask.getEnd());
 		calculatePlanningOfNextTasks(projectData, nextTask.getNodeRef(), d);
+		
+		// calculate next tasks of parent
+		TaskListDataItem parent = nextTask.getParent();
+		while(parent != null && parent.getEnd() != null){
+			calculatePlanningOfNextTasks(projectData, parent.getNodeRef(), 
+					ProjectHelper.calculateNextStartDate(parent.getEnd()));
+			parent = parent.getParent();
+		}
 	}
 
 	private void calculatePlanningOfChildren(ProjectData projectData, TaskListDataItem taskListDataItem) throws FormulateException {
@@ -297,6 +305,14 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 			calculateRetroPlanningOfPrevTasks(projectData, prevTask, d);
 
 			calculateDatesOfParent(prevTask.getParent(), prevTask);
+			
+			// calculate prev tasks of parent
+			TaskListDataItem parent = prevTask.getParent();
+			while(parent != null && parent.getStart() != null){
+				calculateRetroPlanningOfPrevTasks(projectData, parent, 
+						ProjectHelper.calculatePrevEndDate(parent.getStart()));
+				parent = parent.getParent();
+			}
 		}
 	}
 
