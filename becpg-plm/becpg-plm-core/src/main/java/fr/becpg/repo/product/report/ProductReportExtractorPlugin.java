@@ -476,6 +476,11 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 					for (CompoListDataItem dataItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 						if ((dataItem.getProduct() != null) && nodeService.exists(dataItem.getProduct())) {
+							
+							
+							if ((nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT)
+									|| nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_FINISHEDPRODUCT))) {
+
 							ProductData subProductData = (ProductData) alfrescoRepository.findOne(dataItem.getProduct());
 	
 							Double parentLossRatio = dataItem.getLossPerc() != null ? dataItem.getLossPerc() : 0d;
@@ -484,6 +489,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 									CostsCalculatingFormulationHandler.keepProductUnit);
 	
 							loadProcessListItemForCompo(dataItem, subProductData, processListElt, 0, qty, qtyForCost, parentLossRatio, images);
+							}
 						}
 					}
 				}
@@ -499,13 +505,19 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			double qtyForCost, double parentLossRatio, Map<String, byte[]> images) {
 
 		if (productData.hasProcessListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+			loadProcessListItem(dataItem, processListElt, level, qty, qtyForCost, images);
+		}
 
-				loadProcessListItem(dataItem, processListElt, level, qty, qtyForCost, images);
-
-					if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-
-						for (CompoListDataItem subDataItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-
+	   if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+			for (CompoListDataItem subDataItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+				
+				if ((dataItem.getProduct() != null) && nodeService.exists(dataItem.getProduct())) {
+					
+					
+					if ((nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT)
+							|| nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_FINISHEDPRODUCT))) {
+				
+							
 							ProductData subProductData = (ProductData) alfrescoRepository.findOne(dataItem.getProduct());
 
 							Double subQty = (FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT) != 0)
@@ -524,8 +536,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 							loadProcessListItemForCompo(subDataItem, subProductData, processListElt, level + 1, subQty, subQtyForCost, newLossPerc,
 									images);
 						}
-
-					}
+				}
+			}
+		
 		}
 
 	}
