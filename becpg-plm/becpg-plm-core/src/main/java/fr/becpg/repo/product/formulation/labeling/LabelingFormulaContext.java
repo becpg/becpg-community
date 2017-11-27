@@ -1196,13 +1196,13 @@ public class LabelingFormulaContext {
 
 	public String createJsonLog(boolean mergedLabeling) {
 		if (!mergedLabeling) {
-			return createJsonLog(lblCompositeContext, null, null, new HashSet<>()).toString();
+			return createJsonLog(lblCompositeContext, null, null, new HashSet<>(),true).toString();
 		}
-		return createJsonLog(mergedLblCompositeContext, null, null, new HashSet<>()).toString();
+		return createJsonLog(mergedLblCompositeContext, null, null, new HashSet<>(),true).toString();
 	}
 
 	@SuppressWarnings("unchecked")
-	private JSONObject createJsonLog(AbstractLabelingComponent component, Double totalQty, Double totalVol, Set<AbstractLabelingComponent> visited) {
+	private JSONObject createJsonLog(AbstractLabelingComponent component, Double totalQty, Double totalVol, Set<AbstractLabelingComponent> visited, boolean recur) {
 
 		JSONObject tree = new JSONObject();
 
@@ -1275,13 +1275,13 @@ public class LabelingFormulaContext {
 						}
 						JSONArray ingTypeJsonChildren = new JSONArray();
 						for (AbstractLabelingComponent childComponent : kv.getValue()) {
-							ingTypeJsonChildren.add(createJsonLog(childComponent, composite.getQtyTotal(), composite.getVolumeTotal(), visited));
+							ingTypeJsonChildren.add(createJsonLog(childComponent, composite.getQtyTotal(), composite.getVolumeTotal(), visited,true));
 						}
 						ingTypeJson.put("children", ingTypeJsonChildren);
 						children.add(ingTypeJson);
 					} else {
 						for (AbstractLabelingComponent childComponent : kv.getValue()) {
-							children.add(createJsonLog(childComponent, composite.getQtyTotal(), composite.getVolumeTotal(), visited));
+							children.add(createJsonLog(childComponent, composite.getQtyTotal(), composite.getVolumeTotal(), visited,true));
 						}
 					}
 
@@ -1289,10 +1289,10 @@ public class LabelingFormulaContext {
 
 				tree.put("children", children);
 
-			} else if ((component instanceof IngItem) && !((IngItem) component).getSubIngs().isEmpty()) {
+			} else if ((component instanceof IngItem) && !((IngItem) component).getSubIngs().isEmpty() && recur) {
 				JSONArray children = new JSONArray();
 				for (IngItem childComponent : ((IngItem) component).getSubIngs()) {
-					children.add(createJsonLog(childComponent, ((IngItem) component).getQty(), ((IngItem) component).getVolume(), visited));
+					children.add(createJsonLog(childComponent, ((IngItem) component).getQty(), ((IngItem) component).getVolume(), visited, false));
 				}
 				tree.put("children", children);
 			}
