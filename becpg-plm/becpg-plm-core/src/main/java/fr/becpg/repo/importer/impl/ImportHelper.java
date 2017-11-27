@@ -138,7 +138,8 @@ public class ImportHelper {
 					if (values.get(pos).isEmpty()) {
 						value = null;
 					} else {
-						value = values.get(pos);
+						Number n = importContext.getPropertyFormats().parseDecimal( values.get(pos));
+						value = n.longValue();
 					}
 				}
 				// double
