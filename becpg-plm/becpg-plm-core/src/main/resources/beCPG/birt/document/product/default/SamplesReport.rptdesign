@@ -273,6 +273,7 @@
                 <structure>
                     <property name="columnName">entity_erpCode</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">entity_erpCode</text-property>
                 </structure>
                 <structure>
@@ -320,6 +321,7 @@
                 <structure>
                     <property name="columnName">entity_code</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">entity_code</text-property>
                 </structure>
             </list-property>
@@ -648,7 +650,7 @@
                     <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/sampleLists/sampleList/slProduct/finishedProduct/dataLists/compoLists/compoList]#:#{depthLevel;STRING;/@depthLevel},{compoListProduct;STRING;/@compoListProduct},{compoListQtySubFormula;DOUBLE;/@compoListQtySubFormula},{productCompoQtyUsed;DOUBLE;/@productCompoQtyUsed},{compoListQty;DOUBLE;/@compoListQty},{compoListUnit;STRING;/@compoListUnit},{compoListQtyAfterProcess;DOUBLE;/@compoListQtyAfterProcess},{itemType;STRING;/@itemType},{erpCode;STRING;/@erpCode},{variants;STRING;/@variants},{compoListYieldPerc;DOUBLE;/@compoListYieldPerc},{compoListLossPerc;DOUBLE;/@compoListLossPerc},{instruction;STRING;/instruction},{compoListQtyForProduct;DOUBLE;/@compoListQtyForProduct},{dynamicCharactColumn3;DOUBLE;/@dynamicCharactColumn3},{dynamicCharactColumn2;DOUBLE;/@dynamicCharactColumn2},{sampleCode;STRING;../../../../../@code},{entity_erpCode;STRING;../../../erpCode},{sampleLegalName;STRING;../../../../../@legalName},{sampleUnitWeight;STRING;../../../../../@slUnitWeight},{sampleTotalWeight;STRING;../../../../../@slTotalWeight},{productNetWeight;DOUBLE;../../../netWeight},{pfTitle;STRING;../../../title},{pfName;STRING;../../../name},{code;STRING;/@code},{entity_code;STRING;../../../code}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/sampleLists/sampleList/slProduct/finishedProduct/dataLists/compoLists/compoList]#:#{depthLevel;STRING;/@depthLevel},{compoListProduct;STRING;/@compoListProduct},{compoListQtySubFormula;DOUBLE;/@compoListQtySubFormula},{productCompoQtyUsed;DOUBLE;../../../productCompoQtyUsed},{compoListQty;DOUBLE;/@compoListQty},{compoListUnit;STRING;/@compoListUnit},{compoListQtyAfterProcess;DOUBLE;/@compoListQtyAfterProcess},{itemType;STRING;/@itemType},{erpCode;STRING;/@erpCode},{variants;STRING;/@variants},{compoListYieldPerc;DOUBLE;/@compoListYieldPerc},{compoListLossPerc;DOUBLE;/@compoListLossPerc},{instruction;STRING;/instruction},{compoListQtyForProduct;DOUBLE;/@compoListQtyForProduct},{dynamicCharactColumn3;DOUBLE;/@dynamicCharactColumn3},{dynamicCharactColumn2;DOUBLE;/@dynamicCharactColumn2},{sampleCode;STRING;../../../../../@code},{entity_erpCode;STRING;../../../erpCode},{sampleLegalName;STRING;../../../../../@legalName},{sampleUnitWeight;STRING;../../../../../@slUnitWeight},{sampleTotalWeight;STRING;../../../../../@slTotalWeight},{productNetWeight;DOUBLE;../../../netWeight},{pfTitle;STRING;../../../title},{pfName;STRING;../../../name},{code;STRING;/@code},{entity_code;STRING;../../../code}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
