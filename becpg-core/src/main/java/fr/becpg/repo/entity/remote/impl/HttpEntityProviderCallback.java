@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.security.KeyManagementException;
+import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
@@ -22,8 +23,10 @@ import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.ssl.SSLContextBuilder;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.common.BeCPGException;
@@ -128,10 +131,10 @@ public class HttpEntityProviderCallback implements EntityProviderCallBack {
 
 		HttpClientContext httpContext = HttpClientContext.create();
 
-		// SSLContextBuilder sslcb = new SSLContextBuilder();
-		// sslcb.loadTrustMaterial(KeyStore.getInstance(KeyStore.getDefaultType()),
-		// new TrustSelfSignedStrategy());
-		// cb.setSslcontext(sslcb.build());
+		 SSLContextBuilder sslcb = new SSLContextBuilder();
+		 sslcb.loadTrustMaterial(KeyStore.getInstance(KeyStore.getDefaultType()),
+		 new TrustSelfSignedStrategy());
+		 cb.setSslcontext(sslcb.build());
 
 		HttpClient httpClient = cb.build();
 
