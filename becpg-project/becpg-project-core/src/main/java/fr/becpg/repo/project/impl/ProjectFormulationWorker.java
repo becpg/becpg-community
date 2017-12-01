@@ -89,7 +89,7 @@ public class ProjectFormulationWorker {
         					}
         					projectService.formulate(projectNodeRef);
         				} catch (FormulateException e) {
-        					logger.error("Failed to formulate project " + projectNodeRef, e);
+        					logger.error("Failed to formulate project " + projectNodeRef);
         				}
         			}
         		}
