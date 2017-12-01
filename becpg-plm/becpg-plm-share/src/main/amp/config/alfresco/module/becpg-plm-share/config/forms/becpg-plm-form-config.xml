@@ -6901,8 +6901,7 @@
 					</field>
 					<field id="bcpg:parentLevel">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:costList&#38;attributeName=bcpg:costListCost
-							</control-param>
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:costList&#38;attributeName=bcpg:costListCost</control-param>
 						</control>
 					</field>
 					<field id="bcpg:costListComponent">
@@ -7032,6 +7031,7 @@
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:costList&#38;attributeName=bcpg:costListCost
 							</control-param>
+							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
 					</field>
 					<field id="bcpg:costListComponent">
@@ -7309,7 +7309,7 @@
 					<field id="bcpg:lrType">
 						<constraint-handlers>
 							 <constraint type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf" event='keyup,change@[
-		                  		{"prop":"prop_bcpg_lrLabel", "condition" : "Format|Render|DetailComponents|DoNotDetailsComponents|Locale|Prefs|Omit|DoNotDeclare"},
+		                  		{"prop":"prop_bcpg_lrLabel", "condition" : "Format|DetailComponents|DoNotDetailsComponents|Locale|Prefs|Omit|DoNotDeclare"},
 		                  		{"prop":"assoc_bcpg_lrComponents", "condition" : "Render|Locale|Prefs"},
 		                  		{"prop":"assoc_bcpg_lrReplacements", "condition" : "Format|Render|DetailComponents|DoNotDetailsComponents|Locale|Prefs|Omit|DoNotDeclare"},
 		                  		{"prop":"prop_bcpg_lrLocales", "condition" : "Prefs"}
@@ -7472,6 +7472,7 @@
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:ingList&#38;attributeName=bcpg:ingListIng
 							</control-param>
+							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
 					</field>
 				</appearance>
