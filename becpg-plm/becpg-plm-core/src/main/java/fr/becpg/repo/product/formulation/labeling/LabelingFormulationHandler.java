@@ -665,8 +665,15 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 												logger.warn("Invalid replacement :" + aggregateRule.getReplacement());
 											}
 										}
+										
+									
+
 
 										if (current != null) {
+											
+											if (ingList.containsKey(aggregateRuleNodeRef)) {
+												current.setPlural(true);
+											}
 
 											if (!toAdd.containsKey(aggregateRuleNodeRef)) {
 												// if(parent.getIngList().get(aggregateRuleNodeRef)!=null){
