@@ -162,6 +162,7 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 		
 		setNodeRef(p.getNodeRef());
 		setQty(p.getQty());
+		setUnit(p.getUnit());
 		setQtyResource(p.getQtyResource());
 		setRateResource(p.getRateResource());
 		setYield(p.getYield());
