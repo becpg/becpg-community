@@ -676,11 +676,13 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 											}
 										}
 
-										if (ingList.containsKey(aggregateRuleNodeRef)) {
-											current.setPlural(true);
-										}
-
+										
 										if (current != null) {
+											
+											if (ingList.containsKey(aggregateRuleNodeRef)) {
+												current.setPlural(true);
+											}
+
 
 											if (!toAdd.containsKey(aggregateRuleNodeRef)) {
 

@@ -347,6 +347,11 @@ public class CharactDetailsHelper {
 					currentAdditionalValue = charactDetailsValue.getMaxi();
 				}
 				
+				if(currentAdditionalValue == null) {
+					currentAdditionalValue = 0d;
+				}
+				
+				
 				cell = row.createCell(index);
 				cell.setCellValue(currentAdditionalValue);
 			}

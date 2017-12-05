@@ -64,6 +64,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StopWatch;
 
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.BeCPGModel;
@@ -183,6 +184,12 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	@Override
 	public EntityReportData extract(NodeRef entityNodeRef) {
+		
+		StopWatch watch = null;
+		if (logger.isDebugEnabled()) {
+			watch = new StopWatch();
+			watch.start();
+		}
 
 		EntityReportData ret = new EntityReportData();
 
@@ -194,6 +201,11 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 		ret.setXmlDataSource(entityElt);
 		ret.setDataObjects(images);
+		
+		if (logger.isDebugEnabled()) {
+			watch.stop();
+			logger.debug("extract datasource in  " + watch.getTotalTimeSeconds() + " seconds for node " + entityNodeRef);
+		}
 
 		return ret;
 	}
