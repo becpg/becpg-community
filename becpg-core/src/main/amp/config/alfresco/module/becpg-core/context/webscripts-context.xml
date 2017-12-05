@@ -206,6 +206,11 @@
 	<bean id="webscript.fr.becpg.remote.entity.get" class="fr.becpg.repo.web.scripts.remote.GetEntityWebScript" parent="abstractEntityWebScript">
 	</bean>
 	
+	<bean id="webscript.fr.becpg.remote.activities.get" parent="webscript" class="fr.becpg.repo.web.scripts.remote.GetActivitiesWebScript">
+		<property name="activityService" ref="activityService" />
+	</bean>
+	
+	
 	<bean id="webscript.fr.becpg.remote.entityCheck.get" class="fr.becpg.repo.web.scripts.remote.CheckEntityWebScript" parent="abstractEntityWebScript">
 	</bean>
 
