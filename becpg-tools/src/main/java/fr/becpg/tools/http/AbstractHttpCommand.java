@@ -18,15 +18,19 @@
 package fr.becpg.tools.http;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.protocol.HttpContext;
 
@@ -74,11 +78,32 @@ public abstract class AbstractHttpCommand {
 			return new HttpDelete(url);
 		case METHOD_POST :
 			return buildHttpPost(url, params);
+		case METHOD_PUT :
+			return buildHttpPut(url, params);
 		default:
 			 return new HttpGet(url);
 		}
 		
 		
+	}
+
+
+
+	private HttpUriRequest buildHttpPut(String url, Object[] params) {
+		
+		HttpPut request = new HttpPut(url);
+        StringEntity entity = null;
+		try {
+			entity = new StringEntity(IOUtils.toString((InputStream)params[3], "UTF-8"), "UTF-8");
+		} catch (Exception e1) {
+			logger.error(e1);
+		} 
+		
+        entity.setContentType("application/xml");
+        request.addHeader("content-type", "application/xml");
+        request.setEntity(entity);
+        
+		return request;
 	}
 
 
