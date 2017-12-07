@@ -621,7 +621,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			for (PackagingListDataItem packagingListDataItem : productData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 
 				loadPackagingItem(qtyForCost, packagingListDataItem, packagingListElt, defaultVariantNodeRef, defaultVariantPackagingData, images,
-						level);
+						level+1);
 
 			}
 		}
@@ -646,7 +646,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 						Double newLossPerc = subDataItem.getLossPerc() != null ? subDataItem.getLossPerc() : 0d;
 
-						loadPackagingListItemForCompo(subDataItem, subProductData, packagingListElt, 1, subQty, subQtyForCost, newLossPerc, images,
+						loadPackagingListItemForCompo(subDataItem, subProductData, packagingListElt, level+1 , subQty, subQtyForCost, newLossPerc, images,
 								defaultVariantNodeRef, defaultVariantPackagingData);
 
 					}
