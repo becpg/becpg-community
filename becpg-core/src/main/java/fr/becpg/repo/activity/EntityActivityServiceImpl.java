@@ -345,16 +345,24 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 			if (created.after(cal.getTime())) {
 				if (activity.getActivityData().equals(item.getActivityData()) && activity.getUserId().equals(item.getUserId())
 						&& activity.getActivityType().equals(item.getActivityType())) {
+					
 					nodeService.deleteNode(activityListItemNodeRef);
-					logger.info("Delete same activity in last hour "+activity.getActivityType() );
+					
+					if(logger.isDebugEnabled()){						
+						logger.debug("Delete same activity in last hour "+activity.getActivityType() );
+					}
 					break;
 				} 		
 			} 
 			
 			if(index==0 && (activity.getActivityData().equals(item.getActivityData()) && activity.getUserId().equals(item.getUserId())
 					&& activity.getActivityType().equals(item.getActivityType()))){
+				
 				nodeService.deleteNode(activityListItemNodeRef);
-				logger.info("Delete same successor activity ");
+				
+				if(logger.isDebugEnabled()){
+					logger.debug("Delete same successor activity ");
+				}
 				break;
 			}
 			
@@ -638,7 +646,9 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 					for (NodeRef entityNodeRef : entityNodeRefs) {
 
-						logger.info("group activities of entity : "+entityNodeRef);
+						if(logger.isDebugEnabled()){							
+							logger.debug("group activities of entity : "+entityNodeRef);
+						}
 						
 						NodeRef activityListNodeRef = getActivityList(entityNodeRef);
 						if (activityListNodeRef != null) {
