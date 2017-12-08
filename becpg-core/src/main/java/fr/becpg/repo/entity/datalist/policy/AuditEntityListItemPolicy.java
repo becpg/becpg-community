@@ -66,6 +66,20 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy implements No
 	public void onUpdateNode(NodeRef listItemNodeRef) {
 		queueListNodeRef(KEY_LIST_ITEM, listItemNodeRef);
 	}
+	
+
+	@Override
+	public void onDeleteAssociation(AssociationRef assocRef) {
+		if(!ContentModel.ASSOC_ORIGINAL.equals(assocRef.getTypeQName())) {
+			queueListNodeRef(KEY_LIST_ITEM, assocRef.getSourceRef());
+		}
+	}
+
+	@Override
+	public void onCreateAssociation(AssociationRef assocRef) {
+		queueListNodeRef(KEY_LIST_ITEM, assocRef.getSourceRef());
+	}
+
 
 	private void queueListNodeRef(String key, NodeRef listNodeRef) {
 		if (policyBehaviourFilter.isEnabled(BeCPGModel.TYPE_ENTITYLIST_ITEM)
@@ -119,16 +133,6 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy implements No
 			}
 		}
 
-	}
-
-	@Override
-	public void onDeleteAssociation(AssociationRef assocRef) {
-		queueListNodeRef(KEY_LIST_ITEM, assocRef.getSourceRef());
-	}
-
-	@Override
-	public void onCreateAssociation(AssociationRef assocRef) {
-		queueListNodeRef(KEY_LIST_ITEM, assocRef.getSourceRef());
 	}
 
 }
