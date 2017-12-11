@@ -135,8 +135,49 @@ function runAction(p_params)
                            }
                        }
                    }
-                  
-                   
+
+
+                    // set proper sorting
+
+                     var oldSort = oldNode.properties["bcpg:sort"];
+                     
+                     //only do it on nodes with sort attribute
+                     if(oldSort != null){
+	                     //make sure the next item hasn't got sort+1, otherwise multiply all sorts by 10
+	                    var dataList = oldNode.parent;
+	
+	                    //get all compoList items with this duplicated node as a parent
+	                    var childNodes = search.luceneSearch("+@bcpg\\:parentLevel:\""+oldNode.nodeRef+"\"");
+	
+	
+	                    //if there are any, set oldSort to biggest sort of these children
+	                    for(var childIndex in childNodes){
+	                      if(childNodes[childIndex].properties["bcpg:sort"] > oldSort){
+	                          oldSort = childNodes[childIndex].properties["bcpg:sort"];
+	                      }
+	                    }
+	
+	                    //we have compoList, check all children's sort values and see if one has sort+1
+	                    var shouldMultiplySortByTen = false;
+	
+	                    //trouver le plus petit sort supérieur à oldSort
+	                    for(var childIndex in dataList.children){
+	                    	if(!shouldMultiplySortByTen && dataList.children[childIndex].nodeRef != oldNode.nodeRef && dataList.children[childIndex].properties["bcpg:sort"] == oldSort+1){
+	                          shouldMultiplySortByTen = true;
+	                      }
+	                    }
+	
+	                    if(shouldMultiplySortByTen){
+	                      for(var childIndex in dataList.children){
+	                        dataList.children[childIndex].properties["bcpg:sort"] = dataList.children[childIndex].properties["bcpg:sort"]*10;
+	                        dataList.children[childIndex].save();
+	                      }
+	                    }
+	
+	                    itemNode.properties["bcpg:sort"] =  ++oldSort;
+	                    itemNode.save();
+                     }
+
                     // Now copy any associations
                     for (var idxAssoc in oldNode.assocs)
                     {
