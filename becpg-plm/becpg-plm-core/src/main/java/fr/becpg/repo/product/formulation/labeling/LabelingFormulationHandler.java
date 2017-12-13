@@ -1518,7 +1518,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							}
 						}
 
-						if (subIngListItem.getData().getGeoOrigin() != null) {
+						if (subIngListItem.getData().getGeoTransfo() != null && !subIngListItem.getData().getGeoTransfo().isEmpty()) {
+							subIngItem.getGeoOrigins().addAll(subIngListItem.getData().getGeoTransfo());
+						} else if(subIngListItem.getData().getGeoOrigin()!=null){
 							subIngItem.getGeoOrigins().addAll(subIngListItem.getData().getGeoOrigin());
 						}
 
@@ -1568,9 +1570,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				}
 			}
 
-			if (ingListItem.getData().getGeoOrigin() != null) {
+			if (ingListItem.getData().getGeoTransfo() != null && !ingListItem.getData().getGeoTransfo().isEmpty()) {
+				ingLabelItem.getGeoOrigins().addAll(ingListItem.getData().getGeoTransfo());
+			} else if(ingListItem.getData().getGeoOrigin()!=null){
 				ingLabelItem.getGeoOrigins().addAll(ingListItem.getData().getGeoOrigin());
 			}
+			
 
 			if (product instanceof RawMaterialData) {
 				if (((RawMaterialData) product).getGeoOrigins() != null) {
