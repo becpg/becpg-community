@@ -109,7 +109,8 @@ stickers
  }
 
 .yui-ac span.ac-closebutton{
-	background: url(../images/remove-icon-16.png) center center no-repeat;
+	background: url(../images/white-remove-icon-16.png) center center no-repeat;
+	filter: brightness(0.9);
 	display: block;
     font-size: 1px;
     height: 16px;
