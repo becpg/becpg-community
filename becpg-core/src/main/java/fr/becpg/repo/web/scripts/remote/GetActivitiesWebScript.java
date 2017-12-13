@@ -20,14 +20,14 @@ package fr.becpg.repo.web.scripts.remote;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.SocketException;
-import java.util.List;
 import java.util.Map;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.alfresco.repo.activities.ActivityServiceImpl;
+import org.alfresco.query.PagingRequest;
+import org.alfresco.query.PagingResults;
 import org.alfresco.repo.domain.activities.ActivityFeedEntity;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.activities.ActivityService;
@@ -35,8 +35,6 @@ import org.alfresco.util.JSONtoFmModel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
-import org.springframework.aop.framework.Advised;
-import org.springframework.aop.support.AopUtils;
 import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
@@ -82,15 +80,11 @@ public class GetActivitiesWebScript extends AbstractWebScript {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Get user feed entries: " + feedUserId + ", " + feedDBID);
 		}
-
-		int maxFeedItem = activityService.getMaxFeedItems();
 		
 		try {
 			
-			getTargetObject(activityService, ActivityServiceImpl.class).setMaxFeedItems(10000);
+		 PagingResults<ActivityFeedEntity> feedEntries = 	activityService.getPagedUserFeedEntries(feedUserId, null, false, false, feedDBID, new PagingRequest(1000));
 			
-			List<ActivityFeedEntity> feedEntries = activityService.getUserFeedEntries(feedUserId, null, false, false, null, null, feedDBID);
-
 			visit(feedEntries, resp.getOutputStream());
 
 			// set mimetype for the content and the character encoding + length
@@ -107,27 +101,13 @@ public class GetActivitiesWebScript extends AbstractWebScript {
 
 		} catch (Exception e) {
 			logger.error(e,e);
-		} finally {
-			try {
-				getTargetObject(activityService, ActivityServiceImpl.class).setMaxFeedItems(maxFeedItem);
-			} catch (Exception e) {
-				logger.error(e,e);
-			}
-		}
+		} 
 
 	}
 	
 	
-	@SuppressWarnings({"unchecked"})
-	protected <T> T getTargetObject(Object proxy, Class<T> targetClass) throws Exception {
-	  if (AopUtils.isJdkDynamicProxy(proxy)) {
-	    return (T) ((Advised)proxy).getTargetSource().getTarget();
-	  } else {
-	    return (T) proxy; // expected to be cglib proxy then, which is simply a specialized class
-	  }
-	}
 
-	public void visit(List<ActivityFeedEntity> feedEntries, OutputStream result) throws XMLStreamException {
+	public void visit(PagingResults<ActivityFeedEntity> feedEntries, OutputStream result) throws XMLStreamException {
 
 		// Create an output factory
 		XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
@@ -146,9 +126,9 @@ public class GetActivitiesWebScript extends AbstractWebScript {
 
 		xmlw.writeStartElement("activities");
 		
-		if (feedEntries.size() > 0) {
+		if (feedEntries.getPage().size() > 0) {
 
-			for (ActivityFeedEntity feedEntry : feedEntries) {
+			for (ActivityFeedEntity feedEntry : feedEntries.getPage()) {
 				try {
 					String type = feedEntry.getActivityType();
 					
