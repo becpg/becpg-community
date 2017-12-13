@@ -19,6 +19,8 @@ package fr.becpg.repo.product.data.ing;
 
 import java.util.Locale;
 
+import org.alfresco.service.cmr.repository.NodeRef;
+
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -44,6 +46,8 @@ public class IngTypeItem extends AbstractLabelingComponent{
 	
 	private Boolean isLastGroup;
 	
+	private NodeRef origNodeRef;
+	
 	
 	public IngTypeItem(){
 		super();
@@ -53,6 +57,7 @@ public class IngTypeItem extends AbstractLabelingComponent{
 		super(ingTypeItem);
 		this.decThreshold = ingTypeItem.decThreshold;
 		this.lvValue = ingTypeItem.lvValue;
+		this.lvCode = ingTypeItem.lvCode;
 		this.isDoNotDeclare = ingTypeItem.isDoNotDeclare;
 		this.isLastGroup = ingTypeItem.isLastGroup;
 	}
@@ -64,7 +69,8 @@ public class IngTypeItem extends AbstractLabelingComponent{
 		return isDoNotDeclare;
 	}
 	
-	
+
+
 	public boolean doNotDeclare() {
 		return Boolean.TRUE.equals(this.isDoNotDeclare);
 	}
@@ -73,6 +79,15 @@ public class IngTypeItem extends AbstractLabelingComponent{
 		this.isDoNotDeclare = doNotDeclare;
 	}
 
+
+	public NodeRef getOrigNodeRef() {
+		return origNodeRef;
+	}
+
+	public void setOrigNodeRef(NodeRef origNodeRef) {
+		this.origNodeRef = origNodeRef;
+	}
+	
 	@AlfProp
 	@AlfQname(qname = "bcpg:ingTypeIsLastGroup")
 	public Boolean getIsLastGroup() {
@@ -151,6 +166,7 @@ public class IngTypeItem extends AbstractLabelingComponent{
 		result = prime * result + ((isLastGroup == null) ? 0 : isLastGroup.hashCode());
 		result = prime * result + ((lvCode == null) ? 0 : lvCode.hashCode());
 		result = prime * result + ((lvValue == null) ? 0 : lvValue.hashCode());
+		result = prime * result + ((origNodeRef == null) ? 0 : origNodeRef.hashCode());
 		return result;
 	}
 
@@ -187,6 +203,11 @@ public class IngTypeItem extends AbstractLabelingComponent{
 			if (other.lvValue != null)
 				return false;
 		} else if (!lvValue.equals(other.lvValue))
+			return false;
+		if (origNodeRef == null) {
+			if (other.origNodeRef != null)
+				return false;
+		} else if (!origNodeRef.equals(other.origNodeRef))
 			return false;
 		return true;
 	}
