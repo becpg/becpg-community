@@ -61,6 +61,7 @@ public interface PLMModel {
 	QName PROP_PACKAGINGLIST_UNIT = QName.createQName(BeCPGModel.BECPG_URI, "packagingListUnit");
 	QName PROP_PACKAGINGLIST_PKG_LEVEL = QName.createQName(BeCPGModel.BECPG_URI, "packagingListPkgLevel");
 	QName PROP_PACKAGINGLIST_ISMASTER = QName.createQName(BeCPGModel.BECPG_URI, "packagingListIsMaster");
+	QName PROP_PACKAGINGLIST_LOSS_PERC = QName.createQName(BeCPGModel.BECPG_URI, "packagingListLossPerc");
 
 	// costList
 	QName TYPE_COSTLIST = QName.createQName(BeCPGModel.BECPG_URI, "costList");
