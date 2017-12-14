@@ -143,6 +143,7 @@ function runAction(p_params)
                      
                      //only do it on nodes with sort attribute
                      if(oldSort != null){
+                    	 
 	                     //make sure the next item hasn't got sort+1, otherwise multiply all sorts by 10
 	                    var dataList = oldNode.parent;
 	
@@ -160,7 +161,7 @@ function runAction(p_params)
 	                    //we have compoList, check all children's sort values and see if one has sort+1
 	                    var shouldMultiplySortByTen = false;
 	
-	                    //trouver le plus petit sort supérieur à oldSort
+	                    //find smallest sort > oldSort
 	                    for(var childIndex in dataList.children){
 	                    	if(!shouldMultiplySortByTen && dataList.children[childIndex].nodeRef != oldNode.nodeRef && dataList.children[childIndex].properties["bcpg:sort"] == oldSort+1){
 	                          shouldMultiplySortByTen = true;
