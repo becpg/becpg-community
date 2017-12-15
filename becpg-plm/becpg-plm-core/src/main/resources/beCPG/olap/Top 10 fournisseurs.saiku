@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Query name="7A7713C5-A261-8C03-A7CE-9804B1850B21" type="QM" connection="beCPG" cube="[products]" catalog="beCPG OLAP Schema" schema="beCPG OLAP Schema">
+<Query name="6539CDE9-320B-D70E-99DA-5504B7C6C810" type="QM" connection="beCPG" cube="[products]" catalog="beCPG OLAP Schema" schema="beCPG OLAP Schema">
   <QueryModel>
     <Axes>
       <Axis location="ROWS" nonEmpty="true" limitFunction="TopCount" limitFunctionN="10" limitFunctionSortLiteral="[Measures].[productNumber]">
