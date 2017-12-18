@@ -32,7 +32,7 @@
     </list-property>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="452">
-            <property name="FILELIST">src/main/resources/beCPG/birt/document/product/default/ProductReport.xml</property>
+            <property name="FILELIST">src/main/resources/beCPG/birt/document/product/default/datasource.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -787,14 +787,7 @@
             <list-property name="computedColumns">
                 <structure>
                     <property name="name">costPerProduct</property>
-                    <expression name="expression">var qty = row["compoListQtyForProduct"];
-if(row["itemType"]=="bcpg:rawMaterial" &amp;&amp; row["compoListUnit"] == "P" &amp;&amp; row["productUnit"]=="P"){
-qty = row["compoListQtySubFormula"]
-}
-else if(row["productUnit"]=="L" || row["productUnit"]=="cL" || row["productUnit"]=="mL"){
-qty = row["compoListVolume"]
-}
-qty * row["unitTotalCost"] * (1 + row["compoListLossPerc"]/100)</expression>
+                    <expression name="expression">row["qtyForCost"] * row["currentCost"]</expression>
                     <property name="dataType">float</property>
                 </structure>
                 <structure>
@@ -951,7 +944,20 @@ row["compoListProduct"]
                 <structure>
                     <property name="columnName">compoListVolume</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">compoListVolume</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">currentCost</property>
+                    <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">currentCost</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">qtyForCost</property>
+                    <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">qtyForCost</text-property>
                 </structure>
             </list-property>
             <list-property name="parameters"/>
@@ -1069,21 +1075,31 @@ row["compoListProduct"]
                     </structure>
                     <structure>
                         <property name="position">23</property>
-                        <property name="name">costPerProduct</property>
+                        <property name="name">currentCost</property>
                         <property name="dataType">float</property>
                     </structure>
                     <structure>
                         <property name="position">24</property>
-                        <property name="name">costPerKilo</property>
+                        <property name="name">qtyForCost</property>
                         <property name="dataType">float</property>
                     </structure>
                     <structure>
                         <property name="position">25</property>
+                        <property name="name">costPerProduct</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">26</property>
+                        <property name="name">costPerKilo</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">27</property>
                         <property name="name">compoListProductLabel</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">26</property>
+                        <property name="position">28</property>
                         <property name="name">runningCount</property>
                         <property name="dataType">integer</property>
                     </structure>
@@ -1245,8 +1261,22 @@ row["compoListProduct"]
                     <property name="dataType">float</property>
                     <property name="nativeDataType">8</property>
                 </structure>
+                <structure>
+                    <property name="position">23</property>
+                    <property name="name">currentCost</property>
+                    <property name="nativeName">currentCost</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">24</property>
+                    <property name="name">qtyForCost</property>
+                    <property name="nativeName">qtyForCost</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/compoLists/compoList]#:#{depthLevel;STRING;/@depthLevel},{compoListProduct;STRING;/@compoListProduct},{compoListQtySubFormula;BIGDECIMAL;/@compoListQtySubFormula},{compoListQty;DOUBLE;/@compoListQty},{compoListUnit;STRING;/@compoListUnit},{compoListQtyAfterProcess;DOUBLE;/@compoListQtyAfterProcess},{itemType;STRING;/@itemType},{erpCode;STRING;/@erpCode},{variants;STRING;/@variants},{compoListYieldPerc;DOUBLE;/@compoListYieldPerc},{compoListLossPerc;DOUBLE;/@compoListLossPerc},{instruction;STRING;/instruction},{unitTotalCost;DOUBLE;/@unitTotalCost},{productCompoQtyUsed;DOUBLE;../../../productCompoQtyUsed},{netWeight;DOUBLE;../../../netWeight},{compoListQtyForProduct;DOUBLE;/@compoListQtyForProduct},{versionLabel;STRING;/@versionLabel},{itemTypeEntity;STRING;../../../itemType},{title;STRING;/@title},{productCompoQtyUsed_1;DOUBLE;../../../productCompoQtyUsed},{productUnit;STRING;/@productUnit},{compoListVolume;DOUBLE;/@compoListVolume}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/compoLists/compoList]#:#{depthLevel;STRING;/@depthLevel},{compoListProduct;STRING;/@compoListProduct},{compoListQtySubFormula;BIGDECIMAL;/@compoListQtySubFormula},{compoListQty;DOUBLE;/@compoListQty},{compoListUnit;STRING;/@compoListUnit},{compoListQtyAfterProcess;DOUBLE;/@compoListQtyAfterProcess},{itemType;STRING;/@itemType},{erpCode;STRING;/@erpCode},{variants;STRING;/@variants},{compoListYieldPerc;DOUBLE;/@compoListYieldPerc},{compoListLossPerc;DOUBLE;/@compoListLossPerc},{instruction;STRING;/instruction},{unitTotalCost;DOUBLE;/@unitTotalCost},{productCompoQtyUsed;DOUBLE;../../../productCompoQtyUsed},{netWeight;DOUBLE;../../../netWeight},{compoListQtyForProduct;DOUBLE;/@compoListQtyForProduct},{versionLabel;STRING;/@versionLabel},{itemTypeEntity;STRING;../../../itemType},{title;STRING;/@title},{productCompoQtyUsed_1;DOUBLE;../../../productCompoQtyUsed},{productUnit;STRING;/@productUnit},{compoListVolume;DOUBLE;/@compoListVolume},{currentCost;DOUBLE;/@currentCost},{qtyForCost;DOUBLE;/@qtyForCost}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -1590,14 +1620,16 @@ row["compoListProduct"]
             <list-property name="computedColumns">
                 <structure>
                     <property name="name">costPerKilo</property>
-                    <expression name="expression">if(row["itemType"] == "bcpg:finishedProduct"){
-row["costListValuePerProduct"] / row["netWeight"]
+                    <expression name="expression">var weight = (row["netWeight"] != null ? row["netWeight"] : row["productCompoQtyUsed"]);
+
+if(row["itemType"] == "bcpg:finishedProduct"){
+row["costListValuePerProduct"] / weight
 }
 else if(row["costListUnit"].indexOf("/kg") > 0){
 row["costListValue"]
 }
 else if(row["costListUnit"].indexOf("/P") > 0){
-row["costListValue"] / row["netWeight"]
+row["costListValue"] / weight
 }</expression>
                     <property name="dataType">float</property>
                 </structure>
@@ -1683,6 +1715,12 @@ row["costListValuePerProduct"] * row["nbProductsPkgLevel3"]
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">costListUnit</text-property>
                 </structure>
+                <structure>
+                    <property name="columnName">productCompoQtyUsed</property>
+                    <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">productCompoQtyUsed</text-property>
+                </structure>
             </list-property>
             <list-property name="parameters"/>
             <structure name="cachedMetaData">
@@ -1744,16 +1782,21 @@ row["costListValuePerProduct"] * row["nbProductsPkgLevel3"]
                     </structure>
                     <structure>
                         <property name="position">12</property>
-                        <property name="name">costPerKilo</property>
+                        <property name="name">productCompoQtyUsed</property>
                         <property name="dataType">float</property>
                     </structure>
                     <structure>
                         <property name="position">13</property>
-                        <property name="name">costPerBox</property>
+                        <property name="name">costPerKilo</property>
                         <property name="dataType">float</property>
                     </structure>
                     <structure>
                         <property name="position">14</property>
+                        <property name="name">costPerBox</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">15</property>
                         <property name="name">costPerPallet</property>
                         <property name="dataType">float</property>
                     </structure>
@@ -1838,8 +1881,15 @@ row["costListValuePerProduct"] * row["nbProductsPkgLevel3"]
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">productCompoQtyUsed</property>
+                    <property name="nativeName">productCompoQtyUsed</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/costLists/costList]#:#{costListCost;STRING;/@costListCost},{costListValue;DOUBLE;/@costListValue},{productQty;DOUBLE;../../../productQty},{productUnit;STRING;../../../productUnit},{depthLevel;INT;/@depthLevel},{netWeight;DOUBLE;../../../netWeight},{costListValuePerProduct;DOUBLE;/@costListValuePerProduct},{nbProductsPkgLevel2;INT;../../packagingLists/packagingLevelMeasures/@nbProductsPkgLevel2},{nbProductsPkgLevel3;INT;../../packagingLists/packagingLevelMeasures/@nbProductsPkgLevel3},{itemType;STRING;../../../itemType},{costListUnit;STRING;/@costListUnit}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/costLists/costList]#:#{costListCost;STRING;/@costListCost},{costListValue;DOUBLE;/@costListValue},{productQty;DOUBLE;../../../productQty},{productUnit;STRING;../../../productUnit},{depthLevel;INT;/@depthLevel},{netWeight;DOUBLE;../../../netWeight},{costListValuePerProduct;DOUBLE;/@costListValuePerProduct},{nbProductsPkgLevel2;INT;../../packagingLists/packagingLevelMeasures/@nbProductsPkgLevel2},{nbProductsPkgLevel3;INT;../../packagingLists/packagingLevelMeasures/@nbProductsPkgLevel3},{itemType;STRING;../../../itemType},{costListUnit;STRING;/@costListUnit},{productCompoQtyUsed;DOUBLE;../../../productCompoQtyUsed}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -1897,18 +1947,7 @@ row["costListValuePerProduct"] * row["nbProductsPkgLevel3"]
             <list-property name="computedColumns">
                 <structure>
                     <property name="name">costPerProduct</property>
-                    <expression name="expression">var qty = 0;
-
-if(row["itemTypeEntity"] == "bcpg:finishedProduct"){
-qty= row["packagingListQtyForProduct"];
-}
-else if(row["packagingListUnit"]=="g"){
-qty = row["packagingListQty"] / 1000;
-}
-else{
-qty = row["packagingListQty"]
-}
-row["unitTotalCost"] * qty * (1 + row["packagingListLossPerc"]/100)</expression>
+                    <expression name="expression">row["qtyForCost"] * row["currentCost"]</expression>
                     <property name="dataType">float</property>
                 </structure>
                 <structure>
@@ -2023,6 +2062,24 @@ row["packagingListProduct"]
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">productCompoQtyUsed</text-property>
                 </structure>
+                <structure>
+                    <property name="columnName">currentCost</property>
+                    <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">currentCost</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">compoListProduct</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">compoListProduct</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">qtyForCost</property>
+                    <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">qtyForCost</text-property>
+                </structure>
             </list-property>
             <list-property name="filter"/>
             <list-property name="parameters"/>
@@ -2105,21 +2162,36 @@ row["packagingListProduct"]
                     </structure>
                     <structure>
                         <property name="position">16</property>
-                        <property name="name">costPerProduct</property>
+                        <property name="name">currentCost</property>
                         <property name="dataType">float</property>
                     </structure>
                     <structure>
                         <property name="position">17</property>
+                        <property name="name">compoListProduct</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">18</property>
+                        <property name="name">qtyForCost</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">19</property>
+                        <property name="name">costPerProduct</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">20</property>
                         <property name="name">costPerKilo</property>
                         <property name="dataType">float</property>
                     </structure>
                     <structure>
-                        <property name="position">18</property>
+                        <property name="position">21</property>
                         <property name="name">packagingListProductLabel</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">19</property>
+                        <property name="position">22</property>
                         <property name="name">runningCount</property>
                         <property name="dataType">integer</property>
                     </structure>
@@ -2232,8 +2304,29 @@ row["packagingListProduct"]
                     <property name="dataType">float</property>
                     <property name="nativeDataType">8</property>
                 </structure>
+                <structure>
+                    <property name="position">16</property>
+                    <property name="name">currentCost</property>
+                    <property name="nativeName">currentCost</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">17</property>
+                    <property name="name">compoListProduct</property>
+                    <property name="nativeName">compoListProduct</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">18</property>
+                    <property name="name">qtyForCost</property>
+                    <property name="nativeName">qtyForCost</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingLists/packagingList]#:#{erpCode;STRING;/@erpCode},{packagingListProduct;STRING;/@packagingListProduct},{packagingListQty;DOUBLE;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{unitTotalCost;DOUBLE;/@unitTotalCost},{packagingListLossPerc;DOUBLE;/@packagingListLossPerc},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{packagingListQtyForProduct;DOUBLE;/@packagingListQtyForProduct},{depthLevel;INT;/@depthLevel},{netWeight;DOUBLE;../../../netWeight},{itemType;STRING;/@itemType},{versionLabel;STRING;/@versionLabel},{itemTypeEntity;STRING;../../../itemType},{title;STRING;/@title},{productCompoQtyUsed;DOUBLE;../../../productCompoQtyUsed}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingLists/packagingList]#:#{erpCode;STRING;/@erpCode},{packagingListProduct;STRING;/@packagingListProduct},{packagingListQty;DOUBLE;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{unitTotalCost;DOUBLE;/@unitTotalCost},{packagingListLossPerc;DOUBLE;/@packagingListLossPerc},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{packagingListQtyForProduct;DOUBLE;/@packagingListQtyForProduct},{depthLevel;INT;/@depthLevel},{netWeight;DOUBLE;../../../netWeight},{itemType;STRING;/@itemType},{versionLabel;STRING;/@versionLabel},{itemTypeEntity;STRING;../../../itemType},{title;STRING;/@title},{productCompoQtyUsed;DOUBLE;../../../productCompoQtyUsed},{currentCost;DOUBLE;/@currentCost},{compoListProduct;STRING;/@compoListProduct},{qtyForCost;DOUBLE;/@qtyForCost}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -2339,7 +2432,7 @@ row["packagingListProduct"]
             <list-property name="computedColumns">
                 <structure>
                     <property name="name">costPerProduct</property>
-                    <expression name="expression">row["unitTotalCost"] * row["processListQtyForProduct"]</expression>
+                    <expression name="expression">row["currentCost"] * row["qtyForCost"]</expression>
                     <property name="dataType">float</property>
                 </structure>
                 <structure>
@@ -2352,8 +2445,11 @@ row["packagingListProduct"]
                     <expression name="expression">if(row["title"] != null &amp;&amp; row["title"] != ""){
 row["title"]
 }
-else{
+else if(row["plResource"] != null){
 row["plResource"]
+}
+else{
+row["compoListProduct"]
 }</expression>
                     <property name="dataType">string</property>
                 </structure>
@@ -2454,11 +2550,29 @@ row["plResource"]
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">productCompoQtyUsed</text-property>
                 </structure>
+                <structure>
+                    <property name="columnName">compoListProduct</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">compoListProduct</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">qtyForCost</property>
+                    <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">qtyForCost</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">currentCost</property>
+                    <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">currentCost</text-property>
+                </structure>
             </list-property>
             <list-property name="filter">
                 <structure>
                     <property name="operator">gt</property>
-                    <expression name="expr" type="javascript">row["plQtyResource"]</expression>
+                    <expression name="expr" type="javascript">row["costPerKilo"]</expression>
                     <simple-property-list name="value1">
                         <value>0</value>
                     </simple-property-list>
@@ -2544,21 +2658,36 @@ row["plResource"]
                     </structure>
                     <structure>
                         <property name="position">16</property>
-                        <property name="name">costPerProduct</property>
-                        <property name="dataType">float</property>
+                        <property name="name">compoListProduct</property>
+                        <property name="dataType">string</property>
                     </structure>
                     <structure>
                         <property name="position">17</property>
-                        <property name="name">costPerKilo</property>
+                        <property name="name">qtyForCost</property>
                         <property name="dataType">float</property>
                     </structure>
                     <structure>
                         <property name="position">18</property>
+                        <property name="name">currentCost</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">19</property>
+                        <property name="name">costPerProduct</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">20</property>
+                        <property name="name">costPerKilo</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">21</property>
                         <property name="name">plResourceLabel</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">19</property>
+                        <property name="position">22</property>
                         <property name="name">runningCount</property>
                         <property name="dataType">integer</property>
                     </structure>
@@ -2671,8 +2800,29 @@ row["plResource"]
                     <property name="dataType">float</property>
                     <property name="nativeDataType">8</property>
                 </structure>
+                <structure>
+                    <property name="position">16</property>
+                    <property name="name">compoListProduct</property>
+                    <property name="nativeName">compoListProduct</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">17</property>
+                    <property name="name">qtyForCost</property>
+                    <property name="nativeName">qtyForCost</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">18</property>
+                    <property name="name">currentCost</property>
+                    <property name="nativeName">currentCost</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/processLists/processList]#:#{unitTotalCost;DOUBLE;/@unitTotalCost},{plRateProduct;DOUBLE;/@plRateProduct},{plRateResource;DOUBLE;/@plRateResource},{plRateProcess;DOUBLE;/@plRateProcess},{plQtyResource;DOUBLE;/@plQtyResource},{plUnit;STRING;/@plUnit},{plStep;STRING;/@plStep},{plResource;STRING;/@plResource},{processListQtyForProduct;DOUBLE;/@processListQtyForProduct},{netWeight;DOUBLE;../../../netWeight},{versionLabel;STRING;/@versionLabel},{depthLevel;INT;/@depthLevel},{itemTypeEntity;STRING;../../../itemType},{title;STRING;/@title},{productCompoQtyUsed;DOUBLE;../../../productCompoQtyUsed}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/processLists/processList]#:#{unitTotalCost;DOUBLE;/@unitTotalCost},{plRateProduct;DOUBLE;/@plRateProduct},{plRateResource;DOUBLE;/@plRateResource},{plRateProcess;DOUBLE;/@plRateProcess},{plQtyResource;DOUBLE;/@plQtyResource},{plUnit;STRING;/@plUnit},{plStep;STRING;/@plStep},{plResource;STRING;/@plResource},{processListQtyForProduct;DOUBLE;/@processListQtyForProduct},{netWeight;DOUBLE;../../../netWeight},{versionLabel;STRING;/@versionLabel},{depthLevel;INT;/@depthLevel},{itemTypeEntity;STRING;../../../itemType},{title;STRING;/@title},{productCompoQtyUsed;DOUBLE;../../../productCompoQtyUsed},{compoListProduct;STRING;/@compoListProduct},{qtyForCost;DOUBLE;/@qtyForCost},{currentCost;DOUBLE;/@currentCost}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -3931,7 +4081,7 @@ dataSetRow["costListValue"]
         <table id="2890">
             <property name="fontSize">8pt</property>
             <property name="pageBreakInside">auto</property>
-            <property name="width">100%</property>
+            <property name="width">7.28125in</property>
             <property name="dataSet">CompoList</property>
             <list-property name="visibility">
                 <structure>
@@ -4130,6 +4280,36 @@ dataSetRow["costListValue"]
                     <expression name="expression" type="javascript">dataSetRow["runningCount"]</expression>
                     <property name="dataType">integer</property>
                 </structure>
+                <structure>
+                    <property name="name">currentCost</property>
+                    <text-property name="displayName">currentCost</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["currentCost"]</expression>
+                    <property name="dataType">float</property>
+                </structure>
+                <structure>
+                    <property name="name">qtyForCost</property>
+                    <text-property name="displayName">qtyForCost</text-property>
+                    <expression name="expression" type="javascript">if(dataSetRow["productUnit"] == "kg" || dataSetRow["productUnit"] == "g"){
+	dataSetRow["qtyForCost"] * 1000
+}
+else{
+dataSetRow["qtyForCost"]
+}</expression>
+                    <property name="dataType">float</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">productUnit</property>
+                    <text-property name="displayName">productUnit</text-property>
+                    <expression name="expression" type="javascript">if(dataSetRow["productUnit"] == "kg" || dataSetRow["productUnit"] == "mg"){
+"g"
+}
+else{
+dataSetRow["productUnit"]
+}</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
             </list-property>
             <column id="2910">
                 <property name="style">becpg-col-border</property>
@@ -4141,41 +4321,49 @@ dataSetRow["costListValue"]
             </column>
             <column id="3567">
                 <property name="style">becpg-col-border</property>
-                <property name="width">0.4895833333333333in</property>
+                <property name="width">0.4270833333333333in</property>
             </column>
             <column id="3570">
                 <property name="style">becpg-col-border</property>
-                <property name="width">0.5208333333333334in</property>
+                <property name="width">0.3333333333333333in</property>
             </column>
             <column id="2969">
                 <property name="style">becpg-col-border</property>
-                <property name="width">0.4583333333333333in</property>
+                <property name="width">0.3645833333333333in</property>
             </column>
             <column id="7092">
                 <property name="style">becpg-col-border</property>
-                <property name="width">0.3125in</property>
+                <property name="width">0.2916666666666667in</property>
             </column>
             <column id="3290">
                 <property name="style">becpg-col-border</property>
-                <property name="width">0.40625in</property>
+                <property name="width">0.2708333333333333in</property>
+            </column>
+            <column id="7365">
+                <property name="style">becpg-col-border</property>
+                <property name="width">0.3854166666666667in</property>
+            </column>
+            <column id="7359">
+                <property name="style">becpg-col-border</property>
+                <property name="width">0.3229166666666667in</property>
             </column>
             <column id="3329">
                 <property name="style">becpg-col-border</property>
-                <property name="width">0.4375in</property>
+                <property name="width">0.4895833333333333in</property>
             </column>
             <column id="3332">
                 <property name="style">becpg-col-border</property>
-                <property name="width">0.4270833333333333in</property>
+                <property name="width">0.46875in</property>
             </column>
             <column id="3464">
                 <property name="style">becpg-col-border</property>
-                <property name="width">0.4791666666666667in</property>
+                <property name="width">0.4270833333333333in</property>
             </column>
             <header>
                 <row id="6882">
                     <property name="style">becpg-chapter-header</property>
                     <cell id="6883">
-                        <property name="colSpan">10</property>
+                        <property name="colSpan">12</property>
                         <property name="rowSpan">1</property>
                         <label id="2700">
                             <text-property name="text" key="chapterCompo">COMPOSITION</text-property>
@@ -4186,7 +4374,7 @@ dataSetRow["costListValue"]
                     <property name="borderBottomStyle">solid</property>
                     <property name="borderBottomWidth">thin</property>
                     <cell id="6893">
-                        <property name="colSpan">10</property>
+                        <property name="colSpan">12</property>
                         <property name="rowSpan">1</property>
                         <property name="borderBottomStyle">none</property>
                         <property name="borderLeftStyle">none</property>
@@ -4210,15 +4398,11 @@ dataSetRow["costListValue"]
                         </label>
                     </cell>
                     <cell id="3565">
+                        <property name="colSpan">2</property>
+                        <property name="rowSpan">1</property>
                         <property name="style">becpg-cell-header</property>
                         <label id="3571">
                             <text-property name="text" key="qteMeo">Qté MeO</text-property>
-                        </label>
-                    </cell>
-                    <cell id="3568">
-                        <property name="style">becpg-cell-header</property>
-                        <label id="3573">
-                            <text-property name="text" key="unit">Unité</text-property>
                         </label>
                     </cell>
                     <cell id="2966">
@@ -4237,6 +4421,14 @@ dataSetRow["costListValue"]
                         <property name="style">becpg-cell-header</property>
                         <label id="3293">
                             <text-property name="text" key="PercentLoss">% Freinte</text-property>
+                        </label>
+                    </cell>
+                    <cell id="7362">
+                        <property name="colSpan">2</property>
+                        <property name="rowSpan">1</property>
+                        <property name="style">becpg-cell-header</property>
+                        <label id="7142">
+                            <text-property name="text" key="qtyForCost">Qté cons. /UV</text-property>
                         </label>
                     </cell>
                     <cell id="3327">
@@ -4338,15 +4530,30 @@ matière
                             <property name="resultSetColumn">compoListLossPerc</property>
                         </data>
                     </cell>
+                    <cell id="7363">
+                        <property name="style">becpg-cell-data</property>
+                        <data id="7366">
+                            <structure name="numberFormat">
+                                <property name="category">Custom</property>
+                                <property name="pattern">#0.####</property>
+                            </structure>
+                            <property name="resultSetColumn">qtyForCost</property>
+                        </data>
+                    </cell>
+                    <cell id="7357">
+                        <property name="style">becpg-cell-data</property>
+                        <data id="7367">
+                            <property name="resultSetColumn">productUnit</property>
+                        </data>
+                    </cell>
                     <cell id="3328">
                         <property name="style">becpg-cell-data</property>
-                        <data id="3551">
-                            <property name="style">becpg-data</property>
+                        <data id="7353">
                             <structure name="numberFormat">
                                 <property name="category">Custom</property>
                                 <property name="pattern">#0.0000</property>
                             </structure>
-                            <property name="resultSetColumn">unitTotalCost</property>
+                            <property name="resultSetColumn">currentCost</property>
                         </data>
                     </cell>
                     <cell id="3331">
@@ -4406,6 +4613,12 @@ matière
                         <property name="style">becpg-cell-footer</property>
                     </cell>
                     <cell id="7034">
+                        <property name="style">becpg-cell-footer</property>
+                    </cell>
+                    <cell id="7364">
+                        <property name="style">becpg-cell-footer</property>
+                    </cell>
+                    <cell id="7358">
                         <property name="style">becpg-cell-footer</property>
                     </cell>
                     <cell id="7035">
@@ -4576,6 +4789,18 @@ dataSetRow["packagingListPkgLevel"]
                     <expression name="expression" type="javascript">dataSetRow["runningCount"]</expression>
                     <property name="dataType">integer</property>
                 </structure>
+                <structure>
+                    <property name="name">currentCost</property>
+                    <text-property name="displayName">currentCost</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["currentCost"]</expression>
+                    <property name="dataType">float</property>
+                </structure>
+                <structure>
+                    <property name="name">qtyForCost</property>
+                    <text-property name="displayName">qtyForCost</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["qtyForCost"]</expression>
+                    <property name="dataType">float</property>
+                </structure>
             </list-property>
             <column id="3528">
                 <property name="width">0.8in</property>
@@ -4590,11 +4815,11 @@ dataSetRow["packagingListPkgLevel"]
             </column>
             <column id="3531">
                 <property name="style">becpg-col-border</property>
-                <property name="width">0.4479166666666667in</property>
+                <property name="width">0.375in</property>
             </column>
             <column id="3582">
                 <property name="style">becpg-col-border</property>
-                <property name="width">0.5520833333333334in</property>
+                <property name="width">0.6666666666666666in</property>
             </column>
             <column id="3644">
                 <property name="style">becpg-col-border</property>
@@ -4655,15 +4880,11 @@ dataSetRow["packagingListPkgLevel"]
                         </label>
                     </cell>
                     <cell id="3510">
+                        <property name="colSpan">2</property>
+                        <property name="rowSpan">1</property>
                         <property name="style">becpg-cell-header</property>
-                        <label id="3540">
-                            <text-property name="text" key="hQty">Qté</text-property>
-                        </label>
-                    </cell>
-                    <cell id="3511">
-                        <property name="style">becpg-cell-header</property>
-                        <label id="3542">
-                            <text-property name="text" key="unit">Unité</text-property>
+                        <label id="7372">
+                            <text-property name="text" key="qteMeo">Qté MeO</text-property>
                         </label>
                     </cell>
                     <cell id="3580">
@@ -4674,8 +4895,8 @@ dataSetRow["packagingListPkgLevel"]
                     </cell>
                     <cell id="3642">
                         <property name="style">becpg-cell-header</property>
-                        <label id="3645">
-                            <text-property name="text" key="hQtyPerUnit">Qté par UV</text-property>
+                        <label id="7376">
+                            <text-property name="text" key="qtyForCost">Qté cons. /UV</text-property>
                         </label>
                     </cell>
                     <cell id="3575">
@@ -4751,13 +4972,12 @@ dataSetRow["packagingListPkgLevel"]
                     </cell>
                     <cell id="3643">
                         <property name="style">becpg-cell-data</property>
-                        <data id="3646">
-                            <property name="style">becpg-data</property>
+                        <data id="7370">
                             <structure name="numberFormat">
                                 <property name="category">Custom</property>
-                                <property name="pattern">#0.0000</property>
+                                <property name="pattern">#0.####</property>
                             </structure>
-                            <property name="resultSetColumn">packagingListQtyForProduct</property>
+                            <property name="resultSetColumn">qtyForCost</property>
                         </data>
                     </cell>
                     <cell id="3576">
@@ -4769,13 +4989,12 @@ dataSetRow["packagingListPkgLevel"]
                     </cell>
                     <cell id="3519">
                         <property name="style">becpg-cell-data</property>
-                        <data id="3564">
-                            <property name="style">becpg-data</property>
+                        <data id="7368">
                             <structure name="numberFormat">
                                 <property name="category">Custom</property>
                                 <property name="pattern">#0.0000</property>
                             </structure>
-                            <property name="resultSetColumn">unitTotalCost</property>
+                            <property name="resultSetColumn">currentCost</property>
                         </data>
                     </cell>
                     <cell id="3520">
@@ -4975,6 +5194,19 @@ dataSetRow["packagingListPkgLevel"]
                     <expression name="expression" type="javascript">dataSetRow["runningCount"]</expression>
                     <property name="dataType">integer</property>
                 </structure>
+                <structure>
+                    <property name="name">currentCost</property>
+                    <text-property name="displayName">currentCost</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["currentCost"]</expression>
+                    <property name="dataType">float</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">qtyForCost</property>
+                    <text-property name="displayName">qtyForCost</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["qtyForCost"]</expression>
+                    <property name="dataType">float</property>
+                </structure>
             </list-property>
             <column id="3621">
                 <property name="width">0.7708333333333334in</property>
@@ -5051,15 +5283,14 @@ dataSetRow["packagingListPkgLevel"]
                     </cell>
                     <cell id="6979">
                         <property name="style">becpg-cell-header</property>
-                        <label id="3636">
-                            <text-property name="text" key="hQty">Qté</text-property>
+                        <label id="7374">
+                            <text-property name="text" key="qteMeo">Qté MeO</text-property>
                         </label>
                     </cell>
                     <cell id="6980">
                         <property name="style">becpg-cell-header</property>
-                        <label id="3649">
-                            <text-property name="text" key="hQtyPerUnit">Qté 
-par UV</text-property>
+                        <label id="7377">
+                            <text-property name="text" key="qtyForCost">Qté cons. /UV</text-property>
                         </label>
                     </cell>
                     <cell id="6981">
@@ -5122,31 +5353,33 @@ horaire</text-property>
                     </cell>
                     <cell id="3605">
                         <property name="style">becpg-cell-data</property>
-                        <data id="3650">
-                            <property name="style">becpg-data</property>
+                        <data id="7371">
                             <structure name="numberFormat">
                                 <property name="category">Custom</property>
-                                <property name="pattern">#0.0000</property>
+                                <property name="pattern">#0.####</property>
                             </structure>
-                            <property name="resultSetColumn">processListQtyForProduct</property>
+                            <property name="resultSetColumn">qtyForCost</property>
                         </data>
                     </cell>
                     <cell id="3606">
                         <property name="style">becpg-cell-data</property>
                         <data id="3639">
                             <property name="style">becpg-data</property>
+                            <structure name="numberFormat">
+                                <property name="category">Custom</property>
+                                <property name="pattern">#0.#</property>
+                            </structure>
                             <property name="resultSetColumn">plRateProduct</property>
                         </data>
                     </cell>
                     <cell id="3608">
                         <property name="style">becpg-cell-data</property>
-                        <data id="3641">
-                            <property name="style">becpg-data</property>
+                        <data id="7352">
                             <structure name="numberFormat">
                                 <property name="category">Custom</property>
                                 <property name="pattern">#0.0000</property>
                             </structure>
-                            <property name="resultSetColumn">unitTotalCost</property>
+                            <property name="resultSetColumn">currentCost</property>
                         </data>
                     </cell>
                     <cell id="3609">
