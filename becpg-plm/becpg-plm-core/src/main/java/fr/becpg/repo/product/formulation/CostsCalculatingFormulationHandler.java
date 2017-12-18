@@ -686,7 +686,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				}
 				if (productNodeRef.equals(componentNodeRef)) {
 					totalQty += qty;
-				}
+				} 
 			}
 		}
 		return totalQty;
@@ -710,7 +710,9 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 									+ " qty component " + qtyComponent + " netQty " + netQty);
 						}
 						if (c2.getValue() != null) {
-							c.setValue(((c.getSimulatedValue() - c2.getValue()) * qtyComponent) / netQty);
+							Double qty = FormulationHelper.getProductQty(formulatedProduct.getNodeRef(), nodeService);
+							Double uRate = c.getUnit().equals("€/P") ? netQty/qty : 1;
+							c.setValue(((c.getSimulatedValue() - c2.getValue()) * qtyComponent) * uRate / netQty);
 						} else {
 							c.setValue(((c.getSimulatedValue()) * qtyComponent) / netQty);
 						}
