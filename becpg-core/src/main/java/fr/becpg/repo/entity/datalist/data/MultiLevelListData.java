@@ -71,6 +71,10 @@ public class MultiLevelListData {
 	public int getSize() {
 		return getSize(this,0);
 	}
+	
+	public boolean isLeaf() {
+		return tree.isEmpty();
+	}
 
 	private int getSize(MultiLevelListData multiLevelListData, int currSize) {
 		for (Entry<NodeRef, MultiLevelListData> entry : multiLevelListData.getTree().entrySet()) {
@@ -89,6 +93,19 @@ public class MultiLevelListData {
 		}
 		return ret;
 	}
+	
+	public List<NodeRef> getAllLeafs() {
+		List<NodeRef> ret = new ArrayList<>();
+		
+		for (Entry<NodeRef, MultiLevelListData> entry : getTree().entrySet()) {
+			if(entry.getValue().isLeaf()) {
+				ret.add(entry.getValue().getEntityNodeRef());
+			}
+			ret.addAll(entry.getValue().getAllLeafs());
+		}
+		return ret;
+	}
+	
 
 	@Override
 	public String toString() {

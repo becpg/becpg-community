@@ -13,6 +13,8 @@ public interface AutomaticECOService {
 	ChangeOrderData createAutomaticEcoForUser(String ecoName);
 
 	ChangeOrderData getCurrentUserChangeOrderData();
+
+	boolean isWithoutRecord();
 	
 
 }

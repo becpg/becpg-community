@@ -41,7 +41,6 @@ import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.product.data.CharactDetails;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.lexer.CompositionLexer;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
