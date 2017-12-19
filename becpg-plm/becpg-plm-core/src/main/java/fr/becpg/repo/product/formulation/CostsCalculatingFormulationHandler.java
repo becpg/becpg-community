@@ -686,47 +686,48 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				}
 				if (productNodeRef.equals(componentNodeRef)) {
 					totalQty += qty;
-				} 
+				}
 			}
 		}
 		return totalQty;
 	}
-
+	
 	private void calculateSimulationCosts(ProductData formulatedProduct) {
-		Double netQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
-		for (CostListDataItem c : formulatedProduct.getCostList()) {
-			if ((c.getComponentNodeRef() != null) && (c.getParent() != null)) {
-				Double qtyComponent;
-				ProductData componentData = alfrescoRepositoryProductData.findOne(c.getComponentNodeRef());
-				if (componentData instanceof PackagingMaterialData) {
-					qtyComponent = getPackagingListQty(formulatedProduct, c.getComponentNodeRef());
-				} else {
-					qtyComponent = getCompoListQty(formulatedProduct, c.getComponentNodeRef(), formulatedProduct.getRecipeQtyUsed());
-				}
-				for (CostListDataItem c2 : componentData.getCostList()) {
-					if (c2.getCost().equals(c.getParent().getCost()) && (c.getSimulatedValue() != null)) {
-						if (logger.isDebugEnabled()) {
-							logger.debug("add simulationCost " + "c2 value " + c2.getValue() + "c simulated value " + c.getSimulatedValue()
-									+ " qty component " + qtyComponent + " netQty " + netQty);
-						}
-						if (c2.getValue() != null) {
-							Double qty = FormulationHelper.getProductQty(formulatedProduct.getNodeRef(), nodeService);
-							Double uRate = c.getUnit().equals("€/P") ? netQty/qty : 1;
-							c.setValue(((c.getSimulatedValue() - c2.getValue()) * qtyComponent) * uRate / netQty);
-						} else {
-							c.setValue(((c.getSimulatedValue()) * qtyComponent) / netQty);
-						}
-						if (c.getParent().getValue() != null) {
-							c.getParent().setValue(c.getParent().getValue() + c.getValue());
-						} else {
-							c.getParent().setValue(c.getValue());
-						}
-						break;
-					}
-				}
-			}
-		}
-	}
+        Double netQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
+        if(formulatedProduct.getUnit() != null && formulatedProduct.getUnit().equals(ProductUnit.P)){
+            netQty = FormulationHelper.getProductQty(formulatedProduct.getNodeRef(), nodeService);
+        }
+        for (CostListDataItem c : formulatedProduct.getCostList()) {
+            if ((c.getComponentNodeRef() != null) && (c.getParent() != null)) {
+                Double qtyComponent;
+                ProductData componentData = alfrescoRepositoryProductData.findOne(c.getComponentNodeRef());
+                if (componentData instanceof PackagingMaterialData) {
+                    qtyComponent = getPackagingListQty(formulatedProduct, c.getComponentNodeRef());
+                } else {
+                    qtyComponent = getCompoListQty(formulatedProduct, c.getComponentNodeRef(), formulatedProduct.getRecipeQtyUsed());
+                }
+                for (CostListDataItem c2 : componentData.getCostList()) {
+                    if (c2.getCost().equals(c.getParent().getCost()) && (c.getSimulatedValue() != null)) {
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("add simulationCost " + "c2 value " + c2.getValue() + "c simulated value " + c.getSimulatedValue()
+                                    + " qty component " + qtyComponent + " netQty " + netQty);
+                        }
+                        if (c2.getValue() != null) {
+                            c.setValue(((c.getSimulatedValue() - c2.getValue()) * qtyComponent) / netQty);
+                        } else {
+                            c.setValue(((c.getSimulatedValue()) * qtyComponent) / netQty);
+                        }
+                        if (c.getParent().getValue() != null) {
+                            c.getParent().setValue(c.getParent().getValue() + c.getValue());
+                        } else {
+                            c.getParent().setValue(c.getValue());
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+    }
 
 	@Override
 	protected boolean accept(ProductData formulatedProduct) {
