@@ -1254,9 +1254,10 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
     private void redirectToLoginPage(HttpServletRequest req, HttpServletResponse res) throws IOException
     {
         if (logger.isDebugEnabled())
-            logger.debug("Redirecting to the login page.");
+            logger.debug("Redirecting to the login page." );
         
-        if (PAGE_SERVLET_PATH.equals(req.getServletPath()))
+        //Patch beCPG refs #3825 
+        if (PAGE_SERVLET_PATH.equals(req.getServletPath())  || req.getRequestURI().contains("proxy/alfresco/slingshot/node/content") )
         {
             // redirect via full page redirect
             setRedirectUrl(req);
