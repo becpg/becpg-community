@@ -114,4 +114,9 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
     <bean id="userDashboardInterceptor" class="fr.becpg.web.site.ExternalUserDashboardInterceptor" parent="abstractWebFrameworkInterceptor" />
    
    
+     <!-- Filter for performing SSO Authentication such as NTLM -->
+   <bean id="SSOAuthenticationFilter" class="fr.becpg.web.authentication.BeCPGSSOAuthenticationFilter" init-method="init">
+      <property name="endpoint" value="alfresco" />
+   </bean>
+   
 </beans>
