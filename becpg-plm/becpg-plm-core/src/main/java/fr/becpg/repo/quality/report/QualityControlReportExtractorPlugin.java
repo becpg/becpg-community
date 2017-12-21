@@ -55,7 +55,7 @@ public class QualityControlReportExtractorPlugin extends DefaultEntityReportExtr
 	 * @return the element
 	 */
 	@Override
-	protected void loadDataLists(NodeRef entityNodeRef, Element dataListsElt, Map<String, byte[]> images) {
+	protected void loadDataLists(NodeRef entityNodeRef, Element dataListsElt,   DefaultExtractorContext context) {
 		QualityControlData qualityControlData = (QualityControlData) alfrescoRepository.findOne(entityNodeRef);
 
 		Map<QName, List<? extends RepositoryEntity>> datalists = repositoryEntityDefReader.getDataLists(qualityControlData);
@@ -72,7 +72,7 @@ public class QualityControlReportExtractorPlugin extends DefaultEntityReportExtr
 
 					for (BeCPGDataObject dataListItem : dataListItems) {
 						Element nodeElt = dataListElt.addElement(dataListQName.getLocalName());
-						loadDataListItemAttributes(dataListItem, nodeElt, images);
+						loadDataListItemAttributes(dataListItem, nodeElt, context);
 
 					}
 				}
@@ -82,7 +82,7 @@ public class QualityControlReportExtractorPlugin extends DefaultEntityReportExtr
 	}
 
 	@Override
-	protected boolean loadTargetAssoc(NodeRef entityNodeRef, AssociationDefinition assocDef, Element entityElt, Map<String, byte[]> images) {
+	protected boolean loadTargetAssoc(NodeRef entityNodeRef, AssociationDefinition assocDef, Element entityElt,   DefaultExtractorContext context) {
 
 		if ((assocDef != null) && (assocDef.getName() != null)) {
 			if (assocDef.getName().equals(QualityModel.ASSOC_PRODUCT)) {
@@ -93,9 +93,9 @@ public class QualityControlReportExtractorPlugin extends DefaultEntityReportExtr
 					Element nodeElt = pjtEntityElt.addElement(qName.getLocalName());
 					EntityReportExtractorPlugin extractor = entityReportService.retrieveExtractor(nodeRef);
 					if ((extractor != null) && (extractor instanceof DefaultEntityReportExtractor)) {
-						((DefaultEntityReportExtractor) extractor).extractEntity(nodeRef, nodeElt, images);
+						((DefaultEntityReportExtractor) extractor).extractEntity(nodeRef, nodeElt, context);
 					} else {
-						extractEntity(nodeRef, nodeElt, images);
+						extractEntity(nodeRef, nodeElt, context);
 					}
 				}
 				return true;

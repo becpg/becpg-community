@@ -1,25 +1,22 @@
 package fr.becpg.repo.project.report;
 
 import java.util.List;
-import java.util.Map;
 
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.dom4j.Element;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.report.entity.EntityReportExtractorPlugin;
-import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor;
 
 @Service
 public class ProjectReportExtractor extends DefaultEntityReportExtractor {
 	
 	@Override
-	protected boolean loadTargetAssoc(NodeRef entityNodeRef, AssociationDefinition assocDef, Element entityElt, Map<String, byte[]> images) {
+	protected boolean loadTargetAssoc(NodeRef entityNodeRef, AssociationDefinition assocDef, Element entityElt,  DefaultExtractorContext context) {
 		
 		if (assocDef != null && assocDef.getName() != null) {
 			if (assocDef.getName().equals(ProjectModel.ASSOC_PROJECT_ENTITY)) {					
@@ -30,15 +27,15 @@ public class ProjectReportExtractor extends DefaultEntityReportExtractor {
 					Element nodeElt = pjtEntityElt.addElement(qName.getLocalName());
 					EntityReportExtractorPlugin extractor = entityReportService.retrieveExtractor(nodeRef);
 					if(extractor!=null && extractor instanceof DefaultEntityReportExtractor){
-						((DefaultEntityReportExtractor)extractor).extractEntity(nodeRef, nodeElt, images);
+						((DefaultEntityReportExtractor)extractor).extractEntity(nodeRef, nodeElt, context);
 					} else {
-						extractEntity(nodeRef, nodeElt, images);
+						extractEntity(nodeRef, nodeElt, context);
 					}
 				}				
 				return true;
 			}
 			else{
-				super.loadTargetAssoc(entityNodeRef, assocDef, entityElt, images);
+				super.loadTargetAssoc(entityNodeRef, assocDef, entityElt, context);
 			}
 		}
 
