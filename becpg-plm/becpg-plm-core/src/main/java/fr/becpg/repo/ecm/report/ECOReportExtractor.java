@@ -19,6 +19,7 @@ package fr.becpg.repo.ecm.report;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -65,7 +66,7 @@ public class ECOReportExtractor implements EntityReportExtractorPlugin {
 
 	
 	@Override
-	public EntityReportData extract(NodeRef entityNodeRef) {
+	public EntityReportData extract(NodeRef entityNodeRef, Map<String,String> preferences) {
 
 		EntityReportData ret = new EntityReportData();
 
