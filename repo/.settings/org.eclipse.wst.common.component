@@ -8,16 +8,31 @@
         <dependent-module archiveName="alfresco-share-services-5.2.f.amp" deploy-path="/WEB-INF/lib" handle="module:/resource/org.alfresco.alfresco-share-services-5.2.c/org.alfresco.alfresco-share-services-5.2.c">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+<<<<<<< local
         <dependent-module archiveName="becpg-core-2.2.2.amp" deploy-path="/WEB-INF/lib" handle="module:/resource/becpg-core/becpg-core">
+=======
+        <dependent-module archiveName="becpg-core-2.2.1.amp" deploy-path="/WEB-INF/lib" handle="module:/resource/becpg-core/becpg-core">
+>>>>>>> other
             <dependency-type>uses</dependency-type>
         </dependent-module>
+<<<<<<< local
         <dependent-module archiveName="becpg-designer-core-2.2.2.amp" deploy-path="/WEB-INF/lib" handle="module:/resource/becpg-designer-core/becpg-designer-core">
+=======
+        <dependent-module archiveName="becpg-designer-core-2.2.1.amp" deploy-path="/WEB-INF/lib" handle="module:/resource/becpg-designer-core/becpg-designer-core">
+>>>>>>> other
             <dependency-type>uses</dependency-type>
         </dependent-module>
+<<<<<<< local
         <dependent-module archiveName="becpg-project-core-2.2.2.amp" deploy-path="/WEB-INF/lib" handle="module:/resource/becpg-project-core/becpg-project-core">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module archiveName="becpg-plm-core-2.2.2.amp" deploy-path="/WEB-INF/lib" handle="module:/resource/becpg-plm-core/becpg-plm-core">
+=======
+        <dependent-module archiveName="becpg-project-core-2.2.1.amp" deploy-path="/WEB-INF/lib" handle="module:/resource/becpg-project-core/becpg-project-core">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="becpg-plm-core-2.2.1.amp" deploy-path="/WEB-INF/lib" handle="module:/resource/becpg-plm-core/becpg-plm-core">
+>>>>>>> other
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module deploy-path="/" handle="module:/overlay/prj/becpg-plm-core?includes=**/**&amp;excludes=META-INF/MANIFEST.MF">
