@@ -594,7 +594,7 @@ public class LabelingFormulaContext {
 				}
 			}
 		}
-		return applyRoundingMode(new MessageFormat(detailsDefaultFormat), null).format(new Object[] { ingLegalName, null, ret.toString() });
+		return applyRoundingMode(new MessageFormat(detailsDefaultFormat), null).format(new Object[] { ingLegalName, null, ret.toString(),null });
 	}
 
 	private String createAllergenAwareLabel(String ingLegalName, List<AbstractLabelingComponent> ingList) {
@@ -1248,17 +1248,16 @@ public class LabelingFormulaContext {
 
 	private String createGeoOriginsLabel(List<AbstractLabelingComponent> components) {
 		if ((components != null) && !components.isEmpty()) {
-			StringBuilder geoOriginsBuffer = new StringBuilder();
+			
+			Set<NodeRef> geoOrigins = new HashSet<>();
+			
 			for (AbstractLabelingComponent component : components) {
-				String tmp = createGeoOriginsLabel(component.getGeoOrigins());
-				if (tmp != null) {
-					if (geoOriginsBuffer.length() > 0) {
-						geoOriginsBuffer.append(geoOriginsSeparator);
-					}
-					geoOriginsBuffer.append(tmp);
+				if(component.getGeoOrigins()!=null) {
+					geoOrigins.addAll(component.getGeoOrigins());
 				}
 			}
-			return geoOriginsBuffer.toString();
+			
+			return createGeoOriginsLabel(geoOrigins);
 		}
 
 		return null;
@@ -1424,7 +1423,7 @@ public class LabelingFormulaContext {
 	}
 
 	private String cleanLabel(StringBuffer buffer) {
-		return buffer.toString().replaceAll(" null| \\(null\\)| \\(\\)", "").replaceAll(">null<", "><").trim();
+		return buffer.toString().replaceAll(" null| \\(null\\)| \\(\\)| \\[null\\]", "").replaceAll(">null<", "><").trim();
 	}
 
 	public boolean isGroup(AbstractLabelingComponent component) {
