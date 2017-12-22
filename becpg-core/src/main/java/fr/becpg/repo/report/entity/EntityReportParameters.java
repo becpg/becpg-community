@@ -1,7 +1,9 @@
 package fr.becpg.repo.report.entity;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
@@ -26,7 +28,18 @@ import org.json.JSONObject;
     // Values
     nodeRef : dataListNodeRef
     value : productName
-  }]
+  }],
+  prefs : {
+   extractInMultiLevel : "true",
+   componentDatalistsToExtract : "",
+   extractPriceBreaks : "true",
+   mlTextFields: "cm:title",
+   assocsToExtract : "bcpg:plants,bcpg:suppliers,bcpg:storageConditionsRef,bcpg:precautionOfUseRef,bcpg:nutListNut",
+   assocsToExtractWithDataList : "",
+   assocsToExtractWithImage : "bcpg:clients"
+  }
+
+
  }
 
  Exemple 2:
@@ -177,6 +190,12 @@ public class EntityReportParameters {
 
 	private String iterationKey;
 
+	private Map<String, String> preferences = new HashMap<>();
+
+	public Map<String, String> getPreferences() {
+		return preferences;
+	}
+
 	private List<EntityReportParameter> parameters = new ArrayList<>();
 
 	public String getIterationKey() {
@@ -212,29 +231,27 @@ public class EntityReportParameters {
 			reportParamsEl = entityEl.addElement("reportParams");
 
 			for (EntityReportParameter param : getParameters()) {
-				if(param.getId()!=null) {
+				if (param.getId() != null) {
 					Element reportParam = reportParamsEl.addElement(param.getId());
-					if(param.getNodeRef()!=null) {
+					if (param.getNodeRef() != null) {
 						reportParam.addAttribute("nodeRef", param.getNodeRef().toString());
 					}
 					reportParam.addAttribute("prop", param.getProp());
 					reportParam.addAttribute("value", param.getValue());
 				} else {
-					logger.warn("No param id for parameter : "+ param);
+					logger.warn("No param id for parameter : " + param);
 				}
 
 			}
 		} else {
 			logger.warn("Cannot find entity in XML");
 		}
-		
 
 	}
 
 	public static EntityReportParameters createFromJSON(String jsonString) {
 		EntityReportParameters ret = new EntityReportParameters();
-	
-		
+
 		try {
 			if ((jsonString != null) && !jsonString.isEmpty()) {
 				JSONObject json = new JSONObject(jsonString);
@@ -268,12 +285,23 @@ public class EntityReportParameters {
 					ret.setIterationKey(json.getString("iterationKey"));
 				}
 
+				if (json.has("prefs")) {
+					JSONObject prefs = json.getJSONObject("prefs");
+					JSONArray keys = prefs.names();
+					for (int i = 0; i < keys.length(); i++) {
+						String key = keys.getString(i);
+						ret.getPreferences().put(key, prefs.getString(key));
+
+					}
+
+				}
+
 			}
 
 		} catch (JSONException e) {
 			logger.warn("Invalid JSON report params", e);
 		}
-		
+
 		return ret;
 	}
 
@@ -290,10 +318,10 @@ public class EntityReportParameters {
 					JSONObject tmp = new JSONObject();
 					tmp.put("id", param.getId());
 					tmp.put("prop", param.getProp());
-					if(param.getValue()!=null){
+					if (param.getValue() != null) {
 						tmp.put("value", param.getValue());
 					}
-					if(param.getNodeRef()!=null){
+					if (param.getNodeRef() != null) {
 						tmp.put("nodeRef", param.getNodeRef().toString());
 					}
 					params.put(tmp);
@@ -327,7 +355,5 @@ public class EntityReportParameters {
 	public String toString() {
 		return "EntityReportParameters [iterationKey=" + iterationKey + ", parameters=" + parameters + "]";
 	}
-	
-	
 
 }

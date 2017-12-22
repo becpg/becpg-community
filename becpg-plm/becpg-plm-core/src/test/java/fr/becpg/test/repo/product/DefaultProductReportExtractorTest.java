@@ -121,7 +121,7 @@ public class DefaultProductReportExtractorTest extends AbstractFinishedProductTe
 			nodeService.setProperty(finishedProductNodeRef, ContentModel.PROP_DESCRIPTION,
 					"Descr line 1 " + System.getProperty("line.separator") + " descr line 2");
 
-			EntityReportData entityReportData = defaultProductReportExtractor.extract(finishedProductNodeRef);
+			EntityReportData entityReportData = defaultProductReportExtractor.extract(finishedProductNodeRef, new HashMap<>());
 			logger.info("XmlData : " + entityReportData.getXmlDataSource().asXML());
 
 			return null;
