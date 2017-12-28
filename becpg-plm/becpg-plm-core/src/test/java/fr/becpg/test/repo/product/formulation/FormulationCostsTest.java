@@ -327,6 +327,89 @@ public class FormulationCostsTest extends AbstractFinishedProductTest {
 			}
 		}, false, true);
 	}
+	
+	@Test
+	public void testFormulationCostsWithPackagingKitCostSimulation(){
+		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			
+			/*-- Packaging kit --*/
+			ProductData packagingKit = alfrescoRepository.findOne(packagingKit1NodeRef);
+			
+			// Packaging list Of packaging kit
+			List<PackagingListDataItem> kitPackList = new ArrayList<>();
+			kitPackList.add(
+					new PackagingListDataItem(null, 1d, PackagingListUnit.P, PackagingLevel.Secondary, true, packagingMaterial2NodeRef));
+			kitPackList.add(
+					new PackagingListDataItem(null, 1d, PackagingListUnit.P, PackagingLevel.Tertiary, true, packagingMaterial3NodeRef));
+			
+			packagingKit.getPackagingListView().setPackagingList(kitPackList);
+			
+			List<CostListDataItem> costList = new LinkedList<>();
+			
+			// Cost list Of packaging kit
+			costList.add(new CostListDataItem(null, null, null, null, pkgCost1, null));
+			packagingKit.setCostList(costList);
+			
+			alfrescoRepository.save(packagingKit);
+			
+			/*-- Finished product --*/
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName("finished product 1");
+			finishedProduct.setUnit(ProductUnit.P);
+			finishedProduct.setQty(2d);
+			
+			// Packaging list Of finished product
+			List<PackagingListDataItem> finishedProductPackList = new ArrayList<>();
+			finishedProduct.getPackagingListView().setPackagingList(finishedProductPackList);
+			finishedProductPackList.add(
+					new PackagingListDataItem(null, 8d, PackagingListUnit.P, PackagingLevel.Primary, true, packagingMaterial1NodeRef));
+			finishedProductPackList.add(
+					new PackagingListDataItem(null, 10d, PackagingListUnit.PP, PackagingLevel.Secondary, true, packagingKit1NodeRef));
+			
+			finishedProduct = (FinishedProductData) alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct);			
+			
+			// Cost list Of finished product
+			costList.clear();
+			costList.add(new CostListDataItem(null, null, null, null, pkgCost1, null));
+			costList.add(new CostListDataItem(null, null, "€/P", null, cost5, true));
+			costList.get(1).setParent(costList.get(0));
+			costList.get(1).setComponentNodeRef(packagingMaterial2NodeRef);
+			costList.get(1).setSimulatedValue(3d);
+			finishedProduct.setCostList(costList);
+			
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+
+		}, false, true);
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			
+			productService.formulate(finishedProductNodeRef);
+			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+			
+			int checks = 0;
+			assertNotNull("CostList is null", formulatedProduct.getCostList());
+			for (CostListDataItem costListDataItem : formulatedProduct.getCostList()) {
+				String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: "
+						+ costListDataItem.getValue() + " - previous value: " + costListDataItem.getPreviousValue() + " - future value: "
+						+ costListDataItem.getFutureValue() + " - unit: " + costListDataItem.getUnit();
+				logger.info(trace);
+				if (costListDataItem.getCost().equals(pkgCost1) && costListDataItem.getComponentNodeRef() == null) {
+					assertEquals(12.15125d,costListDataItem.getValue());
+					checks++;
+				}
+				if (costListDataItem.getCost().equals(cost5)) {
+					logger.info("cost 5 simulated value :"+ costListDataItem.getSimulatedValue());
+					assertEquals(0.1d,costListDataItem.getValue());
+					assertEquals(3d,costListDataItem.getSimulatedValue());
+					checks++;
+				}
+			}
+			assertEquals(2, checks);
+			
+			return null;
+		}, false, true);
+		
+	}
 
 	@Test
 	public void testFormulationCostsWithKeepProductUnit() throws Exception {
