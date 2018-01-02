@@ -8,9 +8,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -148,13 +150,15 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			}
 		}
 
+		Set<NodeRef> visited = new HashSet<>();
+		
 		Double totalQtyUsed = 0d, totalVolumeUsed = 0d;
 		if (compoList != null) {
 			for (CompoListDataItem compoItem : compoList) {
 
 				if ((compoItem.getQtySubFormula() != null) && (compoItem.getQtySubFormula() > 0)) {
 					ProductData componentProductData = (ProductData) alfrescoRepository.findOne(compoItem.getProduct());
-					visitILOfPart(formulatedProduct, compoItem, componentProductData, retainNodes, totalQtyIngMap, totalQtyVolMap, reqCtrlMap);
+					visitILOfPart(formulatedProduct, compoItem, componentProductData, retainNodes, totalQtyIngMap, totalQtyVolMap, reqCtrlMap,visited);
 
 					QName type = nodeService.getType(compoItem.getProduct());
 					if ((type != null) && (type.isMatch(PLMModel.TYPE_RAWMATERIAL) || type.isMatch(PLMModel.TYPE_SEMIFINISHEDPRODUCT)
@@ -252,11 +256,11 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	 */
 	private void visitILOfPart(ProductData formulatedProduct, CompoListDataItem compoListDataItem, ProductData componentProductData,
 			List<IngListDataItem> retainNodes, Map<String, Double> totalQtyIngMap, Map<String, Double> totalQtyVolMap,
-			Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap) throws FormulateException {
+			Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap, Set<NodeRef> visited) throws FormulateException {
 
 		// check product respect specification
 		checkILOfPart(compoListDataItem.getProduct(), compoListDataItem.getDeclType(), componentProductData, extractRequirements(formulatedProduct),
-				reqCtrlMap);
+				reqCtrlMap, visited);
 
 		if (componentProductData.getIngList() == null) {
 			if (logger.isDebugEnabled()) {
@@ -432,10 +436,12 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	 *            the total qty ing map
 	 */
 	private void checkILOfPart(NodeRef productNodeRef, DeclarationType declType, ProductData componentProductData,
-			List<ForbiddenIngListDataItem> forbiddenIngredientsList, Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap) {
+			List<ForbiddenIngListDataItem> forbiddenIngredientsList, Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap, Set<NodeRef> visited) {
 
-		if (!PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.equals(nodeService.getType(productNodeRef))) {
+		if (!PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.equals(nodeService.getType(productNodeRef)) && ! visited.contains(productNodeRef)) {
 
+			visited.add(productNodeRef);
+			
 			// datalist ingList is null or empty
 			if ((componentProductData.getIngList() == null) || componentProductData.getIngList().isEmpty()) {
 
@@ -458,7 +464,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 										&& !componentProductData.getCompoListView().getCompoList().isEmpty()) {
 									for (CompoListDataItem c : componentProductData.getCompoListView().getCompoList()) {
 										checkILOfPart(c.getProduct(), declType, (ProductData) alfrescoRepository.findOne(c.getProduct()),
-												forbiddenIngredientsList, reqCtrlMap);
+												forbiddenIngredientsList, reqCtrlMap, visited);
 									}
 								} else {
 									logger.debug("Adding not respected for: " + fil.getReqMessage());
