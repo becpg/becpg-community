@@ -704,10 +704,8 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	}
 	
 	private void calculateSimulationCosts(ProductData formulatedProduct) {
-        Double netQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
-        if(formulatedProduct.getUnit() != null && formulatedProduct.getUnit().equals(ProductUnit.P)){
-            netQty = FormulationHelper.getProductQty(formulatedProduct.getNodeRef(), nodeService);
-        }
+        Double netQty = FormulationHelper.getNetQtyForCost(formulatedProduct);
+        
         for (CostListDataItem c : formulatedProduct.getCostList()) {
             if ((c.getComponentNodeRef() != null) && (c.getParent() != null)) {
                 Double qtyComponent;
@@ -724,9 +722,9 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
                                     + " qty component " + qtyComponent + " netQty " + netQty);
                         }
                         if (c2.getValue() != null) {
-                            c.setValue(((c.getSimulatedValue() - c2.getValue()) * qtyComponent) / netQty);
+                            c.setValue(((c.getSimulatedValue() - c2.getValue()) * qtyComponent) / (netQty!=0 ? netQty : 1d));
                         } else {
-                            c.setValue(((c.getSimulatedValue()) * qtyComponent) / netQty);
+                            c.setValue(((c.getSimulatedValue()) * qtyComponent) / (netQty!=0 ? netQty : 1d));
                         }
                         if (c.getParent().getValue() != null) {
                             c.getParent().setValue(c.getParent().getValue() + c.getValue());
