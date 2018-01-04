@@ -38,7 +38,8 @@ import org.json.JSONObject;
    assocsToExtractWithDataList : "",
    assocsToExtractWithImage : "bcpg:clients"
   }
-
+  nameFormat : "{entity_cm:name} - {report_cm:name} - {locale} - {param1}",
+  titleFormat : "{report_cm:name} - {locale} - {param1}"
 
  }
 
@@ -192,9 +193,50 @@ public class EntityReportParameters {
 
 	private Map<String, String> preferences = new HashMap<>();
 
+	public EntityReportParameters(EntityReportParameters config) {
+		this.preferences = config.preferences;
+		this.reportNameFormat = config.reportNameFormat;
+		this.reportTitleFormat = config.reportTitleFormat;
+	}
+
+	public EntityReportParameters() {
+		super();
+	}
+
 	public Map<String, String> getPreferences() {
 		return preferences;
 	}
+	
+	private String reportNameFormat = null;
+
+	private String reportTitleFormat = null;
+	
+	
+	
+	public void setReportNameFormat(String reportNameFormat) {
+		this.reportNameFormat = reportNameFormat;
+	}
+
+	public void setReportTitleFormat(String reportTitleFormat) {
+		this.reportTitleFormat = reportTitleFormat;
+	}
+
+	public String getReportNameFormat(String defaultNameFormat) {
+		
+		if(reportNameFormat!=null && ! reportNameFormat.isEmpty()) {
+			return reportNameFormat;
+		}
+		
+		return defaultNameFormat;
+	}
+
+	public String getReportTitleFormat(String defaultTitleFormat) {
+		if(reportTitleFormat!=null && ! reportTitleFormat.isEmpty()) {
+			return reportTitleFormat;
+		}
+		return defaultTitleFormat;
+	}
+
 
 	private List<EntityReportParameter> parameters = new ArrayList<>();
 
@@ -213,9 +255,14 @@ public class EntityReportParameters {
 	public void setParameters(List<EntityReportParameter> parameters) {
 		this.parameters = parameters;
 	}
+	
+	public boolean isParametersEmpty() {
+		return parameters.isEmpty() ;
+	}
+	
 
 	public boolean isEmpty() {
-		return parameters.isEmpty();
+		return parameters.isEmpty() && preferences.isEmpty() && (reportNameFormat==null || reportNameFormat.isEmpty()) && (reportTitleFormat==null || reportTitleFormat.isEmpty());
 	}
 
 	public void updateDataSource(Element xmlDataSource) {
@@ -295,6 +342,15 @@ public class EntityReportParameters {
 					}
 
 				}
+				
+				if (json.has("nameFormat")) {
+					ret.setReportNameFormat(json.getString("nameFormat"));
+				}
+				
+				if (json.has("titleFormat")) {
+					ret.setReportTitleFormat(json.getString("titleFormat"));
+				}
+				
 
 			}
 
@@ -328,6 +384,25 @@ public class EntityReportParameters {
 				}
 				ret.put("params", params);
 			}
+			
+			if(!preferences.isEmpty()) {
+				JSONObject prefs = new JSONObject();
+				
+				for(Map.Entry<String,String> pref :  preferences.entrySet()) {
+					prefs.put(pref.getKey(), pref.getValue());
+				}
+				ret.put("prefs", prefs);
+				
+			}
+			
+			if(reportNameFormat!=null && !reportNameFormat.isEmpty()) {
+				ret.put("nameFormat", reportNameFormat);
+			}
+			
+			if(reportTitleFormat!=null && !reportTitleFormat.isEmpty()) {
+				ret.put("titleFormat", reportTitleFormat);
+			}
+			
 		} catch (JSONException e) {
 			logger.warn("Failed to write JSON report params", e);
 		}
@@ -356,4 +431,5 @@ public class EntityReportParameters {
 		return "EntityReportParameters [iterationKey=" + iterationKey + ", parameters=" + parameters + "]";
 	}
 
+	
 }
