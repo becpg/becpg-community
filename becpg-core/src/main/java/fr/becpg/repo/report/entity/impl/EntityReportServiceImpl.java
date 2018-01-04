@@ -218,10 +218,10 @@ public class EntityReportServiceImpl implements EntityReportService {
 												String reportFormat = (String) nodeService.getProperty(tplNodeRef,
 														ReportModel.PROP_REPORT_TPL_FORMAT);
 												String documentName = getReportDocumentName(entityNodeRef, tplNodeRef, reportFormat, locale,
-														reportParameters, reportNameFormat);
+														reportParameters, reportParameters.getReportNameFormat(reportNameFormat));
 
 												String documentTitle = getReportDocumentName(entityNodeRef, tplNodeRef, null, locale,
-														reportParameters, reportTitleFormat);
+														reportParameters, reportParameters.getReportTitleFormat(reportTitleFormat));
 
 												NodeRef documentNodeRef = getReportDocumenNodeRef(entityNodeRef, tplNodeRef, documentName, locale,
 														reportParameters);
@@ -378,7 +378,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 		EntityReportParameters defaultEntityReportParameter = EntityReportParameters
 				.createFromJSON((String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TEXT_PARAMETERS));
 
-		if (!defaultEntityReportParameter.isEmpty()) {
+		if (!defaultEntityReportParameter.isParametersEmpty()) {
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("Found multi-param report: " + defaultEntityReportParameter.toString());
@@ -452,7 +452,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 	}
 
 	private EntityReportParameters readParameters(NodeRef itemNodeRef, EntityReportParameters config) {
-		EntityReportParameters ret = new EntityReportParameters();
+		EntityReportParameters ret = new EntityReportParameters(config);
 		for (EntityReportParameter configParam : config.getParameters()) {
 			if (itemNodeRef == null) {
 				itemNodeRef = configParam.getNodeRef();
@@ -488,6 +488,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 			}
 
 		}
+		
 		return ret;
 	}
 
@@ -546,10 +547,10 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 							String reportFormat = (String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
 							String documentName = getReportDocumentName(entityNodeRef, tplNodeRef, reportFormat, locale, reportParameters,
-									reportNameFormat);
+									reportParameters.getReportNameFormat(reportNameFormat));
 
 							String documentTitle = getReportDocumentName(entityNodeRef, tplNodeRef, null, locale, reportParameters,
-									reportTitleFormat);
+									reportParameters.getReportTitleFormat(reportTitleFormat));
 
 							EntityReportData reportData = retrieveExtractor(entityNodeRef).extract(entityNodeRef, reportParameters.getPreferences());
 
@@ -799,7 +800,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 		NodeRef documentNodeRef = null;
 		for (FileInfo fileInfo : fileFolderService.listFiles(documentsFolderNodeRef)) {
 			if (tplNodeRef.equals(associationService.getTargetAssoc(fileInfo.getNodeRef(), ReportModel.ASSOC_REPORT_TPL))) {
-				if (reportParameters.isEmpty() || reportParameters.match(EntityReportParameters
+				if (reportParameters.isParametersEmpty() || reportParameters.match(EntityReportParameters
 						.createFromJSON((String) nodeService.getProperty(fileInfo.getNodeRef(), ReportModel.PROP_REPORT_TEXT_PARAMETERS)))) {
 					for (Locale tmpLocale : getEntityReportLocales(fileInfo.getNodeRef())) {
 
