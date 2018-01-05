@@ -369,9 +369,15 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			loadComments(nodeRef, nodeElt, images);
 		}
 	}
-
+	
 	protected void loadDataListItemAttributes(BeCPGDataObject dataListItem, Element nodeElt, Map<String, byte[]> images) {
-		List<QName> hiddentAttributes = new ArrayList<>();
+		loadDataListItemAttributes(dataListItem,nodeElt,images,new ArrayList<>());
+	}
+	
+	
+
+	protected void loadDataListItemAttributes(BeCPGDataObject dataListItem, Element nodeElt, Map<String, byte[]> images, List<QName> hiddentAttributes) {
+		
 		hiddentAttributes.addAll(hiddenNodeAttributes);
 		hiddentAttributes.addAll(hiddenDataListItemAttributes);
 
