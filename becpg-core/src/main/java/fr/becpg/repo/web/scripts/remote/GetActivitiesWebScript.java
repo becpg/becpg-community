@@ -26,15 +26,24 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.query.PagingRequest;
 import org.alfresco.query.PagingResults;
 import org.alfresco.repo.domain.activities.ActivityFeedEntity;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.activities.ActivityService;
+import org.alfresco.service.cmr.repository.ContentReader;
+import org.alfresco.service.cmr.repository.ContentService;
+import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.site.SiteInfo;
+import org.alfresco.service.cmr.site.SiteService;
+import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.util.JSONtoFmModel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
+import org.springframework.extensions.surf.util.ISO8601DateFormat;
 import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
@@ -49,14 +58,39 @@ import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
  */
 public class GetActivitiesWebScript extends AbstractWebScript {
 
-	
 	protected static final String PARAM_FEED_ID = "feedDBID";
-	
+
 	private ActivityService activityService;
+
+	private SiteService siteService;
+
+	private NodeService nodeService;
+
+	private NamespaceService namespaceService;
+
+	private ContentService contentService;
 	
+	
+	
+
+	public void setNodeService(NodeService nodeService) {
+		this.nodeService = nodeService;
+	}
+
+	public void setNamespaceService(NamespaceService namespaceService) {
+		this.namespaceService = namespaceService;
+	}
+
+	public void setContentService(ContentService contentService) {
+		this.contentService = contentService;
+	}
 
 	public void setActivityService(ActivityService activityService) {
 		this.activityService = activityService;
+	}
+
+	public void setSiteService(SiteService siteService) {
+		this.siteService = siteService;
 	}
 
 	private static Log logger = LogFactory.getLog(GetActivitiesWebScript.class);
@@ -67,11 +101,11 @@ public class GetActivitiesWebScript extends AbstractWebScript {
 		String feedUserId = AuthenticationUtil.getFullyAuthenticatedUser();
 
 		String feedId = req.getParameter(PARAM_FEED_ID);
-		
+
 		// where did we get up to ?
 		Long feedDBID = -1L;
-		
-		if(feedId!=null ) {
+
+		if (feedId != null) {
 			feedDBID = Long.parseLong(feedId);
 		}
 
@@ -80,11 +114,12 @@ public class GetActivitiesWebScript extends AbstractWebScript {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Get user feed entries: " + feedUserId + ", " + feedDBID);
 		}
-		
+
 		try {
-			
-		 PagingResults<ActivityFeedEntity> feedEntries = 	activityService.getPagedUserFeedEntries(feedUserId, null, false, false, feedDBID, new PagingRequest(1000));
-			
+
+			PagingResults<ActivityFeedEntity> feedEntries = activityService.getPagedUserFeedEntries(feedUserId, null, false, false, feedDBID,
+					new PagingRequest(1000));
+
 			visit(feedEntries, resp.getOutputStream());
 
 			// set mimetype for the content and the character encoding + length
@@ -100,12 +135,10 @@ public class GetActivitiesWebScript extends AbstractWebScript {
 			}
 
 		} catch (Exception e) {
-			logger.error(e,e);
-		} 
+			logger.error(e, e);
+		}
 
 	}
-	
-	
 
 	public void visit(PagingResults<ActivityFeedEntity> feedEntries, OutputStream result) throws XMLStreamException {
 
@@ -125,27 +158,53 @@ public class GetActivitiesWebScript extends AbstractWebScript {
 		// Visit node
 
 		xmlw.writeStartElement("activities");
-		
+
 		if (feedEntries.getPage().size() > 0) {
 
 			for (ActivityFeedEntity feedEntry : feedEntries.getPage()) {
 				try {
 					String type = feedEntry.getActivityType();
-					
+
 					xmlw.writeStartElement("activity");
 					xmlw.writeAttribute("id", feedEntry.getId().toString());
 					xmlw.writeAttribute("site", feedEntry.getSiteNetwork());
-					xmlw.writeAttribute("type",type.substring(type.lastIndexOf(".") + 1) );
+					xmlw.writeAttribute("type", type.substring(type.lastIndexOf(".") + 1));
 					xmlw.writeAttribute("user", feedEntry.getPostUserId());
-					xmlw.writeAttribute("date", feedEntry.getPostDate().toString());
-					
-					Map<String,Object>  summary = JSONtoFmModel.convertJSONObjectToMap(feedEntry.getActivitySummary());
-					
-					xmlw.writeAttribute("nodeRef",toString(summary.get("nodeRef")));
+					xmlw.writeAttribute("date", ISO8601DateFormat.format(feedEntry.getPostDate()));
+
+					Map<String, Object> summary = JSONtoFmModel.convertJSONObjectToMap(feedEntry.getActivitySummary());
+
+					NodeRef nodeRef = null;
+
+					if (summary.containsKey("nodeRef")) {
+						nodeRef = new NodeRef(toString(summary.get("nodeRef")));
+					} else if (summary.containsKey("entityNodeRef")) {
+						nodeRef = new NodeRef(toString(summary.get("entityNodeRef")));
+					}
+					if (nodeRef != null) {
+						xmlw.writeAttribute("nodeRef", nodeRef.toString());
+						if(nodeService.exists(nodeRef)) {
+							xmlw.writeAttribute("nodeType", nodeService.getType(nodeRef).toPrefixString(namespaceService));					
+							ContentReader contentReader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
+							if ((contentReader != null) && (contentReader.getMimetype() != null)) {
+								xmlw.writeAttribute("mimeType", contentReader.getMimetype());
+							}
+						}
+
+					}
+
 					xmlw.writeAttribute("title", toString(summary.get("title")));
-					
+					xmlw.writeAttribute("lastName", toString(summary.get("lastName")));
+					xmlw.writeAttribute("firstName", toString(summary.get("firstName")));
+					if (feedEntry.getSiteNetwork() != null) {
+						SiteInfo siteInfo = siteService.getSite(feedEntry.getSiteNetwork());
+						if (siteInfo != null) {
+							xmlw.writeAttribute("siteTitle", siteInfo.getTitle());
+						}
+					}
+
 					xmlw.writeCData(feedEntry.getActivitySummary());
-					
+
 					xmlw.writeEndElement();
 
 				} catch (JSONException je) {
@@ -157,7 +216,7 @@ public class GetActivitiesWebScript extends AbstractWebScript {
 
 		}
 		xmlw.writeEndElement();
-		
+
 		// Write document end. This closes all open structures
 		xmlw.writeEndDocument();
 		// Close the writer to flush the output
@@ -166,7 +225,7 @@ public class GetActivitiesWebScript extends AbstractWebScript {
 	}
 
 	private String toString(Object val) {
-		if(val!=null) {
+		if (val != null) {
 			return val.toString();
 		}
 		return "";
