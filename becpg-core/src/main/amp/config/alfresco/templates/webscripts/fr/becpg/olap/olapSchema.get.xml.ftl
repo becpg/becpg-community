@@ -83,6 +83,77 @@
 		</Measure>
 	
 	</Cube>
+	
+	
+	<Cube name="activities" caption="${msg("jsolap.activities.title")}" cache="false" enabled="true">
+		<Table name="becpg_activities" alias="becpg_activities" >
+				<SQL dialect="generic">
+					becpg_activities.instance_id = ${instanceId}
+				</SQL>
+		</Table>
+		
+		<DimensionUsage name="date" caption="${msg("jsolap.activityDate.title")}" source="timeDimension"  foreignKey="activity_date" />
+		
+		<Dimension name="site" caption="${msg("jsolap.site.title")}" foreignKey="site_id" >
+			<Hierarchy name="site" caption="${msg("jsolap.site.title")}"  primaryKey="site_id" hasAll="true" allMemberCaption="${msg("jsolap.site.caption")}">
+				<Table name="becpg_activities_names" alias="becpg_activities_names">
+					<SQL dialect="generic">
+						becpg_activities_names.instance_id = ${instanceId} AND becpg_activities_names.user_id IS NULL AND becpg_activities_names.entity_id IS NULL
+					</SQL>
+				</Table>
+				<Level name="site" caption="${msg("jsolap.site.title")}" column="site_id" nameColumn="name"  type="String" />
+			</Hierarchy>
+		</Dimension>
+		
+		<Dimension  name="user" caption="${msg("jsolap.user.title")}" foreignKey="user_id" >
+			<Hierarchy name="users" caption="${msg("jsolap.users.title")}" primaryKey="user_id" hasAll="true" allMemberCaption="${msg("jsolap.users.title")}" >
+			   <Table name="becpg_activities_names" alias="becpg_activities_names">
+					<SQL dialect="generic">
+						becpg_activities_names.instance_id = ${instanceId}  AND becpg_activities_names.site_id IS NULL AND becpg_activities_names.entity_id IS NULL
+					</SQL>
+				</Table>
+			
+				<Level name="user" caption="${msg("jsolap.user.title")}" column="user_id" nameColumn="name"  type="String" />
+			</Hierarchy>
+		</Dimension>
+		
+		<Dimension name="entity" caption="${msg("jsolap.activityEntity.title")}"  foreignKey="entity_id">
+			<Hierarchy name="entity" caption="${msg("jsolap.activityEntity.title")}" primaryKey="entity_id"  hasAll="true" allMemberCaption="${msg("jsolap.entity.caption")}">
+				<Table name="becpg_activities_names" alias="becpg_activities_names">
+					<SQL dialect="generic">
+						becpg_activities_names.instance_id = ${instanceId}   AND becpg_activities_names.user_id IS NULL AND becpg_activities_names.site_id IS NULL
+					</SQL>
+				</Table>
+				<Level name="entityType" caption="${msg("jsolap.activityEntity.type")}" column="entity_type"  nameColumn="entity_type" type="String" />
+				<Level name="entityMime" caption="${msg("jsolap.activityEntity.mime")}" column="entity_mime_type"  nameColumn="entity_mime_type" type="String" />
+				<Level name="entityName" caption="${msg("jsolap.activityEntity.name")}" column="entity_id"  nameColumn="name" type="String" />
+			</Hierarchy>
+		</Dimension>
+		
+		<Dimension name="type" caption="${msg("jsolap.activityType.title")}">
+			<Hierarchy name="type" caption="${msg("jsolap.activityType.title")}" hasAll="true" allMemberCaption="${msg("jsolap.activityType.title")}">
+				<Level name="type" caption="${msg("jsolap.activityType.title")}" column="activity_type" nameColumn="activity_type" type="String" >
+					<NameExpression>
+					  <SQL dialect="generic" >
+					  <![CDATA[CASE WHEN activity_type='comment-created' THEN '${msg("jsolap.activityType.comment-created")}'
+	                           WHEN activity_type='entity-created' THEN '${msg("jsolap.activityType.entity-created")}'
+	                           WHEN activity_type='file-added' THEN '${msg("jsolap.activityType.file-added")}'
+	                           WHEN activity_type='file-deleted' THEN '${msg("jsolap.activityType.file-deleted")}'
+	                           WHEN activity_type='file-downloaded' THEN '${msg("jsolap.activityType.file-downloaded")}'
+	                           WHEN activity_type='file-previewed' THEN '${msg("jsolap.activityType.file-previewed")}'
+	                           WHEN activity_type='state-changed' THEN '${msg("jsolap.activityType.state-changed")}'
+	                           WHEN activity_type='comment-deleted' THEN '${msg("jsolap.activityType.comment-deleted")}'
+	                           ELSE 'Vide'
+	                           END]]></SQL>
+              		 </NameExpression>
+				</Level>
+			</Hierarchy>
+		</Dimension>
+	
+		<Measure name="productNumber" caption="${msg("jsolap.activityNumber.title")}" column="id" datatype="Integer" aggregator="distinct-count" visible="true" />
+		
+	</Cube>
+
 
 
 	<Cube name="requirements" caption="${msg("jsolap.requirements.title")}" cache="true" enabled="true" defaultMeasure="${msg("jsolap.requirementsNumber.title")}">
