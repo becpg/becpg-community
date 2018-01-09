@@ -208,6 +208,10 @@
 	
 	<bean id="webscript.fr.becpg.remote.activities.get" parent="webscript" class="fr.becpg.repo.web.scripts.remote.GetActivitiesWebScript">
 		<property name="activityService" ref="activityService" />
+		<property name="siteService" ref="siteService" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="namespaceService" ref="namespaceService" />
+		<property name="contentService" ref="contentService" />	
 	</bean>
 	
 	
