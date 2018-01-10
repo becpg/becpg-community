@@ -393,7 +393,15 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 							Element ingLabelingElt = ingListElt.addElement(PLMModel.TYPE_INGLABELINGLIST.getLocalName());
 
-							loadDataListItemAttributes(dataItem, ingLabelingElt, context);
+                List<QName> excludesProp  = new ArrayList<>();
+							excludesProp.add(PLMModel.ASSOC_ILL_GRP);
+							excludesProp.add(PLMModel.PROP_ILL_VALUE);
+							excludesProp.add(PLMModel.PROP_ILL_MANUAL_VALUE);
+							excludesProp.add(PLMModel.PROP_ILL_LOG_VALUE);
+							
+
+
+							loadDataListItemAttributes(dataItem, ingLabelingElt, context, excludesProp);
 
 							ingLabelingElt.addAttribute(ATTR_LANGUAGE, locale.getDisplayLanguage());
 							ingLabelingElt.addAttribute(ATTR_LANGUAGE_CODE, locale.toString());
