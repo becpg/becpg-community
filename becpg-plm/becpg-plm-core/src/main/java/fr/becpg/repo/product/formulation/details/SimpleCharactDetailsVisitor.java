@@ -200,7 +200,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 
 					currentCharactDetailsValue = new CharactDetailsValue(parent, entityNodeRef, value, currLevel, unit);
 					
-					if(simpleCharact instanceof ForecastValueDataItem){
+					if(simpleCharact instanceof ForecastValueDataItem && ! charactDetails.isMultiple()){
 						ForecastValueDataItem forecastValue = (ForecastValueDataItem) simpleCharact;
 						
 						logger.debug("ForecastDataItem, prev="+forecastValue.getPreviousValue()+", future="+forecastValue.getFutureValue());
@@ -214,7 +214,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 						}
 					}
 					
-					if(simpleCharact instanceof MinMaxValueDataItem){
+					if(simpleCharact instanceof MinMaxValueDataItem && ! charactDetails.isMultiple()){
 						MinMaxValueDataItem minMaxValue = (MinMaxValueDataItem) simpleCharact;
 						
 						logger.debug("minMaxValue, prev="+minMaxValue.getMini()+", maxi="+minMaxValue.getMaxi());
