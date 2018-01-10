@@ -86,7 +86,8 @@ public class ImportHelper {
 						if (!Objects.equals(transColumn, "")) {
 
 							String transLocalName = transColumn.contains(RepoConsts.MODEL_PREFIX_SEPARATOR)
-									? transColumn.split(RepoConsts.MODEL_PREFIX_SEPARATOR)[1] : null;
+									? transColumn.split(RepoConsts.MODEL_PREFIX_SEPARATOR)[1]
+									: null;
 							// default locale
 							if (first) {
 								mlText.addValue(I18NUtil.getContentLocaleLang(), values.get(z_idx));
@@ -138,8 +139,7 @@ public class ImportHelper {
 					if (values.get(pos).isEmpty()) {
 						value = null;
 					} else {
-						Number n = importContext.getPropertyFormats().parseDecimal( values.get(pos));
-						value = n.longValue();
+						value = importContext.getPropertyFormats().parseDecimal(values.get(pos)).longValue();
 					}
 				}
 				// double
@@ -148,15 +148,7 @@ public class ImportHelper {
 					if (values.get(pos).trim().isEmpty()) {
 						value = null;
 					} else {
-						String val = values.get(pos);
-						if (importContext.getPropertyFormats().getDecimalFormat().getDecimalFormatSymbols().getDecimalSeparator() == ',') {
-							val = val.replaceAll("\\.", ",");
-						} else {
-							val = val.replaceAll(",", ".");
-						}
-
-						Number n = importContext.getPropertyFormats().parseDecimal(val);
-						value = n.doubleValue();
+						value = parseNumber(importContext, values.get(pos)).doubleValue();
 					}
 				}
 				// float
@@ -165,15 +157,27 @@ public class ImportHelper {
 					if (values.get(pos).trim().isEmpty()) {
 						value = null;
 					} else {
-						String val = values.get(pos);
-						if (importContext.getPropertyFormats().getDecimalFormat().getDecimalFormatSymbols().getDecimalSeparator() == ',') {
-							val = val.replaceAll("\\.", ",");
-						} else {
-							val = val.replaceAll(",", ".");
-						}
-						Number n = importContext.getPropertyFormats().parseDecimal(val);
-						value = n.floatValue();
+
+						value = parseNumber(importContext, values.get(pos)).floatValue();
 					}
+				} else if (dataType.isMatch(DataTypeDefinition.ANY)) {
+
+					if (values.get(pos).isEmpty()) {
+						value = null;
+					} else {
+						// Try double
+						try {
+							value = parseNumber(importContext, values.get(pos)).doubleValue();
+						} catch (ParseException e1) {
+							// Try date
+							try {
+								value = importContext.getPropertyFormats().parseDate(values.get(pos));
+							} catch (ParseException e2) {
+								value = values.get(pos);
+							}
+						}
+					}
+
 				} else {
 					value = values.get(pos);
 				}
@@ -181,6 +185,16 @@ public class ImportHelper {
 		}
 
 		return value;
+	}
+
+	private static Number parseNumber(ImportContext importContext, String val) throws ParseException {
+		if (importContext.getPropertyFormats().getDecimalFormat().getDecimalFormatSymbols().getDecimalSeparator() == ',') {
+			val = val.replaceAll("\\.", ",");
+		} else {
+			val = val.replaceAll(",", ".");
+		}
+		return importContext.getPropertyFormats().parseDecimal(val);
+
 	}
 
 	public static Serializable mergeMLText(MLText value, MLText currentValue) {
