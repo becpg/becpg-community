@@ -1743,10 +1743,10 @@
                         <property name="width">2.3541666666666665in</property>
                     </column>
                     <column id="767">
-                        <property name="width">3.4375in</property>
+                        <property name="width">3.0833333333333335in</property>
                     </column>
                     <column id="768">
-                        <property name="width">1.42in</property>
+                        <property name="width">1.7708333333333333in</property>
                     </column>
                     <row id="769">
                         <cell id="770">
@@ -2501,27 +2501,19 @@
             </list-property>
             <column id="7498">
                 <property name="textAlign">center</property>
-                <property name="width">2.0104166666666665in</property>
+                <property name="width">2.9479166666666665in</property>
             </column>
             <column id="7499">
                 <property name="textAlign">center</property>
-                <property name="width">2.53125in</property>
+                <property name="width">2.2291666666666665in</property>
             </column>
             <column id="7500">
                 <property name="width">1.7916666666666667in</property>
             </column>
-            <column id="7501">
-                <property name="textAlign">center</property>
-                <property name="width">0.625in</property>
-            </column>
-            <column id="7502">
-                <property name="textAlign">center</property>
-                <property name="width">0.3125in</property>
-            </column>
             <header>
                 <row id="7711">
                     <cell id="7712">
-                        <property name="colSpan">5</property>
+                        <property name="colSpan">3</property>
                         <property name="rowSpan">1</property>
                         <text id="7697">
                             <property name="style">becpg-header-type</property>
@@ -2546,7 +2538,7 @@
                 <row id="7470">
                     <property name="style">becpg-chapter-header</property>
                     <cell id="7471">
-                        <property name="colSpan">5</property>
+                        <property name="colSpan">3</property>
                         <property name="rowSpan">1</property>
                         <property name="style">becpg-cell-header</property>
                         <label id="7472">
@@ -2566,7 +2558,7 @@
                     <row id="7653">
                         <property name="height">0.18in</property>
                         <cell id="7654">
-                            <property name="colSpan">5</property>
+                            <property name="colSpan">3</property>
                             <property name="rowSpan">1</property>
                             <property name="textAlign">left</property>
                         </cell>
@@ -2600,7 +2592,7 @@
                             </data>
                         </cell>
                         <cell id="7507">
-                            <property name="colSpan">3</property>
+                            <property name="colSpan">1</property>
                             <property name="rowSpan">1</property>
                             <property name="textAlign">left</property>
                             <label id="7480">
@@ -2617,7 +2609,7 @@
                     </row>
                     <row id="7592">
                         <cell id="7593">
-                            <property name="colSpan">5</property>
+                            <property name="colSpan">3</property>
                             <property name="rowSpan">1</property>
                             <property name="paddingTop">0pt</property>
                             <property name="paddingLeft">0pt</property>
@@ -2694,8 +2686,9 @@
                                     <structure>
                                         <property name="name">compoListQtyForProduct</property>
                                         <text-property name="displayName">compoListQtyForProduct</text-property>
-                                        <expression name="expression" type="javascript">dataSetRow["compoListQtyForProduct"]</expression>
+                                        <expression name="expression" type="javascript">dataSetRow["compoListQtyForProduct"]*1000</expression>
                                         <property name="dataType">float</property>
+                                        <property name="allowExport">true</property>
                                     </structure>
                                     <structure>
                                         <property name="name">sampleCode</property>
@@ -2753,6 +2746,19 @@ row["compoListQtyForProduct"] / productWeight</expression>
                                         <text-property name="displayName">productNetWeight</text-property>
                                         <expression name="expression" type="javascript">dataSetRow["productNetWeight"]</expression>
                                         <property name="dataType">float</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">total</property>
+                                        <property name="dataType">float</property>
+                                        <property name="aggregateFunction">SUM</property>
+                                        <list-property name="arguments">
+                                            <structure>
+                                                <property name="name">Expression</property>
+                                                <expression name="value" type="javascript">row["compoListQtyForProduct"]</expression>
+                                            </structure>
+                                        </list-property>
+                                        <expression name="filterExpr" type="javascript">dataSetRow["depthLevel"]==1</expression>
+                                        <property name="allowExport">true</property>
                                     </structure>
                                 </list-property>
                                 <list-property name="filter">
@@ -2849,58 +2855,13 @@ row["compoListQtyForProduct"] / productWeight</expression>
                                         </cell>
                                         <cell id="7568">
                                             <property name="style">becpg-col-border</property>
-                                            <table id="7665">
-                                                <property name="dataSet">dynamicCharactList</property>
-                                                <list-property name="boundDataColumns">
-                                                    <structure>
-                                                        <property name="name">dynamicCharactTitle</property>
-                                                        <text-property name="displayName">dynamicCharactTitle</text-property>
-                                                        <expression name="expression" type="javascript">dataSetRow["dynamicCharactTitle"]</expression>
-                                                        <property name="dataType">string</property>
-                                                    </structure>
-                                                    <structure>
-                                                        <property name="name">dynamicCharactValue</property>
-                                                        <text-property name="displayName">dynamicCharactValue</text-property>
-                                                        <expression name="expression" type="javascript">dataSetRow["dynamicCharactValue"]</expression>
-                                                        <property name="dataType">float</property>
-                                                    </structure>
-                                                    <structure>
-                                                        <property name="name">sampleCode</property>
-                                                        <text-property name="displayName">sampleCode</text-property>
-                                                        <expression name="expression" type="javascript">dataSetRow["sampleCode"]</expression>
-                                                        <property name="dataType">string</property>
-                                                    </structure>
-                                                </list-property>
-                                                <list-property name="filter">
-                                                    <structure>
-                                                        <property name="operator">is-true</property>
-                                                        <expression name="expr" type="javascript">( row["sampleCode"] == row._outer._outer["sampleCode"] )</expression>
-                                                        <property name="updateAggregation">true</property>
-                                                    </structure>
-                                                    <structure>
-                                                        <property name="operator">eq</property>
-                                                        <expression name="expr" type="javascript">row["dynamicCharactTitle"]</expression>
-                                                        <simple-property-list name="value1">
-                                                            <value>"Qté Ech (kg)"</value>
-                                                        </simple-property-list>
-                                                        <property name="updateAggregation">true</property>
-                                                    </structure>
-                                                </list-property>
-                                                <column id="7685"/>
-                                                <detail>
-                                                    <row id="7673">
-                                                        <cell id="7676">
-                                                            <text id="7687">
-                                                                <property name="contentType">html</property>
-                                                                <text-property name="content"><![CDATA[<VALUE-OF>
-var productNetWeight = ( row._outer["productNetWeight"] != null &amp;&amp; row._outer["productNetWeight"] !=  "" ) ? row._outer["productNetWeight"] : row._outer._outer["productCompoQtyUsed"];
-
-Formatter.format( (row["dynamicCharactValue"] * row._outer["compoListQtyForProduct"]* 1000 )/ productNetWeight, "#0.###" )</VALUE-OF>]]></text-property>
-                                                            </text>
-                                                        </cell>
-                                                    </row>
-                                                </detail>
-                                            </table>
+                                            <data id="7771">
+                                                <structure name="numberFormat">
+                                                    <property name="category">Custom</property>
+                                                    <property name="pattern">#0.###</property>
+                                                </structure>
+                                                <property name="resultSetColumn">compoListQtyForProduct</property>
+                                            </data>
                                         </cell>
                                         <cell id="7570">
                                             <text id="7609">
@@ -2939,69 +2900,13 @@ Formatter.format( (row["dynamicCharactValue"] * row._outer["compoListQtyForProdu
                                             <property name="borderRightWidth">thin</property>
                                             <property name="borderTopStyle">solid</property>
                                             <property name="borderTopWidth">thin</property>
-                                            <table id="7690">
-                                                <property name="dataSet">dynamicCharactList</property>
-                                                <list-property name="boundDataColumns">
-                                                    <structure>
-                                                        <property name="name">dynamicCharactTitle</property>
-                                                        <text-property name="displayName">dynamicCharactTitle</text-property>
-                                                        <expression name="expression" type="javascript">dataSetRow["dynamicCharactTitle"]</expression>
-                                                        <property name="dataType">string</property>
-                                                    </structure>
-                                                    <structure>
-                                                        <property name="name">dynamicCharactValue</property>
-                                                        <text-property name="displayName">dynamicCharactValue</text-property>
-                                                        <expression name="expression" type="javascript">dataSetRow["dynamicCharactValue"]</expression>
-                                                        <property name="dataType">float</property>
-                                                    </structure>
-                                                    <structure>
-                                                        <property name="name">sampleCode</property>
-                                                        <text-property name="displayName">sampleCode</text-property>
-                                                        <expression name="expression" type="javascript">dataSetRow["sampleCode"]</expression>
-                                                        <property name="dataType">string</property>
-                                                    </structure>
-                                                    <structure>
-                                                        <property name="name">totalSampleProduct</property>
-                                                        <text-property name="displayName">totalSampleProduct</text-property>
-                                                        <property name="dataType">float</property>
-                                                        <property name="aggregateFunction">SUM</property>
-                                                        <list-property name="arguments">
-                                                            <structure>
-                                                                <property name="name">Expression</property>
-                                                                <expression name="value" type="javascript">row._outer["compoListQtyForProduct"]</expression>
-                                                            </structure>
-                                                        </list-property>
-                                                        <expression name="filterExpr" type="javascript">( row._outer["depthLevel"] == "1" )</expression>
-                                                        <property name="allowExport">true</property>
-                                                    </structure>
-                                                </list-property>
-                                                <list-property name="filter">
-                                                    <structure>
-                                                        <property name="operator">is-true</property>
-                                                        <expression name="expr" type="javascript">( row["sampleCode"] == row._outer._outer["sampleCode"] )</expression>
-                                                        <property name="updateAggregation">true</property>
-                                                    </structure>
-                                                    <structure>
-                                                        <property name="operator">eq</property>
-                                                        <expression name="expr" type="javascript">row["dynamicCharactTitle"]</expression>
-                                                        <simple-property-list name="value1">
-                                                            <value>"Qté Ech (kg)"</value>
-                                                        </simple-property-list>
-                                                        <property name="updateAggregation">true</property>
-                                                    </structure>
-                                                </list-property>
-                                                <column id="7694"/>
-                                                <detail>
-                                                    <row id="7691">
-                                                        <cell id="7692">
-                                                            <text id="7693">
-                                                                <property name="contentType">html</property>
-                                                                <text-property name="content"><![CDATA[<VALUE-OF>Formatter.format( row["dynamicCharactValue"] * row._outer["totalQtyForProduct"] * 1000, "#0.###" )</VALUE-OF>]]></text-property>
-                                                            </text>
-                                                        </cell>
-                                                    </row>
-                                                </detail>
-                                            </table>
+                                            <data id="7772">
+                                                <structure name="numberFormat">
+                                                    <property name="category">Custom</property>
+                                                    <property name="pattern">#0.###</property>
+                                                </structure>
+                                                <property name="resultSetColumn">total</property>
+                                            </data>
                                         </cell>
                                         <cell id="7606">
                                             <property name="borderBottomStyle">none</property>
