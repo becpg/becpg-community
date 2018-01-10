@@ -63,6 +63,10 @@ public class CharactDetails {
 		data.put(charactNodeRef, tmp);
 	}
 
+	public boolean isMultiple() {
+		return computedCharacts!=null && computedCharacts.size()>1; 
+	}
+	
 	public boolean hasElement(NodeRef charactNodeRef) {
 		return computedCharacts==null || computedCharacts.isEmpty() || computedCharacts.contains(charactNodeRef);
 	}
