@@ -420,6 +420,14 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		}
 	}
 
+
+	protected void loadDataListItemAttributes(BeCPGDataObject dataListItem, Element nodeElt, DefaultExtractorContext context) {
+		loadDataListItemAttributes(dataListItem,nodeElt,context,new ArrayList<>());
+	}
+	
+	
+
+	
 	protected void loadNodeAttributes(NodeRef nodeRef, Element nodeElt, boolean useCData, DefaultExtractorContext context) {
 		if ((nodeRef != null) && nodeService.exists(nodeRef)) {
 			loadAttributes(nodeRef, nodeElt, useCData, hiddenNodeAttributes, context);
@@ -427,8 +435,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		}
 	}
 
-	protected void loadDataListItemAttributes(BeCPGDataObject dataListItem, Element nodeElt, DefaultExtractorContext context) {
-		List<QName> hiddentAttributes = new ArrayList<>();
+	protected void loadDataListItemAttributes(BeCPGDataObject dataListItem, Element nodeElt, DefaultExtractorContext context, List<QName> hiddentAttributes) {
 		hiddentAttributes.addAll(hiddenNodeAttributes);
 		hiddentAttributes.addAll(hiddenDataListItemAttributes);
 
