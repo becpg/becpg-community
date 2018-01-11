@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Matcher;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -126,14 +127,15 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		return mandatoryCharacts;
 	}
 
-	protected void formulateSimpleList(ProductData formulatedProduct, List<T> simpleListDataList, boolean isFormulatedProduct) throws FormulateException {
+	protected void formulateSimpleList(ProductData formulatedProduct, List<T> simpleListDataList, boolean isFormulatedProduct)
+			throws FormulateException {
 		logger.debug("formulateSimpleList");
 
 		cleanSimpleList(simpleListDataList, isFormulatedProduct);
-		
+
 		synchronizeTemplate(formulatedProduct, simpleListDataList);
 
-		if(isFormulatedProduct){
+		if (isFormulatedProduct) {
 			visitChildren(formulatedProduct, simpleListDataList);
 		}
 
@@ -141,7 +143,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 	protected void cleanSimpleList(List<T> simpleListDataList, boolean isFormulatedProduct) {
 
-		if (simpleListDataList != null  && isFormulatedProduct) {
+		if ((simpleListDataList != null) && isFormulatedProduct) {
 			simpleListDataList.forEach(sl -> {
 				// reset value if formulated
 				if (isCharactFormulated(sl)) {
@@ -182,7 +184,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 				Double weight = FormulationHelper.getQtyInKg(compoItem);
 				Double vol = FormulationHelper.getNetVolume(compoItem, nodeService);
 
-				if (weight != null && !DeclarationType.Omit.equals(compoItem.getDeclType())  ) {
+				if ((weight != null) && !DeclarationType.Omit.equals(compoItem.getDeclType())) {
 					visitPart(compoItem.getProduct(), simpleListDataList, weight, vol, netQty, mandatoryCharacts, totalQtiesValue,
 							isGenericRawMaterial);
 				}
@@ -327,9 +329,11 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 				}
 			} else {
 				Double newMini = ((MinMaxValueDataItem) newSimpleListDataItem).getMini() != null
-						? ((MinMaxValueDataItem) newSimpleListDataItem).getMini() : newValue;
+						? ((MinMaxValueDataItem) newSimpleListDataItem).getMini()
+						: newValue;
 				Double newMaxi = ((MinMaxValueDataItem) newSimpleListDataItem).getMaxi() != null
-						? ((MinMaxValueDataItem) newSimpleListDataItem).getMaxi() : newValue;
+						? ((MinMaxValueDataItem) newSimpleListDataItem).getMaxi()
+						: newValue;
 				Double miniValue = ((MinMaxValueDataItem) slDataItem).getMini() != null ? ((MinMaxValueDataItem) slDataItem).getMini() : value;
 				Double maxiValue = ((MinMaxValueDataItem) slDataItem).getMaxi() != null ? ((MinMaxValueDataItem) slDataItem).getMaxi() : value;
 				if ((miniValue < value) || (newMini < newValue) || (((MinMaxValueDataItem) newSimpleListDataItem).getMini() != null)) {
@@ -416,55 +420,67 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 				if (((formulatedCharactDataItem.getIsManual() == null) || !formulatedCharactDataItem.getIsManual())
 						&& (formulatedCharactDataItem.getCharactNodeRef() != null)) {
 
-					String formula = (String) nodeService.getProperty(formulatedCharactDataItem.getCharactNodeRef(), propFormula);
-					if ((formula != null) && (formula.length() > 0)) {
+					String formulaText = (String) nodeService.getProperty(formulatedCharactDataItem.getCharactNodeRef(), propFormula);
+					if ((formulaText != null) && (formulaText.length() > 0)) {
 						try {
+
 							formulatedCharactDataItem.setIsFormulated(true);
-							formula = SpelHelper.formatFormula(formula);
 
-							Expression exp = parser.parseExpression(formula);
-							Object ret = exp.getValue(context);
-							if ((ret == null) || (ret instanceof Double) || (ret instanceof Integer)) {
-								formulatedCharactDataItem.setValue((Double) ret);
+							String[] formulas = SpelHelper.formatMTFormulas(formulaText);
+							for (String formula : formulas) {
 
-								if (formula.contains(".value") && (formulatedCharactDataItem instanceof MinMaxValueDataItem)) {
-									try {
-										exp = parser.parseExpression(formula.replace(".value", ".mini"));
-										((MinMaxValueDataItem) formulatedCharactDataItem).setMini((Double) exp.getValue(context));
-										exp = parser.parseExpression(formula.replace(".value", ".maxi"));
-										((MinMaxValueDataItem) formulatedCharactDataItem).setMaxi((Double) exp.getValue(context));
-									} catch (Exception e) {
-										((MinMaxValueDataItem) formulatedCharactDataItem).setMaxi(null);
-										((MinMaxValueDataItem) formulatedCharactDataItem).setMini(null);
-										if (logger.isDebugEnabled()) {
-											logger.debug("Error in formula :" + formula, e);
+								Matcher varFormulaMatcher = SpelHelper.formulaVarPattern.matcher(formula);
+								if (varFormulaMatcher.matches()) {
+									Expression exp = parser.parseExpression(varFormulaMatcher.group(2));
+									context.setVariable(varFormulaMatcher.group(1), exp.getValue(context));
+								} else {
+									Expression exp = parser.parseExpression(formula);
+									Object ret = exp.getValue(context);
+									if ((ret == null) || (ret instanceof Double) || (ret instanceof Integer)) {
+										formulatedCharactDataItem.setValue((Double) ret);
+
+										if (formula.contains(".value") && (formulatedCharactDataItem instanceof MinMaxValueDataItem)) {
+											try {
+												exp = parser.parseExpression(formula.replace(".value", ".mini"));
+												((MinMaxValueDataItem) formulatedCharactDataItem).setMini((Double) exp.getValue(context));
+												exp = parser.parseExpression(formula.replace(".value", ".maxi"));
+												((MinMaxValueDataItem) formulatedCharactDataItem).setMaxi((Double) exp.getValue(context));
+											} catch (Exception e) {
+												((MinMaxValueDataItem) formulatedCharactDataItem).setMaxi(null);
+												((MinMaxValueDataItem) formulatedCharactDataItem).setMini(null);
+												if (logger.isDebugEnabled()) {
+													logger.debug("Error in formula :" + formula, e);
+												}
+											}
 										}
-									}
-								}
 
-								if (formula.contains(".value") && (formulatedCharactDataItem instanceof ForecastValueDataItem)) {
-									try {
-										exp = parser.parseExpression(formula.replace(".value", ".futureValue"));
-										((ForecastValueDataItem) formulatedCharactDataItem).setFutureValue((Double) exp.getValue(context));
-										exp = parser.parseExpression(formula.replace(".value", ".previousValue"));
-										((ForecastValueDataItem) formulatedCharactDataItem).setPreviousValue(((Double) exp.getValue(context)));
-									} catch (Exception e) {
-										((ForecastValueDataItem) formulatedCharactDataItem).setFutureValue(null);
-										((ForecastValueDataItem) formulatedCharactDataItem).setPreviousValue(null);
-										if (logger.isDebugEnabled()) {
-											logger.debug("Error in formula :" + formula, e);
+										if (formula.contains(".value") && (formulatedCharactDataItem instanceof ForecastValueDataItem)) {
+											try {
+												exp = parser.parseExpression(formula.replace(".value", ".futureValue"));
+												((ForecastValueDataItem) formulatedCharactDataItem).setFutureValue((Double) exp.getValue(context));
+												exp = parser.parseExpression(formula.replace(".value", ".previousValue"));
+												((ForecastValueDataItem) formulatedCharactDataItem)
+														.setPreviousValue(((Double) exp.getValue(context)));
+											} catch (Exception e) {
+												((ForecastValueDataItem) formulatedCharactDataItem).setFutureValue(null);
+												((ForecastValueDataItem) formulatedCharactDataItem).setPreviousValue(null);
+												if (logger.isDebugEnabled()) {
+													logger.debug("Error in formula :" + formula, e);
+												}
+											}
 										}
-									}
-								}
 
-							} else {
-								error = I18NUtil.getMessage("message.formulate.formula.incorrect.type.double", Locale.getDefault());
+									} else {
+										error = I18NUtil.getMessage("message.formulate.formula.incorrect.type.double", Locale.getDefault());
+									}
+
+								}
 							}
 
 						} catch (Exception e) {
 							error = e.getLocalizedMessage();
 							if (logger.isDebugEnabled()) {
-								logger.debug("Error in formula :" + SpelHelper.formatFormula(formula), e);
+								logger.debug("Error in formula :" + SpelHelper.formatFormula(formulaText), e);
 							}
 						}
 					}
@@ -504,17 +520,16 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 					for (T sl : simpleListDataList) {
 						if (tsl.getCharactNodeRef().equals(sl.getCharactNodeRef())) {
 							isFound = true;
-							
-							if(sl instanceof CompositeDataItem
-									&& tsl instanceof CompositeDataItem){
-								if(((CompositeDataItem<T>)tsl).getParent()!=null
-										&& ((CompositeDataItem<T>)sl).getParent()==null){
-									((CompositeDataItem<T>)sl).setParent(findParentByCharactName(simpleListDataList, ((CompositeDataItem<T>)tsl).getParent().getCharactNodeRef()));
-								} else if(((CompositeDataItem<T>)tsl).getParent() ==null) {
-									((CompositeDataItem<T>)sl).setParent(null);
+
+							if ((sl instanceof CompositeDataItem) && (tsl instanceof CompositeDataItem)) {
+								if ((((CompositeDataItem<T>) tsl).getParent() != null) && (((CompositeDataItem<T>) sl).getParent() == null)) {
+									((CompositeDataItem<T>) sl).setParent(findParentByCharactName(simpleListDataList,
+											((CompositeDataItem<T>) tsl).getParent().getCharactNodeRef()));
+								} else if (((CompositeDataItem<T>) tsl).getParent() == null) {
+									((CompositeDataItem<T>) sl).setParent(null);
 								}
 							}
-							
+
 							break;
 						}
 					}
@@ -523,34 +538,35 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 						toAdd.setName(null);
 						toAdd.setNodeRef(null);
 						toAdd.setParentNodeRef(null);
-						
-						if(toAdd instanceof CompositeDataItem){
-							if(((CompositeDataItem<T>)toAdd).getParent()!=null){
-								((CompositeDataItem<T>)toAdd).setParent(findParentByCharactName(simpleListDataList, ((CompositeDataItem<T>)toAdd).getParent().getCharactNodeRef()));
+
+						if (toAdd instanceof CompositeDataItem) {
+							if (((CompositeDataItem<T>) toAdd).getParent() != null) {
+								((CompositeDataItem<T>) toAdd).setParent(
+										findParentByCharactName(simpleListDataList, ((CompositeDataItem<T>) toAdd).getParent().getCharactNodeRef()));
 							}
 						}
-						
+
 						simpleListDataList.add(toAdd);
-					} 
+					}
 
 				}
 			}
-			
-			//check sorting
+
+			// check sorting
 			int lastSort = 0;
 			for (T sl : simpleListDataList) {
-				if(sl.getCharactNodeRef() != null){
+				if (sl.getCharactNodeRef() != null) {
 					boolean isFound = false;
-					
+
 					for (T tsl : templateSimpleListDataList) {
-						if(sl.getCharactNodeRef().equals(tsl.getCharactNodeRef())){
+						if (sl.getCharactNodeRef().equals(tsl.getCharactNodeRef())) {
 							isFound = true;
-							lastSort = tsl.getSort()*100;
+							lastSort = tsl.getSort() * 100;
 							sl.setSort(lastSort);
 						}
 					}
-					
-					if(!isFound){
+
+					if (!isFound) {
 						sl.setSort(++lastSort);
 					}
 				}

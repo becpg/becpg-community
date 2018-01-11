@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -221,24 +222,35 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 				if (((labelClaimListDataItem.getIsManual() == null) || !labelClaimListDataItem.getIsManual())
 						&& (labelClaimListDataItem.getLabelClaim() != null)) {
 
-					String formula = (String) nodeService.getProperty(labelClaimListDataItem.getLabelClaim(), PLMModel.PROP_LABEL_CLAIM_FORMULA);
-					if ((formula != null) && (formula.length() > 0)) {
+					String formulaText = (String) nodeService.getProperty(labelClaimListDataItem.getLabelClaim(), PLMModel.PROP_LABEL_CLAIM_FORMULA);
+					if ((formulaText != null) && (formulaText.length() > 0)) {
 						try {
 							labelClaimListDataItem.setIsFormulated(true);
-							Expression exp = parser.parseExpression(SpelHelper.formatFormula(formula));
-							Object ret = exp.getValue(context);
-							if (ret instanceof Boolean) {
-								labelClaimListDataItem.setIsClaimed((Boolean) ret);
-							} else {
-								labelClaimListDataItem.setLabelClaimValue(LabelClaimListDataItem.VALUE_EMPTY);
-								labelClaimListDataItem
-										.setErrorLog(I18NUtil.getMessage("message.formulate.formula.incorrect.type.boolean", Locale.getDefault()));
-							}
+							
+							String[] formulas = SpelHelper.formatMTFormulas(formulaText);
+							for (String formula : formulas) {
 
+								Matcher varFormulaMatcher = SpelHelper.formulaVarPattern.matcher(formula);
+								if (varFormulaMatcher.matches()) {
+									Expression exp = parser.parseExpression(varFormulaMatcher.group(2));
+									context.setVariable(varFormulaMatcher.group(1), exp.getValue(context));
+								} else {
+									Expression exp = parser.parseExpression(formula);
+									Object ret = exp.getValue(context);
+									if (ret instanceof Boolean) {
+										labelClaimListDataItem.setIsClaimed((Boolean) ret);
+									} else {
+										labelClaimListDataItem.setLabelClaimValue(LabelClaimListDataItem.VALUE_EMPTY);
+										labelClaimListDataItem
+												.setErrorLog(I18NUtil.getMessage("message.formulate.formula.incorrect.type.boolean", Locale.getDefault()));
+									}
+								}
+							}
+			
 						} catch (Exception e) {
 							labelClaimListDataItem.setErrorLog(e.getLocalizedMessage());
 							if (logger.isDebugEnabled()) {
-								logger.debug("Error in formula :" + SpelHelper.formatFormula(formula), e);
+								logger.debug("Error in formula :" + SpelHelper.formatFormula(formulaText), e);
 							}
 						}
 					}
