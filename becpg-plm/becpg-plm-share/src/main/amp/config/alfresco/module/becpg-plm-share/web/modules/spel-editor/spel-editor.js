@@ -250,7 +250,7 @@
                         			             '$String matches "$Regexp"',
                         			             'T($type)',
                         			             '$false ? $trueExp : $falseExp',
-                        			             '$list.?[$property == $value]',
+                        			             '$list.^[$property == $value]',
                         			             '$list.![$property]',
                         			             '@beCPG.sum($range,$formula)',
                         			             '@beCPG.avg($range,$formula)',
@@ -259,7 +259,15 @@
                         			             '@beCPG.children($compoListDataItem)',
                         			             '@beCPG.findOne($nodeRef)',
                         			             '@beCPG.propValue($nodeRef,"bcpg:productQty")',
-                        			             '@beCPG.copy($fromNodeRef,propQnames,listQNames)'],
+                        			             '@beCPG.copy($fromNodeRef,propQnames,listQNames)',
+                        			             'isLiquid()',
+                        			             'isRawMaterial()',
+                        			             'isPackaging()',
+                        			             'isPackagingKit()',
+                        			             'isSemiFinished()',
+                        			             'isLocalSemiFinished()'
+                        			             ],
+                        			             
                         			      from: CodeMirror.Pos(cur.line, start),
                         			      to: CodeMirror.Pos(cur.line, end)
                         			    };
@@ -595,84 +603,84 @@
                               name : "costList",
                               type : "bcpg:cost",
                               subType : "fr.becpg.repo.product.data.productList.CostListDataItem",
-                              template : "costList.^[cost.toString() == '{item1}']?.{item2}"
+                              template : "cost['{item1}']?.{item2}"
                            },
                            {
                               name : "nutList",
                               type : "bcpg:nut",
                               subType : "fr.becpg.repo.product.data.productList.NutListDataItem",
-                              template : "nutList.^[nut.toString() == '{item1}']?.{item2}"
+                              template : "nut['{item1}']?.{item2}"
                            },
                            {
                               name : "allergenList",
                               type : "bcpg:allergen",
                               subType : "fr.becpg.repo.product.data.productList.AllergenListDataItem",
-                              template : "allergenList.^[allergen.toString() == '{item1}']?.{item2}"
+                              template : "allergen['{item1}']?.{item2}"
                            },
                            {
                               name : "ingList",
                               type : "bcpg:ing",
                               subType : "fr.becpg.repo.product.data.productList.IngListDataItem",
-                              template : "ingList.^[ing.toString() == '{item1}']?.{item2}"
+                              template : "ing['{item1}']?.{item2}"
                            },
                            {
                               name : "organoList",
                               type : "bcpg:organo",
                               subType : "fr.becpg.repo.product.data.productList.OrganoListDataItem",
-                              template : "organoList.^[organo.toString() == '{item1}']?.{item2}"
+                              template : "organo['{item1}']?.{item2}"
                            },
                            {
                               name : "physicoChemList",
                               type : "bcpg:physicoChem",
                               subType : "fr.becpg.repo.product.data.productList.PhysicoChemListDataItem",
-                              template : "physicoChemList.^[physicoChem.toString() == '{item1}']?.{item2}"
+                              template : "physico['{item1}']?.{item2}"
                            },
                            {
                               name : "microbioList",
                               type : "bcpg:microbio",
                               subType : "fr.becpg.repo.product.data.productList.MicrobioListDataItem",
-                              template : "microbioList.^[microBio.toString() == '{item1}']?.{item2}"
+                              template : "microbio['{item1}']?.{item2}"
                            },
                            {
                               name : "compoList",
                               type : "bcpg:rawMaterial,bcpg:finishedProduct,bcpg:localSemiFinishedProduct,bcpg:semiFinishedProduct",
                               subType : "fr.becpg.repo.product.data.productList.CompoListDataItem",
-                              template : "compoListView.compoList.^[product.toString() == '{item1}']?.{item2}"
+                              template : "compo['{item1}']?.{item2}"
                            },
                            {
                               name : "processList",
                               type : "bcpg:resourceProduct",
                               subType : "fr.becpg.repo.product.data.productList.ProcessListDataItem",
-                              template : "processListView.processList.^[resource.toString() == '{item1}']?.{item2}"
+                              template : "process['{item1}']?.{item2}"
                            },
                            {
                               name : "resourceParamList",
                               type : "mpm:resourceParam",
                               subType : "fr.becpg.repo.product.data.productList.ResourceParamListItem",
-                              template : "resourceParamList.^[param.toString() == '{item1}']?.{item2}"
+                              template : "resParam['{item1}']?.{item2}"
                            }, 
                            {
                                name : "packagingList",
                                type : "bcpg:packagingMaterial,bcpg:packagingKit",
                                subType : "fr.becpg.repo.product.data.productList.PackagingListDataItem",
-                               template : "packagingListView.packagingList.^[product.toString() == '{item1}']?.{item2}"
+                               template : "pack['{item1}']?.{item2}"
                             },
                            {
                               name : "variables",
                               type : "bcpg:dynamicCharactList",
-                              template : "{currentList}View.dynamicCharactList.^[title == '{name1}']?.value"
+                              template : "{currentList}Var['{name1}']"
                            },
                            {
                               name : "labelClaimList",
                               type : "bcpg:labelClaim",
                               subType : "fr.becpg.repo.product.data.productList.LabelClaimListDataItem",
-                              template : "labelClaimList.^[labelClaim.toString() == '{item1}']?.{item2}"
+                              template : "labelClaim['{item1}']?.{item2}"
                            },
                            {
                               name : "ingLabelingList",
                               type : "bcpg:labelingRuleList",
                               subType : "fr.becpg.repo.product.data.productList.IngLabelingListDataItem",
-                              template : "labelingListView.ingLabelingList.^[grp.toString() == '{item1}']?.{item2}"
+                              template : "labeling['{item1}']?.{item2}"
                            } ];
 
                      var menuItem, item, label;
@@ -775,7 +783,7 @@
                               var text = Lang.substitute(me.options.selectedParentType.template, {
                                  name1 : data.name,
                                  item1 : data.value,
-                                 currentList : me.options.currentList
+                                 currentList : me.options.currentList.replace("List","")
                               });
 
                               me.widgets.editor.replaceRange( text, me.widgets.editor.getCursor());

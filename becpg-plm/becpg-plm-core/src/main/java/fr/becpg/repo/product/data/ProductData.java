@@ -3,6 +3,7 @@
  */
 package fr.becpg.repo.product.data;
 
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -869,6 +870,27 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	public boolean isLiquid() {
 		return unit != null && (unit == ProductUnit.L || unit == ProductUnit.mL || unit == ProductUnit.cL);
 	}
+	
+	public boolean isRawMaterial() {
+		return this instanceof RawMaterialData;
+	}
+	
+	public boolean isPackaging() {
+		return this instanceof PackagingMaterialData;
+	}
+	
+	public boolean isPackagingKit() {
+		return this instanceof PackagingKitData;
+	}
+	
+	public boolean isSemiFinished() {
+		return this instanceof SemiFinishedProductData;
+	}
+	
+	public boolean isLocalSemiFinished() {
+		return this instanceof LocalSemiFinishedProductData;
+	}
+	
 
 	public Integer getReformulateCount() {
 		return reformulateCount;
