@@ -26,6 +26,10 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import fr.becpg.report.client.ReportException;
 
 public interface BeCPGReportEngine {
+	
+	public static final String PARAM_DOCUMENT_NODEREF = "documentNodeRef";
+	public static final String PARAM_ENTITY_NODEREF = "entityNodeRef";
+	public static final String JS_EXTENSION = ".js";
 
 	void createReport(NodeRef tplNodeRef, InputStream in, OutputStream out, Map<String, Object> params) throws ReportException;
 
