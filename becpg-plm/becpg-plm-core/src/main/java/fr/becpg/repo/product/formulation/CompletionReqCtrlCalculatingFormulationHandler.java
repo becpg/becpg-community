@@ -252,74 +252,76 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 	public JSONArray calculateMandatoryFieldsScore(ProductData productData) throws JSONException {
 		JSONArray ret = new JSONArray();
 
-		JSONArray catalogs = getCatalogDef();
+		List<JSONArray> catalogs = getCatalogsDef();
 
-		if ((catalogs != null) && (productData.getNodeRef() != null) && nodeService.exists(productData.getNodeRef())) {
+		if ((!catalogs.isEmpty()) && (productData.getNodeRef() != null) && nodeService.exists(productData.getNodeRef())) {
 			// Break rules !!!!
 			Map<QName, Serializable> properties = nodeService.getProperties(productData.getNodeRef());
 			String defaultLocale = Locale.getDefault().getLanguage();
 			QName productType = nodeService.getType(productData.getNodeRef());
 
-			for (int i = 0; i < catalogs.length(); i++) {
-				JSONObject catalog = catalogs.getJSONObject(i);
+			for(JSONArray catalogDef : catalogs){
+				for (int i = 0; i < catalogDef.length(); i++) {
+					JSONObject catalog = catalogDef.getJSONObject(i);
 
-				// if( apply(catalog, productData)){
+					// if( apply(catalog, productData)){
 
-				// if( apply(catalog, productData)){
+					// if( apply(catalog, productData)){
 
-				// check if product matches various criteria, such as family,
-				// subfamily, etc.
-				boolean productPassesFilter = productMatches(catalog, productData, productType);
+					// check if product matches various criteria, such as family,
+					// subfamily, etc.
+					boolean productPassesFilter = productMatches(catalog, productData, productType);
 
-				if (logger.isDebugEnabled()) {
-					logger.debug("\n\t\t== Catalog \"" + catalog.getString(JsonScoreHelper.PROP_LABEL) + "\" ==");
-					logger.debug("Type of product: " + productType);
-					logger.debug("Catalog json: " + catalog);
-					logger.debug("ProductPassesFilter: " + productPassesFilter);
-				}
-
-				// if this catalog applies to this type, or this catalog has no
-				// type defined (it applies to every entity type)
-				if (productPassesFilter) {
 					if (logger.isDebugEnabled()) {
-						logger.debug("Formulating for catalog \"" + catalog.getString(JsonScoreHelper.PROP_LABEL) + "\"");
+						logger.debug("\n\t\t== Catalog \"" + catalog.getString(JsonScoreHelper.PROP_LABEL) + "\" ==");
+						logger.debug("Type of product: " + productType);
+						logger.debug("Catalog json: " + catalog);
+						logger.debug("ProductPassesFilter: " + productPassesFilter);
 					}
-					List<String> langs = new LinkedList<>(getLocales(productData.getReportLocales(), catalog));
 
-					langs.sort((o1, o2) -> {
-						if (o1.equals(defaultLocale)) {
-							return -1;
+					// if this catalog applies to this type, or this catalog has no
+					// type defined (it applies to every entity type)
+					if (productPassesFilter) {
+						if (logger.isDebugEnabled()) {
+							logger.debug("Formulating for catalog \"" + catalog.getString(JsonScoreHelper.PROP_LABEL) + "\"");
 						}
-						if (o2.equals(defaultLocale)) {
-							return 1;
+						List<String> langs = new LinkedList<>(getLocales(productData.getReportLocales(), catalog));
+
+						langs.sort((o1, o2) -> {
+							if (o1.equals(defaultLocale)) {
+								return -1;
+							}
+							if (o2.equals(defaultLocale)) {
+								return 1;
+							}
+							return 0;
+						});
+
+						String color = getCatalogColor(catalog, i);
+
+						JSONArray reqFields = catalog.getJSONArray(JsonScoreHelper.PROP_FIELDS);
+						JSONArray uniqueFields = catalog.getJSONArray(JsonScoreHelper.PROP_UNIQUE_FIELDS);
+
+						JSONArray nonUniqueFields = extractNonUniqueFields(productData, catalog.getString(JsonScoreHelper.PROP_LABEL), properties,
+								uniqueFields);
+
+						for (String lang : langs) {
+
+							JSONArray missingFields = extractMissingFields(productData, catalog.getString(JsonScoreHelper.PROP_LABEL), properties,
+									reqFields, defaultLocale.equals(lang) ? null : lang);
+							if ((missingFields.length() > 0) || (nonUniqueFields.length() > 0)) {
+								JSONObject catalogDesc = new JSONObject();
+								catalogDesc.put(JsonScoreHelper.PROP_MISSING_FIELDS, missingFields.length() > 0 ? missingFields : null);
+								catalogDesc.put(JsonScoreHelper.PROP_NON_UNIQUE_FIELDS, nonUniqueFields.length() > 0 ? nonUniqueFields : null);
+								catalogDesc.put(JsonScoreHelper.PROP_LOCALE, defaultLocale.equals(lang) ? null : lang);
+								catalogDesc.put(JsonScoreHelper.PROP_SCORE, ((reqFields.length() - missingFields.length()) * 100d) / reqFields.length());
+								catalogDesc.put(JsonScoreHelper.PROP_LABEL, catalog.getString(JsonScoreHelper.PROP_LABEL));
+								catalogDesc.put(JsonScoreHelper.PROP_ID, catalog.getString(JsonScoreHelper.PROP_ID));
+								catalogDesc.put(JsonScoreHelper.PROP_COLOR, color);
+								ret.put(catalogDesc);
+							}
+
 						}
-						return 0;
-					});
-
-					String color = getCatalogColor(catalog, i);
-
-					JSONArray reqFields = catalog.getJSONArray(JsonScoreHelper.PROP_FIELDS);
-					JSONArray uniqueFields = catalog.getJSONArray(JsonScoreHelper.PROP_UNIQUE_FIELDS);
-
-					JSONArray nonUniqueFields = extractNonUniqueFields(productData, catalog.getString(JsonScoreHelper.PROP_LABEL), properties,
-							uniqueFields);
-
-					for (String lang : langs) {
-
-						JSONArray missingFields = extractMissingFields(productData, catalog.getString(JsonScoreHelper.PROP_LABEL), properties,
-								reqFields, defaultLocale.equals(lang) ? null : lang);
-						if ((missingFields.length() > 0) || (nonUniqueFields.length() > 0)) {
-							JSONObject catalogDesc = new JSONObject();
-							catalogDesc.put(JsonScoreHelper.PROP_MISSING_FIELDS, missingFields.length() > 0 ? missingFields : null);
-							catalogDesc.put(JsonScoreHelper.PROP_NON_UNIQUE_FIELDS, nonUniqueFields.length() > 0 ? nonUniqueFields : null);
-							catalogDesc.put(JsonScoreHelper.PROP_LOCALE, defaultLocale.equals(lang) ? null : lang);
-							catalogDesc.put(JsonScoreHelper.PROP_SCORE, ((reqFields.length() - missingFields.length()) * 100d) / reqFields.length());
-							catalogDesc.put(JsonScoreHelper.PROP_LABEL, catalog.getString(JsonScoreHelper.PROP_LABEL));
-							catalogDesc.put(JsonScoreHelper.PROP_ID, catalog.getString(JsonScoreHelper.PROP_ID));
-							catalogDesc.put(JsonScoreHelper.PROP_COLOR, color);
-							ret.put(catalogDesc);
-						}
-
 					}
 				}
 			}
@@ -328,9 +330,11 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 		return ret;
 	}
 
-	private JSONArray getCatalogDef() {
+	private List<JSONArray> getCatalogsDef() {
 
 		return beCPGCacheService.getFromCache(ScoreCalculatingFormulationHandler.class.getName(), CATALOG_DEFS, () -> {
+			
+			List<JSONArray> res = new ArrayList<>();
 
 			// get JSON from file in system
 			NodeRef folder = getCatalogFolderNodeRef();
@@ -340,24 +344,27 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 			logger.debug("Number of catalogs: " + files.size());
 
 			if (!files.isEmpty()) {
-				FileInfo file = files.get(0);
-
-				logger.debug("File in catalog folder nr: " + file.getNodeRef());
-				ContentReader reader = contentService.getReader(file.getNodeRef(), ContentModel.PROP_CONTENT);
-				String content = reader.getContentString();
-				logger.debug("Content: " + content);
-				JSONArray res = new JSONArray();
-
-				try {
-					res = new JSONArray(content);
-				} catch (JSONException e) {
-					logger.error("Unable to parse content to catalog, content: " + content, e);
+				
+				for(FileInfo file : files){
+					//FileInfo file = files.get(0);
+	
+					logger.debug("File in catalog folder nr: " + file.getNodeRef());
+					ContentReader reader = contentService.getReader(file.getNodeRef(), ContentModel.PROP_CONTENT);
+					String content = reader.getContentString();
+					logger.debug("Content: " + content);
+					//JSONArray res = new JSONArray();
+	
+					try {
+						res.add(new JSONArray(content));
+					} catch (JSONException e) {
+						logger.error("Unable to parse content to catalog, content: " + content, e);
+					}
 				}
 
 				return res;
 			} else {
 				// no file in catalog folder
-				return new JSONArray();
+				return new ArrayList<JSONArray>();
 			}
 		});
 	}

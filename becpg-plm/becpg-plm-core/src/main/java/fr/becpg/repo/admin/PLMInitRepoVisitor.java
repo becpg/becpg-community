@@ -5,6 +5,7 @@ package fr.becpg.repo.admin;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.file.FileAlreadyExistsException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -26,6 +27,8 @@ import org.alfresco.service.cmr.action.ActionCondition;
 import org.alfresco.service.cmr.action.CompositeAction;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
+import org.alfresco.service.cmr.model.FileExistsException;
+import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.rule.Rule;
 import org.alfresco.service.cmr.rule.RuleType;
@@ -34,11 +37,13 @@ import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
-
-import com.sun.star.report.ReportControlFormat;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ECMGroup;
@@ -146,6 +151,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 	@Autowired
 	protected AlfrescoRepository<ProductData> alfrescoRepository;
+	
+	@Value("${beCPG.formulation.score.mandatoryFields}")
+	private String oldCatalogs;
 
 	/**
 	 * Initialize the repository with system folders.
@@ -268,6 +276,29 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			}
 		}
 		if (Objects.equals(folderName, PlmRepoConsts.PATH_CATALOGS)) {
+			
+			//add old catalogs
+			if(oldCatalogs != null && !oldCatalogs.isEmpty()){
+				
+				try {
+					JSONArray oldCatalogsArray = new JSONArray(oldCatalogs);
+					NodeRef oldCatalogFileNR = fileFolderService.create(folderNodeRef, "old-catalogs.json", ContentModel.TYPE_CONTENT).getNodeRef();
+					
+					ContentWriter writer = fileFolderService.getWriter(oldCatalogFileNR);
+					writer.putContent(oldCatalogsArray.toString());
+					
+					logger.info("Copied old catalogs:\n);"
+							+ "===================\n"+oldCatalogs);
+				} catch (JSONException e) {
+					logger.error("Unable to copy old catalogs: ",e);
+				} catch(FileExistsException e2){
+					logger.warn("A file named \"old-catalogs.json\" already exists in folder \""+folderName+"\", skipping copy of old catalogs. ");
+				}
+				
+			} else {
+				logger.info("No old catalogs to backport");
+			}
+			
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/catalogs/*.json");
 		}
 	}
