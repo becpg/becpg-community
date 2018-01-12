@@ -11,8 +11,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -22,6 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.extensions.webscripts.GUID;
+
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
@@ -56,6 +59,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	private static final String MESSAGE_MISSING_INGLIST = "message.formulate.missing.ingList";
 	private static final String MESSAGE_NOTAUTHORIZED_ING = "message.formulate.notauhorized.ing";
 	private static final String MESSAGE_INCORRECT_INGLIST_TOTAL = "message.formulate.incorrect.ingList.total";
+	private static final String MESSAGE_FORBIDDEN_ING = "message.formulate.ingredient.forbidden";
 
 	/** The logger. */
 	private static final Log logger = LogFactory.getLog(IngsCalculatingFormulationHandler.class);
@@ -491,10 +495,16 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 												forbiddenIngredientsList, reqCtrlMap, visited);
 									}
 								} else {
-									logger.debug("Adding not respected for: " + fil.getReqMessage());
+									MLText curMessage = fil.getReqMessage();
+									if(curMessage.values().stream().noneMatch(mes -> mes != null && !mes.isEmpty())){
+										curMessage = new MLText(I18NUtil.getMessage(MESSAGE_FORBIDDEN_ING, nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME)));
+									};
+									
+									logger.debug("Adding not respected for: " + curMessage);
+																		
 									ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(fil.getNodeRef());
 									if (reqCtrl == null) {
-										reqCtrl = new ReqCtrlListDataItem(null, fil.getReqType(), fil.getReqMessage(), null, new ArrayList<NodeRef>(),
+										reqCtrl = new ReqCtrlListDataItem(null, fil.getReqType(),  curMessage, null, new ArrayList<NodeRef>(),
 												RequirementDataType.Specification);
 										reqCtrlMap.put(fil.getNodeRef(), reqCtrl);
 									} else {

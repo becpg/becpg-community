@@ -298,8 +298,8 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 
 						String color = getCatalogColor(catalog, i);
 
-						JSONArray reqFields = catalog.getJSONArray(JsonScoreHelper.PROP_FIELDS);
-						JSONArray uniqueFields = catalog.getJSONArray(JsonScoreHelper.PROP_UNIQUE_FIELDS);
+						JSONArray reqFields = catalog.has(JsonScoreHelper.PROP_FIELDS) ? catalog.getJSONArray(JsonScoreHelper.PROP_FIELDS) : new JSONArray();
+						JSONArray uniqueFields = catalog.has(JsonScoreHelper.PROP_UNIQUE_FIELDS) ?catalog.getJSONArray(JsonScoreHelper.PROP_UNIQUE_FIELDS) : new JSONArray();
 
 						JSONArray nonUniqueFields = extractNonUniqueFields(productData, catalog.getString(JsonScoreHelper.PROP_LABEL), properties,
 								uniqueFields);
