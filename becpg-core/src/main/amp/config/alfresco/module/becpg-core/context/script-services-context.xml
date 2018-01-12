@@ -65,6 +65,15 @@
 		<property name="paginatedSearchCache" ref="paginatedSearchCache"/>
 		<property name="showEntitiesInTree" value="${becpg.doclibtree.showEntities}"></property>
 	</bean>
+	
+	<bean id="pdfScriptHelper" parent="baseJavaScriptExtension" class="fr.becpg.repo.jscript.PDFScriptHelper">
+		<property name="extensionName">
+			<value>pdf</value>
+		</property>
+		<property name="nodeService" ref="nodeService"/>
+		<property name="contentService" ref="contentService"/>
+		<property name="dictionaryService" ref="dictionaryService"/>
+	</bean>
 
 	<!-- Override Alfresco -->
  
