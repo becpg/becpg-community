@@ -85,7 +85,19 @@
 	         <scope>test</scope>
 	    </dependency>
 		
-		
+		<!-- IText PDF -->
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>itextpdf</artifactId>
+			<version>5.0.6</version>
+			<type>jar</type>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 		
 		
 	</dependencies>
