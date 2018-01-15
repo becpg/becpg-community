@@ -20,6 +20,7 @@
 					<show id="bcpg:productHierarchy1" />
 					<show id="bcpg:productHierarchy2" />
 					<show id="bcpg:entityTplRef" force="true"/>
+					<show id="bcpg:clients" force="true"/>
 					<show id="bcpg:productState" />
 				</field-visibility>
 				<appearance>
