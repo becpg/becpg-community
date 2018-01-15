@@ -496,7 +496,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 									}
 								} else {
 									MLText curMessage = fil.getReqMessage();
-									if(curMessage.values().stream().noneMatch(mes -> mes != null && !mes.isEmpty())){
+									if(curMessage==null || curMessage.values().stream().noneMatch(mes -> mes != null && !mes.isEmpty())){
 										curMessage = new MLText(I18NUtil.getMessage(MESSAGE_FORBIDDEN_ING, nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME)));
 									};
 									
