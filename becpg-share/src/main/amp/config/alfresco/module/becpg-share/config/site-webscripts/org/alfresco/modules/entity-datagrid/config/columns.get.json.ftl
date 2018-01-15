@@ -6,6 +6,9 @@
          "type": "${col.type}",
          "name": "${col.name}",
          "formsName": "<#if col.type == "association">assoc<#else>prop</#if>_${col.name?replace(":", "_")}",
+         <#if col.checked??>
+         	"checked": ${col.checked?string},
+      	 </#if>
          <#if col.label??>
          "label": "${jsonUtils.encodeJSONString(msg(col.label))}",
          <#else>
