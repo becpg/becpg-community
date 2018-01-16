@@ -27,7 +27,6 @@
 	               actionName : "columns-conf",
 	               right : true,
 	               evaluate : function(asset, entity) {
-	            	   console.log(asset.name);
 	                  return asset.name !== null && !asset.name.indexOf("View-properties") == 0 && !asset.name.indexOf("View-reports") == 0
 	                  && !asset.name.indexOf("View-documents") == 0 && !asset.name.indexOf("activityList") == 0 && !asset.name.indexOf("taskList") == 0;
 	               },
