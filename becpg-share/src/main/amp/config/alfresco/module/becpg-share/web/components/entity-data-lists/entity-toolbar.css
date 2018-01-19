@@ -53,6 +53,11 @@
    padding-left: 12px;
 }
 
+.datalist-toolbar .columns-conf span.first-child
+{
+	background: url(images/columns-conf-16.png) no-repeat 12px 4px;
+   padding-left: 12px;
+}
 
 .datalist-toolbar div.flat-button .ganttCkeckbox  span.yui-checkbox-button button
 {
