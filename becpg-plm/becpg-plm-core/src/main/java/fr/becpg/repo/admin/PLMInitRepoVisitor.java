@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -716,6 +717,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(PLMModel.TYPE_PACKAGINGLIST);
 				dataLists.add(PLMModel.TYPE_COSTLIST);
 				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
+				
 
 				wusedQName = PLMModel.TYPE_PACKAGINGLIST;
 
@@ -726,6 +728,10 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			NodeRef entityTplNodeRef = entityTplService.createEntityTpl(productTplsNodeRef, productType, null, true, true, dataLists, subFolders);
 			
 			entityTplService.createActivityList(entityTplNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
+			
+			if(productType.equals(PLMModel.TYPE_PACKAGINGKIT) &&  !nodeService.hasAspect(entityTplNodeRef, PackModel.ASPECT_PALLET)){
+				nodeService.addAspect(entityTplNodeRef, PackModel.ASPECT_PALLET, new HashMap<>());
+			}
 			
 			if (wusedQName != null) {
 				entityTplService.createWUsedList(entityTplNodeRef, wusedQName, null);
