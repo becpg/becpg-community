@@ -488,6 +488,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				subFolders);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_DOCUMENTS);
+		entityTplService.createActivityList(entityTplNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
 
 		// visit client
 		dataLists = new LinkedHashSet<>();
@@ -495,6 +496,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityTplNodeRef = entityTplService.createEntityTpl(entityTplsNodeRef, PLMModel.TYPE_CLIENT, null, true, true, dataLists, subFolders);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_DOCUMENTS);
+		entityTplService.createActivityList(entityTplNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
 
 		// visit ECO
 		dataLists = new LinkedHashSet<>();
@@ -722,6 +724,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			}
 
 			NodeRef entityTplNodeRef = entityTplService.createEntityTpl(productTplsNodeRef, productType, null, true, true, dataLists, subFolders);
+			
+			entityTplService.createActivityList(entityTplNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
+			
 			if (wusedQName != null) {
 				entityTplService.createWUsedList(entityTplNodeRef, wusedQName, null);
 			}
