@@ -619,6 +619,23 @@ public class EntityTplServiceImpl implements EntityTplService {
 			nodeService.deleteNode(tplListNodeRef);
 		}
 	}
+	
+	
+	@Override
+	public NodeRef createActivityList(NodeRef entityNodeRef, QName typeActivityList) {
+		// entityLists
+		NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
+		if (listContainerNodeRef == null) {
+			listContainerNodeRef = entityListDAO.createListContainer(entityNodeRef);
+		}		
+		NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, typeActivityList);
+		if (listNodeRef == null) {
+			listNodeRef = entityListDAO.createList(listContainerNodeRef, typeActivityList);
+		}
+		
+		return listNodeRef;
+	}
+	
 
 	/*/
 	 * TODO faire en s'inspirant du synchronizeEntities
