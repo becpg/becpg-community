@@ -109,6 +109,15 @@ public class RepoConsts {
 	 * Email templates
 	 */
 	public static final String EMAIL_NEW_USER_TEMPLATE = "/app:company_home/app:dictionary/app:email_templates/cm:importuser-email.ftl";
+	public static final String EMAIL_ASYNC_ACTIONS_TEMPLATE = "/app:company_home/app:dictionary/app:email_templates/cm:asynchrone-actions-email.html.ftl";
+	
+	/*
+	 * Asynchrone actions by mail 
+	 */
+	public static final String ARG_ACTION_URL = "url";
+	public static final String ARG_ACTION_BODY = "mailBody";
+	public static final String ARG_ACTION_STATE = "actionState";
+	public static final String ARG_ACTION_RUN_TIME = "runTime";
 
 	/**
 	 * ISO charset

@@ -24,6 +24,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.mail.BeCPGMailService;
 
 @Service("simulationService")
@@ -55,13 +56,6 @@ public class EntitySimulationServiceImpl implements EntitySimulationService {
 
 	private class AsyncCreateSimulationNodeRefsCommand implements Runnable {
 		
-		public static final String MAIL_TEMPLATE = "/app:company_home/app:dictionary/app:email_templates/cm:asynchrone-actions-email.html.ftl";
-		private static final String ARG_ACTION_TYPE = "actionType";
-		private static final String ARG_ACTION_STATE = "actionState";
-		private static final String ARG_ACTION_DESTINATION = "destination";
-		private static final String ARG_ACTION_DESTINATION_PATH = "path";
-		private static final String ARG_ACTION_RUN_TIME = "runTime";
-		private String subject = "[Notification]" + I18NUtil.getMessage("message.simulate-entity.subject");
 		
 		private final NodeRef destNodeRef;
 		private final List<NodeRef> nodeRefs;
@@ -116,22 +110,21 @@ public class EntitySimulationServiceImpl implements EntitySimulationService {
 						+ nodeService.getProperty(destNodeRef, ContentModel.PROP_NAME);
 								
 				Map<String, Object> templateArgs = new HashMap<>();
-				templateArgs.put(ARG_ACTION_TYPE, "Simulate");
-				templateArgs.put(ARG_ACTION_STATE, runState);
-				templateArgs.put(ARG_ACTION_DESTINATION, destNodeRef);
-				templateArgs.put(ARG_ACTION_DESTINATION_PATH, destinationPath);
-				templateArgs.put(ARG_ACTION_RUN_TIME, watch.getTotalTimeSeconds());
+				templateArgs.put(RepoConsts.ARG_ACTION_BODY, I18NUtil.getMessage("message.async-mail.simulation.body"));
+				templateArgs.put(RepoConsts.ARG_ACTION_STATE, runState);
+				templateArgs.put(RepoConsts.ARG_ACTION_RUN_TIME, watch.getTotalTimeSeconds());
+				templateArgs.put(RepoConsts.ARG_ACTION_URL, "/page/repository#filter=path|"+destinationPath);
 				
 				List<NodeRef> recipientNodeRefs = new ArrayList<>();
 				recipientNodeRefs.add(personService.getPerson(userName));
 				Map<String, Object> templateModel = new HashMap<>();
 				templateModel.put("args", templateArgs);
+				String subject = "[Notification]" + I18NUtil.getMessage("message.async-mail.simulation.subject");
 				
-				
-				AuthenticationUtil.runAsSystem(()->{
-					beCPGMailService.sendMail(recipientNodeRefs, subject, MAIL_TEMPLATE, templateModel, false);
+				AuthenticationUtil.runAs(()->{
+					beCPGMailService.sendMail(recipientNodeRefs, subject, RepoConsts.EMAIL_ASYNC_ACTIONS_TEMPLATE, templateModel, true);
 					return null;
-				});
+				}, userName);
 				
 			}
 
