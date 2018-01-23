@@ -277,29 +277,28 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		}
 		if (Objects.equals(folderName, PlmRepoConsts.PATH_CATALOGS)) {
 			
+			boolean hasCatalogFile = fileFolderService.listFiles(folderNodeRef).stream().anyMatch(f -> "catalogs.json".equals(f.getName()));
+			
+			logger.debug("Has CatalogFile: "+hasCatalogFile);
+			
 			//add old catalogs
-			if(oldCatalogs != null && !oldCatalogs.isEmpty()){
+			if(oldCatalogs != null && !oldCatalogs.isEmpty() && !hasCatalogFile){
 				
 				try {
 					JSONArray oldCatalogsArray = new JSONArray(oldCatalogs);
-					NodeRef oldCatalogFileNR = fileFolderService.create(folderNodeRef, "old-catalogs.json", ContentModel.TYPE_CONTENT).getNodeRef();
+					NodeRef oldCatalogFileNR = fileFolderService.create(folderNodeRef, "catalogs.json", ContentModel.TYPE_CONTENT).getNodeRef();
 					
 					ContentWriter writer = fileFolderService.getWriter(oldCatalogFileNR);
 					writer.putContent(oldCatalogsArray.toString());
 					
-					logger.info("Copied old catalogs:\n);"
-							+ "===================\n"+oldCatalogs);
+					logger.info("Copied old catalogs:\n===================\n"+oldCatalogs);
 				} catch (JSONException e) {
 					logger.error("Unable to copy old catalogs: ",e);
-				} catch(FileExistsException e2){
-					logger.warn("A file named \"old-catalogs.json\" already exists in folder \""+folderName+"\", skipping copy of old catalogs. ");
 				}
 				
 			} else {
-				logger.info("No old catalogs to backport");
+				contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/catalogs/*.json");
 			}
-			
-			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/catalogs/*.json");
 		}
 	}
 
