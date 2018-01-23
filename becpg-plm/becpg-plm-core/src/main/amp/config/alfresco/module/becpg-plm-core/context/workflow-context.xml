@@ -94,7 +94,6 @@
 		class="fr.becpg.repo.workflow.activiti.product.ValidateProduct">
 		<property name="nodeService" ref="nodeService" />
 		<property name="dictionaryService" ref="dictionaryService" />
-		<property name="ownableService" ref="ownableService" />		
 	</bean>
 
 </beans>
