@@ -114,10 +114,15 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 	@Override
 	public boolean addAutomaticChangeEntry(final NodeRef entityNodeRef, final ChangeOrderData currentUserChangeOrderData) {
 
+		if(isWithoutRecord() && currentUserChangeOrderData == null) {
+			return false;
+		}
+		
 		if (!accept(entityNodeRef)) {
 			return false;
 		}
 
+		
 		return AuthenticationUtil.runAsSystem(() -> {
 			NodeRef parentNodeRef = getChangeOrderFolder();
 
