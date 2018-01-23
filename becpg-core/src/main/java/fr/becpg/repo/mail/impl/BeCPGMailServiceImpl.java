@@ -170,12 +170,13 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 				if (_logger.isDebugEnabled()) {
 					_logger.debug("authorityName : " + authorityName);
 				}
-				if (!authorityName.equals(AuthenticationUtil.getFullyAuthenticatedUser())) {
+				if (!authorityName.equals(AuthenticationUtil.getFullyAuthenticatedUser()) || (sendToSelf)) {
 					authorities.add(authorityName);
 				}
 			}
 
 		}
+		
 		_logger.debug("TemplateNodeRef: "+templateNodeRef);
 		_logger.debug("TemplateArgs: "+templateArgs);
 
@@ -190,6 +191,7 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 			actionService.executeAction(mailAction, null, true, true);
 			return null;
 		});
+		
 	}
 
 	private List<String> extractAuthoritiesFromGroup(NodeRef group, boolean sendToSelf){

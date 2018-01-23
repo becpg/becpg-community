@@ -43,12 +43,14 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.rule.Rule;
 import org.alfresco.service.cmr.rule.RuleService;
+import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
@@ -66,6 +68,7 @@ import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.TranslateHelper;
+import fr.becpg.repo.mail.BeCPGMailService;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -78,7 +81,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 public class EntityTplServiceImpl implements EntityTplService {
 
 	private static final Log logger = LogFactory.getLog(EntityTplServiceImpl.class);
-
+	
 	@Autowired
 	private NodeService nodeService;
 
@@ -117,6 +120,12 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 	@Autowired
 	private FileFolderService fileFolderService;
+	
+	@Autowired
+	BeCPGMailService beCPGMailService;
+	
+	@Autowired
+	private PersonService personService;
 
 	private ReentrantLock lock = new ReentrantLock();
 
@@ -407,7 +416,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 						}
 					}
 
-				});
+				}, "synchronize");
 			} finally {
 				lock.unlock();
 			}
@@ -433,7 +442,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 						logger.error(e, e);
 					}
 
-				});
+				}, "formulate");
 			} finally {
 				lock.unlock();
 			}
@@ -447,7 +456,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 		void run(NodeRef entityNodeRef);
 	}
 
-	private void doInBatch(final List<NodeRef> entityNodeRefs, final int batchSize, final BatchCallBack batchCallBack) {
+	private void doInBatch(final List<NodeRef> entityNodeRefs, final int batchSize, final BatchCallBack batchCallBack, String action) {
 
 		StopWatch watch = null;
 		if (logger.isInfoEnabled()) {
@@ -483,12 +492,30 @@ public class EntityTplServiceImpl implements EntityTplService {
 				AuthenticationUtil.runAsSystem(actionRunAs);
 
 			}
-
+			
+			
 		}, false, true);
 
 		if (logger.isInfoEnabled()) {
 			watch.stop();
 			logger.info("Batch takes " + watch.getTotalTimeSeconds() + " seconds");
+		}
+		
+		// Send mail after action on template entities
+		if(action != null){			
+			Map<String, Object> templateArgs = new HashMap<>();
+			templateArgs.put(RepoConsts.ARG_ACTION_BODY, I18NUtil.getMessage("message.async-mail.entitiesTemplate." + action + ".body"));
+			templateArgs.put(RepoConsts.ARG_ACTION_STATE, true);
+			templateArgs.put(RepoConsts.ARG_ACTION_RUN_TIME, watch.getTotalTimeSeconds());
+
+			List<NodeRef> recipientNodeRefs = new ArrayList<>();
+			recipientNodeRefs.add(personService.getPerson(AuthenticationUtil.getFullyAuthenticatedUser()));
+			
+			Map<String, Object> templateModel = new HashMap<>();
+			templateModel.put("args", templateArgs);
+			String subject = I18NUtil.getMessage("message.async-mail.entitiesTemplate." + action + ".subject");
+			
+			beCPGMailService.sendMail(recipientNodeRefs, subject, RepoConsts.EMAIL_ASYNC_ACTIONS_TEMPLATE, templateModel, true);		
 		}
 
 	}
@@ -506,6 +533,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 		return entityNodeRefs;
 	}
+	
 
 	@Override
 	public void synchronizeEntity(NodeRef entityNodeRef, NodeRef entityTplNodeRef) {
@@ -609,7 +637,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 				nodeService.deleteNode(listNodeRef);
 			}
 
-		});
+		}, null);
 		
 		NodeRef tplListContainerNodeRef = entityListDAO.getListContainer(entityTplNodeRef);
 		NodeRef tplListNodeRef = entityListDAO.getList(tplListContainerNodeRef, entityList);
@@ -619,8 +647,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 			nodeService.deleteNode(tplListNodeRef);
 		}
 	}
-	
-	
+
 	@Override
 	public NodeRef createActivityList(NodeRef entityNodeRef, QName typeActivityList) {
 		// entityLists
@@ -635,7 +662,6 @@ public class EntityTplServiceImpl implements EntityTplService {
 		
 		return listNodeRef;
 	}
-	
 
 	/*/
 	 * TODO faire en s'inspirant du synchronizeEntities

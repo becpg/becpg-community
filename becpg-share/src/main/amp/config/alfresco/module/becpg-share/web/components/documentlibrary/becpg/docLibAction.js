@@ -416,7 +416,8 @@
 	   actionName : "onActionEntityTplSynchronizeEntities",
 	   fn : function onActionEntityTplSynchronizeEntities(asset) {
 		   Alfresco.util.PopupManager.displayMessage({
-			   text : this.msg("message.synchronize-entities.please-wait")
+			   text : this.msg("message.synchronize-entities.please-wait-mail"),
+			   displayTime : 5
 		   });
 
 		   Alfresco.util.Ajax.request({
@@ -447,7 +448,8 @@
 	   actionName : "onActionEntityTplFormulateEntities",
 	   fn : function onActionEntityTplFormulateEntities(asset) {
 		   Alfresco.util.PopupManager.displayMessage({
-			   text : this.msg("message.formulate-entities.please-wait")
+			   text : this.msg("message.formulate-entities.please-wait-mail"),
+			   displayTime : 5
 		   });
 
 		   Alfresco.util.Ajax.request({
