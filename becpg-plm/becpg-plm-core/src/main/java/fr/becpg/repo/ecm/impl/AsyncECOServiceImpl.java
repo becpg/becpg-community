@@ -21,6 +21,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.ecm.AsyncECOService;
 import fr.becpg.repo.ecm.ECOService;
 import fr.becpg.repo.mail.BeCPGMailService;
@@ -28,11 +29,6 @@ import fr.becpg.repo.mail.BeCPGMailService;
 @Service("asyncECOService")
 public class AsyncECOServiceImpl implements AsyncECOService {
 
-	public static final String MAIL_TEMPLATE = "/app:company_home/app:dictionary/app:email_templates/cm:asynchrone-actions-email.html.ftl";
-	private static final String ARG_ACTION_TYPE = "actionType";
-	private static final String ARG_ACTION_STATE = "actionState";
-	private static final String ARG_ACTION_DESTINATION = "destination";
-	private static final String ARG_ACTION_RUN_TIME = "runTime";
 	
 	@Autowired
 	ECOService ecoService;
@@ -143,23 +139,26 @@ public class AsyncECOServiceImpl implements AsyncECOService {
 			
 			} finally {
 				// Send mail after ECO
-				Map<String, Object> templateArgs = new HashMap<>();
-				templateArgs.put(ARG_ACTION_TYPE, "OM");
-				templateArgs.put(ARG_ACTION_STATE, runState);
-				templateArgs.put(ARG_ACTION_DESTINATION, ecoNodeRef);
-				templateArgs.put(ARG_ACTION_RUN_TIME, watch.getTotalTimeSeconds());
-				templateArgs.put("apply", apply);
+				String action = apply ? "apply" : "simulate";
+				String subject = "[Notification]" + I18NUtil.getMessage("message.async-mail.eco." + action + ".subject");
+				String url = apply ? "page/entity-data-lists?list=changeUnitList&nodeRef=" : "page/entity-data-lists?list=calculatedCharactList&nodeRef=";
 				
+				Map<String, Object> templateArgs = new HashMap<>();
+				templateArgs.put(RepoConsts.ARG_ACTION_BODY, I18NUtil.getMessage("message.async-mail.eco." + action + ".body"));
+				templateArgs.put(RepoConsts.ARG_ACTION_STATE, runState);
+				templateArgs.put(RepoConsts.ARG_ACTION_RUN_TIME, watch.getTotalTimeSeconds());
+				templateArgs.put(RepoConsts.ARG_ACTION_URL, url + ecoNodeRef );
+
 				List<NodeRef> recipientNodeRefs = new ArrayList<>();
 				recipientNodeRefs.add(personService.getPerson(userName));
 				Map<String, Object> templateModel = new HashMap<>();
 				templateModel.put("args", templateArgs);
-				String subject = "[Notification]" + I18NUtil.getMessage("message.eco-mail.subject");
 				
-				AuthenticationUtil.runAsSystem(()->{
-					beCPGMailService.sendMail(recipientNodeRefs, subject, MAIL_TEMPLATE, templateModel, false);
+				AuthenticationUtil.runAs(() -> {
+					beCPGMailService.sendMail(recipientNodeRefs, subject, RepoConsts.EMAIL_ASYNC_ACTIONS_TEMPLATE, templateModel, true);	
 					return null;
-				});
+				}, userName);
+				
 				
 			}
 		}

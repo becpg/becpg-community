@@ -30,50 +30,32 @@
                                     <tr>
                                        <td>
                                           <div style="font-size: 14px; margin: 12px 0px 24px 0px; padding-top: 10px; border-top: 1px solid #aaaaaa;">
-                                             <p>Bonjour,</p>
+                                             <p>Hello,</p>
 
                                              <p>
-                                             	<#if args.actionType == 'Simulate'>
-                                             		<#assign viewType = "folder-details?">
-                                             		La simulation des entités 
+                                             	<#if args.mailBody??>
+                                             		${args.mailBody} terminated with :
                                              	</#if>
-                                             	<#if args.actionType == 'Reports'>
-                                             		La génération des rapports 
-                                             	</#if>
-                                             	<#if args.actionType == 'OM'>
-                                             		
-                                             		<#if args.apply>L'application de l'ordre de modification 
-                                             			<#assign viewType = "entity-data-lists?list=changeUnitList&">
-                                             		<#else>
-                                             			<#assign viewType = "entity-data-lists?list=calculatedCharactList&">
-                                             			La simulation de l'ordre de modification </#if> 
-                                             	</#if>  
-												s'est terminée avec :
-                                             	<b><#if args.actionState> Succès<#else> Erreur</#if></b>, après <b>${args.runTime}</b> secondes.
+                                             	<b>
+                                             		<#if args.actionState> Success<#else> Errors</#if>
+                                             	</b>, after <b>${args.runTime}</b> seconds.
                                              </p>
-                                             <#if args.destination??>
+                                             
+                                             <#if args.url??>
 	                                           	 <table cellpadding="2" cellspacing="0" border="0">
 	                                                 <tr>
 	                                                    <td></td>
 	                                                 </tr>
 	                                                 <tr>
-	                                                    <td>Cliquez sur le lien pour accéder au résultat:</td>
+	                                                    <td>Click on the link to show the result:</td>
 	                                                 </tr>
-                                                 	 <#if args.path??>
-	                                                 	<tr>
-	                                                       <a href="${shareUrl}/page/repository#filter=path|${args.path}">
-	                                                       ${shareUrl}/page/repository#filter=path|${args.path}</a>
-	                                                    </tr>
-                                                     <#else>
-		                                                 <tr>	
-	                                                       	<a href="${shareUrl}/page/${viewType}nodeRef=${args.destination.nodeRef}">
-	                                                       	${shareUrl}/page/folder-details?nodeRef=${args.destination.nodeRef}</a>
-		                                                 </tr>
-	                                                 </#if>                                                                         
+	                                                 <tr>
+	                                                 	<a href="${shareUrl}/${args.url}">${shareUrl}/${args.url}</a>
+	                                                 </tr>                                                                
 												 </table>
 											 </#if>
                                                                   
-                                             <p>Cordialement,<br/>
+                                             <p>Regardless,<br/>
                                              beCPG</p>
                                           </div>
                                        </td>
