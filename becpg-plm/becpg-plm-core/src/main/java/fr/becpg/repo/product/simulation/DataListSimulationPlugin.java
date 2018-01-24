@@ -56,32 +56,34 @@ public class DataListSimulationPlugin implements EntitySimulationPlugin {
 
 		NodeRef parentNodeRef = dataListItem != null ? dataListItem.getComponent() : entityNodeRef;
 
-		ProductData productData = alfrescoRepository.findOne(parentNodeRef);
-
-		if (productData.getCompoList() != null) {
-
-			for (AbstractProductDataView view : productData.getViews()) {
-				for (CompositionDataItem item : view.getMainDataList()) {
-
-					NodeRef simulationNodeRef = recurSimule(entityNodeRef, item, dataListItemsNodeRefs);
-					if (simulationNodeRef != null) {
-						if (dataListItem == null) {
-							logger.debug("Update root " + productData.getName());
-							associationService.update(item.getNodeRef(), item.getComponentAssocName(), simulationNodeRef);
-						} else {
-							NodeRef parentSimulationNodeRef = createSimulationNodeRef(parentNodeRef,
-									nodeService.getPrimaryParent(entityNodeRef).getParentRef());
-							ProductData newProductData = alfrescoRepository.findOne(parentSimulationNodeRef);
-							logger.debug("Create new SF " + newProductData.getName());
-
-							for (AbstractProductDataView newView : newProductData.getViews()) {
-								if (newView.getClass().getName().equals(view.getClass().getName())) {
-									for (CompositionDataItem newItem : newView.getMainDataList()) {
-										NodeRef origNodeRef = associationService.getTargetAssoc(newItem.getNodeRef(), ContentModel.ASSOC_ORIGINAL);
-										if ((origNodeRef != null) && origNodeRef.equals(item.getNodeRef())) {
-											associationService.update(newItem.getNodeRef(), item.getComponentAssocName(), simulationNodeRef);
-											logger.debug("Update new SF " + newProductData.getName());
-											return newProductData.getNodeRef();
+		if(parentNodeRef!=null) {
+			ProductData productData = alfrescoRepository.findOne(parentNodeRef);
+	
+			if (productData.getCompoList() != null) {
+	
+				for (AbstractProductDataView view : productData.getViews()) {
+					for (CompositionDataItem item : view.getMainDataList()) {
+	
+						NodeRef simulationNodeRef = recurSimule(entityNodeRef, item, dataListItemsNodeRefs);
+						if (simulationNodeRef != null) {
+							if (dataListItem == null) {
+								logger.debug("Update root " + productData.getName());
+								associationService.update(item.getNodeRef(), item.getComponentAssocName(), simulationNodeRef);
+							} else {
+								NodeRef parentSimulationNodeRef = createSimulationNodeRef(parentNodeRef,
+										nodeService.getPrimaryParent(entityNodeRef).getParentRef());
+								ProductData newProductData = alfrescoRepository.findOne(parentSimulationNodeRef);
+								logger.debug("Create new SF " + newProductData.getName());
+	
+								for (AbstractProductDataView newView : newProductData.getViews()) {
+									if (newView.getClass().getName().equals(view.getClass().getName())) {
+										for (CompositionDataItem newItem : newView.getMainDataList()) {
+											NodeRef origNodeRef = associationService.getTargetAssoc(newItem.getNodeRef(), ContentModel.ASSOC_ORIGINAL);
+											if ((origNodeRef != null) && origNodeRef.equals(item.getNodeRef())) {
+												associationService.update(newItem.getNodeRef(), item.getComponentAssocName(), simulationNodeRef);
+												logger.debug("Update new SF " + newProductData.getName());
+												return newProductData.getNodeRef();
+											}
 										}
 									}
 								}
@@ -89,13 +91,15 @@ public class DataListSimulationPlugin implements EntitySimulationPlugin {
 						}
 					}
 				}
+	
 			}
-
-		}
-
-		if ((dataListItem != null) && dataListItemsNodeRefs.contains(dataListItem.getNodeRef())) {
-			logger.debug("Found item to simulate:" + dataListItem.getNodeRef());
-			return createSimulationNodeRef(dataListItem.getComponent(), nodeService.getPrimaryParent(entityNodeRef).getParentRef());
+	
+			if ((dataListItem != null) && dataListItemsNodeRefs.contains(dataListItem.getNodeRef())) {
+				logger.debug("Found item to simulate:" + dataListItem.getNodeRef());
+				return createSimulationNodeRef(dataListItem.getComponent(), nodeService.getPrimaryParent(entityNodeRef).getParentRef());
+			}
+		} else if(dataListItem!=null){
+			logger.warn("Empty component for :"+dataListItem.toString());
 		}
 
 		return null;
