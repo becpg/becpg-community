@@ -59,10 +59,9 @@
    
    
    <!-- Owner -->
-   
     <bean id="ownableService" class="fr.becpg.repo.security.impl.BeCPGOwnableServiceImpl" init-method="init">
         <property name="disableOwner" value="${beCPG.security.disableOwnerPermission}"/>
-        
+        <property name="entityDictionaryService" ref="entityDictionaryService"/>
         <property name="nodeService">
             <ref bean="nodeService"/>
         </property>
