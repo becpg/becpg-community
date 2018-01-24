@@ -34,6 +34,7 @@ import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.util.StopWatch;
 
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.mail.BeCPGMailService;
 import fr.becpg.repo.report.entity.EntityReportAsyncGenerator;
 import fr.becpg.repo.report.entity.EntityReportService;
@@ -44,11 +45,6 @@ import fr.becpg.repo.report.entity.EntityReportService;
  * 
  */
 public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerator {
-
-	public static final String MAIL_TEMPLATE = "/app:company_home/app:dictionary/app:email_templates/cm:asynchrone-actions-email.html.ftl";
-	private static final String ARG_ACTION_TYPE = "actionType";
-	private static final String ARG_ACTION_STATE = "actionState";
-	private static final String ARG_ACTION_RUN_TIME = "runTime";
 
 	@Autowired
 	private BeCPGMailService beCPGMailService;
@@ -106,21 +102,21 @@ public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerato
 			watch.stop();
 			if (watch.getTotalTimeSeconds() > 0) {
 				Map<String, Object> templateArgs = new HashMap<>();
-				templateArgs.put(ARG_ACTION_TYPE, "Reports");
-				templateArgs.put(ARG_ACTION_STATE, runState);
-				templateArgs.put(ARG_ACTION_RUN_TIME, watch.getTotalTimeSeconds());
+				templateArgs.put(RepoConsts.ARG_ACTION_BODY, I18NUtil.getMessage("message.async-mail.generate-reports.body"));
+				templateArgs.put(RepoConsts.ARG_ACTION_STATE, runState);
+				templateArgs.put(RepoConsts.ARG_ACTION_RUN_TIME, watch.getTotalTimeSeconds());
 
 				List<NodeRef> recipientNodeRefs = new ArrayList<>();
 				recipientNodeRefs.add(personService.getPerson(userName));
 				Map<String, Object> templateModel = new HashMap<>();
 				templateModel.put("args", templateArgs);
-				String subject = "[Notification]" + I18NUtil.getMessage("message.generate-reports.subject");
+				String subject = "[Notification]" + I18NUtil.getMessage("message.async-mail.generate-reports.subject");
 
 				Runnable mailTask = () -> {
-					AuthenticationUtil.runAsSystem(() -> {
-						beCPGMailService.sendMail(recipientNodeRefs, subject, MAIL_TEMPLATE, templateModel, false);
+					AuthenticationUtil.runAs(() -> {
+						beCPGMailService.sendMail(recipientNodeRefs, subject, RepoConsts.EMAIL_ASYNC_ACTIONS_TEMPLATE, templateModel, true);
 						return null;
-					});
+					}, userName);
 				};
 
 				new Thread(mailTask).start();

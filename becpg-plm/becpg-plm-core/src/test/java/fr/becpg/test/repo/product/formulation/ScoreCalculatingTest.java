@@ -194,8 +194,8 @@ public class ScoreCalculatingTest extends AbstractFinishedProductTest {
 
 			logger.info("ValidationScore=" + validationScore + " (expecting 37)");
 			logger.info("SpecificationsScore=" + specificationsScore + " (expecting 90)");
-			logger.info("MandatoryFieldsScore=" + mandatoryFieldsScore + " (expecting 26)");
-			logger.info("GlobalScore=" + globalScore + " (expecting 51)");
+			logger.info("MandatoryFieldsScore=" + mandatoryFieldsScore + " (expecting 20)");
+			logger.info("GlobalScore=" + globalScore + " (expecting 49)");
 
 			//3 /8 valid products (37.5%)
 			assertEquals(37, validationScore);
@@ -204,11 +204,10 @@ public class ScoreCalculatingTest extends AbstractFinishedProductTest {
 			assertEquals(90, specificationsScore);
 			
 			// 1/5 mandatory fields filled (20%)
-			// fix #5192: now formulates and takes the two catalogs of the file into account: 20% + 33.33% / 2 = 26
-			assertEquals(26, mandatoryFieldsScore);
+			assertEquals(20, mandatoryFieldsScore);
 			
-			// 37.5 + 90 + 26 = 51 % global score
-			assertEquals(51, globalScore);
+			// 37.5 + 90 + 20 = 49.1 % global score
+			assertEquals(49, globalScore);
 
 			JSONArray missingFieldsArray = scoresObject.getJSONArray("catalogs").getJSONObject(0).getJSONArray("missingFields");
 			assertNotNull(missingFieldsArray);

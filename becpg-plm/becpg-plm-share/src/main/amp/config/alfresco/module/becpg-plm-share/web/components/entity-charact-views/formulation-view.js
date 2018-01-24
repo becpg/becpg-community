@@ -160,7 +160,7 @@
 		 
 				YAHOO.Bubbling.fire("scopedActiveDataListChanged", 
 						{
-		                  extraDataParams : "&repo=true&effectiveFilterOn="+instance.options.effectiveFilterOn
+		                  extraDataParams : "&clearCache=true&repo=true&effectiveFilterOn="+instance.options.effectiveFilterOn
 						}
 					);
 				

@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -26,7 +27,6 @@ import org.alfresco.service.cmr.action.ActionCondition;
 import org.alfresco.service.cmr.action.CompositeAction;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
-import org.alfresco.service.cmr.model.FileExistsException;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.rule.Rule;
@@ -151,7 +151,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	protected AlfrescoRepository<ProductData> alfrescoRepository;
 	
 	@Value("${beCPG.formulation.score.mandatoryFields}")
-	private String oldCatalogs;
+	private String defaultCatalogDefinition;
 
 	/**
 	 * Initialize the repository with system folders.
@@ -275,29 +275,21 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		}
 		if (Objects.equals(folderName, PlmRepoConsts.PATH_CATALOGS)) {
 			
-			//add old catalogs
-			if(oldCatalogs != null && !oldCatalogs.isEmpty()){
-				
+			if(!fileFolderService.listFiles(folderNodeRef).stream().anyMatch(f -> "catalogs.json".equals(f.getName()))) {
 				try {
-					JSONArray oldCatalogsArray = new JSONArray(oldCatalogs);
-					NodeRef oldCatalogFileNR = fileFolderService.create(folderNodeRef, "old-catalogs.json", ContentModel.TYPE_CONTENT).getNodeRef();
+					JSONArray oldCatalogsArray = new JSONArray(defaultCatalogDefinition);
+					NodeRef oldCatalogFileNR = fileFolderService.create(folderNodeRef, "catalogs.json", ContentModel.TYPE_CONTENT).getNodeRef();
 					
 					ContentWriter writer = fileFolderService.getWriter(oldCatalogFileNR);
 					writer.putContent(oldCatalogsArray.toString());
 					
-					logger.info("Copied old catalogs:\n);"
-							+ "===================\n"+oldCatalogs);
 				} catch (JSONException e) {
 					logger.error("Unable to copy old catalogs: ",e);
-				} catch(FileExistsException e2){
-					logger.warn("A file named \"old-catalogs.json\" already exists in folder \""+folderName+"\", skipping copy of old catalogs. ");
 				}
-				
-			} else {
-				logger.info("No old catalogs to backport");
 			}
 			
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/catalogs/*.json");
+			
 		}
 	}
 
@@ -488,6 +480,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				subFolders);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_DOCUMENTS);
+		entityTplService.createActivityList(entityTplNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
 
 		// visit client
 		dataLists = new LinkedHashSet<>();
@@ -495,6 +488,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityTplNodeRef = entityTplService.createEntityTpl(entityTplsNodeRef, PLMModel.TYPE_CLIENT, null, true, true, dataLists, subFolders);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_DOCUMENTS);
+		entityTplService.createActivityList(entityTplNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
 
 		// visit ECO
 		dataLists = new LinkedHashSet<>();
@@ -714,6 +708,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(PLMModel.TYPE_PACKAGINGLIST);
 				dataLists.add(PLMModel.TYPE_COSTLIST);
 				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
+				
 
 				wusedQName = PLMModel.TYPE_PACKAGINGLIST;
 
@@ -722,6 +717,13 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			}
 
 			NodeRef entityTplNodeRef = entityTplService.createEntityTpl(productTplsNodeRef, productType, null, true, true, dataLists, subFolders);
+			
+			entityTplService.createActivityList(entityTplNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
+			
+			if(productType.equals(PLMModel.TYPE_PACKAGINGKIT) &&  !nodeService.hasAspect(entityTplNodeRef, PackModel.ASPECT_PALLET)){
+				nodeService.addAspect(entityTplNodeRef, PackModel.ASPECT_PALLET, new HashMap<>());
+			}
+			
 			if (wusedQName != null) {
 				entityTplService.createWUsedList(entityTplNodeRef, wusedQName, null);
 			}
