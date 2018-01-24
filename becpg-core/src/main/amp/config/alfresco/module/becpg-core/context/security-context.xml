@@ -57,5 +57,32 @@
      <property name="securityService" ref="securityService" />
    </bean>
    
+   
+   <!-- Owner -->
+    <bean id="ownableService" class="fr.becpg.repo.security.impl.BeCPGOwnableServiceImpl" init-method="init">
+        <property name="disableOwner" value="${beCPG.security.disableOwnerPermission}"/>
+        <property name="entityDictionaryService" ref="entityDictionaryService"/>
+        <property name="nodeService">
+            <ref bean="nodeService"/>
+        </property>
+        <property name="authenticationService">
+            <ref bean="authenticationService"/>
+        </property>
+        <property name="nodeOwnerCache">
+            <ref bean="nodeOwnerCache"/>
+        </property>
+        <property name="policyComponent">
+            <ref bean="policyComponent" />
+        </property>
+        <property name="tenantService">
+            <ref bean="tenantService"/>
+        </property>
+        <property name="storesToIgnorePolicies">
+            <ref bean="storesToIgnorePolicies"/>
+        </property>
+        <property name="renditionService">
+            <ref bean="renditionService"/>
+        </property>
+    </bean>
  
 </beans>
