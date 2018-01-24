@@ -605,21 +605,34 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 		boolean res = true;
 		QName fieldQname = QName.createQName(field.split("_")[0], namespaceService);
 		MLText mlText = (MLText) mlNodeService.getProperty(productData.getNodeRef(), fieldQname);
-
+		Locale loc = getLocaleFromCode(lang);
+		
 		if (field.contains("_")) {
 			String fieldSpecificLang = field.split("_")[1];
-			if ((mlText == null) || (mlText.getValue(new Locale(fieldSpecificLang)) == null)
+			if ((mlText == null) || (mlText.getValue(loc) == null)
 					|| mlText.getValue(new Locale(fieldSpecificLang)).isEmpty()) {
 				res = false;
 			}
 		} else if ((lang != null)
-				&& ((mlText == null) || (mlText.getValue(new Locale(lang)) == null) || mlText.getValue(new Locale(lang)).isEmpty())) {
+				&& ((mlText == null) || (mlText.getValue(loc) == null) || mlText.getValue(loc).isEmpty())) {
 			res = false;
 		} else {
-			res = (properties.get(fieldQname) != null) && !properties.get(fieldQname).toString().isEmpty();
+			
+			res = ((properties.get(fieldQname) != null) && !properties.get(fieldQname).toString().isEmpty()) || (mlText != null && mlText.get(loc) != null && !mlText.get(loc).isEmpty());
+			
 		}
 
 		return res;
+	}
+	
+	private Locale getLocaleFromCode(String code){
+		if(code == null){
+			return null;
+		} else if(code.contains("_")){
+			return new Locale(code.split("_")[0], code.split("_")[1]);
+		} else {
+			return new Locale(code);
+		}
 	}
 
 }
