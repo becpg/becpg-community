@@ -67,7 +67,7 @@ public class AutomaticECOPolicy extends AbstractBeCPGPolicy implements NodeServi
 
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
-		if (isEnable && !automaticECOService.isWithoutRecord() && before.containsKey(ContentModel.PROP_MODIFIED) && after.containsKey(ContentModel.PROP_MODIFIED)
+		if (isEnable && before.containsKey(ContentModel.PROP_MODIFIED) && after.containsKey(ContentModel.PROP_MODIFIED)
 				&& !before.get(ContentModel.PROP_MODIFIED).equals(after.get(ContentModel.PROP_MODIFIED))) {
 
 			if (L2CacheSupport.isThreadLockEnable()) {

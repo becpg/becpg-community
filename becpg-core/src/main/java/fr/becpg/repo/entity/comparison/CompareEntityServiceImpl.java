@@ -515,9 +515,15 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 	public void compareStructDatalist(NodeRef entity1NodeRef, NodeRef entity2NodeRef, QName datalistType,
 			Map<String, List<StructCompareResultDataItem>> structCompareResults) {
 
+		QName pivotProperty = null;
+		
 		// load the 2 datalists
-		QName pivotProperty = entityDictionaryService.getDefaultPivotAssoc(datalistType);
-
+		try {
+		   pivotProperty = entityDictionaryService.getDefaultPivotAssoc(datalistType);
+		} catch (IllegalArgumentException e) {
+			logger.debug(e);
+		}
+		
 		if (pivotProperty != null) {
 			MultiLevelListData listData1 = loadCompositeDataList(entity1NodeRef, datalistType);
 			MultiLevelListData listData2 = loadCompositeDataList(entity2NodeRef, datalistType);
