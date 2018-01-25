@@ -916,6 +916,11 @@
 					<type>d:text</type>
 					<index enabled="false" />
 				</property>
+				<property name="bcpg:nutSort">
+	            <type>d:mltext</type>
+	            <mandatory>false</mandatory>
+	            <index enabled="false"/>
+             </property>
 			</properties>
 		</type>
 

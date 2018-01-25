@@ -13,6 +13,7 @@
 		<!-- the list of available language files -->
 		<languages> 
 			<language locale="en">English</language>
+			<language locale="en_US">English - United States</language>
 			<language locale="de">German</language>
 			<language locale="es">Spanish</language>
 			<language locale="fr">French</language>
@@ -57,8 +58,7 @@
 			<language locale="de_DE">German - Germany</language>
 			<language locale="de_GR">German - Greece</language>
 			<language locale="el_CY">Greek - Cyprus</language>
-			<language locale="el_GR">Greek - Greece</language>
-			<language locale="en_US">English - United States</language>
+			<language locale="el_GR">Greek - Greece</language>			
 			<language locale="en_SG">English - Singapore</language>
 			<language locale="en_MT">English - Malta</language>
 			<language locale="en_PH">English - Philippines</language>

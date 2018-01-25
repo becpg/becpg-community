@@ -345,7 +345,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 			if (created.after(cal.getTime())) {
 				if (activity.getActivityData().equals(item.getActivityData()) && activity.getUserId().equals(item.getUserId())
 						&& activity.getActivityType().equals(item.getActivityType())) {
-					
+					nodeService.addAspect(activityListItemNodeRef, ContentModel.ASPECT_TEMPORARY, null);
 					nodeService.deleteNode(activityListItemNodeRef);
 					
 					if(logger.isDebugEnabled()){						
@@ -357,7 +357,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 			
 			if(index==0 && (activity.getActivityData().equals(item.getActivityData()) && activity.getUserId().equals(item.getUserId())
 					&& activity.getActivityType().equals(item.getActivityType()))){
-				
+				nodeService.addAspect(activityListItemNodeRef, ContentModel.ASPECT_TEMPORARY, null);
 				nodeService.deleteNode(activityListItemNodeRef);
 				
 				if(logger.isDebugEnabled()){
@@ -690,6 +690,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 									
 									if((activityType.equals(ActivityType.Formulation) && hasFormulation) 
 											|| (activityType.equals(ActivityType.Report) && hasReport)){
+										nodeService.addAspect(activityItemNodeRef, ContentModel.ASPECT_TEMPORARY, null);
 										nodeService.deleteNode(activityItemNodeRef);
 										nbrActivity--;
 										continue;
@@ -789,6 +790,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 						if(activitiesByEntity.containsKey(activityParentNodeRef) 
 								&& activitiesByEntity.get(activityParentNodeRef).contains(datalistClassName)){
 							removedNodes.add(activityNodeRef);
+							
+							nodeService.addAspect(activityNodeRef, ContentModel.ASPECT_TEMPORARY, null);
 							nodeService.deleteNode(activityNodeRef);
 						} else {
 							

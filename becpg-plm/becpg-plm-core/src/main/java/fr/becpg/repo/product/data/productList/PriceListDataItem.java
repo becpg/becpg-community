@@ -92,7 +92,6 @@ public class PriceListDataItem extends AbstractEffectiveDataItem{
 
 
 	@AlfSingleAssoc
-	@DataListIdentifierAttr
 	@AlfQname(qname="bcpg:priceListCost")
 	public NodeRef getCost() {
 		return cost;
