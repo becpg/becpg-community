@@ -116,6 +116,7 @@ public interface PLMModel {
 	QName ASSOC_ILL_GRP = QName.createQName(BeCPGModel.BECPG_URI, "illGrp");
 	QName PROP_ILL_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "illValue");
 	QName PROP_ILL_MANUAL_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "illManualValue");
+	QName PROP_ILL_LOG_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "illLogValue");
 
 	// microbioList
 	QName TYPE_MICROBIOLIST = QName.createQName(BeCPGModel.BECPG_URI, "microbioList");

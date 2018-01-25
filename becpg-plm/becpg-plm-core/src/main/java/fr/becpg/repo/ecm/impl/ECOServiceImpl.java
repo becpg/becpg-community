@@ -774,7 +774,7 @@ public class ECOServiceImpl implements ECOService {
 		changeUnitDataItem.setReqDetails(reqDetails);
 	}
 
-	private List<QName> evaluateWUsedAssociations(NodeRef targetAssocNodeRef) {
+	public List<QName> evaluateWUsedAssociations(NodeRef targetAssocNodeRef) {
 		List<QName> wUsedAssociations = new ArrayList<>();
 
 		QName nodeType = nodeService.getType(targetAssocNodeRef);

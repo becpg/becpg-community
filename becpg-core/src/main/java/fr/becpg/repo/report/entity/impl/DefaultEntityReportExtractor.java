@@ -104,6 +104,8 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	protected static final String ATTR_ASPECTS = "aspects";
 	protected static final String TAG_IMAGES = "images";
 	protected static final String TAG_IMAGE = "image";
+	protected static final String ATTR_ENTITY_NODEREF = "entityNodeRef";
+	protected static final String ATTR_ENTITY_TYPE = "entityType";
 	protected static final String PRODUCT_IMG_ID = "Img%d";
 	protected static final String ATTR_IMAGE_ID = "id";
 	protected static final String AVATAR_IMG_ID = "avatar";
@@ -131,11 +133,10 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	@Value("${beCPG.product.report.assocsToExtractWithImage}")
 	private String assocsToExtractWithImage = "";
-	
+
 	@Value("${beCPG.product.report.assocsToExtract}")
 	private String assocsToExtract = "";
 
-	
 	@Autowired
 	protected DictionaryService dictionaryService;
 
@@ -172,19 +173,19 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	@Autowired
 	protected ContentService contentService;
-	
+
 	@Autowired
 	protected AlfrescoRepository<BeCPGDataObject> alfrescoRepository;
-	
+
 	@Autowired
 	protected EntityListDAO entityListDAO;
-	
+
 	@Autowired
 	protected EntityReportService entityReportService;
 
 	@Override
 	public EntityReportData extract(NodeRef entityNodeRef) {
-		
+
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
 			watch = new StopWatch();
@@ -201,7 +202,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 		ret.setXmlDataSource(entityElt);
 		ret.setDataObjects(images);
-		
+
 		if (logger.isDebugEnabled()) {
 			watch.stop();
 			logger.debug("extract datasource in  " + watch.getTotalTimeSeconds() + " seconds for node " + entityNodeRef);
@@ -250,13 +251,13 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 					imgId = REPORT_LOGO_ID;
 				}
 
-				extractImage(fileInfo.getNodeRef(), imgId, imgsElt, images);
+				extractImage(entityNodeRef, fileInfo.getNodeRef(), imgId, imgsElt, images);
 				cnt++;
 			}
 		}
 	}
 
-	protected void extractImage(NodeRef imgNodeRef, String imgId, Element imgsElt, Map<String, byte[]> images) {
+	protected void extractImage(NodeRef entityNodeRef, NodeRef imgNodeRef, String imgId, Element imgsElt, Map<String, byte[]> images) {
 
 		if (ApplicationModel.TYPE_FILELINK.equals(nodeService.getType(imgNodeRef))) {
 			imgNodeRef = (NodeRef) nodeService.getProperty(imgNodeRef, ContentModel.PROP_LINK_DESTINATION);
@@ -265,11 +266,12 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		byte[] imageBytes = entityService.getImage(imgNodeRef);
 		if (imageBytes != null) {
 			Element imgElt = imgsElt.addElement(TAG_IMAGE);
+			imgElt.addAttribute(ATTR_ENTITY_NODEREF, entityNodeRef.toString());
+			imgElt.addAttribute(ATTR_ENTITY_TYPE, nodeService.getType(entityNodeRef).getLocalName());
 			imgElt.addAttribute(ATTR_IMAGE_ID, imgId);
 			imgElt.addAttribute(ContentModel.PROP_NAME.getLocalName(), (String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_NAME));
 			imgElt.addAttribute(ContentModel.PROP_TITLE.getLocalName(), (String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_TITLE));
-			addCDATA(imgElt, ContentModel.PROP_DESCRIPTION,
-					(String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_DESCRIPTION), null);
+			addCDATA(imgElt, ContentModel.PROP_DESCRIPTION, (String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_DESCRIPTION), null);
 
 			images.put(imgId, imageBytes);
 		}
@@ -308,19 +310,19 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	}
 
 	protected void loadDataLists(NodeRef entityNodeRef, Element dataListsElt, Map<String, byte[]> images) {
-		
+
 		NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
-		if(listContainerNodeRef != null){
+		if (listContainerNodeRef != null) {
 			List<NodeRef> listNodeRefs = entityListDAO.getExistingListsNodeRef(listContainerNodeRef);
-			
-			for(NodeRef listNodeRef : listNodeRefs){
-				QName dataListQName = QName.createQName((String) nodeService.getProperty(listNodeRef, DataListModel.PROP_DATALISTITEMTYPE), namespaceService);
-				
+
+			for (NodeRef listNodeRef : listNodeRefs) {
+				QName dataListQName = QName.createQName((String) nodeService.getProperty(listNodeRef, DataListModel.PROP_DATALISTITEMTYPE),
+						namespaceService);
+
 				Class<RepositoryEntity> entityClass = repositoryEntityDefReader.getEntityClass(dataListQName);
 				if (entityClass != null) {
-					@SuppressWarnings({ "rawtypes" })
 					List<BeCPGDataObject> dataListItems = alfrescoRepository.loadDataList(entityNodeRef, dataListQName, dataListQName);
-					
+
 					if ((dataListItems != null) && !dataListItems.isEmpty()) {
 						Element dataListElt = dataListsElt.addElement(dataListQName.getLocalName() + "s");
 
@@ -331,8 +333,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 							loadDataListItemAttributes(dataListItem, nodeElt, images);
 						}
 					}
-				}
-				else{
+				} else {
 					List<NodeRef> dataListItems = entityListDAO.getListItems(listNodeRef, dataListQName);
 					if ((dataListItems != null) && !dataListItems.isEmpty()) {
 						Element dataListElt = dataListsElt.addElement(dataListQName.getLocalName() + "s");
@@ -348,7 +349,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			}
 		}
 	}
-	
+
 	protected void addDataListState(Element xmlNode, NodeRef listNodeRef) {
 
 		if (xmlNode.valueOf("@" + BeCPGModel.PROP_ENTITYLIST_STATE.getLocalName()).isEmpty()) {
@@ -368,9 +369,15 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			loadComments(nodeRef, nodeElt, images);
 		}
 	}
-
+	
 	protected void loadDataListItemAttributes(BeCPGDataObject dataListItem, Element nodeElt, Map<String, byte[]> images) {
-		List<QName> hiddentAttributes = new ArrayList<>();
+		loadDataListItemAttributes(dataListItem,nodeElt,images,new ArrayList<>());
+	}
+	
+	
+
+	protected void loadDataListItemAttributes(BeCPGDataObject dataListItem, Element nodeElt, Map<String, byte[]> images, List<QName> hiddentAttributes) {
+		
 		hiddentAttributes.addAll(hiddenNodeAttributes);
 		hiddentAttributes.addAll(hiddenDataListItemAttributes);
 
@@ -391,7 +398,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			loadComments(dataListItem.getNodeRef(), nodeElt, images);
 		}
 	}
-	
+
 	protected void loadDataListItemAttributes(NodeRef nodeRef, Element nodeElt, Map<String, byte[]> images) {
 		List<QName> hiddentAttributes = new ArrayList<>();
 		hiddentAttributes.addAll(hiddenNodeAttributes);
@@ -495,7 +502,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 					&& !associationDef.getName().equals(RuleModel.ASSOC_RULE_FOLDER) && !associationDef.getName().equals(ContentModel.ASSOC_ORIGINAL)
 					&& !associationDef.isChild()) {
 
-				if (!loadTargetAssoc(nodeRef, associationDef, nodeElt, images) || useCData == false) {
+				if (!loadTargetAssoc(nodeRef, associationDef, nodeElt, images) || (useCData == false)) {
 
 					List<NodeRef> assocNodes = associationService.getTargetAssocs(nodeRef, associationDef.getName());
 
@@ -514,27 +521,25 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	}
 
 	private String extractName(QName targetClass, NodeRef nodeRef) {
-		
-		if(!nodeService.exists(nodeRef)){
-			logger.info("Extract name : "+targetClass);
+
+		if (!nodeService.exists(nodeRef)) {
+			logger.info("Extract name : " + targetClass);
 		}
-		
+
 		QName propNameOfType = getPropNameOfType(targetClass);
 
 		if (propNameOfType != null) {
 			return (String) nodeService.getProperty(nodeRef, propNameOfType);
 		}
-		
-		
-		if(ContentModel.TYPE_CMOBJECT.equals(targetClass) && dictionaryService.isSubClass(nodeService.getType(nodeRef),BeCPGModel.TYPE_CHARACT) ){
+
+		if (ContentModel.TYPE_CMOBJECT.equals(targetClass) && dictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_CHARACT)) {
 			String name = (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_LEGAL_NAME);
-	
+
 			if ((name == null) || name.isEmpty()) {
 				name = (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_CHARACT_NAME);
 			}
 			return name;
 		}
-		
 
 		return attributeExtractorService.extractPropName(targetClass, nodeRef);
 	}
@@ -591,7 +596,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 		VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
 		Element versionsElt = entityElt.addElement(TAG_VERSIONS);
-	
+
 		if ((versionHistory != null) && (versionHistory.getAllVersions() != null)) {
 
 			for (Version version : versionHistory.getAllVersions()) {
@@ -600,9 +605,8 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				versionElt.addAttribute(Version2Model.PROP_QNAME_VERSION_DESCRIPTION.getLocalName(), version.getDescription());
 				versionElt.addAttribute(ContentModel.PROP_CREATOR.getLocalName(),
 						attributeExtractorService.getPersonDisplayName(version.getFrozenModifier()));
-				versionElt.addAttribute(ContentModel.PROP_CREATED.getLocalName(), 
-						ISO8601DateFormat.format((Date) version.getFrozenModifiedDate()));
-				
+				versionElt.addAttribute(ContentModel.PROP_CREATED.getLocalName(), ISO8601DateFormat.format(version.getFrozenModifiedDate()));
+
 			}
 		}
 	}
@@ -643,12 +647,11 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			Element nodeElt = assocElt.addElement(qName.getLocalName());
 
 			appendPrefix(qName, nodeElt);
-			
+
 			EntityReportExtractorPlugin extractor = entityReportService.retrieveExtractor(nodeRef);
-			if(extractDataList && extractor!=null && extractor instanceof DefaultEntityReportExtractor){
-				((DefaultEntityReportExtractor)extractor).extractEntity(nodeRef, nodeElt, images);
-			}
-			else{
+			if (extractDataList && (extractor != null) && (extractor instanceof DefaultEntityReportExtractor)) {
+				((DefaultEntityReportExtractor) extractor).extractEntity(nodeRef, nodeElt, images);
+			} else {
 				loadNodeAttributes(nodeRef, nodeElt, true, images);
 				if (extractDataList) {
 					Element dataListsElt = nodeElt.addElement(TAG_DATALISTS);
@@ -713,7 +716,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			// extract avatar
 			List<AssociationRef> avatorAssocs = nodeService.getTargetAssocs(creatorNodeRef, ContentModel.ASSOC_AVATAR);
 			if (!avatorAssocs.isEmpty()) {
-				extractImage(avatorAssocs.get(0).getTargetRef(), AVATAR_IMG_ID, imgsElt, images);
+				extractImage(creatorNodeRef, avatorAssocs.get(0).getTargetRef(), AVATAR_IMG_ID, imgsElt, images);
 			}
 		}
 	}
