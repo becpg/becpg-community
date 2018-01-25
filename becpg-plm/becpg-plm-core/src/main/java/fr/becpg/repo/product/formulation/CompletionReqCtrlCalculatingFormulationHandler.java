@@ -46,6 +46,7 @@ import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.JsonScoreHelper;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.AbstractProductDataView;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
@@ -605,7 +606,7 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 		boolean res = true;
 		QName fieldQname = QName.createQName(field.split("_")[0], namespaceService);
 		MLText mlText = (MLText) mlNodeService.getProperty(productData.getNodeRef(), fieldQname);
-		Locale loc = getLocaleFromCode(lang);
+		Locale loc = MLTextHelper.parseLocale(lang);
 		
 		if (field.contains("_")) {
 			String fieldSpecificLang = field.split("_")[1];
@@ -625,14 +626,5 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 		return res;
 	}
 	
-	private Locale getLocaleFromCode(String code){
-		if(code == null){
-			return null;
-		} else if(code.contains("_")){
-			return new Locale(code.split("_")[0], code.split("_")[1]);
-		} else {
-			return new Locale(code);
-		}
-	}
 
 }
