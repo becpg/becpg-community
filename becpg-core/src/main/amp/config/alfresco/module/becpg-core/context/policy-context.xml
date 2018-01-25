@@ -70,6 +70,9 @@
 		<property name="contentService" ref="contentService" />
 		<property name="nodeDAO" ref="nodeDAO"/>
 		<property name="entityDictionaryService" ref="entityDictionaryService"/>
+		<property name="dictionaryService" ref="dictionaryService"/>
+		<property name="attributeExtractorService" ref="attributeExtractorService"/>
+		<property name="entityListDAO" ref="entityListDAO"/>
 	</bean>
 
 
