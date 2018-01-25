@@ -122,8 +122,13 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	private static final String EXPORT_INGLABELING_XLSX_PATH = "beCPG/birt/exportsearch/product/ExportIngLabellingList.xlsx";
 	private static final String EXPORT_SUPPLIERS_CONTACTS_XLSX_PATH = "beCPG/birt/exportsearch/product/ExportSuppliersContacts.xlsx";
 
-	private static final String PRODUCT_REPORT_FR_RESOURCE = "beCPG/birt/document/product/default/ProductReport_fr.properties";
+	private static final String PRODUCT_REPORT_DE_RESOURCE = "beCPG/birt/document/product/default/ProductReport_de.properties";
+	private static final String PRODUCT_REPORT_EN_US_RESOURCE = "beCPG/birt/document/product/default/ProductReport_en_US.properties";
 	private static final String PRODUCT_REPORT_EN_RESOURCE = "beCPG/birt/document/product/default/ProductReport_en.properties";
+	private static final String PRODUCT_REPORT_ES_RESOURCE = "beCPG/birt/document/product/default/ProductReport_es.properties";
+	private static final String PRODUCT_REPORT_FR_RESOURCE = "beCPG/birt/document/product/default/ProductReport_fr.properties";
+	private static final String PRODUCT_REPORT_IT_RESOURCE = "beCPG/birt/document/product/default/ProductReport_it.properties";
+	private static final String PRODUCT_REPORT_NL_RESOURCE = "beCPG/birt/document/product/default/ProductReport_nl.properties";
 	private static final String PRODUCT_REPORT_CSS_RESOURCE = "beCPG/birt/document/product/default/becpg-report.css";
 
 	@Autowired
@@ -821,7 +826,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			String[] defaultReportName = { productReportClientName, productReportSupplierName, productReportProductionName, productReportClientName };
 			String[] otherReport = { PRODUCT_REPORT_PRODUCTION_PATH, null, null, null };
 			String[] otherReportName = { productReportProductionName, null, null, null };
-			String[] productReportResource = { PRODUCT_REPORT_FR_RESOURCE, PRODUCT_REPORT_EN_RESOURCE, PRODUCT_REPORT_CSS_RESOURCE };
+			String[] productReportResource = { PRODUCT_REPORT_DE_RESOURCE, PRODUCT_REPORT_EN_US_RESOURCE, 
+					PRODUCT_REPORT_EN_RESOURCE, PRODUCT_REPORT_ES_RESOURCE, PRODUCT_REPORT_FR_RESOURCE, 
+					PRODUCT_REPORT_IT_RESOURCE, PRODUCT_REPORT_NL_RESOURCE, PRODUCT_REPORT_CSS_RESOURCE };
 
 			int i = 0;
 
