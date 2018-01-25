@@ -30,6 +30,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
@@ -48,6 +49,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 	private static final Log logger = LogFactory.getLog(DataListSortServiceImpl.class);
 
 	@Autowired
+	@Qualifier("NodeService")
 	private NodeService nodeService;
 
 	@Autowired
