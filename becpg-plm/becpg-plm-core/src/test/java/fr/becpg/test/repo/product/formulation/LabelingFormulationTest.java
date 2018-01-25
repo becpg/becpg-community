@@ -40,6 +40,7 @@ import javax.annotation.Resource;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -77,7 +78,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 	@Resource
 	private AssociationService associationService;
-
+	
 	@Resource
 	@Qualifier("mlAwareNodeService")
 	private NodeService mlNodeService;
@@ -1710,10 +1711,13 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 	public void testMultiThreadFormulation() throws Exception {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			BeCPGTestHelper.createUser("labellingUser1");
-
+			permissionService.setPermission(getTestFolderNodeRef(), "labellingUser1", PermissionService.ALL_PERMISSIONS, true);
+			
 			return null;
 		});
 		try {
+			
+			
 			authenticationComponent.setCurrentUser("labellingUser1");
 
 			final NodeRef finishProduct1 = createTestProduct(null);
