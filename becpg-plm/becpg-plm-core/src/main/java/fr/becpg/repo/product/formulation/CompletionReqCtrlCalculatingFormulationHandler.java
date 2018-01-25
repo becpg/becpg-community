@@ -613,15 +613,17 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 		boolean res = true;
 		QName fieldQname = QName.createQName(field.split("_")[0], namespaceService);
 		MLText mlText = (MLText) mlNodeService.getProperty(productData.getNodeRef(), fieldQname);
-		Locale loc = MLTextHelper.parseLocale(lang);
-		
+		Locale loc = null;
+		if(lang!=null) {
+			loc = MLTextHelper.parseLocale(lang);
+		}
 		if (field.contains("_")) {
 			String fieldSpecificLang = field.split("_")[1];
-			if ((mlText == null) || (mlText.getValue(loc) == null)
+			if ((mlText == null) || (loc !=null || mlText.getValue(loc) == null)
 					|| mlText.getValue(new Locale(fieldSpecificLang)).isEmpty()) {
 				res = false;
 			}
-		} else if ((lang != null)
+		} else if ((loc != null)
 				&& ((mlText == null) || (mlText.getValue(loc) == null) || mlText.getValue(loc).isEmpty())) {
 			res = false;
 		} else {
