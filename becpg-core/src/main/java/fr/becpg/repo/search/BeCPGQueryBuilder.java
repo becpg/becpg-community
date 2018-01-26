@@ -326,6 +326,11 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		}
 		return this;
 	}
+	
+	public BeCPGQueryBuilder andNotIDs(Set<NodeRef> nodeRefs) {
+		this.notIds.addAll(nodeRefs);
+		return this;
+	}
 
 	Map<String, Boolean> sortProps = new TreeMap<>();
 
