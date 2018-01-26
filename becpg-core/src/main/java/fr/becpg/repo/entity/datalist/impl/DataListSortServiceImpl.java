@@ -90,7 +90,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 							// #351 : we avoid lucene queries
 							if ((prevParentLevel == null) || !prevParentLevel.equals(parentLevel)) {
 								prevParentLevel = parentLevel;
-								NodeRef prevSiblingNode = getLastChildOfLevel(dataType, listContainer, parentLevel, nodeRef);
+								NodeRef prevSiblingNode = getLastChildOfLevel(dataType, listContainer, parentLevel, pendingNodeRefs );
 								insertAfter(dataType, listContainer, prevSiblingNode, nodeRef, pendingNodeRefs);
 								sort = (Integer) nodeService.getProperty(nodeRef, BeCPGModel.PROP_SORT);
 								level = (Integer) nodeService.getProperty(nodeRef, BeCPGModel.PROP_DEPTH_LEVEL);
@@ -334,8 +334,9 @@ public class DataListSortServiceImpl implements DataListSortService {
 	/*
 	 * Get the last sibling node of the level
 	 */
-	private NodeRef getLastChildOfLevel(QName dataType, NodeRef listContainer, NodeRef parentLevel, NodeRef nodeRef) {
-		return getQueryByParentLevel(dataType, listContainer, parentLevel, true).andNotID(nodeRef).isNotNull(BeCPGModel.PROP_SORT)
+	private NodeRef getLastChildOfLevel(QName dataType, NodeRef listContainer, NodeRef parentLevel, HashSet<NodeRef> pendingNodeRefs) {
+		
+		return getQueryByParentLevel(dataType, listContainer, parentLevel, true).andNotIDs(pendingNodeRefs).isNotNull(BeCPGModel.PROP_SORT)
 				.addSort(BeCPGModel.PROP_SORT, false).inDB().singleValue();
 	}
 
