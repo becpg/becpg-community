@@ -16,6 +16,8 @@ import org.alfresco.repo.node.db.NodeHierarchyWalker;
 import org.alfresco.repo.node.db.NodeHierarchyWalker.VisitedNode;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.service.cmr.dictionary.DictionaryService;
+import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentIOException;
 import org.alfresco.service.cmr.repository.ContentReader;
@@ -31,8 +33,10 @@ import org.apache.commons.logging.LogFactory;
 import fr.becpg.common.BeCPGException;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
+import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
+import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
 /**
@@ -52,7 +56,13 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 	private NodeDAO nodeDAO;
 
 	private EntityDictionaryService entityDictionaryService;
+	
+	private DictionaryService dictionaryService;
 
+	private AttributeExtractorService attributeExtractorService;
+	
+	private EntityListDAO entityListDAO;
+	
 	public void setNodeDAO(NodeDAO nodeDAO) {
 		this.nodeDAO = nodeDAO;
 	}
@@ -71,6 +81,18 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 		this.contentService = contentService;
 	}
 
+	public void setDictionaryService(DictionaryService dictionaryService) {
+		this.dictionaryService = dictionaryService;
+	}
+
+	public void setAttributeExtractorService(AttributeExtractorService attributeExtractorService) {
+		this.attributeExtractorService = attributeExtractorService;
+	}
+
+	public void setEntityListDAO(EntityListDAO entityListDAO) {
+		this.entityListDAO = entityListDAO;
+	}
+
 	@Override
 	public void doInit() {
 		this.policyComponent.bindClassBehaviour(BeforePurgeNodePolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2, new JavaBehaviour(this, "beforePurgeNode"));
@@ -78,6 +100,13 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 				new JavaBehaviour(this, "beforeArchiveNode"));
 		this.policyComponent.bindClassBehaviour(OnRestoreNodePolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2, new JavaBehaviour(this, "onRestoreNode"));
 		this.policyComponent.bindClassBehaviour(OnRestoreNodePolicy.QNAME, ContentModel.TYPE_FOLDER, new JavaBehaviour(this, "onRestoreNode"));
+		
+		
+		this.policyComponent.bindClassBehaviour(BeforePurgeNodePolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM, new JavaBehaviour(this, "beforePurgeNode"));
+		this.policyComponent.bindClassBehaviour(BeforeArchiveNodePolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM,
+				new JavaBehaviour(this, "beforeArchiveNode"));
+		this.policyComponent.bindClassBehaviour(OnRestoreNodePolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM, new JavaBehaviour(this, "onRestoreNode"));
+		
 
 	}
 
@@ -98,7 +127,9 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 
 				NodeRef entityNodeRef = visitedNode.nodeRef;
 
-				if (entityDictionaryService.isSubClass(nodeService.getType(entityNodeRef), BeCPGModel.TYPE_ENTITY_V2)) {
+				if (entityDictionaryService.isSubClass(nodeService.getType(entityNodeRef), BeCPGModel.TYPE_ENTITY_V2) 
+						|| entityDictionaryService.isSubClass(nodeService.getType(entityNodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)
+						) {
 
 					NodeRef rootArchiveRef = nodeService.getStoreArchiveNode(entityNodeRef.getStoreRef());
 
@@ -169,7 +200,30 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 			} catch (ContentIOException | IOException | BeCPGException e) {
 				logger.error(e, e);
 			}
-
+			
+			QName type = nodeService.getType(entityNodeRef);
+			
+			if ( entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
+				
+				String name = "";
+				
+				NodeRef entityParent = entityListDAO.getEntity(entityNodeRef);
+				if(entityParent!=null) {
+					name += attributeExtractorService.extractPropName(entityParent)+ " - ";
+				}
+				
+				TypeDefinition typeDef = dictionaryService.getType(type);
+				if(typeDef!=null && typeDef.getTitle(dictionaryService)!=null) {
+					name += typeDef.getTitle(dictionaryService)+" - ";
+				}
+				
+				
+				 name += attributeExtractorService.extractPropName(type,entityNodeRef);
+				
+				nodeService.setProperty(entityNodeRef, ContentModel.PROP_NAME, name );
+					
+			}
+			
 			return null;
 		});
 
