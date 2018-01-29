@@ -26,6 +26,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -138,13 +140,40 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 
 									addCompareValueColumn(PLMModel.PROP_COMPARE_WITH_DYN_COLUMN, view, toCompareWith, dynamicColumnToTreat, true);
 
-									for (DynamicCharactListItem dynamicCharactListItem : view.getDynamicCharactList()) {
+									// map each duplicated column to its last occurrence in the dynamicCharactList
+									
+									Map<String, Integer> duplicateDynCharactColumnsMap = new HashMap<>();
+									
+									Map<String, Long> columnNameOccurrences = view.getDynamicCharactList()
+											.stream()
+											.filter(charact -> charact.getColumnName() != null)
+											.map(charact -> charact.getColumnName())
+											.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()) );
+									
+									columnNameOccurrences.forEach( (column, occurrences) -> {
+										if(occurrences > 1) {
+											duplicateDynCharactColumnsMap.put(column, view.getDynamicCharactList()
+													.stream()
+													.map(charact -> charact.getColumnName())
+													.collect(Collectors.toList())
+													.lastIndexOf(column));
+										}
+									});
+
+									DynamicCharactListItem dynamicCharactListItem;
+									for (int i=0; i< view.getDynamicCharactList().size(); ++i) {
+										dynamicCharactListItem = view.getDynamicCharactList().get(i);
+										
+										// if this column is duplicated and not the last occurrence, we don't compare
+										boolean shouldCompare = !duplicateDynCharactColumnsMap.containsKey(dynamicCharactListItem.getColumnName()) 
+												|| i == duplicateDynCharactColumnsMap.get(dynamicCharactListItem.getColumnName());
+										
 										if (!Boolean.TRUE.equals(dynamicCharactListItem.getMultiLevelFormula())
 												&& dynamicCharactListItem.getFormula()!= null && !dynamicCharactListItem.getFormula().isEmpty()) {
 
 											DynamicCharactListItem toCompareDynamicCharactListItem = getMatchingCharact(dynamicCharactListItem,
 													getMatchingView(toCompareWith, view).getDynamicCharactList());
-											if (toCompareDynamicCharactListItem != null) {
+											if (toCompareDynamicCharactListItem != null && shouldCompare) {
 
 												if (logger.isDebugEnabled()) {
 													logger.debug(" - Found matching charact to compare: ");
