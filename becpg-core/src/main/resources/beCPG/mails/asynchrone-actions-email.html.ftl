@@ -55,7 +55,7 @@
 												 </table>
 											 </#if>
                                                                   
-                                             <p>Regardless,<br/>
+                                             <p>Sincerely,<br/>
                                              beCPG</p>
                                           </div>
                                        </td>

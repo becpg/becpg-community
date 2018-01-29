@@ -505,6 +505,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 		if(action != null){			
 			Map<String, Object> templateArgs = new HashMap<>();
 			templateArgs.put(RepoConsts.ARG_ACTION_BODY, I18NUtil.getMessage("message.async-mail.entitiesTemplate." + action + ".body"));
+			templateArgs.put(RepoConsts.ARG_ACTION_URL, "page/entity-data-lists?list=View-properties&nodeRef=" + getEntityTplNodeRef(entityNodeRefs.get(0)));
 			templateArgs.put(RepoConsts.ARG_ACTION_STATE, true);
 			templateArgs.put(RepoConsts.ARG_ACTION_RUN_TIME, watch.getTotalTimeSeconds());
 
@@ -513,11 +514,16 @@ public class EntityTplServiceImpl implements EntityTplService {
 			
 			Map<String, Object> templateModel = new HashMap<>();
 			templateModel.put("args", templateArgs);
-			String subject = I18NUtil.getMessage("message.async-mail.entitiesTemplate." + action + ".subject");
+			String subject = "[Notification]" + I18NUtil.getMessage("message.async-mail.entitiesTemplate." + action + ".subject");
 			
 			beCPGMailService.sendMail(recipientNodeRefs, subject, RepoConsts.EMAIL_ASYNC_ACTIONS_TEMPLATE, templateModel, true);		
 		}
 
+	}
+	
+	private NodeRef getEntityTplNodeRef(NodeRef entityNodeRef){
+		List<AssociationRef> target = nodeService.getTargetAssocs(entityNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
+		return target.get(0).getTargetRef();
 	}
 
 	private List<NodeRef> getEntitiesToUpdate(NodeRef tplNodeRef) {
