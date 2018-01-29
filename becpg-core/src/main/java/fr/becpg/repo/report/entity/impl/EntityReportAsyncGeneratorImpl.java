@@ -25,7 +25,9 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.PersonService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,6 +36,7 @@ import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.util.StopWatch;
 
+import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.mail.BeCPGMailService;
 import fr.becpg.repo.report.entity.EntityReportAsyncGenerator;
@@ -51,6 +54,9 @@ public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerato
 
 	@Autowired
 	private PersonService personService;
+	
+	@Autowired
+	private NodeService nodeService;
 
 	private ThreadPoolExecutor threadExecuter;
 
@@ -103,6 +109,7 @@ public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerato
 			if (watch.getTotalTimeSeconds() > 0) {
 				Map<String, Object> templateArgs = new HashMap<>();
 				templateArgs.put(RepoConsts.ARG_ACTION_BODY, I18NUtil.getMessage("message.async-mail.generate-reports.body"));
+				templateArgs.put(RepoConsts.ARG_ACTION_URL, "page/document-details?nodeRef=" + getEntityTplNodeRef(pendingNodes.get(0)));
 				templateArgs.put(RepoConsts.ARG_ACTION_STATE, runState);
 				templateArgs.put(RepoConsts.ARG_ACTION_RUN_TIME, watch.getTotalTimeSeconds());
 
@@ -124,6 +131,12 @@ public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerato
 
 		}
 
+	}
+	
+	private NodeRef getEntityTplNodeRef(NodeRef entityNodeRef){
+		List<AssociationRef> targetReports = nodeService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS);
+		List<AssociationRef> targetReportTpls = nodeService.getTargetAssocs( targetReports.get(0).getTargetRef(), ReportModel.ASSOC_REPORT_TPL);
+		return targetReportTpls.get(0).getTargetRef();
 	}
 
 	private class ProductReportGenerator implements Runnable {
