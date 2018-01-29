@@ -20,6 +20,39 @@
         <value>./ProductReport</value>
     </simple-property-list>
     <property name="units">in</property>
+    <method name="initialize"><![CDATA[function nearbyValue (value, base, delta) {
+
+ 	 if (value >= (base - delta) &amp;&amp; value  < (base + delta) ) {
+  		return base;
+  	} else if (value > base) {
+  		return nearbyValue(value, (base + (delta * 2) ), delta);
+  	} 
+  	return nearbyValue(value, (base - (delta + 2) ), delta);
+}
+
+function getNearValue(nutValue, delta ) {
+	
+  	var base = Math.floor(nutValue/10);
+  	var result = base * 10;
+ 	return nearbyValue(nutValue, result, delta/2);
+}
+
+function isNutPresent(ruleTab, targetStr) {
+	for (var i in ruleTab) {
+		if (ruleTab[i] == targetStr) {
+			return true;
+		}
+	}
+	return false;
+}
+
+function getSingularOrPluralWord (word, myNumber) {
+	if (myNumber == 1) {
+		return  reportContext.getMessage(word, reportContext.getLocale())
+	}
+	return  reportContext.getMessage(word+"s", reportContext.getLocale());
+}
+]]></method>
     <property name="iconFile">/templates/dual_column_chart_listing.gif</property>
     <property name="cheatSheet">org.eclipse.birt.report.designer.ui.cheatsheet.dualchartlisting</property>
     <property name="bidiLayoutOrientation">ltr</property>
@@ -282,7 +315,26 @@
                 <structure>
                     <property name="columnName">contractDate</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">contractDate</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">eanCodeLevel2</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">eanCodeLevel2</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">eanCodeLevel3</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">eanCodeLevel3</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">customsCodeRef</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">customsCodeRef</text-property>
                 </structure>
             </list-property>
             <list-property name="parameters"/>
@@ -492,6 +544,21 @@
                         <property name="position">41</property>
                         <property name="name">contractDate</property>
                         <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">42</property>
+                        <property name="name">eanCodeLevel2</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">43</property>
+                        <property name="name">eanCodeLevel3</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">44</property>
+                        <property name="name">customsCodeRef</property>
+                        <property name="dataType">string</property>
                     </structure>
                 </list-property>
             </structure>
@@ -784,8 +851,29 @@
                     <property name="dataType">integer</property>
                     <property name="nativeDataType">4</property>
                 </structure>
+                <structure>
+                    <property name="position">42</property>
+                    <property name="name">eanCodeLevel2</property>
+                    <property name="nativeName">eanCodeLevel2</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">43</property>
+                    <property name="name">eanCodeLevel3</property>
+                    <property name="nativeName">eanCodeLevel3</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">44</property>
+                    <property name="name">customsCodeRef</property>
+                    <property name="nativeName">customsCodeRef</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{productCurrency;STRING;/productCurrency},{productPrice;DOUBLE;/productPrice},{productUnit;STRING;/productUnit},{productType;STRING;/productType},{name;STRING;/name},{productState;STRING;/productState},{modified;TIMESTAMP;/modified},{productQty;DOUBLE;/productQty},{productDensity;DOUBLE;/productDensity},{description;STRING;/description},{clients;STRING;/clients},{productHierarchy1;STRING;/productHierarchy1},{productHierarchy2;STRING;/productHierarchy2},{legalName;STRING;/legalName},{useByDate;INT;/useByDate},{productComments;STRING;/productComments},{eanCode;STRING;/eanCode},{pvValidationDate;TIMESTAMP;/pvValidationDate},{pvCallerActor;STRING;/pvCallerActor},{pvTransmitterActor;STRING;/pvTransmitterActor},{pvQualityApprovalActor;STRING;/pvQualityApprovalActor},{pvProductionApprovalActor;STRING;/pvProductionApprovalActor},{pvRDApprovalActor;STRING;/pvRDApprovalActor},{itemType;STRING;/itemType},{preparationTips;STRING;/preparationTips},{packagingDescription;STRING;/packagingDescription},{numberOfServings;STRING;/numberOfServings},{precautionOfUseDescription;STRING;/precautionOfUse/description},{storageConditionsDescription;STRING;/storageConditions/description},{netWeight;DOUBLE;/netWeight},{bestBeforeDate;INT;/bestBeforeDate},{title;STRING;/title},{servingSize;DOUBLE;/servingSize},{created;TIMESTAMP;/created},{productCompoQtyUsed;DOUBLE;/productCompoQtyUsed},{aspects;STRING;/aspects},{firstPackagingCode;STRING;/dataLists/packagingLists/packagingList/@code},{erpCode;STRING;/erpCode},{versionLabel;STRING;/versionLabel},{contractDate;INT;/contractDate}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{productCurrency;STRING;/productCurrency},{productPrice;DOUBLE;/productPrice},{productUnit;STRING;/productUnit},{productType;STRING;/productType},{name;STRING;/name},{productState;STRING;/productState},{modified;TIMESTAMP;/modified},{productQty;DOUBLE;/productQty},{productDensity;DOUBLE;/productDensity},{description;STRING;/description},{clients;STRING;/clients},{productHierarchy1;STRING;/productHierarchy1},{productHierarchy2;STRING;/productHierarchy2},{legalName;STRING;/legalName},{useByDate;INT;/useByDate},{productComments;STRING;/productComments},{eanCode;STRING;/eanCode},{pvValidationDate;TIMESTAMP;/pvValidationDate},{pvCallerActor;STRING;/pvCallerActor},{pvTransmitterActor;STRING;/pvTransmitterActor},{pvQualityApprovalActor;STRING;/pvQualityApprovalActor},{pvProductionApprovalActor;STRING;/pvProductionApprovalActor},{pvRDApprovalActor;STRING;/pvRDApprovalActor},{itemType;STRING;/itemType},{preparationTips;STRING;/preparationTips},{packagingDescription;STRING;/packagingDescription},{numberOfServings;STRING;/numberOfServings},{precautionOfUseDescription;STRING;/precautionOfUse/description},{storageConditionsDescription;STRING;/storageConditions/description},{netWeight;DOUBLE;/netWeight},{bestBeforeDate;INT;/bestBeforeDate},{title;STRING;/title},{servingSize;DOUBLE;/servingSize},{created;TIMESTAMP;/created},{productCompoQtyUsed;DOUBLE;/productCompoQtyUsed},{aspects;STRING;/aspects},{firstPackagingCode;STRING;/dataLists/packagingLists/packagingList/@code},{erpCode;STRING;/erpCode},{versionLabel;STRING;/versionLabel},{contractDate;INT;/contractDate},{eanCodeLevel2;STRING;/eanCodeLevel2},{eanCodeLevel3;STRING;/eanCodeLevel3},{customsCodeRef;STRING;/customsCodeRef}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -880,8 +968,52 @@
                     <property name="dataType">integer</property>
                     <property name="aggregateFunction">COUNT</property>
                 </structure>
+                <structure>
+                    <property name="name">localNutSort</property>
+                    <expression name="expression">if (row["nutSort"] != null &amp;&amp; row["nutSort"] != "") {
+	row["nutSort"];
+}  else { //if system doesn't have nutSort attribute OR have it but not filled
+	row["sort"]
+}</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">isReportLocaleExist</property>
+                    <expression name="expression">( row["reportLocales"] != null )</expression>
+                    <property name="dataType">boolean</property>
+                </structure>
+                <structure>
+                    <property name="name">nbIslocalReportLocaleExist</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">RUNNINGCOUNT</property>
+                    <list-property name="arguments">
+                        <structure>
+                            <property name="name">Expression</property>
+                            <expression name="value">row["isReportLocaleExist"]</expression>
+                        </structure>
+                    </list-property>
+                    <expression name="filterExpr">( row["isReportLocaleExist"] == true )</expression>
+                </structure>
             </list-property>
             <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">nutListNut</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">nutListNut</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">nutSort</property>
+                    <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">nutSort</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">reportLocales</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">reportLocales</text-property>
+                </structure>
                 <structure>
                     <property name="columnName">nutListValue</property>
                     <property name="analysis">measure</property>
@@ -899,12 +1031,6 @@
                     <property name="analysis">dimension</property>
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">nutListGroup</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">nutListNut</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">nutListNut</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">nutListValuePerServing</property>
@@ -951,7 +1077,26 @@
                 <structure>
                     <property name="columnName">color</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">color</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">servingSize</property>
+                    <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">servingSize</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">sort</property>
+                    <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">sort</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">nutType</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">nutType</text-property>
                 </structure>
             </list-property>
             <list-property name="parameters"/>
@@ -959,82 +1104,122 @@
                 <list-property name="resultSet">
                     <structure>
                         <property name="position">1</property>
-                        <property name="name">nutListValue</property>
-                        <property name="dataType">float</property>
-                    </structure>
-                    <structure>
-                        <property name="position">2</property>
-                        <property name="name">nutListUnit</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">3</property>
-                        <property name="name">nutListGroup</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">4</property>
                         <property name="name">nutListNut</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
+                        <property name="position">2</property>
+                        <property name="name">nutSort</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">reportLocales</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">nutListValue</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
                         <property name="position">5</property>
+                        <property name="name">nutListUnit</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">nutListGroup</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
                         <property name="name">nutListValuePerServing</property>
                         <property name="dataType">float</property>
                     </structure>
                     <structure>
-                        <property name="position">6</property>
+                        <property name="position">8</property>
                         <property name="name">nutListGDAPerc</property>
                         <property name="dataType">float</property>
                     </structure>
                     <structure>
-                        <property name="position">7</property>
+                        <property name="position">9</property>
                         <property name="name">depthLevel</property>
                         <property name="dataType">integer</property>
                     </structure>
                     <structure>
-                        <property name="position">8</property>
+                        <property name="position">10</property>
                         <property name="name">nutListMaxi</property>
                         <property name="dataType">float</property>
                     </structure>
                     <structure>
-                        <property name="position">9</property>
+                        <property name="position">11</property>
                         <property name="name">nutListMini</property>
                         <property name="dataType">float</property>
                     </structure>
                     <structure>
-                        <property name="position">10</property>
+                        <property name="position">12</property>
                         <property name="name">legalName</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">11</property>
+                        <property name="position">13</property>
                         <property name="name">description</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">12</property>
+                        <property name="position">14</property>
                         <property name="name">color</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">13</property>
-                        <property name="name">runningCount</property>
-                        <property name="dataType">integer</property>
-                    </structure>
-                    <structure>
-                        <property name="position">14</property>
-                        <property name="name">GDA</property>
-                        <property name="dataType">integer</property>
-                    </structure>
-                    <structure>
                         <property name="position">15</property>
-                        <property name="name">nutListGDAPercFor100g</property>
+                        <property name="name">servingSize</property>
                         <property name="dataType">float</property>
                     </structure>
                     <structure>
                         <property name="position">16</property>
+                        <property name="name">sort</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">17</property>
+                        <property name="name">nutType</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">18</property>
+                        <property name="name">runningCount</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">19</property>
+                        <property name="name">GDA</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">20</property>
+                        <property name="name">nutListGDAPercFor100g</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">21</property>
                         <property name="name">tableCheck</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">22</property>
+                        <property name="name">localNutSort</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">23</property>
+                        <property name="name">isReportLocaleExist</property>
+                        <property name="dataType">boolean</property>
+                    </structure>
+                    <structure>
+                        <property name="position">24</property>
+                        <property name="name">nbIslocalReportLocaleExist</property>
                         <property name="dataType">integer</property>
                     </structure>
                 </list-property>
@@ -1043,90 +1228,125 @@
             <list-property name="resultSet">
                 <structure>
                     <property name="position">1</property>
-                    <property name="name">nutListValue</property>
-                    <property name="nativeName">nutListValue</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
-                </structure>
-                <structure>
-                    <property name="position">2</property>
-                    <property name="name">nutListUnit</property>
-                    <property name="nativeName">nutListUnit</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">3</property>
-                    <property name="name">nutListGroup</property>
-                    <property name="nativeName">nutListGroup</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">4</property>
                     <property name="name">nutListNut</property>
                     <property name="nativeName">nutListNut</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
+                    <property name="position">2</property>
+                    <property name="name">nutSort</property>
+                    <property name="nativeName">nutSort</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">4</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">reportLocales</property>
+                    <property name="nativeName">reportLocales</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">nutListValue</property>
+                    <property name="nativeName">nutListValue</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
                     <property name="position">5</property>
+                    <property name="name">nutListUnit</property>
+                    <property name="nativeName">nutListUnit</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">nutListGroup</property>
+                    <property name="nativeName">nutListGroup</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
                     <property name="name">nutListValuePerServing</property>
                     <property name="nativeName">nutListValuePerServing</property>
                     <property name="dataType">float</property>
                     <property name="nativeDataType">8</property>
                 </structure>
                 <structure>
-                    <property name="position">6</property>
+                    <property name="position">8</property>
                     <property name="name">nutListGDAPerc</property>
                     <property name="nativeName">nutListGDAPerc</property>
                     <property name="dataType">float</property>
                     <property name="nativeDataType">8</property>
                 </structure>
                 <structure>
-                    <property name="position">7</property>
+                    <property name="position">9</property>
                     <property name="name">depthLevel</property>
                     <property name="nativeName">depthLevel</property>
                     <property name="dataType">integer</property>
                     <property name="nativeDataType">4</property>
                 </structure>
                 <structure>
-                    <property name="position">8</property>
+                    <property name="position">10</property>
                     <property name="name">nutListMaxi</property>
                     <property name="nativeName">nutListMaxi</property>
                     <property name="dataType">float</property>
                     <property name="nativeDataType">8</property>
                 </structure>
                 <structure>
-                    <property name="position">9</property>
+                    <property name="position">11</property>
                     <property name="name">nutListMini</property>
                     <property name="nativeName">nutListMini</property>
                     <property name="dataType">float</property>
                     <property name="nativeDataType">8</property>
                 </structure>
                 <structure>
-                    <property name="position">10</property>
+                    <property name="position">12</property>
                     <property name="name">legalName</property>
                     <property name="nativeName">legalName</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">11</property>
+                    <property name="position">13</property>
                     <property name="name">description</property>
                     <property name="nativeName">description</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">12</property>
+                    <property name="position">14</property>
                     <property name="name">color</property>
                     <property name="nativeName">color</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
+                <structure>
+                    <property name="position">15</property>
+                    <property name="name">servingSize</property>
+                    <property name="nativeName">servingSize</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">16</property>
+                    <property name="name">sort</property>
+                    <property name="nativeName">sort</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">4</property>
+                </structure>
+                <structure>
+                    <property name="position">17</property>
+                    <property name="name">nutType</property>
+                    <property name="nativeName">nutType</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/nutLists/nutList]#:#{nutListValue;DOUBLE;/@nutListValue},{nutListUnit;STRING;/@nutListUnit},{nutListGroup;STRING;/@nutListGroup},{nutListNut;STRING;/@nutListNut},{nutListValuePerServing;DOUBLE;/@nutListValuePerServing},{nutListGDAPerc;DOUBLE;/@nutListGDAPerc},{depthLevel;INT;/@depthLevel},{nutListMaxi;DOUBLE;/@nutListMaxi},{nutListMini;DOUBLE;/@nutListMini},{legalName;STRING;/@legalName},{description;STRING;/description},{color;STRING;/@color}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/nutLists/nutList]#:#{nutListNut;STRING;/@nutListNut},{nutSort;INT;nutListNut/nut/nutSort},{reportLocales;STRING;nutListNut/nut/reportLocales/},{nutListValue;DOUBLE;/@nutListValue},{nutListUnit;STRING;/@nutListUnit},{nutListGroup;STRING;/@nutListGroup},{nutListValuePerServing;DOUBLE;/@nutListValuePerServing},{nutListGDAPerc;DOUBLE;/@nutListGDAPerc},{depthLevel;INT;/@depthLevel},{nutListMaxi;DOUBLE;/@nutListMaxi},{nutListMini;DOUBLE;/@nutListMini},{legalName;STRING;/@legalName},{description;STRING;/description},{color;STRING;/nutListNut/nut/color},{servingSize;DOUBLE;../../../servingSize},{sort;INT;/@sort},{nutType;STRING;nutListNut/nut/nutType}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -1708,19 +1928,19 @@
                 <structure>
                     <property name="name">displayValue</property>
                     <expression name="expression">if(dataSetRow["mblTextCriteria"] != null &amp;&amp; dataSetRow["mblTextCriteria"] != ""){
-dataSetRow["mblTextCriteria"]
+	dataSetRow["mblTextCriteria"]
 }
 else if(dataSetRow["mblMaxi"] == -1){
-"Absence"
+	"Absence"
 }
 else if(dataSetRow["mblMaxi"] != null &amp;&amp; dataSetRow["mblMaxi"] != ""){
-dataSetRow["mblMaxi"] + " " + dataSetRow["mblUnit"]
+	Formatter.format(dataSetRow["mblMaxi"], "#,##0.##" ) + " " + dataSetRow["mblUnit"]
 }
 else if(dataSetRow["mblValue"] == -1){
-"Absence"
+	"Absence"
 }
 else if(dataSetRow["mblValue"] != null &amp;&amp; dataSetRow["mblValue"] != ""){
-dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
+	Formatter.format(dataSetRow["mblValue"], "#,##0.##" ) + " " + dataSetRow["mblUnit"]
 }</expression>
                     <property name="dataType">string</property>
                 </structure>
@@ -1740,6 +1960,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                 <structure>
                     <property name="columnName">mblValue</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">mblValue</text-property>
                 </structure>
                 <structure>
@@ -1751,6 +1972,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                 <structure>
                     <property name="columnName">mblMaxi</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">mblMaxi</text-property>
                 </structure>
                 <structure>
@@ -3496,6 +3718,7 @@ row["illValue"]
             </list-property>
         </oda-data-set>
         <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="packFirstLevelMaster" id="2456">
+            <property name="nullsOrdering">nulls lowest</property>
             <list-property name="computedColumns">
                 <structure>
                     <property name="name">pmDimensions</property>
@@ -3563,16 +3786,19 @@ row["illValue"]
                 <structure>
                     <property name="columnName">length</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">length</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">width</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">width</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">height</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">height</text-property>
                 </structure>
                 <structure>
@@ -6597,14 +6823,16 @@ row["illValue"]
                     <property name="style">becpg-header-table</property>
                     <property name="backgroundImageType">url</property>
                     <property name="pageBreakAfter">auto</property>
+                    <property name="height">1.3125in</property>
+                    <property name="width">100%</property>
                     <column id="766">
-                        <property name="width">2.0833333333333335in</property>
+                        <property name="width">2.0416666666666665in</property>
                     </column>
                     <column id="767">
-                        <property name="width">3in</property>
+                        <property name="width">2.9375in</property>
                     </column>
                     <column id="768">
-                        <property name="width">2.2777777777777777in</property>
+                        <property name="width">2.2291666666666665in</property>
                     </column>
                     <row id="769">
                         <cell id="770">
@@ -6645,6 +6873,8 @@ dataSetRow["name"]
                             <grid id="777">
                                 <property name="style">becpg-meta-grid</property>
                                 <property name="borderTopStyle">none</property>
+                                <property name="height">1.2291666666666667in</property>
+                                <property name="width">100%</property>
                                 <property name="dataSet">Product</property>
                                 <list-property name="boundDataColumns">
                                     <structure>
@@ -6655,10 +6885,10 @@ dataSetRow["name"]
                                     </structure>
                                 </list-property>
                                 <column id="778">
-                                    <property name="width">1.015267175572519in</property>
+                                    <property name="width">0.6770833333333334in</property>
                                 </column>
                                 <column id="1519">
-                                    <property name="width">2.2290076335877864in</property>
+                                    <property name="width">0.9in</property>
                                 </column>
                                 <row id="7352">
                                     <cell id="7260">
@@ -6836,14 +7066,16 @@ dataSetRow["versionLabel"]
                     <property name="style">becpg-header-table</property>
                     <property name="backgroundImageType">url</property>
                     <property name="pageBreakAfter">auto</property>
+                    <property name="height">1.125in</property>
+                    <property name="width">100%</property>
                     <column id="7302">
-                        <property name="width">2.0833333333333335in</property>
+                        <property name="width">2in</property>
                     </column>
                     <column id="7303">
-                        <property name="width">3in</property>
+                        <property name="width">2.8854166666666665in</property>
                     </column>
                     <column id="7304">
-                        <property name="width">2.2777777777777777in</property>
+                        <property name="width">2.1770833333333335in</property>
                     </column>
                     <row id="7305">
                         <cell id="7306">
@@ -6854,6 +7086,8 @@ dataSetRow["versionLabel"]
                             <grid id="7312">
                                 <property name="style">becpg-meta-grid</property>
                                 <property name="textAlign">right</property>
+                                <property name="height">1.0625in</property>
+                                <property name="width">100%</property>
                                 <property name="dataSet">Product</property>
                                 <list-property name="boundDataColumns">
                                     <structure>
@@ -6863,8 +7097,12 @@ dataSetRow["versionLabel"]
                                         <property name="dataType">date-time</property>
                                     </structure>
                                 </list-property>
-                                <column id="7313"/>
-                                <column id="7314"/>
+                                <column id="7313">
+                                    <property name="width">45%</property>
+                                </column>
+                                <column id="7314">
+                                    <property name="width">55%</property>
+                                </column>
                                 <row id="7345">
                                     <property name="fontSize">9pt</property>
                                     <property name="textAlign">left</property>
@@ -6967,11 +7205,11 @@ dataSetRow["versionLabel"]
 
 if (nbOfDays % 30 == 0)  {
 
-	(nbOfDays != null &amp;&amp; nbOfDays != "") ? ( nbOfDays / 30 ) + " " + reportContext.getMessage("month", reportContext.getLocale())  : "";
+	(nbOfDays != null &amp;&amp; nbOfDays != "") ? ( nbOfDays / 30 ) + " " + getSingularOrPluralWord("month",  nbOfDays / 30  )   : "";
 	 
 } else {
 
-	(nbOfDays != null &amp;&amp; nbOfDays != "") ? nbOfDays  + " " + reportContext.getMessage("day", reportContext.getLocale())   : "";
+	(nbOfDays != null &amp;&amp; nbOfDays != "") ? nbOfDays  + " " + getSingularOrPluralWord("day",  nbOfDays  )  : "";
 }</expression>
                                 <property name="dataType">string</property>
                                 <property name="allowExport">true</property>
@@ -6995,11 +7233,11 @@ if (nbOfDays % 30 == 0)  {
 
 if (nbOfDays % 30 == 0)  {
 
-	(nbOfDays != null &amp;&amp; nbOfDays != "") ? ( nbOfDays / 30 ) + " " + reportContext.getMessage("month", reportContext.getLocale())  : "";
+	(nbOfDays != null &amp;&amp; nbOfDays != "") ? ( nbOfDays / 30 ) + " " + getSingularOrPluralWord("month",  nbOfDays / 30  )  : "";
 	 
 } else {
 
-	(nbOfDays != null &amp;&amp; nbOfDays != "") ? nbOfDays  + " " + reportContext.getMessage("day", reportContext.getLocale())   : "";
+	(nbOfDays != null &amp;&amp; nbOfDays != "") ? nbOfDays  + " " + getSingularOrPluralWord("day",  nbOfDays )  : "";
 }</expression>
                                 <property name="dataType">string</property>
                                 <property name="allowExport">true</property>
@@ -7010,12 +7248,11 @@ if (nbOfDays % 30 == 0)  {
                                 <expression name="expression" type="javascript">var nbOfDays = dataSetRow["contractDate"];
 
 if (nbOfDays % 30 == 0)  {
-	(nbOfDays != null &amp;&amp; nbOfDays != "") ? ( nbOfDays / 30 ) + " " + reportContext.getMessage("month", reportContext.getLocale())  : "";
-	
-	 
+	(nbOfDays != null &amp;&amp; nbOfDays != "") ? ( nbOfDays / 30 ) + " " + getSingularOrPluralWord("month",  nbOfDays / 30  ) : "";
+
 } else {
 
-	(nbOfDays != null &amp;&amp; nbOfDays != "") ? nbOfDays  + " " + reportContext.getMessage("day", reportContext.getLocale())   : "";
+	(nbOfDays != null &amp;&amp; nbOfDays != "") ? nbOfDays  + " " + getSingularOrPluralWord("day",  nbOfDays  )   : "";
 }</expression>
                                 <property name="dataType">string</property>
                                 <property name="allowExport">true</property>
@@ -7030,6 +7267,24 @@ if (nbOfDays % 30 == 0)  {
                                 <property name="name">productUnit</property>
                                 <text-property name="displayName">productUnit</text-property>
                                 <expression name="expression" type="javascript">dataSetRow["productUnit"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">eanCodeLevel2</property>
+                                <text-property name="displayName">eanCodeLevel2</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["eanCodeLevel2"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">eanCodeLevel3</property>
+                                <text-property name="displayName">eanCodeLevel3</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["eanCodeLevel3"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">customsCodeRef</property>
+                                <text-property name="displayName">customsCodeRef</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["customsCodeRef"]</expression>
                                 <property name="dataType">string</property>
                             </structure>
                         </list-property>
@@ -7175,6 +7430,42 @@ if (nbOfDays % 30 == 0)  {
                                 </data>
                             </cell>
                         </row>
+                        <row id="7636">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">(row["eanCodeLevel2"]=="" || row["eanCodeLevel2"]==null)</expression>
+                                </structure>
+                            </list-property>
+                            <cell id="7637">
+                                <label id="7642">
+                                    <text-property name="text" key="eanCodeLevel2">Code EAN</text-property>
+                                </label>
+                            </cell>
+                            <cell id="7638">
+                                <data id="7644">
+                                    <property name="resultSetColumn">eanCodeLevel2</property>
+                                </data>
+                            </cell>
+                        </row>
+                        <row id="7639">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">(row["eanCodeLevel3"]=="" || row["eanCodeLevel3"]==null)</expression>
+                                </structure>
+                            </list-property>
+                            <cell id="7640">
+                                <label id="7643">
+                                    <text-property name="text" key="eanCodeLevel3">Code EAN</text-property>
+                                </label>
+                            </cell>
+                            <cell id="7641">
+                                <data id="7645">
+                                    <property name="resultSetColumn">eanCodeLevel3</property>
+                                </data>
+                            </cell>
+                        </row>
                         <row id="7275">
                             <list-property name="visibility">
                                 <structure>
@@ -7276,9 +7567,9 @@ if (nbOfDays % 30 == 0)  {
                                             <property name="name">productQty</property>
                                             <text-property name="displayName">productQty</text-property>
                                             <expression name="expression" type="javascript">if (dataSetRow["productUnit"] != "kg" &amp;&amp; dataSetRow["productUnit"] != "g" ) {  
-	(dataSetRow["netWeight"] != null &amp; dataSetRow["netWeight"] != "" ) ? dataSetRow["netWeight"] + " kg" : "";
+	(dataSetRow["netWeight"] != null &amp; dataSetRow["netWeight"] != "" ) ? Formatter.format(dataSetRow["netWeight"] , "#,##0.###") + " kg" : "";
 }else { 
-	 (dataSetRow["productQty"] != null &amp; dataSetRow["productQty"] != "" ) ?    dataSetRow["productQty"]  + " " + dataSetRow["productUnit"] : "";
+	 (dataSetRow["productQty"] != null &amp; dataSetRow["productQty"] != "" ) ?   Formatter.format(dataSetRow["productQty"] , "#,##0.###")  + " " + dataSetRow["productUnit"] : "";
 
 }</expression>
                                             <property name="dataType">string</property>
@@ -7308,7 +7599,7 @@ if (nbOfDays % 30 == 0)  {
                                         <structure>
                                             <property name="name">productQty</property>
                                             <text-property name="displayName">productQty</text-property>
-                                            <expression name="expression" type="javascript">(dataSetRow["productQty"] != null &amp; dataSetRow["productQty"] != "" ) ?    dataSetRow["productQty"]  + " " + dataSetRow["productUnit"] : "";</expression>
+                                            <expression name="expression" type="javascript">(dataSetRow["productQty"] != null &amp; dataSetRow["productQty"] != "" ) ?    Formatter.format(dataSetRow["productQty"] , "#,##0.###")  + " " + dataSetRow["productUnit"] : "";</expression>
                                             <property name="dataType">string</property>
                                             <property name="allowExport">true</property>
                                         </structure>
@@ -7341,6 +7632,24 @@ if (nbOfDays % 30 == 0)  {
                                         </structure>
                                     </list-property>
                                     <property name="resultSetColumn">description</property>
+                                </data>
+                            </cell>
+                        </row>
+                        <row id="7626">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">(row["customsCodeRef"]=="" || row["customsCodeRef"]==null)</expression>
+                                </structure>
+                            </list-property>
+                            <cell id="7627">
+                                <label id="7646">
+                                    <text-property name="text" key="customsCode">Nomenclature douanière</text-property>
+                                </label>
+                            </cell>
+                            <cell id="7628">
+                                <data id="7647">
+                                    <property name="resultSetColumn">customsCodeRef</property>
                                 </data>
                             </cell>
                         </row>
@@ -7394,6 +7703,16 @@ if (nbOfDays % 30 == 0)  {
                                 <property name="strength">-1</property>
                             </structure>
                         </list-property>
+                        <list-property name="filter">
+                            <structure>
+                                <property name="operator">eq</property>
+                                <expression name="expr" type="javascript">row["runningCount"]</expression>
+                                <simple-property-list name="value1">
+                                    <value>1</value>
+                                </simple-property-list>
+                                <property name="updateAggregation">true</property>
+                            </structure>
+                        </list-property>
                         <column id="2473"/>
                         <header>
                             <row id="2465">
@@ -7439,12 +7758,7 @@ if (nbOfDays % 30 == 0)  {
             <list-property name="visibility">
                 <structure>
                     <property name="format">all</property>
-                    <expression name="valueExpr" type="javascript">if (row["tableCheck"] == null){
-	true
-}
-else{
-	false
-}</expression>
+                    <expression name="valueExpr" type="javascript">(row["tableCheck"] == null)</expression>
                 </structure>
             </list-property>
             <list-property name="boundDataColumns">
@@ -7575,6 +7889,7 @@ else{
             </column>
             <row id="3097">
                 <cell id="3098">
+                    <property name="textAlign">center</property>
                     <table id="5990">
                         <property name="borderBottomStyle">none</property>
                         <property name="borderLeftStyle">none</property>
@@ -7590,12 +7905,7 @@ else{
                         <list-property name="visibility">
                             <structure>
                                 <property name="format">all</property>
-                                <expression name="valueExpr" type="javascript">if (row["tableCheck"] == null){
-	true
-}
-else{
-	false
-}</expression>
+                                <expression name="valueExpr" type="javascript">(row["tableCheck"] == null || (BirtStr.toLower( reportContext.getLocale().toString()) == "en_us") )</expression>
                             </structure>
                         </list-property>
                         <list-property name="boundDataColumns">
@@ -7611,37 +7921,37 @@ else{
                                 <expression name="expression" type="javascript">if(dataSetRow["nutListValue"] != null &amp;&amp; dataSetRow["nutListValue"] != -1){
 
 	if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.energykj", reportContext.getLocale()) || dataSetRow["nutListNut"] == reportContext.getMessage("nut.energykcal", reportContext.getLocale())){
-		BirtMath.round(dataSetRow["nutListValue"], 0)
+		Formatter.format(dataSetRow["nutListValue"], "#,##0")
 	}
 	else if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.lipids", reportContext.getLocale()) &amp;&amp; dataSetRow["nutListValue"] >= 10){
-		BirtMath.round(dataSetRow["nutListValue"], 0)
+		Formatter.format(dataSetRow["nutListValue"], "#,##0")
 	}
 	else if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.lipids", reportContext.getLocale()) &amp;&amp; dataSetRow["nutListValue"] > 0.5){
-		BirtMath.round(dataSetRow["nutListValue"], 1)
+		Formatter.format(dataSetRow["nutListValue"], "#,##0.#")
 	}
 	else if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.lipids", reportContext.getLocale()) &amp;&amp; dataSetRow["nutListValue"] > 0){
-		"&lt; 0,5"
+		"&lt; " + Formatter.format(0.5, "#,##0.#")
 	}
 	else if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.lipids", reportContext.getLocale())){
 		"0"
 	}
 	else if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.fatsat", reportContext.getLocale()) || dataSetRow["nutListNut"] == reportContext.getMessage("nut.fatmono", reportContext.getLocale()) || dataSetRow["nutListNut"] == reportContext.getMessage("nut.fatpoly", reportContext.getLocale())){
 		if(dataSetRow["nutListValue"] >= 10){
-			BirtMath.round(dataSetRow["nutListValue"], 0)
+			Formatter.format(dataSetRow["nutListValue"], "#,##0")
 		}
 		else if(dataSetRow["nutListValue"] >= 0.1){
-			BirtMath.round(dataSetRow["nutListValue"], 1)
+			Formatter.format(dataSetRow["nutListValue"], "#,##0.#")
 		}
 		else{
-			"&lt; 0,1"
+			"&lt; " + Formatter.format(0,1, "#0")
 		}
 	}	
 	else if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.carbohydrate", reportContext.getLocale()) || dataSetRow["nutListNut"] == reportContext.getMessage("nut.sugar", reportContext.getLocale()) || dataSetRow["nutListNut"] == reportContext.getMessage("nut.fiber", reportContext.getLocale()) || dataSetRow["nutListNut"] == reportContext.getMessage("nut.proteins", reportContext.getLocale())){
 		if(dataSetRow["nutListValue"] >= 10){
-			BirtMath.round(dataSetRow["nutListValue"], 0)
+			Formatter.format(dataSetRow["nutListValue"], "#,##0")
 		}
 		else{
-			BirtMath.round(dataSetRow["nutListValue"], 1)
+			Formatter.format(dataSetRow["nutListValue"], "#,##0.#")
 		}
 	}
 	else if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.sodium", reportContext.getLocale())){
@@ -7651,13 +7961,13 @@ else{
 		}
 
 		if(value >= 1){
-			BirtMath.round(value, 1)
+			Formatter.format(value, "#,##0.#")
 		}
 		else if(value >= 0.005){
-			BirtMath.round(value, 2)
+			Formatter.format(value, "#,##0.##")
 		}
 		else if(value > 0){
-			"&lt; 0,005"
+			"&lt; " +  Formatter.format(0,005, "#,##0.###")
 		}
 		else{
 			"0"
@@ -7665,23 +7975,23 @@ else{
 	}
 	else if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.salt", reportContext.getLocale())){
 		if(dataSetRow["nutListValue"] >= 1){
-			BirtMath.round(dataSetRow["nutListValue"], 1)
+			Formatter.format(dataSetRow["nutListValue"], "#,##0.#")
 		}
 		else if(dataSetRow["nutListValue"] >= 0.0125){
-			BirtMath.round(dataSetRow["nutListValue"], 2)
+			 Formatter.format(dataSetRow["nutListValue"], "#,##0.##")
 		}
 		else if(dataSetRow["nutListValue"] > 0){
-			"&lt; 0,0125"
+			"&lt; " +  Formatter.format( 0,0125, "#,##0.####")
 		}
 		else{
 			(dataSetRow["nutListValue"] == -1 ) ? ""  : "0";
 		}
 	}
 	else if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.starch", reportContext.getLocale())){
-		BirtMath.round(dataSetRow["nutListValue"], 1)
+		Formatter.format(dataSetRow["nutListValue"], "#,##0.#")
 	}
 	else{
-		dataSetRow["nutListValue"]
+		Formatter.format(dataSetRow["nutListValue"] , "#,##0.##")
 	}
 }</expression>
                                 <property name="dataType">string</property>
@@ -7693,37 +8003,37 @@ else{
                                 <expression name="expression" type="javascript">if(dataSetRow["nutListValuePerServing"] != null){
 
 	if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.energykj", reportContext.getLocale()) || dataSetRow["nutListNut"] == reportContext.getMessage("nut.energykcal", reportContext.getLocale())){
-	BirtMath.round(dataSetRow["nutListValuePerServing"], 0)
+		Formatter.format( dataSetRow["nutListValuePerServing"] , "#,##0")
 	}
 	else if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.lipids", reportContext.getLocale()) &amp;&amp; dataSetRow["nutListValuePerServing"] >= 10){
-	BirtMath.round(dataSetRow["nutListValuePerServing"], 0)
+		Formatter.format( dataSetRow["nutListValuePerServing"] , "#,##0")
 	}
 	else if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.lipids", reportContext.getLocale()) &amp;&amp; dataSetRow["nutListValuePerServing"] > 0.5){
-	BirtMath.round(dataSetRow["nutListValuePerServing"], 1)
+		Formatter.format( dataSetRow["nutListValuePerServing"] , "#,##0.#")
 	}
 	else if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.lipids", reportContext.getLocale()) &amp;&amp; dataSetRow["nutListValuePerServing"] > 0){
-	"&lt; 0,5"
+		"&lt; " + Formatter.format( 0.5 , "#,##0.#")
 	}
 	else if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.lipids", reportContext.getLocale())){
-	"0"
+		"0"
 	}
 	else if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.fatsat", reportContext.getLocale()) || dataSetRow["nutListNut"] == reportContext.getMessage("nut.fatmono", reportContext.getLocale()) || dataSetRow["nutListNut"] == reportContext.getMessage("nut.fatpoly", reportContext.getLocale())){
 		if(dataSetRow["nutListValuePerServing"] >= 10){
-		BirtMath.round(dataSetRow["nutListValuePerServing"], 0)
+			Formatter.format( dataSetRow["nutListValuePerServing"] , "#,##0")
 		}
 		else if(dataSetRow["nutListValuePerServing"] >= 0.1){
-			BirtMath.round(dataSetRow["nutListValuePerServing"], 1)
+			Formatter.format( dataSetRow["nutListValuePerServing"] , "#,##0.#")
 		}
 		else{
-			"&lt; 0,1"
+			"&lt; " + Formatter.format( 0.1, "#,##0.#")
 		}
 	}	
 	else if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.carbohydrate", reportContext.getLocale()) || dataSetRow["nutListNut"] == reportContext.getMessage("nut.sugar", reportContext.getLocale()) || dataSetRow["nutListNut"] == reportContext.getMessage("nut.fiber", reportContext.getLocale()) || dataSetRow["nutListNut"] == reportContext.getMessage("nut.proteins", reportContext.getLocale())){
 		if(dataSetRow["nutListValuePerServing"] >= 10){
-		BirtMath.round(dataSetRow["nutListValuePerServing"], 0)
+			Formatter.format( dataSetRow["nutListValuePerServing"] , "#,##0")
 		}
 		else{
-		BirtMath.round(dataSetRow["nutListValuePerServing"], 1)
+			Formatter.format( dataSetRow["nutListValuePerServing"] , "#,##0.#")
 		}
 	}
 	else if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.sodium", reportContext.getLocale())){
@@ -7733,37 +8043,37 @@ else{
 		}
 
 		if(value >= 1){
-		BirtMath.round(value, 1)
+			Formatter.format( value , "#,##0.#")
 		}
 		else if(value >= 0.005){
-		BirtMath.round(value, 2)
+			Formatter.format( value , "#,##0.##")
 		}
 		else if(value > 0){
-		"&lt; 0,005"
+			"&lt; 0,005" + Formatter.format( 0.005 , "#,##0.###")
 		}
 		else{
-		"0"
+			"0"
 		}
 	}
 	else if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.salt", reportContext.getLocale())){
 		if(dataSetRow["nutListValuePerServing"] >= 1){
-		BirtMath.round(dataSetRow["nutListValuePerServing"], 1)
+			Formatter.format( dataSetRow["nutListValuePerServing"] , "#,##0.#")
 		}
 		else if(dataSetRow["nutListValuePerServing"] >= 0.0125){
-		BirtMath.round(dataSetRow["nutListValuePerServing"], 2)
+			Formatter.format( dataSetRow["nutListValuePerServing"] , "#,##0.##")
 		}
 		else if(dataSetRow["nutListValuePerServing"] > 0){
-		"&lt; 0,0125"
+		"&lt; " + Formatter.format( 0.0125 , "#,##0.####")
 		}
 		else{
 		"0"
 		}
 	}
 	else if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.starch", reportContext.getLocale())){
-		BirtMath.round(dataSetRow["nutListValuePerServing"], 1)
+		Formatter.format( dataSetRow["nutListValuePerServing"] , "#,##0.#")
 	}
 	else{
-	dataSetRow["nutListValuePerServing"]
+		Formatter.format( dataSetRow["nutListValuePerServing"] , "#,##0.##")
 	}
 }</expression>
                                 <property name="dataType">string</property>
@@ -7830,10 +8140,84 @@ dataSetRow["nutListUnit"]
                                 <expression name="expression" type="javascript">dataSetRow["color"]</expression>
                                 <property name="dataType">string</property>
                             </structure>
+                            <structure>
+                                <property name="name">nutSort</property>
+                                <text-property name="displayName">nutSort</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["nutSort"]</expression>
+                                <property name="dataType">integer</property>
+                                <property name="allowExport">true</property>
+                            </structure>
+                            <structure>
+                                <property name="name">reportLocales</property>
+                                <text-property name="displayName">reportLocales</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["reportLocales"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">gdaToShow</property>
+                                <text-property name="displayName">gdaToShow</text-property>
+                                <expression name="expression" type="javascript">if(row["nutListNut"] == reportContext.getMessage("nut.sodium", reportContext.getLocale())){
+	reportContext.getMessage( "of", reportContext.getLocale()) + row["GDA"] + dataSetRow["nutListUnit"].replace("/100g", ""); 
+} else {
+	reportContext.getMessage( "of", reportContext.getLocale()) + row["GDA"] + row["nutListUnit"].replace("/100g", "");
+}</expression>
+                                <property name="dataType">string</property>
+                                <property name="allowExport">true</property>
+                            </structure>
+                            <structure>
+                                <property name="name">localNutSort</property>
+                                <text-property name="displayName">localNutSort</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["localNutSort"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
+                            <structure>
+                                <property name="name">isReportLocaleExist</property>
+                                <text-property name="displayName">isReportLocaleExist</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["isReportLocaleExist"]</expression>
+                                <property name="dataType">boolean</property>
+                            </structure>
+                            <structure>
+                                <property name="name">nbIslocalReportLocaleExist</property>
+                                <text-property name="displayName">nbIslocalReportLocaleExist</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["nbIslocalReportLocaleExist"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
                         </list-property>
                         <structure name="toc"/>
                         <property name="repeatHeader">false</property>
                         <property name="pageBreakInterval">1000</property>
+                        <list-property name="sort">
+                            <structure>
+                                <expression name="key" type="javascript">row["localNutSort"]</expression>
+                                <property name="direction">asc</property>
+                                <property name="strength">-1</property>
+                            </structure>
+                        </list-property>
+                        <list-property name="filter">
+                            <structure>
+                                <property name="operator">is-true</property>
+                                <expression name="expr" type="javascript">if ( row["nbIslocalReportLocaleExist"] == 0) {
+	true;
+} else {
+
+	if(  row["reportLocales"] == null ||  row["reportLocales"] ==  "") { 
+		true; 
+	} else { 
+
+		var locales = BirtStr.toLower(row["reportLocales"]).replace(/\s/g, '').split(",");
+		var reportLocale = BirtStr.toLower( reportContext.getLocale().toString() );
+	
+		for (var i = 0 ; i &lt; locales.length; i++) {
+			if (locales[i] == reportLocale ) {
+				true;
+				break;
+			}
+		}
+	}
+}</expression>
+                                <property name="updateAggregation">true</property>
+                            </structure>
+                        </list-property>
                         <column id="5985">
                             <property name="style">becpg-col-header</property>
                             <property name="width">2.0729166666666665in</property>
@@ -7860,7 +8244,6 @@ dataSetRow["nutListUnit"]
                         </column>
                         <header>
                             <row id="5991">
-                                <property name="style">becpg-chapter-header</property>
                                 <cell id="5992">
                                     <property name="colSpan">6</property>
                                     <property name="rowSpan">1</property>
@@ -7978,7 +8361,7 @@ dataSetRow["nutListUnit"]
                                     <property name="style">becpg-cell-dynamic-header</property>
                                     <text id="6003">
                                         <property name="contentType">html</property>
-                                        <text-property name="content"><![CDATA[<div style="font-size: 1px; display: inline; float: left; width: <VALUE-OF>(row["depthLevel"]-1)*20</VALUE-OF>px;">&amp;nbsp;</div><VALUE-OF>row["legalName"] != null &amp;&amp; row["legalName"] != "" ?row["legalName"] : row["nutListNut"]</VALUE-OF>]]></text-property>
+                                        <text-property name="content"><![CDATA[<div style="font-size: 1px; display: inline; float: left; width: <VALUE-OF>(row["depthLevel"]-1)*20</VALUE-OF>px;">&amp;nbsp;</div><VALUE-OF format="HTML">row["legalName"] != null &amp;&amp; row["legalName"] != "" ?row["legalName"] : row["nutListNut"]</VALUE-OF>]]></text-property>
                                     </text>
                                 </cell>
                                 <cell id="6004">
@@ -7986,8 +8369,7 @@ dataSetRow["nutListUnit"]
                                     <data id="6005">
                                         <property name="style">becpg-data</property>
                                         <structure name="numberFormat">
-                                            <property name="category">General Number</property>
-                                            <property name="pattern">General Number</property>
+                                            <property name="category">Unformatted</property>
                                         </structure>
                                         <property name="resultSetColumn">nutListValue</property>
                                     </data>
@@ -8040,7 +8422,7 @@ dataSetRow["nutListUnit"]
                                         <column id="7379"/>
                                         <row id="7380">
                                             <method name="onRender"><![CDATA[//If the width of the column changes, adjust the value of the coefficient.
-var coef = -488;
+var coef = -251;
 var nutListGDAPerc = this.getRowData().getColumnValue("nutListGDAPerc");
 var color = this.getRowData().getColumnValue("color");
 
@@ -8049,11 +8431,13 @@ if (color == "" || color == null  ) {
 }
 
 if(nutListGDAPerc != null &amp;&amp; nutListGDAPerc != "") {
-	this.getStyle().backgroundImage = "./cccccc-200X30.png";
+	this.getStyle().backgroundImage = "cccccc-200X30.png";
 	this.getStyle().backgroundPositionX = ((parseFloat(nutListGDAPerc)/100) * coef) + "%";
 	this.getStyle().backgroundRepeat = "no-repeat";
 	this.getStyle().backgroundColor = color;
-}]]></method>
+	
+}
+]]></method>
                                             <property name="backgroundImageType">embed</property>
                                             <property name="backgroundRepeat">no-repeat</property>
                                             <property name="height">0.188in</property>
@@ -8091,136 +8475,11 @@ if(nutListGDAPerc != null &amp;&amp; nutListGDAPerc != "") {
                                                             <property name="paddingLeft">0pt</property>
                                                             <property name="paddingBottom">0pt</property>
                                                             <property name="paddingRight">0pt</property>
-                                                            <text id="4479">
+                                                            <data id="7574">
                                                                 <property name="fontSize">9pt</property>
                                                                 <property name="fontWeight">bold</property>
-                                                                <property name="color">#000000</property>
-                                                                <property name="contentType">html</property>
-                                                                <text-property name="content"><![CDATA[<VALUE-OF>reportContext.getMessage( "of", reportContext.getLocale()) + row["GDA"] + row["nutListUnit"].replace("/100g", "");</VALUE-OF>]]></text-property>
-                                                            </text>
-                                                        </cell>
-                                                    </row>
-                                                </grid>
-                                            </cell>
-                                        </row>
-                                    </grid>
-                                    <grid id="7401">
-                                        <property name="backgroundPositionX">-90%</property>
-                                        <property name="backgroundSizeHeight">contain</property>
-                                        <property name="backgroundSizeWidth">contain</property>
-                                        <property name="marginTop">2pt</property>
-                                        <property name="marginLeft">1pt</property>
-                                        <property name="marginBottom">2pt</property>
-                                        <property name="marginRight">1pt</property>
-                                        <property name="height">0.188in</property>
-                                        <property name="width">100%</property>
-                                        <list-property name="visibility">
-                                            <structure>
-                                                <property name="format">all</property>
-                                                <expression name="valueExpr" type="javascript">true</expression>
-                                            </structure>
-                                        </list-property>
-                                        <column id="7402">
-                                            <property name="width">2.25in</property>
-                                        </column>
-                                        <row id="7403">
-                                            <method name="onRender"><![CDATA[//If the width of the column changes, adjust the value of the coefficient.
-var coef = -488;
-var nutListGDAPerc = this.getRowData().getColumnValue("nutListGDAPerc");
-
-if(nutListGDAPerc != null &amp;&amp; nutListGDAPerc != "") {
-	this.getStyle().backgroundImage = "./cccccc-200X30.png";
-	this.getStyle().backgroundPositionX = ((parseFloat(nutListGDAPerc)/100) * coef) + "%";
-	this.getStyle().backgroundRepeat = "no-repeat";
-}]]></method>
-                                            <property name="backgroundColor">#CCCCCC</property>
-                                            <property name="backgroundImageType">embed</property>
-                                            <property name="backgroundRepeat">no-repeat</property>
-                                            <property name="height">0.188in</property>
-                                            <cell id="7404">
-                                                <property name="paddingTop">0pt</property>
-                                                <property name="paddingLeft">0pt</property>
-                                                <property name="paddingBottom">0pt</property>
-                                                <property name="paddingRight">0pt</property>
-                                                <grid id="7413">
-                                                    <property name="backgroundPositionX">-90%</property>
-                                                    <property name="marginTop">0pt</property>
-                                                    <property name="marginLeft">0pt</property>
-                                                    <property name="marginBottom">0pt</property>
-                                                    <property name="marginRight">0pt</property>
-                                                    <property name="width">100%</property>
-                                                    <list-property name="visibility">
-                                                        <structure>
-                                                            <property name="format">all</property>
-                                                            <expression name="valueExpr" type="javascript">( row["nutListGDAPerc"] == null || row["nutListGDAPerc"] == "")</expression>
-                                                        </structure>
-                                                    </list-property>
-                                                    <column id="7414">
-                                                        <property name="width">2.25in</property>
-                                                    </column>
-                                                    <row id="7415">
-                                                        <method name="onRender"><![CDATA[//If the width of the column changes, adjust the value of the coefficient.
-var coef = -488;
-var nutListGDAPerc = this.getRowData().getColumnValue("nutListGDAPerc");
-var color = this.getRowData().getColumnValue("color");
-
-if (color == "" || color == null  ) {
-	color = "#CCCCCC";
-}
-
-if(nutListGDAPerc != null &amp;&amp; nutListGDAPerc != "") {
-	this.getStyle().backgroundImage = "./cccccc-200X30.png";
-	this.getStyle().backgroundPositionX = ((parseFloat(nutListGDAPerc)/100) * coef) + "%";
-	this.getStyle().backgroundRepeat = "no-repeat";
-	this.getStyle().backgroundColor = color;
-}]]></method>
-                                                        <property name="backgroundImageType">embed</property>
-                                                        <property name="backgroundRepeat">no-repeat</property>
-                                                        <property name="height">0.188in</property>
-                                                        <cell id="7416">
-                                                            <property name="paddingTop">0pt</property>
-                                                            <property name="paddingLeft">0pt</property>
-                                                            <property name="paddingBottom">0pt</property>
-                                                            <property name="paddingRight">0pt</property>
-                                                            <grid id="7417">
-                                                                <property name="height">0.34375in</property>
-                                                                <property name="width">100%</property>
-                                                                <column id="7418">
-                                                                    <property name="textAlign">left</property>
-                                                                </column>
-                                                                <column id="7419">
-                                                                    <property name="textAlign">right</property>
-                                                                </column>
-                                                                <row id="7420">
-                                                                    <property name="backgroundImageType">embed</property>
-                                                                    <cell id="7421">
-                                                                        <property name="paddingTop">0pt</property>
-                                                                        <property name="paddingLeft">0pt</property>
-                                                                        <property name="paddingBottom">0pt</property>
-                                                                        <property name="paddingRight">0pt</property>
-                                                                        <text id="7422">
-                                                                            <property name="fontSize">9pt</property>
-                                                                            <property name="fontWeight">bold</property>
-                                                                            <property name="color">#000000</property>
-                                                                            <property name="contentType">html</property>
-                                                                            <text-property name="content"><![CDATA[<VALUE-OF>Formatter.format(row["nutListGDAPerc"], "#0.##" )+ "%"</VALUE-OF>]]></text-property>
-                                                                        </text>
-                                                                    </cell>
-                                                                    <cell id="7423">
-                                                                        <property name="paddingTop">0pt</property>
-                                                                        <property name="paddingLeft">0pt</property>
-                                                                        <property name="paddingBottom">0pt</property>
-                                                                        <property name="paddingRight">0pt</property>
-                                                                        <text id="7424">
-                                                                            <property name="fontSize">9pt</property>
-                                                                            <property name="fontWeight">bold</property>
-                                                                            <property name="color">#000000</property>
-                                                                            <property name="contentType">html</property>
-                                                                            <text-property name="content"><![CDATA[<VALUE-OF>reportContext.getMessage( "of", reportContext.getLocale()) + row["GDA"] + row["nutListUnit"].replace("/100g", "");</VALUE-OF>]]></text-property>
-                                                                        </text>
-                                                                    </cell>
-                                                                </row>
-                                                            </grid>
+                                                                <property name="resultSetColumn">gdaToShow</property>
+                                                            </data>
                                                         </cell>
                                                     </row>
                                                 </grid>
@@ -8244,6 +8503,921 @@ if(nutListGDAPerc != null &amp;&amp; nutListGDAPerc != "") {
                             </row>
                         </detail>
                     </table>
+                    <table id="7441">
+                        <property name="fontSize">10pt</property>
+                        <property name="color">black</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">thin</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">thin</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <property name="marginBottom">2.2pt</property>
+                        <property name="masterPage">Simple MasterPage</property>
+                        <property name="pageBreakAfter">auto</property>
+                        <property name="pageBreakBefore">auto</property>
+                        <property name="pageBreakInside">avoid</property>
+                        <property name="width">40%</property>
+                        <property name="dataSet">NutList</property>
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr" type="javascript">(row["tableCheck"] == null || (BirtStr.toLower( reportContext.getLocale().toString()) != "en_us") )</expression>
+                            </structure>
+                        </list-property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">nutListNut</property>
+                                <text-property name="displayName">nutListNut</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["nutListNut"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">nutListValue</property>
+                                <text-property name="displayName">nutListValue</text-property>
+                                <expression name="expression" type="javascript">if(dataSetRow["nutListValue"] != null &amp;&amp; dataSetRow["nutListValue"] != -1){
+
+	if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.energykj", reportContext.getLocale()) || dataSetRow["nutListNut"] == reportContext.getMessage("nut.energykcal", reportContext.getLocale())){
+		Formatter.format(dataSetRow["nutListValue"], "#,##0")
+	}
+	else if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.lipids", reportContext.getLocale()) &amp;&amp; dataSetRow["nutListValue"] >= 10){
+		Formatter.format(dataSetRow["nutListValue"], "#,##0")
+	}
+	else if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.lipids", reportContext.getLocale()) &amp;&amp; dataSetRow["nutListValue"] > 0.5){
+		Formatter.format(dataSetRow["nutListValue"], "#,##0.#")
+	}
+	else if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.lipids", reportContext.getLocale()) &amp;&amp; dataSetRow["nutListValue"] > 0){
+		"&lt; " + Formatter.format(0.5, "#,##0.#")
+	}
+	else if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.lipids", reportContext.getLocale())){
+		"0"
+	}
+	else if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.fatsat", reportContext.getLocale()) || dataSetRow["nutListNut"] == reportContext.getMessage("nut.fatmono", reportContext.getLocale()) || dataSetRow["nutListNut"] == reportContext.getMessage("nut.fatpoly", reportContext.getLocale())){
+		if(dataSetRow["nutListValue"] >= 10){
+			Formatter.format(dataSetRow["nutListValue"], "#,##0")
+		}
+		else if(dataSetRow["nutListValue"] >= 0.1){
+			Formatter.format(dataSetRow["nutListValue"], "#,##0.#")
+		}
+		else{
+			"&lt; " + Formatter.format(0,1, "#0")
+		}
+	}	
+	else if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.carbohydrate", reportContext.getLocale()) || dataSetRow["nutListNut"] == reportContext.getMessage("nut.sugar", reportContext.getLocale()) || dataSetRow["nutListNut"] == reportContext.getMessage("nut.fiber", reportContext.getLocale()) || dataSetRow["nutListNut"] == reportContext.getMessage("nut.proteins", reportContext.getLocale())){
+		if(dataSetRow["nutListValue"] >= 10){
+			Formatter.format(dataSetRow["nutListValue"], "#,##0")
+		}
+		else{
+			Formatter.format(dataSetRow["nutListValue"], "#,##0.#")
+		}
+	}
+	else if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.sodium", reportContext.getLocale())){
+		var value = dataSetRow["nutListValue"];
+		if(dataSetRow["nutListUnit"] == "mg/100g"){
+			value = value / 1000
+		}
+
+		if(value >= 1){
+			Formatter.format(value, "#,##0.#")
+		}
+		else if(value >= 0.005){
+			Formatter.format(value, "#,##0.##")
+		}
+		else if(value > 0){
+			"&lt; " +  Formatter.format(0,005, "#,##0.###")
+		}
+		else{
+			"0"
+		}
+	}
+	else if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.salt", reportContext.getLocale())){
+		if(dataSetRow["nutListValue"] >= 1){
+			Formatter.format(dataSetRow["nutListValue"], "#,##0.#")
+		}
+		else if(dataSetRow["nutListValue"] >= 0.0125){
+			 Formatter.format(dataSetRow["nutListValue"], "#,##0.##")
+		}
+		else if(dataSetRow["nutListValue"] > 0){
+			"&lt; " +  Formatter.format( 0,0125, "#,##0.####")
+		}
+		else{
+			(dataSetRow["nutListValue"] == -1 ) ? ""  : "0";
+		}
+	}
+	else if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.starch", reportContext.getLocale())){
+		Formatter.format(dataSetRow["nutListValue"], "#,##0.#")
+	}
+	else{
+		Formatter.format(dataSetRow["nutListValue"] , "#,##0.###")
+	}
+}</expression>
+                                <property name="dataType">string</property>
+                                <property name="allowExport">true</property>
+                            </structure>
+                            <structure>
+                                <property name="name">nutListValuePerServing</property>
+                                <text-property name="displayName">nutListValuePerServing</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["nutListValuePerServing"]</expression>
+                                <property name="dataType">float</property>
+                                <property name="allowExport">true</property>
+                            </structure>
+                            <structure>
+                                <property name="name">nutListGDAPerc</property>
+                                <text-property name="displayName">nutListGDAPerc</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["nutListGDAPerc"]</expression>
+                                <property name="dataType">float</property>
+                                <property name="allowExport">true</property>
+                            </structure>
+                            <structure>
+                                <property name="name">depthLevel</property>
+                                <text-property name="displayName">depthLevel</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["depthLevel"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
+                            <structure>
+                                <property name="name">nutListUnit</property>
+                                <text-property name="displayName">nutListUnit</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["nutListUnit"].replace("/100g", "").replace("/100mL", "");</expression>
+                                <property name="dataType">string</property>
+                                <property name="allowExport">true</property>
+                            </structure>
+                            <structure>
+                                <property name="name">GDA</property>
+                                <text-property name="displayName">GDA</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["GDA"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
+                            <structure>
+                                <property name="name">legalName</property>
+                                <text-property name="displayName">legalName</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["legalName"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">nutListGDAPercFor100g</property>
+                                <text-property name="displayName">nutListGDAPercFor100g</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["nutListGDAPercFor100g"]</expression>
+                                <property name="dataType">float</property>
+                            </structure>
+                            <structure>
+                                <property name="name">tableCheck</property>
+                                <text-property name="displayName">tableCheck</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["tableCheck"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
+                            <structure>
+                                <property name="name">description</property>
+                                <text-property name="displayName">description</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["description"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">color</property>
+                                <text-property name="displayName">color</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["color"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">nutSort</property>
+                                <text-property name="displayName">nutSort</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["nutSort"]</expression>
+                                <property name="dataType">integer</property>
+                                <property name="allowExport">true</property>
+                            </structure>
+                            <structure>
+                                <property name="name">localEnergykcalPerServing</property>
+                                <text-property name="displayName">localEnergykcalPerServing</text-property>
+                                <property name="dataType">string</property>
+                                <property name="aggregateFunction">CONCATENATE</property>
+                                <list-property name="arguments">
+                                    <structure>
+                                        <property name="name">Expression</property>
+                                        <expression name="value" type="javascript">if ( dataSetRow["nutListValuePerServing"] &lt; 5) {
+			"0"
+} else if ( dataSetRow["nutListValuePerServing"] &lt;= 50 ) {
+			Formatter.format( getNearValue(dataSetRow["nutListValuePerServing"], 5), "#,##0");
+} else {
+			Formatter.format( getNearValue(dataSetRow["nutListValuePerServing"], 10), "#,##0");
+}</expression>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">Separat&amp;or</property>
+                                        <expression name="value" type="javascript">","</expression>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">Ma&amp;x length</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">Sho&amp;w all values</property>
+                                    </structure>
+                                </list-property>
+                                <expression name="filterExpr" type="javascript">if (  row["nutListNut"] == reportContext.getMessage("nut.energykcalCA_USA", reportContext.getLocale()) ) {
+	true;
+} else {
+	false;
+}</expression>
+                                <property name="allowExport">true</property>
+                            </structure>
+                            <structure>
+                                <property name="name">localTotalLipidFat</property>
+                                <text-property name="displayName">localTotalLipidFat</text-property>
+                                <property name="dataType">string</property>
+                                <property name="aggregateFunction">CONCATENATE</property>
+                                <list-property name="arguments">
+                                    <structure>
+                                        <property name="name">Expression</property>
+                                        <expression name="value" type="javascript">Formatter.format( dataSetRow["nutListValue"] / 100 * dataSetRow["servingSize"] * 9, "#,##0")</expression>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">Separat&amp;or</property>
+                                        <expression name="value" type="javascript">","</expression>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">Ma&amp;x length</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">Sho&amp;w all values</property>
+                                    </structure>
+                                </list-property>
+                                <expression name="filterExpr" type="javascript">(reportContext.getMessage("nut.totallipidfat", reportContext.getLocale()) == row["nutListNut"] )</expression>
+                                <property name="allowExport">true</property>
+                            </structure>
+                            <structure>
+                                <property name="name">reportLocales</property>
+                                <text-property name="displayName">reportLocales</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["reportLocales"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">servingSize</property>
+                                <text-property name="displayName">servingSize</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["servingSize"]</expression>
+                                <property name="dataType">float</property>
+                            </structure>
+                            <structure>
+                                <property name="name">localNutSort</property>
+                                <text-property name="displayName">localNutSort</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["localNutSort"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
+                            <structure>
+                                <property name="name">nbIslocalReportLocaleExist</property>
+                                <text-property name="displayName">nbIslocalReportLocaleExist</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["nbIslocalReportLocaleExist"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
+                            <structure>
+                                <property name="name">nutType</property>
+                                <text-property name="displayName">nutType</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["nutType"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <structure name="toc"/>
+                        <property name="repeatHeader">false</property>
+                        <property name="pageBreakInterval">1000</property>
+                        <list-property name="sort">
+                            <structure>
+                                <expression name="key" type="javascript">row["localNutSort"]</expression>
+                                <property name="direction">asc</property>
+                                <property name="strength">-1</property>
+                            </structure>
+                        </list-property>
+                        <list-property name="filter">
+                            <structure>
+                                <property name="operator">is-true</property>
+                                <expression name="expr" type="javascript">if ( row["nbIslocalReportLocaleExist"] == 0) {
+ 	true;
+} else {
+
+	 if(  row["reportLocales"] == null || row["reportLocales"] == "" ) {
+		true ;
+	} else { 
+
+		var locales = BirtStr.toLower(row["reportLocales"]).replace(/\s/g, '').split(",");
+		var reportLocale = BirtStr.toLower( reportContext.getLocale().toString() );
+	
+		for (var i = 0 ; i &lt; locales.length; i++) {
+			if (locales[i] == reportLocale ) {
+				true;
+				break;
+			}
+		}
+	}
+}</expression>
+                                <property name="updateAggregation">true</property>
+                            </structure>
+                        </list-property>
+                        <column id="7486">
+                            <property name="style">becpg-col-header</property>
+                            <property name="width">40%</property>
+                        </column>
+                        <column id="7571">
+                            <property name="width">10%</property>
+                        </column>
+                        <column id="7563">
+                            <property name="width">18%</property>
+                        </column>
+                        <column id="7490">
+                            <property name="width">32%</property>
+                        </column>
+                        <header>
+                            <row id="7442">
+                                <cell id="7443">
+                                    <property name="colSpan">4</property>
+                                    <property name="rowSpan">1</property>
+                                    <property name="backgroundColor">black</property>
+                                    <property name="color">#FFFFFF</property>
+                                    <property name="textAlign">center</property>
+                                    <label id="7444">
+                                        <text-property name="text">NUTRITION FACTS</text-property>
+                                    </label>
+                                </cell>
+                            </row>
+                            <row id="7492">
+                                <cell id="7493">
+                                    <property name="colSpan">4</property>
+                                    <property name="rowSpan">1</property>
+                                    <property name="borderBottomStyle">none</property>
+                                    <property name="borderLeftStyle">none</property>
+                                    <property name="borderRightStyle">none</property>
+                                    <property name="borderTopStyle">none</property>
+                                    <label id="3556">
+                                        <property name="fontWeight">normal</property>
+                                        <property name="display">inline</property>
+                                        <text-property name="text">Serving size:</text-property>
+                                    </label>
+                                    <label id="3954">
+                                        <property name="display">inline</property>
+                                    </label>
+                                    <data id="3814">
+                                        <property name="fontWeight">normal</property>
+                                        <property name="textAlign">right</property>
+                                        <property name="display">inline</property>
+                                        <property name="dataSet">Product</property>
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">servingSize</property>
+                                                <text-property name="displayName">servingSize</text-property>
+                                                <expression name="expression" type="javascript">dataSetRow["servingSize"]</expression>
+                                                <property name="dataType">float</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">servingSize</property>
+                                    </data>
+                                    <label id="3815">
+                                        <property name="fontWeight">normal</property>
+                                        <property name="display">inline</property>
+                                        <text-property name="text">g</text-property>
+                                    </label>
+                                </cell>
+                            </row>
+                            <row id="7499">
+                                <property name="style">becpg-row-border</property>
+                                <cell id="7500">
+                                    <property name="colSpan">4</property>
+                                    <property name="rowSpan">1</property>
+                                    <property name="borderBottomStyle">none</property>
+                                    <property name="borderLeftStyle">none</property>
+                                    <property name="borderRightStyle">none</property>
+                                    <property name="borderTopStyle">none</property>
+                                    <label id="3557">
+                                        <property name="fontWeight">bold</property>
+                                        <text-property name="text">Amount per serving</text-property>
+                                    </label>
+                                </cell>
+                            </row>
+                            <row id="7445">
+                                <property name="borderBottomStyle">solid</property>
+                                <property name="borderBottomWidth">medium</property>
+                                <cell id="7446">
+                                    <property name="colSpan">1</property>
+                                    <property name="rowSpan">1</property>
+                                    <property name="borderBottomStyle">none</property>
+                                    <property name="borderLeftStyle">none</property>
+                                    <property name="borderRightStyle">none</property>
+                                    <property name="borderTopStyle">none</property>
+                                    <label id="3558">
+                                        <property name="fontSize">11pt</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="display">inline</property>
+                                        <text-property name="text">Calories </text-property>
+                                    </label>
+                                    <label id="3953">
+                                        <property name="display">inline</property>
+                                    </label>
+                                    <data id="7514">
+                                        <property name="fontSize">11pt</property>
+                                        <structure name="numberFormat">
+                                            <property name="category">Custom</property>
+                                            <property name="pattern">#,##0</property>
+                                        </structure>
+                                        <property name="display">inline</property>
+                                        <property name="resultSetColumn">localEnergykcalPerServing</property>
+                                    </data>
+                                </cell>
+                                <cell id="7567">
+                                    <property name="colSpan">3</property>
+                                    <property name="rowSpan">1</property>
+                                    <property name="borderBottomStyle">none</property>
+                                    <property name="borderLeftStyle">none</property>
+                                    <property name="borderRightStyle">none</property>
+                                    <property name="borderTopStyle">none</property>
+                                    <property name="paddingRight">3pt</property>
+                                    <property name="textAlign">right</property>
+                                    <label id="3559">
+                                        <property name="display">inline</property>
+                                        <text-property name="text">Calories from Fat  </text-property>
+                                    </label>
+                                    <data id="7530">
+                                        <structure name="numberFormat">
+                                            <property name="category">Custom</property>
+                                            <property name="pattern">#,##0</property>
+                                        </structure>
+                                        <property name="display">inline</property>
+                                        <property name="resultSetColumn">localTotalLipidFat</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="7506">
+                                <cell id="7507">
+                                    <property name="colSpan">4</property>
+                                    <property name="rowSpan">1</property>
+                                    <property name="borderBottomStyle">none</property>
+                                    <property name="borderLeftStyle">none</property>
+                                    <property name="borderRightStyle">none</property>
+                                    <property name="borderTopStyle">none</property>
+                                    <property name="paddingRight">3pt</property>
+                                    <label id="3560">
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">right</property>
+                                        <text-property name="text">% Daily Value *</text-property>
+                                    </label>
+                                </cell>
+                            </row>
+                        </header>
+                        <detail>
+                            <row id="7462">
+                                <method name="onRender"><![CDATA[var nutListNut = this.getRowData().getColumnValue("nutListNut");
+
+if (nutListNut == reportContext.getMessage("nut.proteins", reportContext.getLocale()) ) {
+
+	this.text = nutListNut + " \n" + 
+	this.getParent().getParent().getStyle().borderBottomStyle + " : " + this.getParent().getParent().getStyle().borderBottomWidth;
+	this.getStyle().borderBottomStyle  = "solid";
+	this.getStyle().borderBottomWidth = "medium";
+} else {
+	this.getStyle().borderBottomStyle  = "solid";
+	this.getStyle().borderBottomWidth = "thin";
+}]]></method>
+                                <property name="style">becpg-row-border</property>
+                                <property name="verticalAlign">middle</property>
+                                <list-property name="visibility">
+                                    <structure>
+                                        <property name="format">all</property>
+                                        <expression name="valueExpr" type="javascript">( row["nutListNut"] == reportContext.getMessage("nut.energykcalCA_USA", reportContext.getLocale())  || row["nutListNut"] == reportContext.getMessage("nut.energykjCA_USA", reportContext.getLocale())  
+ || row["nutListNut"] == reportContext.getMessage("nut.energykcal", reportContext.getLocale())  || row["nutListNut"] == reportContext.getMessage("nut.energykj", reportContext.getLocale()) )</expression>
+                                    </structure>
+                                </list-property>
+                                <cell id="7463">
+                                    <property name="colSpan">3</property>
+                                    <property name="rowSpan">1</property>
+                                    <text id="7625">
+                                        <property name="fontSize">9pt</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="display">inline</property>
+                                        <property name="contentType">html</property>
+                                        <text-property name="content"><![CDATA[<div style="font-size: 1px; display: inline; float: left; width: <VALUE-OF>
+	var nut = row["nutListNut"].toLowerCase().replace(/ /g, "_").replace(/\./g, "").replace(/,/g, "");
+	var depthLevel = reportContext.getMessage("nut.depthLevel." + nut , reportContext.getLocale());
+
+	depthLevel = (depthLevel == null || depthLevel == "") ? 1 : depthLevel;
+
+	(depthLevel-1)*20
+</VALUE-OF>px;">&amp;nbsp;</div>
+
+<VALUE-OF format="HTML">
+//Initialize Script Event have some declaration function used here.
+var nutName = row["legalName"] != null &amp;&amp; row["legalName"] != "" ? row["legalName"] + "&amp;nbsp;" : row["nutListNut"] + "&amp;nbsp;";
+
+var rule_1 = [ reportContext.getMessage("nutType.energeticValue", reportContext.getLocale()) ];
+var rule_2 = [ reportContext.getMessage("nut.fatsat", reportContext.getLocale()), reportContext.getMessage("nut.fatmono", reportContext.getLocale()), reportContext.getMessage("nut.fatpoly", reportContext.getLocale()), reportContext.getMessage("nut.fatTotalTransAcids", reportContext.getLocale()), reportContext.getMessage("nut.lipids", reportContext.getLocale()) ];
+var rule_3 = [ reportContext.getMessage("nut.cholesterol", reportContext.getLocale()) ];
+var rule_4 = [ reportContext.getMessage("nut.sodium", reportContext.getLocale()), reportContext.getMessage("nut.potassium", reportContext.getLocale()) ];
+var rule_5 = [ reportContext.getMessage("nut.polyolsTotal", reportContext.getLocale()),reportContext.getMessage("nut.insolubleFiber", reportContext.getLocale()),  reportContext.getMessage("nut.solubleFiber", reportContext.getLocale()), reportContext.getMessage("nut.carbohydrateWithoutSugarAlcohol", reportContext.getLocale()), reportContext.getMessage("nut.carbohydrate", reportContext.getLocale()), reportContext.getMessage("nut.carbohydrateWithFiber", reportContext.getLocale()), reportContext.getMessage("nut.fiber",reportContext.getLocale()), reportContext.getMessage("nut.added_sugars", reportContext.getLocale()), reportContext.getMessage("nut.sugar", reportContext.getLocale()), reportContext.getMessage("nut.proteins", reportContext.getLocale()) ];
+//var rule_6 = [ reportContext.getMessage("nutType.vitamins", reportContext.getLocale()), reportContext.getMessage("nutType.minerals", reportContext.getLocale()) ];
+var rule_7 = [ reportContext.getMessage("nut.betaCarotene", reportContext.getLocale()) ];
+
+var vitsVIP = [ reportContext.getMessage("nut.vitaminA", reportContext.getLocale()), reportContext.getMessage("nut.vitaminC", reportContext.getLocale()), reportContext.getMessage("nut.vitaminA_iu", reportContext.getLocale()), 
+							reportContext.getMessage("nut.vitaminA_rae", reportContext.getLocale())
+						  ];
+
+var unit = row["nutListUnit"].replace("/100g", "").replace("/100mL", "");
+
+if(row["nutListValuePerServing"] != null  ){
+			
+			if( isNutPresent(rule_1, row["nutType"])) { // Règle pour les calories. A déplacer dans Aggrégation localNutListValuePerServing
+						
+						if ( row["nutListValuePerServing"] < 5) {
+									nutName + "0" + unit;
+						} else if ( row["nutListValuePerServing"] <= 50 ) {
+									nutName + getNearValue(row["nutListValuePerServing"], 5)+ unit;
+						} else{
+									nutName + getNearValue(row["nutListValuePerServing"], 10)+ unit;
+						}	
+						
+			} else if( isNutPresent(rule_2, row["nutListNut"] )) {
+						
+						if ( row["nutListValuePerServing"] < 0.5) {
+									nutName + "0"+ unit;
+						} else if ( row["nutListValuePerServing"] < 5 ) {
+									nutName + getNearValue(row["nutListValuePerServing"], 0.5)+ unit;
+						} else{
+									nutName + getNearValue(row["nutListValuePerServing"], 1)+ unit;
+						}	
+			
+			} else if( isNutPresent(rule_3, row["nutListNut"]) ) {
+						
+						if ( row["nutListValuePerServing"] < 2) {
+									nutName + "0"+ unit;
+						} else if ( row["nutListValuePerServing"] <= 5 ) {
+									nutName + "<5" + unit;
+						} else{
+									nutName + getNearValue(row["nutListValuePerServing"], 5)+ unit;
+						}
+			
+			} else if(isNutPresent(rule_4, row["nutListNut"] ) ){
+						
+						if ( row["nutListValuePerServing"] < 5) {
+									nutName + "0"+ unit;
+						} else if ( row["nutListValuePerServing"] <= 140 ) {
+									nutName + getNearValue(row["nutListValuePerServing"], 5)+ unit;
+						} else{
+									nutName + getNearValue(row["nutListValuePerServing"], 10)+ unit;
+						}
+			
+			} else if(isNutPresent(rule_5, row["nutListNut"]) ) {
+						var includes = (row["nutListNut"] == reportContext.getMessage("nut.added_sugars", reportContext.getLocale()) )? "includes {nb} {name} ": "{name} {nb}";
+					
+						
+						if ( row["nutListValuePerServing"] < 0.5) {
+									includes.replace("{nb}",   "0" + unit ).replace("{name}", nutName );
+						} else if ( row["nutListValuePerServing"] < 1 ) {
+									includes.replace("{nb}","<1"+ unit).replace("{name}",  nutName );
+						} else{
+									includes.replace("{nb}",	getNearValue(row["nutListValuePerServing"], 1) + unit ).replace("{name}",nutName );
+						}
+								
+			} else if( isNutPresent(rule_7, row["nutListNut"]) ) {//Beta-Carotene
+						
+						if ( row["nutListValuePerServing"] <= 10) {
+						
+									nutName + getNearValue(row["nutListValuePerServing"], 2)+ unit;
+									
+						} else if ( row["nutListValuePerServing"] <=50 ) {
+						
+									nutName + getNearValue(row["nutListValuePerServing"], 5)+ unit;
+									
+						} else{
+									nutName + getNearValue(row["nutListValuePerServing"], 10)+ unit;
+						}
+			
+			} else {
+						nutName + Formatter.format( row["nutListValuePerServing"], "#,##0.##") + unit;
+			}
+}
+if ( row["nutListValue"] == null) {
+		nutName
+}
+</VALUE-OF>]]></text-property>
+                                    </text>
+                                </cell>
+                                <cell id="7471">
+                                    <property name="colSpan">1</property>
+                                    <property name="rowSpan">1</property>
+                                    <property name="paddingTop">0pt</property>
+                                    <property name="paddingLeft">1pt</property>
+                                    <property name="paddingBottom">0pt</property>
+                                    <property name="paddingRight">3pt</property>
+                                    <property name="textAlign">right</property>
+                                    <text id="7529">
+                                        <property name="fontSize">9pt</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="color">#000000</property>
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr" type="javascript">( row["nutListValue"] ==  null )</expression>
+                                            </structure>
+                                        </list-property>
+                                        <property name="contentType">html</property>
+                                        <text-property name="content"><![CDATA[<VALUE-OF format="HTML">
+
+var rule_6 = [ reportContext.getMessage("nutType.vitamins", reportContext.getLocale()), reportContext.getMessage("nutType.minerals", reportContext.getLocale()) ];
+var vitsVIP = [ reportContext.getMessage("nut.vitaminA", reportContext.getLocale()), reportContext.getMessage("nut.vitaminC", reportContext.getLocale()), reportContext.getMessage("nut.vitaminA_iu", reportContext.getLocale()), reportContext.getMessage("nut.vitaminA_rae", reportContext.getLocale())];
+var rounding1Percent = [ reportContext.getMessage("nut.sodium", reportContext.getLocale())];
+						  
+var formattedNut = row["nutListNut"].toLowerCase().replace(/ /g, "_").replace(/\./g, "").replace(/,/g, "");
+var res = ( row["nutListValuePerServing"] / reportContext.getMessage("gda." + formattedNut , reportContext.getLocale()) ) * 100;
+
+if(isNutPresent(rule_6, row["nutType"]) &amp;&amp; isNutPresent(rounding1Percent, row["nutListNut"])==false ) { 
+	
+	if( isNutPresent(vitsVIP, row["nutListNut"]) &amp;&amp;  res < 2 ){
+		"2"+ "%";
+	} else if ( res < 2) {
+		"<2"+  "%";
+	} else  if ( res <= 10) {
+		getNearValue( res, 2)+  "%";			
+	} else  if ( res <= 50) {
+		getNearValue( res, 5)+  "%";
+	} else  {
+		getNearValue(res, 10)+  "%";				
+	}
+
+} else {
+	if(reportContext.getMessage("gda." + formattedNut , reportContext.getLocale() ) !=null ) {
+		Formatter.format(res, "#0") + "%";
+	}
+}
+</VALUE-OF>]]></text-property>
+                                    </text>
+                                </cell>
+                            </row>
+                        </detail>
+                        <footer>
+                            <row id="7515">
+                                <cell id="7516">
+                                    <property name="colSpan">4</property>
+                                    <property name="rowSpan">1</property>
+                                    <property name="paddingRight">3pt</property>
+                                    <grid id="3998">
+                                        <property name="fontSize">8pt</property>
+                                        <property name="fontWeight">normal</property>
+                                        <property name="borderBottomStyle">none</property>
+                                        <property name="borderLeftStyle">none</property>
+                                        <property name="borderRightStyle">none</property>
+                                        <property name="borderTopStyle">none</property>
+                                        <property name="width">100%</property>
+                                        <column id="3999">
+                                            <property name="width">37.4%</property>
+                                        </column>
+                                        <column id="3410">
+                                            <property name="width">19.1%</property>
+                                        </column>
+                                        <column id="3784">
+                                            <property name="width">11.22%</property>
+                                        </column>
+                                        <column id="3411">
+                                            <property name="width">11.15%</property>
+                                        </column>
+                                        <column id="4000">
+                                            <property name="width">12.9%</property>
+                                        </column>
+                                        <column id="4001">
+                                            <property name="width">7.9%</property>
+                                        </column>
+                                        <row id="4100">
+                                            <cell id="4101">
+                                                <property name="colSpan">6</property>
+                                                <property name="rowSpan">1</property>
+                                                <property name="fontSize">9pt</property>
+                                                <label id="7520">
+                                                    <property name="fontSize">8pt</property>
+                                                    <text-property name="text">* Percent Daily Values are based on a 2,000 calorie diet. Your daily values may be higher or lower depending on your calorie needs.</text-property>
+                                                </label>
+                                            </cell>
+                                        </row>
+                                        <row id="3548">
+                                            <cell id="3549"/>
+                                            <cell id="3550">
+                                                <label id="3740">
+                                                    <text-property name="text">Calories</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="3775">
+                                                <property name="colSpan">2</property>
+                                                <property name="rowSpan">1</property>
+                                                <label id="3741">
+                                                    <property name="textAlign">center</property>
+                                                    <text-property name="text">2000</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="3552">
+                                                <property name="colSpan">2</property>
+                                                <property name="rowSpan">1</property>
+                                                <property name="textAlign">center</property>
+                                                <label id="3742">
+                                                    <text-property name="text">2500</text-property>
+                                                </label>
+                                            </cell>
+                                        </row>
+                                        <row id="3734">
+                                            <property name="borderTopStyle">solid</property>
+                                            <property name="borderTopWidth">thin</property>
+                                            <cell id="3735">
+                                                <label id="3743">
+                                                    <text-property name="text">Total Fat</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="3736">
+                                                <label id="3844">
+                                                    <text-property name="text">Less than</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="3776">
+                                                <label id="3870">
+                                                    <property name="textAlign">right</property>
+                                                    <text-property name="text">65</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="3737">
+                                                <label id="3856">
+                                                    <text-property name="text">g</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="3738">
+                                                <label id="3878">
+                                                    <property name="textAlign">right</property>
+                                                    <text-property name="text">85</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="3805">
+                                                <label id="3863">
+                                                    <text-property name="text">g</text-property>
+                                                </label>
+                                            </cell>
+                                        </row>
+                                        <row id="3729">
+                                            <cell id="3730">
+                                                <label id="3744">
+                                                    <property name="paddingLeft">10pt</property>
+                                                    <text-property name="text">Saturated Fat</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="3731">
+                                                <label id="3845">
+                                                    <text-property name="text">Less than</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="3777">
+                                                <label id="3872">
+                                                    <property name="textAlign">right</property>
+                                                    <text-property name="text">20</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="3732">
+                                                <label id="3857">
+                                                    <text-property name="text">g</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="3733">
+                                                <label id="3879">
+                                                    <property name="textAlign">right</property>
+                                                    <text-property name="text">25</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="3806">
+                                                <label id="3862">
+                                                    <text-property name="text">g</text-property>
+                                                </label>
+                                            </cell>
+                                        </row>
+                                        <row id="3724">
+                                            <cell id="3725">
+                                                <label id="3745">
+                                                    <text-property name="text">Cholesterol</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="3726">
+                                                <label id="3846">
+                                                    <text-property name="text">Less than</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="3778">
+                                                <label id="3873">
+                                                    <property name="textAlign">right</property>
+                                                    <text-property name="text">300</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="3727">
+                                                <label id="3864">
+                                                    <text-property name="text">mg</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="3728">
+                                                <label id="3880">
+                                                    <property name="textAlign">right</property>
+                                                    <text-property name="text">300</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="3807">
+                                                <label id="3869">
+                                                    <text-property name="text">mg</text-property>
+                                                </label>
+                                            </cell>
+                                        </row>
+                                        <row id="3719">
+                                            <cell id="3720">
+                                                <label id="3746">
+                                                    <text-property name="text">Sodium</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="3721">
+                                                <label id="3847">
+                                                    <text-property name="text">Less than</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="3779">
+                                                <label id="3874">
+                                                    <property name="textAlign">right</property>
+                                                    <text-property name="text">2400</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="3722">
+                                                <label id="3865">
+                                                    <text-property name="text">mg</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="3723">
+                                                <label id="3881">
+                                                    <property name="textAlign">right</property>
+                                                    <text-property name="text">2400</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="3808">
+                                                <label id="3868">
+                                                    <text-property name="text">mg</text-property>
+                                                </label>
+                                            </cell>
+                                        </row>
+                                        <row id="3849">
+                                            <cell id="3850">
+                                                <label id="3748">
+                                                    <text-property name="text">Total Carbohydrate</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="3851"/>
+                                            <cell id="3852">
+                                                <label id="3876">
+                                                    <property name="textAlign">right</property>
+                                                    <text-property name="text">300</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="3853">
+                                                <label id="3859">
+                                                    <text-property name="text">g</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="3854">
+                                                <label id="3883">
+                                                    <property name="textAlign">right</property>
+                                                    <text-property name="text">375</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="3855">
+                                                <label id="3861">
+                                                    <text-property name="text">g</text-property>
+                                                </label>
+                                            </cell>
+                                        </row>
+                                        <row id="3709">
+                                            <cell id="3710">
+                                                <label id="3749">
+                                                    <property name="paddingLeft">10pt</property>
+                                                    <text-property name="text">Dietery fiber</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="3711"/>
+                                            <cell id="3781">
+                                                <label id="3877">
+                                                    <property name="textAlign">right</property>
+                                                    <text-property name="text">25</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="3712">
+                                                <label id="3858">
+                                                    <text-property name="text">g</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="3713">
+                                                <label id="3884">
+                                                    <property name="textAlign">right</property>
+                                                    <text-property name="text">30</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="3810">
+                                                <label id="3860">
+                                                    <text-property name="text">g</text-property>
+                                                </label>
+                                            </cell>
+                                        </row>
+                                    </grid>
+                                </cell>
+                            </row>
+                        </footer>
+                    </table>
                     <label id="2560"/>
                 </cell>
             </row>
@@ -8258,12 +9432,7 @@ if(nutListGDAPerc != null &amp;&amp; nutListGDAPerc != "") {
                         <list-property name="visibility">
                             <structure>
                                 <property name="format">all</property>
-                                <expression name="valueExpr" type="javascript">if (row["tableCheck"] == null){
-	true
-}
-else{
-	false
-}</expression>
+                                <expression name="valueExpr" type="javascript">(row["tableCheck"] == null)</expression>
                             </structure>
                         </list-property>
                         <list-property name="boundDataColumns">
@@ -8459,11 +9628,7 @@ else{
                                     <list-property name="visibility">
                                         <structure>
                                             <property name="format">all</property>
-                                            <expression name="valueExpr" type="javascript">if(row["alcooléthanol"]=="" || row["alcooléthanol"]==null) {
-true }
-else {
-false
-}</expression>
+                                            <expression name="valueExpr" type="javascript">( row["alcooléthanol"]=="" || row["alcooléthanol"] == null)</expression>
                                         </structure>
                                     </list-property>
                                     <list-property name="boundDataColumns">
@@ -8565,11 +9730,7 @@ BirtMath.round(dataSetRow["alcooléthanol"], 1) + " %"
                                     <list-property name="visibility">
                                         <structure>
                                             <property name="format">all</property>
-                                            <expression name="valueExpr" type="javascript">if(row["lclLabelClaim"]=="" || row["lclLabelClaim"]==null) {
-true }
-else {
-false
-}</expression>
+                                            <expression name="valueExpr" type="javascript">(row["lclLabelClaim"] == "" || row["lclLabelClaim"] == null)</expression>
                                         </structure>
                                     </list-property>
                                     <list-property name="boundDataColumns">
@@ -8643,11 +9804,7 @@ false
                         <list-property name="visibility">
                             <structure>
                                 <property name="format">all</property>
-                                <expression name="valueExpr" type="javascript">if(row["storageConditionsDescription"]=="" || row["storageConditionsDescription"]==null) {
-true }
-else {
-false
-}</expression>
+                                <expression name="valueExpr" type="javascript">(row["storageConditionsDescription"]=="" || row["storageConditionsDescription"]==null)</expression>
                             </structure>
                         </list-property>
                         <list-property name="boundDataColumns">
@@ -8694,11 +9851,7 @@ false
                         <list-property name="visibility">
                             <structure>
                                 <property name="format">all</property>
-                                <expression name="valueExpr" type="javascript">if(row["precautionOfUseDescription"]==""  || row["precautionOfUseDescription"]==null) {
-true }
-else {
-false
-}</expression>
+                                <expression name="valueExpr" type="javascript">(row["precautionOfUseDescription"]==""  || row["precautionOfUseDescription"]==null)</expression>
                             </structure>
                         </list-property>
                         <list-property name="boundDataColumns">
@@ -8745,11 +9898,7 @@ false
                         <list-property name="visibility">
                             <structure>
                                 <property name="format">all</property>
-                                <expression name="valueExpr" type="javascript">if(row["preparationTips"]=="" || row["preparationTips"]==null) {
-true }
-else {
-false
-}</expression>
+                                <expression name="valueExpr" type="javascript">(row["preparationTips"]=="" || row["preparationTips"]==null)</expression>
                             </structure>
                         </list-property>
                         <list-property name="boundDataColumns">
@@ -8877,9 +10026,11 @@ dataSetRow["illValue"]
                                     <data id="3242">
                                         <property name="fontWeight">normal</property>
                                         <property name="textUnderline">underline</property>
+                                        <property name="marginBottom">4.5pt</property>
                                         <property name="resultSetColumn">illGrp</property>
                                     </data>
                                     <text id="3240">
+                                        <property name="marginTop">4.5pt</property>
                                         <property name="contentType">html</property>
                                         <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["illValueToShow"]</VALUE-OF>]]></text-property>
                                     </text>
@@ -8902,12 +10053,7 @@ dataSetRow["illValue"]
                         <list-property name="visibility">
                             <structure>
                                 <property name="format">all</property>
-                                <expression name="valueExpr" type="javascript">if (row["tableCheck"] == null){
-	true
-}
-else{
-	false
-}</expression>
+                                <expression name="valueExpr" type="javascript">(row["tableCheck"] == null )</expression>
                             </structure>
                         </list-property>
                         <list-property name="boundDataColumns">
@@ -9142,7 +10288,8 @@ dataSetRow["mblMaxi"]
                                 <property name="name">pclValue</property>
                                 <text-property name="displayName">pclValue</text-property>
                                 <expression name="expression" type="javascript">dataSetRow["pclValue"]</expression>
-                                <property name="dataType">string</property>
+                                <property name="dataType">float</property>
+                                <property name="allowExport">true</property>
                             </structure>
                             <structure>
                                 <property name="name">pclUnit</property>
@@ -9154,13 +10301,15 @@ dataSetRow["mblMaxi"]
                                 <property name="name">pclMaxi</property>
                                 <text-property name="displayName">pclMaxi</text-property>
                                 <expression name="expression" type="javascript">dataSetRow["pclMaxi"]</expression>
-                                <property name="dataType">string</property>
+                                <property name="dataType">float</property>
+                                <property name="allowExport">true</property>
                             </structure>
                             <structure>
                                 <property name="name">pclMini</property>
                                 <text-property name="displayName">pclMini</text-property>
                                 <expression name="expression" type="javascript">dataSetRow["pclMini"]</expression>
-                                <property name="dataType">string</property>
+                                <property name="dataType">float</property>
+                                <property name="allowExport">true</property>
                             </structure>
                             <structure>
                                 <property name="name">tableCheck</property>
@@ -9293,8 +10442,8 @@ var min = ( row["pclMini"] ==null ||  row["pclMini"] =="" );
                                         <property name="style">becpg-data</property>
                                         <property name="fontSize">9pt</property>
                                         <structure name="numberFormat">
-                                            <property name="category">Fixed</property>
-                                            <property name="pattern">###0.00{RoundingMode=HALF_UP}</property>
+                                            <property name="category">Custom</property>
+                                            <property name="pattern">#,##0.##</property>
                                         </structure>
                                         <property name="whiteSpace">nowrap</property>
                                         <property name="resultSetColumn">pclValue</property>
@@ -9315,8 +10464,8 @@ var min = ( row["pclMini"] ==null ||  row["pclMini"] =="" );
                                         <property name="style">becpg-data</property>
                                         <property name="fontSize">9pt</property>
                                         <structure name="numberFormat">
-                                            <property name="category">Fixed</property>
-                                            <property name="pattern">###0.00{RoundingMode=HALF_UP}</property>
+                                            <property name="category">Custom</property>
+                                            <property name="pattern">#,##0.##</property>
                                         </structure>
                                         <property name="whiteSpace">nowrap</property>
                                         <property name="resultSetColumn">pclMini</property>
@@ -9328,8 +10477,8 @@ var min = ( row["pclMini"] ==null ||  row["pclMini"] =="" );
                                         <property name="style">becpg-data</property>
                                         <property name="fontSize">9pt</property>
                                         <structure name="numberFormat">
-                                            <property name="category">Fixed</property>
-                                            <property name="pattern">###0.00{RoundingMode=HALF_UP}</property>
+                                            <property name="category">Custom</property>
+                                            <property name="pattern">#,##0.##</property>
                                         </structure>
                                         <property name="whiteSpace">nowrap</property>
                                         <property name="resultSetColumn">pclMaxi</property>
@@ -9436,11 +10585,7 @@ false
                                     <list-property name="visibility">
                                         <structure>
                                             <property name="format">all</property>
-                                            <expression name="valueExpr" type="javascript">if(row["tableCheck"]==null) {
-true
-} else {
-false
-}</expression>
+                                            <expression name="valueExpr" type="javascript">( row["tableCheck"]==null )</expression>
                                         </structure>
                                     </list-property>
                                     <list-property name="boundDataColumns">
@@ -9633,18 +10778,22 @@ env en kg</text-property>
                                         <cell id="2756">
                                             <property name="style">becpg-cell-data</property>
                                             <data id="2508">
+                                                <structure name="numberFormat">
+                                                    <property name="category">Custom</property>
+                                                    <property name="pattern">#,##0.##</property>
+                                                </structure>
                                                 <property name="dataSet">Product</property>
                                                 <list-property name="boundDataColumns">
                                                     <structure>
                                                         <property name="name">productQty</property>
                                                         <text-property name="displayName">SPCB</text-property>
                                                         <expression name="expression" type="javascript">if(dataSetRow["productUnit"] == "P"){
-dataSetRow["productQty"]
-}
-else{
-"1"
+	dataSetRow["productQty"]
+	
+} else{
+	1
 }</expression>
-                                                        <property name="dataType">string</property>
+                                                        <property name="dataType">float</property>
                                                         <property name="allowExport">true</property>
                                                     </structure>
                                                 </list-property>
@@ -9672,7 +10821,7 @@ else{
                                             <data id="2766">
                                                 <structure name="numberFormat">
                                                     <property name="category">Custom</property>
-                                                    <property name="pattern">#0.#</property>
+                                                    <property name="pattern">#,##0.#</property>
                                                 </structure>
                                                 <property name="dataSet">packagingLevelMesures</property>
                                                 <list-property name="boundDataColumns">
@@ -9692,7 +10841,7 @@ else{
                                             <data id="3239">
                                                 <structure name="numberFormat">
                                                     <property name="category">Custom</property>
-                                                    <property name="pattern">#0.#</property>
+                                                    <property name="pattern">#,##0.#</property>
                                                 </structure>
                                                 <property name="dataSet">Product</property>
                                                 <list-property name="boundDataColumns">
@@ -9717,7 +10866,7 @@ dataSetRow["productCompoQtyUsed"] * 1000
                                             <data id="2714">
                                                 <structure name="numberFormat">
                                                     <property name="category">Custom</property>
-                                                    <property name="pattern">#0.#</property>
+                                                    <property name="pattern">#,##0.#</property>
                                                 </structure>
                                                 <property name="dataSet">packagingLevelMesures</property>
                                                 <list-property name="boundDataColumns">
@@ -9735,13 +10884,18 @@ dataSetRow["productCompoQtyUsed"] * 1000
                                         <cell id="2762">
                                             <property name="style">becpg-cell-data</property>
                                             <data id="2765">
+                                                <structure name="numberFormat">
+                                                    <property name="category">Custom</property>
+                                                    <property name="pattern">#,##0.##</property>
+                                                </structure>
                                                 <property name="dataSet">packagingLevelMesures</property>
                                                 <list-property name="boundDataColumns">
                                                     <structure>
                                                         <property name="name">nbProductsPkgLevel2</property>
                                                         <text-property name="displayName">nbProductsPkgLevel2</text-property>
                                                         <expression name="expression" type="javascript">dataSetRow["nbProductsPkgLevel2"]</expression>
-                                                        <property name="dataType">string</property>
+                                                        <property name="dataType">float</property>
+                                                        <property name="allowExport">true</property>
                                                     </structure>
                                                 </list-property>
                                                 <property name="resultSetColumn">nbProductsPkgLevel2</property>
@@ -9768,7 +10922,7 @@ dataSetRow["productCompoQtyUsed"] * 1000
                                             <data id="2751">
                                                 <structure name="numberFormat">
                                                     <property name="category">Custom</property>
-                                                    <property name="pattern">#0.##</property>
+                                                    <property name="pattern">#,##0.##</property>
                                                 </structure>
                                                 <property name="dataSet">packagingLevelMesures</property>
                                                 <list-property name="boundDataColumns">
@@ -9799,11 +10953,7 @@ dataSetRow["productCompoQtyUsed"] * 1000
                                     <list-property name="visibility">
                                         <structure>
                                             <property name="format">all</property>
-                                            <expression name="valueExpr" type="javascript">if(row["tableCheck"]==null) {
-true 
-} else {
-false
-}</expression>
+                                            <expression name="valueExpr" type="javascript">(row["tableCheck"]==null)</expression>
                                         </structure>
                                     </list-property>
                                     <list-property name="boundDataColumns">
@@ -9961,8 +11111,8 @@ en m</text-property>
                                             <property name="style">becpg-cell-data</property>
                                             <data id="2745">
                                                 <structure name="numberFormat">
-                                                    <property name="category">Fixed</property>
-                                                    <property name="pattern">###0.00{RoundingMode=HALF_UP}</property>
+                                                    <property name="category">Custom</property>
+                                                    <property name="pattern">#,##0.##</property>
                                                 </structure>
                                                 <property name="dataSet">packagingLevelMesures</property>
                                                 <list-property name="boundDataColumns">
@@ -9970,7 +11120,8 @@ en m</text-property>
                                                         <property name="name">grossWeightPkgLevel3</property>
                                                         <text-property name="displayName">grossWeightPkgLevel3</text-property>
                                                         <expression name="expression" type="javascript">dataSetRow["grossWeightPkgLevel3"]</expression>
-                                                        <property name="dataType">string</property>
+                                                        <property name="dataType">float</property>
+                                                        <property name="allowExport">true</property>
                                                     </structure>
                                                 </list-property>
                                                 <property name="resultSetColumn">grossWeightPkgLevel3</property>
@@ -10017,12 +11168,7 @@ en m</text-property>
                                     <list-property name="visibility">
                                         <structure>
                                             <property name="format">all</property>
-                                            <expression name="valueExpr" type="javascript">if (row["tableCheck"] == null){
-	true
-}
-else{
-	false
-}</expression>
+                                            <expression name="valueExpr" type="javascript">(row["tableCheck"] == null)</expression>
                                         </structure>
                                     </list-property>
                                     <list-property name="boundDataColumns">

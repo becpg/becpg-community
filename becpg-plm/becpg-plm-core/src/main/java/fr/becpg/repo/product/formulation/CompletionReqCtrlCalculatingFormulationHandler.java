@@ -46,6 +46,7 @@ import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.JsonScoreHelper;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.AbstractProductDataView;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
@@ -298,8 +299,8 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 
 						String color = getCatalogColor(catalog, i);
 
-						JSONArray reqFields = catalog.has(JsonScoreHelper.PROP_FIELDS) ? catalog.getJSONArray(JsonScoreHelper.PROP_FIELDS) : new JSONArray();
-						JSONArray uniqueFields = catalog.has(JsonScoreHelper.PROP_UNIQUE_FIELDS) ?catalog.getJSONArray(JsonScoreHelper.PROP_UNIQUE_FIELDS) : new JSONArray();
+						JSONArray reqFields = catalog.getJSONArray(JsonScoreHelper.PROP_FIELDS);
+						JSONArray uniqueFields = catalog.getJSONArray(JsonScoreHelper.PROP_UNIQUE_FIELDS);
 
 						JSONArray nonUniqueFields = extractNonUniqueFields(productData, catalog.getString(JsonScoreHelper.PROP_LABEL), properties,
 								uniqueFields);
@@ -612,15 +613,17 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 		boolean res = true;
 		QName fieldQname = QName.createQName(field.split("_")[0], namespaceService);
 		MLText mlText = (MLText) mlNodeService.getProperty(productData.getNodeRef(), fieldQname);
-		Locale loc = getLocaleFromCode(lang);
-		
+		Locale loc = null;
+		if(lang!=null) {
+			loc = MLTextHelper.parseLocale(lang);
+		}
 		if (field.contains("_")) {
 			String fieldSpecificLang = field.split("_")[1];
-			if ((mlText == null) || (mlText.getValue(loc) == null)
+			if ((mlText == null) || (loc !=null || mlText.getValue(loc) == null)
 					|| mlText.getValue(new Locale(fieldSpecificLang)).isEmpty()) {
 				res = false;
 			}
-		} else if ((lang != null)
+		} else if ((loc != null)
 				&& ((mlText == null) || (mlText.getValue(loc) == null) || mlText.getValue(loc).isEmpty())) {
 			res = false;
 		} else {
@@ -632,14 +635,5 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 		return res;
 	}
 	
-	private Locale getLocaleFromCode(String code){
-		if(code == null){
-			return null;
-		} else if(code.contains("_")){
-			return new Locale(code.split("_")[0], code.split("_")[1]);
-		} else {
-			return new Locale(code);
-		}
-	}
 
 }
