@@ -140,7 +140,7 @@ public class AsyncECOServiceImpl implements AsyncECOService {
 			} finally {
 				// Send mail after ECO
 				String action = apply ? "apply" : "simulate";
-				String subject = "[Notification]" + I18NUtil.getMessage("message.async-mail.eco." + action + ".subject");
+				String subject = I18NUtil.getMessage("message.async-mail.eco." + action + ".subject");
 				String url = apply ? "page/entity-data-lists?list=changeUnitList&nodeRef=" : "page/entity-data-lists?list=calculatedCharactList&nodeRef=";
 				
 				Map<String, Object> templateArgs = new HashMap<>();
