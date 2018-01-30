@@ -454,6 +454,22 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			if ((prev.getPluralLegalName() == null) && (component.getPluralLegalName() != null)) {
 				prev.setPluralLegalName(component.getPluralLegalName());
 			}
+			
+			if(prev instanceof CompositeLabeling && ((CompositeLabeling) prev).getIngType() == null) {
+				if(component instanceof CompositeLabeling &&  ((CompositeLabeling) component).getIngType()!=null) {
+					((CompositeLabeling)prev).setIngType(((CompositeLabeling) component).getIngType());
+				} else if(component instanceof IngItem &&  ((IngItem) component).getIngType()!=null) {
+					((CompositeLabeling)prev).setIngType(((IngItem) component).getIngType());
+				}
+			} else if(prev instanceof IngItem && ((IngItem) prev).getIngType() == null) {
+				if(component instanceof CompositeLabeling &&  ((CompositeLabeling) component).getIngType()!=null) {
+					((IngItem)prev).setIngType(((CompositeLabeling) component).getIngType());
+				} else if(component instanceof IngItem &&  ((IngItem) component).getIngType()!=null) {
+					((IngItem)prev).setIngType(((IngItem) component).getIngType());
+				}
+			}
+			
+			
 			prev.setPlural(true);
 
 			prev.getAllergens().addAll(component.getAllergens());

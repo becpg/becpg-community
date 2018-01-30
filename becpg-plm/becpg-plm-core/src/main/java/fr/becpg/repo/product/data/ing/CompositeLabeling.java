@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.springframework.extensions.surf.util.I18NUtil;
 
@@ -27,7 +26,6 @@ public class CompositeLabeling extends AbstractLabelingComponent {
 	
 	private Double volumeTotal = 0d; 
 	
-	private MLText pluralLegalName;
 	
 	private IngTypeItem ingType;
 	
@@ -52,21 +50,12 @@ public class CompositeLabeling extends AbstractLabelingComponent {
 	    this.declarationType = compositeLabeling.declarationType;
 	}
 	
-
 	public CompositeLabeling(ProductData productData) {
 		this.name = productData.getName();
 		this.nodeRef = productData.getNodeRef();
 		this.legalName = productData.getLegalName();
 		this.ingType = productData.getIngType();
 		
-	}
-
-	public MLText getPluralLegalName() {
-		return pluralLegalName;
-	}
-
-	public void setPluralLegalName(MLText pluralLegalName) {
-		this.pluralLegalName = pluralLegalName;
 	}
 
 	public IngTypeItem getIngType() {
