@@ -119,7 +119,7 @@ public class EntitySimulationServiceImpl implements EntitySimulationService {
 				recipientNodeRefs.add(personService.getPerson(userName));
 				Map<String, Object> templateModel = new HashMap<>();
 				templateModel.put("args", templateArgs);
-				String subject = "[Notification]" + I18NUtil.getMessage("message.async-mail.simulation.subject");
+				String subject = I18NUtil.getMessage("message.async-mail.simulation.subject");
 				
 				AuthenticationUtil.runAs(()->{
 					beCPGMailService.sendMail(recipientNodeRefs, subject, RepoConsts.EMAIL_ASYNC_ACTIONS_TEMPLATE, templateModel, true);

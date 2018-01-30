@@ -117,7 +117,7 @@ public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerato
 				recipientNodeRefs.add(personService.getPerson(userName));
 				Map<String, Object> templateModel = new HashMap<>();
 				templateModel.put("args", templateArgs);
-				String subject = "[Notification]" + I18NUtil.getMessage("message.async-mail.generate-reports.subject");
+				String subject = I18NUtil.getMessage("message.async-mail.generate-reports.subject");
 
 				Runnable mailTask = () -> {
 					AuthenticationUtil.runAs(() -> {

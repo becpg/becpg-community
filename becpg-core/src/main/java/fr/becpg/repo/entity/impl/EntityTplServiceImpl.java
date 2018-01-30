@@ -514,7 +514,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 			
 			Map<String, Object> templateModel = new HashMap<>();
 			templateModel.put("args", templateArgs);
-			String subject = "[Notification]" + I18NUtil.getMessage("message.async-mail.entitiesTemplate." + action + ".subject");
+			String subject = I18NUtil.getMessage("message.async-mail.entitiesTemplate." + action + ".subject");
 			
 			beCPGMailService.sendMail(recipientNodeRefs, subject, RepoConsts.EMAIL_ASYNC_ACTIONS_TEMPLATE, templateModel, true);		
 		}
