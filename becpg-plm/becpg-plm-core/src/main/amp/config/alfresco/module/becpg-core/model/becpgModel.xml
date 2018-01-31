@@ -248,6 +248,7 @@
 					<value>$</value>
 					<value>£</value>
 					<value>SFr</value>
+					<value>zł</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -258,8 +259,7 @@
 					<value></value>
 					<value>Composition</value>
 					<value>Packaging</value>
-					<value>Process</value>
-					
+					<value>Process</value>		
 				</list>
 			</parameter>
 		</constraint>
@@ -326,6 +326,17 @@
 					<value>SFr/m2</value>
 					<value>SFr/h</value>
 					<value>SFr/Pal</value>
+					<value>zł</value>
+					<value>zł/L</value>
+					<value>zł/cL</value>
+					<value>zł/mL</value>
+					<value>zł/kg</value>
+					<value>zł/g</value>
+					<value>zł/P</value>
+					<value>zł/m</value>
+					<value>zł/m2</value>
+					<value>zł/h</value>
+					<value>zł/Pal</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -792,7 +803,6 @@
 				</property>
 				<property name="bcpg:costType">
 					<type>d:text</type>
-					<mandatory>true</mandatory>
 					<index enabled="true">
 						<atomic>false</atomic>
 						<stored>false</stored>
