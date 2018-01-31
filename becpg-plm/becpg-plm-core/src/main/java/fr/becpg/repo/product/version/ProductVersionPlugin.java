@@ -2,6 +2,7 @@ package fr.becpg.repo.product.version;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.version.VersionType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,6 +46,11 @@ public class ProductVersionPlugin implements EntityVersionPlugin {
 	@Override
 	public void cancelCheckout(NodeRef origNodeRef, NodeRef workingCopyNodeRef) {
 		
+	}
+
+	@Override
+	public void impactWUsed(NodeRef entityNodeRef, VersionType versionType, String description) {
+			
 	}
 
 

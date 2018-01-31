@@ -37,6 +37,8 @@ public class FormCheckInWebScript extends DeclarativeWebScript {
 	private static final String PARAM_DESCRIPTION = "description";
 	private static final String MODEL_KEY_NAME_NODEREF = "noderef";
 	private static final String PARAM_BRANCH_TO_NODEREF = "branchToNodeRef";
+	private static final String PARAM_IMPACT_WUSED = "impactWused";
+	
 
 	private static final String VALUE_TRUE = "true";
 
@@ -45,6 +47,8 @@ public class FormCheckInWebScript extends DeclarativeWebScript {
 	private CheckOutCheckInService checkOutCheckInService;
 
 	private EntityVersionService entityVersionService;
+	
+	
 
 	public void setEntityVersionService(EntityVersionService entityVersionService) {
 		this.entityVersionService = entityVersionService;
@@ -61,7 +65,9 @@ public class FormCheckInWebScript extends DeclarativeWebScript {
 		NodeRef branchToNodeRef = null;
 		String description;
 		VersionType versionType;
-
+		boolean impactWused = false;
+		
+		
 		JSONObject json = (JSONObject) req.parseContent();
 		try {
 			nodeRef = new NodeRef((String) json.get(PARAM_NODEREF));
@@ -72,11 +78,16 @@ public class FormCheckInWebScript extends DeclarativeWebScript {
 				branchToNodeRef = new NodeRef((String) json.get(PARAM_BRANCH_TO_NODEREF));
 			}
 
+			if (json.has(PARAM_IMPACT_WUSED) && VALUE_TRUE.equals(json.get(PARAM_IMPACT_WUSED))) {
+				impactWused = true;
+			}
+			
 			if (logger.isDebugEnabled()) {
 				logger.debug("branchToNodeRef: " + branchToNodeRef);
 				logger.debug("nodeRef: " + nodeRef);
 				logger.debug("description: " + description);
 				logger.debug("versionType: " + versionType);
+				logger.debug("impactWused: " + impactWused);
 			}
 		} catch (JSONException e) {
 			logger.error("Failed to parse form fields", e);
@@ -92,6 +103,10 @@ public class FormCheckInWebScript extends DeclarativeWebScript {
 			properties.put(VersionModel.PROP_VERSION_TYPE, versionType);
 			properties.put(Version.PROP_DESCRIPTION, description);
 			newEntityNodeRef = checkOutCheckInService.checkin(nodeRef, properties);
+		}
+		
+		if(impactWused) {
+			entityVersionService.impactWUsed(newEntityNodeRef,versionType, description );
 		}
 
 		Map<String, Object> model = new HashMap<>();

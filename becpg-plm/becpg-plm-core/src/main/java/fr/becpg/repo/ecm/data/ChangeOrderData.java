@@ -46,6 +46,7 @@ public class ChangeOrderData extends BeCPGDataObject {
 	 */
 	private static final long serialVersionUID = -4704853499333377270L;
 	private String code;
+	private String description;
 	private ECOState ecoState;
 	private ChangeOrderType ecoType;
 	private Date effectiveDate;
@@ -54,6 +55,18 @@ public class ChangeOrderData extends BeCPGDataObject {
 	private List<WUsedListDataItem> wUsedList;
 	private List<SimulationListDataItem> simulationList;
 	private List<ChangeUnitDataItem> changeUnitList;
+
+	
+	
+	@AlfProp
+	@AlfQname(qname = "cm:description")
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
 	@AlfProp
 	@AlfQname(qname = "bcpg:code")
@@ -177,6 +190,7 @@ public class ChangeOrderData extends BeCPGDataObject {
 		result = prime * result + ((calculatedCharacts == null) ? 0 : calculatedCharacts.hashCode());
 		result = prime * result + ((changeUnitList == null) ? 0 : changeUnitList.hashCode());
 		result = prime * result + ((code == null) ? 0 : code.hashCode());
+		result = prime * result + ((description == null) ? 0 : description.hashCode());
 		result = prime * result + ((ecoState == null) ? 0 : ecoState.hashCode());
 		result = prime * result + ((ecoType == null) ? 0 : ecoType.hashCode());
 		result = prime * result + ((effectiveDate == null) ? 0 : effectiveDate.hashCode());
@@ -209,6 +223,11 @@ public class ChangeOrderData extends BeCPGDataObject {
 			if (other.code != null)
 				return false;
 		} else if (!code.equals(other.code))
+			return false;
+		if (description == null) {
+			if (other.description != null)
+				return false;
+		} else if (!description.equals(other.description))
 			return false;
 		if (ecoState != other.ecoState)
 			return false;

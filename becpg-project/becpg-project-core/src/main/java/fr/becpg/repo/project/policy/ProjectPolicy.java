@@ -15,6 +15,7 @@ import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
 import org.alfresco.repo.transaction.TransactionListener;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -226,6 +227,11 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 	@Override
 	public void cancelCheckout(NodeRef origNodeRef, NodeRef workingCopyNodeRef) {
 		queueNode(origNodeRef);		
+	}
+
+	@Override
+	public void impactWUsed(NodeRef entityNodeRef, VersionType versionType, String description) {
+		
 	}
 
 }
