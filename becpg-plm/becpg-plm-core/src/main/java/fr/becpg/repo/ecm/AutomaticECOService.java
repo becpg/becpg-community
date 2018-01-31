@@ -14,7 +14,5 @@ public interface AutomaticECOService {
 
 	ChangeOrderData getCurrentUserChangeOrderData();
 
-	boolean isWithoutRecord();
-	
 
 }
