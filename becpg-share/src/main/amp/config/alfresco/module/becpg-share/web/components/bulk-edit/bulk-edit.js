@@ -1470,62 +1470,158 @@
 								});
 								return false;
 							}
+							
+							//Warning before editing ERP code
+							
+							var popupKind = "bulk-edit",  li = '', colCount = 0;
+							var html = '<div class="hd">' + this.msg("header." + popupKind + ".picker") + '</div>';
+				       		html += '<div class="bd">';
+				       		html += '<form  class="form-container">';
+				       		html += '<div class="form-fields '+popupKind+'">';
+				       		html += '   <div class="set">';
+				       		html += '        <div class="form-field">';
+				       		html += '			<div  id="'+this.id+'-columns-list" />';
+				       		
+				       		for(i in displayFields){
+				       			var obj = this.datalistColumns.find(function(element){ return element.formsName == displayFields[i]});
+				       			li += '<li><input id="propSelected-' + i + '"  type="checkbox" name="propChecked" value="'+ displayFields[i] + '" /> <label for="propSelected-' + i + '" >' + obj.label + '</label></li>';
+				       		}
+				       		
+				       		html += '<span>'+this.msg("label.edit-columns.title") + '</span><br/><br/><ul style="width:' + ((colCount + 1) * 20) + 'em;">'+ li +'</ul>';	
+				       		
+				       		html += '          </div>';
+				       		html += '       </div>';
+				       		html += '    </div>';
+				       		html += '<div id="'+this.id+'-'+popupKind+'-ft" class="bdft">';
+				       		html += '</div>';
+				       		html += '</form></div>';
+				       		
+			       			var containerDiv = document.createElement("div");
+			       			containerDiv.innerHTML = html;
+				       			
+			       			this.widgets.columnsListPanel = Alfresco.util.createYUIPanel(containerDiv, {
+			       				draggable : true,
+			       				width : "33em"
+			       			});
+			       			
+			       			var divEl = Dom.get(this.id+'-' + popupKind + '-ft');
+			       			
+			       			divEl.innerHTML = '<input id="'+this.id+'-bulk-edit-ok" type="button" value="'+this.msg("button.ok")+'" />';
+			       			
+			       			this.widgets.columnsListPanel.show();
+			       			
+			       			var containerEl = Dom.get(this.id+'-columns-list').parentNode
+			       			
+			       			this.widgets.okBkButton = Alfresco.util.createYUIButton(this, "bulk-edit-ok", function (){
+				       			var me = this, selectedFields = Selector.query('input[type="checkbox"]', containerEl);
+			       				displayFields = [];
+			       				
+			       				for ( var i in selectedFields) {	
+			       					if(selectedFields[i].checked){
+			       						displayFields.push(selectedFields[i].value);
+			       					}	
+			       				}
+			       				
+			       				me.widgets.columnsListPanel.hide();
+			       				fnDialogShow.call(me);
+			       				
+				            });
+	
+			       			
+			       			var fnDialogShow =  function(){
+			       				var selectedNodeRef = this.getSelectedItems(), submissionParams = "";
+			       				for ( var i in selectedNodeRef) {
+			       					if (submissionParams.length > 0) {
+			       						submissionParams += ",";
+			       					}
+			       					submissionParams += selectedNodeRef[i].nodeRef.replace(/workspace:\/\/SpacesStore\//g,"");
+			       				}
+			       				
+			       				var templateUrl = YAHOO.lang
+			       				.substitute(
+			       						Alfresco.constants.URL_SERVICECONTEXT
+			       						+ "components/form?formId={formId}&bulkEdit=true&fields={fields}&submissionUrl={submissionUrl}&itemKind={itemKind}&itemId={itemId}&mode={mode}&submitType={submitType}&showCancelButton=true",
+			       						{
+			       							itemKind : "type",
+			       							formId : this.options.editSelectedFormId,
+			       							itemId : this.options.itemType,
+			       							mode : "create",
+			       							submitType : "json",
+			       							submissionUrl : encodeURIComponent("/becpg/bulkedit/type/" + this.options.itemType.replace(":", "_")
+			       									+ "/bulksave?nodeRefs=" + submissionParams+"&allPages="+this.allPages+"&queryExecutionId="+this.queryExecutionId),
+			       									fields : displayFields
+			       						});
+			       				
+			       				// Using Forms Service, so always create new
+			       				// instance
+			       				var createRow = new Alfresco.module.SimpleDialog(this.id + "-bulk-createRow");
+			       				
+			       				var submit = displayFields.length > 1 ? false : true;
+			       				createRow.setOptions({
+			       					width : "36em",
+			       					templateUrl : templateUrl,
+			       					actionUrl : null,
+			       					destroyOnHide : true,
+			       					doBeforeDialogShow : {
+			       						fn : doBeforeDialogShow,
+			       						scope : this
+			       					},
+			       					doBeforeFormSubmit : {
+			       						fn: function(){
+			       							if(!submit){
+			       								
+			       								Alfresco.util.PopupManager.displayPrompt({
+			       									title : this.msg("message.confirm.edit-columns.title"),
+			       									text : this.msg("message.confirm.edit-columns.description"),
+			       									buttons : [ {
+			       										text : this.msg("button.ok"),
+			       										handler : function columnsUpdate() {
+			       											this.destroy();
+			       											submit = true;
+			       											createRow.widgets.okButton._button.click();
+			       										}
+			       									}, {
+			       										text : this.msg("button.cancel"),
+			       										handler : function EntityDataGrid__onActionEdit_cancel() {
+			       											this.destroy();
+			       											submit = false;
+			       										},
+			       										isDefault : true
+			       									} ]
+			       								});
+			       							
+			       							}
+			       						},
+			       						scope: this
+			       		          },
 
-							var selectedNodeRef = this.getSelectedItems(), submissionParams = "";
-							for ( var i in selectedNodeRef) {
-								if (submissionParams.length > 0) {
-									submissionParams += ",";
-								}
-								submissionParams += selectedNodeRef[i].nodeRef.replace(/workspace:\/\/SpacesStore\//g,"");
-							}
+			       					doBeforeAjaxRequest : {
+			       		             fn : function() {
+			       		            	  return submit;
+			       		              },
+			       		             scope: this
+			       		            },
+			       					onSuccess : {
+			       						fn : function BulkEdit_onNewRow_success(response) {
+			       							YAHOO.Bubbling.fire("bulkDataChanged");
+			       							Alfresco.util.PopupManager.displayMessage({
+			       								text : this.msg("message.edit-selected.success")
+			       							});
+			       						},
+			       						scope : this
+			       					},
+			       					onFailure : {
+			       						fn : function BulkEdit_onNewRow_failure(response) {
+			       							Alfresco.util.PopupManager.displayMessage({
+			       								text : this.msg("message.edit-selected.failure", response.json.message)
+			       							});
+			       						},
+			       						scope : this
+			       					}
+			       				}).show();
+			       				
+			       			}
 
-							var templateUrl = YAHOO.lang
-									.substitute(
-											Alfresco.constants.URL_SERVICECONTEXT
-													+ "components/form?formId={formId}&bulkEdit=true&fields={fields}&submissionUrl={submissionUrl}&itemKind={itemKind}&itemId={itemId}&mode={mode}&submitType={submitType}&showCancelButton=true",
-											{
-												itemKind : "type",
-												formId : this.options.editSelectedFormId,
-												itemId : this.options.itemType,
-												mode : "create",
-												submitType : "json",
-												submissionUrl : encodeURIComponent("/becpg/bulkedit/type/" + this.options.itemType.replace(":", "_")
-														+ "/bulksave?nodeRefs=" + submissionParams+"&allPages="+this.allPages+"&queryExecutionId="+this.queryExecutionId),
-												fields : displayFields
-											});
-
-							// Using Forms Service, so always create new
-							// instance
-							var createRow = new Alfresco.module.SimpleDialog(this.id + "-bulk-createRow");
-
-							createRow.setOptions({
-								width : "36em",
-								templateUrl : templateUrl,
-								actionUrl : null,
-								destroyOnHide : true,
-								doBeforeDialogShow : {
-									fn : doBeforeDialogShow,
-									scope : this
-								},
-								onSuccess : {
-									fn : function BulkEdit_onNewRow_success(response) {
-										YAHOO.Bubbling.fire("bulkDataChanged");
-
-										Alfresco.util.PopupManager.displayMessage({
-											text : this.msg("message.edit-selected.success")
-										});
-									},
-									scope : this
-								},
-								onFailure : {
-									fn : function BulkEdit_onNewRow_failure(response) {
-										Alfresco.util.PopupManager.displayMessage({
-											text : this.msg("message.edit-selected.failure", response.json.message)
-										});
-									},
-									scope : this
-								}
-							}).show();
 
 						},
 						
