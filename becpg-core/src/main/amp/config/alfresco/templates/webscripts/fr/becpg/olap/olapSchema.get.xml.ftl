@@ -228,6 +228,21 @@
 				<Level name="versionLabel" caption="${msg("jsolap.versionLabel.title")}" column="versionLabel" type="String" />
 			</Hierarchy>
 		</Dimension>
+		
+		<Dimension  name="tags" foreignKey="entity_fact_id" caption="${msg("jsolap.tags.title")}" >
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.tags.caption")}" primaryKey="entity_fact_id">
+				<#if isAdmin>
+					<Table name="becpg_public_tags" />
+				<#else>
+					<Table name="becpg_public_tags">
+						becpg_public_clients.instanceId = ${instanceId}
+					</Table>
+				</#if>
+				<Level name="tag" caption="${msg("jsolap.tag.title")}" column="tag"  type="String" >
+				</Level>
+			</Hierarchy>
+		</Dimension>
+		
 		<#if isAdmin>
 			<DimensionUsage name="instance" caption="${msg("jsolap.instance.title")}" source="instancesDimension" foreignKey="instanceId" />
 		</#if>
@@ -377,6 +392,20 @@
 			</Hierarchy>
 		</Dimension>
 		
+		<Dimension  name="tags" foreignKey="entity_fact_id" caption="${msg("jsolap.tags.title")}" >
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.tags.caption")}" primaryKey="entity_fact_id">
+				<#if isAdmin>
+					<Table name="becpg_public_tags" />
+				<#else>
+					<Table name="becpg_public_tags">
+						becpg_public_clients.instanceId = ${instanceId}
+					</Table>
+				</#if>
+				<Level name="tag" caption="${msg("jsolap.tag.title")}" column="tag"  type="String" >
+				</Level>
+			</Hierarchy>
+		</Dimension>
+		
 		<#if isAdmin>
 			<DimensionUsage name="instance" caption="${msg("jsolap.instance.title")}" source="instancesDimension" foreignKey="instanceId" />
 		</#if>
@@ -406,11 +435,16 @@
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.site.caption")}" primaryKey="id">
 			
 				<#if isAdmin>
-					<Table name="becpg_public_projects" />
+					<Table name="becpg_public_projects" alias="becpg_public_projects">
+						<SQL dialect="generic">
+						 	becpg_public_projects.isLastVersion IS TRUE
+						</SQL>
+					</Table>
 				<#else>
 					<Table name="becpg_public_projects" alias="becpg_public_projects">
 						<SQL dialect="generic">
 							becpg_public_projects.instanceId = ${instanceId}
+							AND becpg_public_projects.isLastVersion IS TRUE
 						</SQL>
 					</Table>
 				</#if>
@@ -480,6 +514,20 @@
 		<Dimension name="resource" caption="${msg("jsolap.resource.title")}" >
 			<Hierarchy name="resource" caption="${msg("jsolap.resource.title")}" hasAll="true" allMemberCaption="${msg("jsolap.resource.caption")}">
 				<Level name="tlResources" caption="${msg("jsolap.resource.title")}" column="tlResources"  type="String"    />
+			</Hierarchy>
+		</Dimension>
+		
+		<Dimension  name="tags" foreignKey="entity_fact_id" caption="${msg("jsolap.tags.title")}" >
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.tags.caption")}" primaryKey="entity_fact_id">
+				<#if isAdmin>
+					<Table name="becpg_public_tags" />
+				<#else>
+					<Table name="becpg_public_tags">
+						becpg_public_clients.instanceId = ${instanceId}
+					</Table>
+				</#if>
+				<Level name="tag" caption="${msg("jsolap.tag.title")}" column="tag"  type="String" >
+				</Level>
 			</Hierarchy>
 		</Dimension>
 		
@@ -556,6 +604,20 @@
 				<Level name="projectManager" caption="${msg("jsolap.projectManager.title")}" column="projectManager"  type="String"    >
 				</Level>
 				<Level name="entity_noderef" caption="${msg("jsolap.project.title")}" column="noderef" nameColumn="name" type="String"   >
+				</Level>
+			</Hierarchy>
+		</Dimension>
+		
+		<Dimension  name="tags" foreignKey="entity_fact_id" caption="${msg("jsolap.tags.title")}" >
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.tags.caption")}" primaryKey="entity_fact_id">
+				<#if isAdmin>
+					<Table name="becpg_public_tags" />
+				<#else>
+					<Table name="becpg_public_tags">
+						becpg_public_clients.instanceId = ${instanceId}
+					</Table>
+				</#if>
+				<Level name="tag" caption="${msg("jsolap.tag.title")}" column="tag"  type="String" >
 				</Level>
 			</Hierarchy>
 		</Dimension>
@@ -719,6 +781,32 @@
 			</Hierarchy>
 		</Dimension>
 		
+		<Dimension  name="creation" caption="${msg("jsolap.creation.title")}" >
+			<Hierarchy name="creators" caption="${msg("jsolap.creators.title")}" hasAll="true" >
+				<Level name="creator"  caption="${msg("jsolap.creator.title")}"  column="projectCreator"  type="String" />
+			</Hierarchy>
+		</Dimension>
+		
+		<Dimension  name="modification" caption="${msg("jsolap.modification.title")}" >
+			<Hierarchy name="modifiers" caption="${msg("jsolap.modifiers.title")}" hasAll="true" >
+				<Level name="modifier" caption="${msg("jsolap.modifier.title")}" column="projectModifier"  type="String" />
+			</Hierarchy>
+		</Dimension>
+		
+		<Dimension  name="tags" foreignKey="id" caption="${msg("jsolap.tags.title")}" >
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.tags.caption")}" primaryKey="entity_fact_id">
+				<#if isAdmin>
+					<Table name="becpg_public_tags" />
+				<#else>
+					<Table name="becpg_public_tags">
+						becpg_public_clients.instanceId = ${instanceId}
+					</Table>
+				</#if>
+				<Level name="tag" caption="${msg("jsolap.tag.title")}" column="tag"  type="String" >
+				</Level>
+			</Hierarchy>
+		</Dimension>		
+		
 		<#if isAdmin>
 			<DimensionUsage name="instance" caption="${msg("jsolap.instance.title")}" source="instancesDimension" foreignKey="instanceId" />
 		</#if>
@@ -832,6 +920,20 @@
 				</Level>
 				<Level  name="nutNodeRef" caption="${msg("jsolap.nutrient.title")}" column="nutNodeRef"  nameColumn="nutName" type="String"   ></Level>
 			</Hierarchy>	
+		</Dimension>
+		
+		<Dimension  name="tags" foreignKey="entity_fact_id" caption="${msg("jsolap.tags.title")}" >
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.tags.caption")}" primaryKey="entity_fact_id">
+				<#if isAdmin>
+					<Table name="becpg_public_tags" />
+				<#else>
+					<Table name="becpg_public_tags">
+						becpg_public_clients.instanceId = ${instanceId}
+					</Table>
+				</#if>
+				<Level name="tag" caption="${msg("jsolap.tag.title")}" column="tag"  type="String" >
+				</Level>
+			</Hierarchy>
 		</Dimension>	
 		
 		<#if isAdmin>
@@ -1120,6 +1222,32 @@
 	    <Dimension  name="history" caption="${msg("jsolap.history.title")}"  >
 			<Hierarchy name="currentVersion" caption="${msg("jsolap.currentVersion.title")}" hasAll="true" defaultMember="[history.currentVersion].[true]" >
 				<Level name="isLastVersion" caption="${msg("jsolap.currentVersion.title")}" column="isLastVersion"  type="Boolean"    />
+			</Hierarchy>
+		</Dimension>
+		
+		<Dimension  name="creation" caption="${msg("jsolap.creation.title")}" >
+			<Hierarchy name="creators" caption="${msg("jsolap.creators.title")}" hasAll="true" >
+				<Level name="creator"  caption="${msg("jsolap.creator.title")}"  column="creator"  type="String" />
+			</Hierarchy>
+		</Dimension>
+		
+		<Dimension  name="modification" caption="${msg("jsolap.modification.title")}" >
+			<Hierarchy name="modifiers" caption="${msg("jsolap.modifiers.title")}" hasAll="true" >
+				<Level name="modifier" caption="${msg("jsolap.modifier.title")}" column="modifier"  type="String" />
+			</Hierarchy>
+		</Dimension>
+		
+		<Dimension  name="tags" foreignKey="id" caption="${msg("jsolap.tags.title")}" >
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.tags.caption")}" primaryKey="entity_fact_id">
+				<#if isAdmin>
+					<Table name="becpg_public_tags" />
+				<#else>
+					<Table name="becpg_public_tags">
+						becpg_public_clients.instanceId = ${instanceId}
+					</Table>
+				</#if>
+				<Level name="tag" caption="${msg("jsolap.tag.title")}" column="tag"  type="String" >
+				</Level>
 			</Hierarchy>
 		</Dimension>
 		

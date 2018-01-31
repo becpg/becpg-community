@@ -42,8 +42,6 @@
 		</property>
 	</bean>
 
-
-	
 	<!-- Abstract bean -->
 	<bean id="parentImportVisitor" abstract="true" class="fr.becpg.repo.importer.impl.AbstractImportVisitor">
 		<property name="nodeService" ref="nodeService" />
@@ -137,15 +135,71 @@
 		<property name="attributeExtractorService" ref="attributeExtractorService"/>
 	</bean>
 
-
-	<!-- Simulation webscript -->
-
-	<bean id="webscript.fr.becpg.simulation.simulation-create.post" class="fr.becpg.repo.web.scripts.simulation.SimulationWebScript" parent="webscript">
+   
+   <!--                                        -->
+   <!--      Discussions Pages REST API        -->
+   <!--                                        -->
+   
+	  <!-- Creates a new discussions topic and primary post -->
+	<bean id="webscript.org.alfresco.repository.discussions.forum.forum-posts.post" class="fr.becpg.repo.web.scripts.discussion.BeCPGForumTopicPost"
+		parent="webscript">
+		<property name="nodeService" ref="NodeService" />
+		<property name="siteService" ref="SiteService" />
+		<property name="personService" ref="PersonService" />
+		<property name="activityService" ref="activityService" />
+		<property name="discussionService" ref="DiscussionService" />
+		<property name="permissionService" ref="PermissionService" />
+	</bean>
+	  
+	   <!-- Fetches the details of one discussions post or topic -->
+	<bean id="webscript.org.alfresco.repository.discussions.posts.forum-post.get" class="fr.becpg.repo.web.scripts.discussion.BeCPGForumPostGet"
+		parent="webscript">
+		<property name="authorityService" ref="AuthorityService" />
+		<property name="nodeService" ref="NodeService" />
+		<property name="siteService" ref="SiteService" />
+		<property name="personService" ref="PersonService" />
+		<property name="activityService" ref="activityService" />
+		<property name="discussionService" ref="DiscussionService" />
+		<property name="permissionService" ref="PermissionService" />
+	</bean>	
+	     
+	   <!-- Updates a discussions post or topic -->
+	<bean id="webscript.org.alfresco.repository.discussions.posts.forum-post.put" class="fr.becpg.repo.web.scripts.discussion.BeCPGForumPostPut"
+		parent="webscript">
 		<property name="associationService" ref="associationService" />
-		<property name="nodeService" ref="NodeService" />		
-		<property name="alfrescoRepository" ref="alfrescoRepository" />
-		<property name="entityVersionService" ref="entityVersionService"/>
-		<property name="copyService" ref="CopyService" />
+		<property name="nodeService" ref="NodeService" />
+		<property name="siteService" ref="SiteService" />
+		<property name="personService" ref="PersonService" />
+		<property name="activityService" ref="activityService" />
+		<property name="discussionService" ref="DiscussionService" />
+		<property name="permissionService" ref="PermissionService" />
+	</bean>
+	   
+	      <!-- Deletes a discussion post or topic -->
+	<bean id="webscript.org.alfresco.repository.discussions.posts.forum-post.delete" class="fr.becpg.repo.web.scripts.discussion.BeCPGForumPostDelete"
+		parent="webscript">
+		<property name="associationService" ref="associationService" />
+		<property name="authorityService" ref="AuthorityService" />
+		<property name="nodeService" ref="NodeService" />
+		<property name="siteService" ref="SiteService" />
+		<property name="personService" ref="PersonService" />
+		<property name="activityService" ref="activityService" />
+		<property name="discussionService" ref="DiscussionService" />
+		<property name="permissionService" ref="PermissionService" />
+	</bean>
+	   
+	   <!-- Lists the discussion topics matching filters -->
+	<bean id="webscript.org.alfresco.repository.discussions.forum.forum-posts-filtered.get" class="fr.becpg.repo.web.scripts.discussion.BeCPGForumTopicsFilteredGet"
+		parent="webscript">
+		<property name="searchService" ref="SearchService" />
+		<property name="associationService" ref="associationService" />
+		<property name="authorityService" ref="AuthorityService" />
+		<property name="nodeService" ref="NodeService" />
+		<property name="siteService" ref="SiteService" />
+		<property name="personService" ref="PersonService" />
+		<property name="activityService" ref="activityService" />
+		<property name="discussionService" ref="DiscussionService" />
+		<property name="permissionService" ref="PermissionService" />
 	</bean>
 
 
@@ -156,7 +210,7 @@
 		<property name="serviceRegistry" ref="ServiceRegistry" />
 		<property name="attributeExtractorService" ref="attributeExtractorService" />
 	</bean>
-
+  
 
 	<!-- Migration -->
 	<bean id="webscript.fr.becpg.migration.migrateRepository.get" class="fr.becpg.repo.web.scripts.migration.MigrateRepositoryWebScript" parent="webscript">

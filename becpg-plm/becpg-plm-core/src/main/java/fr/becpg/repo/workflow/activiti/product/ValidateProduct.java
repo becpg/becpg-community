@@ -15,7 +15,6 @@ import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.security.OwnableService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
@@ -36,7 +35,6 @@ public class ValidateProduct extends BaseJavaDelegate {
 
 	private NodeService nodeService;
 	private DictionaryService dictionaryService;
-	private OwnableService ownableService;
 	
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
@@ -46,9 +44,6 @@ public class ValidateProduct extends BaseJavaDelegate {
 		this.dictionaryService = dictionaryService;
 	}
 
-	public void setOwnableService(OwnableService ownableService) {
-		this.ownableService = ownableService;
-	}
 
 	@Override
 	public void execute(final DelegateExecution task) throws Exception {
@@ -71,9 +66,6 @@ public class ValidateProduct extends BaseJavaDelegate {
 
 						if (dictionaryService.isSubClass(nodeType, PLMModel.TYPE_PRODUCT)) {
 							nodeService.setProperty(nodeRef, PLMModel.PROP_PRODUCT_STATE, SystemState.Valid);
-
-							// productNodeRef : remove all owner related rights
-							ownableService.setOwner(nodeRef, OwnableService.NO_OWNER);
 						}
 					}
 				} catch (Exception e) {

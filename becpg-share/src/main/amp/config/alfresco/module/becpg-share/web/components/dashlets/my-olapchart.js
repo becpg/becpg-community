@@ -218,6 +218,12 @@
                   value : json.queries[i].queryId
                });
             }
+            
+            // #3529 sort queries by name
+            items.sort(function (a, b){
+         	   return a.text.toLowerCase().localeCompare(b.text.toLowerCase());
+            });
+            
             me.chartPicker.getMenu().addItems(items);
             me.chartPicker.getMenu().render(document.body);
             me.selectMenuValue(me.chartPicker, encodeURIComponent(firstQueryId));

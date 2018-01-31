@@ -4677,6 +4677,7 @@
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
+					<show id="bcpg:costType" />
 					<show id="bcpg:costCurrency" />
 					<show id="bcpg:costFixed" />
 					<show id="bcpg:costFormula" />
@@ -4706,6 +4707,7 @@
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
+					<show id="bcpg:costType" />
 					<show id="bcpg:costCurrency" />
 					<show id="bcpg:costFixed" />
 					<show id="bcpg:costFormula" />
@@ -4742,6 +4744,7 @@
 				<field-visibility>
 					<show id="bcpg:charactName" />
 					<show id="bcpg:legalName" />
+					<show id="bcpg:costType" />
 					<show id="bcpg:costCurrency" />
 					<show id="bcpg:costFixed" />
 				</field-visibility>
@@ -4937,6 +4940,8 @@
 					<show id="bcpg:nutGDA" />
 					<show id="bcpg:nutUL" />
 					<show id="bcpg:nutFormula" />
+					<show id="bcpg:nutSort" />
+					<show id="rep:reportLocales" />
 				</field-visibility>
 				<appearance>
 					<field id="cm:description">
@@ -4947,6 +4952,11 @@
 					<field id="bcpg:nutFormula">
 						<control template="/org/alfresco/components/form/controls/spel-editor.ftl">
 							<control-param name="rows">10</control-param>
+						</control>
+					</field>
+					<field id="rep:reportLocales" >
+						<control template="/org/alfresco/components/form/controls/mtlangue.ftl">
+        		 				 <control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -4969,6 +4979,8 @@
 					<show id="bcpg:nutGDA" />
 					<show id="bcpg:nutUL" />
 					<show id="bcpg:nutFormula" />
+					<show id="bcpg:nutSort" />
+					<show id="rep:reportLocales" />
 				</field-visibility>
 
 				<appearance>
@@ -4982,6 +4994,11 @@
 							<control-param name="rows">10</control-param>
 						</control>
 					</field>
+					<field id="rep:reportLocales" >
+						<control template="/org/alfresco/components/form/controls/mtlangue.ftl">
+        		 				 <control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 
@@ -4992,6 +5009,7 @@
 					<show id="bcpg:nutGroup" />
 					<show id="bcpg:nutType" />
 					<show id="bcpg:isDeleted" />
+					<show id="rep:reportLocales" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:charactName">
@@ -5019,6 +5037,8 @@
 					<show id="bcpg:nutUnit" />
 					<show id="bcpg:nutGDA" />
 					<show id="bcpg:nutUL" />
+					<show id="bcpg:nutSort" />
+					<show id="rep:reportLocales" />
 				</field-visibility>
 			</form>
 		
@@ -6898,8 +6918,7 @@
 					</field>
 					<field id="bcpg:parentLevel">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:costList&#38;attributeName=bcpg:costListCost
-							</control-param>
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:costList&#38;attributeName=bcpg:costListCost</control-param>
 						</control>
 					</field>
 					<field id="bcpg:costListComponent">
@@ -7029,6 +7048,7 @@
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:costList&#38;attributeName=bcpg:costListCost
 							</control-param>
+							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
 					</field>
 					<field id="bcpg:costListComponent">
@@ -7225,7 +7245,7 @@
 		                  		{"prop":"prop_bcpg_lrLabel", "condition" : "Format|DetailComponents|DoNotDetailsComponents|Locale|Prefs|Omit|DoNotDeclare"},
 		                  		{"prop":"assoc_bcpg_lrComponents", "condition" : "Render|Locale|Prefs"},
 		                  		{"prop":"assoc_bcpg_lrReplacements", "condition" : "Format|Render|DetailComponents|DoNotDetailsComponents|Locale|Prefs|Omit|DoNotDeclare"},
-		                  		{"prop":"prop_bcpg_lrLocales", "condition" : "Prefs"}
+		                  		{"prop":"prop_bcpg_lrLocales", "condition" : "Prefs|Group|Detail|DoNotDetails|DetailComponents|DoNotDetailsComponents"}
 		                  		]'/>
 		                  	</constraint-handlers>
 					</field>
@@ -7306,7 +7326,7 @@
 					<field id="bcpg:lrType">
 						<constraint-handlers>
 							 <constraint type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf" event='keyup,change@[
-		                  		{"prop":"prop_bcpg_lrLabel", "condition" : "Format|Render|DetailComponents|DoNotDetailsComponents|Locale|Prefs|Omit|DoNotDeclare"},
+		                  		{"prop":"prop_bcpg_lrLabel", "condition" : "Format|DetailComponents|DoNotDetailsComponents|Locale|Prefs|Omit|DoNotDeclare"},
 		                  		{"prop":"assoc_bcpg_lrComponents", "condition" : "Render|Locale|Prefs"},
 		                  		{"prop":"assoc_bcpg_lrReplacements", "condition" : "Format|Render|DetailComponents|DoNotDetailsComponents|Locale|Prefs|Omit|DoNotDeclare"},
 		                  		{"prop":"prop_bcpg_lrLocales", "condition" : "Prefs"}
@@ -7469,6 +7489,7 @@
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:ingList&#38;attributeName=bcpg:ingListIng
 							</control-param>
+							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -8200,7 +8221,6 @@
 					<show id="bcpg:contactListPhoneMobile" />
 					<show id="bcpg:contactListFax" />
 					<show id="bcpg:contactListNotes" />
-					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:contactListNotes">
@@ -8220,7 +8240,7 @@
 					<show id="bcpg:contactListPhoneMobile" />
 					<show id="bcpg:contactListFax" />
 					<show id="bcpg:contactListNotes" />
-					<field id="fm:commentCount" label="hidden" read-only="true" />
+					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="fm:commentCount" label="hidden" read-only="true" />

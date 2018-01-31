@@ -883,7 +883,6 @@
 			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/apache/hadoop/hadoop-annotations/2.2.0/hadoop-annotations-2.2.0-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/opt/java_versions/jdk1.8.0_31/lib/tools.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/hadoop/hadoop-auth/2.2.0/hadoop-auth-2.2.0.jar" sourcepath="M2_REPO/org/apache/hadoop/hadoop-auth/2.2.0/hadoop-auth-2.2.0-sources.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/apache/hadoop/hadoop-auth/2.2.0/hadoop-auth-2.2.0-javadoc.jar!/"/>

@@ -5,31 +5,22 @@
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/properties/local"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
-        <dependent-module archiveName="becpg-share-2.2.0.amp" deploy-path="/WEB-INF/lib" handle="module:/resource/becpg-share/becpg-share">
+        <dependent-module archiveName="becpg-share-2.2.1.amp" deploy-path="/WEB-INF/lib" handle="module:/resource/becpg-share/becpg-share">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="becpg-designer-share-2.2.0.amp" deploy-path="/WEB-INF/lib" handle="module:/resource/becpg-designer-share/becpg-designer-share">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="becpg-project-share-2.2.0.amp" deploy-path="/WEB-INF/lib" handle="module:/resource/becpg-project-share/becpg-project-share">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="becpg-plm-share-2.2.0.amp" deploy-path="/WEB-INF/lib" handle="module:/resource/becpg-plm-share/becpg-plm-share">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module deploy-path="/" handle="module:/overlay/prj/becpg-plm-share?includes=**/**&amp;excludes=META-INF/MANIFEST.MF">
+        <dependent-module deploy-path="/" handle="module:/overlay/var/M2_REPO/fr/becpg/becpg-plm-share/2.2.1/becpg-plm-share-2.2.1.amp?unpackFolder=target/m2e-wtp/overlays&amp;includes=**/**&amp;excludes=META-INF/MANIFEST.MF">
             <dependency-type>consumes</dependency-type>
         </dependent-module>
-        <dependent-module deploy-path="/" handle="module:/overlay/prj/becpg-project-share?includes=**/**&amp;excludes=META-INF/MANIFEST.MF">
+        <dependent-module deploy-path="/" handle="module:/overlay/var/M2_REPO/fr/becpg/becpg-project-share/2.2.1/becpg-project-share-2.2.1.amp?unpackFolder=target/m2e-wtp/overlays&amp;includes=**/**&amp;excludes=META-INF/MANIFEST.MF">
             <dependency-type>consumes</dependency-type>
         </dependent-module>
-        <dependent-module deploy-path="/" handle="module:/overlay/prj/becpg-designer-share?includes=**/**&amp;excludes=META-INF/MANIFEST.MF">
+        <dependent-module deploy-path="/" handle="module:/overlay/var/M2_REPO/fr/becpg/becpg-designer-share/2.2.1/becpg-designer-share-2.2.1.amp?unpackFolder=target/m2e-wtp/overlays&amp;includes=**/**&amp;excludes=META-INF/MANIFEST.MF">
             <dependency-type>consumes</dependency-type>
         </dependent-module>
         <dependent-module deploy-path="/" handle="module:/overlay/prj/becpg-share?includes=**/**&amp;excludes=META-INF/MANIFEST.MF">
             <dependency-type>consumes</dependency-type>
         </dependent-module>
-        <dependent-module deploy-path="/" handle="module:/overlay/prj/org.alfresco.share-5.2.d?includes=**/**&amp;excludes=META-INF/MANIFEST.MF">
+        <dependent-module deploy-path="/" handle="module:/overlay/var/M2_REPO/org/alfresco/share/5.2.f/share-5.2.f.war?unpackFolder=target/m2e-wtp/overlays&amp;includes=**/**&amp;excludes=META-INF/MANIFEST.MF">
             <dependency-type>consumes</dependency-type>
         </dependent-module>
         <dependent-module deploy-path="/" handle="module:/overlay/slf/?includes=**/**&amp;excludes=META-INF/MANIFEST.MF">

@@ -77,6 +77,12 @@
    float: left;
 }
 
+.bulk-edit .bulk-edit-bar .simulate-selected
+{
+   float: left;
+}
+
+
 .bulk-edit .bulk-edit-bar .edit-selected
 {
    float: left;
@@ -145,6 +151,12 @@
 .bulk-edit .edit-selected span.first-child
 {
    background: url(../images/edit-inline-16.png) no-repeat 12px 4px;
+   padding-left: 24px;
+}
+
+.bulk-edit .simulate-selected span.first-child
+{
+   background: url(../documentlibrary/actions/folder-copy-to-16.png) no-repeat 12px 4px;
    padding-left: 24px;
 }
 

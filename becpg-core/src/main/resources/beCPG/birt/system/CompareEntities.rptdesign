@@ -1330,7 +1330,6 @@ row["properties2"]
             </detail>
         </table>
         <table name="Compo - Pack - Doc" id="1678">
-            <property name="style">beCPG-Table-border</property>
             <property name="pageBreakBefore">always</property>
             <property name="width">100%</property>
             <property name="dataSet">StructComparison</property>
@@ -1426,6 +1425,142 @@ else{
                 <property name="style">beCPG-table-col</property>
                 <property name="width">4.857142857142857in</property>
             </column>
+            <header>
+                <row id="3581">
+                    <property name="borderBottomStyle">none</property>
+                    <property name="borderRightStyle">none</property>
+                    <property name="borderTopStyle">none</property>
+                    <property name="verticalAlign">middle</property>
+                    <cell id="3582">
+                        <property name="colSpan">3</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomStyle">none</property>
+                        <property name="borderLeftStyle">none</property>
+                        <property name="borderRightStyle">none</property>
+                        <property name="borderTopStyle">none</property>
+                        <property name="paddingTop">1pt</property>
+                        <property name="paddingLeft">1pt</property>
+                        <property name="paddingBottom">5pt</property>
+                        <property name="paddingRight">1pt</property>
+                        <property name="textAlign">left</property>
+                        <label id="3596">
+                            <property name="fontWeight">bold</property>
+                            <property name="marginBottom">5pt</property>
+                            <property name="display">block</property>
+                            <text-property name="text" key="label.legend">Légende :</text-property>
+                        </label>
+                        <grid id="3597">
+                            <property name="width">100%</property>
+                            <column id="3598">
+                                <property name="width">0.18in</property>
+                            </column>
+                            <column id="3599">
+                                <property name="width">1.6in</property>
+                            </column>
+                            <column id="3600">
+                                <property name="width">0.18in</property>
+                            </column>
+                            <column id="3601">
+                                <property name="width">1.6in</property>
+                            </column>
+                            <column id="3602">
+                                <property name="width">0.18in</property>
+                            </column>
+                            <column id="3603">
+                                <property name="width">1.6in</property>
+                            </column>
+                            <column id="3604">
+                                <property name="width">0.18in</property>
+                            </column>
+                            <column id="3605">
+                                <property name="width">4.5in</property>
+                            </column>
+                            <row id="3606">
+                                <property name="verticalAlign">middle</property>
+                                <cell id="3607">
+                                    <image id="3616">
+                                        <property name="display">inline</property>
+                                        <property name="height">16px</property>
+                                        <property name="width">16px</property>
+                                        <property name="source">embed</property>
+                                        <property name="imageName">Modified.png</property>
+                                    </image>
+                                </cell>
+                                <cell id="3608">
+                                    <label id="3628">
+                                        <property name="display">inline</property>
+                                        <text-property name="text"> : </text-property>
+                                    </label>
+                                    <label id="3615">
+                                        <property name="display">inline</property>
+                                        <text-property name="text" key="label.modification">Modification</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="3609">
+                                    <image id="3617">
+                                        <property name="display">inline</property>
+                                        <property name="height">16px</property>
+                                        <property name="width">16px</property>
+                                        <property name="source">embed</property>
+                                        <property name="imageName">Removed.png</property>
+                                    </image>
+                                </cell>
+                                <cell id="3610">
+                                    <label id="3624">
+                                        <property name="display">inline</property>
+                                        <text-property name="text"> : </text-property>
+                                    </label>
+                                    <label id="3618">
+                                        <property name="display">inline</property>
+                                        <text-property name="text" key="label.suppression">Suppression</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="3611">
+                                    <image id="3587">
+                                        <property name="marginLeft">0cm</property>
+                                        <property name="marginRight">0cm</property>
+                                        <property name="display">inline</property>
+                                        <property name="height">16px</property>
+                                        <property name="width">16px</property>
+                                        <property name="source">embed</property>
+                                        <property name="imageName">Added.png</property>
+                                    </image>
+                                </cell>
+                                <cell id="3612">
+                                    <label id="3626">
+                                        <property name="display">inline</property>
+                                        <text-property name="text"> : </text-property>
+                                    </label>
+                                    <label id="3620">
+                                        <property name="display">inline</property>
+                                        <text-property name="text" key="label.adding">Ajout</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="3613">
+                                    <image id="3588">
+                                        <property name="marginLeft">0cm</property>
+                                        <property name="display">inline</property>
+                                        <property name="height">16px</property>
+                                        <property name="width">16px</property>
+                                        <property name="source">embed</property>
+                                        <property name="imageName">Replaced.png</property>
+                                    </image>
+                                </cell>
+                                <cell id="3614">
+                                    <label id="3627">
+                                        <property name="display">inline</property>
+                                        <text-property name="text"> : </text-property>
+                                    </label>
+                                    <label id="3622">
+                                        <property name="display">inline</property>
+                                        <text-property name="text" key="label.replacement">Remplacement</text-property>
+                                    </label>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+            </header>
             <group id="1721">
                 <property name="groupName">NewTableGroup1</property>
                 <expression name="keyExpr" type="javascript">row["comparison"]</expression>
@@ -1444,6 +1579,12 @@ else{
                 <header>
                     <row id="1750">
                         <property name="style">beCPG-Group</property>
+                        <property name="borderLeftColor">#3EA1E6</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">thin</property>
+                        <property name="borderRightColor">#3EA1E6</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">thin</property>
                         <cell id="1751">
                             <property name="colSpan">3</property>
                             <property name="rowSpan">1</property>
@@ -1467,6 +1608,15 @@ else{
             <detail>
                 <row id="1685">
                     <property name="style">beCPG-table-row</property>
+                    <property name="borderBottomColor">#3EA1E6</property>
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">thin</property>
+                    <property name="borderLeftColor">#3EA1E6</property>
+                    <property name="borderLeftStyle">solid</property>
+                    <property name="borderLeftWidth">thin</property>
+                    <property name="borderRightColor">#3EA1E6</property>
+                    <property name="borderRightStyle">solid</property>
+                    <property name="borderRightWidth">thin</property>
                     <cell id="1686">
                         <property name="textAlign">center</property>
                         <image id="1771">

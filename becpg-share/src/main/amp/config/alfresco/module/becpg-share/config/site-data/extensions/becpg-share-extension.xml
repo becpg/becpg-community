@@ -82,7 +82,12 @@
 					<sourcePackageRoot>org.alfresco.components.custom-preview
 					</sourcePackageRoot>
 				</customization>
-
+				<customization>
+					<targetPackageRoot>org.alfresco.components.discussions
+					</targetPackageRoot>
+					<sourcePackageRoot>org.alfresco.components.custom-create-topic
+					</sourcePackageRoot>
+				</customization>
 			</customizations>
 		</module>
 	</modules>

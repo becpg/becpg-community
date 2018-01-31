@@ -354,7 +354,7 @@ public class ProjectHelper {
 		}
 
 		if (startDate.after(endDate)) {
-			logger.warn("startDate is after endDate");
+			logger.debug("startDate is after endDate : " + startDate + " - " + endDate);
 			return null;
 		}
 

@@ -2,15 +2,20 @@
 <@markup id="css" >
    <#-- CSS Dependencies -->
    <#include "../form/form.css.ftl"/>
+  <@link rel="stylesheet" type="text/css" href="${url.context}/res/modules/documentlibrary/global-folder.css"  group="bulk-edit"/>
   <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/bulk-edit/bulk-edit.css" group="bulk-edit" />
+  
 </@>
 
 <@markup id="js">
    <#-- JavaScript Dependencies -->
    <#include "../form/form.js.ftl"/>
+   <@script src="${url.context}/res/modules/documentlibrary/global-folder.js"  group="bulk-edit"/>
    <@script src="${url.context}/res/modules/entity-datagrid/entity-columnRenderer.js" group="bulk-edit"></@script>
    <@script src="${url.context}/res/components/bulk-edit/bulk-edit.js" group="bulk-edit"></@script>
    <@script src="${url.context}/res/modules/custom-entity-datagrid/custom-columnRenderers.js" group="bulk-edit"></@script>
+   
+   
 </@>
 
 <@markup id="widgets">
@@ -60,6 +65,13 @@
 				            <span id="${el}-edit-selected" class="yui-button yui-push-button">
 				               <span class="first-child">
 				                  <button type="button" >${msg("button.edit-selected")}</button>
+				               </span>
+				            </span>
+				      </div>
+				      <div class="simulate-selected">
+				            <span id="${el}-simulate-selected" class="yui-button yui-push-button">
+				               <span class="first-child">
+				                  <button type="button" >${msg("button.simulate-selected")}</button>
 				               </span>
 				            </span>
 				      </div>

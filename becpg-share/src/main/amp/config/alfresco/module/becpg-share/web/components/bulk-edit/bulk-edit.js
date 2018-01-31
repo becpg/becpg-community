@@ -63,7 +63,8 @@
 		YAHOO.Bubbling.on("selectedItemsChanged", this.onSelectedItemsChanged, this);
 		YAHOO.Bubbling.on("selectedTypeChanged", this.onSelectedTypeChanged, this);
 		YAHOO.Bubbling.on("dataItemUpdated", this.onDataItemUpdated, this);
-		YAHOO.Bubbling.on("bulkDataChanged", this.onBulkEditShow, this);
+		YAHOO.Bubbling.on("bulkDataChanged", this.onBulkEditShow, this);		
+		YAHOO.Bubbling.on("folderSelected", this.onSimulationFolderSelected, this);
 
 		/* Deferred list population until DOM ready */
 		this.deferredListPopulation = new Alfresco.util.Deferred([ "onReady" ], {
@@ -529,8 +530,10 @@
 							
 							if (this.getSelectedItems().length > 0) {
 								this.widgets.editSelected.set("disabled", false);
+								this.widgets.simulateSelected.set("disabled", false);
 							} else {
 								this.widgets.editSelected.set("disabled", true);
+								this.widgets.simulateSelected.set("disabled", true);
 							}
 						},
 						/**
@@ -602,6 +605,10 @@
 							});
 
 							this.widgets.editSelected = Alfresco.util.createYUIButton(this, "edit-selected", this.onEditSelected, {
+								disabled : true
+							});
+							
+							this.widgets.simulateSelected = Alfresco.util.createYUIButton(this, "simulate-selected", this.onSimulateSelected, {
 								disabled : true
 							});
 
@@ -1521,7 +1528,56 @@
 							}).show();
 
 						},
+						
+						onSimulateSelected : function BulkEdit_onSimulateSelected() {
+							
+							if (!this.modules.simulateFolderPicker)
+					         {
+					            this.modules.simulateFolderPicker = new Alfresco.module.DoclibGlobalFolder();
+					         }
+					         
+					         this.modules.simulateFolderPicker.setOptions(
+					         {
+					            allowedViewModes: [ Alfresco.module.DoclibGlobalFolder.VIEW_MODE_SITE ],
+					            title: this.msg("message.simulate-selected.chooseFolder", $html(this.options.siteTitle))
+					         }).showDialog();
+					         
+					    
+						},
+						
+						onSimulationFolderSelected : function BulkEdit_onSimulationFolderSelected(event, args) {
+						     
 
+							var destFolder = args[1].selectedFolder.nodeRef;
+							
+							if(destFolder!=null){
+							
+								var selectedNodeRef = this.getSelectedItems(), submissionParams = "";
+								for ( var i in selectedNodeRef) {
+									if (submissionParams.length > 0) {
+										submissionParams += ",";
+									}
+									submissionParams += selectedNodeRef[i].nodeRef;
+								}
+								
+				               Alfresco.util.Ajax
+				                 .request({
+				                    method : Alfresco.util.Ajax.POST,
+				                    url : Alfresco.constants.PROXY_URI + "becpg/entity/simulation/create?nodeRefs=" 
+				                    	+ submissionParams+"&allPages="+this.allPages+"&queryExecutionId="+this.queryExecutionId+"&destNodeRef="+destFolder+"&mode=recur",
+				                    successCallback : {
+				                       fn : function(resp) {
+				                        	 Alfresco.util.PopupManager.displayMessage({
+				 			                	 text : this.msg("message.branch-entities.inprogress")
+				 			       		    });
+				                       },
+				                       scope : this
+				                    }
+				                 });
+							}
+						},
+						
+						
 						/**
 						 * ACTIONS WHICH ARE LOCAL TO THE DATAGRID COMPONENT
 						 */
