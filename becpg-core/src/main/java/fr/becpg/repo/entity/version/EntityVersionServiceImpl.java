@@ -1085,6 +1085,19 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		}
 	}
 
+	
+
+	@Override
+	public void impactWUsed(NodeRef entityNodeRef, VersionType versionType, String description) {
+		if (entityVersionPlugins != null) {
+			for (EntityVersionPlugin entityVersionPlugin : entityVersionPlugins) {
+				entityVersionPlugin.impactWUsed(entityNodeRef, versionType, description);
+			}
+		}
+
+		
+	}
+	
 	/**
 	 * Create a working copy name using the given fileName and workingCopyLabel.
 	 * The label will be inserted before the file extension (if present), or
@@ -1125,5 +1138,6 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 		return name;
 	}
+
 
 }

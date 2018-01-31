@@ -29,6 +29,7 @@ import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
@@ -209,8 +210,12 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 
 	@Override
 	public void cancelCheckout(NodeRef origNodeRef, NodeRef workingCopyNodeRef) {
-		// TODO Auto-generated method stub
-		
+		// Do nothing
+	}
+
+	@Override
+	public void impactWUsed(NodeRef entityNodeRef, VersionType versionType, String description) {
+		// Do nothing
 	}
 
 	

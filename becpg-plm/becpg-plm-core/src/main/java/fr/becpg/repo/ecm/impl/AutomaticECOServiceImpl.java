@@ -107,14 +107,9 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 	private WUsedListService wUsedListService;
 
 	@Override
-	public boolean isWithoutRecord() {
-		return Boolean.TRUE.equals(withoutRecord);
-	}
-
-	@Override
 	public boolean addAutomaticChangeEntry(final NodeRef entityNodeRef, final ChangeOrderData currentUserChangeOrderData) {
 
-		if(isWithoutRecord() && currentUserChangeOrderData == null) {
+		if( Boolean.TRUE.equals(withoutRecord) && currentUserChangeOrderData == null) {
 			return false;
 		}
 		

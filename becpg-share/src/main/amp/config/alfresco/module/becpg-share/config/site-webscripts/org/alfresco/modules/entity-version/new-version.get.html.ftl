@@ -56,6 +56,14 @@
                   <textarea id="${el}-description-textarea" name="description" rows="4"></textarea>
                </div>
             </div>
+             <div class="yui-gd">
+               <div class="yui-u first">
+                  <label for="${el}-impact-wused-checkbox">${msg("label.impactWused")}</label>
+               </div>
+               <div class="yui-u">
+                  <input type="checkbox" id="${el}-impact-wused-checkbox" name="impactWused" value="true" />
+               </div>
+            </div>
          </div>
 
          <div class="bdft">
