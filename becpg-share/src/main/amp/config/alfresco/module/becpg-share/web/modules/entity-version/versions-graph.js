@@ -264,10 +264,10 @@
          if(!current || doc.label != beCPG.module.getVersionsGraphInstance().options.label){
 	         if(current ){
 	        	 compareURL = Alfresco.constants.PROXY_URI + 'becpg/entity/compare/' + beCPG.module.getVersionsGraphInstance().options.nodeRef
-	             .replace(":/", "") + '/' + encodeURIComponent(doc.label) + '/' + encodeURIComponent(doc.name) + ".pdf";
+	             .replace(":/", "") + '/' + encodeURIComponent(doc.label) + '/' + encodeURIComponent(doc.name);
 	         } else {
 	        	 compareURL = Alfresco.constants.PROXY_URI + 'becpg/entity/compare/' + beCPG.module.getVersionsGraphInstance().options.nodeRef
-	        	 .replace(":/", "") + "/compare.pdf?entities="+doc.entityNodeRef;
+	        	 .replace(":/", "") + "/compare?entities="+doc.entityNodeRef;
 	         }
          }
          

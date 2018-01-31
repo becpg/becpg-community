@@ -61,6 +61,7 @@ public interface PLMModel {
 	QName PROP_PACKAGINGLIST_UNIT = QName.createQName(BeCPGModel.BECPG_URI, "packagingListUnit");
 	QName PROP_PACKAGINGLIST_PKG_LEVEL = QName.createQName(BeCPGModel.BECPG_URI, "packagingListPkgLevel");
 	QName PROP_PACKAGINGLIST_ISMASTER = QName.createQName(BeCPGModel.BECPG_URI, "packagingListIsMaster");
+	QName PROP_PACKAGINGLIST_LOSS_PERC = QName.createQName(BeCPGModel.BECPG_URI, "packagingListLossPerc");
 
 	// costList
 	QName TYPE_COSTLIST = QName.createQName(BeCPGModel.BECPG_URI, "costList");
@@ -115,6 +116,7 @@ public interface PLMModel {
 	QName ASSOC_ILL_GRP = QName.createQName(BeCPGModel.BECPG_URI, "illGrp");
 	QName PROP_ILL_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "illValue");
 	QName PROP_ILL_MANUAL_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "illManualValue");
+	QName PROP_ILL_LOG_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "illLogValue");
 
 	// microbioList
 	QName TYPE_MICROBIOLIST = QName.createQName(BeCPGModel.BECPG_URI, "microbioList");
@@ -177,6 +179,7 @@ public interface PLMModel {
 	QName PROP_COST_FORMULA = QName.createQName(BeCPGModel.BECPG_URI, "costFormula");
 	QName PROP_COSTCURRENCY = QName.createQName(BeCPGModel.BECPG_URI, "costCurrency");
 	QName PROP_COSTFIXED = QName.createQName(BeCPGModel.BECPG_URI, "costFixed");
+	QName PROP_COSTTYPE = QName.createQName(BeCPGModel.BECPG_URI, "costType");
 
 	// ing
 	QName TYPE_ING = QName.createQName(BeCPGModel.BECPG_URI, "ing");
@@ -228,6 +231,9 @@ public interface PLMModel {
 
 	// supplier
 	QName TYPE_SUPPLIER = QName.createQName(BeCPGModel.BECPG_URI, "supplier");
+	
+	// supplierAccountRef aspect
+	QName ASPECT_SUPPLIERS_ACCOUNTREF = QName.createQName(BeCPGModel.BECPG_URI, "supplierAccountRefAspect");
 	QName ASSOC_SUPPLIER_ACCOUNT = QName.createQName(BeCPGModel.BECPG_URI, "supplierAccountRef");
 	
 
@@ -297,6 +303,7 @@ public interface PLMModel {
 	// plant
 	QName TYPE_PLANT = QName.createQName(BeCPGModel.BECPG_URI, "plant");
 	QName ASSOC_PLANT_CERTIFICATIONS = QName.createQName(BeCPGModel.BECPG_URI, "plantCertifications");
+	@Deprecated
 	QName ASSOC_PLANT_APPROVAL_NUMBERS = QName.createQName(BeCPGModel.BECPG_URI, "plantApprovalNumbers");
 
 	// trademark

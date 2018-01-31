@@ -184,7 +184,7 @@ public class ImportEntityXmlVisitor {
 
 		private StringBuffer currValue = new StringBuffer();
 		
-		private Map<Locale, String> mltextAttributes = new HashMap();
+		private Map<Locale, String> mltextAttributes = new HashMap<>();
 
 		private final Stack<String> typeStack = new Stack<>();
 
@@ -232,6 +232,10 @@ public class ImportEntityXmlVisitor {
 					}
 
 					nodeType = parseQName(qName);
+					
+					if(nodeType==null) {
+						nodeType = ContentModel.TYPE_CONTENT;
+					}
 
 					NodeRef node = null;
 					if (currAssocType.isEmpty() || !currAssocType.peek().equals(RemoteEntityService.CHILD_ASSOC_TYPE)) {
@@ -262,7 +266,7 @@ public class ImportEntityXmlVisitor {
 
 						if (!currAssocType.isEmpty() && currAssocType.peek().equals(RemoteEntityService.CHILD_ASSOC_TYPE)) {
 
-							if (currAssoc.peek() != null) {
+							if (currAssoc.peek() != null ) {
 
 								NodeRef childNode = createChildAssocNode(curNodeRef.peek(), nodeType, currAssoc.peek(), name, new NodeRef(nodeRef));
 								curNodeRef.push(childNode);
@@ -641,7 +645,6 @@ public class ImportEntityXmlVisitor {
 
 		private NodeRef createChildAssocNode(NodeRef parentNodeRef, QName type, QName assocName, String name, NodeRef existingNodeRef) {
 			
-
 			if (cache.containsKey(existingNodeRef)) {
 				logger.debug("Cache contains :" + cache.get(existingNodeRef) + " of nodeRef " + existingNodeRef + " " + name);
 
@@ -793,7 +796,7 @@ public class ImportEntityXmlVisitor {
 		}
 
 		private String cleanName(String propValue) {
-			return propValue!=null ? propValue.replaceAll("\n", "").replaceAll("'", " ") : "";
+			return propValue!=null ? propValue.replaceAll("\n", "").replaceAll("'", " ").replaceAll("\"", " ") .replaceAll(Pattern.quote("*"), " "): "";
 		}
 		
 		private String removeTrailingSpecialChar(String prop){

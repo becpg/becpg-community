@@ -1,502 +1,526 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-  <classpathentry kind="src" path="src/test/java" output="target/test-classes" including="**/*.java"/>
-  <classpathentry kind="src" path="src/main/java" including="**/*.java"/>
-  <classpathentry kind="src" path="src/main/resources" excluding="**/*.java"/>
-  <classpathentry kind="output" path="target/classes"/>
-  <classpathentry kind="var" path="M2_REPO/javax/servlet/servlet-api/2.4/servlet-api-2.4.jar" sourcepath="M2_REPO/javax/servlet/servlet-api/2.4/servlet-api-2.4-sources.jar"/>
-  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.birt.runtime/4.6.0-20160607/org.eclipse.birt.runtime-4.6.0-20160607.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.birt.runtime/4.6.0-20160607/org.eclipse.birt.runtime-4.6.0-20160607-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.birt.runtime/4.6.0-20160607/org.eclipse.birt.runtime-4.6.0-20160607-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.sqltools.parsers.sql.query/1.3.0.201603142002/org.eclipse.datatools.sqltools.parsers.sql.query-1.3.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.sqltools.parsers.sql.query/1.3.0.201603142002/org.eclipse.datatools.sqltools.parsers.sql.query-1.3.0.201603142002-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.sqltools.parsers.sql.query/1.3.0.201603142002/org.eclipse.datatools.sqltools.parsers.sql.query-1.3.0.201603142002-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.db2.zseries.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.db2.zseries.dbdefinition-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.db2.zseries.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.db2.zseries.dbdefinition-1.1.0.201603142002-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.db2.zseries.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.db2.zseries.dbdefinition-1.1.0.201603142002-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/com.ibm.icu/56.1.0.v201601250100/com.ibm.icu-56.1.0.v201601250100.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/com.ibm.icu/56.1.0.v201601250100/com.ibm.icu-56.1.0.v201601250100-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/com.ibm.icu/56.1.0.v201601250100/com.ibm.icu-56.1.0.v201601250100-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.sqltools.data.core/1.3.0.201603142002/org.eclipse.datatools.sqltools.data.core-1.3.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.sqltools.data.core/1.3.0.201603142002/org.eclipse.datatools.sqltools.data.core-1.3.0.201603142002-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.sqltools.data.core/1.3.0.201603142002/org.eclipse.datatools.sqltools.data.core-1.3.0.201603142002-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.emf.ecore.xmi/2.12.0.v20160420-0247/org.eclipse.emf.ecore.xmi-2.12.0.v20160420-0247.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.emf.ecore.xmi/2.12.0.v20160420-0247/org.eclipse.emf.ecore.xmi-2.12.0.v20160420-0247-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.emf.ecore.xmi/2.12.0.v20160420-0247/org.eclipse.emf.ecore.xmi-2.12.0.v20160420-0247-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.emf.ecore/2.12.0.v20160420-0247/org.eclipse.emf.ecore-2.12.0.v20160420-0247.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.emf.ecore/2.12.0.v20160420-0247/org.eclipse.emf.ecore-2.12.0.v20160420-0247-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.emf.ecore/2.12.0.v20160420-0247/org.eclipse.emf.ecore-2.12.0.v20160420-0247-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.oda/3.5.0.201603142002/org.eclipse.datatools.connectivity.oda-3.5.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.oda/3.5.0.201603142002/org.eclipse.datatools.connectivity.oda-3.5.0.201603142002-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.oda/3.5.0.201603142002/org.eclipse.datatools.connectivity.oda-3.5.0.201603142002-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.db2.luw/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.db2.luw-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.db2.luw/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.db2.luw-1.1.0.201603142002-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.db2.luw/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.db2.luw-1.1.0.201603142002-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.modelbase.derby/1.1.0.201603142002/org.eclipse.datatools.modelbase.derby-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.modelbase.derby/1.1.0.201603142002/org.eclipse.datatools.modelbase.derby-1.1.0.201603142002-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.modelbase.derby/1.1.0.201603142002/org.eclipse.datatools.modelbase.derby-1.1.0.201603142002-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.sqm.core/1.3.0.201603142002/org.eclipse.datatools.connectivity.sqm.core-1.3.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.sqm.core/1.3.0.201603142002/org.eclipse.datatools.connectivity.sqm.core-1.3.0.201603142002-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.sqm.core/1.3.0.201603142002/org.eclipse.datatools.connectivity.sqm.core-1.3.0.201603142002-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.db2/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.db2-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.db2/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.db2-1.1.0.201603142002-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.db2/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.db2-1.1.0.201603142002-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.sap.maxdb/1.1.0.201603142002/org.eclipse.datatools.enablement.sap.maxdb-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.sap.maxdb/1.1.0.201603142002/org.eclipse.datatools.enablement.sap.maxdb-1.1.0.201603142002-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.sap.maxdb/1.1.0.201603142002/org.eclipse.datatools.enablement.sap.maxdb-1.1.0.201603142002-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.informix/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.informix-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.informix/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.informix-1.1.0.201603142002-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.informix/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.informix-1.1.0.201603142002-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.db2.zseries/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.db2.zseries-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.db2.zseries/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.db2.zseries-1.1.0.201603142002-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.db2.zseries/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.db2.zseries-1.1.0.201603142002-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.console.profile/1.1.0.201603142002/org.eclipse.datatools.connectivity.console.profile-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.console.profile/1.1.0.201603142002/org.eclipse.datatools.connectivity.console.profile-1.1.0.201603142002-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.console.profile/1.1.0.201603142002/org.eclipse.datatools.connectivity.console.profile-1.1.0.201603142002-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.oda.consumer/3.3.0.201603142002/org.eclipse.datatools.connectivity.oda.consumer-3.3.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.oda.consumer/3.3.0.201603142002/org.eclipse.datatools.connectivity.oda.consumer-3.3.0.201603142002-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.oda.consumer/3.3.0.201603142002/org.eclipse.datatools.connectivity.oda.consumer-3.3.0.201603142002-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.sqltools.parsers.sql/1.1.0.201603142002/org.eclipse.datatools.sqltools.parsers.sql-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.sqltools.parsers.sql/1.1.0.201603142002/org.eclipse.datatools.sqltools.parsers.sql-1.1.0.201603142002-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.sqltools.parsers.sql/1.1.0.201603142002/org.eclipse.datatools.sqltools.parsers.sql-1.1.0.201603142002-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.sqltools.result/1.2.0.201603142002/org.eclipse.datatools.sqltools.result-1.2.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.sqltools.result/1.2.0.201603142002/org.eclipse.datatools.sqltools.result-1.2.0.201603142002-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.sqltools.result/1.2.0.201603142002/org.eclipse.datatools.sqltools.result-1.2.0.201603142002-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.apache.derby/1.1.0.201603142002/org.eclipse.datatools.connectivity.apache.derby-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.apache.derby/1.1.0.201603142002/org.eclipse.datatools.connectivity.apache.derby-1.1.0.201603142002-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.apache.derby/1.1.0.201603142002/org.eclipse.datatools.connectivity.apache.derby-1.1.0.201603142002-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.emf.ecore.change/2.11.0.v20160420-0247/org.eclipse.emf.ecore.change-2.11.0.v20160420-0247.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.emf.ecore.change/2.11.0.v20160420-0247/org.eclipse.emf.ecore.change-2.11.0.v20160420-0247-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.emf.ecore.change/2.11.0.v20160420-0247/org.eclipse.emf.ecore.change-2.11.0.v20160420-0247-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.hsqldb/1.1.0.201603142002/org.eclipse.datatools.enablement.hsqldb-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.hsqldb/1.1.0.201603142002/org.eclipse.datatools.enablement.hsqldb-1.1.0.201603142002-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.hsqldb/1.1.0.201603142002/org.eclipse.datatools.enablement.hsqldb-1.1.0.201603142002-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.oda.design/3.4.0.201603142002/org.eclipse.datatools.connectivity.oda.design-3.4.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.oda.design/3.4.0.201603142002/org.eclipse.datatools.connectivity.oda.design-3.4.0.201603142002-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.oda.design/3.4.0.201603142002/org.eclipse.datatools.connectivity.oda.design-3.4.0.201603142002-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.oda.ws/1.3.0.201603142002/org.eclipse.datatools.enablement.oda.ws-1.3.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.oda.ws/1.3.0.201603142002/org.eclipse.datatools.enablement.oda.ws-1.3.0.201603142002-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.oda.ws/1.3.0.201603142002/org.eclipse.datatools.enablement.oda.ws-1.3.0.201603142002-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.oda.flatfile/3.2.0.201603142002/org.eclipse.datatools.connectivity.oda.flatfile-3.2.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.oda.flatfile/3.2.0.201603142002/org.eclipse.datatools.connectivity.oda.flatfile-3.2.0.201603142002-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.oda.flatfile/3.2.0.201603142002/org.eclipse.datatools.connectivity.oda.flatfile-3.2.0.201603142002-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity/1.13.0.201603142002/org.eclipse.datatools.connectivity-1.13.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity/1.13.0.201603142002/org.eclipse.datatools.connectivity-1.13.0.201603142002-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity/1.13.0.201603142002/org.eclipse.datatools.connectivity-1.13.0.201603142002-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.oda.profile/3.3.0.201603142002/org.eclipse.datatools.connectivity.oda.profile-3.3.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.oda.profile/3.3.0.201603142002/org.eclipse.datatools.connectivity.oda.profile-3.3.0.201603142002-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.oda.profile/3.3.0.201603142002/org.eclipse.datatools.connectivity.oda.profile-3.3.0.201603142002-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.osgi.services/3.5.100.v20160504-1419/org.eclipse.osgi.services-3.5.100.v20160504-1419.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.osgi.services/3.5.100.v20160504-1419/org.eclipse.osgi.services-3.5.100.v20160504-1419-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.osgi.services/3.5.100.v20160504-1419/org.eclipse.osgi.services-3.5.100.v20160504-1419-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.msft.sqlserver.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.msft.sqlserver.dbdefinition-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.msft.sqlserver.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.msft.sqlserver.dbdefinition-1.1.0.201603142002-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.msft.sqlserver.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.msft.sqlserver.dbdefinition-1.1.0.201603142002-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.apache.derby/10.11.1.1_v201605202053/org.apache.derby-10.11.1.1_v201605202053.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.apache.derby/10.11.1.1_v201605202053/org.apache.derby-10.11.1.1_v201605202053-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.apache.derby/10.11.1.1_v201605202053/org.apache.derby-10.11.1.1_v201605202053-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.sqltools.parsers.sql.lexer/1.1.0.201603142002/org.eclipse.datatools.sqltools.parsers.sql.lexer-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.sqltools.parsers.sql.lexer/1.1.0.201603142002/org.eclipse.datatools.sqltools.parsers.sql.lexer-1.1.0.201603142002-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.sqltools.parsers.sql.lexer/1.1.0.201603142002/org.eclipse.datatools.sqltools.parsers.sql.lexer-1.1.0.201603142002-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.db2.luw.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.db2.luw.dbdefinition-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.db2.luw.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.db2.luw.dbdefinition-1.1.0.201603142002-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.db2.luw.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.db2.luw.dbdefinition-1.1.0.201603142002-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.hsqldb.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.hsqldb.dbdefinition-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.hsqldb.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.hsqldb.dbdefinition-1.1.0.201603142002-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.hsqldb.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.hsqldb.dbdefinition-1.1.0.201603142002-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.help/3.7.0.v20160602-1307/org.eclipse.help-3.7.0.v20160602-1307.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.help/3.7.0.v20160602-1307/org.eclipse.help-3.7.0.v20160602-1307-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.help/3.7.0.v20160602-1307/org.eclipse.help-3.7.0.v20160602-1307-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.equinox.app/1.3.400.v20150715-1528/org.eclipse.equinox.app-1.3.400.v20150715-1528.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.equinox.app/1.3.400.v20150715-1528/org.eclipse.equinox.app-1.3.400.v20150715-1528-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.equinox.app/1.3.400.v20150715-1528/org.eclipse.equinox.app-1.3.400.v20150715-1528-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.msft.sqlserver/1.1.0.201603142002/org.eclipse.datatools.enablement.msft.sqlserver-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.msft.sqlserver/1.1.0.201603142002/org.eclipse.datatools.enablement.msft.sqlserver-1.1.0.201603142002-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.msft.sqlserver/1.1.0.201603142002/org.eclipse.datatools.enablement.msft.sqlserver-1.1.0.201603142002-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.modelbase.sql/1.1.0.201603142002/org.eclipse.datatools.modelbase.sql-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.modelbase.sql/1.1.0.201603142002/org.eclipse.datatools.modelbase.sql-1.1.0.201603142002-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.modelbase.sql/1.1.0.201603142002/org.eclipse.datatools.modelbase.sql-1.1.0.201603142002-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.informix.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.informix.dbdefinition-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.informix.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.informix.dbdefinition-1.1.0.201603142002-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.informix.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.informix.dbdefinition-1.1.0.201603142002-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.modelbase.sql.query/1.2.0.201603142002/org.eclipse.datatools.modelbase.sql.query-1.2.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.modelbase.sql.query/1.2.0.201603142002/org.eclipse.datatools.modelbase.sql.query-1.2.0.201603142002-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.modelbase.sql.query/1.2.0.201603142002/org.eclipse.datatools.modelbase.sql.query-1.2.0.201603142002-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.oracle.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.oracle.dbdefinition-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.oracle.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.oracle.dbdefinition-1.1.0.201603142002-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.oracle.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.oracle.dbdefinition-1.1.0.201603142002-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm-1.1.0.201603142002-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm-1.1.0.201603142002-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.oracle/1.1.0.201603142002/org.eclipse.datatools.enablement.oracle-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.oracle/1.1.0.201603142002/org.eclipse.datatools.enablement.oracle-1.1.0.201603142002-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.oracle/1.1.0.201603142002/org.eclipse.datatools.enablement.oracle-1.1.0.201603142002-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.oda.xml/1.3.0.201603142002/org.eclipse.datatools.enablement.oda.xml-1.3.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.oda.xml/1.3.0.201603142002/org.eclipse.datatools.enablement.oda.xml-1.3.0.201603142002-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.oda.xml/1.3.0.201603142002/org.eclipse.datatools.enablement.oda.xml-1.3.0.201603142002-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.postgresql/1.2.0.201603142002/org.eclipse.datatools.enablement.postgresql-1.2.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.postgresql/1.2.0.201603142002/org.eclipse.datatools.enablement.postgresql-1.2.0.201603142002-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.postgresql/1.2.0.201603142002/org.eclipse.datatools.enablement.postgresql-1.2.0.201603142002-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.postgresql.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.postgresql.dbdefinition-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.postgresql.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.postgresql.dbdefinition-1.1.0.201603142002-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.postgresql.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.postgresql.dbdefinition-1.1.0.201603142002-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.modelbase.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.modelbase.dbdefinition-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.modelbase.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.modelbase.dbdefinition-1.1.0.201603142002-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.modelbase.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.modelbase.dbdefinition-1.1.0.201603142002-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.db2.iseries/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.db2.iseries-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.db2.iseries/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.db2.iseries-1.1.0.201603142002-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.db2.iseries/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.db2.iseries-1.1.0.201603142002-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.mysql/1.1.0.201603142002/org.eclipse.datatools.enablement.mysql-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.mysql/1.1.0.201603142002/org.eclipse.datatools.enablement.mysql-1.1.0.201603142002-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.mysql/1.1.0.201603142002/org.eclipse.datatools.enablement.mysql-1.1.0.201603142002-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.update.configurator/3.3.400.v20160506-0750/org.eclipse.update.configurator-3.3.400.v20160506-0750.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.update.configurator/3.3.400.v20160506-0750/org.eclipse.update.configurator-3.3.400.v20160506-0750-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.update.configurator/3.3.400.v20160506-0750/org.eclipse.update.configurator-3.3.400.v20160506-0750-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.mysql.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.mysql.dbdefinition-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.mysql.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.mysql.dbdefinition-1.1.0.201603142002-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.mysql.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.mysql.dbdefinition-1.1.0.201603142002-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.db2.iseries.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.db2.iseries.dbdefinition-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.db2.iseries.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.db2.iseries.dbdefinition-1.1.0.201603142002-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.db2.iseries.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.db2.iseries.dbdefinition-1.1.0.201603142002-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.apache.derby.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.connectivity.apache.derby.dbdefinition-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.apache.derby.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.connectivity.apache.derby.dbdefinition-1.1.0.201603142002-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.apache.derby.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.connectivity.apache.derby.dbdefinition-1.1.0.201603142002-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.dbdefinition.genericJDBC/1.1.0.201603142002/org.eclipse.datatools.connectivity.dbdefinition.genericJDBC-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.dbdefinition.genericJDBC/1.1.0.201603142002/org.eclipse.datatools.connectivity.dbdefinition.genericJDBC-1.1.0.201603142002-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.dbdefinition.genericJDBC/1.1.0.201603142002/org.eclipse.datatools.connectivity.dbdefinition.genericJDBC-1.1.0.201603142002-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.db.generic/1.1.0.201603142002/org.eclipse.datatools.connectivity.db.generic-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.db.generic/1.1.0.201603142002/org.eclipse.datatools.connectivity.db.generic-1.1.0.201603142002-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.db.generic/1.1.0.201603142002/org.eclipse.datatools.connectivity.db.generic-1.1.0.201603142002-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.emf.common/2.12.0.v20160420-0247/org.eclipse.emf.common-2.12.0.v20160420-0247.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.emf.common/2.12.0.v20160420-0247/org.eclipse.emf.common-2.12.0.v20160420-0247-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.emf.common/2.12.0.v20160420-0247/org.eclipse.emf.common-2.12.0.v20160420-0247-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.sap.maxdb.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.sap.maxdb.dbdefinition-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.sap.maxdb.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.sap.maxdb.dbdefinition-1.1.0.201603142002-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.sap.maxdb.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.sap.maxdb.dbdefinition-1.1.0.201603142002-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.w3c.css.sac/1.3.1.v200903091627/org.w3c.css.sac-1.3.1.v200903091627.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.w3c.css.sac/1.3.1.v200903091627/org.w3c.css.sac-1.3.1.v200903091627-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.w3c.css.sac/1.3.1.v200903091627/org.w3c.css.sac-1.3.1.v200903091627-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/scout/sdk/deps/org.eclipse.core.runtime/3.12.0.v20160606-1342/org.eclipse.core.runtime-3.12.0.v20160606-1342.jar" sourcepath="M2_REPO/org/eclipse/scout/sdk/deps/org.eclipse.core.runtime/3.12.0.v20160606-1342/org.eclipse.core.runtime-3.12.0.v20160606-1342-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/scout/sdk/deps/org.eclipse.core.runtime/3.12.0.v20160606-1342/org.eclipse.core.runtime-3.12.0.v20160606-1342-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/scout/sdk/deps/org.eclipse.osgi/3.11.0.v20160603-1336/org.eclipse.osgi-3.11.0.v20160603-1336.jar" sourcepath="M2_REPO/org/eclipse/scout/sdk/deps/org.eclipse.osgi/3.11.0.v20160603-1336/org.eclipse.osgi-3.11.0.v20160603-1336-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/scout/sdk/deps/org.eclipse.osgi/3.11.0.v20160603-1336/org.eclipse.osgi-3.11.0.v20160603-1336-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/scout/sdk/deps/org.eclipse.equinox.common/3.8.0.v20160509-1230/org.eclipse.equinox.common-3.8.0.v20160509-1230.jar" sourcepath="M2_REPO/org/eclipse/scout/sdk/deps/org.eclipse.equinox.common/3.8.0.v20160509-1230/org.eclipse.equinox.common-3.8.0.v20160509-1230-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/scout/sdk/deps/org.eclipse.equinox.common/3.8.0.v20160509-1230/org.eclipse.equinox.common-3.8.0.v20160509-1230-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/scout/sdk/deps/org.eclipse.core.jobs/3.8.0.v20160509-0411/org.eclipse.core.jobs-3.8.0.v20160509-0411.jar" sourcepath="M2_REPO/org/eclipse/scout/sdk/deps/org.eclipse.core.jobs/3.8.0.v20160509-0411/org.eclipse.core.jobs-3.8.0.v20160509-0411-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/scout/sdk/deps/org.eclipse.core.jobs/3.8.0.v20160509-0411/org.eclipse.core.jobs-3.8.0.v20160509-0411-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/scout/sdk/deps/org.eclipse.equinox.registry/3.6.100.v20160223-2218/org.eclipse.equinox.registry-3.6.100.v20160223-2218.jar" sourcepath="M2_REPO/org/eclipse/scout/sdk/deps/org.eclipse.equinox.registry/3.6.100.v20160223-2218/org.eclipse.equinox.registry-3.6.100.v20160223-2218-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/scout/sdk/deps/org.eclipse.equinox.registry/3.6.100.v20160223-2218/org.eclipse.equinox.registry-3.6.100.v20160223-2218-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/scout/sdk/deps/org.eclipse.equinox.preferences/3.6.0.v20160120-1756/org.eclipse.equinox.preferences-3.6.0.v20160120-1756.jar" sourcepath="M2_REPO/org/eclipse/scout/sdk/deps/org.eclipse.equinox.preferences/3.6.0.v20160120-1756/org.eclipse.equinox.preferences-3.6.0.v20160120-1756-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/scout/sdk/deps/org.eclipse.equinox.preferences/3.6.0.v20160120-1756/org.eclipse.equinox.preferences-3.6.0.v20160120-1756-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/scout/sdk/deps/org.eclipse.core.contenttype/3.5.100.v20160418-1621/org.eclipse.core.contenttype-3.5.100.v20160418-1621.jar" sourcepath="M2_REPO/org/eclipse/scout/sdk/deps/org.eclipse.core.contenttype/3.5.100.v20160418-1621/org.eclipse.core.contenttype-3.5.100.v20160418-1621-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/scout/sdk/deps/org.eclipse.core.contenttype/3.5.100.v20160418-1621/org.eclipse.core.contenttype-3.5.100.v20160418-1621-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/3_7_1/org.apache.xml.serializer/2.7.1/org.apache.xml.serializer-2.7.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.mozilla.javascript/1.7.5.v201504281450/org.mozilla.javascript-1.7.5.v201504281450.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.mozilla.javascript/1.7.5.v201504281450/org.mozilla.javascript-1.7.5.v201504281450-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.mozilla.javascript/1.7.5.v201504281450/org.mozilla.javascript-1.7.5.v201504281450-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.w3c.dom.events/3.0.0.draft20060413_v201105210656/org.w3c.dom.events-3.0.0.draft20060413_v201105210656.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.w3c.dom.events/3.0.0.draft20060413_v201105210656/org.w3c.dom.events-3.0.0.draft20060413_v201105210656-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.w3c.dom.events/3.0.0.draft20060413_v201105210656/org.w3c.dom.events-3.0.0.draft20060413_v201105210656-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/3_7_1/org.apache.batik.transcoder/1.6.0/org.apache.batik.transcoder-1.6.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/3_7_1/org.w3c.dom.svg/1.1.0/org.w3c.dom.svg-1.1.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/3_7_1/org.apache.batik.util/1.6.0/org.apache.batik.util-1.6.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/net.sourceforge.lpg.lpgjavaruntime/1.1.0.v201004271650/net.sourceforge.lpg.lpgjavaruntime-1.1.0.v201004271650.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/net.sourceforge.lpg.lpgjavaruntime/1.1.0.v201004271650/net.sourceforge.lpg.lpgjavaruntime-1.1.0.v201004271650-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/net.sourceforge.lpg.lpgjavaruntime/1.1.0.v201004271650/net.sourceforge.lpg.lpgjavaruntime-1.1.0.v201004271650-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/3_7_1/org.apache.batik.dom.svg/1.6.0/org.apache.batik.dom.svg-1.6.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/javax.xml.stream/1.0.1.v201004272200/javax.xml.stream-1.0.1.v201004272200.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/javax.xml.stream/1.0.1.v201004272200/javax.xml.stream-1.0.1.v201004272200-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/javax.xml.stream/1.0.1.v201004272200/javax.xml.stream-1.0.1.v201004272200-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/3_7_1/org.apache.batik.ext.awt/1.6.0/org.apache.batik.ext.awt-1.6.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/3_7_1/org.apache.batik.parser/1.6.0/org.apache.batik.parser-1.6.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/3_7_1/org.apache.xml.resolver/1.2.0/org.apache.xml.resolver-1.2.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/scout/sdk/deps/org.eclipse.core.expressions/3.5.100.v20160418-1621/org.eclipse.core.expressions-3.5.100.v20160418-1621.jar" sourcepath="M2_REPO/org/eclipse/scout/sdk/deps/org.eclipse.core.expressions/3.5.100.v20160418-1621/org.eclipse.core.expressions-3.5.100.v20160418-1621-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/scout/sdk/deps/org.eclipse.core.expressions/3.5.100.v20160418-1621/org.eclipse.core.expressions-3.5.100.v20160418-1621-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/3_7_1/org.apache.batik.pdf/1.6.0/org.apache.batik.pdf-1.6.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/3_7_1/org.apache.batik.css/1.6.0/org.apache.batik.css-1.6.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/3_7_1/com.lowagie.text/2.1.7/com.lowagie.text-2.1.7.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/javax.xml/1.3.4.v201005080400/javax.xml-1.3.4.v201005080400.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/javax.xml/1.3.4.v201005080400/javax.xml-1.3.4.v201005080400-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/javax.xml/1.3.4.v201005080400/javax.xml-1.3.4.v201005080400-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/scout/sdk/deps/org.eclipse.core.filesystem/1.6.0.v20160503-1608/org.eclipse.core.filesystem-1.6.0.v20160503-1608.jar" sourcepath="M2_REPO/org/eclipse/scout/sdk/deps/org.eclipse.core.filesystem/1.6.0.v20160503-1608/org.eclipse.core.filesystem-1.6.0.v20160503-1608-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/scout/sdk/deps/org.eclipse.core.filesystem/1.6.0.v20160503-1608/org.eclipse.core.filesystem-1.6.0.v20160503-1608-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/3_7_1/org.apache.batik.svggen/1.6.0/org.apache.batik.svggen-1.6.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/3_7_1/javax.wsdl/1.5.1/javax.wsdl-1.5.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/3_7_1/org.apache.batik.bridge/1.6.0/org.apache.batik.bridge-1.6.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.apache.batik.dom/1.6.1.v201505192100/org.apache.batik.dom-1.6.1.v201505192100.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.apache.batik.dom/1.6.1.v201505192100/org.apache.batik.dom-1.6.1.v201505192100-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.apache.batik.dom/1.6.1.v201505192100/org.apache.batik.dom-1.6.1.v201505192100-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.apache.lucene.core/3.5.0.v20120725-1805/org.apache.lucene.core-3.5.0.v20120725-1805.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.apache.lucene.core/3.5.0.v20120725-1805/org.apache.lucene.core-3.5.0.v20120725-1805-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.apache.lucene.core/3.5.0.v20120725-1805/org.apache.lucene.core-3.5.0.v20120725-1805-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/3_7_1/org.apache.batik.util.gui/1.6.0/org.apache.batik.util.gui-1.6.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.orbit.mongodb/2.10.1.v20130422-1135/org.eclipse.orbit.mongodb-2.10.1.v20130422-1135.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.orbit.mongodb/2.10.1.v20130422-1135/org.eclipse.orbit.mongodb-2.10.1.v20130422-1135-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.orbit.mongodb/2.10.1.v20130422-1135/org.eclipse.orbit.mongodb-2.10.1.v20130422-1135-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/3_7_1/org.apache.batik.xml/1.6.0/org.apache.batik.xml-1.6.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/3_7_1/org.apache.xerces/2.9.0/org.apache.xerces-2.9.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/scout/sdk/deps/org.eclipse.core.resources/3.11.0.v20160503-1608/org.eclipse.core.resources-3.11.0.v20160503-1608.jar" sourcepath="M2_REPO/org/eclipse/scout/sdk/deps/org.eclipse.core.resources/3.11.0.v20160503-1608/org.eclipse.core.resources-3.11.0.v20160503-1608-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/scout/sdk/deps/org.eclipse.core.resources/3.11.0.v20160503-1608/org.eclipse.core.resources-3.11.0.v20160503-1608-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.w3c.dom.smil/1.0.1.v200903091627/org.w3c.dom.smil-1.0.1.v200903091627.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.w3c.dom.smil/1.0.1.v200903091627/org.w3c.dom.smil-1.0.1.v200903091627-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.w3c.dom.smil/1.0.1.v200903091627/org.w3c.dom.smil-1.0.1.v200903091627-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/apache/httpcomponents/httpclient/4.5.2/httpclient-4.5.2.jar" sourcepath="M2_REPO/org/apache/httpcomponents/httpclient/4.5.2/httpclient-4.5.2-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/apache/httpcomponents/httpclient/4.5.2/httpclient-4.5.2-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/apache/httpcomponents/httpcore/4.4.5/httpcore-4.4.5.jar" sourcepath="M2_REPO/org/apache/httpcomponents/httpcore/4.4.5/httpcore-4.4.5-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/apache/httpcomponents/httpcore/4.4.5/httpcore-4.4.5-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.2/commons-logging-1.2.jar" sourcepath="M2_REPO/commons-logging/commons-logging/1.2/commons-logging-1.2-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/commons-logging/commons-logging/1.2/commons-logging-1.2-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/commons-codec/commons-codec/1.10/commons-codec-1.10.jar" sourcepath="M2_REPO/commons-codec/commons-codec/1.10/commons-codec-1.10-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/commons-codec/commons-codec/1.10/commons-codec-1.10-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/log4j/log4j/1.2.17/log4j-1.2.17.jar" sourcepath="M2_REPO/log4j/log4j/1.2.17/log4j-1.2.17-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/log4j/log4j/1.2.17/log4j-1.2.17-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/junit/junit/4.12/junit-4.12.jar" sourcepath="M2_REPO/junit/junit/4.12/junit-4.12-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/junit/junit/4.12/junit-4.12-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar" sourcepath="M2_REPO/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/alfresco/maven/alfresco-rad/2.2.0/alfresco-rad-2.2.0.jar" sourcepath="M2_REPO/org/alfresco/maven/alfresco-rad/2.2.0/alfresco-rad-2.2.0-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/alfresco/maven/alfresco-rad/2.2.0/alfresco-rad-2.2.0-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/com/tradeshift/junit-remote/3/junit-remote-3.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-api/1.7.21/slf4j-api-1.7.21.jar" sourcepath="M2_REPO/org/slf4j/slf4j-api/1.7.21/slf4j-api-1.7.21-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/slf4j/slf4j-api/1.7.21/slf4j-api-1.7.21-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-servlet/7.4.0.v20110414/jetty-servlet-7.4.0.v20110414.jar" sourcepath="M2_REPO/org/eclipse/jetty/jetty-servlet/7.4.0.v20110414/jetty-servlet-7.4.0.v20110414-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/jetty/jetty-servlet/7.4.0.v20110414/jetty-servlet-7.4.0.v20110414-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-security/7.4.0.v20110414/jetty-security-7.4.0.v20110414.jar" sourcepath="M2_REPO/org/eclipse/jetty/jetty-security/7.4.0.v20110414/jetty-security-7.4.0.v20110414-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/jetty/jetty-security/7.4.0.v20110414/jetty-security-7.4.0.v20110414-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-server/7.4.0.v20110414/jetty-server-7.4.0.v20110414.jar" sourcepath="M2_REPO/org/eclipse/jetty/jetty-server/7.4.0.v20110414/jetty-server-7.4.0.v20110414-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/jetty/jetty-server/7.4.0.v20110414/jetty-server-7.4.0.v20110414-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-continuation/7.4.0.v20110414/jetty-continuation-7.4.0.v20110414.jar" sourcepath="M2_REPO/org/eclipse/jetty/jetty-continuation/7.4.0.v20110414/jetty-continuation-7.4.0.v20110414-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/jetty/jetty-continuation/7.4.0.v20110414/jetty-continuation-7.4.0.v20110414-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-http/7.4.0.v20110414/jetty-http-7.4.0.v20110414.jar" sourcepath="M2_REPO/org/eclipse/jetty/jetty-http/7.4.0.v20110414/jetty-http-7.4.0.v20110414-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/jetty/jetty-http/7.4.0.v20110414/jetty-http-7.4.0.v20110414-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-io/7.4.0.v20110414/jetty-io-7.4.0.v20110414.jar" sourcepath="M2_REPO/org/eclipse/jetty/jetty-io/7.4.0.v20110414/jetty-io-7.4.0.v20110414-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/jetty/jetty-io/7.4.0.v20110414/jetty-io-7.4.0.v20110414-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-util/7.4.0.v20110414/jetty-util-7.4.0.v20110414.jar" sourcepath="M2_REPO/org/eclipse/jetty/jetty-util/7.4.0.v20110414/jetty-util-7.4.0.v20110414-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/eclipse/jetty/jetty-util/7.4.0.v20110414/jetty-util-7.4.0.v20110414-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/args4j/args4j/2.0.16/args4j-2.0.16.jar" sourcepath="M2_REPO/args4j/args4j/2.0.16/args4j-2.0.16-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/args4j/args4j/2.0.16/args4j-2.0.16-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/springframework/spring-test/3.2.14.RELEASE/spring-test-3.2.14.RELEASE.jar" sourcepath="M2_REPO/org/springframework/spring-test/3.2.14.RELEASE/spring-test-3.2.14.RELEASE-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/springframework/spring-test/3.2.14.RELEASE/spring-test-3.2.14.RELEASE-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/springframework/spring-core/3.2.17.RELEASE/spring-core-3.2.17.RELEASE.jar" sourcepath="M2_REPO/org/springframework/spring-core/3.2.17.RELEASE/spring-core-3.2.17.RELEASE-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/opt/java_repository/org/springframework/spring-core/3.2.17.RELEASE/spring-core-3.2.17.RELEASE-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
+	<classpathentry kind="src" output="target/test-classes" path="src/test/java">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" output="target/classes" path="src/main/java">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry excluding="**" kind="src" output="target/classes" path="src/main/resources">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/javax/servlet/servlet-api/2.4/servlet-api-2.4.jar" sourcepath="M2_REPO/javax/servlet/servlet-api/2.4/servlet-api-2.4-sources.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.birt.runtime/4.6.0-20160607/org.eclipse.birt.runtime-4.6.0-20160607.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.birt.runtime/4.6.0-20160607/org.eclipse.birt.runtime-4.6.0-20160607-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.birt.runtime/4.6.0-20160607/org.eclipse.birt.runtime-4.6.0-20160607-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.sqltools.parsers.sql.query/1.3.0.201603142002/org.eclipse.datatools.sqltools.parsers.sql.query-1.3.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.sqltools.parsers.sql.query/1.3.0.201603142002/org.eclipse.datatools.sqltools.parsers.sql.query-1.3.0.201603142002-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.sqltools.parsers.sql.query/1.3.0.201603142002/org.eclipse.datatools.sqltools.parsers.sql.query-1.3.0.201603142002-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.db2.zseries.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.db2.zseries.dbdefinition-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.db2.zseries.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.db2.zseries.dbdefinition-1.1.0.201603142002-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.db2.zseries.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.db2.zseries.dbdefinition-1.1.0.201603142002-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/com.ibm.icu/56.1.0.v201601250100/com.ibm.icu-56.1.0.v201601250100.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/com.ibm.icu/56.1.0.v201601250100/com.ibm.icu-56.1.0.v201601250100-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/com.ibm.icu/56.1.0.v201601250100/com.ibm.icu-56.1.0.v201601250100-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.sqltools.data.core/1.3.0.201603142002/org.eclipse.datatools.sqltools.data.core-1.3.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.sqltools.data.core/1.3.0.201603142002/org.eclipse.datatools.sqltools.data.core-1.3.0.201603142002-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.sqltools.data.core/1.3.0.201603142002/org.eclipse.datatools.sqltools.data.core-1.3.0.201603142002-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.emf.ecore.xmi/2.12.0.v20160420-0247/org.eclipse.emf.ecore.xmi-2.12.0.v20160420-0247.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.emf.ecore.xmi/2.12.0.v20160420-0247/org.eclipse.emf.ecore.xmi-2.12.0.v20160420-0247-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.emf.ecore.xmi/2.12.0.v20160420-0247/org.eclipse.emf.ecore.xmi-2.12.0.v20160420-0247-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.emf.ecore/2.12.0.v20160420-0247/org.eclipse.emf.ecore-2.12.0.v20160420-0247.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.emf.ecore/2.12.0.v20160420-0247/org.eclipse.emf.ecore-2.12.0.v20160420-0247-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.emf.ecore/2.12.0.v20160420-0247/org.eclipse.emf.ecore-2.12.0.v20160420-0247-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.oda/3.5.0.201603142002/org.eclipse.datatools.connectivity.oda-3.5.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.oda/3.5.0.201603142002/org.eclipse.datatools.connectivity.oda-3.5.0.201603142002-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.oda/3.5.0.201603142002/org.eclipse.datatools.connectivity.oda-3.5.0.201603142002-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.db2.luw/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.db2.luw-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.db2.luw/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.db2.luw-1.1.0.201603142002-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.db2.luw/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.db2.luw-1.1.0.201603142002-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.modelbase.derby/1.1.0.201603142002/org.eclipse.datatools.modelbase.derby-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.modelbase.derby/1.1.0.201603142002/org.eclipse.datatools.modelbase.derby-1.1.0.201603142002-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.modelbase.derby/1.1.0.201603142002/org.eclipse.datatools.modelbase.derby-1.1.0.201603142002-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.sqm.core/1.3.0.201603142002/org.eclipse.datatools.connectivity.sqm.core-1.3.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.sqm.core/1.3.0.201603142002/org.eclipse.datatools.connectivity.sqm.core-1.3.0.201603142002-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.sqm.core/1.3.0.201603142002/org.eclipse.datatools.connectivity.sqm.core-1.3.0.201603142002-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.db2/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.db2-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.db2/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.db2-1.1.0.201603142002-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.db2/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.db2-1.1.0.201603142002-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.sap.maxdb/1.1.0.201603142002/org.eclipse.datatools.enablement.sap.maxdb-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.sap.maxdb/1.1.0.201603142002/org.eclipse.datatools.enablement.sap.maxdb-1.1.0.201603142002-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.sap.maxdb/1.1.0.201603142002/org.eclipse.datatools.enablement.sap.maxdb-1.1.0.201603142002-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.informix/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.informix-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.informix/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.informix-1.1.0.201603142002-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.informix/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.informix-1.1.0.201603142002-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.db2.zseries/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.db2.zseries-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.db2.zseries/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.db2.zseries-1.1.0.201603142002-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.db2.zseries/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.db2.zseries-1.1.0.201603142002-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.console.profile/1.1.0.201603142002/org.eclipse.datatools.connectivity.console.profile-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.console.profile/1.1.0.201603142002/org.eclipse.datatools.connectivity.console.profile-1.1.0.201603142002-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.console.profile/1.1.0.201603142002/org.eclipse.datatools.connectivity.console.profile-1.1.0.201603142002-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.oda.consumer/3.3.0.201603142002/org.eclipse.datatools.connectivity.oda.consumer-3.3.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.oda.consumer/3.3.0.201603142002/org.eclipse.datatools.connectivity.oda.consumer-3.3.0.201603142002-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.oda.consumer/3.3.0.201603142002/org.eclipse.datatools.connectivity.oda.consumer-3.3.0.201603142002-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.sqltools.parsers.sql/1.1.0.201603142002/org.eclipse.datatools.sqltools.parsers.sql-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.sqltools.parsers.sql/1.1.0.201603142002/org.eclipse.datatools.sqltools.parsers.sql-1.1.0.201603142002-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.sqltools.parsers.sql/1.1.0.201603142002/org.eclipse.datatools.sqltools.parsers.sql-1.1.0.201603142002-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.sqltools.result/1.2.0.201603142002/org.eclipse.datatools.sqltools.result-1.2.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.sqltools.result/1.2.0.201603142002/org.eclipse.datatools.sqltools.result-1.2.0.201603142002-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.sqltools.result/1.2.0.201603142002/org.eclipse.datatools.sqltools.result-1.2.0.201603142002-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.apache.derby/1.1.0.201603142002/org.eclipse.datatools.connectivity.apache.derby-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.apache.derby/1.1.0.201603142002/org.eclipse.datatools.connectivity.apache.derby-1.1.0.201603142002-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.apache.derby/1.1.0.201603142002/org.eclipse.datatools.connectivity.apache.derby-1.1.0.201603142002-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.emf.ecore.change/2.11.0.v20160420-0247/org.eclipse.emf.ecore.change-2.11.0.v20160420-0247.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.emf.ecore.change/2.11.0.v20160420-0247/org.eclipse.emf.ecore.change-2.11.0.v20160420-0247-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.emf.ecore.change/2.11.0.v20160420-0247/org.eclipse.emf.ecore.change-2.11.0.v20160420-0247-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.hsqldb/1.1.0.201603142002/org.eclipse.datatools.enablement.hsqldb-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.hsqldb/1.1.0.201603142002/org.eclipse.datatools.enablement.hsqldb-1.1.0.201603142002-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.hsqldb/1.1.0.201603142002/org.eclipse.datatools.enablement.hsqldb-1.1.0.201603142002-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.oda.design/3.4.0.201603142002/org.eclipse.datatools.connectivity.oda.design-3.4.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.oda.design/3.4.0.201603142002/org.eclipse.datatools.connectivity.oda.design-3.4.0.201603142002-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.oda.design/3.4.0.201603142002/org.eclipse.datatools.connectivity.oda.design-3.4.0.201603142002-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.oda.ws/1.3.0.201603142002/org.eclipse.datatools.enablement.oda.ws-1.3.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.oda.ws/1.3.0.201603142002/org.eclipse.datatools.enablement.oda.ws-1.3.0.201603142002-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.oda.ws/1.3.0.201603142002/org.eclipse.datatools.enablement.oda.ws-1.3.0.201603142002-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.oda.flatfile/3.2.0.201603142002/org.eclipse.datatools.connectivity.oda.flatfile-3.2.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.oda.flatfile/3.2.0.201603142002/org.eclipse.datatools.connectivity.oda.flatfile-3.2.0.201603142002-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.oda.flatfile/3.2.0.201603142002/org.eclipse.datatools.connectivity.oda.flatfile-3.2.0.201603142002-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity/1.13.0.201603142002/org.eclipse.datatools.connectivity-1.13.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity/1.13.0.201603142002/org.eclipse.datatools.connectivity-1.13.0.201603142002-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity/1.13.0.201603142002/org.eclipse.datatools.connectivity-1.13.0.201603142002-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.oda.profile/3.3.0.201603142002/org.eclipse.datatools.connectivity.oda.profile-3.3.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.oda.profile/3.3.0.201603142002/org.eclipse.datatools.connectivity.oda.profile-3.3.0.201603142002-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.oda.profile/3.3.0.201603142002/org.eclipse.datatools.connectivity.oda.profile-3.3.0.201603142002-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.osgi.services/3.5.100.v20160504-1419/org.eclipse.osgi.services-3.5.100.v20160504-1419.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.osgi.services/3.5.100.v20160504-1419/org.eclipse.osgi.services-3.5.100.v20160504-1419-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.osgi.services/3.5.100.v20160504-1419/org.eclipse.osgi.services-3.5.100.v20160504-1419-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.msft.sqlserver.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.msft.sqlserver.dbdefinition-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.msft.sqlserver.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.msft.sqlserver.dbdefinition-1.1.0.201603142002-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.msft.sqlserver.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.msft.sqlserver.dbdefinition-1.1.0.201603142002-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.apache.derby/10.11.1.1_v201605202053/org.apache.derby-10.11.1.1_v201605202053.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.apache.derby/10.11.1.1_v201605202053/org.apache.derby-10.11.1.1_v201605202053-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.apache.derby/10.11.1.1_v201605202053/org.apache.derby-10.11.1.1_v201605202053-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.sqltools.parsers.sql.lexer/1.1.0.201603142002/org.eclipse.datatools.sqltools.parsers.sql.lexer-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.sqltools.parsers.sql.lexer/1.1.0.201603142002/org.eclipse.datatools.sqltools.parsers.sql.lexer-1.1.0.201603142002-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.sqltools.parsers.sql.lexer/1.1.0.201603142002/org.eclipse.datatools.sqltools.parsers.sql.lexer-1.1.0.201603142002-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.db2.luw.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.db2.luw.dbdefinition-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.db2.luw.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.db2.luw.dbdefinition-1.1.0.201603142002-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.db2.luw.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.db2.luw.dbdefinition-1.1.0.201603142002-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.hsqldb.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.hsqldb.dbdefinition-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.hsqldb.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.hsqldb.dbdefinition-1.1.0.201603142002-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.hsqldb.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.hsqldb.dbdefinition-1.1.0.201603142002-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.help/3.7.0.v20160602-1307/org.eclipse.help-3.7.0.v20160602-1307.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.help/3.7.0.v20160602-1307/org.eclipse.help-3.7.0.v20160602-1307-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.help/3.7.0.v20160602-1307/org.eclipse.help-3.7.0.v20160602-1307-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.equinox.app/1.3.400.v20150715-1528/org.eclipse.equinox.app-1.3.400.v20150715-1528.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.equinox.app/1.3.400.v20150715-1528/org.eclipse.equinox.app-1.3.400.v20150715-1528-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.equinox.app/1.3.400.v20150715-1528/org.eclipse.equinox.app-1.3.400.v20150715-1528-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.msft.sqlserver/1.1.0.201603142002/org.eclipse.datatools.enablement.msft.sqlserver-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.msft.sqlserver/1.1.0.201603142002/org.eclipse.datatools.enablement.msft.sqlserver-1.1.0.201603142002-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.msft.sqlserver/1.1.0.201603142002/org.eclipse.datatools.enablement.msft.sqlserver-1.1.0.201603142002-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.modelbase.sql/1.1.0.201603142002/org.eclipse.datatools.modelbase.sql-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.modelbase.sql/1.1.0.201603142002/org.eclipse.datatools.modelbase.sql-1.1.0.201603142002-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.modelbase.sql/1.1.0.201603142002/org.eclipse.datatools.modelbase.sql-1.1.0.201603142002-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.informix.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.informix.dbdefinition-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.informix.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.informix.dbdefinition-1.1.0.201603142002-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.informix.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.informix.dbdefinition-1.1.0.201603142002-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.modelbase.sql.query/1.2.0.201603142002/org.eclipse.datatools.modelbase.sql.query-1.2.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.modelbase.sql.query/1.2.0.201603142002/org.eclipse.datatools.modelbase.sql.query-1.2.0.201603142002-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.modelbase.sql.query/1.2.0.201603142002/org.eclipse.datatools.modelbase.sql.query-1.2.0.201603142002-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.oracle.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.oracle.dbdefinition-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.oracle.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.oracle.dbdefinition-1.1.0.201603142002-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.oracle.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.oracle.dbdefinition-1.1.0.201603142002-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm-1.1.0.201603142002-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm-1.1.0.201603142002-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.oracle/1.1.0.201603142002/org.eclipse.datatools.enablement.oracle-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.oracle/1.1.0.201603142002/org.eclipse.datatools.enablement.oracle-1.1.0.201603142002-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.oracle/1.1.0.201603142002/org.eclipse.datatools.enablement.oracle-1.1.0.201603142002-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.oda.xml/1.3.0.201603142002/org.eclipse.datatools.enablement.oda.xml-1.3.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.oda.xml/1.3.0.201603142002/org.eclipse.datatools.enablement.oda.xml-1.3.0.201603142002-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.oda.xml/1.3.0.201603142002/org.eclipse.datatools.enablement.oda.xml-1.3.0.201603142002-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.postgresql/1.2.0.201603142002/org.eclipse.datatools.enablement.postgresql-1.2.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.postgresql/1.2.0.201603142002/org.eclipse.datatools.enablement.postgresql-1.2.0.201603142002-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.postgresql/1.2.0.201603142002/org.eclipse.datatools.enablement.postgresql-1.2.0.201603142002-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.postgresql.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.postgresql.dbdefinition-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.postgresql.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.postgresql.dbdefinition-1.1.0.201603142002-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.postgresql.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.postgresql.dbdefinition-1.1.0.201603142002-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.modelbase.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.modelbase.dbdefinition-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.modelbase.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.modelbase.dbdefinition-1.1.0.201603142002-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.modelbase.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.modelbase.dbdefinition-1.1.0.201603142002-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.db2.iseries/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.db2.iseries-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.db2.iseries/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.db2.iseries-1.1.0.201603142002-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.db2.iseries/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.db2.iseries-1.1.0.201603142002-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.mysql/1.1.0.201603142002/org.eclipse.datatools.enablement.mysql-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.mysql/1.1.0.201603142002/org.eclipse.datatools.enablement.mysql-1.1.0.201603142002-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.mysql/1.1.0.201603142002/org.eclipse.datatools.enablement.mysql-1.1.0.201603142002-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.update.configurator/3.3.400.v20160506-0750/org.eclipse.update.configurator-3.3.400.v20160506-0750.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.update.configurator/3.3.400.v20160506-0750/org.eclipse.update.configurator-3.3.400.v20160506-0750-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.update.configurator/3.3.400.v20160506-0750/org.eclipse.update.configurator-3.3.400.v20160506-0750-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.mysql.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.mysql.dbdefinition-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.mysql.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.mysql.dbdefinition-1.1.0.201603142002-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.mysql.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.mysql.dbdefinition-1.1.0.201603142002-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.db2.iseries.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.db2.iseries.dbdefinition-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.db2.iseries.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.db2.iseries.dbdefinition-1.1.0.201603142002-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.ibm.db2.iseries.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.ibm.db2.iseries.dbdefinition-1.1.0.201603142002-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.apache.derby.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.connectivity.apache.derby.dbdefinition-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.apache.derby.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.connectivity.apache.derby.dbdefinition-1.1.0.201603142002-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.apache.derby.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.connectivity.apache.derby.dbdefinition-1.1.0.201603142002-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.dbdefinition.genericJDBC/1.1.0.201603142002/org.eclipse.datatools.connectivity.dbdefinition.genericJDBC-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.dbdefinition.genericJDBC/1.1.0.201603142002/org.eclipse.datatools.connectivity.dbdefinition.genericJDBC-1.1.0.201603142002-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.dbdefinition.genericJDBC/1.1.0.201603142002/org.eclipse.datatools.connectivity.dbdefinition.genericJDBC-1.1.0.201603142002-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.db.generic/1.1.0.201603142002/org.eclipse.datatools.connectivity.db.generic-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.db.generic/1.1.0.201603142002/org.eclipse.datatools.connectivity.db.generic-1.1.0.201603142002-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.connectivity.db.generic/1.1.0.201603142002/org.eclipse.datatools.connectivity.db.generic-1.1.0.201603142002-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.emf.common/2.12.0.v20160420-0247/org.eclipse.emf.common-2.12.0.v20160420-0247.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.emf.common/2.12.0.v20160420-0247/org.eclipse.emf.common-2.12.0.v20160420-0247-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.emf.common/2.12.0.v20160420-0247/org.eclipse.emf.common-2.12.0.v20160420-0247-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.sap.maxdb.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.sap.maxdb.dbdefinition-1.1.0.201603142002.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.sap.maxdb.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.sap.maxdb.dbdefinition-1.1.0.201603142002-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.datatools.enablement.sap.maxdb.dbdefinition/1.1.0.201603142002/org.eclipse.datatools.enablement.sap.maxdb.dbdefinition-1.1.0.201603142002-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.w3c.css.sac/1.3.1.v200903091627/org.w3c.css.sac-1.3.1.v200903091627.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.w3c.css.sac/1.3.1.v200903091627/org.w3c.css.sac-1.3.1.v200903091627-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.w3c.css.sac/1.3.1.v200903091627/org.w3c.css.sac-1.3.1.v200903091627-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/scout/sdk/deps/org.eclipse.core.runtime/3.12.0.v20160606-1342/org.eclipse.core.runtime-3.12.0.v20160606-1342.jar" sourcepath="M2_REPO/org/eclipse/scout/sdk/deps/org.eclipse.core.runtime/3.12.0.v20160606-1342/org.eclipse.core.runtime-3.12.0.v20160606-1342-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/scout/sdk/deps/org.eclipse.core.runtime/3.12.0.v20160606-1342/org.eclipse.core.runtime-3.12.0.v20160606-1342-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/scout/sdk/deps/org.eclipse.osgi/3.11.0.v20160603-1336/org.eclipse.osgi-3.11.0.v20160603-1336.jar" sourcepath="M2_REPO/org/eclipse/scout/sdk/deps/org.eclipse.osgi/3.11.0.v20160603-1336/org.eclipse.osgi-3.11.0.v20160603-1336-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/scout/sdk/deps/org.eclipse.osgi/3.11.0.v20160603-1336/org.eclipse.osgi-3.11.0.v20160603-1336-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/scout/sdk/deps/org.eclipse.equinox.common/3.8.0.v20160509-1230/org.eclipse.equinox.common-3.8.0.v20160509-1230.jar" sourcepath="M2_REPO/org/eclipse/scout/sdk/deps/org.eclipse.equinox.common/3.8.0.v20160509-1230/org.eclipse.equinox.common-3.8.0.v20160509-1230-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/scout/sdk/deps/org.eclipse.equinox.common/3.8.0.v20160509-1230/org.eclipse.equinox.common-3.8.0.v20160509-1230-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/scout/sdk/deps/org.eclipse.core.jobs/3.8.0.v20160509-0411/org.eclipse.core.jobs-3.8.0.v20160509-0411.jar" sourcepath="M2_REPO/org/eclipse/scout/sdk/deps/org.eclipse.core.jobs/3.8.0.v20160509-0411/org.eclipse.core.jobs-3.8.0.v20160509-0411-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/scout/sdk/deps/org.eclipse.core.jobs/3.8.0.v20160509-0411/org.eclipse.core.jobs-3.8.0.v20160509-0411-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/scout/sdk/deps/org.eclipse.equinox.registry/3.6.100.v20160223-2218/org.eclipse.equinox.registry-3.6.100.v20160223-2218.jar" sourcepath="M2_REPO/org/eclipse/scout/sdk/deps/org.eclipse.equinox.registry/3.6.100.v20160223-2218/org.eclipse.equinox.registry-3.6.100.v20160223-2218-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/scout/sdk/deps/org.eclipse.equinox.registry/3.6.100.v20160223-2218/org.eclipse.equinox.registry-3.6.100.v20160223-2218-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/scout/sdk/deps/org.eclipse.equinox.preferences/3.6.0.v20160120-1756/org.eclipse.equinox.preferences-3.6.0.v20160120-1756.jar" sourcepath="M2_REPO/org/eclipse/scout/sdk/deps/org.eclipse.equinox.preferences/3.6.0.v20160120-1756/org.eclipse.equinox.preferences-3.6.0.v20160120-1756-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/scout/sdk/deps/org.eclipse.equinox.preferences/3.6.0.v20160120-1756/org.eclipse.equinox.preferences-3.6.0.v20160120-1756-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/scout/sdk/deps/org.eclipse.core.contenttype/3.5.100.v20160418-1621/org.eclipse.core.contenttype-3.5.100.v20160418-1621.jar" sourcepath="M2_REPO/org/eclipse/scout/sdk/deps/org.eclipse.core.contenttype/3.5.100.v20160418-1621/org.eclipse.core.contenttype-3.5.100.v20160418-1621-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/scout/sdk/deps/org.eclipse.core.contenttype/3.5.100.v20160418-1621/org.eclipse.core.contenttype-3.5.100.v20160418-1621-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/3_7_1/org.apache.xml.serializer/2.7.1/org.apache.xml.serializer-2.7.1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.mozilla.javascript/1.7.5.v201504281450/org.mozilla.javascript-1.7.5.v201504281450.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.mozilla.javascript/1.7.5.v201504281450/org.mozilla.javascript-1.7.5.v201504281450-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.mozilla.javascript/1.7.5.v201504281450/org.mozilla.javascript-1.7.5.v201504281450-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.w3c.dom.events/3.0.0.draft20060413_v201105210656/org.w3c.dom.events-3.0.0.draft20060413_v201105210656.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.w3c.dom.events/3.0.0.draft20060413_v201105210656/org.w3c.dom.events-3.0.0.draft20060413_v201105210656-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.w3c.dom.events/3.0.0.draft20060413_v201105210656/org.w3c.dom.events-3.0.0.draft20060413_v201105210656-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/3_7_1/org.apache.batik.transcoder/1.6.0/org.apache.batik.transcoder-1.6.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/3_7_1/org.w3c.dom.svg/1.1.0/org.w3c.dom.svg-1.1.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/3_7_1/org.apache.batik.util/1.6.0/org.apache.batik.util-1.6.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/net.sourceforge.lpg.lpgjavaruntime/1.1.0.v201004271650/net.sourceforge.lpg.lpgjavaruntime-1.1.0.v201004271650.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/net.sourceforge.lpg.lpgjavaruntime/1.1.0.v201004271650/net.sourceforge.lpg.lpgjavaruntime-1.1.0.v201004271650-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/net.sourceforge.lpg.lpgjavaruntime/1.1.0.v201004271650/net.sourceforge.lpg.lpgjavaruntime-1.1.0.v201004271650-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/3_7_1/org.apache.batik.dom.svg/1.6.0/org.apache.batik.dom.svg-1.6.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/javax.xml.stream/1.0.1.v201004272200/javax.xml.stream-1.0.1.v201004272200.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/javax.xml.stream/1.0.1.v201004272200/javax.xml.stream-1.0.1.v201004272200-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/javax.xml.stream/1.0.1.v201004272200/javax.xml.stream-1.0.1.v201004272200-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/3_7_1/org.apache.batik.ext.awt/1.6.0/org.apache.batik.ext.awt-1.6.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/3_7_1/org.apache.batik.parser/1.6.0/org.apache.batik.parser-1.6.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/3_7_1/org.apache.xml.resolver/1.2.0/org.apache.xml.resolver-1.2.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/scout/sdk/deps/org.eclipse.core.expressions/3.5.100.v20160418-1621/org.eclipse.core.expressions-3.5.100.v20160418-1621.jar" sourcepath="M2_REPO/org/eclipse/scout/sdk/deps/org.eclipse.core.expressions/3.5.100.v20160418-1621/org.eclipse.core.expressions-3.5.100.v20160418-1621-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/scout/sdk/deps/org.eclipse.core.expressions/3.5.100.v20160418-1621/org.eclipse.core.expressions-3.5.100.v20160418-1621-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/3_7_1/org.apache.batik.pdf/1.6.0/org.apache.batik.pdf-1.6.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/3_7_1/org.apache.batik.css/1.6.0/org.apache.batik.css-1.6.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/3_7_1/com.lowagie.text/2.1.7/com.lowagie.text-2.1.7.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/javax.xml/1.3.4.v201005080400/javax.xml-1.3.4.v201005080400.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/javax.xml/1.3.4.v201005080400/javax.xml-1.3.4.v201005080400-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/javax.xml/1.3.4.v201005080400/javax.xml-1.3.4.v201005080400-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/scout/sdk/deps/org.eclipse.core.filesystem/1.6.0.v20160503-1608/org.eclipse.core.filesystem-1.6.0.v20160503-1608.jar" sourcepath="M2_REPO/org/eclipse/scout/sdk/deps/org.eclipse.core.filesystem/1.6.0.v20160503-1608/org.eclipse.core.filesystem-1.6.0.v20160503-1608-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/scout/sdk/deps/org.eclipse.core.filesystem/1.6.0.v20160503-1608/org.eclipse.core.filesystem-1.6.0.v20160503-1608-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/3_7_1/org.apache.batik.svggen/1.6.0/org.apache.batik.svggen-1.6.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/3_7_1/javax.wsdl/1.5.1/javax.wsdl-1.5.1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/3_7_1/org.apache.batik.bridge/1.6.0/org.apache.batik.bridge-1.6.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.apache.batik.dom/1.6.1.v201505192100/org.apache.batik.dom-1.6.1.v201505192100.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.apache.batik.dom/1.6.1.v201505192100/org.apache.batik.dom-1.6.1.v201505192100-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.apache.batik.dom/1.6.1.v201505192100/org.apache.batik.dom-1.6.1.v201505192100-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.apache.lucene.core/3.5.0.v20120725-1805/org.apache.lucene.core-3.5.0.v20120725-1805.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.apache.lucene.core/3.5.0.v20120725-1805/org.apache.lucene.core-3.5.0.v20120725-1805-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.apache.lucene.core/3.5.0.v20120725-1805/org.apache.lucene.core-3.5.0.v20120725-1805-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/3_7_1/org.apache.batik.util.gui/1.6.0/org.apache.batik.util.gui-1.6.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.eclipse.orbit.mongodb/2.10.1.v20130422-1135/org.eclipse.orbit.mongodb-2.10.1.v20130422-1135.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.eclipse.orbit.mongodb/2.10.1.v20130422-1135/org.eclipse.orbit.mongodb-2.10.1.v20130422-1135-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.eclipse.orbit.mongodb/2.10.1.v20130422-1135/org.eclipse.orbit.mongodb-2.10.1.v20130422-1135-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/3_7_1/org.apache.batik.xml/1.6.0/org.apache.batik.xml-1.6.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/3_7_1/org.apache.xerces/2.9.0/org.apache.xerces-2.9.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/scout/sdk/deps/org.eclipse.core.resources/3.11.0.v20160503-1608/org.eclipse.core.resources-3.11.0.v20160503-1608.jar" sourcepath="M2_REPO/org/eclipse/scout/sdk/deps/org.eclipse.core.resources/3.11.0.v20160503-1608/org.eclipse.core.resources-3.11.0.v20160503-1608-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/scout/sdk/deps/org.eclipse.core.resources/3.11.0.v20160503-1608/org.eclipse.core.resources-3.11.0.v20160503-1608-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/birt/runtime/org.w3c.dom.smil/1.0.1.v200903091627/org.w3c.dom.smil-1.0.1.v200903091627.jar" sourcepath="M2_REPO/org/eclipse/birt/runtime/org.w3c.dom.smil/1.0.1.v200903091627/org.w3c.dom.smil-1.0.1.v200903091627-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/birt/runtime/org.w3c.dom.smil/1.0.1.v200903091627/org.w3c.dom.smil-1.0.1.v200903091627-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/apache/httpcomponents/httpclient/4.5.2/httpclient-4.5.2.jar" sourcepath="M2_REPO/org/apache/httpcomponents/httpclient/4.5.2/httpclient-4.5.2-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/apache/httpcomponents/httpclient/4.5.2/httpclient-4.5.2-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/apache/httpcomponents/httpcore/4.4.5/httpcore-4.4.5.jar" sourcepath="M2_REPO/org/apache/httpcomponents/httpcore/4.4.5/httpcore-4.4.5-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/apache/httpcomponents/httpcore/4.4.5/httpcore-4.4.5-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.2/commons-logging-1.2.jar" sourcepath="M2_REPO/commons-logging/commons-logging/1.2/commons-logging-1.2-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/commons-logging/commons-logging/1.2/commons-logging-1.2-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/commons-codec/commons-codec/1.10/commons-codec-1.10.jar" sourcepath="M2_REPO/commons-codec/commons-codec/1.10/commons-codec-1.10-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/commons-codec/commons-codec/1.10/commons-codec-1.10-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/log4j/log4j/1.2.17/log4j-1.2.17.jar" sourcepath="M2_REPO/log4j/log4j/1.2.17/log4j-1.2.17-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/log4j/log4j/1.2.17/log4j-1.2.17-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/junit/junit/4.12/junit-4.12.jar" sourcepath="M2_REPO/junit/junit/4.12/junit-4.12-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/junit/junit/4.12/junit-4.12-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar" sourcepath="M2_REPO/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/alfresco/maven/alfresco-rad/2.2.0/alfresco-rad-2.2.0.jar" sourcepath="M2_REPO/org/alfresco/maven/alfresco-rad/2.2.0/alfresco-rad-2.2.0-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/alfresco/maven/alfresco-rad/2.2.0/alfresco-rad-2.2.0-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/com/tradeshift/junit-remote/3/junit-remote-3.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-api/1.7.21/slf4j-api-1.7.21.jar" sourcepath="M2_REPO/org/slf4j/slf4j-api/1.7.21/slf4j-api-1.7.21-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/slf4j/slf4j-api/1.7.21/slf4j-api-1.7.21-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-servlet/7.4.0.v20110414/jetty-servlet-7.4.0.v20110414.jar" sourcepath="M2_REPO/org/eclipse/jetty/jetty-servlet/7.4.0.v20110414/jetty-servlet-7.4.0.v20110414-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/jetty/jetty-servlet/7.4.0.v20110414/jetty-servlet-7.4.0.v20110414-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-security/7.4.0.v20110414/jetty-security-7.4.0.v20110414.jar" sourcepath="M2_REPO/org/eclipse/jetty/jetty-security/7.4.0.v20110414/jetty-security-7.4.0.v20110414-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/jetty/jetty-security/7.4.0.v20110414/jetty-security-7.4.0.v20110414-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-server/7.4.0.v20110414/jetty-server-7.4.0.v20110414.jar" sourcepath="M2_REPO/org/eclipse/jetty/jetty-server/7.4.0.v20110414/jetty-server-7.4.0.v20110414-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/jetty/jetty-server/7.4.0.v20110414/jetty-server-7.4.0.v20110414-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-continuation/7.4.0.v20110414/jetty-continuation-7.4.0.v20110414.jar" sourcepath="M2_REPO/org/eclipse/jetty/jetty-continuation/7.4.0.v20110414/jetty-continuation-7.4.0.v20110414-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/jetty/jetty-continuation/7.4.0.v20110414/jetty-continuation-7.4.0.v20110414-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-http/7.4.0.v20110414/jetty-http-7.4.0.v20110414.jar" sourcepath="M2_REPO/org/eclipse/jetty/jetty-http/7.4.0.v20110414/jetty-http-7.4.0.v20110414-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/jetty/jetty-http/7.4.0.v20110414/jetty-http-7.4.0.v20110414-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-io/7.4.0.v20110414/jetty-io-7.4.0.v20110414.jar" sourcepath="M2_REPO/org/eclipse/jetty/jetty-io/7.4.0.v20110414/jetty-io-7.4.0.v20110414-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/jetty/jetty-io/7.4.0.v20110414/jetty-io-7.4.0.v20110414-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-util/7.4.0.v20110414/jetty-util-7.4.0.v20110414.jar" sourcepath="M2_REPO/org/eclipse/jetty/jetty-util/7.4.0.v20110414/jetty-util-7.4.0.v20110414-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/eclipse/jetty/jetty-util/7.4.0.v20110414/jetty-util-7.4.0.v20110414-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/args4j/args4j/2.0.16/args4j-2.0.16.jar" sourcepath="M2_REPO/args4j/args4j/2.0.16/args4j-2.0.16-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/args4j/args4j/2.0.16/args4j-2.0.16-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-test/3.2.14.RELEASE/spring-test-3.2.14.RELEASE.jar" sourcepath="M2_REPO/org/springframework/spring-test/3.2.14.RELEASE/spring-test-3.2.14.RELEASE-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/springframework/spring-test/3.2.14.RELEASE/spring-test-3.2.14.RELEASE-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-core/3.2.17.RELEASE/spring-core-3.2.17.RELEASE.jar" sourcepath="M2_REPO/org/springframework/spring-core/3.2.17.RELEASE/spring-core-3.2.17.RELEASE-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/springframework/spring-core/3.2.17.RELEASE/spring-core-3.2.17.RELEASE-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="output" path="target/classes"/>
 </classpath>

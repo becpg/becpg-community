@@ -159,7 +159,9 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 
 			ret.put(PROP_NODE, nodeRef);
 
-			if (nodeService.hasAspect(nodeRef, ContentModel.ASPECT_VERSIONABLE)) {
+			if(nodeService.hasAspect(nodeRef,BeCPGModel.ASPECT_COMPOSITE_VERSION)){
+				ret.put(PROP_VERSION, properties.get(BeCPGModel.PROP_VERSION_LABEL));
+			} else if (nodeService.hasAspect(nodeRef, ContentModel.ASPECT_VERSIONABLE)) {
 				ret.put(PROP_VERSION, properties.get(ContentModel.PROP_VERSION_LABEL));
 			}
 
@@ -182,7 +184,8 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 			userAccess.put("delete", accessRight && (permissionService.hasPermission(nodeRef, "Delete") == AccessStatus.ALLOWED));
 			userAccess.put("create", accessRight && (permissionService.hasPermission(nodeRef, "CreateChildren") == AccessStatus.ALLOWED));
 			userAccess.put("edit", accessRight && (permissionService.hasPermission(nodeRef, "Write") == AccessStatus.ALLOWED));
-			userAccess.put("sort", accessRight && nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_SORTABLE_LIST));
+			userAccess.put("sort", accessRight && (permissionService.hasPermission(nodeRef, "Write") == AccessStatus.ALLOWED) 
+					&& nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_SORTABLE_LIST));
 			userAccess.put("details", accessRight && isDetaillable(nodeRef));
 			userAccess.put("wused", accessRight);
 

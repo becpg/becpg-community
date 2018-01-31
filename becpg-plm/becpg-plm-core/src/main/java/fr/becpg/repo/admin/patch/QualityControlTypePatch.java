@@ -167,7 +167,7 @@ public class QualityControlTypePatch extends AbstractBeCPGPatch {
 
 					type = (String) nodeService.getProperty(dataListNodeRef, QualityModel.PROP_CL_TYPE);
 
-					if ((type != null) && !type.isEmpty()) {
+					if ((type != null) && !type.isEmpty() && !type.startsWith("bcpg_")) {
 						nodeService.setProperty(dataListNodeRef, QualityModel.PROP_CL_TYPE, type.toLowerCase());
 					}
 

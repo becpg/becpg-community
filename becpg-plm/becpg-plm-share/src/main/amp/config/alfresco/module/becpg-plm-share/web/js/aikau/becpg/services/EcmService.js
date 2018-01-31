@@ -57,13 +57,20 @@ define([ "dojo/_base/declare", "alfresco/core/Core", "dojo/_base/lang", "dojo/sn
                             title : this.message("ecm.auto.dialog.create.title"),
                             widgetsContent : [
                             {
-                                name : "alfresco/forms/controls/DojoValidationTextBox",
+                                name : "alfresco/forms/controls/TextBox",
                                 config :
                                 {
                                     id : this.id + "_ECM_NAME",
                                     name : "name",
                                     label : this.message("ecm.auto.dialog.field.name.label"),
-                                    description : this.message("ecm.auto.dialog.field.name.description")
+                                    description : this.message("ecm.auto.dialog.field.name.description"),
+                                    validationConfig: [
+                                    	{
+                                    	    validation: "regex",
+                                    	    regex: "^[^\"\*\\\>\<\?\/\:\|]+$",
+                                    	    errorMessage: this.message("ecm.auto.dialog.validate.name")
+                                    	  }
+                                    ]
                                 }
                             } ],
                             widgetsButtons : [
@@ -73,7 +80,8 @@ define([ "dojo/_base/declare", "alfresco/core/Core", "dojo/_base/lang", "dojo/sn
                                 {
                                     label : this.message("button.create-ecm"),
                                     publishTopic : this.createNewEcm,
-                                    publishPayload : payload
+                                    publishPayload : payload,
+                                    disableOnInvalidControls: true
                                 }
                             },
                             {

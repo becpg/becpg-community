@@ -19,5 +19,6 @@
 	<shortname>Get report datasource</shortname>
 	<description>Get report datasource for nodeRef</description>	
 	<url>/becpg/report/datasource?nodeRef={nodeRef}</url>
-	<authentication>admin</authentication>
+	<authentication>user</authentication>
+	<transaction allow="readonly" buffersize="0">required</transaction>
 </webscript>

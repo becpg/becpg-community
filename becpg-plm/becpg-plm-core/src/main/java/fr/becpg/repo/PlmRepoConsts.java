@@ -33,7 +33,6 @@ public class PlmRepoConsts {
 	public static final String PATH_PLANTS = "Plants";	
 	public static final String PATH_CUSTOMSCODES = "CustomsCodes";
 	public static final String PATH_CERTIFICATIONS = "Certifications";
-	public static final String PATH_APPROVALNUMBERS = "ApprovalNumbers";
 	public static final String PATH_PROCESSSTEPS = "ProcessSteps";
 	public static final String PATH_RESOURCEPARAMS = "ResourceParams";
 	public static final String PATH_LABELCLAIMS = "LabelClaims";	

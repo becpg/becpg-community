@@ -246,7 +246,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 															params.put(ReportParams.PARAM_IMAGES, reportData.getDataObjects());
 															params.put(ReportParams.PARAM_FORMAT, ReportFormat.valueOf(reportFormat));
-															params.put(ReportParams.PARAM_LANG, locale.getLanguage());
+															params.put(ReportParams.PARAM_LANG, MLTextHelper.localeKey(locale));
 															params.put(ReportParams.PARAM_ASSOCIATED_TPL_FILES, associationService
 																	.getTargetAssocs(tplNodeRef, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES));
 
@@ -275,7 +275,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 															if (!(Locale.getDefault().getLanguage().equals(locale.getLanguage())
 																	&& (entityReportLocales.size() == 1))) {
 																nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_LOCALES,
-																		locale.getLanguage());
+																		MLTextHelper.localeKey(locale));
 																isDefault = false;
 															} else {
 																nodeService.removeProperty(documentNodeRef, ReportModel.PROP_REPORT_LOCALES);
@@ -498,7 +498,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 							if (nodeService.hasAspect(documentNodeRef, ReportModel.ASPECT_REPORT_LOCALES)) {
 								List<String> langs = (List<String>) nodeService.getProperty(documentNodeRef, ReportModel.PROP_REPORT_LOCALES);
 								if ((langs != null) && !langs.isEmpty()) {
-									locale = new Locale(langs.get(0));
+									locale = MLTextHelper.parseLocale(langs.get(0));
 									I18NUtil.setLocale(locale);
 									isDefault = false;
 								}
@@ -531,7 +531,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 									params.put(ReportParams.PARAM_IMAGES, reportData.getDataObjects());
 									params.put(ReportParams.PARAM_FORMAT, ReportFormat.valueOf(reportFormat));
-									params.put(ReportParams.PARAM_LANG, locale.getLanguage());
+									params.put(ReportParams.PARAM_LANG, MLTextHelper.localeKey(locale));
 									params.put(ReportParams.PARAM_ASSOCIATED_TPL_FILES,
 											associationService.getTargetAssocs(tplNodeRef, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES));
 
@@ -603,7 +603,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 			@SuppressWarnings("unchecked")
 			List<String> langs = (List<String>) nodeService.getProperty(documentNodeRef, ReportModel.PROP_REPORT_LOCALES);
 			if ((langs != null) && !langs.isEmpty()) {
-				locale = new Locale(langs.get(0));
+				locale = MLTextHelper.parseLocale(langs.get(0));
 				I18NUtil.setLocale(locale);
 			}
 		}
@@ -622,7 +622,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 			params.put(ReportParams.PARAM_IMAGES, reportData.getDataObjects());
 			params.put(ReportParams.PARAM_FORMAT, reportFormat);
-			params.put(ReportParams.PARAM_LANG, locale.getLanguage());
+			params.put(ReportParams.PARAM_LANG, MLTextHelper.localeKey(locale));
 			params.put(ReportParams.PARAM_ASSOCIATED_TPL_FILES,
 					associationService.getTargetAssocs(templateNodeRef, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES));
 
@@ -689,8 +689,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 		String lang = null;
 
-		if (!(Locale.getDefault().getLanguage().equals(locale.getLanguage()) && (getEntityReportLocales(entityNodeRef).size() == 1))) {
-			lang = locale.getLanguage();
+		if (!(MLTextHelper.isDefaultLocale(locale) && (getEntityReportLocales(entityNodeRef).size() == 1))) {
+			lang = MLTextHelper.localeKey(locale);
 		}
 
 		Matcher patternMatcher = Pattern.compile("\\{([^}]+)\\}").matcher(nameFormat);
@@ -760,7 +760,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 						.createFromJSON((String) nodeService.getProperty(fileInfo.getNodeRef(), ReportModel.PROP_REPORT_TEXT_PARAMETERS)))) {
 					for (Locale tmpLocale : getEntityReportLocales(fileInfo.getNodeRef())) {
 
-						if (tmpLocale.getLanguage().equals(locale.getLanguage())) {
+						if (MLTextHelper.localeKey(tmpLocale).equals(MLTextHelper.localeKey(locale))) {
 							documentNodeRef = fileInfo.getNodeRef();
 						}
 						break;
@@ -793,7 +793,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 		List<String> langs = (List<String>) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_LOCALES);
 		if ((langs != null) && !langs.isEmpty()) {
 			for (String lang : langs) {
-				if (locale.equals(new Locale(lang))) {
+				if (locale.equals(MLTextHelper.parseLocale(lang))) {
 					return true;
 				}
 			}
@@ -809,10 +809,10 @@ public class EntityReportServiceImpl implements EntityReportService {
 		List<String> langs = (List<String>) nodeService.getProperty(entityNodeRef, ReportModel.PROP_REPORT_LOCALES);
 		if (langs != null) {
 			for (String lang : langs) {
-				ret.add(new Locale(lang));
+				ret.add(MLTextHelper.parseLocale(lang));
 			}
 		} else {
-			ret.add(new Locale(Locale.getDefault().getLanguage()));
+			ret.add(MLTextHelper.parseLocale(Locale.getDefault().getLanguage()));
 		}
 		return ret;
 	}

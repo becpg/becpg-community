@@ -21,8 +21,9 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
 import fr.becpg.repo.repository.RepositoryEntity;
+import fr.becpg.repo.repository.model.EffectiveDataItem;
 
-public interface CompositionDataItem extends RepositoryEntity, Cloneable {
+public interface CompositionDataItem extends RepositoryEntity, Cloneable, EffectiveDataItem {
 
 	NodeRef getComponent();
 	

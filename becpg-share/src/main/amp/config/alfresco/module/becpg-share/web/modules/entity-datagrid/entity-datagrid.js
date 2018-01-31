@@ -1847,6 +1847,8 @@
                                                                             fn : function EntityDataGrid_onActionEdit_refreshFailure(
                                                                                     response)
                                                                             {
+                                                                            	me.queryExecutionId = null;
+                                                                            	
                                                                                 // Insert
                                                                                 // after
                                                                                 me._updateDataGrid.call(me,
@@ -2601,7 +2603,7 @@
                             		this.options.extraDataParams = obj.extraDataParams;
                             	}
                             	
-                                if(this.widgets.floatingHeader!=null ){
+                                if(this.widgets.floatingHeader && this.widgets.floatingHeader!=null ){
                                 	this.widgets.floatingHeader.floatThead('destroy');
                                 	this.widgets.floatingHeader = null;
                                 }
@@ -2949,7 +2951,7 @@
                                     this.widgets.dataTable.formatTheadCell(oColumn._elThLabel, oColumn,
                                             this.widgets.dataTable.get("sortedBy"));
                                     
-                                    if(this.widgets.floatingHeader){
+                                    if(this.widgets.floatingHeader && this.widgets.floatingHeader!=null){
                                		  this.widgets.floatingHeader.floatThead('reflow');
                                	 	}
 

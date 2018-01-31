@@ -178,9 +178,16 @@ function onCompleteClaimTreatmentTask() {
     
     execution.setVariable('bcpgwf_notifyUsers', task.getVariable('bcpgwf_notifyUsers'));
     
+    if(execution.getVariable('qa_claimResponseActor')!=null && !execution.getVariable('qa_claimResponseActor').exists() ){
+        task.setVariable('qa_claimResponseActor',null);
+        task.setVariable('ncwf_claimRejectedState', 'analysis');
+        task.setVariable('ncwf_ncState', 'analysis');
+     }
+    
     if (task.getVariable('ncwf_claimRejectedState') == 'none') {
         task.setVariable('qa_claimTreatementDate', new java.util.Date());
         if (execution.getVariable('qa_claimResponseActor') != null) {
+        	
             task.setVariable('ncwf_ncState', 'response');
         } else {
             task.setVariable('ncwf_ncState', 'closing');
@@ -199,11 +206,13 @@ function onCompleteClaimTreatmentTask() {
     } else {
         execution.setVariable('ncwf_claimRejectedCause', task.getVariable('ncwf_claimRejectedCause'));
     }
+    
 
     execution.setVariable('ncwf_claimRejectedState', task.getVariable('ncwf_claimRejectedState'));
     execution.setVariable('qa_claimTreatementDetails', task.getVariable('qa_claimTreatementDetails'));
     execution.setVariable('qa_claimTreatementPrevActions', task.getVariable('qa_claimTreatementPrevActions'));
     execution.setVariable('qa_claimTreatementComment', task.getVariable('qa_claimTreatementComment'));
+   
     
     task.setVariableLocal('bpm_comment', execution.getVariable('ncwf_claimRejectedCause'));
 }
@@ -224,6 +233,13 @@ function onCreateClaimResponseTask() {
 }
 
 function onCompleteClaimResponseTask() {
+	
+	if(execution.getVariable('qa_claimTreatmentActor')!=null && !execution.getVariable('qa_claimTreatmentActor').exists() ){
+	     task.setVariable('qa_claimTreatmentActor',null);
+	     task.setVariable('ncwf_claimRejectedState', 'analysis');
+	     task.setVariable('ncwf_ncState', 'analysis');
+	 }
+	
     if (task.getVariable('ncwf_claimRejectedState') == 'none') {
         task.setVariable('qa_claimResponseDate', new java.util.Date());
         task.setVariable('ncwf_ncState', 'closing');
@@ -277,6 +293,20 @@ function onCreateClaimClosingTask() {
 }
 
 function onCompleteClaimClosingTask() {
+	
+	
+	if(execution.getVariable('qa_claimTreatmentActor')!=null && !execution.getVariable('qa_claimTreatmentActor').exists() ){
+	     task.setVariable('qa_claimTreatmentActor',null);
+	     task.setVariable('ncwf_claimRejectedState', 'analysis');
+	     task.setVariable('ncwf_ncState', 'analysis');
+	 }
+	
+	if(execution.getVariable('qa_claimResponseActor')!=null && !execution.getVariable('qa_claimResponseActor').exists() ){
+        task.setVariable('qa_claimResponseActor',null);
+        task.setVariable('ncwf_claimRejectedState', 'analysis');
+        task.setVariable('ncwf_ncState', 'analysis');
+     }
+	
     if (task.getVariable('ncwf_claimRejectedState') == 'none') {
         task.setVariable('qa_claimClosingDate', new java.util.Date());
         task.setVariable('ncwf_ncState', 'closed');
