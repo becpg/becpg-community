@@ -1,6 +1,9 @@
 package fr.becpg.web.experimental;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.websocket.CloseReason;
 import javax.websocket.OnClose;
@@ -14,9 +17,11 @@ import javax.websocket.server.ServerEndpoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-@ServerEndpoint(value = "/becpgws/{store_type}/{store_id}/{id}/{user}")
+@ServerEndpoint(value = "/becpgws/{store_type}/{store_id}/{id}/{user}",configurator=BeCPGWSHandlerEndpointConfigurer.class)
 public class BeCPGWSHandler {
 
+	private Set<Session> userSessions = Collections.synchronizedSet(new HashSet<Session>());
+	
 	private static Log logger = LogFactory.getLog(BeCPGWSHandler.class);
 
 	@OnOpen
@@ -26,8 +31,10 @@ public class BeCPGWSHandler {
 		session.getUserProperties().put("room", room);
 		session.getUserProperties().put("user", user);
 		
+		userSessions.add(session);
+		
 		try {
-			for (Session s : session.getOpenSessions()) {
+			for (Session s : userSessions) {
 				if (s.isOpen() && room.equals(s.getUserProperties().get("room")) && !s.getId().equals(session.getId())) {
 					session.getBasicRemote().sendText("{\"type\":\"JOINING\",\"user\":\"" + s.getUserProperties().get("user")  + "\"}");
 					s.getBasicRemote().sendText("{\"type\":\"JOINING\",\"user\":\"" + user  + "\"}");
@@ -45,7 +52,7 @@ public class BeCPGWSHandler {
 		logger.debug("Receiving ... " + session.getId());
 		String room = (String) session.getUserProperties().get("room");
 		try {
-			for (Session s : session.getOpenSessions()) {
+			for (Session s : userSessions) {
 				if (s.isOpen() && room.equals(s.getUserProperties().get("room")) && !s.getId().equals(session.getId())) {
 					s.getBasicRemote().sendText(message);
 				}
@@ -62,18 +69,23 @@ public class BeCPGWSHandler {
 		try {
 			String room = (String) session.getUserProperties().get("room");
 			String user = (String)session.getUserProperties().get("user");
-			for (Session s : session.getOpenSessions()) {
+			for (Session s : userSessions) {
 				if (s.isOpen() && room.equals(s.getUserProperties().get("room")) && !s.getId().equals(session.getId())) {
 					s.getBasicRemote().sendText("{\"type\":\"LEAVING\",\"user\":\"" +  user + "\"}");
 				}
 			}
 		} catch (IOException e) {
 			logger.error("onMessage failed", e);
+		} finally {
+			userSessions.remove(session);
 		}
 	}
 	
 	@OnError
 	public void onError(Session session, Throwable thr) {
+		if(!session.isOpen()) {
+			userSessions.remove(session);
+		}
 		if(logger.isDebugEnabled()){
 			logger.debug(thr,thr);
 		}
