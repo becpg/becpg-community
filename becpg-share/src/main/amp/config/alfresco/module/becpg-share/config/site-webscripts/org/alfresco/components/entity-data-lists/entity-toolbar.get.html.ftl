@@ -17,7 +17,6 @@
 </@>
 
 <@markup id="custom-entity-toolbar-js">
-   <@script src="${url.context}/res/components/documentlibrary/becpg/docLibAction.js" group="entity-datalists"/>
    <@script src="${url.context}/res/components/entity-charact-views/custom-entity-toolbar.js" group="entity-datalists"/>
 </@markup>
 

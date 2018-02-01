@@ -177,10 +177,6 @@
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=pjt:project&amp;formId=create&amp;isEntity=true
 				</param>
 			</content>
-			<content id="supplier-project" label="menu.create-content.project-supplier" type="pagelink" index="110" icon="project">
-				<param name="page">create-content?destination={nodeRef}&amp;itemId=pjt:project&amp;formId=supplier-project&amp;isEntity=true
-				</param>
-			</content>
 			<content id="supplier" label="menu.create-content.supplier" type="pagelink" index="120" icon="supplier">
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:supplier&amp;formId=create&amp;isEntity=true
 				</param>
@@ -214,6 +210,15 @@
 		</create-content>
 		<create-content-by-template>true</create-content-by-template>
 	</config>
+	
+	
+	<config evaluator="string-compare" condition="DocLibCustom">
+		<dependencies>
+			<js src="/components/documentlibrary/becpg/plm-docLibAction.js" />
+		</dependencies>
+	</config>
+	
+	
 	<config evaluator="string-compare" condition="DocLibActions">
 		<!-- Action definitions -->
 		<actions>
@@ -264,6 +269,16 @@
 				<evaluator>evaluator.becpg.doclib.action.entityTpl</evaluator>
 				<evaluator>evaluator.becpg.doclib.action.product</evaluator>
 			</action>
+			
+			<!-- Supplier portal -->
+			
+			<action id="send-to-supplier" type="javascript" label="actions.entity.send-to-supplier">
+				<param name="function">onActionSendToSupplier</param>
+				<evaluator>evaluator.becpg.doclib.action.sendToSupplier</evaluator>
+				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isSystemEntity</evaluator>
+				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isWorkingCopy</evaluator>
+			</action>
+			
 		</actions>
 
 		<actionGroups>
@@ -272,6 +287,7 @@
 				<action index="103" id="entity-branch" />
 				<action index="104" id="entity-merge" />
 				<action index="110" id="entity-compare" icon="compare" />
+				<action index="110" id="send-to-supplier"  />
 				<action index="111" id="entityTpl-synchronize-entities" />
 				<action index="112" id="entityTpl-formulate-entities" />
 				<action index="113" id="entityTpl-wused" />

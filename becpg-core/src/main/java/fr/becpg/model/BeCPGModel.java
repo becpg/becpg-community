@@ -59,6 +59,7 @@ public interface BeCPGModel {
 	QName ASPECT_ENTITY_TPL = QName.createQName(BECPG_URI, "entityTplAspect");
 	QName PROP_ENTITY_TPL_ENABLED = QName.createQName(BECPG_URI, "entityTplEnabled");
 	QName PROP_ENTITY_TPL_IS_DEFAULT = QName.createQName(BECPG_URI, "entityTplIsDefault");
+	QName PROP_ENTITY_TPL_DEFAULT_DEST = QName.createQName(BECPG_URI, "entityTplDefaultDest");
 
 	// entityTplRef aspect
 	QName ASPECT_ENTITY_TPL_REF = QName.createQName(BECPG_URI, "entityTplRefAspect");

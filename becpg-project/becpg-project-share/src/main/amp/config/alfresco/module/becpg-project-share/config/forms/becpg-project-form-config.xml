@@ -76,6 +76,7 @@
 					<!-- Model -->
 					<show id="bcpg:entityTplEnabled" />
 					<show id="bcpg:entityTplIsDefault" />
+					<show id="bcpg:entityTplDefaultDest" />
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" />
@@ -158,7 +159,7 @@
 
 					<field id="bcpg:entityTplEnabled" set="template" />
 					<field id="bcpg:entityTplIsDefault" set="template" />
-
+					<field id="bcpg:entityTplDefaultDest" set="template" />
 
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
