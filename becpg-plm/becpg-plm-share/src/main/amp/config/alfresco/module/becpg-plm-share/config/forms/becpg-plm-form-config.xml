@@ -6018,8 +6018,16 @@
 					<show id="bcpg:locationZip" />
 					<show id="bcpg:locationCity" />
 					<show id="bcpg:locationCountry" />
+					<!-- audit -->
+					<show id="cm:creator" />
+					<show id="cm:created" />
+					<show id="cm:modifier" />
+					<show id="cm:modified" />
 				</field-visibility>
 				<appearance>
+				
+					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
+							template="/org/alfresco/components/form/2-column-set.ftl" />
 					<field id="bcpg:supplierHierarchy1">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/supplier_Hierarchy</control-param>
@@ -6037,6 +6045,12 @@
 						</control>
 					</field>
 					<field id="bcpg:code" read-only="true" />
+					
+					<!-- audit -->
+					<field id="cm:creator" set="audit" />
+					<field id="cm:created" set="audit" />
+					<field id="cm:modifier" set="audit" />
+					<field id="cm:modified" set="audit" />
 				</appearance>
 			</form>
 			<form id="supplier">
@@ -6183,8 +6197,17 @@
 					<show id="bcpg:locationCity" />
 					<show id="bcpg:locationState" />
 					<show id="bcpg:locationCountry" />
+					
+					<!-- audit -->
+					<show id="cm:creator" />
+					<show id="cm:created" />
+					<show id="cm:modifier" />
+					<show id="cm:modified" />
+					
 				</field-visibility>
 				<appearance>
+					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
+							template="/org/alfresco/components/form/2-column-set.ftl" />
 					<field id="bcpg:clientHierarchy1">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/client_Hierarchy
@@ -6205,6 +6228,12 @@
 						</control>
 					</field>
 					<field id="bcpg:code" read-only="true" />
+					
+						<!-- audit -->
+					<field id="cm:creator" set="audit" />
+					<field id="cm:created" set="audit" />
+					<field id="cm:modifier" set="audit" />
+					<field id="cm:modified" set="audit" />
 				</appearance>
 			</form>
 		</forms>
