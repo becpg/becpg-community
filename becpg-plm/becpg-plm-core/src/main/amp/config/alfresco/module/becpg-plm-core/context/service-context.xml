@@ -56,6 +56,7 @@
 		<property name="autoNumService" ref="autoNumService" />
 		<property name="hierarchyService" ref="hierarchyService" />
 		<property name="repositoryHelper" ref="repositoryHelper" />
+		<property name="associationService" ref="associationService" />
 	</bean>
 
 	<bean id="importNodeVisitor" class="fr.becpg.repo.importer.impl.ImportNodeVisitor" parent="parentImportVisitor" />
