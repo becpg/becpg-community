@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMGroup;
+import fr.becpg.model.PLMModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.admin.impl.AbstractInitVisitorImpl;
@@ -140,6 +141,8 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 			pjtTpl.getDeliverableList().add(supplierWizard);
 			pjtTpl.getDeliverableList().add(supplierMPWizard);
 			pjtTpl.getDeliverableList().add(postValidationScript);
+			
+			pjtTpl.getAspects().add(PLMModel.ASPECT_SUPPLIERS);
 
 			alfrescoRepository.save(pjtTpl);
 		}

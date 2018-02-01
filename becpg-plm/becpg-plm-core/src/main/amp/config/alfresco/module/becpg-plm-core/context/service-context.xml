@@ -170,5 +170,17 @@
 		<property name="repository" ref="repositoryHelper" />
 	</bean>
 
+	
+	<bean id="webscript.fr.becpg.sendToSupplier.get" class="fr.becpg.repo.web.scripts.supplier.SupplierPortalWebScript" parent="webscript">
+		<property name="alfrescoRepository" ref="alfrescoRepository" />
+		<property name="nodeService" ref="NodeService" />
+		<property name="namespaceService" ref="NamespaceService" />
+		<property name="associationService" ref="associationService"/>
+		<property name="entityVersionService" ref="entityVersionService"/>
+		<property name="entityNameTpl" value="${beCPG.sendToSupplier.entityName.format}"/>		
+		<property name="projectNameTpl" value="${beCPG.sendToSupplier.projectName.format}"/>	
+	</bean>
+	
+
 
 </beans>

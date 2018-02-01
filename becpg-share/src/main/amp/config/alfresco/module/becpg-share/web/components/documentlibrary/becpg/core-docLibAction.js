@@ -95,85 +95,6 @@
 	            });
 
 	
-	YAHOO.Bubbling
-    .fire(
-          "registerAction",
-          {
-             actionName : "onActionMergeEntity",
-             fn : function onActionMergeEntity(asset) {
-                 var displayName = asset.displayName, nodeRef = new Alfresco.util.NodeRef(asset.nodeRef), version = asset.version;
-
-                 if (!this.newEntityVersion) {
-                     this.newEntityVersion = Alfresco.module.getNewEntityVersionInstance();
-                 }
-
-                 this.newEntityVersion.show({
-                    filename : displayName,
-                    nodeRef : nodeRef,
-                    version : version,
-                    merge : true,
-                    onNewEntityVersionComplete : {
-                       fn : function EntityActions_oACI_success(data) {
-                           this.recordData.jsNode.setNodeRef(data.successful[0].nodeRef);
-                           window.location.href = this.getActionUrls(this.recordData).documentDetailsUrl.replace("document-details?","entity-data-lists?list=View-properties&");
-                       },
-                       scope : this
-                    }
-                 });
-
-             }
-          });
-	
-	YAHOO.Bubbling
-    .fire(
-          "registerAction",
-          {
-             actionName : "onActionBranchEntity",
-             fn : function onActionBranchEntity(p_record) {
-                 var  nodeRef = new Alfresco.util.NodeRef(p_record.nodeRef), recordSiteName = $isValueSet(p_record.location.site) ? p_record.location.site.name : null,
-                		 displayName = p_record.displayName;
-                 
-                 Alfresco.util.PopupManager.displayMessage({
-                	 text : this.msg("message.branch-entity.inprogress", displayName)
-       		    	});
-                 
-                 
-                 Alfresco.util.Ajax
-                 .request({
-                    method : Alfresco.util.Ajax.POST,
-                    url : Alfresco.constants.PROXY_URI + "becpg/entity/simulation/create?entityNodeRef=" + nodeRef,
-                    successCallback : {
-                       fn : function(resp) {
-                          if (resp.json) {
-                             window.location.href = beCPG.util.entityURL(recordSiteName,
-                                   resp.json.persistedObject, p_record.node.type);
-                          }
-                       },
-                       scope : this
-                    } ,
-                    failureCallback : {
-                        fn : function(response) {
-                           if (response.json && response.json.message) {
-                              Alfresco.util.PopupManager.displayPrompt({
-                                 title : this.msg("message.branch-entity.failure"),
-                                 text : response.json.message
-                              });
-                           } else {
-                              Alfresco.util.PopupManager.displayMessage({
-                                 text : this.msg("message.branch-entity.failure")
-                              });
-                           }
-                        },
-                        scope : this
-                     }
-
-                 });
-
-             }
-          });
-    
-	
-	
 	
 	YAHOO.Bubbling.fire("registerAction", {
 		   actionName : "onActionCancelCheckOutEntity",
@@ -261,36 +182,6 @@
 	   	
 	   }
 	});
-	
-	
-	   YAHOO.Bubbling.fire("registerAction", {
-	       actionName : "onActionCompareEntity",
-	       fn : function onActionCompareEntity(p_record) {
-	            var actionUrl = Alfresco.constants.PROXY_URI + 'becpg/entity/compare/' + p_record.nodeRef.replace(":/", "") + "/";
-
-	            // Always create a new instance
-	            this.modules.entityCompare = new Alfresco.module.SimpleDialog(this.id + "-entityCompare").setOptions({
-	               width : "33em",
-	               templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/entity-compare/entity-compare?entityNodeRef="+p_record.nodeRef,
-	               actionUrl : actionUrl,
-	               validateOnSubmit : false,
-	               firstFocus : this.id + "-entityCompare-entities-field",
-	               doBeforeFormSubmit : {
-	                  fn : function(form) {
-	                     this.modules.entityCompare.form.setAJAXSubmit(false);
-	                     this.modules.entityCompare.hide();
-	                     var reportSelect = YAHOO.util.Dom.get(this.id + "-entityCompare-reportTemplate");
-	                     var fileName = reportSelect.options[reportSelect.selectedIndex].getAttribute("fileName");
-	                     window.location.href=actionUrl+fileName+"?entities="+YAHOO.util.Dom.get(this.id + "-entityCompare-entities-added").value
-	                     +"&tplNodeRef="+reportSelect.value;
-	                  },
-	                  scope : this
-	               }
-	            });
-	            
-	            this.modules.entityCompare.show();
-	       }
-	    });
 	
 	
 	YAHOO.Bubbling.fire("registerAction", {
@@ -412,69 +303,7 @@
 	   }
 	});
 	
-	YAHOO.Bubbling.fire("registerAction", {
-	   actionName : "onActionEntityTplSynchronizeEntities",
-	   fn : function onActionEntityTplSynchronizeEntities(asset) {
-		   Alfresco.util.PopupManager.displayMessage({
-			   text : this.msg("message.synchronize-entities.please-wait-mail"),
-			   displayTime : 5
-		   });
 
-		   Alfresco.util.Ajax.request({
-		      method : Alfresco.util.Ajax.GET,
-		      url : Alfresco.constants.PROXY_URI + "becpg/entity/entityTpl/" + asset.nodeRef.replace(":/", "")
-		            + "/synchronizeEntities",
-		      successCallback : {
-		         fn : function EntityDataListToolbar_onActionEntityTplSynchronizeEntities_success(response) {
-		         	Alfresco.util.PopupManager.displayMessage({
-				         text : this.msg("message.synchronize-entities.success")
-			         });
-		         },
-		         scope : this
-		      },
-		      failureCallback : {
-		         fn : function EntityDataListToolbar_onActionEntityTplSynchronizeEntities_failure(response) {
-			         Alfresco.util.PopupManager.displayMessage({
-				         text : this.msg("message.synchronize-entities.failure")
-			         });
-		         },
-		         scope : this
-		      }
-		   });
-	   }
-	});
-	
-	YAHOO.Bubbling.fire("registerAction", {
-	   actionName : "onActionEntityTplFormulateEntities",
-	   fn : function onActionEntityTplFormulateEntities(asset) {
-		   Alfresco.util.PopupManager.displayMessage({
-			   text : this.msg("message.formulate-entities.please-wait-mail"),
-			   displayTime : 5
-		   });
-
-		   Alfresco.util.Ajax.request({
-		      method : Alfresco.util.Ajax.GET,
-		      url : Alfresco.constants.PROXY_URI + "becpg/entity/entityTpl/" + asset.nodeRef.replace(":/", "")
-		            + "/formulateEntities",
-		      successCallback : {
-		         fn : function EntityDataListToolbar_onActionEntityTplFormulateEntities_success(response) {
-		         	Alfresco.util.PopupManager.displayMessage({
-				         text : this.msg("message.formulate-entities.success")
-			         });
-		         },
-		         scope : this
-		      },
-		      failureCallback : {
-		         fn : function EntityDataListToolbar_onActionEntityTplFormulateEntities_failure(response) {
-			         Alfresco.util.PopupManager.displayMessage({
-				         text : this.msg("message.formulate-entities.failure")
-			         });
-		         },
-		         scope : this
-		      }
-		   });
-	   }
-	});
 	
 	YAHOO.Bubbling.fire("registerAction", {
 		   actionName : "onActionViewAssociatedWorkflow",
