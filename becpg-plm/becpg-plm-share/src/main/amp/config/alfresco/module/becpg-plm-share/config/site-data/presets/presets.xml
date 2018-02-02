@@ -116,40 +116,6 @@
       </pages>
    </preset>
 
-    <preset id="external-dashboard">
-      <components>
-         <!-- title -->
-         <component>
-            <scope>page</scope>
-            <region-id>title</region-id>
-            <source-id>user/${userid}/dashboard</source-id>
-            <url>/components/title/user-dashboard-title</url>
-         </component>
-         <component>
-            <scope>page</scope>
-            <region-id>component-1-1</region-id>
-            <source-id>user/${userid}/dashboard</source-id>
-            <url>/components/dashlets/my-tasks</url>
-         </component>
-         <component>
-            <scope>page</scope>
-            <region-id>component-2-1</region-id>
-            <source-id>user/${userid}/dashboard</source-id>
-            <url>/components/dashlets/forum-summary</url>
-         </component>
-         
-      </components>
-      <pages>
-         <page id="user/${userid}/dashboard">
-            <title>User Dashboard</title>
-            <title-id>page.userDashboard.title</title-id>
-            <description>Users dashboard page</description>
-            <description-id>page.userDashboard.description</description-id>
-            <template-instance>dashboard-2-columns-wide-right</template-instance>
-            <authentication>user</authentication>
-         </page>
-      </pages>
-   </preset>
 
 
    <!-- Well known preset used to generate the default RM Site dashboard -->

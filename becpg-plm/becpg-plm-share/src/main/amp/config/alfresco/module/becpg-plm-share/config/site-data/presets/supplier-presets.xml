@@ -1,0 +1,121 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+  Copyright (C) 2010-2017 beCPG. 
+   
+  This file is part of beCPG 
+   
+  beCPG is free software: you can redistribute it and/or modify 
+  it under the terms of the GNU Lesser General Public License as published by 
+  the Free Software Foundation, either version 3 of the License, or 
+  (at your option) any later version. 
+   
+  beCPG is distributed in the hope that it will be useful, 
+  but WITHOUT ANY WARRANTY; without even the implied warranty of 
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+  GNU Lesser General Public License for more details. 
+   
+  You should have received a copy of the GNU Lesser General Public License along with beCPG. 
+  If not, see <http://www.gnu.org/licenses/>.
+-->
+<presets>
+   
+   
+   
+    <preset id="external-dashboard">
+      <components>
+         <!-- title -->
+         <component>
+            <scope>page</scope>
+            <region-id>title</region-id>
+            <source-id>user/${userid}/dashboard</source-id>
+            <url>/components/title/user-dashboard-title</url>
+         </component>
+         <component>
+            <scope>page</scope>
+            <region-id>component-1-1</region-id>
+            <source-id>user/${userid}/dashboard</source-id>
+            <url>/components/dashlets/my-tasks</url>
+         </component>
+         <component>
+            <scope>page</scope>
+            <region-id>component-2-1</region-id>
+            <source-id>user/${userid}/dashboard</source-id>
+            <url>/components/dashlets/forum-summary</url>
+         </component>
+         
+      </components>
+      <pages>
+         <page id="user/${userid}/dashboard">
+            <title>User Dashboard</title>
+            <title-id>page.userDashboard.title</title-id>
+            <description>Users dashboard page</description>
+            <description-id>page.userDashboard.description</description-id>
+            <template-instance>dashboard-2-columns-wide-right</template-instance>
+            <authentication>user</authentication>
+         </page>
+      </pages>
+   </preset>
+   
+   <!-- Well known preset used to generate the default Project Site dashboard -->
+   <preset id="supplier-site-dashboard">
+      <components>
+         <!-- title -->
+         <component>
+            <scope>page</scope>
+            <region-id>title</region-id>
+            <source-id>site/${siteid}/dashboard</source-id>
+            <url>/components/title/collaboration-title</url>
+         </component>
+         <!-- navigation -->
+         <component>
+            <scope>page</scope>
+            <region-id>navigation</region-id>
+            <source-id>site/${siteid}/dashboard</source-id>
+            <url>/components/navigation/collaboration-navigation</url>
+         </component>
+         <component>
+            <scope>page</scope>
+            <region-id>component-1-1</region-id>
+            <source-id>site/${siteid}/dashboard</source-id>
+            <url>/components/dashlets/colleagues</url>
+            <properties>
+               <height>504</height>
+            </properties>
+         </component>
+         <component>
+            <scope>page</scope>
+            <region-id>component-2-1</region-id>
+            <source-id>site/${siteid}/dashboard</source-id>
+            <url>/components/dashlets/project-list</url>
+         </component>
+         <component>
+            <scope>page</scope>
+            <region-id>component-2-2</region-id>
+            <source-id>site/${siteid}/dashboard</source-id>
+            <url>/components/dashlets/activityfeed</url>
+         </component>
+      </components>
+      <pages>
+         <page id="site/${siteid}/dashboard">
+            <title>Supplier Site Dashboard</title>
+            <title-id>page.supplierSiteDashboard.title</title-id>
+            <description>Supplier site's dashboard page</description>
+            <description-id>page.supplierSiteDashboard.description</description-id>
+            <template-instance>dashboard-2-columns-wide-right</template-instance>
+            <authentication>user</authentication>
+            <properties>
+               <sitePages>[{"pageId":"project-list"}, {"pageId":"documentlibrary"}, {"pageId":"discussions-topiclist"}]</sitePages>
+               <pageMetadata>
+               					{
+               					"documentlibrary":{"titleId":"page.supplierDocumentLibrary.title", "descriptionId":"page.supplierDocumentLibrary.description", "type":"supplierManagement"},
+               					"project-list":{"titleId":"page.supplierProjectList.title", "descriptionId":"page.supplierProjectList.description", "type":"supplierManagement"}
+               					}
+               </pageMetadata>
+                <dashboardSitePage>false</dashboardSitePage>
+            </properties>
+         </page>
+      </pages>
+   </preset>
+
+
+</presets>
