@@ -505,7 +505,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 							logger.debug("Add assocs :" + assocDef.getName());
 							nodeService.createAssociation(nodeRef, targetRef, assocDef.getName());
 						}
-					} else if(ImportHelper.NULL_VALUE.equals(value)){
+					} else if(value != null && value.isEmpty()){
 						logger.debug("Null value, remove assocs :" + assocDef.getName());
 						List<NodeRef> assocs = associationService.getTargetAssocs(nodeRef, assocDef.getName());
 						
