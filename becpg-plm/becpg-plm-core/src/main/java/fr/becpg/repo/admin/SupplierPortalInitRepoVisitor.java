@@ -1,14 +1,20 @@
 package fr.becpg.repo.admin;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.site.SiteModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.PermissionService;
+import org.alfresco.service.cmr.site.SiteInfo;
+import org.alfresco.service.cmr.site.SiteService;
+import org.alfresco.service.cmr.site.SiteVisibility;
 import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +22,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMGroup;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.ProjectModel;
+import fr.becpg.model.SystemGroup;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.admin.impl.AbstractInitVisitorImpl;
 import fr.becpg.repo.entity.EntityTplService;
@@ -38,8 +45,12 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 	private static final String SUPPLIER_PRE_SCRIPT = "plm.supplier.portal.deliverable.scripts.pre.name";
 	private static final String VALIDATE_POST_SCRIPT = "plm.supplier.portal.deliverable.scripts.post.name";
 
+	private static final String SUPPLIER_SITE_ID = "supplier";
+	
 	private static final String XPATH_DICTIONNARY_SCRIPTS = "./app:dictionary/app:scripts";
 
+	@Autowired
+	private SiteService siteService;
 
 	@Autowired
 	private EntityTplService entityTplService;
@@ -64,7 +75,15 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 
 		NodeRef entityTplNodeRef = nodeService.getChildByName(entityTplsNodeRef, ContentModel.ASSOC_CONTAINS, I18NUtil.getMessage(SUPPLIER_PJT_TPL_NAME));
 
-
+		SiteInfo siteInfo = siteService.getSite(SUPPLIER_SITE_ID);
+		if(siteInfo==null) {
+			siteInfo = siteService.createSite("supplier-preset", SUPPLIER_SITE_ID, I18NUtil.getMessage("plm.supplier.portal.site.title"), "", SiteVisibility.PUBLIC);
+			
+			siteService.setMembership(siteInfo.getShortName(), PermissionService.GROUP_PREFIX + PLMGroup.ReferencingMgr.toString(), SiteModel.SITE_MANAGER);
+			siteService.setMembership(siteInfo.getShortName(), PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser.toString(), SiteModel.SITE_CONSUMER);
+		}
+		
+		
 		if (entityTplNodeRef == null) {
 			NodeRef scriptFolderNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(companyHome, XPATH_DICTIONNARY_SCRIPTS);
 

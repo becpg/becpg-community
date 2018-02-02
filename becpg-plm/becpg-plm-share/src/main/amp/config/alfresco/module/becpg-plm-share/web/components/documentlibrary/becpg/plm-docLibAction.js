@@ -24,6 +24,7 @@
  */
 (function() {	
 
+	var $isValueSet = Alfresco.util.isValueSet;
 
 	YAHOO.Bubbling
     .fire(
@@ -201,18 +202,21 @@
 	   YAHOO.Bubbling.fire("registerAction", {
 	       actionName : "onActionSendToSupplier",
 	       fn : function onActionSendToSupplier(p_record) {
+	    	    var  nodeRef = new Alfresco.util.NodeRef(p_record.nodeRef), recordSiteName = $isValueSet(p_record.location.site) ? p_record.location.site.name : null,
+              		 displayName = p_record.displayName;
+	    	   
 	            var actionUrl = Alfresco.constants.PROXY_URI + '/becpg/supplier/send-to-supplier?entityNodeRef=' + p_record.nodeRef;
 
 	            this.modules.sendToSupplier = new Alfresco.module.SimpleDialog(this.id + "-sendToSupplier").setOptions({
 	            	  width : "33em",
-		               templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/supplier/send-to-supplier",
-		               actionUrl : actionUrl,
-		               validateOnSubmit : false,
-					  firstFocus : this.id + "-entityImporter-projectTpl-field",
+		              templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/supplier/send-to-supplier",
+		              actionUrl : actionUrl,
+		              validateOnSubmit : false,
+					  firstFocus : this.id + "-sendToSupplier-projectTpl-field",
 					  doBeforeFormSubmit : {
 						  fn : function onActionSendToSupplier_doBeforeFormSubmit(form) {
 							  Alfresco.util.PopupManager.displayMessage({
-				                	 text : this.msg("message.send-to-supplier.inprogress", displayName)
+				                	 text : this.msg("message.send-to-supplier.inprogress", displayname)
 				       		    	});
 						  },
 						  scope : this
@@ -222,7 +226,6 @@
 							  if (response.json) {
 								   window.location.href = beCPG.util.entityURL(recordSiteName,
 			                             response.json.persistedObject, p_record.node.type);
-			                        
 							  }
 
 						  },
@@ -244,7 +247,7 @@
 	    });
 	
 	
-});
+})();
 	
 	   
 	   

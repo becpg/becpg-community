@@ -272,7 +272,7 @@
 			
 			<!-- Supplier portal -->
 			
-			<action id="send-to-supplier" type="javascript" label="actions.entity.send-to-supplier">
+			<action id="send-to-supplier" type="javascript" label="actions.entity.send-to-supplier" icon="user">
 				<param name="function">onActionSendToSupplier</param>
 				<evaluator>evaluator.becpg.doclib.action.sendToSupplier</evaluator>
 				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isSystemEntity</evaluator>
