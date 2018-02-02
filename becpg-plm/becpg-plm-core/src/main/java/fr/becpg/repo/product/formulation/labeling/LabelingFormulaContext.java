@@ -211,7 +211,9 @@ public class LabelingFormulaContext {
 	private String ingTypeDecThresholdFormat = "{0}";
 	private String subIngsDefaultFormat = "{0} ({2})";
 	private String allergenReplacementPattern = "<b>$1</b>";
-
+	
+	private String defaultPercFormat = "0.#%";
+	
 	private String htmlTableRowFormat = "<tr><td style=\"border: solid 1px !important;padding: 5px;\" >{0}</td>"
 			+ "<td style=\"border: solid 1px !important;padding: 5px;\" >{2}</td>"
 			+ "<td style=\"border: solid 1px !important;padding: 5px;text-align:center;\">{1,number,0.#%}</td></tr>";
@@ -501,33 +503,27 @@ public class LabelingFormulaContext {
 		return ingLegalName;
 	}
 
-	private String getLegalIngName(AbstractLabelingComponent lblComponent, boolean plural) {
+	private String getLegalIngName(AbstractLabelingComponent lblComponent, Double qty,  boolean plural) {
 
-		String ingLegalName = lblComponent.isPlural() ? lblComponent.getPluralLegalName(I18NUtil.getLocale())
+		if ((lblComponent instanceof IngTypeItem) && ((IngTypeItem) lblComponent).doNotDeclare()) {
+			return null;
+		}
+		
+		boolean isPlural = (lblComponent.isPlural() || (plural && lblComponent instanceof IngTypeItem) );
+		
+		String ingLegalName = isPlural  ? lblComponent.getPluralLegalName(I18NUtil.getLocale())
 				: lblComponent.getLegalName(I18NUtil.getLocale());
 
 		if (renameRules.containsKey(lblComponent.getNodeRef())) {
 			RenameRule renameRule = renameRules.get(lblComponent.getNodeRef());
 			if (renameRule.matchLocale(I18NUtil.getLocale())) {
-				ingLegalName = renameRule.getClosestValue(I18NUtil.getLocale(), lblComponent.isPlural());
+				ingLegalName = renameRule.getClosestValue(I18NUtil.getLocale(),isPlural);
 			}
 		} else {
 
-			if ((lblComponent instanceof IngTypeItem) && ((IngTypeItem) lblComponent).doNotDeclare()) {
-				return null;
-			}
-
-			if (plural && (lblComponent instanceof IngTypeItem)) {
-				if (uncapitalizeLegalName) {
-					return uncapitalize(((IngTypeItem) lblComponent).getPluralLegalName(I18NUtil.getLocale()));
-				} else {
-					return ((IngTypeItem) lblComponent).getPluralLegalName(I18NUtil.getLocale());
-				}
-			}
-
 			if (showIngCEECode && (lblComponent instanceof IngItem)) {
 				if ((((IngItem) lblComponent).getIngCEECode() != null) && !((IngItem) lblComponent).getIngCEECode().isEmpty()) {
-					return ((IngItem) lblComponent).getIngCEECode();
+					ingLegalName = ((IngItem) lblComponent).getIngCEECode();
 				}
 			}
 		}
@@ -539,10 +535,36 @@ public class LabelingFormulaContext {
 		if (!lblComponent.getAllergens().isEmpty()) {
 			if (((lblComponent instanceof CompositeLabeling) && ((CompositeLabeling) lblComponent).getIngList().isEmpty())
 					|| (lblComponent instanceof IngItem)) {
-				return createAllergenAwareLabel(ingLegalName, lblComponent.getAllergens());
+				ingLegalName = createAllergenAwareLabel(ingLegalName, lblComponent.getAllergens());
 			}
-
 		}
+		
+		if(qty!=null) {
+			ingLegalName = createPercAwareLabel(lblComponent, ingLegalName, qty);
+		}
+		
+
+		return ingLegalName;
+	}
+
+	
+	private String createPercAwareLabel(AbstractLabelingComponent lblComponent, String ingLegalName, Double qty) {
+		
+//	TODO	DecimalFormat decimalFormat = new DecimalFormat(defaultPercFormat);
+//			decimalFormat.setRoundingMode(RoundingMode.HALF_DOWN);
+//			if ((qty != null) && (qty > -1) && (qty != 0d)) {
+//				int maxNum = decimalFormat.getMaximumFractionDigits();
+//				while (((Math.pow(10, maxNum + 2) * qty) < 1)) {
+//					if (maxNum >= maxPrecision) {
+//						decimalFormat.setRoundingMode(RoundingMode.FLOOR);
+//						decimalFormat.setMaximumFractionDigits(maxNum);
+//						decimalFormat.setMinimumFractionDigits(maxNum);
+//						break;
+//					}
+//					maxNum++;
+//				}
+//				decimalFormat.setMaximumFractionDigits(maxNum);
+//			}
 
 		return ingLegalName;
 	}
@@ -875,9 +897,9 @@ public class LabelingFormulaContext {
 
 		for (AbstractLabelingComponent component : components) {
 
-			String ingName = getLegalIngName(component, false);
-
 			Double qtyPerc = computeQtyPerc(lblCompositeContext, component, 1d);
+			
+			String ingName = getLegalIngName(component,  qtyPerc, false);
 
 			if (isGroup(component)) {
 				if (ret.length() > 0) {
@@ -927,22 +949,30 @@ public class LabelingFormulaContext {
 		String firstLabel = "";
 		Double firstQtyPerc = 0d;
 		String firstGeo = "";
+		
+		
 
 		for (Map.Entry<IngTypeItem, List<AbstractLabelingComponent>> kv : getSortedIngListByType(lblCompositeContext).entrySet()) {
 
-			if ((kv.getKey() != null) && (getLegalIngName(kv.getKey(), false) != null)) {
+			if ((kv.getKey() != null) && (getLegalIngName(kv.getKey(), null , false) != null)) {
 
 				Double qtyPerc = computeQtyPerc(lblCompositeContext, kv.getKey(), 1d);
 				Double volumePerc = computeVolumePerc(lblCompositeContext, kv.getKey(), 1d);
 				qtyPerc = (useVolume ? volumePerc : qtyPerc);
 
-				String ingTypeLegalName = getLegalIngName(kv.getKey(),
+				String ingTypeLegalName = getLegalIngName(kv.getKey(),null , 
 						((kv.getValue().size() > 1) || (!kv.getValue().isEmpty() && kv.getValue().get(0).isPlural())));
-				String allergenAwareLegalName = createAllergenAwareLabel(ingTypeLegalName, kv.getValue());
+				
+				boolean doNotDetailsDeclType = isDoNotDetails(kv.getKey().getNodeRef());
+				
+				if(doNotDetailsDeclType) {
+				 ingTypeLegalName = createAllergenAwareLabel(ingTypeLegalName, kv.getValue());
+				}
+				
 				String geoOriginsLabel = createGeoOriginsLabel(kv.getValue());
 
 				String subLabel = getIngTextFormat(kv.getKey(), qtyPerc).format(new Object[] { ingTypeLegalName, qtyPerc,
-						renderLabelingComponent(lblCompositeContext, kv.getValue(), ingTypeDefaultSeparator, 1d), allergenAwareLegalName,
+						doNotDetailsDeclType ? null : renderLabelingComponent(lblCompositeContext, kv.getValue(), ingTypeDefaultSeparator, 1d),
 						geoOriginsLabel });
 
 				if ((subLabel != null) && !subLabel.isEmpty()) {
@@ -970,7 +1000,7 @@ public class LabelingFormulaContext {
 					Double qtyPerc = computeQtyPerc(lblCompositeContext, component, 1d);
 					Double volumePerc = computeVolumePerc(lblCompositeContext, component, 1d);
 
-					String ingName = getLegalIngName(component, false);
+					String ingName = getLegalIngName(component,null, false);
 					String geoOriginsLabel = createGeoOriginsLabel(component.getGeoOrigins());
 
 					qtyPerc = (useVolume ? volumePerc : qtyPerc);
@@ -994,7 +1024,7 @@ public class LabelingFormulaContext {
 								if (!shouldSkip(subIngItem.getNodeRef(), subIngQtyPerc)) {
 
 									subIngBuff.append(getIngTextFormat(subIngItem, subIngQtyPerc)
-											.format(new Object[] { getLegalIngName(subIngItem, false), subIngQtyPerc, null, subIngGeoOriginsLabel }));
+											.format(new Object[] { getLegalIngName(subIngItem, null, false), subIngQtyPerc, null, subIngGeoOriginsLabel }));
 								} else {
 									logger.debug("Removing subIng with qty of 0: " + subIngItem);
 								}
@@ -1071,6 +1101,21 @@ public class LabelingFormulaContext {
 
 	}
 
+	private boolean isDoNotDetails(NodeRef nodeRef) {
+
+		Locale currentLocale = I18NUtil.getLocale();
+		if (nodeDeclarationFilters.containsKey(nodeRef)) {
+			DeclarationFilter declarationFilter = nodeDeclarationFilters.get(nodeRef);
+			if (DeclarationType.DoNotDetails.equals(declarationFilter.getDeclarationType())
+					&& matchFormule(declarationFilter.getFormula(), new DeclarationFilterContext())
+					&& declarationFilter.matchLocale(currentLocale)) {
+				return true;
+			}
+	
+		}
+		return false;
+	}
+
 	private BigDecimal roundeedValue(Double qty, MessageFormat messageFormat) {
 
 		for (Format format : new MessageFormat(htmlTableRowFormat).getFormats()) {
@@ -1113,20 +1158,29 @@ public class LabelingFormulaContext {
 
 			StringBuilder toAppend = new StringBuilder();
 
-			if ((kv.getKey() != null) && (getLegalIngName(kv.getKey(), false) != null)) {
+			if ((kv.getKey() != null) && (getLegalIngName(kv.getKey(),null, false) != null)) {
 
 				Double qtyPerc = computeQtyPerc(compositeLabeling, kv.getKey(), ratio);
 				kv.getKey().setQty(qtyPerc);
-
-				String ingTypeLegalName = getLegalIngName(kv.getKey(),
-						((kv.getValue().size() > 1) || (!kv.getValue().isEmpty() && kv.getValue().get(0).isPlural())));
-				String allergenAwareLegalName = createAllergenAwareLabel(ingTypeLegalName, kv.getValue());
-				String geoOriginsLabel = createGeoOriginsLabel(kv.getValue());
+				
 
 				Double qty = (useVolume ? kv.getKey().getVolume() : kv.getKey().getQty());
 
+				String ingTypeLegalName = getLegalIngName(kv.getKey(),qty,
+						((kv.getValue().size() > 1) || (!kv.getValue().isEmpty() && kv.getValue().get(0).isPlural())));
+				
+				
+				boolean doNotDetailsDeclType = isDoNotDetails(kv.getKey().getNodeRef());
+				
+				if(doNotDetailsDeclType) {
+				 ingTypeLegalName = createAllergenAwareLabel(ingTypeLegalName, kv.getValue());
+				}
+				
+				String geoOriginsLabel = createGeoOriginsLabel(kv.getValue());
+
+
 				toAppend.append(getIngTextFormat(kv.getKey(), qty).format(new Object[] { ingTypeLegalName, qty,
-						renderLabelingComponent(compositeLabeling, kv.getValue(), ingTypeDefaultSeparator, ratio), allergenAwareLegalName,
+						doNotDetailsDeclType ? null :  renderLabelingComponent(compositeLabeling, kv.getValue(), ingTypeDefaultSeparator, ratio),
 						geoOriginsLabel }));
 
 			} else {
@@ -1166,7 +1220,10 @@ public class LabelingFormulaContext {
 			Double qtyPerc = computeQtyPerc(parent, component, ratio);
 			Double volumePerc = computeVolumePerc(parent, component, ratio);
 
-			String ingName = getLegalIngName(component, false);
+			qtyPerc = (useVolume ? volumePerc : qtyPerc);
+
+			
+			String ingName = getLegalIngName(component, qtyPerc, false);
 			String geoOriginsLabel = createGeoOriginsLabel(component.getGeoOrigins());
 
 			if (logger.isDebugEnabled()) {
@@ -1176,8 +1233,7 @@ public class LabelingFormulaContext {
 						+ ") ");
 			}
 
-			qtyPerc = (useVolume ? volumePerc : qtyPerc);
-
+		
 			if (!component.shouldSkip() && !shouldSkip(component.getNodeRef(), qtyPerc)) {
 
 				String toAppend = new String();
@@ -1197,7 +1253,7 @@ public class LabelingFormulaContext {
 						if (!subIngItem.shouldSkip() && !shouldSkip(subIngItem.getNodeRef(), subIngQtyPerc)) {
 
 							subIngBuff.append(getIngTextFormat(subIngItem, subIngQtyPerc)
-									.format(new Object[] { getLegalIngName(subIngItem, false), subIngQtyPerc, null, subIngGeoOriginsLabel }));
+									.format(new Object[] { getLegalIngName(subIngItem, subIngQtyPerc, false), subIngQtyPerc, null, subIngGeoOriginsLabel }));
 						} else {
 							logger.debug("Removing subIng with qty of 0: " + subIngItem);
 						}
@@ -1341,7 +1397,7 @@ public class LabelingFormulaContext {
 			}
 
 			tree.put("name", getName(component));
-			tree.put("legal", getLegalIngName(component, false));
+			tree.put("legal", getLegalIngName(component, null, false));
 			if ((component.getVolume() != null) && (totalVol != null) && (totalVol > 0)) {
 				tree.put("vol", (component.getVolume() / totalVol) * 100);
 			}
@@ -1376,13 +1432,13 @@ public class LabelingFormulaContext {
 				JSONArray children = new JSONArray();
 				for (Map.Entry<IngTypeItem, List<AbstractLabelingComponent>> kv : getSortedIngListByType(composite).entrySet()) {
 
-					if ((kv.getKey() != null) && (getLegalIngName(kv.getKey(), false) != null)) {
+					if ((kv.getKey() != null) && (getLegalIngName(kv.getKey(),null, false) != null)) {
 
 						JSONObject ingTypeJson = new JSONObject();
 						ingTypeJson.put("nodeRef", kv.getKey().getNodeRef().toString());
 						ingTypeJson.put("cssClass", "ingType");
 						ingTypeJson.put("name", getName(kv.getKey()));
-						ingTypeJson.put("legal", getLegalIngName(kv.getKey(),
+						ingTypeJson.put("legal", getLegalIngName(kv.getKey(),null,
 								(kv.getValue().size() > 1) || (!kv.getValue().isEmpty() && kv.getValue().get(0).isPlural())));
 
 						if ((kv.getKey().getQty() != null) && (totalQty != null) && (totalQty > 0)) {
@@ -1423,7 +1479,8 @@ public class LabelingFormulaContext {
 	}
 
 	private String cleanLabel(StringBuffer buffer) {
-		return buffer.toString().replaceAll(" null| \\(null\\)| \\(\\)| \\[null\\]", "").replaceAll(">null<", "><").trim();
+		return buffer.toString().replaceAll(" null| \\(null\\)| \\(\\)| \\[null\\]", "")
+				.replaceAll(":,",",").replaceAll(":$","").replaceAll(">null<", "><").trim();
 	}
 
 	public boolean isGroup(AbstractLabelingComponent component) {
