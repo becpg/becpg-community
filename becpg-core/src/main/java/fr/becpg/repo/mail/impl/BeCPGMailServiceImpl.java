@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.action.executer.MailActionExecuter;
@@ -193,6 +194,23 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 		});
 		
 	}
+	
+	@Override
+	public void sendMailOnAsyncAction(List<String> recipients, String action, Map<String, Object> templateArgs){
+			
+		String subject = I18NUtil.getMessage("message.async-mail." + action + ".subject");
+		templateArgs.put(RepoConsts.ARG_ACTION_BODY, I18NUtil.getMessage("message.async-mail." + action + ".body"));
+		
+		List<NodeRef> recipientsNodeRef = recipients.stream()
+				.map(personService::getPerson)
+				.collect(Collectors.toList());
+		
+		Map<String, Object> templateModel = new HashMap<>();
+		templateModel.put("args", templateArgs);
+		
+		sendMail(recipientsNodeRef, subject, RepoConsts.EMAIL_ASYNC_ACTIONS_TEMPLATE, templateModel, true);	
+		
+	}	
 
 	private List<String> extractAuthoritiesFromGroup(NodeRef group, boolean sendToSelf){
 		List<String> ret = new ArrayList<>();

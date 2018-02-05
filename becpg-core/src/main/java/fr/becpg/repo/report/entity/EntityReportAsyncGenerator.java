@@ -23,6 +23,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 public interface EntityReportAsyncGenerator {
 
-	void queueNodes(List<NodeRef> pendingNodes);
+	void queueNodes(List<NodeRef> pendingNodes, boolean notify);
 
 }

@@ -207,7 +207,7 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy
 
 	@Override
 	protected void doAfterCommit(String key, Set<NodeRef> pendingNodes) {
-		entityReportAsyncGenerator.queueNodes(new ArrayList<>(pendingNodes));
+		entityReportAsyncGenerator.queueNodes(new ArrayList<>(pendingNodes), false);
 
 	}
 
