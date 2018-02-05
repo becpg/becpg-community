@@ -185,7 +185,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 
 				// calculate charact from qty or vol ?
 				boolean isVol = FormulationHelper.isCharactFormulatedFromVol(nodeService, simpleCharact)
-						|| FormulationHelper.isProductUnitLiter(FormulationHelper.getProductUnit(entityNodeRef, nodeService)) ? true : false;
+						&& FormulationHelper.isProductUnitLiter(FormulationHelper.getProductUnit(entityNodeRef, nodeService)) ? true : false;
 				Double qtyUsed = isVol ? volUsed : weightUsed;
 				Double value = FormulationHelper.calculateValue(0d, qtyUsed, simpleCharact.getValue(), netQty, unit);
 				CharactDetailsValue currentCharactDetailsValue = null;
