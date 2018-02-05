@@ -211,7 +211,8 @@
 		<constraint name="bcpg:lrTypes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
-					<value>Format</value>
+					<value>ShowPerc</value>
+					<value>ShowGeo</value>
 					<value>Rename</value>
 					<value>Detail</value>
 					<value>DoNotDetails</value>
@@ -225,7 +226,9 @@
 					<value>Type</value>
 					<value>Render</value>
 					<value>Locale</value>
+					<value>Format</value>
 					<value>Prefs</value>
+					
 				</list>
 			</parameter>
 		</constraint>

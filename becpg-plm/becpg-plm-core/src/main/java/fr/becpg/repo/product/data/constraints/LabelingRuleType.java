@@ -52,6 +52,10 @@ public enum LabelingRuleType {
 	
 	Prefs,
 	
-	DeclareThreshold
+	DeclareThreshold,
+	
+	ShowPerc,
+	
+	ShowGeo
 
 }
