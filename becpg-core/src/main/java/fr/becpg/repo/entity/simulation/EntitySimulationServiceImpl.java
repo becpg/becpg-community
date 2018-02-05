@@ -1,9 +1,7 @@
 package fr.becpg.repo.entity.simulation;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.alfresco.model.ContentModel;
@@ -21,38 +19,37 @@ import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
-import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.mail.BeCPGMailService;
 
 @Service("simulationService")
 public class EntitySimulationServiceImpl implements EntitySimulationService {
 
-	private static final Log logger = LogFactory.getLog(EntitySimulationServiceImpl.class);	
+	private static final Log logger = LogFactory.getLog(EntitySimulationServiceImpl.class);
+
+	// Simulation
 	private static final String ASYNC_ACTION_URL_PREFIX = "page/repository#filter=path|";
-	
+
 	@Autowired
 	@Qualifier("defaultAsyncThreadPool")
 	private ThreadPoolExecutor threadExecuter;
 
 	@Autowired
 	private TransactionService transactionService;
-	
+
 	@Autowired
 	private BeCPGMailService beCPGMailService;
 
 	@Autowired
 	private EntitySimulationPlugin[] entitySimulationPlugins;
-	
+
 	@Autowired
 	private NodeService nodeService;
-	
+
 	@Autowired
 	private PermissionService permissionService;
 
-
 	private class AsyncCreateSimulationNodeRefsCommand implements Runnable {
-		
-		
+
 		private final NodeRef destNodeRef;
 		private final List<NodeRef> nodeRefs;
 		private final String mode;
@@ -72,7 +69,7 @@ public class EntitySimulationServiceImpl implements EntitySimulationService {
 			StopWatch watch = new StopWatch();
 			watch.start();
 			try {
-				
+
 				AuthenticationUtil.runAs(() -> {
 
 					EntitySimulationPlugin entitySimulationPlugin = findPlugin(mode);
@@ -88,7 +85,7 @@ public class EntitySimulationServiceImpl implements EntitySimulationService {
 					return false;
 
 				}, userName);
-				
+
 				runWithSuccess = true;
 
 			} catch (Exception e) {
@@ -97,31 +94,26 @@ public class EntitySimulationServiceImpl implements EntitySimulationService {
 				}
 				runWithSuccess = false;
 				logger.error("Unable to simulate entities ", e);
-				
+
 			} finally {
 				// Send Mail after simulation
-				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-					watch.stop();
-					String action = "simulation";
-					Path folderPath = nodeService.getPath(destNodeRef);
-					String destinationPath = folderPath.subPath(2, folderPath.size()-1).toDisplayPath(nodeService, permissionService) +
-							"/" + nodeService.getProperty(destNodeRef, ContentModel.PROP_NAME);
-					Map<String, Object> templateArgs = new HashMap<>();
-					templateArgs.put(RepoConsts.ARG_ACTION_STATE, runWithSuccess);
-					templateArgs.put(RepoConsts.ARG_ACTION_URL, ASYNC_ACTION_URL_PREFIX + destinationPath);
-					templateArgs.put(RepoConsts.ARG_ACTION_RUN_TIME, watch.getTotalTimeSeconds());
-					
-					AuthenticationUtil.runAs(() -> {
-						beCPGMailService.sendMailOnAsyncAction(Arrays.asList(userName), action, templateArgs);
-						return null; 
-					}, userName);
-					
+				AuthenticationUtil.runAs(() -> {
+					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+						watch.stop();
+						Path folderPath = nodeService.getPath(destNodeRef);
+						String destinationPath = folderPath.subPath(2, folderPath.size() - 1).toDisplayPath(nodeService, permissionService) + "/"
+								+ nodeService.getProperty(destNodeRef, ContentModel.PROP_NAME);
+
+						beCPGMailService.sendMailOnAsyncAction(userName, "simulation", ASYNC_ACTION_URL_PREFIX + destinationPath, runWithSuccess,
+								watch.getTotalTimeSeconds());
+
+						return null;
+					}, true, false);
 					return null;
-				}, true, false);
+				}, userName);
 			}
 
 		}
-
 
 		@Override
 		public int hashCode() {

@@ -19,7 +19,6 @@ package fr.becpg.repo.entity.impl;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +49,7 @@ import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
@@ -79,9 +79,10 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 @Service("entityTplService")
 public class EntityTplServiceImpl implements EntityTplService {
 
-	private static final Log logger = LogFactory.getLog(EntityTplServiceImpl.class);
 	private static final String ASYNC_ACTION_URL_PREFIX = "page/entity-data-lists?list=View-properties&nodeRef=";
-	
+
+	private static final Log logger = LogFactory.getLog(EntityTplServiceImpl.class);
+
 	@Autowired
 	private NodeService nodeService;
 
@@ -120,7 +121,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 	@Autowired
 	private FileFolderService fileFolderService;
-	
+
 	@Autowired
 	BeCPGMailService beCPGMailService;
 
@@ -278,7 +279,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 		boolean runWithSuccess = true;
 		StopWatch watch = new StopWatch();
 		watch.start();
-		
+
 		if (lock.tryLock()) {
 			try {
 
@@ -301,7 +302,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 				logger.debug("synchronize entityNodeRefs, size " + entityNodeRefs.size());
 
 				doInBatch(entityNodeRefs, 10, entityNodeRef -> {
-					
+
 					if ((datalistsTpl != null) && !datalistsTpl.isEmpty()) {
 
 						RepositoryEntity entity = alfrescoRepository.findOne(entityNodeRef);
@@ -386,10 +387,9 @@ public class EntityTplServiceImpl implements EntityTplService {
 					// synchronize folders
 					// remove empty folders that are not in the template
 					for (FileInfo folder : fileFolderService.listFolders(entityNodeRef)) {
-						if (folder.getName() != "DataLists" && 
-								folder.getType().equals(ContentModel.TYPE_FOLDER) && 
-								nodeService.getChildByName(tplNodeRef, ContentModel.ASSOC_CONTAINS, folder.getName()) == null &&
-								fileFolderService.list(folder.getNodeRef()).size() == 0) {
+						if ((folder.getName() != "DataLists") && folder.getType().equals(ContentModel.TYPE_FOLDER)
+								&& (nodeService.getChildByName(tplNodeRef, ContentModel.ASSOC_CONTAINS, folder.getName()) == null)
+								&& (fileFolderService.list(folder.getNodeRef()).size() == 0)) {
 
 							if (logger.isDebugEnabled()) {
 								logger.debug("Remove folder " + folder.getName() + " of node " + entityNodeRef);
@@ -400,30 +400,34 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 					// copy folders of template that are not in the entity
 					for (FileInfo folder : fileFolderService.listFolders(tplNodeRef)) {
-						if (folder.getName() != "DataLists" && 
-								folder.getType().equals(ContentModel.TYPE_FOLDER) && 
-								nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS, folder.getName()) == null){
-							
+						if ((folder.getName() != "DataLists") && folder.getType().equals(ContentModel.TYPE_FOLDER)
+								&& (nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS, folder.getName()) == null)) {
+
 							if (logger.isDebugEnabled()) {
 								logger.debug("Copying folder " + folder.getName() + " to node " + entityNodeRef);
 							}
-							
+
 							try {
 								fileFolderService.copy(folder.getNodeRef(), entityNodeRef, null);
 							} catch (Exception e) {
-								logger.warn(
-										"Unable to synchronize folder " + folder.getName() + " of node " + entityNodeRef + ": " + e.getMessage());
+								logger.warn("Unable to synchronize folder " + folder.getName() + " of node " + entityNodeRef + ": " + e.getMessage());
 							}
 						}
 					}
 
 				});
-			} catch (Exception e){
+			} catch (Exception e) {
+				if (e instanceof ConcurrencyFailureException) {
+					throw (ConcurrencyFailureException) e;
+				}
 				runWithSuccess = false;
+				logger.error(e, e);
+
 			} finally {
 				lock.unlock();
 				watch.stop();
-				notifyByMail("entitiesTemplate.synchronize", tplNodeRef, runWithSuccess, watch.getTotalTimeSeconds());
+				beCPGMailService.sendMailOnAsyncAction(AuthenticationUtil.getFullyAuthenticatedUser(), "entitiesTemplate.synchronize",
+						ASYNC_ACTION_URL_PREFIX + tplNodeRef, runWithSuccess, watch.getTotalTimeSeconds());
 			}
 		} else {
 			logger.error("Only one massive operation at a time");
@@ -435,7 +439,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 		boolean runWithSuccess = true;
 		StopWatch watch = new StopWatch();
 		watch.start();
-		
+
 		if (lock.tryLock()) {
 			try {
 				List<NodeRef> entityNodeRefs = getEntitiesToUpdate(tplNodeRef);
@@ -447,18 +451,18 @@ public class EntityTplServiceImpl implements EntityTplService {
 						}
 						formulationService.formulate(entityNodeRef);
 					} catch (FormulateException e) {
-						
+
 						logger.error(e, e);
 					}
 
 				});
-			} catch(Exception e ){
+			} catch (Exception e) {
 				runWithSuccess = false;
-			}
-			 finally {
+			} finally {
 				lock.unlock();
 				watch.stop();
-				notifyByMail("entitiesTemplate.formulate", tplNodeRef, runWithSuccess, watch.getTotalTimeSeconds());
+				beCPGMailService.sendMailOnAsyncAction(AuthenticationUtil.getFullyAuthenticatedUser(), "entitiesTemplate.formulate",
+						ASYNC_ACTION_URL_PREFIX + tplNodeRef, runWithSuccess, watch.getTotalTimeSeconds());
 			}
 		} else {
 			logger.error("Only one massive operation at a time");
@@ -466,14 +470,6 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 	}
 
-	private void notifyByMail(String action, NodeRef nodeRef, boolean runWithSuccess, double time){
-		Map<String, Object> templateArgs = new HashMap<>();
-		templateArgs.put(RepoConsts.ARG_ACTION_STATE, runWithSuccess);			
-		templateArgs.put(RepoConsts.ARG_ACTION_RUN_TIME, time);
-		templateArgs.put(RepoConsts.ARG_ACTION_URL, ASYNC_ACTION_URL_PREFIX + nodeRef);		
-		beCPGMailService.sendMailOnAsyncAction(Arrays.asList(AuthenticationUtil.getFullyAuthenticatedUser()), action, templateArgs);
-	}
-	
 	private interface BatchCallBack {
 		void run(NodeRef entityNodeRef);
 	}
@@ -514,8 +510,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 				AuthenticationUtil.runAsSystem(actionRunAs);
 
 			}
-			
-			
+
 		}, false, true);
 
 		if (logger.isInfoEnabled()) {
@@ -524,7 +519,6 @@ public class EntityTplServiceImpl implements EntityTplService {
 		}
 
 	}
-	
 
 	private List<NodeRef> getEntitiesToUpdate(NodeRef tplNodeRef) {
 
@@ -539,7 +533,6 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 		return entityNodeRefs;
 	}
-	
 
 	@Override
 	public void synchronizeEntity(NodeRef entityNodeRef, NodeRef entityTplNodeRef) {
@@ -628,28 +621,30 @@ public class EntityTplServiceImpl implements EntityTplService {
 		}
 
 	}
-	
+
 	@Override
-	public void removeDataListOnEntities(NodeRef entityTplNodeRef, QName entityList){
-		List<NodeRef> entities = getEntitiesToUpdate(entityTplNodeRef);		
+	public void removeDataListOnEntities(NodeRef entityTplNodeRef, QName entityList) {
+		List<NodeRef> entities = getEntitiesToUpdate(entityTplNodeRef);
 
 		doInBatch(entities, 10, entityNodeRef -> {
-			
+
 			NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
 			NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, entityList);
-			
+
 			if (listNodeRef != null) {
-				logger.debug("Deleting list with node: "+listNodeRef+" on entity: "+entityNodeRef+" ("+nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME)+")");
+				logger.debug("Deleting list with node: " + listNodeRef + " on entity: " + entityNodeRef + " ("
+						+ nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + ")");
 				nodeService.deleteNode(listNodeRef);
 			}
 
 		});
-		
+
 		NodeRef tplListContainerNodeRef = entityListDAO.getListContainer(entityTplNodeRef);
 		NodeRef tplListNodeRef = entityListDAO.getList(tplListContainerNodeRef, entityList);
-		
+
 		if (tplListNodeRef != null) {
-			logger.debug("Deleting list with node: "+tplListNodeRef+" on template: "+entityTplNodeRef+" ("+nodeService.getProperty(entityTplNodeRef, ContentModel.PROP_NAME)+")");
+			logger.debug("Deleting list with node: " + tplListNodeRef + " on template: " + entityTplNodeRef + " ("
+					+ nodeService.getProperty(entityTplNodeRef, ContentModel.PROP_NAME) + ")");
 			nodeService.deleteNode(tplListNodeRef);
 		}
 	}
@@ -660,23 +655,24 @@ public class EntityTplServiceImpl implements EntityTplService {
 		NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
 		if (listContainerNodeRef == null) {
 			listContainerNodeRef = entityListDAO.createListContainer(entityNodeRef);
-		}		
+		}
 		NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, typeActivityList);
 		if (listNodeRef == null) {
 			listNodeRef = entityListDAO.createList(listContainerNodeRef, typeActivityList);
 		}
-		
+
 		return listNodeRef;
 	}
 
-	/*/
-	 * TODO faire en s'inspirant du synchronizeEntities
-	@Override
-	public void removeDataListItemsOnEntities(NodeRef entityTplNodeRef, List<NodeRef> dataListItems) {
-		List<NodeRef> entities = getEntitiesToUpdate(entityTplNodeRef);
-		
-		
-		
-	}
-	*/
+	/*
+	 * / TODO faire en s'inspirant du synchronizeEntities
+	 * 
+	 * @Override public void removeDataListItemsOnEntities(NodeRef
+	 * entityTplNodeRef, List<NodeRef> dataListItems) { List<NodeRef> entities =
+	 * getEntitiesToUpdate(entityTplNodeRef);
+	 * 
+	 * 
+	 * 
+	 * }
+	 */
 }

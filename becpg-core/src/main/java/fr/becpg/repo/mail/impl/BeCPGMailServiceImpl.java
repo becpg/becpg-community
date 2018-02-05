@@ -1,31 +1,31 @@
 /*******************************************************************************
- * Copyright (C) 2010-2017 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2017 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.mail.impl;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.action.executer.MailActionExecuter;
@@ -56,15 +56,14 @@ import fr.becpg.repo.mail.BeCPGMailService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
- * 
+ *
  * @author matthieu
- * 
+ *
  */
 public class BeCPGMailServiceImpl implements BeCPGMailService {
 
 	private static final Log _logger = LogFactory.getLog(BeCPGMailServiceImpl.class);
 
- 
 	private NodeService nodeService;
 	private ServiceRegistry serviceRegistry;
 	private SearchService searchService;
@@ -125,7 +124,8 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 		templateModel.put("username", userName);
 		templateModel.put("password", password);
 		templateModel.put(TemplateService.KEY_SHARE_URL, UrlUtil.getShareUrl(this.serviceRegistry.getSysAdminParams()));
-		// current date/time is useful to have and isn't supplied by FreeMarker by default
+		// current date/time is useful to have and isn't supplied by FreeMarker
+		// by default
 		templateModel.put("date", new Date());
 
 		String email = (String) nodeService.getProperty(personNodeRef, ContentModel.PROP_EMAIL);
@@ -137,34 +137,33 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 
 	}
 
-
 	@Override
-	public NodeRef findTemplateNodeRef(String templateName, NodeRef folderNR){
-		_logger.debug("Finding template named "+templateName+" in folder "+folderNR);
+	public NodeRef findTemplateNodeRef(String templateName, NodeRef folderNR) {
+		_logger.debug("Finding template named " + templateName + " in folder " + folderNR);
 		NodeRef templateNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(folderNR, templateName);
-		if(templateNodeRef == null){
-			throw new RuntimeException("Template "+templateName+" not found in folder");
+		if (templateNodeRef == null) {
+			throw new RuntimeException("Template " + templateName + " not found in folder");
 		}
 
 		return templateNodeRef;
 	}
 
-	private NodeRef findLocalizedTemplateNodeRef(NodeRef templateNodeRef){	
-		_logger.debug("Finding sibling of template "+templateNodeRef);
+	private NodeRef findLocalizedTemplateNodeRef(NodeRef templateNodeRef) {
+		_logger.debug("Finding sibling of template " + templateNodeRef);
 		return fileFolderService.getLocalizedSibling(templateNodeRef);
 	}
 
 	@Override
-	public void sendMail(List<NodeRef> recipientNodeRefs, String subject, String mailTemplate, Map<String, Object> templateArgs, boolean sendToSelf){
+	public void sendMail(List<NodeRef> recipientNodeRefs, String subject, String mailTemplate, Map<String, Object> templateArgs, boolean sendToSelf) {
 
 		NodeRef templateNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(), mailTemplate);
-		_logger.debug("emails to receive email: "+recipientNodeRefs);
+		_logger.debug("emails to receive email: " + recipientNodeRefs);
 		Set<String> authorities = new HashSet<>();
 		for (NodeRef recipientNodeRef : recipientNodeRefs) {
 			String authorityName;
 			QName type = nodeService.getType(recipientNodeRef);
 			if (type.equals(ContentModel.TYPE_AUTHORITY_CONTAINER)) {
-				_logger.info(recipientNodeRef+" is a group, extracting...");
+				_logger.info(recipientNodeRef + " is a group, extracting...");
 				authorities.addAll(extractAuthoritiesFromGroup(recipientNodeRef, sendToSelf));
 			} else {
 				authorityName = (String) nodeService.getProperty(recipientNodeRef, ContentModel.PROP_USERNAME);
@@ -177,9 +176,9 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 			}
 
 		}
-		
-		_logger.debug("TemplateNodeRef: "+templateNodeRef);
-		_logger.debug("TemplateArgs: "+templateArgs);
+
+		_logger.debug("TemplateNodeRef: " + templateNodeRef);
+		_logger.debug("TemplateArgs: " + templateArgs);
 
 		Action mailAction = actionService.createAction(MailActionExecuter.NAME);
 		mailAction.setParameterValue(MailActionExecuter.PARAM_SUBJECT, subject);
@@ -192,27 +191,29 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 			actionService.executeAction(mailAction, null, true, true);
 			return null;
 		});
-		
+
 	}
-	
+
 	@Override
-	public void sendMailOnAsyncAction(List<String> recipients, String action, Map<String, Object> templateArgs){
-			
+	public void sendMailOnAsyncAction(String userName, String action, String actionUrl, boolean runWithSuccess, double time) {
+		Map<String, Object> templateArgs = new HashMap<>();
+		templateArgs.put(RepoConsts.ARG_ACTION_STATE, runWithSuccess);
+		templateArgs.put(RepoConsts.ARG_ACTION_URL, actionUrl);
+		templateArgs.put(RepoConsts.ARG_ACTION_RUN_TIME, time);
+
 		String subject = I18NUtil.getMessage("message.async-mail." + action + ".subject");
 		templateArgs.put(RepoConsts.ARG_ACTION_BODY, I18NUtil.getMessage("message.async-mail." + action + ".body"));
-		
-		List<NodeRef> recipientsNodeRef = recipients.stream()
-				.map(personService::getPerson)
-				.collect(Collectors.toList());
-		
+
+		List<NodeRef> recipientsNodeRef = Arrays.asList(personService.getPerson(userName));
+
 		Map<String, Object> templateModel = new HashMap<>();
 		templateModel.put("args", templateArgs);
-		
-		sendMail(recipientsNodeRef, subject, RepoConsts.EMAIL_ASYNC_ACTIONS_TEMPLATE, templateModel, true);	
-		
-	}	
 
-	private List<String> extractAuthoritiesFromGroup(NodeRef group, boolean sendToSelf){
+		sendMail(recipientsNodeRef, subject, RepoConsts.EMAIL_ASYNC_ACTIONS_TEMPLATE, templateModel, true);
+
+	}
+
+	private List<String> extractAuthoritiesFromGroup(NodeRef group, boolean sendToSelf) {
 		List<String> ret = new ArrayList<>();
 		String authorityName = (String) nodeService.getProperty(group, ContentModel.PROP_AUTHORITY_NAME);
 		for (String userAuth : authorityService.getContainedAuthorities(AuthorityType.USER, authorityName, false)) {
@@ -220,7 +221,7 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 				ret.add(userAuth);
 			}
 		}
-		_logger.debug("Found "+ret.size()+" users in the group: "+ret);
+		_logger.debug("Found " + ret.size() + " users in the group: " + ret);
 
 		return ret;
 	}
@@ -241,19 +242,18 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 	}
 
 	@Override
-	public NodeRef getEmailProjectTemplatesFolder(){
+	public NodeRef getEmailProjectTemplatesFolder() {
 		return searchFolder("app:company_home/app:dictionary/app:email_templates/cm:project/.");
 	}
 
-	private NodeRef searchFolder(String xpath){
-		List<NodeRef> nodeRefs = searchService.selectNodes(repository.getRootHome(),xpath , null,
-				this.namespaceService, false);
+	private NodeRef searchFolder(String xpath) {
+		List<NodeRef> nodeRefs = searchService.selectNodes(repository.getRootHome(), xpath, null, this.namespaceService, false);
 
 		if (nodeRefs.size() == 1) {
 			// Now localise this
 			NodeRef base = nodeRefs.get(0);
 			return fileFolderService.getLocalizedSibling(base);
-		}  else {
+		} else {
 			throw new RuntimeException("Cannot find the email template folder !");
 		}
 	}
