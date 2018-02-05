@@ -1,8 +1,7 @@
 package fr.becpg.repo.ecm.impl;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -17,7 +16,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.ConcurrencyFailureException;
-import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
@@ -29,7 +27,9 @@ import fr.becpg.repo.mail.BeCPGMailService;
 @Service("asyncECOService")
 public class AsyncECOServiceImpl implements AsyncECOService {
 
-	
+	private static final Log logger = LogFactory.getLog(AsyncECOServiceImpl.class);
+	private static final String ASYNC_ACTION_URL_PREFIX = "page/entity-data-lists?list=changeUnitList&nodeRef=";
+			
 	@Autowired
 	ECOService ecoService;
 	
@@ -38,9 +38,6 @@ public class AsyncECOServiceImpl implements AsyncECOService {
 	
 	@Autowired
 	PersonService personService;
-	
-
-	private static final Log logger = LogFactory.getLog(AsyncECOServiceImpl.class);
 
 	@Autowired
 	@Qualifier("ecoAsyncThreadPool")
@@ -77,6 +74,7 @@ public class AsyncECOServiceImpl implements AsyncECOService {
 		private final NodeRef ecoNodeRef;		
 		private boolean apply = false;
 		private final String userName;
+		private boolean runWithSuccess = true;
 
 		public AsyncECOGenerator(NodeRef ecoNodeRef, boolean apply, String userName) {
 			super();
@@ -89,7 +87,6 @@ public class AsyncECOServiceImpl implements AsyncECOService {
 		public void run() {
 			StopWatch watch = new StopWatch();
 			watch.start();
-			boolean runState = false;
 			
 			try {
 
@@ -128,38 +125,32 @@ public class AsyncECOServiceImpl implements AsyncECOService {
 						return null;
 					}
 				}, userName);
-				
-				runState = true;
 
 			} catch (Exception e) {
 				if (e instanceof ConcurrencyFailureException) {
 					throw (ConcurrencyFailureException) e;
 				}
+				runWithSuccess = false;
 				logger.error("Unable to apply eco ", e);
 			
 			} finally {
 				// Send mail after ECO
-				String action = apply ? "apply" : "simulate";
-				String subject = I18NUtil.getMessage("message.async-mail.eco." + action + ".subject");
-				String url = apply ? "page/entity-data-lists?list=changeUnitList&nodeRef=" : "page/entity-data-lists?list=calculatedCharactList&nodeRef=";
-				
-				Map<String, Object> templateArgs = new HashMap<>();
-				templateArgs.put(RepoConsts.ARG_ACTION_BODY, I18NUtil.getMessage("message.async-mail.eco." + action + ".body"));
-				templateArgs.put(RepoConsts.ARG_ACTION_STATE, runState);
-				templateArgs.put(RepoConsts.ARG_ACTION_RUN_TIME, watch.getTotalTimeSeconds());
-				templateArgs.put(RepoConsts.ARG_ACTION_URL, url + ecoNodeRef );
-
-				List<NodeRef> recipientNodeRefs = new ArrayList<>();
-				recipientNodeRefs.add(personService.getPerson(userName));
-				Map<String, Object> templateModel = new HashMap<>();
-				templateModel.put("args", templateArgs);
-				
-				AuthenticationUtil.runAs(() -> {
-					beCPGMailService.sendMail(recipientNodeRefs, subject, RepoConsts.EMAIL_ASYNC_ACTIONS_TEMPLATE, templateModel, true);	
+				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+					watch.stop();
+					String action = apply ? "eco.apply" : "eco.simulate";
+					Map<String, Object> templateArgs = new HashMap<>();
+					templateArgs.put(RepoConsts.ARG_ACTION_STATE, runWithSuccess);
+					templateArgs.put(RepoConsts.ARG_ACTION_URL, ASYNC_ACTION_URL_PREFIX + ecoNodeRef );
+					templateArgs.put(RepoConsts.ARG_ACTION_RUN_TIME, watch.getTotalTimeSeconds());
+					
+					AuthenticationUtil.runAs(() -> {
+						beCPGMailService.sendMailOnAsyncAction(Arrays.asList(userName), action, templateArgs);						
+						return null;
+					}, userName);
+					
 					return null;
-				}, userName);
-				
-				
+				}, true, false);
+			
 			}
 		}
 

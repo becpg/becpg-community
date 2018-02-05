@@ -17,27 +17,26 @@
  ******************************************************************************/
 package fr.becpg.repo.report.entity.impl;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.security.PersonService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.ConcurrencyFailureException;
-import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.mail.BeCPGMailService;
 import fr.becpg.repo.report.entity.EntityReportAsyncGenerator;
 import fr.becpg.repo.report.entity.EntityReportService;
@@ -49,20 +48,20 @@ import fr.becpg.repo.report.entity.EntityReportService;
  */
 public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerator {
 
-	@Autowired
-	private BeCPGMailService beCPGMailService;
 
-	@Autowired
-	private PersonService personService;
+	private static final Log logger = LogFactory.getLog(EntityReportAsyncGeneratorImpl.class);
+	private static final String ASYNC_ACTION_URL_PREFIX = "page/document-details?nodeRef=";
 	
-	@Autowired
-	private NodeService nodeService;
-
 	private ThreadPoolExecutor threadExecuter;
 
 	private EntityReportService entityReportService;
+	
+	@Autowired
+	private BeCPGMailService mailService;
+	
+	@Autowired
+	private AssociationService associationService;
 
-	private static final Log logger = LogFactory.getLog(EntityReportAsyncGeneratorImpl.class);
 
 	public void setThreadExecuter(ThreadPoolExecutor threadExecuter) {
 		this.threadExecuter = threadExecuter;
@@ -71,92 +70,103 @@ public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerato
 	public void setEntityReportService(EntityReportService entityReportService) {
 		this.entityReportService = entityReportService;
 	}
-
+	
+	
 	@Override
-	public void queueNodes(List<NodeRef> pendingNodes) {
+	public void queueNodes(List<NodeRef> pendingNodes, boolean notify) {
 		logger.debug("Queue nodes for async report generation");
 
-		StopWatch watch = new StopWatch();
-		watch.start();
-		boolean runState = false;
-		String userName = AuthenticationUtil.getFullyAuthenticatedUser();
+		EntityReportAsyncNotificationCallback callBack  = null;
+		
+		if(notify) {
+			callBack  = new EntityReportAsyncNotificationCallback(new HashSet<NodeRef>(pendingNodes));
+		}
 
 		for (NodeRef entityNodeRef : pendingNodes) {
-
-			Runnable command = new ProductReportGenerator(entityNodeRef);
+			
+			Runnable command = new ProductReportGenerator(entityNodeRef, callBack);
 			if (!threadExecuter.getQueue().contains(command)) {
 				threadExecuter.execute(command);
 			} else {
+				if(callBack!=null) {
+					callBack.notify(entityNodeRef);
+				}
+				
 				logger.warn("Report job already in queue for " + entityNodeRef);
 				logger.info("Report active task size " + threadExecuter.getActiveCount());
 				logger.info("Report queue size " + threadExecuter.getTaskCount());
 			}
-		}
-
-		threadExecuter.shutdown();
-		try {
-			while (!threadExecuter.awaitTermination(5, TimeUnit.SECONDS)) {
-				logger.debug("Wait generate reports...");
-			}
-			runState = true;
-
-		} catch (InterruptedException e) {
-			logger.error("Unable to send email", e);
-
-		} finally {
-			// Send Mail after reports refresh
-			watch.stop();
-			if (watch.getTotalTimeSeconds() > 0) {
-				Map<String, Object> templateArgs = new HashMap<>();
-				templateArgs.put(RepoConsts.ARG_ACTION_BODY, I18NUtil.getMessage("message.async-mail.generate-reports.body"));
-				templateArgs.put(RepoConsts.ARG_ACTION_URL, "page/document-details?nodeRef=" + getEntityTplNodeRef(pendingNodes.get(0)));
-				templateArgs.put(RepoConsts.ARG_ACTION_STATE, runState);
-				templateArgs.put(RepoConsts.ARG_ACTION_RUN_TIME, watch.getTotalTimeSeconds());
-
-				List<NodeRef> recipientNodeRefs = new ArrayList<>();
-				recipientNodeRefs.add(personService.getPerson(userName));
-				Map<String, Object> templateModel = new HashMap<>();
-				templateModel.put("args", templateArgs);
-				String subject = I18NUtil.getMessage("message.async-mail.generate-reports.subject");
-
-				Runnable mailTask = () -> {
-					AuthenticationUtil.runAs(() -> {
-						beCPGMailService.sendMail(recipientNodeRefs, subject, RepoConsts.EMAIL_ASYNC_ACTIONS_TEMPLATE, templateModel, true);
-						return null;
-					}, userName);
-				};
-
-				new Thread(mailTask).start();
-			}
 
 		}
 
+	}
+
+	private NodeRef getEntityReportTpl(NodeRef nodeRef){
+		List<NodeRef> tmps =  associationService.getTargetAssocs(nodeRef, ReportModel.ASSOC_REPORTS);
+		tmps = associationService.getTargetAssocs(tmps.get(0), ReportModel.ASSOC_REPORT_TPL);
+		return tmps.get(0);
+	}
+
+	private class EntityReportAsyncNotificationCallback {
+
+		Set<NodeRef> workingSet = Collections.synchronizedSet(new HashSet<NodeRef>());
+		
+		private StopWatch watch = new StopWatch();
+		private String userName = AuthenticationUtil.getFullyAuthenticatedUser();
+		
+		public EntityReportAsyncNotificationCallback(Set<NodeRef> workingSet) {
+			super();
+			this.workingSet = workingSet;
+			watch.start();
+		}
+
+		public void notify(NodeRef nodeRef) {
+		  workingSet.remove(nodeRef);
+		  
+		  if(workingSet.isEmpty()) {
+			  // Send mail after refresh
+			  watch.stop();
+			  Map<String, Object> templateArgs = new HashMap<>();
+			  templateArgs.put(RepoConsts.ARG_ACTION_STATE, true);
+			  templateArgs.put(RepoConsts.ARG_ACTION_URL, ASYNC_ACTION_URL_PREFIX + getEntityReportTpl(nodeRef));
+			  templateArgs.put(RepoConsts.ARG_ACTION_RUN_TIME, watch.getTotalTimeSeconds());
+			  
+			  AuthenticationUtil.runAs(() -> {
+				  mailService.sendMailOnAsyncAction(Arrays.asList(userName), "generate-reports", templateArgs);
+				  return null;
+			  }, userName);	
+		  }
+		  
+		}
 	}
 	
-	private NodeRef getEntityTplNodeRef(NodeRef entityNodeRef){
-		List<AssociationRef> targetReports = nodeService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS);
-		List<AssociationRef> targetReportTpls = nodeService.getTargetAssocs( targetReports.get(0).getTargetRef(), ReportModel.ASSOC_REPORT_TPL);
-		return targetReportTpls.get(0).getTargetRef();
-	}
-
 	private class ProductReportGenerator implements Runnable {
 
 		private final NodeRef entityNodeRef;
 
-		private ProductReportGenerator(NodeRef entityNodeRef) {
+		private final EntityReportAsyncNotificationCallback callback;
+
+		private ProductReportGenerator(NodeRef entityNodeRef, EntityReportAsyncNotificationCallback callback) {
 			this.entityNodeRef = entityNodeRef;
+			this.callback = callback;
 		}
 
 		@Override
 		public void run() {
 			try {
 				entityReportService.generateReports(entityNodeRef);
+				
 			} catch (Exception e) {
 				if (e instanceof ConcurrencyFailureException) {
 					throw (ConcurrencyFailureException) e;
 				}
 				logger.error("Unable to generate product reports ", e);
-
+				
+			} finally{
+				
+				if(callback!=null) {
+					callback.notify(entityNodeRef);
+				}
 			}
 		}
 

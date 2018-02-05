@@ -1,6 +1,5 @@
 package fr.becpg.repo.entity.simulation;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -13,14 +12,12 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.Path;
 import org.alfresco.service.cmr.security.PermissionService;
-import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.ConcurrencyFailureException;
-import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
@@ -30,6 +27,9 @@ import fr.becpg.repo.mail.BeCPGMailService;
 @Service("simulationService")
 public class EntitySimulationServiceImpl implements EntitySimulationService {
 
+	private static final Log logger = LogFactory.getLog(EntitySimulationServiceImpl.class);	
+	private static final String ASYNC_ACTION_URL_PREFIX = "page/repository#filter=path|";
+	
 	@Autowired
 	@Qualifier("defaultAsyncThreadPool")
 	private ThreadPoolExecutor threadExecuter;
@@ -39,9 +39,9 @@ public class EntitySimulationServiceImpl implements EntitySimulationService {
 	
 	@Autowired
 	private BeCPGMailService beCPGMailService;
-	
+
 	@Autowired
-	private PersonService personService;
+	private EntitySimulationPlugin[] entitySimulationPlugins;
 	
 	@Autowired
 	private NodeService nodeService;
@@ -49,10 +49,6 @@ public class EntitySimulationServiceImpl implements EntitySimulationService {
 	@Autowired
 	private PermissionService permissionService;
 
-	@Autowired
-	private EntitySimulationPlugin[] entitySimulationPlugins;
-
-	private static Log logger = LogFactory.getLog(EntitySimulationServiceImpl.class);
 
 	private class AsyncCreateSimulationNodeRefsCommand implements Runnable {
 		
@@ -61,6 +57,7 @@ public class EntitySimulationServiceImpl implements EntitySimulationService {
 		private final List<NodeRef> nodeRefs;
 		private final String mode;
 		private final String userName;
+		private boolean runWithSuccess = true;
 
 		public AsyncCreateSimulationNodeRefsCommand(NodeRef destNodeRef, List<NodeRef> nodeRefs, String mode) {
 			super();
@@ -74,8 +71,6 @@ public class EntitySimulationServiceImpl implements EntitySimulationService {
 		public void run() {
 			StopWatch watch = new StopWatch();
 			watch.start();
-			boolean runState = false;
-			
 			try {
 				
 				AuthenticationUtil.runAs(() -> {
@@ -94,41 +89,39 @@ public class EntitySimulationServiceImpl implements EntitySimulationService {
 
 				}, userName);
 				
-				runState = true;
+				runWithSuccess = true;
 
 			} catch (Exception e) {
 				if (e instanceof ConcurrencyFailureException) {
 					throw (ConcurrencyFailureException) e;
 				}
+				runWithSuccess = false;
 				logger.error("Unable to simulate entities ", e);
 				
 			} finally {
-				// Send Mail after simulation 
-				watch.stop();
-				Path folderPath = nodeService.getPath(destNodeRef);
-				String destinationPath = folderPath.subPath(2, folderPath.size()-1).toDisplayPath(nodeService, permissionService) + "/"
-						+ nodeService.getProperty(destNodeRef, ContentModel.PROP_NAME);
-								
-				Map<String, Object> templateArgs = new HashMap<>();
-				templateArgs.put(RepoConsts.ARG_ACTION_BODY, I18NUtil.getMessage("message.async-mail.simulation.body"));
-				templateArgs.put(RepoConsts.ARG_ACTION_STATE, runState);
-				templateArgs.put(RepoConsts.ARG_ACTION_RUN_TIME, watch.getTotalTimeSeconds());
-				templateArgs.put(RepoConsts.ARG_ACTION_URL, "/page/repository#filter=path|"+destinationPath);
-				
-				List<NodeRef> recipientNodeRefs = new ArrayList<>();
-				recipientNodeRefs.add(personService.getPerson(userName));
-				Map<String, Object> templateModel = new HashMap<>();
-				templateModel.put("args", templateArgs);
-				String subject = I18NUtil.getMessage("message.async-mail.simulation.subject");
-				
-				AuthenticationUtil.runAs(()->{
-					beCPGMailService.sendMail(recipientNodeRefs, subject, RepoConsts.EMAIL_ASYNC_ACTIONS_TEMPLATE, templateModel, true);
+				// Send Mail after simulation
+				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+					watch.stop();
+					String action = "simulation";
+					Path folderPath = nodeService.getPath(destNodeRef);
+					String destinationPath = folderPath.subPath(2, folderPath.size()-1).toDisplayPath(nodeService, permissionService) +
+							"/" + nodeService.getProperty(destNodeRef, ContentModel.PROP_NAME);
+					Map<String, Object> templateArgs = new HashMap<>();
+					templateArgs.put(RepoConsts.ARG_ACTION_STATE, runWithSuccess);
+					templateArgs.put(RepoConsts.ARG_ACTION_URL, ASYNC_ACTION_URL_PREFIX + destinationPath);
+					templateArgs.put(RepoConsts.ARG_ACTION_RUN_TIME, watch.getTotalTimeSeconds());
+					
+					AuthenticationUtil.runAs(() -> {
+						beCPGMailService.sendMailOnAsyncAction(Arrays.asList(userName), action, templateArgs);
+						return null; 
+					}, userName);
+					
 					return null;
-				}, userName);
-				
+				}, true, false);
 			}
 
 		}
+
 
 		@Override
 		public int hashCode() {

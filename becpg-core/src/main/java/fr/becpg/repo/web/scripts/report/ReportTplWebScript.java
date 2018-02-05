@@ -115,7 +115,7 @@ public class ReportTplWebScript extends AbstractWebScript {
 			logger.info("Refresh reports of " + refs.size() + " entities. action: " + action);
 
 			if (ACTION_REFRESH.equals(action)) {
-				entityReportAsyncGenerator.queueNodes(refs);
+				entityReportAsyncGenerator.queueNodes(refs, true);
 			} else if (ACTION_UPDATE_PERMISSIONS.equals(action)) {
 				for (NodeRef entityNodeRef : refs) {
 					List<NodeRef> reports = associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS);

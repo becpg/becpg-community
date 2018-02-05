@@ -19,6 +19,7 @@ package fr.becpg.repo.entity.impl;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,14 +44,12 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.rule.Rule;
 import org.alfresco.service.cmr.rule.RuleService;
-import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
@@ -81,6 +80,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 public class EntityTplServiceImpl implements EntityTplService {
 
 	private static final Log logger = LogFactory.getLog(EntityTplServiceImpl.class);
+	private static final String ASYNC_ACTION_URL_PREFIX = "page/entity-data-lists?list=View-properties&nodeRef=";
 	
 	@Autowired
 	private NodeService nodeService;
@@ -123,9 +123,6 @@ public class EntityTplServiceImpl implements EntityTplService {
 	
 	@Autowired
 	BeCPGMailService beCPGMailService;
-	
-	@Autowired
-	private PersonService personService;
 
 	private ReentrantLock lock = new ReentrantLock();
 
@@ -278,6 +275,10 @@ public class EntityTplServiceImpl implements EntityTplService {
 	@SuppressWarnings("unchecked")
 	public void synchronizeEntities(NodeRef tplNodeRef) {
 
+		boolean runWithSuccess = true;
+		StopWatch watch = new StopWatch();
+		watch.start();
+		
 		if (lock.tryLock()) {
 			try {
 
@@ -416,9 +417,13 @@ public class EntityTplServiceImpl implements EntityTplService {
 						}
 					}
 
-				}, "synchronize");
+				});
+			} catch (Exception e){
+				runWithSuccess = false;
 			} finally {
 				lock.unlock();
+				watch.stop();
+				notifyByMail("entitiesTemplate.synchronize", tplNodeRef, runWithSuccess, watch.getTotalTimeSeconds());
 			}
 		} else {
 			logger.error("Only one massive operation at a time");
@@ -427,7 +432,10 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 	@Override
 	public void formulateEntities(NodeRef tplNodeRef) throws FormulateException {
-
+		boolean runWithSuccess = true;
+		StopWatch watch = new StopWatch();
+		watch.start();
+		
 		if (lock.tryLock()) {
 			try {
 				List<NodeRef> entityNodeRefs = getEntitiesToUpdate(tplNodeRef);
@@ -439,12 +447,18 @@ public class EntityTplServiceImpl implements EntityTplService {
 						}
 						formulationService.formulate(entityNodeRef);
 					} catch (FormulateException e) {
+						
 						logger.error(e, e);
 					}
 
-				}, "formulate");
-			} finally {
+				});
+			} catch(Exception e ){
+				runWithSuccess = false;
+			}
+			 finally {
 				lock.unlock();
+				watch.stop();
+				notifyByMail("entitiesTemplate.formulate", tplNodeRef, runWithSuccess, watch.getTotalTimeSeconds());
 			}
 		} else {
 			logger.error("Only one massive operation at a time");
@@ -452,11 +466,19 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 	}
 
+	private void notifyByMail(String action, NodeRef nodeRef, boolean runWithSuccess, double time){
+		Map<String, Object> templateArgs = new HashMap<>();
+		templateArgs.put(RepoConsts.ARG_ACTION_STATE, runWithSuccess);			
+		templateArgs.put(RepoConsts.ARG_ACTION_RUN_TIME, time);
+		templateArgs.put(RepoConsts.ARG_ACTION_URL, ASYNC_ACTION_URL_PREFIX + nodeRef);		
+		beCPGMailService.sendMailOnAsyncAction(Arrays.asList(AuthenticationUtil.getFullyAuthenticatedUser()), action, templateArgs);
+	}
+	
 	private interface BatchCallBack {
 		void run(NodeRef entityNodeRef);
 	}
 
-	private void doInBatch(final List<NodeRef> entityNodeRefs, final int batchSize, final BatchCallBack batchCallBack, String action) {
+	private void doInBatch(final List<NodeRef> entityNodeRefs, final int batchSize, final BatchCallBack batchCallBack) {
 
 		StopWatch watch = null;
 		if (logger.isInfoEnabled()) {
@@ -500,31 +522,9 @@ public class EntityTplServiceImpl implements EntityTplService {
 			watch.stop();
 			logger.info("Batch takes " + watch.getTotalTimeSeconds() + " seconds");
 		}
-		
-		// Send mail after action on template entities
-		if(action != null){			
-			Map<String, Object> templateArgs = new HashMap<>();
-			templateArgs.put(RepoConsts.ARG_ACTION_BODY, I18NUtil.getMessage("message.async-mail.entitiesTemplate." + action + ".body"));
-			templateArgs.put(RepoConsts.ARG_ACTION_URL, "page/entity-data-lists?list=View-properties&nodeRef=" + getEntityTplNodeRef(entityNodeRefs.get(0)));
-			templateArgs.put(RepoConsts.ARG_ACTION_STATE, true);
-			templateArgs.put(RepoConsts.ARG_ACTION_RUN_TIME, watch.getTotalTimeSeconds());
-
-			List<NodeRef> recipientNodeRefs = new ArrayList<>();
-			recipientNodeRefs.add(personService.getPerson(AuthenticationUtil.getFullyAuthenticatedUser()));
-			
-			Map<String, Object> templateModel = new HashMap<>();
-			templateModel.put("args", templateArgs);
-			String subject = I18NUtil.getMessage("message.async-mail.entitiesTemplate." + action + ".subject");
-			
-			beCPGMailService.sendMail(recipientNodeRefs, subject, RepoConsts.EMAIL_ASYNC_ACTIONS_TEMPLATE, templateModel, true);		
-		}
 
 	}
 	
-	private NodeRef getEntityTplNodeRef(NodeRef entityNodeRef){
-		List<AssociationRef> target = nodeService.getTargetAssocs(entityNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
-		return target.get(0).getTargetRef();
-	}
 
 	private List<NodeRef> getEntitiesToUpdate(NodeRef tplNodeRef) {
 
@@ -643,7 +643,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 				nodeService.deleteNode(listNodeRef);
 			}
 
-		}, null);
+		});
 		
 		NodeRef tplListContainerNodeRef = entityListDAO.getListContainer(entityTplNodeRef);
 		NodeRef tplListNodeRef = entityListDAO.getList(tplListContainerNodeRef, entityList);
