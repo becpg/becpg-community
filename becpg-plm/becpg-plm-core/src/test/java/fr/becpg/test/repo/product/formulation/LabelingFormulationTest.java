@@ -584,6 +584,54 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 				Locale.FRENCH);
 
 	}
+	
+	
+	@Test
+	public void testIngTypeDecl() {
+		
+		/** Do not detail ingType */
+		
+		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			logger.debug("/*-- Create finished product --*/");
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName("Produit fini 4");
+			finishedProduct.setLegalName("Legal Produit fini 4");
+			finishedProduct.setUnit(ProductUnit.kg);
+			finishedProduct.setQty(4d);
+			finishedProduct.setDensity(1d);
+			List<CompoListDataItem> compoList = new ArrayList<>();
+
+			compoList.add(new CompoListDataItem(null, null, null, 3d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial7NodeRef));
+			compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+
+			finishedProduct.getCompoListView().setCompoList(compoList);
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+		}, false, true);
+		
+		
+		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
+
+
+		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
+		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("DoNotDetail", null, LabelingRuleType.DoNotDetails, Collections.singletonList(ingType1), null));
+
+		// └──[root - 0.0 (11.0, vol: 11.0) ]
+		// ├──[ing5 french - 5.0 (10.0, vol: 10.0) Detail]
+		// │ ├──[ing1 french - 7.0 ( vol : 7.0) ]
+		// │ └──[ing4 french - 3.0 ( vol : 3.0) ]
+		// └──[Juice - 6.0 (6.0, vol: 6.0) Detail]
+		// ├──[ing1 french - 2.0 ( vol : 2.0) ]
+		// └──[ing2 french - 4.0 ( vol : 4.0) ]
+
+		checkILL(finishedProductNodeRef, labelingRuleList, "epaississant french, ing2 french 16,7%, ing1 french 8,3%",
+				Locale.FRENCH);
+		
+		
+		
+	}
+	
+	
 
 	@Test
 	public void testReconstitutionLabeling() throws Exception {
@@ -700,6 +748,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		checkILL(finishedProductNodeRef2, labelingRuleList, "epices french: ing6 french 93,7%, legal Raw material 1 (<b>allergen1</b>) 6,2%",
 				Locale.FRENCH);
 
+	
 		/** Test with priority **/
 
 		final NodeRef finishedProductNodeRef3 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {

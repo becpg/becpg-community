@@ -24,10 +24,7 @@ import java.text.Format;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -57,7 +54,6 @@ import org.springframework.util.StringUtils;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
@@ -67,7 +63,6 @@ import fr.becpg.repo.product.data.ing.CompositeLabeling;
 import fr.becpg.repo.product.data.ing.DeclarationFilter;
 import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.ing.IngTypeItem;
-import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.spel.DeclarationFilterContext;
 import fr.becpg.repo.product.data.spel.SpelHelper;
@@ -79,7 +74,7 @@ import fr.becpg.repo.repository.RepositoryEntity;
  * @author matthieu
  *
  */
-public class LabelingFormulaContext {
+public class LabelingFormulaContext extends RuleParser {
 
 	private static final Log logger = LogFactory.getLog(LabelingFormulaContext.class);
 
@@ -88,10 +83,6 @@ public class LabelingFormulaContext {
 	private CompositeLabeling lblCompositeContext;
 
 	private CompositeLabeling mergedLblCompositeContext;
-
-	private final Set<Locale> availableLocales;
-
-	private final NodeService mlNodeService;
 
 	private final AssociationService associationService;
 
@@ -147,71 +138,19 @@ public class LabelingFormulaContext {
 
 	public LabelingFormulaContext(NodeService mlNodeService, AssociationService associationService,
 			AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
-		super();
-		this.mlNodeService = mlNodeService;
+		super(mlNodeService);
 		this.alfrescoRepository = alfrescoRepository;
 		this.associationService = associationService;
-		availableLocales = new HashSet<>();
 	}
 
-	/*
-	 * LOCALE
-	 */
-
-	public void addLocale(String value, List<String> locales) {
-		if (((locales == null) || locales.isEmpty()) && (value != null)) {
-			locales = Arrays.asList(value.split(","));
-		}
-
-		if (locales != null) {
-			for (String tmp : locales) {
-				availableLocales.add(MLTextHelper.parseLocale(tmp));
-			}
-		}
-	}
-
-	public Set<Locale> getLocales() {
-		return availableLocales;
-	}
-
-	/*
-	 * FORMAT
-	 */
-
-	private class TextFormatRule {
-		String textFormat;
-		Set<Locale> locales = new HashSet<>();
-
-		public TextFormatRule(String textFormat, List<String> locales) {
-			this.textFormat = textFormat;
-
-			if (locales != null) {
-				for (String tmp : locales) {
-					this.locales.add(MLTextHelper.parseLocale(tmp));
-				}
-			}
-		}
-
-		public boolean matchLocale(Locale locale) {
-			return locales.isEmpty() || locales.contains(locale);
-		}
-
-		public String getTextFormat() {
-			return textFormat;
-		}
-	}
-
-	private final Map<NodeRef, TextFormatRule> textFormaters = new HashMap<>();
-
-	private String ingDefaultFormat = "{0}";
+	private String ingDefaultFormat = "{0} [{3}]";
 	private String groupDefaultFormat = "<b>{0} ({1,number,0.#%}):</b> {2}";
 	private String groupListDefaultFormat = "<b>{0} {1,number,0.#%}</b>";
-	private String detailsDefaultFormat = "{0} ({2})";
-	private String ingTypeDefaultFormat = "{0}: {2}";
-	private String ingTypeDecThresholdFormat = "{0}";
-	private String subIngsDefaultFormat = "{0} ({2})";
+	private String detailsDefaultFormat = "{0} ({2}) [{3}]";
+	private String ingTypeDefaultFormat = "{0}: {2} [{3}]";
+	private String ingTypeDecThresholdFormat = "{0} [{3}]";
+	private String subIngsDefaultFormat = "{0} ({2}) [{3}]";
 	private String allergenReplacementPattern = "<b>$1</b>";
-
 	private String htmlTableRowFormat = "<tr><td style=\"border: solid 1px !important;padding: 5px;\" >{0}</td>"
 			+ "<td style=\"border: solid 1px !important;padding: 5px;\" >{2}</td>"
 			+ "<td style=\"border: solid 1px !important;padding: 5px;text-align:center;\">{1,number,0.#%}</td></tr>";
@@ -329,17 +268,12 @@ public class LabelingFormulaContext {
 		this.maxPrecision = maxPrecision;
 	}
 
-	// Exemple <b>{1}</b> : {2}
-	public boolean formatText(List<NodeRef> components, String textFormat, List<String> locales) {
-		if ((components != null) && !components.isEmpty()) {
-			for (NodeRef component : components) {
-				textFormaters.put(component, new TextFormatRule(textFormat, locales));
-			}
-		} else {
-			ingDefaultFormat = textFormat;
-			detailsDefaultFormat = textFormat;
-		}
-		return true;
+	@Override
+	void updateDefaultFormat(String textFormat) {
+
+		ingDefaultFormat = textFormat;
+		detailsDefaultFormat = textFormat;
+
 	}
 
 	/* formaters */
@@ -362,8 +296,11 @@ public class LabelingFormulaContext {
 			}
 			return applyRoundingMode(new MessageFormat(ingDefaultFormat), qty);
 		} else if (lblComponent instanceof IngTypeItem) {
-			if (((((IngTypeItem) lblComponent)).getDecThreshold() != null)
-					&& ((((IngTypeItem) lblComponent)).getQty() <= ((((IngTypeItem) lblComponent)).getDecThreshold() / 100))) {
+
+			boolean doNotDetailsDeclType = isDoNotDetails(((IngTypeItem) lblComponent).getOrigNodeRef() !=null ? ((IngTypeItem) lblComponent).getOrigNodeRef() : lblComponent.getNodeRef());
+
+			if (doNotDetailsDeclType || (((((IngTypeItem) lblComponent)).getDecThreshold() != null)
+					&& ((((IngTypeItem) lblComponent)).getQty() <= ((((IngTypeItem) lblComponent)).getDecThreshold() / 100)))) {
 				return applyRoundingMode(new MessageFormat(ingTypeDecThresholdFormat), qty);
 			}
 			return applyRoundingMode(new MessageFormat(ingTypeDefaultFormat), qty);
@@ -381,104 +318,29 @@ public class LabelingFormulaContext {
 		if (messageFormat.getFormats() != null) {
 			for (Format format : messageFormat.getFormats()) {
 				if (format instanceof DecimalFormat) {
-					DecimalFormat decimalFormat = ((DecimalFormat) format);
-					decimalFormat.setRoundingMode(RoundingMode.HALF_DOWN);
-					if ((qty != null) && (qty > -1) && (qty != 0d)) {
-						int maxNum = decimalFormat.getMaximumFractionDigits();
-						while (((Math.pow(10, maxNum + 2) * qty) < 1)) {
-							if (maxNum >= maxPrecision) {
-								decimalFormat.setRoundingMode(maxRoundingMode);
-								decimalFormat.setMaximumFractionDigits(maxNum);
-								decimalFormat.setMinimumFractionDigits(maxNum);
-								break;
-							}
-							maxNum++;
-						}
-						decimalFormat.setMaximumFractionDigits(maxNum);
-					}
+					applyAutomaticPrecicion(((DecimalFormat) format), qty, maxRoundingMode);
 				}
 			}
 		}
 		return messageFormat;
 	}
 
-	/*
-	 * RENAME
-	 */
-
-	private class RenameRule {
-		MLText mlText;
-		MLText pluralMlText;
-
-		Set<Locale> locales = new HashSet<>();
-
-		public RenameRule(MLText mlText, MLText pluralMlText, List<String> locales) {
-			this.mlText = mlText;
-			this.pluralMlText = pluralMlText;
-
-			if (locales != null) {
-				for (String tmp : locales) {
-					this.locales.add(MLTextHelper.parseLocale(tmp));
+	private void applyAutomaticPrecicion(DecimalFormat decimalFormat, Double qty, RoundingMode maxRoundingMode) {
+		decimalFormat.setRoundingMode(RoundingMode.HALF_DOWN);
+		if ((qty != null) && (qty > -1) && (qty != 0d)) {
+			int maxNum = decimalFormat.getMaximumFractionDigits();
+			while (((Math.pow(10, maxNum + 2) * qty) < 1)) {
+				if (maxNum >= maxPrecision) {
+					decimalFormat.setRoundingMode(maxRoundingMode);
+					decimalFormat.setMaximumFractionDigits(maxNum);
+					decimalFormat.setMinimumFractionDigits(maxNum);
+					break;
 				}
+				maxNum++;
 			}
+			decimalFormat.setMaximumFractionDigits(maxNum);
 		}
 
-		public boolean matchLocale(Locale locale) {
-			return locales.isEmpty() || locales.contains(locale);
-		}
-
-		public String getClosestValue(Locale locale, boolean plural) {
-			String ret = null;
-
-			if (plural && (pluralMlText != null) && !pluralMlText.isEmpty()) {
-				ret = MLTextHelper.getClosestValue(pluralMlText, locale);
-			}
-
-			if ((ret == null) || ret.isEmpty()) {
-				ret = MLTextHelper.getClosestValue(mlText, locale);
-			}
-
-			return ret;
-		}
-
-	}
-
-	private final Map<NodeRef, RenameRule> renameRules = new HashMap<>();
-
-	public boolean rename(List<NodeRef> components, List<NodeRef> replacement, MLText label, String formula, List<String> locales) {
-		for (NodeRef component : components) {
-			MLText mlText = null;
-			MLText pluralMlText = null;
-			if ((replacement != null) && !replacement.isEmpty()) {
-				mlText = (MLText) mlNodeService.getProperty(replacement.get(0), BeCPGModel.PROP_LEGAL_NAME);
-				pluralMlText = (MLText) mlNodeService.getProperty(replacement.get(0), BeCPGModel.PROP_PLURAL_LEGAL_NAME);
-			} else if (label != null) {
-				mlText = label;
-			} else if (formula != null) {
-				mlText = new MLText();
-
-				Set<Locale> availableLocales = getLocales();
-
-				if (availableLocales.isEmpty()) {
-					availableLocales.add(new Locale(Locale.getDefault().getLanguage()));
-				}
-
-				for (Locale locale : availableLocales) {
-					String val = I18NUtil.getMessage(formula, locale);
-					if (val == null) {
-						if (logger.isDebugEnabled()) {
-							logger.debug("I18 not found for key " + label + " locale " + locale.toString());
-						}
-						val = formula;
-					}
-					mlText.addValue(locale, val);
-				}
-			}
-			if (mlText != null) {
-				renameRules.put(component, new RenameRule(mlText, pluralMlText, locales));
-			}
-		}
-		return true;
 	}
 
 	private String getName(AbstractLabelingComponent lblComponent) {
@@ -501,33 +363,26 @@ public class LabelingFormulaContext {
 		return ingLegalName;
 	}
 
-	private String getLegalIngName(AbstractLabelingComponent lblComponent, boolean plural) {
+	private String getLegalIngName(AbstractLabelingComponent lblComponent, Double qty, boolean plural) {
 
-		String ingLegalName = lblComponent.isPlural() ? lblComponent.getPluralLegalName(I18NUtil.getLocale())
-				: lblComponent.getLegalName(I18NUtil.getLocale());
+		if ((lblComponent instanceof IngTypeItem) && ((IngTypeItem) lblComponent).doNotDeclare()) {
+			return null;
+		}
+
+		boolean isPlural = (lblComponent.isPlural() || (plural && (lblComponent instanceof IngTypeItem)));
+
+		String ingLegalName = isPlural ? lblComponent.getPluralLegalName(I18NUtil.getLocale()) : lblComponent.getLegalName(I18NUtil.getLocale());
 
 		if (renameRules.containsKey(lblComponent.getNodeRef())) {
 			RenameRule renameRule = renameRules.get(lblComponent.getNodeRef());
 			if (renameRule.matchLocale(I18NUtil.getLocale())) {
-				ingLegalName = renameRule.getClosestValue(I18NUtil.getLocale(), lblComponent.isPlural());
+				ingLegalName = renameRule.getClosestValue(I18NUtil.getLocale(), isPlural);
 			}
 		} else {
 
-			if ((lblComponent instanceof IngTypeItem) && ((IngTypeItem) lblComponent).doNotDeclare()) {
-				return null;
-			}
-
-			if (plural && (lblComponent instanceof IngTypeItem)) {
-				if (uncapitalizeLegalName) {
-					return uncapitalize(((IngTypeItem) lblComponent).getPluralLegalName(I18NUtil.getLocale()));
-				} else {
-					return ((IngTypeItem) lblComponent).getPluralLegalName(I18NUtil.getLocale());
-				}
-			}
-
 			if (showIngCEECode && (lblComponent instanceof IngItem)) {
 				if ((((IngItem) lblComponent).getIngCEECode() != null) && !((IngItem) lblComponent).getIngCEECode().isEmpty()) {
-					return ((IngItem) lblComponent).getIngCEECode();
+					ingLegalName = ((IngItem) lblComponent).getIngCEECode();
 				}
 			}
 		}
@@ -539,9 +394,35 @@ public class LabelingFormulaContext {
 		if (!lblComponent.getAllergens().isEmpty()) {
 			if (((lblComponent instanceof CompositeLabeling) && ((CompositeLabeling) lblComponent).getIngList().isEmpty())
 					|| (lblComponent instanceof IngItem)) {
-				return createAllergenAwareLabel(ingLegalName, lblComponent.getAllergens());
+				ingLegalName = createAllergenAwareLabel(ingLegalName, lblComponent.getAllergens());
+			}
+		}
+
+		if (qty != null) {
+			ingLegalName = createPercAwareLabel(lblComponent, ingLegalName, qty);
+		}
+
+		return ingLegalName;
+	}
+
+	private String createPercAwareLabel(AbstractLabelingComponent lblComponent, String ingLegalName, Double qty) {
+		if (qty != null) {
+			DecimalFormat decimalFormat = null;
+			if (showAllPerc) {
+				decimalFormat = new DecimalFormat(defaultPercFormat);
+			} else if (showPercRules.containsKey(lblComponent.getNodeRef())) {
+				ShowRule showRule = showPercRules.get(lblComponent.getNodeRef());
+				if (showRule.matchLocale(I18NUtil.getLocale())) {
+					decimalFormat = new DecimalFormat(showRule.format);
+				}
+
 			}
 
+			if (decimalFormat != null) {
+				applyAutomaticPrecicion(decimalFormat, qty, RoundingMode.FLOOR);
+				ingLegalName = ingLegalName + " " + decimalFormat.format(qty);
+
+			}
 		}
 
 		return ingLegalName;
@@ -594,7 +475,7 @@ public class LabelingFormulaContext {
 				}
 			}
 		}
-		return applyRoundingMode(new MessageFormat(detailsDefaultFormat), null).format(new Object[] { ingLegalName, null, ret.toString(),null });
+		return applyRoundingMode(new MessageFormat(detailsDefaultFormat), null).format(new Object[] { ingLegalName, null, ret.toString(), null });
 	}
 
 	private String createAllergenAwareLabel(String ingLegalName, List<AbstractLabelingComponent> ingList) {
@@ -621,228 +502,6 @@ public class LabelingFormulaContext {
 		}
 
 		return ret;
-	}
-
-	/*
-	 * AGGREGATE
-	 */
-	public class AggregateRule {
-
-		final String name;
-		MLText label;
-		NodeRef replacement;
-		NodeRef ruleNodeRef;
-		Double qty = 100d;
-		LabelingRuleType labelingRuleType;
-		List<NodeRef> components;
-		Set<Locale> locales = new HashSet<>();
-
-		public AggregateRule(NodeRef ruleNodeRef, String name, List<String> locales) {
-			super();
-			this.name = name;
-
-			if (locales != null) {
-				for (String tmp : locales) {
-					this.locales.add(MLTextHelper.parseLocale(tmp));
-				}
-			}
-
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public NodeRef getReplacement() {
-			return replacement;
-		}
-
-		public void setReplacement(NodeRef replacement) {
-			this.replacement = replacement;
-		}
-
-		public boolean matchLocale(Locale locale) {
-			return locales.isEmpty() || locales.contains(locale);
-		}
-
-		public MLText getLabel() {
-			MLText mlText = null;
-			if (replacement != null) {
-				mlText = (MLText) mlNodeService.getProperty(replacement, BeCPGModel.PROP_LEGAL_NAME);
-			} else if (label != null) {
-				mlText = label;
-			}
-			return mlText;
-		}
-
-		public void setLabel(MLText label) {
-			this.label = label;
-		}
-
-		public Double getQty() {
-			return qty;
-		}
-
-		public void setQty(Double qty) {
-			this.qty = qty;
-		}
-
-		public LabelingRuleType getLabelingRuleType() {
-			return labelingRuleType;
-		}
-
-		public void setLabelingRuleType(LabelingRuleType labelingRuleType) {
-			this.labelingRuleType = labelingRuleType;
-		}
-
-		public void setComponents(List<NodeRef> components) {
-			this.components = components;
-		}
-
-		public NodeRef getKey() {
-			return replacement != null ? replacement
-					: ruleNodeRef != null ? ruleNodeRef : new NodeRef(RepoConsts.SPACES_STORE, "aggr-" + name.hashCode());
-		}
-
-		public boolean matchAll(Collection<AbstractLabelingComponent> values, boolean recur) {
-			// #2352
-			if (!recur) {
-				for (AbstractLabelingComponent abstractLabelingComponent : values) {
-					if (getKey().equals(abstractLabelingComponent.getNodeRef())) {
-						return true;
-					}
-				}
-			}
-
-			int matchCount = components.size();
-			for (AbstractLabelingComponent abstractLabelingComponent : values) {
-				if (components.contains(abstractLabelingComponent.getNodeRef())) {
-					matchCount--;
-				}
-			}
-
-			return matchCount == 0;
-		}
-
-		public boolean matchAll(List<Composite<CompoListDataItem>> values) {
-			int matchCount = components.size();
-			for (Composite<CompoListDataItem> component : values) {
-				if (components.contains(component.getData().getProduct())) {
-					matchCount--;
-				}
-			}
-
-			return matchCount == 0;
-		}
-
-		@Override
-		public String toString() {
-			return "AggregateRule [name=" + name + ", labelingRuleType=" + labelingRuleType + "]";
-		}
-
-	}
-
-	private final Map<NodeRef, List<AggregateRule>> aggregateRules = new HashMap<>();
-
-	public Map<NodeRef, List<AggregateRule>> getAggregateRules() {
-		return aggregateRules;
-	}
-
-	/*
-	 * DECLARE
-	 */
-
-	private final Map<NodeRef, DeclarationFilter> nodeDeclarationFilters = new HashMap<>();
-	private final List<DeclarationFilter> declarationFilters = new ArrayList<>();
-
-	public Map<NodeRef, DeclarationFilter> getNodeDeclarationFilters() {
-		return nodeDeclarationFilters;
-	}
-
-	public List<DeclarationFilter> getDeclarationFilters() {
-		return declarationFilters;
-	}
-
-	public boolean addRule(NodeRef ruleNodeRef, String name, List<NodeRef> components, List<NodeRef> replacement, MLText label, String formula,
-			LabelingRuleType labeLabelingRuleType, List<String> locales) {
-
-		if (labeLabelingRuleType != null) {
-			if (LabelingRuleType.Type.equals(labeLabelingRuleType)
-					|| ((((components != null) && (components.size() > 1)) || ((replacement != null) && !replacement.isEmpty()))
-							&& (LabelingRuleType.Detail.equals(labeLabelingRuleType) || LabelingRuleType.Group.equals(labeLabelingRuleType)
-									|| LabelingRuleType.DoNotDetails.equals(labeLabelingRuleType)))) {
-				aggregate(ruleNodeRef, name, components, replacement, label, formula, labeLabelingRuleType, locales);
-			} else {
-
-				DeclarationType type = null;
-				boolean isThreshold = false;
-
-				if (LabelingRuleType.DetailComponents.equals(labeLabelingRuleType)) {
-					type = DeclarationType.Detail;
-				} else if (LabelingRuleType.DoNotDetailsComponents.equals(labeLabelingRuleType)) {
-					type = DeclarationType.DoNotDetails;
-				} else if (LabelingRuleType.DeclareThreshold.equals(labeLabelingRuleType)) {
-					type = DeclarationType.DoNotDeclare;
-					isThreshold = true;
-				} else {
-					type = DeclarationType.valueOf(labeLabelingRuleType.toString());
-				}
-
-				DeclarationFilter declarationFilter = new DeclarationFilter(formula, type, locales);
-				if (isThreshold) {
-					declarationFilter.setThreshold(Double.parseDouble(formula));
-				}
-
-				if ((components != null) && !components.isEmpty()) {
-					for (NodeRef component : components) {
-						nodeDeclarationFilters.put(component, declarationFilter);
-					}
-				} else {
-					declarationFilters.add(declarationFilter);
-				}
-
-			}
-		}
-
-		return true;
-	}
-
-	private void aggregate(NodeRef ruleNodeRef, String name, List<NodeRef> components, List<NodeRef> replacement, MLText label, String formula,
-			LabelingRuleType labelingRuleType, List<String> locales) {
-		String[] qtys = (formula != null) && !formula.isEmpty() ? formula.split(",") : null;
-
-		// components peut être ING, SF ou MP
-		int i = 0;
-		for (NodeRef component : components) {
-			AggregateRule aggregateRule = new AggregateRule(ruleNodeRef, name, locales);
-
-			if ((replacement != null) && !replacement.isEmpty()) {
-				aggregateRule.setReplacement(replacement.get(0));
-			}
-
-			if ((label != null) && !label.isEmpty()) {
-				aggregateRule.setLabel(label);
-			}
-
-			if ((qtys != null) && (qtys.length > i)) {
-				try {
-					aggregateRule.setQty(Double.valueOf(qtys[i]));
-				} catch (NumberFormatException e) {
-					logger.error(e, e);
-				}
-			}
-			aggregateRule.setComponents(components);
-			aggregateRule.setLabelingRuleType(labelingRuleType);
-
-			i++;
-
-			if (aggregateRules.containsKey(component)) {
-				aggregateRules.get(component).add(aggregateRule);
-			} else {
-				aggregateRules.put(component, new LinkedList<>(Collections.singletonList(aggregateRule)));
-			}
-
-		}
 	}
 
 	public String render() {
@@ -875,9 +534,9 @@ public class LabelingFormulaContext {
 
 		for (AbstractLabelingComponent component : components) {
 
-			String ingName = getLegalIngName(component, false);
-
 			Double qtyPerc = computeQtyPerc(lblCompositeContext, component, 1d);
+
+			String ingName = getLegalIngName(component, qtyPerc, false);
 
 			if (isGroup(component)) {
 				if (ret.length() > 0) {
@@ -930,20 +589,26 @@ public class LabelingFormulaContext {
 
 		for (Map.Entry<IngTypeItem, List<AbstractLabelingComponent>> kv : getSortedIngListByType(lblCompositeContext).entrySet()) {
 
-			if ((kv.getKey() != null) && (getLegalIngName(kv.getKey(), false) != null)) {
+			if ((kv.getKey() != null) && (getLegalIngName(kv.getKey(), null, false) != null)) {
 
 				Double qtyPerc = computeQtyPerc(lblCompositeContext, kv.getKey(), 1d);
 				Double volumePerc = computeVolumePerc(lblCompositeContext, kv.getKey(), 1d);
 				qtyPerc = (useVolume ? volumePerc : qtyPerc);
 
-				String ingTypeLegalName = getLegalIngName(kv.getKey(),
+				String ingTypeLegalName = getLegalIngName(kv.getKey(), null,
 						((kv.getValue().size() > 1) || (!kv.getValue().isEmpty() && kv.getValue().get(0).isPlural())));
-				String allergenAwareLegalName = createAllergenAwareLabel(ingTypeLegalName, kv.getValue());
-				String geoOriginsLabel = createGeoOriginsLabel(kv.getValue());
 
-				String subLabel = getIngTextFormat(kv.getKey(), qtyPerc).format(new Object[] { ingTypeLegalName, qtyPerc,
-						renderLabelingComponent(lblCompositeContext, kv.getValue(), ingTypeDefaultSeparator, 1d), allergenAwareLegalName,
-						geoOriginsLabel });
+				boolean doNotDetailsDeclType = isDoNotDetails(kv.getKey().getOrigNodeRef() !=null ? kv.getKey().getOrigNodeRef() : kv.getKey().getNodeRef());
+
+
+				if (doNotDetailsDeclType) {
+					ingTypeLegalName = createAllergenAwareLabel(ingTypeLegalName, kv.getValue());
+				}
+
+				String geoOriginsLabel = createGeoOriginsLabel(null, kv.getValue());
+
+				String subLabel = getIngTextFormat(kv.getKey(), qtyPerc).format(new Object[] { ingTypeLegalName, null,
+						doNotDetailsDeclType ? null : renderLabelingComponent(lblCompositeContext, kv.getValue(), ingTypeDefaultSeparator, 1d), null });
 
 				if ((subLabel != null) && !subLabel.isEmpty()) {
 
@@ -970,8 +635,8 @@ public class LabelingFormulaContext {
 					Double qtyPerc = computeQtyPerc(lblCompositeContext, component, 1d);
 					Double volumePerc = computeVolumePerc(lblCompositeContext, component, 1d);
 
-					String ingName = getLegalIngName(component, false);
-					String geoOriginsLabel = createGeoOriginsLabel(component.getGeoOrigins());
+					String ingName = getLegalIngName(component, null, false);
+					String geoOriginsLabel = createGeoOriginsLabel(component.getNodeRef(), component.getGeoOrigins());
 
 					qtyPerc = (useVolume ? volumePerc : qtyPerc);
 
@@ -989,12 +654,12 @@ public class LabelingFormulaContext {
 								}
 								Double subIngQtyPerc = (useVolume ? subIngItem.getVolume() : subIngItem.getQty());
 
-								String subIngGeoOriginsLabel = createGeoOriginsLabel(subIngItem.getGeoOrigins());
+								String subIngGeoOriginsLabel = createGeoOriginsLabel(subIngItem.getNodeRef(), subIngItem.getGeoOrigins());
 
 								if (!shouldSkip(subIngItem.getNodeRef(), subIngQtyPerc)) {
 
-									subIngBuff.append(getIngTextFormat(subIngItem, subIngQtyPerc)
-											.format(new Object[] { getLegalIngName(subIngItem, false), subIngQtyPerc, null, subIngGeoOriginsLabel }));
+									subIngBuff.append(getIngTextFormat(subIngItem, subIngQtyPerc).format(
+											new Object[] { getLegalIngName(subIngItem, null, false), subIngQtyPerc, null, subIngGeoOriginsLabel }));
 								} else {
 									logger.debug("Removing subIng with qty of 0: " + subIngItem);
 								}
@@ -1071,6 +736,20 @@ public class LabelingFormulaContext {
 
 	}
 
+	private boolean isDoNotDetails(NodeRef nodeRef) {
+
+		Locale currentLocale = I18NUtil.getLocale();
+		if (nodeDeclarationFilters.containsKey(nodeRef)) {
+			DeclarationFilter declarationFilter = nodeDeclarationFilters.get(nodeRef);
+			if (DeclarationType.DoNotDetails.equals(declarationFilter.getDeclarationType())
+					&& matchFormule(declarationFilter.getFormula(), new DeclarationFilterContext()) && declarationFilter.matchLocale(currentLocale)) {
+				return true;
+			}
+
+		}
+		return false;
+	}
+
 	private BigDecimal roundeedValue(Double qty, MessageFormat messageFormat) {
 
 		for (Format format : new MessageFormat(htmlTableRowFormat).getFormats()) {
@@ -1113,20 +792,26 @@ public class LabelingFormulaContext {
 
 			StringBuilder toAppend = new StringBuilder();
 
-			if ((kv.getKey() != null) && (getLegalIngName(kv.getKey(), false) != null)) {
+			if ((kv.getKey() != null) && (getLegalIngName(kv.getKey(), null, false) != null)) {
 
 				Double qtyPerc = computeQtyPerc(compositeLabeling, kv.getKey(), ratio);
 				kv.getKey().setQty(qtyPerc);
 
-				String ingTypeLegalName = getLegalIngName(kv.getKey(),
-						((kv.getValue().size() > 1) || (!kv.getValue().isEmpty() && kv.getValue().get(0).isPlural())));
-				String allergenAwareLegalName = createAllergenAwareLabel(ingTypeLegalName, kv.getValue());
-				String geoOriginsLabel = createGeoOriginsLabel(kv.getValue());
-
 				Double qty = (useVolume ? kv.getKey().getVolume() : kv.getKey().getQty());
 
+				String ingTypeLegalName = getLegalIngName(kv.getKey(), qty,
+						((kv.getValue().size() > 1) || (!kv.getValue().isEmpty() && kv.getValue().get(0).isPlural())));
+
+				boolean doNotDetailsDeclType = isDoNotDetails(kv.getKey().getOrigNodeRef() !=null ? kv.getKey().getOrigNodeRef() : kv.getKey().getNodeRef());
+
+				if (doNotDetailsDeclType) {
+					ingTypeLegalName = createAllergenAwareLabel(ingTypeLegalName, kv.getValue());
+				}
+
+				String geoOriginsLabel = createGeoOriginsLabel(kv.getKey().getNodeRef(), kv.getValue());
+
 				toAppend.append(getIngTextFormat(kv.getKey(), qty).format(new Object[] { ingTypeLegalName, qty,
-						renderLabelingComponent(compositeLabeling, kv.getValue(), ingTypeDefaultSeparator, ratio), allergenAwareLegalName,
+						doNotDetailsDeclType ? null : renderLabelingComponent(compositeLabeling, kv.getValue(), ingTypeDefaultSeparator, ratio),
 						geoOriginsLabel }));
 
 			} else {
@@ -1166,8 +851,10 @@ public class LabelingFormulaContext {
 			Double qtyPerc = computeQtyPerc(parent, component, ratio);
 			Double volumePerc = computeVolumePerc(parent, component, ratio);
 
-			String ingName = getLegalIngName(component, false);
-			String geoOriginsLabel = createGeoOriginsLabel(component.getGeoOrigins());
+			qtyPerc = (useVolume ? volumePerc : qtyPerc);
+
+			String ingName = getLegalIngName(component, qtyPerc, false);
+			String geoOriginsLabel = createGeoOriginsLabel(component.getNodeRef(), component.getGeoOrigins());
 
 			if (logger.isDebugEnabled()) {
 
@@ -1175,8 +862,6 @@ public class LabelingFormulaContext {
 						+ " apply precision (" + (toApplyThresholdItems.contains(component.getNodeRef()) && ((qtyPerc - qtyPrecisionThreshold) > 0))
 						+ ") ");
 			}
-
-			qtyPerc = (useVolume ? volumePerc : qtyPerc);
 
 			if (!component.shouldSkip() && !shouldSkip(component.getNodeRef(), qtyPerc)) {
 
@@ -1192,12 +877,12 @@ public class LabelingFormulaContext {
 						}
 						Double subIngQtyPerc = (useVolume ? subIngItem.getVolume() : subIngItem.getQty());
 
-						String subIngGeoOriginsLabel = createGeoOriginsLabel(subIngItem.getGeoOrigins());
+						String subIngGeoOriginsLabel = createGeoOriginsLabel(subIngItem.getNodeRef(), subIngItem.getGeoOrigins());
 
 						if (!subIngItem.shouldSkip() && !shouldSkip(subIngItem.getNodeRef(), subIngQtyPerc)) {
 
-							subIngBuff.append(getIngTextFormat(subIngItem, subIngQtyPerc)
-									.format(new Object[] { getLegalIngName(subIngItem, false), subIngQtyPerc, null, subIngGeoOriginsLabel }));
+							subIngBuff.append(getIngTextFormat(subIngItem, subIngQtyPerc).format(
+									new Object[] { getLegalIngName(subIngItem, subIngQtyPerc, false), subIngQtyPerc, null, subIngGeoOriginsLabel }));
 						} else {
 							logger.debug("Removing subIng with qty of 0: " + subIngItem);
 						}
@@ -1246,35 +931,47 @@ public class LabelingFormulaContext {
 		return ret;
 	}
 
-	private String createGeoOriginsLabel(List<AbstractLabelingComponent> components) {
-		if ((components != null) && !components.isEmpty()) {
-			
-			Set<NodeRef> geoOrigins = new HashSet<>();
-			
-			for (AbstractLabelingComponent component : components) {
-				if(component.getGeoOrigins()!=null) {
-					geoOrigins.addAll(component.getGeoOrigins());
+	private String createGeoOriginsLabel(NodeRef nodeRef, List<AbstractLabelingComponent> components) {
+
+		if ((nodeRef == null) || showAllGeo || showGeoRules.containsKey(nodeRef)) {
+			ShowRule showRule = showGeoRules.get(nodeRef);
+			if ((nodeRef == null) || showAllGeo || showRule.matchLocale(I18NUtil.getLocale())) {
+
+				if ((components != null) && !components.isEmpty()) {
+
+					Set<NodeRef> geoOrigins = new HashSet<>();
+
+					for (AbstractLabelingComponent component : components) {
+						if (component.getGeoOrigins() != null) {
+							geoOrigins.addAll(component.getGeoOrigins());
+						}
+					}
+
+					return createGeoOriginsLabel(null, geoOrigins);
 				}
 			}
-			
-			return createGeoOriginsLabel(geoOrigins);
 		}
 
 		return null;
 	}
 
-	private String createGeoOriginsLabel(Set<NodeRef> geoOrigins) {
-		if ((geoOrigins != null) && !geoOrigins.isEmpty()) {
-			StringBuilder geoOriginsBuffer = new StringBuilder();
-			for (NodeRef geoOrigin : geoOrigins) {
-				if (geoOriginsBuffer.length() > 0) {
-					geoOriginsBuffer.append(geoOriginsSeparator);
-				}
-				geoOriginsBuffer.append(getGeoOriginName(geoOrigin));
-			}
-			return geoOriginsBuffer.toString();
-		}
+	private String createGeoOriginsLabel(NodeRef nodeRef, Set<NodeRef> geoOrigins) {
+		if ((nodeRef == null) || showAllGeo || showGeoRules.containsKey(nodeRef)) {
+			ShowRule showRule = showGeoRules.get(nodeRef);
+			if ((nodeRef == null) || showAllGeo || showRule.matchLocale(I18NUtil.getLocale())) {
 
+				if ((geoOrigins != null) && !geoOrigins.isEmpty()) {
+					StringBuilder geoOriginsBuffer = new StringBuilder();
+					for (NodeRef geoOrigin : geoOrigins) {
+						if (geoOriginsBuffer.length() > 0) {
+							geoOriginsBuffer.append(geoOriginsSeparator);
+						}
+						geoOriginsBuffer.append(getGeoOriginName(geoOrigin));
+					}
+					return geoOriginsBuffer.toString();
+				}
+			}
+		}
 		return null;
 	}
 
@@ -1341,7 +1038,7 @@ public class LabelingFormulaContext {
 			}
 
 			tree.put("name", getName(component));
-			tree.put("legal", getLegalIngName(component, false));
+			tree.put("legal", getLegalIngName(component, null, false));
 			if ((component.getVolume() != null) && (totalVol != null) && (totalVol > 0)) {
 				tree.put("vol", (component.getVolume() / totalVol) * 100);
 			}
@@ -1376,13 +1073,13 @@ public class LabelingFormulaContext {
 				JSONArray children = new JSONArray();
 				for (Map.Entry<IngTypeItem, List<AbstractLabelingComponent>> kv : getSortedIngListByType(composite).entrySet()) {
 
-					if ((kv.getKey() != null) && (getLegalIngName(kv.getKey(), false) != null)) {
+					if ((kv.getKey() != null) && (getLegalIngName(kv.getKey(), null, false) != null)) {
 
 						JSONObject ingTypeJson = new JSONObject();
 						ingTypeJson.put("nodeRef", kv.getKey().getNodeRef().toString());
 						ingTypeJson.put("cssClass", "ingType");
 						ingTypeJson.put("name", getName(kv.getKey()));
-						ingTypeJson.put("legal", getLegalIngName(kv.getKey(),
+						ingTypeJson.put("legal", getLegalIngName(kv.getKey(), null,
 								(kv.getValue().size() > 1) || (!kv.getValue().isEmpty() && kv.getValue().get(0).isPlural())));
 
 						if ((kv.getKey().getQty() != null) && (totalQty != null) && (totalQty > 0)) {
@@ -1423,7 +1120,8 @@ public class LabelingFormulaContext {
 	}
 
 	private String cleanLabel(StringBuffer buffer) {
-		return buffer.toString().replaceAll(" null| \\(null\\)| \\(\\)| \\[null\\]", "").replaceAll(">null<", "><").trim();
+		return buffer.toString().replaceAll(" null| \\(null\\)| \\(\\)| \\[null\\]", "").replaceAll(":,", ",").replaceAll(":$", "")
+				.replaceAll(">null<", "><").trim();
 	}
 
 	public boolean isGroup(AbstractLabelingComponent component) {
