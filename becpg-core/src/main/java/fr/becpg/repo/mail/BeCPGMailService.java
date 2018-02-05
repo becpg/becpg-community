@@ -45,8 +45,9 @@ public interface BeCPGMailService {
 	 * @param templateModel
 	 */
 	void sendMail(List<NodeRef> recipientNodeRefs, String title, String emailTemplate, Map<String, Object> templateModel, boolean sendToSelf);
+
+	void sendMailOnAsyncAction(String userName, String action, String actionUrl, boolean runWithSuccess, double time);
 	
-	void sendMailOnAsyncAction(List<String> recipients, String action, Map<String, Object> templateArgs);
 	
 	NodeRef findTemplateNodeRef(String templateName, NodeRef folderNR);
 
@@ -69,6 +70,8 @@ public interface BeCPGMailService {
 	NodeRef getEmailNotifyTemplatesFolder();
 	
 	NodeRef getEmailProjectTemplatesFolder();
+
+
 
 
 

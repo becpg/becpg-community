@@ -1,13 +1,8 @@
 package fr.becpg.repo.ecm.impl;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
-import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.transaction.TransactionService;
@@ -19,7 +14,6 @@ import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
-import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.ecm.AsyncECOService;
 import fr.becpg.repo.ecm.ECOService;
 import fr.becpg.repo.mail.BeCPGMailService;
@@ -29,13 +23,13 @@ public class AsyncECOServiceImpl implements AsyncECOService {
 
 	private static final Log logger = LogFactory.getLog(AsyncECOServiceImpl.class);
 	private static final String ASYNC_ACTION_URL_PREFIX = "page/entity-data-lists?list=changeUnitList&nodeRef=";
-			
+
 	@Autowired
 	ECOService ecoService;
-	
+
 	@Autowired
 	BeCPGMailService beCPGMailService;
-	
+
 	@Autowired
 	PersonService personService;
 
@@ -65,16 +59,15 @@ public class AsyncECOServiceImpl implements AsyncECOService {
 			logger.warn("AsyncECOGenerator job already in queue for " + ecoNodeRef);
 			logger.info("AsyncECOGenerator active task size " + threadExecuter.getActiveCount());
 			logger.info("AsyncECOGenerator queue size " + threadExecuter.getTaskCount());
-		}			
-		
+		}
+
 	}
 
 	private class AsyncECOGenerator implements Runnable {
 
-		private final NodeRef ecoNodeRef;		
+		private final NodeRef ecoNodeRef;
 		private boolean apply = false;
 		private final String userName;
-		private boolean runWithSuccess = true;
 
 		public AsyncECOGenerator(NodeRef ecoNodeRef, boolean apply, String userName) {
 			super();
@@ -87,70 +80,52 @@ public class AsyncECOServiceImpl implements AsyncECOService {
 		public void run() {
 			StopWatch watch = new StopWatch();
 			watch.start();
-			
+
 			try {
 
-				AuthenticationUtil.runAs(new RunAsWork<Object>() {
+				AuthenticationUtil.runAs(() -> {
 
-					@Override
-					public Object doWork() throws Exception {
+					boolean ret = transactionService.getRetryingTransactionHelper().doInTransaction(() -> ecoService.setInProgress(ecoNodeRef), false,
+							true);
 
-						boolean ret = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
-
-							@Override
-							public Boolean execute() throws Throwable {
-								return ecoService.setInProgress(ecoNodeRef);
+					if (ret) {
+						transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+							if (apply) {
+								ecoService.apply(ecoNodeRef);
+							} else {
+								ecoService.doSimulation(ecoNodeRef);
 							}
+							return true;
+
 						}, false, true);
 
-						if (ret) {
-							transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
-
-								@Override
-								public Boolean execute() throws Throwable {
-									if (apply) {
-										ecoService.apply(ecoNodeRef);
-									} else {
-										ecoService.doSimulation(ecoNodeRef);
-									}
-									return true;
-
-								}
-							}, false, true);
-
-						} else {
-							logger.warn("ECO already InProgress:" + ecoNodeRef);
-						}
-
-						return null;
+					} else {
+						logger.warn("ECO already InProgress:" + ecoNodeRef);
 					}
+
+					return null;
 				}, userName);
 
 			} catch (Exception e) {
 				if (e instanceof ConcurrencyFailureException) {
 					throw (ConcurrencyFailureException) e;
 				}
-				runWithSuccess = false;
 				logger.error("Unable to apply eco ", e);
-			
+
 			} finally {
 				// Send mail after ECO
-				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-					watch.stop();
-					String action = apply ? "eco.apply" : "eco.simulate";
-					Map<String, Object> templateArgs = new HashMap<>();
-					templateArgs.put(RepoConsts.ARG_ACTION_STATE, runWithSuccess);
-					templateArgs.put(RepoConsts.ARG_ACTION_URL, ASYNC_ACTION_URL_PREFIX + ecoNodeRef );
-					templateArgs.put(RepoConsts.ARG_ACTION_RUN_TIME, watch.getTotalTimeSeconds());
-					
-					AuthenticationUtil.runAs(() -> {
-						beCPGMailService.sendMailOnAsyncAction(Arrays.asList(userName), action, templateArgs);						
+
+				AuthenticationUtil.runAs(() -> {
+					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+						beCPGMailService.sendMailOnAsyncAction(userName, apply ? "eco.apply" : "eco.simulate", ASYNC_ACTION_URL_PREFIX + ecoNodeRef,
+								true, watch.getTotalTimeSeconds());
+
 						return null;
-					}, userName);
-					
+					}, true, false);
 					return null;
-				}, true, false);
-			
+				}, userName);
+
 			}
 		}
 
@@ -158,27 +133,33 @@ public class AsyncECOServiceImpl implements AsyncECOService {
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + getOuterType().hashCode();
-			result = prime * result + ((ecoNodeRef == null) ? 0 : ecoNodeRef.hashCode());
+			result = (prime * result) + getOuterType().hashCode();
+			result = (prime * result) + ((ecoNodeRef == null) ? 0 : ecoNodeRef.hashCode());
 			return result;
 		}
 
 		@Override
 		public boolean equals(Object obj) {
-			if (this == obj)
+			if (this == obj) {
 				return true;
-			if (obj == null)
+			}
+			if (obj == null) {
 				return false;
-			if (getClass() != obj.getClass())
+			}
+			if (getClass() != obj.getClass()) {
 				return false;
+			}
 			AsyncECOGenerator other = (AsyncECOGenerator) obj;
-			if (!getOuterType().equals(other.getOuterType()))
+			if (!getOuterType().equals(other.getOuterType())) {
 				return false;
+			}
 			if (ecoNodeRef == null) {
-				if (other.ecoNodeRef != null)
+				if (other.ecoNodeRef != null) {
 					return false;
-			} else if (!ecoNodeRef.equals(other.ecoNodeRef))
+				}
+			} else if (!ecoNodeRef.equals(other.ecoNodeRef)) {
 				return false;
+			}
 			return true;
 		}
 
