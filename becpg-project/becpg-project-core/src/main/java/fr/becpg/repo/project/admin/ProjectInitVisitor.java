@@ -18,8 +18,10 @@
 package fr.becpg.repo.project.admin;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -28,6 +30,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
+import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,7 +81,7 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 	private NamespaceService namespaceService;
 
 	@Override
-	public void visitContainer(NodeRef companyHome) {
+	public List<SiteInfo> visitContainer(NodeRef companyHome) {
 
 		logger.info("Run ProjectInitVisitor ...");
 
@@ -97,6 +100,8 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 		// MailTemplates
 		NodeRef emailsProject = visitFolder(BeCPGQueryBuilder.createQuery().selectNodeByPath(companyHome, EMAIL_TEMPLATES), ProjectRepoConsts.PATH_EMAILS_PROJECT);
 		contentHelper.addFilesResources(emailsProject, "classpath*:beCPG/mails/project/*.ftl");
+	
+		return new ArrayList<>();
 	}
 
 	/**

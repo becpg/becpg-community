@@ -18,7 +18,9 @@
 package fr.becpg.repo.designer.admin;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -34,6 +36,7 @@ import org.alfresco.service.cmr.action.CompositeAction;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.rule.Rule;
 import org.alfresco.service.cmr.rule.RuleType;
+import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -63,7 +66,7 @@ public class DesignerInitVisitor extends AbstractInitVisitorImpl  {
 	
 	
 	@Override
-	public void visitContainer(NodeRef companyHome) {
+	public List<SiteInfo> visitContainer(NodeRef companyHome) {
 		
 		logger.info("Run DesignerInitVisitor");
 		
@@ -74,7 +77,7 @@ public class DesignerInitVisitor extends AbstractInitVisitorImpl  {
 		// Security
 		visitFolder(dictionaryNodeRef, PATH_CONFIGS);
 		
-		
+		 return new ArrayList<>();
 
 	}
 	

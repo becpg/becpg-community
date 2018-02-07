@@ -20,6 +20,7 @@ package fr.becpg.repo.admin.impl;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -42,6 +43,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.rule.Rule;
 import org.alfresco.service.cmr.rule.RuleType;
 import org.alfresco.service.cmr.security.PermissionService;
+import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -92,7 +94,7 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 	private BeCPGMailService beCPGMailService;
 
 	@Override
-	public void visitContainer(NodeRef companyHome) {
+	public List<SiteInfo> visitContainer(NodeRef companyHome) {
 		logger.info("Run CoreInitVisitor");
 
 		// Init QNames for dbQueries
@@ -129,6 +131,8 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 
 		// MailTemplates
 		contentHelper.addFilesResources(beCPGMailService.getEmailNotifyTemplatesFolder(), "classpath*:beCPG/mails/notify/*.ftl");
+		
+		return new ArrayList<>();
 	}
 
 	/**

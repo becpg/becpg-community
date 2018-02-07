@@ -134,7 +134,7 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 			switch (action) {
 			case ACTION_INIT_REPO:
 				logger.debug("Init repository");
-				initVisitorService.run(repository.getCompanyHome());
+				ret.put("sites",initVisitorService.run(repository.getCompanyHome()));
 				break;
 			case ACTION_RELOAD_CACHE:
 				beCPGCacheService.printCacheInfos();
