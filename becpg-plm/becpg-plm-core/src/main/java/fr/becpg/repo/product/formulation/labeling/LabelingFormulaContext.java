@@ -297,7 +297,9 @@ public class LabelingFormulaContext extends RuleParser {
 			return applyRoundingMode(new MessageFormat(ingDefaultFormat), qty);
 		} else if (lblComponent instanceof IngTypeItem) {
 
-			boolean doNotDetailsDeclType = isDoNotDetails(((IngTypeItem) lblComponent).getOrigNodeRef() !=null ? ((IngTypeItem) lblComponent).getOrigNodeRef() : lblComponent.getNodeRef());
+			boolean doNotDetailsDeclType = isDoNotDetails(
+					((IngTypeItem) lblComponent).getOrigNodeRef() != null ? ((IngTypeItem) lblComponent).getOrigNodeRef()
+							: lblComponent.getNodeRef());
 
 			if (doNotDetailsDeclType || (((((IngTypeItem) lblComponent)).getDecThreshold() != null)
 					&& ((((IngTypeItem) lblComponent)).getQty() <= ((((IngTypeItem) lblComponent)).getDecThreshold() / 100)))) {
@@ -598,8 +600,8 @@ public class LabelingFormulaContext extends RuleParser {
 				String ingTypeLegalName = getLegalIngName(kv.getKey(), null,
 						((kv.getValue().size() > 1) || (!kv.getValue().isEmpty() && kv.getValue().get(0).isPlural())));
 
-				boolean doNotDetailsDeclType = isDoNotDetails(kv.getKey().getOrigNodeRef() !=null ? kv.getKey().getOrigNodeRef() : kv.getKey().getNodeRef());
-
+				boolean doNotDetailsDeclType = isDoNotDetails(
+						kv.getKey().getOrigNodeRef() != null ? kv.getKey().getOrigNodeRef() : kv.getKey().getNodeRef());
 
 				if (doNotDetailsDeclType) {
 					ingTypeLegalName = createAllergenAwareLabel(ingTypeLegalName, kv.getValue());
@@ -608,7 +610,8 @@ public class LabelingFormulaContext extends RuleParser {
 				String geoOriginsLabel = createGeoOriginsLabel(null, kv.getValue());
 
 				String subLabel = getIngTextFormat(kv.getKey(), qtyPerc).format(new Object[] { ingTypeLegalName, null,
-						doNotDetailsDeclType ? null : renderLabelingComponent(lblCompositeContext, kv.getValue(), ingTypeDefaultSeparator, 1d), null });
+						doNotDetailsDeclType ? null : renderLabelingComponent(lblCompositeContext, kv.getValue(), ingTypeDefaultSeparator, 1d),
+						null });
 
 				if ((subLabel != null) && !subLabel.isEmpty()) {
 
@@ -802,7 +805,8 @@ public class LabelingFormulaContext extends RuleParser {
 				String ingTypeLegalName = getLegalIngName(kv.getKey(), qty,
 						((kv.getValue().size() > 1) || (!kv.getValue().isEmpty() && kv.getValue().get(0).isPlural())));
 
-				boolean doNotDetailsDeclType = isDoNotDetails(kv.getKey().getOrigNodeRef() !=null ? kv.getKey().getOrigNodeRef() : kv.getKey().getNodeRef());
+				boolean doNotDetailsDeclType = isDoNotDetails(
+						kv.getKey().getOrigNodeRef() != null ? kv.getKey().getOrigNodeRef() : kv.getKey().getNodeRef());
 
 				if (doNotDetailsDeclType) {
 					ingTypeLegalName = createAllergenAwareLabel(ingTypeLegalName, kv.getValue());
@@ -1367,16 +1371,20 @@ public class LabelingFormulaContext extends RuleParser {
 
 	public boolean matchFormule(String formula, DeclarationFilterContext declarationFilterContext) {
 		if ((formula != null) && !formula.isEmpty()) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Test Match formula :" + formula);
-			}
+
 			try {
 				ExpressionParser parser = new SpelExpressionParser();
 				StandardEvaluationContext dataContext = new StandardEvaluationContext(declarationFilterContext);
 
 				Expression exp = parser.parseExpression(SpelHelper.formatFormula(formula));
 
-				return exp.getValue(dataContext, Boolean.class);
+				boolean ret = exp.getValue(dataContext, Boolean.class);
+
+				if (ret && logger.isDebugEnabled()) {
+					logger.debug("Matching formula :" + formula );
+				}
+
+				return ret;
 			} catch (SpelParseException | SpelEvaluationException e) {
 				logger.error("Cannot evaluate formula :" + formula + " on " + declarationFilterContext.toString(), e);
 			}
