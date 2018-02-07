@@ -17,9 +17,12 @@
  ******************************************************************************/
 package fr.becpg.repo.admin;
 
+import java.util.List;
+
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.site.SiteInfo;
 
 public interface InitVisitorService {
 	
-	void run(NodeRef companyHomeNodeRef);
+	List<SiteInfo> run(NodeRef companyHomeNodeRef);
 }

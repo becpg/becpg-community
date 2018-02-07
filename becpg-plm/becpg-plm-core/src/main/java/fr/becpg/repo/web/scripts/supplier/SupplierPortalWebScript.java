@@ -82,7 +82,7 @@ public class SupplierPortalWebScript extends AbstractWebScript {
 	private PaginatedSearchCache paginatedSearchCache;
 
 	private String entityNameTpl = "{entity_cm:name} - UPDATE - {date_YYYY}";
-	private String projectNameTpl = "{entity_cm:name} - {supplier_cm:name} - UPDATE - {date_YYYY}";
+	private String projectNameTpl = "PJT - {entity_cm:name} - {supplier_cm:name} - UPDATE - {date_YYYY}";
 
 	
 	public void setNodeService(NodeService nodeService) {

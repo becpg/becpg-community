@@ -17,11 +17,13 @@
  ******************************************************************************/
 package fr.becpg.repo.admin.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.site.SiteInfo;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,8 +41,10 @@ public class InitVisitorServiceImpl implements InitVisitorService {
 	private InitVisitor[] initVisitors;
 
 	@Override
-	public void run(NodeRef companyHomeNodeRef) {
+	public List<SiteInfo> run(NodeRef companyHomeNodeRef) {
 
+		 List<SiteInfo> ret = new ArrayList<>();
+		
 		List<InitVisitor> sortedInitVisitor = new LinkedList<>(Arrays.asList(initVisitors));
 
 		sortedInitVisitor.sort((o1, o2) -> o1.initOrder().compareTo(o2.initOrder()));
@@ -50,8 +54,9 @@ public class InitVisitorServiceImpl implements InitVisitorService {
 				logger.debug("Run visitor : " + initVisitor.getClass().getName());
 			}
 
-			initVisitor.visitContainer(companyHomeNodeRef);
+			ret.addAll(initVisitor.visitContainer(companyHomeNodeRef));
 		}
 
+		return ret;
 	}
 }

@@ -172,7 +172,7 @@
 	</bean>
 
 	
-	<bean id="webscript.fr.becpg.sendToSupplier.get" class="fr.becpg.repo.web.scripts.supplier.SupplierPortalWebScript" parent="webscript">
+	<bean id="webscript.fr.becpg.supplier.sendToSupplier.post" class="fr.becpg.repo.web.scripts.supplier.SupplierPortalWebScript" parent="webscript">
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
 		<property name="nodeService" ref="NodeService" />
 		<property name="namespaceService" ref="NamespaceService" />

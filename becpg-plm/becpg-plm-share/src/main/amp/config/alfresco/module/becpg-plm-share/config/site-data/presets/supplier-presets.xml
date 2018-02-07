@@ -107,8 +107,7 @@
                <sitePages>[{"pageId":"project-list"}, {"pageId":"documentlibrary"}, {"pageId":"discussions-topiclist"}]</sitePages>
                <pageMetadata>
                					{
-               					"documentlibrary":{"titleId":"page.supplierDocumentLibrary.title", "descriptionId":"page.supplierDocumentLibrary.description", "type":"supplierManagement"},
-               					"project-list":{"titleId":"page.supplierProjectList.title", "descriptionId":"page.supplierProjectList.description", "type":"supplierManagement"}
+               					"project-list":{"titleId":"page.projectProjectList.title", "descriptionId":"page.projectProjectList.description"}
                					}
                </pageMetadata>
                 <dashboardSitePage>false</dashboardSitePage>

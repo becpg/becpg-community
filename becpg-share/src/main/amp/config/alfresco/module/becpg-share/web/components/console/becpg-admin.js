@@ -114,7 +114,7 @@
                      this.widgets.initRepoButton.set("disabled", true);
 
                      Alfresco.util.Ajax.request({
-                        url : Alfresco.constants.PROXY_URI + "/becpg/admin/repository/init-repo",
+                        url : Alfresco.constants.URL_SERVICECONTEXT + "modules/init-repo",
                         method : Alfresco.util.Ajax.GET,
                         responseContentType : Alfresco.util.Ajax.JSON,
                         successCallback : {
