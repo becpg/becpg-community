@@ -64,6 +64,8 @@ public abstract class AbstractLabelingComponent extends BeCPGDataObject implemen
 	    this.allergens = abstractLabelingComponent.allergens;
 	    this.geoOrigins = abstractLabelingComponent.geoOrigins;
 	    this.isPlural = abstractLabelingComponent.isPlural;
+	    this.shouldSkip = abstractLabelingComponent.shouldSkip;
+	
 	}
 
 	
