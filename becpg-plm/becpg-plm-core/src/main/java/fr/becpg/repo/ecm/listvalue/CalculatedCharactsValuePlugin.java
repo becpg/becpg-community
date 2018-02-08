@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
@@ -20,6 +21,9 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 public class CalculatedCharactsValuePlugin extends EntityListValuePlugin {
 
 	private static final String SOURCE_TYPE_ECO = "eco";
+	
+	@Autowired
+	private CalculatedCharactsValueExtractor calculatedCharactsValueExtractor;
 
 	@Override
 	public String[] getHandleSourceTypes() {
@@ -61,7 +65,7 @@ public class CalculatedCharactsValuePlugin extends EntityListValuePlugin {
 
 		
 		
-		return new ListValuePage(ret, pageNum, pageSize, getTargetAssocValueExtractor() );
+		return new ListValuePage(ret, pageNum, pageSize, calculatedCharactsValueExtractor );
 		
 		
 	}
