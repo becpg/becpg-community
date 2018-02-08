@@ -7272,9 +7272,9 @@
 					<field id="bcpg:lrType">
 						<constraint-handlers>
 							 <constraint type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf" event='keyup,change@[
-		                  		{"prop":"prop_bcpg_lrLabel", "condition" : "Format|DetailComponents|DoNotDetailsComponents|Locale|Prefs|Omit|DoNotDeclare"},
+		                  		{"prop":"prop_bcpg_lrLabel", "condition" : "Format|DetailComponents|DoNotDetailsComponents|Locale|Prefs|Omit|DoNotDeclare|ShowPerc|ShowGeo"},
 		                  		{"prop":"assoc_bcpg_lrComponents", "condition" : "Render|Locale|Prefs"},
-		                  		{"prop":"assoc_bcpg_lrReplacements", "condition" : "Format|Render|DetailComponents|DoNotDetailsComponents|Locale|Prefs|Omit|DoNotDeclare"},
+		                  		{"prop":"assoc_bcpg_lrReplacements", "condition" : "Format|Render|DetailComponents|DoNotDetailsComponents|Locale|Prefs|Omit|DoNotDeclare|ShowPerc|ShowGeo"},
 		                  		{"prop":"prop_bcpg_lrLocales", "condition" : "Prefs|Group|Detail|DoNotDetails|DetailComponents|DoNotDetailsComponents"}
 		                  		]'/>
 		                  	</constraint-handlers>
@@ -7356,9 +7356,9 @@
 					<field id="bcpg:lrType">
 						<constraint-handlers>
 							 <constraint type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf" event='keyup,change@[
-		                  		{"prop":"prop_bcpg_lrLabel", "condition" : "Format|DetailComponents|DoNotDetailsComponents|Locale|Prefs|Omit|DoNotDeclare"},
+		                  		{"prop":"prop_bcpg_lrLabel", "condition" : "Format|DetailComponents|DoNotDetailsComponents|Locale|Prefs|Omit|DoNotDeclare|ShowPerc|ShowGeo"},
 		                  		{"prop":"assoc_bcpg_lrComponents", "condition" : "Render|Locale|Prefs"},
-		                  		{"prop":"assoc_bcpg_lrReplacements", "condition" : "Format|Render|DetailComponents|DoNotDetailsComponents|Locale|Prefs|Omit|DoNotDeclare"},
+		                  		{"prop":"assoc_bcpg_lrReplacements", "condition" : "Format|Render|DetailComponents|DoNotDetailsComponents|Locale|Prefs|Omit|DoNotDeclare|ShowPerc|ShowGeo"},
 		                  		{"prop":"prop_bcpg_lrLocales", "condition" : "Prefs"}
 		                  		]'/>
 		                  	</constraint-handlers>

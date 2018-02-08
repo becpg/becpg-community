@@ -33,6 +33,7 @@ import org.alfresco.service.cmr.rule.Rule;
 import org.alfresco.service.cmr.rule.RuleType;
 import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
+import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -167,7 +168,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	 *            : locale of the system
 	 */
 	@Override
-	public void visitContainer(NodeRef companyHome) {
+	public List<SiteInfo> visitContainer(NodeRef companyHome) {
 
 		logger.info("Run PLMInitRepoVisitor...");
 
@@ -255,6 +256,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 		// Property catalogs
 		visitFolder(systemNodeRef, PlmRepoConsts.PATH_CATALOGS);
+		
+		 return new ArrayList<>();
 	}
 
 	/**

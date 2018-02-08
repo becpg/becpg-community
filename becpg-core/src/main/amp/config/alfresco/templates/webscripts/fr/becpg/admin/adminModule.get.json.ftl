@@ -9,6 +9,17 @@
 		"nonHeapMemoryUsage": ${nonHeapMemoryUsage?c},
 		"becpgSchema": "${becpgSchema?js_string}"
    }
+   <#if sites??>
+   , "sites" :
+   [
+    <#list sites as site>
+     {
+      "sitePreset": "${site.sitePreset}",
+	   "shortName": "${site.shortName}"
+     }
+    </#list>
+   ]
+   </#if>
    <#if users?? >
 	,"users":
 	   [

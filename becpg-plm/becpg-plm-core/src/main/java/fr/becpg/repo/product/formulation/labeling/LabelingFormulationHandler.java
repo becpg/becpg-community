@@ -61,7 +61,6 @@ import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.spel.DeclarationFilterContext;
 import fr.becpg.repo.product.data.spel.SpelHelper;
 import fr.becpg.repo.product.formulation.FormulationHelper;
-import fr.becpg.repo.product.formulation.labeling.LabelingFormulaContext.AggregateRule;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.variant.filters.VariantFilters;
@@ -152,15 +151,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			for (LabelingRuleListDataItem labelingRuleListDataItem : labelingRuleLists) {
 				if (Boolean.TRUE.equals(labelingRuleListDataItem.getIsActive())) {
 					LabelingRuleType type = labelingRuleListDataItem.getLabelingRuleType();
-					if (LabelingRuleType.Format.equals(type)) {
-						labelingFormulaContext.formatText(labelingRuleListDataItem.getComponents(), labelingRuleListDataItem.getFormula(),
-								labelingRuleListDataItem.getLocales());
-					} else if (LabelingRuleType.Rename.equals(type)) {
-						labelingFormulaContext.rename(labelingRuleListDataItem.getComponents(), labelingRuleListDataItem.getReplacements(),
-								labelingRuleListDataItem.getLabel(), labelingRuleListDataItem.getFormula(), labelingRuleListDataItem.getLocales());
-					} else if (LabelingRuleType.Locale.equals(type)) {
-						labelingFormulaContext.addLocale(labelingRuleListDataItem.getFormula(), labelingRuleListDataItem.getLocales());
-					} else if (LabelingRuleType.Prefs.equals(type)) {
+					
+					if (LabelingRuleType.Prefs.equals(type)) {
 						try {
 							Expression exp = parser.parseExpression(SpelHelper.formatFormula(labelingRuleListDataItem.getFormula()));
 							exp.getValue(dataContext, String.class);
@@ -174,14 +166,16 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 								logger.info("Error in formula :" + SpelHelper.formatFormula(labelingRuleListDataItem.getFormula()), e);
 							}
 						}
-					} else if (!LabelingRuleType.Render.equals(type)) {
+					} else if(!LabelingRuleType.Render.equals(type)) {
 						labelingFormulaContext.addRule(labelingRuleListDataItem.getNodeRef(), labelingRuleListDataItem.getName(),
 								labelingRuleListDataItem.getComponents(), labelingRuleListDataItem.getReplacements(),
 								labelingRuleListDataItem.getLabel(), labelingRuleListDataItem.getFormula(), type,
 								labelingRuleListDataItem.getLocales());
-					} else if (LabelingRuleType.Render.equals(type)) {
+						
+					} else {
 						shouldSkip = false;
 					}
+					
 				}
 			}
 
@@ -345,17 +339,19 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 		for (AbstractLabelingComponent component : parent.getIngList().values()) {
 			List<AbstractLabelingComponent> tmp = new ArrayList<>();
-			String name = labelingFormulaContext.getLegalIngName(component);
-			if ((name != null) && !name.isEmpty()) {
-				if (componentsByName.containsKey(name)) {
-					tmp = componentsByName.get(name);
+			if(!component.shouldSkip()) {
+				String name = labelingFormulaContext.getLegalIngName(component);
+				if ((name != null) && !name.isEmpty()) {
+					if (componentsByName.containsKey(name)) {
+						tmp = componentsByName.get(name);
+					}
+					tmp.add(component);
+	
+					componentsByName.put(name, tmp);
 				}
-				tmp.add(component);
-
-				componentsByName.put(name, tmp);
-			}
-			if (multiLevel && (component instanceof CompositeLabeling)) {
-				aggregateLegalName((CompositeLabeling) component, labelingFormulaContext, multiLevel);
+				if (multiLevel && (component instanceof CompositeLabeling)) {
+					aggregateLegalName((CompositeLabeling) component, labelingFormulaContext, multiLevel);
+				}
 			}
 		}
 
@@ -1674,6 +1670,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			}
 
 			if (DeclarationType.DoNotDeclare.equals(ingDeclarationType)) {
+				if(logger.isTraceEnabled()) {
+					logger.trace("Add should skip to: "+ingLabelItem.getName());
+				}
 				ingLabelItem.setShouldSkip(true);
 			}
 		}
