@@ -1,5 +1,6 @@
 package fr.becpg.repo.admin;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -26,6 +27,7 @@ import fr.becpg.model.SystemGroup;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.admin.impl.AbstractInitVisitorImpl;
 import fr.becpg.repo.entity.EntityTplService;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.ContentHelper;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
@@ -45,8 +47,9 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 	private static final String SUPPLIER_PRE_SCRIPT = "plm.supplier.portal.deliverable.scripts.pre.name";
 	private static final String VALIDATE_POST_SCRIPT = "plm.supplier.portal.deliverable.scripts.post.name";
 
-	private static final String SUPPLIER_SITE_ID = "supplier";
-	
+	private static final String SUPPLIER_SITE_ID = "supplier-portal";
+	private static final String SUPPLIER_SITE_PRESET = "supplier-site-dashboard";
+
 	private static final String XPATH_DICTIONNARY_SCRIPTS = "./app:dictionary/app:scripts";
 
 	@Autowired
@@ -64,26 +67,42 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 	@Autowired
 	private ContentHelper contentHelper;
 
+	@Autowired
+	private AssociationService associationService;
+
 	@Override
-	public void visitContainer(NodeRef companyHome) {
-		
+	public List<SiteInfo> visitContainer(NodeRef companyHome) {
 		logger.info("Run SupplierPortalInitRepoVisitor ...");
+
+		List<SiteInfo> ret = new ArrayList<>();
 
 		NodeRef systemNodeRef = visitFolder(companyHome, RepoConsts.PATH_SYSTEM);
 
 		NodeRef entityTplsNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_ENTITY_TEMPLATES);
 
-		NodeRef entityTplNodeRef = nodeService.getChildByName(entityTplsNodeRef, ContentModel.ASSOC_CONTAINS, I18NUtil.getMessage(SUPPLIER_PJT_TPL_NAME));
+		NodeRef entityTplNodeRef = nodeService.getChildByName(entityTplsNodeRef, ContentModel.ASSOC_CONTAINS,
+				I18NUtil.getMessage(SUPPLIER_PJT_TPL_NAME));
 
 		SiteInfo siteInfo = siteService.getSite(SUPPLIER_SITE_ID);
-		if(siteInfo==null) {
-			siteInfo = siteService.createSite("supplier-preset", SUPPLIER_SITE_ID, I18NUtil.getMessage("plm.supplier.portal.site.title"), "", SiteVisibility.PUBLIC);
-			
-			siteService.setMembership(siteInfo.getShortName(), PermissionService.GROUP_PREFIX + PLMGroup.ReferencingMgr.toString(), SiteModel.SITE_MANAGER);
-			siteService.setMembership(siteInfo.getShortName(), PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser.toString(), SiteModel.SITE_CONSUMER);
+		NodeRef documentLibraryNodeRef = null;
+		if (siteInfo == null) {
+			siteInfo = siteService.createSite(SUPPLIER_SITE_PRESET, SUPPLIER_SITE_ID, I18NUtil.getMessage("plm.supplier.portal.site.title"), "",
+					SiteVisibility.PUBLIC);
+
+			siteService.setMembership(siteInfo.getShortName(), PermissionService.GROUP_PREFIX + PLMGroup.ReferencingMgr.toString(),
+					SiteModel.SITE_MANAGER);
+			siteService.setMembership(siteInfo.getShortName(), PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser.toString(),
+					SiteModel.SITE_CONSUMER);
+
+			// pre-create doclib
+			documentLibraryNodeRef = siteService.createContainer(SUPPLIER_SITE_ID, SiteService.DOCUMENT_LIBRARY, ContentModel.TYPE_FOLDER, null);
+
+			ret.add(siteInfo);
+		} else {
+			documentLibraryNodeRef = siteService.getContainer(SUPPLIER_SITE_ID, SiteService.DOCUMENT_LIBRARY);
+
 		}
-		
-		
+
 		if (entityTplNodeRef == null) {
 			NodeRef scriptFolderNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(companyHome, XPATH_DICTIONNARY_SCRIPTS);
 
@@ -97,13 +116,10 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 			entityTplNodeRef = entityTplService.createEntityTpl(entityTplsNodeRef, ProjectModel.TYPE_PROJECT,
 					I18NUtil.getMessage(SUPPLIER_PJT_TPL_NAME), true, false, dataLists, null);
 
-
 			entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 			entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_DOCUMENTS);
 
-			
-		    NodeRef qualityNodeRef = authorityService.getAuthorityNodeRef(PermissionService.GROUP_PREFIX + PLMGroup.QualityMgr.toString());
-
+			NodeRef qualityNodeRef = authorityService.getAuthorityNodeRef(PermissionService.GROUP_PREFIX + PLMGroup.QualityMgr.toString());
 
 			ProjectData pjtTpl = alfrescoRepository.findOne(entityTplNodeRef);
 
@@ -120,56 +136,62 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 			task2.setRefusedTask(task1);
 
 			pjtTpl.getTaskList().add(task2);
-			
+
 			alfrescoRepository.save(pjtTpl);
 
 			task2.setPrevTasks(Collections.singletonList(task1.getNodeRef()));
-			
+
 			DeliverableListDataItem supplierWizard = new DeliverableListDataItem();
 			supplierWizard.setDescription(I18NUtil.getMessage(SUPPLIER_WIZARD_NAME));
 			supplierWizard.setUrl("/share/page/wizard?id=supplier&nodeRef={bcpg:suppliers}");
 			supplierWizard.setTasks(Collections.singletonList(task1.getNodeRef()));
 
-			
 			DeliverableListDataItem supplierMPWizard = new DeliverableListDataItem();
 			supplierMPWizard.setDescription(I18NUtil.getMessage(SUPPLIER_WIZARD_RAW_MATERIAL_NAME));
 			supplierMPWizard.setUrl("/share/page/wizard?id=supplier-mp&nodeRef={pjt:projectEntity}");
 			supplierMPWizard.setTasks(Collections.singletonList(task1.getNodeRef()));
-			
 
 			DeliverableListDataItem preSupplierScript = new DeliverableListDataItem();
 			preSupplierScript.setDescription(I18NUtil.getMessage(SUPPLIER_PRE_SCRIPT));
 			preSupplierScript.setScriptOrder(DeliverableScriptOrder.Pre);
 			preSupplierScript.setTasks(Collections.singletonList(task1.getNodeRef()));
-			
-			
+
 			DeliverableListDataItem postValidationScript = new DeliverableListDataItem();
 			postValidationScript.setDescription(I18NUtil.getMessage(VALIDATE_POST_SCRIPT));
 			postValidationScript.setScriptOrder(DeliverableScriptOrder.Post);
 			postValidationScript.setTasks(Collections.singletonList(task2.getNodeRef()));
-			
+
 			for (NodeRef scriptNodeRef : scriptResources) {
 				if (nodeService.getProperty(scriptNodeRef, ContentModel.PROP_NAME).equals("supplierPortalScript.js")) {
 					preSupplierScript.setContent(scriptNodeRef);
-				} else if (nodeService.getProperty(scriptNodeRef, ContentModel.PROP_NAME).equals("validateProjectEntity.js")){
+				} else if (nodeService.getProperty(scriptNodeRef, ContentModel.PROP_NAME).equals("validateProjectEntity.js")) {
 					postValidationScript.setContent(scriptNodeRef);
 				}
 			}
-			
+
 			pjtTpl.getDeliverableList().add(preSupplierScript);
 			pjtTpl.getDeliverableList().add(supplierWizard);
 			pjtTpl.getDeliverableList().add(supplierMPWizard);
 			pjtTpl.getDeliverableList().add(postValidationScript);
-			
+
 			pjtTpl.getAspects().add(PLMModel.ASPECT_SUPPLIERS);
 
 			alfrescoRepository.save(pjtTpl);
 		}
+
+		if ((entityTplNodeRef != null) && (documentLibraryNodeRef != null)
+				&& (associationService.getTargetAssoc(entityTplNodeRef, BeCPGModel.PROP_ENTITY_TPL_DEFAULT_DEST) == null)) {
+
+			associationService.update(entityTplNodeRef, BeCPGModel.PROP_ENTITY_TPL_DEFAULT_DEST, documentLibraryNodeRef);
+		}
+
+		return ret;
+
 	}
 
 	@Override
 	public Integer initOrder() {
 		return 4;
 	}
-	
+
 }
