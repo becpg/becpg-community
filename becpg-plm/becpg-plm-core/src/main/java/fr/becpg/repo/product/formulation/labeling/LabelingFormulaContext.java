@@ -410,7 +410,9 @@ public class LabelingFormulaContext extends RuleParser {
 	private String createPercAwareLabel(AbstractLabelingComponent lblComponent, String ingLegalName, Double qty) {
 		if (qty != null) {
 			DecimalFormat decimalFormat = null;
-			if (showAllPerc) {
+			if (showAllPerc && (!(lblComponent instanceof IngItem)
+					|| isDoNotDetails(((IngTypeItem) lblComponent).getOrigNodeRef() != null ? ((IngTypeItem) lblComponent).getOrigNodeRef()
+							: lblComponent.getNodeRef()))) {
 				decimalFormat = new DecimalFormat(defaultPercFormat);
 			} else if (showPercRules.containsKey(lblComponent.getNodeRef())) {
 				ShowRule showRule = showPercRules.get(lblComponent.getNodeRef());
@@ -1381,7 +1383,7 @@ public class LabelingFormulaContext extends RuleParser {
 				boolean ret = exp.getValue(dataContext, Boolean.class);
 
 				if (ret && logger.isDebugEnabled()) {
-					logger.debug("Matching formula :" + formula );
+					logger.debug("Matching formula :" + formula);
 				}
 
 				return ret;
