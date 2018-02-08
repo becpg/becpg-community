@@ -61,20 +61,20 @@
 			               </div>
 			            </div>
 			         </div>
-			          <div class="edit-selected">
-				            <span id="${el}-edit-selected" class="yui-button yui-push-button">
-				               <span class="first-child">
-				                  <button type="button" >${msg("button.edit-selected")}</button>
-				               </span>
-				            </span>
-				      </div>
-				      <div class="simulate-selected">
-				            <span id="${el}-simulate-selected" class="yui-button yui-push-button">
-				               <span class="first-child">
-				                  <button type="button" >${msg("button.simulate-selected")}</button>
-				               </span>
-				            </span>
-				      </div>
+				      <div class="selected-items">
+					      <button class="no-access-check" id="${el}-selectedItems-button" name="bulkedit-selectedItems-button">${msg("menu.selected-items")}&nbsp;&#9662;</button>
+					      <div id="${el}-selectedItems-menu" class="yuimenu" style="visibility:hidden">
+					         <div class="bd">
+					             <ul>
+					               <li><a  href=""><span class="onExportAsZip">${msg("actions.folder.download")}</span></a></li>	
+					               <li><a  rel="supplier" href=""><span class="onSendToSupplier">${msg("actions.entity.send-to-supplier")}</span></a></li>
+					               <li><a  href=""><span class="onSimulateSelected">${msg("button.simulate-selected")}</span></a></li>
+					               <li><a  rel="edit,allPages" href=""><span class="onEditSelected">${msg("button.edit-selected")}</span></a></li>
+					            </ul>
+     				         </div>
+					      </div>			
+					   </div>
+				      
 				      <div id="${el}-paginatorTop" class="paginator"></div>
 			      </div>
 			      <div class="yui-u align-right">
