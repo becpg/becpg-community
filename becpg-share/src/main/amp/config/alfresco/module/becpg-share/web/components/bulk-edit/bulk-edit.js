@@ -528,14 +528,119 @@
 							}
 							
 							
-							if (this.getSelectedItems().length > 0) {
-								this.widgets.editSelected.set("disabled", false);
-								this.widgets.simulateSelected.set("disabled", false);
-							} else {
-								this.widgets.editSelected.set("disabled", true);
-								this.widgets.simulateSelected.set("disabled", true);
-							}
+                            var items = this.getSelectedItems(), item, userAccess = {}, itemAccess, menuItems = this.widgets.selectedItems
+                                    .getMenu().getItems(), menuItem, actionPermissions, disabled, i, ii, disabledForAllPages;
+
+                            // Check each item for user permissions
+                            for (i = 0, ii = items.length; i < ii; i++)
+                            {
+                                item = items[i];
+
+                                // Required user access level - logical AND of
+                                // each
+                                // item's permissions
+                                itemAccess = item.permissions.userAccess;
+                                for ( var index in itemAccess)
+                                {
+                                    if (itemAccess.hasOwnProperty(index))
+                                    {
+                                        userAccess[index] = (userAccess[index] === undefined ? itemAccess[index]
+                                                : userAccess[index] && itemAccess[index]);
+                                    }
+                                }
+                            }
+
+                            // Now go through the menu items, setting the
+                            // disabled flag
+                            // appropriately
+                            for ( var index in menuItems)
+                            {
+                                if (menuItems.hasOwnProperty(index))
+                                {
+                                    // Defaulting to enabled
+                                    menuItem = menuItems[index];
+                                    disabled = false;
+                                    disabledForAllPages = true;
+
+                                    if (menuItem.element.firstChild)
+                                    {
+                                        // Check permissions required - stored
+                                        // in "rel"
+                                        // attribute in the DOM
+                                        if (menuItem.element.firstChild.rel && menuItem.element.firstChild.rel !== "")
+                                        {
+                                            // Comma-separated indicates and
+                                            // "AND" match
+                                            actionPermissions = menuItem.element.firstChild.rel.split(",");
+                                            for (i = 0, ii = actionPermissions.length; i < ii; i++)
+                                            {
+                                                // Disable if the user doesn't
+                                                // have ALL the
+                                                // permissions
+                                            	if(actionPermissions[i] != "allPages" && actionPermissions[i] != "supplier"){
+	                                                if ((!userAccess[actionPermissions[i]] ))
+	                                                {
+	                                                    disabled = true;
+	                                                    break;
+	                                                }
+                                            	} else {
+                                            		if(actionPermissions[i] == "supplier") {
+                                            			if(this.options.itemType != "bcpg:rawMaterial" 
+                                            				&& this.options.itemType != "bcpg:packagingMaterial" 
+                                            					&& this.options.itemType != "bcpg:supplier" ){
+                                            				disabled = true;
+                                            			}
+                                            		} else {
+
+                                            			disabledForAllPages = false;
+                                            		}
+                                            	}
+                                            }
+                                        }
+
+                                        if(this.allPages && (this.queryExecutionId==null || disabledForAllPages)){
+                                        	disabled = true;
+                                        }
+                                        
+                                        menuItem.cfg.setProperty("disabled", disabled);
+                                    }
+                                }
+                            }
+                            this.widgets.selectedItems.set("disabled", (items.length === 0));
+							
+							
+							
 						},
+						
+						 /**
+                         * Selected Items button click handler
+                         * 
+                         * @method onSelectedItems
+                         * @param sType
+                         *            {string} Event type, e.g. "click"
+                         * @param aArgs
+                         *            {array} Arguments array, [0] = DomEvent,
+                         *            [1] = EventTarget
+                         * @param p_obj
+                         *            {object} Object passed back from subscribe
+                         *            method
+                         */
+                        onSelectedItems : function EntityDataGrid_onSelectedItems(sType, aArgs, p_obj)
+                        {
+                            var domEvent = aArgs[0], eventTarget = aArgs[1];
+
+                            // Check mandatory docList module is present
+
+                            // Get the function related to the clicked item
+                            var fn = Alfresco.util.findEventClass(eventTarget);
+                            if (fn && (typeof this[fn] == "function"))
+                            {
+                                this[fn].call(this, this.getSelectedItems());
+                            }
+
+                            Event.preventDefault(domEvent);
+                        },
+						
 						/**
 						 * @method onSelectedTypeChanged React on
 						 *         onSelectedTypeChanged event
@@ -585,6 +690,18 @@
 								this.options.formId = className.split("#")[1];
 								this.options.editSelectedFormId = className.split("#")[2];
 							}
+							
+
+                            // Selected Items menu button
+                            this.widgets.selectedItems = Alfresco.util.createYUIButton(this, "selectedItems-button",
+                                    this.onSelectedItems,
+                                    {
+                                        type : "menu",
+                                        menu : "selectedItems-menu",
+                                        lazyloadmenu : false,
+                                        disabled : true
+                                    });
+
 
 							// Hook action events
 							var fnActionHandler = function DataGrid_fnActionHandler(layer, args) {
@@ -604,13 +721,6 @@
 								disabled : false
 							});
 
-							this.widgets.editSelected = Alfresco.util.createYUIButton(this, "edit-selected", this.onEditSelected, {
-								disabled : true
-							});
-							
-							this.widgets.simulateSelected = Alfresco.util.createYUIButton(this, "simulate-selected", this.onSimulateSelected, {
-								disabled : true
-							});
 
 							this.widgets.exportCSVButton = Alfresco.util.createYUIButton(this, "export-csv", this.onExportCSV, {
 								disabled : true,
@@ -1624,6 +1734,68 @@
 
 
 						},
+						
+						onExportAsZip : function(){
+							alert("Not yet implemented")
+						},
+
+						onSendToSupplier : function(){
+
+							var selectedNodeRef = this.getSelectedItems(), submissionParams = "";
+							for ( var i in selectedNodeRef) {
+								if (submissionParams.length > 0) {
+									submissionParams += ",";
+								}
+								submissionParams += selectedNodeRef[i].nodeRef;
+							}
+
+							var actionUrl = Alfresco.constants.PROXY_URI + "becpg/supplier/send-to-supplier?nodeRefs="+ 
+							submissionParams+"&allPages="+this.allPages+"&queryExecutionId="+this.queryExecutionId;
+
+							this.modules.sendToSupplier = new Alfresco.module.SimpleDialog(this.id + "-sendToSupplier").setOptions({
+								width : "33em",
+								templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/supplier/send-to-supplier",
+								actionUrl : actionUrl,
+								validateOnSubmit : false,
+								destroyOnHide: true,
+								firstFocus : this.id + "-sendToSupplier-projectTpl-field",
+								doBeforeFormSubmit : {
+									fn : function onActionSendToSupplier_doBeforeFormSubmit(form) {
+										Alfresco.util.PopupManager.displayMessage({
+											text : this.msg("message.send-to-supplier.inprogress")
+										});
+									},
+									scope : this
+								},
+								onSuccess : {
+									fn : function onActionSendToSupplier_success(response) {
+										if (response.json) {
+											window.location.href = beCPG.util.entityURL(recordSiteName,
+													response.json.persistedObject, p_record.node.type);
+										}
+									},
+									scope : this
+								},
+								onFailure : {
+									fn : function onActionSendToSupplier_failure(response) {
+										if(response.json && response.json.message){
+											Alfresco.util.PopupManager.displayMessage({
+												text : response.json.message
+											});  
+										} else {
+											Alfresco.util.PopupManager.displayMessage({
+												text : this.msg("message.import.failure")
+											});
+										}
+									},
+									scope : this
+								}
+							});
+
+							this.modules.sendToSupplier.show();				 
+						},
+
+						
 						
 						onSimulateSelected : function BulkEdit_onSimulateSelected() {
 							

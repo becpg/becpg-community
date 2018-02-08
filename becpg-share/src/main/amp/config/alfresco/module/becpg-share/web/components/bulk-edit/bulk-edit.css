@@ -77,17 +77,6 @@
    float: left;
 }
 
-.bulk-edit .bulk-edit-bar .simulate-selected
-{
-   float: left;
-}
-
-
-.bulk-edit .bulk-edit-bar .edit-selected
-{
-   float: left;
-}
-
 .bulk-edit .bulk-edit-bar .items-per-page
 {
    float: right;
@@ -148,17 +137,6 @@
    background-image: url(../images/select-invert-16.png);
 }
 
-.bulk-edit .edit-selected span.first-child
-{
-   background: url(../images/edit-inline-16.png) no-repeat 12px 4px;
-   padding-left: 24px;
-}
-
-.bulk-edit .simulate-selected span.first-child
-{
-   background: url(../documentlibrary/actions/folder-copy-to-16.png) no-repeat 12px 4px;
-   padding-left: 24px;
-}
 
 .bulk-edit .export-csv span.first-child
 {
@@ -371,5 +349,47 @@
 .alfresco-share .yui-panel .bd .form-container .yui-u.first {
     text-align: left;
 }
+
+
+
+/* Selected Items Menu */
+.bulk-edit .selected-items li {
+	width: auto;
+}
+
+.bulk-edit .selected-items li.yuimenuitem-disabled {
+	display: none;
+}
+
+.bulk-edit .selected-items .yuimenuitemlabel span {
+	background-position: 2px 50%;
+	background-repeat: no-repeat;
+	cursor: pointer;
+	display: block;
+	margin-left: -4px;
+	min-height: 16px;
+	padding: 2px 0px 1px 24px;
+}
+
+.bulk-edit .selected-items hr {
+	padding: 0px;
+}
+
+.bulk-edit .onEditSelected {
+	background-image: url(../../components/images/edit-metadata-16.png);
+}
+
+.bulk-edit .onExportAsZip {
+	background-image:  url(../documentlibrary/actions/document-download-16.png);
+}
+
+.bulk-edit .onSendToSupplier {
+	background-image:  url(../documentlibrary/actions/user-16.png);
+}
+
+.bulk-edit .onSimulateSelected {
+	background-image: url(../documentlibrary/actions/folder-copy-to-16.png);
+}
+
 
 
