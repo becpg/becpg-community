@@ -210,8 +210,9 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				visitCompoListChildren(formulatedProduct, c, costList, newLossPerc, netQty, mandatoryCharacts);
 			} else {
 				CompoListDataItem compoListDataItem = component.getData();
-				Double qty = FormulationHelper.getQtyForCost(compoListDataItem, parentLossRatio,
-						ProductUnit.getUnit((String) nodeService.getProperty(compoListDataItem.getProduct(), PLMModel.PROP_PRODUCT_UNIT)),
+				ProductData componentProduct = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());
+				
+				Double qty = FormulationHelper.getQtyForCost(compoListDataItem, parentLossRatio,componentProduct ,
 						keepProductUnit);
 				visitPart(compoListDataItem.getProduct(), costList, qty, qty, netQty, mandatoryCharacts, totalQtiesValue,
 						formulatedProduct instanceof RawMaterialData);
@@ -656,10 +657,12 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		double totalQty = 0d;
 		for (CompoListDataItem compoList : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 			NodeRef productNodeRef = compoList.getProduct();
-			Double qty = FormulationHelper.getQtyForCost(compoList, 0d,
-					ProductUnit.getUnit((String) nodeService.getProperty(productNodeRef, PLMModel.PROP_PRODUCT_UNIT)), keepProductUnit);
+			
+			ProductData componentProduct = alfrescoRepositoryProductData.findOne(productNodeRef);
+			
+			Double qty = FormulationHelper.getQtyForCost(compoList, 0d, componentProduct, keepProductUnit);
 			if (logger.isDebugEnabled()) {
-				logger.debug("Get component " + nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME) + "qty: " + qty + " recipeQtyUsed "
+				logger.debug("Get component " + componentProduct.getName() + "qty: " + qty + " recipeQtyUsed "
 						+ productData.getRecipeQtyUsed());
 			}
 			if ((qty != null) && (productData.getRecipeQtyUsed() != null) && (productData.getRecipeQtyUsed() != 0d)) {
@@ -668,7 +671,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				if (productNodeRef.equals(componentNodeRef)) {
 					totalQty += qty;
 				} else {
-					totalQty += getCompoListQty(alfrescoRepositoryProductData.findOne(productNodeRef), componentNodeRef, qty);
+					totalQty += getCompoListQty(componentProduct, componentNodeRef, qty);
 				}
 			}
 		}
