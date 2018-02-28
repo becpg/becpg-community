@@ -444,7 +444,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 				Double parentLossRatio = dataItem.getLossPerc() != null ? dataItem.getLossPerc() : 0d;
 				Double qty = dataItem.getQty() != null ? dataItem.getQty() : 0d;
-				Double qtyForCost = FormulationHelper.getQtyForCost(dataItem, 0d, subProductData.getUnit(),
+				Double qtyForCost = FormulationHelper.getQtyForCost(dataItem, 0d, subProductData,
 						CostsCalculatingFormulationHandler.keepProductUnit);
 
 				loadCompoListItem(null, dataItem, subProductData, compoListElt, 0, qty, qtyForCost, parentLossRatio, context);
@@ -504,7 +504,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 								Double parentLossRatio = dataItem.getLossPerc() != null ? dataItem.getLossPerc() : 0d;
 								Double qty = dataItem.getQty() != null ? dataItem.getQty() : 0d;
-								Double qtyForCost = FormulationHelper.getQtyForCost(dataItem, 0d, subProductData.getUnit(),
+								Double qtyForCost = FormulationHelper.getQtyForCost(dataItem, 0d, subProductData,
 										CostsCalculatingFormulationHandler.keepProductUnit);
 
 								loadProcessListItemForCompo(dataItem, subProductData, processListElt, 1, qty, qtyForCost, parentLossRatio, context);
@@ -601,7 +601,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 								Double parentLossRatio = dataItem.getLossPerc() != null ? dataItem.getLossPerc() : 0d;
 								Double qty = dataItem.getQty() != null ? dataItem.getQty() : 0d;
-								Double qtyForCost = FormulationHelper.getQtyForCost(dataItem, 0d, subProductData.getUnit(),
+								Double qtyForCost = FormulationHelper.getQtyForCost(dataItem, 0d, subProductData,
 										CostsCalculatingFormulationHandler.keepProductUnit);
 
 								loadPackagingListItemForCompo(dataItem, subProductData, packagingListElt, 1, qty, qtyForCost, parentLossRatio,
@@ -665,7 +665,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 												/ FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT)
 										: 0d;
 
-						Double subQtyForCost = (FormulationHelper.getQtyForCost(subDataItem, parentLossRatio, subProductData.getUnit(),
+						Double subQtyForCost = (FormulationHelper.getQtyForCost(subDataItem, parentLossRatio, subProductData,
 								CostsCalculatingFormulationHandler.keepProductUnit) / FormulationHelper.getNetQtyForCost(productData)) * qtyForCost;
 
 						Double newLossPerc = subDataItem.getLossPerc() != null ? subDataItem.getLossPerc() : 0d;
@@ -704,7 +704,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 												/ FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT)
 										: 0d;
 
-						Double subQtyForCost = (FormulationHelper.getQtyForCost(subDataItem, parentLossRatio, subProductData.getUnit(),
+						Double subQtyForCost = (FormulationHelper.getQtyForCost(subDataItem, parentLossRatio, subProductData,
 								CostsCalculatingFormulationHandler.keepProductUnit) / FormulationHelper.getNetQtyForCost(productData)) * qtyForCost;
 
 						Double newLossPerc = subDataItem.getLossPerc() != null ? subDataItem.getLossPerc() : 0d;
@@ -831,7 +831,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 													/ FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT)
 											: 0d;
 
-							Double subQtyForCost = (FormulationHelper.getQtyForCost(subDataItem, 0d, subProductData.getUnit(),
+							Double subQtyForCost = (FormulationHelper.getQtyForCost(subDataItem, 0d, subProductData,
 									CostsCalculatingFormulationHandler.keepProductUnit) / FormulationHelper.getNetQtyForCost(productData))
 									* qtyForCost;
 
@@ -1105,8 +1105,11 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			if ((productNodeRef != null) && !DeclarationType.Omit.equals(compoList.getDeclType())) {
 				QName type = nodeService.getType(productNodeRef);
 				Double qty = FormulationHelper.getQtyInKg(compoList);
+
+				ProductData subProductData = (ProductData) alfrescoRepository.findOne(compoList.getProduct());
+				
 				Double qtyForCost = FormulationHelper.getQtyForCost(compoList, parentLossRatio,
-						ProductUnit.getUnit((String) nodeService.getProperty(compoList.getProduct(), PLMModel.PROP_PRODUCT_UNIT)), false);
+						subProductData, false);
 
 				if (logger.isDebugEnabled()) {
 					logger.debug("Get rawMaterial " + nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME) + "qty: " + qty + " netWeight "
