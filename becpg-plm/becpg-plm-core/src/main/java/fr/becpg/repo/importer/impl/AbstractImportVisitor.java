@@ -66,6 +66,7 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.remote.extractor.RemoteHelper;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.importer.ClassMapping;
@@ -163,6 +164,8 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	protected HierarchyService hierarchyService;
 
 	protected Repository repositoryHelper;
+	
+	protected AssociationService associationService;
 
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
@@ -207,6 +210,14 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 	public void setRepositoryHelper(Repository repositoryHelper) {
 		this.repositoryHelper = repositoryHelper;
+	}
+
+	public AssociationService getAssociationService() {
+		return associationService;
+	}
+
+	public void setAssociationService(AssociationService associationService) {
+		this.associationService = associationService;
 	}
 
 	@Override
@@ -463,7 +474,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 					AssociationDefinition assocDef = (AssociationDefinition) column;
 					String value = values.get(z_idx);
 
-					if (value != null && !value.isEmpty()) {
+					if (value != null && !value.isEmpty() && !ImportHelper.NULL_VALUE.equals(value)) {
 						QName targetClass = ((AttributeMapping) attributeMapping).getTargetClass();
 						logger.debug("importAssociations targetClass" + targetClass);
 						List<NodeRef> targetRefs = findTargetNodesByValue(importContext, assocDef.isTargetMany(),
@@ -492,7 +503,15 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 							logger.debug("Add assocs :" + assocDef.getName());
 							nodeService.createAssociation(nodeRef, targetRef, assocDef.getName());
 						}
+					} else if(ImportHelper.NULL_VALUE.equals(value)){
+						logger.debug("Null value, remove assocs :" + assocDef.getName());
+						List<NodeRef> assocs = associationService.getTargetAssocs(nodeRef, assocDef.getName());
+						
+						for(NodeRef targetAssoc : assocs){
+							nodeService.removeAssociation(nodeRef, targetAssoc, assocDef.getName());
+						}
 					} else if (assocDef.isTargetMandatory()) {
+					
 						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_GET_ASSOC_TARGET, assocDef.getName(), value));
 					}
 				}
