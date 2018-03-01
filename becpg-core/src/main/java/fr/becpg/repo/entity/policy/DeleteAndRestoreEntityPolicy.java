@@ -3,6 +3,8 @@ package fr.becpg.repo.entity.policy;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Set;
+import java.util.UUID;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.content.MimetypeMap;
@@ -16,6 +18,9 @@ import org.alfresco.repo.node.db.NodeHierarchyWalker;
 import org.alfresco.repo.node.db.NodeHierarchyWalker.VisitedNode;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
+import org.alfresco.repo.transaction.AlfrescoTransactionSupport.TxnReadState;
+import org.alfresco.repo.transaction.TransactionalResourceHelper;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
@@ -56,13 +61,13 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 	private NodeDAO nodeDAO;
 
 	private EntityDictionaryService entityDictionaryService;
-	
+
 	private DictionaryService dictionaryService;
 
 	private AttributeExtractorService attributeExtractorService;
-	
+
 	private EntityListDAO entityListDAO;
-	
+
 	public void setNodeDAO(NodeDAO nodeDAO) {
 		this.nodeDAO = nodeDAO;
 	}
@@ -100,13 +105,12 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 				new JavaBehaviour(this, "beforeArchiveNode"));
 		this.policyComponent.bindClassBehaviour(OnRestoreNodePolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2, new JavaBehaviour(this, "onRestoreNode"));
 		this.policyComponent.bindClassBehaviour(OnRestoreNodePolicy.QNAME, ContentModel.TYPE_FOLDER, new JavaBehaviour(this, "onRestoreNode"));
-		
-		
-		this.policyComponent.bindClassBehaviour(BeforePurgeNodePolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM, new JavaBehaviour(this, "beforePurgeNode"));
+
+		this.policyComponent.bindClassBehaviour(BeforePurgeNodePolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM,
+				new JavaBehaviour(this, "beforePurgeNode"));
 		this.policyComponent.bindClassBehaviour(BeforeArchiveNodePolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM,
 				new JavaBehaviour(this, "beforeArchiveNode"));
 		this.policyComponent.bindClassBehaviour(OnRestoreNodePolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM, new JavaBehaviour(this, "onRestoreNode"));
-		
 
 	}
 
@@ -127,9 +131,8 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 
 				NodeRef entityNodeRef = visitedNode.nodeRef;
 
-				if (entityDictionaryService.isSubClass(nodeService.getType(entityNodeRef), BeCPGModel.TYPE_ENTITY_V2) 
-						|| entityDictionaryService.isSubClass(nodeService.getType(entityNodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)
-						) {
+				if (entityDictionaryService.isSubClass(nodeService.getType(entityNodeRef), BeCPGModel.TYPE_ENTITY_V2)
+						|| entityDictionaryService.isSubClass(nodeService.getType(entityNodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
 
 					NodeRef rootArchiveRef = nodeService.getStoreArchiveNode(entityNodeRef.getStoreRef());
 
@@ -180,6 +183,19 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 
 		AuthenticationUtil.runAsSystem(() -> {
 
+			QName type = nodeService.getType(entityNodeRef);
+
+			boolean isListItem = entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM);
+
+			NodeRef entityParent = null;
+
+			if (isListItem) {
+				entityParent = entityListDAO.getEntity(entityNodeRef);
+				if (isPendingDelete(entityParent)) {
+					return null;
+				}
+			}
+
 			NodeRef rootArchiveRef = nodeService.getStoreArchiveNode(entityNodeRef.getStoreRef());
 
 			NodeRef entityDeletedFileNodeRef = nodeService
@@ -200,33 +216,40 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 			} catch (ContentIOException | IOException | BeCPGException e) {
 				logger.error(e, e);
 			}
-			
-			QName type = nodeService.getType(entityNodeRef);
-			
-			if ( entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
-				
+
+			if (isListItem) {
+
 				String name = "";
-				
-				NodeRef entityParent = entityListDAO.getEntity(entityNodeRef);
-				if(entityParent!=null) {
-					name += attributeExtractorService.extractPropName(entityParent)+ " - ";
+
+				if (entityParent != null) {
+					name += attributeExtractorService.extractPropName(entityParent) + " - ";
 				}
-				
+
 				TypeDefinition typeDef = dictionaryService.getType(type);
-				if(typeDef!=null && typeDef.getTitle(dictionaryService)!=null) {
-					name += typeDef.getTitle(dictionaryService)+" - ";
+				if ((typeDef != null) && (typeDef.getTitle(dictionaryService) != null)) {
+					name += typeDef.getTitle(dictionaryService) + " - ";
 				}
-				
-				
-				 name += attributeExtractorService.extractPropName(type,entityNodeRef);
-				
-				nodeService.setProperty(entityNodeRef, ContentModel.PROP_NAME, name );
-					
+
+				name += attributeExtractorService.extractPropName(type, entityNodeRef) + "-" + UUID.randomUUID().toString();
+
+				nodeService.setProperty(entityNodeRef, ContentModel.PROP_NAME, name);
+
 			}
-			
+
 			return null;
 		});
 
+	}
+
+	public static final String KEY_PENDING_DELETE_NODES = "DbNodeServiceImpl.pendingDeleteNodes";
+
+	private boolean isPendingDelete(NodeRef nodeRef) {
+		// Avoid creating a Set if the transaction is read-only
+		if (AlfrescoTransactionSupport.getTransactionReadState() != TxnReadState.TXN_READ_WRITE) {
+			return false;
+		}
+		Set<NodeRef> nodesPendingDelete = TransactionalResourceHelper.getSet(KEY_PENDING_DELETE_NODES);
+		return nodesPendingDelete.contains(nodeRef);
 	}
 
 	@Override
