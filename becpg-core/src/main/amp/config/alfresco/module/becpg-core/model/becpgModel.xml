@@ -62,7 +62,19 @@
 				</list>
 			</parameter>
 		</constraint>
+		
+		<constraint name="bcpg:nrTimeTypes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>Before</value>
+					<value>After</value>
+					<value>Equals</value>
+				</list>
+			</parameter>
+		</constraint>
+		
 	</constraints>
+	
 	<types>
 		<type name="bcpg:listValue">
 			<parent>bcpg:entityListItem</parent>
@@ -180,6 +192,79 @@
 					<mandatory enforced="true">true</mandatory>
 				</property>
 			</properties>
+		</type>
+		
+		<type name="bcpg:notificationRuleList">
+			<parent>bcpg:entityListItem</parent>
+			<properties>
+				<property name="bcpg:nrEntityType">
+					<type>d:text</type>
+					<mandatory enforced="true">true</mandatory>
+				</property>
+				<property name="bcpg:nrDateField">
+					<type>d:text</type>
+					<mandatory enforced="true">true</mandatory>					
+				</property>
+				<property name="bcpg:nrConditions">
+					<type>d:text</type>					
+				</property>
+				<property name="bcpg:nrFrequency">
+					<type>d:int</type>
+					<mandatory enforced="true">true</mandatory>
+				</property>
+				<property name="bcpg:nrTimeType">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="bcpg:nrTimeTypes" />
+					</constraints>
+				</property>
+				<property name="bcpg:nrTimeNumber">
+					<type>d:int</type>
+					<mandatory enforced="true">true</mandatory>
+				</property>
+				<property name="bcpg:nrSubject">
+					<type>d:text</type>
+					<mandatory enforced="true">true</mandatory>
+				</property>
+				<property name="bcpg:nrFrequencyStartDate">
+					<type>d:date</type>
+					<mandatory enforced="true">true</mandatory>
+				</property>
+			</properties>
+			<associations>
+				<association name="bcpg:nrNotificationAuthorities">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>cm:authority</class>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="bcpg:nrTarget">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>cm:cmobject</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="bcpg:nrEmail">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>cm:cmobject</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>			
 		</type>
 		
 	</types>

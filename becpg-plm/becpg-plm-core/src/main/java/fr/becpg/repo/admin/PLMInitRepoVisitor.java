@@ -546,6 +546,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_LABELING_TEMPLATES, PackModel.TYPE_LABELING_TEMPLATE);
 		entityLists.put(PlmRepoConsts.PATH_LABEL, PackModel.TYPE_LABEL);
 
+		entityLists.put(RepoConsts.PATH_NOTIFICATIONS, BeCPGModel.TYPE_NOTIFICATIONRULELIST);
+
 		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
 	}
 
