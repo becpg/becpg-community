@@ -231,7 +231,7 @@ function main()
     columns = [];
    
    
-   if (itemType !== null && itemType.length > 0)
+   if (itemType != null && itemType.length > 0)
    {
 
       var formConfig = getFormConfig(itemType,"security");
