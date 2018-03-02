@@ -72,11 +72,6 @@ public interface QualityModel {
 	/** qualityListItem */
 	QName TYPE_QUALITYLIST_ITEM = QName.createQName(QUALITY_URI, "qualityListItem");
 
-	/** Work Log **/
-	QName TYPE_WORK_LOG = QName.createQName(QUALITY_URI, "workLog");
-	QName PROP_WL_STATE = QName.createQName(QUALITY_URI, "wlState");
-	QName PROP_WL_COMMENT = QName.createQName(QUALITY_URI, "wlComment");
-
 	/** controlDefList **/
 	QName TYPE_CONTROLDEF_LIST = QName.createQName(QUALITY_URI, "controlDefList");
 	QName PROP_CDL_TYPE = QName.createQName(QUALITY_URI, "clType");
