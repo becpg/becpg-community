@@ -42,7 +42,6 @@
 		<property name="workflowService" ref="WorkflowService"/>		
 	</bean>
     <bean id="nonConformityPolicies"  class="fr.becpg.repo.quality.policy.NonConformityPolicies" parent="abstractBeCPGPolicy">
-		<property name="alfrescoRepository" ref="alfrescoRepository" />
 		<property name="nonConformityService" ref="nonConformityService" />					
 	</bean>	
 

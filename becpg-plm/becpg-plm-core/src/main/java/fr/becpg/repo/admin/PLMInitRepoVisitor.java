@@ -800,7 +800,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		// visit NC
 		subFolders = new HashSet<>();
 		dataLists.clear();
-		dataLists.add(QualityModel.TYPE_WORK_LOG);
+		dataLists.add(BeCPGModel.TYPE_ACTIVITY_LIST);
 		entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_NC, null, true, true, dataLists, subFolders);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_DOCUMENTS);
