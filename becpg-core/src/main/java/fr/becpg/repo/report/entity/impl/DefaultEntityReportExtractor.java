@@ -78,6 +78,7 @@ import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.report.entity.EntityReportData;
 import fr.becpg.repo.report.entity.EntityReportExtractorPlugin;
+import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.RepositoryEntityDefReader;
@@ -123,6 +124,15 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	@Value("${beCPG.entity.report.mltext.fields}")
 	private String mlTextFields;
+	
+	@Value("${beCPG.product.report.assocsToExtract}")
+	private String assocsToExtract = "";
+
+	@Value("${beCPG.product.report.assocsToExtractWithDataList}")
+	private String assocsToExtractWithDataList = "";
+
+	@Value("${beCPG.product.report.assocsToExtractWithImage}")
+	private String assocsToExtractWithImage = "";
 
 	@Autowired
 	protected DictionaryService dictionaryService;
@@ -166,6 +176,9 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	
 	@Autowired
 	protected AlfrescoRepository<BeCPGDataObject> alfrescoRepository;
+
+	@Autowired
+	protected EntityReportService entityReportService;
 
 	@Override
 	public EntityReportData extract(NodeRef entityNodeRef) {
@@ -251,7 +264,32 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	// render target assocs (plants...special cases)
 	protected boolean loadTargetAssoc(NodeRef entityNodeRef, AssociationDefinition assocDef, Element entityElt, Map<String, byte[]> images) {
-		return false;
+		boolean isExtracted = false;
+
+		if ((assocDef != null) && (assocDef.getName() != null)) {
+
+			boolean extractDataList = false;
+
+			if ((assocsToExtractWithDataList != null) && assocsToExtractWithDataList.contains(assocDef.getName().toPrefixString(namespaceService))) {
+				extractDataList = true;
+			}
+
+			if (((assocsToExtract != null) && assocsToExtract.contains(assocDef.getName().toPrefixString(namespaceService))) || extractDataList) {
+				Element assocElt = entityElt.addElement(assocDef.getName().getLocalName());
+				appendPrefix(assocDef.getName(), assocElt);
+				extractTargetAssoc(entityNodeRef, assocDef, assocElt, images, extractDataList);
+				isExtracted = true;
+			}
+
+			if ((assocsToExtractWithImage != null) && assocsToExtractWithImage.contains(assocDef.getName().toPrefixString(namespaceService))) {
+				List<NodeRef> nodeRefs = associationService.getTargetAssocs(entityNodeRef, assocDef.getName());
+				for (NodeRef nodeRef : nodeRefs) {
+					Element imgsElt = (Element) entityElt.getDocument().selectSingleNode(TAG_ENTITY + "/" + TAG_IMAGES);
+					extractEntityImages(nodeRef, imgsElt, images);
+				}
+			}
+		}
+		return isExtracted;
 	}
 
 	protected boolean isMultiLinesAttribute(QName attribute) {
@@ -595,12 +633,17 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 			appendPrefix(qName, nodeElt);
 
-			loadNodeAttributes(nodeRef, nodeElt, true, images);
-
-			if (extractDataList) {
-				Element dataListsElt = nodeElt.addElement(TAG_DATALISTS);
-				loadDataLists(nodeRef, dataListsElt, new HashMap<String, byte[]>());
-			}
+            EntityReportExtractorPlugin extractor = entityReportService.retrieveExtractor(nodeRef);
+            if(extractDataList && extractor!=null && extractor instanceof DefaultEntityReportExtractor){
+            	((DefaultEntityReportExtractor)extractor).extractEntity(nodeRef, nodeElt, images);
+            }
+            else{
+	            loadNodeAttributes(nodeRef, nodeElt, true, images);
+	            if (extractDataList) {
+	            	Element dataListsElt = nodeElt.addElement(TAG_DATALISTS);
+	                loadDataLists(nodeRef, dataListsElt, new HashMap<String, byte[]>());
+	            }
+            }
 		}
 	}
 
