@@ -230,7 +230,7 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 		
 		// calculate next tasks of parent
 		TaskListDataItem parent = nextTask.getParent();
-		while(parent != null && parent.getEnd() != null){
+		while(parent != null && parent.getEnd() != null && nextTask.getPrevTasks().contains(parent.getNodeRef()) == false){
 			calculatePlanningOfNextTasks(projectData, parent.getNodeRef(), 
 					ProjectHelper.calculateNextStartDate(parent.getEnd()));
 			parent = parent.getParent();
@@ -308,7 +308,7 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 			
 			// calculate prev tasks of parent
 			TaskListDataItem parent = prevTask.getParent();
-			while(parent != null && parent.getStart() != null){
+			while(parent != null && parent.getStart() != null && prevTask.getPrevTasks().contains(parent.getNodeRef()) == false){
 				calculateRetroPlanningOfPrevTasks(projectData, parent, 
 						ProjectHelper.calculatePrevEndDate(parent.getStart()));
 				parent = parent.getParent();
