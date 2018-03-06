@@ -1302,6 +1302,7 @@
 					<show id="qa:clMini" />
 					<show id="qa:clMaxi" />
 					<show id="qa:clUnit" />
+					<show id="qa:clTextCriteria"/>
 					<show id="qa:clValue" />
 					<show id="qa:clState" />
 					<show id="qa:clRequired" />
