@@ -31,6 +31,7 @@ import java.util.Map;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.site.SiteModel;
+import org.alfresco.service.cmr.repository.ContentIOException;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -152,13 +153,14 @@ public class UserImporterServiceImpl implements UserImporterService {
 
 			proccessUpload(is, (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME), charset);
 
-		} catch (Exception e) {
-			throw new ImporterException("Invalid content", e);
+		} catch (ContentIOException | IOException e) {
+			logger.error(e, e);
+			throw new ImporterException("Cannot import user", e);
 		}
 
 	}
 
-	private void proccessUpload(InputStream input, String filename, Charset charset) throws IOException {
+	private void proccessUpload(InputStream input, String filename, Charset charset) throws IOException, ImporterException {
 		if ((filename != null) && (filename.length() > 0)) {
 			if (filename.endsWith(".csv")) {
 				processCSVUpload(input, charset);
@@ -186,7 +188,7 @@ public class UserImporterServiceImpl implements UserImporterService {
 		logger.info("Not wet implemented");
 	}
 
-	private void processCSVUpload(InputStream input, Charset charset) throws IOException {
+	private void processCSVUpload(InputStream input, Charset charset) throws IOException, ImporterException {
 
 		CSVReader csvReader = new CSVReader(new InputStreamReader(input, charset), SEPARATOR);
 		try {
@@ -194,17 +196,12 @@ public class UserImporterServiceImpl implements UserImporterService {
 			boolean isFirst = true;
 			Map<String, Integer> headers = new HashMap<>();
 			while ((splitted = csvReader.readNext()) != null) {
-				try {
-					if (isFirst) {
-						headers = processHeaders(splitted);
-						isFirst = false;
-					} else if (splitted.length == headers.size()) {
-						processRow(headers, splitted);
-					}
-				} catch (Exception e) {
-					logger.warn(e, e);
+				if (isFirst) {
+					headers = processHeaders(splitted);
+					isFirst = false;
+				} else if (splitted.length == headers.size()) {
+					processRow(headers, splitted);
 				}
-
 			}
 		} finally {
 			csvReader.close();
@@ -290,55 +287,52 @@ public class UserImporterServiceImpl implements UserImporterService {
 				return null;
 
 			});
+			
 
 			if (headers.containsKey(MEMBERSHIPS)) {
 				AuthenticationUtil.runAsSystem(() -> {
-					String[] memberships = splitted[headers.get(MEMBERSHIPS)].split(FIELD_SEPARATOR);
-					for (String membership : memberships) {
+					if ((splitted[headers.get(MEMBERSHIPS)] != null) && !splitted[headers.get(MEMBERSHIPS)].isEmpty()) {
 
-						String[] sites = membership.split("_");
-						final String siteName = formatSiteName(sites[0]);
-						final String role = formatRole(sites[1]);
-						if (logger.isDebugEnabled()) {
-							logger.debug("Adding role " + role + " to " + username + " on site " + siteName);
-						}
-						if (siteService.getSite(cleanSiteName(siteName)) != null) {
-							siteService.setMembership(cleanSiteName(siteName), username, role);
-						} else {
-							logger.debug("Site " + siteName + " doesn't exist.");
+						String[] memberships = splitted[headers.get(MEMBERSHIPS)].split(FIELD_SEPARATOR);
+						for (String membership : memberships) {
 
-							SiteInfo siteInfo = siteService.createSite(DEFAULT_PRESET, cleanSiteName(siteName), siteName, "", SiteVisibility.PUBLIC);
-							// ISSUE ALF-4771
-							// TODO
-							// http://ecmstuff.blogspot.fr/2012/03/creating-alfresco-share-sites-with.html
-							try {
-								logger.debug("Due to issue ALF-4771 we should call Share webscript to enable site");
-								// TODO externalyze password
-
-								Authenticator.setDefault(new Authenticator() {
-									@Override
-									protected PasswordAuthentication getPasswordAuthentication() {
-										return new PasswordAuthentication(AuthenticationUtil.getAdminUserName(), "becpg".toCharArray());
-									}
-								});
-
-								URL url = new URL("http://localhost:8080/share/service/modules/enable-site?url=" + siteInfo.getShortName()
-										+ "&preset=" + DEFAULT_PRESET + "");
-								URLConnection con = url.openConnection();
-
-								InputStream in = con.getInputStream();
-								if (in != null) {
-									in.close();
-								}
-
-							} catch (Exception e) {
-								logger.error("Unable to enable site", e);
+							String[] sites = membership.split("_");
+							String siteName = formatSiteName(sites[0]);
+							String role = SiteModel.SITE_CONSUMER;
+							if (sites.length > 1) {
+								role = formatRole(sites[1]);
 							}
 
-							siteService.setMembership(siteInfo.getShortName(), username, role);
+							if (logger.isDebugEnabled()) {
+								logger.debug("Adding role " + role + " to " + username + " on site " + siteName);
+							}
+							if (siteService.getSite(cleanSiteName(siteName)) != null) {
+								siteService.setMembership(cleanSiteName(siteName), username, role);
+							} else {
+								logger.debug("Site " + siteName + " doesn't exist.");
+
+								SiteInfo siteInfo = siteService.createSite(DEFAULT_PRESET, cleanSiteName(siteName), siteName, "",
+										SiteVisibility.PUBLIC);
+								try {
+									
+									URL url = new URL("http://becpg:8080/share/service/modules/enable-site?url=" + siteInfo.getShortName()
+											+ "&preset=" + DEFAULT_PRESET + "&ticket="+authenticationService.getCurrentTicket());
+									URLConnection con = url.openConnection();
+
+									InputStream in = con.getInputStream();
+									if (in != null) {
+										in.close();
+									}
+
+								} catch (Exception e) {
+									logger.error("Unable to enable site", e);
+								}
+
+								siteService.setMembership(siteInfo.getShortName(), username, role);
+
+							}
 
 						}
-
 					}
 					return null;
 				});
@@ -379,12 +373,14 @@ public class UserImporterServiceImpl implements UserImporterService {
 	}
 
 	private String formatRole(String role) {
-		if (role.trim().equalsIgnoreCase("Contributor")) {
-			return SiteModel.SITE_CONTRIBUTOR;
-		} else if (role.trim().equalsIgnoreCase("Collaborator")) {
-			return SiteModel.SITE_COLLABORATOR;
-		} else if (role.trim().equalsIgnoreCase("Manager")) {
-			return SiteModel.SITE_MANAGER;
+		if (role != null) {
+			if (role.trim().equalsIgnoreCase("Contributor")) {
+				return SiteModel.SITE_CONTRIBUTOR;
+			} else if (role.trim().equalsIgnoreCase("Collaborator")) {
+				return SiteModel.SITE_COLLABORATOR;
+			} else if (role.trim().equalsIgnoreCase("Manager")) {
+				return SiteModel.SITE_MANAGER;
+			}
 		}
 
 		return SiteModel.SITE_CONSUMER;
