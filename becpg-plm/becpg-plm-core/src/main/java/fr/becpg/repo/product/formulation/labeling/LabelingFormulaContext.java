@@ -410,10 +410,20 @@ public class LabelingFormulaContext extends RuleParser {
 	private String createPercAwareLabel(AbstractLabelingComponent lblComponent, String ingLegalName, Double qty) {
 		if (qty != null) {
 			DecimalFormat decimalFormat = null;
-			if (showAllPerc && (!(lblComponent instanceof IngItem)
-					|| isDoNotDetails(((IngTypeItem) lblComponent).getOrigNodeRef() != null ? ((IngTypeItem) lblComponent).getOrigNodeRef()
-							: lblComponent.getNodeRef()))) {
-				decimalFormat = new DecimalFormat(defaultPercFormat);
+			if (showAllPerc && (lblComponent != null)) {
+				if (lblComponent instanceof IngItem) {
+					decimalFormat = new DecimalFormat(defaultPercFormat);
+				} else {
+					if (lblComponent instanceof IngTypeItem) {
+						if (isDoNotDetails(((IngTypeItem) lblComponent).getOrigNodeRef() != null ? ((IngTypeItem) lblComponent).getOrigNodeRef()
+								: lblComponent.getNodeRef())) {
+							decimalFormat = new DecimalFormat(defaultPercFormat);
+						}
+					} else if (isDoNotDetails(lblComponent.getNodeRef())) {
+						decimalFormat = new DecimalFormat(defaultPercFormat);
+					}
+				}
+
 			} else if (showPercRules.containsKey(lblComponent.getNodeRef())) {
 				ShowRule showRule = showPercRules.get(lblComponent.getNodeRef());
 				if (showRule.matchLocale(I18NUtil.getLocale())) {
