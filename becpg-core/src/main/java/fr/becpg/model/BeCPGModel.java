@@ -43,6 +43,9 @@ public interface BeCPGModel {
 	QName PROP_ACTIVITYLIST_DATA =  QName.createQName(BECPG_URI, "alData");
 	QName PROP_ACTIVITYLIST_USERID=  QName.createQName(BECPG_URI, "alUserId");
 	
+	//Notification 
+	QName TYPE_NOTIFICATIONRULELIST = QName.createQName(BeCPGModel.BECPG_URI, "notificationRuleList");
+	
 	// entity
 	QName TYPE_ENTITY_V2 = QName.createQName(BECPG_URI, "entityV2");
 

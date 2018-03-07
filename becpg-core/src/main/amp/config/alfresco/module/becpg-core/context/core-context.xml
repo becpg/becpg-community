@@ -183,4 +183,37 @@
    </bean>
 
 
+<!--  NotificationRule Job -->
+
+    <bean id="notificationRuleJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass">
+            <value>fr.becpg.repo.notification.NotificationRuleJob</value>
+        </property>
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="notificationRuleService">
+                    <ref bean="notificationRuleService" />
+                </entry>
+                <entry key="tenantAdminService">
+                    <ref bean="tenantAdminService" />
+                </entry>
+                <entry key="transactionService">
+                    <ref bean="transactionService" />
+                </entry>
+            </map>
+        </property>
+    </bean>
+    
+    <bean id="notificationRuleJobTrigger" class="org.alfresco.util.CronTriggerBean"  >
+        <property name="jobDetail">
+            <ref bean="notificationRuleJob"/>
+        </property>
+        <property name="scheduler">
+            <ref bean="schedulerFactory"/>
+        </property>
+        <property name="cronExpression">
+            <value>${beCPG.notification.notify.cronExpression}</value>
+        </property>
+    </bean>
+
 </beans>

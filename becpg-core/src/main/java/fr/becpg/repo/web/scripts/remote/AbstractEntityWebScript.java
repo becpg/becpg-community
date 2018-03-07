@@ -160,7 +160,9 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	}
 
 	protected void sendOKStatus(NodeRef entityNodeRef, WebScriptResponse resp) throws IOException {
-		resp.getWriter().write(entityNodeRef.toString());
+		if(resp!=null && resp.getWriter()!=null && entityNodeRef!=null) {
+			resp.getWriter().write(entityNodeRef.toString());
+		}
 	}
 
 	protected EntityProviderCallBack getEntityProviderCallback(WebScriptRequest req) {

@@ -265,16 +265,16 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 				visitCompoListChildren(productData, c, ret, newLossPerc, subQty, netQty, currLevel, maxLevel, unitProvider);
 			} else {
 				CompoListDataItem compoListDataItem = component.getData();
-
+				ProductData componentProduct = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());
 				Double qty = (FormulationHelper.getQtyForCost(compoListDataItem, parentLossRatio,
-						ProductUnit.getUnit((String) nodeService.getProperty(compoListDataItem.getProduct(), PLMModel.PROP_PRODUCT_UNIT)), CostsCalculatingFormulationHandler.keepProductUnit)
+						componentProduct, CostsCalculatingFormulationHandler.keepProductUnit)
 						/ FormulationHelper.getNetQtyForCost(productData)) * subQty;
 
 				visitPart(productData.getNodeRef(), compoListDataItem.getProduct(), ret, qty, qty, netQty, currLevel, unitProvider);
 
 				if (((maxLevel < 0) || (currLevel < maxLevel))
 						&& !entityDictionaryService.isMultiLevelLeaf(nodeService.getType(compoListDataItem.getProduct()))) {
-					visitRecurCost((ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct()), ret, currLevel + 1, maxLevel, qty,
+					visitRecurCost(componentProduct, ret, currLevel + 1, maxLevel, qty,
 							netQty, unitProvider);
 				}
 

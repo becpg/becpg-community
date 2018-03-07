@@ -17,11 +17,11 @@ import javax.websocket.server.ServerEndpoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-@ServerEndpoint(value = "/becpgws/{store_type}/{store_id}/{id}/{user}",configurator=BeCPGWSHandlerEndpointConfigurer.class)
+@ServerEndpoint(value = "/becpgws/{store_type}/{store_id}/{id}/{user}", configurator = BeCPGWSHandlerEndpointConfigurer.class)
 public class BeCPGWSHandler {
 
 	private Set<Session> userSessions = Collections.synchronizedSet(new HashSet<Session>());
-	
+
 	private static Log logger = LogFactory.getLog(BeCPGWSHandler.class);
 
 	@OnOpen
@@ -30,20 +30,22 @@ public class BeCPGWSHandler {
 
 		session.getUserProperties().put("room", room);
 		session.getUserProperties().put("user", user);
-		
-		userSessions.add(session);
-		
-		try {
-			for (Session s : userSessions) {
-				if (s.isOpen() && room.equals(s.getUserProperties().get("room")) && !s.getId().equals(session.getId())) {
-					session.getBasicRemote().sendText("{\"type\":\"JOINING\",\"user\":\"" + s.getUserProperties().get("user")  + "\"}");
-					s.getBasicRemote().sendText("{\"type\":\"JOINING\",\"user\":\"" + user  + "\"}");
-				}
-			}
-		} catch (IOException e) {
-			logger.error("onMessage failed", e);
-		}
+		synchronized (userSessions) {
+			userSessions.add(session);
 
+			try {
+
+				for (Session s : userSessions) {
+					if (s.isOpen() && room.equals(s.getUserProperties().get("room")) && !s.getId().equals(session.getId())) {
+						session.getBasicRemote().sendText("{\"type\":\"JOINING\",\"user\":\"" + s.getUserProperties().get("user") + "\"}");
+						s.getBasicRemote().sendText("{\"type\":\"JOINING\",\"user\":\"" + user + "\"}");
+					}
+				}
+
+			} catch (IOException e) {
+				logger.error("onMessage failed", e);
+			}
+		}
 	}
 
 	@OnMessage
@@ -52,9 +54,11 @@ public class BeCPGWSHandler {
 		logger.debug("Receiving ... " + session.getId());
 		String room = (String) session.getUserProperties().get("room");
 		try {
-			for (Session s : userSessions) {
-				if (s.isOpen() && room.equals(s.getUserProperties().get("room")) && !s.getId().equals(session.getId())) {
-					s.getBasicRemote().sendText(message);
+			synchronized (userSessions) {
+				for (Session s : userSessions) {
+					if (s.isOpen() && room.equals(s.getUserProperties().get("room")) && !s.getId().equals(session.getId())) {
+						s.getBasicRemote().sendText(message);
+					}
 				}
 			}
 		} catch (IOException e) {
@@ -66,28 +70,34 @@ public class BeCPGWSHandler {
 	@OnClose
 	public void onClose(Session session, CloseReason closeReason) {
 		logger.debug(String.format("Session %s closed because of %s", session.getId(), closeReason));
-		try {
-			String room = (String) session.getUserProperties().get("room");
-			String user = (String)session.getUserProperties().get("user");
-			for (Session s : userSessions) {
-				if (s.isOpen() && room.equals(s.getUserProperties().get("room")) && !s.getId().equals(session.getId())) {
-					s.getBasicRemote().sendText("{\"type\":\"LEAVING\",\"user\":\"" +  user + "\"}");
+		synchronized (userSessions) {
+			try {
+				String room = (String) session.getUserProperties().get("room");
+				String user = (String) session.getUserProperties().get("user");
+
+				for (Session s : userSessions) {
+					if (s.isOpen() && room.equals(s.getUserProperties().get("room")) && !s.getId().equals(session.getId())) {
+						s.getBasicRemote().sendText("{\"type\":\"LEAVING\",\"user\":\"" + user + "\"}");
+					}
 				}
+
+			} catch (IOException e) {
+				logger.error("onMessage failed", e);
+			} finally {
+				userSessions.remove(session);
 			}
-		} catch (IOException e) {
-			logger.error("onMessage failed", e);
-		} finally {
-			userSessions.remove(session);
 		}
 	}
-	
+
 	@OnError
 	public void onError(Session session, Throwable thr) {
-		if(!session.isOpen()) {
-			userSessions.remove(session);
+		if (!session.isOpen()) {
+			synchronized (userSessions) {
+				userSessions.remove(session);
+			}
 		}
-		if(logger.isDebugEnabled()){
-			logger.debug(thr,thr);
+		if (logger.isDebugEnabled()) {
+			logger.debug(thr, thr);
 		}
 	}
 

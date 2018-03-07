@@ -24,6 +24,8 @@ public class RepoConsts {
 	public static final String PATH_LISTS = "Lists";
 	public static final String PATH_LINKED_LISTS 	= "LinkedLists";
 	public static final String PATH_ENTITY_TEMPLATES = "EntityTemplates";
+	//Notification
+	public static final String PATH_NOTIFICATIONS = "Notifications";
 			
 	//Security
 	public static final String PATH_SECURITY = "Security";
@@ -110,6 +112,7 @@ public class RepoConsts {
 	 */
 	public static final String EMAIL_NEW_USER_TEMPLATE = "/app:company_home/app:dictionary/app:email_templates/cm:importuser-email.ftl";
 	public static final String EMAIL_ASYNC_ACTIONS_TEMPLATE = "/app:company_home/app:dictionary/app:email_templates/cm:asynchrone-actions-email.html.ftl";
+	public static final String EMAIL_NOTIF_RULE_LIST_TEMPLATE = "/app:company_home/app:dictionary/app:email_templates/cm:notification-rule-list-email.html.ftl";
 	
 	/*
 	 * Asynchrone actions by mail 

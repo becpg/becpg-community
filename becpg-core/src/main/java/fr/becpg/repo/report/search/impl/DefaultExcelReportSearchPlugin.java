@@ -55,8 +55,9 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 
 	@Override
 	public void fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum,
-			AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache) {
+			 String parameter, AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache) {
 		
+
 		for (NodeRef entityNodeRef : searchResults) {
 			if (entityDictionaryService.isSubClass(nodeService.getType(entityNodeRef), mainType)) {
 				if (keyColumn != null) {
@@ -89,7 +90,7 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 
 	}
 
-	private Map<String, Object> getEntityProperties(NodeRef itemNodeRef,QName itemType, List<AttributeExtractorStructure> metadataFields,
+	protected Map<String, Object> getEntityProperties(NodeRef itemNodeRef,QName itemType, List<AttributeExtractorStructure> metadataFields,
 			Map<NodeRef, Map<String, Object>> cache){
 		
 		Map<QName, Serializable> properties = nodeService.getProperties(itemNodeRef);
@@ -192,7 +193,7 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 	}
 
 	@Override
-	public boolean isApplicable(QName itemType) {
+	public boolean isApplicable(QName itemType, String parameter) {
 		return false;
 	}
 
