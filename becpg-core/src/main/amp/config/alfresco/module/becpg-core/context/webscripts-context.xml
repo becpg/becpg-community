@@ -247,6 +247,9 @@
 
 	<bean id="webscript.fr.becpg.remote.entities.get" class="fr.becpg.repo.web.scripts.remote.ListEntitiesWebScript" parent="abstractEntityWebScript">
 	</bean>
+	
+	<bean id="webscript.fr.becpg.remote.entityContent.get" class="fr.becpg.repo.web.scripts.remote.GetContentWebScript" parent="webscript">
+	</bean>
 
 	<!-- dockbar -->
 	<bean id="webscript.fr.becpg.dockbar.dockbar.get" class="fr.becpg.repo.web.scripts.dockbar.DockBarWebScript" parent="webscript">
