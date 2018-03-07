@@ -421,6 +421,8 @@
 				<aspect>bcpg:sortableListAspect</aspect>
 			</mandatory-aspects>
 		</type>
+		
+		<!-- Deprecated To remove after 2.2.2 -->
 		<type name="qa:workLog">
 			<parent>qa:qualityListItem</parent>
 			<properties>

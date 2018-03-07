@@ -46,7 +46,6 @@ import org.junit.Test;
 import fr.becpg.model.QualityModel;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.quality.NonConformityService;
-import fr.becpg.repo.quality.data.NonConformityData;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.test.BeCPGPLMTestHelper;
@@ -191,14 +190,12 @@ public class NCWorkflowTest extends AbstractWorkflowTest {
 			assertEquals("corrActionTask", task2.getPath().getNode().getName());
 		}
 
-		checkWorkLog(ncNodeRef, 1, "new", "commentaire émetteur");
 		/*
 		 * do corrActionTask
 		 */
 		WorkflowTask task = submitTask(workflowInstanceId, "ncwf:corrActionTask", null, "analysis", "commentaire émetteur 2");
 		assertEquals("checkTask", task.getPath().getNode().getName());
 
-		checkWorkLog(ncNodeRef, 2, "analysis", "commentaire émetteur 2");
 
 		/*
 		 * do checkTask
@@ -208,7 +205,6 @@ public class NCWorkflowTest extends AbstractWorkflowTest {
 		task = submitTask(workflowInstanceId, "ncwf:checkTask", null, "closing", "commentaire émetteur 3");
 		assertEquals("notificationTask", task.getPath().getNode().getName());
 
-		checkWorkLog(ncNodeRef, 3, "closing", "commentaire émetteur 3");
 
 		/*
 		 * do notificationTask
@@ -291,7 +287,6 @@ public class NCWorkflowTest extends AbstractWorkflowTest {
 				"commentaire émetteur");
 		assertEquals("workTask", task.getPath().getNode().getName());
 
-		checkWorkLog(ncNodeRef, 1, "new", "commentaire émetteur");
 		/*
 		 * do corrActionTask
 		 */
@@ -299,7 +294,6 @@ public class NCWorkflowTest extends AbstractWorkflowTest {
 				"commentaire émetteur 2");
 		assertEquals("workTask", task.getPath().getNode().getName());
 
-		checkWorkLog(ncNodeRef, 2, "analysis", "commentaire émetteur 2");
 
 		/*
 		 * do checkTask
@@ -308,7 +302,6 @@ public class NCWorkflowTest extends AbstractWorkflowTest {
 				"commentaire émetteur 3");
 		assertEquals("workTask", task.getPath().getNode().getName());
 
-		checkWorkLog(ncNodeRef, 3, "closing", "commentaire émetteur 3");
 
 		/*
 		 * do notificationTask
@@ -360,20 +353,5 @@ public class NCWorkflowTest extends AbstractWorkflowTest {
 		}, false, true);
 	}
 
-	private void checkWorkLog(final NodeRef ncNodeRef, final int workLogSize, final String state, final String comment) {
-
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			public NodeRef execute() throws Throwable {
-
-				NonConformityData ncData = (NonConformityData) alfrescoRepository.findOne(ncNodeRef);
-				assertNotNull(ncData.getWorkLog());
-				assertEquals(workLogSize, ncData.getWorkLog().size());
-				assertEquals(state, ncData.getState());
-				assertEquals(null, ncData.getComment());
-				assertEquals(state, ncData.getWorkLog().get(workLogSize - 1).getState());
-				assertEquals(comment, ncData.getWorkLog().get(workLogSize - 1).getComment());
-				return null;
-			}
-		}, true, true);
-	}
+	
 }

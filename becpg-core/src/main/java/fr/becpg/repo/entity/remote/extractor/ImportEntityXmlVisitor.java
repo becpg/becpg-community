@@ -49,6 +49,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.codec.binary.Base64OutputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.LocaleUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.xml.sax.Attributes;
@@ -355,7 +356,8 @@ public class ImportEntityXmlVisitor {
 							locale = strLocale.contains("_")? new Locale(strLocale.split("_")[0], strLocale.split("_")[1]) : new Locale(strLocale);
 							if(!attributes.getValue(i).equals(RemoteEntityService.MLTEXT_TYPE) && attributes.getQName(i)!=null
 									&& LocaleUtils.isAvailableLocale(locale)){
-								mltextAttributes.put(new Locale(attributes.getQName(i)), attributes.getValue(i).toString());
+								mltextAttributes.put(new Locale(attributes.getQName(i)),
+										StringEscapeUtils.unescapeHtml(attributes.getValue(i).toString()));
 							}
 						}
 						

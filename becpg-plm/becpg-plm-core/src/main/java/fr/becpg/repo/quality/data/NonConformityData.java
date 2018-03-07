@@ -17,14 +17,9 @@
  ******************************************************************************/
 package fr.becpg.repo.quality.data;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import fr.becpg.repo.quality.data.dataList.WorkLogDataItem;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
-import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 @AlfType
@@ -37,8 +32,6 @@ public class NonConformityData extends BeCPGDataObject {
 	private static final long serialVersionUID = 4975442023838379466L;
 	private String state;
 	private String comment;
-
-	List<WorkLogDataItem> workLog = new LinkedList<>();
 
 	@AlfProp
 	@AlfQname(qname = "qa:ncState")
@@ -60,27 +53,17 @@ public class NonConformityData extends BeCPGDataObject {
 		this.comment = comment;
 	}
 
-	@DataList
-	@AlfQname(qname = "qa:workLog")
-	public List<WorkLogDataItem> getWorkLog() {
-		return workLog;
-	}
-
-	public void setWorkLog(List<WorkLogDataItem> workLog) {
-		this.workLog = workLog;
-	}
-
 	public NonConformityData() {
 
 	}
 
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + ((comment == null) ? 0 : comment.hashCode());
 		result = prime * result + ((state == null) ? 0 : state.hashCode());
-		result = prime * result + ((workLog == null) ? 0 : workLog.hashCode());
 		return result;
 	}
 
@@ -103,17 +86,12 @@ public class NonConformityData extends BeCPGDataObject {
 				return false;
 		} else if (!state.equals(other.state))
 			return false;
-		if (workLog == null) {
-			if (other.workLog != null)
-				return false;
-		} else if (!workLog.equals(other.workLog))
-			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "NonConformityData [state=" + state + ", comment=" + comment + ", workLog=" + workLog + "]";
+		return "NonConformityData [state=" + state + ", comment=" + comment + "]";
 	}
 
 }
