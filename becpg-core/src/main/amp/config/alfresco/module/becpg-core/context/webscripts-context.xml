@@ -249,6 +249,10 @@
 	</bean>
 	
 	<bean id="webscript.fr.becpg.remote.entityContent.get" class="fr.becpg.repo.web.scripts.remote.GetContentWebScript" parent="webscript">
+		<property name="nodeService" ref="nodeService" />
+		<property name="contentService" ref="contentService" />	
+		<property name="associationService" ref="associationService" />
+		<property name="entityReportService" ref="entityReportService" />
 	</bean>
 
 	<!-- dockbar -->
