@@ -615,4 +615,12 @@ public class FormulationHelper {
 
 		return qty;
 	}
+
+	public static boolean isCharactFormulatedFromVol(NodeService nodeService, SimpleCharactDataItem sl) {
+		if (sl instanceof PhysicoChemListDataItem) {
+			Boolean isFormulatedFromVol = (Boolean) nodeService.getProperty(sl.getCharactNodeRef(), PLMModel.PROP_PHYSICO_CHEM_FORMULATED_FROM_VOL);
+			return isFormulatedFromVol != null ? isFormulatedFromVol : false;
+		}
+		return false;
+	}
 }

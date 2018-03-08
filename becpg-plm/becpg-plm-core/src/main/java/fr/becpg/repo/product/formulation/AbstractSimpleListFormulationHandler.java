@@ -262,7 +262,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 						boolean forceWeight = false;
 						
 						if (newSimpleListDataItem instanceof PhysicoChemListDataItem) {
-							if(Boolean.TRUE.equals(((PhysicoChemListDataItem) newSimpleListDataItem).getIsFormulatedFromVol())) {
+							if(FormulationHelper.isCharactFormulatedFromVol(nodeService, newSimpleListDataItem)) {
 								formulateInVol  = true;
 							} else {
 								formulateInVol = false;
