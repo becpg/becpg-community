@@ -38,6 +38,7 @@ import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -107,21 +108,22 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 					.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 
 				if (!DeclarationType.Omit.equals(compoListDataItem.getDeclType())) {
-				
+
 					Double weightUsed = FormulationHelper.getQtyInKg(compoListDataItem);
 					if ((FormulationHelper.getNetWeight(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT) != 0d) && (subWeight != null)) {
 						weightUsed = (weightUsed / FormulationHelper.getNetWeight(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT)) * subWeight;
-	
+
 					}
-	
+
 					Double volUsed = FormulationHelper.getNetVolume(compoListDataItem, nodeService);
 					if ((FormulationHelper.getNetVolume(compoListDataItem, nodeService) != null)
 							&& (FormulationHelper.getNetVolume(subProductData) != null) && (subVol != null)) {
 						volUsed = (volUsed / FormulationHelper.getNetVolume(subProductData)) * subVol;
 					}
-	
-					visitPart(subProductData.getNodeRef(), compoListDataItem.getProduct(), ret, weightUsed, volUsed, netQty, currLevel, null);
-	
+
+					visitPart(subProductData.getNodeRef(), compoListDataItem.getProduct(), ret, weightUsed, volUsed, netQty, subWeight, currLevel,
+							null);
+
 					if (((maxLevel < 0) || (currLevel < maxLevel))
 							&& !entityDictionaryService.isMultiLevelLeaf(nodeService.getType(compoListDataItem.getProduct()))) {
 						visitRecur((ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct()), ret, currLevel + 1, maxLevel, weightUsed,
@@ -152,8 +154,8 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 		return ret;
 	}
 
-	protected void visitPart(NodeRef parent, NodeRef entityNodeRef, CharactDetails charactDetails, Double weightUsed, Double volUsed, Double netQty,
-			Integer currLevel, SimpleCharactUnitProvider unitProvider) throws FormulateException {
+	protected void visitPart(NodeRef parent, NodeRef entityNodeRef, CharactDetails charactDetails, Double weightUsed, Double volUsed,
+			Double netQtyInLorKg, Double netWeight, Integer currLevel, SimpleCharactUnitProvider unitProvider) throws FormulateException {
 
 		if (entityNodeRef == null) {
 			return;
@@ -181,9 +183,23 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 				}
 
 				// calculate charact from qty or vol ?
-				boolean isVol = FormulationHelper.isCharactFormulatedFromVol(nodeService, simpleCharact)
-						|| FormulationHelper.isProductUnitLiter(FormulationHelper.getProductUnit(entityNodeRef, nodeService)) ? true : false;
-				Double qtyUsed = isVol ? volUsed : weightUsed;
+
+				boolean formulateInVol = FormulationHelper.isProductUnitLiter(FormulationHelper.getProductUnit(entityNodeRef, nodeService)) ? true
+						: false;
+				boolean forceWeight = false;
+
+				if (simpleCharact instanceof PhysicoChemListDataItem) {
+					if (Boolean.TRUE.equals(((PhysicoChemListDataItem) simpleCharact).getIsFormulatedFromVol())) {
+						formulateInVol = true;
+					} else {
+						formulateInVol = false;
+						forceWeight = true;
+					}
+				}
+
+				// calculate charact from qty or vol ?
+				Double qtyUsed = formulateInVol ? volUsed : weightUsed;
+				Double netQty = forceWeight ? netWeight : netQtyInLorKg;
 
 				Double value = FormulationHelper.calculateValue(0d, qtyUsed, simpleCharact.getValue(), netQty, unit);
 

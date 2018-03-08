@@ -39,6 +39,8 @@ public class PhysicoChemListDataItem extends AbstractManualDataItem implements S
 	
 	private String errorLog;
 	
+	private Boolean isFormulatedFromVol;
+	
 	
 	@AlfProp
 	@AlfQname(qname="bcpg:pclValue")
@@ -51,6 +53,7 @@ public class PhysicoChemListDataItem extends AbstractManualDataItem implements S
 		this.value = value;
 	}
 	
+
 	
 	@AlfProp
 	@AlfQname(qname="bcpg:pclUnit")
@@ -115,6 +118,18 @@ public class PhysicoChemListDataItem extends AbstractManualDataItem implements S
 	public void setIsFormulated(Boolean isFormulated) {
 		this.isFormulated = isFormulated;
 	}
+	
+	@AlfProp
+	@AlfQname(qname="bcpg:physicoChemFormulatedFromVol")
+	public Boolean getIsFormulatedFromVol() {
+		return isFormulatedFromVol;
+	}
+
+
+	public void setIsFormulatedFromVol(Boolean isFormulatedFromVol) {
+		this.isFormulatedFromVol = isFormulatedFromVol;
+	}
+
 
 	@AlfProp
 	@InternalField
@@ -172,6 +187,7 @@ public class PhysicoChemListDataItem extends AbstractManualDataItem implements S
 		this.mini = p.mini;
 		this.maxi = p.maxi;
 		this.physicoChem = p.physicoChem;
+		this.isFormulatedFromVol = p.isFormulatedFromVol;
 	}
 	
 	/**
