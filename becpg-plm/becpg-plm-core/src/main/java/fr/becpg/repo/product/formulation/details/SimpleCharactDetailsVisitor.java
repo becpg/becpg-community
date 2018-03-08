@@ -189,7 +189,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 				boolean forceWeight = false;
 
 				if (simpleCharact instanceof PhysicoChemListDataItem) {
-					if (Boolean.TRUE.equals(((PhysicoChemListDataItem) simpleCharact).getIsFormulatedFromVol())) {
+					if (FormulationHelper.isCharactFormulatedFromVol(nodeService,simpleCharact )) {
 						formulateInVol = true;
 					} else {
 						formulateInVol = false;
