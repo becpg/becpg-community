@@ -18,7 +18,7 @@
 package fr.becpg.repo.entity.datalist.impl;
 
 import java.io.Serializable;
-import java.util.HashSet;
+import java.util.HashSet;	
 import java.util.List;
 import java.util.Set;
 
@@ -443,6 +443,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 		if (destNodeRef == null) {
 			if (getSortedNode(dataType, listContainer, sort, nodeRef) != null) {
 				// several node with same sort
+				
 				fixSortableList(dataType, listContainer);
 				sort = (Integer) nodeService.getProperty(nodeRef, BeCPGModel.PROP_SORT);
 				destNodeRef = getNextSiblingNode(dataType, listContainer, nodeRef, moveUp);
@@ -478,7 +479,8 @@ public class DataListSortServiceImpl implements DataListSortService {
 
 			// udpate sort of nodeRef and children
 			logger.debug("udpate sort of nodeRef and children");
-			int newSort = destSort;
+			int newSort = moveUp ? destSort : sort + destChildren.size() + 2;
+			
 			for (NodeRef listItem : children) {
 				newSort++;
 				setProperty(listItem, BeCPGModel.PROP_SORT, newSort);
@@ -486,7 +488,14 @@ public class DataListSortServiceImpl implements DataListSortService {
 
 			// update sort of destNodeRef and children
 			logger.debug("update sort of destNodeRef and children");
-			newSort = sort;
+			
+			if(moveUp){
+				newSort++;
+				sort = newSort;
+			} else {				
+				newSort = sort;
+			}
+			
 			for (NodeRef listItem : destChildren) {
 				newSort++;
 				setProperty(listItem, BeCPGModel.PROP_SORT, newSort);
