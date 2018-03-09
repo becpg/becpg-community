@@ -51,6 +51,7 @@ public class PhysicoChemListDataItem extends AbstractManualDataItem implements S
 		this.value = value;
 	}
 	
+
 	
 	@AlfProp
 	@AlfQname(qname="bcpg:pclUnit")
@@ -115,6 +116,7 @@ public class PhysicoChemListDataItem extends AbstractManualDataItem implements S
 	public void setIsFormulated(Boolean isFormulated) {
 		this.isFormulated = isFormulated;
 	}
+	
 
 	@AlfProp
 	@InternalField
