@@ -389,7 +389,9 @@ function sendMail(userOrGroup, from, subject, message, isAction) {
                 templateArgs['workflowDescription'] = execution.getVariable('bpm_workflowDescription');
                 templateArgs['workflowDueDate'] = task.dueDate;
                 templateArgs['workflowPriority'] = task.priority;
-                // templateArgs['workflowDocuments'] = [];
+                if(bpm_package!=null && bpm_package.children!=null){
+                	templateArgs['workflowDocuments'] = bpm_package.children;
+                }
                 templateArgs['workflowId'] = "activiti$" + task.id;
     
                 var templateModel = new Array();
