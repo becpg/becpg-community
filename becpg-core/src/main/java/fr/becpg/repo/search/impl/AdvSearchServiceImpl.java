@@ -190,61 +190,28 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 								}
 
-							} else if (propName.contains("Hierarchy")) {								
+							} else if (propName.contains("Hierarchy")) {	
 								String hierarchyQuery = getHierarchyQuery(propName, propValue);
 								
 								if (hierarchyQuery != null && hierarchyQuery.length() > 0) {
-									List<String> hierarchy1Nodes = new ArrayList<>();
-									List<String> hierarchy2Nodes = new ArrayList<>();
+									List<String> hierarchyNodes = new ArrayList<>();
 									String[] results = hierarchyQuery.split(",");
-									
 									for(String result : results){
 										result = result.replaceAll("\"", "");
-										if(isHierarchyLeaf(result)){
-											hierarchy2Nodes.add(result);
-										} else {
-											hierarchy1Nodes.add(result);
-										}
-									}									
+											hierarchyNodes.add(result);
+										
+									}
 									
-									String hierarchy1PropReplaced = propName.replaceAll("[0-9]+", "1");
-									String hierarchy2PropReplaced = propName.replaceAll("[0-9]+", "2");
-									
-									String hierarchy1NodesString = hierarchy1Nodes.toString()
-											.replaceAll(", ", "\" OR @" + hierarchy1PropReplaced + ":\"").replaceAll(Pattern.quote("["), "\"")
+									String hierarchyNodesString = hierarchyNodes.toString()
+											.replaceAll(", ", "\" OR @" + propName + ":\"").replaceAll(Pattern.quote("["), "\"")
 											.replaceAll(Pattern.quote("]"), "\"");
+									StringBuilder hierarchiesQuery = new StringBuilder();
+									hierarchiesQuery.append("@");
+									hierarchiesQuery.append(propName);
+									hierarchiesQuery.append(":");
+									hierarchiesQuery.append(hierarchyNodesString);
 									
-									String hierarchy2NodesString = hierarchy2Nodes.toString()
-											.replaceAll(", ", "\" OR @" + hierarchy2PropReplaced + ":\"").replaceAll(Pattern.quote("["), "\"")
-											.replaceAll(Pattern.quote("]"), "\"");
-
-									StringBuilder hierarchy1Query = new StringBuilder();
-									hierarchy1Query.append("@");
-									hierarchy1Query.append(hierarchy1PropReplaced);
-									hierarchy1Query.append(":");
-									hierarchy1Query.append(hierarchy1NodesString);
-
-									StringBuilder hierarchy2Query = new StringBuilder();
-									hierarchy2Query.append("@");
-									hierarchy2Query.append(hierarchy2PropReplaced);
-									hierarchy2Query.append(":");
-									hierarchy2Query.append(hierarchy2NodesString);
-
-									StringBuilder hierarchyFTSQuery = new StringBuilder();
-									
-									if(!hierarchy1Nodes.isEmpty()){
-										hierarchyFTSQuery.append(hierarchy1Query);
-									}
-									
-									if(!hierarchy2Nodes.isEmpty() && !hierarchy1Nodes.isEmpty()){
-										hierarchyFTSQuery.append(" OR ");
-									}
-									
-									if(!hierarchy2Nodes.isEmpty()){
-										hierarchyFTSQuery.append(hierarchy2Query);
-									}
-									
-									queryBuilder.andFTSQuery(hierarchyFTSQuery.toString());
+									queryBuilder.andFTSQuery(hierarchiesQuery.toString());
 
 								}
 
@@ -364,17 +331,5 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 			}
 		}
 		return false;
-	}
-	
-	private boolean isHierarchyLeaf(String hierarchyName){
-//		boolean res = false;
-//		
-//		if(nodeService.getProperty(new NodeRef(hierarchyName), BeCPGModel.PROP_PARENT_LEVEL) != null){
-//		
-//			List<NodeRef> results = BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_LINKED_VALUE).andPropEquals(BeCPGModel.PROP_PARENT_LEVEL, hierarchyName).inDB().list();
-//			res = results.isEmpty();
-//		}
-		
-		return nodeService.getProperty(new NodeRef(hierarchyName), BeCPGModel.PROP_PARENT_LEVEL) != null;
 	}
 }
