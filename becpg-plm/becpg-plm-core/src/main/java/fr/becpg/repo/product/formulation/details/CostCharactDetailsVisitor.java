@@ -108,7 +108,7 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 				Double qty = (FormulationHelper.getQtyForCostByPackagingLevel(formulatedProduct, packagingListDataItem, nodeService)
 						/ FormulationHelper.getNetQtyForCost(formulatedProduct)) * subQuantity;
 
-				visitPart(formulatedProduct.getNodeRef(), packagingListDataItem.getProduct(), ret, qty, null, netQty, currLevel, unitProvider);
+				visitPart(formulatedProduct.getNodeRef(), packagingListDataItem.getProduct(), ret, qty, null, netQty, netQty , currLevel, unitProvider);
 
 				 if ((maxLevel < 0) || (currLevel < maxLevel)) {
 					 logger.debug("Finding one packaging with nr=" + packagingListDataItem.getProduct());
@@ -136,7 +136,7 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 						netQty = FormulationHelper.QTY_FOR_PIECE;
 					}
 
-					visitPart(formulatedProduct.getNodeRef(), processListDataItem.getResource(), ret, qty, null, netQty, currLevel, unitProvider);
+					visitPart(formulatedProduct.getNodeRef(), processListDataItem.getResource(), ret, qty, null, netQty, netQty , currLevel, unitProvider);
 
 					 if ((maxLevel < 0) || (currLevel < maxLevel)) {
 					
@@ -264,7 +264,7 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 						componentProduct, CostsCalculatingFormulationHandler.keepProductUnit)
 						/ FormulationHelper.getNetQtyForCost(productData)) * subQty;
 
-				visitPart(productData.getNodeRef(), compoListDataItem.getProduct(), ret, qty, qty, netQty, currLevel, unitProvider);
+				visitPart(productData.getNodeRef(), compoListDataItem.getProduct(), ret, qty, qty, netQty, netQty, currLevel, unitProvider);
 
 				if (((maxLevel < 0) || (currLevel < maxLevel))
 						&& !entityDictionaryService.isMultiLevelLeaf(nodeService.getType(compoListDataItem.getProduct()))) {
