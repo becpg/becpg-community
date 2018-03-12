@@ -58,9 +58,44 @@
                                                 <#if (args.workflowDueDate)??>Due:&nbsp;&nbsp;<b>${args.workflowDueDate?date?string.full}</b><br></#if>
                                              </p>
                                              
-                                            <p>Cliquez sur ce lien pour voir la tâche :</p>
-                                            <p><a href="${shareUrl}/page/task-details?taskId=${args.workflowId}">${shareUrl}/page/task-details?taskId=${args.workflowId}</a>
-                                             
+                                             <#if (args.workflowDocuments)??>
+                                                <table cellpadding="0" callspacing="0" border="0" bgcolor="#eeeeee" style="padding:10px; border: 1px solid #aaaaaa;">
+                                                   <#list args.workflowDocuments as doc>
+                                                      <tr>
+                                                         <td>
+                                                            <table cellpadding="0" cellspacing="0" border="0">
+                                                               <tr>
+                                                                  <td valign="top">
+                                                                     <img src="${shareUrl}/res/components/images/generic-file.png" alt="" width="64" height="64" border="0" style="padding-right: 10px;" />
+                                                                  </td>
+                                                                  <td>
+                                                                     <table cellpadding="2" cellspacing="0" border="0">
+                                                                        <tr>
+                                                                           <td><b>${doc.name}</b></td>
+                                                                        </tr>
+                                                                        <#if doc.hasAspect("bcpg:entityListsAspect")>
+                                                                          <tr>
+	                                                                           <td>Cliquez sur ce lien pour accéder à la réclamation :</td>
+	                                                                        </tr>
+	                                                                        <tr>
+	                                                                           <td>
+	                                                                              <a href="${shareUrl}/page/entity-data-lists?list=View-properties&nodeRef=${doc.nodeRef}">
+	                                                                              ${shareUrl}/page/entity-data-lists?list=View-properties&nodeRef=${doc.nodeRef}</a>
+	                                                                           </td>
+	                                                                        </tr>
+                                                                          </#if>
+                                                                     </table>
+                                                                  </td>
+                                                               </tr>
+                                                            </table>
+                                                         </td>
+                                                      </tr>
+                                                      <#if doc_has_next>
+                                                         <tr><td><div style="border-top: 1px solid #aaaaaa; margin:12px;"></div></td></tr>
+                                                      </#if>
+                                                   </#list>
+                                                </table>
+                                             </#if>
                                              
                                              <p>Cordialement,<br />
                                             beCPG</p>

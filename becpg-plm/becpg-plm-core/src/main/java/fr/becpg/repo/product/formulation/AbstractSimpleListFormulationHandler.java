@@ -173,7 +173,10 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 		boolean isGenericRawMaterial = formulatedProduct instanceof RawMaterialData;
 
-		Double netQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
+		
+		Double netWeight = FormulationHelper.getNetWeight(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
+		Double netQtyInLorKg = FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
+		
 
 		if (formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 
@@ -184,8 +187,8 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 				Double weight = FormulationHelper.getQtyInKg(compoItem);
 				Double vol = FormulationHelper.getNetVolume(compoItem, nodeService);
 
-				if ((weight != null) && !DeclarationType.Omit.equals(compoItem.getDeclType())) {
-					visitPart(compoItem.getProduct(), simpleListDataList, weight, vol, netQty, mandatoryCharacts, totalQtiesValue,
+				if (weight != null && !DeclarationType.Omit.equals(compoItem.getDeclType())  ) {
+					visitPart(compoItem.getProduct(), simpleListDataList, weight, vol, netQtyInLorKg, netWeight, mandatoryCharacts, totalQtiesValue,
 							isGenericRawMaterial);
 				}
 			}
@@ -195,7 +198,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 		// Case Generic MP
 		if (isGenericRawMaterial) {
-			formulateGenericRawMaterial(simpleListDataList, totalQtiesValue, netQty);
+			formulateGenericRawMaterial(simpleListDataList, totalQtiesValue, netQtyInLorKg);
 		}
 
 	}
@@ -231,12 +234,13 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 	/**
 	 * Visit part.
+	 * @param netVolume 
 	 *
 	 * @param valueCount
 	 *
 	 */
-	protected void visitPart(NodeRef componentNodeRef, List<T> simpleListDataList, Double weightUsed, Double volUsed, Double netQty,
-			Map<NodeRef, List<NodeRef>> mandatoryCharacts, Map<NodeRef, Double> totalQtiesValue, boolean isGenericRawMaterial)
+	protected void visitPart(NodeRef componentNodeRef, List<T> simpleListDataList, Double weightUsed, Double volUsed, Double netQtyInLorKg,
+			Double netWeight, Map<NodeRef, List<NodeRef>> mandatoryCharacts, Map<NodeRef, Double> totalQtiesValue, boolean isGenericRawMaterial)
 			throws FormulateException {
 
 		ProductData partProduct = (ProductData) alfrescoRepository.findOne(componentNodeRef);
@@ -257,9 +261,21 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 				simpleListDataList.forEach(newSimpleListDataItem -> {
 					if ((newSimpleListDataItem.getCharactNodeRef() != null) && isCharactFormulated(newSimpleListDataItem)) {
 
+						boolean formulateInVol =  FormulationHelper.isProductUnitLiter(partProduct.getUnit());
+						boolean forceWeight = false;
+						
+						if (newSimpleListDataItem instanceof PhysicoChemListDataItem) {
+							if(FormulationHelper.isCharactFormulatedFromVol(nodeService, newSimpleListDataItem)) {
+								formulateInVol  = true;
+							} else {
+								formulateInVol = false;
+								forceWeight = true;
+							}
+						}
+						
 						// calculate charact from qty or vol ?
-						Double qtyUsed = FormulationHelper.isCharactFormulatedFromVol(nodeService, newSimpleListDataItem)
-								|| FormulationHelper.isProductUnitLiter(partProduct.getUnit()) ? volUsed : weightUsed;
+						Double qtyUsed =  formulateInVol ? volUsed : weightUsed;
+						Double netQty =  forceWeight ? netWeight : netQtyInLorKg ; 
 
 						// look for charact in component
 						SimpleListDataItem slDataItem = componentSimpleListDataList.stream()
