@@ -27,7 +27,8 @@ function getOrCreateBeCPGMenu() {
           config : {
              label : "header.becpg.recents",
              entityNodeRef : page.url.args.nodeRef,
-             pageUri : page.url.uri
+             pageUri : page.url.uri,
+             list : page.url.args.list
           }
        }); 
       

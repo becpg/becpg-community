@@ -20,6 +20,7 @@ package fr.becpg.repo.web.scripts.dockbar;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -62,6 +63,10 @@ public class DockBarWebScript extends AbstractWebScript {
 	private final static Log logger = LogFactory.getLog(DockBarWebScript.class);
 
 	private static final String PARAM_ENTITY_NODEREF = "entityNodeRef";
+	
+	private static final String PARAM_ENTITY_LIST = "list";
+	
+	private static final String DELIMITER = "#";
 
 	private static final String PREF_DOCKBAR_HISTORY = "fr.becpg.DockBarHistory";
 
@@ -89,6 +94,7 @@ public class DockBarWebScript extends AbstractWebScript {
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
 
 		String entityNodeRef = req.getParameter(PARAM_ENTITY_NODEREF);
+		String entityList = req.getParameter(PARAM_ENTITY_LIST);
 
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
@@ -118,16 +124,20 @@ public class DockBarWebScript extends AbstractWebScript {
 			}
 
 			LinkedList<NodeRef> elements = new LinkedList<>();
-
+			Map<NodeRef, String> items = new HashMap<>();
+			
 			if (nodeRefs != null && nodeRefs.length() > 0) {
 				String[] splitted = nodeRefs.split(",");
 				
 				boolean isFirst = true;
 				
 				for (String field : splitted) {
-					NodeRef el = new NodeRef(field);
+					
+					NodeRef el = new NodeRef(field.split(DELIMITER)[0]);
 					if (!el.equals(productNodeRef)) {
 						elements.add(el);
+						items.put(el, field.contains(DELIMITER) ? field.split(DELIMITER)[1] : null  );
+						
 					} else if(isFirst && BrowserCacheHelper.isBrowserHasInCache(req)){
 						res.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
 						if (logger.isDebugEnabled()) {
@@ -152,16 +162,18 @@ public class DockBarWebScript extends AbstractWebScript {
 				if (serviceRegistry.getDictionaryService().isSubClass(type, BeCPGModel.TYPE_ENTITY_V2)
 						&& !serviceRegistry.getDictionaryService().isSubClass(type, BeCPGModel.TYPE_SYSTEM_ENTITY)) {
 					if (elements.size() > DOCKBAR_SIZE - 1) {
-						elements.remove(DOCKBAR_SIZE - 1);
+						NodeRef removedItem = elements.remove(DOCKBAR_SIZE - 1);
+						items.remove(removedItem);
 					}
 					elements.add(0, productNodeRef);
+					items.put(productNodeRef, entityList);
 
 					nodeRefs = "";
 					for (NodeRef nodeRef : elements) {
 						if (nodeRefs.length() > 0) {
 							nodeRefs += ",";
 						}
-						nodeRefs += nodeRef.toString();
+						nodeRefs += nodeRef.toString() + DELIMITER + items.get(nodeRef) ;
 					}
 
 					if (logger.isDebugEnabled()) {
@@ -181,7 +193,7 @@ public class DockBarWebScript extends AbstractWebScript {
 			cache.setLastModified(new Date());
 			res.setCache(cache);
 			
-			JSONObject ret = processResults(elements, WebscriptHelper.extractMetadataFields(req));
+			JSONObject ret = processResults(elements, WebscriptHelper.extractMetadataFields(req), items);
 			ret.put("page", 1);
 			ret.put("pageSize", DOCKBAR_SIZE);
 			ret.put("fullListSize", elements.size());
@@ -202,14 +214,16 @@ public class DockBarWebScript extends AbstractWebScript {
 
 	}
 
-	private JSONObject processResults(List<NodeRef> results, List<String> metadataFields) throws InvalidNodeRefException, JSONException {
+	private JSONObject processResults(List<NodeRef> results, List<String> metadataFields, Map<NodeRef, String> elements) throws InvalidNodeRefException, JSONException {
 
 		JSONArray items = new JSONArray();
 
 		for (NodeRef nodeRef : results) {
 			if (serviceRegistry.getNodeService().exists(nodeRef)
 					&& serviceRegistry.getPermissionService().hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED) {
-				items.put(new ContentDataExtractor(metadataFields, serviceRegistry, attributeExtractorService).extract(nodeRef));
+				Map<String, Object> item = new ContentDataExtractor(metadataFields, serviceRegistry, attributeExtractorService).extract(nodeRef);
+				item.put(PARAM_ENTITY_LIST, elements.get(nodeRef));
+				items.put(item);
 			}
 		}
 
@@ -218,5 +232,7 @@ public class DockBarWebScript extends AbstractWebScript {
 		return obj;
 
 	}
+	
+	 
 
 }
