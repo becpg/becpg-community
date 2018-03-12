@@ -26,6 +26,8 @@ define([ "dojo/_base/declare", "alfresco/core/CoreXhr", "dojo/_base/lang", "dojo
 
 		pageUri : "",
 		
+		list : null,
+		
 		/**
 		 * Extend the default postCreate function to setup handlers for adding
 		 * the 'Useful' group once all the other menu groups and items have been
@@ -39,7 +41,7 @@ define([ "dojo/_base/declare", "alfresco/core/CoreXhr", "dojo/_base/lang", "dojo
 
 			var nodeRef = this.entityNodeRef, url = Alfresco.constants.PROXY_URI + "becpg/dockbar";
 	        if (nodeRef !== null && nodeRef.length > 0) {
-	            url += "?entityNodeRef=" + nodeRef.replace(/\\/g,"");
+	            url += "?entityNodeRef=" + nodeRef.replace(/\\/g,"") + "&list="+this.list;
 	         } 
 	         
 			this.serviceXhr({
@@ -56,7 +58,6 @@ define([ "dojo/_base/declare", "alfresco/core/CoreXhr", "dojo/_base/lang", "dojo
 
 			// Add recent groups if there are some...
 			if (response.items && response.items.length > 0) {
-				
 
 				for (var i = 0; i < response.items.length; i++) {
 					var item = response.items[i];
@@ -66,13 +67,9 @@ define([ "dojo/_base/declare", "alfresco/core/CoreXhr", "dojo/_base/lang", "dojo
 						targetUrl = "entity-data-lists?nodeRef=" + item.nodeRef;
 						// TODO Should be split or better
 						// page.url.args.list
-						if (item.itemType == "bcpg:finishedProduct" || item.itemType == "bcpg:semiFinishedProduct") {
-							targetUrl += "&list=compoList";
-						} else if (item.itemType == "bcpg:packagingKit") {
-							targetUrl += "&list=packagingList";
-						} else if(item.itemType == "pjt:project"){
-	                         targetUrl += "&list=taskList";
-	                     } else {
+						if (item.list != null && item.list != "null") {
+							targetUrl += "&list="+item.list;
+						} else {
 	                         targetUrl += "&list=View-properties";
 	                     }
 
