@@ -47,7 +47,6 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 	@Autowired
 	private AttributeExtractorService attributeExtractorService;
 
-
 	@Autowired
 	private NamespaceService namespaceService;
 
@@ -96,10 +95,15 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 		int rownum = 0;
 		Row headerRow = sheet.getRow(rownum++);
 
-		if (headerRow.getCell(0)!=null && "TYPE".equals(headerRow.getCell(0).getStringCellValue())) {
+		if ((headerRow.getCell(0) != null) && "TYPE".equals(headerRow.getCell(0).getStringCellValue())) {
 			sheet.setColumnHidden(0, true);
 
 			QName itemType = QName.createQName(headerRow.getCell(1).getStringCellValue(), namespaceService);
+			
+			String parameter = null;
+			if(headerRow.getCell(2)!=null){
+				parameter = headerRow.getCell(2).getStringCellValue();
+			}
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("Sheet type : " + itemType.toPrefixString());
@@ -116,23 +120,28 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 			} else {
 				mainType = itemType;
 			}
-
+			
 			rownum++;
+			
+			while(sheet.getRow(rownum) != null && sheet.getRow(rownum).getCell(0) != null && "#".equals(sheet.getRow(rownum).getCell(0).getStringCellValue()) ) {
+				rownum++;
+			}
 
 			Map<NodeRef, Map<String, Object>> cache = new HashMap<>();
 
 			ExcelReportSearchPlugin plugin = null;
-			
-			for(ExcelReportSearchPlugin tmp : excelReportSearchPlugins){
-				if((tmp.isDefault() && plugin == null) || tmp.isApplicable(itemType)){
+
+			for (ExcelReportSearchPlugin tmp : excelReportSearchPlugins) {
+				if ((tmp.isDefault() && (plugin == null)) || tmp.isApplicable(itemType, parameter)) {
 					plugin = tmp;
-				} 
+				}
 			}
-			
-			if(plugin!=null){
-				plugin.fillSheet(sheet, searchResults, mainType, itemType, rownum, keyColumn, metadataFields, cache);
+
+			if (plugin != null) {
+				plugin.fillSheet(sheet, searchResults, mainType, itemType, rownum,parameter, keyColumn,
+						metadataFields, cache);
 			} else {
-				logger.error("No plugin found for : "+itemType.toString());
+				logger.error("No plugin found for : " + itemType.toString());
 			}
 
 		}
@@ -146,9 +155,9 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 		String currentNested = "";
 		for (int i = 1; i < headerRow.getLastCellNum(); i++) {
 			if (headerRow.getCell(i) != null) {
-				if(headerRow.getCell(i).getCellType() == Cell.CELL_TYPE_STRING){
+				if (headerRow.getCell(i).getCellType() == Cell.CELL_TYPE_STRING) {
 					String cellValue = headerRow.getCell(i).getStringCellValue();
-					if (cellValue != null && !cellValue.isEmpty() && !cellValue.startsWith("#")) {
+					if ((cellValue != null) && !cellValue.isEmpty() && !cellValue.startsWith("#")) {
 						if (cellValue.contains("_")) {
 							if (!currentNested.isEmpty() && currentNested.startsWith(cellValue.split("_")[0])) {
 								currentNested += "|" + cellValue.split("_")[1];
@@ -159,7 +168,7 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 								}
 								currentNested = cellValue.replace("_", "|");
 							}
-	
+
 						} else {
 							if (!currentNested.isEmpty()) {
 								logger.debug("Add nested field : " + currentNested);
@@ -180,9 +189,8 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 
 	@Override
 	public boolean isApplicable(NodeRef templateNodeRef, ReportFormat reportFormat) {
-		return ReportFormat.XLSX.equals(reportFormat)
-				&& ((String) nodeService.getProperty(templateNodeRef, ContentModel.PROP_NAME))
-						.endsWith(ReportTplService.PARAM_VALUE_XLSXREPORT_EXTENSION);
+		return ReportFormat.XLSX.equals(reportFormat) && ((String) nodeService.getProperty(templateNodeRef, ContentModel.PROP_NAME))
+				.endsWith(ReportTplService.PARAM_VALUE_XLSXREPORT_EXTENSION);
 	}
 
 }

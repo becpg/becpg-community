@@ -162,7 +162,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 					.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 				Double qty = FormulationHelper.getQtyForCostByPackagingLevel(formulatedProduct, packagingListDataItem, nodeService);
 
-				visitPart(packagingListDataItem.getProduct(), costList, qty, null, netQty, mandatoryCharacts2, null, false);
+				visitPart(packagingListDataItem.getProduct(), costList, qty, null, netQty, null, mandatoryCharacts2, null, false);
 			}
 
 			addReqCtrlList(formulatedProduct.getReqCtrlList(), mandatoryCharacts2, getRequirementDataType());
@@ -183,7 +183,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 						netQty = FormulationHelper.QTY_FOR_PIECE;
 					}
 
-					visitPart(processListDataItem.getResource(), costList, qty, null, netQty, mandatoryCharacts3, null, false);
+					visitPart(processListDataItem.getResource(), costList, qty, null, netQty, null, mandatoryCharacts3, null, false);
 				}
 			}
 
@@ -216,7 +216,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				
 				Double qty = FormulationHelper.getQtyForCost(compoListDataItem, parentLossRatio,componentProduct ,
 						keepProductUnit);
-				visitPart(compoListDataItem.getProduct(), costList, qty, qty, netQty, mandatoryCharacts, totalQtiesValue,
+				visitPart(compoListDataItem.getProduct(), costList, qty, qty, netQty, netQty, mandatoryCharacts, totalQtiesValue,
 						formulatedProduct instanceof RawMaterialData);
 			}
 		}
