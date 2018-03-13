@@ -96,7 +96,7 @@
 
 
 <#function isHiddenField field>
-	<#return field.transitory == true && !field.dataType?? >
+	<#return field.transitory?? && field.transitory == true && !field.dataType?? >
 </#function>
 
 
