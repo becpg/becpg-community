@@ -135,6 +135,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		List<AttributeExtractorStructure> childrens;
 		QName fieldQname;
 		QName itemType;
+		String formula = null;
 
 		public AttributeExtractorStructure(String fieldName, QName fieldQname, List<String> dLFields, boolean isEntityField, QName itemType) {
 			this.fieldName = fieldName;
@@ -159,6 +160,12 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			this.itemType = itemType;
 			this.childrens = readExtractStructure(fieldQname, dLFields);
 		}
+		
+		public AttributeExtractorStructure(String fieldName, String formula) {
+			this.fieldName = fieldName;
+			this.formula = formula;
+		}
+		
 
 		public String getFieldName() {
 			return fieldName;
@@ -166,6 +173,10 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 		public boolean isEntityField() {
 			return isEntityField;
+		}
+		
+		public boolean isFormulaField() {
+			return formula!=null && !formula.isEmpty();
 		}
 
 		public boolean isDataListItems() {
@@ -190,6 +201,10 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 		public QName getItemType() {
 			return itemType;
+		}
+		
+		public String getFormula() {
+			return formula;
 		}
 
 		@Override
@@ -466,6 +481,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	public List<AttributeExtractorStructure> readExtractStructure(QName itemType, List<String> metadataFields) {
 		List<AttributeExtractorStructure> ret = new LinkedList<>();
 
+		int formulaCount = 0;
 		for (String field : metadataFields) {
 
 			if (field.contains("|")) {
@@ -485,7 +501,11 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 						}
 					}
 
+				} else if("formula".equals(dlField)) {
+					field = tokeniser.nextToken();
+					ret.add(new AttributeExtractorStructure("formula_"+(formulaCount++),field));	
 				} else {
+				
 
 					QName fieldQname = QName.createQName(dlField, namespaceService);
 
@@ -566,7 +586,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 						ret.put(field.getFieldName(), callback.extractNestedField(nodeRef, field));
 					}
 				}
-			} else {
+			} else if(!field.isFormulaField()) {
 				ret.put(field.getFieldName(), extractNodeData(nodeRef, properties, getFieldDef(itemType, field), mode, order++));
 			}
 

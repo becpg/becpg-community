@@ -99,10 +99,14 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 			sheet.setColumnHidden(0, true);
 
 			QName itemType = QName.createQName(headerRow.getCell(1).getStringCellValue(), namespaceService);
-			
-			String parameter = null;
-			if(headerRow.getCell(2)!=null){
-				parameter = headerRow.getCell(2).getStringCellValue();
+
+			List<String> parameters = new LinkedList<>();
+			if (headerRow.getCell(2) != null) {
+				parameters.add(headerRow.getCell(2).getStringCellValue());
+			}
+
+			if (headerRow.getCell(3) != null) {
+				parameters.add(headerRow.getCell(3).getStringCellValue());
 			}
 
 			if (logger.isDebugEnabled()) {
@@ -120,10 +124,11 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 			} else {
 				mainType = itemType;
 			}
-			
+
 			rownum++;
-			
-			while(sheet.getRow(rownum) != null && sheet.getRow(rownum).getCell(0) != null && "#".equals(sheet.getRow(rownum).getCell(0).getStringCellValue()) ) {
+
+			while ((sheet.getRow(rownum) != null) && (sheet.getRow(rownum).getCell(0) != null)
+					&& "#".equals(sheet.getRow(rownum).getCell(0).getStringCellValue())) {
 				rownum++;
 			}
 
@@ -132,14 +137,13 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 			ExcelReportSearchPlugin plugin = null;
 
 			for (ExcelReportSearchPlugin tmp : excelReportSearchPlugins) {
-				if ((tmp.isDefault() && (plugin == null)) || tmp.isApplicable(itemType, parameter)) {
+				if ((tmp.isDefault() && (plugin == null)) || tmp.isApplicable(itemType, parameters.toArray(new String[parameters.size()]))) {
 					plugin = tmp;
 				}
 			}
 
 			if (plugin != null) {
-				plugin.fillSheet(sheet, searchResults, mainType, itemType, rownum,parameter, keyColumn,
-						metadataFields, cache);
+				plugin.fillSheet(sheet, searchResults, mainType, itemType, rownum, parameters.toArray(new String[parameters.size()]), keyColumn, metadataFields, cache);
 			} else {
 				logger.error("No plugin found for : " + itemType.toString());
 			}
@@ -158,7 +162,7 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 				if (headerRow.getCell(i).getCellType() == Cell.CELL_TYPE_STRING) {
 					String cellValue = headerRow.getCell(i).getStringCellValue();
 					if ((cellValue != null) && !cellValue.isEmpty() && !cellValue.startsWith("#")) {
-						if (cellValue.contains("_")) {
+						if (cellValue.contains("_") && !cellValue.contains("formula")) {
 							if (!currentNested.isEmpty() && currentNested.startsWith(cellValue.split("_")[0])) {
 								currentNested += "|" + cellValue.split("_")[1];
 							} else {
@@ -170,7 +174,7 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 							}
 
 						} else {
-							if (!currentNested.isEmpty()) {
+							if (!currentNested.isEmpty() && !cellValue.contains("formula")) {
 								logger.debug("Add nested field : " + currentNested);
 								metadataFields.add(currentNested);
 								currentNested = "";
@@ -183,7 +187,6 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 			}
 
 		}
-
 		return attributeExtractorService.readExtractStructure(itemType, metadataFields);
 	}
 
