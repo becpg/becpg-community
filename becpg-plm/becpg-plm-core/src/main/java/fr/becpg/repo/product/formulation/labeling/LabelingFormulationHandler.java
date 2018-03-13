@@ -1134,6 +1134,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 								}
 							}
 							if (shouldOmit) {
+								if (logger.isDebugEnabled()) {
+									logger.debug("Only omitted ingredients, omit the raw material");
+								}
 								declarationType = DeclarationType.Omit;
 							}
 
@@ -1207,6 +1210,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						}
 
 					}
+
+				}
+				if (!DeclarationType.Omit.equals(declarationType)) {
 
 					if (!DeclarationType.DoNotDetails.equals(declarationType) && !DeclarationType.DoNotDeclare.equals(declarationType)) {
 
@@ -1291,7 +1297,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							parent.setVolumeTotal(parent.getVolumeTotal() + applyYield(volume, yield, labelingFormulaContext));
 						}
 					}
-
 				}
 			}
 		}
