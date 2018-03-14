@@ -81,6 +81,7 @@ public class ImportContext {
 
 	public void setParentNodeRef(NodeRef parentNodeRef) {
 		this.parentNodeRef = parentNodeRef;
+		this.cacheNodes.clear();
 	}
 
 	
@@ -90,6 +91,7 @@ public class ImportContext {
 
 	public void setListType(QName listType) {
 		this.listType = listType;
+		this.cacheNodes.clear();
 	}
 	
 
@@ -99,6 +101,7 @@ public class ImportContext {
 
 	public void setType(QName type) {
 		this.type = type;
+		this.cacheNodes.clear();
 	}
 
 	public QName getEntityType() {
@@ -107,6 +110,7 @@ public class ImportContext {
 
 	public void setEntityType(QName entityType) {
 		this.entityType = entityType;
+		this.cacheNodes.clear();
 	}
 
 
