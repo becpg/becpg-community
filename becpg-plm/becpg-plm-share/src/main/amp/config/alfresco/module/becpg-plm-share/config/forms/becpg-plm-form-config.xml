@@ -3247,7 +3247,7 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:entityTplRef" set="mainInfo">
+					<field id="bcpg:entityTplRef">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:rawMaterial?classNames=bcpg:entityTplAspect

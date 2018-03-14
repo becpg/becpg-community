@@ -131,11 +131,6 @@ public class HttpEntityProviderCallback implements EntityProviderCallBack {
 
 		HttpClientContext httpContext = HttpClientContext.create();
 
-		 SSLContextBuilder sslcb = new SSLContextBuilder();
-		 sslcb.loadTrustMaterial(KeyStore.getInstance(KeyStore.getDefaultType()),
-		 new TrustSelfSignedStrategy());
-		 cb.setSslcontext(sslcb.build());
-
 		HttpClient httpClient = cb.build();
 
 		entityUrl.addHeader("Accept-Language", I18NUtil.getLocale().getLanguage());
