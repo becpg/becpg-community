@@ -1101,7 +1101,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 		// nodeColumnKeys
 		if ((classMapping != null) && !classMapping.getNodeColumnKeys().isEmpty()) {
-
+			
 			for (QName attribute : classMapping.getNodeColumnKeys()) {
 
 				if (logger.isDebugEnabled()) {
@@ -1145,10 +1145,11 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 						queryBuilder.andPropEquals(attribute, value);
 					}
 					doQuery = true;
-				} else {
+				} else if(doQuery == false){
 					logger.warn("Value of NodeColumnKey " + attribute + " is null (or it is not a property).");
 				}
 			}
+			
 		} else {
 			logger.debug("nodeColumnKeys is empty type: " + type);
 
@@ -1178,8 +1179,12 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 					return new NodeRef(name.toString());
 				} else {
 					queryBuilder.andPropEquals(propName, name);
+					//#3433 by default look by path or provide mapping
+					if( ContentModel.PROP_NAME.equals(propName) && !(propDef!=null && BeCPGModel.PROP_PARENT_LEVEL.equals(propDef.getName()))) {
+						queryBuilder.parent(importContext.getParentNodeRef());
+					}
 					doQuery = true;
-				}
+				} 
 			} else if ((properties.get(ContentModel.PROP_NAME) != null) && NodeRef.isNodeRef(properties.get(ContentModel.PROP_NAME).toString())) {
 				return new NodeRef(properties.get(ContentModel.PROP_NAME).toString());
 			}
@@ -1193,21 +1198,14 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			logger.debug("findNodeByKeyOrCode: " + queryBuilder.toString());
 
 			//#3433
-			if (dictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM) && propDef!=null && BeCPGModel.PROP_PARENT_LEVEL.equals(propDef.getName())) {
-				for (NodeRef tmpNodeRef : queryBuilder.inDB().ftsLanguage().list()) {
-					if (nodeService.getPrimaryParent(tmpNodeRef).getParentRef().equals(importContext.getParentNodeRef())
-							&& !nodeService.hasAspect(tmpNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)
-							&& !nodeService.hasAspect(tmpNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)) {
-						return tmpNodeRef;
-					}
-				}
-			} else {
-				// TODO #ALF-21197 excludeDefault instead
-				for (NodeRef tmpNodeRef : queryBuilder.inDB().ftsLanguage().list()) {
-					if (!nodeService.hasAspect(tmpNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)
-							&& !nodeService.hasAspect(tmpNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)) {
-						return tmpNodeRef;
-					}
+			if(dictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM) && propDef!=null && BeCPGModel.PROP_PARENT_LEVEL.equals(propDef.getName())) {
+				queryBuilder.parent(importContext.getParentNodeRef());
+			}
+			
+			for (NodeRef tmpNodeRef : queryBuilder.inDB().ftsLanguage().list()) {
+				if (!nodeService.hasAspect(tmpNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)
+						&& !nodeService.hasAspect(tmpNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)) {
+					return tmpNodeRef;
 				}
 			}
 
@@ -1316,6 +1314,8 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		QName targetClass = propDef.getDataType().getName();
 		if ((attributeMapping instanceof AttributeMapping) && (((AttributeMapping) attributeMapping).getTargetClass() != null)) {
 			targetClass = ((AttributeMapping) attributeMapping).getTargetClass();
+		} else if( propDef!=null && BeCPGModel.PROP_PARENT_LEVEL.equals(propDef.getName()) ) {
+			targetClass = importContext.getType();
 		}
 		return findTargetNodeByValue(importContext, propDef, targetClass, value);
 

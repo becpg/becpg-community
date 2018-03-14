@@ -821,6 +821,11 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			int i = 0;
 
+			List<NodeRef> resources = new ArrayList<>();
+			for (String element : productReportResource) {
+				resources.add(reportTplService.createTplRessource(productReportTplsNodeRef, element, true));
+			}
+			
 			for (QName productType : productTypes) {
 
 				ClassDefinition classDef = dictionaryService.getClass(productType);
@@ -834,26 +839,27 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 						NodeRef template = reportTplService.createTplRptDesign(folderNodeRef, defaultReportName[i], defaultReport[i],
 								ReportType.Document, ReportFormat.PDF, productType, true, true, false);
 
-						List<NodeRef> resources = new ArrayList<>();
-						if (defaultReportName[i].equals(productReportSupplierName) || defaultReportName[i].equals(productReportClientName)) {
-							for (String element : productReportResource) {
-								resources.add(reportTplService.createTplRessource(productReportTplsNodeRef, element, true));
-							}
-						}
-
 						if (!resources.isEmpty()) {
 							for (NodeRef resource : resources) {
 								logger.debug("Associating resource: " + resource + " to template: " + template);
 								nodeService.createAssociation(template, resource, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES);
 							}
-							nodeService.setProperty(template, ReportModel.PROP_REPORT_LOCALES, (Serializable) Arrays.asList("fr", "en"));
+							nodeService.setProperty(template, ReportModel.PROP_REPORT_LOCALES, (Serializable) Arrays.asList("fr","en","es","en_US","it","nl"));
 						}
 
 					}
 
 					if ((otherReport[i] != null) && (otherReportName[i] != null)) {
-						reportTplService.createTplRptDesign(folderNodeRef, otherReportName[i], otherReport[i], ReportType.Document, ReportFormat.PDF,
+						NodeRef template = reportTplService.createTplRptDesign(folderNodeRef, otherReportName[i], otherReport[i], ReportType.Document, ReportFormat.PDF,
 								productType, true, false, false);
+						if (!resources.isEmpty()) {
+							for (NodeRef resource : resources) {
+								logger.debug("Associating resource: " + resource + " to template: " + template);
+								nodeService.createAssociation(template, resource, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES);
+							}
+						}
+						
+						
 					}
 				}
 
