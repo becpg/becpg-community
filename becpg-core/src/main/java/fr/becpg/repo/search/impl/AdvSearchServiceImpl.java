@@ -198,16 +198,23 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 									String[] results = hierarchyQuery.split(",");
 									for(String result : results){
 										result = result.replaceAll("\"", "");
-											hierarchyNodes.add(result);
-										
+											hierarchyNodes.add(result);	
+									}
+									
+									String hierarchyPropName = propName;
+									if(!hierarchyNodes.isEmpty()) {
+										Integer depthLevel = getHierarchyLevel(new NodeRef(hierarchyNodes.get(0)));
+										if(depthLevel!=null && !hierarchyPropName.contains(depthLevel.toString())) {
+											hierarchyPropName = hierarchyPropName.replaceAll("[0-9]",depthLevel.toString() );
+										}
 									}
 									
 									String hierarchyNodesString = hierarchyNodes.toString()
-											.replaceAll(", ", "\" OR @" + propName + ":\"").replaceAll(Pattern.quote("["), "\"")
+											.replaceAll(", ", "\" OR @" + hierarchyPropName + ":\"").replaceAll(Pattern.quote("["), "\"")
 											.replaceAll(Pattern.quote("]"), "\"");
 									StringBuilder hierarchiesQuery = new StringBuilder();
 									hierarchiesQuery.append("@");
-									hierarchiesQuery.append(propName);
+									hierarchiesQuery.append(hierarchyPropName);
 									hierarchiesQuery.append(":");
 									hierarchiesQuery.append(hierarchyNodesString);
 									
@@ -318,6 +325,11 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		}
 		return ret;
 	}
+	
+    private Integer  getHierarchyLevel(NodeRef hierarchyNodeRef){
+	  return (Integer) nodeService.getProperty(hierarchyNodeRef, BeCPGModel.PROP_DEPTH_LEVEL);
+	}
+	
 
 	private boolean isAssocSearch(Map<String, String> criteria) {
 		if (criteria != null) {
