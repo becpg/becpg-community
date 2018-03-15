@@ -422,7 +422,7 @@
 			</mandatory-aspects>
 		</type>
 		
-		<!-- Deprecated To remove after 2.2.2 -->
+		<!-- Deprecated To remove after 2.2.3 -->
 		<type name="qa:workLog">
 			<parent>qa:qualityListItem</parent>
 			<properties>
