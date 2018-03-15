@@ -115,7 +115,7 @@ public class ECOServiceImpl implements ECOService {
 
 	@Autowired
 	private TransactionService transactionService;
-	
+
 	@Autowired
 	private CommentService commentService;
 
@@ -194,10 +194,10 @@ public class ECOServiceImpl implements ECOService {
 				} else if (hasError) {
 					ecoData.setEcoState(ECOState.InError);
 					StringBuilder comments = new StringBuilder();
-					for(String error : errors) {
-						comments.append(error+"</br>");
+					for (String error : errors) {
+						comments.append(error + "</br>");
 					}
-					
+
 					commentService.createComment(ecoData.getNodeRef(), "", comments.toString(), false);
 				} else {
 					if (!isFuture(ecoData)) {
@@ -471,10 +471,10 @@ public class ECOServiceImpl implements ECOService {
 							try (PrintWriter printer = new PrintWriter(buffer)) {
 								e.printStackTrace(printer);
 							}
-							errors.add("StackTrace : "+buffer.toString());
-						} catch (IOException e1) { 
+							errors.add("StackTrace : " + buffer.toString());
+						} catch (IOException e1) {
 							// Nothing can be done here
-							
+
 						}
 
 						if (logger.isDebugEnabled()) {
