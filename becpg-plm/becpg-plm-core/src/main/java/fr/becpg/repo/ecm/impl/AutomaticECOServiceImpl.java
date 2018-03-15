@@ -285,10 +285,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 
 	private boolean reformulateChangedEntities() {
 		Calendar cal = Calendar.getInstance();
-		cal.set(Calendar.HOUR_OF_DAY, 0);
-		cal.set(Calendar.MINUTE, 0);
-		cal.set(Calendar.SECOND, 0);
-		cal.set(Calendar.MILLISECOND, 0);
+		cal.add(Calendar.DATE, -1);
 		Boolean ret = true;
 
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
