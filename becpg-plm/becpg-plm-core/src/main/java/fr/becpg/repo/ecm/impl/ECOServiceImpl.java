@@ -17,7 +17,10 @@
  ******************************************************************************/
 package fr.becpg.repo.ecm.impl;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -31,6 +34,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.forum.CommentService;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
@@ -111,6 +115,9 @@ public class ECOServiceImpl implements ECOService {
 
 	@Autowired
 	private TransactionService transactionService;
+	
+	@Autowired
+	private CommentService commentService;
 
 	@Autowired
 	private ProductService productService;
@@ -175,7 +182,9 @@ public class ECOServiceImpl implements ECOService {
 					logger.trace("WUsedList to impact :" + composite.toString());
 				}
 
-				boolean hasError = !visitChildrens(composite, ecoData, ECOState.Simulated.equals(state));
+				Set<String> errors = new HashSet<>();
+
+				boolean hasError = !visitChildrens(composite, ecoData, ECOState.Simulated.equals(state), errors);
 
 				if (ECOState.Simulated.equals(state)) {
 					for (ChangeUnitDataItem cul2 : ecoData.getChangeUnitList()) {
@@ -184,6 +193,12 @@ public class ECOServiceImpl implements ECOService {
 					ecoData.setEcoState(state);
 				} else if (hasError) {
 					ecoData.setEcoState(ECOState.InError);
+					StringBuilder comments = new StringBuilder();
+					for(String error : errors) {
+						comments.append(error+"</br>");
+					}
+					
+					commentService.createComment(ecoData.getNodeRef(), "", comments.toString(), false);
 				} else {
 					if (!isFuture(ecoData)) {
 						ecoData.setEffectiveDate(new Date());
@@ -353,7 +368,8 @@ public class ECOServiceImpl implements ECOService {
 
 	}
 
-	private boolean visitChildrens(Composite<WUsedListDataItem> composite, final ChangeOrderData ecoData, final boolean isSimulation) {
+	private boolean visitChildrens(Composite<WUsedListDataItem> composite, final ChangeOrderData ecoData, final boolean isSimulation,
+			Set<String> errors) {
 
 		for (final Composite<WUsedListDataItem> component : composite.getChildren()) {
 
@@ -448,9 +464,22 @@ public class ECOServiceImpl implements ECOService {
 
 						changeUnitDataItem.setTreated(false);
 						changeUnitDataItem.setErrorMsg(e.getMessage());
-						logger.warn(e, e);
-						// Todo log better error
-						logger.error("Error applying for " + nodeService.getProperty(changeUnitDataItem.getSourceItem(), ContentModel.PROP_NAME), e);
+						errors.add("Change unit in Error: " + changeUnitDataItem.getNodeRef());
+						errors.add("Error message: " + e.getMessage());
+
+						try (StringWriter buffer = new StringWriter()) {
+							try (PrintWriter printer = new PrintWriter(buffer)) {
+								e.printStackTrace(printer);
+							}
+							errors.add("StackTrace : "+buffer.toString());
+						} catch (IOException e1) { 
+							// Nothing can be done here
+							
+						}
+
+						if (logger.isDebugEnabled()) {
+							logger.debug("Error applying for: " + changeUnitDataItem.toString(), e);
+						}
 
 						return false;
 					}
@@ -460,7 +489,7 @@ public class ECOServiceImpl implements ECOService {
 			}
 
 			if (!component.isLeaf()) {
-				if (!visitChildrens(component, ecoData, isSimulation)) {
+				if (!visitChildrens(component, ecoData, isSimulation, errors)) {
 					return false;
 				}
 			}
