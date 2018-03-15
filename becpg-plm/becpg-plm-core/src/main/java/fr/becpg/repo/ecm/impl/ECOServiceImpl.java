@@ -17,7 +17,10 @@
  ******************************************************************************/
 package fr.becpg.repo.ecm.impl;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -29,6 +32,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.forum.CommentService;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
@@ -42,6 +46,7 @@ import org.alfresco.service.transaction.TransactionService;
 import org.alfresco.util.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.mozilla.javascript.ast.Comment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.extensions.surf.util.I18NUtil;
@@ -93,24 +98,26 @@ public class ECOServiceImpl implements ECOService {
 
 	@Autowired
 	private WUsedListService wUsedListService;
-	
+
 	@Autowired
 	private EntityVersionService entityVersionService;
 
 	@Autowired
 	private NodeService nodeService;
-	
+
 	@Autowired
 	private TransactionService transactionService;
+	
+	@Autowired
+	private CommentService commentService;
 
 	@Autowired
 	private ProductService productService;
 	@Autowired
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
-	
+
 	@Autowired
 	private SecurityService securityService;
-
 
 	@Override
 	public boolean doSimulation(NodeRef ecoNodeRef) {
@@ -119,7 +126,7 @@ public class ECOServiceImpl implements ECOService {
 
 	@Override
 	public boolean apply(NodeRef ecoNodeRef) {
-		if(securityService.isCurrentUserAllowed(ECMGroup.ApplyChangeOrder.toString())){
+		if (securityService.isCurrentUserAllowed(ECMGroup.ApplyChangeOrder.toString())) {
 			return doRun(ecoNodeRef, ECOState.Applied);
 		} else {
 			throw new BeCPGAccessDeniedException(ECMGroup.ApplyChangeOrder.toString());
@@ -127,7 +134,7 @@ public class ECOServiceImpl implements ECOService {
 	}
 
 	private boolean doRun(NodeRef ecoNodeRef, final ECOState state) {
-		
+
 		final ChangeOrderData ecoData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
 
 		// Do not run if already applied
@@ -167,7 +174,9 @@ public class ECOServiceImpl implements ECOService {
 					logger.trace("WUsedList to impact :" + composite.toString());
 				}
 
-				boolean hasError = !visitChildrens(composite, ecoData, ECOState.Simulated.equals(state));
+				Set<String> errors = new HashSet<>();
+
+				boolean hasError = !visitChildrens(composite, ecoData, ECOState.Simulated.equals(state), errors);
 
 				if (ECOState.Simulated.equals(state)) {
 					for (ChangeUnitDataItem cul2 : ecoData.getChangeUnitList()) {
@@ -176,6 +185,12 @@ public class ECOServiceImpl implements ECOService {
 					ecoData.setEcoState(state);
 				} else if (hasError) {
 					ecoData.setEcoState(ECOState.InError);
+					StringBuilder comments = new StringBuilder();
+					for(String error : errors) {
+						comments.append(error+"</br>");
+					}
+					
+					commentService.createComment(ecoData.getNodeRef(), "", comments.toString(), false);
 				} else {
 					ecoData.setEffectiveDate(new Date());
 					ecoData.setEcoState(ECOState.Applied);
@@ -188,17 +203,15 @@ public class ECOServiceImpl implements ECOService {
 					logger.warn("Impact Where Used [" + state.toString() + "] executed in  " + watch.getTotalTimeSeconds() + " seconds");
 				}
 			}, ECOState.Simulated.equals(state), true);
-			
-			
 
 			alfrescoRepository.save(ecoData);
-			
-			if(state!=null && state.equals(ecoData.getEcoState())){
+
+			if ((state != null) && state.equals(ecoData.getEcoState())) {
 				return true;
 			}
 
 		}
-		
+
 		return false;
 
 	}
@@ -352,7 +365,8 @@ public class ECOServiceImpl implements ECOService {
 
 	}
 
-	private boolean visitChildrens(Composite<WUsedListDataItem> composite, final ChangeOrderData ecoData, final boolean isSimulation) {
+	private boolean visitChildrens(Composite<WUsedListDataItem> composite, final ChangeOrderData ecoData, final boolean isSimulation,
+			Set<String> errors) {
 
 		for (final Composite<WUsedListDataItem> component : composite.getChildren()) {
 
@@ -421,8 +435,8 @@ public class ECOServiceImpl implements ECOService {
 
 						changeUnitDataItem.setTreated(Boolean.TRUE);
 						changeUnitDataItem.setErrorMsg(null);
-						
-						//Store current state of ecoData
+
+						// Store current state of ecoData
 						alfrescoRepository.save(ecoData);
 
 						if (!isSimulation) {
@@ -447,9 +461,23 @@ public class ECOServiceImpl implements ECOService {
 
 						changeUnitDataItem.setTreated(false);
 						changeUnitDataItem.setErrorMsg(e.getMessage());
-						logger.warn(e, e);
-						// Todo log better error
-						logger.error("Error applying for " + nodeService.getProperty(changeUnitDataItem.getSourceItem(), ContentModel.PROP_NAME), e);
+
+						errors.add("Change unit in Error: " + changeUnitDataItem.getNodeRef());
+						errors.add("Error message: " + e.getMessage());
+
+						try (StringWriter buffer = new StringWriter()) {
+							try (PrintWriter printer = new PrintWriter(buffer)) {
+								e.printStackTrace(printer);
+							}
+							errors.add("StackTrace : "+buffer.toString());
+						} catch (IOException e1) { 
+							// Nothing can be done here
+							
+						}
+
+						if (logger.isDebugEnabled()) {
+							logger.debug("Error applying for: " + changeUnitDataItem.toString(), e);
+						}
 
 						return false;
 					}
@@ -459,7 +487,7 @@ public class ECOServiceImpl implements ECOService {
 			}
 
 			if (!component.isLeaf()) {
-				if (!visitChildrens(component, ecoData, isSimulation)) {
+				if (!visitChildrens(component, ecoData, isSimulation, errors)) {
 					return false;
 				}
 			}
@@ -560,12 +588,12 @@ public class ECOServiceImpl implements ECOService {
 							}
 							if (ChangeOrderType.Merge.equals(ecoData.getEcoType())) {
 								if (replacementListDataItem.getSourceItems() != null) {
-									targetItems.add(new Pair<NodeRef, Integer>(replacementListDataItem.getSourceItems().get(0),
+									targetItems.add(new Pair<>(replacementListDataItem.getSourceItems().get(0),
 											replacementListDataItem.getQtyPerc()));
 								}
 							} else {
 								if (replacementListDataItem.getTargetItem() != null) {
-									targetItems.add(new Pair<NodeRef, Integer>(replacementListDataItem.getTargetItem(),
+									targetItems.add(new Pair<>(replacementListDataItem.getTargetItem(),
 											replacementListDataItem.getQtyPerc()));
 								} else {
 									toDelete.addAll(items.stream().filter(c -> sourceItem.equals(c.getComponent())).collect(Collectors.toSet()));
@@ -617,17 +645,17 @@ public class ECOServiceImpl implements ECOService {
 		component.setComponent(target);
 		if (component instanceof CompoListDataItem) {
 			if ((((CompoListDataItem) component).getQtySubFormula() != null) && (qtyPerc != null)) {
-				
+
 				Double newQty = (qtyPerc / 100d) * ((CompoListDataItem) component).getQtySubFormula();
-				
+
 				((CompoListDataItem) component).setQtySubFormula(newQty);
 			}
 		} else {
 
 			if ((component.getQty() != null) && (qtyPerc != null)) {
-				
+
 				Double newQty = (qtyPerc / 100d) * component.getQty();
-				
+
 				component.setQty(newQty);
 			}
 		}
