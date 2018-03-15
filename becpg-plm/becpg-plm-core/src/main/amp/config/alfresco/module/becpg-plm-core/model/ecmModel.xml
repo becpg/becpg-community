@@ -198,7 +198,6 @@
 				<property name="ecm:culRevision">
 					<type>d:text</type>
 					<multiple>false</multiple>
-					<index enabled="false"/>
 					<constraints>
 						<constraint ref="ecm:revisionTypes" />
 					</constraints>
@@ -206,7 +205,6 @@
 				<property name="ecm:culReqType">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
 					<constraints>
 						<constraint ref="bcpg:reqTypes" />
 					</constraints>					
@@ -221,8 +219,7 @@
 				</property>
 				<property name="ecm:culTreated">
 					<type>d:boolean</type>
-					<default>false</default>				
-					<index enabled="false"/>	
+					<default>false</default>		
 				</property>	
 			</properties>		
 			<associations>
