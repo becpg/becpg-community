@@ -5,19 +5,22 @@
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/properties/local"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
-        <dependent-module archiveName="becpg-core-2.2.2.amp" deploy-path="/WEB-INF/lib" handle="module:/resource/becpg-core/becpg-core">
+        <dependent-module archiveName="becpg-core-2.2.3.amp" deploy-path="/WEB-INF/lib" handle="module:/resource/becpg-core/becpg-core">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="becpg-designer-core-2.2.2.amp" deploy-path="/WEB-INF/lib" handle="module:/resource/becpg-designer-core/becpg-designer-core">
+        <dependent-module archiveName="becpg-designer-core-2.2.3.amp" deploy-path="/WEB-INF/lib" handle="module:/resource/becpg-designer-core/becpg-designer-core">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="becpg-plm-core-2.2.2.amp" deploy-path="/WEB-INF/lib" handle="module:/resource/becpg-plm-core/becpg-plm-core">
+        <dependent-module archiveName="becpg-project-core-2.2.3.amp" deploy-path="/WEB-INF/lib" handle="module:/resource/becpg-project-core/becpg-project-core">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="becpg-plm-core-2.2.3.amp" deploy-path="/WEB-INF/lib" handle="module:/resource/becpg-plm-core/becpg-plm-core">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module deploy-path="/" handle="module:/overlay/prj/becpg-plm-core?includes=**/**&amp;excludes=META-INF/MANIFEST.MF">
             <dependency-type>consumes</dependency-type>
         </dependent-module>
-        <dependent-module deploy-path="/" handle="module:/overlay/var/M2_REPO/fr/becpg/becpg-project-core/2.2.2/becpg-project-core-2.2.2.amp?unpackFolder=target/m2e-wtp/overlays&amp;includes=**/**&amp;excludes=META-INF/MANIFEST.MF">
+        <dependent-module deploy-path="/" handle="module:/overlay/prj/becpg-project-core?includes=**/**&amp;excludes=META-INF/MANIFEST.MF">
             <dependency-type>consumes</dependency-type>
         </dependent-module>
         <dependent-module deploy-path="/" handle="module:/overlay/prj/becpg-designer-core?includes=**/**&amp;excludes=META-INF/MANIFEST.MF">

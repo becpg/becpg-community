@@ -98,7 +98,7 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 	    	visitWF(folderNodeRef, folderPath);	    	
 	    }
 	    
-	    visitPermissions(folderNodeRef, folderName);
+	    visitPermissions(folderNodeRef, folderPath);
 	    visitFiles(folderNodeRef, folderPath);
 	    vivitFolderAspects(folderNodeRef, folderPath);
 	    

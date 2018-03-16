@@ -87,7 +87,7 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 		NodeRef documentLibraryNodeRef = null;
 		if (siteInfo == null) {
 			siteInfo = siteService.createSite(SUPPLIER_SITE_PRESET, SUPPLIER_SITE_ID, I18NUtil.getMessage("plm.supplier.portal.site.title"), "",
-					SiteVisibility.PUBLIC);
+					SiteVisibility.PRIVATE);
 
 			siteService.setMembership(siteInfo.getShortName(), PermissionService.GROUP_PREFIX + PLMGroup.ReferencingMgr.toString(),
 					SiteModel.SITE_MANAGER);

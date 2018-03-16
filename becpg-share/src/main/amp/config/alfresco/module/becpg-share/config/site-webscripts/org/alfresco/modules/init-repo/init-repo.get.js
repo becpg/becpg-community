@@ -18,7 +18,7 @@ function main()
       {
     	  
     	  for (var i= 0; i< repoJSON.sites.length; i++) {
-		    	  var site = repoJSON.sites[i]
+		    	  var site = repoJSON.sites[i];
 		         // Yes we did, now create the Surf objects in the web-tier and the associated configuration elements
 		         // Retry a number of times until success - remove the site on total failure
 		         for (var r=0; r<3 && !model.success; r++)
@@ -34,6 +34,8 @@ function main()
 		            conn.del("/api/sites/" + encodeURIComponent(repoJSON.shortName));
 		            status.setCode(status.STATUS_INTERNAL_SERVER_ERROR, "error.create");
 		         }
+		         
+		         model.success = false;
          
     	  }
       }
