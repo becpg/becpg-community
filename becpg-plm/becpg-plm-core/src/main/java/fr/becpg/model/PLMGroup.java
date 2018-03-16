@@ -7,20 +7,14 @@ package fr.becpg.model;
  */
 public enum PLMGroup {
 
-	RD,
 	RDUser,
 	RDMgr,
-	Quality,
 	QualityUser,
 	QualityMgr,
-	Purchasing,
-	PurchasingUser,
-	PurchasingMgr,
-	Trade,
 	TradeUser,
-	TradeMgr,
-	Production,
 	ProductionUser,
 	ProductionMgr, 
-	ReferencingMgr
+	ReferencingMgr,
+	PackagingMgr,
+	PackagingUser
 }

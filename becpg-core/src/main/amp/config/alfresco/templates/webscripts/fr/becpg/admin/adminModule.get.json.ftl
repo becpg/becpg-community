@@ -16,7 +16,7 @@
      {
       "sitePreset": "${site.sitePreset}",
 	   "shortName": "${site.shortName}"
-     }
+     }<#if site_has_next>,</#if>
     </#list>
    ]
    </#if>

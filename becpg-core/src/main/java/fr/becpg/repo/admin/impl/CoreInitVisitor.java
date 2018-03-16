@@ -257,9 +257,8 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 	@Override
 	protected void visitPermissions(NodeRef nodeRef, String folderName) {
 		if (Objects.equals(folderName, RepoConsts.PATH_SYSTEM)) {
-
 			permissionService
-					.setPermission(nodeRef, PermissionService.GROUP_PREFIX + SystemGroup.SystemMgr.toString(), PermissionService.WRITE, true);
+					.setPermission(nodeRef, PermissionService.GROUP_PREFIX + SystemGroup.SystemMgr.toString(), PermissionService.COORDINATOR, true);
 		}
 	}
 

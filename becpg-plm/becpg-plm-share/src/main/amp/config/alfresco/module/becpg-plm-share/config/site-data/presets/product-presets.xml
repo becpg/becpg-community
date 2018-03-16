@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--
-  Copyright (C) 2010-2016 beCPG. 
+  Copyright (C) 2010-2018 beCPG. 
    
   This file is part of beCPG 
    
@@ -80,6 +80,167 @@
                <sitePages>[{"pageId":"dashboard"},{"pageId":"documentlibrary"}, {"pageId":"data-lists"}]</sitePages>
                <pageMetadata>{"documentlibrary":{"titleId":"page.productDocumentLibrary.title", "descriptionId":"page.productDocumentLibrary.description", "type":"productManagement"}}</pageMetadata>
                <dashboardSitePage>true</dashboardSitePage>
+            </properties>
+         </page>
+      </pages>
+   </preset>
+   
+   
+     <preset id="valid-product-site-dashboard">
+      <components>
+         <!-- title -->
+         <component>
+            <scope>page</scope>
+            <region-id>title</region-id>
+            <source-id>site/${siteid}/dashboard</source-id>
+            <url>/components/title/collaboration-title</url>
+         </component>
+         <!-- navigation -->
+         <component>
+            <scope>page</scope>
+            <region-id>navigation</region-id>
+            <source-id>site/${siteid}/dashboard</source-id>
+            <url>/components/navigation/collaboration-navigation</url>
+         </component>
+         <!-- dashboard components -->
+          <component>
+            <scope>page</scope>
+            <region-id>component-1-1</region-id>
+            <source-id>site/${siteid}/dashboard</source-id>
+            <url>/components/dashlets/activityfeed</url>
+         </component>     
+         <component>
+            <scope>page</scope>
+            <region-id>component-2-1</region-id>
+            <source-id>site/${siteid}/dashboard</source-id>
+            <url>/components/dashlets/product-catalog</url>
+         </component>
+      </components>
+      <pages>
+         <page id="site/${siteid}/dashboard">
+            <title>Product Site Dashboard</title>
+            <title-id>page.productSiteDashboard.title</title-id>
+            <description>Product site's dashboard page</description>
+            <description-id>page.productSiteDashboard.description</description-id>
+            <template-instance>dashboard-2-columns-wide-right</template-instance>
+            <authentication>user</authentication>
+            <properties>
+               <sitePages>[{"pageId":"documentlibrary"}]</sitePages>
+               <pageMetadata>{"documentlibrary":{"titleId":"page.productDocumentLibrary.title", "descriptionId":"page.productDocumentLibrary.description", "type":"productManagement"}}</pageMetadata>
+               <dashboardSitePage>false</dashboardSitePage>
+            </properties>
+         </page>
+      </pages>
+   </preset>
+   
+    <preset id="simulation-product-site-dashboard">
+      <components>
+         <!-- title -->
+         <component>
+            <scope>page</scope>
+            <region-id>title</region-id>
+            <source-id>site/${siteid}/dashboard</source-id>
+            <url>/components/title/collaboration-title</url>
+         </component>
+         <!-- navigation -->
+         <component>
+            <scope>page</scope>
+            <region-id>navigation</region-id>
+            <source-id>site/${siteid}/dashboard</source-id>
+            <url>/components/navigation/collaboration-navigation</url>
+         </component>
+         <!-- dashboard components -->
+         <component>
+            <scope>page</scope>
+            <region-id>full-width-dashlet</region-id>
+            <source-id>site/${siteid}/dashboard</source-id>
+            <url>/components/dashlets/dynamic-welcome</url>
+            <properties>
+               <dashboardType>site</dashboardType>
+            </properties>
+         </component>
+         <component>
+            <scope>page</scope>
+            <region-id>component-1-1</region-id>
+            <source-id>site/${siteid}/dashboard</source-id>
+            <url>/components/dashlets/colleagues</url>
+            <properties>
+               <height>504</height>
+            </properties>
+         </component>         
+         <component>
+            <scope>page</scope>
+            <region-id>component-2-1</region-id>
+            <source-id>site/${siteid}/dashboard</source-id>
+            <url>/components/dashlets/product-catalog</url>
+         </component>
+         <component>
+            <scope>page</scope>
+            <region-id>component-2-2</region-id>
+            <source-id>site/${siteid}/dashboard</source-id>
+            <url>/components/dashlets/activityfeed</url>
+         </component>
+      </components>
+      <pages>
+         <page id="site/${siteid}/dashboard">
+            <title>Product Site Dashboard</title>
+            <title-id>page.productSiteDashboard.title</title-id>
+            <description>Product site's dashboard page</description>
+            <description-id>page.productSiteDashboard.description</description-id>
+            <template-instance>dashboard-2-columns-wide-right</template-instance>
+            <authentication>user</authentication>
+            <properties>
+               <sitePages>[{"pageId":"documentlibrary"},{"pageId":"project-list"}]</sitePages>
+               <pageMetadata>{"documentlibrary":{"titleId":"page.productDocumentLibrary.title", "descriptionId":"page.productDocumentLibrary.description", "type":"productManagement"},
+               				 "project-list":{"titleId":"page.projectProjectList.title", "descriptionId":"page.projectProjectList.description"}}</pageMetadata>
+               <dashboardSitePage>false</dashboardSitePage>
+            </properties>
+         </page>
+      </pages>
+   </preset>
+   
+   <preset id="archived-product-site-dashboard">
+      <components>
+         <!-- title -->
+         <component>
+            <scope>page</scope>
+            <region-id>title</region-id>
+            <source-id>site/${siteid}/dashboard</source-id>
+            <url>/components/title/collaboration-title</url>
+         </component>
+         <!-- navigation -->
+         <component>
+            <scope>page</scope>
+            <region-id>navigation</region-id>
+            <source-id>site/${siteid}/dashboard</source-id>
+            <url>/components/navigation/collaboration-navigation</url>
+         </component>
+         <!-- dashboard components -->
+        <component>
+            <scope>page</scope>
+            <region-id>component-1-1</region-id>
+            <source-id>site/${siteid}/dashboard</source-id>
+            <url>/components/dashlets/activityfeed</url>
+         </component>     
+         <component>
+            <scope>page</scope>
+            <region-id>component-2-1</region-id>
+            <source-id>site/${siteid}/dashboard</source-id>
+            <url>/components/dashlets/product-catalog</url>
+         </component>
+      </components>
+      <pages>
+         <page id="site/${siteid}/dashboard">
+            <title>Product Site Dashboard</title>
+            <title-id>page.productSiteDashboard.title</title-id>
+            <description>Product site's dashboard page</description>
+            <description-id>page.productSiteDashboard.description</description-id>
+            <template-instance>dashboard-2-columns-wide-right</template-instance>
+            <authentication>user</authentication>
+            <properties>
+               <sitePages>[{"pageId":"documentlibrary"}]</sitePages>
+               <pageMetadata>{"documentlibrary":{"titleId":"page.productDocumentLibrary.title", "descriptionId":"page.productDocumentLibrary.description", "type":"productManagement"}}</pageMetadata>
+               <dashboardSitePage>false</dashboardSitePage>
             </properties>
          </page>
       </pages>
