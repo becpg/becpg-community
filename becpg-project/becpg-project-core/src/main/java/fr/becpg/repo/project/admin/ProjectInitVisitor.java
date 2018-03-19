@@ -18,8 +18,12 @@
 package fr.becpg.repo.project.admin;
 
 import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -36,6 +40,7 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectGroup;
 import fr.becpg.model.ProjectModel;
+import fr.becpg.model.ReportModel;
 import fr.becpg.repo.ProjectRepoConsts;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.admin.impl.AbstractInitVisitorImpl;
@@ -59,6 +64,11 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 
 	public static final String EMAIL_TEMPLATES = "./app:dictionary/app:email_templates";
 
+	private static final String PROJECT_REPORT_CSS_RESOURCE = "beCPG/birt/project/becpg-report.css";
+
+	private static final String PROJECT_REPORT_EN_RESOURCE = "beCPG/birt/project/ProjectReport_en.properties";
+
+	private static final String PROJECT_REPORT_FR_RESOURCE = "beCPG/birt/project/ProjectReport_fr.properties";
 	@Autowired
 	private EntitySystemService entitySystemService;
 
@@ -162,11 +172,34 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 
 		// export search products
 		try {
-			NodeRef exportSearchProductsNodeRef = visitFolder(exportSearchNodeRef, PATH_REPORTS_EXPORT_SEARCH_PROJECTS);
-			reportTplService.createTplRptDesign(exportSearchProductsNodeRef, TranslateHelper.getTranslatedPath(PATH_REPORTS_EXPORT_SEARCH_PROJECTS), EXPORT_PROJECTS_REPORT_RPTFILE_PATH,
-					ReportType.ExportSearch, ReportFormat.PDF, ProjectModel.TYPE_PROJECT, false, true, false);
+			String[] projectReportResources = { PROJECT_REPORT_CSS_RESOURCE, PROJECT_REPORT_FR_RESOURCE, PROJECT_REPORT_EN_RESOURCE };
+			List<NodeRef> resources = new ArrayList<>();
 
-			reportTplService.createTplRessource(exportSearchProductsNodeRef, EXPORT_PROJECTS_REPORT_XMLFILE_PATH, false);
+			for (String element : projectReportResources) {
+				resources.add(reportTplService.createTplRessource(exportSearchNodeRef, element, false));
+			}
+
+			if (repoService.getFolderByPath(exportSearchNodeRef, PATH_REPORTS_EXPORT_SEARCH_PROJECTS) == null) {
+
+				NodeRef exportSearchProductsNodeRef = visitFolder(exportSearchNodeRef, PATH_REPORTS_EXPORT_SEARCH_PROJECTS);
+
+				NodeRef templateProject = reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
+						TranslateHelper.getTranslatedPath(PATH_REPORTS_EXPORT_SEARCH_PROJECTS), EXPORT_PROJECTS_REPORT_RPTFILE_PATH,
+						ReportType.ExportSearch, ReportFormat.PDF, ProjectModel.TYPE_PROJECT, false, true, false);
+
+				if (!resources.isEmpty()) {
+					for (NodeRef resource : resources) {
+						logger.debug("Associating resource: " + resource + " to template: " + templateProject);
+						nodeService.createAssociation(templateProject, resource, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES);
+					}
+					nodeService.setProperty(templateProject, ReportModel.PROP_REPORT_LOCALES, (Serializable) Arrays.asList("fr", "en"));
+				}
+
+				nodeService.setProperty(templateProject, ReportModel.PROP_REPORT_LOCALES, (Serializable) Arrays.asList("fr", "en"));
+
+				reportTplService.createTplRessource(exportSearchProductsNodeRef, EXPORT_PROJECTS_REPORT_XMLFILE_PATH, false);
+
+			}
 		} catch (IOException e) {
 			logger.error("Failed to create export search report tpl.", e);
 		}
