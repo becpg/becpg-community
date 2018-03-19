@@ -20,5 +20,6 @@ package fr.becpg.repo.ecm.data;
 public enum ChangeOrderType {
 
 	Replacement,
-	Merge
+	Merge,
+	ImpactWUsed
 }

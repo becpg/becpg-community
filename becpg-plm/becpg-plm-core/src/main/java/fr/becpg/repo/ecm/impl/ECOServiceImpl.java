@@ -72,6 +72,7 @@ import fr.becpg.repo.ecm.data.dataList.WUsedListDataItem;
 import fr.becpg.repo.entity.datalist.WUsedListService;
 import fr.becpg.repo.entity.datalist.WUsedListService.WUsedOperator;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
+import fr.becpg.repo.entity.version.EntityVersionPlugin;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.ProductService;
@@ -428,7 +429,7 @@ public class ECOServiceImpl implements ECOService {
 								if (!changeUnitDataItem.getRevision().equals(RevisionType.NoRevision)) {
 									createNewProductVersion(productNodeRef,
 											changeUnitDataItem.getRevision().equals(RevisionType.Major) ? VersionType.MAJOR : VersionType.MINOR,
-											ecoData);
+											ecoData, composite.getData());
 								}
 							}
 
@@ -713,7 +714,7 @@ public class ECOServiceImpl implements ECOService {
 		return productToImpact;
 	}
 
-	private NodeRef createNewProductVersion(final NodeRef productToImpact, VersionType versionType, ChangeOrderData ecoData) {
+	private NodeRef createNewProductVersion(final NodeRef productToImpact, VersionType versionType, ChangeOrderData ecoData, WUsedListDataItem parent) {
 
 		Map<String, Serializable> properties = new HashMap<>();
 		properties.put(VersionBaseModel.PROP_VERSION_TYPE, versionType);
@@ -722,7 +723,10 @@ public class ECOServiceImpl implements ECOService {
 		} else {
 			properties.put(Version.PROP_DESCRIPTION, I18NUtil.getMessage("plm.ecm.apply.version.label", ecoData.getCode() + " - " + ecoData.getName()));
 		}
-
+		if((parent.getDepthLevel() > 1) && parent.getIsWUsedImpacted() || ChangeOrderType.ImpactWUsed.equals(ecoData.getEcoType())) {
+			properties.put(EntityVersionPlugin.POST_UPDATE_HISTORY_NODEREF, parent.getSourceItems().get(0));
+		}
+		
 		return entityVersionService.createVersion(productToImpact, properties);
 
 	}

@@ -54,4 +54,6 @@ public interface EntityVersionService {
 
 	void impactWUsed(NodeRef newEntityNodeRef, VersionType versionType, String description);
 
+	NodeRef mergeBranch(NodeRef branchNodeRef, NodeRef branchToNodeRef, VersionType versionType, String description, boolean impactWused);
+
 }

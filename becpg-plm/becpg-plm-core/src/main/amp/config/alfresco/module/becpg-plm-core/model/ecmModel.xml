@@ -49,9 +49,7 @@
 				<list>
 					<value>Replacement</value>
 					<value>Merge</value>
-					<!-- 
-					<value>Simulation</value>
-					<value>Variant</value>	 -->							
+					<value>ImpactWUsed</value>
 				</list>
 			</parameter>
 		</constraint>
