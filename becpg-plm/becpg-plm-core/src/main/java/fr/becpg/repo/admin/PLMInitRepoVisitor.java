@@ -59,7 +59,6 @@ import fr.becpg.model.QualityModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.model.SecurityModel;
 import fr.becpg.model.SystemGroup;
-import fr.becpg.model.VariantModel;
 import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.action.executer.ImporterActionExecuter;
@@ -531,7 +530,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		}
 
 		else if (Objects.equals(folderName, PlmRepoConsts.PATH_QUALITY)) {
-			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + PLMGroup.QualityMgr.toString(), PermissionService.COORDINATOR, true);
+			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + PLMGroup.QualityMgr.toString(), PermissionService.COORDINATOR,
+					true);
 		}
 
 		else if (Objects.equals(folderName, PlmRepoConsts.PATH_NC)) {
@@ -541,16 +541,17 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + NCGroup.ClaimAnalysis.toString(), PermissionService.COORDINATOR,
 					true);
 
-			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + NCGroup.ClaimClassification.toString(), PermissionService.COORDINATOR,
-					true);
+			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + NCGroup.ClaimClassification.toString(),
+					PermissionService.COORDINATOR, true);
 
-			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + NCGroup.ClaimTreatment.toString(), PermissionService.COORDINATOR,
-					true);
+			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + NCGroup.ClaimTreatment.toString(),
+					PermissionService.COORDINATOR, true);
 
 			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + NCGroup.ClaimResponse.toString(), PermissionService.COORDINATOR,
 					true);
 
-			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + NCGroup.ClaimClosing.toString(), PermissionService.COORDINATOR, true);
+			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + NCGroup.ClaimClosing.toString(), PermissionService.COORDINATOR,
+					true);
 		}
 	}
 
@@ -629,7 +630,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_NUTRIENTPROFILES, PLMModel.TYPE_NUTRIENT_PROFILE);
 		entityLists.put(PlmRepoConsts.PATH_PROCESSSTEPS, MPMModel.TYPE_PROCESSSTEP);
 		entityLists.put(PlmRepoConsts.PATH_RESOURCEPARAMS, MPMModel.TYPE_RESOURCEPARAM);
-		entityLists.put(PlmRepoConsts.PATH_VARIANT_CHARACTS, VariantModel.TYPE_CHARACT);
 		entityLists.put(PlmRepoConsts.PATH_STORAGE_CONDITIONS, PLMModel.TYPE_STORAGE_CONDITIONS);
 		entityLists.put(PlmRepoConsts.PATH_PRECAUTION_OF_USE, PLMModel.TYPE_PRECAUTION_OF_USE);
 		entityLists.put(PlmRepoConsts.PATH_LABELING_TEMPLATES, PackModel.TYPE_LABELING_TEMPLATE);

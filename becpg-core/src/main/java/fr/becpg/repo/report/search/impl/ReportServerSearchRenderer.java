@@ -4,7 +4,11 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
@@ -36,6 +40,7 @@ import fr.becpg.config.mapping.AttributeMapping;
 import fr.becpg.config.mapping.CharacteristicMapping;
 import fr.becpg.config.mapping.FileMapping;
 import fr.becpg.config.mapping.MappingException;
+import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
@@ -73,7 +78,7 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 
 	@Autowired
 	private EntityService entityService;
-	
+
 	@Autowired
 	private AssociationService associationService;
 
@@ -126,6 +131,9 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 			Document document = DocumentHelper.createDocument();
 			Element exportElt = document.addElement(TAG_EXPORT);
 			params = loadReportData(exportSearchCtx, exportElt, params, searchResults);
+
+			params.put(ReportParams.PARAM_ASSOCIATED_TPL_FILES,
+					associationService.getTargetAssocs(templateNodeRef, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES));
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("Xml data: " + exportElt.asXML());
@@ -294,7 +302,7 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 	private String getColumnValue(ReportServerSearchContext exportSearchCtx, NodeRef nodeRef, ClassAttributeDefinition attribute) {
 
 		String value = VALUE_NULL;
-		
+
 		if (nodeService.exists(nodeRef)) {
 			if (attribute instanceof PropertyDefinition) {
 				Serializable serializable = nodeService.getProperty(nodeRef, attribute.getName());
@@ -302,16 +310,15 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 						exportSearchCtx.getPropertyFormats(), false);
 
 			} else if (attribute instanceof AssociationDefinition) {
-				
-				
+
 				List<NodeRef> assocNodes = associationService.getTargetAssocs(nodeRef, attribute.getName());
 
 				if ((assocNodes != null) && !assocNodes.isEmpty()) {
-					return  assocNodes.stream().map(i -> attributeExtractorService.extractPropName(i))
+					return assocNodes.stream().map(i -> attributeExtractorService.extractPropName(i))
 							.collect(Collectors.joining(RepoConsts.LABEL_SEPARATOR));
 
 				}
-				
+
 			}
 		}
 
@@ -380,8 +387,8 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 
 					attributeDef = dictionaryService.getAssociation(attribute);
 					if (attributeDef == null) {
-						throw new MappingException("Failed to map the following attribute. TemplateNodeRef: " + templateNodeRef + " - Attribute: "
-								+ attribute);
+						throw new MappingException(
+								"Failed to map the following attribute. TemplateNodeRef: " + templateNodeRef + " - Attribute: " + attribute);
 					}
 				}
 
@@ -400,7 +407,7 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 				QName charactQName = QName.createQName(columnNode.valueOf(QUERY_ATTR_GET_CHARACT_QNAME), namespaceService);
 
 				// get characteristic nodeRef
-				if (charactNodeRefString != null && !charactNodeRefString.isEmpty() && NodeRef.isNodeRef(charactNodeRefString)) {
+				if ((charactNodeRefString != null) && !charactNodeRefString.isEmpty() && NodeRef.isNodeRef(charactNodeRefString)) {
 					charactNodeRef = new NodeRef(charactNodeRefString);
 				} else if (!charactName.isEmpty()) {
 					AssociationDefinition assocDef = dictionaryService.getAssociation(charactQName);
@@ -419,8 +426,8 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 					attributeDef = dictionaryService.getAssociation(qName);
 				}
 
-				CharacteristicMapping attributeMapping = new CharacteristicMapping(columnNode.valueOf(QUERY_ATTR_GET_ID), attributeDef,
-						dataListQName, charactQName, charactNodeRef);
+				CharacteristicMapping attributeMapping = new CharacteristicMapping(columnNode.valueOf(QUERY_ATTR_GET_ID), attributeDef, dataListQName,
+						charactQName, charactNodeRef);
 				exportSearchCtx.getCharacteristicsColumns().add(attributeMapping);
 			}
 

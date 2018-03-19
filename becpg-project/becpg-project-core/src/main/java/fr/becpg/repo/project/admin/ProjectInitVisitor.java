@@ -1,24 +1,26 @@
 /*******************************************************************************
- * Copyright (C) 2010-2018 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2018 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.project.admin;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -39,6 +41,7 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectGroup;
 import fr.becpg.model.ProjectModel;
+import fr.becpg.model.ReportModel;
 import fr.becpg.repo.ProjectRepoConsts;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.admin.impl.AbstractInitVisitorImpl;
@@ -61,6 +64,12 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 	private static final String EXPORT_PROJECTS_REPORT_XMLFILE_PATH = "beCPG/birt/project/ExportSearchQuery.xml";
 
 	public static final String EMAIL_TEMPLATES = "./app:dictionary/app:email_templates";
+
+	private static final String PROJECT_REPORT_CSS_RESOURCE = "beCPG/birt/project/becpg-report.css";
+
+	private static final String PROJECT_REPORT_EN_RESOURCE = "beCPG/birt/project/ProjectReport_en.properties";
+
+	private static final String PROJECT_REPORT_FR_RESOURCE = "beCPG/birt/project/ProjectReport_fr.properties";
 
 	@Autowired
 	private EntitySystemService entitySystemService;
@@ -95,18 +104,20 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 
 		visitReports(systemNodeRef);
 
-		createSystemGroups(new String[] { ProjectGroup.ProjectRoles.toString(), createRoleGroup(ContentModel.PROP_CREATOR), createRoleGroup(ProjectModel.ASSOC_PROJECT_MANAGER) });
+		createSystemGroups(new String[] { ProjectGroup.ProjectRoles.toString(), createRoleGroup(ContentModel.PROP_CREATOR),
+				createRoleGroup(ProjectModel.ASSOC_PROJECT_MANAGER) });
 
 		// MailTemplates
-		NodeRef emailsProject = visitFolder(BeCPGQueryBuilder.createQuery().selectNodeByPath(companyHome, EMAIL_TEMPLATES), ProjectRepoConsts.PATH_EMAILS_PROJECT);
+		NodeRef emailsProject = visitFolder(BeCPGQueryBuilder.createQuery().selectNodeByPath(companyHome, EMAIL_TEMPLATES),
+				ProjectRepoConsts.PATH_EMAILS_PROJECT);
 		contentHelper.addFilesResources(emailsProject, "classpath*:beCPG/mails/project/*.ftl");
-	
+
 		return new ArrayList<>();
 	}
 
 	/**
 	 * Create the entity templates
-	 * 
+	 *
 	 * @param productTplsNodeRef
 	 */
 	private void visitEntityTpls(NodeRef systemNodeRef) {
@@ -128,13 +139,12 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_DOCUMENTS);
-	
 
 	}
 
 	/**
 	 * Create NPD List values
-	 * 
+	 *
 	 * @param parentNodeRef
 	 * @param path
 	 * @return
@@ -167,11 +177,36 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 
 		// export search products
 		try {
-			NodeRef exportSearchProductsNodeRef = visitFolder(exportSearchNodeRef, PATH_REPORTS_EXPORT_SEARCH_PROJECTS);
-			reportTplService.createTplRptDesign(exportSearchProductsNodeRef, TranslateHelper.getTranslatedPath(PATH_REPORTS_EXPORT_SEARCH_PROJECTS), EXPORT_PROJECTS_REPORT_RPTFILE_PATH,
-					ReportType.ExportSearch, ReportFormat.PDF, ProjectModel.TYPE_PROJECT, false, true, false);
 
-			reportTplService.createTplRessource(exportSearchProductsNodeRef, EXPORT_PROJECTS_REPORT_XMLFILE_PATH, false);
+			String[] projectReportResources = { PROJECT_REPORT_CSS_RESOURCE, PROJECT_REPORT_FR_RESOURCE, PROJECT_REPORT_EN_RESOURCE };
+			List<NodeRef> resources = new ArrayList<>();
+
+			for (String element : projectReportResources) {
+				resources.add(reportTplService.createTplRessource(exportSearchNodeRef, element, false));
+			}
+
+			if (repoService.getFolderByPath(exportSearchNodeRef, PATH_REPORTS_EXPORT_SEARCH_PROJECTS) == null) {
+
+				NodeRef exportSearchProductsNodeRef = visitFolder(exportSearchNodeRef, PATH_REPORTS_EXPORT_SEARCH_PROJECTS);
+
+				NodeRef templateProject = reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
+						TranslateHelper.getTranslatedPath(PATH_REPORTS_EXPORT_SEARCH_PROJECTS), EXPORT_PROJECTS_REPORT_RPTFILE_PATH,
+						ReportType.ExportSearch, ReportFormat.PDF, ProjectModel.TYPE_PROJECT, false, true, false);
+
+				if (!resources.isEmpty()) {
+					for (NodeRef resource : resources) {
+						logger.debug("Associating resource: " + resource + " to template: " + templateProject);
+						nodeService.createAssociation(templateProject, resource, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES);
+					}
+					nodeService.setProperty(templateProject, ReportModel.PROP_REPORT_LOCALES, (Serializable) Arrays.asList("fr", "en"));
+				}
+
+				nodeService.setProperty(templateProject, ReportModel.PROP_REPORT_LOCALES, (Serializable) Arrays.asList("fr", "en"));
+
+				reportTplService.createTplRessource(exportSearchProductsNodeRef, EXPORT_PROJECTS_REPORT_XMLFILE_PATH, false);
+
+			}
+
 		} catch (IOException e) {
 			logger.error("Failed to create export search report tpl.", e);
 		}
@@ -183,19 +218,22 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 		createGroups(groups);
 
 		// Group hierarchy
-		Set<String> authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP, PermissionService.GROUP_PREFIX + ProjectGroup.ProjectRoles.toString(), true);
+		Set<String> authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP,
+				PermissionService.GROUP_PREFIX + ProjectGroup.ProjectRoles.toString(), true);
 		if (!authorities.contains(PermissionService.GROUP_PREFIX + createRoleGroup(ContentModel.PROP_CREATOR))) {
-			authorityService.addAuthority(PermissionService.GROUP_PREFIX + ProjectGroup.ProjectRoles.toString(), PermissionService.GROUP_PREFIX + createRoleGroup(ContentModel.PROP_CREATOR));
+			authorityService.addAuthority(PermissionService.GROUP_PREFIX + ProjectGroup.ProjectRoles.toString(),
+					PermissionService.GROUP_PREFIX + createRoleGroup(ContentModel.PROP_CREATOR));
 		}
 		if (!authorities.contains(PermissionService.GROUP_PREFIX + createRoleGroup(ProjectModel.ASSOC_PROJECT_MANAGER))) {
-			authorityService.addAuthority(PermissionService.GROUP_PREFIX + ProjectGroup.ProjectRoles.toString(), PermissionService.GROUP_PREFIX + createRoleGroup(ProjectModel.ASSOC_PROJECT_MANAGER));
+			authorityService.addAuthority(PermissionService.GROUP_PREFIX + ProjectGroup.ProjectRoles.toString(),
+					PermissionService.GROUP_PREFIX + createRoleGroup(ProjectModel.ASSOC_PROJECT_MANAGER));
 		}
 	}
 
 	protected String createRoleGroup(QName qName) {
 		return ProjectRepoConsts.PROJECT_GROUP_PREFIX + qName.toPrefixString(namespaceService).replace(":", "_");
 	}
-	
+
 	@Override
 	public Integer initOrder() {
 		return 2;

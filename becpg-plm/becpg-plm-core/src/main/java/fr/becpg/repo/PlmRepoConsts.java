@@ -53,7 +53,6 @@ public class PlmRepoConsts {
 	
 	public static final String PATH_LABEL = "Labels";
 	public static final String PATH_LABEL_TYPES = "LabelTypes";	
-	public static final String PATH_VARIANT_CHARACTS = "VariantCharacts";
 	public static final String PATH_PRODUCT_TEMPLATES = "ProductTemplates";
 	public static final String PATH_QUALITY_TEMPLATES = "QualityTemplates";
 	public static final String PATH_PRODUCTS = "Products";
