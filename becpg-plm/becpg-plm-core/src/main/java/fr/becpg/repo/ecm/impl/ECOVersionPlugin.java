@@ -135,7 +135,7 @@ public class ECOVersionPlugin implements EntityVersionPlugin {
 							logger.debug("Creating new impactWUsed change order");
 						}
 						ChangeOrderData changeOrderData = (ChangeOrderData) alfrescoRepository.create(parentNodeRef,
-								new ChangeOrderData(generateEcoName(name), ECOState.Automatic, ChangeOrderType.Replacement, null));
+								new ChangeOrderData(generateEcoName(name), ECOState.Automatic, ChangeOrderType.ImpactWUsed, null));
 
 						changeOrderData.setDescription(description);
 

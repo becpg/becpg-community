@@ -22,6 +22,7 @@ import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 
+import fr.becpg.repo.entity.version.EntityVersionPlugin;
 import fr.becpg.repo.entity.version.EntityVersionService;
 
 // TODO: Auto-generated Javadoc
@@ -93,15 +94,19 @@ public class FormCheckInWebScript extends DeclarativeWebScript {
 			logger.error("Failed to parse form fields", e);
 			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Failed to parse form fields ", e);
 		}
-		NodeRef newEntityNodeRef = null;
+		NodeRef newEntityNodeRef = null; 
 
 		if (branchToNodeRef != null) {
-			newEntityNodeRef =  entityVersionService.mergeBranch(nodeRef, branchToNodeRef, versionType, description);
+			newEntityNodeRef =  entityVersionService.mergeBranch(nodeRef, branchToNodeRef, versionType, description, impactWused);
 		} else {
 			// Calculate new version
 			Map<String, Serializable> properties = new HashMap<>();
 			properties.put(VersionModel.PROP_VERSION_TYPE, versionType);
 			properties.put(Version.PROP_DESCRIPTION, description);
+			if(impactWused) {
+				properties.put(EntityVersionPlugin.POST_UPDATE_HISTORY_NODEREF,null);
+			}
+			
 			newEntityNodeRef = checkOutCheckInService.checkin(nodeRef, properties);
 		}
 		
