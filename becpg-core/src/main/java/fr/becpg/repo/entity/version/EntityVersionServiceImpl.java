@@ -141,10 +141,10 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 	@Autowired
 	private TransactionService transactionService;
-	
+
 	@Autowired
 	private CommentService commentService;
-	
+
 	@Autowired
 	private ContentService contentService;
 
@@ -280,7 +280,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 						removeRemovedAssociation(workingCopyNodeRef, origNodeRef);
 
 						entityActivityService.mergeActivities(origNodeRef, workingCopyNodeRef);
-						
+
 						// Move workingCopyNodeRef DataList to origNodeRef
 						entityService.deleteDataLists(origNodeRef, true);
 						entityListDAO.moveDataLists(workingCopyNodeRef, origNodeRef);
@@ -304,9 +304,6 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 						// exits
 						entityService.deleteFiles(workingCopyNodeRef, true);
 					}
-					
-					
-					
 
 					return versionNodeRef1;
 
@@ -328,14 +325,13 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			nodeService.addAspect(versionNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION, aspectProperties);
 
 			updateVersionEffectivity(origNodeRef, versionNodeRef);
-			
-			if(!isInitialVersion){
-			
+
+			if (!isInitialVersion) {
+
 				updateEntitiesHistory(origNodeRef);
-			
+
 				entityActivityService.postVersionActivity(origNodeRef, versionNodeRef, versionLabel);
-			}	
-		    
+			}
 
 			return versionNodeRef;
 
@@ -347,8 +343,6 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		}
 	}
 
-	
-
 	private void updateVersionEffectivity(NodeRef entityNodeRef, NodeRef versionNodeRef) {
 		Date newEffectivity = new Date();
 		Date oldEffectivity = (Date) nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_START_EFFECTIVITY);
@@ -359,54 +353,51 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		nodeService.setProperty(versionNodeRef, BeCPGModel.PROP_END_EFFECTIVITY, newEffectivity);
 	}
 
-	
-	
 	private void updateEntitiesHistory(NodeRef origNodeRef) {
 		List<AssociationRef> assocRefs = nodeService.getSourceAssocs(origNodeRef, RegexQNamePattern.MATCH_ALL);
 
-		List<EntityVersion> versions  = getAllVersions(origNodeRef);
-		
-		if(versions!=null && versions.size()>0) {
-		
-		NodeRef versionNodeRef = versions.get(0).getEntityVersionNodeRef();
-			
-		for (AssociationRef assocRef : assocRefs) {
-			policyBehaviourFilter.disableBehaviour(assocRef.getSourceRef(), ContentModel.ASPECT_AUDITABLE);
-			try {
-					
-				if(assocRef!=null && assocRef.getTargetRef()!=null && !assocRef.getTargetRef().equals(versionNodeRef)){
-					NodeRef versionEntityNodeRef = entityService.getEntityNodeRef(assocRef.getSourceRef(), nodeService.getType(assocRef.getSourceRef()));
-				
-					if( versionEntityNodeRef!=null && nodeService.hasAspect(versionEntityNodeRef,BeCPGModel.ASPECT_COMPOSITE_VERSION)){
-						
+		List<EntityVersion> versions = getAllVersions(origNodeRef);
 
-						NodeRef entityNodeRef = new NodeRef( StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, (String) nodeService.getProperty(
-								nodeService.getPrimaryParent(versionEntityNodeRef).getParentRef(),ContentModel.PROP_NAME));
-						
-						if(nodeService.exists(entityNodeRef)) {
-							
-							String entityVersionLabel = (String) nodeService.getProperty(versionEntityNodeRef, BeCPGModel.PROP_VERSION_LABEL);
-							String versionLabel = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_VERSION_LABEL);
-							
-							if(entityVersionLabel!=null && !entityVersionLabel.equals(versionLabel)) {	
-								
-															
-								nodeService.removeAssociation(assocRef.getSourceRef(), assocRef.getTargetRef(), assocRef.getTypeQName());
-								nodeService.createAssociation(assocRef.getSourceRef(), versionNodeRef, assocRef.getTypeQName());
+		if ((versions != null) && (versions.size() > 0)) {
+
+			NodeRef versionNodeRef = versions.get(0).getEntityVersionNodeRef();
+
+			for (AssociationRef assocRef : assocRefs) {
+				policyBehaviourFilter.disableBehaviour(assocRef.getSourceRef(), ContentModel.ASPECT_AUDITABLE);
+				try {
+
+					if ((assocRef != null) && (assocRef.getTargetRef() != null) && !assocRef.getTargetRef().equals(versionNodeRef)) {
+						NodeRef versionEntityNodeRef = entityService.getEntityNodeRef(assocRef.getSourceRef(),
+								nodeService.getType(assocRef.getSourceRef()));
+
+						if ((versionEntityNodeRef != null) && nodeService.hasAspect(versionEntityNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
+
+							NodeRef entityNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, (String) nodeService
+									.getProperty(nodeService.getPrimaryParent(versionEntityNodeRef).getParentRef(), ContentModel.PROP_NAME));
+
+							if (nodeService.exists(entityNodeRef)) {
+
+								String entityVersionLabel = (String) nodeService.getProperty(versionEntityNodeRef, BeCPGModel.PROP_VERSION_LABEL);
+								String versionLabel = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_VERSION_LABEL);
+
+								if ((entityVersionLabel != null) && !entityVersionLabel.equals(versionLabel)) {
+
+									nodeService.removeAssociation(assocRef.getSourceRef(), assocRef.getTargetRef(), assocRef.getTypeQName());
+									nodeService.createAssociation(assocRef.getSourceRef(), versionNodeRef, assocRef.getTypeQName());
+								}
 							}
 						}
 					}
+				} catch (AssociationExistsException e) {
+					logger.error("Cannot update assoc : " + assocRef);
+				} finally {
+					policyBehaviourFilter.enableBehaviour(assocRef.getSourceRef(), ContentModel.ASPECT_AUDITABLE);
 				}
-			} catch(AssociationExistsException e){
-				logger.error("Cannot update assoc : "+assocRef);
-			}	finally {
-				policyBehaviourFilter.enableBehaviour(assocRef.getSourceRef(), ContentModel.ASPECT_AUDITABLE);
 			}
 		}
-		}
-		
+
 	}
-	
+
 	private void removeRemovedAssociation(NodeRef sourceCopy, NodeRef targetCopy) {
 
 		/*
@@ -571,7 +562,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	public List<EntityVersion> getAllVersions(NodeRef entityNodeRef) {
 
 		List<EntityVersion> entityVersions = new LinkedList<>();
-		if (!nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_WORKING_COPY) && !nodeService.hasAspect(entityNodeRef,BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
+		if (!nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_WORKING_COPY)
+				&& !nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
 			VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
 
 			if (versionHistory != null) {
@@ -594,8 +586,6 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 		return entityVersions;
 	}
-
-	
 
 	/**
 	 * Get the versions sort by date and node-ide.
@@ -764,7 +754,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 	private List<ChildAssociationRef> getVersionAssocs(NodeRef entityNodeRef) {
 		NodeRef versionHistoryNodeRef = getVersionHistoryNodeRef(entityNodeRef);
-		return versionHistoryNodeRef != null ? getVersionAssocs(versionHistoryNodeRef, false) : new ArrayList<ChildAssociationRef>();
+		return versionHistoryNodeRef != null ? getVersionAssocs(versionHistoryNodeRef, false) : new ArrayList<>();
 	}
 
 	private NodeRef getEntityVersion(List<ChildAssociationRef> versionAssocs, Version version) {
@@ -773,9 +763,10 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 			NodeRef versionNodeRef = versionAssoc.getChildRef();
 			String entityVersionLabel = (String) nodeService.getProperty(versionNodeRef, BeCPGModel.PROP_VERSION_LABEL);
-		
+
 			if (version.getVersionLabel().equals(entityVersionLabel)) {
-				logger.debug("versionNodeRef:"+ versionNodeRef + " - versionLabel: " + version.getVersionLabel() + " - entityVersionLabel: " + entityVersionLabel);
+				logger.debug("versionNodeRef:" + versionNodeRef + " - versionLabel: " + version.getVersionLabel() + " - entityVersionLabel: "
+						+ entityVersionLabel);
 				return versionNodeRef;
 			}
 		}
@@ -863,7 +854,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				}
 
 				MLPropertyInterceptor.setMLAware(true);
-				
+
 				final NodeRef internalBranchToNodeRef = branchToNodeRef;
 
 				return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -879,23 +870,22 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 					properties.put(VersionBaseModel.PROP_VERSION_TYPE, versionType);
 					properties.put(Version.PROP_DESCRIPTION, description);
 
-					
 					entityActivityService.postMergeBranchActivity(branchNodeRef, branchNodeRef, versionType, description);
-					
-					NodeRef branchFromNodeRef =  null;
-					
-					if(nodeService.hasAspect(internalBranchToNodeRef, BeCPGModel.ASPECT_ENTITY_BRANCH) ) {
-						branchFromNodeRef = associationService.getTargetAssoc( internalBranchToNodeRef,  BeCPGModel.ASSOC_BRANCH_FROM_ENTITY);
+
+					NodeRef branchFromNodeRef = null;
+
+					if (nodeService.hasAspect(internalBranchToNodeRef, BeCPGModel.ASPECT_ENTITY_BRANCH)) {
+						branchFromNodeRef = associationService.getTargetAssoc(internalBranchToNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY);
 					}
 
-					NodeRef ret =  checkOutCheckInService.checkin(branchNodeRef, properties);
+					NodeRef ret = checkOutCheckInService.checkin(branchNodeRef, properties);
 
-					if(branchFromNodeRef !=null ) {
+					if (branchFromNodeRef != null) {
 						associationService.update(ret, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY, branchFromNodeRef);
 					}
-					
+
 					return ret;
-					
+
 				}, false, false);
 
 			} finally {
@@ -947,10 +937,9 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 			((RuleService) ruleService).disableRuleType(RuleType.UPDATE);
 			try {
-				
-				//Remove comments		
+
+				// Remove comments
 				mergeComments(branchNodeRef, branchToNodeRef);
-				
 
 				String copyName = (String) this.nodeService.getProperty(branchToNodeRef, ContentModel.PROP_NAME);
 				String workingCopyLabel = I18NUtil.getMessage(MSG_WORKING_COPY_LABEL);
@@ -985,17 +974,19 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				}
 				// Update all association refering to this branch to point to
 				// branchToNodeRef
-				List<AssociationRef> assocRefs = nodeService.getSourceAssocs(branchNodeRef, RegexQNamePattern.MATCH_ALL);
+				updateBranchAssoc(branchNodeRef, branchToNodeRef);
 
-				for (AssociationRef assocRef : assocRefs) {
-					policyBehaviourFilter.disableBehaviour(assocRef.getSourceRef(), ContentModel.ASPECT_AUDITABLE);
-					try {
-						if(assocRef!=null && assocRef.getTargetRef()!=null && !assocRef.getTargetRef().equals(branchNodeRef)){
-							nodeService.removeAssociation(assocRef.getSourceRef(), assocRef.getTargetRef(), assocRef.getTypeQName());
-							nodeService.createAssociation(assocRef.getSourceRef(), branchToNodeRef, assocRef.getTypeQName());
+				// Update also version of the node
+				VersionHistory versionHistory = versionService.getVersionHistory(branchNodeRef);
+
+				if (versionHistory != null) {
+					List<ChildAssociationRef> versionAssocs = getVersionAssocs(branchNodeRef);
+
+					for (Version version : versionHistory.getAllVersions()) {
+						NodeRef entityVersionNodeRef = getEntityVersion(versionAssocs, version);
+						if (entityVersionNodeRef != null) {
+							updateBranchAssoc(entityVersionNodeRef, branchToNodeRef);
 						}
-					} finally {
-						policyBehaviourFilter.enableBehaviour(assocRef.getSourceRef(), ContentModel.ASPECT_AUDITABLE);
 					}
 				}
 
@@ -1012,26 +1003,50 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 	}
 
+	private void updateBranchAssoc(NodeRef branchNodeRef, NodeRef branchToNodeRef) {
+
+		List<AssociationRef> assocRefs = nodeService.getSourceAssocs(branchNodeRef, RegexQNamePattern.MATCH_ALL);
+
+		for (AssociationRef assocRef : assocRefs) {
+			policyBehaviourFilter.disableBehaviour(assocRef.getSourceRef(), ContentModel.ASPECT_AUDITABLE);
+			try {
+				if ((assocRef != null) && (assocRef.getTargetRef() != null) && !assocRef.getTargetRef().equals(branchToNodeRef)
+						&& !ContentModel.ASSOC_WORKING_COPY_LINK.equals(assocRef.getTypeQName())) {
+
+					nodeService.removeAssociation(assocRef.getSourceRef(), assocRef.getTargetRef(), assocRef.getTypeQName());
+					nodeService.createAssociation(assocRef.getSourceRef(), branchToNodeRef, assocRef.getTypeQName());
+				}
+			} finally {
+				policyBehaviourFilter.enableBehaviour(assocRef.getSourceRef(), ContentModel.ASPECT_AUDITABLE);
+			}
+		}
+
+	}
+
 	private void mergeComments(NodeRef branchNodeRef, NodeRef branchToNodeRef) {
-		PagingResults<NodeRef> comments =   commentService.listComments(branchNodeRef, new PagingRequest(5000, null));
-		if(comments!=null) {
-			for(NodeRef commentNodeRef : comments.getPage()) {
+		PagingResults<NodeRef> comments = commentService.listComments(branchNodeRef, new PagingRequest(5000, null));
+		if (comments != null) {
+			for (NodeRef commentNodeRef : comments.getPage()) {
 				NodeRef newComment = null;
 				try {
-					
+
 					MLPropertyInterceptor.setMLAware(false);
 					ContentReader reader = contentService.getReader(commentNodeRef, ContentModel.PROP_CONTENT);
 					String comment = reader.getContentString();
-					newComment=  commentService.createComment(branchToNodeRef, (String) nodeService.getProperty(commentNodeRef, ContentModel.PROP_TITLE), comment, false);
-					
+					newComment = commentService.createComment(branchToNodeRef,
+							(String) nodeService.getProperty(commentNodeRef, ContentModel.PROP_TITLE), comment, false);
+
 					policyBehaviourFilter.disableBehaviour(newComment, ContentModel.ASPECT_AUDITABLE);
-					nodeService.setProperty(newComment, ContentModel.PROP_CREATED,  nodeService.getProperty(commentNodeRef,ContentModel.PROP_CREATED));
-					nodeService.setProperty(newComment, ContentModel.PROP_CREATOR,  nodeService.getProperty(commentNodeRef,ContentModel.PROP_CREATOR));
-					nodeService.setProperty(newComment, ContentModel.PROP_MODIFIED,  nodeService.getProperty(commentNodeRef,ContentModel.PROP_MODIFIED));
+					nodeService.setProperty(newComment, ContentModel.PROP_CREATED,
+							nodeService.getProperty(commentNodeRef, ContentModel.PROP_CREATED));
+					nodeService.setProperty(newComment, ContentModel.PROP_CREATOR,
+							nodeService.getProperty(commentNodeRef, ContentModel.PROP_CREATOR));
+					nodeService.setProperty(newComment, ContentModel.PROP_MODIFIED,
+							nodeService.getProperty(commentNodeRef, ContentModel.PROP_MODIFIED));
 					commentService.deleteComment(commentNodeRef);
 				} finally {
 					MLPropertyInterceptor.setMLAware(true);
-					if(newComment!=null) {
+					if (newComment != null) {
 						policyBehaviourFilter.enableBehaviour(newComment, ContentModel.ASPECT_AUDITABLE);
 					}
 				}
