@@ -889,28 +889,34 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		try {
 
 			String[] qualityReportResource = { QUALITY_REPORT_EN_RESSOURCE, QUALITY_REPORT_RESSOURCE };
-			List<NodeRef> resources = new ArrayList<>();
-			for (String element : qualityReportResource) {
-				resources.add(reportTplService.createTplRessource(qualityReportTplsNodeRef, element, true));
-			}
+			
 
 			ClassDefinition classDef = dictionaryService.getClass(QualityModel.TYPE_QUALITY_CONTROL);
-			NodeRef qualityFolderNodeRef = repoService.getOrCreateFolderByPath(qualityReportTplsNodeRef, classDef.getTitle(dictionaryService),
-					classDef.getTitle(dictionaryService));
-			NodeRef templateQuality = reportTplService.createTplRptDesign(qualityFolderNodeRef, classDef.getTitle(dictionaryService),
-					QUALITY_CONTROL_REPORT_PATH, ReportType.Document, ReportFormat.PDF, QualityModel.TYPE_QUALITY_CONTROL, true, true, false);
-
-			if (!resources.isEmpty()) {
-				for (NodeRef resource : resources) {
-					logger.debug("Associating resource: " + resource + " to template: " + templateQuality);
-					nodeService.createAssociation(templateQuality, resource, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES);
+			if (repoService.getFolderByPath(qualityReportTplsNodeRef, classDef.getTitle(dictionaryService)) == null) {
+			
+				NodeRef qualityFolderNodeRef = repoService.getOrCreateFolderByPath(qualityReportTplsNodeRef, classDef.getTitle(dictionaryService),
+						classDef.getTitle(dictionaryService));
+				
+				List<NodeRef> resources = new ArrayList<>();
+				for (String element : qualityReportResource) {
+					resources.add(reportTplService.createTplRessource(qualityFolderNodeRef, element, true));
 				}
+				
+				NodeRef templateQuality = reportTplService.createTplRptDesign(qualityFolderNodeRef, classDef.getTitle(dictionaryService),
+						QUALITY_CONTROL_REPORT_PATH, ReportType.Document, ReportFormat.PDF, QualityModel.TYPE_QUALITY_CONTROL, true, true, false);
+	
+				if (!resources.isEmpty()) {
+					for (NodeRef resource : resources) {
+						logger.debug("Associating resource: " + resource + " to template: " + templateQuality);
+						nodeService.createAssociation(templateQuality, resource, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES);
+					}
+				}
+	
+				nodeService.setProperty(templateQuality, ReportModel.PROP_REPORT_LOCALES, (Serializable) Arrays.asList("fr", "en"));
 			}
-
-			nodeService.setProperty(templateQuality, ReportModel.PROP_REPORT_LOCALES, (Serializable) Arrays.asList("fr", "en"));
-
+			
 		} catch (Exception e) {
-			logger.error("Failed to create nc report tpl." + QualityModel.TYPE_QUALITY_CONTROL, e);
+			logger.error("Failed to create quality report tpl." + QualityModel.TYPE_QUALITY_CONTROL, e);
 		}
 
 		// eco report
