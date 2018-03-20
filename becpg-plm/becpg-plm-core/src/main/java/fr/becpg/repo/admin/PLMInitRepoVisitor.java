@@ -106,6 +106,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 	private static final String NC_REPORT_PATH = "beCPG/birt/document/nonconformity/NCReport.rptdesign";
 	private static final String QUALITY_CONTROL_REPORT_PATH = "beCPG/birt/document/qualitycontrol/QualityControlReport.rptdesign";
+	private static final String QUALITY_REPORT_RESSOURCE = "beCPG/birt/document/qualitycontrol/QualityControlReport.properties";
+	private static final String QUALITY_REPORT_EN_RESSOURCE = "beCPG/birt/document/qualitycontrol/QualityControlReport_en.properties";
 	private static final String ECO_REPORT_PATH = "beCPG/birt/document/ecm/ECOReport.rptdesign";
 	private static final String EXPORT_PRODUCTS_REPORT_RPTFILE_PATH = "beCPG/birt/exportsearch/product/ExportSearch.rptdesign";
 	private static final String EXPORT_PRODUCTS_REPORT_XMLFILE_PATH = "beCPG/birt/exportsearch/product/ExportSearchQuery.xml";
@@ -991,13 +993,34 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 		try {
 
+			String[] qualityReportResource = { QUALITY_REPORT_EN_RESSOURCE, QUALITY_REPORT_RESSOURCE };
+			
 			ClassDefinition classDef = dictionaryService.getClass(QualityModel.TYPE_QUALITY_CONTROL);
-			NodeRef qualityFolderNodeRef = repoService.getOrCreateFolderByPath(qualityReportTplsNodeRef, classDef.getTitle(dictionaryService),
-					classDef.getTitle(dictionaryService));
-			reportTplService.createTplRptDesign(qualityFolderNodeRef, classDef.getTitle(dictionaryService), QUALITY_CONTROL_REPORT_PATH,
-					ReportType.Document, ReportFormat.PDF, QualityModel.TYPE_QUALITY_CONTROL, true, true, false);
+			if (repoService.getFolderByPath(qualityReportTplsNodeRef, classDef.getTitle(dictionaryService)) == null) {
+			
+				NodeRef qualityFolderNodeRef = repoService.getOrCreateFolderByPath(qualityReportTplsNodeRef, classDef.getTitle(dictionaryService),
+						classDef.getTitle(dictionaryService));
+				
+				List<NodeRef> resources = new ArrayList<>();
+				for (String element : qualityReportResource) {
+					resources.add(reportTplService.createTplRessource(qualityFolderNodeRef, element, true));
+				}
+				
+				NodeRef templateQuality = reportTplService.createTplRptDesign(qualityFolderNodeRef, classDef.getTitle(dictionaryService),
+						QUALITY_CONTROL_REPORT_PATH, ReportType.Document, ReportFormat.PDF, QualityModel.TYPE_QUALITY_CONTROL, true, true, false);
+	
+				if (!resources.isEmpty()) {
+					for (NodeRef resource : resources) {
+						logger.debug("Associating resource: " + resource + " to template: " + templateQuality);
+						nodeService.createAssociation(templateQuality, resource, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES);
+					}
+				}
+	
+				nodeService.setProperty(templateQuality, ReportModel.PROP_REPORT_LOCALES, (Serializable) Arrays.asList("fr", "en"));
+			}
+			
 		} catch (Exception e) {
-			logger.error("Failed to create nc report tpl." + QualityModel.TYPE_QUALITY_CONTROL, e);
+			logger.error("Failed to create quality report tpl." + QualityModel.TYPE_QUALITY_CONTROL, e);
 		}
 
 		// eco report
