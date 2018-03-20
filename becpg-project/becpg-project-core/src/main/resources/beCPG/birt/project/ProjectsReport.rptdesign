@@ -54,24 +54,12 @@ BirtDateTime.month(row["projectStartDate"], 1) +":"+ BirtDateTime.year(row["proj
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
-                    <property name="name">startDate_recalculated_In_Second</property>
-                    <expression name="expression">BirtDateTime.date(row["projectStartDate"].getFullYear(),  row["projectStartDate"].getMonth(), 01 ).getTime()</expression>
-                    <property name="dataType">float</property>
-                </structure>
-                <structure>
                     <property name="name">completionDate_MonthYear</property>
                     <expression name="expression">//This Computed Column has made for Line chart to display number of opened project by closed project. Is used in join table for (X axis) Line Chart.
 if ( row["projectCompletionDate"] != null &amp;&amp; row["projectCompletionDate"]  != "" ) {
 	BirtDateTime.month(row["projectCompletionDate"], 1) +":"+ BirtDateTime.year(row["projectCompletionDate"])
 }</expression>
                     <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">completionDate_recalculated_In_Second</property>
-                    <expression name="expression">if (row["projectCompletionDate"] != null &amp;&amp; row["projectCompletionDate"] != "") {
-	BirtDateTime.date(row["projectCompletionDate"].getFullYear(),  row["projectCompletionDate"].getMonth(), 01 ).getTime()
-}</expression>
-                    <property name="dataType">float</property>
                 </structure>
                 <structure>
                     <property name="name">runningCount</property>
@@ -310,21 +298,11 @@ if ( row["projectCompletionDate"] != null &amp;&amp; row["projectCompletionDate"
                     </structure>
                     <structure>
                         <property name="position">23</property>
-                        <property name="name">startDate_recalculated_In_Second</property>
-                        <property name="dataType">float</property>
-                    </structure>
-                    <structure>
-                        <property name="position">24</property>
                         <property name="name">completionDate_MonthYear</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">25</property>
-                        <property name="name">completionDate_recalculated_In_Second</property>
-                        <property name="dataType">float</property>
-                    </structure>
-                    <structure>
-                        <property name="position">26</property>
+                        <property name="position">24</property>
                         <property name="name">runningCount</property>
                         <property name="dataType">integer</property>
                     </structure>
@@ -1977,12 +1955,6 @@ if ( row["projectCompletionDate"] != null &amp;&amp; row["projectCompletionDate"
                             <data id="3310">
                                 <property name="resultSetColumn">CountFamily</property>
                             </data>
-                            <text id="3469">
-                                <property name="backgroundColor">#ADD8E6</property>
-                                <property name="fontWeight">bold</property>
-                                <property name="contentType">html</property>
-                                <text-property name="content"><![CDATA[<VALUE-OF>row["Count"]</VALUE-OF>]]></text-property>
-                            </text>
                         </cell>
                     </row>
                 </header>
@@ -7546,8 +7518,7 @@ if ( row["projectCompletionDate"] != null &amp;&amp; row["projectCompletionDate"
                 <structure>
                     <property name="name">projectOverdue</property>
                     <text-property name="displayName">projectOverdue</text-property>
-                    <expression name="expression" type="javascript">( dataSetRow["projectOverdue"] &lt; 0 ) ? "Dans les temps" : "En retard" ;
-//( dataSetRow["projectOverdue"] &lt; 0 ) ? reportContext.getMessage("onTime", reportContext.getLocale()) : reportContext.getMessage("overDue", reportContext.getLocale()) ;</expression>
+                    <expression name="expression" type="javascript">( dataSetRow["projectOverdue"] &lt; 0 ) ? reportContext.getMessage("onTime", reportContext.getLocale()) : reportContext.getMessage("overDue", reportContext.getLocale()) ;</expression>
                     <property name="dataType">string</property>
                     <property name="allowExport">true</property>
                 </structure>
@@ -8645,21 +8616,7 @@ if ( row["projectCompletionDate"] != null &amp;&amp; row["projectCompletionDate"
                 <structure>
                     <property name="name">projectState</property>
                     <text-property name="displayName">projectState</text-property>
-                    <expression name="expression" type="javascript">if(dataSetRow["projectState"] == "Planned"){
-"Plannifié"
-}
-else if(dataSetRow["projectState"] == "InProgress"){
-"En cours"
-}
-else if(dataSetRow["projectState"] == "OnHold"){
-"En attente"
-}
-else if(dataSetRow["projectState"] == "Cancelled"){
-"Annulé"
-}
-else if(dataSetRow["projectState"] == "Completed"){
-"Terminé"
-}</expression>
+                    <expression name="expression" type="javascript">reportContext.getMessage( "projectState." + dataSetRow["projectState"]  , reportContext.getLocale());</expression>
                     <property name="dataType">string</property>
                     <property name="allowExport">true</property>
                 </structure>
@@ -8756,7 +8713,8 @@ else{
             <list-property name="filter">
                 <structure>
                     <property name="operator">is-true</property>
-                    <expression name="expr" type="javascript">row["projectState"] == "En cours" || row["projectState"] == "En attente"</expression>
+                    <expression name="expr" type="javascript">row["projectState"] == reportContext.getMessage( "projectState.InProgress"  , reportContext.getLocale()) 
+|| row["projectState"] == reportContext.getMessage( "projectState.OnHold"  , reportContext.getLocale())</expression>
                     <property name="updateAggregation">true</property>
                 </structure>
             </list-property>
@@ -11480,8 +11438,7 @@ else{
                         <structure>
                             <property name="name">OverDueOrNot</property>
                             <text-property name="displayName">OverDueOrNot</text-property>
-                            <expression name="expression" type="javascript">( row["projectOverdue"] >= 0 ) ? "Dans les temps" :  "En retard";
-//( row["projectOverdue"] >= 0 ) ?  reportContext.getMessage("onTime", reportContext.getLocale()) :  reportContext.getMessage("overDue", reportContext.getLocale());</expression>
+                            <expression name="expression" type="javascript">( row["projectOverdue"] >= 0 ) ?  reportContext.getMessage("onTime", reportContext.getLocale()) :  reportContext.getMessage("overDue", reportContext.getLocale());</expression>
                             <property name="dataType">string</property>
                             <property name="allowExport">true</property>
                         </structure>
@@ -12695,15 +12652,6 @@ else{
                     <property name="marginRight">3pt</property>
                     <property name="height">3.2916666666666665in</property>
                     <property name="width">10.260416666666666in</property>
-                    <list-property name="boundDataColumns">
-                        <structure>
-                            <property name="name">OverDueOrNot</property>
-                            <text-property name="displayName">OverDueOrNot</text-property>
-                            <expression name="expression" type="javascript">( row["projectOverdue"] >= 0 ) ?  "Pas de retard" : "En retard";</expression>
-                            <property name="dataType">string</property>
-                            <property name="allowExport">true</property>
-                        </structure>
-                    </list-property>
                 </extended-item>
                 <extended-item extensionName="Chart" id="3223">
                     <xml-property name="xmlRepresentation"><![CDATA[<model:ChartWithAxes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:attribute="http://www.birt.eclipse.org/ChartModelAttribute" xmlns:data="http://www.birt.eclipse.org/ChartModelData" xmlns:layout="http://www.birt.eclipse.org/ChartModelLayout" xmlns:model="http://www.birt.eclipse.org/ChartModel" xmlns:type="http://www.birt.eclipse.org/ChartModelType">
@@ -13908,15 +13856,6 @@ else{
                     <property name="marginRight">3pt</property>
                     <property name="height">3.2916666666666665in</property>
                     <property name="width">10.260416666666666in</property>
-                    <list-property name="boundDataColumns">
-                        <structure>
-                            <property name="name">OverDueOrNot</property>
-                            <text-property name="displayName">OverDueOrNot</text-property>
-                            <expression name="expression" type="javascript">( row["projectOverdue"] >= 0 ) ?  "Pas de retard" : "En retard";</expression>
-                            <property name="dataType">string</property>
-                            <property name="allowExport">true</property>
-                        </structure>
-                    </list-property>
                 </extended-item>
                 <extended-item extensionName="Chart" id="3224">
                     <xml-property name="xmlRepresentation"><![CDATA[<model:ChartWithAxes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:attribute="http://www.birt.eclipse.org/ChartModelAttribute" xmlns:data="http://www.birt.eclipse.org/ChartModelData" xmlns:layout="http://www.birt.eclipse.org/ChartModelLayout" xmlns:model="http://www.birt.eclipse.org/ChartModel" xmlns:type="http://www.birt.eclipse.org/ChartModelType">
@@ -15122,15 +15061,6 @@ else{
                     <property name="marginRight">3pt</property>
                     <property name="height">3.2916666666666665in</property>
                     <property name="width">10.260416666666666in</property>
-                    <list-property name="boundDataColumns">
-                        <structure>
-                            <property name="name">OverDueOrNot</property>
-                            <text-property name="displayName">OverDueOrNot</text-property>
-                            <expression name="expression" type="javascript">( row["projectOverdue"] >= 0 ) ?  "Pas de retard" : "En retard";</expression>
-                            <property name="dataType">string</property>
-                            <property name="allowExport">true</property>
-                        </structure>
-                    </list-property>
                 </extended-item>
                 <extended-item extensionName="Chart" id="3226">
                     <xml-property name="xmlRepresentation"><![CDATA[<model:ChartWithAxes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:attribute="http://www.birt.eclipse.org/ChartModelAttribute" xmlns:data="http://www.birt.eclipse.org/ChartModelData" xmlns:layout="http://www.birt.eclipse.org/ChartModelLayout" xmlns:model="http://www.birt.eclipse.org/ChartModel" xmlns:type="http://www.birt.eclipse.org/ChartModelType">
@@ -16330,15 +16260,6 @@ else{
                     <property name="marginRight">3pt</property>
                     <property name="height">3.2916666666666665in</property>
                     <property name="width">10.260416666666666in</property>
-                    <list-property name="boundDataColumns">
-                        <structure>
-                            <property name="name">OverDueOrNot</property>
-                            <text-property name="displayName">OverDueOrNot</text-property>
-                            <expression name="expression" type="javascript">( row["projectOverdue"] >= 0 ) ?  "Pas de retard" : "En retard";</expression>
-                            <property name="dataType">string</property>
-                            <property name="allowExport">true</property>
-                        </structure>
-                    </list-property>
                 </extended-item>
                 <extended-item extensionName="Chart" id="3227">
                     <xml-property name="xmlRepresentation"><![CDATA[<model:ChartWithAxes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:attribute="http://www.birt.eclipse.org/ChartModelAttribute" xmlns:data="http://www.birt.eclipse.org/ChartModelData" xmlns:layout="http://www.birt.eclipse.org/ChartModelLayout" xmlns:model="http://www.birt.eclipse.org/ChartModel" xmlns:type="http://www.birt.eclipse.org/ChartModelType">
@@ -17543,15 +17464,6 @@ else{
                     <property name="marginRight">3pt</property>
                     <property name="height">3.2916666666666665in</property>
                     <property name="width">10.260416666666666in</property>
-                    <list-property name="boundDataColumns">
-                        <structure>
-                            <property name="name">OverDueOrNot</property>
-                            <text-property name="displayName">OverDueOrNot</text-property>
-                            <expression name="expression" type="javascript">( row["projectOverdue"] >= 0 ) ?  "Pas de retard" : "En retard";</expression>
-                            <property name="dataType">string</property>
-                            <property name="allowExport">true</property>
-                        </structure>
-                    </list-property>
                 </extended-item>
                 <extended-item extensionName="Chart" id="3228">
                     <xml-property name="xmlRepresentation"><![CDATA[<model:ChartWithAxes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:attribute="http://www.birt.eclipse.org/ChartModelAttribute" xmlns:data="http://www.birt.eclipse.org/ChartModelData" xmlns:layout="http://www.birt.eclipse.org/ChartModelLayout" xmlns:model="http://www.birt.eclipse.org/ChartModel" xmlns:type="http://www.birt.eclipse.org/ChartModelType">
@@ -18756,15 +18668,6 @@ else{
                     <property name="marginRight">3pt</property>
                     <property name="height">3.2916666666666665in</property>
                     <property name="width">10.260416666666666in</property>
-                    <list-property name="boundDataColumns">
-                        <structure>
-                            <property name="name">OverDueOrNot</property>
-                            <text-property name="displayName">OverDueOrNot</text-property>
-                            <expression name="expression" type="javascript">( row["projectOverdue"] >= 0 ) ?  "Pas de retard" : "En retard";</expression>
-                            <property name="dataType">string</property>
-                            <property name="allowExport">true</property>
-                        </structure>
-                    </list-property>
                 </extended-item>
             </footer>
         </list>
