@@ -65,7 +65,7 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 
 	public static final String EMAIL_TEMPLATES = "./app:dictionary/app:email_templates";
 
-	private static final String PROJECT_REPORT_CSS_RESOURCE = "beCPG/birt/project/becpg-report.css";
+	private static final String PROJECT_REPORT_CSS_RESOURCE = "beCPG/birt/project/project-report.css";
 
 	private static final String PROJECT_REPORT_EN_RESOURCE = "beCPG/birt/project/ProjectReport_en.properties";
 
@@ -175,21 +175,20 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 		 */
 		NodeRef exportSearchNodeRef = visitFolder(reportsNodeRef, RepoConsts.PATH_REPORTS_EXPORT_SEARCH);
 
-		// export search products
 		try {
-
-			String[] projectReportResources = { PROJECT_REPORT_CSS_RESOURCE, PROJECT_REPORT_FR_RESOURCE, PROJECT_REPORT_EN_RESOURCE };
-			List<NodeRef> resources = new ArrayList<>();
-
-			for (String element : projectReportResources) {
-				resources.add(reportTplService.createTplRessource(exportSearchNodeRef, element, false));
-			}
 
 			if (repoService.getFolderByPath(exportSearchNodeRef, PATH_REPORTS_EXPORT_SEARCH_PROJECTS) == null) {
 
-				NodeRef exportSearchProductsNodeRef = visitFolder(exportSearchNodeRef, PATH_REPORTS_EXPORT_SEARCH_PROJECTS);
+				NodeRef exportSearchProjectNodeRef = visitFolder(exportSearchNodeRef, PATH_REPORTS_EXPORT_SEARCH_PROJECTS);
 
-				NodeRef templateProject = reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
+				String[] projectReportResources = { PROJECT_REPORT_CSS_RESOURCE, PROJECT_REPORT_FR_RESOURCE, PROJECT_REPORT_EN_RESOURCE };
+				List<NodeRef> resources = new ArrayList<>();
+
+				for (String element : projectReportResources) {
+					resources.add(reportTplService.createTplRessource(exportSearchProjectNodeRef, element, false));
+				}
+
+				NodeRef templateProject = reportTplService.createTplRptDesign(exportSearchProjectNodeRef,
 						TranslateHelper.getTranslatedPath(PATH_REPORTS_EXPORT_SEARCH_PROJECTS), EXPORT_PROJECTS_REPORT_RPTFILE_PATH,
 						ReportType.ExportSearch, ReportFormat.PDF, ProjectModel.TYPE_PROJECT, false, true, false);
 
@@ -198,12 +197,11 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 						logger.debug("Associating resource: " + resource + " to template: " + templateProject);
 						nodeService.createAssociation(templateProject, resource, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES);
 					}
-					nodeService.setProperty(templateProject, ReportModel.PROP_REPORT_LOCALES, (Serializable) Arrays.asList("fr", "en"));
 				}
 
 				nodeService.setProperty(templateProject, ReportModel.PROP_REPORT_LOCALES, (Serializable) Arrays.asList("fr", "en"));
 
-				reportTplService.createTplRessource(exportSearchProductsNodeRef, EXPORT_PROJECTS_REPORT_XMLFILE_PATH, false);
+				reportTplService.createTplRessource(exportSearchProjectNodeRef, EXPORT_PROJECTS_REPORT_XMLFILE_PATH, false);
 
 			}
 

@@ -8,9 +8,15 @@
     <property name="iconFile">/templates/blank_report.gif</property>
     <property name="bidiLayoutOrientation">ltr</property>
     <property name="imageDPI">96</property>
+    <list-property name="cssStyleSheets">
+        <structure>
+            <property name="fileName">../product/default/becpg-report.css</property>
+            <property name="useExternalCss">true</property>
+        </structure>
+    </list-property>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="Data Source" id="5">
-            <property name="FILELIST">src/main/resources/beCPG/birt/document/qualitycontrol/QualityControlReport.xml</property>
+            <property name="FILELIST">becpg-plm/becpg-plm-core/src/main/resources/beCPG/birt/document/qualitycontrol/QualityControlReport.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -895,7 +901,7 @@
             <page-header>
                 <label id="4">
                     <property name="textAlign">right</property>
-                    <text-property name="text">Bulletin de résultats</text-property>
+                    <text-property name="text" key="resultsBulletin">Bulletin de résultats</text-property>
                 </label>
             </page-header>
             <page-footer>
@@ -918,15 +924,16 @@
             <property name="borderTopWidth">thin</property>
             <property name="width">5.239583333333333in</property>
             <column id="10">
-                <property name="width">1in</property>
+                <property name="width">0.6354166666666666in</property>
             </column>
             <column id="11">
-                <property name="width">2.53125in</property>
+                <property name="width">4.604166666666667in</property>
             </column>
             <row id="13">
                 <cell id="14">
                     <label id="8">
-                        <text-property name="text">Dossier:</text-property>
+                        <property name="style">becpg-cell-bold</property>
+                        <text-property name="text" key="forder">Dossier:</text-property>
                     </label>
                 </cell>
                 <cell id="15">
@@ -947,7 +954,8 @@
             <row id="17">
                 <cell id="18">
                     <label id="25">
-                        <text-property name="text">Produit:</text-property>
+                        <property name="style">becpg-cell-bold</property>
+                        <text-property name="text" key="product">Produit:</text-property>
                     </label>
                 </cell>
                 <cell id="19">
@@ -978,14 +986,24 @@
             <property name="borderTopStyle">solid</property>
             <property name="borderTopWidth">thin</property>
             <property name="marginBottom">20pt</property>
-            <column id="129"/>
-            <column id="130"/>
-            <column id="131"/>
-            <column id="132"/>
+            <property name="width">7.5in</property>
+            <column id="129">
+                <property name="width">1.34375in</property>
+            </column>
+            <column id="130">
+                <property name="width">2.2708333333333335in</property>
+            </column>
+            <column id="131">
+                <property name="width">1.4375in</property>
+            </column>
+            <column id="132">
+                <property name="width">2.3125in</property>
+            </column>
             <row id="133">
                 <cell id="134">
                     <label id="163">
-                        <text-property name="text">Date fabrication:</text-property>
+                        <property name="style">becpg-cell-bold</property>
+                        <text-property name="text" key="manufacturingDate">Date fabrication:</text-property>
                     </label>
                 </cell>
                 <cell id="135">
@@ -1005,7 +1023,8 @@
                 </cell>
                 <cell id="136">
                     <label id="165">
-                        <text-property name="text">Code Produit:</text-property>
+                        <property name="style">becpg-cell-bold</property>
+                        <text-property name="text" key="productCode">Code Produit:</text-property>
                     </label>
                 </cell>
                 <cell id="137">
@@ -1026,7 +1045,8 @@
             <row id="138">
                 <cell id="139">
                     <label id="164">
-                        <text-property name="text">Date d'analyse:</text-property>
+                        <property name="style">becpg-cell-bold</property>
+                        <text-property name="text" key="analysisDate">Date d'analyse:</text-property>
                     </label>
                 </cell>
                 <cell id="140">
@@ -1046,7 +1066,8 @@
                 </cell>
                 <cell id="141">
                     <label id="166">
-                        <text-property name="text">N°Tank 1/N° Tank 2:</text-property>
+                        <property name="style">becpg-cell-bold</property>
+                        <text-property name="text" key="tanks">N°Tank 1/N° Tank 2:</text-property>
                     </label>
                 </cell>
                 <cell id="142">
@@ -1067,7 +1088,8 @@
             <row id="143">
                 <cell id="144">
                     <label id="280">
-                        <text-property name="text">DLUO</text-property>
+                        <property name="style">becpg-cell-bold</property>
+                        <text-property name="text" key="bestBeforeDate">DLUO</text-property>
                     </label>
                 </cell>
                 <cell id="145">
@@ -1087,7 +1109,8 @@
                 </cell>
                 <cell id="146">
                     <label id="167">
-                        <text-property name="text">Ligne:</text-property>
+                        <property name="style">becpg-cell-bold</property>
+                        <text-property name="text" key="line">Ligne:</text-property>
                     </label>
                 </cell>
                 <cell id="147">
@@ -1108,7 +1131,8 @@
             <row id="148">
                 <cell id="149">
                     <label id="171">
-                        <text-property name="text">N° de lot:</text-property>
+                        <property name="style">becpg-cell-bold</property>
+                        <text-property name="text" key="batchNumber">N° de lot:</text-property>
                     </label>
                 </cell>
                 <cell id="150">
@@ -1127,7 +1151,8 @@
                 </cell>
                 <cell id="151">
                     <label id="168">
-                        <text-property name="text">Marque:</text-property>
+                        <property name="style">becpg-cell-bold</property>
+                        <text-property name="text" key="brand">Marque:</text-property>
                     </label>
                 </cell>
                 <cell id="152">
@@ -1150,7 +1175,8 @@
                 <cell id="155"/>
                 <cell id="156">
                     <label id="170">
-                        <text-property name="text">Référence:</text-property>
+                        <property name="style">becpg-cell-bold</property>
+                        <text-property name="text" key="reference">Référence:</text-property>
                     </label>
                 </cell>
                 <cell id="157">
@@ -1174,6 +1200,7 @@
             <property name="borderLeftStyle">none</property>
             <property name="borderRightStyle">none</property>
             <property name="borderTopStyle">none</property>
+            <property name="pageBreakBefore">auto</property>
             <property name="dataSet">ControlList</property>
             <list-property name="boundDataColumns">
                 <structure>
@@ -1267,6 +1294,7 @@
                     <property name="dataType">string</property>
                 </structure>
             </list-property>
+            <property name="pageBreakInterval">1000</property>
             <column id="87">
                 <property name="style">leftRightBorders</property>
                 <property name="width">2in</property>
@@ -1281,19 +1309,19 @@
             </column>
             <column id="90">
                 <property name="style">leftRightBorders</property>
-                <property name="width">0.7in</property>
+                <property name="width">0.6in</property>
             </column>
             <column id="91">
                 <property name="style">leftRightBorders</property>
-                <property name="width">0.7in</property>
+                <property name="width">0.6in</property>
             </column>
             <column id="290">
                 <property name="style">leftRightBorders</property>
-                <property name="width">0.7in</property>
+                <property name="width">0.6in</property>
             </column>
             <column id="92"/>
             <column id="412">
-                <property name="width">1.1in</property>
+                <property name="width">1.4in</property>
             </column>
             <group id="236">
                 <property name="groupName">sampleIdGroup</property>
@@ -1376,7 +1404,7 @@
                         </cell>
                     </row>
                     <row id="237">
-                        <property name="backgroundColor">#ADD8E6</property>
+                        <property name="style">becpg-chapter-header</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
                         <property name="borderLeftStyle">solid</property>
@@ -1394,7 +1422,7 @@
                             <property name="verticalAlign">middle</property>
                             <label id="47">
                                 <property name="fontWeight">bold</property>
-                                <text-property name="text">ECHANTILLON:</text-property>
+                                <text-property name="text" key="chapterSample">ECHANTILLON:</text-property>
                             </label>
                         </cell>
                         <cell id="239">
@@ -1456,7 +1484,7 @@
                         </cell>
                     </row>
                     <row id="252">
-                        <property name="backgroundColor">#ADD8E6</property>
+                        <property name="style">becpg-chapter-header</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
                         <property name="borderLeftStyle">solid</property>
@@ -1486,7 +1514,7 @@
                             <property name="textAlign">center</property>
                             <property name="verticalAlign">middle</property>
                             <label id="33">
-                                <text-property name="text">RESULTAT</text-property>
+                                <text-property name="text" key="result">RESULTAT</text-property>
                             </label>
                         </cell>
                         <cell id="255">
@@ -1498,7 +1526,7 @@
                             <property name="textAlign">center</property>
                             <property name="verticalAlign">middle</property>
                             <label id="37">
-                                <text-property name="text">UNITE</text-property>
+                                <text-property name="text" key="unit">UNITE</text-property>
                             </label>
                         </cell>
                         <cell id="256">
@@ -1512,7 +1540,7 @@
                             <property name="textAlign">center</property>
                             <property name="verticalAlign">middle</property>
                             <label id="260">
-                                <text-property name="text">NORMES</text-property>
+                                <text-property name="text" key="standard">NORMES</text-property>
                             </label>
                         </cell>
                         <cell id="258">
@@ -1520,7 +1548,7 @@
                             <property name="textAlign">center</property>
                             <property name="verticalAlign">middle</property>
                             <label id="276">
-                                <text-property name="text">METHODE</text-property>
+                                <text-property name="text" key="method">METHODE</text-property>
                             </label>
                         </cell>
                         <cell id="406">
@@ -1528,12 +1556,12 @@
                             <property name="textAlign">center</property>
                             <property name="verticalAlign">middle</property>
                             <label id="416">
-                                <text-property name="text">CONFORMITE</text-property>
+                                <text-property name="text" key="conformity">CONFORMITE</text-property>
                             </label>
                         </cell>
                     </row>
                     <row id="269">
-                        <property name="backgroundColor">#ADD8E6</property>
+                        <property name="style">becpg-chapter-header</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
                         <property name="borderLeftStyle">solid</property>
@@ -1578,7 +1606,7 @@
                             <property name="textAlign">center</property>
                             <property name="verticalAlign">middle</property>
                             <label id="39">
-                                <text-property name="text">Mini</text-property>
+                                <text-property name="text" key="mini">Mini</text-property>
                             </label>
                         </cell>
                         <cell id="274">
@@ -1590,7 +1618,7 @@
                             <property name="textAlign">center</property>
                             <property name="verticalAlign">middle</property>
                             <label id="45">
-                                <text-property name="text">Maxi</text-property>
+                                <text-property name="text" key="maxi">Maxi</text-property>
                             </label>
                         </cell>
                         <cell id="285">
@@ -1602,7 +1630,7 @@
                             <property name="textAlign">center</property>
                             <property name="verticalAlign">middle</property>
                             <label id="291">
-                                <text-property name="text">Cible</text-property>
+                                <text-property name="text" key="target">Cible</text-property>
                             </label>
                         </cell>
                         <cell id="275">
