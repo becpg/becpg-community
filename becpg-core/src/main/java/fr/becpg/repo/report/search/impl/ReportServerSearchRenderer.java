@@ -33,6 +33,7 @@ import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.ConcurrencyFailureException;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.common.BeCPGException;
@@ -46,6 +47,7 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
 import fr.becpg.repo.report.search.SearchReportRenderer;
 import fr.becpg.repo.report.template.ReportTplService;
@@ -132,6 +134,7 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 			Element exportElt = document.addElement(TAG_EXPORT);
 			params = loadReportData(exportSearchCtx, exportElt, params, searchResults);
 
+			params.put(ReportParams.PARAM_LANG, MLTextHelper.localeKey(I18NUtil.getLocale()));
 			params.put(ReportParams.PARAM_ASSOCIATED_TPL_FILES,
 					associationService.getTargetAssocs(templateNodeRef, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES));
 
