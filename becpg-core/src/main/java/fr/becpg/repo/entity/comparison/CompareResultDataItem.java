@@ -23,7 +23,7 @@ public class CompareResultDataItem {
 	private List<NodeRef> charactPath;
 	
 	/** The characteristic. */
-	private NodeRef characteristic;
+	private String characteristic;
 	
 	/** The property. */
 	private QName property;
@@ -75,7 +75,7 @@ public class CompareResultDataItem {
 	 *
 	 * @return the characteristic
 	 */
-	public NodeRef getCharacteristic() {
+	public String getCharacteristic() {
 		return characteristic;
 	}
 	
@@ -84,7 +84,7 @@ public class CompareResultDataItem {
 	 *
 	 * @param characteristic the new characteristic
 	 */
-	public void setCharacteristic(NodeRef characteristic) {
+	public void setCharacteristic(String characteristic) {
 		this.characteristic = characteristic;
 	}
 	
@@ -111,11 +111,11 @@ public class CompareResultDataItem {
 	}
 
 	public void setValues(String[] values) {
-		this.values = values;
+		this.values = values; 
 	}
 
 	public boolean isDifferent() {
-		return isDifferent;
+		return isDifferent; 
 	}
 
 	public void setDifferent(boolean isDifferent) {
@@ -131,7 +131,7 @@ public class CompareResultDataItem {
 	 * @param property the property
 	 * @param values the values
 	 */
-	public CompareResultDataItem(QName entityList, List<NodeRef> charactPath, NodeRef characteristic, QName property, String[] values){
+	public CompareResultDataItem(QName entityList, List<NodeRef> charactPath, String characteristic, QName property, String[] values){
 		setProductList(entityList);
 		setCharactPath(charactPath);
 		setCharacteristic(characteristic);
