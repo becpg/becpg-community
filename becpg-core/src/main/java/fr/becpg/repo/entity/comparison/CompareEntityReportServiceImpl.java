@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
@@ -114,7 +115,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 	public void getComparisonReport(NodeRef entity1, List<NodeRef> entities, NodeRef templateNodeRef, OutputStream out) {
 
 		if (templateNodeRef != null) {
-			String reportFormat = (String) nodeService.getProperty(templateNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
+			String reportFormat = (String) nodeService.getProperty(templateNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT); 
 
 			List<CompareResultDataItem> compareResult = new ArrayList<>();
 			Map<String, List<StructCompareResultDataItem>> structCompareResults = new HashMap<>();
@@ -128,8 +129,8 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 			entitiesCmpElt.add(renderComparisonAsXmlData(entity1, entities, compareResult));
 			entitiesCmpElt.add(renderStructComparisonAsXmlData(structCompareResults));
 			
-			if (logger.isTraceEnabled()) {
-				logger.trace("comparison XML " + entitiesCmpElt.asXML());
+			if (logger.isDebugEnabled()) {
+				logger.debug("comparison XML " + entitiesCmpElt.asXML());
 			}
 
 			try {
@@ -178,7 +179,6 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 	 * @return the element
 	 */
 	private  Element renderComparisonAsXmlData(NodeRef entity1NodeRef, List<NodeRef> entityNodeRefs, List<CompareResultDataItem> compareResult) {
-
 		Document document = DocumentHelper.createDocument();
 
 		Element cmpRowsElt = document.addElement(TAG_COMPARISON_ROWS);
@@ -189,11 +189,12 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 		int i = 2;
 		for (NodeRef entityNodeRef : entityNodeRefs) {
 			name = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
-			cmpRowsElt.addAttribute(ATTR_ENTITY + i, name);
+			cmpRowsElt.addAttribute(ATTR_ENTITY + i, name); 
 			i++;
 		}
 		// compareResult
 		for (CompareResultDataItem c : compareResult) {
+			if(c.getCharacteristic() == null) continue;
 			Element cmpRowElt = cmpRowsElt.addElement(TAG_COMPARISON_ROW);
 			if (c.getEntityList() != null) {
 				TypeDefinition typeDef = dictionaryService.getType(c.getEntityList());
@@ -212,17 +213,19 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 				}
 			}
 			
+			logger.debug("NodeRef of charact: "+c.getCharacteristic());
+			NodeRef charactNodeRef = new NodeRef(c.getCharacteristic().split(Pattern.quote("|"))[0]); 
 			
 			cmpRowElt.addAttribute(ATTR_CHARACTERISTIC,
-					c.getCharacteristic() == null ? "" : charactPath + attributeExtractorService.extractPropName(c.getCharacteristic()));
+					c.getCharacteristic() == null ? "" : charactPath + attributeExtractorService.extractPropName(charactNodeRef));
 			cmpRowElt.addAttribute(ATTR_PROPERTY, getClassAttributeTitle(c.getProperty()));
 			cmpRowElt.addAttribute(ATTR_PROPERTY_QNAME, c.getProperty().toPrefixString(namespaceService));
 			cmpRowElt.addAttribute(ATTR_IS_DIFFERENT, Boolean.toString(c.isDifferent()));
 
 			i = 1;
 			for (String value : c.getValues()) {
-				if (logger.isTraceEnabled()) {
-					logger.trace("compare prop: " + c.getProperty() + " - " + ATTR_VALUE + i + " " + value);
+				if (logger.isDebugEnabled()) {
+					logger.debug("compare prop: " + c.getProperty() + " - " + ATTR_VALUE + i + " " + value);
 				}
 				cmpRowElt.addAttribute(ATTR_VALUE + i, value);
 				i++;

@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.regex.Pattern;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.model.ForumModel;
@@ -31,6 +32,7 @@ import org.alfresco.util.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.config.format.PropertyFormats;
@@ -81,6 +83,9 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 	@Autowired
 	private FileFolderService fileFolderService;
+	
+	@Value("${beCPG.comparison.pivots}")
+	private String customPivots;
 
 	@Override
 	public List<CompareResultDataItem> compare(NodeRef entity1, List<NodeRef> entities, List<CompareResultDataItem> compareResult,
@@ -173,6 +178,8 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				}
 			}
 		}
+		
+		
 
 	}
 
@@ -422,18 +429,10 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 	private void compareDataLists(QName dataListType, NodeRef dataList1NodeRef, NodeRef dataList2NodeRef, int nbEntities, int comparisonPosition,
 			Map<String, CompareResultDataItem> comparisonMap) {
-
-		QName pivotProperty = null;
-
-		try {
-			pivotProperty = entityDictionaryService.getDefaultPivotAssoc(dataListType);
-		} catch (IllegalArgumentException e) {
-			logger.debug(e);
-		}
-
-		if (pivotProperty != null) {
-
-			logger.debug("pivotProperty: " + pivotProperty);
+		
+		List<QName> pivotProperties = getPivotForComparison(dataListType);
+		
+		if (!pivotProperties.isEmpty()) {
 
 			// load characteristics
 			List<NodeRef> dataListItems1 = new ArrayList<>();
@@ -448,66 +447,56 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 			// look for characteristics that are in both entity
 			List<CharacteristicToCompare> characteristicsToCmp = new LinkedList<>();
-			List<NodeRef> comparedCharact = new ArrayList<>();
+			List<String> comparedCharact = new ArrayList<>();
 
 			// composite datalist
 			for (NodeRef dataListItem1 : dataListItems1) {
 				NodeRef dataListItem2NodeRef = null;
-
-				List<AssociationRef> target1Refs = nodeService.getTargetAssocs(dataListItem1, pivotProperty);
-
-				NodeRef characteristicNodeRef = null;
-
-				if (target1Refs.size() > 0) {
-					characteristicNodeRef = (target1Refs.get(0)).getTargetRef();
-					comparedCharact.add(characteristicNodeRef);
+				
+				String pivot1Key = getKeyFromPivots(dataListItem1, pivotProperties);
+				if (!pivot1Key.isEmpty()) {
+					comparedCharact.add(pivot1Key.toString());
 
 					for (NodeRef d : dataListItems2) {
-
-						List<AssociationRef> target2Refs = nodeService.getTargetAssocs(d, pivotProperty);
-						if (target2Refs.size() > 0) {
-
-							NodeRef c = (target2Refs.get(0)).getTargetRef();
-
-							if (characteristicNodeRef.equals(c)) {
-								if (logger.isDebugEnabled()) {
-									logger.debug("###c " + nodeService.getProperty(c, ContentModel.PROP_NAME));
-								}
-								dataListItem2NodeRef = d;
-								break;
-							}
+						
+						String pivot2Key = getKeyFromPivots(d, pivotProperties);
+						if(pivot1Key.equals(pivot2Key)){
+							dataListItem2NodeRef = d;
+							break;
 						}
 					}
+
+
+					CharacteristicToCompare characteristicToCmp = new CharacteristicToCompare(null, pivot1Key, dataListItem1,
+							dataListItem2NodeRef);
+					characteristicsToCmp.add(characteristicToCmp);
+
 				}
-
-				CharacteristicToCompare characteristicToCmp = new CharacteristicToCompare(null, characteristicNodeRef, dataListItem1,
-						dataListItem2NodeRef);
-				characteristicsToCmp.add(characteristicToCmp);
-
 			}
 
-			// compare charact that are in DL1
-			for (NodeRef d : dataListItems2) {
+				// compare charact that are in DL1
+				for (NodeRef d : dataListItems2) {
 
-				List<AssociationRef> target2Refs = nodeService.getTargetAssocs(d, pivotProperty);
-				NodeRef characteristicNodeRef;
+					String pivot2Key = getKeyFromPivots(d, pivotProperties);
 
-				if (target2Refs.size() > 0) {
-					characteristicNodeRef = (target2Refs.get(0)).getTargetRef();
+					if (!pivot2Key.isEmpty()) {
 
-					if (!comparedCharact.contains(characteristicNodeRef)) {
-						comparedCharact.add(characteristicNodeRef);
-						CharacteristicToCompare characteristicToCmp = new CharacteristicToCompare(null, characteristicNodeRef, null, d);
-						characteristicsToCmp.add(characteristicToCmp);
+						if (!comparedCharact.contains(pivot2Key)) {
+							comparedCharact.add(pivot2Key);
+							CharacteristicToCompare characteristicToCmp = new CharacteristicToCompare(null, pivot2Key, null, d);
+							characteristicsToCmp.add(characteristicToCmp);
+						}  
 					}
-				}
-			}
+				} 
 
-			// compare properties of characteristics
-			for (CharacteristicToCompare c : characteristicsToCmp) {
-				compareNode(dataListType, c.getCharactPath(), c.getCharacteristic(), c.getNodeRef1(), c.getNodeRef2(), nbEntities, comparisonPosition,
-						true, comparisonMap);
-			}
+				// compare properties of characteristics
+
+				for (CharacteristicToCompare c : characteristicsToCmp) {
+					
+					compareNode(dataListType, c.getCharactPath(), c.getCharacteristic(), c.getNodeRef1(), c.getNodeRef2(), nbEntities, comparisonPosition,
+							true, comparisonMap);
+				}
+			
 		}
 	}
 
@@ -695,7 +684,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 	}
 
-	private void compareNode(QName dataListType, List<NodeRef> charactPath, NodeRef characteristic, NodeRef nodeRef1, NodeRef nodeRef2,
+	private void compareNode(QName dataListType, List<NodeRef> charactPath, String characteristic, NodeRef nodeRef1, NodeRef nodeRef2,
 			int nbEntities, int comparisonPosition, boolean isDataList, Map<String, CompareResultDataItem> comparisonMap) {
 
 		/*
@@ -820,7 +809,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 	}
 
-	private void compareAssocs(QName dataListType, List<NodeRef> charactPath, NodeRef characteristic, QName propertyQName, List<NodeRef> nodeRefs1,
+	private void compareAssocs(QName dataListType, List<NodeRef> charactPath, String characteristic, QName propertyQName, List<NodeRef> nodeRefs1,
 			List<NodeRef> nodeRefs2, int nbEntities, int comparisonPosition, Map<String, CompareResultDataItem> comparisonMap, boolean isDifferent) {
 
 		String strValue1 = null;
@@ -852,7 +841,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				comparisonPosition, isDifferent);
 	}
 
-	private void compareValues(QName dataListType, List<NodeRef> charactPath, NodeRef characteristic, QName propertyQName, Serializable oValue1,
+	private void compareValues(QName dataListType, List<NodeRef> charactPath, String characteristic, QName propertyQName, Serializable oValue1,
 			Serializable oValue2, int nbEntities, int comparisonPosition, Map<String, CompareResultDataItem> comparisonMap,
 			PropertyFormats propertyFormats) {
 
@@ -896,10 +885,12 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 	}
 
 	private void addComparisonDataItem(Map<String, CompareResultDataItem> comparisonMap, QName dataListType, List<NodeRef> charactPath,
-			NodeRef characteristic, QName propertyQName, String strValue1, String strValue2, int nbEntities, int comparisonPosition,
+			String characteristic, QName propertyQName, String strValue1, String strValue2, int nbEntities, int comparisonPosition,
 			boolean isDifferent) {
 
+
 		String key = String.format("%s-%s-%s", dataListType, characteristic, propertyQName);
+
 		CompareResultDataItem comparisonDataItem = comparisonMap.get(key);
 
 		if (comparisonDataItem == null) {
@@ -910,7 +901,9 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 			comparisonDataItem = new CompareResultDataItem(dataListType, charactPath, characteristic, propertyQName, values);
 			comparisonMap.put(key, comparisonDataItem);
 		} else {
-			comparisonDataItem.getValues()[comparisonPosition] = strValue2;
+				comparisonDataItem.getValues()[comparisonPosition] = strValue2;
+				
+			
 		}
 
 		if (isDifferent) {
@@ -948,6 +941,68 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		}
 
 		return isCompareable;
+	}
+	
+	/**
+	 * Extracts the custom pivots for a type.
+	 * 
+	 * These come from the spring property beCPG.comparison.pivots
+	 * @param type which type to lookup for pivots (ex: bcpg:compoList)
+	 * @return the list (eventually empty) of pivots qnames for this type
+	 */
+	private List<QName> getPivotForComparison(QName type){
+		
+		String shortName = type.getPrefixString();
+		List<QName> res = new ArrayList<>();
+		
+		if(customPivots != null && customPivots.contains(shortName)){
+			
+			String[] pivots = {};
+			String[] pivotTypesSplit = customPivots.split(",");
+			
+			for(String pivotType : pivotTypesSplit){
+				if(pivotType.contains(shortName)){
+					
+					// example of custom pivot string: 
+					// bcpg:compoList|bcpg:compoListProduct;bcpg:instruction,bcpg:packagingList|bcpg:packagingListProduct
+					
+					pivots = pivotType.split(Pattern.quote("|"))[1].split("-");
+				}
+			}
+			
+			for(String pivot : pivots){
+				res.add(QName.createQName(pivot, namespaceService));
+			}
+			
+		}
+			
+		//put default pivot if no custom pivot were set in config
+		if(res.isEmpty() && entityDictionaryService.getDefaultPivotAssoc(type) != null){
+			res.add(entityDictionaryService.getDefaultPivotAssoc(type));
+		}
+		return res;
+	}
+	
+	private String getKeyFromPivots(NodeRef node, List<QName> pivotProperties){
+		logger.debug("getKeyFromPivots, node = "+node);
+		String res = "";
+		
+		for(QName pivot : pivotProperties){
+			
+			if(dictionaryService.getProperty(pivot) != null){
+				res += (res.isEmpty() ? "" : "|") + nodeService.getProperty(node, pivot);
+			} else {
+				List<AssociationRef> targetAssocs = nodeService.getTargetAssocs(node, pivot);
+				if(!targetAssocs.isEmpty()){
+					res += (res.isEmpty() ? "" : "|") + nodeService.getTargetAssocs(node, pivot).get(0).getTargetRef();
+				} else {
+					res += (res.isEmpty() ? "" : "|") + "null";
+				}
+			}
+		}
+		logger.debug("getKeyFromPivots, res = "+res);
+		return res;
+		
 	}
 
 }

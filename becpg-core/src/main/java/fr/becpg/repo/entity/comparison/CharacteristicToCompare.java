@@ -19,7 +19,7 @@ public class CharacteristicToCompare {
 	private List<NodeRef> charactPath;
 	
 	/** The characteristic. */
-	private NodeRef characteristic;	
+	private String characteristic;	
 	
 	/** The node ref1. */
 	private NodeRef nodeRef1;
@@ -50,7 +50,7 @@ public class CharacteristicToCompare {
 	 *
 	 * @return the characteristic
 	 */
-	public NodeRef getCharacteristic() {
+	public String getCharacteristic() {
 		return characteristic;
 	}
 	
@@ -59,7 +59,7 @@ public class CharacteristicToCompare {
 	 *
 	 * @param characteristic the new characteristic
 	 */
-	public void setCharacteristic(NodeRef characteristic) {
+	public void setCharacteristic(String characteristic) {
 		this.characteristic = characteristic;
 	}
 	
@@ -81,6 +81,12 @@ public class CharacteristicToCompare {
 		this.nodeRef1 = nodeRef1;
 	}
 	
+	@Override 
+	public String toString() {
+		return "CharacteristicToCompare [charactPath=" + charactPath + ", characteristic=" + characteristic + ", nodeRef1=" + nodeRef1
+				+ ", nodeRef2=" + nodeRef2 + "]";
+	}
+
 	/**
 	 * Gets the node ref2.
 	 *
@@ -107,7 +113,7 @@ public class CharacteristicToCompare {
 	 * @param nodeRef1 the node ref1
 	 * @param nodeRef2 the node ref2
 	 */
-	public CharacteristicToCompare(List<NodeRef> charactPath, NodeRef characteristic, NodeRef nodeRef1, NodeRef nodeRef2){
+	public CharacteristicToCompare(List<NodeRef> charactPath, String characteristic, NodeRef nodeRef1, NodeRef nodeRef2){
 		setCharactPath(charactPath);
 		setCharacteristic(characteristic);
 		setNodeRef1(nodeRef1);
