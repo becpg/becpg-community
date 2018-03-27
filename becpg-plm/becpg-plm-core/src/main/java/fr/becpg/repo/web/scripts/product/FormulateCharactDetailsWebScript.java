@@ -37,6 +37,7 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.helper.AttachmentHelper;
 import fr.becpg.repo.helper.AttributeExtractorService;
@@ -122,7 +123,7 @@ public class FormulateCharactDetailsWebScript extends AbstractProductWebscript {
 
 			CharactDetails ret = productService.formulateDetails(productNodeRef, dataType, dataListName, elements, level);
 
-			if (elements.size() == 1) {
+			if (elements.size() == 1 && dataListName.equals(PLMModel.TYPE_COSTLIST.getLocalName())) {
 				List<ChildAssociationRef> childAssocs = nodeService.getChildAssocsByPropertyValue(
 						nodeService.getPrimaryParent(elements.get(0)).getParentRef(), BeCPGModel.PROP_PARENT_LEVEL, elements.get(0));
 
