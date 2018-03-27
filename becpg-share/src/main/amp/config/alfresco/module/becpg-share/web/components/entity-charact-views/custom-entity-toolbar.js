@@ -38,7 +38,7 @@
 	            	   var html = '<div class="hd">' + this.msg("header." + popupKind + ".picker") + '</div>';
 		       			html += '<div class="bd">';
 		       			html += '<form  class="form-container">';
-		       			html += '<div class="form-fields '+popupKind+'">';
+		       			html += '<div class="form-fields bulk-edit">';
 		       			html += '   <div class="set">';
 		       			html += '        <div class="form-field">';
 		       			html += '			<div  id="'+this.id+'-columns-list" />'		
@@ -82,7 +82,7 @@
     								}
 
     								 html = "<span>"+this.msg("label.select-columns.title")
-    								 	+"</span><br/><br/><ul style=\"width:" + ((colCount + 1) * 20) + "em;\">" + html + "</ul>";		    
+    								 	+"</span><br/><br/><ul style=\"width:" + ((colCount + 2) * 20) + "em;\">" + html + "</ul>";		    
 
     								containerEl.innerHTML = html;
     								 
