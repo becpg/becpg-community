@@ -5,7 +5,6 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -150,9 +149,14 @@ public class FormulaService {
 		public Double sum(Collection<Double> range) {
 			return range.stream().mapToDouble(Double::doubleValue).sum();
 		}
-
+		
+		
 		public Double avg(Collection<CompositionDataItem> range, String formula) {
 			return aggreate(productData, range, formula, Operator.AVG);
+		}
+		
+		public void applyFormulaToList(Collection<RepositoryEntity> range, String formula) {
+			applyToList(productData,range ,formula);
 		}
 
 		public void copy(NodeRef fromNodeRef, Collection<String> propQNames,Collection<String> listQNames) {
@@ -304,6 +308,25 @@ public class FormulaService {
 		return sum;
 	}
 
+	public void applyToList(ProductData entity, Collection<RepositoryEntity> range, String formula) {
+
+		ExpressionParser parser = new SpelExpressionParser();
+		Expression exp = parser.parseExpression(formula);
+
+		for (RepositoryEntity item : range) {
+			StandardEvaluationContext context = new StandardEvaluationContext(new FormulaFormulationContext(this, entity, item));
+			registerCustomFunctions(entity, context);
+
+			exp.getValue(context, Double.class);
+			
+		}
+		
+		
+		
+	}
+	
+	
+	
 	public ProductData findOne(NodeRef nodeRef) {
 		return createSecurityProxy(alfrescoRepository.findOne(nodeRef));
 	}
