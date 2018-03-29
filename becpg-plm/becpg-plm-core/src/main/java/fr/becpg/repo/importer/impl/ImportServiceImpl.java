@@ -20,7 +20,6 @@ import org.alfresco.repo.content.MimetypeMap;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
-import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
@@ -28,8 +27,10 @@ import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.rule.RuleService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -75,7 +76,7 @@ public class ImportServiceImpl implements ImportService {
 	private static final String PFX_PATH = "PATH";
 
 	private static final String PFX_TYPE = "TYPE";
-	
+
 	private static final String PFX_LIST_TYPE = "LIST_TYPE";
 
 	private static final String PFX_ENTITY_TYPE = "ENTITY_TYPE";
@@ -123,8 +124,7 @@ public class ImportServiceImpl implements ImportService {
 	@Autowired
 	private ContentService contentService;
 	@Autowired
-	@Qualifier("ServiceRegistry")
-	private ServiceRegistry serviceRegistry;
+	private NamespaceService nameSpaceService;
 	@Autowired
 	private RepoService repoService;
 	@Autowired
@@ -135,6 +135,12 @@ public class ImportServiceImpl implements ImportService {
 	private BehaviourFilter policyBehaviourFilter;
 	@Autowired
 	private MimetypeService mimetypeService;
+
+	@Autowired
+	private TransactionService transactionService;
+
+	@Autowired
+	private RuleService ruleService;
 
 	// TODO could be better with plugin
 	@Autowired
@@ -165,7 +171,7 @@ public class ImportServiceImpl implements ImportService {
 		logger.debug("start import");
 
 		// prepare context
-		ImportContext importContext = serviceRegistry.getTransactionService().getRetryingTransactionHelper().doInTransaction(() -> {
+		ImportContext importContext = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			ImportContext importContext1 = new ImportContext();
 			InputStream is = null;
@@ -202,7 +208,7 @@ public class ImportServiceImpl implements ImportService {
 				IOUtils.closeQuietly(is);
 			}
 			return importContext1;
-		} , true, requiresNewTransaction);
+		}, true, requiresNewTransaction);
 
 		importContext.setDoUpdate(doUpdate);
 
@@ -227,8 +233,8 @@ public class ImportServiceImpl implements ImportService {
 			}
 
 			// use transaction
-			importContext = serviceRegistry.getTransactionService().getRetryingTransactionHelper()
-					.doInTransaction(() -> importInBatch(finalImportContext, finalLastIndex), false, requiresNewTransaction);
+			importContext = transactionService.getRetryingTransactionHelper().doInTransaction(() -> importInBatch(finalImportContext, finalLastIndex),
+					false, requiresNewTransaction);
 
 		}
 
@@ -236,16 +242,16 @@ public class ImportServiceImpl implements ImportService {
 
 			final ImportContext finalImportContext = importContext;
 
-			importContext = serviceRegistry.getTransactionService().getRetryingTransactionHelper().doInTransaction(() -> {
-				serviceRegistry.getRuleService().disableRules();
+			importContext = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				ruleService.disableRules();
 				try {
 
 					finalImportContext.getImportFileReader().writeErrorInFile(contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true));
 					return finalImportContext;
 				} finally {
-					serviceRegistry.getRuleService().enableRules();
+					ruleService.enableRules();
 				}
-			} , false, requiresNewTransaction);
+			}, false, requiresNewTransaction);
 		}
 
 		return importContext.getLog();
@@ -304,7 +310,7 @@ public class ImportServiceImpl implements ImportService {
 
 			return null;
 		};
-		serviceRegistry.getTransactionService().getRetryingTransactionHelper().doInTransaction(actionCallback, false, true);
+		transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, false, true);
 	}
 
 	private String cleanPath(String pathValue) {
@@ -379,7 +385,7 @@ public class ImportServiceImpl implements ImportService {
 				String disabledPoliciesValue = arrStr[COLUMN_DISABLED_POLICIES];
 				if (!disabledPoliciesValue.isEmpty()) {
 					for (String disabledPolicy : disabledPoliciesValue.split(RepoConsts.MULTI_VALUES_SEPARATOR)) {
-						importContext.getDisabledPolicies().add(QName.createQName(disabledPolicy, serviceRegistry.getNamespaceService()));
+						importContext.getDisabledPolicies().add(QName.createQName(disabledPolicy, nameSpaceService));
 					}
 
 				}
@@ -392,10 +398,10 @@ public class ImportServiceImpl implements ImportService {
 					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_LIST_TYPE, importContext.getImportIndex()));
 				}
 
-				QName type = QName.createQName(typeValue, serviceRegistry.getNamespaceService());
+				QName type = QName.createQName(typeValue, nameSpaceService);
 				importContext.setListType(type);
 
-			}  else if (prefix.equals(PFX_TYPE)) {
+			} else if (prefix.equals(PFX_TYPE)) {
 
 				importContext.setType(null);
 
@@ -404,7 +410,7 @@ public class ImportServiceImpl implements ImportService {
 					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_TYPE, importContext.getImportIndex()));
 				}
 
-				QName type = QName.createQName(typeValue, serviceRegistry.getNamespaceService());
+				QName type = QName.createQName(typeValue, nameSpaceService);
 				importContext.setType(type);
 
 			} else if (prefix.equals(PFX_ENTITY_TYPE)) {
@@ -416,7 +422,7 @@ public class ImportServiceImpl implements ImportService {
 					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_ENTITY_TYPE, importContext.getImportIndex()));
 				}
 
-				QName entityType = QName.createQName(typeValue, serviceRegistry.getNamespaceService());
+				QName entityType = QName.createQName(typeValue, nameSpaceService);
 				importContext.setEntityType(entityType);
 			} else if (prefix.equals(PFX_STOP_ON_FIRST_ERROR)) {
 
@@ -599,7 +605,7 @@ public class ImportServiceImpl implements ImportService {
 
 		RetryingTransactionCallback<Object> actionCallback = () -> {
 			if (nodeService.exists(nodeRef)) {
-				serviceRegistry.getRuleService().disableRules();
+				ruleService.disableRules();
 				try {
 					if (hasFailed) {
 						nodeService.setProperty(nodeRef, ContentModel.PROP_TITLE, log);
@@ -607,11 +613,11 @@ public class ImportServiceImpl implements ImportService {
 						nodeService.setProperty(nodeRef, ContentModel.PROP_TITLE, "");
 					}
 				} finally {
-					serviceRegistry.getRuleService().enableRules();
+					ruleService.enableRules();
 				}
 			}
 			return null;
 		};
-		serviceRegistry.getTransactionService().getRetryingTransactionHelper().doInTransaction(actionCallback, false, true);
+		transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, false, true);
 	}
 }

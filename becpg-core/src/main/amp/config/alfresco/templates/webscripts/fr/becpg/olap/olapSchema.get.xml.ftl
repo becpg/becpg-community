@@ -852,12 +852,6 @@
 			</Hierarchy>
 		</Dimension>
 		
-		<Dimension  name="creation" caption="${msg("jsolap.creation.title")}" >
-			<Hierarchy name="creators" caption="${msg("jsolap.creators.title")}" hasAll="true" >
-				<Level name="creator"  caption="${msg("jsolap.creator.title")}"  column="projectCreator"  type="String" />
-			</Hierarchy>
-		</Dimension>
-		
 		<Dimension  name="modification" caption="${msg("jsolap.modification.title")}" >
 			<Hierarchy name="modifiers" caption="${msg("jsolap.modifiers.title")}" hasAll="true" >
 				<Level name="modifier" caption="${msg("jsolap.modifier.title")}" column="projectModifier"  type="String" />

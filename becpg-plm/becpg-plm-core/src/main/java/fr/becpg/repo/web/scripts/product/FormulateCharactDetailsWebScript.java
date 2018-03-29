@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.webdav.WebDAVHelper;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -35,6 +36,8 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 import org.springframework.util.StopWatch;
 
+import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.helper.AttachmentHelper;
 import fr.becpg.repo.helper.AttributeExtractorService;
@@ -120,10 +123,19 @@ public class FormulateCharactDetailsWebScript extends AbstractProductWebscript {
 
 			CharactDetails ret = productService.formulateDetails(productNodeRef, dataType, dataListName, elements, level);
 
+			if (elements.size() == 1 && dataListName.equals(PLMModel.TYPE_COSTLIST.getLocalName())) {
+				List<ChildAssociationRef> childAssocs = nodeService.getChildAssocsByPropertyValue(
+						nodeService.getPrimaryParent(elements.get(0)).getParentRef(), BeCPGModel.PROP_PARENT_LEVEL, elements.get(0));
+
+				if (childAssocs.size() > 0) {
+					ret = new CharactDetails(new ArrayList<NodeRef>());
+				}
+			}
+
 			if ("csv".equals(req.getFormat())) {
 				res.setContentType("application/vnd.ms-excel");
 				AttachmentHelper.setAttachment(req, res, (String) nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME) + ".xlsx");
-				
+
 				CharactDetailsHelper.writeXLS(ret, nodeService, attributeExtractorService, res.getOutputStream());
 			} else {
 				res.setContentType("application/json");

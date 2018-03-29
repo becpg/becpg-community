@@ -54,7 +54,6 @@ import fr.becpg.model.QualityModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.model.SecurityModel;
 import fr.becpg.model.SystemGroup;
-import fr.becpg.model.VariantModel;
 import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.action.executer.ImporterActionExecuter;
@@ -98,6 +97,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 	private static final String NC_REPORT_PATH = "beCPG/birt/document/nonconformity/NCReport.rptdesign";
 	private static final String QUALITY_CONTROL_REPORT_PATH = "beCPG/birt/document/qualitycontrol/QualityControlReport.rptdesign";
+	private static final String QUALITY_REPORT_RESSOURCE = "beCPG/birt/document/qualitycontrol/QualityControlReport.properties";
+	private static final String QUALITY_REPORT_EN_RESSOURCE = "beCPG/birt/document/qualitycontrol/QualityControlReport_en.properties";
+
 	private static final String ECO_REPORT_PATH = "beCPG/birt/document/ecm/ECOReport.rptdesign";
 	private static final String EXPORT_PRODUCTS_REPORT_RPTFILE_PATH = "beCPG/birt/exportsearch/product/ExportSearch.rptdesign";
 	private static final String EXPORT_PRODUCTS_REPORT_XMLFILE_PATH = "beCPG/birt/exportsearch/product/ExportSearchQuery.xml";
@@ -159,7 +161,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 	@Autowired
 	protected AlfrescoRepository<ProductData> alfrescoRepository;
-	
+
 	@Value("${beCPG.formulation.score.mandatoryFields}")
 	private String defaultCatalogDefinition;
 
@@ -284,22 +286,22 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			}
 		}
 		if (Objects.equals(folderName, PlmRepoConsts.PATH_CATALOGS)) {
-			
-			if(!fileFolderService.listFiles(folderNodeRef).stream().anyMatch(f -> "catalogs.json".equals(f.getName()))) {
+
+			if (!fileFolderService.listFiles(folderNodeRef).stream().anyMatch(f -> "catalogs.json".equals(f.getName()))) {
 				try {
 					JSONArray oldCatalogsArray = new JSONArray(defaultCatalogDefinition);
 					NodeRef oldCatalogFileNR = fileFolderService.create(folderNodeRef, "catalogs.json", ContentModel.TYPE_CONTENT).getNodeRef();
-					
+
 					ContentWriter writer = fileFolderService.getWriter(oldCatalogFileNR);
 					writer.putContent(oldCatalogsArray.toString());
-					
+
 				} catch (JSONException e) {
-					logger.error("Unable to copy old catalogs: ",e);
+					logger.error("Unable to copy old catalogs: ", e);
 				}
 			}
-			
+
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/catalogs/*.json");
-			
+
 		}
 	}
 
@@ -346,7 +348,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			rule.setDescription("Every csv item created will be imported");
 
 			ruleService.saveRule(nodeRef, rule);
-			
+
 			action = actionService.createAction(ImporterActionExecuter.NAME, null);
 			compositeAction = actionService.createCompositeAction();
 			compositeAction.addAction(action);
@@ -540,7 +542,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_NUTRIENTPROFILES, PLMModel.TYPE_NUTRIENT_PROFILE);
 		entityLists.put(PlmRepoConsts.PATH_PROCESSSTEPS, MPMModel.TYPE_PROCESSSTEP);
 		entityLists.put(PlmRepoConsts.PATH_RESOURCEPARAMS, MPMModel.TYPE_RESOURCEPARAM);
-		entityLists.put(PlmRepoConsts.PATH_VARIANT_CHARACTS, VariantModel.TYPE_CHARACT);
 		entityLists.put(PlmRepoConsts.PATH_STORAGE_CONDITIONS, PLMModel.TYPE_STORAGE_CONDITIONS);
 		entityLists.put(PlmRepoConsts.PATH_PRECAUTION_OF_USE, PLMModel.TYPE_PRECAUTION_OF_USE);
 		entityLists.put(PlmRepoConsts.PATH_LABELING_TEMPLATES, PackModel.TYPE_LABELING_TEMPLATE);
@@ -829,6 +830,11 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			int i = 0;
 
+			List<NodeRef> resources = new ArrayList<>();
+			for (String element : productReportResource) {
+				resources.add(reportTplService.createTplRessource(productReportTplsNodeRef, element, true));
+			}
+
 			for (QName productType : productTypes) {
 
 				ClassDefinition classDef = dictionaryService.getClass(productType);
@@ -842,26 +848,27 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 						NodeRef template = reportTplService.createTplRptDesign(folderNodeRef, defaultReportName[i], defaultReport[i],
 								ReportType.Document, ReportFormat.PDF, productType, true, true, false);
 
-						List<NodeRef> resources = new ArrayList<>();
-						if (defaultReportName[i].equals(productReportSupplierName) || defaultReportName[i].equals(productReportClientName)) {
-							for (String element : productReportResource) {
-								resources.add(reportTplService.createTplRessource(productReportTplsNodeRef, element, true));
-							}
-						}
-
 						if (!resources.isEmpty()) {
 							for (NodeRef resource : resources) {
 								logger.debug("Associating resource: " + resource + " to template: " + template);
 								nodeService.createAssociation(template, resource, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES);
 							}
-							nodeService.setProperty(template, ReportModel.PROP_REPORT_LOCALES, (Serializable) Arrays.asList("fr", "en"));
+							nodeService.setProperty(template, ReportModel.PROP_REPORT_LOCALES,
+									(Serializable) Arrays.asList("fr", "en", "es", "en_US", "it", "nl"));
 						}
 
 					}
 
 					if ((otherReport[i] != null) && (otherReportName[i] != null)) {
-						reportTplService.createTplRptDesign(folderNodeRef, otherReportName[i], otherReport[i], ReportType.Document, ReportFormat.PDF,
-								productType, true, false, false);
+						NodeRef template = reportTplService.createTplRptDesign(folderNodeRef, otherReportName[i], otherReport[i], ReportType.Document,
+								ReportFormat.PDF, productType, true, false, false);
+						if (!resources.isEmpty()) {
+							for (NodeRef resource : resources) {
+								logger.debug("Associating resource: " + resource + " to template: " + template);
+								nodeService.createAssociation(template, resource, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES);
+							}
+						}
+
 					}
 				}
 
@@ -889,13 +896,35 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 		try {
 
+			String[] qualityReportResource = { QUALITY_REPORT_EN_RESSOURCE, QUALITY_REPORT_RESSOURCE };
+			
+
 			ClassDefinition classDef = dictionaryService.getClass(QualityModel.TYPE_QUALITY_CONTROL);
-			NodeRef qualityFolderNodeRef = repoService.getOrCreateFolderByPath(qualityReportTplsNodeRef, classDef.getTitle(dictionaryService),
-					classDef.getTitle(dictionaryService));
-			reportTplService.createTplRptDesign(qualityFolderNodeRef, classDef.getTitle(dictionaryService), QUALITY_CONTROL_REPORT_PATH,
-					ReportType.Document, ReportFormat.PDF, QualityModel.TYPE_QUALITY_CONTROL, true, true, false);
+			if (repoService.getFolderByPath(qualityReportTplsNodeRef, classDef.getTitle(dictionaryService)) == null) {
+			
+				NodeRef qualityFolderNodeRef = repoService.getOrCreateFolderByPath(qualityReportTplsNodeRef, classDef.getTitle(dictionaryService),
+						classDef.getTitle(dictionaryService));
+				
+				List<NodeRef> resources = new ArrayList<>();
+				for (String element : qualityReportResource) {
+					resources.add(reportTplService.createTplRessource(qualityFolderNodeRef, element, true));
+				}
+				
+				NodeRef templateQuality = reportTplService.createTplRptDesign(qualityFolderNodeRef, classDef.getTitle(dictionaryService),
+						QUALITY_CONTROL_REPORT_PATH, ReportType.Document, ReportFormat.PDF, QualityModel.TYPE_QUALITY_CONTROL, true, true, false);
+	
+				if (!resources.isEmpty()) {
+					for (NodeRef resource : resources) {
+						logger.debug("Associating resource: " + resource + " to template: " + templateQuality);
+						nodeService.createAssociation(templateQuality, resource, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES);
+					}
+				}
+	
+				nodeService.setProperty(templateQuality, ReportModel.PROP_REPORT_LOCALES, (Serializable) Arrays.asList("fr", "en"));
+			}
+			
 		} catch (Exception e) {
-			logger.error("Failed to create nc report tpl." + QualityModel.TYPE_QUALITY_CONTROL, e);
+			logger.error("Failed to create quality report tpl." + QualityModel.TYPE_QUALITY_CONTROL, e);
 		}
 
 		// eco report
@@ -927,10 +956,10 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
 					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_INGLABELING), EXPORT_INGLABELING_XLSX_PATH,
 					ReportType.ExportSearch, ReportFormat.XLSX, PLMModel.TYPE_PRODUCT, false, false, false);
-			
+
 			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
-					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_SUPPLIERS_CONTACTS), EXPORT_SUPPLIERS_CONTACTS_XLSX_PATH,
-					ReportType.ExportSearch, ReportFormat.XLSX, PLMModel.TYPE_SUPPLIER, false, false, false);
+					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_SUPPLIERS_CONTACTS),
+					EXPORT_SUPPLIERS_CONTACTS_XLSX_PATH, ReportType.ExportSearch, ReportFormat.XLSX, PLMModel.TYPE_SUPPLIER, false, false, false);
 
 		} catch (IOException e) {
 			logger.error("Failed to create export search report tpl.", e);
@@ -963,8 +992,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				PLMGroup.PurchasingMgr.toString(), PLMGroup.Production.toString(), PLMGroup.ProductionUser.toString(),
 				PLMGroup.ProductionMgr.toString(), PLMGroup.ReferencingMgr.toString(), PLMGroup.Trade.toString(), PLMGroup.TradeUser.toString(),
 				PLMGroup.TradeMgr.toString(), NCGroup.ClaimStart.toString(), NCGroup.ClaimAnalysis.toString(), NCGroup.ClaimClassification.toString(),
-				NCGroup.ClaimTreatment.toString(), NCGroup.ClaimResponse.toString(), NCGroup.ClaimClosing.toString(), ECMGroup.CreateChangeOrder.toString(),
-				ECMGroup.ApplyChangeOrder.toString() };
+				NCGroup.ClaimTreatment.toString(), NCGroup.ClaimResponse.toString(), NCGroup.ClaimClosing.toString(),
+				ECMGroup.CreateChangeOrder.toString(), ECMGroup.ApplyChangeOrder.toString() };
 
 		createGroups(groups);
 
@@ -1022,11 +1051,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			authorityService.addAuthority(PermissionService.GROUP_PREFIX + PLMGroup.Trade.toString(),
 					PermissionService.GROUP_PREFIX + PLMGroup.TradeUser.toString());
 		}
-		
-		
-		
-		authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP, PermissionService.GROUP_PREFIX + SystemGroup.SecurityRole.toString(),
-				true);
+
+		authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP,
+				PermissionService.GROUP_PREFIX + SystemGroup.SecurityRole.toString(), true);
 		if (!authorities.contains(PermissionService.GROUP_PREFIX + ECMGroup.ApplyChangeOrder.toString())) {
 			authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.SecurityRole.toString(),
 					PermissionService.GROUP_PREFIX + ECMGroup.ApplyChangeOrder.toString());
@@ -1035,7 +1062,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.SecurityRole.toString(),
 					PermissionService.GROUP_PREFIX + ECMGroup.CreateChangeOrder.toString());
 		}
-		
+
 	}
 
 	@Override

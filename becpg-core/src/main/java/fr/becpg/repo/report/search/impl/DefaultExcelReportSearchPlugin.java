@@ -31,7 +31,7 @@ import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtracto
 
 @Service
 public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
-	
+
 	@Autowired
 	protected NodeService nodeService;
 
@@ -49,14 +49,13 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 
 	@Autowired
 	protected NamespaceService namespaceService;
-	
+
 	@Autowired
 	protected EntityDictionaryService entityDictionaryService;
 
 	@Override
-	public void fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum,
-			 String parameter, AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache) {
-		
+	public void fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum, String[] parameters,
+			AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache) {
 
 		for (NodeRef entityNodeRef : searchResults) {
 			if (entityDictionaryService.isSubClass(nodeService.getType(entityNodeRef), mainType)) {
@@ -65,9 +64,9 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 					if (key == null) {
 						key = nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_CODE);
 					}
-					if(key==null){
-				    	key = nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
-				    }
+					if (key == null) {
+						key = nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
+					}
 
 					NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
 					NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, itemType);
@@ -76,12 +75,12 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 						List<NodeRef> results = entityListDAO.getListItems(listNodeRef, itemType);
 						for (NodeRef itemNodeRef : results) {
 							if (itemType.equals(nodeService.getType(itemNodeRef))) {
-								if (permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED) {	
+								if (permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED) {
 									rownum = fillRow(sheet, itemNodeRef, itemType, metadataFields, cache, rownum, key, entityItems);
 								}
 							}
 						}
-					}	
+					}
 				} else {
 					rownum = fillRow(sheet, entityNodeRef, itemType, metadataFields, cache, rownum, null, null);
 				}
@@ -90,28 +89,25 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 
 	}
 
-	protected Map<String, Object> getEntityProperties(NodeRef itemNodeRef,QName itemType, List<AttributeExtractorStructure> metadataFields,
-			Map<NodeRef, Map<String, Object>> cache){
-		
+	protected Map<String, Object> getEntityProperties(NodeRef itemNodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields,
+			Map<NodeRef, Map<String, Object>> cache) {
+
 		Map<QName, Serializable> properties = nodeService.getProperties(itemNodeRef);
 		Map<String, Object> item = doExtract(itemNodeRef, itemType, metadataFields, properties, cache);
-		Map<String, Object> tmp = item.entrySet()
-				.stream()
-				.filter(map -> map.getKey().contains("entity_") && map.getValue()!= null)
-				.collect(Collectors.toMap(p -> p.getKey(), p-> p.getValue()));
+		Map<String, Object> tmp = item.entrySet().stream().filter(map -> map.getKey().contains("entity_") && (map.getValue() != null))
+				.collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
 		return tmp;
 	}
-	
+
 	protected int fillRow(XSSFSheet sheet, NodeRef itemNodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields,
 			Map<NodeRef, Map<String, Object>> cache, int rownum, Serializable key, Map<String, Object> entityItems) {
 
-		
 		Map<QName, Serializable> properties = nodeService.getProperties(itemNodeRef);
 		Map<String, Object> item = doExtract(itemNodeRef, itemType, metadataFields, properties, cache);
-		if(entityItems != null){
+		if (entityItems != null) {
 			item.putAll(entityItems);
 		}
-		
+
 		Row row = sheet.createRow(rownum++);
 
 		int cellNum = 0;
@@ -123,9 +119,8 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 			cell.setCellValue(String.valueOf(key));
 		}
 
-		cellNum = ExcelHelper.appendExcelField(metadataFields, null, item, sheet.getWorkbook(), row, cellNum,null);
+		cellNum = ExcelHelper.appendExcelField(metadataFields, null, item, sheet.getWorkbook(), row, cellNum, null);
 
-		
 		return rownum;
 	}
 
@@ -193,7 +188,7 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 	}
 
 	@Override
-	public boolean isApplicable(QName itemType, String parameter) {
+	public boolean isApplicable(QName itemType, String[] parameters) {
 		return false;
 	}
 
