@@ -237,45 +237,49 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					if (LabelingRuleType.Render.equals(labelingRuleListDataItem.getLabelingRuleType())
 							&& Boolean.TRUE.equals(labelingRuleListDataItem.getIsActive())) {
 
+						String log = "";
 						MLText label = new MLText();
+						if ((labelingRuleListDataItem.getFormula() != null) && !labelingRuleListDataItem.getFormula().trim().isEmpty()) {
+							Set<Locale> locales = labelingFormulaContext.getLocales();
 
-						Set<Locale> locales = labelingFormulaContext.getLocales();
-
-						if (locales.isEmpty()) {
-							locales.add(new Locale(Locale.getDefault().getLanguage()));
-						}
-
-						for (Locale locale : locales) {
-							Locale currentLocal = I18NUtil.getLocale();
-
-							try {
-								I18NUtil.setLocale(locale);
-
-								Expression exp = parser.parseExpression(SpelHelper.formatFormula(labelingRuleListDataItem.getFormula()));
-								String ret = exp.getValue(dataContext, String.class);
-								if (logger.isDebugEnabled()) {
-									logger.debug(
-											"Running renderFormula :" + labelingRuleListDataItem.getFormula() + " for locale :" + locale.toString());
-									logger.debug(" - render value :" + ret);
-								}
-								label.addValue(locale, ret);
-							} catch (Exception e) {
-								String message = I18NUtil.getMessage("message.formulate.labelRule.error", labelingRuleListDataItem.getName(),
-										e.getLocalizedMessage());
-								formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, null,
-										new ArrayList<NodeRef>(), RequirementDataType.Labelling));
-
-								if (logger.isInfoEnabled()) {
-									logger.info("Error in formula :" + SpelHelper.formatFormula(labelingRuleListDataItem.getFormula()), e);
-								}
-							} finally {
-								I18NUtil.setLocale(currentLocal);
+							if (locales.isEmpty()) {
+								locales.add(new Locale(Locale.getDefault().getLanguage()));
 							}
-						}
 
-						// Create logs
-						String log = labelingFormulaContext
-								.createJsonLog(labelingRuleListDataItem.getFormula().replace(" ", "").contains("render(false)"));
+							for (Locale locale : locales) {
+								Locale currentLocal = I18NUtil.getLocale();
+
+								try {
+									I18NUtil.setLocale(locale);
+
+									Expression exp = parser.parseExpression(SpelHelper.formatFormula(labelingRuleListDataItem.getFormula()));
+									String ret = exp.getValue(dataContext, String.class);
+									if (logger.isDebugEnabled()) {
+										logger.debug("Running renderFormula :" + labelingRuleListDataItem.getFormula() + " for locale :"
+												+ locale.toString());
+										logger.debug(" - render value :" + ret);
+									}
+									label.addValue(locale, ret);
+
+								} catch (Exception e) {
+									String message = I18NUtil.getMessage("message.formulate.labelRule.error", labelingRuleListDataItem.getName(),
+											e.getLocalizedMessage());
+									formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, null,
+											new ArrayList<NodeRef>(), RequirementDataType.Labelling));
+
+									if (logger.isInfoEnabled()) {
+										logger.info("Error in formula : (" + labelingRuleListDataItem.getNodeRef() + ")"
+												+ SpelHelper.formatFormula(labelingRuleListDataItem.getFormula()), e);
+									}
+								} finally {
+									I18NUtil.setLocale(currentLocal);
+								}
+							}
+
+							// Create logs
+							log = labelingFormulaContext
+									.createJsonLog(labelingRuleListDataItem.getFormula().replace(" ", "").contains("render(false)"));
+						}
 
 						retainNodes.add(getOrCreateILLDataItem(formulatedProduct, labelingRuleListDataItem.getNodeRef(), label, log));
 					}
