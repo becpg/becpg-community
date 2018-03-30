@@ -127,7 +127,7 @@
 				         	
 				         	YAHOO.util.Dom.get("${fieldHtmlId}-val").value = val;
 				         	YAHOO.util.Dom.get("${fieldHtmlId}-label").innerHTML =
-				         	    YAHOO.util.Dom.get("${fieldHtmlId}-label").innerHTML.replace(/ *\([^)]*\) */g," ("+sel.options[sel.selectedIndex].innerHTML+")");
+				         	    YAHOO.util.Dom.get("${fieldHtmlId}-label").innerHTML.replace(/ *\([^)]*\) */g,"("+sel.options[sel.selectedIndex].innerHTML+")");
 				         	return true;
 	         			};
 	         	

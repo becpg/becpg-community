@@ -1,9 +1,8 @@
 package fr.becpg.web.experimental;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.websocket.CloseReason;
 import javax.websocket.OnClose;
@@ -17,12 +16,12 @@ import javax.websocket.server.ServerEndpoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-@ServerEndpoint(value = "/becpgws/{store_type}/{store_id}/{id}/{user}", configurator = BeCPGWSHandlerEndpointConfigurer.class)
+@ServerEndpoint(value = "/becpgws/{store_type}/{store_id}/{id}/{user}")
 public class BeCPGWSHandler {
 
-	private Set<Session> userSessions = Collections.synchronizedSet(new HashSet<Session>());
+	private static final Map<String, Session> userSessions = new ConcurrentHashMap<>();
 
-	private static Log logger = LogFactory.getLog(BeCPGWSHandler.class);
+	private static final Log logger = LogFactory.getLog(BeCPGWSHandler.class);
 
 	@OnOpen
 	public void onOpen(Session session, @PathParam("id") final String room, @PathParam("user") final String user) {
@@ -30,21 +29,19 @@ public class BeCPGWSHandler {
 
 		session.getUserProperties().put("room", room);
 		session.getUserProperties().put("user", user);
-		synchronized (userSessions) {
-			userSessions.add(session);
+		BeCPGWSHandler.userSessions.put(session.getId(), session);
 
-			try {
+		try {
 
-				for (Session s : userSessions) {
-					if (s.isOpen() && room.equals(s.getUserProperties().get("room")) && !s.getId().equals(session.getId())) {
-						session.getBasicRemote().sendText("{\"type\":\"JOINING\",\"user\":\"" + s.getUserProperties().get("user") + "\"}");
-						s.getBasicRemote().sendText("{\"type\":\"JOINING\",\"user\":\"" + user + "\"}");
-					}
+			for (Session s : BeCPGWSHandler.userSessions.values()) {
+				if (s.isOpen() && room.equals(s.getUserProperties().get("room")) && !s.getId().equals(session.getId())) {
+					session.getBasicRemote().sendText("{\"type\":\"JOINING\",\"user\":\"" + s.getUserProperties().get("user") + "\"}");
+					s.getBasicRemote().sendText("{\"type\":\"JOINING\",\"user\":\"" + user + "\"}");
 				}
-
-			} catch (IOException e) {
-				logger.error("onMessage failed", e);
 			}
+
+		} catch (IOException e) {
+			logger.error("onMessage failed", e);
 		}
 	}
 
@@ -54,11 +51,9 @@ public class BeCPGWSHandler {
 		logger.debug("Receiving ... " + session.getId());
 		String room = (String) session.getUserProperties().get("room");
 		try {
-			synchronized (userSessions) {
-				for (Session s : userSessions) {
-					if (s.isOpen() && room.equals(s.getUserProperties().get("room")) && !s.getId().equals(session.getId())) {
-						s.getBasicRemote().sendText(message);
-					}
+			for (Session s : BeCPGWSHandler.userSessions.values()) {
+				if (s.isOpen() && room.equals(s.getUserProperties().get("room")) && !s.getId().equals(session.getId())) {
+					s.getBasicRemote().sendText(message);
 				}
 			}
 		} catch (IOException e) {
@@ -70,31 +65,26 @@ public class BeCPGWSHandler {
 	@OnClose
 	public void onClose(Session session, CloseReason closeReason) {
 		logger.debug(String.format("Session %s closed because of %s", session.getId(), closeReason));
-		synchronized (userSessions) {
-			try {
-				String room = (String) session.getUserProperties().get("room");
-				String user = (String) session.getUserProperties().get("user");
+		BeCPGWSHandler.userSessions.remove(session.getId());
+		try {
+			String room = (String) session.getUserProperties().get("room");
+			String user = (String) session.getUserProperties().get("user");
 
-				for (Session s : userSessions) {
-					if (s.isOpen() && room.equals(s.getUserProperties().get("room")) && !s.getId().equals(session.getId())) {
-						s.getBasicRemote().sendText("{\"type\":\"LEAVING\",\"user\":\"" + user + "\"}");
-					}
+			for (Session s : BeCPGWSHandler.userSessions.values()) {
+				if (s.isOpen() && room.equals(s.getUserProperties().get("room")) && !s.getId().equals(session.getId())) {
+					s.getBasicRemote().sendText("{\"type\":\"LEAVING\",\"user\":\"" + user + "\"}");
 				}
-
-			} catch (IOException e) {
-				logger.error("onMessage failed", e);
-			} finally {
-				userSessions.remove(session);
 			}
+
+		} catch (IOException e) {
+			logger.error("onMessage failed", e);
 		}
 	}
 
 	@OnError
 	public void onError(Session session, Throwable thr) {
 		if (!session.isOpen()) {
-			synchronized (userSessions) {
-				userSessions.remove(session);
-			}
+			BeCPGWSHandler.userSessions.remove(session.getId());
 		}
 		if (logger.isDebugEnabled()) {
 			logger.debug(thr, thr);

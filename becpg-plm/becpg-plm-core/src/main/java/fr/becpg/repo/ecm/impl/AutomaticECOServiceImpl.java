@@ -293,6 +293,8 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 		String dateRange = dateFormat.format(cal.getTime());
 
 		String ftsQuery = String.format("@cm\\:created:[%s TO MAX] OR @cm\\:modified:[%s TO MAX]", dateRange, dateRange);
+		
+		logger.info("Start of reformulate changed entities for: "+ftsQuery);
 
 		List<NodeRef> nodeRefs = transactionService.getRetryingTransactionHelper().doInTransaction(() -> BeCPGQueryBuilder.createQuery()
 				.ofType(PLMModel.TYPE_PRODUCT).andFTSQuery(ftsQuery).maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list(), false, true);
@@ -335,6 +337,8 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 				return new ArrayList<>();
 
 			}, false, true);
+			
+			logger.info(" - reformulating: "+toReformulates.size()+" entities");
 
 			for (NodeRef toReformulate : toReformulates) {
 
@@ -380,6 +384,8 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 			}
 
 		}
+		
+		logger.info("End of reformulate changed entities");
 
 		return ret;
 	}
