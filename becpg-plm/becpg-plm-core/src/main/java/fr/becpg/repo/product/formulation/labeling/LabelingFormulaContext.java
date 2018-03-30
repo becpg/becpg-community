@@ -1398,7 +1398,10 @@ public class LabelingFormulaContext extends RuleParser {
 
 				return ret;
 			} catch (SpelParseException | SpelEvaluationException e) {
-				logger.error("Cannot evaluate formula :" + formula + " on " + declarationFilterContext.toString(), e);
+				logger.error("Cannot evaluate formula :" + formula +" for "+declarationFilterContext.getCompoListDataItem());
+				if(logger.isDebugEnabled()) {
+					logger.error("Cannot evaluate formula :" + formula + " on " + declarationFilterContext.toString(), e);
+				}
 			}
 		}
 		return true;
