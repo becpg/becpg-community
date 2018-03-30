@@ -161,6 +161,21 @@
 			   html += ' ' + $html(data.displayValue) + '</a>';
 			   return html;
 		   });
+		   
+		   this.registerRenderer([ "content_cm:content"], function(oRecord, data, label, scope, z, zz, elCell, oColumn) {
+				var nodeRef = new Alfresco.util.NodeRef(oRecord.getData("nodeRef"));
+
+				oColumn.width = 100;
+
+				Dom.setStyle(elCell, "width", oColumn.width + "px");
+				Dom.setStyle(elCell.parentNode, "width", oColumn.width + "px");
+			
+
+				return '<span class="thumbnail"><img src="' + Alfresco.constants.PROXY_URI + 'api/node/' + nodeRef.uri
+				+ '/content/thumbnails/doclib?c=queue&ph=true&timestamp='+(new Date())+'"  /></span>';
+				
+		   });
+		   
 
 	   },
 
