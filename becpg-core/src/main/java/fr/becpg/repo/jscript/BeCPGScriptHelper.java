@@ -195,9 +195,9 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		
 		
 		if ((value != null) && !value.isEmpty()) {
-			mlText.addValue(MLTextHelper.parseLocale(value), value);
+			mlText.addValue(MLTextHelper.parseLocale(locale), value);
 		} else {
-			mlText.removeValue(MLTextHelper.parseLocale(value));
+			mlText.removeValue(MLTextHelper.parseLocale(locale));
 		}
 		mlNodeService.setProperty(sourceNode.getNodeRef(), QName.createQName(propQName, namespaceService), mlText);
 
