@@ -1,0 +1,178 @@
+/*
+ * Helpers
+ */
+
+function isNullOrEmpty(value) {
+	if (value == null || value == "") {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+function concatName(name, value) {
+	if (name != "" && value != "") {
+		name += " ";
+	}
+	name += value;
+	return name;
+}
+
+function getProp(product, propName) {
+	if (product != null && product != "" && product.properties[propName] != null) {
+		return product.properties[propName];
+	} else {
+		return "";
+	}
+}
+
+function getMLProp(product, propName, locale) {
+	if (product != null && product != "" && bcpg.getMLProperty(product, propName, locale) != null) {
+		return bcpg.getMLProperty(product, propName, locale);
+	} else {
+		return "";
+	}
+}
+
+function getMLConstraint(propValue, propName, locale) {
+	if (propValue != null && propValue != "" && bcpg.getMLConstraint(propValue, propName, locale) != null) {
+		return bcpg.getMLConstraint(propValue, propName, locale);
+	} else {
+		return "";
+	}
+}
+
+function getAssoc(product, assocName, propName) {
+	if (product != null && product != "" && product.assocs[assocName] != null) {
+		if (propName != null && product.assocs[assocName][0].properties[propName] != null && product.assocs[assocName][0].properties[propName] != "") {
+			return product.assocs[assocName][0].properties[propName];
+		}
+		return product.assocs[assocName][0].name;
+	} else {
+		return "";
+	}
+}
+
+function removeForbiddenChar(value) {
+	return value.replace(/[|"<>.*?:+\/]/g, "").replace(/ -/g, "");
+}
+
+function classifyProduct(productNode, folderNode, propHierarchy) {
+	if (folderNode != null) {
+		var action = actions.create("classify-by-hierarchy");
+		action.parameters["destination-folder"] = folderNode;
+		if (propHierarchy) {
+			action.parameters["prop-hierarchy"] = propHierarchy;
+		}
+		action.execute(productNode.nodeRef);
+	}
+}
+
+function isInSite(productNode, siteId) {
+	if (productNode.qnamePath.indexOf("/app:company_home/st:sites/cm:" + siteId + "/") != -1) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+
+function removeOwner(document) {
+	// remove owner permission
+	if (document.owner == person.properties.userName) {
+		document.setOwner("");
+	}
+}
+
+function renameProductAsCopy(document, folderNode) {
+	var name = document.properties["cm:name"];
+	while (folderNode.childByNamePath(name) != null) {
+		name = "Copie de " + name;
+	}
+	document.properties["cm:name"] = name;
+	document.save();
+}
+
+function isInFolder(productNode, folderNode) {
+	var i = 0;
+
+	var folder = productNode.parent;
+
+	while (folder.isContainer) {
+		i++;
+		if (i > 10) {
+			break;
+		}
+
+		if (folder.parent === null) {
+			return false;
+		}
+		if (folder.getNodeRef() == folderNode) {
+			return true;
+		}
+
+		folder = folder.parent;
+	}
+
+	return false;
+}
+
+function getDocumentLibraryNodeRef(siteId) {
+	var site = siteService.getSite(siteId);
+	return site.getContainer("documentLibrary");
+}
+
+//
+// Sample method
+//
+function rename(product) {
+	var name = getProp(product, "cm:title");
+
+	if (name != null && name != "") {
+
+		name = removeForbiddenChar(name.trim().toUpperCase());
+		name = concatName(getProp(product, "bcpg:erpCode"), name);
+
+		if (name != "" && product.properties["cm:name"] != name && product.parent.childByNamePath(name) == null) {
+			product.properties["cm:name"] = name;
+			product.save();
+		}
+	}
+}
+
+
+
+const SIMULATION_SITE_ID = "simulation";
+const VALID_SITE_ID = "valid";
+const ARCHIVED_SITE_ID = "archived";
+
+
+function main() {
+
+	// TODO Clients fournisseurs OM Cdc Microbio
+	if (!document.hasAspect("bcpg:entityTplAspect") && document.isSubType("bcpg:product") && !document.hasAspect("cm:workingcopy")) {
+
+		var productState = document.properties["bcpg:productState"];
+
+		if (productState == "Valid") {
+			if (!isInSite(document, VALID_SITE_ID)) {
+				classifyProduct(document, getDocumentLibraryNodeRef(VALID_SITE_ID));
+			}
+		} else if (productState == "Simulation" || productState == "ToValidate") {
+			if (isInSite(document, VALID_SITE_ID) || isInSite(document, ARCHIVED_SITE_ID)) {
+				bcpg.moveAndRename(document, getDocumentLibraryNodeRef(SIMULATION_SITE_ID));
+			}
+		} else if (productState == "Archived") {
+			if (!isInSite(document, ARCHIVED_SITE_ID)) {
+				
+				classifyProduct(document, getDocumentLibraryNodeRef(ARCHIVED_SITE_ID));
+			}
+		}
+
+		// Uncomment and modify to get automatic name base on title
+		// rename(document);
+
+	}
+}
+
+main();
