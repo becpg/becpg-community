@@ -48,6 +48,7 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.olap.OlapService;
 import fr.becpg.repo.search.PaginatedSearchCache;
@@ -85,6 +86,8 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	private EntityListDAO entityListDAO;
 
 	private PaginatedSearchCache paginatedSearchCache;
+
+	private RepoService repoService;
 
 	private boolean showEntitiesInTree = false;
 
@@ -152,6 +155,10 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		this.showEntitiesInTree = showEntitiesInTree;
 	}
 
+	public void setRepoService(RepoService repoService) {
+		this.repoService = repoService;
+	}
+
 	public String getMLProperty(ScriptNode sourceNode, String propQName, String locale) {
 		MLText mlText = (MLText) mlNodeService.getProperty(sourceNode.getNodeRef(), QName.createQName(propQName, namespaceService));
 		if (mlText != null) {
@@ -192,8 +199,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		if (mlText == null) {
 			mlText = new MLText();
 		}
-		
-		
+
 		if ((value != null) && !value.isEmpty()) {
 			mlText.addValue(MLTextHelper.parseLocale(locale), value);
 		} else {
@@ -234,6 +240,11 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 				VersionType.valueOf(type), description);
 
 		return new ScriptNode(retNodeRef, serviceRegistry);
+	}
+
+	public ScriptNode moveAndRename(ScriptNode nodeToMove, ScriptNode destination) {
+		repoService.moveNode(nodeToMove.getNodeRef(), destination.getNodeRef());
+		return nodeToMove;
 	}
 
 	public boolean changeEntityListStates(ScriptNode entity, String state) {

@@ -63,6 +63,7 @@
 		<property name="associationService" ref="associationService" />
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="paginatedSearchCache" ref="paginatedSearchCache"/>
+		<property name="repoService" ref="repoService"/>
 		<property name="showEntitiesInTree" value="${becpg.doclibtree.showEntities}"></property>
 	</bean>
 	

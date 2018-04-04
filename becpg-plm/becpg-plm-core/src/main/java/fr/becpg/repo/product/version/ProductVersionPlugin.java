@@ -1,9 +1,14 @@
 package fr.becpg.repo.product.version;
 
+import java.io.Serializable;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.version.VersionType;
+import org.alfresco.service.namespace.NamespaceService;
+import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.PLMModel;
@@ -20,6 +25,12 @@ public class ProductVersionPlugin implements EntityVersionPlugin {
 	
 	@Autowired
 	EntityDictionaryService entityDictionaryService;
+	
+	@Autowired
+	NamespaceService namespaceService;
+	
+	@Value("${beCPG.copyOrBranch.propertiesToReset}")
+	String propertiesNotToMerge;
 	
 	
 	@Override
@@ -38,7 +49,19 @@ public class ProductVersionPlugin implements EntityVersionPlugin {
 	public void doBeforeCheckin(NodeRef origNodeRef, NodeRef workingCopyNodeRef) {
 		if(entityDictionaryService.isSubClass(nodeService.getType(origNodeRef), PLMModel.TYPE_PRODUCT)){
 	        nodeService.setProperty(workingCopyNodeRef, PLMModel.PROP_PRODUCT_STATE, nodeService.getProperty(origNodeRef, PLMModel.PROP_PRODUCT_STATE));
-	        nodeService.setProperty(workingCopyNodeRef, PLMModel.PROP_ERP_CODE,  nodeService.getProperty(origNodeRef, PLMModel.PROP_ERP_CODE));
+     
+	        if(propertiesNotToMerge!=null) {
+		        for(String propertyToKeep : propertiesNotToMerge.split(",")) {
+		        	QName propertyQname = QName.createQName(propertyToKeep,namespaceService );
+		        	Serializable value = nodeService.getProperty(origNodeRef, propertyQname);
+		        	if(value!=null) {
+		        		nodeService.setProperty(workingCopyNodeRef, propertyQname,value  );
+		        	} else {
+		        		nodeService.removeProperty(workingCopyNodeRef, propertyQname);
+		        	}
+		        }
+	        }
+	        
 		}
 		
 	}
