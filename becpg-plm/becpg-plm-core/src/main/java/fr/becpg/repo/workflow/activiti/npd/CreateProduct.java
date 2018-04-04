@@ -133,7 +133,7 @@ public class CreateProduct extends BaseJavaDelegate {
 					packagingNodeRef = packagingNode.getNodeRef();
 				}
 
-				String productName = repoService.getAvailableName(projectNodeRef, entityName);
+				String productName = repoService.getAvailableName(projectNodeRef, entityName, false);
 				NodeRef productNodeRef = entityService.createOrCopyFrom(sourceNodeRef, projectNodeRef, targetType, productName);
 
 				// change state

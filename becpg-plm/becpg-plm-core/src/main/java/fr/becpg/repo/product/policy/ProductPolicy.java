@@ -6,6 +6,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.copy.CopyServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -20,6 +21,19 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 public class ProductPolicy extends AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyCompletePolicy {
 
 	private static final Log logger = LogFactory.getLog(CodePolicy.class);
+
+	private NamespaceService namespaceService;
+	
+	private String propertiesToReset;
+	
+	
+	public void setNamespaceService(NamespaceService namespaceService) {
+		this.namespaceService = namespaceService;
+	}
+
+	public void setPropertiesToReset(String propertiesToReset) {
+		this.propertiesToReset = propertiesToReset;
+	}
 
 	/**
 	 * Inits the.
@@ -42,6 +56,20 @@ public class ProductPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 		) {
 			nodeService.setProperty(destinationRef, PLMModel.PROP_PRODUCT_STATE, SystemState.Simulation);
 			nodeService.setProperty(destinationRef, PLMModel.PROP_ERP_CODE, null);
+			
+			if(propertiesToReset!=null) {
+		        for(String propertyToKeep : propertiesToReset.split(",")) {
+		        	
+		        	QName propertyQname = QName.createQName(propertyToKeep,namespaceService );
+		        	
+		        	nodeService.removeProperty(destinationRef, propertyQname);
+		        }
+	        }
+			
+			if(nodeService.hasAspect(destinationRef,  ContentModel.ASPECT_VERSIONABLE)) {
+				nodeService.removeAspect(destinationRef, ContentModel.ASPECT_VERSIONABLE);
+			}
+			
 			if (nodeService.hasAspect(destinationRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT)) {
 				nodeService.removeAspect(destinationRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT);
 			}

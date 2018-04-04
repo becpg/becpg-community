@@ -20,7 +20,9 @@ import java.util.Set;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.action.evaluator.CompareMimeTypeEvaluator;
 import org.alfresco.repo.action.evaluator.ComparePropertyValueEvaluator;
+import org.alfresco.repo.action.evaluator.IsSubTypeEvaluator;
 import org.alfresco.repo.action.evaluator.compare.ComparePropertyValueOperation;
+import org.alfresco.repo.action.executer.ScriptActionExecuter;
 import org.alfresco.repo.content.MimetypeMap;
 import org.alfresco.repo.site.SiteModel;
 import org.alfresco.service.cmr.action.Action;
@@ -74,6 +76,7 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.report.client.ReportFormat;
 
 /**
@@ -145,6 +148,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	private static final String PRODUCT_REPORT_IMG_TRAFFICLIGHTS_ORANGE = "beCPG/birt/document/product/default/images/trafficLights_Orange.png";
 	private static final String PRODUCT_REPORT_IMG_TRAFFICLIGHTS_RED = "beCPG/birt/document/product/default/images/trafficLights_Red.png";
 	private static final String PRODUCT_REPORT_IMG_TRAFFICLIGHTS_SERVING = "beCPG/birt/document/product/default/images/trafficLights_Serving.png";
+	
+	private static final String CLASSIFY_RULE_TITLE = "classifyProductRule";
 
 	@Autowired
 	private SiteService siteService;
@@ -274,8 +279,50 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		// Property catalogs
 		visitFolder(systemNodeRef, PlmRepoConsts.PATH_CATALOGS);
 
+		addClassifyRule(companyHome);
+
 		// Create default sites
 		return visitSites();
+
+	}
+
+
+	private void addClassifyRule(NodeRef companyHome) {
+
+		NodeRef scriptsFolderNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(companyHome, "./app:dictionary/app:scripts");
+		List<NodeRef> scriptNodeRefs = contentHelper.addFilesResources(scriptsFolderNodeRef, "classpath:beCPG/rules/classify-product.js");
+
+		List<Rule> rules = ruleService.getRules(companyHome, false);
+
+		for (Rule rule : rules) {
+			if (CLASSIFY_RULE_TITLE.equals(rule.getTitle())) {
+				return;
+			}
+		}
+
+		CompositeAction compositeAction = actionService.createCompositeAction();
+		Action action = actionService.createAction(ScriptActionExecuter.NAME, null);
+		action.setParameterValue(ScriptActionExecuter.PARAM_SCRIPTREF, scriptNodeRefs.get(0));
+
+		compositeAction.addAction(action);
+
+		ActionCondition condition = actionService.createActionCondition(IsSubTypeEvaluator.NAME);
+		condition.setParameterValue(IsSubTypeEvaluator.PARAM_TYPE, PLMModel.TYPE_PRODUCT);
+		condition.setInvertCondition(false);
+		compositeAction.addActionCondition(condition);
+
+		// rule
+		Rule rule = new Rule();
+		rule.setRuleType(RuleType.INBOUND);
+		rule.setRuleTypes(Arrays.asList(RuleType.INBOUND, RuleType.UPDATE));
+		rule.setAction(compositeAction);
+		rule.applyToChildren(true);
+		rule.setTitle(CLASSIFY_RULE_TITLE);
+		rule.setExecuteAsynchronously(false);
+		rule.setRuleDisabled(true);
+		rule.setDescription("Classify product by state");
+
+		ruleService.saveRule(companyHome, rule);
 
 	}
 
@@ -927,11 +974,11 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			String[] defaultReportName = { productReportClientName, productReportSupplierName, productReportProductionName, productReportClientName };
 			String[] otherReport = { PRODUCT_REPORT_PRODUCTION_PATH, null, null, null };
 			String[] otherReportName = { productReportProductionName, null, null, null };
-			String[] productReportResource = { PRODUCT_REPORT_DE_RESOURCE, PRODUCT_REPORT_EN_US_RESOURCE, 
-					PRODUCT_REPORT_EN_RESOURCE, PRODUCT_REPORT_ES_RESOURCE, PRODUCT_REPORT_FR_RESOURCE, 
-					PRODUCT_REPORT_IT_RESOURCE, PRODUCT_REPORT_NL_RESOURCE, PRODUCT_REPORT_CSS_RESOURCE,
-					PRODUCT_REPORT_IMG_CCCCCC, PRODUCT_REPORT_IMG_TRAFFICLIGHTS_ENERGY, PRODUCT_REPORT_IMG_TRAFFICLIGHTS_GREEN,
-					PRODUCT_REPORT_IMG_TRAFFICLIGHTS_ORANGE, PRODUCT_REPORT_IMG_TRAFFICLIGHTS_RED, PRODUCT_REPORT_IMG_TRAFFICLIGHTS_SERVING};
+			String[] productReportResource = { PRODUCT_REPORT_DE_RESOURCE, PRODUCT_REPORT_EN_US_RESOURCE, PRODUCT_REPORT_EN_RESOURCE,
+					PRODUCT_REPORT_ES_RESOURCE, PRODUCT_REPORT_FR_RESOURCE, PRODUCT_REPORT_IT_RESOURCE, PRODUCT_REPORT_NL_RESOURCE,
+					PRODUCT_REPORT_CSS_RESOURCE, PRODUCT_REPORT_IMG_CCCCCC, PRODUCT_REPORT_IMG_TRAFFICLIGHTS_ENERGY,
+					PRODUCT_REPORT_IMG_TRAFFICLIGHTS_GREEN, PRODUCT_REPORT_IMG_TRAFFICLIGHTS_ORANGE, PRODUCT_REPORT_IMG_TRAFFICLIGHTS_RED,
+					PRODUCT_REPORT_IMG_TRAFFICLIGHTS_SERVING };
 
 			int i = 0;
 
@@ -1002,31 +1049,31 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		try {
 
 			String[] qualityReportResource = { QUALITY_REPORT_EN_RESSOURCE, QUALITY_REPORT_RESSOURCE };
-			
+
 			ClassDefinition classDef = dictionaryService.getClass(QualityModel.TYPE_QUALITY_CONTROL);
 			if (repoService.getFolderByPath(qualityReportTplsNodeRef, classDef.getTitle(dictionaryService)) == null) {
-			
+
 				NodeRef qualityFolderNodeRef = repoService.getOrCreateFolderByPath(qualityReportTplsNodeRef, classDef.getTitle(dictionaryService),
 						classDef.getTitle(dictionaryService));
-				
+
 				List<NodeRef> resources = new ArrayList<>();
 				for (String element : qualityReportResource) {
 					resources.add(reportTplService.createTplRessource(qualityFolderNodeRef, element, true));
 				}
-				
+
 				NodeRef templateQuality = reportTplService.createTplRptDesign(qualityFolderNodeRef, classDef.getTitle(dictionaryService),
 						QUALITY_CONTROL_REPORT_PATH, ReportType.Document, ReportFormat.PDF, QualityModel.TYPE_QUALITY_CONTROL, true, true, false);
-	
+
 				if (!resources.isEmpty()) {
 					for (NodeRef resource : resources) {
 						logger.debug("Associating resource: " + resource + " to template: " + templateQuality);
 						nodeService.createAssociation(templateQuality, resource, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES);
 					}
 				}
-	
+
 				nodeService.setProperty(templateQuality, ReportModel.PROP_REPORT_LOCALES, (Serializable) Arrays.asList("fr", "en"));
 			}
-			
+
 		} catch (Exception e) {
 			logger.error("Failed to create quality report tpl." + QualityModel.TYPE_QUALITY_CONTROL, e);
 		}

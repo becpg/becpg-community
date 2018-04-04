@@ -114,27 +114,27 @@ public class RepoServiceImpl implements RepoService {
 	}
 
 	@Override
-	public void moveNode(NodeRef nodeRefToMove, NodeRef destionationNodeRef) {
+	public void moveNode(NodeRef nodeRefToMove, NodeRef destinationNodeRef) {
 
 		logger.debug("start moveNode");
 
 		// check the nodeRefToMove is not already moved !
 		NodeRef parentOfNodeRefToMove = nodeService.getPrimaryParent(nodeRefToMove).getParentRef();
-		if (destionationNodeRef.equals(parentOfNodeRefToMove)) {
+		if (destinationNodeRef.equals(parentOfNodeRefToMove)) {
 			// nothing to do...
 			logger.debug("nodeRefToMove is not already moved, nothing to do...");
 			return;
 		}
 
 		// Check there is not a node with the same name, then rename node
-		String name = getAvailableName(destionationNodeRef, (String) nodeService.getProperty(nodeRefToMove, ContentModel.PROP_NAME));
+		String name = getAvailableName(destinationNodeRef, (String) nodeService.getProperty(nodeRefToMove, ContentModel.PROP_NAME), false);
 
 		if (logger.isDebugEnabled()) {
-			logger.debug(String.format("Move node '%s' in folder '%s'", name, destionationNodeRef));
+			logger.debug(String.format("Move node '%s' in folder '%s'", name, destinationNodeRef));
 		}
 
 		try {
-			fileFolderService.move(nodeRefToMove, destionationNodeRef, name);
+			fileFolderService.move(nodeRefToMove, destinationNodeRef, name);
 		} catch (Exception e) {
 			if (e instanceof ConcurrencyFailureException) {
 				throw (ConcurrencyFailureException) e;
@@ -144,20 +144,21 @@ public class RepoServiceImpl implements RepoService {
 	}
 
 	@Override
-	public String getAvailableName(NodeRef folderNodeRef, String name) {
+	public String getAvailableName(NodeRef folderNodeRef, String name, boolean forceRename) {
 
 		List<FileInfo> fileInfos = fileFolderService.list(folderNodeRef);
 		if (!fileInfos.isEmpty()) {
-			int count = 0;
+			int count =  0;
 			NodeRef nodeRef = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, name);
 
-			while (nodeRef != null) {
+			while (nodeRef != null || forceRename) {
 				count++;
+				forceRename = false;
 				String nameWithCounter = String.format("%s (%d)", name, count);
 				nodeRef = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, nameWithCounter);
 			}
 
-			if (count > 0) {
+			if (count > 0 ) {
 				name = String.format("%s (%d)", name, count);
 			}
 		}

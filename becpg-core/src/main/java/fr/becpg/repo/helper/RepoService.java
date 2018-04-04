@@ -64,8 +64,9 @@ public interface RepoService {
 	 * Calculate the name in order to get an available name ie: name (1)
 	 * @param nodeRefToMove
 	 * @param destionationNodeRef
+	 * @param forceRename
 	 * @param name
 	 */
-	String getAvailableName(NodeRef folderNodeRef, String name);
+	String getAvailableName(NodeRef folderNodeRef, String name, boolean forceRename);
 	
 }

@@ -1099,7 +1099,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ENTITY_BRANCH);
 
 				String newEntityName = repoService.getAvailableName(parentRef,
-						(String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
+						(String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME),true);
 				NodeRef branchNodeRef = entityService.createOrCopyFrom(entityNodeRef, parentRef, nodeService.getType(entityNodeRef), newEntityName);
 				if (nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
 					nodeService.setProperty(branchNodeRef, BeCPGModel.PROP_BRANCH_FROM_VERSION_LABEL,
