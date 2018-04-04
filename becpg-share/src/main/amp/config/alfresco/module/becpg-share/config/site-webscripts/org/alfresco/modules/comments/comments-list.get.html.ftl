@@ -46,7 +46,7 @@
 	      
 	        var sourceYuiEl = new YAHOO.util.Element(sourceEl),
             syncYuiEl = new YAHOO.util.Element(syncEl),
-            region = YAHOO.util.Dom.getRegion(sourceYuiEl.get("id"));
+            region = YAHOO.util.Dom.getRegion(sourceYuiEl.get("id")),
 			region2 = YAHOO.util.Dom.getRegion("${el}-dialog");
 			
 			var width = region.width;
