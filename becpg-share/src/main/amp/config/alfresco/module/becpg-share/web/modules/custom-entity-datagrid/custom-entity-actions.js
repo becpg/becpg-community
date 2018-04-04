@@ -351,7 +351,7 @@
 			
 		},
 		
-		onActionShowWorkflows : function EntityDataGrid_onActionShowComments(item) {
+		onActionShowWorkflows : function EntityDataGrid_onActionShowWorkflows(item) {
 
 			 Alfresco.util.Ajax.request({
 				    method : Alfresco.util.Ajax.GET,
@@ -558,6 +558,29 @@
 			});
 
 		},
+		
+		onActionUploadContent : function EntityDataGrid_onActionUploadContent(item) {
+			  var fileUpload = Alfresco.getFileUploadInstance();
+                   
+                   fileUpload.show({
+                       updateNodeRef: item.nodeRef,
+                       mode: fileUpload.MODE_SINGLE_UPLOAD,
+                       suppressRefreshEvent : true,
+                       onFileUploadComplete:
+                       {
+                          fn: function onFileUploadComplete(complete)
+                          {
+                        	  setTimeout(function(){
+				            		YAHOO.Bubbling.fire("scopedActiveDataListChanged", 
+				            	    		{extraDataParams : "&clearCache=true"}
+				            	    );
+				            	}, 1000);
+                           },
+                           scope: this
+                       }
+                    });
+
+		},
 
 		_manageAspect : function EntityDataGrid_manageAspect(itemNodeRef, aspect) {
 			var itemUrl = itemNodeRef.replace(":/", ""), me = this;
@@ -673,6 +696,9 @@
 		}
 
 	};
+	
+	
+	
 
 	/**
 	 * Augment prototype with Common Actions module
