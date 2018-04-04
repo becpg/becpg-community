@@ -5630,7 +5630,6 @@
 					<show id="bcpg:trademarkType"  />
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
-					
 				</field-visibility>
 				<appearance>
 					<field id="cm:description">
@@ -5654,7 +5653,7 @@
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:trademarkType"  />
 					<show id="cm:title" force="true" />
-					<show id="cm:description" force="true" />
+					<show id="cm:description"  />
 					
 				</field-visibility>
 
@@ -5691,6 +5690,7 @@
 					<show id="bcpg:trademarkType"  />
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
+					<show id="cm:content"  />
 				</field-visibility>
 			</form>
 		</forms>

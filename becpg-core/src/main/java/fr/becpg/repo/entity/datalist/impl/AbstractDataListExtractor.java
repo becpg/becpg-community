@@ -180,14 +180,18 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 
 			boolean accessRight = (Boolean) (props.get(PROP_ACCESSRIGHT) != null ? props.get(PROP_ACCESSRIGHT) : false);
 
+			boolean hasWrite = (permissionService.hasPermission(nodeRef, "Write") == AccessStatus.ALLOWED);
+			
 			permissions.put("userAccess", userAccess);
 			userAccess.put("delete", accessRight && (permissionService.hasPermission(nodeRef, "Delete") == AccessStatus.ALLOWED));
 			userAccess.put("create", accessRight && (permissionService.hasPermission(nodeRef, "CreateChildren") == AccessStatus.ALLOWED));
-			userAccess.put("edit", accessRight && (permissionService.hasPermission(nodeRef, "Write") == AccessStatus.ALLOWED));
-			userAccess.put("sort", accessRight && (permissionService.hasPermission(nodeRef, "Write") == AccessStatus.ALLOWED) 
+			userAccess.put("edit", accessRight && hasWrite);
+			userAccess.put("sort", accessRight && hasWrite 
 					&& nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_SORTABLE_LIST));
 			userAccess.put("details", accessRight && isDetaillable(nodeRef));
 			userAccess.put("wused", accessRight);
+			userAccess.put("content", accessRight && hasWrite &&  hasContentField(metadataFields));
+			
 
 			ret.put(PROP_PERMISSIONS, permissions);
 
@@ -244,6 +248,16 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 				logger.debug(getClass().getSimpleName() + " extract metadata in  " + watch.getTotalTimeSeconds() + "s");
 			}
 		}
+	}
+
+	private boolean hasContentField(List<AttributeExtractorStructure> metadataFields) {
+		for(AttributeExtractorStructure metadataField : metadataFields) {
+			if(ContentModel.PROP_CONTENT.equals(metadataField.getFieldQname())) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 
 	protected Map<String, Object> extractExport(AttributeExtractorMode mode, NodeRef nodeRef, List<AttributeExtractorStructure> metadataFields,
