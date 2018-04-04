@@ -63,8 +63,9 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 
 		// no compo => no formulation
 		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)
-				|| (!formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())) && !formulatedProduct
-						.hasPackagingListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())))) {
+				|| (!formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))
+						&& !formulatedProduct
+								.hasPackagingListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())))) {
 			logger.debug("no compoList, no packagingList => no formulation");
 			return true;
 		}
@@ -72,47 +73,48 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 		// Tare
 		BigDecimal tarePrimary = calculateTareOfComposition(formulatedProduct);
 		tarePrimary = tarePrimary.add(calculateTareOfPackaging(formulatedProduct));
-		formulatedProduct.setTareUnit(TareUnit.kg);
+
+		BigDecimal netWeightPrimary = new BigDecimal(
+				FormulationHelper.getNetWeight(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT).toString());
+
+		BigDecimal weightPrimary = tarePrimary.add(netWeightPrimary);
+
+		formulatedProduct.setWeightPrimary(weightPrimary.doubleValue());
+
+		VariantPackagingData variantPackagingData = formulatedProduct.getDefaultVariantPackagingData();
+
+		if ((variantPackagingData != null) && (variantPackagingData.getProductPerBoxes() != null)) {
+
+			BigDecimal tareSecondary = tarePrimary.multiply(new BigDecimal(variantPackagingData.getProductPerBoxes()))
+					.add(variantPackagingData.getTareSecondary());
+
+			BigDecimal netWeightSecondary = netWeightPrimary.multiply(new BigDecimal(variantPackagingData.getProductPerBoxes()));
+			BigDecimal weightSecondary = tareSecondary.add(netWeightSecondary);
+			formulatedProduct.setWeightSecondary(weightSecondary.doubleValue());
+			formulatedProduct.setNetWeightSecondary(netWeightSecondary.doubleValue());
+
+			if (variantPackagingData.getBoxesPerPallet() != null) {
+
+				BigDecimal tareTertiary = tareSecondary.multiply(new BigDecimal(variantPackagingData.getBoxesPerPallet()))
+						.add(variantPackagingData.getTareTertiary());
+
+				BigDecimal netWeightTertiary = netWeightSecondary.multiply(new BigDecimal(variantPackagingData.getBoxesPerPallet()));
+				BigDecimal weightTertiary = tareTertiary.add(netWeightTertiary);
+				formulatedProduct.setWeightTertiary(weightTertiary.doubleValue());
+				formulatedProduct.setNetWeightTertiary(netWeightTertiary.doubleValue());
+
+			}
+		}
 
 		if (formulatedProduct.getAspects().contains(GS1Model.ASPECT_MEASURES_ASPECT)) {
-
-			BigDecimal netWeightPrimary = new BigDecimal(FormulationHelper.getNetWeight(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT)
-					.toString());
-
-			BigDecimal weightPrimary = tarePrimary.add(netWeightPrimary);
-
-			formulatedProduct.getExtraProperties().put(GS1Model.PROP_WEIGHT, weightPrimary.doubleValue());
-
-			formulatedProduct.getExtraProperties().put(GS1Model.PROP_SECONDARY_WEIGHT, null);
-			formulatedProduct.getExtraProperties().put(GS1Model.PROP_SECONDARY_NET_WEIGHT, null);
-			formulatedProduct.getExtraProperties().put(GS1Model.PROP_TERTIARY_WEIGHT, null);
-			formulatedProduct.getExtraProperties().put(GS1Model.PROP_TERTIARY_NET_WEIGHT, null);
-
-			VariantPackagingData variantPackagingData = formulatedProduct.getDefaultVariantPackagingData();
-
-			if ((variantPackagingData != null) && (variantPackagingData.getProductPerBoxes() != null)) {
-
-				BigDecimal tareSecondary = tarePrimary.multiply(new BigDecimal(variantPackagingData.getProductPerBoxes())).add(
-						variantPackagingData.getTareSecondary());
-
-				BigDecimal netWeightSecondary = netWeightPrimary.multiply(new BigDecimal(variantPackagingData.getProductPerBoxes()));
-				BigDecimal weightSecondary = tareSecondary.add(netWeightSecondary);
-
-				formulatedProduct.getExtraProperties().put(GS1Model.PROP_SECONDARY_WEIGHT, weightSecondary.doubleValue());
-				formulatedProduct.getExtraProperties().put(GS1Model.PROP_SECONDARY_NET_WEIGHT, netWeightSecondary.doubleValue());
-
-				if (variantPackagingData.getBoxesPerPallet() != null) {
-
-					BigDecimal tareTertiary = tareSecondary.multiply(new BigDecimal(variantPackagingData.getBoxesPerPallet())).add(
-							variantPackagingData.getTareTertiary());
-					BigDecimal netWeightTertiary = netWeightSecondary.multiply(new BigDecimal(variantPackagingData.getBoxesPerPallet()));
-
-					formulatedProduct.getExtraProperties().put(GS1Model.PROP_TERTIARY_WEIGHT, tareTertiary.add(netWeightTertiary));
-					formulatedProduct.getExtraProperties().put(GS1Model.PROP_TERTIARY_NET_WEIGHT, netWeightTertiary.doubleValue());
-				}
-			}
-
+			formulatedProduct.getExtraProperties().put(GS1Model.PROP_WEIGHT, formulatedProduct.getWeightPrimary());
+			formulatedProduct.getExtraProperties().put(GS1Model.PROP_SECONDARY_WEIGHT, formulatedProduct.getWeightSecondary());
+			formulatedProduct.getExtraProperties().put(GS1Model.PROP_SECONDARY_NET_WEIGHT, formulatedProduct.getNetWeightSecondary());
+			formulatedProduct.getExtraProperties().put(GS1Model.PROP_TERTIARY_WEIGHT, formulatedProduct.getWeightTertiary());
+			formulatedProduct.getExtraProperties().put(GS1Model.PROP_TERTIARY_NET_WEIGHT, formulatedProduct.getNetWeightTertiary());
 		}
+
+		formulatedProduct.setTareUnit(TareUnit.kg);
 
 		if (tarePrimary.doubleValue() < 1) {
 			logger.debug("Calculating tare in g: " + tarePrimary);
@@ -126,8 +128,8 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 
 	private BigDecimal calculateTareOfComposition(ProductData formulatedProduct) {
 		BigDecimal totalTare = new BigDecimal(0d);
-		for (CompoListDataItem compoList : formulatedProduct.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE),
-				new VariantFilters<>()))) {
+		for (CompoListDataItem compoList : formulatedProduct
+				.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 			totalTare = totalTare.add(FormulationHelper.getTareInKg(compoList, nodeService));
 		}
 		return totalTare;
@@ -135,8 +137,8 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 
 	private BigDecimal calculateTareOfPackaging(ProductData formulatedProduct) {
 		BigDecimal totalTare = new BigDecimal(0d);
-		for (PackagingListDataItem packList : formulatedProduct.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE),
-				new VariantFilters<>()))) {
+		for (PackagingListDataItem packList : formulatedProduct
+				.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 			// take in account only primary
 			PackagingLevel level = PackagingLevel.Primary;
 			if (nodeService.hasAspect(formulatedProduct.getNodeRef(), PackModel.ASPECT_PALLET)) {
