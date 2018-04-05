@@ -1,6 +1,9 @@
 <#escape x as jsonUtils.encodeJSONString(x)>
 {
-   <#if aclType??>"aclType":"${aclType}",</#if>
+   <#if aclType??>
+   "aclType":"${aclType}",
+   "aclTypeNode":"${aclTypeNode!"null"}",
+   </#if>
    <#if container??>
    "container": "${container.nodeRef?string}",
    </#if>

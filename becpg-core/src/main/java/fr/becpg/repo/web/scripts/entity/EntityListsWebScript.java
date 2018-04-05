@@ -59,6 +59,7 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.SiteHelper;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.security.SecurityService;
 
 /**
@@ -89,6 +90,8 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 	private static final String MODEL_HAS_CHANGE_STATE_PERMISSION = "hasChangeStatePermission";
 
 	private static final String MODEL_KEY_ACL_TYPE = "aclType";
+	
+	private static final String MODEL_KEY_ACL_TYPE_NODE = "aclTypeNode";
 
 	private static final String MODEL_PROP_KEY_LIST_TYPES = "listTypes";
 
@@ -209,8 +212,16 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 			logger.debug("We want to get datalist for current ACL entity");
 			String aclType = (String) nodeService.getProperty(nodeRef, SecurityModel.PROP_ACL_GROUP_NODE_TYPE);
 			QName aclTypeQname = QName.createQName(aclType, namespaceService);
+			
+			
+			NodeRef typeNodeRef = BeCPGQueryBuilder.createQuery().ofType(aclTypeQname).singleValue();
+			
+			if(typeNodeRef!=null) {
+				model.put(MODEL_KEY_ACL_TYPE_NODE, typeNodeRef.toString());
+			}
 			model.put(MODEL_KEY_ACL_TYPE, aclType);
-
+			
+				
 			NodeRef templateNodeRef = entityTplService.getEntityTpl(aclTypeQname);
 			if (templateNodeRef != null) {
 				listContainerNodeRef = entityListDAO.getListContainer(templateNodeRef);
