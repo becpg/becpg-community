@@ -554,18 +554,21 @@
                                 Dom.setStyle(elCell, "width", oColumn.width + "px");
                                 Dom.setStyle(elCell.parentNode, "width", oColumn.width + "px");
 
+                                var userAccess = oRecord.getData("permissions").userAccess;
                                 if (scope.options.sortable)
                                 {
-                                    var userAccess = oRecord.getData("permissions").userAccess;
+                                   
                                     if (userAccess.sort)
                                     {
                                         YAHOO.util.Dom.addClass(elCell.parentNode, "datagrid-sort-handle");
                                     }
                                 }
-
-                                elCell.innerHTML = '<input class="dt-check" id="checkbox-' + oRecord.getId() + '" type="checkbox" name="fileChecked" value="' + oData + '"' + (scope.selectedItems[oData] ? ' checked="checked">'
+                                if (userAccess.select === undefined || userAccess.select === null || userAccess.select  )
+                                {
+                                	elCell.innerHTML = '<input class="dt-check" id="checkbox-' + oRecord.getId() + '" type="checkbox" name="fileChecked" value="' + oData + '"' + (scope.selectedItems[oData] ? ' checked="checked">'
                                         : '>')+
                                         '<label class="dt-check" for="checkbox-' + oRecord.getId() + '"></label>';
+                                }
                             };
                         },
                         
