@@ -177,10 +177,9 @@ function createPostBody(itemKind, itemId, visibleFields, formConfig)
       {
          fieldId = visibleFields[f];
          postBodyFields.push(fieldId);
-         if (formConfig.isFieldForced(fieldId))
-         {
-            postBodyForcedFields.push(fieldId);
-         }
+         //Force all field
+         postBodyForcedFields.push(fieldId);
+       
       }
       
       postBody.fields = postBodyFields;
@@ -228,16 +227,17 @@ function main()
    //ACL Group
    var aclInfo = getACLGroupInfo(entityNodeRef),
    	itemType = aclInfo.aclType,
+	itemNode = aclInfo.aclTypeNode,
     columns = [];
    
    
    if (itemType != null && itemType.length > 0)
    {
 
-      var formConfig = getFormConfig(itemType,"security");
+      var formConfig = getFormConfig(itemNode!=null ? itemNode : itemType ,"security");
       
       // get the configured visible fields
-      var visibleFields = getVisibleFields("edit", formConfig);
+      var visibleFields = getVisibleFields("view", formConfig);
       
       // build the JSON object to send to the server
       var postBody = createPostBody("type", itemType, visibleFields, formConfig);
@@ -268,7 +268,11 @@ function main()
          {
             model.error = formModel.message;
          }
-      }
+         
+         // Add view only fields
+         
+         
+    }
    
    
    var q = getArgument("q");
