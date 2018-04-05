@@ -121,7 +121,7 @@ public abstract class AbstractCompareProductTest extends PLMBaseTestCase {
 		for (CompareResultDataItem c : compareResult) {
 
 			String tempProductList = c.getEntityList() == null ? "" : c.getEntityList().toString();
-			String tempCharacteristic = c.getCharacteristic() == null ? "" : (String) nodeService.getProperty(c.getCharacteristic(),
+			String tempCharacteristic = c.getCharacteristic() == null ? "" : (String) nodeService.getProperty(new NodeRef(c.getCharacteristic()),
 					BeCPGModel.PROP_CHARACT_NAME);
 			String tempProperty = c.getProperty() == null ? "" : c.getProperty().toString();
 			if (productList.equals(tempProductList) && characteristic.equals(tempCharacteristic) && property.equals(tempProperty)
