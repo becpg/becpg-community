@@ -72,6 +72,8 @@ public class RepoConsts {
 	public static final int MAX_RESULTS_UNLIMITED = -1;
 	
 	public static final int MAX_SUGGESTIONS = 100;
+
+	public static final int MAX_RESULTS_5000 = 5000;
 	
 	
 	
@@ -149,5 +151,6 @@ public class RepoConsts {
 
 
 	public static final String[] SUPPORTED_LANGUAGES = {"fr", "en"};
+
 	
 }
