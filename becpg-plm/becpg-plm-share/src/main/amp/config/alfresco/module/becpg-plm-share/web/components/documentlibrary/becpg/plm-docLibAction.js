@@ -219,7 +219,94 @@
 	            	            
 	       }
 	    });
-	
+
+	   
+	   YAHOO.Bubbling.fire("registerAction", {
+	       actionName : "onActionCreateSupplier",
+	       fn : function onActionCreateSupplier(p_record) {
+	    	   	var  nodeRef = new Alfresco.util.NodeRef(p_record.nodeRef);
+	    	   	var popupKind = "supplier-account",  li = '', colCount = 0;
+				var html = '<div class="hd">' + this.msg("header." + popupKind + ".dialog") + '</div>';
+	       		html += '<div class="bd">';
+	       		html += '<form  class="form-container">';
+	       		html += '<div class="form-fields bulk-edit">';
+	       		html += '   <div class="set">';
+	       		html += '        <div class="form-field">';
+	       		html += '			<div  id="'+this.id+'-columns-list" />';
+	       		
+	       		li += '<li style="margin: 10px 0;"><input id="propEmail" type="email" required name="propEmail" placeholder="supplier@becpg.fr"/></li>';
+	       		
+	       		html += '<span>'+this.msg("label.supplier-account.title") + '</span><br/><br/><ul style="width:' + ((colCount + 1) * 20) + 'em;">'+ li +'</ul>';	
+	       		html += '          </div>';
+	       		html += '<div style="display: inline-block;"> <input id="propNotify"  type="checkbox" name="propNotify" /> <label for="propNotify" style="display: inline-block"> ' + this.msg("label.notify-supplier") + '</label></div>';
+	       		html += '       </div>';
+	       		html += '    </div>';
+	       		html += '<div id="'+this.id+'-'+popupKind+'-ft" class="bdft">';
+	       		html += '</div>';
+	       		html += '</form></div>';
+	       		
+       			var containerDiv = document.createElement("div");
+       			containerDiv.innerHTML = html;
+	       			
+       			this.widgets.columnsListPanel = Alfresco.util.createYUIPanel(containerDiv, {
+       				draggable : true,
+       				width : "33em"
+       			});
+       			
+       			var divEl = Dom.get(this.id+'-' + popupKind + '-ft');
+       			
+       			divEl.innerHTML = '<input id="'+this.id+'-bulk-edit-ok" type="submit" value="'+this.msg("button.ok")+'" />';
+       			
+       			this.widgets.columnsListPanel.show();
+       			
+       			this.widgets.okBkButton = Alfresco.util.createYUIButton(this, "bulk-edit-ok", function (){
+	       			var me = this;
+	       			
+       				var containerEl = Dom.get(this.id+'-columns-list').parentNode;
+       				var selectedFields = Selector.query('input[type="checkbox"]', containerEl);
+       				var notifySupplier =  selectedFields[0].checked;
+       				var emailAddress = Dom.get("propEmail").value;
+       				
+       				var emailRegx = /\S+@\S+\.\S+/;
+       				if(emailRegx.test(emailAddress)){
+       					me.widgets.columnsListPanel.hide();
+       					
+       					Alfresco.util.Ajax.jsonPost({
+       						url : Alfresco.constants.PROXY_URI + "becpg/supplier/create-supplier?emailAddress="+emailAddress+"&notifySupplier="+notifySupplier+"&nodeRef="+nodeRef,
+       						successCallback : {
+       							fn : function (response) {
+       								Alfresco.util.PopupManager.displayMessage({
+       									text : this.msg("message.createSupplier.success", response.json.login)
+       								});
+       								location.reload();
+       							},
+       							scope : this
+       						},
+       						failureCallback : {
+       							fn : function (response) {
+       								var login = response.json.message;
+       								Alfresco.util.PopupManager.displayMessage({
+       									text : this.msg("message.createSupplier.failure", login.match(/supplier.*$/)[0]),
+       									displayTime : 5
+       								});
+       							},
+       							scope : this
+       						}
+       					});
+       					
+       				} else {
+       					Alfresco.util.PopupManager.displayMessage({
+								text : this.msg("message.email.notValide")
+							});
+       				}
+       				
+       				
+	            });
+       			
+       			
+	            	            
+	       }
+	    });	
 	
 })();
 	

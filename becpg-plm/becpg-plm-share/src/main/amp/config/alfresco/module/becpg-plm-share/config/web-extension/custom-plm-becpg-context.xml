@@ -79,6 +79,14 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 		</property>
 	</bean>
 	
+	<bean id="evaluator.becpg.doclib.action.createSupplier" parent="evaluator.doclib.action.nodeType">
+		<property name="types">
+			<list>
+				<value>bcpg:supplier</value>
+			</list>
+		</property>
+	</bean>
+	
 	<!-- ecm:ecoState  -->
 	<bean id="evaluator.becpg.doclib.indicator.ecm.automatic" parent="evaluator.doclib.action.value">
 		<property name="accessor" value="node.properties.ecm:ecoState" />

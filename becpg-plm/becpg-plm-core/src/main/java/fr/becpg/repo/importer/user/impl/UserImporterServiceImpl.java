@@ -349,7 +349,7 @@ public class UserImporterServiceImpl implements UserImporterService {
 
 	private void sendMail(NodeRef person, String username, String password) {
 		logger.debug("Notify user " + nodeService.getProperty(person, ContentModel.PROP_FIRSTNAME));
-		beCPGMailService.sendMailNewUser(person, username, password);
+		beCPGMailService.sendMailNewUser(person, username, password, false);
 	}
 
 	private boolean isPropQname(String key) {

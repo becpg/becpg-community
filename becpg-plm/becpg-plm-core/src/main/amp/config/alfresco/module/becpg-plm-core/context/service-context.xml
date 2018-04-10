@@ -182,6 +182,12 @@
 		<property name="projectNameTpl" value="${beCPG.sendToSupplier.projectName.format}"/>	
 	</bean>
 	
+	<bean id="webscript.fr.becpg.supplier.createSupplier.post" class="fr.becpg.repo.web.scripts.supplier.SupplierAccountWebScript" parent="webscript">
+		<property name="nodeService" ref="NodeService" />
+		<property name="personService" ref="PersonService" />
+		<property name="authorityService" ref="AuthorityService" />
+	</bean>
+	
 
 
 </beans>

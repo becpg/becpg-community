@@ -34,7 +34,7 @@ public interface BeCPGMailService {
 	 * Send a mail to notify user import
 	 * @param personNodeRef
 	 */
-	void sendMailNewUser(NodeRef personNodeRef, String userName, String password);
+	void sendMailNewUser(NodeRef personNodeRef, String userName, String password, boolean sendToSelf);
 
 
 	/**
