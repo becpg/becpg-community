@@ -1054,6 +1054,14 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		
 	}
 	
+	public List<NodeRef> fastChildrenByType(){
+		// @TODO
+		//https://github.com/ITDSystems/alvex-registers/blob/master/repo/src/main/java/com/alvexcore/repo/registers/api/AbstractRegistryWebScript.java
+		
+		
+		return new LinkedList<>();
+	}
+	
 	
 	public PagingResults<NodeRef> childFileFolders(PagingRequest pageRequest) {
 
