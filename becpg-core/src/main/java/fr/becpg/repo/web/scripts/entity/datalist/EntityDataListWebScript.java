@@ -394,6 +394,7 @@ public class EntityDataListWebScript extends AbstractWebScript {
 
 	private boolean isExternalUserAllowed(DataListFilter dataListFilter) {
 		if(dataListFilter.getParentNodeRef() !=null 
+				&& nodeService.exists(dataListFilter.getParentNodeRef())
 				&& nodeService.hasAspect(dataListFilter.getParentNodeRef(), BeCPGModel.ASPECT_ENTITYLIST_STATE)
 				&& SystemState.Valid.toString().equals(nodeService.getProperty(dataListFilter.getParentNodeRef(), BeCPGModel.PROP_ENTITYLIST_STATE))
 				&& isCurrentUserExternal()
