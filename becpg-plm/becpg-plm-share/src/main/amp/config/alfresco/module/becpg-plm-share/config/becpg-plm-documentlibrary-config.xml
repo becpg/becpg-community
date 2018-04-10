@@ -279,6 +279,14 @@
 				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isWorkingCopy</evaluator>
 			</action>
 			
+			<!-- Create supplier -->
+			
+			<action id="create-supplier" type="javascript" label="actions.entity.create-supplier" icon="edit-user">
+				<param name="function">onActionCreateSupplier</param>
+				<evaluator>evaluator.becpg.doclib.action.createSupplier</evaluator>
+				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isSystemEntity</evaluator>
+			</action>
+			
 		</actions>
 
 		<actionGroups>
@@ -288,6 +296,7 @@
 				<action index="104" id="entity-merge" />
 				<action index="110" id="entity-compare" icon="compare" />
 				<action index="110" id="send-to-supplier"  />
+				<action index="110" id="create-supplier" />
 				<action index="111" id="entityTpl-synchronize-entities" />
 				<action index="112" id="entityTpl-formulate-entities" />
 				<action index="113" id="entityTpl-wused" />

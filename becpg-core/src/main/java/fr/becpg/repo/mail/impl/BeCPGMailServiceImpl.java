@@ -116,7 +116,7 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 	}
 
 	@Override
-	public void sendMailNewUser(NodeRef personNodeRef, String userName, String password) {
+	public void sendMailNewUser(NodeRef personNodeRef, String userName, String password, boolean sendToSelf) {
 		_logger.debug("Email new user");
 		Map<String, Object> templateModel = new HashMap<>(8, 1.0f);
 
@@ -131,12 +131,12 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 		String email = (String) nodeService.getProperty(personNodeRef, ContentModel.PROP_EMAIL);
 		if (!StringUtils.isEmpty(email)) {
 			List<NodeRef> users = new ArrayList<>(1);
-			users.add(personService.getPerson(userName));
-			sendMail(users, I18NUtil.getMessage("becpg.mail.newUser.title"), RepoConsts.EMAIL_NEW_USER_TEMPLATE, templateModel, false);
+			users.add(personNodeRef);
+			sendMail(users, I18NUtil.getMessage("becpg.mail.newUser.title"), RepoConsts.EMAIL_NEW_USER_TEMPLATE, templateModel, sendToSelf);
 		}
 
 	}
-
+	
 	@Override
 	public NodeRef findTemplateNodeRef(String templateName, NodeRef folderNR) {
 		_logger.debug("Finding template named " + templateName + " in folder " + folderNR);

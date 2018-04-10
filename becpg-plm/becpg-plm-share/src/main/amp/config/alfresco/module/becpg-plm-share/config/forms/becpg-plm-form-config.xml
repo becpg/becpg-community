@@ -6019,10 +6019,10 @@
 					<show id="bcpg:locationCity" />
 					<show id="bcpg:locationCountry" />
 					<!-- audit -->
-					<show id="cm:creator" />
-					<show id="cm:created" />
-					<show id="cm:modifier" />
-					<show id="cm:modified" />
+					<show id="cm:creator" for-mode="view"/>
+					<show id="cm:created" for-mode="view"/>
+					<show id="cm:modifier" for-mode="view"/>
+					<show id="cm:modified" for-mode="view"/>
 				</field-visibility>
 				<appearance>
 				
@@ -6108,7 +6108,7 @@
 					<show id="cm:description" />
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
-					<show id="bcpg:supplierAccountRef" />
+					
 					<show id="bcpg:supplierTel" />
 					<show id="bcpg:supplierEmail" />
 					<show id="bcpg:supplierFax" />
