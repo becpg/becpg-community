@@ -260,9 +260,10 @@ public class FormulationHelper {
 		ProductUnit productUnit = getProductUnit(nodeRef, nodeService);
 		Double qty = getProductQty(nodeRef, nodeService);
 		if (netWeight != null) {
-			if (ProductUnit.P.equals(productUnit) && (qty != null) && (qty != 0)) {
-				return netWeight / qty;
-			}
+// Fix #4247 - Done in #4048 but why ??				
+//  if (ProductUnit.P.equals(productUnit) && (qty != null) && (qty != 0)) {
+// 			return netWeight / qty;
+//  }
 			return netWeight;
 		} else {
 			if (productUnit != null) {
