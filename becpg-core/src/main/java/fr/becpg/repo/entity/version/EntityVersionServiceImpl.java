@@ -328,7 +328,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 			if (!isInitialVersion) {
 
-				updateEntitiesHistory(origNodeRef);
+				updateEntitiesHistory(origNodeRef,null);
 
 				entityActivityService.postVersionActivity(origNodeRef, versionNodeRef, versionLabel);
 			}
@@ -353,14 +353,21 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		nodeService.setProperty(versionNodeRef, BeCPGModel.PROP_END_EFFECTIVITY, newEffectivity);
 	}
 
-	private void updateEntitiesHistory(NodeRef origNodeRef) {
+
+	private void updateEntitiesHistory(NodeRef origNodeRef, NodeRef impactOnlyNodeRef) {
 		List<AssociationRef> assocRefs = nodeService.getSourceAssocs(origNodeRef, RegexQNamePattern.MATCH_ALL);
 
 		List<EntityVersion> versions = getAllVersions(origNodeRef);
 
 		if ((versions != null) && (versions.size() > 0)) {
 
-			NodeRef versionNodeRef = versions.get(0).getEntityVersionNodeRef();
+			int index = 0;
+
+			if ((versions.size() > 1) && (impactOnlyNodeRef != null)) {
+				index = 1;
+			}
+
+			NodeRef versionNodeRef = versions.get(index).getEntityVersionNodeRef();
 
 			for (AssociationRef assocRef : assocRefs) {
 				policyBehaviourFilter.disableBehaviour(assocRef.getSourceRef(), ContentModel.ASPECT_AUDITABLE);
@@ -375,7 +382,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 							NodeRef entityNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, (String) nodeService
 									.getProperty(nodeService.getPrimaryParent(versionEntityNodeRef).getParentRef(), ContentModel.PROP_NAME));
 
-							if (nodeService.exists(entityNodeRef)) {
+							if (nodeService.exists(entityNodeRef) && nodeService.exists(versionNodeRef)
+									&& ((impactOnlyNodeRef == null) || impactOnlyNodeRef.equals(entityNodeRef))) {
 
 								String entityVersionLabel = (String) nodeService.getProperty(versionEntityNodeRef, BeCPGModel.PROP_VERSION_LABEL);
 								String versionLabel = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_VERSION_LABEL);
