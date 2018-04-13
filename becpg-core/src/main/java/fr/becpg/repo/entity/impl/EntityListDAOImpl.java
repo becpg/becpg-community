@@ -240,7 +240,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 			queryBuilder.ofType(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 		}
 
-		return queryBuilder.childFileFolders(new PagingRequest(5000, null)).getPage();
+		return queryBuilder.fastChildrenByType();
 
 	}
 

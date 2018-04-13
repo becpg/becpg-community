@@ -849,7 +849,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 			return false;
 		}
 
-		return Locale.getDefault().getLanguage().equals(locale.getLanguage());
+		return Locale.getDefault().equals(locale) ||  (Locale.getDefault().getLanguage().equals(locale.getLanguage()) && locale.getCountry() == null);
 	}
 
 	@SuppressWarnings("unchecked")
