@@ -25,6 +25,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.alfresco.repo.dictionary.DictionaryNamespaceComponent;
+import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -62,6 +64,9 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	
 	@Autowired
 	private NodeService nodeService;
+	
+	@Autowired
+	private DictionaryService dictionaryService;
 
 	@Override
 	public List<NodeRef> queryAdvSearch(QName datatype, BeCPGQueryBuilder beCPGQueryBuilder, Map<String, String> criteria, int maxResults) {
@@ -200,6 +205,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 										result = result.replaceAll("\"", "");
 											hierarchyNodes.add(result);	
 									}
+								
 									
 									String hierarchyPropName = propName;
 									if(!hierarchyNodes.isEmpty()) {
@@ -207,6 +213,10 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 										if(depthLevel!=null && !hierarchyPropName.contains(depthLevel.toString())) {
 											hierarchyPropName = hierarchyPropName.replaceAll("[0-9]",depthLevel.toString() );
 										}
+										if(dictionaryService.getProperty(QName.createQName(hierarchyPropName,namespaceService)) == null) {
+											 hierarchyPropName = propName;
+										}
+										
 									}
 									
 									String hierarchyNodesString = hierarchyNodes.toString()
