@@ -1504,7 +1504,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	protected QName getPropNameOfType(QName type) {
 		if ((type != null) && type.equals(PLMModel.TYPE_CERTIFICATION)) {
 			return ContentModel.PROP_TITLE;
-		} else if (dictionaryService.isSubClass(type, PLMModel.TYPE_PRODUCT)) {
+		} else if (entityDictionaryService.isSubClass(type, PLMModel.TYPE_PRODUCT)) {
 			return ContentModel.PROP_NAME;
 		}
 		return null;
@@ -1513,6 +1513,6 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	@Override
 	public EntityReportExtractorPriority getMatchPriority(QName type) {
-		return dictionaryService.isSubClass(type, PLMModel.TYPE_PRODUCT) ? EntityReportExtractorPriority.NORMAL : EntityReportExtractorPriority.NONE;
+		return entityDictionaryService.isSubClass(type, PLMModel.TYPE_PRODUCT) ? EntityReportExtractorPriority.NORMAL : EntityReportExtractorPriority.NONE;
 	}
 }

@@ -600,7 +600,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			return (String) nodeService.getProperty(nodeRef, propNameOfType);
 		}
 
-		if (ContentModel.TYPE_CMOBJECT.equals(targetClass) && dictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_CHARACT)) {
+		if (ContentModel.TYPE_CMOBJECT.equals(targetClass) && entityDictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_CHARACT)) {
 			String name = (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_LEGAL_NAME);
 
 			if ((name == null) || name.isEmpty()) {

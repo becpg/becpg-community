@@ -143,13 +143,16 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 					logger.debug("DataType to filter :" + dataListFilter.getDataType());
 				}
 
-				int skipOffset = (pagination.getPage() - 1) * pagination.getPageSize();
-				int requestTotalCountMax = skipOffset + RepoConsts.MAX_RESULTS_1000;
-
-				PagingRequest pageRequest = new PagingRequest(skipOffset, pagination.getPageSize(), pagination.getQueryExecutionId());
-				pageRequest.setRequestTotalCountMax(requestTotalCountMax);
-
-				return pagination.paginate(queryBuilder.childFileFolders(pageRequest));
+//				int skipOffset = (pagination.getPage() - 1) * pagination.getPageSize();
+//				int requestTotalCountMax = skipOffset + RepoConsts.MAX_RESULTS_1000;
+//
+//				PagingRequest pageRequest = new PagingRequest(skipOffset, pagination.getPageSize(), pagination.getQueryExecutionId());
+//				pageRequest.setRequestTotalCountMax(requestTotalCountMax);
+//
+//				return pagination.paginate(queryBuilder.childFileFolders(pageRequest));
+				
+				results = queryBuilder.fastChildrenByType();
+				pagination.setQueryExecutionId(paginatedSearchCache.storeSearchResults(results));
 
 			} else if (dataListFilter.isSimpleItem()) {
 				results.add(dataListFilter.getNodeRef());
