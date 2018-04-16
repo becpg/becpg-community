@@ -1084,32 +1084,42 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			}
 		}
 
-		if ((sortFieldQName != null) && (sortDirection != null) && (dataTypeQName != null)) {
+		if ((dataTypeQName != null)) {
 
-			DataTypeDefinition dateType = dictionaryService.getProperty(sortFieldQName).getDataType();
-			String fieldType = "string_value";
+			String sql = "select alf_node.uuid, alf_node.audit_created from alf_node ";
 
-			if (DataTypeDefinition.INT.equals(dateType.getName()) || DataTypeDefinition.LONG.equals(dateType.getName())) {
-				fieldType = "long_value";
-			} else if (DataTypeDefinition.DOUBLE.equals(dateType.getName())) {
-				fieldType = "double_value";
-			} else if (DataTypeDefinition.FLOAT.equals(dateType.getName())) {
-				fieldType = "float_value";
-			} else if (DataTypeDefinition.BOOLEAN.equals(dateType.getName())) {
-				fieldType = "boolean_value";
+			String sortOrderSql = " order by alf_node.audit_created " + createSortDirection;
+
+			if ((sortFieldQName != null) && (sortDirection != null)) {
+				DataTypeDefinition dateType = dictionaryService.getProperty(sortFieldQName).getDataType();
+				String fieldType = "string_value";
+
+				if (DataTypeDefinition.INT.equals(dateType.getName()) || DataTypeDefinition.LONG.equals(dateType.getName())) {
+					fieldType = "long_value";
+				} else if (DataTypeDefinition.DOUBLE.equals(dateType.getName())) {
+					fieldType = "double_value";
+				} else if (DataTypeDefinition.FLOAT.equals(dateType.getName())) {
+					fieldType = "float_value";
+				} else if (DataTypeDefinition.BOOLEAN.equals(dateType.getName())) {
+					fieldType = "boolean_value";
+				}
+
+				sql = "select alf_node.uuid, alf_node_properties." + fieldType + ", alf_node.audit_created " + "from alf_node "
+						+ "left join alf_node_properties " + "on (alf_node_properties.node_id = alf_node.id "
+						+ "and alf_node_properties.qname_id=(select id from alf_qname " + "where ns_id=(select id from alf_namespace where uri='"
+						+ sortFieldQName.getNamespaceURI() + "') " + "and local_name='" + sortFieldQName.getLocalName() + "') " + ") ";
+
+				sortOrderSql = " order by alf_node_properties." + fieldType + " " + sortDirection + ", alf_node.audit_created " + createSortDirection;
+
 			}
 
-			String sql = "select alf_node.uuid, alf_node_properties." + fieldType + ", alf_node.audit_created " + "from alf_node "
-					+ "left join alf_node_properties " + "on (alf_node_properties.node_id = alf_node.id "
-					+ "and alf_node_properties.qname_id=(select id from alf_qname " + "where ns_id=(select id from alf_namespace where uri='"
-					+ sortFieldQName.getNamespaceURI() + "') " + "and local_name='" + sortFieldQName.getLocalName() + "') " + ") "
-					+ "where alf_node.store_id=(select id from alf_store where protocol='workspace' and identifier='SpacesStore') "
+			sql += "where alf_node.store_id=(select id from alf_store where protocol='workspace' and identifier='SpacesStore') "
 					+ "and alf_node.type_qname_id=(select id from alf_qname " + "where ns_id=(select id from alf_namespace where uri='"
 					+ dataTypeQName.getNamespaceURI() + "') " + "and local_name='" + type.getLocalName() + "') "
 					+ "and id in (select child_node_id from alf_child_assoc where " + "parent_node_id = (select id from alf_node where uuid='"
 					+ parentNodeRef.getId() + "')) ";
 
-			sql += " order by alf_node_properties." + fieldType + " " + sortDirection + ", alf_node.audit_created " + createSortDirection;
+			sql += sortOrderSql;
 
 			if (logger.isTraceEnabled()) {
 				logger.trace("Searching with: " + sql);
