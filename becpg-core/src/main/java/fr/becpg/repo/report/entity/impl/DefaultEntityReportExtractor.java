@@ -73,6 +73,7 @@ import fr.becpg.model.DataListModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.dictionary.constraint.DynListConstraint;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AssociationService;
@@ -140,6 +141,9 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	@Autowired
 	protected DictionaryService dictionaryService;
+
+	@Autowired
+	protected EntityDictionaryService entityDictionaryService;
 
 	@Autowired
 	protected NamespaceService namespaceService;
@@ -354,9 +358,18 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 			if (context.prefsContains("assocsToExtractWithImage", assocsToExtractWithImage, assocDef.getName().toPrefixString(namespaceService))) {
 				List<NodeRef> nodeRefs = associationService.getTargetAssocs(entityNodeRef, assocDef.getName());
+				Element imgsElt = (Element) entityElt.getDocument().selectSingleNode(TAG_ENTITY + "/" + TAG_IMAGES);
+				int cnt = imgsElt.selectNodes(TAG_IMAGE) != null ? imgsElt.selectNodes(TAG_IMAGE).size() : 1;
+
 				for (NodeRef nodeRef : nodeRefs) {
-					Element imgsElt = (Element) entityElt.getDocument().selectSingleNode(TAG_ENTITY + "/" + TAG_IMAGES);
-					extractEntityImages(nodeRef, imgsElt, context);
+
+					if (entityDictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
+
+						extractImage(nodeRef, nodeRef, assocDef.getName().getLocalName() + "_" + cnt, imgsElt, context);
+					} else {
+						extractEntityImages(nodeRef, imgsElt, context);
+					}
+					cnt++;
 				}
 			}
 		}
@@ -421,14 +434,10 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		}
 	}
 
-
 	protected void loadDataListItemAttributes(BeCPGDataObject dataListItem, Element nodeElt, DefaultExtractorContext context) {
-		loadDataListItemAttributes(dataListItem,nodeElt,context,new ArrayList<>());
+		loadDataListItemAttributes(dataListItem, nodeElt, context, new ArrayList<>());
 	}
-	
-	
 
-	
 	protected void loadNodeAttributes(NodeRef nodeRef, Element nodeElt, boolean useCData, DefaultExtractorContext context) {
 		if ((nodeRef != null) && nodeService.exists(nodeRef)) {
 			loadAttributes(nodeRef, nodeElt, useCData, hiddenNodeAttributes, context);
@@ -436,7 +445,8 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		}
 	}
 
-	protected void loadDataListItemAttributes(BeCPGDataObject dataListItem, Element nodeElt, DefaultExtractorContext context, List<QName> hiddentAttributes) {
+	protected void loadDataListItemAttributes(BeCPGDataObject dataListItem, Element nodeElt, DefaultExtractorContext context,
+			List<QName> hiddentAttributes) {
 		hiddentAttributes.addAll(hiddenNodeAttributes);
 		hiddentAttributes.addAll(hiddenDataListItemAttributes);
 

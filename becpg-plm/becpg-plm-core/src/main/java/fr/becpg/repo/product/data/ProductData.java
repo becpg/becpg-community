@@ -75,6 +75,12 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private Double yield;
 	private Double yieldVolume;
 	private Double netWeight;
+	private Double weightPrimary;
+	private Double netWeightSecondary;
+	private Double weightSecondary;
+	private Double netWeightTertiary;
+	private Double weightTertiary;
+	
 	private Double netVolume;
 	private Double servingSize;
 	private Double recipeQtyUsed;
@@ -423,6 +429,47 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		this.netWeight = netWeight;
 	}
 	
+	
+	public Double getWeightPrimary() {
+		return weightPrimary;
+	}
+
+	public void setWeightPrimary(Double weightPrimary) {
+		this.weightPrimary = weightPrimary;
+	}
+
+	public Double getNetWeightSecondary() {
+		return netWeightSecondary;
+	}
+
+	public void setNetWeightSecondary(Double netWeightSecondary) {
+		this.netWeightSecondary = netWeightSecondary;
+	}
+
+	public Double getWeightSecondary() {
+		return weightSecondary;
+	}
+
+	public void setWeightSecondary(Double weightSecondary) {
+		this.weightSecondary = weightSecondary;
+	}
+
+	public Double getNetWeightTertiary() {
+		return netWeightTertiary;
+	}
+
+	public void setNetWeightTertiary(Double netWeightTertiary) {
+		this.netWeightTertiary = netWeightTertiary;
+	}
+
+	public Double getWeightTertiary() {
+		return weightTertiary;
+	}
+
+	public void setWeightTertiary(Double weightTertiary) {
+		this.weightTertiary = weightTertiary;
+	}
+
 	@AlfProp
 	@AlfQname(qname = "bcpg:netVolume")
 	public Double getNetVolume() {

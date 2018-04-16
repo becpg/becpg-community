@@ -91,7 +91,7 @@ public class ExportSearchWebScript extends AbstractSearchWebScript {
 
 			QName datatype = QName.createQName(jsonObject.getString("datatype"), namespaceService);
 
-			List<NodeRef> resultNodeRefs = doSearch(req, RepoConsts.MAX_RESULTS_UNLIMITED);
+			List<NodeRef> resultNodeRefs = doSearch(req, RepoConsts.MAX_RESULTS_5000);
 
 			ReportFormat reportFormat = reportTplService.getReportFormat(templateNodeRef);			
 			
