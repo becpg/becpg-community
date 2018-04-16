@@ -19,7 +19,7 @@
 	<shortname>Get entity content</shortname>
 	<description>Get the entity's content</description>	
 	<url>/becpg/remote/entity/content?nodeRef={nodeRef}</url>
-	<authentication>admin</authentication>
+	<authentication>user</authentication>
 	<format default="">extension</format>
 	<transaction>required</transaction>
 </webscript>
