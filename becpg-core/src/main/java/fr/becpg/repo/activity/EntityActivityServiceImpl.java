@@ -311,7 +311,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					activityListDataItem.setActivityData(data.toString());
 					activityListDataItem.setParentNodeRef(activityListNodeRef);
 
-					mergeWihtLastActivity(activityListDataItem);
+					mergeWithLastActivity(activityListDataItem);
 
 					alfrescoRepository.save(activityListDataItem);
 
@@ -329,7 +329,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 	}
 
-	private void mergeWihtLastActivity(ActivityListDataItem item) {
+	private void mergeWithLastActivity(ActivityListDataItem item) {
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.HOUR, -1); 
 		NodeRef activityListNodeRef = item.getParentNodeRef();
@@ -536,7 +536,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					activityListDataItem.setActivityData(data.toString());
 					activityListDataItem.setParentNodeRef(activityListNodeRef);
 
-					mergeWihtLastActivity(activityListDataItem);
+					mergeWithLastActivity(activityListDataItem);
 
 					alfrescoRepository.save(activityListDataItem);
 
