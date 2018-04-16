@@ -115,6 +115,7 @@ public class PlmRepoConsts {
 	
 	public static final String PATH_NUT_DATABASES = "NutritionalDatabases";
 	public static final String PATH_CATALOGS = "PropertyCatalogs";
+	public static final String PATH_WORKFLOW_SCRIPTS = "WorkflowScripts";
 	
 	
 	

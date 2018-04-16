@@ -307,6 +307,62 @@
 	            	            
 	       }
 	    });	
+	   
+	   
+	   YAHOO.Bubbling.fire("registerAction", {
+	       actionName : "onActionStartProcess",
+	       fn : function onActionStartProcess(p_record) {
+	    	    var  nodeRef = new Alfresco.util.NodeRef(p_record.nodeRef), recordSiteName = $isValueSet(p_record.location.site) ? p_record.location.site.name : null,
+              		 displayName = p_record.displayName;
+	    	   
+	            var actionUrl = Alfresco.constants.PROXY_URI + 'becpg/workflow/start-process?nodeRef=' + p_record.nodeRef;
+
+	            this.modules.startProcess = new Alfresco.module.SimpleDialog(this.id + "-onActionStartProcess").setOptions({
+	            	  width : "33em",
+		              templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/workflow/start-process?nodeRef=" + p_record.nodeRef,
+		              actionUrl : actionUrl,
+		              validateOnSubmit : false,
+		              destroyOnHide: true,
+					  firstFocus : this.id + "-processScript",
+					  doBeforeFormSubmit : {
+						  fn : function onActionSendToValidation_doBeforeFormSubmit(form) {
+							  Alfresco.util.PopupManager.displayMessage({
+				                	 text : this.msg("message.start-process.inprogress")
+				       		    	});
+						  },
+						  scope : this
+					  },
+					  onSuccess : {
+						  fn : function onActionSendToValidation_success(response) {
+							  if (response.json) {
+								   window.location.href = beCPG.util.entityURL(recordSiteName,
+			                             response.json.persistedObject, p_record.node.type);
+							  }
+						  },
+						  scope : this
+					  },
+					  onFailure : {
+						  fn : function onActionSendToValidation_failure(response) {
+							  if(response.json && response.json.message){
+								  Alfresco.util.PopupManager.displayMessage({
+									  text : response.json.message
+								  });  
+							  } else {
+								  Alfresco.util.PopupManager.displayMessage({
+									  text : this.msg("message.start-proces.failure")
+								  });
+							  }
+						  },
+						  scope : this
+					  }
+				  });
+	            
+	            this.modules.startProcess.show();				 
+	            	            
+	       }
+	    });
+	   
+	   
 	
 })();
 	

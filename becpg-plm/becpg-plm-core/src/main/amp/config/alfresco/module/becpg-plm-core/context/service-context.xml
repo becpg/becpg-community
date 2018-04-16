@@ -188,6 +188,16 @@
 		<property name="authorityService" ref="AuthorityService" />
 	</bean>
 	
+	
+	<bean id="webscript.fr.becpg.workflow.startProcess.get" class="fr.becpg.repo.web.scripts.workflow.StartProcessWebscript" parent="webscript">
+		<property name="nodeService" ref="NodeService" />
+		<property name="namespaceService" ref="NamespaceService" />
+		<property name="scriptService" ref="scriptService"/>
+		<property name="repository" ref="repositoryHelper" />
+		<property name="searchService" ref="searchService"/>		
+	</bean>
+
+	<alias name="webscript.fr.becpg.workflow.startProcess.get" alias="webscript.fr.becpg.workflow.startProcess.post" />
 
 
 </beans>
