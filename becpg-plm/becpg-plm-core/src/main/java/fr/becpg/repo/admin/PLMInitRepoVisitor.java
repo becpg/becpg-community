@@ -148,7 +148,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	private static final String PRODUCT_REPORT_IMG_TRAFFICLIGHTS_ORANGE = "beCPG/birt/document/product/default/images/trafficLights_Orange.png";
 	private static final String PRODUCT_REPORT_IMG_TRAFFICLIGHTS_RED = "beCPG/birt/document/product/default/images/trafficLights_Red.png";
 	private static final String PRODUCT_REPORT_IMG_TRAFFICLIGHTS_SERVING = "beCPG/birt/document/product/default/images/trafficLights_Serving.png";
-	
+
 	private static final String CLASSIFY_RULE_TITLE = "classifyProductRule";
 
 	@Autowired
@@ -279,13 +279,14 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		// Property catalogs
 		visitFolder(systemNodeRef, PlmRepoConsts.PATH_CATALOGS);
 
+		visitFolder(systemNodeRef, PlmRepoConsts.PATH_WORKFLOW_SCRIPTS);
+
 		addClassifyRule(companyHome);
 
 		// Create default sites
 		return visitSites();
 
 	}
-
 
 	private void addClassifyRule(NodeRef companyHome) {
 
@@ -442,6 +443,18 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/catalogs/*.json");
 
 		}
+
+		if (Objects.equals(folderName, PlmRepoConsts.PATH_WORKFLOW_SCRIPTS)) {
+			for (NodeRef scriptNodeRef : contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/script/workflow/*.js")) {
+				String title = (String) nodeService.getProperty(scriptNodeRef, ContentModel.PROP_TITLE);
+				if ((title == null) || title.isEmpty()) {
+					nodeService.setProperty(scriptNodeRef, ContentModel.PROP_TITLE,
+							I18NUtil.getMessage("plm.script." + nodeService.getProperty(scriptNodeRef, ContentModel.PROP_NAME) + ".title"));
+				}
+
+			}
+		}
+
 	}
 
 	/**
