@@ -213,6 +213,11 @@ public class EntityReportServiceImpl implements EntityReportService {
 										for (EntityReportParameters reportParameters : getEntityReportParametersList(tplNodeRef, entityNodeRef)) {
 
 											if (isLocaleEnableOnTemplate(tplNodeRef, locale)) {
+												
+												
+
+												Boolean isDefault = (Boolean) this.nodeService.getProperty(tplNodeRef,
+														ReportModel.PROP_REPORT_TPL_IS_DEFAULT);
 
 												// prepare
 												String reportFormat = (String) nodeService.getProperty(tplNodeRef,
@@ -225,9 +230,6 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 												NodeRef documentNodeRef = getReportDocumenNodeRef(entityNodeRef, tplNodeRef, documentName, locale,
 														reportParameters);
-
-												Boolean isDefault = (Boolean) this.nodeService.getProperty(tplNodeRef,
-														ReportModel.PROP_REPORT_TPL_IS_DEFAULT);
 
 												if (documentNodeRef != null) {
 													// Run report
@@ -273,15 +275,11 @@ public class EntityReportServiceImpl implements EntityReportService {
 																		reportParameters.toJSONString());
 															}
 
-															if (!(Locale.getDefault().getLanguage().equals(locale.getLanguage())
-																	&& (entityReportLocales.size() == 1))) {
-																nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_LOCALES,
-																		MLTextHelper.localeKey(locale));
+															if ((entityReportLocales.size() > 1) && !MLTextHelper.isDefaultLocale(locale)) {
 																isDefault = false;
-															} else {
-																nodeService.removeProperty(documentNodeRef, ReportModel.PROP_REPORT_LOCALES);
 															}
-
+															nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_LOCALES,
+																	MLTextHelper.localeKey(locale));
 															nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_IS_DEFAULT, isDefault);
 
 														}
@@ -488,10 +486,11 @@ public class EntityReportServiceImpl implements EntityReportService {
 			}
 
 		}
-		
+
 		return ret;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void generateReport(final NodeRef entityNodeRef, final NodeRef documentNodeRef) {
 
@@ -529,7 +528,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 								throw new IllegalArgumentException("tplNodeRef is null");
 							}
 
-							Locale locale = I18NUtil.getLocale();
+							Locale locale = MLTextHelper.getNearestLocale(Locale.getDefault());
 
 							Boolean isDefault = (Boolean) this.nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_IS_DEFAULT);
 
@@ -541,8 +540,11 @@ public class EntityReportServiceImpl implements EntityReportService {
 								if ((langs != null) && !langs.isEmpty()) {
 									locale = MLTextHelper.parseLocale(langs.get(0));
 									I18NUtil.setLocale(locale);
-									isDefault = false;
 								}
+							}
+
+							if (!MLTextHelper.isDefaultLocale(locale)) {
+								isDefault = false;
 							}
 
 							String reportFormat = (String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
@@ -626,6 +628,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public void generateReport(NodeRef entityNodeRef, NodeRef documentNodeRef, ReportFormat reportFormat, OutputStream outputStream) {
 
 		NodeRef templateNodeRef = associationService.getTargetAssoc(documentNodeRef, ReportModel.ASSOC_REPORT_TPL);
@@ -634,13 +637,13 @@ public class EntityReportServiceImpl implements EntityReportService {
 			throw new IllegalArgumentException("templateNodeRef is null");
 		}
 
-		Locale locale = I18NUtil.getLocale();
+		Locale locale = MLTextHelper.getNearestLocale(Locale.getDefault());
 
 		EntityReportParameters reportParameters = readParameters(
 				EntityReportParameters.createFromJSON((String) nodeService.getProperty(documentNodeRef, ReportModel.PROP_REPORT_TEXT_PARAMETERS)));
 
 		if (nodeService.hasAspect(documentNodeRef, ReportModel.ASPECT_REPORT_LOCALES)) {
-			@SuppressWarnings("unchecked")
+
 			List<String> langs = (List<String>) nodeService.getProperty(documentNodeRef, ReportModel.PROP_REPORT_LOCALES);
 			if ((langs != null) && !langs.isEmpty()) {
 				locale = MLTextHelper.parseLocale(langs.get(0));
@@ -731,11 +734,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 	private String getReportDocumentName(NodeRef entityNodeRef, NodeRef tplNodeRef, String reportFormat, Locale locale,
 			EntityReportParameters reportParameters, String nameFormat) {
 
-		String lang = null;
-
-		if (!(MLTextHelper.isDefaultLocale(locale) && (getEntityReportLocales(entityNodeRef).size() == 1))) {
-			lang = MLTextHelper.localeKey(locale);
-		}
+		String lang = MLTextHelper.localeKey(locale);
 
 		Matcher patternMatcher = Pattern.compile("\\{([^}]+)\\}").matcher(nameFormat);
 		StringBuffer sb = new StringBuffer();
@@ -803,8 +802,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 				if (reportParameters.isParametersEmpty() || reportParameters.match(EntityReportParameters
 						.createFromJSON((String) nodeService.getProperty(fileInfo.getNodeRef(), ReportModel.PROP_REPORT_TEXT_PARAMETERS)))) {
 					for (Locale tmpLocale : getEntityReportLocales(fileInfo.getNodeRef())) {
-
-						if (MLTextHelper.localeKey(tmpLocale).equals(MLTextHelper.localeKey(locale))) {
+						if (tmpLocale.equals(locale)) {
 							documentNodeRef = fileInfo.getNodeRef();
 						}
 						break;
@@ -844,7 +842,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 			return false;
 		}
 
-		return Locale.getDefault().getLanguage().equals(locale.getLanguage());
+		return MLTextHelper.isDefaultLocale(locale);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -856,7 +854,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 				ret.add(MLTextHelper.parseLocale(lang));
 			}
 		} else {
-			ret.add(MLTextHelper.parseLocale(Locale.getDefault().getLanguage()));
+			ret.add(MLTextHelper.getNearestLocale(Locale.getDefault()));
 		}
 		return ret;
 	}
