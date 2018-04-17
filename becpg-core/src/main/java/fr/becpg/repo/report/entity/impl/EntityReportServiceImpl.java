@@ -252,6 +252,9 @@ public class EntityReportServiceImpl implements EntityReportService {
 															params.put(ReportParams.PARAM_LANG, MLTextHelper.localeKey(locale));
 															params.put(ReportParams.PARAM_ASSOCIATED_TPL_FILES, associationService
 																	.getTargetAssocs(tplNodeRef, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES));
+															params.put(BeCPGReportEngine.PARAM_DOCUMENT_NODEREF, documentNodeRef);
+															params.put(BeCPGReportEngine.PARAM_ENTITY_NODEREF, entityNodeRef);
+																														
 
 															logger.debug("beCPGReportEngine createReport: " + entityNodeRef + " for document "
 																	+ documentName + " (" + documentNodeRef + ")");
