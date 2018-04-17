@@ -90,7 +90,10 @@ public class MLTextHelper {
 		return locale!=null && locale.equals(getNearestLocale(Locale.getDefault(),new HashSet<>(getSupportedLocales())));
 	}
 
-	
+	public static Locale getNearestLocale(Locale locale) {
+		return getNearestLocale(Locale.getDefault(),new HashSet<>(getSupportedLocales()));
+	}
+
 
 	 public static Locale getNearestLocale(Locale templateLocale, Set<Locale> options)
 	    {
