@@ -57,7 +57,8 @@ public class BeCPGWSHandler {
 				}
 			}
 		} catch (IOException e) {
-			logger.error("onMessage failed", e);
+			logger.warn(e.getMessage());
+			logger.debug("onMessage failed", e);
 		}
 
 	}
@@ -77,7 +78,8 @@ public class BeCPGWSHandler {
 			}
 
 		} catch (IOException e) {
-			logger.error("onMessage failed", e);
+			logger.warn(e.getMessage());
+			logger.debug("onClose failed", e);
 		}
 	}
 
