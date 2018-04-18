@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.service.cmr.dictionary.DictionaryService;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -43,6 +45,9 @@ public class VariantListValuePlugin extends EntityListValuePlugin {
 	@Autowired
 	private AssociationService associationService;
 	
+	@Autowired
+	private DictionaryService dictionaryService;
+	
 
 	@Override
 	public String[] getHandleSourceTypes() {
@@ -52,7 +57,16 @@ public class VariantListValuePlugin extends EntityListValuePlugin {
 	@Override
 	public ListValuePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
 		NodeRef entityNodeRef = new NodeRef((String) props.get(ListValueService.PROP_NODEREF));
-		logger.debug("VariantListValuePlugin sourceType: " + sourceType + " - entityNodeRef: " + entityNodeRef);
+		
+		@SuppressWarnings("unchecked")
+		Map<String, String> extra =  (Map<String, String>) props.get(ListValueService.EXTRA_PARAM);
+		if(extra != null && !extra.isEmpty()){
+			NodeRef itemRef =  new NodeRef (extra.get("itemId"));
+			entityNodeRef = getParentEntity(itemRef);
+		}
+		if(logger.isDebugEnabled()){
+			logger.debug("VariantListValuePlugin sourceType: " + sourceType + " - entityNodeRef: " + entityNodeRef);
+		}
 
 		List<NodeRef> ret = associationService.getChildAssocs(entityNodeRef, PLMModel.ASSOC_VARIANTS);
 	
@@ -60,7 +74,18 @@ public class VariantListValuePlugin extends EntityListValuePlugin {
 
 	}
 	
-	
+	private NodeRef getParentEntity(NodeRef itemRef){
+		ChildAssociationRef childAssociationRef = nodeService.getPrimaryParent(itemRef);
+		NodeRef parent = childAssociationRef.getParentRef();
+
+		while (!dictionaryService.isSubClass(nodeService.getType(parent), PLMModel.TYPE_PRODUCT)){
+			childAssociationRef = nodeService.getPrimaryParent(parent);
+			parent = childAssociationRef.getParentRef();
+			logger.info("parent: "+parent);
+		}
+		
+		return parent; 
+	}
 	
 	public class VariantListValueExtractor implements ListValueExtractor<NodeRef> {
 
@@ -69,7 +94,6 @@ public class VariantListValuePlugin extends EntityListValuePlugin {
 			List<ListValueEntry> suggestions = new ArrayList<>();
 	    	if(nodeRefs!=null){
 	    		for(NodeRef nodeRef : nodeRefs){
-	    			
 	    			String name = (String)nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
 	    			Boolean isDefault = (Boolean) nodeService.getProperty(nodeRef, PLMModel.PROP_IS_DEFAULT_VARIANT);
 	    			
