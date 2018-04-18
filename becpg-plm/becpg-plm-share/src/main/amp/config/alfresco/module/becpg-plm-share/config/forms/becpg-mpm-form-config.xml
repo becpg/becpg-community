@@ -207,6 +207,7 @@
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/variantList
 							</control-param>
+							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
 					</field>
 					<field id="bcpg:instruction">
@@ -347,6 +348,7 @@
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/variantList
 							</control-param>
+							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
 					</field>
 					<field id="bcpg:instruction">
