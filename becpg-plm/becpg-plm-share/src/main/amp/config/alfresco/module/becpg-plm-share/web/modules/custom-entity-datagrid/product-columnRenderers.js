@@ -645,6 +645,8 @@ if (beCPG.module.EntityDataGridRenderers) {
 		renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
 			var variants = data.value, isInDefault = !variants || variants.length < 1;
 
+			
+			
 			if (data.value != null && data.value.length > 0) {
 				if(oColumn.label == ""){
 					Dom.setStyle(elCell, "width", "16px");
@@ -661,28 +663,17 @@ if (beCPG.module.EntityDataGridRenderers) {
 				return "<span  class='variant-common'>&nbsp;</span>";
 			}
 
-			if (scope.entity) {
-				for ( var j in variants) {
-					for ( var i in scope.entity.variants) {
-						if (variants[j] == scope.entity.variants[i].nodeRef && scope.entity.variants[i].isDefaultVariant) {
-							isInDefault = true;
-							break;
-						}
-					}
-				}
-			}
-
 			var title = "&nbsp;";
-			
+			isInDefault = !((data.displayValue).indexOf("+")<0);
 			if(oColumn.label != ""){
-				title += data.displayValue;
+				title += (data.displayValue).replace("+","");
 			}	
 			
 			if (isInDefault) {
-				return "<span title=\"" + data.displayValue + "\" class='variant-default'>"+title+"</span>";
+				return "<span title=\"" + (data.displayValue).replace("+","") + "\" class='variant-default'>"+title+"</span>";
 			}
 
-			return "<span title=\"" + data.displayValue + "\" class='variant'>"+title+"</span>";
+			return "<span title=\"" + (data.displayValue).replace("+","") + "\" class='variant'>"+title+"</span>";
 
 		}
 
