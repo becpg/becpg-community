@@ -12,9 +12,8 @@
         ],
         "fields":[
             "bcpg:legalName",
-            "bcpg:precautionOfUseRef",
             "bcpg:useByDate|bcpg:bestBeforeDate",
-            "bcpg:storageConditionsRef",
+            "bcpg:storageConditionsRef|bcpg:preparationTips",
             "cm:title"
         ]
     },
