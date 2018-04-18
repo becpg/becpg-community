@@ -432,6 +432,14 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		
 		List<QName> pivotProperties = getPivotForComparison(dataListType);
 		
+		//put default pivot if no custom pivot were set in config
+		boolean isDefaultPivot = false;
+		if(pivotProperties.isEmpty() && entityDictionaryService.getDefaultPivotAssoc(dataListType) != null){
+			pivotProperties.add(entityDictionaryService.getDefaultPivotAssoc(dataListType));
+			isDefaultPivot = true;
+		}
+		
+		
 		if (!pivotProperties.isEmpty()) {
 
 			// load characteristics
@@ -448,18 +456,35 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 			// look for characteristics that are in both entity
 			List<CharacteristicToCompare> characteristicsToCmp = new LinkedList<>();
 			List<String> comparedCharact = new ArrayList<>();
-
+			
+			Map<String, Integer> pivot1Map = new HashMap<>();
+			Map<String, Integer> pivot2Map = new HashMap<>();
+			
 			// composite datalist
 			for (NodeRef dataListItem1 : dataListItems1) {
 				NodeRef dataListItem2NodeRef = null;
 				
 				String pivot1Key = getKeyFromPivots(dataListItem1, pivotProperties);
+				
+				if(isDefaultPivot && !pivot1Key.isEmpty()){
+					pivot1Key = getDefaultPivot(dataListItem1, pivot1Map, pivot1Key, comparedCharact);
+				}
+				
+				
 				if (!pivot1Key.isEmpty()) {
+					
 					comparedCharact.add(pivot1Key.toString());
-
+					
+					pivot2Map.clear();
+					
 					for (NodeRef d : dataListItems2) {
 						
 						String pivot2Key = getKeyFromPivots(d, pivotProperties);
+						
+						if(isDefaultPivot && !pivot2Key.isEmpty()){
+							pivot2Key = getDefaultPivot(d, pivot2Map, pivot2Key,  new ArrayList<>(pivot2Map.keySet()));
+						}
+						
 						if(pivot1Key.equals(pivot2Key)){
 							dataListItem2NodeRef = d;
 							break;
@@ -475,12 +500,18 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 			}
 
 				// compare charact that are in DL1
+				
+				pivot2Map.clear();
+				
 				for (NodeRef d : dataListItems2) {
 
 					String pivot2Key = getKeyFromPivots(d, pivotProperties);
-
+					
+					if(isDefaultPivot && !pivot2Key.isEmpty()){
+						pivot2Key = getDefaultPivot(d, pivot2Map, pivot2Key, new ArrayList<>(pivot2Map.keySet()));
+					}
+					
 					if (!pivot2Key.isEmpty()) {
-
 						if (!comparedCharact.contains(pivot2Key)) {
 							comparedCharact.add(pivot2Key);
 							CharacteristicToCompare characteristicToCmp = new CharacteristicToCompare(null, pivot2Key, null, d);
@@ -976,10 +1007,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 			
 		}
 			
-		//put default pivot if no custom pivot were set in config
-		if(res.isEmpty() && entityDictionaryService.getDefaultPivotAssoc(type) != null){
-			res.add(entityDictionaryService.getDefaultPivotAssoc(type));
-		}
+		
 		return res;
 	}
 	
@@ -1003,6 +1031,24 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		logger.debug("getKeyFromPivots, res = "+res);
 		return res;
 		
+	}
+	
+	private String getDefaultPivot(NodeRef itemRef, Map<String, Integer> pivotMap, String pivotKey, List<String> comparedCharact ){
+		String separator = "|";
+		NodeRef parent = (NodeRef) nodeService.getProperty(itemRef, BeCPGModel.PROP_PARENT_LEVEL);
+		if(parent != null){
+			pivotKey = pivotKey + separator + parent.toString();
+			separator = "-";
+		}
+		
+		if(comparedCharact.contains(pivotKey)){
+			pivotMap.put(pivotKey, pivotMap.get(pivotKey) + 1);
+			pivotKey = pivotKey + separator + pivotMap.get(pivotKey);
+		}else {
+			pivotMap.put(pivotKey, 0);
+		}
+		
+		return pivotKey;
 	}
 
 }

@@ -119,7 +119,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 
 			List<CompareResultDataItem> compareResult = new ArrayList<>();
 			Map<String, List<StructCompareResultDataItem>> structCompareResults = new HashMap<>();
-
+			
 			compareEntityService.compare(entity1, entities, compareResult, structCompareResults);
 
 			// Prepare data source
@@ -194,7 +194,6 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 		}
 		// compareResult
 		for (CompareResultDataItem c : compareResult) {
-			if(c.getCharacteristic() == null) continue;
 			Element cmpRowElt = cmpRowsElt.addElement(TAG_COMPARISON_ROW);
 			if (c.getEntityList() != null) {
 				TypeDefinition typeDef = dictionaryService.getType(c.getEntityList());
@@ -214,7 +213,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 			}
 			
 			logger.debug("NodeRef of charact: "+c.getCharacteristic());
-			NodeRef charactNodeRef = new NodeRef(c.getCharacteristic().split(Pattern.quote("|"))[0]); 
+			NodeRef charactNodeRef = c.getCharacteristic()== null ? null : (new NodeRef(c.getCharacteristic().split(Pattern.quote("|"))[0])); 
 			
 			cmpRowElt.addAttribute(ATTR_CHARACTERISTIC,
 					c.getCharacteristic() == null ? "" : charactPath + attributeExtractorService.extractPropName(charactNodeRef));
