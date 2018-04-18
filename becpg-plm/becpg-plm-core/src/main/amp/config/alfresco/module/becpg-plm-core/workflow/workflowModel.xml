@@ -87,11 +87,14 @@
 		</type>
 
 		<type name="bcpgwf:doProductValidationQualityTask">
-			<parent>bpm:workflowTask</parent>			
+			<parent>bpm:activitiOutcomeTask</parent>			
 			<overrides>
 				<property name="bpm:packageItemActionGroup">
 					<default>edit_package_item_actions</default>
 				</property>
+				<property name='bpm:outcomePropertyName'>
+                <default>{http://www.bcpg.fr/model/workflow/1.0}reviewQualityApproval</default>
+            </property>
 			</overrides>
 			<mandatory-aspects>
 				<aspect>bcpgwf:productValidationAspect</aspect>
@@ -101,11 +104,14 @@
 		</type>
 		
 		<type name="bcpgwf:doProductValidationProductionTask">
-			<parent>bpm:workflowTask</parent>			
+			<parent>bpm:activitiOutcomeTask</parent>			
 			<overrides>
 				<property name="bpm:packageItemActionGroup">
 					<default>edit_package_item_actions</default>
 				</property>
+				<property name='bpm:outcomePropertyName'>
+                <default>{http://www.bcpg.fr/model/workflow/1.0}reviewProductionApproval</default>
+            </property>
 			</overrides>
 			<mandatory-aspects>
 				<aspect>bcpgwf:productValidationAspect</aspect>
@@ -115,11 +121,14 @@
 		</type>
 		
 		<type name="bcpgwf:doProductValidationRDTask">
-			<parent>bpm:workflowTask</parent>			
+			<parent>bpm:activitiOutcomeTask</parent>			
 			<overrides>
 				<property name="bpm:packageItemActionGroup">
 					<default>edit_package_item_actions</default>
 				</property>
+				<property name='bpm:outcomePropertyName'>
+                <default>{http://www.bcpg.fr/model/workflow/1.0}reviewRDApproval</default>
+            </property>
 			</overrides>
 			<mandatory-aspects>
 				<aspect>bcpgwf:productValidationAspect</aspect>
@@ -129,11 +138,14 @@
 		</type>
 		
 		<type name="bcpgwf:doProductValidationPackagingTask">
-			<parent>bpm:workflowTask</parent>			
+			<parent>bpm:activitiOutcomeTask</parent>			
 			<overrides>
 				<property name="bpm:packageItemActionGroup">
 					<default>edit_package_item_actions</default>
 				</property>
+				<property name='bpm:outcomePropertyName'>
+                <default>{http://www.bcpg.fr/model/workflow/1.0}reviewPackagingApproval</default>
+            </property>
 			</overrides>
 			<mandatory-aspects>
 				<aspect>bcpgwf:productValidationAspect</aspect>
@@ -143,11 +155,14 @@
 		</type>
 		
 		<type name="bcpgwf:doProductValidationCallerTask">
-			<parent>bpm:workflowTask</parent>			
+			<parent>bpm:activitiOutcomeTask</parent>			
 			<overrides>
 				<property name="bpm:packageItemActionGroup">
 					<default>edit_package_item_actions</default>
 				</property>
+				<property name='bpm:outcomePropertyName'>
+                <default>{http://www.bcpg.fr/model/workflow/1.0}reviewCallerApproval</default>
+            </property>
 			</overrides>
 			<mandatory-aspects>
 				<aspect>bcpgwf:productValidationAspect</aspect>
@@ -157,11 +172,14 @@
 		</type>
 		
 		<type name="bcpgwf:doProductValidationCaller2Task">
-			<parent>bpm:workflowTask</parent>			
+			<parent>bpm:activitiOutcomeTask</parent>			
 			<overrides>
 				<property name="bpm:packageItemActionGroup">
 					<default>edit_package_item_actions</default>
 				</property>
+				<property name='bpm:outcomePropertyName'>
+                <default>{http://www.bcpg.fr/model/workflow/1.0}reviewCaller2Approval</default>
+            </property>
 			</overrides>
 			<mandatory-aspects>
 				<aspect>bcpgwf:productValidationAspect</aspect>
@@ -186,7 +204,28 @@
 		</type>
 
 		<type name="bcpgwf:rejectProductTask">
-			<parent>bpm:workflowTask</parent>
+			<parent>bpm:activitiOutcomeTask</parent>
+			<properties>
+				<property name="bcpgwf:rejectProductTaskOutcome">
+					<type>d:text</type>
+					<default>Re-submit for approval</default>
+					<constraints>
+						<constraint name="bcpgwf:rejectProductTaskOutcomeOptions" type="LIST">
+							<parameter name="allowedValues">
+								<list>
+									<value>Resubmit</value>
+									<value>Close</value>
+								</list>
+							</parameter>
+						</constraint>
+					</constraints>
+				</property>
+			</properties>
+			<overrides>
+				<property name='bpm:outcomePropertyName'>
+                <default>{http://www.bcpg.fr/model/workflow/1.0}rejectProductTaskOutcome</default>
+            </property>
+			</overrides>
 			<mandatory-aspects>
 				<aspect>bcpgwf:productValidationAspect</aspect>
 				<aspect>bcpgwf:productValidationCommentAspect</aspect>

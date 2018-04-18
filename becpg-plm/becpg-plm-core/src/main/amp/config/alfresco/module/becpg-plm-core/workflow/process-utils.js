@@ -58,6 +58,36 @@ function sendMail(userOrGroup, from, subject, message, templatePath, workflowDoc
     }
 }
 
+function getDelegate(user){
+	var curDate = new Date(), 
+	startDate = (user.properties["pjt:delegationStartDate"] != null ? new Date(user.properties["pjt:delegationStartDate"].getTime()) : null),
+	endDate = (user.properties["pjt:delegationEndDate"] != null ? new Date(user.properties["pjt:delegationEndDate"].getTime()) : null);
+
+	if(user != null && user.properties["pjt:delegationActivated"] &&
+			(startDate == null || startDate <= curDate) &&
+			(endDate == null || curDate <= endDate) &&
+			user.assocs["pjt:reassignTo"][0] != null){
+			var reassignResource = getDelegate(user.assocs["pjt:reassignTo"][0]);
+			if(reassignResource != null){
+				return reassignResource;
+			}
+			else{
+				return user.assocs["pjt:reassignTo"][0].properties["userName"];
+			}			
+	}
+	return null;
+}
+
+function getAssigneeOrDelegate(user){
+	var delegate = getDelegate(user); 
+	if(delegate != null){
+		return delegate;
+	}
+	else{
+		return user.properties["userName"];
+	}
+}
+
 function getMemberNames(assignees){
 	
 	var memberNames = null;
@@ -69,11 +99,11 @@ function getMemberNames(assignees){
 				var members = people.getMembers(assignees.get(i));
 				for(var j in members) 
 				{
-				  memberNames.add(members[j].properties.userName);
+				  memberNames.add(getAssigneeOrDelegate(members[j]));
 				}
 			}
 			else if(assignees.get(i).isSubType("cm:person")){
-				memberNames.add(assignees.get(i).properties.userName);
+				memberNames.add(getAssigneeOrDelegate(assignees.get(i)));
 			}		
 		}
 	}
