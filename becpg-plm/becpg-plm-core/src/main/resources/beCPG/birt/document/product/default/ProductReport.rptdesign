@@ -11190,7 +11190,7 @@ dataSetRow["illValue"]
                         <list-property name="filter">
                             <structure>
                                 <property name="operator">is-true</property>
-                                <expression name="expr" type="javascript">row["languageCode"] == reportContext.getLocale()</expression>
+                                <expression name="expr" type="javascript">row["languageCode"].toLowerCase() ==  reportContext.getLocale().toString().toLowerCase()</expression>
                                 <property name="updateAggregation">true</property>
                             </structure>
                         </list-property>
