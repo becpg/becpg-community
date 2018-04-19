@@ -241,7 +241,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						String log = "";
 						MLText label = new MLText();
 						if ((labelingRuleListDataItem.getFormula() != null) && !labelingRuleListDataItem.getFormula().trim().isEmpty()) {
-							Set<Locale> locales = labelingRuleListDataItem.getLocales()!=null && labelingRuleListDataItem.getLocales().isEmpty() ?
+							Set<Locale> locales = labelingRuleListDataItem.getLocales()!=null && !labelingRuleListDataItem.getLocales().isEmpty() ?
 									MLTextHelper.extractLocales(labelingRuleListDataItem.getLocales()) : labelingFormulaContext.getLocales();
 
 							if (locales.isEmpty()) {
