@@ -18,6 +18,7 @@
 package fr.becpg.repo.project.impl;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -258,9 +259,17 @@ public class ProjectServiceImpl implements ProjectService {
 
 			Date delegationStart = (Date) nodeService.getProperty(resource, ProjectModel.PROP_QNAME_DELEGATION_START);
 			Date delegationEnd = (Date) nodeService.getProperty(resource, ProjectModel.PROP_QNAME_DELEGATION_END);
+			Date curDate = new Date();
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(curDate);
+			cal.set(Calendar.HOUR_OF_DAY, 0);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			cal.set(Calendar.MILLISECOND, 0);
+			curDate = cal.getTime();
 
-			if ((delegationStart == null) || (delegationStart.before(new Date()) || delegationStart.equals(new Date()))
-					&& (delegationEnd == null || delegationEnd.after(new Date()) || delegationEnd.equals(new Date()))) {
+			if ((delegationStart == null) || (delegationStart.before(curDate) || delegationStart.equals(curDate))
+					&& (delegationEnd == null || delegationEnd.after(curDate) || delegationEnd.equals(curDate))) {
 
 				NodeRef reassignResource = getReassignedResource(
 						associationService.getTargetAssoc(resource, ProjectModel.PROP_QNAME_REASSIGN_RESOURCE));
