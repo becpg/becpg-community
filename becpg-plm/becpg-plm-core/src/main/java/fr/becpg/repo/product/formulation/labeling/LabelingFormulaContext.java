@@ -167,6 +167,8 @@ public class LabelingFormulaContext extends RuleParser {
 	private boolean ingsLabelingWithYield = false;
 	private boolean uncapitalizeLegalName = false;
 	private boolean shouldBreakIngType = false;
+	private boolean labelingByLanguage = false;
+	
 
 	private Double qtyPrecisionThreshold = (1d / (PRECISION_FACTOR * PRECISION_FACTOR));
 
@@ -266,6 +268,14 @@ public class LabelingFormulaContext extends RuleParser {
 
 	public void setMaxPrecision(Integer maxPrecision) {
 		this.maxPrecision = maxPrecision;
+	}
+	
+	public boolean isLabelingByLanguage() {
+		return labelingByLanguage;
+	}
+
+	public void setLabelingByLanguage(boolean labelingByLanguage) {
+		this.labelingByLanguage = labelingByLanguage;
 	}
 
 	@Override

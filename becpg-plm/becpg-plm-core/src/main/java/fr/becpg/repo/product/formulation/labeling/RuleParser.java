@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -75,7 +76,7 @@ public abstract class RuleParser {
 	public RuleParser(NodeService mlNodeService) {
 		super();
 		this.mlNodeService = mlNodeService;
-		availableLocales = new HashSet<>();
+		availableLocales = new LinkedHashSet<>();
 	}
 
 	public boolean addRule(NodeRef ruleNodeRef, String name, List<NodeRef> components, List<NodeRef> replacement, MLText label, String formula,
@@ -225,7 +226,7 @@ public abstract class RuleParser {
 			} else if (formula != null) {
 				mlText = new MLText();
 
-				Set<Locale> availableLocales = getLocales();
+				Set<Locale> availableLocales = new LinkedHashSet<>(getLocales());
 
 				if (availableLocales.isEmpty()) {
 					availableLocales.add(new Locale(Locale.getDefault().getLanguage()));

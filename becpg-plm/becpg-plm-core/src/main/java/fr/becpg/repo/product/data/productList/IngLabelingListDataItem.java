@@ -3,6 +3,8 @@
  */
 package fr.becpg.repo.product.data.productList;
 
+import java.util.List;
+
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 
@@ -18,18 +20,13 @@ import fr.becpg.repo.repository.model.AbstractManualDataItem;
 public class IngLabelingListDataItem extends AbstractManualDataItem {
 
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 3043212457177647400L;
 
 	private NodeRef grp;
-	
 	private MLText value;
-	
 	private MLText manualValue;
-	
 	private String logValue;
+	private List<String> locales;
 
 
 	@AlfSingleAssoc
@@ -79,6 +76,17 @@ public class IngLabelingListDataItem extends AbstractManualDataItem {
 	}
 	
 	
+	@AlfProp
+	@AlfQname(qname="bcpg:lrLocales")
+	public List<String> getLocales() {
+		return locales;
+	}
+
+	public void setLocales(List<String> locales) {
+		this.locales = locales;
+	}
+
+	
 	
 	/**
 	 * Instantiates a new ing labeling list data item.
@@ -110,15 +118,17 @@ public class IngLabelingListDataItem extends AbstractManualDataItem {
 		this.grp = i.grp;
 		this.value = i.value;		
 		this.isManual = i.isManual;
+		this.locales = i.locales;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
+		int result = super.hashCode();
 		result = prime * result + ((grp == null) ? 0 : grp.hashCode());
-		result = prime * result + ((isManual == null) ? 0 : isManual.hashCode());
-		result = prime * result + ((nodeRef == null) ? 0 : nodeRef.hashCode());
+		result = prime * result + ((locales == null) ? 0 : locales.hashCode());
+		result = prime * result + ((logValue == null) ? 0 : logValue.hashCode());
+		result = prime * result + ((manualValue == null) ? 0 : manualValue.hashCode());
 		result = prime * result + ((value == null) ? 0 : value.hashCode());
 		return result;
 	}
@@ -127,7 +137,7 @@ public class IngLabelingListDataItem extends AbstractManualDataItem {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!super.equals(obj))
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
@@ -137,15 +147,20 @@ public class IngLabelingListDataItem extends AbstractManualDataItem {
 				return false;
 		} else if (!grp.equals(other.grp))
 			return false;
-		if (isManual == null) {
-			if (other.isManual != null)
+		if (locales == null) {
+			if (other.locales != null)
 				return false;
-		} else if (!isManual.equals(other.isManual))
+		} else if (!locales.equals(other.locales))
 			return false;
-		if (nodeRef == null) {
-			if (other.nodeRef != null)
+		if (logValue == null) {
+			if (other.logValue != null)
 				return false;
-		} else if (!nodeRef.equals(other.nodeRef))
+		} else if (!logValue.equals(other.logValue))
+			return false;
+		if (manualValue == null) {
+			if (other.manualValue != null)
+				return false;
+		} else if (!manualValue.equals(other.manualValue))
 			return false;
 		if (value == null) {
 			if (other.value != null)
