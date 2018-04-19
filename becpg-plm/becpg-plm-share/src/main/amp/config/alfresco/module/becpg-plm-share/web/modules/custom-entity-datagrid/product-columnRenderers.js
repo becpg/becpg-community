@@ -551,6 +551,22 @@ if (beCPG.module.EntityDataGridRenderers) {
     });
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName : "bcpg:lrLocales",
+        renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+        	if (data.value != null) {
+				Dom.setStyle(elCell, "width", "16px");
+				Dom.setStyle(elCell.parentNode, "width", "16px");
+				if (oColumn.hidden) {
+					scope.widgets.dataTable.showColumn(oColumn);
+					Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
+				}
+				return '<img  title="'+scope.msg('locale.name.'+data.value)+'" src="'+ Alfresco.constants.URL_RESCONTEXT  +'/components/images/flags/'+data.value+'.png" />';
+			}
+			return "";
+        }
+    });
+
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : "bcpg:dynamicCharactGroupColor",
 		renderer : function(oRecord, data, label, scope) {
 			var color = oRecord.getData("itemData")["prop_bcpg_dynamicCharactGroupColor"].value;
