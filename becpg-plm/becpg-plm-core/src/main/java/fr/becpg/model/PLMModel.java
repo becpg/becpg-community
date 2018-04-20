@@ -362,6 +362,7 @@ public interface PLMModel {
 	
 	
 	QName ASPECT_WATER = QName.createQName(BeCPGModel.BECPG_URI, "waterAspect");
+	QName LABELING_RULE_ASPECT =  QName.createQName(BeCPGModel.BECPG_URI, "labelingRuleAspect");
 	
 	
 	
