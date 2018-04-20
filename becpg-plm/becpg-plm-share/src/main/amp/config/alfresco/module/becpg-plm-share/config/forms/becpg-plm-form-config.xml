@@ -7221,6 +7221,24 @@
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
 			</form>
+			
+			<form id="filter">
+				<field-visibility>
+					<show id="bcpg:illGrp" />
+					<show id="bcpg:lrLocales" force="true"/>
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:illGrp" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+						</control>
+					</field>
+					<field id="bcpg:lrLocales" >
+						<control template="/org/alfresco/components/form/controls/mtlangue.ftl"/>
+					</field>
+						
+				</appearance>
+			</form>
 		</forms>
 	</config>
 	<!-- bcpg:ingLabelingList type (existing nodes) -->
@@ -7326,13 +7344,16 @@
 
 			<form id="filter">
 				<field-visibility>
-					<show id="bcpg:lrType" >
+					<show id="bcpg:lrType" />
+					<show id="bcpg:lrIsActive" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:lrType">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
 						</control>
-					</show>
-					<show id="bcpg:lrIsActive" />
-				</field-visibility>
+					</field>
+				</appearance>
 			</form>
 
 		</forms>

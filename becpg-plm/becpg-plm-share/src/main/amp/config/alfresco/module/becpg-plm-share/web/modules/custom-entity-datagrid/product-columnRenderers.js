@@ -560,7 +560,14 @@ if (beCPG.module.EntityDataGridRenderers) {
 					scope.widgets.dataTable.showColumn(oColumn);
 					Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
 				}
-				return '<img  title="'+scope.msg('locale.name.'+data.value)+'" src="'+ Alfresco.constants.URL_RESCONTEXT  +'/components/images/flags/'+data.value+'.png" />';
+				
+				var country = data.value[0];
+				
+			  	if(country.indexOf("_")>0){
+			  	 country = country.split("_")[1].toLowerCase();
+			  	}
+			  	
+				return '<img  title="'+scope.msg('locale.name.'+data.value[0])+'" src="'+ Alfresco.constants.URL_RESCONTEXT  +'/components/images/flags/'+country+'.png" />';
 			}
 			return "";
         }
