@@ -707,7 +707,7 @@
         <property name="id"><value>patch.bcpg.labelingRuleAspectPatch</value></property>
         <property name="description"><value>patch.bcpg.labelingRuleAspectPatchDescription</value></property>
         <property name="fixesFromSchema" value="0"/>
-        <property name="fixesToSchema" value="10005" />
+        <property name="fixesToSchema" value="10057" />
         <property name="targetSchema" value="10175"/>
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
