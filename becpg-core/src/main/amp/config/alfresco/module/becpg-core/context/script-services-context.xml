@@ -64,6 +64,7 @@
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="paginatedSearchCache" ref="paginatedSearchCache"/>
 		<property name="showEntitiesInTree" value="${becpg.doclibtree.showEntities}"></property>
+		<property name="permissionService" ref="permissionService"/>
 	</bean>
 
 	<!-- Override Alfresco -->
