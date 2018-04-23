@@ -2,6 +2,7 @@ package fr.becpg.repo.admin.patch;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import org.alfresco.repo.batch.BatchProcessWorkProvider;
@@ -22,51 +23,58 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.PLMModel;
 
-public class RemoveReqCtrlViewPatch extends AbstractBeCPGPatch {
+/**
+ * Copy prop value of cm:name in bcpg:lvValue to support mlText
+ * 
+ * @author matthieu
+ * 
+ */
+public class LabelingRuleAspectPatch extends AbstractBeCPGPatch {
 
-	private static final Log logger = LogFactory.getLog(RemoveReqCtrlViewPatch.class);
-	private static final String MSG_SUCCESS = "patch.bcpg.plm.removeReqCtrlViewPatch.result";
+	private static final Log logger = LogFactory.getLog(LabelingRuleAspectPatch.class);
+	private static final String MSG_SUCCESS = "patch.bcpg.labelingRuleAspectPatch.result";
 
 	private NodeDAO nodeDAO;
 	private PatchDAO patchDAO;
 	private QNameDAO qnameDAO;
 	private BehaviourFilter policyBehaviourFilter;
 	private RuleService ruleService;
-
+	
 	private final int batchThreads = 3;
 	private final int batchSize = 40;
 	private final long count = batchThreads * batchSize;
+	
+
+	public void setRuleService(RuleService ruleService) {
+		this.ruleService = ruleService;
+	}
 
 	@Override
 	protected String applyInternal() throws Exception {
-
-		AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
+		
 
 		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
 			final List<NodeRef> result = new ArrayList<>();
 
-			final long maxNodeId = getNodeDAO().getMaxNodeId();
+			final long maxNodeId = getPatchDAO().getMaxAdmNodeID();
 
 			long minSearchNodeId = 0;
-			long maxSearchNodeId = count;
 
-			final Pair<Long, QName> val = getQnameDAO().getQName(PLMModel.TYPE_REQCTRLLIST);
+			final Pair<Long, QName> val = getQnameDAO().getQName(PLMModel.TYPE_LABELINGRULELIST);
 
-			@Override
+
 			public int getTotalEstimatedWorkSize() {
 				return result.size();
 			}
 
-			@Override
 			public Collection<NodeRef> getNextWork() {
 				if (val != null) {
 					Long typeQNameId = val.getFirst();
 
 					result.clear();
 
-					while (result.isEmpty() && (minSearchNodeId < maxNodeId)) {
-
-						List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, maxSearchNodeId);
+					while (result.isEmpty() && minSearchNodeId < maxNodeId) {
+						List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, minSearchNodeId + count);
 
 						for (Long nodeid : nodeids) {
 							NodeRef.Status status = getNodeDAO().getNodeIdStatus(nodeid);
@@ -75,7 +83,6 @@ public class RemoveReqCtrlViewPatch extends AbstractBeCPGPatch {
 							}
 						}
 						minSearchNodeId = minSearchNodeId + count;
-						maxSearchNodeId = maxSearchNodeId + count;
 					}
 				}
 
@@ -83,46 +90,36 @@ public class RemoveReqCtrlViewPatch extends AbstractBeCPGPatch {
 			}
 		};
 
-		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("RemoveReqCtrlViewPatch", transactionService.getRetryingTransactionHelper(),
-				workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 1000);
+		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("IngTypeAspectPatch", transactionService.getRetryingTransactionHelper(),
+				workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 500);
 
 		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
 
-			@Override
 			public void afterProcess() throws Throwable {
+				ruleService.enableRules();
+				
+			}
+
+			public void beforeProcess() throws Throwable {
 				ruleService.disableRules();
 			}
 
-			@Override
-			public void beforeProcess() throws Throwable {
-				ruleService.enableRules();
-			}
-
-			@Override
 			public String getIdentifier(NodeRef entry) {
 				return entry.toString();
 			}
 
-			@Override
 			public void process(NodeRef dataListNodeRef) throws Throwable {
-
-				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
-				policyBehaviourFilter.disableBehaviour();
-
-				if (nodeService.exists(dataListNodeRef)) {
-					nodeService.deleteNode(dataListNodeRef);
-
-				} else {
-					logger.warn("dataListNodeRef doesn't exist : " + dataListNodeRef);
+				if (nodeService.exists(dataListNodeRef) && !nodeService.hasAspect(dataListNodeRef, PLMModel.LABELING_RULE_ASPECT)) {
+					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
+					policyBehaviourFilter.disableBehaviour();
+					nodeService.addAspect(dataListNodeRef,  PLMModel.LABELING_RULE_ASPECT, new HashMap<>());
 				}
-
 			}
 
 		};
-
 		batchProcessor.process(worker, true);
-
 		return I18NUtil.getMessage(MSG_SUCCESS);
+
 	}
 
 	public NodeDAO getNodeDAO() {
@@ -151,14 +148,6 @@ public class RemoveReqCtrlViewPatch extends AbstractBeCPGPatch {
 
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 		this.policyBehaviourFilter = policyBehaviourFilter;
-	}
-
-	public RuleService getRuleService() {
-		return ruleService;
-	}
-
-	public void setRuleService(RuleService ruleService) {
-		this.ruleService = ruleService;
 	}
 
 }

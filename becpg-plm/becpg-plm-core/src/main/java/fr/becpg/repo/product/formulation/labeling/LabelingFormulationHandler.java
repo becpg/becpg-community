@@ -36,6 +36,7 @@ import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
@@ -240,7 +241,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						String log = "";
 						MLText label = new MLText();
 						if ((labelingRuleListDataItem.getFormula() != null) && !labelingRuleListDataItem.getFormula().trim().isEmpty()) {
-							Set<Locale> locales = labelingFormulaContext.getLocales();
+							Set<Locale> locales = labelingRuleListDataItem.getLocales()!=null && !labelingRuleListDataItem.getLocales().isEmpty() ?
+									MLTextHelper.extractLocales(labelingRuleListDataItem.getLocales()) : labelingFormulaContext.getLocales();
 
 							if (locales.isEmpty()) {
 								locales.add(new Locale(Locale.getDefault().getLanguage()));
@@ -281,7 +283,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 									.createJsonLog(labelingRuleListDataItem.getFormula().replace(" ", "").contains("render(false)"));
 						}
 
-						retainNodes.add(getOrCreateILLDataItem(formulatedProduct, labelingRuleListDataItem.getNodeRef(), label, log));
+						retainNodes.addAll(getOrCreateILLDataItems(formulatedProduct, labelingRuleListDataItem.getNodeRef(), label, log,
+								labelingFormulaContext));
 					}
 				}
 
@@ -958,11 +961,29 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		return ret;
 	}
 
-	private IngLabelingListDataItem getOrCreateILLDataItem(ProductData formulatedProduct, NodeRef key, MLText label, String log) {
+	private List<IngLabelingListDataItem> getOrCreateILLDataItems(ProductData formulatedProduct, NodeRef key, MLText label, String log,
+			LabelingFormulaContext labelingFormulaContext) {
+		List<IngLabelingListDataItem> ret = new ArrayList<>();
+
+		if (labelingFormulaContext.isLabelingByLanguage()) {
+			for (Map.Entry<Locale, String> entry : label.entrySet()) {
+				MLText newLabel = new MLText();
+				newLabel.addValue(MLTextHelper.getNearestLocale(Locale.getDefault()), entry.getValue());
+				ret.add(getOrCreateILLDataItem(formulatedProduct, key, newLabel, log, MLTextHelper.localeKey(entry.getKey())));
+			}
+		} else {
+			ret.add(getOrCreateILLDataItem(formulatedProduct, key, label, log, null));
+		}
+		return ret;
+
+	}
+
+	IngLabelingListDataItem getOrCreateILLDataItem(ProductData formulatedProduct, NodeRef key, MLText label, String log, String lang) {
 
 		IngLabelingListDataItem ill = null;
 		for (IngLabelingListDataItem tmp : formulatedProduct.getLabelingListView().getIngLabelingList()) {
-			if (((tmp.getGrp() == null) && (key == null)) || ((tmp.getGrp() != null) && tmp.getGrp().equals(key))) {
+			if (((tmp.getGrp() == null) && (key == null)) || (((tmp.getGrp() != null) && tmp.getGrp().equals(key))
+					&& ((lang == null) || ((tmp.getLocales() != null) && tmp.getLocales().contains(lang))))) {
 				ill = tmp;
 				break;
 			}
@@ -974,7 +995,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		} else if (!Boolean.TRUE.equals(ill.getIsManual())) {
 			ill.setValue(label);
 		}
-
+		
+		if (lang != null) {
+			ill.setLocales(Arrays.asList(lang));
+		} else {
+			ill.setLocales(null);
+		}
 		ill.setLogValue(log);
 
 		return ill;
