@@ -24,7 +24,7 @@ import fr.becpg.model.PLMModel;
 
 public class RemoveReqCtrlViewPatch extends AbstractBeCPGPatch {
 
-	private static final Log logger = LogFactory.getLog(RemoveQtyAfterProcessPatch.class);
+	private static final Log logger = LogFactory.getLog(RemoveReqCtrlViewPatch.class);
 	private static final String MSG_SUCCESS = "patch.bcpg.plm.removeReqCtrlViewPatch.result";
 
 	private NodeDAO nodeDAO;
