@@ -42,27 +42,39 @@
 	</query>
 	<nodes>
 	 	<node id="12" code="22223333" name="Project 12" description="descr" creator="admin" created="2011-1-15T00:00:00.000+02:00" projectOrigin="Interne" 
-			projectSponsor="SponsorY" hierarchy1="hierarchy1.1" hierarchy2="hierarchy1.2" projectPriority="2" projectManager="Philippe" projectCompletionDate="2011-11-25T00:00:00.000+02:00"
+			projectSponsor="SponsorY" hierarchy1="hierarchy1.1 plus long plus long plus long plus long" hierarchy2="hierarchy1.2" projectPriority="2" projectManager="Philippe" projectCompletionDate="2011-11-25T00:00:00.000+02:00"
 			projectStartDate="2011-02-15T00:00:00.000+02:00" projectDueDate="2011-09-15T00:00:00.000+02:00" modified="2015-10-15T00:00:00.000+02:00"  projectState="Completed" projectOverdue="8" completionPercent="70"  projectScore="12" score1="12" score2="18" score3="52"/>
 		 
 		<node id="1" code="22223333" name="Project 1" description="descr" creator="admin" created="2011-1-15T00:00:00.000+02:00" projectOrigin="Interne" 
-			projectSponsor="SponsorY" hierarchy1="hierarchy1.1" hierarchy2="hierarchy1.2" projectPriority="2" projectManager="Philippe" projectCompletionDate="2013-10-25T00:00:00.000+02:00"
+			projectSponsor="SponsorY" hierarchy1="hierarchy1.1 plus long plus long" hierarchy2="hierarchy1.2" projectPriority="2" projectManager="Philippe" projectCompletionDate="2013-10-25T00:00:00.000+02:00"
 			projectStartDate="2013-02-15T00:00:00.000+02:00" projectDueDate="2013-10-15T00:00:00.000+02:00" modified="2015-10-15T00:00:00.000+02:00"  projectState="InProgress" projectOverdue="8" completionPercent="70"  projectScore="12" score1="12" score2="18" score3="52"/>
 		
 		<node id="2" code="22223333" name="Project 2" description="descr" creator="administrateur" created="2013-12-15T00:00:00.000+02:00" projectOrigin="Interne" 
-			projectStartDate="2014-02-15T00:00:00.000+02:00" projectDueDate="2014-10-15T00:00:00.000+02:00"  projectCompletionDate="2015-10-15T00:00:00.000+02:00" projectSponsor="SponsorX" hierarchy1="hierarchy1.1" projectManager="Guillaume" hierarchy2="hierarchy1.2" projectState="Planned" projectOverdue="8" completionPercent="70" projectScore="12" score1="12" score2="18" score3="52"/>
+			projectStartDate="2014-02-15T00:00:00.000+02:00" projectDueDate="2014-10-15T00:00:00.000+02:00"  projectCompletionDate="2015-10-15T00:00:00.000+02:00" projectSponsor="SponsorX" hierarchy1="hierarchy1.1 plus long plus long" projectManager="Guillaume" hierarchy2="hierarchy1.2" projectState="Planned" projectOverdue="8" completionPercent="70" projectScore="12" score1="12" score2="18" score3="52"/>
 				
 		<node id="3" code="22223333" name="Project 3" description="descr" creator="admin1" created="2015-01-15T00:00:00.000+02:00" 
-			projectStartDate="2015-05-15T00:00:00.000+02:00" projectDueDate="2015-10-15T00:00:00.000+02:00"   projectCompletionDate="2015-10-15T00:00:00.000+02:00" projectOrigin="Interne" projectSponsor="SponsorX" hierarchy1="hierarchy1.1" hierarchy2="hierarchy1.2" projectState="Completed" projectPriority="3" projectOverdue="8" completionPercent="70" projectScore="22" score1="5" score2="70" score3="32"/>
+			projectStartDate="2015-05-15T00:00:00.000+02:00" projectDueDate="2015-10-15T00:00:00.000+02:00"   projectCompletionDate="2015-10-15T00:00:00.000+02:00" projectOrigin="Interne" projectSponsor="SponsorX" hierarchy1="hierarchy1.1 plus long plus long" hierarchy2="hierarchy1.2" projectState="Completed" projectPriority="3" projectOverdue="8" completionPercent="70" projectScore="22" score1="5" score2="70" score3="32"/>
 		
 		<node id="4" code="22223333" name="Project 4" description="descr" creator="admin1"  created="2015-12-15T00:00:00.000+02:00" projectOrigin="Interne" projectSponsor="SponsorX"
-			projectStartDate="2016-08-15T00:00:00.000+02:00" projectDueDate="2016-10-15T00:00:00.000+02:00" projectCompletionDate="2016-12-15T00:00:00.000+02:00" hierarchy1="hierarchy1.1" hierarchy2="hierarchy1.3" projectState="OnHold" projectOverdue="-8" completionPercent="70" projectScore="22" score1="5" score2="70" score3="32"/>
+			projectStartDate="2016-08-15T00:00:00.000+02:00" projectDueDate="2016-10-15T00:00:00.000+02:00" projectCompletionDate="2016-12-15T00:00:00.000+02:00" hierarchy1="hierarchy1.1 plus long plus long" hierarchy2="hierarchy1.3" projectState="OnHold" projectOverdue="-8" completionPercent="70" projectScore="22" score1="5" score2="70" score3="32"/>
 		
 		<node id="5" code="22223333" name="Project 5" description="descr" creator="admin2"  created="2015-12-15T00:00:00.000+02:00" projectOrigin="MDD" projectSponsor="SponsorY"
 			projectStartDate="2016-07-18T00:00:00.000+02:00" projectDueDate="2016-10-15T00:00:00.000+02:00" projectCompletionDate="2017-12-15T00:00:00.000+02:00"  hierarchy1="hierarchy1.1" hierarchy2="hierarchy1.3" projectManager="Jérôme Bonil" projectState="OnHold" projectOverdue="8" completionPercent="100" projectScore="22" score1="5" score2="70" score3="32"/>
+			
+			<node id="5" code="22223333" name="Project 5" description="descr" creator="admin2"  created="2015-12-15T00:00:00.000+02:00" projectOrigin="MDD" projectSponsor="SponsorY"
+			projectStartDate="2016-07-18T00:00:00.000+02:00" projectDueDate="2016-10-15T00:00:00.000+02:00" projectCompletionDate="2017-12-15T00:00:00.000+02:00"  hierarchy1="hierarchy1.1" hierarchy2="hierarchy1.3" projectManager="Jérôme Bonil" projectState="OnHold" projectOverdue="8" completionPercent="100" projectScore="22" score1="5" score2="70" score3="32"/>
+			
+			<node id="5" code="22223333" name="Project 5" description="descr" creator="admin2"  created="2015-12-15T00:00:00.000+02:00" projectOrigin="MDD" projectSponsor="SponsorY"
+			projectStartDate="2016-07-18T00:00:00.000+02:00" projectDueDate="2016-10-15T00:00:00.000+02:00" projectCompletionDate="2017-12-15T00:00:00.000+02:00"  hierarchy1="hierarchy1.2" hierarchy2="hierarchy1.3" projectManager="Jérôme Bonil" projectState="OnHold" projectOverdue="8" completionPercent="100" projectScore="22" score1="5" score2="70" score3="32"/>
+			
+			<node id="5" code="22223333" name="Project 5" description="descr" creator="admin2"  created="2015-12-15T00:00:00.000+02:00" projectOrigin="MDD" projectSponsor="SponsorY"
+			projectStartDate="2016-07-18T00:00:00.000+02:00" projectDueDate="2016-10-15T00:00:00.000+02:00" projectCompletionDate="2017-12-15T00:00:00.000+02:00"  hierarchy1="hierarchy1.3" hierarchy2="hierarchy1.3" projectManager="Jérôme Bonil" projectState="OnHold" projectOverdue="8" completionPercent="100" projectScore="22" score1="5" score2="70" score3="32"/>
+			
+			<node id="5" code="22223333" name="Project 5" description="descr" creator="admin2"  created="2015-12-15T00:00:00.000+02:00" projectOrigin="MDD" projectSponsor="SponsorY"
+			projectStartDate="2016-07-18T00:00:00.000+02:00" projectDueDate="2016-10-15T00:00:00.000+02:00" projectCompletionDate="2017-12-15T00:00:00.000+02:00"  hierarchy1="hierarchy1.4" hierarchy2="hierarchy1.3" projectManager="Jérôme Bonil" projectState="OnHold" projectOverdue="8" completionPercent="100" projectScore="22" score1="5" score2="70" score3="32"/>
 				
 		<node id="6" code="22223333" name="Project 6" description="descr" creator="admin1" created="2016-02-15T00:00:00.000+02:00"  projectOrigin="Interne" projectSponsor="SponsorX"
-			projectStartDate="2016-07-15T00:00:00.000+02:00" projectDueDate="2016-09-15T00:00:00.000+02:00"  projectCompletionDate="2018-09-15T00:00:00.000+02:00" hierarchy1="hierarchy1.1" hierarchy2="hierarchy1.2" projectPriority="2" projectState="Planned" projectOverdue="8" completionPercent="70" projectScore="12" score1="12" score2="18" score3="52"/>
+			projectStartDate="2016-07-15T00:00:00.000+02:00" projectDueDate="2016-09-15T00:00:00.000+02:00"  projectCompletionDate="2018-09-15T00:00:00.000+02:00" hierarchy1="hierarchy1.5" hierarchy2="hierarchy1.2" projectPriority="2" projectState="Planned" projectOverdue="8" completionPercent="70" projectScore="12" score1="12" score2="18" score3="52"/>
 		
 		<node id="7" code="22223333" name="Project 7" description="descr" creator="admin3" created="2016-09-15T00:00:00.000+02:00" projectOrigin="MDD" projectSponsor="SponsorY"
 			projectStartDate="2017-09-15T00:00:00.000+02:00" projectDueDate="2017-11-15T00:00:00.000+02:00" modified="2017-11-15T00:00:00.000+02:00" hierarchy1="hierarchy2.1" hierarchy2="hierarchy1.2" projectManager="Jérôme Bonil" projectState="OnHold" projectOverdue="8" completionPercent="70" projectScore="12" score1="12" score2="18" score3="52"/>
