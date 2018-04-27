@@ -2,8 +2,10 @@ package fr.becpg.repo.admin.patch;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.batch.BatchProcessWorkProvider;
 import org.alfresco.repo.batch.BatchProcessor;
 import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
@@ -110,6 +112,7 @@ public class RemoveReqCtrlViewPatch extends AbstractBeCPGPatch {
 				policyBehaviourFilter.disableBehaviour();
 
 				if (nodeService.exists(dataListNodeRef)) {
+					nodeService.addAspect(dataListNodeRef, ContentModel.ASPECT_TEMPORARY, null);
 					nodeService.deleteNode(dataListNodeRef);
 
 				} else {

@@ -53,10 +53,10 @@ public class FormulaFormulationContext {
 	}
 
 	public ProductData getDataListItemEntity() {
-		if (dataListItem instanceof CompoListDataItem) {
+		if (dataListItem instanceof CompositionDataItem) {
 
-			return ((CompoListDataItem) dataListItem).getComponent() != null
-					? formulaService.findOne(((CompoListDataItem) dataListItem).getComponent())
+			return ((CompositionDataItem) dataListItem).getComponent() != null
+					? formulaService.findOne(((CompositionDataItem) dataListItem).getComponent())
 					: null;
 		}
 		return null;
