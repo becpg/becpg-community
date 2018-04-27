@@ -3,6 +3,7 @@ package fr.becpg.repo.project.admin.patch;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import org.alfresco.model.ContentModel;
@@ -217,6 +218,7 @@ public class ProjectActivityPatch extends AbstractBeCPGPatch {
 					}
 
 					// Delete Node
+					nodeService.addAspect(activityNodeRef, ContentModel.ASPECT_TEMPORARY, new HashMap<>());
 					nodeService.deleteNode(activityNodeRef);
 
 				} 
