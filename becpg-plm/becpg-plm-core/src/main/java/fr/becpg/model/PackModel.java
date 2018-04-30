@@ -74,4 +74,8 @@ public class PackModel {
 	public static final QName ASSOC_LL_LABEL = QName.createQName(PACK_URI, "llLabel");
 	public static final QName PROP_LL_TYPE = QName.createQName(PACK_URI, "llType");
 	public static final QName PROP_LL_POSITION = QName.createQName(PACK_URI, "llPosition");
+
+	public static final QName ASPECT_PM_MATERIAL = QName.createQName(PACK_URI,"pmMaterialAspect");
+
+	public static final QName ASSOC_PM_MATERIAL =   QName.createQName(PACK_URI,"pmMaterialRefs");
 }
