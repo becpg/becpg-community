@@ -96,7 +96,7 @@ public class PMMaterialPatch extends AbstractBeCPGPatch {
 			}
 		};
 
-		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("IngTypePatch", transactionService.getRetryingTransactionHelper(), workProvider,
+		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("PMMaterialPatch", transactionService.getRetryingTransactionHelper(), workProvider,
 				batchThreads, batchSize, applicationEventPublisher, logger, 500);
 
 		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
@@ -111,7 +111,7 @@ public class PMMaterialPatch extends AbstractBeCPGPatch {
 
 			@Override
 			public void beforeProcess() throws Throwable {
-
+				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 				materials = BeCPGQueryBuilder.createQuery().selectNodesByPath(nodeService.getRootNode(RepoConsts.SPACES_STORE),
 						"/app:company_home/" + AbstractBeCPGQueryBuilder.encodePath("/System/Lists/bcpg:entityLists/pmMaterials") + "/*");
 

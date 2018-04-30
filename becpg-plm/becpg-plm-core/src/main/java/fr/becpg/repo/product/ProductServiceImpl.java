@@ -118,9 +118,7 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
 				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 			}
-		} else {
-			throw new FormulateException("Sorry you don't have write access");
-		}
+		} 
 
 	}
 
