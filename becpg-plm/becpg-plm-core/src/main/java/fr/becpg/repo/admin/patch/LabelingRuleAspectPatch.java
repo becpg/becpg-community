@@ -90,7 +90,7 @@ public class LabelingRuleAspectPatch extends AbstractBeCPGPatch {
 			}
 		};
 
-		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("IngTypeAspectPatch", transactionService.getRetryingTransactionHelper(),
+		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("LabelingRuleAspectPatch", transactionService.getRetryingTransactionHelper(),
 				workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 500);
 
 		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
