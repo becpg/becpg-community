@@ -2,6 +2,7 @@ package fr.becpg.repo.admin.patch;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import org.alfresco.repo.batch.BatchProcessWorkProvider;
@@ -110,6 +111,7 @@ public class LabelingRulePatch extends AbstractBeCPGPatch {
 					
 					if (nodeService.exists(dataListNodeRef)) {
 						AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
+						policyBehaviourFilter.disableBehaviour();
 						Boolean isManual = (Boolean) nodeService.getProperty(dataListNodeRef, BeCPGModel.PROP_IS_MANUAL_LISTITEM);
 						if (Boolean.TRUE.equals(isManual)) {
 							nodeService.setProperty(dataListNodeRef, PLMModel.PROP_LABELINGRULELIST_SYNC_STATE,
@@ -121,6 +123,11 @@ public class LabelingRulePatch extends AbstractBeCPGPatch {
 			
 						nodeService.removeAspect(dataListNodeRef, BeCPGModel.ASPECT_IS_MANUAL_LISTITEM);
 
+						if ( !nodeService.hasAspect(dataListNodeRef, PLMModel.LABELING_RULE_ASPECT)) {
+							
+							nodeService.addAspect(dataListNodeRef,  PLMModel.LABELING_RULE_ASPECT, new HashMap<>());
+						}
+						
 					} else {
 						logger.warn("dataListNodeRef doesn't exist : " + dataListNodeRef);
 					}
