@@ -7214,13 +7214,33 @@
 				<field-visibility>
 					<show id="bcpg:variantIds" force="true" />
 					<show id="bcpg:illGrp" />
+					<show id="bcpg:lrLocales" force="true"/>
 					<show id="bcpg:illValue" />
 					<show id="bcpg:illManualValue" />
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden"></field>
+					<field id="bcpg:lrLocales" label="hidden" read-only="true"></field>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
+				</appearance>
+			</form>
+			
+			<form id="filter">
+				<field-visibility>
+					<show id="bcpg:illGrp" />
+					<show id="bcpg:lrLocales" force="true"/>
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:illGrp" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+						</control>
+					</field>
+					<field id="bcpg:lrLocales" >
+						<control template="/org/alfresco/components/form/controls/mtlangue.ftl"/>
+					</field>
+						
 				</appearance>
 			</form>
 		</forms>
@@ -7268,7 +7288,7 @@
 					<show id="bcpg:lrComponents" />
 					<show id="bcpg:lrReplacements" />
 					<show id="bcpg:lrGroup" />
-					<show id="bcpg:lrLocales" />
+					<show id="bcpg:lrLocales" force="true"  />
 					<show id="bcpg:lrIsActive" />
 					<show id="bcpg:lrSyncState" />
 				</field-visibility>
@@ -7328,13 +7348,16 @@
 
 			<form id="filter">
 				<field-visibility>
-					<show id="bcpg:lrType" >
+					<show id="bcpg:lrType" />
+					<show id="bcpg:lrIsActive" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:lrType">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
 						</control>
-					</show>
-					<show id="bcpg:lrIsActive" />
-				</field-visibility>
+					</field>
+				</appearance>
 			</form>
 
 		</forms>
@@ -7352,7 +7375,7 @@
 					<show id="bcpg:lrComponents" />
 					<show id="bcpg:lrReplacements" />
 					<show id="bcpg:lrGroup" />
-					<show id="bcpg:lrLocales" />
+					<show id="bcpg:lrLocales" force="true" />
 					<show id="bcpg:lrIsActive" />
 					<show id="bcpg:lrSyncState" />
 				</field-visibility>
@@ -7363,7 +7386,7 @@
 		                  		{"prop":"prop_bcpg_lrLabel", "condition" : "Format|DetailComponents|DoNotDetailsComponents|Locale|Prefs|Omit|DoNotDeclare|ShowPerc|ShowGeo"},
 		                  		{"prop":"assoc_bcpg_lrComponents", "condition" : "Render|Locale|Prefs"},
 		                  		{"prop":"assoc_bcpg_lrReplacements", "condition" : "Format|Render|DetailComponents|DoNotDetailsComponents|Locale|Prefs|Omit|DoNotDeclare|ShowPerc|ShowGeo"},
-		                  		{"prop":"prop_bcpg_lrLocales", "condition" : "Prefs"}
+		                  		{"prop":"prop_bcpg_lrLocales", "condition" : "Prefs|Group|Detail|DoNotDetails|DetailComponents|DoNotDetailsComponents"}
 		                  		]'/>
 		                  	</constraint-handlers>
 					</field>

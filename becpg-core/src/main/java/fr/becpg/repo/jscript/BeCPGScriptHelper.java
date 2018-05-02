@@ -24,6 +24,7 @@ import java.util.Set;
 
 import org.alfresco.repo.jscript.BaseScopableProcessorExtension;
 import org.alfresco.repo.jscript.ScriptNode;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
@@ -32,6 +33,7 @@ import org.alfresco.service.cmr.quickshare.QuickShareService;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -86,10 +88,16 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	private EntityListDAO entityListDAO;
 
 	private PaginatedSearchCache paginatedSearchCache;
+	
+	private PermissionService permissionService;
 
 	private RepoService repoService;
 
 	private boolean showEntitiesInTree = false;
+	
+	public void setPermissionService(PermissionService permissionService) {
+		this.permissionService = permissionService;
+	}
 
 	public void setOlapService(OlapService olapService) {
 		this.olapService = olapService;
@@ -280,6 +288,14 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		}
 
 		return null;
+	}
+	
+	
+	public boolean allowWrite(ScriptNode sourceNode, String authority) {
+		return AuthenticationUtil.runAsSystem(() -> {
+			permissionService.setPermission(sourceNode.getNodeRef(), authority, PermissionService.EDITOR, true);
+			return true;
+		});
 	}
 
 }

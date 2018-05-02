@@ -167,6 +167,9 @@ public class LabelingFormulaContext extends RuleParser {
 	private boolean ingsLabelingWithYield = false;
 	private boolean uncapitalizeLegalName = false;
 	private boolean shouldBreakIngType = false;
+	private boolean labelingByLanguage = false;
+	private boolean force100Perc = false;
+	
 
 	private Double qtyPrecisionThreshold = (1d / (PRECISION_FACTOR * PRECISION_FACTOR));
 
@@ -194,6 +197,10 @@ public class LabelingFormulaContext extends RuleParser {
 
 	public void setIngsLabelingWithYield(boolean ingsLabelingWithYield) {
 		this.ingsLabelingWithYield = ingsLabelingWithYield;
+	}
+	
+	public void setForce100Perc(boolean force100Perc) {
+		this.force100Perc = force100Perc;
 	}
 
 	public void setIngDefaultFormat(String ingDefaultFormat) {
@@ -266,6 +273,14 @@ public class LabelingFormulaContext extends RuleParser {
 
 	public void setMaxPrecision(Integer maxPrecision) {
 		this.maxPrecision = maxPrecision;
+	}
+	
+	public boolean isLabelingByLanguage() {
+		return labelingByLanguage;
+	}
+
+	public void setLabelingByLanguage(boolean labelingByLanguage) {
+		this.labelingByLanguage = labelingByLanguage;
 	}
 
 	@Override
@@ -802,6 +817,61 @@ public class LabelingFormulaContext extends RuleParser {
 	private String renderCompositeIng(CompositeLabeling compositeLabeling, Double ratio) {
 		StringBuffer ret = new StringBuffer();
 		boolean appendEOF = false;
+		
+//		if(force100Perc) {
+//			
+//			BigDecimal total = new BigDecimal(0d);
+//			boolean first = true;
+//			Double firstQtyPerc = 0d;
+//
+//			for (Map.Entry<IngTypeItem, List<AbstractLabelingComponent>> kv : getSortedIngListByType(lblCompositeContext).entrySet()) {
+//
+//				if ((kv.getKey() != null) && (getLegalIngName(kv.getKey(), null, false) != null)) {
+//
+//					Double qtyPerc = computeQtyPerc(lblCompositeContext, kv.getKey(), 1d);
+//					Double volumePerc = computeVolumePerc(lblCompositeContext, lblCompositeContext, 1d);
+//					qtyPerc = (useVolume ? volumePerc : qtyPerc);
+//
+//					if (first) {
+//						first = false;
+//						firstQtyPerc = qtyPerc;
+//					}
+//						
+//					total = total.add(roundeedValue(qtyPerc, new MessageFormat(htmlTableRowFormat)));
+//
+//
+//				} else {
+//
+//					for (AbstractLabelingComponent component : kv.getValue()) {
+//
+//						Double qtyPerc = computeQtyPerc(lblCompositeContext, component, 1d);
+//						Double volumePerc = computeVolumePerc(lblCompositeContext, component, 1d);
+//						qtyPerc = (useVolume ? volumePerc : qtyPerc);
+//
+//						if (!component.shouldSkip() && !shouldSkip(component.getNodeRef(), qtyPerc)) {
+//
+//							
+//								if (first) {
+//									first = false;
+//									firstQtyPerc = qtyPerc;
+//								}
+//
+//								if (qtyPerc != null) {
+//									total = total.add(roundeedValue(qtyPerc, new MessageFormat(htmlTableRowFormat)));
+//								}
+//							}
+//
+//						}
+//					}
+//			}
+//			
+//
+//			BigDecimal diffValue = (new BigDecimal(1d)).subtract(total);
+//			total = new BigDecimal(1);
+//			firstQtyPerc = roundeedValue(firstQtyPerc, new MessageFormat(htmlTableRowFormat)).add(diffValue).doubleValue();
+//
+//		}
+//		
 
 		for (Map.Entry<IngTypeItem, List<AbstractLabelingComponent>> kv : getSortedIngListByType(compositeLabeling).entrySet()) {
 
@@ -1054,7 +1124,7 @@ public class LabelingFormulaContext extends RuleParser {
 			}
 
 			tree.put("name", getName(component));
-			tree.put("legal", getLegalIngName(component, null, false));
+			tree.put("legal", cleanLabel(getLegalIngName(component, null, false)));
 			if ((component.getVolume() != null) && (totalVol != null) && (totalVol > 0)) {
 				tree.put("vol", (component.getVolume() / totalVol) * 100);
 			}
@@ -1095,8 +1165,8 @@ public class LabelingFormulaContext extends RuleParser {
 						ingTypeJson.put("nodeRef", kv.getKey().getNodeRef().toString());
 						ingTypeJson.put("cssClass", "ingType");
 						ingTypeJson.put("name", getName(kv.getKey()));
-						ingTypeJson.put("legal", getLegalIngName(kv.getKey(), null,
-								(kv.getValue().size() > 1) || (!kv.getValue().isEmpty() && kv.getValue().get(0).isPlural())));
+						ingTypeJson.put("legal", cleanLabel(getLegalIngName(kv.getKey(), null,
+								(kv.getValue().size() > 1) || (!kv.getValue().isEmpty() && kv.getValue().get(0).isPlural()))));
 
 						if ((kv.getKey().getQty() != null) && (totalQty != null) && (totalQty > 0)) {
 							ingTypeJson.put("qte", (kv.getKey().getQty() / totalQty) * 100);
@@ -1134,10 +1204,17 @@ public class LabelingFormulaContext extends RuleParser {
 
 		return tree;
 	}
+	
+	private String cleanLabel(String buffer) {
+		if(buffer!=null) {
+			return buffer.replaceAll(" null| \\(null\\)| \\(\\)| \\[null\\]", "").replaceAll(":,", ",").replaceAll(":$", "")
+					.replaceAll(">null<", "><").trim();
+		} 
+		return "";
+	}
 
 	private String cleanLabel(StringBuffer buffer) {
-		return buffer.toString().replaceAll(" null| \\(null\\)| \\(\\)| \\[null\\]", "").replaceAll(":,", ",").replaceAll(":$", "")
-				.replaceAll(">null<", "><").trim();
+		return cleanLabel(buffer.toString());
 	}
 
 	public boolean isGroup(AbstractLabelingComponent component) {

@@ -242,6 +242,11 @@
 					<value>Group3</value>
 					<value>Group4</value>
 					<value>Group5</value>
+					<value>Group6</value>
+					<value>Group7</value>
+					<value>Group8</value>
+					<value>Group9</value>
+					<value>Group10</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -1534,6 +1539,9 @@
 					</target>
 				</association>
 			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:labelingRuleAspect</aspect>
+			</mandatory-aspects>
 		</type>
 
 		<type name="bcpg:labelingRuleList">
@@ -1549,13 +1557,10 @@
 				</property>
 				<property name="bcpg:lrGroup">
 					<type>d:text</type>
+					<multiple>true</multiple>
 					<constraints>
 						<constraint ref="bcpg:lrGroups" />
 					</constraints>
-				</property>
-				<property name="bcpg:lrLocales">
-					<type>d:text</type>
-					<multiple>true</multiple>					
 				</property>
 				<property name="bcpg:lrFormula">
 					<type>d:text</type>
@@ -1609,7 +1614,9 @@
 					</target>
 				</association>
 			</associations>
-
+			<mandatory-aspects>
+				<aspect>bcpg:labelingRuleAspect</aspect>
+			</mandatory-aspects>
 		</type>
 
 		<type name="bcpg:ingList">
@@ -3208,7 +3215,14 @@
 			</associations>
 		</aspect>
 		
-	
+	<aspect name="bcpg:labelingRuleAspect">
+	 	<properties>
+			<property name="bcpg:lrLocales">
+					<type>d:text</type>
+					<multiple>true</multiple>					
+			</property>
+		</properties>
+	</aspect>
 		
 		<aspect name="bcpg:ingTypeAspect">
 			 <properties>	
