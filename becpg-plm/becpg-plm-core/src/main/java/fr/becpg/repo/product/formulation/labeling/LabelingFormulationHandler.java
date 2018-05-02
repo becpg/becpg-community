@@ -287,7 +287,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						}
 
 						retainNodes.addAll(getOrCreateILLDataItems(formulatedProduct, labelingRuleListDataItem.getNodeRef(), label, log,
-								labelingFormulaContext, sortOrder++));
+								labelingFormulaContext, sortOrder));
+						
+						sortOrder = sortOrder + 50;
 					}
 				}
 
@@ -540,7 +542,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	}
 
 	private Map<String, List<LabelingRuleListDataItem>> getLabelingRules(ProductData formulatedProduct) {
-		Map<String, List<LabelingRuleListDataItem>> ret = new TreeMap<>((s1, s2 )-> { return s2.compareTo(s1); } ) ;
+		Map<String, List<LabelingRuleListDataItem>> ret = new TreeMap<>((s1, s2 )-> { return s1.compareTo(s2); } ) ;
 		if (formulatedProduct.getLabelingListView().getLabelingRuleList() != null) {
 
 			for (LabelingRuleListDataItem entityLabelingRulList : formulatedProduct.getLabelingListView().getLabelingRuleList()) {
