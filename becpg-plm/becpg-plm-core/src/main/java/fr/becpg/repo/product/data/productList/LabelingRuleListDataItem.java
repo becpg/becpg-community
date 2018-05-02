@@ -51,7 +51,7 @@ public class LabelingRuleListDataItem extends BeCPGDataObject implements Synchro
 	private List<NodeRef> components = new ArrayList<>();
 	private List<NodeRef> replacements = new ArrayList<>();
 	private Boolean isActive = true;
-	private String group;
+	private List<String> groups;
 	private List<String> locales;
 	private SynchronisableState synchronisableState = SynchronisableState.Synchronized;
 
@@ -61,12 +61,12 @@ public class LabelingRuleListDataItem extends BeCPGDataObject implements Synchro
 
 	@AlfProp
 	@AlfQname(qname="bcpg:lrGroup")
-	public String getGroup() {
-		return group;
+	public List<String> getGroups() {
+		return groups;
 	}
 
-	public void setGroup(String group) {
-		this.group = group;
+	public void setGroups(List<String> groups) {
+		this.groups = groups;
 	}
 
 	
@@ -228,7 +228,7 @@ public class LabelingRuleListDataItem extends BeCPGDataObject implements Synchro
 		int result = super.hashCode();
 		result = prime * result + ((components == null) ? 0 : components.hashCode());
 		result = prime * result + ((formula == null) ? 0 : formula.hashCode());
-		result = prime * result + ((group == null) ? 0 : group.hashCode());
+		result = prime * result + ((groups == null) ? 0 : groups.hashCode());
 		result = prime * result + ((isActive == null) ? 0 : isActive.hashCode());
 		result = prime * result + ((label == null) ? 0 : label.hashCode());
 		result = prime * result + ((labelingRuleType == null) ? 0 : labelingRuleType.hashCode());
@@ -257,10 +257,10 @@ public class LabelingRuleListDataItem extends BeCPGDataObject implements Synchro
 				return false;
 		} else if (!formula.equals(other.formula))
 			return false;
-		if (group == null) {
-			if (other.group != null)
+		if (groups == null) {
+			if (other.groups != null)
 				return false;
-		} else if (!group.equals(other.group))
+		} else if (!groups.equals(other.groups))
 			return false;
 		if (isActive == null) {
 			if (other.isActive != null)
@@ -292,7 +292,7 @@ public class LabelingRuleListDataItem extends BeCPGDataObject implements Synchro
 	@Override
 	public String toString() {
 		return "LabelingRuleListDataItem [formula=" + formula + ", label=" + label + ", labelingRuleType=" + labelingRuleType + ", components="
-				+ components + ", replacements=" + replacements + ", isActive=" + isActive + ", group=" + group + ", locales=" + locales
+				+ components + ", replacements=" + replacements + ", isActive=" + isActive + ", groups=" + groups + ", locales=" + locales
 				+ ", synchronisableState=" + synchronisableState + "]";
 	}
 

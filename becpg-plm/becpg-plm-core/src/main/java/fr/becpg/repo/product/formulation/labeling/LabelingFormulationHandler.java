@@ -15,6 +15,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
@@ -36,6 +37,7 @@ import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
@@ -136,6 +138,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			}
 		}
 
+		int sortOrder = 0;
+		
 		for (Map.Entry<String, List<LabelingRuleListDataItem>> labelingRuleListsGroup : labelingRuleListsByGroup.entrySet()) {
 
 			logger.debug("Calculate Ingredient Labeling for group : " + labelingRuleListsGroup.getKey() + " - " + formulatedProduct.getName());
@@ -240,7 +244,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						String log = "";
 						MLText label = new MLText();
 						if ((labelingRuleListDataItem.getFormula() != null) && !labelingRuleListDataItem.getFormula().trim().isEmpty()) {
-							Set<Locale> locales = labelingFormulaContext.getLocales();
+							Set<Locale> locales = labelingRuleListDataItem.getLocales()!=null && !labelingRuleListDataItem.getLocales().isEmpty() ?
+									MLTextHelper.extractLocales(labelingRuleListDataItem.getLocales()) : labelingFormulaContext.getLocales();
 
 							if (locales.isEmpty()) {
 								locales.add(new Locale(Locale.getDefault().getLanguage()));
@@ -281,7 +286,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 									.createJsonLog(labelingRuleListDataItem.getFormula().replace(" ", "").contains("render(false)"));
 						}
 
-						retainNodes.add(getOrCreateILLDataItem(formulatedProduct, labelingRuleListDataItem.getNodeRef(), label, log));
+						retainNodes.addAll(getOrCreateILLDataItems(formulatedProduct, labelingRuleListDataItem.getNodeRef(), label, log,
+								labelingFormulaContext, sortOrder++));
 					}
 				}
 
@@ -534,7 +540,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	}
 
 	private Map<String, List<LabelingRuleListDataItem>> getLabelingRules(ProductData formulatedProduct) {
-		Map<String, List<LabelingRuleListDataItem>> ret = new HashMap<>();
+		Map<String, List<LabelingRuleListDataItem>> ret = new TreeMap<>((s1, s2 )-> { return s2.compareTo(s1); } ) ;
 		if (formulatedProduct.getLabelingListView().getLabelingRuleList() != null) {
 
 			for (LabelingRuleListDataItem entityLabelingRulList : formulatedProduct.getLabelingListView().getLabelingRuleList()) {
@@ -578,16 +584,27 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	}
 
 	private void addLabelingRule(Map<String, List<LabelingRuleListDataItem>> ret, LabelingRuleListDataItem labelingRule) {
-		String group = labelingRule.getGroup();
-		if ((group == null) || group.isEmpty()) {
-			group = LabelingRuleListDataItem.DEFAULT_LABELING_GROUP;
+		if(labelingRule.getGroups()!=null && ! labelingRule.getGroups().isEmpty()) {
+			for(String group : labelingRule.getGroups()) {
+				if ((group == null) || group.isEmpty()) {
+					group = LabelingRuleListDataItem.DEFAULT_LABELING_GROUP;
+				}
+				List<LabelingRuleListDataItem> tmp = ret.get(group);
+				if (tmp == null) {
+					tmp = new ArrayList<>();
+				}
+				tmp.add(labelingRule);
+				ret.put(group, tmp);
+			}
+		} else {
+			String group = LabelingRuleListDataItem.DEFAULT_LABELING_GROUP;
+			List<LabelingRuleListDataItem> tmp = ret.get(group);
+			if (tmp == null) {
+				tmp = new ArrayList<>();
+			}
+			tmp.add(labelingRule);
+			ret.put(group, tmp);
 		}
-		List<LabelingRuleListDataItem> tmp = ret.get(group);
-		if (tmp == null) {
-			tmp = new ArrayList<>();
-		}
-		tmp.add(labelingRule);
-		ret.put(group, tmp);
 	}
 
 	private void copyTemplateLabelingRuleList(ProductData formulatedProduct) {
@@ -958,11 +975,36 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		return ret;
 	}
 
-	private IngLabelingListDataItem getOrCreateILLDataItem(ProductData formulatedProduct, NodeRef key, MLText label, String log) {
+	private List<IngLabelingListDataItem> getOrCreateILLDataItems(ProductData formulatedProduct, NodeRef key, MLText label, String log,
+			LabelingFormulaContext labelingFormulaContext, int sortOrder) {
+		List<IngLabelingListDataItem> ret = new ArrayList<>();
+
+		if (labelingFormulaContext.isLabelingByLanguage()) {
+			List<Locale> langs = new LinkedList<>();
+		    for(Locale orderedLocale: labelingFormulaContext.availableLocales) {
+		    	if(label.containsKey(orderedLocale)) {
+		    		langs.add(orderedLocale);
+		    	}
+		    }
+			
+			for (Locale lang : langs) {
+				MLText newLabel = new MLText();
+				newLabel.addValue(MLTextHelper.getNearestLocale(Locale.getDefault()), label.getValue(lang));
+				ret.add(getOrCreateILLDataItem(formulatedProduct, key, newLabel, log, MLTextHelper.localeKey(lang), sortOrder++));
+			}
+		} else {
+			ret.add(getOrCreateILLDataItem(formulatedProduct, key, label, log, null, sortOrder));
+		}
+		return ret;
+
+	}
+
+	IngLabelingListDataItem getOrCreateILLDataItem(ProductData formulatedProduct, NodeRef key, MLText label, String log, String lang, int sortOrder) {
 
 		IngLabelingListDataItem ill = null;
 		for (IngLabelingListDataItem tmp : formulatedProduct.getLabelingListView().getIngLabelingList()) {
-			if (((tmp.getGrp() == null) && (key == null)) || ((tmp.getGrp() != null) && tmp.getGrp().equals(key))) {
+			if (((tmp.getGrp() == null) && (key == null)) || (((tmp.getGrp() != null) && tmp.getGrp().equals(key))
+					&& ((lang == null) || ((tmp.getLocales() != null) && tmp.getLocales().contains(lang))))) {
 				ill = tmp;
 				break;
 			}
@@ -974,8 +1016,14 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		} else if (!Boolean.TRUE.equals(ill.getIsManual())) {
 			ill.setValue(label);
 		}
-
+		
+		if (lang != null) {
+			ill.setLocales(Arrays.asList(lang));
+		} else {
+			ill.setLocales(null);
+		}
 		ill.setLogValue(log);
+		ill.setSort(sortOrder);
 
 		return ill;
 

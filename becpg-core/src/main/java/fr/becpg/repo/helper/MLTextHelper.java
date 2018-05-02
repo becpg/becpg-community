@@ -1,6 +1,7 @@
 package fr.becpg.repo.helper;
 
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -216,6 +217,16 @@ public class MLTextHelper {
 			}
 		}
 		return true;
+	}
+
+
+	public static Set<Locale> extractLocales(List<String> locales) {
+		Set<Locale> ret = new LinkedHashSet<>();
+		
+		for (String tmp : locales) {
+			ret.add(MLTextHelper.parseLocale(tmp));
+		}
+		return ret;
 	}
 
 
