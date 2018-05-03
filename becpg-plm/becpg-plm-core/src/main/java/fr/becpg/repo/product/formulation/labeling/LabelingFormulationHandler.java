@@ -1768,29 +1768,31 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 		if (ingListDataItem == null) {
 			if (labelingFormulaContext.getNodeDeclarationFilters().containsKey(compoListDataItem.getProduct())) {
-				DeclarationFilter declarationFilter = labelingFormulaContext.getNodeDeclarationFilters().get(compoListDataItem.getProduct());
-				if (!declarationFilter.isThreshold() && ((declarationFilter.getFormula() == null) || labelingFormulaContext
-						.matchFormule(declarationFilter.getFormula(), new DeclarationFilterContext(compoListDataItem, ingListDataItem)))) {
-
-					if (logger.isTraceEnabled()) {
-						logger.trace(" -- Found declType : " + declarationFilter.getDeclarationType() + " for "
-								+ nodeService.getProperty(compoListDataItem.getProduct(), ContentModel.PROP_NAME));
+				for( DeclarationFilter declarationFilter : labelingFormulaContext.getNodeDeclarationFilters().get(compoListDataItem.getProduct())) {
+					if (!declarationFilter.isThreshold() && ((declarationFilter.getFormula() == null) || labelingFormulaContext
+							.matchFormule(declarationFilter.getFormula(), new DeclarationFilterContext(compoListDataItem, ingListDataItem)))) {
+	
+						if (logger.isTraceEnabled()) {
+							logger.trace(" -- Found declType : " + declarationFilter.getDeclarationType() + " for "
+									+ nodeService.getProperty(compoListDataItem.getProduct(), ContentModel.PROP_NAME));
+						}
+						return declarationFilter.getDeclarationType();
 					}
-					return declarationFilter.getDeclarationType();
 				}
 			}
 
 		} else {
 
 			if (labelingFormulaContext.getNodeDeclarationFilters().containsKey(ingListDataItem.getIng())) {
-				DeclarationFilter declarationFilter = labelingFormulaContext.getNodeDeclarationFilters().get(ingListDataItem.getIng());
-				if (!declarationFilter.isThreshold() && ((declarationFilter.getFormula() == null) || labelingFormulaContext
-						.matchFormule(declarationFilter.getFormula(), new DeclarationFilterContext(compoListDataItem, ingListDataItem)))) {
-					if (logger.isTraceEnabled()) {
-						logger.trace(" -- Found declType : " + declarationFilter.getDeclarationType() + " for "
-								+ nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME));
+				for(DeclarationFilter declarationFilter : labelingFormulaContext.getNodeDeclarationFilters().get(ingListDataItem.getIng())) {
+					if (!declarationFilter.isThreshold() && ((declarationFilter.getFormula() == null) || labelingFormulaContext
+							.matchFormule(declarationFilter.getFormula(), new DeclarationFilterContext(compoListDataItem, ingListDataItem)))) {
+						if (logger.isTraceEnabled()) {
+							logger.trace(" -- Found declType : " + declarationFilter.getDeclarationType() + " for "
+									+ nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME));
+						}
+						return declarationFilter.getDeclarationType();
 					}
-					return declarationFilter.getDeclarationType();
 				}
 			}
 
