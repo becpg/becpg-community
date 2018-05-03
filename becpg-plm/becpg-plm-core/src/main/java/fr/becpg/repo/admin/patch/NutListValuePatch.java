@@ -149,7 +149,9 @@ public class NutListValuePatch extends AbstractBeCPGPatch {
 					}
 
 				} else {
-					logger.warn("dataListNodeRef doesn't exist : " + entityNodeRef);
+					if(entityNodeRef.getStoreRef().equals(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE)){
+						logger.warn("dataListNodeRef doesn't exist : " + entityNodeRef);
+					}
 				}
 
 			}
