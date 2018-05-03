@@ -55,8 +55,7 @@
 					execution.setVariable('bcpgwf_pvQualityApprovalActors',getMemberNames(execution.getVariable('bcpgwf_pvQualityApprovalActor')));
 					execution.setVariable('bcpgwf_pvProductionApprovalActors',getMemberNames(execution.getVariable('bcpgwf_pvProductionApprovalActor')));
 					execution.setVariable('bcpgwf_pvPackagingApprovalActors',getMemberNames(execution.getVariable('bcpgwf_pvPackagingApprovalActor')));
-					execution.setVariable('wf_initiatorAssignee',getAssigneeOrDelegate(initiator));
-					]]></activiti:string>
+					execution.setVariable('wf_initiatorAssignee',getAssigneeOrDelegate(initiator));]]></activiti:string>
           </activiti:field>
         </activiti:executionListener>
       </extensionElements>
@@ -164,12 +163,10 @@
       <extensionElements>
         <activiti:executionListener event="start" class="org.alfresco.repo.workflow.activiti.listener.ScriptExecutionListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[
-            	<import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js">
+            <activiti:string><![CDATA[<import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js">
             	execution.setVariable('wf_initiatorAssignee',getAssigneeOrDelegate(initiator));
             	execution.setVariable('bcpgwf_pvCallerActors',getMemberNames(execution.getVariable('bcpgwf_pvCallerActor')));
-            	execution.setVariable('bcpgwf_pvCaller2Actors',getMemberNames(execution.getVariable('bcpgwf_pvCaller2Actor')));
-            ]]></activiti:string>
+            	execution.setVariable('bcpgwf_pvCaller2Actors',getMemberNames(execution.getVariable('bcpgwf_pvCaller2Actor')));]]></activiti:string>
           </activiti:field>
         </activiti:executionListener>
       </extensionElements>
@@ -214,10 +211,8 @@
       <extensionElements>
         <activiti:executionListener event="start" class="org.alfresco.repo.workflow.activiti.listener.ScriptExecutionListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[
-            	<import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js">
-            	execution.setVariable('wf_initiatorAssignee',getAssigneeOrDelegate(initiator));
-            ]]></activiti:string>
+            <activiti:string><![CDATA[<import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js">
+            	execution.setVariable('wf_initiatorAssignee',getAssigneeOrDelegate(initiator));]]></activiti:string>
           </activiti:field>
         </activiti:executionListener>
       </extensionElements>
@@ -245,12 +240,15 @@
         <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
             <activiti:string><![CDATA[task.setVariableLocal('bpm_comment',task.getVariable('bcpgwf_pvTransmitterComment'));
+            execution.setVariable('bcpgwf_rejectProductTaskOutcome',task.getVariable('bcpgwf_rejectProductTaskOutcome'));
             execution.setVariable('bcpgwf_pvTransmitterComment',task.getVariable('bcpgwf_pvTransmitterComment'));]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
       </extensionElements>
     </userTask>
-    <sequenceFlow id="restartValidation" sourceRef="rejectProductTask" targetRef="startGateway"></sequenceFlow>
+    <sequenceFlow id="restartValidation" sourceRef="exclusivegateway1" targetRef="startGateway">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${bcpgwf_rejectProductTaskOutcome=="Resubmit"}]]></conditionExpression>
+    </sequenceFlow>
     <sequenceFlow id="approvedCallerValidation" sourceRef="testCallerValidation" targetRef="alfrescoScripttask1">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${(bcpgwf_pvCallerActor ==null ||  bcpgwf_reviewCallerApproval == "Approved" ) && (bcpgwf_pvCaller2Actor ==null ||  bcpgwf_reviewCaller2Approval == "Approved" )}]]></conditionExpression>
     </sequenceFlow>
@@ -392,8 +390,13 @@
     </sequenceFlow>
     <sequenceFlow id="endDoProductValidationPackaging" sourceRef="doProductValidationPackagingTask" targetRef="testParallelValidation"></sequenceFlow>
     <sequenceFlow id="doProductValidationCallers" sourceRef="testParallelValidation" targetRef="testCallerValidation">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${(bcpgwf_pvCallerActor ==null ||  bcpgwf_reviewCallerApproval == "Approved" ) && (bcpgwf_pvCaller2Actor ==null ||  bcpgwf_reviewCaller2Approval == "Approved" )}]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${(bcpgwf_pvCallerActor ==null ||  bcpgwf_reviewCallerApproval == "Approved" ) && (bcpgwf_pvCaller2Actor ==null ||  bcpgwf_reviewCaller2Approval == "Approved" ) &&  (bcpgwf_reviewQualityApproval != "Rejected" && bcpgwf_reviewProductionApproval != "Rejected" && bcpgwf_reviewRDApproval != "Rejected" && bcpgwf_reviewPackagingApproval != "Rejected")}]]></conditionExpression>
     </sequenceFlow>
+    <sequenceFlow id="closeWorkflow" sourceRef="exclusivegateway1" targetRef="endevent1">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${bcpgwf_rejectProductTaskOutcome!="Resubmit"}]]></conditionExpression>
+    </sequenceFlow>
+    <exclusiveGateway id="exclusivegateway1" name="Exclusive Gateway"></exclusiveGateway>
+    <sequenceFlow id="flow2" sourceRef="rejectProductTask" targetRef="exclusivegateway1"></sequenceFlow>
   </process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_productValidationWF">
     <bpmndi:BPMNPlane bpmnElement="productValidationWF" id="BPMNPlane_productValidationWF">
@@ -422,7 +425,7 @@
         <omgdc:Bounds height="40.0" width="40.0" x="707.0" y="140.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="rejectProductTask" id="BPMNShape_rejectProductTask">
-        <omgdc:Bounds height="55.0" width="105.0" x="586.0" y="360.0"></omgdc:Bounds>
+        <omgdc:Bounds height="55.0" width="105.0" x="586.0" y="261.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="alfrescoScripttask1" id="BPMNShape_alfrescoScripttask1">
         <omgdc:Bounds height="55.0" width="105.0" x="796.0" y="133.0"></omgdc:Bounds>
@@ -438,6 +441,9 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="doProductValidationPackagingTask" id="BPMNShape_doProductValidationPackagingTask">
         <omgdc:Bounds height="55.0" width="105.0" x="281.0" y="310.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway1" id="BPMNShape_exclusivegateway1">
+        <omgdc:Bounds height="40.0" width="40.0" x="618.0" y="337.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge bpmnElement="initiate" id="BPMNEdge_initiate">
         <omgdi:waypoint x="36.0" y="160.0"></omgdi:waypoint>
@@ -479,7 +485,7 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="rejectedParallelValidation" id="BPMNEdge_rejectedParallelValidation">
         <omgdi:waypoint x="471.0" y="180.0"></omgdi:waypoint>
-        <omgdi:waypoint x="638.0" y="360.0"></omgdi:waypoint>
+        <omgdi:waypoint x="638.0" y="261.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="doProductValidationCaller" id="BPMNEdge_doProductValidationCaller">
         <omgdi:waypoint x="491.0" y="160.0"></omgdi:waypoint>
@@ -491,11 +497,13 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="rejectedCallerValidation" id="BPMNEdge_rejectedCallerValidation">
         <omgdi:waypoint x="727.0" y="180.0"></omgdi:waypoint>
-        <omgdi:waypoint x="727.0" y="387.0"></omgdi:waypoint>
-        <omgdi:waypoint x="691.0" y="387.0"></omgdi:waypoint>
+        <omgdi:waypoint x="726.0" y="287.0"></omgdi:waypoint>
+        <omgdi:waypoint x="691.0" y="288.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="restartValidation" id="BPMNEdge_restartValidation">
-        <omgdi:waypoint x="586.0" y="387.0"></omgdi:waypoint>
+        <omgdi:waypoint x="638.0" y="377.0"></omgdi:waypoint>
+        <omgdi:waypoint x="638.0" y="387.0"></omgdi:waypoint>
+        <omgdi:waypoint x="418.0" y="387.0"></omgdi:waypoint>
         <omgdi:waypoint x="201.0" y="387.0"></omgdi:waypoint>
         <omgdi:waypoint x="201.0" y="180.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
@@ -537,6 +545,18 @@
         <omgdi:waypoint x="601.0" y="6.0"></omgdi:waypoint>
         <omgdi:waypoint x="726.0" y="6.0"></omgdi:waypoint>
         <omgdi:waypoint x="727.0" y="140.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="closeWorkflow" id="BPMNEdge_closeWorkflow">
+        <omgdi:waypoint x="638.0" y="377.0"></omgdi:waypoint>
+        <omgdi:waypoint x="638.0" y="384.0"></omgdi:waypoint>
+        <omgdi:waypoint x="676.0" y="384.0"></omgdi:waypoint>
+        <omgdi:waypoint x="866.0" y="384.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1104.0" y="384.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1104.0" y="178.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
+        <omgdi:waypoint x="638.0" y="316.0"></omgdi:waypoint>
+        <omgdi:waypoint x="638.0" y="337.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
