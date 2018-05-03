@@ -51,6 +51,7 @@ public class ProductValidationWorkflowTest extends AbstractWorkflowTest {
 //	private static final QName PROP_reviewProductionApproval = QName.createQName(WF_URI, "reviewProductionApproval");
 	private static final QName PROP_pvTransmitterComment = QName.createQName(WF_URI, "pvTransmitterComment");
 	private static final QName PROP_reviewRDApproval = QName.createQName(WF_URI, "reviewRDApproval");
+	private static final QName PROP_rejectProductTaskOutcome = QName.createQName(WF_URI, "rejectProductTaskOutcome");
 	private static final QName PROP_reviewRDComment = QName.createQName(WF_URI, "reviewRDComment");
 	private static final QName PROP_reviewCallerApproval = QName.createQName(WF_URI, "reviewCallerApproval");
 	private static final QName PROP_pvCallerActor = QName.createQName(WF_URI, "pvCallerActor");
@@ -156,7 +157,8 @@ public class ProductValidationWorkflowTest extends AbstractWorkflowTest {
 
 		properties = new HashMap<>();
 		properties.put(PROP_pvTransmitterComment, "OK comment");
-
+		properties.put(PROP_rejectProductTaskOutcome, "Resubmit");
+		
 		task = submitTask(workflowInstanceId, "bcpgwf:rejectProductTask", null, properties);
 		assertNotNull(task);
 		assertEquals("OK comment", task.getProperties().get(WorkflowModel.PROP_COMMENT));
