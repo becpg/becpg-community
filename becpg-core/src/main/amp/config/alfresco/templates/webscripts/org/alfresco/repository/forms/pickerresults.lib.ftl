@@ -54,6 +54,9 @@
 				<#elseif row.item.typeShort == "bcpg:ingTypeItem" >
 				"name": "${row.item.properties["bcpg:lvValue"]!""}",
 				"title": "${row.item.properties["bcpg:lvValue"]!""}",
+				<#elseif row.item.typeShort == "bcpg:listValue" >
+				"name": "${row.item.properties["bcpg:lvValue"]!""}",
+				"title": "${row.item.properties["bcpg:lvValue"]!""}",
 				<#elseif row.item.typeShort == "bcpg:compoList" >				
 				"name": "${row.item.assocs["bcpg:compoListProduct"][0].properties.name!""}",
 				"title": "${row.item.assocs["bcpg:compoListProduct"][0].properties.name!""}",	
