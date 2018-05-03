@@ -779,10 +779,11 @@ public class LabelingFormulaContext extends RuleParser {
 
 		Locale currentLocale = I18NUtil.getLocale();
 		if (nodeDeclarationFilters.containsKey(nodeRef)) {
-			DeclarationFilter declarationFilter = nodeDeclarationFilters.get(nodeRef);
-			if (DeclarationType.DoNotDetails.equals(declarationFilter.getDeclarationType())
-					&& matchFormule(declarationFilter.getFormula(), new DeclarationFilterContext()) && declarationFilter.matchLocale(currentLocale)) {
-				return true;
+			for (DeclarationFilter declarationFilter : nodeDeclarationFilters.get(nodeRef)) {
+				if (DeclarationType.DoNotDetails.equals(declarationFilter.getDeclarationType())
+						&& matchFormule(declarationFilter.getFormula(), new DeclarationFilterContext()) && declarationFilter.matchLocale(currentLocale)) {
+					return true;
+				}
 			}
 
 		}
@@ -1109,10 +1110,11 @@ public class LabelingFormulaContext extends RuleParser {
 			Locale currentLocale = I18NUtil.getLocale();
 
 			if (nodeDeclarationFilters.containsKey(nodeRef)) {
-				DeclarationFilter declarationFilter = nodeDeclarationFilters.get(nodeRef);
-				if (declarationFilter.isThreshold() && (qtyPerc < (declarationFilter.getThreshold() / 100d))
-						&& declarationFilter.matchLocale(currentLocale)) {
-					return true;
+				for(DeclarationFilter declarationFilter : nodeDeclarationFilters.get(nodeRef)) {
+					if (declarationFilter.isThreshold() && (qtyPerc < (declarationFilter.getThreshold() / 100d))
+							&& declarationFilter.matchLocale(currentLocale)) {
+						return true;
+					}
 				}
 			}
 
@@ -1311,15 +1313,22 @@ public class LabelingFormulaContext extends RuleParser {
 
 				// If Omit
 				if (nodeDeclarationFilters.containsKey(ingType.getNodeRef())) {
-					DeclarationFilter declarationFilter = nodeDeclarationFilters.get(ingType.getNodeRef());
-					if (DeclarationType.Omit.equals(declarationFilter.getDeclarationType())
-							&& matchFormule(declarationFilter.getFormula(), new DeclarationFilterContext())
-							&& declarationFilter.matchLocale(currentLocale)) {
+					boolean shouldBreak = false;
+					for(DeclarationFilter declarationFilter : nodeDeclarationFilters.get(ingType.getNodeRef())) {
+						if (DeclarationType.Omit.equals(declarationFilter.getDeclarationType())
+								&& matchFormule(declarationFilter.getFormula(), new DeclarationFilterContext())
+								&& declarationFilter.matchLocale(currentLocale)) {
+							shouldBreak = true;
+							break;
+						} else if ((DeclarationType.DoNotDeclare.equals(declarationFilter.getDeclarationType()) && !declarationFilter.isThreshold()
+								&& matchFormule(declarationFilter.getFormula(), new DeclarationFilterContext())
+								&& declarationFilter.matchLocale(currentLocale))) {
+							ingType = null;
+							break;
+						}
+					}
+					if(shouldBreak) {
 						break;
-					} else if ((DeclarationType.DoNotDeclare.equals(declarationFilter.getDeclarationType()) && !declarationFilter.isThreshold()
-							&& matchFormule(declarationFilter.getFormula(), new DeclarationFilterContext())
-							&& declarationFilter.matchLocale(currentLocale))) {
-						ingType = null;
 					}
 
 				} else if (ingType.doNotDeclare() && !ingType.lastGroup()) {
