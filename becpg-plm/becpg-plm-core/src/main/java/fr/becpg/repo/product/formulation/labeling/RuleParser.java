@@ -31,7 +31,7 @@ public abstract class RuleParser {
 	protected final NodeService mlNodeService;
 	protected final Set<Locale> availableLocales;
 	protected final Map<NodeRef, TextFormatRule> textFormaters = new HashMap<>();
-	protected final Map<NodeRef, DeclarationFilter> nodeDeclarationFilters = new HashMap<>();
+	protected final Map<NodeRef, List<DeclarationFilter>> nodeDeclarationFilters = new HashMap<>();
 	protected final List<DeclarationFilter> declarationFilters = new ArrayList<>();
 	protected final Map<NodeRef, List<AggregateRule>> aggregateRules = new HashMap<>();
 	protected final Map<NodeRef, RenameRule> renameRules = new HashMap<>();
@@ -60,7 +60,7 @@ public abstract class RuleParser {
 		return aggregateRules;
 	}
 
-	public Map<NodeRef, DeclarationFilter> getNodeDeclarationFilters() {
+	public Map<NodeRef, List<DeclarationFilter>> getNodeDeclarationFilters() {
 		return nodeDeclarationFilters;
 	}
 
@@ -138,7 +138,13 @@ public abstract class RuleParser {
 
 				if ((components != null) && !components.isEmpty()) {
 					for (NodeRef component : components) {
-						nodeDeclarationFilters.put(component, declarationFilter);
+						List<DeclarationFilter> tmp = new LinkedList<>();
+						if(nodeDeclarationFilters.containsKey(component)) {
+							tmp = nodeDeclarationFilters.get(component);
+						}
+						tmp.add(declarationFilter);
+						
+						nodeDeclarationFilters.put(component, tmp);
 					}
 				} else {
 					declarationFilters.add(declarationFilter);

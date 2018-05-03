@@ -1835,7 +1835,7 @@
 					<show id="pack:pmPaperWeight" />
 					
 					<!-- material -->	
-					<show id="pack:pmMaterial" />
+					<show id="pack:pmMaterialRefs" />
 					<show id="pack:pmAdditionnalMaterial" />
 					
 					<!-- coil -->
@@ -1958,7 +1958,12 @@
 					<field id="pack:pmPaperWeight" set="thickness"/>
 					
 					<!-- material -->	
-					<field id="pack:pmMaterial" set="material"/>
+					<field id="pack:pmMaterialRefs" set="material">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/listvalue/values/System/Lists/bcpg:entityLists/pmMaterials
+							</control-param>
+						</control>
+					</field>
 					<field id="pack:pmAdditionnalMaterial" set="material"/>
 					
 					<!-- coil -->
@@ -2085,7 +2090,7 @@
 					<show id="pack:pmPaperWeight" />
 					
 					<!-- material -->	
-					<show id="pack:pmMaterial" />
+					<show id="pack:pmMaterialRefs" />
 					<show id="pack:pmAdditionnalMaterial" />
 					
 					<!-- coil -->
@@ -2162,7 +2167,12 @@
 					<field id="pack:pmPaperWeight" set="thickness"/>
 					
 					<!-- material -->	
-					<field id="pack:pmMaterial" set="material"/>
+					<field id="pack:pmMaterialRefs" set="material">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/listvalue/values/System/Lists/bcpg:entityLists/pmMaterials
+							</control-param>
+						</control>
+					</field>
 					<field id="pack:pmAdditionnalMaterial" set="material"/>
 					
 					<!-- coil -->
@@ -2231,7 +2241,7 @@
 					<show id="pack:pmPaperWeight" force="true" />
 					
 					<!-- material -->	
-					<show id="pack:pmMaterial" force="true"  />
+					<show id="pack:pmMaterialRefs" force="true"  />
 					<show id="pack:pmAdditionnalMaterial" force="true" />
 					
 					<!-- coil -->
@@ -2270,6 +2280,12 @@
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:packagingMaterial?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
 							</control-param>
 							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
+							</control-param>
+						</control>
+					</field>
+					<field id="pack:pmMaterialRefs" >
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/listvalue/values/System/Lists/bcpg:entityLists/pmMaterials
 							</control-param>
 						</control>
 					</field>
