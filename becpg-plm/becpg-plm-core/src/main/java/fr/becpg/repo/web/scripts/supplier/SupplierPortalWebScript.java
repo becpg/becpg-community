@@ -45,6 +45,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.ProjectState;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -73,6 +74,8 @@ public class SupplierPortalWebScript extends AbstractWebScript {
 
 	private AssociationService associationService;
 
+	private RepoService repoService;
+
 	private EntityVersionService entityVersionService;
 
 	private AlfrescoRepository<ProjectData> alfrescoRepository;
@@ -84,7 +87,6 @@ public class SupplierPortalWebScript extends AbstractWebScript {
 	private String entityNameTpl = "{entity_cm:name} - UPDATE - {date_YYYY}";
 	private String projectNameTpl = "PJT - {entity_cm:name} - {supplier_cm:name} - UPDATE - {date_YYYY}";
 
-	
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
@@ -115,6 +117,10 @@ public class SupplierPortalWebScript extends AbstractWebScript {
 
 	public void setProjectNameTpl(String projectNameTpl) {
 		this.projectNameTpl = projectNameTpl;
+	}
+
+	public void setRepoService(RepoService repoService) {
+		this.repoService = repoService;
 	}
 
 	@Override
@@ -209,10 +215,12 @@ public class SupplierPortalWebScript extends AbstractWebScript {
 
 		NodeRef branchNodeRef = entityVersionService.createBranch(entityNodeRef, destNodeRef);
 		associationService.update(branchNodeRef, BeCPGModel.ASSOC_AUTO_MERGE_TO, entityNodeRef);
-		nodeService.setProperty(branchNodeRef, ContentModel.PROP_NAME, createName(entityNodeRef, supplierNodeRef, entityNameTpl, currentDate));
+		nodeService.setProperty(branchNodeRef, ContentModel.PROP_NAME,
+				repoService.getAvailableName(destNodeRef, createName(entityNodeRef, supplierNodeRef, entityNameTpl, currentDate), false));
 
 		ProjectData projectData = new ProjectData();
-		projectData.setName(createName(entityNodeRef, supplierNodeRef, projectNameTpl, currentDate));
+		projectData
+				.setName(repoService.getAvailableName(destNodeRef, createName(entityNodeRef, supplierNodeRef, projectNameTpl, currentDate), false));
 		projectData.setParentNodeRef(destNodeRef);
 		projectData.setState(ProjectState.InProgress.toString());
 		projectData.setEntities(Arrays.asList(branchNodeRef));

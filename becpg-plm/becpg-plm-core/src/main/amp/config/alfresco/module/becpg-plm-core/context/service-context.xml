@@ -169,6 +169,7 @@
 		<property name="nodeService" ref="NodeService" />
 		<property name="permissionService" ref="permissionService" />
 		<property name="repository" ref="repositoryHelper" />
+		<property name="repoService" ref="repoService"/>
 	</bean>
 
 	
@@ -180,6 +181,7 @@
 		<property name="entityVersionService" ref="entityVersionService"/>
 		<property name="entityNameTpl" value="${beCPG.sendToSupplier.entityName.format}"/>		
 		<property name="projectNameTpl" value="${beCPG.sendToSupplier.projectName.format}"/>	
+		<property name="repoService" ref="repoService"/>
 	</bean>
 	
 	<bean id="webscript.fr.becpg.supplier.createSupplier.post" class="fr.becpg.repo.web.scripts.supplier.SupplierAccountWebScript" parent="webscript">

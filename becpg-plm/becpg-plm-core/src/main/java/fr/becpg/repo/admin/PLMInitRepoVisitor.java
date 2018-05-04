@@ -149,7 +149,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	private static final String PRODUCT_REPORT_IMG_TRAFFICLIGHTS_RED = "beCPG/birt/document/product/default/images/trafficLights_Red.png";
 	private static final String PRODUCT_REPORT_IMG_TRAFFICLIGHTS_SERVING = "beCPG/birt/document/product/default/images/trafficLights_Serving.png";
 
-	private static final String CLASSIFY_RULE_TITLE = "classifyProductRule";
+	private static final String CLASSIFY_RULE_TITLE = "classifyEntityRule";
 
 	@Autowired
 	private SiteService siteService;
@@ -291,7 +291,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	private void addClassifyRule(NodeRef companyHome) {
 
 		NodeRef scriptsFolderNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(companyHome, "./app:dictionary/app:scripts");
-		List<NodeRef> scriptNodeRefs = contentHelper.addFilesResources(scriptsFolderNodeRef, "classpath:beCPG/rules/classify-product.js");
+		List<NodeRef> scriptNodeRefs = contentHelper.addFilesResources(scriptsFolderNodeRef, "classpath:beCPG/rules/classify-entity.js");
 
 		List<Rule> rules = ruleService.getRules(companyHome, false);
 
@@ -308,7 +308,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		compositeAction.addAction(action);
 
 		ActionCondition condition = actionService.createActionCondition(IsSubTypeEvaluator.NAME);
-		condition.setParameterValue(IsSubTypeEvaluator.PARAM_TYPE, PLMModel.TYPE_PRODUCT);
+		condition.setParameterValue(IsSubTypeEvaluator.PARAM_TYPE, BeCPGModel.TYPE_ENTITY_V2);
 		condition.setInvertCondition(false);
 		compositeAction.addActionCondition(condition);
 
@@ -321,7 +321,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		rule.setTitle(CLASSIFY_RULE_TITLE);
 		rule.setExecuteAsynchronously(false);
 		rule.setRuleDisabled(true);
-		rule.setDescription("Classify product by state");
+		rule.setDescription("Classify entity by state");
 
 		ruleService.saveRule(companyHome, rule);
 
