@@ -76,7 +76,6 @@ function isInSite(productNode, siteId) {
 	}
 }
 
-
 function isInFolder(productNode, folderNode) {
 	var i = 0;
 
@@ -124,42 +123,36 @@ function rename(product) {
 	}
 }
 
-
-
 const SIMULATION_SITE_ID = "simulation";
 const VALID_SITE_ID = "valid";
 const ARCHIVED_SITE_ID = "archived";
 
-
 function main() {
 
-	
 	if (!document.hasAspect("bcpg:entityTplAspect") && !document.hasAspect("cm:workingcopy")) {
 
-		if( document.isSubType("bcpg:product")){
-			var productState = document.properties["bcpg:productState"];
-	
-			if (productState == "Valid") {
-				if (!isInSite(document, VALID_SITE_ID)) {
-					classifyByHierarchy(document, getDocumentLibraryNodeRef(VALID_SITE_ID));
-				}
-			} else if (productState == "Simulation" || productState == "ToValidate") {
-				if (isInSite(document, VALID_SITE_ID) || isInSite(document, ARCHIVED_SITE_ID)) {
-					bcpg.moveAndRename(document, getDocumentLibraryNodeRef(SIMULATION_SITE_ID));
-				}
-			} else if (productState == "Archived") {
-				if (!isInSite(document, ARCHIVED_SITE_ID)) {
-					
-					classifyByHierarchy(document, getDocumentLibraryNodeRef(ARCHIVED_SITE_ID));
-				}
-			}
-			
-			// TODO Clients fournisseurs OM Cdc Microbio
-			
-		} 
+		var state = "";
+		if (document.isSubType("bcpg:product")) {
+			state = document.properties["bcpg:productState"];
+		} else if (document.isSubType("bcpg:client")) {
+			state = document.properties["bcpg:clientState"];
+		} else if (document.isSubType("bcpg:supplier")) {
+			state = document.properties["bcpg:supplierState"];
+		}
 
-		// Uncomment and modify to get automatic name base on title
-		// rename(document);
+		if (state == "Valid") {
+			if (!isInSite(document, VALID_SITE_ID)) {
+				classifyByHierarchy(document, getDocumentLibraryNodeRef(VALID_SITE_ID));
+			}
+		} else if (state == "Simulation" || state == "ToValidate") {
+			if (isInSite(document, VALID_SITE_ID) || isInSite(document, ARCHIVED_SITE_ID)) {
+				bcpg.moveAndRename(document, getDocumentLibraryNodeRef(SIMULATION_SITE_ID));
+			}
+		} else if (state == "Archived") {
+			if (!isInSite(document, ARCHIVED_SITE_ID)) {
+				classifyByHierarchy(document, getDocumentLibraryNodeRef(ARCHIVED_SITE_ID));
+			}
+		}
 
 	}
 }
