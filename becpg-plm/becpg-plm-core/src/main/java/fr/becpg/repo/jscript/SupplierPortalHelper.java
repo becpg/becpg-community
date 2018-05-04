@@ -39,6 +39,7 @@ import fr.becpg.model.PLMGroup;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 import fr.becpg.repo.project.data.projectList.DeliverableScriptOrder;
@@ -64,6 +65,8 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 
 	private PermissionService permissionService;
 	
+	private RepoService repoService;
+	
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
@@ -84,6 +87,9 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 		assignToSupplier(project, task, entityNodeRef,true);
 	}
 	
+	public void setRepoService(RepoService repoService) {
+		this.repoService = repoService;
+	}
 
 	public void assignToSupplier(final ProjectData project, final TaskListDataItem task, final ScriptNode entityNodeRef, boolean moveSupplier) {
 
@@ -139,7 +145,7 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 							NodeRef supplierNodeRef = associationService.getTargetAssoc(entityNodeRef.getNodeRef(), PLMModel.ASSOC_SUPPLIERS);
 							if (supplierNodeRef != null) {
 								if(moveSupplier){
-									nodeService.moveNode(supplierNodeRef, userHome, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
+									repoService.moveNode(supplierNodeRef, userHome);
 									permissionService.setInheritParentPermissions(supplierNodeRef, true);
 								} else {
 									permissionService.setPermission(supplierNodeRef
@@ -163,7 +169,7 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 										nodeService.deleteNode(deliverable.getContent());
 										deliverable.setContent(existingNodeWithSameName);
 									} else{
-										nodeService.moveNode(deliverable.getContent(), entityNodeRef.getNodeRef(), ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
+										repoService.moveNode(deliverable.getContent(), entityNodeRef.getNodeRef());
 									}
 								}
 

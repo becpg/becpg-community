@@ -57,7 +57,7 @@ function removeForbiddenChar(value) {
 	return value.replace(/[|"<>.*?:+\/]/g, "").replace(/ -/g, "");
 }
 
-function classifyProduct(productNode, folderNode, propHierarchy) {
+function classifyByHierarchy(productNode, folderNode, propHierarchy) {
 	if (folderNode != null) {
 		var action = actions.create("classify-by-hierarchy");
 		action.parameters["destination-folder"] = folderNode;
@@ -76,22 +76,6 @@ function isInSite(productNode, siteId) {
 	}
 }
 
-
-function removeOwner(document) {
-	// remove owner permission
-	if (document.owner == person.properties.userName) {
-		document.setOwner("");
-	}
-}
-
-function renameProductAsCopy(document, folderNode) {
-	var name = document.properties["cm:name"];
-	while (folderNode.childByNamePath(name) != null) {
-		name = "Copie de " + name;
-	}
-	document.properties["cm:name"] = name;
-	document.save();
-}
 
 function isInFolder(productNode, folderNode) {
 	var i = 0;
@@ -149,25 +133,30 @@ const ARCHIVED_SITE_ID = "archived";
 
 function main() {
 
-	// TODO Clients fournisseurs OM Cdc Microbio
-	if (!document.hasAspect("bcpg:entityTplAspect") && document.isSubType("bcpg:product") && !document.hasAspect("cm:workingcopy")) {
+	
+	if (!document.hasAspect("bcpg:entityTplAspect") && !document.hasAspect("cm:workingcopy")) {
 
-		var productState = document.properties["bcpg:productState"];
-
-		if (productState == "Valid") {
-			if (!isInSite(document, VALID_SITE_ID)) {
-				classifyProduct(document, getDocumentLibraryNodeRef(VALID_SITE_ID));
+		if( document.isSubType("bcpg:product")){
+			var productState = document.properties["bcpg:productState"];
+	
+			if (productState == "Valid") {
+				if (!isInSite(document, VALID_SITE_ID)) {
+					classifyByHierarchy(document, getDocumentLibraryNodeRef(VALID_SITE_ID));
+				}
+			} else if (productState == "Simulation" || productState == "ToValidate") {
+				if (isInSite(document, VALID_SITE_ID) || isInSite(document, ARCHIVED_SITE_ID)) {
+					bcpg.moveAndRename(document, getDocumentLibraryNodeRef(SIMULATION_SITE_ID));
+				}
+			} else if (productState == "Archived") {
+				if (!isInSite(document, ARCHIVED_SITE_ID)) {
+					
+					classifyByHierarchy(document, getDocumentLibraryNodeRef(ARCHIVED_SITE_ID));
+				}
 			}
-		} else if (productState == "Simulation" || productState == "ToValidate") {
-			if (isInSite(document, VALID_SITE_ID) || isInSite(document, ARCHIVED_SITE_ID)) {
-				bcpg.moveAndRename(document, getDocumentLibraryNodeRef(SIMULATION_SITE_ID));
-			}
-		} else if (productState == "Archived") {
-			if (!isInSite(document, ARCHIVED_SITE_ID)) {
-				
-				classifyProduct(document, getDocumentLibraryNodeRef(ARCHIVED_SITE_ID));
-			}
-		}
+			
+			// TODO Clients fournisseurs OM Cdc Microbio
+			
+		} 
 
 		// Uncomment and modify to get automatic name base on title
 		// rename(document);

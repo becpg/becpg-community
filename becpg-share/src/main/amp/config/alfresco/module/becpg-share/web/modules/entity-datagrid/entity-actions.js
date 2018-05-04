@@ -313,8 +313,10 @@
 			      url : url,
 			      successCallback : {
 			         fn : function EntityDataGrid_onActionUp_refreshSuccess(response) {
+			        	 me.queryExecutionId = null;
 				         me._updateDataGrid.call(me, {
 					         page : me.currentPage
+					         
 				         });
 			         },
 			         scope : this
