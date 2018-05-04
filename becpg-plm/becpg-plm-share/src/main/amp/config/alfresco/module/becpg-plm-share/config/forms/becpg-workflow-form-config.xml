@@ -380,9 +380,8 @@
 					<show id="bpm:priority" />
 					<show id="bpm:dueDate" />
 					<show id="packageItems" />
-					<show id="bcpgwf:reviewQualityApproval"/>
 					<show id="bcpgwf:reviewQualityComment"/>
-					<show id="transitions" />
+					<show id="bcpgwf:reviewQualityApproval"/>
 				</field-visibility>
 				<appearance>
 					<set id="" appearance="title" label-id="workflow.set.task.info" />
@@ -412,16 +411,13 @@
 						</control>
 					</field>
 					<field id="packageItems" set="items" />
-					<field id="bcpgwf:reviewQualityApproval" set="response" mandatory="true">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="insertBlank">true</control-param>
-						</control>
-					</field>
 					<field id="bcpgwf:reviewQualityComment" label-id="workflow.field.comment"
 						set="response">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
-					<field id="transitions" set="response" />
+					<field id="bcpgwf:reviewQualityApproval" label-id="workflow.field.outcome" set="response">
+                  <control template="/org/alfresco/components/form/controls/workflow/activiti-transitions.ftl" />
+               </field>
 				</appearance>
 			</form>
 		</forms>
@@ -436,9 +432,8 @@
 					<show id="bpm:priority" />
 					<show id="bpm:dueDate" />
 					<show id="packageItems" />
-					<show id="bcpgwf:reviewProductionApproval"/>
 					<show id="bcpgwf:reviewProductionComment"/>			
-					<show id="transitions" />
+					<show id="bcpgwf:reviewProductionApproval"/>
 				</field-visibility>
 				<appearance>
 					<set id="" appearance="title" label-id="workflow.set.task.info" />
@@ -468,16 +463,13 @@
 						</control>
 					</field>
 					<field id="packageItems" set="items" />
-					<field id="bcpgwf:reviewProductionApproval" set="response" mandatory="true" >
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="insertBlank">true</control-param>
-						</control>
-					</field>
 					<field id="bcpgwf:reviewProductionComment" label-id="workflow.field.comment"
 						set="response">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
-					<field id="transitions" set="response" />
+					<field id="bcpgwf:reviewProductionApproval" label-id="workflow.field.outcome" set="response">
+                  <control template="/org/alfresco/components/form/controls/workflow/activiti-transitions.ftl" />
+               </field>
 				</appearance>
 			</form>
 		</forms>
@@ -492,9 +484,8 @@
 					<show id="bpm:priority" />
 					<show id="bpm:dueDate" />
 					<show id="packageItems" />
-					<show id="bcpgwf:reviewRDApproval"/>
 					<show id="bcpgwf:reviewRDComment"/>			
-					<show id="transitions" />
+					<show id="bcpgwf:reviewRDApproval"/>
 				</field-visibility>
 				<appearance>
 					<set id="" appearance="title" label-id="workflow.set.task.info" />
@@ -524,16 +515,13 @@
 						</control>
 					</field>
 					<field id="packageItems" set="items" />
-					<field id="bcpgwf:reviewRDApproval" set="response" mandatory="true" >
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="insertBlank">true</control-param>
-						</control>
-					</field>
 					<field id="bcpgwf:reviewRDComment" label-id="workflow.field.comment"
 						set="response">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
-					<field id="transitions" set="response" />
+					<field id="bcpgwf:reviewRDApproval" label-id="workflow.field.outcome" set="response">
+                  <control template="/org/alfresco/components/form/controls/workflow/activiti-transitions.ftl" />
+               </field>
 				</appearance>
 			</form>
 		</forms>
@@ -548,9 +536,8 @@
 					<show id="bpm:priority" />
 					<show id="bpm:dueDate" />			
 					<show id="packageItems" />
-					<show id="bcpgwf:reviewPackagingApproval"/>
 					<show id="bcpgwf:reviewPackagingComment"/>			
-					<show id="transitions" />
+					<show id="bcpgwf:reviewPackagingApproval"/>
 				</field-visibility>
 				<appearance>
 					<set id="" appearance="title" label-id="workflow.set.task.info" />
@@ -580,16 +567,13 @@
 						</control>
 					</field>
 					<field id="packageItems" set="items" />
-					<field id="bcpgwf:reviewPackagingApproval" set="response" mandatory="true" >
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="insertBlank">true</control-param>
-						</control>
-					</field>
 					<field id="bcpgwf:reviewPackagingComment" label-id="workflow.field.comment"
 						set="response">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
-					<field id="transitions" set="response" />
+					<field id="bcpgwf:reviewPackagingApproval" label-id="workflow.field.outcome" set="response">
+                  <control template="/org/alfresco/components/form/controls/workflow/activiti-transitions.ftl" />
+               </field>
 				</appearance>
 			</form>
 		</forms>
@@ -604,9 +588,8 @@
 					<show id="bpm:priority" />
 					<show id="bpm:dueDate" />		
 					<show id="packageItems" />
-					<show id="bcpgwf:reviewCallerApproval"/>
 					<show id="bcpgwf:reviewCallerComment"/>			
-					<show id="transitions" />
+					<show id="bcpgwf:reviewCallerApproval"/>
 				</field-visibility>
 				<appearance>
 					<set id="" appearance="title" label-id="workflow.set.task.info" />
@@ -636,16 +619,13 @@
 						</control>
 					</field>
 					<field id="packageItems" set="items" />
-					<field id="bcpgwf:reviewCallerApproval" set="response" mandatory="true" >
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="insertBlank">true</control-param>
-						</control>
-					</field>
 					<field id="bcpgwf:reviewCallerComment" label-id="workflow.field.comment"
 						set="response">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
-					<field id="transitions" set="response" />
+					<field id="bcpgwf:reviewCallerApproval" label-id="workflow.field.outcome" set="response">
+                  <control template="/org/alfresco/components/form/controls/workflow/activiti-transitions.ftl" />
+               </field>
 				</appearance>
 			</form>
 		</forms>
@@ -660,9 +640,8 @@
 					<show id="bpm:priority" />
 					<show id="bpm:dueDate" />
 					<show id="packageItems" />
-					<show id="bcpgwf:reviewCaller2Approval"/>
 					<show id="bcpgwf:reviewCaller2Comment"/>			
-					<show id="transitions" />
+					<show id="bcpgwf:reviewCaller2Approval" />
 				</field-visibility>
 				<appearance>
 					<set id="" appearance="title" label-id="workflow.set.task.info" />
@@ -692,16 +671,13 @@
 						</control>
 					</field>
 					<field id="packageItems" set="items" />
-					<field id="bcpgwf:reviewCaller2Approval" set="response" mandatory="true" >
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="insertBlank">true</control-param>
-						</control>
-					</field>
 					<field id="bcpgwf:reviewCaller2Comment" label-id="workflow.field.comment"
 						set="response">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
-					<field id="transitions" set="response" />
+					<field id="bcpgwf:reviewCaller2Approval" label-id="workflow.field.outcome" set="response">
+                  <control template="/org/alfresco/components/form/controls/workflow/activiti-transitions.ftl" />
+               </field>
 				</appearance>
 			</form>
 		</forms>
@@ -855,7 +831,7 @@
 					<show id="bcpgwf:reviewCaller2Comment" />
 					<show id="packageItems" />
 					<show id="bcpgwf:pvTransmitterComment" />
-					<show id="transitions" />
+					<show id="bcpgwf:rejectProductTaskOutcome" />
 				</field-visibility>
 				<appearance>
 					<set id="" appearance="title" label-id="workflow.set.task.info" />
@@ -944,7 +920,9 @@
 					<field id="bcpgwf:pvTransmitterComment" set="response">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
-					<field id="transitions" set="response" />
+					<field id="bcpgwf:rejectProductTaskOutcome" label-id="workflow.field.outcome" set="response">
+                  <control template="/org/alfresco/components/form/controls/workflow/activiti-transitions.ftl" />
+               </field>
 				</appearance>
 			</form>
 		</forms>

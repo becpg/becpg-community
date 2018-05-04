@@ -244,6 +244,7 @@ public interface PLMModel {
 
 	// client
 	QName TYPE_CLIENT = QName.createQName(BeCPGModel.BECPG_URI, "client");
+	QName PROP_CLIENT_STATE = QName.createQName(BeCPGModel.BECPG_URI, "clientState");
 
 	// product aspect
 	QName ASPECT_PRODUCT = QName.createQName(BeCPGModel.BECPG_URI, "productAspect");
