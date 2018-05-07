@@ -52,7 +52,14 @@ public class LabelingRuleAspectPatch extends AbstractBeCPGPatch {
 	@Override
 	protected String applyInternal() throws Exception {
 		
-
+	   doForType(PLMModel.TYPE_INGLABELINGLIST);
+	   doForType(PLMModel.TYPE_LABELINGRULELIST);
+	   
+		return I18NUtil.getMessage(MSG_SUCCESS);
+	   
+	}
+		
+	protected void doForType(QName typeQname) throws Exception {
 		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
 			final List<NodeRef> result = new ArrayList<>();
 
@@ -60,7 +67,7 @@ public class LabelingRuleAspectPatch extends AbstractBeCPGPatch {
 
 			long minSearchNodeId = 0;
 
-			final Pair<Long, QName> val = getQnameDAO().getQName(PLMModel.TYPE_LABELINGRULELIST);
+			final Pair<Long, QName> val = getQnameDAO().getQName(typeQname);
 
 
 			public int getTotalEstimatedWorkSize() {
@@ -118,7 +125,6 @@ public class LabelingRuleAspectPatch extends AbstractBeCPGPatch {
 
 		};
 		batchProcessor.process(worker, true);
-		return I18NUtil.getMessage(MSG_SUCCESS);
 
 	}
 
