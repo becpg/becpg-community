@@ -196,7 +196,9 @@
 		<property name="namespaceService" ref="NamespaceService" />
 		<property name="scriptService" ref="scriptService"/>
 		<property name="repository" ref="repositoryHelper" />
-		<property name="searchService" ref="searchService"/>		
+		<property name="searchService" ref="searchService" />
+		<property name="contentService" ref="contentService"/>
+		<property name="authorityService" ref="authorityService"/>	
 	</bean>
 
 	<alias name="webscript.fr.becpg.workflow.startProcess.get" alias="webscript.fr.becpg.workflow.startProcess.post" />
