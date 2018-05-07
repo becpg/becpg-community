@@ -38,8 +38,6 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 	public static final String MESSAGE_NON_VALIDATED_STATE = "message.formulate.nonValidatedState";
 	public static final String MESSAGE_OR = "message.formulate.or";
 	public static final String MESSAGE_NON_UNIQUE_FIELD = "message.formulate.non-unique-field";
-	public static final String CATALOGS_PATH = "/app:company_home/cm:System/cm:PropertyCatalogs";
-	public static final String CATALOG_DEFS = "CATALOG_DEFS";
 	private AlfrescoRepository<ProductData> alfrescoRepository;
 
 	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
