@@ -528,7 +528,7 @@
                                        value = oData[0].displayValue;
                                        break;
                                    }
-                                   if (repeating) {
+                                   if (repeating && value != null) {
                                        value = value.split(",");
                                    }
                                }

@@ -76,6 +76,12 @@ public class ReportModel {
 
 	public static final QName ASPECT_REPORT_LOCALES =QName.createQName(REPORT_URI,"reportLocalesAspect");
 	
+	//reportKind
+	public static final QName ASPECT_REPORT_KIND =QName.createQName(REPORT_URI,"reportKindAspect");
+	
+	public static final QName PROP_REPORT_KINDS =  QName.createQName(REPORT_URI,
+			"reportKinds");
+	
 	// reportTpls
 	public static final QName ASPECT_REPORT_TEMPLATES = QName.createQName(REPORT_URI,
 			"reportTplsAspect");
@@ -83,8 +89,9 @@ public class ReportModel {
 			"reportTpls");
 
 	public static final QName PROP_REPORT_IS_DEFAULT =  QName.createQName(REPORT_URI,
-	"reportIsDefault");;
+	"reportIsDefault");
 
+	
 	
 	
 }

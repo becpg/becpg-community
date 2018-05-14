@@ -215,6 +215,7 @@
 				<aspect name="rep:reportTplsAspect" />
 				<aspect name="rep:reportLocalesAspect" />
 				<aspect name="rep:reportParametersAspect" />
+				<aspect name="rep:reportKindAspect" />
 				<aspect name="bp:cataloguable" />
 				<aspect name="bcpg:entityTplAspect" />
 				<aspect name="bcpg:entityBranchAspect" />
