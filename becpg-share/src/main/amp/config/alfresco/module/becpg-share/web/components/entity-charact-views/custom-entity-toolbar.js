@@ -75,7 +75,7 @@
     									var value = column.name.replace(":", "_");
     									var checked = column.checked ? "checked" : "";
     									
-    									if (propLabel!="hidden" && hiddenColumnsInPopup.indexOf(value) < 0) {
+    									if (propLabel!="hidden" && propLabel && hiddenColumnsInPopup.indexOf(value) < 0) {
     										html += '<li class=""><input id="propSelected-' + i + '" type="checkbox" name="propChecked" value="'+ value +'" '+ checked + '/>' 
     												+ '<label for="propSelected-' + i + '" >' + propLabel + '</label></li>';
     									}
