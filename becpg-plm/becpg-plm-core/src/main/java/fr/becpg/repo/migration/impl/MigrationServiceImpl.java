@@ -343,7 +343,7 @@ public class MigrationServiceImpl implements MigrationService {
 					  break;
 				  }
 				  
-				  if(version.getVersionLabel()!="1.0" ) {
+				  if(!RepoConsts.INITIAL_VERSION.equals(version.getVersionLabel()) ) {
 					if(entityVersionService.getEntityVersion(version)==null) {
 						logger.info("No version for: "+version.getVersionLabel()+" "+nodeService.getProperty(versionAssoc.getChildRef(), BeCPGModel.PROP_CODE));
 					}
