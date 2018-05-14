@@ -51,8 +51,6 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * 
  * @author querephi
  */
-//TODO Merged with designer
-@Deprecated 
 public class MigrateRepositoryWebScript extends AbstractWebScript {	
 	
 	private static final String PARAM_ACTION = "action";
@@ -81,6 +79,8 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 
 	private static final String ACTION_ADD_NUT_FACTS_METHODS = "addNutFactsMethods";
 	private static final String ACTION_CREATE_GEN_RAWMATERIAL = "createGenRawMaterial";
+	
+	private static final String ACTION_CLEAN_VERSIONS = "cleanVersions";
 	
 	/** The logger. */
 	private static final Log logger = LogFactory.getLog(MigrateRepositoryWebScript.class);
@@ -155,7 +155,10 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 
 		String action = templateArgs.get(PARAM_ACTION);		
 
-		if (ACTION_DELETE_MODEL.equals(action)) {
+		if (ACTION_CLEAN_VERSIONS.equals(action)) {
+		
+			migrationService.cleanOrphanVersion();
+		} else if (ACTION_DELETE_MODEL.equals(action)) {
 			NodeRef modelNodeRef = new NodeRef(req.getParameter(PARAM_NODEREF));
 			deleteModel(modelNodeRef);
 		} else if (ACTION_RENAME_USER.equals(action)) {
