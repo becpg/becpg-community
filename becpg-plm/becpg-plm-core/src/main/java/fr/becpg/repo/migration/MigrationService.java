@@ -35,4 +35,5 @@ public interface MigrationService {
 	//Non MT
 	void addMandatoryAspect(QName type, QName aspect);
 	void migrateAssociation(QName classQName, QName sourceAssoc, QName targetAssoc);
+	void cleanOrphanVersion();
 }

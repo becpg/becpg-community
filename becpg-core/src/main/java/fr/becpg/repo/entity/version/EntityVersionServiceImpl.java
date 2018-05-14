@@ -490,9 +490,11 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	@Override
 	public NodeRef getVersionHistoryNodeRef(NodeRef nodeRef) {
 		NodeRef vhNodeRef = null;
-		NodeRef entitiesHistoryFolder = getEntitiesHistoryFolder();
-		if (entitiesHistoryFolder != null) {
-			vhNodeRef = nodeService.getChildByName(entitiesHistoryFolder, ContentModel.ASSOC_CONTAINS, nodeRef.getId());
+		if(nodeRef !=null) {
+			NodeRef entitiesHistoryFolder = getEntitiesHistoryFolder();
+			if (entitiesHistoryFolder != null) {
+				vhNodeRef = nodeService.getChildByName(entitiesHistoryFolder, ContentModel.ASSOC_CONTAINS, nodeRef.getId());
+			}
 		}
 
 		return vhNodeRef;
