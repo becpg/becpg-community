@@ -319,6 +319,7 @@ public class MigrationServiceImpl implements MigrationService {
 		List<ChildAssociationRef> childAssocs = dbNodeService.getChildAssocs(rootNode, Version2Model.CHILD_QNAME_VERSION_HISTORIES,
 				RegexQNamePattern.MATCH_ALL);
 		
+		
 		for (ChildAssociationRef childAssoc : childAssocs) {
 			String name = (String) dbNodeService.getProperty(childAssoc.getChildRef(), ContentModel.PROP_NAME);
 			NodeRef nodeToTest = new NodeRef(StoreRef.PROTOCOL_WORKSPACE, "SpacesStore", name);
@@ -328,7 +329,11 @@ public class MigrationServiceImpl implements MigrationService {
 						RegexQNamePattern.MATCH_ALL);
 				for (ChildAssociationRef versionAssoc : versionAssocs) {
 					if(dictionaryService.isSubClass(nodeService.getType(versionAssoc.getChildRef()), BeCPGModel.TYPE_ENTITY_V2)) {
-					logger.info("version  doesn't exist :"+nodeService.getProperty(versionAssoc.getChildRef(), BeCPGModel.PROP_CODE) + " "+ nodeToTest+ " for :"+name);
+						logger.info("version  doesn't exist :"+nodeService.getProperty(versionAssoc.getChildRef(), BeCPGModel.PROP_CODE) + " "+ nodeToTest+ " for :"+name);
+						if(BeCPGQueryBuilder.createQuery().andPropEquals(BeCPGModel.PROP_CODE,(String) nodeService.getProperty(versionAssoc.getChildRef(), BeCPGModel.PROP_CODE)).singleValue() == null) {
+						 logger.info("Removing with double Check");
+						 nodeService.deleteNode(childAssoc.getChildRef());
+						}
 					}
 					break;
 				}
