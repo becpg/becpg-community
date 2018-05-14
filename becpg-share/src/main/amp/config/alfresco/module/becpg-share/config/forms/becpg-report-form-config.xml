@@ -36,6 +36,8 @@
 					
 					<show id="rep:reportLocales" force="true"/>
 					
+					<show id="rep:reportKinds" />
+					
 					<show id="rep:reportTextParameters" force="true" />
 					
 					<!-- auditable -->

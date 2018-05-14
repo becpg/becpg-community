@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -33,10 +34,13 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.Resource;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
+import org.alfresco.repo.security.authority.UnknownAuthorityException;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ChildAssociationDefinition;
@@ -46,6 +50,7 @@ import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.preference.PreferenceService;
 import org.alfresco.service.cmr.repository.AssociationRef;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.MLText;
@@ -54,12 +59,15 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AccessPermission;
 import org.alfresco.service.cmr.security.AccessStatus;
+import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.dom4j.Attribute;
+import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -69,15 +77,19 @@ import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
+import fr.becpg.model.SystemGroup;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.activity.data.ActivityEvent;
 import fr.becpg.repo.activity.data.ActivityType;
+import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.entity.EntitySystemService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
 import fr.becpg.repo.report.entity.EntityReportData;
 import fr.becpg.repo.report.entity.EntityReportExtractorPlugin;
@@ -88,6 +100,7 @@ import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
 import fr.becpg.repo.repository.L2CacheSupport;
+import fr.becpg.repo.security.SecurityService;
 import fr.becpg.report.client.ReportException;
 import fr.becpg.report.client.ReportFormat;
 import fr.becpg.report.client.ReportParams;
@@ -99,6 +112,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	private static final String PREF_REPORT_PREFIX = "fr.becpg.repo.report.";
 	private static final String PREF_REPORT_SUFFIX = ".view";
+	private static final String REPORT_PARAM_SEPARATOR = "#";
+	private static final String REPORT_LIST_CACHE_KEY = "REPORT_KIND_CACHE_KEY";
 
 	private static final Log logger = LogFactory.getLog(EntityReportServiceImpl.class);
 
@@ -159,6 +174,16 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	@Autowired
 	private EntityListDAO entityListDAO;
+	
+	@Resource
+	protected RepoService repoService;
+	
+	@Autowired
+	protected EntitySystemService entitySystemService;
+	
+	@Autowired
+	private BeCPGCacheService beCPGCacheService;
+
 
 	@Override
 	public void generateReports(final NodeRef entityNodeRef) {
@@ -195,6 +220,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 								}
 
 								Map<String, String> preferences = getMergedPreferences(tplsNodeRef);
+								
 
 								List<Locale> entityReportLocales = getEntityReportLocales(entityNodeRef);
 
@@ -203,6 +229,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 									I18NUtil.setLocale(locale);
 
 									EntityReportData reportData = retrieveExtractor(entityNodeRef).extract(entityNodeRef, preferences);
+									
 
 									if (reportData.getXmlDataSource() == null) {
 										throw new IllegalArgumentException("nodeElt is null");
@@ -254,15 +281,15 @@ public class EntityReportServiceImpl implements EntityReportService {
 																	.getTargetAssocs(tplNodeRef, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES));
 															params.put(BeCPGReportEngine.PARAM_DOCUMENT_NODEREF, documentNodeRef);
 															params.put(BeCPGReportEngine.PARAM_ENTITY_NODEREF, entityNodeRef);
-																														
-
+															
 															logger.debug("beCPGReportEngine createReport: " + entityNodeRef + " for document "
 																	+ documentName + " (" + documentNodeRef + ")");
-
+															
 															beCPGReportEngine.createReport(tplNodeRef,
-																	new ByteArrayInputStream(reportData.getXmlDataSource().asXML().getBytes()),
+																	new ByteArrayInputStream(filterByReportKind(reportData.getXmlDataSource(), tplNodeRef).asXML().getBytes()),
 																	writer.getContentOutputStream(), params);
-
+															
+															
 															I18NUtil.setLocale(Locale.getDefault());
 
 															nodeService.setProperty(documentNodeRef, ContentModel.PROP_MODIFIED, generatedDate);
@@ -331,6 +358,162 @@ public class EntityReportServiceImpl implements EntityReportService {
 		}, false, true);
 	}
 
+	@SuppressWarnings("unchecked")
+	private Element filterByReportKind(Element dataXml, NodeRef tplNodeRef){
+		
+		StopWatch stopWatch = null;
+		if (logger.isDebugEnabled()) {
+			stopWatch = new StopWatch();
+			stopWatch.start();
+		}
+		
+		String reportKindCode = "", reportKindValue = "";
+		if(tplNodeRef != null){
+			List<String> reportKindProp = (List<String>) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_KINDS);
+			if(reportKindProp != null && !reportKindProp.isEmpty()){
+				reportKindCode = reportKindProp.get(0);
+			}
+		}
+		
+		 
+		NodeRef reportKindFolderNodeRef = getFromCacheListFolderNodeRef(RepoConsts.PATH_REPORT_KINDLIST);
+		
+		if(reportKindFolderNodeRef != null && !reportKindCode.isEmpty()){
+			List<ChildAssociationRef> assocList = nodeService.getChildAssocsByPropertyValue(reportKindFolderNodeRef, BeCPGModel.PROP_LV_CODE, reportKindCode);
+			if(assocList != null && !assocList.isEmpty()){
+				reportKindValue = (String) nodeService.getProperty(assocList.get(0).getChildRef(), BeCPGModel.PROP_LV_VALUE);
+			} else {
+				reportKindValue = reportKindCode; 
+			}
+		}
+		// Filter XML report by reportKind
+		String[] entityParams = null;
+		for(Iterator<Element> entityIterator = dataXml.elementIterator(); entityIterator.hasNext();){
+			Element entityEl = entityIterator.next();
+			if(entityEl.getName().equals("dataLists")){
+				
+				for(Iterator<Element> datalistsIterator = entityEl.elementIterator(); datalistsIterator.hasNext();){
+					Element dlEl = datalistsIterator.next();
+					boolean hasReportKindAspect = false;
+					
+					for(Iterator<Element> elIterator = dlEl.elementIterator(); elIterator.hasNext();){
+						Element itemEl = elIterator.next();
+						String[] rkValues = itemEl.valueOf("@" + ReportModel.PROP_REPORT_KINDS.getLocalName()).split("\\s*,\\s*");
+						
+						if(Arrays.asList(rkValues).contains(reportKindValue)){
+							hasReportKindAspect = true;
+							break;
+						}
+					}
+					
+					if(hasReportKindAspect){
+						for(Iterator<Element> elIterator = dlEl.elementIterator(); elIterator.hasNext();){
+							Element itemEl = elIterator.next();
+							String [] rkValues = itemEl.valueOf("@" + ReportModel.PROP_REPORT_KINDS.getLocalName()).split("\\s*,\\s*");
+							if(!Arrays.asList(rkValues).contains(reportKindValue) || rkValues ==  null){
+								dlEl.remove(itemEl);
+							}
+						}
+					} 
+				}
+			}
+			
+			// get report parameters 
+			if(entityEl.getName().equals(ReportModel.PROP_REPORT_PARAMETERS.getLocalName())){
+				entityParams = entityEl.getStringValue().split("\\s*,\\s*");
+			}
+		}
+		 
+		// Filter XML report by parameters 
+		NodeRef reportParamsFolderNodRef = getFromCacheListFolderNodeRef(RepoConsts.PATH_REPORT_PARAMS);
+		Map<String, String> valideCode = new HashMap<>();
+		List<ChildAssociationRef> assocList = nodeService.getChildAssocs(reportParamsFolderNodRef);
+		assocList.forEach(val -> {
+			String paramCode = (String) nodeService.getProperty(val.getChildRef(), BeCPGModel.PROP_LV_CODE);
+			String paramValue = (String) nodeService.getProperty(val.getChildRef(), BeCPGModel.PROP_LV_VALUE);
+			if(isValideReportParams(paramCode)){
+				valideCode.put(paramValue, paramCode);
+			}
+			
+		});
+		
+		dataXml = entityParams != null ? filterByParams(dataXml, getFilteredParams(valideCode, Arrays.asList(entityParams), reportKindCode)) : dataXml;
+		
+		if (logger.isDebugEnabled()) {
+			stopWatch.stop();
+			logger.debug("Filter XML takes : " + stopWatch.getTotalTimeSeconds() + "s");
+		}
+		
+		return dataXml;
+		 
+	}
+	
+	public NodeRef getFromCacheListFolderNodeRef(String listPath) {
+		return beCPGCacheService.getFromCache(EntityReportServiceImpl.class.getName(), REPORT_LIST_CACHE_KEY + listPath , () -> {
+			NodeRef systemFolderNodeRef = repoService.getFolderByPath(RepoConsts.PATH_SYSTEM);
+			NodeRef listsFolder = entitySystemService.getSystemEntity(systemFolderNodeRef, RepoConsts.PATH_LISTS);
+			return entitySystemService.getSystemEntityDataList(listsFolder, listPath);
+		});
+	}
+	
+	@SuppressWarnings("unchecked")
+	private Element filterByParams(Element entity, List<String> filteredParams){
+		
+		for(Iterator<Element> entityIter = entity.elementIterator(); entityIter.hasNext();){
+			 Element itemEl = entityIter.next();
+			 
+			 String prefixValue = itemEl.valueOf("@" + "prefix");
+			 prefixValue = prefixValue.isEmpty() ? "" : prefixValue + "_"; 
+			 
+			 if(filteredParams.contains(prefixValue + itemEl.getName())){
+				 entity.remove(itemEl);
+				 continue;
+			 }
+			 
+			 for(String paramValue : filteredParams){
+				 Attribute att = itemEl.attribute(paramValue);
+				 if(att != null){
+					 itemEl.remove(att);
+				 }
+			 }
+			 
+			 Iterator<Element> itemElIter = itemEl.elementIterator();
+			 if(itemElIter.hasNext()){
+				 itemEl = filterByParams(itemEl, filteredParams);
+			 }
+			 
+		}
+		
+		return entity;
+	}
+	
+	private List<String> getFilteredParams(Map<String, String> params, List<String> paramList, String reportKind){
+		List<String> ret = new ArrayList<>();
+		
+		params.forEach((val, code) -> {
+			String[] codes = code.split(REPORT_PARAM_SEPARATOR);
+			if(codes.length == 3 && !codes[1].equals(reportKind)){
+				return;
+			}
+			if ((!paramList.contains(val) && code.startsWith("show")) || 
+					(paramList.contains(val) && code.startsWith("hide"))){ 
+				
+				ret.add(codes[codes.length-1]);
+			}
+		});
+		
+		return ret;	   
+	}
+	
+	private boolean isValideReportParams(String codeParams){
+		String[] strParams = codeParams.split(REPORT_PARAM_SEPARATOR);
+		if((strParams[0].equals("hide") || strParams[0].equals("show")) && 
+				(strParams.length == 2 || strParams.length == 3)){
+			return true;
+		}
+		return false;
+	}
+	
 	private Map<String, String> getMergedPreferences(List<NodeRef> tplsNodeRef) {
 
 		Map<String, String> prefs = new HashMap<>();
@@ -587,7 +770,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 											+ documentNodeRef + ")");
 
 									beCPGReportEngine.createReport(tplNodeRef,
-											new ByteArrayInputStream(reportData.getXmlDataSource().asXML().getBytes()),
+											new ByteArrayInputStream(filterByReportKind(reportData.getXmlDataSource(), tplNodeRef).asXML().getBytes()),
 											writer.getContentOutputStream(), params);
 
 									I18NUtil.setLocale(Locale.getDefault());
@@ -674,7 +857,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 			params.put(ReportParams.PARAM_ASSOCIATED_TPL_FILES,
 					associationService.getTargetAssocs(templateNodeRef, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES));
 
-			beCPGReportEngine.createReport(templateNodeRef, new ByteArrayInputStream(reportData.getXmlDataSource().asXML().getBytes()), outputStream,
+			beCPGReportEngine.createReport(templateNodeRef, new ByteArrayInputStream(filterByReportKind(reportData.getXmlDataSource(), templateNodeRef).asXML().getBytes()), outputStream,
 					params);
 
 		} catch (ReportException e) {
@@ -710,7 +893,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 			reportData.setParameters(reportParameters);
 
-			return reportData.getXmlDataSource().asXML();
+			return filterByReportKind(reportData.getXmlDataSource(), null).asXML();
 		} finally {
 			if (logger.isDebugEnabled()) {
 				watch.stop();
