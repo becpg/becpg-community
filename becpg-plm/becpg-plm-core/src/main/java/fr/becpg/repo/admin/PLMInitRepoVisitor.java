@@ -31,7 +31,9 @@ import org.alfresco.service.cmr.action.CompositeAction;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.ContentWriter;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.rule.Rule;
 import org.alfresco.service.cmr.rule.RuleType;
 import org.alfresco.service.cmr.security.AuthorityType;
@@ -45,6 +47,7 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
@@ -69,6 +72,7 @@ import fr.becpg.repo.admin.impl.AbstractInitVisitorImpl;
 import fr.becpg.repo.entity.EntitySystemService;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.ContentHelper;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.hierarchy.HierarchyHelper;
 import fr.becpg.repo.mail.BeCPGMailService;
@@ -118,7 +122,19 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	private static final String EXPORT_NC_REPORT_XMLFILE_PATH = "beCPG/birt/exportsearch/nonconformity/ExportSearchQuery.xml";
 
 	private static final String EXPORT_RAWMATERIAL_INGLIST_XLSX_PATH = "beCPG/birt/exportsearch/product/ExportRawMaterialIngList.xlsx";
-
+	final Locale[] locales =  {Locale.FRENCH, Locale.ENGLISH};
+	private static final Map<String, String> reportKindCodes = new HashMap<>();
+	private static final String NONE_KIND_REPORT = "none";
+	
+	static {
+		reportKindCodes.put(PRODUCT_REPORT_CLIENT_PATH, "CustomerSheet");
+		reportKindCodes.put(PRODUCT_REPORT_RAWMATERIAL_PATH, "RawMaterialSheet");
+		reportKindCodes.put(PRODUCT_REPORT_PRODUCTION_PATH, "ProductionSheet");
+		reportKindCodes.put(PRODUCT_REPORT_SUPPLIER_NAME, "SupplierSheet");
+		reportKindCodes.put(NONE_KIND_REPORT, "None");
+		
+	}
+	
 	// TODO
 	// private static final String EXPORT_SUPPLIER_XLSX_PATH =
 	// "beCPG/birt/exportsearch/product/ExportSuppliers.xlsx";
@@ -170,7 +186,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	private EntityTplService entityTplService;
 
 	@Autowired
-	private BeCPGMailService beCPGMailService;
+	private BeCPGMailService beCPGMailService;;
 
 	@Autowired
 	private EntitySystemService entitySystemService;
@@ -181,6 +197,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	@Value("${beCPG.formulation.score.mandatoryFields}")
 	private String defaultCatalogDefinition;
 
+	@Autowired
+	@Qualifier("mlAwareNodeService")
+	protected NodeService mlNodeService;
 	/**
 	 * Initialize the repository with system folders.
 	 *
@@ -207,7 +226,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 		// Dynamic constraints
 		visitSystemListValuesEntity(systemNodeRef, RepoConsts.PATH_LISTS);
-
+		
+		
 		// Hierarchy
 		visitSystemHierachiesEntity(systemNodeRef, RepoConsts.PATH_PRODUCT_HIERARCHY);
 
@@ -756,6 +776,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_PM_PRINT_VANISHS, BeCPGModel.TYPE_LIST_VALUE);
 
 		entityLists.put(RepoConsts.PATH_REPORT_PARAMS, BeCPGModel.TYPE_LIST_VALUE);
+		
+		entityLists.put(RepoConsts.PATH_REPORT_KINDLIST, BeCPGModel.TYPE_LIST_VALUE);
 
 		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
 	}
@@ -962,6 +984,16 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_DOCUMENTS);
 	}
 
+	private void visitReportKindList(Map<String, Map<QName, Serializable>> reportKindListDefaultValues){
+		NodeRef systemFolderNodeRef = repoService.getFolderByPath(RepoConsts.PATH_SYSTEM);
+		NodeRef listsFolder = entitySystemService.getSystemEntity(systemFolderNodeRef, RepoConsts.PATH_LISTS);
+		NodeRef reportKindListFolder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_REPORT_KINDLIST);
+		reportKindListDefaultValues.forEach((key, val) -> {
+			mlNodeService.createNode(reportKindListFolder, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, BeCPGModel.TYPE_LIST_VALUE, val);
+		});
+		
+	}
+	
 	/**
 	 * Create the reports templates
 	 *
@@ -975,9 +1007,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		// product report templates
 		NodeRef productReportTplsNodeRef = visitFolder(reportsNodeRef, PlmRepoConsts.PATH_PRODUCT_REPORTTEMPLATES);
 		String productReportClientName = I18NUtil.getMessage(PRODUCT_REPORT_CLIENT_NAME, Locale.getDefault());
-		String productReportSupplierName = I18NUtil.getMessage(PRODUCT_REPORT_SUPPLIER_NAME, Locale.getDefault());
+		String productReportSupplierName = I18NUtil.getMessage(PRODUCT_REPORT_CLIENT_NAME, Locale.getDefault());
 		String productReportProductionName = I18NUtil.getMessage(PRODUCT_REPORT_PRODUCTION_NAME, Locale.getDefault());
-
+	
 		try {
 
 			QName[] productTypes = { PLMModel.TYPE_FINISHEDPRODUCT, PLMModel.TYPE_RAWMATERIAL, PLMModel.TYPE_SEMIFINISHEDPRODUCT,
@@ -985,14 +1017,48 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			String[] defaultReport = { PRODUCT_REPORT_CLIENT_PATH, PRODUCT_REPORT_RAWMATERIAL_PATH, PRODUCT_REPORT_PRODUCTION_PATH,
 					PRODUCT_REPORT_CLIENT_PATH };
 			String[] defaultReportName = { productReportClientName, productReportSupplierName, productReportProductionName, productReportClientName };
+			
 			String[] otherReport = { PRODUCT_REPORT_PRODUCTION_PATH, null, null, null };
 			String[] otherReportName = { productReportProductionName, null, null, null };
+			
 			String[] productReportResource = { PRODUCT_REPORT_DE_RESOURCE, PRODUCT_REPORT_EN_US_RESOURCE, PRODUCT_REPORT_EN_RESOURCE,
 					PRODUCT_REPORT_ES_RESOURCE, PRODUCT_REPORT_FR_RESOURCE, PRODUCT_REPORT_IT_RESOURCE, PRODUCT_REPORT_NL_RESOURCE,
 					PRODUCT_REPORT_CSS_RESOURCE, PRODUCT_REPORT_IMG_CCCCCC, PRODUCT_REPORT_IMG_TRAFFICLIGHTS_ENERGY,
 					PRODUCT_REPORT_IMG_TRAFFICLIGHTS_GREEN, PRODUCT_REPORT_IMG_TRAFFICLIGHTS_ORANGE, PRODUCT_REPORT_IMG_TRAFFICLIGHTS_RED,
 					PRODUCT_REPORT_IMG_TRAFFICLIGHTS_SERVING };
 
+			Map<String, Map<QName, Serializable>> reportKindDefaultValues = new HashMap<>();
+			Map<String ,Map<QName, Serializable>> reportKindTplAssoc = new HashMap<>();
+			List<String> defaultKindReport = new ArrayList<>(Arrays.asList(defaultReport));
+			defaultKindReport.add(NONE_KIND_REPORT);
+			
+			for (String reportKind : defaultKindReport){	
+				
+				if(reportKind == null){
+					continue;
+				}
+				
+				String reportKindCode = reportKindCodes.get(reportKind);
+
+				MLText mltValue = new MLText();
+				for( Locale locale : locales){
+					mltValue.put(MLTextHelper.getNearestLocale(locale), I18NUtil.getMessage("becpg.reportkind."+reportKindCode.toLowerCase()+".value",MLTextHelper.getNearestLocale(locale) ));	
+				}
+				// for aspect on report template
+				Map<QName, Serializable> reportKindTplProps = new HashMap<>();
+				reportKindTplProps.put(ReportModel.PROP_REPORT_KINDS, reportKindCode);
+				reportKindTplAssoc.put(reportKind, reportKindTplProps);
+				
+				//for reportKindList default values
+				Map<QName, Serializable> reportKindListProps = new HashMap<>();
+				reportKindListProps.put(BeCPGModel.PROP_LV_CODE, reportKindCode);
+				reportKindListProps.put(BeCPGModel.PROP_LV_VALUE, mltValue);
+				reportKindDefaultValues.put(reportKind, reportKindListProps);
+			}
+			
+			visitReportKindList(reportKindDefaultValues);
+			
+			
 			int i = 0;
 
 			List<NodeRef> resources = new ArrayList<>();
@@ -1000,6 +1066,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				resources.add(reportTplService.createTplRessource(productReportTplsNodeRef, element, true));
 			}
 
+			
+			
 			for (QName productType : productTypes) {
 
 				ClassDefinition classDef = dictionaryService.getClass(productType);
@@ -1012,7 +1080,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 					if ((defaultReport[i] != null) && (defaultReportName[i] != null)) {
 						NodeRef template = reportTplService.createTplRptDesign(folderNodeRef, defaultReportName[i], defaultReport[i],
 								ReportType.Document, ReportFormat.PDF, productType, true, true, false);
-
+						
+						nodeService.addAspect(template, ReportModel.ASPECT_REPORT_KIND, reportKindTplAssoc.get(defaultReport[i]));
+						
 						if (!resources.isEmpty()) {
 							for (NodeRef resource : resources) {
 								logger.debug("Associating resource: " + resource + " to template: " + template);
@@ -1027,6 +1097,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 					if ((otherReport[i] != null) && (otherReportName[i] != null)) {
 						NodeRef template = reportTplService.createTplRptDesign(folderNodeRef, otherReportName[i], otherReport[i], ReportType.Document,
 								ReportFormat.PDF, productType, true, false, false);
+						
+						nodeService.addAspect(template, ReportModel.ASPECT_REPORT_KIND, reportKindTplAssoc.get(otherReport[i]));
+						
 						if (!resources.isEmpty()) {
 							for (NodeRef resource : resources) {
 								logger.debug("Associating resource: " + resource + " to template: " + template);
@@ -1039,6 +1112,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 				i++;
 			}
+			
+			
 
 		} catch (Exception e) {
 			logger.error("Failed to create product report.", e);
