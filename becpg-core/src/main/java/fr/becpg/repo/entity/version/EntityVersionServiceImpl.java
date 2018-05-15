@@ -549,6 +549,9 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				policyBehaviourFilter.enableBehaviour();
 			}
 		}
+		
+		versionService.deleteVersionHistory(entityNodeRef);
+		
 	}
 
 	@Override
