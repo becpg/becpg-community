@@ -264,6 +264,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				try {
 					policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 					policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
+					policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_VERSIONABLE);
 
 					// version is a copy of working copy or orig for 1st
 					// version
@@ -310,6 +311,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				} finally {
 					policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
 					policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+					policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_VERSIONABLE);
 				}
 
 			});
@@ -549,9 +551,6 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				policyBehaviourFilter.enableBehaviour();
 			}
 		}
-		
-		versionService.deleteVersionHistory(entityNodeRef);
-		
 	}
 
 	@Override

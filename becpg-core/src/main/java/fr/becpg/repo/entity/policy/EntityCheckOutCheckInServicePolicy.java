@@ -62,7 +62,7 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy
 	private EntityReportAsyncGenerator entityReportAsyncGenerator;
 
 	private RuleService ruleService;
-
+	
 	public void setRuleService(RuleService ruleService) {
 		this.ruleService = ruleService;
 	}
@@ -168,7 +168,10 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy
 			// If we are permanantly deleting the node then we need to
 			// remove
 			// the associated version history
-			entityVersionService.deleteVersionHistory(childAssocRef.getChildRef());
+			if (isNodeArchived == false)
+	        {
+				entityVersionService.deleteVersionHistory(childAssocRef.getChildRef());
+	        }
 		} finally {
 			ruleService.enableRules();
 		}
