@@ -329,33 +329,15 @@ public class MigrationServiceImpl implements MigrationService {
 					if (dictionaryService.isSubClass(nodeService.getType(versionAssoc.getChildRef()), BeCPGModel.TYPE_ENTITY_V2)) {
 						logger.info("version  doesn't exist :" + nodeService.getProperty(versionAssoc.getChildRef(), BeCPGModel.PROP_CODE) + " "
 								+ nodeToTest + " for :" + name);
-							logger.info("Removing with double Check");
 							nodeService.deleteNode(childAssoc.getChildRef());
 					}
 					break;
 				}
 
-			}/* else {
-				List<ChildAssociationRef> versionAssocs = dbNodeService.getChildAssocs(childAssoc.getChildRef(), Version2Model.CHILD_QNAME_VERSIONS,
-						RegexQNamePattern.MATCH_ALL);
-				for (ChildAssociationRef versionAssoc : versionAssocs) {
-					Version version = getVersion(versionAssoc.getChildRef());
-					if (!dictionaryService.isSubClass(nodeService.getType(versionAssoc.getChildRef()), BeCPGModel.TYPE_ENTITY_V2)) {
-						break;
-					}
-
-					try {
-						if (!RepoConsts.INITIAL_VERSION.equals(version.getVersionLabel())) {
-							if (entityVersionService.getEntityVersion(version) == null) {
-								logger.info("No version for: " + version.getVersionLabel() + " "
-										+ nodeService.getProperty(versionAssoc.getChildRef(), BeCPGModel.PROP_CODE));
-							}
-						}
-					} catch (Exception e) {
-						logger.error(version, e);
-					}
-				}
-			} */
+			} else if(nodeService.hasAspect(nodeToTest, BeCPGModel.ASPECT_COMPOSITE_VERSION)){
+				logger.info("Removing unneeded version for Composite version : "+nodeToTest);
+				nodeService.deleteNode(childAssoc.getChildRef());
+			} 
 
 		}
 

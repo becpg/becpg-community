@@ -14,9 +14,12 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.node.archive.NodeArchiveService;
+import org.alfresco.repo.version.Version2Model;
 import org.alfresco.repo.version.VersionBaseModel;
 import org.alfresco.service.cmr.coci.CheckOutCheckInService;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.cmr.version.Version;
 import org.alfresco.service.cmr.version.VersionHistory;
 import org.alfresco.service.cmr.version.VersionService;
@@ -33,6 +36,7 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.entity.version.EntityVersion;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.hierarchy.HierarchyService;
@@ -81,6 +85,9 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 
 	@Resource
 	private HierarchyService hierarchyService;
+
+	@Resource
+	private NodeArchiveService nodeArchiveService;
 
 	/**
 	 * Test check out check in.
@@ -635,6 +642,186 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 
 		validateNewVersion(newRawMaterialNodeRef, rawMaterialNodeRef, rawMaterial, productUnit, valueAdded);
 
+	}
+
+	@Test
+	public void testDeleteVersion() throws InterruptedException {
+
+		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			/*-- Create raw material --*/
+			NodeRef r = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test report");
+			nodeService.setProperty(r, PLMModel.PROP_ERP_CODE, ERP_CODE);
+			return r;
+		}, false, true);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			entityReportService.generateReports(rawMaterialNodeRef);
+			return null;
+		}, false, true);
+
+		if (!nodeService.hasAspect(rawMaterialNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				logger.debug("Add versionnable aspect");
+				Map<QName, Serializable> aspectProperties = new HashMap<>();
+				aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
+				nodeService.addAspect(rawMaterialNodeRef, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
+				return rawMaterialNodeRef;
+			}, false, true);
+
+		}
+
+		final NodeRef workingCopyNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			List<NodeRef> dbReports = associationService.getTargetAssocs(rawMaterialNodeRef, ReportModel.ASSOC_REPORTS);
+
+			assertEquals(1, dbReports.size());
+			// Check out
+			logger.debug("checkout nodeRef: " + rawMaterialNodeRef);
+			return checkOutCheckInService.checkout(rawMaterialNodeRef);
+
+		}, false, true);
+
+		final NodeRef newRawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			// Check in
+			Map<String, Serializable> versionProperties = new HashMap<>();
+			versionProperties.put(Version.PROP_DESCRIPTION, "This is a test version");
+			versionProperties.put(VersionBaseModel.PROP_VERSION_TYPE, VersionType.MAJOR);
+			return checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
+		}, false, true);
+
+		assertEquals(newRawMaterialNodeRef, rawMaterialNodeRef);
+		assertNotNull(entityVersionService.getVersionHistoryNodeRef(rawMaterialNodeRef));
+		assertNotNull(versionService.getVersionHistory(rawMaterialNodeRef));
+		
+		for(EntityVersion entityVersion : entityVersionService.getAllVersions(rawMaterialNodeRef)) {
+			assertNull(versionService.getVersionHistory(entityVersion.getEntityVersionNodeRef()));
+		}
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			nodeService.deleteNode(rawMaterialNodeRef);
+			return null;
+
+		}, false, true);
+
+		assertNotNull(entityVersionService.getVersionHistoryNodeRef(rawMaterialNodeRef));
+		assertNotNull(versionService.getVersionHistory(rawMaterialNodeRef));
+		assertFalse(nodeService.exists(rawMaterialNodeRef));
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			NodeRef archiveNodeRef = nodeArchiveService.getArchivedNode(rawMaterialNodeRef);
+			nodeArchiveService.restoreArchivedNode(archiveNodeRef);
+
+			return null;
+
+		}, false, true);
+
+		assertTrue(nodeService.exists(rawMaterialNodeRef));
+		assertNotNull(entityVersionService.getVersionHistoryNodeRef(rawMaterialNodeRef));
+		assertNotNull(versionService.getVersionHistory(rawMaterialNodeRef));
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			nodeService.addAspect(rawMaterialNodeRef, ContentModel.ASPECT_TEMPORARY, null);
+			nodeService.deleteNode(rawMaterialNodeRef);
+
+			return null;
+
+		}, false, true);
+
+		assertNull(entityVersionService.getVersionHistoryNodeRef(rawMaterialNodeRef));
+		assertNull(versionService.getVersionHistory(rawMaterialNodeRef));
+		assertFalse(nodeService.exists(rawMaterialNodeRef));
+
+	}
+
+	@Test
+	public void testPurgeVersion() throws InterruptedException {
+
+		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			/*-- Create raw material --*/
+			NodeRef r = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test report");
+			nodeService.setProperty(r, PLMModel.PROP_ERP_CODE, ERP_CODE);
+			return r;
+		}, false, true);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			entityReportService.generateReports(rawMaterialNodeRef);
+			return null;
+		}, false, true);
+
+		if (!nodeService.hasAspect(rawMaterialNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				logger.debug("Add versionnable aspect");
+				Map<QName, Serializable> aspectProperties = new HashMap<>();
+				aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
+				nodeService.addAspect(rawMaterialNodeRef, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
+				return rawMaterialNodeRef;
+			}, false, true);
+
+		}
+
+		final NodeRef workingCopyNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			List<NodeRef> dbReports = associationService.getTargetAssocs(rawMaterialNodeRef, ReportModel.ASSOC_REPORTS);
+
+			assertEquals(1, dbReports.size());
+			// Check out
+			logger.debug("checkout nodeRef: " + rawMaterialNodeRef);
+			return checkOutCheckInService.checkout(rawMaterialNodeRef);
+
+		}, false, true);
+
+		NodeRef newRawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			// Check in
+			Map<String, Serializable> versionProperties = new HashMap<>();
+			versionProperties.put(Version.PROP_DESCRIPTION, "This is a test version");
+			versionProperties.put(VersionBaseModel.PROP_VERSION_TYPE, VersionType.MAJOR);
+			return checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
+		}, false, true);
+
+		assertEquals(newRawMaterialNodeRef, rawMaterialNodeRef);
+		assertNotNull(entityVersionService.getVersionHistoryNodeRef(rawMaterialNodeRef));
+		assertNotNull(versionService.getVersionHistory(rawMaterialNodeRef));
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			nodeService.deleteNode(rawMaterialNodeRef);
+			return null;
+
+		}, false, true);
+
+		assertNotNull(entityVersionService.getVersionHistoryNodeRef(rawMaterialNodeRef));
+		assertNotNull(getVersionHistoryNodeRef(rawMaterialNodeRef));
+		assertFalse(nodeService.exists(rawMaterialNodeRef));
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			NodeRef archiveNodeRef = nodeArchiveService.getArchivedNode(rawMaterialNodeRef);
+			nodeArchiveService.purgeArchivedNode(archiveNodeRef);
+
+			return null;
+
+		}, false, true);
+
+		assertNull(entityVersionService.getVersionHistoryNodeRef(rawMaterialNodeRef));
+		assertNull(getVersionHistoryNodeRef(rawMaterialNodeRef));
+		assertFalse(nodeService.exists(rawMaterialNodeRef));
+
+	}
+	
+	
+	
+	
+	
+
+	private Object getVersionHistoryNodeRef(NodeRef rawMaterialNodeRef) {
+		NodeRef rootNode = nodeService.getRootNode(new StoreRef(StoreRef.PROTOCOL_WORKSPACE, Version2Model.STORE_ID));
+		return nodeService.getChildByName(rootNode, Version2Model.CHILD_QNAME_VERSION_HISTORIES, rawMaterialNodeRef.getId());
 	}
 
 	private void validateNewVersion(final NodeRef newRawMaterialNodeRef, final NodeRef rawMaterialNodeRef, final ProductData rawMaterial,
