@@ -91,6 +91,8 @@ public class BulkEditExtractor extends SimpleExtractor {
 					queryBuilder.excludeSearch();
 				}
 				
+				//Set AND operator
+				queryBuilder.andOperator();
 				
 				// Look for path
 				if (dataListFilter.getFilterId().equals(DataListFilter.NODE_PATH_FILTER)) {
@@ -104,8 +106,7 @@ public class BulkEditExtractor extends SimpleExtractor {
 
 				try {
 					if ((dataListFilter.getExtraParams() != null) && (dataListFilter.getCriteriaMap() != null)) {
-						//Set AND operator
-						queryBuilder.andOperator();
+						
 						JSONObject jsonObject = new JSONObject(dataListFilter.getExtraParams());
 						if ((jsonObject != null) && jsonObject.has("searchTerm")) {
 							String searchTerm = (String) jsonObject.get("searchTerm");

@@ -22,6 +22,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.expression.Expression;
@@ -139,7 +140,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 
 		int sortOrder = 0;
-		
+
 		for (Map.Entry<String, List<LabelingRuleListDataItem>> labelingRuleListsGroup : labelingRuleListsByGroup.entrySet()) {
 
 			logger.debug("Calculate Ingredient Labeling for group : " + labelingRuleListsGroup.getKey() + " - " + formulatedProduct.getName());
@@ -244,8 +245,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						String log = "";
 						MLText label = new MLText();
 						if ((labelingRuleListDataItem.getFormula() != null) && !labelingRuleListDataItem.getFormula().trim().isEmpty()) {
-							Set<Locale> locales = labelingRuleListDataItem.getLocales()!=null && !labelingRuleListDataItem.getLocales().isEmpty() ?
-									MLTextHelper.extractLocales(labelingRuleListDataItem.getLocales()) : labelingFormulaContext.getLocales();
+							Set<Locale> locales = (labelingRuleListDataItem.getLocales() != null) && !labelingRuleListDataItem.getLocales().isEmpty()
+									? MLTextHelper.extractLocales(labelingRuleListDataItem.getLocales())
+									: labelingFormulaContext.getLocales();
 
 							if (locales.isEmpty()) {
 								locales.add(new Locale(Locale.getDefault().getLanguage()));
@@ -288,7 +290,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 						retainNodes.addAll(getOrCreateILLDataItems(formulatedProduct, labelingRuleListDataItem.getNodeRef(), label, log,
 								labelingFormulaContext, sortOrder));
-						
+
 						sortOrder = sortOrder + 50;
 					}
 				}
@@ -336,13 +338,26 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	private void extractAllergens(LabelingFormulaContext labelingFormulaContext, ProductData productData) {
 		for (AllergenListDataItem allergenListDataItem : productData.getAllergenList()) {
+			NodeRef allergen = allergenListDataItem.getAllergen();
 			if (allergenListDataItem.getVoluntary()) {
-				if (AllergenType.Major.toString().equals(nodeService.getProperty(allergenListDataItem.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE))) {
-					labelingFormulaContext.getAllergens().add(allergenListDataItem.getAllergen());
+				if (AllergenType.Major.toString().equals(nodeService.getProperty(allergen, PLMModel.PROP_ALLERGEN_TYPE))) {
+					labelingFormulaContext.getAllergens().add(allergen);
+				}
+			} else if (allergenListDataItem.getInVoluntary()) {
+				if (AllergenType.Major.toString().equals(nodeService.getProperty(allergen, PLMModel.PROP_ALLERGEN_TYPE))) {
+					labelingFormulaContext.getInVolAllergens().add(allergen);
+					for (NodeRef inVoluntarySource : allergenListDataItem.getInVoluntarySources()) {
+						QName inVoluntarySourceType = nodeService.getType(inVoluntarySource);
+
+						if (PLMModel.TYPE_RAWMATERIAL.equals(inVoluntarySourceType)) {
+							labelingFormulaContext.getInVolAllergensRawMaterial().add(allergen);
+						} else if (PLMModel.TYPE_RESOURCEPRODUCT.equals(inVoluntarySourceType)) {
+							labelingFormulaContext.getInVolAllergensProcess().add(allergen);
+						}
+					}
 				}
 			}
 		}
-
 	}
 
 	private void aggregateLegalName(CompositeLabeling parent, LabelingFormulaContext labelingFormulaContext, boolean multiLevel) {
@@ -542,7 +557,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	}
 
 	private Map<String, List<LabelingRuleListDataItem>> getLabelingRules(ProductData formulatedProduct) {
-		Map<String, List<LabelingRuleListDataItem>> ret = new TreeMap<>((s1, s2 )-> { return s1.compareTo(s2); } ) ;
+		Map<String, List<LabelingRuleListDataItem>> ret = new TreeMap<>((s1, s2) -> {
+			return s1.compareTo(s2);
+		});
 		if (formulatedProduct.getLabelingListView().getLabelingRuleList() != null) {
 
 			for (LabelingRuleListDataItem entityLabelingRulList : formulatedProduct.getLabelingListView().getLabelingRuleList()) {
@@ -586,8 +603,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	}
 
 	private void addLabelingRule(Map<String, List<LabelingRuleListDataItem>> ret, LabelingRuleListDataItem labelingRule) {
-		if(labelingRule.getGroups()!=null && ! labelingRule.getGroups().isEmpty()) {
-			for(String group : labelingRule.getGroups()) {
+		if ((labelingRule.getGroups() != null) && !labelingRule.getGroups().isEmpty()) {
+			for (String group : labelingRule.getGroups()) {
 				if ((group == null) || group.isEmpty()) {
 					group = LabelingRuleListDataItem.DEFAULT_LABELING_GROUP;
 				}
@@ -983,12 +1000,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 		if (labelingFormulaContext.isLabelingByLanguage()) {
 			List<Locale> langs = new LinkedList<>();
-		    for(Locale orderedLocale: labelingFormulaContext.availableLocales) {
-		    	if(label.containsKey(orderedLocale)) {
-		    		langs.add(orderedLocale);
-		    	}
-		    }
-			
+			for (Locale orderedLocale : labelingFormulaContext.availableLocales) {
+				if (label.containsKey(orderedLocale)) {
+					langs.add(orderedLocale);
+				}
+			}
+
 			for (Locale lang : langs) {
 				MLText newLabel = new MLText();
 				newLabel.addValue(MLTextHelper.getNearestLocale(Locale.getDefault()), label.getValue(lang));
@@ -1018,7 +1035,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		} else if (!Boolean.TRUE.equals(ill.getIsManual())) {
 			ill.setValue(label);
 		}
-		
+
 		if (lang != null) {
 			ill.setLocales(Arrays.asList(lang));
 		} else {
@@ -1768,10 +1785,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 		if (ingListDataItem == null) {
 			if (labelingFormulaContext.getNodeDeclarationFilters().containsKey(compoListDataItem.getProduct())) {
-				for( DeclarationFilter declarationFilter : labelingFormulaContext.getNodeDeclarationFilters().get(compoListDataItem.getProduct())) {
+				for (DeclarationFilter declarationFilter : labelingFormulaContext.getNodeDeclarationFilters().get(compoListDataItem.getProduct())) {
 					if (!declarationFilter.isThreshold() && ((declarationFilter.getFormula() == null) || labelingFormulaContext
 							.matchFormule(declarationFilter.getFormula(), new DeclarationFilterContext(compoListDataItem, ingListDataItem)))) {
-	
+
 						if (logger.isTraceEnabled()) {
 							logger.trace(" -- Found declType : " + declarationFilter.getDeclarationType() + " for "
 									+ nodeService.getProperty(compoListDataItem.getProduct(), ContentModel.PROP_NAME));
@@ -1784,7 +1801,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		} else {
 
 			if (labelingFormulaContext.getNodeDeclarationFilters().containsKey(ingListDataItem.getIng())) {
-				for(DeclarationFilter declarationFilter : labelingFormulaContext.getNodeDeclarationFilters().get(ingListDataItem.getIng())) {
+				for (DeclarationFilter declarationFilter : labelingFormulaContext.getNodeDeclarationFilters().get(ingListDataItem.getIng())) {
 					if (!declarationFilter.isThreshold() && ((declarationFilter.getFormula() == null) || labelingFormulaContext
 							.matchFormule(declarationFilter.getFormula(), new DeclarationFilterContext(compoListDataItem, ingListDataItem)))) {
 						if (logger.isTraceEnabled()) {
