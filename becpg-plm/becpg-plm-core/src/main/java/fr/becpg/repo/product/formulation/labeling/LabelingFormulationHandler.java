@@ -328,9 +328,23 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	private void extractAllergens(LabelingFormulaContext labelingFormulaContext, ProductData productData) {
 		for (AllergenListDataItem allergenListDataItem : productData.getAllergenList()) {
+			NodeRef allergen = allergenListDataItem.getAllergen();
 			if (allergenListDataItem.getVoluntary()) {
-				if (AllergenType.Major.toString().equals(nodeService.getProperty(allergenListDataItem.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE))) {
-					labelingFormulaContext.getAllergens().add(allergenListDataItem.getAllergen());
+				if (AllergenType.Major.toString().equals(nodeService.getProperty(allergen, PLMModel.PROP_ALLERGEN_TYPE))) {
+					labelingFormulaContext.getAllergens().add(allergen);
+				}
+			} else if (allergenListDataItem.getInVoluntary()) {
+				if (AllergenType.Major.toString().equals(nodeService.getProperty(allergen, PLMModel.PROP_ALLERGEN_TYPE))) {
+					labelingFormulaContext.getInVolAllergens().add(allergen);
+					for (NodeRef inVoluntarySource : allergenListDataItem.getInVoluntarySources()) {
+						QName inVoluntarySourceType = nodeService.getType(inVoluntarySource);
+
+						if (PLMModel.TYPE_RAWMATERIAL.equals(inVoluntarySourceType)) {
+							labelingFormulaContext.getInVolAllergensRawMaterial().add(allergen);
+						} else if (PLMModel.TYPE_RESOURCEPRODUCT.equals(inVoluntarySourceType)) {
+							labelingFormulaContext.getInVolAllergensProcess().add(allergen);
+						}
+					}
 				}
 			}
 		}
