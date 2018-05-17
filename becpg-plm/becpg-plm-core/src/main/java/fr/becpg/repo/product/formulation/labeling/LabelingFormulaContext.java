@@ -24,6 +24,7 @@ import java.text.Format;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -53,6 +54,7 @@ import org.springframework.util.StringUtils;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
+import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
@@ -93,6 +95,9 @@ public class LabelingFormulaContext extends RuleParser {
 	private List<ReconstituableDataItem> reconstituableDataItems = new ArrayList<>();
 
 	private Set<NodeRef> allergens = new HashSet<>();
+	private Set<NodeRef> inVolAllergens = new HashSet<>();
+	private Set<NodeRef> inVolAllergensProcess = new HashSet<>();
+	private Set<NodeRef> inVolAllergensRawMaterial = new HashSet<>();
 
 	private Set<NodeRef> toApplyThresholdItems = new HashSet<>();
 
@@ -106,6 +111,18 @@ public class LabelingFormulaContext extends RuleParser {
 
 	public Set<NodeRef> getAllergens() {
 		return allergens;
+	}
+
+	public Set<NodeRef> getInVolAllergens() {
+		return inVolAllergens;
+	}
+
+	public Set<NodeRef> getInVolAllergensProcess() {
+		return inVolAllergensProcess;
+	}
+
+	public Set<NodeRef> getInVolAllergensRawMaterial() {
+		return inVolAllergensRawMaterial;
 	}
 
 	public List<ReconstituableDataItem> getReconstituableDataItems() {
@@ -169,7 +186,13 @@ public class LabelingFormulaContext extends RuleParser {
 	private boolean shouldBreakIngType = false;
 	private boolean labelingByLanguage = false;
 	private boolean force100Perc = false;
-	
+
+	/**
+	 * Use to disable allergen detection in legalName - Comma separated list of
+	 * locale codes - Empty for all allergens - Wildcard (*) can be used for
+	 * disable all Language
+	 */
+	private String disableAllergensForLocales = "";
 
 	private Double qtyPrecisionThreshold = (1d / (PRECISION_FACTOR * PRECISION_FACTOR));
 
@@ -181,6 +204,10 @@ public class LabelingFormulaContext extends RuleParser {
 
 	public void setShouldBreakIngType(boolean shouldBreakIngType) {
 		this.shouldBreakIngType = shouldBreakIngType;
+	}
+
+	public void setDisableAllergensForLocales(String disableAllergensForLocales) {
+		this.disableAllergensForLocales = disableAllergensForLocales;
 	}
 
 	public void setUseVolume(boolean useVolume) {
@@ -198,7 +225,6 @@ public class LabelingFormulaContext extends RuleParser {
 	public void setIngsLabelingWithYield(boolean ingsLabelingWithYield) {
 		this.ingsLabelingWithYield = ingsLabelingWithYield;
 	}
-
 
 	public void setIngDefaultFormat(String ingDefaultFormat) {
 		this.ingDefaultFormat = ingDefaultFormat;
@@ -271,7 +297,7 @@ public class LabelingFormulaContext extends RuleParser {
 	public void setMaxPrecision(Integer maxPrecision) {
 		this.maxPrecision = maxPrecision;
 	}
-	
+
 	public boolean isLabelingByLanguage() {
 		return labelingByLanguage;
 	}
@@ -280,7 +306,7 @@ public class LabelingFormulaContext extends RuleParser {
 		this.labelingByLanguage = labelingByLanguage;
 	}
 
-        public void setForce100Perc(boolean force100Perc) {
+	public void setForce100Perc(boolean force100Perc) {
 		this.force100Perc = force100Perc;
 	}
 
@@ -429,10 +455,10 @@ public class LabelingFormulaContext extends RuleParser {
 
 			if (decimalFormat != null) {
 				RoundingMode mode = RoundingMode.FLOOR;
-				if(useTotalPrecision ) {
+				if (useTotalPrecision) {
 					mode = RoundingMode.HALF_UP;
 				}
-				applyAutomaticPrecicion(decimalFormat, useTotalPrecision?  totalPrecision : qty , mode);
+				applyAutomaticPrecicion(decimalFormat, useTotalPrecision ? totalPrecision : qty, mode);
 				ingLegalName = ingLegalName + " " + decimalFormat.format(qty);
 			}
 		}
@@ -442,24 +468,24 @@ public class LabelingFormulaContext extends RuleParser {
 
 	private DecimalFormat getDecimalFormat(AbstractLabelingComponent lblComponent) {
 		DecimalFormat decimalFormat = null;
-		if( (lblComponent != null)) {
-			if (showAllPerc ) {
+		if ((lblComponent != null)) {
+			if (showAllPerc) {
 				if (lblComponent instanceof IngTypeItem) {
 					NodeRef ingItemNodeRef = ((IngTypeItem) lblComponent).getOrigNodeRef() != null ? ((IngTypeItem) lblComponent).getOrigNodeRef()
 							: lblComponent.getNodeRef();
-					if (isDoNotDetails(ingItemNodeRef) || showPercRules.containsKey(ingItemNodeRef) ) {
+					if (isDoNotDetails(ingItemNodeRef) || showPercRules.containsKey(ingItemNodeRef)) {
 						decimalFormat = new DecimalFormat(defaultPercFormat);
 					}
 				} else {
 					decimalFormat = new DecimalFormat(defaultPercFormat);
-				} 
-	
+				}
+
 			} else if (showPercRules.containsKey(lblComponent.getNodeRef())) {
 				ShowRule showRule = showPercRules.get(lblComponent.getNodeRef());
 				if (showRule.matchLocale(I18NUtil.getLocale())) {
 					decimalFormat = new DecimalFormat((showRule.format != null) && !showRule.format.isEmpty() ? showRule.format : defaultPercFormat);
 				}
-	
+
 			}
 
 		}
@@ -473,47 +499,81 @@ public class LabelingFormulaContext extends RuleParser {
 		return StringUtils.uncapitalize(legalName);
 	}
 
+	public static Pattern ALLERGEN_DETECTION_PATTERN = Pattern.compile("<b>|<u>|<i>|[A-Z]{3}|\\p{Lu}{3}");
+
 	private String createAllergenAwareLabel(String ingLegalName, Set<NodeRef> allergens) {
 
-		if (Pattern.compile("<b>|<u>|<i>|[A-Z]{3}").matcher(ingLegalName).find()) {
+		if (ALLERGEN_DETECTION_PATTERN.matcher(ingLegalName).find() || isAllergensDisableForLocale()) {
 			return ingLegalName;
 		}
 
 		StringBuilder ret = new StringBuilder();
 		for (NodeRef allergen : allergens) {
-			boolean shouldAppend = true;
-			if (getAllergens().contains(allergen)) {
-				String allergenName = getAllergenName(allergen);
-				if ((allergenName != null) && !allergenName.isEmpty()) {
-					if (ret.length() > 0) {
-						ret.append(allergensSeparator);
-					} else {
-						Matcher ma = Pattern.compile("\\b(" + Pattern.quote(allergenName) + "(s?))\\b", Pattern.CASE_INSENSITIVE)
-								.matcher(ingLegalName);
-						if (ma.find() && (ma.group(1) != null)) {
-							ingLegalName = ma.replaceAll(allergenReplacementPattern);
-							shouldAppend = false;
+			if (!isAllergenDisableForLocale(allergen)) {
+				boolean shouldAppend = true;
+				if (getAllergens().contains(allergen)) {
+					String allergenName = getAllergenName(allergen);
+					if ((allergenName != null) && !allergenName.isEmpty()) {
+						if (ret.length() > 0) {
+							ret.append(allergensSeparator);
 						} else {
-							for (NodeRef subAllergen : associationService.getTargetAssocs(allergen, PLMModel.ASSOC_ALLERGENSUBSETS)) {
-								String subAllergenName = uncapitalize(getAllergenName(subAllergen));
-								if ((subAllergenName != null) && !subAllergenName.isEmpty()) {
-									ma = Pattern.compile("\\b(" + Pattern.quote(subAllergenName) + "(s?))\\b", Pattern.CASE_INSENSITIVE)
-											.matcher(ingLegalName);
-									if (ma.find() && (ma.group(1) != null)) {
-										ingLegalName = ma.replaceAll(allergenReplacementPattern);
-										shouldAppend = false;
+							Matcher ma = Pattern.compile("\\b(" + Pattern.quote(allergenName) + "(s?))\\b", Pattern.CASE_INSENSITIVE)
+									.matcher(ingLegalName);
+							if (ma.find() && (ma.group(1) != null)) {
+								ingLegalName = ma.replaceAll(allergenReplacementPattern);
+								shouldAppend = false;
+							} else {
+								for (NodeRef subAllergen : associationService.getTargetAssocs(allergen, PLMModel.ASSOC_ALLERGENSUBSETS)) {
+									String subAllergenName = uncapitalize(getAllergenName(subAllergen));
+									if ((subAllergenName != null) && !subAllergenName.isEmpty()) {
+										ma = Pattern.compile("\\b(" + Pattern.quote(subAllergenName) + "(s?))\\b", Pattern.CASE_INSENSITIVE)
+												.matcher(ingLegalName);
+										if (ma.find() && (ma.group(1) != null)) {
+											ingLegalName = ma.replaceAll(allergenReplacementPattern);
+											shouldAppend = false;
+										}
 									}
 								}
 							}
 						}
-					}
-					if (shouldAppend) {
-						ret.append(allergenName.replaceFirst("(.*)", allergenReplacementPattern));
+						if (shouldAppend) {
+							ret.append(allergenName.replaceFirst("(.*)", allergenReplacementPattern));
+						}
 					}
 				}
 			}
 		}
 		return applyRoundingMode(new MessageFormat(detailsDefaultFormat), null).format(new Object[] { ingLegalName, null, ret.toString(), null });
+	}
+
+	Set<Locale> disableAllergensForLocalesCache = null;
+
+	private boolean isAllergensDisableForLocale() {
+
+		if (disableAllergensForLocales.isEmpty()) {
+			return false;
+		}
+
+		if ("*".equals(disableAllergensForLocales)) {
+			return true;
+		}
+
+		if (disableAllergensForLocalesCache == null) {
+			disableAllergensForLocalesCache = MLTextHelper.extractLocales(Arrays.asList(disableAllergensForLocales.split(",")));
+		}
+
+		return disableAllergensForLocalesCache.contains(I18NUtil.getLocale());
+	}
+
+	@SuppressWarnings("unchecked")
+	private boolean isAllergenDisableForLocale(NodeRef allergen) {
+		if (mlNodeService.hasAspect(allergen, ReportModel.ASPECT_REPORT_LOCALES)) {
+			List<String> langs = (List<String>) mlNodeService.getProperty(allergen, ReportModel.PROP_REPORT_LOCALES);
+			if ((langs != null) && !langs.isEmpty()) {
+				return !MLTextHelper.extractLocales(langs).contains(I18NUtil.getLocale());
+			}
+		}
+		return false;
 	}
 
 	private String createAllergenAwareLabel(String ingLegalName, List<AbstractLabelingComponent> ingList) {
@@ -597,20 +657,41 @@ public class LabelingFormulaContext extends RuleParser {
 	}
 
 	public String renderAllergens() {
+		return renderAllergens(this.allergens);
+	}
+
+	public String renderInvoluntaryAllergens() {
+		return renderAllergens(this.inVolAllergens);
+
+	}
+
+	public String renderInvoluntaryAllergenInProcess() {
+		return renderAllergens(this.inVolAllergensProcess);
+
+	}
+
+	public String renderInvoluntaryInRawMaterial() {
+		return renderAllergens(this.inVolAllergensRawMaterial);
+	}
+
+	private String renderAllergens(Set<NodeRef> allergensList) {
 		StringBuffer ret = new StringBuffer();
 
 		if (logger.isTraceEnabled()) {
 			logger.trace(" Render Allergens list ");
 		}
 
-		for (NodeRef allergen : allergens) {
-			if (ret.length() > 0) {
-				ret.append(allergensSeparator);
+		for (NodeRef allergen : allergensList) {
+			if (!isAllergenDisableForLocale(allergen)) {
+				if (ret.length() > 0) {
+					ret.append(allergensSeparator);
+				}
+				ret.append(getAllergenName(allergen));
 			}
-			ret.append(getAllergenName(allergen));
 		}
 
 		return ret.toString();
+
 	}
 
 	public String renderAsHtmlTable() {
@@ -706,8 +787,8 @@ public class LabelingFormulaContext extends RuleParser {
 
 								if (!shouldSkip(subIngItem.getNodeRef(), subIngQtyPerc)) {
 
-									subIngBuff.append(getIngTextFormat(subIngItem, subIngQtyPerc).format(
-											new Object[] { getLegalIngName(subIngItem, null, false, false), subIngQtyPerc, null, subIngGeoOriginsLabel }));
+									subIngBuff.append(getIngTextFormat(subIngItem, subIngQtyPerc).format(new Object[] {
+											getLegalIngName(subIngItem, null, false, false), subIngQtyPerc, null, subIngGeoOriginsLabel }));
 								} else {
 									logger.debug("Removing subIng with qty of 0: " + subIngItem);
 								}
@@ -788,7 +869,8 @@ public class LabelingFormulaContext extends RuleParser {
 		if (nodeDeclarationFilters.containsKey(nodeRef)) {
 			for (DeclarationFilter declarationFilter : nodeDeclarationFilters.get(nodeRef)) {
 				if (DeclarationType.DoNotDetails.equals(declarationFilter.getDeclarationType())
-						&& matchFormule(declarationFilter.getFormula(), new DeclarationFilterContext()) && declarationFilter.matchLocale(currentLocale)) {
+						&& matchFormule(declarationFilter.getFormula(), new DeclarationFilterContext())
+						&& declarationFilter.matchLocale(currentLocale)) {
 					return true;
 				}
 			}
@@ -827,6 +909,7 @@ public class LabelingFormulaContext extends RuleParser {
 		return new BigDecimal(qty != null ? qty : 0d);
 
 	}
+
 	private BigDecimal roundeedValue(Double qty, MessageFormat messageFormat) {
 
 		for (Format format : messageFormat.getFormats()) {
@@ -884,7 +967,7 @@ public class LabelingFormulaContext extends RuleParser {
 
 			StringBuilder toAppend = new StringBuilder();
 
-			if ((kv.getKey() != null) && (getLegalIngName(kv.getKey(), null, false,false) != null)) {
+			if ((kv.getKey() != null) && (getLegalIngName(kv.getKey(), null, false, false) != null)) {
 
 				Double qtyPerc = computeQtyPerc(compositeLabeling, kv.getKey(), ratio);
 				Double volumePerc = computeVolumePerc(compositeLabeling, kv.getKey(), ratio);
@@ -893,7 +976,7 @@ public class LabelingFormulaContext extends RuleParser {
 				kv.getKey().setVolume(volumePerc);
 
 				String ingTypeLegalName = getLegalIngName(kv.getKey(), qtyPerc,
-						((kv.getValue().size() > 1) || (!kv.getValue().isEmpty() && kv.getValue().get(0).isPlural())),false);
+						((kv.getValue().size() > 1) || (!kv.getValue().isEmpty() && kv.getValue().get(0).isPlural())), false);
 
 				boolean doNotDetailsDeclType = isDoNotDetails(
 						kv.getKey().getOrigNodeRef() != null ? kv.getKey().getOrigNodeRef() : kv.getKey().getNodeRef());
@@ -937,7 +1020,7 @@ public class LabelingFormulaContext extends RuleParser {
 	}
 
 	Double totalPrecision = 1 / Math.pow(10, maxPrecision + 2);
-	
+
 	private StringBuilder renderLabelingComponent(CompositeLabeling parent, List<AbstractLabelingComponent> subComponents, String separator,
 			Double ratio, BigDecimal total) {
 
@@ -945,7 +1028,7 @@ public class LabelingFormulaContext extends RuleParser {
 
 		boolean appendEOF = false;
 		boolean first = true;
-		
+
 		for (AbstractLabelingComponent component : subComponents) {
 
 			Double qtyPerc = computeQtyPerc(parent, component, ratio);
@@ -958,7 +1041,7 @@ public class LabelingFormulaContext extends RuleParser {
 				qtyPerc = roundeedValue(qtyPerc, getDecimalFormat(component)).add(diffValue).doubleValue();
 			}
 
-			String ingName = getLegalIngName(component,  qtyPerc, false, first && (total != null));
+			String ingName = getLegalIngName(component, qtyPerc, false, first && (total != null));
 			String geoOriginsLabel = createGeoOriginsLabel(component.getNodeRef(), component.getGeoOrigins());
 
 			if (logger.isDebugEnabled()) {
@@ -986,8 +1069,8 @@ public class LabelingFormulaContext extends RuleParser {
 
 						if (!subIngItem.shouldSkip() && !shouldSkip(subIngItem.getNodeRef(), subIngQtyPerc)) {
 
-							subIngBuff.append(getIngTextFormat(subIngItem, subIngQtyPerc).format(
-									new Object[] { getLegalIngName(subIngItem, subIngQtyPerc, false,false), subIngQtyPerc, null, subIngGeoOriginsLabel }));
+							subIngBuff.append(getIngTextFormat(subIngItem, subIngQtyPerc).format(new Object[] {
+									getLegalIngName(subIngItem, subIngQtyPerc, false, false), subIngQtyPerc, null, subIngGeoOriginsLabel }));
 						} else {
 							logger.debug("Removing subIng with qty of 0: " + subIngItem);
 						}
@@ -1109,7 +1192,7 @@ public class LabelingFormulaContext extends RuleParser {
 			Locale currentLocale = I18NUtil.getLocale();
 
 			if (nodeDeclarationFilters.containsKey(nodeRef)) {
-				for(DeclarationFilter declarationFilter : nodeDeclarationFilters.get(nodeRef)) {
+				for (DeclarationFilter declarationFilter : nodeDeclarationFilters.get(nodeRef)) {
 					if (declarationFilter.isThreshold() && (qtyPerc < (declarationFilter.getThreshold() / 100d))
 							&& declarationFilter.matchLocale(currentLocale)) {
 						return true;
@@ -1159,7 +1242,7 @@ public class LabelingFormulaContext extends RuleParser {
 			}
 
 			tree.put("name", getName(component));
-			tree.put("legal", cleanLabel(getLegalIngName(component, null, false,false)));
+			tree.put("legal", cleanLabel(getLegalIngName(component, null, false, false)));
 			if ((component.getVolume() != null) && (totalVol != null) && (totalVol > 0)) {
 				tree.put("vol", (component.getVolume() / totalVol) * 100);
 			}
@@ -1201,7 +1284,7 @@ public class LabelingFormulaContext extends RuleParser {
 						ingTypeJson.put("cssClass", "ingType");
 						ingTypeJson.put("name", getName(kv.getKey()));
 						ingTypeJson.put("legal", cleanLabel(getLegalIngName(kv.getKey(), null,
-								(kv.getValue().size() > 1) || (!kv.getValue().isEmpty() && kv.getValue().get(0).isPlural()),false)));
+								(kv.getValue().size() > 1) || (!kv.getValue().isEmpty() && kv.getValue().get(0).isPlural()), false)));
 
 						if ((kv.getKey().getQty() != null) && (totalQty != null) && (totalQty > 0)) {
 							ingTypeJson.put("qte", (kv.getKey().getQty() / totalQty) * 100);
@@ -1239,12 +1322,12 @@ public class LabelingFormulaContext extends RuleParser {
 
 		return tree;
 	}
-	
+
 	private String cleanLabel(String buffer) {
-		if(buffer!=null) {
+		if (buffer != null) {
 			return buffer.replaceAll(" null| \\(null\\)| \\(\\)| \\[null\\]", "").replaceAll(":,", ",").replaceAll(":$", "")
 					.replaceAll(">null<", "><").trim();
-		} 
+		}
 		return "";
 	}
 
@@ -1320,7 +1403,7 @@ public class LabelingFormulaContext extends RuleParser {
 				// If Omit
 				if (nodeDeclarationFilters.containsKey(ingType.getNodeRef())) {
 					boolean shouldBreak = false;
-					for(DeclarationFilter declarationFilter : nodeDeclarationFilters.get(ingType.getNodeRef())) {
+					for (DeclarationFilter declarationFilter : nodeDeclarationFilters.get(ingType.getNodeRef())) {
 						if (DeclarationType.Omit.equals(declarationFilter.getDeclarationType())
 								&& matchFormule(declarationFilter.getFormula(), new DeclarationFilterContext())
 								&& declarationFilter.matchLocale(currentLocale)) {
@@ -1333,7 +1416,7 @@ public class LabelingFormulaContext extends RuleParser {
 							break;
 						}
 					}
-					if(shouldBreak) {
+					if (shouldBreak) {
 						break;
 					}
 
