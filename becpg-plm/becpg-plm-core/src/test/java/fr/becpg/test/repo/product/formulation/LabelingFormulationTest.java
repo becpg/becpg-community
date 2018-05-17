@@ -1627,11 +1627,6 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 				for (IngLabelingListDataItem illDataItem : formulatedProduct.getLabelingListView().getIngLabelingList()) {
 					if (grpNodeRef == null || illDataItem.getGrp().equals(grpNodeRef)) {
-						if (grpNodeRef != null) {
-							System.out.println("Check for:" + ruleName + " " + illDataItem.toString());
-
-						}
-
 						String formulatedIll = illDataItem.getValue().getValue(locale);
 						Assert.assertEquals("Incorrect label :" + formulatedIll + "\n   - compare to " + ill, ill, formulatedIll);
 						Assert.assertNotNull(illDataItem.getLogValue());
