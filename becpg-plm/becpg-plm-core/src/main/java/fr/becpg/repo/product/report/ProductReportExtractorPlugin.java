@@ -438,17 +438,18 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			Element compoListElt = dataListsElt.addElement(PLMModel.TYPE_COMPOLIST.getLocalName() + "s");
 
 			for (CompoListDataItem dataItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-				addDataListState(compoListElt, dataItem.getParentNodeRef());
-
-				ProductData subProductData = (ProductData) alfrescoRepository.findOne(dataItem.getProduct());
-
-				Double parentLossRatio = dataItem.getLossPerc() != null ? dataItem.getLossPerc() : 0d;
-				Double qty = dataItem.getQty() != null ? dataItem.getQty() : 0d;
-				Double qtyForCost = FormulationHelper.getQtyForCost(dataItem, 0d, subProductData,
-						CostsCalculatingFormulationHandler.keepProductUnit);
-
-				loadCompoListItem(null, dataItem, subProductData, compoListElt, 0, qty, qtyForCost, parentLossRatio, context);
-
+				if(dataItem.getProduct()!=null) {
+					addDataListState(compoListElt, dataItem.getParentNodeRef());
+	
+					ProductData subProductData = (ProductData) alfrescoRepository.findOne(dataItem.getProduct());
+	
+					Double parentLossRatio = dataItem.getLossPerc() != null ? dataItem.getLossPerc() : 0d;
+					Double qty = dataItem.getQty() != null ? dataItem.getQty() : 0d;
+					Double qtyForCost = FormulationHelper.getQtyForCost(dataItem, 0d, subProductData,
+							CostsCalculatingFormulationHandler.keepProductUnit);
+	
+					loadCompoListItem(null, dataItem, subProductData, compoListElt, 0, qty, qtyForCost, parentLossRatio, context);
+				}
 			}
 
 			loadDynamicCharactList(productData.getCompoListView().getDynamicCharactList(), compoListElt);

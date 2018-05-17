@@ -422,15 +422,16 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	}
 
 	protected void addDataListState(Element xmlNode, NodeRef listNodeRef) {
-
-		if (xmlNode.valueOf("@" + BeCPGModel.PROP_ENTITYLIST_STATE.getLocalName()).isEmpty()) {
-			Serializable state = nodeService.getProperty(listNodeRef, BeCPGModel.PROP_ENTITYLIST_STATE);
-			if (state != null) {
-				xmlNode.addAttribute(BeCPGModel.PROP_ENTITYLIST_STATE.getLocalName(), (String) state);
-			} else {
-				xmlNode.addAttribute(BeCPGModel.PROP_ENTITYLIST_STATE.getLocalName(), SystemState.ToValidate.toString());
+		if ((listNodeRef != null) && nodeService.exists(listNodeRef)) {
+			if (xmlNode.valueOf("@" + BeCPGModel.PROP_ENTITYLIST_STATE.getLocalName()).isEmpty()) {
+				Serializable state = nodeService.getProperty(listNodeRef, BeCPGModel.PROP_ENTITYLIST_STATE);
+				if (state != null) {
+					xmlNode.addAttribute(BeCPGModel.PROP_ENTITYLIST_STATE.getLocalName(), (String) state);
+				} else {
+					xmlNode.addAttribute(BeCPGModel.PROP_ENTITYLIST_STATE.getLocalName(), SystemState.ToValidate.toString());
+				}
+	
 			}
-
 		}
 	}
 

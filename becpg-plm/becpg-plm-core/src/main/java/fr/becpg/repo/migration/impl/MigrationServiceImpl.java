@@ -28,7 +28,6 @@ import org.alfresco.repo.tenant.Tenant;
 import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.repo.version.Version2Model;
 import org.alfresco.repo.version.VersionBaseModel;
-import org.alfresco.repo.version.VersionModel;
 import org.alfresco.repo.version.common.VersionImpl;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
@@ -84,7 +83,7 @@ public class MigrationServiceImpl implements MigrationService {
 
 	@Autowired
 	private EntityVersionService entityVersionService;
-	
+
 	@Autowired
 	@Qualifier("mtAwareNodeService")
 	private NodeService dbNodeService;
@@ -318,7 +317,7 @@ public class MigrationServiceImpl implements MigrationService {
 
 		List<ChildAssociationRef> childAssocs = dbNodeService.getChildAssocs(rootNode, Version2Model.CHILD_QNAME_VERSION_HISTORIES,
 				RegexQNamePattern.MATCH_ALL);
-		
+
 		for (ChildAssociationRef childAssoc : childAssocs) {
 			String name = (String) dbNodeService.getProperty(childAssoc.getChildRef(), ContentModel.PROP_NAME);
 			NodeRef nodeToTest = new NodeRef(StoreRef.PROTOCOL_WORKSPACE, "SpacesStore", name);
@@ -327,85 +326,74 @@ public class MigrationServiceImpl implements MigrationService {
 				List<ChildAssociationRef> versionAssocs = dbNodeService.getChildAssocs(childAssoc.getChildRef(), Version2Model.CHILD_QNAME_VERSIONS,
 						RegexQNamePattern.MATCH_ALL);
 				for (ChildAssociationRef versionAssoc : versionAssocs) {
-					if(dictionaryService.isSubClass(nodeService.getType(versionAssoc.getChildRef()), BeCPGModel.TYPE_ENTITY_V2)) {
-					logger.info("version  doesn't exist :"+nodeService.getProperty(versionAssoc.getChildRef(), BeCPGModel.PROP_CODE) + " "+ nodeToTest+ " for :"+name);
+					if (dictionaryService.isSubClass(nodeService.getType(versionAssoc.getChildRef()), BeCPGModel.TYPE_ENTITY_V2)) {
+						logger.info("version  doesn't exist :" + nodeService.getProperty(versionAssoc.getChildRef(), BeCPGModel.PROP_CODE) + " "
+								+ nodeToTest + " for :" + name);
+							nodeService.deleteNode(childAssoc.getChildRef());
 					}
 					break;
 				}
-				
-				
-			} else {
-				List<ChildAssociationRef> versionAssocs = dbNodeService.getChildAssocs(childAssoc.getChildRef(), Version2Model.CHILD_QNAME_VERSIONS,
-						RegexQNamePattern.MATCH_ALL);
-				for (ChildAssociationRef versionAssoc : versionAssocs) {
-				  Version version  = getVersion(versionAssoc.getChildRef());
-				  if(!dictionaryService.isSubClass(nodeService.getType(versionAssoc.getChildRef()), BeCPGModel.TYPE_ENTITY_V2)) {
-					  break;
-				  }
-				  
-				  if(!RepoConsts.INITIAL_VERSION.equals(version.getVersionLabel()) ) {
-					if(entityVersionService.getEntityVersion(version)==null) {
-						logger.info("No version for: "+version.getVersionLabel()+" "+nodeService.getProperty(versionAssoc.getChildRef(), BeCPGModel.PROP_CODE));
-					}
-				  }
-				}
-			}
+
+			} else if(nodeService.hasAspect(nodeToTest, BeCPGModel.ASPECT_COMPOSITE_VERSION)){
+				logger.info("Removing unneeded version for Composite version : "+nodeToTest);
+				nodeService.deleteNode(childAssoc.getChildRef());
+			} 
 
 		}
 
 	}
-
-	private Version getVersion(NodeRef versionRef) {
-		if (versionRef == null) {
-			return null;
-		}
-		Map<String, Serializable> versionProperties = new HashMap<>();
-
-		// Get the standard node details and get the meta data
-		Map<QName, Serializable> nodeProperties = dbNodeService.getProperties(versionRef);
-
-		if (logger.isTraceEnabled()) {
-			logger.trace("getVersion: " + versionRef + " nodeProperties=\n" + nodeProperties.keySet());
-		}
-
-		// TODO consolidate with VersionUtil.convertFrozenToOriginalProps
-
-		for (QName key : nodeProperties.keySet()) {
-			Serializable value = nodeProperties.get(key);
-
-			String keyName = key.getLocalName();
-			int idx = keyName.indexOf(Version2Model.PROP_METADATA_PREFIX);
-			if (idx == 0) {
-				// versioned metadata property - additional (optional) metadata,
-				// set during versioning
-				versionProperties.put(keyName.substring(Version2Model.PROP_METADATA_PREFIX.length()), value);
-			} else {
-				if (key.equals(Version2Model.PROP_QNAME_VERSION_DESCRIPTION)) {
-					versionProperties.put(Version.PROP_DESCRIPTION, value);
-				} else if (key.equals(Version2Model.PROP_QNAME_VERSION_LABEL)) {
-					versionProperties.put(VersionBaseModel.PROP_VERSION_LABEL, value);
-				} else {
-					if (keyName.equals(Version.PROP_DESCRIPTION) || keyName.equals(VersionBaseModel.PROP_VERSION_LABEL)) {
-						// ignore reserved localname (including cm:description,
-						// cm:versionLabel)
-					} else {
-						// all other properties
-						versionProperties.put(keyName, value);
-					}
-				}
-			}
-		}
-
-		// Create and return the version object
-		NodeRef newNodeRef = new NodeRef(new StoreRef(VersionBaseModel.STORE_PROTOCOL, Version2Model.STORE_ID), versionRef.getId());
-		Version result = new VersionImpl(versionProperties, newNodeRef);
-
-		if (logger.isTraceEnabled()) {
-			logger.trace("getVersion: " + versionRef + " versionProperties=\n" + versionProperties.keySet());
-		}
-
-		// done
-		return result;
-	}
+//
+//	private Version getVersion(NodeRef versionRef) {
+//		if (versionRef == null) {
+//			return null;
+//		}
+//		Map<String, Serializable> versionProperties = new HashMap<>();
+//
+//		// Get the standard node details and get the meta data
+//		Map<QName, Serializable> nodeProperties = dbNodeService.getProperties(versionRef);
+//
+//		if (logger.isTraceEnabled()) {
+//			logger.trace("getVersion: " + versionRef + " nodeProperties=\n" + nodeProperties.keySet());
+//		}
+//
+//		// TODO consolidate with VersionUtil.convertFrozenToOriginalProps
+//
+//		for (QName key : nodeProperties.keySet()) {
+//			Serializable value = nodeProperties.get(key);
+//
+//			String keyName = key.getLocalName();
+//			int idx = keyName.indexOf(Version2Model.PROP_METADATA_PREFIX);
+//			if (idx == 0) {
+//				// versioned metadata property - additional (optional) metadata,
+//				// set during versioning
+//				versionProperties.put(keyName.substring(Version2Model.PROP_METADATA_PREFIX.length()), value);
+//			} else {
+//				if (key.equals(Version2Model.PROP_QNAME_VERSION_DESCRIPTION)) {
+//					versionProperties.put(Version.PROP_DESCRIPTION, value);
+//				} else if (key.equals(Version2Model.PROP_QNAME_VERSION_LABEL)) {
+//					versionProperties.put(VersionBaseModel.PROP_VERSION_LABEL, value);
+//				} else {
+//					if (keyName.equals(Version.PROP_DESCRIPTION) || keyName.equals(VersionBaseModel.PROP_VERSION_LABEL)) {
+//						// ignore reserved localname (including cm:description,
+//						// cm:versionLabel)
+//					} else {
+//						// all other properties
+//						versionProperties.put(keyName, value);
+//					}
+//				}
+//			}
+//		}
+//
+//		// Create and return the version object
+//		NodeRef newNodeRef = new NodeRef(new StoreRef(VersionBaseModel.STORE_PROTOCOL, Version2Model.STORE_ID), versionRef.getId());
+//		Version result = new VersionImpl(versionProperties, newNodeRef);
+//
+//		if (logger.isTraceEnabled()) {
+//			logger.trace("getVersion: " + versionRef + " versionProperties=\n" + versionProperties.keySet());
+//		}
+//
+//		// done
+//		return result;
+//	}
 
 }
