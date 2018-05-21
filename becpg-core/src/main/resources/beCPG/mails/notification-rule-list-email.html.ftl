@@ -33,13 +33,13 @@
                                  <table width="100%" cellpadding="0" cellspacing="0" border="0">
                                     <tr>
                                        <td>
-                                          <table bgcolor="#009dcc" cellpadding="0" cellspacing="0" border="0">
+                                          <table cellpadding="0" cellspacing="0" border="0">
                                              <tr>
                                                 <td>
                                                    <img src="${shareUrl}/res/components/images/page-64.png" alt="" width="64" height="64" border="0" style="padding-right: 20px;" />
                                                 </td>
                                                 <td>
-                                                   <div style="color: #ffffff; font-size: 22px; padding-bottom: 4px;">
+                                                   <div style="color: #000000; font-size: 22px; padding-bottom: 4px;">
                                                    			${args.subject}  
                                                    </div>
                                                    <div style="font-size: 13px;">
@@ -55,7 +55,7 @@
                                               </p>
                                             
                                              <table cellpadding="0" cellspacing="0" style="border:solid 1px black;padding: 0px;" >
-                                               <tr style="background-color: #79FD5A;">
+                                               <tr style="background-color: #009dcc;">
                                                  <th>Dossier</th>
                                                  <th class="becpg_cellBorderLeft">Objet</th>
                                                  <th class="becpg_cellBorderLeft">${args.dateField}</th>
