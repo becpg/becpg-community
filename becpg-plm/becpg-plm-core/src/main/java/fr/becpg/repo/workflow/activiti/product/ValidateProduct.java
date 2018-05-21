@@ -67,6 +67,12 @@ public class ValidateProduct extends BaseJavaDelegate {
 						if (dictionaryService.isSubClass(nodeType, PLMModel.TYPE_PRODUCT)) {
 							nodeService.setProperty(nodeRef, PLMModel.PROP_PRODUCT_STATE, SystemState.Valid);
 						}
+						else if (dictionaryService.isSubClass(nodeType, PLMModel.TYPE_CLIENT)) {
+							nodeService.setProperty(nodeRef, PLMModel.PROP_CLIENT_STATE, SystemState.Valid);
+						}
+						if (dictionaryService.isSubClass(nodeType, PLMModel.TYPE_SUPPLIER)) {
+							nodeService.setProperty(nodeRef, PLMModel.PROP_SUPPLIER_STATE, SystemState.Valid);
+						}
 					}
 				} catch (Exception e) {
 					if (e instanceof ConcurrencyFailureException) {
