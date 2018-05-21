@@ -79,8 +79,11 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 							a.getVoluntarySources().clear();
 							a.getInVoluntarySources().clear();
 						} else if(formulatedProduct.hasProcessListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))){
+							a.setVoluntary(false);
 							a.setInVoluntary(false);
+							a.getVoluntarySources().clear();
 							a.getInVoluntarySources().clear();
+							
 						}
 						
 						// add detailable aspect
