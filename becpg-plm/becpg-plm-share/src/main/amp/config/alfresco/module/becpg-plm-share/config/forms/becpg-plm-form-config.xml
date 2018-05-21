@@ -7789,6 +7789,11 @@
 					<show id="bcpg:nutListGroup" />
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:nutListMethod">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
 					<field id="bcpg:nutListGroup">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
