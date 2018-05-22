@@ -2,10 +2,8 @@ package fr.becpg.repo.product.version;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
-import org.alfresco.service.cmr.coci.CheckOutCheckInServiceException;
 import org.alfresco.service.cmr.lock.LockService;
 import org.alfresco.service.cmr.lock.LockType;
-import org.alfresco.service.cmr.lock.UnableToReleaseLockException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.springframework.beans.factory.annotation.Autowired;
