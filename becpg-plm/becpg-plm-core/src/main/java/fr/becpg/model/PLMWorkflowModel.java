@@ -29,5 +29,8 @@ public class PLMWorkflowModel {
 	
 	public static final QName ASPECT_PRODUCT_VALIDATION_ASPECT = QName.createQName(PLM_WORKFLOW_URI,
 			"productValidationAspect");
-		
+	
+	public static final QName PROP_PV_VALIDATION_DATE = QName.createQName(PLM_WORKFLOW_URI, "pvValidationDate");
+	public static final QName ASSOC_PV_CALLER_ACTOR = QName.createQName(PLM_WORKFLOW_URI, "pvCallerActor");
+	
 }
