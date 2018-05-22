@@ -5856,6 +5856,7 @@
 					<show id="cm:description" force="true" />
 					<show id="bcpg:labelClaimFormula" />
 					<show id="bcpg:isManualListItem" force="true" />
+					<show id="rep:reportLocales" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:charactName" />	
@@ -5874,6 +5875,11 @@
 							<control-param name="rows">10</control-param>
 						</control>
 					</field>
+					<field id="rep:reportLocales" >
+						<control template="/org/alfresco/components/form/controls/mtlangue.ftl">
+        		 				 <control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 		</forms>
@@ -5890,6 +5896,7 @@
 					<show id="cm:description" force="true" />
 					<show id="bcpg:labelClaimFormula" />
 					<show id="bcpg:isManualListItem" force="true" />
+					<show id="rep:reportLocales" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:charactName" />
@@ -5906,6 +5913,11 @@
 					<field id="bcpg:labelClaimFormula">
 						<control template="/org/alfresco/components/form/controls/spel-editor.ftl">
 							<control-param name="rows">10</control-param>
+						</control>
+					</field>
+					<field id="rep:reportLocales" >
+						<control template="/org/alfresco/components/form/controls/mtlangue.ftl">
+        		 				 <control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
 				</appearance>
