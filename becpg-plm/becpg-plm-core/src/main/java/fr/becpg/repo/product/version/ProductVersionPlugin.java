@@ -61,6 +61,21 @@ public class ProductVersionPlugin implements EntityVersionPlugin {
 		        	}
 		        }
 	        }
+
+                if(!nodeService.hasAspect(workingCopyNodeRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT)) {
+	        	try {
+	        		policyBehaviourFilter.disableBehaviour();
+	        		  if (nodeService.hasAspect(origNodeRef, ContentModel.ASPECT_LOCKABLE))
+	                    {
+	                        // Release the lock on the original node
+	                        lockService.unlock(origNodeRef, false, true);
+	                    }
+	                   	nodeService.removeAspect(origNodeRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT);
+	        	} finally {
+	        		  policyBehaviourFilter.enableBehaviour();
+	        		  lockService.lock(origNodeRef, LockType.READ_ONLY_LOCK);
+	        	}
+	        }
 	        
 		}
 		
