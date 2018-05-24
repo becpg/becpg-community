@@ -32,7 +32,7 @@ public class ZipSearchRenderer  implements SearchReportRenderer {
 	
 	@Override
 	public void renderReport(NodeRef templateNodeRef, List<NodeRef> searchResults, ReportFormat reportFormat, OutputStream outputStream) {
-
+      throw new IllegalStateException("Please use async method");
 		
 	}
 

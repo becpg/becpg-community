@@ -694,6 +694,8 @@
                          */
                         exportSearch : function Search_exportSearch(args)
                         {
+                        	
+
                             var searchTerm = this.searchTerm;
                             if (args.searchTerm !== undefined)
                             {
@@ -704,16 +706,7 @@
                             {
                                 searchTag = args.searchTag;
                             }
-                            // var searchAllSites = this.searchAllSites;
-                            // if (args.searchAllSites !== undefined)
-                            // {
-                            // searchAllSites = args.searchAllSites;
-                            // }
-                            // var searchRepository = this.searchRepository;
-                            // if (args.searchRepository !== undefined)
-                            // {
-                            // searchRepository = args.searchRepository;
-                            // }
+                            
                             var searchSort = this.searchSort;
                             if (args.searchSort !== undefined)
                             {
@@ -754,7 +747,53 @@
                                 url += "&site=&repo=true";
                             }
 
-                            window.location = url;
+                        	
+                        	if(args.reportFileName.indexOf(".zip")>0) {
+                        		
+                        		url += "&async=true";
+                        		
+                        		var downloadDialog = Alfresco.getArchiveAndDownloadInstance();
+                                
+                        		downloadDialog.showExport = function (reportName)
+	                        	      {
+                        			
+	                        	            // Reset the dialog...
+	                        	            this._resetGUI();
+	
+	                        	            // Enable the Esc key listener
+	                        	            this.widgets.escapeListener.enable();
+	                        	            this.panel.setFirstLastFocusable();
+	                        	            this.panel.show();
+	                        	            
+	                        	            this._currentArchiveName = reportName;
+	                        	            
+	                        	            // Kick off the request...
+	                        	            
+	                        	            // Post the details of the nodeRefs to archive...
+	                        	            Alfresco.util.Ajax.request({
+	                        				     method : Alfresco.util.Ajax.GET,
+		                           	            url: url,
+		                           	            responseContentType : "application/json",
+		                           	            successCallback:
+		                           	            {
+		                           	               fn: this.archiveInitReqSuccess,
+		                           	               scope: this
+		                           	            },
+		                           	            failureCallback:
+		                           	            {
+		                           	               fn: this.archiveInitReqFailure,
+		                           	               scope: this
+		                           	            }
+		                           	         });
+                        		
+	                        	        
+	                        	      }
+	                        		
+                        			downloadDialog.showExport(args.reportFileName);
+                        	
+                        	} else {
+	                            window.location = url;
+                        	}
                         },
 
                         onBulkEditClick : function Search_onBulkEditClick(e, obj)
