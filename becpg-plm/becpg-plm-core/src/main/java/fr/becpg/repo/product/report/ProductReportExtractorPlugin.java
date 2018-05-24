@@ -25,14 +25,17 @@ import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.MPMModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
+import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.JsonFormulaHelper;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.PackagingKitData;
 import fr.becpg.repo.product.data.ProductData;
@@ -278,7 +281,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 						// #1815: takes in account major
 						String allergenType = (String) nodeService.getProperty(dataItem.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE);
-						if ((allergenType != null) && allergenType.equals("Major")) {
+						if ((allergenType != null) && allergenType.equals("Major") && !isAllergenDisableForLocal(dataItem.getAllergen())) {
 							String allergen = (String) nodeService.getProperty(dataItem.getAllergen(), BeCPGModel.PROP_LEGAL_NAME);
 
 							if ((allergen == null) || allergen.isEmpty()) {
@@ -432,22 +435,32 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	}
 
+	private boolean isAllergenDisableForLocal(NodeRef allergen) {
+		if (mlNodeService.hasAspect(allergen, ReportModel.ASPECT_REPORT_LOCALES)) {
+			List<String> langs = (List<String>) nodeService.getProperty(allergen, ReportModel.PROP_REPORT_LOCALES);
+			if ((langs != null) && !langs.isEmpty()) {
+				return !MLTextHelper.extractLocales(langs).contains(I18NUtil.getLocale());
+			}
+		}
+		return false;
+	}
+
 	private void loadCompoList(ProductData productData, Element dataListsElt, DefaultExtractorContext context) {
 		// compoList
 		if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 			Element compoListElt = dataListsElt.addElement(PLMModel.TYPE_COMPOLIST.getLocalName() + "s");
 
 			for (CompoListDataItem dataItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-				if(dataItem.getProduct()!=null) {
+				if (dataItem.getProduct() != null) {
 					addDataListState(compoListElt, dataItem.getParentNodeRef());
-	
+
 					ProductData subProductData = (ProductData) alfrescoRepository.findOne(dataItem.getProduct());
-	
+
 					Double parentLossRatio = dataItem.getLossPerc() != null ? dataItem.getLossPerc() : 0d;
 					Double qty = dataItem.getQty() != null ? dataItem.getQty() : 0d;
 					Double qtyForCost = FormulationHelper.getQtyForCost(dataItem, 0d, subProductData,
 							CostsCalculatingFormulationHandler.keepProductUnit);
-	
+
 					loadCompoListItem(null, dataItem, subProductData, compoListElt, 0, qty, qtyForCost, parentLossRatio, context);
 				}
 			}
@@ -1108,9 +1121,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				Double qty = FormulationHelper.getQtyInKg(compoList);
 
 				ProductData subProductData = (ProductData) alfrescoRepository.findOne(compoList.getProduct());
-				
-				Double qtyForCost = FormulationHelper.getQtyForCost(compoList, parentLossRatio,
-						subProductData, false);
+
+				Double qtyForCost = FormulationHelper.getQtyForCost(compoList, parentLossRatio, subProductData, false);
 
 				if (logger.isDebugEnabled()) {
 					logger.debug("Get rawMaterial " + nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME) + "qty: " + qty + " netWeight "
@@ -1514,6 +1526,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	@Override
 	public EntityReportExtractorPriority getMatchPriority(QName type) {
-		return entityDictionaryService.isSubClass(type, PLMModel.TYPE_PRODUCT) ? EntityReportExtractorPriority.NORMAL : EntityReportExtractorPriority.NONE;
+		return entityDictionaryService.isSubClass(type, PLMModel.TYPE_PRODUCT) ? EntityReportExtractorPriority.NORMAL
+				: EntityReportExtractorPriority.NONE;
 	}
 }
