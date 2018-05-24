@@ -63,8 +63,11 @@
                                                <#list args.entities as item> 	
 													<tr>
 														<td class="becpg_rowBorderTop"> ${item.parentFolder} </td>
-														<td class="becpg_rowBorderTopLeftRight"><a href="${shareUrl}/page/<#if item.siteName??>site/${item.siteName}/</#if>entity-data-lists?nodeRef=${item.entityNodeRef}">${item.entityName}</a></td>
+														<td class="becpg_rowBorderTopLeftRight">
+															<a href="${shareUrl}/page/<#if item.siteName??>site/${item.siteName}/</#if><#if item.isEnitytV2SubType>entity-data-lists<#else>document-details</#if>?nodeRef=${item.entityNodeRef}">${item.entityName}</a>
+														</td>
 														<td class="becpg_rowBorderTopLeftRight">${item.dateFieldValue?date}</td>
+														
 													</tr>
 												</#list>
                                              </table>
