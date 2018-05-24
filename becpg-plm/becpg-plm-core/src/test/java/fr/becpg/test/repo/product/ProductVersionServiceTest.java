@@ -675,15 +675,11 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 
 		assertTrue(nodeService.hasAspect(branchNodeRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT));
 		assertEquals(nodeService.getProperty(branchNodeRef, PLMWorkflowModel.PROP_PV_VALIDATION_DATE), validationDate);
-
-		System.out.println("Befor pwet : "+nodeService.getProperty(branchNodeRef, PLMWorkflowModel.PROP_PV_VALIDATION_DATE));
-		
+	
 		final NodeRef newRawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(
 				() -> entityVersionService.mergeBranch(branchNodeRef, rawMaterialNodeRef, VersionType.MAJOR, "This is a test version"), false, true);
 
 		validateNewVersion(newRawMaterialNodeRef, rawMaterialNodeRef, rawMaterial, productUnit, valueAdded,false);
-
-		System.out.println("After pwet : "+nodeService.getProperty(rawMaterialNodeRef, PLMWorkflowModel.PROP_PV_VALIDATION_DATE));
 
 		assertTrue(nodeService.hasAspect(newRawMaterialNodeRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT));
 		assertEquals(nodeService.getProperty(newRawMaterialNodeRef, PLMWorkflowModel.PROP_PV_VALIDATION_DATE), validationDate);
