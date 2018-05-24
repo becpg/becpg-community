@@ -105,7 +105,7 @@ public class ExportSearchServiceTest extends RepoBaseTestCase {
 
 			searchResults.add(entityNodeRef);
 
-			allEntries.add("Image Export Zip Test " + i + ".jpeg");
+			allEntries.add("subimg" + i+".jpeg - Export Zip Test " + i + ".jpeg");
 			allEntries.add("Sub folder/Image - Export Zip Test " + i + ".jpeg");
 			allEntries.add("Sub folder2/img" + i + ".jpeg");
 

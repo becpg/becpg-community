@@ -205,6 +205,7 @@ public class ZipSearchDownloadExporter implements Exporter {
 	}
 
 	Map<String, Set<NodeRef>> cache = new HashMap<>();
+	Set<String> folders = new HashSet<>();
 
 	@Override
 	public void startNode(NodeRef entityNodeRef) {
@@ -217,7 +218,7 @@ public class ZipSearchDownloadExporter implements Exporter {
 			if (toExtractNodes == null) {
 				toExtractNodes = new HashSet<>();
 
-				List<NodeRef> files = BeCPGQueryBuilder.createQuery().selectNodesByPath(entityNodeRef, extractExpr(entityNodeRef, fileMapping.path));
+				List<NodeRef> files = BeCPGQueryBuilder.createQuery().selectNodesByPath(entityNodeRef, extractExpr(entityNodeRef, null, fileMapping.path));
 				toExtractNodes.addAll(files);
 
 				cache.put(key, toExtractNodes);
@@ -236,16 +237,23 @@ public class ZipSearchDownloadExporter implements Exporter {
 							fileCount = fileCount + 1;
 
 						} else {
+							
+							String folderName = null;
+							
+							if(fileMapping.destFolder != null && !fileMapping.destFolder.isEmpty()){
+								folderName = extractExpr(entityNodeRef, null, fileMapping.destFolder);
+							}
 
-							String path = ((fileMapping.destFolder != null) && !fileMapping.destFolder.isEmpty() ? fileMapping.destFolder + "/" : "")
+							String path = (folderName!=null ? fileMapping.destFolder + "/" : "")
 									+ createName(fileMapping, fileNodeRef, entityNodeRef);
 
 							try (InputStream inputStream = reader.getContentInputStream()) {
 
-								if ((fileMapping.destFolder != null) && !fileMapping.destFolder.isEmpty()) {
-									ZipArchiveEntry zipEntry = new ZipArchiveEntry(fileMapping.destFolder);
+								if (folderName!=null && !folders.contains(folderName)) {
+									ZipArchiveEntry zipEntry = new ZipArchiveEntry(folderName);
 									zipStream.putArchiveEntry(zipEntry);
 									zipStream.closeArchiveEntry();
+									folders.add(folderName);
 								}
 
 								// ALF-2016
@@ -301,12 +309,12 @@ public class ZipSearchDownloadExporter implements Exporter {
 
 	private String createName(FileToExtract fileMapping, NodeRef docNodeRef, NodeRef entityNodeRef) {
 		if ((fileMapping.name != null) && !fileMapping.name.isEmpty()) {
-			return extractExpr(entityNodeRef, fileMapping.name);
+			return extractExpr(entityNodeRef, docNodeRef , fileMapping.name);
 		}
 		return (String) nodeService.getProperty(docNodeRef, ContentModel.PROP_NAME);
 	}
 
-	private String extractExpr(NodeRef nodeRef, String exprFormat) {
+	private String extractExpr(NodeRef nodeRef, NodeRef docNodeRef , String exprFormat) {
 		Matcher patternMatcher = Pattern.compile("\\{([^}]+)\\}").matcher(exprFormat);
 		StringBuffer sb = new StringBuffer();
 		while (patternMatcher.find()) {
@@ -315,14 +323,14 @@ public class ZipSearchDownloadExporter implements Exporter {
 			String replacement = "";
 			if (propQname.contains("|")) {
 				for (String propQnameAlt : propQname.split("\\|")) {
-					replacement = extractPropText(nodeRef, propQnameAlt);
+					replacement = extractPropText(nodeRef,docNodeRef, propQnameAlt);
 					if ((replacement != null) && !replacement.isEmpty()) {
 						break;
 					}
 				}
 
 			} else {
-				replacement = extractPropText(nodeRef, propQname);
+				replacement = extractPropText(nodeRef,docNodeRef, propQname);
 			}
 
 			patternMatcher.appendReplacement(sb, replacement != null ? replacement.replace("$", "") : "");
@@ -333,12 +341,19 @@ public class ZipSearchDownloadExporter implements Exporter {
 	}
 
 	@SuppressWarnings("unchecked")
-	private String extractPropText(NodeRef nodeRef, String propQname) {
+	private String extractPropText(NodeRef nodeRef, NodeRef docNodeRef, String propQname) {
+		NodeRef nodeToExtract = nodeRef;
+		
+		if(propQname.startsWith("doc_")) {
+			nodeToExtract = docNodeRef;
+		}
+		propQname = propQname.replace("doc_", "");
+		
 		if (nodeService.getProperty(nodeRef, QName.createQName(propQname, namespaceService)) instanceof List) {
-			return ((List<String>) nodeService.getProperty(nodeRef, QName.createQName(propQname, namespaceService))).stream()
+			return ((List<String>) nodeService.getProperty(nodeToExtract, QName.createQName(propQname, namespaceService))).stream()
 					.collect(Collectors.joining(","));
 		}
-		return (String) nodeService.getProperty(nodeRef, QName.createQName(propQname, namespaceService));
+		return (String) nodeService.getProperty(nodeToExtract, QName.createQName(propQname, namespaceService));
 	}
 
 	/**

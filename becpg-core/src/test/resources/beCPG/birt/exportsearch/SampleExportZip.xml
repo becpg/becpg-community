@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<export format="zip">
+	<file path="cm:Documents/*" name="{bcpg:code} - {doc_cm:name}" />
+	<file path="cm:Images/*[like(@cm:name, '%jpg', false)]" name="{bcpg:code} - img_produit.jpg" destFolder="Images" />
+	<file path="*/*[like(@cm:name, '%jpeg', false)]" name="{bcpg:code} - img.jpeg" destFolder="Images" />
+	<file path="*/*[like(@cm:name, '%png', false)]" name="{bcpg:code} - img.png" destFolder="Images" />
+</export>
