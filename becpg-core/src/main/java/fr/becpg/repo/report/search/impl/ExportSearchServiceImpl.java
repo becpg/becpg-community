@@ -1,13 +1,18 @@
 /*
- * 
+ *
  */
 package fr.becpg.repo.report.search.impl;
 
 import java.io.OutputStream;
 import java.util.List;
 
+import javax.annotation.Resource;
+
+import org.alfresco.repo.download.DownloadStorage;
+import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.util.ParameterCheck;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,42 +28,75 @@ import fr.becpg.report.client.ReportFormat;
  * @author matthieu
  */
 @Service("exportSearchService")
-public class ExportSearchServiceImpl implements ExportSearchService{		
-	
-	
-	private final static Log logger = LogFactory.getLog(ExportSearchServiceImpl.class);	
-	
+public class ExportSearchServiceImpl implements ExportSearchService {
+
+	private final static Log logger = LogFactory.getLog(ExportSearchServiceImpl.class);
+
 	@Autowired
-	SearchReportRenderer[] searchReportRenderers;
-	
+	private SearchReportRenderer[] searchReportRenderers;
+
+	@Autowired
+	protected RetryingTransactionHelper retryingTransactionHelper;
+
+	@Autowired
+	private DownloadStorage downloadStorage;
+
 	@Override
-	public void createReport(QName nodeType, NodeRef templateNodeRef, List<NodeRef> searchResults, ReportFormat reportFormat, OutputStream outputStream) {
-		
-		if(templateNodeRef != null){
-						
-			
+	public void createReport(QName nodeType, NodeRef templateNodeRef, List<NodeRef> searchResults, ReportFormat reportFormat,
+			OutputStream outputStream) {
+
+		if (templateNodeRef != null) {
+
 			SearchReportRenderer searchReportRender = getSearchReportRender(templateNodeRef, reportFormat);
-			if(searchReportRender!=null){
+			if (searchReportRender != null) {
 				searchReportRender.renderReport(templateNodeRef, searchResults, reportFormat, outputStream);
 			} else {
-				logger.error("No search report renderer found for : "+reportFormat.toString()+" "+templateNodeRef);
+				logger.error("No search report renderer found for : " + reportFormat.toString() + " " + templateNodeRef);
 			}
-					
+
 		}
 	}
-	
+
 	private SearchReportRenderer getSearchReportRender(NodeRef templateNodeRef, ReportFormat reportFormat) {
-	    if(searchReportRenderers!=null){
-	    	for(SearchReportRenderer searchReportRenderer : searchReportRenderers){
-	    		if(searchReportRenderer.isApplicable(templateNodeRef, reportFormat)){
-	    			return searchReportRenderer;
-	    		}
-	    	}
-	    }
+		if (searchReportRenderers != null) {
+			for (SearchReportRenderer searchReportRenderer : searchReportRenderers) {
+				if (searchReportRenderer.isApplicable(templateNodeRef, reportFormat)) {
+					return searchReportRenderer;
+				}
+			}
+		}
 		return null;
 	}
 
+	@Override
+	public NodeRef createReport(QName nodeType, NodeRef templateNodeRef, List<NodeRef> searchResults, ReportFormat reportFormat) {
 
-		
+		ParameterCheck.mandatory("templateNodeRef", templateNodeRef);
+
+		NodeRef downloadNode = retryingTransactionHelper.doInTransaction(() -> {
+			// Create a download node
+			NodeRef downloadNode1 = downloadStorage.createDownloadNode(false);
+
+			// Add requested nodes
+			for (NodeRef node : searchResults) {
+				downloadStorage.addNodeToDownload(downloadNode1, node);
+			}
+
+			return downloadNode1;
+		}, false, true);
+
+		SearchReportRenderer searchReportRender = getSearchReportRender(templateNodeRef, reportFormat);
+		if (searchReportRender != null) {
+			searchReportRender.executeAction(templateNodeRef, downloadNode, reportFormat);
+		} else {
+			logger.error("No search report renderer found for : " + reportFormat.toString() + " " + templateNodeRef);
+		}
+
+		// This is done in a new transaction to avoid node not found errors when
+		// the zip creation occurs
+		// on a remote transformation server.
+
+		return downloadNode;
+	}
 
 }
