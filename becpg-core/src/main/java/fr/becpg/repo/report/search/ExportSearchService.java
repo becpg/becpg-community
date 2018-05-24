@@ -42,4 +42,15 @@ public interface ExportSearchService {
 	 * @param outputStream
 	 */
 	void createReport(QName nodeType, NodeRef templateNodeRef, List<NodeRef> searchResults, ReportFormat reportFormat, OutputStream outputStream);
+
+	
+	/**
+	 * Create report asynchronously
+	 * @param nodeType
+	 * @param templateNodeRef
+	 * @param searchResults
+	 * @param reportFormat
+	 * @return
+	 */
+	NodeRef createReport(QName nodeType, NodeRef templateNodeRef, List<NodeRef> searchResults, ReportFormat reportFormat);
 }

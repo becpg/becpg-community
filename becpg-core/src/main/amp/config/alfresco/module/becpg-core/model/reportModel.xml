@@ -37,6 +37,7 @@
 					<value>PDF</value>
 					<value>XLSX</value>
 					<value>DOCX</value>
+					<value>ZIP</value>
 				</list>
 			</parameter>
 		</constraint>	
