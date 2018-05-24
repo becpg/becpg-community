@@ -323,9 +323,7 @@
 					<field id="bcpg:nrFrequency" help-id="becpg.forms.help.notificationFrequency" />
 					<field id="bcpg:nrEmail">
 						<control template="/org/alfresco/components/form/controls/association.ftl">
-							<control-param name="startLocation">{ancestor}</control-param>
-							<control-param name="startLocationParams">aspect=bcpg:entityListsAspect
-							</control-param>
+							<control-param name="startLocation">/app:company_home/app:dictionary/app:email_templates</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -430,9 +428,7 @@
 					<field id="bcpg:nrFrequency" help-id="becpg.forms.help.notificationFrequency" />
 					<field id="bcpg:nrEmail">
 						<control template="/org/alfresco/components/form/controls/association.ftl">
-							<control-param name="startLocation">{ancestor}</control-param>
-							<control-param name="startLocationParams">aspect=bcpg:entityListsAspect
-							</control-param>
+							<control-param name="startLocation">/app:company_home/app:dictionary/app:email_templates</control-param>
 						</control>
 					</field>
 				</appearance>
