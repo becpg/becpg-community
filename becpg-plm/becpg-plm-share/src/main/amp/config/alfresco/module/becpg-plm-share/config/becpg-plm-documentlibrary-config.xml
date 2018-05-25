@@ -24,6 +24,7 @@
 				<aspect name="pack:pmCoilAspect" />
 				<aspect name="pack:pmPrintAspect" />
 				<aspect name="bcpg:entityVariantAspect" />
+				<aspect name="bcpg:chemicalCodeAspect" />
 				
 			</visible>
 			<!-- Aspects that a user can add. Same as "visible" if left empty -->

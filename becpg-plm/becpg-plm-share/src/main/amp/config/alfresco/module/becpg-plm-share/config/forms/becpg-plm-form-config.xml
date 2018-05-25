@@ -122,6 +122,9 @@
 					<show id="bcpg:productState" />
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:casNumber" />
+					<show id="bcpg:ecNumber" />
+					
 					<show id="bcpg:eanCode" />
 					<show id="bcpg:eanCodeLevel2"  />
 					<show id="bcpg:eanCodeLevel3" />
@@ -315,6 +318,10 @@
 					<field id="bcpg:productState" set="mainInfo" />
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
+					
+					<field id="bcpg:casNumber" set="mainInfo"/>
+					<field id="bcpg:ecNumber" set="mainInfo"/>
+					
 					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo" >
 						<constraint-handlers>
 		                  	<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.GTIN" event="keyup,change"/>
@@ -2502,6 +2509,11 @@
 					<show id="bcpg:productState" />
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
+					
+					<show id="bcpg:casNumber" />
+					<show id="bcpg:ecNumber" />
+					
+					
 					<show id="bcpg:eanCode" />
 					<show id="bcpg:suppliers" />
 					<show id="bcpg:plants" force="true" />
@@ -2521,6 +2533,7 @@
 					<show id="bcpg:diluentRef" />
 					<show id="bcpg:targetReconstitutionRef" />
 					<show id="bcpg:ingTypeV2" force="true" />
+					<show id="bcpg:ingCEECode" force="true" />
 					<show id="bcpg:useByDate" force="true" />
 					<show id="bcpg:bestBeforeDate" force="true" />
 					<show id="bcpg:periodAfterOpening" force="true" />
@@ -2614,6 +2627,9 @@
 					</field>
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
+					<field id="bcpg:casNumber" set="mainInfo"/>
+					<field id="bcpg:ecNumber" set="mainInfo"/>
+					
 					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo"  >
 						<constraint-handlers>
 		                  	<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.GTIN" event="keyup,change"/>
@@ -2670,12 +2686,17 @@
 						</control>
 					</field>
 					
+					
+					
 					<field id="bcpg:ingTypeV2" set="consumer">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ingTypeItem
 							</control-param>
 						</control>
 					</field>
+					
+					<field id="bcpg:ingCEECode" set="consumer" />
+					
 					<field id="bcpg:useByDate" help-id="becpg.forms.help.useByDate" set="consumer" />
 					<field id="bcpg:bestBeforeDate" help-id="becpg.forms.help.bestBeforeDate" set="consumer" >
 						<control
@@ -2804,6 +2825,8 @@
 					<!-- Consumer -->
 					<show id="bcpg:productDensity" />
 					<show id="bcpg:ingTypeV2" force="true" />
+					
+					<show id="bcpg:ingCEECode" force="true" />
 					<show id="bcpg:useByDate" force="true" />
 					<show id="bcpg:bestBeforeDate" force="true" />
 					<show id="bcpg:periodAfterOpening" force="true" />
@@ -2882,6 +2905,7 @@
 							</control-param>
 						</control>
 					</field>
+					<field id="bcpg:ingCEECode" set="consumer" />
 					<field id="bcpg:useByDate" help-id="becpg.forms.help.useByDate" set="consumer" />
 					<field id="bcpg:bestBeforeDate" help-id="becpg.forms.help.bestBeforeDate" set="consumer" >
 						<control
@@ -3059,6 +3083,7 @@
 					<show id="bcpg:diluentRef" />
 					<show id="bcpg:targetReconstitutionRef" />
 					<show id="bcpg:ingTypeV2" force="true" />
+					<show id="bcpg:ingCEECode" force="true" />
 					<show id="bcpg:useByDate" force="true" />
 					<show id="bcpg:bestBeforeDate" force="true" />
 					<show id="bcpg:periodAfterOpening" force="true" />
@@ -3180,6 +3205,8 @@
 							</control-param>
 						</control>
 					</field>
+					
+					<field id="bcpg:ingCEECode" set="consumer" />
 					<field id="bcpg:useByDate" help-id="becpg.forms.help.useByDate" set="consumer" />
 					<field id="bcpg:bestBeforeDate" help-id="becpg.forms.help.bestBeforeDate" set="consumer" >
 						<control
@@ -4792,12 +4819,11 @@
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:pluralLegalName"/>
-					<show id="bcpg:ingCEECode" />
+					<show id="bcpg:ingCEECode"  force="true"/>
 					<show id="bcpg:ingTypeV2"  force="true"/>
 				</field-visibility>
 
 				<appearance>
-
 					<field id="bcpg:charactName" />
 					<field id="cm:description">
 						<control>
@@ -4826,7 +4852,7 @@
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:pluralLegalName"/>
-					<show id="bcpg:ingCEECode" />
+					<show id="bcpg:ingCEECode" force="true"/>
 					<show id="bcpg:ingTypeV2"  force="true"/>
 				</field-visibility>
 
@@ -4882,7 +4908,7 @@
 					<show id="bcpg:charactName" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:pluralLegalName"/>
-					<show id="bcpg:ingCEECode" />
+					<show id="bcpg:ingCEECode" force="true"/>
 					<show id="bcpg:ingTypeV2"  force="true"/>
 				</field-visibility>
 			</form>
