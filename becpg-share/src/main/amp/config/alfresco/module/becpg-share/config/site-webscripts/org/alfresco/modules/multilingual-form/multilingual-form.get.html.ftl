@@ -1,10 +1,14 @@
 <#assign el=args.htmlid?html>
-<#assign label=args.label>
+<#assign label=args.label!false>
 <#assign description="">
 
 
 <div id="${el}-dialog" class="multilingual-form">
+	<#if !args.readonly??>   
    <div id="${el}-dialogTitle" class="hd">${msg("title")}</div>
+   <#else>
+   <div id="${el}-dialogTitle" class="hd">${msg("title.read")}</div>
+   </#if>
    <div class="bd">
       <form id="${el}-form" action="" method="post" class="form-container">
          <div class="form-fields">
@@ -45,7 +49,7 @@
 					<#assign description=mlField.description!""?html>
 	                <#if mlField.locale != currentLocale>
 		         	<div class="form-field">
-	      				<label for="${el}-${mlField.locale}">${fieldLabel?html}:&nbsp;
+	      				<label for="${el}-${mlField.locale}"><#if label?? >${label?html}<#else>${mlField.label?html}</#if>:&nbsp;
 	      						<span class="locale-icon"><img class="icon16_11" title="${mlField.localeLabel}" tabindex="0" src="${url.context}/res/components/images/flags/${mlField.country?lower_case}.png">&nbsp;(${mlField.localeLabel})<span>&nbsp;&nbsp;
 	      						<span class="translate-icon" onClick="suggestTranslate('${el}-${mlField.locale}','${mlField.locale}');" ><img class="icon16" title="${msg("translate.suggest")}" tabindex="0" src="${url.context}/res/components/images/translate-16.png"><span>
 	      				</label>

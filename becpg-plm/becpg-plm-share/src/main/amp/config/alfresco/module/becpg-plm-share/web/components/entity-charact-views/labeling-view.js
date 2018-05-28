@@ -64,7 +64,7 @@
                 {
                     args[1].stop = true;
                     var fieldId  = owner.id;
-                    me[owner.className].call(me, fieldId, "bcpg_illValue");
+                    me[owner.className].call(me, fieldId);
                 }
             }
             return true;
@@ -148,21 +148,25 @@
 
 		},
 		
-		showMLTLabelingPanel : function showMultiLangualForm (nodeRef, field){
+		onShowTranslation : function showMultiLangualForm (fieldId){
+			
+			var nodeRef = fieldId.split("#")[1], field=fieldId.split("#")[2];
+			
+			
 			new Alfresco.module.SimpleDialog(nodeRef+"-multilingualForm").setOptions({
-              templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/multilingual-form/multilingual-form?nodeRef=" + nodeRef + "&label=Etiquette&field=" + field + "&readonly=true",
+              templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/multilingual-form/multilingual-form?nodeRef=" + nodeRef + "&field=" + field + "&readonly=true",
               actionUrl : Alfresco.constants.PROXY_URI + "becpg/form/multilingual/field/" + field + "?nodeRef=" + nodeRef,
               validateOnSubmit : false,
               destroyOnHide : true,
               width: "33em"
            }).show();
             
-
-			
 		},
 		
-	    clipIt : function(htmlId, suffix) {
-	    	htmlId = suffix!=null? htmlId + suffix : htmlId;
+		onCopyToClipboard : function(fieldId) {
+			
+			var htmlId= fieldId.split("#")[0]+ fieldId.split("#")[2];
+			
 	    	if (document.selection) { 	
 			    var range = document.body.createTextRange();
 			    range.moveToElementText(document.getElementById(htmlId));
