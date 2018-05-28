@@ -789,16 +789,16 @@ if (beCPG.module.EntityDataGridRenderers) {
 					
 				html += '<div class="note rounded"><div id="'+ htmlId + suffix +'" > ' + displayValue + '</div>';
 				
-				//show labeling translations & clipboard 
-				if(label == "bcpg:illValue"){
 					var nodeRef = oRecord._oData.nodeRef;
-					console.log(scope.msg("bcpg_bcpgmodel.property.bcpg_illValue.title"));
-					html += '<div class="show-translatedLabeling-container">';
-					html += '<span id="' + htmlId + '" class="clipIt"><a href="#" title="'+ scope.msg("label.copy.to.clipboard.title") +'" class="labeling-action clipboard"></a> </span>';
-					html += '<span>&nbsp;</span>';
-					html += '<span id="' + nodeRef + '" class="showMLTLabelingPanel"><a href="#" title="'+ scope.msg("label.show.translated.labeling.tit") +'" class="labeling-action mltlingual-panel" ></a></span>';
+					html += '<div class="labeling-action-container">';
+				
+					if(label == "bcpg:illValue"){
+						html += '<span id="' +htmlId+"#"+ nodeRef+"#"+ label+  '" class="onCopyToClipboard"><a href="#" title="'+ scope.msg("label.copy.to.clipboard.title") +'" class="labeling-action clipboard"></a> </span>';
+						html += '<span>&nbsp;</span>';
+					}
+					html += '<span id="' +htmlId+"#"+ nodeRef+"#"+ label+ '" class="onShowTranslation"><a href="#" title="'+ scope.msg("label.show.translation.title") +'" class="labeling-action show-translation" ></a></span>';
 					html += '</div>';
-				}
+				
 				
 				html += '</div>';
 				return html;

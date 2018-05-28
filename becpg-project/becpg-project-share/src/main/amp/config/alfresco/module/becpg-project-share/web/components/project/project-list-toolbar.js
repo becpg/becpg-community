@@ -61,15 +61,13 @@
                            type : "menu",
                            menu : "reporting-menu",
                            lazyloadmenu : true,
-                           disabled : true
+                           disabled : true,
+                           zindex: 99
                         });
                            
                         
                         this.widgets.reportingMenu.getMenu().subscribe("beforeShow", function () {
-                        	var oParent = this.parent;
-                        	if (oParent && oParent instanceof YAHOO.widget.MenuBarItem) {
-                        		this.cfg.setProperty("zindex", 99);
-                        	}
+                        	this.cfg.setProperty("zindex", 99);
                         });
                         
                            
