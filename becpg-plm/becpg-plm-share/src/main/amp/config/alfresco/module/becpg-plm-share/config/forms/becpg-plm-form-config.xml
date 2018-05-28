@@ -7256,7 +7256,7 @@
 
 				<appearance>
 					<field id="bcpg:illGrp" read-only="true" />
-					<field id="bcpg:illValue">
+					<field id="bcpg:illValue" read-only="true">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">5</control-param>
     						<control-param name="maxLength">10000</control-param>
@@ -7285,6 +7285,7 @@
 					<field id="bcpg:variantIds" label="hidden"></field>
 					<field id="bcpg:lrLocales" label="hidden" read-only="true"></field>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
+					<field id="bcpg:illValue" read-only="true" />
 				</appearance>
 			</form>
 			
@@ -7320,7 +7321,7 @@
 
 				<appearance>
 					<field id="bcpg:illGrp" read-only="true" />
-					<field id="bcpg:illValue">
+					<field id="bcpg:illValue" read-only="true">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">5</control-param>
     						<control-param name="maxLength">10000</control-param>
