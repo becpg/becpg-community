@@ -31,6 +31,7 @@ import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
@@ -42,6 +43,7 @@ import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 import org.springframework.util.StopWatch;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import fr.becpg.repo.helper.MLTextHelper;
@@ -249,7 +251,7 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 				if (jsonObject.has("data") && jsonObject.getJSONObject("data").has("translations")) {
 					JSONArray translations = jsonObject.getJSONObject("data").getJSONArray("translations");
 					if (translations.length() > 0) {
-						return translations.getJSONObject(0).getString("translatedText");
+						return StringEscapeUtils.unescapeHtml(translations.getJSONObject(0).getString("translatedText"));
 					}
 				}
 
