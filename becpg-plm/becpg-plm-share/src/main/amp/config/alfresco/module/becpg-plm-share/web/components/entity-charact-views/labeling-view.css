@@ -180,8 +180,9 @@
 	padding-left: 20px;
 }
 
-.datagrid .show-translatedLabeling-container {
+.datagrid .labeling-action-container {
 	float: right;
+	padding-top: 25px;
 }
 
 .labeling-view a.clipboard {
@@ -192,9 +193,10 @@
   height:16px;
 }
 
-.labeling-view a.mltlingual-panel {
+.labeling-view a.show-translation {
 	background: url("../../components/images/view-discussion-16.png") no-repeat;
 	float: right;
 	width:16px;
 	height:16px;
+	padding-right: 5px;
 }

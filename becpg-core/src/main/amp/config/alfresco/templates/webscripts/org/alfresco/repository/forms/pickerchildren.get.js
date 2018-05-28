@@ -220,8 +220,16 @@ function main()
          else
          {
             // combine groups and users
-            findGroups(argsSearchTerm, maxResults, results);
-            findUsers(argsSearchTerm, maxResults, results);
+            if (argsGroup != null && argsGroup != "")
+    	 	{
+    	 		findUsersInGroup(argsSearchTerm, maxResults, results, argsGroup);
+    	 		findGroupsInGroup(argsSearchTerm, maxResults, results, argsGroup);
+    	 	}
+    	 	else
+    	 	{
+    	 		findGroups(argsSearchTerm, maxResults, results);
+    	 		findUsers(argsSearchTerm, maxResults, results);
+    	 	}
          }
       }
       
@@ -313,25 +321,7 @@ function findUsersInGroup(searchTerm, maxResults, results, groupName)
    if(group != null)
    {
    	usersInGroup = people.getMembers(group, true);
-   	
-//   	if(searchTerm == "*")
-//	   {   	
-//	   	// create person object for each result
-//	      for each(var user in usersInGroup)
-//	      {
-//	         if (logger.isLoggingEnabled())
-//	            logger.log("found user = " + user.userName);
-//	         
-//	         // add to results
-//	         results.push(
-//	         {
-//	            item: user,
-//	            selectable: true 
-//	         });
-//	      }
-//	   }
-//	   else
-//	   {
+
 	   	findUsers(searchTerm, maxResults, searchResults)
 	   	
 	   	if(usersInGroup.length > 0)
@@ -350,8 +340,41 @@ function findUsersInGroup(searchTerm, maxResults, results, groupName)
 	   	else{
 	   		results.push.apply(results,searchResults);
 	   	}
+	
+   }
+}
+
+
+function findGroupsInGroup(searchTerm, maxResults, results, groupName)
+{
+   var group, groupsInGroup,
+	searchResults = [];
+   
+   group = groups.getGroup(groupName);
+   
+   if(group != null)
+   {
+	   groupsInGroup = group.getChildGroups();
+
+	   findGroups(searchTerm, maxResults, searchResults)
 	   	
-//   	}
+	   	if(groupsInGroup!=null && groupsInGroup.length > 0)
+   		{
+	   		for each(var tmp in searchResults)
+		      {
+		      	for each(var groupInGroup in groupsInGroup)
+		         {
+		      		if(groupInGroup.getGroupNodeRef() == tmp.item.nodeRef)
+		      		{
+		      			results.push(tmp);
+		      		}
+		         }
+		      }
+   		}
+	   	else{
+	   		results.push.apply(results,searchResults);
+	   	}
+	
    }
 }
 

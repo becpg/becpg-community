@@ -10,7 +10,7 @@ function main()
 
    model.mlFields = [];
    model.langs = [];
-   model.fieldLabel = "";
+   
    
    var langs = config.scoped["Languages"]["languages"].childrenMap["language"];
    for (var i = 0, lang ; i < langs.size(); i++) {
@@ -37,7 +37,6 @@ function main()
            		   lang = model.langs[i];
            			for(var j=0, field; j < obj.items.length;j++ ){
            				field = obj.items[j];
-           				model.fieldLabel = field.label;
            				if(field.locale == lang.key){
            					field.localeLabel = lang.label;
            					model.mlFields.push(field);
