@@ -641,7 +641,7 @@
 				<#else>
 					<Table name="becpg_public_projects" alias="becpg_public_projects">
 						<SQL dialect="generic">
-							projects.instanceId = ${instanceId}
+							becpg_public_projects.instanceId = ${instanceId}
 						</SQL>
 					</Table>
 				</#if>

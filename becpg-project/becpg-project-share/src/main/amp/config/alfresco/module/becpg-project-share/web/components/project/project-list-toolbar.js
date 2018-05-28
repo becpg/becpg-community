@@ -61,9 +61,15 @@
                            type : "menu",
                            menu : "reporting-menu",
                            lazyloadmenu : true,
-                           disabled : true
+                           disabled : true,
+                           zindex: 99
                         });
                            
+                        
+                        this.widgets.reportingMenu.getMenu().subscribe("beforeShow", function () {
+                        	this.cfg.setProperty("zindex", 99);
+                        });
+                        
                            
                         this.widgets.reportingMenu.set("label", this.msg("button.download-report")+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
                         

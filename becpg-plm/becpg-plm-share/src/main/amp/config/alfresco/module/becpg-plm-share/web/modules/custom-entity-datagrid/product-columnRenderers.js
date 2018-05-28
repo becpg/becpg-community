@@ -686,17 +686,27 @@ if (beCPG.module.EntityDataGridRenderers) {
 				return "<span  class='variant-common'>&nbsp;</span>";
 			}
 
+			if (scope.entity) {
+				for ( var j in variants) {
+					for ( var i in scope.entity.variants) {
+						if (variants[j] == scope.entity.variants[i].nodeRef && scope.entity.variants[i].isDefaultVariant) {
+							isInDefault = true;
+							break;
+						}
+					}
+				}
+			}
 			var title = "&nbsp;";
-			isInDefault = !((data.displayValue).indexOf("+")<0);
+			
 			if(oColumn.label != ""){
-				title += (data.displayValue).replace("+","");
+				title += data.displayValue;
 			}	
 			
 			if (isInDefault) {
-				return "<span title=\"" + (data.displayValue).replace("+","") + "\" class='variant-default'>"+title+"</span>";
+				return "<span title=\"" + data.displayValue + "\" class='variant-default'>"+title+"</span>";
 			}
 
-			return "<span title=\"" + (data.displayValue).replace("+","") + "\" class='variant'>"+title+"</span>";
+			return "<span title=\"" + data.displayValue + "\" class='variant'>"+title+"</span>";
 
 		}
 
