@@ -65,7 +65,7 @@
                         });
                            
                         
-                        this.widgets.reportingMenu.subscribe("beforeShow", function () {
+                        this.widgets.reportingMenu.getMenu().subscribe("beforeShow", function () {
                         	var oParent = this.parent;
                         	if (oParent && oParent instanceof YAHOO.widget.MenuBarItem) {
                         		this.cfg.setProperty("zindex", 99);
