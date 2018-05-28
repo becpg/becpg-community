@@ -64,6 +64,14 @@
                            disabled : true
                         });
                            
+                        
+                        this.widgets.reportingMenu.subscribe("beforeShow", function () {
+                        	var oParent = this.parent;
+                        	if (oParent && oParent instanceof YAHOO.widget.MenuBarItem) {
+                        		this.cfg.setProperty("zindex", 99);
+                        	}
+                        });
+                        
                            
                         this.widgets.reportingMenu.set("label", this.msg("button.download-report")+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
                         
