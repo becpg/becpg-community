@@ -165,7 +165,7 @@
 		
 		onCopyToClipboard : function(fieldId) {
 			
-			var htmlId= fieldId.split("#")[0]+ fieldId.split("#")[2];
+			var htmlId = fieldId.split("#")[0]+ fieldId.split("#")[2].replace(":","_");
 			
 	    	if (document.selection) { 	
 			    var range = document.body.createTextRange();
