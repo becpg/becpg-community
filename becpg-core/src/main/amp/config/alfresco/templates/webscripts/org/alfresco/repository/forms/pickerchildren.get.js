@@ -215,7 +215,13 @@ function main()
          }
          else if (argsSelectableType == "cm:authorityContainer")
          {
-            findGroups(argsSearchTerm, maxResults, results);
+        	 if (argsGroup != null && argsGroup != "")
+     	 	{
+        	   findGroupsInGroup(argsSearchTerm, maxResults, results, argsGroup);
+     	 	} else {
+     	 		findGroups(argsSearchTerm, maxResults, results);
+     	 	}
+            
          }
          else
          {
@@ -341,13 +347,15 @@ function findUsersInGroup(searchTerm, maxResults, results, groupName)
 	   		results.push.apply(results,searchResults);
 	   	}
 	
+   } else {
+	 	findUsers(searchTerm, maxResults, results);
    }
 }
 
 
 function findGroupsInGroup(searchTerm, maxResults, results, groupName)
 {
-   var group, groupsInGroup,
+   var group,usersInGroup, groupsInGroup,
 	searchResults = [];
    
    group = groups.getGroup(groupName);
@@ -355,26 +363,33 @@ function findGroupsInGroup(searchTerm, maxResults, results, groupName)
    if(group != null)
    {
 	   groupsInGroup = group.getChildGroups();
+	   usersInGroup = people.getMembers(people.getGroup(groupName), true);
+	   
 
 	   findGroups(searchTerm, maxResults, searchResults)
 	   	
-	   	if(groupsInGroup!=null && groupsInGroup.length > 0)
+	   
+	   	if((groupsInGroup!=null && groupsInGroup.length > 0) || (usersInGroup.length > 0) )
    		{
-	   		for each(var tmp in searchResults)
-		      {
-		      	for each(var groupInGroup in groupsInGroup)
-		         {
-		      		if(groupInGroup.getGroupNodeRef() == tmp.item.nodeRef)
-		      		{
-		      			results.push(tmp);
-		      		}
-		         }
-		      }
+	   		if(groupsInGroup!=null && groupsInGroup.length > 0){
+		   		for each(var tmp in searchResults)
+			      {
+			      	for each(var groupInGroup in groupsInGroup)
+			         {
+			      		if(groupInGroup.getGroupNodeRef() == tmp.item.nodeRef)
+			      		{
+			      			results.push(tmp);
+			      		}
+			         }
+			      }
+	   		}
    		}
 	   	else{
 	   		results.push.apply(results,searchResults);
 	   	}
 	
+   } else {
+	   findGroups(searchTerm, maxResults, results);
    }
 }
 
