@@ -161,6 +161,11 @@
                               description : me.msg("empty.product.description")
                            });
                         }
+                    	 
+                        // refs #4325 - sort catalog by modification date, most recent first.
+                    	 oResponse.results = oResponse.results.sort(function(a, b){
+                     		return (new Date(a.modifiedOn) < new Date(b.modifiedOn));
+                     	});
 
                         return original_doBeforeLoadData.apply(this, arguments);
                      };
