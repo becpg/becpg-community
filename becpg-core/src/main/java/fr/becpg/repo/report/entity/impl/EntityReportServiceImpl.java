@@ -52,6 +52,7 @@ import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.rule.RuleService;
 import org.alfresco.service.cmr.security.AccessPermission;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.PermissionService;
@@ -161,6 +162,9 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	@Autowired
 	private EntityListDAO entityListDAO;
+	
+	@Autowired
+	private RuleService ruleService;
 
 	@Override
 	public void generateReports(final NodeRef entityNodeRef) {
@@ -175,6 +179,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 				RetryingTransactionCallback<Object> actionCallback = () -> {
 					if (nodeService.exists(entityNodeRef)) {
 						try {
+							ruleService.disableRules();
 							policyBehaviourFilter.disableBehaviour(entityNodeRef);
 							if (logger.isDebugEnabled()) {
 								logger.debug(
@@ -315,6 +320,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 							 ActivityType.Report, ActivityEvent.Update);
 
 						} finally {
+							ruleService.enableRules();
 							policyBehaviourFilter.enableBehaviour(entityNodeRef);
 						}
 					}
@@ -464,6 +470,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 					if (nodeService.exists(entityNodeRef)) {
 						try {
 							policyBehaviourFilter.disableBehaviour(entityNodeRef);
+							ruleService.disableRules();
 							if (logger.isDebugEnabled()) {
 								logger.debug(
 										"Generate report: " + entityNodeRef + " - " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
@@ -571,6 +578,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 							}
 
 						} finally {
+							ruleService.enableRules();
 							policyBehaviourFilter.enableBehaviour(entityNodeRef);
 						}
 					}
