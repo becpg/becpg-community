@@ -17,7 +17,9 @@
  ******************************************************************************/
 package fr.becpg.config.format;
 
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -71,14 +73,16 @@ public class PropertyFormats {
 	};
 	
 	private boolean useDefaultLocale = true;
-	
+	private Integer maxDecimalPrecision = null;
 	protected String dateFormat;
 	
 	protected String datetimeFormat;
 	
 	protected String decimalFormat;
 
-	
+	public void setMaxDecimalPrecision(Integer maxDecimalPrecision) {
+		this.maxDecimalPrecision = maxDecimalPrecision;
+	}
 	public boolean isUseDefaultLocale() {
 		return useDefaultLocale;
 	}
@@ -105,15 +109,18 @@ public class PropertyFormats {
 		this.decimalFormat = decimalFormat;
 	}
 
-	public PropertyFormats(boolean useDefaultLocal){
-		
+	public PropertyFormats(boolean useDefaultLocal) {
 		this.useDefaultLocale = useDefaultLocal;
 		
 		dateFormat = RepoConsts.FORMAT_DATE;
 		datetimeFormat = RepoConsts.FORMAT_DATETIME;
 		decimalFormat = FORMAT_DECIMAL_VALUE;
-		
-	
+	}
+
+
+	public PropertyFormats(boolean useDefaultLocal, int maxDecimalPrecision) {
+		this(useDefaultLocal);
+		this.maxDecimalPrecision = maxDecimalPrecision;
 	}
 	
 	public String formatDate(Object o) {
@@ -121,7 +128,44 @@ public class PropertyFormats {
 	}
 
 	public String formatDecimal(Object o) {
-		return s_localDecimalFormat.get().format(o);
+		String ret = null;
+
+		if ((maxDecimalPrecision != null) && (o != null) && (o instanceof Double)) {
+			Double qty = (Double) o;
+
+			int previousMaxDigit = s_localDecimalFormat.get().getMaximumFractionDigits();
+			RoundingMode previousRoundingMode = s_localDecimalFormat.get().getRoundingMode();
+			try {
+			
+				if ((qty != null) && (qty > -1) && (qty != 0d)) {
+					int maxNum = s_localDecimalFormat.get().getMaximumFractionDigits();
+					
+					while (((Math.pow(10, maxNum ) * qty) < 1000)) {
+						if (maxNum >= maxDecimalPrecision) {
+							break;
+						}
+						maxNum++;
+					}
+					if(maxNum > previousMaxDigit) {	
+						s_localDecimalFormat.get().setMaximumFractionDigits(maxNum);
+						if(maxNum >= maxDecimalPrecision) {
+							s_localDecimalFormat.get().setMinimumFractionDigits(maxNum);
+							s_localDecimalFormat.get().setRoundingMode(RoundingMode.FLOOR);
+						} else {
+							s_localDecimalFormat.get().setRoundingMode(RoundingMode.HALF_UP);
+						}
+					}
+				}
+				ret = s_localDecimalFormat.get().format(o);
+			} finally {
+				s_localDecimalFormat.get().setMaximumFractionDigits(previousMaxDigit);
+				s_localDecimalFormat.get().setRoundingMode(previousRoundingMode);
+			}
+		} else {
+			ret = s_localDecimalFormat.get().format(o);
+		}
+
+		return ret;
 	}
 
 	public String formatDateTime(Object o) {

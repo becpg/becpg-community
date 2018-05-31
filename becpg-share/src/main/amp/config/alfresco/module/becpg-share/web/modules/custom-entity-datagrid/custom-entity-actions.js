@@ -219,7 +219,7 @@
 								submitType : "json",
 								submissionUrl : encodeURIComponent("/becpg/bulkedit/type/" + itemType.replace(":", "_")
 										+ "/bulksave?nodeRefs=" + nodeRefs.join()+"&allPages="+me.allPages+"&queryExecutionId="+me.queryExecutionId),
-								fields : displayFields
+								fields : encodeURIComponent(displayFields)
 							});
 
 			// Using Forms Service, so always create new
