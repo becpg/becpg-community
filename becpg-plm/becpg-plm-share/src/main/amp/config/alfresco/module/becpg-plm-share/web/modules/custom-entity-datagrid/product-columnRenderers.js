@@ -418,11 +418,11 @@ if (beCPG.module.EntityDataGridRenderers) {
 							for (i = 0; i < json.comp.length; i++) {
 								if (json.comp[i].value) {
 									if (i == 0) {
-										refValue = parseFloat(json.comp[i].value);
+										refValue = beCPG.util.sigFigs(parseFloat(json.comp[i].value),4);
 										ret += '<span style="color:' + color + ';">' + Alfresco.util.encodeHTML(json.comp[i].displayValue)
 												+ '</span>';
 									} else {
-										currValue = parseFloat(json.comp[i].value);
+										currValue = beCPG.util.sigFigs(parseFloat(json.comp[i].value),4);
 										if (currValue != Number.NaN && refValue != Number.NaN) {
 											if(refValue == currValue){
 												className = "dynaCompEquals";
@@ -858,10 +858,10 @@ if (beCPG.module.EntityDataGridRenderers) {
 						for (z = 0; z < json.comp.length; z++) {
 							if (json.comp[z].value) {
 								if (z == 0) {
-									refValue = parseFloat(json.comp[z].value);
+									refValue = beCPG.util.sigFigs(parseFloat(json.comp[z].value),4);
 									ret += '<span>' + Alfresco.util.encodeHTML(json.comp[z].displayValue) + '</span>';
 								} else {
-									currValue = parseFloat(json.comp[z].value);
+									currValue = beCPG.util.sigFigs(parseFloat(json.comp[z].value),4);
 									if (currValue != Number.NaN && refValue != Number.NaN) {
 										if(refValue == currValue){
 											className = "dynaCompEquals";
