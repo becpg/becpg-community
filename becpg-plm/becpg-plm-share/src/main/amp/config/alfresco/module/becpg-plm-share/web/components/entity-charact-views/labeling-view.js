@@ -30,7 +30,7 @@
 	beCPG.component.LabelingView = function(htmlId) {
 
 		beCPG.component.LabelingView.superclass.constructor.call(this, "beCPG.component.LabelingView", htmlId, [ "button", "container" ]);
-		
+		var me = this;
 		var dataGridModuleCount = 1;
 
 		YAHOO.Bubbling.on("dataGridReady", function(layer, args) {
@@ -52,9 +52,25 @@
 			}
 			dataGridModuleCount++;
 		});
-		
 
 		YAHOO.Bubbling.on("dirtyDataTable", this.formulate, this);
+        
+		var fnActionHandler = function EntityDataGrid_fnActionHandler(layer, args)
+        { 
+            var owner = YAHOO.Bubbling.getOwnerByTagName(args[1].anchor, "span");
+            if (owner !== null)
+            {
+                if (typeof me[owner.className] == "function")
+                {
+                    args[1].stop = true;
+                    var fieldId  = owner.id;
+                    me[owner.className].call(me, fieldId);
+                }
+            }
+            return true;
+        };
+        
+        YAHOO.Bubbling.addDefaultAction("labeling-action", fnActionHandler);
 
 		return this;
 	};
@@ -130,7 +146,41 @@
 	                 }
 				});
 
-		}
+		},
+		
+		onShowTranslation : function showMultiLangualForm (fieldId){
+			
+			var nodeRef = fieldId.split("#")[1], field=fieldId.split("#")[2];
+			
+			
+			new Alfresco.module.SimpleDialog(nodeRef+"-multilingualForm").setOptions({
+              templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/multilingual-form/multilingual-form?nodeRef=" + nodeRef + "&field=" + field + "&readonly=true",
+              actionUrl : Alfresco.constants.PROXY_URI + "becpg/form/multilingual/field/" + field + "?nodeRef=" + nodeRef,
+              validateOnSubmit : false,
+              destroyOnHide : true,
+              width: "33em"
+           }).show();
+            
+		},
+		
+		onCopyToClipboard : function(fieldId) {
+			
+			var htmlId = fieldId.split("#")[0]+ fieldId.split("#")[2].replace(":","_");
+			
+	    	if (document.selection) { 	
+			    var range = document.body.createTextRange();
+			    range.moveToElementText(document.getElementById(htmlId));
+			    range.select().createTextRange();
+			    document.execCommand("copy"); 
+
+			} else if (window.getSelection) {
+			    var range = document.createRange();
+			     range.selectNode(document.getElementById(htmlId));
+			     window.getSelection().addRange(range);
+			     document.execCommand("copy");
+			}
+			
+	    }
 
 	});
 

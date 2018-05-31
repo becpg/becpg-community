@@ -783,7 +783,25 @@ if (beCPG.module.EntityDataGridRenderers) {
 		propertyName : [ "bcpg:illValue", "bcpg:illManualValue" ],
 		renderer : function(oRecord, data, label, scope) {
 			if (data.value != null && data.value.length > 0) {
-				return '<div class="note rounded"> ' + data.displayValue + '</div>';
+				
+				var html ='', displayValue = data.displayValue,
+					htmlId = "id-" + oRecord._sId, suffix = "bcpg_illValue";
+					
+				html += '<div class="note rounded"><div id="'+ htmlId + suffix +'" > ' + displayValue + '</div>';
+				
+					var nodeRef = oRecord._oData.nodeRef;
+					html += '<div class="labeling-action-container">';
+				
+					if(label == "bcpg:illValue"){
+						html += '<span id="' +htmlId+"#"+ nodeRef+"#"+ label+  '" class="onCopyToClipboard"><a href="#" title="'+ scope.msg("label.copy.to.clipboard.title") +'" class="labeling-action clipboard"></a> </span>';
+						html += '<span>&nbsp;</span>';
+					}
+					html += '<span id="' +htmlId+"#"+ nodeRef+"#"+ label+ '" class="onShowTranslation"><a href="#" title="'+ scope.msg("label.show.translation.title") +'" class="labeling-action show-translation" ></a></span>';
+					html += '</div>';
+				
+				
+				html += '</div>';
+				return html;
 			}
 			return "";
 		}
@@ -1114,6 +1132,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 			return "";
 		}
 	});
+	
 	
 /* Align cost to the right
         YAHOO.Bubbling.fire("registerDataGridRenderer", {

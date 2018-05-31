@@ -11,6 +11,7 @@
 					<show id="smp:slTotalWeight" />
 				</field-visibility>
 				<appearance>
+					<field id="smp:slProduct" mandatory="true"  />
 				</appearance>
 			</form>
 
@@ -23,7 +24,8 @@
 					<show id="smp:slTotalWeight" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:code" read-only="true" set="mainInfo" />
+					<field id="bcpg:code" read-only="true"  />
+					<field id="smp:slProduct" mandatory="true"  />
 				</appearance>
 			</form>
 		</forms>
@@ -40,7 +42,8 @@
 					<show id="smp:slTotalWeight" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:code" read-only="true" set="mainInfo" />
+					<field id="bcpg:code" read-only="true" />
+					<field id="smp:slProduct" mandatory="true"  />
 				</appearance>
 			</form>
 		</forms>

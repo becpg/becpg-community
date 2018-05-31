@@ -149,6 +149,14 @@ var g; // gantt var
                                             {
 
                                                 var data = response.json.legends;
+                                                
+                                                data.sort(function (a, b){
+                                                    if(a!=null && a.sort!=null	
+                                                    		&& b!=null && b.sort!=null	){
+                                                    	return a.sort - b.sort;
+                                                    }
+                                                	return 0;
+                                                });
 
                                                 this.options.parentNodeRef = response.json.parentNodeRef;
 

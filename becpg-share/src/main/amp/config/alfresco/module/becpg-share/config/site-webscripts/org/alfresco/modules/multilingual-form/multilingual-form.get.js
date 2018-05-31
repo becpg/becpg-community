@@ -11,7 +11,6 @@ function main()
    model.mlFields = [];
    model.langs = [];
    
-   
    var langs = config.scoped["Languages"]["languages"].childrenMap["language"];
    for (var i = 0, lang ; i < langs.size(); i++) {
 		lang = langs.get(i);
@@ -32,6 +31,7 @@ function main()
          var obj = eval('(' + json + ')');
          if (obj && obj.items && obj.items.length > 0)
          {
+        	  
               for (var i = 0, lang ; i < model.langs.length; i++) {
            		   lang = model.langs[i];
            			for(var j=0, field; j < obj.items.length;j++ ){
@@ -39,6 +39,7 @@ function main()
            				if(field.locale == lang.key){
            					field.localeLabel = lang.label;
            					model.mlFields.push(field);
+           					
            				}
            			}
            		

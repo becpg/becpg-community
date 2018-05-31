@@ -132,6 +132,7 @@ public interface PLMModel {
 	QName PROP_PHYSICOCHEMLIST_UNIT = QName.createQName(BeCPGModel.BECPG_URI, "pclUnit");
 	QName PROP_PHYSICOCHEMLIST_MINI = QName.createQName(BeCPGModel.BECPG_URI, "pclMini");
 	QName PROP_PHYSICOCHEMLIST_MAXI = QName.createQName(BeCPGModel.BECPG_URI, "pclMaxi");
+	QName PROP_PHYSICOCHEMFORMULA_ERROR = QName.createQName(BeCPGModel.BECPG_URI, "physicoChemFormulaErrorLog");
 	QName ASSOC_PHYSICOCHEMLIST_PHYSICOCHEM = QName.createQName(BeCPGModel.BECPG_URI, "pclPhysicoChem");
 
 	// forbiddenIngList
@@ -168,7 +169,9 @@ public interface PLMModel {
 	QName PROP_LCL_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "lclType");
 	QName PROP_LCL_CLAIM_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "lclClaimValue");
 	QName ASSOC_LCL_LABELCLAIM = QName.createQName(BeCPGModel.BECPG_URI, "lclLabelClaim");
-
+	QName PROP_LCL_FORMULAERROR = QName.createQName(BeCPGModel.BECPG_URI, "llclFormulaErrorLog");
+	QName ASSOC_LCL_MISSING_LABELCLAIMS = QName.createQName(BeCPGModel.BECPG_URI, "lbcpg:lclMissingLabelClaims");
+	
 	// allergen
 	QName TYPE_ALLERGEN = QName.createQName(BeCPGModel.BECPG_URI, "allergen");
 	QName PROP_ALLERGEN_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "allergenType");
