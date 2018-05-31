@@ -117,12 +117,23 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	@Value("${beCPG.product.report.priceBreaks}")
 	private Boolean extractPriceBreaks = false;
 
+	@Value("${beCPG.product.report.extractRawMaterial}")
+	private Boolean extractRawMaterial = true;
+
 	@Autowired
 	@Qualifier("mlAwareNodeService")
 	private NodeService mlNodeService;
 
 	@Autowired
 	protected PackagingHelper packagingHelper;
+
+	static {
+		hiddenNodeAttributes.add(PLMModel.PROP_NUT_FORMULA);
+		hiddenNodeAttributes.add(PLMModel.PROP_LABEL_CLAIM_FORMULA);
+		hiddenDataListItemAttributes.add(PLMModel.PROP_LCL_FORMULAERROR);
+		hiddenDataListItemAttributes.add(PLMModel.ASSOC_LCL_MISSING_LABELCLAIMS);
+		hiddenDataListItemAttributes.add(PLMModel.PROP_PHYSICOCHEMFORMULA_ERROR);
+	}
 
 	/**
 	 * load the datalists of the product data.
@@ -337,12 +348,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			}
 
 			if (isExtractedProduct) {
-
 				loadCompoList(productData, dataListsElt, context);
-
-				// extract RawMaterials
-				extractRawMaterials(productData, dataListsElt, context);
-
 			}
 
 			if (isExtractedProduct || context.prefsContains("componentDatalistsToExtract", componentDatalistsToExtract,
@@ -364,6 +370,12 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			if (isExtractedProduct && context.isPrefOn("extractPriceBreaks", extractPriceBreaks)) {
 
 				extractPriceBreaks(productData, dataListsElt);
+			}
+
+			// extract RawMaterials
+			if (isExtractedProduct && context.isPrefOn("extractRawMaterial", extractRawMaterial)) {
+
+				extractRawMaterials(productData, dataListsElt, context);
 			}
 
 			if (isExtractedProduct || context.prefsContains("componentDatalistsToExtract", componentDatalistsToExtract,
@@ -413,11 +425,11 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 							ingLabelingElt.addAttribute(ATTR_LANGUAGE, locale.getDisplayLanguage());
 							ingLabelingElt.addAttribute(ATTR_LANGUAGE_CODE, locale.toString());
-							addCDATA(ingLabelingElt, PLMModel.ASSOC_ILL_GRP, grpName, null);
+							addCDATA(ingLabelingElt, PLMModel.ASSOC_ILL_GRP, grpName, null, true);
 							addCDATA(ingLabelingElt, PLMModel.PROP_ILL_VALUE,
-									dataItem.getValue() != null ? dataItem.getValue().getValue(locale) : VALUE_NULL, null);
+									dataItem.getValue() != null ? dataItem.getValue().getValue(locale) : VALUE_NULL, null, true);
 							addCDATA(ingLabelingElt, PLMModel.PROP_ILL_MANUAL_VALUE,
-									dataItem.getManualValue() != null ? dataItem.getManualValue().getValue(locale) : VALUE_NULL, null);
+									dataItem.getManualValue() != null ? dataItem.getManualValue().getValue(locale) : VALUE_NULL, null, true);
 
 							if (logger.isDebugEnabled()) {
 								logger.debug("ingLabelingElt: " + ingLabelingElt.asXML());
@@ -438,16 +450,16 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			Element compoListElt = dataListsElt.addElement(PLMModel.TYPE_COMPOLIST.getLocalName() + "s");
 
 			for (CompoListDataItem dataItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-				if(dataItem.getProduct()!=null) {
+				if (dataItem.getProduct() != null) {
 					addDataListState(compoListElt, dataItem.getParentNodeRef());
-	
+
 					ProductData subProductData = (ProductData) alfrescoRepository.findOne(dataItem.getProduct());
-	
+
 					Double parentLossRatio = dataItem.getLossPerc() != null ? dataItem.getLossPerc() : 0d;
 					Double qty = dataItem.getQty() != null ? dataItem.getQty() : 0d;
 					Double qtyForCost = FormulationHelper.getQtyForCost(dataItem, 0d, subProductData,
 							CostsCalculatingFormulationHandler.keepProductUnit);
-	
+
 					loadCompoListItem(null, dataItem, subProductData, compoListElt, 0, qty, qtyForCost, parentLossRatio, context);
 				}
 			}
@@ -896,7 +908,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 								nodeService.getProperty(nutNodeRef, PLMModel.PROP_NUTGDA) != null
 										? ((Double) nodeService.getProperty(nutNodeRef, PLMModel.PROP_NUTGDA)).toString()
 										: "",
-								null);
+								null, true);
 
 					} else {
 						logger.warn("Nut is null for " + dataListItem.getNut());
@@ -956,7 +968,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		for (Map.Entry<NodeRef, Double> entry : sortedRawMaterials) {
 			Element rawMaterialElt = rawMaterialsElt.addElement(PLMModel.TYPE_RAWMATERIAL.getLocalName());
 			loadAttributes(entry.getKey(), rawMaterialElt, true, null, context);
-			addCDATA(rawMaterialElt, PLMModel.PROP_COMPOLIST_QTY, toString((100 * entry.getValue()) / totalQty), null);
+			addCDATA(rawMaterialElt, PLMModel.PROP_COMPOLIST_QTY, toString((100 * entry.getValue()) / totalQty), null, true);
 			if (FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT) != 0d) {
 				Element cDATAElt = rawMaterialElt.addElement(ATTR_COMPOLIST_QTY_FOR_PRODUCT);
 				cDATAElt.addCDATA(
@@ -1108,9 +1120,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				Double qty = FormulationHelper.getQtyInKg(compoList);
 
 				ProductData subProductData = (ProductData) alfrescoRepository.findOne(compoList.getProduct());
-				
-				Double qtyForCost = FormulationHelper.getQtyForCost(compoList, parentLossRatio,
-						subProductData, false);
+
+				Double qtyForCost = FormulationHelper.getQtyForCost(compoList, parentLossRatio, subProductData, false);
 
 				if (logger.isDebugEnabled()) {
 					logger.debug("Get rawMaterial " + nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME) + "qty: " + qty + " netWeight "
@@ -1409,7 +1420,10 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	protected void loadProductData(NodeRef nodeRef, Element dataListItemElt, DefaultExtractorContext context, CostType costType) {
 		if (nodeRef != null) {
-			loadNodeAttributes(nodeRef, dataListItemElt, false, context);
+
+			context.doInDataListContext(() -> {
+				loadNodeAttributes(nodeRef, dataListItemElt, false, context);
+			});
 			extractCost(nodeRef, dataListItemElt, costType);
 
 			dataListItemElt.addAttribute(ATTR_ITEM_TYPE, nodeService.getType(nodeRef).toPrefixString(namespaceService));

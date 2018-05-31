@@ -169,6 +169,7 @@
 		<property name="formulationService" ref="formulationService"/>
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter"/>
 		<property name="permissionService" ref="PermissionService"/>
+		<property name="ruleService" ref="ruleService"/>
 	</bean>
 	
 

@@ -8,6 +8,7 @@ import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.rule.RuleService;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.apache.commons.logging.Log;
@@ -46,6 +47,14 @@ public class EntityCatalogWebScript extends AbstractWebScript {
 	private BehaviourFilter policyBehaviourFilter;
 
 	private PermissionService permissionService;
+	
+	private RuleService ruleService;
+	
+	
+
+	public void setRuleService(RuleService ruleService) {
+		this.ruleService = ruleService;
+	}
 
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 		this.policyBehaviourFilter = policyBehaviourFilter;
@@ -85,7 +94,8 @@ public class EntityCatalogWebScript extends AbstractWebScript {
 					policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
 					policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 					policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-
+					ruleService.disableRules();
+					
 					L2CacheSupport.doInCacheContext(() -> {
 						AuthenticationUtil.runAsSystem(() -> {
 							formulationService.formulate(productNodeRef);
@@ -95,6 +105,7 @@ public class EntityCatalogWebScript extends AbstractWebScript {
 					}, false, true);
 
 				} finally {
+					ruleService.enableRules();
 					policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
 					policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
 					policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);

@@ -271,8 +271,17 @@
 							<control-param name="extraParams">group=GROUP_PackagingMgr</control-param>
 						</control>
 					</field>
-					<field id="bcpgwf:pvCallerActor" set="intervenants" />
-					<field id="bcpgwf:pvCaller2Actor" set="intervenants" />
+					<field id="bcpgwf:pvCallerActor" set="intervenants" >
+						<control template="/org/alfresco/components/form/controls/authority.ftl">
+							<control-param name="extraParams">group=GROUP_pvCallerActor</control-param>
+						</control>
+				    </field>
+					<field id="bcpgwf:pvCaller2Actor" set="intervenants" >
+						<control template="/org/alfresco/components/form/controls/authority.ftl">
+							<control-param name="extraParams">group=GROUP_pvCaller2Actor</control-param>
+						</control>
+				    </field>
+					
 					<field id="bpm:workflowDueDate" label-id="workflow.field.due"
 						set="info" />
 					<field id="bpm:workflowPriority" label-id="workflow.field.priority"

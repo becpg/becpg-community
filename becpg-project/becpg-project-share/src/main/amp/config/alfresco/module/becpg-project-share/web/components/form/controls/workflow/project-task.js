@@ -161,6 +161,14 @@
                         {
                             var deliverableHtlm = "<ul>";
 
+                            deliverables.sort(function (a, b){
+                                if(a!=null && a.sort!=null	
+                                		&& b!=null && b.sort!=null	){
+                                	return a.sort - b.sort;
+                                }
+                            	return 0;
+                            });
+                            
                             for (j in deliverables)
                             {
                                 deliverableHtlm += "<li>" + this.getDeliverableTitle(deliverables[j], entityNodeRef) + "</li>";
