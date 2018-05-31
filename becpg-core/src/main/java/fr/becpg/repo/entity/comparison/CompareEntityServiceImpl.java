@@ -58,6 +58,8 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 	private static final String COMPARISON_SEPARATOR = " - ";
 
+	private static final int COMPARE_MAX_PRECISION = 9;
+
 	@Autowired
 	private NodeService nodeService;
 
@@ -181,10 +183,10 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 			String comparison, boolean rootInsert) {
 
 		logger.debug("Compare Files of level " + depthLevel + "   :: ON :entity1= " + entity1 + "  AND : entity2=" + entity2);
-		List<FileInfo> filesInfo1 = entity1 == null ? new ArrayList<FileInfo>() : fileFolderService.listFiles(entity1);
-		List<FileInfo> filesInfo2 = entity2 == null ? new ArrayList<FileInfo>() : fileFolderService.listFiles(entity2);
-		Set<FileInfo> filesTreated1 = new HashSet<FileInfo>();
-		Set<FileInfo> filesTreated2 = new HashSet<FileInfo>();
+		List<FileInfo> filesInfo1 = entity1 == null ? new ArrayList<>() : fileFolderService.listFiles(entity1);
+		List<FileInfo> filesInfo2 = entity2 == null ? new ArrayList<>() : fileFolderService.listFiles(entity2);
+		Set<FileInfo> filesTreated1 = new HashSet<>();
+		Set<FileInfo> filesTreated2 = new HashSet<>();
 
 		List<StructCompareResultDataItem> structComparisonList = new LinkedList<>();
 
@@ -323,10 +325,10 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 	private boolean compareSubDocuments(int depthLevel, NodeRef entity1, NodeRef entity2, List<StructCompareResultDataItem> structComparisonListTMP,
 			String comparison) {
 
-		List<FileInfo> foldersInfo1 = entity1 == null ? new ArrayList<FileInfo>(0) : fileFolderService.listFolders(entity1);
-		List<FileInfo> foldersInfo2 = entity2 == null ? new ArrayList<FileInfo>(0) : fileFolderService.listFolders(entity2);
-		List<FileInfo> foldersTreaded1 = new ArrayList<FileInfo>();
-		List<FileInfo> foldersTreaded2 = new ArrayList<FileInfo>();
+		List<FileInfo> foldersInfo1 = entity1 == null ? new ArrayList<>(0) : fileFolderService.listFolders(entity1);
+		List<FileInfo> foldersInfo2 = entity2 == null ? new ArrayList<>(0) : fileFolderService.listFolders(entity2);
+		List<FileInfo> foldersTreaded1 = new ArrayList<>();
+		List<FileInfo> foldersTreaded2 = new ArrayList<>();
 		boolean isOperatorFolderIsEqual = false;
 		Pair<List<StructCompareResultDataItem>, Boolean> results = null;
 
@@ -398,7 +400,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 		StructCompareResultDataItem structComparison = new StructCompareResultDataItem(ContentModel.TYPE_CONTENT, depthLevel, operator, null,
 				folderNodeRef1, folderNodeRef2, new TreeMap<>(), new TreeMap<>());
-		List<StructCompareResultDataItem> structListFilesInter = new ArrayList<StructCompareResultDataItem>();
+		List<StructCompareResultDataItem> structListFilesInter = new ArrayList<>();
 
 		if (root) {
 			structListFilesInter.add(structComparison);
@@ -516,14 +518,14 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 			Map<String, List<StructCompareResultDataItem>> structCompareResults) {
 
 		QName pivotProperty = null;
-		
+
 		// load the 2 datalists
 		try {
-		   pivotProperty = entityDictionaryService.getDefaultPivotAssoc(datalistType);
+			pivotProperty = entityDictionaryService.getDefaultPivotAssoc(datalistType);
 		} catch (IllegalArgumentException e) {
 			logger.debug(e);
 		}
-		
+
 		if (pivotProperty != null) {
 			MultiLevelListData listData1 = loadCompositeDataList(entity1NodeRef, datalistType);
 			MultiLevelListData listData2 = loadCompositeDataList(entity2NodeRef, datalistType);
@@ -702,9 +704,9 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		 * Compare properties
 		 */
 
-		PropertyFormats propertyFormats = new PropertyFormats(false);
-		Map<QName, Serializable> properties1 = nodeRef1 == null ? new TreeMap<QName, Serializable>() : nodeService.getProperties(nodeRef1);
-		Map<QName, Serializable> properties2 = nodeRef2 == null ? new TreeMap<QName, Serializable>() : nodeService.getProperties(nodeRef2);
+		PropertyFormats propertyFormats = new PropertyFormats(false, COMPARE_MAX_PRECISION);
+		Map<QName, Serializable> properties1 = nodeRef1 == null ? new TreeMap<>() : nodeService.getProperties(nodeRef1);
+		Map<QName, Serializable> properties2 = nodeRef2 == null ? new TreeMap<>() : nodeService.getProperties(nodeRef2);
 		for (QName propertyQName : properties1.keySet()) {
 
 			if (isCompareableProperty(propertyQName, isDataList)) {
@@ -734,9 +736,9 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		 * Compare associations
 		 */
 
-		List<AssociationRef> associations1 = nodeRef1 == null ? new ArrayList<AssociationRef>()
+		List<AssociationRef> associations1 = nodeRef1 == null ? new ArrayList<>()
 				: nodeService.getTargetAssocs(nodeRef1, RegexQNamePattern.MATCH_ALL);
-		List<AssociationRef> associations2 = nodeRef2 == null ? new ArrayList<AssociationRef>()
+		List<AssociationRef> associations2 = nodeRef2 == null ? new ArrayList<>()
 				: nodeService.getTargetAssocs(nodeRef2, RegexQNamePattern.MATCH_ALL);
 
 		Map<QName, List<NodeRef>> associations1Sorted = new HashMap<>();
@@ -866,6 +868,10 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		}
 
 		// Are properties differents ?
+
+		String strValue1 = attributeExtractorService.extractPropertyForReport(propertyDef, oValue1, propertyFormats, true);
+		String strValue2 = attributeExtractorService.extractPropertyForReport(propertyDef, oValue2, propertyFormats, true);
+
 		if (oValue1 != null) {
 
 			if (oValue2 != null) {
@@ -874,12 +880,10 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 						|| propertyDef.getDataType().toString().equals(DataTypeDefinition.DATE.toString())
 						|| propertyDef.getDataType().toString().equals(DataTypeDefinition.DATETIME.toString())) {
 
-					String tempValue1 = attributeExtractorService.getStringValue(propertyDef, oValue1, propertyFormats);
-					String tempValue2 = attributeExtractorService.getStringValue(propertyDef, oValue2, propertyFormats);
-
-					if (tempValue1.equals(tempValue2)) {
+					if (strValue1.equals(strValue2)) {
 						isDifferent = false;
 					}
+
 				} else if (oValue1.equals(oValue2)) {
 					isDifferent = false;
 				}
@@ -887,9 +891,6 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		} else if (oValue2 == null) {
 			isDifferent = false;
 		}
-
-		String strValue1 = attributeExtractorService.extractPropertyForReport(propertyDef, oValue1, propertyFormats, true);
-		String strValue2 = attributeExtractorService.extractPropertyForReport(propertyDef, oValue2, propertyFormats, true);
 
 		addComparisonDataItem(comparisonMap, dataListType, charactPath, characteristic, propertyQName, strValue1, strValue2, nbEntities,
 				comparisonPosition, isDifferent);
@@ -925,9 +926,8 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		if (qName.equals(ContentModel.PROP_NODE_REF) || qName.equals(ContentModel.PROP_NODE_DBID) || qName.equals(ContentModel.PROP_NODE_UUID)
 				|| qName.equals(ContentModel.PROP_STORE_IDENTIFIER) || qName.equals(ContentModel.PROP_STORE_NAME)
 				|| qName.equals(ContentModel.PROP_STORE_PROTOCOL) || qName.equals(ContentModel.PROP_CONTENT)
-				|| qName.equals(ContentModel.PROP_AUTO_VERSION)
-				|| qName.equals(ContentModel.PROP_AUTO_VERSION_PROPS) || qName.equals(ContentModel.ASSOC_ORIGINAL)
-				|| qName.equals(ForumModel.PROP_COMMENT_COUNT) ||
+				|| qName.equals(ContentModel.PROP_AUTO_VERSION) || qName.equals(ContentModel.PROP_AUTO_VERSION_PROPS)
+				|| qName.equals(ContentModel.ASSOC_ORIGINAL) || qName.equals(ForumModel.PROP_COMMENT_COUNT) ||
 				// system properties
 				qName.equals(BeCPGModel.PROP_PARENT_LEVEL) || qName.equals(BeCPGModel.PROP_START_EFFECTIVITY)
 				|| qName.equals(BeCPGModel.PROP_END_EFFECTIVITY) || qName.equals(ReportModel.PROP_REPORT_ENTITY_GENERATED)
