@@ -161,7 +161,7 @@
                               description : me.msg("empty.product.description")
                            });
                         }
-                    	
+
                         return original_doBeforeLoadData.apply(this, arguments);
                      };
 
@@ -191,9 +191,9 @@
                    */
                   getWebscriptUrl : function BeCPGCatalog_getWebscriptUrl() {
                      if (Alfresco.constants.SITE !== null && Alfresco.constants.SITE.length > 0) {
-                        return Alfresco.constants.PROXY_URI + "slingshot/doclib/doclist/product/site/" + Alfresco.constants.SITE + "/documentLibrary?max=" + this.options.maxItems;
+                         return Alfresco.constants.PROXY_URI + "slingshot/doclib/doclist/product/site/" + Alfresco.constants.SITE + "/documentLibrary?max=" + this.options.maxItems + "&sortField=cm:modified&sortAsc=false";
                      }
-                     return Alfresco.constants.PROXY_URI + "slingshot/doclib/doclist/product/node/alfresco/company/home?max=" + this.options.maxItems;
+                     return Alfresco.constants.PROXY_URI + "slingshot/doclib/doclist/product/node/alfresco/company/home?max=" + this.options.maxItems + "&sortField=cm:modified&sortAsc=false";
                   },
 
                   /**
