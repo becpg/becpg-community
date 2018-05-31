@@ -184,6 +184,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 	@Autowired
 	private BeCPGCacheService beCPGCacheService;
 
+        @Autowired
+	private RuleService ruleService;
 
 	@Override
 	public void generateReports(final NodeRef entityNodeRef) {
@@ -198,6 +200,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 				RetryingTransactionCallback<Object> actionCallback = () -> {
 					if (nodeService.exists(entityNodeRef)) {
 						try {
+							ruleService.disableRules();
 							policyBehaviourFilter.disableBehaviour(entityNodeRef);
 							if (logger.isDebugEnabled()) {
 								logger.debug(
@@ -347,6 +350,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 							entityActivityService.postEntityActivity(entityNodeRef, ActivityType.Report, ActivityEvent.Update);
 
 						} finally {
+							ruleService.enableRules();
 							policyBehaviourFilter.enableBehaviour(entityNodeRef);
 						}
 					}
@@ -695,6 +699,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 					if (nodeService.exists(entityNodeRef)) {
 						try {
 							policyBehaviourFilter.disableBehaviour(entityNodeRef);
+							ruleService.disableRules();
 							if (logger.isDebugEnabled()) {
 								logger.debug(
 										"Generate report: " + entityNodeRef + " - " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
@@ -804,6 +809,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 							}
 
 						} finally {
+							ruleService.enableRules();
 							policyBehaviourFilter.enableBehaviour(entityNodeRef);
 						}
 					}

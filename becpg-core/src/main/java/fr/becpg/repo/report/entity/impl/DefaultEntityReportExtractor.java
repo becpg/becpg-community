@@ -121,7 +121,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	protected static final ArrayList<QName> hiddenNodeAttributes = new ArrayList<>(
 			Arrays.asList(ContentModel.PROP_NODE_REF, ContentModel.PROP_NODE_UUID, ContentModel.PROP_STORE_IDENTIFIER, ContentModel.PROP_STORE_NAME,
-					ContentModel.PROP_STORE_PROTOCOL, ContentModel.PROP_CONTENT, BeCPGModel.PROP_ENTITY_SCORE));
+					ContentModel.PROP_STORE_PROTOCOL, ContentModel.PROP_CONTENT, BeCPGModel.PROP_ENTITY_SCORE, ContentModel.PROP_PREFERENCE_VALUES, ContentModel.PROP_PERSONDESC));
 
 	protected static final ArrayList<QName> hiddenDataListItemAttributes = new ArrayList<>(
 			Arrays.asList(ContentModel.PROP_CREATED, ContentModel.PROP_CREATOR, ContentModel.PROP_MODIFIED, ContentModel.PROP_MODIFIER));
@@ -138,6 +138,9 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	@Value("${beCPG.product.report.assocsToExtract}")
 	private String assocsToExtract = "";
+
+	@Value("${beCPG.product.report.assocsToExtractInDataList}")
+	private String assocsToExtractInDataList = "";
 
 	@Autowired
 	protected DictionaryService dictionaryService;
@@ -188,7 +191,14 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	@Autowired
 	protected EntityReportService entityReportService;
 
+	protected interface DefaultExtractorContextCallBack {
+		public void run();
+	}
+
 	public class DefaultExtractorContext {
+
+		boolean isInDataListContext = false;
+
 		Map<String, String> preferences;
 		Map<String, byte[]> images = new HashMap<>();
 
@@ -239,6 +249,20 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			}
 
 			return false;
+		}
+
+		public boolean isInDataListContext() {
+			return isInDataListContext;
+		}
+
+		public void doInDataListContext(DefaultExtractorContextCallBack callBack) {
+			try {
+				isInDataListContext = true;
+				callBack.run();
+			} finally {
+				isInDataListContext = false;
+			}
+
 		}
 
 	}
@@ -332,8 +356,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			imgElt.addAttribute(ATTR_IMAGE_ID, imgId);
 			imgElt.addAttribute(ContentModel.PROP_NAME.getLocalName(), (String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_NAME));
 			imgElt.addAttribute(ContentModel.PROP_TITLE.getLocalName(), (String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_TITLE));
-			addCDATA(imgElt, ContentModel.PROP_DESCRIPTION, (String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_DESCRIPTION), null);
-
+			addCDATA(imgElt, ContentModel.PROP_DESCRIPTION, (String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_DESCRIPTION), null, true);
 			context.getImages().put(imgId, imageBytes);
 		}
 	}
@@ -342,14 +365,24 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	protected boolean loadTargetAssoc(NodeRef entityNodeRef, AssociationDefinition assocDef, Element entityElt, DefaultExtractorContext context) {
 		boolean isExtracted = false;
 		if ((assocDef != null) && (assocDef.getName() != null)) {
-			boolean extractDataList = false;
+			boolean extractDataList = false ; boolean extractAssoc = false;
 			if (context.prefsContains("assocsToExtractWithDataList", assocsToExtractWithDataList,
 					assocDef.getName().toPrefixString(namespaceService))) {
 				extractDataList = true;
 			}
 
-			if (context.prefsContains("assocsToExtract", assocsToExtract, assocDef.getName().toPrefixString(namespaceService)) || extractDataList) {
+			if (context.isInDataListContext()) {
+				if (context.prefsContains("assocsToExtractInDataList", assocsToExtractInDataList,
+						assocDef.getName().toPrefixString(namespaceService))) {
+					extractAssoc = true;
+				}
+			} else {
+				if (context.prefsContains("assocsToExtract", assocsToExtract, assocDef.getName().toPrefixString(namespaceService))) {
+					extractAssoc = true;
+				}
+			}
 
+			if (extractAssoc  || extractDataList) {
 				Element assocElt = entityElt.addElement(assocDef.getName().getLocalName());
 				appendPrefix(assocDef.getName(), assocElt);
 				extractTargetAssoc(entityNodeRef, assocDef, assocElt, context, extractDataList);
@@ -362,9 +395,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				int cnt = imgsElt.selectNodes(TAG_IMAGE) != null ? imgsElt.selectNodes(TAG_IMAGE).size() : 1;
 
 				for (NodeRef nodeRef : nodeRefs) {
-
 					if (entityDictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
-
 						extractImage(nodeRef, nodeRef, assocDef.getName().getLocalName() + "_" + cnt, imgsElt, context);
 					} else {
 						extractEntityImages(nodeRef, imgsElt, context);
@@ -430,7 +461,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				} else {
 					xmlNode.addAttribute(BeCPGModel.PROP_ENTITYLIST_STATE.getLocalName(), SystemState.ToValidate.toString());
 				}
-	
+
 			}
 		}
 	}
@@ -461,7 +492,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 					nodeElt.addAttribute(BeCPGModel.PROP_LEGAL_NAME.getLocalName(),
 							(String) nodeService.getProperty((NodeRef) kv.getValue(), BeCPGModel.PROP_LEGAL_NAME));
 					addCDATA(nodeElt, ContentModel.PROP_DESCRIPTION,
-							(String) nodeService.getProperty((NodeRef) kv.getValue(), ContentModel.PROP_DESCRIPTION), null);
+							(String) nodeService.getProperty((NodeRef) kv.getValue(), ContentModel.PROP_DESCRIPTION), null, false);
 					break;
 				}
 			}
@@ -498,7 +529,8 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		for (Map.Entry<QName, Serializable> property : properties.entrySet()) {
 
 			// do not display system properties
-			if ((hiddenAttributes == null) || !hiddenAttributes.contains(property.getKey())) {
+			if ((hiddenAttributes == null) || (!hiddenAttributes.contains(property.getKey())
+					&& !NamespaceService.SYSTEM_MODEL_1_0_URI.equals(property.getKey().getNamespaceURI()))) {
 
 				PropertyDefinition propertyDef = dictionaryService.getProperty(property.getKey());
 				if (propertyDef == null) {
@@ -642,7 +674,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	protected void addData(Element nodeElt, boolean useCData, QName propertyQName, String value, String suffix) {
 		if (useCData || isMultiLinesAttribute(propertyQName)) {
-			addCDATA(nodeElt, propertyQName, value, suffix);
+			addCDATA(nodeElt, propertyQName, value, suffix, true);
 		} else {
 			String localName = propertyQName.getLocalName();
 			if ((suffix != null) && !suffix.isEmpty()) {
@@ -730,7 +762,11 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		}
 	}
 
-	protected void addCDATA(Element nodeElt, QName propertyQName, String eltValue, String suffix) {
+	protected void addCDATA(Element nodeElt, QName propertyQName, String eltValue, String suffix, boolean appendIfEmpty) {
+		if (!appendIfEmpty && ((eltValue == null) || eltValue.isEmpty())) {
+			return;
+		}
+
 		String localName = propertyQName.getLocalName();
 		if ((suffix != null) && !suffix.isEmpty()) {
 			localName += "_" + suffix;
