@@ -19,7 +19,6 @@ package fr.becpg.config.format;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -71,13 +70,10 @@ public class PropertyFormats {
     		}
     	}
 	};
-	
 	private boolean useDefaultLocale = true;
 	private Integer maxDecimalPrecision = null;
 	protected String dateFormat;
-	
 	protected String datetimeFormat;
-	
 	protected String decimalFormat;
 
 	public void setMaxDecimalPrecision(Integer maxDecimalPrecision) {
@@ -93,7 +89,6 @@ public class PropertyFormats {
 		this.useDefaultLocale = useDefaultLocale;
 	}
 
-	
 	public void setDateFormat(String dateFormat) {
 		s_localDateFormat.remove();
 		this.dateFormat = dateFormat;
@@ -111,7 +106,6 @@ public class PropertyFormats {
 
 	public PropertyFormats(boolean useDefaultLocal) {
 		this.useDefaultLocale = useDefaultLocal;
-		
 		dateFormat = RepoConsts.FORMAT_DATE;
 		datetimeFormat = RepoConsts.FORMAT_DATETIME;
 		decimalFormat = FORMAT_DECIMAL_VALUE;
@@ -149,8 +143,10 @@ public class PropertyFormats {
 					if(maxNum > previousMaxDigit) {	
 						s_localDecimalFormat.get().setMaximumFractionDigits(maxNum);
 						if(maxNum >= maxDecimalPrecision) {
-							s_localDecimalFormat.get().setMinimumFractionDigits(maxNum);
-							s_localDecimalFormat.get().setRoundingMode(RoundingMode.FLOOR);
+							if((Math.pow(10, maxNum ) * qty)<1) {
+								s_localDecimalFormat.get().setMinimumFractionDigits(maxNum);
+								s_localDecimalFormat.get().setRoundingMode(RoundingMode.FLOOR);
+							}
 						} else {
 							s_localDecimalFormat.get().setRoundingMode(RoundingMode.HALF_UP);
 						}
