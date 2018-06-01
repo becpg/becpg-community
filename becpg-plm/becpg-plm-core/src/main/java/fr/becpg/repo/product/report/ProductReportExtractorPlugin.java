@@ -425,11 +425,11 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 							ingLabelingElt.addAttribute(ATTR_LANGUAGE, locale.getDisplayLanguage());
 							ingLabelingElt.addAttribute(ATTR_LANGUAGE_CODE, locale.toString());
-							addCDATA(ingLabelingElt, PLMModel.ASSOC_ILL_GRP, grpName, null, true);
+							addCDATA(ingLabelingElt, PLMModel.ASSOC_ILL_GRP, grpName, null);
 							addCDATA(ingLabelingElt, PLMModel.PROP_ILL_VALUE,
-									dataItem.getValue() != null ? dataItem.getValue().getValue(locale) : VALUE_NULL, null, true);
+									dataItem.getValue() != null ? dataItem.getValue().getValue(locale) : VALUE_NULL, null);
 							addCDATA(ingLabelingElt, PLMModel.PROP_ILL_MANUAL_VALUE,
-									dataItem.getManualValue() != null ? dataItem.getManualValue().getValue(locale) : VALUE_NULL, null, true);
+									dataItem.getManualValue() != null ? dataItem.getManualValue().getValue(locale) : VALUE_NULL, null);
 
 							if (logger.isDebugEnabled()) {
 								logger.debug("ingLabelingElt: " + ingLabelingElt.asXML());
@@ -908,7 +908,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 								nodeService.getProperty(nutNodeRef, PLMModel.PROP_NUTGDA) != null
 										? ((Double) nodeService.getProperty(nutNodeRef, PLMModel.PROP_NUTGDA)).toString()
 										: "",
-								null, true);
+								null);
 
 					} else {
 						logger.warn("Nut is null for " + dataListItem.getNut());
@@ -968,7 +968,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		for (Map.Entry<NodeRef, Double> entry : sortedRawMaterials) {
 			Element rawMaterialElt = rawMaterialsElt.addElement(PLMModel.TYPE_RAWMATERIAL.getLocalName());
 			loadAttributes(entry.getKey(), rawMaterialElt, true, null, context);
-			addCDATA(rawMaterialElt, PLMModel.PROP_COMPOLIST_QTY, toString((100 * entry.getValue()) / totalQty), null, true);
+			addCDATA(rawMaterialElt, PLMModel.PROP_COMPOLIST_QTY, toString((100 * entry.getValue()) / totalQty), null);
 			if (FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT) != 0d) {
 				Element cDATAElt = rawMaterialElt.addElement(ATTR_COMPOLIST_QTY_FOR_PRODUCT);
 				cDATAElt.addCDATA(
