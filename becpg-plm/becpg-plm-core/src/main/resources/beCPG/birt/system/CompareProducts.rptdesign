@@ -1733,7 +1733,9 @@ row["properties2"]
                 <structure>
                     <property name="name">value1</property>
                     <text-property name="displayName">value1</text-property>
-                    <expression name="expression" type="javascript">if(dataSetRow["value1"]&lt;1){
+                    <expression name="expression" type="javascript">if(dataSetRow["value1"]&lt;0.001){
+BirtMath.round(dataSetRow["value1"]*1000000,2)+" mg"
+}else if(dataSetRow["value1"]&lt;1){
 BirtMath.round(dataSetRow["value1"]*1000,2)+" g"
 }
 else{
@@ -1745,7 +1747,9 @@ BirtMath.round(dataSetRow["value1"],3)+" kg"
                 <structure>
                     <property name="name">value2</property>
                     <text-property name="displayName">value2</text-property>
-                    <expression name="expression" type="javascript">if(dataSetRow["value2"]&lt;1){
+                    <expression name="expression" type="javascript">if(dataSetRow["value2"]&lt;0.001){
+BirtMath.round(dataSetRow["value2"]*1000000,2)+" mg"
+}else if(dataSetRow["value2"]&lt;1){
 BirtMath.round(dataSetRow["value2"]*1000,2)+" g"
 }
 else{
@@ -1757,7 +1761,9 @@ BirtMath.round(dataSetRow["value2"],3)+" kg"
                 <structure>
                     <property name="name">value3</property>
                     <text-property name="displayName">value3</text-property>
-                    <expression name="expression" type="javascript">if(dataSetRow["value3"]&lt;1){
+                    <expression name="expression" type="javascript">if(dataSetRow["value3"]&lt;0.001){
+BirtMath.round(dataSetRow["value3"]*1000000,2)+" mg"
+}else if(dataSetRow["value3"]&lt;1){
 BirtMath.round(dataSetRow["value3"]*1000,2)+" g"
 }
 else{
@@ -1769,7 +1775,9 @@ BirtMath.round(dataSetRow["value3"],3)+" kg"
                 <structure>
                     <property name="name">value4</property>
                     <text-property name="displayName">value4</text-property>
-                    <expression name="expression" type="javascript">if(dataSetRow["value4"]&lt;1){
+                    <expression name="expression" type="javascript">if(dataSetRow["value4"]&lt;0.001){
+BirtMath.round(dataSetRow["value4"]*1000000,2)+" mg"
+}else if(dataSetRow["value4"]&lt;1){
 BirtMath.round(dataSetRow["value4"]*1000,2)+" g"
 }
 else{
