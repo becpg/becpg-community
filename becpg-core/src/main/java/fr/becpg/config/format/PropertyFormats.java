@@ -19,7 +19,6 @@ package fr.becpg.config.format;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -69,7 +68,7 @@ public class PropertyFormats {
 			if (useDefaultLocale) {
 				return new DecimalFormat(decimalFormat);
 			} else {
-				DecimalFormat ret = (DecimalFormat) NumberFormat.getInstance(I18NUtil.getLocale());
+				DecimalFormat ret = (DecimalFormat) DecimalFormat.getInstance(I18NUtil.getLocale());
 				ret.applyPattern(decimalFormat);
 				return ret;
 			}
@@ -159,8 +158,10 @@ public class PropertyFormats {
 					if(maxNum > previousMaxDigit) {	
 						s_localDecimalFormat.get().setMaximumFractionDigits(maxNum);
 						if(maxNum >= maxDecimalPrecision) {
-							s_localDecimalFormat.get().setMinimumFractionDigits(maxNum);
-							s_localDecimalFormat.get().setRoundingMode(RoundingMode.FLOOR);
+							if((Math.pow(10, maxNum ) * qty)<1) {
+								s_localDecimalFormat.get().setMinimumFractionDigits(maxNum);
+								s_localDecimalFormat.get().setRoundingMode(RoundingMode.FLOOR);
+							}
 						} else {
 							s_localDecimalFormat.get().setRoundingMode(RoundingMode.HALF_UP);
 						}
