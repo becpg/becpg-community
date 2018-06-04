@@ -77,10 +77,10 @@
                                                         }
                                                         
                                                         
-                                                        if (task["itemData"]["assoc_pjt_SubProjectRef"] != null
-                                                        		&& task["itemData"]["assoc_pjt_SubProjectRef"] .length>0)
+                                                        if (task["itemData"]["assoc_pjt_subProjectRef"] != null
+                                                        		&& task["itemData"]["assoc_pjt_subProjectRef"] .length>0)
                                                         {
-                                                        	pSubProject = task["itemData"]["assoc_pjt_SubProjectRef"][0].displayValue;
+                                                        	pSubProject = task["itemData"]["assoc_pjt_subProjectRef"][0].displayValue;
                                                         }
                                                         
                                                         

@@ -69,6 +69,18 @@
 }
 
 
+.project-list  a.sub-project-link {
+    cursor: pointer;
+	padding-left: 15px;
+	text-decoration: none;
+	background: url("../images/link-16.png") no-repeat;
+	margin-left: 5px;
+	display: inline-table;
+	height: 16px;
+	vertical-align: middle;
+}
+
+
 
 .project-list  a.task-comments {
 	cursor: pointer;

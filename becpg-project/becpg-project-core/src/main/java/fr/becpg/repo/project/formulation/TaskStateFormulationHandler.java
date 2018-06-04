@@ -43,6 +43,7 @@ import fr.becpg.repo.project.data.projectList.DeliverableState;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskState;
 import fr.becpg.repo.project.impl.ProjectHelper;
+import fr.becpg.repo.repository.AlfrescoRepository;
 
 public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectData> {
 
@@ -57,6 +58,14 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 	private ProjectActivityService projectActivityService;
 
 	private NodeService nodeService;
+	
+	AlfrescoRepository<ProjectData> alfrescoRepository;
+
+
+	public void setAlfrescoRepository(AlfrescoRepository<ProjectData> alfrescoRepository) {
+		this.alfrescoRepository = alfrescoRepository;
+	}
+
 
 	public void setProjectWorkflowService(ProjectWorkflowService projectWorkflowService) {
 		this.projectWorkflowService = projectWorkflowService;
@@ -164,6 +173,8 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 
 		if (!nextTasks.isEmpty()) {
 			for (TaskListDataItem nextTask : nextTasks) {
+				
+				visitSubProject(nextTask);
 				
 				nextTask.setIsExcludeFromSearch(false);
 
@@ -369,10 +380,23 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 				// parent second
 				visitGroup(projectData, nextTask.getParent());
 				
+				
 			}
 		}
-
+		
 		return reformulate;
+	}
+
+	private void visitSubProject(TaskListDataItem nextTask) {
+		if(nextTask.getSubProject()!=null) {
+			ProjectData subProject = alfrescoRepository.findOne(nextTask.getSubProject());
+			TaskState  subProjectState = subProject.getProjectState().toTaskState();
+			if(subProjectState.equals(nextTask.getTaskState()))
+			{
+				ProjectHelper.setTaskState(nextTask, subProjectState, projectActivityService);
+			}
+		}
+		
 	}
 
 	private void visitGroup(ProjectData projectData, TaskListDataItem parent) {
@@ -399,7 +423,6 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 				ProjectHelper.setTaskState(parent, TaskState.Completed, projectActivityService);
 			}
 			parent.setCompletionPercent(completionPerc / tasks.size());
-
 		}
 	}
 

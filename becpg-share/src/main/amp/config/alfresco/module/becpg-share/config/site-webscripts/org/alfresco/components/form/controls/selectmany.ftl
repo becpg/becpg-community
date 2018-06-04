@@ -32,9 +32,6 @@
 	<#assign fieldValue="">
 </#if>
 
-<#if field.control.params.isSearch?? >
-	<#assign fieldValue="">
-</#if>
 
 <div class="form-field">
    <#if form.mode == "view">
@@ -78,14 +75,14 @@
                <#if field.control.params.style??>style="${field.control.params.style}"</#if>
                <#if field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true")>disabled="true"</#if>>
                <#if field.control.params.insertBlank??>
-               		 <option value="" <#if field.control.params.isSearch?? >selected="selected"</#if> ></option>
+               		 <option value="" ></option>
                </#if>
                <#list field.control.params.options?split(optionSeparator) as nameValue>
                   <#if nameValue?index_of(labelSeparator) == -1>
-                     <option value="<#if field.control.params.isSearch?? >&#34;</#if>${nameValue?html}<#if field.control.params.isSearch?? >&#34;</#if>"<#if isSelected(nameValue)> selected="selected"</#if>>${nameValue?html}</option>
+                     <option value="<#if field.control.params.isSearch?? >&#34;</#if>${nameValue?html}<#if field.control.params.isSearch?? >&#34;</#if>"<#if isSelected(nameValue) && !field.control.params.isSearch??> selected="selected"</#if>>${nameValue?html}</option>
                   <#else>
                      <#assign choice=nameValue?split(labelSeparator)>
-                     <option value="<#if field.control.params.isSearch?? >&#34;</#if>${choice[0]?html}<#if field.control.params.isSearch?? >&#34;</#if>"<#if isSelected(choice[0])> selected="selected"</#if>>${msgValue(choice[1])?html}</option>
+                     <option value="<#if field.control.params.isSearch?? >&#34;</#if>${choice[0]?html}<#if field.control.params.isSearch?? >&#34;</#if>"<#if isSelected(choice[0]) && !field.control.params.isSearch??> selected="selected"</#if>>${msgValue(choice[1])?html}</option>
                   </#if>
                </#list>
          </select>

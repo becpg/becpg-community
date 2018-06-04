@@ -34,6 +34,7 @@ import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskState;
 import fr.becpg.repo.project.impl.ProjectHelper;
+import fr.becpg.repo.repository.AlfrescoRepository;
 
 /**
  * Project visitor to calculate planningDates
@@ -45,6 +46,14 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 
 	private static final Log logger = LogFactory.getLog(PlanningFormulationHandler.class);
 	private static final int DEFAULT_WORK_HOURS_PER_DAY = 8;
+	
+
+	AlfrescoRepository<ProjectData> alfrescoRepository;
+
+
+	public void setAlfrescoRepository(AlfrescoRepository<ProjectData> alfrescoRepository) {
+		this.alfrescoRepository = alfrescoRepository;
+	}
 
 	@Override
 	public boolean process(ProjectData projectData) throws FormulateException {
@@ -236,26 +245,27 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 			parent = parent.getParent();
 		}
 	}
-
+	
 	private void calculatePlanningOfChildren(ProjectData projectData, TaskListDataItem taskListDataItem) throws FormulateException {
 
-		
-		
-		List<TaskListDataItem> children = ProjectHelper.getChildrenTasks(projectData, taskListDataItem);
-
-//		for (TaskListDataItem c : children) {
-//			if (c.getPrevTasks().isEmpty()) {
-//				calculatePlanningOfTask(projectData, c, taskListDataItem.getStart());
-//			}
-//		}
-
-		Date endDate = taskListDataItem.getStart();
-		for (TaskListDataItem c : children) {
-			if (c.getEnd() != null && c.getEnd().after(endDate)) {
-				endDate = c.getEnd();
+		if(taskListDataItem.getSubProject()!=null) {
+			ProjectData subProject = alfrescoRepository.findOne(taskListDataItem.getSubProject());
+			ProjectHelper.setTaskEndDate(taskListDataItem, subProject.getCompletionDate());
+			taskListDataItem.setCompletionPercent(subProject.getCompletionPercent());
+			taskListDataItem.setTaskName(subProject.getName());
+			
+		} else {
+			List<TaskListDataItem> children = ProjectHelper.getChildrenTasks(projectData, taskListDataItem);
+	
+	
+			Date endDate = taskListDataItem.getStart();
+			for (TaskListDataItem c : children) {
+				if (c.getEnd() != null && c.getEnd().after(endDate)) {
+					endDate = c.getEnd();
+				}
 			}
+			ProjectHelper.setTaskEndDate(taskListDataItem, endDate);
 		}
-		ProjectHelper.setTaskEndDate(taskListDataItem, endDate);
 	}
 
 	private void calculateRetroPlanningOfPrevTasks(ProjectData projectData, TaskListDataItem task, Date endDate) throws FormulateException {

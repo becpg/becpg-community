@@ -177,7 +177,7 @@
            	                           url : Alfresco.constants.PROXY_URI + "api/type/pjt:taskList/formprocessor",
            	                           dataObj : {
          	                                 		"alf_destination" : (instance.datalistMeta.nodeRef != null ? instance.datalistMeta.nodeRef  : instance.options.parentNodeRef),
-                	                                 "assoc_pjt_subProject_added" : response.json.persistedObject,
+                	                                 "assoc_pjt_subProjectRef_added" : response.json.persistedObject,
                 	                                 "prop_pjt_tlTaskName": "Sub project"
                 	                              },
            	                           successCallback : {

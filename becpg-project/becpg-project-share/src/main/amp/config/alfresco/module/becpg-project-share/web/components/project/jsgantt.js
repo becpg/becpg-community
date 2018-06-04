@@ -1554,7 +1554,6 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
                   
                   vLeftTable += '<div style="margin-left:' + vMargin + 'px;" id="group_' + vcurrDivID + '" class="gicon '+gcssClass+'" onclick="JSGantt.folder(\'' + vcurrDivID + '\',' + vGanttVar + ');' + vGanttVar + '.DrawDependencies();"></div>';
                   
-                  
                } else {
 
                   vLeftTable += '<span  style="margin-left:' + vMargin + 'px;">&nbsp;</span>';
