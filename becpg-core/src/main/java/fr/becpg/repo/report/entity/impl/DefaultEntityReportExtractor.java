@@ -610,9 +610,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 					if ((assocNodes != null) && !assocNodes.isEmpty()) {
 						String ret = assocNodes.stream().map(i -> extractName(associationDef.getTargetClass().getName(), i))
 								.collect(Collectors.joining(RepoConsts.LABEL_SEPARATOR));
-
 						addData(nodeElt, useCData, associationDef.getName(), ret, null);
-
 					}
 
 				}

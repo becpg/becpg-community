@@ -368,6 +368,7 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 				// visitGroup(projectData, nextTask);
 				// parent second
 				visitGroup(projectData, nextTask.getParent());
+				
 			}
 		}
 

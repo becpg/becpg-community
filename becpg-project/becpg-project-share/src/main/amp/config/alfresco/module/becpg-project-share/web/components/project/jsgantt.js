@@ -84,7 +84,7 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
     * @return void
     */	
    JSGantt.TaskItem = function(pID, pName, pStart, pEnd, pColor, pLink, pMile, pRes, pComp, pGroup, pParent, pOpen,
-                               pDepend, pCaption, pLineColor) {
+                               pDepend, pCaption, pLineColor, pSubProject) {
 
 	   
 	 
@@ -235,6 +235,10 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
        */
       var vVisible = 1;
       
+      /**
+       * Sub project
+       */
+      var vSubProject = pSubProject;
 
 
       var x1 = 0, y1 = 0, x2 = 0, y2 = 0;
@@ -448,6 +452,15 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
          return vGroup;
       };
 
+      /**
+       * 
+       */
+      this.getSubProject = function() {
+          return vSubProject;
+      }
+          
+      
+      
       /**
        * Returns whether task is open (1=Yes,0=No)
        * 
@@ -1323,6 +1336,7 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
          var vDayWidth = 0;
          var vStr = "";
          var colNumber = 2;
+         var vMargin = 0;
          
           if (vShowRes === 1){
         	 colNumber++;
@@ -1523,23 +1537,27 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
                 }
                
                
-               vLeftTable += '  <td class="ggTaskTitle ggCol'+colNumber+'"><span style="color: #aaaaaa">';
+               vLeftTable += '  <td class="ggTaskTitle ggCol'+colNumber+'">';
 
-               for ( var j = 1; j < vTaskList[i].getLevel(); j++) {
-                  vLeftTable += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-               }
-
-               vLeftTable += '</span>';
+               vMargin = (vTaskList[i].getLevel() - 1)  * 25;
+               
 
                if (vTaskList[i].getGroup()) {
+            	  var gcssClass = "ggroup-collapsed";
+            	   
                   if (vTaskList[i].getOpen() == 1){
-                     vLeftTable += '<div id="group_' + vcurrDivID + '" class="gicon ggroup-expanded" onclick="JSGantt.folder(\'' + vcurrDivID + '\',' + vGanttVar + ');' + vGanttVar + '.DrawDependencies();"></div>';
-                  } else {
-                     vLeftTable += '<div id="group_' + vcurrDivID + '" class="gicon ggroup-collapsed" onclick="JSGantt.folder(\'' + vcurrDivID + '\',' + vGanttVar + ');' + vGanttVar + '.DrawDependencies();"></div>';
+                	  gcssClass = "ggroup-expanded";
+                  } 
+                  if(vTaskList[i].getSubProject()!=null){
+                	  gcssClass= "ggroup-project";
                   }
+                  
+                  vLeftTable += '<div style="margin-left:' + vMargin + 'px;" id="group_' + vcurrDivID + '" class="gicon '+gcssClass+'" onclick="JSGantt.folder(\'' + vcurrDivID + '\',' + vGanttVar + ');' + vGanttVar + '.DrawDependencies();"></div>';
+                  
+                  
                } else {
 
-                  vLeftTable += '<span style="color: #000000; font-weight:bold; font-size: 12px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>';
+                  vLeftTable += '<span  style="margin-left:' + vMargin + 'px;">&nbsp;</span>';
                }
 
                vLeftTable += '<span class="task-title" > ' + vTaskList[i].getName() + '</span></td>';

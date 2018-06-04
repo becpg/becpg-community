@@ -28,6 +28,8 @@ import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
+import fr.becpg.repo.repository.annotation.MultiLevelDataList;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 /**
@@ -38,6 +40,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
  */
 @AlfType
 @AlfQname(qname = "pjt:taskList")
+@MultiLevelDataList
 public class TaskListDataItem extends BeCPGDataObject implements CompositeDataItem<TaskListDataItem> {
 
 	/**
@@ -77,6 +80,19 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	private Integer initialNotification;
 	private Date lastNotification;
 	private List<NodeRef> notificationAuthorities;
+	
+	private NodeRef subProject;
+	
+	@AlfSingleAssoc
+	@DataListIdentifierAttr
+	@AlfQname(qname="pjt:subProjectRef")
+	public NodeRef getSubProject() {
+		return subProject;
+	}
+	
+	public void setSubProject(NodeRef subProject) {
+		this.subProject = subProject;
+	}	
 	
 
 	@AlfProp
@@ -469,11 +485,16 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 		result = prime * result + ((end == null) ? 0 : end.hashCode());
 		result = prime * result + ((expense == null) ? 0 : expense.hashCode());
 		result = prime * result + ((fixedCost == null) ? 0 : fixedCost.hashCode());
+		result = prime * result + ((initialNotification == null) ? 0 : initialNotification.hashCode());
 		result = prime * result + ((invoice == null) ? 0 : invoice.hashCode());
+		result = prime * result + ((isExcludeFromSearch == null) ? 0 : isExcludeFromSearch.hashCode());
 		result = prime * result + ((isGroup == null) ? 0 : isGroup.hashCode());
 		result = prime * result + ((isMilestone == null) ? 0 : isMilestone.hashCode());
+		result = prime * result + ((lastNotification == null) ? 0 : lastNotification.hashCode());
 		result = prime * result + ((loggedTime == null) ? 0 : loggedTime.hashCode());
 		result = prime * result + ((manualDate == null) ? 0 : manualDate.hashCode());
+		result = prime * result + ((notificationAuthorities == null) ? 0 : notificationAuthorities.hashCode());
+		result = prime * result + ((notificationFrequency == null) ? 0 : notificationFrequency.hashCode());
 		result = prime * result + ((observers == null) ? 0 : observers.hashCode());
 		result = prime * result + ((parent == null) ? 0 : parent.hashCode());
 		result = prime * result + ((prevTasks == null) ? 0 : prevTasks.hashCode());
@@ -482,6 +503,7 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 		result = prime * result + ((resourceCost == null) ? 0 : resourceCost.hashCode());
 		result = prime * result + ((resources == null) ? 0 : resources.hashCode());
 		result = prime * result + ((start == null) ? 0 : start.hashCode());
+		result = prime * result + ((subProject == null) ? 0 : subProject.hashCode());
 		result = prime * result + ((taskLegend == null) ? 0 : taskLegend.hashCode());
 		result = prime * result + ((taskName == null) ? 0 : taskName.hashCode());
 		result = prime * result + ((taskState == null) ? 0 : taskState.hashCode());
@@ -540,10 +562,20 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 				return false;
 		} else if (!fixedCost.equals(other.fixedCost))
 			return false;
+		if (initialNotification == null) {
+			if (other.initialNotification != null)
+				return false;
+		} else if (!initialNotification.equals(other.initialNotification))
+			return false;
 		if (invoice == null) {
 			if (other.invoice != null)
 				return false;
 		} else if (!invoice.equals(other.invoice))
+			return false;
+		if (isExcludeFromSearch == null) {
+			if (other.isExcludeFromSearch != null)
+				return false;
+		} else if (!isExcludeFromSearch.equals(other.isExcludeFromSearch))
 			return false;
 		if (isGroup == null) {
 			if (other.isGroup != null)
@@ -555,12 +587,27 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 				return false;
 		} else if (!isMilestone.equals(other.isMilestone))
 			return false;
+		if (lastNotification == null) {
+			if (other.lastNotification != null)
+				return false;
+		} else if (!lastNotification.equals(other.lastNotification))
+			return false;
 		if (loggedTime == null) {
 			if (other.loggedTime != null)
 				return false;
 		} else if (!loggedTime.equals(other.loggedTime))
 			return false;
 		if (manualDate != other.manualDate)
+			return false;
+		if (notificationAuthorities == null) {
+			if (other.notificationAuthorities != null)
+				return false;
+		} else if (!notificationAuthorities.equals(other.notificationAuthorities))
+			return false;
+		if (notificationFrequency == null) {
+			if (other.notificationFrequency != null)
+				return false;
+		} else if (!notificationFrequency.equals(other.notificationFrequency))
 			return false;
 		if (observers == null) {
 			if (other.observers != null)
@@ -601,6 +648,11 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 			if (other.start != null)
 				return false;
 		} else if (!start.equals(other.start))
+			return false;
+		if (subProject == null) {
+			if (other.subProject != null)
+				return false;
+		} else if (!subProject.equals(other.subProject))
 			return false;
 		if (taskLegend == null) {
 			if (other.taskLegend != null)

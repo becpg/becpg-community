@@ -500,6 +500,8 @@
 						<many>false</many>
 					</target>
 				</association>
+			
+				
 				<association name="pjt:tlObservers">
 					<source>
 						<mandatory>false</mandatory>
@@ -914,6 +916,23 @@
 
 	<aspects>
 
+		<aspect name="pjt:subProjectAspect">
+			<associations>
+				<association name="pjt:subProjectRef">
+						<source>
+							<mandatory>true</mandatory>
+							<many>true</many>
+						</source>
+						<target>
+							<class>pjt:project</class>
+							<mandatory>false</mandatory>
+							<many>false</many>
+						</target>
+					</association>
+			</associations>
+		</aspect>
+
+
 		<aspect name="pjt:budgetAspect">
 			<properties>				
 				<property name="pjt:invoice">
@@ -1055,6 +1074,8 @@
 				</property>				
 			</properties>
 		</aspect>
+		
+		
 
                 
 		<aspect name="pjt:requestListAspect">

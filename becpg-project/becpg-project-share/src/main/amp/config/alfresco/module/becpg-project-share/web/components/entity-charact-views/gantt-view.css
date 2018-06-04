@@ -11,6 +11,13 @@
 	width: auto;
 }
 
+.datalist-toolbar .sub-project span.first-child
+{
+   background: url(../images/filetypes/generic-project-16.png) no-repeat 12px 4px;
+   padding-left: 24px;
+}
+
+
 div.legend.project-list  {
 	float:right;
 	margin-top:10px;

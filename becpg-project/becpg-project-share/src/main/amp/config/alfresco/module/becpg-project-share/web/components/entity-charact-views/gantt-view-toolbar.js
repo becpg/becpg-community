@@ -18,6 +18,7 @@
  ******************************************************************************/
 (function()
 {
+
     if (beCPG.component.EntityDataListToolbar)
     {
 
@@ -126,6 +127,81 @@
                 Dom.setStyle("alf-content", "margin-left", "200px");
             }
         });
+        
+        
+	        YAHOO.Bubbling.fire("registerToolbarButtonAction", {
+	           actionName : "sub-project",
+	           right : false,
+	           evaluate : function(asset, entity) {
+	              return asset.name != null && ( asset.name === "taskList" ) && entity != null && entity.userAccess.edit;
+	           },
+	          fn : function(inst) {
+	        	  var instance = this;
+	        	  
+	        	   var templateUrl = YAHOO.lang
+                   .substitute(
+                         Alfresco.constants.URL_SERVICECONTEXT + "components/form?formId=formulation&itemKind=type&itemId={itemId}&destination={destination}&mode=create&submitType=json&showCancelButton=true&popup=true",
+                         {
+                            itemId : "pjt:project",
+                            destination : instance.entity.parentNodeRef
+                         });
 
+	        	   var createRow = new Alfresco.module.SimpleDialog(instance.id + "-createSubProject");
+
+	             createRow.setOptions(
+	                   {
+	                      width : "34em",
+	                      templateUrl : templateUrl,
+	                      actionUrl : null,
+	                      destroyOnHide : true,
+	                      doBeforeDialogShow : {
+	                         fn : function(p_form, p_dialog) {
+	                            Alfresco.util.populateHTML([ p_dialog.id + "-dialogTitle",
+	                                  instance.msg("action.sub-project.create.title" ) ]);
+	                         },
+	                         scope : this
+	                      },
+                      doBeforeFormSubmit : {
+                         fn : function(form) {
+                            Alfresco.util.PopupManager.displayMessage({
+                               text : this.msg("message.sub-project.create.please-wait")
+                            });
+                         },
+                         scope : this
+                      },
+                      onSuccess : {
+                         fn : function(response) {
+                            if (response.json) {           	                        
+           	                        Alfresco.util.Ajax.jsonRequest({
+           	                           method : Alfresco.util.Ajax.POST,
+           	                           url : Alfresco.constants.PROXY_URI + "api/type/pjt:taskList/formprocessor",
+           	                           dataObj : {
+         	                                 		"alf_destination" : (instance.datalistMeta.nodeRef != null ? instance.datalistMeta.nodeRef  : instance.options.parentNodeRef),
+                	                                 "assoc_pjt_subProject_added" : response.json.persistedObject,
+                	                                 "prop_pjt_tlTaskName": "Sub project"
+                	                              },
+           	                           successCallback : {
+           	                              fn : function(resp) {
+           	                                 if (resp.json) {
+           	                                    YAHOO.Bubbling.fire("dataItemCreated", {
+           	                                       nodeRef : resp.json.persistedObject,
+           	                                       callback : function(item) {
+           	                                          Alfresco.util.PopupManager.displayMessage({
+           	                                             text : instance.msg("message.sub-project.create.success")
+           	                                          });
+           	                                       }
+           	                                    });
+           	                                 }
+           	                              },
+           	                              scope : this
+           	                           }
+           	                        });
+           	                     }
+                         },
+                         scope : this
+                      }
+                   }).show();	           }
+
+	        });
     }
 })();
