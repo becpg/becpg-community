@@ -32,6 +32,10 @@
 	<#assign fieldValue="">
 </#if>
 
+<#if field.control.params.isSearch?? >
+	<#assign fieldValue="">
+</#if>
+
 <div class="form-field">
    <#if form.mode == "view">
       <div class="viewmode-field">

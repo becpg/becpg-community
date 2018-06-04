@@ -242,6 +242,11 @@ div.scroll {
 	background-repeat: no-repeat;
 }
 
+.projects .ggroup-project {
+	background-image: url("../images/filetypes/generic-project-16.png");
+	background-repeat: no-repeat;
+}
+
 .projects div.milestone {
 	-ms-transform: rotate(45deg); 
 	-moz-transform: rotate(45deg); 

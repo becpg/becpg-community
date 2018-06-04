@@ -132,7 +132,7 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 	private void calculateGroup(ProjectData projectData) {
 
 		for (TaskListDataItem tl : projectData.getTaskList()) {
-			if (ProjectHelper.getChildrenTasks(projectData, tl).isEmpty()) {
+			if (tl.getSubProject()==null && ProjectHelper.getChildrenTasks(projectData, tl).isEmpty()) {
 				tl.setIsGroup(false);
 			} else {
 				tl.setIsGroup(true);

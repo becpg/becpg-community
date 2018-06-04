@@ -52,19 +52,38 @@
                                                     g.setDateDisplayFormat("mediumDate");
                                                     g.setCaptionType('Resource');
                                                     var start = new Date();
+                                                    var previousTask = null;
                                                     for (var i = 0; i < recordSet.getLength(); i++)
                                                     {
                                                         var oRecord = recordSet.getRecord(i);
                                                         var task = oRecord.getData();
                                                         var taskId = task.nodeRef;
                                                         var precTaskIds = "";
-
+                                                       
                                                         var pParent = 0;
+                                                        var pSubProject = null;
 
                                                         if (task["itemData"]["prop_bcpg_parentLevel"].value != null)
                                                         {
                                                             pParent = task["itemData"]["prop_bcpg_parentLevel"].value;
+                                                        } else if(task["itemData"].isMultiLevel){
+                                                        	pParent = previousTask;
+                                                        } 
+                                                       
+                                                        
+                                                        
+                                                        if(!task["itemData"].isMultiLevel){
+                                                        	previousTask = taskId;
                                                         }
+                                                        
+                                                        
+                                                        if (task["itemData"]["assoc_pjt_SubProjectRef"] != null
+                                                        		&& task["itemData"]["assoc_pjt_SubProjectRef"] .length>0)
+                                                        {
+                                                        	pSubProject = task["itemData"]["assoc_pjt_SubProjectRef"][0].displayValue;
+                                                        }
+                                                        
+                                                        
                                                         var pGroup = !task["itemData"]["prop_pjt_tlIsGroup"].value ? 0 : 1;
 
                                                         for ( var z in task["itemData"]["assoc_pjt_tlPrevTasks"])
@@ -107,7 +126,7 @@
                                                         g.AddTaskItem(new JSGantt.TaskItem(taskId, this.getTaskTitle(task,
                                                                 this.options.entityNodeRef, tdates.start), tdates.start,
                                                                 tdates.end, this.getTaskColor(task), null, tlIsMilestone ? 1 : 0,
-                                                                taskOwner, tlPercent, pGroup, pParent, 1, precTaskIds,null,task.color));
+                                                                taskOwner, tlPercent, pGroup, pParent, 1, precTaskIds,null,task.color, pSubProject));
                                                     }
 
                                                     this.refreshView();

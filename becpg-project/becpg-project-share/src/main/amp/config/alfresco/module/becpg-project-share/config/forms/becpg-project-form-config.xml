@@ -603,6 +603,7 @@
 					
 					<show id="pjt:tlState" />
 					
+					<show id="pjt:subProjectRef" force="true" />
 					<show id="pjt:tlPrevTasks" />
 					<show id="bcpg:parentLevel" force="true" />
 					<show id="pjt:tlRefusedTaskRef" />
@@ -645,6 +646,11 @@
 						</control>
 					</field>
 					<field id="pjt:tlState" set="mainInfo" />
+					<field id="pjt:subProjectRef" set="mainInfo" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl"/>
+					</field>
+					
 					<field id="bcpg:parentLevel" help-id="becpg.forms.help.parentLevel" set="mainInfo" label-id="becpg.forms.field.projects.taskList.parentLevel" >
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
@@ -749,6 +755,7 @@
 					
 					<show id="pjt:tlState" />
 					
+					<show id="pjt:subProjectRef" force="true" />
 					<show id="pjt:tlPrevTasks" />
 					<show id="bcpg:parentLevel" force="true" />
 					<show id="pjt:tlRefusedTaskRef" />
@@ -791,6 +798,10 @@
 						</control>
 					</field>
 					<field id="pjt:tlState" set="mainInfo" />
+					<field id="pjt:subProjectRef" set="mainInfo" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl"/>
+					</field>
 					<field id="bcpg:parentLevel" set="mainInfo" label-id="becpg.forms.field.projects.taskList.parentLevel" >
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
@@ -885,12 +896,27 @@
 					<show id="pjt:tlResources" />
 					<show id="pjt:tlState" />
 					<show id="pjt:tlIsMilestone" />
+					<show id="bcpg:depthLevel" />
 				</field-visibility>
 				<appearance>
 					<field id="pjt:tlState">
 						<control template="/org/alfresco/components/form/controls/selectmany.ftl">
 							<control-param name="insertBlank">true</control-param>
 							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+					<field id="pjt:tlIsMilestone">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="insertBlank">true</control-param>
+							<control-param name="options">true|data.boolean.true,false|data.boolean.false
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:depthLevel">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">0|,1|1,2|2,3|3,All|data.level.all
+							</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -912,6 +938,7 @@
 					
 					<show id="pjt:tlState" />
 					
+					<show id="pjt:subProjectRef" force="true" />
 					<show id="pjt:tlPrevTasks" />
 					<show id="bcpg:parentLevel" force="true" />
 					<show id="pjt:tlRefusedTaskRef" />
@@ -954,6 +981,10 @@
 						</control>
 					</field>
 					<field id="pjt:tlState" set="mainInfo" />
+					<field id="pjt:subProjectRef" force="true"  set="mainInfo" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl"/>
+					</field>
 					<field id="bcpg:parentLevel" set="mainInfo" label-id="becpg.forms.field.projects.taskList.parentLevel" >
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
@@ -1044,6 +1075,7 @@
 				<field-visibility>
 					<show id="bcpg:depthLevel" />
 					<show id="bcpg:parentLevel" />
+					<show id="pjt:subProjectRef" force="true" />
 					<show id="pjt:tlIsGroup" />
 					<show id="pjt:tlTaskName" />
 					<show id="pjt:tlStart" />
@@ -1065,6 +1097,7 @@
 				<appearance>
 					<field id="bcpg:depthLevel" label="hidden" />
 					<field id="bcpg:parentLevel" label="hidden" />
+					<field id="pjt:subProjectRef" label="hidden" />
 					<field id="pjt:tlIsGroup" label="hidden" />
 					<field id="pjt:tlPrevTasks" label="hidden" />
 					<field id="pjt:invoice" read-only="true" />

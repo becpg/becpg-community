@@ -288,11 +288,13 @@
 				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isSystemEntity</evaluator>
 			</action>
 			
-			<!-- Send to validation -->
-			
+			<!-- Send to validation 
+			 // For next release
 			<action id="start-process" type="javascript" label="actions.entity.start-process" icon="document-assign-workflow">
 				<param name="function">onActionStartProcess</param>
 			</action>
+			
+			-->
 			
 		</actions>
 

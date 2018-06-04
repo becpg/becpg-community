@@ -57,6 +57,7 @@ import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.rule.RuleService;
 import org.alfresco.service.cmr.security.AccessPermission;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.AuthorityType;
@@ -184,7 +185,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 	@Autowired
 	private BeCPGCacheService beCPGCacheService;
 
-        @Autowired
+    @Autowired
 	private RuleService ruleService;
 
 	@Override
