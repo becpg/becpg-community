@@ -29,6 +29,7 @@ import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.product.formulation.rounding.NutrientRoundingRules;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
 /**
@@ -131,7 +132,6 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 					if (isGenericRawMaterial) {
 						formulateGenericRawMaterial(formulatedProduct.getNutList(), totalQtiesValue, netQty);
 					}
-
 				}
 			}
 
@@ -142,10 +142,10 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 
 				formulatedProduct.getNutList().forEach(n -> {
 					if (n.getNut() != null) {
-
 						n.setGroup((String) nodeService.getProperty(n.getNut(), PLMModel.PROP_NUTGROUP));
 						n.setUnit(calculateUnit(formulatedProduct.getUnit(), (String) nodeService.getProperty(n.getNut(), PLMModel.PROP_NUTUNIT)));
-
+					
+						
 						if (n.getLossPerc() != null) {
 							if (n.getValue() != null) {
 								n.setValue((n.getValue() * (100 - n.getLossPerc())) / 100);
@@ -185,7 +185,9 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 								n.setMethod(NUT_FORMULATED);
 							}
 						}
-
+						n.setRoundedValue(NutrientRoundingRules.extractRoundedValue(n,
+								(String) nodeService.getProperty(n.getNut(), PLMModel.PROP_NUTROUNDINGMODE)));
+						
 						if (transientFormulation) {
 							n.setTransient(true);
 						}
@@ -193,12 +195,11 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 				});
 
 				checkRequirementsOfFormulatedProduct(formulatedProduct);
-
 			}
 		} 
 		return true;
 	}
-
+	
 	private List<ReqCtrlListDataItem> visitPart(ProductData partProduct, List<NutListDataItem> nutList, List<NutListDataItem> retainNodes,
 			Double qtyUsed, Double netQty, Boolean isGenericRawMaterial, Map<NodeRef, Double> totalQtiesValue) {
 
@@ -232,7 +233,6 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 						totalQtiesValue.put(newNutListDataItem.getCharactNodeRef(), currentQty + qtyUsed);
 					}
 				}
-
 			}
 		}
 
