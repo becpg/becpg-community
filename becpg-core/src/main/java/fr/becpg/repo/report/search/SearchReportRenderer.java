@@ -13,4 +13,6 @@ public interface SearchReportRenderer {
 
 	boolean isApplicable(NodeRef templateNodeRef, ReportFormat reportFormat);
 
+	void executeAction(NodeRef templateNodeRef, NodeRef downloadNode, ReportFormat reportFormat);
+
 }

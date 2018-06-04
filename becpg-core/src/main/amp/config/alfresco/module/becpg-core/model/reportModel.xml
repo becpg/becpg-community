@@ -37,6 +37,7 @@
 					<value>PDF</value>
 					<value>XLSX</value>
 					<value>DOCX</value>
+					<value>ZIP</value>
 				</list>
 			</parameter>
 		</constraint>	
@@ -56,6 +57,19 @@
 				<value>bcpg:lvValue</value>
 			</parameter>
 		</constraint>
+		<constraint name="rep:reportKindList" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+                <list>
+                    <value>/System/Lists/bcpg:entityLists/ReportKindList</value>
+                </list>
+            </parameter>
+            <parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>bcpg:lvValue</value>
+			</parameter>
+        </constraint>
 						
 	</constraints>
 
@@ -216,7 +230,18 @@
 			</associations>
 		</aspect>
 		
-		
+		<!-- applied to a list when a user can hide component in a specific report-->
+		<aspect name="rep:reportKindAspect">
+			<properties>
+				<property name="rep:reportKinds">
+					<type>d:text</type>
+					<multiple>true</multiple>
+					<constraints>
+						<constraint ref="rep:reportKindList" />
+					</constraints>					
+				</property>
+			</properties>
+		</aspect>
 		
 		
 	</aspects>

@@ -1,5 +1,5 @@
 /*
- * 
+ *
  */
 package fr.becpg.repo.web.scripts.report;
 
@@ -32,7 +32,7 @@ import fr.becpg.report.client.ReportFormat;
 
 /**
  * Webscript that send the result of a search in a report
- * 
+ *
  * @author querephi, matthieu
  */
 public class ExportSearchWebScript extends AbstractSearchWebScript {
@@ -63,7 +63,7 @@ public class ExportSearchWebScript extends AbstractSearchWebScript {
 
 	/**
 	 * Export search in a report.
-	 * 
+	 *
 	 * @param req
 	 *            the req
 	 * @param res
@@ -82,7 +82,9 @@ public class ExportSearchWebScript extends AbstractSearchWebScript {
 		NodeRef templateNodeRef = new NodeRef(storeType, storeId, nodeId);
 		String query = req.getParameter(PARAM_QUERY);
 
-		if (query == null || query.isEmpty()) {
+		Boolean async = "true".equals(req.getParameter("async"));
+
+		if ((query == null) || query.isEmpty()) {
 			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "'query' argument cannot be null or empty");
 		}
 
@@ -93,22 +95,36 @@ public class ExportSearchWebScript extends AbstractSearchWebScript {
 
 			List<NodeRef> resultNodeRefs = doSearch(req, RepoConsts.MAX_RESULTS_5000);
 
-			ReportFormat reportFormat = reportTplService.getReportFormat(templateNodeRef);			
-			
-			String name = (String) nodeService.getProperty(templateNodeRef, ContentModel.PROP_NAME);
-		
-			String mimeType = mimetypeService.getMimetype(reportFormat.toString());
+			ReportFormat reportFormat = reportTplService.getReportFormat(templateNodeRef);
 
-			name = FilenameUtils.removeExtension(name) + FilenameUtils.EXTENSION_SEPARATOR_STR + mimetypeService.getExtension(mimeType);
-			
-			logger.debug("Rendering report at format :" + reportFormat.toString() + " mimetype: " + mimeType + " name " + name);
+			if (async) {
 
-			res.setContentType(mimeType);
-			AttachmentHelper.setAttachment(req, res, name);
-			
-			exportSearchService.createReport(datatype, templateNodeRef, resultNodeRefs, reportFormat, res.getOutputStream());
-			
-			
+				NodeRef downloadNodeRef = exportSearchService.createReport(datatype, templateNodeRef, resultNodeRefs, reportFormat);
+
+				JSONObject ret = new JSONObject();
+
+				ret.put("nodeRef", downloadNodeRef);
+
+				res.setContentType("application/json");
+				res.setContentEncoding("UTF-8");
+				res.getWriter().write(ret.toString(3));
+
+			} else {
+
+				String name = (String) nodeService.getProperty(templateNodeRef, ContentModel.PROP_NAME);
+
+				String mimeType = mimetypeService.getMimetype(reportFormat.toString());
+
+				name = FilenameUtils.removeExtension(name) + FilenameUtils.EXTENSION_SEPARATOR_STR + mimetypeService.getExtension(mimeType);
+
+				logger.debug("Rendering report at format :" + reportFormat.toString() + " mimetype: " + mimeType + " name " + name);
+
+				res.setContentType(mimeType);
+				AttachmentHelper.setAttachment(req, res, name);
+
+				exportSearchService.createReport(datatype, templateNodeRef, resultNodeRefs, reportFormat, res.getOutputStream());
+			}
+
 		} catch (SocketException | ContentIOException e1) {
 
 			// the client cut the connection - our mission was accomplished
@@ -119,8 +135,9 @@ public class ExportSearchWebScript extends AbstractSearchWebScript {
 
 		} catch (JSONException e3) {
 
-			if (logger.isInfoEnabled())
+			if (logger.isInfoEnabled()) {
 				logger.info("Failed to parse the JSON query", e3);
+			}
 
 		}
 

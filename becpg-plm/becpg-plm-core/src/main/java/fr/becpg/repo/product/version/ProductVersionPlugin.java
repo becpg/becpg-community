@@ -2,6 +2,10 @@ package fr.becpg.repo.product.version;
 
 import java.io.Serializable;
 
+import org.alfresco.model.ContentModel;
+import org.alfresco.repo.policy.BehaviourFilter;
+import org.alfresco.service.cmr.lock.LockService;
+import org.alfresco.service.cmr.lock.LockType;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.version.VersionType;
@@ -28,6 +32,13 @@ public class ProductVersionPlugin implements EntityVersionPlugin {
 	
 	@Autowired
 	NamespaceService namespaceService;
+	
+	@Autowired
+	BehaviourFilter policyBehaviourFilter;
+
+	@Autowired
+	LockService lockService;
+
 	
 	@Value("${beCPG.copyOrBranch.propertiesToReset}")
 	String propertiesNotToMerge;
@@ -60,6 +71,21 @@ public class ProductVersionPlugin implements EntityVersionPlugin {
 		        		nodeService.removeProperty(workingCopyNodeRef, propertyQname);
 		        	}
 		        }
+	        }
+
+                if(!nodeService.hasAspect(workingCopyNodeRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT)) {
+	        	try {
+	        		policyBehaviourFilter.disableBehaviour();
+	        		  if (nodeService.hasAspect(origNodeRef, ContentModel.ASPECT_LOCKABLE))
+	                    {
+	                        // Release the lock on the original node
+	                        lockService.unlock(origNodeRef, false, true);
+	                    }
+	                   	nodeService.removeAspect(origNodeRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT);
+	        	} finally {
+	        		  policyBehaviourFilter.enableBehaviour();
+	        		  lockService.lock(origNodeRef, LockType.READ_ONLY_LOCK);
+	        	}
 	        }
 	        
 		}

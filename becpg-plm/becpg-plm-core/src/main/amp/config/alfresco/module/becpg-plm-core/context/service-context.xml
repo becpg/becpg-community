@@ -87,14 +87,6 @@
 		<property name="namespacePrefixResolver" ref="namespaceService" />
 	</bean>
 
-
-	<bean id="migrationService" class="fr.becpg.repo.migration.impl.MigrationServiceImpl">
-		<property name="nodeService" ref="nodeService" />
-		<property name="tenantAdminService" ref="tenantAdminService" />
-		<property name="transactionService" ref="transactionService" />
-		<property name="dictionaryService" ref="dictionaryService" />
-	</bean>
-
 	<!-- Variant -->
 
 	<bean id="variantPolicy" class="fr.becpg.repo.variant.policy.VariantPolicy" parent="abstractBeCPGPolicy" depends-on="bcpg.plm.dictionaryBootstrap">

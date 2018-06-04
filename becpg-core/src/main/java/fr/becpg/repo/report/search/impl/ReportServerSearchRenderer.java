@@ -462,4 +462,10 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 		return BeCPGQueryBuilder.createQuery().ofType(type).andPropQuery(ContentModel.PROP_NAME, name).singleValue();
 	}
 
+	@Override
+	public void executeAction(NodeRef templateNodeRef, NodeRef downloadNode, ReportFormat reportFormat) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

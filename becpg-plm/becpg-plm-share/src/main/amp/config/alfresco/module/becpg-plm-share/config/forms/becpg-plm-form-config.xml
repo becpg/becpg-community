@@ -122,6 +122,9 @@
 					<show id="bcpg:productState" />
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:casNumber" />
+					<show id="bcpg:ecNumber" />
+					
 					<show id="bcpg:eanCode" />
 					<show id="bcpg:eanCodeLevel2"  />
 					<show id="bcpg:eanCodeLevel3" />
@@ -315,6 +318,10 @@
 					<field id="bcpg:productState" set="mainInfo" />
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
+					
+					<field id="bcpg:casNumber" set="mainInfo"/>
+					<field id="bcpg:ecNumber" set="mainInfo"/>
+					
 					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo" >
 						<constraint-handlers>
 		                  	<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.GTIN" event="keyup,change"/>
@@ -2502,6 +2509,11 @@
 					<show id="bcpg:productState" />
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
+					
+					<show id="bcpg:casNumber" />
+					<show id="bcpg:ecNumber" />
+					
+					
 					<show id="bcpg:eanCode" />
 					<show id="bcpg:suppliers" />
 					<show id="bcpg:plants" force="true" />
@@ -2521,6 +2533,7 @@
 					<show id="bcpg:diluentRef" />
 					<show id="bcpg:targetReconstitutionRef" />
 					<show id="bcpg:ingTypeV2" force="true" />
+					<show id="bcpg:ingCEECode" force="true" />
 					<show id="bcpg:useByDate" force="true" />
 					<show id="bcpg:bestBeforeDate" force="true" />
 					<show id="bcpg:periodAfterOpening" force="true" />
@@ -2614,6 +2627,9 @@
 					</field>
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
+					<field id="bcpg:casNumber" set="mainInfo"/>
+					<field id="bcpg:ecNumber" set="mainInfo"/>
+					
 					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo"  >
 						<constraint-handlers>
 		                  	<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.GTIN" event="keyup,change"/>
@@ -2670,12 +2686,17 @@
 						</control>
 					</field>
 					
+					
+					
 					<field id="bcpg:ingTypeV2" set="consumer">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ingTypeItem
 							</control-param>
 						</control>
 					</field>
+					
+					<field id="bcpg:ingCEECode" set="consumer" />
+					
 					<field id="bcpg:useByDate" help-id="becpg.forms.help.useByDate" set="consumer" />
 					<field id="bcpg:bestBeforeDate" help-id="becpg.forms.help.bestBeforeDate" set="consumer" >
 						<control
@@ -2804,6 +2825,8 @@
 					<!-- Consumer -->
 					<show id="bcpg:productDensity" />
 					<show id="bcpg:ingTypeV2" force="true" />
+					
+					<show id="bcpg:ingCEECode" force="true" />
 					<show id="bcpg:useByDate" force="true" />
 					<show id="bcpg:bestBeforeDate" force="true" />
 					<show id="bcpg:periodAfterOpening" force="true" />
@@ -2882,6 +2905,7 @@
 							</control-param>
 						</control>
 					</field>
+					<field id="bcpg:ingCEECode" set="consumer" />
 					<field id="bcpg:useByDate" help-id="becpg.forms.help.useByDate" set="consumer" />
 					<field id="bcpg:bestBeforeDate" help-id="becpg.forms.help.bestBeforeDate" set="consumer" >
 						<control
@@ -3059,6 +3083,7 @@
 					<show id="bcpg:diluentRef" />
 					<show id="bcpg:targetReconstitutionRef" />
 					<show id="bcpg:ingTypeV2" force="true" />
+					<show id="bcpg:ingCEECode" force="true" />
 					<show id="bcpg:useByDate" force="true" />
 					<show id="bcpg:bestBeforeDate" force="true" />
 					<show id="bcpg:periodAfterOpening" force="true" />
@@ -3180,6 +3205,8 @@
 							</control-param>
 						</control>
 					</field>
+					
+					<field id="bcpg:ingCEECode" set="consumer" />
 					<field id="bcpg:useByDate" help-id="becpg.forms.help.useByDate" set="consumer" />
 					<field id="bcpg:bestBeforeDate" help-id="becpg.forms.help.bestBeforeDate" set="consumer" >
 						<control
@@ -4580,6 +4607,7 @@
 					<show id="bcpg:allergenCode" />
 					<show id="bcpg:allergenRegulatoryThreshold"/>
 					<show id="bcpg:allergenSubset" />
+					<show id="rep:reportLocales" force="true"/>
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:charactName" />
@@ -4604,6 +4632,11 @@
 					<field id="bcpg:allergenSubset">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+						</control>
+					</field>
+					<field id="rep:reportLocales" >
+						<control template="/org/alfresco/components/form/controls/mtlangue.ftl">
+        		 				 <control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -4623,6 +4656,7 @@
 					<show id="bcpg:allergenCode" />
 					<show id="bcpg:allergenRegulatoryThreshold"/>
 					<show id="bcpg:allergenSubset" />
+					<show id="rep:reportLocales" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:charactName" />
@@ -4647,6 +4681,11 @@
 					<field id="bcpg:allergenSubset">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+						</control>
+					</field>
+					<field id="rep:reportLocales" >
+						<control template="/org/alfresco/components/form/controls/mtlangue.ftl">
+        		 				 <control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -4681,6 +4720,7 @@
 					<show id="bcpg:allergenCode" />
 					<show id="bcpg:allergenSubset" />
 					<show id="bcpg:allergenRegulatoryThreshold"/>
+					<show id="rep:reportLocales" />
 				</field-visibility>
 			</form>
 		</forms>
@@ -4779,12 +4819,11 @@
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:pluralLegalName"/>
-					<show id="bcpg:ingCEECode" />
+					<show id="bcpg:ingCEECode"  force="true"/>
 					<show id="bcpg:ingTypeV2"  force="true"/>
 				</field-visibility>
 
 				<appearance>
-
 					<field id="bcpg:charactName" />
 					<field id="cm:description">
 						<control>
@@ -4813,7 +4852,7 @@
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:pluralLegalName"/>
-					<show id="bcpg:ingCEECode" />
+					<show id="bcpg:ingCEECode" force="true"/>
 					<show id="bcpg:ingTypeV2"  force="true"/>
 				</field-visibility>
 
@@ -4869,7 +4908,7 @@
 					<show id="bcpg:charactName" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:pluralLegalName"/>
-					<show id="bcpg:ingCEECode" />
+					<show id="bcpg:ingCEECode" force="true"/>
 					<show id="bcpg:ingTypeV2"  force="true"/>
 				</field-visibility>
 			</form>
@@ -4958,7 +4997,7 @@
 					<show id="bcpg:nutUL" />
 					<show id="bcpg:nutFormula" />
 					<show id="bcpg:nutSort" />
-					<show id="rep:reportLocales" />
+					<show id="rep:reportLocales" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="cm:description">
@@ -4998,7 +5037,7 @@
 					<show id="bcpg:nutUL" />
 					<show id="bcpg:nutFormula" />
 					<show id="bcpg:nutSort" />
-					<show id="rep:reportLocales" />
+					<show id="rep:reportLocales" force="true" />
 				</field-visibility>
 
 				<appearance>
@@ -5027,7 +5066,6 @@
 					<show id="bcpg:nutGroup" />
 					<show id="bcpg:nutType" />
 					<show id="bcpg:isDeleted" />
-					<show id="rep:reportLocales" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:charactName">
@@ -5846,6 +5884,7 @@
 					<show id="cm:description" force="true" />
 					<show id="bcpg:labelClaimFormula" />
 					<show id="bcpg:isManualListItem" force="true" />
+					<show id="rep:reportLocales" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:charactName" />	
@@ -5864,6 +5903,11 @@
 							<control-param name="rows">10</control-param>
 						</control>
 					</field>
+					<field id="rep:reportLocales" >
+						<control template="/org/alfresco/components/form/controls/mtlangue.ftl">
+        		 				 <control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 		</forms>
@@ -5880,6 +5924,7 @@
 					<show id="cm:description" force="true" />
 					<show id="bcpg:labelClaimFormula" />
 					<show id="bcpg:isManualListItem" force="true" />
+					<show id="rep:reportLocales" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:charactName" />
@@ -5896,6 +5941,11 @@
 					<field id="bcpg:labelClaimFormula">
 						<control template="/org/alfresco/components/form/controls/spel-editor.ftl">
 							<control-param name="rows">10</control-param>
+						</control>
+					</field>
+					<field id="rep:reportLocales" >
+						<control template="/org/alfresco/components/form/controls/mtlangue.ftl">
+        		 				 <control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -7208,11 +7258,12 @@
 					<show id="bcpg:illGrp" />
 					<show id="bcpg:illValue" />
 					<show id="bcpg:illManualValue" />
+					<show id="rep:reportKinds" />
 				</field-visibility>
 
 				<appearance>
 					<field id="bcpg:illGrp" read-only="true" />
-					<field id="bcpg:illValue">
+					<field id="bcpg:illValue" read-only="true">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">5</control-param>
     						<control-param name="maxLength">10000</control-param>
@@ -7236,11 +7287,13 @@
 					<show id="bcpg:illValue" />
 					<show id="bcpg:illManualValue" />
 					<show id="fm:commentCount" force="true" />
+					<show id="rep:reportKinds" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden"></field>
 					<field id="bcpg:lrLocales" label="hidden" read-only="true"></field>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
+					<field id="bcpg:illValue" read-only="true" />
 				</appearance>
 			</form>
 			
@@ -7272,11 +7325,12 @@
 					<show id="bcpg:illGrp" />
 					<show id="bcpg:illValue" />
 					<show id="bcpg:illManualValue" />
+					<show id="rep:reportKinds" />
 				</field-visibility>
 
 				<appearance>
 					<field id="bcpg:illGrp" read-only="true" />
-					<field id="bcpg:illValue">
+					<field id="bcpg:illValue" read-only="true">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">5</control-param>
     						<control-param name="maxLength">10000</control-param>
@@ -7656,6 +7710,7 @@
 					<show id="bcpg:nutListLossPerc" />
 					<show id="bcpg:nutListMethod" />
 					<show id="bcpg:parentLevel" />
+					<show id="rep:reportKinds" />
 				</field-visibility>
 
 				<appearance>
@@ -7699,6 +7754,7 @@
 					<show id="bcpg:nutListIsFormulated" />
 					<show id="bcpg:nutListFormulaErrorLog" />					
 					<show id="entity_bcpg:nutListNut_bcpg:nut" force="true"/>
+					<show id="rep:reportKinds" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden"></field>
@@ -7726,6 +7782,7 @@
 					<show id="bcpg:nutListIsFormulated" />
 					<show id="bcpg:nutListFormulaErrorLog" />					
 					<show id="entity_bcpg:nutListNut_bcpg:nut" force="true"/>
+					<show id="rep:reportKinds" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden"></field>
@@ -7773,6 +7830,11 @@
 					<show id="bcpg:nutListGroup" />
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:nutListMethod">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
 					<field id="bcpg:nutListGroup">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
@@ -7796,6 +7858,7 @@
 					<show id="bcpg:nutListLossPerc" />
 					<show id="bcpg:nutListMethod" />
 					<show id="bcpg:parentLevel" />
+					<show id="rep:reportKinds" />
 				</field-visibility>
 
 				<appearance>
@@ -7898,6 +7961,7 @@
 					<show id="bcpg:pclMini" />
 					<show id="bcpg:pclMaxi" />
 					<show id="bcpg:pclTextCriteria" />
+					<show id="rep:reportKinds" />
 				</field-visibility>
 
 				<appearance>
@@ -7926,6 +7990,7 @@
 					<show id="fm:commentCount" force="true" />
 					<show id="bcpg:physicoChemIsFormulated" />
 					<show id="bcpg:physicoChemFormulaErrorLog" />
+					<show id="rep:reportKinds" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden"></field>
@@ -7944,6 +8009,7 @@
 					<show id="fm:commentCount" force="true" />
 					<show id="bcpg:physicoChemIsFormulated" />
 					<show id="bcpg:physicoChemFormulaErrorLog" />
+					<show id="rep:reportKinds" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden"></field>
@@ -8002,6 +8068,7 @@
 					<show id="bcpg:pclMini" />
 					<show id="bcpg:pclMaxi" />
 					<show id="bcpg:pclTextCriteria" />
+					<show id="rep:reportKinds" />
 				</field-visibility>
 
 				<appearance>

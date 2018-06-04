@@ -50,6 +50,8 @@ public class RepoConsts {
 	
 
 	public static final String PATH_REPORT_PARAMS = "ReportParams";
+
+	public static final String PATH_REPORT_KINDLIST = "ReportKindList";
 	
 	// olap
 	public static final String PATH_OLAP_QUERIES = "OlapQueries";

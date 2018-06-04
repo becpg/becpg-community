@@ -196,4 +196,10 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 				.endsWith(ReportTplService.PARAM_VALUE_XLSXREPORT_EXTENSION);
 	}
 
+	@Override
+	public void executeAction(NodeRef templateNodeRef, NodeRef downloadNode, ReportFormat reportFormat) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
