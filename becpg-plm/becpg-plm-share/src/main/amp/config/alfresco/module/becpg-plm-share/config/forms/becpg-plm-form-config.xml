@@ -1425,7 +1425,7 @@
 	</config>
 
 	<!-- bcpg:packagingKit type (existing nodes) -->
-	<config evaluator="node-type" condition="bcpg:packagingKit">
+	<config evaluator="node-type" condition="bcpg:packagingKit" >
 		<forms>
 			<form>
 				<field-visibility>
@@ -4994,6 +4994,7 @@
 					<show id="bcpg:nutType" />
 					<show id="bcpg:nutUnit" />
 					<show id="bcpg:nutGDA" />
+					<show id="bcpg:nutRoundingMode" force="true" />
 					<show id="bcpg:nutUL" />
 					<show id="bcpg:nutFormula" />
 					<show id="bcpg:nutSort" />
@@ -5053,6 +5054,7 @@
 					<show id="bcpg:nutType" />
 					<show id="bcpg:nutUnit" />
 					<show id="bcpg:nutGDA" />
+					<show id="bcpg:nutRoundingMode" force="true" />
 					<show id="bcpg:nutUL" />
 					<show id="bcpg:nutSort" />
 					<show id="rep:reportLocales" />

@@ -98,7 +98,8 @@ public interface PLMModel {
 	QName PROP_NUTLIST_MINI = QName.createQName(BeCPGModel.BECPG_URI, "nutListMini");
 	QName PROP_NUTLIST_MAXI = QName.createQName(BeCPGModel.BECPG_URI, "nutListMaxi");
 	QName PROP_NUTLIST_GROUP = QName.createQName(BeCPGModel.BECPG_URI, "nutListGroup");
-
+	QName PROP_NUTLIST_ROUNDED_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "nutListRoundedValue");
+	
 	// organoList
 	QName TYPE_ORGANOLIST = QName.createQName(BeCPGModel.BECPG_URI, "organoList");
 	QName PROP_ORGANOLIST_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "organoListValue");
@@ -212,6 +213,8 @@ public interface PLMModel {
 	QName PROP_NUTUL = QName.createQName(BeCPGModel.BECPG_URI, "nutUL");
 	QName PROP_NUT_FORMULA = QName.createQName(BeCPGModel.BECPG_URI, "nutFormula");
 	QName PROP_NUT_METHOD = QName.createQName(BeCPGModel.BECPG_URI, "nutListMethod");
+	QName PROP_NUTROUNDINGMODE = QName.createQName(BeCPGModel.BECPG_URI, "nutRoundingMode");
+	
 
 	// organo
 	QName TYPE_ORGANO = QName.createQName(BeCPGModel.BECPG_URI, "organo");

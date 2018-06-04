@@ -58,8 +58,10 @@ public class NutListDataItem extends AbstractManualDataItem  implements SimpleLi
 	
 	private NutListDataItem parent;
 	
+	private String roundedValue;
 	
 	
+
 	@Override
 	@AlfProp
 	@InternalField
@@ -132,6 +134,8 @@ public class NutListDataItem extends AbstractManualDataItem  implements SimpleLi
 	public void setUnit(String unit) {
 		this.unit = unit;
 	}
+	
+
 	
 	@AlfProp
 	@AlfQname(qname="bcpg:nutListMini")
@@ -233,8 +237,6 @@ public class NutListDataItem extends AbstractManualDataItem  implements SimpleLi
 		this.nut = nut;
 	}	
 
-	
-	
 	@AlfProp
 	@InternalField
 	@AlfQname(qname="bcpg:nutListIsFormulated")
@@ -265,7 +267,20 @@ public class NutListDataItem extends AbstractManualDataItem  implements SimpleLi
 	public String getTextCriteria() {
 		return null;
 	}	
+	
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:nutListRoundedValue")
+	public String getRoundedValue() {
+		return roundedValue;
+	}
 
+	public void setRoundedValue(String roundedValue) {
+		this.roundedValue = roundedValue;
+	}
+	
+
+	
 	/**
 	 * Instantiates a new nut list data item.
 	 */
@@ -315,6 +330,7 @@ public class NutListDataItem extends AbstractManualDataItem  implements SimpleLi
 		this.nut = n.nut;
 		this.isFormulated = n.isFormulated;
 		this.errorLog = n.errorLog;
+		this.roundedValue=n.roundedValue;
 	}
 
 
@@ -322,24 +338,37 @@ public class NutListDataItem extends AbstractManualDataItem  implements SimpleLi
 	public NutListDataItem clone() {
 		return new NutListDataItem(this);
 	}
-	
+
+
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + ((errorLog == null) ? 0 : errorLog.hashCode());
-		result = prime * result + ((formulatedValue == null) ? 0 : formulatedValue.hashCode());
+		result = prime * result
+				+ ((depthLevel == null) ? 0 : depthLevel.hashCode());
+		result = prime * result
+				+ ((errorLog == null) ? 0 : errorLog.hashCode());
+		result = prime * result
+				+ ((formulatedValue == null) ? 0 : formulatedValue.hashCode());
 		result = prime * result + ((gdaPerc == null) ? 0 : gdaPerc.hashCode());
 		result = prime * result + ((group == null) ? 0 : group.hashCode());
-		result = prime * result + ((isFormulated == null) ? 0 : isFormulated.hashCode());
-		result = prime * result + ((manualValue == null) ? 0 : manualValue.hashCode());
+		result = prime * result
+				+ ((isFormulated == null) ? 0 : isFormulated.hashCode());
+		result = prime * result
+				+ ((lossPerc == null) ? 0 : lossPerc.hashCode());
+		result = prime * result
+				+ ((manualValue == null) ? 0 : manualValue.hashCode());
 		result = prime * result + ((maxi == null) ? 0 : maxi.hashCode());
 		result = prime * result + ((method == null) ? 0 : method.hashCode());
 		result = prime * result + ((mini == null) ? 0 : mini.hashCode());
 		result = prime * result + ((nut == null) ? 0 : nut.hashCode());
+		result = prime * result + ((parent == null) ? 0 : parent.hashCode());
+		result = prime * result
+				+ ((roundedValue == null) ? 0 : roundedValue.hashCode());
 		result = prime * result + ((unit == null) ? 0 : unit.hashCode());
-		result = prime * result + ((valuePerServing == null) ? 0 : valuePerServing.hashCode());
+		result = prime * result
+				+ ((valuePerServing == null) ? 0 : valuePerServing.hashCode());
 		return result;
 	}
 
@@ -352,6 +381,11 @@ public class NutListDataItem extends AbstractManualDataItem  implements SimpleLi
 		if (getClass() != obj.getClass())
 			return false;
 		NutListDataItem other = (NutListDataItem) obj;
+		if (depthLevel == null) {
+			if (other.depthLevel != null)
+				return false;
+		} else if (!depthLevel.equals(other.depthLevel))
+			return false;
 		if (errorLog == null) {
 			if (other.errorLog != null)
 				return false;
@@ -376,6 +410,11 @@ public class NutListDataItem extends AbstractManualDataItem  implements SimpleLi
 			if (other.isFormulated != null)
 				return false;
 		} else if (!isFormulated.equals(other.isFormulated))
+			return false;
+		if (lossPerc == null) {
+			if (other.lossPerc != null)
+				return false;
+		} else if (!lossPerc.equals(other.lossPerc))
 			return false;
 		if (manualValue == null) {
 			if (other.manualValue != null)
@@ -402,6 +441,16 @@ public class NutListDataItem extends AbstractManualDataItem  implements SimpleLi
 				return false;
 		} else if (!nut.equals(other.nut))
 			return false;
+		if (parent == null) {
+			if (other.parent != null)
+				return false;
+		} else if (!parent.equals(other.parent))
+			return false;
+		if (roundedValue == null) {
+			if (other.roundedValue != null)
+				return false;
+		} else if (!roundedValue.equals(other.roundedValue))
+			return false;
 		if (unit == null) {
 			if (other.unit != null)
 				return false;
@@ -417,11 +466,25 @@ public class NutListDataItem extends AbstractManualDataItem  implements SimpleLi
 
 	@Override
 	public String toString() {
-		return "NutListDataItem [ parentNodeRef="
-				+ parentNodeRef + ", nodeRef=" + nodeRef + ", name=" + name + ", isManual=" + isManual + ", sort=" + sort + ", manualValue=" + manualValue + ", formulatedValue=" + formulatedValue + ", unit=" + unit + ", mini=" + mini
-				+ ", maxi=" + maxi + ", valuePerServing=" + valuePerServing + ", gdaPerc=" + gdaPerc + ", lossPerc=" + lossPerc + ", group=" + group
-				+ ", method=" + method + ", nut=" + nut + ", isFormulated=" + isFormulated + ", errorLog=" + errorLog +"]";
+		return "NutListDataItem [manualValue=" + manualValue
+				+ ", formulatedValue=" + formulatedValue + ", unit=" + unit
+				+ ", mini=" + mini + ", maxi=" + maxi + ", valuePerServing="
+				+ valuePerServing + ", gdaPerc=" + gdaPerc + ", lossPerc="
+				+ lossPerc + ", group=" + group + ", method=" + method
+				+ ", nut=" + nut + ", isFormulated=" + isFormulated
+				+ ", errorLog=" + errorLog + ", depthLevel=" + depthLevel
+				+ ", parent=" + parent + ", roundedValue=" + roundedValue + "]";
 	}
+	
+
+	
+	
+
+	
+
+	
+
+	
 
 
 }
