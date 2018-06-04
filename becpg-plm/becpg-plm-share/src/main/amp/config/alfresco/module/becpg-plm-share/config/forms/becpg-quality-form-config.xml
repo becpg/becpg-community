@@ -1194,6 +1194,7 @@
 					<show id="qa:clTextCriteriaLimit" />
 					<show id="qa:clRequired" />
 					<show id="qa:clMethod" />
+					<show id="rep:reportKinds" />
 				</field-visibility>
 
 				<appearance>
@@ -1225,7 +1226,8 @@
 					<show id="qa:clTextCriteriaLimit" />
 					<show id="qa:clRequired" />
 					<show id="qa:clMethod" />
-					<show id="fm:commentCount" force="true" />										
+					<show id="fm:commentCount" force="true" />
+					<show id="rep:reportKinds" />										
 				</field-visibility>
 				<appearance>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
@@ -1252,6 +1254,7 @@
 					<show id="qa:clTextCriteriaLimit" />
 					<show id="qa:clRequired" />
 					<show id="qa:clMethod" />
+					<show id="rep:reportKinds" />
 				</field-visibility>
 				<appearance>
 					<field id="qa:clTextCriteria">

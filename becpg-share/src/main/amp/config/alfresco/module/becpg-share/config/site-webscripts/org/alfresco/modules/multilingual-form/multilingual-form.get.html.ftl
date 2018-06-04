@@ -1,14 +1,19 @@
 <#assign el=args.htmlid?html>
-<#assign label=args.label>
+<#assign label=args.label!"">
 <#assign description="">
 
 
 <div id="${el}-dialog" class="multilingual-form">
+	<#if !args.readonly??>   
    <div id="${el}-dialogTitle" class="hd">${msg("title")}</div>
+   <#else>
+   <div id="${el}-dialogTitle" class="hd">${msg("title.read")}</div>
+   </#if>
    <div class="bd">
       <form id="${el}-form" action="" method="post" class="form-container">
          <div class="form-fields">
-	         <div class="set">	         
+	         <div class="set">	
+	         <#if !args.readonly??>      
 		         <div class="form-field">
 			         <select id="${el}-locale-picker" name="-" onChange="addFormFieldForLocale();return false;">
                             <option value="-" >${msg("locale.choose")}</option>
@@ -34,10 +39,26 @@
 	      			<#else>
 		      			<input type="text" title="${mlField.description!""?html}" tabindex="0"
 		      				 name="${mlField.locale}" id="${el}-${mlField.locale}"  value="${mlField.value!""}"></input>
-	      			</#if>	 
+	      			</#if>	
 	      		</div>
                </#if>
-	      	</#list>	
+	      	</#list>
+	      	
+	      	<#else>	
+		         <#list mlFields?sort_by(["localeLabel"]) as mlField>
+					<#assign description=mlField.description!""?html>
+	                <#if mlField.locale != currentLocale>
+		         	<div class="form-field">
+	      				<label for="${el}-${mlField.locale}"><#if args.label?? >${label?html}<#else>${mlField.label?html}</#if>:&nbsp;
+	      						<span class="locale-icon"><img class="icon16_11" title="${mlField.localeLabel}" tabindex="0" src="${url.context}/res/components/images/flags/${mlField.country?lower_case}.png">&nbsp;(${mlField.localeLabel})<span>&nbsp;&nbsp;
+	      						<span class="translate-icon" onClick="suggestTranslate('${el}-${mlField.locale}','${mlField.locale}');" ><img class="icon16" title="${msg("translate.suggest")}" tabindex="0" src="${url.context}/res/components/images/translate-16.png"><span>
+	      				</label>
+		      				<div rows="2" cols="60" title="${mlField.description!""?html}" tabindex="0" readonly
+			      				 name="${mlField.locale}" id="${el}-${mlField.locale}" >${mlField.value!""}</div>	
+		      		</div>
+	               </#if>
+		      	</#list>
+	      	</#if>
 	      	
 		      	<div id="${el}-added-locale-container"></div>
 				</div>

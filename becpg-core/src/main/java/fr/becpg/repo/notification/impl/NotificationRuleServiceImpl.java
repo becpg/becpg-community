@@ -59,6 +59,8 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 	private static final String PARENT_FOLDER = "parentFolder";
 	private static final String DATE_FIELD_VALUE = "dateFieldValue";
 	private static final String NOTIFICATION_NODEREF = "notificationNodeRef";
+	private static final String ENTITYV2_SUBTYPE = "isEnitytV2SubType";
+	
 
 	@Autowired
 	private NodeService nodeService;
@@ -170,12 +172,14 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 			templateArgs.put(TARGET_PATH, destinationPath);
 			
 			
+			
 			String emailTemplate = notification.getEmail() != null ? nodeService.getPath(notification.getEmail()).toPrefixString(namespaceService)
 					: RepoConsts.EMAIL_NOTIF_RULE_LIST_TEMPLATE;
 			
 			for (NodeRef nodeRef : items) {
 				Map<String, Object> item = new HashMap<>();
 				item.put(ENTITY_NODEREF, nodeRef.toString());
+				item.put(ENTITYV2_SUBTYPE, dictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITY_V2));
 				item.put(PARENT_FOLDER, (String) nodeService.getProperty(nodeService.getPrimaryParent(nodeRef).getParentRef(),ContentModel.PROP_NAME));
 				item.put(ENTITY_NAME, (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
 				item.put(DATE_FIELD_VALUE, (Date) nodeService.getProperty(nodeRef, dateField));

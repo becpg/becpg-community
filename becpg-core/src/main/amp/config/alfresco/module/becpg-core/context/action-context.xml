@@ -43,6 +43,25 @@
     	<property name="entityVersionService" ref="entityVersionService" />
     </bean>
     
+    
+    <!-- Export Search actions -->
+    
+   <bean id="zipSearchAction" class="fr.becpg.repo.report.search.actions.ZipSearchAction" parent="action-executer">
+      <property name="checkOutCheckInService" ref="checkOutCheckInService"/>
+      <property name="contentServiceHelper" ref="downloadContentServiceHelper" />
+      <property name="downloadStorage" ref="downloadStorage" />
+      <property name="exporterService" ref="downloadExporterComponent" />
+      <property name="maximumContentSize" value="${download.maxContentSize}" />
+      <property name="nodeService" ref="nodeService" />
+      <property name="publicAction" value="false"/>
+      <property name="transactionHelper" ref="retryingTransactionHelper"/>
+      <property name="contentService" ref="contentService"/>
+      <property name="updateService" ref="downloadStatusUpdateService"/>
+      <property name="namespaceService" ref="namespaceService"/>
+   </bean>
+    
+    
+    
     <!-- I18N -->
    
    <bean id="actionResourceBundles" class="org.alfresco.i18n.ResourceBundleBootstrapComponent">

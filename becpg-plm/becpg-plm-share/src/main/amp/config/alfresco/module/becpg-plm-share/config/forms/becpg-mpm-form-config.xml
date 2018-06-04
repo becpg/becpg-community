@@ -103,6 +103,7 @@
 					<show id="bcpg:charactName" />
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
+					<show id="rep:reportKinds" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:charactName" />
@@ -128,6 +129,7 @@
 					<show id="bcpg:charactName" />
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
+					<show id="rep:reportKinds" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:charactName" />
@@ -145,6 +147,7 @@
 				<field-visibility>
 					<show id="bcpg:charactName" />
 					<show id="cm:title" />
+					<show id="rep:reportKinds" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:charactName">

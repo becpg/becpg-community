@@ -1,0 +1,577 @@
+
+package fr.becpg.repo.report.search.actions;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import org.alfresco.model.ContentModel;
+import org.alfresco.repo.download.DownloadCancelledException;
+import org.alfresco.repo.download.DownloadStatusUpdateService;
+import org.alfresco.repo.download.DownloadStorage;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.transaction.RetryingTransactionHelper;
+import org.alfresco.service.cmr.coci.CheckOutCheckInService;
+import org.alfresco.service.cmr.download.DownloadStatus;
+import org.alfresco.service.cmr.download.DownloadStatus.Status;
+import org.alfresco.service.cmr.repository.ContentData;
+import org.alfresco.service.cmr.repository.ContentReader;
+import org.alfresco.service.cmr.repository.ContentService;
+import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.security.AccessPermission;
+import org.alfresco.service.cmr.view.Exporter;
+import org.alfresco.service.cmr.view.ExporterContext;
+import org.alfresco.service.cmr.view.ExporterException;
+import org.alfresco.service.namespace.NamespaceService;
+import org.alfresco.service.namespace.QName;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream.UnicodeExtraFieldPolicy;
+import org.dom4j.Document;
+import org.dom4j.Element;
+import org.dom4j.Node;
+import org.dom4j.io.SAXReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.becpg.repo.search.BeCPGQueryBuilder;
+
+/**
+ * Handler for exporting node content to a ZIP file
+ *
+ * @author Matthieu
+ */
+public class ZipSearchDownloadExporter implements Exporter {
+	private static Logger log = LoggerFactory.getLogger(ZipSearchDownloadExporter.class);
+
+	private ZipArchiveOutputStream zipStream;
+	private OutputStream outputStream;
+
+	private NodeRef downloadNodeRef;
+	private int sequenceNumber = 1;
+	private long done;
+	private long filesAddedCount;
+
+	private long size = 0;
+	private long fileCount = 0;
+
+	private List<FileToExtract> fileToExtract = new ArrayList<>();
+
+	private class FileToExtract {
+
+		String path;
+		String name;
+		String destFolder;
+
+		public FileToExtract(String path, String name, String destFolder) {
+			super();
+			this.path = path;
+			this.name = name;
+			this.destFolder = destFolder;
+		}
+
+		@Override
+		public String toString() {
+			return "FileToExtract [path=" + path + ", name=" + name + ", destFolder=" + destFolder + "]";
+		}
+
+	}
+
+	private RetryingTransactionHelper transactionHelper;
+	private DownloadStorage downloadStorage;
+	private DownloadStatusUpdateService updateService;
+	private NamespaceService namespaceService;
+	private CheckOutCheckInService checkOutCheckInService;
+	private NodeService nodeService;
+	private ContentService contentService;
+
+	public long getSize() {
+		return size;
+	}
+
+	public long getFileCount() {
+		return fileCount;
+	}
+
+	/**
+	 * Construct
+	 *
+	 * @param zipFile
+	 *            File
+	 * @param checkOutCheckInService
+	 *            CheckOutCheckInService
+	 * @param nodeService
+	 *            NodeService
+	 * @param transactionHelper
+	 *            RetryingTransactionHelper
+	 * @param updateService
+	 *            DownloadStatusUpdateService
+	 * @param downloadStorage
+	 *            DownloadStorage
+	 * @param downloadNodeRef
+	 *            NodeRef
+	 * @param total
+	 *            long
+	 * @param totalFileCount
+	 *            long
+	 */
+	public ZipSearchDownloadExporter(NamespaceService namespaceService, CheckOutCheckInService checkOutCheckInService, NodeService nodeService,
+			RetryingTransactionHelper transactionHelper, DownloadStatusUpdateService updateService, DownloadStorage downloadStorage,
+			ContentService contentService, NodeRef downloadNodeRef, NodeRef templateNodeRef) {
+
+		this.updateService = updateService;
+		this.transactionHelper = transactionHelper;
+		this.downloadStorage = downloadStorage;
+
+		this.downloadNodeRef = downloadNodeRef;
+		this.checkOutCheckInService = checkOutCheckInService;
+		this.nodeService = nodeService;
+		this.contentService = contentService;
+		this.namespaceService = namespaceService;
+
+		try {
+			readFileMapping(templateNodeRef);
+		} catch (Exception e) {
+			throw new ExporterException("Failed to read zip search mapping", e);
+		}
+
+	}
+
+	@SuppressWarnings("unchecked")
+	private void readFileMapping(NodeRef templateNodeRef) throws Exception {
+
+		//
+		//
+		// <?xml version="1.0" encoding="UTF-8"?>
+		// <export format="zip">
+		// <node type="bcpg:product">
+		// <file path="Images/produit.jpg" name="img_produit${bcpg:erpCode}.jpg"
+		// destFolder="."></file>
+		// <file path="Documents/${cm:name} - Fiche Technique Client.pdf"
+		// name="FT_client${bcpg:erpCode}.pdf" destFolder="./FTs/"></file>
+		// <file path="Annexes/*.pdf" />
+		// </node>
+		// </export>
+
+		ContentReader reader = contentService.getReader(templateNodeRef, ContentModel.PROP_CONTENT);
+
+		SAXReader saxReader = new SAXReader();
+		try (InputStream is = reader.getContentInputStream()) {
+			Document doc = saxReader.read(is);
+			Element queryElt = doc.getRootElement();
+			List<Node> columnNodes = queryElt.selectNodes("file");
+			for (Node columnNode : columnNodes) {
+
+				FileToExtract tmp = new FileToExtract(columnNode.valueOf("@path"), columnNode.valueOf("@name"), columnNode.valueOf("@destFolder"));
+
+				fileToExtract.add(tmp);
+			}
+
+		}
+
+	}
+
+	public void setZipFile(File zipFile) {
+		try {
+			this.outputStream = new FileOutputStream(zipFile);
+		} catch (FileNotFoundException e) {
+			throw new ExporterException("Failed to create zip file", e);
+		}
+	}
+
+	@Override
+	public void start(final ExporterContext context) {
+		if (outputStream != null) {
+			zipStream = new ZipArchiveOutputStream(outputStream);
+			zipStream.setEncoding("UTF-8");
+			zipStream.setCreateUnicodeExtraFields(UnicodeExtraFieldPolicy.ALWAYS);
+			zipStream.setUseLanguageEncodingFlag(true);
+			zipStream.setFallbackToUTF8(true);
+		}
+	}
+
+	Map<String, Set<NodeRef>> cache = new HashMap<>();
+	Set<String> folders = new HashSet<>();
+
+	@Override
+	public void startNode(NodeRef entityNodeRef) {
+
+		for (FileToExtract fileMapping : fileToExtract) {
+			String key = fileMapping.path + entityNodeRef.toString();
+
+			Set<NodeRef> toExtractNodes = cache.get(key);
+
+			if (toExtractNodes == null) {
+				toExtractNodes = new HashSet<>();
+
+				List<NodeRef> files = BeCPGQueryBuilder.createQuery().selectNodesByPath(entityNodeRef, extractExpr(entityNodeRef, null, fileMapping.path));
+				toExtractNodes.addAll(files);
+
+				cache.put(key, toExtractNodes);
+			}
+
+			for (NodeRef fileNodeRef : toExtractNodes) {
+				if ((fileNodeRef != null) && isExportable(fileNodeRef)) {
+
+					ContentReader reader = contentService.getReader(fileNodeRef, ContentModel.PROP_CONTENT);
+					if ((reader != null) && (reader.exists())) {
+						// export an empty url for the content
+						ContentData contentData = reader.getContentData();
+						// Estimator mode
+						if (outputStream == null) {
+							size = size + contentData.getSize();
+							fileCount = fileCount + 1;
+
+						} else {
+							
+							String folderName = null;
+							
+							if(fileMapping.destFolder != null && !fileMapping.destFolder.isEmpty()){
+								folderName = extractExpr(entityNodeRef, null, fileMapping.destFolder);
+							}
+
+							String path = (folderName!=null ? fileMapping.destFolder + "/" : "")
+									+ createName(fileMapping, fileNodeRef, entityNodeRef);
+
+							try (InputStream inputStream = reader.getContentInputStream()) {
+
+								if (folderName!=null && !folders.contains(folderName)) {
+									ZipArchiveEntry zipEntry = new ZipArchiveEntry(folderName);
+									zipStream.putArchiveEntry(zipEntry);
+									zipStream.closeArchiveEntry();
+									folders.add(folderName);
+								}
+
+								// ALF-2016
+								ZipArchiveEntry zipEntry = new ZipArchiveEntry(path);
+								zipStream.putArchiveEntry(zipEntry);
+
+								// copy export stream to zip
+								copyStream(zipStream, inputStream);
+
+								zipStream.closeArchiveEntry();
+								filesAddedCount = filesAddedCount + 1;
+							} catch (IOException e) {
+								throw new ExporterException("Failed to zip export stream", e);
+							}
+
+						}
+
+					}
+
+				}
+			}
+		}
+
+	}
+
+	@Override
+	public void end() {
+		if (outputStream != null) {
+			try {
+				zipStream.close();
+			} catch (IOException error) {
+				throw new ExporterException("Unexpected error closing zip stream!", error);
+			}
+		}
+	}
+
+	private boolean isExportable(NodeRef fileNodeRef) {
+		if (checkOutCheckInService.isCheckedOut(fileNodeRef) == true) {
+			String owner = (String) nodeService.getProperty(fileNodeRef, ContentModel.PROP_LOCK_OWNER);
+			if (AuthenticationUtil.getRunAsUser().equals(owner) == true) {
+				return false;
+			}
+		}
+
+		if (checkOutCheckInService.isWorkingCopy(fileNodeRef) == true) {
+			String owner = (String) nodeService.getProperty(fileNodeRef, ContentModel.PROP_WORKING_COPY_OWNER);
+			if (AuthenticationUtil.getRunAsUser().equals(owner) == false) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private String createName(FileToExtract fileMapping, NodeRef docNodeRef, NodeRef entityNodeRef) {
+		if ((fileMapping.name != null) && !fileMapping.name.isEmpty()) {
+			return extractExpr(entityNodeRef, docNodeRef , fileMapping.name);
+		}
+		return (String) nodeService.getProperty(docNodeRef, ContentModel.PROP_NAME);
+	}
+
+	private String extractExpr(NodeRef nodeRef, NodeRef docNodeRef , String exprFormat) {
+		Matcher patternMatcher = Pattern.compile("\\{([^}]+)\\}").matcher(exprFormat);
+		StringBuffer sb = new StringBuffer();
+		while (patternMatcher.find()) {
+
+			String propQname = patternMatcher.group(1);
+			String replacement = "";
+			if (propQname.contains("|")) {
+				for (String propQnameAlt : propQname.split("\\|")) {
+					replacement = extractPropText(nodeRef,docNodeRef, propQnameAlt);
+					if ((replacement != null) && !replacement.isEmpty()) {
+						break;
+					}
+				}
+
+			} else {
+				replacement = extractPropText(nodeRef,docNodeRef, propQname);
+			}
+
+			patternMatcher.appendReplacement(sb, replacement != null ? replacement.replace("$", "") : "");
+
+		}
+		patternMatcher.appendTail(sb);
+		return sb.toString();
+	}
+
+	@SuppressWarnings("unchecked")
+	private String extractPropText(NodeRef nodeRef, NodeRef docNodeRef, String propQname) {
+		NodeRef nodeToExtract = nodeRef;
+		
+		if(propQname.startsWith("doc_")) {
+			nodeToExtract = docNodeRef;
+		}
+		propQname = propQname.replace("doc_", "");
+		
+		if (nodeService.getProperty(nodeRef, QName.createQName(propQname, namespaceService)) instanceof List) {
+			return ((List<String>) nodeService.getProperty(nodeToExtract, QName.createQName(propQname, namespaceService))).stream()
+					.collect(Collectors.joining(","));
+		}
+		return (String) nodeService.getProperty(nodeToExtract, QName.createQName(propQname, namespaceService));
+	}
+
+	/**
+	 * Copy input stream to output stream
+	 *
+	 * @param output
+	 *            output stream
+	 * @param in
+	 *            input stream
+	 * @throws IOException
+	 */
+	private void copyStream(OutputStream output, InputStream in) throws IOException {
+		byte[] buffer = new byte[2048 * 10];
+		int read = in.read(buffer, 0, 2048 * 10);
+		int i = 0;
+		while (read != -1) {
+			output.write(buffer, 0, read);
+			done = done + read;
+
+			// ALF-16289 - only update the status every 10MB
+			if ((i++ % 500) == 0) {
+				updateStatus();
+				checkCancelled();
+			}
+
+			read = in.read(buffer, 0, 2048 * 10);
+		}
+	}
+
+	private void checkCancelled() {
+		boolean downloadCancelled = transactionHelper.doInTransaction(() -> downloadStorage.isCancelled(downloadNodeRef), true, true);
+
+		if (downloadCancelled == true) {
+			log.debug("Download cancelled");
+			throw new DownloadCancelledException();
+		}
+	}
+
+	private void updateStatus() {
+		transactionHelper.doInTransaction(() -> {
+			DownloadStatus status = new DownloadStatus(Status.IN_PROGRESS, done, size, filesAddedCount, fileCount);
+
+			updateService.update(downloadNodeRef, status, getNextSequenceNumber());
+			return null;
+		}, false, true);
+	}
+
+	public int getNextSequenceNumber() {
+		return sequenceNumber++;
+	}
+
+	public long getDone() {
+		return done;
+	}
+
+	public long getFilesAdded() {
+		return filesAddedCount;
+	}
+
+	@Override
+	public void startNamespace(String prefix, String uri) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void endNamespace(String prefix) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void endNode(NodeRef nodeRef) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void startReference(NodeRef nodeRef, QName childName) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void endReference(NodeRef nodeRef) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void startAspects(NodeRef nodeRef) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void startAspect(NodeRef nodeRef, QName aspect) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void endAspect(NodeRef nodeRef, QName aspect) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void endAspects(NodeRef nodeRef) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void startACL(NodeRef nodeRef) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void permission(NodeRef nodeRef, AccessPermission permission) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void endACL(NodeRef nodeRef) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void startProperties(NodeRef nodeRef) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void startProperty(NodeRef nodeRef, QName property) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void endProperty(NodeRef nodeRef, QName property) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void endProperties(NodeRef nodeRef) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void startValueCollection(NodeRef nodeRef, QName property) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void startValueMLText(NodeRef nodeRef, Locale locale, boolean isNull) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void endValueMLText(NodeRef nodeRef) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void value(NodeRef nodeRef, QName property, Object value, int index) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void content(NodeRef nodeRef, QName property, InputStream content, ContentData contentData, int index) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void endValueCollection(NodeRef nodeRef, QName property) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void startAssocs(NodeRef nodeRef) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void startAssoc(NodeRef nodeRef, QName assoc) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void endAssoc(NodeRef nodeRef, QName assoc) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void endAssocs(NodeRef nodeRef) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void warning(String warning) {
+		// TODO Auto-generated method stub
+
+	}
+}
