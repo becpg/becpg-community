@@ -84,7 +84,9 @@
 	<bean id="projectFormulationChain" class="fr.becpg.repo.formulation.FormulationChain" init-method="init">
 		<property name="handlers">
 			<list>
-				<bean class="fr.becpg.repo.project.formulation.PlanningFormulationHandler" />
+				<bean class="fr.becpg.repo.project.formulation.PlanningFormulationHandler" >
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+				</bean>
 				<bean class="fr.becpg.repo.project.formulation.BudgetFormulationHandler" >
 				  <property name="associationService" ref="associationService"/>
 				  <property name="nodeService" ref="nodeService"/>
@@ -96,6 +98,7 @@
 					<property name="projectService" ref="projectService" />
 					<property name="projectActivityService" ref="projectActivityService" />
 					<property name="nodeService" ref="nodeService"/>
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
 				</bean>
 				<bean class="fr.becpg.repo.project.formulation.TaskOverdueFormulationHandler">
 					<property name="beCPGMailService" ref="beCPGMailService"/>

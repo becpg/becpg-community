@@ -235,6 +235,17 @@
          }
          
           ret += '</span>';
+         
+          if (task["itemData"]["assoc_pjt_subProjectRef"] != null
+          		&& task["itemData"]["assoc_pjt_subProjectRef"] .length>0)
+          {
+        	  var subProject = task["itemData"]["assoc_pjt_subProjectRef"][0];
+          	 ret += '<span >';
+             ret += '<a  class="sub-project-link" title="' + subProject.displayValue + '" href="'+
+             beCPG.util.entityURL(subProject.siteId, subProject.value,"pjt:project");
+             +'" >';
+             ret +="&nbsp;</a></span></span>";
+          }
 
           ret += '<span class="node-' + task.nodeRef + '|' + entityNodeRef + '">';
           ret += '<a class="task-comments '+COMMENT_EVENTCLASS+'" title="' + this.msg("link.title.comment-task") + '" href="" >';
