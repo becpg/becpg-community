@@ -270,20 +270,24 @@
 			<!-- Create item form -->
 			<form>
 				<field-visibility>
-					<show id="bcpg:nrEntityType" />
-					<show id="bcpg:nrTarget" />
-					<show id="bcpg:nrDateField" />
-					<show id="bcpg:nrCondtions" />
-					<show id="bcpg:nrTimeNumber" />
-					<show id="bcpg:nrTimeType" />
-					<show id="bcpg:nrSubject" />
 					<show id="bcpg:nrNotificationAuthorities" />
-					<show id="bcpg:nrFrequencyStartDate" />
-					<show id="bcpg:nrFrequency" />
+					<show id="bcpg:nrTimeType" />
+					<show id="bcpg:nrTimeNumber" />
+					<show id="bcpg:nrDateField" />
+					
+					<show id="bcpg:nrNodeType" />
+					<show id="bcpg:nrTarget" />
+					
+					<show id="bcpg:nrConditions" />
+					
+					<show id="bcpg:nrSubject" />
 					<show id="bcpg:nrEmail" />
+					
+					<show id="bcpg:nrFrequency" />
+					<show id="bcpg:nrFrequencyStartDate" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:nrEntityType">
+					<field id="bcpg:nrNodeType">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/entityTypeValue</control-param>
 							<control-param name="saveTitle">false</control-param>
@@ -332,11 +336,11 @@
 			<!-- Filter items form -->
 			<form id="filter">
 				<field-visibility>
-					<show id="bcpg:nrEntityType" />
+					<show id="bcpg:nrNodeType" />
 					<show id="bcpg:nrDateField" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:nrEntityType">
+					<field id="bcpg:nrNodeType">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/entityTypeValue</control-param>
 							<control-param name="saveTitle">false</control-param>
@@ -354,17 +358,21 @@
 			<!-- DataGrid view from -->
 			<form id="datagrid">
 				<field-visibility>
-					<show id="bcpg:nrEntityType" />
-					<show id="bcpg:nrTarget" />
-					<show id="bcpg:nrConditions" />
-					<show id="bcpg:nrDateField" />
-					<show id="bcpg:nrTimeNumber" />
-					<show id="bcpg:nrTimeType" />
-					<show id="bcpg:nrSubject" />
 					<show id="bcpg:nrNotificationAuthorities" />
-					<show id="bcpg:nrFrequencyStartDate" />
-					<show id="bcpg:nrFrequency" />
+					<show id="bcpg:nrTimeType" />
+					<show id="bcpg:nrTimeNumber" />
+					<show id="bcpg:nrDateField" />
+					
+					<show id="bcpg:nrNodeType" />
+					<show id="bcpg:nrTarget" />
+					
+					<show id="bcpg:nrConditions" />
+					
+					<show id="bcpg:nrSubject" />
 					<show id="bcpg:nrEmail" />
+					
+					<show id="bcpg:nrFrequency" />
+					<show id="bcpg:nrFrequencyStartDate" />
 				</field-visibility>
 			</form>
 		</forms>
@@ -375,20 +383,24 @@
 			<!-- Popup update existing node form -->
 			<form>
 				<field-visibility>
-					<show id="bcpg:nrEntityType" />
-					<show id="bcpg:nrTarget" />
-					<show id="bcpg:nrConditions" />
-					<show id="bcpg:nrDateField" />
-					<show id="bcpg:nrTimeNumber" />
-					<show id="bcpg:nrTimeType" />
-					<show id="bcpg:nrSubject" />
 					<show id="bcpg:nrNotificationAuthorities" />
-					<show id="bcpg:nrFrequencyStartDate" />
-					<show id="bcpg:nrFrequency" />
+					<show id="bcpg:nrTimeType" />
+					<show id="bcpg:nrTimeNumber" />
+					<show id="bcpg:nrDateField" />
+					
+					<show id="bcpg:nrNodeType" />
+					<show id="bcpg:nrTarget" />
+					
+					<show id="bcpg:nrConditions" />
+					
+					<show id="bcpg:nrSubject" />
 					<show id="bcpg:nrEmail" />
+					
+					<show id="bcpg:nrFrequency" />
+					<show id="bcpg:nrFrequencyStartDate" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:nrEntityType">
+					<field id="bcpg:nrNodeType">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/entityTypeValue</control-param>
 							<control-param name="saveTitle">false</control-param>

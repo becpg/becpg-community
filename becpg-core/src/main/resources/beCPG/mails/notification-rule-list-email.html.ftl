@@ -33,6 +33,8 @@
                                  <table width="100%" cellpadding="0" cellspacing="0" border="0">
                                     <tr>
                                        <td>
+                                       <#assign notification=args.notification>
+                                       <#assign dateField=notification.properties["bcpg:nrDateField"]>
                                           <table cellpadding="0" cellspacing="0" border="0">
                                              <tr>
                                                 <td>
@@ -40,7 +42,7 @@
                                                 </td>
                                                 <td>
                                                    <div style="color: #000000; font-size: 22px; padding-bottom: 4px;">
-                                                   			${args.subject}  
+                                                   			${notification.properties["bcpg:nrSubject"]}
                                                    </div>
                                                    <div style="font-size: 13px;">
                                                    </div>
@@ -60,14 +62,15 @@
                                                  <th class="becpg_cellBorderLeft">Objet</th>
                                                  <th class="becpg_cellBorderLeft">${args.dateField}</th>
                                                </tr>
-                                               <#list args.entities as item> 	
-													<tr>
-														<td class="becpg_rowBorderTop"> ${item.parentFolder} </td>
+                                               
+                                               <#list args.entities as item> 
+                                               		<#assign node=item.node/>
+													<tr> 
+														<td class="becpg_rowBorderTop"> ${node.parent.name} </td>
 														<td class="becpg_rowBorderTopLeftRight">
-															<a href="${shareUrl}/page/<#if item.siteName??>site/${item.siteName}/</#if><#if item.isEnitytV2SubType>entity-data-lists<#else>document-details</#if>?nodeRef=${item.entityNodeRef}">${item.entityName}</a>
+															<a href="${shareUrl}/page/<#if node.siteShortName??>site/${node.siteShortName}/</#if><#if item.isEntityV2SubType>entity-data-lists<#else>document-details</#if>?nodeRef=${node.nodeRef}">${node.name}</a>
 														</td>
-														<td class="becpg_rowBorderTopLeftRight">${item.dateFieldValue?date}</td>
-														
+														<td class="becpg_rowBorderTopLeftRight">${node.properties[dateField]?date}</td>
 													</tr>
 												</#list>
                                              </table>
