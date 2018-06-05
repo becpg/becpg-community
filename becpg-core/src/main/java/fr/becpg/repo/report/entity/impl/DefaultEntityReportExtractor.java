@@ -743,6 +743,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		for (NodeRef nodeRef : nodeRefs) {
 
 			QName qName = nodeService.getType(nodeRef);
+			
 			Element nodeElt = assocElt.addElement(qName.getLocalName());
 
 			appendPrefix(qName, nodeElt);
@@ -751,8 +752,18 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			if (extractDataList && (extractor != null) && (extractor instanceof DefaultEntityReportExtractor)) {
 				((DefaultEntityReportExtractor) extractor).extractEntity(nodeRef, nodeElt, context);
 			} else {
-				loadNodeAttributes(nodeRef, nodeElt, true, context);
+			
+				if(entityDictionaryService.isSubClass(qName, BeCPGModel.TYPE_CHARACT)) {
+					List<QName> hiddentAttributes= new ArrayList<>();
+						hiddentAttributes.addAll(hiddenNodeAttributes);
+						hiddentAttributes.addAll(hiddenDataListItemAttributes);
+					
+					loadAttributes(nodeRef, nodeElt, true, hiddentAttributes, context);
+				} else {
+					loadNodeAttributes(nodeRef, nodeElt, true, context);
+				}
 				if (extractDataList) {
+
 					Element dataListsElt = nodeElt.addElement(TAG_DATALISTS);
 					loadDataLists(nodeRef, dataListsElt, new DefaultExtractorContext(context.getPreferences()));
 				}

@@ -67,6 +67,7 @@ import fr.becpg.repo.product.data.productList.ResourceParamListItem;
 import fr.becpg.repo.product.formulation.CostsCalculatingFormulationHandler;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.product.formulation.PackagingHelper;
+import fr.becpg.repo.product.formulation.rounding.NutrientRoundingRules;
 import fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
@@ -122,6 +123,10 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	@Value("${beCPG.product.report.extractRawMaterial}")
 	private Boolean extractRawMaterial = true;
+	
+
+	@Value("${beCPG.product.report.showDeprecatedXml}")
+	private Boolean showDeprecated = false;
 
 	@Autowired
 	@Qualifier("mlAwareNodeService")
@@ -133,9 +138,13 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	static {
 		hiddenNodeAttributes.add(PLMModel.PROP_NUT_FORMULA);
 		hiddenNodeAttributes.add(PLMModel.PROP_LABEL_CLAIM_FORMULA);
+		hiddenNodeAttributes.add(PLMModel.PROP_NUT_FORMULA_ERROR);
+		
 		hiddenDataListItemAttributes.add(PLMModel.PROP_LCL_FORMULAERROR);
 		hiddenDataListItemAttributes.add(PLMModel.ASSOC_LCL_MISSING_LABELCLAIMS);
 		hiddenDataListItemAttributes.add(PLMModel.PROP_PHYSICOCHEMFORMULA_ERROR);
+		hiddenDataListItemAttributes.add(PLMModel.PROP_NUT_FORMULA_ERROR);
+		hiddenDataListItemAttributes.add(PLMModel.PROP_NUTLIST_ROUNDED_VALUE);
 	}
 
 	/**
@@ -905,26 +914,31 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 					loadDataListItemAttributes(dataListItem, nutListElt, context);
 
-					String nut = nutListElt.valueOf("@" + PLMModel.ASSOC_NUTLIST_NUT.getLocalName());
-					if ((nut != null) && !nut.isEmpty()) {
-						String value = nutListElt.valueOf("@" + PLMModel.PROP_NUTLIST_VALUE.getLocalName());
-						if ((value == null) || value.isEmpty()) {
-							value = nutListElt.valueOf("@" + PLMModel.PROP_NUTLIST_FORMULATED_VALUE.getLocalName());
-							nutListElt.addAttribute(PLMModel.PROP_NUTLIST_VALUE.getLocalName(), value);
+					String value = nutListElt.valueOf("@" + PLMModel.PROP_NUTLIST_VALUE.getLocalName());
+					if ((value == null) || value.isEmpty()) {
+						value = nutListElt.valueOf("@" + PLMModel.PROP_NUTLIST_FORMULATED_VALUE.getLocalName());
+						nutListElt.addAttribute(PLMModel.PROP_NUTLIST_VALUE.getLocalName(), value);
+					}
 
-						}
-
-						nutListsElt.addAttribute(generateKeyAttribute(nut), value != null ? value : "");
-						NodeRef nutNodeRef = dataListItem.getNut();
-
+					NutrientRoundingRules.extractXMLAttribute(nutListElt , dataListItem.getRoundedValue(), I18NUtil.getLocale());
+					
+					
+					if(showDeprecated) {
+						
 						addCDATA(nutListElt, PLMModel.PROP_NUTGDA,
-								nodeService.getProperty(nutNodeRef, PLMModel.PROP_NUTGDA) != null
-										? ((Double) nodeService.getProperty(nutNodeRef, PLMModel.PROP_NUTGDA)).toString()
+								nodeService.getProperty(dataListItem.getNut(), PLMModel.PROP_NUTGDA) != null
+										? ((Double) nodeService.getProperty(dataListItem.getNut(), PLMModel.PROP_NUTGDA)).toString()
 										: "",
 								null, true);
-
-					} else {
-						logger.warn("Nut is null for " + dataListItem.getNut());
+						
+						String nut = nutListElt.valueOf("@" + PLMModel.ASSOC_NUTLIST_NUT.getLocalName());
+						if ((nut != null) && !nut.isEmpty()) {
+	
+							nutListsElt.addAttribute(generateKeyAttribute(nut), value != null ? value : "");
+	
+						} else {
+							logger.warn("Nut is null for " + dataListItem.getNut());
+						}
 					}
 				}
 			}
