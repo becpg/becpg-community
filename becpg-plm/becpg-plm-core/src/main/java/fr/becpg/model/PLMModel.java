@@ -215,6 +215,8 @@ public interface PLMModel {
 	QName PROP_NUTGDA = QName.createQName(BeCPGModel.BECPG_URI, "nutGDA");
 	QName PROP_NUTUL = QName.createQName(BeCPGModel.BECPG_URI, "nutUL");
 	QName PROP_NUT_FORMULA = QName.createQName(BeCPGModel.BECPG_URI, "nutFormula");
+	
+	QName PROP_NUT_FORMULA_ERROR = QName.createQName(BeCPGModel.BECPG_URI, "nutListFormulaErrorLog");
 	QName PROP_NUT_METHOD = QName.createQName(BeCPGModel.BECPG_URI, "nutListMethod");
 	QName PROP_NUTROUNDINGMODE = QName.createQName(BeCPGModel.BECPG_URI, "nutRoundingMode");
 	

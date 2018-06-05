@@ -115,7 +115,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 	protected NodeRef rawMaterial14NodeRef;
 	protected NodeRef rawMaterial15NodeRef;
 	protected NodeRef rawMaterial16NodeRef;
-	
+
 	protected NodeRef rawMaterialWaterNodeRef;
 
 	protected NodeRef packagingMaterial1NodeRef;
@@ -155,71 +155,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 
 	/** The nut4. */
 	protected NodeRef nut4;
-	
-	/** The nut5. */
-	protected NodeRef nut5;
 
-	
-	/** The nut6. */
-	protected NodeRef nut6;
-	
-	/** The nut7. */
-	protected NodeRef nut7;
-	
-	/** The nut8. */
-	protected NodeRef nut8;
-	
-	/** The nut9. */
-	protected NodeRef nut9;
-	
-	/** The nut10. */
-	protected NodeRef nut10;
-	
-	/** The nut11. */
-	protected NodeRef nut11;
-	
-	/** The nut12. */
-	protected NodeRef nut12;
-	
-	/** The nut13. */
-	protected NodeRef nut13;
-	
-	/** The nut14. */
-	protected NodeRef nut14;
-	
-	/** The nut15. */
-	protected NodeRef nut15;
-	
-	/** The nut16. */
-	protected NodeRef nut16;
-	
-	/** The nut17. */
-	protected NodeRef nut17;
-	
-	/** The nut18. */
-	protected NodeRef nut18;
-	
-	/** The nut19. */
-	protected NodeRef nut19;
-	
-	/** The nut20. */
-	protected NodeRef nut20;
-	
-	/** The nut21. */
-	protected NodeRef nut21;
-	
-	/** The nut22. */
-	protected NodeRef nut22;
-	
-	/** The nut23. */
-	protected NodeRef nut23;
-	
-	/** The nut24. */
-	protected NodeRef nut24;
-	
-	/** The nut25. */
-	protected NodeRef nut25;
-	
 	/** The allergen1. */
 	protected NodeRef allergen1;
 
@@ -247,7 +183,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 	protected NodeRef ing5;
 
 	protected NodeRef ing6;
-	
+
 	protected NodeRef ingWater;
 
 	protected NodeRef ingType1;
@@ -275,11 +211,11 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 	protected NodeRef physicoChem4;
 
 	protected NodeRef physicoChem5;
-	
+
 	protected NodeRef physicoChem6;
-	
+
 	protected NodeRef physicoChem7;
-	
+
 	protected NodeRef physicoChem8;
 
 	protected NodeRef supplier1;
@@ -294,7 +230,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 	 * Inits the parts.
 	 */
 	protected void initParts() {
-		
+
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			/*-- characteristics --*/
@@ -391,199 +327,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			nut4 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_NUT, properties).getChildRef();
-			
-			
-			properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut5");
-			properties.put(BeCPGModel.PROP_LEGAL_NAME, "Nut1 legalName");
-			properties.put(PLMModel.PROP_NUTUNIT, "g");
-			properties.put(PLMModel.PROP_NUTGROUP, GROUP1);
-			properties.put(PLMModel.PROP_NUTROUNDINGMODE, "Fat");
-			nut5 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
-					PLMModel.TYPE_NUT, properties).getChildRef();
-			
-			properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut6");
-			properties.put(BeCPGModel.PROP_LEGAL_NAME, "Nut1 legalName");
-			properties.put(PLMModel.PROP_NUTUNIT, "g");
-			properties.put(PLMModel.PROP_NUTGROUP, GROUP1);
-			properties.put(PLMModel.PROP_NUTROUNDINGMODE, "Fat");
-			nut6 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
-					PLMModel.TYPE_NUT, properties).getChildRef();
-			
-			properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut7");
-			properties.put(BeCPGModel.PROP_LEGAL_NAME, "Nut1 legalName");
-			properties.put(PLMModel.PROP_NUTUNIT, "g");
-			properties.put(PLMModel.PROP_NUTGROUP, GROUP1);
-			properties.put(PLMModel.PROP_NUTROUNDINGMODE, "Fat");
-			nut7 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
-					PLMModel.TYPE_NUT, properties).getChildRef();
-			
-			properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut8");
-			properties.put(BeCPGModel.PROP_LEGAL_NAME, "Nut1 legalName");
-			properties.put(PLMModel.PROP_NUTUNIT, "g");
-			properties.put(PLMModel.PROP_NUTGROUP, GROUP1);
-			properties.put(PLMModel.PROP_NUTROUNDINGMODE, "SatFat");
-			nut8 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
-					PLMModel.TYPE_NUT, properties).getChildRef();
-			
-			properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut9");
-			properties.put(BeCPGModel.PROP_LEGAL_NAME, "Nut1 legalName");
-			properties.put(PLMModel.PROP_NUTUNIT, "g");
-			properties.put(PLMModel.PROP_NUTGROUP, GROUP1);
-			properties.put(PLMModel.PROP_NUTROUNDINGMODE, "SatFat");
-			nut9 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
-					PLMModel.TYPE_NUT, properties).getChildRef();
-			
 
-			properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut10");
-			properties.put(BeCPGModel.PROP_LEGAL_NAME, "Nut1 legalName");
-			properties.put(PLMModel.PROP_NUTUNIT, "g");
-			properties.put(PLMModel.PROP_NUTGROUP, GROUP1);
-			properties.put(PLMModel.PROP_NUTROUNDINGMODE, "SatFat");
-			nut10 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
-					PLMModel.TYPE_NUT, properties).getChildRef();
-			
-			properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut11");
-			properties.put(BeCPGModel.PROP_LEGAL_NAME, "Nut1 legalName");
-			properties.put(PLMModel.PROP_NUTUNIT, "g");
-			properties.put(PLMModel.PROP_NUTGROUP, GROUP1);
-			properties.put(PLMModel.PROP_NUTROUNDINGMODE, "Na");
-			nut11 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
-					PLMModel.TYPE_NUT, properties).getChildRef();
-			
-			properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut12");
-			properties.put(BeCPGModel.PROP_LEGAL_NAME, "Nut1 legalName");
-			properties.put(PLMModel.PROP_NUTUNIT, "g");
-			properties.put(PLMModel.PROP_NUTGROUP, GROUP1);
-			properties.put(PLMModel.PROP_NUTROUNDINGMODE, "Na");
-			nut12 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
-					PLMModel.TYPE_NUT, properties).getChildRef();			
-			
-			properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut13");
-			properties.put(BeCPGModel.PROP_LEGAL_NAME, "Nut1 legalName");
-			properties.put(PLMModel.PROP_NUTUNIT, "g");
-			properties.put(PLMModel.PROP_NUTGROUP, GROUP1);
-			properties.put(PLMModel.PROP_NUTROUNDINGMODE, "Na");
-			nut13 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
-					PLMModel.TYPE_NUT, properties).getChildRef();			
-			
-			
-			properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut14");
-			properties.put(BeCPGModel.PROP_LEGAL_NAME, "Nut1 legalName");
-			properties.put(PLMModel.PROP_NUTUNIT, "g");
-			properties.put(PLMModel.PROP_NUTGROUP, GROUP1);
-			properties.put(PLMModel.PROP_NUTROUNDINGMODE, "Salt");
-			nut14 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
-					PLMModel.TYPE_NUT, properties).getChildRef();
-			
-			properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut15");
-			properties.put(BeCPGModel.PROP_LEGAL_NAME, "Nut1 legalName");
-			properties.put(PLMModel.PROP_NUTUNIT, "g");
-			properties.put(PLMModel.PROP_NUTGROUP, GROUP1);
-			properties.put(PLMModel.PROP_NUTROUNDINGMODE, "Salt");
-			nut15 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
-					PLMModel.TYPE_NUT, properties).getChildRef();
-			
-			properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut16");
-			properties.put(BeCPGModel.PROP_LEGAL_NAME, "Nut1 legalName");
-			properties.put(PLMModel.PROP_NUTUNIT, "g");
-			properties.put(PLMModel.PROP_NUTGROUP, GROUP1);
-			properties.put(PLMModel.PROP_NUTROUNDINGMODE, "Salt");
-			nut16 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
-					PLMModel.TYPE_NUT, properties).getChildRef();
-			
-			properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut17");
-			properties.put(BeCPGModel.PROP_LEGAL_NAME, "Nut1 legalName");
-			properties.put(PLMModel.PROP_NUTUNIT, "kcal");
-			properties.put(PLMModel.PROP_NUTGROUP, GROUP1);
-			properties.put(PLMModel.PROP_NUTROUNDINGMODE, "NRJ");
-			nut17 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
-					PLMModel.TYPE_NUT, properties).getChildRef();
-			
-			properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut18");
-			properties.put(BeCPGModel.PROP_LEGAL_NAME, "Nut1 legalName");
-			properties.put(PLMModel.PROP_NUTUNIT, "kcal");
-			properties.put(PLMModel.PROP_NUTGROUP, GROUP1);
-			properties.put(PLMModel.PROP_NUTROUNDINGMODE, "NRJ");
-			nut18 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
-					PLMModel.TYPE_NUT, properties).getChildRef();
-			
-			properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut19");
-			properties.put(BeCPGModel.PROP_LEGAL_NAME, "Nut1 legalName");
-			properties.put(PLMModel.PROP_NUTUNIT, "kcal");
-			properties.put(PLMModel.PROP_NUTGROUP, GROUP1);
-			properties.put(PLMModel.PROP_NUTROUNDINGMODE, "NRJ");
-			nut19 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
-					PLMModel.TYPE_NUT, properties).getChildRef();
-			
-			properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut20");
-			properties.put(BeCPGModel.PROP_LEGAL_NAME, "Nut1 legalName");
-			properties.put(PLMModel.PROP_NUTUNIT, "g");
-			properties.put(PLMModel.PROP_NUTGROUP, GROUP1);
-			properties.put(PLMModel.PROP_NUTROUNDINGMODE, "Su");
-			nut20 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
-					PLMModel.TYPE_NUT, properties).getChildRef();
-			
-			properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut21");
-			properties.put(BeCPGModel.PROP_LEGAL_NAME, "Nut1 legalName");
-			properties.put(PLMModel.PROP_NUTUNIT, "g");
-			properties.put(PLMModel.PROP_NUTGROUP, GROUP1);
-			properties.put(PLMModel.PROP_NUTROUNDINGMODE, "Su");
-			nut21 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
-					PLMModel.TYPE_NUT, properties).getChildRef();
-			
-			properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut22");
-			properties.put(BeCPGModel.PROP_LEGAL_NAME, "Nut1 legalName");
-			properties.put(PLMModel.PROP_NUTUNIT, "g");
-			properties.put(PLMModel.PROP_NUTGROUP, GROUP1);
-			properties.put(PLMModel.PROP_NUTROUNDINGMODE, "Su");
-			nut22 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
-					PLMModel.TYPE_NUT, properties).getChildRef();
-			
-			properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut23");
-			properties.put(BeCPGModel.PROP_LEGAL_NAME, "Nut1 legalName");
-			properties.put(PLMModel.PROP_NUTUNIT, "g");
-			properties.put(PLMModel.PROP_NUTGROUP, GROUP1);
-			properties.put(PLMModel.PROP_NUTROUNDINGMODE, "Cholesterol");
-			nut23 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
-					PLMModel.TYPE_NUT, properties).getChildRef();
-			
-			properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut24");
-			properties.put(BeCPGModel.PROP_LEGAL_NAME, "Nut1 legalName");
-			properties.put(PLMModel.PROP_NUTUNIT, "g");
-			properties.put(PLMModel.PROP_NUTGROUP, GROUP1);
-			properties.put(PLMModel.PROP_NUTROUNDINGMODE, "Cholesterol");
-			nut24 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
-					PLMModel.TYPE_NUT, properties).getChildRef();
-			
-			properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut25");
-			properties.put(BeCPGModel.PROP_LEGAL_NAME, "Nut1 legalName");
-			properties.put(PLMModel.PROP_NUTUNIT, "g");
-			properties.put(PLMModel.PROP_NUTGROUP, GROUP1);
-			properties.put(PLMModel.PROP_NUTROUNDINGMODE, "Cholesterol");
-			nut25 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
-					PLMModel.TYPE_NUT, properties).getChildRef();
-		
 			// Allergens
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "allergen1");
@@ -776,7 +520,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			physicoChem8 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_PHYSICO_CHEM, properties).getChildRef();
-			
+
 			// Suppliers
 			properties.put(ContentModel.PROP_NAME, "supplier1");
 			supplier1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
@@ -821,37 +565,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			nutList.add(new NutListDataItem(null, 2d, "g/100g", 1.5d, 2.2d, "Groupe 1", nut2, false));
 			nutList.add(new NutListDataItem(null, 4d, "g/100g", 0.8d, 2.1d, "Groupe 1", nut3, false));
 			nutList.add(new NutListDataItem(null, 3d, "g/100g", 0.8d, 2.1d, "Groupe 1", nut4, false));
-			
-			nutList.add(new NutListDataItem(null, 25.58d, "g/100g", null, null, "Groupe 1", nut5, false));
-			nutList.add(new NutListDataItem(null, 4.33d, "mg/100g", null, null, "Groupe 1", nut6, false));
-			nutList.add(new NutListDataItem(null, 0.2d, "g/100g", null, null, "Groupe 1", nut7, false));
-			
-			nutList.add(new NutListDataItem(null, 25.58d, "g/100g", null, null, "Groupe 1", nut8, false)); 
-			nutList.add(new NutListDataItem(null, 4.333d, "g/100g", null, null, "Groupe 1", nut9, false));
-			nutList.add(new NutListDataItem(null, 0.2d, "g/100g", null, null, "Groupe 1", nut10, false));
-			
-			nutList.add(new NutListDataItem(null, 3.58d, "g/100g", null, null, "Groupe 1", nut11, false));
-			nutList.add(new NutListDataItem(null, 1.536d, "g/100g", null, null, "Groupe 1", nut12, false));
-			nutList.add(new NutListDataItem(null, 0.002d, "g/100g", null, null, "Groupe 1", nut13, false));
-			
-			nutList.add(new NutListDataItem(null, 1.63d, "g/100g", null, null, "Groupe 1", nut14, false));
-			nutList.add(new NutListDataItem(null, 3.26d, "g/100g", null, null, "Groupe 1", nut15, false));
-			nutList.add(new NutListDataItem(null, 0.0124d, "g/100g", null, null, "Groupe 1", nut16, false));
 
-			nutList.add(new NutListDataItem(null, 1d, "kcal/100g", null, null, "Groupe 1", nut17, false));
-			nutList.add(new NutListDataItem(null, 251.65d, "kcal/100g", null, null, "Groupe 1", nut18, false));
-			nutList.add(new NutListDataItem(null, 50.6d, "kcal/100g", null, null, "Groupe 1", nut19, false));
-			
-			nutList.add(new NutListDataItem(null, 28.68d, "g/100g", null, null, "Groupe 1", nut20, false));
-			nutList.add(new NutListDataItem(null, 1.26d, "g/100g", null, null, "Groupe 1", nut21, false));
-			nutList.add(new NutListDataItem(null, 0.43d, "g/100g", null, null, "Groupe 1", nut22, false));
-			
-			nutList.add(new NutListDataItem(null, 0.003d, "g/100g", null, null, "Groupe 1", nut23, false));
-			nutList.add(new NutListDataItem(null, 0.009d, "g/100g", null, null, "Groupe 1", nut24, false));
-			nutList.add(new NutListDataItem(null, 0.023d, "g/100g", null, null, "Groupe 1", nut25, false));
-			
-		
-			
 			rawMaterial1.setNutList(nutList);
 			// allergenList
 			List<AllergenListDataItem> allergenList = new ArrayList<>();
@@ -1092,7 +806,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			ingList.add(new IngListDataItem(null, ingList.get(0), 30d, null, null, null, false, false, false, false, ing4, false));
 			rawMaterial7.setIngList(ingList);
 			rawMaterial7NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial7).getNodeRef();
-			
+
 			/** Water **/
 			RawMaterialData waterRawMaterial = new RawMaterialData();
 			waterRawMaterial.setName("Water");
@@ -1273,52 +987,6 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			rawMaterial16.setIngList(ingList);
 			rawMaterial16NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial16).getNodeRef();
 
-			
-			
-			
-			/*-- Raw material 17 --*/
-			RawMaterialData rawMaterial17 = new RawMaterialData();
-			rawMaterial17.setName("Raw material 1");
-			rawMaterial17.setDensity(1d);
-			legalName = new MLText("Legal Raw material 17");
-			legalName.addValue(Locale.FRENCH, "Legal Raw material 17");
-			legalName.addValue(Locale.ENGLISH, "Legal Raw material 17");
-			rawMaterial1.setLegalName(legalName);
-			rawMaterial1.setSuppliers(Collections.singletonList(supplier1));
-			
-			// nutList
-			nutList = new ArrayList<>();		
-			nutList.add(new NutListDataItem(null, 11.45d, "g/100g", null, null, "Groupe 1", nut5, false));
-			nutList.add(new NutListDataItem(null, 4.33d, "g/100g", 0.0d, 0.0d, "Groupe 1", nut6, false));
-			nutList.add(new NutListDataItem(null, 0.2d, "g/100g", 0.8d, 2.1d, "Groupe 1", nut7, false));
-			
-			nutList.add(new NutListDataItem(null, 11.45d, "g/100g", 0.0d, 0.0d, "Groupe 1", nut8, false)); 
-			nutList.add(new NutListDataItem(null, 4.333d, "g/100g", 0.0d, 0.0d, "Groupe 1", nut9, false));
-			nutList.add(new NutListDataItem(null, 0.2d, "g/100g", 0.0d, 0.0d, "Groupe 1", nut10, false));
-			
-			nutList.add(new NutListDataItem(null, 1.2d, "g/100g", 0.0d, 0.0d, "Groupe 1", nut11, false));
-			nutList.add(new NutListDataItem(null, 0.006d, "g/100g", 0.0d, 0.0d, "Groupe 1", nut12, false));
-			nutList.add(new NutListDataItem(null, 0.002d, "g/100g", 0.0d, 0.0d, "Groupe 1", nut13, false));
-			
-			nutList.add(new NutListDataItem(null, 1.63d, "g/100g", 0.0d, 0.0d, "Groupe 1", nut14, false));
-			nutList.add(new NutListDataItem(null, 0.0126d, "g/100g", 0.0d, 0.0d, "Groupe 1", nut15, false));
-			nutList.add(new NutListDataItem(null, 0.0124d, "g/100g", 0.0d, 0.0d, "Groupe 1", nut16, false));
-
-			nutList.add(new NutListDataItem(null, 1d, "kcal/100g", 0.0d, 0.0d, "Groupe 1", nut17, false));
-			nutList.add(new NutListDataItem(null, 6.6d, "kcal/100g", 0.0d, 0.0d, "Groupe 1", nut18, false));
-			nutList.add(new NutListDataItem(null, 50.6d, "kcal/100g", 0.0d, 0.0d, "Groupe 1", nut19, false));
-			
-			nutList.add(new NutListDataItem(null, 11.4d, "g/100g", 0.0d, 0.0d, "Groupe 1", nut20, false));
-			nutList.add(new NutListDataItem(null, 0.64d, "g/100g", 0.0d, 0.0d, "Groupe 1", nut21, false));
-			nutList.add(new NutListDataItem(null, 0.43d, "g/100g", 0.0d, 0.0d, "Groupe 1", nut22, false));
-			
-			nutList.add(new NutListDataItem(null, 0.001d, "g/100g", 0.0d, 0.0d, "Groupe 1", nut23, false));
-			nutList.add(new NutListDataItem(null, 0.004d, "g/100g", 0.0d, 0.0d, "Groupe 1", nut24, false));
-			nutList.add(new NutListDataItem(null, 0.0063d, "g/100g", 0.0d, 0.0d, "Groupe 1", nut25, false));
-			
-			rawMaterial1.setNutList(nutList);
-						
-			
 			/*-- Packaging material 1 --*/
 			PackagingMaterialData packagingMaterial1 = new PackagingMaterialData();
 			packagingMaterial1.setName("Packaging material 1");
@@ -1363,127 +1031,10 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			nodeService.setProperty(packagingKit1NodeRef, PackModel.PROP_PALLET_BOXES_PER_PALLET, 40);
 			nodeService.setProperty(packagingKit1NodeRef, PackModel.PROP_PALLET_NUMBER_ON_GROUND, 2);
 
-			// }
-			// else{
-			//
-			// localSF1NodeRef =
-			// nodeService.getChildByName(getTestFolderNodeRef(),
-			// ContentModel.ASSOC_CONTAINS, "Local semi finished 1");
-			// assertNotNull(localSF1NodeRef);
-			// rawMaterial1NodeRef =
-			// nodeService.getChildByName(getTestFolderNodeRef(),
-			// ContentModel.ASSOC_CONTAINS, "Raw material 1");
-			// rawMaterial2NodeRef =
-			// nodeService.getChildByName(getTestFolderNodeRef(),
-			// ContentModel.ASSOC_CONTAINS, "Raw material 2");
-			// localSF2NodeRef =
-			// nodeService.getChildByName(getTestFolderNodeRef(),
-			// ContentModel.ASSOC_CONTAINS, "Local semi finished 2");
-			// localSF3NodeRef =
-			// nodeService.getChildByName(getTestFolderNodeRef(),
-			// ContentModel.ASSOC_CONTAINS, "Local semi finished 3");
-			// rawMaterial3NodeRef =
-			// nodeService.getChildByName(getTestFolderNodeRef(),
-			// ContentModel.ASSOC_CONTAINS, "Raw material 3");
-			// rawMaterial4NodeRef =
-			// nodeService.getChildByName(getTestFolderNodeRef(),
-			// ContentModel.ASSOC_CONTAINS, "Raw material 1");
-			// rawMaterial5NodeRef =
-			// nodeService.getChildByName(getTestFolderNodeRef(),
-			// ContentModel.ASSOC_CONTAINS, "Raw material 5");
-			// rawMaterial6NodeRef =
-			// nodeService.getChildByName(getTestFolderNodeRef(),
-			// ContentModel.ASSOC_CONTAINS, "Raw material 6");
-			// rawMaterial7NodeRef =
-			// nodeService.getChildByName(getTestFolderNodeRef(),
-			// ContentModel.ASSOC_CONTAINS, "Raw material ");
-			// localSF11NodeRef =
-			// nodeService.getChildByName(getTestFolderNodeRef(),
-			// ContentModel.ASSOC_CONTAINS, "Local semi finished 11");
-			// rawMaterial11NodeRef =
-			// nodeService.getChildByName(getTestFolderNodeRef(),
-			// ContentModel.ASSOC_CONTAINS, "Raw material 11");
-			// rawMaterial12NodeRef =
-			// nodeService.getChildByName(getTestFolderNodeRef(),
-			// ContentModel.ASSOC_CONTAINS, "Raw material 12");
-			// localSF12NodeRef =
-			// nodeService.getChildByName(getTestFolderNodeRef(),
-			// ContentModel.ASSOC_CONTAINS, "Local semi finished 12");
-			// rawMaterial13NodeRef =
-			// nodeService.getChildByName(getTestFolderNodeRef(),
-			// ContentModel.ASSOC_CONTAINS, "Raw material 13");
-			// rawMaterial14NodeRef =
-			// nodeService.getChildByName(getTestFolderNodeRef(),
-			// ContentModel.ASSOC_CONTAINS, "Raw material 14");
-			// packagingMaterial1NodeRef =
-			// nodeService.getChildByName(getTestFolderNodeRef(),
-			// ContentModel.ASSOC_CONTAINS, "");
-			// packagingMaterial2NodeRef =
-			// nodeService.getChildByName(getTestFolderNodeRef(),
-			// ContentModel.ASSOC_CONTAINS, "");
-			// packagingMaterial3NodeRef =
-			// nodeService.getChildByName(getTestFolderNodeRef(),
-			// ContentModel.ASSOC_CONTAINS, "");
-			//
-			// cost1 = nodeService.getChildByName(getTestFolderNodeRef(),
-			// ContentModel.ASSOC_CONTAINS, "cost1");
-			// cost2 = nodeService.getChildByName(getTestFolderNodeRef(),
-			// ContentModel.ASSOC_CONTAINS, "cost2");
-			// fixedCost = nodeService.getChildByName(getTestFolderNodeRef(),
-			// ContentModel.ASSOC_CONTAINS, "fixedCost");
-			// pkgCost1 = nodeService.getChildByName(getTestFolderNodeRef(),
-			// ContentModel.ASSOC_CONTAINS, "pkgCost1");
-			// pkgCost2 = nodeService.getChildByName(getTestFolderNodeRef(),
-			// ContentModel.ASSOC_CONTAINS, "pkgCost2");
-			//
-			// nut1 = nodeService.getChildByName(getTestFolderNodeRef(),
-			// ContentModel.ASSOC_CONTAINS, "nut1");
-			// nut2 = nodeService.getChildByName(getTestFolderNodeRef(),
-			// ContentModel.ASSOC_CONTAINS, "nut2");
-			//
-			// allergen1 = nodeService.getChildByName(getTestFolderNodeRef(),
-			// ContentModel.ASSOC_CONTAINS, "allergen1");
-			// allergen2 = nodeService.getChildByName(getTestFolderNodeRef(),
-			// ContentModel.ASSOC_CONTAINS, "allergen2");
-			// allergen3 = nodeService.getChildByName(getTestFolderNodeRef(),
-			// ContentModel.ASSOC_CONTAINS, "allergen3");
-			// allergen4 = nodeService.getChildByName(getTestFolderNodeRef(),
-			// ContentModel.ASSOC_CONTAINS, "allergen4");
-			//
-			// ing1 = nodeService.getChildByName(getTestFolderNodeRef(),
-			// ContentModel.ASSOC_CONTAINS, "ing1");
-			// ing2 = nodeService.getChildByName(getTestFolderNodeRef(),
-			// ContentModel.ASSOC_CONTAINS, "ing2");
-			// ing3 = nodeService.getChildByName(getTestFolderNodeRef(),
-			// ContentModel.ASSOC_CONTAINS, "ing3");
-			// ing4 = nodeService.getChildByName(getTestFolderNodeRef(),
-			// ContentModel.ASSOC_CONTAINS, "ing4");
-			// ing5 = nodeService.getChildByName(getTestFolderNodeRef(),
-			// ContentModel.ASSOC_CONTAINS, "ing5");
-			//
-			// bioOrigin1 = nodeService.getChildByName(getTestFolderNodeRef(),
-			// ContentModel.ASSOC_CONTAINS, "bioOrigin1");
-			// bioOrigin2 = nodeService.getChildByName(getTestFolderNodeRef(),
-			// ContentModel.ASSOC_CONTAINS, "bioOrigin2");
-			//
-			// geoOrigin1 = nodeService.getChildByName(getTestFolderNodeRef(),
-			// ContentModel.ASSOC_CONTAINS, "geoOrigin1");
-			// geoOrigin2 = nodeService.getChildByName(getTestFolderNodeRef(),
-			// ContentModel.ASSOC_CONTAINS, "geoOrigin2");
-			//
-			// physicoChem1 = nodeService.getChildByName(getTestFolderNodeRef(),
-			// ContentModel.ASSOC_CONTAINS, "physicoChem1");
-			// physicoChem2 = nodeService.getChildByName(getTestFolderNodeRef(),
-			// ContentModel.ASSOC_CONTAINS, "physicoChem2");
-			// physicoChem3 = nodeService.getChildByName(getTestFolderNodeRef(),
-			// ContentModel.ASSOC_CONTAINS, "physicoChem3");
-			// physicoChem4 = nodeService.getChildByName(getTestFolderNodeRef(),
-			// ContentModel.ASSOC_CONTAINS, "physicoChem4");
-			// }
 
 			return null;
 
-		} , false, true);
+		}, false, true);
 	}
 
 	public void checkILL(String expectedStr1, String expectedStr2, String actualStr) {
