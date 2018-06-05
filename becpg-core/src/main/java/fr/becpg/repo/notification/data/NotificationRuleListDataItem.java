@@ -19,7 +19,7 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 
 	private static final long serialVersionUID = 996800984821144870L;
 
-	private String entityType;
+	private String nodeType;
 	private String dateField;
 	private String condtions;
 	private NodeRef target;
@@ -38,13 +38,13 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 	}
 
 	@AlfProp
-	@AlfQname(qname="bcpg:nrEntityType")
-	public String getEntityType() {
-		return entityType;
+	@AlfQname(qname="bcpg:nrNodeType")
+	public String getNodeType() {
+		return nodeType;
 	}
 
-	public void setEntityType(String entityType) {
-		this.entityType = entityType;
+	public void setNodeType(String nodeType) {
+		this.nodeType = nodeType;
 	}
 
 	@AlfProp
@@ -158,7 +158,7 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 		result = prime * result + ((dateField == null) ? 0 : dateField.hashCode());
 		result = prime * result + days;
 		result = prime * result + ((email == null) ? 0 : email.hashCode());
-		result = prime * result + ((entityType == null) ? 0 : entityType.hashCode());
+		result = prime * result + ((nodeType == null) ? 0 : nodeType.hashCode());
 		result = prime * result + frequency;
 		result = prime * result + ((frequencyStartDate == null) ? 0 : frequencyStartDate.hashCode());
 		result = prime * result + ((subject == null) ? 0 : subject.hashCode());
@@ -198,10 +198,10 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 				return false;
 		} else if (!email.equals(other.email))
 			return false;
-		if (entityType == null) {
-			if (other.entityType != null)
+		if (nodeType == null) {
+			if (other.nodeType != null)
 				return false;
-		} else if (!entityType.equals(other.entityType))
+		} else if (!nodeType.equals(other.nodeType))
 			return false;
 		if (frequency != other.frequency)
 			return false;
@@ -227,7 +227,7 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 
 	@Override
 	public String toString() {
-		return "NotificationRuleListDataItem [entityType=" + entityType + ", dateField=" + dateField + ", target=" + target + ", condtions=" + condtions + " startDate=" + frequencyStartDate +
+		return "NotificationRuleListDataItem [nodeType=" + nodeType + ", dateField=" + dateField + ", target=" + target + ", condtions=" + condtions + " startDate=" + frequencyStartDate +
 				", frequency=" + frequency + ", timeType=" + timeType + ", days=" + days + ", authorities=" + authorities + ", subject=" + subject + ", email=" + email + "]";
 	}
 

@@ -197,7 +197,7 @@
 		<type name="bcpg:notificationRuleList">
 			<parent>bcpg:entityListItem</parent>
 			<properties>
-				<property name="bcpg:nrEntityType">
+				<property name="bcpg:nrNodeType">
 					<type>d:text</type>
 					<mandatory enforced="true">true</mandatory>
 				</property>
