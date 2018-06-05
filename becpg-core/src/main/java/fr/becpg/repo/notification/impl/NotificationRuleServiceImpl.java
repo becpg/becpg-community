@@ -22,7 +22,6 @@ import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
-import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -48,25 +47,16 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 	private static final int WEEKLY = 7;
 	private static final int MONTHLY = 30;
 	
-	private static final String SUBJECT = "subject";
-	private static final String SITE_NAME = "siteName";
 	private static final String DATE_FIELD = "dateField";
-	private static final String ENTITY_TYPE = "entityType";
-	private static final String ENTITY_NAME = "entityName";
-	private static final String ENTITY_NODEREF = "entityNodeRef";
-	private static final String CONDITIONS = "conditions";
+	private static final String NODE_TYPE = "type";
+	private static final String NODE = "node";
+	private static final String NOTIFICATION = "notification";
 	private static final String TARGET_PATH = "targetPath";
-	private static final String PARENT_FOLDER = "parentFolder";
-	private static final String DATE_FIELD_VALUE = "dateFieldValue";
-	private static final String NOTIFICATION_NODEREF = "notificationNodeRef";
-	private static final String ENTITYV2_SUBTYPE = "isEnitytV2SubType";
+	private static final String ENTITYV2_SUBTYPE = "isEntityV2SubType";
 	
 
 	@Autowired
 	private NodeService nodeService;
-	
-	@Autowired
-	private SiteService siteService;
 	
 	@Autowired
 	private BeCPGMailService mailService;
@@ -100,7 +90,7 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 		List<Object> entitiesByUser;
 		Map<NodeRef, Object> entities;
 		Path targetPath = null;
-		QName entityType = null, dateField = null;
+		QName nodeType = null, dateField = null;
 		String destinationPath = null, fromQuery = null, toQuery = null;
 		
 		
@@ -110,13 +100,13 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 			
 			notification = alfrescoRepository.findOne(notificationNodeRef);
 
-			if(notification.getEntityType() == null || notification.getDateField() == null || notification.getAuthorities() == null
+			if(notification.getNodeType() == null || notification.getDateField() == null || notification.getAuthorities() == null
 					|| !isAllowed(notification.getFrequencyStartDate(), notification.getFrequency())){
 				logger.warn("Skip notification : " + notificationNodeRef);
 				continue ;
 			}
 			
-			entityType = QName.createQName(notification.getEntityType(), namespaceService);
+			nodeType = QName.createQName(notification.getNodeType(), namespaceService);
 			dateField = QName.createQName(notification.getDateField(), namespaceService);
 			targetPath = nodeService.getPath(notification.getTarget());
 			
@@ -149,7 +139,7 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 			}
 
 			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery()
-					.ofType(entityType)
+					.ofType(nodeType)
 					.andPropQuery(dateField, notification.getTimeType().equals(NotificationRuleTimeType.Equals)? fromQuery : "[" + fromQuery + " TO " + toQuery + "]")
 					.inSubPath(targetPath.toPrefixString(namespaceService));
 			
@@ -164,12 +154,10 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 				continue;
 			}
 			
-			templateArgs.put(SUBJECT, notification.getSubject());
-			templateArgs.put(ENTITY_TYPE, dictionaryService.getType(entityType).getTitle(serviceRegistry.getDictionaryService()));
+			templateArgs.put(NODE_TYPE, dictionaryService.getType(nodeType).getTitle(serviceRegistry.getDictionaryService()));
 			templateArgs.put(DATE_FIELD, dictionaryService.getProperty(dateField).getTitle(serviceRegistry.getDictionaryService()));
-			templateArgs.put(NOTIFICATION_NODEREF, notificationNodeRef.toString());
-			templateArgs.put(CONDITIONS, notification.getCondtions());
 			templateArgs.put(TARGET_PATH, destinationPath);
+			templateArgs.put(NOTIFICATION, notification.getNodeRef());
 			
 			
 			
@@ -178,12 +166,8 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 			
 			for (NodeRef nodeRef : items) {
 				Map<String, Object> item = new HashMap<>();
-				item.put(ENTITY_NODEREF, nodeRef.toString());
+				item.put(NODE, nodeRef);
 				item.put(ENTITYV2_SUBTYPE, dictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITY_V2));
-				item.put(PARENT_FOLDER, (String) nodeService.getProperty(nodeService.getPrimaryParent(nodeRef).getParentRef(),ContentModel.PROP_NAME));
-				item.put(ENTITY_NAME, (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
-				item.put(DATE_FIELD_VALUE, (Date) nodeService.getProperty(nodeRef, dateField));
-				item.put(SITE_NAME, siteService.getSite(nodeRef).getShortName());
 				entities.put(nodeRef, item);
 			}
 			
