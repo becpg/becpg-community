@@ -356,7 +356,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			imgElt.addAttribute(ATTR_IMAGE_ID, imgId);
 			imgElt.addAttribute(ContentModel.PROP_NAME.getLocalName(), (String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_NAME));
 			imgElt.addAttribute(ContentModel.PROP_TITLE.getLocalName(), (String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_TITLE));
-			addCDATA(imgElt, ContentModel.PROP_DESCRIPTION, (String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_DESCRIPTION), null, true);
+			addCDATA(imgElt, ContentModel.PROP_DESCRIPTION, (String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_DESCRIPTION), null);
 			context.getImages().put(imgId, imageBytes);
 		}
 	}
@@ -492,7 +492,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 					nodeElt.addAttribute(BeCPGModel.PROP_LEGAL_NAME.getLocalName(),
 							(String) nodeService.getProperty((NodeRef) kv.getValue(), BeCPGModel.PROP_LEGAL_NAME));
 					addCDATA(nodeElt, ContentModel.PROP_DESCRIPTION,
-							(String) nodeService.getProperty((NodeRef) kv.getValue(), ContentModel.PROP_DESCRIPTION), null, false);
+							(String) nodeService.getProperty((NodeRef) kv.getValue(), ContentModel.PROP_DESCRIPTION), null);
 					break;
 				}
 			}
@@ -672,7 +672,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	protected void addData(Element nodeElt, boolean useCData, QName propertyQName, String value, String suffix) {
 		if (useCData || isMultiLinesAttribute(propertyQName)) {
-			addCDATA(nodeElt, propertyQName, value, suffix, true);
+			addCDATA(nodeElt, propertyQName, value, suffix);
 		} else {
 			String localName = propertyQName.getLocalName();
 			if ((suffix != null) && !suffix.isEmpty()) {
@@ -771,8 +771,8 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		}
 	}
 
-	protected void addCDATA(Element nodeElt, QName propertyQName, String eltValue, String suffix, boolean appendIfEmpty) {
-		if (!appendIfEmpty && ((eltValue == null) || eltValue.isEmpty())) {
+	protected void addCDATA(Element nodeElt, QName propertyQName, String eltValue, String suffix) {
+		if ((eltValue == null) || eltValue.isEmpty()) {
 			return;
 		}
 
