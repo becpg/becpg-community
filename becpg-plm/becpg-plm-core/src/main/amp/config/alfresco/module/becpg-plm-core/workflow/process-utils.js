@@ -25,7 +25,6 @@ function sendMail(userOrGroup, from, subject, message, templatePath, workflowDoc
             var template = search.xpathSearch(templatePath)[0];
             if (template)
             {
-
                 mail.parameters.template = template;
                 var templateArgs = new Array();
                 templateArgs['workflowTitle'] = message;
@@ -88,30 +87,57 @@ function getAssigneeOrDelegate(user){
 	}
 }
 
-function getMemberNames(assignees){
-	
-	var memberNames = null;
-	if(assignees != null){
-		var memberNames = new java.util.ArrayList();
-		
-		for (var i=0; i<assignees.size(); i++) {
-			if(assignees.get(i).isSubType("cm:authorityContainer")){
-				var members = people.getMembers(assignees.get(i));
+function getAssignees(authorities){
+	var assignees = new java.util.ArrayList();
+	if(authorities != null){		
+		for (var i=0; i<authorities.size(); i++) {
+			if(authorities.get(i).isSubType("cm:authorityContainer")){
+				var members = people.getMembers(authorities.get(i));
 				for(var j in members) 
 				{
-				  memberNames.add(getAssigneeOrDelegate(members[j]));
+				  assignees.add(getAssigneeOrDelegate(members[j]));
 				}
 			}
-			else if(assignees.get(i).isSubType("cm:person")){
-				memberNames.add(getAssigneeOrDelegate(assignees.get(i)));
+			else if(authorities.get(i).isSubType("cm:person")){
+				assignees.add(getAssigneeOrDelegate(authorities.get(i)));
 			}		
 		}
 	}
-	return memberNames;
+	return assignees;
 }
 
-function sendMailToAssignees(assignees, from, subject, message, templatePath, workflowDocuments){
-	for (var i = 0; i < assignees.size(); i++){
-		sendMail(assignees.get(i), from, subject, message, templatePath, workflowDocuments)
+function onCreateProductValidationTask(authorities){
+	if (typeof bpm_workflowDueDate != 'undefined') task.dueDate = bpm_workflowDueDate;
+   if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority;
+   
+   var assignees = getAssignees(authorities)
+   
+   if (assignees != null && assignees.size()>0){
+   	if(assignees.size()==1){
+   		task.setAssignee(assignees.get(0));
+   	}
+   	else{
+   		for (var i = 0; i < assignees.size(); i++){
+   			task.addCandidateUser(assignees.get(i));
+   			
+   			if(bcpgwf_notifyAssignee){
+      			sendMail(assignees.get(i), initiator,
+    						bcpg.getMessage('productValidationWF.mail.notify.subject', bpm_workflowDescription),
+    						bcpg.getMessage('productValidationWF.mail.notify.message'), 
+    						"/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:product-validation-notify-task-email.ftl",
+    						bpm_package.children);
+      		}
+         }
+   	}
+   }
+}
+
+function onAssignmentProductValidationTask(){
+	if (bcpgwf_notifyAssignee){
+		sendMail(task.assignee, initiator,
+			bcpg.getMessage('productValidationWF.mail.notify.subject', bpm_workflowDescription),
+			bcpg.getMessage('productValidationWF.mail.notify.message'), 
+			"/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:product-validation-notify-task-email.ftl",
+			bpm_package.children);
 	}
 }
