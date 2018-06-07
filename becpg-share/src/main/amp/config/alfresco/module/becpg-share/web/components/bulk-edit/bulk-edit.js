@@ -1914,7 +1914,8 @@
 
 													// recall edit for
 													// next item
-													var checkBoxEl = Dom.get(this.id + "-editDetails" + "-form-bulkAction");
+													var checkBoxEl = Dom.get(this.id + "bulk-editDetails" + "-form-bulkAction");
+													
 
 													if (checkBoxEl && checkBoxEl.checked) {
 														var recordFound = scope._findNextItemByParameter(resp.json.item.nodeRef, "nodeRef");
