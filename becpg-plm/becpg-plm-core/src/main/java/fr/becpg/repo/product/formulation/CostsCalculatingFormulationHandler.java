@@ -18,6 +18,7 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
+import fr.becpg.model.PackModel;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.entity.EntityTplService;
@@ -29,6 +30,7 @@ import fr.becpg.repo.product.data.PackagingMaterialData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
+import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.ProcessListUnit;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
@@ -655,7 +657,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 
 	private double getCompoListQty(ProductData productData, NodeRef componentNodeRef, double parentQty) {
 		double totalQty = 0d;
-		for (CompoListDataItem compoList : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+		for (CompoListDataItem compoList : productData.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 			NodeRef productNodeRef = compoList.getProduct();
 			
 			ProductData componentProduct = alfrescoRepositoryProductData.findOne(productNodeRef);
@@ -678,58 +680,67 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		return totalQty;
 	}
 
-	private double getPackagingListQty(ProductData productData, NodeRef componentNodeRef) {
+	private double getPackagingListQty(ProductData productData, NodeRef componentNodeRef, int palletBoxesPerPallet) {
 		double totalQty = 0d;
 		if (productData.hasPackagingListEl()) {
-			for (PackagingListDataItem packList : productData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+			for (PackagingListDataItem packList : productData.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
+				QName nodeType = nodeService.getType(packList.getProduct());
 				NodeRef productNodeRef = packList.getProduct();
 				Double qty = FormulationHelper.getQtyForCost(productData, packList);
 				if (logger.isDebugEnabled()) {
 					logger.debug("Get component " + nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME) + "qty: " + qty);
 				}
 				if (productNodeRef.equals(componentNodeRef)) {
-					totalQty += qty;
-				} 
+					if(PackagingLevel.Tertiary.equals(packList.getPkgLevel())){
+						totalQty =  qty / palletBoxesPerPallet;
+					} else {
+						totalQty += qty;
+					}
+					break;
+				} else if(PLMModel.TYPE_PACKAGINGKIT.equals(nodeType)){
+					totalQty = qty * getPackagingListQty(alfrescoRepositoryProductData.findOne(productNodeRef), componentNodeRef, 
+							(Integer) nodeService.getProperty(packList.getProduct(), PackModel.PROP_PALLET_BOXES_PER_PALLET));
+				}
 			}
 		}
 		return totalQty;
 	}
 
+	
 	private void calculateSimulationCosts(ProductData formulatedProduct) {
-		Double netQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
-		for (CostListDataItem c : formulatedProduct.getCostList()) {
-			if ((c.getComponentNodeRef() != null) && (c.getParent() != null)) {
-				Double qtyComponent;
-				ProductData componentData = alfrescoRepositoryProductData.findOne(c.getComponentNodeRef());
-				if (componentData instanceof PackagingMaterialData) {
-					qtyComponent = getPackagingListQty(formulatedProduct, c.getComponentNodeRef());
-				} else {
-					qtyComponent = getCompoListQty(formulatedProduct, c.getComponentNodeRef(), formulatedProduct.getRecipeQtyUsed());
-				}
-				for (CostListDataItem c2 : componentData.getCostList()) {
-					if (c2.getCost().equals(c.getParent().getCost()) && (c.getSimulatedValue() != null)) {
-						if (logger.isDebugEnabled()) {
-							logger.debug("add simulationCost " + "c2 value " + c2.getValue() + "c simulated value " + c.getSimulatedValue()
-									+ " qty component " + qtyComponent + " netQty " + netQty);
-						}
-						if (c2.getValue() != null) {
-							Double qty = FormulationHelper.getProductQty(formulatedProduct.getNodeRef(), nodeService);
-							Double uRate = c.getUnit().equals("€/P") ? netQty/qty : 1;
-							c.setValue(((c.getSimulatedValue() - c2.getValue()) * qtyComponent) * uRate / netQty);
-						} else {
-							c.setValue(((c.getSimulatedValue()) * qtyComponent) / netQty);
-						}
-						if (c.getParent().getValue() != null) {
-							c.getParent().setValue(c.getParent().getValue() + c.getValue());
-						} else {
-							c.getParent().setValue(c.getValue());
-						}
-						break;
-					}
-				}
-			}
-		}
-	}
+        Double netQty = FormulationHelper.getNetQtyForCost(formulatedProduct);
+        
+        for (CostListDataItem c : formulatedProduct.getCostList()) {
+            if ((c.getComponentNodeRef() != null) && (c.getParent() != null)) {
+                Double qtyComponent;
+                ProductData componentData = alfrescoRepositoryProductData.findOne(c.getComponentNodeRef());
+                if (componentData instanceof PackagingMaterialData) {
+                    qtyComponent = getPackagingListQty(formulatedProduct, c.getComponentNodeRef(), 1);
+                } else {
+                    qtyComponent = getCompoListQty(formulatedProduct, c.getComponentNodeRef(), formulatedProduct.getRecipeQtyUsed());
+                }
+                for (CostListDataItem c2 : componentData.getCostList()) {
+                    if (c2.getCost().equals(c.getParent().getCost()) && (c.getSimulatedValue() != null)) {
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("add simulationCost " + "c2 value " + c2.getValue() + "c simulated value " + c.getSimulatedValue()
+                                    + " qty component " + qtyComponent + " netQty " + netQty);
+                        }
+                        if (c2.getValue() != null) {
+                            c.setValue(((c.getSimulatedValue() - c2.getValue()) * qtyComponent) / (netQty!=0 ? netQty : 1d));
+                        } else {
+                            c.setValue(((c.getSimulatedValue()) * qtyComponent) / (netQty!=0 ? netQty : 1d));
+                        }
+                        if (c.getParent().getValue() != null) {
+                            c.getParent().setValue(c.getParent().getValue() + c.getValue());
+                        } else {
+                            c.getParent().setValue(c.getValue());
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+    }
 
 	@Override
 	protected boolean accept(ProductData formulatedProduct) {
