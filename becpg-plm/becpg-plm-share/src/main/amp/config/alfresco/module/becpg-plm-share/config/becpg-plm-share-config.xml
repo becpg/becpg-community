@@ -16,6 +16,11 @@
 					<authority type="group">GROUP_ClaimStart</authority>
 				</authorities>
 			</permission-workflow>
+			<permission-workflow name="activiti$productValidationWF">
+				<authorities>
+					<authority type="group">GROUP_ProductValidationStart</authority>
+				</authorities>
+			</permission-workflow>
 		</permission-workflows>
 
 		<hidden-workflows>
