@@ -22,8 +22,27 @@
 		YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		   propertyName : "cm:name",
 		   renderer : function(oRecord, data, label, scope) {
+			   
+               var dates = scope.extractDates(oRecord.getData()), end = dates.due;
 
-			   return scope.getProjectTitle(oRecord.getData());
+               var  dateLine = (dates.start ? Alfresco.util.formatDate(dates.start, "longDate") : scope
+                     .msg("label.none"));
+
+               if (dates.end != null) {
+                  end = dates.end;
+               }
+
+               dateLine += " - ";
+
+               dateLine += (dates.start ? Alfresco.util.formatDate(end, "longDate") : scope
+                     .msg("label.none"));
+			   
+               var desc = scope.getProjectTitle(oRecord.getData());
+			   
+			   desc += '<span class="project-date">[ ' + dateLine + ' ]</span>';
+			   
+			   
+			   return desc;
 
 		   }
 		});
@@ -33,15 +52,40 @@
 		   renderer : function(oRecord, data, label, scope, idx, length) {
 			   var oData = oRecord.getData();
 			   if(data["itemData"]){
-			       return scope.getTaskTitle(data, oData.nodeRef);
+				   var tasks = oRecord.getData("itemData")["dt_pjt_taskList"];
+				   var moreTasksHtlm = "";
+				   var taskHtlm = "<ul>";
+				   if (idx == 0) {
+					   var z = 0;
+					   for (j in tasks) {
+						   var task = tasks[j];
+						   	if(z>3){
+						   		moreTasksHtlm += "<li>" + scope.getTaskTitle(task, oData.nodeRef) + "</li>";
+						   	} else {
+						   		taskHtlm += "<li>" + scope.getTaskTitle(task, oData.nodeRef)  + "</li>";
+						   	}
+						    z++;
+					   }
+					   taskHtlm += "</ul>";
+
+					   if (moreTasksHtlm.length > 0) {
+						   taskHtlm += '<div class="more-task"><div class="onActionShowMore">' + '<a href="#" class="' + scope.id
+						         + '-show-more show-more" title="' + scope.msg("tasks.more") + '">' + '<span>'
+						         + scope.msg("tasks.more") + '</span></a></div>' + ' <div class="more-actions hidden"><ul>'
+						         + moreTasksHtlm + '</ul></div></div>';
+					   }
+
+					   return taskHtlm;
+				   }
 			   }
+			   return null;
 		   }
 		});
 		
 		YAHOO.Bubbling.fire("registerDataGridRenderer", {
 	           propertyName : "bcpg:activityList",
 	           renderer : function(oRecord, data, label, scope, idx, length) {
-	               if( data["itemData"]){
+	               if( data["itemData"]){            	   
 	                   var user =data["itemData"]["prop_bcpg_alUserId"];
 	                   var alData = data["itemData"]["prop_bcpg_alData"] ? data["itemData"]["prop_bcpg_alData"] : null;
 	                   var html = "";
@@ -50,7 +94,7 @@
 	                       html += '   <div class="icon" title="' +  user.displayValue + '">' + Alfresco.Share.userAvatar(user.value,32) + '</div>';
 	                       html += '   <div class="details">';
 	                       if(alData.content){
-	                     	  html += '      <div class="activity-content">' + (alData.content) + '</div>';
+	                     	  html += '      <div class="activity-content">' + (alData.content)+'</div>';
                           }
 	                       html += '   </div>';
 	                       html += '   <div class="clear"></div>';
@@ -143,10 +187,22 @@
 			});
 		
 		YAHOO.Bubbling.fire("registerDataGridRenderer", {
-			   propertyName : ["pjt:projectScore","pjt:completionPercent"],
+			   propertyName : ["pjt:projectScore"],
 			   renderer : function(oRecord, data, label, scope) {
 				   return (data.value !=null) ? $html(data.displayValue)+ '&nbsp; %' : '';
 			   }
 			});
+		
+
+		   
+		   
+		   YAHOO.Bubbling.fire("registerDataGridRenderer", {
+				propertyName : [ "pjt:completionPercent" ],
+				renderer : function(oRecord, data, label, scope) {
+					return "<progress max='100' value='"+data.value+"' >'"+$html(data.displayValue)+ "&nbsp; %</progress>";
+				}
+			});
+		   
+		
 	}
 })();

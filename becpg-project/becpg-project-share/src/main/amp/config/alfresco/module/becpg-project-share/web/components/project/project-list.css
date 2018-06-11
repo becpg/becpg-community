@@ -1,3 +1,5 @@
+
+
 .project-list {
 	clear: both;
 }
@@ -211,6 +213,7 @@
 	box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
 	position: relative;
 	clear:both;
+
 }
 
 
@@ -247,3 +250,20 @@
 		no-repeat;
 	padding-left: 20px;
 }
+
+
+.project-list  progress[value] {
+  width: 75px;
+  height: 16px;
+}
+
+
+.project-list  span.project-date {
+	color:  #1155CC;
+  font-style: italic;
+	font-size: 0.9em;
+	display: block;
+}
+
+
+

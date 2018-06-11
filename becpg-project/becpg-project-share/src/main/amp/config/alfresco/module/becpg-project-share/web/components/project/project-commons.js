@@ -200,14 +200,21 @@
       },
 
       getTaskTitle : function PL_getTaskTitle(task, entityNodeRef, start, large) {
+    	  var subProject = null;
+    	  
+    	  if (task["itemData"]["assoc_pjt_subProjectRef"] != null
+            		&& task["itemData"]["assoc_pjt_subProjectRef"] .length>0)
+            {
+          	   subProject = task["itemData"]["assoc_pjt_subProjectRef"][0];
+            }  
 
           var ret = '<span class="task-status task-status-' + task["itemData"]["prop_pjt_tlState"].value + '">', duration ='';
           
           if(task.permissions.userAccess.edit){
-	          ret += '<span class="node-' + task.nodeRef + '|' + entityNodeRef + '"><a href="" class="theme-color-1 ' + TASK_EVENTCLASS + '" title="' + this
+	          ret += '<span class="node-' + (subProject!=null ? subProject.value : task.nodeRef) + '|' + entityNodeRef + '"><a href="" class="theme-color-1 ' + TASK_EVENTCLASS + '" title="' + this
 	          .msg("link.title.task-edit") + '" >' + task["itemData"]["prop_pjt_tlTaskName"].displayValue;
           } else {
-        	  ret += '<span class="node-' + task.nodeRef + '|' + entityNodeRef + '">' + task["itemData"]["prop_pjt_tlTaskName"].displayValue;
+        	  ret += '<span class="node-' + (subProject!=null ? subProject.value : task.nodeRef) + '|' + entityNodeRef + '">' + task["itemData"]["prop_pjt_tlTaskName"].displayValue;
           }
           
           if( task["itemData"]["prop_pjt_tlState"].value == "InProgress"){
@@ -236,10 +243,8 @@
          
           ret += '</span>';
          
-          if (task["itemData"]["assoc_pjt_subProjectRef"] != null
-          		&& task["itemData"]["assoc_pjt_subProjectRef"] .length>0)
+          if (subProject!=null)
           {
-        	  var subProject = task["itemData"]["assoc_pjt_subProjectRef"][0];
           	 ret += '<span >';
              ret += '<a  class="sub-project-link" title="' + subProject.displayValue + '" href="'+
              beCPG.util.entityURL(subProject.siteId, subProject.value,"pjt:project");

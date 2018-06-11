@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Stack;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -227,6 +228,10 @@ public class ImportEntityXmlVisitor {
 					String nodeRef = attributes.getValue(RemoteEntityService.ATTR_NODEREF);
 					String code = attributes.getValue(RemoteEntityService.ATTR_CODE);
 
+					if(nodeRef == null) {
+						nodeRef = "bcpg://tmpStore/"+UUID.randomUUID().toString();
+					}
+					
 					if ((entityNodeRef != null) && curNodeRef.isEmpty()) {
 						logger.debug("We force node update by providing nodeRef");
 						nodeRef = entityNodeRef.toString();
@@ -730,7 +735,7 @@ public class ImportEntityXmlVisitor {
 				return new NodeRef(nodeRef);
 			}
 
-			if ((cache != null) && cache.containsKey(new NodeRef(nodeRef))) {
+			if ((nodeRef != null) && (cache != null) && cache.containsKey(new NodeRef(nodeRef))) {
 				return cache.get(new NodeRef(nodeRef));
 			}
 
