@@ -18,7 +18,10 @@
 package fr.becpg.repo.product.formulation;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -38,6 +41,7 @@ import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.variant.filters.VariantFilters;
+import fr.becpg.repo.variant.model.VariantData;
 
 public class CompositionCalculatingFormulationHandler extends FormulationBaseHandler<ProductData> {
 
@@ -75,6 +79,27 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		Composite<CompoListDataItem> compositeAll = CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList());
 		Composite<CompoListDataItem> compositeDefaultVariant = CompositeHelper
 				.getHierarchicalCompoList(formulatedProduct.getCompoList(new VariantFilters<>()));
+
+		// Variants
+		List<VariantData> variants = formulatedProduct.getVariants();
+		
+		if(variants == null || variants.isEmpty()) {
+			variants = new ArrayList<>();
+			formulatedProduct.setDefaultVariantData(new VariantData());
+			variants.add(formulatedProduct.getDefaultVariantData());
+		} else {
+			for (VariantData variantData : formulatedProduct.getVariants()) {
+				
+				variantData.reset();
+				
+				if (variantData.getIsDefaultVariant()) {
+					formulatedProduct.setDefaultVariantData(variantData);
+				} 
+			}
+		}
+
+
+		visitVariantData(variants, compositeAll, formulatedProduct.getProductLossPerc());
 
 		// Yield
 		visitYieldChildren(formulatedProduct, compositeDefaultVariant);
@@ -114,6 +139,43 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		return true;
 	}
 
+	private void visitVariantData(List<VariantData> variants, Composite<CompoListDataItem> composite, Double parentLossRatio) {
+
+		for (Composite<CompoListDataItem> component : composite.getChildren()) {
+
+			if (!DeclarationType.Omit.equals(component.getData().getDeclType())) {
+
+				Double lossPerc = FormulationHelper.calculateLossPerc(parentLossRatio,
+						(component.getData().getLossPerc() != null ? component.getData().getLossPerc() : 0d));
+
+				if (!component.isLeaf()) {
+					visitVariantData(variants, component, lossPerc);
+				} else {
+					for (VariantData variantData : variants) {
+
+						if(component.getData().getVariants() == null || component.getData().getVariants().contains(variantData.getNodeRef())) {
+							Double recipeQtyUsedWithLossPerc = ((FormulationHelper.getQtyInKg(component.getData())
+									* FormulationHelper.getYield(component.getData()) * (1 - (lossPerc / 100))) / 100);
+							
+							Double recipeQtyUsed = (FormulationHelper.getQtyInKg(component.getData()) * FormulationHelper.getYield(component.getData()))
+									/ 100;
+							Double recipeVolumeUsed = FormulationHelper.getNetVolume(component.getData(), nodeService);
+							recipeQtyUsedWithLossPerc += variantData.getRecipeQtyUsedWithLossPerc();
+							recipeQtyUsed += variantData.getRecipeQtyUsed();
+							recipeVolumeUsed += variantData.getRecipeVolumeUsed();
+	
+							variantData.setRecipeQtyUsedWithLossPerc(recipeQtyUsedWithLossPerc);
+							variantData.setRecipeQtyUsed(recipeQtyUsed);
+							variantData.setRecipeVolumeUsed(recipeVolumeUsed);
+						}
+
+					}
+
+				}
+			}
+		}
+
+	}
 	private void visitYieldChildren(ProductData formulatedProduct, Composite<CompoListDataItem> composite) throws FormulateException {
 
 		for (Composite<CompoListDataItem> component : composite.getChildren()) {
@@ -168,6 +230,8 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		return yieldPerc;
 	}
 
+	@Deprecated
+	// TODO use variant Data instead
 	private Double calculateQtyUsed(Composite<CompoListDataItem> composite, Double parentLossRatio, boolean withLossPerc) throws FormulateException {
 
 		Double qty = 0d;
@@ -191,6 +255,8 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		return qty;
 	}
 
+	@Deprecated
+	// TODO use variant Data instead
 	private Double calculateVolumeFromChildren(Composite<CompoListDataItem> composite) throws FormulateException {
 
 		Double volume = 0d;
