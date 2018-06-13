@@ -234,6 +234,10 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 		if ((googleApiKey != null) && !googleApiKey.isEmpty()) {
 			logger.debug("Try to translate : " + defaultValue + " in " + target);
 
+			if(target.split("_")[0].equals(I18NUtil.getContentLocale().getLanguage())) {
+				return defaultValue;
+			}
+			
 			Map<String, String> vars = new HashMap<>();
 			vars.put("key", googleApiKey);
 			vars.put("target", target.split("_")[0]);
