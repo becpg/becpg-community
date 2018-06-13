@@ -110,6 +110,45 @@ function resolveAuthorities(authorities) {
     return authorityResult;
 }
 
+function isNotInPermissionDefinitions(permissionDefinitions, workflowDefinition){
+	var permissionDefinitionIterator = permissionDefinitions.iterator();
+    while (permissionDefinitionIterator.hasNext())
+    {
+    	var permissionDefinition = permissionDefinitionIterator.next();
+    	if (permissionDefinition.attributes["name"] == workflowDefinition.name)
+        {
+    		return false;
+        }
+    }
+    return true;
+}
+
+function isGroupExistAndHasUsers(fullName){
+	var shortName =  fullName.replace("GROUP_", "");
+	var json = doGetCall("/api/groups/" + shortName + "/children");
+	if(json) {
+		var groupChildren = json.data;
+		for(var child in groupChildren){
+			if(groupChildren[child].authorityType == "USER"){
+				return true;
+			}else if (groupChildren[child].authorityType == "GROUP"){
+				return isGroupExistAndHasUsers(groupChildren[child].fullName)
+			}
+		}
+	}
+	
+	return false;
+}
+
+function containsGroup(groups, group){
+	for each (var element in groups){
+		if (element == group){
+			return true
+		}
+	}
+	return false;
+}
+
 function getWorkflowDefinitionsOfCurrentUser()
 {
     var person = doGetCall("/api/people/current");
@@ -143,16 +182,21 @@ function getWorkflowDefinitionsOfCurrentUser()
                         {
                             continue;
                         }
+                        
 
                         if (authorities.user.contains(person.userName))
                         {
+                        	
                             workflowDefinitionsResult.add(workflowDefinition);
                         }
                         else
                         {
-                            for each(var group in person.groups)
+                            
+                        	for(var i = 0; i < authorities.group.size(); i++)
                             {
-                                if (authorities.group.contains(group))
+                            	var group = authorities.group.get(i);
+                           
+                                if (containsGroup(person.groups, group) || !isGroupExistAndHasUsers(group) )
                                 {
                                     workflowDefinitionsResult.add(workflowDefinition);
                                     break;
@@ -160,7 +204,7 @@ function getWorkflowDefinitionsOfCurrentUser()
                             }
                         }
                     } else {
-                        if (defaultAllow) {
+                        if (defaultAllow && isNotInPermissionDefinitions(permissionDefinitions, workflowDefinition) ) {
                             workflowDefinitionsResult.add(workflowDefinition);
                         }
                     }
