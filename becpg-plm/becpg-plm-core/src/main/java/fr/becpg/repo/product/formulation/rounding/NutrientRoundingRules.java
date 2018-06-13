@@ -152,7 +152,7 @@ public class NutrientRoundingRules {
 
 	private static String getLocalKey(Locale locale) {
 		String key = MLTextHelper.localeKey(locale);
-		if (!Locale.FRENCH.equals(locale)) {
+		if (Locale.FRENCH.equals(locale) || Locale.FRANCE.equals(locale)) {
 			key = "default";
 		}
 
@@ -160,7 +160,7 @@ public class NutrientRoundingRules {
 	}
 
 	public static void extractXMLAttribute(Element nutListElt, String roundedValue, Locale locale) {
-		if(roundedValue!=null) {
+		if (roundedValue != null) {
 			String localKey = getLocalKey(locale);
 			try {
 				JSONObject jsonRound = new JSONObject(roundedValue);
@@ -168,12 +168,12 @@ public class NutrientRoundingRules {
 					String valueKey = (String) i.next();
 					JSONObject value = (JSONObject) jsonRound.get(valueKey);
 					if (value.has(localKey)) {
-						nutListElt.addAttribute("rounded"+StringUtils.capitalize(valueKey), "" + value.get(localKey));
+						nutListElt.addAttribute("rounded" + StringUtils.capitalize(valueKey), "" + value.get(localKey));
 					}
 				}
 			} catch (JSONException e) {
 				logger.error(e, e);
-			}	
+			}
 		}
 	}
 
@@ -348,24 +348,35 @@ public class NutrientRoundingRules {
 		if (value == null) {
 			return null;
 		}
-		RoundingRule roundingRule = roundingRuleType != null ? rules.get(NutrientRoundingRuleType.valueOf(roundingRuleType)) : null;
+		if (roundingRuleType != null &&  !roundingRuleType.isEmpty()
+				) {
+			try {
+				RoundingRule roundingRule = roundingRuleType != null ? rules.get(NutrientRoundingRuleType.valueOf(roundingRuleType)) : null;
 
-		if (roundingRule != null) {
-			if ((nutUnit != null) && nutUnit.equals("mg/100g")) { // convert mg
-																	// to g
-				value = value / 1000;
-				value = roundingRule.round(value, locale);
-				return value * 1000;
+				if (roundingRule != null) {
+					if ((nutUnit != null) && nutUnit.equals("mg/100g")) { // convert
+																			// mg
+																			// to
+																			// g
+						value = value / 1000;
+						value = roundingRule.round(value, locale);
+						return value * 1000;
+					}
+					if ((nutUnit != null) && nutUnit.equals("KJ/100g")) { // convert
+																			// KJ
+																			// to
+																			// Kcal
+						value = value / 4.184;
+						value = roundingRule.round(value, locale);
+						return (double) Math.round(value * 4.184 * 100) / 100;
+					}
+					return roundingRule.round(value, locale);
+				}
+			} catch (IllegalStateException e) {
+				logger.debug(e, e);
 			}
-			if ((nutUnit != null) && nutUnit.equals("KJ/100g")) { // convert KJ
-																	// to Kcal
-				value = value * 4.18;
-				value = roundingRule.round(value, locale);
-				return value / 4.18;
-			}
-			return roundingRule.round(value, locale);
 		}
-		return value;
+		return (double) Math.round(value);
 	}
 
 }
