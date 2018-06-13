@@ -25,6 +25,13 @@ public class NutrientRoundingRulesTest{
 		 assertEquals(NutrientRoundingRules.round(0.014d, NutrientRoundingRuleType.NRJ.toString(), Locale.US, "kcal"), 0.015d,0);
 		 assertEquals(NutrientRoundingRules.round(0.004d, NutrientRoundingRuleType.NRJ.toString(), Locale.US, "kcal"), 0d,0);
 		 
+
+         //Test NRJ en KJ/100g
+
+         assertEquals(NutrientRoundingRules.round(0.013d, NutrientRoundingRuleType.NRJ.toString(), Locale.US, "KJ/100g"), 0d,0);
+         assertEquals(NutrientRoundingRules.round(0.16d, NutrientRoundingRuleType.NRJ.toString(), Locale.US, "KJ/100g"), 0.17d,0);
+         assertEquals(NutrientRoundingRules.round(0.433d, NutrientRoundingRuleType.NRJ.toString(), Locale.US, "KJ/100g"), 0.46d,0);
+		 
 		 //Test fat
 		 assertEquals(NutrientRoundingRules.round(null, NutrientRoundingRuleType.Fat.toString(), Locale.FRENCH, null), null);
 		 assertEquals(NutrientRoundingRules.round(null, NutrientRoundingRuleType.Fat.toString(), Locale.US, null), null);
@@ -68,12 +75,25 @@ public class NutrientRoundingRulesTest{
 		 assertEquals(NutrientRoundingRules.round(0.0125d, NutrientRoundingRuleType.Salt.toString(), Locale.FRENCH, null), 0.0d,0);
 		 assertEquals(NutrientRoundingRules.round(0.002d, NutrientRoundingRuleType.Salt.toString(), Locale.FRENCH, null), 0.0d,0);
 
+		 
+
+         //Test Sodium en mg/100g
+
+         assertEquals(NutrientRoundingRules.round(10.36d, NutrientRoundingRuleType.Na.toString(), Locale.FRENCH, "mg/100g"), 10d,0);
+         assertEquals(NutrientRoundingRules.round(101d, NutrientRoundingRuleType.Na.toString(), Locale.FRENCH, "mg/100g"), 100d,0);
+         assertEquals(NutrientRoundingRules.round(1150d, NutrientRoundingRuleType.Na.toString(), Locale.FRENCH, "mg/100g"), 1200d,0);
+         
+         assertEquals(NutrientRoundingRules.round(10.36d, NutrientRoundingRuleType.Na.toString(), Locale.US, "mg/100g"), 15d,0);
+         assertEquals(NutrientRoundingRules.round(101d, NutrientRoundingRuleType.Na.toString(), Locale.US, "mg/100g"), 105d,0);
+
+		 
 		 //Cholesterol
 		 
 		 assertEquals(NutrientRoundingRules.round(null, NutrientRoundingRuleType.Cholesterol.toString(), Locale.US, null), null);
 		 assertEquals(NutrientRoundingRules.round(0.002d, NutrientRoundingRuleType.Cholesterol.toString(), Locale.US, null), 0d,0);
 		 assertEquals(NutrientRoundingRules.round(0.003d, NutrientRoundingRuleType.Cholesterol.toString(), Locale.US, null), 0.005d,0);
 		 assertEquals(NutrientRoundingRules.round(0.006d, NutrientRoundingRuleType.Cholesterol.toString(), Locale.US, null), 0.01d,0);
+		 
 		 
 		 
 		 
