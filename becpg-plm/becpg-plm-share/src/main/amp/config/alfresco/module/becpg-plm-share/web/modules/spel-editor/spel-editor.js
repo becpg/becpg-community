@@ -244,6 +244,7 @@
                         			             'entity',
                         			             'dataListItem',
                         			             'dataListItemEntity', 
+                        			             'variantData',
                         			             '#this',
                         			             '#root',
                         			             '$Value instanceof T($Type)',

@@ -38,6 +38,17 @@
     <data-sets>
         <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="Product" id="453">
             <property name="nullsOrdering">nulls lowest</property>
+            <list-property name="computedColumns">
+                <structure>
+                    <property name="name">versionLabelToShow</property>
+                    <expression name="expression">if(row["versionLabelBcpg"] != null){
+	row["versionLabelBcpg"]
+} else if(row["versionLabel"] != null){
+	row["versionLabel"]
+} else "1.0"</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
             <list-property name="columnHints">
                 <structure>
                     <property name="columnName">code</property>
@@ -252,7 +263,13 @@
                 <structure>
                     <property name="columnName">versionLabel</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">versionLabel</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">versionLabelBcpg</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">versionLabelBcpg</text-property>
                 </structure>
             </list-property>
             <list-property name="parameters"/>
@@ -436,6 +453,16 @@
                     <structure>
                         <property name="position">36</property>
                         <property name="name">versionLabel</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">37</property>
+                        <property name="name">versionLabelBcpg</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">38</property>
+                        <property name="name">versionLabelToShow</property>
                         <property name="dataType">string</property>
                     </structure>
                 </list-property>
@@ -694,8 +721,15 @@
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
+                <structure>
+                    <property name="position">37</property>
+                    <property name="name">versionLabelBcpg</property>
+                    <property name="nativeName">versionLabelBcpg</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{productCurrency;STRING;/productCurrency},{productPrice;DOUBLE;/productPrice},{productUnit;STRING;/productUnit},{productType;STRING;/productType},{name;STRING;/name},{productState;STRING;/productState},{modified;TIMESTAMP;/modified},{productQty;DOUBLE;/productQty},{productDensity;DOUBLE;/productDensity},{description;STRING;/description},{clients;STRING;/clients},{productHierarchy1;STRING;/productHierarchy1},{productHierarchy2;STRING;/productHierarchy2},{legalName;STRING;/legalName},{useByDate;INT;/useByDate},{productComments;STRING;/productComments},{eanCode;STRING;/eanCode},{pvValidationDate;TIMESTAMP;/pvValidationDate},{pvCallerActor;STRING;/pvCallerActor},{pvTransmitterActor;STRING;/pvTransmitterActor},{pvQualityApprovalActor;STRING;/pvQualityApprovalActor},{pvProductionApprovalActor;STRING;/pvProductionApprovalActor},{pvRDApprovalActor;STRING;/pvRDApprovalActor},{itemType;STRING;/itemType},{preparationTips;STRING;/preparationTips},{packagingDescription;STRING;/packagingDescription},{numberOfServings;STRING;/numberOfServings},{precautionOfUseDescription;STRING;/precautionOfUse/description},{storageConditionsDescription;STRING;/storageConditions/description},{netWeight;DOUBLE;/netWeight},{creator;STRING;/creator},{title;STRING;/title},{created;TIMESTAMP;/created},{erpCode;STRING;/erpCode},{versionLabel;STRING;/versionLabel}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{productCurrency;STRING;/productCurrency},{productPrice;DOUBLE;/productPrice},{productUnit;STRING;/productUnit},{productType;STRING;/productType},{name;STRING;/name},{productState;STRING;/productState},{modified;TIMESTAMP;/modified},{productQty;DOUBLE;/productQty},{productDensity;DOUBLE;/productDensity},{description;STRING;/description},{clients;STRING;/clients},{productHierarchy1;STRING;/productHierarchy1},{productHierarchy2;STRING;/productHierarchy2},{legalName;STRING;/legalName},{useByDate;INT;/useByDate},{productComments;STRING;/productComments},{eanCode;STRING;/eanCode},{pvValidationDate;TIMESTAMP;/pvValidationDate},{pvCallerActor;STRING;/pvCallerActor},{pvTransmitterActor;STRING;/pvTransmitterActor},{pvQualityApprovalActor;STRING;/pvQualityApprovalActor},{pvProductionApprovalActor;STRING;/pvProductionApprovalActor},{pvRDApprovalActor;STRING;/pvRDApprovalActor},{itemType;STRING;/itemType},{preparationTips;STRING;/preparationTips},{packagingDescription;STRING;/packagingDescription},{numberOfServings;STRING;/numberOfServings},{precautionOfUseDescription;STRING;/precautionOfUse/description},{storageConditionsDescription;STRING;/storageConditions/description},{netWeight;DOUBLE;/netWeight},{creator;STRING;/creator},{title;STRING;/title},{created;TIMESTAMP;/created},{erpCode;STRING;/erpCode},{versionLabel;STRING;/versionLabel},{versionLabelBcpg;STRING;/versionLabel[@prefix='bcpg']}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -1451,6 +1485,12 @@ dataSetRow["name"]
                                         <expression name="expression" type="javascript">dataSetRow["pvValidationDate"]</expression>
                                         <property name="dataType">date-time</property>
                                     </structure>
+                                    <structure>
+                                        <property name="name">versionLabelToShow</property>
+                                        <text-property name="displayName">versionLabelToShow</text-property>
+                                        <expression name="expression" type="javascript">dataSetRow["versionLabelToShow"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
                                 </list-property>
                                 <column id="778">
                                     <property name="width">1.015267175572519in</property>
@@ -1604,23 +1644,8 @@ dataSetRow["name"]
                                     </cell>
                                     <cell id="7022">
                                         <property name="style">becpg-meta-cell-data</property>
-                                        <data id="7024">
-                                            <property name="dataSet">Product</property>
-                                            <list-property name="boundDataColumns">
-                                                <structure>
-                                                    <property name="name">versionLabel</property>
-                                                    <text-property name="displayName">versionLabel</text-property>
-                                                    <expression name="expression" type="javascript">if(dataSetRow["versionLabel"] == null){
-"1.0"
-}
-else{
-dataSetRow["versionLabel"]
-}</expression>
-                                                    <property name="dataType">string</property>
-                                                    <property name="allowExport">true</property>
-                                                </structure>
-                                            </list-property>
-                                            <property name="resultSetColumn">versionLabel</property>
+                                        <data id="7360">
+                                            <property name="resultSetColumn">versionLabelToShow</property>
                                         </data>
                                     </cell>
                                 </row>
