@@ -67,7 +67,8 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private ProductUnit unit = ProductUnit.kg;
 	private ProductData entityTpl;
 	private List<NodeRef> plants = new ArrayList<>();
-	private VariantPackagingData defaultVariantPackagingData;
+	
+
 	/*
 	 * Transformable properties
 	 */
@@ -152,6 +153,8 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	 */
 
 	private List<VariantData> variants;
+	private VariantPackagingData defaultVariantPackagingData;
+	private VariantData defaultVariantData;
 
 	/*
 	 * Product specifications
@@ -198,6 +201,14 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 
 	public void setVariants(List<VariantData> variants) {
 		this.variants = variants;
+	}
+	
+	public VariantData getDefaultVariantData() {
+		return defaultVariantData;
+	}
+
+	public void setDefaultVariantData(VariantData defaultVariantData) {
+		this.defaultVariantData = defaultVariantData;
 	}
 
 	@AlfProp
@@ -343,7 +354,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	public void setDefaultVariantPackagingData(VariantPackagingData defaultVariantPackagingData) {
 		this.defaultVariantPackagingData = defaultVariantPackagingData;
 	}
-
+	
 	@AlfProp
 	@AlfQname(qname = "bcpg:productQty")
 	public Double getQty() {

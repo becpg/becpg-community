@@ -31,7 +31,17 @@ public class VariantData extends BeCPGDataObject {
 	 */
 	private static final long serialVersionUID = 6714268508538918393L;
 	protected Boolean isDefaultVariant;
+	private Double recipeQtyUsed = 0d;
+	private Double recipeQtyUsedWithLossPerc = 0d;
+	private Double recipeVolumeUsed = 0d;
+	
 
+	public void reset() {
+		recipeQtyUsed = 0d;
+		recipeQtyUsedWithLossPerc = 0d;
+		recipeVolumeUsed = 0d;
+	}
+	
 	@AlfProp
 	@AlfQname(qname="bcpg:isDefaultVariant")
 	public Boolean getIsDefaultVariant() {
@@ -42,10 +52,36 @@ public class VariantData extends BeCPGDataObject {
 		this.isDefaultVariant = isDefaultVariant;
 	}
 
+	public Double getRecipeQtyUsed() {
+		return recipeQtyUsed;
+	}
+
+	public void setRecipeQtyUsed(Double recipeQtyUsed) {
+		this.recipeQtyUsed = recipeQtyUsed;
+	}
+
+	public Double getRecipeQtyUsedWithLossPerc() {
+		return recipeQtyUsedWithLossPerc;
+	}
+
+	public void setRecipeQtyUsedWithLossPerc(Double recipeQtyUsedWithLossPerc) {
+		this.recipeQtyUsedWithLossPerc = recipeQtyUsedWithLossPerc;
+	}
+
+	public Double getRecipeVolumeUsed() {
+		return recipeVolumeUsed;
+	}
+
+	public void setRecipeVolumeUsed(Double recipeVolumeUsed) {
+		this.recipeVolumeUsed = recipeVolumeUsed;
+	}
+
 	@Override
 	public String toString() {
 		return "VariantData [isDefaultVariant=" + isDefaultVariant + "]";
 	}
+	
+	
 
 	@Override
 	public int hashCode() {
@@ -71,6 +107,7 @@ public class VariantData extends BeCPGDataObject {
 			return false;
 		return true;
 	}
+
 	
 	
 

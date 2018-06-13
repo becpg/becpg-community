@@ -21,11 +21,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.alfresco.service.cmr.repository.NodeRef;
+
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompositionDataItem;
 import fr.becpg.repo.product.formulation.FormulaService;
 import fr.becpg.repo.repository.RepositoryEntity;
+import fr.becpg.repo.variant.model.VariantData;
+import fr.becpg.repo.variant.model.VariantDataItem;
 
 public class FormulaFormulationContext {
 	
@@ -61,6 +65,26 @@ public class FormulaFormulationContext {
 		}
 		return null;
 	}
+
+    public VariantData getVariantData() {
+		if (entity != null) {
+			if (entity.getVariants() != null) {
+				if (dataListItem instanceof VariantDataItem) {
+					List<NodeRef> variantsNodeRef = ((VariantDataItem) dataListItem).getVariants();
+					if ((variantsNodeRef != null) && !variantsNodeRef.isEmpty()) {
+						for (VariantData variant : entity.getVariants()) {
+							if (variant.getNodeRef().equals(variantsNodeRef.get(0))) {
+								return variant;
+							}
+						}
+					}
+				}
+			}
+			return entity.getDefaultVariantData();
+		}
+		return new VariantData();
+	}
+
 
 	public Collection<CompositionDataItem> children(CompoListDataItem parent) {
 		List<CompositionDataItem> ret = new ArrayList<>();

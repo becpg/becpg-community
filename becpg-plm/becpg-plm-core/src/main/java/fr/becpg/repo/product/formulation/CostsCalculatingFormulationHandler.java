@@ -657,7 +657,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 
 	private double getCompoListQty(ProductData productData, NodeRef componentNodeRef, double parentQty) {
 		double totalQty = 0d;
-		for (CompoListDataItem compoList : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+		for (CompoListDataItem compoList : productData.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 			NodeRef productNodeRef = compoList.getProduct();
 			
 			ProductData componentProduct = alfrescoRepositoryProductData.findOne(productNodeRef);
@@ -683,7 +683,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	private double getPackagingListQty(ProductData productData, NodeRef componentNodeRef, int palletBoxesPerPallet) {
 		double totalQty = 0d;
 		if (productData.hasPackagingListEl()) {
-			for (PackagingListDataItem packList : productData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+			for (PackagingListDataItem packList : productData.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 				QName nodeType = nodeService.getType(packList.getProduct());
 				NodeRef productNodeRef = packList.getProduct();
 				Double qty = FormulationHelper.getQtyForCost(productData, packList);
