@@ -71,7 +71,6 @@
                                                         } 
                                                        
                                                         
-                                                        
                                                         if(!task["itemData"].isMultiLevel){
                                                         	previousTask = taskId;
                                                         }
@@ -85,6 +84,7 @@
                                                         
                                                         
                                                         var pGroup = !task["itemData"]["prop_pjt_tlIsGroup"].value ? 0 : 1;
+                                                        
 
                                                         for ( var z in task["itemData"]["assoc_pjt_tlPrevTasks"])
                                                         {

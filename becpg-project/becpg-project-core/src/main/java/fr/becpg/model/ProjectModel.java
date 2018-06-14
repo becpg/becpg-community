@@ -69,6 +69,8 @@ public interface ProjectModel {
 	QName ASSOC_TL_OBSERVERS = QName.createQName(PROJECT_URI, "tlObservers");
 	QName PROP_TL_WORKFLOW_INSTANCE = QName.createQName(PROJECT_URI, "tlWorkflowInstance");
 	QName PROP_TL_FIXED_COST = QName.createQName(PROJECT_URI, "tlFixedCost");
+	QName ASSOC_SUB_PROJECT = QName.createQName(PROJECT_URI, "subProjectRef");
+	
 
 	QName ASSOC_TL_RESOURCE_COST = QName.createQName(PROJECT_URI, "tlResourceCost");
 		

@@ -21,64 +21,127 @@
 
 		YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		   propertyName : "cm:name",
-		   renderer : function(oRecord, data, label, scope) {
-			   
+		   renderer : function(oRecord, data, label, scope) { 
                var dates = scope.extractDates(oRecord.getData()), end = dates.due;
-
                var  dateLine = (dates.start ? Alfresco.util.formatDate(dates.start, "longDate") : scope
                      .msg("label.none"));
 
                if (dates.end != null) {
                   end = dates.end;
                }
-
                dateLine += " - ";
-
+               
                dateLine += (dates.start ? Alfresco.util.formatDate(end, "longDate") : scope
                      .msg("label.none"));
 			   
                var desc = scope.getProjectTitle(oRecord.getData());
-			   
 			   desc += '<span class="project-date">[ ' + dateLine + ' ]</span>';
-			   
-			   
 			   return desc;
 
 		   }
 		});
 
-		YAHOO.Bubbling.fire("registerDataGridRenderer", {
+//		ESSAI 1		
+//		YAHOO.Bubbling.fire("registerDataGridRenderer", {
+//		   propertyName : "pjt:taskList",
+//		   renderer : function(oRecord, data, label, scope, idx, length) {
+//			   var oData = oRecord.getData();
+//			   if(data["itemData"]){
+//				   var tasks = oRecord.getData("itemData")["dt_pjt_taskList"];
+//				   var moreTasksHtlm = "";
+//				 
+//				   
+//				   var taskHtlm = '<div class="task-header " > En cours <span>'+tasks.length+'</span></div><div style="max-height: 150px; overflow: auto;"><table class="taskList-table"><tbody>';
+//				   if (idx == 0) {
+//					   var z = 0;
+//					   for (j in tasks) {
+//						   var task = tasks[j], duration ='',subProject ;
+//						   
+//						   if (task["itemData"]["assoc_pjt_subProjectRef"] != null
+//				            		&& task["itemData"]["assoc_pjt_subProjectRef"] .length>0)
+//				            {
+//				          	   subProject = task["itemData"]["assoc_pjt_subProjectRef"][0];
+//				            }  
+//						   
+//						   taskHtlm+= "<tr><td>";
+//						   
+//						   var className = "task";
+//						   if(subProject!=null){
+//							   className= "project";
+//						   } else if(task["itemData"]["prop_pjt_tlIsMilestone"] && task["itemData"]["prop_pjt_tlIsMilestone"].value){
+//							   className= "task-milestone";
+//						   }
+//						   
+//						   
+//						   if(task.permissions.userAccess.edit){
+//						          taskHtlm += '<span class="node-' + (subProject!=null ? subProject.value : task.nodeRef) + '|' + oData.nodeRef + '"><a href="" class="theme-color-1 ' + scope.taskEventClass + '" title="' + scope
+//						          .msg("link.title.task-edit") + '" ><span class="'+className+'">' + task["itemData"]["prop_pjt_tlTaskName"].displayValue+'</span></a></span>';
+//					          } else {
+//					        	  taskHtlm += '<span class="node-' + (subProject!=null ? subProject.value : task.nodeRef) + '|' + oData.nodeRef + '">' + task["itemData"]["prop_pjt_tlTaskName"].displayValue+'</span>';
+//					          }
+//						   
+//
+//					          if (subProject!=null)
+//					          {
+//					        	  taskHtlm += '<span >';
+//					        	  taskHtlm += '<a  class="sub-project-link" title="' + subProject.displayValue + '" href="'+
+//					             beCPG.util.entityURL(subProject.siteId, subProject.value,"pjt:project");
+//					             +'" >';
+//					             taskHtlm +="&nbsp;</a></span></span>";
+//					          }
+//						   
+//						     taskHtlm+= "</td>";
+//						   
+//
+//					         if( task["itemData"]["prop_pjt_tlState"].value == "InProgress"){
+//					              if(task["itemData"]["prop_pjt_completionPercent"] && 
+//					                      task["itemData"]["prop_pjt_completionPercent"].value != null)  {
+//					            	  taskHtlm += '<td><span title="' + scope.msg("completion.title") + '">' + task["itemData"]["prop_pjt_completionPercent"].displayValue + '%</span></td>';
+//					              }   else {
+//					            	  taskHtlm += '<td></td>';
+//					              }           
+//					          }
+//					          
+//					          if(task["itemData"]["prop_pjt_tlRealDuration"] && task["itemData"]["prop_pjt_tlRealDuration"].value!=null &&
+//					         		 task["itemData"]["prop_pjt_tlRealDuration"].value > task["itemData"]["prop_pjt_tlDuration"].value)  {             
+//					         	 if(duration.length>0){
+//					         		 duration+=" - ";
+//					         	 }
+//					         	 duration += '<span class="red" title="' + scope.msg("overdue.title") + '">' + Alfresco.util.encodeHTML(task["itemData"]["prop_pjt_tlRealDuration"].value - task["itemData"]["prop_pjt_tlDuration"].value)+" "+scope
+//					             .msg("overdue.day")+ '</span>';
+//					         } 
+//
+//						   
+//						    taskHtlm+= "<td>"+duration+"</td>";
+//
+//						   	taskHtlm+= '<td><span class="node-' + task.nodeRef + '|' + oData.nodeRef + '">';
+//						   	taskHtlm += '<a class="task-comments '+scope.commentEventClass+'" title="' + scope.msg("link.title.comment-task") + '" href="" >';
+//
+//					          if (task["itemData"]["prop_fm_commentCount"] && task["itemData"]["prop_fm_commentCount"].value) {
+//					        	  taskHtlm += task["itemData"]["prop_fm_commentCount"].value;
+//					          } else {
+//					        	  taskHtlm +="&nbsp;";
+//					          }
+//					          taskHtlm += "</a></span></span></td></tr>";
+//
+//						    z++;
+//					   }
+//					   taskHtlm += "</tbody></table>";
+//
+//					   return taskHtlm;
+//				   }
+//			   }
+//			   return null;
+//		   }
+//		});
+		
+	   YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		   propertyName : "pjt:taskList",
 		   renderer : function(oRecord, data, label, scope, idx, length) {
 			   var oData = oRecord.getData();
 			   if(data["itemData"]){
-				   var tasks = oRecord.getData("itemData")["dt_pjt_taskList"];
-				   var moreTasksHtlm = "";
-				   var taskHtlm = "<ul>";
-				   if (idx == 0) {
-					   var z = 0;
-					   for (j in tasks) {
-						   var task = tasks[j];
-						   	if(z>3){
-						   		moreTasksHtlm += "<li>" + scope.getTaskTitle(task, oData.nodeRef) + "</li>";
-						   	} else {
-						   		taskHtlm += "<li>" + scope.getTaskTitle(task, oData.nodeRef)  + "</li>";
-						   	}
-						    z++;
-					   }
-					   taskHtlm += "</ul>";
-
-					   if (moreTasksHtlm.length > 0) {
-						   taskHtlm += '<div class="more-task"><div class="onActionShowMore">' + '<a href="#" class="' + scope.id
-						         + '-show-more show-more" title="' + scope.msg("tasks.more") + '">' + '<span>'
-						         + scope.msg("tasks.more") + '</span></a></div>' + ' <div class="more-actions hidden"><ul>'
-						         + moreTasksHtlm + '</ul></div></div>';
-					   }
-
-					   return taskHtlm;
-				   }
+			       return scope.getTaskTitle(data, oData.nodeRef);
 			   }
-			   return null;
 		   }
 		});
 		
@@ -192,9 +255,7 @@
 				   return (data.value !=null) ? $html(data.displayValue)+ '&nbsp; %' : '';
 			   }
 			});
-		
 
-		   
 		   
 		   YAHOO.Bubbling.fire("registerDataGridRenderer", {
 				propertyName : [ "pjt:completionPercent" ],

@@ -141,7 +141,7 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 	private void calculateGroup(ProjectData projectData) {
 
 		for (TaskListDataItem tl : projectData.getTaskList()) {
-			if (tl.getSubProject()==null && ProjectHelper.getChildrenTasks(projectData, tl).isEmpty()) {
+			if (tl.getSubProject()== null && ProjectHelper.getChildrenTasks(projectData, tl).isEmpty()) {
 				tl.setIsGroup(false);
 			} else {
 				tl.setIsGroup(true);
@@ -220,8 +220,12 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 			ProjectHelper.setTaskStartDate(nextTask, startDate);
 		}
 
-		if (nextTask.getIsGroup()) {
-			calculatePlanningOfChildren(projectData, nextTask);
+		if (nextTask.getIsGroup() ) {
+			System.out.println("PWET on ne passe pas ici ");
+			
+			if(nextTask.getSubProject() == null) {
+				calculatePlanningOfChildren(projectData, nextTask);
+			}
 		} else if (hasPlannedDuration(nextTask)) {
 			Date endDate = ProjectHelper.calculateEndDate(nextTask.getStart(), nextTask.getDuration());
 			ProjectHelper.setTaskEndDate(nextTask, endDate);
@@ -246,15 +250,9 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 		}
 	}
 	
+	@Deprecated
 	private void calculatePlanningOfChildren(ProjectData projectData, TaskListDataItem taskListDataItem) throws FormulateException {
 
-		if(taskListDataItem.getSubProject()!=null) {
-			ProjectData subProject = alfrescoRepository.findOne(taskListDataItem.getSubProject());
-			ProjectHelper.setTaskEndDate(taskListDataItem, subProject.getCompletionDate());
-			taskListDataItem.setCompletionPercent(subProject.getCompletionPercent());
-			taskListDataItem.setTaskName(subProject.getName());
-			
-		} else {
 			List<TaskListDataItem> children = ProjectHelper.getChildrenTasks(projectData, taskListDataItem);
 	
 	
@@ -265,7 +263,7 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 				}
 			}
 			ProjectHelper.setTaskEndDate(taskListDataItem, endDate);
-		}
+		
 	}
 
 	private void calculateRetroPlanningOfPrevTasks(ProjectData projectData, TaskListDataItem task, Date endDate) throws FormulateException {

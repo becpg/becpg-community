@@ -2071,7 +2071,7 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
          }
       }
 
-      if (pRow >= 0 && ! pList[pRow].getMile()) {
+      if (pRow >= 0 && ! pList[pRow].getMile() && pList[i].getSubProject()==null) {
          pList[pRow].setStart(vMinDate);
          pList[pRow].setEnd(vMaxDate);
          pList[pRow].setNumKid(vNumKid);
