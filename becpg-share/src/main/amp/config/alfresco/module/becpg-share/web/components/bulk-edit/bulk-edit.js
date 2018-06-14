@@ -1667,6 +1667,11 @@
 			       				var createRow = new Alfresco.module.SimpleDialog(this.id + "-bulk-createRow");
 			       				
 			       				var submit = displayFields.length > 1 ? false : true;
+			       				var confirmMessage = "message.confirm.edit-columns.description";
+			       				if(displayFields.length == 1 && displayFields[0] == "prop_bcpg_erpCode"){
+			       					submit = false;
+			       					confirmMessage = "message.confirm.edit-erpcode.description";
+			       				}
 			       				createRow.setOptions({
 			       					width : "36em",
 			       					templateUrl : templateUrl,
@@ -1682,7 +1687,7 @@
 			       								
 			       								Alfresco.util.PopupManager.displayPrompt({
 			       									title : this.msg("message.confirm.edit-columns.title"),
-			       									text : this.msg("message.confirm.edit-columns.description"),
+			       									text : this.msg(confirmMessage),
 			       									buttons : [ {
 			       										text : this.msg("button.ok"),
 			       										handler : function columnsUpdate() {
