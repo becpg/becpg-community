@@ -506,16 +506,11 @@
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.site.caption")}" primaryKey="id">
 			
 				<#if isAdmin>
-					<Table name="becpg_public_projects" alias="becpg_public_projects">
-						<SQL dialect="generic">
-						 	becpg_public_projects.isLastVersion IS TRUE
-						</SQL>
-					</Table>
+					<Table name="becpg_public_projects" alias="becpg_public_projects" />
 				<#else>
 					<Table name="becpg_public_projects" alias="becpg_public_projects">
 						<SQL dialect="generic">
 							becpg_public_projects.instanceId = ${instanceId}
-							AND becpg_public_projects.isLastVersion IS TRUE
 						</SQL>
 					</Table>
 				</#if>
@@ -526,6 +521,21 @@
 		<Dimension  name="designation" caption="${msg("jsolap.designation.title")}" >
 			<Hierarchy name="taskPerName" caption="${msg("jsolap.taskPerName.title")}" hasAll="true" allMemberCaption="${msg("jsolap.task.caption")}">
 				<Level name="tlTaskName" caption="${msg("jsolap.task.title")}" column="tlTaskName" type="String" ordinalColumn="sortOrder" />
+			</Hierarchy>
+		</Dimension>
+		
+		<Dimension  name="history" caption="${msg("jsolap.history.title")}" foreignKey="entity_fact_id">
+			<Hierarchy name="currentVersion" caption="${msg("jsolap.currentVersion.title")}" hasAll="true" primaryKey="id" defaultMember="[history.currentVersion].[true]" >
+				<#if isAdmin>
+					<Table name="becpg_public_projects"/>
+				<#else>
+					<Table name="becpg_public_projects" alias="becpg_public_projects">
+						<SQL dialect="generic">
+							becpg_public_projects.instanceId = ${instanceId}
+						</SQL>
+					</Table>	
+				</#if>
+				<Level name="isLastVersion" caption="${msg("jsolap.currentVersion.title")}" column="isLastVersion"  type="Boolean" />
 			</Hierarchy>
 		</Dimension>
 		
