@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.model.ForumModel;
 import org.alfresco.repo.cache.SimpleCache;
 import org.alfresco.repo.download.DownloadModel;
 import org.alfresco.repo.ownable.impl.OwnableServiceImpl;
@@ -104,9 +105,11 @@ public class BeCPGOwnableServiceImpl extends OwnableServiceImpl {
 					userName = DefaultTypeConverter.INSTANCE.convert(String.class, nodeService.getProperty(nodeRef, ContentModel.PROP_OWNER));
 				} else { 
 					QName type = nodeService.getType(nodeRef);
-					if(disableOwner && !entityDictionaryService.isSubClass(type,  ContentModel.TYPE_PERSON) 
+					if(disableOwner 
 						&& !DownloadModel.DOWNLOAD_MODEL_1_0_URI.equals(type.getNamespaceURI()) 
-						&& !NamespaceService.SYSTEM_MODEL_1_0_URI.equals(type.getNamespaceURI())) {
+						&& !NamespaceService.SYSTEM_MODEL_1_0_URI.equals(type.getNamespaceURI())
+						&& !NamespaceService.FORUMS_MODEL_1_0_URI.equals(type.getNamespaceURI())
+						&& !entityDictionaryService.isSubClass(type,  ContentModel.TYPE_PERSON) ) {
 						userName = OwnableService.NO_OWNER;
 					} else if (nodeService.hasAspect(nodeRef, ContentModel.ASPECT_AUDITABLE) ) {
 						userName = DefaultTypeConverter.INSTANCE.convert(String.class, nodeService.getProperty(nodeRef, ContentModel.PROP_CREATOR));
