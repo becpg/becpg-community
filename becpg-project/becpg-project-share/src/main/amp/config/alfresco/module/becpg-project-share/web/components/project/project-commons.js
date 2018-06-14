@@ -9,7 +9,9 @@
    beCPG.component.ProjectCommons.prototype = {
 
       cache : [],
-   
+      taskEventClass: TASK_EVENTCLASS,
+      commentEventClass : COMMENT_EVENTCLASS,
+      
 
       onActionShowTask : function PL_onActionShowTask(className) {
 
@@ -247,8 +249,7 @@
           {
           	 ret += '<span >';
              ret += '<a  class="sub-project-link" title="' + subProject.displayValue + '" href="'+
-             beCPG.util.entityURL(subProject.siteId, subProject.value,"pjt:project");
-             +'" >';
+             	beCPG.util.entityURL(subProject.siteId, subProject.value,"pjt:project") +'" >';
              ret +="&nbsp;</a></span></span>";
           }
 

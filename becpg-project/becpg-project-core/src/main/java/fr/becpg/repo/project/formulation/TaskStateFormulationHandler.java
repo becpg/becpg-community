@@ -174,8 +174,6 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 		if (!nextTasks.isEmpty()) {
 			for (TaskListDataItem nextTask : nextTasks) {
 				
-				visitSubProject(nextTask);
-				
 				nextTask.setIsExcludeFromSearch(false);
 
 				TaskState currentTaskState = nextTask.getTaskState();
@@ -385,18 +383,6 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 		}
 		
 		return reformulate;
-	}
-
-	private void visitSubProject(TaskListDataItem nextTask) {
-		if(nextTask.getSubProject()!=null) {
-			ProjectData subProject = alfrescoRepository.findOne(nextTask.getSubProject());
-			TaskState  subProjectState = subProject.getProjectState().toTaskState();
-			if(subProjectState.equals(nextTask.getTaskState()))
-			{
-				ProjectHelper.setTaskState(nextTask, subProjectState, projectActivityService);
-			}
-		}
-		
 	}
 
 	private void visitGroup(ProjectData projectData, TaskListDataItem parent) {
