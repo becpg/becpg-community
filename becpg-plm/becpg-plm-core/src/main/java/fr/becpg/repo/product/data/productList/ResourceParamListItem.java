@@ -6,6 +6,7 @@ import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 
 @AlfType
 @AlfQname(qname = "mpm:resourceParamList")
@@ -52,6 +53,7 @@ public class ResourceParamListItem  extends AbstractManualVariantListDataItem {
 	
 	@AlfSingleAssoc
 	@AlfQname(qname="mpm:rplParamRef")
+	@DataListIdentifierAttr
 	public NodeRef getParam() {
 		return param;
 	}

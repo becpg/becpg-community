@@ -2268,7 +2268,8 @@ row["propertyQName"] == "bcpg:microbioUnit" ||
 row["propertyQName"] == "bcpg:ingListQtyPerc" ||
 row["propertyQName"] == "bcpg:ingListGeoOrigin" ||
 row["propertyQName"] == "bcpg:ingListQtyTransfo" ||
-row["propertyQName"] == "bcpg:ingListBioOrigin")</expression>
+row["propertyQName"] == "bcpg:ingListBioOrigin" ||
+row["propertyQName"] == "mpm:rplParamValue")</expression>
                     <property name="updateAggregation">true</property>
                 </structure>
             </list-property>
