@@ -168,7 +168,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	 */
 	private String entityScore;
 	private List<String> reportLocales;
-	
+	private List<ProductData> compareWithEntities;
 
 	@AlfMultiAssoc(isEntity = true)
 	@AlfQname(qname = "bcpg:productSpecifications")
@@ -190,6 +190,17 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 
 	public void setClients(List<ClientData> clients) {
 		this.clients = clients;
+	}
+	
+	@AlfMultiAssoc(isEntity = true)
+	@AlfQname(qname = "bcpg:compareWithEntities")
+	@AlfReadOnly
+	public List<ProductData> getCompareWithEntities() {
+		return compareWithEntities;
+	}
+
+	public void setCompareWithEntities(List<ProductData> compareWithEntities) {
+		this.compareWithEntities = compareWithEntities;
 	}
 
 	@AlfMultiAssoc(isChildAssoc = true, isEntity = true)
