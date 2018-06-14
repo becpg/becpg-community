@@ -85,6 +85,7 @@ public class SupplierAccountWebScript extends  AbstractWebScript {
 					
 					Map<QName, Serializable> propMap = new HashMap<>();
 					propMap.put(ContentModel.PROP_USERNAME, userName);
+					propMap.put(ContentModel.PROP_LASTNAME, userName);
 					propMap.put(ContentModel.PROP_FIRSTNAME, (String)nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
 					propMap.put(ContentModel.PROP_EMAIL, supplierEmail);
 					NodeRef userRef = personService.createPerson(propMap);
