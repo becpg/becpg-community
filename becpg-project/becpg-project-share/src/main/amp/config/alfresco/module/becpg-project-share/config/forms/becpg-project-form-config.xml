@@ -350,19 +350,20 @@
 			</form>
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:code" />
+					<show id="cm:name" />
 					<show id="pjt:projectOverdue" />
 					<show id="pjt:projectHierarchy1" />
 					<show id="pjt:projectHierarchy2" />
 					<!-- <show id="pjt:projectPriority" /> -->
 					<show id="pjt:completionPercent" />
 					<show id="pjt:projectScore" />
-					<show id="bcpg:code" />
-					<show id="cm:name" />
-					<show id="pjt:projectEntity" />
+					<show id="pjt:projectManager" />
 					<show id="dataList_pjt:taskList" />
 					<show id="dataList_bcpg:activityList" />
 					<!-- <show id="dataList_pjt:deliverableList" /> -->
-					<show id="pjt:projectManager" />
+					
+					<show id="pjt:projectEntity" />
 					<show id="pjt:projectStartDate" />
 					<show id="pjt:projectCompletionDate" />
 					<show id="pjt:projectDueDate" />
@@ -371,12 +372,16 @@
 				<appearance>
 					<!-- <field id="dataList_pjt:deliverableList" label-id="becpg.forms.field.projects.datagrid.deliverableList.label" 
 						/> -->
+					<field id="cm:name"
+						 read-only="true" />
+					<field id="pjt:projectOverdue"
+						 read-only="true" />
 					<field id="dataList_pjt:taskList"
 						label-id="becpg.forms.field.projects.datagrid.taskList.label" />
 					<field id="dataList_bcpg:activityList"
 						label-id="becpg.forms.field.projects.datagrid.activityList.label" />
 					<field id="pjt:projectStartDate"
-						label-id="becpg.forms.field.projects.datagrid.projectStartDate.label" />
+						label="hidden" />
 				</appearance>
 
 			</form>
@@ -892,13 +897,19 @@
 			<!-- Data Grid view -->
 			<form id="filter">
 				<field-visibility>
+					<show id="bcpg:depthLevel" />
 					<show id="pjt:tlTaskLegend" />
 					<show id="pjt:tlResources" />
 					<show id="pjt:tlState" />
 					<show id="pjt:tlIsMilestone" />
-					<show id="bcpg:depthLevel" />
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:depthLevel">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">0|,1|1,2|2,3|3,All|data.level.all
+							</control-param>
+						</control>
+					</field>
 					<field id="pjt:tlState">
 						<control template="/org/alfresco/components/form/controls/selectmany.ftl">
 							<control-param name="insertBlank">true</control-param>
@@ -913,12 +924,7 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:depthLevel">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">0|,1|1,2|2,3|3,All|data.level.all
-							</control-param>
-						</control>
-					</field>
+					
 				</appearance>
 			</form>
 			<form id="sub-datagrid-filter">
@@ -1116,6 +1122,7 @@
 			<form id="sub-datagrid">
 				<field-visibility>
 					<show id="bcpg:parentLevel" />
+					<show id="pjt:subProjectRef" force="true" />
 					<show id="pjt:tlTaskName" />
 					<show id="pjt:tlIsGroup" />
 					<show id="pjt:tlIsMilestone" />

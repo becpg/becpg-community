@@ -111,16 +111,17 @@ public class FormulationNutsTest extends AbstractFinishedProductTest {
 				assertEquals("nut3.getValue() == 14, actual values: " + trace, 14d, nutListDataItem.getValue());
 				checks++;
 			}
-			if (nutListDataItem.getNut().equals(nut4)) {
-				assertEquals("nut4.getValue() == 1.5d, actual values: " + trace, 1.5d, nutListDataItem.getValue());
+			 if (nutListDataItem.getNut().equals(nut4)) {
+	                assertEquals("nut4.getValue() == 1.5d, actual values: " + trace, 1.5d, nutListDataItem.getValue());
 
-				assertEquals(NutrientRoundingRules.extractValue(nutListDataItem.getRoundedValue(), Locale.FRENCH).doubleValue(), 1.5d);
-				assertEquals(NutrientRoundingRules.extractValue(nutListDataItem.getRoundedValue(), Locale.US).doubleValue(), 1.5d);
-				assertEquals(NutrientRoundingRules.extractMini(nutListDataItem.getRoundedValue(), Locale.FRENCH),0.4d);
-				assertNull(NutrientRoundingRules.extractMaxi(nutListDataItem.getRoundedValue(), Locale.FRENCH));
-			
-				checks++;
-			}
+	                assertEquals(NutrientRoundingRules.extractValue(nutListDataItem.getRoundedValue(), Locale.FRENCH).doubleValue(), 2d);
+	                assertEquals(NutrientRoundingRules.extractValue(nutListDataItem.getRoundedValue(), Locale.US).doubleValue(), 2d);
+	                assertEquals(NutrientRoundingRules.extractMini(nutListDataItem.getRoundedValue(), Locale.FRENCH).doubleValue(),0d);
+	                assertNull(NutrientRoundingRules.extractMaxi(nutListDataItem.getRoundedValue(), Locale.FRENCH));
+	            
+	                checks++;
+	            }
+
 			assertEquals(NutsCalculatingFormulationHandler.NUT_FORMULATED, nutListDataItem.getMethod());
 		}
 
