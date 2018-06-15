@@ -52,6 +52,9 @@
 				<property name="bpm:packageItemActionGroup">
 					<default>edit_package_item_actions</default>
 				</property>
+				<property name="bpm:reassignable">
+					<default>false</default>
+				</property>	
 			</overrides>
 			<mandatory-aspects>
 				<aspect>pjt:workflowAspect</aspect>
