@@ -96,6 +96,9 @@
 				<property name="bpm:outcomePropertyName">
 					<default>{http://www.alfresco.org/model/project-workflow/1.0}npdAction</default>
 				</property>
+				<property name="bpm:reassignable">
+					<default>false</default>
+				</property>	
 			</overrides>
 			<mandatory-aspects>
 				<aspect>npdwf:needDefinitionProductAspect</aspect>
