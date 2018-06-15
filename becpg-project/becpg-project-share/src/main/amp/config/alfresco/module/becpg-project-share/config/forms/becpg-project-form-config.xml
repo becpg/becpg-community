@@ -372,6 +372,10 @@
 				<appearance>
 					<!-- <field id="dataList_pjt:deliverableList" label-id="becpg.forms.field.projects.datagrid.deliverableList.label" 
 						/> -->
+					<field id="cm:name"
+						 read-only="true" />
+					<field id="pjt:projectOverdue"
+						 read-only="true" />
 					<field id="dataList_pjt:taskList"
 						label-id="becpg.forms.field.projects.datagrid.taskList.label" />
 					<field id="dataList_bcpg:activityList"
