@@ -4,7 +4,9 @@ import java.util.Collections;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.model.ForumModel;
 import org.alfresco.repo.cache.SimpleCache;
+import org.alfresco.repo.download.DownloadModel;
 import org.alfresco.repo.ownable.impl.OwnableServiceImpl;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.TenantService;
@@ -13,6 +15,8 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.datatype.DefaultTypeConverter;
 import org.alfresco.service.cmr.security.OwnableService;
+import org.alfresco.service.namespace.NamespaceService;
+import org.alfresco.service.namespace.QName;
 
 import fr.becpg.repo.entity.EntityDictionaryService;
 
@@ -99,11 +103,18 @@ public class BeCPGOwnableServiceImpl extends OwnableServiceImpl {
 					userName = getOwner(nodeService.getPrimaryParent(nodeRef).getParentRef());
 				} else if (nodeService.hasAspect(nodeRef, ContentModel.ASPECT_OWNABLE)) {
 					userName = DefaultTypeConverter.INSTANCE.convert(String.class, nodeService.getProperty(nodeRef, ContentModel.PROP_OWNER));
-				} else if(disableOwner && !entityDictionaryService.isSubClass(nodeService.getType(nodeRef),  ContentModel.TYPE_PERSON)) {
-					userName = OwnableService.NO_OWNER;
-				} else if (nodeService.hasAspect(nodeRef, ContentModel.ASPECT_AUDITABLE) ) {
-					userName = DefaultTypeConverter.INSTANCE.convert(String.class, nodeService.getProperty(nodeRef, ContentModel.PROP_CREATOR));
-				} 
+				} else { 
+					QName type = nodeService.getType(nodeRef);
+					if(disableOwner 
+						&& !DownloadModel.DOWNLOAD_MODEL_1_0_URI.equals(type.getNamespaceURI()) 
+						&& !NamespaceService.SYSTEM_MODEL_1_0_URI.equals(type.getNamespaceURI())
+						&& !NamespaceService.FORUMS_MODEL_1_0_URI.equals(type.getNamespaceURI())
+						&& !entityDictionaryService.isSubClass(type,  ContentModel.TYPE_PERSON) ) {
+						userName = OwnableService.NO_OWNER;
+					} else if (nodeService.hasAspect(nodeRef, ContentModel.ASPECT_AUDITABLE) ) {
+						userName = DefaultTypeConverter.INSTANCE.convert(String.class, nodeService.getProperty(nodeRef, ContentModel.PROP_CREATOR));
+					} 
+				}
 			}
 			cacheOwner(nodeRef, userName);
 		}

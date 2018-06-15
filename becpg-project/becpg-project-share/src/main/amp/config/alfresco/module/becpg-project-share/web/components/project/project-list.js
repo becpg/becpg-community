@@ -68,6 +68,7 @@ var g; // gantt var
                         list : "projectList",
                         groupBy : "prop_pjt_projectHierarchy2",
                         sortId : "ProjectList",
+                        saveFieldUrl : Alfresco.constants.PROXY_URI + "becpg/bulkedit/save",
                         groupFormater : function(args, record)
                         {
 

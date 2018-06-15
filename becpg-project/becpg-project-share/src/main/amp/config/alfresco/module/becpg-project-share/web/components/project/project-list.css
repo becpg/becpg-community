@@ -39,7 +39,7 @@
 }
 
 /* project-list bar Buttons and Paginator */
-.project-list .project-list-bar .thin,.project-list .project-list-bar .paginator
+.project-list .project-list-bar .thin, .project-list .project-list-bar .paginator
 	{
 	padding: 4px 1em;
 	margin: 0;
@@ -60,10 +60,10 @@
 .project-list-toolbar div.filterform .yui-u {
 	text-align: left;
 }
-.project-list-toolbar div.filterform {
-    width: 60em;
-}
 
+.project-list-toolbar div.filterform {
+	width: 60em;
+}
 
 /* Data Table */
 .project-list .projects table {
@@ -127,7 +127,7 @@
 	padding: 4px;
 }
 
-.project-list .projects tr.yui-dt-first td.yui-dt-empty,.project-list .projects tr.yui-dt-first td.yui-dt-loading
+.project-list .projects tr.yui-dt-first td.yui-dt-empty, .project-list .projects tr.yui-dt-first td.yui-dt-loading
 	{
 	border-right: medium none;
 	padding: 0.5em 1em;
@@ -168,7 +168,6 @@
 	margin-bottom: 0.5em;
 }
 
-
 /* activities */
 /* 
  .project-list  .project-activity-details {
@@ -179,7 +178,6 @@
 	padding: 5px;
 	border: 1px solid #CCCCCC;
 } */
-
 .project-list  .project-activity-details  .icon {
 	float: left;
 	width: 50px;
@@ -187,7 +185,7 @@
 	min-height: 3em;
 	text-align: center;
 }
- 
+
 .project-list .project-activity-details  .details {
 	float: left;
 }
@@ -197,11 +195,13 @@
 	list-style-type: disc;
 }
 
-.project-list  .project-activity-details .details .activity-content ul li {
+.project-list  .project-activity-details .details .activity-content ul li
+	{
 	list-style-type: disc;
 }
 
-.project-list  .project-activity-details .details .activity-content ol li {
+.project-list  .project-activity-details .details .activity-content ol li
+	{
 	list-style-type: decimal;
 }
 
@@ -210,9 +210,8 @@
 	padding: 5px;
 	box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
 	position: relative;
-	clear:both;
+	clear: both;
 }
-
 
 .project-list  .activity-content:before {
 	position: absolute;
@@ -247,3 +246,70 @@
 		no-repeat;
 	padding-left: 20px;
 }
+
+.project-list  progress[value] {
+	width: 75px;
+	height: 16px;
+}
+
+.project-list  span.project-date {
+	color: #1155CC;
+	font-style: italic;
+	font-size: 0.9em;
+	display: block;
+}
+
+/** Tasks 
+
+  .datagrid span.task-milestone {
+	background:
+		url("../../components/images/filetypes/generic-task-milestone-16.png")
+		no-repeat;
+	padding-left: 20px;
+}
+
+
+ .datagrid span.task {
+	background: url("../../components/images/filetypes/generic-task-16.png")
+		no-repeat;
+	padding-left: 20px;
+	
+	
+}
+
+.project-list div.task-header {
+	background-color: #009dcc;
+	color: white !important;
+	font-size: 15px;
+	font-family: Roboto, sans-serif;
+	padding: 2px;
+	
+}
+
+.project-list .taskList-table td {
+   padding: 5px 5px;
+	display: table-cell;
+	text-align: left;
+	border-radius: 2px;
+	color: rgb(158, 158, 158);
+	margin-right: 0;
+	word-wrap: break-word;
+	font-family: Roboto, sans-serif;
+	border: none !important;
+    
+}
+
+
+.project-list div.task-header span {
+	background-color: white;
+color: black;
+width: 35px;
+display: inline-block;
+border-radius: 5px;
+text-align: center;
+}
+
+.project-list .taskList-table tr {
+    border-bottom: 1px solid rgba(0,0,0,0.12);
+}
+**/
