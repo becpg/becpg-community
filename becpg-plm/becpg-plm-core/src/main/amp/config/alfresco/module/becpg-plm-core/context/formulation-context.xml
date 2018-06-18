@@ -69,6 +69,7 @@
 		<property name="namespaceService" ref="namespaceService"/>
 		<property name="securityMethodBeforeAdvice" ref="securityMethodBeforeAdvice"/>
 		<property name="nodeService" ref="nodeService" />
+		<property name="associationService" ref="associationService"/>
 	</bean>
 
 

@@ -2,6 +2,7 @@ package fr.becpg.repo.product.formulation;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -19,6 +20,7 @@ import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.CompositionDataItem;
 import fr.becpg.repo.product.data.spel.FormulaFormulationContext;
@@ -38,11 +40,12 @@ public class FormulaService {
 	private NodeService nodeService;
 
 	private NamespaceService namespaceService;
+	
+	private AssociationService associationService;
 
 	public void setSecurityMethodBeforeAdvice(SecurityMethodBeforeAdvice securityMethodBeforeAdvice) {
 		this.securityMethodBeforeAdvice = securityMethodBeforeAdvice;
 	}
-
 
 	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
@@ -55,6 +58,10 @@ public class FormulaService {
 
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
+	}
+	
+	public void setAssociationService(AssociationService associationService) {
+		this.associationService = associationService;
 	}
 
 
@@ -98,6 +105,14 @@ public class FormulaService {
 
 		public Serializable propValue(NodeRef nodeRef, String qname) {
 			return nodeService.getProperty(nodeRef, QName.createQName(qname, namespaceService));
+		}
+		
+		public NodeRef assocValue(NodeRef nodeRef, String qname) {
+			return associationService.getTargetAssoc(nodeRef, QName.createQName(qname, namespaceService));
+		}
+		
+		public List<NodeRef> assocValues(NodeRef nodeRef, String qname) {
+			return associationService.getTargetAssocs(nodeRef, QName.createQName(qname, namespaceService));
 		}
 
 		public QName getQName(String qName){
