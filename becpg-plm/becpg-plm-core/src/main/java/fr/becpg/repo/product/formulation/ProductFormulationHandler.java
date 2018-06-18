@@ -264,11 +264,13 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 
 		if (!PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.isMatch(nodeService.getType(productNodeRef))) {
 
-			ProductUnit productUnit = FormulationHelper.getProductUnit(productNodeRef, nodeService);
+			ProductData subComponent = alfrescoRepository.findOne(c.getComponent());
+			
+			ProductUnit productUnit = subComponent.getUnit();
 			if (c != null) {
 				boolean shouldUseLiter = FormulationHelper.isProductUnitLiter(productUnit);
 				boolean useLiter = FormulationHelper.isCompoUnitLiter(c.getCompoListUnit());
-				Double density = FormulationHelper.getDensity(productNodeRef, nodeService);
+				Double density = subComponent.getDensity();
 
 				if ((density == null) && ((shouldUseLiter && !useLiter) || (!shouldUseLiter && useLiter))) {
 					addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_WRONG_UNIT, RequirementDataType.Composition);
@@ -286,7 +288,9 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 
 	private void checkPackagingItem(List<ReqCtrlListDataItem> reqCtrlListDataItem, PackagingListDataItem p) {
 		NodeRef productNodeRef = p.getProduct();
-		ProductUnit productUnit = FormulationHelper.getProductUnit(productNodeRef, nodeService);
+		ProductData subComponent = alfrescoRepository.findOne(productNodeRef);
+		
+		ProductUnit productUnit = subComponent.getUnit();
 		if (productUnit == null) {
 			addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_MISSING_UNIT, RequirementDataType.Packaging);
 		} else {
@@ -307,7 +311,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		}
 
 		if (!nodeService.hasAspect(p.getProduct(), PackModel.ASPECT_PALLET)) {
-			BigDecimal tare = FormulationHelper.getTareInKg(productNodeRef, nodeService);
+			BigDecimal tare = FormulationHelper.getTareInKg(subComponent);
 			if (tare == null) {
 				addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_MISSING_TARE, RequirementDataType.Packaging);
 			}
