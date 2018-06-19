@@ -647,7 +647,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 				var json = JSON.parse(data.value);
 				if (json) {
 					for (var i = 0; i < json.comp.length; i++) {
-						if (json.comp[i].value) {
+						if (json.comp[i].value != null && json.comp[i].value !== undefined) {
 
 							var newColumn = scope.widgets.dataTable.getColumn("dynCompareWith-" + json.comp[i].nodeRef);
 							scope.widgets.dataTable.updateCell(oRecord, newColumn, {
