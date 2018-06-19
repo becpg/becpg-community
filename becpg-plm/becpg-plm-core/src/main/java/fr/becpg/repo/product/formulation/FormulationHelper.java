@@ -32,6 +32,7 @@ import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 
 /**
@@ -205,6 +206,7 @@ public class FormulationHelper {
 		}
 	}
 
+	@Deprecated
 	public static Double getProductQty(NodeRef nodeRef, NodeService nodeService) {
 		return (Double) nodeService.getProperty(nodeRef, PLMModel.PROP_PRODUCT_QTY);
 	}
@@ -303,7 +305,7 @@ public class FormulationHelper {
 			ProductUnit productUnit = productData.getUnit();
 			if (productUnit != null) {
 				Double qty = productData.getQty();
-				if (((qty != null) && FormulationHelper.isProductUnitKg(productUnit)) || FormulationHelper.isProductUnitLiter(productUnit)) {
+				if (qty != null && (FormulationHelper.isProductUnitKg(productUnit) || FormulationHelper.isProductUnitLiter(productUnit))) {
 					if (productUnit.equals(ProductUnit.g) || productUnit.equals(ProductUnit.mL)) {
 						qty = qty / 1000;
 					} else if (productUnit.equals(ProductUnit.cL)) {
@@ -311,7 +313,7 @@ public class FormulationHelper {
 					}
 					if (FormulationHelper.isProductUnitLiter(productUnit)) {
 						Double density = productData.getDensity();
-						if ((density != null) && (qty != null)) {
+						if ((density != null)) {
 							qty = qty * density;
 						} else {
 							return FormulationHelper.getQtyFromComposition(productData, productUnit, defaultValue);
@@ -369,26 +371,26 @@ public class FormulationHelper {
 		return qty;
 	}
 
-	public static Double getNetVolume(NodeRef nodeRef, NodeService nodeService) {
-
-		Double qty = getProductQty(nodeRef, nodeService);
-		if (qty == null) {
-			return null;
-		} else {
-			ProductUnit productUnit = getProductUnit(nodeRef, nodeService);
-			if ((productUnit != null)
-					&& (productUnit.equals(ProductUnit.mL) || productUnit.equals(ProductUnit.L) || productUnit.equals(ProductUnit.cL))) {
-				if (productUnit.equals(ProductUnit.mL)) {
-					return qty / 1000;
-				} else if (productUnit.equals(ProductUnit.L)) {
-					return qty;
-				} else if (productUnit.equals(ProductUnit.cL)) {
-					return qty / 100;
-				}
-			}
-			return null;
-		}
-	}
+//	public static Double getNetVolume(NodeRef nodeRef, NodeService nodeService) {
+//
+//		Double qty = getProductQty(nodeRef, nodeService);
+//		if (qty == null) {
+//			return null;
+//		} else {
+//			ProductUnit productUnit = getProductUnit(nodeRef, nodeService);
+//			if ((productUnit != null)
+//					&& (productUnit.equals(ProductUnit.mL) || productUnit.equals(ProductUnit.L) || productUnit.equals(ProductUnit.cL))) {
+//				if (productUnit.equals(ProductUnit.mL)) {
+//					return qty / 1000;
+//				} else if (productUnit.equals(ProductUnit.L)) {
+//					return qty;
+//				} else if (productUnit.equals(ProductUnit.cL)) {
+//					return qty / 100;
+//				}
+//			}
+//			return null;
+//		}
+//	}
 
 	public static Double getNetVolume(ProductData formulatedProduct) {
 		if ((formulatedProduct.getNetVolume() != null) && (formulatedProduct.getNetVolume() > 0)) {
@@ -469,17 +471,20 @@ public class FormulationHelper {
 		return totalValue;
 	}
 
-	public static BigDecimal getTareInKg(CompoListDataItem compoList, NodeService nodeService) {
+	public static BigDecimal getTareInKg(CompoListDataItem compoList, AlfrescoRepository<ProductData> alfrescoRepository) {
 
 		Double qty = compoList.getQty();
 		CompoListUnit unit = compoList.getCompoListUnit();
 		if ((compoList.getProduct() != null) && (qty != null) && (unit != null)) {
-			Double productQty = FormulationHelper.getProductQty(compoList.getProduct(), nodeService);
+			ProductData subProduct = alfrescoRepository.findOne(compoList.getProduct());
+			
+			
+			Double productQty = subProduct.getQty();
 			if (productQty == null) {
 				productQty = 1d;
 			}
-			ProductUnit productUnit = FormulationHelper.getProductUnit(compoList.getProduct(), nodeService);
-			BigDecimal tare = FormulationHelper.getTareInKg(compoList.getProduct(), nodeService);
+			ProductUnit productUnit = subProduct.getUnit();
+			BigDecimal tare = FormulationHelper.getTareInKg(subProduct);
 
 			if ((tare != null) && (productUnit != null)) {
 
@@ -511,7 +516,7 @@ public class FormulationHelper {
 		return new BigDecimal(0d);
 	}
 
-	public static BigDecimal getTareInKg(PackagingListDataItem packList, NodeService nodeService) {
+	public static BigDecimal getTareInKg(PackagingListDataItem packList, AlfrescoRepository<ProductData> alfrescoRepository) {
 
 		BigDecimal tare = new BigDecimal(0d);
 		Double qty = FormulationHelper.getQty(packList);
@@ -520,7 +525,7 @@ public class FormulationHelper {
 			if (FormulationHelper.isPackagingListUnitKg(packList.getPackagingListUnit())) {
 				tare = new BigDecimal(qty);
 			} else {
-				BigDecimal t = FormulationHelper.getTareInKg(packList.getProduct(), nodeService);
+				BigDecimal t = FormulationHelper.getTareInKg(alfrescoRepository.findOne(packList.getProduct()));
 				if (t != null) {
 					tare = t.multiply(new BigDecimal(qty));
 				}
@@ -530,14 +535,13 @@ public class FormulationHelper {
 		return tare;
 	}
 
-	public static BigDecimal getTareInKg(NodeRef productNodeRef, NodeService nodeService) {
+	public static BigDecimal getTareInKg(ProductData productData) {
 
-		Double tare = (Double) nodeService.getProperty(productNodeRef, PackModel.PROP_TARE);
-		String strTareUnit = (String) nodeService.getProperty(productNodeRef, PackModel.PROP_TARE_UNIT);
-		if ((tare == null) || (strTareUnit == null)) {
+		Double tare = productData.getTare();
+		TareUnit tareUnit =  productData.getTareUnit();
+		if ((tare == null) || (tareUnit == null)) {
 			return null;
 		} else {
-			TareUnit tareUnit = TareUnit.valueOf(strTareUnit);
 			return FormulationHelper.getTareInKg(tare, tareUnit);
 		}
 	}
