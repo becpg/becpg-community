@@ -1,6 +1,7 @@
 package fr.becpg.repo.security.impl;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
@@ -85,6 +86,22 @@ public class BeCPGOwnableServiceImpl extends OwnableServiceImpl {
 		super.setRenditionService(renditionService);
 	}
 
+	
+	private Set<String> URI_TO_EXCLUDES = new HashSet<>();
+	{
+		URI_TO_EXCLUDES.add(DownloadModel.DOWNLOAD_MODEL_1_0_URI);
+		URI_TO_EXCLUDES.add(NamespaceService.SYSTEM_MODEL_1_0_URI);
+		URI_TO_EXCLUDES.add(NamespaceService.FORUMS_MODEL_1_0_URI);
+		URI_TO_EXCLUDES.add(NamespaceService.WORKFLOW_MODEL_1_0_URI);
+		URI_TO_EXCLUDES.add(NamespaceService.EMAILSERVER_MODEL_URI);
+		URI_TO_EXCLUDES.add(NamespaceService.APP_MODEL_1_0_URI);
+		URI_TO_EXCLUDES.add(NamespaceService.BPM_MODEL_1_0_URI);
+		URI_TO_EXCLUDES.add(NamespaceService.DICTIONARY_MODEL_1_0_URI);
+		URI_TO_EXCLUDES.add(NamespaceService.SECURITY_MODEL_1_0_URI);
+		URI_TO_EXCLUDES.add(NamespaceService.WEBDAV_MODEL_1_0_URI);
+		URI_TO_EXCLUDES.add(NamespaceService.LINKS_MODEL_1_0_URI);
+	}
+
 
 	// OwnableService implementation
 
@@ -104,9 +121,9 @@ public class BeCPGOwnableServiceImpl extends OwnableServiceImpl {
 					userName = DefaultTypeConverter.INSTANCE.convert(String.class, nodeService.getProperty(nodeRef, ContentModel.PROP_OWNER));
 				} else { 
 					QName type = nodeService.getType(nodeRef);
-					if(disableOwner && !entityDictionaryService.isSubClass(type,  ContentModel.TYPE_PERSON) 
-						&& !DownloadModel.DOWNLOAD_MODEL_1_0_URI.equals(type.getNamespaceURI()) 
-						&& !NamespaceService.SYSTEM_MODEL_1_0_URI.equals(type.getNamespaceURI())) {
+					if(disableOwner && !URI_TO_EXCLUDES.contains(type.getNamespaceURI()) 
+							&& !entityDictionaryService.isSubClass(type,  ContentModel.TYPE_PERSON) 
+						) {
 						userName = OwnableService.NO_OWNER;
 					} else if (nodeService.hasAspect(nodeRef, ContentModel.ASPECT_AUDITABLE) ) {
 						userName = DefaultTypeConverter.INSTANCE.convert(String.class, nodeService.getProperty(nodeRef, ContentModel.PROP_CREATOR));
