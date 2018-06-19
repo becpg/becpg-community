@@ -76,7 +76,7 @@ public class PackagingHelper {
 		// Sum tare (don't take in account packagingKit)
 		if ((dataItem.getPkgLevel() != null) && !PLMModel.TYPE_PACKAGINGKIT.equals(nodeType)) {
 
-			BigDecimal tare = FormulationHelper.getTareInKg(dataItem, nodeService);
+			BigDecimal tare = FormulationHelper.getTareInKg(dataItem, alfrescoRepository);
 			if (PackagingLevel.Primary.equals(dataItem.getPkgLevel())) {
 				packagingData.addTarePrimary(currentVariants, tare);
 			} else if (PackagingLevel.Secondary.equals(dataItem.getPkgLevel())) {

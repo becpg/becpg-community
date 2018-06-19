@@ -133,6 +133,15 @@ public class FormulaService {
 			return nodeService.getProperty(nodeRef, QName.createQName(qname, namespaceService));
 		}
 
+                public NodeRef assocValue(NodeRef nodeRef, String qname) {
+			return associationService.getTargetAssoc(nodeRef, QName.createQName(qname, namespaceService));
+		}
+		
+		public List<NodeRef> assocValues(NodeRef nodeRef, String qname) {
+			return associationService.getTargetAssocs(nodeRef, QName.createQName(qname, namespaceService));
+		}
+
+
 		public QName getQName(String qName) {
 			return QName.createQName(qName, namespaceService);
 		}
