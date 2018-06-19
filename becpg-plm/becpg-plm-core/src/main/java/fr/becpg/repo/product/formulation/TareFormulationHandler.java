@@ -130,7 +130,7 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 		BigDecimal totalTare = new BigDecimal(0d);
 		for (CompoListDataItem compoList : formulatedProduct
 				.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
-			totalTare = totalTare.add(FormulationHelper.getTareInKg(compoList, nodeService));
+			totalTare = totalTare.add(FormulationHelper.getTareInKg(compoList, alfrescoRepository));
 		}
 		return totalTare;
 	}
@@ -155,7 +155,7 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 				if (kitData.hasPackagingListEl()) {
 					for (PackagingListDataItem kitPackagingDataItem : kitData.getPackagingList()) {
 						if (PackagingLevel.Primary.equals(kitPackagingDataItem.getPkgLevel())) {
-							BigDecimal kitPkgDataTare = FormulationHelper.getTareInKg(kitPackagingDataItem, nodeService);
+							BigDecimal kitPkgDataTare = FormulationHelper.getTareInKg(kitPackagingDataItem, alfrescoRepository);
 							kitPackagingData.addTarePrimary(kitPackagingDataItem.getVariants(), kitPkgDataTare);
 
 							kitTare = kitTare.add(kitPkgDataTare);
@@ -169,7 +169,7 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 			}
 
 			if ((packList.getPkgLevel() != null) && packList.getPkgLevel().equals(level)) {
-				totalTare = totalTare.add(FormulationHelper.getTareInKg(packList, nodeService));
+				totalTare = totalTare.add(FormulationHelper.getTareInKg(packList, alfrescoRepository));
 			}
 		}
 		return totalTare;

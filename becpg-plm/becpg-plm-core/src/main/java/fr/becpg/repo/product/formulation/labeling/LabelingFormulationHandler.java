@@ -899,6 +899,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				current.getAllergens().addAll(allergens);
 				current.getGeoOrigins().addAll(geoOrigins);
 
+			} else {
+				compositeLabeling.getAllergens().addAll(allergens);
+				compositeLabeling.getGeoOrigins().addAll(geoOrigins);
 			}
 
 			Double qtyTotal = compositeLabeling.getQtyTotal();
