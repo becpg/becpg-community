@@ -93,3 +93,42 @@
 {
    background-image: url(../../components/images/filetypes/xls-file-16.png);
 }
+
+/* Simple/Details View */
+
+.project-list-toolbar .simple-detailed span.first-child
+{
+   background-position: 50% 50%;
+   background-repeat: no-repeat;
+   min-height: 16px;
+   padding: 0 2px;
+}
+
+.project-list-toolbar .simple-detailed .yui-button
+{
+   margin-left: 0;
+   margin-right: 0;
+}
+
+
+.project-list-toolbar .simple-detailed .simple-view span.first-child
+{
+   background-image: url(../documentlibrary/images/simple-view-off-16.png);
+}
+
+.project-list-toolbar .simple-detailed .simple-view.yui-button-checked span.first-child
+{
+   background-image: url(../documentlibrary/images/simple-view-on-16.png);
+}
+
+.project-list-toolbar .simple-detailed .detailed-view span.first-child
+{
+   background-image: url(../documentlibrary/images/detailed-view-off-16.png);
+}
+
+.project-list-toolbar .simple-detailed .detailed-view.yui-button-checked span.first-child
+{
+   background-image: url(../documentlibrary/images/detailed-view-on-16.png);
+}
+
+

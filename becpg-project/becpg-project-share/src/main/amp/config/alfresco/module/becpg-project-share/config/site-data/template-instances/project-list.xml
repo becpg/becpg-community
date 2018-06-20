@@ -31,8 +31,8 @@
          <region-id>navigation</region-id>
          <url>/components/navigation/collaboration-navigation</url>
       </component>
-   
-      <!-- All Filter -->
+   <!-- 
+      All Filter
       <component>
          <region-id>all-filter</region-id>
          <url>/components/project/filter/all</url>
@@ -41,26 +41,26 @@
          </properties>
       </component>
 
-      <!-- Due Filter -->
+      Due Filter
       <component>
          <region-id>due-filter</region-id>
          <url>/components/workflow/filter/due</url>
       </component>
 
-      <!-- Started Filter -->
+      Started Filter
       <component>
          <region-id>started-filter</region-id>
          <url>/components/workflow/filter/started</url>
       </component>
 
-      <!-- Priority Filter -->
+      Priority Filter
       <component>
          <region-id>priority-filter</region-id>
          <url>/components/workflow/filter/priority</url>
       </component>
       
       
-      <!-- Tags Filter -->
+      Tags Filter
       <component>
          <region-id>tags</region-id>
          <url>/components/tag-filter</url>
@@ -68,7 +68,7 @@
          	<container>projects</container>
          </properties>
       </component>
-		
+		 -->
 
       <component>
          <region-id>toolbar</region-id>

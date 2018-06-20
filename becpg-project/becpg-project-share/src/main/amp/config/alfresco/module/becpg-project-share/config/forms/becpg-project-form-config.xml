@@ -385,6 +385,31 @@
 				</appearance>
 
 			</form>
+			<form id="datagrid-simple">
+				<field-visibility>
+					<show id="bcpg:code" />
+					<show id="cm:name" />
+					<show id="pjt:projectOverdue" />
+					<show id="pjt:projectHierarchy1" />
+					<show id="pjt:projectHierarchy2" />
+					<show id="pjt:completionPercent" />
+					<show id="pjt:projectScore" />
+					<show id="pjt:projectManager" />
+					<show id="pjt:projectEntity" />
+					<show id="pjt:projectStartDate" />
+					<show id="pjt:projectCompletionDate" />
+					<show id="pjt:projectDueDate" />
+					<show id="pjt:projectState" />
+				</field-visibility>
+				<appearance>
+					<field id="cm:name"
+						 read-only="true" />
+					<field id="pjt:projectOverdue"
+						 read-only="true" />
+					<field id="pjt:projectStartDate"
+						label="hidden" />
+				</appearance>
+			</form>
 			<form id="export">
 				<field-visibility>
 					<show id="cm:name" />
@@ -428,10 +453,10 @@
 
 				</field-visibility>
 				<appearance>
-					<set id="main" />
-					<field id="cm:name" set="main" />
-					<field id="pjt:projectManager" set="main" />
+				
 					<set id="mainInfo" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="cm:name" set="mainInfo" />
+					<field id="pjt:projectManager" set="mainInfo" />
 					<field id="pjt:projectPriority" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">1|priority.high,2|priority.medium,3|priority.low</control-param>
@@ -472,14 +497,13 @@
 
 					<field id="entity_pjt:projectCurrentTasks_pjt:taskList" set="mainInfo" />
 
-					<set id="main2" />
-					<field id="pjt:projectStartDate" set="main2">
+					<field id="pjt:projectStartDate" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/daterange.ftl" />
 					</field>
-					<field id="pjt:projectCompletionDate" set="main2">
+					<field id="pjt:projectCompletionDate" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/daterange.ftl" />
 					</field>
-					<field id="pjt:projectDueDate" set="main2">
+					<field id="pjt:projectDueDate" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/daterange.ftl" />
 					</field>
 				</appearance>
