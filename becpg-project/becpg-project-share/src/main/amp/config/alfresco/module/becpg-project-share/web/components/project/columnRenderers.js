@@ -22,21 +22,7 @@
 		YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		   propertyName : "cm:name",
 		   renderer : function(oRecord, data, label, scope) { 
-               var dates = scope.extractDates(oRecord.getData()), end = dates.due;
-               var  dateLine = (dates.start ? Alfresco.util.formatDate(dates.start, "longDate") : scope
-                     .msg("label.none"));
-
-               if (dates.end != null) {
-                  end = dates.end;
-               }
-               dateLine += " - ";
-               
-               dateLine += (dates.start ? Alfresco.util.formatDate(end, "longDate") : scope
-                     .msg("label.none"));
-			   
-               var desc = scope.getProjectTitle(oRecord.getData());
-			   desc += '<span class="project-date">[ ' + dateLine + ' ]</span>';
-			   return desc;
+			   return scope.getProjectTitleV2(oRecord.getData(),scope.options.columnFormId != "datagrid-simple");
 
 		   }
 		});
@@ -138,7 +124,7 @@
 				   end = dates.end;
 			   }
 
-			   desc += '<br/><span class="' + (dates.end != null ? "end" : "due") + '">'
+			   desc += '&nbsp;-&nbsp;<span class="' + (dates.end != null ? "end" : "due") + '">'
 			         + (end != null ? Alfresco.util.formatDate(end, "shortDate") : scope.msg("label.none")) + "</span>";
 
 			   return desc;
