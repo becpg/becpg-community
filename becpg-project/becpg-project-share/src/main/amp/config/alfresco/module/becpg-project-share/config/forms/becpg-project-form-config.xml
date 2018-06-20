@@ -355,7 +355,7 @@
 					<show id="pjt:projectOverdue" />
 					<show id="pjt:projectHierarchy1" />
 					<show id="pjt:projectHierarchy2" />
-					<!-- <show id="pjt:projectPriority" /> -->
+				    <!-- <show id="pjt:projectPriority" /> -->
 					<show id="pjt:completionPercent" />
 					<show id="pjt:projectScore" />
 					<show id="pjt:projectManager" />
@@ -382,6 +382,8 @@
 						label-id="becpg.forms.field.projects.datagrid.activityList.label" />
 					<field id="pjt:projectStartDate"
 						label="hidden" />
+					<!-- <field id="pjt:projectPriority"
+						label="hidden" /> -->
 				</appearance>
 
 			</form>
@@ -390,16 +392,17 @@
 					<show id="bcpg:code" />
 					<show id="cm:name" />
 					<show id="pjt:projectOverdue" />
+					<show id="pjt:projectStartDate" />
+					<show id="pjt:projectDueDate" />
+					<show id="pjt:projectState" />
 					<show id="pjt:projectHierarchy1" />
 					<show id="pjt:projectHierarchy2" />
 					<show id="pjt:completionPercent" />
 					<show id="pjt:projectScore" />
 					<show id="pjt:projectManager" />
 					<show id="pjt:projectEntity" />
-					<show id="pjt:projectStartDate" />
-					<show id="pjt:projectCompletionDate" />
-					<show id="pjt:projectDueDate" />
-					<show id="pjt:projectState" />
+					<show id="pjt:projectCompletionDate" />		
+					<show id="pjt:projectPriority" />	
 				</field-visibility>
 				<appearance>
 					<field id="cm:name"
@@ -407,7 +410,9 @@
 					<field id="pjt:projectOverdue"
 						 read-only="true" />
 					<field id="pjt:projectStartDate"
-						label="hidden" />
+						 read-only="true" />
+				    <field id="pjt:projectStartDate"
+						label-id="becpg.forms.field.projects.datagrid.projectStartDate.label" />
 				</appearance>
 			</form>
 			<form id="export">

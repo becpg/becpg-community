@@ -11,6 +11,24 @@
       <action type="action-link" id="onActionDelete" permission="delete" label="actions.delete-row" />
       <action type="action-link" id="onActionShowComments" permission="edit" label="actions.comment" />
    </actionSetDataGrid>
+   	 <filters>
+      <filtermenu id="projects" data="Planned"  />
+      <filtermenu id="projects" data="InProgress" />
+      <filtermenu id="projects" data="OnHold"     />
+      <filtermenu id="projects" data="Cancelled"  />
+      <filtermenu id="projects" data="Completed"  />
+      <filtermenu id="due" data="today"/>
+      <filtermenu id="due" data="tomorrow" />
+      <filtermenu id="due" data="next7Days"  />
+      <filtermenu id="due" data="overdue" />
+      <filtermenu id="due" data="noDate" />
+      <filtermenu id="started" data="last7Days" />
+      <filtermenu id="started" data="last14Days"  />
+      <filtermenu id="started" data="last28Days" />
+      <filtermenu id="priority" data="1" />
+      <filtermenu id="priority" data="2" />
+      <filtermenu id="priority" data="3"  />	
+   </filters>
     <filters-parameters>
       <!--
          Turns the filters form the filter's config files into url parameters by matching the filter id and data against
@@ -25,7 +43,7 @@
           * {-7d} -  resolves to a iso8601 date respresentation of the current day rolled the given number of days back
           * {+7d} -  resolves to a iso8601 date respresentation of the current day rolled the given number of days forward
       -->
-      <filter id="projects"      data="*"      		  parameters="fts(+@pjt\:projectState:&quot;{data}&quot;)"/>
+      <filter id="projects"      data="*"      		 parameters="fts(+@pjt\:projectState:&quot;{data}&quot;)"/>
       <filter id="due"           data="today"        parameters="fts(+@pjt\:projectDueDate:['{-1d}' TO '{0d}'])"/>
       <filter id="due"           data="tomorrow"     parameters="fts(+@pjt\:projectDueDate:['{0d}' TO '{1d}'])"/>
       <filter id="due"           data="next7Days"    parameters="fts(+@pjt\:projectDueDate:['{0d}' TO '{8d}'])"/>

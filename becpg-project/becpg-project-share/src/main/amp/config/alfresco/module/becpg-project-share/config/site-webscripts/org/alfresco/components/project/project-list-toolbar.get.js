@@ -1,5 +1,4 @@
 <import resource="classpath:/alfresco/templates/org/alfresco/import/alfresco-util.js">
-<import resource="classpath:alfresco/site-webscripts/org/alfresco/components/workflow/filter/filter.lib.js">
 
 
 function main()
@@ -12,7 +11,6 @@ function main()
 	}
 
     model.preferences = AlfrescoUtil.getPreferences(prefs);
-	model.filters = getFilters();
 	model.view = (page.url.args.view != null) ? page.url.args.view : "dataTable";
 	
 	   

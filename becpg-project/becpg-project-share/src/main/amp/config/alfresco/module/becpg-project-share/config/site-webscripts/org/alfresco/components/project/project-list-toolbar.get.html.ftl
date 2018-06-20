@@ -24,7 +24,7 @@
 		<#assign el = args.htmlid?html>
 		<div id="${el}-body" class="project-list-toolbar datalist-toolbar toolbar">
 		   <div id="${el}-headerBar" class="header-bar flat-button theme-bg-2">
-		      <div class="left">
+		      <div class="left">   
 		      	 <div id="toolbar-contribs" class="hidden" ></div>
 		      	 <#if view == "dataTable">
 		      	 <div id="${el}-simpleDetailed" class="align-right simple-detailed yui-buttongroup inline">

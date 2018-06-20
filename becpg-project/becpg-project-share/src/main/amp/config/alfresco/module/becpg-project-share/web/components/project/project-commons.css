@@ -93,6 +93,31 @@
 	vertical-align: bottom;
 }
 
+
+.project-list span.project-status-Completed,.project-list span.project-status-Closed
+	{
+	background: url("../documentlibrary/indicators/project-completed-16.png") no-repeat;
+	display: inline-table;
+	background-repeat: no-repeat;
+	padding-left: 20px;
+}
+
+.project-list span.project-status-Planned {
+	background: url("../documentlibrary/indicators/project-planned-16.png") no-repeat;
+	display: inline-table;
+	background-repeat: no-repeat;
+	padding-left: 20px;
+}
+
+.project-list span.project-status-InProgress {
+	background: url("../documentlibrary/indicators/project-inprogress-16.png") no-repeat;
+	display: inline-table;
+	background-repeat: no-repeat;
+	padding-left: 20px;
+}
+
+
+
 .project-list span.delivrable-status {
 	background-repeat: no-repeat;
 	padding-left: 20px;

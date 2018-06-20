@@ -2,6 +2,23 @@
 <import resource="classpath:alfresco/site-webscripts/org/alfresco/modules/entity-datagrid/include/actions.lib.js">
 <import resource="classpath:/alfresco/templates/org/alfresco/import/alfresco-util.js">
 
+function getFiltersMenu()
+{
+   var myConfig = new XML(config.script),
+      filters = [];
+
+   for each (var xmlFilter in myConfig..filtermenu)
+   {
+      filters.push(
+      {
+         id: xmlFilter.@id.toString(),
+         data: xmlFilter.@data.toString()
+      });
+   }
+   return filters;
+}
+
+
 
 function main()
 {
@@ -17,6 +34,8 @@ function main()
    parseActions();
    
    var filterParameters =  getFilterParameters();
+   model.filters = getFiltersMenu();
+	
 
    //Widget instantiation metadata...
    var projectList = {

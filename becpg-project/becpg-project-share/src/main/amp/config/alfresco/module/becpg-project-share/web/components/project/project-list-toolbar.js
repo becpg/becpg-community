@@ -52,23 +52,7 @@
                    */
                   onReady : function PTL_onReady() {
                 	  
-                	  
-                	  
-                      this.widgets.filter = Alfresco.util.createYUIButton(this, "filters", this.onFilterChange, {
-                          type : "menu",
-                          menu : "filters-menu",
-                          lazyloadmenu : false,
-                          zindex: 99
-                       });
-
-                      this.widgets.filter.getMenu().subscribe("beforeShow", function () {
-                      	this.cfg.setProperty("zindex", 99);
-                      });
-                      
-
-                      this.widgets.filter.set("label", this.msg("link.projects.inprogress")+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
-                      
-          
+       
                       // Detailed/Simple List button
                       
                       if(this.options.view == "dataTable"){
@@ -191,28 +175,7 @@
                 	  }
                      YAHOO.Bubbling.fire("simpleDetailedChanged", {simpleView :simpleView});
                   },
-
-                  onFilterChange : function PTL_onFilterChange(p_sType, p_aArgs) {
-                     var menuItem = p_aArgs[1];
-                     if (menuItem) {
-                    	 
-                    	var value = menuItem.value;
-                        var me = this
-
-                        me.widgets.filter.set("label", menuItem.cfg.getProperty("text")+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
-                    	 
-                        var filterObj =
-                              {
-                                 filterOwner: me.name,
-                                 filterId: value.split("|")[0],
-                                 filterData :  value.split("|")[1]
-                              };
-
-                        YAHOO.Bubbling.fire("changeFilter", filterObj);
-                     }
-                  },
-                  
-                  
+             
                   onGanttButtonClick : function PTL_onGanttButtonClick(e, p_obj) {
                      document.location.href = Alfresco.util
                            .siteURL("project-list?view=gantt"+window.location.hash);
