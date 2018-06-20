@@ -9,7 +9,7 @@
 <@markup id="js">
    <#include "../form/form.js.ftl"/>
 	<@script src="${url.context}/res/modules/entity-datagrid/entity-columnRenderer.js" group="project-list" />
-	<@script src="${url.context}/res/modules/custom-entity-datagrid/custom-columnRenderer.js" group="project-list" />
+	<@script src="${url.context}/res/modules/custom-entity-datagrid/custom-columnRenderers.js" group="project-list" />
 
 	<@script src="${url.context}/res/components/project/columnRenderers.js" group="project-list" />
 	<@script src="${url.context}/res/modules/entity-datagrid/entity-actions.js" group="project-list" />
@@ -49,13 +49,18 @@
 		<div id="toolbar-contribs-${el}" style="display:none;">
 			<@dataGridToolbar  toolbarId=el />
 		</div>
+	
 		
 		<div id="${el}-body" class="project-list datagrid">
 		    <div class="yui-gf project-list-bar datagrid-bar  flat-button">
 		      <div class="yui-u first">
-		         <h2 id="${el}-filterTitle" class="thin">
+		      		 
+		      
+		        
+		        <h2 id="${el}-filterTitle" class="thin">
 		            &nbsp;
-		         </h2>
+		        </h2>
+		       
 		       </div> 
 			    <div class="yui-u">
 			         <div id="${el}-legend" class="legend">&nbsp;</div>

@@ -36,6 +36,8 @@ var g; // gantt var
          * Decoupled event listeners
          */
         YAHOO.Bubbling.on("filterChanged", this.onFilterChanged, this);
+        YAHOO.Bubbling.on("simpleDetailedChanged", this.onSimpleDetailed, this);
+        
 
         if (view == "resources")
         {
@@ -194,6 +196,12 @@ var g; // gantt var
                                                 {
                                                     this.initResources();
                                                 }
+                                                
+                                                if(this.view == "dataTable"){
+	                                           		 if(this.options.simpleView){
+	                                           			 this.options.columnFormId = "datagrid-simple";
+	                                           		 } 
+                                           	 	}
 
                                                 this.initDataTable();
 
@@ -375,6 +383,7 @@ var g; // gantt var
                             this.extraAfterDataGridUpdate.push(fnDrawGantt);
 
                         },
+                        
 
                         initResources : function PL_initResources()
                         {
@@ -480,6 +489,22 @@ var g; // gantt var
                             }
 
                         },
+                        
+
+                        onSimpleDetailed : function PL_onSimpleDetailed(layer, args) {
+                        	 var simpleViewMode = Alfresco.util.cleanBubblingObject(args[1]);
+                        	 
+                        	 if(this.view == "dataTable"){
+                        		 if(simpleViewMode.simpleView){
+                        			 this.options.columnFormId = "datagrid-simple";
+                        		 } else {
+                        			 this.options.columnFormId = null;
+                        		 }
+                        		 
+                        		 YAHOO.Bubbling.fire("activeDataListChanged");
+                        	 }
+                        	 
+                         },
 
                         /**
                          * Data Item created event handler
