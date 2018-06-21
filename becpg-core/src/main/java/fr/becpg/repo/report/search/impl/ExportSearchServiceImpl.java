@@ -6,8 +6,6 @@ package fr.becpg.repo.report.search.impl;
 import java.io.OutputStream;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.alfresco.repo.download.DownloadStorage;
 import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.service.cmr.repository.NodeRef;
