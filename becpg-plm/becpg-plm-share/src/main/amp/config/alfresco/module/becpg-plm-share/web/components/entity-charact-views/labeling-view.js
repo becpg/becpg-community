@@ -64,7 +64,7 @@
                 {
                     args[1].stop = true;
                     var fieldId  = owner.id;
-                    me[owner.className].call(me, fieldId, "bcpg_illValue");
+                    me[owner.className].call(me, fieldId);
                 }
             }
             return true;
@@ -161,8 +161,6 @@
               width: "33em"
            }).show();
             
-
-			
 		},
 		
 		onCopyToClipboard : function(fieldId) {
