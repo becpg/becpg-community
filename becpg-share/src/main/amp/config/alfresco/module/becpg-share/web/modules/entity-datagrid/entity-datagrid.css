@@ -475,6 +475,27 @@ div.filterButtonsBar {
 
 /** Groupped dataTable **/
 
+
+.datagrid div.onCollapsedAndExpanded {
+	display: inline-block;
+}
+
+.datagrid  span.gicon {
+	height: 15px;
+	width: 18px;
+    padding-right: 25px;
+}
+
+.datagrid  span.ggroup-expanded {
+	background-image: url("./images/dt-group-arrow-down.png");
+	background-repeat: no-repeat;
+}
+
+.datagrid  span.ggroup-collapsed {
+	background-image: url("./images/dt-group-arrow-up.png");
+	background-repeat: no-repeat;
+}
+
 /* The group cell */
 .datagrid  .group {
 	border-top: 1px solid #CBCBCB;

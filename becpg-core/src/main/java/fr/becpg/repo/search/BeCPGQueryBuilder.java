@@ -178,11 +178,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	public BeCPGQueryBuilder ofType(QName typeQname) {
-		if ((this.type != null) && !type.equals(typeQname)) {
-			logger.warn("Type is already set for this query.( old:" + type + " -  new: " + typeQname + ")");
-		}
 		this.type = typeQname;
-
 		return this;
 	}
 
@@ -1117,7 +1113,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 					+ "and alf_node.type_qname_id=(select id from alf_qname " + "where ns_id=(select id from alf_namespace where uri='"
 					+ dataTypeQName.getNamespaceURI() + "') " + "and local_name='" + type.getLocalName() + "') "
 					+ "and id in (select child_node_id from alf_child_assoc where " + "parent_node_id = (select id from alf_node where uuid='"
-					+ parentNodeRef.getId() + "')) ";
+					+ parentNodeRef.getId() + "' and store_id=(select id from alf_store where protocol='workspace' and identifier='SpacesStore') )) ";
 
 			sql += sortOrderSql;
 
@@ -1138,7 +1134,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 					}
 				}
 			} catch (SQLException e) {
-				logger.error(e, e);
+				logger.error("Error running : "+sql, e);
 			}
 
 		}
