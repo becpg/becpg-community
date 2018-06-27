@@ -426,10 +426,11 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 							ingLabelingElt.addAttribute(ATTR_LANGUAGE, locale.getDisplayLanguage());
 							ingLabelingElt.addAttribute(ATTR_LANGUAGE_CODE, locale.toString());
 							addCDATA(ingLabelingElt, PLMModel.ASSOC_ILL_GRP, grpName, null);
-							addCDATA(ingLabelingElt, PLMModel.PROP_ILL_VALUE,
-									dataItem.getValue() != null ? dataItem.getValue().getValue(locale) : VALUE_NULL, null);
-							addCDATA(ingLabelingElt, PLMModel.PROP_ILL_MANUAL_VALUE,
-									dataItem.getManualValue() != null ? dataItem.getManualValue().getValue(locale) : VALUE_NULL, null);
+							//#4510
+							Element cDATAElt = ingLabelingElt.addElement(PLMModel.PROP_ILL_VALUE.getLocalName());
+                            cDATAElt.addCDATA(dataItem.getValue() != null ? dataItem.getValue().getValue(locale) : VALUE_NULL);
+                            ingLabelingElt.addElement(PLMModel.PROP_ILL_MANUAL_VALUE.getLocalName());
+                            cDATAElt.addCDATA(dataItem.getManualValue() != null ? dataItem.getManualValue().getValue(locale) : VALUE_NULL);
 
 							if (logger.isDebugEnabled()) {
 								logger.debug("ingLabelingElt: " + ingLabelingElt.asXML());
