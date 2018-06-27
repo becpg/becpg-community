@@ -65,6 +65,9 @@ function getFormConfig(itemId, formId, mode) {
 		if (formsConfig !== null) {
 			if (formId !== null && formId.length > 0) {
 				// look up the specific form
+				if(formsConfig.getForm(formId + prefixedSiteId) !== null){
+					formId += prefixedSiteId;
+				}
 				formConfig = formsConfig.getForm(formId);
 			}
 
@@ -191,7 +194,7 @@ function createPostBody(itemKind, itemId, visibleFields, formConfig, mode) {
  * @method main
  */
 function main() {
-	var itemType = getArgument("itemType"), list = getArgument("list"), formId = getArgument("formId"),mode = getArgument("mode"), clearCache = getArgument("clearCache");// beCPG
+	var itemType = getArgument("itemType"), list = getArgument("list"), formId = getArgument("formId"),mode = getArgument("mode"), clearCache = getArgument("clearCache"), siteId = getArgument("siteId");// beCPG
 	
 	cache.maxAge = 3600; // in seconds
 	
@@ -199,8 +202,10 @@ function main() {
 		cache.maxAge = 0;
 	}
 	
+	prefixedSiteId = siteId ? "-" + siteId : "";
+	
 	prefs = "fr.becpg.formulation.dashlet.custom.datagrid-prefs"+"."+itemType.replace(":","_");
-
+	
 	// pass form ui model to FTL
 	model.columns = getColumns(itemType, list, formId, mode);
 	
