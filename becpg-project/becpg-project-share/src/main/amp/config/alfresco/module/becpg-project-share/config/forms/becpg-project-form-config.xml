@@ -415,6 +415,40 @@
 						label-id="becpg.forms.field.projects.datagrid.projectStartDate.label" />
 				</appearance>
 			</form>
+			
+			<form id="datagrid-supplier-portal">
+				<field-visibility>
+					<show id="bcpg:code" />
+					<show id="cm:name" />
+					<show id="pjt:projectOverdue" />
+					<show id="pjt:projectHierarchy1" />
+					<show id="pjt:projectHierarchy2" />
+				    <!-- <show id="pjt:projectPriority" /> -->
+					<show id="pjt:completionPercent" />
+					<show id="pjt:projectManager" />
+					<show id="dataList_pjt:taskList" />
+					<show id="dataList_bcpg:activityList" />
+					<!-- <show id="dataList_pjt:deliverableList" /> -->
+					
+					<show id="pjt:projectEntity" />
+					<show id="pjt:projectStartDate" />
+					<show id="pjt:projectCompletionDate" />
+					<show id="pjt:projectDueDate" />
+					<show id="pjt:projectState" />
+				</field-visibility>
+				<appearance>
+					<!-- <field id="dataList_pjt:deliverableList" label-id="becpg.forms.field.projects.datagrid.deliverableList.label" 
+						/> -->
+					<field id="dataList_pjt:taskList"
+						label-id="becpg.forms.field.projects.datagrid.taskList.label" />
+					<field id="dataList_bcpg:activityList"
+						label-id="becpg.forms.field.projects.datagrid.activityList.label" />
+					<field id="pjt:projectStartDate"
+						label-id="becpg.forms.field.projects.datagrid.projectStartDate.label" />
+				</appearance>
+
+			</form>
+			
 			<form id="export">
 				<field-visibility>
 					<show id="cm:name" />
