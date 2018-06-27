@@ -46,6 +46,10 @@ public class MultiLevelExtractor extends SimpleExtractor {
 
 	public static final String PROP_DEPTH = "depth";
 
+	public static final String PROP_LEAF = "isLeaf";
+
+	public static final String PROP_OPEN = "open";
+
 	public static final String PROP_ENTITYNODEREF = "entityNodeRef";
 
 	public static final String PROP_REVERSE_ASSOC = "reverseAssoc";
@@ -55,6 +59,8 @@ public class MultiLevelExtractor extends SimpleExtractor {
 	private static final String PREF_DEPTH_PREFIX = "fr.becpg.MultiLevelExtractor.";
 
 	public static final String PROP_IS_MULTI_LEVEL = "isMultiLevel";
+
+	public static final String PROP_DISABLE_TREE = "disableTree";
 
 	MultiLevelDataListService multiLevelDataListService;
 
@@ -107,9 +113,9 @@ public class MultiLevelExtractor extends SimpleExtractor {
 		PaginatedExtractedItems ret = new PaginatedExtractedItems(pageSize);
 
 		MultiLevelListData listData = paginatedSearchCache.getSearchMultiLevelResults(dataListFilter.getPagination().getQueryExecutionId());
-		if(listData==null){
-			 listData = getMultiLevelListData(dataListFilter);
-			 dataListFilter.getPagination().setQueryExecutionId(paginatedSearchCache.storeMultiLevelSearchResults(listData));
+		if (listData == null) {
+			listData = multiLevelDataListService.getMultiLevelListData(dataListFilter, true);
+			dataListFilter.getPagination().setQueryExecutionId(paginatedSearchCache.storeMultiLevelSearchResults(listData));
 		}
 
 		Map<String, Object> props = new HashMap<>();
@@ -121,10 +127,6 @@ public class MultiLevelExtractor extends SimpleExtractor {
 		return ret;
 	}
 
-	protected MultiLevelListData getMultiLevelListData(DataListFilter dataListFilter) {
-		return multiLevelDataListService.getMultiLevelListData(dataListFilter);
-	}
-
 	protected int appendNextLevel(PaginatedExtractedItems ret, List<String> metadataFields, MultiLevelListData listData, int currIndex,
 			int startIndex, int pageSize, Map<String, Object> props, DataListFilter dataListFilter) {
 
@@ -134,26 +136,40 @@ public class MultiLevelExtractor extends SimpleExtractor {
 
 		for (Entry<NodeRef, MultiLevelListData> entry : listData.getTree().entrySet()) {
 			NodeRef nodeRef = entry.getKey();
+			NodeRef entityNodeRef = entry.getValue().getEntityNodeRef();
 			props.put(PROP_DEPTH, entry.getValue().getDepth());
-			props.put(PROP_ENTITYNODEREF, entry.getValue().getEntityNodeRef());
+			props.put(PROP_ENTITYNODEREF, entityNodeRef);
 			props.put(PROP_PATH, curPath + "/" + entry.getKey().getId());
 
 			if ((currIndex >= startIndex) && (currIndex < (startIndex + pageSize))) {
-				
+
 				QName itemType = nodeService.getType(nodeRef);
-				
-				if(!itemType.equals(dataListFilter.getDataType())){
+
+				if (!props.containsKey(PROP_DISABLE_TREE)) {
+					props.put(PROP_OPEN, false);
+					props.put(PROP_LEAF, false);
+
+					if (entry.getValue().isLeaf()) {
+						props.put(PROP_LEAF, true);
+					} else if (multiLevelDataListService.isExpandedNode(nodeRef, (!entry.getValue().getTree().isEmpty()
+							|| (dataListFilter.getMaxDepth() < 0) || (entry.getValue().getDepth() < dataListFilter.getMaxDepth())))) {
+						props.put(PROP_OPEN, true);
+					}
+				}
+
+				if (!itemType.equals(dataListFilter.getDataType())) {
 					props.put(PROP_ACCESSRIGHT, false);
 				} else {
 					props.put(PROP_ACCESSRIGHT, true);// TODO
 				}
-				
+
 				if (ret.getComputedFields() == null) {
 					ret.setComputedFields(attributeExtractorService.readExtractStructure(dataListFilter.getDataType(), metadataFields));
 				}
 
 				if (RepoConsts.FORMAT_CSV.equals(dataListFilter.getFormat()) || RepoConsts.FORMAT_XLSX.equals(dataListFilter.getFormat())) {
-					ret.addItem(extractExport(RepoConsts.FORMAT_XLSX.equals(dataListFilter.getFormat()) ? AttributeExtractorMode.XLSX : AttributeExtractorMode.CSV,
+					ret.addItem(extractExport(
+							RepoConsts.FORMAT_XLSX.equals(dataListFilter.getFormat()) ? AttributeExtractorMode.XLSX : AttributeExtractorMode.CSV,
 							nodeRef, ret.getComputedFields(), props, cache));
 				} else {
 					ret.addItem(extractJSON(nodeRef, ret.getComputedFields(), props, cache));
@@ -186,6 +202,14 @@ public class MultiLevelExtractor extends SimpleExtractor {
 				depth.put("displayValue", value);
 
 				tmp.put("prop_bcpg_depthLevel", depth);
+			}
+
+			if (extraProps.get(PROP_LEAF) != null) {
+				tmp.put(PROP_LEAF, extraProps.get(PROP_LEAF));
+			}
+
+			if (extraProps.get(PROP_OPEN) != null) {
+				tmp.put(PROP_OPEN, extraProps.get(PROP_OPEN));
 			}
 
 			if (extraProps.get(PROP_ROOT_ENTITYNODEREF) != null) {
@@ -234,8 +258,10 @@ public class MultiLevelExtractor extends SimpleExtractor {
 	public boolean applyTo(DataListFilter dataListFilter) {
 		return !dataListFilter.isSimpleItem() && (dataListFilter.getDataType() != null)
 				&& entityDictionaryService.isMultiLevelDataList(dataListFilter.getDataType())
-				&& !dataListFilter.getDataListName().startsWith(RepoConsts.WUSED_PREFIX) 
-				&& !dataListFilter.getDataListName().equals("projectList") //TODO should be better
+				&& !dataListFilter.getDataListName().startsWith(RepoConsts.WUSED_PREFIX) && !dataListFilter.getDataListName().equals("projectList") // TODO
+																																					// should
+																																					// be
+																																					// better
 				&& !dataListFilter.isVersionFilter();
 	}
 
