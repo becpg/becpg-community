@@ -114,17 +114,19 @@
 	</bean>
 
 
-
 	<bean id="webscript.fr.becpg.entity.datalist.sort.post" class="fr.becpg.repo.web.scripts.entity.datalist.SortDataListWebScript" parent="webscript">
 		<property name="nodeService" ref="NodeService" />
 		<property name="dataListSortService" ref="dataListSortService" />
+	</bean>
+		
+	<bean id="webscript.fr.becpg.entity.datalist.openclose.post" class="fr.becpg.repo.web.scripts.entity.datalist.MultiLevelDataListWebscript" parent="webscript">
+		<property name="multiLevelDataListService" ref="multiLevelDataListService" />
 	</bean>
 	
 	<bean id="webscript.fr.becpg.entity.datalist.copy.post" class="fr.becpg.repo.web.scripts.entity.datalist.CopyDataListWebScript" parent="webscript">
 		<property name="entityListDAO" ref="entityListDAO" />
 	</bean>
 	
-
 
 	<!-- Entity report -->
 	<bean id="webscript.fr.becpg.entity.entityReport.get" class="fr.becpg.repo.web.scripts.entity.ReportWebScript" parent="webscript">

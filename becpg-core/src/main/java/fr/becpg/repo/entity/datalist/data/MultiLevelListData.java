@@ -36,6 +36,7 @@ public class MultiLevelListData {
 	
 	private final List<NodeRef> entityNodeRefs;
 
+	private boolean isLeaf = false;
 	
 	public MultiLevelListData(List<NodeRef> entityNodeRefs,int depth ) {
 		super();
@@ -63,7 +64,6 @@ public class MultiLevelListData {
 	}
 
 	
-
 	public List<NodeRef> getEntityNodeRefs() {
 		return entityNodeRefs;
 	}
@@ -72,8 +72,13 @@ public class MultiLevelListData {
 		return getSize(this,0);
 	}
 	
+	
 	public boolean isLeaf() {
-		return tree.isEmpty();
+		return isLeaf;
+	}
+
+	public void setLeaf(boolean isLeaf) {
+		this.isLeaf = isLeaf;
 	}
 
 	private int getSize(MultiLevelListData multiLevelListData, int currSize) {
@@ -98,7 +103,7 @@ public class MultiLevelListData {
 		List<NodeRef> ret = new ArrayList<>();
 		
 		for (Entry<NodeRef, MultiLevelListData> entry : getTree().entrySet()) {
-			if(entry.getValue().isLeaf()) {
+			if(entry.getValue().tree.isEmpty()) {
 				ret.add(entry.getValue().getEntityNodeRef());
 			}
 			ret.addAll(entry.getValue().getAllLeafs());

@@ -26,7 +26,13 @@ if (beCPG.module.EntityDataGridRenderers) {
 		renderer : function(oRecord, data, label, scope, z, zz, elCell, oColumn) {
 
 			var url = beCPG.util.entityURL(data.siteId, data.value), version = "";
+			var toogleGroupButton = null;
+			var padding = 0;
 
+			if (oRecord.getData("itemData")["prop_bcpg_depthLevel"] && oRecord.getData("itemData")["prop_bcpg_depthLevel"].value) {
+				 padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 25;
+			}
+			
 			if (label == "mpm:plProduct" || label == "bcpg:compoListProduct" || label == "bcpg:packagingListProduct" || label == "mpm:plResource") {
 				// datalist
 				if (data.metadata.indexOf("finishedProduct") != -1 || data.metadata.indexOf("semiFinishedProduct") != -1) {
@@ -42,6 +48,14 @@ if (beCPG.module.EntityDataGridRenderers) {
 				if(url!=null){
 					url+="&bcPath=true&bcList="+scope.datalistMeta.name;
 				}
+				
+				if(false === oRecord.getData("itemData")["isLeaf"]){
+					toogleGroupButton = '<div id="group_'+( oRecord.getData("itemData")["open"]?"expanded":"collapsed")+'_'+ oRecord.getData("nodeRef")+'" style="margin-left:' + padding
+							+ 'px;" class="onCollapsedAndExpanded" ><a href="#" class="'+scope.id + '-action-link"><span class="gicon ggroup-'
+							+( oRecord.getData("itemData")["open"]?"expanded":"collapsed")+'"></span></a></div>';
+				} else if( true === oRecord.getData("itemData")["isLeaf"] ){
+					padding +=25;
+				}
 			}
 			
 			if(label == "mpm:rplResourceRef"){
@@ -50,15 +64,11 @@ if (beCPG.module.EntityDataGridRenderers) {
                     Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
                 }
 			}
-
-			if (oRecord.getData("itemData")["prop_bcpg_depthLevel"] && oRecord.getData("itemData")["prop_bcpg_depthLevel"].value) {
-				var padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 25;
-				return '<span class="' + data.metadata + '" style="margin-left:' + padding + 'px;">'+(url!=null?'<a href="' + url + '">':'') 
+			
+			return (toogleGroupButton!=null ? toogleGroupButton : '')+'<span class="' + data.metadata + '" '+(toogleGroupButton==null && padding!=0 ?'style="margin-left:' + padding + 'px;"':'')+'>'
+						+(url!=null?'<a href="' + url + '">':'') 
 						+ Alfresco.util.encodeHTML(data.displayValue) + (url!=null?'</a>':'')+'</span>' + version;
-			}
-
-			return '<span class="' + data.metadata + '" >'+(url!=null?'<a href="' + url + '">':'') + Alfresco.util.encodeHTML(data.displayValue) + (url!=null?'</a>':'')+'</span>'
-					+ version;
+			
 		}
 
 	});
