@@ -17,13 +17,16 @@
  ******************************************************************************/
 package fr.becpg.repo.entity.datalist;
 
+import org.alfresco.service.cmr.repository.NodeRef;
+
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 
 public interface MultiLevelDataListService {
-
-	
 	MultiLevelListData getMultiLevelListData(DataListFilter dataListFilter);
-
+	MultiLevelListData getMultiLevelListData(DataListFilter dataListFilter, boolean useExpandedCache);
+	void expandOrColapseNode(NodeRef nodeToExpand, boolean expand);
+	boolean isExpandedNode(NodeRef entityFolder, boolean condition);
+	
 	
 }

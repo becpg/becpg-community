@@ -96,7 +96,9 @@ public class WUsedExtractor extends MultiLevelExtractor {
 
 		props.put(PROP_ACCESSRIGHT, true); // TODO
 		props.put(PROP_REVERSE_ASSOC, assocName);
-
+        props.put(PROP_DISABLE_TREE, true);
+		
+		
 		int pageSize = dataListFilter.getPagination().getPageSize();
 		int startIndex = (dataListFilter.getPagination().getPage() - 1) * dataListFilter.getPagination().getPageSize();
 		

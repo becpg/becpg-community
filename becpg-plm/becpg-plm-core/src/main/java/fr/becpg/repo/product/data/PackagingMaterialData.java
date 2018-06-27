@@ -19,9 +19,11 @@ package fr.becpg.repo.product.data;
 
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.annotation.MultiLevelLeaf;
 
 @AlfType
 @AlfQname(qname = "bcpg:packagingMaterial")
+@MultiLevelLeaf
 public class PackagingMaterialData extends ProductData   {
 
 	/**

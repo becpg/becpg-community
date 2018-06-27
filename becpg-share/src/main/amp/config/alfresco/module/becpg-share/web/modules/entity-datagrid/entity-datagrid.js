@@ -707,7 +707,7 @@
                             };
                             Bubbling.addDefaultAction(me.id + "-action-link", fnActionHandler);
                             Bubbling.addDefaultAction(me.id + "-show-more", fnActionHandler);
-
+                            
                             // Hook filter change events
                             var fnChangeFilterHandler = function EntityDataGrid_fnChangeFilterHandler(layer, args)
                             {
@@ -1853,8 +1853,6 @@
                                                                             {
                                                                             	me.queryExecutionId = null;
                                                                             	
-                                                                                // Insert
-                                                                                // after
                                                                                 me._updateDataGrid.call(me,
                                                                                 {
                                                                                     page : me.currentPage
@@ -2158,6 +2156,32 @@
                                 this.deferredActionsMenu = null;
                             }
                         },
+                        
+                        onCollapsedAndExpanded : function EntityDataGrid_onCollapsedAndExpanded(layer, args){
+                        	
+                        	var nodeRef = args.id.split("_")[2], expand = "collapsed" === args.id.split("_")[1],
+                        		url = Alfresco.constants.PROXY_URI + "/becpg/entity/datalists/openclose?nodeRef=" +nodeRef+"&expand="+expand, me = this;
+                        	  Alfresco.util.Ajax
+	                              .jsonPost(
+	                              {
+	                                  url : url,
+	                                  successCallback :
+	                                  {
+	                                      fn : function EntityDataGrid_onCollapsedAndExpanded(
+	                                              response)
+	                                      {
+	                                      	me.queryExecutionId = null;
+	                                
+	                                         me._updateDataGrid.call(me,
+	                                          {
+	                                              page : me.currentPage
+	                                          });
+	                                      },
+	                                      scope : this
+	                                  }
+	                              });
+                        },
+                        
 
                         /**
                          * The urls to be used when creating links in the action
