@@ -202,7 +202,8 @@ public class EntityListDAOImpl implements EntityListDAO {
 					QName dataListTypeQName = QName.createQName(dataListType, namespaceService);
 
 					if ((BeCPGModel.TYPE_ENTITYLIST_ITEM.equals(dataListTypeQName)
-							|| dictionaryService.isSubClass(dataListTypeQName, BeCPGModel.TYPE_ENTITYLIST_ITEM))) {
+							|| dictionaryService.isSubClass(dataListTypeQName, BeCPGModel.TYPE_ENTITYLIST_ITEM)
+							|| ((String) nodeService.getProperty(listNodeRef, ContentModel.PROP_NAME)).startsWith(RepoConsts.WUSED_PREFIX) )) {
 
 						if (!hiddenListQnames.contains(dataListTypeQName)) {
 							existingLists.add(listNodeRef);
