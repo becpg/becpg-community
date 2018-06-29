@@ -20,6 +20,29 @@
 		});				
 
 		YAHOO.Bubbling.fire("registerDataGridRenderer", {
+			   propertyName : "cm:person_pjt:projectManager",
+			   renderer : function(oRecord, data, label, scope) { 
+
+                   if(scope.options.columnFormId != "datagrid-simple"){
+                	   var ret = "";
+                	   var resource = oRecord.getData("itemData")["assoc_pjt_projectManager"];
+	                   if (resource && resource[0]) {
+	                      ret += '<div class="project-manager avatar" title="' + resource[0].displayValue + '">';
+	                      ret += Alfresco.Share.userAvatar(resource[0].metadata, 32) +"&nbsp;" +Alfresco.util.userProfileLink(data.metadata, data.displayValue);
+	                      ret += "</div>";
+	                   }
+	                   return ret;
+                   } else {
+                	   return '<span class="person">' + Alfresco.util.userProfileLink(data.metadata, data.displayValue) + '</span>';
+                   }
+
+                 
+			   }
+			});
+
+
+		
+		YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		   propertyName : "cm:name",
 		   renderer : function(oRecord, data, label, scope) { 
 			   return scope.getProjectTitleV2(oRecord.getData(),scope.options.columnFormId != "datagrid-simple");

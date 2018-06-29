@@ -59,6 +59,15 @@ if (beCPG.module.EntityDataGridRenderers) {
       }
 
    });
+   
+   
+   YAHOO.Bubbling.fire("registerDataGridRenderer", {
+	   propertyName : "pjt:projectCurrentTasks",
+	   renderer : function(oRecord, data, label, scope, idx, length) {
+			  return '<span class="' + data.metadata + '"  >' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+	   }
+	});
+   
 
  YAHOO.Bubbling.fire("registerDataGridRenderer", {
       propertyName : [ "pjt:tlState", "pjt:dlState" ],
@@ -67,7 +76,7 @@ if (beCPG.module.EntityDataGridRenderers) {
       }
 
    });
-   
+ 
    
    YAHOO.Bubbling.fire("registerDataGridRenderer", {
 	      propertyName : "pjt:slScreening",
