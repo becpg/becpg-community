@@ -692,15 +692,15 @@
 							}
 							
 
-                                                    // Selected Items menu button
-                                                    this.widgets.selectedItems = Alfresco.util.createYUIButton(this, "selectedItems-button",
-                                                            this.onSelectedItems,
-                                                            {
-                                                                type : "menu",
-                                                                menu : "selectedItems-menu",
-                                                                lazyloadmenu : false,
-                                                                disabled : true
-                                                            });
+                            // Selected Items menu button
+                            this.widgets.selectedItems = Alfresco.util.createYUIButton(this, "selectedItems-button",
+                                    this.onSelectedItems,
+                                    {
+                                        type : "menu",
+                                        menu : "selectedItems-menu",
+                                        lazyloadmenu : false,
+                                        disabled : true
+                                    });
 
 
 							// Hook action events
@@ -1659,7 +1659,7 @@
 			       							submitType : "json",
 			       							submissionUrl : encodeURIComponent("/becpg/bulkedit/type/" + this.options.itemType.replace(":", "_")
 			       									+ "/bulksave?nodeRefs=" + submissionParams+"&allPages="+this.allPages+"&queryExecutionId="+this.queryExecutionId),
-			       									fields : encodeURIComponent(displayFields)
+			       							fields : encodeURIComponent(displayFields)
 			       						});
 			       				
 			       				// Using Forms Service, so always create new

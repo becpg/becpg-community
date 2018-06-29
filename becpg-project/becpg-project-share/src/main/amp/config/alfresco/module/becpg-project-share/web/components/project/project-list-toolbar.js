@@ -9,6 +9,7 @@
     * YUI Library aliases
     */
    var Dom = YAHOO.util.Dom, Selector = YAHOO.util.Selector;
+   
 
    /**
     * ProjectListToolbar constructor.
@@ -22,6 +23,10 @@
 
       beCPG.component.ProjectListToolbar.superclass.constructor.call(this, "beCPG.component.ProjectListToolbar",
             htmlId, [ "button" ]);
+      
+      // Preferences service
+      this.services.preferences = new Alfresco.service.Preferences();
+      
       return this;
    };
 
@@ -33,7 +38,10 @@
 
                   options : {
                      view : "dataTable",
-                     siteId : ""
+                     siteId : "",
+                     filters : [],
+                     simpleView : 0,
+                     prefsId: null
                   },
 
                   /**
@@ -43,6 +51,19 @@
                    * @method onReady
                    */
                   onReady : function PTL_onReady() {
+                	  
+       
+                      // Detailed/Simple List button
+                      
+                      if(this.options.view == "dataTable"){
+	                      this.widgets.simpleDetailed = new YAHOO.widget.ButtonGroup(this.id + "-simpleDetailed");
+	                      if (this.widgets.simpleDetailed !== null) {
+	                         this.widgets.simpleDetailed.check(this.options.simpleView ? 0 : 1);
+	                         this.widgets.simpleDetailed.on("checkedButtonChange", this.onSimpleDetailed,
+	                           this.widgets.simpleDetailed, this);
+	                      }
+                      }
+                	  
 
                      this.widgets.showGanttButton = Alfresco.util.createYUIButton(this, "show-gantt-button",
                            this.onGanttButtonClick);
@@ -50,7 +71,6 @@
                            this.onPlanningButtonClick);
                      this.widgets.showResourcesButton = Alfresco.util.createYUIButton(this, "show-resources-button",
                              this.onResourcesButtonClick);
-                     
                      this.widgets.exportProjectList = Alfresco.util.createYUIButton(this, "export-csv-button",
                            this.onExportProjectList);
 
@@ -139,6 +159,23 @@
                      }
                   },
 
+                  /**
+                   * Show/Hide detailed list buttongroup click handler
+                   * 
+                   * @method onSimpleDetailed
+                   * @param e
+                   *            {object} DomEvent
+                   * @param p_obj
+                   *            {object} Object passed back from addListener method
+                   */
+                  onSimpleDetailed : function PTL_onSimpleDetailed(e, p_obj) {
+                	  var simpleView = (e.newValue.index === 0);
+                	  if(this.options.prefsId){
+                		  this.services.preferences.set(this.options.prefsId+".simpleView", simpleView);
+                	  }
+                     YAHOO.Bubbling.fire("simpleDetailedChanged", {simpleView :simpleView});
+                  },
+             
                   onGanttButtonClick : function PTL_onGanttButtonClick(e, p_obj) {
                      document.location.href = Alfresco.util
                            .siteURL("project-list?view=gantt"+window.location.hash);

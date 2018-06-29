@@ -20,23 +20,32 @@
 		});				
 
 		YAHOO.Bubbling.fire("registerDataGridRenderer", {
+			   propertyName : "cm:person_pjt:projectManager",
+			   renderer : function(oRecord, data, label, scope) { 
+
+                   if(scope.options.columnFormId != "datagrid-simple"){
+                	   var ret = "";
+                	   var resource = oRecord.getData("itemData")["assoc_pjt_projectManager"];
+	                   if (resource && resource[0]) {
+	                      ret += '<div class="project-manager avatar" title="' + resource[0].displayValue + '">';
+	                      ret += Alfresco.Share.userAvatar(resource[0].metadata, 32) +"&nbsp;" +Alfresco.util.userProfileLink(data.metadata, data.displayValue);
+	                      ret += "</div>";
+	                   }
+	                   return ret;
+                   } else {
+                	   return '<span class="person">' + Alfresco.util.userProfileLink(data.metadata, data.displayValue) + '</span>';
+                   }
+
+                 
+			   }
+			});
+
+
+		
+		YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		   propertyName : "cm:name",
 		   renderer : function(oRecord, data, label, scope) { 
-               var dates = scope.extractDates(oRecord.getData()), end = dates.due;
-               var  dateLine = (dates.start ? Alfresco.util.formatDate(dates.start, "longDate") : scope
-                     .msg("label.none"));
-
-               if (dates.end != null) {
-                  end = dates.end;
-               }
-               dateLine += " - ";
-               
-               dateLine += (dates.start ? Alfresco.util.formatDate(end, "longDate") : scope
-                     .msg("label.none"));
-			   
-               var desc = scope.getProjectTitle(oRecord.getData());
-			   desc += '<span class="project-date">[ ' + dateLine + ' ]</span>';
-			   return desc;
+			   return scope.getProjectTitleV2(oRecord.getData(),scope.options.columnFormId != "datagrid-simple");
 
 		   }
 		});
@@ -138,7 +147,7 @@
 				   end = dates.end;
 			   }
 
-			   desc += '<br/><span class="' + (dates.end != null ? "end" : "due") + '">'
+			   desc += '&nbsp;-&nbsp;<span class="' + (dates.end != null ? "end" : "due") + '">'
 			         + (end != null ? Alfresco.util.formatDate(end, "shortDate") : scope.msg("label.none")) + "</span>";
 
 			   return desc;

@@ -36,6 +36,8 @@ var g; // gantt var
          * Decoupled event listeners
          */
         YAHOO.Bubbling.on("filterChanged", this.onFilterChanged, this);
+        YAHOO.Bubbling.on("simpleDetailedChanged", this.onSimpleDetailed, this);
+        
 
         if (view == "resources")
         {
@@ -135,6 +137,22 @@ var g; // gantt var
                         onReady : function PL_onReady()
                         {
 
+
+                            this.widgets.filter = Alfresco.util.createYUIButton(this, "filters", this.onMenuFilterChanged, {
+                                type : "menu",
+                                menu : "filters-menu",
+                                lazyloadmenu : false,
+                                zindex: 99
+                             });
+
+                            this.widgets.filter.getMenu().subscribe("beforeShow", function () {
+                            	this.cfg.setProperty("zindex", 99);
+                            });
+                            
+
+                            this.widgets.filter.set("label", this.msg("filter.projects.InProgress")+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
+                            
+                        	
                             JSGantt.register(this);
 
                             var url = Alfresco.constants.PROXY_URI + "becpg/project/info" + (this.options.siteId != null && this.options.siteId.length > 0 ? "?site=" + this.options.siteId
@@ -194,6 +212,12 @@ var g; // gantt var
                                                 {
                                                     this.initResources();
                                                 }
+                                                
+                                                if(this.view == "dataTable"){
+	                                           		 if(this.options.simpleView){
+	                                           			 this.options.columnFormId = "datagrid-simple";
+	                                           		 } 
+                                           	 	}
 
                                                 this.initDataTable();
 
@@ -375,6 +399,7 @@ var g; // gantt var
                             this.extraAfterDataGridUpdate.push(fnDrawGantt);
 
                         },
+                        
 
                         initResources : function PL_initResources()
                         {
@@ -464,22 +489,66 @@ var g; // gantt var
                             var filter = Alfresco.util.cleanBubblingObject(args[1]);
                             if (filter.filterId == "filterform")
                             {
-                                Dom.get(this.id + "-filterTitle").innerHTML = $html(this
-                                        .msg("filter." + filter.filterId));
+                            	this.widgets.filter.set("label", $html(this
+                                        .msg("filter." + filter.filterId))+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
+                            	
                             }
                             else if (filter.filterId == "tag")
                             {
-                                Dom.get(this.id + "-filterTitle").innerHTML = $html(this.msg(
-                                        "filter." + filter.filterId, filter.filterData));
+                            	this.widgets.filter.set("label", $html(this.msg(
+                                        "filter." + filter.filterId, filter.filterData))+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
+                            	
                             }
                             else
                             {
-                                Dom.get(this.id + "-filterTitle").innerHTML = $html(this
+                            	this.widgets.filter.set("label", $html(this
                                         .msg("filter." + filter.filterId + (filter.filterData ? "." + filter.filterData
-                                                : ""), filter.filterData));
+                                                : ""), filter.filterData))+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
+                            	
                             }
 
                         },
+                        
+                        
+
+                        onMenuFilterChanged : function PTL_onFilterChange(p_sType, p_aArgs) {
+                           var menuItem = p_aArgs[1];
+                           if (menuItem) {
+                          	 
+                          	var value = menuItem.value;
+                              var me = this
+
+                              me.widgets.filter.set("label", menuItem.cfg.getProperty("text")+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
+                          	 
+                              var filterObj =
+                                    {
+                                       filterOwner: me.name,
+                                       filterId: value.split("|")[0],
+                                       filterData :  value.split("|")[1]
+                                    };
+
+                              YAHOO.Bubbling.fire("changeFilter", filterObj);
+                           }
+                        },
+                        
+                        
+
+                        onSimpleDetailed : function PL_onSimpleDetailed(layer, args) {
+                        	 var simpleViewMode = Alfresco.util.cleanBubblingObject(args[1]);
+                        	 
+                        	 if(this.view == "dataTable"){
+                        		 if(simpleViewMode.simpleView){
+                        			 this.options.simpleView = true;
+                        			 this.options.columnFormId = "datagrid-simple";
+                        		 } else {
+                        			 this.options.simpleView = false;
+                        			 this.options.columnFormId = null;
+                        		 }
+                        		 
+                        		 this.populateDataGrid();
+                        	 }
+                        	 
+                         },
 
                         /**
                          * Data Item created event handler
