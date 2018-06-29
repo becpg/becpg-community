@@ -92,6 +92,13 @@ td.ggtaskCheckbox {
 }
 
 
+.projects span.project-title {
+	background-image: url("../images/filetypes/generic-project-16.png");
+	background-repeat: no-repeat;
+	padding-left: 16px;
+}
+
+
 .projects  span.task-title {
 	display: inline-block;
 }
@@ -242,10 +249,6 @@ div.scroll {
 	background-repeat: no-repeat;
 }
 
-.projects .ggroup-project {
-	background-image: url("../images/filetypes/generic-project-16.png");
-	background-repeat: no-repeat;
-}
 
 .projects div.milestone {
 	-ms-transform: rotate(45deg); 
