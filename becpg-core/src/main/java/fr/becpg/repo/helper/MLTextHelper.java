@@ -92,7 +92,7 @@ public class MLTextHelper {
 	}
 
 	public static Locale getNearestLocale(Locale locale) {
-		return getNearestLocale(Locale.getDefault(),new HashSet<>(getSupportedLocales()));
+		return getNearestLocale(locale,new HashSet<>(getSupportedLocales()));
 	}
 
 
