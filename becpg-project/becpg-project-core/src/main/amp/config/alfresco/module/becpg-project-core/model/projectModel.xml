@@ -921,7 +921,7 @@
 				<association name="pjt:subProjectRef">
 						<source>
 							<mandatory>true</mandatory>
-							<many>true</many>
+							<many>false</many>
 						</source>
 						<target>
 							<class>pjt:project</class>
@@ -929,9 +929,19 @@
 							<many>false</many>
 						</target>
 					</association>
+					<association name="pjt:parentProjectRef">
+						<source>
+							<mandatory>true</mandatory>
+							<many>true</many>
+						</source>
+						<target>
+							<class>pjt:project</class>
+							<mandatory>false</mandatory>
+							<many>false</many>
+						</target>
+				   </association>
 			</associations>
 		</aspect>
-
 
 		<aspect name="pjt:budgetAspect">
 			<properties>				

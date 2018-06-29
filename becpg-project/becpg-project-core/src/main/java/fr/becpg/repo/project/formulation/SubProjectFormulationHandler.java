@@ -1,19 +1,11 @@
 package fr.becpg.repo.project.formulation;
 
-import java.util.Iterator;
-import java.util.List;
-
-import org.alfresco.service.cmr.repository.NodeRef;
-
-import fr.becpg.model.ProjectModel;
-import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.formulation.FormulationService;
-import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.project.ProjectActivityService;
-import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.data.ProjectData;
+import fr.becpg.repo.project.data.ProjectState;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskManualDate;
 import fr.becpg.repo.project.data.projectList.TaskState;
@@ -61,7 +53,13 @@ public class SubProjectFormulationHandler extends FormulationBaseHandler<Project
 				task.setDuration(null);
 				task.setCompletionPercent(subProject.getCompletionPercent());
 				task.setTaskName(subProject.getName());				
-				TaskState subProjectState = subProject.getProjectState().toTaskState();
+				
+				ProjectState state = subProject.getProjectState();
+				if(state == null) {
+					state = ProjectState.Planned;
+				}
+				
+				TaskState subProjectState = state.toTaskState();
 				if (!subProjectState.equals(task.getTaskState())) {
 					ProjectHelper.setTaskState(task, subProjectState, projectActivityService);
 				}

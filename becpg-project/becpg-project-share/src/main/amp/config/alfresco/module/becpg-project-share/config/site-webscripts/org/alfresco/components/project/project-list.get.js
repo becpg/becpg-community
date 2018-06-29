@@ -1,12 +1,41 @@
 <import resource="classpath:alfresco/site-webscripts/org/alfresco/components/workflow/filter/filter.lib.js">
 <import resource="classpath:alfresco/site-webscripts/org/alfresco/modules/entity-datagrid/include/actions.lib.js">
+<import resource="classpath:/alfresco/templates/org/alfresco/import/alfresco-util.js">
+
+function getFiltersMenu()
+{
+   var myConfig = new XML(config.script),
+      filters = [];
+
+   for each (var xmlFilter in myConfig..filtermenu)
+   {
+      filters.push(
+      {
+         id: xmlFilter.@id.toString(),
+         data: xmlFilter.@data.toString()
+      });
+   }
+   return filters;
+}
+
+
 
 function main()
 {
+	var site = page.url.templateArgs.site;
+	var prefs = "org.alfresco.share.project.list";
+
+	if(site!=null && site.length>0){
+	   prefs+="."+site;
+	}
+
+   var preferences = AlfrescoUtil.getPreferences(prefs);
   
    parseActions();
    
    var filterParameters =  getFilterParameters();
+   model.filters = getFiltersMenu();
+	
 
    //Widget instantiation metadata...
    var projectList = {
@@ -19,7 +48,8 @@ function main()
        filterParameters : filterParameters,
        sortUrl :  page.url.context+"/proxy/alfresco/becpg/entity/datalists/sort/node",
        dataUrl : page.url.context+"/proxy/alfresco/becpg/entity/datalists/data/node",
-       itemUrl : page.url.context+"/proxy/alfresco/becpg/entity/datalists/item/node/"
+       itemUrl : page.url.context+"/proxy/alfresco/becpg/entity/datalists/item/node/",
+       simpleView : preferences.simpleView !=null ? preferences.simpleView : false
       }
    };
     

@@ -9,7 +9,7 @@
 <@markup id="js">
    <#include "../form/form.js.ftl"/>
 	<@script src="${url.context}/res/modules/entity-datagrid/entity-columnRenderer.js" group="project-list" />
-	<@script src="${url.context}/res/modules/custom-entity-datagrid/custom-columnRenderer.js" group="project-list" />
+	<@script src="${url.context}/res/modules/custom-entity-datagrid/custom-columnRenderers.js" group="project-list" />
 
 	<@script src="${url.context}/res/components/project/columnRenderers.js" group="project-list" />
 	<@script src="${url.context}/res/modules/entity-datagrid/entity-actions.js" group="project-list" />
@@ -49,13 +49,22 @@
 		<div id="toolbar-contribs-${el}" style="display:none;">
 			<@dataGridToolbar  toolbarId=el />
 		</div>
+	
 		
 		<div id="${el}-body" class="project-list datagrid">
 		    <div class="yui-gf project-list-bar datagrid-bar  flat-button">
 		      <div class="yui-u first">
-		         <h2 id="${el}-filterTitle" class="thin">
-		            &nbsp;
-		         </h2>
+		    	  <span class="yui-button yui-menu-button" id="${el}-filters">
+			            <span class="first-child">
+			               <button type="button" tabindex="0"></button>
+			            </span>
+			         </span>
+			      	 <select id="${el}-filters-menu">
+				         <#list filters as filter>
+				            <option value="${filter.id+"|"+filter.data}">${msg("filter."+filter.id+"."+filter.data)}</option>
+				         </#list>
+				      </select>	
+
 		       </div> 
 			    <div class="yui-u">
 			         <div id="${el}-legend" class="legend">&nbsp;</div>

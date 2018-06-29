@@ -27,6 +27,24 @@ if (beCPG.module.EntityDataGridRenderers) {
         }    
     }, this);
 
+    
+    YAHOO.Bubbling.fire("registerDataGridRenderer", {
+ 	      propertyName : "cm:name",
+ 	      renderer : function(oRecord, data, label, scope) {
+ 	    	  if( oRecord.getData("itemType") === "pjt:project"){  
+ 
+ 	    		 return '<span class="project" ><a class="theme-color-1" href="' 
+ 	    		 + beCPG.util.entityURL(oRecord.getData("siteId"), oRecord.getData("nodeRef"),"pjt:project", null, "View-properties") + '">'
+ 	              + Alfresco.util.encodeHTML(data.value) + '</a></span>';
+
+ 	    	  }
+ 	    	  
+ 	         return Alfresco.util.encodeHTML(data.value);
+ 	      }
+
+ 	   });
+    
+    
 
    YAHOO.Bubbling.fire("registerDataGridRenderer", {
       propertyName : [ "pjt:tlTaskName" ],
@@ -41,6 +59,15 @@ if (beCPG.module.EntityDataGridRenderers) {
       }
 
    });
+   
+   
+   YAHOO.Bubbling.fire("registerDataGridRenderer", {
+	   propertyName : "pjt:projectCurrentTasks",
+	   renderer : function(oRecord, data, label, scope, idx, length) {
+			  return '<span class="' + data.metadata + '"  >' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+	   }
+	});
+   
 
  YAHOO.Bubbling.fire("registerDataGridRenderer", {
       propertyName : [ "pjt:tlState", "pjt:dlState" ],
@@ -49,7 +76,7 @@ if (beCPG.module.EntityDataGridRenderers) {
       }
 
    });
-   
+ 
    
    YAHOO.Bubbling.fire("registerDataGridRenderer", {
 	      propertyName : "pjt:slScreening",

@@ -633,9 +633,11 @@
 									list = this.options.listTypes[i];
 									el = document.createElement("div");
 
-									el.innerHTML = '<h4>' + $html(list.title) + '</h4><span>' + $html(list.description) + '</span>';
-									el.onclick = fnOnClick(el, list.name);
-									containerEl.appendChild(el);
+									if(list.title!=null && list.title.length > 0){
+										el.innerHTML = '<h4>' + $html(list.title) + '</h4><span>' + $html(list.description) + '</span>';
+										el.onclick = fnOnClick(el, list.name);
+										containerEl.appendChild(el);
+									}
 								}
 							};
 

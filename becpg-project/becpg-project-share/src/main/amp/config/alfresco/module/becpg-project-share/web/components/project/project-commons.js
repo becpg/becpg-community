@@ -352,6 +352,47 @@
 
          return ret;
       },
+      
+      getProjectTitleV2 : function PL_getProjectTitle(record, full) {
+    	  
+          var propertiesUrl = null, dataListUrl = null, folderUrl = null, version = "";
+
+          var title = record.itemData["prop_cm_name"].displayValue, code = record.itemData["prop_bcpg_code"].displayValue, 
+          overdue = '', ret = "", state = record.itemData["prop_pjt_projectState"].value;
+
+          folderUrl = beCPG.util.entityDocumentsURL(record.siteId, record.path, title);
+
+          ret += '<span class="project-title project-status-'+state+'">';
+  
+          
+          ret += '<a class="theme-color-1" href="' + beCPG.util.entityURL(record.siteId, record.nodeRef,"pjt:project") + '" title="' 
+            +this.msg("actions.entity.view-tasks") + '">' + code + "&nbsp;-&nbsp;" + $html(title) + 
+            '</a>&nbsp;<a class="folder-link" href="' + folderUrl + '" title="' + this
+            .msg("link.title.open-folder") + '">&nbsp;</a></span>' ;
+          
+          if (record.version && record.version !== "") {
+        	  ret += '<span class="document-version">' + record.version + '</span>';
+           }
+           
+          if (full) {
+        	  var dates = this.extractDates(record), end = dates.due;
+              var  dateLine = (dates.start ? Alfresco.util.formatDate(dates.start, "longDate") : scope
+                    .msg("label.none"));
+
+              if (dates.end != null) {
+                 end = dates.end;
+              }
+              dateLine += " - ";
+              
+              dateLine += (dates.start ? Alfresco.util.formatDate(end, "longDate") : scope
+                    .msg("label.none"));
+    		   
+              ret += '<span class="project-date">[ ' + dateLine + ' ]</span>';
+
+          } 
+          
+          return ret;
+       },
 
       getTaskColor : function PL_getTaskColor(task) {
       	if(task["itemData"]["assoc_pjt_tlTaskLegend"][0] != null){

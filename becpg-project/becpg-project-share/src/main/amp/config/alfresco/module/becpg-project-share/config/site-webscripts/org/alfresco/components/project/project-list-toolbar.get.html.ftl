@@ -17,14 +17,30 @@
   		<@createWidgets group="project-toolbar"/>
 </@>
 
+<#assign prefSimpleView = preferences.simpleView!false >
 
 <@markup id="html">
    <@uniqueIdDiv>
 		<#assign el = args.htmlid?html>
 		<div id="${el}-body" class="project-list-toolbar datalist-toolbar toolbar">
 		   <div id="${el}-headerBar" class="header-bar flat-button theme-bg-2">
-		      <div class="left">
-		         <div id="toolbar-contribs" class="hidden" ></div>
+		      <div class="left">   
+		      	 <div id="toolbar-contribs" class="hidden" ></div>
+		      	 <#if view == "dataTable">
+		      	 <div id="${el}-simpleDetailed" class="align-right simple-detailed yui-buttongroup inline">
+			            <span class="yui-button yui-radio-button simple-view<#if prefSimpleView> yui-button-checked yui-radio-button-checked</#if>">
+			               <span class="first-child">
+			                  <button type="button" tabindex="0" title="${msg("button.view.simple")}"></button>
+			               </span>
+			            </span>
+			            <span class="yui-button yui-radio-button detailed-view<#if !prefSimpleView> yui-button-checked yui-radio-button-checked</#if>">
+			               <span class="first-child">
+			                  <button type="button" tabindex="0" title="${msg("button.view.detailed")}"></button>
+			               </span>
+			            </span>
+			       </div>	  
+			   </#if>
+
 		      </div>
 		      <div class="right">
 		         <div class="show-planning">
