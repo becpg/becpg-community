@@ -55,7 +55,7 @@ public class FormulaFormulationContext {
 		return dataListItem;
 	}
 
-	public ProductData getDataListItemEnty() {
+	public ProductData getDataListItemEntity() {
 		return dataListItem.getComponent() != null ? formulaService.findOne(dataListItem.getComponent()) : null;
 	}
 
