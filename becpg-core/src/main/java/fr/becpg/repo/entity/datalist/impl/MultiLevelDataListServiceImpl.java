@@ -91,11 +91,11 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 
 	@Override
 	public MultiLevelListData getMultiLevelListData(DataListFilter dataListFilter) {
-		return getMultiLevelListData(dataListFilter, false);
+		return getMultiLevelListData(dataListFilter, false, false);
 	}
 
 	@Override
-	public MultiLevelListData getMultiLevelListData(DataListFilter dataListFilter, boolean useExpandedCache) {
+	public MultiLevelListData getMultiLevelListData(DataListFilter dataListFilter, boolean useExpandedCache, boolean resetTree) {
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
 			watch = new StopWatch();
@@ -104,7 +104,7 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 
 		try {
 			return getMultiLevelListData(dataListFilter, dataListFilter.getEntityNodeRef(), 0, dataListFilter.getMaxDepth(), null,
-					new HashSet<NodeRef>(), useExpandedCache);
+					new HashSet<NodeRef>(), useExpandedCache, resetTree);
 		} finally {
 			if (logger.isDebugEnabled()) {
 				watch.stop();
@@ -114,7 +114,7 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 	}
 
 	private MultiLevelListData getMultiLevelListData(DataListFilter dataListFilter, NodeRef entityNodeRef, int currDepth, int maxDepthLevel,
-			NodeRef dataListNodeRef, Set<NodeRef> parentNodeRefs, boolean useExpandedCache) {
+			NodeRef dataListNodeRef, Set<NodeRef> parentNodeRefs, boolean useExpandedCache, boolean resetTree) {
 
 		MultiLevelListData ret = new MultiLevelListData(entityNodeRef, currDepth);
 
@@ -123,7 +123,7 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 			parentNodeRefs.add(entityNodeRef);
 			QName nodeType = nodeService.getType(entityNodeRef);
 
-			if (isExpandedNode(useExpandedCache ? dataListNodeRef : null, (maxDepthLevel < 0) || (currDepth < maxDepthLevel))) {
+			if (isExpandedNode(useExpandedCache ? dataListNodeRef : null, (maxDepthLevel < 0) || (currDepth < maxDepthLevel), resetTree)) {
 				logger.debug("getMultiLevelListData depth :" + currDepth + " max " + maxDepthLevel);
 
 				if ((currDepth == 0) || !entityDictionaryService.isMultiLevelLeaf(nodeType)) {
@@ -131,7 +131,7 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 					if (listsContainerNodeRef != null) {
 
 						visitMultiLevelListData(ret, dataListFilter, entityNodeRef, listsContainerNodeRef, currDepth, maxDepthLevel, nodeType,
-								dataListFilter.getDataType(), parentNodeRefs, useExpandedCache);
+								dataListFilter.getDataType(), parentNodeRefs, useExpandedCache, resetTree);
 
 						QName secondaryType = entityDictionaryService.getMultiLevelSecondaryPivot(dataListFilter.getDataType());
 
@@ -140,7 +140,7 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 							logger.debug("Visiting secondary type:" + secondaryType);
 
 							visitMultiLevelListData(ret, dataListFilter, entityNodeRef, listsContainerNodeRef, currDepth, maxDepthLevel, nodeType,
-									secondaryType, parentNodeRefs, useExpandedCache);
+									secondaryType, parentNodeRefs, useExpandedCache, resetTree);
 
 						}
 
@@ -156,7 +156,8 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 	}
 
 	private void visitMultiLevelListData(MultiLevelListData ret, DataListFilter dataListFilter, NodeRef entityNodeRef, NodeRef listsContainerNodeRef,
-			int currDepth, int maxDepthLevel, QName nodeType, QName dataType, Set<NodeRef> parentNodeRefs, boolean useExpandedCache) {
+			int currDepth, int maxDepthLevel, QName nodeType, QName dataType, Set<NodeRef> parentNodeRefs, boolean useExpandedCache,
+			boolean resetTree) {
 		int access_mode = securityService.computeAccessMode(nodeType, dataType.toPrefixString(namespaceService));
 
 		if (SecurityService.NONE_ACCESS != access_mode) {
@@ -178,7 +179,7 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 					int nextDepth = currDepth + depthLevel;
 					NodeRef parentNodeRef = (NodeRef) nodeService.getProperty(childRef, BeCPGModel.PROP_PARENT_LEVEL);
 					if (isExpandedNode(useExpandedCache ? parentNodeRef : null,
-							(maxDepthLevel < 0) || (nextDepth <= maxDepthLevel) || (depthLevel == 1))) {
+							(maxDepthLevel < 0) || (nextDepth <= maxDepthLevel) || (depthLevel == 1), resetTree)) {
 
 						if (entityNodeRef != null) {
 							if (logger.isDebugEnabled()) {
@@ -189,9 +190,9 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 							Set<NodeRef> curVisitedNodeRef = new HashSet<>(parentNodeRefs);
 
 							MultiLevelListData tmp = getMultiLevelListData(dataListFilter, entityNodeRef, nextDepth, maxDepthLevel, childRef,
-									curVisitedNodeRef, useExpandedCache);
+									curVisitedNodeRef, useExpandedCache, resetTree);
 
-							if (!isSecondary || (!tmp.getTree().isEmpty() || !isExpandedNode(useExpandedCache ? childRef : null, true))) {
+							if (!isSecondary || (!tmp.getTree().isEmpty() || !isExpandedNode(useExpandedCache ? childRef : null, true, resetTree))) {
 								ret.getTree().put(childRef, tmp);
 							}
 						} else if (!isSecondary) {
@@ -234,14 +235,18 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 	}
 
 	@Override
-	public boolean isExpandedNode(NodeRef entityFolder, boolean condition) {
+	public boolean isExpandedNode(NodeRef entityFolder, boolean condition, boolean resetTree) {
 		if (entityFolder != null) {
 			Map<NodeRef, Boolean> expandedNodes = beCPGCacheService.getFromCache(CACHE_KEY, AuthenticationUtil.getFullyAuthenticatedUser());
 			if ((expandedNodes != null) && expandedNodes.containsKey(entityFolder)) {
-				if (logger.isDebugEnabled()) {
-					logger.debug("found Expanded node : " + entityFolder + " for " + AuthenticationUtil.getFullyAuthenticatedUser());
+				if (resetTree) {
+					expandedNodes.remove(entityFolder);
+				} else {
+					if (logger.isDebugEnabled()) {
+						logger.debug("found Expanded node : " + entityFolder + " for " + AuthenticationUtil.getFullyAuthenticatedUser());
+					}
+					return expandedNodes.get(entityFolder);
 				}
-				return expandedNodes.get(entityFolder);
 			}
 		}
 		return condition;
