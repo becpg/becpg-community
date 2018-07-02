@@ -70,6 +70,10 @@ div.constraintsList .scrollableList {
 	float: none;
 }
 
+.formulation-view .toolbar .left .filterform div, .formulation-view .toolbar .left div.filterButtonsBar {
+    float: none;
+}
+
 .datalist-toolbar .onActionSimulate, .datagrid .onActionSimulate a {
 	background: transparent
 		url(../../components/documentlibrary/actions/folder-copy-to-16.png)
@@ -143,13 +147,15 @@ div.constraintsList .scrollableList {
 
 .formulation-view  .effectivityCheckbox  span.yui-checkbox-button button
 {
-   background: url("../images/calendar-disabled-20.png") no-repeat 1px 1px;
+   background: url("../images/calendar-disabled-20.png") no-repeat 4px 4px;
+   background-size: 17px
 }
 
 
 .formulation-view  .effectivityCheckbox span.yui-checkbox-button.yui-checkbox-button-checked button
 {
-   background: url("../images/calendar-20.png") no-repeat 1px 1px;
+   background: url("../images/calendar-20.png") no-repeat 4px 4px;
+   background-size: 17px
 }
 
 
