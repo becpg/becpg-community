@@ -132,10 +132,24 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		// Keep Manual ingList
 		if (formulatedProduct.getLabelingListView().getIngLabelingList() != null) {
 			for (IngLabelingListDataItem tmp : formulatedProduct.getLabelingListView().getIngLabelingList()) {
+				boolean isEmpty = true;
+				
 				if ((tmp.getManualValue() != null) && !tmp.getManualValue().isEmpty()) {
-					tmp.setValue(null);
-					retainNodes.add(tmp);
+					for(String trad : tmp.getManualValue().values()) {
+						if(trad!=null && !trad.isEmpty()) {
+							isEmpty = false;
+						}
+					}
+					
+					if(!isEmpty) {
+						tmp.setValue(null);
+						retainNodes.add(tmp);
+					}
 				}
+				
+				if (isEmpty) {
+					tmp.setManualValue(null);
+				} 
 			}
 		}
 
