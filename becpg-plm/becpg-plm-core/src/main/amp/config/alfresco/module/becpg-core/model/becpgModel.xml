@@ -545,7 +545,45 @@
 				<list>
 					<value>Before</value>
 					<value>After</value>
+					<value>From</value>
+					<value>To</value>
 					<value>Equals</value>
+				</list>
+			</parameter>
+		</constraint>
+		
+		<constraint name="bcpg:nrVersionFilterType" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>MINOR</value>
+					<value>MAJOR</value>
+				</list>
+			</parameter>
+		</constraint>
+		
+		<constraint name="bcpg:nrRecurringTimeTypes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>Day</value>
+					<value>Week</value>
+					<value>Month</value>
+					<value>Year</value>
+				</list>
+			</parameter>
+		</constraint>
+		
+		<constraint name="bcpg:listDays" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>MONDAY</value>
+					<value>TUESDAY</value>
+					<value>WEDNESDAY</value>
+					<value>THURSDAY</value>
+					<value>FRIDAY</value>
+					<value>SATURDAY</value>
+					<value>SUNDAY</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -2348,7 +2386,6 @@
 				</property>
 				<property name="bcpg:nrDateField">
 					<type>d:text</type>
-					<mandatory enforced="true">true</mandatory>					
 				</property>
 				<property name="bcpg:nrConditions">
 					<type>d:text</type>					
@@ -2365,7 +2402,6 @@
 				</property>
 				<property name="bcpg:nrTimeNumber">
 					<type>d:int</type>
-					<mandatory enforced="true">true</mandatory>
 				</property>
 				<property name="bcpg:nrSubject">
 					<type>d:text</type>
@@ -2374,6 +2410,27 @@
 				<property name="bcpg:nrFrequencyStartDate">
 					<type>d:date</type>
 					<mandatory enforced="true">true</mandatory>
+				</property>
+				<property name="bcpg:nrVersionFilter">
+					<type>d:text</type>	
+					<constraints>
+						<constraint ref="bcpg:nrVersionFilterType" />
+					</constraints>				
+				</property>
+				<property name="bcpg:nrForceNotification">
+					<type>d:boolean</type>					
+				</property>
+				<property name="bcpg:nrRecurringTimeType">
+					<type>d:text</type>	
+					<constraints>
+						<constraint ref="bcpg:nrRecurringTimeTypes" />
+					</constraints>				
+				</property>
+				<property name="bcpg:nrRecurringDay">
+					<type>d:text</type>	
+					<constraints>
+						<constraint ref="bcpg:listDays" />
+					</constraints>				
 				</property>
 			</properties>
 			<associations>
