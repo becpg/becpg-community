@@ -121,6 +121,10 @@
 		
 	<bean id="webscript.fr.becpg.entity.datalist.openclose.post" class="fr.becpg.repo.web.scripts.entity.datalist.MultiLevelDataListWebscript" parent="webscript">
 		<property name="multiLevelDataListService" ref="multiLevelDataListService" />
+		<property name="namespaceService" ref="namespaceService" />
+		<property name="nodeService" ref="NodeService" />
+		<property name="entityDictionaryService" ref="entityDictionaryService" />
+		<property name="preferenceService" ref="preferenceService" />
 	</bean>
 	
 	<bean id="webscript.fr.becpg.entity.datalist.copy.post" class="fr.becpg.repo.web.scripts.entity.datalist.CopyDataListWebScript" parent="webscript">

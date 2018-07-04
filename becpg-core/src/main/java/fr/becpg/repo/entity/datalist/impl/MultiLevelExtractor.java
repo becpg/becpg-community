@@ -56,7 +56,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 
 	public static final String PROP_ROOT_ENTITYNODEREF = "rootEntityNodeRef";
 
-	private static final String PREF_DEPTH_PREFIX = "fr.becpg.MultiLevelExtractor.";
+	public static final String PREF_DEPTH_PREFIX = "fr.becpg.MultiLevelExtractor.";
 
 	public static final String PROP_IS_MULTI_LEVEL = "isMultiLevel";
 
