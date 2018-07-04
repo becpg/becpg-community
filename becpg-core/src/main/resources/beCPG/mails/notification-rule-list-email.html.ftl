@@ -55,25 +55,53 @@
                                              <p>
                                              	Veuillez trouver ci-dessous les objets concernés: 
                                               </p>
-                                            
+                                            <#if args.entities?size != 0>
                                              <table cellpadding="0" cellspacing="0" style="border:solid 1px black;padding: 0px;" >
                                                <tr style="background-color: #009dcc;">
                                                  <th>Dossier</th>
                                                  <th class="becpg_cellBorderLeft">Objet</th>
+                                                 <#if args.versions??>
+                                                 <th class="becpg_cellBorderLeft">Date de création</th>
+                                                 <th class="becpg_cellBorderLeft">Verion</th>
+                                                 <th class="becpg_cellBorderLeft">Créateur</th>
+                                                 <th class="becpg_cellBorderLeft">Commentaire</th>
+                                                 <#else>
                                                  <th class="becpg_cellBorderLeft">${args.dateField}</th>
+                                                 </#if>
                                                </tr>
                                                
                                                <#list args.entities as item> 
                                                		<#assign node=item.node/>
-													<tr> 
-														<td class="becpg_rowBorderTop"> ${node.parent.name} </td>
-														<td class="becpg_rowBorderTopLeftRight">
-															<a href="${shareUrl}/page/<#if node.siteShortName??>site/${node.siteShortName}/</#if><#if item.isEntityV2SubType>entity-data-lists<#else>document-details</#if>?nodeRef=${node.nodeRef}">${node.name}</a>
-														</td>
-														<td class="becpg_rowBorderTopLeftRight">${node.properties[dateField]?date}</td>
-													</tr>
+                                               		<#if args.versions??>
+	                                               		<#list args.versions[node.nodeRef]?keys as key >
+	                                               			<#assign version=args.versions[node.nodeRef][key]>
+															<tr> 
+																<td class="becpg_rowBorderTop"> ${node.parent.name} </td>
+																<td class="becpg_rowBorderTopLeftRight">
+																	<a href="${shareUrl}/page/<#if node.siteShortName??>site/${node.siteShortName}/</#if><#if item.isEntityV2SubType>entity-data-lists<#else>document-details</#if>?nodeRef=${node.nodeRef}">${node.name}</a>
+																</td>
+																<td class="becpg_rowBorderTopLeftRight">${version.properties["cm:created"]?date}</td>
+																<td class="becpg_rowBorderTopLeftRight">${version.properties["cm:versionLabel"]}</td>
+																<td class="becpg_rowBorderTopLeftRight">${version.properties["cm:creator"]}</td>
+																<td class="becpg_rowBorderTopLeftRight">${key?split("|")[1]}</td>
+															</tr>
+														</#list>
+													<#else>
+														<tr> 
+															<td class="becpg_rowBorderTop"> ${node.parent.name} </td>
+															<td class="becpg_rowBorderTopLeftRight">
+																<a href="${shareUrl}/page/<#if node.siteShortName??>site/${node.siteShortName}/</#if><#if item.isEntityV2SubType>entity-data-lists<#else>document-details</#if>?nodeRef=${node.nodeRef}">${node.name}</a>
+															</td>
+	                                               			<td class="becpg_rowBorderTopLeftRight">${node.properties[dateField]?date}</td>
+	                                               		</tr>	
+													</#if>
+														
+                                               		
 												</#list>
                                              </table>
+                                             <#else>
+                                             <p><b> Aucun élément trouvé<b></p>
+                                             </#if>
                                              
                                              <p>Cordialement,<br/>
                                              beCPG</p>

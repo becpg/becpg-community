@@ -1,15 +1,19 @@
 package fr.becpg.repo.notification.impl;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -22,6 +26,8 @@ import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
+import org.alfresco.service.cmr.version.VersionService;
+import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -43,9 +49,6 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 public class NotificationRuleServiceImpl implements NotificationRuleService {
 
 	private static final Log logger = LogFactory.getLog(NotificationRuleServiceImpl.class);
-	
-	private static final int WEEKLY = 7;
-	private static final int MONTHLY = 30;
 	
 	private static final String DATE_FIELD = "dateField";
 	private static final String NODE_TYPE = "type";
@@ -78,6 +81,9 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 	private DictionaryService dictionaryService;
 
 	@Autowired
+	private VersionService versionService;
+	
+	@Autowired
 	private AlfrescoRepository<NotificationRuleListDataItem> alfrescoRepository;
 
 	
@@ -99,12 +105,14 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 			entities = new HashMap<>();
 			
 			notification = alfrescoRepository.findOne(notificationNodeRef);
-
-			if(notification.getNodeType() == null || notification.getDateField() == null || notification.getAuthorities() == null
-					|| !isAllowed(notification.getFrequencyStartDate(), notification.getFrequency())){
-				logger.warn("Skip notification : " + notificationNodeRef);
+			
+			if(notification.getNodeType() == null || notification.getAuthorities() == null || !isAllowed(notification)){
+				logger.warn("Skip notification : " + notification);
 				continue ;
 			}
+			//TODO update notification startDate
+			notification.setFrequencyStartDate(new Date());
+			alfrescoRepository.save(notification);
 			
 			nodeType = QName.createQName(notification.getNodeType(), namespaceService);
 			dateField = QName.createQName(notification.getDateField(), namespaceService);
@@ -115,33 +123,37 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 			
 			Calendar date = Calendar.getInstance();
 			
-			if(notification.getTimeType().equals(NotificationRuleTimeType.After)){
-				date.add(Calendar.DATE, Math.abs(notification.getDays()));
-				if(notification.getDays() > 0){
-					fromQuery = "NOW";
-					toQuery = formatDate(date);
-				}else{
-					fromQuery = formatDate(date);
-					toQuery = "MAX";
-				}
-			}else if(notification.getTimeType().equals(NotificationRuleTimeType.Before)){
-				date.add(Calendar.DATE, -Math.abs(notification.getDays()));
-				if(notification.getDays() > 0){
-					fromQuery = formatDate(date);
-					toQuery = "NOW";
-				}else {
-					fromQuery = "MIN";
-					toQuery = formatDate(date);
-				}
-			} else{
+			switch(notification.getTimeType()){
+			case After : //[(NOW+DATE) , MAX]
 				date.add(Calendar.DATE, notification.getDays());
 				fromQuery = formatDate(date);
+				toQuery = "MAX";
+				break;
+			case To : //[NOW , (NOW+DATE)]
+				date.add(Calendar.DATE, notification.getDays());
+				fromQuery = "NOW";
+				toQuery = formatDate(date);
+				break;
+			case Before : //[MIN , (NOW-DATE)]
+				date.add(Calendar.DATE, -notification.getDays());
+				fromQuery = "MIN";
+				toQuery = formatDate(date);
+				break;
+			case From : //[(NOW-DATE) , NOW]
+				date.add(Calendar.DATE, -notification.getDays());
+				fromQuery = formatDate(date);
+				toQuery = "NOW";
+				break;
+			case Equals : // date = NOW + X
+				date.add(Calendar.DATE, notification.getDays());
+				fromQuery = formatDate(date);
+				break;
 			}
 
-			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery()
-					.ofType(nodeType)
-					.andPropQuery(dateField, notification.getTimeType().equals(NotificationRuleTimeType.Equals)? fromQuery : "[" + fromQuery + " TO " + toQuery + "]")
-					.inSubPath(targetPath.toPrefixString(namespaceService));
+			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(nodeType)
+					.andPropQuery(dateField, notification.getTimeType().equals(NotificationRuleTimeType.Equals)? fromQuery : "[" + fromQuery + " TO " + toQuery + "]");	
+			
+			queryBuilder.inSubPath(targetPath.toPrefixString(namespaceService));
 			
 			if (notification.getCondtions() != null && !notification.getCondtions().isEmpty()){
 				queryBuilder.andFTSQuery(notification.getCondtions());
@@ -149,8 +161,24 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 			
 			List<NodeRef> items = queryBuilder.list();
 			
-			if(items.isEmpty() || items == null){
-				logger.info("No object found for notification: " + notification.getNodeRef());
+			//Versions history filter
+			Map<NodeRef, Map<String, NodeRef>> itemVersions = new HashMap<>();
+			final VersionType versionType = notification.getVersionType();
+			if(versionType != null && dateField.isMatch(ContentModel.PROP_MODIFIED)){
+				Iterator<NodeRef> iter = items.iterator();
+				while(iter.hasNext()){
+					NodeRef item = iter.next();
+					Map<String, NodeRef> temp = getOnlyAssociatedVersions(item, versionType, getDate(fromQuery), getDate(toQuery));
+					if(!temp.isEmpty()){
+						itemVersions.put(item, temp);
+					}else {
+						iter.remove();
+					}
+				}
+			}
+			
+			if((items.isEmpty() || items == null || (itemVersions.isEmpty() && versionType != null )) && !notification.isEnforced()){
+				logger.warn("No object found for notification: " + notification.getNodeRef());
 				continue;
 			}
 			
@@ -158,8 +186,6 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 			templateArgs.put(DATE_FIELD, dictionaryService.getProperty(dateField).getTitle(serviceRegistry.getDictionaryService()));
 			templateArgs.put(TARGET_PATH, destinationPath);
 			templateArgs.put(NOTIFICATION, notification.getNodeRef());
-			
-			
 			
 			String emailTemplate = notification.getEmail() != null ? nodeService.getPath(notification.getEmail()).toPrefixString(namespaceService)
 					: RepoConsts.EMAIL_NOTIF_RULE_LIST_TEMPLATE;
@@ -195,16 +221,18 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 							
 						}
 					}
-					if(!entitiesByUser.isEmpty()){
+					if(!entitiesByUser.isEmpty() || notification.isEnforced()){			
 						Map<String, Object> templateModel = new HashMap<>();
 						HashMap<String, Object> userTemplateArgs = new HashMap<>(templateArgs);
 						userTemplateArgs.put("entities", entitiesByUser);
+						if(versionType != null){
+							userTemplateArgs.put("versions", itemVersions);
+						}
 						templateModel.put("args", userTemplateArgs);
 						
 						logger.info("send mail: "+templateModel);
-						mailService.sendMail(Arrays.asList(authorityService.getAuthorityNodeRef(userName)), notification.getSubject(), emailTemplate, templateModel, false);
-						
-					}
+						mailService.sendMail(Arrays.asList(authorityService.getAuthorityNodeRef(userName)), notification.getSubject(), emailTemplate, templateModel, false);	
+					} 
 				}
 			}								
 		}
@@ -212,6 +240,21 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 	}
 
 	
+	private Map<String, NodeRef> getOnlyAssociatedVersions(NodeRef item, VersionType versionType, Date from, Date to) {
+		Map<String, NodeRef> ret = new HashMap<>();
+		    if(versionService.getVersionHistory(item) != null){
+		    	versionService.getVersionHistory(item).getAllVersions().forEach((version)-> {
+		    		Date createDate = (Date) nodeService.getProperty(version.getFrozenStateNodeRef(), ContentModel.PROP_CREATED);
+		    		if(version.getVersionType().equals(versionType) && !version.getVersionLabel().equals("1.0") && createDate.after(from) && createDate.before(to)){
+		    			ret.put(version.getVersionLabel() + "|" + version.getDescription(), version.getFrozenStateNodeRef());
+		    		}
+		    	}
+		    			);
+		    }
+		return ret;
+	}
+
+
 	private Set<String> extractAuthoritiesFromGroup(NodeRef authority) {
 		Set<String> ret = new HashSet<>();
 		if(nodeService.getType(authority).equals(ContentModel.TYPE_AUTHORITY_CONTAINER)){
@@ -230,6 +273,29 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 			   (date.get(Calendar.MONTH) + 1) + "\\-" + 
 			   date.get(Calendar.DAY_OF_MONTH);
 	}
+
+	
+	private Date getDate(String strDate){
+		Date date = null;
+		
+		if(strDate.equals("MAX")){
+			date = new Date(Long.MAX_VALUE);
+		}else if (strDate.equals("MIN")){
+			date = new Date(0L);
+		}else if (strDate.equals("NOW")){
+			date = new Date();
+		}else if(strDate != null){
+			String separator = "\\-";
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyy" + separator + "MM" + separator + "dd");
+			try {
+				date = formatter.parse(strDate);
+			} catch (ParseException e) {
+				logger.error("Wrong date format ", e);
+			}			
+		}
+		
+		return date;
+	}
 	
 	
 	private List<NodeRef> getAllNotificationRule() {
@@ -239,26 +305,47 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 	}
 	
 	
-	private boolean isAllowed(Date frequencyDate, int frequency){
-		final Calendar today = Calendar.getInstance();
-		if (today.before(frequencyDate)){
+	private boolean isAllowed(NotificationRuleListDataItem notification){
+
+		LocalDate now = LocalDate.now();
+		
+		int frequency = notification.getFrequency();
+		
+		Date date = notification.getFrequencyStartDate() != null ? notification.getFrequencyStartDate() 
+				: (Date) nodeService.getProperty(notification.getNodeRef(), ContentModel.PROP_CREATED);
+
+		LocalDate lastDate = date.toInstant()
+			      .atZone(ZoneId.systemDefault())
+			      .toLocalDate(); 
+
+		if (now.isBefore(lastDate) || frequency < 1){
 			return false;
 		}
-		Calendar date = Calendar.getInstance();
-		date.setTime(frequencyDate);
 		
-		switch(frequency){
-			case WEEKLY :
-				return today.get(Calendar.DAY_OF_WEEK) == date.get(Calendar.DAY_OF_WEEK);
-			
-			case MONTHLY: 
-				return today.get(Calendar.DAY_OF_MONTH) == date.get(Calendar.DAY_OF_MONTH);
-			
-			default: 
-				return frequency == 0 ? false 
-				   : ((TimeUnit.DAYS.convert((today.getTime().getTime() - frequencyDate.getTime()), TimeUnit.MILLISECONDS) % frequency) == 0);
+		switch(notification.getRecurringTime()){
+		case Day:
+			lastDate = lastDate.plusDays(frequency);
+			break;
+		case Week:
+			lastDate = lastDate.plusWeeks(frequency);
+			break;
+		case Month:
+			lastDate = lastDate.plusMonths(frequency);
+			break;
+		case Year:
+			lastDate = lastDate.plusYears(frequency);
+			break;
 		}
 		
+		if(notification.getRecurringDay() != null){
+			return (now.equals(lastDate) || now.isAfter(lastDate)) && now.getDayOfWeek().equals(notification.getRecurringDay());
+		}
+		
+		return now.equals(lastDate);
 	}
+	
+
+	
+
 
 }
