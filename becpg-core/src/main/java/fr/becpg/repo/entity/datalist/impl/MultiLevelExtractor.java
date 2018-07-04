@@ -78,6 +78,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 	public PaginatedExtractedItems extract(DataListFilter dataListFilter, List<String> metadataFields) {
 
 		boolean multiLevelExtract = true;
+		boolean resetTree = false;
 
 		if (!dataListFilter.isDepthDefined()) {
 			int depth = getDepthUserPref(dataListFilter);
@@ -86,7 +87,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 			}
 			dataListFilter.updateMaxDepth(depth);
 		} else {
-			updateDepthUserPref(dataListFilter);
+			resetTree = updateDepthUserPref(dataListFilter);
 			if (dataListFilter.getMaxDepth() == 0) {
 				dataListFilter.updateMaxDepth(-1);
 				multiLevelExtract = false;
@@ -114,7 +115,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 
 		MultiLevelListData listData = paginatedSearchCache.getSearchMultiLevelResults(dataListFilter.getPagination().getQueryExecutionId());
 		if (listData == null) {
-			listData = multiLevelDataListService.getMultiLevelListData(dataListFilter, true);
+			listData = multiLevelDataListService.getMultiLevelListData(dataListFilter, true, resetTree);
 			dataListFilter.getPagination().setQueryExecutionId(paginatedSearchCache.storeMultiLevelSearchResults(listData));
 		}
 
@@ -152,7 +153,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 					if (entry.getValue().isLeaf()) {
 						props.put(PROP_LEAF, true);
 					} else if (multiLevelDataListService.isExpandedNode(nodeRef, (!entry.getValue().getTree().isEmpty()
-							|| (dataListFilter.getMaxDepth() < 0) || (entry.getValue().getDepth() < dataListFilter.getMaxDepth())))) {
+							|| (dataListFilter.getMaxDepth() < 0) || (entry.getValue().getDepth() < dataListFilter.getMaxDepth())),false)) {
 						props.put(PROP_OPEN, true);
 					}
 				}
@@ -273,7 +274,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 		return null;
 	}
 
-	private void updateDepthUserPref(DataListFilter dataListFilter) {
+	private boolean updateDepthUserPref(DataListFilter dataListFilter) {
 		String username = AuthenticationUtil.getFullyAuthenticatedUser();
 
 		Map<String, Serializable> prefs = preferenceService.getPreferences(username);
@@ -286,7 +287,10 @@ public class MultiLevelExtractor extends SimpleExtractor {
 			}
 			prefs.put(PREF_DEPTH_PREFIX + dataListFilter.getDataType().getLocalName(), dataListFilter.getMaxDepth());
 			preferenceService.setPreferences(username, prefs);
+			
+			return true;
 		}
+		return false;
 
 	}
 

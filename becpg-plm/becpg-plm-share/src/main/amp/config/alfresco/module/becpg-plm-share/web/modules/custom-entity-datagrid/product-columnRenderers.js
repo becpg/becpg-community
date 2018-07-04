@@ -793,12 +793,16 @@ if (beCPG.module.EntityDataGridRenderers) {
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : [ "bcpg:illValue", "bcpg:illManualValue" ],
 		renderer : function(oRecord, data, label, scope) {
-			if (data.value != null && data.value.length > 0) {
+			if (data.value != null) {
 				
 				var html ='', displayValue = data.displayValue,
 					htmlId = "id-" + oRecord._sId, suffix = "bcpg_illValue";
-					
-				html += '<div class="note rounded"><div id="'+ htmlId + suffix +'" > ' + displayValue + '</div>';
+					if(data.displayValue == null || data.displayValue == "" ){
+						displayValue = "<i>"+scope.msg("label.empty")+"</i>";
+					}
+				
+				
+					html += '<div class="note rounded"><div id="'+ htmlId + suffix +'" > ' + displayValue + '</div>';
 				
 					var nodeRef = oRecord._oData.nodeRef;
 					html += '<div class="labeling-action-container">';

@@ -380,7 +380,6 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			}
 
 		} else if (dataType.equals(DataTypeDefinition.MLTEXT.toString())) {
-
 			value = v.toString();
 		} else if (dataType.equals(DataTypeDefinition.DOUBLE.toString()) || dataType.equals(DataTypeDefinition.FLOAT.toString())
 				|| (dataType.equals(DataTypeDefinition.ANY.toString()) && ((v instanceof Double) || (v instanceof Float)))) {

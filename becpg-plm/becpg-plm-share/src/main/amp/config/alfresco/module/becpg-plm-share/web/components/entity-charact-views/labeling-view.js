@@ -67,7 +67,10 @@
                     me[owner.className].call(me, fieldId);
                 }
             }
-            return true;
+            
+
+            YAHOO.util.Event.preventDefault(args[0]);
+            return false;
         };
         
         YAHOO.Bubbling.addDefaultAction("labeling-action", fnActionHandler);
@@ -163,7 +166,7 @@
             
 		},
 		
-		onCopyToClipboard : function(fieldId) {
+		onCopyToClipboard : function( fieldId) {
 			
 			var htmlId = fieldId.split("#")[0]+ fieldId.split("#")[2].replace(":","_");
 			
@@ -179,7 +182,6 @@
 			     window.getSelection().addRange(range);
 			     document.execCommand("copy");
 			}
-			
 	    }
 
 	});
