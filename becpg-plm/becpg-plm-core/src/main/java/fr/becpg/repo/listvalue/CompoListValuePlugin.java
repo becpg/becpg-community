@@ -75,7 +75,7 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 			dataListFilter.updateMaxDepth(getDepthUserPref(dataListFilter));
 
 			// need to load assoc so we use the MultiLevelDataListService
-			MultiLevelListData mlld = multiLevelDataListService.getMultiLevelListData(dataListFilter, true);
+			MultiLevelListData mlld = multiLevelDataListService.getMultiLevelListData(dataListFilter, true, false);
 
 			NodeRef itemId = null;
 			@SuppressWarnings("unchecked")
