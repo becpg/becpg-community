@@ -75,10 +75,10 @@
 			</parameter>
 		</constraint>
 		
-		<constraint name="bcpg:nrVersionFilterType" type="LIST">
+		<constraint name="bcpg:nrVersionFilterTypes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
-					<value></value>
+					<value>NONE</value>
 					<value>MINOR</value>
 					<value>MAJOR</value>
 				</list>
@@ -96,7 +96,7 @@
 			</parameter>
 		</constraint>
 		
-		<constraint name="bcpg:listDays" type="LIST">
+		<constraint name="bcpg:nrRecurringDays" type="LIST">
 			<parameter name="allowedValues">
 				<list>
 					<value></value>
@@ -269,7 +269,7 @@
 				<property name="bcpg:nrVersionFilter">
 					<type>d:text</type>	
 					<constraints>
-						<constraint ref="bcpg:nrVersionFilterType" />
+						<constraint ref="bcpg:nrVersionFilterTypes" />
 					</constraints>				
 				</property>
 				<property name="bcpg:nrForceNotification">
@@ -284,7 +284,7 @@
 				<property name="bcpg:nrRecurringDay">
 					<type>d:text</type>	
 					<constraints>
-						<constraint ref="bcpg:listDays" />
+						<constraint ref="bcpg:nrRecurringDays" />
 					</constraints>				
 				</property>
 			</properties>
