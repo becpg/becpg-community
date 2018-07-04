@@ -8,8 +8,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +30,6 @@ public class LabelingAttributeExtractorPlugin implements AttributeExtractorPlugi
 	private NodeService nodeService;
 	
 	
-	
 	@Override
 	public String extractPropName(QName type, NodeRef nodeRef) {
 		
@@ -40,7 +37,6 @@ public class LabelingAttributeExtractorPlugin implements AttributeExtractorPlugi
 		
 		if(grp!=null){
 			return (String) nodeService.getProperty(grp, ContentModel.PROP_NAME);
-			
 		}
 		
 		return type.toPrefixString();
