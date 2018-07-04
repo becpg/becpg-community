@@ -62,7 +62,12 @@
 			   if(this.options.formWidth !="34em"){
                   Dom.addClass(p_dialog.id+"-dialog","large-dialog");
                 }
-			  
+			   
+		        if(this.parentInputNodeRef!=null ){
+                	Dom.get(p_dialog.id + "_prop_bcpg_parentLevel-added").value = this.parentInputNodeRef;
+		        	Bubbling.fire(p_dialog.id + "_prop_bcpg_parentLevel" + "refreshContent", this.parentInputNodeRef, this );
+		        }
+
 		   };
 
 		   var templateUrl = YAHOO.lang
@@ -95,6 +100,14 @@
 		         fn : function() {
 			         var checkBoxEl = Dom.get(this.id + "-createRow" + "-form-bulkAction");
 
+			         var parentInput =   Dom.get(this.id + "-createRow_prop_bcpg_parentLevel-added");
+			         
+			         if(parentInput !=null){
+			        	 me.parentInputNodeRef = parentInput.value;
+			         } else {
+			        	 me.parentInputNodeRef = null;
+			         }
+	
 			         if (checkBoxEl && checkBoxEl.checked) {
 				         me.onActionCreateBulkEdit = true;
 			         } else {
@@ -105,24 +118,64 @@
 		      },
 		      onSuccess : {
 		         fn : function EntityDataGrid_onActionCreate_success(response) {
-			         YAHOO.Bubbling.fire(me.scopeId + "dataItemCreated", {
-			            nodeRef : response.json.persistedObject,
-			            callback : function(item) {
-			            	
-			            	YAHOO.Bubbling.fire("refreshFloatingHeader");
+		        	 
+		        	 if(me.parentInputNodeRef!=null){
+		            		
+                 		url = Alfresco.constants.PROXY_URI + "becpg/entity/datalists/openclose?nodeRef=" 
+                 		+me.parentInputNodeRef+"&expand=true&entityNodeRef="+me.options.entityNodeRef +"&listType="+itemType;
+                 	  Alfresco.util.Ajax
+                           .jsonPost(
+                           {
+                               url : url,
+                               successCallback :
+                               {
+                                   fn : function EntityDataGrid_onCollapsedAndExpanded(
+                                           response)
+                                   {
 
-				            Alfresco.util.PopupManager.displayMessage({
-					            text : me.msg("message.new-row.success")
-				            });
+                                    me.queryExecutionId = null;
+   	                                
+	                                   me._updateDataGrid.call(me,
+	                                     {
+	                                         page : me.currentPage
+	                                    });
 
-				            // recall edit for next item
+           				            Alfresco.util.PopupManager.displayMessage({
+           					            text : me.msg("message.new-row.success")
+           				            });
 
-				            if (me.onActionCreateBulkEdit) {
-					            me.onActionCreate();
-				            }
+           				            // recall edit for next item
 
-			            }
-			         });
+           				            if (me.onActionCreateBulkEdit) {
+           					            me.onActionCreate();
+           				            }
+
+                                   },
+                                   scope : this
+                               }
+                           });
+		            		
+		            	} else {
+		        	 
+					         YAHOO.Bubbling.fire(me.scopeId + "dataItemCreated", {
+					            nodeRef : response.json.persistedObject,
+					            callback : function(item) {
+
+						            	YAHOO.Bubbling.fire("refreshFloatingHeader");
+			
+							            Alfresco.util.PopupManager.displayMessage({
+								            text : me.msg("message.new-row.success")
+							            });
+			
+							            // recall edit for next item
+			
+							            if (me.onActionCreateBulkEdit) {
+								            me.onActionCreate();
+							            }
+					            
+					            }
+					         });
+		            	}
 
 		         },
 		         scope : this

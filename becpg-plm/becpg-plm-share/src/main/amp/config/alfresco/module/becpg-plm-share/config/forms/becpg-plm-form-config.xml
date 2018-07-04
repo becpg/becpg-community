@@ -6375,46 +6375,51 @@
 					<show id="bcpg:compoListYieldPerc" />
 					<show id="bcpg:compoListLossPerc" />
 					<show id="bcpg:compoListDeclType" />
-					<show id="bcpg:parentLevel" />
 					<show id="bcpg:variantIds" force="true" />
+					<show id="bcpg:parentLevel" />
 					<show id="bcpg:instruction" force="true" />
 				</field-visibility>
 
 				<appearance>
-					<field id="bcpg:compoListProduct" help-id="becpg.forms.help.compoListProduct">
+					<set id="1-col-1"  />
+					<set id="2-col"  template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="1-col-2"  />
+				
+					<field id="bcpg:compoListProduct" help-id="becpg.forms.help.compoListProduct" set="1-col-1" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial%5E4,bcpg:finishedProduct,bcpg:localSemiFinishedProduct%5E2,bcpg:semiFinishedProduct%5E2</control-param>
 						</control>
 					</field>
-					<field id="bcpg:compoListQtySubFormula" help-id="becpg.forms.help.compoListQtySubFormula"/>
-					<field id="bcpg:compoListYieldPerc" help-id="becpg.forms.help.compoListYieldPerc" />
-					<field id="bcpg:compoListLossPerc" help-id="becpg.forms.help.compoListLossPerc" />
-					<field id="bcpg:parentLevel" help-id="becpg.forms.help.parentLevel" >
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/compoListParentLevel
-							</control-param>
-						</control>
-					</field>
-					<field id="bcpg:compoListUnit">
+					<field id="bcpg:compoListQtySubFormula" set="2-col" help-id="becpg.forms.help.compoListQtySubFormula"/>
+					<field id="bcpg:compoListYieldPerc" set="2-col" help-id="becpg.forms.help.compoListYieldPerc" />
+					<field id="bcpg:compoListLossPerc" set="2-col" help-id="becpg.forms.help.compoListLossPerc" />
+					
+					<field id="bcpg:compoListUnit" set="2-col" >
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="isStoreable">true</control-param>
 						</control>
 					</field>
-					<field id="bcpg:compoListDeclType">
+					<field id="bcpg:compoListDeclType" set="2-col">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="isStoreable">true</control-param>
 						</control>
 					</field>
 					
-					<field id="bcpg:variantIds" help-id="becpg.forms.help.variantIds" >
+					<field id="bcpg:variantIds" help-id="becpg.forms.help.variantIds"  set="2-col">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/variantList
 							</control-param>
 							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
 					</field>
-					<field id="bcpg:instruction">
+					<field id="bcpg:parentLevel" help-id="becpg.forms.help.parentLevel" set="1-col-2">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/compoListParentLevel
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:instruction" set="1-col-2">
 						<control template="/org/alfresco/components/form/controls/richtext.ftl">
 							<control-param name="rows">10</control-param>
 						</control>
@@ -6555,41 +6560,56 @@
 			<form>
 				<field-visibility>
 					<show id="bcpg:compoListProduct" />
+					<show id="bcpg:compoListDeclType" />
 					<show id="bcpg:compoListQtySubFormula" />
 					<show id="bcpg:compoListUnit" />
 					<show id="bcpg:compoListYieldPerc" />
 					<show id="bcpg:compoListLossPerc" />
-					<show id="bcpg:compoListDeclType" />
+					<show id="bcpg:variantIds" force="true" />					
 					<show id="bcpg:parentLevel" />
-					<show id="bcpg:variantIds" force="true" />
+					
 					<show id="bcpg:instruction" force="true" />
 				</field-visibility>
 
 				<appearance>
-					<field id="bcpg:compoListProduct" help-id="becpg.forms.help.compoListProduct">
+					<set id="1-col-1"  />
+					<set id="2-col"  template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="1-col-2"  />
+					<field id="bcpg:compoListProduct" help-id="becpg.forms.help.compoListProduct" set="1-col-1">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial%5E4,bcpg:finishedProduct,bcpg:localSemiFinishedProduct%5E2,bcpg:semiFinishedProduct%5E2</control-param>
 						</control>
 					</field>
-					<field id="bcpg:compoListQtySubFormula" help-id="becpg.forms.help.compoListQtySubFormula"/>
-					<field id="bcpg:compoListYieldPerc" help-id="becpg.forms.help.compoListYieldPerc" />
-					<field id="bcpg:compoListLossPerc" help-id="becpg.forms.help.compoListLossPerc" />
-					<field id="bcpg:parentLevel" help-id="becpg.forms.help.parentLevel" >
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/compoListParentLevel
-							</control-param>
-							<control-param name="urlParamsToPass">itemId</control-param>
+					<field id="bcpg:compoListQtySubFormula" help-id="becpg.forms.help.compoListQtySubFormula"  set="2-col"/>
+					<field id="bcpg:compoListYieldPerc" help-id="becpg.forms.help.compoListYieldPerc"  set="2-col" />
+					<field id="bcpg:compoListLossPerc" help-id="becpg.forms.help.compoListLossPerc"  set="2-col"/>
+					
+					<field id="bcpg:compoListUnit" set="2-col" >
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 						</control>
 					</field>
-					<field id="bcpg:variantIds" help-id="becpg.forms.help.variantIds" >
+					<field id="bcpg:compoListDeclType" set="2-col">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+						</control>
+					</field>
+					
+					<field id="bcpg:variantIds" help-id="becpg.forms.help.variantIds"  set="2-col">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/variantList
 							</control-param>
 							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
 					</field>
-					<field id="bcpg:instruction">
+					
+					<field id="bcpg:parentLevel" help-id="becpg.forms.help.parentLevel" set="1-col-2" >
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/compoListParentLevel
+							</control-param>
+							<control-param name="urlParamsToPass">itemId</control-param>
+						</control>
+					</field>
+					<field id="bcpg:instruction"   set="1-col-2">
 						<control template="/org/alfresco/components/form/controls/richtext.ftl">
 							<control-param name="rows">10</control-param>
 						</control>
@@ -6606,44 +6626,50 @@
 			<form>
 				<field-visibility>
 					<show id="bcpg:packagingListProduct" />
+					
 					<show id="bcpg:packagingListQty" />
 					<show id="bcpg:packagingListUnit" />
-					<show id="bcpg:packagingListLossPerc" />
 					<show id="bcpg:packagingListPkgLevel" />
 					<show id="bcpg:packagingListIsMaster" />
+					<show id="bcpg:packagingListLossPerc" />
+
+					
 					<show id="bcpg:variantIds" force="true" />
 					<show id="bcpg:instruction" force="true" />
 				</field-visibility>
 
 				<appearance>
-					<field id="bcpg:packagingListProduct" help-id="becpg.forms.help.packagingListProduct">
+					<set id="1-col-1"  />
+					<set id="2-col"  template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="1-col-2"  />
+					<field id="bcpg:packagingListProduct" help-id="becpg.forms.help.packagingListProduct" set="1-col-1">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:packagingMaterial,bcpg:packagingKit</control-param>
 						</control>
 					</field>
-					<field id="bcpg:packagingListQty" help-id="becpg.forms.help.packagingListQty"/>
-					<field id="bcpg:packagingListUnit">
+					<field id="bcpg:packagingListQty" help-id="becpg.forms.help.packagingListQty" set="2-col"/>
+					<field id="bcpg:packagingListUnit" set="2-col">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="isStoreable">true</control-param>
 						</control>
 					</field>
-					<field id="bcpg:packagingListLossPerc" help-id="becpg.forms.help.packagingListLossPerc"/>
-					<field id="bcpg:packagingListPkgLevel">
+					<field id="bcpg:packagingListLossPerc" help-id="becpg.forms.help.packagingListLossPerc" set="2-col"/>
+					<field id="bcpg:packagingListPkgLevel" set="2-col">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">,Primary|data.bcpg_packaginglistpkglevel.primary,Secondary|data.bcpg_packaginglistpkglevel.secondary,Tertiary|data.bcpg_packaginglistpkglevel.tertiary</control-param>
 							<control-param name="isStoreable">true</control-param>
 						</control>
 					</field>
-					<field id="bcpg:packagingListIsMaster" help-id="becpg.forms.help.packagingListIsMaster"/>
-					<field id="bcpg:variantIds" help-id="becpg.forms.help.variantIds">
+					<field id="bcpg:packagingListIsMaster" help-id="becpg.forms.help.packagingListIsMaster" set="2-col" />
+					<field id="bcpg:variantIds" help-id="becpg.forms.help.variantIds" set="2-col">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/variantList
 							</control-param>
 							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
 					</field>
-					<field id="bcpg:instruction">
+					<field id="bcpg:instruction" set="1-col-2">
 						<control template="/org/alfresco/components/form/controls/richtext.ftl">
 							<control-param name="rows">10</control-param>
 						</control>
@@ -6775,42 +6801,53 @@
 			<form>
 				<field-visibility>
 					<show id="bcpg:packagingListProduct" />
+					
 					<show id="bcpg:packagingListQty" />
 					<show id="bcpg:packagingListUnit" />
-					<show id="bcpg:packagingListLossPerc" />
+					
 					<show id="bcpg:packagingListPkgLevel" />
 					<show id="bcpg:packagingListIsMaster" />
+					<show id="bcpg:packagingListLossPerc" />
 					<show id="bcpg:variantIds" force="true" />
 					<show id="pack:labelingPosition" />
-					<show id="pack:labelingLabelingTemplate" />
 					<show id="pack:labelingType" />
+					<show id="pack:labelingLabelingTemplate" />
 					<show id="bcpg:instruction" force="true" />
 				</field-visibility>
 
 				<appearance>
-					<field id="bcpg:packagingListProduct" help-id="becpg.forms.help.packagingListProduct">
+					<set id="1-col-1"  />
+					<set id="2-col"  template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="1-col-2"  />
+				
+					<field id="bcpg:packagingListProduct" help-id="becpg.forms.help.packagingListProduct" set="1-col-1">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:packagingMaterial,bcpg:packagingKit</control-param>
 						</control>
 					</field>
-					<field id="bcpg:packagingListQty" help-id="becpg.forms.help.packagingListQty"/>
-					<field id="bcpg:packagingListLossPerc" help-id="becpg.forms.help.packagingListLossPerc"/>
-					<field id="bcpg:packagingListPkgLevel">
+					<field id="bcpg:packagingListQty" help-id="becpg.forms.help.packagingListQty" set="2-col"/>
+					<field id="bcpg:packagingListUnit"  set="2-col"/>
+					<field id="bcpg:packagingListLossPerc" help-id="becpg.forms.help.packagingListLossPerc" set="2-col"/>
+					<field id="bcpg:packagingListPkgLevel" set="2-col">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">,Primary|data.bcpg_packaginglistpkglevel.primary,Secondary|data.bcpg_packaginglistpkglevel.secondary,Tertiary|data.bcpg_packaginglistpkglevel.tertiary
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:packagingListIsMaster" help-id="becpg.forms.help.packagingListIsMaster"/>
-					<field id="bcpg:variantIds" help-id="becpg.forms.help.variantIds">
+					<field id="bcpg:packagingListIsMaster" help-id="becpg.forms.help.packagingListIsMaster" set="2-col"/>
+					<field id="bcpg:variantIds" help-id="becpg.forms.help.variantIds" set="2-col">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/variantList
 							</control-param>
 							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
 					</field>
-					<field id="bcpg:instruction">
+					<field id="pack:labelingPosition"  set="2-col"/>
+					<field id="pack:labelingType"  set="2-col"/>
+					<field id="pack:labelingLabelingTemplate" set="1-col-2"/>
+					
+					<field id="bcpg:instruction"  set="1-col-2">
 						<control template="/org/alfresco/components/form/controls/richtext.ftl">
 							<control-param name="rows">10</control-param>
 						</control>
