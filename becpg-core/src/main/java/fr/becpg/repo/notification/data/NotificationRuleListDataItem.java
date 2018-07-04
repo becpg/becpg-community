@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.version.VersionType;
 
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
@@ -32,7 +31,7 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 	private NotificationRuleTimeType timeType;
 	private List<NodeRef> authorities = new ArrayList<>();
 	private Date frequencyStartDate;
-	private VersionType versionType = null;
+	private VersionFilterType versionFilterType;
 	private boolean enforced;
 	private RecurringTimeType recurringTime;
 	private DayOfWeek recurringDay;
@@ -157,12 +156,12 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 
 	@AlfProp
 	@AlfQname(qname="bcpg:nrVersionFilter")
-	public VersionType getVersionType() {
-		return versionType;
+	public VersionFilterType getVersionFilterType() {
+		return versionFilterType;
 	}
 
-	public void setVersionType(VersionType versionType) {
-		this.versionType = versionType;
+	public void setVersionFilterType(VersionFilterType versionFilterType) {
+		this.versionFilterType = versionFilterType;
 	}
 
 	@AlfProp
@@ -213,7 +212,7 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 		result = prime * result + ((subject == null) ? 0 : subject.hashCode());
 		result = prime * result + ((target == null) ? 0 : target.hashCode());
 		result = prime * result + ((timeType == null) ? 0 : timeType.hashCode());
-		result = prime * result + ((versionType == null) ? 0 : versionType.hashCode());
+		result = prime * result + ((versionFilterType == null) ? 0 : versionFilterType.hashCode());
 		return result;
 	}
 
@@ -278,7 +277,7 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 			return false;
 		if (timeType != other.timeType)
 			return false;
-		if (versionType != other.versionType)
+		if (versionFilterType != other.versionFilterType)
 			return false;
 		return true;
 	}
@@ -287,7 +286,7 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 	public String toString() {
 		return "NotificationRuleListDataItem [nodeType=" + nodeType + ", dateField=" + dateField + ", condtions=" + condtions + ", target=" + target
 				+ ", days=" + days + ", subject=" + subject + ", email=" + email + ", frequency=" + frequency + ", timeType=" + timeType
-				+ ", authorities=" + authorities + ", frequencyStartDate=" + frequencyStartDate + ", versionType=" + versionType + ", enforced="
+				+ ", authorities=" + authorities + ", frequencyStartDate=" + frequencyStartDate + ", versionType=" + versionFilterType + ", enforced="
 				+ enforced + ", recurringTime=" + recurringTime + ", recurringDay=" + recurringDay + "]";
 	}
 

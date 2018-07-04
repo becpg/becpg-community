@@ -27,7 +27,6 @@ import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.version.VersionService;
-import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -42,6 +41,7 @@ import fr.becpg.repo.mail.BeCPGMailService;
 import fr.becpg.repo.notification.NotificationRuleService;
 import fr.becpg.repo.notification.data.NotificationRuleListDataItem;
 import fr.becpg.repo.notification.data.NotificationRuleTimeType;
+import fr.becpg.repo.notification.data.VersionFilterType;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
@@ -163,8 +163,8 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 			
 			//Versions history filter
 			Map<NodeRef, Map<String, NodeRef>> itemVersions = new HashMap<>();
-			final VersionType versionType = notification.getVersionType();
-			if(versionType != null && dateField.isMatch(ContentModel.PROP_MODIFIED)){
+			final VersionFilterType versionType = notification.getVersionFilterType();
+			if(!versionType.equals(VersionFilterType.NONE) && dateField.isMatch(ContentModel.PROP_MODIFIED)){
 				Iterator<NodeRef> iter = items.iterator();
 				while(iter.hasNext()){
 					NodeRef item = iter.next();
@@ -177,7 +177,7 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 				}
 			}
 			
-			if((items.isEmpty() || items == null || (itemVersions.isEmpty() && versionType != null )) && !notification.isEnforced()){
+			if((items.isEmpty() || items == null || (itemVersions.isEmpty() && !versionType.equals(VersionFilterType.NONE) )) && !notification.isEnforced()){
 				logger.warn("No object found for notification: " + notification.getNodeRef());
 				continue;
 			}
@@ -225,7 +225,7 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 						Map<String, Object> templateModel = new HashMap<>();
 						HashMap<String, Object> userTemplateArgs = new HashMap<>(templateArgs);
 						userTemplateArgs.put("entities", entitiesByUser);
-						if(versionType != null){
+						if(!versionType.equals(VersionFilterType.NONE)){
 							userTemplateArgs.put("versions", itemVersions);
 						}
 						templateModel.put("args", userTemplateArgs);
@@ -240,12 +240,12 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 	}
 
 	
-	private Map<String, NodeRef> getOnlyAssociatedVersions(NodeRef item, VersionType versionType, Date from, Date to) {
+	private Map<String, NodeRef> getOnlyAssociatedVersions(NodeRef item, VersionFilterType versionType, Date from, Date to) {
 		Map<String, NodeRef> ret = new HashMap<>();
 		    if(versionService.getVersionHistory(item) != null){
 		    	versionService.getVersionHistory(item).getAllVersions().forEach((version)-> {
 		    		Date createDate = (Date) nodeService.getProperty(version.getFrozenStateNodeRef(), ContentModel.PROP_CREATED);
-		    		if(version.getVersionType().equals(versionType) && !version.getVersionLabel().equals("1.0") && createDate.after(from) && createDate.before(to)){
+		    		if(version.getVersionType().toString().equals(versionType.toString()) && !version.getVersionLabel().equals("1.0") && createDate.after(from) && createDate.before(to)){
 		    			ret.put(version.getVersionLabel() + "|" + version.getDescription(), version.getFrozenStateNodeRef());
 		    		}
 		    	}
