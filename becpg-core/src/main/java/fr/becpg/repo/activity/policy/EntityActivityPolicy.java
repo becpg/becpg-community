@@ -150,7 +150,7 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 
 						}
 					}
-				} else if ((before != null) && (after != null) && before.size() < after.size()) {
+				} else if ((before != null) && (after != null) && (before.size() < after.size())) {
 					isDifferent = true;
 				}
 
@@ -234,7 +234,8 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 
 					switch (key) {
 					case KEY_QUEUE_UPDATED:
-						if (!containsNodeInQueue(KEY_QUEUE_CREATED, nodeRef) && !containsNodeInQueue(KEY_QUEUE_DELETED, nodeRef)) {
+						if (!containsNodeInQueue(KEY_QUEUE_CREATED, nodeRef) && !containsNodeInQueue(KEY_QUEUE_DELETED, nodeRef)
+								&& !containsNodeInQueue(KEY_QUEUE_UPDATED_STATUS, nodeRef)) {
 							registerActivity(nodeRef, type, ActivityEvent.Update);
 						}
 						break;

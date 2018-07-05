@@ -18,6 +18,8 @@
 package fr.becpg.repo.activity.data;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -38,6 +40,9 @@ public class ActivityListDataItem extends BeCPGDataObject {
 	 * 
 	 */
 	private static final long serialVersionUID = -817711206754301661L;
+	
+	
+	
 	private ActivityType activityType = ActivityType.State;
 	private String activityData;
 	private String userId;
@@ -60,6 +65,10 @@ public class ActivityListDataItem extends BeCPGDataObject {
 
 	public void setActivityData(String activityData) {
 		this.activityData = activityData;
+	}
+	
+	public JSONObject getJSONData() throws JSONException {
+		return new JSONObject(activityData);
 	}
 
 	@AlfProp
@@ -115,6 +124,7 @@ public class ActivityListDataItem extends BeCPGDataObject {
 	public String toString() {
 		return "ActivityListDataItem [activityType=" + activityType + ", activityData=" + activityData + ", userId=" + userId + "]";
 	}
+
 
 	
 	

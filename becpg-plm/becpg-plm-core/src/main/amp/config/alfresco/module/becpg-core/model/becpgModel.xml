@@ -34,6 +34,7 @@
 					<value>ToValidate</value>
 					<value>Valid</value>
 					<value>Refused</value>
+					<value>Stopped</value>
 					<value>Archived</value>
 				</list>
 			</parameter>
@@ -2491,6 +2492,22 @@
 				</property>
 			</properties>
 		</aspect>
+		
+		
+		<aspect name="bcpg:stateActivityAspect">
+			<properties>
+				<property name="bcpg:stateActivityModified">
+					<type>d:datetime</type>
+				</property>
+				<property name="bcpg:stateActivityPreviousState">
+					<type>d:text</type>
+				</property>
+				<property name="bcpg:stateActivityModifier">
+					<type>d:text</type>
+				</property>
+			</properties>
+		</aspect>
+		
 	
 		<aspect name="bcpg:legalNameAspect">
 			<properties>

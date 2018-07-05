@@ -34,6 +34,7 @@
 					<value>ToValidate</value>
 					<value>Valid</value>
 					<value>Refused</value>
+					<value>Stopped</value>
 					<value>Archived</value>
 				</list>
 			</parameter>
@@ -387,6 +388,20 @@
 			<properties>
 				<property name="bcpg:formulatedDate">
 					<type>d:datetime</type>
+				</property>
+			</properties>
+		</aspect>
+		
+		<aspect name="bcpg:stateActivityAspect">
+			<properties>
+				<property name="bcpg:stateActivityModified">
+					<type>d:datetime</type>
+				</property>
+				<property name="bcpg:stateActivityPreviousState">
+					<type>d:text</type>
+				</property>
+				<property name="bcpg:stateActivityModifier">
+					<type>d:text</type>
 				</property>
 			</properties>
 		</aspect>
