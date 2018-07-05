@@ -415,8 +415,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 						data.put(PROP_TITLE, attributeExtractorService.extractPropName(entityNodeRef));
 					}
 
-					data.put("beforeState", beforeState);
-					data.put("afterState", afterState);
+					data.put(PROP_BEFORE_STATE, beforeState);
+					data.put(PROP_AFTER_STATE, afterState);
 
 					activityListDataItem.setActivityType(ActivityType.State);
 					activityListDataItem.setActivityData(data.toString());

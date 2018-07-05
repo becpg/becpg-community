@@ -25,6 +25,9 @@ public interface EntityActivityService {
 	static final String PROP_BRANCH_TITLE = "branchTitle";
 	static final String PROP_VERSION_NODEREF="versionNodeRef";
 	static final String PROP_VERSION_LABEL="versionLabel";
+	static final String PROP_BEFORE_STATE = "beforeState";
+	static final String PROP_AFTER_STATE = "afterState";
+	
 
 	boolean postCommentActivity(NodeRef entityNodeRef, NodeRef commentNodeRef, ActivityEvent activityEvent);
 

@@ -103,7 +103,7 @@
 
 			         var parentInput =   Dom.get(this.id + "-createRow_prop_bcpg_parentLevel-added");
 			         
-			         if(parentInput !=null){
+			         if(parentInput !=null && parentInput.value!=null && parentInput.value.length>0){
 			        	 me.parentInputNodeRef = parentInput.value;
 			         } else {
 			        	 me.parentInputNodeRef = null;
