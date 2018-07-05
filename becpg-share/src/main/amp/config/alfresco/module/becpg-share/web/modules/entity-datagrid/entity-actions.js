@@ -62,13 +62,18 @@
 			   if(this.options.formWidth !="34em"){
                   Dom.addClass(p_dialog.id+"-dialog","large-dialog");
                 }
-			  
+			   
+		        if(this.parentInputNodeRef!=null ){
+                	Dom.get(p_dialog.id + "_prop_bcpg_parentLevel-added").value = this.parentInputNodeRef;
+		        	Bubbling.fire(p_dialog.id + "_prop_bcpg_parentLevel" + "refreshContent", this.parentInputNodeRef, this );
+		        }
+
 		   };
 
 		   var templateUrl = YAHOO.lang
 		         .substitute(
 		               Alfresco.constants.URL_SERVICECONTEXT
-		                     + "components/form?bulkEdit=true&entityNodeRef={entityNodeRef}&itemKind={itemKind}&itemId={itemId}&destination={destination}&mode={mode}&submitType={submitType}&showCancelButton=true&dataListsName={dataListsName}",
+		                     + "components/form?bulkEdit=true&entityNodeRef={entityNodeRef}&itemKind={itemKind}&itemId={itemId}&destination={destination}&mode={mode}&submitType={submitType}&showCancelButton=true&dataListsName={dataListsName}&siteId={siteId}",
 		               {
 		                  itemKind : "type",
 		                  itemId : itemType,
@@ -76,7 +81,8 @@
 		                  mode : "create",
 		                  submitType : "json",
 		                  entityNodeRef : this.options.entityNodeRef,
-		                  dataListsName :  encodeURIComponent(this.datalistMeta.name!=null ? this.datalistMeta.name : this.options.list)
+		                  dataListsName :  encodeURIComponent(this.datalistMeta.name!=null ? this.datalistMeta.name : this.options.list),
+		                  siteId : this.options.siteId
 		               });
 
 		   // Using Forms Service, so always create new instance
@@ -95,6 +101,14 @@
 		         fn : function() {
 			         var checkBoxEl = Dom.get(this.id + "-createRow" + "-form-bulkAction");
 
+			         var parentInput =   Dom.get(this.id + "-createRow_prop_bcpg_parentLevel-added");
+			         
+			         if(parentInput !=null && parentInput.value!=null && parentInput.value.length>0){
+			        	 me.parentInputNodeRef = parentInput.value;
+			         } else {
+			        	 me.parentInputNodeRef = null;
+			         }
+	
 			         if (checkBoxEl && checkBoxEl.checked) {
 				         me.onActionCreateBulkEdit = true;
 			         } else {
@@ -105,24 +119,64 @@
 		      },
 		      onSuccess : {
 		         fn : function EntityDataGrid_onActionCreate_success(response) {
-			         YAHOO.Bubbling.fire(me.scopeId + "dataItemCreated", {
-			            nodeRef : response.json.persistedObject,
-			            callback : function(item) {
-			            	
-			            	YAHOO.Bubbling.fire("refreshFloatingHeader");
+		        	 
+		        	 if(me.parentInputNodeRef!=null){
+		            		
+                 		url = Alfresco.constants.PROXY_URI + "becpg/entity/datalists/openclose?nodeRef=" 
+                 		+me.parentInputNodeRef+"&expand=true&entityNodeRef="+me.options.entityNodeRef +"&listType="+itemType;
+                 	  Alfresco.util.Ajax
+                           .jsonPost(
+                           {
+                               url : url,
+                               successCallback :
+                               {
+                                   fn : function EntityDataGrid_onCollapsedAndExpanded(
+                                           response)
+                                   {
 
-				            Alfresco.util.PopupManager.displayMessage({
-					            text : me.msg("message.new-row.success")
-				            });
+                                    me.queryExecutionId = null;
+   	                                
+	                                   me._updateDataGrid.call(me,
+	                                     {
+	                                         page : me.currentPage
+	                                    });
 
-				            // recall edit for next item
+           				            Alfresco.util.PopupManager.displayMessage({
+           					            text : me.msg("message.new-row.success")
+           				            });
 
-				            if (me.onActionCreateBulkEdit) {
-					            me.onActionCreate();
-				            }
+           				            // recall edit for next item
 
-			            }
-			         });
+           				            if (me.onActionCreateBulkEdit) {
+           					            me.onActionCreate();
+           				            }
+
+                                   },
+                                   scope : this
+                               }
+                           });
+		            		
+		            	} else {
+		        	 
+					         YAHOO.Bubbling.fire(me.scopeId + "dataItemCreated", {
+					            nodeRef : response.json.persistedObject,
+					            callback : function(item) {
+
+						            	YAHOO.Bubbling.fire("refreshFloatingHeader");
+			
+							            Alfresco.util.PopupManager.displayMessage({
+								            text : me.msg("message.new-row.success")
+							            });
+			
+							            // recall edit for next item
+			
+							            if (me.onActionCreateBulkEdit) {
+								            me.onActionCreate();
+							            }
+					            
+					            }
+					         });
+		            	}
 
 		         },
 		         scope : this
@@ -166,14 +220,15 @@
 		   var templateUrl = YAHOO.lang
 		         .substitute(
 		               Alfresco.constants.URL_SERVICECONTEXT
-		                     + "components/form?bulkEdit=true&entityNodeRef={entityNodeRef}&itemKind={itemKind}&itemId={itemId}&mode={mode}&submitType={submitType}&showCancelButton=true&dataListsName={dataListsName}",
+		                     + "components/form?bulkEdit=true&entityNodeRef={entityNodeRef}&itemKind={itemKind}&itemId={itemId}&mode={mode}&submitType={submitType}&showCancelButton=true&dataListsName={dataListsName}&siteId={siteId}",
 		               {
 		                  itemKind : "node",
 		                  itemId : item.nodeRef,
 		                  mode : "edit",
 		                  submitType : "json",
 		                  entityNodeRef : this.options.entityNodeRef,
-		                  dataListsName :  encodeURIComponent(this.datalistMeta.name!=null ? this.datalistMeta.name : this.options.list)
+		                  dataListsName :  encodeURIComponent(this.datalistMeta.name!=null ? this.datalistMeta.name : this.options.list),
+		                  siteId : this.options.siteId
 		               });
 
 		   // Using Forms Service, so always create new instance

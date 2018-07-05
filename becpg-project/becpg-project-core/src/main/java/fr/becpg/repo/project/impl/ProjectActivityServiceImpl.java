@@ -18,10 +18,12 @@
 package fr.becpg.repo.project.impl;
 
 import java.util.Collections;
+import java.util.Date;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.activities.post.lookup.PostLookup;
 import org.alfresco.repo.forum.CommentService;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.activities.ActivityService;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -34,6 +36,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.activity.EntityActivityListener;
 import fr.becpg.repo.activity.EntityActivityService;
@@ -112,10 +115,16 @@ public class ProjectActivityServiceImpl implements ProjectActivityService, Entit
 	}
 
 	@Override
+	@Deprecated
+	//TODO remove and use EntityActivityStateListener instead
 	public void postProjectStateChangeActivity(NodeRef projectNodeRef, String beforeState, String afterState) {
 
 		if (entityActivityService.postStateChangeActivity(projectNodeRef, null, beforeState, afterState)) {
-
+			
+			nodeService.setProperty(projectNodeRef, BeCPGModel.PROP_STATE_ACTIVITY_MODIFIED, new Date());
+			nodeService.setProperty(projectNodeRef, BeCPGModel.PROP_STATE_ACTIVITY_MODIFIER, AuthenticationUtil.getFullyAuthenticatedUser());
+			nodeService.setProperty(projectNodeRef, BeCPGModel.PROP_STATE_ACTIVITY_PREVIOUSSTATE, beforeState);
+		
 			postStateChangeActivity(PROJECT_STATE_ACTIVITY, (String) nodeService.getProperty(projectNodeRef, ContentModel.PROP_NAME), projectNodeRef,
 					beforeState, afterState, false);
 

@@ -25,6 +25,9 @@
       <filtermenu id="started" data="last7Days" />
       <filtermenu id="started" data="last14Days"  />
       <filtermenu id="started" data="last28Days" />
+      <filtermenu id="cancelled" data="last7Days" />
+      <filtermenu id="cancelled" data="last14Days"  />
+      <filtermenu id="cancelled" data="last28Days" />
       <filtermenu id="priority" data="1" />
       <filtermenu id="priority" data="2" />
       <filtermenu id="priority" data="3"  />	
@@ -52,6 +55,9 @@
       <filter id="started"       data="last7Days"    parameters="fts(+@pjt\:projectStartDate:['{-7d}' TO MAX])"/>
       <filter id="started"       data="last14Days"   parameters="fts(+@pjt\:projectStartDate:['{-14d}' TO MAX])"/>
       <filter id="started"       data="last28Days"   parameters="fts(+@pjt\:projectStartDate:['{-28d}' TO MAX])"/>
+      <filter id="cancelled"     data="last7Days"    parameters="fts(+@pjt\:projectState:&quot;Cancelled&quot; +@bcpg\:stateActivityModified:['{-7d}' TO MAX])"/>
+      <filter id="cancelled"     data="last14Days"   parameters="fts(+@pjt\:projectState:&quot;Cancelled&quot; +@bcpg\:stateActivityModified:['{-14d}' TO MAX])"/>
+      <filter id="cancelled"     data="last28Days"   parameters="fts(+@pjt\:projectState:&quot;Cancelled&quot; +@bcpg\:stateActivityModified:['{-28d}' TO MAX])"/>
       <filter id="priority"      data="*"            parameters="fts(+@pjt\:projectPriority:{data})"/>
    </filters-parameters>
 </config>

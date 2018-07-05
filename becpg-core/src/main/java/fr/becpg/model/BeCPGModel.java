@@ -142,6 +142,10 @@ public interface BeCPGModel {
 	QName ASPECT_LINKED_SEARCH = QName.createQName(BECPG_URI, "linkedSearchAspect");
 	QName ASSOC_LINKED_SEARCH_ASSOCIATION = QName.createQName(BECPG_URI, "linkedSearchAssociation");
 	
-	
+	//Audit state aspect
+	QName PROP_STATE_ACTIVITY_MODIFIED = QName.createQName(BECPG_URI,"stateActivityModified");
+	QName PROP_STATE_ACTIVITY_MODIFIER = QName.createQName(BECPG_URI,"stateActivityModifier");
+	QName PROP_STATE_ACTIVITY_PREVIOUSSTATE = QName.createQName(BECPG_URI,"stateActivityPreviousState");
+
 	
 }

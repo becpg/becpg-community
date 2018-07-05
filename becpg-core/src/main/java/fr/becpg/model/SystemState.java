@@ -14,6 +14,7 @@ public enum SystemState {
 		ToValidate,
 		Valid,
 		Refused,
+		Stopped,
 		Archived;
 		
 		
