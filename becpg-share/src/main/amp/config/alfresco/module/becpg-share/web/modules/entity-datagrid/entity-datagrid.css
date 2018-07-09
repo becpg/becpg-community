@@ -487,11 +487,11 @@ div.filterButtonsBar {
 }
 
 .datagrid  span.ggroup-expanded {
-	background: url("./images/dt-group-arrow-down.png") no-repeat 0px 1.5px;
+	background: url("./images/dt-group-arrow-down.png") no-repeat 0px 0px;
 }
 
 .datagrid  span.ggroup-collapsed {
-	background: url("./images/dt-group-arrow-up.png") no-repeat 0px 1.5px;
+	background: url("./images/dt-group-arrow-up.png") no-repeat 0px 0px;
 }
 
 /* The group cell */
