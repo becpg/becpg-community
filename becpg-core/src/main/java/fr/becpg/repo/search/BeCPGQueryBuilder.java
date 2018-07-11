@@ -871,7 +871,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 	private String getCmisPrefix(QName tmpQName) {
 		String ret = tmpQName.toPrefixString(namespaceService);
-		QName aspect = dictionaryService.getProperty(tmpQName).getContainerClass().getName();
+		QName aspect = dictionaryService.getProperty(tmpQName) != null ? dictionaryService.getProperty(tmpQName).getContainerClass().getName() : null;
 		if ((dictionaryService.getProperty(tmpQName) != null) && dictionaryService.getProperty(tmpQName).getContainerClass().isAspect() 
 				&& !aspect.isMatch(ContentModel.ASPECT_AUDITABLE)) {
 			this.aspects.add(aspect);
