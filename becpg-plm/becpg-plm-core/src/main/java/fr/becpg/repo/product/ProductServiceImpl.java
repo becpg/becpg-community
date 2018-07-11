@@ -104,8 +104,8 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 				L2CacheSupport.doInCacheContext(() -> {
 					AuthenticationUtil.runAsSystem(() -> {
 						formulationService.formulate(productNodeRef);
-						if (!fast) {
-							entityActivityService.postEntityActivity(productNodeRef, ActivityType.Formulation, ActivityEvent.Update);
+						if (fast) {
+								entityActivityService.postEntityActivity(productNodeRef, ActivityType.Formulation, ActivityEvent.Update);
 						}
 
 						return true;

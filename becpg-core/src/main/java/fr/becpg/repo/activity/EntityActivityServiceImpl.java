@@ -22,6 +22,7 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
+import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
@@ -304,7 +305,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					} else {
 						if(attributeExtractorService.hasAttributeExtractorPlugin(datalistNodeRef)){
 							data.put(PROP_TITLE, attributeExtractorService.extractPropName(datalistNodeRef));
-						}
+						} 
 					}
 
 					activityListDataItem.setActivityType(ActivityType.Datalist);
@@ -331,46 +332,57 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 	private void mergeWithLastActivity(ActivityListDataItem item) {
 		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.HOUR, -1); 
+		cal.add(Calendar.HOUR, -1);
+
 		NodeRef activityListNodeRef = item.getParentNodeRef();
+		// Activities in the last hour
+		BeCPGQueryBuilder query = BeCPGQueryBuilder.createQuery().parent(activityListNodeRef)
+				.ofType( BeCPGModel.TYPE_ACTIVITY_LIST)
+				.andBetween(ContentModel.PROP_CREATED,  "'" + ISO8601DateFormat.format(cal.getTime()) + "'", "'" + ISO8601DateFormat.format(new Date(Long.MAX_VALUE)) + "'")
+				.addSort(ContentModel.PROP_CREATED, false)
+				.inDB();
 		
-		List<NodeRef> sortedActivityList = entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST, SORT_MAP);
-		Collections.reverse(sortedActivityList);
+		List<NodeRef> sortedActivityList = query.list();
 		
-		int index = 0;
+		// The last created activity
+		if(sortedActivityList.isEmpty()){
+			sortedActivityList = BeCPGQueryBuilder.createQuery().parent(activityListNodeRef)
+					.ofType( BeCPGModel.TYPE_ACTIVITY_LIST)
+					.addSort(ContentModel.PROP_CREATED, false)
+					.maxResults(1)
+					.inDB()
+					.list();
+		}
+		
 		for (NodeRef activityListItemNodeRef : sortedActivityList) {
-			Date created = (Date) nodeService.getProperty(activityListItemNodeRef, ContentModel.PROP_CREATED);
 			ActivityListDataItem activity = alfrescoRepository.findOne(activityListItemNodeRef);
 			
-			if (created.after(cal.getTime())) {
-				if (activity.getActivityData().equals(item.getActivityData()) && activity.getUserId().equals(item.getUserId())
-						&& activity.getActivityType().equals(item.getActivityType())) {
+			JSONObject activityData = null, itemData = null;
+			try {
+				activityData =  new JSONObject(activity.getActivityData());
+				itemData =  new JSONObject(item.getActivityData());
+				if( ((activity.getActivityData().equals(item.getActivityData())) 
+						|| (!itemData.has(PROP_TITLE) && !activityData.has(PROP_TITLE) 
+						&& item.getActivityType().equals(ActivityType.Datalist) 
+						&& activityData.get(PROP_CLASSNAME).equals(itemData.get(PROP_CLASSNAME)) 
+						&& activityData.get(PROP_ACTIVITY_EVENT).equals(itemData.get(PROP_ACTIVITY_EVENT)))) 
+						&& activity.getUserId().equals(item.getUserId()) 
+						&& activity.getActivityType().equals(item.getActivityType()) ){
+					
 					nodeService.addAspect(activityListItemNodeRef, ContentModel.ASPECT_TEMPORARY, null);
 					nodeService.deleteNode(activityListItemNodeRef);
-					
+				
 					if(logger.isDebugEnabled()){						
-						logger.debug("Delete same activity in last hour "+activity.getActivityType() );
+						logger.debug("Merge with the last activity "+activity.getActivityType() );
 					}
-					break;
-				} 		
+					
+					return;
+				}
+				
+			} catch (JSONException e) {
+				logger.error("parse json", e);
 			} 
 			
-			if(index==0 && (activity.getActivityData().equals(item.getActivityData()) && activity.getUserId().equals(item.getUserId())
-					&& activity.getActivityType().equals(item.getActivityType()))){
-				nodeService.addAspect(activityListItemNodeRef, ContentModel.ASPECT_TEMPORARY, null);
-				nodeService.deleteNode(activityListItemNodeRef);
-				
-				if(logger.isDebugEnabled()){
-					logger.debug("Delete same successor activity ");
-				}
-				break;
-			}
-			
-			if (created.before(cal.getTime())){
-				break;
-			}
-			
-			index++;
 		}
 	}
 
