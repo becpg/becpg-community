@@ -36,7 +36,7 @@ public class NotificationRuleJob implements Job {
 			return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 				notificationRuleService.sendNotifications();
 				return null;				
-			}, true, false);
+			}, false, true);
 		});
 		
 		if ((tenantAdminService != null) && tenantAdminService.isEnabled()) {
@@ -47,7 +47,7 @@ public class NotificationRuleJob implements Job {
 					return transactionService.getRetryingTransactionHelper().doInTransaction(()->{						
 						notificationRuleService.sendNotifications();
 						return null;
-					}, true, false);
+					}, false, true);
 					
 				} , tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenantDomain));
 			}

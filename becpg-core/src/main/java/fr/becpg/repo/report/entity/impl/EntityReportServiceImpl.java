@@ -361,14 +361,13 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	@SuppressWarnings("unchecked")
 	private Element filterByReportKind(Element dataXml, NodeRef tplNodeRef){
-		
 		StopWatch stopWatch = null;
 		if (logger.isDebugEnabled()) {
 			stopWatch = new StopWatch();
 			stopWatch.start();
 		}
 		
-		String reportKindCode = "", reportKindValue = "";
+		String reportKindCode = "", reportKindValue = "", reportKindNoneValue;
 		if(tplNodeRef != null){
 			List<String> reportKindProp = (List<String>) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_KINDS);
 			if(reportKindProp != null && !reportKindProp.isEmpty()){
@@ -376,17 +375,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 			}
 		}
 		
-		 
-		NodeRef reportKindFolderNodeRef = getFromCacheListFolderNodeRef(RepoConsts.PATH_REPORT_KINDLIST);
-		
-		if(reportKindFolderNodeRef != null && !reportKindCode.isEmpty()){
-			List<ChildAssociationRef> assocList = nodeService.getChildAssocsByPropertyValue(reportKindFolderNodeRef, BeCPGModel.PROP_LV_CODE, reportKindCode);
-			if(assocList != null && !assocList.isEmpty()){
-				reportKindValue = (String) nodeService.getProperty(assocList.get(0).getChildRef(), BeCPGModel.PROP_LV_VALUE);
-			} else {
-				reportKindValue = reportKindCode; 
-			}
-		}
+		 reportKindValue = getRerportKindValue(reportKindCode);
+		 reportKindNoneValue = getRerportKindValue("None");
 		// Filter XML report by reportKind
 		String[] entityParams = null;
 		for(Iterator<Element> entityIterator = dataXml.elementIterator(); entityIterator.hasNext();){
@@ -401,10 +391,16 @@ public class EntityReportServiceImpl implements EntityReportService {
 						Element itemEl = elIterator.next();
 						String[] rkValues = itemEl.valueOf("@" + ReportModel.PROP_REPORT_KINDS.getLocalName()).split("\\s*,\\s*");
 						
+						
+						if(Arrays.asList(rkValues).contains(reportKindNoneValue)){
+							dlEl.remove(itemEl);
+							continue;
+						}
+						
 						if(Arrays.asList(rkValues).contains(reportKindValue)){
 							hasReportKindAspect = true;
-							break;
 						}
+						
 					}
 					
 					if(hasReportKindAspect){
@@ -447,6 +443,24 @@ public class EntityReportServiceImpl implements EntityReportService {
 		
 		return dataXml;
 		 
+	}
+	
+	private String getRerportKindValue(String reportKindCode){
+		
+		String reportKindValue = "";
+		
+		NodeRef reportKindFolderNodeRef = getFromCacheListFolderNodeRef(RepoConsts.PATH_REPORT_KINDLIST);
+		
+		if(reportKindFolderNodeRef != null && !reportKindCode.isEmpty()){
+			List<ChildAssociationRef> assocList = nodeService.getChildAssocsByPropertyValue(reportKindFolderNodeRef, BeCPGModel.PROP_LV_CODE, reportKindCode);
+			if(assocList != null && !assocList.isEmpty()){
+				reportKindValue = (String) nodeService.getProperty(assocList.get(0).getChildRef(), BeCPGModel.PROP_LV_VALUE);
+			} else {
+				reportKindValue = reportKindCode; 
+			}
+		}
+		
+		return reportKindValue;
 	}
 	
 	public NodeRef getFromCacheListFolderNodeRef(String listPath) {

@@ -192,7 +192,7 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 							MultiLevelListData tmp = getMultiLevelListData(dataListFilter, entityNodeRef, nextDepth, maxDepthLevel, childRef,
 									curVisitedNodeRef, useExpandedCache, resetTree);
 
-							if (!isSecondary || (!tmp.getTree().isEmpty() || !isExpandedNode(useExpandedCache ? childRef : null, true, resetTree))) {
+							if (!isSecondary || (!tmp.getTree().isEmpty() /*|| !isExpandedNode(useExpandedCache ? childRef : null, true, resetTree)*/)) {
 								ret.getTree().put(childRef, tmp);
 							}
 						} else if (!isSecondary) {

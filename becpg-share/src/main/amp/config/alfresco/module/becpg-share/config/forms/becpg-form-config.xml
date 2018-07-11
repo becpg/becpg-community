@@ -277,18 +277,22 @@
 					
 					<show id="bcpg:nrNodeType" />
 					<show id="bcpg:nrTarget" />
+					<show id="bcpg:nrVersionFilter" />
 					<show id="bcpg:nrConditions" />
 					
 					<show id="bcpg:nrSubject" />
 					<show id="bcpg:nrEmail" />
 					
 					<show id="bcpg:nrFrequency" />
+					<show id="bcpg:nrRecurringTimeType" />
+					<show id="bcpg:nrRecurringDay" />
 					<show id="bcpg:nrFrequencyStartDate" />
+					<show id="bcpg:nrForceNotification" />
 				</field-visibility>
 				<appearance>
 					<set id="notificationRule" appearance="bordered-panel" label-id="becpg.forms.set.notification-rule.label" />
-					<set id="notificationEMail" appearance="bordered-panel" label-id="becpg.forms.set.notification-email.label" />
 					<set id="notificationFilter" appearance="bordered-panel" label-id="becpg.forms.set.notification-filter.label" />
+					<set id="notificationEMail" appearance="bordered-panel" label-id="becpg.forms.set.notification-email.label" />
 					<set id="notificationRecurring" appearance="bordered-panel" label-id="becpg.forms.set.notification-recurring.label" />
 					
 					<field id="bcpg:nrNodeType" set="notificationFilter">
@@ -328,12 +332,17 @@
 							<control-param name="showTime">false</control-param>
 						</control>
 					</field>
-					<field id="bcpg:nrFrequency" set="notificationRecurring" help-id="becpg.forms.help.notificationFrequency" />
+					<field id="bcpg:nrFrequency" set="notificationRecurring" />
 					<field id="bcpg:nrEmail" set="notificationEMail">
 						<control template="/org/alfresco/components/form/controls/association.ftl">
 							<control-param name="startLocation">/app:company_home/app:dictionary/app:email_templates</control-param>
 						</control>
 					</field>
+					<field id="bcpg:nrVersionFilter" set="notificationFilter" />
+					<field id="bcpg:nrForceNotification" set="notificationRecurring" />
+					<field id="bcpg:nrRecurringTimeType" set="notificationRecurring" help-id="becpg.forms.help.notificationFrequency" />
+					<field id="bcpg:nrRecurringDay" set="notificationRecurring" />
+					
 				</appearance>
 			</form>
 			
@@ -369,14 +378,17 @@
 					
 					<show id="bcpg:nrNodeType" />
 					<show id="bcpg:nrTarget" />
-					
+					<show id="bcpg:nrVersionFilter" />
 					<show id="bcpg:nrConditions" />
 					
 					<show id="bcpg:nrSubject" />
 					<show id="bcpg:nrEmail" />
 					
 					<show id="bcpg:nrFrequency" />
+					<show id="bcpg:nrRecurringTimeType" />
+					<show id="bcpg:nrRecurringDay" />
 					<show id="bcpg:nrFrequencyStartDate" />
+					<show id="bcpg:nrForceNotification" />
 				</field-visibility>
 			</form>
 		</forms>
@@ -394,18 +406,21 @@
 					
 					<show id="bcpg:nrNodeType" />
 					<show id="bcpg:nrTarget" />
+					<show id="bcpg:nrVersionFilter" />
 					<show id="bcpg:nrConditions" />
 					
 					<show id="bcpg:nrSubject" />
 					<show id="bcpg:nrEmail" />
 					
 					<show id="bcpg:nrFrequency" />
-					<show id="bcpg:nrFrequencyStartDate" />
+					<show id="bcpg:nrRecurringTimeType" />
+					<show id="bcpg:nrRecurringDay" />
+					<show id="bcpg:nrForceNotification" />
 				</field-visibility>
 				<appearance>
 					<set id="notificationRule" appearance="bordered-panel" label-id="becpg.forms.set.notification-rule.label" />
-					<set id="notificationEMail" appearance="bordered-panel" label-id="becpg.forms.set.notification-email.label" />
 					<set id="notificationFilter" appearance="bordered-panel" label-id="becpg.forms.set.notification-filter.label" />
+					<set id="notificationEMail" appearance="bordered-panel" label-id="becpg.forms.set.notification-email.label" />
 					<set id="notificationRecurring" appearance="bordered-panel" label-id="becpg.forms.set.notification-recurring.label" />
 					
 					<field id="bcpg:nrNodeType" set="notificationFilter">
@@ -445,12 +460,17 @@
 							<control-param name="showTime">false</control-param>
 						</control>
 					</field>
-					<field id="bcpg:nrFrequency" set="notificationRecurring" help-id="becpg.forms.help.notificationFrequency" />
+					<field id="bcpg:nrFrequency" set="notificationRecurring" />
 					<field id="bcpg:nrEmail" set="notificationEMail">
 						<control template="/org/alfresco/components/form/controls/association.ftl">
 							<control-param name="startLocation">/app:company_home/app:dictionary/app:email_templates</control-param>
 						</control>
 					</field>
+					<field id="bcpg:nrVersionFilter" set="notificationFilter" />
+					<field id="bcpg:nrForceNotification" set="notificationRecurring" />
+					<field id="bcpg:nrRecurringTimeType" set="notificationRecurring" help-id="becpg.forms.help.notificationFrequency"/>
+					<field id="bcpg:nrRecurringDay" set="notificationRecurring" />
+					
 				</appearance>
 			</form>
 		</forms>

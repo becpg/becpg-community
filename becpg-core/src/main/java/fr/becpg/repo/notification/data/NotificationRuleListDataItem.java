@@ -1,5 +1,6 @@
 package fr.becpg.repo.notification.data;
 
+import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -30,6 +31,10 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 	private NotificationRuleTimeType timeType;
 	private List<NodeRef> authorities = new ArrayList<>();
 	private Date frequencyStartDate;
+	private VersionFilterType versionFilterType;
+	private boolean enforced;
+	private RecurringTimeType recurringTime;
+	private DayOfWeek recurringDay;
 	
 	
 	
@@ -149,6 +154,46 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 	}
 
 
+	@AlfProp
+	@AlfQname(qname="bcpg:nrVersionFilter")
+	public VersionFilterType getVersionFilterType() {
+		return versionFilterType;
+	}
+
+	public void setVersionFilterType(VersionFilterType versionFilterType) {
+		this.versionFilterType = versionFilterType;
+	}
+
+	@AlfProp
+	@AlfQname(qname="bcpg:nrForceNotification")
+	public boolean isEnforced() {
+		return enforced;
+	}
+
+	public void setEnforced(boolean enforced) {
+		this.enforced = enforced;
+	}
+
+	@AlfProp
+	@AlfQname(qname="bcpg:nrRecurringTimeType")
+	public RecurringTimeType getRecurringTime() {
+		return recurringTime;
+	}
+
+	public void setRecurringTime(RecurringTimeType recurringTime) {
+		this.recurringTime = recurringTime;
+	}
+
+	@AlfProp
+	@AlfQname(qname="bcpg:nrRecurringDay")
+	public DayOfWeek getRecurringDay() {
+		return recurringDay;
+	}
+
+	public void setRecurringDay(DayOfWeek recurringDay) {
+		this.recurringDay = recurringDay;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -158,12 +203,16 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 		result = prime * result + ((dateField == null) ? 0 : dateField.hashCode());
 		result = prime * result + days;
 		result = prime * result + ((email == null) ? 0 : email.hashCode());
-		result = prime * result + ((nodeType == null) ? 0 : nodeType.hashCode());
+		result = prime * result + (enforced ? 1231 : 1237);
 		result = prime * result + frequency;
 		result = prime * result + ((frequencyStartDate == null) ? 0 : frequencyStartDate.hashCode());
+		result = prime * result + ((nodeType == null) ? 0 : nodeType.hashCode());
+		result = prime * result + ((recurringDay == null) ? 0 : recurringDay.hashCode());
+		result = prime * result + ((recurringTime == null) ? 0 : recurringTime.hashCode());
 		result = prime * result + ((subject == null) ? 0 : subject.hashCode());
 		result = prime * result + ((target == null) ? 0 : target.hashCode());
 		result = prime * result + ((timeType == null) ? 0 : timeType.hashCode());
+		result = prime * result + ((versionFilterType == null) ? 0 : versionFilterType.hashCode());
 		return result;
 	}
 
@@ -198,10 +247,7 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 				return false;
 		} else if (!email.equals(other.email))
 			return false;
-		if (nodeType == null) {
-			if (other.nodeType != null)
-				return false;
-		} else if (!nodeType.equals(other.nodeType))
+		if (enforced != other.enforced)
 			return false;
 		if (frequency != other.frequency)
 			return false;
@@ -209,6 +255,15 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 			if (other.frequencyStartDate != null)
 				return false;
 		} else if (!frequencyStartDate.equals(other.frequencyStartDate))
+			return false;
+		if (nodeType == null) {
+			if (other.nodeType != null)
+				return false;
+		} else if (!nodeType.equals(other.nodeType))
+			return false;
+		if (recurringDay != other.recurringDay)
+			return false;
+		if (recurringTime != other.recurringTime)
 			return false;
 		if (subject == null) {
 			if (other.subject != null)
@@ -222,13 +277,20 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 			return false;
 		if (timeType != other.timeType)
 			return false;
+		if (versionFilterType != other.versionFilterType)
+			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "NotificationRuleListDataItem [nodeType=" + nodeType + ", dateField=" + dateField + ", target=" + target + ", condtions=" + condtions + " startDate=" + frequencyStartDate +
-				", frequency=" + frequency + ", timeType=" + timeType + ", days=" + days + ", authorities=" + authorities + ", subject=" + subject + ", email=" + email + "]";
+		return "NotificationRuleListDataItem [nodeType=" + nodeType + ", dateField=" + dateField + ", condtions=" + condtions + ", target=" + target
+				+ ", days=" + days + ", subject=" + subject + ", email=" + email + ", frequency=" + frequency + ", timeType=" + timeType
+				+ ", authorities=" + authorities + ", frequencyStartDate=" + frequencyStartDate + ", versionType=" + versionFilterType + ", enforced="
+				+ enforced + ", recurringTime=" + recurringTime + ", recurringDay=" + recurringDay + "]";
 	}
+
+	
+	
 
 }
