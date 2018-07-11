@@ -15,7 +15,6 @@
 .labeling-view  .datagrid .scrollableList {
 	padding: 0;
 	height: 260px;
-	clear: both;
 }
 
 .labeling-view  .datagrid {
@@ -23,21 +22,32 @@
 }
 
 .labeling-view  .dashlet {
-	margin: 10px 0;
+	margin: 0px;
 }
 
+.labeling-view  .yui-resize .yui-resize-handle-b {
+    background-color: #eee !important;
+    left: -9px;
+    width: 105%;
+}
+
+
+
 .labeling-view  .dashlet  .toolbar {
-	height: 28px;
+	min-height: 0px;
 	margin: 0px;
 	padding: 0px;
 	border-bottom: none;
 }
 
- .yui-skin-lightTheme .labeling-view .yui-dt table,
-  .labeling-view .yui-dt-col-actions{
-	border-collapse: collapse;
-	border-right:none;
+
+.labeling-view  .dashlet {
+	z-index: auto;
+	margin: 5px 0px 20px 0;
+	border: none;
+	background-color: transparent;
 }
+
 
 .labeling-view .datagrid .yui-dt-col-actions  {
     border-right:none;
@@ -95,8 +105,8 @@
 }
 
 .labeling-view  .datagrid-bar .new-row span.first-child {
-	background: url(../images/add-row-16.png) no-repeat 12px 4px;
-	padding-left: 24px;
+	background: url(../images/add-row-16.png) no-repeat 8px 4px;
+	padding-left: 0px;
 }
 
 .labeling-view  .note {

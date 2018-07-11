@@ -2,7 +2,7 @@
 	<div class="new-row">
       <span id="${toolbarId}-newRowButton" class="yui-button yui-push-button">
          <span class="first-child">
-            <button type="button">${msg('button.new-row')}</button>
+            <button type="button" title="${msg('button.new-row')}">&nbsp;</button>
          </span>
       </span>
   </div>
@@ -10,7 +10,7 @@
 
 <#macro dataGridToolbarSelectedItem toolbarId>
 	<div class="selected-items">
-      <button class="no-access-check" id="${toolbarId}-selectedItems-button" name="doclist-selectedItems-button">${msg("menu.selected-items")}&nbsp;&#9662;</button>
+      <button class="no-access-check" id="${toolbarId}-selectedItems-button" name="doclist-selectedItems-button" title="${msg("menu.selected-items")}">&nbsp;&#9662;</button>
       <div id="${toolbarId}-selectedItems-menu" class="yuimenu" style="visibility:hidden">
          <div class="bd">
             <ul>
@@ -23,25 +23,31 @@
    </div>
 </#macro>
 
-<#macro dataGridToolbar toolbarId>
-	<#if filter?? && filter >
-         <div class="filter-form" >
-				<button id="${el}-filterform-button">${msg("filterform.header")}&nbsp;&#9662;</button>
-				<div id="${el}-filterform-panel"  class="yuimenu" >
-					 <div class="bd">	 		
-					 		<div class="filterButtonsBar">
-					 			<button id="${el}-filterform-clear"   >${msg("filterform.clear")}</button>
-					  			<button id="${el}-filterform-submit"  >${msg("filterform.submit")}</button>
-					  		</div>
-					 		<div id="${el}-filterform"  class="filterform" >
-					 		  	<img class="icon16" src="${url.context}/components/images/lightbox/loading.gif" />
-					 		</div>					 		
-					  </div>
+
+<#macro dataGridToolbarFilter toolbarId>
+	<div class="filter-form" >
+			<button id="${toolbarId}-filterform-button" title="${msg("filterform.header")}">&nbsp;&#9662;</button>
+			<div id="${toolbarId}-filterform-panel"  class="yuimenu" >
+						<div class="bd">
+								 <div class="filterButtonsBar">
+								 		<button id="${toolbarId}-filterform-clear"   >${msg("filterform.clear")}</button>
+								  		<button id="${toolbarId}-filterform-submit"  >${msg("filterform.submit")}</button>
+								  	</div>
+								 	<div id="${toolbarId}-filterform"  class="filterform" >
+								 		<img class="icon16" src="${url.context}/components/images/lightbox/loading.gif" />				 		
+								 	</div>
+						  </div>
 				</div>
-			</div>
+		</div>
+</#macro>
+
+
+<#macro dataGridToolbar toolbarId filter=false >
+	<#if filter?? >
+         <@dataGridToolbarFilter  toolbarId=toolbarId />
     </#if>
-   <@dataGridToolbarSelectedItem toolbarId=toolbarId />
-   <@dataGridToolbarNewRow toolbarId=toolbarId />
+    <@dataGridToolbarSelectedItem toolbarId=toolbarId />
+    <@dataGridToolbarNewRow toolbarId=toolbarId />
 </#macro>
 
 <#macro entityDataGrid showToolBar=false showDataListTitle=true>
@@ -64,7 +70,7 @@
         	 <div id="${el}-paginator" class="paginator hidden"></div>
          </#if>
          <div class="items-per-page" style="visibility: hidden;">
-            <button id="${el}-itemsPerPage-button">${msg("menu.items-per-page")}</button>
+            <button id="${el}-itemsPerPage-button" >${msg("menu.items-per-page")}</button>
          </div>
       </div>
    </div>

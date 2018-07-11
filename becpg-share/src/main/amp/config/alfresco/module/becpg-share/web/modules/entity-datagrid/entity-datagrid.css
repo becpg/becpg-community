@@ -161,6 +161,10 @@
 	width: 86px;
 }
 
+.yui-skin-becpg .datagrid .yui-dt-col-actions {
+	width: 1px;
+}
+
 .datagrid .yui-dt-col-actions .yui-dt-liner {
 	padding: 3px;
 }
@@ -172,7 +176,11 @@
 .datagrid .action-set {
 	position: absolute;
 	background-color: rgb(245, 245, 245);
-    width: 82px;
+        width: 82px;
+}
+.yui-skin-becpg .datagrid .action-set {
+        width: 150px;
+	right: 5px;
 }
 
 

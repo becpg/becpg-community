@@ -21,23 +21,38 @@
 	padding: 0px;
 }
 
+
+.formulation-view  .dashlet  .toolbar .yui-button {
+    margin: 0px;
+}
+
+/* 
 .formulation-view  .dashlet {
 	z-index: auto;
 	margin: 20px 0 0;
 }
+ */
+ .formulation-view .yui-resize .yui-resize-handle-b {
+    background-color: #eee !important;
+    left: -9px;
+    width: 105%;
+}
+
 
 .formulation-view  .dashlet  .toolbar {
-	min-height: 28px;
+	min-height: 0px;
 	margin: 0px;
 	padding: 0px;
 	border-bottom: none;
 }
 
-.yui-skin-lightTheme .formulation-view .yui-dt table, .formulation-view .yui-dt-col-actions
-	{
-	border-collapse: collapse;
-	border-right: none;
+.formulation-view  .dashlet {
+	z-index: auto;
+	margin: 5px 0px 20px 0;
+	border: none;
+	background-color: transparent;
 }
+
 
 div.constraintsList .scrollableList {
 	height: 260px;
@@ -81,6 +96,12 @@ div.constraintsList .scrollableList {
 	padding-left: 22px;
 }
 
+
+.formulation-view .datagrid-bar .new-row span.first-child {
+	background: url(../images/add-row-16.png) no-repeat 8px 4px;
+	padding-left: 0px;
+}
+
 .datalist-toolbar .onAddLabelingAspect, .datagrid .onAddLabelingAspect a
 	{
 	background: transparent url(../images/tag-16.png) no-repeat 12px 4px;
@@ -102,6 +123,7 @@ div.constraintsList .scrollableList {
 	border-bottom: 0px;
 }
 
+
 .dynamicCharactList-prop-panel {
 	padding: 0;
 	border-radius: 0 0 5px 0;
@@ -109,6 +131,16 @@ div.constraintsList .scrollableList {
 	border: 1px solid #CCCCCC;
 	width: 100%;
 }
+
+
+.yui-skin-becpg  .dynamicCharactList-prop-panel {
+	border-radius: 0;
+	background-color: white;
+	border: none;
+}
+
+
+
 
 .dynamicCharactList-prop-panel span {
 	padding: 5px;
@@ -145,14 +177,14 @@ div.constraintsList .scrollableList {
 
 
 
-.formulation-view  .effectivityCheckbox  span.yui-checkbox-button button
+.effectivityCheckbox  span.yui-checkbox-button button
 {
    background: url("../images/calendar-disabled-20.png") no-repeat 4px 4px;
    background-size: 17px
 }
 
 
-.formulation-view  .effectivityCheckbox span.yui-checkbox-button.yui-checkbox-button-checked button
+ .effectivityCheckbox span.yui-checkbox-button.yui-checkbox-button-checked button
 {
    background: url("../images/calendar-20.png") no-repeat 4px 4px;
    background-size: 17px
@@ -162,8 +194,6 @@ div.constraintsList .scrollableList {
 
 /** Full screen form */
 div#full-screen-form {
-	border: 1px solid #CCCCCC;
-	box-shadow: 0 1px 2px #CCCCCC;
 	height: 50px;
 	margin-top: 6px;
 	padding: 6px;

@@ -50,19 +50,22 @@
 			<![endif]-->
 			<input id="yui-history-field" type="hidden" ></input>
 			<div id="toolbar-contribs-compoList-${el}" style="display:none;">
-				<@dataGridToolbar  toolbarId="compoList-"+el />
+				<div class="effectivityCheckbox" id="${el}-effectivityCheckbox"></div>
+				<@dataGridToolbar filter="true" toolbarId="compoList-${el}" />
 			</div>
 			<div id="main-view-${el}" class="formulation-view">
 					<div id="full-screen-form" class=" hidden"></div>
-					<@dataGridDashlet dashletName="compoListDashlet" dashletId="compoList-${el}" hideTitle="true" hideToolbar="true" >
-						<div class="effectivityCheckbox" id="${el}-effectivityCheckbox"></div>
+					<@dataGridDashlet dashletName="compoListDashlet" dashletId="compoList-${el}" hideFilter="true" hideTitle="true" hideToolbar="true" >
+						
 					</@dataGridDashlet>
 					<div class="yui-gd">
 						<div class="yui-u first dynamicCharactList">
 							<@dataGridDashlet  dashletName="dynamicCharactListDashlet"
 								dashletId="dynamicCharactList-${el}" 
 								dashletTitle=msg("dashlet.dynamicCharactList.title") 
-								itemType="bcpg:dynamicCharactList"  />
+								itemType="bcpg:dynamicCharactList" 
+								hideTitle="true"
+								  />
 							<div class="dynamicCharactList-prop-panel">
   					   			<span>
 					   				<input  id="dynamicCharactList-${el}-colCheckbox" type="checkbox"/>
@@ -75,6 +78,7 @@
 					   		   <@dataGridDashlet dashletName="customListDashlet"
 							   	dashletId="customList-${el}" 
 							   	dashletTitle=msg("dashlet.customList.title")
+							   	hideTitle="true"
 							   	itemType="${customListType}" >
 									<div class="customListMenu">
 										<span class="yui-button yui-menu-button" id="${el}-customLists">

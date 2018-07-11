@@ -31,22 +31,25 @@
 			<iframe id="yui-history-iframe" src="${url.context}/res/yui/history/assets/blank.html"></iframe> 
 			<![endif]-->
 			<input id="yui-history-field" type="hidden" ></input>
+			<div id="toolbar-contribs-compoList-${el}" style="display:none;">
+				<@dataGridToolbar filter="true" toolbarId="ingLabelingList-${el}" />
+			</div>		
 			<div id="main-view-${el}" class="labeling-view">
-					<@dataGridDashlet  dashletName="ingLabelingListDashlet" dashletId="ingLabelingList-${el}" />
+					<@dataGridDashlet  dashletName="ingLabelingListDashlet" dashletId="ingLabelingList-${el}"  hideFilter="true" hideTitle="true" hideToolbar="true"  />
 					<div class="yui-g">
 						<div  class="yui-u first labelingRuleList" >
 							<@dataGridDashlet  dashletName="labelingRuleListDashlet"
 								dashletId="labelingRuleList-${el}" 
 								itemType="bcpg:labelingRuleList"
 								dashletTitle=msg("dashlet.labelingRuleList.title")  
-								  />
+								hideTitle="true"  />
 						</div>
 						<div class="yui-u compoList">
 						  <@dataGridDashlet  dashletName="compoListDashlet"
 								dashletId="compoList-${el}" 
 								itemType="bcpg:compoList"
 								dashletTitle=msg("dashlet.compoList.title")  
-								  />
+								hideTitle="true"  />
 						</div>
 						
 					</div>

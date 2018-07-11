@@ -1,3 +1,8 @@
+
+.yui-skin-becpg .yui-dt th .yui-dt-liner {
+	width: 100%;
+}
+
 .datalists .header-bar
 {
    margin-left: -20px;
@@ -17,9 +22,19 @@
    padding-left: 24px;
 }
 
+
 .datalists div.filter
 {
    padding-top: 0.5em;
+   max-height:356px;
+   transition: max-height 1s ease;
+   overflow: hidden;
+}
+
+
+.datalists div.filter:hover {
+	max-height:1000px;
+    transition: max-height 1s ease;
 }
 
 .datalists .no-lists
