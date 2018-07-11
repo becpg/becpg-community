@@ -8,6 +8,18 @@
 	float: none;
 }
 
+.yui-skin-becpg .datalist-toolbar .left  .yui-button,
+.yui-skin-becpg .datagrid-bar .yui-button  {
+    margin: 0px;
+}
+
+
+#toolbar-contribs .yui-menu-button button,
+.datagrid-bar  .yui-menu-button button
+ {
+ padding-right: 5px;
+}
+
 
 .datalist-toolbar .entity-view-details span.first-child
 {
@@ -49,14 +61,12 @@
 
 .datalist-toolbar .export-csv span.first-child
 {
-	background: url(../images/filetypes/xls-file-16.png) no-repeat 12px 4px;
-   padding-left: 12px;
+	background: url(../images/filetypes/xls-file-16.png) no-repeat 8px 4px;
 }
 
 .datalist-toolbar .columns-conf span.first-child
 {
-	background: url(images/columns-conf-16.png) no-repeat 12px 4px;
-   padding-left: 12px;
+	background: url(images/columns-conf-16.png) no-repeat 8px 4px;
 }
 
 .datalist-toolbar div.flat-button .ganttCkeckbox  span.yui-checkbox-button button
@@ -73,14 +83,12 @@
 
 .datalist-toolbar .formulate span.first-child
 {
-   background: url(images/formulate-16.png) no-repeat 12px 4px;
-   padding-left: 24px;
+   background: url(../documentlibrary/actions/entity-refresh-reports-16.png) no-repeat 8px 4px;
 }
 
 .datalist-toolbar .formulate.loading span.first-child
 {
-   background: url(images/loading.gif) no-repeat 12px 4px;
-   padding-left: 24px;
+   background: url(images/loading.gif) no-repeat 8px 4px;
 }
 
 .datalist-toolbar .import-nuts span.first-child
@@ -92,9 +100,16 @@
 
 .datalist-toolbar .product-metadata span.first-child
 {
-   background: url(../documentlibrary/actions/entity-view-details-16.png) no-repeat 12px 4px;
-   padding-left: 24px;
+   background: url(../documentlibrary/actions/entity-view-details-16.png) no-repeat 8px 4px;
 }
+
+
+.datalist-toolbar .new-row span.first-child {
+    background: url(../images/add-row-16.png) no-repeat 8px 4px;
+    padding-left: 0px ! important;
+}
+
+
 
 .datalist-toolbar .entity-edit-metadata span.first-child
 {
@@ -123,7 +138,7 @@
 
 .datalist-toolbar .full-screen span.first-child
 {
-   background: url(../images/fullscreen-enter.png) no-repeat 5px 4px;
+   background: url(../images/fullscreen-enter.png) no-repeat 9px 5px;
 }
 
 

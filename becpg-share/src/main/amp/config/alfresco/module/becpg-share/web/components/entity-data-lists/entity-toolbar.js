@@ -296,7 +296,12 @@
                   this.widgets.actionButtons[actionName] = Alfresco.util.createYUIButton(this, actionName + "Button",
                         action.fn);
    
-                  this.widgets.actionButtons[actionName].set("label", this.msg("button." + actionName));
+                  if(action.hideLabel !== null && action.hideLabel === true){
+                	  this.widgets.actionButtons[actionName].set("label", "");
+                  } else {
+                	  this.widgets.actionButtons[actionName].set("label", this.msg("button." + actionName));
+                  }
+                  
                   this.widgets.actionButtons[actionName].set("title", this.msg("button." + actionName + ".description"));
                   
 

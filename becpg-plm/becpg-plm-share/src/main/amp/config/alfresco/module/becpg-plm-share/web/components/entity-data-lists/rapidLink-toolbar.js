@@ -111,7 +111,8 @@
 
                      this.widgets.rapidLinkToolbar = new YAHOO.widget.Button({
                         type : "split",
-                        label : this.msg("button.rapid-link"),
+                        label : "&nbsp;",
+                        title : this.msg("button.rapid-link"),
                         name : "mymenubutton",
                         menu : rapidLinkPickerMenu,
                         container : this.options.containerDiv,

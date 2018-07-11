@@ -1336,15 +1336,17 @@
                                     });
                                 }
                             }
+                            
+                            var isThemeBecpg = Dom.hasClass("Share", "yui-skin-becpg");
 
                             // Add actions as last column
                             columnDefinitions.push(
                             {
                                 key : "actions",
-                                label : this.msg("label.column.actions"),
+                                label : isThemeBecpg ? "" : this.msg("label.column.actions"),
                                 sortable : false,
                                 formatter : this.fnRenderCellActions(),
-                                width : 80
+                                width :  isThemeBecpg ? 1 : 80
                             });
 
                             // DataTable definition

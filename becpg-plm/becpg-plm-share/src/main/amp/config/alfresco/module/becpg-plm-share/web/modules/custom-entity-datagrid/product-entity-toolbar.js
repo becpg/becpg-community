@@ -234,7 +234,19 @@ YAHOO.Bubbling
                         
 
                         if (Dom.hasClass("share-header", "hidden")) {
+                        	
+                        	if (document.exitFullscreen) {
+                        	    document.exitFullscreen();
+                        	}
+                        	else if (document.mozCancelFullScreen) {
+                        	    document.mozCancelFullScreen();
+                        	}
+                        	else if (document.webkitCancelFullScreen) {
+                        	    document.webkitCancelFullScreen();
+                        	}
+                        	
                            Dom.removeClass("share-header", "hidden");
+                           Dom.removeClass("alf-hd", "hidden");
                            Dom.removeClass("alf-filters", "hidden");
                            Dom.removeClass("alf-ft", "hidden");
                            Dom.removeClass("Share", "full-screen");
@@ -247,7 +259,21 @@ YAHOO.Bubbling
                            
                            YAHOO.Bubbling.fire("refreshFloatingHeader");
                         } else {
+                        	
+                        	var docElm = document.documentElement;
+                        	if (docElm.requestFullscreen) {
+                        	    docElm.requestFullscreen();
+                        	}
+                        	else if (docElm.mozRequestFullScreen) {
+                        	    docElm.mozRequestFullScreen();
+                        	}
+                        	else if (docElm.webkitRequestFullScreen) {
+                        	    docElm.webkitRequestFullScreen();
+                        	}
+                        	
+   
                            Dom.addClass("share-header", "hidden");
+                           Dom.addClass("alf-hd", "hidden");
                            Dom.addClass("alf-ft", "hidden");
                            Dom.addClass("Share", "full-screen");
                            Dom.addClass("alf-ft", "hidden");
@@ -358,6 +384,7 @@ YAHOO.Bubbling
                   "registerToolbarButtonAction",
                   {
                      actionName : "formulate",
+                     hideLabel: true,
                      evaluate : function(asset, entity) {
                         return asset.name != null && 
                              (asset.name === "compoList" || asset.name === "processList" || asset.name === "packagingList" || asset.name === "ingLabelingList" || asset.name === "nutList" || asset.name === "labelClaimList" || asset.name === "costList" || asset.name === "physicoChemList" || asset.name === "ingList" || asset.name === "allergenList")
@@ -422,6 +449,7 @@ YAHOO.Bubbling
                   "registerToolbarButtonAction",
                   {
                      actionName : "product-metadata",
+                     hideLabel: true,
                      evaluate : function(asset, entity) {
                         return asset.name != null && (asset.name === "compoList" || asset.name === "processList" || asset.name === "packagingList" ) && entity != null && entity.userAccess.edit;
                      },
