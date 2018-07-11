@@ -871,19 +871,20 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 	private String getCmisPrefix(QName tmpQName) {
 		String ret = tmpQName.toPrefixString(namespaceService);
-		if ((dictionaryService.getProperty(tmpQName) != null) && dictionaryService.getProperty(tmpQName).getContainerClass().isAspect()) {
-			QName aspect = dictionaryService.getProperty(tmpQName).getContainerClass().getName();
+		QName aspect = dictionaryService.getProperty(tmpQName) != null ? dictionaryService.getProperty(tmpQName).getContainerClass().getName() : null;
+		if ((dictionaryService.getProperty(tmpQName) != null) && dictionaryService.getProperty(tmpQName).getContainerClass().isAspect() 
+				&& !aspect.isMatch(ContentModel.ASPECT_AUDITABLE)) {
 			this.aspects.add(aspect);
 			ret = aspect.getLocalName() + "." + ret;
 		} else {
 			if (tmpQName.equals(ContentModel.PROP_NAME)) {
 				ret = "cmis:name";
 			} else if (tmpQName.equals(ContentModel.PROP_CREATED)) {
-				ret = "cmis:createdDate";
+				ret = "cmis:creationDate";
 			} else if (tmpQName.equals(ContentModel.PROP_CREATOR)) {
 				ret = "cmis:createdBy";
 			} else if (tmpQName.equals(ContentModel.PROP_MODIFIED)) {
-				ret = "cmis:lastModifiedDate";
+				ret = "cmis:lastModificationDate";
 			} else if (tmpQName.equals(ContentModel.PROP_MODIFIER)) {
 				ret = "cmis:lastModifiedBy";
 			}
