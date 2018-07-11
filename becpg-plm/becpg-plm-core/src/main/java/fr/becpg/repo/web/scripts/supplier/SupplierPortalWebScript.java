@@ -36,6 +36,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
@@ -183,7 +184,7 @@ public class SupplierPortalWebScript extends AbstractWebScript {
 
 			projectNodeRef = createProject(entityNodeRef, projectTemplateNodeRef);
 		} else {
-			throw new IllegalStateException("Parameters are incorrects");
+			throw new IllegalStateException(I18NUtil.getMessage("message.incorrect.paramater"));
 		}
 
 		try {
@@ -197,7 +198,7 @@ public class SupplierPortalWebScript extends AbstractWebScript {
 			res.setContentEncoding("UTF-8");
 			ret.write(res.getWriter());
 		} catch (JSONException e) {
-			throw new WebScriptException("Unable to serialize JSON", e);
+			throw new IllegalStateException("Unable to serialize JSON", e);
 		}
 
 	}
@@ -210,7 +211,7 @@ public class SupplierPortalWebScript extends AbstractWebScript {
 
 		NodeRef destNodeRef = associationService.getTargetAssoc(projectTemplateNodeRef, BeCPGModel.PROP_ENTITY_TPL_DEFAULT_DEST);
 		if (destNodeRef == null) {
-			throw new WebScriptException("No destination on project template");
+			throw new IllegalStateException(I18NUtil.getMessage("message.project-template.destination.missed"));
 		}
 
 		NodeRef branchNodeRef = entityVersionService.createBranch(entityNodeRef, destNodeRef);
@@ -295,11 +296,11 @@ public class SupplierPortalWebScript extends AbstractWebScript {
 
 				NodeRef accountNodeRef = associationService.getTargetAssoc(supplierNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNT);
 				if (accountNodeRef == null) {
-					throw new WebScriptException("No account provided for supplier");
+					throw new IllegalStateException(I18NUtil.getMessage("message.supplier-account.missed"));
 				}
 
 			} else {
-				throw new WebScriptException("No supplier provided for entity");
+				throw new IllegalStateException(I18NUtil.getMessage("message.supplier.missed"));
 			}
 		}
 

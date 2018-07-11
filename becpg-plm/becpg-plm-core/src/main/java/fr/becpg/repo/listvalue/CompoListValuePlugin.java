@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.service.cmr.preference.PreferenceService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -32,10 +34,12 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.entity.datalist.MultiLevelDataListService;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
+import fr.becpg.repo.entity.datalist.impl.MultiLevelExtractor;
 import fr.becpg.repo.listvalue.impl.EntityListValuePlugin;
 
 @Service
@@ -48,13 +52,12 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 	@Autowired
 	private MultiLevelDataListService multiLevelDataListService;
 
+	@Autowired
+	private PreferenceService preferenceService;
+
 	@Override
 	public String[] getHandleSourceTypes() {
 		return new String[] { SOURCE_TYPE_COMPOLIST_PARENT_LEVEL };
-	}
-
-	public void setMultiLevelDataListService(MultiLevelDataListService multiLevelDataListService) {
-		this.multiLevelDataListService = multiLevelDataListService;
 	}
 
 	@Override
@@ -66,11 +69,13 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 		if (sourceType.equals(SOURCE_TYPE_COMPOLIST_PARENT_LEVEL)) {
 
 			DataListFilter dataListFilter = new DataListFilter();
+
 			dataListFilter.setDataType(PLMModel.TYPE_COMPOLIST);
 			dataListFilter.setEntityNodeRefs(Collections.singletonList(entityNodeRef));
+			dataListFilter.updateMaxDepth(getDepthUserPref(dataListFilter));
 
 			// need to load assoc so we use the MultiLevelDataListService
-			MultiLevelListData mlld = multiLevelDataListService.getMultiLevelListData(dataListFilter);
+			MultiLevelListData mlld = multiLevelDataListService.getMultiLevelListData(dataListFilter, true, false);
 
 			NodeRef itemId = null;
 			@SuppressWarnings("unchecked")
@@ -81,7 +86,7 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 				}
 			}
 
-			List<ListValueEntry> result = getParentsLevel(mlld, query, itemId);
+			List<ListValueEntry> result = getParentsLevel(mlld, query, itemId, "");
 
 			if (entityNodeRef != null) {
 
@@ -95,9 +100,13 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 		return null;
 	}
 
-	private List<ListValueEntry> getParentsLevel(MultiLevelListData mlld, String query, NodeRef itemId) {
+	private List<ListValueEntry> getParentsLevel(MultiLevelListData mlld, String query, NodeRef itemId, String parentName) {
 
 		List<ListValueEntry> result = new ArrayList<>();
+
+		if (!parentName.isEmpty()) {
+			parentName += " > ";
+		}
 
 		if (mlld != null) {
 
@@ -115,11 +124,12 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 					}
 
 					QName type = nodeService.getType(productNodeRef);
+					String productName = extractHierarchyFullName(productNodeRef);
 
 					if (type.isMatch(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT) || type.isMatch(PLMModel.TYPE_SEMIFINISHEDPRODUCT)) {
 
 						boolean addNode = false;
-						String productName = (String) nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME);
+
 						logger.debug("productName: " + productName + " - query: " + query);
 
 						if (!query.isEmpty()) {
@@ -138,23 +148,43 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 							String state = (String) nodeService.getProperty(productNodeRef, PLMModel.PROP_PRODUCT_STATE);
 
 							if (type.isMatch(PLMModel.TYPE_SEMIFINISHEDPRODUCT)) {
-								result.add(new ListValueEntry(productNodeRef.toString(), productName,
+								result.add(new ListValueEntry(productNodeRef.toString(), parentName + productName,
 										PLMModel.TYPE_SEMIFINISHEDPRODUCT.getLocalName() + "-" + state));
 							} else {
-								result.add(new ListValueEntry(kv.getKey().toString(), productName,
+								result.add(new ListValueEntry(kv.getKey().toString(), parentName + productName,
 										PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.getLocalName() + "-" + state));
 							}
 						}
 					}
 
 					if (kv.getValue() != null) {
-						result.addAll(getParentsLevel(kv.getValue(), query, itemId));
+						result.addAll(getParentsLevel(kv.getValue(), query, itemId, parentName + productName));
 					}
 				}
 			}
 		}
 
 		return result;
+	}
+
+	private String extractHierarchyFullName(NodeRef hierarchy) {
+		String res = (String) nodeService.getProperty(hierarchy, ContentModel.PROP_NAME);
+		NodeRef parent = (NodeRef) nodeService.getProperty(hierarchy, BeCPGModel.PROP_PARENT_LEVEL);
+		if (parent != null) {
+			res = extractHierarchyFullName(parent) + " > " + res;
+		}
+
+		return res;
+	}
+
+	private int getDepthUserPref(DataListFilter dataListFilter) {
+		String username = AuthenticationUtil.getFullyAuthenticatedUser();
+
+		Map<String, Serializable> prefs = preferenceService.getPreferences(username);
+
+		Integer depth = (Integer) prefs.get(MultiLevelExtractor.PREF_DEPTH_PREFIX + dataListFilter.getDataType().getLocalName());
+
+		return depth != null ? depth : 1;
 	}
 
 }

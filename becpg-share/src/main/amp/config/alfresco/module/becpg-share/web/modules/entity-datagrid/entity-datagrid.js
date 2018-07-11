@@ -2160,7 +2160,7 @@
                         onCollapsedAndExpanded : function EntityDataGrid_onCollapsedAndExpanded(layer, args){
                         	
                         	var nodeRef = args.id.split("_")[2], expand = "collapsed" === args.id.split("_")[1],
-                        		url = Alfresco.constants.PROXY_URI + "/becpg/entity/datalists/openclose?nodeRef=" +nodeRef+"&expand="+expand, me = this;
+                        		url = Alfresco.constants.PROXY_URI + "becpg/entity/datalists/openclose?nodeRef=" +nodeRef+"&expand="+expand, me = this;
                         	  Alfresco.util.Ajax
 	                              .jsonPost(
 	                              {

@@ -16,7 +16,7 @@
  *  You should have received a copy of the GNU Lesser General Public License along with beCPG.
  *   If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-function createDashlet(dashletId, dashletName, dashletTitle, itemType, disableResize,listId,  columnFormId, extraDataParams){
+function createDashlet(dashletId, dashletName, dashletTitle, itemType, disableResize,listId,  columnFormId, extraDataParams, formWidth){
 
    var entityDataGrid = {
          id : "entityDataGrid", 
@@ -38,7 +38,8 @@ function createDashlet(dashletId, dashletName, dashletTitle, itemType, disableRe
             hiddenColumns : ["prop_bcpg_depthLevel"],
             initHistoryManager : false,
             columnFormId : columnFormId ? columnFormId : null, 
-            extraDataParams : extraDataParams ? extraDataParams : "&repo=true"
+            extraDataParams : extraDataParams ? extraDataParams : "&repo=true",
+            formWidth: formWidth ? formWidth :  "34em"
            }
         };
          
