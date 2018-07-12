@@ -116,7 +116,7 @@
 				
 				Alfresco.util.Ajax.request({
 					method : Alfresco.util.Ajax.GET,
-					url : Alfresco.constants.PROXY_URI + "becpg/product/formulate/node/" + this.options.entityNodeRef.replace(":/", ""),
+					url : Alfresco.constants.PROXY_URI + "becpg/product/formulate/node/" + this.options.entityNodeRef.replace(":/", "") + "?fast=true",
 					responseContentType : Alfresco.util.Ajax.JSON,
 					successCallback : {
 						fn : function(response) {

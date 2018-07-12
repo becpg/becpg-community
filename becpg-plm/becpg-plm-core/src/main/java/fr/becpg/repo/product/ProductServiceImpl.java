@@ -90,7 +90,7 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 
 	@Override
 	public void formulate(NodeRef productNodeRef) throws FormulateException {
-		formulate(productNodeRef, false);
+		formulate(productNodeRef, true);
 	}
 
 	@Override
@@ -104,7 +104,7 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 				L2CacheSupport.doInCacheContext(() -> {
 					AuthenticationUtil.runAsSystem(() -> {
 						formulationService.formulate(productNodeRef);
-						if (fast) {
+						if (!fast) {
 								entityActivityService.postEntityActivity(productNodeRef, ActivityType.Formulation, ActivityEvent.Update);
 						}
 
