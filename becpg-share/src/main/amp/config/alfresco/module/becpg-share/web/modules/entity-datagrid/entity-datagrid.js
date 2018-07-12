@@ -930,13 +930,14 @@
                             	this.isFilterFormLoaded = true;
 	                            var filterFormUrl = YAHOO.lang
 	                                    .substitute(
-	                                            Alfresco.constants.URL_SERVICECONTEXT + "module/entity-datagrid/filter/form?itemKind={itemKind}&list={list}&itemId={itemId}&formId={formId}&submitType=json&showCancelButton=false&showCaption=false&showSubmitButton=false" + ((this.options.entityNodeRef != null && this.options.entityNodeRef.length > 0) ? "&entityNodeRef=" + this.options.entityNodeRef
+	                                            Alfresco.constants.URL_SERVICECONTEXT + "module/entity-datagrid/filter/form?itemKind={itemKind}&siteId={siteId}&list={list}&itemId={itemId}&formId={formId}&submitType=json&showCancelButton=false&showCaption=false&showSubmitButton=false" + ((this.options.entityNodeRef != null && this.options.entityNodeRef.length > 0) ? "&entityNodeRef=" + this.options.entityNodeRef
 	                                                    : ""),
 	                                            {
 	                                                itemKind : "type",
 	                                                itemId : this.options.itemType != null ? this.options.itemType
 	                                                        : this.datalistMeta.itemType,
 	                                                formId : this.options.filterFormId!=null ?  this.options.filterFormId :  "filter",
+	                                                siteId: this.options.siteId,
 	                                                list : listName
 	                                            });
 	
