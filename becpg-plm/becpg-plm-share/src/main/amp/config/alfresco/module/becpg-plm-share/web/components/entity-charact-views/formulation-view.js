@@ -182,7 +182,7 @@
 				Alfresco.util.Ajax.request({
 					method : Alfresco.util.Ajax.GET,
 					responseContentType : Alfresco.util.Ajax.JSON,
-					url : Alfresco.constants.PROXY_URI + "becpg/product/formulate/node/" + this.options.entityNodeRef.replace(":/", ""),
+					url : Alfresco.constants.PROXY_URI + "becpg/product/formulate/node/" + this.options.entityNodeRef.replace(":/", "") + "?fast=true",
 					successCallback : {
 						fn : function(response) {
 							if(beCPG.util.lockCount() == localCount){

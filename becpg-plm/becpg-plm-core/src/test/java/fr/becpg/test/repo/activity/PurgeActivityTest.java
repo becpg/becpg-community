@@ -79,7 +79,7 @@ public class PurgeActivityTest extends PlmActivityServiceTest {
 		for (int i = 0; i < 3; i++) {
 			// Formulate finished product	
 			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-				productService.formulate(finishedProductNodeRef, true);
+				productService.formulate(finishedProductNodeRef, false);
 				return null;
 			}, false, true);
 			
@@ -131,7 +131,7 @@ public class PurgeActivityTest extends PlmActivityServiceTest {
 			alfrescoRepository.save(productData);
 
 			// Formulate finished product
-			productService.formulate(productData.getNodeRef(), true);
+			productService.formulate(productData.getNodeRef(), false);
 			return null;
 		}, false, true);
 
