@@ -87,7 +87,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		
 		addCriteriaMap(beCPGQueryBuilder, criteria, ignoredFields);
 
-		List<NodeRef> nodes = beCPGQueryBuilder.maxResults(maxResults).ofType(datatype).ftsLanguage().list();
+		List<NodeRef> nodes = beCPGQueryBuilder.maxResults(maxResults).ofType(datatype).inDBIfPossible().ftsLanguage().list();
 
 		if (advSearchPlugins != null) {
 			StopWatch watch = null;
