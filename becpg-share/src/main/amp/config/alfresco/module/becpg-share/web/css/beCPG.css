@@ -37,6 +37,12 @@
 }
 
 
+.form-container .yui-g .form-field  input.date-entry {
+    width: 6em !important;
+    margin-bottom: 0.1em;
+}
+
+
 .form-container .yui-g .form-field input.number-unit {
 	width: 23em !important;
 }

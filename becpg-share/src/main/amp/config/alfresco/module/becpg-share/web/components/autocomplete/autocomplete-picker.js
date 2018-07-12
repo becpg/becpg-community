@@ -179,7 +179,9 @@
                                         {
                                             inputAdded.value = "";
                                         }
-                                        inputRemoved.value = "";
+                                        if(inputRemoved!=null){
+                                        	inputRemoved.value = "";
+                                        }
                                     });
 
                                 }

@@ -387,6 +387,7 @@
 				<evaluator>evaluator.becpg.doclib.action.entity</evaluator>
 			</action>
 			
+			
          <action id="datalist-copy-to" type="javascript" label="actions.datalist.copy-to">
             <param name="function">onActionCopyDataListTo</param>
             <evaluator>evaluator.doclib.action.editableByCurrentUser</evaluator>
@@ -421,7 +422,9 @@
 			</actionGroup>
 			<actionGroup id="entity-details">
 				<!-- <action index="100" id="entity-view-documents" /> -->
-				<action index="101" id="document-edit-metadata" icon="folder-edit-metadata" label="actions.folder.edit-metadata" />
+				<action index="101" id="document-edit-metadata" icon="folder-edit-metadata" label="actions.folder.edit-metadata" >
+		            <param name="page">edit-metadata?nodeRef={node.nodeRef}&amp;siteId={site}</param>
+		        </action>
 				<action index="102" id="entity-checkin" />
 				<action index="103" id="entity-checkout" />
 				<action index="104" id="entity-cancel-editing" />

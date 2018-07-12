@@ -134,12 +134,18 @@
                                            response)
                                    {
 
-                                    me.queryExecutionId = null;
+                                    
+                                	   
+                                       me.queryExecutionId = null;
    	                                
 	                                   me._updateDataGrid.call(me,
 	                                     {
 	                                         page : me.currentPage
 	                                    });
+
+	           				            
+	           				        YAHOO.Bubbling.fire("dirtyDataTable");   
+	                                   
 
            				            Alfresco.util.PopupManager.displayMessage({
            					            text : me.msg("message.new-row.success")
