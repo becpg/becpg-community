@@ -1881,12 +1881,13 @@
 							var templateUrl = YAHOO.lang
 									.substitute(
 											Alfresco.constants.URL_SERVICECONTEXT
-													+ "components/form?formId=bulk-edit&itemKind={itemKind}&itemId={itemId}&mode={mode}&submitType={submitType}&showCancelButton=true",
+													+ "components/form?formId=bulk-edit&itemKind={itemKind}&itemId={itemId}&mode={mode}&submitType={submitType}&showCancelButton=true&siteId={siteId}",
 											{
 												itemKind : "node",
 												itemId : item.nodeRef,
 												mode : "edit",
-												submitType : "json"
+												submitType : "json",
+												siteId : this.options.siteId
 											});
 
 							// Using Forms Service, so always create new

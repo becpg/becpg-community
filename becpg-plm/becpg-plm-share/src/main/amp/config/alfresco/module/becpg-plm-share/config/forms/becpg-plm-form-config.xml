@@ -6410,7 +6410,6 @@
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/variantList
 							</control-param>
-							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
 					</field>
 					<field id="bcpg:parentLevel" help-id="becpg.forms.help.parentLevel" set="1-col-2">
@@ -6465,6 +6464,20 @@
 			</form>
 			<!-- Data Grid view -->
 			<form id="filter">
+				<field-visibility>
+					<show id="bcpg:depthLevel" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:depthLevel">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">0|,1|1,2|2,3|3,4|4,All|data.level.all
+							</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+			
+			<form id="filter-wused">
 				<field-visibility>
 					<show id="bcpg:depthLevel" />
 					<show id="entity_bcpg:compoListProduct_bcpg:product" />

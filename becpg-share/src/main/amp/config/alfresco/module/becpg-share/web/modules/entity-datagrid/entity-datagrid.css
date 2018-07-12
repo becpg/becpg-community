@@ -3,6 +3,11 @@
 	z-index:3;
 }
 
+
+.datagrid  .yui-dt th .yui-dt-liner {
+	width: 100%;
+}
+
 .datagrid {
 	padding-top: 0.5em;
 	visibility: hidden;

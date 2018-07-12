@@ -8,12 +8,18 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.web.config.forms.FormConfigElement;
+import org.alfresco.web.config.forms.FormsConfigElement;
 import org.alfresco.web.config.forms.Mode;
 import org.alfresco.web.scripts.forms.FormUIGet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.extensions.config.Config;
+import org.springframework.extensions.config.ConfigElement;
+import org.springframework.extensions.surf.RequestContext;
+import org.springframework.extensions.surf.support.ThreadLocalRequestContext;
 import org.springframework.extensions.surf.util.StringBuilderWriter;
 import org.springframework.extensions.webscripts.Cache;
+import org.springframework.extensions.webscripts.ConfigModel;
 import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.connector.Response;
@@ -24,6 +30,8 @@ import org.springframework.extensions.webscripts.json.JSONWriter;
  * @author Matthieu
  */
 public class FilterFormUIGet extends FormUIGet {
+	
+	private static final String PARAM_SITEID = "siteId";
 
 	private static final String PARAM_LIST = "list";
 
@@ -35,17 +43,30 @@ public class FilterFormUIGet extends FormUIGet {
 
 		// get mode formId
 		String formId = getParameter(request, PARAM_FORM_ID);
-
+		String siteIdParam = getParameter(request, PARAM_SITEID);
 		String list = getParameter(request, PARAM_LIST);
 
 		Mode mode = Mode.CREATE;
 		if (list != null && list.indexOf("WUsed") > -1) {
 			mode = Mode.VIEW;
+			if(formId!=null && testFormConfig(itemId, formId +"-wused" ) != null ) {
+				formId = formId +"-wused" ;
+			}
 		}
 
-		// get the form configuration and list of fields that are visible (if
-		// any)
-		FormConfigElement formConfig = getFormConfig(itemId, formId);
+	    
+        if(siteIdParam!=null && !siteIdParam.isEmpty()) {
+        	if(formId!=null && !formId.isEmpty() && testFormConfig(itemId, formId +"-"+ siteIdParam) != null ) {
+        		formId = formId +"-"+ siteIdParam;
+        	} else if(testFormConfig(itemId, siteIdParam) !=null ) {
+        		formId = siteIdParam;
+        	}
+        }
+        
+         // get the form configuration and list of fields that are visible (if any)
+        FormConfigElement formConfig  = getFormConfig(itemId, formId);
+        
+		
 		List<String> visibleFields = getVisibleFields(mode, formConfig);
 		
 		// get the form definition from the form service
@@ -259,5 +280,47 @@ public class FilterFormUIGet extends FormUIGet {
 		// return the JSON body as a stream
 		return new ByteArrayInputStream(buf.toString().getBytes());
 	}
+	
+	
+    protected FormConfigElement testFormConfig(String itemId, String formId)
+    {
+        FormConfigElement formConfig = null;
+        FormsConfigElement formsConfig = null;
+        RequestContext requestContext = ThreadLocalRequestContext.getRequestContext();
+        ConfigModel extendedTemplateConfigModel = requestContext.getExtendedTemplateConfigModel(null);
+        
+        if(extendedTemplateConfigModel != null) {
+        	@SuppressWarnings("unchecked")
+	        Map<String, ConfigElement> configs = (Map<String, ConfigElement>) extendedTemplateConfigModel.getScoped().get(itemId);
+	        formsConfig = (FormsConfigElement) configs.get(CONFIG_FORMS);
+        }
+        
+        if(formsConfig == null)
+        {
+        	Config configResult = this.configService.getConfig(itemId);
+            formsConfig = (FormsConfigElement)configResult.getConfigElement(CONFIG_FORMS);
+        }
+        
+        if (formsConfig != null)
+        {
+           // Extract the form we are looking for
+            if (formsConfig != null)
+            {
+                // try and retrieve the specified form 
+                if (formId != null && formId.length() > 0)
+                {
+                    formConfig = formsConfig.getForm(formId);
+                }
+                
+            }
+        }
+        else if (logger.isWarnEnabled())
+        {
+            logger.warn("Could not lookup form configuration as configService has not been set");
+        }
+        return formConfig;
+    }
+	
+	
 
 }
