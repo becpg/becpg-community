@@ -36,10 +36,12 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
+import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.datalist.MultiLevelDataListService;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.entity.datalist.impl.MultiLevelExtractor;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.listvalue.impl.EntityListValuePlugin;
 
 @Service
@@ -55,6 +57,12 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 	@Autowired
 	private PreferenceService preferenceService;
 
+	@Autowired
+	private EntityListDAO entityListDAO;
+
+	@Autowired
+	private AssociationService associationService;
+
 	@Override
 	public String[] getHandleSourceTypes() {
 		return new String[] { SOURCE_TYPE_COMPOLIST_PARENT_LEVEL };
@@ -66,16 +74,18 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 		NodeRef entityNodeRef = new NodeRef((String) props.get(ListValueService.PROP_NODEREF));
 		logger.debug("CompoListValuePlugin sourceType: " + sourceType + " - entityNodeRef: " + entityNodeRef);
 
-		if (sourceType.equals(SOURCE_TYPE_COMPOLIST_PARENT_LEVEL)) {
+		if (sourceType.equals(SOURCE_TYPE_COMPOLIST_PARENT_LEVEL) && (entityNodeRef != null)) {
+
+			boolean multiLevelExtract = true;
 
 			DataListFilter dataListFilter = new DataListFilter();
-
 			dataListFilter.setDataType(PLMModel.TYPE_COMPOLIST);
 			dataListFilter.setEntityNodeRefs(Collections.singletonList(entityNodeRef));
-			dataListFilter.updateMaxDepth(getDepthUserPref(dataListFilter));
 
-			// need to load assoc so we use the MultiLevelDataListService
-			MultiLevelListData mlld = multiLevelDataListService.getMultiLevelListData(dataListFilter, true, false);
+			Integer depthLevel = getDepthUserPref(dataListFilter);
+			if (depthLevel == 0) {
+				multiLevelExtract = false;
+			}
 
 			NodeRef itemId = null;
 			@SuppressWarnings("unchecked")
@@ -86,18 +96,81 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 				}
 			}
 
-			List<ListValueEntry> result = getParentsLevel(mlld, query, itemId, "");
+			List<ListValueEntry> result = null;
 
-			if (entityNodeRef != null) {
+			if (multiLevelExtract) {
 
-				String state = (String) nodeService.getProperty(entityNodeRef, PLMModel.PROP_PRODUCT_STATE);
-				result.add(new ListValueEntry(entityNodeRef.toString(), (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME),
-						nodeService.getType(entityNodeRef).getLocalName() + "-" + state));
+				dataListFilter.updateMaxDepth(depthLevel);
+
+				// need to load assoc so we use the MultiLevelDataListService
+				MultiLevelListData mlld = multiLevelDataListService.getMultiLevelListData(dataListFilter, true, false);
+
+				result = getParentsLevel(mlld, query, itemId, "");
+			} else {
+				result = getSimpleResults(entityNodeRef, query, itemId);
 			}
+
+			String state = (String) nodeService.getProperty(entityNodeRef, PLMModel.PROP_PRODUCT_STATE);
+			result.add(new ListValueEntry(entityNodeRef.toString(), (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME),
+					nodeService.getType(entityNodeRef).getLocalName() + "-" + state));
 
 			return new ListValuePage(result, pageNum, pageSize, null);
 		}
 		return null;
+	}
+
+	private List<ListValueEntry> getSimpleResults(NodeRef entityNodeRef, String query, NodeRef itemId) {
+
+		List<ListValueEntry> result = new ArrayList<>();
+
+		NodeRef listsContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
+		if (listsContainerNodeRef != null) {
+			NodeRef dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, PLMModel.TYPE_COMPOLIST);
+
+			for (NodeRef dataListItemNodeRef : entityListDAO.getListItems(dataListNodeRef, PLMModel.TYPE_COMPOLIST)) {
+				if (!dataListItemNodeRef.equals(itemId)) {
+
+					NodeRef productNodeRef = associationService.getTargetAssoc(dataListItemNodeRef, PLMModel.ASSOC_COMPOLIST_PRODUCT);
+
+					QName type = nodeService.getType(productNodeRef);
+					String productName = extractHierarchyFullName(productNodeRef);
+
+					if (type.isMatch(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT) || type.isMatch(PLMModel.TYPE_SEMIFINISHEDPRODUCT)) {
+
+						boolean addNode = false;
+
+						logger.debug("productName: " + productName + " - query: " + query);
+
+						if (!query.isEmpty()) {
+
+							if (productName != null) {
+								if (isQueryMatch(query, productName)) {
+									addNode = true;
+								}
+							}
+						} else {
+							addNode = true;
+						}
+
+						if (addNode) {
+							logger.debug("add node productName: " + productName);
+							String state = (String) nodeService.getProperty(productNodeRef, PLMModel.PROP_PRODUCT_STATE);
+
+							if (type.isMatch(PLMModel.TYPE_SEMIFINISHEDPRODUCT)) {
+								result.add(new ListValueEntry(productNodeRef.toString(), productName,
+										PLMModel.TYPE_SEMIFINISHEDPRODUCT.getLocalName() + "-" + state));
+							} else {
+								result.add(new ListValueEntry(dataListItemNodeRef.toString(), productName,
+										PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.getLocalName() + "-" + state));
+							}
+						}
+					}
+
+				}
+			}
+
+		}
+		return result;
 	}
 
 	private List<ListValueEntry> getParentsLevel(MultiLevelListData mlld, String query, NodeRef itemId, String parentName) {
@@ -184,7 +257,7 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 
 		Integer depth = (Integer) prefs.get(MultiLevelExtractor.PREF_DEPTH_PREFIX + dataListFilter.getDataType().getLocalName());
 
-		return depth != null ? depth : 1;
+		return depth != null ? depth : 0;
 	}
 
 }

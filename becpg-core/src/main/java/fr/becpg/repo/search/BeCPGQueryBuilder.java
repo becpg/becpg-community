@@ -284,6 +284,11 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		cmisLanguage();
 		return this;
 	}
+	
+	public BeCPGQueryBuilder inDBIfPossible() {
+		queryConsistancy = QueryConsistency.TRANSACTIONAL_IF_POSSIBLE;
+		return this;
+	}
 
 	public BeCPGQueryBuilder cmisLanguage() {
 		this.language = SearchService.LANGUAGE_CMIS_ALFRESCO;
