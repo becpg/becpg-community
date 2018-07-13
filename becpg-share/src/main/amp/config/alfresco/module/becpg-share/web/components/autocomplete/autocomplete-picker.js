@@ -774,7 +774,7 @@
                         refreshContent : function(layer, args)
                         {
                         	this.options.currentValue = args[1];
-                        	loadItems(args);
+                        	this.loadItems(args);
                         },
 
                         beforeFormRuntimeInit : function(layer, args)
