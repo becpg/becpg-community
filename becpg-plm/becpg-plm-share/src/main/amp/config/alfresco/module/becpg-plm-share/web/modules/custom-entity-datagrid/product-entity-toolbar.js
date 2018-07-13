@@ -209,7 +209,25 @@ YAHOO.Bubbling
                                     YAHOO.Bubbling.fire("dataItemCreated", {
                                        nodeRef : response.json.persistedObject
                                     });
+                                    
+
+                                    var parentInput =   Dom.get(me.id + "_prop_bcpg_parentLevel-added");
+               			
+               			         
+	               			         if(parentInput !=null && parentInput.value!=null && parentInput.value.length>0){
+	               			        	 me.parentInputNodeRef = parentInput.value;
+	               			         } else {
+	               			        	 me.parentInputNodeRef = null;
+	               			         }
+                                    
                                     formsRuntime.reset();
+                                    
+
+                    		        if(me.parentInputNodeRef!=null ){
+                                    	Dom.get(me.id + "_prop_bcpg_parentLevel-added").value = me.parentInputNodeRef;
+                                    	YAHOO.Bubbling.fire(me.id + "_prop_bcpg_parentLevel" + "refreshContent", me.parentInputNodeRef, this );
+                    		        }
+
 
                                     var form = Dom.get(formsRuntime.formId);
                                     for ( var j = 0; j < form.elements.length; j++) {
