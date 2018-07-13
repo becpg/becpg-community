@@ -233,8 +233,8 @@ div#full-screen-form {
 }
 
 #full-screen-form  .yui-ac .ac-body {
-	width: 15em;
-	max-width: 15em;
+	width: 25em;
+	max-width: 25em;
 }
 
 #full-screen-form .ac-toogle {
@@ -276,4 +276,18 @@ div#full-screen-form {
 	#full-screen-form  .form-fields .input.mandatory input[type="text"],
 	#full-screen-form  .form-fields .input .mandatory input[type="text"] {
 	background-color: transparent;
+}
+
+#full-screen-form input[name="prop_bcpg_compoListQtySubFormula"],
+#full-screen-form input[name="prop_bcpg_compoListYieldPerc"],
+#full-screen-form input[name="prop_bcpg_compoListLossPerc"]{
+	width: 70px!important;
+	
+}
+
+td.yui-dt-col-assoc_bcpg_compoListProduct,
+th.yui-dt-col-assoc_bcpg_compoListProduct,
+td.yui-dt-col-assoc_bcpg_packagingListProduct,
+th.yui-dt-col-assoc_bcpg_packagingListProduct {
+	min-width: 350px;
 }
