@@ -159,7 +159,6 @@ div.constraintsList .scrollableList {
 }
 
 
-
 /** Full screen form */
 div#full-screen-form {
 	border: 1px solid #CCCCCC;
@@ -248,11 +247,16 @@ div#full-screen-form {
 	background-color: transparent;
 }
 
-
-
 #full-screen-form input[name="prop_bcpg_compoListQtySubFormula"],
 #full-screen-form input[name="prop_bcpg_compoListYieldPerc"],
 #full-screen-form input[name="prop_bcpg_compoListLossPerc"]{
 	width: 70px!important;
 	
+}
+
+td.yui-dt-col-assoc_bcpg_compoListProduct,
+th.yui-dt-col-assoc_bcpg_compoListProduct,
+td.yui-dt-col-assoc_bcpg_packagingListProduct,
+th.yui-dt-col-assoc_bcpg_packagingListProduct {
+	min-width: 350px;
 }
