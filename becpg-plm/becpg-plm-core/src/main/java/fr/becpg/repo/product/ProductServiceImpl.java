@@ -90,7 +90,7 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 
 	@Override
 	public void formulate(NodeRef productNodeRef) throws FormulateException {
-		formulate(productNodeRef, true);
+		formulate(productNodeRef, false);
 	}
 
 	@Override
