@@ -30,6 +30,7 @@ function main()
    AlfrescoUtil.param("site", null);
    AlfrescoUtil.param("bcPath", null);
    AlfrescoUtil.param("bcList", null);
+   AlfrescoUtil.param("bcTask", null);
    AlfrescoUtil.param("list", null);
    AlfrescoUtil.param("rootPage", "documentlibrary");
    AlfrescoUtil.param("rootLabelId", "path.documents");
@@ -118,6 +119,7 @@ function main()
             showDownload : (model.showDownload == "true"),
             showRelativePath : (model.bcPath == "true"),
             listFrom : model.bcList,
+            taskFrom : model.bcTask,
             showPath : (model.showPath == "true"),
             displayName : (model.item.displayName != null) ? model.item.displayName : model.item.fileName,
             likes : likes,

@@ -128,7 +128,12 @@
          		    		 YAHOO.util.Dom.removeClass(me.id+"-bcpath","hidden");
          		    		 var html = '<ul class="bcpath">';
          		    		 for(var i = 0 ; i<path.length;i++){		
-         		    			var type = path[i].type,  url = beCPG.util.entityURL(path[i].siteId, path[i].nodeRef, type, null, path[i].listId)+"&bcPath=true";
+         		    			var type = path[i].type;
+         		    			if(type == "task") {
+         		    				var url = Alfresco.constants.URL_PAGECONTEXT+"task-edit?taskId="+ path[i].nodeRef;
+         		    			} else {
+         		    				var url = beCPG.util.entityURL(path[i].siteId, path[i].nodeRef, type, null, path[i].listId)+"&bcPath=true";
+         		    			}
          		    			 html += '<li style="z-index:'+(20-i)+'"><span class="' +type.split(':')[1] + '" ><a href="' + url + '">'
 	    						+ Alfresco.util.encodeHTML(path[i].name) + '</a></li>';
          		    		 }
@@ -137,7 +142,18 @@
 	          			};
 	          			
 	          		    if(this.options.showRelativePath){
-	          		    	if(pathBreadCrumbs.currentNode != null && pathBreadCrumbs.currentNode.nodeRef != this.options.nodeRef) {
+	          		    	if(this.options.taskFrom!=null){
+	          		    		pathBreadCrumbs = { currentNode :{siteId : this.options.siteId,
+		          					nodeRef : this.options.nodeRef,
+		          					name:this.options.itemName,
+		          					type:this.options.itemType,
+	      		    				listId : this.options.listId}, path : [{
+	          		    				nodeRef : this.options.taskFrom,
+	          		    				name: this.msg("label.path.task",this.options.taskFrom.split('$')[1]),
+	          		    				type: "pjt:taskList"}]};
+	          		    
+	          		    		printBreadCumbsPath(pathBreadCrumbs.path);
+	          		    	} else if(pathBreadCrumbs.currentNode != null && pathBreadCrumbs.currentNode.nodeRef != this.options.nodeRef) {
 	          		    		 var isInPath = false; 
 	          		    		 for(var i = 0 ; i<pathBreadCrumbs.path.length;i++){
 	          		    			 if(pathBreadCrumbs.path[i].nodeRef == this.options.nodeRef){
