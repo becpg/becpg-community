@@ -206,20 +206,44 @@ YAHOO.Bubbling
                            formsRuntime.setAJAXSubmit(true, {
                               successCallback : {
                                  fn : function(response) {
-                                    YAHOO.Bubbling.fire("dataItemCreated", {
-                                       nodeRef : response.json.persistedObject
-                                    });
-                                    
+                                	 
+                                	var itemType = me.options.itemType != null ? me.options.itemType
+                            		         : me.datalistMeta.itemType;
+                                     var parentInput =   Dom.get(me.id + "_prop_bcpg_parentLevel-added");
+                			
+                			         
+ 	               			         if(parentInput !=null && parentInput.value!=null && parentInput.value.length>0){
+ 	               			        	 me.parentInputNodeRef = parentInput.value;
+ 	               			        	 
+ 	               			      	
+ 	                                 	  Alfresco.util.Ajax
+ 	                                           .jsonPost(
+ 	                                           {
+ 	                                               url : Alfresco.constants.PROXY_URI + "becpg/entity/datalists/openclose?nodeRef=" 
+ 	                                        		+me.parentInputNodeRef+"&expand=true&entityNodeRef="+me.options.entityNodeRef +"&listType="+itemType,
+ 	                                               successCallback :
+ 	                                               {
+ 	                                                   fn : function EntityDataGrid_onCollapsedAndExpanded(
+ 	                                                           responseColapse)
+ 	                                                   {
+ 	                                                	 
+ 	                                                	  YAHOO.Bubbling.fire("refreshDataGrids");
+ 	                                                	  YAHOO.Bubbling.fire("dirtyDataTable");   
+ 	                
+ 	                                                   },
+ 	                                                   scope : this
+ 	                                               }
+ 	                                           });
+ 	               			        	 
+ 	               			         } else {
+ 	               			        	 me.parentInputNodeRef = null;
+ 	               			         
+	                                	 YAHOO.Bubbling.fire("dataItemCreated", {
+	                                       nodeRef : response.json.persistedObject
+	                                    });
+                                
+ 	               			         }
 
-                                    var parentInput =   Dom.get(me.id + "_prop_bcpg_parentLevel-added");
-               			
-               			         
-	               			         if(parentInput !=null && parentInput.value!=null && parentInput.value.length>0){
-	               			        	 me.parentInputNodeRef = parentInput.value;
-	               			         } else {
-	               			        	 me.parentInputNodeRef = null;
-	               			         }
-                                    
                                     formsRuntime.reset();
                                     
 
@@ -259,6 +283,7 @@ YAHOO.Bubbling
                            Dom.addClass("alf-content", "yui-b");
                            if (this.fullScreen) {
                               Dom.setStyle("alf-content", "margin-left", this.fullScreen.marginLeft);
+                              this.fullScreen = null;
                            }
                            Dom.addClass("full-screen-form", "hidden");
                            
