@@ -129,7 +129,7 @@
          		    		 var html = '<ul class="bcpath">';
          		    		 for(var i = 0 ; i<path.length;i++){		
          		    			var type = path[i].type;
-         		    			if(type == "task") {
+         		    			if(type == "pjt:taskList") {
          		    				var url = Alfresco.constants.URL_PAGECONTEXT+"task-edit?taskId="+ path[i].nodeRef;
          		    			} else {
          		    				var url = beCPG.util.entityURL(path[i].siteId, path[i].nodeRef, type, null, path[i].listId)+"&bcPath=true";
