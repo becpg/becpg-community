@@ -81,12 +81,12 @@ public class AsyncECOServiceImpl implements AsyncECOService {
 			StopWatch watch = new StopWatch();
 			watch.start();
 
-			try {
+			AuthenticationUtil.runAs(() -> {
 
-				AuthenticationUtil.runAs(() -> {
+				boolean ret = transactionService.getRetryingTransactionHelper().doInTransaction(() -> ecoService.setInProgress(ecoNodeRef), false,
+						true);
 
-					boolean ret = transactionService.getRetryingTransactionHelper().doInTransaction(() -> ecoService.setInProgress(ecoNodeRef), false,
-							true);
+				try {
 
 					if (ret) {
 						transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -102,22 +102,12 @@ public class AsyncECOServiceImpl implements AsyncECOService {
 					} else {
 						logger.warn("ECO already InProgress:" + ecoNodeRef);
 					}
+				} catch (Exception e) {
+					transactionService.getRetryingTransactionHelper().doInTransaction(() -> ecoService.setInError(ecoNodeRef, e), false, true);	
+					logger.error("Unable to apply eco ", e);
 
-					return null;
-				}, userName);
-
-			} catch (Exception e) {
-
-                                transactionService.getRetryingTransactionHelper().doInTransaction(() -> ecoService.setInError(ecoNodeRef), false, true);
-				if (e instanceof ConcurrencyFailureException) {
-					throw (ConcurrencyFailureException) e;
-				}
-				logger.error("Unable to apply eco ", e);
-
-			} finally {
-				// Send mail after ECO
-
-				AuthenticationUtil.runAs(() -> {
+				} finally {
+					// Send mail after ECO
 					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 						beCPGMailService.sendMailOnAsyncAction(userName, apply ? "eco.apply" : "eco.simulate", ASYNC_ACTION_URL_PREFIX + ecoNodeRef,
@@ -125,10 +115,12 @@ public class AsyncECOServiceImpl implements AsyncECOService {
 
 						return null;
 					}, true, false);
-					return null;
-				}, userName);
 
-			}
+				}
+
+				return null;
+			}, userName);
+
 		}
 
 		@Override
