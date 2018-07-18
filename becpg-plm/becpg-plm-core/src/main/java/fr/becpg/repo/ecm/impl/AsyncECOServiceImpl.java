@@ -3,8 +3,6 @@ package fr.becpg.repo.ecm.impl;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
-import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
@@ -72,47 +70,37 @@ public class AsyncECOServiceImpl implements AsyncECOService {
 		public void run() {
 			try {
 
-				AuthenticationUtil.runAs(new RunAsWork<Object>() {
+				AuthenticationUtil.runAs(() -> {
 
-					@Override
-					public Object doWork() throws Exception {
+					boolean ret = transactionService.getRetryingTransactionHelper().doInTransaction(() -> ecoService.setInProgress(ecoNodeRef), false,
+							true);
 
-						boolean ret = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
-
-							@Override
-							public Boolean execute() throws Throwable {
-								return ecoService.setInProgress(ecoNodeRef);
+					if (ret) {
+						transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+							if (apply) {
+								ecoService.apply(ecoNodeRef);
+							} else {
+								ecoService.doSimulation(ecoNodeRef);
 							}
+							return true;
+
 						}, false, true);
 
-						if (ret) {
-							transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
-
-								@Override
-								public Boolean execute() throws Throwable {
-									if (apply) {
-										ecoService.apply(ecoNodeRef);
-									} else {
-										ecoService.doSimulation(ecoNodeRef);
-									}
-									return true;
-
-								}
-							}, false, true);
-
-						} else {
-							logger.warn("ECO already InProgress:" + ecoNodeRef);
-						}
-
-						return null;
+					} else {
+						logger.warn("ECO already InProgress:" + ecoNodeRef);
 					}
+
+					return null;
 				}, userName);
 
 			} catch (Exception e) {
+
 				if (e instanceof ConcurrencyFailureException) {
 					throw (ConcurrencyFailureException) e;
 				}
 				logger.error("Unable to apply eco ", e);
+			} finally {
+				transactionService.getRetryingTransactionHelper().doInTransaction(() -> ecoService.setInError(ecoNodeRef), false, true);
 			}
 		}
 
@@ -120,27 +108,33 @@ public class AsyncECOServiceImpl implements AsyncECOService {
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + getOuterType().hashCode();
-			result = prime * result + ((ecoNodeRef == null) ? 0 : ecoNodeRef.hashCode());
+			result = (prime * result) + getOuterType().hashCode();
+			result = (prime * result) + ((ecoNodeRef == null) ? 0 : ecoNodeRef.hashCode());
 			return result;
 		}
 
 		@Override
 		public boolean equals(Object obj) {
-			if (this == obj)
+			if (this == obj) {
 				return true;
-			if (obj == null)
+			}
+			if (obj == null) {
 				return false;
-			if (getClass() != obj.getClass())
+			}
+			if (getClass() != obj.getClass()) {
 				return false;
+			}
 			AsyncECOGenerator other = (AsyncECOGenerator) obj;
-			if (!getOuterType().equals(other.getOuterType()))
+			if (!getOuterType().equals(other.getOuterType())) {
 				return false;
+			}
 			if (ecoNodeRef == null) {
-				if (other.ecoNodeRef != null)
+				if (other.ecoNodeRef != null) {
 					return false;
-			} else if (!ecoNodeRef.equals(other.ecoNodeRef))
+				}
+			} else if (!ecoNodeRef.equals(other.ecoNodeRef)) {
 				return false;
+			}
 			return true;
 		}
 
