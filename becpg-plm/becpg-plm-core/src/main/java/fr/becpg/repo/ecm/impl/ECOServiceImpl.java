@@ -956,11 +956,40 @@ public class ECOServiceImpl implements ECOService {
 	}
 	
 	@Override
-	public Boolean setInError(NodeRef ecoNodeRef) {
-		ChangeOrderData om = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
-		if (!ECOState.InError.equals(om.getEcoState())) {
-			om.setEcoState(ECOState.InError);
-			alfrescoRepository.save(om);
+	public Boolean setInError(NodeRef ecoNodeRef, Exception e) {
+
+		List<String> errors = new ArrayList<>();
+
+		ChangeOrderData ecoData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
+		if (!(e instanceof ConcurrencyFailureException)) {
+
+			errors.add("OM in error ");
+			errors.add("Error message: " + e.getMessage());
+
+			try (StringWriter buffer = new StringWriter()) {
+				try (PrintWriter printer = new PrintWriter(buffer)) {
+					e.printStackTrace(printer);
+				}
+				errors.add("StackTrace : " + buffer.toString());
+			} catch (IOException e1) {
+				// Nothing can be done here
+
+			}
+		}
+
+		if (!ECOState.InError.equals(ecoData.getEcoState())) {
+			ecoData.setEcoState(ECOState.InError);
+
+			if (!errors.isEmpty()) {
+				StringBuilder comments = new StringBuilder();
+				for (String error : errors) {
+					comments.append(error + "</br>");
+				}
+
+				commentService.createComment(ecoData.getNodeRef(), "", comments.toString(), false);
+			}
+
+			alfrescoRepository.save(ecoData);
 			return true;
 		}
 
