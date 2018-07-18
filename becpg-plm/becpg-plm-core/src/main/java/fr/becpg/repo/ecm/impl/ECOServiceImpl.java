@@ -471,7 +471,7 @@ public class ECOServiceImpl implements ECOService {
 								if (!changeUnitDataItem.getRevision().equals(RevisionType.NoRevision)) {
 									createNewProductVersion(productNodeRef,
 											changeUnitDataItem.getRevision().equals(RevisionType.Major) ? VersionType.MAJOR : VersionType.MINOR,
-											ecoData, composite.getData());
+											ecoData);
 								}
 							}
 
@@ -756,17 +756,12 @@ public class ECOServiceImpl implements ECOService {
 		return productToImpact;
 	}
 
-	private NodeRef createNewProductVersion(final NodeRef productToImpact, VersionType versionType, ChangeOrderData ecoData,
-			WUsedListDataItem parent) {
+	private NodeRef createNewProductVersion(final NodeRef productToImpact, VersionType versionType, ChangeOrderData ecoData) {
 
 		Map<String, Serializable> properties = new HashMap<>();
 		properties.put(VersionBaseModel.PROP_VERSION_TYPE, versionType);
-		if ((ecoData.getDescription() != null) && !ecoData.getDescription().isEmpty()) {
-			properties.put(Version.PROP_DESCRIPTION, ecoData.getDescription());
-		} else {
-			properties.put(Version.PROP_DESCRIPTION,
+		properties.put(Version.PROP_DESCRIPTION,
 					I18NUtil.getMessage("plm.ecm.apply.version.label", ecoData.getCode() + " - " + ecoData.getName()));
-		}
 
 		return entityVersionService.createVersion(productToImpact, properties);
 
@@ -941,6 +936,18 @@ public class ECOServiceImpl implements ECOService {
 		ChangeOrderData om = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
 		if (!ECOState.InProgress.equals(om.getEcoState())) {
 			om.setEcoState(ECOState.InProgress);
+			alfrescoRepository.save(om);
+			return true;
+		}
+
+		return false;
+	}
+	
+	@Override
+	public Boolean setInError(NodeRef ecoNodeRef) {
+		ChangeOrderData om = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
+		if (!ECOState.InError.equals(om.getEcoState())) {
+			om.setEcoState(ECOState.InError);
 			alfrescoRepository.save(om);
 			return true;
 		}
