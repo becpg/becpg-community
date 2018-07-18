@@ -182,8 +182,8 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 					return xmlEntityVisitor.visit(entityNodeRef, destNodeRef, properties, in);
 				} catch (IOException | ParserConfigurationException | SAXException e) {
 					logger.error("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
+					throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
 				}
-				return null;
 			}, false, false);
 
 		} finally {
