@@ -94,14 +94,12 @@ public class AsyncECOServiceImpl implements AsyncECOService {
 				}, userName);
 
 			} catch (Exception e) {
-
+				transactionService.getRetryingTransactionHelper().doInTransaction(() -> ecoService.setInError(ecoNodeRef, e), false, true);
 				if (e instanceof ConcurrencyFailureException) {
 					throw (ConcurrencyFailureException) e;
-				}
+				} 
 				logger.error("Unable to apply eco ", e);
-			} finally {
-				transactionService.getRetryingTransactionHelper().doInTransaction(() -> ecoService.setInError(ecoNodeRef), false, true);
-			}
+			} 
 		}
 
 		@Override
