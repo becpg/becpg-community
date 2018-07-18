@@ -34,7 +34,7 @@ public interface ECOService {
 
 	Boolean setInProgress(NodeRef ecoNodeRef);
 
-	Boolean setInError(NodeRef ecoNodeRef);
+	Boolean setInError(NodeRef ecoNodeRef, Exception e);
 
 
 }
