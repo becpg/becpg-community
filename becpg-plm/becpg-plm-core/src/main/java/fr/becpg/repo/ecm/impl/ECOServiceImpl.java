@@ -954,5 +954,17 @@ public class ECOServiceImpl implements ECOService {
 
 		return false;
 	}
+	
+	@Override
+	public Boolean setInError(NodeRef ecoNodeRef) {
+		ChangeOrderData om = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
+		if (!ECOState.InError.equals(om.getEcoState())) {
+			om.setEcoState(ECOState.InError);
+			alfrescoRepository.save(om);
+			return true;
+		}
+
+		return false;
+	}
 
 }

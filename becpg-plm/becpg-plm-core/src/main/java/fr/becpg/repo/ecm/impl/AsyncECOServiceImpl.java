@@ -107,6 +107,8 @@ public class AsyncECOServiceImpl implements AsyncECOService {
 				}, userName);
 
 			} catch (Exception e) {
+
+                                transactionService.getRetryingTransactionHelper().doInTransaction(() -> ecoService.setInError(ecoNodeRef), false, true);
 				if (e instanceof ConcurrencyFailureException) {
 					throw (ConcurrencyFailureException) e;
 				}
