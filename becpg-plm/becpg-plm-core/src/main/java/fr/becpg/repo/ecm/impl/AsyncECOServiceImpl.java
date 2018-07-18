@@ -9,7 +9,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.ecm.AsyncECOService;
@@ -68,13 +67,12 @@ public class AsyncECOServiceImpl implements AsyncECOService {
 
 		@Override
 		public void run() {
-			try {
 
-				AuthenticationUtil.runAs(() -> {
+			AuthenticationUtil.runAs(() -> {
 
-					boolean ret = transactionService.getRetryingTransactionHelper().doInTransaction(() -> ecoService.setInProgress(ecoNodeRef), false,
-							true);
-
+				boolean ret = transactionService.getRetryingTransactionHelper().doInTransaction(() -> ecoService.setInProgress(ecoNodeRef), false,
+						true);
+				try {
 					if (ret) {
 						transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 							if (apply) {
@@ -90,16 +88,15 @@ public class AsyncECOServiceImpl implements AsyncECOService {
 						logger.warn("ECO already InProgress:" + ecoNodeRef);
 					}
 
-					return null;
-				}, userName);
+				} catch (Exception e) {
+					transactionService.getRetryingTransactionHelper().doInTransaction(() -> ecoService.setInError(ecoNodeRef, e), false, true);
 
-			} catch (Exception e) {
-				transactionService.getRetryingTransactionHelper().doInTransaction(() -> ecoService.setInError(ecoNodeRef, e), false, true);
-				if (e instanceof ConcurrencyFailureException) {
-					throw (ConcurrencyFailureException) e;
-				} 
-				logger.error("Unable to apply eco ", e);
-			} 
+					logger.error("Unable to apply eco ", e);
+				}
+
+				return null;
+			}, userName);
+
 		}
 
 		@Override
