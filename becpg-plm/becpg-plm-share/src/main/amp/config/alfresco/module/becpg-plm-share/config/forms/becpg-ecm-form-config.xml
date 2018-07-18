@@ -39,7 +39,7 @@
 					<field id="ecm:ecoType">
 						<control
 							template="/org/alfresco/components/form/controls/selectone.ftl" >
-							<control-param name="options">Replacement,Merge</control-param>
+							<control-param name="options">Replacement|data.ecotype.replacement,Merge|data.ecotype.merge</control-param>
 						</control>
 						<constraint-handlers>
 							 <constraint type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf" event='keyup,change@[
@@ -91,7 +91,7 @@
 					<field id="ecm:ecoType">
 						<control
 							template="/org/alfresco/components/form/controls/selectone.ftl" >
-							<control-param name="options">Replacement,Merge</control-param>
+							<control-param name="options">Replacement|data.ecotype.replacement,Merge|data.ecotype.merge</control-param>
 							 </control>
 					</field>	
 					<field id="ecm:calculatedCharacts" >
