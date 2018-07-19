@@ -153,22 +153,30 @@
 		
 		onShowTranslation : function showMultiLangualForm (fieldId){
 			
-			var nodeRef = fieldId.split("#")[1], field=fieldId.split("#")[2];
-			
+			var nodeRef = fieldId.split("#")[1], field=fieldId.split("#")[2], readOnly = fieldId.split("#")[3];
 			
 			new Alfresco.module.SimpleDialog(nodeRef+"-multilingualForm").setOptions({
-              templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/multilingual-form/multilingual-form?nodeRef=" + nodeRef + "&field=" + field + "&readonly=true",
+              templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/multilingual-form/multilingual-form?nodeRef=" + nodeRef + "&field=" + field + (readOnly == "true" ? "&readonly=true" : "&textarea=true&htmlEditor=true"),
               actionUrl : Alfresco.constants.PROXY_URI + "becpg/form/multilingual/field/" + field + "?nodeRef=" + nodeRef,
               validateOnSubmit : false,
               destroyOnHide : true,
-              width: "33em"
+              width: "33em",
+              onSuccess: {
+                 fn: function(){
+                	 YAHOO.Bubbling.fire("scopedActiveDataListChanged");
+                 },
+                 obj: null,
+                 scope: this
+              }
            }).show();
             
 		},
 		
-		onCopyToClipboard : function( fieldId) {
+		onCopyToClipboard : function(fieldId) {
 			
-			var htmlId = fieldId.split("#")[0]+ fieldId.split("#")[2].replace(":","_");
+			this.copyToIllManualValue(fieldId);
+			
+			var htmlId= fieldId.split("#")[0]+ fieldId.split("#")[2];
 			
 	    	if (document.selection) { 	
 			    var range = document.body.createTextRange();
@@ -182,6 +190,39 @@
 			     window.getSelection().addRange(range);
 			     document.execCommand("copy");
 			}
+			
+	    },
+	    
+		
+		copyToIllManualValue : function(fieldId) {
+			
+			var nodeRef = fieldId.split("#")[1];
+			
+			Alfresco.util.Ajax.jsonPost({
+				url : Alfresco.constants.PROXY_URI + "becpg/form/multilingual/field/bcpg_illValue?nodeRef=" + nodeRef + "&copy=true&destField=bcpg_illManualValue",
+				requestContentType: "text/plain",
+				successCallback : {
+					fn : function (response){
+						
+						YAHOO.Bubbling.fire("scopedActiveDataListChanged");
+						
+						Alfresco.util.PopupManager.displayMessage({
+			                 text : this.msg("message.copy-to-illManualValue.success")
+			              });
+					},
+					scope : this
+				},
+				failureCallback : {
+					fn : function (){
+						Alfresco.util.PopupManager.displayMessage({
+			                 text : this.msg("message.copy-to-illManualValue.failure")
+			              });
+					},
+					scope : this
+				}
+			});
+			
+	    	
 	    }
 
 	});
