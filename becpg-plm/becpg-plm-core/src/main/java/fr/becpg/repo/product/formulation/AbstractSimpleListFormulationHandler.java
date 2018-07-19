@@ -333,33 +333,25 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 			value = 0d;
 		}
 		if (slDataItem instanceof MinMaxValueDataItem) {
+			Double newMini = ((MinMaxValueDataItem) newSimpleListDataItem).getMini();
+			Double miniValue = ((MinMaxValueDataItem) slDataItem).getMini();
+			Double newMaxi = ((MinMaxValueDataItem) newSimpleListDataItem).getMaxi();
+			Double maxiValue = ((MinMaxValueDataItem) slDataItem).getMaxi();
 			if (isGenericRawMaterial) {
-				if ((((MinMaxValueDataItem) slDataItem).getMini() != null) && ((((MinMaxValueDataItem) newSimpleListDataItem).getMini() == null)
-						|| ((((MinMaxValueDataItem) newSimpleListDataItem).getMini() != null)
-								&& (((MinMaxValueDataItem) newSimpleListDataItem).getMini() > ((MinMaxValueDataItem) slDataItem).getMini())))) {
-					((MinMaxValueDataItem) newSimpleListDataItem).setMini(((MinMaxValueDataItem) slDataItem).getMini());
+				if ((miniValue != null) && ((newMini == null) || ((newMini != null) && (newMini > miniValue)))) {
+					((MinMaxValueDataItem) newSimpleListDataItem).setMini(miniValue);
 				}
-				if ((((MinMaxValueDataItem) slDataItem).getMaxi() != null) && ((((MinMaxValueDataItem) newSimpleListDataItem).getMaxi() == null)
-						|| ((((MinMaxValueDataItem) newSimpleListDataItem).getMaxi() != null)
-								&& (((MinMaxValueDataItem) newSimpleListDataItem).getMaxi() < ((MinMaxValueDataItem) slDataItem).getMaxi())))) {
-					((MinMaxValueDataItem) newSimpleListDataItem).setMaxi(((MinMaxValueDataItem) slDataItem).getMaxi());
+				if ((maxiValue != null) && ((newMaxi == null) || ((newMaxi != null) && (newMaxi < maxiValue)))) {
+					((MinMaxValueDataItem) newSimpleListDataItem).setMaxi(maxiValue);
 				}
 			} else {
-				Double newMini = ((MinMaxValueDataItem) newSimpleListDataItem).getMini() != null
-						? ((MinMaxValueDataItem) newSimpleListDataItem).getMini()
-						: newValue;
-				Double newMaxi = ((MinMaxValueDataItem) newSimpleListDataItem).getMaxi() != null
-						? ((MinMaxValueDataItem) newSimpleListDataItem).getMaxi()
-						: newValue;
-				Double miniValue = ((MinMaxValueDataItem) slDataItem).getMini() != null ? ((MinMaxValueDataItem) slDataItem).getMini() : value;
-				Double maxiValue = ((MinMaxValueDataItem) slDataItem).getMaxi() != null ? ((MinMaxValueDataItem) slDataItem).getMaxi() : value;
-				if ((miniValue < value) || (newMini < newValue) || (((MinMaxValueDataItem) newSimpleListDataItem).getMini() != null)) {
-					((MinMaxValueDataItem) newSimpleListDataItem)
-							.setMini(FormulationHelper.calculateValue(newMini, qtyUsed, miniValue, netQty, unit));
+				if ((newMini != null) || (miniValue != null)) {
+					((MinMaxValueDataItem) newSimpleListDataItem).setMini(FormulationHelper.calculateValue(newMini != null ? newMini : newValue,
+							qtyUsed, miniValue != null ? miniValue : value, netQty, unit));
 				}
-				if ((maxiValue > value) || (newMaxi > newValue) || (((MinMaxValueDataItem) newSimpleListDataItem).getMaxi() != null)) {
-					((MinMaxValueDataItem) newSimpleListDataItem)
-							.setMaxi(FormulationHelper.calculateValue(newMaxi, qtyUsed, maxiValue, netQty, unit));
+				if ((newMaxi != null) || (maxiValue != null)) {
+					((MinMaxValueDataItem) newSimpleListDataItem).setMaxi(FormulationHelper.calculateValue(newMaxi != null ? newMaxi : newValue,
+							qtyUsed, maxiValue != null ? maxiValue : value, netQty, unit));
 				}
 			}
 		}

@@ -18,8 +18,10 @@
 package fr.becpg.repo.web.scripts.remote;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.apache.commons.io.IOUtils;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
@@ -37,6 +39,16 @@ public class CreateEntityWebScript extends AbstractEntityWebScript {
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
 		logger.debug("Create entity");
+		if(logger.isTraceEnabled()) {
+			logger.trace("Request details: "+req.getContentType()+" "+req.getFormat());
+			logger.trace("XML request DUMP: ");
+			InputStream in = req.getContent().getInputStream();
+			IOUtils.copy(in, System.out);
+			if(in.markSupported()) {
+				in.reset();
+			}
+		}
+		
 		try {
 			NodeRef entityNodeRef = remoteEntityService.createOrUpdateEntity(null, req.getContent().getInputStream(), getFormat(req), getEntityProviderCallback(req));
 			sendOKStatus(entityNodeRef, resp);

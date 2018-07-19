@@ -7,7 +7,7 @@ function(item)
 {
    var path;
 	if(item.aspects !=null && beCPG.util.contains(item.aspects, "bcpg:entityListsAspect")){
-			  path = "entity-data-lists?list=View-properties&nodeRef=" + item.nodeRef;
+			  path = "entity-data-lists?list=View-properties&nodeRef=" + item.nodeRef+"&bcPath=true&bcTask="+YAHOO.util.History.getQueryStringParameter('taskId');
 	}	   
    else  if (item.isContainer)
    {

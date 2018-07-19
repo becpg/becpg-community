@@ -179,6 +179,9 @@ public class ECOServiceImpl implements ECOService {
 				// Visit Wused
 				Composite<WUsedListDataItem> composite = CompositeHelper.getHierarchicalCompoList(ecoData.getWUsedList());
 
+				checkMissingWUsed(composite);
+				
+				
 				if (logger.isTraceEnabled()) {
 					logger.trace("WUsedList to impact :" + composite.toString());
 				}
@@ -225,6 +228,25 @@ public class ECOServiceImpl implements ECOService {
 
 		return false;
 
+	}
+
+	private void checkMissingWUsed(Composite<WUsedListDataItem> composite) {
+		
+		boolean childChecked  = false;
+		for (final Composite<WUsedListDataItem> component : composite.getChildren()) {
+			if(!component.isLeaf()) {
+				 checkMissingWUsed(component);
+			}
+			
+			 if(component.getData().getIsWUsedImpacted()) {
+				childChecked = true;
+			}
+		}
+		
+		if(composite.getData()!=null && childChecked) {
+			composite.getData().setIsWUsedImpacted(true);
+		}
+		
 	}
 
 	@Override
@@ -374,8 +396,11 @@ public class ECOServiceImpl implements ECOService {
 
 		for (final Composite<WUsedListDataItem> component : composite.getChildren()) {
 
+			boolean isMergeItem = ChangeOrderType.Merge.equals(ecoData.getEcoType()) && (component.getData().getDepthLevel() == 1);
+
 			// Not First level
-			if ((component.getData() != null) && (component.getData().getDepthLevel() > 1) && component.getData().getIsWUsedImpacted()) {
+			if ((component.getData() != null) && ((component.getData().getDepthLevel() > 1) || isMergeItem)
+					&& component.getData().getIsWUsedImpacted()) {
 
 				final ChangeUnitDataItem changeUnitDataItem = getOrCreateChangeUnitDataItem(ecoData, component.getData());
 
@@ -408,15 +433,35 @@ public class ECOServiceImpl implements ECOService {
 							}
 
 							// Level 2
-							if (component.getData().getDepthLevel() == 2) {
-								applyReplacementList(ecoData, productToFormulateData, isSimulation);
+							if ((component.getData().getDepthLevel() == 2) || isMergeItem) {
+								applyReplacementList(ecoData, productToFormulateData, isSimulation, isMergeItem);
+							}
+
+							if (isMergeItem && isSimulation) {
+								
+								logger.debug("Merge finding corresponding branch...");
+								
+								for (ReplacementListDataItem replacementListDataItem : ecoData.getReplacementList()) {
+									if ((replacementListDataItem.getSourceItems() != null) && (replacementListDataItem.getTargetItem() != null)
+											&& (replacementListDataItem.getSourceItems().size() == 1)
+											&& replacementListDataItem.getTargetItem().equals(productNodeRef)) {
+                                       
+										
+										productToFormulateData = (ProductData) alfrescoRepository
+												.findOne(replacementListDataItem.getSourceItems().get(0));
+										
+										  logger.debug("Found matching branch product:" + productToFormulateData.getName());    
+
+										break;
+									}
+								}
 							}
 
 							productService.formulate(productToFormulateData);
 
 							if (isSimulation) {
 								// update simulation List
-								updateCalculatedCharactValues(ecoData, productToFormulateData);
+								updateCalculatedCharactValues(ecoData, productToFormulateData, productNodeRef);
 							}
 
 							// check req
@@ -425,7 +470,7 @@ public class ECOServiceImpl implements ECOService {
 							alfrescoRepository.save(productToFormulateData);
 
 							// Create new version if needed
-							if (!isSimulation) {
+							if (!isSimulation && !isMergeItem) {
 								if (!changeUnitDataItem.getRevision().equals(RevisionType.NoRevision)) {
 									createNewProductVersion(productNodeRef,
 											changeUnitDataItem.getRevision().equals(RevisionType.Major) ? VersionType.MAJOR : VersionType.MINOR,
@@ -489,7 +534,7 @@ public class ECOServiceImpl implements ECOService {
 
 			}
 
-			if (!component.isLeaf()) {
+			if (!component.isLeaf() && component.getData().getIsWUsedImpacted()) {
 				if (!visitChildrens(component, ecoData, isSimulation, errors)) {
 					return false;
 				}
@@ -504,7 +549,7 @@ public class ECOServiceImpl implements ECOService {
 
 		boolean skip = false;
 		for (WUsedListDataItem wulDataItem : ecoData.getWUsedList()) {
-			if ((wulDataItem.getParent() != null) && wulDataItem.getParent().getIsWUsedImpacted()
+			if (wulDataItem.getIsWUsedImpacted() && (wulDataItem.getParent() != null) && wulDataItem.getParent().getIsWUsedImpacted()
 					&& wulDataItem.getSourceItems().contains(changeUnitDataItem.getSourceItem())) {
 				if ((ecoData.getChangeUnitMap().get(wulDataItem.getParent().getSourceItems().get(0)) == null)
 						|| !ecoData.getChangeUnitMap().get(wulDataItem.getParent().getSourceItems().get(0)).getTreated()) {
@@ -517,9 +562,9 @@ public class ECOServiceImpl implements ECOService {
 		return skip;
 	}
 
-	private void applyReplacementList(ChangeOrderData ecoData, ProductData product, boolean isSimulation) {
+	private void applyReplacementList(ChangeOrderData ecoData, ProductData product, boolean isSimulation, boolean isMergedItem) {
 		if (ecoData.getReplacementList() != null) {
-			if (!isSimulation && ChangeOrderType.Merge.equals(ecoData.getEcoType())) {
+			if (isMergedItem && !isSimulation) {
 				merge(ecoData);
 			} else {
 				for (AbstractProductDataView view : product.getViews()) {
@@ -527,6 +572,7 @@ public class ECOServiceImpl implements ECOService {
 				}
 			}
 		}
+
 	}
 
 	private void merge(ChangeOrderData ecoData) {
@@ -714,19 +760,21 @@ public class ECOServiceImpl implements ECOService {
 		return productToImpact;
 	}
 
-	private NodeRef createNewProductVersion(final NodeRef productToImpact, VersionType versionType, ChangeOrderData ecoData, WUsedListDataItem parent) {
+	private NodeRef createNewProductVersion(final NodeRef productToImpact, VersionType versionType, ChangeOrderData ecoData,
+			WUsedListDataItem parent) {
 
 		Map<String, Serializable> properties = new HashMap<>();
 		properties.put(VersionBaseModel.PROP_VERSION_TYPE, versionType);
-		if(ecoData.getDescription()!=null && !ecoData.getDescription().isEmpty()) {
-			properties.put(Version.PROP_DESCRIPTION,ecoData.getDescription());
+		if ((ecoData.getDescription() != null) && !ecoData.getDescription().isEmpty()) {
+			properties.put(Version.PROP_DESCRIPTION, ecoData.getDescription());
 		} else {
-			properties.put(Version.PROP_DESCRIPTION, I18NUtil.getMessage("plm.ecm.apply.version.label", ecoData.getCode() + " - " + ecoData.getName()));
+			properties.put(Version.PROP_DESCRIPTION,
+					I18NUtil.getMessage("plm.ecm.apply.version.label", ecoData.getCode() + " - " + ecoData.getName()));
 		}
-		if((parent.getDepthLevel() > 1) && parent.getIsWUsedImpacted() || ChangeOrderType.ImpactWUsed.equals(ecoData.getEcoType())) {
+		if (((parent.getDepthLevel() > 1) && parent.getIsWUsedImpacted()) || ChangeOrderType.ImpactWUsed.equals(ecoData.getEcoType())) {
 			properties.put(EntityVersionPlugin.POST_UPDATE_HISTORY_NODEREF, parent.getSourceItems().get(0));
 		}
-		
+
 		return entityVersionService.createVersion(productToImpact, properties);
 
 	}
@@ -745,7 +793,7 @@ public class ECOServiceImpl implements ECOService {
 
 	}
 
-	private void updateCalculatedCharactValues(ChangeOrderData ecoData, ProductData targetData) {
+	private void updateCalculatedCharactValues(ChangeOrderData ecoData, ProductData targetData, NodeRef productNodeRef) {
 
 		List<SimulationListDataItem> toRemove = new ArrayList<>();
 
@@ -754,7 +802,7 @@ public class ECOServiceImpl implements ECOService {
 			Object targetValue = getCharactValue(charactNodeRef, charactType, targetData);
 			for (SimulationListDataItem simulationListDataItem : ecoData.getSimulationList()) {
 				if (simulationListDataItem.getCharact().equals(charactNodeRef)
-						&& simulationListDataItem.getSourceItem().equals(targetData.getNodeRef())) {
+						&& simulationListDataItem.getSourceItem().equals(productNodeRef)) {
 					simulationListDataItem.setTargetValue(targetValue);
 
 					if ((simulationListDataItem.getTargetValue() == null) && (simulationListDataItem.getSourceValue() == null)) {
@@ -901,6 +949,47 @@ public class ECOServiceImpl implements ECOService {
 		if (!ECOState.InProgress.equals(om.getEcoState())) {
 			om.setEcoState(ECOState.InProgress);
 			alfrescoRepository.save(om);
+			return true;
+		}
+
+		return false;
+	}
+	
+	@Override
+	public Boolean setInError(NodeRef ecoNodeRef, Exception e) {
+
+		List<String> errors = new ArrayList<>();
+
+		ChangeOrderData ecoData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
+		if (!(e instanceof ConcurrencyFailureException)) {
+
+			errors.add("OM in error ");
+			errors.add("Error message: " + e.getMessage());
+
+			try (StringWriter buffer = new StringWriter()) {
+				try (PrintWriter printer = new PrintWriter(buffer)) {
+					e.printStackTrace(printer);
+				}
+				errors.add("StackTrace : " + buffer.toString());
+			} catch (IOException e1) {
+				// Nothing can be done here
+
+			}
+		}
+
+		if (!ECOState.InError.equals(ecoData.getEcoState())) {
+			ecoData.setEcoState(ECOState.InError);
+
+			if (!errors.isEmpty()) {
+				StringBuilder comments = new StringBuilder();
+				for (String error : errors) {
+					comments.append(error + "</br>");
+				}
+
+				commentService.createComment(ecoData.getNodeRef(), "", comments.toString(), false);
+			}
+
+			alfrescoRepository.save(ecoData);
 			return true;
 		}
 

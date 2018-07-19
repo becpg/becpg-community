@@ -221,8 +221,6 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 		}
 
 		if (nextTask.getIsGroup() ) {
-			System.out.println("PWET on ne passe pas ici ");
-			
 			if(nextTask.getSubProject() == null) {
 				calculatePlanningOfChildren(projectData, nextTask);
 			}
