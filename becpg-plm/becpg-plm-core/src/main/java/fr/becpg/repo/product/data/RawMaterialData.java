@@ -24,8 +24,6 @@ public class RawMaterialData extends ProductData {
 	
 	private List<NodeRef> supplierPlants = new ArrayList<>();
 	
-	private List<NodeRef> geoOrigins = new ArrayList<>();
-	
 	@AlfMultiAssoc
 	@AlfQname(qname="bcpg:suppliers")
 	public List<NodeRef> getSuppliers() {
@@ -46,15 +44,6 @@ public class RawMaterialData extends ProductData {
 		this.supplierPlants = supplierPlants;
 	}
 	
-	@AlfMultiAssoc
-	@AlfQname(qname="bcpg:productGeoOrigin")
-	public List<NodeRef> getGeoOrigins() {
-		return geoOrigins;
-	}
-
-	public void setGeoOrigins(List<NodeRef> geoOrigins) {
-		this.geoOrigins = geoOrigins;
-	}
 
 	@Override
 	public int hashCode() {
