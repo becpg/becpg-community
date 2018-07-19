@@ -163,6 +163,14 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private List<ClientData> clients;
 	
 	/*
+	 * Origin geo
+	 */
+
+	private List<NodeRef> geoOrigins = new ArrayList<>();
+	
+	
+	
+	/*
 	 * Completion scores
 	 */
 	private String entityScore;
@@ -532,7 +540,6 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	}
 
 	
-	
 	@AlfProp
 	@AlfQname(qname = "bcpg:previousUnitTotalCost")
 	public Double getPreviousUnitTotalCost() {
@@ -541,6 +548,17 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 
 	public void setPreviousUnitTotalCost(Double previousUnitTotalCost) {
 		this.previousUnitTotalCost = previousUnitTotalCost;
+	}
+	
+
+	@AlfMultiAssoc
+	@AlfQname(qname="bcpg:productGeoOrigin")
+	public List<NodeRef> getGeoOrigins() {
+		return geoOrigins;
+	}
+
+	public void setGeoOrigins(List<NodeRef> geoOrigins) {
+		this.geoOrigins = geoOrigins;
 	}
 
 	@AlfProp

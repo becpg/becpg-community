@@ -127,14 +127,15 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		return mandatoryCharacts;
 	}
 
-	protected void formulateSimpleList(ProductData formulatedProduct, List<T> simpleListDataList, boolean isFormulatedProduct) throws FormulateException {
+	protected void formulateSimpleList(ProductData formulatedProduct, List<T> simpleListDataList, boolean isFormulatedProduct)
+			throws FormulateException {
 		logger.debug("formulateSimpleList");
 
 		cleanSimpleList(simpleListDataList, isFormulatedProduct);
-		
+
 		synchronizeTemplate(formulatedProduct, simpleListDataList);
 
-		if(isFormulatedProduct){
+		if (isFormulatedProduct) {
 			visitChildren(formulatedProduct, simpleListDataList);
 		}
 
@@ -142,7 +143,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 	protected void cleanSimpleList(List<T> simpleListDataList, boolean isFormulatedProduct) {
 
-		if (simpleListDataList != null  && isFormulatedProduct) {
+		if ((simpleListDataList != null) && isFormulatedProduct) {
 			simpleListDataList.forEach(sl -> {
 				// reset value if formulated
 				if (isCharactFormulated(sl)) {
@@ -171,10 +172,10 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		Map<NodeRef, Double> totalQtiesValue = new HashMap<>();
 
 		boolean isGenericRawMaterial = formulatedProduct instanceof RawMaterialData;
-		
+
 		Double netWeight = FormulationHelper.getNetWeight(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
 		Double netQtyInLorKg = FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
-		
+
 		if (formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 
 			Map<NodeRef, List<NodeRef>> mandatoryCharacts = getMandatoryCharacts(formulatedProduct, PLMModel.TYPE_RAWMATERIAL);
@@ -184,7 +185,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 				Double weight = FormulationHelper.getQtyInKg(compoItem);
 				Double vol = FormulationHelper.getNetVolume(compoItem, nodeService);
 
-				if (weight != null && !DeclarationType.Omit.equals(compoItem.getDeclType())  ) {
+				if ((weight != null) && !DeclarationType.Omit.equals(compoItem.getDeclType())) {
 					visitPart(compoItem.getProduct(), simpleListDataList, weight, vol, netQtyInLorKg, netWeight, mandatoryCharacts, totalQtiesValue,
 							isGenericRawMaterial);
 				}
@@ -231,7 +232,8 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 	/**
 	 * Visit part.
-	 * @param netVolume 
+	 *
+	 * @param netVolume
 	 *
 	 * @param valueCount
 	 *
@@ -258,21 +260,21 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 				simpleListDataList.forEach(newSimpleListDataItem -> {
 					if ((newSimpleListDataItem.getCharactNodeRef() != null) && isCharactFormulated(newSimpleListDataItem)) {
 
-						boolean formulateInVol =  FormulationHelper.isProductUnitLiter(partProduct.getUnit());
+						boolean formulateInVol = FormulationHelper.isProductUnitLiter(partProduct.getUnit());
 						boolean forceWeight = false;
-						
+
 						if (newSimpleListDataItem instanceof PhysicoChemListDataItem) {
-							if(FormulationHelper.isCharactFormulatedFromVol(nodeService, newSimpleListDataItem)) {
-								formulateInVol  = true;
+							if (FormulationHelper.isCharactFormulatedFromVol(nodeService, newSimpleListDataItem)) {
+								formulateInVol = true;
 							} else {
 								formulateInVol = false;
 								forceWeight = true;
 							}
 						}
-						
+
 						// calculate charact from qty or vol ?
-						Double qtyUsed =  formulateInVol ? volUsed : weightUsed;
-						Double netQty =  forceWeight ? netWeight : netQtyInLorKg ; 
+						Double qtyUsed = formulateInVol ? volUsed : weightUsed;
+						Double netQty = forceWeight ? netWeight : netQtyInLorKg;
 
 						// look for charact in component
 						SimpleListDataItem slDataItem = componentSimpleListDataList.stream()
@@ -329,32 +331,31 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 			value = 0d;
 		}
 		if (slDataItem instanceof MinMaxValueDataItem) {
+
+			Double newMini = ((MinMaxValueDataItem) newSimpleListDataItem).getMini();
+			Double miniValue = ((MinMaxValueDataItem) slDataItem).getMini();
+			Double newMaxi = ((MinMaxValueDataItem) newSimpleListDataItem).getMaxi();
+			Double maxiValue = ((MinMaxValueDataItem) slDataItem).getMaxi();
+
 			if (isGenericRawMaterial) {
-				if ((((MinMaxValueDataItem) slDataItem).getMini() != null) && ((((MinMaxValueDataItem) newSimpleListDataItem).getMini() == null)
-						|| ((((MinMaxValueDataItem) newSimpleListDataItem).getMini() != null)
-								&& (((MinMaxValueDataItem) newSimpleListDataItem).getMini() > ((MinMaxValueDataItem) slDataItem).getMini())))) {
-					((MinMaxValueDataItem) newSimpleListDataItem).setMini(((MinMaxValueDataItem) slDataItem).getMini());
+				if ((miniValue != null) && ((newMini == null) || ((newMini != null) && (newMini > miniValue)))) {
+					((MinMaxValueDataItem) newSimpleListDataItem).setMini(miniValue);
 				}
-				if ((((MinMaxValueDataItem) slDataItem).getMaxi() != null) && ((((MinMaxValueDataItem) newSimpleListDataItem).getMaxi() == null)
-						|| ((((MinMaxValueDataItem) newSimpleListDataItem).getMaxi() != null)
-								&& (((MinMaxValueDataItem) newSimpleListDataItem).getMaxi() < ((MinMaxValueDataItem) slDataItem).getMaxi())))) {
-					((MinMaxValueDataItem) newSimpleListDataItem).setMaxi(((MinMaxValueDataItem) slDataItem).getMaxi());
+				if ((maxiValue != null) && ((newMaxi == null) || ((newMaxi != null) && (newMaxi < maxiValue)))) {
+					((MinMaxValueDataItem) newSimpleListDataItem).setMaxi(maxiValue);
 				}
 			} else {
-				Double newMini = ((MinMaxValueDataItem) newSimpleListDataItem).getMini() != null
-						? ((MinMaxValueDataItem) newSimpleListDataItem).getMini() : newValue;
-				Double newMaxi = ((MinMaxValueDataItem) newSimpleListDataItem).getMaxi() != null
-						? ((MinMaxValueDataItem) newSimpleListDataItem).getMaxi() : newValue;
-				Double miniValue = ((MinMaxValueDataItem) slDataItem).getMini() != null ? ((MinMaxValueDataItem) slDataItem).getMini() : value;
-				Double maxiValue = ((MinMaxValueDataItem) slDataItem).getMaxi() != null ? ((MinMaxValueDataItem) slDataItem).getMaxi() : value;
-				if ((miniValue < value) || (newMini < newValue) || (((MinMaxValueDataItem) newSimpleListDataItem).getMini() != null)) {
-					((MinMaxValueDataItem) newSimpleListDataItem)
-							.setMini(FormulationHelper.calculateValue(newMini, qtyUsed, miniValue, netQty, unit));
+
+				if ((newMini != null) || (miniValue != null)) {
+					((MinMaxValueDataItem) newSimpleListDataItem).setMini(FormulationHelper.calculateValue(newMini != null ? newMini : newValue,
+							qtyUsed, miniValue != null ? miniValue : value, netQty, unit));
 				}
-				if ((maxiValue > value) || (newMaxi > newValue) || (((MinMaxValueDataItem) newSimpleListDataItem).getMaxi() != null)) {
-					((MinMaxValueDataItem) newSimpleListDataItem)
-							.setMaxi(FormulationHelper.calculateValue(newMaxi, qtyUsed, maxiValue, netQty, unit));
+
+				if ((newMaxi != null) || (maxiValue != null)) {
+					((MinMaxValueDataItem) newSimpleListDataItem).setMaxi(FormulationHelper.calculateValue(newMaxi != null ? newMaxi : newValue,
+							qtyUsed, maxiValue != null ? maxiValue : value, netQty, unit));
 				}
+
 			}
 		}
 
@@ -519,17 +520,16 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 					for (T sl : simpleListDataList) {
 						if (tsl.getCharactNodeRef().equals(sl.getCharactNodeRef())) {
 							isFound = true;
-							
-							if(sl instanceof CompositeDataItem
-									&& tsl instanceof CompositeDataItem){
-								if(((CompositeDataItem<T>)tsl).getParent()!=null
-										&& ((CompositeDataItem<T>)sl).getParent()==null){
-									((CompositeDataItem<T>)sl).setParent(findParentByCharactName(simpleListDataList, ((CompositeDataItem<T>)tsl).getParent().getCharactNodeRef()));
-								} else if(((CompositeDataItem<T>)tsl).getParent() ==null) {
-									((CompositeDataItem<T>)sl).setParent(null);
+
+							if ((sl instanceof CompositeDataItem) && (tsl instanceof CompositeDataItem)) {
+								if ((((CompositeDataItem<T>) tsl).getParent() != null) && (((CompositeDataItem<T>) sl).getParent() == null)) {
+									((CompositeDataItem<T>) sl).setParent(findParentByCharactName(simpleListDataList,
+											((CompositeDataItem<T>) tsl).getParent().getCharactNodeRef()));
+								} else if (((CompositeDataItem<T>) tsl).getParent() == null) {
+									((CompositeDataItem<T>) sl).setParent(null);
 								}
 							}
-							
+
 							break;
 						}
 					}
@@ -538,34 +538,35 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 						toAdd.setName(null);
 						toAdd.setNodeRef(null);
 						toAdd.setParentNodeRef(null);
-						
-						if(toAdd instanceof CompositeDataItem){
-							if(((CompositeDataItem<T>)toAdd).getParent()!=null){
-								((CompositeDataItem<T>)toAdd).setParent(findParentByCharactName(simpleListDataList, ((CompositeDataItem<T>)toAdd).getParent().getCharactNodeRef()));
+
+						if (toAdd instanceof CompositeDataItem) {
+							if (((CompositeDataItem<T>) toAdd).getParent() != null) {
+								((CompositeDataItem<T>) toAdd).setParent(
+										findParentByCharactName(simpleListDataList, ((CompositeDataItem<T>) toAdd).getParent().getCharactNodeRef()));
 							}
 						}
-						
+
 						simpleListDataList.add(toAdd);
-					} 
+					}
 
 				}
 			}
-			
-			//check sorting
+
+			// check sorting
 			int lastSort = 0;
 			for (T sl : simpleListDataList) {
-				if(sl.getCharactNodeRef() != null){
+				if (sl.getCharactNodeRef() != null) {
 					boolean isFound = false;
-					
+
 					for (T tsl : templateSimpleListDataList) {
-						if(sl.getCharactNodeRef().equals(tsl.getCharactNodeRef())){
+						if (sl.getCharactNodeRef().equals(tsl.getCharactNodeRef())) {
 							isFound = true;
-							lastSort = tsl.getSort()*100;
+							lastSort = tsl.getSort() * 100;
 							sl.setSort(lastSort);
 						}
 					}
-					
-					if(!isFound){
+
+					if (!isFound) {
 						sl.setSort(++lastSort);
 					}
 				}
