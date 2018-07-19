@@ -7337,10 +7337,9 @@
    						</control>
 					</field>
 					<field id="bcpg:illManualValue">
-						<control template="/org/alfresco/components/form/controls/textarea.ftl">
-							<control-param name="rows">5</control-param>
-    						<control-param name="maxLength">10000</control-param>
-   						</control>
+						<control template="/org/alfresco/components/form/controls/richtext.ftl">
+							<control-param name="rows">10</control-param>
+						</control>
 					</field>
 				</appearance>
 			</form>
@@ -7404,10 +7403,9 @@
    						</control>
 					</field>
 					<field id="bcpg:illManualValue">
-						<control template="/org/alfresco/components/form/controls/textarea.ftl">
-							<control-param name="rows">5</control-param>
-    						<control-param name="maxLength">10000</control-param>
-   						</control>
+						<control template="/org/alfresco/components/form/controls/richtext.ftl">
+							<control-param name="rows">10</control-param>
+						</control>
 					</field>
 				</appearance>
 			</form>
