@@ -501,7 +501,7 @@ public class LabelingFormulaContext extends RuleParser {
 			if (!isAllergenDisableForLocale(allergen)) {
 				boolean shouldAppend = true;
 				if (getAllergens().contains(allergen)) {
-					String allergenName = getAllergenName(allergen);
+					String allergenName = getCharactName(allergen);
 					if ((allergenName != null) && !allergenName.isEmpty()) {
 						if (ret.length() > 0) {
 							ret.append(allergensSeparator);
@@ -513,7 +513,7 @@ public class LabelingFormulaContext extends RuleParser {
 								shouldAppend = false;
 							} else {
 								for (NodeRef subAllergen : associationService.getTargetAssocs(allergen, PLMModel.ASSOC_ALLERGENSUBSETS)) {
-									String subAllergenName = uncapitalize(getAllergenName(subAllergen));
+									String subAllergenName = uncapitalize(getCharactName(subAllergen));
 									if ((subAllergenName != null) && !subAllergenName.isEmpty()) {
 										ma = Pattern.compile("\\b(" + Pattern.quote(subAllergenName) + "(s?))\\b", Pattern.CASE_INSENSITIVE)
 												.matcher(ingLegalName);
@@ -576,19 +576,21 @@ public class LabelingFormulaContext extends RuleParser {
 		return createAllergenAwareLabel(ingLegalName, allergens);
 	}
 
-	private String getAllergenName(NodeRef allergen) {
 
-		MLText legalName = (MLText) mlNodeService.getProperty(allergen, BeCPGModel.PROP_LEGAL_NAME);
+	private String getCharactName(NodeRef charact) {
+		
+		MLText legalName = (MLText) mlNodeService.getProperty(charact, BeCPGModel.PROP_LEGAL_NAME);
 
 		String ret = MLTextHelper.getClosestValue(legalName, I18NUtil.getLocale());
 
 		if ((ret == null) || ret.isEmpty()) {
-			legalName = (MLText) mlNodeService.getProperty(allergen, BeCPGModel.PROP_CHARACT_NAME);
+			legalName = (MLText) mlNodeService.getProperty(charact, BeCPGModel.PROP_CHARACT_NAME);
 
 			ret = MLTextHelper.getClosestValue(legalName, I18NUtil.getLocale());
 		}
 
 		return ret;
+		
 	}
 
 	public String render() {
@@ -677,7 +679,7 @@ public class LabelingFormulaContext extends RuleParser {
 				if (ret.length() > 0) {
 					ret.append(allergensSeparator);
 				}
-				ret.append(getAllergenName(allergen));
+				ret.append(getCharactName(allergen));
 			}
 		}
 
@@ -1166,7 +1168,7 @@ public class LabelingFormulaContext extends RuleParser {
 						if (geoOriginsBuffer.length() > 0) {
 							geoOriginsBuffer.append(geoOriginsSeparator);
 						}
-						geoOriginsBuffer.append(getGeoOriginName(geoOrigin));
+						geoOriginsBuffer.append(getCharactName(geoOrigin));
 					}
 					return geoOriginsBuffer.toString();
 				}
@@ -1175,9 +1177,6 @@ public class LabelingFormulaContext extends RuleParser {
 		return null;
 	}
 
-	private String getGeoOriginName(NodeRef geoOrigin) {
-		return MLTextHelper.getClosestValue((MLText) mlNodeService.getProperty(geoOrigin, BeCPGModel.PROP_CHARACT_NAME), I18NUtil.getLocale());
-	}
 
 	private boolean shouldSkip(NodeRef nodeRef, Double qtyPerc) {
 
@@ -1250,7 +1249,7 @@ public class LabelingFormulaContext extends RuleParser {
 					&& (!(component instanceof CompositeLabeling) || ((CompositeLabeling) component).getIngList().isEmpty())) {
 				JSONArray allergens = new JSONArray();
 				for (NodeRef allergen : component.getAllergens()) {
-					allergens.add(getAllergenName(allergen));
+					allergens.add(getCharactName(allergen));
 				}
 				tree.put("allergens", allergens);
 			}
@@ -1259,7 +1258,7 @@ public class LabelingFormulaContext extends RuleParser {
 					&& (!(component instanceof CompositeLabeling) || ((CompositeLabeling) component).getIngList().isEmpty())) {
 				JSONArray geoOrigins = new JSONArray();
 				for (NodeRef geoOrigin : component.getGeoOrigins()) {
-					geoOrigins.add(getGeoOriginName(geoOrigin));
+					geoOrigins.add(getCharactName(geoOrigin));
 				}
 				tree.put("geoOrigins", geoOrigins);
 			}
