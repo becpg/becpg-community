@@ -796,20 +796,25 @@ if (beCPG.module.EntityDataGridRenderers) {
 			if (data.value != null) {
 				
 				var html ='', displayValue = data.displayValue,
-					htmlId = "id-" + oRecord._sId, suffix = "bcpg_illValue";
+					htmlId = "id-" + oRecord._sId, suffix = "bcpg_illValue",
+					editPermission = oRecord.getData().permissions.userAccess.edit;
+				
 					if(data.displayValue == null || data.displayValue == "" ){
 						displayValue = "<i>"+scope.msg("label.empty")+"</i>";
 					}
 					
-				
 					html += '<div class="note rounded"><div id="'+ htmlId + suffix +'" > ' + displayValue + '</div>';
 				
 					var nodeRef = oRecord._oData.nodeRef;
 					html += '<div class="labeling-action-container">';
 				
 					if(label == "bcpg:illValue"){
-						html += '<span id="' +htmlId+"#"+ nodeRef+"#"+ label+  '" class="onCopyToClipboard"><a href="#" title="'+ scope.msg("label.copy.to.clipboard.title") +'" class="labeling-action clipboard"></a> </span>';
-						html += '<span>&nbsp;</span>';
+						if(editPermission){
+							html += '<span id="' +htmlId+"#"+ nodeRef+"#"+ label+  '" class="copyToIllManualValue"><a href="#" title="'+ scope.msg("label.copy.to.illManualValue.title") +'" class="labeling-action copy-to"></a> </span>';
+							html += '<span>&nbsp;</span>';
+						}
+						html += '<span id="' +htmlId+"#"+ nodeRef+"#"+ suffix+  '" class="onCopyToClipboard"><a href="#" title="'+ scope.msg("label.copy.to.clipboard.title") +'" class="labeling-action clipboard"></a> </span>';
+						html += '<span>&nbsp;&nbsp;</span>';
 					}
 					if(label == "bcpg:illManualValue"){
 						html += '<span id="' +htmlId+"#"+ nodeRef+"#"+ label+ "#false" + '" class="onShowTranslation"><a href="#" title="'+ scope.msg("label.edit.translation.title") +'" class="labeling-action edit-translation"></a> </span>';
