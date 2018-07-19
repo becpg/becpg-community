@@ -800,7 +800,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 					if(data.displayValue == null || data.displayValue == "" ){
 						displayValue = "<i>"+scope.msg("label.empty")+"</i>";
 					}
-				
+					
 				
 					html += '<div class="note rounded"><div id="'+ htmlId + suffix +'" > ' + displayValue + '</div>';
 				
@@ -811,7 +811,11 @@ if (beCPG.module.EntityDataGridRenderers) {
 						html += '<span id="' +htmlId+"#"+ nodeRef+"#"+ label+  '" class="onCopyToClipboard"><a href="#" title="'+ scope.msg("label.copy.to.clipboard.title") +'" class="labeling-action clipboard"></a> </span>';
 						html += '<span>&nbsp;</span>';
 					}
-					html += '<span id="' +htmlId+"#"+ nodeRef+"#"+ label+ '" class="onShowTranslation"><a href="#" title="'+ scope.msg("label.show.translation.title") +'" class="labeling-action show-translation" ></a></span>';
+					if(label == "bcpg:illManualValue"){
+						html += '<span id="' +htmlId+"#"+ nodeRef+"#"+ label+ "#false" + '" class="onShowTranslation"><a href="#" title="'+ scope.msg("label.edit.translation.title") +'" class="labeling-action edit-translation"></a> </span>';
+						html += '<span>&nbsp;</span>';
+					}
+					html += '<span id="' +htmlId+"#"+ nodeRef+"#"+ label+ "#true" + '" class="onShowTranslation"><a href="#" title="'+ scope.msg("label.show.translation.title") +'" class="labeling-action show-translation" ></a></span>';
 					html += '</div>';
 				
 				
