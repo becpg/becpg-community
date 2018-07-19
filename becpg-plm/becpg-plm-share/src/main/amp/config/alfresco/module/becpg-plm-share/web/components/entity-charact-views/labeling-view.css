@@ -210,3 +210,11 @@
 	height:16px;
 	padding-right: 5px;
 }
+
+.labeling-view a.edit-translation {
+	background: url("../../components/images/edit-16.png") no-repeat;
+	float: right;
+	width:16px;
+	height:16px;
+	padding-right: 5px;
+}
