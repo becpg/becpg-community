@@ -725,8 +725,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 									if ((aggregateRule.getReplacement() != null)
 											&& LabelingRuleType.DoNotDetails.equals(aggregateRule.getLabelingRuleType())) {
 
+										
 										if (current == null) {
-
 											RepositoryEntity replacement = alfrescoRepository.findOne(aggregateRule.getReplacement());
 											if (replacement instanceof IngItem) {
 												current = new IngItem((IngItem) replacement);
@@ -739,17 +739,19 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 											} else {
 												logger.warn("Invalid replacement :" + aggregateRule.getReplacement());
 											}
+											
 										}
 
 										if (current != null) {
 
-											if (ingList.containsKey(aggregateRuleNodeRef)) {
+											if (ingList.containsKey(aggregateRuleNodeRef) ) {
 												current.setPlural(true);
 											}
 
 											if (!toAdd.containsKey(aggregateRuleNodeRef)) {
-
 												toAdd.put(aggregateRuleNodeRef, current);
+											} else {
+												current.setPlural(true);
 											}
 
 											if ((qty != null) && (current.getQty() != null)) {
@@ -1407,10 +1409,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			}
 		}
 
-		if (productData instanceof RawMaterialData) {
-			if (((RawMaterialData) productData).getGeoOrigins() != null) {
-				compositeLabeling.getGeoOrigins().addAll(((RawMaterialData) productData).getGeoOrigins());
-			}
+		if (productData.getGeoOrigins() != null) {
+			compositeLabeling.getGeoOrigins().addAll(productData.getGeoOrigins());
 		}
 
 	}
