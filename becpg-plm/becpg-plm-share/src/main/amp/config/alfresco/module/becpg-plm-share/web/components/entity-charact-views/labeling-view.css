@@ -195,8 +195,17 @@
 	padding-top: 15px;
 }
 
-.labeling-view a.clipboard {
+.labeling-view a.copy-to {
   background: url("../../components/documentlibrary/actions/document-copy-to-16.png") no-repeat;
+  display: inline-block;
+  float: right;
+  width:16px;
+  height:16px;
+  margin-left: 5px;
+}
+
+.labeling-view a.clipboard {
+  background: url("../../components/images/clipboard-16.png") no-repeat;
   display: inline-block;
   float: right;
   width:16px;

@@ -143,7 +143,7 @@ var addFormFieldForLocale = function(){
 	   	         +"<span></label>";
 	   	 <#if args.textarea??>
 		   	 <#if args.htmlEditor??>
-	   	 	 <#assign mlField = {}>
+	   	 	 <#assign mlField = {"control": {"params": {"editorAppearance": "default"}}}>
 		   	 var mlFieldHtmlId = "${el}-"+lc;
 			 if(this.editors === undefined){
 			    this.editors = {};
