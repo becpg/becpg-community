@@ -174,8 +174,6 @@
 		
 		onCopyToClipboard : function(fieldId) {
 			
-			this.copyToIllManualValue(fieldId);
-			
 			var htmlId= fieldId.split("#")[0]+ fieldId.split("#")[2];
 			
 	    	if (document.selection) { 	
@@ -191,6 +189,9 @@
 			     document.execCommand("copy");
 			}
 			
+	    	Alfresco.util.PopupManager.displayMessage({
+                text : this.msg("message.copy-to-clipboard.success")
+             });
 	    },
 	    
 		
