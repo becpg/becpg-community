@@ -268,5 +268,12 @@
 		<property name="serviceRegistry" ref="ServiceRegistry" />
 		<property name="attributeExtractorService" ref="attributeExtractorService" />
 	</bean>
+	
+	<!-- Override alfresco -->
+    <bean id="webscript.org.alfresco.repository.workflow.task-instances.get"
+          class="fr.becpg.repo.web.scripts.workflow.BeCPGTaskInstancesGet"
+          parent="abstractWorkflowWebScript">
+    </bean>
+    
 
 </beans>
