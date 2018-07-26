@@ -4,6 +4,7 @@
 
    var TASK_EVENTCLASS = Alfresco.util.generateDomId(null, "task");
    var COMMENT_EVENTCLASS = Alfresco.util.generateDomId(null, "comment");
+   var COMMENT_PROJECTEVENTCLASS = Alfresco.util.generateDomId(null, "commentProject");
 
    beCPG.component.ProjectCommons = {};
    beCPG.component.ProjectCommons.prototype = {
@@ -11,6 +12,7 @@
       cache : [],
       taskEventClass: TASK_EVENTCLASS,
       commentEventClass : COMMENT_EVENTCLASS,
+      commentProjectEventClass : COMMENT_PROJECTEVENTCLASS,
       
 
       onActionShowTask : function PL_onActionShowTask(className) {
@@ -90,6 +92,18 @@
          
 
       },
+      
+      onActionCommentProject : function PL_onActionShowTask(className) {
+          var node = className.replace("node-", "");
+          node = (node != "#access_forbidden" ? node : "");
+
+          var url = Alfresco.constants.URL_SERVICECONTEXT + "modules/comments/list?nodeRef=" + node + "&activityType=project&entityNodeRef="+node;
+
+          this._showPanel(url ,this.id+"_comments", node);
+          
+
+       },
+      
       getOverdueClass : function PL_getOverdueClass(project, size) {
          var percent = 0, overdue = project.itemData["prop_pjt_projectOverdue"], dates = this.extractDates(project), suffix = size != null ? "-" + size
                : "";
@@ -209,10 +223,12 @@
             {
           	   subProject = task["itemData"]["assoc_pjt_subProjectRef"][0];
             }  
+    	  
+    	  var classGroup = (subProject==null && task["itemData"]["prop_pjt_tlIsGroup"]!=null && task["itemData"]["prop_pjt_tlIsGroup"].value ) ? " task-group" : "";
 
-          var ret = '<span class="task-status task-status-' + task["itemData"]["prop_pjt_tlState"].value + '">', duration ='';
+          var ret = '<span class="task-status task-status-' + task["itemData"]["prop_pjt_tlState"].value +classGroup+ '">', duration ='';
           
-          if(task.permissions.userAccess.edit){
+          if(task.permissions.userAccess.edit && classGroup == "" ){
 	          ret += '<span class="node-' + (subProject!=null ? subProject.value : task.nodeRef) + '|' + entityNodeRef + '"><a href="" class="theme-color-1 ' + TASK_EVENTCLASS + '" title="' + this
 	          .msg("link.title.task-edit") + '" >' + task["itemData"]["prop_pjt_tlTaskName"].displayValue;
           } else {
@@ -370,6 +386,18 @@
             '</a>&nbsp;<a class="folder-link" href="' + folderUrl + '" title="' + this
             .msg("link.title.open-folder") + '">&nbsp;</a></span>' ;
           
+          
+          ret += '<span class="node-' + record.nodeRef + '">';
+          ret += '<a class="project-comments '+COMMENT_PROJECTEVENTCLASS+'" title="' + this.msg("link.title.comment-project") + '" href="" >';
+
+          if (record["itemData"]["prop_fm_commentCount"] && record["itemData"]["prop_fm_commentCount"].value) {
+              ret += record["itemData"]["prop_fm_commentCount"].value;
+          } else {
+              ret +="&nbsp;";
+          }
+          ret += "</a></span></span>";
+          
+          
           if (record.version && record.version !== "") {
         	  ret += '<span class="document-version">' + record.version + '</span>';
            }
@@ -427,6 +455,16 @@
             return true;
          };
          YAHOO.Bubbling.addDefaultAction(COMMENT_EVENTCLASS, fnOnCommentTaskHandler);
+         
+         
+         var fnOnCommentTaskHandler = function PL__fnOnShowTaskHandler(layer, args) {
+            var owner = YAHOO.Bubbling.getOwnerByTagName(args[1].anchor, "span");
+            if (owner !== null) {
+               me.onActionCommentProject.call(me, owner.className, owner);
+            }
+            return true;
+         };
+         YAHOO.Bubbling.addDefaultAction(COMMENT_PROJECTEVENTCLASS, fnOnCommentTaskHandler);
          
       }
 

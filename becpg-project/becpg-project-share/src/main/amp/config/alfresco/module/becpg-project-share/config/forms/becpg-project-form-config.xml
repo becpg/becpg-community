@@ -368,6 +368,8 @@
 					<show id="pjt:projectCompletionDate" />
 					<show id="pjt:projectDueDate" />
 					<show id="pjt:projectState" />
+					<show id="fm:commentCount" force="true" />
+					
 				</field-visibility>
 				<appearance>
 					<!-- <field id="dataList_pjt:deliverableList" label-id="becpg.forms.field.projects.datagrid.deliverableList.label" 
@@ -382,6 +384,8 @@
 						label-id="becpg.forms.field.projects.datagrid.activityList.label" />
 					<field id="pjt:projectStartDate"
 						label="hidden" />
+					<field id="fm:commentCount" label="hidden" />	
+					
 					<!-- <field id="pjt:projectPriority"
 						label="hidden" /> -->
 				</appearance>
