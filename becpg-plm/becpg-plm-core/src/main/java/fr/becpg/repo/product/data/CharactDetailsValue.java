@@ -80,12 +80,66 @@ public class CharactDetailsValue {
 		this.name = name;
 	}
 
-	public void add(Double val) {
-		if ((value != null) && (val != null)) {
-			value += val;
+	public void add(CharactDetailsValue caractValue) {
+		if (caractValue.getValue() != null) {
+			if(value==null) {
+				value = 0d;
+			}
+			value += caractValue.getValue();
 		}
+		
+		if (caractValue.getMini() != null) {
+			if(mini==null) {
+				mini = 0d;
+			}
+			mini += caractValue.getMini();
+		}
+		
+		if (caractValue.getMaxi() != null) {
+			if(maxi==null) {
+				maxi = 0d;
+			}
+			maxi += caractValue.getMaxi();
+		}
+		
+		if (caractValue.getPreviousValue() != null) {
+			if(previousValue==null) {
+				previousValue = 0d;
+			}
+			previousValue += caractValue.getPreviousValue();
+		}
+		
+		if (caractValue.getFutureValue() != null) {
+			if(futureValue==null) {
+				futureValue = 0d;
+			}
+			futureValue += caractValue.getFutureValue();
+		}
+		
+	}
+	
+
+	public boolean keyEquals(CharactDetailsValue other) {
+		if (keyNodeRef == null) {
+			if (other.keyNodeRef != null)
+				return false;
+		} else if (!keyNodeRef.equals(other.keyNodeRef))
+			return false;
+		if (level == null) {
+			if (other.level != null)
+				return false;
+		} else if (!level.equals(other.level))
+			return false;
+		if (parentNodeRef == null) {
+			if (other.parentNodeRef != null)
+				return false;
+		} else if (!parentNodeRef.equals(other.parentNodeRef))
+			return false;
+		return true;
 	}
 
+	//TODO A refaire issue #4612
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -103,9 +157,6 @@ public class CharactDetailsValue {
 		return result;
 	}
 
-	
-	///IMPORTANT DO NOT MODIFIED THIS
-	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -175,8 +226,4 @@ public class CharactDetailsValue {
 				+ ", name=" + name + "]";
 	}
 
-	
-
-	
-	
 }
