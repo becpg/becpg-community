@@ -160,10 +160,16 @@ td.ggtaskCheckbox {
 	margin: 0px;
 	padding: 0px;
 	overflow: hidden;
-	border: 0px;
+    border: 0px
 	z-index: 0;
 	background-color: red;
 	visibility: visible;
+}
+
+.yui-skin-becpg .ggline {
+	background-color: #009dcc;
+	border-top: 1px solid  #009dcc;
+	border-left: 1px solid  #009dcc;
 }
 
 
@@ -172,14 +178,15 @@ td.ggtaskCheckbox {
 	border: 1px solid red;
 	height: 7px;
 	color: red;
+	 z-index:5;
 }
 
 .ggcomplete {
 	background-color: #FFF3A5;
 	height: 7px;
 	overflow: auto;
-	z-index: -4;
 	float: left;
+	z-index: -4;
 }
 
 .gtask {
@@ -188,6 +195,7 @@ td.ggtaskCheckbox {
 	border-radius: 5px;
 	height: 13px;
 	opacity: 0.8;
+	z-index:5;
 }
 
 .gcaption{
@@ -202,18 +210,43 @@ td.ggtaskCheckbox {
 }
 
 .gcomplete {
-	background-color: black;
+	
 	height: 13px;
 	overflow: auto;
-	background-image: url("../../themes/default/images/title-button-bg.png");
+	background-image: url("../../themes/default/images/title-button-bg.png"); 
+    background-color: black;
 	z-index: -4;
 	float: left;
 	border-radius: 5px;
 }
 
+.yui-skin-becpg .gcomplete {
+	z-index: 5;
+	background: 
+	  /* On "top" */
+	  repeating-linear-gradient(
+	    45deg,
+	    transparent,
+	    transparent 10px,
+	    #ccc 10px,
+	    #ccc 20px
+	  ),
+	  /* on "bottom" */
+	  linear-gradient(
+	    to bottom,
+	    #eee,
+	    #999
+	  );
+
+	
+}
+
+
+
 tr.ggroup {
 	background-color: #f3f3f3;
 	height: 2em;
+	
 }
 
 tr.ggroup.highlight > td, tr.grow.highlight > td, tr.gweekend.highlight  > td,tr.gmile.highlight  > td {
@@ -258,7 +291,7 @@ div.scroll {
 	margin:2px;
 	height: 11px; 
 	width:11px;	
-		
+	 z-index:5;		
 }
 
 .projects div.completed.milestone {
@@ -271,3 +304,31 @@ div.scroll {
 	width:11px;	
 	background-image: url("../../themes/default/images/title-button-bg.png");
 }
+
+.yui-skin-becpg .projects div.milestone {
+  height:12px;
+  width:12px;
+ 
+}
+.yui-skin-becpg .projects div.completed.milestone {
+
+	background: 
+	  /* On "top" */
+	  repeating-linear-gradient(
+	    45deg,
+	    transparent,
+	    transparent 10px,
+	    #ccc 10px,
+	    #ccc 20px
+	  ),
+	  /* on "bottom" */
+	  linear-gradient(
+	    to bottom,
+	    #eee,
+	    #999
+	  );
+
+	
+}
+
+

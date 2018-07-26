@@ -94,6 +94,18 @@
 }
 
 
+.project-list  a.project-comments {
+	cursor: pointer;
+	padding-left: 20px;
+	margin-left: 5px;
+	text-decoration: none;
+	background: url("../images/comment-16.png") no-repeat;
+	display: inline-table;
+	height: 16px;
+	vertical-align: bottom;
+}
+
+
 .project-list span.project-status-Completed,.project-list span.project-status-Closed
 	{
 	background: url("../documentlibrary/indicators/project-completed-16.png") no-repeat;

@@ -1225,24 +1225,32 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
        * @return {Void}
        */
       this.drawDependency = function(x1, y1, x2, y2) {
-         if (x1 + 10 < x2) {
+    	  
+    	 var isThemeBecpg = Dom.hasClass("Share", "yui-skin-becpg");
+    	 var spacerSize =  isThemeBecpg ? 16 : 12;
+    	  
+         if (x1 + spacerSize < x2) {
             this.sLine(x1, y1, x1 + 4, y1);
             this.sLine(x1 + 4, y1, x1 + 4, y2);
-            this.sLine(x1 + 4, y2, x2, y2);
-            this.dLine(x2, y2, x2 - 3, y2 - 3);
-            this.dLine(x2, y2, x2 - 3, y2 + 3);
-            this.dLine(x2 - 1, y2, x2 - 3, y2 - 2);
-            this.dLine(x2 - 1, y2, x2 - 3, y2 + 2);
+            this.sLine(x1 + 4, y2, x2 - 1, y2);
+            
+            //Arrow
+            this.dLine(x2 - 2, y2, x2 - 5, y2 - 4);
+            this.dLine(x2 - 2, y2, x2 - 5, y2 + 4);
+//            this.dLine(x2 - 2, y2, x2 - 3, y2 - 2);
+//            this.dLine(x2 - 2, y2, x2 - 3, y2 + 2);
          } else {
             this.sLine(x1, y1, x1 + 4, y1);
-            this.sLine(x1 + 4, y1, x1 + 4, y2 - 10);
-            this.sLine(x1 + 4, y2 - 10, x2 - 8, y2 - 10);
-            this.sLine(x2 - 8, y2 - 10, x2 - 8, y2);
-            this.sLine(x2 - 8, y2, x2, y2);
-            this.dLine(x2, y2, x2 - 3, y2 - 3);
-            this.dLine(x2, y2, x2 - 3, y2 + 3);
-            this.dLine(x2 - 1, y2, x2 - 3, y2 - 2);
-            this.dLine(x2 - 1, y2, x2 - 3, y2 + 2);
+            this.sLine(x1 + 4, y1, x1 + 4, y2 - spacerSize);
+            this.sLine(x1 + 4, y2 - spacerSize, x2 - (spacerSize+4), y2 - spacerSize);
+            this.sLine(x2 - (spacerSize+4), y2 - spacerSize, x2 - (spacerSize+4), y2);
+            this.sLine(x2 - (spacerSize+4), y2, x2 - 2, y2);
+            
+            //Arrow
+            this.dLine(x2 - 1, y2, x2 - 5, y2 - 4);
+            this.dLine(x2 - 1, y2, x2 - 5, y2 + 4);
+//            this.dLine(x2 - 2, y2, x2 - 3, y2 - 2);
+//            this.dLine(x2 - 2, y2, x2 - 3, y2 + 2);
          }
       };
 
@@ -1931,7 +1939,7 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
           }
           
           return '<div id="bardiv_' + vcurrDivID + '" style="position:absolute; top:3px; left:' + Math
-          .ceil(vTaskLeft * (vDayWidth) + 1)  + 'px; height: 16px; width:266px; overflow:hidden;">' + '  <div id="taskbar_' + vcurrDivID + '" title="'+vDateRowStr 
+          .ceil(vTaskLeft * (vDayWidth) + 1)  + 'px; height: 16px; width:266px; overflow:hidden;z-index:5;">' + '  <div id="taskbar_' + vcurrDivID + '" title="'+vDateRowStr 
           + '"  class="milestone ' + (vTask.getCompVal() < 100 ? "" : "completed") + '" style="background-color:#' + vTask.getColor() + ';">&nbsp;</div>'
           + (( vCaptionStr!=null && vCaptionStr.length>0)?'<div class="gcaption" style="top:0px; left:20px">' + vCaptionStr + '</div>': '');
          
@@ -1939,7 +1947,7 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
       
       this.renderTask = function(vcurrDivID,vTaskLeft,vTaskRight,vDayWidth,vColWidth, vDateRowStr,vCaptionStr,vTask, vFormat){
          return  '<div id="bardiv_' + vcurrDivID + '" style="position:absolute; top:4px; left:' 
-          + Math.ceil(vTaskLeft * (vDayWidth) - 1) + 'px; height:18px; width:' 
+          + Math.ceil(vTaskLeft * (vDayWidth) - 1) + 'px; height:18px;z-index:5; width:' 
           + Math.ceil((vTaskRight) * (vDayWidth) - 1) + 'px">' + '<div id="taskbar_' + vcurrDivID + '" title="' + vDateRowStr 
           + '" class="gtask" style="background-color:#' + vTask.getColor() + '; width:' + Math.ceil((vTaskRight) * (vDayWidth) - 1) + 'px;"  >' 
           + '<div class="gcomplete" style="width:' + vTask.getCompStr() + ';">' + '</div>' + '</div>'
