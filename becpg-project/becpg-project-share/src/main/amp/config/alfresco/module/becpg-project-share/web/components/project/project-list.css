@@ -274,14 +274,11 @@
 	padding-left: 0px;	
 }
 
-
-.truncate {
-  width: 250px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.datagrid span.sub-project {
+	 padding-left: 20px;	
+	 background:
+		url("../../components/images/filetypes/generic-project-16.png")	no-repeat;
 }
-
 
 /** Tasks 
 

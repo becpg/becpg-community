@@ -216,17 +216,19 @@
       },
 
       getTaskTitle : function PL_getTaskTitle(task, entityNodeRef, start, large) {
-    	  var subProject = null;
+    	  var subProject = null, subProjectClass = "";
     	  
     	  if (task["itemData"]["assoc_pjt_subProjectRef"] != null
             		&& task["itemData"]["assoc_pjt_subProjectRef"] .length>0)
             {
           	   subProject = task["itemData"]["assoc_pjt_subProjectRef"][0];
+          	   subProjectClass = " sub-project";
             }  
     	  
     	  var classGroup = (subProject==null && task["itemData"]["prop_pjt_tlIsGroup"]!=null && task["itemData"]["prop_pjt_tlIsGroup"].value ) ? " task-group" : "";
 
-          var ret = '<span class="task-status task-status-' + task["itemData"]["prop_pjt_tlState"].value +classGroup+ '">', duration ='';
+    	  
+          var ret = '<span class="task-status task-status-' + task["itemData"]["prop_pjt_tlState"].value +classGroup+subProjectClass+ '">', duration ='';
           
           if(task.permissions.userAccess.edit && classGroup == "" ){
 	          ret += '<span class="node-' + (subProject!=null ? subProject.value : task.nodeRef) + '|' + entityNodeRef + '"><a href="" class="theme-color-1 ' + TASK_EVENTCLASS + '" title="' + this
