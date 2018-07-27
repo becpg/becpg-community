@@ -87,7 +87,6 @@
 				<bean class="fr.becpg.repo.project.formulation.SubProjectFormulationHandler" >
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="projectActivityService" ref="projectActivityService" />
-					<property name="formulationService" ref="formulationService" />
 				</bean>
 				<bean class="fr.becpg.repo.project.formulation.PlanningFormulationHandler" >
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
