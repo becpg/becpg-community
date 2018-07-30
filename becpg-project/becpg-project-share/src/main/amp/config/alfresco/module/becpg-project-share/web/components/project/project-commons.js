@@ -97,7 +97,7 @@
       
       onActionSubmitTask : function onActionSubmitTask(className) {
     	  var nodes = className.replace("node-", "").split("|")
-          , taskNodeRef =  nodes[1] != "#access_forbidden" ? nodes[1] : "", me = this;
+          , taskNodeRef =  nodes[0] != "#access_forbidden" ? nodes[0] : "", me = this;
     	  
     	  Alfresco.util.PopupManager.displayPrompt({
               title : me.msg("message.confirm.submit-task.title"),
@@ -114,6 +114,11 @@
                               Alfresco.util.PopupManager.displayMessage({
                                  text : me.msg("message.submit-task.success")
                               });
+                              
+                              YAHOO.Bubbling.fire(me.scopeId + "dataItemUpdated", {
+									nodeRef : taskNodeRef
+								});
+                              
                            },
                            scope : me
                         }
