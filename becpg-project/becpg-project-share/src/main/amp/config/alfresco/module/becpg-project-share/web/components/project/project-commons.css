@@ -81,8 +81,24 @@
 }
 
 
+.project-list  a.task-comments,.project-list   a.submit-task{ 
+	display: none;
+}
 
-.project-list  a.task-comments {
+
+.project-list span.task-status:hover a.submit-task {
+	cursor: pointer;
+	padding-left: 12px;
+	margin-left: 5px;
+	text-decoration: none;
+	background: url("../form/images/suggested-action-16.png") no-repeat;
+	display: inline-table;
+	height: 16px;
+	vertical-align: bottom;
+}
+
+
+.project-list span.task-status:hover  a.task-comments, .project-list  a.active-comments ,.project-task  a.task-comments{
 	cursor: pointer;
 	padding-left: 20px;
 	margin-left: 5px;

@@ -48,8 +48,8 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	 */
 	private static final long serialVersionUID = 158129873096972078L;
 	private String taskName;
-	private Boolean isMilestone;
-	private Boolean isGroup;
+	private Boolean isMilestone = false;
+	private Boolean isGroup = false;
 	private Boolean isExcludeFromSearch;
 	private Integer duration;
 	private Integer realDuration;

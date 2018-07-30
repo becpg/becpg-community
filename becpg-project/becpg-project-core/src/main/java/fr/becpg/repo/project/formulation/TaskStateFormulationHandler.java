@@ -391,20 +391,29 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 		if (parent != null) {
 			boolean hasTaskInProgress = false;
 			boolean allTasksPlanned = true;
+			boolean allTasksCancelled = true;
+			
 			int completionPerc = 0;
 			List<TaskListDataItem> tasks = ProjectHelper.getChildrenTasks(projectData, parent);
 			for (TaskListDataItem c : tasks) {
 				completionPerc += (c.getCompletionPercent() != null ? c.getCompletionPercent() : 0);
 				if (TaskState.InProgress.equals(c.getTaskState())) {
 					hasTaskInProgress = true;
+					allTasksCancelled = false;
 				} else if (TaskState.Completed.equals(c.getTaskState())) {
 					allTasksPlanned = false;
+				}  else if (TaskState.OnHold.equals(c.getTaskState()) || TaskState.Refused.equals(c.getTaskState())) {
+					allTasksCancelled = false;
+					allTasksPlanned = false;
+					hasTaskInProgress = true;
 				}
 			}
 			if (hasTaskInProgress) {
 				ProjectHelper.setTaskState(parent, TaskState.InProgress, projectActivityService);
-			} else if (allTasksPlanned) {
+			} else if (allTasksPlanned && ! allTasksCancelled) {
 				ProjectHelper.setTaskState(parent, TaskState.Planned, projectActivityService);
+			} else if(allTasksCancelled) {
+				ProjectHelper.setTaskState(parent, TaskState.Cancelled, projectActivityService);
 			} else {
 				ProjectHelper.setTaskState(parent, TaskState.Completed, projectActivityService);
 			}
