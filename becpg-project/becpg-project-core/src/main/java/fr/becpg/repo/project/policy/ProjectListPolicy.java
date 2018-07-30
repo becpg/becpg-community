@@ -6,6 +6,7 @@ package fr.becpg.repo.project.policy;
 import java.io.Serializable;
 import java.util.Map;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.service.cmr.repository.AssociationRef;
@@ -216,7 +217,7 @@ public class ProjectListPolicy extends ProjectPolicy
 	public void onDeleteAssociation(AssociationRef assocRef) {
 		if (assocRef.getTypeQName().equals(ProjectModel.ASSOC_SUB_PROJECT)) {
 			NodeRef projectNodeRef = entityListDAO.getEntity(assocRef.getSourceRef());
-			if (projectNodeRef != null) {
+			if (projectNodeRef != null && !isNotLocked(projectNodeRef) && !nodeService.hasAspect(projectNodeRef, ContentModel.ASPECT_PENDING_DELETE)) {
 				nodeService.removeAssociation(assocRef.getTargetRef(), projectNodeRef, ProjectModel.ASSOC_PARENT_PROJECT);
 			}
 		}
