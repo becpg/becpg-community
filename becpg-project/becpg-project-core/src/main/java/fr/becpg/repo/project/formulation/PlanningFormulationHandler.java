@@ -355,7 +355,7 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 
 	private boolean hasPlannedDuration(TaskListDataItem task) {
 
-		if ((task != null) && ((task.getDuration() != null) || ((task.getIsMilestone() != null) && task.getIsMilestone()))) {
+		if ((task != null) && ((task.getDuration() != null) || (Boolean.TRUE.equals(task.getIsMilestone())))) {
 			return true;
 		} else {
 			return false;
