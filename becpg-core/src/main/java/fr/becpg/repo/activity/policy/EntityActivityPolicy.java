@@ -137,15 +137,14 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 							if (((before.get(beforeType) != null) && !before.get(beforeType).equals(after.get(beforeType)))
 									|| ((before.get(beforeType) == null) && (after.get(beforeType) != null))) {
 
+								isDifferent = true;
 								if (entityActivityService.isMatchingStateProperty(beforeType)) {
 									entityState = beforeType;
 									beforeState = before.get(entityState).toString();
 									afterState = after.get(entityState).toString();
+									break;
 								}
 
-								isDifferent = true;
-
-								break;
 							}
 
 						}
