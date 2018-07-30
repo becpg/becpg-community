@@ -16,6 +16,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.GS1Model;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.data.EffectiveFilters;
@@ -186,7 +187,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 							}
 						}
 						n.setRoundedValue(NutrientRoundingRules.extractRoundedValue(n,
-								(String) nodeService.getProperty(n.getNut(), PLMModel.PROP_NUTROUNDINGMODE)));
+								(String) nodeService.getProperty(n.getNut(), GS1Model.PROP_NUTRIENT_TYPE_CODE)));
 						
 						if (transientFormulation) {
 							n.setTransient(true);
