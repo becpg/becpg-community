@@ -41,7 +41,7 @@ public class RetrieveUserCommand extends AbstractHttpCommand {
 			logger.warn(e, e);
 		}
 
-		return getServerUrl() + String.format(COMMAND_URL_TEMPLATE, userName, params);
+		return getServerUrl() + String.format(COMMAND_URL_TEMPLATE, userName, ticket);
 	}
 
 }
