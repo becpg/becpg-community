@@ -149,24 +149,6 @@
 			</parameter>
 		</constraint>
 
-       <constraint name="bcpg:nutRoundingModes" type="LIST">
-			<parameter name="allowedValues">
-				<list>
-					<value></value>
-					<value>NRJ</value>
-					<value>Fat</value>
-					<value>SatFat</value>
-					<value>Su</value>
-					<value>Fiber</value>
-					<value>P</value>
-					<value>Na</value>
-					<value>Salt</value>
-					<value>Cholesterol</value>
-					<value>K</value>
-				</list>
-			</parameter>
-		</constraint>
-
 		<constraint name="bcpg:nutListUnit" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -970,14 +952,7 @@
 					<constraints>
 						<constraint ref="bcpg:nutType" />
 					</constraints>
-				</property>
-				<property name="bcpg:nutRoundingMode">
-					<type>d:text</type>
-					<index enabled="false"/>
-					<constraints>
-						<constraint ref="bcpg:nutRoundingModes" />
-					</constraints>
-				</property>			
+				</property>				
 				<property name="bcpg:nutUnit">
 					<type>d:text</type>
 					<mandatory>true</mandatory>

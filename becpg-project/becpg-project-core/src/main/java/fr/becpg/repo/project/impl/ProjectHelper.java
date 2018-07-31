@@ -410,7 +410,7 @@ public class ProjectHelper {
 	}
 
 	public static Integer calculateDuration(TaskListDataItem task) {		
-		return task.getDuration() != null ? task.getDuration() : task.getIsMilestone() ? DURATION_DEFAULT : null;
+		return task.getDuration() != null ? task.getDuration() : (Boolean.TRUE.equals(task.getIsMilestone())) ? DURATION_DEFAULT : null;
 	}
 
 	public static void setTaskState(TaskListDataItem task, TaskState state, ProjectActivityService projectActivityService) {

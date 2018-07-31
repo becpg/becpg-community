@@ -165,6 +165,20 @@ if (beCPG.module.EntityDataGridRenderers) {
 
    });
    
+
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+	   propertyName : [ "pjt:projectEntity" ],
+	   renderer : function(oRecord, data, label, scope) {
+
+		   var url = beCPG.util.entityURL(data.siteId, data.value), version = "";
+
+		   if (data.version && data.version !== "") {
+			   version = '<span class="document-version">' + data.version + '</span>';
+		   }
+		   return '<span class="' + data.metadata + '" ><a href="' + url + '">' +  Alfresco.util.encodeHTML(data.displayValue)
+		         + '</a></span>' + version;
+	   }});
+   
    
    
    /* Align cost to the right

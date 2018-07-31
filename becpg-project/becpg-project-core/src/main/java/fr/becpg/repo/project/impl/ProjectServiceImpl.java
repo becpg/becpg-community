@@ -20,8 +20,10 @@ package fr.becpg.repo.project.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -57,6 +59,7 @@ import fr.becpg.repo.project.data.ProjectState;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 import fr.becpg.repo.project.data.projectList.DeliverableState;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
+import fr.becpg.repo.project.data.projectList.TaskManualDate;
 import fr.becpg.repo.project.data.projectList.TaskState;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
@@ -144,7 +147,16 @@ public class ProjectServiceImpl implements ProjectService {
 			
 			L2CacheSupport.doInCacheContext(() -> {
 				AuthenticationUtil.runAsSystem(() -> {
+					
 					formulationService.formulate(projectNodeRef);
+					
+					NodeRef parentProjectNodeRef  = associationService.getTargetAssoc(projectNodeRef,ProjectModel.ASSOC_PARENT_PROJECT);
+					
+					//Check for parent project
+					if(parentProjectNodeRef!=null) {
+						formulate(parentProjectNodeRef);
+					}
+
 					return true;
 				});
 

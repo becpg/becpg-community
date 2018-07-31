@@ -3,6 +3,20 @@
    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
+	<!-- abstract workflow web script -->
+    <bean id="abstractWorkflowWebScript"
+          class="org.alfresco.repo.web.scripts.workflow.AbstractWorkflowWebscript"
+          parent="webscript" abstract="true">
+        <property name="namespaceService" ref="NamespaceService" />
+        <property name="nodeService" ref="NodeService" />
+        <property name="personService" ref="PersonService" />
+        <property name="dictionaryService" ref="DictionaryService" />
+        <property name="authenticationService" ref="AuthenticationService" />
+        <property name="authorityService" ref="AuthorityService" />
+        <property name="workflowService" ref="WorkflowService" />
+    </bean>
+
+
    <!-- Share Service Module Bootstrap -->
     
    <bean id="datalistModelBootstrap" parent="dictionaryModelBootstrap" depends-on="resourceBundles">

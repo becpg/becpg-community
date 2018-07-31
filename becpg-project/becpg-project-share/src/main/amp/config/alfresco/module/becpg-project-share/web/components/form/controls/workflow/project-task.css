@@ -63,7 +63,7 @@
 
 
 
-.project-list a.active-comments {
+.project-list.project-task a.active-comments {
 	cursor: pointer;
 	margin-left: 5px;
 	margin-bottom: -3px;

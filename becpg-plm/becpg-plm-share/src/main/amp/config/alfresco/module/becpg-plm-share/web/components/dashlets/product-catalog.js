@@ -12,7 +12,7 @@
    /**
     * Alfresco Slingshot aliases
     */
-   var $html = Alfresco.util.encodeHTML, $userProfile = Alfresco.util.userProfileLink, $siteDashboard = Alfresco.util.siteDashboardLink, $relTime = Alfresco.util.relativeTime, $isValueSet = Alfresco.util.isValueSet;
+   var $html = Alfresco.util.encodeHTML, $userProfile = Alfresco.util.userProfileLink, $relTime = Alfresco.util.relativeTime, $isValueSet = Alfresco.util.isValueSet;
 
    /**
     * Preferences
@@ -376,7 +376,7 @@
                         }
                         if (Alfresco.constants.SITE === "") {
                            dateLine = this.msg("details." + dateI18N + "-in-site", $relTime(dateProperty),
-                                 $siteDashboard(locn.site, locn.siteTitle,
+                        		   Alfresco.util.siteDefaultPageLink(locn.site, locn.siteTitle,
                                        'class="site-link theme-color-1" id="' + id + '"'));
                         } else {
                            dateLine = this.msg("details." + dateI18N + "-by", $relTime(dateProperty), $userProfile(

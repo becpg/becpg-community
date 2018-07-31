@@ -48,8 +48,8 @@ public class CharactDetails {
 		}
 		boolean match = false;
 		for(CharactDetailsValue existingValue : tmp){
-			if(existingValue.equals(value)){
-				existingValue.add(value.getValue());
+			if(existingValue.keyEquals(value)){
+				existingValue.add(value);
 				match = true;
 				break;
 			}
