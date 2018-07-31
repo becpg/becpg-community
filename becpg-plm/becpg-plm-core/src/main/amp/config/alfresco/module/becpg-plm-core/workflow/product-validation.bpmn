@@ -46,8 +46,7 @@
         </activiti:executionListener>
       </extensionElements>
     </sequenceFlow>
-    <inclusiveGateway id="startGateway" name="Exclusive Gateway">
-    </inclusiveGateway>
+    <inclusiveGateway id="startGateway" name="Exclusive Gateway"></inclusiveGateway>
     <sequenceFlow id="doProductValidationReviews" sourceRef="startGateway" targetRef="testParallelValidation">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${(bcpgwf_pvRDApprovalActor ==null ||  bcpgwf_reviewRDApproval == "Approved" ) && (bcpgwf_pvPackagingApprovalActor ==null ||  bcpgwf_reviewPackagingApproval == "Approved" ) && (bcpgwf_pvQualityApprovalActor ==null ||  bcpgwf_reviewQualityApproval == "Approved" )   && (bcpgwf_pvProductionApprovalActor ==null ||  bcpgwf_reviewProductionApproval == "Approved" )}]]></conditionExpression>
     </sequenceFlow>
@@ -60,22 +59,18 @@
     <sequenceFlow id="doProductValidationQuality" sourceRef="startGateway" targetRef="doProductValidationQualityTask">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${bcpgwf_pvQualityApprovalActor !=null && ( bcpgwf_reviewQualityApproval == null || bcpgwf_reviewRDApproval == "Rejected" || bcpgwf_reviewProductionApproval == "Rejected" || bcpgwf_reviewQualityApproval == "Rejected" || bcpgwf_reviewPackagingApproval == "Rejected")}]]></conditionExpression>
     </sequenceFlow>
-    <userTask id="doProductValidationQualityTask" name="Review Quality" activiti:formKey="bcpgwf:doProductValidationQualityTask">
+    <userTask id="doProductValidationQualityTask" name="Quality" activiti:formKey="bcpgwf:doProductValidationQualityTask">
       <extensionElements>
-      	<activiti:taskListener event="assignment" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+        <activiti:taskListener event="assignment" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[
-            	<import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js">
-	           	onAssignmentProductValidationTask();
-           					]]></activiti:string>
+            <activiti:string><![CDATA[<import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js">
+	           	onAssignmentProductValidationTask();]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[
-            	<import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js">
-               onCreateProductValidationTask(bcpgwf_pvQualityApprovalActor);
-               ]]></activiti:string>
+            <activiti:string><![CDATA[<import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js">
+               onCreateProductValidationTask(bcpgwf_pvQualityApprovalActor);]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
         <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
@@ -88,22 +83,18 @@
         </activiti:taskListener>
       </extensionElements>
     </userTask>
-    <userTask id="doProductValidationProductionTask" name="Review Production" activiti:formKey="bcpgwf:doProductValidationProductionTask">
+    <userTask id="doProductValidationProductionTask" name="Production" activiti:formKey="bcpgwf:doProductValidationProductionTask">
       <extensionElements>
-      	<activiti:taskListener event="assignment" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+        <activiti:taskListener event="assignment" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[
-            	<import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js">
-	           	onAssignmentProductValidationTask();
-           					]]></activiti:string>
+            <activiti:string><![CDATA[<import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js">
+	           	onAssignmentProductValidationTask();]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[
-            	<import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js">
-               onCreateProductValidationTask(bcpgwf_pvProductionApprovalActor);
-               ]]></activiti:string>
+            <activiti:string><![CDATA[<import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js">
+               onCreateProductValidationTask(bcpgwf_pvProductionApprovalActor);]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
         <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
@@ -116,22 +107,18 @@
         </activiti:taskListener>
       </extensionElements>
     </userTask>
-    <userTask id="doProductValidationRDTask" name="Review R&amp;D" activiti:formKey="bcpgwf:doProductValidationRDTask">
+    <userTask id="doProductValidationRDTask" name="R&amp;D" activiti:formKey="bcpgwf:doProductValidationRDTask">
       <extensionElements>
-      	<activiti:taskListener event="assignment" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+        <activiti:taskListener event="assignment" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[
-            	<import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js">
-	           	onAssignmentProductValidationTask();
-           					]]></activiti:string>
+            <activiti:string><![CDATA[<import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js">
+	           	onAssignmentProductValidationTask();]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[
-            	<import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js">
-               onCreateProductValidationTask(bcpgwf_pvRDApprovalActor);
-               ]]></activiti:string>
+            <activiti:string><![CDATA[<import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js">
+               onCreateProductValidationTask(bcpgwf_pvRDApprovalActor);]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
         <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
@@ -147,30 +134,25 @@
     <sequenceFlow id="endDoProductValidationQuality" sourceRef="doProductValidationQualityTask" targetRef="testParallelValidation"></sequenceFlow>
     <sequenceFlow id="endDoProductValidationProduction" sourceRef="doProductValidationProductionTask" targetRef="testParallelValidation"></sequenceFlow>
     <sequenceFlow id="endDoProductValidationRD" sourceRef="doProductValidationRDTask" targetRef="testParallelValidation"></sequenceFlow>
-    <inclusiveGateway id="testParallelValidation" name="Exclusive Gateway">
-    </inclusiveGateway>
+    <inclusiveGateway id="testParallelValidation" name="Exclusive Gateway"></inclusiveGateway>
     <sequenceFlow id="rejectedParallelValidation" sourceRef="testParallelValidation" targetRef="rejectProductTask">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${bcpgwf_reviewQualityApproval == "Rejected" || bcpgwf_reviewProductionApproval == "Rejected" || bcpgwf_reviewRDApproval == "Rejected" || bcpgwf_reviewPackagingApproval == "Rejected"}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="doProductValidationCaller" sourceRef="testParallelValidation" targetRef="doProductValidationCallerTask">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${bcpgwf_pvCallerActor !=null && ( bcpgwf_reviewCallerApproval == null || bcpgwf_reviewCallerApproval == "Rejected" || bcpgwf_reviewCaller2Approval == "Rejected") && (bcpgwf_reviewQualityApproval != "Rejected" && bcpgwf_reviewProductionApproval != "Rejected" && bcpgwf_reviewRDApproval != "Rejected" && bcpgwf_reviewPackagingApproval != "Rejected")}]]></conditionExpression>
     </sequenceFlow>
-    <userTask id="doProductValidationCallerTask" name="Validation Task 1" activiti:formKey="bcpgwf:doProductValidationCallerTask">
+    <userTask id="doProductValidationCallerTask" name="Validation 1" activiti:formKey="bcpgwf:doProductValidationCallerTask">
       <extensionElements>
-      	<activiti:taskListener event="assignment" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+        <activiti:taskListener event="assignment" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[
-            	<import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js">
-	           	onAssignmentProductValidationTask();
-           					]]></activiti:string>
+            <activiti:string><![CDATA[<import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js">
+	           	onAssignmentProductValidationTask();]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[
-            	<import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js">
-               onCreateProductValidationTask(bcpgwf_pvCallerActor);
-               ]]></activiti:string>
+            <activiti:string><![CDATA[<import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js">
+               onCreateProductValidationTask(bcpgwf_pvCallerActor);]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
         <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
@@ -184,35 +166,30 @@
       </extensionElements>
     </userTask>
     <sequenceFlow id="doTestCallerValidation" sourceRef="doProductValidationCallerTask" targetRef="testCallerValidation"></sequenceFlow>
-    <inclusiveGateway id="testCallerValidation" name="Inclusive Gateway">
-    </inclusiveGateway>
+    <inclusiveGateway id="testCallerValidation" name="Inclusive Gateway"></inclusiveGateway>
     <sequenceFlow id="rejectedCallerValidation" sourceRef="testCallerValidation" targetRef="rejectProductTask">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${bcpgwf_reviewCallerApproval == "Rejected" || bcpgwf_reviewCaller2Approval == "Rejected"}]]></conditionExpression>
     </sequenceFlow>
     <userTask id="rejectProductTask" name="Rejected  Task" activiti:formKey="bcpgwf:rejectProductTask">
       <extensionElements>
-      	<activiti:taskListener event="assignment" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+        <activiti:taskListener event="assignment" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[
-            	<import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js">
+            <activiti:string><![CDATA[<import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js">
 	           	if (bcpgwf_notifyMe){
             		sendMail(task.assignee, null,
 								bcpg.getMessage('productValidationWF.mail.rejected.subject', bpm_workflowDescription),
 								bcpg.getMessage('productValidationWF.mail.rejected.message'), 
 								"/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:product-validation-rejected-task-email.ftl",
 								bpm_package.children);
-					}
-           					]]></activiti:string>
+					}]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[
-            <import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js">
+            <activiti:string><![CDATA[<import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js">
             if (typeof bpm_workflowDueDate != 'undefined') task.dueDate = bpm_workflowDueDate;
             if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority;
-            task.setAssignee(getAssigneeOrDelegate(initiator));
-            ]]></activiti:string>
+            task.setAssignee(getAssigneeOrDelegate(initiator));]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
         <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
@@ -234,18 +211,16 @@
     <serviceTask id="alfrescoScripttask1" name="Classify and Validate" activiti:delegateExpression="${ValidateProduct}"></serviceTask>
     <userTask id="approveProductTask" name="Approved  Task" activiti:formKey="bcpgwf:approveProductTask">
       <extensionElements>
-      	<activiti:taskListener event="assignment" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+        <activiti:taskListener event="assignment" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[
-            	<import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js">
+            <activiti:string><![CDATA[<import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js">
 	           	if (bcpgwf_notifyMe) {
             				sendMail(task.assignee, null,
 									bcpg.getMessage('productValidationWF.mail.approved.subject', bpm_workflowDescription),
 									bcpg.getMessage('productValidationWF.mail.approved.message'), 
 									"/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:product-validation-approved-task-email.ftl",
 									bpm_package.children);
-			             }
-           	]]></activiti:string>
+			             }]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
@@ -314,22 +289,18 @@
     </userTask>
     <sequenceFlow id="endValidation" sourceRef="approveProductTask" targetRef="endevent1"></sequenceFlow>
     <endEvent id="endevent1" name="End"></endEvent>
-    <userTask id="doProductValidationCaller2Task" name="Validation Task 2" activiti:formKey="bcpgwf:doProductValidationCaller2Task">
+    <userTask id="doProductValidationCaller2Task" name="Validation 2" activiti:formKey="bcpgwf:doProductValidationCaller2Task">
       <extensionElements>
-      	<activiti:taskListener event="assignment" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+        <activiti:taskListener event="assignment" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[
-            	<import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js">
-	           	onAssignmentProductValidationTask();
-           					]]></activiti:string>
+            <activiti:string><![CDATA[<import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js">
+	           	onAssignmentProductValidationTask();]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[
-            	<import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js">
-               onCreateProductValidationTask(bcpgwf_pvCaller2Actor);
-               ]]></activiti:string>
+            <activiti:string><![CDATA[<import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js">
+               onCreateProductValidationTask(bcpgwf_pvCaller2Actor);]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
         <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
@@ -346,22 +317,18 @@
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${bcpgwf_pvCaller2Actor !=null && ( bcpgwf_reviewCaller2Approval == null || bcpgwf_reviewCallerApproval == "Rejected" || bcpgwf_reviewCaller2Approval == "Rejected") && (bcpgwf_reviewQualityApproval != "Rejected" && bcpgwf_reviewProductionApproval != "Rejected" && bcpgwf_reviewRDApproval != "Rejected" && bcpgwf_reviewPackagingApproval != "Rejected")}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="doTestCaller2Validation" sourceRef="doProductValidationCaller2Task" targetRef="testCallerValidation"></sequenceFlow>
-    <userTask id="doProductValidationPackagingTask" name="Review Packaging" activiti:formKey="bcpgwf:doProductValidationPackagingTask">
+    <userTask id="doProductValidationPackagingTask" name="Packaging" activiti:formKey="bcpgwf:doProductValidationPackagingTask">
       <extensionElements>
-      	<activiti:taskListener event="assignment" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+        <activiti:taskListener event="assignment" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[
-            	<import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js">
-	           	onAssignmentProductValidationTask();
-           					]]></activiti:string>
+            <activiti:string><![CDATA[<import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js">
+	           	onAssignmentProductValidationTask();]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[
-            	<import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js">
-               onCreateProductValidationTask(bcpgwf_pvPackagingApprovalActor);
-               ]]></activiti:string>
+            <activiti:string><![CDATA[<import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js">
+               onCreateProductValidationTask(bcpgwf_pvPackagingApprovalActor);]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
         <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
@@ -432,7 +399,7 @@
         <omgdc:Bounds height="55.0" width="105.0" x="281.0" y="310.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="exclusivegateway1" id="BPMNShape_exclusivegateway1">
-        <omgdc:Bounds height="40.0" width="40.0" x="618.0" y="337.0"></omgdc:Bounds>
+        <omgdc:Bounds height="40.0" width="40.0" x="618.0" y="364.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge bpmnElement="initiate" id="BPMNEdge_initiate">
         <omgdi:waypoint x="36.0" y="160.0"></omgdi:waypoint>
@@ -441,12 +408,12 @@
       <bpmndi:BPMNEdge bpmnElement="doProductValidationReviews" id="BPMNEdge_doProductValidationReviews">
         <omgdi:waypoint x="201.0" y="140.0"></omgdi:waypoint>
         <omgdi:waypoint x="201.0" y="8.0"></omgdi:waypoint>
-        <omgdi:waypoint x="471.0" y="8.0"></omgdi:waypoint>
+        <omgdi:waypoint x="470.0" y="8.0"></omgdi:waypoint>
         <omgdi:waypoint x="471.0" y="140.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="doProductValidationRD" id="BPMNEdge_doProductValidationRD">
         <omgdi:waypoint x="201.0" y="180.0"></omgdi:waypoint>
-        <omgdi:waypoint x="200.0" y="261.0"></omgdi:waypoint>
+        <omgdi:waypoint x="201.0" y="261.0"></omgdi:waypoint>
         <omgdi:waypoint x="281.0" y="261.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="doProductValidationProduction" id="BPMNEdge_doProductValidationProduction">
@@ -460,7 +427,7 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="endDoProductValidationQuality" id="BPMNEdge_endDoProductValidationQuality">
         <omgdi:waypoint x="386.0" y="67.0"></omgdi:waypoint>
-        <omgdi:waypoint x="471.0" y="67.0"></omgdi:waypoint>
+        <omgdi:waypoint x="470.0" y="67.0"></omgdi:waypoint>
         <omgdi:waypoint x="471.0" y="140.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="endDoProductValidationProduction" id="BPMNEdge_endDoProductValidationProduction">
@@ -490,10 +457,8 @@
         <omgdi:waypoint x="691.0" y="288.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="restartValidation" id="BPMNEdge_restartValidation">
-        <omgdi:waypoint x="638.0" y="377.0"></omgdi:waypoint>
-        <omgdi:waypoint x="638.0" y="387.0"></omgdi:waypoint>
-        <omgdi:waypoint x="418.0" y="387.0"></omgdi:waypoint>
-        <omgdi:waypoint x="201.0" y="387.0"></omgdi:waypoint>
+        <omgdi:waypoint x="618.0" y="384.0"></omgdi:waypoint>
+        <omgdi:waypoint x="201.0" y="384.0"></omgdi:waypoint>
         <omgdi:waypoint x="201.0" y="180.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="approvedCallerValidation" id="BPMNEdge_approvedCallerValidation">
@@ -510,7 +475,7 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="doProductValidationCaller2" id="BPMNEdge_doProductValidationCaller2">
         <omgdi:waypoint x="471.0" y="140.0"></omgdi:waypoint>
-        <omgdi:waypoint x="471.0" y="68.0"></omgdi:waypoint>
+        <omgdi:waypoint x="471.0" y="67.0"></omgdi:waypoint>
         <omgdi:waypoint x="551.0" y="67.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="doTestCaller2Validation" id="BPMNEdge_doTestCaller2Validation">
@@ -530,22 +495,18 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="doProductValidationCallers" id="BPMNEdge_doProductValidationCallers">
         <omgdi:waypoint x="471.0" y="140.0"></omgdi:waypoint>
-        <omgdi:waypoint x="471.0" y="6.0"></omgdi:waypoint>
-        <omgdi:waypoint x="601.0" y="6.0"></omgdi:waypoint>
-        <omgdi:waypoint x="726.0" y="6.0"></omgdi:waypoint>
+        <omgdi:waypoint x="471.0" y="8.0"></omgdi:waypoint>
+        <omgdi:waypoint x="726.0" y="8.0"></omgdi:waypoint>
         <omgdi:waypoint x="727.0" y="140.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="closeWorkflow" id="BPMNEdge_closeWorkflow">
-        <omgdi:waypoint x="638.0" y="377.0"></omgdi:waypoint>
-        <omgdi:waypoint x="638.0" y="384.0"></omgdi:waypoint>
-        <omgdi:waypoint x="676.0" y="384.0"></omgdi:waypoint>
-        <omgdi:waypoint x="866.0" y="384.0"></omgdi:waypoint>
+        <omgdi:waypoint x="658.0" y="384.0"></omgdi:waypoint>
         <omgdi:waypoint x="1104.0" y="384.0"></omgdi:waypoint>
         <omgdi:waypoint x="1104.0" y="178.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
         <omgdi:waypoint x="638.0" y="316.0"></omgdi:waypoint>
-        <omgdi:waypoint x="638.0" y="337.0"></omgdi:waypoint>
+        <omgdi:waypoint x="638.0" y="364.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

@@ -36,4 +36,6 @@ public interface GS1Model {
 	QName PROP_SECONDARY_NET_WEIGHT = QName.createQName(GS1_URI, "secondaryNetWeight");
 	QName PROP_TERTIARY_NET_WEIGHT = QName.createQName(GS1_URI, "tertiaryNetWeight");
 
+	QName PROP_NUTRIENT_TYPE_CODE = QName.createQName(GS1_URI, "nutrientTypeCode");
+
 }

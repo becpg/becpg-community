@@ -22,16 +22,10 @@ public class SubProjectFormulationHandler extends FormulationBaseHandler<Project
 
 	private AlfrescoRepository<ProjectData> alfrescoRepository;
 	
-	private FormulationService<ProjectData> formulationService;
-	
 	private ProjectActivityService projectActivityService;
 
 	public void setAlfrescoRepository(AlfrescoRepository<ProjectData> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
-	}
-
-	public void setFormulationService(FormulationService<ProjectData> formulationService) {
-		this.formulationService = formulationService;
 	}
 
 	public void setProjectActivityService(ProjectActivityService projectActivityService) {
@@ -44,9 +38,7 @@ public class SubProjectFormulationHandler extends FormulationBaseHandler<Project
 			if (task.getSubProject()!=null) {
 	
 				ProjectData subProject = alfrescoRepository.findOne(task.getSubProject());
-				formulationService.formulate(subProject);
-				alfrescoRepository.save(subProject);
-				
+	
 				task.setManualDate(TaskManualDate.End);
 				task.setStart(subProject.getStartDate());
 				task.setEnd(subProject.getCompletionDate());

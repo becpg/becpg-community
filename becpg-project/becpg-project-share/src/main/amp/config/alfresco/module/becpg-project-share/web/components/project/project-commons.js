@@ -3,14 +3,18 @@
    var Bubbling = YAHOO.Bubbling, $html = Alfresco.util.encodeHTML;
 
    var TASK_EVENTCLASS = Alfresco.util.generateDomId(null, "task");
+   var SUBMITTASK_EVENTCLASS = Alfresco.util.generateDomId(null, "submitTask");
    var COMMENT_EVENTCLASS = Alfresco.util.generateDomId(null, "comment");
+   var COMMENT_PROJECTEVENTCLASS = Alfresco.util.generateDomId(null, "commentProject");
 
    beCPG.component.ProjectCommons = {};
    beCPG.component.ProjectCommons.prototype = {
 
       cache : [],
       taskEventClass: TASK_EVENTCLASS,
+      taskSubmitEventClass: SUBMITTASK_EVENTCLASS,
       commentEventClass : COMMENT_EVENTCLASS,
+      commentProjectEventClass : COMMENT_PROJECTEVENTCLASS,
       
 
       onActionShowTask : function PL_onActionShowTask(className) {
@@ -90,6 +94,62 @@
          
 
       },
+      
+      onActionSubmitTask : function onActionSubmitTask(className) {
+    	  var nodes = className.replace("node-", "").split("|")
+          , taskNodeRef =  nodes[0] != "#access_forbidden" ? nodes[0] : "", me = this;
+    	  
+    	  Alfresco.util.PopupManager.displayPrompt({
+              title : me.msg("message.confirm.submit-task.title"),
+              text : me.msg("message.confirm.submit-task.description"),
+              buttons : [ {
+                 text : me.msg("button.submit"),
+                 handler : function() {
+                	 Alfresco.util.Ajax
+                     .jsonRequest({
+                        url : Alfresco.constants.PROXY_URI + "/becpg/project/complete/task?nodeRef="+taskNodeRef,
+                        method : "POST",
+                        successCallback : {
+                           fn : function(response) {
+                              Alfresco.util.PopupManager.displayMessage({
+                                 text : me.msg("message.submit-task.success")
+                              });
+                              
+                              YAHOO.Bubbling.fire(me.scopeId + "dataItemUpdated", {
+									nodeRef : taskNodeRef
+								});
+                              
+                           },
+                           scope : me
+                        }
+                     });  
+                     this.destroy(); 
+                 }
+              }, {
+                 text : me.msg("button.cancel"),
+                 handler : function() {
+                    this.destroy();
+                 },
+                 isDefault : true
+              } ]
+           });
+    	  
+          
+
+       },
+       
+      
+      onActionCommentProject : function PL_onActionShowTask(className) {
+          var node = className.replace("node-", "");
+          node = (node != "#access_forbidden" ? node : "");
+
+          var url = Alfresco.constants.URL_SERVICECONTEXT + "modules/comments/list?nodeRef=" + node + "&activityType=project&entityNodeRef="+node;
+
+          this._showPanel(url ,this.id+"_comments", node);
+          
+
+       },
+      
       getOverdueClass : function PL_getOverdueClass(project, size) {
          var percent = 0, overdue = project.itemData["prop_pjt_projectOverdue"], dates = this.extractDates(project), suffix = size != null ? "-" + size
                : "";
@@ -202,21 +262,25 @@
       },
 
       getTaskTitle : function PL_getTaskTitle(task, entityNodeRef, start, large) {
-    	  var subProject = null;
+    	  var subProject = null, subProjectClass = "";
     	  
     	  if (task["itemData"]["assoc_pjt_subProjectRef"] != null
             		&& task["itemData"]["assoc_pjt_subProjectRef"] .length>0)
             {
           	   subProject = task["itemData"]["assoc_pjt_subProjectRef"][0];
+          	   subProjectClass = " sub-project";
             }  
+    	  
+    	  var classGroup = (subProject==null && task["itemData"]["prop_pjt_tlIsGroup"]!=null && task["itemData"]["prop_pjt_tlIsGroup"].value ) ? " task-group" : "";
 
-          var ret = '<span class="task-status task-status-' + task["itemData"]["prop_pjt_tlState"].value + '">', duration ='';
+    	  
+          var ret = '<span class="task-status task-status-' + task["itemData"]["prop_pjt_tlState"].value +classGroup+subProjectClass+ '">', duration ='';
           
-          if(task.permissions.userAccess.edit){
+          if(task.permissions.userAccess.edit && classGroup == "" ){
 	          ret += '<span class="node-' + (subProject!=null ? subProject.value : task.nodeRef) + '|' + entityNodeRef + '"><a href="" class="theme-color-1 ' + TASK_EVENTCLASS + '" title="' + this
-	          .msg("link.title.task-edit") + '" >' + task["itemData"]["prop_pjt_tlTaskName"].displayValue;
+	          .msg("link.title.task-edit") + '" >' + task["itemData"]["prop_pjt_tlTaskName"].displayValue+"</span>";
           } else {
-        	  ret += '<span class="node-' + (subProject!=null ? subProject.value : task.nodeRef) + '|' + entityNodeRef + '">' + task["itemData"]["prop_pjt_tlTaskName"].displayValue;
+        	  ret += '<span class="node-' + (subProject!=null ? subProject.value : task.nodeRef) + '|' + entityNodeRef + '">' + task["itemData"]["prop_pjt_tlTaskName"].displayValue+"</span>";
           }
           
           if( task["itemData"]["prop_pjt_tlState"].value == "InProgress"){
@@ -242,26 +306,33 @@
          if(duration.length>0){
              ret +=' ('+duration+')';
          }
-         
-          ret += '</span>';
-         
+
           if (subProject!=null)
           {
-          	 ret += '<span >';
              ret += '<a  class="sub-project-link" title="' + subProject.displayValue + '" href="'+
              	beCPG.util.entityURL(subProject.siteId, subProject.value,"pjt:project") +'" >';
-             ret +="&nbsp;</a></span></span>";
+             ret +="&nbsp;</a>";
+          } else {
+	          if(task.permissions.userAccess.edit){
+		          ret += '<span class="node-' + task.nodeRef + '|' + entityNodeRef + '">';
+		          ret += '<a class="submit-task '+SUBMITTASK_EVENTCLASS+'" title="' + this.msg("link.title.submit-task") + '" href="" >';
+		          ret +="&nbsp;";
+		          ret += "</a></span>";
+	          }
           }
 
           ret += '<span class="node-' + task.nodeRef + '|' + entityNodeRef + '">';
-          ret += '<a class="task-comments '+COMMENT_EVENTCLASS+'" title="' + this.msg("link.title.comment-task") + '" href="" >';
+         
 
           if (task["itemData"]["prop_fm_commentCount"] && task["itemData"]["prop_fm_commentCount"].value) {
+        	  ret += '<a class="task-comments active-comments '+COMMENT_EVENTCLASS+'" title="' + this.msg("link.title.comment-task") + '" href="" >';
               ret += task["itemData"]["prop_fm_commentCount"].value;
           } else {
+        	  ret += '<a class="task-comments '+COMMENT_EVENTCLASS+'" title="' + this.msg("link.title.comment-task") + '" href="" >';
               ret +="&nbsp;";
           }
           ret += "</a></span></span>";
+          
 
           return ret;
       },
@@ -368,7 +439,19 @@
           ret += '<a class="theme-color-1" href="' + beCPG.util.entityURL(record.siteId, record.nodeRef,"pjt:project") + '" title="' 
             +this.msg("actions.entity.view-tasks") + '">' + code + "&nbsp;-&nbsp;" + $html(title) + 
             '</a>&nbsp;<a class="folder-link" href="' + folderUrl + '" title="' + this
-            .msg("link.title.open-folder") + '">&nbsp;</a></span>' ;
+            .msg("link.title.open-folder") + '">&nbsp;</a>' ;
+          
+          
+          ret += '<span class="node-' + record.nodeRef + '">';
+          ret += '<a class="project-comments '+COMMENT_PROJECTEVENTCLASS+'" title="' + this.msg("link.title.comment-project") + '" href="" >';
+
+          if (record["itemData"]["prop_fm_commentCount"] && record["itemData"]["prop_fm_commentCount"].value) {
+              ret += record["itemData"]["prop_fm_commentCount"].value;
+          } else {
+              ret +="&nbsp;";
+          }
+          ret += "</a></span></span>";
+          
           
           if (record.version && record.version !== "") {
         	  ret += '<span class="document-version">' + record.version + '</span>';
@@ -406,7 +489,7 @@
       	}
          return '006600';
       },
-      initTaskHandlers : function PL_initGantt() {
+      initTaskHandlers : function PL_initTaskHandlers() {
          var me = this;
          var fnOnShowTaskHandler = function PL__fnOnShowTaskHandler(layer, args) {
             var owner = YAHOO.Bubbling.getOwnerByTagName(args[1].anchor, "span");
@@ -418,7 +501,15 @@
          
          YAHOO.Bubbling.addDefaultAction(TASK_EVENTCLASS, fnOnShowTaskHandler);
          
-         
+         var fnOnSubmitTaskHandler = function PL__fnOnSubmitTaskHandler(layer, args) {
+             var owner = YAHOO.Bubbling.getOwnerByTagName(args[1].anchor, "span");
+             if (owner !== null) {
+                me.onActionSubmitTask.call(me, owner.className, owner);
+             }
+             return true;
+          };
+          YAHOO.Bubbling.addDefaultAction(SUBMITTASK_EVENTCLASS, fnOnSubmitTaskHandler);
+          
          var fnOnCommentTaskHandler = function PL__fnOnShowTaskHandler(layer, args) {
             var owner = YAHOO.Bubbling.getOwnerByTagName(args[1].anchor, "span");
             if (owner !== null) {
@@ -427,6 +518,15 @@
             return true;
          };
          YAHOO.Bubbling.addDefaultAction(COMMENT_EVENTCLASS, fnOnCommentTaskHandler);
+         
+         var fnOnCommentProjectHandler = function PL__fnOnCommentProjectHandler(layer, args) {
+            var owner = YAHOO.Bubbling.getOwnerByTagName(args[1].anchor, "span");
+            if (owner !== null) {
+               me.onActionCommentProject.call(me, owner.className, owner);
+            }
+            return true;
+         };
+         YAHOO.Bubbling.addDefaultAction(COMMENT_PROJECTEVENTCLASS, fnOnCommentProjectHandler);
          
       }
 

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
@@ -29,7 +30,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.PLMModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.CharactDetailsVisitor;
@@ -207,7 +207,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 					if (logger.isDebugEnabled()) {
 						logger.debug("Add new charact detail. Charact: "
 								+ nodeService.getProperty(simpleCharact.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME) + " - entityNodeRef: "
-								+ nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_CHARACT_NAME) + " - netQty: " + netQty + " - qty: " + qtyUsed
+								+ nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + " - netQty: " + netQty + " - qty: " + qtyUsed
 								+ " - value: " + value);
 					}
 
