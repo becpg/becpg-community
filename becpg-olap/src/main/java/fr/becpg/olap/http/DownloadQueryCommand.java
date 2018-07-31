@@ -17,7 +17,13 @@
  ******************************************************************************/
 package fr.becpg.olap.http;
 
+import java.io.UnsupportedEncodingException;
+
+import org.springframework.web.util.UriUtils;
+
 import fr.becpg.tools.http.AbstractHttpCommand;
+
+
 
 
 
@@ -33,8 +39,13 @@ public class DownloadQueryCommand  extends AbstractHttpCommand {
 	@Override
 	public String getHttpUrl(Object... params) {
 		String nodeRef =((String)params[0]).replace(":/", "");
+		String fileName = ((String)params[1]);
+		try {
+			fileName = UriUtils.encodePath(fileName, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			logger.warn(e, e);
+		}
 		
-		String fileName = (String)encodeParams(params)[1];
 		return getServerUrl() + String.format(COMMAND_URL_TEMPLATE, nodeRef, fileName );
 	}
 	
