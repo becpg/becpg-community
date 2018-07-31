@@ -116,6 +116,10 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	@Value("${beCPG.product.report.assocsToExtractWithImage}")
 	private String assocsToExtractWithImage = "";
 
+        @Value("${beCPG.product.report.multilineProperties}")
+	private String multilineProperties = "";
+
+
 	@Autowired
 	@Qualifier("mlAwareNodeService")
 	private NodeService mlNodeService;
@@ -976,6 +980,11 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			if (attribute.equals(ContentModel.PROP_DESCRIPTION)) {
 				return true;
 			}
+			if(multilineProperties!=null 
+					&& multilineProperties.contains(attribute.toPrefixString(namespaceService))) {
+				return true;
+			}
+			
 		}
 		return false;
 	}
