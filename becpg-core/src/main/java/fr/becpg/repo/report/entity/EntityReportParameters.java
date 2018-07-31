@@ -36,7 +36,8 @@ import org.json.JSONObject;
    mlTextFields: "cm:title",
    assocsToExtract : "bcpg:plants,bcpg:suppliers,bcpg:storageConditionsRef,bcpg:precautionOfUseRef,bcpg:nutListNut",
    assocsToExtractWithDataList : "",
-   assocsToExtractWithImage : "bcpg:clients"
+   assocsToExtractWithImage : "bcpg:clients",
+   multilineProperties:"bcpg:organoListValue"
   }
   nameFormat : "{entity_cm:name} - {report_cm:name} - {locale} - {param1}",
   titleFormat : "{report_cm:name} - {locale} - {param1}"
