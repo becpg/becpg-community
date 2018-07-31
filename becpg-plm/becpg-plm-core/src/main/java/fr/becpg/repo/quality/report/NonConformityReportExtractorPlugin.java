@@ -72,10 +72,6 @@ public class NonConformityReportExtractorPlugin extends DefaultEntityReportExtra
 		}
 	}
 
-	@Override
-	protected boolean isMultiLinesAttribute(QName attribute) {
-		return false;
-	}
 	
 	@Override
 	public EntityReportExtractorPriority getMatchPriority(QName type) {

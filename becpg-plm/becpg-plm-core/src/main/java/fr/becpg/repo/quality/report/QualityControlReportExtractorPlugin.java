@@ -105,10 +105,7 @@ public class QualityControlReportExtractorPlugin extends DefaultEntityReportExtr
 		return false;
 	}
 
-	@Override
-	protected boolean isMultiLinesAttribute(QName attribute) {
-		return false;
-	}
+	
 
 	@Override
 	public EntityReportExtractorPriority getMatchPriority(QName type) {
