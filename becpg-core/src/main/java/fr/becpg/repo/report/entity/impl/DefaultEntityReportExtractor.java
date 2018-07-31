@@ -82,6 +82,7 @@ import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.report.entity.EntityReportData;
 import fr.becpg.repo.report.entity.EntityReportExtractorPlugin;
 import fr.becpg.repo.report.entity.EntityReportService;
+import fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor.DefaultExtractorContext;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.RepositoryEntityDefReader;
@@ -131,16 +132,20 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	private String mlTextFields;
 
 	@Value("${beCPG.product.report.assocsToExtractWithDataList}")
-	private String assocsToExtractWithDataList = "";
+	protected String assocsToExtractWithDataList = "";
 
 	@Value("${beCPG.product.report.assocsToExtractWithImage}")
-	private String assocsToExtractWithImage = "";
+	protected String assocsToExtractWithImage = "";
 
 	@Value("${beCPG.product.report.assocsToExtract}")
-	private String assocsToExtract = "";
+	protected String assocsToExtract = "";
 
 	@Value("${beCPG.product.report.assocsToExtractInDataList}")
-	private String assocsToExtractInDataList = "";
+	protected String assocsToExtractInDataList = "";
+	
+	@Value("${beCPG.product.report.multilineProperties}")
+	protected String multilineProperties = "";
+
 
 	@Autowired
 	protected DictionaryService dictionaryService;
@@ -407,7 +412,10 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		return isExtracted;
 	}
 
-	protected boolean isMultiLinesAttribute(QName attribute) {
+	protected boolean isMultiLinesAttribute(QName attribute, DefaultExtractorContext context) {
+		if(context.prefsContains("multilineProperties", multilineProperties, attribute.toPrefixString(namespaceService))) {
+			return true;
+		}
 		return false;
 	}
 
@@ -538,7 +546,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 					continue;
 				}
 				addData(nodeElt, useCData, propertyDef.getName(),
-						attributeExtractorService.extractPropertyForReport(propertyDef, property.getValue(), propertyFormats, false), null);
+						attributeExtractorService.extractPropertyForReport(propertyDef, property.getValue(), propertyFormats, false), null, context);
 
 				if (context.prefsContains("mlTextFields", mlTextFields, propertyDef.getName().toPrefixString(namespaceService))) {
 
@@ -578,7 +586,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 								code += "_" + mlEntry.getKey().getCountry();
 							}
 							if ((code != null) && !code.isEmpty()) {
-								addData(nodeElt, useCData, propertyDef.getName(), mlEntry.getValue(), code);
+								addData(nodeElt, useCData, propertyDef.getName(), mlEntry.getValue(), code, context);
 							}
 						}
 					}
@@ -611,7 +619,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 						String ret = assocNodes.stream().map(i -> extractName(associationDef.getTargetClass().getName(), i))
 								.collect(Collectors.joining(RepoConsts.LABEL_SEPARATOR));
 
-						addData(nodeElt, useCData, associationDef.getName(), ret, null);
+						addData(nodeElt, useCData, associationDef.getName(), ret, null, context);
 
 					}
 
@@ -662,7 +670,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 							loadAttributes(post.getChildRef(), commentElt, true, hiddenNodeAttributes, context);
 							ContentReader reader = contentService.getReader(post.getChildRef(), ContentModel.PROP_CONTENT);
 							if (reader != null) {
-								addData(commentElt, true, ContentModel.PROP_CONTENT, reader.getContentString(), null);
+								addData(commentElt, true, ContentModel.PROP_CONTENT, reader.getContentString(), null, context);
 							}
 						}
 					}
@@ -672,8 +680,8 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	}
 
-	protected void addData(Element nodeElt, boolean useCData, QName propertyQName, String value, String suffix) {
-		if (useCData || isMultiLinesAttribute(propertyQName)) {
+	protected void addData(Element nodeElt, boolean useCData, QName propertyQName, String value, String suffix, DefaultExtractorContext context) {
+		if (useCData || isMultiLinesAttribute(propertyQName, context)) {
 			addCDATA(nodeElt, propertyQName, value, suffix);
 		} else {
 			String localName = propertyQName.getLocalName();
