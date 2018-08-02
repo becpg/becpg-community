@@ -261,6 +261,7 @@
       onFilterSearch: function BaseFilter_onFilterChanged(layer, args)
       {
          var filter = Alfresco.util.cleanBubblingObject(args[1]);
+         this.widgets.pagingDataTable.setPagingState("|");
          this.widgets.pagingDataTable.loadDataTable("q="+filter.filterData);
          
       },

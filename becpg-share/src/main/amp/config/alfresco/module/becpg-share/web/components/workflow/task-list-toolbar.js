@@ -181,7 +181,7 @@
       onSearchButtonClick : function WLT_onSearchButtonClick() {
 
          this._cleanSearchText();
-         this.setDefaultSearchText();
+        //this.setDefaultSearchText();
          
          YAHOO.Bubbling.fire("filterSearch",
                  {

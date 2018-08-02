@@ -120,7 +120,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	@Value("${beCPG.product.report.priceBreaks}")
 	private Boolean extractPriceBreaks = false;
-
+	
 	@Value("${beCPG.product.report.extractRawMaterial}")
 	private Boolean extractRawMaterial = true;
 	
@@ -1528,8 +1528,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	}
 
 	@Override
-	protected boolean isMultiLinesAttribute(QName attribute) {
-		if (attribute != null) {
+	protected boolean isMultiLinesAttribute(QName attribute, DefaultExtractorContext context) {
+		if (attribute != null ) {
 			if (attribute.equals(PLMModel.PROP_INSTRUCTION)) {
 				return true;
 			}
@@ -1539,6 +1539,13 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			if (attribute.equals(ContentModel.PROP_DESCRIPTION)) {
 				return true;
 			}
+			
+			
+			if(multilineProperties!=null 
+					&& context.prefsContains("multilineProperties", multilineProperties, attribute.toPrefixString(namespaceService))) {
+				return true;
+			}
+			
 		}
 		return false;
 	}
