@@ -388,6 +388,16 @@
 			</action>
 			
 			
+			<!-- Associated process -->
+			<action id="entity-show-associated-process" type="javascript" label="actions.entity.associated-process" icon="document-assign-workflow">
+				<param name="function">onActionShowAssociatedProcess</param>
+				<evaluator >evaluator.becpg.doclib.action.entity</evaluator>
+			</action>
+			
+			<action id="entity-show-associated-process" type="javascript" label="actions.entity.associated-process" icon="document-assign-workflow" subgroup="50" appendEvaluators="true">>
+				 <evaluator negate="true">evaluator.doclib.action.isLocked</evaluator>
+			</action>
+			
          <action id="datalist-copy-to" type="javascript" label="actions.datalist.copy-to">
             <param name="function">onActionCopyDataListTo</param>
             <evaluator>evaluator.doclib.action.editableByCurrentUser</evaluator>
@@ -449,12 +459,14 @@
 				<action index="370" id="document-cloud-unsync" />
 				<action index="380" id="document-view-in-cloud" />
 				<action index="390" id="document-request-sync" />
-				<action index="500" id="view-associated-workflow" />
+				<!-- <action index="500" id="view-associated-workflow" /> -->
+				<action index="510" id="entity-show-associated-process" />
 				
 			</actionGroup>
 			<actionGroup id="document-details">
 				<action index="121" id="reportTpl-refresh" />
 				<action index="301" id="reportTpl-update-permissions" />
+				<action index="510" id="entity-show-associated-process" />
 			</actionGroup>
 
 			<actionGroup id="document-browse">
