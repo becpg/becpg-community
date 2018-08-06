@@ -170,7 +170,7 @@
 			</actionGroup>
 			<actionGroup id="entity-details">
 				<action index="181" id="project-manage-permissions" icon="folder-manage-permissions" label="actions.folder.manage-permissions" />
-				<action index="501" id="entity-view-projects" />
+				<!-- <action index="501" id="entity-view-projects" /> -->
 			</actionGroup>
 		</actionGroups>
 	</config>

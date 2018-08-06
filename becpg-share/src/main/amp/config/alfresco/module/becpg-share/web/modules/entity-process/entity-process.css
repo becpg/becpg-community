@@ -1,0 +1,40 @@
+.entity-process .process img {
+	float: left;
+	margin-top: 0.2em;
+	min-height: 3em;
+	padding-right: 1em;
+	line-height: 3em;
+	text-align: center;
+}
+
+.entity-process .process {
+	padding: 0.5em 0.5em 1em;
+	margin-bottom: 0.5em;
+	border-bottom: 1px dashed #ddd;
+}
+
+.entity-process .process-last {
+	border-bottom: medium none;
+	margin-bottom: 0;
+}
+
+.entity-process .process .details {
+	margin-left: 2em;
+}
+
+.entity-process .process .title {
+	margin-top: 0.3em;
+}
+
+select.entity-process-filter {
+  margin: 50px;
+  width: 150px;
+  padding: 5px 35px 5px 5px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  height: 34px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: url(../../arrow.png) 96% / 15% no-repeat #eee;
+}

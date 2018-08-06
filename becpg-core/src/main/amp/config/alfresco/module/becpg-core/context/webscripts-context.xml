@@ -269,6 +269,15 @@
 		<property name="attributeExtractorService" ref="attributeExtractorService" />
 	</bean>
 	
+
+    
+	<!-- Retrieves all active and closed process instances that the given node is part of. -->
+    <bean id="webscript.fr.becpg.process.entity-process-list.get"
+          class="fr.becpg.repo.web.scripts.process.EntityProcessListWebscript"
+          parent="abstractWorkflowWebScript">
+    </bean>
+          
+	
 	<!-- Override alfresco -->
     <bean id="webscript.org.alfresco.repository.workflow.task-instances.get"
           class="fr.becpg.repo.web.scripts.workflow.BeCPGTaskInstancesGet"
