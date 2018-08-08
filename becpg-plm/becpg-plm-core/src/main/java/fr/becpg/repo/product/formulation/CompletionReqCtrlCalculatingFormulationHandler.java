@@ -299,8 +299,8 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 
 						String color = getCatalogColor(catalog, i);
 
-						JSONArray reqFields = catalog.getJSONArray(JsonScoreHelper.PROP_FIELDS);
-						JSONArray uniqueFields = catalog.getJSONArray(JsonScoreHelper.PROP_UNIQUE_FIELDS);
+						JSONArray reqFields = catalog.has(JsonScoreHelper.PROP_FIELDS) ? catalog.getJSONArray(JsonScoreHelper.PROP_FIELDS) : new JSONArray();
+						JSONArray uniqueFields = catalog.has(JsonScoreHelper.PROP_UNIQUE_FIELDS) ? catalog.getJSONArray(JsonScoreHelper.PROP_UNIQUE_FIELDS) : new JSONArray();
 
 						JSONArray nonUniqueFields = extractNonUniqueFields(productData, catalog.getString(JsonScoreHelper.PROP_LABEL), properties,
 								uniqueFields);
@@ -314,7 +314,7 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 								catalogDesc.put(JsonScoreHelper.PROP_MISSING_FIELDS, missingFields.length() > 0 ? missingFields : null);
 								catalogDesc.put(JsonScoreHelper.PROP_NON_UNIQUE_FIELDS, nonUniqueFields.length() > 0 ? nonUniqueFields : null);
 								catalogDesc.put(JsonScoreHelper.PROP_LOCALE, defaultLocale.equals(lang) ? null : lang);
-								catalogDesc.put(JsonScoreHelper.PROP_SCORE, ((reqFields.length() - missingFields.length()) * 100d) / reqFields.length());
+								catalogDesc.put(JsonScoreHelper.PROP_SCORE, ((reqFields.length() - missingFields.length()) * 100d) / (reqFields.length() > 0 ? reqFields.length() : 1d));
 								catalogDesc.put(JsonScoreHelper.PROP_LABEL, catalog.getString(JsonScoreHelper.PROP_LABEL));
 								catalogDesc.put(JsonScoreHelper.PROP_ID, catalog.getString(JsonScoreHelper.PROP_ID));
 								catalogDesc.put(JsonScoreHelper.PROP_COLOR, color);
@@ -474,10 +474,7 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 		List<NodeRef> queryResults = new ArrayList<>();
 		if ((value != null) && !value.isEmpty()) {
 
-			BeCPGQueryBuilder query = BeCPGQueryBuilder.createQuery().andPropEquals(propQName, value);
-			query = query.excludeAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION);
-			// query = query.excludeAspect(BeCPGModel.ASPECT_ENTITY_BRANCH);
-			query = query.excludeAspect(ContentModel.ASPECT_WORKING_COPY);
+			BeCPGQueryBuilder query = BeCPGQueryBuilder.createQuery().andPropEquals(propQName, value).inDBIfPossible();
 			logger.debug("Query: " + query.toString());
 			queryResults = query.list();
 			List<NodeRef> falsePositives = new ArrayList<>();
@@ -487,11 +484,14 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 			for (NodeRef result : queryResults) {
 				Serializable resultProp = nodeService.getProperty(result, propQName);
 				logger.debug("result: " + result + " prop value: " + resultProp);
-
-				if ((resultProp != null) && !resultProp.equals(value)) {
-					logger.debug("Result " + result + " does not match value " + value + " (its value: " + resultProp + "), removing from res");
+				
+				//exclude aspects here so we can make the query in db
+				if(	nodeService.hasAspect(result, BeCPGModel.ASPECT_COMPOSITE_VERSION) 
+					||	nodeService.hasAspect(result, ContentModel.ASPECT_WORKING_COPY)
+					|| (resultProp != null) && !resultProp.equals(value)){
+					
 					falsePositives.add(result);
-				}
+				} 
 			}
 
 			for (NodeRef falsePositive : falsePositives) {
