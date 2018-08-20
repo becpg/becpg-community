@@ -92,7 +92,9 @@
                                                         if(task["itemData"]["assoc_pjt_tlResources"].length>0){
                                                         	taskOwner = "";
                                                         	for(var z in  task["itemData"]["assoc_pjt_tlResources"]){
-                                                        		taskOwner += '<span class="resource-title">' + task["itemData"]["assoc_pjt_tlResources"][z].displayValue + '</span>';                               	
+                                                        		if(task["itemData"]["assoc_pjt_tlResources"][z].displayValue!=null){
+                                                        			taskOwner += '<span class="resource-title">' + task["itemData"]["assoc_pjt_tlResources"][z].displayValue.replace("null", "").trim() + '</span>';   
+                                                        		}
                                                         	}
                                                         }
                                                         
