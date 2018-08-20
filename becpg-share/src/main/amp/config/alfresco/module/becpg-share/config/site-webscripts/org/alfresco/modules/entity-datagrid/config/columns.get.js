@@ -52,7 +52,7 @@ function getArgument(argName, defValue) {
  *            form
  * @return Object representing the configuration or null
  */
-function getFormConfig(itemId, formId, mode) {
+function getFormConfig(itemId, formId, mode, prefixedSiteId) {
 	var formConfig = null;
 
 	// query for configuration for item
@@ -202,16 +202,16 @@ function main() {
 		cache.maxAge = 0;
 	}
 	
-	prefixedSiteId = siteId ? "-" + siteId : "";
+	var prefixedSiteId = siteId ? "-" + siteId : "";
 	
 	prefs = "fr.becpg.formulation.dashlet.custom.datagrid-prefs"+"."+itemType.replace(":","_");
 	
 	// pass form ui model to FTL
-	model.columns = getColumns(itemType, list, formId, mode);
+	model.columns = getColumns(itemType, list, formId, mode, prefixedSiteId);
 	
 }
 
-function getColumns(itemType, list, formIdArgs, mode) {
+function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId) {
 	
 	var columns = [], defaultColumns = [], ret = [];
 
@@ -231,7 +231,7 @@ function getColumns(itemType, list, formIdArgs, mode) {
 			formId = formIdArgs;
 		}
 		
-		var formConfig = getFormConfig(itemType, formId, mode);
+		var formConfig = getFormConfig(itemType, formId, mode, prefixedSiteId);
 		
 		// get the configured visible fields
 		var visibleFields = getVisibleFields(mode == "bulk-edit" ? "edit" : "view", formConfig);
@@ -281,9 +281,14 @@ function getColumns(itemType, list, formIdArgs, mode) {
 				var name = fieldId.replace("dataList_", ""), column = {
 					type : "dataList",
 					name : name,
-					label : (formConfig.fields[fieldId].labelId != null ? formConfig.fields[fieldId].labelId : formConfig.fields[fieldId].label),
 					"dataType" : "nested"
 				};
+				
+				if (formConfig.fields[fieldId].label != null || formConfig.fields[fieldId].labelId != null) {
+					column.label = formConfig.fields[fieldId].label != null ? formConfig.fields[fieldId].label
+							: formConfig.fields[fieldId].labelId;
+				}
+				
 				column.columns = getColumns(name + "", "sub-datagrid");
 
 				ret.push(column);
@@ -293,9 +298,15 @@ function getColumns(itemType, list, formIdArgs, mode) {
 				var name = splitted[0], column = {
 					type : "entity",
 					name : name,
-					label : (formConfig.fields[fieldId].labelId != null ? formConfig.fields[fieldId].labelId : formConfig.fields[fieldId].label),
 					"dataType" : "nested"
 				};
+				
+				if (formConfig.fields[fieldId].label != null || formConfig.fields[fieldId].labelId != null) {
+					column.label = formConfig.fields[fieldId].label != null ? formConfig.fields[fieldId].label
+							: formConfig.fields[fieldId].labelId;
+				}
+				
+				
 				if (formIdArgs != null) {
 					column.columns = getColumns(splitted[1] + "", "sub-datagrid", "sub-datagrid-" + formIdArgs);
 				} else {
@@ -309,8 +320,8 @@ function getColumns(itemType, list, formIdArgs, mode) {
 				for ( var j in columns) {
 					if (columns[j].name == fieldId) {
 						if (formConfig.fields[fieldId].label != null || formConfig.fields[fieldId].labelId != null) {
-							columns[j].label = formConfig.fields[fieldId].labelId != null ? formConfig.fields[fieldId].labelId
-									: formConfig.fields[fieldId].label;
+							columns[j].label = formConfig.fields[fieldId].label != null ? formConfig.fields[fieldId].label
+									: formConfig.fields[fieldId].labelId;
 						}
 
 						columns[j].readOnly = formConfig.fields[fieldId].isReadOnly();
