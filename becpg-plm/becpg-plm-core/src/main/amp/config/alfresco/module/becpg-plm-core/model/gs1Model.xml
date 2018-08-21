@@ -484,6 +484,11 @@
 					<tokenised>TRUE</tokenised>
 				</index>
 			</property>
+			<property name="gs1:nutListRoundedValue">
+				<type>d:text</type>
+				<mandatory>false</mandatory>
+				<index enabled="false" />
+			</property>
 		</properties>
 	</aspect> 
   </aspects>

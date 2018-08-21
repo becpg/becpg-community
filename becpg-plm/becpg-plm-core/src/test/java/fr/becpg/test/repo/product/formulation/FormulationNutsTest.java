@@ -117,7 +117,7 @@ public class FormulationNutsTest extends AbstractFinishedProductTest {
 	                assertEquals(NutrientRoundingRules.extractValue(nutListDataItem.getRoundedValue(), Locale.FRENCH).doubleValue(), 2d);
 	                assertEquals(NutrientRoundingRules.extractValue(nutListDataItem.getRoundedValue(), Locale.US).doubleValue(), 2d);
 	                assertEquals(NutrientRoundingRules.extractMini(nutListDataItem.getRoundedValue(), Locale.FRENCH).doubleValue(),0d);
-	                assertNull(NutrientRoundingRules.extractMaxi(nutListDataItem.getRoundedValue(), Locale.FRENCH));
+	                assertEquals(NutrientRoundingRules.extractMaxi(nutListDataItem.getRoundedValue(), Locale.FRENCH).doubleValue(), 1d);
 	            
 	                checks++;
 	            }

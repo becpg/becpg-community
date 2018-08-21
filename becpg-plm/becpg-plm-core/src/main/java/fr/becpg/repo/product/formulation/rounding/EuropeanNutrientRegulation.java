@@ -4,54 +4,30 @@ public class EuropeanNutrientRegulation extends AbstractNutrientRegulation {
 
 	public EuropeanNutrientRegulation() {
 
-		rules.put(NutrientTypeCode.NRJ, (value) -> {
+	}
 
+	@Override
+	protected Double roundByCode(Double value, String nutrientTypeCode) {
+		logger.info("value: "+value +" code : "+ nutrientTypeCode);
+		if(nutrientTypeCode.startsWith(NutrientTypeCode.ENER.toString())){
 			return (double) Math.round(value);
-		});
-
-		rules.put(NutrientTypeCode.Fat, (value) -> {
-
+		}
+		else if (nutrientTypeCode.equals(NutrientTypeCode.FAT.toString()) || nutrientTypeCode.equals(NutrientTypeCode.CHOAVL.toString())
+				|| nutrientTypeCode.equals(NutrientTypeCode.SUGAR.toString()) || nutrientTypeCode.equals(NutrientTypeCode.FIBTG.toString())
+				|| nutrientTypeCode.startsWith(NutrientTypeCode.PRO.toString())){
 			return nearByValueEur(value, 0.5);
-		});
-
-		rules.put(NutrientTypeCode.SatFat, (value) -> {
-
+		}
+		else if (nutrientTypeCode.equals(NutrientTypeCode.FASAT.toString())){
 			return nearByValueEur(value, 0.1);
-		});
-
-		rules.put(NutrientTypeCode.Su, (value) -> {
-
-			return nearByValueEur(value, 0.5);
-		});
-
-		rules.put(NutrientTypeCode.Fiber, (value) -> {
-
-			return nearByValueEur(value, 0.5);
-		});
-
-		rules.put(NutrientTypeCode.P, (value) -> {
-
-			return nearByValueEur(value, 0.5);
-		});
-		rules.put(NutrientTypeCode.Na, (value) -> {
-
+		}
+		else if (nutrientTypeCode.equals(NutrientTypeCode.NA.toString())){
 			return nearByValueNaSaltEur(value, 0.005);
-		});
-
-		rules.put(NutrientTypeCode.Salt, (value) -> {
-
+		}
+		else if (nutrientTypeCode.equals(NutrientTypeCode.NACL.toString())){
 			return nearByValueNaSaltEur(value, 0.0125);
-		});
-		rules.put(NutrientTypeCode.Cholesterol, (value) -> {
+		}
 
-			return value;
-		});
-
-		rules.put(NutrientTypeCode.K, (value) -> {
-
-			return value;
-		});
-
+		return null;
 	}
 
 	// RoundingRole method for Fat according to european guide in g
