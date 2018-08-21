@@ -2,8 +2,6 @@ package fr.becpg.repo.product.formulation.rounding;
 
 public enum NutrientTypeCode {
 
-	    //TODO Ne lister ici que celles nécessaire dans le code
-	
-		NRJ, Fat, SatFat, Su, Fiber, P, Na, Salt, Cholesterol, K;
-
+	NA, K, PRO, CHOAVL, CHO, SUGAR, FIBTG, FAT, FASAT, FAMSCIS,
+	FAPUCIS, CHOL, ENER, ENERPF, ENERSF, NACL, FIBSOL, FIBINS, POLYL;
 }

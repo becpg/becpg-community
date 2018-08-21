@@ -24,6 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.GS1Model;
 import fr.becpg.model.PLMModel;
 
 public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
@@ -45,8 +46,202 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 	Map<String,String> nutrientTypeCode = new HashMap<>();
 	
 	{
-		nutrientTypeCode.put("Fat","FAT");
-		//TODO
+
+		nutrientTypeCode.put("Sodium, Na", "NA");
+		nutrientTypeCode.put("Magnesium, Mg", "MG");
+		nutrientTypeCode.put("Phosphorus", "P");
+		nutrientTypeCode.put("Potassium, k", "K");
+		nutrientTypeCode.put("Calcium, Ca", "CA");
+		nutrientTypeCode.put("Manganese", "MN");
+		nutrientTypeCode.put("Iron, Fe", "FE");
+		nutrientTypeCode.put("Copper", "CU");
+		nutrientTypeCode.put("Zinc, Zn", "ZN");
+		nutrientTypeCode.put("Selenium", "SE");
+		nutrientTypeCode.put("Iodine", "ID");
+		nutrientTypeCode.put("Chromium", "CR");
+		nutrientTypeCode.put("Protein", "PRO-");
+		nutrientTypeCode.put("Raw proteins (N x 6.25)", "PROCNT");
+		nutrientTypeCode.put("Carbohydrate, by difference", "CHOAVL");
+		nutrientTypeCode.put("Carbohydrate, by difference (with fiber)", "CHO-");
+		nutrientTypeCode.put("Sugars total", "SUGAR");
+		nutrientTypeCode.put("Starch", "STARCH");
+		nutrientTypeCode.put("Polyols total", "POLYL");
+		nutrientTypeCode.put("Fiber, total dietary", "FIBTG");
+		nutrientTypeCode.put("NSP Fiber", "PSACNS");
+		nutrientTypeCode.put("Total lipid (fat)", "FAT");
+		nutrientTypeCode.put("Fatty acids, total saturated", "FASAT");
+		nutrientTypeCode.put("Fatty acids, total monounsaturated", "FAMSCIS");
+		nutrientTypeCode.put("Fatty acids, total polyunsaturated", "FAPUCIS");
+		nutrientTypeCode.put("Retinol", "RETOL");
+		nutrientTypeCode.put("Beta-caroten", "CARTB");
+		nutrientTypeCode.put("Vitamin A", "VITA-");
+		nutrientTypeCode.put("Vitamin A, IU", "VITA-");
+		nutrientTypeCode.put("Vitamin A, RAE", "VITA");
+		nutrientTypeCode.put("VITAMIN D", "VITD-");
+		nutrientTypeCode.put("Vitamin D (D2 + D3)", "VITDEQ");
+		nutrientTypeCode.put("Vitamin E (alpha-tocopherol)", "TOCPHA");
+		nutrientTypeCode.put("Vitamin E", "VITE-");
+		nutrientTypeCode.put("Vitamin K (phylloquinone)", "VITK1");
+		nutrientTypeCode.put("Vitamin K2", "VITK2");
+		nutrientTypeCode.put("Vitamin C, total ascorbic acid", "VITC-");
+		nutrientTypeCode.put("Thiamin", "THIA");
+		nutrientTypeCode.put("Riboflavin", "RIBF");
+		nutrientTypeCode.put("Niacin", "NIA");
+		nutrientTypeCode.put("Panto acid", "PANTAC");
+		nutrientTypeCode.put("Vitamin B-6", "VITB6-");
+		nutrientTypeCode.put("Vitamin B7 (Biotin)", "INOTL");
+		nutrientTypeCode.put("Vitamin B-12", "VITB12");
+		nutrientTypeCode.put("Food folate", "FOL");
+		nutrientTypeCode.put("Folate DFE", "FOLDFE");
+		nutrientTypeCode.put("Folic acid", "FOLAC");
+		nutrientTypeCode.put("Folate natural", "FOLFD");
+		nutrientTypeCode.put("Choline totaux", "CHOLN");
+		nutrientTypeCode.put("Beta-crypt", "CRYPX");
+		nutrientTypeCode.put("Lycopen", "LYCPN");
+		nutrientTypeCode.put("Alcohol", "ALC");
+		nutrientTypeCode.put("Organic acids, total", "OA");
+		nutrientTypeCode.put("Cholesterol", "CHOL-");
+		nutrientTypeCode.put("FA 4:0, butyric", "F4D0");
+		nutrientTypeCode.put("FA 6:0, caproic", "F6D0");
+		nutrientTypeCode.put("FA 8:0, caprylic", "F8D0");
+		nutrientTypeCode.put("FA 10:0, capric", "F10D0");
+		nutrientTypeCode.put("FA 12:0, lauric", "F12D0");
+		nutrientTypeCode.put("FA 14:0 , myristic", "F14D0");
+		nutrientTypeCode.put("FA 16:0, palmitic", "F16D0");
+		nutrientTypeCode.put("FA 18:0, stearic", "F18D0");
+		nutrientTypeCode.put("FA 18:1 n-9 cis, oleic", "F18D1CN9");
+		nutrientTypeCode.put("FA 18:2 9c,12c (n-6), linoleic", "F18D1CN6");
+		nutrientTypeCode.put("FA 18:3 c9,c12,c15 (n-3), alpha-linolenic",
+				"F18D3N3");
+		nutrientTypeCode.put("FA 20:4 5c,8c,11c,14c (n-6), arachidonic",
+				"F20D4");
+		nutrientTypeCode.put("FA 20:5 5c,8c,11c,14c,17c (n-3), EPA", "F20D5N3");
+		nutrientTypeCode
+				.put("FA 22:5 7c,10c,13c,16c,19c (n-3), DPA", "F22D5N3");
+		nutrientTypeCode.put("FA 22:6 4c,7c,10c,13c,16c,19c (n-3), DHA",
+				"F22D6N3");
+		nutrientTypeCode.put("Energy kcal", "ENER-");
+		nutrientTypeCode.put("Energy KJ", "ENER-");
+		nutrientTypeCode.put("Energy kcal, labelling", "ENER-");
+		nutrientTypeCode.put("Energy KJ, labelling", "ENER-");
+		nutrientTypeCode.put("Energy kcal Canada, USA", "ENER-");
+		nutrientTypeCode.put("Energy KJ Canada, USA", "ENER");
+		nutrientTypeCode.put("Energy KJ, without dietary fibre", "");
+		nutrientTypeCode.put("Salt", "NACL");
+		nutrientTypeCode.put("Ash", "ASH");
+		nutrientTypeCode.put("Alpha-carot", "CARTA");
+		nutrientTypeCode.put("Carbohydrates, without sugar alcohol", "SUGAD");
+		nutrientTypeCode
+				.put("Provitamin A (b-carotene equivalents)", "CARTBEQ");
+		nutrientTypeCode.put("Vitamin A retinol equivalents", "VITA");
+		nutrientTypeCode.put("Niacine (derived equivalents)", "NIAEQ");
+		nutrientTypeCode.put("Caffein", "CAFFN");
+		nutrientTypeCode.put("Tryptophan", "TRP");
+		nutrientTypeCode.put("Total omega 3 fatty acids", "FAPUN3F");
+		nutrientTypeCode.put("Total trans fatty acids", "FATRN");
+		nutrientTypeCode.put("Added sugars", "SUGAD");
+		nutrientTypeCode.put("Soluble fiber", "FIBSOL");
+		nutrientTypeCode.put("Insoluble fiber", "FIBINS");
+
+		nutrientTypeCode.put("Sodium", "NA");
+		nutrientTypeCode.put("Magnesium", "MG");
+		nutrientTypeCode.put("Phosphore", "P");
+		nutrientTypeCode.put("Potassium", "K");
+		nutrientTypeCode.put("Calcium", "CA");
+		nutrientTypeCode.put("Manganèse", "MN");
+		nutrientTypeCode.put("Fer", "FE");
+		nutrientTypeCode.put("Cuivre", "CU");
+		nutrientTypeCode.put("Zinc", "ZN");
+		nutrientTypeCode.put("Sélénium", "SE");
+		nutrientTypeCode.put("Iode", "ID");
+		nutrientTypeCode.put("Chrome", "CR");
+		nutrientTypeCode.put("Protéines", "PRO-");
+		nutrientTypeCode.put("protéines brutes", "PROCNT");
+		nutrientTypeCode.put("Glucides", "CHOAVL");
+		nutrientTypeCode.put("Glucides (avec fibre)", "CHO-");
+		nutrientTypeCode.put("Sucres", "SUGAR");
+		nutrientTypeCode.put("Amidon", "STARCH");
+		nutrientTypeCode.put("Polyols totaux", "POLYL");
+		nutrientTypeCode.put("Fibres alimentaires", "FIBTG");
+		nutrientTypeCode.put("Fibres NSP", "PSACNS");
+		nutrientTypeCode.put("Lipides", "FAT");
+		nutrientTypeCode.put("AG saturés", "FASAT");
+		nutrientTypeCode.put("AG monoinsaturés", "FAMSCIS");
+		nutrientTypeCode.put("AG polyinsaturés", "FAPUCIS");
+		nutrientTypeCode.put("Rétinol", "RETOL");
+		nutrientTypeCode.put("Bêtacarotène", "CARTB");
+		nutrientTypeCode.put("Vitamine A", "VITA-");
+		nutrientTypeCode.put("Vitamine A, IU", "VITA-");
+		nutrientTypeCode.put("Vitamine A, équivalent activité rétinol (EAR)",
+				"VITA");
+		nutrientTypeCode.put("Vitamine D", "VITD-");
+		nutrientTypeCode.put("Vitamine D (D2 + D3)", "VITDEQ");
+		nutrientTypeCode.put(
+				"Activité vitaminique E (en équivalents alpha-tocophérol)",
+				"TOCPHA");
+		nutrientTypeCode.put("Vitamine E", "VITE-");
+		nutrientTypeCode.put("Vitamine K1", "VITK1");
+		nutrientTypeCode.put("Vitamine K2", "VITK2");
+		nutrientTypeCode.put("Vitamine C totale", "VITC-");
+		nutrientTypeCode.put("Vitamine B1 ou Thiamine", "THIA");
+		nutrientTypeCode.put("Vitamine B2 ou Riboflavine", "RIBF");
+		nutrientTypeCode.put("Vitamine B3 PP ou Niacine", "NIA");
+		nutrientTypeCode.put("Vitamine B5 ou acide pantothénique", "PANTAC");
+		nutrientTypeCode.put("Vitamine B6 ou ou Pyridoxine", "VITB6-");
+		nutrientTypeCode.put("Vitamine B8 ou Biotine", "INOTL");
+		nutrientTypeCode.put("Vitamine B12 ou Cobalamines", "VITB12");
+		nutrientTypeCode.put("Vitamine B9 ou Folates totaux", "FOL");
+		nutrientTypeCode.put("Folates, équivalent fibres alimentaires",
+				"FOLDFE");
+		nutrientTypeCode.put("Acide folique", "FOLAC");
+		nutrientTypeCode.put("Folates naturels", "FOLFD");
+		nutrientTypeCode.put("Choline", "CHOLN");
+		nutrientTypeCode.put("Bêta-cryptoxanthine", "CRYPX");
+		nutrientTypeCode.put("Lycopène", "LYCPN");
+		nutrientTypeCode.put("Lutéine et zéaxanthine", "");
+		nutrientTypeCode.put("Alcool", "ALC");
+		nutrientTypeCode.put("acides organiques", "OA");
+		nutrientTypeCode.put("Cholestérol", "CHOL-");
+		nutrientTypeCode.put("AG 4:0, butyrique", "F4D0");
+		nutrientTypeCode.put("AG 6:0, caproïque", "F6D0");
+		nutrientTypeCode.put("AG 8:0, caprylique", "F8D0");
+		nutrientTypeCode.put("AG 10:0, caprique", "F10D0");
+		nutrientTypeCode.put("AG 12:0, laurique", "F12D0");
+		nutrientTypeCode.put("AG 14:0, myristique", "F14D0");
+		nutrientTypeCode.put("AG 16:0, palmitique", "F16D0");
+		nutrientTypeCode.put("AG 18:0, stéarique", "F18D0");
+		nutrientTypeCode.put("AG 18:1 9c (n-9), oléique", "F18D1CN9");
+		nutrientTypeCode.put("AG 18:2 9c,12c (n-6), linoléique", "F18D1CN6");
+		nutrientTypeCode.put("AG 18:3 c9,c12,c15 (n-3), alpha-linolénique",
+				"F18D3N3");
+		nutrientTypeCode.put("AG 20:4 5c,8c,11c,14c (n-6), arachidonique",
+				"F20D4");
+		nutrientTypeCode.put("AG 20:5 5c,8c,11c,14c,17c (n-3), EPA", "F20D5N3");
+		nutrientTypeCode
+				.put("AG 22:5 7c,10c,13c,16c,19c (n-3), DPA", "F22D5N3");
+		nutrientTypeCode.put("AG 22:6 4c,7c,10c,13c,16c,19c (n-3), DHA",
+				"F22D6N3");
+		nutrientTypeCode.put("Energy kcal", "ENER-");
+		nutrientTypeCode.put("Energy KJ", "ENER-");
+		nutrientTypeCode.put("Energy kcal, étiquetage", "ENER-");
+		nutrientTypeCode.put("Energy KJ, étiquetage", "ENER-");
+		nutrientTypeCode.put("Energy kcal Canada, USA", "ENER-");
+		nutrientTypeCode.put("Energy KJ Canada, USA", "ENER-");
+		nutrientTypeCode.put("Energy KJ, Sans fibres alimentaires", "");
+		nutrientTypeCode.put("Sel", "NACL");
+		nutrientTypeCode.put("Résidu à sec", "ASH");
+		nutrientTypeCode.put("Alpha-carotene", "CARTA");
+		nutrientTypeCode
+				.put("Provitamine A (équivalent b-carotène)", "CARTBEQ");
+		nutrientTypeCode.put("Vitamine A (équivalent rétinol)", "VITA");
+		nutrientTypeCode.put("Niacine (équivalent dérivés)", "NIAEQ");
+		nutrientTypeCode.put("Caféine", "CAFFN");
+		nutrientTypeCode.put("Tryptophane", "TRP");
+		nutrientTypeCode.put("Acides gras oméga 3 totaux", "FAPUN3F");
+		nutrientTypeCode.put("Acides gras trans totaux", "FATRN");
+		nutrientTypeCode.put("Sucres ajoutés", "SUGAD");
+		nutrientTypeCode.put("Fibres solubles", "FIBSOL");
+		nutrientTypeCode.put("Fibres insolubles", "FIBINS");
 	}
 	
 	
@@ -120,12 +315,19 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 				if (nodeService.exists(dataListNodeRef)) {
 					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 					policyBehaviourFilter.disableBehaviour();
-					String name = (String) nodeService.getProperty(dataListNodeRef, ContentModel.PROP_NAME);
-					String charactName = (String) nodeService.getProperty(dataListNodeRef, BeCPGModel.PROP_CHARACT_NAME);
-					if (name != null && (charactName == null || charactName.isEmpty())) {
-						
-						
-						
+					String name = (String) nodeService.getProperty(
+							dataListNodeRef, ContentModel.PROP_NAME);
+					String charactName = (String) nodeService.getProperty(
+							dataListNodeRef, BeCPGModel.PROP_CHARACT_NAME);
+					String nutTypeCode = (String) nodeService.getProperty(
+							dataListNodeRef, GS1Model.PROP_NUTRIENT_TYPE_CODE);
+					if (name != null && (charactName != null && !charactName.isEmpty()) && (nutTypeCode == null || nutTypeCode.isEmpty())) {
+						if (nutrientTypeCode.containsKey(charactName)
+								&& nutrientTypeCode.get(charactName).isEmpty() == false) {
+							nodeService.setProperty(dataListNodeRef,
+									GS1Model.PROP_NUTRIENT_TYPE_CODE,
+									nutrientTypeCode.get(charactName));
+						}
 					}
 
 				} else {
