@@ -200,15 +200,15 @@
 	font-size: 12pt;
 	font-weight: bold;
 	border-bottom-style: solid;
-	border-bottom-width: bold;
+	border-bottom-width: thin;
 	text-align: center;
 }
 
 .becpg-quality-col-border
 {
 	border-color: #c5c2c2;
-	border-lef-style: solid;
-	border-left-width: bold;
+	border-left-style: solid;
+	border-left-width: thin;
 	text-align: center;
 }
 
