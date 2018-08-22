@@ -143,9 +143,8 @@
 					class="fr.becpg.repo.product.formulation.PhysicoChemCalculatingFormulationHandler">
 					<property name="formulaService" ref="formulaService"/>
 				</bean>
-				<bean class="fr.becpg.repo.product.formulation.TareFormulationHandler">
-					<property name="nodeService" ref="nodeService" />
-				</bean>
+				<bean class="fr.becpg.repo.product.formulation.TareFormulationHandler" />
+				
 				<bean class="fr.becpg.repo.product.formulation.LabelClaimFormulationHandler" >
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="formulaService" ref="formulaService"/>
