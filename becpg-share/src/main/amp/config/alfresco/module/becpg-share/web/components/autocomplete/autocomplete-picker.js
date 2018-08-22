@@ -42,6 +42,8 @@
         this.isAssoc = isAssoc;
         
         YAHOO.Bubbling.on(this.fieldHtmlId + "refreshContent", this.refreshContent, this);
+        YAHOO.Bubbling.on("formContainerDestroyed", this.onFormContainerDestroyed, this);
+        
 
         return this;
     };
@@ -89,6 +91,39 @@
                             urlParamsToPass : null,
                             isParentMode : false
                         },
+                        
+                        /**
+                         * Notification that form is being destroyed.
+                         * 
+                         * @method onFormContainerDestroyed
+                         * @param layer
+                         *            {object} Event fired (unused)
+                         * @param args
+                         *            {array} Event parameters
+                         */
+                        onFormContainerDestroyed : function AutoCompletePicker_onFormContainerDestroyed(layer, args) {
+                        	if(this.widgets.oAC){
+                        		this.widgets.oAC.destroy();
+                        		delete this.widgets.oAC
+                        	}
+                        },
+                        
+                        /**
+                         * Destroy method - deregister Bubbling event handlers
+                         * 
+                         * @method destroy
+                         */
+                        destroy : function AutoCompletePicker_destroy() {
+                           try {
+                              YAHOO.Bubbling.unsubscribe("formContainerDestroyed", this.onFormContainerDestroyed, this);
+                              YAHOO.Bubbling.unsubscribe(this.fieldHtmlId + "refreshContent", this.refreshContent, this);
+                              YAHOO.Bubbling.unsubscribe("beforeFormRuntimeInit", this.beforeFormRuntimeInit, this);
+                           } catch (e) {
+                              // Ignore
+                           }
+                           beCPG.component.AutoCompletePicker.superclass.destroy.call(this);
+                        },
+                        
                         /**
                          * Fired by YUI when parent element is available for
                          * scripting. Component initialisation, including
@@ -110,8 +145,8 @@
 
                             if (me.options.mode != "view" && !this.options.readOnly)
                             {
-
-                                var oDS = null, oAC = null, bToggler = null, previewTooltips = [], previewTooltipsData = {}, initialValue = "";
+                            	
+                                var oDS = null, bToggler = null, previewTooltips = [], previewTooltipsData = {}, initialValue = "";
 
                                 // Use an XHRDataSource
                                 if (this.options.isLocalProxy)
@@ -140,15 +175,15 @@
                                     }
                                 };
                                 // Instantiate the AutoComplete
-                                oAC = new YAHOO.widget.AutoComplete(me.fieldHtmlId, me.fieldHtmlId + "-container", oDS);
-                                oAC.queryDelay = .1;
-                                oAC.page = 1;
-                                oAC.maxResultsDisplayed = 15;
-                                oAC.forceSelection = false;
+                                me.widgets.oAC = new YAHOO.widget.AutoComplete(me.fieldHtmlId, me.fieldHtmlId + "-container", oDS);
+                                me.widgets.oAC.queryDelay = .1;
+                                me.widgets.oAC.page = 1;
+                                me.widgets.oAC.maxResultsDisplayed = 15;
+                                me.widgets.oAC.forceSelection = false;
 
                                 
                                 if(Dom.get(me.fieldHtmlId).hasFocus){
-                                	oAC._onTextboxFocus(this,oAC);
+                                	me.widgets.oAC._onTextboxFocus(this,me.widgets.oAC);
                                 }
                                 
 
@@ -159,14 +194,14 @@
                                     {
                                         var nodeRef = matchedEl.id.split('ac-close-' + me.fieldHtmlId + '-')[1];
                                         me.removeFromBasket(nodeRef);
-                                        YAHOO.Bubbling.fire("mandatoryControlValueUpdated", oAC.getInputEl());
+                                        YAHOO.Bubbling.fire("mandatoryControlValueUpdated", me.widgets.oAC.getInputEl());
                                         Event.preventDefault(e);
                                         Event.stopPropagation(e);
                                     }, "span.ac-closebutton");
 
                                     Event.on(Dom.get(me.fieldHtmlId).form, "reset", function(e)
                                     {
-                                        oAC._clearSelection();
+                                        me.widgets.oAC._clearSelection();
                                         Dom.get(me.controlId + "-basket").innerHTML = "";
                                         var inputOrig = Dom.get(me.controlId + "-orig"), inputAdded = Dom
                                                 .get(me.controlId + "-added"), inputRemoved = Dom
@@ -187,7 +222,7 @@
                                 }
 
                                 // The webservice needs additional parameters
-                                oAC.generateRequest = function(sQuery)
+                                me.widgets.oAC.generateRequest = function(sQuery)
                                 {
 
                                     me.openOnce = true;
@@ -216,7 +251,7 @@
                                         {
                                             query : sQuery,
                                             parent : oParentField,
-                                            page : oAC.page
+                                            page : me.widgets.oAC.page
                                         });
                                     }
                                     else
@@ -224,7 +259,7 @@
                                         q = Lang.substitute("q={query}&page={page}",
                                         {
                                             query : sQuery,
-                                            page : oAC.page
+                                            page : me.widgets.oAC.page
                                         });
                                     }
 
@@ -241,7 +276,7 @@
 
                                 };
 
-                                oAC.setHeader("<div class='ac-header' ><span>" + me.msg("autocomplete.header.msg") + "</span></div>");
+                                me.widgets.oAC.setHeader("<div class='ac-header' ><span>" + me.msg("autocomplete.header.msg") + "</span></div>");
 
                                 if (me.options.showToolTip)
                                 {
@@ -293,7 +328,7 @@
                                             });
                                 }
 
-                                oAC.formatResult = function(oResultData, sQuery, sResultMatch)
+                                me.widgets.oAC.formatResult = function(oResultData, sQuery, sResultMatch)
                                 {
                                     if (me.options.showToolTip)
                                     {
@@ -328,74 +363,73 @@
                                 // Add focus to selected element
                                 Event.on(me.fieldHtmlId + "-autocomplete", "click", function(e)
                                 {
-                                    if (!oAC.isContainerOpen())
+                                    if (!me.widgets.oAC.isContainerOpen())
                                     {
-                                        oAC.getInputEl().focus();
+                                        me.widgets.oAC.getInputEl().focus();
                                     }
 
                                 });
 
                                 Event.on(bToggler, "click", function(e)
                                 {
-                                    if (oAC.isContainerOpen())
+                                    if (me.widgets.oAC.isContainerOpen())
                                     {
-                                        oAC.collapseContainer();
+                                        me.widgets.oAC.collapseContainer();
                                     }
                                     else
                                     {
-                                        oAC.getInputEl().focus();
-                                        initialValue = oAC.getInputEl().value;
+                                        me.widgets.oAC.getInputEl().focus();
+                                        initialValue = me.widgets.oAC.getInputEl().value;
                                         setTimeout(function()
                                         { // For IE
-                                            oAC.sendQuery("*");
+                                            me.widgets.oAC.sendQuery("*");
                                         }, 0);
                                     }
-                                    oAC.page = 1;
+                                    me.widgets.oAC.page = 1;
                                     previewTooltips = [];
                                     previewTooltipsData = {};
                                     Event.preventDefault(e);
                                     Event.stopPropagation(e);
                                 });
 
-                                oAC.containerExpandEvent.subscribe(function()
+                                me.widgets.oAC.containerExpandEvent.subscribe(function()
                                 {
                                     Dom.addClass(bToggler, "openToggle");
                                 });
-                                oAC.containerCollapseEvent.subscribe(function()
+                                me.widgets.oAC.containerCollapseEvent.subscribe(function()
                                 {
                                     Dom.removeClass(bToggler, "openToggle");
-                                    oAC.page = 1;
+                                    me.widgets.oAC.page = 1;
                                     previewTooltips = [];
                                     previewTooltipsData = {};
                                 });
 
-                                oAC.doBeforeLoadData = function(sQuery, oResponse, oPayload)
+                                me.widgets.oAC.doBeforeLoadData = function(sQuery, oResponse, oPayload)
                                 {
                                     if (me.options.showPage)
                                     {
-                                        oAC.fullListSize = oResponse.meta.fullListSize;
-                                        oAC.pageSize = oResponse.meta.pageSize;
-                                        oAC.page = oResponse.meta.page;
+                                        me.widgets.oAC.fullListSize = oResponse.meta.fullListSize;
+                                        me.widgets.oAC.pageSize = oResponse.meta.pageSize;
+                                        me.widgets.oAC.page = oResponse.meta.page;
                                     }
                                     return true;
                                 };
 
-                                oAC.doBeforeExpandContainer = function(elTextbox, elContainer, sQuery, aResults)
+                                me.widgets.oAC.doBeforeExpandContainer = function(elTextbox, elContainer, sQuery, aResults)
                                 {
-                                    if (!me.options.showPage || parseInt(oAC.fullListSize) < parseInt(oAC.pageSize) + 1)
+                                    if (!me.options.showPage || parseInt(me.widgets.oAC.fullListSize) < parseInt(me.widgets.oAC.pageSize) + 1)
                                     {
-                                        oAC.setFooter("");
+                                        me.widgets.oAC.setFooter("");
                                     }
                                     else
                                     {
-                                        oAC
-                                                .setFooter("<div class='ac-footer'><div id='" + me.fieldHtmlId + "-container-paging'></div></div>");
+                                    	me.widgets.oAC.setFooter("<div class='ac-footer'><div id='" + me.fieldHtmlId + "-container-paging'></div></div>");
                                         var oACPagination = new YAHOO.widget.Paginator(
                                                 {
-                                                    rowsPerPage : oAC.pageSize,
-                                                    totalRecords : oAC.fullListSize,
+                                                    rowsPerPage : me.widgets.oAC.pageSize,
+                                                    totalRecords : me.widgets.oAC.fullListSize,
                                                     containers : me.fieldHtmlId + '-container-paging',
-                                                    initialPage : parseInt(oAC.page),
+                                                    initialPage : parseInt(me.widgets.oAC.page),
                                                     template : "<div>{CurrentPageReport}</div> {PreviousPageLink} {PageLinks} {NextPageLink}",
                                                     pageReportTemplate : me
                                                             .msg("autocomplete.pagination.template.page-report"),
@@ -406,19 +440,19 @@
                                                 });
                                         oACPagination.subscribe('changeRequest', function(state)
                                         {
-                                            oAC.page = state.page;
+                                            me.widgets.oAC.page = state.page;
                                             previewTooltips = [];
                                             previewTooltipsData = {};
                                             setTimeout(function()
                                             { // For IE
-                                                var input = oAC.getInputEl().value;
+                                                var input = me.widgets.oAC.getInputEl().value;
                                                 if (input == initialValue)
                                                 {
-                                                    oAC.sendQuery("*");
+                                                    me.widgets.oAC.sendQuery("*");
                                                 }
                                                 else
                                                 {
-                                                    oAC.sendQuery(input);
+                                                    me.widgets.oAC.sendQuery(input);
                                                 }
                                             }, 0);
                                         });
@@ -432,39 +466,39 @@
                                     return true;
                                 };
 
-                                oAC.textboxKeyEvent.subscribe(function()
+                                me.widgets.oAC.textboxKeyEvent.subscribe(function()
                                 {
-                                    oAC.page = 1;
+                                    me.widgets.oAC.page = 1;
                                     previewTooltips = [];
                                 });
 
-                                oAC.textboxBlurEvent
+                                me.widgets.oAC.textboxBlurEvent
                                         .subscribe(function()
                                         {
 
-                                            if (me.openOnce && (!oAC._bOverContainer || (oAC._nKeyCode == 9)))
+                                            if (me.openOnce && (!me.widgets.oAC._bOverContainer || (me.widgets.oAC._nKeyCode == 9)))
                                             {
                                                 // Current query needs to be
                                                 // validated as a selection
-                                                if (!oAC._bItemSelected)
+                                                if (!me.widgets.oAC._bItemSelected)
                                                 {
-                                                    var elMatchListItem = oAC._textMatchesOption();
+                                                    var elMatchListItem = me.widgets.oAC._textMatchesOption();
                                                     // Container is closed or
                                                     // current query doesn't
                                                     // match any result
-                                                    if (!oAC._bContainerOpen || (oAC._bContainerOpen && (elMatchListItem === null)))
+                                                    if (!me.widgets.oAC._bContainerOpen || (me.widgets.oAC._bContainerOpen && (elMatchListItem === null)))
                                                     {
                                                         // Force selection is
                                                         // enabled so clear the
                                                         // current query
-                                                        oAC._clearSelection();
+                                                        me.widgets.oAC._clearSelection();
                                                     }
                                                 }
                                             }
 
                                             if (!me.options.multipleSelectMode && me.isAssoc)
                                             {
-                                                if (oAC.getInputEl().value == null || oAC.getInputEl().value.length < 1)
+                                                if (me.widgets.oAC.getInputEl().value == null || me.widgets.oAC.getInputEl().value.length < 1)
                                                 {
                                                     var inputOrig = Dom.get(me.controlId + "-orig"), inputAdded = Dom
                                                             .get(me.controlId + "-added"), inputRemoved = Dom
@@ -479,7 +513,7 @@
 
                                         });
 
-                                oAC.itemSelectEvent.subscribe(function(type, args)
+                                me.widgets.oAC.itemSelectEvent.subscribe(function(type, args)
                                 {
                                     var selectedObj = args[2], itemValue = selectedObj[0], itemTitle = selectedObj[1];
 
@@ -528,27 +562,27 @@
                                     if (me.options.multipleSelectMode)
                                     {
                                         me.addToBasket(Dom.get(me.controlId + "-basket"), itemTitle, itemValue);
-                                        oAC.getInputEl().value = "";
+                                        me.widgets.oAC.getInputEl().value = "";
                                     }
                                     else
                                     {
                                         if (me.options.saveTitle)
                                         {
-                                            oAC.getInputEl().value = itemTitle;
+                                            me.widgets.oAC.getInputEl().value = itemTitle;
                                         }
                                         else
                                         {
-                                            oAC.getInputEl().value = itemValue;
+                                            me.widgets.oAC.getInputEl().value = itemValue;
                                         }
                                     }
 
-                                    YAHOO.Bubbling.fire("mandatoryControlValueUpdated", oAC.getInputEl());
+                                    YAHOO.Bubbling.fire("mandatoryControlValueUpdated", me.widgets.oAC.getInputEl());
 
                                     return true;
 
                                 });
 
-                                Dom.removeClass(oAC.getInputEl(), "hidden");
+                                Dom.removeClass(me.widgets.oAC.getInputEl(), "hidden");
 
                             }
                             else if (!me.options.multipleSelectMode && !me.isAssoc)
@@ -773,8 +807,15 @@
                         
                         refreshContent : function(layer, args)
                         {
+                        	var basket = Dom.get(this.controlId + "-basket");
+                        	if(basket!=null){
+                        	 basket.innerHTML = "";
+                        	}
                         	this.options.currentValue = args[1];
-                        	this.loadItems(args);
+                        	 if (!(this.options.multipleSelectMode || this.isAssoc))
+                             {
+                        		 this.loadItems();
+                             }
                         },
 
                         beforeFormRuntimeInit : function(layer, args)
