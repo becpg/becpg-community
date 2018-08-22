@@ -490,7 +490,6 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				}
 
 				if (dataItem.getQtyResource() != null) {
-
 					qty *= dataItem.getQtyResource();
 				}
 
@@ -544,13 +543,16 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			BigDecimal netWeightPrimary = new BigDecimal(
 					FormulationHelper.getNetWeight(productData.getNodeRef(), nodeService, FormulationHelper.DEFAULT_NET_WEIGHT).toString());
 
+			// display tare, net weight and gross weight
+			BigDecimal tarePrimary = FormulationHelper.getTareInKg(productData.getTare(), productData.getTareUnit());
+			if (tarePrimary == null) {
+				tarePrimary = new BigDecimal(0d);
+			}
+			BigDecimal grossWeightPrimary = tarePrimary.add(netWeightPrimary);
+			
 			PackagingData packagingData = packagingHelper.getPackagingData(productData);
 			for (Map.Entry<NodeRef, VariantPackagingData> kv : packagingData.getVariants().entrySet()) {
 				VariantPackagingData variantPackagingData = kv.getValue();
-
-				// display tare, net weight and gross weight
-				BigDecimal tarePrimary = variantPackagingData.getTarePrimary();
-				BigDecimal grossWeightPrimary = tarePrimary.add(netWeightPrimary);
 
 				Element packgLevelMesuresElt = packagingListElt.addElement(TAG_PACKAGING_LEVEL_MEASURES);
 				if (kv.getKey() != null) {
