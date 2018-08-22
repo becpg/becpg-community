@@ -25,6 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -104,29 +105,43 @@ public class CharactDetailsHelper {
 			totals.add(0d);
 		}
 		
+		Map<NodeRef,List<Object>> tmpMap = new LinkedHashMap<NodeRef, List<Object>>();
+		
 		for (CharactDetailsValue charactDetailsValue : compEls) {
 			
 			String currentDetailsName = charactDetailsValue.getName();
-			List<Object> tmp = new ArrayList<>();
-						
-			tmp.add(attributeExtractorService.extractPropName(charactDetailsValue.getKeyNodeRef()));
+			List<Object> tmp;
+			if(!tmpMap.containsKey(charactDetailsValue.getKeyNodeRef())){
 			
-			//insert padding in tmp so columns fit
-			for(int i=0; i<indexMap.size(); i++){
-				tmp.add(null);
+				tmp = new ArrayList<>();
+				tmp.add(attributeExtractorService.extractPropName(charactDetailsValue.getKeyNodeRef()));
+				
+				//insert padding in tmp so columns fit
+				for(int i=0; i<indexMap.size(); i++){
+					tmp.add(null);
+				}
+				tmpMap.put(charactDetailsValue.getKeyNodeRef(), tmp);
+			} else {				
+				tmp = tmpMap.get(charactDetailsValue.getKeyNodeRef());
 			}
+						
+			
 			
 			//set charact value, increase its total
 			for (Map.Entry<NodeRef,List<CharactDetailsValue>> entry : charactDetails.getData().entrySet()) {
 				Integer currentIndex = indexMap.get(currentDetailsName);
 				Double total = (Double) totals.get(currentIndex);
-
-				if (entry.getValue().contains(charactDetailsValue)) {
-					Double value = entry.getValue().get(entry.getValue().indexOf(charactDetailsValue)).getValue();
-
-					tmp.set(currentIndex, value);
-					if(entry.getValue().get(entry.getValue().indexOf(charactDetailsValue)).getLevel()==0){
-						total += value!=null ? value : 0d;
+				Optional<CharactDetailsValue> matchingCharact = compEls.stream().filter(elt -> elt.keyEquals(charactDetailsValue) && elt.getName().equals(currentDetailsName)).findFirst();
+				if (matchingCharact.isPresent()) {
+					
+					int entryIndex = entry.getValue().indexOf(matchingCharact.get());
+					if(entryIndex != -1){
+						Double value = entry.getValue().get(entryIndex).getValue();
+	
+						tmp.set(currentIndex, value);
+						if(entry.getValue().get(entryIndex).getLevel()==0){
+							total += value!=null ? value : 0d;
+						}
 					}
 				}
 				totals.set(currentIndex,total);
@@ -163,9 +178,9 @@ public class CharactDetailsHelper {
 			tmp.add(nodeService.getType(charactDetailsValue.getKeyNodeRef()));
 			tmp.add(nodeService.getType(charactDetailsValue.getKeyNodeRef()).getLocalName());
 			tmp.add(charactDetailsValue.getLevel());
-
-			resultsets.add(tmp);
 		}
+		
+		resultsets.addAll(tmpMap.values());
 		resultsets.add(totals);
 
 		obj.put("metadatas", metadatas);

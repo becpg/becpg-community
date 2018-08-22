@@ -69,10 +69,17 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 			logger.debug("no compoList, no packagingList => no formulation");
 			return true;
 		}
+		
+		//Do not calculate Tare on RawMaterialData
+		if (formulatedProduct instanceof RawMaterialData) {
+			return true;
+		}
 
 		// Tare
 		BigDecimal tarePrimary = calculateTareOfComposition(formulatedProduct);
-		tarePrimary = tarePrimary.add(calculateTareOfPackaging(formulatedProduct));
+                VariantPackagingData variantPackagingData = formulatedProduct.getDefaultVariantPackagingData();
+
+                tarePrimary = tarePrimary.add(variantPackagingData.getTarePrimary());
 
 		BigDecimal netWeightPrimary = new BigDecimal(
 				FormulationHelper.getNetWeight(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT).toString());
@@ -81,7 +88,7 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 
 		formulatedProduct.setWeightPrimary(weightPrimary.doubleValue());
 
-		VariantPackagingData variantPackagingData = formulatedProduct.getDefaultVariantPackagingData();
+		
 
 		if ((variantPackagingData != null) && (variantPackagingData.getProductPerBoxes() != null)) {
 
@@ -131,46 +138,6 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 		for (CompoListDataItem compoList : formulatedProduct
 				.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 			totalTare = totalTare.add(FormulationHelper.getTareInKg(compoList, alfrescoRepository));
-		}
-		return totalTare;
-	}
-
-	private BigDecimal calculateTareOfPackaging(ProductData formulatedProduct) {
-		BigDecimal totalTare = new BigDecimal(0d);
-		for (PackagingListDataItem packList : formulatedProduct
-				.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
-			// take in account only primary
-			PackagingLevel level = PackagingLevel.Primary;
-			if (nodeService.hasAspect(formulatedProduct.getNodeRef(), PackModel.ASPECT_PALLET)) {
-				level = PackagingLevel.Secondary;
-			}
-
-			if (nodeService.hasAspect(packList.getProduct(), PackModel.ASPECT_PALLET) && PackagingLevel.Secondary.equals(packList.getPkgLevel())
-					&& PackagingListUnit.PP.equals(packList.getPackagingListUnit())
-					&& PLMModel.TYPE_PACKAGINGKIT.equals(nodeService.getType(packList.getComponent()))) {
-				ProductData kitData = alfrescoRepository.findOne(packList.getProduct());
-				BigDecimal kitTare = new BigDecimal(0d);
-
-				PackagingData kitPackagingData = new PackagingData(kitData.getVariants());
-				if (kitData.hasPackagingListEl()) {
-					for (PackagingListDataItem kitPackagingDataItem : kitData.getPackagingList()) {
-						if (PackagingLevel.Primary.equals(kitPackagingDataItem.getPkgLevel())) {
-							BigDecimal kitPkgDataTare = FormulationHelper.getTareInKg(kitPackagingDataItem, alfrescoRepository);
-							kitPackagingData.addTarePrimary(kitPackagingDataItem.getVariants(), kitPkgDataTare);
-
-							kitTare = kitTare.add(kitPkgDataTare);
-						}
-
-					}
-
-				}
-
-				totalTare = totalTare.add(kitTare);
-			}
-
-			if ((packList.getPkgLevel() != null) && packList.getPkgLevel().equals(level)) {
-				totalTare = totalTare.add(FormulationHelper.getTareInKg(packList, alfrescoRepository));
-			}
 		}
 		return totalTare;
 	}

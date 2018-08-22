@@ -111,7 +111,7 @@ public class PackagingHelper {
 		ProductData packagingKitData = alfrescoRepository.findOne(dataItem.getProduct());
 		if (packagingKitData.hasPackagingListEl()) {
 			for (PackagingListDataItem p : packagingKitData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-				loadPackaging(p, packagingData, dataItem.getVariants());
+				loadPackagingItem(p,packagingData);
 			}
 		}
 	}
