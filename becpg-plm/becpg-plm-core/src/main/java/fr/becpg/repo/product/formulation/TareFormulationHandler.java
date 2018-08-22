@@ -20,26 +20,20 @@ package fr.becpg.repo.product.formulation;
 import java.math.BigDecimal;
 import java.util.Arrays;
 
-import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.GS1Model;
-import fr.becpg.model.PLMModel;
-import fr.becpg.model.PackModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.constraints.PackagingLevel;
-import fr.becpg.repo.product.data.constraints.PackagingListUnit;
+import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.constraints.TareUnit;
-import fr.becpg.repo.product.data.packaging.PackagingData;
 import fr.becpg.repo.product.data.packaging.VariantPackagingData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
-import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
@@ -49,12 +43,6 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 
 	@Autowired
 	protected AlfrescoRepository<ProductData> alfrescoRepository;
-
-	private NodeService nodeService;
-
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
 
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
