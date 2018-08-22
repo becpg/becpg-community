@@ -68,7 +68,6 @@
                 }
             }
             
-
             YAHOO.util.Event.preventDefault(args[0]);
             return false;
         };
@@ -196,34 +195,50 @@
 	    
 		
 		copyToIllManualValue : function(fieldId) {
+			var me = this;
+			console.log("field");
+			Alfresco.util.PopupManager.displayPrompt({
+					title : this.msg("message.copy-to-illManualValue.confirm.title"),
+					text : this.msg("message.copy-to-illManualValue.confirm.body"),
+					buttons : [ {
+						text : this.msg("button.ok"),
+						handler : function () {	
+							this.destroy();
+							var nodeRef = fieldId.split("#")[1];
+							
+							Alfresco.util.Ajax.jsonPost({
+								url : Alfresco.constants.PROXY_URI + "becpg/form/multilingual/field/bcpg_illValue?nodeRef=" + nodeRef + "&copy=true&destField=bcpg_illManualValue",
+								requestContentType: "text/plain",
+								successCallback : {
+									fn : function (response){
+										
+										YAHOO.Bubbling.fire("scopedActiveDataListChanged");
+										
+										Alfresco.util.PopupManager.displayMessage({
+											text : me.msg("message.copy-to-illManualValue.success")
+										});
+									},
+									scope : me
+								},
+								failureCallback : {
+									fn : function (){
+										Alfresco.util.PopupManager.displayMessage({
+											text : me.msg("message.copy-to-illManualValue.failure")
+										});
+									},
+									scope : me
+								}
+							});
+						}
+					}, {
+						text : this.msg("button.cancel"),
+						handler : function () {
+							this.destroy();
+						},
+						isDefault : true
+					} ]
+				});
 			
-			var nodeRef = fieldId.split("#")[1];
-			
-			Alfresco.util.Ajax.jsonPost({
-				url : Alfresco.constants.PROXY_URI + "becpg/form/multilingual/field/bcpg_illValue?nodeRef=" + nodeRef + "&copy=true&destField=bcpg_illManualValue",
-				requestContentType: "text/plain",
-				successCallback : {
-					fn : function (response){
-						
-						YAHOO.Bubbling.fire("scopedActiveDataListChanged");
-						
-						Alfresco.util.PopupManager.displayMessage({
-			                 text : this.msg("message.copy-to-illManualValue.success")
-			              });
-					},
-					scope : this
-				},
-				failureCallback : {
-					fn : function (){
-						Alfresco.util.PopupManager.displayMessage({
-			                 text : this.msg("message.copy-to-illManualValue.failure")
-			              });
-					},
-					scope : this
-				}
-			});
-			
-	    	
 	    }
 
 	});
