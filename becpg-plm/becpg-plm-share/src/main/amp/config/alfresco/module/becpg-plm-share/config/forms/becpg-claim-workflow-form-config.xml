@@ -248,7 +248,7 @@
 					</field>
 					
 					<set id="analysis" appearance="bordered-panel" label-id="workflow.claim.set.orientation"  />
-					<field id="bcpg:plants" set="analysis" mandatory="false" read-only="false" label="Site de fabrication"/>
+					<field id="bcpg:plants" set="analysis" mandatory="false" read-only="false" />
 					
 					<set id="analysis2" parent="analysis" appearance="" template="/org/alfresco/components/form/2-column-set.ftl"/>
 					<field id="qa:claimTreatmentActor" set="analysis2" mandatory="false" read-only="false" >
@@ -272,7 +272,7 @@
 					<set id="rejected" parent="analysis" appearance="title" label-id="workflow.claim.set.rejected" />
 					<field id="ncwf:claimRejectedState" set="rejected" mandatory="false" read-only="false">
 						<control template="/org/alfresco/components/form/controls/quality/selectone.ftl">
-							<control-param name="options">none|Aucun refus,entry|Saisie refusé</control-param>
+							<control-param name="options">none|listconstraint.ncwf_claimRejectedStates.none,entry|listconstraint.ncwf_claimRejectedStates.entry</control-param>
 						</control>
 					</field>
 					<field id="ncwf:claimRejectedCause" set="rejected" mandatory="false" read-only="false">
@@ -411,7 +411,7 @@
 					<set id="rejected" appearance="title" parent="treatment" label-id="workflow.claim.set.rejected" />
 					<field id="ncwf:claimRejectedState" set="rejected" mandatory="false" read-only="false">
 						<control template="/org/alfresco/components/form/controls/quality/selectone.ftl">
-							<control-param name="options">none|Aucun refus,analysis|Orientation refusé</control-param>
+							<control-param name="options">none|listconstraint.ncwf_claimRejectedStates.none,analysis|listconstraint.ncwf_claimRejectedStates.analysis</control-param>
 						</control>
 					</field>
 					<field id="ncwf:claimRejectedCause" set="rejected" mandatory="false" read-only="false">
@@ -563,7 +563,7 @@
 					<set id="rejected" appearance="title"  parent="response" label-id="workflow.claim.set.rejected" />
 					<field id="ncwf:claimRejectedState" set="rejected" mandatory="false" read-only="false">
 						<control template="/org/alfresco/components/form/controls/quality/selectone.ftl">
-							<control-param name="options">none|Aucun refus,analysis|Orientation refusé,treatment|Traitement refusé</control-param>
+							<control-param name="options">none|listconstraint.ncwf_claimRejectedStates.none,analysis|listconstraint.ncwf_claimRejectedStates.analysis,treatment|listconstraint.ncwf_claimRejectedStates.treatment</control-param>
 						</control>
 					</field>
 					<field id="ncwf:claimRejectedCause" set="rejected" mandatory="false" read-only="false">
@@ -919,7 +919,7 @@
 					<set id="rejected" parent="closing" appearance="title" label-id="workflow.claim.set.rejected" />
 					<field id="ncwf:claimRejectedState" set="rejected" mandatory="false" read-only="false">
 						<control template="/org/alfresco/components/form/controls/quality/selectone.ftl">
-							<control-param name="options">none|Aucun refus,analysis|Orientation refusé,treatment|Traitement refusé,response|Réponse refusé,classification|Classification refusé</control-param>
+							<control-param name="options">none|listconstraint.ncwf_claimRejectedStates.none,analysis|listconstraint.ncwf_claimRejectedStates.analysis,treatment|listconstraint.ncwf_claimRejectedStates.treatment,response|listconstraint.ncwf_claimRejectedStates.response,classification|listconstraint.ncwf_claimRejectedStates.classification</control-param>
 						</control>
 					</field>
 					<field id="ncwf:claimRejectedCause" set="rejected" mandatory="false" read-only="false">
