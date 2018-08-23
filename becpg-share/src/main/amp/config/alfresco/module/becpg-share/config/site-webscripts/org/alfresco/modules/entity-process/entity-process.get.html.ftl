@@ -62,7 +62,7 @@
                     </#if>
                     <#if process.message?? && process.message?length &gt; 0>${process.message?html}<#else>${msg("process.no_description")?html}</#if></a>
                     <div class="title">${process.title?html}</div>
-                    <div class="title">${process.startDate} - ${process.dueDate}</div> 
+                    <div class="title">${process.startDate}  <#if process.dueDate??> - ${process.dueDate}<#else></#if></div> 
                     <div class="clear"></div>
                  </div>
               </#list>

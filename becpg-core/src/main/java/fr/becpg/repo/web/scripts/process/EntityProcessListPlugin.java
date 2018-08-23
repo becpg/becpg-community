@@ -1,15 +1,15 @@
 package fr.becpg.repo.web.scripts.process;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.namespace.QName;
+
+import fr.becpg.config.format.PropertyFormats;
 
 public interface EntityProcessListPlugin {
 	
-	public static final SimpleDateFormat FORMATER = new SimpleDateFormat("dd-MM-yyy");
+	PropertyFormats FORMATER = new PropertyFormats(true);
 	
 	public static final String PROCESS_INSTANCE = "processInstance";
     public static final String PROCESS_INSTANCE_TYPE = "type";
