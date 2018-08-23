@@ -268,7 +268,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 			final AttributeExtractorMode mode, Map<QName, Serializable> properties, final Map<String, Object> props,
 			final Map<NodeRef, Map<String, Object>> cache) {
 
-		return attributeExtractorService.extractNodeData(nodeRef, itemType, properties, metadataFields, mode,
+		Map<String, Object> ret =  attributeExtractorService.extractNodeData(nodeRef, itemType, properties, metadataFields, mode,
 				new AttributeExtractorService.DataListCallBack() {
 
 					@Override
@@ -279,6 +279,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 							DataListPagination pagination = (DataListPagination) props.get(PAGINATION);
 						
 						
+							
 							if ((ProjectModel.TYPE_TASK_LIST.equals(field.getFieldQname()) && pagination.getPageSize()>10)
 									|| BeCPGModel.TYPE_ACTIVITY_LIST.equals(field.getFieldQname())) {
 								// Only in progress tasks
@@ -390,8 +391,14 @@ public class ProjectListExtractor extends ActivityListExtractor {
 					}
 
 				});
+		
+		TaskListExtractorHelper.extractTaskListResources(nodeRef, mode, itemType, ret, nodeService);
+		
+		return ret;
 	}
 
+
+	
 	@Override
 	public boolean applyTo(DataListFilter dataListFilter) {
 		return dataListFilter.getDataListName() != null && dataListFilter.getDataListName().equals(PROJECT_LIST);
