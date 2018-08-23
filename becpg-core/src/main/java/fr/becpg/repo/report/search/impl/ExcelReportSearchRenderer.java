@@ -55,7 +55,7 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 
 	@Autowired
 	private ExcelReportSearchPlugin[] excelReportSearchPlugins;
-
+	
 	@Override
 	public void renderReport(NodeRef tplNodeRef, List<NodeRef> searchResults, ReportFormat reportFormat, OutputStream outputStream) {
 
@@ -162,7 +162,7 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 				if (headerRow.getCell(i).getCellType() == Cell.CELL_TYPE_STRING) {
 					String cellValue = headerRow.getCell(i).getStringCellValue();
 					if ((cellValue != null) && !cellValue.isEmpty() && !cellValue.startsWith("#")) {
-						if (cellValue.contains("_") && !cellValue.contains("formula")) {
+						if (cellValue.contains("_") && !cellValue.contains("formula") && !cellValue.startsWith("dyn_")) {
 							if (!currentNested.isEmpty() && currentNested.startsWith(cellValue.split("_")[0])) {
 								currentNested += "|" + cellValue.split("_")[1];
 							} else {
