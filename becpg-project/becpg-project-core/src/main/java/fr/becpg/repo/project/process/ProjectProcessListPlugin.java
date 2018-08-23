@@ -11,6 +11,7 @@ import org.alfresco.service.cmr.security.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.helper.AssociationService;
@@ -25,6 +26,7 @@ public class ProjectProcessListPlugin implements EntityProcessListPlugin {
 	
 	@Autowired
 	private PersonService personService;
+	
 	
 	@Autowired
 	private AssociationService associationService;
@@ -57,8 +59,12 @@ public class ProjectProcessListPlugin implements EntityProcessListPlugin {
 				temp.put(PROCESS_INSTANCE_TYPE, getType());
 				
 				temp.put(PROCESS_INSTANCE_TITLE, data.getName());
-				temp.put(PROCESS_INSTANCE_START_DATE, FORMATER.format(data.getStartDate()));
-				temp.put(PROCESS_INSTANCE_DUE_DATE, FORMATER.format(data.getDueDate()));
+				
+				temp.put(PROCESS_INSTANCE_START_DATE, FORMATER.formatDate(data.getStartDate()));
+				
+				if(data.getDueDate() != null){
+					temp.put(PROCESS_INSTANCE_DUE_DATE, FORMATER.formatDate(data.getDueDate()));
+				}
 				
 				temp.put(PROCESS_INSTANCE_IS_ACTIVE, data.getProjectState().equals(ProjectState.Completed) ? false : true);
 				
