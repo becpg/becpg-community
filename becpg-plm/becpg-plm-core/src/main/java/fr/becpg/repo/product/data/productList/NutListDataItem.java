@@ -270,7 +270,7 @@ public class NutListDataItem extends AbstractManualDataItem  implements SimpleLi
 	
 	
 	@AlfProp
-	@AlfQname(qname = "gs1:nutListRoundedValue")
+	@AlfQname(qname = "bcpg:nutListRoundedValue")
 	public String getRoundedValue() {
 		return roundedValue;
 	}

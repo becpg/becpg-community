@@ -15,6 +15,11 @@ import org.springframework.util.StringUtils;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 
+/**
+ * 
+ * @author matthieu
+ *
+ */
 public class NutrientRoundingRules {
 	protected static final Log logger = LogFactory.getLog(NutrientRoundingRules.class);
 
@@ -152,7 +157,6 @@ public class NutrientRoundingRules {
 
 		if (Locale.US.equals(locale)) {
 			regulation = new UsNutrientRegulation();
-
 		} else {
 			regulation = new EuropeanNutrientRegulation();
 		}
