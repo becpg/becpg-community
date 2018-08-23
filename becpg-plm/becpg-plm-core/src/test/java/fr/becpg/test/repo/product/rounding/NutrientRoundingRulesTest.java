@@ -74,8 +74,6 @@ public class NutrientRoundingRulesTest{
 		 assertEquals(NutrientRoundingRules.round(0.0125d, NutrientTypeCode.NACL.toString(), Locale.FRENCH, null), 0.0d,0);
 		 assertEquals(NutrientRoundingRules.round(0.002d, NutrientTypeCode.NACL.toString(), Locale.FRENCH, null), 0.0d,0);
 
-		 
-
          //Test Sodium en mg/100g
 
          assertEquals(NutrientRoundingRules.round(10.36d, NutrientTypeCode.NA.toString(), Locale.FRENCH, "mg/100g"), 10d,0);

@@ -1,39 +1,35 @@
 package fr.becpg.repo.product.formulation.rounding;
 
-
+/**
+ * 
+ * @author rim
+ *
+ */
 public class UsNutrientRegulation extends AbstractNutrientRegulation {
 
-	public UsNutrientRegulation() {
-
-	}
-	
+	@Override
 	protected Double roundByCode(Double value, String nutrientTypeCode) {
-		
-		if(nutrientTypeCode.startsWith(NutrientTypeCode.ENER.toString()) || nutrientTypeCode.equals(NutrientTypeCode.ENERSF.toString()) 
-				|| nutrientTypeCode.equals(NutrientTypeCode.ENERPF.toString()) ){
+
+		if (nutrientTypeCode.startsWith(NutrientTypeCode.ENER.toString()) || nutrientTypeCode.equals(NutrientTypeCode.ENERSF.toString())
+				|| nutrientTypeCode.equals(NutrientTypeCode.ENERPF.toString())) {
 			return nearByValueNRJUS(value);
-		}
-		else if (nutrientTypeCode.equals(NutrientTypeCode.FAPUCIS.toString()) || nutrientTypeCode.equals(NutrientTypeCode.FAMSCIS.toString())
-				|| nutrientTypeCode.equals(NutrientTypeCode.FAT.toString()) || nutrientTypeCode.equals(NutrientTypeCode.FASAT.toString())){
+		} else if (nutrientTypeCode.equals(NutrientTypeCode.FAPUCIS.toString()) || nutrientTypeCode.equals(NutrientTypeCode.FAMSCIS.toString())
+				|| nutrientTypeCode.equals(NutrientTypeCode.FAT.toString()) || nutrientTypeCode.equals(NutrientTypeCode.FASAT.toString())) {
 			return nearByValueUS(value);
-		}
-		else if (nutrientTypeCode.equals(NutrientTypeCode.NA.toString()) || nutrientTypeCode.equals(NutrientTypeCode.K.toString())){
+		} else if (nutrientTypeCode.equals(NutrientTypeCode.NA.toString()) || nutrientTypeCode.equals(NutrientTypeCode.K.toString())) {
 			return nearByValueNaUS(value);
-		}
-		else if (nutrientTypeCode.equals(NutrientTypeCode.CHO.toString()) || nutrientTypeCode.equals(NutrientTypeCode.FIBTG.toString())
-				|| nutrientTypeCode.startsWith(NutrientTypeCode.PRO.toString())){
+		} else if (nutrientTypeCode.equals(NutrientTypeCode.CHO.toString()) || nutrientTypeCode.equals(NutrientTypeCode.FIBTG.toString())
+				|| nutrientTypeCode.startsWith(NutrientTypeCode.PRO.toString())) {
 			return nearByValueSuFiberPUS(value);
-		}
-		else if (nutrientTypeCode.equals(NutrientTypeCode.FIBSOL.toString()) || nutrientTypeCode.equals(NutrientTypeCode.FIBINS.toString())
-				|| nutrientTypeCode.equals(NutrientTypeCode.POLYL.toString()) || nutrientTypeCode.equals(NutrientTypeCode.SUGAR.toString())
-				){
+		} else if (nutrientTypeCode.equals(NutrientTypeCode.FIBSOL.toString()) || nutrientTypeCode.equals(NutrientTypeCode.FIBINS.toString())
+				|| nutrientTypeCode.equals(NutrientTypeCode.POLYL.toString()) || nutrientTypeCode.equals(NutrientTypeCode.SUGAR.toString())) {
 			return nearByValueNaUS(value);
-		} else if (nutrientTypeCode.startsWith(NutrientTypeCode.CHOL.toString())){
-		    return nearByValuecholesterolUS(value);
+		} else if (nutrientTypeCode.startsWith(NutrientTypeCode.CHOL.toString())) {
+			return nearByValuecholesterolUS(value);
 		}
 		return null;
 	}
-		
+
 	// RoundingRole method for Fat according to european guide in Kcal = cal
 	private Double nearByValueNRJUS(Double value) {
 
