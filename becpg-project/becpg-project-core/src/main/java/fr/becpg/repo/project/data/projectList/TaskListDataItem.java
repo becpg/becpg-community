@@ -84,7 +84,7 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	private NodeRef subProject;
 	
 	@AlfSingleAssoc
-	@DataListIdentifierAttr
+	@DataListIdentifierAttr(isDefaultPivotAssoc=true)
 	@AlfQname(qname="pjt:subProjectRef")
 	public NodeRef getSubProject() {
 		return subProject;
@@ -96,6 +96,7 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	
 
 	@AlfProp
+	@DataListIdentifierAttr(isDefaultPivotAssoc=false)
 	@AlfQname(qname = "pjt:tlTaskName")
 	public String getTaskName() {
 		return taskName;
