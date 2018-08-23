@@ -47,9 +47,10 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 	
 	{
 
+		nutrientTypeCode.put("Water", "WATER");
 		nutrientTypeCode.put("Sodium, Na", "NA");
 		nutrientTypeCode.put("Magnesium, Mg", "MG");
-		nutrientTypeCode.put("Phosphorus", "P");
+		nutrientTypeCode.put("Phosphorus, P", "P");
 		nutrientTypeCode.put("Potassium, k", "K");
 		nutrientTypeCode.put("Calcium, Ca", "CA");
 		nutrientTypeCode.put("Manganese", "MN");
@@ -95,10 +96,11 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 		nutrientTypeCode.put("Folate DFE", "FOLDFE");
 		nutrientTypeCode.put("Folic acid", "FOLAC");
 		nutrientTypeCode.put("Folate natural", "FOLFD");
-		nutrientTypeCode.put("Choline totaux", "CHOLN");
-		nutrientTypeCode.put("Beta-crypt", "CRYPX");
-		nutrientTypeCode.put("Lycopen", "LYCPN");
-		nutrientTypeCode.put("Alcohol", "ALC");
+		nutrientTypeCode.put("CholineTot", "CHOLN");
+		nutrientTypeCode.put("Beta-Crypt", "CRYPX");
+		nutrientTypeCode.put("Lycopene", "LYCPN");
+		nutrientTypeCode.put("Lut+Zea", "");
+		nutrientTypeCode.put("Alcohol (ethanol)", "ALC");
 		nutrientTypeCode.put("Organic acids, total", "OA");
 		nutrientTypeCode.put("Cholesterol", "CHOL-");
 		nutrientTypeCode.put("FA 4:0, butyric", "F4D0");
@@ -121,16 +123,18 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 		nutrientTypeCode.put("FA 22:6 4c,7c,10c,13c,16c,19c (n-3), DHA",
 				"F22D6N3");
 		nutrientTypeCode.put("Energy kcal", "ENER-");
-		nutrientTypeCode.put("Energy KJ", "ENER-");
+		nutrientTypeCode.put("Energy kJ", "ENER-");
 		nutrientTypeCode.put("Energy kcal, labelling", "ENER-");
-		nutrientTypeCode.put("Energy KJ, labelling", "ENER-");
+		nutrientTypeCode.put("Energy kJ, labelling", "ENER-");
 		nutrientTypeCode.put("Energy kcal Canada, USA", "ENER-");
-		nutrientTypeCode.put("Energy KJ Canada, USA", "ENER");
-		nutrientTypeCode.put("Energy KJ, without dietary fibre", "");
+		nutrientTypeCode.put("Energy kJ Canada, USA", "ENER-");
+		nutrientTypeCode.put("Energy kJ, without dietary fibre", "ENER-");
 		nutrientTypeCode.put("Salt", "NACL");
+		nutrientTypeCode.put("Points (SP)", "");
+		nutrientTypeCode.put("Points (SP)(Arrondi)", "");
 		nutrientTypeCode.put("Ash", "ASH");
-		nutrientTypeCode.put("Alpha-carot", "CARTA");
-		nutrientTypeCode.put("Carbohydrates, without sugar alcohol", "SUGAD");
+		nutrientTypeCode.put("Alpha-Carot", "CARTA");
+		nutrientTypeCode.put("Carbohydrates, without sugar alcohol", "CHOAVL");
 		nutrientTypeCode
 				.put("Provitamin A (b-carotene equivalents)", "CARTBEQ");
 		nutrientTypeCode.put("Vitamin A retinol equivalents", "VITA");
@@ -143,8 +147,10 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 		nutrientTypeCode.put("Soluble fiber", "FIBSOL");
 		nutrientTypeCode.put("Insoluble fiber", "FIBINS");
 
+		
+		nutrientTypeCode.put("Eau", "WATER");
 		nutrientTypeCode.put("Sodium", "NA");
-		nutrientTypeCode.put("Magnesium", "MG");
+		nutrientTypeCode.put("Magnésium", "MG");
 		nutrientTypeCode.put("Phosphore", "P");
 		nutrientTypeCode.put("Potassium", "K");
 		nutrientTypeCode.put("Calcium", "CA");
@@ -156,7 +162,7 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 		nutrientTypeCode.put("Iode", "ID");
 		nutrientTypeCode.put("Chrome", "CR");
 		nutrientTypeCode.put("Protéines", "PRO-");
-		nutrientTypeCode.put("protéines brutes", "PROCNT");
+		nutrientTypeCode.put("Protéines brutes (N x 6.25)", "PROCNT");
 		nutrientTypeCode.put("Glucides", "CHOAVL");
 		nutrientTypeCode.put("Glucides (avec fibre)", "CHO-");
 		nutrientTypeCode.put("Sucres", "SUGAR");
@@ -186,7 +192,7 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 		nutrientTypeCode.put("Vitamine B1 ou Thiamine", "THIA");
 		nutrientTypeCode.put("Vitamine B2 ou Riboflavine", "RIBF");
 		nutrientTypeCode.put("Vitamine B3 PP ou Niacine", "NIA");
-		nutrientTypeCode.put("Vitamine B5 ou acide pantothénique", "PANTAC");
+		nutrientTypeCode.put("Vitamine B5 ou Acide pantothénique", "PANTAC");
 		nutrientTypeCode.put("Vitamine B6 ou ou Pyridoxine", "VITB6-");
 		nutrientTypeCode.put("Vitamine B8 ou Biotine", "INOTL");
 		nutrientTypeCode.put("Vitamine B12 ou Cobalamines", "VITB12");
@@ -199,8 +205,8 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 		nutrientTypeCode.put("Bêta-cryptoxanthine", "CRYPX");
 		nutrientTypeCode.put("Lycopène", "LYCPN");
 		nutrientTypeCode.put("Lutéine et zéaxanthine", "");
-		nutrientTypeCode.put("Alcool", "ALC");
-		nutrientTypeCode.put("acides organiques", "OA");
+		nutrientTypeCode.put("Alcool (éthanol)", "ALC");
+		nutrientTypeCode.put("Acides organiques", "OA");
 		nutrientTypeCode.put("Cholestérol", "CHOL-");
 		nutrientTypeCode.put("AG 4:0, butyrique", "F4D0");
 		nutrientTypeCode.put("AG 6:0, caproïque", "F6D0");
@@ -221,16 +227,17 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 				.put("AG 22:5 7c,10c,13c,16c,19c (n-3), DPA", "F22D5N3");
 		nutrientTypeCode.put("AG 22:6 4c,7c,10c,13c,16c,19c (n-3), DHA",
 				"F22D6N3");
-		nutrientTypeCode.put("Energy kcal", "ENER-");
-		nutrientTypeCode.put("Energy KJ", "ENER-");
-		nutrientTypeCode.put("Energy kcal, étiquetage", "ENER-");
-		nutrientTypeCode.put("Energy KJ, étiquetage", "ENER-");
-		nutrientTypeCode.put("Energy kcal Canada, USA", "ENER-");
-		nutrientTypeCode.put("Energy KJ Canada, USA", "ENER-");
-		nutrientTypeCode.put("Energy KJ, Sans fibres alimentaires", "");
+		nutrientTypeCode.put("Energie kcal", "ENER-");
+		nutrientTypeCode.put("Energie kJ", "ENER-");
+		nutrientTypeCode.put("Energie kcal, étiquetage", "ENER-");
+		nutrientTypeCode.put("Energie kJ, étiquetage", "ENER-");
+		nutrientTypeCode.put("Energie kcal Canada, USA", "ENER-");
+		nutrientTypeCode.put("Energie kJ Canada, USA", "ENER-");
+		nutrientTypeCode.put("Energie kJ, sans fibres alimentaires", "ENER-");
 		nutrientTypeCode.put("Sel", "NACL");
 		nutrientTypeCode.put("Résidu à sec", "ASH");
 		nutrientTypeCode.put("Alpha-carotene", "CARTA");
+		nutrientTypeCode.put("Glucides, sans sucres de l'alcool", "CHOAVL");
 		nutrientTypeCode
 				.put("Provitamine A (équivalent b-carotène)", "CARTBEQ");
 		nutrientTypeCode.put("Vitamine A (équivalent rétinol)", "VITA");
