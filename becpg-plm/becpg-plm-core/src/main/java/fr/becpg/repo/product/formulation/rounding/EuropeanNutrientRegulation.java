@@ -1,14 +1,18 @@
 package fr.becpg.repo.product.formulation.rounding;
 
+/**
+ * 
+ * @author rim
+ *
+ */
 public class EuropeanNutrientRegulation extends AbstractNutrientRegulation {
 
-	public EuropeanNutrientRegulation() {
-
-	}
 
 	@Override
 	protected Double roundByCode(Double value, String nutrientTypeCode) {
-		logger.info("value: "+value +" code : "+ nutrientTypeCode);
+		if(logger.isDebugEnabled()) {
+			logger.debug("Round EUR value: "+value +" code : "+ nutrientTypeCode);
+		}
 		if(nutrientTypeCode.startsWith(NutrientTypeCode.ENER.toString())){
 			return (double) Math.round(value);
 		}
