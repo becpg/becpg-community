@@ -62,17 +62,28 @@
     width: 11px;
 }
 
-.datagrid .item-select button {
+.datagrid .item-select button  {
 	width: 15px;
 	height:10px;
 }
 
-.datagrid .item-select button, .datagrid .item-select .yui-button {
+.datagrid .item-select button, .datagrid .item-select .yui-button , .datagrid .columns-conf .yui-button {
 	border:none;
 	margin:0px;
 	padding:0px;
 	background-color: transparent;
 	background-position: 8px 100%;
+}
+
+.datagrid .columns-conf span.first-child {
+	border: none;
+	 background:  url(./images/cog.png) no-repeat scroll 0 0 transparent;
+}
+
+
+.datagrid .columns-conf button {
+	padding: 0px 0px 0px 16px;
+	min-height: 0em;
 }
 
 
