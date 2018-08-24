@@ -65,6 +65,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 	MultiLevelDataListService multiLevelDataListService;
 
 	PreferenceService preferenceService;
+	
 
 	public void setPreferenceService(PreferenceService preferenceService) {
 		this.preferenceService = preferenceService;
@@ -107,11 +108,14 @@ public class MultiLevelExtractor extends SimpleExtractor {
 			return super.extract(dataListFilter, metadataFields);
 
 		}
+		
+		
 
 		int pageSize = dataListFilter.getPagination().getPageSize();
 		int startIndex = (dataListFilter.getPagination().getPage() - 1) * dataListFilter.getPagination().getPageSize();
 
 		PaginatedExtractedItems ret = new PaginatedExtractedItems(pageSize);
+		
 
 		MultiLevelListData listData = paginatedSearchCache.getSearchMultiLevelResults(dataListFilter.getPagination().getQueryExecutionId());
 		if (listData == null) {
@@ -125,6 +129,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 		appendNextLevel(ret, metadataFields, listData, 0, startIndex, pageSize, props, dataListFilter);
 
 		ret.setFullListSize(listData.getSize());
+		
 		return ret;
 	}
 
@@ -260,7 +265,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 		return !dataListFilter.isSimpleItem() && (dataListFilter.getDataType() != null)
 				&& entityDictionaryService.isMultiLevelDataList(dataListFilter.getDataType())
 				&& !dataListFilter.getDataListName().startsWith(RepoConsts.WUSED_PREFIX) && !dataListFilter.getDataListName().equals("projectList") // TODO
-																																					// should
+									          																										// should
 																																					// be
 																																					// better
 				&& !dataListFilter.isVersionFilter();
