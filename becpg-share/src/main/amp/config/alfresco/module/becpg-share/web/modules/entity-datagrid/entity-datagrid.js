@@ -594,6 +594,22 @@
                             
                             return ret;
                         },
+                        
+                        fnRenderCellActionsHeader : function EntityDataGrid_fnRenderCellActionsHeader()
+                        {
+
+                            var ret = "";
+                            ret+="<div id=\""+this.id+"-"+this.timeStampId+"columns-confContainerDiv\" class=\"columns-conf\">";
+                            ret+="<span class=\"yui-button yui-push-button\" id=\""+this.id+"-"+this.timeStampId+"columns-confButton\">";
+                            ret+="   <span class=\"first-child\">";
+                            ret+="         <button type=\"button\"  id=\""+this.id+"-"+this.timeStampId+"columns-confButton-button\" title=\""+this.msg("button.columns-conf.description")+"\">&nbsp;</button>";
+                            ret+="   </span>";
+                            ret+="</span>";
+                            ret+="</div>";
+                            
+                            return ret;
+                        },
+                        
 
                         /**
                          * Returns actions custom datacell formatter
@@ -1338,18 +1354,20 @@
                                 }
                             }
                             
-                            var isThemeBecpg = Dom.hasClass("Share", "yui-skin-becpg");
+                           // var isThemeBecpg = Dom.hasClass("Share", "yui-skin-becpg");
 
                             // Add actions as last column
                             columnDefinitions.push(
                             {
                                 key : "actions",
-                                label : isThemeBecpg ? "" : this.msg("label.column.actions"),
+                                label : this.fnRenderCellActionsHeader(),
                                 sortable : false,
                                 formatter : this.fnRenderCellActions(),
-                                width :  isThemeBecpg ? 40 : 60
+                                width :   40 
                             });
-
+                            
+                           delete me.widgets.columnConfigurer;
+                            
                             // DataTable definition
 
                             if (!YAHOO.widget.GroupedDataTable)
@@ -1586,43 +1604,19 @@
                                 Bubbling.fire(this.scopeId + "selectedItemsChanged");
                             }, this, true);
 
-                            // Before render event handler
-//                            this.widgets.dataTable
-//                                    .subscribe(
-//                                            "beforeRenderEvent",
-//                                            function()
-//                                            {
-//                                                if (me.currentSort)
-//                                                {
-//                                                    // Is there a custom sort
-//                                                    // handler
-//                                                    // function defined?
-//                                                    var oColumn = me.currentSort.oColumn, sSortDir = me.currentSort.sSortDir, sortFnc = (oColumn.sortOptions && YAHOO.lang
-//                                                            .isFunction(oColumn.sortOptions.sortFunction)) ?
-//                                                    // Custom sort function
-//                                                    oColumn.sortOptions.sortFunction : null;
-//
-//                                                    // Sort the Records
-//                                                    if (sSortDir || sortFnc)
-//                                                    {
-//                                                        // Default sort function
-//                                                        // if necessary
-//                                                        sortFnc = sortFnc || this.rendererHelper.get("sortFunction");
-//                                                        // Get the field to sort
-//                                                        var sField = (oColumn.sortOptions && oColumn.sortOptions.field) ? oColumn.sortOptions.field
-//                                                                : oColumn.field;
-//
-//                                                        // Sort the Records
-//                                                        this._oRecordSet.sortRecords(sortFnc,
-//                                                                ((sSortDir == YAHOO.widget.DataTable.CLASS_DESC) ? true
-//                                                                        : false), sField);
-//                                                    }
-//                                                }
-//                                            }, this.widgets.dataTable, true);
 
                             // Rendering complete event handler
                             this.widgets.dataTable.subscribe("renderEvent", function()
                             {
+                            	
+                            	
+                                if( this.widgets.columnConfigurer ==null){
+                                	this.widgets.columnConfigurer = Alfresco.util.createYUIButton(this, me.timeStampId+"columns-confButton",
+                                            this.onActionColumnConf);
+
+                                }
+                            	
+                            	
                              // Item Select menu button
                                 if( this.widgets.itemSelect ==null){
                                    this.widgets.itemSelect = Alfresco.util.createYUIButton(this, me.timeStampId+"itemSelect-button",
