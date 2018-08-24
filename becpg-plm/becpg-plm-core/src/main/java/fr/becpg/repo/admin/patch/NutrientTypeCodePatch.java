@@ -90,7 +90,7 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 		nutrientTypeCode.put("Niacin", "NIA");
 		nutrientTypeCode.put("Panto acid", "PANTAC");
 		nutrientTypeCode.put("Vitamin B-6", "VITB6-");
-		nutrientTypeCode.put("Vitamin B7 (Biotin)", "INOTL");
+		nutrientTypeCode.put("Vitamin B7 (Biotin)", "BIOT");
 		nutrientTypeCode.put("Vitamin B-12", "VITB12");
 		nutrientTypeCode.put("Food folate", "FOL");
 		nutrientTypeCode.put("Folate DFE", "FOLDFE");
@@ -194,7 +194,7 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 		nutrientTypeCode.put("Vitamine B3 PP ou Niacine", "NIA");
 		nutrientTypeCode.put("Vitamine B5 ou Acide pantothénique", "PANTAC");
 		nutrientTypeCode.put("Vitamine B6 ou ou Pyridoxine", "VITB6-");
-		nutrientTypeCode.put("Vitamine B8 ou Biotine", "INOTL");
+		nutrientTypeCode.put("Vitamine B8 ou Biotine", "BIOT");
 		nutrientTypeCode.put("Vitamine B12 ou Cobalamines", "VITB12");
 		nutrientTypeCode.put("Vitamine B9 ou Folates totaux", "FOL");
 		nutrientTypeCode.put("Folates, équivalent fibres alimentaires",
