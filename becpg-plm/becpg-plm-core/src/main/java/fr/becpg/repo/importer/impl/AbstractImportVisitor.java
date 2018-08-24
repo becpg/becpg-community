@@ -130,6 +130,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 	protected static final String MSG_ERROR_LOAD_FILE = "import_service.error.err_load_file";
 	protected static final String MSG_ERROR_FILE_NOT_FOUND = "import_service.error.err_file_not_found";
+	protected static final String MSG_ERROR_FILE_BAD_PREFIX = "import_service.error.err_file_bad_prefix";
 	protected static final String MSG_ERROR_MAPPING_ATTR_FAILED = "import_service.error.err_mapping_attr_failed";
 	protected static final String MSG_ERROR_GET_OR_CREATE_NODEREF = "import_service.error.err_get_or_create_noderef";
 	protected static final String MSG_ERROR_GET_NODEREF_CHARACT = "import_service.error.err_get_noderef_charact";
@@ -680,7 +681,8 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_LOAD_FILE, value));
 				}
 			} else {
-				logger.warn(I18NUtil.getMessage(MSG_ERROR_FILE_NOT_FOUND, value));
+				logger.error(I18NUtil.getMessage(MSG_ERROR_FILE_BAD_PREFIX, value));
+				throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_FILE_BAD_PREFIX, value));
 			}
 
 			if (in != null) {
