@@ -205,7 +205,7 @@
 }
 
 .labeling-view a.clipboard {
-  background: url("../../components/images/clipboard-16.png") no-repeat;
+  background: url("../../components/images/pooled-task-16.png") no-repeat;
   display: inline-block;
   float: right;
   width:16px;

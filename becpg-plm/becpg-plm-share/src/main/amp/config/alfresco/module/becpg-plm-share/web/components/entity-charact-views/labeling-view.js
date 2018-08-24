@@ -69,7 +69,8 @@
             }
             
             YAHOO.util.Event.preventDefault(args[0]);
-            return false;
+            YAHOO.util.Event.stopPropagation();
+            return true;
         };
         
         YAHOO.Bubbling.addDefaultAction("labeling-action", fnActionHandler);
