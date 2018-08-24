@@ -179,13 +179,10 @@
 }
 
 .datagrid .action-set {
+	transition:0.25s;
 	position: absolute;
-	background-color: rgb(245, 245, 245);
-        width: 82px;
-}
-.yui-skin-becpg .datagrid .action-set {
-        width: 150px;
-	right: 5px;
+    width: 60px;
+	right: 10px;
 }
 
 
@@ -253,18 +250,15 @@ div.itemSelect-open {
 }
 
 .datagrid .action-set a:active,.datagrid .action-set a:hover,.datagrid .action-set .highlighted
-	{
-	background-color: #fff;
-	border: 1px solid #2b6eb5;
+{
+	border: none;
 	text-decoration: none;
 }
 
 .datagrid div.more-actions {
 	background-color: #fff;
-	border: 1px solid #2b6eb5;
+	border: 1px solid black;
 	clear: left;
-	margin-left: -22px;
-	margin-top: 1px;
 	position: absolute;
 	width: 200px;
 }
@@ -279,6 +273,7 @@ div.itemSelect-open {
 	border: 1px solid #2b6eb5;
 	color: #fff;
 }
+
 
 /* Actions: Simple view */
 .datagrid div.simple div {
@@ -299,8 +294,8 @@ div.itemSelect-open {
 }
 
 .datagrid div.simple div.more-actions {
-	margin-left: -122px;
-	margin-top: 3em;
+	margin-left: -150px;
+	margin-top: 2em;
 }
 
 .datagrid div.simple div.more-actions div {
@@ -318,7 +313,7 @@ div.itemSelect-open {
 }
 
 .datagrid .onActionShowMore a {
-	background-image: url(../../components/images/plus-16.png);
+	background-image: url(../../components/images/dot-more-16.png);
 }
 
 .datagrid .onActionView a {
@@ -467,12 +462,27 @@ div.filterButtonsBar {
 }
 
 
+.datagrid-bar .selected-items .yui-button-disabled span.first-child,
+.datalist-toolbar .selected-items .yui-button-disabled span.first-child {
+  width: 0px;
+  padding:0px;
+  opacity: 0;
+  visibility: hidden;
+  -webkit-transition: 400ms;
+  transition: 400ms;
+}
+
 .datagrid-bar .selected-items span.first-child,
 .datalist-toolbar .selected-items span.first-child {
 	background: url(../../components/images/checkbox-16.png) no-repeat 12px
 		4px;
 	padding-left: 24px;
+	opacity: 1;
+  visibility: visible;
+   -webkit-transition: 400ms;
+  transition: 400ms;
 }
+
 
 .datagrid-sort-handle {
 	background: url("./images/grippy.png") no-repeat scroll 1px 6px
