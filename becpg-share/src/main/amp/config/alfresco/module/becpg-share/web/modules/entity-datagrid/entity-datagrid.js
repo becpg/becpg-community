@@ -246,7 +246,7 @@
                              * @type int
                              * @default 3
                              */
-                            splitActionsAt : 3,
+                            splitActionsAt : 1,
 
                             /**
                              * Current entityNodeRef.
@@ -1347,7 +1347,7 @@
                                 label : isThemeBecpg ? "" : this.msg("label.column.actions"),
                                 sortable : false,
                                 formatter : this.fnRenderCellActions(),
-                                width :  isThemeBecpg ? 1 : 80
+                                width :  isThemeBecpg ? 40 : 60
                             });
 
                             // DataTable definition

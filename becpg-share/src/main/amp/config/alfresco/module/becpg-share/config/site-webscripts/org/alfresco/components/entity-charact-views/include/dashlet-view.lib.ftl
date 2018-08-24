@@ -43,7 +43,7 @@
 			   <div style="display:none">
 			      <!-- Action Set "More..." container -->
 			      <div id="${dashletId}-moreActions">
-			         <div class="onActionShowMore"><a href="#" class="${dashletId}-show-more show-more" title="${msg("actions.more")}"><span>${msg("actions.more")}</span></a></div>
+			         <div class="onActionShowMore"><a href="#" class="${dashletId}-show-more show-more" title="${msg("actions.more")}"><span>&nbsp;</span></a></div>
 			         <div class="more-actions hidden"></div>
 			      </div>
 			
