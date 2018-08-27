@@ -76,7 +76,7 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 
 				Map<String, Object> entityItems = getEntityProperties(entityNodeRef, mainType, metadataFields, cache);
 				
-				entityItems.putAll(getDynamicProperties(entityNodeRef, itemType, metadataFields, cache));
+				entityItems.putAll(getDynamicProperties(entityNodeRef, itemType));
 
 				rownum = appendNextLevel(listData, sheet, itemType, metadataFields, cache, rownum, key, null, parameters, entityItems);
 
