@@ -451,16 +451,15 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 
 				ClassAttributeDefinition classDef = formatQnameString(field);
 				String propTitle = classDef.getTitle(dictionaryService);
-
+				
+				// we don't want this product in the sources of the error
+				propDuplicates.remove(productData.getNodeRef());
 				res.put(propTitle);
 
-				String message = I18NUtil.getMessage(MESSAGE_NON_UNIQUE_FIELD, propTitle) + " (" + propValue + ")";
+				String message = I18NUtil.getMessage(MESSAGE_NON_UNIQUE_FIELD, propTitle, propValue);
 
-				ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, null, new ArrayList<NodeRef>(),
+				ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, null, propDuplicates,
 						RequirementDataType.Completion);
-
-				rclDataItem.getSources().add(productData.getNodeRef());
-
 				productData.getReqCtrlList().add(rclDataItem);
 
 			}
