@@ -21,13 +21,19 @@ import fr.becpg.repo.report.search.impl.DefaultExcelReportSearchPlugin;
 
 @Service
 public class DynamicCharactExcelReportSearchPlugin extends DefaultExcelReportSearchPlugin {
-	
-	
 
 	@Override
 	public void fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum, String[] parameters,
 			AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache) {
-		
+
+		boolean addDynCharact = false;
+		for (AttributeExtractorStructure field : metadataFields) {
+			if (field.getFieldName().startsWith("dyn_")) {
+				addDynCharact = true;
+				break;
+			}
+		}
+
 		for (NodeRef entityNodeRef : searchResults) {
 			if (entityDictionaryService.isSubClass(nodeService.getType(entityNodeRef), mainType)) {
 				if (keyColumn != null) {
@@ -43,8 +49,11 @@ public class DynamicCharactExcelReportSearchPlugin extends DefaultExcelReportSea
 					NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, itemType);
 					if (listNodeRef != null) {
 						Map<String, Object> entityItems = getEntityProperties(entityNodeRef, mainType, metadataFields, cache);
-						 entityItems.putAll(getDynamicProperties(entityNodeRef, mainType, metadataFields, cache));
-						
+
+						if (addDynCharact) {
+							entityItems.putAll(getDynamicProperties(entityNodeRef, itemType));
+						}
+
 						List<NodeRef> results = entityListDAO.getListItems(listNodeRef, itemType);
 						for (NodeRef itemNodeRef : results) {
 							if (itemType.equals(nodeService.getType(itemNodeRef))) {
@@ -55,48 +64,59 @@ public class DynamicCharactExcelReportSearchPlugin extends DefaultExcelReportSea
 						}
 					}
 				} else {
-					rownum = fillRow(sheet, entityNodeRef, itemType, metadataFields, cache, rownum, null, null);
+					Map<String, Object> entityItems = new HashMap<>();
+					if (addDynCharact) {
+						entityItems.putAll(getDynamicProperties(entityNodeRef, null));
+					}
+
+					rownum = fillRow(sheet, entityNodeRef, itemType, metadataFields, cache, rownum, null, entityItems);
 				}
 			}
 		}
 
 	}
-	
-	
 
-	Map<String, Object> getDynamicProperties(NodeRef entityNodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields,
-			Map<NodeRef, Map<String, Object>> cache){
+	Map<String, Object> getDynamicProperties(NodeRef entityNodeRef, QName listType) {
 		NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
 		List<NodeRef> listNodeRefs = new ArrayList<>();
 		List<NodeRef> results = new ArrayList<>();
 
-		listNodeRefs.add(entityListDAO.getList(listContainerNodeRef, PLMModel.TYPE_COMPOLIST));
-		listNodeRefs.add(entityListDAO.getList(listContainerNodeRef, PLMModel.TYPE_PACKAGINGLIST));
-		listNodeRefs.add(entityListDAO.getList(listContainerNodeRef, MPMModel.TYPE_PROCESSLIST));
-		
-		listNodeRefs.forEach((nodeRef) -> results.addAll(entityListDAO.getListItems(nodeRef, PLMModel.TYPE_DYNAMICCHARACTLIST)));
+		if (((listType != null) && PLMModel.TYPE_COMPOLIST.equals(listType)) || PLMModel.TYPE_PACKAGINGLIST.equals(listType)
+				|| MPMModel.TYPE_PROCESSLIST.equals(listType)) {
+			listNodeRefs.add(entityListDAO.getList(listContainerNodeRef, listType));
+		} else {
+			listNodeRefs.add(entityListDAO.getList(listContainerNodeRef, PLMModel.TYPE_COMPOLIST));
+			listNodeRefs.add(entityListDAO.getList(listContainerNodeRef, PLMModel.TYPE_PACKAGINGLIST));
+			listNodeRefs.add(entityListDAO.getList(listContainerNodeRef, MPMModel.TYPE_PROCESSLIST));
+		}
+
+		listNodeRefs.forEach((nodeRef) -> {
+			if (nodeRef != null) {
+				results.addAll(entityListDAO.getListItems(nodeRef, PLMModel.TYPE_DYNAMICCHARACTLIST));
+			}
+		});
 		Map<String, Object> item = new HashMap<>();
 		results.forEach(nodeRef -> {
 			Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
-			if(properties.get(PLMModel.PROP_DYNAMICCHARACT_TITLE) != null &&  properties.get(PLMModel.PROP_DYNAMICCHARACT_VALUE) != null){
-				item.put("dyn_"+((String) properties.get(PLMModel.PROP_DYNAMICCHARACT_TITLE)).replace(" ", ""), properties.get(PLMModel.PROP_DYNAMICCHARACT_VALUE));
+			if ((properties.get(PLMModel.PROP_DYNAMICCHARACT_TITLE) != null) && (properties.get(PLMModel.PROP_DYNAMICCHARACT_VALUE) != null)) {
+				item.put("dyn_" + ((String) properties.get(PLMModel.PROP_DYNAMICCHARACT_TITLE)).replace(" ", "_"),
+						properties.get(PLMModel.PROP_DYNAMICCHARACT_VALUE));
 			}
-			
+
 		});
-		return item ;
+		return item;
 	}
-	
+
 	@Override
 	public boolean isApplicable(QName itemType, String[] parameters) {
 		String parameter = (parameters != null) && (parameters.length > 0) ? parameters[0] : null;
-		return (PLMModel.TYPE_COMPOLIST.equals(itemType) || MPMModel.TYPE_PROCESSLIST.equals(itemType)) 
-				&& (parameter == null || !parameter.contains("Level"));
+		return (entityDictionaryService.isSubClass(itemType, PLMModel.TYPE_PRODUCT) || PLMModel.TYPE_COMPOLIST.equals(itemType)
+				|| MPMModel.TYPE_PROCESSLIST.equals(itemType)) && ((parameter == null) || !parameter.contains("Level"));
 	}
-	
+
 	@Override
 	public boolean isDefault() {
 		return false;
 	}
-	
 
 }
