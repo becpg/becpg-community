@@ -2622,6 +2622,8 @@
 	                                if(obj.dataList.itemType!=null && obj.force == true){
 	                                	this.options.itemType = obj.dataList.itemType;
 	                                }
+	                                
+	                                this.parentInputNodeRef = null;
 	                            }
 
                             	if(obj.extraDataParams!=null) {
@@ -2679,7 +2681,7 @@
 
                                 // Could happen more than once, so check return
                                 // value of
-                                // fulfil()
+                                // fulfill()
                                 if (!this.deferredListPopulation.fulfil("onActiveDataListChanged"))
                                 {
                                     this.populateDataGrid();
