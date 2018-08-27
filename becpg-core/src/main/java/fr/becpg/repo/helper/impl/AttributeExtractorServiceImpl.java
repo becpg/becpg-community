@@ -543,9 +543,16 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 				QName fieldQname = QName.createQName(field, namespaceService);
 
+				
+
 				if (hasReadAccess(itemType, field)) {
 
 					ClassAttributeDefinition prodDef = entityDictionaryService.getPropDef(fieldQname);
+					
+					if(field.startsWith("dyn_")){
+						ret.add(new AttributeExtractorStructure(field, field));
+					}
+					
 					if (prodDef != null) {
 						String prefix = "prop_";
 						if (isAssoc(prodDef)) {
@@ -554,6 +561,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 						ret.add(new AttributeExtractorStructure(prefix + field.replaceFirst(":", "_"), prodDef, itemType));
 					}
 				}
+				
 			}
 		}
 		return ret;
@@ -572,6 +580,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			watch = new StopWatch();
 			watch.start();
 		}
+		
 		Map<String, Object> ret = new HashMap<>(metadataFields.size());
 
 		Integer order = 0;

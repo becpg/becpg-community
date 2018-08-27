@@ -15,11 +15,6 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.expression.EvaluationContext;
-import org.springframework.expression.Expression;
-import org.springframework.expression.ExpressionParser;
-import org.springframework.expression.spel.standard.SpelExpressionParser;
-import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
@@ -32,10 +27,9 @@ import fr.becpg.repo.helper.ExcelHelper;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.formulation.FormulationHelper;
-import fr.becpg.repo.report.search.impl.DefaultExcelReportSearchPlugin;
 
 @Service
-public class MultiLevelExcelReportSearchPlugin extends DefaultExcelReportSearchPlugin {
+public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReportSearchPlugin {
 
 	// Allowed Parameter1 AllLevel MaxLevel2 OnlyLevel2
 
@@ -81,6 +75,8 @@ public class MultiLevelExcelReportSearchPlugin extends DefaultExcelReportSearchP
 				MultiLevelListData listData = multiLevelDataListService.getMultiLevelListData(dataListFilter);
 
 				Map<String, Object> entityItems = getEntityProperties(entityNodeRef, mainType, metadataFields, cache);
+				
+				entityItems.putAll(getDynamicProperties(entityNodeRef, itemType));
 
 				rownum = appendNextLevel(listData, sheet, itemType, metadataFields, cache, rownum, key, null, parameters, entityItems);
 
@@ -176,32 +172,6 @@ public class MultiLevelExcelReportSearchPlugin extends DefaultExcelReportSearchP
 		return rownum;
 	}
 
-	public class FormulaContext {
-		private Map<String, Object> props;
 
-		FormulaContext(Map<String, Object> props) {
-			this.props = props;
-		}
-
-		public Map<String, Object> getProps() {
-			return props;
-		}
-
-		public void setProps(Map<String, Object> props) {
-			this.props = props;
-		}
-	}
-
-	protected Object eval(String formula, Map<String, Object> values) {
-
-		EvaluationContext context = new StandardEvaluationContext(new FormulaContext(values));
-		ExpressionParser parser = new SpelExpressionParser();
-	
-		Expression exp = parser.parseExpression(formula);
-		Object ret = exp.getValue(context);
-		
-		return ret;
-
-	}
 
 }
