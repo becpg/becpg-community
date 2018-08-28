@@ -196,7 +196,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 									Double qtyPerProduct = getQtyPerProduct(productData, dataListItem);
 									dataListItem.setQty(qtyPerProduct);
 
-									StandardEvaluationContext dataContext =  formulaService.createEvaluationContext( productData, dataListItem);
+									StandardEvaluationContext dataContext = formulaService.createEvaluationContext(productData, dataListItem);
 									Object value = null;
 									try {
 										value = exp.getValue(dataContext);
@@ -335,20 +335,23 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 			for (PackagingListDataItem subDataListItem : subProductData.getPackagingListView().getPackagingList()) {
 
 				Pair<CompositionDataItem, Double> pair = new Pair<>(subDataListItem, subDataListItem.getQty());
-
-				if ((variantPackagingData != null) && (subDataListItem.getQty() != null)) {
-					if (PackagingLevel.Secondary.equals(subDataListItem.getPkgLevel()) && (variantPackagingData.getProductPerBoxes() != null)) {
-						subDataListItem.setQty(subDataListItem.getQty() / variantPackagingData.getProductPerBoxes());
-					}
-
-					if (PackagingLevel.Tertiary.equals(subDataListItem.getPkgLevel()) && (variantPackagingData.getProductPerPallet() != null)) {
-						subDataListItem.setQty(subDataListItem.getQty() / variantPackagingData.getProductPerPallet());
+               
+				if(!PLMModel.TYPE_PACKAGINGKIT.equals(nodeService.getType(subDataListItem.getComponent()))) {
+					if ((variantPackagingData != null) && (subDataListItem.getQty() != null)) {
+						if (PackagingLevel.Secondary.equals(subDataListItem.getPkgLevel()) && (variantPackagingData.getProductPerBoxes() != null)) {
+							subDataListItem.setQty(subDataListItem.getQty() / variantPackagingData.getProductPerBoxes());
+						}
+	
+						if (PackagingLevel.Tertiary.equals(subDataListItem.getPkgLevel()) && (variantPackagingData.getProductPerPallet() != null)) {
+							subDataListItem.setQty(subDataListItem.getQty() / variantPackagingData.getProductPerPallet());
+						}
 					}
 				}
 
 				if ((dataListItem instanceof PackagingListDataItem) && (((PackagingListDataItem) dataListItem).getPackagingListUnit() != null)
 						&& !PackagingListUnit.PP.equals(((PackagingListDataItem) dataListItem).getPackagingListUnit())
 						&& (dataListItem.getQty() != null) && (subDataListItem.getQty() != null)) {
+
 					subDataListItem.setQty(dataListItem.getQty() * subDataListItem.getQty());
 				}
 
@@ -359,8 +362,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 			try {
 				JSONObject subObject = new JSONObject();
 
-				StandardEvaluationContext 
-						dataContext =  formulaService.createEvaluationContext( productData, pair.getFirst());
+				StandardEvaluationContext dataContext = formulaService.createEvaluationContext(productData, pair.getFirst());
 
 				String subPath = path + "/" + pair.getFirst().getNodeRef().getId();
 
