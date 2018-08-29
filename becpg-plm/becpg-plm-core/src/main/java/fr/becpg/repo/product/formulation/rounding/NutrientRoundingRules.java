@@ -88,9 +88,16 @@ public class NutrientRoundingRules {
 				for (Iterator<?> i = jsonRound.keys(); i.hasNext();) {
 					String valueKey = (String) i.next();
 					JSONObject value = (JSONObject) jsonRound.get(valueKey);
-					if (value.has(localKey)) {
-						nutListElt.addAttribute("rounded" + StringUtils.capitalize(valueKey), "" + value.get(localKey));
+					for (Iterator<?> j = value.keys(); j.hasNext();) {
+						String locKey = (String) j.next();
+						
+						if (locKey.equals(localKey)) {
+							nutListElt.addAttribute("rounded" + StringUtils.capitalize(valueKey), "" + value.get(locKey));
+						} else {
+							nutListElt.addAttribute("rounded" + StringUtils.capitalize(valueKey)+"_"+locKey, "" + value.get(locKey));
+						}	
 					}
+					
 				}
 			} catch (JSONException e) {
 				logger.error(e, e);
