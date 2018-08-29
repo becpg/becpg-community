@@ -134,10 +134,7 @@
                                            response)
                                    {
 
-                                    
-                                	   
                                        me.queryExecutionId = null;
-   	                                
 	                                   me._updateDataGrid.call(me,
 	                                     {
 	                                         page : me.currentPage
