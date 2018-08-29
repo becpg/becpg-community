@@ -250,9 +250,7 @@
 			</content>
 		</create-content>
 		
-			
 	</config>
-
 
 	 <config evaluator="string-compare" condition="WebFramework" replace="false">
           <web-framework>
@@ -393,7 +391,71 @@
             <evaluator>evaluator.doclib.action.editableByCurrentUser</evaluator>
          </action>
 			
-
+			<!-- Annotation -->
+			<action id="annotation-checkout" type="javascript" icon="document-edit-properties" label="actions.document.annotation-checkout">
+				<param name="function">onActionCheckOutAnnotation</param>
+				<permissions>
+					<permission allow="true">Write</permission>
+				</permissions>
+				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isSystemEntity</evaluator>
+				<evaluator negate="true">evaluator.becpg.doclib.action.annotation.hasAnnotationAspect</evaluator>
+				<evaluator>evaluator.becpg.doclib.action.annotation.mimetype</evaluator>
+				<evaluator>evaluator.becpg.doclib.action.annotation.isEnabled</evaluator>
+				<evaluator negate="true">evaluator.doclib.action.notEditable</evaluator>
+			</action>
+			<action id="annotation-cancel" type="javascript" icon="document-cancel-editing" label="actions.document.annotation-cancel">
+				<param name="function">onActionCancelCheckOutAnnotation</param>
+				<permissions>
+					<permission allow="true">Write</permission>
+				</permissions>
+				<evaluator>evaluator.becpg.doclib.action.annotation.hasAnnotationAspect</evaluator>
+				<evaluator>evaluator.becpg.doclib.action.annotation.isEnabled</evaluator>
+				<override>document-edit-offline</override>
+				<override>document-upload-new-version</override>
+				<override>document-cancel-editing</override>
+            <override>document-cancel-editing-unlock</override>
+            <override>document-edit-properties</override>
+            <override>document-edit-metadata</override>
+            <override>document-delete</override>
+            <override>document-manage-granular-permissions</override>
+            <override>document-manage-repo-permissions</override>
+            <override>document-copy-to</override>
+				<override>document-move-to</override>
+				<override>document-take-ownership</override>
+				<override>document-manage-aspects</override>
+				<override>document-change-type</override>
+			</action>
+			<action id="annotation-checkin" type="javascript" icon="document-upload-new-version" label="actions.document.annotation-checkin">
+				<param name="function">onActionCheckInAnnotation</param>
+				<permissions>
+					<permission allow="true">Write</permission>
+				</permissions>
+				<evaluator>evaluator.becpg.doclib.action.annotation.hasAnnotationAspect</evaluator>
+				<evaluator>evaluator.becpg.doclib.action.annotation.isEnabled</evaluator>
+			</action>
+			<action id="annotation-create-session" type="javascript" icon="document-edit-properties" label="actions.document.annotation-create-session">
+				<param name="function">onActionCreateSessionAnnotation</param>
+				<permissions>
+					<permission allow="true">Write</permission>
+				</permissions>
+				<evaluator>evaluator.becpg.doclib.action.annotation.hasAnnotationAspect</evaluator>
+				<evaluator>evaluator.becpg.doclib.action.annotation.isEnabled</evaluator>
+				<override>document-edit-offline</override>
+				<override>document-upload-new-version</override>
+				<override>document-cancel-editing</override>
+            <override>document-cancel-editing-unlock</override>
+            <override>document-edit-properties</override>
+            <override>document-edit-metadata</override>
+            <override>document-delete</override>
+            <override>document-manage-granular-permissions</override>
+            <override>document-manage-repo-permissions</override>
+            <override>document-copy-to</override>
+				<override>document-move-to</override>
+				<override>document-take-ownership</override>
+				<override>document-manage-aspects</override>
+				<override>document-change-type</override>
+			</action>
+			
 		</actions>
 		<actionGroupResolver>becpg.resolver.doclib.actionGroup</actionGroupResolver>
 		<actionGroups>
@@ -453,15 +515,23 @@
 				
 			</actionGroup>
 			<actionGroup id="document-details">
+				<action index="421" subgroup="40" id="annotation-checkout" />
+				<action index="422" subgroup="40" id="annotation-create-session" />
+				<action index="423" subgroup="40" id="annotation-checkin" />
+				<action index="424" subgroup="40" id="annotation-cancel" />
 				<action index="121" id="reportTpl-refresh" />
 				<action index="301" id="reportTpl-update-permissions" />
 			</actionGroup>
 
 			<actionGroup id="document-browse">
+				<action index="421" subgroup="40" id="annotation-checkout" />
+				<action index="422" subgroup="40" id="annotation-create-session" />
+				<action index="423" subgroup="40" id="annotation-checkin" />
+				<action index="424" subgroup="40" id="annotation-cancel" />
 				<action index="131" id="reportTpl-refresh" />
 				<action index="371" id="reportTpl-update-permissions" />
 			</actionGroup>
 		</actionGroups>
 	</config>
-
+	
 </alfresco-config>

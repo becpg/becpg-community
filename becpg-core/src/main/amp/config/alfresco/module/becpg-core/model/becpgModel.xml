@@ -745,6 +745,14 @@
 				</property>
 			</properties>
 		</aspect>
+		
+		<aspect name="bcpg:annotationAspect">
+			<properties>
+				<property name="bcpg:annotationDocumentIdentifier">
+				  <type>d:text</type>
+				</property>
+			</properties>
+		</aspect>
 
 	</aspects>
 </model>
