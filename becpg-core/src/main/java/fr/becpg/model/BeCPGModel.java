@@ -147,5 +147,4 @@ public interface BeCPGModel {
 	QName PROP_STATE_ACTIVITY_MODIFIER = QName.createQName(BECPG_URI,"stateActivityModifier");
 	QName PROP_STATE_ACTIVITY_PREVIOUSSTATE = QName.createQName(BECPG_URI,"stateActivityPreviousState");
 
-	
 }

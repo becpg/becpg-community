@@ -250,9 +250,7 @@
 			</content>
 		</create-content>
 		
-			
 	</config>
-
 
 	 <config evaluator="string-compare" condition="WebFramework" replace="false">
           <web-framework>
@@ -403,7 +401,6 @@
             <evaluator>evaluator.doclib.action.editableByCurrentUser</evaluator>
          </action>
 			
-
 		</actions>
 		<actionGroupResolver>becpg.resolver.doclib.actionGroup</actionGroupResolver>
 		<actionGroups>
@@ -475,5 +472,5 @@
 			</actionGroup>
 		</actionGroups>
 	</config>
-
+	
 </alfresco-config>

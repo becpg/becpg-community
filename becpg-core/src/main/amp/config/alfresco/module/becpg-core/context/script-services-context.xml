@@ -76,6 +76,7 @@
 		<property name="contentService" ref="contentService"/>
 		<property name="dictionaryService" ref="dictionaryService"/>
 	</bean>
+	
 
 	<!-- Override Alfresco -->
  
@@ -91,5 +92,5 @@
 		<property name="permissionService" ref="PermissionService" />
 		<property name="jsonConversionComponent" ref="jsonConversionComponent" />
 	</bean>
-
+	
 </beans>

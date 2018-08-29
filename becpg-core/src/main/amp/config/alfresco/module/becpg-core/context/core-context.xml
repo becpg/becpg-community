@@ -216,5 +216,5 @@
             <value>${beCPG.notification.notify.cronExpression}</value>
         </property>
     </bean>
-
+    
 </beans>
