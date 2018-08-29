@@ -275,5 +275,10 @@
           parent="abstractWorkflowWebScript">
     </bean>
     
+	<bean id="webscript.fr.becpg.document.annotation.get" class="fr.becpg.repo.web.scripts.document.AnnotationWebScript" parent="webscript">
+		<property name="annotationService" ref="annotationService" />
+		<property name="nodeService" ref="NodeService" />
+		<property name="lockService" ref="lockService" />
+	</bean>
 
 </beans>

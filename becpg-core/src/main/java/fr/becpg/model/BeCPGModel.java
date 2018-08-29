@@ -147,5 +147,7 @@ public interface BeCPGModel {
 	QName PROP_STATE_ACTIVITY_MODIFIER = QName.createQName(BECPG_URI,"stateActivityModifier");
 	QName PROP_STATE_ACTIVITY_PREVIOUSSTATE = QName.createQName(BECPG_URI,"stateActivityPreviousState");
 
-	
+	// Annotation aspect
+	QName ASPECT_ANNOTATION = QName.createQName(BeCPGModel.BECPG_URI, "annotationAspect");
+	QName PROP_ANNOTATION_DOCUMENT_IDENTIFIER = QName.createQName(BeCPGModel.BECPG_URI, "annotationDocumentIdentifier");
 }

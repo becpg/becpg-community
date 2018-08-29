@@ -216,5 +216,13 @@
             <value>${beCPG.notification.notify.cronExpression}</value>
         </property>
     </bean>
+    
+    <bean id="annotationService" class="fr.becpg.repo.annotation.AnnotationServiceImpl">
+		<property name="nodeService" ref="nodeService"/>
+		<property name="contentService" ref="contentService"/>
+		<property name="personService" ref="personService"/>
+		<property name="checkOutCheckInService" ref="checkOutCheckInService"/>
+		<property name="annotationAuthorization" value="${beCPG.annotationAuthorization}"/>
+	</bean>
 
 </beans>

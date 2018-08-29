@@ -119,4 +119,29 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
       <property name="endpoint" value="alfresco" />
    </bean>
    
+   <bean id="evaluator.becpg.doclib.action.annotation.isEnabled" parent="evaluator.doclib.action.metadataValue">
+      <property name="accessor" value="custom.annotation.enabled"/>
+      <property name="comparator">
+         <bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+            <property name="value" value="true" />
+         </bean>
+      </property>
+   </bean>
+   
+   <bean id="evaluator.becpg.doclib.action.annotation.hasAnnotationAspect" parent="evaluator.doclib.metadata.hasAspect">
+      <property name="aspects">
+         <list>
+            <value>bcpg:annotationAspect</value>
+         </list>
+      </property>
+	</bean>
+
+<bean id="evaluator.becpg.doclib.action.annotation.mimetype" parent="evaluator.doclib.action.isMimetype">
+		<property name="mimetypes">
+			<list>
+				<value>application/pdf</value>
+			</list>
+		</property>
+	</bean>
+	
 </beans>

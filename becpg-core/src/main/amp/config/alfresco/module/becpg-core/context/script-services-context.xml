@@ -19,8 +19,9 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
 	xsi:schemaLocation="
-        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
 
 	<!-- Todo merge that with beCPGScriptHelper -->
@@ -76,6 +77,13 @@
 		<property name="contentService" ref="contentService"/>
 		<property name="dictionaryService" ref="dictionaryService"/>
 	</bean>
+	
+	<bean id="annotationScriptHelper" parent="baseJavaScriptExtension" class="fr.becpg.repo.jscript.AnnotationScriptHelper">
+		<property name="extensionName">
+			<value>annotation</value>
+		</property>
+		<property name="annotationService" ref="annotationService"/>
+	</bean>
 
 	<!-- Override Alfresco -->
  
@@ -91,5 +99,17 @@
 		<property name="permissionService" ref="PermissionService" />
 		<property name="jsonConversionComponent" ref="jsonConversionComponent" />
 	</bean>
+	
+	<bean id="doclibCustomAnnotation" class="fr.becpg.repo.jscript.app.AnnotationCustomResponse">
+	    <property name="annotationAuthorization">
+	        <value>${beCPG.annotationAuthorization}</value>
+	    </property>
+	</bean>
+
+	<util:map id="slingshotDocLibCustomResponsesMap">
+		<entry key="annotation">
+			<ref bean="doclibCustomAnnotation" />
+		</entry>
+	</util:map>
 
 </beans>
