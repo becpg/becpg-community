@@ -19,15 +19,18 @@ package fr.becpg.repo.project.extractor;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.preference.PreferenceService;
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.MalformedNodeRefException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AccessStatus;
@@ -35,6 +38,7 @@ import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
@@ -48,6 +52,7 @@ import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorMode;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
+import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 public class ProjectListExtractor extends ActivityListExtractor {
@@ -66,6 +71,9 @@ public class ProjectListExtractor extends ActivityListExtractor {
 	private static final String VIEW_ENTITY_PROJECTS = "entity-projects";
 	private static final String PROJECT_LIST = "projectList";
 
+	@Autowired
+	private ProjectService projectService;
+	
 	private PersonService personService;
 
 	private AssociationService associationService;
@@ -268,7 +276,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 			final AttributeExtractorMode mode, Map<QName, Serializable> properties, final Map<String, Object> props,
 			final Map<NodeRef, Map<String, Object>> cache) {
 
-		return attributeExtractorService.extractNodeData(nodeRef, itemType, properties, metadataFields, mode,
+		Map<String, Object> ret =  attributeExtractorService.extractNodeData(nodeRef, itemType, properties, metadataFields, mode,
 				new AttributeExtractorService.DataListCallBack() {
 
 					@Override
@@ -279,6 +287,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 							DataListPagination pagination = (DataListPagination) props.get(PAGINATION);
 						
 						
+							
 							if ((ProjectModel.TYPE_TASK_LIST.equals(field.getFieldQname()) && pagination.getPageSize()>10)
 									|| BeCPGModel.TYPE_ACTIVITY_LIST.equals(field.getFieldQname())) {
 								// Only in progress tasks
@@ -390,6 +399,55 @@ public class ProjectListExtractor extends ActivityListExtractor {
 					}
 
 				});
+		
+		 extractTaskListResources(nodeRef, mode, itemType, ret);
+		 
+		return ret;
+	}
+
+
+	
+	private void extractTaskListResources(NodeRef nodeRef, AttributeExtractorMode mode, QName itemType, Map<String, Object> ret) {
+		
+		if(AttributeExtractorMode.CSV.equals(mode) || AttributeExtractorMode.XLSX.equals(mode)){
+			String resources = "";
+			if(entityDictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)){
+				for(NodeRef resourceNoderef : projectService.extractResources(entityListDAO.getEntity(nodeRef), getResources(nodeRef))){
+					if(!resources.isEmpty()){
+						resources += ",";
+					}
+					resources += (String) nodeService.getProperty(resourceNoderef, ContentModel.PROP_USERNAME);
+				}
+			}
+			
+			if(!resources.isEmpty()){
+				ret.put("assoc_pjt_tlResources", resources);
+			}
+		} else {
+			List<Map<String,Object>> resources = (List<Map<String,Object>>) ret.get("assoc_pjt_tlResources");
+			if(resources == null || resources.isEmpty()){
+				return;
+			}
+			for(Map<String, Object>resource : resources){
+				NodeRef resourceRef = new NodeRef((String) resource.get("value"));
+				for(NodeRef extractctedResourceRef : projectService.extractResources(entityListDAO.getEntity(nodeRef), Arrays.asList(resourceRef))){
+					resource.put("value", extractctedResourceRef.toString());
+					resource.put("metadata", (String) nodeService.getProperty(extractctedResourceRef, ContentModel.PROP_USERNAME));
+					resource.put("displayValue", (String) nodeService.getProperty(extractctedResourceRef, ContentModel.PROP_USERNAME));
+				}
+			}
+			
+		}
+			
+	}
+	
+	List<NodeRef> getResources(NodeRef nodeRef){
+		List<NodeRef> ret  = new ArrayList<>();
+		for(AssociationRef assocRef : nodeService.getTargetAssocs(nodeRef, ProjectModel.ASSOC_TL_RESOURCES)){
+			NodeRef resourceRef = assocRef.getTargetRef();
+			ret.add(resourceRef);
+		}
+		return ret ;
 	}
 
 	@Override
