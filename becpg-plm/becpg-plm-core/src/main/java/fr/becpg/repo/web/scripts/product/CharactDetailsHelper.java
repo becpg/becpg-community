@@ -20,12 +20,14 @@ package fr.becpg.repo.web.scripts.product;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.TreeMap;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -73,8 +75,22 @@ public class CharactDetailsHelper {
 
 		List<CharactDetailsValue> compEls = new LinkedList<>();
 
-		// translation -> index in resulting array
-		Map<String, Integer> additionalValues = new LinkedHashMap<String, Integer>();
+		// translation -> index in resulting array, sorted so it goes value - mini - maxi, or value - previous - future
+		Map<String, Integer> additionalValues = new TreeMap<String, Integer>(
+				
+				new Comparator<String>() {
+					
+					@Override
+					public int compare(String o1, String o2) {
+						if(o2.contains(MAXI_VALUE_KEY) && !o1.contains(MAXI_VALUE_KEY)) {
+							return 1;
+						} else if (o2.contains(FUTURE_COST_KEY) && !o1.contains(FUTURE_COST_KEY)){
+							return -1;
+						}
+						return o2.compareTo(o1);
+					}
+				});
+		
 		List<Object> totals = new LinkedList<>();
 		String colUnit = "";
 		for (Map.Entry<NodeRef, List<CharactDetailsValue>> entry : charactDetails.getData().entrySet()) {			
@@ -157,6 +173,7 @@ public class CharactDetailsHelper {
 				
 				Integer index = indexMap.get(key);
 				Double currentAdditionalValue = 0d;
+				boolean isNutrient = key.contains(MINI_VALUE_KEY) || key.contains(MAXI_VALUE_KEY);
 
 				if(key.contains(PREVIOUS_COST_KEY)){
 					currentAdditionalValue = charactDetailsValue.getPreviousValue();
@@ -168,10 +185,23 @@ public class CharactDetailsHelper {
 					currentAdditionalValue = charactDetailsValue.getMaxi();
 				}
 
-				if(currentAdditionalValue != null){
+				Integer level = charactDetailsValue.getLevel();
+				
+				Object elementToDisplay = currentAdditionalValue;
+				if(currentAdditionalValue == null){
+					if(isNutrient){
+						elementToDisplay = "—";
+						currentAdditionalValue = charactDetailsValue.getValue() != null ? charactDetailsValue.getValue() : 0d;
+					} else {
+						elementToDisplay = "";
+						currentAdditionalValue = 0d;
+					}
+				}
+				
+				if(level == 0) {
 					computeTotals(index, totals, currentAdditionalValue);
 				}
-				tmp.set(index, currentAdditionalValue);
+				tmp.set(index, elementToDisplay);
 			}
 			
 			tmp.add(charactDetailsValue.getKeyNodeRef());
