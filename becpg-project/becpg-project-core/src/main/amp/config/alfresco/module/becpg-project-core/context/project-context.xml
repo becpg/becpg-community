@@ -153,6 +153,13 @@
 		<property name="projectService" ref="projectService" />
 	</bean>
 	
+	<bean id="webscript.fr.becpg.project.projectDetails.get" class="fr.becpg.repo.project.web.scripts.ProjectDetailsWebScript" parent="webscript">
+		<property name="nodeService" ref="NodeService" />
+		<property name="entityListDAO" ref="entityListDAO" />
+		<property name="alfrescoRepository" ref="alfrescoRepository" />
+		<property name="contentService" ref="contentService"/>
+		<property name="personService" ref="personService"/>
+	</bean>
 	
    <!--                 -->
    <!-- Scheduled tasks -->

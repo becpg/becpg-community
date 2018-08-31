@@ -149,6 +149,22 @@
           
 
        },
+       
+       onActionShowProjectDetails : function PL_onActionShowDetails(item) {
+         
+           var url = Alfresco.constants.URL_SERVICECONTEXT + "modules/project-details/project-details?nodeRef=" + item.nodeRef ;
+
+           this._showPanel(url ,this.id+"_projectDetails", item.nodeRef);
+
+        },
+        
+        onActionShowProjectFolder : function PL_onActionShowProjectFolder(record){
+
+            var folderUrl = beCPG.util.entityDocumentsURL(record.siteId, record.path, record.itemData["prop_cm_name"].displayValue);      
+            
+        	window.location.href = folderUrl;
+        },
+       
       
       getOverdueClass : function PL_getOverdueClass(project, size) {
          var percent = 0, overdue = project.itemData["prop_pjt_projectOverdue"], dates = this.extractDates(project), suffix = size != null ? "-" + size
@@ -426,20 +442,18 @@
       
       getProjectTitleV2 : function PL_getProjectTitle(record, full) {
     	  
-          var propertiesUrl = null, dataListUrl = null, folderUrl = null, version = "";
+          var propertiesUrl = null, dataListUrl = null, version = "";
 
           var title = record.itemData["prop_cm_name"].displayValue, code = record.itemData["prop_bcpg_code"].displayValue, 
           overdue = '', ret = "", state = record.itemData["prop_pjt_projectState"].value;
 
-          folderUrl = beCPG.util.entityDocumentsURL(record.siteId, record.path, title);
 
           ret += '<span class="project-title project-status-'+state+'">';
   
           
           ret += '<a class="theme-color-1" href="' + beCPG.util.entityURL(record.siteId, record.nodeRef,"pjt:project") + '" title="' 
             +this.msg("actions.entity.view-tasks") + '">' + code + "&nbsp;-&nbsp;" + $html(title) + 
-            '</a>&nbsp;<a class="folder-link" href="' + folderUrl + '" title="' + this
-            .msg("link.title.open-folder") + '">&nbsp;</a>' ;
+            '</a>' ;
           
           
           ret += '<span class="node-' + record.nodeRef + '">';
@@ -451,7 +465,7 @@
               ret +="&nbsp;";
           }
           ret += "</a></span></span>";
-          
+         
           
           if (record.version && record.version !== "") {
         	  ret += '<span class="document-version">' + record.version + '</span>';
@@ -528,6 +542,7 @@
          };
          YAHOO.Bubbling.addDefaultAction(COMMENT_PROJECTEVENTCLASS, fnOnCommentProjectHandler);
          
+    
       }
 
    };

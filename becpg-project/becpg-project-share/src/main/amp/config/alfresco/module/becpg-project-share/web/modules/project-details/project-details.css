@@ -1,0 +1,349 @@
+.project-details span {
+    color: grey;
+    font-size: 12px;
+    display: inline-block;
+}
+
+.project-details a{
+    color: blue;
+    display: inline-block;
+}
+
+.project-details .hr {
+    border: 1px solid #D3D3D3;
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+.project-details {
+	 margin: 35px auto 5px auto;
+     width: 100%;
+     border: 1px solid #D3D3D3; 
+     background: #eeeeee;
+     border-top-left-radius: none;
+}
+
+.project-details .big-title {
+    font-size: 13px;
+    color: black;
+    padding-left: 20px;
+}
+
+.project-details .big-number {
+    color: black;
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.project-details .white-btn {
+    background-color: white;
+    border-radius: 8px;
+    padding: 3px 11px;
+    border-style: unset;
+    margin-left: 20px;
+}
+
+.project-details .grey-btn{
+    background-color: #666666;
+    border-style: unset;
+    padding: 5px 10px;
+    color: white;
+}
+
+.project-details .title-block{
+    color: white;
+    vertical-align: text-top;
+    font-size: 19px;
+    margin-top: -3px
+}
+
+.project-details .adjust-margin{
+    margin-top: -6px;
+}
+.project-details .white-block {
+    margin-top: 40px;
+    background-color: white;
+    margin: 10px;
+    padding: 6px;
+}
+
+.project-details .block-title {
+    text-transform: uppercase;
+    font-size: 13px;
+    display: inline-block;
+}
+
+.project-details .medium-title , .medium-txt {
+    color: black;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.project-details .sm-bold-txt {
+    color: black;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+..project-details vertical-top,
+.project-details .medium-title {
+    vertical-align: top;
+    margin-top: 6px;
+}
+
+.project-details .green-text {
+    color: #17a554;
+}
+
+.project-details .red-text {
+    color: #ff6620;
+}
+
+.project-details .grey-text {
+    color: #878a8d;
+}
+
+.project-details .white-text {
+    color: white;
+}
+
+.project-details .black-text {
+    color: black;
+}
+
+.project-details .percentage {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.project-details .chart {
+    background-color:white;
+    margin-top: 20px;
+    margin-bottom: 5px;
+}
+
+.project-details .float-right {
+    float: right;
+}
+
+.project-details .float-left {
+    float: left;
+}
+.project-details .bold {
+    font-weight: bold;
+}
+
+.project-details #myProgress {
+    width: 100%;
+    background-color: #ddd;
+    margin-botton: 20px;
+    margin-top:5px;
+}
+
+.project-details #blueBar, .project-details #lightBlueBar, .project-details #tooLightPinkBar, .project-details #redBar, .project-details #mauveBar, .project-details #lightmauveBar {
+    height: 30px;
+    line-height: 30px;
+    color: white;
+    text-align: left;
+}
+
+.project-details #blueBar{
+    background-color: #009dcc;
+}
+
+.project-details #lightBlueBar{
+	background-color: #90c6de;
+}
+.project-details #tooLightPinkBar{
+	background-color: #e9a6b7;
+}
+.project-details #redBar{
+    background-color: #fb9e29;
+}
+
+.project-details #mauveBar{
+    background-color: rgb(115, 95, 173);
+    width: 68%;
+}
+
+.project-details #lightmauveBar{
+    background-color: #cac1e4;
+    width: 60%;
+    color: black;
+}
+
+.project-details .next-milestone{
+    display: inline-block;
+    font-size: 13px;
+}
+
+ .project-details .xs-text{
+     padding: 0px 13px;
+ }
+
+.project-details .padding-0 {
+    padding: 0;
+}
+
+.project-details .padding-15 {
+    padding: 15px;
+}
+
+.project-details .padding-top-5{
+	padding-top: 1px;
+}
+
+.project-details .green-header{
+    background-color: #69bd43;
+    padding: 6px;
+}
+.project-details .red-header{
+    background-color: #f44336;
+    padding: 6px;
+}
+
+.project-details .diplay-block{
+    display: block;
+}
+.project-details .margin-left{
+    margin-left:  8px;
+}
+.project-details .margin-right{
+    margin-right: 16px;
+}
+
+.project-details .margin-top{
+	margin-top: 10px;
+}
+
+.project-details .scrollableList {
+    width: 100%;
+    height: 100px;
+    overflow: auto;
+}
+.project-details .inline-grid{
+    display: inline-grid;
+}
+
+.project-details .margin-left-20{
+	margin-left:20px;
+}
+
+.project-details .content-block{
+	margin-right: 11%;
+	float:left;
+}
+
+.project-details .display-flex{
+	display:flex;
+}
+
+.project-details .project-taskList-details{
+	 margin: 5px auto;
+     width: 100%;
+     border: 1px solid #D3D3D3; 
+     background: #eeeeee;
+     border-top-left-radius: none;
+}
+
+.project-details .project-comment-details{
+	 margin: 5px auto;
+     width: 100%;
+     border: 1px solid #D3D3D3; 
+     background: #eeeeee;
+     border-top-left-radius: none;
+}
+
+.project-details .btn:hover {
+  background-color: #ddd;
+}
+
+.project-details .btn.active {
+  background-color: white;
+  color: black;
+}
+
+.project-details .filter-btn{
+    background-color: rgba( 255, 255, 255, 0.5);
+    border-radius: 8px;
+    padding: 3px 11px;
+    border-style: unset;
+    margin-left: 20px;
+    margin-top: 3px;
+    cursor: pointer;
+}
+
+.project-details .display-inline-box{
+	-moz-inline-box;
+}
+
+.project-details .negatif-margin-left{
+	 margin-left: -22.01%;
+}
+.project-details .absolute-position{
+	position:absolute;
+}
+.project-details .center{
+	text-align:center;
+}
+
+.project-details .bar-description{
+	font-size: 12px;
+	-moz-inline-box;
+	position:absolute;
+	float: right;
+	color: black;
+	margin-left : 5px;
+}
+
+.project-details .comment-details{
+	border: 1px;
+	border-radius: 8px;
+	box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+	width: 100%;
+	margin: 10px;
+	
+}
+.project-details .icon {
+	float: left;
+	width: 70%;
+	padding-left: 10px;
+	padding-bottom: 5px;
+}
+
+.project-details .first-half{
+	width: 50%;
+	float: left;
+}
+
+.project-details .second-half{
+	width: 50%;
+	float: right;
+	text-align: end
+}
+
+.project-details #milestone-box {
+    width: 100%;
+    background-color: white;
+    margin-botton: 20px;
+    margin-top:5px;
+}
+.project-details .inline-block{
+	display: inline-block;
+}
+
+.project-details .div-resizer{
+    resize: vertical;
+    overflow: auto;
+    min-height: 185px;
+    height: 185px;
+}
+
+
+
+
+
+
+
+
+
