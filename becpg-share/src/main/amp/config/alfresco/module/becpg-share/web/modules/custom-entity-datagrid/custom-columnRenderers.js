@@ -44,6 +44,10 @@ if (beCPG.module.EntityDataGridRenderers) {
 
                      if (data.value != null && data.value != "" && data.value != "0") {
 
+                    	 if(scope.datalistMeta && scope.datalistMeta && scope.datalistMeta.name == "projectList"){
+                    		 return "";
+                    	 }
+                    	 
                         if (oColumn.hidden) {
                            scope.widgets.dataTable.showColumn(oColumn);
                            Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
