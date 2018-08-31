@@ -2,14 +2,18 @@ package fr.becpg.repo.product.helper;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.model.ForumModel;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.namespace.NamespaceService;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,10 +24,13 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.MPMModel;
 import fr.becpg.model.PLMModel;
+import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.impl.AbstractDataListExtractor;
 import fr.becpg.repo.entity.datalist.impl.ExcelDataListOutputPlugin;
 import fr.becpg.repo.entity.datalist.impl.MultiLevelExtractor;
+import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.ExcelHelper.ExcelFieldTitleProvider;
 import fr.becpg.repo.helper.JsonFormulaHelper;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
@@ -32,21 +39,32 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 @Service
 public class ProductExcelDataListOutputPlugin implements ExcelDataListOutputPlugin {
 
+	
 	@Autowired
 	private DictionaryService dictionaryService;
+	
+	@Autowired
+	protected EntityListDAO entityListDAO;
 
 	@Autowired
 	private NodeService nodeService;
+	
+	@Autowired
+	private AttributeExtractorService attributeExtractorService;
+	
+	@Autowired
+	private NamespaceService namespaceService;
 
 	@Override
 	public boolean isDefault() {
 		return false;
 	}
 
+
 	@Override
 	public boolean applyTo(DataListFilter dataListFilter) {
 		return PLMModel.TYPE_COMPOLIST.equals(dataListFilter.getDataType()) || PLMModel.TYPE_PACKAGINGLIST.equals(dataListFilter.getDataType())
-				|| MPMModel.TYPE_PROCESSLIST.equals(dataListFilter.getDataType());
+				|| MPMModel.TYPE_PROCESSLIST.equals(dataListFilter.getDataType()) || PLMModel.TYPE_DYNAMICCHARACTLIST.equals(dataListFilter.getDataType());
 	}
 
 	@Override
@@ -127,7 +145,60 @@ public class ProductExcelDataListOutputPlugin implements ExcelDataListOutputPlug
 
 		return items;
 	}
+	
 
+	@Override
+	public PaginatedExtractedItems extractExtrasSheet(DataListFilter dataListFilter) {
+		
+		if(PLMModel.TYPE_DYNAMICCHARACTLIST.equals(dataListFilter.getDataType())){
+			return null; 
+		}
+		
+		PaginatedExtractedItems ret = new PaginatedExtractedItems(dataListFilter.getPagination().getPageSize());
+		Set<String> metadataFields = new HashSet<>();
+		
+		NodeRef listsContainerNodeRef = entityListDAO.getListContainer(dataListFilter.getEntityNodeRefs().get(0));
+		
+		if (listsContainerNodeRef != null) {
+			NodeRef dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, dataListFilter.getDataListName());
+			
+			if (dataListNodeRef != null) {
+				List<NodeRef>  dynamicCharacts = entityListDAO.getListItems(dataListNodeRef, PLMModel.TYPE_DYNAMICCHARACTLIST);
+				
+				if(!dynamicCharacts.isEmpty()){
+					dynamicCharacts.forEach(nodeRef -> {
+						
+						Map<String, Object> temp = new HashMap<>(); 
+						nodeService.getProperties(nodeRef).forEach((key, value) -> {
+							
+							if(key.equals(PLMModel.PROP_DYNAMICCHARACT_TITLE) || key.equals(PLMModel.PROP_DYNAMICCHARACT_VALUE) ){
+								String mtField = "prop_" + key.toPrefixString(namespaceService).replaceAll(":", "_");
+								temp.put(mtField, value);
+								if(ret.getComputedFields() == null){
+									metadataFields.add(key.toPrefixString(namespaceService));
+								}
+							}
+							
+						});
+						
+						if(!temp.isEmpty()){
+							ret.addItem(temp);
+						}
+						
+						if(ret.getComputedFields() == null){
+							ret.setComputedFields(attributeExtractorService.readExtractStructure(PLMModel.TYPE_DYNAMICCHARACTLIST, new ArrayList<>(metadataFields)));
+						}
+					});
+					
+					dataListFilter.setDataListName(PLMModel.TYPE_DYNAMICCHARACTLIST.getLocalName());
+					dataListFilter.setDataType(PLMModel.TYPE_DYNAMICCHARACTLIST);
+				}
+			}
+		}
+		
+		return ret; 
+	}
+	
 	private Serializable extractSubValue(JSONArray jsonArray, Map<String, Object> items) throws JSONException {
 		for (int j = 0; j < jsonArray.length(); j++) {
 			String path = jsonArray.getJSONObject(j).getString(JsonFormulaHelper.JSON_PATH);
@@ -185,5 +256,7 @@ public class ProductExcelDataListOutputPlugin implements ExcelDataListOutputPlug
 		}
 
 	}
+
+
 
 }

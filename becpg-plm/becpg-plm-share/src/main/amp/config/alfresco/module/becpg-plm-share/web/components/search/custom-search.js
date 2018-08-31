@@ -694,7 +694,6 @@
                          */
                         exportSearch : function Search_exportSearch(args)
                         {
-                        	
 
                             var searchTerm = this.searchTerm;
                             if (args.searchTerm !== undefined)
@@ -748,7 +747,7 @@
                             }
 
                         	
-                        	if(args.reportFileName.indexOf(".zip")>0) {
+                        	if(args.reportFileName.indexOf(".zip")>0 || args.reportFileName.indexOf(".xlsx")>0) {
                         		
                         		url += "&async=true";
                         		
@@ -756,7 +755,11 @@
                                 
                         		downloadDialog.showExport = function (reportName)
 	                        	      {
-                        			
+                        			       if(args.reportFileName.indexOf(".xlsx")>0)
+                        			    	   this.mimeType = "-excel";
+                        			       else{
+                        			    	   this.mimeType = "";
+                        			       }
 	                        	            // Reset the dialog...
 	                        	            this._resetGUI();
 	
