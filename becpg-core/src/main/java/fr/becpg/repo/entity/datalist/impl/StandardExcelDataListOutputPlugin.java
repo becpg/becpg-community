@@ -9,6 +9,7 @@ import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.helper.ExcelHelper.ExcelFieldTitleProvider;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
@@ -51,6 +52,12 @@ public class StandardExcelDataListOutputPlugin implements ExcelDataListOutputPlu
 	@Override
 	public List<Map<String, Object>> decorate(List<Map<String, Object>> items) throws IOException {
 		return items;
+	}
+
+	@Override
+	public PaginatedExtractedItems extractExtrasSheet(DataListFilter dataListFilter) {
+		return null; 
+		
 	}
 
 }
