@@ -39,7 +39,6 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import fr.becpg.config.mapping.AbstractAttributeMapping;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
-import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.importer.ClassMapping;
 import fr.becpg.repo.importer.ImportContext;
 import fr.becpg.repo.importer.ImportVisitor;
@@ -55,12 +54,6 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 	private static final Log logger = LogFactory.getLog(ImportEntityListItemVisitor.class);
 
 	private FileFolderService fileFolderService;
-
-	private AssociationService associationService;
-
-	public void setAssociationService(AssociationService associationService) {
-		this.associationService = associationService;
-	}
 
 	public void setFileFolderService(FileFolderService fileFolderService) {
 		this.fileFolderService = fileFolderService;
