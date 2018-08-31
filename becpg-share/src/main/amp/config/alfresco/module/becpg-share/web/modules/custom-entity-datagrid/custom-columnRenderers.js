@@ -44,7 +44,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 
                      if (data.value != null && data.value != "" && data.value != "0") {
 
-                    	 if(scope.datalistMeta && scope.datalistMeta && scope.datalistMeta.name == "projectList"){
+                    	 if(scope.options  && scope.options.itemType == "pjt:project"){
                     		 return "";
                     	 }
                     	 
