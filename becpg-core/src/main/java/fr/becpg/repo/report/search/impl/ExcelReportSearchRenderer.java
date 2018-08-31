@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.service.cmr.action.Action;
+import org.alfresco.service.cmr.action.ActionService;
 import org.alfresco.service.cmr.repository.ContentIOException;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
@@ -30,6 +32,7 @@ import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.report.search.SearchReportRenderer;
+import fr.becpg.repo.report.search.actions.ExcelSearchAction;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.report.client.ReportFormat;
 
@@ -37,6 +40,9 @@ import fr.becpg.report.client.ReportFormat;
 public class ExcelReportSearchRenderer implements SearchReportRenderer {
 
 	private final static Log logger = LogFactory.getLog(ExcelReportSearchRenderer.class);
+	
+	@Autowired
+	private ActionService actionService;
 
 	@Autowired
 	private NodeService nodeService;
@@ -198,7 +204,10 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 
 	@Override
 	public void executeAction(NodeRef templateNodeRef, NodeRef downloadNode, ReportFormat reportFormat) {
-		// TODO Auto-generated method stub
+		Action action = actionService.createAction("excelSearchAction");
+        action.setExecuteAsynchronously(true);
+        action.setParameterValue(ExcelSearchAction.PARAM_TPL_NODEREF, templateNodeRef);
+        actionService.executeAction(action, downloadNode);
 		
 	}
 

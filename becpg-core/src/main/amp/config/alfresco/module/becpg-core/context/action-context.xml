@@ -59,6 +59,21 @@
       <property name="updateService" ref="downloadStatusUpdateService"/>
       <property name="namespaceService" ref="namespaceService"/>
    </bean>
+   
+   <!-- Export Search actions -->
+    
+   <bean id="excelSearchAction" class="fr.becpg.repo.report.search.actions.ExcelSearchAction" parent="action-executer">
+      <property name="contentServiceHelper" ref="downloadContentServiceHelper" />
+      <property name="downloadStorage" ref="downloadStorage" />
+      <property name="exporterService" ref="downloadExporterComponent" />
+      <property name="publicAction" value="false"/>
+      <property name="transactionHelper" ref="retryingTransactionHelper"/>
+      <property name="contentService" ref="contentService"/>
+      <property name="updateService" ref="downloadStatusUpdateService"/>
+      <property name="namespaceService" ref="namespaceService"/>
+      <property name="attributeExtractorService" ref="attributeExtractorService"/>
+      <property name="entityDictionaryService" ref="entityDictionaryService"/>
+   </bean>
     
     
     

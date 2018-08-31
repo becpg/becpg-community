@@ -1,21 +1,29 @@
 package fr.becpg.repo.project.extractor;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.alfresco.model.ContentModel;
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
-import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorMode;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
+import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.report.search.impl.DefaultExcelReportSearchPlugin;
 
 @Service
 public class TaskListExcelReportSearch extends DefaultExcelReportSearchPlugin{
 
+	
+	@Autowired
+	private ProjectService projectService;
 	
 	@Override
 	public boolean isDefault() {
@@ -33,12 +41,35 @@ public class TaskListExcelReportSearch extends DefaultExcelReportSearchPlugin{
 	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields,
 			Map<QName, Serializable> properties, final Map<NodeRef, Map<String, Object>> cache) {
 		
-
 		Map<String, Object> ret =  super.doExtract(nodeRef, itemType, metadataFields, properties, cache);
 		
-		TaskListExtractorHelper.extractTaskListResources(nodeRef, AttributeExtractorMode.XLSX, itemType, ret, nodeService);
+		String resources = "";
 		
+		
+		if(entityDictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)){
+			for(NodeRef resourceNoderef : projectService.extractResources(entityListDAO.getEntity(nodeRef), getResources(nodeRef))){
+				if(!resources.isEmpty()){
+					resources += ",";
+				}
+				
+				resources += (String) nodeService.getProperty(resourceNoderef, ContentModel.PROP_USERNAME);
+			}
+		}
+		
+		if(!resources.isEmpty()){
+			ret.put("assoc_pjt_tlResources", resources);
+		}
+
 		return ret;
+	}
+	
+	List<NodeRef> getResources(NodeRef nodeRef){
+		List<NodeRef> ret  = new ArrayList<>();
+		for(AssociationRef assocRef : nodeService.getTargetAssocs(nodeRef, ProjectModel.ASSOC_TL_RESOURCES)){
+			NodeRef resourceRef = assocRef.getTargetRef();
+			ret.add(resourceRef);
+		}
+		return ret ;
 	}
 
 }
