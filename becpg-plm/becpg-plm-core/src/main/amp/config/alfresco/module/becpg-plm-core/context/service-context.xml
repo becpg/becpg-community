@@ -72,7 +72,6 @@
 
 	<bean id="importEntityListItemVisitor" class="fr.becpg.repo.importer.impl.ImportEntityListItemVisitor" parent="parentImportVisitor">
 		<property name="fileFolderService" ref="fileFolderService" />
-		<property name="associationService" ref="associationService" />
 	</bean>
 
 
