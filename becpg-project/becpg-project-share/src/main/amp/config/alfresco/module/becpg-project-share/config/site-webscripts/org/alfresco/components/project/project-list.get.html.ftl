@@ -4,6 +4,8 @@
 	<@link href="${url.context}/res/components/project/jsgantt.css" group="project-list" />
 	<@link href="${url.context}/res/components/project/project-commons.css" group="project-list" />
 	<@link href="${url.context}/res/components/project/project-list.css" group="project-list" />
+	
+  	<@link href="${url.context}/res/modules/project-details/project-details.css" group="project-details" />
 </@>
 
 <@markup id="js">
@@ -25,6 +27,15 @@
 	<@script src="${url.context}/res/components/project/project-commons.js" group="project-list" />
 	<@script src="${url.context}/res/components/project/project-list.js" group="project-list" />
 	<@script src="${url.context}/res/components/comments/comments-list.js" group="comments"/>
+	
+    <@script src="${url.context}/res/ctools/jquery.js" type="text/javascript" group="project-details"></@script>
+    <@script src="${url.context}/res/ctools/jquery.tipsy.js" type="text/javascript" group="project-details"></@script>
+    <@script src="${url.context}/res/ctools/protovis.js" type="text/javascript" group="project-details"></@script>
+    <@script src="${url.context}/res/ctools/protovis-msie.js" type="text/javascript" group="project-details"></@script>
+    <@script src="${url.context}/res/ctools/tipsy.js" type="text/javascript" group="project-details"></@script>
+    <@script src="${url.context}/res/ctools/def.js" type="text/javascript" group="project-details"></@script>
+    <@script src="${url.context}/res/ctools/pvc.js" type="text/javascript" group="project-details"></@script>
+    <@script src="${url.context}/res/modules/project-details/project-details.js"  group="project-details"></@script>
 </@>
 
 <@markup id="widgets">
@@ -95,7 +106,7 @@
 			   <div style="display:none">
 			      <!-- Action Set "More..." container -->
 			      <div id="${el}-moreActions">
-			         <div class="onActionShowMore"><a href="#" class="${el}-show-more show-more" title="${msg("actions.more")}"><span>${msg("actions.more")}</span></a></div>
+			         <div class="onActionShowMore"><a href="#" class="${el}-show-more show-more" title="${msg("actions.more")}"><span>&nbsp;</span></a></div>
 			         <div class="more-actions hidden"></div>
 			      </div>
 			
