@@ -45,6 +45,11 @@
 	margin: 0;
 }
 
+.project-list .projects tr:hover td.yui-dt-last .yui-dt-liner {
+	border-left: none;
+	visibility: visible;
+}
+
 .project-list .project-list-bar .yui-u {
 	text-align: right;
 }
@@ -92,18 +97,7 @@
 	visibility: hidden;
 }
 
-.project-list .projects tr:hover td.yui-dt-last .yui-dt-liner {
-	border-left: 1px solid #c5e6e9;
-	visibility: visible;
-}
 
-/*
-.project-list .projects tr.yui-dt-highlighted td.yui-dt-last .yui-dt-liner
-{
-   border-left: 1px solid #c5e6e9;
-   visibility: visible;
-}
-*/
 .project-list .projects .yui-dt-data td {
 	border-bottom: 1px dashed #d9d9d9;
 	border-right: medium none;
