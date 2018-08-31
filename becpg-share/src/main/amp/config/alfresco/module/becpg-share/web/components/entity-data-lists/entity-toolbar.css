@@ -35,8 +35,7 @@
 
 
 .datalist-toolbar .entity-add-aspect span.first-child  {
-	background:  url("../documentlibrary/actions/document-manage-aspects-16.png") no-repeat 12px 4px;
-	padding-left: 24px;
+	background:  url("../documentlibrary/actions/document-manage-aspects-16.png") no-repeat 8px 4px;
 }
 
 
@@ -110,30 +109,31 @@
 }
 
 
+.datalist-toolbar .print span.first-child {
+    background: url(../images/printer-16.png) no-repeat 8px 4px ! important;
+    padding-left: 0px ! important;
+}
+
 
 .datalist-toolbar .entity-edit-metadata span.first-child
 {
-   background: url(../documentlibrary/actions/folder-edit-metadata-16.png) no-repeat 12px 4px;
-   padding-left: 24px;
+   background: url(../documentlibrary/actions/folder-edit-metadata-16.png) no-repeat 8px 4px;
 }
 
 .datalist-toolbar .entity-print-metadata span.first-child,
 .datalist-toolbar .entity-print-report span.first-child
 {
-   background: url(../images/printer-16.png) no-repeat 12px 4px;
-   padding-left: 24px;
+   background: url(../images/printer-16.png) no-repeat 8px 4px;
 }
 
 .datalist-toolbar .entity-reports-parameters span.first-child
 {
-   background: url(../documentlibrary/actions/entity-reports-parameters-16.png) no-repeat 12px 4px;
-   padding-left: 24px;
+   background: url(../../modules/entity-datagrid/images/cog.png) no-repeat 8px 4px;
 }
 
 .datalist-toolbar .entity-refresh-reports span.first-child
 {
-   background: url(../documentlibrary/actions/entity-refresh-reports-16.png) no-repeat 12px 4px;
-   padding-left: 24px;
+   background: url(../documentlibrary/actions/entity-refresh-reports-16.png) no-repeat 8px 4px;
 }
 
 .datalist-toolbar .full-screen span.first-child
