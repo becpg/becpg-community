@@ -155,7 +155,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 
 						if(component.getData().getVariants() == null || component.getData().getVariants().contains(variantData.getNodeRef())) {
 							Double recipeQtyUsedWithLossPerc = ((FormulationHelper.getQtyInKg(component.getData())
-									* FormulationHelper.getYield(component.getData()) * (1 - (lossPerc / 100))) / 100);
+									* FormulationHelper.getYield(component.getData()) * (1 + (lossPerc / 100))) / 100);
 							
 							Double recipeQtyUsed = (FormulationHelper.getQtyInKg(component.getData()) * FormulationHelper.getYield(component.getData()))
 									/ 100;
@@ -245,7 +245,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 				} else {
 					if (withLossPerc) {
 						qty += (FormulationHelper.getQtyInKg(component.getData()) * FormulationHelper.getYield(component.getData())
-								* (1 - (lossPerc / 100))) / 100;
+								* (1 + (lossPerc / 100))) / 100;
 					} else {
 						qty += (FormulationHelper.getQtyInKg(component.getData()) * FormulationHelper.getYield(component.getData())) / 100;
 					}
