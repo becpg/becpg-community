@@ -30,7 +30,6 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.preference.PreferenceService;
-import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.MalformedNodeRefException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AccessStatus;
@@ -38,7 +37,6 @@ import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
@@ -71,7 +69,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 	private static final String VIEW_ENTITY_PROJECTS = "entity-projects";
 	private static final String PROJECT_LIST = "projectList";
 
-	@Autowired
+	
 	private ProjectService projectService;
 	
 	private PersonService personService;
@@ -81,6 +79,11 @@ public class ProjectListExtractor extends ActivityListExtractor {
 	private PreferenceService preferenceService;
 
 	private static final Log logger = LogFactory.getLog(ProjectListExtractor.class);
+
+	
+	public void setProjectService(ProjectService projectService) {
+		this.projectService = projectService;
+	}
 
 	public void setPersonService(PersonService personService) {
 		this.personService = personService;
@@ -412,7 +415,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 		if(AttributeExtractorMode.CSV.equals(mode) || AttributeExtractorMode.XLSX.equals(mode)){
 			String resources = "";
 			if(entityDictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)){
-				for(NodeRef resourceNoderef : projectService.extractResources(entityListDAO.getEntity(nodeRef), getResources(nodeRef))){
+				for(NodeRef resourceNoderef : projectService.extractResources(entityListDAO.getEntity(nodeRef), associationService.getTargetAssocs(nodeRef, ProjectModel.ASSOC_TL_RESOURCES))){
 					if(!resources.isEmpty()){
 						resources += ",";
 					}
@@ -441,14 +444,6 @@ public class ProjectListExtractor extends ActivityListExtractor {
 			
 	}
 	
-	List<NodeRef> getResources(NodeRef nodeRef){
-		List<NodeRef> ret  = new ArrayList<>();
-		for(AssociationRef assocRef : nodeService.getTargetAssocs(nodeRef, ProjectModel.ASSOC_TL_RESOURCES)){
-			NodeRef resourceRef = assocRef.getTargetRef();
-			ret.add(resourceRef);
-		}
-		return ret ;
-	}
 
 	@Override
 	public boolean applyTo(DataListFilter dataListFilter) {
