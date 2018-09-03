@@ -1,12 +1,10 @@
 package fr.becpg.repo.project.extractor;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +45,7 @@ public class TaskListExcelReportSearch extends DefaultExcelReportSearchPlugin{
 		
 		
 		if(entityDictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)){
-			for(NodeRef resourceNoderef : projectService.extractResources(entityListDAO.getEntity(nodeRef), getResources(nodeRef))){
+			for(NodeRef resourceNoderef : projectService.extractResources(entityListDAO.getEntity(nodeRef), associationService.getTargetAssocs(nodeRef, ProjectModel.ASSOC_TL_RESOURCES))){
 				if(!resources.isEmpty()){
 					resources += ",";
 				}
@@ -63,13 +61,6 @@ public class TaskListExcelReportSearch extends DefaultExcelReportSearchPlugin{
 		return ret;
 	}
 	
-	List<NodeRef> getResources(NodeRef nodeRef){
-		List<NodeRef> ret  = new ArrayList<>();
-		for(AssociationRef assocRef : nodeService.getTargetAssocs(nodeRef, ProjectModel.ASSOC_TL_RESOURCES)){
-			NodeRef resourceRef = assocRef.getTargetRef();
-			ret.add(resourceRef);
-		}
-		return ret ;
-	}
+
 
 }
