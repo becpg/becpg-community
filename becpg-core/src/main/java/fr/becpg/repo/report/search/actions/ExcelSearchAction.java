@@ -23,9 +23,11 @@ import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.download.DownloadRequest;
 import org.alfresco.service.cmr.download.DownloadStatus;
 import org.alfresco.service.cmr.download.DownloadStatus.Status;
+import org.alfresco.service.cmr.repository.ContentData;
 import org.alfresco.service.cmr.repository.ContentIOException;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.view.ExporterCrawlerParameters;
 import org.alfresco.service.cmr.view.ExporterService;
 import org.alfresco.service.cmr.view.Location;
@@ -62,6 +64,7 @@ public class ExcelSearchAction extends ActionExecuterAbstractBase {
 	private AttributeExtractorService attributeExtractorService;
 	private EntityDictionaryService entityDictionaryService;
 	
+	private NodeService nodeService;
 	private ContentServiceHelper contentServiceHelper;
 	private DownloadStorage downloadStorage;
 	private ExporterService exporterService;
@@ -72,6 +75,10 @@ public class ExcelSearchAction extends ActionExecuterAbstractBase {
 
 	
 	
+	public void setNodeService(NodeService nodeService) {
+		this.nodeService = nodeService;
+	}
+
 	public void setExcelReportSearchPlugins(ExcelReportSearchPlugin[] excelReportSearchPlugins) {
 		this.excelReportSearchPlugins = excelReportSearchPlugins;
 	}
@@ -162,7 +169,6 @@ public class ExcelSearchAction extends ActionExecuterAbstractBase {
 				handler.setTemplateFile(tempFile);
 				try {
 					exporterService.exportView(handler, crawlerParameters, null);
-					
 					fileCreationComplete(actionedUponNodeRef, tempFile, handler);
 				} catch (DownloadCancelledException ex) {
 					downloadCancelled(actionedUponNodeRef, handler);
@@ -183,11 +189,14 @@ public class ExcelSearchAction extends ActionExecuterAbstractBase {
 		// Update the content and set the status to done.
 		transactionHelper.doInTransaction(() -> {
 			try {
+
 				contentServiceHelper.updateContent(actionedUponNodeRef, tempFile);
 				DownloadStatus status = new DownloadStatus(Status.DONE, handler.getFilesAddedCount(), handler.getFileCount(), handler.getFilesAddedCount(),
 						handler.getFileCount());
 				updateService.update(actionedUponNodeRef, status, handler.getNextSequenceNumber());
-
+				ContentData contentData = (ContentData) nodeService.getProperty(actionedUponNodeRef, ContentModel.PROP_CONTENT);
+				ContentData excelContentData = ContentData.setMimetype(contentData, "application/vnd.ms-excel");
+				nodeService.setProperty(actionedUponNodeRef, ContentModel.PROP_CONTENT, excelContentData);
 				return null;
 			} catch (ContentIOException ex1) {
 				throw new DownloadServiceException(CREATION_ERROR, ex1);
@@ -196,8 +205,9 @@ public class ExcelSearchAction extends ActionExecuterAbstractBase {
 			} catch (IOException ex3) {
 				throw new DownloadServiceException(CREATION_ERROR, ex3);
 			}
-
+			
 		}, false, true);
+			
 	}
 
 	private void downloadCancelled(final NodeRef actionedUponNodeRef, final ExcelSearchDownloadExporter handler) {
@@ -211,5 +221,8 @@ public class ExcelSearchAction extends ActionExecuterAbstractBase {
 		}, false, true);
 
 	}
+	
+	
+
 
 }
