@@ -304,7 +304,8 @@
                                         me.exportSearch(
                                         {
                                             reportTpl : menuItem.value,
-                                            reportFileName : menuItem.srcElement.attributes["fileName"].value
+                                            reportFileName : menuItem.srcElement.attributes["fileName"].value,
+                                            reportTplName : menuItem.srcElement.attributes["reportTplName"].value
                                         });
                                     }
                                 });
@@ -747,19 +748,36 @@
                             }
 
                         	
-                        	if(args.reportFileName.indexOf(".zip")>0 || args.reportFileName.indexOf(".xlsx")>0) {
+                        	if(args.reportFileName.indexOf(".zip")>0 || args.reportTplName.indexOf(".xlsx")>0) {
                         		
                         		url += "&async=true";
                         		
                         		var downloadDialog = Alfresco.getArchiveAndDownloadInstance();
+                        		
+                        		downloadDialog.mimeType = args.reportFileName.indexOf(".xlsx")>0 ? "-excel" : "";
                                 
+                        		downloadDialog._resetGUI = function (){
+                        	         // Reset references and the gui before showing it
+                        	         this.widgets.cancelOkButton.set("disabled", false);
+                        	         this._currentArchiveNodeURL = "";
+                        	         Dom.setStyle(this.id + "-aggregate-progress-span", "left", "-300px");
+                        	         Dom.get(this.id + "-file-count-span").innerHTML = "";
+                        	         Dom.get(this.id + "-aggregate-status-span").innerHTML = this.msg("status.label"+this.mimeType);
+                        	      };
+                        	      
+                        	      downloadDialog.updateProgress = function (json){
+                        	         // Remove any commas from the number to prevent NaN errors
+                        	         var done = json.done.replace(/,/g, "");
+                        	         var total = json.total.replace(/,/g, "");
+                        	         var overallProgress = total != 0 ? (done / total) : 0;
+                        	         var overallLeft = (-300 + (overallProgress * 300));
+                        	         Dom.setStyle(this.id + "-aggregate-progress-span", "left", overallLeft + "px"); 
+                        	         Dom.get(this.id + "-file-count-span").innerHTML = this.msg("file.status"+this.mimeType, json.filesAdded, json.totalFiles);
+                        	      };
+                        	      
                         		downloadDialog.showExport = function (reportName)
 	                        	      {
-                        			       if(args.reportFileName.indexOf(".xlsx")>0)
-                        			    	   this.mimeType = "-excel";
-                        			       else{
-                        			    	   this.mimeType = "";
-                        			       }
+                        			       
 	                        	            // Reset the dialog...
 	                        	            this._resetGUI();
 	
