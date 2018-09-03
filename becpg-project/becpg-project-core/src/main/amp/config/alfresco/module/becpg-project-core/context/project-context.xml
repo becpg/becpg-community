@@ -138,6 +138,7 @@
 		<property name="associationService" ref="associationService" />
 		<property name="dataListSortRegistry" ref="dataListSortRegistry" />
 		<property name="preferenceService" ref="preferenceService" />
+		<property name="projectService" ref="projectService" />
 	</bean>
 
 
