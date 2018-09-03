@@ -56,6 +56,7 @@
 						mandatory="false" read-only="false">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="style">width: 95%</control-param>
+							<control-param name="rows">10</control-param>
 						</control>
 					</field>
 				</appearance>
