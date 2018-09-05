@@ -2,6 +2,7 @@
 
 function getProjectParam(){
 	var nodeRef = args.nodeRef;
+	model.entityNodeRef=args.nodeRef;
 	 if (!nodeRef){
 	       status.setCode(status.STATUS_BAD_REQUEST, "nodeRef parameter is not present");
 	       return;

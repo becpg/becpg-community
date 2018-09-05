@@ -23,11 +23,6 @@
      border-top-left-radius: none;
 }
 
-.project-details .big-title {
-    font-size: 13px;
-    color: black;
-    padding-left: 20px;
-}
 
 .project-details .big-number {
     color: black;
@@ -43,13 +38,6 @@
     margin-left: 20px;
 }
 
-.project-details .grey-btn{
-    background-color: #666666;
-    border-style: unset;
-    padding: 5px 10px;
-    color: white;
-}
-
 .project-details .title-block{
     color: white;
     vertical-align: text-top;
@@ -60,11 +48,12 @@
 .project-details .adjust-margin{
     margin-top: -6px;
 }
+
 .project-details .white-block {
     margin-top: 40px;
     background-color: white;
     margin: 10px;
-    padding: 6px;
+    padding: 6px 6px;
 }
 
 .project-details .block-title {
@@ -73,13 +62,7 @@
     display: inline-block;
 }
 
-.project-details .medium-title , .medium-txt {
-    color: black;
-    font-size: 11px;
-    font-weight: 700;
-}
-
-.project-details .sm-bold-txt {
+.project-details .medium-title {
     color: black;
     font-size: 15px;
     font-weight: 700;
@@ -91,29 +74,12 @@
     margin-top: 6px;
 }
 
-.project-details .green-text {
-    color: #17a554;
-}
-
 .project-details .red-text {
     color: #ff6620;
 }
 
-.project-details .grey-text {
-    color: #878a8d;
-}
-
-.project-details .white-text {
-    color: white;
-}
-
 .project-details .black-text {
     color: black;
-}
-
-.project-details .percentage {
-    font-size: 14px;
-    font-weight: bold;
 }
 
 .project-details .chart {
@@ -133,78 +99,58 @@
     font-weight: bold;
 }
 
-.project-details #myProgress {
+.project-details .myProgress {
     width: 100%;
     background-color: #ddd;
     margin-botton: 20px;
     margin-top:5px;
 }
 
-.project-details #blueBar, .project-details #lightBlueBar, .project-details #tooLightPinkBar, .project-details #redBar, .project-details #mauveBar, .project-details #lightmauveBar {
+.project-details .blueBar, .project-details .lightBlueBar, .project-details .redBar, .project-details .mauveBar, .project-details .lightmauveBar {
     height: 30px;
     line-height: 30px;
     color: white;
     text-align: left;
 }
 
-.project-details #blueBar{
+.project-details .blueBar{
     background-color: #009dcc;
 }
 
-.project-details #lightBlueBar{
+.project-details .lightBlueBar{
 	background-color: #90c6de;
 }
-.project-details #tooLightPinkBar{
-	background-color: #e9a6b7;
-}
-.project-details #redBar{
+
+.project-details .redBar{
     background-color: #fb9e29;
 }
 
-.project-details #mauveBar{
+.project-details .mauveBar{
     background-color: rgb(115, 95, 173);
     width: 68%;
 }
 
-.project-details #lightmauveBar{
+.project-details .lightmauveBar{
     background-color: #cac1e4;
     width: 60%;
     color: black;
 }
 
-.project-details .next-milestone{
-    display: inline-block;
-    font-size: 13px;
-}
-
- .project-details .xs-text{
-     padding: 0px 13px;
- }
-
 .project-details .padding-0 {
     padding: 0;
-}
-
-.project-details .padding-15 {
-    padding: 15px;
-}
-
-.project-details .padding-top-5{
-	padding-top: 1px;
 }
 
 .project-details .green-header{
     background-color: #69bd43;
     padding: 6px;
+    margin-bottom: 10px;
 }
 .project-details .red-header{
     background-color: #f44336;
     padding: 6px;
+    margin-bottom : 10px;
 }
 
-.project-details .diplay-block{
-    display: block;
-}
 .project-details .margin-left{
     margin-left:  8px;
 }
@@ -221,37 +167,13 @@
     height: 100px;
     overflow: auto;
 }
-.project-details .inline-grid{
-    display: inline-grid;
-}
 
 .project-details .margin-left-20{
 	margin-left:20px;
 }
 
-.project-details .content-block{
-	margin-right: 11%;
-	float:left;
-}
-
 .project-details .display-flex{
 	display:flex;
-}
-
-.project-details .project-taskList-details{
-	 margin: 5px auto;
-     width: 100%;
-     border: 1px solid #D3D3D3; 
-     background: #eeeeee;
-     border-top-left-radius: none;
-}
-
-.project-details .project-comment-details{
-	 margin: 5px auto;
-     width: 100%;
-     border: 1px solid #D3D3D3; 
-     background: #eeeeee;
-     border-top-left-radius: none;
 }
 
 .project-details .btn:hover {
@@ -271,20 +193,6 @@
     margin-left: 20px;
     margin-top: 3px;
     cursor: pointer;
-}
-
-.project-details .display-inline-box{
-	-moz-inline-box;
-}
-
-.project-details .negatif-margin-left{
-	 margin-left: -22.01%;
-}
-.project-details .absolute-position{
-	position:absolute;
-}
-.project-details .center{
-	text-align:center;
 }
 
 .project-details .bar-description{
@@ -322,14 +230,12 @@
 	text-align: end
 }
 
-.project-details #milestone-box {
+.project-details .milestone-box {
     width: 100%;
     background-color: white;
     margin-botton: 20px;
     margin-top:5px;
-}
-.project-details .inline-block{
-	display: inline-block;
+    display: inline-block;
 }
 
 .project-details .div-resizer{
@@ -339,11 +245,9 @@
     height: 185px;
 }
 
-
-
-
-
-
-
-
-
+.project-details .black-bold-text{
+	color: black;
+	font-weight: bold;
+	float: right;
+	margin-right: 16px;
+}

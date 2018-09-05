@@ -104,7 +104,7 @@ public class ProjectDetailsWebScript extends AbstractWebScript {
 
 			int milestoneSum = 0, milestoneReleased = 0, remainingDays = 0, userTaskSum = 0;
 
-			double overdueTaskCompletionPerc = 0, userOverdueTaskCompletionPerc = 0, userTaskCompletionPerc = -1;
+			double overdueTaskCompletionPerc = 0, userOverdueTaskCompletionPerc = 0, userTaskCompletionPerc = 0;
 
 			List<TaskListDataItem> tasks = data.getTaskList();
 
@@ -152,7 +152,7 @@ public class ProjectDetailsWebScript extends AbstractWebScript {
 				if (isAuthenticatedUser) {
 					userTaskSum++;
 					double taskCompletionPerc = task.getCompletionPercent() != null ? task.getCompletionPercent() : 0;
-					if (userTaskCompletionPerc < 0) {
+					if (userTaskCompletionPerc == 0) {
 						userTaskCompletionPerc = taskCompletionPerc;
 					} else {
 						userTaskCompletionPerc = (taskCompletionPerc + userTaskCompletionPerc) / 2;
@@ -160,7 +160,7 @@ public class ProjectDetailsWebScript extends AbstractWebScript {
 				}
 
 				// commingTask && overdueTask && overdueWorkPercent
-				if (task.getEnd().before(today) && !task.getState().equals(TaskState.Completed.toString())) {
+				if (task.getEnd() != null && task.getEnd().before(today) && !task.getState().equals(TaskState.Completed.toString())) {
 					overdueTaskCompletionPerc += task.getCompletionPercent() != null ? 100 - task.getCompletionPercent() : 100;
 					overdueTaskList.put(taskObject);
 
@@ -168,7 +168,7 @@ public class ProjectDetailsWebScript extends AbstractWebScript {
 						userOverdueTaskCompletionPerc += task.getCompletionPercent() != null ? 100 - task.getCompletionPercent() : 0;
 					}
 
-				} else if (task.getStart().after(today)) {
+				} else if (task.getStart()!= null && task.getStart().after(today)) {
 					commingTaskList.put(taskObject);
 				}
 
