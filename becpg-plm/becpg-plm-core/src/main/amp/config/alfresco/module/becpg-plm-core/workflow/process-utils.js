@@ -15,7 +15,7 @@ function sendMail(userOrGroup, from, subject, message, templatePath, workflowDoc
                mail.parameters.to_many = new Array(userOrGroup);
             }
            
-            mail.parameters.subject = subject;
+            mail.parameters.subject = subject.replace("\n", " ").replace("\r", " ");
             if (from != null)
             {
                 mail.parameters.from = from.properties.email;
