@@ -360,8 +360,9 @@
 													html += "</div></div></div>";
 												}
 											}
-											Dom.get(instance.id + "-scoresDiv").innerHTML = html;
-
+											if(Dom.get(instance.id + "-scoresDiv")!=null){
+												Dom.get(instance.id + "-scoresDiv").innerHTML = html;
+											}
 											
 											if(!instance.widgets.notificationsDataTable){
 												instance.createDataTable();
