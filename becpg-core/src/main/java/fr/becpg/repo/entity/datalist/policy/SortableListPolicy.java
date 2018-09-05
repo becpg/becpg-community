@@ -149,7 +149,7 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 	@Override
 	public void onAddAspect(NodeRef nodeRef, QName aspect) {
 
-		if (policyBehaviourFilter.isEnabled(BeCPGModel.ASPECT_DEPTH_LEVEL) ) {
+		if (policyBehaviourFilter.isEnabled(BeCPGModel.ASPECT_DEPTH_LEVEL)) {
 			// try to avoid to do two times the work, otherwise it duplicates
 			// nodeRef in lucene index !!!
 			if (nodeService.exists(nodeRef)) {
@@ -162,17 +162,28 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 
 				if (aspect.isMatch(BeCPGModel.ASPECT_DEPTH_LEVEL)) {
 					NodeRef parentNodeRef = (NodeRef) nodeService.getProperty(nodeRef, BeCPGModel.PROP_PARENT_LEVEL);
-					if ((parentNodeRef != null)
-							&& entityDictionaryService.isSubClass(nodeService.getType(parentNodeRef), BeCPGModel.TYPE_ENTITY_V2)) {
+					if ((parentNodeRef != null)) {
 
-						NodeRef listContainerNodeRef = entityListDAO.getListContainer(parentNodeRef);
-						if (listContainerNodeRef != null) {
-							NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, nodeService.getType(nodeRef));
-							if (listNodeRef != null) {
-								nodeService.moveNode(nodeRef, listNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
+						if (entityDictionaryService.isSubClass(nodeService.getType(parentNodeRef), BeCPGModel.TYPE_ENTITY_V2)) {
+							NodeRef listContainerNodeRef = entityListDAO.getListContainer(parentNodeRef);
+							if (listContainerNodeRef != null) {
+								NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, nodeService.getType(nodeRef));
+								if (listNodeRef != null) {
+									nodeService.moveNode(nodeRef, listNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
+								}
+							}
+							nodeService.setProperty(nodeRef, BeCPGModel.PROP_PARENT_LEVEL, null);
+						} else if (entityDictionaryService.isSubClass(nodeService.getType(parentNodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)
+								&& entityDictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
+
+							if (!nodeService.getPrimaryParent(parentNodeRef).getParentRef()
+									.equals(nodeService.getPrimaryParent(nodeRef).getParentRef())) {
+
+								nodeService.moveNode(nodeRef, nodeService.getPrimaryParent(parentNodeRef).getParentRef(), ContentModel.ASSOC_CONTAINS,
+										ContentModel.ASSOC_CONTAINS);
+
 							}
 						}
-						nodeService.setProperty(nodeRef, BeCPGModel.PROP_PARENT_LEVEL, null);
 					}
 
 				}
@@ -217,7 +228,7 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 					return true;
 				});
 
-			} , false, true);
+			}, false, true);
 		} finally {
 			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
 		}
@@ -226,16 +237,16 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 	@Override
 	public void onDeleteNode(ChildAssociationRef childRef, boolean isNodeArchived) {
 		logger.debug("SortableListPolicy.onDeleteNode");
-	
-			// if folder is deleted, all children are
-			if (nodeService.exists(childRef.getParentRef())) {
-				try {
-					policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
-					dataListSortService.deleteChildrens(childRef.getParentRef(), childRef.getChildRef());
-				} finally {
-					policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
-				}
+
+		// if folder is deleted, all children are
+		if (nodeService.exists(childRef.getParentRef())) {
+			try {
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
+				dataListSortService.deleteChildrens(childRef.getParentRef(), childRef.getChildRef());
+			} finally {
+				policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
 			}
+		}
 	}
 
 	@Override
