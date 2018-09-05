@@ -27,13 +27,12 @@
 	 * @constructor
 	 */
 	beCPG.component.ProjectDetails = function(htmlId) {
-
-		beCPG.component.ProjectDetails.superclass.constructor.call(this,
+	beCPG.component.ProjectDetails.superclass.constructor.call(this,
 				"beCPG.component.ProjectDetails", htmlId, [ "button",
 						"container" ]);
 		var me = this;
 
-		var fnActionHandler = function EntityDataGrid_fnActionHandler(layer,
+		var fnActionHandler = function ProjectDetails_fnActionHandler(layer,
 				args) {
 
 			var owner = YAHOO.Bubbling
@@ -48,22 +47,17 @@
 			return true;
 		};
 
-		YAHOO.Bubbling.addDefaultAction("filter-action", fnActionHandler);
-
+		YAHOO.Bubbling.addDefaultAction("filter-details-action", fnActionHandler);
+	
 		return this;
 	};
 
-	/**
-	 * Extend from Alfresco.component.Base
-	 */
-	YAHOO.extend(beCPG.component.ProjectDetails, Alfresco.component.Base);
 
-	/**
-	 * Augment prototype with main class implementation, ensuring overwrite is
-	 * enabled
-	 */
-	YAHOO.lang.augmentObject(beCPG.component.ProjectDetails.prototype,
-			{
+	   YAHOO
+	         .extend(
+	        	   beCPG.component.ProjectDetails,
+	               Alfresco.component.Base,
+	               {
 				/**
 				 * Object container for initialization options
 				 * 
@@ -83,85 +77,84 @@
 				},
 
 				onReady : function projectGraph() {
-					console.log(this);
-					var relational_01_ds = {
-
-						"resultset" : this.options.graphData,
-						"metadata" : [ {
-							"colIndex" : 0,
-							"colType" : "String",
-							"colName" : "Date"
-						}, {
-							"colIndex" : 1,
-							"colType" : "Numeric",
-							"colName" : "Activity number"
-						} ]
-					};
-					var myChart = new pvc.StackedAreaChart({
-
-						canvas : this.id+"-chart",
-						width : 500,
-						height : 150,
-						animate : true,
-						selectable : false,
-						hoverable : true,
-						tooltipEnabled : false,
-						axisGrid : true,
-						nullInterpolationMode : 'linear',
-						extensionPoints : {
-							area_interpolate : 'cardinal',
-							axisGrid_strokeStyle : 'lightgray'
-						},
-
-						orthoAxisVisible : true,
-						orthoAxisTitle : "Nombre d'activité",
-						baseAxisVisible : true,
-						colors : [ 'rgba(107, 210, 169, 0.6)' ],
-
-						focusWindowBaseConstraint : function(oper) {
-							console.log(oper);
-
-							if (oper.type === 'new'
-									&& oper.length0 === oper.length) {
-								var len = (oper.max - oper.min) / 4;
-								var middle = ((+oper.max) + (+oper.min)) / 2;
-								oper.value = new Date(middle - len / 2);
-								oper.length = len;
-							}
-							var tim = pvc.time;
-							var interval = tim.weekday;
-
-							var minLen = tim.intervals.d;
-							var sign = oper.target === 'end' ? -1 : +1;
-							var t0 = +oper.value;
-
-							var t = interval.closestOrSelf(tim
-									.withoutTime(oper.value));
-							oper.min = interval.previousOrSelf(tim
-									.withoutTime(oper.minView));
-							oper.max = interval.previousOrSelf(tim
-									.withoutTime(oper.maxView));
-							if (oper.type === 'new') {
+				
+						var relational_01_ds = {
+	
+							"resultset" : this.options.graphData,
+							"metadata" : [ {
+								"colIndex" : 0,
+								"colType" : "String",
+								"colName" : "Date"
+							}, {
+								"colIndex" : 1,
+								"colType" : "Numeric",
+								"colName" : "Activity number"
+							} ]
+						};
+						var myChart = new pvc.StackedAreaChart({
+	
+							canvas : this.id+"-chart",
+							width : 500,
+							height : 150,
+							animate : true,
+							selectable : false,
+							hoverable : true,
+							tooltipEnabled : false,
+							axisGrid : true,
+							nullInterpolationMode : 'linear',
+							extensionPoints : {
+								area_interpolate : 'cardinal',
+								axisGrid_strokeStyle : 'lightgray'
+							},
+	
+							orthoAxisVisible : true,
+							orthoAxisTitle : "Nombre d'activité",
+							baseAxisVisible : true,
+							colors : [ 'rgba(107, 210, 169, 0.6)' ],
+	
+							focusWindowBaseConstraint : function(oper) {
+					
+								if (oper.type === 'new'
+										&& oper.length0 === oper.length) {
+									var len = (oper.max - oper.min) / 4;
+									var middle = ((+oper.max) + (+oper.min)) / 2;
+									oper.value = new Date(middle - len / 2);
+									oper.length = len;
+								}
+								var tim = pvc.time;
+								var interval = tim.weekday;
+	
+								var minLen = tim.intervals.d;
+								var sign = oper.target === 'end' ? -1 : +1;
+								var t0 = +oper.value;
+	
+								var t = interval.closestOrSelf(tim
+										.withoutTime(oper.value));
+								oper.min = interval.previousOrSelf(tim
+										.withoutTime(oper.minView));
+								oper.max = interval.previousOrSelf(tim
+										.withoutTime(oper.maxView));
+								if (oper.type === 'new') {
+									oper.value = t;
+									oper.length = Math.max(oper.length, minLen);
+									return;
+								}
+								var l = +oper.length;
+								var o = t0 + sign * l;
+								l = sign * (o - t);
+								if (l < minLen) {
+									t = o - sign * minLen;
+								}
 								oper.value = t;
-								oper.length = Math.max(oper.length, minLen);
-								return;
-							}
-							var l = +oper.length;
-							var o = t0 + sign * l;
-							l = sign * (o - t);
-							if (l < minLen) {
-								t = o - sign * minLen;
-							}
-							oper.value = t;
-						},
-
-					}).setData(relational_01_ds, {
-						crosstabMode : false
-					}).render();
+							},
+	
+						}).setData(relational_01_ds, {
+							crosstabMode : false
+						}).render();
+						
 				},
 
-				onFilterAction : function(fieldId) {
-					console.log(this);
+				onFilterDetailsAction : function(fieldId) {
 					var idSpan0 = fieldId.split("#")[0], idSpan1 = fieldId
 							.split("#")[1];
 					var filteredDivEls = Dom.getElementsByClassName(idSpan0);
