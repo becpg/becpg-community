@@ -367,7 +367,7 @@ function sendMail(userOrGroup, from, subject, message, isAction) {
             } else {
                 mail.parameters.to_many = new Array(userOrGroup.properties["cm:userName"]);
             }
-            mail.parameters.subject = subject;
+            mail.parameters.subject = subject.replace("\n", " ").replace("\r", " ");
             mail.parameters.from = from.properties.email;
             mail.parameters.ignore_send_failure = true;
 
