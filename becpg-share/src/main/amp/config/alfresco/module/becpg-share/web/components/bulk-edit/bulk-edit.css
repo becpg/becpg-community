@@ -351,6 +351,10 @@
 }
 
 
+.form-container .bulk-edit label {
+	display: inline;
+}
+
 
 /* Selected Items Menu */
 .bulk-edit .selected-items li {

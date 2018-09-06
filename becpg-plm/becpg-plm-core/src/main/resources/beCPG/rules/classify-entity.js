@@ -71,9 +71,16 @@ function classifyByHierarchy(productNode, folderNode, propHierarchy) {
 function isInSite(productNode, siteId) {
 	if (productNode.qnamePath.indexOf("/app:company_home/st:sites/cm:" + siteId + "/") != -1) {
 		return true;
-	} else {
-		return false;
+	} 
+	return false;
+}
+
+function isInUserFolder(productNode){
+	if (productNode.qnamePath.indexOf("/app:company_home/app:user_homes") != -1) {
+		return true;
 	}
+	return false;
+	
 }
 
 function isInFolder(productNode, folderNode) {
