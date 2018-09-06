@@ -1689,14 +1689,14 @@
 			       									title : this.msg("message.confirm.edit-columns.title"),
 			       									text : this.msg(confirmMessage),
 			       									buttons : [ {
-			       										text : this.msg("button.ok"),
+			       										text : this.msg("button.yes"),
 			       										handler : function columnsUpdate() {
 			       											this.destroy();
 			       											submit = true;
 			       											createRow.widgets.okButton._button.click();
 			       										}
 			       									}, {
-			       										text : this.msg("button.cancel"),
+			       										text : this.msg("button.no"),
 			       										handler : function EntityDataGrid__onActionEdit_cancel() {
 			       											this.destroy();
 			       											submit = false;

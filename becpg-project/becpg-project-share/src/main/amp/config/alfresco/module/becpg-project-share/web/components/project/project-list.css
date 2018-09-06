@@ -257,6 +257,7 @@
 	font-style: italic;
 	font-size: 0.9em;
 	display: block;
+	padding-top: 5px;
 }
 
 .datagrid span.task-group {
