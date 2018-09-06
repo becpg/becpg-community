@@ -53,12 +53,14 @@ public class WorkflowProcessListPlugin implements EntityProcessListPlugin {
 		
 		for (WorkflowInstance workflow : workflows){
 			Map<String, Object> tmp = modelBuilder.buildSimple(workflow);
-			
-			tmp.put(PROCESS_INSTANCE_START_DATE, FORMATER.formatDate(workflow.getStartDate()));
-			
+			if(workflow.getStartDate() != null){
+				tmp.put(PROCESS_INSTANCE_START_DATE, FORMATER.formatDate(workflow.getStartDate()));
+			}
 			if(workflow.getDueDate() != null ){
 				tmp.put(PROCESS_INSTANCE_DUE_DATE, FORMATER.formatDate(workflow.getDueDate()));
 			}
+			
+			tmp.put(PROCESS_INSTANCE_ICON, "res/components/images/workflow-16.png");
 			
 			tmp.put(PROCESS_INSTANCE_TYPE, getType());
 			results.add(tmp);

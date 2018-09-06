@@ -11,9 +11,11 @@
    "type": "${processInstance.type}",
    "title": "${processInstance.title!""}",
    "isActive": ${processInstance.isActive?string},
+   "state": <#if processInstance.state??>"${processInstance.state?string}"<#else>null</#if>,
    "message": <#if processInstance.message??>"${processInstance.message}"<#else>null</#if>,
-   "startDate": "${processInstance.startDate}",
+   "startDate":<#if processInstance.startDate??>"${processInstance.startDate}"<#else>null</#if>,
    "dueDate": <#if processInstance.dueDate??>"${processInstance.dueDate}"<#else>null</#if>,
+   "iconUrl": "${processInstance.iconUrl}",
    "initiator": 
    <#if processInstance.initiator??>
    {
