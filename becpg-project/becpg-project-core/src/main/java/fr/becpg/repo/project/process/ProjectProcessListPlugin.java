@@ -7,11 +7,11 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.helper.AssociationService;
@@ -27,6 +27,8 @@ public class ProjectProcessListPlugin implements EntityProcessListPlugin {
 	@Autowired
 	private PersonService personService;
 	
+	@Autowired
+	private NodeService nodeService;
 	
 	@Autowired
 	private AssociationService associationService;
@@ -60,15 +62,25 @@ public class ProjectProcessListPlugin implements EntityProcessListPlugin {
 				
 				temp.put(PROCESS_INSTANCE_TITLE, data.getName());
 				
-				temp.put(PROCESS_INSTANCE_START_DATE, FORMATER.formatDate(data.getStartDate()));
-				
+				if(data.getStartDate() != null){
+					temp.put(PROCESS_INSTANCE_START_DATE, FORMATER.formatDate(data.getStartDate()));
+				}
 				if(data.getDueDate() != null){
 					temp.put(PROCESS_INSTANCE_DUE_DATE, FORMATER.formatDate(data.getDueDate()));
 				}
 				
 				temp.put(PROCESS_INSTANCE_IS_ACTIVE, data.getProjectState().equals(ProjectState.Completed) ? false : true);
+				temp.put(PROCESS_INSTANCE_STATE, data.getProjectState().toString());
 				
-				temp.put(PROCESS_INSTANCE_INITIATOR, getPersonModel(data.getCreator()));
+				NodeRef personRef = null;
+				if(data.getProjectManager()!=null){
+					personRef = data.getProjectManager();
+				} else if(personService.personExists(data.getCreator())){
+					 personRef = personService.getPerson(data.getCreator());
+				}
+				
+				temp.put(PROCESS_INSTANCE_INITIATOR, getPersonModel(personRef));
+				temp.put(PROCESS_INSTANCE_ICON, "res/components/images/filetypes/generic-project-16.png");
 				
 				ret.add(temp);
 			}
@@ -80,18 +92,15 @@ public class ProjectProcessListPlugin implements EntityProcessListPlugin {
 	}
 
 	  
-	private Map<String, Object> getPersonModel(String name){
+	private Map<String, Object> getPersonModel(NodeRef person){
 
 		Map<String, Object> model = new HashMap<>();
-		model.put(PERSON_USER_NAME, name);
-		
-		if (personService.personExists(name))
-		{
-			NodeRef person = personService.getPerson(name);
+		if(person != null){
+			model.put(PERSON_USER_NAME, nodeService.getProperty(person, ContentModel.PROP_USERNAME));
 			NodeRef avatarRef = associationService.getTargetAssoc(person, ContentModel.ASSOC_AVATAR);
 			model.put(PERSON_AVATAR, "api/node/" + avatarRef.toString().replace("://", "/") + "/content/thumbnails/avatar");
 		}
-		
+
 		return model;
 		
 	}

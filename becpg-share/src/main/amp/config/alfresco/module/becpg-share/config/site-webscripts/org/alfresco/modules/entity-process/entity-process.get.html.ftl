@@ -28,7 +28,7 @@
 	        <span class="first-child">
 			    <select id="process-state" class="process-list-filter-action process-type">
 			     <#list processStates as state>
-			        <option value="${state?html}">${msg("filter.process." + state)}</option>
+			        <option value="${state?html}" <#if state=="active"> selected="selected"</#if> >${msg("filter.process." + state)}</option>
 			     </#list>
 			    </select>
 	        </span>
@@ -49,7 +49,7 @@
        <div class="processes">
               <#list processes as process>
                 <#assign processState><#if process.isActive>active<#else>archived</#if></#assign>
-                 <div class="process process-element ${process.type}-${processState} ${processState}-${process.type} ${process.type} ${processState} <#if !process_has_next>process-last</#if>">
+                 <div class="process process-element <#if !process.isActive> hidden </#if> ${process.type}-${processState} ${processState}-${process.type} ${process.type} ${processState} <#if !process_has_next>process-last</#if>">
                     <#if process.initiator?? && process.initiator.avatarUrl??>
                     <img src="${url.context}/proxy/alfresco/${process.initiator.avatarUrl}" alt="${msg("label.avatar")}"/>
                     <#else>
@@ -58,11 +58,15 @@
                     <#if process.id??>
                     <a href="${siteURL("workflow-details?workflowId=" + process.id?js_string + "&nodeRef=" + (args.nodeRef!""))}">
                     <#else>
-                    <a href="${siteURL("entity-data-lists?nodeRef=" + process.nodeRef +"&list=View-properties")}">
-                    </#if>
-                    <#if process.message?? && process.message?length &gt; 0>${process.message?html}<#else>${msg("process.no_description")?html}</#if></a>
-                    <div class="title">${process.title?html}</div>
-                    <div class="title">${process.startDate}  <#if process.dueDate??> - ${process.dueDate}<#else></#if></div> 
+                    <a href="${siteURL("entity-data-lists?nodeRef=" + process.nodeRef +"&list=taskList")}">
+                    </#if> 
+                    <img style="min-height: 0em;" src="${url.context}/${process.iconUrl}" />
+                    <div style="vertical-align:middle; display:inline-block;">
+	                    <div class="title">
+	                    ${process.title?html} [ <#if process.state??>${msg("process.state." + process.state)}<#else>${msg("process.state." + processState)}</#if> ]</div>
+	                    <#if process.message?? && process.message?length &gt; 0><div class ="title">${process.message?html}</div></#if>
+	                    <div class="title"><#if process.startDate??> ${process.startDate}<#else></#if> <#if process.dueDate??> - ${process.dueDate}<#else></#if></div> 
+                    </div>
                     <div class="clear"></div>
                  </div>
               </#list>
@@ -74,7 +78,7 @@
 
 <script type="text/javascript">//<![CDATA[
  (function () {
-		 new beCPG.component.EntityProcess("${el}");
+		 new beCPG.component.EntityProcess();
 	
  })();
 
