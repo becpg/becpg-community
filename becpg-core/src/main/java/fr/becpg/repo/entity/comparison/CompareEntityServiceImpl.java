@@ -482,6 +482,10 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 							}
 						}
 					}
+					
+					if(dataListItem2NodeRef == null && logger.isDebugEnabled()) {
+						logger.debug("Missing key: "+pivot1Key);
+					}
 
 					CharacteristicToCompare characteristicToCmp = new CharacteristicToCompare(null, pivot1Key, dataListItem1, dataListItem2NodeRef);
 					characteristicsToCmp.add(characteristicToCmp);
@@ -503,6 +507,8 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 					pivot2Keys.add(pivot2Key);
 
 					if (!pivot1Keys.contains(pivot2Key)) {
+						logger.debug("Missing key: "+pivot2Key);
+						
 						CharacteristicToCompare characteristicToCmp = new CharacteristicToCompare(null, pivot2Key, null, d);
 						characteristicsToCmp.add(characteristicToCmp);
 					}
@@ -995,7 +1001,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 		if (res.isEmpty() && (entityDictionaryService.getDefaultPivotAssoc(type) != null)) {
 			res.add(entityDictionaryService.getDefaultPivotAssoc(type));
-			res.add(BeCPGModel.PROP_PARENT_LEVEL);
+			res.add(BeCPGModel.PROP_DEPTH_LEVEL);
 		}
 
 		return res;
