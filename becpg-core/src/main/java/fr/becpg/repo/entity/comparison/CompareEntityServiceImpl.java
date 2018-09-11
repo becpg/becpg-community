@@ -459,7 +459,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				if (!pivot1Key.isEmpty()) {
 
 					if (pivot1Keys.contains(pivot1Key)) {
-						pivot1Key = pivot1Key + "@";
+						pivot1Key = pivot1Key + "|@";
 					}
 					pivot1Keys.add(pivot1Key);
 
@@ -472,7 +472,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 						if (!pivot2Key.isEmpty()) {
 
 							if (pivot2Keys.contains(pivot2Key)) {
-								pivot2Key = pivot2Key + "@";
+								pivot2Key = pivot2Key + "|@";
 							}
 							pivot2Keys.add(pivot2Key);
 
@@ -1001,9 +1001,8 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 		if (res.isEmpty() && (entityDictionaryService.getDefaultPivotAssoc(type) != null)) {
 			res.add(entityDictionaryService.getDefaultPivotAssoc(type));
-			res.add(BeCPGModel.PROP_DEPTH_LEVEL);
 		}
-
+		
 		return res;
 	}
 
@@ -1024,7 +1023,16 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				}
 			}
 		}
+		
+		if(nodeService.hasAspect(node, BeCPGModel.ASPECT_DEPTH_LEVEL) ) {
+			NodeRef parentNodeRef = (NodeRef) nodeService.getProperty(node, BeCPGModel.PROP_PARENT_LEVEL);
+			if(parentNodeRef!=null) {
+				res += (res.isEmpty() ? "" : "|")+getKeyFromPivots(parentNodeRef,pivotProperties);
+			}
+		}
+		
 		logger.debug("getKeyFromPivots, res = " + res);
+		
 		return res;
 
 	}
