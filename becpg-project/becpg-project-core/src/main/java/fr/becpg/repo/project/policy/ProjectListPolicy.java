@@ -19,6 +19,7 @@ import org.apache.commons.logging.LogFactory;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.project.data.projectList.DeliverableState;
+import fr.becpg.repo.project.data.projectList.TaskManualDate;
 import fr.becpg.repo.project.data.projectList.TaskState;
 
 /**
