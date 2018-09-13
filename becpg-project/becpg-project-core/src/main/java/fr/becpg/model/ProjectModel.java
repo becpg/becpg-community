@@ -71,6 +71,7 @@ public interface ProjectModel {
 	QName PROP_TL_FIXED_COST = QName.createQName(PROJECT_URI, "tlFixedCost");
 	QName ASSOC_SUB_PROJECT = QName.createQName(PROJECT_URI, "subProjectRef");
 	QName ASSOC_PARENT_PROJECT = QName.createQName(PROJECT_URI, "parentProjectRef");
+	QName PROP_TL_MANUAL_DATE = QName.createQName(PROJECT_URI, "tlManualDate");
 	
 
 	QName ASSOC_TL_RESOURCE_COST = QName.createQName(PROJECT_URI, "tlResourceCost");
