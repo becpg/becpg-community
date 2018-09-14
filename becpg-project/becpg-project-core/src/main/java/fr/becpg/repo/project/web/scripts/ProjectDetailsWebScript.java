@@ -14,13 +14,11 @@ import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.InvalidNodeRefException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.security.PersonService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
@@ -65,8 +63,6 @@ public class ProjectDetailsWebScript extends AbstractWebScript {
 
 	private NodeService nodeService;
 
-	private PersonService personService;
-
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
@@ -81,10 +77,6 @@ public class ProjectDetailsWebScript extends AbstractWebScript {
 
 	public void setContentService(ContentService contentService) {
 		this.contentService = contentService;
-	}
-
-	public void setPersonService(PersonService personService) {
-		this.personService = personService;
 	}
 
 	@Override
@@ -131,14 +123,14 @@ public class ProjectDetailsWebScript extends AbstractWebScript {
 				taskObject.put("taskState", task.getState());
 
 				// milestoneDetails
-				if (task.getIsMilestone()) {
+				if (task.getIsMilestone()!=null && task.getIsMilestone()) {
 					milestoneSum++;
-					if (task.getEnd().after(today)) {
+					if (task.getEnd()!= null && task.getEnd().after(today)) {
 						if (nextMilestoneTask == null) {
 							nextMilestoneTask = task;
 							nextMilestoneObject = taskObject;
 						}
-						if (task.getStart().before(nextMilestoneTask.getStart())) {
+						if (task.getStart() != null && task.getStart().before(nextMilestoneTask.getStart())) {
 							nextMilestoneTask = task;
 							nextMilestoneObject = taskObject;
 						}
@@ -200,7 +192,6 @@ public class ProjectDetailsWebScript extends AbstractWebScript {
 			} else {
 				lObj.put("overduePerc", (overdueTaskCompletionPerc));
 			}
-			//TODO
 			if(userTaskSum> 0) {
 				lObj.put("userOverdueTaskCompletionPerc", (userOverdueTaskCompletionPerc) / userTaskSum);
 			} else {
@@ -209,7 +200,6 @@ public class ProjectDetailsWebScript extends AbstractWebScript {
 			lObj.put("userTaskSum", userTaskSum);
 			lObj.put("milestoneSum", milestoneSum);
 			lObj.put("milestoneReleased", milestoneReleased);
-			//TODO
 			if(milestoneSum> 0) {
 				lObj.put("milestoneReleasedPerc", (milestoneReleased / milestoneSum) * 100);
 			} else {
@@ -318,7 +308,6 @@ public class ProjectDetailsWebScript extends AbstractWebScript {
 				try {
 					JSONObject commentObj = new JSONObject();
 					commentObj.put("commentCreator", activityComment.getUserId());
-
 					commentObj.put("commentCreationDate",
 							formatDate(nodeService.getProperty(activityComment.getNodeRef(), ContentModel.PROP_CREATED)));
 					JSONObject activityDataObj = activityComment.getJSONData();
@@ -347,23 +336,5 @@ public class ProjectDetailsWebScript extends AbstractWebScript {
 			return format.formatDate(date);
 		}
 		return null;
-	}
-
-	@Deprecated
-	String getAvatar(String userId) {
-		String avatar = "slingshot/profile/avatar/System/thumbnail/avatar32";
-
-		if (personService.personExists(userId)) {
-			NodeRef person = personService.getPerson(userId);
-
-			List<AssociationRef> assocRefs = nodeService.getTargetAssocs(person, ContentModel.ASSOC_AVATAR);
-			if ((assocRefs != null) && !assocRefs.isEmpty()) {
-				NodeRef avatarRef = assocRefs.get(0).getTargetRef();
-				avatar = "api/node/" + avatarRef.toString().replace("://", "/") + "/content/thumbnails/avatar";
-			}
-		}
-
-		return avatar;
-
 	}
 }

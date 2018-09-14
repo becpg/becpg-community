@@ -159,7 +159,6 @@
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
 		<property name="contentService" ref="contentService"/>
-		<property name="personService" ref="personService"/>
 	</bean>
 	
    <!--                 -->
