@@ -110,11 +110,15 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 
 	@Override
 	public void getEntity(NodeRef entityNodeRef, OutputStream out, RemoteEntityFormat format) throws BeCPGException {
-		if (format.equals(RemoteEntityFormat.xml) || format.equals(RemoteEntityFormat.xml_all)) {
+		if (format.equals(RemoteEntityFormat.xml) || format.equals(RemoteEntityFormat.xml_all)  || format.equals(RemoteEntityFormat.xml_light)) {
 			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(mlNodeService, nodeService, namespaceService, dictionaryService, contentService, siteService);
 			if (format.equals(RemoteEntityFormat.xml_all)) {
 				xmlEntityVisitor.setDumpAll(true);
 			}
+			if (format.equals(RemoteEntityFormat.xml_light)) {
+				xmlEntityVisitor.setLight(true);
+			}
+			
 			try {
 				xmlEntityVisitor.visit(entityNodeRef, out);
 			} catch (XMLStreamException e) {

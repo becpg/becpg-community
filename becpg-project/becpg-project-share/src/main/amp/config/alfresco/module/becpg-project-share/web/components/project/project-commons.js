@@ -329,7 +329,7 @@
              	beCPG.util.entityURL(subProject.siteId, subProject.value,"pjt:project") +'" >';
              ret +="&nbsp;</a>";
           } else {
-	          if(task.permissions.userAccess.edit){
+	          if(task.permissions.userAccess.edit && task["itemData"]["prop_pjt_tlState"].value == "InProgress"){
 		          ret += '<span class="node-' + task.nodeRef + '|' + entityNodeRef + '">';
 		          ret += '<a class="submit-task '+SUBMITTASK_EVENTCLASS+'" title="' + this.msg("link.title.submit-task") + '" href="" >';
 		          ret +="&nbsp;";
@@ -501,7 +501,7 @@
                }
             }
       	}
-         return '006600';
+         return '37C700';
       },
       initTaskHandlers : function PL_initTaskHandlers() {
          var me = this;
