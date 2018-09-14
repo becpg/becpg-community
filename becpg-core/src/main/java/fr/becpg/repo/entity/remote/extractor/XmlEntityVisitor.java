@@ -82,13 +82,18 @@ public class XmlEntityVisitor {
 	private final SiteService siteService;
 
 	private boolean dumpAll = false;
-
+	private boolean light = false;
+	
 	private final Set<NodeRef> cacheList = new HashSet<>();
 
 	public void setDumpAll(boolean dumpAll) {
 		this.dumpAll = dumpAll;
 	}
-
+	
+	public void setLight(boolean light) {
+		this.light = light;
+	}
+	
 	private static final Log logger = LogFactory.getLog(XmlEntityVisitor.class);
 
 	public XmlEntityVisitor(NodeService mlNodeService, NodeService nodeService, NamespaceService namespaceService, DictionaryService dictionaryService,
@@ -288,7 +293,7 @@ public class XmlEntityVisitor {
 					for (ChildAssociationRef assocRef : assocRefs) {
 						if (assocRef.getTypeQName().equals(assocDef.getName())) {
 							NodeRef childRef = assocRef.getChildRef();
-							visitNode(childRef, xmlw, true, true, false);
+							visitNode(childRef, xmlw, light ? false : true, light ? false : true, false);
 						}
 					}
 					xmlw.writeEndElement();
@@ -438,5 +443,6 @@ public class XmlEntityVisitor {
 		return dumpAll && !cacheList.contains(nodeRef) && !(ContentModel.TYPE_AUTHORITY.equals(nodeType) || ContentModel.TYPE_PERSON.equals(nodeType)
 				|| ContentModel.TYPE_AUTHORITY_CONTAINER.equals(nodeType));
 	}
+
 
 }
