@@ -5,7 +5,6 @@
 }
 
 .project-details a{
-    color: blue;
     display: inline-block;
 }
 
@@ -17,12 +16,13 @@
 
 .project-details {
 	 margin: 35px auto 5px auto;
-     width: 100%;
+     max-width: 40%;
      border: 1px solid #D3D3D3; 
-     background: #eeeeee;
+     background: #eee;
      border-top-left-radius: none;
+     padding-bottom: 1px;
+     
 }
-
 
 .project-details .big-number {
     color: black;
@@ -31,10 +31,9 @@
 }
 
 .project-details .white-btn {
-    background-color: white;
-    border-radius: 8px;
+	background-color: rgba( 255, 255, 255, 0.5);
+	border-radius: 8px;
     padding: 3px 11px;
-    border-style: unset;
     margin-left: 20px;
 }
 
@@ -43,10 +42,6 @@
     vertical-align: text-top;
     font-size: 19px;
     margin-top: -3px
-}
-
-.project-details .adjust-margin{
-    margin-top: -6px;
 }
 
 .project-details .white-block {
@@ -101,12 +96,14 @@
 
 .project-details .myProgress {
     width: 100%;
-    background-color: #ddd;
+    background-color: #e7e3e3;
     margin-botton: 20px;
     margin-top:5px;
 }
 
-.project-details .blueBar, .project-details .lightBlueBar, .project-details .redBar, .project-details .mauveBar, .project-details .lightmauveBar {
+.project-details .blueBar, .project-details .lightBlueBar, 
+.project-details .redBar, .project-details .mauveBar, 
+.project-details .lightmauveBar {
     height: 30px;
     line-height: 30px;
     color: white;
@@ -136,10 +133,6 @@
     color: black;
 }
 
-.project-details .padding-0 {
-    padding: 0;
-}
-
 .project-details .green-header{
     background-color: #69bd43;
     padding: 6px;
@@ -151,13 +144,6 @@
     margin-bottom : 10px;
 }
 
-.project-details .margin-left{
-    margin-left:  8px;
-}
-.project-details .margin-right{
-    margin-right: 16px;
-}
-
 .project-details .margin-top{
 	margin-top: 10px;
 }
@@ -166,10 +152,6 @@
     width: 100%;
     height: 100px;
     overflow: auto;
-}
-
-.project-details .margin-left-20{
-	margin-left:20px;
 }
 
 .project-details .display-flex{
@@ -188,7 +170,7 @@
 .project-details .filter-btn{
     background-color: rgba( 255, 255, 255, 0.5);
     border-radius: 8px;
-    padding: 3px 11px;
+    padding: 2px 11px;
     border-style: unset;
     margin-left: 20px;
     margin-top: 3px;
@@ -205,49 +187,30 @@
 }
 
 .project-details .comment-details{
-	border: 1px;
 	border-radius: 8px;
 	box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-	width: 100%;
-	margin: 10px;
+	margin: 10px 0px;
 	
 }
 .project-details .icon {
 	float: left;
-	width: 70%;
+	width: 50%;
 	padding-left: 10px;
 	padding-bottom: 5px;
-}
-
-.project-details .first-half{
-	width: 50%;
-	float: left;
-}
-
-.project-details .second-half{
-	width: 50%;
-	float: right;
-	text-align: end
-}
-
-.project-details .milestone-box {
-    width: 100%;
-    background-color: white;
-    margin-botton: 20px;
-    margin-top:5px;
-    display: inline-block;
+	text-align:center;
 }
 
 .project-details .div-resizer{
     resize: vertical;
     overflow: auto;
-    min-height: 185px;
-    height: 185px;
 }
 
 .project-details .black-bold-text{
 	color: black;
 	font-weight: bold;
 	float: right;
-	margin-right: 16px;
+}
+
+.project-details .txt-align-end {
+	text-align: end; 
 }
