@@ -367,6 +367,10 @@ public class EntityReportServiceImpl implements EntityReportService {
 			stopWatch.start();
 		}
 		
+		if(getFromCacheListFolderNodeRef(RepoConsts.PATH_REPORT_KINDLIST) == null){
+			return dataXml;
+		}
+		
 		String reportKindCode = "", reportKindValue = "", reportKindNoneValue;
 		if(tplNodeRef != null){
 			List<String> reportKindProp = (List<String>) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_KINDS);
@@ -445,7 +449,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 		 
 	}
 	
-	private String getRerportKindValue(String reportKindCode){
+	private String getRerportKindValue(String reportKindCode){				
 		
 		String reportKindValue = "";
 		
