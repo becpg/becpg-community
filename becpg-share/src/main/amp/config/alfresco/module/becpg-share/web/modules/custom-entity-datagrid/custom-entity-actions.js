@@ -283,18 +283,18 @@
 				html += '                  <option value="selectlines">' + this.msg(popupKind + ".picker.selectedlines") + '</option>';
 			}
 			for ( var key in items[0].itemData) {
-				if (key.indexOf("assoc_") > -1 && this.datalistColumns[key].label != "hidden") {
-					if(popupKind != "bulk-edit" || key == "assoc_bcpg_compoListProduct"
-						|| key == "assoc_bcpg_packagingListProduct" 
-						|| key == "assoc_mpm_plResource"){
-						showPopup = true;
-						html += "<option value='" + key + "'>" + this.datalistColumns[key].label + "</option>";
-						entryCount++;
-						entryKey = key;
+					if (key.indexOf("assoc_") > -1 && this.datalistColumns[key] && this.datalistColumns[key].label != "hidden") {
+						if(popupKind != "bulk-edit" || key == "assoc_bcpg_compoListProduct"
+							|| key == "assoc_bcpg_packagingListProduct" 
+							|| key == "assoc_mpm_plResource"){
+							showPopup = true;
+							html += "<option value='" + key + "'>" + this.datalistColumns[key].label + "</option>";
+							entryCount++;
+							entryKey = key;
+						}
+					} else if( key == "prop_bcpg_charactName"){
+						isCharact = true;
 					}
-				} else if( key == "prop_bcpg_charactName"){
-					isCharact = true;
-				}
 			}
 			html += '            </select>';
 			html += '          </div>';
