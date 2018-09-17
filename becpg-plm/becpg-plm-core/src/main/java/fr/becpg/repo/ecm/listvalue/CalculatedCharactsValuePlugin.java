@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.springframework.stereotype.Service;
 
@@ -47,7 +48,7 @@ public class CalculatedCharactsValuePlugin extends EntityListValuePlugin {
 						    .ftsLanguage()
 							.maxResults(RepoConsts.MAX_SUGGESTIONS).list());
 					
-					ret.addAll(BeCPGQueryBuilder.createQuery().ofType(PLMModel.TYPE_LABELINGRULELIST).andPropQuery(PLMModel.PROP_LABELINGRULELIST_LABEL, prepareQuery(query))
+					ret.addAll(BeCPGQueryBuilder.createQuery().ofType(PLMModel.TYPE_LABELINGRULELIST).andPropQuery(ContentModel.PROP_NAME, prepareQuery(query))
 						    .andPropEquals(PLMModel.PROP_LABELINGRULELIST_TYPE, LabelingRuleType.Render.toString())
 						    .inPath(nodeService.getPath(tplNodeRef).toPrefixString(namespaceService) + "/*/*")
 						    .ftsLanguage()
