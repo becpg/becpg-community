@@ -102,6 +102,9 @@
 												url = '#';
 											} else if (content.type == "pagelink") {
 												url = $siteURL(content.params.page);
+											    if (Alfresco.constants.SITE.length > 0) {
+													url+="&siteId="+Alfresco.constants.SITE;
+												}										
 											} else if (content.type == "link") {
 												url = content.params.href;
 											}
