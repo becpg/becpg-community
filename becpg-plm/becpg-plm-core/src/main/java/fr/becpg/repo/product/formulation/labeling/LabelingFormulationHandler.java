@@ -711,7 +711,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 									if ((aggregateRule.getReplacement() != null)
 											&& LabelingRuleType.DoNotDetails.equals(aggregateRule.getLabelingRuleType())) {
 
-										
 										if (current == null) {
 											RepositoryEntity replacement = alfrescoRepository.findOne(aggregateRule.getReplacement());
 											if (replacement instanceof IngItem) {
@@ -725,12 +724,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 											} else {
 												logger.warn("Invalid replacement :" + aggregateRule.getReplacement());
 											}
-											
+
 										}
 
 										if (current != null) {
 
-											if (ingList.containsKey(aggregateRuleNodeRef) ) {
+											if (ingList.containsKey(aggregateRuleNodeRef)) {
 												current.setPlural(true);
 											}
 
