@@ -203,9 +203,9 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 			String charactPath = "";
 			if (c.getCharactPath() != null) {
 				for (NodeRef nodeRef : c.getCharactPath()) {
-
-					charactPath += attributeExtractorService.extractPropName(nodeRef);
-
+					if(nodeRef!=null) {
+						charactPath += attributeExtractorService.extractPropName(nodeRef);
+					}
 					if (!charactPath.isEmpty()) {
 						charactPath += CHARACT_PATH_SEPARATOR;
 					}

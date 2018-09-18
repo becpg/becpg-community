@@ -135,8 +135,7 @@ public class CompositeLabeling extends AbstractLabelingComponent {
         	if(labelingComponent  instanceof CompositeLabeling) {
 				((CompositeLabeling)labelingComponent).print(sb, prefix + (isTail ? "    " : "│   "), !iterator.hasNext());
 			} else {
-				sb.append(prefix).append(isTail ? "    " : "│   ").append(!iterator.hasNext() ? "└──[" : "├──[").append(labelingComponent.getLegalName(I18NUtil.getContentLocaleLang())).append(" ( plural:"+labelingComponent.isPlural()+",shouldSkip:"+labelingComponent.shouldSkip()+") ").append(" - ").append(labelingComponent.getQty()).append(" ( vol : ").append(labelingComponent.getVolume()).append(") ]\n");
-			      
+				sb.append(prefix).append(isTail ? "    " : "│   ").append(!iterator.hasNext() ? "└──[" : "├──[").append(labelingComponent.getLegalName(I18NUtil.getContentLocaleLang())).append(" ( plural:"+labelingComponent.isPlural()+",shouldSkip:"+labelingComponent.shouldSkip()+") ").append(" - ").append(labelingComponent.getQty()).append(" ( vol : ").append(labelingComponent.getVolume()).append(") ]\n"); 
 			}
  
         }
