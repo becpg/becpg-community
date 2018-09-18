@@ -238,7 +238,7 @@
    </#if>
 </#macro>
 
-<#macro renderLocaleImage field textarea=false>
+<#macro renderLocaleImage field textarea=false htmlEditor=false>
   <#if !isHiddenField(field) && field.dataType == "mltext" && form.mode == "edit" && form.arguments.itemKind == "node">
     <#if locale?contains("_") >
       <#assign localeshort = locale?substring(3,5)?lower_case >
@@ -255,7 +255,7 @@
 				Alfresco.util.useAsButton("${fieldHtmlId}-locale-icon", function (event, fieldId)
 		            {
 		                new Alfresco.module.SimpleDialog("${fieldHtmlId}-multilingualForm").setOptions({
-		                  templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/multilingual-form/multilingual-form?nodeRef=${form.arguments.itemId}&label=${field.label?url}&field="+fieldId<#if textarea >+"&textarea=true"</#if><#if field.disabled >+"&readonly=true"</#if>,
+		                  templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/multilingual-form/multilingual-form?nodeRef=${form.arguments.itemId}&label=${field.label?url}&field="+fieldId<#if textarea >+"&textarea=true"</#if><#if field.disabled >+"&readonly=true"</#if><#if htmlEditor >+"&htmlEditor=true"</#if>,
 		                  actionUrl : Alfresco.constants.PROXY_URI + "becpg/form/multilingual/field/"+fieldId+"?nodeRef=${form.arguments.itemId}",
 		                  validateOnSubmit : false,
 		                  destroyOnHide : true,

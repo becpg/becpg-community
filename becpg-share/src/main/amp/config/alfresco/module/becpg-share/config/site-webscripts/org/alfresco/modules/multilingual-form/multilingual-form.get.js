@@ -38,6 +38,7 @@ function main()
            				field = obj.items[j];
            				if(field.locale == lang.key){
            					field.localeLabel = lang.label;
+           					field.control = {params: {editorAppearance: "default"}};
            					model.mlFields.push(field);
            					
            				}
@@ -52,5 +53,4 @@ function main()
 }
 
 main();
-
 
