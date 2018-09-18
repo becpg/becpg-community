@@ -622,6 +622,7 @@
        */
       _onActionDeleteConfirm: function dlA__onActionDeleteConfirm(record)
       {
+    	  var that = this;
          var jsNode = record.jsNode,
             path = record.location.path,
             fileName = record.location.file,
@@ -677,7 +678,37 @@
             failure:
             {
                display : display,
-               message: this.msg("message.delete.failure", displayName)
+               callback:
+               {
+                  fn: function DocumentActions_oADC_failure(data, obj)
+                  {
+                	  
+                	  var errorMsg = data.json.message;
+                	  const regex = /The association target multiplicity has been violated:\s*Source Node: (workspace:\/\/SpacesStore\/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})/gm;
+                	  var m;
+                	  var nodesArray = [];
+
+                	  while ((m = regex.exec(errorMsg)) !== null) {
+                	      // This is necessary to avoid infinite loops with zero-width matches
+                	      if (m.index === regex.lastIndex) {
+                	          regex.lastIndex++;
+                	      }
+                	      
+                	      // The result can be accessed through the `m`-variable.
+                	      console.log("m: ",m[1]);
+                	          nodesArray.push(m[1]);
+                	  }
+                	  
+                	  
+                	  var popupText = (nodesArray.length > 0 ? that.msg("message.delete.failure", nodesArray.toString().replace(/[]/g, "")) : that.msg("message.delete.failure"));
+                	  console.log(popupText);
+                	  
+	      			   Alfresco.util.PopupManager.displayMessage({
+	    				   text : popupText,
+	    				   displayTime : 10
+	    			   });
+                  }
+               }
             },
             webscript:
             {

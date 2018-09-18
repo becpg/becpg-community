@@ -425,6 +425,8 @@
       _onActionDeleteConfirm: function DocumentActions__onActionDeleteConfirm(asset)
       {
          var path = asset.location.path;
+         var failureErrorMsg = null;
+         var that = this;
          
          // Update the path for My Files and Shared Files...
          if (Alfresco.constants.PAGECONTEXT == "mine" || Alfresco.constants.PAGECONTEXT == "shared")
@@ -466,7 +468,7 @@
             callbackUrl = Alfresco.util.isValueSet(this.options.siteId) ? "documentlibrary" : "repository";
          }
            
-         this.modules.actions.genericAction(
+         that.actionWidget = this.modules.actions.genericAction(
          {
             success:
             {
@@ -492,7 +494,37 @@
             },
             failure:
             {
-               message: this.msg("message.delete.failure", displayName)
+            	callback:
+               {
+                  fn: function DocumentActions_oADC_failure(data, obj)
+                  {
+                	  
+                	  var errorMsg = data.json.message;
+                	  const regex = /The association target multiplicity has been violated:\s*Source Node: (workspace:\/\/SpacesStore\/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})/gm;
+                	  var m;
+                	  var nodesArray = [];
+
+                	  while ((m = regex.exec(errorMsg)) !== null) {
+                	      // This is necessary to avoid infinite loops with zero-width matches
+                	      if (m.index === regex.lastIndex) {
+                	          regex.lastIndex++;
+                	      }
+                	      
+                	      // The result can be accessed through the `m`-variable.
+                	      console.log("m: ",m[1]);
+                	          nodesArray.push(m[1]);
+                	  }
+                	  
+                	  var popupText = (nodesArray.length > 0 ? that.msg("message.delete.failure.usedBy", nodesArray.toString().replace(/[]/g, "")) : that.msg("message.delete.failure"));
+                	  console.log(popupText);
+                	  
+	      			   Alfresco.util.PopupManager.displayMessage({
+	    				   text : popupText,
+	    				   displayTime : 10
+	    			   });
+                  }
+               }
+            	   
             },
             webscript:
             {
