@@ -587,9 +587,8 @@ public class LabelingFormulaContext extends RuleParser {
 		return createAllergenAwareLabel(ingLegalName, allergens);
 	}
 
-
 	private String getCharactName(NodeRef charact) {
-		
+
 		MLText legalName = (MLText) mlNodeService.getProperty(charact, BeCPGModel.PROP_LEGAL_NAME);
 
 		String ret = MLTextHelper.getClosestValue(legalName, I18NUtil.getLocale());
@@ -601,7 +600,7 @@ public class LabelingFormulaContext extends RuleParser {
 		}
 
 		return ret;
-		
+
 	}
 
 	public String render() {
@@ -1179,7 +1178,6 @@ public class LabelingFormulaContext extends RuleParser {
 		}
 		return null;
 	}
-
 
 	private boolean shouldSkip(NodeRef nodeRef, Double qtyPerc) {
 
