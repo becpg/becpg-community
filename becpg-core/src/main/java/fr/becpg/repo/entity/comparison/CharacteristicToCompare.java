@@ -15,108 +15,85 @@ import org.alfresco.service.cmr.repository.NodeRef;
  */
 public class CharacteristicToCompare {
 
-	/** The charact path. */
-	private List<NodeRef> charactPath;
+	private String pivotKey;	
 	
-	/** The characteristic. */
-	private String characteristic;	
-	
-	/** The node ref1. */
 	private NodeRef nodeRef1;
 	
-	/** The node ref2. */
 	private NodeRef nodeRef2;
 	
-	/**
-	 * Gets the charact path.
-	 *
-	 * @return the charact path
-	 */
-	public List<NodeRef> getCharactPath() {
-		return charactPath;
-	}
 	
-	/**
-	 * Sets the charact path.
-	 *
-	 * @param charactPath the new charact path
-	 */
-	public void setCharactPath(List<NodeRef> charactPath) {
-		this.charactPath = charactPath;
+	public String getPivotKey() {
+		return pivotKey;
 	}
-	
-	/**
-	 * Gets the characteristic.
-	 *
-	 * @return the characteristic
-	 */
-	public String getCharacteristic() {
-		return characteristic;
+
+	public void setPivotKey(String pivotKey) {
+		this.pivotKey = pivotKey;
 	}
-	
-	/**
-	 * Sets the characteristic.
-	 *
-	 * @param characteristic the new characteristic
-	 */
-	public void setCharacteristic(String characteristic) {
-		this.characteristic = characteristic;
-	}
-	
-	/**
-	 * Gets the node ref1.
-	 *
-	 * @return the node ref1
-	 */
+
 	public NodeRef getNodeRef1() {
 		return nodeRef1;
 	}
-	
-	/**
-	 * Sets the node ref1.
-	 *
-	 * @param nodeRef1 the new node ref1
-	 */
+
 	public void setNodeRef1(NodeRef nodeRef1) {
 		this.nodeRef1 = nodeRef1;
 	}
-	
-	@Override 
-	public String toString() {
-		return "CharacteristicToCompare [charactPath=" + charactPath + ", characteristic=" + characteristic + ", nodeRef1=" + nodeRef1
-				+ ", nodeRef2=" + nodeRef2 + "]";
-	}
 
-	/**
-	 * Gets the node ref2.
-	 *
-	 * @return the node ref2
-	 */
 	public NodeRef getNodeRef2() {
 		return nodeRef2;
 	}
-	
-	/**
-	 * Sets the node ref2.
-	 *
-	 * @param nodeRef2 the new node ref2
-	 */
+
 	public void setNodeRef2(NodeRef nodeRef2) {
 		this.nodeRef2 = nodeRef2;
 	}
-	
-	/**
-	 * Instantiates a new characteristic to compare.
-	 *
-	 * @param charactPath the charact path
-	 * @param characteristic the characteristic
-	 * @param nodeRef1 the node ref1
-	 * @param nodeRef2 the node ref2
-	 */
-	public CharacteristicToCompare(List<NodeRef> charactPath, String characteristic, NodeRef nodeRef1, NodeRef nodeRef2){
-		setCharactPath(charactPath);
-		setCharacteristic(characteristic);
-		setNodeRef1(nodeRef1);
-		setNodeRef2(nodeRef2);
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((nodeRef1 == null) ? 0 : nodeRef1.hashCode());
+		result = prime * result + ((nodeRef2 == null) ? 0 : nodeRef2.hashCode());
+		result = prime * result + ((pivotKey == null) ? 0 : pivotKey.hashCode());
+		return result;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CharacteristicToCompare other = (CharacteristicToCompare) obj;
+		if (nodeRef1 == null) {
+			if (other.nodeRef1 != null)
+				return false;
+		} else if (!nodeRef1.equals(other.nodeRef1))
+			return false;
+		if (nodeRef2 == null) {
+			if (other.nodeRef2 != null)
+				return false;
+		} else if (!nodeRef2.equals(other.nodeRef2))
+			return false;
+		if (pivotKey == null) {
+			if (other.pivotKey != null)
+				return false;
+		} else if (!pivotKey.equals(other.pivotKey))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "CharacteristicToCompare [pivotKey=" + pivotKey + ", nodeRef1=" + nodeRef1 + ", nodeRef2=" + nodeRef2 + "]";
+	}
+
+	public CharacteristicToCompare( String pivotKey, NodeRef nodeRef1, NodeRef nodeRef2) {
+		super();
+		this.pivotKey = pivotKey;
+		this.nodeRef1 = nodeRef1;
+		this.nodeRef2 = nodeRef2;
+	}
+
+	
 }

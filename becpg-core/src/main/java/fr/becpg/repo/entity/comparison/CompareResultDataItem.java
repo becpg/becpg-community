@@ -3,6 +3,7 @@
  */
 package fr.becpg.repo.entity.comparison;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -16,92 +17,31 @@ import org.alfresco.service.namespace.QName;
  */
 public class CompareResultDataItem {
 
-	/** The entity list. */
 	private QName entityList;
 	
-	/** The charact path. */
-	private List<NodeRef> charactPath;
-	
-	/** The characteristic. */
-	private String characteristic;
-	
-	/** The property. */
 	private QName property;
 	
-	/** The values. */
 	private String[] values;
+	
+	private String pivotKey;
+	
+	private String charactName;
 	
 	private boolean isDifferent = false;
 
 	
-	/**
-	 * Gets the entity list.
-	 *
-	 * @return the entity list
-	 */
 	public QName getEntityList() {
 		return entityList;
 	}
 	
-	/**
-	 * Sets the entity list.
-	 *
-	 * @param entityList the new entity list
-	 */
 	public void setProductList(QName entityList) {
 		this.entityList = entityList;
 	}
 	
-	/**
-	 * Gets the charact path.
-	 *
-	 * @return the charact path
-	 */
-	public List<NodeRef> getCharactPath() {
-		return charactPath;
-	}
-	
-	/**
-	 * Sets the charact path.
-	 *
-	 * @param charactPath the new charact path
-	 */
-	public void setCharactPath(List<NodeRef> charactPath) {
-		this.charactPath = charactPath;
-	}
-	
-	/**
-	 * Gets the characteristic.
-	 *
-	 * @return the characteristic
-	 */
-	public String getCharacteristic() {
-		return characteristic;
-	}
-	
-	/**
-	 * Sets the characteristic.
-	 *
-	 * @param characteristic the new characteristic
-	 */
-	public void setCharacteristic(String characteristic) {
-		this.characteristic = characteristic;
-	}
-	
-	/**
-	 * Gets the property.
-	 *
-	 * @return the property
-	 */
 	public QName getProperty() {
 		return property;
 	}
 	
-	/**
-	 * Sets the property.
-	 *
-	 * @param property the new property
-	 */
 	public void setProperty(QName property) {
 		this.property = property;
 	}
@@ -122,28 +62,76 @@ public class CompareResultDataItem {
 		this.isDifferent = isDifferent;
 	}
 
-	/**
-	 * Instantiates a new compare result data item.
-	 *
-	 * @param entityList the entity list
-	 * @param charactPath the charact path
-	 * @param characteristic the characteristic
-	 * @param property the property
-	 * @param values the values
-	 */
-	public CompareResultDataItem(QName entityList, List<NodeRef> charactPath, String characteristic, QName property, String[] values){
+	public String getPivotKey() {
+		return pivotKey;
+	}
+
+	public void setPivotKey(String pivotKey) {
+		this.pivotKey = pivotKey;
+	}
+	
+	
+
+	public String getCharactName() {
+		return charactName;
+	}
+
+	public void setCharactName(String charactName) {
+		this.charactName = charactName;
+	}
+
+	public CompareResultDataItem(QName entityList,String charactName,  String pivotKey, QName property, String[] values){
 		setProductList(entityList);
-		setCharactPath(charactPath);
-		setCharacteristic(characteristic);
+		setPivotKey(pivotKey);
+		setCharactName(charactName);
 		setProperty(property);
 		setValues(values);
 	}
 
 	@Override
-	public String toString() {
-		return "CompareResultDataItem [entityList=" + entityList + ", charactPath=" + charactPath + ", characteristic="
-				+ characteristic + ", property=" + property + ", values=" + values + ", isDifferent=" + isDifferent
-				+ "]";
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((entityList == null) ? 0 : entityList.hashCode());
+		result = prime * result + (isDifferent ? 1231 : 1237);
+		result = prime * result + ((pivotKey == null) ? 0 : pivotKey.hashCode());
+		result = prime * result + ((property == null) ? 0 : property.hashCode());
+		result = prime * result + Arrays.hashCode(values);
+		return result;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CompareResultDataItem other = (CompareResultDataItem) obj;
+		if (entityList == null) {
+			if (other.entityList != null)
+				return false;
+		} else if (!entityList.equals(other.entityList))
+			return false;
+		if (isDifferent != other.isDifferent)
+			return false;
+		if (pivotKey == null) {
+			if (other.pivotKey != null)
+				return false;
+		} else if (!pivotKey.equals(other.pivotKey))
+			return false;
+		if (property == null) {
+			if (other.property != null)
+				return false;
+		} else if (!property.equals(other.property))
+			return false;
+		if (!Arrays.equals(values, other.values))
+			return false;
+		return true;
+	}
+
+	
+	
 	
 }
