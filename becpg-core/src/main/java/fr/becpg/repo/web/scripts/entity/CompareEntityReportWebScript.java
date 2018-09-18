@@ -178,8 +178,7 @@ public class CompareEntityReportWebScript extends AbstractWebScript {
 			if (req.getParameter(PARAM_TPL_NODEREF) != null) {
 				templateNodeRef = new NodeRef(req.getParameter(PARAM_TPL_NODEREF));
 			} else {
-				templateNodeRef = reportTplService.getUserReportTemplate(ReportType.Compare, null,
-						TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_COMPARE_ENTITIES));
+				templateNodeRef = reportTplService.getDefaultReportTemplate(ReportType.Compare, null);
 			}
 			
 
