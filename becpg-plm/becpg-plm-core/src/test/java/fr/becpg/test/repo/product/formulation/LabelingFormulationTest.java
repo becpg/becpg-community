@@ -700,7 +700,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		// └──[ing2 french - 4.0 ( vol : 4.0) ]
 
 		checkILL(finishedProductNodeRef1, labelingRuleList,
-				"epaississant french: ing5 french 54,5% (ing1 french 70%, ing4 french 30%), epices french: ing6 french 45,5%", Locale.FRENCH);
+				"epaississant french: ing5 french 54,5% (ing1 french 38,2%, ing4 french 16,4%), epices french: ing6 french 45,5%", Locale.FRENCH);
 
 		/** Partial Reconstitution **/
 
@@ -1273,7 +1273,6 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		labelingRuleList.add(new LabelingRuleListDataItem("Param2", "defaultSeparator = \"; \"", LabelingRuleType.Prefs, null, null));
 		labelingRuleList.add(new LabelingRuleListDataItem("Param3", "ingTypeDefaultSeparator = \"# \"", LabelingRuleType.Prefs, null, null));
 		labelingRuleList.add(new LabelingRuleListDataItem("Param4", "groupDefaultSeparator = \"! \"", LabelingRuleType.Prefs, null, null));
-		labelingRuleList.add(new LabelingRuleListDataItem("Param5", "subIngsSeparator = \"@ \"", LabelingRuleType.Prefs, null, null));
 
 		checkILL(finishedProductNodeRef1, labelingRuleList,
 				"pâte french 50% (legal Raw material 12 33,3% (epaississant french: ing3 french); epaississant french: ing3 french); garniture french 50% (epaississants french: ing3 french# ing5 french)",
