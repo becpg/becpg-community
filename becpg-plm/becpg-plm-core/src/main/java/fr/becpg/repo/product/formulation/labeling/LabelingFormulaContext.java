@@ -753,7 +753,7 @@ public class LabelingFormulaContext extends RuleParser {
 					Double volumePerc = computeVolumePerc(lblCompositeContext, component, 1d);
 
 					String ingName = getLegalIngName(component, null, false, false);
-					String geoOriginsLabel = createGeoOriginsLabel(component.getNodeRef(), component.getGeoOrigins());
+					String geoOriginsLabel = createGeoOriginsLabel(null, component.getGeoOrigins());
 
 					qtyPerc = (useVolume ? volumePerc : qtyPerc);
 
