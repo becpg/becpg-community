@@ -144,7 +144,9 @@ public class BeCPGReportServerClient extends AbstractBeCPGReportClient implement
 
 		if (timeStamp < 0 || timeStamp < dateModified.getTime()) {
 			ContentReader reader = contentService.getReader(tplNodeRef, ContentModel.PROP_CONTENT);
-			saveTemplate(reportSession, reader.getContentInputStream());
+			if(reader!=null) {
+				saveTemplate(reportSession, reader.getContentInputStream());
+			}
 		}
 
 	}

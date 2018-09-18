@@ -175,7 +175,6 @@ public class LabelingFormulaContext extends RuleParser {
 	private String defaultSeparator = RepoConsts.LABEL_SEPARATOR;
 	private String groupDefaultSeparator = RepoConsts.LABEL_SEPARATOR;
 	private String ingTypeDefaultSeparator = RepoConsts.LABEL_SEPARATOR;
-	private String subIngsSeparator = RepoConsts.LABEL_SEPARATOR;
 	private String allergensSeparator = RepoConsts.LABEL_SEPARATOR;
 	private String geoOriginsSeparator = RepoConsts.LABEL_SEPARATOR;
 
@@ -274,9 +273,6 @@ public class LabelingFormulaContext extends RuleParser {
 		this.ingTypeDefaultSeparator = ingTypeDefaultSeparator;
 	}
 
-	public void setSubIngsSeparator(String subIngsSeparator) {
-		this.subIngsSeparator = subIngsSeparator;
-	}
 
 	public void setAllergensSeparator(String allergensSeparator) {
 		this.allergensSeparator = allergensSeparator;
@@ -766,7 +762,7 @@ public class LabelingFormulaContext extends RuleParser {
 					Double volumePerc = computeVolumePerc(lblCompositeContext, component, 1d);
 
 					String ingName = getLegalIngName(component, null, false, false);
-					String geoOriginsLabel = createGeoOriginsLabel(component.getNodeRef(), component.getGeoOrigins());
+					String geoOriginsLabel = createGeoOriginsLabel(null, component.getGeoOrigins());
 
 					qtyPerc = (useVolume ? volumePerc : qtyPerc);
 
@@ -778,22 +774,7 @@ public class LabelingFormulaContext extends RuleParser {
 							IngItem ingItem = (IngItem) component;
 
 							StringBuilder subIngBuff = new StringBuilder();
-							for (IngItem subIngItem : ingItem.getSubIngs()) {
-								if (subIngBuff.length() > 0) {
-									subIngBuff.append(subIngsSeparator);
-								}
-								Double subIngQtyPerc = (useVolume ? subIngItem.getVolume() : subIngItem.getQty());
-
-								String subIngGeoOriginsLabel = createGeoOriginsLabel(subIngItem.getNodeRef(), subIngItem.getGeoOrigins());
-
-								if (!shouldSkip(subIngItem.getNodeRef(), subIngQtyPerc)) {
-
-									subIngBuff.append(getIngTextFormat(subIngItem, subIngQtyPerc).format(new Object[] {
-											getLegalIngName(subIngItem, null, false, false), subIngQtyPerc, null, subIngGeoOriginsLabel }));
-								} else {
-									logger.debug("Removing subIng with qty of 0: " + subIngItem);
-								}
-							}
+							createSubIngBuff(lblCompositeContext, ingItem, subIngBuff, 1d);
 
 							subLabel = getIngTextFormat(component, qtyPerc)
 									.format(new Object[] { ingName, qtyPerc, subIngBuff.toString(), geoOriginsLabel });
@@ -1060,22 +1041,7 @@ public class LabelingFormulaContext extends RuleParser {
 					IngItem ingItem = (IngItem) component;
 
 					StringBuilder subIngBuff = new StringBuilder();
-					for (IngItem subIngItem : ingItem.getSubIngs()) {
-						if (subIngBuff.length() > 0) {
-							subIngBuff.append(subIngsSeparator);
-						}
-						Double subIngQtyPerc = (useVolume ? subIngItem.getVolume() : subIngItem.getQty());
-
-						String subIngGeoOriginsLabel = createGeoOriginsLabel(subIngItem.getNodeRef(), subIngItem.getGeoOrigins());
-
-						if (!subIngItem.shouldSkip() && !shouldSkip(subIngItem.getNodeRef(), subIngQtyPerc)) {
-
-							subIngBuff.append(getIngTextFormat(subIngItem, subIngQtyPerc).format(new Object[] {
-									getLegalIngName(subIngItem, subIngQtyPerc, false, false), subIngQtyPerc, null, subIngGeoOriginsLabel }));
-						} else {
-							logger.debug("Removing subIng with qty of 0: " + subIngItem);
-						}
-					}
+					createSubIngBuff(parent, ingItem, subIngBuff, ratio);
 
 					MessageFormat formater = getIngTextFormat(component, qtyPerc);
 
@@ -1310,7 +1276,7 @@ public class LabelingFormulaContext extends RuleParser {
 			} else if ((component instanceof IngItem) && !((IngItem) component).getSubIngs().isEmpty() && recur) {
 				JSONArray children = new JSONArray();
 				for (IngItem childComponent : ((IngItem) component).getSubIngs()) {
-					children.add(createJsonLog(childComponent, ((IngItem) component).getQty(), ((IngItem) component).getVolume(), visited, false));
+					children.add(createJsonLog(childComponent, totalQty, totalVol, visited, false));
 				}
 				tree.put("children", children);
 			}
@@ -1561,6 +1527,22 @@ public class LabelingFormulaContext extends RuleParser {
 		}
 
 		return sortedIngListByType;
+	}
+
+	private void createSubIngBuff(CompositeLabeling parent, IngItem ingItem, StringBuilder subIngBuff, Double ratio) {
+
+		CompositeLabeling subIngComposite = new CompositeLabeling();
+		for (IngItem subIngItem : ingItem.getSubIngs()) {
+			subIngComposite.add(new IngItem(subIngItem));
+		}
+		
+	
+		subIngComposite.setQty(parent.getQty());
+		subIngComposite.setVolume(parent.getVolume());
+		subIngComposite.setQtyTotal(parent.getQtyTotal());
+		subIngComposite.setVolumeTotal(parent.getVolumeTotal());
+
+		subIngBuff.append(renderCompositeIng(subIngComposite, ratio, null));
 
 	}
 
