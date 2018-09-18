@@ -108,8 +108,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	private static final String PRODUCT_REPORT_CLIENT_NAME = "path.productreportclienttemplate";
 	private static final String PRODUCT_REPORT_PRODUCTION_PATH = "beCPG/birt/document/product/default/ProductReport_Prod.rptdesign";
 	private static final String PRODUCT_REPORT_PRODUCTION_NAME = "path.productreportproductiontemplate";
-	private static final String PRODUCT_REPORT_RAWMATERIAL_PATH = "beCPG/birt/document/product/default/RawMaterialReport.rptdesign";
-	private static final String PRODUCT_REPORT_SUPPLIER_NAME = "path.rawmaterialreporttemplate";
 
 	private static final String NC_REPORT_PATH = "beCPG/birt/document/nonconformity/NCReport.rptdesign";
 	private static final String QUALITY_CONTROL_REPORT_PATH = "beCPG/birt/document/qualitycontrol/QualityControlReport.rptdesign";
@@ -128,9 +126,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	
 	static {
 		reportKindCodes.put(PRODUCT_REPORT_CLIENT_PATH, "CustomerSheet");
-		reportKindCodes.put(PRODUCT_REPORT_RAWMATERIAL_PATH, "RawMaterialSheet");
 		reportKindCodes.put(PRODUCT_REPORT_PRODUCTION_PATH, "ProductionSheet");
-		reportKindCodes.put(PRODUCT_REPORT_SUPPLIER_NAME, "SupplierSheet");
 		reportKindCodes.put(NONE_KIND_REPORT, "None");
 		
 	}
@@ -1014,8 +1010,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			QName[] productTypes = { PLMModel.TYPE_FINISHEDPRODUCT, PLMModel.TYPE_RAWMATERIAL, PLMModel.TYPE_SEMIFINISHEDPRODUCT,
 					PLMModel.TYPE_PACKAGINGMATERIAL };
-			String[] defaultReport = { PRODUCT_REPORT_CLIENT_PATH, PRODUCT_REPORT_RAWMATERIAL_PATH, PRODUCT_REPORT_PRODUCTION_PATH,
-					PRODUCT_REPORT_CLIENT_PATH };
+			String[] defaultReport = { PRODUCT_REPORT_CLIENT_PATH, null, PRODUCT_REPORT_PRODUCTION_PATH, PRODUCT_REPORT_CLIENT_PATH };
 			String[] defaultReportName = { productReportClientName, productReportSupplierName, productReportProductionName, productReportClientName };
 			
 			String[] otherReport = { PRODUCT_REPORT_PRODUCTION_PATH, null, null, null };
@@ -1033,7 +1028,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			defaultKindReport.add(NONE_KIND_REPORT);
 			
 			for (String reportKind : defaultKindReport){	
-				
 				if(reportKind == null){
 					continue;
 				}
@@ -1081,7 +1075,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 						NodeRef template = reportTplService.createTplRptDesign(folderNodeRef, defaultReportName[i], defaultReport[i],
 								ReportType.Document, ReportFormat.PDF, productType, true, true, false);
 						
-						nodeService.addAspect(template, ReportModel.ASPECT_REPORT_KIND, reportKindTplAssoc.get(defaultReport[i]));
+						if(reportKindTplAssoc.get(defaultReport[i]) != null){
+							nodeService.addAspect(template, ReportModel.ASPECT_REPORT_KIND, reportKindTplAssoc.get(defaultReport[i]));
+						}
 						
 						if (!resources.isEmpty()) {
 							for (NodeRef resource : resources) {
@@ -1098,7 +1094,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 						NodeRef template = reportTplService.createTplRptDesign(folderNodeRef, otherReportName[i], otherReport[i], ReportType.Document,
 								ReportFormat.PDF, productType, true, false, false);
 						
-						nodeService.addAspect(template, ReportModel.ASPECT_REPORT_KIND, reportKindTplAssoc.get(otherReport[i]));
+						if(reportKindTplAssoc.get(otherReport[i]) != null){
+							nodeService.addAspect(template, ReportModel.ASPECT_REPORT_KIND, reportKindTplAssoc.get(otherReport[i]));
+						}
 						
 						if (!resources.isEmpty()) {
 							for (NodeRef resource : resources) {

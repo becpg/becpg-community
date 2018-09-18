@@ -217,4 +217,21 @@
         </property>
     </bean>
     
+       <!-- Overload of IntegrityChecker -->
+      <bean id="integrityChecker" class="fr.becpg.repo.node.integrity.BeCPGIntegrityChecker" init-method="init">
+      <property name="policyComponent" ref="policyComponent"/>
+      <property name="dictionaryService" ref="dictionaryService" />
+      <property name="nodeService" ref="nodeService" />
+      <property name="tenantService" ref="tenantService" />
+      <property name="enabled" value="${system.integrity.enabled}" />
+      <property name="traceOn" value="${system.integrity.trace}" />
+      <property name="failOnViolation" value="${system.integrity.failOnViolation}" />
+      <property name="maxErrorsPerTransaction" value="5" />
+      <property name="storesToIgnore">
+         <list>
+            <value>${version.store.version2Store}</value>
+         </list>
+      </property>
+   </bean>
+    
 </beans>
