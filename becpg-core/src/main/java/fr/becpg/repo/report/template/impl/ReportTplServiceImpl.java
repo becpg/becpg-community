@@ -79,7 +79,7 @@ public class ReportTplServiceImpl implements ReportTplService {
 	 */
 	@Override
 	public List<NodeRef> getSystemReportTemplates(ReportType reportType, QName nodeType) {
-		return getReportTpls(reportType, nodeType, true, null);
+		return getReportTpls(reportType, nodeType, true, null, null);
 	}
 
 	/**
@@ -87,7 +87,7 @@ public class ReportTplServiceImpl implements ReportTplService {
 	 */
 	@Override
 	public NodeRef getSystemReportTemplate(ReportType reportType, QName nodeType, String tplName) {
-		List<NodeRef> ret = getReportTpls(reportType, nodeType, true, tplName);
+		List<NodeRef> ret = getReportTpls(reportType, nodeType, true, null, tplName);
 
 		return (ret != null) && !ret.isEmpty() ? ret.get(0) : null;
 	}
@@ -107,7 +107,7 @@ public class ReportTplServiceImpl implements ReportTplService {
 	 */
 	@Override
 	public List<NodeRef> getUserReportTemplates(ReportType reportType, QName nodeType, String tplName) {
-		return getReportTpls(reportType, nodeType, false, tplName);
+		return getReportTpls(reportType, nodeType, false, null, tplName);
 	}
 
 	/**
@@ -124,11 +124,25 @@ public class ReportTplServiceImpl implements ReportTplService {
 	 */
 	@Override
 	public NodeRef getUserReportTemplate(ReportType reportType, QName nodeType, String tplName) {
-		List<NodeRef> ret = getReportTpls(reportType, nodeType, false, tplName);
+		List<NodeRef> ret = getReportTpls(reportType, nodeType, false, null, tplName);
 
 		return (ret != null) && !ret.isEmpty() ? ret.get(0) : null;
 	}
 
+	/**
+	 * 
+	 * @param reportType
+	 * @param nodeType
+	 * @return
+	 */
+	@Override
+	public NodeRef getDefaultReportTemplate(ReportType reportType, QName nodeType) {
+		List<NodeRef> ret = getReportTpls(reportType, nodeType, false, true, null);
+
+		return (ret != null) && !ret.isEmpty() ? ret.get(0) : null;
+	}
+	
+	
 	/**
 	 * Create the rptdesign node for the report
 	 *
@@ -315,7 +329,7 @@ public class ReportTplServiceImpl implements ReportTplService {
 		return reportFormat;
 	}
 
-	private List<NodeRef> getReportTpls(ReportType reportType, QName nodeType, Boolean isSystem, String tplName) {
+	private List<NodeRef> getReportTpls(ReportType reportType, QName nodeType, Boolean isSystem, Boolean isDefault, String tplName) {
 
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(ReportModel.TYPE_REPORT_TPL)
 				.andPropEquals(ReportModel.PROP_REPORT_TPL_TYPE, reportType.toString());
@@ -335,8 +349,9 @@ public class ReportTplServiceImpl implements ReportTplService {
 			QName classType = (QName) nodeService.getProperty(rTplNodeRef, ReportModel.PROP_REPORT_TPL_CLASS_NAME);
 
 			if ((((classType == null) && (nodeType == null)) || ((classType != null) && classType.equals(nodeType)))
-					&& isSystem.equals(nodeService.getProperty(rTplNodeRef, ReportModel.PROP_REPORT_TPL_IS_SYSTEM))
-					&& !Boolean.TRUE.equals(nodeService.getProperty(rTplNodeRef, ReportModel.PROP_REPORT_TPL_IS_DISABLED))) {
+					&& (isSystem == null ||  isSystem.equals(nodeService.getProperty(rTplNodeRef, ReportModel.PROP_REPORT_TPL_IS_SYSTEM)))
+					&& (isDefault == null || isDefault.equals(nodeService.getProperty(rTplNodeRef, ReportModel.PROP_REPORT_TPL_IS_DEFAULT)) )
+					&& !Boolean.TRUE.equals(nodeService.getProperty(rTplNodeRef, ReportModel.PROP_REPORT_TPL_IS_DISABLED)) ) {
 				ret.add(rTplNodeRef);
 			}
 		}

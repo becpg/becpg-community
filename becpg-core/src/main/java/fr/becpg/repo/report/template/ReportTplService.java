@@ -113,4 +113,12 @@ public interface ReportTplService {
 	 * @return
 	 */
 	NodeRef getAssociatedReportTemplate(NodeRef nodeRef);
+
+	/**
+	 * 
+	 * @param reportType
+	 * @param nodeType
+	 * @return
+	 */
+	NodeRef getDefaultReportTemplate(ReportType reportType, QName nodeType);
 }
