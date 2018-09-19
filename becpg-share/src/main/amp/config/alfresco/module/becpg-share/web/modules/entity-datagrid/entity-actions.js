@@ -449,7 +449,22 @@
 			         message : this.msg("message.delete.success", items.length)
 			      },
 			      failure : {
-				      message : this.msg("message.delete.failure")
+		               callback:
+		               {
+		                  fn: function(response, obj)
+		                  {
+		                	  if (response.json && response.json.message) {
+		                          Alfresco.util.PopupManager.displayPrompt({
+		                             title : me.msg("message.delete.failure"),
+		                             text : response.json.message
+		                          });
+		                       } else {
+		                          Alfresco.util.PopupManager.displayMessage({
+		                             text : me.msg("message.delete.failure")
+		                          });
+		                      }
+		                  }
+		               }
 			      },
 			      webscript : {
 			         method : Alfresco.util.Ajax.DELETE,

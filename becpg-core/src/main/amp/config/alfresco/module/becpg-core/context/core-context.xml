@@ -217,11 +217,14 @@
         </property>
     </bean>
     
-       <!-- Overload of IntegrityChecker -->
-      <bean id="integrityChecker" class="fr.becpg.repo.node.integrity.BeCPGIntegrityChecker" init-method="init">
+  	<!--  Overload of IntegrityChecker --> 
+    <bean id="integrityChecker" class="fr.becpg.repo.node.integrity.BeCPGIntegrityChecker" init-method="init">
       <property name="policyComponent" ref="policyComponent"/>
       <property name="dictionaryService" ref="dictionaryService" />
       <property name="nodeService" ref="nodeService" />
+      <property name="entityDictionaryService" ref="entityDictionaryService" />
+      <property name="entityListDAO" ref="entityListDAO" />
+      <property name="attributeExtractorService" ref="attributeExtractorService" />
       <property name="tenantService" ref="tenantService" />
       <property name="enabled" value="${system.integrity.enabled}" />
       <property name="traceOn" value="${system.integrity.trace}" />
@@ -232,6 +235,6 @@
             <value>${version.store.version2Store}</value>
          </list>
       </property>
-   </bean>
+   </bean> 
     
 </beans>
