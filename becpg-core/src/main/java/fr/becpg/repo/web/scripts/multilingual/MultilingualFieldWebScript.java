@@ -43,7 +43,6 @@ import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 import org.springframework.util.StopWatch;
-import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import fr.becpg.repo.helper.MLTextHelper;
@@ -65,10 +64,16 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 	private static final String PARAM_SUGGEST = "suggest";
 
 	private static final String PARAM_TARGET = "target";
+	
+	private static final String PARAM_COPY = "copy";
+	
+	private static final String PARAM_DEST_FIELD = "destField";
 
 	private String googleApiKey;
 
 	private ServiceRegistry serviceRegistry;
+	
+
 
 	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
 		this.serviceRegistry = serviceRegistry;
@@ -83,6 +88,9 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
 
 		String nodeRef = req.getParameter(PARAM_NODEREF);
+		
+		boolean copy = "true".equals(req.getParameter(PARAM_COPY));
+		String destFieldName = req.getParameter(PARAM_DEST_FIELD);
 
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
@@ -92,6 +100,12 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 
 		NodeRef formNodeRef = null;
 		QName fieldQname = null;
+		QName destFieldQname = null;
+		
+		if (destFieldName != null) {
+			destFieldName = destFieldName.replace("_", ":");
+			destFieldQname = QName.createQName(destFieldName, serviceRegistry.getNamespaceService());
+		}
 
 		if ((nodeRef != null) && !nodeRef.isEmpty()) {
 			formNodeRef = new NodeRef(nodeRef);
@@ -100,10 +114,12 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 		Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();
 		if (templateArgs != null) {
 			String fieldName = templateArgs.get(PARAM_FIELD);
+			
 			if (fieldName != null) {
 				fieldName = fieldName.replace("_", ":");
 				fieldQname = QName.createQName(fieldName, serviceRegistry.getNamespaceService());
 			}
+			
 		}
 
 		if ((formNodeRef == null) || (fieldQname == null)) {
@@ -184,6 +200,9 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 					}
 
 					if (mlText != null) {
+						if(copy){
+							serviceRegistry.getNodeService().setProperty(formNodeRef, destFieldQname, mlText);
+						}
 						JSONArray items = new JSONArray();
 						for (Map.Entry<Locale, String> mlEntry : mlText.entrySet()) {
 							JSONObject item = new JSONObject();
@@ -207,6 +226,7 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 
 						ret.put("items", items);
 						ret.put("currentLocale",MLTextHelper.localeKey(toSaveUnderLocale));
+						
 					}
 
 				}
@@ -229,6 +249,7 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 		}
 
 	}
+
 
 	private String getTranslatedText(String defaultValue, String target) throws IOException {
 		if ((googleApiKey != null) && !googleApiKey.isEmpty()) {

@@ -200,23 +200,9 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 				cmpRowElt.addAttribute(ATTR_ENTITYLIST, typeDef.getTitle(dictionaryService));
 				cmpRowElt.addAttribute(ATTR_ENTITYLIST_QNAME, c.getEntityList().toPrefixString(namespaceService));
 			}
-			String charactPath = "";
-			if (c.getCharactPath() != null) {
-				for (NodeRef nodeRef : c.getCharactPath()) {
-
-					charactPath += attributeExtractorService.extractPropName(nodeRef);
-
-					if (!charactPath.isEmpty()) {
-						charactPath += CHARACT_PATH_SEPARATOR;
-					}
-				}
-			}
 			
-			logger.debug("NodeRef of charact: "+c.getCharacteristic());
-			NodeRef charactNodeRef = c.getCharacteristic()== null ? null : (new NodeRef(c.getCharacteristic().split(Pattern.quote("|"))[0])); 
 			
-			cmpRowElt.addAttribute(ATTR_CHARACTERISTIC,
-					c.getCharacteristic() == null ? "" : charactPath + attributeExtractorService.extractPropName(charactNodeRef));
+			cmpRowElt.addAttribute(ATTR_CHARACTERISTIC,c.getCharactName());
 			cmpRowElt.addAttribute(ATTR_PROPERTY, getClassAttributeTitle(c.getProperty()));
 			cmpRowElt.addAttribute(ATTR_PROPERTY_QNAME, c.getProperty().toPrefixString(namespaceService));
 			cmpRowElt.addAttribute(ATTR_IS_DIFFERENT, Boolean.toString(c.isDifferent()));
