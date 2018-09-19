@@ -2635,7 +2635,7 @@ else if(dataSetRow["mblValue"] != null &amp;&amp; dataSetRow["mblValue"] != ""){
             <list-property name="computedColumns">
                 <structure>
                     <property name="name">illValueToShow</property>
-                    <expression name="expression">if(row["illManualValue"] != ""){
+                    <expression name="expression">if(row["illManualValue"] != null &amp;&amp; row["illManualValue"] != ""){
 row["illManualValue"]
 }
 else{
@@ -2650,12 +2650,6 @@ row["illValue"]
                     <property name="analysis">attribute</property>
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">language</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">languageCode</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">languageCode</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">languageCode</property>
