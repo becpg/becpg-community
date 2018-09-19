@@ -50,7 +50,7 @@
                                              <p>Voici votre compte beCPG:
 															<br />- Url : <a href="${shareUrl}">${shareUrl}</a>
 															<br />- Compte : ${username}
-															<br />- Mot de passe (Je vous conseille de le modifier) : ${password}</p>
+															<br />- Mot de passe : ${password}</p>
 															
 															<p>Je vous conseille d'utiliser le navigateur Firefox ou Chrome.<br />															
 															</p>
