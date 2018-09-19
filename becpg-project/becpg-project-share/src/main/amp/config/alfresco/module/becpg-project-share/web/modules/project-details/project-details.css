@@ -190,11 +190,10 @@
 	border-radius: 8px;
 	box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
 	margin: 10px 0px;
-	
 }
+
 .project-details .icon {
 	float: left;
-	width: 50%;
 	padding-left: 10px;
 	padding-bottom: 5px;
 	text-align:center;
@@ -213,4 +212,16 @@
 
 .project-details .txt-align-end {
 	text-align: end; 
+}
+
+.project-details  span.task {
+    background: url("../../components/images/filetypes/generic-task-16.png") no-repeat;
+    padding-left: 20px;
+    color: black;
+}
+
+.project-details  span.task-milestone {
+	background: url("../../components/images/filetypes/generic-task-milestone-16.png") no-repeat;
+	padding-left: 20px;
+	color: black;
 }
