@@ -45,6 +45,7 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.datalist.MultiLevelDataListService;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 
 /**
@@ -70,6 +71,9 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 	@Autowired
 	private NamespaceService namespaceService;
+	
+	@Autowired
+	private AssociationService associationService;
 
 	@Autowired
 	private AttributeExtractorService attributeExtractorService;
@@ -431,7 +435,10 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 			Map<String, CompareResultDataItem> comparisonMap) {
 
 		List<QName> pivotProperties = getPivotForComparison(dataListType);
-
+		
+		QName pivotAssoc = entityDictionaryService.getDefaultPivotAssoc(dataListType);
+		
+		
 		if (!pivotProperties.isEmpty()) {
 
 			// load characteristics
@@ -487,7 +494,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 						logger.debug("Missing key: "+pivot1Key);
 					}
 
-					CharacteristicToCompare characteristicToCmp = new CharacteristicToCompare(null, pivot1Key, dataListItem1, dataListItem2NodeRef);
+					CharacteristicToCompare characteristicToCmp = new CharacteristicToCompare(pivot1Key, dataListItem1, dataListItem2NodeRef);
 					characteristicsToCmp.add(characteristicToCmp);
 
 				}
@@ -509,7 +516,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 					if (!pivot1Keys.contains(pivot2Key)) {
 						logger.debug("Missing key: "+pivot2Key);
 						
-						CharacteristicToCompare characteristicToCmp = new CharacteristicToCompare(null, pivot2Key, null, d);
+						CharacteristicToCompare characteristicToCmp = new CharacteristicToCompare( pivot2Key, null, d);
 						characteristicsToCmp.add(characteristicToCmp);
 					}
 				}
@@ -517,12 +524,32 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 			// compare properties of characteristics
 			for (CharacteristicToCompare c : characteristicsToCmp) {
-
-				compareNode(dataListType, c.getCharactPath(), c.getCharacteristic(), c.getNodeRef1(), c.getNodeRef2(), nbEntities, comparisonPosition,
+				compareNode(dataListType, extractCharactName(c, pivotAssoc) , c.getPivotKey(), c.getNodeRef1(), c.getNodeRef2(), nbEntities, comparisonPosition,
 						true, comparisonMap);
 			}
 
 		}
+	}
+
+	private String extractCharactName(CharacteristicToCompare c, QName pivotAssoc) {
+		NodeRef itemNodeRef =  c.getNodeRef1();
+		if(itemNodeRef!=null) {
+			itemNodeRef = c.getNodeRef2();
+		}
+		
+		if(itemNodeRef!=null) {
+			if (pivotAssoc != null) {
+				NodeRef part = associationService.getTargetAssoc(itemNodeRef, pivotAssoc);
+				if ((part != null)) {
+					
+					return attributeExtractorService.extractPropName(part);
+				}
+			}
+			return attributeExtractorService.extractPropName(itemNodeRef);
+			
+		}
+		
+		return null;
 	}
 
 	@Override
@@ -618,7 +645,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				StructCompareOperator operator = StructCompareOperator.Equal;
 
 				Map<String, CompareResultDataItem> comparisonMap = new TreeMap<>();
-				compareNode(entityListType, null, null, nodeRef1, nodeRef2, 2, 1, true, comparisonMap);
+				compareNode(entityListType,null , null, nodeRef1, nodeRef2, 2, 1, true, comparisonMap);
 
 				if (logger.isDebugEnabled()) {
 					logger.debug("structCompareCompositeDataLists: nodeRef1: " + nodeRef1 + " - nodeRef2: " + nodeRef2 + " pivotProperty: "
@@ -709,7 +736,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 	}
 
-	private void compareNode(QName dataListType, List<NodeRef> charactPath, String characteristic, NodeRef nodeRef1, NodeRef nodeRef2, int nbEntities,
+	private void compareNode(QName dataListType, String charactName, String privotKey, NodeRef nodeRef1, NodeRef nodeRef2, int nbEntities,
 			int comparisonPosition, boolean isDataList, Map<String, CompareResultDataItem> comparisonMap) {
 
 		/*
@@ -730,7 +757,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 					oValue2 = properties2.get(propertyQName);
 				}
 
-				compareValues(dataListType, charactPath, characteristic, propertyQName, oValue1, oValue2, nbEntities, comparisonPosition,
+				compareValues(dataListType, charactName, privotKey, propertyQName, oValue1, oValue2, nbEntities, comparisonPosition,
 						comparisonMap, propertyFormats);
 			}
 		}
@@ -739,7 +766,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		for (QName propertyQName : properties2.keySet()) {
 
 			if (!properties1.containsKey(propertyQName) && isCompareableProperty(propertyQName, isDataList)) {
-				compareValues(dataListType, charactPath, characteristic, propertyQName, null, properties2.get(propertyQName), nbEntities,
+				compareValues(dataListType, charactName, privotKey, propertyQName, null, properties2.get(propertyQName), nbEntities,
 						comparisonPosition, comparisonMap, propertyFormats);
 			}
 		}
@@ -818,7 +845,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 					isDifferent = true;
 				}
 
-				compareAssocs(dataListType, charactPath, characteristic, propertyQName, nodeRefs1, nodeRefs2, nbEntities, comparisonPosition,
+				compareAssocs(dataListType,  charactName,  privotKey, propertyQName, nodeRefs1, nodeRefs2, nbEntities, comparisonPosition,
 						comparisonMap, isDifferent);
 			}
 		}
@@ -827,14 +854,14 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		for (QName propertyQName : associations2Sorted.keySet()) {
 
 			if (!associations1Sorted.containsKey(propertyQName) && isCompareableProperty(propertyQName, isDataList)) {
-				compareAssocs(dataListType, charactPath, characteristic, propertyQName, null, associations2Sorted.get(propertyQName), nbEntities,
+				compareAssocs(dataListType, charactName, privotKey, propertyQName, null, associations2Sorted.get(propertyQName), nbEntities,
 						comparisonPosition, comparisonMap, true);
 			}
 		}
 
 	}
 
-	private void compareAssocs(QName dataListType, List<NodeRef> charactPath, String characteristic, QName propertyQName, List<NodeRef> nodeRefs1,
+	private void compareAssocs(QName dataListType,String charactName,  String privotKey, QName propertyQName, List<NodeRef> nodeRefs1,
 			List<NodeRef> nodeRefs2, int nbEntities, int comparisonPosition, Map<String, CompareResultDataItem> comparisonMap, boolean isDifferent) {
 
 		String strValue1 = null;
@@ -862,11 +889,11 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 			}
 		}
 
-		addComparisonDataItem(comparisonMap, dataListType, charactPath, characteristic, propertyQName, strValue1, strValue2, nbEntities,
+		addComparisonDataItem(comparisonMap, dataListType, charactName, privotKey, propertyQName, strValue1, strValue2, nbEntities,
 				comparisonPosition, isDifferent);
 	}
 
-	private void compareValues(QName dataListType, List<NodeRef> charactPath, String characteristic, QName propertyQName, Serializable oValue1,
+	private void compareValues(QName dataListType, String charactName, String privotKey, QName propertyQName, Serializable oValue1,
 			Serializable oValue2, int nbEntities, int comparisonPosition, Map<String, CompareResultDataItem> comparisonMap,
 			PropertyFormats propertyFormats) {
 
@@ -904,15 +931,15 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 			isDifferent = false;
 		}
 
-		addComparisonDataItem(comparisonMap, dataListType, charactPath, characteristic, propertyQName, strValue1, strValue2, nbEntities,
+		addComparisonDataItem(comparisonMap, dataListType, charactName, privotKey, propertyQName, strValue1, strValue2, nbEntities,
 				comparisonPosition, isDifferent);
 	}
 
-	private void addComparisonDataItem(Map<String, CompareResultDataItem> comparisonMap, QName dataListType, List<NodeRef> charactPath,
-			String characteristic, QName propertyQName, String strValue1, String strValue2, int nbEntities, int comparisonPosition,
+	private void addComparisonDataItem(Map<String, CompareResultDataItem> comparisonMap, QName dataListType,
+			String charactName, String pivotKey, QName propertyQName, String strValue1, String strValue2, int nbEntities, int comparisonPosition,
 			boolean isDifferent) {
 
-		String key = String.format("%s-%s-%s", dataListType, characteristic, propertyQName);
+		String key = String.format("%s-%s-%s", dataListType, pivotKey, propertyQName);
 
 		CompareResultDataItem comparisonDataItem = comparisonMap.get(key);
 
@@ -921,7 +948,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 			values[0] = strValue1;
 			logger.debug("nbEntities " + nbEntities + " comparisonPosition " + comparisonPosition);
 			values[comparisonPosition] = strValue2;
-			comparisonDataItem = new CompareResultDataItem(dataListType, charactPath, characteristic, propertyQName, values);
+			comparisonDataItem = new CompareResultDataItem(dataListType, charactName, pivotKey, propertyQName, values);
 			comparisonMap.put(key, comparisonDataItem);
 		} else {
 			comparisonDataItem.getValues()[comparisonPosition] = strValue2;
@@ -1015,9 +1042,9 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 			if (dictionaryService.getProperty(pivot) != null) {
 				res += (res.isEmpty() ? "" : "|") + nodeService.getProperty(node, pivot);
 			} else {
-				List<AssociationRef> targetAssocs = nodeService.getTargetAssocs(node, pivot);
-				if (!targetAssocs.isEmpty()) {
-					res += (res.isEmpty() ? "" : "|") + nodeService.getTargetAssocs(node, pivot).get(0).getTargetRef();
+				NodeRef targetAssoc = associationService.getTargetAssoc(node, pivot);
+				if (targetAssoc!=null) {
+					res += (res.isEmpty() ? "" : "|") + targetAssoc;
 				} else {
 					res += (res.isEmpty() ? "" : "|") + "null";
 				}

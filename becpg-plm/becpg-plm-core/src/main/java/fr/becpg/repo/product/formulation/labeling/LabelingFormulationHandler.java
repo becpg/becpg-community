@@ -725,7 +725,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 									if ((aggregateRule.getReplacement() != null)
 											&& LabelingRuleType.DoNotDetails.equals(aggregateRule.getLabelingRuleType())) {
 
-										
 										if (current == null) {
 											RepositoryEntity replacement = alfrescoRepository.findOne(aggregateRule.getReplacement());
 											if (replacement instanceof IngItem) {
@@ -739,12 +738,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 											} else {
 												logger.warn("Invalid replacement :" + aggregateRule.getReplacement());
 											}
-											
+
 										}
 
 										if (current != null) {
 
-											if (ingList.containsKey(aggregateRuleNodeRef) ) {
+											if (ingList.containsKey(aggregateRuleNodeRef)) {
 												current.setPlural(true);
 											}
 
@@ -1470,7 +1469,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 								: realDiluentQty.divide(diluentQty, 10, BigDecimal.ROUND_HALF_UP);
 
 						BigDecimal realQty = realDiluentQty.add(productQty.multiply(realDiluentQtyRatio)).divide(rate, 10, BigDecimal.ROUND_HALF_UP);
-
+						BigDecimal subIngQtyRatio = realDiluentQty.divide(ingQty);
+						
+						
 						ingLabelItem.setQty(ingQty.subtract(realDiluentQty).doubleValue());
 						productLabelItem.setQty(productQty.subtract(realQty).doubleValue());
 
@@ -1483,8 +1484,26 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						BigDecimal realVol = readlDiluentvolume.add(productVol.multiply(readlDiluentvolumeRatio)).divide(rate, 10,
 								BigDecimal.ROUND_HALF_UP);
 
+						BigDecimal subIngVolRatio = readlDiluentvolume.divide(ingVol);
+						
 						ingLabelItem.setVolume(ingVol.subtract(readlDiluentvolume).doubleValue());
 						productLabelItem.setVolume(productVol.subtract(realVol).doubleValue());
+
+						if (ingLabelItem instanceof IngItem) {
+							if (((IngItem) ingLabelItem).getSubIngs() != null) {
+									for (IngItem subIng : ((IngItem) ingLabelItem).getSubIngs()) {
+										if (subIng.getQty() != null) {
+											BigDecimal subIngQty = new BigDecimal(subIng.getQty());
+											subIng.setQty(subIngQty.subtract(subIngQtyRatio.multiply(subIngQty)).doubleValue());
+										}
+
+										if (subIng.getVolume() != null) {
+											BigDecimal subIngVol = new BigDecimal(subIng.getVolume());
+											subIng.setVolume(subIngVol.subtract(subIngVolRatio.multiply(subIngVol)).doubleValue());
+										}
+									}
+							}
+						}
 
 						IngItem targetLabelItem = (IngItem) parent.get(reconstituableData.getTargetIngNodeRef());
 						if (targetLabelItem == null) {
@@ -1493,9 +1512,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							targetLabelItem.setVolume(0d);
 							parent.add(targetLabelItem);
 						}
-
+						
 						targetLabelItem.setQty(new BigDecimal(targetLabelItem.getQty()).add(realQty).add(realDiluentQty).doubleValue());
 						targetLabelItem.setVolume(new BigDecimal(targetLabelItem.getVolume()).add(realVol).add(readlDiluentvolume).doubleValue());
+
 
 						if (logger.isTraceEnabled()) {
 							logger.trace("Applying reconstitution:" + getName(productLabelItem) + " with " + getName(ingLabelItem) + " to "
@@ -1610,77 +1630,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				}
 			}
 
-			if (!ingListItem.isLeaf() && !DeclarationType.DoNotDeclare.equals(ingDeclarationType)) {
-				// Only one level of subIngs
-				for (Composite<IngListDataItem> subIngListItem : ingListItem.getChildren()) {
-
-					DeclarationType subIngItemDeclarationType = getDeclarationType(compoListDataItem, subIngListItem.getData(),
-							labelingFormulaContext);
-					if (!DeclarationType.Omit.equals(subIngItemDeclarationType) && !DeclarationType.DoNotDeclare.equals(subIngItemDeclarationType)) {
-
-						IngItem subIngItem = new IngItem((IngItem) alfrescoRepository.findOne(subIngListItem.getData().getIng()));
-
-						if (subIngListItem.getData().getQtyPerc() != null) {
-							subIngItem.setQty(subIngListItem.getData().getQtyPerc() / 100);
-							subIngItem.setVolume(subIngListItem.getData().getQtyPerc() / 100);
-						} else {
-							subIngItem.setQty(null);
-							subIngItem.setVolume(null);
-						}
-
-						if (product.getAllergenList() != null) {
-							for (AllergenListDataItem allergenListDataItem : product.getAllergenList()) {
-								if (allergenListDataItem.getVoluntary()
-										&& allergenListDataItem.getVoluntarySources().contains(subIngItem.getNodeRef())) {
-									if (AllergenType.Major.toString()
-											.equals(nodeService.getProperty(allergenListDataItem.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE))) {
-										subIngItem.getAllergens().add(allergenListDataItem.getAllergen());
-									}
-								}
-							}
-						}
-
-						if ((subIngListItem.getData().getGeoTransfo() != null) && !subIngListItem.getData().getGeoTransfo().isEmpty()) {
-							subIngItem.getGeoOrigins().addAll(subIngListItem.getData().getGeoTransfo());
-						} else if (subIngListItem.getData().getGeoOrigin() != null) {
-							subIngItem.getGeoOrigins().addAll(subIngListItem.getData().getGeoOrigin());
-						}
-
-						if (ingLabelItem.getSubIngs().stream()
-								.filter(i -> (labelingFormulaContext.getLegalIngName(i) != null)
-										&& labelingFormulaContext.getLegalIngName(i).equals(labelingFormulaContext.getLegalIngName(subIngItem)))
-								.count() < 1) {
-							logger.trace("Adding subIng: " + subIngItem.getCharactName());
-							ingLabelItem.getSubIngs().add(subIngItem);
-						} else {
-							logger.trace("Merge subIng: " + subIngItem.getCharactName());
-							ingLabelItem.getSubIngs().stream()
-									.filter(i -> (labelingFormulaContext.getLegalIngName(i) != null)
-											&& labelingFormulaContext.getLegalIngName(i).equals(labelingFormulaContext.getLegalIngName(subIngItem)))
-
-									.forEach(i -> {
-										if ((i.getQty() != null) && (subIngItem.getQty() != null)) {
-											i.setQty(i.getQty() + subIngItem.getQty());
-										} else {
-											// TODO add warning
-											i.setQty(null);
-										}
-										if ((i.getVolume() != null) && (subIngItem.getVolume() != null)) {
-											i.setVolume(i.getVolume() + subIngItem.getVolume());
-										} else {
-											// TODO add warning
-											i.setVolume(null);
-										}
-
-										i.getAllergens().addAll(subIngItem.getAllergens());
-
-									});
-						}
-					}
-
-				}
-			}
-
 			if (product.getAllergenList() != null) {
 				for (AllergenListDataItem allergenListDataItem : product.getAllergenList()) {
 					if (allergenListDataItem.getVoluntary() && allergenListDataItem.getVoluntarySources().contains(ingNodeRef)) {
@@ -1773,6 +1722,87 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					if (qty == null) {
 						ingLabelItem.setQty(null);
 						ingLabelItem.setVolume(null);
+					}
+
+				}
+			}
+
+			// Sub ings
+			if (!ingListItem.isLeaf() && !DeclarationType.DoNotDeclare.equals(ingDeclarationType)) {
+				// Only one level of subIngs
+				for (Composite<IngListDataItem> subIngListItem : ingListItem.getChildren()) {
+
+					DeclarationType subIngItemDeclarationType = getDeclarationType(compoListDataItem, subIngListItem.getData(),
+							labelingFormulaContext);
+					if (!DeclarationType.Omit.equals(subIngItemDeclarationType) && !DeclarationType.DoNotDeclare.equals(subIngItemDeclarationType)) {
+
+						IngItem subIngItem = new IngItem((IngItem) alfrescoRepository.findOne(subIngListItem.getData().getIng()));
+
+						Double subIngQtyPerc = subIngListItem.getData().getQtyPerc();
+						if (subIngQtyPerc != null) {
+							subIngQtyPerc += omitQtyPerc;
+						}
+
+						if ((subIngQtyPerc != null) && (qty != null)) {
+							subIngItem.setQty((qty * subIngQtyPerc) / 100);
+						} else {
+							subIngItem.setQty(null);
+						}
+						if ((subIngQtyPerc != null) && (volume != null)) {
+							subIngItem.setVolume((volume * subIngQtyPerc) / 100);
+						} else {
+							subIngItem.setVolume(null);
+						}
+
+						if (product.getAllergenList() != null) {
+							for (AllergenListDataItem allergenListDataItem : product.getAllergenList()) {
+								if (allergenListDataItem.getVoluntary()
+										&& allergenListDataItem.getVoluntarySources().contains(subIngItem.getNodeRef())) {
+									if (AllergenType.Major.toString()
+											.equals(nodeService.getProperty(allergenListDataItem.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE))) {
+										subIngItem.getAllergens().add(allergenListDataItem.getAllergen());
+									}
+								}
+							}
+						}
+
+						if ((subIngListItem.getData().getGeoTransfo() != null) && !subIngListItem.getData().getGeoTransfo().isEmpty()) {
+							subIngItem.getGeoOrigins().addAll(subIngListItem.getData().getGeoTransfo());
+						} else if (subIngListItem.getData().getGeoOrigin() != null) {
+							subIngItem.getGeoOrigins().addAll(subIngListItem.getData().getGeoOrigin());
+						}
+
+						if (ingLabelItem.getSubIngs().stream()
+								.filter(i -> (labelingFormulaContext.getLegalIngName(i) != null)
+										&& labelingFormulaContext.getLegalIngName(i).equals(labelingFormulaContext.getLegalIngName(subIngItem)))
+								.count() < 1) {
+							logger.trace(
+									"Adding subIng: " + subIngItem.getCharactName() + " qty: " + subIngItem.getQty() + " for perc :" + subIngQtyPerc);
+							ingLabelItem.getSubIngs().add(subIngItem);
+						} else {
+							logger.trace("Merge subIng: " + subIngItem.getCharactName());
+							ingLabelItem.getSubIngs().stream()
+									.filter(i -> (labelingFormulaContext.getLegalIngName(i) != null)
+											&& labelingFormulaContext.getLegalIngName(i).equals(labelingFormulaContext.getLegalIngName(subIngItem)))
+
+									.forEach(i -> {
+										if ((i.getQty() != null) && (subIngItem.getQty() != null)) {
+											i.setQty(i.getQty() + subIngItem.getQty());
+										} else {
+											// TODO add warning
+											i.setQty(null);
+										}
+										if ((i.getVolume() != null) && (subIngItem.getVolume() != null)) {
+											i.setVolume(i.getVolume() + subIngItem.getVolume());
+										} else {
+											// TODO add warning
+											i.setVolume(null);
+										}
+
+										i.getAllergens().addAll(subIngItem.getAllergens());
+
+									});
+						}
 					}
 
 				}
