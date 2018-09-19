@@ -994,6 +994,11 @@ row["compoListProduct"]
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">qtyForCost</text-property>
                 </structure>
+                <structure>
+                    <property name="columnName">parentLevel</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">parentLevel</text-property>
+                </structure>
             </list-property>
             <list-property name="parameters"/>
             <structure name="cachedMetaData">
@@ -1120,21 +1125,26 @@ row["compoListProduct"]
                     </structure>
                     <structure>
                         <property name="position">25</property>
+                        <property name="name">parentLevel</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">26</property>
                         <property name="name">costPerProduct</property>
                         <property name="dataType">float</property>
                     </structure>
                     <structure>
-                        <property name="position">26</property>
+                        <property name="position">27</property>
                         <property name="name">costPerKilo</property>
                         <property name="dataType">float</property>
                     </structure>
                     <structure>
-                        <property name="position">27</property>
+                        <property name="position">28</property>
                         <property name="name">compoListProductLabel</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">28</property>
+                        <property name="position">29</property>
                         <property name="name">runningCount</property>
                         <property name="dataType">integer</property>
                     </structure>
@@ -1310,8 +1320,15 @@ row["compoListProduct"]
                     <property name="dataType">float</property>
                     <property name="nativeDataType">8</property>
                 </structure>
+                <structure>
+                    <property name="position">25</property>
+                    <property name="name">parentLevel</property>
+                    <property name="nativeName">parentLevel</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/compoLists/compoList]#:#{depthLevel;STRING;/@depthLevel},{compoListProduct;STRING;/@compoListProduct},{compoListQtySubFormula;BIGDECIMAL;/@compoListQtySubFormula},{compoListQty;DOUBLE;/@compoListQty},{compoListUnit;STRING;/@compoListUnit},{compoListQtyAfterProcess;DOUBLE;/@compoListQtyAfterProcess},{itemType;STRING;/@itemType},{erpCode;STRING;/@erpCode},{variants;STRING;/@variants},{compoListYieldPerc;DOUBLE;/@compoListYieldPerc},{compoListLossPerc;DOUBLE;/@compoListLossPerc},{instruction;STRING;/instruction},{unitTotalCost;DOUBLE;/@unitTotalCost},{productCompoQtyUsed;DOUBLE;../../../productCompoQtyUsed},{netWeight;DOUBLE;../../../netWeight},{compoListQtyForProduct;DOUBLE;/@compoListQtyForProduct},{versionLabel;STRING;/@versionLabel},{itemTypeEntity;STRING;../../../itemType},{title;STRING;/@title},{productCompoQtyUsed_1;DOUBLE;../../../productCompoQtyUsed},{productUnit;STRING;/@productUnit},{compoListVolume;DOUBLE;/@compoListVolume},{currentCost;DOUBLE;/@currentCost},{qtyForCost;DOUBLE;/@qtyForCost}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/compoLists/compoList]#:#{depthLevel;STRING;/@depthLevel},{compoListProduct;STRING;/@compoListProduct},{compoListQtySubFormula;BIGDECIMAL;/@compoListQtySubFormula},{compoListQty;DOUBLE;/@compoListQty},{compoListUnit;STRING;/@compoListUnit},{compoListQtyAfterProcess;DOUBLE;/@compoListQtyAfterProcess},{itemType;STRING;/@itemType},{erpCode;STRING;/@erpCode},{variants;STRING;/@variants},{compoListYieldPerc;DOUBLE;/@compoListYieldPerc},{compoListLossPerc;DOUBLE;/@compoListLossPerc},{instruction;STRING;/instruction},{unitTotalCost;DOUBLE;/@unitTotalCost},{productCompoQtyUsed;DOUBLE;../../../productCompoQtyUsed},{netWeight;DOUBLE;../../../netWeight},{compoListQtyForProduct;DOUBLE;/@compoListQtyForProduct},{versionLabel;STRING;/@versionLabel},{itemTypeEntity;STRING;../../../itemType},{title;STRING;/@title},{productCompoQtyUsed_1;DOUBLE;../../../productCompoQtyUsed},{productUnit;STRING;/@productUnit},{compoListVolume;DOUBLE;/@compoListVolume},{currentCost;DOUBLE;/@currentCost},{qtyForCost;DOUBLE;/@qtyForCost},{parentLevel;STRING;/@parentLevel}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -4229,7 +4246,7 @@ dataSetRow["costListValue"]
                             <expression name="value" type="javascript">row["costPerProduct"]</expression>
                         </structure>
                     </list-property>
-                    <expression name="filterExpr" type="javascript">dataSetRow["depthLevel"]==1</expression>
+                    <expression name="filterExpr" type="javascript">dataSetRow["depthLevel"]==1 || dataSetRow["parentLevel"]!=""</expression>
                     <property name="allowExport">true</property>
                 </structure>
                 <structure>
@@ -4242,7 +4259,7 @@ dataSetRow["costListValue"]
                             <expression name="value" type="javascript">row["costPerKilo"]</expression>
                         </structure>
                     </list-property>
-                    <expression name="filterExpr" type="javascript">dataSetRow["depthLevel"]==1</expression>
+                    <expression name="filterExpr" type="javascript">dataSetRow["depthLevel"]==1 || dataSetRow["parentLevel"]!=""</expression>
                     <property name="allowExport">true</property>
                 </structure>
                 <structure>
@@ -4335,6 +4352,12 @@ dataSetRow["productUnit"]
 }</expression>
                     <property name="dataType">string</property>
                     <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">parentLevel</property>
+                    <text-property name="displayName">parentLevel</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["parentLevel"]</expression>
+                    <property name="dataType">string</property>
                 </structure>
             </list-property>
             <column id="2910">

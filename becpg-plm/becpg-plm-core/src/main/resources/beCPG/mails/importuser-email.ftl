@@ -50,7 +50,7 @@
                                              <p>Here is your account for beCPG:
 															<br />- Url : <a href="${shareUrl}">${shareUrl}</a>
 															<br />- Account : ${username}
-															<br />- Password (I advice you to change it) : ${password}</p>
+															<br />- Password : ${password}</p>
 															
 															<p>I advice you to use Firefox or Chrome browser.<br />															
 															You can create new products or new projects in the existing sites.<br />
