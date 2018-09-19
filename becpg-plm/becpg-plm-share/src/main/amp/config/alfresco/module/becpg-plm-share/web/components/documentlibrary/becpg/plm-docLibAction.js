@@ -73,6 +73,7 @@
                  .request({
                     method : Alfresco.util.Ajax.POST,
                     url : Alfresco.constants.PROXY_URI + "becpg/entity/simulation/create?entityNodeRef=" + nodeRef,
+                    responseContentType : Alfresco.util.Ajax.JSON,
                     successCallback : {
                        fn : function(resp) {
                           if (resp.json) {

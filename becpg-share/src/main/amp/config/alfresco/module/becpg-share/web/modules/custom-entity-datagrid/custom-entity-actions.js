@@ -529,6 +529,7 @@
 
 			Alfresco.util.Ajax.request({
 				method : Alfresco.util.Ajax.POST,
+				responseContentType : Alfresco.util.Ajax.JSON,
 				url : Alfresco.constants.PROXY_URI + "becpg/entity/simulation/create?dataListItems=" + nodeRefs
 						+ (this.options.entityNodeRef ? "&entityNodeRef=" + this.options.entityNodeRef : ""),
 				successCallback : {
@@ -548,10 +549,17 @@
 					scope : this
 				},
 				failureCallback : {
-					fn : function EntityDataGrid_onActionUp_refreshFailure(response) {
-						Alfresco.util.PopupManager.displayMessage({
-							text : me.msg("message.details.failure")
-						});
+					fn : function createBranchFailure(response) {
+							if (response.json && response.json.message) {
+	                              Alfresco.util.PopupManager.displayPrompt({
+	                                 title : this.msg("message.branch-entity.failure"),
+	                                 text : response.json.message
+	                              });
+	                           } else {
+	                              Alfresco.util.PopupManager.displayMessage({
+	                                 text : this.msg("message.branch-entity.failure")
+	                              });
+	                           }
 					},
 					scope : this
 				}
@@ -696,8 +704,6 @@
 		}
 
 	};
-	
-	
 	
 
 	/**

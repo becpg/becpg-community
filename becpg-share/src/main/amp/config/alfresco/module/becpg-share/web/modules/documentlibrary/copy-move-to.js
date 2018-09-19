@@ -252,6 +252,12 @@
                     else if (error.indexOf("Cannot perform operation since the node") != -1)
                	    {
                     	msgFailure = "message.locked.failure";
+               	    } else if (response.json && response.json.message) {
+                         Alfresco.util.PopupManager.displayPrompt({
+                            title : this.msg(msgFailure),
+                            text : response.json.message
+                         });
+                         return;
                	    }
 
                     Alfresco.util.PopupManager.displayMessage(

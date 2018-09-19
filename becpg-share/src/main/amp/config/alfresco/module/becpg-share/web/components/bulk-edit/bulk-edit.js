@@ -1836,6 +1836,7 @@
 				               Alfresco.util.Ajax
 				                 .request({
 				                    method : Alfresco.util.Ajax.POST,
+				                    responseContentType : Alfresco.util.Ajax.JSON,
 				                    url : Alfresco.constants.PROXY_URI + "becpg/entity/simulation/create?nodeRefs=" 
 				                    	+ submissionParams+"&allPages="+this.allPages+"&queryExecutionId="+this.queryExecutionId+"&destNodeRef="+destFolder+"&mode=recur",
 				                    successCallback : {
@@ -1845,8 +1846,22 @@
 				 			       		    });
 				                       },
 				                       scope : this
+				                    }, failureCallback : {
+				    					fn : function createBranchFailure(response) {
+				   						 if (response.json && response.json.message) {
+				   	                              Alfresco.util.PopupManager.displayPrompt({
+				   	                                 title : this.msg("message.branch-entity.failure"),
+				   	                                 text : response.json.message
+				   	                              });
+				   	                           } else {
+				   	                              Alfresco.util.PopupManager.displayMessage({
+				   	                                 text : this.msg("message.branch-entity.failure")
+				   	                              });
+				   	                           }
+				    					},
+				    					scope : this
 				                    }
-				                 });
+				                });
 							}
 						},
 						
