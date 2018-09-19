@@ -32,22 +32,8 @@
 						"container" ]);
 		var me = this;
 
-		var fnActionHandler = function ProjectDetails_fnActionHandler(layer,
-				args) {
-
-			var owner = YAHOO.Bubbling
-					.getOwnerByTagName(args[1].anchor, "span");
-			if (owner !== null) {
-				if (typeof me[owner.className] == "function") {
-					args[1].stop = true;
-					var fieldId = owner.id;
-					me[owner.className].call(me, fieldId);
-				}
-			}
-			return true;
-		};
-
-		YAHOO.Bubbling.addDefaultAction("filter-details-action", fnActionHandler);
+	
+		YAHOO.Bubbling.addDefaultAction("filter-details-action", this.onFilterDetailsAction);
 	
 		return this;
 	};
@@ -84,17 +70,17 @@
 							"metadata" : [ {
 								"colIndex" : 0,
 								"colType" : "String",
-								"colName" : "Date"
+								"colName" : this.msg("projectdetails.graph.xaxis")
 							}, {
 								"colIndex" : 1,
 								"colType" : "Numeric",
-								"colName" : "Activity number"
+								"colName" : this.msg("projectdetails.graph.yaxis")
 							} ]
 						};
 						var myChart = new pvc.StackedAreaChart({
 	
 							canvas : this.id+"-chart",
-							width : 500,
+							width : 430,
 							height : 150,
 							animate : true,
 							selectable : false,
@@ -108,7 +94,7 @@
 							},
 	
 							orthoAxisVisible : true,
-							orthoAxisTitle : "Nombre d'activité",
+							orthoAxisTitle : this.msg("projectdetails.graph.yaxis"),
 							baseAxisVisible : true,
 							colors : [ 'rgba(107, 210, 169, 0.6)' ],
 	
@@ -152,20 +138,28 @@
 							crosstabMode : false
 						}).render();
 						
+						
 				},
 
-				onFilterDetailsAction : function(fieldId) {
-					var idSpan0 = fieldId.split("#")[0], idSpan1 = fieldId
-							.split("#")[1];
-					var filteredDivEls = Dom.getElementsByClassName(idSpan0);
+				onFilterDetailsAction : function(layer,	args) {
 
-					for (i in filteredDivEls) {
+					var owner = YAHOO.Bubbling.getOwnerByTagName(args[1].anchor, "span");
+					if (owner !== null) {
+							args[1].stop = true;
+							var fieldId = owner.id;
+							var idSpan0 = fieldId.split("#")[0], idSpan1 = fieldId
+									.split("#")[1];
+							var filteredDivEls = Dom.getElementsByClassName(idSpan0);
 
-						Dom.removeClass(filteredDivEls[i], "hidden");
-						if (!Dom.hasClass(filteredDivEls[i], idSpan1)) {
-							Dom.addClass(filteredDivEls[i], "hidden");
-						}
+							for (i in filteredDivEls) {
+
+								Dom.removeClass(filteredDivEls[i], "hidden");
+								if (!Dom.hasClass(filteredDivEls[i], idSpan1)) {
+									Dom.addClass(filteredDivEls[i], "hidden");
+								}
+							}
 					}
+					
 				},
 
 			});

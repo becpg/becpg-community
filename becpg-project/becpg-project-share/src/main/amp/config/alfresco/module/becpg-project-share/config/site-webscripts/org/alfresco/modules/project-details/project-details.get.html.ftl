@@ -2,10 +2,9 @@
 
 <@markup class="html">
     <@uniqueIdDiv>
-    
-<div class="project-details">
+<div id="${el}" class="project-details">
 <!-- Begin Evaluation Widget-->
-    <div class ="project-details-evolution white-block">
+    <div class="project-details-evolution white-block">
     	<div class="yui-g"> 
 		    <div class="yui-g first">
 	            <span class="block-title">${msg("projectdetails.projectevolution.title")}</span>
@@ -27,7 +26,7 @@
             </div>
             <div class="yui-u txt-align-end">
                 <#assign state = projectDetails.state>
-                <span class=" medium-title" <#if state = "InProgress"> style ="color: #17a554
+                <span class="medium-title" <#if state = "InProgress"> style ="color: #17a554
                     <#elseif state = "Completed"> style ="color: red
                     <#else> style ="color: blue"</#if>">${msg("projectdetails.project.state.${projectDetails.state}")}</span>
                <#if projectDetails.remainingDays ?? ><span class="vertical-top">${projectDetails.remainingDays} ${msg("projectdetails.projectevolution.remainingDays")}</span></#if>
@@ -36,7 +35,7 @@
 <!-- End of Evaluation Widget-->
 <!-- Begin graph evaluation part-->
         <div class="chart">
-            <div class="${el}-chart"></div>
+            <div id="${el}-chart"></div>
         </div>
         <div class="yui-b">
             <div class="yui-u-1-2">
@@ -107,8 +106,7 @@
             	</div>
 	            <div class="yui-g txt-align-end">
     	            <div class="yui-u-1">
-        	            <img src="${url.context}/modules/project-details/images/flag.svg" alt="">
-            	        <span class="black-bold-text medium-title"> ${msg("projectdetails.milestones.nextmilestones")}</span>
+            	        <span class="black-bold-text medium-title task-milestone"> ${msg("projectdetails.milestones.nextmilestones")}</span>
                 	</div>
                 	<div class="yui-u-1">
                         <#if projectDetails.nextMilestoneTask.taskName??>
@@ -168,11 +166,11 @@
                 <span class="title-block">${msg("projectdetails.tasklist.comming")}</span>
                 <span class="black-text bold white-btn">${projectDetails.taskList.commingTaskList?size}</span>
                 <span class="float-right">
-                    <span class="comming-tasks#comming-tasks" class="onFilterDetailsAction">
+                    <span id="comming-tasks#comming-tasks" class="onFilterDetailsAction">
                         <a class="filter-details-action float-right filter-btn btn active">${msg("projectdetails.tasklist.allTasks")}</a>
                     </span>
                 <span class="float-left">
-                    <span class="comming-tasks#my-tasks" class="onFilterDetailsAction">
+                    <span id="comming-tasks#my-tasks" class="onFilterDetailsAction">
                        <a class="filter-details-action float-right filter-btn btn">${msg("projectdetails.tasklist.myTasks")}</a>
                     </span>
                 </span>
@@ -186,9 +184,8 @@
                         <span class="black-bold-text">${task.taskStart}</span>
                     </div></#if>
                     <div class="yui-u-1-2 margin-top">
-                        <#if task.isMilestoneTask ><img src="${url.context}/modules/project-details/images/flag.svg">
-                        <#else><img src="${url.context}/modules/project-details/images/check.svg"></#if>
-                        <span class="black-text"> ${task.taskName}</span>
+                        <#if task.isMilestoneTask > <span class="task-milestone">${task.taskName}</span>
+                        <#else><span class="task">${task.taskName}</span></#if>
                     </div>
                 </div>
             </#list>
@@ -203,11 +200,11 @@
                 <span class="title-block">${msg("projectdetails.tasklist.overdue")}</span>
                 <span class="black-text bold white-btn">${projectDetails.taskList.overdueTaskList?size}</span>
                 <span class="float-right">
-                    <span class="overdue-tasks#overdue-tasks" class="onFilterDetailsAction">
+                    <span id="overdue-tasks#overdue-tasks" class="onFilterDetailsAction">
                         <a class="filter-details-action float-right filter-btn btn active">${msg("projectdetails.tasklist.allTasks")}</a>
                     </span>
                 <span class="float-left">
-                    <span class="overdue-tasks#my-tasks" class="onFilterDetailsAction">
+                    <span id="overdue-tasks#my-tasks" class="onFilterDetailsAction">
                         <a class="filter-details-action float-right filter-btn btn">${msg("projectdetails.tasklist.myTasks")}</a>
                     </span>
                </span>
@@ -221,9 +218,8 @@
                               <span class="black-bold-text">${task.taskEnd}</span>
                         </div></#if>
                         <div class="yui-u-1-2 margin-top">
-                            <#if task.isMilestoneTask?? ><img src="${url.context}/modules/project-details/images/flag.svg">
-                            <#else><img src="${url.context}/modules/project-details/images/check.svg"></#if>
-                            <span class="black-text"> ${task.taskName}</span>
+                             <#if task.isMilestoneTask > <span class="task-milestone">${task.taskName}</span>
+                       		 <#else><span class="task">${task.taskName}</span></#if>
                         </div>
                     </div>
                 </#list>
