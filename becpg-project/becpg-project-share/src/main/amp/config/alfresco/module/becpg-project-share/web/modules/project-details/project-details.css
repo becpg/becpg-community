@@ -225,3 +225,16 @@
 	padding-left: 20px;
 	color: black;
 }
+
+
+.project-details  span.comming-tasks-title {
+	background: url("../../components/documentlibrary/indicators/project-inprogress-16.png") 0px 3px no-repeat;
+	padding-left: 25px;
+    
+}
+
+
+.project-details  span.overdue-tasks-title {
+	background: url("../../components/images/states/error-16.png")  0px 3px no-repeat;
+	padding-left: 25px;
+}

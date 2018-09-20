@@ -43,7 +43,7 @@ import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
- * 
+ *
  * @author rim
  *
  */
@@ -123,14 +123,14 @@ public class ProjectDetailsWebScript extends AbstractWebScript {
 				taskObject.put("taskState", task.getState());
 
 				// milestoneDetails
-				if (task.getIsMilestone()!=null && task.getIsMilestone()) {
+				if ((task.getIsMilestone() != null) && task.getIsMilestone()) {
 					milestoneSum++;
-					if (task.getEnd()!= null && task.getEnd().after(today)) {
+					if (((task.getEnd() != null) && task.getEnd().after(today)) || ((task.getStart() != null) && task.getStart().after(today))) {
 						if (nextMilestoneTask == null) {
 							nextMilestoneTask = task;
 							nextMilestoneObject = taskObject;
 						}
-						if (task.getStart() != null && task.getStart().before(nextMilestoneTask.getStart())) {
+						if ((task.getStart() != null) && task.getStart().before(nextMilestoneTask.getStart())) {
 							nextMilestoneTask = task;
 							nextMilestoneObject = taskObject;
 						}
@@ -152,7 +152,8 @@ public class ProjectDetailsWebScript extends AbstractWebScript {
 				}
 
 				// commingTask && overdueTask && overdueWorkPercent
-				if (task.getEnd() != null && task.getEnd().before(today) && !task.getState().equals(TaskState.Completed.toString())) {
+				if ((task.getEnd() != null) && task.getEnd().before(today)
+						&& (task.getState().equals(TaskState.Planned.toString()) || task.getState().equals(TaskState.InProgress.toString()))) {
 					overdueTaskCompletionPerc += task.getCompletionPercent() != null ? 100 - task.getCompletionPercent() : 100;
 					overdueTaskList.put(taskObject);
 
@@ -160,7 +161,8 @@ public class ProjectDetailsWebScript extends AbstractWebScript {
 						userOverdueTaskCompletionPerc += task.getCompletionPercent() != null ? 100 - task.getCompletionPercent() : 0;
 					}
 
-				} else if (task.getStart()!= null && task.getStart().after(today)) {
+				} else if ((task.getStart() != null) && task.getStart().after(today)
+						&& (task.getState().equals(TaskState.Planned.toString()) || task.getState().equals(TaskState.InProgress.toString()))) {
 					commingTaskList.put(taskObject);
 				}
 
@@ -168,7 +170,7 @@ public class ProjectDetailsWebScript extends AbstractWebScript {
 
 			}
 
-			if (data.getDueDate()!=null && data.getDueDate().after(today)) {
+			if ((data.getDueDate() != null) && data.getDueDate().after(today)) {
 				remainingDays = getDaysBetween(today, data.getDueDate());
 			}
 
@@ -187,23 +189,23 @@ public class ProjectDetailsWebScript extends AbstractWebScript {
 
 			lObj.put("tasks", arrayTasks);
 			lObj.put("taskList", taskList);
-			if(arrayTasks.length() > 0) {
+			if (arrayTasks.length() > 0) {
 				lObj.put("overduePerc", (overdueTaskCompletionPerc) / arrayTasks.length());
 			} else {
 				lObj.put("overduePerc", (overdueTaskCompletionPerc));
 			}
-			if(userTaskSum> 0) {
+			if (userTaskSum > 0) {
 				lObj.put("userOverdueTaskCompletionPerc", (userOverdueTaskCompletionPerc) / userTaskSum);
 			} else {
-				lObj.put("userOverdueTaskCompletionPerc", (userOverdueTaskCompletionPerc) );
+				lObj.put("userOverdueTaskCompletionPerc", (userOverdueTaskCompletionPerc));
 			}
 			lObj.put("userTaskSum", userTaskSum);
 			lObj.put("milestoneSum", milestoneSum);
 			lObj.put("milestoneReleased", milestoneReleased);
-			if(milestoneSum> 0) {
+			if (milestoneSum > 0) {
 				lObj.put("milestoneReleasedPerc", (milestoneReleased / milestoneSum) * 100);
 			} else {
-				lObj.put("milestoneReleasedPerc", (milestoneReleased ));
+				lObj.put("milestoneReleasedPerc", (milestoneReleased));
 			}
 			lObj.put("nextMilestoneTask", nextMilestoneObject);
 			lObj.put("remainingDays", remainingDays);
@@ -251,6 +253,9 @@ public class ProjectDetailsWebScript extends AbstractWebScript {
 	}
 
 	private boolean isAuthenticatedUser(List<NodeRef> listNodeRef) {
+
+		// TODO utiliser ProjectService extractResources
+
 		String authenticatedUser = AuthenticationUtil.getFullyAuthenticatedUser();
 		String ressource = "";
 		for (NodeRef nodeRef : listNodeRef) {
@@ -332,7 +337,7 @@ public class ProjectDetailsWebScript extends AbstractWebScript {
 	}
 
 	private String formatDate(Serializable date) {
-		if(date != null) {
+		if (date != null) {
 			return format.formatDate(date);
 		}
 		return null;
