@@ -177,10 +177,12 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 			// sort
 			sort(formulatedProduct.getAllergenList());
 
-			checkRequirementsOfFormulatedProduct(formulatedProduct);
-
 		}
 
+		if(alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_ALLERGENLIST)) {
+			checkRequirementsOfFormulatedProduct(formulatedProduct);
+		}
+		
 		return true;
 
 	}
