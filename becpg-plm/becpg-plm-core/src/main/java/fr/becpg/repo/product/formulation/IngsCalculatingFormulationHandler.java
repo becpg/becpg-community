@@ -90,62 +90,69 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			return true;
 		}
 
-		// no compo, nor ingList on formulated product => no formulation
-		if (!formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))
-				|| (!alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_INGLIST)
-						&& !alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_INGLABELINGLIST))) {
-				
+
+		Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap = new HashMap<>();
+		
+		if (accept(formulatedProduct)) {
 			
-			return true;
-		}
-
-		if (formulatedProduct.getIngList() != null) {
-			for (IngListDataItem il : formulatedProduct.getIngList()) {
-				if ((il.getIsManual() == null) || !il.getIsManual()) {
-					// reset
-					il.setQtyPerc(null);
-					il.setMini(null);
-					il.setMaxi(null);
-					il.setIsGMO(false);
-					il.setIsProcessingAid(true);
-					il.setIsSupport(true);
-					il.setIsIonized(false);
-					il.getGeoOrigin().clear();
-					il.getGeoTransfo().clear();
-					il.getBioOrigin().clear();
+			if (formulatedProduct.getIngList() != null) {
+				for (IngListDataItem il : formulatedProduct.getIngList()) {
+					if ((il.getIsManual() == null) || !il.getIsManual()) {
+						// reset
+						il.setQtyPerc(null);
+						il.setMini(null);
+						il.setMaxi(null);
+						il.setIsGMO(false);
+						il.setIsProcessingAid(true);
+						il.setIsSupport(true);
+						il.setIsIonized(false);
+						il.getGeoOrigin().clear();
+						il.getGeoTransfo().clear();
+						il.getBioOrigin().clear();
+					}
 				}
+			} else {
+				formulatedProduct.setIngList(new LinkedList<IngListDataItem>());
 			}
-		} else {
-			formulatedProduct.setIngList(new LinkedList<IngListDataItem>());
+	
+			// Load product specification
+	
+			// IngList
+			calculateIL(formulatedProduct,reqCtrlMap);
 		}
+		
+		if(alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_INGLIST)) {
 
-		if (formulatedProduct.getProductSpecifications() == null) {
-			formulatedProduct.setProductSpecifications(new LinkedList<ProductSpecificationData>());
+			formulatedProduct.getReqCtrlList().addAll(reqCtrlMap.values());
+			// check formulated product
+			checkILOfFormulatedProduct(formulatedProduct.getIngList(), extractRequirements(formulatedProduct), reqCtrlMap);
+
 		}
-
-		// Load product specification
-
-		// IngList
-		calculateIL(formulatedProduct);
 
 		return true;
 	}
 
 
+	private boolean accept(ProductData formulatedProduct) {
+		return formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))
+				&& (alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_INGLIST)
+						|| alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_INGLABELINGLIST)) ;
+	}
+
 	/**
 	 * Calculate the ingredient list of a product.
+	 * @param reqCtrlMap 
 	 *
 	 * @param productData
 	 *            the product data
 	 * @return the list
 	 * @throws FormulateException
 	 */
-	private void calculateIL(ProductData formulatedProduct) throws FormulateException {
+	private void calculateIL(ProductData formulatedProduct, Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap) throws FormulateException {
 
 		List<CompoListDataItem> compoList = formulatedProduct
 				.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()));
 
-		Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap = new HashMap<>();
 		Map<String, Double> totalQtyIngMap = new HashMap<>();
 		Map<String, Double> totalQtyVolMap = new HashMap<>();
 
@@ -233,13 +240,9 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 		}
 
-		// check formulated product
-		checkILOfFormulatedProduct(formulatedProduct.getIngList(), extractRequirements(formulatedProduct), reqCtrlMap);
-
 		// sort collection
 		sortIL(formulatedProduct.getIngList());
 
-		formulatedProduct.getReqCtrlList().addAll(reqCtrlMap.values());
 
 	}
 
