@@ -162,8 +162,7 @@
     <div class="project-details-comming-tasks white-block">
         <div class="yui-b">
             <div class="green-header">
-                <span><img src="${url.context}/modules/project-details/images/check-circle.svg"></span>
-                <span class="title-block">${msg("projectdetails.tasklist.comming")}</span>
+                <span class="title-block comming-tasks-title">${msg("projectdetails.tasklist.comming")}</span>
                 <span class="black-text bold white-btn">${projectDetails.taskList.commingTaskList?size}</span>
                 <span class="float-right">
                     <span id="comming-tasks#comming-tasks" class="onFilterDetailsAction">
@@ -196,8 +195,7 @@
     <div class="project-details-overdue-tasks white-block">
         <div class="yui-b">
             <div class="red-header">
-                <img src="${url.context}/modules/project-details/images/Exclamation_encircled.svg">
-                <span class="title-block">${msg("projectdetails.tasklist.overdue")}</span>
+                <span class="title-block overdue-tasks-title">${msg("projectdetails.tasklist.overdue")}</span>
                 <span class="black-text bold white-btn">${projectDetails.taskList.overdueTaskList?size}</span>
                 <span class="float-right">
                     <span id="overdue-tasks#overdue-tasks" class="onFilterDetailsAction">
