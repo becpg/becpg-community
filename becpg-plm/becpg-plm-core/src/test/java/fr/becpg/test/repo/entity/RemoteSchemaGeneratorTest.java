@@ -18,6 +18,7 @@ import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.xml.sax.SAXException;
 
+import fr.becpg.common.BeCPGException;
 import fr.becpg.repo.entity.remote.RemoteSchemaGenerator;
 import fr.becpg.test.PLMBaseTestCase;
 
@@ -32,7 +33,7 @@ public class RemoteSchemaGeneratorTest extends PLMBaseTestCase {
 
 
 	@Test
-	public void testGenerateSchema() throws XMLStreamException, IOException, SAXException  {
+	public void testGenerateSchema() throws XMLStreamException, IOException, SAXException, BeCPGException  {
 		
 		File tempFile = File.createTempFile("schema", "xsd");
 		

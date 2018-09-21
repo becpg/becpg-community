@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 
+import fr.becpg.common.BeCPGException;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
 
@@ -35,24 +36,29 @@ public class RemoteSchemaGenerator {
 
 	
 	
-	public void generateSchema(OutputStream out) throws XMLStreamException {
+	public void generateSchema(OutputStream out) throws  BeCPGException{
 
-		// Create an output factory
-		XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
-		xmlof.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, true);
-		// Create an XML stream writer
-		XMLStreamWriter xmlw = new IndentingXMLStreamWriter(xmlof.createXMLStreamWriter(out));
-
-		// Write XML prologue
-		xmlw.writeStartDocument();
-		// Visit node
-
-		createXSD(xmlw);
-
-		// Write document end. This closes all open structures
-		xmlw.writeEndDocument();
-		// Close the writer to flush the output
-		xmlw.close();
+		try {
+			// Create an output factory
+			XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
+			xmlof.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, true);
+			// Create an XML stream writer
+			XMLStreamWriter xmlw = new IndentingXMLStreamWriter(xmlof.createXMLStreamWriter(out));
+	
+			// Write XML prologue
+			xmlw.writeStartDocument();
+			// Visit node
+	
+			createXSD(xmlw);
+	
+			// Write document end. This closes all open structures
+			xmlw.writeEndDocument();
+			// Close the writer to flush the output
+			xmlw.close();
+		} catch (XMLStreamException e) {
+			logger.error(e);
+			throw new BeCPGException(e);
+		}
 
 	}
 
