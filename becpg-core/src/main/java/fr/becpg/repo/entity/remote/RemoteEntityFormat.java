@@ -19,5 +19,5 @@ package fr.becpg.repo.entity.remote;
 
 
 public enum RemoteEntityFormat {
-	xml,csv, xml_excel, xml_all, xml_light
+	xml,csv, xml_excel, xml_all, xml_light, xsd, xsd_excel
 }

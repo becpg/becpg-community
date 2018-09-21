@@ -13,7 +13,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.comparison.CompareEntityService;
@@ -121,8 +120,7 @@ public abstract class AbstractCompareProductTest extends PLMBaseTestCase {
 		for (CompareResultDataItem c : compareResult) {
 
 			String tempProductList = c.getEntityList() == null ? "" : c.getEntityList().toString();
-			String tempCharacteristic = c.getCharacteristic() == null ? "" : (String) nodeService.getProperty(new NodeRef(c.getCharacteristic()),
-					BeCPGModel.PROP_CHARACT_NAME);
+			String tempCharacteristic = c.getCharactName() == null ? "" : c.getCharactName();
 			String tempProperty = c.getProperty() == null ? "" : c.getProperty().toString();
 			if (productList.equals(tempProductList) && characteristic.equals(tempCharacteristic) && property.equals(tempProperty)
 					) {
