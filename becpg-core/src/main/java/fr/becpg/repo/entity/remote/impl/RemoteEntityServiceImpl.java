@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Resource;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 
@@ -58,6 +59,7 @@ import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.remote.EntityProviderCallBack;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
+import fr.becpg.repo.entity.remote.RemoteSchemaGenerator;
 import fr.becpg.repo.entity.remote.extractor.ExcelXmlEntityVisitor;
 import fr.becpg.repo.entity.remote.extractor.ImportEntityXmlVisitor;
 import fr.becpg.repo.entity.remote.extractor.XmlEntityVisitor;
@@ -102,6 +104,10 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 
 	@Autowired
 	private BehaviourFilter policyBehaviourFilter;
+	
+	@Resource
+	private RemoteSchemaGenerator remoteSchemaGenerator;
+	
 
 	@Autowired
 	private EntityDictionaryService entityDictionaryService;
@@ -131,6 +137,8 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 			} catch (XMLStreamException e) {
 				throw new BeCPGException("Cannot export entity :" + entityNodeRef + " at format " + format, e);
 			}
+		} else if(format.equals(RemoteEntityFormat.xsd) || format.equals(RemoteEntityFormat.xsd_excel)) {
+			remoteSchemaGenerator.generateSchema(out);
 		} else {
 			throw new BeCPGException("Unknown format " + format.toString());
 		}
