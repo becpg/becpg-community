@@ -174,30 +174,30 @@
 		
 		onCopyToClipboard : function(fieldId) {
 			
-			var htmlId= fieldId.split("#")[0]+ fieldId.split("#")[2];
-			
-	    	if (document.selection) { 	
-			    var range = document.body.createTextRange();
-			    range.moveToElementText(document.getElementById(htmlId));
-			    range.select().createTextRange();
-			    document.execCommand("copy"); 
-
-			} else if (window.getSelection) {
-			    var range = document.createRange();
-			     range.selectNode(document.getElementById(htmlId));
-			     window.getSelection().addRange(range);
-			     document.execCommand("copy");
+			var htmlId= fieldId.split("#")[2]+ fieldId.split("#")[0];
+			var el = document.getElementById(htmlId);
+				
+			if (document.selection) {// IE 
+				var range = document.querySelector("#"+htmlId);
+				range.select();
+				document.execCommand("copy");
+			} else if (window.getSelection) { // Chrome, Mozilla, Edge ...
+				var range = document.querySelector("#"+htmlId);
+				range.select();
+				var result = document.execCommand("copy");
 			}
+			
 			
 	    	Alfresco.util.PopupManager.displayMessage({
                 text : this.msg("message.copy-to-clipboard.success")
              });
+	    	
+	    	YAHOO.Bubbling.fire("scopedActiveDataListChanged");
 	    },
 	    
 		
 		copyToIllManualValue : function(fieldId) {
 			var me = this;
-			console.log("field");
 			Alfresco.util.PopupManager.displayPrompt({
 					title : this.msg("message.copy-to-illManualValue.confirm.title"),
 					text : this.msg("message.copy-to-illManualValue.confirm.body"),
