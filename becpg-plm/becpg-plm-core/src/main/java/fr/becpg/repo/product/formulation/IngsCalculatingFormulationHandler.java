@@ -123,11 +123,11 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		
 		if(alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_INGLIST)) {
 
-			formulatedProduct.getReqCtrlList().addAll(reqCtrlMap.values());
 			// check formulated product
 			checkILOfFormulatedProduct(formulatedProduct.getIngList(), extractRequirements(formulatedProduct), reqCtrlMap);
-
 		}
+
+		formulatedProduct.getReqCtrlList().addAll(reqCtrlMap.values());
 
 		return true;
 	}
