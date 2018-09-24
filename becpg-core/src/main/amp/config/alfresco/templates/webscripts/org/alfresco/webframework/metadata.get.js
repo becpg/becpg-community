@@ -59,6 +59,10 @@ else if (args["user"] != null)
   }
       
    model.immutableProperties = people.getImmutableProperties(userId);
+   
+   //TODO Add beCPG personAttributeMapping
+   //bcpg:userLocale, bcpg:userContentLocale
+   
 }
 
 // load content by relative path

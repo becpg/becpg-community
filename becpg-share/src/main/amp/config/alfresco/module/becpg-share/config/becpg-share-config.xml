@@ -10,6 +10,12 @@
 	</config>
 
 	<config evaluator="string-compare" condition="Languages">
+		<ui-languages>
+			<language locale="en">English</language>
+			<language locale="fr">French</language>
+		</ui-languages>
+	
+	
 		<!-- the list of available language files -->
 		<languages> 
 			<language locale="en">English</language>
