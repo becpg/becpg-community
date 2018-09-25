@@ -55,17 +55,19 @@
                     <#else>
                     <img src="${url.context}/res/components/images/no-user-photo-64.png" alt="${msg("label.avatar")}"/>
                     </#if>
-                    <#if process.id??>
-                    <a href="${siteURL("workflow-details?workflowId=" + process.id?js_string + "&nodeRef=" + (args.nodeRef!""))}">
-                    <#else>
-                    <a href="${siteURL("entity-data-lists?nodeRef=" + process.nodeRef +"&list=taskList")}">
-                    </#if> 
-                    <img style="min-height: 0em;" src="${url.context}/${process.iconUrl}" />
-                    <div style="vertical-align:middle; display:inline-block;">
-	                    <div class="title">
-	                    ${process.title?html} [ <#if process.state??>${msg("process.state." + process.state)}<#else>${msg("process.state." + processState)}</#if> ]</div>
-	                    <#if process.message?? && process.message?length &gt; 0><div class ="title">${process.message?html}</div></#if>
-	                    <div class="title"><#if process.startDate??> ${process.startDate}<#else></#if> <#if process.dueDate??> - ${process.dueDate}<#else></#if></div> 
+                    <div>
+                     <h3 class="filename simple-view">
+                    	<span class="${process.type}-icon"> &nbsp; </span> 
+                    	<span > <a href="
+		                    <#if process.id??> ${siteURL("workflow-details?workflowId=" + process.id?js_string + "&nodeRef=" + (args.nodeRef!""))}
+		                    <#else> ${siteURL("entity-data-lists?nodeRef=" + process.nodeRef +"&list=taskList")}</#if> ">
+		                    ${process.title?html} [ <span class="entity-process-state"> <#if process.state??>${msg("process.state." + process.state)}<#else>${msg("process.state." + processState)}</#if> </span>]
+	                     </a></span>
+	                   </h3>
+	                   <div class="process-detail">
+	                    <#if process.message?? && process.message?length &gt; 0><span >${process.message?html}</span></#if>
+	                    <span class="process-date">[ <#if process.startDate??> ${process.startDate}<#else></#if> <#if process.dueDate??>  -  ${process.dueDate}<#else></#if> ]</span> 
+	                   </div>
                     </div>
                     <div class="clear"></div>
                  </div>

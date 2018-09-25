@@ -40,6 +40,8 @@ public class ProjectProcessListPlugin implements EntityProcessListPlugin {
 	@Override
 	public List<Map<String, Object>> buildModel(NodeRef nodeRef){
 		
+		FORMATER.setDateFormat(PROCESS_DATETIME_FORMAT);
+		
 		List<Map<String, Object>> ret = new ArrayList<>();
 		
 		List<NodeRef> projectNodeRefs = BeCPGQueryBuilder.createQuery()
@@ -80,7 +82,6 @@ public class ProjectProcessListPlugin implements EntityProcessListPlugin {
 				}
 				
 				temp.put(PROCESS_INSTANCE_INITIATOR, getPersonModel(personRef));
-				temp.put(PROCESS_INSTANCE_ICON, "res/components/images/filetypes/generic-project-16.png");
 				
 				ret.add(temp);
 			}

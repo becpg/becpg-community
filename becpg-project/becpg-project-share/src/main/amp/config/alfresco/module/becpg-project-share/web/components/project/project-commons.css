@@ -267,3 +267,10 @@
 	padding-left: 35px;
 	height: 32px;
 }
+
+ .project-icon {
+	background-image: url(../../components/images/filetypes/generic-project-16.png);
+	background-repeat: no-repeat;
+	padding-right: 10px;
+	
+}
