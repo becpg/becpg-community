@@ -30,6 +30,7 @@ import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
 import fr.becpg.report.client.ReportFormat;
 import fr.becpg.report.client.ReportParams;
@@ -109,8 +110,6 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 	private AttributeExtractorService attributeExtractorService;
 
 	@Override
-	@Deprecated
-	// TOO manage multi list comparaison
 	public void getComparisonReport(NodeRef entity1, List<NodeRef> entities, NodeRef templateNodeRef, OutputStream out) {
 
 		if (templateNodeRef != null) {
@@ -135,7 +134,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 			try {
 				Map<String, Object> params = new HashMap<>();
 				params.put(ReportParams.PARAM_FORMAT, ReportFormat.valueOf(reportFormat));
-				params.put(ReportParams.PARAM_LANG, I18NUtil.getLocale().getLanguage());
+				params.put(ReportParams.PARAM_LANG, MLTextHelper.localeKey(I18NUtil.getLocale()));
 				params.put(ReportParams.PARAM_ASSOCIATED_TPL_FILES,
 						associationService.getTargetAssocs(templateNodeRef, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES));
 				beCPGReportEngine.createReport(templateNodeRef, new ByteArrayInputStream(entitiesCmpElt.asXML().getBytes()), out, params);
