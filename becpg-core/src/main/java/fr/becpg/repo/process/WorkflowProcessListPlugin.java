@@ -45,6 +45,8 @@ public class WorkflowProcessListPlugin implements EntityProcessListPlugin {
 		WorkflowModelBuilder modelBuilder = new WorkflowModelBuilder(namespaceService, nodeService, authenticationService, 
                 personService, workflowService, dictionaryService);
 		
+		FORMATER.setDateFormat(PROCESS_DATETIME_FORMAT);
+		
 		// list all active and closed workflows for nodeRef
 		List<WorkflowInstance> workflows = workflowService.getWorkflowsForContent(nodeRef, true);
 		workflows.addAll(workflowService.getWorkflowsForContent(nodeRef, false));
@@ -59,8 +61,6 @@ public class WorkflowProcessListPlugin implements EntityProcessListPlugin {
 			if(workflow.getDueDate() != null ){
 				tmp.put(PROCESS_INSTANCE_DUE_DATE, FORMATER.formatDate(workflow.getDueDate()));
 			}
-			
-			tmp.put(PROCESS_INSTANCE_ICON, "res/components/images/workflow-16.png");
 			
 			tmp.put(PROCESS_INSTANCE_TYPE, getType());
 			results.add(tmp);
