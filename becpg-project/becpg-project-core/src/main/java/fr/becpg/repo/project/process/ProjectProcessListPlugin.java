@@ -64,6 +64,11 @@ public class ProjectProcessListPlugin implements EntityProcessListPlugin {
 				
 				temp.put(PROCESS_INSTANCE_TITLE, data.getName());
 				
+				String projectTitle = (String) nodeService.getProperty(pjtNodeRef, ContentModel.PROP_TITLE);
+				if(projectTitle != null && !projectTitle.isEmpty()){
+					temp.put(PROCESS_INSTANCE_MESSAGE, projectTitle);
+				}
+				
 				if(data.getStartDate() != null){
 					temp.put(PROCESS_INSTANCE_START_DATE, FORMATER.formatDate(data.getStartDate()));
 				}
