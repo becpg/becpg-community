@@ -793,11 +793,14 @@ if (beCPG.module.EntityDataGridRenderers) {
 					}
 					
 					html += '<div class="note rounded"><div id="'+ htmlId + suffix +'" > ' + displayValue + '</div>';
-				
+					
 					var nodeRef = oRecord._oData.nodeRef;
 					html += '<div class="labeling-action-container">';
 				
 					if(label == "bcpg:illValue"){
+						
+						html += '<textarea id="'+ suffix + htmlId +'" style ="display:block; width:0; height:0; opacity: 0;">' + displayValue + '</textarea>';
+						
 						if(editPermission){
 							html += '<span id="' +htmlId+"#"+ nodeRef+"#"+ label+  '" class="copyToIllManualValue"><a href="#" title="'+ scope.msg("label.copy.to.illManualValue.title") +'" class="labeling-action copy-to"></a> </span>';
 							html += '<span>&nbsp;</span>';
