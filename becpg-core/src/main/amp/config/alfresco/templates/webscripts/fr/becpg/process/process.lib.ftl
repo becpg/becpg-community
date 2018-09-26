@@ -15,7 +15,6 @@
    "message": <#if processInstance.message??>"${processInstance.message}"<#else>null</#if>,
    "startDate":<#if processInstance.startDate??>"${processInstance.startDate}"<#else>null</#if>,
    "dueDate": <#if processInstance.dueDate??>"${processInstance.dueDate}"<#else>null</#if>,
-   "iconUrl": "${processInstance.iconUrl}",
    "initiator": 
    <#if processInstance.initiator??>
    {

@@ -10,6 +10,7 @@ import fr.becpg.config.format.PropertyFormats;
 public interface EntityProcessListPlugin {
 	
 	PropertyFormats FORMATER = new PropertyFormats(true);
+	public static final String PROCESS_DATETIME_FORMAT = "dd MMMM, yyyy";
 	
 	public static final String PROCESS_INSTANCE = "processInstance";
     public static final String PROCESS_INSTANCE_TYPE = "type";
@@ -24,7 +25,6 @@ public interface EntityProcessListPlugin {
     public static final String PROCESS_INSTANCE_END_DATE = "endDate";
     public static final String PROCESS_INSTANCE_DUE_DATE = "dueDate";
     public static final String PROCESS_INSTANCE_INITIATOR = "initiator";
-    public static final String PROCESS_INSTANCE_ICON = "iconUrl";
     
     public static final String PERSON_LAST_NAME = "lastName";
     public static final String PERSON_FIRST_NAME = "firstName";
