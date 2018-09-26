@@ -1,8 +1,7 @@
 .entity-process .process img {
 	float: left;
 	margin-top: 0.2em;
-	min-height: 3em;
-	padding-right: 1em;
+	padding-right: 2em;
 	line-height: 3em;
 	text-align: center;
 }
@@ -18,12 +17,14 @@
 	margin-bottom: 0;
 }
 
-.entity-process .process .details {
-	margin-left: 2em;
+
+.entity-process .info {
+	padding-left: 1em;
 }
 
 .entity-process .process .title {
 	margin-top: 0.3em;
+	padding-lef: 1em;
 }
 
 select.entity-process-filter {
@@ -38,3 +39,26 @@ select.entity-process-filter {
   appearance: none;
   background: url(../../arrow.png) 96% / 15% no-repeat #eee;
 }
+
+.entity-process .process-date {
+	color: #009dcc;
+	font-style: normal;
+}
+
+.entity-process .entity-process-state {
+	font-weight: bold;
+	display: inline;
+}
+
+.entity-process .process-detail {
+	display: inline-grid;	
+}
+
+.entity-process .workflow-icon {
+	background-image: url(../../components/documentlibrary/actions/document-assign-workflow-16.png);
+	background-repeat: no-repeat;
+	padding-right: 10px;
+}
+
+
+

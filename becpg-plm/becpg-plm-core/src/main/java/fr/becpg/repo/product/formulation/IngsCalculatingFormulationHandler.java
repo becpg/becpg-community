@@ -5,16 +5,13 @@ package fr.becpg.repo.product.formulation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -24,7 +21,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.extensions.webscripts.GUID;
-
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
@@ -63,7 +59,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 	/** The logger. */
 	private static final Log logger = LogFactory.getLog(IngsCalculatingFormulationHandler.class);
-	
+
 	private NodeService nodeService;
 
 	private boolean ingsCalculatingWithYield = false;
@@ -90,11 +86,10 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			return true;
 		}
 
-
 		Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap = new HashMap<>();
-		
+
 		if (accept(formulatedProduct)) {
-			
+
 			if (formulatedProduct.getIngList() != null) {
 				for (IngListDataItem il : formulatedProduct.getIngList()) {
 					if ((il.getIsManual() == null) || !il.getIsManual()) {
@@ -114,17 +109,17 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			} else {
 				formulatedProduct.setIngList(new LinkedList<IngListDataItem>());
 			}
-	
+
 			// Load product specification
-	
+
 			// IngList
-			calculateIL(formulatedProduct,reqCtrlMap);
+			calculateIL(formulatedProduct, reqCtrlMap);
 		}
-		
-		if(alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_INGLIST)) {
+
+		if (alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_INGLIST)) {
 
 			// check formulated product
-			checkILOfFormulatedProduct(formulatedProduct.getIngList(), extractRequirements(formulatedProduct), reqCtrlMap);
+			checkILOfFormulatedProduct(formulatedProduct, reqCtrlMap);
 		}
 
 		formulatedProduct.getReqCtrlList().addAll(reqCtrlMap.values());
@@ -132,16 +127,16 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		return true;
 	}
 
-
 	private boolean accept(ProductData formulatedProduct) {
 		return formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))
 				&& (alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_INGLIST)
-						|| alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_INGLABELINGLIST)) ;
+						|| alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_INGLABELINGLIST));
 	}
 
 	/**
 	 * Calculate the ingredient list of a product.
-	 * @param reqCtrlMap 
+	 *
+	 * @param reqCtrlMap
 	 *
 	 * @param productData
 	 *            the product data
@@ -166,14 +161,15 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		}
 
 		Set<NodeRef> visited = new HashSet<>();
-		
+
 		Double totalQtyUsed = 0d, totalVolumeUsed = 0d;
 		if (compoList != null) {
 			for (CompoListDataItem compoItem : compoList) {
 
 				if ((compoItem.getQtySubFormula() != null) && (compoItem.getQtySubFormula() > 0)) {
 					ProductData componentProductData = (ProductData) alfrescoRepository.findOne(compoItem.getProduct());
-					visitILOfPart(formulatedProduct, compoItem, componentProductData, retainNodes, totalQtyIngMap, totalQtyVolMap, reqCtrlMap,visited);
+					visitILOfPart(formulatedProduct, compoItem, componentProductData, retainNodes, totalQtyIngMap, totalQtyVolMap, reqCtrlMap,
+							visited);
 
 					QName type = nodeService.getType(compoItem.getProduct());
 					if ((type != null) && (type.isMatch(PLMModel.TYPE_RAWMATERIAL) || type.isMatch(PLMModel.TYPE_SEMIFINISHEDPRODUCT)
@@ -242,7 +238,6 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 		// sort collection
 		sortIL(formulatedProduct.getIngList());
-
 
 	}
 
@@ -449,40 +444,40 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	private void checkILOfPart(NodeRef productNodeRef, DeclarationType declType, ProductData componentProductData,
 			List<ForbiddenIngListDataItem> forbiddenIngredientsList, Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap, Set<NodeRef> visited) {
 
-		if (!PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.equals(nodeService.getType(productNodeRef)) && ! visited.contains(productNodeRef)) {
+		if (!PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.equals(nodeService.getType(productNodeRef)) && !visited.contains(productNodeRef)) {
 
 			visited.add(productNodeRef);
-			
+
 			// datalist ingList is null or empty
 			if ((componentProductData.getIngList() == null) || componentProductData.getIngList().isEmpty()) {
 
-				if ((declType == null) || (!declType.equals(DeclarationType.DoNotDetails)  && ! declType.equals(DeclarationType.Omit)) ) {
+				if ((declType == null) || (!declType.equals(DeclarationType.DoNotDetails) && !declType.equals(DeclarationType.Omit))) {
 					// req not respected
 					String message = I18NUtil.getMessage(MESSAGE_MISSING_INGLIST);
 					addReqCtrl(reqCtrlMap, new NodeRef(RepoConsts.SPACES_STORE, "missing-inglist"), RequirementType.Tolerated, new MLText(message),
 							productNodeRef, RequirementDataType.Ingredient);
 				}
 			} else {
-				
-				if ((declType == null) || (!declType.equals(DeclarationType.DoNotDetails)  && ! declType.equals(DeclarationType.Omit))) {
-			      Double total  = 0d;
-			      for(IngListDataItem ingListDataItem : componentProductData.getIngList()){
-			    	  if(ingListDataItem.getQtyPerc()!=null && (ingListDataItem.getDepthLevel() == null || ingListDataItem.getDepthLevel() == 1)){
-			    		  total+= ingListDataItem.getQtyPerc();
-			    	  }
-			    	  
-			      }
-			      
-			      //Due to double precision
-			      if(Math.abs(total - 100d) > 0.00001){
-			    	  String message = I18NUtil.getMessage(MESSAGE_INCORRECT_INGLIST_TOTAL);
-						addReqCtrl(reqCtrlMap, new NodeRef(RepoConsts.SPACES_STORE, "incorrect-inglist-total"), RequirementType.Tolerated, new MLText(message),
-								productNodeRef, RequirementDataType.Ingredient);
-			      }
-			      
+
+				if ((declType == null) || (!declType.equals(DeclarationType.DoNotDetails) && !declType.equals(DeclarationType.Omit))) {
+					Double total = 0d;
+					for (IngListDataItem ingListDataItem : componentProductData.getIngList()) {
+						if ((ingListDataItem.getQtyPerc() != null)
+								&& ((ingListDataItem.getDepthLevel() == null) || (ingListDataItem.getDepthLevel() == 1))) {
+							total += ingListDataItem.getQtyPerc();
+						}
+
+					}
+
+					// Due to double precision
+					if (Math.abs(total - 100d) > 0.00001) {
+						String message = I18NUtil.getMessage(MESSAGE_INCORRECT_INGLIST_TOTAL);
+						addReqCtrl(reqCtrlMap, new NodeRef(RepoConsts.SPACES_STORE, "incorrect-inglist-total"), RequirementType.Tolerated,
+								new MLText(message), productNodeRef, RequirementDataType.Ingredient);
+					}
+
 				}
-			
-				
+
 				forbiddenIngredientsList.forEach(fil -> {
 
 					componentProductData.getIngList().forEach(ingListDataItem -> {
@@ -499,15 +494,17 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 									}
 								} else {
 									MLText curMessage = fil.getReqMessage();
-									if(curMessage==null || curMessage.values().stream().noneMatch(mes -> mes != null && !mes.isEmpty())){
-										curMessage = new MLText(I18NUtil.getMessage(MESSAGE_FORBIDDEN_ING, nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME)));
-									};
-									
+									if ((curMessage == null) || curMessage.values().stream().noneMatch(mes -> (mes != null) && !mes.isEmpty())) {
+										curMessage = new MLText(I18NUtil.getMessage(MESSAGE_FORBIDDEN_ING,
+												nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME)));
+									}
+									;
+
 									logger.debug("Adding not respected for: " + curMessage);
-																		
+
 									ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(fil.getNodeRef());
 									if (reqCtrl == null) {
-										reqCtrl = new ReqCtrlListDataItem(null, fil.getReqType(),  curMessage, null, new ArrayList<NodeRef>(),
+										reqCtrl = new ReqCtrlListDataItem(null, fil.getReqType(), curMessage, null, new ArrayList<NodeRef>(),
 												RequirementDataType.Specification);
 										reqCtrlMap.put(fil.getNodeRef(), reqCtrl);
 									} else {
@@ -638,12 +635,14 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	 * check the ingredients of the part according to the specification
 	 *
 	 */
-	private void checkILOfFormulatedProduct(Collection<IngListDataItem> ingList,
-			List<ForbiddenIngListDataItem> productSpecicationsForbiddenIngredientsList, Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap) {
+	private void checkILOfFormulatedProduct(ProductData productData, Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap) {
 		boolean checkAutorized = false;
-		for (ForbiddenIngListDataItem fil : productSpecicationsForbiddenIngredientsList) {
 
-			for (IngListDataItem ingListDataItem : ingList) {
+		List<ForbiddenIngListDataItem> requirements = extractRequirements(productData);
+
+		for (ForbiddenIngListDataItem fil : requirements) {
+
+			for (IngListDataItem ingListDataItem : productData.getIngList()) {
 				if (!RequirementType.Authorized.equals(fil.getReqType())) {
 					// Ings
 					if (!fil.getIngs().isEmpty() && (fil.getReqMessage() != null) && !fil.getReqMessage().isEmpty()) {
@@ -661,6 +660,25 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 								}
 							}
 						}
+					} else if ((productData.getCompoListView().getCompoList() == null) || productData.getCompoListView().getCompoList().isEmpty()) {
+						if (checkRuleMatchIng(ingListDataItem, fil)) {
+							MLText curMessage = fil.getReqMessage();
+							if ((curMessage == null) || curMessage.values().stream().noneMatch(mes -> (mes != null) && !mes.isEmpty())) {
+								curMessage = new MLText(I18NUtil.getMessage(MESSAGE_FORBIDDEN_ING,
+										nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME)));
+							}
+
+							ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(fil.getNodeRef());
+							if (reqCtrl == null) {
+								reqCtrl = new ReqCtrlListDataItem(null, fil.getReqType(), curMessage, null, new ArrayList<NodeRef>(),
+										RequirementDataType.Specification);
+								reqCtrlMap.put(fil.getNodeRef(), reqCtrl);
+							} else {
+								reqCtrl.setReqDataType(RequirementDataType.Specification);
+							}
+
+						}
+
 					}
 
 				} else {
@@ -674,10 +692,10 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 		if (checkAutorized) {
 
-			for (IngListDataItem ingListDataItem : ingList) {
+			for (IngListDataItem ingListDataItem : productData.getIngList()) {
 				boolean autorized = false;
 
-				for (ForbiddenIngListDataItem fil : productSpecicationsForbiddenIngredientsList) {
+				for (ForbiddenIngListDataItem fil : requirements) {
 					if (RequirementType.Authorized.equals(fil.getReqType())) {
 						if (checkRuleMatchIng(ingListDataItem, fil)) {
 							autorized = true;
