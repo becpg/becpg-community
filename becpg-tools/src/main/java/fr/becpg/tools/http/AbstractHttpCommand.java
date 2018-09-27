@@ -137,6 +137,32 @@ public abstract class AbstractHttpCommand {
 	}
 	
 
+	protected String buildQueryString(Object[] params) {
+		StringBuilder ret = new StringBuilder();
+		if(params!=null) {
+			for(int i=0;i< params.length;i++){
+				if(params[i] instanceof String){
+					try {
+						
+						String[] splitted = params[i].toString().split("=");
+						if(splitted!=null && splitted.length>1 && !"MIN".equals(splitted[1])) {
+							if(ret.length()>0) {
+								ret.append("&");
+							}
+							ret.append(splitted[0]);
+							ret.append("=");
+							ret.append(URLEncoder.encode(splitted[1],"UTF-8"));
+						}
+					} catch (UnsupportedEncodingException e) {
+						logger.warn(e,e);
+					}
+				}
+			}
+		}
+		
+		return ret.toString();
+	}
+	
 
 	
 	
