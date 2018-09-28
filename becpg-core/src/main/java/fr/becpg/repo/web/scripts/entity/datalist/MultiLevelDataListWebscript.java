@@ -75,47 +75,49 @@ public class MultiLevelDataListWebscript extends AbstractWebScript {
 
 			NodeRef entityToExpand = new NodeRef(nodeRef);
 
-			if ((entityNodeRef != null) && (dataListType != null)
-					&& !entityDictionaryService.isSubClass(nodeService.getType(entityToExpand), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
+			if (nodeService.exists(entityToExpand)) {
 
-				DataListFilter dataListFilter = new DataListFilter();
-				dataListFilter.setDataType(QName.createQName(dataListType, namespaceService));
-				dataListFilter.setEntityNodeRefs(Collections.singletonList(new NodeRef(entityNodeRef)));
-				dataListFilter.updateMaxDepth(getDepthUserPref(dataListFilter));
+				if ((entityNodeRef != null) && (dataListType != null)
+						&& !entityDictionaryService.isSubClass(nodeService.getType(entityToExpand), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
 
-				MultiLevelListData mlld = multiLevelDataListService.getMultiLevelListData(dataListFilter);
+					DataListFilter dataListFilter = new DataListFilter();
+					dataListFilter.setDataType(QName.createQName(dataListType, namespaceService));
+					dataListFilter.setEntityNodeRefs(Collections.singletonList(new NodeRef(entityNodeRef)));
+					dataListFilter.updateMaxDepth(getDepthUserPref(dataListFilter));
 
-				entityToExpand = getEntityToExpand(mlld, entityToExpand);
+					MultiLevelListData mlld = multiLevelDataListService.getMultiLevelListData(dataListFilter);
 
-			}
+					entityToExpand = getEntityToExpand(mlld, entityToExpand);
 
-			if (entityToExpand != null) {
-				multiLevelDataListService.expandOrColapseNode(entityToExpand, expand);
+				}
+
+				if (entityToExpand != null) {
+					multiLevelDataListService.expandOrColapseNode(entityToExpand, expand);
+				} else {
+					throw new WebScriptException("Cannot find node to expand");
+				}
+				JSONObject ret = new JSONObject();
+
+				try {
+					ret.put("nodeRef", entityToExpand);
+					ret.put("success", true);
+					res.setContentType("application/json");
+					res.setContentEncoding("UTF-8");
+					ret.write(res.getWriter());
+				} catch (JSONException e) {
+					throw new WebScriptException("Unable to parse JSON", e);
+				}
+
 			} else {
-				throw new WebScriptException("Cannot find node to expand");
+				throw new WebScriptException("nodeRef is mandatory");
 			}
-			JSONObject ret = new JSONObject();
-
-			try {
-				ret.put("nodeRef", entityToExpand);
-				ret.put("success", true);
-				res.setContentType("application/json");
-				res.setContentEncoding("UTF-8");
-				ret.write(res.getWriter());
-			} catch (JSONException e) {
-				throw new WebScriptException("Unable to parse JSON", e);
-			}
-
-		} else {
-			throw new WebScriptException("nodeRef is mandatory");
 		}
-
 	}
 
 	private NodeRef getEntityToExpand(MultiLevelListData mlld, NodeRef productNodeRef) {
 
 		NodeRef ret = null;
-		
+
 		if (mlld != null) {
 			for (Map.Entry<NodeRef, MultiLevelListData> kv : mlld.getTree().entrySet()) {
 
@@ -124,7 +126,7 @@ public class MultiLevelDataListWebscript extends AbstractWebScript {
 						return kv.getKey();
 					} else {
 						ret = getEntityToExpand(kv.getValue(), productNodeRef);
-						if(ret!=null) {
+						if (ret != null) {
 							return ret;
 						}
 					}
