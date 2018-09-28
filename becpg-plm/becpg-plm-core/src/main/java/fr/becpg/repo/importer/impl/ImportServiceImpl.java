@@ -294,7 +294,7 @@ public class ImportServiceImpl implements ImportService {
 					NodeRef logFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(),
 							FULL_PATH_IMPORT_LOG_FOLDER);
 					if (logFolder != null) {
-						String logFileName = csvFileName.substring(0, csvFileName.length() - 4) + RepoConsts.EXTENSION_LOG;
+						String logFileName = csvFileName.replace(".", "_") + RepoConsts.EXTENSION_LOG;
 						createLogFile(logFolder, logFileName, fileLog);
 					}
 				}
