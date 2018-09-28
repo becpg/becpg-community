@@ -32,6 +32,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.datalist.MultiLevelDataListService;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
@@ -65,7 +66,6 @@ public class MultiLevelExtractor extends SimpleExtractor {
 	MultiLevelDataListService multiLevelDataListService;
 
 	PreferenceService preferenceService;
-	
 
 	public void setPreferenceService(PreferenceService preferenceService) {
 		this.preferenceService = preferenceService;
@@ -78,44 +78,41 @@ public class MultiLevelExtractor extends SimpleExtractor {
 	@Override
 	public PaginatedExtractedItems extract(DataListFilter dataListFilter, List<String> metadataFields) {
 
-		boolean multiLevelExtract = true;
+		// boolean multiLevelExtract = true;
 		boolean resetTree = false;
 
 		if (!dataListFilter.isDepthDefined()) {
 			int depth = getDepthUserPref(dataListFilter);
-			if (depth == 0) {
-				multiLevelExtract = false;
-			}
 			dataListFilter.updateMaxDepth(depth);
 		} else {
 			resetTree = updateDepthUserPref(dataListFilter);
-			if (dataListFilter.getMaxDepth() == 0) {
-				dataListFilter.updateMaxDepth(-1);
-				multiLevelExtract = false;
-			}
+			// if (dataListFilter.getMaxDepth() == 0) {
+			// dataListFilter.updateMaxDepth(-1);
+			// }
 		}
 
-		if (!multiLevelExtract) {
-			if (dataListFilter.isGuessContainer() && (dataListFilter.getEntityNodeRef() != null)) {
-				NodeRef listsContainerNodeRef = entityListDAO.getListContainer(dataListFilter.getEntityNodeRef());
-				if (listsContainerNodeRef != null) {
-					NodeRef dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, dataListFilter.getDataType());
-					if (dataListNodeRef != null) {
-						dataListFilter.setParentNodeRef(dataListNodeRef);
-					}
-				}
-			}
-			return super.extract(dataListFilter, metadataFields);
-
-		}
-		
-		
+		// if (!multiLevelExtract) {
+		// if (dataListFilter.isGuessContainer() &&
+		// (dataListFilter.getEntityNodeRef() != null)) {
+		// NodeRef listsContainerNodeRef =
+		// entityListDAO.getListContainer(dataListFilter.getEntityNodeRef());
+		// if (listsContainerNodeRef != null) {
+		// NodeRef dataListNodeRef =
+		// entityListDAO.getList(listsContainerNodeRef,
+		// dataListFilter.getDataType());
+		// if (dataListNodeRef != null) {
+		// dataListFilter.setParentNodeRef(dataListNodeRef);
+		// }
+		// }
+		// }
+		// return super.extract(dataListFilter, metadataFields);
+		//
+		// }
 
 		int pageSize = dataListFilter.getPagination().getPageSize();
 		int startIndex = (dataListFilter.getPagination().getPage() - 1) * dataListFilter.getPagination().getPageSize();
 
 		PaginatedExtractedItems ret = new PaginatedExtractedItems(pageSize);
-		
 
 		MultiLevelListData listData = paginatedSearchCache.getSearchMultiLevelResults(dataListFilter.getPagination().getQueryExecutionId());
 		if (listData == null) {
@@ -129,7 +126,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 		appendNextLevel(ret, metadataFields, listData, 0, startIndex, pageSize, props, dataListFilter);
 
 		ret.setFullListSize(listData.getSize());
-		
+
 		return ret;
 	}
 
@@ -150,15 +147,16 @@ public class MultiLevelExtractor extends SimpleExtractor {
 			if ((currIndex >= startIndex) && (currIndex < (startIndex + pageSize))) {
 
 				QName itemType = nodeService.getType(nodeRef);
-
 				if (!props.containsKey(PROP_DISABLE_TREE)) {
 					props.put(PROP_OPEN, false);
 					props.put(PROP_LEAF, false);
 
 					if (entry.getValue().isLeaf()) {
 						props.put(PROP_LEAF, true);
-					} else if (multiLevelDataListService.isExpandedNode(nodeRef, (!entry.getValue().getTree().isEmpty()
-							|| (dataListFilter.getMaxDepth() < 0) || (entry.getValue().getDepth() < dataListFilter.getMaxDepth())),false)) {
+					} else if (multiLevelDataListService.isExpandedNode(nodeRef,
+							(!entry.getValue().getTree().isEmpty() || (dataListFilter.getMaxDepth() < 0)
+									|| (entry.getValue().getDepth() < dataListFilter.getMaxDepth())),
+							false)) {
 						props.put(PROP_OPEN, true);
 					}
 				}
@@ -265,7 +263,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 		return !dataListFilter.isSimpleItem() && (dataListFilter.getDataType() != null)
 				&& entityDictionaryService.isMultiLevelDataList(dataListFilter.getDataType())
 				&& !dataListFilter.getDataListName().startsWith(RepoConsts.WUSED_PREFIX) && !dataListFilter.getDataListName().equals("projectList") // TODO
-									          																										// should
+																																					// should
 																																					// be
 																																					// better
 				&& !dataListFilter.isVersionFilter();
@@ -292,7 +290,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 			}
 			prefs.put(PREF_DEPTH_PREFIX + dataListFilter.getDataType().getLocalName(), dataListFilter.getMaxDepth());
 			preferenceService.setPreferences(username, prefs);
-			
+
 			return true;
 		}
 		return false;
