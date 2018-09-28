@@ -18,6 +18,7 @@
 package fr.becpg.repo.entity.datalist.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -123,7 +124,8 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 			parentNodeRefs.add(entityNodeRef);
 			QName nodeType = nodeService.getType(entityNodeRef);
 
-			if (isExpandedNode(useExpandedCache ? dataListNodeRef : null, (maxDepthLevel < 0) || (currDepth < maxDepthLevel), resetTree)) {
+			if (isExpandedNode(useExpandedCache ? dataListNodeRef : null,
+					(maxDepthLevel == 0 && currDepth == 0) || (maxDepthLevel < 0) || (currDepth < maxDepthLevel), resetTree)) {
 				logger.debug("getMultiLevelListData depth :" + currDepth + " max " + maxDepthLevel);
 
 				if ((currDepth == 0) || !entityDictionaryService.isMultiLevelLeaf(nodeType)) {
@@ -170,6 +172,8 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 				List<NodeRef> childRefs = getListNodeRef(dataListNodeRef, dataListFilter, dataType);
 				// Adv search already filter by perm
 
+				Map<NodeRef, MultiLevelListData> currTmp = new HashMap<NodeRef, MultiLevelListData>();
+				
 				for (NodeRef childRef : childRefs) {
 					entityNodeRef = getEntityNodeRef(childRef);
 					Integer depthLevel = (Integer) nodeService.getProperty(childRef, BeCPGModel.PROP_DEPTH_LEVEL);
@@ -179,7 +183,8 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 					int nextDepth = currDepth + depthLevel;
 					NodeRef parentNodeRef = (NodeRef) nodeService.getProperty(childRef, BeCPGModel.PROP_PARENT_LEVEL);
 					if (isExpandedNode(useExpandedCache ? parentNodeRef : null,
-							(maxDepthLevel < 0) || (nextDepth <= maxDepthLevel) || (depthLevel == 1), resetTree)) {
+							(maxDepthLevel == 0 && parentNodeRef != null) || (maxDepthLevel < 0) || (nextDepth <= maxDepthLevel) || (depthLevel == 1),
+							resetTree)) {
 
 						if (entityNodeRef != null) {
 							if (logger.isDebugEnabled()) {
@@ -192,9 +197,23 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 							MultiLevelListData tmp = getMultiLevelListData(dataListFilter, entityNodeRef, nextDepth, maxDepthLevel, childRef,
 									curVisitedNodeRef, useExpandedCache, resetTree);
 
-							if (!isSecondary || (!tmp.getTree().isEmpty() /*|| !isExpandedNode(useExpandedCache ? childRef : null, true, resetTree)*/)) {
-								ret.getTree().put(childRef, tmp);
+							currTmp.put(childRef, tmp);
+							
+							if (!isSecondary || (!tmp.getTree()
+									.isEmpty() /*
+												 * || !isExpandedNode(
+												 * useExpandedCache ? childRef :
+												 * null, true, resetTree)
+												 */)) {
+								if(parentNodeRef!=null && currTmp.containsKey(parentNodeRef)) {
+									currTmp.get(parentNodeRef).getTree().put(childRef, tmp);
+								} else {
+									ret.getTree().put(childRef, tmp);
+								}
 							}
+							
+						
+							
 						} else if (!isSecondary) {
 
 							ret.getTree().put(childRef, new MultiLevelListData(new ArrayList<>(), nextDepth));
