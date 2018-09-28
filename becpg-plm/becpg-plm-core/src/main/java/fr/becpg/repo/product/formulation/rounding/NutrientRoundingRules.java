@@ -14,6 +14,7 @@ import org.springframework.util.StringUtils;
 
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
+import fr.becpg.repo.product.helper.GDAHelper;
 
 /**
  * 
@@ -21,7 +22,8 @@ import fr.becpg.repo.product.data.productList.NutListDataItem;
  *
  */
 public class NutrientRoundingRules {
-	protected static final Log logger = LogFactory.getLog(NutrientRoundingRules.class);
+	protected static final Log logger = LogFactory
+			.getLog(NutrientRoundingRules.class);
 
 	public static List<Locale> getAvailableLocales() {
 		List<Locale> ret = new ArrayList<>();
@@ -39,7 +41,8 @@ public class NutrientRoundingRules {
 		return extractValueByKey(roundedValue, "value", locale);
 	}
 
-	private static Number extractValueByKey(String roundedValue, String item, Locale locale) {
+	private static Number extractValueByKey(String roundedValue, String item,
+			Locale locale) {
 		String key = getLocalKey(locale);
 		JSONObject jsonRound;
 		try {
@@ -59,7 +62,8 @@ public class NutrientRoundingRules {
 		return null;
 	}
 
-	public static Number extractValuePerServing(String roundedValue, Locale locale) {
+	public static Number extractValuePerServing(String roundedValue,
+			Locale locale) {
 		return extractValueByKey(roundedValue, "valuePerServing", locale);
 	}
 
@@ -80,7 +84,8 @@ public class NutrientRoundingRules {
 		return key;
 	}
 
-	public static void extractXMLAttribute(Element nutListElt, String roundedValue, Locale locale) {
+	public static void extractXMLAttribute(Element nutListElt,
+			String roundedValue, Locale locale) {
 		if (roundedValue != null) {
 			String localKey = getLocalKey(locale);
 			try {
@@ -90,14 +95,21 @@ public class NutrientRoundingRules {
 					JSONObject value = (JSONObject) jsonRound.get(valueKey);
 					for (Iterator<?> j = value.keys(); j.hasNext();) {
 						String locKey = (String) j.next();
-						
+
 						if (locKey.equals(localKey)) {
-							nutListElt.addAttribute("rounded" + StringUtils.capitalize(valueKey), "" + value.get(locKey));
+							nutListElt.addAttribute(
+									"rounded"
+											+ StringUtils.capitalize(valueKey),
+									"" + value.get(locKey));
 						} else {
-							nutListElt.addAttribute("rounded" + StringUtils.capitalize(valueKey)+"_"+locKey, "" + value.get(locKey));
-						}	
+							nutListElt.addAttribute(
+									"rounded"
+											+ StringUtils.capitalize(valueKey)
+											+ "_" + locKey,
+									"" + value.get(locKey));
+						}
 					}
-					
+
 				}
 			} catch (JSONException e) {
 				logger.error(e, e);
@@ -120,7 +132,8 @@ public class NutrientRoundingRules {
 	// }
 	// }
 	//
-	public static String extractRoundedValue(NutListDataItem n, String nutrientTypeCode) {
+	public static String extractRoundedValue(NutListDataItem n,
+			String nutrientTypeCode) {
 
 		JSONObject jsonRound = new JSONObject();
 
@@ -130,21 +143,33 @@ public class NutrientRoundingRules {
 			JSONObject mini = new JSONObject();
 			JSONObject maxi = new JSONObject();
 			JSONObject valuePerServing = new JSONObject();
+			JSONObject gdaPerc = new JSONObject();
 
 			for (Locale locale : getAvailableLocales()) {
 
 				String key = getLocalKey(locale);
 				String nutUnit = n.getUnit();
 
-				value.put(key, round(n.getValue(), nutrientTypeCode, locale, nutUnit));
-				mini.put(key, round(n.getMini(), nutrientTypeCode, locale, nutUnit));
-				maxi.put(key, round(n.getMaxi(), nutrientTypeCode, locale, nutUnit));
-				valuePerServing.put(key, round(n.getValuePerServing(), nutrientTypeCode, locale, nutUnit));
+				value.put(key,
+						round(n.getValue(), nutrientTypeCode, locale, nutUnit));
+				mini.put(key,
+						round(n.getMini(), nutrientTypeCode, locale, nutUnit));
+				maxi.put(key,
+						round(n.getMaxi(), nutrientTypeCode, locale, nutUnit));
+				valuePerServing.put(
+						key,
+						round(n.getValuePerServing(), nutrientTypeCode, locale,
+								nutUnit));
+				gdaPerc.put(
+						key,
+						GDAHelper.computeGDA(nutrientTypeCode,
+								n.getValuePerServing()));
 
 				jsonRound.put("value", value);
 				jsonRound.put("mini", mini);
 				jsonRound.put("maxi", maxi);
 				jsonRound.put("valuePerServing", valuePerServing);
+				jsonRound.put("gdaPerc", gdaPerc);
 
 			}
 
@@ -154,7 +179,8 @@ public class NutrientRoundingRules {
 		return jsonRound.toString();
 	}
 
-	public static Double round(Double value, String nutrientTypeCode, Locale locale, String nutUnit) {
+	public static Double round(Double value, String nutrientTypeCode,
+			Locale locale, String nutUnit) {
 
 		if (value == null) {
 			return null;

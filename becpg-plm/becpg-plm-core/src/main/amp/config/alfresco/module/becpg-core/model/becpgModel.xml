@@ -1827,6 +1827,12 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
+				
+				<property name="bcpg:gdaPercByProfile">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 				<property name="bcpg:nutListRoundedValue">
 					<type>d:text</type>
 					<mandatory>false</mandatory>

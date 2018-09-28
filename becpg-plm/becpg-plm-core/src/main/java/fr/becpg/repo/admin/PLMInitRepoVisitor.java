@@ -46,6 +46,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -192,6 +193,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 	@Value("${beCPG.formulation.score.mandatoryFields}")
 	private String defaultCatalogDefinition;
+	
+	@Value("${becpg.formulation.gda.values}")
+	private String defaultGdaProfilesValues;
 
 	@Autowired
 	@Qualifier("mlAwareNodeService")
@@ -294,6 +298,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 		// Property catalogs
 		visitFolder(systemNodeRef, PlmRepoConsts.PATH_CATALOGS);
+		
+		// GDA Profiles
+		visitFolder(systemNodeRef, PlmRepoConsts.PATH_GDA_PROFILES);
 
 		visitFolder(systemNodeRef, PlmRepoConsts.PATH_WORKFLOW_SCRIPTS);
 
@@ -457,6 +464,22 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			}
 
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/catalogs/*.json");
+
+		}
+
+		if (Objects.equals(folderName, PlmRepoConsts.PATH_GDA_PROFILES)) {
+			
+			if (!fileFolderService.listFiles(folderNodeRef).stream().anyMatch(f -> "gdaProfiles.json".equals(f.getName()))) {
+				try{
+				JSONObject oldGdaProfilesObject = new JSONObject(defaultGdaProfilesValues);
+				NodeRef oldGdaProfilesFile = fileFolderService.create(folderNodeRef, "gdaProfiles.json", ContentModel.TYPE_CONTENT).getNodeRef();
+				ContentWriter writer = fileFolderService.getWriter(oldGdaProfilesFile);
+				writer.putContent(oldGdaProfilesObject.toString());
+			} catch (JSONException e) {
+				logger.error("Unable to copy old GDA profiles: ", e);
+			}
+		}
+			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/gda/*.json");
 
 		}
 

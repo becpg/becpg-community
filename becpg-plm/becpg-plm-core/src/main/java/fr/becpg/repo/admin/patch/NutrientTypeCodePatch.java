@@ -76,8 +76,8 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 		nutrientTypeCode.put("Retinol", "RETOL");
 		nutrientTypeCode.put("Beta-caroten", "CARTB");
 		nutrientTypeCode.put("Vitamin A", "VITA-");
-		nutrientTypeCode.put("Vitamin A, IU", "VITA-");
-		nutrientTypeCode.put("Vitamin A, RAE", "VITA");
+		nutrientTypeCode.put("Vitamin A, IU", "VITA-IU");
+		nutrientTypeCode.put("Vitamin A, RAE", "VITA-RAE");
 		nutrientTypeCode.put("VITAMIN D", "VITD-");
 		nutrientTypeCode.put("Vitamin D (D2 + D3)", "VITDEQ");
 		nutrientTypeCode.put("Vitamin E (alpha-tocopherol)", "TOCPHA");
@@ -122,12 +122,12 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 				.put("FA 22:5 7c,10c,13c,16c,19c (n-3), DPA", "F22D5N3");
 		nutrientTypeCode.put("FA 22:6 4c,7c,10c,13c,16c,19c (n-3), DHA",
 				"F22D6N3");
-		nutrientTypeCode.put("Energy kcal", "ENER-");
-		nutrientTypeCode.put("Energy kJ", "ENER-");
-		nutrientTypeCode.put("Energy kcal, labelling", "ENER-");
-		nutrientTypeCode.put("Energy kJ, labelling", "ENER-");
-		nutrientTypeCode.put("Energy kcal Canada, USA", "ENER-");
-		nutrientTypeCode.put("Energy kJ Canada, USA", "ENER-");
+		nutrientTypeCode.put("Energy kcal", "ENER-E14");
+		nutrientTypeCode.put("Energy kJ", "ENER-KJO");
+		nutrientTypeCode.put("Energy kcal, labelling", "ENER-E14");
+		nutrientTypeCode.put("Energy kJ, labelling", "ENER-KJO");
+		nutrientTypeCode.put("Energy kcal Canada, USA", "ENER-E14");
+		nutrientTypeCode.put("Energy kJ Canada, USA", "ENER-KJO");
 		nutrientTypeCode.put("Energy kJ, without dietary fibre", "ENER-");
 		nutrientTypeCode.put("Salt", "NACL");
 		nutrientTypeCode.put("Points (SP)", "");
@@ -177,9 +177,9 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 		nutrientTypeCode.put("Rétinol", "RETOL");
 		nutrientTypeCode.put("Bêtacarotène", "CARTB");
 		nutrientTypeCode.put("Vitamine A", "VITA-");
-		nutrientTypeCode.put("Vitamine A, IU", "VITA-");
+		nutrientTypeCode.put("Vitamine A, IU", "VITA-IU");
 		nutrientTypeCode.put("Vitamine A, équivalent activité rétinol (EAR)",
-				"VITA");
+				"VITA-RAE");
 		nutrientTypeCode.put("Vitamine D", "VITD-");
 		nutrientTypeCode.put("Vitamine D (D2 + D3)", "VITDEQ");
 		nutrientTypeCode.put(
@@ -227,12 +227,12 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 				.put("AG 22:5 7c,10c,13c,16c,19c (n-3), DPA", "F22D5N3");
 		nutrientTypeCode.put("AG 22:6 4c,7c,10c,13c,16c,19c (n-3), DHA",
 				"F22D6N3");
-		nutrientTypeCode.put("Energie kcal", "ENER-");
-		nutrientTypeCode.put("Energie kJ", "ENER-");
-		nutrientTypeCode.put("Energie kcal, étiquetage", "ENER-");
-		nutrientTypeCode.put("Energie kJ, étiquetage", "ENER-");
-		nutrientTypeCode.put("Energie kcal Canada, USA", "ENER-");
-		nutrientTypeCode.put("Energie kJ Canada, USA", "ENER-");
+		nutrientTypeCode.put("Energie kcal", "ENER-E14");
+		nutrientTypeCode.put("Energie kJ", "ENER-KJO");
+		nutrientTypeCode.put("Energie kcal, étiquetage", "ENER-E14");
+		nutrientTypeCode.put("Energie kJ, étiquetage", "ENER-KJO");
+		nutrientTypeCode.put("Energie kcal Canada, USA", "ENER-E14");
+		nutrientTypeCode.put("Energie kJ Canada, USA", "ENER-KJO");
 		nutrientTypeCode.put("Energie kJ, sans fibres alimentaires", "ENER-");
 		nutrientTypeCode.put("Sel", "NACL");
 		nutrientTypeCode.put("Résidu à sec", "ASH");

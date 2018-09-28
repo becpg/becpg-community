@@ -3,6 +3,8 @@
  */
 package fr.becpg.repo.product.data.productList;
 
+import java.util.Locale;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
@@ -60,8 +62,10 @@ public class NutListDataItem extends AbstractManualDataItem  implements SimpleLi
 	
 	private String roundedValue;
 	
+	private Double gdaPercByProfile;
 	
-
+	private Double gdaPercByLocale;
+	
 	@Override
 	@AlfProp
 	@InternalField
@@ -176,6 +180,24 @@ public class NutListDataItem extends AbstractManualDataItem  implements SimpleLi
 
 	public void setGdaPerc(Double gdaPerc) {
 		this.gdaPerc = gdaPerc;
+	}
+	
+	@AlfProp
+	@AlfQname(qname="bcpg:gdaPercByProfile")
+	public Double getGdaPercByProfile(String profileId) {
+		return gdaPercByProfile;
+	}
+
+	public void setGdaPercByProfile(Double gdaPercByProfile) {
+		this.gdaPercByProfile = gdaPercByProfile;
+	}
+	
+	public Double getGdaPercByLocale(Locale locale) {
+		return gdaPercByLocale;
+	}
+
+	public void setGdaPercByLocale(Double gdaPercByLocale) {
+		this.gdaPercByLocale = gdaPercByLocale;
 	}
 
 	@AlfProp
