@@ -475,5 +475,27 @@
 			</form>
 		</forms>
 	</config>
+	
+		<config condition="cm:person" evaluator="node-type">
+		<forms>
+			<form id="user-language">
+				<field-visibility>
+					<show id="bcpg:userContentLocale" force="true" />
+					<show id="bcpg:userLocale" force="true"  />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:userContentLocale" >
+						<control template="/org/alfresco/components/form/controls/mtlangue.ftl">
+						</control>
+					</field>
+					<field id="bcpg:userLocale">
+						<control template="/org/alfresco/components/form/controls/mtlangue.ftl">
+							<control-param name="isUserLang">true</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
 
 </alfresco-config>

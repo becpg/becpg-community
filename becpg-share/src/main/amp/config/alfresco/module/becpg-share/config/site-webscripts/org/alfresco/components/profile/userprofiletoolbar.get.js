@@ -45,6 +45,7 @@ function main()
 	   if(!isExternalUser(user))
 	   {	   
 		   addLink("user-delegation-link", "user-delegation?nodeRef="+getPersonNodeRef(user), "link.delegation");
+		   addLink("user-language-link", "user-language?nodeRef="+getPersonNodeRef(user), "link.language");
 	   }
    }
    // Add User Sites link

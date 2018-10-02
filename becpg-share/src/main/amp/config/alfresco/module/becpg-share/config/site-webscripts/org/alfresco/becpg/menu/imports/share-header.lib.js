@@ -9,19 +9,28 @@
 function getOrCreateBeCPGMenu() {
 
    var beCPGMenu = widgetUtils.findObject(model.jsonModel, "id", "HEADER_BECPG");
+   var menuBar = widgetUtils.findObject(model.jsonModel, "id", "HEADER_APP_MENU_BAR");
+   var languageMenu = widgetUtils.findObject(model.jsonModel, "id", "HEADER_BECPG_LANGUAGE");
+   var userMenuBar = widgetUtils.findObject(model.jsonModel, "id", "HEADER_USER_MENU_BAR");
 
+   var result = remote.call("/webframework/content/user-locale?user="+user.id);
+   var results =  eval('(' + result + ')');
+   
+   var userProps = results.properties;
+   
    if (beCPGMenu == null && !isExternalUser(user)) {
 
-      beCPGMenu = {
-         id : "HEADER_BECPG",
-         name : "alfresco/header/AlfMenuBarPopup",
-         config : {
-            id : "HEADER_BECPG",
-            label : "header.menu.becpg.label",
-            widgets : []
-         }
-      };
+	   beCPGMenu = {
+			   id : "HEADER_BECPG",
+			   name : "alfresco/header/AlfMenuBarPopup",
+			   config : {
+				   id : "HEADER_BECPG",
+				   label : "header.menu.becpg.label",
+				   widgets : []
+			   }
+	   };
 
+	   
       beCPGMenu.config.widgets.push({
           name : "becpg/header/BeCPGRecentMenu",
           config : {
@@ -46,7 +55,7 @@ function getOrCreateBeCPGMenu() {
            })
       }
       
-      beCPGMenu.config.widgets.push( {
+      beCPGMenu.config.widgets.push({
          id : "HEADER_TOOLS_BECPG",
          name : "alfresco/menus/AlfMenuGroup",
          config : {
@@ -79,12 +88,34 @@ function getOrCreateBeCPGMenu() {
       }
       
 
-      var menuBar = widgetUtils.findObject(model.jsonModel, "id", "HEADER_APP_MENU_BAR");
+      
       if (menuBar != null) {
          menuBar.config.widgets.push(beCPGMenu);
       }
 
    }
+  
+  
+   if(languageMenu == null){
+	   
+	   languageMenu = {
+			   id : "HEADER_BECPG_LANGUAGE",
+			   name : "alfresco/menus/AlfMenuBarItem",
+			   config : {
+				   id : "HEADER_BECPG_LANGUAGE",
+				   label : "",
+				   iconImage: url.context + "/res/components/images/flags/" + userProps.userContentLocale + ".png",
+				   iconImageHeight: "50%",
+				   targetUrl : "user-language?nodeRef="+ userProps.userNodeRef,
+			   }
+	   };
+	   
+	   if (userMenuBar) {
+		   userMenuBar.config.widgets.push(languageMenu);
+	   }
+   
+   }
+
 
    return beCPGMenu;
 }
@@ -105,6 +136,11 @@ function isSystemMgr(user){
 function isExternalUser(user){
     return user.capabilities["isbeCPGExternalUser"] !=null && user.capabilities["isbeCPGExternalUser"] == true;
 }
+
+
+
+
+
 
 
 
