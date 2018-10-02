@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<page>
+   <title>Change Language Settings for a User</title>
+   <title-id>page.userLanguage.title</title-id>
+   <description>Change Language Settings section on Profile page for a User</description>
+   <description-id>page.userLanguage.description</description-id>
+   <template-instance>user-language</template-instance>
+   <authentication>user</authentication>
+</page>
