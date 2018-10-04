@@ -269,10 +269,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 							for (Locale locale : locales) {
 								Locale currentLocal = I18NUtil.getLocale();
-
+								Locale currentContentLocal = I18NUtil.getContentLocale();
 								try {
 									I18NUtil.setLocale(locale);
-
+									I18NUtil.setContentLocale(null);
+									
 									Expression exp = parser.parseExpression(SpelHelper.formatFormula(labelingRuleListDataItem.getFormula()));
 									String ret = exp.getValue(dataContext, String.class);
 									if (logger.isDebugEnabled()) {
@@ -294,6 +295,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 									}
 								} finally {
 									I18NUtil.setLocale(currentLocal);
+									I18NUtil.setContentLocale(currentContentLocal);
 								}
 							}
 

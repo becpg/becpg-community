@@ -171,17 +171,17 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	@Autowired
 	private EntityListDAO entityListDAO;
-	
+
 	@Resource
 	protected RepoService repoService;
-	
+
 	@Autowired
 	protected EntitySystemService entitySystemService;
-	
+
 	@Autowired
 	private BeCPGCacheService beCPGCacheService;
 
-    @Autowired
+	@Autowired
 	private RuleService ruleService;
 
 	@Override
@@ -196,7 +196,12 @@ public class EntityReportServiceImpl implements EntityReportService {
 			RunAsWork<Object> actionRunAs = () -> {
 				RetryingTransactionCallback<Object> actionCallback = () -> {
 					if (nodeService.exists(entityNodeRef)) {
+						Locale currentLocal = I18NUtil.getLocale();
+						Locale currentContentLocal = I18NUtil.getContentLocale();
 						try {
+							I18NUtil.setLocale(Locale.getDefault());
+							I18NUtil.setContentLocale(null);
+
 							ruleService.disableRules();
 							policyBehaviourFilter.disableBehaviour(entityNodeRef);
 							if (logger.isDebugEnabled()) {
@@ -220,7 +225,6 @@ public class EntityReportServiceImpl implements EntityReportService {
 								}
 
 								Map<String, String> preferences = getMergedPreferences(tplsNodeRef);
-								
 
 								List<Locale> entityReportLocales = getEntityReportLocales(entityNodeRef);
 
@@ -229,7 +233,6 @@ public class EntityReportServiceImpl implements EntityReportService {
 									I18NUtil.setLocale(locale);
 
 									EntityReportData reportData = retrieveExtractor(entityNodeRef).extract(entityNodeRef, preferences);
-									
 
 									if (reportData.getXmlDataSource() == null) {
 										throw new IllegalArgumentException("nodeElt is null");
@@ -240,8 +243,6 @@ public class EntityReportServiceImpl implements EntityReportService {
 										for (EntityReportParameters reportParameters : getEntityReportParametersList(tplNodeRef, entityNodeRef)) {
 
 											if (isLocaleEnableOnTemplate(tplNodeRef, locale)) {
-												
-												
 
 												Boolean isDefault = (Boolean) this.nodeService.getProperty(tplNodeRef,
 														ReportModel.PROP_REPORT_TPL_IS_DEFAULT);
@@ -281,15 +282,14 @@ public class EntityReportServiceImpl implements EntityReportService {
 																	.getTargetAssocs(tplNodeRef, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES));
 															params.put(BeCPGReportEngine.PARAM_DOCUMENT_NODEREF, documentNodeRef);
 															params.put(BeCPGReportEngine.PARAM_ENTITY_NODEREF, entityNodeRef);
-															
+
 															logger.debug("beCPGReportEngine createReport: " + entityNodeRef + " for document "
 																	+ documentName + " (" + documentNodeRef + ")");
-															
-															beCPGReportEngine.createReport(tplNodeRef,
-																	new ByteArrayInputStream(filterByReportKind(reportData.getXmlDataSource(), tplNodeRef).asXML().getBytes()),
+
+															beCPGReportEngine.createReport(tplNodeRef, new ByteArrayInputStream(
+																	filterByReportKind(reportData.getXmlDataSource(), tplNodeRef).asXML().getBytes()),
 																	writer.getContentOutputStream(), params);
-															
-															
+
 															I18NUtil.setLocale(Locale.getDefault());
 
 															nodeService.setProperty(documentNodeRef, ContentModel.PROP_MODIFIED, generatedDate);
@@ -347,6 +347,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 							entityActivityService.postEntityActivity(entityNodeRef, ActivityType.Report, ActivityEvent.Update);
 
 						} finally {
+							I18NUtil.setLocale(currentLocal);
+							I18NUtil.setContentLocale(currentContentLocal);
 							ruleService.enableRules();
 							policyBehaviourFilter.enableBehaviour(entityNodeRef);
 						}
@@ -360,179 +362,178 @@ public class EntityReportServiceImpl implements EntityReportService {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Element filterByReportKind(Element dataXml, NodeRef tplNodeRef){
+	private Element filterByReportKind(Element dataXml, NodeRef tplNodeRef) {
 		StopWatch stopWatch = null;
 		if (logger.isDebugEnabled()) {
 			stopWatch = new StopWatch();
 			stopWatch.start();
 		}
-		
-		if(getFromCacheListFolderNodeRef(RepoConsts.PATH_REPORT_KINDLIST) == null){
+
+		if (getFromCacheListFolderNodeRef(RepoConsts.PATH_REPORT_KINDLIST) == null) {
 			return dataXml;
 		}
-		
+
 		String reportKindCode = "", reportKindValue = "", reportKindNoneValue;
-		if(tplNodeRef != null){
+		if (tplNodeRef != null) {
 			List<String> reportKindProp = (List<String>) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_KINDS);
-			if(reportKindProp != null && !reportKindProp.isEmpty()){
+			if ((reportKindProp != null) && !reportKindProp.isEmpty()) {
 				reportKindCode = reportKindProp.get(0);
 			}
 		}
-		
-		 reportKindValue = getRerportKindValue(reportKindCode);
-		 reportKindNoneValue = getRerportKindValue("None");
+
+		reportKindValue = getRerportKindValue(reportKindCode);
+		reportKindNoneValue = getRerportKindValue("None");
 		// Filter XML report by reportKind
 		String[] entityParams = null;
-		for(Iterator<Element> entityIterator = dataXml.elementIterator(); entityIterator.hasNext();){
+		for (Iterator<Element> entityIterator = dataXml.elementIterator(); entityIterator.hasNext();) {
 			Element entityEl = entityIterator.next();
-			if(entityEl.getName().equals("dataLists")){
-				
-				for(Iterator<Element> datalistsIterator = entityEl.elementIterator(); datalistsIterator.hasNext();){
+			if (entityEl.getName().equals("dataLists")) {
+
+				for (Iterator<Element> datalistsIterator = entityEl.elementIterator(); datalistsIterator.hasNext();) {
 					Element dlEl = datalistsIterator.next();
 					boolean hasReportKindAspect = false;
-					
-					for(Iterator<Element> elIterator = dlEl.elementIterator(); elIterator.hasNext();){
+
+					for (Iterator<Element> elIterator = dlEl.elementIterator(); elIterator.hasNext();) {
 						Element itemEl = elIterator.next();
 						String[] rkValues = itemEl.valueOf("@" + ReportModel.PROP_REPORT_KINDS.getLocalName()).split("\\s*,\\s*");
-						
-						
-						if(Arrays.asList(rkValues).contains(reportKindNoneValue)){
+
+						if (Arrays.asList(rkValues).contains(reportKindNoneValue)) {
 							dlEl.remove(itemEl);
 							continue;
 						}
-						
-						if(Arrays.asList(rkValues).contains(reportKindValue)){
+
+						if (Arrays.asList(rkValues).contains(reportKindValue)) {
 							hasReportKindAspect = true;
 						}
-						
+
 					}
-					
-					if(hasReportKindAspect){
-						for(Iterator<Element> elIterator = dlEl.elementIterator(); elIterator.hasNext();){
+
+					if (hasReportKindAspect) {
+						for (Iterator<Element> elIterator = dlEl.elementIterator(); elIterator.hasNext();) {
 							Element itemEl = elIterator.next();
-							String [] rkValues = itemEl.valueOf("@" + ReportModel.PROP_REPORT_KINDS.getLocalName()).split("\\s*,\\s*");
-							if(!Arrays.asList(rkValues).contains(reportKindValue) || rkValues ==  null){
+							String[] rkValues = itemEl.valueOf("@" + ReportModel.PROP_REPORT_KINDS.getLocalName()).split("\\s*,\\s*");
+							if (!Arrays.asList(rkValues).contains(reportKindValue) || (rkValues == null)) {
 								dlEl.remove(itemEl);
 							}
 						}
-					} 
+					}
 				}
 			}
-			
-			// get report parameters 
-			if(entityEl.getName().equals(ReportModel.PROP_REPORT_PARAMETERS.getLocalName())){
+
+			// get report parameters
+			if (entityEl.getName().equals(ReportModel.PROP_REPORT_PARAMETERS.getLocalName())) {
 				entityParams = entityEl.getStringValue().split("\\s*,\\s*");
 			}
 		}
-		 
-		// Filter XML report by parameters 
+
+		// Filter XML report by parameters
 		NodeRef reportParamsFolderNodRef = getFromCacheListFolderNodeRef(RepoConsts.PATH_REPORT_PARAMS);
 		Map<String, String> valideCode = new HashMap<>();
 		List<ChildAssociationRef> assocList = nodeService.getChildAssocs(reportParamsFolderNodRef);
 		assocList.forEach(val -> {
 			String paramCode = (String) nodeService.getProperty(val.getChildRef(), BeCPGModel.PROP_LV_CODE);
 			String paramValue = (String) nodeService.getProperty(val.getChildRef(), BeCPGModel.PROP_LV_VALUE);
-			if(isValideReportParams(paramCode)){
+			if (isValideReportParams(paramCode)) {
 				valideCode.put(paramValue, paramCode);
 			}
-			
+
 		});
-		
-		dataXml = entityParams != null ? filterByParams(dataXml, getFilteredParams(valideCode, Arrays.asList(entityParams), reportKindCode)) : dataXml;
-		
+
+		dataXml = entityParams != null ? filterByParams(dataXml, getFilteredParams(valideCode, Arrays.asList(entityParams), reportKindCode))
+				: dataXml;
+
 		if (logger.isDebugEnabled()) {
 			stopWatch.stop();
 			logger.debug("Filter XML takes : " + stopWatch.getTotalTimeSeconds() + "s");
 		}
-		
+
 		return dataXml;
-		 
+
 	}
-	
-	private String getRerportKindValue(String reportKindCode){				
-		
+
+	private String getRerportKindValue(String reportKindCode) {
+
 		String reportKindValue = "";
-		
+
 		NodeRef reportKindFolderNodeRef = getFromCacheListFolderNodeRef(RepoConsts.PATH_REPORT_KINDLIST);
-		
-		if(reportKindFolderNodeRef != null && !reportKindCode.isEmpty()){
-			List<ChildAssociationRef> assocList = nodeService.getChildAssocsByPropertyValue(reportKindFolderNodeRef, BeCPGModel.PROP_LV_CODE, reportKindCode);
-			if(assocList != null && !assocList.isEmpty()){
+
+		if ((reportKindFolderNodeRef != null) && !reportKindCode.isEmpty()) {
+			List<ChildAssociationRef> assocList = nodeService.getChildAssocsByPropertyValue(reportKindFolderNodeRef, BeCPGModel.PROP_LV_CODE,
+					reportKindCode);
+			if ((assocList != null) && !assocList.isEmpty()) {
 				reportKindValue = (String) nodeService.getProperty(assocList.get(0).getChildRef(), BeCPGModel.PROP_LV_VALUE);
 			} else {
-				reportKindValue = reportKindCode; 
+				reportKindValue = reportKindCode;
 			}
 		}
-		
+
 		return reportKindValue;
 	}
-	
+
 	public NodeRef getFromCacheListFolderNodeRef(String listPath) {
-		return beCPGCacheService.getFromCache(EntityReportServiceImpl.class.getName(), REPORT_LIST_CACHE_KEY + listPath , () -> {
+		return beCPGCacheService.getFromCache(EntityReportServiceImpl.class.getName(), REPORT_LIST_CACHE_KEY + listPath, () -> {
 			NodeRef systemFolderNodeRef = repoService.getFolderByPath(RepoConsts.PATH_SYSTEM);
 			NodeRef listsFolder = entitySystemService.getSystemEntity(systemFolderNodeRef, RepoConsts.PATH_LISTS);
 			return entitySystemService.getSystemEntityDataList(listsFolder, listPath);
 		});
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	private Element filterByParams(Element entity, List<String> filteredParams){
-		
-		for(Iterator<Element> entityIter = entity.elementIterator(); entityIter.hasNext();){
-			 Element itemEl = entityIter.next();
-			 
-			 String prefixValue = itemEl.valueOf("@" + "prefix");
-			 prefixValue = prefixValue.isEmpty() ? "" : prefixValue + "_"; 
-			 
-			 if(filteredParams.contains(prefixValue + itemEl.getName())){
-				 entity.remove(itemEl);
-				 continue;
-			 }
-			 
-			 for(String paramValue : filteredParams){
-				 Attribute att = itemEl.attribute(paramValue);
-				 if(att != null){
-					 itemEl.remove(att);
-				 }
-			 }
-			 
-			 Iterator<Element> itemElIter = itemEl.elementIterator();
-			 if(itemElIter.hasNext()){
-				 itemEl = filterByParams(itemEl, filteredParams);
-			 }
-			 
+	private Element filterByParams(Element entity, List<String> filteredParams) {
+
+		for (Iterator<Element> entityIter = entity.elementIterator(); entityIter.hasNext();) {
+			Element itemEl = entityIter.next();
+
+			String prefixValue = itemEl.valueOf("@" + "prefix");
+			prefixValue = prefixValue.isEmpty() ? "" : prefixValue + "_";
+
+			if (filteredParams.contains(prefixValue + itemEl.getName())) {
+				entity.remove(itemEl);
+				continue;
+			}
+
+			for (String paramValue : filteredParams) {
+				Attribute att = itemEl.attribute(paramValue);
+				if (att != null) {
+					itemEl.remove(att);
+				}
+			}
+
+			Iterator<Element> itemElIter = itemEl.elementIterator();
+			if (itemElIter.hasNext()) {
+				itemEl = filterByParams(itemEl, filteredParams);
+			}
+
 		}
-		
+
 		return entity;
 	}
-	
-	private List<String> getFilteredParams(Map<String, String> params, List<String> paramList, String reportKind){
+
+	private List<String> getFilteredParams(Map<String, String> params, List<String> paramList, String reportKind) {
 		List<String> ret = new ArrayList<>();
-		
+
 		params.forEach((val, code) -> {
 			String[] codes = code.split(REPORT_PARAM_SEPARATOR);
-			if(codes.length == 3 && !codes[1].equals(reportKind)){
+			if ((codes.length == 3) && !codes[1].equals(reportKind)) {
 				return;
 			}
-			if ((!paramList.contains(val) && code.startsWith("show")) || 
-					(paramList.contains(val) && code.startsWith("hide"))){ 
-				
-				ret.add(codes[codes.length-1]);
+			if ((!paramList.contains(val) && code.startsWith("show")) || (paramList.contains(val) && code.startsWith("hide"))) {
+
+				ret.add(codes[codes.length - 1]);
 			}
 		});
-		
-		return ret;	   
+
+		return ret;
 	}
-	
-	private boolean isValideReportParams(String codeParams){
+
+	private boolean isValideReportParams(String codeParams) {
 		String[] strParams = codeParams.split(REPORT_PARAM_SEPARATOR);
-		if((strParams[0].equals("hide") || strParams[0].equals("show")) && 
-				(strParams.length == 2 || strParams.length == 3)){
+		if ((strParams[0].equals("hide") || strParams[0].equals("show")) && ((strParams.length == 2) || (strParams.length == 3))) {
 			return true;
 		}
 		return false;
 	}
-	
+
 	private Map<String, String> getMergedPreferences(List<NodeRef> tplsNodeRef) {
 
 		Map<String, String> prefs = new HashMap<>();
@@ -712,6 +713,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 			RunAsWork<Object> actionRunAs = () -> {
 				RetryingTransactionCallback<Object> actionCallback = () -> {
 					if (nodeService.exists(entityNodeRef)) {
+						Locale currentLocal = I18NUtil.getLocale();
+						Locale currentContentLocal = I18NUtil.getContentLocale();
 						try {
 							policyBehaviourFilter.disableBehaviour(entityNodeRef);
 							ruleService.disableRules();
@@ -790,7 +793,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 											+ documentNodeRef + ")");
 
 									beCPGReportEngine.createReport(tplNodeRef,
-											new ByteArrayInputStream(filterByReportKind(reportData.getXmlDataSource(), tplNodeRef).asXML().getBytes()),
+											new ByteArrayInputStream(
+													filterByReportKind(reportData.getXmlDataSource(), tplNodeRef).asXML().getBytes()),
 											writer.getContentOutputStream(), params);
 
 									I18NUtil.setLocale(Locale.getDefault());
@@ -824,6 +828,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 							}
 
 						} finally {
+							I18NUtil.setLocale(currentLocal);
+							I18NUtil.setContentLocale(currentContentLocal);
 							ruleService.enableRules();
 							policyBehaviourFilter.enableBehaviour(entityNodeRef);
 						}
@@ -840,58 +846,71 @@ public class EntityReportServiceImpl implements EntityReportService {
 	@SuppressWarnings("unchecked")
 	public void generateReport(NodeRef entityNodeRef, NodeRef documentNodeRef, ReportFormat reportFormat, OutputStream outputStream) {
 
-		NodeRef templateNodeRef = associationService.getTargetAssoc(documentNodeRef, ReportModel.ASSOC_REPORT_TPL);
-
-		if (templateNodeRef == null) {
-			throw new IllegalArgumentException("templateNodeRef is null");
-		}
-
-		Locale locale = MLTextHelper.getNearestLocale(Locale.getDefault());
-
-		EntityReportParameters reportParameters = readParameters(
-				EntityReportParameters.createFromJSON((String) nodeService.getProperty(documentNodeRef, ReportModel.PROP_REPORT_TEXT_PARAMETERS)));
-
-		if (nodeService.hasAspect(documentNodeRef, ReportModel.ASPECT_REPORT_LOCALES)) {
-
-			List<String> langs = (List<String>) nodeService.getProperty(documentNodeRef, ReportModel.PROP_REPORT_LOCALES);
-			if ((langs != null) && !langs.isEmpty()) {
-				locale = MLTextHelper.parseLocale(langs.get(0));
-				I18NUtil.setLocale(locale);
-			}
-		}
-
-		EntityReportData reportData = retrieveExtractor(entityNodeRef).extract(entityNodeRef, reportParameters.getPreferences());
-
-		if (reportData.getXmlDataSource() == null) {
-			throw new IllegalArgumentException("nodeElt is null");
-		}
-
-		reportData.setParameters(reportParameters);
-
+		Locale currentLocal = I18NUtil.getLocale();
+		Locale currentContentLocal = I18NUtil.getContentLocale();
 		try {
 
-			Map<String, Object> params = new HashMap<>();
+			NodeRef templateNodeRef = associationService.getTargetAssoc(documentNodeRef, ReportModel.ASSOC_REPORT_TPL);
 
-			params.put(ReportParams.PARAM_IMAGES, reportData.getDataObjects());
-			params.put(ReportParams.PARAM_FORMAT, reportFormat);
-			params.put(ReportParams.PARAM_LANG, MLTextHelper.localeKey(locale));
-			params.put(ReportParams.PARAM_ASSOCIATED_TPL_FILES,
-					associationService.getTargetAssocs(templateNodeRef, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES));
+			if (templateNodeRef == null) {
+				throw new IllegalArgumentException("templateNodeRef is null");
+			}
 
-			beCPGReportEngine.createReport(templateNodeRef, new ByteArrayInputStream(filterByReportKind(reportData.getXmlDataSource(), templateNodeRef).asXML().getBytes()), outputStream,
-					params);
+			Locale locale = MLTextHelper.getNearestLocale(Locale.getDefault());
 
-		} catch (ReportException e) {
-			logger.error("Failed to execute report for template : " + templateNodeRef, e);
+			EntityReportParameters reportParameters = readParameters(EntityReportParameters
+					.createFromJSON((String) nodeService.getProperty(documentNodeRef, ReportModel.PROP_REPORT_TEXT_PARAMETERS)));
+
+			if (nodeService.hasAspect(documentNodeRef, ReportModel.ASPECT_REPORT_LOCALES)) {
+
+				List<String> langs = (List<String>) nodeService.getProperty(documentNodeRef, ReportModel.PROP_REPORT_LOCALES);
+				if ((langs != null) && !langs.isEmpty()) {
+					locale = MLTextHelper.parseLocale(langs.get(0));
+					I18NUtil.setLocale(locale);
+				}
+			}
+
+			EntityReportData reportData = retrieveExtractor(entityNodeRef).extract(entityNodeRef, reportParameters.getPreferences());
+
+			if (reportData.getXmlDataSource() == null) {
+				throw new IllegalArgumentException("nodeElt is null");
+			}
+
+			reportData.setParameters(reportParameters);
+
+			try {
+
+				Map<String, Object> params = new HashMap<>();
+
+				params.put(ReportParams.PARAM_IMAGES, reportData.getDataObjects());
+				params.put(ReportParams.PARAM_FORMAT, reportFormat);
+				params.put(ReportParams.PARAM_LANG, MLTextHelper.localeKey(locale));
+				params.put(ReportParams.PARAM_ASSOCIATED_TPL_FILES,
+						associationService.getTargetAssocs(templateNodeRef, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES));
+
+				beCPGReportEngine.createReport(templateNodeRef,
+						new ByteArrayInputStream(filterByReportKind(reportData.getXmlDataSource(), templateNodeRef).asXML().getBytes()), outputStream,
+						params);
+
+			} catch (ReportException e) {
+				logger.error("Failed to execute report for template : " + templateNodeRef, e);
+			}
+
+		} finally {
+			I18NUtil.setLocale(currentLocal);
+			I18NUtil.setContentLocale(currentContentLocal);
 		}
-
 	}
 
 	@Override
 	public String getXmlReportDataSource(NodeRef entityNodeRef) {
 
 		StopWatch watch = null;
+		Locale currentLocal = I18NUtil.getLocale();
+		Locale currentContentLocal = I18NUtil.getContentLocale();
 		try {
+			I18NUtil.setLocale(Locale.getDefault());
+			I18NUtil.setContentLocale(null);
 			if (logger.isDebugEnabled()) {
 				watch = new StopWatch();
 				watch.start();
@@ -916,6 +935,9 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 			return filterByReportKind(reportData.getXmlDataSource(), null).asXML();
 		} finally {
+			I18NUtil.setLocale(currentLocal);
+			I18NUtil.setContentLocale(currentContentLocal);
+
 			if (logger.isDebugEnabled()) {
 				watch.stop();
 				logger.debug("XmlReportDataSource generated in  " + watch.getTotalTimeSeconds() + " seconds for node " + entityNodeRef);

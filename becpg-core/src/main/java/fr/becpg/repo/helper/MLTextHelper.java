@@ -180,12 +180,12 @@ public class MLTextHelper {
 		String ret = (String) nodeService.getProperty(nodeRef, propCharactName);
 		
 		if(ret == null){
-			Locale locale = I18NUtil.getLocale();
+			Locale locale = I18NUtil.getContentLocale();
 			try {
-				I18NUtil.setLocale(Locale.getDefault());
+				I18NUtil.setContentLocale(Locale.getDefault());
 				ret = (String) nodeService.getProperty(nodeRef, propCharactName);
 			} finally {
-				I18NUtil.setLocale(locale);
+				I18NUtil.setContentLocale(locale);
 			}
 			
 		}

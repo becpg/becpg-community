@@ -46,22 +46,15 @@ public class TranslateHelper {
 	 * @return the translated path
 	 */
 	public static String getTranslatedPath(String name) {
-		Locale currentLocal = I18NUtil.getLocale();
-
-		try {
-			I18NUtil.setLocale(Locale.getDefault());
-			String translation = I18NUtil.getMessage(PATH_MSG_PFX + name.toLowerCase(), Locale.getDefault());
-			if (logger.isDebugEnabled() && (translation == null)) {
-				logger.debug("Failed to translate path. path: " + name);
-			}
-
-			return translation;
-		} finally {
-			I18NUtil.setLocale(currentLocal);
+		String translation = I18NUtil.getMessage(PATH_MSG_PFX + name.toLowerCase(), Locale.getDefault());
+		if (logger.isDebugEnabled() && (translation == null)) {
+			logger.debug("Failed to translate path. path: " + name);
 		}
+		return translation;
+
 	}
-	
-	public static MLText getTranslatedPathMLText(String name){
+
+	public static MLText getTranslatedPathMLText(String name) {
 		return getTranslatedKey(PATH_MSG_PFX + name.toLowerCase());
 	}
 
@@ -87,47 +80,48 @@ public class TranslateHelper {
 		return getConstraint(constraintName, value, null);
 
 	}
-	
+
 	/**
 	 * Returns the MLText with the translations for all the languages supported.
 	 * List defined in {@link RepoConsts}
-	 * @param key the key to search for translations
-	 * @return 
+	 * 
+	 * @param key
+	 *            the key to search for translations
+	 * @return
 	 */
-	public static MLText getTranslatedKey(String key){
+	public static MLText getTranslatedKey(String key) {
 		MLText res = new MLText();
-		
-		logger.debug("Getting translations for key: "+key);
-		for(String localeString : RepoConsts.SUPPORTED_LANGUAGES){
+
+		logger.debug("Getting translations for key: " + key);
+		for (String localeString : RepoConsts.SUPPORTED_LANGUAGES) {
 			Locale currentLocale = new Locale(localeString);
-			
+
 			String translation = I18NUtil.getMessage(key, currentLocale);
-			
-			logger.debug("Found translation: "+translation);
-			if(translation != null){
+
+			logger.debug("Found translation: " + translation);
+			if (translation != null) {
 				res.addValue(currentLocale, I18NUtil.getMessage(key, currentLocale));
 			}
 		}
-		
+
 		return res;
 	}
-	
-	public static MLText getTemplateModelMLText(QName classQName, String key){
+
+	public static MLText getTemplateModelMLText(QName classQName, String key) {
 		String localName = classQName.getLocalName();
 		String shortPrefix = classQName.getPrefixString().split(":")[0];
-		
-		logger.debug("getting title mltext for class: "+classQName+" ("+localName+", pfx:"+shortPrefix+")");
-		logger.debug("Full path: "+shortPrefix+"_"+shortPrefix+"model.type."+shortPrefix+"_"+localName+"."+key);
-		
-		return getTranslatedKey(shortPrefix+"_"+shortPrefix+"model.type."+shortPrefix+"_"+localName+"."+key);
+
+		logger.debug("getting title mltext for class: " + classQName + " (" + localName + ", pfx:" + shortPrefix + ")");
+		logger.debug("Full path: " + shortPrefix + "_" + shortPrefix + "model.type." + shortPrefix + "_" + localName + "." + key);
+
+		return getTranslatedKey(shortPrefix + "_" + shortPrefix + "model.type." + shortPrefix + "_" + localName + "." + key);
 	}
-	
-	
-	public static MLText getTemplateTitleMLText(QName classQName){
+
+	public static MLText getTemplateTitleMLText(QName classQName) {
 		return getTemplateModelMLText(classQName, "title");
 	}
-	
-	public static MLText getTemplateDescriptionMLText(QName classQName){
+
+	public static MLText getTemplateDescriptionMLText(QName classQName) {
 		return getTemplateModelMLText(classQName, "description");
 	}
 

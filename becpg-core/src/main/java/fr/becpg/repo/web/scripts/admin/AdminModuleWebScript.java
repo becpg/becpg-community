@@ -127,10 +127,10 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 
 		// #378 : force to use server locale
 		Locale currentLocal = I18NUtil.getLocale();
-
+		Locale currentContentLocal = I18NUtil.getContentLocale();
 		try {
 			I18NUtil.setLocale(Locale.getDefault());
-
+			I18NUtil.setContentLocale(null);
 			switch (action) {
 			case ACTION_INIT_REPO:
 				logger.debug("Init repository");
@@ -165,6 +165,7 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 
 		} finally {
 			I18NUtil.setLocale(currentLocal);
+			I18NUtil.setContentLocale(currentContentLocal);
 		}
 
 		// Add status

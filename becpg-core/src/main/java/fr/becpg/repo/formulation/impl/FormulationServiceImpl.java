@@ -93,11 +93,14 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 	@Override
 	public T formulate(T repositoryEntity) throws FormulateException {
 		Locale currentLocal = I18NUtil.getLocale();
+		Locale currentContentLocal = I18NUtil.getContentLocale();
 		try {
 			I18NUtil.setLocale(Locale.getDefault());
+			I18NUtil.setContentLocale(null);
 			return formulate(repositoryEntity, DEFAULT_CHAIN_ID);
 		} finally {
 			I18NUtil.setLocale(currentLocal);
+			I18NUtil.setContentLocale(currentContentLocal);
 		}
 	}
 

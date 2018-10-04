@@ -53,6 +53,8 @@ public class BeCPGRuntimeContainer extends TenantRepositoryContainer implements 
 				if (logger.isDebugEnabled()) {
 					logger.debug("Set content locale:" + getUserContentLocale(personNodeRef));
 				}
+				
+				I18NUtil.setLocale(getUserLocale(personNodeRef));
 				I18NUtil.setContentLocale(getUserContentLocale(personNodeRef));
 			}
 		}
@@ -63,6 +65,17 @@ public class BeCPGRuntimeContainer extends TenantRepositoryContainer implements 
 		} finally {
 			I18NUtil.setContentLocale(null);
 		}
+	}
+
+	private Locale getUserLocale(NodeRef personNodeRef) {
+		String loc = (String) nodeService.getProperty(personNodeRef, BeCPGModel.PROP_USER_LOCAL);
+		if(loc ==  null || loc.isEmpty()) {
+			if(!Locale.getDefault().getLanguage().equals("fr")) {
+				return Locale.ENGLISH;
+			}
+			return Locale.FRENCH;
+		}
+		return MLTextHelper.parseLocale(loc);
 	}
 
 	public Locale getUserContentLocale(NodeRef personNodeRef) {
