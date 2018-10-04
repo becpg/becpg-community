@@ -146,5 +146,9 @@ public interface BeCPGModel {
 	QName PROP_STATE_ACTIVITY_MODIFIED = QName.createQName(BECPG_URI,"stateActivityModified");
 	QName PROP_STATE_ACTIVITY_MODIFIER = QName.createQName(BECPG_URI,"stateActivityModifier");
 	QName PROP_STATE_ACTIVITY_PREVIOUSSTATE = QName.createQName(BECPG_URI,"stateActivityPreviousState");
+	
+	
+	QName PROP_USER_LOCAL = QName.createQName(BECPG_URI,"userLocale");
+	QName PROP_USER_CONTENT_LOCAL = QName.createQName(BECPG_URI,"userContentLocale");
 
 }

@@ -225,6 +225,19 @@ img.icon16_11 {
     width: 20px
 }
 
+#HEADER_BECPG_LANGUAGE {
+    margin:0px;
+    padding:2px;
+}
+
+#HEADER_BECPG_LANGUAGE img {
+	background-repeat: no-repeat;
+	background-position-y: 5px;
+	height: 100% !important;
+	width: 100% !important;
+}
+
+
 .dijitIcon.dijitMenuItemIcon.entity {
 	  padding: 0px !important;
 }

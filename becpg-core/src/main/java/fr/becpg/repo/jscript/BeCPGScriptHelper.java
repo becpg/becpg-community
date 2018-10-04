@@ -297,5 +297,24 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 			return true;
 		});
 	}
+	
+	public String getUserLocale(ScriptNode personNode) {
+		String loc = (String) mlNodeService.getProperty(personNode.getNodeRef(), BeCPGModel.PROP_USER_LOCAL);
+		if(loc ==  null || loc.isEmpty()) {
+			if(!Locale.getDefault().getLanguage().equals("fr")) {
+				return "en";
+			}
+			return "fr";
+		}
+		return loc;
+	}
+	
+	public String getUserContentLocale(ScriptNode personNode) {
+		String loc = (String) mlNodeService.getProperty(personNode.getNodeRef(), BeCPGModel.PROP_USER_CONTENT_LOCAL);
+		if(loc ==  null || loc.isEmpty()) {
+			loc = MLTextHelper.localeKey(MLTextHelper.getNearestLocale(Locale.getDefault()));
+		}
+		return loc;
+	}
 
 }
