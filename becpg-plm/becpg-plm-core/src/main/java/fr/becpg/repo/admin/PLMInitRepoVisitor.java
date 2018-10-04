@@ -118,6 +118,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	private static final String EXPORT_PRODUCTS_REPORT_XMLFILE_PATH = "beCPG/birt/exportsearch/product/ExportSearchQuery.xml";
 	private static final String EXPORT_NC_REPORT_RPTFILE_PATH = "beCPG/birt/exportsearch/nonconformity/NonConformitySynthesis.rptdesign";
 	private static final String EXPORT_NC_REPORT_XMLFILE_PATH = "beCPG/birt/exportsearch/nonconformity/ExportSearchQuery.xml";
+	private static final String PRODUCT_REPORT_RAWMATERIAL_PATH = "beCPG/birt/document/product/default/RawMaterialReport.rptdesign";
 
 	private static final String EXPORT_RAWMATERIAL_INGLIST_XLSX_PATH = "beCPG/birt/exportsearch/product/ExportRawMaterialIngList.xlsx";
 	final Locale[] locales =  {Locale.FRENCH, Locale.ENGLISH};
@@ -1010,7 +1011,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			QName[] productTypes = { PLMModel.TYPE_FINISHEDPRODUCT, PLMModel.TYPE_RAWMATERIAL, PLMModel.TYPE_SEMIFINISHEDPRODUCT,
 					PLMModel.TYPE_PACKAGINGMATERIAL };
-			String[] defaultReport = { PRODUCT_REPORT_CLIENT_PATH, null, PRODUCT_REPORT_PRODUCTION_PATH, PRODUCT_REPORT_CLIENT_PATH };
+			String[] defaultReport = { PRODUCT_REPORT_CLIENT_PATH, PRODUCT_REPORT_RAWMATERIAL_PATH, PRODUCT_REPORT_PRODUCTION_PATH, PRODUCT_REPORT_CLIENT_PATH };
 			String[] defaultReportName = { productReportClientName, productReportSupplierName, productReportProductionName, productReportClientName };
 			
 			String[] otherReport = { PRODUCT_REPORT_PRODUCTION_PATH, null, null, null };
@@ -1028,7 +1029,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			defaultKindReport.add(NONE_KIND_REPORT);
 			
 			for (String reportKind : defaultKindReport){	
-				if(reportKind == null){
+				if(reportKind == PRODUCT_REPORT_RAWMATERIAL_PATH){
 					continue;
 				}
 				
