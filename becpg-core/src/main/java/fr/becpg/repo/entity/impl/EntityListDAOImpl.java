@@ -132,9 +132,10 @@ public class EntityListDAOImpl implements EntityListDAO {
 	public NodeRef createList(NodeRef listContainerNodeRef, QName listQName) {
 
 		Locale currentLocal = I18NUtil.getLocale();
-
+		Locale currentContentLocal = I18NUtil.getContentLocale();
 		try {
 			I18NUtil.setLocale(Locale.getDefault());
+			I18NUtil.setContentLocale(null);
 
 			ClassDefinition classDef = dictionaryService.getClass(listQName);
 
@@ -157,6 +158,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 					.getChildRef();
 		} finally {
 			I18NUtil.setLocale(currentLocal);
+			I18NUtil.setContentLocale(currentContentLocal);
 		}
 	}
 

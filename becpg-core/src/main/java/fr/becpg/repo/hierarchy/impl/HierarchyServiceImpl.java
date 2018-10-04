@@ -203,9 +203,11 @@ public class HierarchyServiceImpl implements HierarchyService {
 		AuthenticationUtil.runAsSystem(() -> {
 
 			Locale currentLocal = I18NUtil.getLocale();
+			Locale currentContentLocal = I18NUtil.getContentLocale();
 
 			try {
 				I18NUtil.setLocale(Locale.getDefault());
+				I18NUtil.setContentLocale(null);
 				
 					QName type = nodeService.getType(entityNodeRef);
 					ClassDefinition classDef = dictionaryService.getClass(type);
@@ -238,6 +240,7 @@ public class HierarchyServiceImpl implements HierarchyService {
 
 			} finally {
 				I18NUtil.setLocale(currentLocal);
+				I18NUtil.setContentLocale(currentContentLocal);
 			}
 		});
 
