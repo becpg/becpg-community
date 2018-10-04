@@ -484,13 +484,19 @@
 					<show id="bcpg:userLocale" force="true"  />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:userContentLocale" >
+					<set id="language" appearance="bordered-panel"
+						label-id="becpg.forms.set.language.label" template="/org/alfresco/components/form/1-column-set.ftl" />
+					<field id="bcpg:userContentLocale" set="language">
 						<control template="/org/alfresco/components/form/controls/mtlangue.ftl">
+							<control-param name="multiple">false</control-param>
+							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
-					<field id="bcpg:userLocale">
+					<field id="bcpg:userLocale" set="language">
 						<control template="/org/alfresco/components/form/controls/mtlangue.ftl">
 							<control-param name="isUserLang">true</control-param>
+							<control-param name="multiple">false</control-param>
+							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
 				</appearance>

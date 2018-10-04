@@ -1,12 +1,13 @@
 package fr.becpg.web.resolver;
 
 import java.util.Locale;
-import java.util.StringTokenizer;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.extensions.config.ConfigService;
 import org.springframework.extensions.surf.RequestContext;
+import org.springframework.extensions.surf.UserFactory;
+import org.springframework.extensions.surf.exception.UserFactoryException;
 import org.springframework.extensions.surf.mvc.LocaleResolver;
 import org.springframework.extensions.surf.support.ThreadLocalRequestContext;
 import org.springframework.extensions.surf.util.I18NUtil;
@@ -22,60 +23,45 @@ public class BeCPGLocaleResolver extends LocaleResolver {
 	@Override
 	public Locale resolveLocale(HttpServletRequest request) {
 
-		Locale locale = Locale.getDefault();
+		Locale locale = null;
 
 		RequestContext rc = ThreadLocalRequestContext.getRequestContext();
 
 		User user = rc.getUser();
+
+		if("true".equals(request.getParameter("resetLocale"))) {
+
+			  // allow the endpoint id to be explicitly overridden via a request attribute
+            String userEndpointId = (String) rc.getAttribute(RequestContext.USER_ENDPOINT);
+            
+            
+            UserFactory userFactory = rc.getServiceRegistry().getUserFactory();
+			try {
+				user = userFactory.initialiseUser(rc, (HttpServletRequest)request, userEndpointId, true);
+				rc.setUser(user);
+			} catch (UserFactoryException e) {}
+		}
+		
+
 		if (user != null) {
-			/**
-			 * TODO for LDAP support map it to localeID under
-			 * personAttributeMapping form common-ldap-context.xml
-			 */
 
-			if (user.getProperties().containsKey("bcpg:userLocale")) {
-				locale = I18NUtil.parseLocale((String) user.getProperties().get("bcpg:userLocale"));
-				// set locale onto Alfresco thread local
-				I18NUtil.setLocale(locale);
-
+			for (Map.Entry<String, Boolean> entry : user.getCapabilities().entrySet()) {
+				if (entry.getKey().startsWith("userLocale_")) {
+					locale = I18NUtil.parseLocale(entry.getKey().substring(11));
+					I18NUtil.setLocale(locale);
+				} else if (entry.getKey().startsWith("userContentLocale_")) {
+					locale = I18NUtil.parseLocale(entry.getKey().substring(18));	
+					I18NUtil.setContentLocale(locale);
+				}
+			}
+			
+			if(locale!=null) {
 				return locale;
 			}
 
 		}
 
-		// set language locale from browser header if available
-		final String acceptLang = request.getHeader("Accept-Language");
-		if ((acceptLang != null) && (acceptLang.length() != 0)) {
-			StringTokenizer t = new StringTokenizer(acceptLang, ",; ");
-
-			// get language and convert to java locale format
-			String language = t.nextToken().replace('-', '_');
-
-			Locale tmpLocale = I18NUtil.parseLocale(language);
-
-			if (!locale.getLanguage().equals(tmpLocale.getLanguage())) {
-				ConfigService configService = rc.getServiceRegistry().getConfigService();
-
-				for (org.springframework.extensions.config.ConfigElement config : configService.getConfig("Languages")
-						.getConfigElement("ui-languages").getChildren()) {
-					Locale configLocale = I18NUtil.parseLocale(config.getAttribute("locale"));
-					if (configLocale.getLanguage().equals(tmpLocale.getLanguage())) {
-						locale = tmpLocale;
-						break;
-					}
-
-				}
-
-			}
-
-			locale = I18NUtil.parseLocale(language);
-
-		}
-
-		// set locale onto Alfresco thread local
-		I18NUtil.setLocale(locale);
-
-		return locale;
+		return super.resolveLocale(request);
 	}
 
 }

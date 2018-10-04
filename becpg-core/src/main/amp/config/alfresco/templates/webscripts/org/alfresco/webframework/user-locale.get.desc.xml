@@ -1,9 +1,0 @@
-<webscript>
-  <shortname>user-language-mgr</shortname>
-  <description>User Language Manager Component</description>
-  <url>/webframework/content/user-locale?user={user}</url>
-  <format default="json">argument</format>
-  <authentication>user</authentication>
-  <transaction allow="readonly">required</transaction>
-  <lifecycle>limited_support</lifecycle>
-</webscript>

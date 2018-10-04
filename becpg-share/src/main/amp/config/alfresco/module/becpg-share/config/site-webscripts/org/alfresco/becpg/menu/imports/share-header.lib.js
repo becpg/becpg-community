@@ -9,14 +9,7 @@
 function getOrCreateBeCPGMenu() {
 
    var beCPGMenu = widgetUtils.findObject(model.jsonModel, "id", "HEADER_BECPG");
-   var menuBar = widgetUtils.findObject(model.jsonModel, "id", "HEADER_APP_MENU_BAR");
-   var languageMenu = widgetUtils.findObject(model.jsonModel, "id", "HEADER_BECPG_LANGUAGE");
-   var userMenuBar = widgetUtils.findObject(model.jsonModel, "id", "HEADER_USER_MENU_BAR");
 
-   var result = remote.call("/webframework/content/user-locale?user="+user.id);
-   var results =  eval('(' + result + ')');
-   
-   var userProps = results.properties;
    
    if (beCPGMenu == null && !isExternalUser(user)) {
 
@@ -87,6 +80,7 @@ function getOrCreateBeCPGMenu() {
          
       }
       
+      var menuBar = widgetUtils.findObject(model.jsonModel, "id", "HEADER_APP_MENU_BAR");
 
       
       if (menuBar != null) {
@@ -95,8 +89,18 @@ function getOrCreateBeCPGMenu() {
 
    }
   
-  
+
+   var languageMenu = widgetUtils.findObject(model.jsonModel, "id", "HEADER_BECPG_LANGUAGE");
+
+   
    if(languageMenu == null){
+	   
+	   var flag = getUserLocal(user);
+	   if(flag.indexOf("_")>0){
+		   flag = flag.substring(3,5).toLowerCase();
+	   } else {
+		   flag = flag.substring(0,2).toLowerCase();
+	   }
 	   
 	   languageMenu = {
 			   id : "HEADER_BECPG_LANGUAGE",
@@ -104,11 +108,12 @@ function getOrCreateBeCPGMenu() {
 			   config : {
 				   id : "HEADER_BECPG_LANGUAGE",
 				   label : "",
-				   iconImage: url.context + "/res/components/images/flags/" + userProps.userContentLocale + ".png",
-				   iconImageHeight: "50%",
-				   targetUrl : "user-language?nodeRef="+ userProps.userNodeRef,
+				   iconImage: url.context + "/res/components/images/flags/" + flag + ".png",
+				   targetUrl : "user-language?nodeRef="+ getUserNodeRef(user)
 			   }
 	   };
+	   
+	   var userMenuBar = widgetUtils.findObject(model.jsonModel, "id", "HEADER_USER_MENU_BAR");
 	   
 	   if (userMenuBar) {
 		   userMenuBar.config.widgets.push(languageMenu);
@@ -128,6 +133,27 @@ function getOlapSSOUrl(user){
     }
     return null;
 }
+
+
+function getUserLocal(user){
+    for(var i  in user.capabilities){
+       if(i.indexOf("userLocale_") == 0){
+           return i.substring(11);
+       }
+    }
+    return null;
+}
+
+function getUserNodeRef(user){
+	 for(var i  in user.capabilities){
+	       if(i.indexOf("personNodeRef_") == 0){
+	           return i.substring(14);
+	       }
+	    }
+	    return null;
+	
+}
+
 
 function isSystemMgr(user){
     return user.capabilities["isbeCPGSystemManager"] !=null && user.capabilities["isbeCPGSystemManager"] == true;

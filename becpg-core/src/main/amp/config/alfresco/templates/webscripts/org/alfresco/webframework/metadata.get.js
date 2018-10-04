@@ -57,12 +57,20 @@ else if (args["user"] != null)
   if(personNodeRef!=null){
       model.capabilities["personNodeRef_"+personNodeRef] = true;
   }
-      
+  
+
+  var userLocale = bcpg.getUserLocale(object);
+  if(userLocale!=null){
+      model.capabilities["userLocale_"+userLocale] = true;
+  } 
+  
+
+  var userContentLocale = bcpg.getUserContentLocale(object);
+  if(userContentLocale!=null){
+      model.capabilities["userContentLocale_"+userContentLocale] = true;
+  }
+  
    model.immutableProperties = people.getImmutableProperties(userId);
-   
-   //TODO Add beCPG personAttributeMapping
-   //bcpg:userLocale, bcpg:userContentLocale
-   
 }
 
 // load content by relative path

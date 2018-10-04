@@ -240,11 +240,21 @@
 
 <#macro renderLocaleImage field textarea=false htmlEditor=false>
   <#if !isHiddenField(field) && field.dataType == "mltext" && form.mode == "edit" && form.arguments.itemKind == "node">
-    <#if locale?contains("_") >
-      <#assign localeshort = locale?substring(3,5)?lower_case >
-    <#else>
-	  <#assign localeshort = locale?substring(0,2)?lower_case >
-	</#if>  
+    
+    <#if userContentLocale??>
+	    <#if userContentLocale?contains("_") >
+	      <#assign localeshort = userContentLocale?substring(3,5)?lower_case >
+	    <#else>
+		  <#assign localeshort = userContentLocale?substring(0,2)?lower_case >
+		</#if>  
+	<#else>
+		 <#if locale?contains("_") >
+	      <#assign localeshort = locale?substring(3,5)?lower_case >
+	    <#else>
+		  <#assign localeshort = locale?substring(0,2)?lower_case >
+		</#if>  
+	</#if>
+	
     <#if form.arguments.itemId??>
 	    <span class="locale-icon">
 			<img class="icon16_11" id="${fieldHtmlId}-locale-icon" src="${url.context}/res/components/images/flags/${localeshort}.png" title="${msg("form.field.locale")}"  tabindex="-1"/>
