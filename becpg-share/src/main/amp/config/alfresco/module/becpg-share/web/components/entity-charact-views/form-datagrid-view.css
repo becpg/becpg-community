@@ -1,0 +1,20 @@
+.form-datagrid-view .form-container .form-fields {
+    border-bottom: none;
+}
+
+.form-datagrid-view {
+	padding: 5px;
+	margin-top: 10px;
+}
+
+.form-datagrid-view  div.edit-datagrid-form > span  {
+	float:right;
+	margin-right: 15px;
+}
+
+
+.form-datagrid-view  .edit-datagrid-form span.first-child
+{
+   background: url(../documentlibrary/actions/folder-edit-metadata-16.png) no-repeat 6px 4px;
+	 border:none;	
+}

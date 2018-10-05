@@ -73,11 +73,11 @@ public class NutrientRoundingRules {
 
 	private static String getLocalKey(Locale locale) {
 		String key = MLTextHelper.localeKey(locale);
-		if (Locale.FRENCH.equals(locale) || Locale.FRANCE.equals(locale)) {
-			key = "default";
+		if (Locale.US.equals(locale)) {
+			return key;
 		}
 
-		return key;
+		return "default";
 	}
 
 	public static void extractXMLAttribute(Element nutListElt, String roundedValue, Locale locale) {

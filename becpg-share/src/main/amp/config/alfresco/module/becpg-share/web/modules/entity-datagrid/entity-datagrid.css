@@ -191,7 +191,7 @@
 
 .datagrid .action-set {
 	transition:0.25s;
-	position: absolute;
+	position: relative;
     width: 60px;
 	right: 10px;
 }
