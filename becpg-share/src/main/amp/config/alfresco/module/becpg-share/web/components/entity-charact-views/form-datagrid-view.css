@@ -4,7 +4,7 @@
 
 .form-datagrid-view {
 	padding: 5px;
-	margin-top: 10px;
+	margin-top: 36px;
 }
 
 .form-datagrid-view  div.edit-datagrid-form > span  {
@@ -16,5 +16,5 @@
 .form-datagrid-view  .edit-datagrid-form span.first-child
 {
    background: url(../documentlibrary/actions/folder-edit-metadata-16.png) no-repeat 6px 4px;
-	 border:none;	
+   border:none;	
 }
