@@ -690,6 +690,48 @@
 					</field>
 				</appearance>
 			</form>
+			<form id="nutList">
+				<field-visibility>
+					<show id="bcpg:servingSize" force="true"/>
+					<show id="bcpg:numberOfServings" force="true" />
+					<show id="bcpg:nutrientProfilingScore" force="true" for-mode="view"/>
+					<show id="bcpg:nutrientProfilingClass" force="true" for-mode="view"/>
+					<show id="bcpg:nutrientProfileRef"   force="true"/>
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:servingSize" help-id="becpg.forms.help.servingSize"  />
+					<field id="bcpg:numberOfServings" help-id="becpg.forms.help.numberOfServings"  />
+					<field id="bcpg:nutrientProfilingScore"  />
+					<field id="bcpg:nutrientProfilingClass"  >
+						<control template="/org/alfresco/components/form/controls/nutrient-class.ftl" />
+					</field>
+					<field id="bcpg:nutrientProfileRef">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="showLink">false</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+			<form id="costList">
+				<field-visibility>
+					<show id="bcpg:unitPrice" force="true" />
+					<show id="bcpg:unitTotalCost" force="true" />
+					<show id="bcpg:priceCurrency" force="true" />
+					<show id="bcpg:breakEven" force="true" />
+					<show id="bcpg:projectedQty" force="true" />
+					<show id="bcpg:profitability" force="true" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:unitPrice" help-id="becpg.forms.help.unitPrice"  />
+					<field id="bcpg:unitTotalCost" read-only="true"/>
+					<field id="bcpg:priceCurrency"/>
+					<field id="bcpg:breakEven" read-only="true"  />
+					<field id="bcpg:projectedQty"/>
+					<field id="bcpg:profitability" read-only="true" />
+				</appearance>
+			</form>
+			
 		</forms>
 	</config>
 
@@ -3042,6 +3084,25 @@
 					</field>
 				</appearance>
 			</form>
+			<form id="nutList">
+				<field-visibility>
+					<show id="bcpg:nutrientProfilingScore" force="true" for-mode="view"/>
+					<show id="bcpg:nutrientProfilingClass" force="true" for-mode="view"/>
+					<show id="bcpg:nutrientProfileRef"   force="true"/>
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:nutrientProfilingScore"  />
+					<field id="bcpg:nutrientProfilingClass"  >
+						<control template="/org/alfresco/components/form/controls/nutrient-class.ftl" />
+					</field>
+					<field id="bcpg:nutrientProfileRef">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="showLink">false</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
 			
 		</forms>
 	</config>
@@ -3840,6 +3901,29 @@
 					<field id="cm:categories">
 						<control>
 							<control-param name="compactMode">true</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+			<form id="nutList">
+				<field-visibility>
+					<show id="bcpg:servingSize" force="true"/>
+					<show id="bcpg:numberOfServings" force="true" />
+					<show id="bcpg:nutrientProfilingScore" force="true" for-mode="view"/>
+					<show id="bcpg:nutrientProfilingClass" force="true" for-mode="view"/>
+					<show id="bcpg:nutrientProfileRef"   force="true"/>
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:servingSize" help-id="becpg.forms.help.servingSize"  />
+					<field id="bcpg:numberOfServings" help-id="becpg.forms.help.numberOfServings"  />
+					<field id="bcpg:nutrientProfilingScore"  />
+					<field id="bcpg:nutrientProfilingClass"  >
+						<control template="/org/alfresco/components/form/controls/nutrient-class.ftl" />
+					</field>
+					<field id="bcpg:nutrientProfileRef">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="showLink">false</control-param>
 						</control>
 					</field>
 				</appearance>
