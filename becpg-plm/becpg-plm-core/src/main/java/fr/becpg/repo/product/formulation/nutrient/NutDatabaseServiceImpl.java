@@ -1,4 +1,4 @@
-package fr.becpg.repo.product;
+package fr.becpg.repo.product.formulation.nutrient;
 
 import java.io.IOException;
 import java.io.InputStreamReader;

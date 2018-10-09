@@ -37,14 +37,13 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 	private QNameDAO qnameDAO;
 	private BehaviourFilter policyBehaviourFilter;
 	private RuleService ruleService;
-	
+
 	private final int batchThreads = 3;
 	private final int batchSize = 40;
 	private final long count = batchThreads * batchSize;
-	
-	
-	Map<String,String> nutrientTypeCode = new HashMap<>();
-	
+
+	Map<String, String> nutrientTypeCode = new HashMap<>();
+
 	{
 
 		nutrientTypeCode.put("Water", "WATER");
@@ -76,8 +75,8 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 		nutrientTypeCode.put("Retinol", "RETOL");
 		nutrientTypeCode.put("Beta-caroten", "CARTB");
 		nutrientTypeCode.put("Vitamin A", "VITA-");
-		nutrientTypeCode.put("Vitamin A, IU", "VITA-");
-		nutrientTypeCode.put("Vitamin A, RAE", "VITA");
+		nutrientTypeCode.put("Vitamin A, IU", "VITA-IU");
+		nutrientTypeCode.put("Vitamin A, RAE", "VITA-RAE");
 		nutrientTypeCode.put("VITAMIN D", "VITD-");
 		nutrientTypeCode.put("Vitamin D (D2 + D3)", "VITDEQ");
 		nutrientTypeCode.put("Vitamin E (alpha-tocopherol)", "TOCPHA");
@@ -113,30 +112,27 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 		nutrientTypeCode.put("FA 18:0, stearic", "F18D0");
 		nutrientTypeCode.put("FA 18:1 n-9 cis, oleic", "F18D1CN9");
 		nutrientTypeCode.put("FA 18:2 9c,12c (n-6), linoleic", "F18D1CN6");
-		nutrientTypeCode.put("FA 18:3 c9,c12,c15 (n-3), alpha-linolenic",
-				"F18D3N3");
-		nutrientTypeCode.put("FA 20:4 5c,8c,11c,14c (n-6), arachidonic",
-				"F20D4");
+		nutrientTypeCode.put("FA 18:3 c9,c12,c15 (n-3), alpha-linolenic", "F18D3N3");
+		nutrientTypeCode.put("FA 20:4 5c,8c,11c,14c (n-6), arachidonic", "F20D4");
 		nutrientTypeCode.put("FA 20:5 5c,8c,11c,14c,17c (n-3), EPA", "F20D5N3");
-		nutrientTypeCode
-				.put("FA 22:5 7c,10c,13c,16c,19c (n-3), DPA", "F22D5N3");
-		nutrientTypeCode.put("FA 22:6 4c,7c,10c,13c,16c,19c (n-3), DHA",
-				"F22D6N3");
-		nutrientTypeCode.put("Energy kcal", "ENER-");
-		nutrientTypeCode.put("Energy kJ", "ENER-");
-		nutrientTypeCode.put("Energy kcal, labelling", "ENER-");
-		nutrientTypeCode.put("Energy kJ, labelling", "ENER-");
-		nutrientTypeCode.put("Energy kcal Canada, USA", "ENER-");
-		nutrientTypeCode.put("Energy kJ Canada, USA", "ENER-");
+		nutrientTypeCode.put("FA 22:5 7c,10c,13c,16c,19c (n-3), DPA", "F22D5N3");
+		nutrientTypeCode.put("FA 22:6 4c,7c,10c,13c,16c,19c (n-3), DHA", "F22D6N3");
+
+		nutrientTypeCode.put("Energy kcal", "ENER-E14");
+		nutrientTypeCode.put("Energy kJ", "ENER-KJO");
+		nutrientTypeCode.put("Energy kcal, labelling", "ENER-E14");
+		nutrientTypeCode.put("Energy kJ, labelling", "ENER-KJO");
+		nutrientTypeCode.put("Energy kcal Canada, USA", "ENER-E14");
+		nutrientTypeCode.put("Energy kJ Canada, USA", "ENER-KJO");
 		nutrientTypeCode.put("Energy kJ, without dietary fibre", "ENER-");
+
 		nutrientTypeCode.put("Salt", "NACL");
 		nutrientTypeCode.put("Points (SP)", "");
 		nutrientTypeCode.put("Points (SP)(Arrondi)", "");
 		nutrientTypeCode.put("Ash", "ASH");
 		nutrientTypeCode.put("Alpha-Carot", "CARTA");
 		nutrientTypeCode.put("Carbohydrates, without sugar alcohol", "CHOAVL");
-		nutrientTypeCode
-				.put("Provitamin A (b-carotene equivalents)", "CARTBEQ");
+		nutrientTypeCode.put("Provitamin A (b-carotene equivalents)", "CARTBEQ");
 		nutrientTypeCode.put("Vitamin A retinol equivalents", "VITA");
 		nutrientTypeCode.put("Niacine (derived equivalents)", "NIAEQ");
 		nutrientTypeCode.put("Caffein", "CAFFN");
@@ -147,7 +143,6 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 		nutrientTypeCode.put("Soluble fiber", "FIBSOL");
 		nutrientTypeCode.put("Insoluble fiber", "FIBINS");
 
-		
 		nutrientTypeCode.put("Eau", "WATER");
 		nutrientTypeCode.put("Sodium", "NA");
 		nutrientTypeCode.put("Magnésium", "MG");
@@ -177,14 +172,11 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 		nutrientTypeCode.put("Rétinol", "RETOL");
 		nutrientTypeCode.put("Bêtacarotène", "CARTB");
 		nutrientTypeCode.put("Vitamine A", "VITA-");
-		nutrientTypeCode.put("Vitamine A, IU", "VITA-");
-		nutrientTypeCode.put("Vitamine A, équivalent activité rétinol (EAR)",
-				"VITA");
+		nutrientTypeCode.put("Vitamine A, IU", "VITA-IU");
+		nutrientTypeCode.put("Vitamine A, équivalent activité rétinol (EAR)", "VITA-EAR");
 		nutrientTypeCode.put("Vitamine D", "VITD-");
 		nutrientTypeCode.put("Vitamine D (D2 + D3)", "VITDEQ");
-		nutrientTypeCode.put(
-				"Activité vitaminique E (en équivalents alpha-tocophérol)",
-				"TOCPHA");
+		nutrientTypeCode.put("Activité vitaminique E (en équivalents alpha-tocophérol)", "TOCPHA");
 		nutrientTypeCode.put("Vitamine E", "VITE-");
 		nutrientTypeCode.put("Vitamine K1", "VITK1");
 		nutrientTypeCode.put("Vitamine K2", "VITK2");
@@ -197,8 +189,7 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 		nutrientTypeCode.put("Vitamine B8 ou Biotine", "BIOT");
 		nutrientTypeCode.put("Vitamine B12 ou Cobalamines", "VITB12");
 		nutrientTypeCode.put("Vitamine B9 ou Folates totaux", "FOL");
-		nutrientTypeCode.put("Folates, équivalent fibres alimentaires",
-				"FOLDFE");
+		nutrientTypeCode.put("Folates, équivalent fibres alimentaires", "FOLDFE");
 		nutrientTypeCode.put("Acide folique", "FOLAC");
 		nutrientTypeCode.put("Folates naturels", "FOLFD");
 		nutrientTypeCode.put("Choline", "CHOLN");
@@ -218,28 +209,25 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 		nutrientTypeCode.put("AG 18:0, stéarique", "F18D0");
 		nutrientTypeCode.put("AG 18:1 9c (n-9), oléique", "F18D1CN9");
 		nutrientTypeCode.put("AG 18:2 9c,12c (n-6), linoléique", "F18D1CN6");
-		nutrientTypeCode.put("AG 18:3 c9,c12,c15 (n-3), alpha-linolénique",
-				"F18D3N3");
-		nutrientTypeCode.put("AG 20:4 5c,8c,11c,14c (n-6), arachidonique",
-				"F20D4");
+		nutrientTypeCode.put("AG 18:3 c9,c12,c15 (n-3), alpha-linolénique", "F18D3N3");
+		nutrientTypeCode.put("AG 20:4 5c,8c,11c,14c (n-6), arachidonique", "F20D4");
 		nutrientTypeCode.put("AG 20:5 5c,8c,11c,14c,17c (n-3), EPA", "F20D5N3");
-		nutrientTypeCode
-				.put("AG 22:5 7c,10c,13c,16c,19c (n-3), DPA", "F22D5N3");
-		nutrientTypeCode.put("AG 22:6 4c,7c,10c,13c,16c,19c (n-3), DHA",
-				"F22D6N3");
-		nutrientTypeCode.put("Energie kcal", "ENER-");
-		nutrientTypeCode.put("Energie kJ", "ENER-");
-		nutrientTypeCode.put("Energie kcal, étiquetage", "ENER-");
-		nutrientTypeCode.put("Energie kJ, étiquetage", "ENER-");
-		nutrientTypeCode.put("Energie kcal Canada, USA", "ENER-");
-		nutrientTypeCode.put("Energie kJ Canada, USA", "ENER-");
+		nutrientTypeCode.put("AG 22:5 7c,10c,13c,16c,19c (n-3), DPA", "F22D5N3");
+		nutrientTypeCode.put("AG 22:6 4c,7c,10c,13c,16c,19c (n-3), DHA", "F22D6N3");
+
+		nutrientTypeCode.put("Energie kcal", "ENER-E14");
+		nutrientTypeCode.put("Energie kJ", "ENER-KJO");
+		nutrientTypeCode.put("Energie kcal, étiquetage", "ENER-E14");
+		nutrientTypeCode.put("Energie kJ, étiquetage", "ENER-KJO");
+		nutrientTypeCode.put("Energie kcal Canada, USA", "ENER-E14");
+		nutrientTypeCode.put("Energie kJ Canada, USA", "ENER-KJO");
 		nutrientTypeCode.put("Energie kJ, sans fibres alimentaires", "ENER-");
+
 		nutrientTypeCode.put("Sel", "NACL");
 		nutrientTypeCode.put("Résidu à sec", "ASH");
 		nutrientTypeCode.put("Alpha-carotene", "CARTA");
 		nutrientTypeCode.put("Glucides, sans sucres de l'alcool", "CHOAVL");
-		nutrientTypeCode
-				.put("Provitamine A (équivalent b-carotène)", "CARTBEQ");
+		nutrientTypeCode.put("Provitamine A (équivalent b-carotène)", "CARTBEQ");
 		nutrientTypeCode.put("Vitamine A (équivalent rétinol)", "VITA");
 		nutrientTypeCode.put("Niacine (équivalent dérivés)", "NIAEQ");
 		nutrientTypeCode.put("Caféine", "CAFFN");
@@ -250,11 +238,6 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 		nutrientTypeCode.put("Fibres solubles", "FIBSOL");
 		nutrientTypeCode.put("Fibres insolubles", "FIBINS");
 	}
-	
-	
-	
-	
-	
 
 	public void setRuleService(RuleService ruleService) {
 		this.ruleService = ruleService;
@@ -262,7 +245,6 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 
 	@Override
 	protected String applyInternal() throws Exception {
-		
 
 		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
 			final List<NodeRef> result = new ArrayList<>();
@@ -273,17 +255,19 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 
 			final Pair<Long, QName> val = getQnameDAO().getQName(PLMModel.TYPE_NUT);
 
+			@Override
 			public int getTotalEstimatedWorkSize() {
 				return result.size();
 			}
 
+			@Override
 			public Collection<NodeRef> getNextWork() {
 				if (val != null) {
 					Long typeQNameId = val.getFirst();
 
 					result.clear();
 
-					while (result.isEmpty() && minSearchNodeId < maxNodeId) {
+					while (result.isEmpty() && (minSearchNodeId < maxNodeId)) {
 						List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, minSearchNodeId + count);
 
 						for (Long nodeid : nodeids) {
@@ -305,35 +289,33 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 
 		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
 
+			@Override
 			public void afterProcess() throws Throwable {
 				ruleService.enableRules();
-				
+
 			}
 
+			@Override
 			public void beforeProcess() throws Throwable {
 				ruleService.disableRules();
 			}
 
+			@Override
 			public String getIdentifier(NodeRef entry) {
 				return entry.toString();
 			}
 
+			@Override
 			public void process(NodeRef dataListNodeRef) throws Throwable {
 				if (nodeService.exists(dataListNodeRef)) {
 					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 					policyBehaviourFilter.disableBehaviour();
-					String name = (String) nodeService.getProperty(
-							dataListNodeRef, ContentModel.PROP_NAME);
-					String charactName = (String) nodeService.getProperty(
-							dataListNodeRef, BeCPGModel.PROP_CHARACT_NAME);
-					String nutTypeCode = (String) nodeService.getProperty(
-							dataListNodeRef, GS1Model.PROP_NUTRIENT_TYPE_CODE);
-					if (name != null && (charactName != null && !charactName.isEmpty()) && (nutTypeCode == null || nutTypeCode.isEmpty())) {
-						if (nutrientTypeCode.containsKey(charactName)
-								&& nutrientTypeCode.get(charactName).isEmpty() == false) {
-							nodeService.setProperty(dataListNodeRef,
-									GS1Model.PROP_NUTRIENT_TYPE_CODE,
-									nutrientTypeCode.get(charactName));
+					String name = (String) nodeService.getProperty(dataListNodeRef, ContentModel.PROP_NAME);
+					String charactName = (String) nodeService.getProperty(dataListNodeRef, BeCPGModel.PROP_CHARACT_NAME);
+					String nutTypeCode = (String) nodeService.getProperty(dataListNodeRef, GS1Model.PROP_NUTRIENT_TYPE_CODE);
+					if ((name != null) && ((charactName != null) && !charactName.isEmpty()) && ((nutTypeCode == null) || nutTypeCode.isEmpty())) {
+						if (nutrientTypeCode.containsKey(charactName) && (nutrientTypeCode.get(charactName).isEmpty() == false)) {
+							nodeService.setProperty(dataListNodeRef, GS1Model.PROP_NUTRIENT_TYPE_CODE, nutrientTypeCode.get(charactName));
 						}
 					}
 

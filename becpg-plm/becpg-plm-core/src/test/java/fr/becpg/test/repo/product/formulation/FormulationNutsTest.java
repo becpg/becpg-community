@@ -52,7 +52,7 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.formulation.NutsCalculatingFormulationHandler;
-import fr.becpg.repo.product.formulation.rounding.NutrientRoundingRules;
+import fr.becpg.repo.product.formulation.nutrient.NutrientFormulationHelper;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
 public class FormulationNutsTest extends AbstractFinishedProductTest {
@@ -103,7 +103,8 @@ public class FormulationNutsTest extends AbstractFinishedProductTest {
 				assertEquals((6d * 50d) / 100, nutListDataItem.getValuePerServing());		
 				assertEquals((100 * nutListDataItem.getValuePerServing()) / 2000d, nutListDataItem.getGdaPerc());
 				
-				assertEquals(NutrientRoundingRules.extractValuePerServing(nutListDataItem.getRoundedValue(), Locale.FRENCH).doubleValue(), (6d * 50d) / 100);
+				
+				assertEquals(NutrientFormulationHelper.extractValuePerServing(nutListDataItem.getRoundedValue(), Locale.FRENCH).doubleValue(), (6d * 50d) / 100);
 				
 				checks++;
 			}
@@ -114,10 +115,10 @@ public class FormulationNutsTest extends AbstractFinishedProductTest {
 			 if (nutListDataItem.getNut().equals(nut4)) {
 	                assertEquals("nut4.getValue() == 1.5d, actual values: " + trace, 1.5d, nutListDataItem.getValue());
 
-	                assertEquals(NutrientRoundingRules.extractValue(nutListDataItem.getRoundedValue(), Locale.FRENCH).doubleValue(), 2d);
-	                assertEquals(NutrientRoundingRules.extractValue(nutListDataItem.getRoundedValue(), Locale.US).doubleValue(), 2d);
-	                assertEquals(NutrientRoundingRules.extractMini(nutListDataItem.getRoundedValue(), Locale.FRENCH).doubleValue(),0d);
-	                assertEquals(NutrientRoundingRules.extractMaxi(nutListDataItem.getRoundedValue(), Locale.FRENCH).doubleValue(), 1d);
+	                assertEquals(NutrientFormulationHelper.extractValue(nutListDataItem.getRoundedValue(), Locale.FRENCH).doubleValue(), 2d);
+	                assertEquals(NutrientFormulationHelper.extractValue(nutListDataItem.getRoundedValue(), Locale.US).doubleValue(), 2d);
+	                assertEquals(NutrientFormulationHelper.extractMini(nutListDataItem.getRoundedValue(), Locale.FRENCH).doubleValue(),0d);
+	                assertEquals(NutrientFormulationHelper.extractMaxi(nutListDataItem.getRoundedValue(), Locale.FRENCH).doubleValue(), 1d);
 	            
 	                checks++;
 	            }
