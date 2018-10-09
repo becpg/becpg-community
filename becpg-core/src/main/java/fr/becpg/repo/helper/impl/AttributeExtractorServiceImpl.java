@@ -349,7 +349,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				}
 			} else {
 				
-				if(SecurityModel.PROP_ACL_PROPNAME.equals(propertyDef.getName()) || SecurityModel.PROP_ACL_GROUP_NODE_TYPE.equals(propertyDef.getName())) {
+				if(SecurityModel.PROP_ACL_PROPNAME.equals(propertyDef.getName())) {
 					QName aclPropName = QName.createQName(v.toString(), namespaceService);
 					ClassAttributeDefinition  aclDef = entityDictionaryService.getPropDef(aclPropName);
 					if(aclDef!=null) {
