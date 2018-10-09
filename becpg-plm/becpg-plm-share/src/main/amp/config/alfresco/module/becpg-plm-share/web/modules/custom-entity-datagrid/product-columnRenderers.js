@@ -91,6 +91,8 @@ if (beCPG.module.EntityDataGridRenderers) {
         renderer : function(oRecord, data, label, scope) {
             if ("true" === data.value) {
                 return '<span class="red">' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+            } else if("suitable"){
+            	return '<span class="blue">' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
             }
             return Alfresco.util.encodeHTML(data.displayValue);
         }
