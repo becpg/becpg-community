@@ -191,9 +191,8 @@
 
 .datagrid .action-set {
 	transition:0.25s;
-	position: relative;
+	position: absolute;
     width: 60px;
-	right: 10px;
 }
 
 
@@ -272,6 +271,7 @@ div.itemSelect-open {
 	clear: left;
 	position: absolute;
 	width: 200px;
+	right:10px;
 }
 
 .datagrid .more-actions a.action-link,.datagrid .more-actions a.simple-link
