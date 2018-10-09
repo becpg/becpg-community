@@ -43,6 +43,7 @@ public class LabelClaimListDataItem extends AbstractManualDataItem {
 	public static final String VALUE_FALSE = "false";
 	public static final String VALUE_EMPTY = "";
 	public static final String VALUE_NA = "na";
+	public static final String VALUE_SUITABLE = "suitable";
 	
 	
 	private NodeRef labelClaim;
