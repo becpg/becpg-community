@@ -29,46 +29,53 @@ public class NutrientFormulationHelper {
 	private static final String KEY_MINI = "min";
 	private static final String KEY_MAXI = "max";
 	private static final String KEY_VALUE_PER_SERVING = "vps";
+	private static final String KEY_GDA_PERC = "gda";
 
 	private static UsNutrientRegulation usNutrientRegulation 
 		= new UsNutrientRegulation("beCPG/databases/nuts/UsNutrientRegulation.csv");
 	private static EuropeanNutrientRegulation europeanNutrientRegulation = new EuropeanNutrientRegulation(
 			"beCPG/databases/nuts/EuNutrientRegulation.csv");
 
-	public static Number extractValuePerServing(String roundedValue, Locale locale) {
+	public static Double extractValuePerServing(String roundedValue, Locale locale) {
 		return extractValuePerServing(roundedValue, getLocalKey(locale));
 	}
 
-	public static Number extractMini(String roundedValue, Locale locale) {
+	public static Double extractMini(String roundedValue, Locale locale) {
 		return extractMini(roundedValue, getLocalKey(locale));
 	}
 
-	public static Number extractMaxi(String roundedValue, Locale locale) {
+	public static Double extractMaxi(String roundedValue, Locale locale) {
 		return extractMaxi(roundedValue, getLocalKey(locale));
 	}
 
-	public static Number extractValue(String roundedValue, Locale locale) {
+	public static Double extractValue(String roundedValue, Locale locale) {
 		return extractValue(roundedValue, getLocalKey(locale));
 	}
 	
-	public static Number extractValuePerServing(String roundedValue, String key) {
+	public static Double extractValuePerServing(String roundedValue, String key) {
 		return extractValueByKey(roundedValue, KEY_VALUE_PER_SERVING, key );
 	}
 
-	public static Number extractMini(String roundedValue, String key) {
+	public static Double extractMini(String roundedValue, String key) {
 		return extractValueByKey(roundedValue, KEY_MINI, key);
 	}
 
-	public static Number extractMaxi(String roundedValue, String key) {
+	public static Double extractMaxi(String roundedValue, String key) {
 		return extractValueByKey(roundedValue, KEY_MAXI, key);
 	}
 
-	public static Number extractValue(String roundedValue, String key) {
+	public static Double extractValue(String roundedValue, String key) {
 		return extractValueByKey(roundedValue, KEY_VALUE,key);
 	}
 
 
-	private static Number extractValueByKey(String roundedValue, String item, String key) {
+	public static Double extractGDAPerc(String roundedValue, String key) {
+		return extractValueByKey(roundedValue, KEY_GDA_PERC,key);
+	}
+
+	
+
+	private static Double extractValueByKey(String roundedValue, String item, String key) {
 
 		JSONObject jsonRound;
 		try {
@@ -77,7 +84,7 @@ public class NutrientFormulationHelper {
 			if (jsonRound.has(item)) {
 				JSONObject value = (JSONObject) jsonRound.get(item);
 				if (value.has(key)) {
-					return (Number) value.get(key);
+					return parseDouble(value.get(key));
 				}
 			}
 
@@ -137,16 +144,16 @@ public class NutrientFormulationHelper {
 							if( def.getUl()!=null) {
 								nutListElt.addAttribute("regulUL" + prefix, "" + def.getUl());
 							}
-							
-							if(KEY_VALUE_PER_SERVING.equals(valueKey)) {
-								Double gdapPerc = 	null;
-								Object vps = value.get(locKey);
-					
-								if(vps!=null &&  def.getGda()!=null &&  def.getGda()!=0) {
-									gdapPerc  = regulation.roundGDA(100 * parseDouble(vps) / def.getGda());
-								}
-								nutListElt.addAttribute("regulGdaPerc" + prefix, "" + gdapPerc);
-							}
+//							
+//							if(KEY_VALUE_PER_SERVING.equals(valueKey)) {
+//								Double gdapPerc = 	null;
+//								Object vps = value.get(locKey);
+//					
+//								if(vps!=null &&  def.getGda()!=null &&  def.getGda()!=0) {
+//									gdapPerc  = regulation.roundGDA(100 * parseDouble(vps) / def.getGda());
+//								}
+//								nutListElt.addAttribute("regulGdaPerc" + prefix, "" + gdapPerc);
+//							}
 							
 						}
 
@@ -180,6 +187,8 @@ public class NutrientFormulationHelper {
 			return "Maxi";
 		case KEY_VALUE_PER_SERVING:
 			return "ValuePerServing";
+		case KEY_GDA_PERC:
+			return "GDAPerc";
 		default:
 			break;
 		}
@@ -211,21 +220,38 @@ public class NutrientFormulationHelper {
 			JSONObject mini = new JSONObject();
 			JSONObject maxi = new JSONObject();
 			JSONObject valuePerServing = new JSONObject();
+			JSONObject gda = new JSONObject();
 
 			for (String key : getAvailableRegulations()) {
 				String nutUnit = n.getUnit();
+				
 
-				value.put(key, round(n.getValue(), nutCode, key, nutUnit));
-				mini.put(key, round(n.getMini(), nutCode, key, nutUnit));
-				maxi.put(key, round(n.getMaxi(), nutCode, key, nutUnit));
-				valuePerServing.put(key, round(n.getValuePerServing(), nutCode, key, nutUnit));
 
+				AbstractNutrientRegulation regulation = getRegulation(key);
+				NutrientDefinition def = regulation.getNutrientDefinition(nutCode);
+
+				value.put(key, regulation.round(n.getValue(), nutCode, nutUnit));
+				mini.put(key, regulation.round(n.getMini(), nutCode, nutUnit));
+				maxi.put(key, regulation.round(n.getMaxi(), nutCode, nutUnit));
+				Double vps =  regulation.round(n.getValuePerServing(), nutCode, nutUnit);
+				
+				valuePerServing.put(key,vps);
+
+				Double gdaPerc = null;
+				
+				
+				if(def!=null && vps!=null &&  def.getGda()!=null &&  def.getGda()!=0) {
+					gdaPerc  = regulation.roundGDA(100 * vps / def.getGda());
+				}
+				gda.put(key, gdaPerc);
+				
 			}
 
 			jsonRound.put(KEY_VALUE, value);
 			jsonRound.put(KEY_MINI, mini);
 			jsonRound.put(KEY_MAXI, maxi);
 			jsonRound.put(KEY_VALUE_PER_SERVING, valuePerServing);
+			jsonRound.put(KEY_GDA_PERC, gda);
 
 		} catch (JSONException e) {
 			logger.error(e, e);
