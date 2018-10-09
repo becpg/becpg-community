@@ -91,7 +91,7 @@ if (beCPG.module.EntityDataGridRenderers) {
         renderer : function(oRecord, data, label, scope) {
             if ("true" === data.value) {
                 return '<span class="red">' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
-            } else if("suitable"){
+            } else if("suitable" === data.value){
             	return '<span class="blue">' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
             }
             return Alfresco.util.encodeHTML(data.displayValue);
@@ -136,13 +136,10 @@ if (beCPG.module.EntityDataGridRenderers) {
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : [ "bcpg:rclReqType", "bcpg:filReqType", "ecm:culReqType" ],
 		renderer : function(oRecord, data, label, scope) {
-
 			if(data.value!=null && data.value.length>0){
 			    return '<span class="reqType'+data.value+'">' + Alfresco.util.encodeHTML( scope.msg("data.reqtype."+ data.value.toLowerCase())) + '</span>';
-			}
-			
-			return Alfresco.util.encodeHTML(data.displayValue);
-			
+			}	
+			return Alfresco.util.encodeHTML(data.displayValue);	
 		}
 
 	});

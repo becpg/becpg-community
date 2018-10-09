@@ -54,6 +54,7 @@ import org.springframework.util.StopWatch;
 import fr.becpg.config.format.CSVPropertyFormats;
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.SecurityModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.dictionary.constraint.DynListConstraint;
@@ -347,11 +348,23 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 				}
 			} else {
-				if (dynListConstraint != null) {
-					value = dynListConstraint.getDisplayLabel(v.toString());
+				
+				if(SecurityModel.PROP_ACL_PROPNAME.equals(propertyDef.getName()) || SecurityModel.PROP_ACL_GROUP_NODE_TYPE.equals(propertyDef.getName())) {
+					QName aclPropName = QName.createQName(v.toString(), namespaceService);
+					ClassAttributeDefinition  aclDef = entityDictionaryService.getPropDef(aclPropName);
+					if(aclDef!=null) {
+						value =  aclDef.getTitle(dictionaryService);
+					} else {
+						value = v.toString();
+					}
+					
 				} else {
-					value = constraintName != null ? TranslateHelper.getConstraint(constraintName, v.toString(), propertyFormats.isUseDefaultLocale())
-							: v.toString();
+					if (dynListConstraint != null) {
+						value = dynListConstraint.getDisplayLabel(v.toString());
+					} else {
+						value = constraintName != null ? TranslateHelper.getConstraint(constraintName, v.toString(), propertyFormats.isUseDefaultLocale())
+								: v.toString();
+					}
 				}
 			}
 
