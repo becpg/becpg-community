@@ -29,6 +29,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.GS1Model;
 import fr.becpg.model.MPMModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
@@ -67,7 +68,7 @@ import fr.becpg.repo.product.data.productList.ResourceParamListItem;
 import fr.becpg.repo.product.formulation.CostsCalculatingFormulationHandler;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.product.formulation.PackagingHelper;
-import fr.becpg.repo.product.formulation.rounding.NutrientRoundingRules;
+import fr.becpg.repo.product.formulation.nutrient.NutrientFormulationHelper;
 import fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
@@ -923,7 +924,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 						nutListElt.addAttribute(PLMModel.PROP_NUTLIST_VALUE.getLocalName(), value);
 					}
 
-					NutrientRoundingRules.extractXMLAttribute(nutListElt , dataListItem.getRoundedValue(), I18NUtil.getLocale());
+					nutListElt.addAttribute(NutrientFormulationHelper.ATTR_NUT_CODE,(String)nodeService.getProperty(dataListItem.getNut(),GS1Model.PROP_NUTRIENT_TYPE_CODE) );
+					
+					NutrientFormulationHelper.extractXMLAttribute(nutListElt , dataListItem.getRoundedValue(), I18NUtil.getLocale());
 					
 					
 					if(showDeprecated) {

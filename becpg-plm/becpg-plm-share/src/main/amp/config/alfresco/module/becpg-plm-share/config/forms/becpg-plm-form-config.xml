@@ -5083,7 +5083,6 @@
 					<show id="gs1:nutrientTypeCode" force="true" />
 					<show id="bcpg:nutUL" />
 					<show id="bcpg:nutFormula" />
-					<show id="bcpg:nutSort" />
 					<show id="rep:reportLocales" force="true" />
 				</field-visibility>
 				<appearance>
@@ -5124,7 +5123,6 @@
 					<show id="gs1:nutrientTypeCode" force="true" />
 					<show id="bcpg:nutUL" />
 					<show id="bcpg:nutFormula" />
-					<show id="bcpg:nutSort" />
 					<show id="rep:reportLocales" force="true" />
 				</field-visibility>
 
@@ -5183,7 +5181,6 @@
 					<show id="bcpg:nutGDA" />
 					<show id="gs1:nutrientTypeCode" force="true" />
 					<show id="bcpg:nutUL" />
-					<show id="bcpg:nutSort" />
 					<show id="rep:reportLocales" />
 				</field-visibility>
 				

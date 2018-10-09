@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.listvalue.impl.EntityListValuePlugin;
 import fr.becpg.repo.listvalue.impl.FileInfoListValueExtractor;
-import fr.becpg.repo.product.NutDatabaseService;
+import fr.becpg.repo.product.formulation.nutrient.NutDatabaseService;
 
 @Service
 public class NutDatabaseImportListValuePlugin extends EntityListValuePlugin {
