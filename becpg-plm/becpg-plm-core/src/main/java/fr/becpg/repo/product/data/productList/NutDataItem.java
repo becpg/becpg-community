@@ -35,7 +35,7 @@ public class NutDataItem extends BeCPGDataObject {
 
 	
 	@AlfProp
-	@AlfQname(qname="gs1:nutCode")
+	@AlfQname(qname="gs1:nutrientTypeCode")
 	public String getNutCode() {
 		return nutCode;
 	}

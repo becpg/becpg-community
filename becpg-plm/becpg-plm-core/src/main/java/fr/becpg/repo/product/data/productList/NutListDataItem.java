@@ -98,7 +98,7 @@ public class NutListDataItem extends AbstractManualDataItem implements SimpleLis
 	}
 
 	public Double value(String key) {
-		return (Double) NutrientFormulationHelper.extractValue(getRoundedValue(), key);
+		return NutrientFormulationHelper.extractValue(getRoundedValue(), key);
 	}
 
 	@AlfProp
@@ -150,7 +150,7 @@ public class NutListDataItem extends AbstractManualDataItem implements SimpleLis
 	}
 
 	public Double mini(String key) {
-		return (Double) NutrientFormulationHelper.extractMini(getRoundedValue(), key);
+		return NutrientFormulationHelper.extractMini(getRoundedValue(), key);
 	}
 
 	@Override
@@ -166,7 +166,7 @@ public class NutListDataItem extends AbstractManualDataItem implements SimpleLis
 	}
 
 	public Double maxi(String key) {
-		return (Double) NutrientFormulationHelper.extractMaxi(getRoundedValue(), key);
+		return  NutrientFormulationHelper.extractMaxi(getRoundedValue(), key);
 	}
 
 	@AlfProp
@@ -180,7 +180,7 @@ public class NutListDataItem extends AbstractManualDataItem implements SimpleLis
 	}
 
 	public Double valuePerServing(String key) {
-		return (Double) NutrientFormulationHelper.extractValuePerServing(getRoundedValue(), key);
+		return NutrientFormulationHelper.extractValuePerServing(getRoundedValue(), key);
 	}
 
 	@AlfProp
@@ -193,6 +193,13 @@ public class NutListDataItem extends AbstractManualDataItem implements SimpleLis
 		this.gdaPerc = gdaPerc;
 	}
 
+	
+	public Double gdaPerc(String key) {
+		return NutrientFormulationHelper.extractGDAPerc(getRoundedValue(), key);
+	}
+
+	
+	
 	@AlfProp
 	@AlfQname(qname = "bcpg:nutListLossPerc")
 	public Double getLossPerc() {
