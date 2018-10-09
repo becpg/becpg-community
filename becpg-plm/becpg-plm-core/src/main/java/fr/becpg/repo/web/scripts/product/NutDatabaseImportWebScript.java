@@ -15,9 +15,9 @@ import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
-import fr.becpg.repo.product.NutDatabaseService;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
+import fr.becpg.repo.product.formulation.nutrient.NutDatabaseService;
 import fr.becpg.repo.repository.AlfrescoRepository;
 
 public class NutDatabaseImportWebScript extends AbstractWebScript {
