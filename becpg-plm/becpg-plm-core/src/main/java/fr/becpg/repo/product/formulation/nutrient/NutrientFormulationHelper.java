@@ -34,7 +34,7 @@ public class NutrientFormulationHelper {
 	private static UsNutrientRegulation usNutrientRegulation 
 		= new UsNutrientRegulation("beCPG/databases/nuts/UsNutrientRegulation_2016.csv");
 	private static UsNutrientRegulation usNutrientRegulation2013 
-	= new UsNutrientRegulation("beCPG/databases/nuts/UsNutrientRegulation_2013.csv");
+	= new UsNutrientRegulation("beCPG/databases/nuts/UsNutrientRegulation_2013_2020.csv");
 	private static EuropeanNutrientRegulation europeanNutrientRegulation = new EuropeanNutrientRegulation(
 			"beCPG/databases/nuts/EuNutrientRegulation.csv");
 
