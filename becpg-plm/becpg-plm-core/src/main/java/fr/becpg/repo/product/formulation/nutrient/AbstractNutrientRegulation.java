@@ -18,7 +18,7 @@ public abstract class AbstractNutrientRegulation {
 		private Integer sort;
 		private Integer depthLevel;
 		private Boolean mandatory;
-		private Boolean optionnal;
+		private Boolean optional;
 		private Boolean bold;
 		private Double gda;
 		private Double ul;
@@ -27,13 +27,13 @@ public abstract class AbstractNutrientRegulation {
 			return depthLevel;
 		}
 
-		public NutrientDefinition(String nutCode, Integer sort, Integer depthLevel, Boolean mandatory, Boolean optionnal, Boolean bold, Double gda,
+		public NutrientDefinition(String nutCode, Integer sort, Integer depthLevel, Boolean mandatory, Boolean optional, Boolean bold, Double gda,
 				Double ul) {
 			super();
 			this.sort = sort;
 			this.depthLevel = depthLevel;
 			this.mandatory = mandatory;
-			this.optionnal = optionnal;
+			this.optional = optional;
 			this.bold = bold;
 			this.gda = gda;
 			this.ul = ul;
@@ -51,8 +51,8 @@ public abstract class AbstractNutrientRegulation {
 			return mandatory;
 		}
 
-		public Boolean getOptionnal() {
-			return optionnal;
+		public Boolean getOptional() {
+			return optional;
 		}
 
 		public Double getGda() {
