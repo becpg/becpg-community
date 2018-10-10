@@ -88,8 +88,8 @@ public abstract class AbstractNutrientRegulation {
 	}
 
 	private Double parseDouble(String value) {
-		if (value != null && !value.isEmpty()) {
-			return Double.valueOf(value);
+		if (value != null && !value.trim().isEmpty()) {
+			return Double.valueOf(value.trim().replace(",", "."));
 		}
 
 		return null;
