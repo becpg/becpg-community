@@ -32,7 +32,9 @@ public class NutrientFormulationHelper {
 	private static final String KEY_GDA_PERC = "gda";
 
 	private static UsNutrientRegulation usNutrientRegulation 
-		= new UsNutrientRegulation("beCPG/databases/nuts/UsNutrientRegulation.csv");
+		= new UsNutrientRegulation("beCPG/databases/nuts/UsNutrientRegulation_2016.csv");
+	private static UsNutrientRegulation usNutrientRegulation2013 
+	= new UsNutrientRegulation("beCPG/databases/nuts/UsNutrientRegulation_2013.csv");
 	private static EuropeanNutrientRegulation europeanNutrientRegulation = new EuropeanNutrientRegulation(
 			"beCPG/databases/nuts/EuNutrientRegulation.csv");
 
@@ -264,6 +266,7 @@ public class NutrientFormulationHelper {
 		 List<String> ret = new LinkedList<>();
 		 if(MLTextHelper.isSupportedLocale(Locale.US)) {
 			 ret.add("US");
+			 ret.add("US_2013");
 		 }
 		 ret.add("EU");
 		 
@@ -287,6 +290,8 @@ public class NutrientFormulationHelper {
 	private static AbstractNutrientRegulation getRegulation(String key) {
 		if ("US".equals(key)) {
 			return usNutrientRegulation;
+		} else if("US_2013".equals(key)){
+			return usNutrientRegulation2013;
 		}
 		return europeanNutrientRegulation;
 	}
