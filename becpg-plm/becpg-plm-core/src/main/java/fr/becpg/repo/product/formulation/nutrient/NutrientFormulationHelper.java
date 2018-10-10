@@ -34,7 +34,7 @@ public class NutrientFormulationHelper {
 	private static UsNutrientRegulation usNutrientRegulation 
 		= new UsNutrientRegulation("beCPG/databases/nuts/UsNutrientRegulation_2016.csv");
 	private static UsNutrientRegulation usNutrientRegulation2013 
-	= new UsNutrientRegulation("beCPG/databases/nuts/UsNutrientRegulation_2013.csv");
+	= new UsNutrientRegulation("beCPG/databases/nuts/UsNutrientRegulation_2013_2020.csv");
 	private static EuropeanNutrientRegulation europeanNutrientRegulation = new EuropeanNutrientRegulation(
 			"beCPG/databases/nuts/EuNutrientRegulation.csv");
 
@@ -131,11 +131,10 @@ public class NutrientFormulationHelper {
 							if(def.getDepthLevel()!=null) {
 								nutListElt.addAttribute("regulDepthLevel" + prefix, "" + def.getDepthLevel());
 							}
-							if(def.getMandatory()!=null) {
-								nutListElt.addAttribute("regulMandatory" + prefix, "" + def.getMandatory());
-							}
-							if(def.getOptionnal()!=null) {
-								nutListElt.addAttribute("regulOptional" + prefix, "" + def.getOptionnal());
+							if(Boolean.TRUE.equals(def.getMandatory())) {
+								nutListElt.addAttribute("regulDisplayMode" + prefix, "M");
+							} else  if(Boolean.TRUE.equals(def.getOptional())) {
+								nutListElt.addAttribute("regulDisplayMode" + prefix, "O");
 							}
 							if(def.getBold()!=null) {
 								nutListElt.addAttribute("regulBold" + prefix, "" + def.getBold());
@@ -146,16 +145,6 @@ public class NutrientFormulationHelper {
 							if( def.getUl()!=null) {
 								nutListElt.addAttribute("regulUL" + prefix, "" + def.getUl());
 							}
-//							
-//							if(KEY_VALUE_PER_SERVING.equals(valueKey)) {
-//								Double gdapPerc = 	null;
-//								Object vps = value.get(locKey);
-//					
-//								if(vps!=null &&  def.getGda()!=null &&  def.getGda()!=0) {
-//									gdapPerc  = regulation.roundGDA(100 * parseDouble(vps) / def.getGda());
-//								}
-//								nutListElt.addAttribute("regulGdaPerc" + prefix, "" + gdapPerc);
-//							}
 							
 						}
 
