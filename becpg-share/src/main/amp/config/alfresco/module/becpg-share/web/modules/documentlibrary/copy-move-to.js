@@ -340,7 +340,8 @@
                Alfresco.util.PopupManager.displayMessage(
                {
                   text: this.msg(message),
-                  zIndex: this.options.zIndex
+                  zIndex: this.options.zIndex,
+                  displayTime: 0
                }, this.options.parentElement);
 
                return;
