@@ -197,6 +197,7 @@
 		   // Prepare the XHR callback object
 		   var callback = {
 		      success : function DesignerTreelND_success(oResponse) {
+		    	  popup.destroy();
 			      var results = YAHOO.lang.JSON.parse(oResponse.responseText);
 
 			      if (results) {
@@ -209,6 +210,7 @@
 		      // If the XHR call is not successful, fire the TreeView callback
 		      // anyway
 		      failure : function DesignerTreelND_failure(oResponse) {
+		    	  popup.destroy();
 			      if (oResponse.status == 401) {
 				      // Our session has likely timed-out, so refresh to offer the
 				      // login page
@@ -222,8 +224,16 @@
 		   };
 
 		   var uri = this._buildTreeNodeUrl(rootNodeRef);
+		   
+           var popup = Alfresco.util.PopupManager.displayMessage({
+               text : this.msg("message.tree-loading"),
+               spanClass : "wait",
+               displayTime : 0
+            });
 
 		   // Make the XHR call using Connection Manager's asyncRequest method
+
+           
 		   YAHOO.util.Connect.asyncRequest('GET', uri, callback);
 
 	   },
@@ -343,6 +353,7 @@
 		 * @private
 		 */
 	   _buildTree : function DesignerTree_buildTree(id, results, modelNodeRef, readOnly) {
+		   
 		   // Create a new tree
 		   var tree = new YAHOO.widget.TreeView(id);
 
