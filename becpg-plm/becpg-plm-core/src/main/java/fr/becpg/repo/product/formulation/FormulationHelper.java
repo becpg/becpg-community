@@ -149,6 +149,8 @@ public class FormulationHelper {
 				qty = 1 / qty;
 			} else if (packagingListUnit.equals(PackagingListUnit.g)) {
 				qty = qty / 1000;
+			} else if (packagingListUnit.equals(PackagingListUnit.mL)) {
+				qty = qty / 1000;
 			}
 		}
 
