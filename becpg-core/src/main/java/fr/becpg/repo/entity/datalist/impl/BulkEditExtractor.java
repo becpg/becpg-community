@@ -28,6 +28,7 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.DataListPagination;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -89,6 +90,9 @@ public class BulkEditExtractor extends SimpleExtractor {
 				
 				if(ContentModel.TYPE_CONTENT.equals(dataListFilter.getDataType())){
 					queryBuilder.excludeSearch();
+					if (!dataListFilter.getFilterId().equals(DataListFilter.NODE_PATH_FILTER)) {
+						queryBuilder.excludePath(RepoConsts.ENTITIES_HISTORY_XPATH + "//*");
+					}
 				}
 				
 				//Set AND operator
