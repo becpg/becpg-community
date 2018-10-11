@@ -6,6 +6,8 @@ import java.io.OutputStream;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
+import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.ss.usermodel.Cell;
@@ -16,7 +18,10 @@ import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import com.sun.star.sdbc.DataType;
+
 import fr.becpg.config.format.PropertyFormats;
+import fr.becpg.config.mapping.AbstractAttributeMapping;
 import fr.becpg.repo.importer.ImportFileReader;
 
 public class ImportExcelFileReader implements ImportFileReader {
@@ -35,12 +40,12 @@ public class ImportExcelFileReader implements ImportFileReader {
 	}
 
 	@Override
-	public String[] getLineAt(int importIndex) {
+	public String[] getLineAt(int importIndex, List<AbstractAttributeMapping> columns) {
 		String[] line = null;
 		if (sheet != null && importIndex < getTotalLineCount()) {
 			Row row = sheet.getRow(importIndex);
 			if (row != null) {
-				line = extractRow(row);
+				line = extractRow(row,columns);
 			} else {
 				line = new String[1];
 				line[0] = "";
@@ -49,13 +54,20 @@ public class ImportExcelFileReader implements ImportFileReader {
 		return line;
 	}
 
-	private String[] extractRow(Row row) {
+	private String[] extractRow(Row row, List<AbstractAttributeMapping> columns) {
+		
 		List<String> line = new LinkedList<>();
 		for (int i = 0; i < row.getLastCellNum(); i++) {
 			Cell cell = row.getCell(i);
 			if (cell == null) {
 				line.add("");
 			} else {
+				
+				AbstractAttributeMapping attributeMapping = null;
+				if(columns!=null && columns.size()>=i && i>1){
+				  attributeMapping = columns.get(i-1);	
+				}
+
 				int cellType = cell.getCellType();
 				
 				if(cellType == Cell.CELL_TYPE_FORMULA){
@@ -69,7 +81,13 @@ public class ImportExcelFileReader implements ImportFileReader {
 				case Cell.CELL_TYPE_BOOLEAN:
 					line.add("" + cell.getBooleanCellValue());
 					break;
-				case Cell.CELL_TYPE_NUMERIC:
+				case Cell.CELL_TYPE_NUMERIC:	
+					if(attributeMapping!=null && attributeMapping.getAttribute() instanceof PropertyDefinition
+					&& DataTypeDefinition.TEXT.equals(((PropertyDefinition)attributeMapping.getAttribute()).getDataType().getName())
+					|| DataTypeDefinition.MLTEXT.equals(((PropertyDefinition)attributeMapping.getAttribute()).getDataType().getName())
+						 ){
+						line.add(cell.getStringCellValue());
+					} else	
 					if (HSSFDateUtil.isCellDateFormatted(cell) || HSSFDateUtil.isCellInternalDateFormatted(cell)) {
 						line.add(propertyFormats.formatDate(cell.getDateCellValue()));
 					} else {
