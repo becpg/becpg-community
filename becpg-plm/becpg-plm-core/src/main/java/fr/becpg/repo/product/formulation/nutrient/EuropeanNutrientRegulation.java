@@ -1,37 +1,34 @@
-package fr.becpg.repo.product.formulation.rounding;
+package fr.becpg.repo.product.formulation.nutrient;
 
 /**
- * 
+ *
  * @author rim
  *
  */
 public class EuropeanNutrientRegulation extends AbstractNutrientRegulation {
 
+	public EuropeanNutrientRegulation(String path)  {
+		super(path);
+	}
 
 	@Override
 	protected Double roundByCode(Double value, String nutrientTypeCode) {
-		if(logger.isDebugEnabled()) {
-			logger.debug("Round EUR value: "+value +" code : "+ nutrientTypeCode);
-		}
-		if(nutrientTypeCode.startsWith(NutrientTypeCode.ENER.toString())){
+
+		if (nutrientTypeCode.startsWith(NutrientCode.ENER.toString())) {
 			return (double) Math.round(value);
-		}
-		else if (nutrientTypeCode.equals(NutrientTypeCode.FAT.toString()) || nutrientTypeCode.equals(NutrientTypeCode.CHOAVL.toString())
-				|| nutrientTypeCode.equals(NutrientTypeCode.SUGAR.toString()) || nutrientTypeCode.equals(NutrientTypeCode.FIBTG.toString())
-				|| nutrientTypeCode.startsWith(NutrientTypeCode.PRO.toString())){
+		} else if (nutrientTypeCode.equals(NutrientCode.FAT.toString()) || nutrientTypeCode.equals(NutrientCode.CHOAVL.toString())
+				|| nutrientTypeCode.equals(NutrientCode.SUGAR.toString()) || nutrientTypeCode.equals(NutrientCode.FIBTG.toString())
+				|| nutrientTypeCode.startsWith(NutrientCode.PRO.toString())) {
 			return nearByValueEur(value, 0.5);
-		}
-		else if (nutrientTypeCode.equals(NutrientTypeCode.FASAT.toString())){
+		} else if (nutrientTypeCode.equals(NutrientCode.FASAT.toString())) {
 			return nearByValueEur(value, 0.1);
-		}
-		else if (nutrientTypeCode.equals(NutrientTypeCode.NA.toString())){
+		} else if (nutrientTypeCode.equals(NutrientCode.NA.toString())) {
 			return nearByValueNaSaltEur(value, 0.005);
-		}
-		else if (nutrientTypeCode.equals(NutrientTypeCode.NACL.toString())){
+		} else if (nutrientTypeCode.equals(NutrientCode.NACL.toString())) {
 			return nearByValueNaSaltEur(value, 0.0125);
 		}
 
-		return null;
+		return nearByDefault(value);
 	}
 
 	// RoundingRole method for Fat according to european guide in g
@@ -45,7 +42,7 @@ public class EuropeanNutrientRegulation extends AbstractNutrientRegulation {
 		} else if (value >= 10) {
 			return (double) Math.round(value);
 		}
-		return null;
+		return value;
 	}
 
 	// RoundingRole method for sodium according to european guide (unit:g)
@@ -61,7 +58,7 @@ public class EuropeanNutrientRegulation extends AbstractNutrientRegulation {
 		} else if (value <= minValue) {
 			return 0.0;
 		}
-		return null;
+		return value;
 	}
 
 }

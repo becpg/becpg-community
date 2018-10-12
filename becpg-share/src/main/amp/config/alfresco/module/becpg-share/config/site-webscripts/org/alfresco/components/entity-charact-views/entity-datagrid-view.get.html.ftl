@@ -3,6 +3,7 @@
    <#include "../../modules/entity-datagrid/include/entity-datagrid.css.ftl"/>
    
 	<@link href="${url.context}/res/modules/entity-charact-details/entity-charact-details.css" group="entity-datalists" />
+	<@link href="${url.context}/res/components/entity-charact-views/form-datagrid-view.css" group="entity-datalists"/>
 </@>
 
 <@markup id="js">
@@ -11,6 +12,7 @@
 	<@script src="${url.context}/res/yui/swf/swf.js" group="entity-datalists"></@script>
 	<@script src="${url.context}/res/yui/charts/charts.js" group="entity-datalists"></@script>
 	<@script src="${url.context}/res/modules/entity-charact-details/entity-charact-details.js" group="entity-datalists"></@script>
+	<@script src="${url.context}/res/components/entity-charact-views/form-datagrid-view.js" group="entity-datalists"/>
 </@>
 
 <@markup id="resources">
@@ -35,6 +37,17 @@
 			<@dataGridToolbar  toolbarId=el />
 		</div>
 		<@entityDataGrid showDataListTitle=true />
+		<div class="hidden form-datagrid-view" id="${el}-formDatagridView" >
+			<div class="edit-datagrid-form">
+				 <span class="yui-button yui-push-button" id="${el}-edit-datagrid-form">
+				     <span class="first-child">
+				        <button type="button" tabindex="0" id="${el}-edit-datagrid-form-button" title="${msg("edit.form")}">&nbsp;</button>
+				    </span>
+				 </span>
+			 </div>
+		
+			<div id="${el}-formContainer"></div>
+		</div>
 	</@>
 </@>
 

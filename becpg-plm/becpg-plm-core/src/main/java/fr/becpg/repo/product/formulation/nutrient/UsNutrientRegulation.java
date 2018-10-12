@@ -1,33 +1,37 @@
-package fr.becpg.repo.product.formulation.rounding;
+package fr.becpg.repo.product.formulation.nutrient;
 
 /**
- * 
+ *
  * @author rim
  *
  */
 public class UsNutrientRegulation extends AbstractNutrientRegulation {
 
+	public UsNutrientRegulation(String path) {
+		super(path);
+	}
+
 	@Override
 	protected Double roundByCode(Double value, String nutrientTypeCode) {
 
-		if (nutrientTypeCode.startsWith(NutrientTypeCode.ENER.toString()) || nutrientTypeCode.equals(NutrientTypeCode.ENERSF.toString())
-				|| nutrientTypeCode.equals(NutrientTypeCode.ENERPF.toString())) {
+		if (nutrientTypeCode.startsWith(NutrientCode.ENER.toString()) || nutrientTypeCode.equals(NutrientCode.ENERSF.toString())
+				|| nutrientTypeCode.equals(NutrientCode.ENERPF.toString())) {
 			return nearByValueNRJUS(value);
-		} else if (nutrientTypeCode.equals(NutrientTypeCode.FAPUCIS.toString()) || nutrientTypeCode.equals(NutrientTypeCode.FAMSCIS.toString())
-				|| nutrientTypeCode.equals(NutrientTypeCode.FAT.toString()) || nutrientTypeCode.equals(NutrientTypeCode.FASAT.toString())) {
+		} else if (nutrientTypeCode.equals(NutrientCode.FAPUCIS.toString()) || nutrientTypeCode.equals(NutrientCode.FAMSCIS.toString())
+				|| nutrientTypeCode.equals(NutrientCode.FAT.toString()) || nutrientTypeCode.equals(NutrientCode.FASAT.toString())) {
 			return nearByValueUS(value);
-		} else if (nutrientTypeCode.equals(NutrientTypeCode.NA.toString()) || nutrientTypeCode.equals(NutrientTypeCode.K.toString())) {
+		} else if (nutrientTypeCode.equals(NutrientCode.NA.toString()) || nutrientTypeCode.equals(NutrientCode.K.toString())) {
 			return nearByValueNaUS(value);
-		} else if (nutrientTypeCode.equals(NutrientTypeCode.CHO.toString()) || nutrientTypeCode.equals(NutrientTypeCode.FIBTG.toString())
-				|| nutrientTypeCode.startsWith(NutrientTypeCode.PRO.toString())) {
+		} else if (nutrientTypeCode.equals(NutrientCode.CHO.toString()) || nutrientTypeCode.equals(NutrientCode.FIBTG.toString())
+				|| nutrientTypeCode.startsWith(NutrientCode.PRO.toString())) {
 			return nearByValueSuFiberPUS(value);
-		} else if (nutrientTypeCode.equals(NutrientTypeCode.FIBSOL.toString()) || nutrientTypeCode.equals(NutrientTypeCode.FIBINS.toString())
-				|| nutrientTypeCode.equals(NutrientTypeCode.POLYL.toString()) || nutrientTypeCode.equals(NutrientTypeCode.SUGAR.toString())) {
+		} else if (nutrientTypeCode.equals(NutrientCode.FIBSOL.toString()) || nutrientTypeCode.equals(NutrientCode.FIBINS.toString())
+				|| nutrientTypeCode.equals(NutrientCode.POLYL.toString()) || nutrientTypeCode.equals(NutrientCode.SUGAR.toString())) {
 			return nearByValueNaUS(value);
-		} else if (nutrientTypeCode.startsWith(NutrientTypeCode.CHOL.toString())) {
+		} else if (nutrientTypeCode.startsWith(NutrientCode.CHOL.toString())) {
 			return nearByValuecholesterolUS(value);
 		}
-		return null;
+		return nearByDefault(value);
 	}
 
 	// RoundingRole method for Fat according to european guide in Kcal = cal
@@ -43,11 +47,10 @@ public class UsNutrientRegulation extends AbstractNutrientRegulation {
 			return 0.0;
 		}
 
-		return null;
+		return value;
 	}
 
 	// RoundingRole method for Fat according to US guide in g
-
 	private Double nearByValueUS(Double value) {
 
 		if (value == null) {
@@ -61,7 +64,7 @@ public class UsNutrientRegulation extends AbstractNutrientRegulation {
 			return 0.0;
 		}
 
-		return null;
+		return value;
 	}
 
 	// RoundingRole method for Sugars/Soluble & Insoluble fiber/Protein
@@ -76,10 +79,9 @@ public class UsNutrientRegulation extends AbstractNutrientRegulation {
 			return (double) Math.ceil(value);
 		} else if ((value > 0.5) && (value < 1)) {
 			return 1.0;
-		} else {
-
-			return null;
 		}
+		return value;
+
 	}
 
 	// RoundingRole method for sodium according to US guide (Unit:g)
@@ -93,9 +95,9 @@ public class UsNutrientRegulation extends AbstractNutrientRegulation {
 			return (double) (0.005 * (int) (Math.ceil(value / 0.005)));
 		} else if (value > 0.14) {
 			return (double) (0.01 * (int) (Math.ceil(value / 0.01)));
-		} else {
-			return null;
 		}
+		return value;
+
 	}
 
 	// RoundingRole method for cholesterol according to US guide (unit:g)
@@ -113,7 +115,7 @@ public class UsNutrientRegulation extends AbstractNutrientRegulation {
 		} else if ((value > 0.002) && (value < 0.005)) {
 			return 0.005;
 		}
-		return null;
+		return value;
 	}
 
 }

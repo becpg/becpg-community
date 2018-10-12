@@ -65,7 +65,8 @@
                 		 displayName = p_record.displayName;
                  
                  Alfresco.util.PopupManager.displayMessage({
-                	 text : this.msg("message.branch-entity.inprogress", displayName)
+                	 text : this.msg("message.branch-entity.inprogress", displayName),
+                	 displayTime: 0
        		    	});
                  
                  

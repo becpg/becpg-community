@@ -124,6 +124,12 @@
        */
       onCreateContentSuccess: function CreateContentMgr_onCreateContentSuccess(response)
       {
+    	  
+    	 Alfresco.util.PopupManager.displayMessage({
+    		            text: this.msg("message.create.please-wait"),
+    		            displayTime: 0
+    		         });
+    	  
          var nodeRef = null, scope=this;
          if (response.json && response.json.persistedObject)
          {

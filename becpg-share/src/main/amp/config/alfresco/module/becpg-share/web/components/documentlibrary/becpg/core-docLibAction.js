@@ -34,7 +34,7 @@
 		   Alfresco.util.PopupManager.displayMessage({
 		      displayTime : 0,
 		      effect : null,
-		      text : this.msg("message.checkout-entity.inprogress", displayName)
+		      text : this.msg("message.checkout-entity.inprogress", displayName),
 		   });
 
 		   this.modules.actions.genericAction({

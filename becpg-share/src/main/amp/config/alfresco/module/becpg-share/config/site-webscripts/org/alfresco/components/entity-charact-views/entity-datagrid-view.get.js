@@ -29,8 +29,17 @@ function main()
        saveFieldUrl : page.url.context+"/proxy/alfresco/becpg/bulkedit/save"
       }
    };
-    
-   model.widgets = [entityDataGrid];
+
+   var formDatagridView = {
+	      id : "formDatagridView", 
+	      name : "beCPG.component.FormDataGrid",
+	      options : {
+	          nodeRef : page.url.args.nodeRef,
+	          formId : model.listName
+	       }
+	  };    
+  
+   model.widgets = [entityDataGrid,formDatagridView];
 }
 
 

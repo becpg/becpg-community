@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -60,13 +61,13 @@ public class ImportContext {
 
 	private PropertyFormats propertyFormats;
 
-	private List<AbstractAttributeMapping> columns = new ArrayList<>();
+	private List<AbstractAttributeMapping> columns = new LinkedList<>();
 
 	private Map<QName, ClassMapping> classMappings = new HashMap<>();
 
 	private Map<String, NodeRef> cacheNodes = new HashMap<>();
 
-	private List<String> log = new ArrayList<>();
+	private List<String> log = new LinkedList<>();
 
 	private String path;
 
@@ -281,7 +282,7 @@ public class ImportContext {
 
 	public String[] nextLine() {
 		
-		return importFileReader.getLineAt(importIndex++);
+		return importFileReader.getLineAt(importIndex++, columns);
 		
 	}
 

@@ -50,8 +50,8 @@
 	   	<#assign el=args.htmlid?html>
 	   	<div id="${el}">
 	    	  <#if comments>
-	    	 <div class="yui-ge" >
-			         <div  class="yui-u first">
+	    	 <div class="wizard-container">
+			         <div  class="wizard-content">
 			  </#if>  
 			  			<div class="clear"></div>
 			   			<div class="wizard-mgr">     
@@ -60,7 +60,7 @@
 						</div>          		          
 	         	<#if comments>
 	         		 </div>
-	        		  <div class="yui-u wizard-comments">
+	        		  <div class="wizard-comments">
 	          				
 					         <div id="${el}-body" class="comments-list">
 					            <div id="${el}-add-comment">

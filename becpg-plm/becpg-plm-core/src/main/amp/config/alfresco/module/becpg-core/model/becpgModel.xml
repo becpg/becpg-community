@@ -394,6 +394,8 @@
 					<value>m2</value>
 					<value>kg</value>
 					<value>g</value>
+					<value>L</value>
+					<value>mL</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -451,6 +453,7 @@
 				<list>
 					<value></value>
 					<value>na</value>
+					<value>suitable</value>
 					<value>true</value>
 					<value>false</value>
 				</list>
