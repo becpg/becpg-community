@@ -10,6 +10,7 @@ import org.alfresco.service.cmr.repository.ContentWriter;
 import org.apache.commons.io.input.BOMInputStream;
 
 import fr.becpg.common.csv.CSVReader;
+import fr.becpg.config.mapping.AbstractAttributeMapping;
 import fr.becpg.repo.importer.ImportFileReader;
 
 public class ImportCSVFileReader implements ImportFileReader {
@@ -27,7 +28,7 @@ public class ImportCSVFileReader implements ImportFileReader {
 	}
 
 	@Override
-	public String[] getLineAt(int importIndex) {
+	public String[] getLineAt(int importIndex, List<AbstractAttributeMapping> columns) {
 		String[] line = null;
 
 		if ((lines != null) && (importIndex < lines.size())) {
@@ -58,5 +59,5 @@ public class ImportCSVFileReader implements ImportFileReader {
 		// DO nothing for CSV
 
 	}
-
+	
 }

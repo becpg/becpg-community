@@ -28,9 +28,10 @@ import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.product.data.productList.NutDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
-import fr.becpg.repo.product.formulation.rounding.NutrientRoundingRules;
+import fr.becpg.repo.product.formulation.nutrient.NutrientFormulationHelper;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
 /**
@@ -143,9 +144,11 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 
 				formulatedProduct.getNutList().forEach(n -> {
 					if (n.getNut() != null) {
-						n.setGroup((String) nodeService.getProperty(n.getNut(), PLMModel.PROP_NUTGROUP));
-						n.setUnit(calculateUnit(formulatedProduct.getUnit(), (String) nodeService.getProperty(n.getNut(), PLMModel.PROP_NUTUNIT)));
-					
+						
+						NutDataItem nut = (NutDataItem) alfrescoRepository.findOne(n.getNut());
+												
+						n.setGroup(nut.getNutGroup());
+						n.setUnit(calculateUnit(formulatedProduct.getUnit(), nut.getNutUnit()));
 						
 						if (n.getLossPerc() != null) {
 							if (n.getValue() != null) {
@@ -162,15 +165,15 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 						if ((formulatedProduct.getServingSize() != null) && (n.getValue() != null)) {
 							Double valuePerserving = (n.getValue() * formulatedProduct.getServingSize()) / 100;
 							n.setValuePerServing(valuePerserving);
-							Double gda = (Double) nodeService.getProperty(n.getNut(), PLMModel.PROP_NUTGDA);
+							Double gda = nut.getNutGDA();
 							if ((gda != null) && (gda != 0d)) {
 								n.setGdaPerc((100 * n.getValuePerServing()) / gda);
 							}
-							Double ul = (Double) nodeService.getProperty(n.getNut(), PLMModel.PROP_NUTUL);
+							Double ul = nut.getNutUL();
 							if (ul != null) {
 								if (valuePerserving > ul) {
 									String message = I18NUtil.getMessage(MESSAGE_MAXIMAL_DAILY_VALUE,
-											nodeService.getProperty(n.getNut(), BeCPGModel.PROP_CHARACT_NAME));
+											nut.getCharactName());
 
 									formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message,
 											n.getNut(), new ArrayList<NodeRef>(), RequirementDataType.Specification));
@@ -186,8 +189,8 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 								n.setMethod(NUT_FORMULATED);
 							}
 						}
-						n.setRoundedValue(NutrientRoundingRules.extractRoundedValue(n,
-								(String) nodeService.getProperty(n.getNut(), GS1Model.PROP_NUTRIENT_TYPE_CODE)));
+						
+						NutrientFormulationHelper.extractRoundedValue(nut.getNutCode(),n);
 						
 						if (transientFormulation) {
 							n.setTransient(true);

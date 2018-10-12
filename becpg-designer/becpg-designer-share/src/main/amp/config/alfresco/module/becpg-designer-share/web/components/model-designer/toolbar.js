@@ -107,6 +107,15 @@
 	               onPublish : function DesignerToolbar_onPublish(e, p_obj) {
 		               var templateUrl = Alfresco.constants.PROXY_URI + "becpg/designer/model/publish?nodeRef="
 		                     + this.tree.modelNodeRef;
+		               
+		               var publishName = this.tree.root.children[0].label;
+		               
+		               var popup = Alfresco.util.PopupManager.displayMessage({
+	                        text : this.msg("message.publishing", publishName),
+	                        spanClass : "wait",
+	                        displayTime : 0
+	                     });
+		               
 		               Alfresco.util.Ajax.request({
 		                  method : Alfresco.util.Ajax.POST,
 		                  url : templateUrl,
@@ -122,13 +131,15 @@
 			                        url : Alfresco.constants.URL_SERVICECONTEXT + "components/console/config/reload",
 			                        method : Alfresco.util.Ajax.GET,
 			                        responseContentType : Alfresco.util.Ajax.JSON,
-			                        successMessage : this.msg("message.publish.success"),
-			                        failureMessage : this.msg("message.publish.failure")
+			                        successMessage : this.msg("message.publish.success", publishName),
+			                        failureMessage : this.msg("message.publish.failure", publishName)
 			                     });
+
+			                     popup.destroy();
 		                     },
 		                     scope : this
 		                  },
-		                  failureMessage : this.msg("message.publish.failure"),
+		                  failureMessage : this.msg("message.publish.failure", publishName),
 		                  scope : this,
 		                  execScripts : false
 		               });
@@ -144,6 +155,15 @@
 			                     handler : function DesignerToolbar_onUnPublish_Confirmed() {
 			                    	 var templateUrl = Alfresco.constants.PROXY_URI + "becpg/designer/model/unpublish?nodeRef="
 				                     + me.tree.modelNodeRef;
+			                    	 
+			  		               var publishName = this.tree.root.children[0].label;
+					               
+					               var popup = Alfresco.util.PopupManager.displayMessage({
+				                        text : this.msg("message.unpublishing", publishName),
+				                        spanClass : "wait",
+				                        displayTime : 0
+				                     });
+			                    	 
 						               Alfresco.util.Ajax.request({
 						                  method : Alfresco.util.Ajax.POST,
 						                  url : templateUrl,
@@ -153,16 +173,17 @@
 								                        url : Alfresco.constants.URL_SERVICECONTEXT + "components/console/config/reload",
 								                        method : Alfresco.util.Ajax.GET,
 								                        responseContentType : Alfresco.util.Ajax.JSON,
-								                        successMessage : me.msg("message.unpublish.success"),
-								                        failureMessage : me.msg("message.unpublish.failure")
+								                        successMessage : me.msg("message.unpublish.success", publishName),
+								                        failureMessage : me.msg("message.unpublish.failure", publishName)
 								                     });
 							                     },
 							                     scope : this
 							                  },
-						                  failureMessage : me.msg("message.unpublish.failure"),
+						                  failureMessage : me.msg("message.unpublish.failure", publishName),
 						                  scope : this,
 						                  execScripts : false
 						               });
+						               popup.destroy();
 						               this.destroy();
 			                     }
 			                  }, {
@@ -513,6 +534,8 @@
 			               this.tree = obj.tree;
 			               this.readOnly = obj.tree.isReadOnly;
 		               }
+		               
+		               
 
 		               this.currentNode = node;
 

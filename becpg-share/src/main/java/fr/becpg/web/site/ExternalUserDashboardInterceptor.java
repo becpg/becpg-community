@@ -119,7 +119,8 @@ public class ExternalUserDashboardInterceptor extends AbstractWebFrameworkInterc
 					// still do this by visiting the index page
 				}
 			}
-		} else if((pathInfo != null && (matcher = PATTERN_FORBIDDEN_PATH.matcher(pathInfo)).matches() && !pathInfo.contains("discussions-topicview"))){
+		} else if((pathInfo != null && (matcher = PATTERN_FORBIDDEN_PATH.matcher(pathInfo)).matches() && !pathInfo.contains("discussions-topicview")
+				&& rc.getParameter("resetLocale") == null)){
 			HttpServletRequest req = MTAuthenticationFilter.getCurrentServletRequest();
 			if (req != null) {
 				try {
