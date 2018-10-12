@@ -145,7 +145,7 @@ public abstract class AbstractHttpCommand {
 					try {
 						
 						String[] splitted = params[i].toString().split("=");
-						if(splitted!=null && splitted.length>1 && !"MIN".equals(splitted[1])) {
+						if(splitted!=null && splitted.length>1 && !"MIN".equals(splitted[1]) && !"MINZ".equals(splitted[1])) {
 							if(ret.length()>0) {
 								ret.append("&");
 							}
