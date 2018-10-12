@@ -104,7 +104,9 @@ public class ProjectProcessListPlugin implements EntityProcessListPlugin {
 		if(person != null){
 			model.put(PERSON_USER_NAME, nodeService.getProperty(person, ContentModel.PROP_USERNAME));
 			NodeRef avatarRef = associationService.getTargetAssoc(person, ContentModel.ASSOC_AVATAR);
-			model.put(PERSON_AVATAR, "api/node/" + avatarRef.toString().replace("://", "/") + "/content/thumbnails/avatar");
+			if (avatarRef != null ){
+				model.put(PERSON_AVATAR, "api/node/" + avatarRef.toString().replace("://", "/") + "/content/thumbnails/avatar");
+			}
 		}
 
 		return model;

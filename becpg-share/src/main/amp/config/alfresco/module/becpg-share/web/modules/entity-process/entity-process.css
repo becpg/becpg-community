@@ -43,6 +43,7 @@ select.entity-process-filter {
 .entity-process .process-date {
 	color: #009dcc;
 	font-style: normal;
+	display: block;
 }
 
 .entity-process .entity-process-state {
@@ -51,7 +52,7 @@ select.entity-process-filter {
 }
 
 .entity-process .process-detail {
-	display: inline-grid;	
+	margin-top: 0.3em;
 }
 
 .entity-process .workflow-icon {
