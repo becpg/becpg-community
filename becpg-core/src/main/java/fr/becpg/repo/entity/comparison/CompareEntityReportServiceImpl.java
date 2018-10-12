@@ -324,6 +324,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 				Element cmpRowElt = structCmpRowsElt.addElement(TAG_STRUCT_COMPARISON_ROW);
 				cmpRowElt.addAttribute(ATTR_COMPARISON, comparison);
 				cmpRowElt.addAttribute(ATTR_ENTITYLIST, entityListTitle);
+				cmpRowElt.addAttribute(ATTR_ENTITYLIST_QNAME, c.getEntityList().toPrefixString(namespaceService));
 				cmpRowElt.addAttribute(ATTR_DEPTH_LEVEL, depthLevel);
 				cmpRowElt.addAttribute(ATTR_OPERATOR, c.getOperator().toString());
 				cmpRowElt.addAttribute(ATTR_ITEM1, entity1);
