@@ -23,6 +23,7 @@ import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.LabelingRuleType;
 import fr.becpg.repo.product.data.ing.DeclarationFilter;
+import fr.becpg.repo.product.data.meat.MeatType;
 
 public abstract class RuleParser {
 
@@ -34,6 +35,7 @@ public abstract class RuleParser {
 	protected final Map<NodeRef, List<DeclarationFilter>> nodeDeclarationFilters = new HashMap<>();
 	protected final List<DeclarationFilter> declarationFilters = new ArrayList<>();
 	protected final Map<NodeRef, List<AggregateRule>> aggregateRules = new HashMap<>();
+	protected final List<MeatContentRule> meatContentRules = new ArrayList<>();
 	protected final Map<NodeRef, RenameRule> renameRules = new HashMap<>();
 	protected final Map<NodeRef, ShowRule> showPercRules = new HashMap<>();
 	protected final Map<NodeRef, ShowRule> showGeoRules = new HashMap<>();
@@ -58,6 +60,10 @@ public abstract class RuleParser {
 
 	public Map<NodeRef, List<AggregateRule>> getAggregateRules() {
 		return aggregateRules;
+	}
+	
+	public List<MeatContentRule> getMeatContentRules() {
+		return meatContentRules;
 	}
 
 	public Map<NodeRef, List<DeclarationFilter>> getNodeDeclarationFilters() {
@@ -90,7 +96,7 @@ public abstract class RuleParser {
 			} else if (LabelingRuleType.Locale.equals(labeLabelingRuleType)) {
 				addLocale(formula, locales);
 			} else if (LabelingRuleType.ShowPerc.equals(labeLabelingRuleType)) {
-				if (components.isEmpty()) {
+				if (components==null || components.isEmpty()) {
 					showAllPerc = true;
 					if ((formula != null) && !formula.isEmpty()) {
 						defaultPercFormat = formula;
@@ -114,7 +120,11 @@ public abstract class RuleParser {
 					|| ((((components != null) && (components.size() > 1)) || ((replacement != null) && !replacement.isEmpty()))
 							&& (LabelingRuleType.Detail.equals(labeLabelingRuleType) || LabelingRuleType.Group.equals(labeLabelingRuleType)
 									|| LabelingRuleType.DoNotDetails.equals(labeLabelingRuleType)))) {
-				aggregate(ruleNodeRef, name, components, replacement, label, formula, labeLabelingRuleType, locales);
+				if(MeatType.isMeatType(formula)) {
+					addMeatContentRule( name, components, replacement, formula, locales);
+				} else {
+					aggregate(ruleNodeRef, name, components, replacement, label, formula, labeLabelingRuleType, locales);
+				}
 			} else {
 
 				DeclarationType type = null;
@@ -215,6 +225,24 @@ public abstract class RuleParser {
 			} else {
 				aggregateRules.put(component, new LinkedList<>(Collections.singletonList(aggregateRule)));
 			}
+
+		}
+	}
+	
+	private void addMeatContentRule( String name, List<NodeRef> components, List<NodeRef> replacement, String formula,
+			List<String> locales) {
+
+		MeatType meatType = MeatType.valueOf(formula);
+
+		for (NodeRef component : components) {
+			MeatContentRule meatContentRule = new MeatContentRule(meatType, locales);
+
+			if ((replacement != null) && !replacement.isEmpty()) {
+				meatContentRule.setReplacement(replacement.get(0));
+			}
+			meatContentRule.setComponent(component);
+				
+			meatContentRules.add(meatContentRule);
 
 		}
 	}

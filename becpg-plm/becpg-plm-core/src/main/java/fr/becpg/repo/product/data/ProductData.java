@@ -1,19 +1,21 @@
 /*
- * 
+ *
  */
 package fr.becpg.repo.product.data;
-
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.json.JSONException;
 
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.formulation.FormulatedEntity;
@@ -21,6 +23,8 @@ import fr.becpg.repo.hierarchy.HierarchicalEntity;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.TareUnit;
 import fr.becpg.repo.product.data.ing.IngTypeItem;
+import fr.becpg.repo.product.data.meat.MeatContentData;
+import fr.becpg.repo.product.data.meat.MeatType;
 import fr.becpg.repo.product.data.packaging.VariantPackagingData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -55,7 +59,7 @@ import fr.becpg.repo.variant.model.VariantData;
 public class ProductData extends AbstractEffectiveDataItem implements FormulatedEntity, HierarchicalEntity, StateableEntity, AspectAwareDataItem {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 764534088277737617L;
 	private NodeRef hierarchy1;
@@ -67,7 +71,6 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private ProductUnit unit = ProductUnit.kg;
 	private ProductData entityTpl;
 	private List<NodeRef> plants = new ArrayList<>();
-	
 
 	/*
 	 * Transformable properties
@@ -82,12 +85,12 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private Double weightSecondary;
 	private Double netWeightTertiary;
 	private Double weightTertiary;
-	
+
 	private Double netVolume;
 	private Double servingSize;
 	private Double recipeQtyUsed;
 	private Double recipeVolumeUsed;
-	private Double productLossPerc =  0d;
+	private Double productLossPerc = 0d;
 	private Double recipeQtyUsedWithLossPerc;
 
 	private Double tare;
@@ -113,15 +116,16 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private Integer currentReformulateCount;
 	private IngTypeItem ingType;
 	private Boolean isUpToDate = false;
-	
-	
+
 	/*
 	 * Nutrient Score
 	 */
-	
+
 	private Double nutrientScore;
 	private String nutrientClass;
 	private NodeRef nutrientProfile;
+
+	private Map<MeatType, MeatContentData> meatContentData = new HashMap<>();
 
 	/*
 	 * DataList
@@ -137,8 +141,8 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private List<LabelClaimListDataItem> labelClaimList;
 	private List<ControlDefListDataItem> controlDefList;
 	private List<LabelingListDataItem> labelingList;
-    private List<ResourceParamListItem> resourceParamList;
-    private List<ReqCtrlListDataItem> reqCtrlList;
+	private List<ResourceParamListItem> resourceParamList;
+	private List<ReqCtrlListDataItem> reqCtrlList;
 
 	/*
 	 * View
@@ -162,15 +166,13 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 
 	private List<ProductSpecificationData> productSpecifications;
 	private List<ClientData> clients;
-	
+
 	/*
 	 * Origin geo
 	 */
 
 	private List<NodeRef> geoOrigins = new ArrayList<>();
-	
-	
-	
+
 	/*
 	 * Completion scores
 	 */
@@ -199,7 +201,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	public void setClients(List<ClientData> clients) {
 		this.clients = clients;
 	}
-	
+
 	@AlfMultiAssoc(isEntity = true)
 	@AlfQname(qname = "bcpg:compareWithEntities")
 	@AlfReadOnly
@@ -221,7 +223,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	public void setVariants(List<VariantData> variants) {
 		this.variants = variants;
 	}
-	
+
 	public VariantData getDefaultVariantData() {
 		return defaultVariantData;
 	}
@@ -230,6 +232,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		this.defaultVariantData = defaultVariantData;
 	}
 
+	@Override
 	@AlfProp
 	@AlfQname(qname = "bcpg:productHierarchy1")
 	public NodeRef getHierarchy1() {
@@ -240,6 +243,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		this.hierarchy1 = hierarchy1;
 	}
 
+	@Override
 	@AlfProp
 	@AlfQname(qname = "bcpg:productHierarchy2")
 	public NodeRef getHierarchy2() {
@@ -250,16 +254,18 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		this.hierarchy2 = hierarchy2;
 	}
 
+	@Override
 	@AlfProp
 	@AlfQname(qname = "bcpg:formulatedDate")
 	public Date getFormulatedDate() {
 		return formulatedDate;
 	}
 
+	@Override
 	public void setFormulatedDate(Date formulatedDate) {
 		this.formulatedDate = formulatedDate;
 	}
-	
+
 	public Boolean getIsUpToDate() {
 		return isUpToDate;
 	}
@@ -330,8 +336,6 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		return unit;
 	}
 
-	
-
 	public void setUnit(ProductUnit unit) {
 		this.unit = unit;
 	}
@@ -345,9 +349,9 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	public void setEntityTpl(ProductData entityTpl) {
 		this.entityTpl = entityTpl;
 	}
-	
+
 	@AlfMultiAssoc
-	@AlfQname(qname="bcpg:plants")
+	@AlfQname(qname = "bcpg:plants")
 	public List<NodeRef> getPlants() {
 		return plants;
 	}
@@ -355,9 +359,9 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	public void setPlants(List<NodeRef> plants) {
 		this.plants = plants;
 	}
-	
+
 	@AlfProp
-	@AlfQname(qname="bcpg:ingTypeV2")
+	@AlfQname(qname = "bcpg:ingTypeV2")
 	public IngTypeItem getIngType() {
 		return ingType;
 	}
@@ -373,7 +377,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	public void setDefaultVariantPackagingData(VariantPackagingData defaultVariantPackagingData) {
 		this.defaultVariantPackagingData = defaultVariantPackagingData;
 	}
-	
+
 	@AlfProp
 	@AlfQname(qname = "bcpg:productQty")
 	public Double getQty() {
@@ -389,7 +393,6 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	public Double getDensity() {
 		return density;
 	}
-	
 
 	public void setDensity(Double density) {
 		this.density = density;
@@ -410,7 +413,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	public void setYieldVolume(Double yieldVolume) {
 		this.yieldVolume = yieldVolume;
 	}
-	
+
 	public Double getProductLossPerc() {
 		return productLossPerc;
 	}
@@ -426,7 +429,6 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	public void setRecipeQtyUsedWithLossPerc(Double recipeQtyUsedWithLossPerc) {
 		this.recipeQtyUsedWithLossPerc = recipeQtyUsedWithLossPerc;
 	}
-
 
 	@AlfProp
 	@AlfQname(qname = "bcpg:productCompoQtyUsed")
@@ -447,8 +449,6 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	public void setRecipeVolumeUsed(Double recipeVolumeUsed) {
 		this.recipeVolumeUsed = recipeVolumeUsed;
 	}
-	
-	
 
 	@AlfProp
 	@AlfQname(qname = "bcpg:netWeight")
@@ -459,8 +459,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	public void setNetWeight(Double netWeight) {
 		this.netWeight = netWeight;
 	}
-	
-	
+
 	public Double getWeightPrimary() {
 		return weightPrimary;
 	}
@@ -551,7 +550,6 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		this.unitTotalCost = unitTotalCost;
 	}
 
-	
 	@AlfProp
 	@AlfQname(qname = "bcpg:previousUnitTotalCost")
 	public Double getPreviousUnitTotalCost() {
@@ -561,10 +559,9 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	public void setPreviousUnitTotalCost(Double previousUnitTotalCost) {
 		this.previousUnitTotalCost = previousUnitTotalCost;
 	}
-	
 
 	@AlfMultiAssoc
-	@AlfQname(qname="bcpg:productGeoOrigin")
+	@AlfQname(qname = "bcpg:productGeoOrigin")
 	public List<NodeRef> getGeoOrigins() {
 		return geoOrigins;
 	}
@@ -592,7 +589,6 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	public void setUnitPrice(Double unitPrice) {
 		this.unitPrice = unitPrice;
 	}
-	
 
 	@AlfProp
 	@AlfQname(qname = "bcpg:profitability")
@@ -603,7 +599,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	public void setProfitability(Double profitability) {
 		this.profitability = profitability;
 	}
-	
+
 	@AlfProp
 	@AlfQname(qname = "bcpg:nutrientProfilingScore")
 	public Double getNutrientScore() {
@@ -623,7 +619,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	public void setNutrientClass(String nutrientClass) {
 		this.nutrientClass = nutrientClass;
 	}
-	
+
 	@AlfSingleAssoc
 	@AlfQname(qname = "bcpg:nutrientProfileRef")
 	public NodeRef getNutrientProfile() {
@@ -632,6 +628,33 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 
 	public void setNutrientProfile(NodeRef nutrientProfile) {
 		this.nutrientProfile = nutrientProfile;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "bcpg:meatContentData")
+	public String getMeatContentData() {
+		try {
+			return MeatContentData.toJsonString(meatContentData);
+		} catch (JSONException e) {
+			return null;
+		}
+
+	}
+
+	public void setMeatContentData(String meatContentdata) {
+		try {
+			meatContentData = MeatContentData.parseJsonString(meatContentdata);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public MeatContentData getMeatContentByType(String type) {
+		return meatContentData.get(MeatType.valueOf(type));
+	}
+
+	public Map<MeatType, MeatContentData> getMeatContents() {
+		return meatContentData;
 	}
 
 	@AlfProp
@@ -753,9 +776,9 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	public void setControlDefList(List<ControlDefListDataItem> controlDefList) {
 		this.controlDefList = controlDefList;
 	}
-	
-    @DataList
-	@AlfQname(qname="mpm:resourceParamList")
+
+	@DataList
+	@AlfQname(qname = "mpm:resourceParamList")
 	public List<ResourceParamListItem> getResourceParamList() {
 		return resourceParamList;
 	}
@@ -783,10 +806,9 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	public void setLabelingListView(LabelingListView labelingListView) {
 		this.labelingListView = labelingListView;
 	}
-	
-	
+
 	@DataList
-	@AlfQname(qname="bcpg:reqCtrlList")
+	@AlfQname(qname = "bcpg:reqCtrlList")
 	public List<ReqCtrlListDataItem> getReqCtrlList() {
 		return reqCtrlList;
 	}
@@ -794,7 +816,6 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	public void setReqCtrlList(List<ReqCtrlListDataItem> reqCtrlList) {
 		this.reqCtrlList = reqCtrlList;
 	}
-
 
 	@DataListView
 	@AlfQname(qname = "bcpg:compoList")
@@ -804,15 +825,14 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 
 	@AlfProp
 	@AlfQname(qname = "bcpg:entityScore")
-	public String getEntityScore(){
+	public String getEntityScore() {
 		return entityScore;
 	}
-	
-	public void setEntityScore(String string){
+
+	public void setEntityScore(String string) {
 		this.entityScore = string;
 	}
-	
-	
+
 	@AlfProp
 	@AlfQname(qname = "rep:reportLocales")
 	public List<String> getReportLocales() {
@@ -823,42 +843,42 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		this.reportLocales = reportLocales;
 	}
 
-	private <T> List<T>  filterList(List<T> list,List<DataListFilter<ProductData, T>> filters ) {
-		if (filters != null && !filters.isEmpty()) {
+	private <T> List<T> filterList(List<T> list, List<DataListFilter<ProductData, T>> filters) {
+		if ((filters != null) && !filters.isEmpty()) {
 			Stream<T> stream = list.stream();
 			for (DataListFilter<ProductData, T> filter : filters) {
 				stream = stream.filter(filter.createPredicate(this));
 			}
 			return stream.collect(Collectors.toList());
-		} 
+		}
 		return list;
 	}
-	
-	public List<CompoListDataItem> getCompoList(){
+
+	public List<CompoListDataItem> getCompoList() {
 		return getCompoList(Collections.emptyList());
 	}
-	
+
 	public List<CompoListDataItem> getCompoList(DataListFilter<ProductData, CompoListDataItem> filter) {
 		return getCompoList(Collections.singletonList(filter));
 	}
-	
+
 	public List<CompoListDataItem> getCompoList(List<DataListFilter<ProductData, CompoListDataItem>> filters) {
-		if (compoListView != null && compoListView.getCompoList() != null) {
-			return filterList(compoListView.getCompoList(),filters);
+		if ((compoListView != null) && (compoListView.getCompoList() != null)) {
+			return filterList(compoListView.getCompoList(), filters);
 		}
 		return null;
 	}
 
-	public boolean hasCompoListEl(){
+	public boolean hasCompoListEl() {
 		return hasCompoListEl(Collections.emptyList());
 	}
-	
-	public boolean hasCompoListEl( DataListFilter<ProductData, CompoListDataItem> filter) {
+
+	public boolean hasCompoListEl(DataListFilter<ProductData, CompoListDataItem> filter) {
 		return hasCompoListEl(Collections.singletonList(filter));
 	}
-	
-	public boolean hasCompoListEl( List<DataListFilter<ProductData, CompoListDataItem>> filters) {
-		return compoListView != null && compoListView.getCompoList() != null && !getCompoList(filters).isEmpty();
+
+	public boolean hasCompoListEl(List<DataListFilter<ProductData, CompoListDataItem>> filters) {
+		return (compoListView != null) && (compoListView.getCompoList() != null) && !getCompoList(filters).isEmpty();
 	}
 
 	public void setCompoListView(CompoListView compoListView) {
@@ -871,34 +891,31 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		return processListView;
 	}
 
-	
-	public  List<ProcessListDataItem> getProcessList() {
+	public List<ProcessListDataItem> getProcessList() {
 		return getProcessList(Collections.emptyList());
 	}
-	
-	public  List<ProcessListDataItem> getProcessList(DataListFilter<ProductData,ProcessListDataItem> filter) {
+
+	public List<ProcessListDataItem> getProcessList(DataListFilter<ProductData, ProcessListDataItem> filter) {
 		return getProcessList(Collections.singletonList(filter));
 	}
-	
-	
-	public  List<ProcessListDataItem> getProcessList(List<DataListFilter<ProductData,ProcessListDataItem>> filters) {
-		if (processListView != null && processListView.getProcessList() != null) {
-			return filterList(processListView.getProcessList(),filters);
+
+	public List<ProcessListDataItem> getProcessList(List<DataListFilter<ProductData, ProcessListDataItem>> filters) {
+		if ((processListView != null) && (processListView.getProcessList() != null)) {
+			return filterList(processListView.getProcessList(), filters);
 		}
 		return null;
 	}
-	
-	
-	public boolean hasProcessListEl(){
+
+	public boolean hasProcessListEl() {
 		return hasCompoListEl(Collections.emptyList());
 	}
-	
-	public boolean hasProcessListEl( DataListFilter<ProductData, ProcessListDataItem> filter) {
+
+	public boolean hasProcessListEl(DataListFilter<ProductData, ProcessListDataItem> filter) {
 		return hasProcessListEl(Collections.singletonList(filter));
 	}
-	
-	public  boolean hasProcessListEl(List<DataListFilter<ProductData,ProcessListDataItem>> filters) {
-		return processListView != null && processListView.getProcessList() != null && !getProcessList(filters).isEmpty();
+
+	public boolean hasProcessListEl(List<DataListFilter<ProductData, ProcessListDataItem>> filters) {
+		return (processListView != null) && (processListView.getProcessList() != null) && !getProcessList(filters).isEmpty();
 	}
 
 	public void setProcessListView(ProcessListView processListView) {
@@ -911,32 +928,31 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		return packagingListView;
 	}
 
-	public  List<PackagingListDataItem> getPackagingList() {
+	public List<PackagingListDataItem> getPackagingList() {
 		return getPackagingList(Collections.emptyList());
 	}
-	
-	public  List<PackagingListDataItem> getPackagingList(DataListFilter<ProductData,PackagingListDataItem> filter) {
+
+	public List<PackagingListDataItem> getPackagingList(DataListFilter<ProductData, PackagingListDataItem> filter) {
 		return getPackagingList(Collections.singletonList(filter));
 	}
-	
-	
-	public List<PackagingListDataItem> getPackagingList(List<DataListFilter<ProductData,PackagingListDataItem>> filters) {
-		if (packagingListView != null && packagingListView.getPackagingList() != null) {
-			return filterList(packagingListView.getPackagingList(),filters);
+
+	public List<PackagingListDataItem> getPackagingList(List<DataListFilter<ProductData, PackagingListDataItem>> filters) {
+		if ((packagingListView != null) && (packagingListView.getPackagingList() != null)) {
+			return filterList(packagingListView.getPackagingList(), filters);
 		}
 		return null;
 	}
 
-	public boolean hasPackagingListEl(){
+	public boolean hasPackagingListEl() {
 		return hasPackagingListEl(Collections.emptyList());
 	}
-	
-	public boolean hasPackagingListEl( DataListFilter<ProductData, PackagingListDataItem> filter) {
+
+	public boolean hasPackagingListEl(DataListFilter<ProductData, PackagingListDataItem> filter) {
 		return hasPackagingListEl(Collections.singletonList(filter));
 	}
-	
-	public boolean hasPackagingListEl(List<DataListFilter<ProductData,PackagingListDataItem>> filters) {
-		return packagingListView != null && packagingListView.getPackagingList() != null && !getPackagingList(filters).isEmpty();
+
+	public boolean hasPackagingListEl(List<DataListFilter<ProductData, PackagingListDataItem>> filters) {
+		return (packagingListView != null) && (packagingListView.getPackagingList() != null) && !getPackagingList(filters).isEmpty();
 	}
 
 	public void setPackagingListView(PackagingListView packagingListView) {
@@ -951,46 +967,49 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	public String getEntityState() {
 		return state != null ? state.toString() : null;
 	}
-	
+
 	// Formula helpers
 
 	public boolean isLiquid() {
-		return unit != null && (unit == ProductUnit.L || unit == ProductUnit.mL || unit == ProductUnit.cL);
+		return (unit != null) && ((unit == ProductUnit.L) || (unit == ProductUnit.mL) || (unit == ProductUnit.cL));
 	}
-	
+
 	public boolean isRawMaterial() {
 		return this instanceof RawMaterialData;
 	}
-	
+
 	public boolean isPackaging() {
 		return this instanceof PackagingMaterialData;
 	}
-	
+
 	public boolean isPackagingKit() {
 		return this instanceof PackagingKitData;
 	}
-	
+
 	public boolean isSemiFinished() {
 		return this instanceof SemiFinishedProductData;
 	}
-	
+
 	public boolean isLocalSemiFinished() {
 		return this instanceof LocalSemiFinishedProductData;
 	}
-	
 
+	@Override
 	public Integer getReformulateCount() {
 		return reformulateCount;
 	}
 
+	@Override
 	public void setReformulateCount(Integer reformulateCount) {
 		this.reformulateCount = reformulateCount;
 	}
 
+	@Override
 	public Integer getCurrentReformulateCount() {
 		return currentReformulateCount;
 	}
 
+	@Override
 	public void setCurrentReformulateCount(Integer currentReformulateCount) {
 		this.currentReformulateCount = currentReformulateCount;
 	}
@@ -1004,152 +1023,197 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 
 	@Override
 	public String toString() {
-				return "ProductData [hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", legalName=" + legalName + ", title=" + title
-								+ ", erpCode=" + erpCode + ", state=" + state +  ", unit=" + unit + ", qty=" + qty + ", density=" + density + ", yield=" + yield
-								+ ", yieldVolume=" + yieldVolume + ", netWeight=" + netWeight + ", netVolume=" + netVolume + ", servingSize=" + servingSize + ", recipeQtyUsed=" + recipeQtyUsed
-								+ ", tare=" + tare + ", tareUnit=" + tareUnit + ", unitTotalCost=" + unitTotalCost + ", unitPrice=" + unitPrice + ", profitability="
-								+ profitability + ", breakEven=" + breakEven + ", allergenList=" + allergenList + ", productScores="+ entityScore +"]";
+		return "ProductData [hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", legalName=" + legalName + ", title=" + title + ", erpCode="
+				+ erpCode + ", state=" + state + ", unit=" + unit + ", qty=" + qty + ", density=" + density + ", yield=" + yield + ", yieldVolume="
+				+ yieldVolume + ", netWeight=" + netWeight + ", netVolume=" + netVolume + ", servingSize=" + servingSize + ", recipeQtyUsed="
+				+ recipeQtyUsed + ", tare=" + tare + ", tareUnit=" + tareUnit + ", unitTotalCost=" + unitTotalCost + ", unitPrice=" + unitPrice
+				+ ", profitability=" + profitability + ", breakEven=" + breakEven + ", allergenList=" + allergenList + ", productScores="
+				+ entityScore + "]";
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + ((breakEven == null) ? 0 : breakEven.hashCode());
-		result = prime * result + ((currentReformulateCount == null) ? 0 : currentReformulateCount.hashCode());
-		result = prime * result + ((density == null) ? 0 : density.hashCode());
-		result = prime * result + ((erpCode == null) ? 0 : erpCode.hashCode());
-		result = prime * result + ((hierarchy1 == null) ? 0 : hierarchy1.hashCode());
-		result = prime * result + ((hierarchy2 == null) ? 0 : hierarchy2.hashCode());
-		result = prime * result + ((legalName == null) ? 0 : legalName.hashCode());
-		result = prime * result + ((netWeight == null) ? 0 : netWeight.hashCode());
-		result = prime * result + ((profitability == null) ? 0 : profitability.hashCode());
-		result = prime * result + ((qty == null) ? 0 : qty.hashCode());
-		result = prime * result + ((recipeQtyUsed == null) ? 0 : recipeQtyUsed.hashCode());
-		result = prime * result + ((servingSize == null) ? 0 : servingSize.hashCode());
-		result = prime * result + ((state == null) ? 0 : state.hashCode());
-		result = prime * result + ((tare == null) ? 0 : tare.hashCode());
-		result = prime * result + ((tareUnit == null) ? 0 : tareUnit.hashCode());
-		result = prime * result + ((title == null) ? 0 : title.hashCode());
-		result = prime * result + ((unit == null) ? 0 : unit.hashCode());
-		result = prime * result + ((unitPrice == null) ? 0 : unitPrice.hashCode());
-		result = prime * result + ((unitTotalCost == null) ? 0 : unitTotalCost.hashCode());
-		result = prime * result + ((variants == null) ? 0 : variants.hashCode());
-		result = prime * result + ((yield == null) ? 0 : yield.hashCode());
-		result = prime * result + ((yieldVolume == null) ? 0 : yieldVolume.hashCode());
+		result = (prime * result) + ((breakEven == null) ? 0 : breakEven.hashCode());
+		result = (prime * result) + ((currentReformulateCount == null) ? 0 : currentReformulateCount.hashCode());
+		result = (prime * result) + ((density == null) ? 0 : density.hashCode());
+		result = (prime * result) + ((erpCode == null) ? 0 : erpCode.hashCode());
+		result = (prime * result) + ((hierarchy1 == null) ? 0 : hierarchy1.hashCode());
+		result = (prime * result) + ((hierarchy2 == null) ? 0 : hierarchy2.hashCode());
+		result = (prime * result) + ((legalName == null) ? 0 : legalName.hashCode());
+		result = (prime * result) + ((netWeight == null) ? 0 : netWeight.hashCode());
+		result = (prime * result) + ((profitability == null) ? 0 : profitability.hashCode());
+		result = (prime * result) + ((qty == null) ? 0 : qty.hashCode());
+		result = (prime * result) + ((recipeQtyUsed == null) ? 0 : recipeQtyUsed.hashCode());
+		result = (prime * result) + ((servingSize == null) ? 0 : servingSize.hashCode());
+		result = (prime * result) + ((state == null) ? 0 : state.hashCode());
+		result = (prime * result) + ((tare == null) ? 0 : tare.hashCode());
+		result = (prime * result) + ((tareUnit == null) ? 0 : tareUnit.hashCode());
+		result = (prime * result) + ((title == null) ? 0 : title.hashCode());
+		result = (prime * result) + ((unit == null) ? 0 : unit.hashCode());
+		result = (prime * result) + ((unitPrice == null) ? 0 : unitPrice.hashCode());
+		result = (prime * result) + ((unitTotalCost == null) ? 0 : unitTotalCost.hashCode());
+		result = (prime * result) + ((variants == null) ? 0 : variants.hashCode());
+		result = (prime * result) + ((yield == null) ? 0 : yield.hashCode());
+		result = (prime * result) + ((yieldVolume == null) ? 0 : yieldVolume.hashCode());
 		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (!super.equals(obj))
+		}
+		if (!super.equals(obj)) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		ProductData other = (ProductData) obj;
 		if (breakEven == null) {
-			if (other.breakEven != null)
+			if (other.breakEven != null) {
 				return false;
-		} else if (!breakEven.equals(other.breakEven))
+			}
+		} else if (!breakEven.equals(other.breakEven)) {
 			return false;
+		}
 		if (currentReformulateCount == null) {
-			if (other.currentReformulateCount != null)
+			if (other.currentReformulateCount != null) {
 				return false;
-		} else if (!currentReformulateCount.equals(other.currentReformulateCount))
+			}
+		} else if (!currentReformulateCount.equals(other.currentReformulateCount)) {
 			return false;
+		}
 		if (density == null) {
-			if (other.density != null)
+			if (other.density != null) {
 				return false;
-		} else if (!density.equals(other.density))
+			}
+		} else if (!density.equals(other.density)) {
 			return false;
+		}
 		if (erpCode == null) {
-			if (other.erpCode != null)
+			if (other.erpCode != null) {
 				return false;
-		} else if (!erpCode.equals(other.erpCode))
+			}
+		} else if (!erpCode.equals(other.erpCode)) {
 			return false;
+		}
 		if (hierarchy1 == null) {
-			if (other.hierarchy1 != null)
+			if (other.hierarchy1 != null) {
 				return false;
-		} else if (!hierarchy1.equals(other.hierarchy1))
+			}
+		} else if (!hierarchy1.equals(other.hierarchy1)) {
 			return false;
+		}
 		if (hierarchy2 == null) {
-			if (other.hierarchy2 != null)
+			if (other.hierarchy2 != null) {
 				return false;
-		} else if (!hierarchy2.equals(other.hierarchy2))
+			}
+		} else if (!hierarchy2.equals(other.hierarchy2)) {
 			return false;
+		}
 		if (legalName == null) {
-			if (other.legalName != null)
+			if (other.legalName != null) {
 				return false;
-		} else if (!legalName.equals(other.legalName))
+			}
+		} else if (!legalName.equals(other.legalName)) {
 			return false;
+		}
 		if (netWeight == null) {
-			if (other.netWeight != null)
+			if (other.netWeight != null) {
 				return false;
-		} else if (!netWeight.equals(other.netWeight))
+			}
+		} else if (!netWeight.equals(other.netWeight)) {
 			return false;
+		}
 		if (profitability == null) {
-			if (other.profitability != null)
+			if (other.profitability != null) {
 				return false;
-		} else if (!profitability.equals(other.profitability))
+			}
+		} else if (!profitability.equals(other.profitability)) {
 			return false;
+		}
 		if (qty == null) {
-			if (other.qty != null)
+			if (other.qty != null) {
 				return false;
-		} else if (!qty.equals(other.qty))
+			}
+		} else if (!qty.equals(other.qty)) {
 			return false;
+		}
 		if (recipeQtyUsed == null) {
-			if (other.recipeQtyUsed != null)
+			if (other.recipeQtyUsed != null) {
 				return false;
-		} else if (!recipeQtyUsed.equals(other.recipeQtyUsed))
+			}
+		} else if (!recipeQtyUsed.equals(other.recipeQtyUsed)) {
 			return false;
+		}
 		if (servingSize == null) {
-			if (other.servingSize != null)
+			if (other.servingSize != null) {
 				return false;
-		} else if (!servingSize.equals(other.servingSize))
+			}
+		} else if (!servingSize.equals(other.servingSize)) {
 			return false;
-		if (state != other.state)
+		}
+		if (state != other.state) {
 			return false;
+		}
 		if (tare == null) {
-			if (other.tare != null)
+			if (other.tare != null) {
 				return false;
-		} else if (!tare.equals(other.tare))
+			}
+		} else if (!tare.equals(other.tare)) {
 			return false;
-		if (tareUnit != other.tareUnit)
+		}
+		if (tareUnit != other.tareUnit) {
 			return false;
+		}
 		if (title == null) {
-			if (other.title != null)
+			if (other.title != null) {
 				return false;
-		} else if (!title.equals(other.title))
+			}
+		} else if (!title.equals(other.title)) {
 			return false;
-		if (unit != other.unit)
+		}
+		if (unit != other.unit) {
 			return false;
+		}
 		if (unitPrice == null) {
-			if (other.unitPrice != null)
+			if (other.unitPrice != null) {
 				return false;
-		} else if (!unitPrice.equals(other.unitPrice))
+			}
+		} else if (!unitPrice.equals(other.unitPrice)) {
 			return false;
+		}
 		if (unitTotalCost == null) {
-			if (other.unitTotalCost != null)
+			if (other.unitTotalCost != null) {
 				return false;
-		} else if (!unitTotalCost.equals(other.unitTotalCost))
+			}
+		} else if (!unitTotalCost.equals(other.unitTotalCost)) {
 			return false;
+		}
 		if (variants == null) {
-			if (other.variants != null)
+			if (other.variants != null) {
 				return false;
-		} else if (!variants.equals(other.variants))
+			}
+		} else if (!variants.equals(other.variants)) {
 			return false;
+		}
 		if (yield == null) {
-			if (other.yield != null)
+			if (other.yield != null) {
 				return false;
-		} else if (!yield.equals(other.yield))
+			}
+		} else if (!yield.equals(other.yield)) {
 			return false;
+		}
 		if (yieldVolume == null) {
-			if (other.yieldVolume != null)
+			if (other.yieldVolume != null) {
 				return false;
-		} else if (!yieldVolume.equals(other.yieldVolume))
+			}
+		} else if (!yieldVolume.equals(other.yieldVolume)) {
 			return false;
+		}
 		return true;
 	}
 
