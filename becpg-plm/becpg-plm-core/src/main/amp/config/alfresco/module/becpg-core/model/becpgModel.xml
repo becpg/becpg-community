@@ -573,6 +573,16 @@
 				</list>
 			</parameter>
 		</constraint>
+		
+		<constraint name="bcpg:meatTypes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>Mammals</value>
+					<value>Porcines</value>
+					<value>BirdsAndRabbits</value>
+				</list>
+			</parameter>
+		</constraint>
 
 	</constraints>
 
@@ -3327,6 +3337,20 @@
 					<type>d:noderef</type>
 					<mandatory>false</mandatory>
 				</property>
+			 </properties>	
+		</aspect>		
+		
+		<aspect name="bcpg:meatAspect">
+			 <properties>
+			 	<property name="bcpg:meatType">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="bcpg:meatTypes"></constraint>
+					</constraints>
+				</property>	
+				<property name="bcpg:meatContentData">
+					<type>d:text</type>
+				</property>	
 			 </properties>	
 		</aspect>		
 		
