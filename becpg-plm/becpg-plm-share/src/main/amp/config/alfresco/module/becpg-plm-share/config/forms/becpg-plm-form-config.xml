@@ -8052,7 +8052,7 @@
 			</form>
 
 			<!-- Data Grid view -->
-			<form id="datagrid">
+			<form id="datagridWUsed">
 				<field-visibility>
 					<show id="bcpg:variantIds" force="true" />
 					<show id="bcpg:pclPhysicoChem" />
