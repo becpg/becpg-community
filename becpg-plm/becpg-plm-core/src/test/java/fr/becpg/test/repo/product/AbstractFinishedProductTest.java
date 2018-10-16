@@ -25,6 +25,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
@@ -45,14 +47,21 @@ import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.PackagingKitData;
 import fr.becpg.repo.product.data.PackagingMaterialData;
+import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
+import fr.becpg.repo.product.data.constraints.LabelingRuleType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
+import fr.becpg.repo.product.data.constraints.RequirementDataType;
+import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.constraints.TareUnit;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
+import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
+import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
+import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.test.PLMBaseTestCase;
 
 public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
@@ -1037,7 +1046,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 		}, false, true);
 	}
 
-	public void checkILL(String expectedStr1, String expectedStr2, String actualStr) {
+	protected void checkILL(String expectedStr1, String expectedStr2, String actualStr) {
 
 		String expectedStr;
 
@@ -1053,5 +1062,105 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			throw e;
 		}
 	}
+	
+	protected void checkILL(final NodeRef productNodeRef, final List<LabelingRuleListDataItem> labelingRuleList, final String ill, Locale locale) {
+
+		checkILL(productNodeRef, labelingRuleList, ill, locale, null);
+	}
+
+	protected void checkILL(final NodeRef productNodeRef, final List<LabelingRuleListDataItem> labelingRuleList, final String ill, Locale locale,
+			final String ruleName) {
+
+		logger.info("checkILL : " + ill+ (ruleName!=null ? " "+ruleName : ""));
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			try {
+				ProductData formulatedProduct = alfrescoRepository.findOne(productNodeRef);
+				labelingRuleList.add(new LabelingRuleListDataItem("Pref7", "uncapitalizeLegalName = true", LabelingRuleType.Prefs));
+
+				NodeRef grpNodeRef = null;
+
+				for (LabelingRuleListDataItem rule : labelingRuleList) {
+					if (rule.getLabelingRuleType().equals(LabelingRuleType.Render)) {
+						rule.setNodeRef(new NodeRef("test", "becpg", UUID.randomUUID().toString()));
+						if (ruleName != null && ruleName.equals(rule.getName())) {
+							grpNodeRef = rule.getNodeRef();
+						}
+					}
+				}
+
+				formulatedProduct.getLabelingListView().setLabelingRuleList(labelingRuleList);
+
+				productService.formulate(formulatedProduct);
+
+				Assert.assertTrue(formulatedProduct.getLabelingListView().getLabelingRuleList().size() > 0);
+				// verify IngLabelingList
+
+				Assert.assertNotNull("IngLabelingList is null", formulatedProduct.getLabelingListView().getIngLabelingList());
+				Assert.assertTrue(formulatedProduct.getLabelingListView().getIngLabelingList().size() > 0);
+
+				for (IngLabelingListDataItem illDataItem : formulatedProduct.getLabelingListView().getIngLabelingList()) {
+					if (grpNodeRef == null || illDataItem.getGrp().equals(grpNodeRef)) {
+
+						String formulatedIll = illDataItem.getValue().getValue(locale);
+						Assert.assertEquals("Incorrect label :" + formulatedIll + "\n   - compare to " + ill, ill, formulatedIll);
+						Assert.assertNotNull(illDataItem.getLogValue());
+					}
+				}
+				
+				
+			} catch (Throwable e) {
+				logger.error(e, e);
+				throw e;
+			}
+
+			return null;
+
+		}, false, true);
+
+	}
+
+	private void checkError(final NodeRef productNodeRef, final List<LabelingRuleListDataItem> labelingRuleList, final String errorMessage) {
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			ProductData formulatedProduct = alfrescoRepository.findOne(productNodeRef);
+
+			formulatedProduct.getLabelingListView().setLabelingRuleList(labelingRuleList);
+
+			productService.formulate(formulatedProduct);
+
+			assertFalse(formulatedProduct.getReqCtrlList().isEmpty());
+
+			for (ReqCtrlListDataItem reqCtrlListDataItem : formulatedProduct.getReqCtrlList()) {
+				if (RequirementType.Forbidden.equals(reqCtrlListDataItem.getReqType())) {
+
+					String error = reqCtrlListDataItem.getReqMessage();
+					if (RequirementDataType.Validation.equals(reqCtrlListDataItem.getReqDataType())) {
+						Assert.assertEquals("Composant non validé", error);
+					} else if (RequirementDataType.Completion.equals(reqCtrlListDataItem.getReqDataType())) {
+
+						boolean ret = Pattern.matches("Champ obligatoire '(.*)' manquant \\(catalogue 'EU 1169/2011 \\(INCO\\)'\\)", error);
+
+						if (!ret) {
+							logger.error("Incorrect requirement:" + error);
+						}
+
+						Assert.assertTrue(ret);
+					} else {
+						Assert.assertEquals("Incorrect label :" + error + "\n   - compare to " + errorMessage, error, errorMessage);
+					}
+				} else if (RequirementType.Info.equals(reqCtrlListDataItem.getReqType())) {
+					logger.info("Info rclDataItem, message: " + reqCtrlListDataItem.getReqMessage());
+					Assert.assertEquals("Etat de l'allégation {0} indéfini", reqCtrlListDataItem.getReqMessage());
+				}
+			}
+
+			return null;
+
+		}, false, true);
+
+	}
+
 
 }
