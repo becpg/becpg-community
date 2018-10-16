@@ -1587,61 +1587,6 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 	}
 
-	private void checkILL(final NodeRef productNodeRef, final List<LabelingRuleListDataItem> labelingRuleList, final String ill, Locale locale) {
-
-		checkILL(productNodeRef, labelingRuleList, ill, locale, null);
-	}
-
-	private void checkILL(final NodeRef productNodeRef, final List<LabelingRuleListDataItem> labelingRuleList, final String ill, Locale locale,
-			final String ruleName) {
-
-		logger.info("checkILL : " + ill+ (ruleName!=null ? " "+ruleName : ""));
-
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-
-			try {
-				ProductData formulatedProduct = alfrescoRepository.findOne(productNodeRef);
-				labelingRuleList.add(new LabelingRuleListDataItem("Pref7", "uncapitalizeLegalName = true", LabelingRuleType.Prefs));
-
-				NodeRef grpNodeRef = null;
-
-				for (LabelingRuleListDataItem rule : labelingRuleList) {
-					if (rule.getLabelingRuleType().equals(LabelingRuleType.Render)) {
-						rule.setNodeRef(new NodeRef("test", "becpg", UUID.randomUUID().toString()));
-						if (ruleName != null && ruleName.equals(rule.getName())) {
-							grpNodeRef = rule.getNodeRef();
-						}
-					}
-				}
-
-				formulatedProduct.getLabelingListView().setLabelingRuleList(labelingRuleList);
-
-				productService.formulate(formulatedProduct);
-
-				Assert.assertTrue(formulatedProduct.getLabelingListView().getLabelingRuleList().size() > 0);
-				// verify IngLabelingList
-
-				Assert.assertNotNull("IngLabelingList is null", formulatedProduct.getLabelingListView().getIngLabelingList());
-				Assert.assertTrue(formulatedProduct.getLabelingListView().getIngLabelingList().size() > 0);
-
-				for (IngLabelingListDataItem illDataItem : formulatedProduct.getLabelingListView().getIngLabelingList()) {
-					if (grpNodeRef == null || illDataItem.getGrp().equals(grpNodeRef)) {
-
-						String formulatedIll = illDataItem.getValue().getValue(locale);
-						Assert.assertEquals("Incorrect label :" + formulatedIll + "\n   - compare to " + ill, ill, formulatedIll);
-						Assert.assertNotNull(illDataItem.getLogValue());
-					}
-				}
-			} catch (Throwable e) {
-				logger.error(e, e);
-				throw e;
-			}
-
-			return null;
-
-		}, false, true);
-
-	}
 
 	private void checkError(final NodeRef productNodeRef, final List<LabelingRuleListDataItem> labelingRuleList, final String errorMessage) {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
