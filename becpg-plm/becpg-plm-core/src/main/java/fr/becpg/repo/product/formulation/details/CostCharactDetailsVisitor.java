@@ -108,7 +108,7 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 				Double qty = (FormulationHelper.getQtyForCostByPackagingLevel(formulatedProduct, packagingListDataItem, nodeService)
 						/ FormulationHelper.getNetQtyForCost(formulatedProduct)) * subQuantity;
 
-				visitPart(formulatedProduct.getNodeRef(), packagingListDataItem.getProduct(), ret, qty, null, netQty, netQty , currLevel, unitProvider);
+				visitPart(formulatedProduct.getNodeRef(), packagingListDataItem.getProduct(), ret, qty, qty, netQty, netQty , currLevel, unitProvider);
 
 				 if ((maxLevel < 0) || (currLevel < maxLevel)) {
 					 logger.debug("Finding one packaging with nr=" + packagingListDataItem.getProduct());
