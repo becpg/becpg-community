@@ -4880,7 +4880,9 @@
 			<!-- Data Grid view -->
 			<form id="filter">
 				<field-visibility>
-					<show id="bcpg:charactName" />
+					<show id="bcpg:charactName" force="true"/>
+					<show id="bcpg:legalName" force="true"/>
+					<show id="bcpg:ingCEECode" force="true"/>
 					<show id="bcpg:ingTypeV2"  force="true"/>
 				</field-visibility>
 				<appearance>

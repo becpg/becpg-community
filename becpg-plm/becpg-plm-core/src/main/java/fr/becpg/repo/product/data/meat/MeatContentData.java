@@ -400,9 +400,15 @@ public class MeatContentData {
 
 	@Override
 	public String toString() {
-		return "MAXFat=" + maxFat + "\n MAX Col.=" + maxCol
-				+ ", %EXCol.=" + exColPerc + "\n %EXCT=" + exCTPerc + "\n %EXFat=" + exFatPerc + "\n Meat=" + meatContent
-				+ ", %Protein=" + proteinPerc + "\n %Collagen=" + collagenPerc + "\n %Fat=" + fatPerc;
+		return "MAXFat=" + maxFat 
+				+ "\nMAX Col.=" + maxCol
+				+ "\n%EXCol.=" + exColPerc 
+				+ "\n%EXCT=" + exCTPerc 
+				+ "\n%EXFat=" + exFatPerc 
+				+ "\nMeat=" + meatContent
+				+ "\n%Protein=" + proteinPerc 
+				+ "\n%Collagen=" + collagenPerc 
+				+ "\n%Fat=" + fatPerc;
 	}
 	
 	
