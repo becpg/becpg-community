@@ -86,7 +86,9 @@ public class MeatContentFormulationHandler extends FormulationBaseHandler<Produc
 						
 							if (((RawMaterialData) partProduct).getMeatType() != null) {
 								
-								logger.info("Found meat rawMaterial : "+partProduct.getName()+" "+((RawMaterialData) partProduct).getMeatType());
+								if(logger.isDebugEnabled()) {
+									logger.debug("Found meat rawMaterial : "+partProduct.getName()+" "+((RawMaterialData) partProduct).getMeatType());
+								}
 								
 								MeatContentData meatContentData = getOrCreateMeatData(formulatedProduct,
 										((RawMaterialData) partProduct).getMeatType());
@@ -108,7 +110,6 @@ public class MeatContentFormulationHandler extends FormulationBaseHandler<Produc
 										
 										switch (nut.getNutCode()) {
 										case "FAT":
-											logger.info("Add fat : "+nutListDataItem.getValue()+" " +qtyUsed+ " "+netWeight+" "+value);
 											meatContentData.setFatPerc(value);
 											break;
 										case "PRO-":
@@ -119,7 +120,6 @@ public class MeatContentFormulationHandler extends FormulationBaseHandler<Produc
 											// COLG collagen (mg)
 											break;
 										case "COLG":
-											logger.info("Add collagen : "+nutListDataItem.getValue()+" " +qtyUsed+ " "+netWeight+" "+nutListDataItem.getUnit()+" "+value);
 											meatContentData.setCollagenPerc(value);
 											break;
 										default:
