@@ -281,8 +281,8 @@ public class MeatContentFormulationTest extends AbstractFinishedProductTest {
 
 			Assert.assertTrue(finishedProductData.getMeatContents().size() == 2);
 
-			MeatContentData meatContentData = finishedProductData.getMeatContentByType(MeatType.Mammals.toString());
-
+			MeatContentData meatContentData = finishedProductData.meatContentByType(MeatType.Mammals.toString());
+			
 			Assert.assertTrue((meatContentData.getFatPerc() - (90 * 2) / 5d) < 1);
 			Assert.assertTrue((meatContentData.getProteinPerc() - (10 * 2) / 5d) < 1);
 			Assert.assertTrue((meatContentData.getCollagenPerc() - (0.5 * 2) / 500d) < 1);

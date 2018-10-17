@@ -103,14 +103,17 @@ public class MeatContentData {
 		if (collagenPerc > maxCol) {
 			// step 5
 			exColPerc = (collagenPerc - maxCol);
-			exCTPerc = exColPerc * 4.625; // i.e. 37/8
-
-			// Connective tissue for this species must be labelled
-			// as a separate ingredient in the ingredients list (e.g.
-			// Beef connective tissue)
-
-			maxFat = (fatLimitPerc * (100 - exCTPerc - fatPerc)) / (100 - fatLimitPerc);
-
+			
+			if(exColPerc > 0) {
+				exCTPerc = exColPerc * 4.625; // i.e. 37/8
+			} else {
+				exCTPerc = 0d;
+			}
+				// Connective tissue for this species must be labelled
+				// as a separate ingredient in the ingredients list (e.g.
+				// Beef connective tissue)
+				maxFat = (fatLimitPerc * (100 - exCTPerc - fatPerc)) / (100 - fatLimitPerc);
+			
 		} else {
 			exColPerc = 0d;
 			exCTPerc = 0d;
@@ -128,7 +131,6 @@ public class MeatContentData {
 
 		if (fatPerc > maxFat) {
 			exFatPerc = fatPerc - maxFat;
-
 		} else {
 			exFatPerc = 0d;
 		}
@@ -397,6 +399,11 @@ public class MeatContentData {
 		}
 		return true;
 	}
+	
+	public boolean isApplied() {
+		return meatContent!=null && meatContent < 100;
+	}
+	
 
 	@Override
 	public String toString() {

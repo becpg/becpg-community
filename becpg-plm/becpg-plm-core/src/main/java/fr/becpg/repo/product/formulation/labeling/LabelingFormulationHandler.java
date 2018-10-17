@@ -45,7 +45,6 @@ import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
-import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.AllergenType;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
@@ -1255,21 +1254,22 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							&& ((productData instanceof SemiFinishedProductData) || (productData instanceof FinishedProductData))) {
 						Composite<CompoListDataItem> sfComposite = CompositeHelper.getHierarchicalCompoList(
 								productData.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())));
-
-						for (Composite<CompoListDataItem> sfChild : sfComposite.getChildren()) {
-							CompoListDataItem clone = sfChild.getData().clone();
-							clone.setParent(compoListDataItem);
-							sfChild.setData(clone);
-							composite.addChild(sfChild);
+						if(sfComposite.getChildren() != null && !sfComposite.getChildren().isEmpty()){
+							for (Composite<CompoListDataItem> sfChild : sfComposite.getChildren()) {
+								CompoListDataItem clone = sfChild.getData().clone();
+								clone.setParent(compoListDataItem);
+								sfChild.setData(clone);
+								composite.addChild(sfChild);
+							}
+							isMultiLevel = true;
 						}
-						isMultiLevel = true;
 					}
 
 					// Case show ings and is empty use legalName instead #2558
-					if (!isMultiLevel && DeclarationType.Declare.equals(declarationType)) {
-						if (((productData.getIngList() == null) || productData.getIngList().isEmpty()) && (productData instanceof RawMaterialData)) {
+					if (!isMultiLevel && DeclarationType.Declare.equals(declarationType) && !(productData instanceof LocalSemiFinishedProductData) ) {
+						if (((productData.getIngList() == null) || productData.getIngList().isEmpty())) {
 							declarationType = DeclarationType.DoNotDetails;
-						} else if (productData instanceof RawMaterialData) {
+						} else {
 							// Case all ingedient are omit
 							boolean shouldOmit = true;
 							for (IngListDataItem ingListItem : productData.getIngList()) {
@@ -1703,11 +1703,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				ingLabelItem.getGeoOrigins().addAll(ingListItem.getData().getGeoOrigin());
 			}
 
-			if (product instanceof RawMaterialData) {
-				if (((RawMaterialData) product).getGeoOrigins() != null) {
-					ingLabelItem.getGeoOrigins().addAll(((RawMaterialData) product).getGeoOrigins());
-				}
+			if ( product.getGeoOrigins() != null) {
+				ingLabelItem.getGeoOrigins().addAll(product.getGeoOrigins());
 			}
+			
 
 			Double qtyPerc = ingListItem.getData().getQtyPerc();
 

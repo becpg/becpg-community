@@ -13,7 +13,6 @@ import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.meat.MeatContentData;
 import fr.becpg.repo.product.data.meat.MeatType;
@@ -39,8 +38,6 @@ public class MeatContentFormulationHandler extends FormulationBaseHandler<Produc
 	private NodeService nodeService;
 
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
-	
-	
 
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
@@ -62,7 +59,7 @@ public class MeatContentFormulationHandler extends FormulationBaseHandler<Produc
 			logger.debug("no compo => no formulation");
 			return true;
 		}
-		
+
 		formulatedProduct.setMeatContentData(null);
 
 		Double netWeight = FormulationHelper.getNetWeight(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
@@ -84,55 +81,53 @@ public class MeatContentFormulationHandler extends FormulationBaseHandler<Produc
 						// calculate charact from qty or vol ?
 						Double qtyUsed = formulateInVol ? volUsed : weightUsed;
 
-						if (partProduct instanceof RawMaterialData) {
-						
-							if (((RawMaterialData) partProduct).getMeatType() != null) {
-								
-								if(logger.isDebugEnabled()) {
-									logger.debug("Found meat rawMaterial : "+partProduct.getName()+" "+((RawMaterialData) partProduct).getMeatType());
-								}
-								
-								MeatContentData meatContentData = getOrCreateMeatData(formulatedProduct,
-										((RawMaterialData) partProduct).getMeatType());
-
-								for (NutListDataItem nutListDataItem : partProduct.getNutList()) {
-
-									NutDataItem nut = (NutDataItem) alfrescoRepository.findOne(nutListDataItem.getNut());
-
-									if ((nutListDataItem.getValue() != null) && (qtyUsed != null)) {
-										Double value = nutListDataItem.getValue() * qtyUsed;
-										//Express all as g
-										if(nutListDataItem.getUnit().startsWith("mg")) {
-											value= value / 100d;
-										}
-										if ((netWeight != null) && (netWeight != 0d)) {
-											value = value / netWeight;
-										}
-
-										
-										switch (nut.getNutCode()) {
-										case "FAT":
-											meatContentData.addFatPerc(value);
-											break;
-										case "PRO-":
-											meatContentData.addProteinPerc(value);
-											// HYP hydroxyproline (mg)
-										case "HYP":
-											meatContentData.addCollagenPerc(8 * value);
-											// COLG collagen (mg)
-											break;
-										case "COLG":
-											meatContentData.addCollagenPerc(value);
-											break;
-										default:
-											break;
-										}
-
-									}
-								}
-
+						if (partProduct.getMeatType() != null) {
+							
+							if (logger.isDebugEnabled()) {
+								logger.debug("Found meat product : " + partProduct.getName() + " " + partProduct.getMeatType());
 							}
-						} else {
+
+							MeatContentData meatContentData = getOrCreateMeatData(formulatedProduct, partProduct.getMeatType());
+
+							for (NutListDataItem nutListDataItem : partProduct.getNutList()) {
+
+								NutDataItem nut = (NutDataItem) alfrescoRepository.findOne(nutListDataItem.getNut());
+
+								if ((nutListDataItem.getValue() != null) && (qtyUsed != null)) {
+									Double value = nutListDataItem.getValue() * qtyUsed;
+									// Express all as g
+									if (nutListDataItem.getUnit().startsWith("mg")) {
+										value = value / 100d;
+									}
+									if ((netWeight != null) && (netWeight != 0d)) {
+										value = value / netWeight;
+									}
+
+									
+									switch (nut.getNutCode()) {
+									case "FAT":
+										meatContentData.addFatPerc(value);
+										break;
+									case "PRO-":
+										meatContentData.addProteinPerc(value);
+										// HYP hydroxyproline (mg)
+										break;
+									case "HYP":
+										meatContentData.addCollagenPerc(8 * value);
+										// COLG collagen (mg)
+										break;
+									case "COLG":
+										meatContentData.addCollagenPerc(value);
+										break;
+									default:
+										break;
+									}
+
+								}
+								
+							}
+
+						} else if ((partProduct.getMeatContents() != null) && !partProduct.getMeatContents().isEmpty()) {
 
 							for (Map.Entry<MeatType, MeatContentData> entry : partProduct.getMeatContents().entrySet()) {
 								getOrCreateMeatData(formulatedProduct, entry.getKey()).merge(entry.getValue());
