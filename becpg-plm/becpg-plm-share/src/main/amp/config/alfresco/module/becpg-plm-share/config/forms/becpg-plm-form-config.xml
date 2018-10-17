@@ -7868,7 +7868,7 @@
 					<field id="bcpg:nutListFormulaErrorLog" label="hidden"/>
 				</appearance>
 			</form>
-			<form id="datagrid">
+			<form id="datagridWUsed">
 				<field-visibility>
 					<show id="bcpg:variantIds" force="true" />
 					<show id="bcpg:depthLevel" />
