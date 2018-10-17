@@ -50,6 +50,7 @@ import fr.becpg.repo.repository.annotation.AlfReadOnly;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.annotation.DataListView;
+import fr.becpg.repo.repository.annotation.InternalField;
 import fr.becpg.repo.repository.filters.DataListFilter;
 import fr.becpg.repo.repository.model.AbstractEffectiveDataItem;
 import fr.becpg.repo.repository.model.AspectAwareDataItem;
@@ -632,6 +633,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 
 	@AlfProp
 	@AlfQname(qname = "bcpg:meatContentData")
+	@InternalField
 	public String getMeatContentData() {
 		try {
 			return MeatContentData.toJsonString(meatContentData);

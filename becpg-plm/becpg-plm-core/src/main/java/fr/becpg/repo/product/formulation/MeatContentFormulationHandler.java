@@ -62,6 +62,8 @@ public class MeatContentFormulationHandler extends FormulationBaseHandler<Produc
 			logger.debug("no compo => no formulation");
 			return true;
 		}
+		
+		formulatedProduct.setMeatContentData(null);
 
 		Double netWeight = FormulationHelper.getNetWeight(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
 		FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
@@ -110,17 +112,17 @@ public class MeatContentFormulationHandler extends FormulationBaseHandler<Produc
 										
 										switch (nut.getNutCode()) {
 										case "FAT":
-											meatContentData.setFatPerc(value);
+											meatContentData.addFatPerc(value);
 											break;
 										case "PRO-":
-											meatContentData.setProteinPerc(value);
+											meatContentData.addProteinPerc(value);
 											// HYP hydroxyproline (mg)
 										case "HYP":
-											meatContentData.setCollagenPerc(8 * value);
+											meatContentData.addCollagenPerc(8 * value);
 											// COLG collagen (mg)
 											break;
 										case "COLG":
-											meatContentData.setCollagenPerc(value);
+											meatContentData.addCollagenPerc(value);
 											break;
 										default:
 											break;
@@ -128,8 +130,6 @@ public class MeatContentFormulationHandler extends FormulationBaseHandler<Produc
 
 									}
 								}
-								
-								logger.info("meatContentData: "+meatContentData);
 
 							}
 						} else {
