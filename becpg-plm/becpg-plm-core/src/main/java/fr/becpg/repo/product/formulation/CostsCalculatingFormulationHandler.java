@@ -162,7 +162,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 					.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 				Double qty = FormulationHelper.getQtyForCostByPackagingLevel(formulatedProduct, packagingListDataItem, nodeService);
 
-				visitPart(packagingListDataItem.getProduct(), costList, qty, null, netQty, null, mandatoryCharacts2, null, false);
+				visitPart(packagingListDataItem.getProduct(), costList, qty,  qty, netQty, netQty, mandatoryCharacts2, null, false);
 			}
 
 			addReqCtrlList(formulatedProduct.getReqCtrlList(), mandatoryCharacts2, getRequirementDataType());

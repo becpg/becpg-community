@@ -180,10 +180,28 @@ public class MeatContentData {
 	public void setProteinPerc(Double proteinPerc) {
 		this.proteinPerc = proteinPerc;
 	}
+	
+	public void addProteinPerc(Double value) {
+		if(proteinPerc!=null) {
+			proteinPerc+=value;
+		} else {
+			proteinPerc = value;
+		}
+	}
 
 	public Double getCollagenPerc() {
 		return collagenPerc;
 	}
+	
+
+	public void addCollagenPerc(Double value) {
+		if(collagenPerc!=null) {
+			collagenPerc+=value;
+		} else {
+			collagenPerc = value;
+		}
+	}
+
 
 	public void setCollagenPerc(Double collagenPerc) {
 		this.collagenPerc = collagenPerc;
@@ -195,6 +213,15 @@ public class MeatContentData {
 
 	public void setFatPerc(Double fatPerc) {
 		this.fatPerc = fatPerc;
+	}
+	
+
+	public void addFatPerc(Double value) {
+		if(fatPerc!=null) {
+			fatPerc+=value;
+		} else {
+			fatPerc = value;
+		}
 	}
 
 	public void merge(MeatContentData meatContentData) {
@@ -373,9 +400,22 @@ public class MeatContentData {
 
 	@Override
 	public String toString() {
-		return "MeatContentData [fatLimitPerc=" + fatLimitPerc + ", colLimitPerc=" + colLimitPerc + ", maxFat=" + maxFat + ", maxCol=" + maxCol
-				+ ", exColPerc=" + exColPerc + ", exCTPerc=" + exCTPerc + ", exFatPerc=" + exFatPerc + ", meatContent=" + meatContent
-				+ ", proteinPerc=" + proteinPerc + ", collagenPerc=" + collagenPerc + ", fatPerc=" + fatPerc + "]";
+		return "MAXFat=" + maxFat 
+				+ "\nMAX Col.=" + maxCol
+				+ "\n%EXCol.=" + exColPerc 
+				+ "\n%EXCT=" + exCTPerc 
+				+ "\n%EXFat=" + exFatPerc 
+				+ "\nMeat=" + meatContent
+				+ "\n%Protein=" + proteinPerc 
+				+ "\n%Collagen=" + collagenPerc 
+				+ "\n%Fat=" + fatPerc;
+	}
+	
+	
+	public String toHTMLString() {
+		return "<table><th><td>MAX<sub>FAT</sub></td><td>MAX<sub>COL</sub></td><td>MEAT</td></th>"+
+				"<tr><td>"+maxFat+"</td><td>"+maxCol+"</td><td>"+meatContent+"</td></tr>"
+						+ "</table>";
 	}
 
 }

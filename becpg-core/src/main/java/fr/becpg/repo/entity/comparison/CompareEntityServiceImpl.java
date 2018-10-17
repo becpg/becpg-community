@@ -220,8 +220,6 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 					if (size1 != size2) {
 						properties1 = new TreeMap<>();
 						properties2 = new TreeMap<>();
-						properties1.put(ContentModel.PROP_NAME, fileName1);
-						properties2.put(ContentModel.PROP_NAME, fileName2);
 
 						StructCompareResultDataItem structComparison = new StructCompareResultDataItem(ContentModel.TYPE_CONTENT, depthLevel,
 								StructCompareOperator.Modified, null, fileNodeRef1, fileNodeRef2, properties1, properties2);
