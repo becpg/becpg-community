@@ -24,7 +24,7 @@
     </parameters>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="1347">
-            <property name="FILELIST">becpg-core/src/main/resources/beCPG/birt/system/CompareEntities2.xml</property>
+            <property name="FILELIST">src/main/resources/beCPG/birt/system/CompareEntities2.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -121,6 +121,11 @@
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">isDifferent</text-property>
                 </structure>
+                <structure>
+                    <property name="columnName">entityListQName</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">entityListQName</text-property>
+                </structure>
             </list-property>
             <list-property name="filter">
                 <structure>
@@ -139,7 +144,7 @@
                 </structure>
                 <structure>
                     <property name="operator">is-true</property>
-                    <expression name="expr" type="javascript">(row["entityList"] != "Composition" &amp;&amp; row["entityList"] != "Emballages")</expression>
+                    <expression name="expr" type="javascript">(row["entityListQName"] != "bcpg:compoList" &amp;&amp; row["entityListQName"] != "bcpg:packagingList")</expression>
                 </structure>
                 <structure>
                     <property name="operator">ne</property>
@@ -224,6 +229,11 @@
                         <property name="position">13</property>
                         <property name="name">isDifferent</property>
                         <property name="dataType">boolean</property>
+                    </structure>
+                    <structure>
+                        <property name="position">14</property>
+                        <property name="name">entityListQName</property>
+                        <property name="dataType">string</property>
                     </structure>
                 </list-property>
             </structure>
@@ -320,8 +330,15 @@
                     <property name="dataType">boolean</property>
                     <property name="nativeDataType">16</property>
                 </structure>
+                <structure>
+                    <property name="position">14</property>
+                    <property name="name">entityListQName</property>
+                    <property name="nativeName">entityListQName</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entitiesComparison/comparisonRows/comparisonRow]#:#{entityList;STRING;/@entityList},{characteristic;STRING;/@characteristic},{property;STRING;/@property},{value1;STRING;/@value1},{value2;STRING;/@value2},{value3;STRING;/@value3},{value4;STRING;/@value4},{entity1;STRING;../@entity1},{entity2;STRING;../@entity2},{entity3;STRING;../@entity3},{entity4;STRING;../@entity4},{propertyQName;STRING;/@propertyQName},{isDifferent;BOOLEAN;/@isDifferent}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entitiesComparison/comparisonRows/comparisonRow]#:#{entityList;STRING;/@entityList},{characteristic;STRING;/@characteristic},{property;STRING;/@property},{value1;STRING;/@value1},{value2;STRING;/@value2},{value3;STRING;/@value3},{value4;STRING;/@value4},{entity1;STRING;../@entity1},{entity2;STRING;../@entity2},{entity3;STRING;../@entity3},{entity4;STRING;../@entity4},{propertyQName;STRING;/@propertyQName},{isDifferent;BOOLEAN;/@isDifferent},{entityListQName;STRING;/@entityListQName}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -481,50 +498,47 @@ row["properties2"]
                 <structure>
                     <property name="columnName">comparison</property>
                     <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">comparison</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">entityList</property>
                     <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">entityList</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">depthLevel</property>
                     <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">depthLevel</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">item1</property>
                     <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">item1</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">item2</property>
                     <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">item2</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">operator</property>
                     <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">operator</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">properties1</property>
                     <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">properties1</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">properties2</property>
                     <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">properties2</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">entityListQName</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">entityListQName</text-property>
                 </structure>
             </list-property>
             <list-property name="filter">
@@ -537,7 +551,7 @@ row["properties2"]
                 </structure>
                 <structure>
                     <property name="operator">is-true</property>
-                    <expression name="expr" type="javascript">(row["entityList"] == "Composition" || row["entityList"] == "Emballages" || row["entityList"] == "Contenu")</expression>
+                    <expression name="expr" type="javascript">(row["entityListQName"] == "bcpg:compoList" || row["entityListQName"] == "bcpg:packagingList" || row["entityListQName"] == "cm:content" || row["entityListQName"] == "mpm:processList")</expression>
                 </structure>
             </list-property>
             <list-property name="parameters"/>
@@ -585,16 +599,21 @@ row["properties2"]
                     </structure>
                     <structure>
                         <property name="position">9</property>
+                        <property name="name">entityListQName</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
                         <property name="name">tableCheck</property>
                         <property name="dataType">integer</property>
                     </structure>
                     <structure>
-                        <property name="position">10</property>
+                        <property name="position">11</property>
                         <property name="name">displayProperties1</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">11</property>
+                        <property name="position">12</property>
                         <property name="name">displayProperties2</property>
                         <property name="dataType">string</property>
                     </structure>
@@ -607,59 +626,66 @@ row["properties2"]
                     <property name="name">comparison</property>
                     <property name="nativeName">comparison</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">0</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">2</property>
                     <property name="name">entityList</property>
                     <property name="nativeName">entityList</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">0</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">3</property>
                     <property name="name">depthLevel</property>
                     <property name="nativeName">depthLevel</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">0</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">4</property>
                     <property name="name">item1</property>
                     <property name="nativeName">item1</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">0</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">5</property>
                     <property name="name">item2</property>
                     <property name="nativeName">item2</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">0</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">6</property>
                     <property name="name">operator</property>
                     <property name="nativeName">operator</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">0</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">7</property>
                     <property name="name">properties1</property>
                     <property name="nativeName">properties1</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">0</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">8</property>
                     <property name="name">properties2</property>
                     <property name="nativeName">properties2</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">0</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">entityListQName</property>
+                    <property name="nativeName">entityListQName</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entitiesComparison/structComparisonRows/structComparisonRow]#:#{comparison;STRING;/@comparison},{entityList;STRING;/@entityList},{depthLevel;STRING;/@depthLevel},{item1;STRING;/@item1},{item2;STRING;/@item2},{operator;STRING;/@operator},{properties1;STRING;/@properties1},{properties2;STRING;/@properties2}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entitiesComparison/structComparisonRows/structComparisonRow]#:#{comparison;STRING;/@comparison},{entityList;STRING;/@entityList},{depthLevel;STRING;/@depthLevel},{item1;STRING;/@item1},{item2;STRING;/@item2},{operator;STRING;/@operator},{properties1;STRING;/@properties1},{properties2;STRING;/@properties2},{entityListQName;STRING;/@entityListQName}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
