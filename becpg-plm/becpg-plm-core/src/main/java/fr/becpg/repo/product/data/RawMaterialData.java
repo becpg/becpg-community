@@ -8,7 +8,9 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.product.data.meat.MeatType;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
+import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.MultiLevelLeaf;
@@ -24,6 +26,19 @@ public class RawMaterialData extends ProductData {
 	
 	private List<NodeRef> supplierPlants = new ArrayList<>();
 	
+	private MeatType meatType;
+	
+	
+	@AlfProp
+	@AlfQname(qname="bcpg:meatType")
+	public MeatType getMeatType() {
+		return meatType;
+	}
+
+	public void setMeatType(MeatType meatType) {
+		this.meatType = meatType;
+	}
+
 	@AlfMultiAssoc
 	@AlfQname(qname="bcpg:suppliers")
 	public List<NodeRef> getSuppliers() {
@@ -49,6 +64,7 @@ public class RawMaterialData extends ProductData {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
+		result = prime * result + ((meatType == null) ? 0 : meatType.hashCode());
 		result = prime * result + ((supplierPlants == null) ? 0 : supplierPlants.hashCode());
 		result = prime * result + ((suppliers == null) ? 0 : suppliers.hashCode());
 		return result;
@@ -64,6 +80,8 @@ public class RawMaterialData extends ProductData {
 		if (getClass() != obj.getClass())
 			return false;
 		RawMaterialData other = (RawMaterialData) obj;
+		if (meatType != other.meatType)
+			return false;
 		if (supplierPlants == null) {
 			if (other.supplierPlants != null)
 				return false;

@@ -37,7 +37,7 @@ public class AggregateRule {
 		super();
 		this.name = name;
 		this.mlNodeService = mlNodeService; 
-
+		this.ruleNodeRef = ruleNodeRef;
 		if (locales != null) {
 			for (String tmp : locales) {
 				this.locales.add(MLTextHelper.parseLocale(tmp));

@@ -33,10 +33,14 @@ public class NutrientFormulationHelper {
 
 	private static UsNutrientRegulation usNutrientRegulation 
 		= new UsNutrientRegulation("beCPG/databases/nuts/UsNutrientRegulation_2016.csv");
+	private static UsNutrientRegulation caNutrientRegulation 
+		= new UsNutrientRegulation("beCPG/databases/nuts/CanadianNutrientRegulation_2017.csv");
+	private static EuropeanNutrientRegulation chineseNutrientRegulation 
+		= new EuropeanNutrientRegulation("beCPG/databases/nuts/ChineseNutrientRegulation.csv");
 	private static UsNutrientRegulation usNutrientRegulation2013 
-	= new UsNutrientRegulation("beCPG/databases/nuts/UsNutrientRegulation_2013_2020.csv");
-	private static EuropeanNutrientRegulation europeanNutrientRegulation = new EuropeanNutrientRegulation(
-			"beCPG/databases/nuts/EuNutrientRegulation.csv");
+		= new UsNutrientRegulation("beCPG/databases/nuts/UsNutrientRegulation_2013_2020.csv");
+	private static EuropeanNutrientRegulation europeanNutrientRegulation 
+		= new EuropeanNutrientRegulation("beCPG/databases/nuts/EuNutrientRegulation.csv");
 
 	public static Double extractValuePerServing(String roundedValue, Locale locale) {
 		return extractValuePerServing(roundedValue, getLocalKey(locale));
@@ -100,6 +104,10 @@ public class NutrientFormulationHelper {
 	private static String getLocalKey(Locale locale) {
 		if (locale.getCountry().equals("US")) {
 			return "US";
+		} else if (locale.getCountry().equals("CA")) {
+			return "CA";
+		} else if (locale.getCountry().equals("CN")) {
+			return "CN";
 		}
 		return "EU";
 	}
@@ -257,6 +265,18 @@ public class NutrientFormulationHelper {
 			 ret.add("US");
 			 ret.add("US_2013");
 		 }
+		 if(MLTextHelper.isSupportedLocale(Locale.CANADA) 
+				 || MLTextHelper.isSupportedLocale(Locale.CANADA_FRENCH)
+				){
+			 ret.add("CA");
+		 }
+		 if(MLTextHelper.isSupportedLocale(Locale.CHINESE) 
+				 || MLTextHelper.isSupportedLocale(Locale.SIMPLIFIED_CHINESE)
+				 || MLTextHelper.isSupportedLocale(Locale.TRADITIONAL_CHINESE)
+				){
+			 ret.add("CN");
+		 }
+		 
 		 ret.add("EU");
 		 
 		return ret;
@@ -281,6 +301,10 @@ public class NutrientFormulationHelper {
 			return usNutrientRegulation;
 		} else if("US_2013".equals(key)){
 			return usNutrientRegulation2013;
+		} else if("CA".equals(key)){
+			return caNutrientRegulation;
+		} else if("CN".equals(key)){
+			return chineseNutrientRegulation;
 		}
 		return europeanNutrientRegulation;
 	}

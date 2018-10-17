@@ -2574,6 +2574,7 @@
 					<show id="bcpg:reconstitutionPriority" />
 					<show id="bcpg:diluentRef" />
 					<show id="bcpg:targetReconstitutionRef" />
+					<show id="bcpg:meatType" force="false" />
 					<show id="bcpg:ingTypeV2" force="true" />
 					<show id="bcpg:ingCEECode" force="true" />
 					<show id="bcpg:useByDate" force="true" />
@@ -2728,7 +2729,7 @@
 						</control>
 					</field>
 					
-					
+					<field id="bcpg:meatType" set="consumer" />
 					
 					<field id="bcpg:ingTypeV2" set="consumer">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
@@ -5073,6 +5074,7 @@
 		<forms>
 			<form>
 				<field-visibility>
+					<show id="gs1:nutrientTypeCode" force="true" />
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
@@ -5080,12 +5082,14 @@
 					<show id="bcpg:nutType" />
 					<show id="bcpg:nutUnit" />
 					<show id="bcpg:nutGDA" />
-					<show id="gs1:nutrientTypeCode" force="true" />
+					
 					<show id="bcpg:nutUL" />
 					<show id="bcpg:nutFormula" />
 					<show id="rep:reportLocales" force="true" />
 				</field-visibility>
 				<appearance>
+				
+					<field id="gs1:nutrientTypeCode" help-id="becpg.forms.help.nutrientTypeCode" />
 					<field id="cm:description">
 						<control>
 							<control-param name="activateLinks">true</control-param>
@@ -5101,7 +5105,6 @@
         		 				 <control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
-					<field id="gs1:nutrientTypeCode" help-id="becpg.forms.help.nutrientTypeCode" />
 				</appearance>
 			</form>
 		</forms>
@@ -5113,6 +5116,7 @@
 			<form>
 
 				<field-visibility>
+					<show id="gs1:nutrientTypeCode" force="true" />
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
@@ -5120,13 +5124,14 @@
 					<show id="bcpg:nutType" />
 					<show id="bcpg:nutUnit" />
 					<show id="bcpg:nutGDA" />
-					<show id="gs1:nutrientTypeCode" force="true" />
 					<show id="bcpg:nutUL" />
 					<show id="bcpg:nutFormula" />
 					<show id="rep:reportLocales" force="true" />
 				</field-visibility>
 
 				<appearance>
+				
+					<field id="gs1:nutrientTypeCode" help-id="becpg.forms.help.nutrientTypeCode" />
 					<field id="cm:description">
 						<control>
 							<control-param name="activateLinks">true</control-param>
@@ -5142,13 +5147,13 @@
         		 				 <control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
-					<field id="gs1:nutrientTypeCode" help-id="becpg.forms.help.nutrientTypeCode" />
 				</appearance>
 			</form>
 
 			<!-- Data Grid view -->
 			<form id="filter">
 				<field-visibility>
+					<show id="gs1:nutrientTypeCode" force="true" />
 					<show id="bcpg:charactName" />
 					<show id="bcpg:nutGroup" />
 					<show id="bcpg:nutType" />
@@ -5173,22 +5178,16 @@
 
 			<form id="datagrid">
 				<field-visibility>
+					<show id="gs1:nutrientTypeCode" force="true" />
 					<show id="bcpg:charactName" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:nutGroup" />
 					<show id="bcpg:nutType" />
 					<show id="bcpg:nutUnit" />
 					<show id="bcpg:nutGDA" />
-					<show id="gs1:nutrientTypeCode" force="true" />
 					<show id="bcpg:nutUL" />
 					<show id="rep:reportLocales" />
 				</field-visibility>
-				
-				<appearance>
-					<field id="gs1:nutrientTypeCode">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
-					</field>
-				</appearance>
 			</form>
 		
 			<form id="sub-datagrid">
