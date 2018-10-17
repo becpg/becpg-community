@@ -285,6 +285,10 @@ public class EntityReportServiceImpl implements EntityReportService {
 															logger.debug("beCPGReportEngine createReport: " + entityNodeRef + " for document "
 																	+ documentName + " (" + documentNodeRef + ")");
 															
+															if(logger.isTraceEnabled()) {
+																logger.trace("DataSource XML : \n" + filterByReportKind(reportData.getXmlDataSource(), tplNodeRef).asXML() + "\n\n");
+															}
+															
 															beCPGReportEngine.createReport(tplNodeRef,
 																	new ByteArrayInputStream(filterByReportKind(reportData.getXmlDataSource(), tplNodeRef).asXML().getBytes()),
 																	writer.getContentOutputStream(), params);
