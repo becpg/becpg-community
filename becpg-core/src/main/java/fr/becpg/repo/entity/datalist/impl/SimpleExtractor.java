@@ -25,7 +25,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.alfresco.query.PagingRequest;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AccessStatus;
@@ -143,15 +142,18 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 					logger.debug("DataType to filter :" + dataListFilter.getDataType());
 				}
 
-//				int skipOffset = (pagination.getPage() - 1) * pagination.getPageSize();
-//				int requestTotalCountMax = skipOffset + RepoConsts.MAX_RESULTS_1000;
+//				if (AuthenticationUtil.isMtEnabled()) {
+//					int skipOffset = (pagination.getPage() - 1) * pagination.getPageSize();
+//					int requestTotalCountMax = skipOffset + RepoConsts.MAX_RESULTS_1000;
+//	
+//					PagingRequest pageRequest = new PagingRequest(skipOffset, pagination.getPageSize(), pagination.getQueryExecutionId());
+//					pageRequest.setRequestTotalCountMax(requestTotalCountMax);
 //
-//				PagingRequest pageRequest = new PagingRequest(skipOffset, pagination.getPageSize(), pagination.getQueryExecutionId());
-//				pageRequest.setRequestTotalCountMax(requestTotalCountMax);
-//
-//				return pagination.paginate(queryBuilder.childFileFolders(pageRequest));
+//					results = pagination.paginate(queryBuilder.childFileFolders(pageRequest));
+//				} else {
+					results = queryBuilder.fastChildrenByType();
+			//	}
 				
-				results = queryBuilder.fastChildrenByType();
 				pagination.setQueryExecutionId(paginatedSearchCache.storeSearchResults(results));
 
 			} else if (dataListFilter.isSimpleItem()) {
