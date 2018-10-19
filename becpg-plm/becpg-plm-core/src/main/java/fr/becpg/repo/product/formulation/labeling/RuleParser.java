@@ -231,11 +231,9 @@ public abstract class RuleParser {
 	
 	private void addMeatContentRule( String name, List<NodeRef> components, List<NodeRef> replacement, String formula,
 			List<String> locales) {
-
-		MeatType meatType = MeatType.valueOf(formula);
-
+		
 		for (NodeRef component : components) {
-			MeatContentRule meatContentRule = new MeatContentRule(meatType, locales);
+			MeatContentRule meatContentRule = new MeatContentRule(formula, locales);
 
 			if ((replacement != null) && !replacement.isEmpty()) {
 				meatContentRule.setReplacement(replacement.get(0));

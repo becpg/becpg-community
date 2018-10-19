@@ -5,7 +5,7 @@ public enum MeatType {
 
 	public static boolean isMeatType(String meatType) {
 
-		return "Mammals".equals(meatType) || "Porcines".equals(meatType) || "BirdsAndRabbits".equals(meatType);
+		return meatType != null && (meatType.startsWith("Mammals") || meatType.startsWith("Porcines") || meatType.startsWith("BirdsAndRabbits"));
 
 	}
 

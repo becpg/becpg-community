@@ -9,6 +9,8 @@ import org.json.JSONObject;
 
 public class MeatContentData {
 
+	Double qtyPerc = 0d;
+	
 	/**
 	 * The limit for the fat content is the percentage of fat permitted in a
 	 * ‘meat’ mixture for a particular species as defined in Regulation (EC) o.
@@ -69,9 +71,11 @@ public class MeatContentData {
 
 	Double fatPerc = 0d;
 
-	public MeatContentData(MeatType meatType) {
+	public MeatContentData(String meatTypeKey) {
 		super();
 
+		MeatType meatType = MeatType.valueOf(meatTypeKey.split("-")[0]);
+		
 		switch (meatType) {
 		case Mammals:
 			this.fatLimitPerc = 25;
@@ -91,6 +95,12 @@ public class MeatContentData {
 
 	public void calculateMeatContent() {
 
+		if(qtyPerc!=null && qtyPerc!=0d) {
+			fatPerc = fatPerc * (100d /qtyPerc);
+			proteinPerc = proteinPerc * (100d /qtyPerc);
+			collagenPerc = collagenPerc * (100d /qtyPerc);
+		}
+		
 		/**
 		 * Step 4: Calculate the maximum permitted connective tissue content
 		 * expressed as collagen (MAX COL) using equation 1
@@ -103,14 +113,17 @@ public class MeatContentData {
 		if (collagenPerc > maxCol) {
 			// step 5
 			exColPerc = (collagenPerc - maxCol);
-			exCTPerc = exColPerc * 4.625; // i.e. 37/8
-
-			// Connective tissue for this species must be labelled
-			// as a separate ingredient in the ingredients list (e.g.
-			// Beef connective tissue)
-
-			maxFat = (fatLimitPerc * (100 - exCTPerc - fatPerc)) / (100 - fatLimitPerc);
-
+			
+			if(exColPerc > 0) {
+				exCTPerc = exColPerc * 4.625; // i.e. 37/8
+			} else {
+				exCTPerc = 0d;
+			}
+				// Connective tissue for this species must be labelled
+				// as a separate ingredient in the ingredients list (e.g.
+				// Beef connective tissue)
+				maxFat = (fatLimitPerc * (100 - exCTPerc - fatPerc)) / (100 - fatLimitPerc);
+			
 		} else {
 			exColPerc = 0d;
 			exCTPerc = 0d;
@@ -128,7 +141,6 @@ public class MeatContentData {
 
 		if (fatPerc > maxFat) {
 			exFatPerc = fatPerc - maxFat;
-
 		} else {
 			exFatPerc = 0d;
 		}
@@ -193,7 +205,6 @@ public class MeatContentData {
 		return collagenPerc;
 	}
 	
-
 	public void addCollagenPerc(Double value) {
 		if(collagenPerc!=null) {
 			collagenPerc+=value;
@@ -202,9 +213,25 @@ public class MeatContentData {
 		}
 	}
 
-
 	public void setCollagenPerc(Double collagenPerc) {
 		this.collagenPerc = collagenPerc;
+	}
+	
+	
+	public void addQtyPerc(Double value) {
+		if(qtyPerc!=null) {
+			qtyPerc+=value;
+		} else {
+			qtyPerc = value;
+		}
+	}
+
+	public Double getQtyPerc() {
+		return qtyPerc;
+	}
+
+	public void setQtyPerc(Double qtyPerc) {
+		this.qtyPerc = qtyPerc;
 	}
 
 	public Double getFatPerc() {
@@ -215,7 +242,6 @@ public class MeatContentData {
 		this.fatPerc = fatPerc;
 	}
 	
-
 	public void addFatPerc(Double value) {
 		if(fatPerc!=null) {
 			fatPerc+=value;
@@ -224,7 +250,8 @@ public class MeatContentData {
 		}
 	}
 
-	public void merge(MeatContentData meatContentData) {
+	public void merge(MeatContentData meatContentData, Double partQtyPerc) {
+		
 		if (fatPerc == null) {
 			fatPerc = 0d;
 		}
@@ -234,26 +261,39 @@ public class MeatContentData {
 		if (collagenPerc == null) {
 			collagenPerc = 0d;
 		}
-
-		if (meatContentData.getFatPerc() != null) {
-			fatPerc += meatContentData.getFatPerc();
+		if(this.qtyPerc == null) {
+			this.qtyPerc = 0d;
 		}
-		if (meatContentData.getProteinPerc() != null) {
-			proteinPerc += meatContentData.getProteinPerc();
-		}
-		if (meatContentData.getCollagenPerc() != null) {
-			collagenPerc += meatContentData.getCollagenPerc();
+		
+		if(partQtyPerc!=null) {
+			if (meatContentData.getQtyPerc() != null) {
+				 // 30 % SF  Dans lequels j'avais 10% Viande -> 10% * 30 /100 -> 0.3% viande dans PF
+				partQtyPerc = meatContentData.getQtyPerc() * partQtyPerc / 100d;
+			}
+			
+			this.qtyPerc += partQtyPerc;
+				
+			if (meatContentData.getFatPerc() != null) {
+				// meatContentData.getFatPerc() est pour 100% Viande -> 0.3% 				
+				fatPerc += (meatContentData.getFatPerc() * partQtyPerc) / 100d;
+			}
+			if (meatContentData.getProteinPerc() != null) {
+				proteinPerc += (meatContentData.getProteinPerc() * partQtyPerc) / 100d;
+			}
+			if (meatContentData.getCollagenPerc() != null) {
+				collagenPerc += (meatContentData.getCollagenPerc() * partQtyPerc) / 100d;
+			}
 		}
 
 	}
 
-	public static String toJsonString(Map<MeatType, MeatContentData> meatContentData) throws JSONException {
+	public static String toJsonString(Map<String, MeatContentData> meatContentData) throws JSONException {
 		if(meatContentData ==null || meatContentData.isEmpty()) {
 			return null;
 		}
 		
 		JSONObject ret = new JSONObject();
-		for (Map.Entry<MeatType, MeatContentData> entry : meatContentData.entrySet()) {
+		for (Map.Entry<String, MeatContentData> entry : meatContentData.entrySet()) {
 			ret.put(entry.getKey().toString(), entry.getValue().toJson());
 		}
 		return ret.toString();
@@ -264,27 +304,30 @@ public class MeatContentData {
 		ret.put("fatPerc", fatPerc);
 		ret.put("proteinPerc", proteinPerc);
 		ret.put("collagenPerc", collagenPerc);
+		ret.put("qtyPerc", qtyPerc);
 		return ret;
 	}
 
-	public static Map<MeatType, MeatContentData> parseJsonString(String meatContentdata) throws JSONException {
-		Map<MeatType, MeatContentData> ret = new HashMap<>();
+	public static Map<String, MeatContentData> parseJsonString(String meatContentdata) throws JSONException {
+		Map<String, MeatContentData> ret = new HashMap<>();
 		if (meatContentdata != null) {
 			JSONObject obj = new JSONObject(meatContentdata);
 			for (Iterator<?> i = obj.keys(); i.hasNext();) {
 				String valueKey = (String) i.next();
-				ret.put(MeatType.valueOf(valueKey), MeatContentData.parse(MeatType.valueOf(valueKey), (JSONObject) obj.get(valueKey)));
+				ret.put(valueKey, MeatContentData.parse(valueKey, (JSONObject) obj.get(valueKey)));
 			}
 		}
 		return ret;
 	}
 
-	private static MeatContentData parse(MeatType meatType, JSONObject jsonObject) throws JSONException {
+	private static MeatContentData parse(String meatType, JSONObject jsonObject) throws JSONException {
 		MeatContentData ret = new MeatContentData(meatType);
 		ret.setFatPerc(jsonObject.getDouble("fatPerc"));
 		ret.setProteinPerc(jsonObject.getDouble("proteinPerc"));
 		ret.setCollagenPerc(jsonObject.getDouble("collagenPerc"));
 		ret.calculateMeatContent();
+		//Important keep after
+		ret.setQtyPerc(jsonObject.getDouble("qtyPerc"));
 		return ret;
 	}
 
@@ -292,123 +335,109 @@ public class MeatContentData {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = (prime * result) + ((colLimitPerc == null) ? 0 : colLimitPerc.hashCode());
-		result = (prime * result) + ((collagenPerc == null) ? 0 : collagenPerc.hashCode());
-		result = (prime * result) + ((exCTPerc == null) ? 0 : exCTPerc.hashCode());
-		result = (prime * result) + ((exColPerc == null) ? 0 : exColPerc.hashCode());
-		result = (prime * result) + ((exFatPerc == null) ? 0 : exFatPerc.hashCode());
-		result = (prime * result) + ((fatLimitPerc == null) ? 0 : fatLimitPerc.hashCode());
-		result = (prime * result) + ((fatPerc == null) ? 0 : fatPerc.hashCode());
-		result = (prime * result) + ((maxCol == null) ? 0 : maxCol.hashCode());
-		result = (prime * result) + ((maxFat == null) ? 0 : maxFat.hashCode());
-		result = (prime * result) + ((meatContent == null) ? 0 : meatContent.hashCode());
-		result = (prime * result) + ((proteinPerc == null) ? 0 : proteinPerc.hashCode());
+		result = prime * result + ((colLimitPerc == null) ? 0 : colLimitPerc.hashCode());
+		result = prime * result + ((collagenPerc == null) ? 0 : collagenPerc.hashCode());
+		result = prime * result + ((exCTPerc == null) ? 0 : exCTPerc.hashCode());
+		result = prime * result + ((exColPerc == null) ? 0 : exColPerc.hashCode());
+		result = prime * result + ((exFatPerc == null) ? 0 : exFatPerc.hashCode());
+		result = prime * result + ((fatLimitPerc == null) ? 0 : fatLimitPerc.hashCode());
+		result = prime * result + ((fatPerc == null) ? 0 : fatPerc.hashCode());
+		result = prime * result + ((maxCol == null) ? 0 : maxCol.hashCode());
+		result = prime * result + ((maxFat == null) ? 0 : maxFat.hashCode());
+		result = prime * result + ((meatContent == null) ? 0 : meatContent.hashCode());
+		result = prime * result + ((proteinPerc == null) ? 0 : proteinPerc.hashCode());
+		result = prime * result + ((qtyPerc == null) ? 0 : qtyPerc.hashCode());
 		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
+		if (this == obj)
 			return true;
-		}
-		if (obj == null) {
+		if (obj == null)
 			return false;
-		}
-		if (getClass() != obj.getClass()) {
+		if (getClass() != obj.getClass())
 			return false;
-		}
 		MeatContentData other = (MeatContentData) obj;
 		if (colLimitPerc == null) {
-			if (other.colLimitPerc != null) {
+			if (other.colLimitPerc != null)
 				return false;
-			}
-		} else if (!colLimitPerc.equals(other.colLimitPerc)) {
+		} else if (!colLimitPerc.equals(other.colLimitPerc))
 			return false;
-		}
 		if (collagenPerc == null) {
-			if (other.collagenPerc != null) {
+			if (other.collagenPerc != null)
 				return false;
-			}
-		} else if (!collagenPerc.equals(other.collagenPerc)) {
+		} else if (!collagenPerc.equals(other.collagenPerc))
 			return false;
-		}
 		if (exCTPerc == null) {
-			if (other.exCTPerc != null) {
+			if (other.exCTPerc != null)
 				return false;
-			}
-		} else if (!exCTPerc.equals(other.exCTPerc)) {
+		} else if (!exCTPerc.equals(other.exCTPerc))
 			return false;
-		}
 		if (exColPerc == null) {
-			if (other.exColPerc != null) {
+			if (other.exColPerc != null)
 				return false;
-			}
-		} else if (!exColPerc.equals(other.exColPerc)) {
+		} else if (!exColPerc.equals(other.exColPerc))
 			return false;
-		}
 		if (exFatPerc == null) {
-			if (other.exFatPerc != null) {
+			if (other.exFatPerc != null)
 				return false;
-			}
-		} else if (!exFatPerc.equals(other.exFatPerc)) {
+		} else if (!exFatPerc.equals(other.exFatPerc))
 			return false;
-		}
 		if (fatLimitPerc == null) {
-			if (other.fatLimitPerc != null) {
+			if (other.fatLimitPerc != null)
 				return false;
-			}
-		} else if (!fatLimitPerc.equals(other.fatLimitPerc)) {
+		} else if (!fatLimitPerc.equals(other.fatLimitPerc))
 			return false;
-		}
 		if (fatPerc == null) {
-			if (other.fatPerc != null) {
+			if (other.fatPerc != null)
 				return false;
-			}
-		} else if (!fatPerc.equals(other.fatPerc)) {
+		} else if (!fatPerc.equals(other.fatPerc))
 			return false;
-		}
 		if (maxCol == null) {
-			if (other.maxCol != null) {
+			if (other.maxCol != null)
 				return false;
-			}
-		} else if (!maxCol.equals(other.maxCol)) {
+		} else if (!maxCol.equals(other.maxCol))
 			return false;
-		}
 		if (maxFat == null) {
-			if (other.maxFat != null) {
+			if (other.maxFat != null)
 				return false;
-			}
-		} else if (!maxFat.equals(other.maxFat)) {
+		} else if (!maxFat.equals(other.maxFat))
 			return false;
-		}
 		if (meatContent == null) {
-			if (other.meatContent != null) {
+			if (other.meatContent != null)
 				return false;
-			}
-		} else if (!meatContent.equals(other.meatContent)) {
+		} else if (!meatContent.equals(other.meatContent))
 			return false;
-		}
 		if (proteinPerc == null) {
-			if (other.proteinPerc != null) {
+			if (other.proteinPerc != null)
 				return false;
-			}
-		} else if (!proteinPerc.equals(other.proteinPerc)) {
+		} else if (!proteinPerc.equals(other.proteinPerc))
 			return false;
-		}
+		if (qtyPerc == null) {
+			if (other.qtyPerc != null)
+				return false;
+		} else if (!qtyPerc.equals(other.qtyPerc))
+			return false;
 		return true;
+	}
+	
+	public boolean isApplied() {
+		return meatContent!=null && meatContent < 100;
 	}
 
 	@Override
 	public String toString() {
 		return "MAXFat=" + maxFat 
-				+ "\nMAX Col.=" + maxCol
+				+ "\nMAXCol.=" + maxCol
 				+ "\n%EXCol.=" + exColPerc 
 				+ "\n%EXCT=" + exCTPerc 
 				+ "\n%EXFat=" + exFatPerc 
 				+ "\nMeat=" + meatContent
 				+ "\n%Protein=" + proteinPerc 
 				+ "\n%Collagen=" + collagenPerc 
-				+ "\n%Fat=" + fatPerc;
+				+ "\n%Fat=" + fatPerc
+				+ "\n%Qty=" + qtyPerc;
 	}
 	
 	
