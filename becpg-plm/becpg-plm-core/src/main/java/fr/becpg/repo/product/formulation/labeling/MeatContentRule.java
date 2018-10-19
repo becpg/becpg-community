@@ -8,17 +8,16 @@ import java.util.Set;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.helper.MLTextHelper;
-import fr.becpg.repo.product.data.meat.MeatType;
 
 public class MeatContentRule {
 
 	NodeRef replacement;
-	MeatType meatType;
+	String meatType;
 	NodeRef component;
 	
 	Set<Locale> locales = new HashSet<>();
 
-	public MeatContentRule(MeatType meatType, List<String> locales) {
+	public MeatContentRule(String meatType, List<String> locales) {
 		super();
 		this.meatType = meatType;
 		
@@ -30,11 +29,11 @@ public class MeatContentRule {
 
 	}
 
-	public MeatType getMeatType() {
+	public String getMeatType() {
 		return meatType;
 	}
 
-	public void setMeatType(MeatType meatType) {
+	public void setMeatType(String meatType) {
 		this.meatType = meatType;
 	}
 

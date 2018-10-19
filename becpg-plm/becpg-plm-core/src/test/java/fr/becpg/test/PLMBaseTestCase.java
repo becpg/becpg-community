@@ -194,6 +194,18 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)),
 					BeCPGModel.TYPE_LIST_VALUE, properties);
 		}
+		
+		// meatTypes
+		NodeRef meatTypesFolder = entitySystemService.getSystemEntityDataList(listsFolder, PlmRepoConsts.PATH_MEAT_TYPES);
+		String[] meatTypes = { "Mammals", "Porcines","BirdsAndRabbits" };
+		for (String meatType : meatTypes) {
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(BeCPGModel.PROP_LV_VALUE, meatType);
+			nodeService.createNode(meatTypesFolder, ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)),
+					BeCPGModel.TYPE_LIST_VALUE, properties);
+		}
+		
 		// nutFactsMethods
 		NodeRef nutFactsMethodsFolder = entitySystemService.getSystemEntityDataList(listsFolder, PlmRepoConsts.PATH_NUT_FACTS_METHODS);
 		String[] nutFactsMethods = { "Formulation", "CIQUAL", "USDA" };

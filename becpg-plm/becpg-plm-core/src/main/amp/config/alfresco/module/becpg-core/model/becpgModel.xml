@@ -574,13 +574,20 @@
 			</parameter>
 		</constraint>
 		
-		<constraint name="bcpg:meatTypes" type="LIST">
-			<parameter name="allowedValues">
+		<constraint name="bcpg:meatTypes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
 				<list>
-					<value>Mammals</value>
-					<value>Porcines</value>
-					<value>BirdsAndRabbits</value>
+					<value>/System/Lists/bcpg:entityLists/MeatTypes</value>
 				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>bcpg:lvValue</value>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
 			</parameter>
 		</constraint>
 

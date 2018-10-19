@@ -130,8 +130,8 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	 * Meat aspect
 	 */
 
-	private Map<MeatType, MeatContentData> meatContentData = new HashMap<>();
-	private MeatType meatType;
+	private Map<String, MeatContentData> meatContentData = new HashMap<>();
+	private String meatType;
 	
 	/*
 	 * DataList
@@ -659,21 +659,31 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	
 	@AlfProp
 	@AlfQname(qname="bcpg:meatType")
-	public MeatType getMeatType() {
+	public String getMeatType() {
 		return meatType;
 	}
 
-	public void setMeatType(MeatType meatType) {
+	public void setMeatType(String meatType) {
 		this.meatType = meatType;
 	}
 
 	// Spel Helper
 	public MeatContentData meatContentByType(String type) {
-		return meatContentData.get(MeatType.valueOf(type));
+		return meatContentData.get(type);
 	}
 	
+	public String meatContentApplied() {
+	  String ret = "";
+	  for(String key : meatContentData.keySet()) {
+		  ret+= key +": "+ meatContentData.get(key).getMeatContent()+"%\n";
+	   }
+	  return ret;
+		
+	}
+	
+	
 
-	public Map<MeatType, MeatContentData> getMeatContents() {
+	public Map<String, MeatContentData> getMeatContents() {
 		return meatContentData;
 	}
 
