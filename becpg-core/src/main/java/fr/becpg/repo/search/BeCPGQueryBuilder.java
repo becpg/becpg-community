@@ -1057,6 +1057,11 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		String sortDirection = null;
 		String createSortDirection = "ASC";
 		QName dataTypeQName = null;
+		
+		StoreRef storeRef = StoreRef.STORE_REF_WORKSPACE_SPACESSTORE;
+		if (AuthenticationUtil.isMtEnabled()) {
+			storeRef = tenantService.getName(storeRef);
+		}
 
 		if (type != null) {
 			dataTypeQName = type;
@@ -1115,12 +1120,17 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 			}
 
-			sql += "where alf_node.store_id=(select id from alf_store where protocol='workspace' and identifier='SpacesStore') "
+			sql += "where alf_node.store_id=(select id from alf_store where protocol='"+storeRef.getProtocol()
+					+"' and identifier='"+storeRef.getIdentifier()+"') "
 					+ "and alf_node.type_qname_id=(select id from alf_qname " + "where ns_id=(select id from alf_namespace where uri='"
 					+ dataTypeQName.getNamespaceURI() + "') " + "and local_name='" + type.getLocalName() + "') "
 					+ "and id in (select child_node_id from alf_child_assoc where " + "parent_node_id = (select id from alf_node where uuid='"
-					+ parentNodeRef.getId() + "' and store_id=(select id from alf_store where protocol='workspace' and identifier='SpacesStore') )) ";
+					+ parentNodeRef.getId() + "'"
+					+ " and store_id=(select id from alf_store where protocol='"+storeRef.getProtocol()+"'"
+					+ " and identifier='"+storeRef.getIdentifier()+"') )) ";
 
+			
+			
 			sql += sortOrderSql;
 
 			if (logger.isTraceEnabled()) {
@@ -1131,13 +1141,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 				try (PreparedStatement statement = con.prepareStatement(sql)) {
 					try (java.sql.ResultSet res = statement.executeQuery()) {
 						while (res.next()) {
-
 							NodeRef nodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, res.getString("uuid"));
-							if (nodeService.exists(nodeRef)) {
-								ret.add(nodeRef);
-							}
+								if (nodeService.exists(nodeRef)) {
+									ret.add(nodeRef);
+								}
+							} 
 						}
-					}
 				}
 			} catch (SQLException e) {
 				logger.error("Error running : "+sql, e);

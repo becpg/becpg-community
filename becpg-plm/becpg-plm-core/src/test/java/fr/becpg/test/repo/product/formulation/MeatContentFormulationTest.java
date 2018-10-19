@@ -160,7 +160,7 @@ public class MeatContentFormulationTest extends AbstractFinishedProductTest {
 			RawMaterialData rawMaterial1 = new RawMaterialData();
 			rawMaterial1.setName("MP Beef 1");
 			rawMaterial1.setDensity(1d);
-			rawMaterial1.setMeatType(MeatType.Mammals);
+			rawMaterial1.setMeatType(MeatType.Mammals.toString());
 			MLText legalName = new MLText("Legal MP Beef 1");
 			legalName.addValue(Locale.FRENCH, "Legal MP Beef 1");
 			legalName.addValue(Locale.ENGLISH, "Legal MP Beef 1");
@@ -191,7 +191,7 @@ public class MeatContentFormulationTest extends AbstractFinishedProductTest {
 			/*-- Raw material 2 --*/
 			RawMaterialData rawMaterial2 = new RawMaterialData();
 			rawMaterial2.setName("MP Porc 2");
-			rawMaterial2.setMeatType(MeatType.Porcines);
+			rawMaterial2.setMeatType(MeatType.Porcines.toString());
 			rawMaterial2.setDensity(1d);
 			legalName = new MLText("Legal MP Porc 2");
 			legalName.addValue(Locale.FRENCH, "Legal MP Porc 2");
@@ -281,11 +281,11 @@ public class MeatContentFormulationTest extends AbstractFinishedProductTest {
 
 			Assert.assertTrue(finishedProductData.getMeatContents().size() == 2);
 
-			MeatContentData meatContentData = finishedProductData.getMeatContentByType(MeatType.Mammals.toString());
-
-			Assert.assertTrue((meatContentData.getFatPerc() - (90 * 2) / 5d) < 1);
-			Assert.assertTrue((meatContentData.getProteinPerc() - (10 * 2) / 5d) < 1);
-			Assert.assertTrue((meatContentData.getCollagenPerc() - (0.5 * 2) / 500d) < 1);
+			MeatContentData meatContentData = finishedProductData.meatContentByType(MeatType.Mammals.toString());
+			
+			Assert.assertTrue(meatContentData.getFatPerc() == 90d);
+			Assert.assertTrue(meatContentData.getProteinPerc() == 10d);
+			Assert.assertTrue(meatContentData.getCollagenPerc() == 0.5 /1000d);
 
 			return null;
 		}, false, true);
@@ -299,7 +299,7 @@ public class MeatContentFormulationTest extends AbstractFinishedProductTest {
 		labelingRuleList.add(new LabelingRuleListDataItem("QUID porc", MeatType.Porcines.toString(), LabelingRuleType.Group, Arrays.asList(porc),
 				Arrays.asList(porcFat)));
 
-		checkILL(finishedProductNodeRef1, labelingRuleList, "porc french 60%, beef french 34,1%, beefFat french 5,9%", Locale.FRENCH);
+		checkILL(finishedProductNodeRef1, labelingRuleList, "porc french 60%, beefFat french 34,7%, beef french 5,3%", Locale.FRENCH);
 
 	}
 

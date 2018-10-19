@@ -13,10 +13,8 @@ import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.meat.MeatContentData;
-import fr.becpg.repo.product.data.meat.MeatType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.NutDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
@@ -39,8 +37,6 @@ public class MeatContentFormulationHandler extends FormulationBaseHandler<Produc
 	private NodeService nodeService;
 
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
-	
-	
 
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
@@ -62,7 +58,7 @@ public class MeatContentFormulationHandler extends FormulationBaseHandler<Produc
 			logger.debug("no compo => no formulation");
 			return true;
 		}
-		
+
 		formulatedProduct.setMeatContentData(null);
 
 		Double netWeight = FormulationHelper.getNetWeight(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
@@ -82,34 +78,34 @@ public class MeatContentFormulationHandler extends FormulationBaseHandler<Produc
 						boolean formulateInVol = FormulationHelper.isProductUnitLiter(partProduct.getUnit());
 
 						// calculate charact from qty or vol ?
-						Double qtyUsed = formulateInVol ? volUsed : weightUsed;
+						Double qtyUsedPerc = formulateInVol ? volUsed : weightUsed;
 
-						if (partProduct instanceof RawMaterialData) {
-						
-							if (((RawMaterialData) partProduct).getMeatType() != null) {
-								
-								if(logger.isDebugEnabled()) {
-									logger.debug("Found meat rawMaterial : "+partProduct.getName()+" "+((RawMaterialData) partProduct).getMeatType());
+						if ((qtyUsedPerc != null) && (qtyUsedPerc != 0d)) {
+							if ((netWeight != null) && (netWeight != 0d)) {
+								qtyUsedPerc = qtyUsedPerc / netWeight;
+							}
+
+							if ((partProduct.getMeatType() != null) && !partProduct.getMeatType().isEmpty()) {
+
+								if (logger.isDebugEnabled()) {
+									logger.debug("Found meat product : " + partProduct.getName() + " " + partProduct.getMeatType());
 								}
-								
-								MeatContentData meatContentData = getOrCreateMeatData(formulatedProduct,
-										((RawMaterialData) partProduct).getMeatType());
+
+								MeatContentData meatContentData = getOrCreateMeatData(formulatedProduct, partProduct.getMeatType());
+
+								meatContentData.addQtyPerc(qtyUsedPerc * 100d);
 
 								for (NutListDataItem nutListDataItem : partProduct.getNutList()) {
 
 									NutDataItem nut = (NutDataItem) alfrescoRepository.findOne(nutListDataItem.getNut());
 
-									if ((nutListDataItem.getValue() != null) && (qtyUsed != null)) {
-										Double value = nutListDataItem.getValue() * qtyUsed;
-										//Express all as g
-										if(nutListDataItem.getUnit().startsWith("mg")) {
-											value= value / 100d;
-										}
-										if ((netWeight != null) && (netWeight != 0d)) {
-											value = value / netWeight;
+									if ((nutListDataItem.getValue() != null)) {
+										Double value = nutListDataItem.getValue() * qtyUsedPerc;
+										// Express all as g
+										if (nutListDataItem.getUnit().startsWith("mg")) {
+											value = value / 1000d;
 										}
 
-										
 										switch (nut.getNutCode()) {
 										case "FAT":
 											meatContentData.addFatPerc(value);
@@ -117,6 +113,7 @@ public class MeatContentFormulationHandler extends FormulationBaseHandler<Produc
 										case "PRO-":
 											meatContentData.addProteinPerc(value);
 											// HYP hydroxyproline (mg)
+											break;
 										case "HYP":
 											meatContentData.addCollagenPerc(8 * value);
 											// COLG collagen (mg)
@@ -129,19 +126,24 @@ public class MeatContentFormulationHandler extends FormulationBaseHandler<Produc
 										}
 
 									}
+
+								}
+
+							} else if ((partProduct.getMeatContents() != null) && !partProduct.getMeatContents().isEmpty()) {
+
+								for (Map.Entry<String, MeatContentData> entry : partProduct.getMeatContents().entrySet()) {
+
+									// partMeatData is express for 100Perc of
+									// meatType
+									MeatContentData partMeatData = entry.getValue();
+
+									getOrCreateMeatData(formulatedProduct, entry.getKey()).merge(partMeatData, qtyUsedPerc * 100d);
 								}
 
 							}
-						} else {
-
-							for (Map.Entry<MeatType, MeatContentData> entry : partProduct.getMeatContents().entrySet()) {
-								getOrCreateMeatData(formulatedProduct, entry.getKey()).merge(entry.getValue());
-							}
 
 						}
-
 					}
-
 				}
 			}
 
@@ -155,20 +157,9 @@ public class MeatContentFormulationHandler extends FormulationBaseHandler<Produc
 
 	}
 
-	private MeatContentData getOrCreateMeatData(ProductData formulatedProduct, MeatType meatType) {
+	private MeatContentData getOrCreateMeatData(ProductData formulatedProduct, String meatType) {
 		if (!formulatedProduct.getMeatContents().containsKey(meatType)) {
-
-			switch (meatType) {
-			case Mammals:
-				formulatedProduct.getMeatContents().put(MeatType.Mammals, new MeatContentData(MeatType.Mammals));
-				break;
-			case Porcines:
-				formulatedProduct.getMeatContents().put(MeatType.Porcines, new MeatContentData(MeatType.Porcines));
-				break;
-			case BirdsAndRabbits:
-				formulatedProduct.getMeatContents().put(MeatType.BirdsAndRabbits, new MeatContentData(MeatType.BirdsAndRabbits));
-				break;
-			}
+			formulatedProduct.getMeatContents().put(meatType, new MeatContentData(meatType));
 		}
 		return formulatedProduct.getMeatContents().get(meatType);
 	}
