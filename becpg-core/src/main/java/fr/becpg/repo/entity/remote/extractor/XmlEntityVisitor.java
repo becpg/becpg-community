@@ -65,6 +65,7 @@ import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.SiteHelper;
 
 /**
@@ -370,18 +371,12 @@ public class XmlEntityVisitor {
 	
 	private void visitMltextAttributes(XMLStreamWriter xmlw, MLText mlValues)throws XMLStreamException{
 		if (mlValues != null) {
-			
 			for (Map.Entry<Locale, String> mlEntry : mlValues.entrySet()) {
-
-				String code = mlEntry.getKey().getLanguage();
-				if ((mlEntry.getKey().getCountry() != null) && !mlEntry.getKey().getCountry().isEmpty()) {
-					code += "_" + mlEntry.getKey().getCountry();
-				}
-				if ((code != null) && !code.isEmpty()) {
-					xmlw.writeAttribute(code, writeCDATA(mlEntry.getValue()));
+				String code = MLTextHelper.localeKey(mlEntry.getKey());
+				if(code!=null && ! code.isEmpty()) {
+					xmlw.writeAttribute(code.replaceAll(":", "_"), writeCDATA(mlEntry.getValue()));
 				}
 			}
-			
 		}
 	}
 	
