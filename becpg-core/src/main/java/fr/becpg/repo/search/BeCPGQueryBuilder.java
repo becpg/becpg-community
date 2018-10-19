@@ -1114,12 +1114,15 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 				sortOrderSql = " order by alf_node_properties." + fieldType + " " + sortDirection + ", alf_node.audit_created " + createSortDirection;
 
 			}
+			NodeRef tenantAwareParentNodeRef =  tenantService.getBaseName(parentNodeRef);
 
 			sql += "where alf_node.store_id=(select id from alf_store where protocol='workspace' and identifier='SpacesStore') "
 					+ "and alf_node.type_qname_id=(select id from alf_qname " + "where ns_id=(select id from alf_namespace where uri='"
 					+ dataTypeQName.getNamespaceURI() + "') " + "and local_name='" + type.getLocalName() + "') "
 					+ "and id in (select child_node_id from alf_child_assoc where " + "parent_node_id = (select id from alf_node where uuid='"
-					+ parentNodeRef.getId() + "' and store_id=(select id from alf_store where protocol='workspace' and identifier='SpacesStore') )) ";
+					+ tenantAwareParentNodeRef.getId() + "' and store_id=(select id from alf_store where protocol='"
+					+ tenantAwareParentNodeRef.getStoreRef().getProtocol()+"'"
+					+ " and identifier='"+tenantAwareParentNodeRef.getStoreRef().getIdentifier()+"') )) ";
 
 			sql += sortOrderSql;
 
