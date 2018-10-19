@@ -63,6 +63,7 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.remote.EntityProviderCallBack;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.PropertiesHelper;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
@@ -358,10 +359,10 @@ public class ImportEntityXmlVisitor {
 						String strLocale = "";
 						for(int i=0; i<attributes.getLength(); i++){
 							strLocale = attributes.getQName(i);
-							locale = strLocale.contains("_")? new Locale(strLocale.split("_")[0], strLocale.split("_")[1]) : new Locale(strLocale);
+							locale = MLTextHelper.parseLocale(strLocale);
 							if(!attributes.getValue(i).equals(RemoteEntityService.MLTEXT_TYPE) && attributes.getQName(i)!=null
-									&& LocaleUtils.isAvailableLocale(locale)){
-								mltextAttributes.put(new Locale(attributes.getQName(i)),
+									&& MLTextHelper.isSupportedLocale(locale)){
+								mltextAttributes.put(locale,
 										StringEscapeUtils.unescapeHtml(attributes.getValue(i).toString()));
 							}
 						}
