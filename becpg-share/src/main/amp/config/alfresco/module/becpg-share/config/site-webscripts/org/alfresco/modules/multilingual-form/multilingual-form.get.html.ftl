@@ -2,7 +2,6 @@
 <#assign label=args.label!false>
 <#assign description="">
 
-
 <div id="${el}-dialog" class="multilingual-form">
 	<#if !args.readonly??>   
    <div id="${el}-dialogTitle" class="hd">${msg("title")}</div>
@@ -14,6 +13,7 @@
          <div class="form-fields">
 	         <div class="set">	
 	         <#if !args.readonly??>      
+	         	<#if !showAll>
 		         <div class="form-field">
 			         <select id="${el}-locale-picker" name="-" onChange="addFormFieldForLocale();return false;">
                             <option value="-" >${msg("locale.choose")}</option>
@@ -24,6 +24,7 @@
 							</#list>
 						</select>
 					</div>
+				</#if>
 					
 	         <#list mlFields?sort_by(["localeLabel"]) as mlField>
 				<#assign description=mlField.description!""?html>
@@ -70,6 +71,7 @@
       </form>
    </div>
 </div>
+
 <script type="text/javascript">//<![CDATA[
 
 var suggestTranslate = function(fieldHtmlId, targetLocale){
@@ -119,11 +121,7 @@ var addFormFieldForLocale = function(){
 	  	 
 	  	 container.appendChild(htmlEl);
  };
-  		
-
-  		
-  		
-	     			    
+  			    
 };
 
 //]]></script>
