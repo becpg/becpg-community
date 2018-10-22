@@ -131,10 +131,13 @@
 
                      this.widgets.editVariantButton = this.createYUIButton(this, "edit-variant", this.onEditVariant);
 
+                     this.widgets.duplicateVariantButton = this.createYUIButton(this, "duplicate-variant", this.onDuplicateVariant);
+                     
                      this.widgets.deleteVariantButton = this.createYUIButton(this, "delete-variant",
                            this.onDeleteVariant);
 
                      Dom.setStyle(this.widgets.editVariantButton, 'display', 'none');
+                     Dom.setStyle(this.widgets.duplicateVariantButton, 'display', 'none');
                      Dom.setStyle(this.widgets.deleteVariantButton, 'display', 'none');
 
                   },
@@ -171,6 +174,7 @@
                            this.currentVariantNodeRef = null;
                            Dom.setStyle(this.widgets.createVariantButton, 'display', '');
                            Dom.setStyle(this.widgets.editVariantButton, 'display', 'none');
+                           Dom.setStyle(this.widgets.duplicateVariantButton, 'display', 'none');
                            Dom.setStyle(this.widgets.deleteVariantButton, 'display', 'none');
                            if ("all" === p_oItem.value) {
                               YAHOO.Bubbling.fire("changeFilter", {
@@ -198,6 +202,7 @@
 
                            Dom.setStyle(this.widgets.createVariantButton, 'display', 'none');
                            Dom.setStyle(this.widgets.editVariantButton, 'display', '');
+                           Dom.setStyle(this.widgets.duplicateVariantButton, 'display', '');
                            Dom.setStyle(this.widgets.deleteVariantButton, 'display', '');
                         }
                      }
@@ -287,6 +292,96 @@
 
                   },
 
+                  onDuplicateVariant : function VariantPicker_onDuplicateVariant() {
+               
+                      var instance = this;
+
+                      var doBeforeDialogShow = function(p_form, p_dialog) {
+                         Alfresco.util.populateHTML([ p_dialog.id + "-dialogTitle",
+                               instance.msg("label.duplicate-variant.title") ]);
+                      };
+
+                      var templateUrl = YAHOO.lang
+                            .substitute(
+                                  Alfresco.constants.URL_SERVICECONTEXT + "components/form?itemKind={itemKind}&formId=duplicate&itemId={itemId}&destination={destination}&association={association}&mode={mode}&submitType={submitType}&showCancelButton=true&popup=true",
+                                  {
+                                     itemKind : "type",
+                                     itemId : "bcpg:variant",
+                                     destination : instance.options.entityNodeRef,
+                                     association : "bcpg:variants",
+                                     mode : "create",
+                                     submitType : "json"
+                                  });
+
+                      var createRow = new Alfresco.module.SimpleDialog(instance.id + "-createVariant");
+
+                      createRow.setOptions({
+                         width : instance.options.formWidth,
+                         templateUrl : templateUrl,
+                         actionUrl : Alfresco.constants.PROXY_URI + "/becpg/variant/duplicate?nodeRef="+instance.currentVariantNodeRef,
+                         destroyOnHide : true,
+                         doBeforeDialogShow : {
+                            fn : doBeforeDialogShow,
+                            scope : this
+                         },
+
+                         onSuccess : {
+                            fn : function EntityDataGrid_onActionCreate_success(response) {
+
+                            	
+                               Alfresco.util.Ajax.jsonRequest({
+                                  url : Alfresco.constants.PROXY_URI + "api/forms/picker/items",
+                                  method : "POST",
+                                  dataObj : {
+                                     items : [ response.json.persistedObject ]
+                                  },
+                                  successCallback : {
+                                     fn : function(res) {
+                                        var items = res.json.data.items, menuItems = [];
+
+                                        for ( var i = 0, il = items.length; i < il; i++) {
+                                           menuItems.push({
+                                              text : items[i].name,
+                                              value : items[i].nodeRef,
+                                              onclick : {
+                                                 fn : instance.onMenuItemClick,
+                                                 scope : instance
+                                              }
+                                           });
+
+                                        }
+
+                                        instance.widgets.variantPicker.getMenu().addItems(menuItems);
+
+                                        YAHOO.Bubbling.fire("changeFilter", {
+                                            filterOwner : instance.id,
+                                            filterId : "all"
+                                         });
+                                        
+                                        Alfresco.util.PopupManager.displayMessage({
+                                            text : instance.msg("message.duplicate-variant.success")
+                                         });
+
+                                     },
+                                     scope : instance
+                                  }
+                               });
+
+                            },
+                            scope : this
+                         },
+                         onFailure : {
+                            fn : function EntityDataGrid_onActionCreate_failure(response) {
+                               Alfresco.util.PopupManager.displayMessage({
+                                  text : instance.msg("message.duplicate-variant.failure")
+                               });
+                            },
+                            scope : this
+                         }
+                      }).show();
+
+                  },
+                  
                   onEditVariant : function VariantPicker_onCreateVariant() {
 
                      var instance = this;
@@ -418,6 +513,7 @@
 
                                                 Dom.setStyle(instance.widgets.createVariantButton, 'display', '');
                                                 Dom.setStyle(instance.widgets.editVariantButton, 'display', 'none');
+                                                Dom.setStyle(this.widgets.duplicateVariantButton, 'display', 'none');
                                                 Dom.setStyle(instance.widgets.deleteVariantButton, 'display', 'none');
                                              }
                                           }

@@ -80,7 +80,12 @@
          	     "isDefaultVariant" :${variant.properties["bcpg:isDefaultVariant"]?string}
          	    <#else>
          	     "isDefaultVariant" : false
-         	    </#if>
+         	    </#if>,
+         	     <#if variant.properties["bcpg:color"]??>
+         	    	"color": "${variant.properties["bcpg:color"]}"
+         	      <#else>
+	         	   	"color": ""
+	         	  </#if>
          	 	}
          		<#if variant_has_next>,</#if></#list>]
          </#if>

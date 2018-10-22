@@ -5,6 +5,13 @@
 }
 
 
+.datalist-toolbar .duplicate-variant span.first-child
+{
+   background: url(../images/duplicate-row-16.png) no-repeat 6px 4px;
+   padding: inherit 4px inherit 4px;
+}
+
+
 .datalist-toolbar .delete-variant span.first-child
 {
    background: url(../images/delete-16.png) no-repeat 6px 4px;
@@ -36,6 +43,12 @@
 	padding-left: 20px;
 }
 
+
+
+.datalist-toolbar .variantPicker .yui-push-button button {
+	padding-right: 9px !important;
+	padding-left: 9px !important;
+}
 
 
 .datalist-toolbar  span.variant-default {
