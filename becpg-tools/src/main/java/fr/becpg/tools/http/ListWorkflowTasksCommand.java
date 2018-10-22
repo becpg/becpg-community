@@ -21,7 +21,7 @@ public class ListWorkflowTasksCommand extends AbstractHttpCommand {
 
 	//GET /alfresco/service//{workflow_instance_id}/task-instances?authority={authority?}&state={state?}&priority={priority?}&dueBefore={isoDate?}&dueAfter={isoDate?}&properties={prop1, prop2, prop3...?}&maxItems={maxItems?}&skipCount={skipCount?}&exclude={exclude?}
 
-	private static final String COMMAND_URL_TEMPLATE = "/api/workflow-instances/%s/task-instances";
+	private static final String COMMAND_URL_TEMPLATE = "/api/workflow-instances/%s?includeTasks=true";
 
 	public ListWorkflowTasksCommand(String serverUrl) {
 		super(serverUrl);
