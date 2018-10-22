@@ -12,6 +12,10 @@ function main()
    model.langs = [];
    
    var langs = config.scoped["Languages"]["languages"].childrenMap["language"];
+   var showAll = config.scoped["Languages"]["showAll"].value;
+   
+   model.showAll = showAll!=null && showAll == "true";
+   
    for (var i = 0, lang ; i < langs.size(); i++) {
 		lang = langs.get(i);
 		if(lang.getAttribute("locale")!=null){
@@ -22,7 +26,7 @@ function main()
    
    if (model.nodeRef && model.field)
    {
-     
+     var description = "";
       // Call the repository for the site profile
       var json = remote.call("/becpg/form/multilingual/field/"+model.field+"?nodeRef=" + model.nodeRef);
       if (json.status == 200)
@@ -34,15 +38,28 @@ function main()
         	  
               for (var i = 0, lang ; i < model.langs.length; i++) {
            		   lang = model.langs[i];
+           		   var added = false;
            			for(var j=0, field; j < obj.items.length;j++ ){
            				field = obj.items[j];
+           				description = field.description;
            				if(field.locale == lang.key){
            					field.localeLabel = lang.label;
            					field.control = {params: {editorAppearance: "default"}};
            					model.mlFields.push(field);
-           					
+           					added = true;
+           					break;
            				}
            			}
+           			
+           			if(!added && model.showAll){
+           				var country = lang.key.toLowerCase();
+           			  	if(lang.key.indexOf("_")>0){
+           			  	 country = lang.key.split("_")[1].toLowerCase();
+           			  	}
+           				var toAdd  = { "localeLabel" : lang.label, "locale" : lang.key, "value": "", "description":description, "country":country };
+           				model.mlFields.push(toAdd);
+           			}
+           			
            		
               }
               model.currentLocale = obj.currentLocale;
