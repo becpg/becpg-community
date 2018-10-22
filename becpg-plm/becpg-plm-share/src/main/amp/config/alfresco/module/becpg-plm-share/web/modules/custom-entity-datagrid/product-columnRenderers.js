@@ -661,16 +661,29 @@ if (beCPG.module.EntityDataGridRenderers) {
 				return "<span  class='variant-common'>&nbsp;</span>";
 			}
 
+			var variantColor = "";
+			
 			if (scope.entity) {
 				for ( var j in variants) {
 					for ( var i in scope.entity.variants) {
-						if (variants[j] == scope.entity.variants[i].nodeRef && scope.entity.variants[i].isDefaultVariant) {
-							isInDefault = true;
+						if (variants[j] == scope.entity.variants[i].nodeRef ) {
+							if(scope.entity.variants[i].isDefaultVariant) {
+								isInDefault = true;
+							}
+							variantColor = scope.entity.variants[i].color;
 							break;
 						}
 					}
 				}
 			}
+			
+			if(variantColor!=null && variantColor.length>0 && variantColor!="000000" && 
+			 !(oRecord.getData("color") && oRecord.getData("color").length>0 && oRecord.getData("color")!="000000")		
+				){
+				var elTr = scope.widgets.dataTable.getTrEl(elCell);
+				Dom.setStyle(elTr, 'background-color',variantColor);
+			}
+			
 
 			var title = "&nbsp;";
 			

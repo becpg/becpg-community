@@ -101,6 +101,12 @@
 		<property name="entityListDAO" ref="entityListDAO" />
 	</bean>
 
+	<bean id="webscript.fr.becpg.variant.duplicateVariant.post" class="fr.becpg.repo.web.scripts.variant.DuplicateVariantWebScript" parent="webscript">
+		<property name="nodeService" ref="NodeService" />
+		<property name="alfrescoRepository" ref="alfrescoRepository" />
+		<property name="serviceRegistry" ref="ServiceRegistry" />
+		<property name="copyService" ref="copyService" />
+	</bean>
 
 	<!-- webscripts -->
 
@@ -211,7 +217,6 @@
 		<property name="attributeExtractorService" ref="attributeExtractorService" />
 	</bean>
   
-
 	<!-- Migration -->
 	<bean id="webscript.fr.becpg.migration.migrateRepository.get" class="fr.becpg.repo.web.scripts.migration.MigrateRepositoryWebScript" parent="webscript">
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
