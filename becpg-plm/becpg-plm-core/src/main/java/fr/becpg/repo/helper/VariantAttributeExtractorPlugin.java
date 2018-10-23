@@ -27,6 +27,7 @@ import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.helper.impl.AbstractExprNameExtractor;
@@ -46,13 +47,14 @@ public class VariantAttributeExtractorPlugin extends AbstractExprNameExtractor {
 
 	@Override
 	public String extractPropName(QName type, NodeRef nodeRef) {
-		String def = ((boolean)nodeService.getProperty(nodeRef, PLMModel.PROP_IS_DEFAULT_VARIANT)) ? "+" : "";
-		return def + (String)nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
+		return (String)nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
 	}
 
 	@Override
 	public String extractMetadata(QName type, NodeRef nodeRef) {
-		return type.toPrefixString(namespaceService).split(":")[1];
+		Boolean isDefault = (Boolean) nodeService.getProperty(nodeRef, PLMModel.PROP_IS_DEFAULT_VARIANT);
+		String color =  (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_COLOR);
+		return (Boolean.TRUE.equals(isDefault) ? "variant-default": "variant")+(color!=null && color.indexOf("#")==0 ? color : "");
 	}
 
 }

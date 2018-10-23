@@ -1,9 +1,11 @@
 package fr.becpg.repo.product.formulation.nutrient;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,16 +33,22 @@ public class NutrientFormulationHelper {
 	private static final String KEY_VALUE_PER_SERVING = "vps";
 	private static final String KEY_GDA_PERC = "gda";
 
-	private static UsNutrientRegulation usNutrientRegulation 
-		= new UsNutrientRegulation("beCPG/databases/nuts/UsNutrientRegulation_2016.csv");
-	private static UsNutrientRegulation caNutrientRegulation 
-		= new UsNutrientRegulation("beCPG/databases/nuts/CanadianNutrientRegulation_2017.csv");
-	private static EuropeanNutrientRegulation chineseNutrientRegulation 
-		= new EuropeanNutrientRegulation("beCPG/databases/nuts/ChineseNutrientRegulation.csv");
-	private static UsNutrientRegulation usNutrientRegulation2013 
-		= new UsNutrientRegulation("beCPG/databases/nuts/UsNutrientRegulation_2013_2020.csv");
-	private static EuropeanNutrientRegulation europeanNutrientRegulation 
-		= new EuropeanNutrientRegulation("beCPG/databases/nuts/EuNutrientRegulation.csv");
+	
+	private static Map<String, NutrientRegulation> regulations = new HashMap<>();
+	
+	static {
+		regulations.put("EU", new EuropeanNutrientRegulation("beCPG/databases/nuts/EuNutrientRegulation.csv"));
+
+		regulations.put("US", new UsNutrientRegulation("beCPG/databases/nuts/UsNutrientRegulation_2016.csv"));
+		regulations.put("US_2013", new UsNutrientRegulation("beCPG/databases/nuts/UsNutrientRegulation_2013_2020.csv"));
+		
+		regulations.put("CA", new CanadianNutrientRegulation("beCPG/databases/nuts/CanadianNutrientRegulation_2017.csv"));
+		regulations.put("CA_2013", new CanadianNutrientRegulation("beCPG/databases/nuts/CanadianNutrientRegulation_2013_2022.csv"));
+		
+		regulations.put("CN", new ChineseNutrientRegulation("beCPG/databases/nuts/ChineseNutrientRegulation.csv"));
+		regulations.put("AU", new AustralianNutrientRegulation("beCPG/databases/nuts/AUNutrientRegulation.csv"));
+	}
+	
 
 	public static Double extractValuePerServing(String roundedValue, Locale locale) {
 		return extractValuePerServing(roundedValue, getLocalKey(locale));
@@ -74,12 +82,9 @@ public class NutrientFormulationHelper {
 		return extractValueByKey(roundedValue, KEY_VALUE,key);
 	}
 
-
 	public static Double extractGDAPerc(String roundedValue, String key) {
 		return extractValueByKey(roundedValue, KEY_GDA_PERC,key);
 	}
-
-	
 
 	private static Double extractValueByKey(String roundedValue, String item, String key) {
 
@@ -102,13 +107,12 @@ public class NutrientFormulationHelper {
 	}
 
 	private static String getLocalKey(Locale locale) {
-		if (locale.getCountry().equals("US")) {
-			return "US";
-		} else if (locale.getCountry().equals("CA")) {
-			return "CA";
-		} else if (locale.getCountry().equals("CN")) {
-			return "CN";
-		}
+		if (locale.getCountry().equals("US") || 
+				locale.getCountry().equals("CA") || 
+				locale.getCountry().equals("CN") || 
+				locale.getCountry().equals("AU") ) {
+			return locale.getCountry();
+		} 
 		return "EU";
 	}
 
@@ -124,7 +128,7 @@ public class NutrientFormulationHelper {
 					for (Iterator<?> j = value.keys(); j.hasNext();) {
 						String locKey = (String) j.next();
 
-						AbstractNutrientRegulation regulation = getRegulation(locKey);
+						NutrientRegulation regulation = getRegulation(locKey);
 						NutrientDefinition def = regulation.getNutrientDefinition(nutCode);
 
 						String prefix = "";
@@ -226,7 +230,7 @@ public class NutrientFormulationHelper {
 				
 
 
-				AbstractNutrientRegulation regulation = getRegulation(key);
+				NutrientRegulation regulation = getRegulation(key);
 				NutrientDefinition def = regulation.getNutrientDefinition(nutCode);
 
 				value.put(key, regulation.round(n.getValue(), nutCode, nutUnit));
@@ -269,14 +273,19 @@ public class NutrientFormulationHelper {
 				 || MLTextHelper.isSupportedLocale(Locale.CANADA_FRENCH)
 				){
 			 ret.add("CA");
+			 ret.add("CA_2013");
 		 }
 		 if(MLTextHelper.isSupportedLocale(Locale.CHINESE) 
 				 || MLTextHelper.isSupportedLocale(Locale.SIMPLIFIED_CHINESE)
 				 || MLTextHelper.isSupportedLocale(Locale.TRADITIONAL_CHINESE)
 				){
 			 ret.add("CN");
+		 } 
+		 if(MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("en_AU"))
+				){
+			 ret.add("AU");
 		 }
-		 
+
 		 ret.add("EU");
 		 
 		return ret;
@@ -287,26 +296,18 @@ public class NutrientFormulationHelper {
 	}
 
 	private static Double round(Double value, String nutCode, String key, String nutUnit) {
-
 		if (value == null) {
 			return null;
 		}
-
 		return getRegulation(key).round(value, nutCode, nutUnit);
-
 	}
 
-	private static AbstractNutrientRegulation getRegulation(String key) {
-		if ("US".equals(key)) {
-			return usNutrientRegulation;
-		} else if("US_2013".equals(key)){
-			return usNutrientRegulation2013;
-		} else if("CA".equals(key)){
-			return caNutrientRegulation;
-		} else if("CN".equals(key)){
-			return chineseNutrientRegulation;
+	private static NutrientRegulation getRegulation(String key) {
+		if(regulations.containsKey(key)) {
+			return regulations.get(key);
 		}
-		return europeanNutrientRegulation;
+		
+		return regulations.get("EU");
 	}
 
 
