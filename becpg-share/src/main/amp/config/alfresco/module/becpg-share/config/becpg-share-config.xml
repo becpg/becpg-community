@@ -10,7 +10,9 @@
 	</config>
 
 	<config evaluator="string-compare" condition="Languages">
-		<ui-languages>
+                <!-- Show all languages in mlText popup -->
+		<showAll>false</showAll>		
+                <ui-languages>
 			<language locale="en">English</language>
 			<language locale="fr">French</language>
 		</ui-languages>
