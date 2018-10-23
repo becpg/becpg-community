@@ -300,19 +300,41 @@ span.physicoChem-formulated {
 }
 
 
-span.variant {
+
+.yui-dt  span.variant {
+    height: 13px;
+    width: 13px;
+	border-radius: 50%;
+	display: inline-block;
+    border: 1px solid #ccc;
+    
+}
+.yui-dt span.variant-default {
+    height: 13px;
+    width: 13px;
+	background-color: #ccc;
+	border-radius: 50%;
+	display: inline-block;
+    border: 1px solid #ccc;
+}
+
+
+.yui-ac  span.variant {
     background-image: url("../../components/images/enabled-indicator-off-16.png") !important;
     background-repeat: no-repeat;
     padding-left: 14px
 }
-span.variant-default {
+.yui-ac  span.variant-default {
     background-image: url("../../components/images/enabled-indicator-on-16.png") !important;
     background-repeat: no-repeat;
     padding-left: 14px
 }
 
 .yui-ac span.variant, .yui-ac span.variant-default  {
-	 padding-left: 20px
+	 padding-left: 20px;
+	 background-color: transparent;
+	 border: none;
+	 width :16px;
 }
 
 
