@@ -8136,7 +8136,7 @@
 			</form>
 
 			<!-- Data Grid view -->
-			<form id="datagridWUsed">
+			<form id="datagrid">
 				<field-visibility>
 					<show id="bcpg:variantIds" force="true" />
 					<show id="bcpg:pclPhysicoChem" />
@@ -8848,7 +8848,14 @@
 					<show id="bcpg:isDefaultVariant" />
 					<show id="bcpg:plants" force="true" />
 					<show id="bcpg:clients" force="true" />
+					<show id="bcpg:color" force="true" />
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:color">
+						<control
+							template="/org/alfresco/components/form/controls/selectcolorpicker.ftl" />
+					</field>
+				</appearance>
 			</form>
 		</forms>
 	</config>
@@ -8861,6 +8868,18 @@
 					<show id="bcpg:isDefaultVariant" />
 					<show id="bcpg:plants" force="true" />
 					<show id="bcpg:clients" force="true" />
+					<show id="bcpg:color" force="true" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:color">
+						<control
+							template="/org/alfresco/components/form/controls/selectcolorpicker.ftl" />
+					</field>
+				</appearance>
+			</form>
+			<form id="duplicate">
+				<field-visibility>
+					<show id="cm:name" />
 				</field-visibility>
 			</form>
 		</forms>
