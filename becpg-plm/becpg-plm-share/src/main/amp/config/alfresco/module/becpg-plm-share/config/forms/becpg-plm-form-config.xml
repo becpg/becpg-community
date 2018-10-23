@@ -8054,7 +8054,7 @@
 			</form>
 
 			<!-- Data Grid view -->
-			<form id="datagridWUsed">
+			<form id="datagrid">
 				<field-visibility>
 					<show id="bcpg:variantIds" force="true" />
 					<show id="bcpg:pclPhysicoChem" />
