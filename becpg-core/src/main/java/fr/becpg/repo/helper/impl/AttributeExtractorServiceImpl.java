@@ -677,7 +677,30 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 					tmp.put("type", type);
 					tmp.put("label", attribute.getTitle(dictionaryService));
 				} else if (type != null) {
-					tmp.put("metadata", extractMetadata(type, nodeRef));
+					if(value!=null && type.equals(DataTypeDefinition.NODE_REF)) {
+						String metadata = null;
+						if (!((PropertyDefinition) attribute).isMultiValued()) {
+							metadata = extractMetadata(nodeService.getType((NodeRef) value), (NodeRef) value);
+						} else {
+							List<NodeRef> values = (List<NodeRef>) value;
+							if (values != null) {
+								for (NodeRef tempValue : values) {
+									if (tempValue != null) {
+										if (metadata != null) {
+											metadata += ",";
+										} else {
+											metadata = "";
+										}
+										metadata += extractMetadata(nodeService.getType(tempValue),tempValue);
+									}
+								}
+							}
+						}
+						
+						tmp.put("metadata", metadata);
+					} else {
+						tmp.put("metadata", extractMetadata(type, nodeRef));
+					}
 				}
 				if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
 					tmp.put("version", properties.get(BeCPGModel.PROP_VERSION_LABEL));

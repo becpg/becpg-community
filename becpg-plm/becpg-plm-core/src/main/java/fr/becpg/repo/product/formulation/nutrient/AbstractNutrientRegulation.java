@@ -12,8 +12,12 @@ import org.springframework.core.io.ClassPathResource;
 
 import fr.becpg.common.csv.CSVReader;
 
-public abstract class AbstractNutrientRegulation {
+public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 
+	private String path;
+	
+	protected static Log logger = LogFactory.getLog(AbstractNutrientRegulation.class);
+	
 	protected class NutrientDefinition {
 		private Integer sort;
 		private Integer depthLevel;
@@ -65,9 +69,15 @@ public abstract class AbstractNutrientRegulation {
 
 	}
 
-	protected Map<String, NutrientDefinition> definitions = new LinkedHashMap<>();
+	private Map<String, NutrientDefinition> definitions = null;
 
 	public AbstractNutrientRegulation(String path) {
+		this.path = path;
+
+	}
+
+	private void loadRegulation() {
+		definitions = new LinkedHashMap<>();
 		ClassPathResource resource = new ClassPathResource(path);
 		try (InputStream in = resource.getInputStream()) {
 			try (InputStreamReader inReader = new InputStreamReader(resource.getInputStream())) {
@@ -78,15 +88,13 @@ public abstract class AbstractNutrientRegulation {
 						definitions.put(line[0], new NutrientDefinition(line[0], parseInt(line[2]), parseInt(line[3]), "true".equals(line[4]),
 								"true".equals(line[5]), "true".equals(line[6]), parseDouble(line[7]), parseDouble(line[8])));
 					}
-
 				}
 			}
 		} catch (IOException e) {
 			logger.error(e,e);
 		}
-
 	}
-
+	
 	private Double parseDouble(String value) {
 		if (value != null && !value.trim().isEmpty()) {
 			return Double.valueOf(value.trim().replace(",", "."));
@@ -103,12 +111,16 @@ public abstract class AbstractNutrientRegulation {
 		return null;
 	}
 
+	@Override
 	public NutrientDefinition getNutrientDefinition(String nutCode) {
+		//Defers loading
+		if(definitions == null) {
+			loadRegulation();
+		}
 		return definitions.get(nutCode);
 	}
 
-	protected static Log logger = LogFactory.getLog(AbstractNutrientRegulation.class);
-
+	@Override
 	public Double round(Double value, String nutrientTypeCode, String nutUnit) {
 
 		if (value == null) {
@@ -159,6 +171,7 @@ public abstract class AbstractNutrientRegulation {
 	        for values exactly halfway between two whole numbers or higher (e.g., 2.5 to 2.990 the values shall round up (e.g., 3%)
 	        for values less than halfway between two whole numbers (e.g., 2.01 to 2.49) the values shall round down (e.g., 2%).
 	 */
+	@Override
 	public Double roundGDA(Double value) {
 		if (value == null) {
 			return null;
