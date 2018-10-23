@@ -677,8 +677,6 @@ if (beCPG.module.EntityDataGridRenderers) {
 		renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
 			var variants = data.value, isInDefault = !variants || variants.length < 1;
 
-			
-			
 			if (data.value != null && data.value.length > 0) {
 				if(oColumn.label == ""){
 					Dom.setStyle(elCell, "width", "16px");
@@ -688,47 +686,33 @@ if (beCPG.module.EntityDataGridRenderers) {
 					scope.widgets.dataTable.showColumn(oColumn);
 					Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
 				}
-				
 			}
 
 			if (isInDefault) {
-				return "<span  class='variant-common'>&nbsp;</span>";
+			   return "<span  class='variant-common'>&nbsp;</span>";
 			}
 
-			var variantColor = "";
-			
-			if (scope.entity) {
-				for ( var j in variants) {
-					for ( var i in scope.entity.variants) {
-						if (variants[j] == scope.entity.variants[i].nodeRef ) {
-							if(scope.entity.variants[i].isDefaultVariant) {
-								isInDefault = true;
-							}
-							variantColor = scope.entity.variants[i].color;
-							break;
-						}
-					}
-				}
+			var cssClass = "variant"
+		    var style = "";
+				
+			if(data.metadata!=null){
+			  var splitted = data.metadata.split(",")[0].split("#");
+			  cssClass = splitted[0];
+			 
+			  if(splitted.length>0){
+				 var variantColor = "#"+splitted[1];
+				  if(cssClass!= "variant-default" && variantColor!=null && variantColor.length>0 ){
+					  style="style=\"background-color:"+variantColor+"\"";
+				}  
+			  }
 			}
-			
-			if(variantColor!=null && variantColor.length>0 && variantColor!="000000" && 
-			 !(oRecord.getData("color") && oRecord.getData("color").length>0 && oRecord.getData("color")!="000000")		
-				){
-				var elTr = scope.widgets.dataTable.getTrEl(elCell);
-				Dom.setStyle(elTr, 'background-color',variantColor);
-			}
-			
 			var title = "&nbsp;";
 			
 			if(oColumn.label != ""){
-				title += data.displayValue;
+			   title += data.displayValue;
 			}	
 			
-			if (isInDefault) {
-				return "<span title=\"" + data.displayValue + "\" class='variant-default'>"+title+"</span>";
-			}
-
-			return "<span title=\"" + data.displayValue + "\" class='variant'>"+title+"</span>";
+			return "<span "+style+" title=\"" + data.displayValue + "\" class='"+cssClass+"'>"+title+"</span>";
 
 		}
 
@@ -1008,7 +992,6 @@ if (beCPG.module.EntityDataGridRenderers) {
       }
   });	
 
-		
 	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 	      propertyName : [ "bcpg:lclComments"],

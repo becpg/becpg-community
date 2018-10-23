@@ -105,24 +105,25 @@ public class MeatContentFormulationHandler extends FormulationBaseHandler<Produc
 										if (nutListDataItem.getUnit().startsWith("mg")) {
 											value = value / 1000d;
 										}
-
-										switch (nut.getNutCode()) {
-										case "FAT":
-											meatContentData.addFatPerc(value);
-											break;
-										case "PRO-":
-											meatContentData.addProteinPerc(value);
-											// HYP hydroxyproline (mg)
-											break;
-										case "HYP":
-											meatContentData.addCollagenPerc(8 * value);
-											// COLG collagen (mg)
-											break;
-										case "COLG":
-											meatContentData.addCollagenPerc(value);
-											break;
-										default:
-											break;
+										if(nut.getNutCode()!=null) {
+											switch (nut.getNutCode()) {
+											case "FAT":
+												meatContentData.addFatPerc(value);
+												break;
+											case "PRO-":
+												meatContentData.addProteinPerc(value);
+												// HYP hydroxyproline (mg)
+												break;
+											case "HYP":
+												meatContentData.addCollagenPerc(8 * value);
+												// COLG collagen (mg)
+												break;
+											case "COLG":
+												meatContentData.addCollagenPerc(value);
+												break;
+											default:
+												break;
+											}
 										}
 
 									}
