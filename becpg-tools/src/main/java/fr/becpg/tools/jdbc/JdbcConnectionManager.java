@@ -61,6 +61,7 @@ public class JdbcConnectionManager {
 			} catch (Exception e) {
 				logger.error("Rollback transaction caused by: " + e.getMessage(), e);
 				connection.rollback();
+				throw e;
 			}
 			connection.commit();
 		}
