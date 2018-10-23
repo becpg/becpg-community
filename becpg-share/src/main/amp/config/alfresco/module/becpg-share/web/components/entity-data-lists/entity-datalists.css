@@ -82,9 +82,8 @@
 
 .datalists li a span.state.WUsed
 {
-    background-image: url("../images/wused-16.png");
+    background-image: url("../images/wused-14.png");
     background-repeat: no-repeat;
-    background-size: 14px;
 }
 
 .datalists li a span.state.dl-View-properties

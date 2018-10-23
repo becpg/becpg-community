@@ -81,7 +81,6 @@ public class VariantListValuePlugin extends EntityListValuePlugin {
 		while (!dictionaryService.isSubClass(nodeService.getType(parent), PLMModel.TYPE_PRODUCT)){
 			childAssociationRef = nodeService.getPrimaryParent(parent);
 			parent = childAssociationRef.getParentRef();
-			logger.info("parent: "+parent);
 		}
 		
 		return parent; 
@@ -95,8 +94,7 @@ public class VariantListValuePlugin extends EntityListValuePlugin {
 	    	if(nodeRefs!=null){
 	    		for(NodeRef nodeRef : nodeRefs){
 	    			String name = (String)nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
-	    			Boolean isDefault = (Boolean) nodeService.getProperty(nodeRef, PLMModel.PROP_IS_DEFAULT_VARIANT);
-	    			
+	    			Boolean isDefault = (Boolean) nodeService.getProperty(nodeRef, PLMModel.PROP_IS_DEFAULT_VARIANT);		
 	    			suggestions.add(new ListValueEntry(nodeRef.toString(),name, Boolean.TRUE.equals(isDefault) ? "variant-default": "variant"));
 	    			
 	    		}

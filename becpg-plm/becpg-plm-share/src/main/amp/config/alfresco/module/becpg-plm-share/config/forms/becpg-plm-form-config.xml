@@ -8764,8 +8764,6 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="bcpg:isDefaultVariant" />
-					<show id="bcpg:plants" force="true" />
-					<show id="bcpg:clients" force="true" />
 					<show id="bcpg:color" force="true" />
 				</field-visibility>
 				<appearance>
@@ -8784,8 +8782,6 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="bcpg:isDefaultVariant" />
-					<show id="bcpg:plants" force="true" />
-					<show id="bcpg:clients" force="true" />
 					<show id="bcpg:color" force="true" />
 				</field-visibility>
 				<appearance>
