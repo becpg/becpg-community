@@ -22,8 +22,10 @@ import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -174,13 +176,32 @@ public class InstanceManager {
 				}, new Object[] {});
 
 	}
+	
+	enum BatchState {
+		INPROGRESS,DONE
+	}
 
-	public Instance createBatch(Connection connection, Instance instance) throws SQLException {
-
-		final Long batchId = JdbcUtils.update(connection, "INSERT INTO `becpg_batch`(`id`) VALUES(NULL)", new Object[] {});
-
+	public Instance getOrCreateBatch(Connection connection, Instance instance) throws SQLException {
+		
+		 Long batchId = null;
+		
+		try ( PreparedStatement pst = connection.prepareStatement("select id from `becpg_batch` where `batch_state`=?", Statement.RETURN_GENERATED_KEYS)) {
+			pst.setString(1, BatchState.INPROGRESS.toString());
+			try (ResultSet rs = pst.executeQuery()) {
+				if (rs != null) {
+					if(rs.next()) {
+						batchId = rs.getLong(1);
+					}
+				}
+			}
+		}
+		
+		if(batchId ==null) {
+			batchId = JdbcUtils.update(connection, "INSERT INTO `becpg_batch`(`id`) VALUES(NULL)", new Object[] {});
+		}
+		
 		instance.setBatchId(batchId);
-
+		
 		return instance;
 
 	}
@@ -189,6 +210,8 @@ public class InstanceManager {
 
 		instance.setLastImport(new Date());
 
+		JdbcUtils.update(connection, "UPDATE `becpg_batch` SET `batch_state`=? WHERE `id`=?", new Object[] { BatchState.DONE.toString(), instance.getBatchId()});
+		
 		JdbcUtils.update(connection, "UPDATE `becpg_instance` SET `last_imported`=?, `batch_id`=? WHERE `id`=? ", new Object[] { instance.getLastImport(), instance.getBatchId(), instance.getId() });
 	}
 
