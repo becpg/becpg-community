@@ -359,7 +359,7 @@ public class XmlEntityVisitor {
 						xmlw.writeEndElement();
 								
 					} else {
-						logger.warn("Properties not in dictionnary: " + entry.getKey());
+						logger.debug("Properties not in dictionnary: " + entry.getKey());
 					}
 
 				}
