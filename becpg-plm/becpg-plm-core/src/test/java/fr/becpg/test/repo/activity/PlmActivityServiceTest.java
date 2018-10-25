@@ -82,8 +82,7 @@ public class PlmActivityServiceTest extends AbstractFinishedProductTest {
 					entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
 				
 				ret.forEach(tmp -> {
-					logger.info("Data: " + nodeService.getProperty(tmp, BeCPGModel.PROP_ACTIVITYLIST_DATA));
-					logger.info("User: " + nodeService.getProperty(tmp, BeCPGModel.PROP_ACTIVITYLIST_USERID));
+					logger.info("Data: " + nodeService.getProperty(tmp, BeCPGModel.PROP_ACTIVITYLIST_DATA)+" user: " + nodeService.getProperty(tmp, BeCPGModel.PROP_ACTIVITYLIST_USERID));
 				});
 				
 
@@ -318,7 +317,7 @@ public class PlmActivityServiceTest extends AbstractFinishedProductTest {
 			return product;
 
 		}, false, true);
-
+		
 		assertEquals("Check create Activity", 1, getActivities(finishedProductNodeRef, null).size());
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -330,7 +329,7 @@ public class PlmActivityServiceTest extends AbstractFinishedProductTest {
 			alfrescoRepository.save(finishedProduct);
 			return null;
 		}, false, true);
-
+		
 		assertEquals("Check update Activity", 2, getActivities(finishedProductNodeRef, null).size());
 	}
 
