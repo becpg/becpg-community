@@ -59,7 +59,7 @@ public class EffectivityAspectPolicy extends AbstractBeCPGPolicy
 	}
 
 	@Override
-	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
+	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 		for (NodeRef nodeRef : pendingNodes) {
 			if (isNotLocked(nodeRef) && !isWorkingCopyOrVersion(nodeRef)) {
 				if (nodeService.getProperty(nodeRef, BeCPGModel.PROP_START_EFFECTIVITY) == null) {
@@ -68,6 +68,7 @@ public class EffectivityAspectPolicy extends AbstractBeCPGPolicy
 				}
 			}
 		}
+		return true;
 	}
 
 	@Override
