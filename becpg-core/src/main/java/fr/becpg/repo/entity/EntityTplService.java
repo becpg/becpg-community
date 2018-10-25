@@ -17,7 +17,6 @@
  ******************************************************************************/
 package fr.becpg.repo.entity;
 
-import java.util.List;
 import java.util.Set;
 
 import org.alfresco.service.cmr.repository.NodeRef;
