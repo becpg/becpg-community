@@ -84,7 +84,7 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy
 	}
 
 	@Override
-	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
+	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 
 		for (NodeRef entityNodeRef : pendingNodes) {
 			if (nodeService.exists(entityNodeRef) && !isWorkingCopyOrVersion(entityNodeRef) ) {
@@ -103,6 +103,7 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy
 				}
 			}
 		}
+		return true;
 	}
 
 }
