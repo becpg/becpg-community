@@ -392,7 +392,7 @@
 				url = YAHOO.lang.substitute(Alfresco.constants.URL_PAGECONTEXT + this.options.searchPath, {
 					site : (this.options.siteId.length !== 0 ? ("site/" + this.options.siteId + "/") : ""),
 					terms : encodeURIComponent(Dom.get(this.id + "-search-text").value),
-					query : encodeURIComponent(YAHOO.lang.JSON.stringify(formData)),
+					query : encodeURIComponent(YAHOO.lang.JSON.stringify(this.cleanFilterData(formData)).replace("|","$ML$")),
 					scope : this.options.searchScope.toString(),
 					repo : (this.options.searchScope.toString() == "repo") ? "true" : "false"
 				});
@@ -407,6 +407,23 @@
 
 			window.location.href = url;
 		},
+		
+
+        cleanFilterData : function EntityDataGrid_cleanFilterData(formData)
+        {
+            var ret = {};
+            if (formData != null)
+            {
+                for ( var key in formData)
+                {
+                    if (formData[key].length > 0)
+                    {
+                        ret[key] = formData[key];
+                    }
+                }
+            }
+            return ret;
+        },
 
 		/**
 		 * Event handler called when the "beforeFormRuntimeInit" event is
