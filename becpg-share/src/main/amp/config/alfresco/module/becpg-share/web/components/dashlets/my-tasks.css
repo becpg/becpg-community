@@ -10,6 +10,13 @@
 
 /* Body */
 
+
+.my-tasks .body h3
+{
+   font-size: 12px;
+   font-weight: normal;
+}
+
 .my-tasks .body h4
 {
    margin-bottom: 0.2em;

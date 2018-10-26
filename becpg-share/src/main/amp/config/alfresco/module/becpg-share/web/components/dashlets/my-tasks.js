@@ -340,11 +340,11 @@
                statusDesc = '<div title="' + this.msg("title.taskSummary", type, status) + '">' + this.msg("label.taskSummary", type, status) + '</div>',
                unassignedDesc = '';
 
-            if (!assignee || !assignee.userName)
-            {
-               unassignedDesc = '<span class="theme-bg-color-5 theme-color-5 unassigned-task">' + this.msg("label.unassignedTask") + '</span>';
-            }
-            desc = messageDesc + dateDesc + statusDesc + unassignedDesc;
+//            if (!assignee || !assignee.userName)
+//            {
+//               unassignedDesc = '<span class="theme-bg-color-5 theme-color-5 unassigned-task">' + this.msg("label.unassignedTask") + '</span>';
+//            }
+            desc = messageDesc + dateDesc; //+ statusDesc + unassignedDesc;
          }
          
          elCell.innerHTML = desc;

@@ -128,11 +128,13 @@
                container: this.id + "-tasks",
                columnDefinitions:
                [
-                  { key: "id", sortable: true,label:"", formatter: this.bind(this.renderCellIcons), width: 40 },
-                  { key: "title", sortable: true, label:this.msg("label.description"), formatter: this.bind(this.renderTitleCell) },
+                  { key: "id", sortable: true,label:"", formatter: this.bind(this.renderCellPriority), width: 16 },
+                  { key: "isPooled", sortable: false,label:"", formatter: this.bind(this.renderCellPooled), width: 16 },      
+                  { key: "description", sortable: true, label:this.msg("label.description"), formatter: this.bind(this.renderTitleCell) },
+                  { key: "title", sortable: true, label:this.msg("label.type"), formatter: this.bind(this.renderTaskTypeCell) },
                   { key: "path", sortable: true, label:this.msg("label.due"), formatter: this.bind(this.renderDueDateCell) },
                   { key: "state", sortable: true, label:this.msg("label.started"), formatter: this.bind(this.renderStartDateCell) },
-                  { key: "description", sortable: true, label:this.msg("label.initiator"), formatter: this.bind(this.renderInitiatorCell) },
+                  { key: "owner", sortable: true, label:this.msg("label.initiator"), formatter: this.bind(this.renderInitiatorCell) },
                   { key: "name", sortable: false, label:"", formatter: this.bind(this.renderCellActions), width: 200 }
                ],
                config:
@@ -279,16 +281,21 @@
        * @param oColumn {object}
        * @param oData {object|string}
        */
-      renderCellIcons: function TL_renderCellIcons(elCell, oRecord, oColumn, oData)
+      renderCellPriority: function renderCellPriority(elCell, oRecord, oColumn, oData)
       {
          var priority = oRecord.getData("properties")["bpm_priority"],
                priorityMap = { "1": "high", "2": "medium", "3": "low" },
-               priorityKey = priorityMap[priority + ""],
-               pooledTask = oRecord.getData("isPooled");
-         var desc = '<img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/priority-' + priorityKey + '-16.png" title="' + this.msg("label.priority", this.msg("priority." + priorityKey)) + '"/>';
+               priorityKey = priorityMap[priority + ""];
+         elCell.innerHTML = '<img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/priority-' + priorityKey + '-16.png" title="' + this.msg("label.priority", this.msg("priority." + priorityKey)) + '"/>';
+      },
+      
+      renderCellPooled: function renderCellPooled(elCell, oRecord, oColumn, oData)
+      {
+         var pooledTask = oRecord.getData("isPooled");
+         var desc = "";
          if (pooledTask)
          {
-            desc += '&nbsp;<img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/pooled-task-16.png" title="' + this.msg("label.pooledTask") + '"/>';
+            desc += '<img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/pooled-task-16.png" title="' + this.msg("label.pooledTask") + '"/>';
          }
          elCell.innerHTML = desc;
       },
@@ -403,19 +410,38 @@
 		{
 			var data = oRecord.getData();
 			var taskId = data.id,
-					message = $html(data.properties["bpm_description"]),
-					type = $html(data.title);
+				message = $html(data.properties["bpm_description"]),
+				type = $html(data.title),
+		        assignee = oRecord.getData("owner"),href = "",
+		        status = $html(oRecord.getData("properties")["bpm_status"]),
+		        statusTitle = status;
+			
+			if(status!=null){
+				status = status.toUpperCase().replace(/\s/g,"_");
+			}
 
-			if (message === type)
+			if (message === type){
 				message = this.msg("workflow.no_message");
+			}
+			
+			 // if there is a property label available for the status use that instead
+            if (data.propertyLabels && Alfresco.util.isValueSet(data.propertyLabels["bpm_status"], false))
+            {
+            	statusTitle = data.propertyLabels["bpm_status"];
+            }
 
-			var href;
-			if (oRecord.getData('isEditable'))
+			if (oRecord.getData('isEditable')){
 				href = $siteURL('task-edit?taskId=' + taskId + '&referrer=tasks&myTasksLinkBack=true') + '" class="theme-color-1" title="' + this.msg("link.editTask");
-			else
+			} else {
 				href = $siteURL('task-details?taskId=' + taskId + '&referrer=tasks&myTasksLinkBack=true') + '" class="theme-color-1" title="' + this.msg("link.viewTask");
-
-			var info = '<h3><a href="' + href + '">' + message + '</a></h3>';
+			}
+			var info = '<h3><span title="'+statusTitle+'" class="'+status+'"><a href="' + href + '">' + message + '</a></span></h3>';
+			
+			 if (!assignee || !assignee.userName)
+	         {
+	            info += '<div class="unassigned"><span class="theme-bg-color-5 theme-color-5 unassigned-task">' + this.msg("label.unassignedTask") + '</span></div>';
+	         }
+			
 			elCell.innerHTML = info;
 		},
 
