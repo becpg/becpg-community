@@ -20,10 +20,8 @@ package fr.becpg.repo.project.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -59,7 +57,6 @@ import fr.becpg.repo.project.data.ProjectState;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 import fr.becpg.repo.project.data.projectList.DeliverableState;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
-import fr.becpg.repo.project.data.projectList.TaskManualDate;
 import fr.becpg.repo.project.data.projectList.TaskState;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
@@ -169,13 +166,13 @@ public class ProjectServiceImpl implements ProjectService {
 
 		// update prevTasks assoc of next tasks
 		List<NodeRef> deleteTaskPrevTaskNodeRefs = associationService.getTargetAssocs(taskListNodeRef, ProjectModel.ASSOC_TL_PREV_TASKS);
-		List<AssociationRef> nextTaskAssociationRefs = nodeService.getSourceAssocs(taskListNodeRef, ProjectModel.ASSOC_TL_PREV_TASKS);
+		List<NodeRef> nextTaskAssociationRefs = associationService.getSourcesAssocs(taskListNodeRef, ProjectModel.ASSOC_TL_PREV_TASKS);
 
-		for (AssociationRef nextTaskAssociationRef : nextTaskAssociationRefs) {
+		for (NodeRef nextTaskAssociationRef : nextTaskAssociationRefs) {
 
-			if (!nodeService.hasAspect(nextTaskAssociationRef.getSourceRef(), ContentModel.ASPECT_PENDING_DELETE)) {
+			if (!nodeService.hasAspect(nextTaskAssociationRef, ContentModel.ASPECT_PENDING_DELETE)) {
 
-				List<NodeRef> nextTaskPrevTaskNodeRefs = associationService.getTargetAssocs(nextTaskAssociationRef.getSourceRef(),
+				List<NodeRef> nextTaskPrevTaskNodeRefs = associationService.getTargetAssocs(nextTaskAssociationRef,
 						ProjectModel.ASSOC_TL_PREV_TASKS);
 
 				if (nextTaskAssociationRefs.contains(taskListNodeRef)) {
@@ -185,7 +182,7 @@ public class ProjectServiceImpl implements ProjectService {
 				for (NodeRef deleteTaskPrevTaskNodeRef : deleteTaskPrevTaskNodeRefs) {
 					nextTaskPrevTaskNodeRefs.add(deleteTaskPrevTaskNodeRef);
 				}
-				associationService.update(nextTaskAssociationRef.getSourceRef(), ProjectModel.ASSOC_TL_PREV_TASKS, nextTaskPrevTaskNodeRefs);
+				associationService.update(nextTaskAssociationRef, ProjectModel.ASSOC_TL_PREV_TASKS, nextTaskPrevTaskNodeRefs);
 			}
 		}
 
