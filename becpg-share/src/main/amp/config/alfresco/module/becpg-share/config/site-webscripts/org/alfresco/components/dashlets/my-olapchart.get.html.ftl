@@ -4,11 +4,22 @@
    <#-- JavaScript Dependencies -->
 	<@script type="text/javascript" src="${url.context}/res/yui/swf/swf.js" group="dashlets"></@script>
 	<@script type="text/javascript" src="${url.context}/res/yui/charts/charts.js" group="dashlets"></@script>
-	<@script type="text/javascript" src="${url.context}/res/components/dashlets/my-olapchart.js" group="dashlets"></@script>
+	<!-- CCC charts dependencies -->
+	<@script src="${url.context}/res/ctools/jquery.js" type="text/javascript" group="dashlets"></@script>
+    <@script src="${url.context}/res/ctools/jquery.tipsy.js" type="text/javascript" group="dashlets"></@script>
+    <@script src="${url.context}/res/ctools/protovis.js" type="text/javascript" group="dashlets"></@script>
+    <@script src="${url.context}/res/ctools/protovis-msie.js" type="text/javascript" group="dashlets"></@script>
+    <@script src="${url.context}/res/ctools/tipsy.js" type="text/javascript" group="dashlets"></@script>
+    <@script src="${url.context}/res/ctools/def.js" type="text/javascript" group="dashlets"></@script>
+    <@script src="${url.context}/res/ctools/pvc.js" type="text/javascript" group="dashlets"></@script>
+    
+    <@script type="text/javascript" src="${url.context}/res/components/dashlets/my-olapchart.js" group="dashlets"></@script>
+    
 </@>
 
 <@markup id="css" >
    <#-- CSS Dependencies -->
+   	<@link type="text/css" href="${url.context}/res/ctools/tipsy.css" rel="stylesheet" group="dashlets" />
 	<@link rel="stylesheet" type="text/css" href="${url.context}/res/components/dashlets/my-olapchart.css" group="dashlets"/>
 </@>
 <#--
@@ -72,7 +83,7 @@
 			<div class="body"  <#if args.height??>style="height: ${args.height}px;"</#if> >
 				<div id="${el}-chartContainer" class="yui-content">
 					<div class="chart olapChart" id="${el}-chart" >
-						<div class="empty"><h3>${msg("empty.title")}</h3><span>${msg("empty.description")}</span></div>
+						
 					</div>
 				</div>
 			</div>
