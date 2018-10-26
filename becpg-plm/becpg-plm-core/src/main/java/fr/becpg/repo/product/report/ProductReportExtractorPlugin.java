@@ -29,6 +29,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.DataListModel;
 import fr.becpg.model.GS1Model;
 import fr.becpg.model.MPMModel;
 import fr.becpg.model.PLMModel;
@@ -185,44 +186,56 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			defaultVariantNodeRef = loadVariants(productData, dataListsElt.getParent());
 		}
 
-		if ((datalists != null) && !datalists.isEmpty()) {
+		NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
+		if (listContainerNodeRef != null) {
+			List<NodeRef> listNodeRefs = entityListDAO.getExistingListsNodeRef(listContainerNodeRef);
 
-			for (QName dataListQName : datalists.keySet()) {
-
-				@SuppressWarnings({ "rawtypes" })
-				List<BeCPGDataObject> dataListItems = (List) datalists.get(dataListQName);
-
-				if ((dataListItems != null) && !dataListItems.isEmpty()) {
-					if (!DATALIST_SPECIFIC_EXTRACTOR.contains(dataListQName)) {
-						if (isExtractedProduct || context.prefsContains("componentDatalistsToExtract", componentDatalistsToExtract,
-								dataListQName.toPrefixString(namespaceService))) {
-							Element dataListElt = dataListsElt.addElement(dataListQName.getLocalName() + "s");
-
-							for (BeCPGDataObject dataListItem : dataListItems) {
-
-								addDataListState(dataListElt, dataListItem.getParentNodeRef());
-								Element nodeElt = dataListElt.addElement(dataListQName.getLocalName());
-
-								if (dataListItem instanceof CompositionDataItem) {
-									CompositionDataItem compositionDataItem = (CompositionDataItem) dataListItem;
-									loadProductData(compositionDataItem.getComponent(), nodeElt, context, null);
-								}
-
-								if (dataListItem instanceof AllergenListDataItem) {
-									String allergenType = (String) nodeService.getProperty(((AllergenListDataItem) dataListItem).getAllergen(),
-											PLMModel.PROP_ALLERGEN_TYPE);
-									if (allergenType != null) {
-										nodeElt.addAttribute("allergenType", allergenType);
+			for (NodeRef listNodeRef : listNodeRefs) {
+				QName dataListQName = QName.createQName((String) nodeService.getProperty(listNodeRef, DataListModel.PROP_DATALISTITEMTYPE),
+						namespaceService);
+				
+				if (!DATALIST_SPECIFIC_EXTRACTOR.contains(dataListQName)) {
+					
+					if (datalists != null && datalists.containsKey(dataListQName)) {
+						// use entityRepository for performances
+						@SuppressWarnings({ "rawtypes" })
+						List<BeCPGDataObject> dataListItems = (List) datalists.get(dataListQName);
+		
+						if ((dataListItems != null) && !dataListItems.isEmpty()) {
+							if (isExtractedProduct || context.prefsContains("componentDatalistsToExtract", componentDatalistsToExtract,
+									dataListQName.toPrefixString(namespaceService))) {
+								Element dataListElt = dataListsElt.addElement(dataListQName.getLocalName() + "s");
+	
+								for (BeCPGDataObject dataListItem : dataListItems) {
+	
+									addDataListState(dataListElt, dataListItem.getParentNodeRef());
+									Element nodeElt = dataListElt.addElement(dataListQName.getLocalName());
+	
+									if (dataListItem instanceof CompositionDataItem) {
+										CompositionDataItem compositionDataItem = (CompositionDataItem) dataListItem;
+										loadProductData(compositionDataItem.getComponent(), nodeElt, context, null);
 									}
-								}
-
-								loadDataListItemAttributes(dataListItem, nodeElt, context);
-
-								if (dataListItem instanceof AbstractManualVariantListDataItem) {
-									extractVariants(((AbstractManualVariantListDataItem) dataListItem).getVariants(), nodeElt);
+	
+									if (dataListItem instanceof AllergenListDataItem) {
+										String allergenType = (String) nodeService.getProperty(((AllergenListDataItem) dataListItem).getAllergen(),
+												PLMModel.PROP_ALLERGEN_TYPE);
+										if (allergenType != null) {
+											nodeElt.addAttribute("allergenType", allergenType);
+										}
+									}
+	
+									loadDataListItemAttributes(dataListItem, nodeElt, context);
+	
+									if (dataListItem instanceof AbstractManualVariantListDataItem) {
+										extractVariants(((AbstractManualVariantListDataItem) dataListItem).getVariants(), nodeElt);
+									}
 								}
 							}
 						}
+					}
+					else if(!BeCPGModel.TYPE_ACTIVITY_LIST.equals(dataListQName)){
+						// extract specific datalists
+						loadDataList(dataListsElt, listNodeRef, dataListQName, context);
 					}
 				}
 			}

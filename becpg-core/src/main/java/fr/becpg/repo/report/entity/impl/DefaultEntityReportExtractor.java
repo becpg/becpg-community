@@ -449,17 +449,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 						}
 					}
 				} else {
-					List<NodeRef> dataListItems = entityListDAO.getListItems(listNodeRef, dataListQName);
-					if ((dataListItems != null) && !dataListItems.isEmpty()) {
-						Element dataListElt = dataListsElt.addElement(dataListQName.getLocalName() + "s");
-
-						for (NodeRef dataListItem : dataListItems) {
-
-							addDataListState(dataListElt, dataListItem);
-							Element nodeElt = dataListElt.addElement(dataListQName.getLocalName());
-							loadDataListItemAttributes(dataListItem, nodeElt, context);
-						}
-					}
+					loadDataList(dataListsElt, listNodeRef, dataListQName, context);
 				}
 			}
 		}
@@ -479,6 +469,19 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		}
 	}
 
+	protected void loadDataList(Element dataListsElt, NodeRef listNodeRef, QName dataListQName, DefaultExtractorContext context) {
+		List<NodeRef> dataListItems = entityListDAO.getListItems(listNodeRef, dataListQName);
+		if ((dataListItems != null) && !dataListItems.isEmpty()) {
+			Element dataListElt = dataListsElt.addElement(dataListQName.getLocalName() + "s");
+
+			for (NodeRef dataListItem : dataListItems) {
+
+				addDataListState(dataListElt, dataListItem);
+				Element nodeElt = dataListElt.addElement(dataListQName.getLocalName());
+				loadDataListItemAttributes(dataListItem, nodeElt, context);
+			}
+		}
+	}
 	protected void loadDataListItemAttributes(BeCPGDataObject dataListItem, Element nodeElt, DefaultExtractorContext context) {
 		loadDataListItemAttributes(dataListItem, nodeElt, context, new ArrayList<>());
 	}
