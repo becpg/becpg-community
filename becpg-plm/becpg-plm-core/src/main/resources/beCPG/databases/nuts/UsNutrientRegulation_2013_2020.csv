@@ -1,4 +1,4 @@
-��nutCode;charactName;sort;depthLevel;mandatory;optionnal;bold;gda;ul
+nutCode;charactName;sort;depthLevel;mandatory;optionnal;bold;gda;ul
 SUGAD;Added sugars;;;;;;;
 ALC;Alcohol (ethanol);;;;;;;
 CARTA;Alpha-Carot;;;;;;;
@@ -9,7 +9,6 @@ CAFFN;Caffein;;;;;;;
 CA;Calcium, Ca;13;0;true;false;false;1000;2500
 CHOAVL;Carbohydrate, by difference;;;;;;;
 CHO-;Carbohydrate, by difference (with fiber);7;0;true;false;true;300;
-CHOAVL;Carbohydrates, without sugar alcohol;;;;;;;
 CHOL-;Cholesterol;5;0;true;false;true;300;
 CHOLN;CholineTot;;;;;;;3500
 CR;Chromium;;0;false;true;false;120;
