@@ -18,12 +18,19 @@
    <@script type="text/javascript" src="${url.context}/res/components/entity-data-lists/variant-picker.js" group="entity-datalists"/>
    <@script type="text/javascript" src="${url.context}/res/components/entity-data-lists/product-notifications.js" group="entity-datalists"/>
   
-   <@script src="${url.context}/res/yui/swf/swf.js" group="entity-datalists"></@script>
-   <@script src="${url.context}/res/yui/charts/charts.js" group="entity-datalists"></@script>
-   <@script src="${url.context}/res/modules/entity-charact-details/entity-charact-details.js" group="entity-datalists"></@script>
+   <@script src="${url.context}/res/ctools/jquery.js" type="text/javascript" group="entity-datalists"/>
+   <@script src="${url.context}/res/ctools/jquery.tipsy.js" type="text/javascript" group="entity-datalists"/>
+   <@script src="${url.context}/res/ctools/protovis.js" type="text/javascript" group="entity-datalists"/>
+   <@script src="${url.context}/res/ctools/protovis-msie.js" type="text/javascript" group="entity-datalists"/>
+   <@script src="${url.context}/res/ctools/tipsy.js" type="text/javascript" group="entity-datalists"/>
+   <@script src="${url.context}/res/ctools/def.js" type="text/javascript" group="entity-datalists"/>
+   <@script src="${url.context}/res/ctools/pvc.js" type="text/javascript" group="entity-datalists"/>
+  
+  
+   <@script src="${url.context}/res/modules/entity-charact-details/entity-charact-details.js" group="entity-datalists"/>
   	
   
-   <@script src="${url.context}/res/modules/custom-entity-datagrid/product-columnRenderers.js" group="entity-datalists"></@script>
+   <@script src="${url.context}/res/modules/custom-entity-datagrid/product-columnRenderers.js" group="entity-datalists"/>
    <@script src="${url.context}/res/modules/custom-entity-datagrid/product-entity-toolbar.js" group="entity-datalists"/>
   
    <@script src="${url.context}/res/components/entity-charact-views/dashlet-resizer.js" group="entity-datalists"/>

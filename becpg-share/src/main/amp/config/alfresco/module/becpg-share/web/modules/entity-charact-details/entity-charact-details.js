@@ -27,11 +27,6 @@
 {
 
     /**
-     * YUI Chart SWF
-     */
-    YAHOO.widget.Chart.SWFURL = Alfresco.constants.URL_CONTEXT + "res/yui/charts/assets/charts.swf";
-
-    /**
      * Preferences
      */
     var PREFERENCES_DETAILS_VIEW = "beCPG.module.EntityCharactDetails", PREF_CHART_TYPE = "chartType";
