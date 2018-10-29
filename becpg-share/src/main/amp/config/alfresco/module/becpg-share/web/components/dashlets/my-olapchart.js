@@ -26,11 +26,6 @@
 (function() {
 
    /**
-    * YUI Chart SWF
-    */
-   YAHOO.widget.Chart.SWFURL = Alfresco.constants.URL_CONTEXT + "res/yui/charts/assets/charts.swf";
-
-   /**
     * Preferences
     */
    var PREFERENCES_OLAP = "fr.becpg.olap.chart.dashlet", PREF_QUERY = "query", PREF_CHART_TYPE = "chartType";

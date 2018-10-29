@@ -374,7 +374,7 @@
                   <span class="crud-label"> ${msg("label.usercontentlocale")}:&nbsp; </span>
                </div>
                <div class="field-row">
-                  <select id="${el}-update-usercontentlocale" class="crud-label">
+                  <select id="${el}-update-usercontentlocale" class="crud-label" style="width:10em;">
                      <#list  contentLocale.getChildren("language") as language>
                   	  <#assign key = language.getAttribute("locale")>			
 						<option value=${key} >${msg("locale.name.${key}")}</option>
@@ -385,7 +385,7 @@
                   <span class="crud-label"> ${msg("label.userlocale")}:&nbsp; </span>
                </div>
                <div class="field-row">
-                  <select id="${el}-update-userlocale" class="crud-label">
+                  <select id="${el}-update-userlocale" class="crud-label" style="width:10em;">
                   	 <#list  uiLocale.getChildren("language") as language>
                   	  <#assign key = language.getAttribute("locale")>			
 						<option value=${key} >${msg("locale.name.${key}")}</option>
