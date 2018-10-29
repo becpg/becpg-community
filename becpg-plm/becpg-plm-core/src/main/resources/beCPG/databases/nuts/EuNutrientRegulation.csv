@@ -9,7 +9,6 @@ CAFFN;Caffein;;;;;;;
 CA;Calcium, Ca;;0;false;true;false;800;
 CHOAVL;Carbohydrate, by difference;5;0;false;true;false;260;
 CHO-;Carbohydrate, by difference (with fiber);;;;;;;
-CHOAVL;Carbohydrates, without sugar alcohol;;;;;;;
 CHOL-;Cholesterol;;;;;;;
 CHOLN;CholineTot;;;;;;;
 CR;Chromium;;0;false;true;false;40;

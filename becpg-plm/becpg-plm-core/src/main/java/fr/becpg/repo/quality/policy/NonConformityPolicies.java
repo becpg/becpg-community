@@ -63,14 +63,14 @@ public class NonConformityPolicies extends AbstractBeCPGPolicy implements NodeSe
 	
 	
 	@Override
-	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
+	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 		List<String> instanceIds = new ArrayList<>();
 		for(NodeRef tmp : pendingNodes){
 			instanceIds.add(tmp.getId());
 		}
 		
 		nonConformityService.deleteWorkflows(instanceIds);
-		
+		return true;
 	}
 	
 }

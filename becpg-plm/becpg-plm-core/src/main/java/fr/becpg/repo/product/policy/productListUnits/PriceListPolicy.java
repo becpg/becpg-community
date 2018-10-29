@@ -101,7 +101,7 @@ public class PriceListPolicy extends AbstractBeCPGPolicy implements NodeServiceP
 	}
 
 	@Override
-	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
+	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 		for (NodeRef nodeRef : pendingNodes) {
 			if (nodeService.exists(nodeRef)) {
 				Integer prefRank = (Integer) nodeService.getProperty(nodeRef, PLMModel.PROP_PRICELIST_PREF_RANK);
@@ -113,6 +113,7 @@ public class PriceListPolicy extends AbstractBeCPGPolicy implements NodeServiceP
 				}
 			}
 		}
+		return true;
 	}
 
 	private void updateCostList(NodeRef priceListItemNodeRef) {

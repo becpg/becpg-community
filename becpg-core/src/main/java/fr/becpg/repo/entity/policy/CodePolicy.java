@@ -56,13 +56,14 @@ public class CodePolicy extends AbstractBeCPGPolicy implements NodeServicePolici
 	}
 
 	@Override
-	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
+	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 		
 		for (NodeRef nodeRef : pendingNodes) {
 			if (isNotLocked(nodeRef) && !isWorkingCopyOrVersion(nodeRef) ) {
 
 				autoNumService.getOrCreateBeCPGCode(nodeRef);
 			}
-		}		
+		}
+		return true;
 	}
 }
