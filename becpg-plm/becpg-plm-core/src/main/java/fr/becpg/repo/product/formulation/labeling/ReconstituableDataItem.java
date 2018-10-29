@@ -19,7 +19,7 @@ public class ReconstituableDataItem {
 		this.productNodeRef = productNodeRef;
 		this.rate = rate;
 		if(priority == null){
-			priority = 0;
+			this.priority = 0;
 		} else {
 			this.priority = priority;
 		}
