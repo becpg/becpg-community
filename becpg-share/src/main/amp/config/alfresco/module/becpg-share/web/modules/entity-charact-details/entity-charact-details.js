@@ -70,6 +70,11 @@
                          * dataSource
                          */
                         dataSource : null,
+                        
+                        /**
+                         * dataSource for ccc charts
+                         */
+                        cDataSource : null,
 
                         /**
                          * Object container for initialization options
@@ -300,12 +305,6 @@
                         {
                             if (this.options.entityNodeRef != null && this.options.entityNodeRef.length > 0)
                             {
-
-
-                            	
-                            	
-                            	
-                            	
                                 Alfresco.util.Ajax.request(
                                 {
                                     url : this._buildDetailsUrl("json"),
@@ -339,8 +338,10 @@
                          */
                         processData : function EntityCharactDetails_processData(response)
                         {
+                        	
 
                             var data = response.json;
+                            
 
                             var myFieldDefs = [];
                             this.columnDefs = [];
@@ -451,6 +452,11 @@
                                 data.resultsets.pop();
                             }
                             
+                            this.cDataSource = {};
+                            this.cDataSource.metadata = data.metadatas;
+                            
+                            this.cDataSource.resultset = data.resultsets;
+                            
                             this.dataSource = new YAHOO.util.DataSource(data.resultsets);
                             this.dataSource.responseType = YAHOO.util.DataSource.TYPE_JSARRAY;
                             this.dataSource.responseSchema =
@@ -462,6 +468,33 @@
                             this.render();
 
                         },
+                        
+                        /**
+                         * On chart click event handler 
+                         */
+                        onClickChart : function EntityCharactDetails_onClickChart(scene, me){   
+                        	var result = me.cDataSource.resultset.filter(function (obj) {
+                        		return obj[0] === scene.firstAtoms.category.value;
+                        	});
+                        	if( result[0][me.cDataSource.metadata.length+1].indexOf("Material") < 0){
+                        		var itemNodeRef = result[0][me.cDataSource.metadata.length];
+                        		me.options.backEntityNodeRef.push(me.options.entityNodeRef);
+                        		me.options.navigationPath.push({"name":scene.firstAtoms.category.value,"nodeRef":itemNodeRef,"cssClass":result[0][me.cDataSource.metadata.length+2]});
+                        		me.options.entityNodeRef = itemNodeRef;
+                        		me.widgets.backButton.set("disabled", false);
+                        		me.loadChartData();
+                        	}
+                        },
+                        
+                        /**
+                         * Show toolTip message 
+                         */
+                        showTooltipMessage : function OlapChart_render(scene){
+                      	  return scene.vars.series.label + 
+                  	       "<br /> " + scene.vars.category.label + 
+                  	       "<br /> "    + scene.vars.value.value ;
+                        },
+                    
                         /**
                          * Render Details Chart
                          */
@@ -470,78 +503,126 @@
 
                             if (this.dataSource != null)
                             {
+                            	var elWidth = document.getElementById(this.id+"-chartContainer").offsetWidth - 10;
+                            	var elHieght = document.getElementById(this.id+"-chartContainer").offsetHeight;
                             	
                                 if (this.widgets.chartTypePicker.value == "lineChart")
                                 {
-                                    this.widgets.dataTable = null;
-                                    this.widgets.chart = new YAHOO.widget.LineChart(this.id + "-chart", this.dataSource,
-                                    {
-                                        series : this.seriesDef,
-                                        xField : "col0",
-                                        wmode : "opaque",
-                                        style :
-                                        {
-                                            legend :
-                                            {
-                                                display : "bottom"
-                                            }
-                                        }
-                                    });
+                                	 new pvc.LineChart({
+                                	        canvas: this.id + "-chart",
+                                	        width:  elWidth,
+                                	        height: elHieght,
+                                	        dotsVisible: true,
+                                	        baseAxisSize: 40,
+                                	        baseAxisDomainRoundMode: 'nice',
+                                	        // Panels/legend
+                                    	    legend: true,
+                                    	    legendPosition: 'bottom',
+                                            legendAlign: 'center',
+                                            legendDot_shape: 'circle',
+                                	        animate:    true,
+                                	        selectable: true,
+                                	        hoverable:  true,
+                                	        clickable: true,
+                                    	    clickAction: function(scene) { 
+                                    	    	me.onClickChart(scene, me);
+                                    	    },
+                                    	    tooltipFormat : function(scene){
+                                	        	return me.showTooltipMessage(scene);
+                                	        }
+                                	    })
+                                	    .setData(this.cDataSource, {crosstabMode: true})
+                                	    .render();
 
                                 }
                                 else if (this.widgets.chartTypePicker.value == "barChart")
                                 {
-                                    this.widgets.dataTable = null;
-                                    this.widgets.chart = new YAHOO.widget.BarChart(this.id + "-chart", this.dataSource,
-                                    {
-                                        series : this.barChartSeriesDef,
-                                        yField : "col0",
-                                        wmode : "opaque",
-                                        style :
-                                        {
-                                            legend :
-                                            {
-                                                display : "bottom"
-                                            }
-                                        }
-                                    });
+                                	new pvc.BarChart({
+                                	    canvas: this.id + "-chart",
+                                	    width:  elWidth,
+                                	    height: elHieght,
+                                	    orientation: 'horizontal',
+                                	    axisGrid: true,
+                                	    axisGrid_strokeStyle: '#F7F8F9',
+                                	    axisLabel_font: 'normal 10px "Open Sans"',
+                                	    legend: true,
+                                	    legendPosition: 'bottom',
+                                        legendAlign: 'center',
+                                        panelSizeRatio: 0.3,
+                                	    animate:    true,
+                                	    selectable: true,
+                                	    hoverable:  true,
+                                	    clickable: true,
+                                	    clickAction: function(scene) { 
+                                	    	me.onClickChart(scene, me);
+                                	    },
+                                	    tooltipFormat : function(scene){
+                            	        	return me.showTooltipMessage(scene);
+                            	        }
+
+                                	})
+                                	.setData(this.cDataSource, {crosstabMode: true})
+                                	.render();
 
                                 }
                                 else if (this.widgets.chartTypePicker.value == "columnChart")
                                 {
-                                    this.widgets.dataTable = null;
-                                    this.widgets.chart = new YAHOO.widget.ColumnChart(this.id + "-chart", this.dataSource,
-                                    {
-                                        series : this.seriesDef,
-                                        xField : "col0",
-                                        wmode : "opaque",
-                                        style :
-                                        {
-                                            legend :
-                                            {
-                                                display : "bottom"
-                                            }
-                                        }
-                                    });
+                                	 new pvc.BarChart({
+                                		 canvas: this.id + "-chart",
+                                		 width:  elWidth,
+                                		 height: elHieght,
+                                		 legend: true,
+                                		 legendPosition: 'bottom',
+                                		 legendAlign: 'center',
+                                		 panelSizeRatio: 0.3,
+                                		 animate: true,
+                                		 baseAxisGrid: true,
+                                		 selectable: true,
+                                		 clickable: true,
+                                		 clickAction: function(scene) {  
+                                			 me.onClickChart(scene, me);
+                                		 },
+                                		 tooltipFormat : function(scene){
+                             	        	return me.showTooltipMessage(scene);
+                                		 }
+                                	    })
+                                	    .setData(this.cDataSource, {crosstabMode: true})
+                                	    .render();
 
                                 }
                                 else if (this.widgets.chartTypePicker.value == "pieChart")
                                 {
-                                    this.widgets.dataTable = null;
-                                    this.widgets.chart = new YAHOO.widget.PieChart(this.id + "-chart", this.dataSource,
-                                    {
-                                        dataField : "col1",
-                                        categoryField : "col0",
-                                        wmode : "opaque",
-                                        style :
-                                        {
-                                            legend :
-                                            {
-                                                display : "right"
-                                            }
-                                        }
-                                    });
-
+                                	new pvc.PieChart({
+                                	    canvas: this.id + "-chart",
+                                	    width:  elWidth,
+                                	    height: elHieght,
+                                	    valuesVisible: true,
+                                	    valuesFont: 'lighter 11px "Open Sans"',
+                                	    explodedSliceRadius: '10%',
+                                	    slice_offsetRadius: function(scene) {
+                                	        return scene.isSelected() ? '10%' : 0;
+                                	    },
+                                	    //multiChartIndexes: 1,
+                                	    legend: true,
+                                	    legendPosition: 'right',
+                                        legendAlign: 'center',
+                                        legendDot_shape: 'circle',
+                                        legendLabel_textStyle: function(scene) {
+                                            var colorScale = this.panel.axes.color.scale;
+                                            return colorScale(this.getValue());
+                                        },
+                                	    selectable: true,
+                                	    hoverable:  true,
+                                	    clickable: true,
+                                	    clickAction: function(scene) { 
+                                	    	me.onClickChart(scene, me);
+                                	    },
+                                	    tooltipFormat : function(scene){
+                             	        	return me.showTooltipMessage(scene);
+                                		 }
+                                	})
+                                	.setData(this.cDataSource, {crosstabMode: true})
+                                	.render();
                                 }
                                 else if (this.widgets.chartTypePicker.value == "chartData")
                                 {
@@ -550,6 +631,8 @@
                                     this.widgets.chart = null;
                                     this.widgets.dataTable = new YAHOO.widget.DataTable(this.id + "-chart", this.columnDefs, this.dataSource);
                                 }
+                                
+                                Dom.setStyle(this.id + "-chart", "display", "flex");
 
                                 var me = this;
                                 if (this.widgets.chart != null)
@@ -569,8 +652,6 @@
 
                                 if (this.widgets.dataTable != null)
                                 {
-                                    
-                                    
                                     this.widgets.dataTable.subscribe("cellClickEvent", function(events)
                                     {
                                         var target = events.target;
