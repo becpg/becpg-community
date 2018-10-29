@@ -60,6 +60,11 @@
        * dataSource
        */
       dataSource : null,
+      
+      /**
+       * dataSource for ccc charts 
+       */
+      cDataSource : null,
 
       /**
        * saiku-ui
@@ -303,6 +308,9 @@
             });
          }
       },
+      
+      
+      
       /**
        * @param response
        * @returns {OlapChart_processData}
@@ -311,6 +319,10 @@
 
          this.data = response.json;
 
+         this.cDataSource = {};
+         this.cDataSource.metadata = this.data.metadatas;
+         this.cDataSource.resultset = this.data.resultsets;
+		  
          var myFieldDefs = [];
          this.columnDefs = [];
          this.seriesDef = [];
@@ -343,61 +355,124 @@
          this.render();
 
       },
+      
+      /**
+       * Show toolTip message 
+       */
+      showTooltipMessage : function OlapChart_render(scene){
+    	  return scene.vars.series.label + 
+	       "<br /> " + scene.vars.category.label + 
+	       "<br /> "    + scene.vars.value.value ;
+      },
+      
       /**
        * Render OLAP Chart
        */
       render : function OlapChart_render() {
 
          if (this.dataSource !== null) {
+        	 
+        	var elWidth = document.getElementById(this.id+"-chartContainer").offsetWidth;
+         	var elHieght = document.getElementById(this.id+"-chartContainer").offsetHeight;
 
             if (this.chartTypePicker.value == "lineChart") {
-               new YAHOO.widget.LineChart(this.id + "-chart", this.dataSource, {
-                  series : this.seriesDef,
-                  xField : "col0",
-                  wmode : "opaque",
-                  style : {
-                     legend : {
-                        display : "bottom"
-                     }
-                  }
-               });
-
+            	new pvc.LineChart({
+        	        canvas: this.id + "-chart",
+        	        width:  elWidth,
+        	        height: elHieght,
+        	        dotsVisible: true,
+        	        baseAxisSize: 40,
+        	        baseAxisDomainRoundMode: 'nice',
+        	        // Panels/legend
+            	    legend: true,
+            	    legendPosition: 'bottom',
+                    legendAlign: 'center',
+                    legendDot_shape: 'circle',
+        	        animate:    true,
+        	        selectable: true,
+        	        hoverable:  true,
+        	        tooltipFormat : function(scene){
+        	        	return me.showTooltipMessage(scene);
+        	        }
+        	    })
+        	    .setData(this.cDataSource, {crosstabMode: true})
+        	    .render();
+            	
             } else if (this.chartTypePicker.value == "barChart") {
 
-               new YAHOO.widget.BarChart(this.id + "-chart", this.dataSource, {
-                  series : this.barChartSeriesDef,
-                  yField : "col0",
-                  wmode : "opaque",
-                  style : {
-                     legend : {
-                        display : "bottom"
-                     }
-                  }
-               });
+            	new pvc.BarChart({
+            	    canvas: this.id + "-chart",
+            	    width:  elWidth,
+            	    height: elHieght,
+            	    orientation: 'horizontal',
+            	    axisGrid: true,
+            	    axisGrid_strokeStyle: '#F7F8F9',
+            	    axisLabel_font: 'normal 10px "Open Sans"',   
+            	    panelSizeRatio: 0.3,
+            	    // Panels/legend
+            	    legend: true,
+            	    legendPosition: 'bottom',
+                    legendAlign: 'center',
+            	    animate:    true,
+            	    selectable: true,
+            	    hoverable:  true,
+            	    tooltipFormat : function(scene){
+         		       return me.showTooltipMessage(scene);
+         		 }
+
+            	})
+            	.setData(this.cDataSource, {crosstabMode: true})
+            	.render();
 
             } else if (this.chartTypePicker.value == "columnChart") {
-               new YAHOO.widget.ColumnChart(this.id + "-chart", this.dataSource, {
-                  series : this.seriesDef,
-                  xField : "col0",
-                  wmode : "opaque",
-                  style : {
-                     legend : {
-                        display : "bottom"
-                     }
-                  }
-               });
+            	new pvc.BarChart({
+           		 canvas: this.id + "-chart",
+           		 width:  elWidth,
+           		 height: elHieght,
+           		 panelSizeRatio: 0.3,
+           		 // Panels/legend
+           		 legend: true,
+           		 legendPosition: 'bottom',
+           		 legendAlign: 'center',
+           		 animate: true,
+           		 baseAxisGrid: true,
+           		 selectable: true,
+           		 tooltipFormat : function(scene){
+           			return me.showTooltipMessage(scene);
+        		 }
+           	    })
+           	    .setData(this.cDataSource, {crosstabMode: true})
+           	    .render();
 
             } else if (this.chartTypePicker.value == "pieChart") {
-               new YAHOO.widget.PieChart(this.id + "-chart", this.dataSource, {
-                  dataField : "col1",
-                  categoryField : "col0",
-                  wmode : "opaque",
-                  style : {
-                     legend : {
-                        display : "right"
-                     }
-                  }
-               });
+            	new pvc.PieChart({
+            	    canvas: this.id + "-chart",
+            	    width:  elWidth,
+            	    height: elHieght,
+            	    valuesVisible: true,
+            	    valuesFont: 'lighter 11px "Open Sans"',
+            	    explodedSliceRadius: '10%',
+            	    slice_offsetRadius: function(scene) {
+            	        return scene.isSelected() ? '10%' : 0;
+            	    },
+            	    // Panels/legend
+            	    legend: true,
+            	    legendPosition: 'right',
+                    legendAlign: 'center',
+                    legendDot_shape: 'circle',
+                    legendLabel_textStyle: function(scene) {
+                        var colorScale = this.panel.axes.color.scale;
+                        return colorScale(this.getValue());
+                    },
+            	    selectable: true,
+            	    hoverable:  true,
+            	    tooltipFormat : function(scene){
+            	    	return me.showTooltipMessage(scene);
+         		 }
+            	})
+            	.setData(this.cDataSource, {crosstabMode: true})
+            	.render();
+            	
             } else if (this.chartTypePicker.value == "chartData") {
                new YAHOO.widget.DataTable(this.id + "-chart", this.columnDefs, this.dataSource);
             }
