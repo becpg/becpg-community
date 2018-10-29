@@ -219,7 +219,7 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 	}
 
 	@Override
-	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
+	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 		try {
 			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 			L2CacheSupport.doInCacheContext(() -> {
@@ -232,6 +232,7 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 		} finally {
 			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
 		}
+		return true;
 	}
 
 	@Override

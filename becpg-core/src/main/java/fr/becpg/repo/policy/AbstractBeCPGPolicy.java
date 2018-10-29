@@ -38,17 +38,16 @@ import org.alfresco.service.cmr.lock.LockStatus;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.util.GUID;
 import org.alfresco.util.PropertyCheck;
 import org.alfresco.util.transaction.TransactionListenerAdapter;
 import org.alfresco.util.transaction.TransactionSupportUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
 
-@EnableAspectJAutoProxy
 public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyNodePolicy, CopyServicePolicies.OnCopyCompletePolicy {
 
 	protected BehaviourFilter policyBehaviourFilter;
@@ -58,8 +57,11 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 	protected LockService lockService;
 
 	protected NodeService nodeService;
+	
+	protected BeCPGPolicyTransactionListener transactionListener = new BeCPGPolicyTransactionListener("pre");
+	
+	protected BeCPGPolicyTransactionListener postTransactionListener = new BeCPGPolicyTransactionListener("post");
 
-	private AbstractBeCPGPolicyTransactionListener transactionListener;
 
 	private final Set<String> keys = new HashSet<>();
 
@@ -88,9 +90,7 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 		PropertyCheck.mandatory(this, "nodeService", nodeService);
 
 		doInit();
-
-		// Create the transaction listener
-		this.transactionListener = new AbstractBeCPGPolicyTransactionListener();
+		
 	}
 
 	public void disableOnCopyBehaviour(QName type) {
@@ -142,12 +142,14 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 
 	public abstract void doInit();
 
-	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
+	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 		// Do Nothing
+		return false;
 	}
 
 	protected void doAfterCommit(String key, Set<NodeRef> pendingNodes) {
 		// Do Nothing
+
 	}
 
 	protected void queueNode(NodeRef nodeRef) {
@@ -160,7 +162,7 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 			pendingNodes = new LinkedHashSet<>();
 			keys.add(key);
 			TransactionSupportUtil.bindResource(key, pendingNodes);
-			AlfrescoTransactionSupport.bindListener(this.transactionListener);
+			AlfrescoTransactionSupport.bindListener(transactionListener);
 		}
 		if (!pendingNodes.contains(nodeRef)) {
 			pendingNodes.add(nodeRef);
@@ -201,13 +203,22 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 		return false;
 	}
 
-	class AbstractBeCPGPolicyTransactionListener extends TransactionListenerAdapter {
+	class BeCPGPolicyTransactionListener extends TransactionListenerAdapter {
+
+		private String id = GUID.generate();
+	
+		
+		public BeCPGPolicyTransactionListener(String prefix) {
+			this.id =prefix+"-"+this.id;
+		}
 
 		@Override
 		public void beforeCommit(boolean readOnly) {
 
 			StopWatch watch = null;
 
+			Set<String> keysToRemove = new HashSet<>();
+			
 			for (String key : keys) {
 
 				Set<NodeRef> pendingNodes = TransactionSupportUtil.getResource(key);
@@ -219,13 +230,24 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 						watch.start();
 					}
 
-					doBeforeCommit(key, pendingNodes);
+					if(doBeforeCommit(key, pendingNodes)) {
+						keysToRemove.add(key);
+					}
 
 					if (logger.isDebugEnabled()) {
 						watch.stop();
-						logger.debug("BeforeCommit run in  " + watch.getTotalTimeSeconds() + " seconds for key " + key+"  - pendingNodesSize : "+pendingNodes.size());
+						logger.debug(id + " - BeforeCommit run in  " + watch.getTotalTimeSeconds() + " seconds for key " + key+"  - pendingNodesSize : "+pendingNodes.size());
 					}
+					
+					
 				}
+			}
+			
+			if(keysToRemove!=null && !keysToRemove.isEmpty()) {
+				for (String key : keys) {
+					TransactionSupportUtil.bindResource(key, null);
+				}
+				AlfrescoTransactionSupport.bindListener(postTransactionListener);
 			}
 		}
 
@@ -249,11 +271,42 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 
 					if (logger.isDebugEnabled()) {
 						watch.stop();
-						logger.debug("AfterCommit run in  " + watch.getTotalTimeSeconds() + " seconds for key " + key+"  - pendingNodesSize : "+pendingNodes.size());
+						logger.debug(id + " - AfterCommit run in  " + watch.getTotalTimeSeconds() + " seconds for key " + key+"  - pendingNodesSize : "+pendingNodes.size());
 
 					}
 				}
 			}
+		}
+		
+
+		/**
+		 * @see java.lang.Object#hashCode()
+		 */
+		@Override
+		public int hashCode()
+		{
+			return this.id.hashCode();
+		}
+		
+		/**
+		 * @see java.lang.Object#equals(java.lang.Object)
+		 */
+		@Override
+		public boolean equals(Object obj)
+		{
+			if (this == obj)
+	        {
+	            return true;
+	        }
+	        if (obj instanceof BeCPGPolicyTransactionListener)
+	        {
+	        	BeCPGPolicyTransactionListener that = (BeCPGPolicyTransactionListener) obj;
+	            return (this.id.equals(that.id));
+	        }
+	        else
+	        {
+	            return false;
+	        }
 		}
 
 	}
