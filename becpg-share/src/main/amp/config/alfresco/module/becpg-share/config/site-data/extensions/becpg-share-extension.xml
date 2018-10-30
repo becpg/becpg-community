@@ -11,6 +11,7 @@
 						<dojo-pages>
 							<packages>
 								<package name="becpg" location="js/aikau/becpg" />
+								<package name="bccc" location="js" main="beCPGCCC-min" />
 							</packages>
 						</dojo-pages>
 					</web-framework>

@@ -1,22 +1,15 @@
 
 <@markup id="css" >
    <#include "../../modules/entity-datagrid/include/entity-datagrid.css.ftl"/>
-   <@link type="text/css" href="${url.context}/res/ctools/tipsy.css" rel="stylesheet" group="entity-datalists" />
 	<@link href="${url.context}/res/modules/entity-charact-details/entity-charact-details.css" group="entity-datalists" />
 	<@link href="${url.context}/res/components/entity-charact-views/form-datagrid-view.css" group="entity-datalists"/>
+	
+	<@link rel="stylesheet" type="text/css" href="${url.context}/res/ctools/tipsy.css" group="entity-datalists" />
 </@>
 
 <@markup id="js">
     <#include "../../modules/entity-datagrid/include/entity-datagrid.js.ftl"/>
-    
-	<@script src="${url.context}/res/ctools/jquery.js" type="text/javascript" group="entity-datalists"/>
-    <@script src="${url.context}/res/ctools/jquery.tipsy.js" type="text/javascript" group="entity-datalists"/>
-    <@script src="${url.context}/res/ctools/protovis.js" type="text/javascript" group="entity-datalists"/>
-    <@script src="${url.context}/res/ctools/protovis-msie.js" type="text/javascript" group="entity-datalists"/>
-    <@script src="${url.context}/res/ctools/tipsy.js" type="text/javascript" group="entity-datalists"/>
-    <@script src="${url.context}/res/ctools/def.js" type="text/javascript" group="entity-datalists"/>
-    <@script src="${url.context}/res/ctools/pvc.js" type="text/javascript" group="entity-datalists"/>
-    
+  
 	<@script src="${url.context}/res/modules/entity-charact-details/entity-charact-details.js" group="entity-datalists"/>
 	<@script src="${url.context}/res/components/entity-charact-views/form-datagrid-view.js" group="entity-datalists"/>
 	
