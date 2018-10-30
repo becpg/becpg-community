@@ -7,29 +7,20 @@
 	<@link href="${url.context}/res/modules/entity-charact-details/entity-charact-details.css" group="entity-datalists" />
 	<@link href="${url.context}/res/components/entity-charact-views/formulation-view.css" group="entity-datalists" />
 	
+	<@link rel="stylesheet" type="text/css" href="${url.context}/res/ctools/tipsy.css" group="entity-datalists" />
+	
 </@>
 
 <@markup id="js">
    <#include "../../modules/entity-datagrid/include/entity-datagrid.js.ftl"/>
    
-  
-
    <@script type="text/javascript" src="${url.context}/res/components/entity-data-lists/rapidLink-toolbar.js" group="entity-datalists"/>
    <@script type="text/javascript" src="${url.context}/res/components/entity-data-lists/variant-picker.js" group="entity-datalists"/>
    <@script type="text/javascript" src="${url.context}/res/components/entity-data-lists/product-notifications.js" group="entity-datalists"/>
-  
-   <@script src="${url.context}/res/ctools/jquery.js" type="text/javascript" group="entity-datalists"/>
-   <@script src="${url.context}/res/ctools/jquery.tipsy.js" type="text/javascript" group="entity-datalists"/>
-   <@script src="${url.context}/res/ctools/protovis.js" type="text/javascript" group="entity-datalists"/>
-   <@script src="${url.context}/res/ctools/protovis-msie.js" type="text/javascript" group="entity-datalists"/>
-   <@script src="${url.context}/res/ctools/tipsy.js" type="text/javascript" group="entity-datalists"/>
-   <@script src="${url.context}/res/ctools/def.js" type="text/javascript" group="entity-datalists"/>
-   <@script src="${url.context}/res/ctools/pvc.js" type="text/javascript" group="entity-datalists"/>
-  
-  
+ 
+    
    <@script src="${url.context}/res/modules/entity-charact-details/entity-charact-details.js" group="entity-datalists"/>
-  	
-  
+
    <@script src="${url.context}/res/modules/custom-entity-datagrid/product-columnRenderers.js" group="entity-datalists"/>
    <@script src="${url.context}/res/modules/custom-entity-datagrid/product-entity-toolbar.js" group="entity-datalists"/>
   

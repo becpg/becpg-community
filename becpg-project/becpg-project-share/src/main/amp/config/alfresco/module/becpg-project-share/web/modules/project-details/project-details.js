@@ -63,23 +63,24 @@
 				},
 
 				onReady : function projectGraph() {
-				
+				var me = this;
+				 require(dojoConfig,["bccc"], function(pvc){
 						var relational_01_ds = {
 	
-							"resultset" : this.options.graphData,
+							"resultset" : me.options.graphData,
 							"metadata" : [ {
 								"colIndex" : 0,
 								"colType" : "String",
-								"colName" : this.msg("projectdetails.graph.xaxis")
+								"colName" : me.msg("projectdetails.graph.xaxis")
 							}, {
 								"colIndex" : 1,
 								"colType" : "Numeric",
-								"colName" : this.msg("projectdetails.graph.yaxis")
+								"colName" : me.msg("projectdetails.graph.yaxis")
 							} ]
 						};
 						var myChart = new pvc.StackedAreaChart({
 	
-							canvas : this.id+"-chart",
+							canvas : me.id+"-chart",
 							width : 430,
 							height : 150,
 							animate : true,
@@ -94,7 +95,7 @@
 							},
 	
 							orthoAxisVisible : true,
-							orthoAxisTitle : this.msg("projectdetails.graph.yaxis"),
+							orthoAxisTitle : me.msg("projectdetails.graph.yaxis"),
 							baseAxisVisible : true,
 							colors : [ 'rgba(107, 210, 169, 0.6)' ],
 	
@@ -137,7 +138,7 @@
 						}).setData(relational_01_ds, {
 							crosstabMode : false
 						}).render();
-						
+					});
 						
 				},
 

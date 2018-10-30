@@ -495,16 +495,17 @@
                          */
                         render : function EntityCharactDetails_render()
                         {
-
-                            if (this.dataSource != null)
+                         var me = this;
+                         require(dojoConfig,["bccc"], function(pvc){
+                            if (me.dataSource != null)
                             {
-                            	var elWidth = document.getElementById(this.id+"-chartContainer").offsetWidth - 10;
-                            	var elHieght = document.getElementById(this.id+"-chartContainer").offsetHeight;
+                            	var elWidth = document.getElementById(me.id+"-chartContainer").offsetWidth - 10;
+                            	var elHieght = document.getElementById(me.id+"-chartContainer").offsetHeight;
                             	
-                                if (this.widgets.chartTypePicker.value == "lineChart")
+                                if (me.widgets.chartTypePicker.value == "lineChart")
                                 {
                                 	 new pvc.LineChart({
-                                	        canvas: this.id + "-chart",
+                                	        canvas: me.id + "-chart",
                                 	        width:  elWidth,
                                 	        height: elHieght,
                                 	        dotsVisible: true,
@@ -526,14 +527,14 @@
                                 	        	return me.showTooltipMessage(scene);
                                 	        }
                                 	    })
-                                	    .setData(this.cDataSource, {crosstabMode: true})
+                                	    .setData(me.cDataSource, {crosstabMode: true})
                                 	    .render();
 
                                 }
-                                else if (this.widgets.chartTypePicker.value == "barChart")
+                                else if (me.widgets.chartTypePicker.value == "barChart")
                                 {
                                 	new pvc.BarChart({
-                                	    canvas: this.id + "-chart",
+                                	    canvas: me.id + "-chart",
                                 	    width:  elWidth,
                                 	    height: elHieght,
                                 	    orientation: 'horizontal',
@@ -556,14 +557,14 @@
                             	        }
 
                                 	})
-                                	.setData(this.cDataSource, {crosstabMode: true})
+                                	.setData(me.cDataSource, {crosstabMode: true})
                                 	.render();
 
                                 }
-                                else if (this.widgets.chartTypePicker.value == "columnChart")
+                                else if (me.widgets.chartTypePicker.value == "columnChart")
                                 {
                                 	 new pvc.BarChart({
-                                		 canvas: this.id + "-chart",
+                                		 canvas: me.id + "-chart",
                                 		 width:  elWidth,
                                 		 height: elHieght,
                                 		 legend: true,
@@ -581,14 +582,14 @@
                              	        	return me.showTooltipMessage(scene);
                                 		 }
                                 	    })
-                                	    .setData(this.cDataSource, {crosstabMode: true})
+                                	    .setData(me.cDataSource, {crosstabMode: true})
                                 	    .render();
 
                                 }
-                                else if (this.widgets.chartTypePicker.value == "pieChart")
+                                else if (me.widgets.chartTypePicker.value == "pieChart")
                                 {
                                 	new pvc.PieChart({
-                                	    canvas: this.id + "-chart",
+                                	    canvas: me.id + "-chart",
                                 	    width:  elWidth,
                                 	    height: elHieght,
                                 	    valuesVisible: true,
@@ -603,8 +604,8 @@
                                         legendAlign: 'center',
                                         legendDot_shape: 'circle',
                                         legendLabel_textStyle: function(scene) {
-                                            var colorScale = this.panel.axes.color.scale;
-                                            return colorScale(this.getValue());
+                                            var colorScale = me.panel.axes.color.scale;
+                                            return colorScale(me.getValue());
                                         },
                                 	    selectable: true,
                                 	    hoverable:  true,
@@ -616,23 +617,22 @@
                              	        	return me.showTooltipMessage(scene);
                                 		 }
                                 	})
-                                	.setData(this.cDataSource, {crosstabMode: true})
+                                	.setData(me.cDataSource, {crosstabMode: true})
                                 	.render();
                                 }
-                                else if (this.widgets.chartTypePicker.value == "chartData")
+                                else if (me.widgets.chartTypePicker.value == "chartData")
                                 {
-                                	this.widgets.levelMenu.set("disabled", false);
+                                	me.widgets.levelMenu.set("disabled", false);
                                 	
-                                    this.widgets.chart = null;
-                                    this.widgets.dataTable = new YAHOO.widget.DataTable(this.id + "-chart", this.columnDefs, this.dataSource);
+                                    me.widgets.chart = null;
+                                    me.widgets.dataTable = new YAHOO.widget.DataTable(me.id + "-chart", me.columnDefs, me.dataSource);
                                 }
                                 
-                                Dom.setStyle(this.id + "-chart", "display", "flex");
+                                Dom.setStyle(me.id + "-chart", "display", "flex");
 
-                                var me = this;
-                                if (this.widgets.chart != null)
+                                if (me.widgets.chart != null)
                                 {
-                                    this.widgets.chart.subscribe("itemClickEvent", function(event)
+                                    me.widgets.chart.subscribe("itemClickEvent", function(event)
                                     {
                                         if (event.item.type.indexOf("Material") < 0)
                                         {
@@ -645,13 +645,13 @@
                                     });
                                 }
 
-                                if (this.widgets.dataTable != null)
+                                if (me.widgets.dataTable != null)
                                 {
-                                    this.widgets.dataTable.subscribe("cellClickEvent", function(events)
+                                    me.widgets.dataTable.subscribe("cellClickEvent", function(events)
                                     {
                                         var target = events.target;
-                                        var recordRowIndex = this.getRecordIndex(target);
-                                        var recordSet = this.getRecordSet(), record;
+                                        var recordRowIndex = me.getRecordIndex(target);
+                                        var recordSet = me.getRecordSet(), record;
                                         record = recordSet.getRecord(recordRowIndex);
                                         if ((record.getData("type")).indexOf("Material") < 0)
                                         {
@@ -664,29 +664,31 @@
                                     });
                                 }
 
-                                if (this.options.navigationPath != null && this.options.navigationPath.length > 0)
+                                if (me.options.navigationPath != null && me.options.navigationPath.length > 0)
                                 {
                                     var html = "";
-                                    for (var i = 0; i < this.options.navigationPath.length; i++)
+                                    for (var i = 0; i < me.options.navigationPath.length; i++)
                                     {
-                                        html += '<span class="separator"> > </span><span class="bar-'+this.options.navigationPath[i].nodeRef+' ' 
-                                        + this.options.navigationPath[i].cssClass + '">'
+                                        html += '<span class="separator"> > </span><span class="bar-'+me.options.navigationPath[i].nodeRef+' ' 
+                                        + me.options.navigationPath[i].cssClass + '">'
                                         
                                         + '<a href="#" class="'+BAR_EVENTCLASS+'" >' 
-                                        + this.options.navigationPath[i].name + '</a>' + '</span>';
+                                        + me.options.navigationPath[i].name + '</a>' + '</span>';
 
                                     }
-                                    Dom.get(this.id + "-chartPath").innerHTML = html;
-                                    Dom.setStyle(this.id + "-chartPath", "visibility", "inherit");
+                                    Dom.get(me.id + "-chartPath").innerHTML = html;
+                                    Dom.setStyle(me.id + "-chartPath", "visibility", "inherit");
 
                                 } else {
-                                    Dom.setStyle(this.id + "-chartPath", "visibility", "hidden");
+                                    Dom.setStyle(me.id + "-chartPath", "visibility", "hidden");
                                 }
                                 
-                                Dom.setStyle(this.id + "-chart", "visibility", "inherit");
+                                Dom.setStyle(me.id + "-chart", "visibility", "inherit");
 
                             }
-                        }
+                        });
+                     }
+
                     });
 
 })();

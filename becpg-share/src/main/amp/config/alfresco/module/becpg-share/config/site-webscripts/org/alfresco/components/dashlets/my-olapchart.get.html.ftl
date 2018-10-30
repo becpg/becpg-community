@@ -1,14 +1,7 @@
 
 
 <@markup id="js">
-	<@script src="${url.context}/res/ctools/jquery.js" type="text/javascript" group="dashlets"></@script>
-    <@script src="${url.context}/res/ctools/jquery.tipsy.js" type="text/javascript" group="dashlets"></@script>
-    <@script src="${url.context}/res/ctools/protovis.js" type="text/javascript" group="dashlets"></@script>
-    <@script src="${url.context}/res/ctools/protovis-msie.js" type="text/javascript" group="dashlets"></@script>
-    <@script src="${url.context}/res/ctools/tipsy.js" type="text/javascript" group="dashlets"></@script>
-    <@script src="${url.context}/res/ctools/def.js" type="text/javascript" group="dashlets"></@script>
-    <@script src="${url.context}/res/ctools/pvc.js" type="text/javascript" group="dashlets"></@script>
- 
+	
     <@script type="text/javascript" src="${url.context}/res/components/dashlets/my-olapchart.js" group="dashlets"></@script>
     
 </@>

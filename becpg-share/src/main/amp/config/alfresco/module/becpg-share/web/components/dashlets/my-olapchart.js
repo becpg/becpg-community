@@ -364,15 +364,17 @@
        * Render OLAP Chart
        */
       render : function OlapChart_render() {
+        var me = this;
 
-         if (this.dataSource !== null) {
+      require(dojoConfig,["bccc"], function(pvc){
+         if (me.dataSource !== null) {
         	 
-        	var elWidth = document.getElementById(this.id+"-chartContainer").offsetWidth;
-         	var elHieght = document.getElementById(this.id+"-chartContainer").offsetHeight;
+        	var elWidth = document.getElementById(me.id+"-chartContainer").offsetWidth;
+         	var elHieght = document.getElementById(me.id+"-chartContainer").offsetHeight;
 
-            if (this.chartTypePicker.value == "lineChart") {
+            if (me.chartTypePicker.value == "lineChart") {
             	new pvc.LineChart({
-        	        canvas: this.id + "-chart",
+        	        canvas: me.id + "-chart",
         	        width:  elWidth,
         	        height: elHieght,
         	        dotsVisible: true,
@@ -390,13 +392,13 @@
         	        	return me.showTooltipMessage(scene);
         	        }
         	    })
-        	    .setData(this.cDataSource, {crosstabMode: true})
+        	    .setData(me.cDataSource, {crosstabMode: true})
         	    .render();
             	
-            } else if (this.chartTypePicker.value == "barChart") {
+            } else if (me.chartTypePicker.value == "barChart") {
 
             	new pvc.BarChart({
-            	    canvas: this.id + "-chart",
+            	    canvas: me.id + "-chart",
             	    width:  elWidth,
             	    height: elHieght,
             	    orientation: 'horizontal',
@@ -416,12 +418,12 @@
          		 }
 
             	})
-            	.setData(this.cDataSource, {crosstabMode: true})
+            	.setData(me.cDataSource, {crosstabMode: true})
             	.render();
 
-            } else if (this.chartTypePicker.value == "columnChart") {
+            } else if (me.chartTypePicker.value == "columnChart") {
             	new pvc.BarChart({
-           		 canvas: this.id + "-chart",
+           		 canvas: me.id + "-chart",
            		 width:  elWidth,
            		 height: elHieght,
            		 panelSizeRatio: 0.3,
@@ -436,12 +438,12 @@
            			return me.showTooltipMessage(scene);
         		 }
            	    })
-           	    .setData(this.cDataSource, {crosstabMode: true})
+           	    .setData(me.cDataSource, {crosstabMode: true})
            	    .render();
 
-            } else if (this.chartTypePicker.value == "pieChart") {
+            } else if (me.chartTypePicker.value == "pieChart") {
             	new pvc.PieChart({
-            	    canvas: this.id + "-chart",
+            	    canvas: me.id + "-chart",
             	    width:  elWidth,
             	    height: elHieght,
             	    valuesVisible: true,
@@ -456,8 +458,8 @@
                     legendAlign: 'center',
                     legendDot_shape: 'circle',
                     legendLabel_textStyle: function(scene) {
-                        var colorScale = this.panel.axes.color.scale;
-                        return colorScale(this.getValue());
+                        var colorScale = me.panel.axes.color.scale;
+                        return colorScale(me.getValue());
                     },
             	    selectable: true,
             	    hoverable:  true,
@@ -465,14 +467,14 @@
             	    	return me.showTooltipMessage(scene);
          		 }
             	})
-            	.setData(this.cDataSource, {crosstabMode: true})
+            	.setData(me.cDataSource, {crosstabMode: true})
             	.render();
             	
-            } else if (this.chartTypePicker.value == "chartData") {
-               new YAHOO.widget.DataTable(this.id + "-chart", this.columnDefs, this.dataSource);
+            } else if (me.chartTypePicker.value == "chartData") {
+               new YAHOO.widget.DataTable(me.id + "-chart", me.columnDefs, me.dataSource);
             }
          }
-
+      });
       },
       openSaikuClick : function OlapChart_openSaikuClick() {
          if (this.saikuUrl !== null) {
