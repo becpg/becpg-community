@@ -54,9 +54,9 @@
 		      propertyName : "cm:description",
 		      renderer : function(oRecord, data, label, scope) {
 		    	 
-		    	  var text = Alfresco.util.encodeHTML(data.value);
+		    	  var text = data.value;
 		    	  if(text!=null && text.length>100){
-		    		  text = text.substring(0,100).trim()+"...";
+		    		  text = Alfresco.util.encodeHTML(text.substring(0,100).trim())+"...";
 		    	  }
 		    	  return '<span class="large-text-tooltip se" data-tooltip="'+ beCPG.util.encodeAttr(data.value) +'"><span>'+text+'</span></span>';
 		      }

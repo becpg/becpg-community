@@ -1,24 +1,5 @@
 
 //beCPG
-function isbeCPGSystemMember(user){
-    var groups = people.getContainerGroups(user);
-    for (var i=0;i<groups.length;i++) {
-        if("GROUP_SystemMgr" == groups[i].properties["cm:authorityName"]){
-            return true;
-        }
-    }
-    return false;
-}
-
-function isbeCPGExternalUser(user){
-    var groups = people.getContainerGroups(user);
-    for (var i=0;i<groups.length;i++) {
-        if("GROUP_ExternalUser" == groups[i].properties["cm:authorityName"]){
-            return true;
-        }
-    }
-    return false;
-}
 
 
 model.includeChildren = true;
@@ -45,8 +26,31 @@ else if (args["user"] != null)
    model.includeChildren = false;
    model.capabilities = people.getCapabilities(object);
    
-   model.capabilities["isbeCPGSystemManager"] = isbeCPGSystemMember(object);
-   model.capabilities["isbeCPGExternalUser"] = isbeCPGExternalUser(object);
+   //beCPG
+   model.capabilities["isbeCPGSystemManager"] =false;
+   model.capabilities["isbeCPGExternalUser"] = false;
+   model.capabilities["isbeCPGLanguageMgr"] = false;
+   
+   var languageMgrGroup = people.getGroup("GROUP_LanguageMgr");
+
+   if(languageMgrGroup){
+      if(people.getMembers(languageMgrGroup, false).length == 0){
+    	  model.capabilities["isbeCPGLanguageMgr"] = true;
+      }         
+   }
+   
+   var groups = people.getContainerGroups(object);
+   for (var i=0;i<groups.length;i++) {
+       if("GROUP_ExternalUser" == groups[i].properties["cm:authorityName"]){
+    	   model.capabilities["isbeCPGExternalUser"] = true;
+       }
+       if("GROUP_LanguageMgr" == groups[i].properties["cm:authorityName"]){
+    	   model.capabilities["isbeCPGLanguageMgr"] = true;
+       }
+       if("GROUP_SystemMgr" == groups[i].properties["cm:authorityName"]){
+    	   model.capabilities["isbeCPGSystemManager"] = true;
+       }
+   }
    
    var olapSSOUrl = bcpg.getOlapSSOUrl();
    if(olapSSOUrl!=null){
