@@ -37,8 +37,6 @@
                    } else {
                 	   return '<span class="person">' + Alfresco.util.userProfileLink(data.metadata, data.displayValue) + '</span>';
                    }
-
-                 
 			   }
 			});
 
@@ -48,9 +46,22 @@
 		   propertyName : "cm:name",
 		   renderer : function(oRecord, data, label, scope) { 
 			   return scope.getProjectTitleV2(oRecord.getData(),scope.options.columnFormId != "datagrid-simple");
-
 		   }
 		});
+		
+		
+	    YAHOO.Bubbling.fire("registerDataGridRenderer", {
+		      propertyName : "cm:description",
+		      renderer : function(oRecord, data, label, scope) {
+		    	 
+		    	  var text = Alfresco.util.encodeHTML(data.value);
+		    	  if(text!=null && text.length>100){
+		    		  text = text.substring(0,100).trim()+"...";
+		    	  }
+		    	  return '<span class="large-text-tooltip se" data-tooltip="'+ beCPG.util.encodeAttr(data.value) +'"><span>'+text+'</span></span>';
+		      }
+		  });
+	    
 
 	   YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		   propertyName : "pjt:taskList",

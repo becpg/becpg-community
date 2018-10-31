@@ -4,6 +4,7 @@
 	<@link href="${url.context}/res/components/project/jsgantt.css" group="project-list" />
 	<@link href="${url.context}/res/components/project/project-commons.css" group="project-list" />
 	<@link href="${url.context}/res/components/project/project-list.css" group="project-list" />
+	<@link href="${url.context}/res/components/project/tooltip.css" group="project-list" />
 </@>
 
 <@markup id="js">
