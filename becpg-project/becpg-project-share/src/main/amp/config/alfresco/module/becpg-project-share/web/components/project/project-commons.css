@@ -69,6 +69,37 @@
 }
 
 
+.project-list  span.project-title a {
+    cursor: pointer;
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 140px;
+    white-space: nowrap;
+    vertical-align: middle;
+    max-height: none;
+}
+
+@media screen and (min-width: 1400px) {
+	.project-list   span.task-title a {
+		max-width: 200px;
+	}
+	
+}
+
+.project-list  span.project-title a:hover {
+    
+     /* make text have right to left direction */
+    direction: rtl;
+    
+    &:after {
+      /* fix brackets in rtl mode */
+      content: "\200E‎";
+    }
+    
+} 
+
+
 .project-list  a.sub-project-link {
     cursor: pointer;
 	padding-left: 15px;
