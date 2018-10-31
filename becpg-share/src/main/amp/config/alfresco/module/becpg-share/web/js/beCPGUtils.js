@@ -158,6 +158,29 @@
             return n;   
         }       
     };
+    
+    beCPG.util.encodeAttr = function(text, justified)
+    {
+       if (text === null || typeof text == "undefined")
+       {
+          return "";
+       }
+
+       var indent = justified === true ? "" : "&nbsp;&nbsp;&nbsp;";
+
+       if (YAHOO.env.ua.ie > 0)
+       {
+          text = "" + text;
+          return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "&#10;" + indent).replace(/"/g, "&quot;");
+       }
+       var me = arguments.callee;
+       me.text.data = text;
+       return me.div.innerHTML.replace(/\n/g, "&#10;" + indent).replace(/"/g, "&quot;");
+    };
+    beCPG.util.encodeAttr.div = document.createElement("div");
+    beCPG.util.encodeAttr.text = document.createTextNode("");
+    beCPG.util.encodeAttr.div.appendChild(Alfresco.util.encodeHTML.text);
+    
    
     beCPG.util.isEntity = function(record)
     {
