@@ -44,9 +44,12 @@ function main()
    {
 	   if(!isExternalUser(user))
 	   {	   
+		   //TODO Move that to project or add delegation to core ?
 		   addLink("user-delegation-link", "user-delegation?nodeRef="+getPersonNodeRef(user), "link.delegation");
 	   }
-	   addLink("user-language-link", "user-language?nodeRef="+getPersonNodeRef(user), "link.language");
+	   if(isLanguageMgr(user)){
+		   addLink("user-language-link", "user-language?nodeRef="+getPersonNodeRef(user), "link.language");
+	   }
    }
    // Add User Sites link
    addLink("user-sites-link", "user-sites", "link.sites");

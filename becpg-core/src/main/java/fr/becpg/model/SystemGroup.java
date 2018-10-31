@@ -4,5 +4,6 @@ public enum SystemGroup {
 
 	SystemMgr,
 	ExternalUser,
-	SecurityRole
+	SecurityRole,
+	LanguageMgr
 }

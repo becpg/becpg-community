@@ -89,37 +89,38 @@ function getOrCreateBeCPGMenu() {
 
    }
   
-
-   var languageMenu = widgetUtils.findObject(model.jsonModel, "id", "HEADER_BECPG_LANGUAGE");
-
-   
-   if(languageMenu == null){
+	 if(isLanguageMgr(user)){
+	   var languageMenu = widgetUtils.findObject(model.jsonModel, "id", "HEADER_BECPG_LANGUAGE");
+	
 	   
-	   var flag = getUserLocal(user);
-	   if(flag.indexOf("_")>0){
-		   flag = flag.substring(3,5).toLowerCase();
-	   } else {
-		   flag = flag.substring(0,2).toLowerCase();
-	   }
-	   
-	   languageMenu = {
-			   id : "HEADER_BECPG_LANGUAGE",
-			   name : "alfresco/menus/AlfMenuBarItem",
-			   config : {
+	   if(languageMenu == null){
+		   
+		   var flag = getUserLocal(user);
+		   if(flag.indexOf("_")>0){
+			   flag = flag.substring(3,5).toLowerCase();
+		   } else {
+			   flag = flag.substring(0,2).toLowerCase();
+		   }
+		   
+		   languageMenu = {
 				   id : "HEADER_BECPG_LANGUAGE",
-				   label : "",
-				   iconImage: url.context + "/res/components/images/flags/" + flag + ".png",
-				   targetUrl : "user-language?nodeRef="+ getUserNodeRef(user)
-			   }
-	   };
+				   name : "alfresco/menus/AlfMenuBarItem",
+				   config : {
+					   id : "HEADER_BECPG_LANGUAGE",
+					   label : "",
+					   iconImage: url.context + "/res/components/images/flags/" + flag + ".png",
+					   targetUrl : "user-language?nodeRef="+ getUserNodeRef(user)
+				   }
+		   };
+		   
+		   var userMenuBar = widgetUtils.findObject(model.jsonModel, "id", "HEADER_USER_MENU_BAR");
+		   
+		   if (userMenuBar) {
+			   userMenuBar.config.widgets.push(languageMenu);
+		   }
 	   
-	   var userMenuBar = widgetUtils.findObject(model.jsonModel, "id", "HEADER_USER_MENU_BAR");
-	   
-	   if (userMenuBar) {
-		   userMenuBar.config.widgets.push(languageMenu);
 	   }
-   
-   }
+	 }
 
 
    return beCPGMenu;
@@ -163,6 +164,11 @@ function isExternalUser(user){
     return user.capabilities["isbeCPGExternalUser"] !=null && user.capabilities["isbeCPGExternalUser"] == true;
 }
 
+
+
+function isLanguageMgr(user){
+    return user.capabilities["isbeCPGLanguageMgr"] !=null && user.capabilities["isbeCPGLanguageMgr"] == true;
+}
 
 
 
