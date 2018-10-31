@@ -730,7 +730,7 @@ public class ImportEntityXmlVisitor {
 				return new NodeRef(nodeRef);
 			}
 
-			if ((cache != null) && cache.containsKey(new NodeRef(nodeRef))) {
+			if (nodeRef!=null && (cache != null) && cache.containsKey(new NodeRef(nodeRef))) {
 				return cache.get(new NodeRef(nodeRef));
 			}
 
