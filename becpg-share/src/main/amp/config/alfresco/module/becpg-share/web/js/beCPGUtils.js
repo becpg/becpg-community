@@ -179,7 +179,7 @@
     };
     beCPG.util.encodeAttr.div = document.createElement("div");
     beCPG.util.encodeAttr.text = document.createTextNode("");
-    beCPG.util.encodeAttr.div.appendChild(Alfresco.util.encodeHTML.text);
+    beCPG.util.encodeAttr.div.appendChild(beCPG.util.encodeAttr.text);
     
    
     beCPG.util.isEntity = function(record)
