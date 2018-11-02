@@ -3,7 +3,11 @@ package fr.becpg.repo.product.formulation.nutrient;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -26,13 +30,14 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 		private Boolean bold;
 		private Double gda;
 		private Double ul;
+		private String unit;
 
 		public Integer getDepthLevel() {
 			return depthLevel;
 		}
 
 		public NutrientDefinition(String nutCode, Integer sort, Integer depthLevel, Boolean mandatory, Boolean optional, Boolean bold, Double gda,
-				Double ul) {
+				Double ul, String unit) {
 			super();
 			this.sort = sort;
 			this.depthLevel = depthLevel;
@@ -41,6 +46,7 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 			this.bold = bold;
 			this.gda = gda;
 			this.ul = ul;
+			this.unit = unit;
 		}
 
 		public Integer getSort() {
@@ -66,6 +72,10 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 		public Double getUl() {
 			return ul;
 		}
+		
+		public String getUnit() {
+			return unit;
+		}
 
 	}
 
@@ -86,7 +96,7 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 					// nutCode charactName sort depthLevel mandatory optionnal bold gda ul
 					while ((line = csvReader.readNext()) != null) {
 						definitions.put(line[0], new NutrientDefinition(line[0], parseInt(line[2]), parseInt(line[3]), "true".equals(line[4]),
-								"true".equals(line[5]), "true".equals(line[6]), parseDouble(line[7]), parseDouble(line[8])));
+								"true".equals(line[5]), "true".equals(line[6]), parseDouble(line[7]), parseDouble(line[8]), line[9]));
 					}
 				}
 			}
@@ -126,41 +136,79 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 		if (value == null) {
 			return null;
 		}
-		if ((nutrientTypeCode != null) && !nutrientTypeCode.isEmpty()) {
-
-			if ((nutUnit != null) && nutUnit.equals("mg/100g")) { // convert mg
-																	// to g
-				value = value / 1000;
-				value = roundByCode(value, nutrientTypeCode);
-				if (value != null) {
-					value = value * 1000;
-				}
-				return value;
+		if (nutrientTypeCode != null && !nutrientTypeCode.isEmpty()) {
+			String regulUnit = nutUnit;
+			NutrientDefinition def = getNutrientDefinition(nutrientTypeCode);
+			if(def != null){
+				regulUnit = def.getUnit();
 			}
-			if ((nutUnit != null) && nutUnit.equals("KJ/100g")) { // convert KJ
-																	// to Kcal
-				value = value / 4.184;
-				value = roundByCode(value, nutrientTypeCode);
-				return (double) Math.round((value * 4.184 * 100) / 100);
+			if(logger.isDebugEnabled()){
+				logger.debug("round : nutrientTypeCode " + nutrientTypeCode + " value " + value + " nutUnit " + nutUnit + " regulUnit " + regulUnit);
 			}
-			return roundByCode(value, nutrientTypeCode);
+			return roundByCode(convertValue(value, nutUnit, regulUnit), nutrientTypeCode);
 		}
-		return (double) Math.round(value);
+		return roundValue(value, 1d);
 	}
 	
+	@Override
+	public String displayValue(Double value, Double roundedValue, String nutrientTypeCode, Locale locale) {
+		if (nutrientTypeCode != null && !nutrientTypeCode.isEmpty()) {
+			return displayValueByCode(value, roundedValue, nutrientTypeCode, locale);
+		}
+		return formatDouble(roundedValue, locale);
+	}
 	
-
-	protected Double nearByDefault(Double value) {
-		
-		if (value == null) {
+	protected String formatDouble(Double value, Locale locale){
+		if(value != null){
+			DecimalFormatSymbols symbols = new DecimalFormatSymbols(locale);
+			DecimalFormat df = new DecimalFormat("#,###.######", symbols);
+	        return df.format(value);
+		}
+		else{
 			return null;
-		} 
+		}
+	}
+	
+	protected Double roundValue(Double value, Double delta) {
+		if(value != null){
+			// round by delta (eg: 0.5)
+			double roundedValue = (delta * Math.round(value / delta));
+			// sometime roundedValue is 0.3000000001 when 0.1 * 3 --> we round twice
+			return (Math.round(roundedValue * 1000d) / 1000d);
+		}
+		else{
+			return null;
+		}
+	}
+	
+	private Double convertValue(Double value, String nutUnit, String regulUnit){
 		
-		if ((value < 10)) {
-			return (double) Math.round(10 * value) / 10;
-		} 
-		return (double) Math.round(value);
-		
+		if (value != null && nutUnit != null && regulUnit != null ) { 
+			// convert mg to g
+			double coef = 1d;
+			if(nutUnit.startsWith("mg") && regulUnit.startsWith("g")){
+				coef = 1000;
+			}else if(nutUnit.startsWith("µg") && regulUnit.startsWith("g")){
+				coef = 1000000;
+			}else if(nutUnit.startsWith("µg") && regulUnit.startsWith("mg")){
+				coef = 1000;
+			}else if(nutUnit.startsWith("g") && regulUnit.startsWith("mg")){
+				coef = 0.001;
+			}
+			else if(nutUnit.startsWith("g") && regulUnit.startsWith("µg")){
+				coef = 0.000001;
+			}
+			else if(nutUnit.startsWith("mg") && regulUnit.startsWith("µg")){
+				coef = 0.001;
+			}
+			if(logger.isDebugEnabled()){
+				logger.debug("value " +  value + " coef " + coef);
+			}
+			return value / coef;
+		}
+		else{
+			return value;
+		}
 	}
 
 	/*
@@ -175,12 +223,13 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 	public Double roundGDA(Double value) {
 		if (value == null) {
 			return null;
-		} 
-		return  (double) Math.round(10 * value) / 10;
+		}
+		return  roundValue(value, 1d);
 	}
 	
 
 	protected abstract Double roundByCode(Double value, String nutrientTypeCode);
-
+	
+	protected abstract String displayValueByCode(Double value, Double roundedValue, String nutrientTypeCode, Locale locale);
 
 }

@@ -1,64 +1,82 @@
 package fr.becpg.repo.product.formulation.nutrient;
 
-/**
- *
- * @author rim
- *
- */
+import java.text.DecimalFormat;
+import java.util.Locale;
+
 public class EuropeanNutrientRegulation extends AbstractNutrientRegulation {
 
 	public EuropeanNutrientRegulation(String path)  {
 		super(path);
 	}
-
+	
 	@Override
 	protected Double roundByCode(Double value, String nutrientTypeCode) {
 
-		if (nutrientTypeCode.startsWith(NutrientCode.ENER.toString())) {
-			return (double) Math.round(value);
-		} else if (nutrientTypeCode.equals(NutrientCode.FAT.toString()) || nutrientTypeCode.equals(NutrientCode.CHOAVL.toString())
-				|| nutrientTypeCode.equals(NutrientCode.SUGAR.toString()) || nutrientTypeCode.equals(NutrientCode.FIBTG.toString())
-				|| nutrientTypeCode.startsWith(NutrientCode.PRO.toString())) {
-			return nearByValueEur(value, 0.5);
-		} else if (nutrientTypeCode.equals(NutrientCode.FASAT.toString())) {
-			return nearByValueEur(value, 0.1);
-		} else if (nutrientTypeCode.equals(NutrientCode.NA.toString())) {
-			return nearByValueNaSaltEur(value, 0.005);
-		} else if (nutrientTypeCode.equals(NutrientCode.NACL.toString())) {
-			return nearByValueNaSaltEur(value, 0.0125);
+		if(value != null && nutrientTypeCode != null){
+			if (nutrientTypeCode.equals(NutrientCode.Energykcal)
+				|| nutrientTypeCode.equals(NutrientCode.EnergykJ)) {
+				return roundValue(value, 1d);
+			} else if (nutrientTypeCode.equals(NutrientCode.Fat) || nutrientTypeCode.equals(NutrientCode.CarbohydrateByDiff)
+					|| nutrientTypeCode.equals(NutrientCode.Sugar) || nutrientTypeCode.equals(NutrientCode.FiberDietary)
+					|| nutrientTypeCode.startsWith(NutrientCode.Protein)) {
+				if (value >= 10) {
+					return roundValue(value,1d);
+				} else if ((value > 0.5) && (value < 10)) {
+					return roundValue(value,0.1d);
+				} else {
+					return 0.0;
+				}
+			} else if (nutrientTypeCode.equals(NutrientCode.FatSaturated)) {
+				if (value >= 10) {
+					return roundValue(value,1d);
+				} else if ((value > 0.1) && (value < 10)) {
+					return roundValue(value,0.1d);
+				} else {
+					return 0.0;
+				}
+			} else if (nutrientTypeCode.equals(NutrientCode.Sodium)) {
+				if (value >= 1) {
+					return roundValue(value,0.1d);
+				} else if ((value > 0.005) && (value < 1)) {
+					return roundValue(value,0.01d);
+				} else {
+					return 0.0;
+				}
+			} else if (nutrientTypeCode.equals(NutrientCode.Salt)) {
+				if (value >= 1) {
+					return roundValue(value,0.1d);
+				} else if ((value > 0.0125) && (value < 1)) {
+					return roundValue(value,0.01d);
+				} else {
+					return 0.0;
+				}
+			}
 		}
-
-		return nearByDefault(value);
+		return roundValue(value,1d);
 	}
 
-	// RoundingRole method for Fat according to european guide in g
-	private Double nearByValueEur(Double value, Double minValue) {
-		if (value == null) {
-			return null;
-		} else if (value <= minValue) {
-			return 0.0;
-		} else if ((value > minValue) && (value < 10)) {
-			return (double) Math.round(10 * value) / 10;
-		} else if (value >= 10) {
-			return (double) Math.round(value);
+	@Override
+	protected String displayValueByCode(Double value, Double roundedValue, String nutrientTypeCode, Locale locale) {
+		
+		if(value != null && roundedValue != null && nutrientTypeCode != null){
+			if (nutrientTypeCode.equals(NutrientCode.Fat) && value<=0.5) {
+				return "< " + formatDouble(0.5, locale);
+			} else if (nutrientTypeCode.equals(NutrientCode.FatSaturated) && value<=0.1) {
+				return "< " + formatDouble(0.1, locale);
+			} else if ((nutrientTypeCode.equals(NutrientCode.CarbohydrateByDiff) 
+						|| nutrientTypeCode.equals(NutrientCode.Sugar)
+						|| nutrientTypeCode.equals(NutrientCode.FiberDietary)
+						|| nutrientTypeCode.equals(NutrientCode.Protein)
+						) && value<0.5) {
+				return "< " + formatDouble(0.5, locale);
+			} else if (nutrientTypeCode.equals(NutrientCode.Sodium) && value<0.005) {
+				return "< " + formatDouble(0.005, locale);
+			} else if (nutrientTypeCode.equals(NutrientCode.Salt) && value<0.0125) {
+				return "< " + formatDouble(0.01, locale);
+			}
 		}
-		return value;
+		return formatDouble(roundedValue, locale);
 	}
-
-	// RoundingRole method for sodium according to european guide (unit:g)
-	private Double nearByValueNaSaltEur(Double value, Double minValue) {
-		if (value == null) {
-			return null;
-		} else if ((value > minValue) && (value < 1)) {
-
-			return (double) Math.round(100 * value) / 100;
-		} else if (value >= 1) {
-
-			return (double) Math.round(10 * value) / 10;
-		} else if (value <= minValue) {
-			return 0.0;
-		}
-		return value;
-	}
-
+	
+	
 }

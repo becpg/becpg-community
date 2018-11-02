@@ -20,6 +20,11 @@
         <value>./ProductReport</value>
     </simple-property-list>
     <property name="units">in</property>
+    <method name="initialize"><![CDATA[function indent_docx (coef, depthLevel, object) {
+	if (reportContext.getOutputFormat().toString()== "docx") {
+		object.getStyle().paddingLeft = (coef * (depthLevel - 1) + 4) + "pt";
+	}
+}]]></method>
     <property name="iconFile">/templates/dual_column_chart_listing.gif</property>
     <property name="cheatSheet">org.eclipse.birt.report.designer.ui.cheatsheet.dualchartlisting</property>
     <property name="bidiLayoutOrientation">ltr</property>
@@ -2459,9 +2464,29 @@ dataSetRow["versionLabel"]
                 </cell>
             </row>
         </grid>
+        <label id="9150">
+            <property name="fontSize">6pt</property>
+            <list-property name="visibility">
+                <structure>
+                    <property name="format">pdf</property>
+                    <expression name="valueExpr" type="javascript">true</expression>
+                </structure>
+            </list-property>
+            <text-property name="text"> </text-property>
+        </label>
         <label id="2700">
             <property name="style">becpg-chapter-header</property>
             <text-property name="text" key="recipe">RECETTE</text-property>
+        </label>
+        <label id="9142">
+            <property name="fontSize">6pt</property>
+            <list-property name="visibility">
+                <structure>
+                    <property name="format">pdf</property>
+                    <expression name="valueExpr" type="javascript">true</expression>
+                </structure>
+            </list-property>
+            <text-property name="text"> </text-property>
         </label>
         <table id="3384">
             <property name="marginTop">10pt</property>
@@ -2520,6 +2545,16 @@ false
                 </row>
             </detail>
         </table>
+        <label id="9143">
+            <property name="fontSize">6pt</property>
+            <list-property name="visibility">
+                <structure>
+                    <property name="format">pdf</property>
+                    <expression name="valueExpr" type="javascript">true</expression>
+                </structure>
+            </list-property>
+            <text-property name="text"> </text-property>
+        </label>
         <table id="2890">
             <property name="style">becpg-table</property>
             <property name="marginTop">10pt</property>
@@ -2729,6 +2764,8 @@ BirtMath.round(dataSetRow["compoListQty"] * 1000000, 2)+ " mg";
                         </structure>
                     </list-property>
                     <cell id="2908">
+                        <method name="onRender"><![CDATA[indent_docx (12, 1, this);]]></method>
+                        <property name="style">becpg-cell-data</property>
                         <data id="2946">
                             <property name="fontSize">9pt</property>
                             <property name="textAlign">center</property>
@@ -2736,6 +2773,8 @@ BirtMath.round(dataSetRow["compoListQty"] * 1000000, 2)+ " mg";
                         </data>
                     </cell>
                     <cell id="2892">
+                        <method name="onRender"><![CDATA[indent_docx (12, this.getRowData().getColumnValue("depthLevel"), this);]]></method>
+                        <property name="style">becpg-cell-data-left</property>
                         <text id="3300">
                             <property name="fontSize">9pt</property>
                             <property name="contentType">html</property>
@@ -2743,6 +2782,7 @@ BirtMath.round(dataSetRow["compoListQty"] * 1000000, 2)+ " mg";
                         </text>
                     </cell>
                     <cell id="2967">
+                        <property name="style">becpg-cell-data</property>
                         <data id="3522">
                             <property name="fontSize">9pt</property>
                             <structure name="numberFormat">
@@ -2754,6 +2794,7 @@ BirtMath.round(dataSetRow["compoListQty"] * 1000000, 2)+ " mg";
                         </data>
                     </cell>
                     <cell id="3286">
+                        <property name="style">becpg-cell-data</property>
                         <data id="3292">
                             <property name="style">becpg-data</property>
                             <property name="fontSize">9pt</property>
@@ -2766,6 +2807,7 @@ BirtMath.round(dataSetRow["compoListQty"] * 1000000, 2)+ " mg";
                         </data>
                     </cell>
                     <cell id="3289">
+                        <property name="style">becpg-cell-data</property>
                         <data id="3294">
                             <property name="style">becpg-data</property>
                             <property name="fontSize">9pt</property>
@@ -2778,6 +2820,7 @@ BirtMath.round(dataSetRow["compoListQty"] * 1000000, 2)+ " mg";
                         </data>
                     </cell>
                     <cell id="3322">
+                        <property name="style">becpg-cell-data</property>
                         <table id="3513">
                             <property name="dataSet">dynamicCharactList</property>
                             <list-property name="boundDataColumns">
@@ -2826,6 +2869,16 @@ BirtMath.round(dataSetRow["compoListQty"] * 1000000, 2)+ " mg";
                 </row>
             </detail>
         </table>
+        <label id="9144">
+            <property name="fontSize">6pt</property>
+            <list-property name="visibility">
+                <structure>
+                    <property name="format">pdf</property>
+                    <expression name="valueExpr" type="javascript">true</expression>
+                </structure>
+            </list-property>
+            <text-property name="text"> </text-property>
+        </label>
         <grid id="3091">
             <property name="pageBreakBefore">auto</property>
             <column id="3092"/>
@@ -2838,6 +2891,16 @@ BirtMath.round(dataSetRow["compoListQty"] * 1000000, 2)+ " mg";
                         <property name="textAlign">center</property>
                         <property name="display">block</property>
                         <text-property name="text" key="chapterInstrunction">INSTRUCTIONS</text-property>
+                    </label>
+                    <label id="9145">
+                        <property name="fontSize">6pt</property>
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">pdf</property>
+                                <expression name="valueExpr" type="javascript">true</expression>
+                            </structure>
+                        </list-property>
+                        <text-property name="text"> </text-property>
                     </label>
                     <table id="3249">
                         <property name="style">becpg-table</property>
@@ -2893,6 +2956,8 @@ true
                             <row id="3253">
                                 <property name="style">becpg-row-border</property>
                                 <cell id="3254">
+                                    <method name="onRender"><![CDATA[indent_docx (12, this.getRowData().getColumnValue("depthLevel"), this);]]></method>
+                                    <property name="style">becpg-cell-dynamic-header-left</property>
                                     <text id="3449">
                                         <property name="fontSize">9pt</property>
                                         <property name="fontWeight">bold</property>
@@ -2901,6 +2966,9 @@ true
                                     </text>
                                 </cell>
                                 <cell id="3255">
+                                    <method name="onRender"><![CDATA[indent_docx (12, 1, this);]]></method>
+                                    <property name="style">becpg-cell-data-left</property>
+                                    <property name="paddingLeft">1pt</property>
                                     <text id="3471">
                                         <property name="fontSize">9pt</property>
                                         <property name="contentType">html</property>
@@ -2910,6 +2978,16 @@ true
                             </row>
                         </detail>
                     </table>
+                    <label id="9146">
+                        <property name="fontSize">6pt</property>
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">pdf</property>
+                                <expression name="valueExpr" type="javascript">true</expression>
+                            </structure>
+                        </list-property>
+                        <text-property name="text"> </text-property>
+                    </label>
                     <table id="3344">
                         <property name="style">becpg-table</property>
                         <property name="marginTop">10pt</property>
@@ -2962,12 +3040,17 @@ true
                             <row id="3348">
                                 <property name="style">becpg-row-border</property>
                                 <cell id="3349">
+                                    <method name="onRender"><![CDATA[indent_docx (12, 1, this);]]></method>
+                                    <property name="style">becpg-cell-dynamic-header-left</property>
                                     <data id="3401">
                                         <property name="fontSize">9pt</property>
                                         <property name="resultSetColumn">plStep</property>
                                     </data>
                                 </cell>
                                 <cell id="3350">
+                                    <method name="onRender"><![CDATA[indent_docx (12, 1, this);]]></method>
+                                    <property name="style">becpg-cell-data-left</property>
+                                    <property name="paddingLeft">1pt</property>
                                     <text id="3472">
                                         <property name="fontSize">9pt</property>
                                         <property name="contentType">html</property>
@@ -2977,6 +3060,16 @@ true
                             </row>
                         </detail>
                     </table>
+                    <label id="9147">
+                        <property name="fontSize">6pt</property>
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">pdf</property>
+                                <expression name="valueExpr" type="javascript">true</expression>
+                            </structure>
+                        </list-property>
+                        <text-property name="text"> </text-property>
+                    </label>
                 </cell>
             </row>
             <row id="3503">
@@ -2985,6 +3078,16 @@ true
                     <label id="960">
                         <property name="style">becpg-chapter-header</property>
                         <text-property name="text" key="chapterSamplesValidation">VALIDATION ECHANTILLONS</text-property>
+                    </label>
+                    <label id="9148">
+                        <property name="fontSize">6pt</property>
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">pdf</property>
+                                <expression name="valueExpr" type="javascript">true</expression>
+                            </structure>
+                        </list-property>
+                        <text-property name="text"> </text-property>
                     </label>
                     <grid id="3402">
                         <property name="marginTop">10pt</property>
@@ -3037,18 +3140,21 @@ true
                                         <row id="8412">
                                             <property name="style">becpg-row-header</property>
                                             <cell id="8413">
+                                                <property name="style">becpg-cell-header</property>
                                                 <label id="3272">
                                                     <property name="paddingLeft">5pt</property>
                                                     <text-property name="text" key="criteria">Critères</text-property>
                                                 </label>
                                             </cell>
                                             <cell id="8414">
+                                                <property name="style">becpg-cell-header</property>
                                                 <label id="3274">
                                                     <property name="paddingLeft">5pt</property>
                                                     <text-property name="text" key="value">Valeur</text-property>
                                                 </label>
                                             </cell>
                                             <cell id="8415">
+                                                <property name="style">becpg-cell-header</property>
                                                 <label id="8419">
                                                     <property name="paddingLeft">5pt</property>
                                                     <text-property name="text" key="results">Results</text-property>
@@ -3060,6 +3166,8 @@ true
                                         <row id="1530">
                                             <property name="style">becpg-row-border</property>
                                             <cell id="1531">
+                                                <method name="onRender"><![CDATA[indent_docx (12, 1, this);]]></method>
+                                                <property name="style">becpg-cell-dynamic-header-left</property>
                                                 <data id="1541">
                                                     <property name="fontSize">9pt</property>
                                                     <property name="whiteSpace">nowrap</property>
@@ -3067,15 +3175,23 @@ true
                                                 </data>
                                             </cell>
                                             <cell id="1532">
+                                                <property name="style">becpg-cell-data</property>
+                                                <property name="paddingLeft">1pt</property>
                                                 <data id="8409">
                                                     <property name="fontSize">9pt</property>
                                                     <property name="resultSetColumn">organoListValue</property>
                                                 </data>
                                             </cell>
-                                            <cell id="8410"/>
+                                            <cell id="8410">
+                                                <property name="style">becpg-cell-data</property>
+                                            </cell>
                                         </row>
                                     </detail>
                                 </table>
+                                <label id="9151">
+                                    <property name="fontSize">4pt</property>
+                                    <text-property name="text"> </text-property>
+                                </label>
                                 <table id="3267">
                                     <property name="style">becpg-table</property>
                                     <property name="marginTop">0pt</property>
@@ -3175,6 +3291,8 @@ true
                                             <property name="borderTopStyle">solid</property>
                                             <property name="borderTopWidth">thin</property>
                                             <cell id="3276">
+                                                <method name="onRender"><![CDATA[indent_docx (12, 1, this);]]></method>
+                                                <property name="style">becpg-cell-dynamic-header-left</property>
                                                 <data id="3277">
                                                     <property name="fontSize">9pt</property>
                                                     <property name="whiteSpace">normal</property>
@@ -3182,29 +3300,54 @@ true
                                                 </data>
                                             </cell>
                                             <cell id="3278">
+                                                <property name="style">becpg-cell-data</property>
+                                                <property name="paddingLeft">1pt</property>
                                                 <data id="3279">
                                                     <property name="fontSize">9pt</property>
                                                     <structure name="numberFormat">
                                                         <property name="category">Fixed</property>
                                                         <property name="pattern">###0.00{RoundingMode=HALF_UP}</property>
                                                     </structure>
-                                                    <property name="textAlign">left</property>
                                                     <property name="whiteSpace">nowrap</property>
+                                                    <list-property name="visibility">
+                                                        <structure>
+                                                            <property name="format">all</property>
+                                                            <expression name="valueExpr" type="javascript">row["pclValue"] == null || row["pclValue"] == ""</expression>
+                                                        </structure>
+                                                    </list-property>
                                                     <property name="resultSetColumn">pclValue</property>
                                                 </data>
                                                 <text id="8400">
                                                     <property name="fontSize">9pt</property>
-                                                    <property name="textAlign">left</property>
+                                                    <list-property name="visibility">
+                                                        <structure>
+                                                            <property name="format">all</property>
+                                                            <expression name="valueExpr" type="javascript">row["pclTextCriteria"] == null || row["pclTextCriteria"] == ""</expression>
+                                                        </structure>
+                                                    </list-property>
                                                     <property name="contentType">html</property>
                                                     <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["pclTextCriteria"]</VALUE-OF>]]></text-property>
                                                 </text>
                                             </cell>
-                                            <cell id="8417"/>
+                                            <cell id="8417">
+                                                <property name="style">becpg-cell-data</property>
+                                            </cell>
                                         </row>
                                     </detail>
                                 </table>
+                                <label id="9149">
+                                    <property name="fontSize">6pt</property>
+                                    <list-property name="visibility">
+                                        <structure>
+                                            <property name="format">pdf</property>
+                                            <expression name="valueExpr" type="javascript">true</expression>
+                                        </structure>
+                                    </list-property>
+                                    <text-property name="text"> </text-property>
+                                </label>
                                 <label id="3242">
                                     <property name="style">becpg-col-header</property>
+                                    <property name="marginTop">7pt</property>
                                     <text-property name="text" key="modificationsConclusions">Modifications - Conclusions :</text-property>
                                 </label>
                                 <table id="3475">

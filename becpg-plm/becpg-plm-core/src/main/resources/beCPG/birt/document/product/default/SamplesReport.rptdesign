@@ -20,6 +20,11 @@
         <value>./ProductReport</value>
     </simple-property-list>
     <property name="units">in</property>
+    <method name="initialize"><![CDATA[function indent_docx (coef, depthLevel, object) {
+	if (reportContext.getOutputFormat().toString()== "docx") {
+		object.getStyle().paddingLeft = (coef * (depthLevel - 1) + 4) + "pt";
+	}
+}]]></method>
     <property name="iconFile">/templates/dual_column_chart_listing.gif</property>
     <property name="cheatSheet">org.eclipse.birt.report.designer.ui.cheatsheet.dualchartlisting</property>
     <property name="bidiLayoutOrientation">ltr</property>
@@ -32,7 +37,7 @@
     </list-property>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="452">
-            <property name="FILELIST">src/main/resources/beCPG/birt/document/product/default/datasource-projet.xml</property>
+            <property name="FILELIST">becpg-plm/becpg-plm-core/src/main/resources/beCPG/birt/document/product/default/datasource-projet.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -925,6 +930,7 @@
                 <structure>
                     <property name="columnName">code_product</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">code_product</text-property>
                 </structure>
             </list-property>
@@ -2006,6 +2012,16 @@
                 <cell id="7431"/>
             </row>
         </grid>
+        <label id="9144">
+            <property name="fontSize">6pt</property>
+            <list-property name="visibility">
+                <structure>
+                    <property name="format">pdf</property>
+                    <expression name="valueExpr" type="javascript">true</expression>
+                </structure>
+            </list-property>
+            <text-property name="text"> </text-property>
+        </label>
         <table id="7355">
             <property name="marginTop">10pt</property>
             <property name="marginBottom">10pt</property>
@@ -2176,27 +2192,33 @@
                         </structure>
                     </list-property>
                     <cell id="7411">
+                        <property name="style">becpg-cell-data</property>
                         <data id="7414">
                             <property name="resultSetColumn">code</property>
                         </data>
                     </cell>
                     <cell id="7370">
+                        <property name="style">becpg-cell-data</property>
                         <data id="7415">
                             <property name="resultSetColumn">erpCode_product</property>
                         </data>
                     </cell>
                     <cell id="7372">
+                        <method name="onRender"><![CDATA[indent_docx (12, 1, this);]]></method>
+                        <property name="style">becpg-cell-data-left</property>
                         <data id="7762">
                             <property name="paddingLeft">4pt</property>
                             <property name="resultSetColumn">pfTitle</property>
                         </data>
                     </cell>
                     <cell id="7374">
+                        <property name="style">becpg-cell-data</property>
                         <data id="7417">
                             <property name="resultSetColumn">slUnitWeight</property>
                         </data>
                     </cell>
                     <cell id="7376">
+                        <property name="style">becpg-cell-data</property>
                         <data id="7416">
                             <property name="resultSetColumn">slTotalWeight</property>
                         </data>
@@ -2204,6 +2226,16 @@
                 </row>
             </detail>
         </table>
+        <label id="9143">
+            <property name="fontSize">6pt</property>
+            <list-property name="visibility">
+                <structure>
+                    <property name="format">pdf</property>
+                    <expression name="valueExpr" type="javascript">true</expression>
+                </structure>
+            </list-property>
+            <text-property name="text"> </text-property>
+        </label>
         <table id="7720">
             <property name="marginTop">10pt</property>
             <property name="marginBottom">10pt</property>
@@ -2306,15 +2338,53 @@
                     </list-property>
                     <cell id="7739">
                         <property name="textAlign">left</property>
+                        <label id="9152">
+                            <property name="fontSize">6pt</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">pdf</property>
+                                    <expression name="valueExpr" type="javascript">true</expression>
+                                </structure>
+                            </list-property>
+                            <text-property name="text"> </text-property>
+                        </label>
                         <data id="7740">
                             <property name="resultSetColumn">code</property>
                         </data>
-                        <data id="7756">
-                            <property name="marginBottom">7pt</property>
-                            <property name="paddingTop">5pt</property>
-                            <property name="paddingLeft">10pt</property>
-                            <property name="resultSetColumn">preparationTips</property>
-                        </data>
+                        <label id="9146">
+                            <property name="fontSize">6pt</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">pdf</property>
+                                    <expression name="valueExpr" type="javascript">true</expression>
+                                </structure>
+                            </list-property>
+                            <text-property name="text"> </text-property>
+                        </label>
+                        <grid id="9153">
+                            <column id="9154"/>
+                            <row id="9155">
+                                <cell id="9156">
+                                    <method name="onRender"><![CDATA[indent_docx (12, 2, this);]]></method>
+                                    <data id="7756">
+                                        <property name="marginBottom">7pt</property>
+                                        <property name="paddingTop">5pt</property>
+                                        <property name="paddingLeft">10pt</property>
+                                        <property name="resultSetColumn">preparationTips</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </grid>
+                        <label id="9147">
+                            <property name="fontSize">6pt</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">pdf</property>
+                                    <expression name="valueExpr" type="javascript">true</expression>
+                                </structure>
+                            </list-property>
+                            <text-property name="text"> </text-property>
+                        </label>
                     </cell>
                 </row>
             </detail>
@@ -2615,6 +2685,16 @@
                             <property name="paddingLeft">0pt</property>
                             <property name="paddingBottom">0pt</property>
                             <property name="paddingRight">0pt</property>
+                            <label id="9148">
+                                <property name="fontSize">6pt</property>
+                                <list-property name="visibility">
+                                    <structure>
+                                        <property name="format">pdf</property>
+                                        <expression name="valueExpr" type="javascript">true</expression>
+                                    </structure>
+                                </list-property>
+                                <text-property name="text"> </text-property>
+                            </label>
                             <table id="7532">
                                 <property name="marginTop">5pt</property>
                                 <property name="marginBottom">5pt</property>
@@ -2837,12 +2917,14 @@ row["compoListQtyForProduct"] / productWeight</expression>
                                         <cell id="7561">
                                             <property name="colSpan">1</property>
                                             <property name="rowSpan">1</property>
+                                            <property name="style">becpg-cell-data</property>
                                             <data id="7584">
                                                 <property name="resultSetColumn">erpCode</property>
                                             </data>
                                         </cell>
                                         <cell id="7567">
-                                            <property name="style">becpg-col-border</property>
+                                            <method name="onRender"><![CDATA[indent_docx (12, this.getRowData().getColumnValue("depthLevel"), this);]]></method>
+                                            <property name="style">becpg-cell-data-left</property>
                                             <text id="3300">
                                                 <property name="fontSize">9pt</property>
                                                 <property name="textAlign">left</property>
@@ -2851,10 +2933,10 @@ row["compoListQtyForProduct"] / productWeight</expression>
                                             </text>
                                         </cell>
                                         <cell id="7572">
-                                            <property name="style">becpg-col-border</property>
+                                            <property name="style">becpg-cell-data</property>
                                         </cell>
                                         <cell id="7568">
-                                            <property name="style">becpg-col-border</property>
+                                            <property name="style">becpg-cell-data</property>
                                             <data id="7771">
                                                 <structure name="numberFormat">
                                                     <property name="category">Custom</property>
@@ -2864,8 +2946,10 @@ row["compoListQtyForProduct"] / productWeight</expression>
                                             </data>
                                         </cell>
                                         <cell id="7570">
+                                            <method name="onRender"><![CDATA[indent_docx (12, 1, this);]]></method>
+                                            <property name="style">becpg-cell-data</property>
                                             <text id="7609">
-                                                <property name="textAlign">justify</property>
+                                                <property name="textAlign">left</property>
                                                 <property name="contentType">html</property>
                                                 <text-property name="content"><![CDATA[<VALUE-OF format="HTML">(row["instruction"] != null)? row["instruction"].replace("<p>", "").replace("</p>", ""): "";</VALUE-OF>]]></text-property>
                                             </text>
@@ -2879,6 +2963,7 @@ row["compoListQtyForProduct"] / productWeight</expression>
                                         <cell id="7602">
                                             <property name="colSpan">1</property>
                                             <property name="rowSpan">1</property>
+                                            <property name="style">becpg-cell-data</property>
                                             <property name="borderBottomStyle">solid</property>
                                             <property name="borderBottomWidth">thin</property>
                                             <property name="borderLeftStyle">solid</property>
@@ -2892,6 +2977,7 @@ row["compoListQtyForProduct"] / productWeight</expression>
                                             </label>
                                         </cell>
                                         <cell id="7604">
+                                            <property name="style">becpg-cell-data</property>
                                             <property name="borderBottomStyle">solid</property>
                                             <property name="borderBottomWidth">thin</property>
                                             <property name="borderLeftStyle">solid</property>
@@ -2919,6 +3005,16 @@ row["compoListQtyForProduct"] / productWeight</expression>
                                         <cell id="7614">
                                             <property name="colSpan">1</property>
                                             <property name="rowSpan">1</property>
+                                            <label id="9149">
+                                                <property name="fontSize">6pt</property>
+                                                <list-property name="visibility">
+                                                    <structure>
+                                                        <property name="format">pdf</property>
+                                                        <expression name="valueExpr" type="javascript">true</expression>
+                                                    </structure>
+                                                </list-property>
+                                                <text-property name="text"> </text-property>
+                                            </label>
                                         </cell>
                                         <cell id="7659"/>
                                         <cell id="7660">
@@ -3045,6 +3141,16 @@ row["compoListQtyForProduct"] / productWeight</expression>
                                                     </cell>
                                                 </row>
                                             </grid>
+                                            <label id="9150">
+                                                <property name="fontSize">6pt</property>
+                                                <list-property name="visibility">
+                                                    <structure>
+                                                        <property name="format">pdf</property>
+                                                        <expression name="valueExpr" type="javascript">true</expression>
+                                                    </structure>
+                                                </list-property>
+                                                <text-property name="text"> </text-property>
+                                            </label>
                                         </cell>
                                     </row>
                                 </footer>
