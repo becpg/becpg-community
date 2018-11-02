@@ -1,5 +1,7 @@
 package fr.becpg.repo.product.formulation.nutrient;
 
+import java.util.Locale;
+
 import fr.becpg.repo.product.formulation.nutrient.AbstractNutrientRegulation.NutrientDefinition;
 
 public interface NutrientRegulation {
@@ -9,5 +11,7 @@ public interface NutrientRegulation {
 	Double roundGDA(Double value);
 
 	NutrientDefinition getNutrientDefinition(String nutCode);
+	
+	String displayValue(Double value, Double roundedValue, String nutrientTypeCode, Locale locale);
 
 }

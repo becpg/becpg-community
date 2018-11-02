@@ -3258,6 +3258,7 @@ display;</expression>
                     <property name="borderTopStyle">solid</property>
                     <property name="borderTopWidth">thin</property>
                     <cell id="3368">
+                        <property name="style">becpg-cell-data</property>
                         <property name="textAlign">center</property>
                         <data id="3467">
                             <property name="display">inline</property>
@@ -3272,6 +3273,7 @@ display;</expression>
                         </data>
                     </cell>
                     <cell id="3370">
+                        <property name="style">becpg-cell-data</property>
                         <property name="textAlign">center</property>
                         <data id="3469">
                             <structure name="numberFormat">
@@ -3282,22 +3284,26 @@ display;</expression>
                         </data>
                     </cell>
                     <cell id="3372">
+                        <property name="style">becpg-cell-data-left</property>
                         <data id="3371">
                             <property name="resultSetColumn">product</property>
                         </data>
                     </cell>
                     <cell id="7358">
+                        <property name="style">becpg-cell-data</property>
                         <data id="7366">
                             <property name="textAlign">center</property>
                             <property name="resultSetColumn">priceListPrefRank</property>
                         </data>
                     </cell>
                     <cell id="7363">
+                        <property name="style">becpg-cell-data-left</property>
                         <data id="7367">
                             <property name="resultSetColumn">suppliers</property>
                         </data>
                     </cell>
                     <cell id="3376">
+                        <property name="style">becpg-cell-data</property>
                         <property name="textAlign">center</property>
                         <data id="3465">
                             <structure name="numberFormat">

@@ -183,14 +183,69 @@
 
 .becpg-cell-dynamic-header
 {
-	
+	text-align: center;
+	border-bottom-style: solid;
+	border-bottom-width: thin;
+	border-left-style: solid;
+	border-left-width: thin;
+	border-right-style: solid;
+	border-right-width: thin;
+	border-top-style: solid;
+	border-top-width: thin;
+}
+
+.becpg-cell-dynamic-header-left
+{
+	text-align: left;
+	font-weight: bold;
+	border-bottom-style: solid;
+	border-bottom-width: thin;
+	border-left-style: solid;
+	border-left-width: thin;
+	border-right-style: solid;
+	border-right-width: thin;
+	border-top-style: solid;
+	border-top-width: thin;
 }
 
 .becpg-cell-data
 {
 	text-align: center;
+	border-bottom-style: solid;
+	border-bottom-width: thin;
+	border-left-style: solid;
+	border-left-width: thin;
+	border-right-style: solid;
+	border-right-width: thin;
+	border-top-style: solid;
+	border-top-width: thin;
 }
 
+.becpg-cell-data-left
+{
+	text-align: left;
+	border-bottom-style: solid;
+	border-bottom-width: thin;
+	border-left-style: solid;
+	border-left-width: thin;
+	border-right-style: solid;
+	border-right-width: thin;
+	border-top-style: solid;
+	border-top-width: thin;
+}
+
+.becpg-cell-data-right
+{
+	text-align: right;
+	border-bottom-style: solid;
+	border-bottom-width: thin;
+	border-left-style: solid;
+	border-left-width: thin;
+	border-right-style: solid;
+	border-right-width: thin;
+	border-top-style: solid;
+	border-top-width: thin;
+}
 /* Quality Report css */
 .becpg-quality-row-header
 {
