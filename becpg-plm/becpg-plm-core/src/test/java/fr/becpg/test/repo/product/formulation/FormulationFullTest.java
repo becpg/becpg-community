@@ -51,7 +51,6 @@ import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
-import fr.becpg.repo.product.formulation.AbstractSimpleListFormulationHandler;
 import fr.becpg.repo.product.formulation.NutsCalculatingFormulationHandler;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
@@ -489,7 +488,7 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 					illDataItem.getValue().getValue(Locale.FRENCH));
 
 			checkILL("Garniture english 50% (ing3 english 50%)",
-					"Pâte english 50% (Legal Raw material 2 33,3% (ing2 english 25%, ing1 english), ing2 english 11,1%, ing1 english)",
+					"Pâte english 50% (Legal Raw material 2 33.3% (ing2 english 25%, ing1 english), ing2 english 11.1%, ing1 english)",
 					illDataItem.getValue().getValue(Locale.ENGLISH));
 
 			checks++;
