@@ -2008,9 +2008,10 @@ dataSetRow["name"]
                     </cell>
                     <cell id="3667">
                         <property name="style">becpg-cell-data</property>
-                        <data id="3668">
-                            <property name="resultSetColumn">legalName</property>
-                        </data>
+                        <text-data id="7362">
+                            <expression name="valueExpr">row["legalName"]</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
                     </cell>
                     <cell id="3669">
                         <property name="style">becpg-cell-data</property>
