@@ -20,6 +20,11 @@
         <value>./ProductReport</value>
     </simple-property-list>
     <property name="units">in</property>
+    <method name="initialize"><![CDATA[function indent_docx (coef, depthLevel, object) {
+	if (reportContext.getOutputFormat().toString()== "docx") {
+		object.getStyle().paddingLeft = (coef * (depthLevel - 1) + 4) + "pt";
+	}
+}]]></method>
     <property name="iconFile">/templates/dual_column_chart_listing.gif</property>
     <property name="cheatSheet">org.eclipse.birt.report.designer.ui.cheatsheet.dualchartlisting</property>
     <property name="bidiLayoutOrientation">ltr</property>
@@ -6098,6 +6103,16 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                 </cell>
             </row>
         </grid>
+        <label id="8529">
+            <property name="fontSize">6pt</property>
+            <list-property name="visibility">
+                <structure>
+                    <property name="format">pdf</property>
+                    <expression name="valueExpr" type="javascript">true</expression>
+                </structure>
+            </list-property>
+            <text-property name="text"> </text-property>
+        </label>
         <grid id="3091">
             <property name="width">100%</property>
             <column id="3092"/>
@@ -6105,7 +6120,9 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                 <cell id="7011">
                     <table id="7014">
                         <property name="marginTop">8pt</property>
+                        <property name="marginLeft">1pt</property>
                         <property name="marginBottom">8pt</property>
+                        <property name="marginRight">1pt</property>
                         <property name="width">100%</property>
                         <property name="dataSet">IngList</property>
                         <list-property name="visibility">
@@ -6257,6 +6274,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                             </row>
                             <row id="7015">
                                 <property name="style">becpg-row-header</property>
+                                <property name="fontSize">9pt</property>
                                 <cell id="7016">
                                     <property name="style">becpg-cell-header</property>
                                     <label id="7087">
@@ -6324,6 +6342,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                             <row id="7026">
                                 <property name="verticalAlign">middle</property>
                                 <cell id="7027">
+                                    <property name="style">becpg-cell-dynamic-header-left</property>
                                     <property name="borderBottomColor">#000000</property>
                                     <property name="borderBottomStyle">solid</property>
                                     <property name="borderBottomWidth">1px</property>
@@ -6336,6 +6355,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                                     <property name="borderTopColor">#000000</property>
                                     <property name="borderTopStyle">solid</property>
                                     <property name="borderTopWidth">1px</property>
+                                    <property name="paddingLeft">2pt</property>
                                     <data id="6538">
                                         <property name="backgroundAttachment">scroll</property>
                                         <property name="backgroundPositionX">0%</property>
@@ -6998,6 +7018,16 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                             </row>
                         </detail>
                     </table>
+                    <label id="8530">
+                        <property name="fontSize">6pt</property>
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">pdf</property>
+                                <expression name="valueExpr" type="javascript">true</expression>
+                            </structure>
+                        </list-property>
+                        <text-property name="text"> </text-property>
+                    </label>
                 </cell>
             </row>
             <row id="6547">
@@ -7143,82 +7173,36 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                             </row>
                             <row id="6558">
                                 <property name="style">becpg-row-header</property>
+                                <property name="fontSize">9pt</property>
                                 <cell id="6559">
-                                    <property name="borderBottomStyle">solid</property>
-                                    <property name="borderBottomWidth">thin</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
-                                    <property name="borderTopStyle">solid</property>
-                                    <property name="borderTopWidth">thin</property>
+                                    <property name="style">becpg-cell-header</property>
                                 </cell>
                                 <cell id="6560">
                                     <property name="style">becpg-cell-header</property>
-                                    <property name="borderBottomStyle">solid</property>
-                                    <property name="borderBottomWidth">thin</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
-                                    <property name="borderTopStyle">solid</property>
-                                    <property name="borderTopWidth">thin</property>
                                     <label id="6561">
                                         <text-property name="text" key="value"></text-property>
                                     </label>
                                 </cell>
                                 <cell id="6565">
                                     <property name="style">becpg-cell-header</property>
-                                    <property name="borderBottomStyle">solid</property>
-                                    <property name="borderBottomWidth">thin</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
-                                    <property name="borderTopStyle">solid</property>
-                                    <property name="borderTopWidth">thin</property>
                                     <label id="6566">
                                         <text-property name="text" key="unit"></text-property>
                                     </label>
                                 </cell>
                                 <cell id="6603">
                                     <property name="style">becpg-cell-header</property>
-                                    <property name="borderBottomStyle">solid</property>
-                                    <property name="borderBottomWidth">thin</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
-                                    <property name="borderTopStyle">solid</property>
-                                    <property name="borderTopWidth">thin</property>
                                     <label id="6629">
                                         <text-property name="text" key="mini"></text-property>
                                     </label>
                                 </cell>
                                 <cell id="6608">
                                     <property name="style">becpg-cell-header</property>
-                                    <property name="borderBottomStyle">solid</property>
-                                    <property name="borderBottomWidth">thin</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
-                                    <property name="borderTopStyle">solid</property>
-                                    <property name="borderTopWidth">thin</property>
                                     <label id="6630">
                                         <text-property name="text" key="maxi"></text-property>
                                     </label>
                                 </cell>
                                 <cell id="6613">
                                     <property name="style">becpg-cell-header</property>
-                                    <property name="borderBottomStyle">solid</property>
-                                    <property name="borderBottomWidth">thin</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
-                                    <property name="borderTopStyle">solid</property>
-                                    <property name="borderTopWidth">thin</property>
                                     <label id="6631">
                                         <text-property name="text" key="method"></text-property>
                                     </label>
@@ -7230,6 +7214,9 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                                 <property name="style">becpg-row-border</property>
                                 <property name="verticalAlign">middle</property>
                                 <cell id="6577">
+                                    <method name="onRender"><![CDATA[indent_docx (12, this.getRowData().getColumnValue("depthLevel"), this);]]></method>
+                                    <property name="style">becpg-cell-dynamic-header-left</property>
+                                    <property name="paddingLeft">2pt</property>
                                     <text id="5971">
                                         <property name="fontStyle">normal</property>
                                         <property name="contentType">html</property>
@@ -7482,6 +7469,16 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                             </row>
                         </detail>
                     </table>
+                    <label id="8531">
+                        <property name="fontSize">6pt</property>
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">pdf</property>
+                                <expression name="valueExpr" type="javascript">true</expression>
+                            </structure>
+                        </list-property>
+                        <text-property name="text"> </text-property>
+                    </label>
                 </cell>
             </row>
             <row id="6632">
@@ -7588,7 +7585,7 @@ decisionTree
                                     <property name="rowSpan">1</property>
                                     <label id="6734">
                                         <property name="style">becpg-chapter-header</property>
-                                        <text-property name="text" key="allergens">ALLERGENES</text-property>
+                                        <text-property name="text" key="chapterAllergens">ALLERGENES</text-property>
                                     </label>
                                 </cell>
                             </row>
@@ -7620,6 +7617,7 @@ decisionTree
                             </row>
                             <row id="6685">
                                 <property name="style">becpg-row-header</property>
+                                <property name="fontSize">9pt</property>
                                 <cell id="6687">
                                     <property name="style">becpg-cell-header</property>
                                     <label id="6775">
@@ -7676,7 +7674,8 @@ decisionTree
                                 <property name="borderTopWidth">1px</property>
                                 <property name="verticalAlign">middle</property>
                                 <cell id="6697">
-                                    <property name="style">becpg-col-header</property>
+                                    <property name="style">becpg-cell-dynamic-header-left</property>
+                                    <property name="paddingLeft">2pt</property>
                                     <data id="6787">
                                         <property name="backgroundAttachment">scroll</property>
                                         <property name="backgroundPositionX">0%</property>
@@ -8100,6 +8099,16 @@ decisionTree
                             </row>
                         </detail>
                     </table>
+                    <label id="8532">
+                        <property name="fontSize">6pt</property>
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">pdf</property>
+                                <expression name="valueExpr" type="javascript">true</expression>
+                            </structure>
+                        </list-property>
+                        <text-property name="text"> </text-property>
+                    </label>
                 </cell>
             </row>
             <row id="6788">
@@ -8182,6 +8191,7 @@ decisionTree
                             </row>
                             <row id="6793">
                                 <property name="style">becpg-row-header</property>
+                                <property name="fontSize">9pt</property>
                                 <cell id="6794">
                                     <property name="style">becpg-cell-header</property>
                                     <label id="6830">
@@ -8211,6 +8221,7 @@ decisionTree
                         <detail>
                             <row id="6799">
                                 <cell id="6800">
+                                    <property name="style">becpg-cell-dynamic-header-left</property>
                                     <property name="borderBottomStyle">solid</property>
                                     <property name="borderBottomWidth">1px</property>
                                     <property name="borderLeftStyle">solid</property>
@@ -8219,6 +8230,7 @@ decisionTree
                                     <property name="borderRightWidth">1px</property>
                                     <property name="borderTopStyle">solid</property>
                                     <property name="borderTopWidth">1px</property>
+                                    <property name="paddingLeft">2pt</property>
                                     <data id="6823">
                                         <property name="backgroundAttachment">scroll</property>
                                         <property name="backgroundPositionX">0%</property>
@@ -8476,6 +8488,16 @@ decisionTree
                             </row>
                         </detail>
                     </table>
+                    <label id="8533">
+                        <property name="fontSize">6pt</property>
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">pdf</property>
+                                <expression name="valueExpr" type="javascript">true</expression>
+                            </structure>
+                        </list-property>
+                        <text-property name="text"> </text-property>
+                    </label>
                 </cell>
             </row>
             <row id="6831">
@@ -8555,7 +8577,7 @@ decisionTree
                                     <property name="rowSpan">1</property>
                                     <label id="6858">
                                         <property name="textAlign">center</property>
-                                        <text-property name="text" key="labelClaimsTitle"></text-property>
+                                        <text-property name="text" key="chapterLabelClaims"></text-property>
                                     </label>
                                 </cell>
                             </row>
@@ -8570,10 +8592,11 @@ decisionTree
                             </row>
                             <row id="6834">
                                 <property name="style">becpg-row-header</property>
+                                <property name="fontSize">9pt</property>
                                 <cell id="6835">
                                     <property name="style">becpg-cell-header</property>
                                     <label id="6863">
-                                        <text-property name="text" key="labelClaimsTitle"></text-property>
+                                        <text-property name="text" key="labelClaims"></text-property>
                                     </label>
                                 </cell>
                                 <cell id="6836">
@@ -8613,6 +8636,7 @@ decisionTree
                                 <property name="borderTopStyle">solid</property>
                                 <property name="borderTopWidth">1px</property>
                                 <cell id="6840">
+                                    <property name="style">becpg-cell-dynamic-header-left</property>
                                     <property name="borderBottomStyle">solid</property>
                                     <property name="borderBottomWidth">1px</property>
                                     <property name="borderLeftStyle">solid</property>
@@ -8621,6 +8645,7 @@ decisionTree
                                     <property name="borderRightWidth">1px</property>
                                     <property name="borderTopStyle">solid</property>
                                     <property name="borderTopWidth">1px</property>
+                                    <property name="paddingLeft">2pt</property>
                                     <data id="6859">
                                         <property name="backgroundAttachment">scroll</property>
                                         <property name="backgroundPositionX">0%</property>
@@ -8842,6 +8867,16 @@ decisionTree
                             </row>
                         </detail>
                     </table>
+                    <label id="8535">
+                        <property name="fontSize">6pt</property>
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">pdf</property>
+                                <expression name="valueExpr" type="javascript">true</expression>
+                            </structure>
+                        </list-property>
+                        <text-property name="text"> </text-property>
+                    </label>
                 </cell>
             </row>
             <row id="6867">
@@ -8987,17 +9022,16 @@ BirtMath.round(dataSetRow["mblMaxi"],0) + " " + dataSetRow["mblUnit"]
                             </row>
                             <row id="6880">
                                 <property name="style">becpg-row-header</property>
+                                <property name="fontSize">9pt</property>
                                 <cell id="6881">
                                     <property name="style">becpg-cell-header</property>
                                     <label id="6882">
-                                        <property name="style">becpg-col-header</property>
                                         <text-property name="text" key="charact">Caractéristique</text-property>
                                     </label>
                                 </cell>
                                 <cell id="6883">
                                     <property name="style">becpg-cell-header</property>
                                     <label id="6884">
-                                        <property name="style">becpg-col-header</property>
                                         <text-property name="text" key="value">Valeur</text-property>
                                     </label>
                                 </cell>
@@ -9010,7 +9044,6 @@ BirtMath.round(dataSetRow["mblMaxi"],0) + " " + dataSetRow["mblUnit"]
                                 <cell id="6885">
                                     <property name="style">becpg-cell-header</property>
                                     <label id="6886">
-                                        <property name="style">becpg-col-header</property>
                                         <property name="paddingLeft">5pt</property>
                                         <text-property name="text" key="maxi">Maxi</text-property>
                                     </label>
@@ -9033,6 +9066,8 @@ BirtMath.round(dataSetRow["mblMaxi"],0) + " " + dataSetRow["mblUnit"]
                             <row id="6887">
                                 <property name="style">becpg-row-border</property>
                                 <cell id="6888">
+                                    <property name="style">becpg-cell-dynamic-header-left</property>
+                                    <property name="paddingLeft">2pt</property>
                                     <data id="6889">
                                         <property name="fontWeight">bold</property>
                                         <property name="resultSetColumn">mblMicrobio</property>
@@ -9217,6 +9252,16 @@ BirtMath.round(dataSetRow["mblMaxi"],0) + " " + dataSetRow["mblUnit"]
                             </row>
                         </detail>
                     </table>
+                    <label id="8534">
+                        <property name="fontSize">6pt</property>
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">pdf</property>
+                                <expression name="valueExpr" type="javascript">true</expression>
+                            </structure>
+                        </list-property>
+                        <text-property name="text"> </text-property>
+                    </label>
                 </cell>
             </row>
             <row id="3095">
@@ -9296,6 +9341,7 @@ else{
                         <detail>
                             <row id="5434">
                                 <cell id="5435">
+                                    <property name="style">becpg-cell-dynamic-header-left</property>
                                     <property name="borderBottomStyle">solid</property>
                                     <property name="borderBottomWidth">thin</property>
                                     <property name="borderLeftStyle">solid</property>
@@ -9304,6 +9350,7 @@ else{
                                     <property name="borderRightWidth">thin</property>
                                     <property name="borderTopStyle">solid</property>
                                     <property name="borderTopWidth">thin</property>
+                                    <property name="paddingLeft">2pt</property>
                                     <data id="5443">
                                         <property name="backgroundAttachment">scroll</property>
                                         <property name="backgroundPositionX">0%</property>
@@ -9357,6 +9404,7 @@ else{
                                     </data>
                                 </cell>
                                 <cell id="5436">
+                                    <property name="style">becpg-row-border</property>
                                     <property name="borderBottomStyle">solid</property>
                                     <property name="borderBottomWidth">thin</property>
                                     <property name="borderLeftStyle">solid</property>
@@ -9365,6 +9413,7 @@ else{
                                     <property name="borderRightWidth">thin</property>
                                     <property name="borderTopStyle">solid</property>
                                     <property name="borderTopWidth">thin</property>
+                                    <property name="paddingLeft">2pt</property>
                                     <data id="5445">
                                         <property name="resultSetColumn">organoListValue</property>
                                     </data>

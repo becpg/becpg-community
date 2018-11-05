@@ -20,6 +20,11 @@
         <value>./ProductReport</value>
     </simple-property-list>
     <property name="units">in</property>
+    <method name="initialize"><![CDATA[function indent_docx (coef, depthLevel, object) {
+	if (reportContext.getOutputFormat().toString()== "docx") {
+		object.getStyle().paddingLeft = (coef * (depthLevel - 1) + 4) + "pt";
+	}
+}]]></method>
     <property name="iconFile">/templates/dual_column_chart_listing.gif</property>
     <property name="cheatSheet">org.eclipse.birt.report.designer.ui.cheatsheet.dualchartlisting</property>
     <property name="bidiLayoutOrientation">ltr</property>
@@ -4008,6 +4013,8 @@ dataSetRow["costListValue"]
                 <row id="3475">
                     <property name="style">becpg-row-border</property>
                     <cell id="3476">
+                        <method name="onRender"><![CDATA[indent_docx (12, this.getRowData().getColumnValue("depthLevel"), this);]]></method>
+                        <property name="style">becpg-cell-data-left</property>
                         <text id="6871">
                             <property name="fontSize">8pt</property>
                             <property name="contentType">html</property>
@@ -4515,13 +4522,15 @@ matière
                         </structure>
                     </list-property>
                     <cell id="2908">
-                        <property name="style">becpg-cell-data-header</property>
+                        <property name="style">becpg-cell-data</property>
                         <data id="2946">
                             <property name="style">becpg-data</property>
                             <property name="resultSetColumn">erpCode</property>
                         </data>
                     </cell>
                     <cell id="2892">
+                        <method name="onRender"><![CDATA[indent_docx (12, this.getRowData().getColumnValue("depthLevel"), this);]]></method>
+                        <property name="style">becpg-cell-data-left</property>
                         <text id="3300">
                             <property name="fontSize">8pt</property>
                             <property name="contentType">html</property>
@@ -4981,13 +4990,15 @@ dataSetRow["packagingListPkgLevel"]
                 <row id="3514">
                     <property name="style">becpg-row-border</property>
                     <cell id="3515">
-                        <property name="style">becpg-cell-data-header</property>
+                        <property name="style">becpg-cell-data</property>
                         <data id="3535">
                             <property name="style">becpg-data</property>
                             <property name="resultSetColumn">erpCode</property>
                         </data>
                     </cell>
                     <cell id="3516">
+                        <method name="onRender"><![CDATA[indent_docx (12, this.getRowData().getColumnValue("depthLevel"), this);]]></method>
+                        <property name="style">becpg-cell-data-left</property>
                         <text id="7072">
                             <property name="fontSize">8pt</property>
                             <property name="contentType">html</property>
@@ -5379,7 +5390,8 @@ horaire</text-property>
                 <row id="3601">
                     <property name="style">becpg-row-border</property>
                     <cell id="3602">
-                        <property name="style">becpg-cell-data-header</property>
+                        <method name="onRender"><![CDATA[indent_docx (12, 1, this);]]></method>
+                        <property name="style">becpg-cell-data-left</property>
                         <data id="3631">
                             <property name="style">becpg-data</property>
                             <property name="textAlign">left</property>
@@ -5387,6 +5399,8 @@ horaire</text-property>
                         </data>
                     </cell>
                     <cell id="3603">
+                        <method name="onRender"><![CDATA[indent_docx (12, this.getRowData().getColumnValue("depthLevel"), this);]]></method>
+                        <property name="style">becpg-cell-data-left</property>
                         <text id="7073">
                             <property name="fontSize">8pt</property>
                             <property name="contentType">html</property>
