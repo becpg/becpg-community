@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
-    <property name="createdBy">Eclipse BIRT Designer Version 4.4.2.v201410272105 Build &lt;4.4.2.v20150217-1805></property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.6.0.v201606072122</property>
     <simple-property-list name="includeResource">
         <value>./QualityControlReport</value>
     </simple-property-list>
@@ -1156,7 +1156,7 @@
                             <cell id="682">
                                 <label id="168">
                                     <property name="style">becpg-cell-bold</property>
-                                    <text-property name="text" key="brand">Marque : </text-property>
+                                    <text-property name="text" key="brand">Marque :</text-property>
                                 </label>
                             </cell>
                             <cell id="684">
@@ -1212,7 +1212,13 @@
                 <structure>
                     <property name="name">clType</property>
                     <text-property name="displayName">clType</text-property>
-                    <expression name="expression" type="javascript">reportContext.getMessage(dataSetRow["clType"], reportContext.getLocale())</expression>
+                    <expression name="expression" type="javascript">var msg = reportContext.getMessage(dataSetRow["clType"], reportContext.getLocale())
+
+if(msg != null &amp;&amp; msg != ""){
+	msg
+} else {
+	dataSetRow["clType"]
+}</expression>
                     <property name="dataType">string</property>
                     <property name="allowExport">true</property>
                 </structure>
