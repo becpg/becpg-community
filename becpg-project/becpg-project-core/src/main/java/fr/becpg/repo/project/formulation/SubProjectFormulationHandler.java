@@ -2,7 +2,6 @@ package fr.becpg.repo.project.formulation;
 
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
-import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.project.ProjectActivityService;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.ProjectState;
@@ -44,8 +43,12 @@ public class SubProjectFormulationHandler extends FormulationBaseHandler<Project
 				task.setEnd(subProject.getCompletionDate());
 				task.setDuration(null);
 				task.setCompletionPercent(subProject.getCompletionPercent());
-				task.setTaskName(subProject.getName());				
+				task.setTaskName(subProject.getName());	
 				
+				if(subProject.getLegends()!=null && !subProject.getLegends().isEmpty()) {
+					task.setTaskLegend(subProject.getLegends().get(0));
+				}
+
 				ProjectState state = subProject.getProjectState();
 				if(state == null) {
 					state = ProjectState.Planned;

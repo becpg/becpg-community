@@ -20,8 +20,10 @@ package fr.becpg.repo.product.formulation.labeling;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.Format;
 import java.text.MessageFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -321,18 +323,18 @@ public class LabelingFormulaContext extends RuleParser {
 		if (textFormaters.containsKey(lblComponent.getNodeRef())) {
 			TextFormatRule textFormatRule = textFormaters.get(lblComponent.getNodeRef());
 			if (textFormatRule.matchLocale(I18NUtil.getLocale())) {
-				return applyRoundingMode(new MessageFormat(textFormatRule.getTextFormat()), qty);
+				return applyRoundingMode(new MessageFormat(textFormatRule.getTextFormat(), I18NUtil.getContentLocale()), qty);
 			}
 		}
 
 		if (lblComponent instanceof CompositeLabeling) {
 			if (((CompositeLabeling) lblComponent).isGroup()) {
-				return applyRoundingMode(new MessageFormat(groupDefaultFormat), qty);
+				return applyRoundingMode(new MessageFormat(groupDefaultFormat, I18NUtil.getContentLocale()), qty);
 			}
 			if (DeclarationType.Detail.equals(((CompositeLabeling) lblComponent).getDeclarationType())) {
-				return applyRoundingMode(new MessageFormat(detailsDefaultFormat), qty);
+				return applyRoundingMode(new MessageFormat(detailsDefaultFormat, I18NUtil.getContentLocale()), qty);
 			}
-			return applyRoundingMode(new MessageFormat(ingDefaultFormat), qty);
+			return applyRoundingMode(new MessageFormat(ingDefaultFormat, I18NUtil.getContentLocale()), qty);
 		} else if (lblComponent instanceof IngTypeItem) {
 
 			boolean doNotDetailsDeclType = isDoNotDetails(
@@ -341,13 +343,13 @@ public class LabelingFormulaContext extends RuleParser {
 
 			if (doNotDetailsDeclType || (((((IngTypeItem) lblComponent)).getDecThreshold() != null)
 					&& ((((IngTypeItem) lblComponent)).getQty() <= ((((IngTypeItem) lblComponent)).getDecThreshold() / 100)))) {
-				return applyRoundingMode(new MessageFormat(ingTypeDecThresholdFormat), qty);
+				return applyRoundingMode(new MessageFormat(ingTypeDecThresholdFormat, I18NUtil.getContentLocale()), qty);
 			}
-			return applyRoundingMode(new MessageFormat(ingTypeDefaultFormat), qty);
+			return applyRoundingMode(new MessageFormat(ingTypeDefaultFormat, I18NUtil.getContentLocale()), qty);
 		} else if ((lblComponent instanceof IngItem) && (((IngItem) lblComponent).getSubIngs().size() > 0)) {
-			return applyRoundingMode(new MessageFormat(subIngsDefaultFormat), qty);
+			return applyRoundingMode(new MessageFormat(subIngsDefaultFormat, I18NUtil.getContentLocale()), qty);
 		}
-		return applyRoundingMode(new MessageFormat(ingDefaultFormat), qty);
+		return applyRoundingMode(new MessageFormat(ingDefaultFormat, I18NUtil.getContentLocale()), qty);
 	}
 
 	private MessageFormat applyRoundingMode(MessageFormat messageFormat, Double qty) {
@@ -357,15 +359,15 @@ public class LabelingFormulaContext extends RuleParser {
 	private MessageFormat applyRoundingMode(MessageFormat messageFormat, Double qty, RoundingMode maxRoundingMode) {
 		if (messageFormat.getFormats() != null) {
 			for (Format format : messageFormat.getFormats()) {
-				if (format instanceof DecimalFormat) {
-					applyAutomaticPrecicion(((DecimalFormat) format), qty, maxRoundingMode);
+				if (format instanceof NumberFormat) {
+					applyAutomaticPrecicion(((NumberFormat) format), qty, maxRoundingMode);
 				}
 			}
 		}
 		return messageFormat;
 	}
 
-	private void applyAutomaticPrecicion(DecimalFormat decimalFormat, Double qty, RoundingMode maxRoundingMode) {
+	private void applyAutomaticPrecicion(NumberFormat decimalFormat, Double qty, RoundingMode maxRoundingMode) {
 		decimalFormat.setRoundingMode(RoundingMode.HALF_DOWN);
 		if ((qty != null) && (qty > -1) && (qty != 0d)) {
 			int maxNum = decimalFormat.getMaximumFractionDigits();
@@ -464,22 +466,24 @@ public class LabelingFormulaContext extends RuleParser {
 
 	private DecimalFormat getDecimalFormat(AbstractLabelingComponent lblComponent) {
 		DecimalFormat decimalFormat = null;
+
+		DecimalFormatSymbols symbols = new DecimalFormatSymbols(I18NUtil.getContentLocale());
 		if ((lblComponent != null)) {
 			if (showAllPerc) {
 				if (lblComponent instanceof IngTypeItem) {
 					NodeRef ingItemNodeRef = ((IngTypeItem) lblComponent).getOrigNodeRef() != null ? ((IngTypeItem) lblComponent).getOrigNodeRef()
 							: lblComponent.getNodeRef();
 					if (isDoNotDetails(ingItemNodeRef) || showPercRules.containsKey(ingItemNodeRef)) {
-						decimalFormat = new DecimalFormat(defaultPercFormat);
+						decimalFormat = new DecimalFormat(defaultPercFormat,symbols);
 					}
 				} else {
-					decimalFormat = new DecimalFormat(defaultPercFormat);
+					decimalFormat = new DecimalFormat(defaultPercFormat,symbols);
 				}
 
 			} else if (showPercRules.containsKey(lblComponent.getNodeRef())) {
 				ShowRule showRule = showPercRules.get(lblComponent.getNodeRef());
 				if (showRule.matchLocale(I18NUtil.getLocale())) {
-					decimalFormat = new DecimalFormat((showRule.format != null) && !showRule.format.isEmpty() ? showRule.format : defaultPercFormat);
+					decimalFormat = new DecimalFormat((showRule.format != null) && !showRule.format.isEmpty() ? showRule.format : defaultPercFormat,symbols);
 				}
 
 			}
@@ -745,11 +749,11 @@ public class LabelingFormulaContext extends RuleParser {
 						firstQtyPerc = qtyPerc;
 						firstGeo = geoOriginsLabel != null ? geoOriginsLabel : "";
 					} else {
-						tableContent.append(applyRoundingMode(new MessageFormat(htmlTableRowFormat), qtyPerc)
+						tableContent.append(applyRoundingMode(new MessageFormat(htmlTableRowFormat,I18NUtil.getContentLocale()), qtyPerc)
 								.format(new Object[] { subLabel, qtyPerc, geoOriginsLabel != null ? geoOriginsLabel : "" }));
 					}
 					if (qtyPerc != null) {
-						total = total.add(roundeedValue(qtyPerc, new MessageFormat(htmlTableRowFormat)));
+						total = total.add(roundeedValue(qtyPerc, new MessageFormat(htmlTableRowFormat,I18NUtil.getContentLocale())));
 					}
 
 				}
@@ -800,12 +804,12 @@ public class LabelingFormulaContext extends RuleParser {
 								firstQtyPerc = qtyPerc;
 								firstGeo = geoOriginsLabel != null ? geoOriginsLabel : "";
 							} else {
-								tableContent.append(applyRoundingMode(new MessageFormat(htmlTableRowFormat), qtyPerc)
+								tableContent.append(applyRoundingMode(new MessageFormat(htmlTableRowFormat,I18NUtil.getContentLocale()), qtyPerc)
 										.format(new Object[] { subLabel, qtyPerc, geoOriginsLabel != null ? geoOriginsLabel : "" }));
 							}
 
 							if (qtyPerc != null) {
-								total = total.add(roundeedValue(qtyPerc, new MessageFormat(htmlTableRowFormat)));
+								total = total.add(roundeedValue(qtyPerc, new MessageFormat(htmlTableRowFormat,I18NUtil.getContentLocale())));
 							}
 						}
 
@@ -824,19 +828,19 @@ public class LabelingFormulaContext extends RuleParser {
 
 			total = new BigDecimal(1);
 
-			firstQtyPerc = roundeedValue(firstQtyPerc, new MessageFormat(htmlTableRowFormat)).add(diffValue).doubleValue();
+			firstQtyPerc = roundeedValue(firstQtyPerc, new MessageFormat(htmlTableRowFormat,I18NUtil.getContentLocale())).add(diffValue).doubleValue();
 
-			ret.append(applyRoundingMode(new MessageFormat(htmlTableRowFormat), totalPrecision, RoundingMode.HALF_UP)
+			ret.append(applyRoundingMode(new MessageFormat(htmlTableRowFormat,I18NUtil.getContentLocale()), totalPrecision, RoundingMode.HALF_UP)
 					.format(new Object[] { firstLabel, firstQtyPerc, firstGeo }));
 		} else {
-			ret.append(applyRoundingMode(new MessageFormat(htmlTableRowFormat), firstQtyPerc)
+			ret.append(applyRoundingMode(new MessageFormat(htmlTableRowFormat,I18NUtil.getContentLocale()), firstQtyPerc)
 					.format(new Object[] { firstLabel, firstQtyPerc, firstGeo }));
 		}
 
 		ret.append(tableContent);
 
 		if (showTotal && (total.doubleValue() > 0)) {
-			ret.append(applyRoundingMode(new MessageFormat(htmlTableRowFormat), totalPrecision, RoundingMode.HALF_UP)
+			ret.append(applyRoundingMode(new MessageFormat(htmlTableRowFormat,I18NUtil.getContentLocale()), totalPrecision, RoundingMode.HALF_UP)
 					.format(new Object[] { "<b>" + I18NUtil.getMessage("entity.datalist.item.details.total") + "</b>", total.doubleValue(), "" }));
 		}
 
@@ -861,9 +865,10 @@ public class LabelingFormulaContext extends RuleParser {
 		return false;
 	}
 
-	private BigDecimal roundeedValue(Double qty, DecimalFormat decimalFormat) {
+	private BigDecimal roundeedValue(Double qty, NumberFormat decimalFormat) {
 		if (decimalFormat == null) {
-			decimalFormat = new DecimalFormat(defaultPercFormat);
+			DecimalFormatSymbols symbols = new DecimalFormatSymbols(I18NUtil.getContentLocale());
+			decimalFormat = new DecimalFormat(defaultPercFormat,symbols);
 		}
 		decimalFormat.setRoundingMode(RoundingMode.HALF_DOWN);
 		if ((qty != null) && (qty > -1) && (qty != 0d)) {
@@ -895,8 +900,8 @@ public class LabelingFormulaContext extends RuleParser {
 	private BigDecimal roundeedValue(Double qty, MessageFormat messageFormat) {
 
 		for (Format format : messageFormat.getFormats()) {
-			if (format instanceof DecimalFormat) {
-				return roundeedValue(qty, (DecimalFormat) format);
+			if (format instanceof NumberFormat) {
+				return roundeedValue(qty, (NumberFormat) format);
 			}
 		}
 		return new BigDecimal(qty);
