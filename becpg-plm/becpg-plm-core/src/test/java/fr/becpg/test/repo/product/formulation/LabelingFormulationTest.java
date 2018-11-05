@@ -26,7 +26,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -778,12 +777,12 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		labelingRuleList.add(new LabelingRuleListDataItem("Langue", "fr,en", LabelingRuleType.Locale));
 
 		checkILL(finishedProductNodeRef3, labelingRuleList, "ing4 french 71,4%, epices french, legal Raw material 1 10,7%", Locale.FRENCH);
-		checkILL(finishedProductNodeRef3, labelingRuleList, "ing4 english 71,4%, epices english, legal Raw material 1 (<b>allergen1</b>) 10,7%",
+		checkILL(finishedProductNodeRef3, labelingRuleList, "ing4 english 71.4%, epices english, legal Raw material 1 (<b>allergen1</b>) 10.7%",
 				Locale.ENGLISH);
 
 		labelingRuleList.add(new LabelingRuleListDataItem("PrefAllergen", "disableAllergensForLocales = \"*\"", LabelingRuleType.Prefs));
 
-		checkILL(finishedProductNodeRef3, labelingRuleList, "ing4 english 71,4%, epices english, legal Raw material 1 10,7%", Locale.ENGLISH);
+		checkILL(finishedProductNodeRef3, labelingRuleList, "ing4 english 71.4%, epices english, legal Raw material 1 10.7%", Locale.ENGLISH);
 	}
 
 	@Test
@@ -1668,8 +1667,8 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 						"Pâte french 50% (Legal Raw material 12 33,3% (ing2 french 25%, ing1 french), ing2 french 11,1%, ing1 french)",
 						illDataItem.getValue().getValue(Locale.FRENCH));
 
-				checkILL("Garniture english 50% (ing3 english 41,7%, ing4 english 8,3%)",
-						"Pâte english 50% (Legal Raw material 12 33,3% (ing2 english 25%, ing1 english), ing2 english 11,1%, ing1 english)",
+				checkILL("Garniture english 50% (ing3 english 41.7%, ing4 english 8.3%)",
+						"Pâte english 50% (Legal Raw material 12 33.3% (ing2 english 25%, ing1 english), ing2 english 11.1%, ing1 english)",
 						illDataItem.getValue().getValue(Locale.ENGLISH));
 
 			}
