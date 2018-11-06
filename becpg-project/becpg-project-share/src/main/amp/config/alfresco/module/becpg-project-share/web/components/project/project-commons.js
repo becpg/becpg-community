@@ -50,6 +50,7 @@
             templateUrl : templateUrl,
             actionUrl : null,
             destroyOnHide : true,
+            zIndex: 10,
             doBeforeDialogShow : {
                fn : doBeforeDialogShow,
                scope : this
@@ -287,7 +288,7 @@
 	          ret += '<span class="node-' + (subProject!=null ? subProject.value : task.nodeRef) + '|' + entityNodeRef + '"><a href="" class="theme-color-1 ' + TASK_EVENTCLASS + '" title="' + this
 	          .msg("link.title.task-edit") + '" >' + task["itemData"]["prop_pjt_tlTaskName"].displayValue+"</span>";
           } else {
-        	  ret += '<span class="node-' + (subProject!=null ? subProject.value : task.nodeRef) + '|' + entityNodeRef + '">' + task["itemData"]["prop_pjt_tlTaskName"].displayValue+"</span>";
+        	  ret += '<span data-tooltip="'+ beCPG.util.encodeAttr(task["itemData"]["prop_pjt_tlTaskName"].displayValue)+'"   class="node-' + (subProject!=null ? subProject.value : task.nodeRef) + '|' + entityNodeRef + '">' + task["itemData"]["prop_pjt_tlTaskName"].displayValue+"</span>";
           }
           
           if( task["itemData"]["prop_pjt_tlState"].value == "InProgress"){
@@ -439,12 +440,16 @@
           overdue = '', ret = "", state = record.itemData["prop_pjt_projectState"].value;
 
           folderUrl = beCPG.util.entityDocumentsURL(record.siteId, record.path, title);
+          
+          var light = "light";
+          if(full){
+        	 light=""; 
+          }
 
-          ret += '<span class="project-title project-status-'+state+'">';
+          ret += '<span class="project-title tooltip '+light+' project-status-'+state+'" data-tooltip="'+ beCPG.util.encodeAttr(title)+'" >';
   
           
-          ret += '<a class="theme-color-1" href="' + beCPG.util.entityURL(record.siteId, record.nodeRef,"pjt:project") + '" title="' 
-            +this.msg("actions.entity.view-tasks") + '">' + code + "&nbsp;-&nbsp;" + $html(title) + 
+          ret += '<a class="theme-color-1" href="' + beCPG.util.entityURL(record.siteId, record.nodeRef,"pjt:project") + '" >' + code + "&nbsp;-&nbsp;" + $html(title) + 
             '</a>&nbsp;<a class="folder-link" href="' + folderUrl + '" title="' + this
             .msg("link.title.open-folder") + '">&nbsp;</a>' ;
           
