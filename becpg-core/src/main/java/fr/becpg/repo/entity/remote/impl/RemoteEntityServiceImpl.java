@@ -170,7 +170,6 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	}
 
 	@Override
-	@Deprecated
 	public NodeRef createOrUpdateEntity(NodeRef entityNodeRef, NodeRef destNodeRef, Map<QName, Serializable> properties, InputStream in,
 			RemoteEntityFormat format, EntityProviderCallBack entityProviderCallBack, Map<NodeRef, NodeRef> cache) {
 

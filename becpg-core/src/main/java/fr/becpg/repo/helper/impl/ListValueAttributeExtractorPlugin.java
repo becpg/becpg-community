@@ -49,19 +49,19 @@ public class ListValueAttributeExtractorPlugin implements AttributeExtractorPlug
 	
 	@Override
 	public Collection<QName> getMatchingTypes() {
-		return Collections.singletonList(BeCPGModel.TYPE_LINKED_VALUE);
+		return Collections.singletonList(BeCPGModel.TYPE_LIST_VALUE);
 	}
 	
 
 	@Override
 	public String extractPropName(QName type, NodeRef nodeRef) {
-		return (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_LKV_VALUE);
+		return (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_LV_VALUE);
 	}
 
 	
 	@Override
 	public String extractMetadata(QName type, NodeRef nodeRef) {
-		return BeCPGModel.PROP_LKV_VALUE.toPrefixString(namespaceService).split(":")[1];
+		return BeCPGModel.PROP_LV_VALUE.toPrefixString(namespaceService).split(":")[1];
 	}
 
 
