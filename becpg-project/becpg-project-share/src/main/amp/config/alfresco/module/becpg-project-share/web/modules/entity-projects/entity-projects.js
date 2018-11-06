@@ -392,7 +392,7 @@
                      for (j in tasks) {
                         var task = tasks[j];
                            idx++;
-                           ret += "<li>" + this.getTaskTitle(task, oRecord.getData().nodeRef, true) + "</li>";
+                           ret += "<li>" + this.getTaskTitle(task, oRecord.getData().nodeRef) + "</li>";
                      }
                      ret += "</ul>";
 

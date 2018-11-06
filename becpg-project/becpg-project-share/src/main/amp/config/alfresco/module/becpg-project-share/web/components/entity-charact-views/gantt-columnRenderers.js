@@ -126,7 +126,7 @@
                                                         }
 
                                                         g.AddTaskItem(new JSGantt.TaskItem(taskId, this.getTaskTitle(task,
-                                                                this.options.entityNodeRef, tdates.start), tdates.start,
+                                                                this.options.entityNodeRef), tdates.start,
                                                                 tdates.end, this.getTaskColor(task), null, tlIsMilestone ? 1 : 0,
                                                                 taskOwner, tlPercent, pGroup, pParent, pSubProject!=null ? 0 : 1, precTaskIds,null,task.color, pSubProject));
                                                     }
