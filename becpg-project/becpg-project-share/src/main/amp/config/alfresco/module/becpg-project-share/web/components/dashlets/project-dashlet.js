@@ -513,7 +513,7 @@
                               desc += '</h3>';
                            } else {
                               desc += '<h3 class="filename simple-view">' + this.getTaskTitle(record,
-                                    record.itemData["dt_pjt_project"].nodeRef, null, false) + '</h3>';
+                                    record.itemData["dt_pjt_project"].nodeRef) + '</h3>';
                            }
 
 

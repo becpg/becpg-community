@@ -260,20 +260,41 @@
 	padding-top: 5px;
 }
 
-.datagrid span.task-group {
+.project-list .grid span.task-group {
 	 font-weight: bold;
 }
 
- .datagrid span.task-status {
+.project-list .grid span.task-status {
 	background: none;
 	padding-left: 0px;	
+    display: inline;
 }
 
-.datagrid span.sub-project {
+.project-list .grid span.task-legend {
+	width: 10px;
+    height: 10px;
+	display:inline-block;
+	margin-top: -3px;
+}
+
+.project-list .grid span.sub-project {
 	 padding-left: 20px;	
 	 background:
 		url("../../components/images/filetypes/generic-project-16.png")	no-repeat;
 }
+
+.project-list .grid .more-task div.more-actions {
+	border-color: #7f7f7f;
+	margin-left: 0px;
+}
+
+.project-list .grid .more-task .more-actions a:active,.project-list .projects .more-task  .more-actions a:hover {
+	background-color: transparent;
+	border: none;
+	color: inherit;
+}
+
+
 
 /** Tasks 
 

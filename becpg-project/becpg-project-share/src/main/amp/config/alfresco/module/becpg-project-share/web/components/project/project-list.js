@@ -376,7 +376,7 @@ var g; // gantt var
                                             }
 
                                             g.AddTaskItem(new JSGantt.TaskItem(taskId, this.getTaskTitle(task,
-                                                    oData.nodeRef, tdates.start), tdates.start, tdates.end, this
+                                                    oData.nodeRef), tdates.start, tdates.end, this
                                                     .getTaskColor(task), null, tlIsMilestone ? 1 : 0, taskOwner,
                                                     tlPercent, pGroup, pParent, 1, precTaskIds));
 
@@ -451,7 +451,7 @@ var g; // gantt var
 
                                         task["itemData"]["prop_pjt_tlTaskName"].displayValue = task["itemData"]["dt_pjt_project"]["itemData"]["prop_bcpg_code"].displayValue + " - " + task["itemData"]["prop_pjt_tlTaskName"].displayValue;
 
-                                        var taskTitle = this.getTaskTitle(task, null, tdates.start);
+                                        var taskTitle = this.getTaskTitle(task, null);
 
                                         g.AddTaskItem(new JSGantt.TaskItem(taskId, taskTitle, tdates.start, tdates.end,
                                                 this.getTaskColor(task), null, tlIsMilestone ? 1 : 0, title , tlPercent,

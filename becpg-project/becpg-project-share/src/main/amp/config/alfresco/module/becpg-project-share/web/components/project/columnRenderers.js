@@ -68,7 +68,44 @@
 		   renderer : function(oRecord, data, label, scope, idx, length) {
 			   var oData = oRecord.getData();
 			   if(data["itemData"]){
-			       return scope.getTaskTitle(data, oData.nodeRef);
+				  
+				   if (idx == 0) {
+					   var tasks = oRecord.getData("itemData")["dt_pjt_taskList"];
+
+					   var moreTasksHtlm = "";
+					   var taskHtlm = "<ul>";
+					   var count =0;
+					   for (j in tasks) {
+						   var task = tasks[j];
+						   count++;
+						   
+						    var padding ="";
+						    if(task["itemData"]["prop_bcpg_parentLevel"].value!=null){
+						    	padding='style="padding-left:10px;"'
+						    }
+						   
+						 	if(count>4){
+						   		moreTasksHtlm += "<li "+padding+">" + scope.getTaskTitle(task, oData.nodeRef,true) + "</li>";
+						   	} else {
+						   		taskHtlm += "<li "+padding+">" + scope.getTaskTitle(task, oData.nodeRef,true) + "</li>";
+						   	}
+					   }
+					   taskHtlm += "</ul>";
+
+					   if (moreTasksHtlm.length > 0) {
+						   taskHtlm += '<div class="more-task"><div class="onActionShowMore">' + '<a href="#" class="' + scope.id
+						         + '-show-more show-more" title="' + scope.msg("tasks.more") + '">' + '<span>'
+						         + scope.msg("tasks.more") + '</span></a></div>' + ' <div class="more-actions hidden"><ul>'
+						         + moreTasksHtlm + '</ul></div></div>';
+					   }
+
+					   return taskHtlm;
+
+				   }
+
+				   return null;
+			       
+			       
 			   }
 		   }
 		});
