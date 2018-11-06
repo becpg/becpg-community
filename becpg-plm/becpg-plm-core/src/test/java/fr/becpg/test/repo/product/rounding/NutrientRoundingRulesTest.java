@@ -67,7 +67,7 @@ public class NutrientRoundingRulesTest {
 		assertEquals(0d, NutrientFormulationHelper.round(0.18d, NutrientCode.Sugar, Locale.US, "g/100g"), 0);
 		
 		// less than
-		assertEquals("< 5", NutrientFormulationHelper.displayValue(1d, 
+		assertEquals("<5", NutrientFormulationHelper.displayValue(1d, 
 				NutrientFormulationHelper.round(1d, NutrientCode.Cholesterol, Locale.US, "mg/100g"), 
 				NutrientCode.Cholesterol, Locale.US));
 		
@@ -75,7 +75,7 @@ public class NutrientRoundingRulesTest {
 			NutrientCode.FiberDietary, NutrientCode.FiberInsoluble, NutrientCode.FiberSoluble, NutrientCode.Protein, NutrientCode.Polyols};
 		
 		for(String code : codes){
-			assertEquals("< 1", NutrientFormulationHelper.displayValue(0.9d, 
+			assertEquals("<1", NutrientFormulationHelper.displayValue(0.9d, 
 					NutrientFormulationHelper.round(0.9d, code, Locale.US, "g/100g"), 
 					code, Locale.US));
 			

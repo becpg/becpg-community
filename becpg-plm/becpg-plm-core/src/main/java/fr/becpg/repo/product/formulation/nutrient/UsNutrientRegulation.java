@@ -82,7 +82,7 @@ public class UsNutrientRegulation extends AbstractNutrientRegulation {
 	protected String displayValueByCode(Double value, Double roundedValue, String nutrientTypeCode, Locale locale) {
 		if(value != null){
 			if (nutrientTypeCode.equals(NutrientCode.Cholesterol) && value<=5) {
-				return "< 5";
+				return "<5";
 			} else if ((nutrientTypeCode.equals(NutrientCode.CarbohydrateWithFiber) 
 						|| nutrientTypeCode.equals(NutrientCode.Sugar)
 						|| nutrientTypeCode.equals(NutrientCode.SugarAdded)
@@ -92,7 +92,7 @@ public class UsNutrientRegulation extends AbstractNutrientRegulation {
 						|| nutrientTypeCode.equals(NutrientCode.Protein)
 						|| nutrientTypeCode.equals(NutrientCode.Polyols)
 						) && value<1) {
-				return "< 1";
+				return "<1";
 			}
 		}
 		return formatDouble(roundedValue, locale);
