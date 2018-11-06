@@ -13,8 +13,8 @@
 
 .datalist-toolbar .sub-project span.first-child
 {
-   background: url(../images/filetypes/generic-project-16.png) no-repeat 12px 4px;
-   padding-left: 24px;
+   background: url(../project/images/sub-project-16.png) no-repeat 8px 4px !important;
+   padding-left: 0px !important;
 }
 
 
