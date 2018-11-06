@@ -365,7 +365,12 @@
                             /**
                              * Floating header
                              */
-                            floatingHeader : !(YAHOO.env.ua.ie > 0)
+                            floatingHeader : !(YAHOO.env.ua.ie > 0),
+                            
+                            /**
+                             * Allow to customize column
+                             */
+                            configurableColumns : true
                         },
 
                         /**
@@ -597,17 +602,19 @@
                         
                         fnRenderCellActionsHeader : function EntityDataGrid_fnRenderCellActionsHeader()
                         {
-
                             var ret = "";
-                            ret+="<div id=\""+this.id+"-"+this.timeStampId+"columns-confContainerDiv\" class=\"columns-conf\">";
-                            ret+="<span class=\"yui-button yui-push-button\" id=\""+this.id+"-"+this.timeStampId+"columns-confButton\">";
-                            ret+="   <span class=\"first-child\">";
-                            ret+="         <button type=\"button\"  id=\""+this.id+"-"+this.timeStampId+"columns-confButton-button\" title=\""+this.msg("button.columns-conf.description")+"\">&nbsp;</button>";
-                            ret+="   </span>";
-                            ret+="</span>";
-                            ret+="</div>";
-                            
-                            return ret;
+                        	if(this.options.configurableColumns){
+                           
+	                            ret+="<div id=\""+this.id+"-"+this.timeStampId+"columns-confContainerDiv\" class=\"columns-conf\">";
+	                            ret+="<span class=\"yui-button yui-push-button\" id=\""+this.id+"-"+this.timeStampId+"columns-confButton\">";
+	                            ret+="   <span class=\"first-child\">";
+	                            ret+="         <button type=\"button\"  id=\""+this.id+"-"+this.timeStampId+"columns-confButton-button\" title=\""+this.msg("button.columns-conf.description")+"\">&nbsp;</button>";
+	                            ret+="   </span>";
+	                            ret+="</span>";
+	                            ret+="</div>";
+                           
+                        	}
+                        	 return ret;
                         },
                         
 
