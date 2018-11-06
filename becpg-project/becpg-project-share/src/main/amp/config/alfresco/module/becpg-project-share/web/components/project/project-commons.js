@@ -261,7 +261,7 @@
          return date;
       },
 
-      getTaskTitle : function PL_getTaskTitle(task, entityNodeRef, start, large) {
+      getTaskTitle : function PL_getTaskTitle(task, entityNodeRef, showLegend) {
     	  var subProject = null, subProjectClass = "";
     	  
     	  if (task["itemData"]["assoc_pjt_subProjectRef"] != null
@@ -273,8 +273,15 @@
     	  
     	  var classGroup = (subProject==null && task["itemData"]["prop_pjt_tlIsGroup"]!=null && task["itemData"]["prop_pjt_tlIsGroup"].value ) ? " task-group" : "";
 
+    	  var legend = "";
     	  
-          var ret = '<span class="task-status task-status-' + task["itemData"]["prop_pjt_tlState"].value +classGroup+subProjectClass+ '">', duration ='';
+    	  if(showLegend){
+    		 var color =   this.getTaskColor(task);
+    		 legend = '<span class="task-legend" style="background-color:#'+color+'"></span>';
+    	  }
+    	  
+    	  
+          var ret = legend + '<span class="task-status task-status-' + task["itemData"]["prop_pjt_tlState"].value +classGroup+subProjectClass+ '">', duration ='';
           
           if(task.permissions.userAccess.edit && classGroup == "" ){
 	          ret += '<span class="node-' + (subProject!=null ? subProject.value : task.nodeRef) + '|' + entityNodeRef + '"><a href="" class="theme-color-1 ' + TASK_EVENTCLASS + '" title="' + this

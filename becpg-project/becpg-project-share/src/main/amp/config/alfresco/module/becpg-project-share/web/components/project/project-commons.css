@@ -167,7 +167,8 @@
 	display: inline-table;
 }
 
-.project-list .more-deliverable a.show-more {
+.project-list .more-deliverable a.show-more,
+ .project-list .more-task a.show-more  {
 	background-repeat: no-repeat;
 	border: 1px solid transparent;
 	display: block;
