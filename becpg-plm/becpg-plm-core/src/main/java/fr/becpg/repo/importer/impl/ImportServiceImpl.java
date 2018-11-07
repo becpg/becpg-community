@@ -137,12 +137,6 @@ public class ImportServiceImpl implements ImportService {
 	private BehaviourFilter policyBehaviourFilter;
 
 	@Autowired
-	private RuleService ruleService;
-
-	@Autowired
-	private TransactionService transactionService;
-
-	@Autowired
 	private MimetypeService mimetypeService;
 
 	@Autowired
