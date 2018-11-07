@@ -54,6 +54,7 @@ import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
 import fr.becpg.repo.product.data.AbstractProductDataView;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.CompositionDataItem;
+import fr.becpg.repo.product.data.productList.ResourceParamListItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.variant.filters.VariantFilters;
 import fr.becpg.repo.variant.model.VariantDataItem;
@@ -135,17 +136,26 @@ public class DuplicateVariantWebScript extends AbstractWebScript {
 				NodeRef newVariantNodeRef = nodeService
 						.createNode(entityNodeRef, PLMModel.ASSOC_VARIANTS, PLMModel.ASSOC_VARIANTS, PLMModel.TYPE_VARIANT, props).getChildRef();
 
-				VariantFilters<? extends CompositionDataItem> variantFilters = new VariantFilters<>(variantNodeRef);
+				VariantFilters<? extends VariantDataItem> variantFilters = new VariantFilters<>(variantNodeRef);
 
 				for (AbstractProductDataView view : productData.getViews()) {
 					if ((view.getMainDataList() != null) && !view.getMainDataList().isEmpty()) {
 
 						@SuppressWarnings("unchecked")
 						Predicate<CompositionDataItem> predicate = (Predicate<CompositionDataItem>) variantFilters.createPredicate(productData);
-
 						duplicate(newVariantNodeRef, view.getMainDataList(),
 								view.getMainDataList().stream().filter(predicate).collect(Collectors.toList()));
 					}
+				}
+
+				if ((productData.getResourceParamList() != null) && !productData.getResourceParamList().isEmpty()) {
+
+					@SuppressWarnings("unchecked")
+					Predicate<ResourceParamListItem> predicate = (Predicate<ResourceParamListItem>) variantFilters.createPredicate(productData);
+
+					duplicate(newVariantNodeRef, productData.getResourceParamList(),
+							productData.getResourceParamList().stream().filter(predicate).collect(Collectors.toList()));
+
 				}
 
 				JSONObject ret = new JSONObject();
@@ -166,7 +176,7 @@ public class DuplicateVariantWebScript extends AbstractWebScript {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void duplicate(NodeRef newVariantNodeRef, List<? extends CompositionDataItem> origList, List<? extends CompositionDataItem> listToCopy) {
+	private void duplicate(NodeRef newVariantNodeRef, List<? extends VariantDataItem> origList, List<? extends VariantDataItem> listToCopy) {
 
 		if (!origList.isEmpty() && !listToCopy.isEmpty()) {
 
@@ -176,39 +186,38 @@ public class DuplicateVariantWebScript extends AbstractWebScript {
 			}
 
 			Map<NodeRef, NodeRef> replacements = new HashMap<>();
-			Map<NodeRef, NodeRef>  parents = new HashMap<>();
-			
-			int i = 0;
-			for (CompositionDataItem dataListToCopy : listToCopy) {
+			Map<NodeRef, NodeRef> parents = new HashMap<>();
 
-				if(dataListToCopy instanceof VariantDataItem && ((VariantDataItem)dataListToCopy).getVariants()!=null) {
+			int i = 0;
+			for (VariantDataItem dataListToCopy : listToCopy) {
+
+				if (dataListToCopy.getVariants() != null) {
 					Integer sort = (Integer) nodeService.getProperty(dataListToCopy.getNodeRef(), BeCPGModel.PROP_SORT);
-					NodeRef newDLNodeRef = copyService.copy(dataListToCopy.getNodeRef(), dataListToCopy.getParentNodeRef(), ContentModel.ASSOC_CONTAINS,
-							ContentModel.ASSOC_CONTAINS);
-					
+					NodeRef newDLNodeRef = copyService.copy(dataListToCopy.getNodeRef(), dataListToCopy.getParentNodeRef(),
+							ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
+
 					replacements.put(dataListToCopy.getNodeRef(), newDLNodeRef);
-					
-					if(dataListToCopy instanceof CompositeDataItem && ((CompositeDataItem<CompositionDataItem>)dataListToCopy).getParent()!=null) {
-						parents.put(newDLNodeRef, ((CompositeDataItem<CompositionDataItem>)dataListToCopy).getParent().getNodeRef());
+
+					if ((dataListToCopy instanceof CompositeDataItem)
+							&& (((CompositeDataItem<CompositionDataItem>) dataListToCopy).getParent() != null)) {
+						parents.put(newDLNodeRef, ((CompositeDataItem<CompositionDataItem>) dataListToCopy).getParent().getNodeRef());
 					}
-	
+
 					if (sort == null) {
 						sort = i;
 					}
 					sort = sort + lastSort;
 					nodeService.setProperty(newDLNodeRef, BeCPGModel.PROP_SORT, sort);
 					nodeService.setProperty(newDLNodeRef, PLMModel.PROP_VARIANTIDS, new ArrayList<>(Arrays.asList(newVariantNodeRef)));
-	
+
 					i++;
-					
+
 				}
 			}
-			
-			
-			for(NodeRef parentToUpdate : parents.keySet()) {
+
+			for (NodeRef parentToUpdate : parents.keySet()) {
 				nodeService.setProperty(parentToUpdate, BeCPGModel.PROP_PARENT_LEVEL, replacements.get(parents.get(parentToUpdate)));
 			}
-
 
 		}
 
