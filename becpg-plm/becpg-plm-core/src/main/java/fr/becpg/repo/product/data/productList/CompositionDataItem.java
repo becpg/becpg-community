@@ -22,8 +22,9 @@ import org.alfresco.service.namespace.QName;
 
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.model.EffectiveDataItem;
+import fr.becpg.repo.variant.model.VariantDataItem;
 
-public interface CompositionDataItem extends RepositoryEntity, Cloneable, EffectiveDataItem {
+public interface CompositionDataItem extends RepositoryEntity, Cloneable, EffectiveDataItem, VariantDataItem {
 
 	NodeRef getComponent();
 	

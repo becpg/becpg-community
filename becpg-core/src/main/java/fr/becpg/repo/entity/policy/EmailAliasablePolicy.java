@@ -46,12 +46,13 @@ public class EmailAliasablePolicy extends AbstractBeCPGPolicy implements
 	}
 
 	@Override
-	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {		
+	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {		
 		for (NodeRef nodeRef : pendingNodes) {
 			if (nodeService.exists(nodeRef)) {
 				setAliasOnNode(nodeRef);
 			}
-		}		
+		}	
+		return true;
 	}
 
 	@Override

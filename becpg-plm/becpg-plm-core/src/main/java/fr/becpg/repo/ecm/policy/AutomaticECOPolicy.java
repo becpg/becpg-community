@@ -97,7 +97,7 @@ public class AutomaticECOPolicy extends AbstractBeCPGPolicy implements NodeServi
 
 
 	@Override
-	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
+	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 
 		for (NodeRef nodeRef : pendingNodes) {
 			if (isNotLocked(nodeRef) && !isWorkingCopyOrVersion(nodeRef) && !isBeCPGVersion(nodeRef)) {
@@ -114,6 +114,7 @@ public class AutomaticECOPolicy extends AbstractBeCPGPolicy implements NodeServi
 				}
 			}
 		}
+		return true;
 	}
 
 }

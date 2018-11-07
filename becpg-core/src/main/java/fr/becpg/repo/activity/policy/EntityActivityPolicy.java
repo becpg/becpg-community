@@ -222,7 +222,7 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 	}
 
 	@Override
-	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
+	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 
 		Set<QName> types = new HashSet<>();
 
@@ -253,7 +253,7 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 
 			}
 		}
-
+		return false;
 	}
 
 	private boolean accept(QName type) {
