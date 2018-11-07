@@ -52,7 +52,7 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase {
 
 	private ImportService importService;
 	private final TransactionListenerAdapter transactionListener;
-	private ThreadPoolExecutor threadExecuter;
+	private ThreadPoolExecutor importThreadExecuter;
 
 	public void setImportService(ImportService importService) {
 		this.importService = importService;
@@ -62,8 +62,9 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase {
 		this.transactionListener = new ImportServiceTransactionListener();
 	}
 
-	public void setThreadExecuter(ThreadPoolExecutor threadExecuter) {
-		this.threadExecuter = threadExecuter;
+	
+	public void setImportThreadExecuter(ThreadPoolExecutor importThreadExecuter) {
+		this.importThreadExecuter = importThreadExecuter;
 	}
 
 	/**
@@ -108,8 +109,8 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase {
 				for (NodeRef nodeRef : nodeRefs) {
 
 					Runnable command = new FileImporter(nodeRef, AuthenticationUtil.getFullyAuthenticatedUser(), doNotMoveNode);
-					if (!threadExecuter.getQueue().contains(command)) {
-						threadExecuter.execute(command);
+					if (!importThreadExecuter.getQueue().contains(command)) {
+						importThreadExecuter.execute(command);
 					} else {
 						logger.warn("Import job already in queue for " + nodeRef);
 					}
