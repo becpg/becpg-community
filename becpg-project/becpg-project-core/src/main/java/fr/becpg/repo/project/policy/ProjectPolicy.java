@@ -1,5 +1,5 @@
 /*
- * 
+ *
  */
 package fr.becpg.repo.project.policy;
 
@@ -11,9 +11,6 @@ import java.util.Set;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
-import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
-import org.alfresco.repo.transaction.TransactionListener;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -35,7 +32,7 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 
 /**
  * The Class ProjectPolicy.
- * 
+ *
  * @author querephi
  */
 public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy, EntityVersionPlugin {
@@ -75,11 +72,12 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 	/**
 	 * Inits the.
 	 */
+	@Override
 	public void doInit() {
 		logger.debug("Init ProjectPolicy...");
 
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, ProjectModel.TYPE_PROJECT, new JavaBehaviour(this,
-				"onUpdateProperties"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, ProjectModel.TYPE_PROJECT,
+				new JavaBehaviour(this, "onUpdateProperties"));
 
 		// disable otherwise, impossible to copy project that has a template
 		super.disableOnCopyBehaviour(ProjectModel.TYPE_PROJECT);
@@ -93,7 +91,7 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 		String afterState = (String) after.get(ProjectModel.PROP_PROJECT_STATE);
 
 		// change state
-		if (afterState != null && !afterState.equals(beforeState)) {
+		if ((afterState != null) && !afterState.equals(beforeState)) {
 
 			projectActivityService.postProjectStateChangeActivity(nodeRef, beforeState, afterState);
 
@@ -134,7 +132,7 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 	}
 
 	@Override
-	protected void doBeforeCommit(String key, final Set<NodeRef> pendingNodes) {
+	protected boolean doBeforeCommit(String key, final Set<NodeRef> pendingNodes) {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("doBeforeCommit key: " + key + " size: " + pendingNodes.size());
@@ -144,78 +142,46 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 				projectWorkflowService.deleteWorkflowById(wfIds.getId());
 			}
 		} else {
-			// TODO Move that to afterCommit ?
-			// Unsure is the last one
-			// Case a rule is execute after #1446
-			AlfrescoTransactionSupport.bindListener(new TransactionListener() {
 
-				@Override
-				public void beforeCommit(boolean readOnly) {
-					for (final NodeRef projectNodeRef : pendingNodes) {
-						if (logger.isDebugEnabled()) {
-							logger.debug("doBeforeCommit last - formulate project");
-						}
-						if (nodeService.exists(projectNodeRef)) {
+			for (final NodeRef projectNodeRef : pendingNodes) {
+				if (nodeService.exists(projectNodeRef)) {
 
-							AuthenticationUtil.runAs(new RunAsWork<NodeRef>() {
+					AuthenticationUtil.runAs(() -> {
 
-								@Override
-								public NodeRef doWork() throws Exception {
-
-									try {
-										policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_LOG_TIME_LIST);
-										policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
-										policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
-										policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_PROJECT);
-										policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_SCORE_LIST);
-										policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_BUDGET_LIST);
-										policyBehaviourFilter.disableBehaviour(ProjectModel.ASPECT_BUDGET);
-										projectService.formulate(projectNodeRef);
-									} catch (FormulateException e) {
-										logger.error(e, e);
-									} finally {
-										policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_LOG_TIME_LIST);
-										policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
-										policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
-										policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_PROJECT);
-										policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_SCORE_LIST);
-										policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_BUDGET_LIST);
-										policyBehaviourFilter.enableBehaviour(ProjectModel.ASPECT_BUDGET);
-									}
-
-									return null;
-								}
-							}, AuthenticationUtil.SYSTEM_USER_NAME);
+						try {
+							policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_LOG_TIME_LIST);
+							policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
+							policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
+							policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_PROJECT);
+							policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_SCORE_LIST);
+							policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_BUDGET_LIST);
+							policyBehaviourFilter.disableBehaviour(ProjectModel.ASPECT_BUDGET);
+							projectService.formulate(projectNodeRef);
+						} catch (FormulateException e) {
+							logger.error(e, e);
+						} finally {
+							policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_LOG_TIME_LIST);
+							policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
+							policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
+							policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_PROJECT);
+							policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_SCORE_LIST);
+							policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_BUDGET_LIST);
+							policyBehaviourFilter.enableBehaviour(ProjectModel.ASPECT_BUDGET);
 						}
 
-					}
-
+						return null;
+					}, AuthenticationUtil.SYSTEM_USER_NAME);
 				}
+			}
 
-				@Override
-				public void flush() {
-				}
-
-				@Override
-				public void beforeCompletion() {
-				}
-
-				@Override
-				public void afterRollback() {
-				}
-
-				@Override
-				public void afterCommit() {
-				}
-			});
 		}
-
+		return true;
 	}
 
 	@Override
 	public void doAfterCheckout(NodeRef origNodeRef, NodeRef workingCopyNodeRef) {
 		queueNode(origNodeRef);
-		queueNode(workingCopyNodeRef);		
+		queueNode(workingCopyNodeRef);
 	}
 
 	@Override
@@ -225,7 +191,7 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 
 	@Override
 	public void cancelCheckout(NodeRef origNodeRef, NodeRef workingCopyNodeRef) {
-		queueNode(origNodeRef);		
+		queueNode(origNodeRef);
 	}
 
 }

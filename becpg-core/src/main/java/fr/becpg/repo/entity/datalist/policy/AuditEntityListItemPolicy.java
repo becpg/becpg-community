@@ -93,7 +93,7 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy implements No
 	 * 
 	 */
 	@Override
-	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
+	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 
 		Set<NodeRef> listNodeRefs = new HashSet<>();
 		Set<NodeRef> listContainerNodeRefs = new HashSet<>();
@@ -136,7 +136,7 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy implements No
 				}
 			}
 		}
-
+		return true;
 	}
 
 }

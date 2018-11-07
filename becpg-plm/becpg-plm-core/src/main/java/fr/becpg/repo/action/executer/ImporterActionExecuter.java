@@ -24,6 +24,7 @@ import org.alfresco.util.transaction.TransactionListenerAdapter;
 import org.alfresco.util.transaction.TransactionSupportUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.dao.ConcurrencyFailureException;
 
 import fr.becpg.repo.importer.ImportService;
 
@@ -49,10 +50,9 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase {
 
 	private static final Log logger = LogFactory.getLog(ImporterActionExecuter.class);
 
-
 	private ImportService importService;
 	private final TransactionListenerAdapter transactionListener;
-	private ThreadPoolExecutor threadExecuter;
+	private ThreadPoolExecutor importThreadExecuter;
 
 	public void setImportService(ImportService importService) {
 		this.importService = importService;
@@ -62,8 +62,9 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase {
 		this.transactionListener = new ImportServiceTransactionListener();
 	}
 
-	public void setThreadExecuter(ThreadPoolExecutor threadExecuter) {
-		this.threadExecuter = threadExecuter;
+	
+	public void setImportThreadExecuter(ThreadPoolExecutor importThreadExecuter) {
+		this.importThreadExecuter = importThreadExecuter;
 	}
 
 	/**
@@ -95,26 +96,8 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase {
 
 	}
 
-	/**
-	 * The listener interface for receiving productReportServiceTransaction
-	 * events. The class that is interested in processing a
-	 * productReportServiceTransaction event implements this interface, and the
-	 * object created with that class is registered with a component using the
-	 * component's <code>addProductReportServiceTransactionListener
-	 * <code> method. When the productReportServiceTransaction event occurs,
-	 * that object's appropriate method is invoked.
-	 *
-	 * @see ProductReportServiceTransactionEvent
-	 */
 	private class ImportServiceTransactionListener extends TransactionListenerAdapter {
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see
-		 * org.alfresco.repo.transaction.TransactionListenerAdapter#afterCommit
-		 * ()
-		 */
 		@Override
 		public void afterCommit() {
 
@@ -124,8 +107,14 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase {
 
 			if (nodeRefs != null) {
 				for (NodeRef nodeRef : nodeRefs) {
-					Runnable runnable = new FileImporter(nodeRef, AuthenticationUtil.getFullyAuthenticatedUser(), doNotMoveNode);
-					threadExecuter.execute(runnable);
+
+					Runnable command = new FileImporter(nodeRef, AuthenticationUtil.getFullyAuthenticatedUser(), doNotMoveNode);
+					if (!importThreadExecuter.getQueue().contains(command)) {
+						importThreadExecuter.execute(command);
+					} else {
+						logger.warn("Import job already in queue for " + nodeRef);
+					}
+
 				}
 			}
 		}
@@ -186,6 +175,11 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase {
 					}
 
 				} catch (Exception e) {
+					
+					if (e instanceof ConcurrencyFailureException) {
+						throw (ConcurrencyFailureException) e;
+					} 
+					
 					hasFailed = true;
 					logger.error("Failed to import file text", e);
 
@@ -199,11 +193,15 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase {
 					endlog = LOG_ENDING_DATE + Calendar.getInstance().getTime().toString();
 				}
 
-				String log = startlog + LOG_SEPARATOR + (unhandledLog != null ? unhandledLog + LOG_SEPARATOR : "") + first50ErrorsLog + LOG_SEPARATOR
+				String log = startlog + LOG_SEPARATOR 
+						+ (unhandledLog != null ? unhandledLog + LOG_SEPARATOR : "") 
+						+ (first50ErrorsLog.isEmpty()? "" : first50ErrorsLog + LOG_SEPARATOR)
 						+ (after50ErrorsLog.isEmpty() ? "" : LOG_ERROR_MAX_REACHED + LOG_SEPARATOR) + endlog;
 
-				String allLog = startlog + LOG_SEPARATOR + (unhandledLog != null ? unhandledLog + LOG_SEPARATOR : "") + first50ErrorsLog
-						+ LOG_SEPARATOR + after50ErrorsLog + LOG_SEPARATOR + endlog;
+				String allLog = startlog + LOG_SEPARATOR 
+						+ (unhandledLog != null ? unhandledLog + LOG_SEPARATOR : "") 
+						+ (first50ErrorsLog.isEmpty()? "" : first50ErrorsLog + LOG_SEPARATOR)
+						+ (after50ErrorsLog.isEmpty() ? "" : after50ErrorsLog + LOG_SEPARATOR )  + endlog;
 
 				// set log, stackTrace and move file
 				if ((doNotMoveNode == null) || Boolean.FALSE.equals(doNotMoveNode)) {
@@ -215,6 +213,45 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase {
 			};
 			AuthenticationUtil.runAs(actionRunAs, runAsUser);
 		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = (prime * result) + getOuterType().hashCode();
+			result = (prime * result) + ((nodeRef == null) ? 0 : nodeRef.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
+			FileImporter other = (FileImporter) obj;
+			if (!getOuterType().equals(other.getOuterType())) {
+				return false;
+			}
+			if (nodeRef == null) {
+				if (other.nodeRef != null) {
+					return false;
+				}
+			} else if (!nodeRef.equals(other.nodeRef)) {
+				return false;
+			}
+			return true;
+		}
+
+		private ImporterActionExecuter getOuterType() {
+			return ImporterActionExecuter.this;
+		}
+
 	}
 
 }

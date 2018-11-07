@@ -52,7 +52,7 @@ public class DesignerContentUpdatePolicy extends AbstractBeCPGPolicy implements 
 	}
 
 	@Override
-	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
+	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 
 		try {
 			policyBehaviourFilter.disableBehaviour(DesignerModel.ASPECT_CONFIG);
@@ -69,6 +69,7 @@ public class DesignerContentUpdatePolicy extends AbstractBeCPGPolicy implements 
 			policyBehaviourFilter.enableBehaviour(DesignerModel.ASPECT_CONFIG);
 			policyBehaviourFilter.enableBehaviour(DesignerModel.ASPECT_MODEL);
 		}
+		return true;
 	}
 
 	@Override
