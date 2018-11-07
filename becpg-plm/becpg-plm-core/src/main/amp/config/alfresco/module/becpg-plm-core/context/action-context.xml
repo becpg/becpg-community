@@ -22,9 +22,17 @@
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 
+	<bean id="importThreadPoolExecutor" class="org.alfresco.util.ThreadPoolExecutorFactoryBean">
+      <property name="poolName" value="importThreadPoolExecutor" />
+      <property name="corePoolSize" value="1" />
+      <property name="maximumPoolSize" value="1" />
+      <property name="threadPriority" value="4" />
+    </bean>
+
+
 	<bean id="import-content" class="fr.becpg.repo.action.executer.ImporterActionExecuter" parent="action-executer">
       <property name="importService" ref="importService" />           
-      <property name="threadExecuter" ref="defaultAsyncThreadPool" />
+      <property name="threadExecuter" ref="importThreadPoolExecutor" />
     </bean>  	
     
     <bean id="import-user" class="fr.becpg.repo.action.executer.UserImporterActionExecuter" parent="action-executer">
