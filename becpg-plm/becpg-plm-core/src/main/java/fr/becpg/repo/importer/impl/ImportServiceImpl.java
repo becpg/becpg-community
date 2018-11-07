@@ -22,15 +22,17 @@ import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
+import org.alfresco.service.cmr.repository.ContentIOException;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.rule.RuleService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.apache.commons.io.IOUtils;
+import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
@@ -39,6 +41,7 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
@@ -75,7 +78,7 @@ public class ImportServiceImpl implements ImportService {
 	private static final String PFX_PATH = "PATH";
 
 	private static final String PFX_TYPE = "TYPE";
-	
+
 	private static final String PFX_LIST_TYPE = "LIST_TYPE";
 
 	private static final String PFX_ENTITY_TYPE = "ENTITY_TYPE";
@@ -133,6 +136,13 @@ public class ImportServiceImpl implements ImportService {
 	private DictionaryService dictionaryService;
 	@Autowired
 	private BehaviourFilter policyBehaviourFilter;
+
+	@Autowired
+	private RuleService ruleService;
+
+	@Autowired
+	private TransactionService transactionService;
+
 	@Autowired
 	private MimetypeService mimetypeService;
 
@@ -165,14 +175,12 @@ public class ImportServiceImpl implements ImportService {
 		logger.debug("start import");
 
 		// prepare context
-		ImportContext importContext = serviceRegistry.getTransactionService().getRetryingTransactionHelper().doInTransaction(() -> {
+		ImportContext importContext = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			ImportContext importContext1 = new ImportContext();
-			InputStream is = null;
-			try {
 
-				ContentReader reader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
-				is = reader.getContentInputStream();
+			ContentReader reader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
+			try (InputStream is = reader.getContentInputStream()) {
 
 				if (logger.isDebugEnabled()) {
 					logger.debug("Reading Import File");
@@ -198,11 +206,9 @@ public class ImportServiceImpl implements ImportService {
 
 				importContext1.setImportFileReader(imporFileReader);
 
-			} finally {
-				IOUtils.closeQuietly(is);
 			}
 			return importContext1;
-		} , true, requiresNewTransaction);
+		}, true, requiresNewTransaction);
 
 		importContext.setDoUpdate(doUpdate);
 
@@ -227,8 +233,8 @@ public class ImportServiceImpl implements ImportService {
 			}
 
 			// use transaction
-			importContext = serviceRegistry.getTransactionService().getRetryingTransactionHelper()
-					.doInTransaction(() -> importInBatch(finalImportContext, finalLastIndex), false, requiresNewTransaction);
+			importContext = transactionService.getRetryingTransactionHelper().doInTransaction(() -> importInBatch(finalImportContext, finalLastIndex),
+					false, requiresNewTransaction);
 
 		}
 
@@ -236,16 +242,16 @@ public class ImportServiceImpl implements ImportService {
 
 			final ImportContext finalImportContext = importContext;
 
-			importContext = serviceRegistry.getTransactionService().getRetryingTransactionHelper().doInTransaction(() -> {
-				serviceRegistry.getRuleService().disableRules();
+			importContext = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				ruleService.disableRules();
 				try {
 
 					finalImportContext.getImportFileReader().writeErrorInFile(contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true));
 					return finalImportContext;
 				} finally {
-					serviceRegistry.getRuleService().enableRules();
+					ruleService.enableRules();
 				}
-			} , false, requiresNewTransaction);
+			}, false, requiresNewTransaction);
 		}
 
 		return importContext.getLog();
@@ -304,7 +310,7 @@ public class ImportServiceImpl implements ImportService {
 
 			return null;
 		};
-		serviceRegistry.getTransactionService().getRetryingTransactionHelper().doInTransaction(actionCallback, false, true);
+		transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, false, true);
 	}
 
 	private String cleanPath(String pathValue) {
@@ -395,7 +401,7 @@ public class ImportServiceImpl implements ImportService {
 				QName type = QName.createQName(typeValue, serviceRegistry.getNamespaceService());
 				importContext.setListType(type);
 
-			}  else if (prefix.equals(PFX_TYPE)) {
+			} else if (prefix.equals(PFX_TYPE)) {
 
 				importContext.setType(null);
 
@@ -497,24 +503,32 @@ public class ImportServiceImpl implements ImportService {
 						importNodeVisitor.importNode(importContext, values);
 					}
 					// Do not remove that
-					logger.info(importContext.markCurrLineSuccess());
+					String successMessage = importContext.markCurrLineSuccess();
+					if (logger.isDebugEnabled()) {
+						logger.debug(successMessage);
+					}
+
 				} catch (ImporterException e) {
 
 					if (importContext.isStopOnFirstError()) {
 						throw e;
 					} else {
 						// Do not remove that
-						logger.error(importContext.markCurrLineError(e));
+						String errorMessage = importContext.markCurrLineError(e);
+						logger.error(errorMessage);
 					}
 				} catch (Exception e) {
 
-					if (importContext.isStopOnFirstError()) {
+					if (e instanceof ConcurrencyFailureException) {
+						throw (ConcurrencyFailureException) e;
+					} else if (importContext.isStopOnFirstError()) {
 						throw e;
 					} else {
 						// store the exception and the printStack and continue
 						// import...
 						// Do not remove that
-						logger.error(importContext.markCurrLineError(e), e);
+						String errorMessage = importContext.markCurrLineError(e);
+						logger.error(errorMessage, e);
 					}
 				} finally {
 					// enable policy
@@ -536,9 +550,11 @@ public class ImportServiceImpl implements ImportService {
 	 * @param name
 	 *            the name
 	 * @return the element
+	 * @throws IOException
+	 * @throws ContentIOException
 	 */
 
-	private Element loadMapping(String name) throws ImporterException {
+	private Element loadMapping(String name) throws ImporterException, ContentIOException, IOException {
 
 		Element mappingElt = null;
 
@@ -553,24 +569,20 @@ public class ImportServiceImpl implements ImportService {
 		}
 
 		ContentReader reader = contentService.getReader(mappingNodeRef, ContentModel.PROP_CONTENT);
-		InputStream is = reader.getContentInputStream();
-		SAXReader saxReader = new SAXReader();
-
-		try {
+		try (InputStream is = reader.getContentInputStream()) {
+			SAXReader saxReader = new SAXReader();
 			Document doc = saxReader.read(is);
 			mappingElt = doc.getRootElement();
 		} catch (DocumentException e) {
 			String msg = I18NUtil.getMessage(MSG_ERROR_READING_MAPPING, name, e.getMessage());
 			logger.error(msg, e);
 			throw new ImporterException(msg);
-		} finally {
-			IOUtils.closeQuietly(is);
 		}
 
 		return mappingElt;
 	}
 
-	private void createLogFile(NodeRef parentNodeRef, String fileName, String content) {
+	private void createLogFile(NodeRef parentNodeRef, String fileName, String content) throws IOException {
 
 		Map<QName, Serializable> properties = new HashMap<>();
 		properties.put(ContentModel.PROP_NAME, fileName);
@@ -582,24 +594,20 @@ public class ImportServiceImpl implements ImportService {
 					ContentModel.TYPE_CONTENT, properties).getChildRef();
 		}
 
-		InputStream is = null;
-		try {
-			ContentWriter contentWriter = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
-			contentWriter.setEncoding("UTF-8");
-			contentWriter.setMimetype(MimetypeMap.MIMETYPE_TEXT_PLAIN);
-			is = new ByteArrayInputStream(content.getBytes());
+		ContentWriter contentWriter = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
+		contentWriter.setEncoding("UTF-8");
+		contentWriter.setMimetype(MimetypeMap.MIMETYPE_TEXT_PLAIN);
+		try (InputStream is = new ByteArrayInputStream(content.getBytes())) {
 			contentWriter.putContent(is);
-		} finally {
-			IOUtils.closeQuietly(is);
 		}
 	}
 
 	@Override
 	public void writeLogInFileTitle(final NodeRef nodeRef, final String log, final boolean hasFailed) {
 
-		RetryingTransactionCallback<Object> actionCallback = () -> {
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			if (nodeService.exists(nodeRef)) {
-				serviceRegistry.getRuleService().disableRules();
+				ruleService.disableRules();
 				try {
 					if (hasFailed) {
 						nodeService.setProperty(nodeRef, ContentModel.PROP_TITLE, log);
@@ -607,11 +615,10 @@ public class ImportServiceImpl implements ImportService {
 						nodeService.setProperty(nodeRef, ContentModel.PROP_TITLE, "");
 					}
 				} finally {
-					serviceRegistry.getRuleService().enableRules();
+					ruleService.enableRules();
 				}
 			}
 			return null;
-		};
-		serviceRegistry.getTransactionService().getRetryingTransactionHelper().doInTransaction(actionCallback, false, true);
+		}, false, true);
 	}
 }
