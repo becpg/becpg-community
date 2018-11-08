@@ -1309,7 +1309,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		if (packagingKitData.hasPackagingListEl()) {
 			for (PackagingListDataItem p : packagingKitData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 			   if(dataItem.getVariants() != null && !dataItem.getVariants().isEmpty()){
-	                 p.getVariants().addAll(dataItem.getVariants());
+	                 p.setVariants(dataItem.getVariants());
 	           }
 			   loadPackagingItem(sfQty, parentLossRatio, p, packagingListElt, defaultVariantNodeRef, defaultVariantPackagingData, images, level + 1);
 			}
