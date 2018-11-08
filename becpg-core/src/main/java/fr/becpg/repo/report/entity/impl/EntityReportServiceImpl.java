@@ -225,8 +225,18 @@ public class EntityReportServiceImpl implements EntityReportService {
 								}
 
 								Map<String, String> preferences = getMergedPreferences(tplsNodeRef);
+								
+								Locale defaultLocale = MLTextHelper.getNearestLocale(Locale.getDefault());
 
 								List<Locale> entityReportLocales = getEntityReportLocales(entityNodeRef);
+								
+								final Boolean hideDefaultLocal;
+								if(!entityReportLocales.contains(defaultLocale)) {
+									hideDefaultLocal = true;
+									entityReportLocales.add(defaultLocale);
+								} else {
+									hideDefaultLocal = false;
+								}
 
 								for (Locale locale : entityReportLocales) {
 
@@ -242,7 +252,9 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 										for (EntityReportParameters reportParameters : getEntityReportParametersList(tplNodeRef, entityNodeRef)) {
 
-											if (isLocaleEnableOnTemplate(tplNodeRef, locale)) {
+											if (isLocaleEnableOnTemplate(tplNodeRef, locale, hideDefaultLocal)) {
+												
+												
 
 												Boolean isDefault = (Boolean) this.nodeService.getProperty(tplNodeRef,
 														ReportModel.PROP_REPORT_TPL_IS_DEFAULT);
@@ -1066,12 +1078,12 @@ public class EntityReportServiceImpl implements EntityReportService {
 	}
 
 	@SuppressWarnings("unchecked")
-	private boolean isLocaleEnableOnTemplate(NodeRef tplNodeRef, Locale locale) {
+	private boolean isLocaleEnableOnTemplate(NodeRef tplNodeRef, Locale locale, boolean hideDefaultLocal) {
 
 		List<String> langs = (List<String>) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_LOCALES);
 		if ((langs != null) && !langs.isEmpty()) {
 			for (String lang : langs) {
-				if (locale.equals(MLTextHelper.parseLocale(lang))) {
+				if (locale.equals(MLTextHelper.parseLocale(lang)) && ! (hideDefaultLocal && MLTextHelper.isDefaultLocale(locale))) {
 					return true;
 				}
 			}
