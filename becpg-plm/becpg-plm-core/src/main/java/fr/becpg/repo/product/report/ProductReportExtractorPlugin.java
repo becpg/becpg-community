@@ -1308,7 +1308,10 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		ProductData packagingKitData = (ProductData) alfrescoRepository.findOne(dataItem.getProduct());
 		if (packagingKitData.hasPackagingListEl()) {
 			for (PackagingListDataItem p : packagingKitData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-				loadPackagingItem(sfQty, parentLossRatio, p, packagingListElt, defaultVariantNodeRef, defaultVariantPackagingData, images, level + 1);
+			   if(dataItem.getVariants() != null && !dataItem.getVariants().isEmpty()){
+	                 p.getVariants().addAll(dataItem.getVariants());
+	           }
+			   loadPackagingItem(sfQty, parentLossRatio, p, packagingListElt, defaultVariantNodeRef, defaultVariantPackagingData, images, level + 1);
 			}
 		}
 	}
