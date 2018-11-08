@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
@@ -30,7 +29,6 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.AssociationService;
-import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
 import fr.becpg.report.client.ReportFormat;
@@ -81,8 +79,6 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 
 	private static final String ATTR_PROPERTIES2 = "properties2";
 
-	private static final String CHARACT_PATH_SEPARATOR = " / ";
-
 	private static final String PROPERTY_SEPARATOR = " ; ";
 
 	private static final String PROPERTY_VALUE_SEPARATOR = " : ";
@@ -107,8 +103,6 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 	@Autowired
 	private AssociationService associationService;
 
-	@Autowired
-	private AttributeExtractorService attributeExtractorService;
 
 	@Override
 	public void getComparisonReport(NodeRef entity1, List<NodeRef> entities, NodeRef templateNodeRef, OutputStream out) {
