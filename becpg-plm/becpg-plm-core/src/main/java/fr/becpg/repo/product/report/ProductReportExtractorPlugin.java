@@ -1262,7 +1262,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			loadPackaging(sfQty, parentLossRatio, dataItem, packagingListElt, defaultVariantNodeRef, defaultVariantPackagingData, images, level);
 		}
 	}
-
+	
 	private Element loadPackaging(double sfQtyForCost, double parentLossRatio, PackagingListDataItem dataItem, Element packagingListElt, NodeRef defaultVariantNodeRef,
 			VariantPackagingData defaultVariantPackagingData, Map<String, byte[]> images, int level) {
 
@@ -1355,17 +1355,26 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	protected void extractVariants(List<NodeRef> variantNodeRefs, Element dataItemElt) {
 
 		if ((variantNodeRefs != null) && !variantNodeRefs.isEmpty()) {
-			Boolean isDefault = false;
+			Boolean isDefault = null;
+			String variantNames = "";
 			for (NodeRef variantNodeRef : variantNodeRefs) {
-				isDefault = (Boolean) nodeService.getProperty(variantNodeRef, PLMModel.PROP_IS_DEFAULT_VARIANT);
-				if ((isDefault != null) && isDefault) {
-					break;
-				} else {
+				if(isDefault != null) {
+					variantNames+=",";
+				}
+				
+				variantNames+= ((String) nodeService.getProperty(variantNodeRef, ContentModel.PROP_NAME));
+				
+				if (isDefault == null || !isDefault) {
+					isDefault = (Boolean) nodeService.getProperty(variantNodeRef, PLMModel.PROP_IS_DEFAULT_VARIANT);
+				}
+				
+				if(isDefault == null) {
 					isDefault = false;
 				}
+				
 			}
 			dataItemElt.addAttribute(PLMModel.PROP_IS_DEFAULT_VARIANT.getLocalName(), isDefault.toString());
-
+			dataItemElt.addAttribute(PLMModel.PROP_VARIANTIDS.getLocalName(), variantNames);
 		} else {
 			dataItemElt.addAttribute(PLMModel.PROP_VARIANTIDS.getLocalName(), "");
 			dataItemElt.addAttribute(PLMModel.PROP_IS_DEFAULT_VARIANT.getLocalName(), Boolean.TRUE.toString());
