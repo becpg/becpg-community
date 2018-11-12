@@ -221,28 +221,6 @@
 			</associations>
 		</aspect>
 
-		<aspect name="ghs:substanceAspect">
-			<properties>
-				<property name="ghs:casNumber">
-					<type>d:text</type>
-					<mandatory>false</mandatory>
-					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
-					</index>
-				</property>
-				<property name="ghs:ecNumber">
-					<type>d:text</type>
-					<mandatory>false</mandatory>
-					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
-					</index>
-				</property>
-			</properties>
-		</aspect>
 	</aspects>
 
 

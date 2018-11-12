@@ -55,6 +55,8 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ECMGroup;
 import fr.becpg.model.ECMModel;
+import fr.becpg.model.GHSModel;
+import fr.becpg.model.GS1Model;
 import fr.becpg.model.MPMModel;
 import fr.becpg.model.NCGroup;
 import fr.becpg.model.PLMGroup;
@@ -230,6 +232,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 		// Lists of characteristics for Quality
 		visitSystemQualityListValuesEntity(systemNodeRef, PlmRepoConsts.PATH_QUALITY_LISTS);
+		
+		//Lists of characteristics security
+		visitSystemSecurityListValuesEntity(systemNodeRef,PlmRepoConsts.PATH_SECURITY_LISTS);
 
 		// Exchange
 		NodeRef exchangeNodeRef = visitFolder(companyHome, PlmRepoConsts.PATH_EXCHANGE);
@@ -254,6 +259,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 		folderNodeRef = visitFolder(qualityNodeRef, PlmRepoConsts.PATH_PRODUCT_SPECIFICATIONS);
 		addSystemFolderAspect(folderNodeRef);
+		
+		
+		
 
 		// NC
 		visitFolder(qualityNodeRef, PlmRepoConsts.PATH_NC);
@@ -781,6 +789,19 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
 	}
 
+	
+	private NodeRef visitSystemSecurityListValuesEntity(NodeRef parentNodeRef, String path) {
+		Map<String, QName> entityLists = new LinkedHashMap<>();
+		entityLists.put(PlmRepoConsts.PATH_PERSONAL_PROTECTIONS, GHSModel.TYPE_PERSONAL_PROTECTION);
+		entityLists.put(PlmRepoConsts.PATH_PICTOGRAMS, GHSModel.TYPE_PICTOGRAM);
+		entityLists.put(PlmRepoConsts.PATH_HAZARD_STATEMENTS, GHSModel.TYPE_HAZARD_STATEMENT);
+		entityLists.put(PlmRepoConsts.PATH_PRECAUTIONARY_STATEMENTS, GHSModel.TYPE_PRECAUTIONARY_STATEMENT);
+		entityLists.put(PlmRepoConsts.PATH_HAZARD_CATEGORIES, BeCPGModel.TYPE_LIST_VALUE);	
+
+		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
+	}
+	
+	
 	private NodeRef visitSystemQualityListValuesEntity(NodeRef parentNodeRef, String path) {
 
 		Map<String, QName> entityLists = new LinkedHashMap<>();
