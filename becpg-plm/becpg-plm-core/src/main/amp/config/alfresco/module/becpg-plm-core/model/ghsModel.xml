@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (C) 2010-2018 beCPG. 
+   
+  This file is part of beCPG 
+   
+  beCPG is free software: you can redistribute it and/or modify 
+  it under the terms of the GNU Lesser General Public License as published by 
+  the Free Software Foundation, either version 3 of the License, or 
+  (at your option) any later version. 
+   
+  beCPG is distributed in the hope that it will be useful, 
+  but WITHOUT ANY WARRANTY; without even the implied warranty of 
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+  GNU Lesser General Public License for more details. 
+   
+  You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
+-->
+<model xmlns="http://www.alfresco.org/model/dictionary/1.0" name="ghs:ghsmodel">
+	<description>GHS Model</description>
+	<author>Laborie Matthieu</author>
+	<version>1.0</version>
+	<imports>
+		<import uri="http://www.alfresco.org/model/dictionary/1.0" prefix="d" />
+		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
+		<import uri="http://www.alfresco.org/model/datalist/1.0" prefix="dl" />
+		<import uri="http://www.bcpg.fr/model/becpg/1.0" prefix="bcpg" />
+	</imports>
+	<namespaces>
+		<namespace uri="http://www.bcpg.fr/model/ghs/1.0" prefix="ghs" />
+	</namespaces>
+	<constraints>
+
+		<constraint name="ghs:hazardCategories" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/Security/bcpg:entityLists/HazardCategories</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>bcpg:lvValue</value>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
+		</constraint>
+
+		<constraint name="ghs:hazardTypes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>Physical</value>
+					<value>Health</value>
+					<value>Environmental</value>
+					<value>Other</value>
+				</list>
+			</parameter>
+		</constraint>
+
+		<constraint name="ghs:precautionaryTypes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>General</value>
+					<value>Prevention</value>
+					<value>Response</value>
+					<value>Storage</value>
+					<value>Disposal</value>
+				</list>
+			</parameter>
+		</constraint>
+
+		<constraint name="ghs:signalWords" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>Warning</value>
+					<value>Danger</value>
+				</list>
+			</parameter>
+		</constraint>
+	</constraints>
+
+	<types>
+
+		<type name="ghs:personalProtection">
+			<parent>bcpg:charact</parent>
+		</type>
+
+		<type name="ghs:pictogram">
+			<parent>bcpg:charact</parent>
+			<properties>
+				<property name="ghs:pictogramCode">
+					<type>d:text</type>
+				</property>
+			</properties>
+		</type>
+		
+		<type name="ghs:hazardStatement">
+			<parent>bcpg:charact</parent>
+			<properties>
+				<property name="ghs:hazardCode">
+					<type>d:text</type>
+				</property>
+				<property name="ghs:hazardType">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="ghs:hazardTypes" />
+					</constraints>
+				</property>
+				 <property name="ghs:hazardClassCode">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="ghs:hazardCategories" />
+					</constraints>
+				</property>
+				<property name="ghs:signalWord">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="ghs:signalWords" />
+					</constraints>
+				</property>
+			</properties>
+		</type>
+
+		<type name="ghs:precautionaryStatement">
+			<parent>bcpg:charact</parent>
+			<properties>
+				<property name="ghs:precautionaryCode">
+					<type>d:text</type>
+				</property>
+				<property name="ghs:precautionaryType">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="ghs:precautionaryTypes" />
+					</constraints>
+				</property>
+			</properties>
+		</type>
+
+	</types>
+
+	<aspects>
+	
+		<!-- 	
+		https://www.chemsafetypro.com/pdf/Minimum_Info_GHS_SDS_Safety_Data_Sheets.pdf
+		
+	    Section 1 Identification of the substance or mixture and of the supplier;
+	    Section 2 Hazard identification;
+	    Section 3 Composition/information on ingredients;
+	    Section 4 First-aid measures;
+	    Section 5 Fire-fighting measures;
+	    Section 6 Accidental release measures;
+	    Section 7 Handling and storage;
+	    Section 8 Exposure controls/personal protection;
+	    Section 9 Physical and chemical properties;
+	    Section 10 Stability and reactivity;
+	    Section 11 Toxicological information;
+	    Section 12 Ecological information;
+	    Section 13 Disposal consideration;
+	    Section 14 Transport information;
+	    Section 15 Regulatory information;
+	    Section 16 Other information.
+		-->
+
+
+		<aspect name="ghs:sdsAspect">
+			<properties>
+				<property name="ghs:sdsSignalWord">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="ghs:signalWords" />
+					</constraints>
+				</property>
+			</properties>
+			<associations>
+				<association name="ghs:sdsPictograms">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>ghs:pictogram</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="ghs:sdsHazardStatements">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>ghs:hazardStatement</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="ghs:sdsPrecautionaryStatements">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>ghs:hazardStatement</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="ghs:sdsPersonalProtections">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>ghs:personalProtection</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>
+		</aspect>
+
+		<aspect name="ghs:substanceAspect">
+			<properties>
+				<property name="ghs:casNumber">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="ghs:ecNumber">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+			</properties>
+		</aspect>
+	</aspects>
+
+
+</model>
