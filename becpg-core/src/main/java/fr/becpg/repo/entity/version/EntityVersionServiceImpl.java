@@ -1042,7 +1042,10 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 					nodeService.removeAssociation(assocRef.getSourceRef(), assocRef.getTargetRef(), assocRef.getTypeQName());
 					nodeService.createAssociation(assocRef.getSourceRef(), branchToNodeRef, assocRef.getTypeQName());
+
 				}
+			} catch (AssociationExistsException e) { 
+			  //DO Nothing
 			} finally {
 				policyBehaviourFilter.enableBehaviour(assocRef.getSourceRef(), ContentModel.ASPECT_AUDITABLE);
 			}
