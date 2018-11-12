@@ -3,6 +3,8 @@
  */
 package fr.becpg.repo;
 
+import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.GHSModel;
 
 /**
  * beCPG constants for repository
@@ -93,7 +95,16 @@ public class PlmRepoConsts {
 	public static final String PATH_CLAIM_DISTRIBUTION_NETWORKS = "ClaimDistributionNetworks";
 	
 
+	// GHS
+	public static final String PATH_SECURITY_LISTS = "Security";
+	
+	public static final String PATH_PERSONAL_PROTECTIONS= "PersonalProtections";
+	public static final String PATH_PICTOGRAMS= "Pictograms";
+	public static final String PATH_HAZARD_STATEMENTS= "HazardStatements";
+	public static final String PATH_PRECAUTIONARY_STATEMENTS= "PrecautionaryStatements";
+	public static final String PATH_HAZARD_CATEGORIES = "HazardCategories";
 
+	
 	public static final String PATH_COMPANIES = "Companies";
 	public static final String PATH_SUPPLIERS = "Suppliers";
 	public static final String PATH_CLIENTS	= "Clients";
@@ -117,6 +128,7 @@ public class PlmRepoConsts {
 	public static final String PATH_CATALOGS = "PropertyCatalogs";
 	public static final String PATH_WORKFLOW_SCRIPTS = "WorkflowScripts";
 	public static final String PATH_MEAT_TYPES = "MeatTypes";
+	
 	
 	
 	
