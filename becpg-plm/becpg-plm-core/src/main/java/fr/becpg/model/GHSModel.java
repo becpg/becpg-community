@@ -1,0 +1,18 @@
+package fr.becpg.model;
+
+import org.alfresco.service.namespace.QName;
+
+public class GHSModel {
+
+	String GHS_URI = "http://www.bcpg.fr/model/ghs/1.0";
+
+	String GHS_PREFIX = "gsh";
+
+	QName MODEL = QName.createQName(GHS_URI, "ghsModel");
+
+	public static QName TYPE_PERSONAL_PROTECTION = QName.createQName(GHS_URI, "personalProtection");
+	public static QName TYPE_PICTOGRAM = QName.createQName(GHS_URI, "pictogram");
+	public static QName TYPE_HAZARD_STATEMENT = QName.createQName(GHS_URI, "hazardStatement");
+	public static QName TYPE_PRECAUTIONARY_STATEMENT = QName.createQName(GHS_URI, "precautionaryStatement");
+
+}
