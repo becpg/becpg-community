@@ -218,11 +218,20 @@ public class EntityReportServiceImpl implements EntityReportService {
 									watch = new StopWatch();
 									watch.start();
 								}
-
+								
 								Map<String, String> preferences = getMergedPreferences(tplsNodeRef);
 								
+								Locale defaultLocale = MLTextHelper.getNearestLocale(Locale.getDefault());
 
 								List<Locale> entityReportLocales = getEntityReportLocales(entityNodeRef);
+								
+								final Boolean hideDefaultLocal;
+								if(!entityReportLocales.contains(defaultLocale)) {
+									hideDefaultLocal = true;
+									entityReportLocales.add(defaultLocale);
+								} else {
+									hideDefaultLocal = false;
+								}
 
 								for (Locale locale : entityReportLocales) {
 
@@ -239,7 +248,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 										for (EntityReportParameters reportParameters : getEntityReportParametersList(tplNodeRef, entityNodeRef)) {
 
-											if (isLocaleEnableOnTemplate(tplNodeRef, locale)) {
+											if (isLocaleEnableOnTemplate(tplNodeRef, locale, hideDefaultLocal)) {
 												
 												
 
@@ -432,7 +441,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 		assocList.forEach(val -> {
 			String paramCode = (String) nodeService.getProperty(val.getChildRef(), BeCPGModel.PROP_LV_CODE);
 			String paramValue = (String) nodeService.getProperty(val.getChildRef(), BeCPGModel.PROP_LV_VALUE);
-			if(isValideReportParams(paramCode)){
+			if(isValidReportParams(paramCode)){
 				valideCode.put(paramValue, paramCode);
 			}
 			
@@ -524,7 +533,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 		return ret;	   
 	}
 	
-	private boolean isValideReportParams(String codeParams){
+	private boolean isValidReportParams(String codeParams){
 		String[] strParams = codeParams.split(REPORT_PARAM_SEPARATOR);
 		if((strParams[0].equals("hide") || strParams[0].equals("show")) && 
 				(strParams.length == 2 || strParams.length == 3)){
@@ -836,6 +845,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 		}, false, true);
 	}
 
+	//TODO Refactor with previous method
 	@Override
 	@SuppressWarnings("unchecked")
 	public void generateReport(NodeRef entityNodeRef, NodeRef documentNodeRef, ReportFormat reportFormat, OutputStream outputStream) {
@@ -1039,18 +1049,16 @@ public class EntityReportServiceImpl implements EntityReportService {
 	}
 
 	@SuppressWarnings("unchecked")
-	private boolean isLocaleEnableOnTemplate(NodeRef tplNodeRef, Locale locale) {
-
+	private boolean isLocaleEnableOnTemplate(NodeRef tplNodeRef, Locale locale, boolean hideDefaultLocal) {
 		List<String> langs = (List<String>) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_LOCALES);
 		if ((langs != null) && !langs.isEmpty()) {
 			for (String lang : langs) {
-				if (locale.equals(MLTextHelper.parseLocale(lang))) {
+				if (locale.equals(MLTextHelper.parseLocale(lang)) && ! (hideDefaultLocal && MLTextHelper.isDefaultLocale(locale))) {
 					return true;
 				}
 			}
 			return false;
 		}
-
 		return MLTextHelper.isDefaultLocale(locale);
 	}
 

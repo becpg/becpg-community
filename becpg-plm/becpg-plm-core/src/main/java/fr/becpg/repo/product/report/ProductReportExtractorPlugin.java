@@ -1379,7 +1379,10 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		ProductData packagingKitData = (ProductData) alfrescoRepository.findOne(dataItem.getProduct());
 		if (packagingKitData.hasPackagingListEl()) {
 			for (PackagingListDataItem p : packagingKitData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-				loadPackagingItem(sfQty, parentLossRatio, p, packagingListElt, defaultVariantNodeRef, defaultVariantPackagingData, context,
+                                if(dataItem.getVariants() != null && !dataItem.getVariants().isEmpty()){
+	                                p.setVariants(dataItem.getVariants());
+	                        }				
+                                loadPackagingItem(sfQty, parentLossRatio, p, packagingListElt, defaultVariantNodeRef, defaultVariantPackagingData, context,
 						level + 1);
 			}
 		}
@@ -1424,17 +1427,27 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	protected void extractVariants(List<NodeRef> variantNodeRefs, Element dataItemElt) {
 
 		if ((variantNodeRefs != null) && !variantNodeRefs.isEmpty()) {
-			Boolean isDefault = false;
+			Boolean isDefault = null;
+			String variantNames = "";
 			for (NodeRef variantNodeRef : variantNodeRefs) {
-				isDefault = (Boolean) nodeService.getProperty(variantNodeRef, PLMModel.PROP_IS_DEFAULT_VARIANT);
-				if ((isDefault != null) && isDefault) {
-					break;
-				} else {
+				if(isDefault != null) {
+					variantNames+=",";
+				}
+				
+				variantNames+= ((String) nodeService.getProperty(variantNodeRef, ContentModel.PROP_NAME));
+				
+				if (isDefault == null || !isDefault) {
+					isDefault = (Boolean) nodeService.getProperty(variantNodeRef, PLMModel.PROP_IS_DEFAULT_VARIANT);
+				}
+				
+				if(isDefault == null) {
 					isDefault = false;
 				}
+				
 			}
 			dataItemElt.addAttribute(PLMModel.PROP_IS_DEFAULT_VARIANT.getLocalName(), isDefault.toString());
 
+			dataItemElt.addAttribute(PLMModel.PROP_VARIANTIDS.getLocalName(), variantNames);
 		} else {
 			dataItemElt.addAttribute(PLMModel.PROP_VARIANTIDS.getLocalName(), "");
 			dataItemElt.addAttribute(PLMModel.PROP_IS_DEFAULT_VARIANT.getLocalName(), Boolean.TRUE.toString());
