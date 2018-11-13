@@ -93,6 +93,7 @@ public interface PLMModel {
 	QName TYPE_NUTLIST = QName.createQName(BeCPGModel.BECPG_URI, "nutList");
 	QName ASSOC_NUTLIST_NUT = QName.createQName(BeCPGModel.BECPG_URI, "nutListNut");
 	QName PROP_NUTLIST_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "nutListValue");
+	QName PROP_NUTLIST_VALUE_PER_SERVING = QName.createQName(BeCPGModel.BECPG_URI, "nutListValuePerServing");
 	QName PROP_NUTLIST_FORMULATED_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "nutListFormulatedValue");
 	QName PROP_NUTLIST_UNIT = QName.createQName(BeCPGModel.BECPG_URI, "nutListUnit");
 	QName PROP_NUTLIST_MINI = QName.createQName(BeCPGModel.BECPG_URI, "nutListMini");
@@ -175,6 +176,7 @@ public interface PLMModel {
 	
 	// allergen
 	QName TYPE_ALLERGEN = QName.createQName(BeCPGModel.BECPG_URI, "allergen");
+	QName PROP_ALLERGEN_CODE = QName.createQName(BeCPGModel.BECPG_URI, "allergenCode");
 	QName PROP_ALLERGEN_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "allergenType");
 	QName PROP_ALLERGEN_REGULATORY_THRESHOLD = QName.createQName(BeCPGModel.BECPG_URI, "allergenRegulatoryThreshold");
 
@@ -327,6 +329,7 @@ public interface PLMModel {
 
 	// labelClaim
 	QName TYPE_LABEL_CLAIM = QName.createQName(BeCPGModel.BECPG_URI, "labelClaim");
+	QName PROP_LABEL_CLAIM_CODE = QName.createQName(BeCPGModel.BECPG_URI, "labelClaimCode");
 	QName PROP_LABEL_CLAIM_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "labelClaimType");
 	QName PROP_LABEL_CLAIM_FORMULA = QName.createQName(BeCPGModel.BECPG_URI, "labelClaimFormula");
 

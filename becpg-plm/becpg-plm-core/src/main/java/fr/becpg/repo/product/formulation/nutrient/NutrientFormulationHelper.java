@@ -13,6 +13,7 @@ import org.dom4j.Element;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.formulation.nutrient.AbstractNutrientRegulation.NutrientDefinition;
@@ -27,8 +28,6 @@ public class NutrientFormulationHelper {
 	protected static final Log logger = LogFactory.getLog(NutrientFormulationHelper.class);
 
 	public static final String ATTR_NUT_CODE = "nutCode";
-	public static final String ATTR_NUTLIST_VALUE = "nutListValue";
-	public static final String ATTR_NUTLIST_VALUE_PER_SERVING = "nutListValuePerServing";
 	private static final String KEY_VALUE = "v";
 	private static final String KEY_MINI = "min";
 	private static final String KEY_MAXI = "max";
@@ -125,8 +124,9 @@ public class NutrientFormulationHelper {
 		if (roundedValue != null) {
 			String localKey = getLocalKey(locale);
 			String nutCode = nutListElt.attributeValue(ATTR_NUT_CODE);
-			String nutListValue = nutListElt.attributeValue(ATTR_NUTLIST_VALUE);
-			String nutListValuePerServing = nutListElt.attributeValue(ATTR_NUTLIST_VALUE_PER_SERVING);
+			String nutListValue = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_VALUE.getLocalName());
+			String nutListValuePerServing = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_VALUE_PER_SERVING.getLocalName());
+			Element reportLocales = (Element)nutListElt.selectSingleNode("nutListNut/nut/reportLocales");
 			try {
 				JSONObject jsonRound = new JSONObject(roundedValue);
 				for (Iterator<?> i = jsonRound.keys(); i.hasNext();) {
@@ -150,10 +150,22 @@ public class NutrientFormulationHelper {
 							if(def.getDepthLevel()!=null) {
 								nutListElt.addAttribute("regulDepthLevel" + prefix, "" + def.getDepthLevel());
 							}
-							if(Boolean.TRUE.equals(def.getMandatory())) {
-								nutListElt.addAttribute("regulDisplayMode" + prefix, "M");
-							} else  if(Boolean.TRUE.equals(def.getOptional())) {
-								nutListElt.addAttribute("regulDisplayMode" + prefix, "O");
+							boolean display = true;
+							if(reportLocales != null && reportLocales.getText() != null){
+								display = false;
+								for (String reportLocale : reportLocales.getText().split(",")){
+									if(reportLocale != null && locale != null && reportLocale.trim().equals(locale.toString())){
+										display = true;
+										break;
+									}
+								}
+							}
+							if(display){
+								if(Boolean.TRUE.equals(def.getMandatory())) {
+									nutListElt.addAttribute("regulDisplayMode" + prefix, "M");
+								} else  if(Boolean.TRUE.equals(def.getOptional())) {
+									nutListElt.addAttribute("regulDisplayMode" + prefix, "O");
+								}
 							}
 							if(def.getBold()!=null) {
 								nutListElt.addAttribute("regulBold" + prefix, "" + def.getBold());

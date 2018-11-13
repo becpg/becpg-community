@@ -7,7 +7,7 @@ CARTB;Beta-caroten;;;;true;;;;
 CRYPX;Beta-Crypt;;;;true;;;;
 CAFFN;Caffein;;;;true;;;;
 CA;Calcium, Ca;;1;false;true;false;800;;
-CHOAVL;Carbohydrate, by difference;5;1;false;true;false;260;;g
+CHOAVL;Carbohydrate, by difference;5;1;true;true;false;260;;g
 CHO-;Carbohydrate, by difference (with fiber);;;;true;;;;
 CHOL-;Cholesterol;;;;true;;;;
 CHOLN;CholineTot;;;;true;;;;
@@ -32,7 +32,7 @@ F6D0;FA 6:0, caproic;;;;true;;;;
 F8D0;FA 8:0, caprylic;;;;true;;;;
 FAMSCIS;Fatty acids, total monounsaturated;;;;true;;;;
 FAPUCIS;Fatty acids, total polyunsaturated;;;;true;;;;
-FASAT;Fatty acids, total saturated;4;2;false;true;false;20;;g
+FASAT;Fatty acids, total saturated;4;2;true;true;false;20;;g
 FIBTG;Fiber, total dietary;7;1;false;true;false;;;g
 FOLDFE;Folate DFE;;;;true;;;;
 FOLFD;Folate natural;;;;true;;;;
@@ -52,19 +52,19 @@ PANTAC;Panto acid;;1;false;true;false;6;;
 P;Phosphorus, P;;1;false;true;false;700;;
 POLYL;Polyols total;;;;true;;;;
 K;Potassium, k;;1;false;true;false;2000;;
-PRO-;Protein;8;1;false;true;false;50;;g
+PRO-;Protein;8;1;true;true;false;50;;g
 CARTBEQ;Provitamin A (b-carotene equivalents);;;;true;;;;
 PROCNT;Raw proteins (N x 6.25);;;;true;;;;
 RETOL;Retinol;;;;true;;;;
 RIBF;Riboflavin;;1;false;true;false;1,4;;
-NACL;Salt;9;1;false;true;false;6;;g
+NACL;Salt;9;1;true;true;false;6;;g
 SE;Selenium;;1;false;true;false;55;;
 NA;Sodium, Na;;;;true;;;;g
 FIBSOL;Soluble fiber;;;;true;;;;
 STARCH;Starch;;;;true;;;;
-SUGAR;Sugars total;6;2;false;true;false;90;;g
+SUGAR;Sugars total;6;2;true;true;false;90;;g
 THIA;Thiamin;;1;false;true;false;1,1;;
-FAT;Total lipid (fat);3;1;false;true;false;70;;g
+FAT;Total lipid (fat);3;1;true;true;false;70;;g
 FAPUN3F;Total omega 3 fatty acids;;;;true;;;;
 FATRN;Total trans fatty acids;;;;true;;;;
 TRP;Tryptophan;;;;true;;;;

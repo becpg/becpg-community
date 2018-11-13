@@ -147,7 +147,7 @@
 
 	<mapping name="bcpg:labelClaim">
 		<nodeColumnKeys>
-			<nodeColumnKey attribute="bcpg:charactName" />
+			<nodeColumnKey attribute="bcpg:labelClaimCode" />
 		</nodeColumnKeys>
 		<columns>
 			<column id="labelClaimFormula" type="Formula" attribute="bcpg:labelClaimFormula" />
@@ -165,7 +165,7 @@
 	
 	<mapping name="bcpg:nut">
 		<nodeColumnKeys>
-			<nodeColumnKey attribute="bcpg:charactName" />
+			<nodeColumnKey attribute="gs1:nutrientTypeCode" />
 		</nodeColumnKeys>
 		<columns>
 			<column id="nutFormula" type="Formula" attribute="bcpg:nutFormula" />

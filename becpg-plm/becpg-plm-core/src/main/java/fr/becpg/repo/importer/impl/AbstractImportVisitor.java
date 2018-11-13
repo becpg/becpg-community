@@ -62,6 +62,8 @@ import fr.becpg.config.mapping.FormulaMapping;
 import fr.becpg.config.mapping.HierarchyMapping;
 import fr.becpg.config.mapping.MappingException;
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.GS1Model;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.entity.EntityListDAO;
@@ -430,19 +432,62 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 	// DO NOT REMOVED USED in FORMULA
 	public String findCharact(String type, String name) {
-		NodeRef ret = findCharact(QName.createQName(type, namespaceService), name);
+		NodeRef ret = findCharact(QName.createQName(type, namespaceService), BeCPGModel.PROP_CHARACT_NAME, name);
 		if (ret == null) {
 			logger.error("Cannot find (" + type + "," + name + ")");
 			return null;
 		}
 
 		return ret.toString();
+	}
+	
+	// DO NOT REMOVED USED in FORMULA
+	public String findNut(String nutCode) {
+		NodeRef ret = findCharact(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, nutCode);
+		if (ret == null) {
+			logger.error("Cannot find nut (" + nutCode + ")");
+			return null;
+		}
 
+		return ret.toString();
+	}
+	
+	// DO NOT REMOVED USED in FORMULA
+	public String findLabelClaim(String labelClaimCode) {
+		NodeRef ret = findCharact(PLMModel.TYPE_LABEL_CLAIM, PLMModel.PROP_LABEL_CLAIM_CODE, labelClaimCode);
+		if (ret == null) {
+			logger.error("Cannot find labelClaim (" + labelClaimCode + ")");
+			return null;
+		}
+
+		return ret.toString();
+	}
+	
+	// DO NOT REMOVED USED in FORMULA
+	public String findAllergen(String allergenCode) {
+		NodeRef ret = findCharact(PLMModel.TYPE_ALLERGEN, PLMModel.PROP_ALLERGEN_CODE, allergenCode);
+		if (ret == null) {
+			logger.error("Cannot find allergen (" + allergenCode + ")");
+			return null;
+		}
+
+		return ret.toString();
+	}
+	
+	// DO NOT REMOVED USED in FORMULA
+	public String findCharactByProperty(String type, String property, String name) {
+		NodeRef ret = findCharact(QName.createQName(type, namespaceService), QName.createQName(property, namespaceService), name);
+		if (ret == null) {
+			logger.error("Cannot find (" + type + "," + name + ")");
+			return null;
+		}
+
+		return ret.toString();
 	}
 
-	private NodeRef findCharact(QName type, String name) {
+	private NodeRef findCharact(QName type, QName property, String name) {
 
-		for (NodeRef tmpNodeRef : BeCPGQueryBuilder.createQuery().ofType(type).andPropEquals(BeCPGModel.PROP_CHARACT_NAME, name).inDB().ftsLanguage()
+		for (NodeRef tmpNodeRef : BeCPGQueryBuilder.createQuery().ofType(type).andPropEquals(property, name).inDB().ftsLanguage()
 				.list()) {
 			if (!nodeService.hasAspect(tmpNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)
 					&& !nodeService.hasAspect(tmpNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)) {
@@ -852,7 +897,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 					charactNodeRef = new NodeRef(charactNodeRefString);
 				} else if (!charactName.isEmpty()) {
 					AssociationDefinition assocDef = dictionaryService.getAssociation(charactQName);
-					charactNodeRef = findCharact(assocDef.getTargetClass().getName(), charactName);
+					charactNodeRef = findCharact(assocDef.getTargetClass().getName(), BeCPGModel.PROP_CHARACT_NAME, charactName);
 
 					if (charactNodeRef == null) {
 						String error = I18NUtil.getMessage(MSG_ERROR_GET_NODEREF_CHARACT, assocDef.getTargetClass().getName(), charactName);
