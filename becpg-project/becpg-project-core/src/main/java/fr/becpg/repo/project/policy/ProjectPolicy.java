@@ -197,7 +197,8 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 
 	@Override
 	public void impactWUsed(NodeRef entityNodeRef, VersionType versionType, String description) {
-
+		// TODO Auto-generated method stub
+		
 	}
 
 }

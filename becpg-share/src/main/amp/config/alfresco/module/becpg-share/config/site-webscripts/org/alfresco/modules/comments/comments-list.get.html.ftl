@@ -71,7 +71,7 @@
 				        maxItems : 10,
 				        <#if activityParameters??>
 					      activity :{
-					            itemTitle: "${activityParameters.itemTitle}",
+					            itemTitle: "${activityParameters.itemTitle?js_string}",
 					            page: "${activityParameters.page}",
 					            pageParams:
 					            {
