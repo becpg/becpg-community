@@ -1331,7 +1331,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			loadPackaging(sfQty, parentLossRatio, dataItem, packagingListElt, defaultVariantNodeRef, defaultVariantPackagingData, context, level);
 		}
 	}
-
+	
 	private Element loadPackaging(double sfQtyForCost, double parentLossRatio, PackagingListDataItem dataItem, Element packagingListElt,
 			NodeRef defaultVariantNodeRef, VariantPackagingData defaultVariantPackagingData, DefaultExtractorContext context, int level) {
 
@@ -1446,7 +1446,6 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				
 			}
 			dataItemElt.addAttribute(PLMModel.PROP_IS_DEFAULT_VARIANT.getLocalName(), isDefault.toString());
-
 			dataItemElt.addAttribute(PLMModel.PROP_VARIANTIDS.getLocalName(), variantNames);
 		} else {
 			dataItemElt.addAttribute(PLMModel.PROP_VARIANTIDS.getLocalName(), "");
