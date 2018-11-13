@@ -53,7 +53,7 @@ public class UsNutrientRegulation extends AbstractNutrientRegulation {
 			} else if (nutrientTypeCode.equals(NutrientCode.Cholesterol)) {
 				if (value > 5) {
 					return roundValue(value,5d);
-				} else if ((value > 2) && (value <= 5)) {
+				} else if ((value >= 2) && (value <= 5)) {
 					return roundValue(value,1d);
 				} else {
 					return 0.0;
@@ -73,15 +73,20 @@ public class UsNutrientRegulation extends AbstractNutrientRegulation {
 				} else {
 					return 0.0;
 				}		
+			} else if (nutrientTypeCode.equals(NutrientCode.VitD)
+					|| nutrientTypeCode.equals(NutrientCode.Calcium)
+					|| nutrientTypeCode.equals(NutrientCode.Iron)
+					|| nutrientTypeCode.equals(NutrientCode.Potassium)) {
+				roundValue(value,1d);
 			}
 		}
 		
-		return roundValue(value,1d);
+		return roundValue(value,0.1d);
 	}
 	
 	protected String displayValueByCode(Double value, Double roundedValue, String nutrientTypeCode, Locale locale) {
 		if(value != null){
-			if (nutrientTypeCode.equals(NutrientCode.Cholesterol) && value<=5) {
+			if (nutrientTypeCode.equals(NutrientCode.Cholesterol) && value<=5 && value >= 2) {
 				return "<5";
 			} else if ((nutrientTypeCode.equals(NutrientCode.CarbohydrateWithFiber) 
 						|| nutrientTypeCode.equals(NutrientCode.Sugar)
@@ -91,7 +96,7 @@ public class UsNutrientRegulation extends AbstractNutrientRegulation {
 						|| nutrientTypeCode.equals(NutrientCode.FiberInsoluble)
 						|| nutrientTypeCode.equals(NutrientCode.Protein)
 						|| nutrientTypeCode.equals(NutrientCode.Polyols)
-						) && value<1) {
+						) && value<1 && value >= 0.5) {
 				return "<1";
 			}
 		}

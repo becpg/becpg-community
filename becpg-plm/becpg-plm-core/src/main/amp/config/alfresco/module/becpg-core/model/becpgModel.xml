@@ -2320,6 +2320,15 @@
 		<type name="bcpg:labelClaim">
 			<parent>bcpg:charact</parent>
 			<properties>
+				<property name="bcpg:labelClaimCode">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>false</tokenised>
+					</index>
+				</property>
 				<property name="bcpg:labelClaimType">
 					<type>d:text</type>
 					<index enabled="true">
