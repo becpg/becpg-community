@@ -2,8 +2,6 @@ package fr.becpg.test.repo.product.rounding;
 
 import static org.junit.Assert.assertEquals;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
 import javax.annotation.Resource;
@@ -53,6 +51,7 @@ public class NutrientRoundingRulesTest {
 		assertEquals(20d, NutrientFormulationHelper.round(21d, NutrientCode.Cholesterol, Locale.US, "mg/100g"), 0);
 		assertEquals(25d, NutrientFormulationHelper.round(26d, NutrientCode.Cholesterol, Locale.US, "mg/100g"), 0);
 		assertEquals(30d, NutrientFormulationHelper.round(29d, NutrientCode.Cholesterol, Locale.US, "mg/100g"), 0);
+		assertEquals(35d, NutrientFormulationHelper.round(33.7d, NutrientCode.Cholesterol, Locale.US, "mg/100g"), 0);
 		assertEquals(3d, NutrientFormulationHelper.round(3d, NutrientCode.Cholesterol, Locale.US, "mg/100g"), 0);
 		assertEquals(0d, NutrientFormulationHelper.round(1d, NutrientCode.Cholesterol, Locale.US, "mg/100g"), 0);
 		
@@ -67,8 +66,15 @@ public class NutrientRoundingRulesTest {
 		assertEquals(0d, NutrientFormulationHelper.round(0.18d, NutrientCode.Sugar, Locale.US, "g/100g"), 0);
 		
 		// less than
-		assertEquals("<5", NutrientFormulationHelper.displayValue(1d, 
+		assertEquals("<5", NutrientFormulationHelper.displayValue(3d, 
+				NutrientFormulationHelper.round(3d, NutrientCode.Cholesterol, Locale.US, "mg/100g"), 
+				NutrientCode.Cholesterol, Locale.US));
+		assertEquals("0", NutrientFormulationHelper.displayValue(1d, 
 				NutrientFormulationHelper.round(1d, NutrientCode.Cholesterol, Locale.US, "mg/100g"), 
+				NutrientCode.Cholesterol, Locale.US));
+		
+		assertEquals("35", NutrientFormulationHelper.displayValue(33.7d, 
+				NutrientFormulationHelper.round(33.7d, NutrientCode.Cholesterol, Locale.US, "mg/100g"), 
 				NutrientCode.Cholesterol, Locale.US));
 		
 		String [] codes = {NutrientCode.CarbohydrateWithFiber, NutrientCode.Sugar, NutrientCode.SugarAdded,
@@ -206,6 +212,7 @@ public class NutrientRoundingRulesTest {
 		assertEquals(0d, NutrientFormulationHelper.round(0.4d, NutrientCode.Protein, Locale.CHINESE, "g/100g"), 0);
 		assertEquals(6.6d, NutrientFormulationHelper.round(6.61d, NutrientCode.Protein, Locale.CHINESE, "g/100g"), 0);
 		assertEquals(6.7d, NutrientFormulationHelper.round(6.66d, NutrientCode.Protein, Locale.CHINESE, "g/100g"), 0);
+		assertEquals(8.9d, NutrientFormulationHelper.round(8.89d, NutrientCode.Protein, Locale.CHINESE, "g/100g"), 0);
 		
 		assertEquals(0d, NutrientFormulationHelper.round(0.4d, NutrientCode.Fat, Locale.CHINESE, "g/100g"), 0);
 		assertEquals(0.8, NutrientFormulationHelper.round(0.78d, NutrientCode.Fat, Locale.CHINESE, "g/100g"), 0);

@@ -748,7 +748,7 @@ public class ImportServiceTest extends PLMBaseTestCase {
 		NodeRef labelClaimListsFolder = entitySystemService.getSystemEntityDataList(systemFolder, RepoConsts.PATH_CHARACTS, PlmRepoConsts.PATH_LABELCLAIMS);
 		List<NodeRef> labelClaimsFileInfo = entityListDAO.getListItems(labelClaimListsFolder,PLMModel.TYPE_LABEL_CLAIM);
 
-		Assert.assertTrue(labelClaimsFileInfo.size()==2);
+		Assert.assertTrue(labelClaimsFileInfo.size()==3);
 		
 		
 		
