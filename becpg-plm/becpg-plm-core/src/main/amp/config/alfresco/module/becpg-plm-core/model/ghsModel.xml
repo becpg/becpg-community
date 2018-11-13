@@ -74,6 +74,7 @@
 		<constraint name="ghs:signalWords" type="LIST">
 			<parameter name="allowedValues">
 				<list>
+					<value></value>
 					<value>Warning</value>
 					<value>Danger</value>
 				</list>
@@ -202,7 +203,7 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>ghs:hazardStatement</class>
+						<class>ghs:precautionaryStatement</class>
 						<mandatory>false</mandatory>
 						<many>true</many>
 					</target>
