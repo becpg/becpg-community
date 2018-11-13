@@ -13,7 +13,7 @@ CHOL-;Cholesterol;5;1;true;false;true;300;;mg
 CHOLN;CholineTot;;1;false;true;false;550;3500;
 CR;Chromium;;1;false;true;false;35;;
 CU;Copper;;1;false;true;false;0,9;10;
-ENER-E14;Energy kcal;1;1;true;false;true;2000;;kcal
+ENER-E14-US;Energy kcal;1;1;true;false;true;2000;;kcal
 F10D0;FA 10:0, capric;;;;;;;;
 F12D0;FA 12:0, lauric;;;;;;;;
 F14D0;FA 14:0 , myristic;;;;;;;;
@@ -65,7 +65,7 @@ SUGAR;Total Sugars;9;2;true;false;false;;;g
 THIA;Thiamin;;1;false;true;false;1,2;;
 FAT;Total lipid (fat);2;1;true;false;true;78;;g
 FAPUN3F;Total omega 3 fatty acids;;;;;;;;
-FATRN;Total trans fatty acids;4;2;true;false;false;;;
+FATRN;Total trans fatty acids;4;2;true;false;false;;;g
 TRP;Tryptophan;;;;;;;;
 VITA-;Vitamin A;;1;false;true;false;900;3000;
 VITA;Vitamin A retinol equivalents;;;;;;;;
