@@ -238,6 +238,12 @@ img.icon16_11 {
 }
 
 
+
+.alfresco-share .alfresco-header-SearchBox input.alfresco-header-SearchBox-text {
+ 	margin-right: 0px !important;	
+}
+
+
 .dijitIcon.dijitMenuItemIcon.entity {
 	  padding: 0px !important;
 }

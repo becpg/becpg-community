@@ -96,7 +96,7 @@ public class PlmRepoConsts {
 	
 
 	// GHS
-	public static final String PATH_SECURITY_LISTS = "Security";
+	public static final String PATH_SECURITY_LISTS = "SecurityLists";
 	
 	public static final String PATH_PERSONAL_PROTECTIONS= "PersonalProtections";
 	public static final String PATH_PICTOGRAMS= "Pictograms";
