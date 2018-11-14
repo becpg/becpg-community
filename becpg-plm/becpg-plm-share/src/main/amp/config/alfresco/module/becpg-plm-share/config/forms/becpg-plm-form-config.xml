@@ -2613,6 +2613,7 @@
 					<show id="ghs:sdsHazardStatements" />
 					<show id="ghs:sdsPrecautionaryStatements" />
 					<show id="ghs:sdsPersonalProtections" />
+					<show id="ghs:sdsSafetyInstructions"/>
 				
 
 					<!-- tags and categories -->
@@ -2848,6 +2849,13 @@
 							<control-param name="showLink">false</control-param>
 						</control>
 					</field>
+					<field id="ghs:sdsSafetyInstructions" set="security">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
+						</control>
+					</field>
+					
+					
 					
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
