@@ -111,6 +111,7 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 			}
 
 			String state = (String) nodeService.getProperty(entityNodeRef, PLMModel.PROP_PRODUCT_STATE);
+			
 			result.add(new ListValueEntry(entityNodeRef.toString(), (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME),
 					nodeService.getType(entityNodeRef).getLocalName() + "-" + state));
 
@@ -155,12 +156,14 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 						if (addNode) {
 							logger.debug("add node productName: " + productName);
 							String state = (String) nodeService.getProperty(productNodeRef, PLMModel.PROP_PRODUCT_STATE);
+		
+							String variantNames  = extractVariantNames(dataListItemNodeRef);
 
 							if (type.isMatch(PLMModel.TYPE_SEMIFINISHEDPRODUCT)) {
-								result.add(new ListValueEntry(productNodeRef.toString(), productName,
+								result.add(new ListValueEntry(productNodeRef.toString(),variantNames + productName,
 										PLMModel.TYPE_SEMIFINISHEDPRODUCT.getLocalName() + "-" + state));
 							} else {
-								result.add(new ListValueEntry(dataListItemNodeRef.toString(), productName,
+								result.add(new ListValueEntry(dataListItemNodeRef.toString(), variantNames +  productName,
 										PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.getLocalName() + "-" + state));
 							}
 						}
@@ -171,6 +174,30 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 
 		}
 		return result;
+	}
+
+	@SuppressWarnings("unchecked")
+	private String extractVariantNames(NodeRef dataListItemNodeRef) {
+
+		List<NodeRef> variantNodeRefs = (List<NodeRef>) nodeService.getProperty(dataListItemNodeRef, PLMModel.PROP_VARIANTIDS);
+		String variantNames = ""; 
+		
+		if(variantNodeRefs!=null) {
+			for (NodeRef variantNodeRef : variantNodeRefs) {
+				if(!variantNames.isEmpty()) {
+					variantNames+=",";
+				}
+
+				variantNames+= ((String) nodeService.getProperty(variantNodeRef, ContentModel.PROP_NAME));
+			}
+			
+			if(!variantNames.isEmpty()) {
+				variantNames+=" - ";
+			}
+				
+		}
+		
+		return variantNames;
 	}
 
 	private List<ListValueEntry> getParentsLevel(MultiLevelListData mlld, String query, NodeRef itemId, String parentName) {
@@ -220,11 +247,15 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 							logger.debug("add node productName: " + productName);
 							String state = (String) nodeService.getProperty(productNodeRef, PLMModel.PROP_PRODUCT_STATE);
 
+
+							String variantNames  = extractVariantNames(kv.getKey());
+
+							
 							if (type.isMatch(PLMModel.TYPE_SEMIFINISHEDPRODUCT)) {
-								result.add(new ListValueEntry(productNodeRef.toString(), parentName + productName,
+								result.add(new ListValueEntry(productNodeRef.toString(), variantNames + parentName + productName,
 										PLMModel.TYPE_SEMIFINISHEDPRODUCT.getLocalName() + "-" + state));
 							} else {
-								result.add(new ListValueEntry(kv.getKey().toString(), parentName + productName,
+								result.add(new ListValueEntry(kv.getKey().toString(), variantNames + parentName + productName,
 										PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.getLocalName() + "-" + state));
 							}
 						}
