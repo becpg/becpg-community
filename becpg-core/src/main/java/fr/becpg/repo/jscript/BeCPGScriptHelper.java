@@ -42,11 +42,13 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.EntityListState;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
@@ -85,7 +87,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 	private AssociationService associationService;
 
-	private EntityListDAO entityListDAO;
+	private EntityService entityService;
 
 	private PaginatedSearchCache paginatedSearchCache;
 	
@@ -143,10 +145,6 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		this.associationService = associationService;
 	}
 
-	public void setEntityListDAO(EntityListDAO entityListDAO) {
-		this.entityListDAO = entityListDAO;
-	}
-
 	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
 		this.entityDictionaryService = entityDictionaryService;
 	}
@@ -165,6 +163,10 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 	public void setRepoService(RepoService repoService) {
 		this.repoService = repoService;
+	}
+	
+	public void setEntityService(EntityService entityService) {
+		this.entityService = entityService;
 	}
 
 	public String getMLProperty(ScriptNode sourceNode, String propQName, String locale) {
@@ -256,16 +258,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	}
 
 	public boolean changeEntityListStates(ScriptNode entity, String state) {
-
-		NodeRef listContainerNodeRef = entityListDAO.getListContainer(entity.getNodeRef());
-
-		if (listContainerNodeRef != null) {
-			for (NodeRef listNodeRef : entityListDAO.getExistingListsNodeRef(listContainerNodeRef)) {
-				mlNodeService.setProperty(listNodeRef, BeCPGModel.PROP_ENTITYLIST_STATE, SystemState.valueOf(state));
-			}
-		}
-
-		return true;
+		return entityService.changeEntityListStates(entity.getNodeRef(), EntityListState.valueOf(state));
 	}
 
 	public String[] getSubTypes(String type) {
