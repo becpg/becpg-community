@@ -74,11 +74,12 @@ public class ProductPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 				nodeService.removeAspect(destinationRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT);
 			}
 			// Allow to determine if is a branch or a version
-			if (!policyBehaviourFilter.isEnabled(BeCPGModel.ASPECT_ENTITY_BRANCH)) {
-				if (nodeService.hasAspect(destinationRef, BeCPGModel.ASPECT_ENTITY_BRANCH)) {
-					nodeService.removeAspect(destinationRef, BeCPGModel.ASPECT_ENTITY_BRANCH);
-				}
+			
+			//if (!policyBehaviourFilter.isEnabled(BeCPGModel.ASPECT_ENTITY_BRANCH)) {
+			if (nodeService.hasAspect(destinationRef, BeCPGModel.ASPECT_ENTITY_BRANCH)) {
+				nodeService.removeAspect(destinationRef, BeCPGModel.ASPECT_ENTITY_BRANCH);
 			}
+			//}
 		}
 
 	}
