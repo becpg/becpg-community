@@ -3545,6 +3545,21 @@
 			</associations>
 		</aspect>
 
+		<aspect name="bcpg:userLanguageAspect">
+			<properties>
+				<property name="bcpg:userContentLocale">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="false"/>
+				</property>
+				<property name="bcpg:userLocale">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="false"/>
+				</property>
+			</properties>
+		</aspect>
+
 		<aspect name="bcpg:advSearchAspect">
 			<properties>
 				<property name="bcpg:advPclValue1">
