@@ -56,7 +56,6 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ECMGroup;
 import fr.becpg.model.ECMModel;
 import fr.becpg.model.GHSModel;
-import fr.becpg.model.GS1Model;
 import fr.becpg.model.MPMModel;
 import fr.becpg.model.NCGroup;
 import fr.becpg.model.PLMGroup;
@@ -355,6 +354,11 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	private List<SiteInfo> visitSites() {
 
 		List<SiteInfo> ret = new ArrayList<>();
+		
+		List<SiteInfo> sites = siteService.listSites(null, null);
+		if(sites!=null && sites.size()>2) {
+			return ret;
+		}
 
 		for (String siteId : new String[] { SIMULATION_SITE_ID, VALID_SITE_ID, ARCHIVED_SITE_ID }) {
 

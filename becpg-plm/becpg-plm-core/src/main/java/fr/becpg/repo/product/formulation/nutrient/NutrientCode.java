@@ -12,14 +12,14 @@ public interface NutrientCode {
 	String FatMonounsaturated = "FAMSCIS";
 	String FatPolyunsaturated = "FAPUCIS";
 	String FatTrans = "FATRN";
-	String Protein = "PRO";
+	String Protein = "PRO-";
 	String CarbohydrateByDiff = "CHOAVL";
 	String CarbohydrateWithFiber = "CHO-";
 	String Sugar = "SUGAR";
 	String FiberDietary = "FIBTG";
 	String Sodium = "NA";
 	String Salt = "NACL";	
-	String Cholesterol = "CHOL";
+	String Cholesterol = "CHOL-";
 	String Potassium = "K";
 	String FiberSoluble = "FIBSOL";
 	String FiberInsoluble = "FIBINS";

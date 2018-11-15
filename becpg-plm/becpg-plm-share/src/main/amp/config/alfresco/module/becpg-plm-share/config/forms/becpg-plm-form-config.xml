@@ -2613,6 +2613,7 @@
 					<show id="ghs:sdsHazardStatements" />
 					<show id="ghs:sdsPrecautionaryStatements" />
 					<show id="ghs:sdsPersonalProtections" />
+					<show id="ghs:sdsSafetyInstructions"/>
 				
 
 					<!-- tags and categories -->
@@ -2848,6 +2849,13 @@
 							<control-param name="showLink">false</control-param>
 						</control>
 					</field>
+					<field id="ghs:sdsSafetyInstructions" set="security">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
+						</control>
+					</field>
+					
+					
 					
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
@@ -6007,6 +6015,7 @@
 		<forms>
 			<form>
 				<field-visibility>
+					<show id="bcpg:labelClaimCode" />
 					<show id="bcpg:charactName" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:labelClaimType" />
@@ -6047,6 +6056,7 @@
 			<!-- Create item form -->
 			<form>
 				<field-visibility>
+					<show id="bcpg:labelClaimCode" />
 					<show id="bcpg:charactName" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:labelClaimType" />
@@ -6083,6 +6093,7 @@
 			<!-- Data Grid view -->
 			<form id="filter">
 				<field-visibility>
+					<show id="bcpg:labelClaimCode" />
 					<show id="bcpg:charactName" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:labelClaimType" />					
@@ -6104,6 +6115,7 @@
 
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:labelClaimCode" />
 					<show id="bcpg:charactName" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:labelClaimType" />

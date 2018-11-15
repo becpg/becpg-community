@@ -24,6 +24,8 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
 import fr.becpg.common.BeCPGException;
+import fr.becpg.model.EntityListState;
+import fr.becpg.model.SystemState;
 
 /**
  * Entity service
@@ -65,6 +67,6 @@ public interface EntityService {
 
 	NodeRef getEntityNodeRef(NodeRef childNodeRef, QName itemType);
 
-	
+	boolean changeEntityListStates(NodeRef entityNodeRef, EntityListState state);
 
 }

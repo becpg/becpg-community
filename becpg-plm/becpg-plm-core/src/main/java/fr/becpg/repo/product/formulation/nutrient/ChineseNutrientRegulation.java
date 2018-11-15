@@ -83,7 +83,7 @@ public class ChineseNutrientRegulation extends AbstractNutrientRegulation {
 
 		}
 		
-		return roundValue(value,1d);
+		return roundValue(value,0.1d);
 	}
 	
 	@Override

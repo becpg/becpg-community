@@ -36,6 +36,7 @@ import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.GS1Model;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
 import fr.becpg.repo.PlmRepoConsts;
@@ -107,7 +108,7 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 		if (shouldInit) {
 			transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
 				public Boolean execute() throws Throwable {
-					Assert.assertEquals(5, entitySystemService.getSystemEntities().size());
+					Assert.assertEquals(6, entitySystemService.getSystemEntities().size());
 
 					initConstraints();
 					return false;
@@ -375,6 +376,7 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 			if (nutsNodeRef.size() == 0) {
 				for (int i = 0; i < 10; i++) {
 					Map<QName, Serializable> properties = new HashMap<>();
+					properties.put(GS1Model.PROP_NUTRIENT_TYPE_CODE, "Nut " + i);
 					properties.put(BeCPGModel.PROP_CHARACT_NAME, "Nut " + i);
 					properties.put(PLMModel.PROP_NUTUNIT, "kcal");
 					properties.put(PLMModel.PROP_NUTGROUP, "Groupe 1");
@@ -427,6 +429,7 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 				String[] labelClaimNames = { "Faible valeur énergétique", "Sans apport énergétique" };
 				for (String labelClaim : labelClaimNames) {
 					Map<QName, Serializable> properties = new HashMap<>();
+					properties.put(PLMModel.PROP_LABEL_CLAIM_CODE, labelClaim);
 					properties.put(BeCPGModel.PROP_CHARACT_NAME, labelClaim);
 					properties.put(PLMModel.PROP_LABEL_CLAIM_TYPE, "Nutritionnelle");
 					ChildAssociationRef childAssocRef = nodeService.createNode(labelClaimListsFolder, ContentModel.ASSOC_CONTAINS,
@@ -436,7 +439,6 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 				}
 			} else {
 				for (NodeRef fileInfo : labelClaimsNodeRef) {
-					
 					if(((String)nodeService.getProperty(fileInfo,BeCPGModel.PROP_CHARACT_NAME)).startsWith( "Faible valeur énergétique")
 							|| ((String)nodeService.getProperty(fileInfo,BeCPGModel.PROP_CHARACT_NAME)).startsWith( "Sans apport énergétique")){
 						labelClaims.add(fileInfo);
