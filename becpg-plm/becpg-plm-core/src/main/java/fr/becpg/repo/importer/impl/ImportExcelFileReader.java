@@ -18,8 +18,6 @@ import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import com.sun.star.sdbc.DataType;
-
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.config.mapping.AbstractAttributeMapping;
 import fr.becpg.repo.importer.ImportFileReader;

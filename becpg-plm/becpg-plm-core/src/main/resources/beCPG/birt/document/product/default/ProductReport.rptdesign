@@ -1060,23 +1060,6 @@ function indent_docx (coef, depthLevel, object) {
                     <property name="dataType">integer</property>
                 </structure>
                 <structure>
-                    <property name="name">isReportLocaleExist</property>
-                    <expression name="expression">( row["reportLocales"] != null )</expression>
-                    <property name="dataType">boolean</property>
-                </structure>
-                <structure>
-                    <property name="name">nbIslocalReportLocaleExist</property>
-                    <property name="dataType">integer</property>
-                    <property name="aggregateFunction">RUNNINGCOUNT</property>
-                    <list-property name="arguments">
-                        <structure>
-                            <property name="name">Expression</property>
-                            <expression name="value">row["isReportLocaleExist"]</expression>
-                        </structure>
-                    </list-property>
-                    <expression name="filterExpr">( row["isReportLocaleExist"] == true )</expression>
-                </structure>
-                <structure>
                     <property name="name">regulDepthLevel_toUse</property>
                     <expression name="expression">(row["regulDepthLevel"] == null) ? 1 : row["regulDepthLevel"];</expression>
                     <property name="dataType">integer</property>
@@ -1254,18 +1237,27 @@ function indent_docx (coef, depthLevel, object) {
                 <structure>
                     <property name="columnName">roundedDisplayValue</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">roundedDisplayValue</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">roundedDisplayValuePerServing</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">roundedDisplayValuePerServing</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">numberOfServings</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">numberOfServings</text-property>
                 </structure>
             </list-property>
             <list-property name="filter">
                 <structure>
                     <property name="operator">is-true</property>
-                    <expression name="expr" type="javascript">row["regulDisplayMode"]=="M" || row["regulDisplayMode"]=="O"</expression>
+                    <expression name="expr" type="javascript">row["regulDisplayMode"]=="M"
+|| (BirtStr.indexOf( reportContext.getMessage("showOptionalNutrients", reportContext.getLocale()), row["reportParameters"]) != -1 &amp;&amp; row["regulDisplayMode"]=="O")</expression>
                 </structure>
             </list-property>
             <list-property name="parameters"/>
@@ -1423,36 +1415,31 @@ function indent_docx (coef, depthLevel, object) {
                     </structure>
                     <structure>
                         <property name="position">31</property>
+                        <property name="name">numberOfServings</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">32</property>
                         <property name="name">runningCount</property>
                         <property name="dataType">integer</property>
                     </structure>
                     <structure>
-                        <property name="position">32</property>
+                        <property name="position">33</property>
                         <property name="name">roundedGDAPercFor100g</property>
                         <property name="dataType">float</property>
                     </structure>
                     <structure>
-                        <property name="position">33</property>
+                        <property name="position">34</property>
                         <property name="name">tableCheck</property>
                         <property name="dataType">integer</property>
                     </structure>
                     <structure>
-                        <property name="position">34</property>
+                        <property name="position">35</property>
                         <property name="name">localNutSort</property>
                         <property name="dataType">integer</property>
                     </structure>
                     <structure>
-                        <property name="position">35</property>
-                        <property name="name">isReportLocaleExist</property>
-                        <property name="dataType">boolean</property>
-                    </structure>
-                    <structure>
                         <property name="position">36</property>
-                        <property name="name">nbIslocalReportLocaleExist</property>
-                        <property name="dataType">integer</property>
-                    </structure>
-                    <structure>
-                        <property name="position">37</property>
                         <property name="name">regulDepthLevel_toUse</property>
                         <property name="dataType">integer</property>
                     </structure>
@@ -1670,8 +1657,15 @@ function indent_docx (coef, depthLevel, object) {
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
+                <structure>
+                    <property name="position">31</property>
+                    <property name="name">numberOfServings</property>
+                    <property name="nativeName">numberOfServings</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/nutLists/nutList]#:#{nutCode;STRING;/@nutCode},{nutListNut;STRING;/@nutListNut},{regulDepthLevel;INT;/@regulDepthLevel},{nutSort;INT;nutListNut/nut/nutSort},{regulSort;INT;/@regulSort},{reportLocales;STRING;nutListNut/nut/reportLocales/},{roundedValue;DOUBLE;/@roundedValue},{roundedValue_US;DOUBLE;/@roundedValue_US},{roundedValuePerServing;DOUBLE;/@roundedValuePerServing},{nutListUnit;STRING;/@nutListUnit},{regulGDA;DOUBLE;/@regulGDA},{nutListGroup;STRING;/@nutListGroup},{nutListMaxi;DOUBLE;/@nutListMaxi},{nutListMini;DOUBLE;/@nutListMini},{legalName;STRING;/@legalName},{description;STRING;/description},{color;STRING;/nutListNut/nut/color},{servingSize;DOUBLE;../../../servingSize},{sort;INT;/@sort},{nutType;STRING;nutListNut/nut/nutType},{reportParameters;STRING;../../../reportParameters},{roundedGDAPerc;DOUBLE;/@roundedGDAPerc},{regulBold;BOOLEAN;/@regulBold},{regulDisplayMode;STRING;/@regulDisplayMode},{regulUnit;STRING;/@regulUnit},{regulLessThan;DOUBLE;/@regulLessThan},{nutListValue;DOUBLE;/@nutListValue},{nutListValuePerServing;DOUBLE;/@nutListValuePerServing},{roundedDisplayValue;STRING;/@roundedDisplayValue},{roundedDisplayValuePerServing;STRING;/@roundedDisplayValuePerServing}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/nutLists/nutList]#:#{nutCode;STRING;/@nutCode},{nutListNut;STRING;/@nutListNut},{regulDepthLevel;INT;/@regulDepthLevel},{nutSort;INT;nutListNut/nut/nutSort},{regulSort;INT;/@regulSort},{reportLocales;STRING;nutListNut/nut/reportLocales/},{roundedValue;DOUBLE;/@roundedValue},{roundedValue_US;DOUBLE;/@roundedValue_US},{roundedValuePerServing;DOUBLE;/@roundedValuePerServing},{nutListUnit;STRING;/@nutListUnit},{regulGDA;DOUBLE;/@regulGDA},{nutListGroup;STRING;/@nutListGroup},{nutListMaxi;DOUBLE;/@nutListMaxi},{nutListMini;DOUBLE;/@nutListMini},{legalName;STRING;/@legalName},{description;STRING;/description},{color;STRING;/nutListNut/nut/color},{servingSize;DOUBLE;../../../servingSize},{sort;INT;/@sort},{nutType;STRING;nutListNut/nut/nutType},{reportParameters;STRING;../../../reportParameters},{roundedGDAPerc;DOUBLE;/@roundedGDAPerc},{regulBold;BOOLEAN;/@regulBold},{regulDisplayMode;STRING;/@regulDisplayMode},{regulUnit;STRING;/@regulUnit},{regulLessThan;DOUBLE;/@regulLessThan},{nutListValue;DOUBLE;/@nutListValue},{nutListValuePerServing;DOUBLE;/@nutListValuePerServing},{roundedDisplayValue;STRING;/@roundedDisplayValue},{roundedDisplayValuePerServing;STRING;/@roundedDisplayValuePerServing},{numberOfServings;STRING;../../../numberOfServings}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -7472,6 +7466,20 @@ dataSetRow["name"]
     <body>
         <grid id="7353">
             <property name="width">7.28125in</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">Column Binding</property>
+                    <expression name="expression" type="javascript">reportContext.getLocale()</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">Column Binding_1</property>
+                    <expression name="expression" type="javascript">reportContext.getMessage("showOptionalNutrients", reportContext.getLocale()), row["reportParameters"])</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+            </list-property>
             <column id="7354">
                 <property name="width">4.072916666666667in</property>
             </column>
@@ -9402,18 +9410,6 @@ dataSetRow["nutListUnit"]
                                 <property name="dataType">integer</property>
                             </structure>
                             <structure>
-                                <property name="name">isReportLocaleExist</property>
-                                <text-property name="displayName">isReportLocaleExist</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["isReportLocaleExist"]</expression>
-                                <property name="dataType">boolean</property>
-                            </structure>
-                            <structure>
-                                <property name="name">nbIslocalReportLocaleExist</property>
-                                <text-property name="displayName">nbIslocalReportLocaleExist</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["nbIslocalReportLocaleExist"]</expression>
-                                <property name="dataType">integer</property>
-                            </structure>
-                            <structure>
                                 <property name="name">reportParameters</property>
                                 <text-property name="displayName">reportParameters</text-property>
                                 <expression name="expression" type="javascript">dataSetRow["reportParameters"]</expression>
@@ -9514,31 +9510,6 @@ dataSetRow["nutListUnit"].replace("/100g", "").replace("/100mL", "")
                                 <property name="strength">-1</property>
                             </structure>
                         </list-property>
-                        <list-property name="filter">
-                            <structure>
-                                <property name="operator">is-true</property>
-                                <expression name="expr" type="javascript">if ( row["nbIslocalReportLocaleExist"] == 0) {
-	true;
-} else {
-
-	if(  row["reportLocales"] == null ||  row["reportLocales"] ==  "") { 
-		true; 
-	} else { 
-
-		var locales = BirtStr.toLower(row["reportLocales"]).replace(/\s/g, '').split(",");
-		var reportLocale = BirtStr.toLower( reportContext.getLocale().toString() );
-	
-		for (var i = 0 ; i &lt; locales.length; i++) {
-			if (locales[i] == reportLocale ) {
-				true;
-				break;
-			}
-		}
-	}
-}</expression>
-                                <property name="updateAggregation">true</property>
-                            </structure>
-                        </list-property>
                         <column id="9112">
                             <property name="style">becpg-col-header</property>
                             <property name="width">2.0729166666666665in</property>
@@ -9590,7 +9561,7 @@ dataSetRow["nutListUnit"].replace("/100g", "").replace("/100mL", "")
                                 <cell id="9072">
                                     <property name="style">becpg-cell-header</property>
                                     <label id="9073">
-                                        <text-property name="text" key="value">Valeur</text-property>
+                                        <text-property name="text" key="valueFor100g">Valeur</text-property>
                                     </label>
                                 </cell>
                                 <cell id="9074">
@@ -9820,7 +9791,6 @@ if (!(reportContext.getOutputFormat().toString()== "docx")) {
                         <property name="pageBreakAfter">auto</property>
                         <property name="pageBreakBefore">auto</property>
                         <property name="pageBreakInside">avoid</property>
-                        <property name="width">2.875in</property>
                         <property name="dataSet">NutList</property>
                         <list-property name="visibility">
                             <structure>
@@ -9879,56 +9849,16 @@ if (!(reportContext.getOutputFormat().toString()== "docx")) {
                             <structure>
                                 <property name="name">localEnergykcalPerServing</property>
                                 <text-property name="displayName">localEnergykcalPerServing</text-property>
-                                <property name="dataType">string</property>
-                                <property name="aggregateFunction">CONCATENATE</property>
+                                <property name="dataType">float</property>
+                                <property name="aggregateFunction">SUM</property>
                                 <list-property name="arguments">
                                     <structure>
                                         <property name="name">Expression</property>
                                         <expression name="value" type="javascript">dataSetRow["roundedValuePerServing"]</expression>
                                     </structure>
-                                    <structure>
-                                        <property name="name">Separat&amp;or</property>
-                                        <expression name="value" type="javascript">","</expression>
-                                    </structure>
-                                    <structure>
-                                        <property name="name">Ma&amp;x length</property>
-                                    </structure>
-                                    <structure>
-                                        <property name="name">Sho&amp;w all values</property>
-                                    </structure>
                                 </list-property>
-                                <expression name="filterExpr" type="javascript">(  row["nutCode"] == "ENER-E14" )</expression>
+                                <expression name="filterExpr" type="javascript">dataSetRow["nutCode"] == "ENER-E14-US"</expression>
                                 <property name="allowExport">true</property>
-                            </structure>
-                            <structure>
-                                <property name="name">localTotalLipidFat</property>
-                                <text-property name="displayName">localTotalLipidFat</text-property>
-                                <property name="dataType">string</property>
-                                <property name="aggregateFunction">CONCATENATE</property>
-                                <list-property name="arguments">
-                                    <structure>
-                                        <property name="name">Expression</property>
-                                        <expression name="value" type="javascript">Formatter.format( dataSetRow["roundedValue"] / 100 * dataSetRow["servingSize"] * 9, "#,##0")</expression>
-                                    </structure>
-                                    <structure>
-                                        <property name="name">Separat&amp;or</property>
-                                        <expression name="value" type="javascript">","</expression>
-                                    </structure>
-                                    <structure>
-                                        <property name="name">Ma&amp;x length</property>
-                                    </structure>
-                                    <structure>
-                                        <property name="name">Sho&amp;w all values</property>
-                                    </structure>
-                                </list-property>
-                                <expression name="filterExpr" type="javascript">( row["nutCode"] == "FAT" )</expression>
-                                <property name="allowExport">true</property>
-                            </structure>
-                            <structure>
-                                <property name="name">reportLocales</property>
-                                <text-property name="displayName">reportLocales</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["reportLocales"]</expression>
-                                <property name="dataType">string</property>
                             </structure>
                             <structure>
                                 <property name="name">servingSize</property>
@@ -9940,12 +9870,6 @@ if (!(reportContext.getOutputFormat().toString()== "docx")) {
                                 <property name="name">localNutSort</property>
                                 <text-property name="displayName">localNutSort</text-property>
                                 <expression name="expression" type="javascript">dataSetRow["localNutSort"]</expression>
-                                <property name="dataType">integer</property>
-                            </structure>
-                            <structure>
-                                <property name="name">nbIslocalReportLocaleExist</property>
-                                <text-property name="displayName">nbIslocalReportLocaleExist</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["nbIslocalReportLocaleExist"]</expression>
                                 <property name="dataType">integer</property>
                             </structure>
                             <structure>
@@ -10014,6 +9938,18 @@ if (!(reportContext.getOutputFormat().toString()== "docx")) {
                                 <expression name="expression" type="javascript">dataSetRow["regulUnit"]</expression>
                                 <property name="dataType">string</property>
                             </structure>
+                            <structure>
+                                <property name="name">numberOfServings</property>
+                                <text-property name="displayName">numberOfServings</text-property>
+                                <expression name="expression" type="javascript">if(dataSetRow["numberOfServings"] == "1"){
+dataSetRow["numberOfServings"] + " serving per container"
+}
+else{
+dataSetRow["numberOfServings"] + " servings per container"
+}</expression>
+                                <property name="dataType">string</property>
+                                <property name="allowExport">true</property>
+                            </structure>
                         </list-property>
                         <structure name="toc"/>
                         <property name="repeatHeader">false</property>
@@ -10025,34 +9961,9 @@ if (!(reportContext.getOutputFormat().toString()== "docx")) {
                                 <property name="strength">-1</property>
                             </structure>
                         </list-property>
-                        <list-property name="filter">
-                            <structure>
-                                <property name="operator">is-true</property>
-                                <expression name="expr" type="javascript">if ( row["nbIslocalReportLocaleExist"] == 0) {
- 	true;
-} else {
-
-	 if(  row["reportLocales"] == null || row["reportLocales"] == "" ) {
-		true ;
-	} else { 
-
-		var locales = BirtStr.toLower(row["reportLocales"]).replace(/\s/g, '').split(",");
-		var reportLocale = BirtStr.toLower( reportContext.getLocale().toString() );
-	
-		for (var i = 0 ; i &lt; locales.length; i++) {
-			if (locales[i] == reportLocale ) {
-				true;
-				break;
-			}
-		}
-	}
-}</expression>
-                                <property name="updateAggregation">true</property>
-                            </structure>
-                        </list-property>
                         <column id="8655">
                             <property name="style">becpg-col-header</property>
-                            <property name="width">1.3125in</property>
+                            <property name="width">1.612in</property>
                         </column>
                         <column id="8656">
                             <property name="width">0.010416666666666666in</property>
@@ -10087,6 +9998,11 @@ if (!(reportContext.getOutputFormat().toString()== "docx")) {
                                     <property name="borderLeftStyle">none</property>
                                     <property name="borderRightStyle">none</property>
                                     <property name="borderTopStyle">none</property>
+                                    <data id="9153">
+                                        <property name="fontWeight">normal</property>
+                                        <property name="display">block</property>
+                                        <property name="resultSetColumn">numberOfServings</property>
+                                    </data>
                                     <label id="8536">
                                         <property name="fontWeight">normal</property>
                                         <property name="display">inline</property>

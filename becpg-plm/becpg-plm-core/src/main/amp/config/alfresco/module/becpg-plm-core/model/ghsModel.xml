@@ -34,7 +34,7 @@
 		<constraint name="ghs:hazardCategories" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>/System/Security/bcpg:entityLists/HazardCategories</value>
+					<value>/System/SecurityLists/bcpg:entityLists/HazardCategories</value>
 				</list>
 			</parameter>
 			<parameter name="constraintType">
@@ -74,6 +74,7 @@
 		<constraint name="ghs:signalWords" type="LIST">
 			<parameter name="allowedValues">
 				<list>
+					<value></value>
 					<value>Warning</value>
 					<value>Danger</value>
 				</list>
@@ -166,6 +167,9 @@
 
 		<aspect name="ghs:sdsAspect">
 			<properties>
+				<property name="ghs:sdsSafetyInstructions">
+					<type>d:text</type>
+				</property>
 				<property name="ghs:sdsSignalWord">
 					<type>d:text</type>
 					<constraints>
@@ -202,7 +206,7 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>ghs:hazardStatement</class>
+						<class>ghs:precautionaryStatement</class>
 						<mandatory>false</mandatory>
 						<many>true</many>
 					</target>

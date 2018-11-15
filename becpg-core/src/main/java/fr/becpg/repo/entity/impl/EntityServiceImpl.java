@@ -39,7 +39,6 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.coci.CheckOutCheckInServiceImpl;
 import org.alfresco.repo.content.MimetypeMap;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
@@ -60,7 +59,9 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.common.BeCPGException;
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.EntityListState;
 import fr.becpg.model.ReportModel;
+import fr.becpg.model.SystemState;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
@@ -533,6 +534,21 @@ public class EntityServiceImpl implements EntityService {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public boolean changeEntityListStates(NodeRef entityNodeRef, EntityListState state) {
+
+		NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
+
+		if (listContainerNodeRef != null) {
+			for (NodeRef listNodeRef : entityListDAO.getExistingListsNodeRef(listContainerNodeRef)) {
+				nodeService.setProperty(listNodeRef, BeCPGModel.PROP_ENTITYLIST_STATE, state.toString());
+			}
+		}
+
+		return true;
+		
 	}
 
 

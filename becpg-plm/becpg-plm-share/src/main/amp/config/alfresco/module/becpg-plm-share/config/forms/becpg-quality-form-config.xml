@@ -1058,7 +1058,7 @@
 		</forms>
 	</config>
 
-	<!-- Deprecated To remove after 2.2.3 -->
+	<!-- Deprecated To remove after 2.2.4 -->
 	<!-- qa:workLog type (existing nodes) -->
 	<config evaluator="node-type" condition="qa:workLog">
 		<forms>

@@ -12,9 +12,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.EntityListState;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.PLMWorkflowModel;
 import fr.becpg.model.SystemState;
+import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.policy.CodePolicy;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
@@ -26,6 +28,7 @@ public class ProductPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 	
 	private String propertiesToReset;
 	
+	private EntityService entityService;
 	
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
@@ -33,6 +36,10 @@ public class ProductPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 
 	public void setPropertiesToReset(String propertiesToReset) {
 		this.propertiesToReset = propertiesToReset;
+	}
+
+	public void setEntityService(EntityService entityService) {
+		this.entityService = entityService;
 	}
 
 	/**
@@ -57,6 +64,8 @@ public class ProductPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 			nodeService.setProperty(destinationRef, PLMModel.PROP_PRODUCT_STATE, SystemState.Simulation);
 			nodeService.setProperty(destinationRef, PLMModel.PROP_ERP_CODE, null);
 			
+			entityService.changeEntityListStates(destinationRef, EntityListState.ToValidate);
+			
 			if(propertiesToReset!=null) {
 		        for(String propertyToKeep : propertiesToReset.split(",")) {
 		        	
@@ -74,11 +83,12 @@ public class ProductPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 				nodeService.removeAspect(destinationRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT);
 			}
 			// Allow to determine if is a branch or a version
-			if (!policyBehaviourFilter.isEnabled(BeCPGModel.ASPECT_ENTITY_BRANCH)) {
-				if (nodeService.hasAspect(destinationRef, BeCPGModel.ASPECT_ENTITY_BRANCH)) {
-					nodeService.removeAspect(destinationRef, BeCPGModel.ASPECT_ENTITY_BRANCH);
-				}
+			
+			//if (!policyBehaviourFilter.isEnabled(BeCPGModel.ASPECT_ENTITY_BRANCH)) {
+			if (nodeService.hasAspect(destinationRef, BeCPGModel.ASPECT_ENTITY_BRANCH)) {
+				nodeService.removeAspect(destinationRef, BeCPGModel.ASPECT_ENTITY_BRANCH);
 			}
+			//}
 		}
 
 	}

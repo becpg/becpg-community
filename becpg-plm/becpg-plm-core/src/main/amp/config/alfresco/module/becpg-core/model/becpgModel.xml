@@ -1426,7 +1426,6 @@
 				<property name="bcpg:costListValue">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
-					<index enabled="false" />
 				</property>
 				<property name="bcpg:costListUnit">
 					<type>d:text</type>
@@ -1822,7 +1821,6 @@
 				<property name="bcpg:nutListValue">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
-					<index enabled="false" />
 				</property>
 				<property name="bcpg:nutListFormulatedValue">
 					<type>d:double</type>
@@ -1939,7 +1937,6 @@
 				<property name="bcpg:pclValue">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
-					<index enabled="false" />
 				</property>
 				<property name="bcpg:pclUnit">
 					<type>d:text</type>
@@ -2320,6 +2317,15 @@
 		<type name="bcpg:labelClaim">
 			<parent>bcpg:charact</parent>
 			<properties>
+				<property name="bcpg:labelClaimCode">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>false</tokenised>
+					</index>
+				</property>
 				<property name="bcpg:labelClaimType">
 					<type>d:text</type>
 					<index enabled="true">
@@ -3553,6 +3559,218 @@
 				</property>
 			</properties>
 		</aspect>
+
+		<aspect name="bcpg:advSearchAspect">
+			<properties>
+				<property name="bcpg:advPclValue1">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false"></index>
+				</property>
+				<property name="bcpg:advPclValue2">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false"></index>
+				</property>
+				<property name="bcpg:advClValue1">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false"></index>
+				</property>
+				<property name="bcpg:advClValue2">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false"></index>
+				</property>
+				<property name="bcpg:advNlValue1">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false"></index>
+				</property>
+				<property name="bcpg:advNlValue2">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false"></index>
+				</property>
+				<property name="bcpg:advNlValue3">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false"></index>
+				</property>
+			</properties>
+		
+			<associations>
+					 <association name="bcpg:advIlIngAnd">
+						<source>
+							<mandatory>false</mandatory>
+							<many>true</many>
+						</source>
+						<target>
+							<class>bcpg:ing</class>
+							<mandatory>false</mandatory>
+							<many>true</many>
+						</target>
+					</association>
+			 		<association name="bcpg:advIlIngNot">
+						<source>
+							<mandatory>false</mandatory>
+							<many>true</many>
+						</source>
+						<target>
+							<class>bcpg:ing</class>
+							<mandatory>false</mandatory>
+							<many>true</many>
+						</target>
+					</association>
+			
+				  <association name="bcpg:advAlVolAnd">
+						<source>
+							<mandatory>false</mandatory>
+							<many>true</many>
+						</source>
+						<target>
+							<class>bcpg:allergen</class>
+							<mandatory>false</mandatory>
+							<many>true</many>
+						</target>
+					</association>
+					<association name="bcpg:advAlInVolAnd">
+						<source>
+							<mandatory>false</mandatory>
+							<many>true</many>
+						</source>
+						<target>
+							<class>bcpg:allergen</class>
+							<mandatory>false</mandatory>
+							<many>true</many>
+						</target>
+					</association>
+					 <association name="bcpg:advAlVolNot">
+						<source>
+							<mandatory>false</mandatory>
+							<many>true</many>
+						</source>
+						<target>
+							<class>bcpg:allergen</class>
+							<mandatory>false</mandatory>
+							<many>true</many>
+						</target>
+					</association>
+					<association name="bcpg:advAlInVolNot">
+						<source>
+							<mandatory>false</mandatory>
+							<many>true</many>
+						</source>
+						<target>
+							<class>bcpg:allergen</class>
+							<mandatory>false</mandatory>
+							<many>true</many>
+						</target>
+					</association>
+					
+					<association name="bcpg:advLclClaimAnd">
+						<source>
+							<mandatory>false</mandatory>
+							<many>true</many>
+						</source>
+						<target>
+							<class>bcpg:labelClaim</class>
+							<mandatory>false</mandatory>
+							<many>true</many>
+						</target>
+					</association>
+					<association name="bcpg:advLclClaimNot">
+						<source>
+							<mandatory>false</mandatory>
+							<many>true</many>
+						</source>
+						<target>
+							<class>bcpg:labelClaim</class>
+							<mandatory>false</mandatory>
+							<many>true</many>
+						</target>
+					</association>
+					
+					<association name="bcpg:advNlNut1">
+						<source>
+							<mandatory>false</mandatory>
+							<many>true</many>
+						</source>
+						<target>
+							<class>bcpg:nut</class>
+							<mandatory>false</mandatory>
+							<many>false</many>
+						</target>
+					</association>
+					<association name="bcpg:advNlNut2">
+						<source>
+							<mandatory>false</mandatory>
+							<many>true</many>
+						</source>
+						<target>
+							<class>bcpg:nut</class>
+							<mandatory>false</mandatory>
+							<many>false</many>
+						</target>
+					</association>
+					<association name="bcpg:advNlNut3">
+						<source>
+							<mandatory>false</mandatory>
+							<many>true</many>
+						</source>
+						<target>
+							<class>bcpg:nut</class>
+							<mandatory>false</mandatory>
+							<many>false</many>
+						</target>
+					</association>
+					<association name="bcpg:advPclPhysicoChem1">
+						<source>
+							<mandatory>false</mandatory>
+							<many>true</many>
+						</source>
+						<target>
+							<class>bcpg:physicoChem</class>
+							<mandatory>false</mandatory>
+							<many>false</many>
+						</target>
+					</association>
+					<association name="bcpg:advPclPhysicoChem2">
+						<source>
+							<mandatory>false</mandatory>
+							<many>true</many>
+						</source>
+						<target>
+							<class>bcpg:physicoChem</class>
+							<mandatory>false</mandatory>
+							<many>false</many>
+						</target>
+					</association>
+					<association name="bcpg:advClCost1">
+						<source>
+							<mandatory>false</mandatory>
+							<many>true</many>
+						</source>
+						<target>
+							<class>bcpg:cost</class>
+							<mandatory>false</mandatory>
+							<many>false</many>
+						</target>
+					</association>
+					<association name="bcpg:advClCost2">
+						<source>
+							<mandatory>false</mandatory>
+							<many>true</many>
+						</source>
+						<target>
+							<class>bcpg:cost</class>
+							<mandatory>false</mandatory>
+							<many>false</many>
+						</target>
+					</association>
+			</associations>
+		</aspect>
+
 		
 	</aspects>
 </model>
