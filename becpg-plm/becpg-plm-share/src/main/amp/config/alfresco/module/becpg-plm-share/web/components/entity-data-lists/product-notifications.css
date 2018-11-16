@@ -497,7 +497,8 @@ div.dataTypeList {
 	border-right: 0px;
 }
 
-.product-notifications .notifications-list /** Full screen mode */ 
+/** Full screen mode */ 
+.product-notifications .notifications-list
 .full-screen .sticky-footer, .full-screen  .sticky-push {
 	height: 0px;
 }
