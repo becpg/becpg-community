@@ -13,7 +13,7 @@ CHOL-;Cholesterol;5;1;true;false;true;300;;mg
 CHOLN;CholineTot;;;;;;;3500;mg
 CR;Chromium;;1;false;true;false;120;;µg
 CU;Copper;;1;false;true;false;2;10;mg
-ENER-E14-US;Energy kcal;1;1;true;false;true;2000;;kcal
+US_ENER-E14;Energy kcal;1;1;true;false;true;2000;;kcal
 F10D0;FA 10:0, capric;;;;;;;;
 F12D0;FA 12:0, lauric;;;;;;;;
 F14D0;FA 14:0 , myristic;;;;;;;;
