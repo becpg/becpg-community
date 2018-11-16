@@ -350,6 +350,11 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	private List<SiteInfo> visitSites() {
 
 		List<SiteInfo> ret = new ArrayList<>();
+		
+		List<SiteInfo> sites = siteService.listSites(null, null);
+		if(sites!=null && sites.size()>2) {
+			return ret;
+		}
 
 		for (String siteId : new String[] { SIMULATION_SITE_ID, VALID_SITE_ID, ARCHIVED_SITE_ID }) {
 
