@@ -8,7 +8,7 @@ public interface NutrientRegulation {
 
 	Double round(Double value, String nutrientTypeCode, String nutUnit);
 
-	Double roundGDA(Double value);
+	Double roundGDA(Double value, String nutrientTypeCode);
 
 	NutrientDefinition getNutrientDefinition(String nutCode);
 	

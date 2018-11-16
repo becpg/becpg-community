@@ -1,6 +1,8 @@
 package fr.becpg.repo.product.formulation.nutrient;
 
-import java.text.DecimalFormat;
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.Locale;
 
 import org.apache.commons.logging.Log;
@@ -13,16 +15,12 @@ public class UsNutrientRegulation extends AbstractNutrientRegulation {
 	public UsNutrientRegulation(String path) {
 		super(path);
 	}
-	
-	
 
 	@Override
 	protected Double roundByCode(Double value, String nutrientTypeCode) {
 
 		if(value != null){
-			if (nutrientTypeCode.equals(NutrientCode.Energykcal)
-				|| nutrientTypeCode.equals(NutrientCode.EnergyFromFat)
-				|| nutrientTypeCode.equals(NutrientCode.EnergyFromSatFat)) {
+			if (nutrientTypeCode.equals(NutrientCode.EnergykcalUS)) {
 				if (value > 50) {
 					return roundValue(value,10d);
 				} else if ((value >= 5) && (value <= 50)) {
@@ -77,11 +75,13 @@ public class UsNutrientRegulation extends AbstractNutrientRegulation {
 					|| nutrientTypeCode.equals(NutrientCode.Calcium)
 					|| nutrientTypeCode.equals(NutrientCode.Iron)
 					|| nutrientTypeCode.equals(NutrientCode.Potassium)) {
-				roundValue(value,1d);
+				return roundValue(value,1d);
 			}
 		}
 		
-		return roundValue(value,0.1d);
+		BigDecimal bd = new BigDecimal(value);
+		bd = bd.round(new MathContext(3,RoundingMode.HALF_EVEN));
+		return bd.doubleValue();
 	}
 	
 	protected String displayValueByCode(Double value, Double roundedValue, String nutrientTypeCode, Locale locale) {
@@ -98,8 +98,74 @@ public class UsNutrientRegulation extends AbstractNutrientRegulation {
 						|| nutrientTypeCode.equals(NutrientCode.Polyols)
 						) && value<1 && value >= 0.5) {
 				return "<1";
+			} else if (nutrientTypeCode.equals(NutrientCode.VitA)
+					|| nutrientTypeCode.equals(NutrientCode.VitC)
+					|| nutrientTypeCode.equals(NutrientCode.VitE)
+					|| nutrientTypeCode.equals(NutrientCode.VitK1)
+					|| nutrientTypeCode.equals(NutrientCode.VitK2)
+					|| nutrientTypeCode.equals(NutrientCode.Thiamin)
+					|| nutrientTypeCode.equals(NutrientCode.Riboflavin)
+					|| nutrientTypeCode.equals(NutrientCode.Niacin)
+					|| nutrientTypeCode.equals(NutrientCode.VitB6)
+					|| nutrientTypeCode.equals(NutrientCode.Folate)
+					|| nutrientTypeCode.equals(NutrientCode.VitB12)
+					|| nutrientTypeCode.equals(NutrientCode.Biotin)
+					|| nutrientTypeCode.equals(NutrientCode.PantoAcid)
+					|| nutrientTypeCode.equals(NutrientCode.Phosphorus)
+					|| nutrientTypeCode.equals(NutrientCode.Iodine)
+					|| nutrientTypeCode.equals(NutrientCode.Magnesium)
+					|| nutrientTypeCode.equals(NutrientCode.Zinc)
+					|| nutrientTypeCode.equals(NutrientCode.Selenium)
+					|| nutrientTypeCode.equals(NutrientCode.Copper)
+					|| nutrientTypeCode.equals(NutrientCode.Manganese)
+					|| nutrientTypeCode.equals(NutrientCode.Chromium)
+					|| nutrientTypeCode.equals(NutrientCode.Choline)) {
+				return "";
 			}
 		}
 		return formatDouble(roundedValue, locale);
+	}
+	
+	@Override
+	public Double roundGDA(Double value, String nutrientTypeCode) {
+		if(value != null){
+			if (nutrientTypeCode.equals(NutrientCode.VitD)
+				|| nutrientTypeCode.equals(NutrientCode.Calcium)
+				|| nutrientTypeCode.equals(NutrientCode.Iron)
+				|| nutrientTypeCode.equals(NutrientCode.Potassium)
+				||	nutrientTypeCode.equals(NutrientCode.VitA)
+				|| nutrientTypeCode.equals(NutrientCode.VitC)
+				|| nutrientTypeCode.equals(NutrientCode.VitE)
+				|| nutrientTypeCode.equals(NutrientCode.VitK1)
+				|| nutrientTypeCode.equals(NutrientCode.VitK2)
+				|| nutrientTypeCode.equals(NutrientCode.Thiamin)
+				|| nutrientTypeCode.equals(NutrientCode.Riboflavin)
+				|| nutrientTypeCode.equals(NutrientCode.Niacin)
+				|| nutrientTypeCode.equals(NutrientCode.VitB6)
+				|| nutrientTypeCode.equals(NutrientCode.Folate)
+				|| nutrientTypeCode.equals(NutrientCode.VitB12)
+				|| nutrientTypeCode.equals(NutrientCode.Biotin)
+				|| nutrientTypeCode.equals(NutrientCode.PantoAcid)
+				|| nutrientTypeCode.equals(NutrientCode.Phosphorus)
+				|| nutrientTypeCode.equals(NutrientCode.Iodine)
+				|| nutrientTypeCode.equals(NutrientCode.Magnesium)
+				|| nutrientTypeCode.equals(NutrientCode.Zinc)
+				|| nutrientTypeCode.equals(NutrientCode.Selenium)
+				|| nutrientTypeCode.equals(NutrientCode.Copper)
+				|| nutrientTypeCode.equals(NutrientCode.Manganese)
+				|| nutrientTypeCode.equals(NutrientCode.Chromium)
+				|| nutrientTypeCode.equals(NutrientCode.Molybdenum)
+				|| nutrientTypeCode.equals(NutrientCode.Chloride)
+				|| nutrientTypeCode.equals(NutrientCode.Choline)) {
+				if (value > 50) {
+					return roundValue(value, 10d);
+				} else if (value > 10) {
+					return roundValue(value, 5d);
+				} else {
+					return roundValue(value, 2d);
+				}
+			}
+		}
+		return roundValue(value, 1d);
 	}
 }

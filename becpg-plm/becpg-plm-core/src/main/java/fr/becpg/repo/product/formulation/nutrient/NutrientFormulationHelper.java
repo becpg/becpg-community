@@ -270,7 +270,7 @@ public class NutrientFormulationHelper {
 				if(n.getValuePerServing() != null){
 					valuePerServing.put(key,regulation.round(n.getValuePerServing(), nutCode, nutUnit));
 					if(def!=null &&  def.getGda()!=null &&  def.getGda()!=0) {
-						gda.put(key, regulation.roundGDA(100 * n.getValuePerServing() / def.getGda()));
+						gda.put(key, regulation.roundGDA(100 * n.getValuePerServing() / def.getGda(), nutCode));
 					}
 				}
 			}
@@ -327,6 +327,13 @@ public class NutrientFormulationHelper {
 			return null;
 		}
 		return getRegulation(getLocalKey(locale)).displayValue(value, roundedValue, nutCode, locale);
+	}
+	
+	public static Double roundGDA(Double value, String nutCode, Locale locale) {
+		if(value == null){
+			return null;
+		}
+		return getRegulation(getLocalKey(locale)).roundGDA(value, nutCode);
 	}
 
 	private static NutrientRegulation getRegulation(String key) {

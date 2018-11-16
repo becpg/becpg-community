@@ -10,9 +10,9 @@ CA;Calcium, Ca;12;1;true;false;false;1300;;mg
 CHOAVL;Carbohydrate, by difference;;;;;;;;
 CHO-;Carbohydrate, by difference (with fiber);5;1;true;false;true;;;g
 CHOL-;Cholesterol;9;1;true;false;true;300;;mg
-CHOLN;CholineTot;;1;false;true;false;550;;
-CR;Chromium;;1;false;true;false;35;;
-CU;Copper;;1;false;true;false;0,9;;
+CHOLN;CholineTot;;1;false;true;false;550;;mg
+CR;Chromium;;1;false;true;false;35;;µg
+CU;Copper;;1;false;true;false;0,9;;mg
 ENER-E14-US;Energy kcal;1;1;true;false;true;2000;;kcal
 ENER-KJO;Energy kJ;;;;;;;;
 ENER-;Energy kJ, without dietary fibre;;;;;;;;
@@ -38,50 +38,50 @@ FIBTG;Fiber, total dietary;6;2;true;false;false;28;;g
 FOLDFE;Folate DFE;;;;;;;;
 FOLFD;Folate natural;;;;;;;;
 FOLAC;Folic acid;;;;;;;;
-FOL;Food folate;;1;false;true;false;400;;
+FOL;Food folate;;1;false;true;false;400;;µg
 FIBINS;Insoluble fiber;;;;;;;;
-ID;Iodine;;1;false;true;false;150;;
+ID;Iodine;;1;false;true;false;150;;µg
 FE;Iron, Fe;13;1;true;false;false;18;;mg
 LYCPN;Lycopene;;;;;;;;
-MG;Magnesium, Mg;;1;false;true;false;420;;
-MN;Manganese;;1;false;true;false;2,3;;
-NIA;Niacin;;1;false;true;false;16;;
+MG;Magnesium, Mg;;1;false;true;false;420;;mg
+MN;Manganese;;1;false;true;false;2,3;;mg
+NIA;Niacin;;1;false;true;false;16;;mg
 NIAEQ;Niacine (derived equivalents);;;;;;;;
 PSACNS;NSP Fiber;;;;;;;;
 OA;Organic acids, total;;;;;;;;
-PANTAC;Panto acid;;1;false;true;false;5;;
-P;Phosphorus, P;;1;false;true;false;1250;;
+PANTAC;Panto acid;;1;false;true;false;5;;mg
+P;Phosphorus, P;;1;false;true;false;1250;;mg
 POLYL;Polyols total;;;;;;;;
 K;Potassium, k;11;1;false;true;false;4700;;mg
 PRO-;Protein;8;1;true;false;true;;;g
 CARTBEQ;Provitamin A (b-carotene equivalents);;;;;;;;
 PROCNT;Raw proteins (N x 6.25);;;;;;;;
 RETOL;Retinol;;;;;;;;
-RIBF;Riboflavin;;1;false;true;false;1,3;;
+RIBF;Riboflavin;;1;false;true;false;1,3;;mg
 NACL;Salt;;;;;;;;
-SE;Selenium;;1;false;true;false;55;;
+SE;Selenium;;1;false;true;false;55;;µg
 NA;Sodium, Na;10;1;true;false;true;2300;;mg
 FIBSOL;Soluble fiber;;;;;;;;
 STARCH;Starch;;;;;;;;
 SUGAR;Sugars total;7;2;true;false;false;100;;g
-THIA;Thiamin;;1;false;true;false;1,2;;
+THIA;Thiamin;;1;false;true;false;1,2;;mg
 FAT;Total lipid (fat);2;1;true;false;true;75;;g
 FAPUN3F;Total omega 3 fatty acids;;;;;;;;
 FATRN;Total trans fatty acids;4;2;true;false;false;;;g
 TRP;Tryptophan;;;;;;;;
-VITA-;Vitamin A;;1;true;false;false;900;;
+VITA-;Vitamin A;;1;true;false;false;900;;µg
 VITA;Vitamin A retinol equivalents;;;;;;;;
 VITA-IU;Vitamin A, IU;;;;;;;;
 VITA-RAE;Vitamin A, RAE;;;;;;;;
-VITB12;Vitamin B-12;;1;false;true;false;2,4;;
-VITB6-;Vitamin B-6;;1;false;true;false;1,7;;
-BIOT;Vitamin B7 (Biotin);;1;false;true;false;30;;
-VITC-;Vitamin C, total ascorbic acid;;1;true;false;false;90;;
-VITD-;VITAMIN D;;1;false;true;false;20;;
+VITB12;Vitamin B-12;;1;false;true;false;2,4;;µg
+VITB6-;Vitamin B-6;;1;false;true;false;1,7;;mg
+BIOT;Vitamin B7 (Biotin);;1;false;true;false;30;;µg
+VITC-;Vitamin C, total ascorbic acid;;1;true;false;false;90;;mg
+VITD-;VITAMIN D;;1;false;true;false;20;;µg
 VITDEQ;Vitamin D (D2 + D3);;;;;;;;
-VITE-;Vitamin E;;1;false;true;false;15;;
+VITE-;Vitamin E;;1;false;true;false;15;;mg
 TOCPHA;Vitamin E (alpha-tocopherol);;;;;;;;
-VITK1;Vitamin K (phylloquinone);;1;false;true;false;120;;
+VITK1;Vitamin K (phylloquinone);;1;false;true;false;120;;µg
 VITK2;Vitamin K2;;;;;;;;
 WATER;Water;;;;;;;;
-ZN;Zinc, Zn;;1;false;true;false;11;;
+ZN;Zinc, Zn;;1;false;true;false;11;;mg

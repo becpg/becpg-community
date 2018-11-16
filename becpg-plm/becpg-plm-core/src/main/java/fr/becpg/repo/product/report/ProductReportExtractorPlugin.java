@@ -58,6 +58,7 @@ import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
+import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.MicrobioListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.OrganoListDataItem;
@@ -83,7 +84,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	protected static final List<QName> DATALIST_SPECIFIC_EXTRACTOR = Arrays.asList(PLMModel.TYPE_COMPOLIST, PLMModel.TYPE_PACKAGINGLIST,
 			MPMModel.TYPE_PROCESSLIST, PLMModel.TYPE_MICROBIOLIST, PLMModel.TYPE_INGLABELINGLIST, PLMModel.TYPE_NUTLIST, PLMModel.TYPE_ORGANOLIST,
-			PLMModel.TYPE_INGLIST, PLMModel.TYPE_FORBIDDENINGLIST, PLMModel.TYPE_LABELINGRULELIST, PLMModel.TYPE_REQCTRLLIST);
+			PLMModel.TYPE_INGLIST, PLMModel.TYPE_FORBIDDENINGLIST, PLMModel.TYPE_LABELINGRULELIST, PLMModel.TYPE_REQCTRLLIST, PLMModel.TYPE_LABELCLAIMLIST);
 
 	private static final Log logger = LogFactory.getLog(ProductReportExtractorPlugin.class);
 
@@ -124,7 +125,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	private Boolean extractPriceBreaks = false;
 	
 	@Value("${beCPG.product.report.extractRawMaterial}")
-	private Boolean extractRawMaterial = true;
+	private Boolean extractRawMaterial = false;
 	
 
 	@Value("${beCPG.product.report.showDeprecatedXml}")
@@ -246,6 +247,11 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			if (isExtractedProduct || context.prefsContains("componentDatalistsToExtract", componentDatalistsToExtract,
 					PLMModel.TYPE_ORGANOLIST.toPrefixString(namespaceService))) {
 				loadOrganoLists(productData, dataListsElt, context);
+			}
+			
+			if (isExtractedProduct || context.prefsContains("componentDatalistsToExtract", componentDatalistsToExtract,
+					PLMModel.TYPE_LABELCLAIMLIST.toPrefixString(namespaceService))) {
+				loadLabelCLaimLists(productData, dataListsElt, context);
 			}
 
 			if (isExtractedProduct || context.prefsContains("componentDatalistsToExtract", componentDatalistsToExtract,
@@ -938,6 +944,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					}
 
 					nutListElt.addAttribute(NutrientFormulationHelper.ATTR_NUT_CODE,(String)nodeService.getProperty(dataListItem.getNut(),GS1Model.PROP_NUTRIENT_TYPE_CODE) );
+					nutListElt.addAttribute(BeCPGModel.PROP_COLOR.getLocalName(),(String)nodeService.getProperty(dataListItem.getNut(),BeCPGModel.PROP_COLOR) );
 					
 					NutrientFormulationHelper.extractXMLAttribute(nutListElt , dataListItem.getRoundedValue(), I18NUtil.getLocale());
 					
@@ -973,6 +980,32 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				addDataListState(organoListsElt, dataListItem.getParentNodeRef());
 				Element organoListElt = organoListsElt.addElement(PLMModel.TYPE_ORGANOLIST.getLocalName());
 				loadDataListItemAttributes(dataListItem, organoListElt, context);
+			}
+		}
+	}
+	
+	private void loadLabelCLaimLists(ProductData productData, Element dataListsElt, DefaultExtractorContext context) {
+		if ((productData.getLabelClaimList() != null) && !productData.getLabelClaimList().isEmpty()) {
+			Element lcListsElt = dataListsElt.addElement(PLMModel.TYPE_LABELCLAIMLIST.getLocalName() + "s");
+
+			for (LabelClaimListDataItem dataListItem : productData.getLabelClaimList()) {
+
+				addDataListState(lcListsElt, dataListItem.getParentNodeRef());
+				Element lcListElt = lcListsElt.addElement(PLMModel.TYPE_LABELCLAIMLIST.getLocalName());
+				loadDataListItemAttributes(dataListItem, lcListElt, context);
+				
+				String code = (String)nodeService.getProperty(dataListItem.getLabelClaim(), PLMModel.PROP_LABEL_CLAIM_CODE);
+				String displayMode = "O";
+				if(code != null){
+					if(code.startsWith("US") && !I18NUtil.getLocale().getCountry().equals("US")){
+						displayMode = "";
+					} else if(code.startsWith("EU") && (I18NUtil.getLocale().getCountry().equals("US") 
+							|| I18NUtil.getLocale().getLanguage().equals("zh") || I18NUtil.getLocale().getCountry().equals("AU") 
+							|| I18NUtil.getLocale().getCountry().equals("NZ"))){
+						displayMode = "";
+					}
+				}
+				lcListElt.addAttribute("regulDisplayMode", displayMode);
 			}
 		}
 	}
