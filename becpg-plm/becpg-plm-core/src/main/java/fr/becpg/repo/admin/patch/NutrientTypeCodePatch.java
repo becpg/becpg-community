@@ -120,11 +120,7 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 
 		nutrientTypeCode.put("Energy kcal", "ENER-E14");
 		nutrientTypeCode.put("Energy kJ", "ENER-KJO");
-		nutrientTypeCode.put("Energy kcal, labelling", "ENER-E14");
-		nutrientTypeCode.put("Energy kJ, labelling", "ENER-KJO");
-		nutrientTypeCode.put("Energy kcal Canada, USA", "ENER-E14");
-		nutrientTypeCode.put("Energy kJ Canada, USA", "ENER-KJO");
-		nutrientTypeCode.put("Energy kJ, without dietary fibre", "ENER-");
+		nutrientTypeCode.put("Energy kcal Canada, USA", "US_ENER-E14");
 
 		nutrientTypeCode.put("Salt", "NACL");
 		nutrientTypeCode.put("Points (SP)", "");
@@ -217,11 +213,7 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 
 		nutrientTypeCode.put("Energie kcal", "ENER-E14");
 		nutrientTypeCode.put("Energie kJ", "ENER-KJO");
-		nutrientTypeCode.put("Energie kcal, étiquetage", "ENER-E14");
-		nutrientTypeCode.put("Energie kJ, étiquetage", "ENER-KJO");
-		nutrientTypeCode.put("Energie kcal Canada, USA", "ENER-E14");
-		nutrientTypeCode.put("Energie kJ Canada, USA", "ENER-KJO");
-		nutrientTypeCode.put("Energie kJ, sans fibres alimentaires", "ENER-");
+		nutrientTypeCode.put("Energie kcal Canada, USA", "US_ENER-E14");
 
 		nutrientTypeCode.put("Sel", "NACL");
 		nutrientTypeCode.put("Résidu à sec", "ASH");
