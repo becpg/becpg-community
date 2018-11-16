@@ -75,8 +75,8 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 		nutrientTypeCode.put("Retinol", "RETOL");
 		nutrientTypeCode.put("Beta-caroten", "CARTB");
 		nutrientTypeCode.put("Vitamin A", "VITA-");
-		nutrientTypeCode.put("Vitamin A, IU", "VITA-IU");
-		nutrientTypeCode.put("Vitamin A, RAE", "VITA-RAE");
+		nutrientTypeCode.put("Vitamin A, IU", "VITAA");
+		nutrientTypeCode.put("Vitamin A retinol equivalents", "VITA");
 		nutrientTypeCode.put("VITAMIN D", "VITD-");
 		nutrientTypeCode.put("Vitamin D (D2 + D3)", "VITDEQ");
 		nutrientTypeCode.put("Vitamin E (alpha-tocopherol)", "TOCPHA");
@@ -127,9 +127,7 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 		nutrientTypeCode.put("Points (SP)(Arrondi)", "");
 		nutrientTypeCode.put("Ash", "ASH");
 		nutrientTypeCode.put("Alpha-Carot", "CARTA");
-		nutrientTypeCode.put("Carbohydrates, without sugar alcohol", "CHOAVL");
 		nutrientTypeCode.put("Provitamin A (b-carotene equivalents)", "CARTBEQ");
-		nutrientTypeCode.put("Vitamin A retinol equivalents", "VITA");
 		nutrientTypeCode.put("Niacine (derived equivalents)", "NIAEQ");
 		nutrientTypeCode.put("Caffein", "CAFFN");
 		nutrientTypeCode.put("Tryptophan", "TRP");
@@ -168,8 +166,8 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 		nutrientTypeCode.put("Rétinol", "RETOL");
 		nutrientTypeCode.put("Bêtacarotène", "CARTB");
 		nutrientTypeCode.put("Vitamine A", "VITA-");
-		nutrientTypeCode.put("Vitamine A, IU", "VITA-IU");
-		nutrientTypeCode.put("Vitamine A, équivalent activité rétinol (EAR)", "VITA-EAR");
+		nutrientTypeCode.put("Vitamine A, IU", "VITAA");
+		nutrientTypeCode.put("Vitamine A (équivalent rétinol)", "VITA");
 		nutrientTypeCode.put("Vitamine D", "VITD-");
 		nutrientTypeCode.put("Vitamine D (D2 + D3)", "VITDEQ");
 		nutrientTypeCode.put("Activité vitaminique E (en équivalents alpha-tocophérol)", "TOCPHA");
@@ -218,9 +216,7 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 		nutrientTypeCode.put("Sel", "NACL");
 		nutrientTypeCode.put("Résidu à sec", "ASH");
 		nutrientTypeCode.put("Alpha-carotene", "CARTA");
-		nutrientTypeCode.put("Glucides, sans sucres de l'alcool", "CHOAVL");
 		nutrientTypeCode.put("Provitamine A (équivalent b-carotène)", "CARTBEQ");
-		nutrientTypeCode.put("Vitamine A (équivalent rétinol)", "VITA");
 		nutrientTypeCode.put("Niacine (équivalent dérivés)", "NIAEQ");
 		nutrientTypeCode.put("Caféine", "CAFFN");
 		nutrientTypeCode.put("Tryptophane", "TRP");
