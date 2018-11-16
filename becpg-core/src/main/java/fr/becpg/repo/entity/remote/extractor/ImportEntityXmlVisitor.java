@@ -712,11 +712,13 @@ public class ImportEntityXmlVisitor {
 		}
 
 		private NodeRef findNodeByPath(String parentPath) {
+			NodeRef ret = null;
 
 			NodeRef rootNode = serviceRegistry.getNodeService().getRootNode(RepoConsts.SPACES_STORE);
-
-			NodeRef ret = BeCPGQueryBuilder.createQuery().selectNodeByPath(rootNode, parentPath);
-
+			if(parentPath!=null && !parentPath.isEmpty()) {
+				ret = BeCPGQueryBuilder.createQuery().selectNodeByPath(rootNode, parentPath);
+			}
+			
 			if (ret == null) {
 				ret = BeCPGQueryBuilder.createQuery().selectNodeByPath(rootNode, FULL_PATH_IMPORT_TO_DO);
 			}
