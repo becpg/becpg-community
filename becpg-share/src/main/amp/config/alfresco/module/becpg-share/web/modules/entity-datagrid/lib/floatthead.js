@@ -1102,11 +1102,4 @@
     });
     return this;
   };
-})((function(){
-  var $ = window.jQuery;
-  if(typeof module !== 'undefined' && module.exports && !$) {
-    // only use cjs if they dont have a jquery for me to use, and we have commonjs
-    $ = require('jquery');
-  }
-  return $;
-})());
+})(jQuery);

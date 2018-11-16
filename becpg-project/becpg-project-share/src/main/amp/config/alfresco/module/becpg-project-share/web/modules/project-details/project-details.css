@@ -63,7 +63,7 @@
     font-weight: 700;
 }
 
-..project-details vertical-top,
+.project-details vertical-top,
 .project-details .medium-title {
     vertical-align: top;
     margin-top: 6px;
@@ -179,7 +179,7 @@
 
 .project-details .bar-description{
 	font-size: 12px;
-	-moz-inline-box;
+	display:-moz-inline-box;
 	position:absolute;
 	float: right;
 	color: black;
