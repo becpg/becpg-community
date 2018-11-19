@@ -93,7 +93,6 @@ public class NutrientFormulationHelper {
 		JSONObject jsonRound;
 		try {
 			jsonRound = new JSONObject(roundedValue);
-
 			if (jsonRound.has(item)) {
 				JSONObject value = (JSONObject) jsonRound.get(item);
 				if (value.has(key)) {
@@ -129,71 +128,72 @@ public class NutrientFormulationHelper {
 			Element reportLocales = (Element)nutListElt.selectSingleNode("nutListNut/nut/reportLocales");
 			try {
 				JSONObject jsonRound = new JSONObject(roundedValue);
-				for (Iterator<?> i = jsonRound.keys(); i.hasNext();) {
-					String valueKey = (String) i.next();
-					JSONObject value = (JSONObject) jsonRound.get(valueKey);
-					for (Iterator<?> j = value.keys(); j.hasNext();) {
-						String locKey = (String) j.next();
-
-						NutrientRegulation regulation = getRegulation(locKey);
-						NutrientDefinition def = regulation.getNutrientDefinition(nutCode);
-
-						String prefix = "";
-						if (!locKey.equals(localKey)) {
-							prefix = "_" + locKey;
+				
+				for (String locKey : getAvailableRegulations()) {
+					NutrientRegulation regulation = getRegulation(locKey);
+					NutrientDefinition def = regulation.getNutrientDefinition(nutCode);
+					
+					String prefix = "";
+					if (!locKey.equals(localKey)) {
+						prefix = "_" + locKey;
+					}
+					
+					if (def != null) {
+						if( def.getSort()!=null) {
+							nutListElt.addAttribute("regulSort" + prefix, "" + def.getSort());
 						}
-
-						if (def != null) {
-							if( def.getSort()!=null) {
-								nutListElt.addAttribute("regulSort" + prefix, "" + def.getSort());
-							}
-							if(def.getDepthLevel()!=null) {
-								nutListElt.addAttribute("regulDepthLevel" + prefix, "" + def.getDepthLevel());
-							}
-							boolean display = true;
-							if(reportLocales != null && reportLocales.getText() != null){
-								display = false;
-								for (String reportLocale : reportLocales.getText().split(",")){
-									if(reportLocale != null && locale != null && reportLocale.trim().equals(locale.toString())){
-										display = true;
-										break;
-									}
+						if(def.getDepthLevel()!=null) {
+							nutListElt.addAttribute("regulDepthLevel" + prefix, "" + def.getDepthLevel());
+						}
+						boolean display = true;
+						if(reportLocales != null && reportLocales.getText() != null){
+							display = false;
+							for (String reportLocale : reportLocales.getText().split(",")){
+								if(reportLocale != null && locale != null && reportLocale.trim().equals(locale.toString())){
+									display = true;
+									break;
 								}
 							}
-							if(display){
-								if(Boolean.TRUE.equals(def.getMandatory())) {
-									nutListElt.addAttribute("regulDisplayMode" + prefix, "M");
-								} else  if(Boolean.TRUE.equals(def.getOptional())) {
-									nutListElt.addAttribute("regulDisplayMode" + prefix, "O");
-								}
-							}
-							if(def.getBold()!=null) {
-								nutListElt.addAttribute("regulBold" + prefix, "" + def.getBold());
-							}
-							if(def.getGda()!=null) {
-								nutListElt.addAttribute("regulGDA" + prefix, "" + def.getGda());
-							}
-							if( def.getUl()!=null) {
-								nutListElt.addAttribute("regulUL" + prefix, "" + def.getUl());
-							}
-							if( def.getUnit()!=null) {
-								nutListElt.addAttribute("regulUnit" + prefix, "" + def.getUnit());
-							}							
 						}
-
-						nutListElt.addAttribute("rounded" + keyToXml(valueKey) + prefix, "" + value.get(locKey));
-						if(nutListValue != null && nutListValue != null){
-							nutListElt.addAttribute("roundedDisplayValue" + prefix , 
-									NutrientFormulationHelper.displayValue(Double.parseDouble(nutListValue), 
-											extractValue(roundedValue, locale), nutCode, locale));
+						if(display){
+							if(Boolean.TRUE.equals(def.getMandatory())) {
+								nutListElt.addAttribute("regulDisplayMode" + prefix, "M");
+							} else  if(Boolean.TRUE.equals(def.getOptional())) {
+								nutListElt.addAttribute("regulDisplayMode" + prefix, "O");
+							}
 						}
-						if(nutListValuePerServing != null && nutListValuePerServing != ""){
-							nutListElt.addAttribute("roundedDisplayValuePerServing" + prefix , 
-									NutrientFormulationHelper.displayValue(Double.parseDouble(nutListValuePerServing), 
-											extractValuePerServing(roundedValue, locale), nutCode, locale));
+						if(def.getBold()!=null) {
+							nutListElt.addAttribute("regulBold" + prefix, "" + def.getBold());
+						}
+						if(def.getGda()!=null) {
+							nutListElt.addAttribute("regulGDA" + prefix, "" + def.getGda());
+						}
+						if( def.getUl()!=null) {
+							nutListElt.addAttribute("regulUL" + prefix, "" + def.getUl());
+						}
+						if( def.getUnit()!=null) {
+							nutListElt.addAttribute("regulUnit" + prefix, "" + def.getUnit());
+						}							
+					}
+					
+					for (Iterator<?> i = jsonRound.keys(); i.hasNext();) {
+						String valueKey = (String) i.next();
+						JSONObject value = (JSONObject) jsonRound.get(valueKey);
+						if(value.has(locKey)){
+							nutListElt.addAttribute("rounded" + keyToXml(valueKey) + prefix, "" + value.get(locKey));
 						}
 					}
 
+					if(nutListValue != null && nutListValue != ""){
+						nutListElt.addAttribute("roundedDisplayValue" + prefix , 
+								NutrientFormulationHelper.displayValue(Double.parseDouble(nutListValue), 
+										extractValue(roundedValue, locale), nutCode, locale));
+					}
+					if(nutListValuePerServing != null && nutListValuePerServing != ""){
+						nutListElt.addAttribute("roundedDisplayValuePerServing" + prefix , 
+								NutrientFormulationHelper.displayValue(Double.parseDouble(nutListValuePerServing), 
+										extractValuePerServing(roundedValue, locale), nutCode, locale));
+					}
 				}
 			} catch (JSONException e) {
 				logger.error(e, e);
@@ -270,11 +270,11 @@ public class NutrientFormulationHelper {
 				if(n.getValuePerServing() != null){
 					valuePerServing.put(key,regulation.round(n.getValuePerServing(), nutCode, nutUnit));
 					if(def!=null &&  def.getGda()!=null &&  def.getGda()!=0) {
-						gda.put(key, regulation.roundGDA(100 * n.getValuePerServing() / def.getGda(), nutCode));
+						gda.put(key, regulation.roundGDA(100 * regulation.convertValue(n.getValuePerServing(), nutUnit, def.getUnit()) / def.getGda(), nutCode));
 					}
 				}
 			}
-
+			
 			jsonRound.put(KEY_VALUE, value);
 			jsonRound.put(KEY_MINI, mini);
 			jsonRound.put(KEY_MAXI, maxi);

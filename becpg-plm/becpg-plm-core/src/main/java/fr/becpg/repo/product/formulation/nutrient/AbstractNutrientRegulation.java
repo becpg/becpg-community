@@ -239,7 +239,7 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 		return false;
 	}
 	
-	private Double convertValue(Double value, String nutUnit, String regulUnit){
+	public Double convertValue(Double value, String nutUnit, String regulUnit){
 		
 		if (value != null && nutUnit != null && regulUnit != null ) { 
 			// convert mg to g
