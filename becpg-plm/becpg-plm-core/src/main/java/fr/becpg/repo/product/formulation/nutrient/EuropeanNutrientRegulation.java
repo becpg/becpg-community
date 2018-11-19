@@ -69,7 +69,6 @@ public class EuropeanNutrientRegulation extends AbstractNutrientRegulation {
 				return bd.doubleValue();
 			}
 		}
-		logger.info("Round 33 sig");
 		BigDecimal bd = new BigDecimal(value);
 		bd = bd.round(new MathContext(3,RoundingMode.HALF_EVEN));
 		return bd.doubleValue();

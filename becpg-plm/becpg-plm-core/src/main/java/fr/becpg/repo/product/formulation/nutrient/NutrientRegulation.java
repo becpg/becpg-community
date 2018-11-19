@@ -14,4 +14,5 @@ public interface NutrientRegulation {
 	
 	String displayValue(Double value, Double roundedValue, String nutrientTypeCode, Locale locale);
 
+	Double convertValue(Double value, String nutUnit, String regulUnit);
 }

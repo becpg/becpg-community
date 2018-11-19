@@ -134,7 +134,7 @@ public class UsNutrientRegulation extends AbstractNutrientRegulation {
 				|| nutrientTypeCode.equals(NutrientCode.Calcium)
 				|| nutrientTypeCode.equals(NutrientCode.Iron)
 				|| nutrientTypeCode.equals(NutrientCode.Potassium)
-				||	nutrientTypeCode.equals(NutrientCode.VitA)
+				|| nutrientTypeCode.equals(NutrientCode.VitA)
 				|| nutrientTypeCode.equals(NutrientCode.VitC)
 				|| nutrientTypeCode.equals(NutrientCode.VitE)
 				|| nutrientTypeCode.equals(NutrientCode.VitK1)
