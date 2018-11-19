@@ -29,7 +29,8 @@ public class UsNutrientRegulation extends AbstractNutrientRegulation {
 					return 0.0;
 				}
 			} else if (nutrientTypeCode.equals(NutrientCode.FatPolyunsaturated) || nutrientTypeCode.equals(NutrientCode.FatMonounsaturated)
-					|| nutrientTypeCode.equals(NutrientCode.Fat) || nutrientTypeCode.equals(NutrientCode.FatSaturated)) {
+					|| nutrientTypeCode.equals(NutrientCode.Fat) || nutrientTypeCode.equals(NutrientCode.FatSaturated)
+					|| nutrientTypeCode.equals(NutrientCode.FatTrans)) {
 				if (value >= 5) {
 					return roundValue(value,1d);
 				} else if ((value >= 0.5) && (value < 5)) {
