@@ -197,7 +197,10 @@ public class ImportServiceImpl implements ImportService {
 				importContext1.setImportFileName(fileName);
 
 				ImportFileReader imporFileReader;
-				if (MimetypeMap.MIMETYPE_EXCEL.equals(mimeType) || MimetypeMap.MIMETYPE_OPENXML_SPREADSHEET.equals(mimeType)) {
+				if (MimetypeMap.MIMETYPE_EXCEL.equals(mimeType) || MimetypeMap.MIMETYPE_OPENXML_SPREADSHEET.equals(mimeType)
+						 || MimetypeMap.MIMETYPE_OPENXML_SPREADSHEET_MACRO.equals(mimeType)
+						 || MimetypeMap.MIMETYPE_OPENXML_SPREADSHEET_BINARY_MACRO.equals(mimeType)
+						) {
 					imporFileReader = new ImportExcelFileReader(is, importContext1.getPropertyFormats());
 				} else {
 					imporFileReader = new ImportCSVFileReader(is, charset, SEPARATOR);
