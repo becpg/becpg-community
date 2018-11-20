@@ -173,7 +173,9 @@
 }
 
 
-.project-list  a.task-comments,.project-list   a.submit-task{ 
+.project-list  a.task-comments,
+.project-list  a.submit-task,
+.project-list  a.project-comments{ 
 	display: none;
 }
 
@@ -190,7 +192,9 @@
 }
 
 
-.project-list span.task-status:hover  a.task-comments, .project-list  a.active-comments ,.project-task  a.task-comments{
+.project-list span.task-status:hover  a.task-comments,
+.project-list span.project-title:hover a.project-comments,
+.project-list a.active-comments ,.project-task  a.task-comments{
 	cursor: pointer;
 	padding-left: 20px;
 	margin-left: 5px;
@@ -201,17 +205,6 @@
 	vertical-align: bottom;
 }
 
-
-.project-list  a.project-comments {
-	cursor: pointer;
-	padding-left: 20px;
-	margin-left: 5px;
-	text-decoration: none;
-	background: url("../images/comment-16.png") no-repeat;
-	display: inline-table;
-	height: 16px;
-	vertical-align: bottom;
-}
 
 .project-list  .datagrid-bar .onActionShowProjectDetails, .datagrid .onActionShowProjectDetails a {
 	background-image: url(../images/info-16.png);
