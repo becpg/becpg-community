@@ -592,12 +592,12 @@ div.filterButtonsBar {
 
 /* The group icon when expanded */
 .datagrid  .group-expanded .icon {
-	background: url(./images/dt-group-arrow-down.png) no-repeat 0px 1px;
+	background: url(./images/dt-group-arrow-down.png) no-repeat 0px 0px;
 }
 
 /* The group icon when collapsed */
 .datagrid  .group-collapsed .icon {
-	background: url(./images/dt-group-arrow-up.png) no-repeat 0px 1px;
+	background: url(./images/dt-group-arrow-up.png) no-repeat 0px 0px;
 }
 
 /* Progress bar */

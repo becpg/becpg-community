@@ -83,14 +83,15 @@ var g; // gantt var
                                 groupName += record.getData("itemData")["prop_pjt_projectHierarchy1"].displayValue;
                             }
 
-                            if (groupName.length > 0)
-                            {
-                                groupName += " - ";
-                            }
 
                             if (record.getData("itemData")["prop_pjt_projectHierarchy2"] != null && record
                                     .getData("itemData")["prop_pjt_projectHierarchy2"].displayValue != null)
                             {
+                            	 if (groupName.length > 0 )
+                                 {
+                                     groupName += " - ";
+                                 }
+                            	
                                 groupName += record.getData("itemData")["prop_pjt_projectHierarchy2"].displayValue;
                             }
 
