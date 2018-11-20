@@ -28,22 +28,21 @@
 }
 
 /*2 Column set */
-.form-container .yui-g .form-field input[type="text"], .form-container .yui-g .form-field input[type="file"],
+.form-container .yui-g .form-field input[type="text"]:not(.number-range):not(.date-range), .form-container .yui-g .form-field input[type="file"],
 	.form-container .yui-g .form-field input[type="password"],
-	.form-container .yui-g .form-field input, .form-container .yui-g .form-field select,
+	.form-container .yui-g .form-field input:not(.number-range):not(.date-range), .form-container .yui-g .form-field select,
 	.form-container .yui-g .form-field textarea, .form-container .yui-g .yui-ac .ac-body
 	{
 	width: 27em !important;
 }
 
-
-.form-container .yui-g .form-field  input.date-entry {
+.form-container .yui-g .form-field  input.date-range {
     width: 6em !important;
     margin-bottom: 0.1em;
 }
 
 
-.form-container .yui-g .form-field input.number-unit {
+.form-container .yui-g .form-field input[type="text"].number.number-unit {
 	width: 23em !important;
 }
 
@@ -56,10 +55,10 @@
 	padding-bottom: 0em;
 }
 
-.form-container .yui-navset .form-field input[type="text"],
+.form-container .yui-navset .form-field input[type="text"]:not(.number-range):not(.date-range),
 	.form-container .yui-navset .form-field input[type="file"],
 	.form-container .yui-navset .form-field input[type="password"],
-	.form-container .yui-navset .form-field input, .form-container .yui-navset .form-field select,
+	.form-container .yui-navset .form-field input:not(.number-range):not(.date-range), .form-container .yui-navset .form-field select,
 	.form-container .yui-navset .form-field textarea, .form-container .yui-navset .yui-ac .ac-body
 	{
 	width: 26em !important;
@@ -75,9 +74,9 @@
 
 
 /* 3 Column set */
-.form-container .yui-gb .form-field input[type="text"], .form-container .yui-gb .form-field input[type="file"],
+.form-container .yui-gb .form-field input[type="text"]:not(.number-range):not(.date-range), .form-container .yui-gb .form-field input[type="file"],
 	.form-container .yui-gb .form-field input[type="password"],
-	.form-container .yui-gb .form-field input, .form-container .yui-gb .form-field select,
+	.form-container .yui-gb .form-field input:not(.number-range):not(.date-range), .form-container .yui-gb .form-field select,
 	.form-container .yui-gb .form-field textarea, .form-container .yui-gb .yui-ac .ac-body
 	{
 	width: 16em !important;
@@ -92,6 +91,14 @@
 	width: 4em !important;
 }
 
+.form-container .yui-gb .form-field input.number-range {
+	width: 6em !important;
+}
+
+.form-container .yui-g .form-field input.number-range {
+	width: 9em !important;
+}
+
 
 .form-container .yui-g .form-field input[type="checkbox"],
 	.form-container .yui-navset .form-field input[type="checkbox"],
@@ -99,14 +106,21 @@
 	width: auto !important;
 }
 
+.form-container .yui-gb .yui-g.date-range,.form-container .yui-gb .yui-g.number-range {
+	
+	width: auto !important;
+	margin: 0;
+}
+
 /* Auto complete */
-.form-container .yui-navset .yui-ac .ac-body .yui-ac-input,
-	.form-container .yui-g .yui-ac .ac-body .yui-ac-input, .yui-dialog .form-container .yui-ac .ac-body .yui-ac-input
+.form-container .yui-navset .form-field .yui-ac .ac-body input[type="text"].yui-ac-input ,
+.form-container .yui-g .form-field .yui-ac .ac-body input[type="text"].yui-ac-input, 
+.yui-dialog .form-container .form-field .yui-ac .ac-body input[type="text"].yui-ac-input
 	{
 	width: 90% !important;
 }
 
-.form-container .yui-gb .yui-ac .ac-body .yui-ac-input {
+.form-container .yui-gb .form-field .yui-ac .ac-body input[type="text"].yui-ac-input{
 	width: 85% !important;
 }
 
