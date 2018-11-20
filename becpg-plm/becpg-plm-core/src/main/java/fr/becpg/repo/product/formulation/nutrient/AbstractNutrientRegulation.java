@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -181,7 +180,66 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 		}
 	}
 	
-	private Double convertValue(Double value, String nutUnit, String regulUnit){
+	protected boolean isVitamin(String nutrientTypeCode){
+		if(nutrientTypeCode!=null){
+			if(nutrientTypeCode.equals(NutrientCode.FolicAcid)
+				|| nutrientTypeCode.equals(NutrientCode.VitA)
+				|| nutrientTypeCode.equals(NutrientCode.VitC)
+				|| nutrientTypeCode.equals(NutrientCode.VitD)
+				|| nutrientTypeCode.equals(NutrientCode.VitE)
+				|| nutrientTypeCode.equals(NutrientCode.VitK1)
+				|| nutrientTypeCode.equals(NutrientCode.VitK2)
+				|| nutrientTypeCode.equals(NutrientCode.VitB1)
+				|| nutrientTypeCode.equals(NutrientCode.VitB2)
+				|| nutrientTypeCode.equals(NutrientCode.VitB3)
+				|| nutrientTypeCode.equals(NutrientCode.PantoAcid)
+				|| nutrientTypeCode.equals(NutrientCode.VitB6)
+				|| nutrientTypeCode.equals(NutrientCode.VitB12)
+				|| nutrientTypeCode.equals(NutrientCode.Thiamin)
+				|| nutrientTypeCode.equals(NutrientCode.Riboflavin)
+				|| nutrientTypeCode.equals(NutrientCode.Niacin)
+				|| nutrientTypeCode.equals(NutrientCode.Folate)
+				|| nutrientTypeCode.equals(NutrientCode.FolateDFE)
+				|| nutrientTypeCode.equals(NutrientCode.Biotin)
+				|| nutrientTypeCode.equals(NutrientCode.Choline)
+				|| nutrientTypeCode.equals(NutrientCode.Retinol)
+				|| nutrientTypeCode.equals(NutrientCode.BetaCarotene)
+				|| nutrientTypeCode.equals(NutrientCode.BetaCrypt)
+				|| nutrientTypeCode.equals(NutrientCode.Lycopene)
+				|| nutrientTypeCode.equals(NutrientCode.AlphaCarot)
+				|| nutrientTypeCode.equals(NutrientCode.ProvitaminA)){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	protected boolean isMineral(String nutrientTypeCode){
+		if(nutrientTypeCode!=null){
+			if(nutrientTypeCode.equals(NutrientCode.Calcium)
+				|| nutrientTypeCode.equals(NutrientCode.Sodium)
+				|| nutrientTypeCode.equals(NutrientCode.Potassium)
+				|| nutrientTypeCode.equals(NutrientCode.Iron)	
+				|| nutrientTypeCode.equals(NutrientCode.Salt)
+				|| nutrientTypeCode.equals(NutrientCode.Copper)
+				|| nutrientTypeCode.equals(NutrientCode.Phosphorus)
+				|| nutrientTypeCode.equals(NutrientCode.Magnesium)
+				|| nutrientTypeCode.equals(NutrientCode.Zinc)
+				|| nutrientTypeCode.equals(NutrientCode.Iodine)
+				|| nutrientTypeCode.equals(NutrientCode.Selenium)
+				|| nutrientTypeCode.equals(NutrientCode.Fluoride)
+				|| nutrientTypeCode.equals(NutrientCode.Manganese)
+				|| nutrientTypeCode.equals(NutrientCode.Chromium)
+				|| nutrientTypeCode.equals(NutrientCode.Starch)
+				|| nutrientTypeCode.equals(NutrientCode.Molybdenum)
+				|| nutrientTypeCode.equals(NutrientCode.Chloride)){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public Double convertValue(Double value, String nutUnit, String regulUnit){
 		
 		if (value != null && nutUnit != null && regulUnit != null ) { 
 			// convert mg to g
@@ -220,7 +278,7 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 	        for values less than halfway between two whole numbers (e.g., 2.01 to 2.49) the values shall round down (e.g., 2%).
 	 */
 	@Override
-	public Double roundGDA(Double value) {
+	public Double roundGDA(Double value, String nutrientTypeCode) {
 		if (value == null) {
 			return null;
 		}

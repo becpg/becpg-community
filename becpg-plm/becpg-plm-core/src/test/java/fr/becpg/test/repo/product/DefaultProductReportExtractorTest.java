@@ -88,7 +88,8 @@ public class DefaultProductReportExtractorTest extends AbstractFinishedProductTe
 			costList.add(new CostListDataItem(null, 2d, "€/P", null, pkgCost2, false));
 			finishedProduct.setCostList(costList);
 			List<NutListDataItem> nutList = new ArrayList<>();
-			nutList.add(new NutListDataItem(null, 12d, "kg/100g", 0d, 0d, "Group1", nut1, false));
+			nutList.add(new NutListDataItem(null, 12d, "g/100g", 0d, 0d, "Group1", nut1, false));
+			nutList.add(new NutListDataItem(null, null, "g/100g", null, null, "Group1", nut2, false));
 			finishedProduct.setNutList(nutList);
 			List<CompoListDataItem> compoList = new ArrayList<>();
 			compoList.add(new CompoListDataItem(null, null, 1d, 1d, CompoListUnit.kg, 3d, DeclarationType.Declare, rawMaterial1NodeRef));
@@ -120,6 +121,8 @@ public class DefaultProductReportExtractorTest extends AbstractFinishedProductTe
 
 			nodeService.setProperty(finishedProductNodeRef, ContentModel.PROP_DESCRIPTION,
 					"Descr line 1 " + System.getProperty("line.separator") + " descr line 2");
+			
+			productService.formulate(finishedProductNodeRef);
 
 			EntityReportData entityReportData = defaultProductReportExtractor.extract(finishedProductNodeRef, new HashMap<>());
 			logger.info("XmlData : " + entityReportData.getXmlDataSource().asXML());

@@ -1665,7 +1665,7 @@ function indent_docx (coef, depthLevel, object) {
                     <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/nutLists/nutList]#:#{nutCode;STRING;/@nutCode},{nutListNut;STRING;/@nutListNut},{regulDepthLevel;INT;/@regulDepthLevel},{nutSort;INT;nutListNut/nut/nutSort},{regulSort;INT;/@regulSort},{reportLocales;STRING;nutListNut/nut/reportLocales/},{roundedValue;DOUBLE;/@roundedValue},{roundedValue_US;DOUBLE;/@roundedValue_US},{roundedValuePerServing;DOUBLE;/@roundedValuePerServing},{nutListUnit;STRING;/@nutListUnit},{regulGDA;DOUBLE;/@regulGDA},{nutListGroup;STRING;/@nutListGroup},{nutListMaxi;DOUBLE;/@nutListMaxi},{nutListMini;DOUBLE;/@nutListMini},{legalName;STRING;/@legalName},{description;STRING;/description},{color;STRING;/nutListNut/nut/color},{servingSize;DOUBLE;../../../servingSize},{sort;INT;/@sort},{nutType;STRING;nutListNut/nut/nutType},{reportParameters;STRING;../../../reportParameters},{roundedGDAPerc;DOUBLE;/@roundedGDAPerc},{regulBold;BOOLEAN;/@regulBold},{regulDisplayMode;STRING;/@regulDisplayMode},{regulUnit;STRING;/@regulUnit},{regulLessThan;DOUBLE;/@regulLessThan},{nutListValue;DOUBLE;/@nutListValue},{nutListValuePerServing;DOUBLE;/@nutListValuePerServing},{roundedDisplayValue;STRING;/@roundedDisplayValue},{roundedDisplayValuePerServing;STRING;/@roundedDisplayValuePerServing},{numberOfServings;STRING;../../../numberOfServings}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/nutLists/nutList]#:#{nutCode;STRING;/@nutCode},{nutListNut;STRING;/@nutListNut},{regulDepthLevel;INT;/@regulDepthLevel},{nutSort;INT;nutListNut/nut/nutSort},{regulSort;INT;/@regulSort},{reportLocales;STRING;nutListNut/nut/reportLocales/},{roundedValue;DOUBLE;/@roundedValue},{roundedValue_US;DOUBLE;/@roundedValue_US},{roundedValuePerServing;DOUBLE;/@roundedValuePerServing},{nutListUnit;STRING;/@nutListUnit},{regulGDA;DOUBLE;/@regulGDA},{nutListGroup;STRING;/@nutListGroup},{nutListMaxi;DOUBLE;/@nutListMaxi},{nutListMini;DOUBLE;/@nutListMini},{legalName;STRING;/@legalName},{description;STRING;/description},{color;STRING;/@color},{servingSize;DOUBLE;../../../servingSize},{sort;INT;/@sort},{nutType;STRING;nutListNut/nut/nutType},{reportParameters;STRING;../../../reportParameters},{roundedGDAPerc;DOUBLE;/@roundedGDAPerc},{regulBold;BOOLEAN;/@regulBold},{regulDisplayMode;STRING;/@regulDisplayMode},{regulUnit;STRING;/@regulUnit},{regulLessThan;DOUBLE;/@regulLessThan},{nutListValue;DOUBLE;/@nutListValue},{nutListValuePerServing;DOUBLE;/@nutListValuePerServing},{roundedDisplayValue;STRING;/@roundedDisplayValue},{roundedDisplayValuePerServing;STRING;/@roundedDisplayValuePerServing},{numberOfServings;STRING;../../../numberOfServings}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -6232,6 +6232,11 @@ row["illValue"]
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">legalName</text-property>
                 </structure>
+                <structure>
+                    <property name="columnName">regulDisplayMode</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">regulDisplayMode</text-property>
+                </structure>
             </list-property>
             <list-property name="filter">
                 <structure>
@@ -6239,6 +6244,13 @@ row["illValue"]
                     <expression name="expr" type="javascript">row["lclIsClaimed"]</expression>
                     <simple-property-list name="value1">
                         <value>"true"</value>
+                    </simple-property-list>
+                </structure>
+                <structure>
+                    <property name="operator">eq</property>
+                    <expression name="expr" type="javascript">row["regulDisplayMode"]</expression>
+                    <simple-property-list name="value1">
+                        <value>"O"</value>
                     </simple-property-list>
                 </structure>
             </list-property>
@@ -6263,6 +6275,11 @@ row["illValue"]
                     <structure>
                         <property name="position">4</property>
                         <property name="name">legalName</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">regulDisplayMode</property>
                         <property name="dataType">string</property>
                     </structure>
                 </list-property>
@@ -6297,8 +6314,15 @@ row["illValue"]
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">regulDisplayMode</property>
+                    <property name="nativeName">regulDisplayMode</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/labelClaimLists/labelClaimList]#:#{lclType;STRING;/@lclType},{lclLabelClaim;STRING;/@lclLabelClaim},{lclIsClaimed;STRING;/@lclClaimValue},{legalName;STRING;/@legalName}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/labelClaimLists/labelClaimList]#:#{lclType;STRING;/@lclType},{lclLabelClaim;STRING;/@lclLabelClaim},{lclIsClaimed;STRING;/@lclClaimValue},{legalName;STRING;/@legalName},{regulDisplayMode;STRING;/@regulDisplayMode}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -9857,7 +9881,7 @@ if (!(reportContext.getOutputFormat().toString()== "docx")) {
                                         <expression name="value" type="javascript">dataSetRow["roundedValuePerServing"]</expression>
                                     </structure>
                                 </list-property>
-                                <expression name="filterExpr" type="javascript">dataSetRow["nutCode"] == "ENER-E14-US"</expression>
+                                <expression name="filterExpr" type="javascript">dataSetRow["nutCode"] == "US_ENER-E14"</expression>
                                 <property name="allowExport">true</property>
                             </structure>
                             <structure>
@@ -10122,7 +10146,7 @@ if (nutCode == "PRO-" ) {
                                 <list-property name="visibility">
                                     <structure>
                                         <property name="format">all</property>
-                                        <expression name="valueExpr" type="javascript">(row["nutCode"] == "ENER-E14"  || row["nutCode"] == "ENER-KJO" )</expression>
+                                        <expression name="valueExpr" type="javascript">row["nutCode"] == "US_ENER-E14"</expression>
                                     </structure>
                                 </list-property>
                                 <cell id="8555">
@@ -10149,7 +10173,7 @@ nutName = "<b>"+nutName+"</b>";
 
 var unit = row["regulUnit"] != null ? row["regulUnit"] : row["nutListUnit"].replace("/100g", "").replace("/100mL", "");
 
-if(row["roundedDisplayValuePerServing"] != null  ){
+if(row["roundedDisplayValuePerServing"] != null &amp;&amp; row["roundedDisplayValuePerServing"] != ""){
 		(row["regulDepthLevel_toUse"] == 3 ) ? "Includes " + row["roundedDisplayValuePerServing"] + unit + "&amp;nbsp;"  + nutName : nutName + row["roundedDisplayValuePerServing"] + unit;
 } else {
 		nutName
