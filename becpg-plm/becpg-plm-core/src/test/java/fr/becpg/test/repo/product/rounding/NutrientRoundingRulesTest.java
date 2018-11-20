@@ -23,12 +23,12 @@ public class NutrientRoundingRulesTest {
 
 	@Test
 	public void testUSRoundingRules() {
-		assertEquals(110d, NutrientFormulationHelper.round(111d, NutrientCode.Energykcal, Locale.US, "kcal"),0);
-		assertEquals(110d, NutrientFormulationHelper.round(109d, NutrientCode.Energykcal, Locale.US, "kcal"), 0);
-		assertEquals(10d, NutrientFormulationHelper.round(11d, NutrientCode.Energykcal, Locale.US, "kcal"), 0);
-		assertEquals(15d, NutrientFormulationHelper.round(16d, NutrientCode.Energykcal, Locale.US, "kcal"), 0);
-		assertEquals(20d, NutrientFormulationHelper.round(18d, NutrientCode.Energykcal, Locale.US, "kcal"), 0);
-		assertEquals(0d, NutrientFormulationHelper.round(4d, NutrientCode.Energykcal, Locale.US, "kcal"), 0);
+		assertEquals(110d, NutrientFormulationHelper.round(111d, NutrientCode.EnergykcalUS, Locale.US, "kcal"),0);
+		assertEquals(110d, NutrientFormulationHelper.round(109d, NutrientCode.EnergykcalUS, Locale.US, "kcal"), 0);
+		assertEquals(10d, NutrientFormulationHelper.round(11d, NutrientCode.EnergykcalUS, Locale.US, "kcal"), 0);
+		assertEquals(15d, NutrientFormulationHelper.round(16d, NutrientCode.EnergykcalUS, Locale.US, "kcal"), 0);
+		assertEquals(20d, NutrientFormulationHelper.round(18d, NutrientCode.EnergykcalUS, Locale.US, "kcal"), 0);
+		assertEquals(0d, NutrientFormulationHelper.round(4d, NutrientCode.EnergykcalUS, Locale.US, "kcal"), 0);
 
 		assertEquals(11d, NutrientFormulationHelper.round(11.45d, NutrientCode.Fat, Locale.US, "g/100g"), 0);
 		assertEquals(4.5d, NutrientFormulationHelper.round(4.33d, NutrientCode.Fat, Locale.US, "g/100g"), 0);
@@ -89,6 +89,21 @@ public class NutrientRoundingRulesTest {
 					NutrientFormulationHelper.round(9.1d, code, Locale.US, "g/100g"), 
 					code, Locale.US));
 		}
+		
+		//gda
+		assertEquals(6d, NutrientFormulationHelper.roundGDA(5.4d, NutrientCode.VitA, Locale.US), 0);
+		assertEquals(15d, NutrientFormulationHelper.roundGDA(15.5d, NutrientCode.VitA, Locale.US), 0);
+		assertEquals(20d, NutrientFormulationHelper.roundGDA(18d, NutrientCode.VitA, Locale.US), 0);
+		assertEquals(60d, NutrientFormulationHelper.roundGDA(56d, NutrientCode.VitA, Locale.US), 0);
+		assertEquals(5d, NutrientFormulationHelper.roundGDA(5.4d, NutrientCode.Sodium, Locale.US), 0);
+		
+		assertEquals(4d, NutrientFormulationHelper.round(3.7d, NutrientCode.VitD, Locale.US, "µg/100g"), 0);
+		assertEquals("4", NutrientFormulationHelper.displayValue(3.7d, 
+				NutrientFormulationHelper.round(3.7d, NutrientCode.VitD, Locale.US, "µg/100g"), 
+				NutrientCode.VitD, Locale.US));
+		assertEquals("", NutrientFormulationHelper.displayValue(3.7d, 
+				NutrientFormulationHelper.round(3.7d, NutrientCode.VitA, Locale.US, "µg/100g"), 
+				NutrientCode.VitA, Locale.US));
 	}
 
 	@Test
@@ -158,16 +173,19 @@ public class NutrientRoundingRulesTest {
 					NutrientFormulationHelper.round(19.1d, code, Locale.FRENCH, "g/100g"), 
 					code, Locale.FRENCH));
 		}
+		
+		assertEquals(3.78d, NutrientFormulationHelper.round(3.7777d, NutrientCode.VitA, Locale.FRENCH, "µg/100g"), 0);
+		assertEquals(3.8d, NutrientFormulationHelper.round(3.7777d, NutrientCode.VitD, Locale.FRENCH, "µg/100g"), 0);
 	}
 	
 	@Test
 	public void testCanadianRoundingRules() {
-		assertEquals(110d, NutrientFormulationHelper.round(111d, NutrientCode.Energykcal, Locale.CANADA, "kcal"),0);
-		assertEquals(110d, NutrientFormulationHelper.round(109d, NutrientCode.Energykcal, Locale.CANADA, "kcal"), 0);
-		assertEquals(10d, NutrientFormulationHelper.round(11d, NutrientCode.Energykcal, Locale.CANADA, "kcal"), 0);
-		assertEquals(15d, NutrientFormulationHelper.round(16d, NutrientCode.Energykcal, Locale.CANADA, "kcal"), 0);
-		assertEquals(20d, NutrientFormulationHelper.round(18d, NutrientCode.Energykcal, Locale.CANADA, "kcal"), 0);
-		assertEquals(4d, NutrientFormulationHelper.round(4d, NutrientCode.Energykcal, Locale.CANADA, "kcal"), 0);
+		assertEquals(110d, NutrientFormulationHelper.round(111d, NutrientCode.EnergykcalUS, Locale.CANADA, "kcal"),0);
+		assertEquals(110d, NutrientFormulationHelper.round(109d, NutrientCode.EnergykcalUS, Locale.CANADA, "kcal"), 0);
+		assertEquals(10d, NutrientFormulationHelper.round(11d, NutrientCode.EnergykcalUS, Locale.CANADA, "kcal"), 0);
+		assertEquals(15d, NutrientFormulationHelper.round(16d, NutrientCode.EnergykcalUS, Locale.CANADA, "kcal"), 0);
+		assertEquals(20d, NutrientFormulationHelper.round(18d, NutrientCode.EnergykcalUS, Locale.CANADA, "kcal"), 0);
+		assertEquals(4d, NutrientFormulationHelper.round(4d, NutrientCode.EnergykcalUS, Locale.CANADA, "kcal"), 0);
 
 		assertEquals(11d, NutrientFormulationHelper.round(11.45d, NutrientCode.Fat, Locale.CANADA, "g/100g"), 0);
 		assertEquals(4.5d, NutrientFormulationHelper.round(4.33d, NutrientCode.Fat, Locale.CANADA, "g/100g"), 0);
@@ -201,6 +219,11 @@ public class NutrientRoundingRulesTest {
 		assertEquals(20d, NutrientFormulationHelper.round(19.6d, NutrientCode.Sugar, Locale.CANADA, "g/100g"), 0);
 		assertEquals(1d, NutrientFormulationHelper.round(0.7d, NutrientCode.Sugar, Locale.CANADA, "g/100g"), 0);
 		assertEquals(0d, NutrientFormulationHelper.round(0.4d, NutrientCode.Sugar, Locale.CANADA, "g/100g"), 0);
+		
+		assertEquals(50d, NutrientFormulationHelper.round(51d, NutrientCode.VitA, Locale.CANADA, "µg/100g"), 0);
+		assertEquals(300d, NutrientFormulationHelper.round(251d, NutrientCode.VitA, Locale.CANADA, "µg/100g"), 0);
+		assertEquals(50d, NutrientFormulationHelper.round(0.056d, NutrientCode.VitA, Locale.CANADA, "mg/100g"), 0);
+		assertEquals(4.5d, NutrientFormulationHelper.round(4.6d, NutrientCode.VitD, Locale.CANADA, "µg/100g"), 0);
 	}
 
 	@Test
