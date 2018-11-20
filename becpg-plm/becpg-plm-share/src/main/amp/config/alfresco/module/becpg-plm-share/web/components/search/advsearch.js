@@ -392,7 +392,7 @@
 				url = YAHOO.lang.substitute(Alfresco.constants.URL_PAGECONTEXT + this.options.searchPath, {
 					site : (this.options.siteId.length !== 0 ? ("site/" + this.options.siteId + "/") : ""),
 					terms : encodeURIComponent(Dom.get(this.id + "-search-text").value),
-					query : encodeURIComponent(YAHOO.lang.JSON.stringify(this.cleanFilterData(formData)).replace("|","$ML$")),
+					query : encodeURIComponent(YAHOO.lang.JSON.stringify(this.cleanFilterData(formData))),
 					scope : this.options.searchScope.toString(),
 					repo : (this.options.searchScope.toString() == "repo") ? "true" : "false"
 				});
