@@ -1,6 +1,8 @@
 package fr.becpg.repo.product.formulation.nutrient;
 
-import java.text.DecimalFormat;
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.Locale;
 
 public class EuropeanNutrientRegulation extends AbstractNutrientRegulation {
@@ -11,7 +13,7 @@ public class EuropeanNutrientRegulation extends AbstractNutrientRegulation {
 	
 	@Override
 	protected Double roundByCode(Double value, String nutrientTypeCode) {
-
+		
 		if(value != null && nutrientTypeCode != null){
 			if (nutrientTypeCode.equals(NutrientCode.Energykcal)
 				|| nutrientTypeCode.equals(NutrientCode.EnergykJ)) {
@@ -50,9 +52,26 @@ public class EuropeanNutrientRegulation extends AbstractNutrientRegulation {
 				} else {
 					return 0.0;
 				}
+			} else if (nutrientTypeCode.equals(NutrientCode.VitA)
+					|| nutrientTypeCode.equals(NutrientCode.FolicAcid)
+					|| nutrientTypeCode.equals(NutrientCode.Chloride)
+					|| nutrientTypeCode.equals(NutrientCode.Calcium)
+					|| nutrientTypeCode.equals(NutrientCode.Phosphorus)
+					|| nutrientTypeCode.equals(NutrientCode.Magnesium)
+					|| nutrientTypeCode.equals(NutrientCode.Iodine)
+					|| nutrientTypeCode.equals(NutrientCode.Potassium)) {
+				BigDecimal bd = new BigDecimal(value);
+				bd = bd.round(new MathContext(3,RoundingMode.HALF_EVEN));
+				return bd.doubleValue();
+			} else if(isVitamin(nutrientTypeCode) || isMineral(nutrientTypeCode)){
+				BigDecimal bd = new BigDecimal(value);
+				bd = bd.round(new MathContext(2,RoundingMode.HALF_EVEN));
+				return bd.doubleValue();
 			}
 		}
-		return roundValue(value,0.1d);
+		BigDecimal bd = new BigDecimal(value);
+		bd = bd.round(new MathContext(3,RoundingMode.HALF_EVEN));
+		return bd.doubleValue();
 	}
 
 	@Override

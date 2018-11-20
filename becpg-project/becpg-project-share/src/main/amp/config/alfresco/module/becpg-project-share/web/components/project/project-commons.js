@@ -469,13 +469,15 @@
           
           
           ret += '<span class="node-' + record.nodeRef + '">';
-          ret += '<a class="project-comments '+COMMENT_PROJECTEVENTCLASS+'" title="' + this.msg("link.title.comment-project") + '" href="" >';
-
+          
           if (record["itemData"]["prop_fm_commentCount"] && record["itemData"]["prop_fm_commentCount"].value) {
-              ret += record["itemData"]["prop_fm_commentCount"].value;
+        	  ret += '<a class="project-comments active-comments '+COMMENT_PROJECTEVENTCLASS+'" title="' + this.msg("link.title.comment-project") + '" href="" >';
+        	  ret += record["itemData"]["prop_fm_commentCount"].value;
           } else {
-              ret +="&nbsp;";
-          }
+        	  ret += '<a class="project-comments '+COMMENT_PROJECTEVENTCLASS+'" title="' + this.msg("link.title.comment-project") + '" href="" >';
+        	  ret +="&nbsp;";
+          }      
+          
           ret += "</a></span></span>";
          
           
@@ -496,7 +498,7 @@
               dateLine += (dates.start ? Alfresco.util.formatDate(end, "longDate") : scope
                     .msg("label.none"));
     		   
-              ret += '<span class="project-date">[ ' + dateLine + ' ]</span>';
+              ret += '<span class="project-date">' + dateLine + '</span>';
 
           } 
           
