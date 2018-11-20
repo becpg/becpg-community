@@ -761,16 +761,22 @@
 					<show id="mpm:plResource" force="true" />
 					<show id="bcpg:compoListProduct" force="true" />
 					<show id="bcpg:packagingListProduct" force="true" />
-					<show id="bcpg:allergenListAllergen" force="true" />
-					<show id="bcpg:lclLabelClaim" force="true" />
 					
+					<!-- Allergens and claims -->
+					<show id="bcpg:advAlVolAnd" force="true" />
+					<show id="bcpg:advAlVolNot" force="true" />
+					<show id="bcpg:advAlInVolAnd" force="true" />
+					<show id="bcpg:advAlInVolNot" force="true" />
+					<show id="bcpg:advLclClaimAnd" force="true" />
+					<show id="bcpg:advLclClaimNot" force="true" />
 
 					<!-- modified -->
 					<show id="cm:modified" />
 					<show id="cm:modifier" />
 
 					<!-- ing information -->
-					<show id="bcpg:ingListIng" force="true" />
+					<show id="bcpg:advIlIngAnd" force="true" />
+					<show id="bcpg:advIlIngNot" force="true" />
 					<show id="bcpg:ingListGeoOrigin" force="true" />
 					<show id="bcpg:ingListBioOrigin" force="true" />
 				
@@ -779,12 +785,18 @@
 					<show id="bcpg:costListValue" force="true" />
 					
 					<!-- Nuts -->
-					<show id="bcpg:nutListNut" force="true" />
-					<show id="bcpg:nutListValue" force="true" />
+					<show id="bcpg:advNlNut1" force="true" />
+					<show id="bcpg:advNlValue1" force="true" />
+					<show id="bcpg:advNlNut2" force="true" />
+					<show id="bcpg:advNlValue2" force="true" />
+					<show id="bcpg:advNlNut3" force="true" />
+					<show id="bcpg:advNlValue3" force="true" />
 					
 					<!-- Physico -->
-					<show id="bcpg:pclPhysicoChem" force="true" />
-					<show id="bcpg:pclValue" force="true" />
+					<show id="bcpg:advPclPhysicoChem1" force="true" />
+					<show id="bcpg:advPclValue1" force="true" />
+					<show id="bcpg:advPclPhysicoChem2" force="true" />
+					<show id="bcpg:advPclValue2" force="true" />
 					
 					<!-- Packaging -->
 					
@@ -796,15 +808,17 @@
 					<set parent="product-criteria" id="2-col-product-criteria"  template="/org/alfresco/components/form/2-column-set.ftl" />	
 					<set parent="product-criteria" id="3-col-product-criteria" template="/org/alfresco/components/form/3-column-set.ftl"  />
 					<set parent="product-criteria" id="1-col-product-criteria"  />
+					<set id="allergens-claims" appearance="bordered-panel"
+						label-id="becpg.forms.set.allergens-claims.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="ings-criteria" appearance="bordered-panel"
-						label-id="becpg.forms.set.ings-criteria.label" template="/org/alfresco/components/form/3-column-set.ftl"/>
-					<set id="costs-criteria" appearance="bordered-panel"
+						label-id="becpg.forms.set.ings-criteria.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
+					<set id="costs-criteria" appearance="bordered-panel" template="/org/alfresco/components/form/2-column-set.ftl"
 						label-id="becpg.forms.set.costs-criteria.label"  />
 						
-					<set id="nuts-criteria" appearance="bordered-panel"
+					<set id="nuts-criteria" appearance="bordered-panel" template="/org/alfresco/components/form/2-column-set.ftl"
 						label-id="becpg.forms.set.nuts-criteria.label" />	
 							
-					<set id="physicoChems-criteria" appearance="bordered-panel"
+					<set id="physicoChems-criteria" appearance="bordered-panel" template="/org/alfresco/components/form/2-column-set.ftl"
 						label-id="becpg.forms.set.physicoChems-criteria.label" />		
 	
 
@@ -871,16 +885,24 @@
 					
 					
 					
-					<field id="bcpg:allergenListAllergen" set="3-col-product-criteria">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					<!-- allergens and claims -->
+					<field id="bcpg:advAlVolAnd" set="allergens-claims">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
-
-					<field id="bcpg:lclLabelClaim" set="3-col-product-criteria">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
-							<control-param name="multipleSelectMode">true</control-param>	
-						</control>
+					<field id="bcpg:advAlVolNot" set="allergens-claims">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:advAlInVolAnd" set="allergens-claims">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:advAlInVolNot" set="allergens-claims">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:advLclClaimAnd" set="allergens-claims">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:advLclClaimNot" set="allergens-claims">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 
 
@@ -891,14 +913,16 @@
 						</control>
 					</field>
 					
-					
-					
 					<field id="cm:modified" set="1-col-product-criteria">
 						<control template="/org/alfresco/components/form/controls/daterange.ftl" />
 					</field>
 
 					<!-- ing information -->
-					<field id="bcpg:ingListIng" set="ings-criteria">
+					<field id="bcpg:advIlIngAnd" set="ings-criteria" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:advIlIngNot" set="ings-criteria" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
@@ -922,27 +946,49 @@
 							template="/org/alfresco/components/form/controls/numberrange.ftl" />
 					</field>
 					
-					<field id="bcpg:nutListNut" set="nuts-criteria">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
-								<control-param name="ds">becpg/autocomplete/nut</control-param>
-							</control>
-					</field>
-					
-					<field id="bcpg:nutListValue" set="nuts-criteria">
-						<control
-							template="/org/alfresco/components/form/controls/numberrange.ftl" />
-					</field>
-					
-					<field id="bcpg:pclPhysicoChem" set="physicoChems-criteria">
+					<!-- Nuts -->
+					<field id="bcpg:advNlNut1" 	set="nuts-criteria" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
-					
-					<field id="bcpg:pclValue" set="physicoChems-criteria">
+					<field id="bcpg:advNlValue1" set="nuts-criteria" >
 						<control
 							template="/org/alfresco/components/form/controls/numberrange.ftl" />
 					</field>
+					<field id="bcpg:advNlNut2" 	set="nuts-criteria" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:advNlValue2" set="nuts-criteria" >
+						<control
+							template="/org/alfresco/components/form/controls/numberrange.ftl" />
+					</field>
+					<field id="bcpg:advNlNut3" 	set="nuts-criteria" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:advNlValue3" set="nuts-criteria" >
+						<control
+							template="/org/alfresco/components/form/controls/numberrange.ftl" />
+					</field>
+					
+					<!-- Physico -->
+					<field id="bcpg:advPclPhysicoChem1" set="physicoChems-criteria" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:advPclValue1" set="physicoChems-criteria" >
+						<control
+							template="/org/alfresco/components/form/controls/numberrange.ftl" />
+					</field>
+					<field id="bcpg:advPclPhysicoChem2" set="physicoChems-criteria" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:advPclValue2" set="physicoChems-criteria" >
+						<control
+							template="/org/alfresco/components/form/controls/numberrange.ftl" />
+					</field>	
 					
 				</appearance>
 			</form>
@@ -3426,7 +3472,8 @@
 					<show id="cm:modifier" />
 
 					<!-- ing information -->
-					<show id="bcpg:ingListIng" force="true" />
+					<show id="bcpg:advIlIngAnd" force="true" />
+					<show id="bcpg:advIlIngNot" force="true" />
 					<show id="bcpg:ingListGeoOrigin" force="true" />
 					<show id="bcpg:ingListBioOrigin" force="true" />
 				
@@ -3435,22 +3482,30 @@
 					<show id="bcpg:costListValue" force="true" />
 					
 					<!-- Nuts -->
-					<show id="bcpg:nutListNut" force="true" />
-					<show id="bcpg:nutListValue" force="true" />
+					<show id="bcpg:advNlNut1" force="true" />
+					<show id="bcpg:advNlValue1" force="true" />
+					<show id="bcpg:advNlNut2" force="true" />
+					<show id="bcpg:advNlValue2" force="true" />
+					<show id="bcpg:advNlNut3" force="true" />
+					<show id="bcpg:advNlValue3" force="true" />
 					
 					<!-- Physico -->
-					<show id="bcpg:pclPhysicoChem" force="true" />
-					<show id="bcpg:pclValue" force="true" />
+					<show id="bcpg:advPclPhysicoChem1" force="true" />
+					<show id="bcpg:advPclValue1" force="true" />
+					<show id="bcpg:advPclPhysicoChem2" force="true" />
+					<show id="bcpg:advPclValue2" force="true" />
 					
 					<!-- Microbio -->
 					<show id="bcpg:mblMicrobio" force="true" />
 					<show id="bcpg:mblValue" force="true" />
 					
-					<!-- Allergen -->
-					<show id="bcpg:allergenListAllergen" force="true" />
-					
-					<!-- Claim -->
-					<show id="bcpg:lclLabelClaim" force="true" />
+					<!-- Allergens and claims -->
+					<show id="bcpg:advAlVolAnd" force="true" />
+					<show id="bcpg:advAlVolNot" force="true" />
+					<show id="bcpg:advAlInVolAnd" force="true" />
+					<show id="bcpg:advAlInVolNot" force="true" />
+					<show id="bcpg:advLclClaimAnd" force="true" />
+					<show id="bcpg:advLclClaimNot" force="true" />
 
 				</field-visibility>
 				<appearance>
@@ -3459,18 +3514,20 @@
 					<set parent="product-criteria" id="2-col-product-criteria"  template="/org/alfresco/components/form/2-column-set.ftl" />	
 					<set parent="product-criteria" id="3-col-product-criteria" template="/org/alfresco/components/form/3-column-set.ftl"  />
 					<set parent="product-criteria" id="1-col-product-criteria"  />
+					<set id="allergens-claims" appearance="bordered-panel"
+						label-id="becpg.forms.set.allergens-claims.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="ings-criteria" appearance="bordered-panel"
-						label-id="becpg.forms.set.ings-criteria.label" template="/org/alfresco/components/form/3-column-set.ftl"/>
-					<set id="costs-criteria" appearance="bordered-panel"
+						label-id="becpg.forms.set.ings-criteria.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
+					<set id="costs-criteria" appearance="bordered-panel" template="/org/alfresco/components/form/2-column-set.ftl"
 						label-id="becpg.forms.set.costs-criteria.label"  />
 						
-					<set id="nuts-criteria" appearance="bordered-panel"
+					<set id="nuts-criteria" appearance="bordered-panel" template="/org/alfresco/components/form/2-column-set.ftl"
 						label-id="becpg.forms.set.nuts-criteria.label" />	
 							
-					<set id="physicoChems-criteria" appearance="bordered-panel"
+					<set id="physicoChems-criteria" appearance="bordered-panel" template="/org/alfresco/components/form/2-column-set.ftl"
 						label-id="becpg.forms.set.physicoChems-criteria.label" />	
 						
-					<set id="microbio-criteria" appearance="bordered-panel"
+					<set id="microbio-criteria" appearance="bordered-panel" template="/org/alfresco/components/form/2-column-set.ftl"
 						label-id="becpg.forms.set.microbio-criteria.label" />		
 	
 
@@ -3503,19 +3560,29 @@
 
 					<field id="bcpg:certificateDate" set="2-col-product-criteria" />
 					
-					<field id="bcpg:suppliers" set="3-col-product-criteria">
+					<field id="bcpg:suppliers" set="2-col-product-criteria">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 
-					<field id="bcpg:allergenListAllergen" set="3-col-product-criteria">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					<!-- allergens and claims -->
+					<field id="bcpg:advAlVolAnd" set="allergens-claims">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
-
-					<field id="bcpg:lclLabelClaim" set="3-col-product-criteria">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					<field id="bcpg:advAlVolNot" set="allergens-claims">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:advAlInVolAnd" set="allergens-claims">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:advAlInVolNot" set="allergens-claims">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:advLclClaimAnd" set="allergens-claims">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:advLclClaimNot" set="allergens-claims">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 
 					<!-- modified -->
@@ -3530,7 +3597,11 @@
 					</field>
 
 					<!-- ing information -->
-					<field id="bcpg:ingListIng" set="ings-criteria">
+					<field id="bcpg:advIlIngAnd" set="ings-criteria" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:advIlIngNot" set="ings-criteria" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
@@ -3554,29 +3625,49 @@
 							template="/org/alfresco/components/form/controls/numberrange.ftl" />
 					</field>
 					
-					<field id="bcpg:nutListNut" set="nuts-criteria">
+					<!-- Nuts -->
+					<field id="bcpg:advNlNut1" 	set="nuts-criteria" >
 						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
-								<control-param name="ds">becpg/autocomplete/nut</control-param>
-							</control>
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
-					
-					<field id="bcpg:nutListValue" set="nuts-criteria">
+					<field id="bcpg:advNlValue1" set="nuts-criteria" >
+						<control
+							template="/org/alfresco/components/form/controls/numberrange.ftl" />
+					</field>
+					<field id="bcpg:advNlNut2" 	set="nuts-criteria" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:advNlValue2" set="nuts-criteria" >
+						<control
+							template="/org/alfresco/components/form/controls/numberrange.ftl" />
+					</field>
+					<field id="bcpg:advNlNut3" 	set="nuts-criteria" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:advNlValue3" set="nuts-criteria" >
 						<control
 							template="/org/alfresco/components/form/controls/numberrange.ftl" />
 					</field>
 					
-					<field id="bcpg:pclPhysicoChem" set="physicoChems-criteria">
+					<!-- Physico -->
+					<field id="bcpg:advPclPhysicoChem1" set="physicoChems-criteria" >
 						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
-								<control-param name="ds">becpg/autocomplete/physicoChem</control-param>
-							</control>
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
-					
-					<field id="bcpg:pclValue" set="physicoChems-criteria">
+					<field id="bcpg:advPclValue1" set="physicoChems-criteria" >
 						<control
 							template="/org/alfresco/components/form/controls/numberrange.ftl" />
 					</field>
+					<field id="bcpg:advPclPhysicoChem2" set="physicoChems-criteria" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:advPclValue2" set="physicoChems-criteria" >
+						<control
+							template="/org/alfresco/components/form/controls/numberrange.ftl" />
+					</field>	
 					
 					
 					<field id="bcpg:mblMicrobio" set="microbio-criteria" >
@@ -3996,7 +4087,8 @@
 					<show id="cm:modifier" />
 
 					<!-- ing information -->
-					<show id="bcpg:ingListIng" force="true" />
+					<show id="bcpg:advIlIngAnd" force="true" />
+					<show id="bcpg:advIlIngNot" force="true" />
 					<show id="bcpg:ingListGeoOrigin" force="true" />
 					<show id="bcpg:ingListBioOrigin" force="true" />
 				
@@ -4005,21 +4097,29 @@
 					<show id="bcpg:costListValue" force="true" />
 					
 					<!-- Nuts -->
-					<show id="bcpg:nutListNut" force="true" />
-					<show id="bcpg:nutListValue" force="true" />
+					<show id="bcpg:advNlNut1" force="true" />
+					<show id="bcpg:advNlValue1" force="true" />
+					<show id="bcpg:advNlNut2" force="true" />
+					<show id="bcpg:advNlValue2" force="true" />
+					<show id="bcpg:advNlNut3" force="true" />
+					<show id="bcpg:advNlValue3" force="true" />
 					
 					<!-- Physico -->
-					<show id="bcpg:pclPhysicoChem" force="true" />
-					<show id="bcpg:pclValue" force="true" />
+					<show id="bcpg:advPclPhysicoChem1" force="true" />
+					<show id="bcpg:advPclValue1" force="true" />
+					<show id="bcpg:advPclPhysicoChem2" force="true" />
+					<show id="bcpg:advPclValue2" force="true" />
 					
 					<!-- Packaging -->
 					<show id="bcpg:packagingListProduct" force="true" />
 					
-					<!-- Allergen -->
-					<show id="bcpg:allergenListAllergen" force="true" />
-					
-					<!-- Claim -->
-					<show id="bcpg:lclLabelClaim" force="true" />
+					<!-- Allergens and claims -->
+					<show id="bcpg:advAlVolAnd" force="true" />
+					<show id="bcpg:advAlVolNot" force="true" />
+					<show id="bcpg:advAlInVolAnd" force="true" />
+					<show id="bcpg:advAlInVolNot" force="true" />
+					<show id="bcpg:advLclClaimAnd" force="true" />
+					<show id="bcpg:advLclClaimNot" force="true" />
 
 				</field-visibility>
 				<appearance>
@@ -4027,16 +4127,18 @@
 						label-id="becpg.forms.set.product-criteria.label"  />
 					<set parent="product-criteria" id="2-col-product-criteria"  template="/org/alfresco/components/form/2-column-set.ftl" />	
 					<set parent="product-criteria" id="3-col-product-criteria" template="/org/alfresco/components/form/3-column-set.ftl"  />
+					<set id="allergens-claims" appearance="bordered-panel"
+						label-id="becpg.forms.set.allergens-claims.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set parent="product-criteria" id="1-col-product-criteria"  />
 					<set id="ings-criteria" appearance="bordered-panel"
-						label-id="becpg.forms.set.ings-criteria.label" template="/org/alfresco/components/form/3-column-set.ftl"/>
-					<set id="costs-criteria" appearance="bordered-panel"
+						label-id="becpg.forms.set.ings-criteria.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
+					<set id="costs-criteria" appearance="bordered-panel" template="/org/alfresco/components/form/2-column-set.ftl"
 						label-id="becpg.forms.set.costs-criteria.label"  />
 						
-					<set id="nuts-criteria" appearance="bordered-panel"
+					<set id="nuts-criteria" appearance="bordered-panel" template="/org/alfresco/components/form/2-column-set.ftl"
 						label-id="becpg.forms.set.nuts-criteria.label" />	
 							
-					<set id="physicoChems-criteria" appearance="bordered-panel"
+					<set id="physicoChems-criteria" appearance="bordered-panel" template="/org/alfresco/components/form/2-column-set.ftl"
 						label-id="becpg.forms.set.physicoChems-criteria.label" />		
 	
 
@@ -4074,17 +4176,27 @@
 							</control-param>
 						</control>
 					</field>
+				
+					<!-- allergens and claims -->
+					<field id="bcpg:advAlVolAnd" set="allergens-claims">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:advAlVolNot" set="allergens-claims">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:advAlInVolAnd" set="allergens-claims">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:advAlInVolNot" set="allergens-claims">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:advLclClaimAnd" set="allergens-claims">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:advLclClaimNot" set="allergens-claims">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
 					
-					<field id="bcpg:allergenListAllergen" set="3-col-product-criteria">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
-					</field>
-
-					<field id="bcpg:lclLabelClaim" set="3-col-product-criteria">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
-					</field>
-
 
 					<!-- modified -->
 					<field id="cm:modifier" set="1-col-product-criteria">
@@ -4093,14 +4205,16 @@
 						</control>
 					</field>
 					
-					
-					
 					<field id="cm:modified" set="1-col-product-criteria">
 						<control template="/org/alfresco/components/form/controls/daterange.ftl" />
 					</field>
 
 					<!-- ing information -->
-					<field id="bcpg:ingListIng" set="ings-criteria">
+					<field id="bcpg:advIlIngAnd" set="ings-criteria" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:advIlIngNot" set="ings-criteria" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
@@ -4124,32 +4238,49 @@
 							template="/org/alfresco/components/form/controls/numberrange.ftl" />
 					</field>
 					
-					<field id="bcpg:nutListNut" set="nuts-criteria">
+					<!-- Nuts -->
+					<field id="bcpg:advNlNut1" 	set="nuts-criteria" >
 						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
-								<control-param name="ds">becpg/autocomplete/nut</control-param>
-							</control>
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
-					
-					<field id="bcpg:nutListValue" set="nuts-criteria">
+					<field id="bcpg:advNlValue1" set="nuts-criteria" >
+						<control
+							template="/org/alfresco/components/form/controls/numberrange.ftl" />
+					</field>
+					<field id="bcpg:advNlNut2" 	set="nuts-criteria" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:advNlValue2" set="nuts-criteria" >
+						<control
+							template="/org/alfresco/components/form/controls/numberrange.ftl" />
+					</field>
+					<field id="bcpg:advNlNut3" 	set="nuts-criteria" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:advNlValue3" set="nuts-criteria" >
 						<control
 							template="/org/alfresco/components/form/controls/numberrange.ftl" />
 					</field>
 					
-					<field id="bcpg:pclPhysicoChem" set="physicoChems-criteria">
+					<!-- Physico -->
+					<field id="bcpg:advPclPhysicoChem1" set="physicoChems-criteria" >
 						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
-							<control-param name="ds">becpg/autocomplete/physicoChem</control-param>
-							</control>
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
-					
-					<field id="bcpg:pclValue" set="physicoChems-criteria">
+					<field id="bcpg:advPclValue1" set="physicoChems-criteria" >
 						<control
 							template="/org/alfresco/components/form/controls/numberrange.ftl" />
 					</field>
-					
-					
-					
+					<field id="bcpg:advPclPhysicoChem2" set="physicoChems-criteria" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:advPclValue2" set="physicoChems-criteria" >
+						<control
+							template="/org/alfresco/components/form/controls/numberrange.ftl" />
+					</field>
 				</appearance>
 			</form>
 			<form id="create">
