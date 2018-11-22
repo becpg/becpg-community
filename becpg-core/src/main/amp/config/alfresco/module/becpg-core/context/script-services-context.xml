@@ -66,6 +66,7 @@
 		<property name="showEntitiesInTree" value="${becpg.doclibtree.showEntities}"></property>
 		<property name="permissionService" ref="permissionService"/>
 		<property name="entityService" ref="entityService"/>
+		<property name="useBrowserLocale" value="${beCPG.multilinguale.useBrowserLocale}"/>
 	</bean>
 	
 	<bean id="pdfScriptHelper" parent="baseJavaScriptExtension" class="fr.becpg.repo.jscript.PDFScriptHelper">
