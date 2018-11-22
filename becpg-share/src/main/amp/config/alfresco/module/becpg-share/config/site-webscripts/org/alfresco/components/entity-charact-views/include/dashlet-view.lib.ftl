@@ -4,7 +4,7 @@
 
 <div id="${dashletId}">
 <@uniqueIdDiv>
-	<div class="dashlet datagrid" id="${dashletId}-body" >
+	<div class="dashlet datagrid<#if args.list??> ${args.list}</#if>" id="${dashletId}-body">
 			
 		  	<div  class="title<#if extra["hideTitle"]?? > hidden</#if>"><#if extra["dashletTitle"]??>${extra["dashletTitle"]?string}<#else><span id="${dashletId}-title"></span>&nbsp;(<span id="${dashletId}-description"></span>)</#if></div>
 			 <div class="toolbar datagrid-bar flat-button">
