@@ -26,6 +26,7 @@ div.wizard-comments {
 div.wizard-container{
 	float: left; 
 	clear: none;
+	width: 100%;
 }
 
 div.wizard-content {
@@ -123,7 +124,7 @@ div.wizard-content {
 }
 
 .wizard > .content {
-    background: none repeat scroll 0 0 rgb(238, 238, 238);
+  /*background: none repeat scroll 0 0 rgb(238, 238, 238);*/
     border-radius: 5px;
     display: block;
     margin: 0.5em;
@@ -140,9 +141,17 @@ div.wizard-content {
 }
 .wizard > .content > .body {
     float: left;
-    padding: 2.5%;
-    width: 95%;
+  /*   padding: 2.5%;
+    width: 95%; */
 }
+/* 
+.wizard > .content > .body.entity-data-lists {
+    float: left;
+    padding: 0px;
+    width: 100%;
+    background: white;
+} */
+
 .wizard > .content > .body ul {
     list-style: disc outside none !important;
 }
@@ -154,28 +163,7 @@ div.wizard-content {
     height: 100%;
     width: 100%;
 }
-/* .wizard > .content > .body input {
-    border: 1px solid rgb(204, 204, 204);
-    display: block;
-}
-.wizard > .content > .body input[type="checkbox"] {
-    display: inline-block;
-} 
-.wizard > .content > .body input.error {
-    background: none repeat scroll 0 0 rgb(251, 227, 228);
-    border: 1px solid rgb(251, 194, 196);
-    color: rgb(138, 31, 17);
-}
-.wizard > .content > .body label {
-    display: inline-block;
-    margin-bottom: 0.5em;
-}
-.wizard > .content > .body label.error {
-    color: rgb(138, 31, 17);
-    display: inline-block;
-    margin-left: 1.5em;
-}
-*/
+
 .wizard > .actions {
     display: block;
     position: relative;
@@ -314,27 +302,59 @@ div.wizard-content {
 
 .share-form .wizard-mgr {
 	margin-top: 15px;
-	
 }
 
 
 /**
  Dashlet
 **/
-.wizard  .datagrid .scrollableList {
-	padding: 0;
-	height: 450px;
-	clear:both;
+
+
+.wizard .dashlet {
+    z-index: auto;
+    margin: 5px 0px 20px 0;
+    border: none;
+    background-color: transparent;
+}
+.wizard .datagrid {
+    padding: 0px;
 }
 
-.wizard  .datagrid {
+.wizard .datagrid table {
+	border:none;
+}
+
+* .wizard  .datagrid .scrollableList {
+	padding: 0;
+	height: 450px;
+}
+
+
+.wizard  .dashlet  .toolbar .yui-button {
+    margin: 0px;
+}
+
+
+.wizard  .dashlet  .toolbar {
+	min-height: 0px;
+	margin: 0px;
 	padding: 0px;
+	border-bottom: none;
 }
 
 .wizard  .dashlet {
-	margin: 10px 0 0;
+	z-index: auto;
+	margin: 5px 0px 20px 0;
+	border: none;
+	background-color: white;
 }
 
+.wizard .datagrid .yui-dt-col-actions {
+	border-right: none;
+}
+
+
+/*
 .wizard  .dashlet  .toolbar {
 	height: 28px;
 	margin: 0px;
@@ -350,7 +370,7 @@ div.wizard-content {
 
 .wizard .datagrid .yui-dt-col-actions  {
     border-right:none;
-}
+} */
 
 
 /**
@@ -359,9 +379,10 @@ div.wizard-content {
 .wizard  .datagrid .datagrid-bar .paginator {
 	float: inherit;
 	width: inherit;
+	padding: 3px;
 }
 
-.wizard  .datagrid-bar .left,.datagrid-bar .left div {
+.wizard  .datagrid-bar .left, .datagrid-bar .left div {
 	float: left;
 }
 
@@ -369,36 +390,26 @@ div.wizard-content {
 	float: right;
 }
 
-
-
 .wizard .datagrid-bar .left  .filterform  div,
-.wizard .datagrid-bar .left  .filterform  {
-    float:none;
+	.wizard .datagrid-bar .left  .filterform {
+	float: none;
 }
 
-
-.wizard  .datagrid-bar .new-row span.first-child {
-	background: url(../images/add-row-16.png) no-repeat 12px 4px;
-	padding-left: 24px;
+.wizard .toolbar .left .filterform div, .wizard .toolbar .left div.filterButtonsBar {
+    float: none;
 }
 
-.wizard  .datagrid-bar  .onActionBulkEdit {
-	background: transparent url(../images/edit-inline-16.png) no-repeat 12px
-		4px;
-	padding-left: 22px;
-}
-
-.wizard  .datagrid-bar  .onActionSelectColor  {
-	background-image:  url("../../components/images/select-color-16.png") no-repeat 12px
-		4px;
-	padding-left: 22px;
-}
-
-.wizard  .datagrid-bar  .onActionSimulate,.datagrid .onActionSimulate a
-	{
-	background: transparent url(../documentlibrary/actions/folder-copy-to-16.png)
+.datalist-toolbar .onActionSimulate, .datagrid .onActionSimulate a {
+	background: transparent
+		url(../../components/documentlibrary/actions/folder-copy-to-16.png)
 		no-repeat 12px 4px;
 	padding-left: 22px;
+}
+
+
+.wizard .datagrid-bar .new-row span.first-child {
+	background: url(../images/add-row-16.png) no-repeat 8px 4px;
+	padding-left: 0px;
 }
 
 
@@ -406,7 +417,6 @@ div.wizard-content {
 .wizard-mgr > h1 {
     background-color: #FFFFCC;
     border: 1px solid #CACACA;
-    border-radius: 5px 5px 5px 5px;
     margin: 0 1em 0.5em 0.3em;
     padding: 0.6em;
 	display: block;

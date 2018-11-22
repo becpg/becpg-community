@@ -273,6 +273,11 @@
                                 Dom.removeClass(this.id + "-wizardTitle", "hidden");
                             }
                             
+                            if(step.type == "entityDataList"){
+                            	Dom.addClass( this.id + "-wizard-p-" + step.index, "entity-data-lists");
+                            } else {
+                            	Dom.removeClass( this.id + "-wizard-p-" + step.index, "entity-data-lists");
+                            }
                             
                             if (!step.nodeRef || step.nodeRef == null || step.nodeRef.length < 1)
                             {
@@ -301,7 +306,6 @@
                                                     formId : step.formId
                                                 });
                             } else if(step.type == "entityDataList"){
-                                
                                
                                  url =  YAHOO.lang
                                 .substitute(

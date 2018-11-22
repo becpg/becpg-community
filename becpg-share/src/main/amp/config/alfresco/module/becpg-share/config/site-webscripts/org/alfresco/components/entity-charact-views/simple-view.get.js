@@ -2,7 +2,7 @@
 
 
 function main()
-{
+{  
    parseActions(args.list);
 }
 
