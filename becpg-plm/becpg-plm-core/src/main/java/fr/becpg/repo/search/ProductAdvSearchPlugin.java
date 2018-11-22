@@ -53,29 +53,28 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 	@Autowired
 	private EntityListDAO entityListDAO;
-	
 
 	private static final String CRITERIA_ING = "assoc_bcpg_ingListIng_added";
 	private static final String CRITERIA_ING_AND = "assoc_bcpg_advIlIngAnd_added";
 	private static final String CRITERIA_ING_NOT = "assoc_bcpg_advIlIngNot_added";
-	
-	
+
+	private static final String CRITERIA_GEO_ORIGIN = "assoc_bcpg_ingListGeoOrigin_added";
+	private static final String CRITERIA_BIO_ORIGIN = "assoc_bcpg_ingListBioOrigin_added";
+
 	private static final String CRITERIA_PHYSICO = "assoc_bcpg_pclPhysicoChem_added";
 	private static final String CRITERIA_PHYSICO_RANGE = "prop_bcpg_pclValue-range";
 	private static final String CRITERIA_PHYSICO_1 = "assoc_bcpg_advPclPhysicoChem1_added";
 	private static final String CRITERIA_PHYSICO_RANGE_1 = "prop_bcpg_advPclValue1-range";
 	private static final String CRITERIA_PHYSICO_2 = "assoc_bcpg_advPclPhysicoChem2_added";
 	private static final String CRITERIA_PHYSICO_RANGE_2 = "prop_bcpg_advPclValue2-range";
-	
-	
+
 	private static final String CRITERIA_COST = "assoc_bcpg_costListCost_added";
 	private static final String CRITERIA_COST_RANGE = "prop_bcpg_costListValue-range";
 	private static final String CRITERIA_COST_1 = "assoc_bcpg_advClCost1_added";
 	private static final String CRITERIA_COST_RANGE_1 = "prop_bcpg_advClCost1-range";
 	private static final String CRITERIA_COST_2 = "assoc_bcpg_advClCost2_added";
 	private static final String CRITERIA_COST_RANGE_2 = "prop_bcpg_advClCost2-range";
-	
-	
+
 	private static final String CRITERIA_NUTS = "assoc_bcpg_nutListNut_added";
 	private static final String CRITERIA_NUTS_RANGE = "prop_bcpg_nutListValue-range";
 	private static final String CRITERIA_NUTS_1 = "assoc_bcpg_advNlNut1_added";
@@ -85,33 +84,69 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 	private static final String CRITERIA_NUTS_3 = "assoc_bcpg_advNlNut3_added";
 	private static final String CRITERIA_NUTS_RANGE_3 = "prop_bcpg_advNlValue3-range";
 
-	
 	private static final String CRITERIA_ALLERGEN = "assoc_bcpg_allergenListAllergen_added";
 	private static final String CRITERIA_ALLERGEN_VOL_AND = "assoc_bcpg_advAlVolAnd_added";
 	private static final String CRITERIA_ALLERGEN_VOL_NOT = "assoc_bcpg_advAlVolNot_added";
 	private static final String CRITERIA_ALLERGEN_INVOL_AND = "assoc_bcpg_advAlInVolAnd_added";
 	private static final String CRITERIA_ALLERGEN_INVOL_NOT = "assoc_bcpg_advAlInVolNot_added";
 
-	
 	private static final String CRITERIA_LABEL_CLAIM = "assoc_bcpg_lclLabelClaim_added";
 	private static final String CRITERIA_LABEL_CLAIM_AND = "assoc_bcpg_advLclClaimAnd_added";
 	private static final String CRITERIA_LABEL_CLAIM_NOT = "assoc_bcpg_advLclClaimNot_added";
-	
 
-	
 	private static final String CRITERIA_MICROBIO = "assoc_bcpg_mblMicrobio_added";
 	private static final String CRITERIA_MICROBIO_RANGE = "prop_bcpg_mblValue-range";
 
-	private static final String CRITERIA_GEO_ORIGIN = "assoc_bcpg_ingListGeoOrigin_added";
-	private static final String CRITERIA_BIO_ORIGIN = "assoc_bcpg_ingListBioOrigin_added";
-
 	private static final String CRITERIA_PACK_LABEL = "assoc_pack_llLabel_added";
-	
+
 	private static final String CRITERIA_PACKAGING_LIST_PRODUCT = "assoc_bcpg_packagingListProduct_added";
 	private static final String CRITERIA_PROCESS_LIST_RESSOURCE = "assoc_mpm_plResource_added";
 	private static final String CRITERIA_COMPO_LIST_PRODUCT = "assoc_bcpg_compoListProduct_added";
 
 	private static final String CRITERIA_PACK_LABEL_POSITION = "prop_pack_llPosition";
+
+	private static Set<String> keysToExclude = new HashSet<>();
+
+	static {
+		keysToExclude.add(CRITERIA_ING);
+		keysToExclude.add(CRITERIA_ING_AND);
+		keysToExclude.add(CRITERIA_ING_NOT);
+
+		keysToExclude.add(CRITERIA_GEO_ORIGIN);
+		keysToExclude.add(CRITERIA_BIO_ORIGIN);
+
+		keysToExclude.add(CRITERIA_PHYSICO);
+		keysToExclude.add(CRITERIA_PHYSICO_1);
+		keysToExclude.add(CRITERIA_PHYSICO_2);
+
+		keysToExclude.add(CRITERIA_COST);
+		keysToExclude.add(CRITERIA_COST_1);
+		keysToExclude.add(CRITERIA_COST_2);
+
+		keysToExclude.add(CRITERIA_NUTS);
+		keysToExclude.add(CRITERIA_NUTS_1);
+		keysToExclude.add(CRITERIA_NUTS_2);
+		keysToExclude.add(CRITERIA_NUTS_3);
+
+		keysToExclude.add(CRITERIA_ALLERGEN);
+		keysToExclude.add(CRITERIA_ALLERGEN_VOL_AND);
+		keysToExclude.add(CRITERIA_ALLERGEN_VOL_NOT);
+		keysToExclude.add(CRITERIA_ALLERGEN_INVOL_AND);
+		keysToExclude.add(CRITERIA_ALLERGEN_INVOL_NOT);
+
+		keysToExclude.add(CRITERIA_LABEL_CLAIM);
+		keysToExclude.add(CRITERIA_LABEL_CLAIM_AND);
+		keysToExclude.add(CRITERIA_LABEL_CLAIM_NOT);
+
+		keysToExclude.add(CRITERIA_MICROBIO);
+
+		keysToExclude.add(CRITERIA_PACK_LABEL);
+
+		keysToExclude.add(CRITERIA_PACKAGING_LIST_PRODUCT);
+		keysToExclude.add(CRITERIA_PROCESS_LIST_RESSOURCE);
+		keysToExclude.add(CRITERIA_COMPO_LIST_PRODUCT);
+
+	}
 
 	@Override
 	public List<NodeRef> filter(List<NodeRef> nodes, QName datatype, Map<String, String> criteria) {
@@ -130,8 +165,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 						PLMModel.PROP_LCL_CLAIM_VALUE, "true");
 				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_LABEL_CLAIM_NOT, PLMModel.ASSOC_LCL_LABELCLAIM,
 						PLMModel.PROP_LCL_CLAIM_VALUE, "false");
-				
-				
+
 				nodes = getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_PACKAGING_LIST_PRODUCT, PLMModel.ASSOC_PACKAGINGLIST_PRODUCT, null,
 						null);
 				nodes = getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_COMPO_LIST_PRODUCT, PLMModel.ASSOC_COMPOLIST_PRODUCT, null, null);
@@ -147,17 +181,14 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 						PLMModel.PROP_ALLERGENLIST_INVOLUNTARY, "true");
 				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_ALLERGEN_INVOL_NOT, PLMModel.ASSOC_ALLERGENLIST_ALLERGEN,
 						PLMModel.PROP_ALLERGENLIST_INVOLUNTARY, "false");
-				
-				
-				
+
 				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_COST, PLMModel.ASSOC_COSTLIST_COST, PLMModel.PROP_COSTLIST_VALUE,
 						criteria.get(CRITERIA_COST_RANGE));
 				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_COST_1, PLMModel.ASSOC_COSTLIST_COST, PLMModel.PROP_COSTLIST_VALUE,
 						criteria.get(CRITERIA_COST_RANGE_1));
 				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_COST_2, PLMModel.ASSOC_COSTLIST_COST, PLMModel.PROP_COSTLIST_VALUE,
 						criteria.get(CRITERIA_COST_RANGE_2));
-				
-				
+
 				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_NUTS, PLMModel.ASSOC_NUTLIST_NUT, PLMModel.PROP_NUTLIST_VALUE,
 						criteria.get(CRITERIA_NUTS_RANGE));
 				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_NUTS_1, PLMModel.ASSOC_NUTLIST_NUT, PLMModel.PROP_NUTLIST_VALUE,
@@ -166,17 +197,14 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 						criteria.get(CRITERIA_NUTS_RANGE_2));
 				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_NUTS_3, PLMModel.ASSOC_NUTLIST_NUT, PLMModel.PROP_NUTLIST_VALUE,
 						criteria.get(CRITERIA_NUTS_RANGE_3));
-				
-				
-				
+
 				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_PHYSICO, PLMModel.ASSOC_PHYSICOCHEMLIST_PHYSICOCHEM,
 						PLMModel.PROP_PHYSICOCHEMLIST_VALUE, criteria.get(CRITERIA_PHYSICO_RANGE));
 				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_PHYSICO_1, PLMModel.ASSOC_PHYSICOCHEMLIST_PHYSICOCHEM,
 						PLMModel.PROP_PHYSICOCHEMLIST_VALUE, criteria.get(CRITERIA_PHYSICO_RANGE_1));
 				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_PHYSICO_2, PLMModel.ASSOC_PHYSICOCHEMLIST_PHYSICOCHEM,
 						PLMModel.PROP_PHYSICOCHEMLIST_VALUE, criteria.get(CRITERIA_PHYSICO_RANGE_2));
-				
-				
+
 				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_MICROBIO, PLMModel.ASSOC_MICROBIOLIST_MICROBIO,
 						PLMModel.PROP_MICROBIOLIST_VALUE, criteria.get(CRITERIA_MICROBIO_RANGE));
 			}
@@ -200,7 +228,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 	/**
 	 * Take in account criteria on associations (ie :
 	 * assoc_bcpg_supplierAssoc_added)
-	 * 
+	 *
 	 * @param datatype
 	 *
 	 * @return filtered list of nodes by associations
@@ -223,13 +251,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 				String assocName = key.substring(6);
 				if (assocName.endsWith("_added")) {
-					// TODO : should be generic
-					if (!entityDictionaryService.isSubClass(datatype, PLMModel.TYPE_PRODUCT)
-							|| (!key.equals(CRITERIA_ING) && !key.equals(CRITERIA_GEO_ORIGIN) && !key.equals(CRITERIA_BIO_ORIGIN)
-									&& !key.equals(CRITERIA_PACK_LABEL) && !key.equals(CRITERIA_LABEL_CLAIM)
-									&& !key.equals(CRITERIA_PACKAGING_LIST_PRODUCT) && !key.equals(CRITERIA_COMPO_LIST_PRODUCT)
-									&& !key.equals(CRITERIA_PROCESS_LIST_RESSOURCE) && !key.equals(CRITERIA_ALLERGEN) && !key.equals(CRITERIA_COST)
-									&& !key.equals(CRITERIA_PHYSICO) && !key.equals(CRITERIA_NUTS))) {
+					if (!entityDictionaryService.isSubClass(datatype, PLMModel.TYPE_PRODUCT) || !keysToExclude.contains(key)) {
 
 						assocName = assocName.substring(0, assocName.length() - 6);
 						assocName = assocName.replace("_", ":");
@@ -278,7 +300,6 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 		List<NodeRef> ingListItems = null;
 		List<NodeRef> notIngListItems = null;
-		
 
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
@@ -292,21 +313,21 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 			String propValue = criterion.getValue();
 
 			// criteria on ing
-			if ((key.equals(CRITERIA_ING) || key.equals(CRITERIA_ING_AND) ) && !propValue.isEmpty()) {
+			if ((key.equals(CRITERIA_ING) || key.equals(CRITERIA_ING_AND)) && !propValue.isEmpty()) {
 
 				String[] arrValues = propValue.split(RepoConsts.MULTI_VALUES_SEPARATOR);
 
 				for (String strNodeRef : arrValues) {
-				
+
 					NodeRef nodeRef = new NodeRef(strNodeRef);
 
 					if (nodeService.exists(nodeRef)) {
-	
+
 						List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, PLMModel.ASSOC_INGLIST_ING);
 						ingListItems = new ArrayList<>(assocRefs.size());
-	
+
 						for (AssociationRef assocRef : assocRefs) {
-	
+
 							NodeRef n = assocRef.getSourceRef();
 							if (isWorkSpaceProtocol(n)) {
 								ingListItems.add(n);
@@ -314,20 +335,20 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 						}
 					}
 				}
-			} else if(key.equals(CRITERIA_ING_NOT) && !propValue.isEmpty()) {
+			} else if (key.equals(CRITERIA_ING_NOT) && !propValue.isEmpty()) {
 				String[] arrValues = propValue.split(RepoConsts.MULTI_VALUES_SEPARATOR);
 
 				for (String strNodeRef : arrValues) {
-				
+
 					NodeRef nodeRef = new NodeRef(strNodeRef);
 
 					if (nodeService.exists(nodeRef)) {
-	
+
 						List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, PLMModel.ASSOC_INGLIST_ING);
 						notIngListItems = new ArrayList<>(assocRefs.size());
-	
+
 						for (AssociationRef assocRef : assocRefs) {
-	
+
 							NodeRef n = assocRef.getSourceRef();
 							if (isWorkSpaceProtocol(n)) {
 								notIngListItems.add(n);
@@ -410,8 +431,8 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 				nodes.retainAll(productNodeRefs);
 			}
 		}
-		
-		if(notIngListItems!=null) {
+
+		if (notIngListItems != null) {
 			for (NodeRef ingListItem : notIngListItems) {
 
 				if (isWorkSpaceProtocol(ingListItem)) {
@@ -423,7 +444,6 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 			}
 
 		}
-		
 
 		if (logger.isDebugEnabled()) {
 			watch.stop();
@@ -577,8 +597,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 							if (isWorkSpaceProtocol(n)) {
 								if ((criteriaAssocValue != null) && (criteriaValue != null) && !criteriaValue.isEmpty()) {
 									Object value = nodeService.getProperty(n, criteriaAssocValue);
-									if (PLMModel.PROP_NUTLIST_VALUE.equals(criteriaAssocValue)
-											&& (value == null)) {
+									if (PLMModel.PROP_NUTLIST_VALUE.equals(criteriaAssocValue) && (value == null)) {
 										value = nodeService.getProperty(n, PLMModel.PROP_NUTLIST_FORMULATED_VALUE);
 									}
 
@@ -644,7 +663,8 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 		if (logger.isDebugEnabled()) {
 			watch.stop();
-			logger.debug("getSearchNodesByLabelClaim executed in  " + watch.getTotalTimeSeconds() + " seconds ");
+			logger.debug("getSearchNodesByListCriteria "+criteriaAssoc.toPrefixString(namespaceService)
+			+" executed in  " + watch.getTotalTimeSeconds() + " seconds");
 		}
 
 		return nodes;
