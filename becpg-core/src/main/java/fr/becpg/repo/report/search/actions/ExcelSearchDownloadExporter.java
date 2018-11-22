@@ -100,7 +100,6 @@ public class ExcelSearchDownloadExporter implements Exporter {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	private void readFileMapping(NodeRef templateNodeRef) throws Exception {
 		ContentReader reader = contentService.getReader(templateNodeRef, ContentModel.PROP_CONTENT);
 
@@ -278,6 +277,9 @@ public class ExcelSearchDownloadExporter implements Exporter {
 							metadataFields.add(cellValue);
 						}
 					}
+				} else if(headerRow.getCell(i).getCellType() == Cell.CELL_TYPE_FORMULA) {
+					String cellFormula = headerRow.getCell(i).getCellFormula();
+					metadataFields.add("excel|"+cellFormula);
 				}
 			}
 

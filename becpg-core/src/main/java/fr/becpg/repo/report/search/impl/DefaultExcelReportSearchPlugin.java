@@ -126,12 +126,16 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 
 		for (AttributeExtractorStructure metadataField : metadataFields) {
 			if (metadataField.isFormulaField()) {
-				item.put(metadataField.getFieldName(), eval(metadataField.getFormula(), item));
+				if(metadataField.getFieldName().startsWith("formula")) {
+					item.put(metadataField.getFieldName(), eval(metadataField.getFormula(), item));
+				} else {
+					item.put(metadataField.getFieldName(),metadataField.getFormula());
+				}
 			}
 
 		}
 		
-		cellNum = ExcelHelper.appendExcelField(metadataFields, null, item, sheet.getWorkbook(), row, cellNum, null);
+		cellNum = ExcelHelper.appendExcelField(metadataFields, null, item, sheet, row, cellNum, rownum, null);
 
 		return rownum;
 	}

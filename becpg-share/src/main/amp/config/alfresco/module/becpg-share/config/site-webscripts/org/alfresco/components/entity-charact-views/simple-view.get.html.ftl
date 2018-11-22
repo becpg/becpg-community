@@ -20,7 +20,8 @@
 			      itemType : "${args.itemType}",
 			      saveFieldUrl :  Alfresco.constants.PROXY_URI+ "becpg/bulkedit/save",
 			      hiddenColumns : ["prop_bcpg_depthLevel"],
-			      useHistoryManager : false
+			      useHistoryManager : false,
+			      configurableColumns : false
 			   }).setMessages(${messages});
 			   
 			 
@@ -29,8 +30,8 @@
 			 })();
 			   
 			//]]></script>
-			<@dataGridDashlet dashletName="simpleViewDashlet" dashletId="simpleView-${el}" dashletTitle="${args.title}"  
-							 hideFilter=true itemType="${args.itemType}" />	
+				<@dataGridDashlet dashletName="simpleViewDashlet" dashletId="simpleView-${el}" dashletTitle="${args.title}"  
+						 hideTitle="true"  hideFilter="true" itemType="${args.itemType}" />	
  	</@>
  </@>
  

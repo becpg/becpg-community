@@ -698,7 +698,7 @@
                             this.widgets.newRowButton = Alfresco.util.createYUIButton(this, "newRowButton",
                                     this.onActionCreate,
                                     {
-                                        disabled : false,
+                                        disabled : true,
                                         value : "create"
                                     });
 
@@ -767,6 +767,8 @@
                             // Assume no list chosen for now
                             Dom.removeClass(this.id + "-selectListMessage", "hidden");
 
+                            this.widgets.newRowButton.set("disabled", true);
+                            
                            
                             // Filter forms
                             if (this.options.useFilter)
@@ -1097,7 +1099,8 @@
                             this._setupDataTable();
                             // Hide "no list" message
                             Dom.addClass(this.id + "-selectListMessage", "hidden");
-                           
+                            
+                            this.widgets.newRowButton.set("disabled", false);
 
                             Bubbling.fire(this.scopeId + "onDatalistColumnsReady",
                             {

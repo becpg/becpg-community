@@ -141,7 +141,11 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 					
 					for (AttributeExtractorStructure metadataField : metadataFields) {
 						if (metadataField.isFormulaField()) {
-							item.put(metadataField.getFieldName(), eval(metadataField.getFormula(), item));
+							if(metadataField.getFieldName().startsWith("formula")) {
+								item.put(metadataField.getFieldName(), eval(metadataField.getFormula(), item));
+							} else {
+								item.put(metadataField.getFieldName(),metadataField.getFormula());
+							}
 						}
 
 					}
@@ -160,7 +164,7 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 							cell.setCellValue(String.valueOf(key));
 						}
 
-						cellNum = ExcelHelper.appendExcelField(metadataFields, null, item, sheet.getWorkbook(), row, cellNum, null);
+						cellNum = ExcelHelper.appendExcelField(metadataFields, null, item, sheet, row, cellNum, rownum, null);
 
 					}
 					rownum = appendNextLevel(entry.getValue(), sheet, itemType, metadataFields, cache, rownum, key, qty, parameters, entityItems);

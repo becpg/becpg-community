@@ -221,7 +221,7 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 						cell.setCellValue(bcpgCode);
 					}
 					
-					ExcelHelper.appendExcelField(fields, null, item, workbook, row, cellnum,
+					ExcelHelper.appendExcelField(fields, null, item, sheet, row, cellnum,rownum,
 							MLTextHelper.shouldExtractMLText() ? MLTextHelper.getSupportedLocales() : null);
 					
 				}
@@ -253,7 +253,7 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 						cell.setCellValue(bcpgCode);
 					}
 					
-					ExcelHelper.appendExcelField(extractedExtrasItems.getComputedFields(), null, item, workbook, row, cellnum,
+					ExcelHelper.appendExcelField(extractedExtrasItems.getComputedFields(), null, item, sheet, row, cellnum,rownum,
 							MLTextHelper.shouldExtractMLText() ? MLTextHelper.getSupportedLocales() : null);
 					
 				}
