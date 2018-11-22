@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <export format="zip">
-	 <!--  <file path="./Images/produit.jpg" name="img_produit${bcpg:erpCode}.jpg" destFolder="."></file>
-	  <file path="./Documents/${cm:name} - Fiche Technique Client.pdf"  name="FT_client${bcpg:erpCode}.pdf" destFolder="./FTs/"></file>
-	  <file path="./*.jpeg" /> -->
-	  
-	  <file path="./*[like(@cm:name, '%jpeg', false)]" destFolder="Sub folder2" />
+	  <file path="./*[like(@cm:name, '%jpeg', false)]" destFolder="Sub folder2/" />
 	  <file path="*/*" name="{doc_cm:name} - {cm:name}.jpeg"/>
-	  <file path="cm:Test_x0020_folder/*" name="Image - {cm:name}.jpeg" destFolder="Sub folder" />
-	  
+	  <file path="cm:Test_x0020_folder/*" name="Image - {cm:name}.jpeg" destFolder="Sub folder/" />
+	  	<file path="cm:Documents/*[like(@cm:name, '%Client%', false)]" name="{bcpg:code} - {doc_cm:name}" destFolder="Client spec/"/>
 </export>

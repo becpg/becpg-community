@@ -224,34 +224,27 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 	@Override
 	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 
-		Set<QName> types = new HashSet<>();
-
 		for (NodeRef nodeRef : pendingNodes) {
 			if (nodeService.exists(nodeRef)) {
 				QName type = nodeService.getType(nodeRef);
-				if (!(entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM) && types.contains(type))) {
-
-					switch (key) {
-					case KEY_QUEUE_UPDATED:
-						if (!containsNodeInQueue(KEY_QUEUE_CREATED, nodeRef) && !containsNodeInQueue(KEY_QUEUE_DELETED, nodeRef)
-								&& !containsNodeInQueue(KEY_QUEUE_UPDATED_STATUS, nodeRef)) {
-							registerActivity(nodeRef, type, ActivityEvent.Update);
-						}
-						break;
-					case KEY_QUEUE_CREATED:
-						registerActivity(nodeRef, type, ActivityEvent.Create);
-						break;
-					default:
-						if (key.contains(KEY_QUEUE_UPDATED_STATUS)) {
-							String[] strState = pattern.split(key);
-							entityActivityService.postStateChangeActivity(nodeRef, null, strState[1], strState[2]);
-						}
-						break;
+				
+				switch (key) {
+				case KEY_QUEUE_UPDATED:
+					if (!containsNodeInQueue(KEY_QUEUE_CREATED, nodeRef) && !containsNodeInQueue(KEY_QUEUE_DELETED, nodeRef)
+							&& !containsNodeInQueue(KEY_QUEUE_UPDATED_STATUS, nodeRef)) {
+						registerActivity(nodeRef, type, ActivityEvent.Update);
 					}
-
+					break;
+				case KEY_QUEUE_CREATED:
+					registerActivity(nodeRef, type, ActivityEvent.Create);
+					break;
+				default:
+					if (key.contains(KEY_QUEUE_UPDATED_STATUS)) {
+						String[] strState = pattern.split(key);
+						entityActivityService.postStateChangeActivity(nodeRef, null, strState[1], strState[2]);
+					}
+					break;
 				}
-				types.add(type);
-
 			}
 		}
 		return false;
