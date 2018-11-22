@@ -1013,7 +1013,12 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		NodeRef listsFolder = entitySystemService.getSystemEntity(systemFolderNodeRef, RepoConsts.PATH_LISTS);
 		NodeRef reportKindListFolder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_REPORT_KINDLIST);
 		reportKindListDefaultValues.forEach((key, val) -> {
-			mlNodeService.createNode(reportKindListFolder, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, BeCPGModel.TYPE_LIST_VALUE, val);
+			
+			NodeRef nodeRef = nodeService.getChildByName(reportKindListFolder, ContentModel.ASSOC_CONTAINS, (String) val.get(ContentModel.PROP_NAME));
+			if (nodeRef == null) {
+			
+				mlNodeService.createNode(reportKindListFolder, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, BeCPGModel.TYPE_LIST_VALUE, val);
+			}
 		});
 		
 	}
@@ -1073,6 +1078,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				
 				//for reportKindList default values
 				Map<QName, Serializable> reportKindListProps = new HashMap<>();
+				reportKindListProps.put(ContentModel.PROP_NAME, reportKindCode);
 				reportKindListProps.put(BeCPGModel.PROP_LV_CODE, reportKindCode);
 				reportKindListProps.put(BeCPGModel.PROP_LV_VALUE, mltValue);
 				reportKindDefaultValues.put(reportKind, reportKindListProps);

@@ -43,11 +43,9 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.EntityListState;
-import fr.becpg.model.SystemState;
 import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.entity.EntityDictionaryService;
-import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.AssociationService;
@@ -94,9 +92,16 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	private PermissionService permissionService;
 
 	private RepoService repoService;
+	
+	private boolean useBrowserLocale;
 
 	private boolean showEntitiesInTree = false;
 	
+	
+	public void setUseBrowserLocale(boolean useBrowserLocale) {
+		this.useBrowserLocale = useBrowserLocale;
+	}
+
 	public void setPermissionService(PermissionService permissionService) {
 		this.permissionService = permissionService;
 	}
@@ -294,10 +299,11 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public String getUserLocale(ScriptNode personNode) {
 		String loc = (String) mlNodeService.getProperty(personNode.getNodeRef(), BeCPGModel.PROP_USER_LOCAL);
 		if(loc ==  null || loc.isEmpty()) {
-			if(!Locale.getDefault().getLanguage().equals("fr")) {
-				return "en";
+			if(useBrowserLocale) {
+				return null;
+			} else {
+				return MLTextHelper.localeKey(I18NUtil.getLocale());
 			}
-			return "fr";
 		}
 		return loc;
 	}
@@ -305,7 +311,11 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public String getUserContentLocale(ScriptNode personNode) {
 		String loc = (String) mlNodeService.getProperty(personNode.getNodeRef(), BeCPGModel.PROP_USER_CONTENT_LOCAL);
 		if(loc ==  null || loc.isEmpty()) {
-			loc = MLTextHelper.localeKey(MLTextHelper.getNearestLocale(Locale.getDefault()));
+			if(useBrowserLocale) {
+				 return null;
+			} else {
+				loc = MLTextHelper.localeKey(I18NUtil.getContentLocale());
+			}
 		}
 		return loc;
 	}

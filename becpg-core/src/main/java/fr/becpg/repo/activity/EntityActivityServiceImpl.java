@@ -33,6 +33,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.activity.data.ActivityEvent;
 import fr.becpg.repo.activity.data.ActivityListDataItem;
 import fr.becpg.repo.activity.data.ActivityType;
@@ -648,8 +649,12 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			// Only entities that might could be have activities
-			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_ENTITY_V2).inDB();
+			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_ENTITY_V2).inDB().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED);
 			List<NodeRef> entityNodeRefs = queryBuilder.list();
+			
+			if(logger.isDebugEnabled()){
+				logger.debug("Clean activities, Number of entities: " + entityNodeRefs.size());
+			}
 
 			try {
 				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
@@ -676,6 +681,10 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 							activityListDataItemNodeRefs = activityListDataItemNodeRefs.subList(nbrActivity>MAX_PAGE? MAX_PAGE : 0, nbrActivity>MAX_PAGE? nbrActivity : 0 );
 							
 							nbrActivity = activityListDataItemNodeRefs.size();
+							
+							if(logger.isDebugEnabled()){
+								logger.debug("nbrActivity: " + nbrActivity);
+							}
 							
 							// Clean activities which are not in the first page.
 							if (nbrActivity > 0 ) {
@@ -720,11 +729,13 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 								}
 								
 								List<NodeRef> dlActivities = activitiesByType.get(ActivityType.Datalist);
-								// Group list by day/week/month/year
-								int[] groupTime = { Calendar.DAY_OF_YEAR, Calendar.WEEK_OF_YEAR, Calendar.MONTH, Calendar.YEAR};
-								for (int i = 0; (i < groupTime.length) && (nbrActivity > MAX_PAGE); i++) {
-									dlActivities = group(entityNodeRef, dlActivities, users, groupTime[i], cronDate);
-									nbrActivity += (dlActivities.size() - activitiesByType.get(ActivityType.Datalist).size());
+								if(dlActivities != null){
+									// Group list by day/week/month/year
+									int[] groupTime = { Calendar.DAY_OF_YEAR, Calendar.WEEK_OF_YEAR, Calendar.MONTH, Calendar.YEAR};
+									for (int i = 0; (i < groupTime.length) && (nbrActivity > MAX_PAGE); i++) {
+										dlActivities = group(entityNodeRef, dlActivities, users, groupTime[i], cronDate);
+										nbrActivity += (dlActivities.size() - activitiesByType.get(ActivityType.Datalist).size());
+									}
 								}
 							}
 						}
@@ -779,42 +790,45 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 			for (String userId : users) { 
 				
-				Map<NodeRef,List<String>> activitiesByEntity = new HashMap<>();
-				List<NodeRef> removedNodes = new ArrayList<>();
-				for (NodeRef activityNodeRef : activitiesNodeRefs) {
-					
-					Date createdDate = (Date) nodeService.getProperty(activityNodeRef, ContentModel.PROP_CREATED);
-					
-					ActivityListDataItem activity = alfrescoRepository.findOne(activityNodeRef);
-					NodeRef activityParentNodeRef = activity.getParentNodeRef();
-					String strData = activity.getActivityData();
-					JSONTokener tokener = new JSONTokener(strData);
-					String datalistClassName = null;
-					try {
-						JSONObject data = new JSONObject(tokener);
-						datalistClassName = (String)data.get(PROP_CLASSNAME);
-					} catch (JSONException e) {
-						logger.error("Problem occurred while parsing data activity!! ", e);
-					}
+				if(activitiesNodeRefs != null){
+					Map<NodeRef,List<String>> activitiesByEntity = new HashMap<>();
+					List<NodeRef> removedNodes = new ArrayList<>();
+				
+					for (NodeRef activityNodeRef : activitiesNodeRefs) {
 						
-					if (createdDate.after(minLimit.getTime()) && createdDate.before(maxLimit.getTime()) && activity.getUserId().equals(userId)) {
-						// group same data-list activity
-						if(activitiesByEntity.containsKey(activityParentNodeRef) 
-								&& activitiesByEntity.get(activityParentNodeRef).contains(datalistClassName)){
-							removedNodes.add(activityNodeRef);
-							
-							nodeService.addAspect(activityNodeRef, ContentModel.ASPECT_TEMPORARY, null);
-							nodeService.deleteNode(activityNodeRef);
-						} else {
-							
-							if (!activitiesByEntity.containsKey(activityParentNodeRef)) {
-								activitiesByEntity.put(activityParentNodeRef, new ArrayList<>());
-							}
-							activitiesByEntity.get(activityParentNodeRef).add(datalistClassName);
-						}	
-					} 
+						Date createdDate = (Date) nodeService.getProperty(activityNodeRef, ContentModel.PROP_CREATED);
+						
+						ActivityListDataItem activity = alfrescoRepository.findOne(activityNodeRef);
+						NodeRef activityParentNodeRef = activity.getParentNodeRef();
+						String strData = activity.getActivityData();
+						JSONTokener tokener = new JSONTokener(strData);
+						String datalistClassName = null;
+						try {
+							JSONObject data = new JSONObject(tokener);
+							datalistClassName = (String)data.get(PROP_CLASSNAME);
+						} catch (JSONException e) {
+							logger.error("Problem occurred while parsing data activity!! ", e);
+						}
+						
+						if (createdDate.after(minLimit.getTime()) && createdDate.before(maxLimit.getTime()) && activity.getUserId().equals(userId)) {
+							// group same data-list activity
+							if(activitiesByEntity.containsKey(activityParentNodeRef) 
+									&& activitiesByEntity.get(activityParentNodeRef).contains(datalistClassName)){
+								removedNodes.add(activityNodeRef);
+								
+								nodeService.addAspect(activityNodeRef, ContentModel.ASPECT_TEMPORARY, null);
+								nodeService.deleteNode(activityNodeRef);
+							} else {
+								
+								if (!activitiesByEntity.containsKey(activityParentNodeRef)) {
+									activitiesByEntity.put(activityParentNodeRef, new ArrayList<>());
+								}
+								activitiesByEntity.get(activityParentNodeRef).add(datalistClassName);
+							}	
+						} 
+					}
+					activitiesNodeRefs.removeAll(removedNodes);
 				}
-				activitiesNodeRefs.removeAll(removedNodes);
 			}
 
 			// Move to previous period

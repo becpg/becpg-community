@@ -32,6 +32,12 @@ public class BeCPGRuntimeContainer extends TenantRepositoryContainer implements 
 	private NodeService nodeService;
 
 	private PersonService personService;
+	
+	private boolean useBrowserLocale = false;
+	
+	public void setUseBrowserLocale(boolean useBrowserLocale) {
+		this.useBrowserLocale = useBrowserLocale;
+	}
 
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
@@ -70,10 +76,19 @@ public class BeCPGRuntimeContainer extends TenantRepositoryContainer implements 
 	private Locale getUserLocale(NodeRef personNodeRef) {
 		String loc = (String) nodeService.getProperty(personNodeRef, BeCPGModel.PROP_USER_LOCAL);
 		if(loc ==  null || loc.isEmpty()) {
-			if(!Locale.getDefault().getLanguage().equals("fr")) {
-				return Locale.ENGLISH;
+			if(useBrowserLocale) {
+				System.out.println("Locale : "+I18NUtil.getLocale());
+				
+				if(!I18NUtil.getLocale().getLanguage().equals("fr")) {
+					return Locale.ENGLISH;
+				}
+				return Locale.FRENCH;
+			} else {
+				if(!Locale.getDefault().getLanguage().equals("fr")) {
+					return Locale.ENGLISH;
+				}
+				return Locale.FRENCH;
 			}
-			return Locale.FRENCH;
 		}
 		return MLTextHelper.parseLocale(loc);
 	}
@@ -81,7 +96,12 @@ public class BeCPGRuntimeContainer extends TenantRepositoryContainer implements 
 	public Locale getUserContentLocale(NodeRef personNodeRef) {
 		String loc = (String) nodeService.getProperty(personNodeRef, BeCPGModel.PROP_USER_CONTENT_LOCAL);
 		if ((loc == null) || loc.isEmpty()) {
-			return MLTextHelper.getNearestLocale(Locale.getDefault());
+			if(useBrowserLocale) {
+				System.out.println("Content Locale : "+I18NUtil.getContentLocale());
+				return MLTextHelper.getNearestLocale(I18NUtil.getContentLocale());
+			} else {
+				return MLTextHelper.getNearestLocale(Locale.getDefault());
+			}
 		}
 		return MLTextHelper.parseLocale(loc);
 	}
