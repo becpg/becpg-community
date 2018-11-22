@@ -28,10 +28,10 @@
 }
 
 /*2 Column set */
-.form-container .yui-g .form-field input[type="text"]:not(.number-range):not(.date-range), .form-container .yui-g .form-field input[type="file"],
-	.form-container .yui-g .form-field input[type="password"],
-	.form-container .yui-g .form-field input:not(.number-range):not(.date-range), .form-container .yui-g .form-field select,
-	.form-container .yui-g .form-field textarea, .form-container .yui-g .yui-ac .ac-body
+	.form-container < :not(.bd) .yui-g .form-field input[type="text"]:not(.number-range):not(.date-range), .form-container .yui-g .form-field input[type="file"],
+	.form-container  < :not(.bd) .yui-g .form-field input[type="password"],
+	.form-container  < :not(.bd) .yui-g .form-field input:not(.number-range):not(.date-range), .form-container .yui-g .form-field select,
+	.form-container  < :not(.bd) .yui-g .form-field textarea, .form-container .yui-g .yui-ac .ac-body
 	{
 	width: 27em !important;
 }
@@ -55,11 +55,11 @@
 	padding-bottom: 0em;
 }
 
-.form-container .yui-navset .form-field input[type="text"]:not(.number-range):not(.date-range),
-	.form-container .yui-navset .form-field input[type="file"],
-	.form-container .yui-navset .form-field input[type="password"],
-	.form-container .yui-navset .form-field input:not(.number-range):not(.date-range), .form-container .yui-navset .form-field select,
-	.form-container .yui-navset .form-field textarea, .form-container .yui-navset .yui-ac .ac-body
+	.form-container < :not(.bd) .yui-navset .form-field input[type="text"]:not(.number-range):not(.date-range),
+	 .form-container < :not(.bd) .yui-navset .form-field input[type="file"],
+	 .form-container < :not(.bd) .yui-navset .form-field input[type="password"],
+	 .form-container < :not(.bd) .yui-navset .form-field input:not(.number-range):not(.date-range), .form-container .yui-navset .form-field select,
+	 .form-container < :not(.bd) .yui-navset .form-field textarea, .form-container .yui-navset .yui-ac .ac-body
 	{
 	width: 26em !important;
 }
@@ -74,10 +74,10 @@
 
 
 /* 3 Column set */
-.form-container .yui-gb .form-field input[type="text"]:not(.number-range):not(.date-range), .form-container .yui-gb .form-field input[type="file"],
-	.form-container .yui-gb .form-field input[type="password"],
-	.form-container .yui-gb .form-field input:not(.number-range):not(.date-range), .form-container .yui-gb .form-field select,
-	.form-container .yui-gb .form-field textarea, .form-container .yui-gb .yui-ac .ac-body
+ .form-container < :not(.bd) .yui-gb .form-field input[type="text"]:not(.number-range):not(.date-range), .form-container .yui-gb .form-field input[type="file"],
+	 .form-container < :not(.bd) .yui-gb .form-field input[type="password"],
+	 .form-container < :not(.bd) .yui-gb .form-field input:not(.number-range):not(.date-range), .form-container .yui-gb .form-field select,
+	 .form-container < :not(.bd) .yui-gb .form-field textarea, .form-container .yui-gb .yui-ac .ac-body
 	{
 	width: 16em !important;
 }
