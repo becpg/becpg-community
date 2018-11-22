@@ -523,7 +523,10 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				} else if("formula".equals(dlField)) {
 					field = tokeniser.nextToken();
 					ret.add(new AttributeExtractorStructure("formula_"+(formulaCount++),field));	
-				} else {
+				} else if("excel".equals(dlField)) {
+					field = tokeniser.nextToken();
+					ret.add(new AttributeExtractorStructure("excel_"+(formulaCount++),field));	
+				}  else {
 				
 
 					QName fieldQname = QName.createQName(dlField, namespaceService);
