@@ -2,6 +2,7 @@ package fr.becpg.web.resolver;
 
 import java.util.Locale;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -9,17 +10,17 @@ import javax.servlet.http.HttpSession;
 import org.springframework.extensions.surf.RequestContext;
 import org.springframework.extensions.surf.UserFactory;
 import org.springframework.extensions.surf.exception.UserFactoryException;
-import org.springframework.extensions.surf.mvc.LocaleResolver;
 import org.springframework.extensions.surf.support.ThreadLocalRequestContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.extensions.webscripts.connector.User;
+import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 
 /**
  *
  * @author matthieu
  *
  */
-public class BeCPGLocaleResolver extends LocaleResolver {
+public class BeCPGLocaleResolver extends AcceptHeaderLocaleResolver {
 
 	@Override
 	public Locale resolveLocale(HttpServletRequest request) {
@@ -48,7 +49,7 @@ public class BeCPGLocaleResolver extends LocaleResolver {
 				user = userFactory.initialiseUser(rc, request, userEndpointId, true);
 				rc.setUser(user);
 			} catch (UserFactoryException e) {
-				//Do nothing
+				// Do nothing
 			}
 		}
 
@@ -69,8 +70,28 @@ public class BeCPGLocaleResolver extends LocaleResolver {
 			}
 
 		}
+		locale = Locale.getDefault();
 
-		return super.resolveLocale(request);
+		// set language locale from browser header if available
+		final String acceptLang = request.getHeader("Accept-Language");
+		if (acceptLang != null && acceptLang.length() != 0) {
+			StringTokenizer t = new StringTokenizer(acceptLang, ",; ");
+
+			// get language and convert to java locale format
+			String language = t.nextToken().replace('-', '_');
+			locale = I18NUtil.parseLocale(language);
+		}
+
+		I18NUtil.setContentLocale(locale);
+		// set locale onto Alfresco thread local
+		if (!locale.getLanguage().equals("fr")) {
+			locale = Locale.ENGLISH;
+		} else {
+			locale = Locale.FRENCH;
+		}
+		I18NUtil.setLocale(locale);
+
+		return locale;
 	}
 
 }
