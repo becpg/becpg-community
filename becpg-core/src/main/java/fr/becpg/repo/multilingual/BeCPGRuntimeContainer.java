@@ -77,8 +77,6 @@ public class BeCPGRuntimeContainer extends TenantRepositoryContainer implements 
 		String loc = (String) nodeService.getProperty(personNodeRef, BeCPGModel.PROP_USER_LOCAL);
 		if(loc ==  null || loc.isEmpty()) {
 			if(useBrowserLocale) {
-				System.out.println("Locale : "+I18NUtil.getLocale());
-				
 				if(!I18NUtil.getLocale().getLanguage().equals("fr")) {
 					return Locale.ENGLISH;
 				}
@@ -97,7 +95,6 @@ public class BeCPGRuntimeContainer extends TenantRepositoryContainer implements 
 		String loc = (String) nodeService.getProperty(personNodeRef, BeCPGModel.PROP_USER_CONTENT_LOCAL);
 		if ((loc == null) || loc.isEmpty()) {
 			if(useBrowserLocale) {
-				System.out.println("Content Locale : "+I18NUtil.getContentLocale());
 				return MLTextHelper.getNearestLocale(I18NUtil.getContentLocale());
 			} else {
 				return MLTextHelper.getNearestLocale(Locale.getDefault());

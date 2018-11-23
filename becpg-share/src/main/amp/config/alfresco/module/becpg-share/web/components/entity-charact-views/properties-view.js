@@ -50,6 +50,8 @@
         // Decoupled event listeners
         YAHOO.Bubbling.on("metadataRefresh", this.doRefresh, this);
         
+        YAHOO.Bubbling.on("refreshDataGrids", this.doRefresh, this);
+        
         YAHOO.Bubbling.on("versionChangeFilter", this.onVersionChanged,this);
         return this;
     };
