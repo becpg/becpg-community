@@ -106,9 +106,21 @@
 	  -moz-hyphens: auto;
 	  -ms-hyphens: auto;
 	  -o-hyphens: auto;
-	  hyphens: auto;	
+	  hyphens: auto;
+	  max-width: 250px;
+      word-break: break-all;
 	
 }
+
+.project-list  .yui-dt-col-prop_cm_name, 
+.project-list  .yui-dt-col-dt_pjt_taskList  {
+	min-width: 265px;
+}
+
+.project-list  .yui-dt-col-prop_pjt_projectOverdue {
+	min-width: 90px;
+}
+
 
 .project-list .projects .yui-dt-data .yui-dt-last td {
 	border-bottom: medium none;
@@ -247,20 +259,51 @@
 	padding-left: 20px;
 }
 
+.project-list span.project-subtitle {
+	font-style: italic;
+}
+
+
 .project-list  progress[value] {
+	border: none;
 	width: 75px;
 	height: 16px;
+}
+
+
+.project-list .yui-dt-col-prop_cm_name progress {
+  border: none;
+  height: 16px;
+  width: 170px;
+}
+
+
+.project-list .yui-dt-col-prop_cm_name  span.small{
+	background-size: 16px;
+	padding-left: 20px;
+	height: 16px;
+	background-position: 0px;
+	float:left;
+}
+
+
+.project-list .yui-dt-col-prop_cm_name li {
+	padding: 5px;
 }
 
 .project-list  span.project-date {
 	color: #1155CC;
 	font-style: italic;
-	font-size: 0.9em;
-	display: block;
-	padding-top: 5px;
 }
 
-.project-list .grid span.task-group {
+.project-list  span.project-overdue {
+	color: red;
+	font-style: italic;
+}
+
+.project-list .grid span.task-group,
+.project-list .grid span.project-title.full a
+ {
 	 font-weight: bold;
 }
 

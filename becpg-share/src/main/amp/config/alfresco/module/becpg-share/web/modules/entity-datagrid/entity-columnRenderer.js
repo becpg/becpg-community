@@ -238,12 +238,12 @@
 							         && typeof scope.renderers[p_type + "_" + p_label] === "function") {
 							   	ret = scope.renderers[p_type + "_" + p_label].call(scope, oRecord, data, p_label,
 								         datagrid, i, ii, elCell, oColumn);
+							   } else if (scope.renderers.hasOwnProperty(p_label)
+								         && typeof scope.renderers[p_label] === "function") {
+								   	ret = scope.renderers[p_label].call(scope, oRecord, data, p_label, datagrid, i, ii, elCell, oColumn);
 							   } else if (scope.renderers.hasOwnProperty(p_type)
 							         && typeof scope.renderers[p_type] === "function") {
 							   	ret = scope.renderers[p_type].call(scope, oRecord, data, p_label, datagrid, i, ii, elCell, oColumn);
-							   } else if (scope.renderers.hasOwnProperty(p_label)
-							         && typeof scope.renderers[p_label] === "function") {
-							   	ret = scope.renderers[p_label].call(scope, oRecord, data, p_label, datagrid, i, ii, elCell, oColumn);
 							   } else {
 							   	ret = $links($html(data.displayValue));
 							   }
@@ -422,6 +422,10 @@
                case "mltext":
                    if (regexp == null) {
                        editor = new YAHOO.widget.TextareaCellEditor({disableBtns:false});
+                       editor.focus = function (){
+                   		this.getDataTable()._focusEl(this.textarea);
+                   		//  this.textarea.select();                    	   
+                       };
                    } else {
                        editor = new YAHOO.widget.TextboxCellEditor({
                            validator : function(oData) {
@@ -433,6 +437,7 @@
                            },
                            disableBtns:true
                        });
+                       
                    }
                    break;
                case "any":

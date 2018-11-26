@@ -72,92 +72,9 @@
 .project-list  span.project-title a {
     cursor: pointer;
     display: inline-block;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 200px;
-    white-space: nowrap;
+    word-break: break-all;
     vertical-align: middle;
     max-height: none;
-}
-
-@media screen and (min-width: 1400px) {
-	.project-list   span.task-title a {
-		max-width: 250px;
-	}
-}
-
-.project-title.tooltip{
- 	position: relative;	
- 	word-break: break-all;
-}
-
-.project-title.tooltip:before, .project-title.tooltip:after {
- opacity: 0;
-  z-index: 98;
-  -moz-transition: opacity 300ms, visibility 0ms linear 300ms;
-  -o-transition: opacity 300ms, visibility 0ms linear 300ms;
-  -webkit-transition: opacity 300ms, visibility 0ms linear;
-  -webkit-transition-delay: 0s, 300ms;
-  transition: opacity 300ms, visibility 0ms linear 300ms;
-  pointer-events: none;
-}
-.project-title.tooltip:before {
- content: attr(data-tooltip);
-  position: absolute;
-  width: 200px;
-  padding: 10px 15px;
-  line-height: 18px;
-  text-align: left;
-  font-size: 13px;
-  font-weight: normal;
-  white-space: normal;
-  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
-  border-radius: 3px;
-  background-color: #2c3e50;
-  color: #fff;
-}
-.project-title.tooltip:after {
-  content: '';
-}
-.project-title.tooltip:before {
-  bottom: -9px;
-  top: auto;
-  -moz-transform: translateY(100%);
-  -ms-transform: translateY(100%);
-  -webkit-transform: translateY(100%);
-  transform: translateY(100%);
-}
-.project-title.tooltip:after {
-  content: '';
-  display: block;
-  position: absolute;
-  height: 0;
-  width: 0;
-  border-bottom: 6px solid #2c3e50;
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-top: none;
-  bottom: -9px;
-  top: auto;
-}
-.project-title.tooltip:before, .project-title.tooltip:after {
-  left: 50%;
-  right: auto;
-  margin-left: -6px;
-}
-.project-title.tooltip:before {
-  margin-right: -18px;
-}
-.project-title.tooltip:hover {
-  /* putting comment here so :hover is declared first by itself to fix ie10 bug with transitions on psuedo elements- https://css-tricks.com/pseudo-element-animationstransitions-bug-fixed-in-webkit/ */
-}
-.project-title.tooltip:hover:before, .project-title.tooltip:hover:after {
-  opacity: 1;
-  pointer-events: all;
-  -moz-transition-delay: 0ms;
-  -o-transition-delay: 0ms;
-  -webkit-transition-delay: 0ms;
-  transition-delay: 0ms;
 }
 
 
@@ -175,6 +92,7 @@
 
 .project-list  a.task-comments,
 .project-list  a.submit-task,
+.project-list  a.show-details,
 .project-list  a.project-comments{ 
 	display: none;
 }
@@ -186,6 +104,17 @@
 	margin-left: 5px;
 	text-decoration: none;
 	background: url("../form/images/suggested-action-16.png") no-repeat;
+	display: inline-table;
+	height: 16px;
+	vertical-align: bottom;
+}
+
+.project-list  span.project-title:hover  a.show-details {
+	cursor: pointer;
+	padding-left: 16px;
+	margin-left: 5px;
+	text-decoration: none;
+	background: url("../images/info-16.png") no-repeat;
 	display: inline-table;
 	height: 16px;
 	vertical-align: bottom;
