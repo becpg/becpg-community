@@ -424,6 +424,12 @@
        */
       _onActionDeleteConfirm: function DocumentActions__onActionDeleteConfirm(asset)
       {
+    	var msgPopup =  Alfresco.util.PopupManager.displayMessage({
+    		                 text : this.msg("message.delete.please-wait"),
+    		                 spanClass : "wait",
+    		                 displayTime : 0
+    		              });
+    	  
          var path = asset.location.path;
          var failureErrorMsg = null;
          var that = this;
@@ -498,6 +504,7 @@
                {
                   fn: function DocumentActions_oADC_failure(response, obj)
                   {
+                	  msgPopup.destroy(); 
                 	  
                 	  if (response.json && response.json.message) {
                           Alfresco.util.PopupManager.displayPrompt({
