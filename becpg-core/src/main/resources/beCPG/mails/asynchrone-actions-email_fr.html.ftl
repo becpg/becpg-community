@@ -38,7 +38,8 @@
                                              	</#if>
                                              	<b>
                                              		<#if args.actionState> Succès<#else> Erreur</#if>
-                                             	</b>, après <b>${args.runTime}</b> secondes.
+                                             	</b>, après <#if args.runTime < 60 ><b>${args.runTime?round}</b> secondes.
+                                             				<#else><b>${(args.runTime/60)?round}</b> minutes.</#if>
                                              </p>
                                              
                                              <#if args.url??>
