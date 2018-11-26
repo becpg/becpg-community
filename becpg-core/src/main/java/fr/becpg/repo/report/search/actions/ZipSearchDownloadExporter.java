@@ -205,7 +205,6 @@ public class ZipSearchDownloadExporter implements Exporter {
 	}
 
 	Map<String, Set<NodeRef>> cache = new HashMap<>();
-	Set<String> folders = new HashSet<>();
 
 	@Override
 	public void startNode(NodeRef entityNodeRef) {
@@ -242,19 +241,15 @@ public class ZipSearchDownloadExporter implements Exporter {
 							
 							if(fileMapping.destFolder != null && !fileMapping.destFolder.isEmpty()){
 								folderName = extractExpr(entityNodeRef, null, fileMapping.destFolder);
+								if(!folderName.endsWith("/")) {
+									folderName +="/";
+								}
 							}
 
-							String path = (folderName!=null ? fileMapping.destFolder + "/" : "")
+							String path = (folderName!=null ? folderName : "")
 									+ createName(fileMapping, fileNodeRef, entityNodeRef);
 
 							try (InputStream inputStream = reader.getContentInputStream()) {
-
-								if (folderName!=null && !folders.contains(folderName)) {
-									ZipArchiveEntry zipEntry = new ZipArchiveEntry(folderName);
-									zipStream.putArchiveEntry(zipEntry);
-									zipStream.closeArchiveEntry();
-									folders.add(folderName);
-								}
 
 								// ALF-2016
 								ZipArchiveEntry zipEntry = new ZipArchiveEntry(path);

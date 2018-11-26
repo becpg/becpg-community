@@ -272,6 +272,7 @@ div.itemSelect-open {
 	position: absolute;
 	width: 200px;
 	right:10px;
+	z-index:99;
 }
 
 .datagrid .more-actions a.action-link,.datagrid .more-actions a.simple-link
