@@ -1,4 +1,5 @@
 <@standalone>
+
 <@markup id="css" >
    <#-- CSS Dependencies -->
    <#include "../form/form.css.ftl"/>
@@ -14,6 +15,11 @@
    <@script src="${url.context}/res/components/entity-catalog/entity-catalog.js" group="properties-view"/>
    <@script src="${url.context}/res/components/entity-charact-views/properties-view.js" group="properties-view"/>
 </@>
+
+
+<@markup id="resources">
+   <!-- Additional entity resources -->
+</@markup>
 
 <@markup id="widgets">
    <#if document??>

@@ -1,0 +1,97 @@
+/*******************************************************************************
+ * Copyright (C) 2010-2018 beCPG. 
+ *  
+ * This file is part of beCPG 
+ *  
+ * beCPG is free software: you can redistribute it and/or modify 
+ * it under the terms of the GNU Lesser General Public License as published by 
+ * the Free Software Foundation, either version 3 of the License, or 
+ * (at your option) any later version. 
+ *  
+ * beCPG is distributed in the hope that it will be useful, 
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ * GNU Lesser General Public License for more details. 
+ *  
+ * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
+ ******************************************************************************/
+package fr.becpg.repo.project.web.scripts;
+
+import java.io.IOException;
+import java.util.Map;
+
+import org.alfresco.service.cmr.repository.NodeRef;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.springframework.extensions.webscripts.AbstractWebScript;
+import org.springframework.extensions.webscripts.WebScriptException;
+import org.springframework.extensions.webscripts.WebScriptRequest;
+import org.springframework.extensions.webscripts.WebScriptResponse;
+
+import fr.becpg.repo.formulation.FormulateException;
+import fr.becpg.repo.project.ProjectService;
+
+public class FormulateProjectWebScript extends AbstractWebScript {
+	
+	protected static final String PARAM_STORE_TYPE = "store_type";
+
+	protected static final String PARAM_STORE_ID = "store_id";
+
+	protected static final String PARAM_ID = "id";
+	
+
+	private static final Log logger = LogFactory.getLog(FormulateProjectWebScript.class);
+	
+	private ProjectService projectService;
+	
+
+	public void setProjectService(ProjectService projectService) {
+		this.projectService = projectService;
+	}
+
+	@Override
+	public void execute(WebScriptRequest req, WebScriptResponse res) throws WebScriptException, IOException {
+		logger.debug("start formulate webscript");
+
+		NodeRef projectNodeRef = getProjectNodeRef(req);
+		try {
+			projectService.formulate(projectNodeRef);
+			
+			JSONObject ret = new JSONObject();
+
+			ret.put("projectNodeRef", projectNodeRef);
+			ret.put("status", "SUCCESS");
+
+			res.setContentType("application/json");
+			res.setContentEncoding("UTF-8");
+			ret.write(res.getWriter());
+			
+		} catch (FormulateException e) {
+			handleFormulationError(e);
+		} catch (JSONException e) {
+			throw new WebScriptException("Unable to serialize JSON", e);
+		}
+		
+	}
+	
+	protected NodeRef getProjectNodeRef(WebScriptRequest req) {
+		Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();	    	
+    	String storeType = templateArgs.get(PARAM_STORE_TYPE);
+		String storeId = templateArgs.get(PARAM_STORE_ID);
+		String nodeId = templateArgs.get(PARAM_ID);
+    	
+		return new NodeRef(storeType, storeId, nodeId);
+	}
+	
+	
+	protected void handleFormulationError(FormulateException e) {
+
+		logger.error(e,e);
+		throw new WebScriptException(e.getMessage());
+		
+	}
+	
+
+}

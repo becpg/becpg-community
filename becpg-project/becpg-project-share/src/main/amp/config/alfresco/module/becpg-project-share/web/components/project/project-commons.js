@@ -4,6 +4,7 @@
 
    var TASK_EVENTCLASS = Alfresco.util.generateDomId(null, "task");
    var SUBMITTASK_EVENTCLASS = Alfresco.util.generateDomId(null, "submitTask");
+   var SHOWDETAILS_EVENTCLASS = Alfresco.util.generateDomId(null, "showDetails");
    var COMMENT_EVENTCLASS = Alfresco.util.generateDomId(null, "comment");
    var COMMENT_PROJECTEVENTCLASS = Alfresco.util.generateDomId(null, "commentProject");
 
@@ -15,6 +16,7 @@
       taskSubmitEventClass: SUBMITTASK_EVENTCLASS,
       commentEventClass : COMMENT_EVENTCLASS,
       commentProjectEventClass : COMMENT_PROJECTEVENTCLASS,
+      showDetailsEventClass :  SHOWDETAILS_EVENTCLASS,
       
 
       onActionShowTask : function PL_onActionShowTask(className) {
@@ -278,7 +280,7 @@
          return date;
       },
 
-      getTaskTitle : function PL_getTaskTitle(task, entityNodeRef, showLegend) {
+      getTaskTitle : function PL_getTaskTitle(task, entityNodeRef, showLegend, size) {
     	  var subProject = null, subProjectClass = "";
     	  
     	  if (task["itemData"]["assoc_pjt_subProjectRef"] != null
@@ -300,11 +302,26 @@
     	  
           var ret = legend + '<span class="task-status task-status-' + task["itemData"]["prop_pjt_tlState"].value +classGroup+subProjectClass+ '">', duration ='';
           
+          var text = task["itemData"]["prop_pjt_tlTaskName"].displayValue;
+          
           if(task.permissions.userAccess.edit && classGroup == "" ){
-	          ret += '<span class="node-' + (subProject!=null ? subProject.value : task.nodeRef) + '|' + entityNodeRef + '"><a href="" class="theme-color-1 ' + TASK_EVENTCLASS + '" title="' + this
-	          .msg("link.title.task-edit") + '" >' + task["itemData"]["prop_pjt_tlTaskName"].displayValue+"</span>";
+        	  
+        	  if(size && text.length>size){
+        		  ret += '<span class="node-' + (subProject!=null ? subProject.value : task.nodeRef) + '|' + entityNodeRef 
+        		  + ' text-tooltip se" data-tooltip="'+ beCPG.util.encodeAttr(text) +'"><a href="" class="theme-color-1 ' + TASK_EVENTCLASS + '" title="' + this
+		          .msg("link.title.task-edit") + '" >' + Alfresco.util.encodeHTML(text.substring(0,size).trim())+"..." +"</span>";
+        	  } else {
+        		  ret += '<span class="node-' + (subProject!=null ? subProject.value : task.nodeRef) + '|' + entityNodeRef + '"><a href="" class="theme-color-1 ' + TASK_EVENTCLASS + '" title="' + this
+		          .msg("link.title.task-edit") + '" >' + text +"</span>";
+        	  }
           } else {
-        	  ret += '<span data-tooltip="'+ beCPG.util.encodeAttr(task["itemData"]["prop_pjt_tlTaskName"].displayValue)+'"   class="node-' + (subProject!=null ? subProject.value : task.nodeRef) + '|' + entityNodeRef + '">' + task["itemData"]["prop_pjt_tlTaskName"].displayValue+"</span>";
+        	  if(size && text.length>size){
+        		   ret += '<span class="node-' + (subProject!=null ? subProject.value : task.nodeRef) + '|' + entityNodeRef 
+    	    		    + ' text-tooltip se" data-tooltip="'+ beCPG.util.encodeAttr(text) +'"><span>'
+    	    		  +Alfresco.util.encodeHTML(text.substring(0,size).trim())+"..."+'</span></span>';
+        	  } else {
+	        	  ret += '<span class="node-' + (subProject!=null ? subProject.value : task.nodeRef) + '|' + entityNodeRef + '">' + text +"</span>";
+        	  }
           }
           
           if( task["itemData"]["prop_pjt_tlState"].value == "InProgress"){
@@ -345,8 +362,14 @@
 	          }
           }
 
-          ret += '<span class="node-' + task.nodeRef + '|' + entityNodeRef + '">';
-         
+          var commentRef = 'node-' + task.nodeRef + '|' + entityNodeRef;
+          
+          if (subProject!=null) {
+        	  commentRef = 'node-' + subProject.value + '|' + entityNodeRef;
+          }
+          
+          ret += '<span class="'+commentRef+'">';
+ 
 
           if (task["itemData"]["prop_fm_commentCount"] && task["itemData"]["prop_fm_commentCount"].value) {
         	  ret += '<a class="task-comments active-comments '+COMMENT_EVENTCLASS+'" title="' + this.msg("link.title.comment-task") + '" href="" >';
@@ -448,7 +471,7 @@
          return ret;
       },
       
-      getProjectTitleV2 : function PL_getProjectTitle(record, full) {
+      getProjectTitleV2 : function PL_getProjectTitle(record, full, size) {
     	  
           var propertiesUrl = null, dataListUrl = null, version = "";
 
@@ -458,15 +481,23 @@
           
           var light = "light";
           if(full){
-        	 light=""; 
+        	  light="full"; 
           }
-
-          ret += '<span class="project-title tooltip '+light+' project-status-'+state+'" data-tooltip="'+ beCPG.util.encodeAttr(title)+'" >';
-  
           
-          ret += '<a class="theme-color-1" href="' + beCPG.util.entityURL(record.siteId, record.nodeRef,"pjt:project") + '" >' + code + "&nbsp;-&nbsp;" + $html(title) + 
+          if(size && title!=null && title.length>size){
+    		  ret += '<span class="project-title text-tooltip se '+light+' project-status-'+state+'" data-tooltip="'+ beCPG.util.encodeAttr(title)+'" >';
+    		  title = Alfresco.util.encodeHTML(title.substring(0,size).trim())+"...";
+    	  } else {
+    	    	ret += '<span class="project-title '+light+' project-status-'+state+'"  >';
+      	  }
+          
+          ret += '<a class="theme-color-1" href="' + beCPG.util.entityURL(record.siteId, record.nodeRef,"pjt:project") + '" >' + code + "-" + $html(title) + 
             '</a>' ;
           
+          ret += '<span class="node-' + record.nodeRef +'">';
+          ret += '<a class="show-details '+SHOWDETAILS_EVENTCLASS+'" title="' + this.msg("link.title.project-details") + '" href="" >';
+          ret +="&nbsp;";
+          ret += "</a></span>"
           
           ret += '<span class="node-' + record.nodeRef + '">';
           
@@ -486,8 +517,23 @@
            }
            
           if (full) {
+        	  
+        	  var projectTitle = record.itemData["prop_cm_title"]
+        	  
+        	  ret +="<ul>"
+        		  
+        	 if(projectTitle!=null &&projectTitle.displayValue!=null && projectTitle.displayValue.length>0){
+        		 
+        		  if(size && projectTitle.displayValue.length>(size+10)){
+        			  ret += '<li><span class="project-subtitle text-tooltip se"  data-tooltip="'+ beCPG.util.encodeAttr(projectTitle.displayValue)+'">'
+        			   + $html(projectTitle.displayValue.substring(0,(size+10)).trim()) +'...</span></li>';   
+            	  } else {
+        			 ret += '<li><span class="project-subtitle">' + $html(projectTitle.displayValue) + '</span></li>';   
+            	  }
+        	 }	  
+        		  
         	  var dates = this.extractDates(record), end = dates.due;
-              var  dateLine = (dates.start ? Alfresco.util.formatDate(dates.start, "longDate") : scope
+              var  dateLine = (dates.start ? Alfresco.util.formatDate(dates.start, "shortDate") : scope
                     .msg("label.none"));
 
               if (dates.end != null) {
@@ -495,10 +541,30 @@
               }
               dateLine += " - ";
               
-              dateLine += (dates.start ? Alfresco.util.formatDate(end, "longDate") : scope
+              dateLine += (dates.start ? Alfresco.util.formatDate(end, "shortDate") : scope
                     .msg("label.none"));
     		   
-              ret += '<span class="project-date">' + dateLine + '</span>';
+              ret+="<li>";
+              
+              var overdue = record.itemData["prop_pjt_projectOverdue"];
+              if(overdue!=null && overdue.value!=null){
+            	  ret +=  '<span class="small ' + this.getOverdueClass(record,32) + '" title="'+$html(overdue.value)+ '&nbsp;' + this.msg("overdue.day")+'"></span>';
+              }
+              
+              ret += '<span class="project-date">' + dateLine + '</span>';    
+              
+             
+              if(overdue!=null && overdue.value!=null  && overdue.value > 0){ 
+            	 ret += '&nbsp;<span class="project-overdue">('+ $html(overdue.value)+ '&nbsp;' + this.msg("overdue.day")+')</span>';
+              }
+              ret += '</li>';
+              var progress =record.itemData["prop_pjt_completionPercent"];
+              if(progress!=null){
+              
+            	  ret += "<li><progress max='100' value='"+progress.value+"' >'"+$html(progress.value)+ "&nbsp; %</progress></li>";
+   			
+              }
+              ret +="</ul>"
 
           } 
           
@@ -556,6 +622,16 @@
          };
          YAHOO.Bubbling.addDefaultAction(COMMENT_PROJECTEVENTCLASS, fnOnCommentProjectHandler);
          
+         
+         var fnOnShowDetailsHandler = function PL__fnOnShowDetailsHandler(layer, args) {
+             var owner = YAHOO.Bubbling.getOwnerByTagName(args[1].anchor, "span");
+             if (owner !== null) {
+            	 var node = owner.className.replace("node-", "");
+                 me.onActionShowProjectDetails.call(me, {nodeRef:node});
+             }
+             return true;
+          };
+          YAHOO.Bubbling.addDefaultAction(SHOWDETAILS_EVENTCLASS, fnOnShowDetailsHandler)
     
       }
 

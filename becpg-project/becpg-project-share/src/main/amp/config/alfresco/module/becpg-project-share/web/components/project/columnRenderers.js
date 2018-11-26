@@ -7,8 +7,9 @@
 			 var text = msg;
 	    	  if(text!=null && text.length > size){
 	    		  text = Alfresco.util.encodeHTML(text.substring(0,size).trim())+"...";
+	    		  return '<span class="text-tooltip sw" data-tooltip="'+ beCPG.util.encodeAttr(msg) +'"><span>'+text+'</span></span>';
 	    	  }
-	    	  return '<span class="text-tooltip se" data-tooltip="'+ beCPG.util.encodeAttr(msg) +'"><span>'+text+'</span></span>';
+	    	 return Alfresco.util.encodeHTML(msg);
 		}
 		
 
@@ -23,7 +24,7 @@
 				   if (data.version && data.version !== "") {
 					   version = '<span class="document-version">' + data.version + '</span>';
 				   }
-				   return '<span class="' + data.metadata + '"><a href="' + url + '">' + createTextTooltip(data.displayValue, 20) + '</a></span>' + version;
+				   return '<span class="' + data.metadata + '"><a href="' + url + '">' + createTextTooltip(data.displayValue, 100) + '</a></span>' + version;
 			   }
 			   return "";
 		   }
@@ -54,13 +55,13 @@
 		YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		   propertyName : "cm:name",
 		   renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) { 
-			   return scope.getProjectTitleV2(oRecord.getData(),scope.options.columnFormId != "datagrid-simple");
+			   return scope.getProjectTitleV2(oRecord.getData(),scope.options.columnFormId != "datagrid-simple",100);
 		   }
 		});
 		
 		
 	    YAHOO.Bubbling.fire("registerDataGridRenderer", {
-		      propertyName : "cm:description",
+		      propertyName : ["text","cm:description"],
 		      renderer : function(oRecord, data, label, scope) {
 		    	  return createTextTooltip(data.value,100);
 		      }
@@ -91,7 +92,7 @@
 						 	if(count>4){
 						   		moreTasksHtlm += "<li "+padding+">" + scope.getTaskTitle(task, oData.nodeRef,true) + "</li>";
 						   	} else {
-						   		taskHtlm += "<li "+padding+">" + scope.getTaskTitle(task, oData.nodeRef,true) + "</li>";
+						   		taskHtlm += "<li "+padding+">" + scope.getTaskTitle(task, oData.nodeRef,true,100) + "</li>";
 						   	}
 					   }
 					   taskHtlm += "</ul>";
