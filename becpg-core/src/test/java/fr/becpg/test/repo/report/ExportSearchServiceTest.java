@@ -86,9 +86,6 @@ public class ExportSearchServiceTest extends RepoBaseTestCase {
 	public void testExportZip() throws Exception {
 
 		Set<String> allEntries = new HashSet<>();
-		allEntries.add("Sub folder");
-		allEntries.add("Sub folder2");
-
 		NodeRef templateNodeRef = createNodeWithContent(getTestFolderNodeRef(), ReportModel.TYPE_REPORT_TPL, "ExportZip.xml",
 				"beCPG/birt/exportsearch/ExportZip.xml");
 
