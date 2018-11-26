@@ -64,7 +64,7 @@
                  var  nodeRef = new Alfresco.util.NodeRef(p_record.nodeRef), recordSiteName = $isValueSet(p_record.location.site) ? p_record.location.site.name : null,
                 		 displayName = p_record.displayName;
                  
-                 Alfresco.util.PopupManager.displayMessage({
+                var msgPopup = Alfresco.util.PopupManager.displayMessage({
                 	 text : this.msg("message.branch-entity.inprogress", displayName),
                 	 displayTime: 0
        		    	});
@@ -86,6 +86,7 @@
                     } ,
                     failureCallback : {
                         fn : function(response) {
+                        	msgPopup.destroy();
                            if (response.json && response.json.message) {
                               Alfresco.util.PopupManager.displayPrompt({
                                  title : this.msg("message.branch-entity.failure"),
@@ -187,7 +188,8 @@
 					  doBeforeFormSubmit : {
 						  fn : function onActionSendToSupplier_doBeforeFormSubmit(form) {
 							  Alfresco.util.PopupManager.displayMessage({
-				                	 text : this.msg("message.send-to-supplier.inprogress")
+				                	 text : this.msg("message.send-to-supplier.inprogress"),
+				                	 displayTime : 0
 				       		    	});
 						  },
 						  scope : this
@@ -195,6 +197,7 @@
 					  onSuccess : {
 						  fn : function onActionSendToSupplier_success(response) {
 							  if (response.json) {
+								  this.modules.sendToSupplier.hide();
 								   window.location.href = beCPG.util.entityURL(recordSiteName,
 			                             response.json.persistedObject, p_record.node.type);
 							  }
@@ -203,6 +206,7 @@
 					  },
 					  onFailure : {
 						  fn : function onActionSendToSupplier_failure(response) {
+							  this.modules.sendToSupplier.hide();
 							  if(response.json && response.json.message){
 								  Alfresco.util.PopupManager.displayMessage({
 									  text : response.json.message
