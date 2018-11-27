@@ -39,6 +39,7 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
@@ -508,7 +509,9 @@ public class ImportServiceImpl implements ImportService {
 					}
 				} catch (Exception e) {
 
-					if (importContext.isStopOnFirstError()) {
+					if (e instanceof ConcurrencyFailureException) {
+						throw (ConcurrencyFailureException) e;
+					} else if (importContext.isStopOnFirstError()) {
 						throw e;
 					} else {
 						// store the exception and the printStack and continue
