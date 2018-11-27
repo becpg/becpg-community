@@ -216,7 +216,7 @@
                               <span class="black-bold-text">${task.taskEnd}</span>
                         </div></#if>
                         <div class="yui-u-1-2 margin-top">
-                             <#if task.isMilestoneTask > <span class="task-milestone">${task.taskName}</span>
+                             <#if task.isMilestoneTask?? && task.isMilestoneTask> <span class="task-milestone">${task.taskName}</span>
                        		 <#else><span class="task">${task.taskName}</span></#if>
                         </div>
                     </div>
