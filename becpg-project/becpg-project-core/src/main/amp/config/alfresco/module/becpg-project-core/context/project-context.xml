@@ -87,6 +87,10 @@
 				<bean class="fr.becpg.repo.project.formulation.SubProjectFormulationHandler" >
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="projectActivityService" ref="projectActivityService" />
+					<property name="propsToCopyFromParent" value="${project.subProject.propsToCopyFromParent}"/>
+					<property name="propsToCopyToParent" value="${project.subProject.propsToCopyToParent}"/>
+					<property name="nodeService" ref="nodeService"/>
+					<property name="namespaceService" ref="namespaceService"/>
 				</bean>
 				<bean class="fr.becpg.repo.project.formulation.PlanningFormulationHandler" >
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
@@ -147,6 +151,10 @@
 	<!-- Webscripts -->
 	<bean id="webscript.fr.becpg.project.projectModuleInfo.get" class="fr.becpg.repo.project.web.scripts.ProjectModuleInfoWebScript" parent="webscript">
 		<property name="nodeService" ref="NodeService" />
+		<property name="projectService" ref="projectService" />
+	</bean>
+	
+		<bean id="webscript.fr.becpg.project.projectFormulation.get" class="fr.becpg.repo.project.web.scripts.FormulateProjectWebScript" parent="webscript">
 		<property name="projectService" ref="projectService" />
 	</bean>
 	

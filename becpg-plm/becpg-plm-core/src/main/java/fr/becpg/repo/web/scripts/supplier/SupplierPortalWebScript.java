@@ -142,7 +142,7 @@ public class SupplierPortalWebScript extends AbstractWebScript {
 					projectTemplateNodeRef = new NodeRef(json.getString("projectTpl"));
 				}
 			} catch (JSONException e) {
-				throw new IllegalStateException("projectTemplateNodeRef is Mandatory");
+				throw new IllegalStateException(I18NUtil.getMessage("message.supplier.project-template"));
 			}
 
 		} else {
@@ -150,7 +150,7 @@ public class SupplierPortalWebScript extends AbstractWebScript {
 		}
 
 		if (projectTemplateNodeRef == null) {
-			throw new IllegalStateException("projectTemplateNodeRef is Mandatory");
+			throw new IllegalStateException(I18NUtil.getMessage("message.supplier.project-template"));
 		}
 
 		String allPagesParam = req.getParameter(PARAM_ALLPAGES);
