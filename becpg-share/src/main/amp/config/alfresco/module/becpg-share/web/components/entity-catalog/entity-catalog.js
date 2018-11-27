@@ -70,14 +70,16 @@
 			
 			function parseJsonToHTML(json){
 				//displays things if there are any catalogs
-				if(json !== undefined && json != null && Object.keys(json).length > 0){
+				if(json.catalogs !== undefined && json.catalogs != null && Object.keys(json.catalogs).length > 0){
+					
+					var catalogs = json.catalogs;
 					
 					var html="<div class=\"entity-catalog\">";				
-					for(var key in json){
-						var score = json[key].score;
-						var locale = json[key].locale;
-						var label = json[key].label;
-						var catalogId = json[key].id;
+					for(var key in catalogs){
+						var score = catalogs[key].score;
+						var locale = catalogs[key].locale;
+						var label = catalogs[key].label;
+						var catalogId = catalogs[key].id;
 						var country = null;
 						
 						if(locale !== undefined && locale != null ){
@@ -108,23 +110,23 @@
 						
 
 						//display missing props, if any
-						if(json[key].missingFields !== undefined){
+						if(catalogs[key].missingFields !== undefined){
 							html+="<h3 >"+instance.msg("label.missing_properties")+"</h3>";
 							html+="<ul class=\"catalog-missing-propList\">";
-								for(var field in json[key].missingFields){
+								for(var field in catalogs[key].missingFields){
 									
 									var flag = null;
-									if(json[key].missingFields[field].locale!=null){
-										flag = json[key].missingFields[field].locale.toLowerCase();
-										  	if(json[key].missingFields[field].locale.indexOf("_")>0){
-										  		flag = json[key].missingFields[field].locale.split("_")[1].toLowerCase();
+									if(catalogs[key].missingFields[field].locale!=null){
+										flag = catalogs[key].missingFields[field].locale.toLowerCase();
+										  	if(catalogs[key].missingFields[field].locale.indexOf("_")>0){
+										  		flag = catalogs[key].missingFields[field].locale.split("_")[1].toLowerCase();
 										  	}
 									}
 									
 									
 									html+="<li class=\"missing-field\" >"
-											+json[key].missingFields[field].displayName+
-											(flag!=null?"<img title="+instance.msg("locale.name."+json[key].missingFields[field].locale)
+											+catalogs[key].missingFields[field].displayName+
+											(flag!=null?"<img title="+instance.msg("locale.name."+catalogs[key].missingFields[field].locale)
 													+" src=\"/share/res/components/images/flags/"
 													+flag+".png\">":"")+"</li>";	
 								}
@@ -135,13 +137,13 @@
 						
 						//Non unique props
 						
-						if(json[key].nonUniqueFields !== undefined){
+						if(catalogs[key].nonUniqueFields !== undefined){
 							html+="<h3>"+instance.msg("label.non-unique-properties")+"</h3>";
 							
 							html+="<ul class=\"catalog-missing-propList\">";
-								for(var field in json[key].nonUniqueFields){	
+								for(var field in catalogs[key].nonUniqueFields){	
 									html+="<li class=\"non-unique-field\" >"
-											+json[key].nonUniqueFields[field]
+											+catalogs[key].nonUniqueFields[field]
 											+"</li>";	
 								}
 								
@@ -164,30 +166,30 @@
 			 * json : catalogs
 			 * id : radical id of inputs (eg : $id_prop_bcpg_legalName)
 			 */ 
-			function colorizeMissingFields(json, id){
+			function colorizeMissingFields(catalogs, id){
 				var i=0;
 				
-				for(var key in json){
+				for(var key in catalogs){
 					
-					var color = json[key].color;
+					var color = catalogs[key].color;
 					
 					var colorTipElement = document.createElement("SPAN");
 					colorTipElement.style.backgroundColor=color;
 					colorTipElement.className+="catalog-color";	
-					colorTipElement.title=instance.msg("label.catalog")+" '"+json[key].label+(json[key].locale !== undefined && json[key].locale.length == 1 ? "("+json[key].locale+")'": "'");
+					colorTipElement.title=instance.msg("label.catalog")+" '"+catalogs[key].label+(catalogs[key].locale !== undefined && catalogs[key].locale.length == 1 ? "("+catalogs[key].locale+")'": "'");
 					
-					if(json[key].missingFields !== undefined){
+					if(catalogs[key].missingFields !== undefined){
 						
 						//put a color tip for this catalog
-						var catalogId = json[key].id;
-						var locale = json[key].locale;
+						var catalogId = catalogs[key].id;
+						var locale = catalogs[key].locale;
 						
 						if(locale !== undefined && locale != null ){
 							catalogId = catalogId+"_"+locale;
 						}
 						var labelId = instance.id+"_"+catalogId+"_missingPropLabel";
 						
-						if(json[key].missingFields.length > 0){
+						if(catalogs[key].missingFields.length > 0){
 							var label = YAHOO.util.Dom.get(labelId);
 							
 							if(label !== undefined && label != null){
@@ -196,12 +198,12 @@
 						}
 						
 						//put color tip next to each non validated field according to the catalog
-						for(var field in json[key].missingFields){							
+						for(var field in catalogs[key].missingFields){							
 							//try to find a prop or assoc with this field
 							
 							
 							var fieldArray = new Array();
-							var fieldCode = json[key].missingFields[field].id;
+							var fieldCode = catalogs[key].missingFields[field].id;
 							
 							
 							
@@ -212,14 +214,12 @@
 								fieldArray.push(fieldCode);
 							}
 							
-							console.log("fieldArray: ",fieldArray);
 							
 							for(var field in fieldArray){
 								
 								var fieldId="";
 								var curField = fieldArray[field].replace(":", "_");
 								
-								console.log("colorizing field ",curField);
 								
 								var found = YAHOO.util.Dom.get(id+"_assoc_"+curField);
 								fieldId=id+"_assoc_"+curField+"-cntrl";
@@ -229,8 +229,6 @@
 									fieldId=id+"_prop_"+curField;
 								}
 								
-								console.log("found = ",found);
-	
 								if(found !== undefined && found != null){
 									if(found.className.indexOf("multi-assoc") != -1){
 										found = found.parentNode;
@@ -264,7 +262,7 @@
 										}
 									}							
 								} else {
-									var absentMissingFieldId = "missing-field_"+json[key]+"_"+json[key].missingFields[field].displayName;
+									var absentMissingFieldId = "missing-field_"+catalogs[key]+"_"+catalogs[key].missingFields[field].displayName;
 									
 									var absentMissingFieldHTMLElement = YAHOO.util.Dom.get(absentMissingFieldId);
 									
@@ -282,6 +280,10 @@
 
 			YAHOO.util.Dom.get(this.id+"-entity-catalog").innerHTML='<span class="wait">' + Alfresco.util.encodeHTML(this.msg("label.loading")) + '</span>';
 			
+			var formulateButton = YAHOO.util.Selector.query('div.formulate');
+			
+			YAHOO.util.Dom.addClass(formulateButton, "loading");
+			
 			Alfresco.util.Ajax.request({
 				url : Alfresco.constants.PROXY_URI + "becpg/entity/catalog/node/" + instance.options.entityNodeRef.replace(":/",""),
 				method : Alfresco.util.Ajax.GET,
@@ -289,13 +291,14 @@
 				successCallback : {
 					fn : function (response){
 
-						if(response.json !== undefined ){
+						if(response.json != null  && response.json !== undefined ){
 							var html = parseJsonToHTML(response.json),
 							  catalogs = YAHOO.util.Dom.get(this.id+"-entity-catalog");
 							
 							  catalogs.innerHTML=html;
 
-							if( response.json != null && Object.keys(response.json).length > 0){
+							if( response.json.catalogs != null  && response.json.catalogs !== undefined 
+									&& Object.keys(response.json.catalogs).length > 0){
 							   var insertId = this.id.replace("_cat","").replace("-mgr", "");							
 							   var form = YAHOO.util.Dom.get(insertId+"-form");
 								
@@ -311,8 +314,13 @@
 									colorizeMissingFields(response.json, insertId);
 								}
 							}
+							
+							if(true === response.json.formulated){
+							   YAHOO.Bubbling.fire("metadataRefresh");
+							}
+							
 						}
-
+						YAHOO.util.Dom.removeClass(formulateButton, "loading");
 					},
 					scope : instance
 				},
@@ -328,6 +336,7 @@
                              text : this.msg("message.formulate.failure")
                           });
                        }
+                       YAHOO.util.Dom.removeClass(formulateButton, "loading");
                     },
                     scope : this
                  },

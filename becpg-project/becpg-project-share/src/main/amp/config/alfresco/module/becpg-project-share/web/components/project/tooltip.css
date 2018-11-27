@@ -18,11 +18,7 @@ h1 {
 }
 
 .text-tooltip > span{
- 	max-width: 200px;
-    text-overflow: ellipsis;
-    overflow: hidden;
     word-break: break-all;
-    display: inline-block;
 }
 .text-tooltip.ne {
   position: relative;
@@ -273,7 +269,7 @@ h1 {
 .text-tooltip.sw:before {
   content: attr(data-tooltip);
   position: absolute;
-  width: 200px;
+  width: 300px;
   padding: 10px 15px;
   line-height: 18px;
   text-align: left;

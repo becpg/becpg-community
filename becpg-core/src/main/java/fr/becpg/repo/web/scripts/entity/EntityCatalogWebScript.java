@@ -87,6 +87,8 @@ public class EntityCatalogWebScript extends AbstractWebScript {
 
 		try {
 
+			boolean formulated = false;
+			
 			if (formulationService.shouldFormulate(productNodeRef)
 					&& (permissionService.hasPermission(productNodeRef, PermissionService.WRITE) == AccessStatus.ALLOWED)) {
 
@@ -103,6 +105,8 @@ public class EntityCatalogWebScript extends AbstractWebScript {
 						});
 
 					}, false, true);
+					
+					formulated = true;
 
 				} finally {
 					ruleService.enableRules();
@@ -114,19 +118,17 @@ public class EntityCatalogWebScript extends AbstractWebScript {
 			}
 
 			String scores = (String) nodeService.getProperty(productNodeRef, BeCPGModel.PROP_ENTITY_SCORE);
-
+			JSONObject jsonObject  = new JSONObject();
 			if ((scores != null) && !scores.isEmpty()) {
-
-				JSONObject jsonObject = new JSONObject(scores);
-
-				if (jsonObject.has(JsonScoreHelper.PROP_CATALOGS)) {
-
-					res.setContentType("application/json");
-					res.setContentEncoding("UTF-8");
-					jsonObject.getJSONArray(JsonScoreHelper.PROP_CATALOGS).write(res.getWriter());
-				}
+				jsonObject = new JSONObject(scores);
 			}
 
+			jsonObject.put("formulated", formulated);
+			
+			res.setContentType("application/json");
+			res.setContentEncoding("UTF-8");
+			jsonObject.write(res.getWriter());
+			
 		} catch (JSONException e) {
 			logger.error(e, e);
 			throw new WebScriptException("Unable to serialize JSON", e);
