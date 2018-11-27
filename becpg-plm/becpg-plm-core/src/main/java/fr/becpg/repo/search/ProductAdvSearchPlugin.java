@@ -118,15 +118,25 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		keysToExclude.add(CRITERIA_PHYSICO);
 		keysToExclude.add(CRITERIA_PHYSICO_1);
 		keysToExclude.add(CRITERIA_PHYSICO_2);
+		keysToExclude.add(CRITERIA_PHYSICO_RANGE);
+		keysToExclude.add(CRITERIA_PHYSICO_RANGE_1);
+		keysToExclude.add(CRITERIA_PHYSICO_RANGE_2);
 
 		keysToExclude.add(CRITERIA_COST);
 		keysToExclude.add(CRITERIA_COST_1);
 		keysToExclude.add(CRITERIA_COST_2);
+		keysToExclude.add(CRITERIA_COST_RANGE);
+		keysToExclude.add(CRITERIA_COST_RANGE_1);
+		keysToExclude.add(CRITERIA_COST_RANGE_2);
 
 		keysToExclude.add(CRITERIA_NUTS);
 		keysToExclude.add(CRITERIA_NUTS_1);
 		keysToExclude.add(CRITERIA_NUTS_2);
 		keysToExclude.add(CRITERIA_NUTS_3);
+		keysToExclude.add(CRITERIA_NUTS_RANGE);
+		keysToExclude.add(CRITERIA_NUTS_RANGE_1);
+		keysToExclude.add(CRITERIA_NUTS_RANGE_2);
+		keysToExclude.add(CRITERIA_NUTS_RANGE_3);
 
 		keysToExclude.add(CRITERIA_ALLERGEN);
 		keysToExclude.add(CRITERIA_ALLERGEN_VOL_AND);
@@ -139,8 +149,10 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		keysToExclude.add(CRITERIA_LABEL_CLAIM_NOT);
 
 		keysToExclude.add(CRITERIA_MICROBIO);
+		keysToExclude.add(CRITERIA_MICROBIO_RANGE);
 
 		keysToExclude.add(CRITERIA_PACK_LABEL);
+		keysToExclude.add(CRITERIA_PACK_LABEL_POSITION);
 
 		keysToExclude.add(CRITERIA_PACKAGING_LIST_PRODUCT);
 		keysToExclude.add(CRITERIA_PROCESS_LIST_RESSOURCE);
@@ -217,10 +229,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 	public Set<String> getIgnoredFields(QName datatype) {
 		Set<String> ret = new HashSet<>();
 		if ((datatype != null) && entityDictionaryService.isSubClass(datatype, PLMModel.TYPE_PRODUCT)) {
-			ret.add(CRITERIA_PACK_LABEL_POSITION);
-			ret.add(CRITERIA_COST_RANGE);
-			ret.add(CRITERIA_PHYSICO_RANGE);
-			ret.add(CRITERIA_NUTS_RANGE);
+			ret.addAll(keysToExclude);
 		}
 		return ret;
 	}
@@ -324,7 +333,9 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 					if (nodeService.exists(nodeRef)) {
 
 						List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, PLMModel.ASSOC_INGLIST_ING);
-						ingListItems = new ArrayList<>(assocRefs.size());
+						if(ingListItems == null){
+							ingListItems = new ArrayList<>(assocRefs.size());
+						}
 
 						for (AssociationRef assocRef : assocRefs) {
 
@@ -345,7 +356,9 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 					if (nodeService.exists(nodeRef)) {
 
 						List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, PLMModel.ASSOC_INGLIST_ING);
-						notIngListItems = new ArrayList<>(assocRefs.size());
+						if(notIngListItems == null){
+							notIngListItems = new ArrayList<>(assocRefs.size());
+						}
 
 						for (AssociationRef assocRef : assocRefs) {
 
@@ -616,7 +629,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 											String[] splitted = criteriaValue.split("\\|");
 											if (splitted.length == 2) {
 												if (logger.isDebugEnabled()) {
-													logger.debug("filter by range: " + splitted[0] + " " + splitted[1]);
+													logger.debug("filter by range: " + splitted[0] + "->" + splitted[1]+", value="+value);
 												}
 												if ((splitted[0].isEmpty() || (((Double) value) >= Double.valueOf(splitted[0])))
 														&& (splitted[1].isEmpty() || (((Double) value) <= Double.valueOf(splitted[1])))) {
