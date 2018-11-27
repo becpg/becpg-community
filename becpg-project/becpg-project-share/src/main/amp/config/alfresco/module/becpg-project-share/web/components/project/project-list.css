@@ -107,10 +107,8 @@
 	  -ms-hyphens: auto;
 	  -o-hyphens: auto;
 	  hyphens: auto;
-	  max-width: 250px;
-      word-break: break-all;
-	
 }
+
 
 .project-list  .yui-dt-col-prop_cm_name, 
 .project-list  .yui-dt-col-dt_pjt_taskList  {
@@ -135,8 +133,9 @@
 	vertical-align: middle;
 }
 
-.project-list .yui-dt-liner {
-	padding: 4px;
+
+.project-list tbody td .yui-dt-liner {
+	padding: 4px!important;
 }
 
 .project-list .projects tr.yui-dt-first td.yui-dt-empty, .project-list .projects tr.yui-dt-first td.yui-dt-loading
@@ -162,7 +161,10 @@
 .project-list .projects {
 	color: #333333;
 	margin: 0 -10px 0 -8px;
+
 }
+
+
 
 .project-list .projects .yui-dt-col-id .yui-dt-liner {
 	padding: 0.5em 1em;
@@ -301,6 +303,11 @@
 	font-style: italic;
 }
 
+.project-list .grid tbody td {
+	font-size: 12px
+}
+
+
 .project-list .grid span.task-group,
 .project-list .grid span.project-title.full a
  {
@@ -341,58 +348,3 @@
 .project-list .grid .more-task .onActionShowMore a {
     background-image: url(../../components/images/plus-16.png);
 }
-
-/** Tasks 
-
-  .datagrid span.task-milestone {
-	background:
-		url("../../components/images/filetypes/generic-task-milestone-16.png")
-		no-repeat;
-	padding-left: 20px;
-}
-
-
- .datagrid span.task {
-	background: url("../../components/images/filetypes/generic-task-16.png")
-		no-repeat;
-	padding-left: 20px;
-	
-	
-}
-
-.project-list div.task-header {
-	background-color: #009dcc;
-	color: white !important;
-	font-size: 15px;
-	font-family: Roboto, sans-serif;
-	padding: 2px;
-	
-}
-
-.project-list .taskList-table td {
-   padding: 5px 5px;
-	display: table-cell;
-	text-align: left;
-	border-radius: 2px;
-	color: rgb(158, 158, 158);
-	margin-right: 0;
-	word-wrap: break-word;
-	font-family: Roboto, sans-serif;
-	border: none !important;
-    
-}
-
-
-.project-list div.task-header span {
-	background-color: white;
-color: black;
-width: 35px;
-display: inline-block;
-border-radius: 5px;
-text-align: center;
-}
-
-.project-list .taskList-table tr {
-    border-bottom: 1px solid rgba(0,0,0,0.12);
-}
-**/
