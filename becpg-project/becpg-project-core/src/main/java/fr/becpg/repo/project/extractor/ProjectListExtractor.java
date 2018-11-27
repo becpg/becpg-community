@@ -322,27 +322,20 @@ public class ProjectListExtractor extends ActivityListExtractor {
 											postLookupActivity(itemNodeRef, tmp2, properties, mode);
 											tmp.put(PROP_NODEDATA, tmp2);
 										} else {
-
 											Map<String, Object> metadata = doExtract(itemNodeRef, itemType, field.getChildrens(), mode, properties,
 													props, cache);
 											NodeRef subProjectNoderef = associationService.getTargetAssoc(itemNodeRef,
 													ProjectModel.ASSOC_SUB_PROJECT);
 											if (subProjectNoderef != null) {
-
 												HashMap<String, Object> commentCount = new HashMap<>(6);
 												Integer count = (Integer) nodeService.getProperty(subProjectNoderef, ForumModel.PROP_COMMENT_COUNT);
-
 												commentCount.put("displayValue", count);
 												commentCount.put("value", count);
 												commentCount.put("metadata", "int");
-
 												metadata.put("prop_fm_commentCount", commentCount);
 											}
-
 											tmp.put(PROP_NODEDATA, metadata);
-
 										}
-
 										ret.add(tmp);
 									}
 								}
