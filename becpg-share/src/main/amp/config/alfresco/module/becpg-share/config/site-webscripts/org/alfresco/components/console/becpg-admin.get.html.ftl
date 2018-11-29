@@ -9,7 +9,6 @@
    <#-- JavaScript Dependencies -->
    <@script type="text/javascript" src="${url.context}/res/components/console/consoletool.js" group="becpg-admin" ></@script>
    <@script type="text/javascript" src="${url.context}/res/components/console/becpg-admin.js" group="becpg-admin" ></@script>
-   <@script type='text/javascript' src='https://www.google.com/jsapi' group="becpg-admin" ></@script>
 </@>
 
 
@@ -29,7 +28,22 @@
 				      <div class="section">
 					      <table>
 					      <tr><td>
-					 			 <div class="yui-u first"  id='${el}-gauge-div'></div>
+					 			 <div class="yui-u first" >
+					 			 	<div id="${el}-gauge-wrapper" class="gauge-wrapper">
+										<svg class="gauge-meter">
+										    <circle id="${el}-outline_curves" class="circle outline"  cx="50%" cy="50%">
+										    </circle>
+										    <circle id="${el}-low" class="circle range" cx="50%" cy="50%" stroke="#109618">
+										    </circle>
+										    <circle id="${el}-avg" class="circle range" cx="50%" cy="50%" stroke="#ff9900">
+										    </circle>
+										    <circle id="${el}-high" class="circle range" cx="50%" cy="50%" stroke="#dc3912">
+										    </circle>
+										</svg>
+										<img id="${el}-gauge-meter_needle" class="gauge-meter_needle"  src="${url.context}/res/components/images/gauge-needle.svg" alt="">
+										<label id="gauge-percentage" for=""></label>
+									</div>
+					 			 </div>
 					 			</td>
 					 			<td>
 					 			<div class="infos">
