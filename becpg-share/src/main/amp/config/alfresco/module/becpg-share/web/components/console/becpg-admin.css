@@ -48,3 +48,50 @@ ul.users {
 	vertical-align: top;
 	padding-left: 20px;
 }
+
+.gauge-wrapper {
+	position: relative;
+	margin: auto;
+}
+
+.gauge-meter {
+	width: 100%;
+	height: 100%;
+	transform: rotateX(180deg);
+}
+
+.circle {
+	fill: none;
+}
+
+.outline {
+	stroke: #F1F1F1;
+	stroke-width: 10;
+}
+
+.range {
+	stroke-width: 10;
+}
+
+.gauge-meter_needle {
+	height: 23%;
+	left: 0;
+	margin: auto;
+	position: absolute;
+	right: 0;
+	top: 27%;
+	transform-origin: bottom center;
+	transform: rotate(270deg);
+}
+
+#gauge-percentage {
+  background-color: #4B4C51;
+  border-radius: 2px;
+  position: absolute;
+  color: white;
+  font-family: 'courier new';
+  font-size: 8pt;
+  padding: 1px 2px 0px 2px;
+  right: 45%;
+  top: 55%;
+}
