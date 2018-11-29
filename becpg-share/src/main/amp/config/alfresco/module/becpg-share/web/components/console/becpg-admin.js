@@ -37,12 +37,6 @@
       beCPG.component.AdminConsole.superclass.constructor.call(this, "beCPG.component.AdminConsole", htmlId, [
             "button", "menu", "container", "json" ]);
 
-      // Chart google
-      if(typeof google != 'undefined'){
-	      google.load('visualization', '1', {
-	         packages : [ 'gauge' ]
-	      });
-      }
       return this;
    };
 
@@ -78,25 +72,37 @@
                      this.widgets.showUsersButton = Alfresco.util.createYUIButton(this, "show-users-button",
                            this.onShowUsersClick);
 
-                     if(typeof google != 'undefined'){
-	                     var data = google.visualization.arrayToDataTable([ [ 'Label', 'Value' ],
-	                           [ this.msg("label.memory"), this.options.memory ] ]);
-	
-	                     var options = {
-	                        width : 400,
-	                        height : 120,
-	                        redFrom : 90,
-	                        redTo : 100,
-	                        yellowFrom : 80,
-	                        yellowTo : 90,
-	                        greenFrom : 60,
-	                        greenTo : 80,
-	                        minorTicks : 5
-	                     };
-	
-	                     var chart = new google.visualization.Gauge(document.getElementById(this.id + '-gauge-div'));
-	                     chart.draw(data, options);
+                     /* beCPG used-memory gauge  */
+                     var r = 50;
+                     var circles = document.querySelectorAll('.circle');
+                     var total_circles = circles.length;
+                     for (var i = 0; i < total_circles; i++) {
+                    	 circles[i].setAttribute('r', r);
                      }
+                     var meter_dimension = (r * 2) + 100;
+                     var wrapper = document.getElementById(this.id + '-gauge-wrapper');
+                     wrapper.style.width = meter_dimension + 'px';
+                     wrapper.style.height = meter_dimension + 'px';
+                     var cf = 2 * Math.PI * r;
+                     var semi_cf = cf / 2;
+                     var semi_cf_1by3 = semi_cf / 5;
+                     var semi_cf_2by3 = semi_cf_1by3 * 2;
+                     
+                     document.getElementById(this.id + '-outline_curves')
+                     .setAttribute('stroke-dasharray', semi_cf + ',' + cf);
+                     document.getElementById(this.id + '-low')
+                     .setAttribute('stroke-dasharray', semi_cf + ',' + cf);
+                     document.getElementById(this.id + '-avg')
+                     .setAttribute('stroke-dasharray', semi_cf_2by3 + ',' + cf);
+                     document.getElementById(this.id + '-high')
+                     .setAttribute('stroke-dasharray', semi_cf_1by3 + ',' + cf);
+                     
+                     var precLbl = document.getElementById('gauge-percentage');
+                     var meter_needle = document.getElementById(this.id + '-gauge-meter_needle');
+                     var meter_value = semi_cf - ((this.options.memory * semi_cf) / 100);
+                     meter_needle.style.transform = 'rotate(' + (270 + ((this.options.memory * 180) / 100))+ 'deg)';
+                     precLbl.textContent = this.options.memory + "%";
+                     
                      // Do stuff here
                   },
 
