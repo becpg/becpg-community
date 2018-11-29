@@ -41,7 +41,6 @@ div.wizard-content {
 
 .wizard, .tabcontrol {
     display: block;
-    overflow: hidden;
     width: 100%;
 }
 .wizard a, .tabcontrol a {
