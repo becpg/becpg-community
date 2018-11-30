@@ -90,7 +90,7 @@ public class JdbcConnectionManager {
 			return dataSource.getConnection();
 		} else {
 			try {
-				Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
+				Class.forName("com.mysql.jdbc.Driver").newInstance();
 			} catch (Exception e) {
 				logger.error(e, e);
 			}
