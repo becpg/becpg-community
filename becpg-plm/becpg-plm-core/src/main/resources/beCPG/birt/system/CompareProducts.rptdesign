@@ -5,6 +5,24 @@
         <value>./CompareEntities-messages</value>
     </simple-property-list>
     <property name="units">in</property>
+    <method name="initialize"><![CDATA[importPackage(Packages.java.util)
+importPackage(Packages.java.text);
+
+function formatWeight ( dataSetValue ) {
+	var format = NumberFormat.getInstance(reportContext.getLocale()),
+	number = format.parse((dataSetValue == null || dataSetValue == "") ? 0 : dataSetValue),
+	value = number.floatValue(),
+	qty = Math.abs(value);
+		  
+	if(qty<0.001){
+		return Formatter.format(value * 1000000, "###,##0.##") + " mg";
+	}else if(qty<1){
+		return Formatter.format(value * 1000, "###,##0.##") + " g";
+	}
+	else{
+		return Formatter.format(value, "###,##0.###") + " kg";
+	}	
+}]]></method>
     <property name="iconFile">/templates/blank_report.gif</property>
     <property name="bidiLayoutOrientation">ltr</property>
     <property name="imageDPI">112</property>
@@ -571,22 +589,22 @@
                     <structure>
                         <property name="position">4</property>
                         <property name="name">value1</property>
-                        <property name="dataType">float</property>
+                        <property name="dataType">string</property>
                     </structure>
                     <structure>
                         <property name="position">5</property>
                         <property name="name">value2</property>
-                        <property name="dataType">float</property>
+                        <property name="dataType">string</property>
                     </structure>
                     <structure>
                         <property name="position">6</property>
                         <property name="name">value3</property>
-                        <property name="dataType">float</property>
+                        <property name="dataType">string</property>
                     </structure>
                     <structure>
                         <property name="position">7</property>
                         <property name="name">value4</property>
-                        <property name="dataType">float</property>
+                        <property name="dataType">string</property>
                     </structure>
                     <structure>
                         <property name="position">8</property>
@@ -647,29 +665,29 @@
                     <property name="position">4</property>
                     <property name="name">value1</property>
                     <property name="nativeName">value1</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">5</property>
                     <property name="name">value2</property>
                     <property name="nativeName">value2</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">6</property>
                     <property name="name">value3</property>
                     <property name="nativeName">value3</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">7</property>
                     <property name="name">value4</property>
                     <property name="nativeName">value4</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">8</property>
@@ -714,7 +732,7 @@
                     <property name="nativeDataType">16</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entitiesComparison/comparisonRows/comparisonRow]#:#{entityList;STRING;/@entityList},{characteristic;STRING;/@characteristic},{property;STRING;/@property},{value1;DOUBLE;/@value1},{value2;DOUBLE;/@value2},{value3;DOUBLE;/@value3},{value4;DOUBLE;/@value4},{entity1;STRING;../@entity1},{entity2;STRING;../@entity2},{entity3;STRING;../@entity3},{entity4;STRING;../@entity4},{propertyQName;STRING;/@propertyQName},{isDifferent;BOOLEAN;/@isDifferent}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entitiesComparison/comparisonRows/comparisonRow]#:#{entityList;STRING;/@entityList},{characteristic;STRING;/@characteristic},{property;STRING;/@property},{value1;STRING;/@value1},{value2;STRING;/@value2},{value3;STRING;/@value3},{value4;STRING;/@value4},{entity1;STRING;../@entity1},{entity2;STRING;../@entity2},{entity3;STRING;../@entity3},{entity4;STRING;../@entity4},{propertyQName;STRING;/@propertyQName},{isDifferent;BOOLEAN;/@isDifferent}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -1733,60 +1751,28 @@ row["properties2"]
                 <structure>
                     <property name="name">value1</property>
                     <text-property name="displayName">value1</text-property>
-                    <expression name="expression" type="javascript">var qty = Math.abs(dataSetRow["value1"]);
-if(qty&lt;0.001){
-BirtMath.round(dataSetRow["value1"]*1000000,2)+" mg"
-}else if(qty&lt;1){
-BirtMath.round(dataSetRow["value1"]*1000,2)+" g"
-}
-else{
-BirtMath.round(dataSetRow["value1"],3)+" kg"
-}</expression>
+                    <expression name="expression" type="javascript">formatWeight(dataSetRow["value1"]);</expression>
                     <property name="dataType">string</property>
                     <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">value2</property>
                     <text-property name="displayName">value2</text-property>
-                    <expression name="expression" type="javascript">var qty = Math.abs(dataSetRow["value2"]);
-if(qty&lt;0.001){
-BirtMath.round(dataSetRow["value2"]*1000000,2)+" mg"
-}else if(qty&lt;1){
-BirtMath.round(dataSetRow["value2"]*1000,2)+" g"
-}
-else{
-BirtMath.round(dataSetRow["value2"],3)+" kg"
-}</expression>
+                    <expression name="expression" type="javascript">formatWeight(dataSetRow["value2"]);</expression>
                     <property name="dataType">string</property>
                     <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">value3</property>
                     <text-property name="displayName">value3</text-property>
-                    <expression name="expression" type="javascript">var qty = Math.abs(dataSetRow["value3"]);
-if(qty&lt;0.001){
-BirtMath.round(dataSetRow["value3"]*1000000,2)+" mg"
-}else if(qty&lt;1){
-BirtMath.round(dataSetRow["value3"]*1000,2)+" g"
-}
-else{
-BirtMath.round(dataSetRow["value3"],3)+" kg"
-}</expression>
+                    <expression name="expression" type="javascript">formatWeight(dataSetRow["value3"]);</expression>
                     <property name="dataType">string</property>
                     <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">value4</property>
                     <text-property name="displayName">value4</text-property>
-                    <expression name="expression" type="javascript">var qty = Math.abs(dataSetRow["value4"]);
-if(qty&lt;0.001){
-BirtMath.round(dataSetRow["value4"]*1000000,2)+" mg"
-}else if(qty&lt;1){
-BirtMath.round(dataSetRow["value4"]*1000,2)+" g"
-}
-else{
-BirtMath.round(dataSetRow["value4"],3)+" kg"
-}</expression>
+                    <expression name="expression" type="javascript">formatWeight(dataSetRow["value4"]);</expression>
                     <property name="dataType">string</property>
                     <property name="allowExport">true</property>
                 </structure>
