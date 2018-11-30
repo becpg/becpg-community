@@ -258,7 +258,7 @@
           <web-framework>
             <dojo-pages> 
                 <packages> 
-                    <package name="grid" location="/share/modules/entity-datagrid/lib"/> 
+                    <package name="floatthead" location="modules/entity-datagrid/lib" main="floatthead-min"/> 
                 </packages>
             </dojo-pages>
           </web-framework>
