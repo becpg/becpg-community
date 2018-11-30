@@ -39,7 +39,6 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.formulation.FormulateException;
@@ -260,7 +259,7 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 			String defaultLocale = Locale.getDefault().getLanguage();
 			QName productType = nodeService.getType(productData.getNodeRef());
 
-			for(JSONArray catalogDef : catalogs){
+			for (JSONArray catalogDef : catalogs) {
 				for (int i = 0; i < catalogDef.length(); i++) {
 					JSONObject catalog = catalogDef.getJSONObject(i);
 
@@ -268,7 +267,8 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 
 					// if( apply(catalog, productData)){
 
-					// check if product matches various criteria, such as family,
+					// check if product matches various criteria, such as
+					// family,
 					// subfamily, etc.
 					boolean productPassesFilter = productMatches(catalog, productData, productType);
 
@@ -279,7 +279,8 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 						logger.debug("ProductPassesFilter: " + productPassesFilter);
 					}
 
-					// if this catalog applies to this type, or this catalog has no
+					// if this catalog applies to this type, or this catalog has
+					// no
 					// type defined (it applies to every entity type)
 					if (productPassesFilter) {
 						if (logger.isDebugEnabled()) {
@@ -299,8 +300,11 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 
 						String color = getCatalogColor(catalog, i);
 
-						JSONArray reqFields = catalog.has(JsonScoreHelper.PROP_FIELDS) ? catalog.getJSONArray(JsonScoreHelper.PROP_FIELDS) : new JSONArray();
-						JSONArray uniqueFields = catalog.has(JsonScoreHelper.PROP_UNIQUE_FIELDS) ? catalog.getJSONArray(JsonScoreHelper.PROP_UNIQUE_FIELDS) : new JSONArray();
+						JSONArray reqFields = catalog.has(JsonScoreHelper.PROP_FIELDS) ? catalog.getJSONArray(JsonScoreHelper.PROP_FIELDS)
+								: new JSONArray();
+						JSONArray uniqueFields = catalog.has(JsonScoreHelper.PROP_UNIQUE_FIELDS)
+								? catalog.getJSONArray(JsonScoreHelper.PROP_UNIQUE_FIELDS)
+								: new JSONArray();
 
 						JSONArray nonUniqueFields = extractNonUniqueFields(productData, catalog.getString(JsonScoreHelper.PROP_LABEL), properties,
 								uniqueFields);
@@ -314,7 +318,8 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 								catalogDesc.put(JsonScoreHelper.PROP_MISSING_FIELDS, missingFields.length() > 0 ? missingFields : null);
 								catalogDesc.put(JsonScoreHelper.PROP_NON_UNIQUE_FIELDS, nonUniqueFields.length() > 0 ? nonUniqueFields : null);
 								catalogDesc.put(JsonScoreHelper.PROP_LOCALE, defaultLocale.equals(lang) ? null : lang);
-								catalogDesc.put(JsonScoreHelper.PROP_SCORE, ((reqFields.length() - missingFields.length()) * 100d) / (reqFields.length() > 0 ? reqFields.length() : 1d));
+								catalogDesc.put(JsonScoreHelper.PROP_SCORE,
+										((reqFields.length() - missingFields.length()) * 100d) / (reqFields.length() > 0 ? reqFields.length() : 1d));
 								catalogDesc.put(JsonScoreHelper.PROP_LABEL, catalog.getString(JsonScoreHelper.PROP_LABEL));
 								catalogDesc.put(JsonScoreHelper.PROP_ID, catalog.getString(JsonScoreHelper.PROP_ID));
 								catalogDesc.put(JsonScoreHelper.PROP_COLOR, color);
@@ -333,7 +338,7 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 	private List<JSONArray> getCatalogsDef() {
 
 		return beCPGCacheService.getFromCache(ScoreCalculatingFormulationHandler.class.getName(), CATALOG_DEFS, () -> {
-			
+
 			List<JSONArray> res = new ArrayList<>();
 
 			// get JSON from file in system
@@ -344,16 +349,16 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 			logger.debug("Number of catalogs: " + files.size());
 
 			if (!files.isEmpty()) {
-				
-				for(FileInfo file : files){
-					//FileInfo file = files.get(0);
-	
+
+				for (FileInfo file : files) {
+					// FileInfo file = files.get(0);
+
 					logger.debug("File in catalog folder nr: " + file.getNodeRef());
 					ContentReader reader = contentService.getReader(file.getNodeRef(), ContentModel.PROP_CONTENT);
 					String content = reader.getContentString();
 					logger.debug("Content: " + content);
-					//JSONArray res = new JSONArray();
-	
+					// JSONArray res = new JSONArray();
+
 					try {
 						res.add(new JSONArray(content));
 					} catch (JSONException e) {
@@ -364,7 +369,7 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 				return res;
 			} else {
 				// no file in catalog folder
-				return new ArrayList<JSONArray>();
+				return new ArrayList<>();
 			}
 		});
 	}
@@ -411,7 +416,7 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 	private boolean productMatchesOnType(ProductData product, JSONObject catalog, QName productType) throws JSONException {
 		JSONArray catalogEntityTypes = (catalog.has(JsonScoreHelper.PROP_ENTITY_TYPE)) ? catalog.getJSONArray(JsonScoreHelper.PROP_ENTITY_TYPE)
 				: new JSONArray();
-		List<QName> qnameCatalogEntityTypeList = new ArrayList<QName>();
+		List<QName> qnameCatalogEntityTypeList = new ArrayList<>();
 
 		logger.debug("catalog has " + catalogEntityTypes.length() + " entities: " + catalogEntityTypes);
 
@@ -439,58 +444,56 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 			throws JSONException {
 		JSONArray res = new JSONArray();
 
-		for (int i = 0; i < uniqueFields.length(); i++) {
+		if (productData.getNodeRef() != null) {
+			for (int i = 0; i < uniqueFields.length(); i++) {
 
-			String field = uniqueFields.getString(i);
+				String field = uniqueFields.getString(i);
 
-			QName propQName = QName.createQName(field, namespaceService);
-			Serializable propValue = nodeService.getProperty(productData.getNodeRef(), propQName);
-			List<NodeRef> propDuplicates = getPropertyDuplicates(propQName, (String) propValue);
+				QName propQName = QName.createQName(field, namespaceService);
+				Serializable propValue = nodeService.getProperty(productData.getNodeRef(), propQName);
 
-			if (!(propDuplicates.size() <= 1)) {
+				if (propValue != null) {
+					List<NodeRef> propDuplicates = getPropertyDuplicates(productData.getNodeRef(), propQName, propValue.toString());
 
-				ClassAttributeDefinition classDef = formatQnameString(field);
-				String propTitle = classDef.getTitle(dictionaryService);
-				
-				// we don't want this product in the sources of the error
-				propDuplicates.remove(productData.getNodeRef());
-				res.put(propTitle);
+					if (!(propDuplicates.isEmpty())) {
 
-				String message = I18NUtil.getMessage(MESSAGE_NON_UNIQUE_FIELD, propTitle, propValue);
+						ClassAttributeDefinition classDef = formatQnameString(field);
+						String propTitle = classDef.getTitle(dictionaryService);
+						res.put(propTitle);
 
-				ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, null, propDuplicates,
-						RequirementDataType.Completion);
-				productData.getReqCtrlList().add(rclDataItem);
+						String message = I18NUtil.getMessage(MESSAGE_NON_UNIQUE_FIELD, propTitle, propValue);
 
+						ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, null, propDuplicates,
+								RequirementDataType.Completion);
+						productData.getReqCtrlList().add(rclDataItem);
+
+					}
+				}
 			}
 		}
 
 		return res;
 	}
 
-	private List<NodeRef> getPropertyDuplicates(QName propQName, String value) {
+	private List<NodeRef> getPropertyDuplicates(NodeRef productNodeRef, QName propQName, String value) {
 
 		List<NodeRef> queryResults = new ArrayList<>();
 		if ((value != null) && !value.isEmpty()) {
 
-			BeCPGQueryBuilder query = BeCPGQueryBuilder.createQuery().andPropEquals(propQName, value).inDBIfPossible();
-			logger.debug("Query: " + query.toString());
-			queryResults = query.list();
+			queryResults = BeCPGQueryBuilder.createQuery().ofType(nodeService.getType(productNodeRef)).andNotID(productNodeRef).excludeDefaults()
+					.andPropEquals(propQName, value).inDBIfPossible().list();
+
 			List<NodeRef> falsePositives = new ArrayList<>();
 
 			// Lucene equals is actually contains, remove results that contain
 			// but do not equal value
 			for (NodeRef result : queryResults) {
 				Serializable resultProp = nodeService.getProperty(result, propQName);
-				logger.debug("result: " + result + " prop value: " + resultProp);
-				
-				//exclude aspects here so we can make the query in db
-				if(	nodeService.hasAspect(result, BeCPGModel.ASPECT_COMPOSITE_VERSION) 
-					||	nodeService.hasAspect(result, ContentModel.ASPECT_WORKING_COPY)
-					|| (resultProp != null) && !resultProp.equals(value)){
-					
+
+				if ((resultProp != null) && !resultProp.equals(value)) {
+
 					falsePositives.add(result);
-				} 
+				}
 			}
 
 			for (NodeRef falsePositive : falsePositives) {
@@ -498,14 +501,10 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 			}
 		}
 
-		logger.debug("Number of properties of name: " + propQName + " and value: " + value + " = " + queryResults.size() + ", res=" + queryResults
-				+ ", is unique ? " + (queryResults.size() <= 1));
-
 		return queryResults;
 	}
 
 	private NodeRef getCatalogFolderNodeRef() {
-		logger.debug("CatalogFileNR: " + BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(), CATALOGS_PATH));
 
 		return BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(), CATALOGS_PATH);
 	}
@@ -613,26 +612,24 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 		QName fieldQname = QName.createQName(field.split("_")[0], namespaceService);
 		MLText mlText = (MLText) mlNodeService.getProperty(productData.getNodeRef(), fieldQname);
 		Locale loc = null;
-		if(lang!=null) {
+		if (lang != null) {
 			loc = MLTextHelper.parseLocale(lang);
 		}
 		if (field.contains("_")) {
 			String fieldSpecificLang = field.split("_")[1];
-			if ((mlText == null) || (loc !=null || mlText.getValue(loc) == null)
-					|| mlText.getValue(new Locale(fieldSpecificLang)).isEmpty()) {
+			if ((mlText == null) || ((loc != null) || (mlText.getValue(loc) == null)) || mlText.getValue(new Locale(fieldSpecificLang)).isEmpty()) {
 				res = false;
 			}
-		} else if ((loc != null)
-				&& ((mlText == null) || (mlText.getValue(loc) == null) || mlText.getValue(loc).isEmpty())) {
+		} else if ((loc != null) && ((mlText == null) || (mlText.getValue(loc) == null) || mlText.getValue(loc).isEmpty())) {
 			res = false;
 		} else {
-			
-			res = ((properties.get(fieldQname) != null) && !properties.get(fieldQname).toString().isEmpty()) || (mlText != null && mlText.get(loc) != null && !mlText.get(loc).isEmpty());
-			
+
+			res = ((properties.get(fieldQname) != null) && !properties.get(fieldQname).toString().isEmpty())
+					|| ((mlText != null) && (mlText.get(loc) != null) && !mlText.get(loc).isEmpty());
+
 		}
 
 		return res;
 	}
-	
 
 }

@@ -3054,11 +3054,9 @@
 				</property>
 				<property name="bcpg:netWeight">
 					<type>d:double</type>
-					<index enabled="false"/>
 				</property>
 				<property name="bcpg:netVolume">
 					<type>d:double</type>
-					<index enabled="false"/>
 				</property>
 				<property name="bcpg:servingSize">
 					<type>d:double</type>

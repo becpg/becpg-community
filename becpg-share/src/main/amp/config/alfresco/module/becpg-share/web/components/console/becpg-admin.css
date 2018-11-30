@@ -74,24 +74,22 @@ ul.users {
 }
 
 .gauge-meter_needle {
-	height: 23%;
+	height: 28%;
 	left: 0;
 	margin: auto;
 	position: absolute;
 	right: 0;
-	top: 27%;
+	top: 22%;
 	transform-origin: bottom center;
 	transform: rotate(270deg);
 }
 
 #gauge-percentage {
-  background-color: #4B4C51;
-  border-radius: 2px;
-  position: absolute;
-  color: white;
-  font-family: 'courier new';
-  font-size: 8pt;
-  padding: 1px 2px 0px 2px;
-  right: 45%;
-  top: 55%;
+	border-radius: 2px;
+	position: absolute;
+	font-family: 'courier new';
+	font-size: 20pt;
+	padding: 1px 2px 0px 2px;
+	right: 25%;
+	top: 55%;
 }

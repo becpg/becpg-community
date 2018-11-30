@@ -531,7 +531,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 	private String extractCharactName(CharacteristicToCompare c, QName pivotAssoc) {
 		NodeRef itemNodeRef =  c.getNodeRef1();
-		if(itemNodeRef!=null) {
+		if(itemNodeRef==null) {
 			itemNodeRef = c.getNodeRef2();
 		}
 		
@@ -539,14 +539,11 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 			if (pivotAssoc != null) {
 				NodeRef part = associationService.getTargetAssoc(itemNodeRef, pivotAssoc);
 				if ((part != null)) {
-					
 					return attributeExtractorService.extractPropName(part);
 				}
 			}
 			return attributeExtractorService.extractPropName(itemNodeRef);
-			
 		}
-		
 		return null;
 	}
 
