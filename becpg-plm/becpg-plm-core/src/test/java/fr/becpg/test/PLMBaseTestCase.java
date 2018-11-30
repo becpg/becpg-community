@@ -426,7 +426,7 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 			List<NodeRef> labelClaimsNodeRef = entityListDAO.getListItems(labelClaimListsFolder,PLMModel.TYPE_LABEL_CLAIM);
 			if (labelClaimsNodeRef.size() == 0) {
 	
-				String[] labelClaimNames = { "Faible valeur énergétique", "Sans apport énergétique", "TEST3" };
+				String[] labelClaimNames = { "Faible valeur énergétique", "Sans apport énergétique" };
 				for (String labelClaim : labelClaimNames) {
 					Map<QName, Serializable> properties = new HashMap<>();
 					properties.put(PLMModel.PROP_LABEL_CLAIM_CODE, labelClaim);
@@ -439,14 +439,13 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 				}
 			} else {
 				for (NodeRef fileInfo : labelClaimsNodeRef) {
-					logger.info("nodeService.getProperty(fileInfo,BeCPGModel.PROP_CHARACT_NAME)) " + nodeService.getProperty(fileInfo,BeCPGModel.PROP_CHARACT_NAME));
 					if(((String)nodeService.getProperty(fileInfo,BeCPGModel.PROP_CHARACT_NAME)).startsWith( "Faible valeur énergétique")
 							|| ((String)nodeService.getProperty(fileInfo,BeCPGModel.PROP_CHARACT_NAME)).startsWith( "Sans apport énergétique")){
 						labelClaims.add(fileInfo);
 					}
 				}
 			}
-			Assert.assertEquals(3, labelClaims.size());
+			Assert.assertEquals(2, labelClaims.size());
 			labelClaims = Collections.unmodifiableList(labelClaims);
 		}
 
