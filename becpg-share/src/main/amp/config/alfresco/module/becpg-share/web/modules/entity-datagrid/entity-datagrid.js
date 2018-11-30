@@ -1629,18 +1629,20 @@
                                   
                                    if(this.options.floatingHeader){
                                 	   
-       	                            require([
-       	                        	         "jquery", "grid/floatthead"
+       	                            require(dojoConfig,[
+       	                        	         "jquery", "floatthead"
        	                        	       ], function(jQuery) {
        	                            		try {
-	       	                            		if(!me.widgets.floatingHeader || !me.widgets.floatingHeader.floatThead ){
-	       	                            			me.widgets.floatingHeader = jQuery(me.widgets.dataTable._elTable);
-	       	    	                            	me.widgets.floatingHeader.floatThead({zIndex:2, scrollContainer: function($table){
-	       	    	                                    return me.widgets.floatingHeader.closest('.scrollableList');
-	       	    	                                },floatContainerClass:"floatThead-container grid yui-dt"});
-	       	                            		} else {
-	       	                            			 me.widgets.floatingHeader.floatThead('reflow');
-	       	                            		}
+       	                            			if(jQuery.floatThead){
+		       	                            		if(!me.widgets.floatingHeader || !me.widgets.floatingHeader.floatThead ){
+		       	                            			me.widgets.floatingHeader = jQuery(me.widgets.dataTable._elTable);
+		       	    	                            	me.widgets.floatingHeader.floatThead({zIndex:2, scrollContainer: function(table){
+		       	    	                                    return me.widgets.floatingHeader.closest('.scrollableList');
+		       	    	                                },floatContainerClass:"floatThead-container grid yui-dt"});
+		       	                            		} else {
+		       	                            			 me.widgets.floatingHeader.floatThead('reflow');
+		       	                            		}
+       	                            			}
        	                            		} catch (exep){
        	                            			//Nothing I can do
        	                            		}
