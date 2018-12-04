@@ -141,12 +141,11 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	static {
 		hiddenNodeAttributes.add(PLMModel.PROP_NUT_FORMULA);
 		hiddenNodeAttributes.add(PLMModel.PROP_LABEL_CLAIM_FORMULA);
-		hiddenNodeAttributes.add(PLMModel.PROP_NUT_FORMULA_ERROR);
 		
 		hiddenDataListItemAttributes.add(PLMModel.PROP_LCL_FORMULAERROR);
 		hiddenDataListItemAttributes.add(PLMModel.ASSOC_LCL_MISSING_LABELCLAIMS);
 		hiddenDataListItemAttributes.add(PLMModel.PROP_PHYSICOCHEMFORMULA_ERROR);
-		hiddenDataListItemAttributes.add(PLMModel.PROP_NUT_FORMULA_ERROR);
+		hiddenDataListItemAttributes.add(PLMModel.PROP_NUTLIST_FORMULA_ERROR);
 		hiddenDataListItemAttributes.add(PLMModel.PROP_NUTLIST_ROUNDED_VALUE);
 	}
 
@@ -942,7 +941,10 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 						value = nutListElt.valueOf("@" + PLMModel.PROP_NUTLIST_FORMULATED_VALUE.getLocalName());
 						nutListElt.addAttribute(PLMModel.PROP_NUTLIST_VALUE.getLocalName(), value);
 					}
-
+					
+					if(dataListItem.getErrorLog() != null && dataListItem.getErrorLog() != ""){
+						nutListElt.addAttribute(PLMModel.PROP_NUTLIST_FORMULA_ERROR.getLocalName(), "Error");
+					}
 					nutListElt.addAttribute(NutrientFormulationHelper.ATTR_NUT_CODE,(String)nodeService.getProperty(dataListItem.getNut(),GS1Model.PROP_NUTRIENT_TYPE_CODE) );
 					nutListElt.addAttribute(BeCPGModel.PROP_COLOR.getLocalName(),(String)nodeService.getProperty(dataListItem.getNut(),BeCPGModel.PROP_COLOR) );
 					
