@@ -197,8 +197,10 @@
            return asset.name !== null && asset.name.indexOf("View-reports") == 0 ;
        },
        fn : function(instance) {
-           Alfresco.util.PopupManager.displayMessage({
-               text : this.msg("message.generate-reports.please-wait")
+           var msgPopup = Alfresco.util.PopupManager.displayMessage({
+               text : this.msg("message.generate-reports.please-wait"),
+               spanClass : "wait",
+               displayTime : 0
            });
 
            Alfresco.util.Ajax.request({
@@ -214,6 +216,7 @@
               },
               failureCallback : {
                  fn : function EntityDataListToolbar_onFinish_failure(response) {
+                	 msgPopup.destroy();
                      Alfresco.util.PopupManager.displayMessage({
                          text : this.msg("message.generate-reports.failure")
                      });
