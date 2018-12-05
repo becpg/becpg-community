@@ -860,32 +860,12 @@ public class EntityReportServiceImpl implements EntityReportService {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
-	public void generateReport(NodeRef entityNodeRef, NodeRef documentNodeRef, ReportFormat reportFormat, OutputStream outputStream) {
-
+	public void generateReport(NodeRef entityNodeRef, NodeRef templateNodeRef, EntityReportParameters reportParameters, 
+			Locale locale, ReportFormat reportFormat, OutputStream outputStream) {
+		
 		Locale currentLocal = I18NUtil.getLocale();
 		Locale currentContentLocal = I18NUtil.getContentLocale();
 		try {
-
-			NodeRef templateNodeRef = associationService.getTargetAssoc(documentNodeRef, ReportModel.ASSOC_REPORT_TPL);
-
-			if (templateNodeRef == null) {
-				throw new IllegalArgumentException("templateNodeRef is null");
-			}
-
-			Locale locale = MLTextHelper.getNearestLocale(Locale.getDefault());
-
-			EntityReportParameters reportParameters = readParameters(EntityReportParameters
-					.createFromJSON((String) nodeService.getProperty(documentNodeRef, ReportModel.PROP_REPORT_TEXT_PARAMETERS)));
-
-			if (nodeService.hasAspect(documentNodeRef, ReportModel.ASPECT_REPORT_LOCALES)) {
-
-				List<String> langs = (List<String>) nodeService.getProperty(documentNodeRef, ReportModel.PROP_REPORT_LOCALES);
-				if ((langs != null) && !langs.isEmpty()) {
-					locale = MLTextHelper.parseLocale(langs.get(0));
-					I18NUtil.setLocale(locale);
-				}
-			}
 
 			EntityReportData reportData = retrieveExtractor(entityNodeRef).extract(entityNodeRef, reportParameters.getPreferences());
 
@@ -917,6 +897,37 @@ public class EntityReportServiceImpl implements EntityReportService {
 			I18NUtil.setLocale(currentLocal);
 			I18NUtil.setContentLocale(currentContentLocal);
 		}
+
+	}
+	
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public void generateReport(NodeRef entityNodeRef, NodeRef documentNodeRef, ReportFormat reportFormat, OutputStream outputStream) {
+
+		NodeRef templateNodeRef = associationService.getTargetAssoc(documentNodeRef, ReportModel.ASSOC_REPORT_TPL);
+
+		if (templateNodeRef == null) {
+			throw new IllegalArgumentException("templateNodeRef is null");
+		}
+
+		Locale locale = MLTextHelper.getNearestLocale(Locale.getDefault());
+
+		EntityReportParameters reportParameters = readParameters(EntityReportParameters
+				.createFromJSON((String) nodeService.getProperty(documentNodeRef, ReportModel.PROP_REPORT_TEXT_PARAMETERS)));
+
+		if (nodeService.hasAspect(documentNodeRef, ReportModel.ASPECT_REPORT_LOCALES)) {
+
+			List<String> langs = (List<String>) nodeService.getProperty(documentNodeRef, ReportModel.PROP_REPORT_LOCALES);
+			if ((langs != null) && !langs.isEmpty()) {
+				locale = MLTextHelper.parseLocale(langs.get(0));
+				I18NUtil.setLocale(locale);
+			}
+		}
+		
+		generateReport(entityNodeRef, templateNodeRef, reportParameters, locale, reportFormat, outputStream);
+		
+		
 	}
 
 	@Override

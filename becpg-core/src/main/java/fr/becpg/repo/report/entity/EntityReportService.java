@@ -18,6 +18,7 @@
 package fr.becpg.repo.report.entity;
 
 import java.io.OutputStream;
+import java.util.Locale;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
@@ -46,6 +47,9 @@ public interface EntityReportService {
 	EntityReportExtractorPlugin retrieveExtractor(NodeRef entityNodeRef);
 
 	NodeRef getEntityNodeRef(NodeRef nodeRef);
+
+	void generateReport(NodeRef entityNodeRef, NodeRef templateNodeRef, EntityReportParameters reportParameters, Locale locale,
+			ReportFormat reportFormat, OutputStream outputStream);
 
 
 	
