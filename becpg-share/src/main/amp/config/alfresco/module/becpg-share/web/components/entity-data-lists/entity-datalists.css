@@ -191,7 +191,11 @@
 
 
 
-
+.datalist-toolbar .loading span.first-child
+{
+   background: url(images/loading.gif) no-repeat 12px 4px;
+   padding-left: 24px;
+}
 
 
 

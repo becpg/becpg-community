@@ -197,6 +197,11 @@
            return asset.name !== null && asset.name.indexOf("View-reports") == 0 ;
        },
        fn : function(instance) {
+    	   
+    	   var refreshReportButton = YAHOO.util.Selector.query('div.entity-refresh-reports'), me = this;
+
+			Dom.addClass(refreshReportButton, "loading");
+			
            var msgPopup = Alfresco.util.PopupManager.displayMessage({
                text : this.msg("message.generate-reports.please-wait"),
                spanClass : "wait",
@@ -210,13 +215,15 @@
               successCallback : {
                  fn : function EntityDataListToolbar_onFinish_success(response) {
                 	 	//#2147 YAHOO.Bubbling.fire("previewChangedEvent");
-                	 	 window.location.reload();
+                	 Dom.removeClass(refreshReportButton, "loading");
+                	 window.location.reload();
                  },
                  scope : this
               },
               failureCallback : {
                  fn : function EntityDataListToolbar_onFinish_failure(response) {
                 	 msgPopup.destroy();
+                	 Dom.removeClass(refreshReportButton, "loading");
                      Alfresco.util.PopupManager.displayMessage({
                          text : this.msg("message.generate-reports.failure")
                      });
