@@ -162,7 +162,7 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 							NutListDataItem nut = new NutListDataItem(null, null, null, null, null, null, nutNodeRef, false);
 
 							String newMethod = getFileName(databaseFile);
-							PropertyDefinition methodDef = dictionaryService.getProperty(PLMModel.PROP_NUT_METHOD);
+							PropertyDefinition methodDef = dictionaryService.getProperty(PLMModel.PROP_NUTLIST_METHOD);
 
 							if (methodDef != null) {
 								List<ConstraintDefinition> methodConstraints = methodDef.getConstraints();
@@ -184,7 +184,7 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 									}
 								}
 							} else {
-								logger.debug("Can't find method definition for " + PLMModel.PROP_NUT_METHOD);
+								logger.debug("Can't find method definition for " + PLMModel.PROP_NUTLIST_METHOD);
 							}
 
 							if (nutValue != null) {
