@@ -16,13 +16,13 @@
   You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 -->
 <webscript>
-	<shortname>Create Custom Report</shortname>
-	<description>Create reports with custom config</description>	
+	<shortname>Get entity report content</shortname>
+	<description>Get entity report content with custom config</description>	
 	<url>/becpg/remote/report?nodeRef={nodeRef}&amp;tplNodeRef={tplNodeRef}</url>
 	<url>/becpg/remote/report?nodeRef={nodeRef}&amp;tplNodeRef={tplNodeRef}&amp;locale={locale}</url>
 	<url>/becpg/remote/report?nodeRef={nodeRef}&amp;tplNodeRef={tplNodeRef}&amp;locale={locale}&amp;format={format}</url>
-	<format default="json">argument</format>
+	<format default="">extension</format>
 	<authentication>user</authentication>
-	<transaction allow="readwrite" buffersize="0">required</transaction>
+	<transaction allow="readonly" >required</transaction>
 	<lifecycle>public_api</lifecycle>
 </webscript>

@@ -60,11 +60,8 @@ public class GetEntityWebScript extends AbstractEntityWebScript {
 			if (logger.isInfoEnabled())
 				logger.info("Client aborted stream read:\n\tcontent", e1);
 
-		} catch (Exception e) {		
-			e.printStackTrace();
-		}
+		} 
 			
-
 	}
 
 }
