@@ -21,7 +21,6 @@
 	<url>/becpg/remote/report?nodeRef={nodeRef}&amp;tplNodeRef={tplNodeRef}</url>
 	<url>/becpg/remote/report?nodeRef={nodeRef}&amp;tplNodeRef={tplNodeRef}&amp;locale={locale}</url>
 	<url>/becpg/remote/report?nodeRef={nodeRef}&amp;tplNodeRef={tplNodeRef}&amp;locale={locale}&amp;format={format}</url>
-	<format default="">extension</format>
 	<authentication>user</authentication>
 	<transaction allow="readonly" >required</transaction>
 	<lifecycle>public_api</lifecycle>
