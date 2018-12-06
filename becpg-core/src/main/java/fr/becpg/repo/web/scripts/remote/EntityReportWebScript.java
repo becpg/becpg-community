@@ -19,37 +19,35 @@ import fr.becpg.repo.report.entity.EntityReportParameters;
 import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.report.client.ReportFormat;
 
-public class EntityReportWebScript  extends AbstractEntityWebScript {
+public class EntityReportWebScript extends AbstractEntityWebScript {
 
 	private static final Log logger = LogFactory.getLog(EntityReportWebScript.class);
-	
+
 	private static final String PARAM_LOCALE = "locale";
 	private static final String PARAM_TEMPLATE = "tplNodeRef";
-	
+
 	private EntityReportService entityReportService;
-	
-	
+
 	public void setEntityReportService(EntityReportService entityReportService) {
 		this.entityReportService = entityReportService;
 	}
 
-	
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
 
 		NodeRef entityNodeRef = findEntity(req);
-		
+
 		NodeRef templateNodeRef = null;
-		if(req.getParameter(PARAM_TEMPLATE) != null) {
+		if (req.getParameter(PARAM_TEMPLATE) != null) {
 			templateNodeRef = new NodeRef(req.getParameter(PARAM_TEMPLATE));
 		} else {
 			throw new WebScriptException("Template nodeRef is mandatory..");
 		}
-		
+
 		Locale locale;
 		String paramLocale = req.getParameter(PARAM_LOCALE);
-		if(paramLocale == null) {
-			locale = I18NUtil.getLocale(); 
+		if (paramLocale == null) {
+			locale = I18NUtil.getLocale();
 		} else {
 			locale = MLTextHelper.parseLocale(paramLocale);
 		}
@@ -64,34 +62,31 @@ public class EntityReportWebScript  extends AbstractEntityWebScript {
 
 		EntityReportParameters reportParameters;
 		JSONObject json = (JSONObject) req.parseContent();
-		if(json!=null) {
+		if (json != null) {
 			reportParameters = EntityReportParameters.createFromJSON(json.toString());
 		} else {
 			reportParameters = EntityReportParameters
-				.createFromJSON((String) nodeService.getProperty(templateNodeRef, ReportModel.PROP_REPORT_TEXT_PARAMETERS));
+					.createFromJSON((String) nodeService.getProperty(templateNodeRef, ReportModel.PROP_REPORT_TEXT_PARAMETERS));
 		}
 
-		if(logger.isDebugEnabled()) {
+		if (logger.isDebugEnabled()) {
 			logger.debug("Get report for entity: " + entityNodeRef);
 		}
 
 		try {
-			
+			String mimeType = mimetypeService.getMimetype(format);
+	
+			resp.setContentType(mimeType);
 			entityReportService.generateReport(entityNodeRef, templateNodeRef, reportParameters, locale, reportFormat, resp.getOutputStream());
+		} catch (SocketException e1) {
 
-			// set mimetype for the content and the character encoding + length
-			// for the stream
-			resp.setContentType(getContentType(req));
-			resp.setContentEncoding("UTF-8");
-		} catch (SocketException e) {
-			logger.error("Cannot export report entity", e);
-			throw new WebScriptException(e.getMessage());
-		} catch (Exception e) {		
-			e.printStackTrace();
-		}
-			
+			// the client cut the connection - our mission was accomplished
+			// apart from a little error message
+			if (logger.isInfoEnabled())
+				logger.info("Client aborted stream read:\n\tcontent", e1);
 
+		} 
+		
 	}
-
 
 }
