@@ -87,7 +87,7 @@
 			function productUnitToogleVisible(){
 				var val = Dom.get("${fieldHtmlId}").value;
 						if(YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_netWeight")!=null){
-								if(val == "kg" || val == "g"){
+								if(val == "kg" || val == "g" || val == "lb" || val == "oz"){
 								   	YAHOO.util.Dom.addClass(YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_netWeight").parentNode,"hidden");
 								    YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_netWeight").value = "";
 									if(YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_netWeight-val")!=null){

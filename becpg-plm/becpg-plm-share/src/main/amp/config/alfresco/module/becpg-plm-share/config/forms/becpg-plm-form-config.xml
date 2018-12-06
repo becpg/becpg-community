@@ -407,7 +407,7 @@
 					<field id="bcpg:productQty" help-id="becpg.forms.help.productQty" set="formulation" />
 					<field id="bcpg:productUnit" set="formulation">
 						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
-							<control-param name="options">kg,g,L,cL,mL,P|becpg.forms.field.productUnit
+							<control-param name="options">kg,g,lb,oz,L,cL,mL,P|becpg.forms.field.productUnit
 							</control-param>
 						</control>
 					</field>
@@ -589,7 +589,7 @@
 					<field id="bcpg:productQty" />
 					<field id="bcpg:productUnit">
 						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
-							<control-param name="options">kg,g,L,cL,mL,P|becpg.forms.field.productUnit
+							<control-param name="options">kg,g,lb,oz,L,cL,mL,P|becpg.forms.field.productUnit
 							</control-param>
 						</control>
 					</field>
@@ -1187,7 +1187,7 @@
 					<field id="bcpg:productQty" help-id="becpg.forms.help.productQty" set="formulation" />
 					<field id="bcpg:productUnit" set="formulation">
 						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
-							<control-param name="options">kg,g,L,cL,mL,P|becpg.forms.field.productUnit
+							<control-param name="options">kg,g,lb,oz,L,cL,mL,P|becpg.forms.field.productUnit
 							</control-param>
 						</control>
 					</field>
@@ -1258,7 +1258,7 @@
 					<field id="bcpg:productQty" />
 					<field id="bcpg:productUnit">
 						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
-							<control-param name="options">kg,g,L,cL,mL,P|becpg.forms.field.productUnit
+							<control-param name="options">kg,g,lb,oz,L,cL,mL,P|becpg.forms.field.productUnit
 							</control-param>
 						</control>
 					</field>
@@ -2761,7 +2761,7 @@
 					<!-- <field id="bcpg:productQty" set="consumer" /> -->
 					<field id="bcpg:productUnit"  set="consumer">
 						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
-							<control-param name="options">kg,g,L,cL,mL,m,m2,P|becpg.forms.field.productUnit
+							<control-param name="options">kg,g,lb,oz,L,cL,mL,m,m2,P|becpg.forms.field.productUnit
 							</control-param>
 						</control>
 					</field>
@@ -3153,7 +3153,7 @@
 				<appearance>
 					<field id="bcpg:productUnit">
 						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
-							<control-param name="options">kg,g,L,cL,mL,m,m2,P|becpg.forms.field.productUnit
+							<control-param name="options">kg,g,lb,oz,L,cL,mL,m,m2,P|becpg.forms.field.productUnit
 							</control-param>
 						</control>
 					</field>
@@ -3326,7 +3326,7 @@
 					<!-- <field id="bcpg:productQty" set="consumer" /> -->
 					<field id="bcpg:productUnit"  set="consumer">
 						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
-							<control-param name="options">kg,g,L,cL,mL,m,m2,P|becpg.forms.field.productUnit
+							<control-param name="options">kg,g,lb,oz,L,cL,mL,m,m2,P|becpg.forms.field.productUnit
 							</control-param>
 						</control>
 					</field>
@@ -3438,7 +3438,7 @@
 				<appearance>
 					<field id="bcpg:productUnit">
 						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
-							<control-param name="options">kg,g,L,cL,mL,m,m2,P|becpg.forms.field.productUnit
+							<control-param name="options">kg,g,lb,oz,L,cL,mL,m,m2,P|becpg.forms.field.productUnit
 							</control-param>
 						</control>
 					</field>
@@ -3819,7 +3819,7 @@
 					<field id="bcpg:productQty" help-id="becpg.forms.help.productQty" set="formulation" />
 					<field id="bcpg:productUnit" set="formulation">
 						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
-							<control-param name="options">kg,g,L,cL,mL,P|becpg.forms.field.productUnit
+							<control-param name="options">kg,g,lb,oz,L,cL,mL,P|becpg.forms.field.productUnit
 							</control-param>
 						</control>
 					</field>
@@ -3960,7 +3960,7 @@
 					<field id="bcpg:productQty" />
 					<field id="bcpg:productUnit">
 						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
-							<control-param name="options">kg,g,L,cL,mL,P|becpg.forms.field.productUnit
+							<control-param name="options">kg,g,lb,oz,L,cL,mL,P|becpg.forms.field.productUnit
 							</control-param>
 						</control>
 					</field>
@@ -4437,7 +4437,7 @@
 					<field id="bcpg:productQty" help-id="becpg.forms.help.productQty" set="formulation" />
 					<field id="bcpg:productUnit" set="formulation">
 						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
-							<control-param name="options">kg,g,L,cL,mL,P|becpg.forms.field.productUnit
+							<control-param name="options">kg,g,lb,oz,L,cL,mL,P|becpg.forms.field.productUnit
 							</control-param>
 						</control>
 					</field>
@@ -4490,7 +4490,7 @@
 					<field id="bcpg:productQty" />
 					<field id="bcpg:productUnit">
 						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
-							<control-param name="options">kg,g,L,cL,mL,P|becpg.forms.field.productUnit
+							<control-param name="options">kg,g,lb,oz,L,cL,mL,P|becpg.forms.field.productUnit
 							</control-param>
 						</control>
 					</field>
