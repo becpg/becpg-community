@@ -3,22 +3,22 @@
  */
 package fr.becpg.repo.product.data.productList;
 
+import java.util.Objects;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
-import fr.becpg.repo.product.data.constraints.CompoListUnit;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
-import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
-import fr.becpg.repo.repository.annotation.InternalField;
+import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
+import fr.becpg.repo.repository.annotation.InternalField;
 import fr.becpg.repo.repository.annotation.MultiLevelDataList;
-
-import java.util.Objects;
 
 @AlfType
 @AlfQname(qname = "bcpg:compoList")
@@ -37,7 +37,7 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 		
 	private Double qtySubFormula = null;	
 	
-	private CompoListUnit compoListUnit = CompoListUnit.Unknown;
+	private ProductUnit compoListUnit;
 	
 	private Double lossPerc = 0d;
 	
@@ -97,15 +97,12 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 	
 	@AlfProp
 	@AlfQname(qname="bcpg:compoListUnit")
-	public CompoListUnit getCompoListUnit() {
+	public ProductUnit getCompoListUnit() {
 		return compoListUnit;
 	}
 	
 	
-	public void setCompoListUnit(CompoListUnit compoListUnit) {
-		if(compoListUnit==null){
-			compoListUnit  = CompoListUnit.Unknown;
-		}
+	public void setCompoListUnit(ProductUnit compoListUnit) {
 		this.compoListUnit = compoListUnit;
 	}
 	
@@ -183,7 +180,7 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 		super();
 	}
 	
-	public CompoListDataItem(NodeRef nodeRef, CompoListDataItem parent, Double qty, Double qtySubFormula, CompoListUnit compoListUnit, Double lossPerc, DeclarationType declType, NodeRef product){
+	public CompoListDataItem(NodeRef nodeRef, CompoListDataItem parent, Double qty, Double qtySubFormula, ProductUnit compoListUnit, Double lossPerc, DeclarationType declType, NodeRef product){
 		super();
 		this.nodeRef=nodeRef;
 		this.parent=parent;
@@ -313,7 +310,7 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 
 	@Override
 	public String toString() {
-		return "CompoListDataItem [depthLevel=" + depthLevel + ", qty=" + qty + ", qtySubFormula=" + qtySubFormula + ", compoListUnit="
+		return "CompoListDataItem [depthLevel=" + depthLevel + ", qty=" + qty + ", qtySubFormula=" + qtySubFormula + ", ProductUnit="
 				+ compoListUnit + ", lossPerc=" + lossPerc + ", yieldPerc=" + yieldPerc + ", declType=" + declType + ", overrunPerc=" + overrunPerc
 				+ ", volume=" + volume + ", product=" + product + ", parent=" + parent + ", startEffectivity=" + startEffectivity
 				+ ", endEffectivity=" + endEffectivity + ", nodeRef=" + nodeRef + ", aspects=" + aspects + ", extraProperties=" + extraProperties

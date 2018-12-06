@@ -39,8 +39,8 @@ import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.migration.MigrationService;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
-import fr.becpg.repo.product.data.constraints.CompoListUnit;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
+import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -336,7 +336,7 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 						List<CompoListDataItem> compoList = new ArrayList<>(kv.getValue().size());
 						for(NodeRef rmNodeRef : supplierRMNodeRefs){
 							Double subQty = (double) (100 / kv.getValue().size());
-							compoList.add(new CompoListDataItem(null, null, null, subQty, CompoListUnit.Perc, null, DeclarationType.Declare, rmNodeRef));						
+							compoList.add(new CompoListDataItem(null, null, null, subQty, ProductUnit.Perc, null, DeclarationType.Declare, rmNodeRef));						
 						}								
 						
 						genRawMaterialData.getCompoListView().setCompoList(compoList);

@@ -29,10 +29,8 @@ import org.junit.Test;
 
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.constraints.CompoListUnit;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
-import fr.becpg.repo.product.data.constraints.PackagingListUnit;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.TareUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -72,14 +70,14 @@ public class FormulationTareTest extends AbstractFinishedProductTest {
 				finishedProduct.setQty(1d);
 				finishedProduct.setDensity(1d);
 				List<CompoListDataItem> compoList = new ArrayList<>();
-				compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial5NodeRef));
-				compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.P, 0d, DeclarationType.Detail, rawMaterial5NodeRef));
+				compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial5NodeRef));
+				compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.P, 0d, DeclarationType.Detail, rawMaterial5NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
 
 				List<PackagingListDataItem> packList = new ArrayList<>();
-				packList.add(new PackagingListDataItem(null, 1d, PackagingListUnit.P, PackagingLevel.Primary, true, packagingMaterial1NodeRef));
-				packList.add(new PackagingListDataItem(null, 2d, PackagingListUnit.P, PackagingLevel.Primary, true, packagingMaterial2NodeRef));
-				packList.add(new PackagingListDataItem(null, 3d, PackagingListUnit.g, PackagingLevel.Primary, true, packagingMaterial3NodeRef));
+				packList.add(new PackagingListDataItem(null, 1d, ProductUnit.P, PackagingLevel.Primary, true, packagingMaterial1NodeRef));
+				packList.add(new PackagingListDataItem(null, 2d, ProductUnit.P, PackagingLevel.Primary, true, packagingMaterial2NodeRef));
+				packList.add(new PackagingListDataItem(null, 3d, ProductUnit.g, PackagingLevel.Primary, true, packagingMaterial3NodeRef));
 				finishedProduct.getPackagingListView().setPackagingList(packList);
 				
 				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();

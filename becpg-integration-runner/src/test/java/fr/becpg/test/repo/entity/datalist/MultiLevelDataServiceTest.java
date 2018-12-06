@@ -20,7 +20,7 @@ import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
-import fr.becpg.repo.product.data.constraints.CompoListUnit;
+import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.test.PLMBaseTestCase;
@@ -88,16 +88,16 @@ public class MultiLevelDataServiceTest extends PLMBaseTestCase {
 				finishedProduct.setName("Finished Product");
 
 				List<CompoListDataItem> compoList = new LinkedList<>();
-				CompoListDataItem parent1 = new CompoListDataItem(null, null, 1d, 1d, CompoListUnit.P, 0d,
+				CompoListDataItem parent1 = new CompoListDataItem(null, null, 1d, 1d, ProductUnit.P, 0d,
 						DeclarationType.Declare, lSF1NodeRef);
-				CompoListDataItem child1 = new CompoListDataItem(null, parent1, 1d, 4d, CompoListUnit.P, 0d, DeclarationType.Declare, lSF2NodeRef);
-				CompoListDataItem child12 = new CompoListDataItem(null, child1, 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit,
+				CompoListDataItem child1 = new CompoListDataItem(null, parent1, 1d, 4d, ProductUnit.P, 0d, DeclarationType.Declare, lSF2NodeRef);
+				CompoListDataItem child12 = new CompoListDataItem(null, child1, 3d, 0d, ProductUnit.kg, 0d, DeclarationType.Omit,
 						rawMaterial1NodeRef);
-				CompoListDataItem parent2 = new CompoListDataItem(null, null, 1d, 4d, CompoListUnit.P, 0d,
+				CompoListDataItem parent2 = new CompoListDataItem(null, null, 1d, 4d, ProductUnit.P, 0d,
 						DeclarationType.Declare, lSF3NodeRef);
-				CompoListDataItem child2 = new CompoListDataItem(null, parent2, 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit,
+				CompoListDataItem child2 = new CompoListDataItem(null, parent2, 3d, 0d, ProductUnit.kg, 0d, DeclarationType.Omit,
 						rawMaterial2NodeRef);
-				CompoListDataItem child21 = new CompoListDataItem(null, parent2, 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, lSF4NodeRef);
+				CompoListDataItem child21 = new CompoListDataItem(null, parent2, 3d, 0d, ProductUnit.kg, 0d, DeclarationType.Omit, lSF4NodeRef);
 
 				compoList.add(parent1);
 				compoList.add(child1);

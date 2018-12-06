@@ -16,7 +16,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.GS1Model;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.data.EffectiveFilters;
@@ -75,14 +74,12 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 			}
 
 			boolean hasCompo = formulatedProduct.hasCompoListEl(new VariantFilters<>());
-			
+
 			cleanSimpleList(formulatedProduct.getNutList(), hasCompo || formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL));
-			
+
 			synchronizeTemplate(formulatedProduct, formulatedProduct.getNutList());
-			
 
 			if (hasCompo) {
-
 
 				if (!propagateModeEnable) {
 
@@ -108,7 +105,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 
 							ProductData partProduct = (ProductData) alfrescoRepository.findOne(part);
 
-							Double qtyUsed = FormulationHelper.isProductUnitLiter(partProduct.getUnit()) ? vol : weight;
+							Double qtyUsed = ((partProduct.getUnit() != null) && partProduct.getUnit().isLiter()) ? vol : weight;
 
 							if (qtyUsed != null) {
 								if (!(partProduct instanceof LocalSemiFinishedProductData)) {
@@ -144,12 +141,12 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 
 				formulatedProduct.getNutList().forEach(n -> {
 					if (n.getNut() != null) {
-						
+
 						NutDataItem nut = (NutDataItem) alfrescoRepository.findOne(n.getNut());
-												
+
 						n.setGroup(nut.getNutGroup());
 						n.setUnit(calculateUnit(formulatedProduct.getUnit(), nut.getNutUnit()));
-						
+
 						if (n.getLossPerc() != null) {
 							if (n.getValue() != null) {
 								n.setValue((n.getValue() * (100 - n.getLossPerc())) / 100);
@@ -172,8 +169,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 							Double ul = nut.getNutUL();
 							if (ul != null) {
 								if (valuePerserving > ul) {
-									String message = I18NUtil.getMessage(MESSAGE_MAXIMAL_DAILY_VALUE,
-											nut.getCharactName());
+									String message = I18NUtil.getMessage(MESSAGE_MAXIMAL_DAILY_VALUE, nut.getCharactName());
 
 									formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message,
 											n.getNut(), new ArrayList<NodeRef>(), RequirementDataType.Specification));
@@ -189,9 +185,9 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 								n.setMethod(NUT_FORMULATED);
 							}
 						}
-						
-						NutrientFormulationHelper.extractRoundedValue(nut.getNutCode(),n);
-						
+
+						NutrientFormulationHelper.extractRoundedValue(nut.getNutCode(), n);
+
 						if (transientFormulation) {
 							n.setTransient(true);
 						}
@@ -200,10 +196,10 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 
 				checkRequirementsOfFormulatedProduct(formulatedProduct);
 			}
-		} 
+		}
 		return true;
 	}
-	
+
 	private List<ReqCtrlListDataItem> visitPart(ProductData partProduct, List<NutListDataItem> nutList, List<NutListDataItem> retainNodes,
 			Double qtyUsed, Double netQty, Boolean isGenericRawMaterial, Map<NodeRef, Double> totalQtiesValue) {
 
@@ -273,7 +269,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 	 * @return
 	 */
 	public static String calculateSuffixUnit(ProductUnit productUnit) {
-		if (ProductUnit.L.equals(productUnit) || ProductUnit.mL.equals(productUnit) || ProductUnit.cL.equals(productUnit)) {
+		if (((productUnit != null) && productUnit.isLiter())) {
 			return UNIT_PER100ML;
 		} else {
 			return UNIT_PER100G;
@@ -289,7 +285,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 	protected Map<NodeRef, List<NodeRef>> getMandatoryCharacts(ProductData formulatedProduct, QName componentType) {
 		Map<NodeRef, List<NodeRef>> mandatoryCharacts = new HashMap<>();
 		for (Map.Entry<NodeRef, List<NodeRef>> kv : getMandatoryCharactsFromList(formulatedProduct.getNutList()).entrySet()) {
-			if(kv.getKey()!=null){
+			if (kv.getKey() != null) {
 				String formula = (String) nodeService.getProperty(kv.getKey(), PLMModel.PROP_NUT_FORMULA);
 				if ((formula == null) || formula.isEmpty()) {
 					mandatoryCharacts.put(kv.getKey(), kv.getValue());

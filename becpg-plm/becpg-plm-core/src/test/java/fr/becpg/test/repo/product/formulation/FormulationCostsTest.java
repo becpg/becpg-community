@@ -37,10 +37,8 @@ import fr.becpg.repo.product.data.ClientData;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
-import fr.becpg.repo.product.data.constraints.CompoListUnit;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
-import fr.becpg.repo.product.data.constraints.PackagingListUnit;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.TareUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -135,7 +133,7 @@ public class FormulationCostsTest extends AbstractFinishedProductTest {
 
 						List<PackagingListDataItem> packList = new ArrayList<>();
 						packList.add(
-								new PackagingListDataItem(null, 25d, PackagingListUnit.PP, PackagingLevel.Secondary, true, packagingKit1NodeRef));
+								new PackagingListDataItem(null, 25d, ProductUnit.PP, PackagingLevel.Secondary, true, packagingKit1NodeRef));
 						finishedProduct.getPackagingListView().setPackagingList(packList);
 
 						finishedProduct = (FinishedProductData) alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct);
@@ -254,15 +252,15 @@ public class FormulationCostsTest extends AbstractFinishedProductTest {
 						finishedProduct.setUnit(ProductUnit.kg);
 						finishedProduct.setQty(2d);
 						List<CompoListDataItem> compoList = new ArrayList<>();
-						compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
-						compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare,
+						compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
+						compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare,
 								rawMaterial1NodeRef));
-						compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, CompoListUnit.kg, 0d, DeclarationType.Detail,
+						compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, ProductUnit.kg, 0d, DeclarationType.Detail,
 								rawMaterial2NodeRef));
-						compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
-						compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, CompoListUnit.kg, 0d, DeclarationType.Declare,
+						compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
+						compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare,
 								rawMaterial3NodeRef));
-						compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, CompoListUnit.kg, 0d, DeclarationType.Omit,
+						compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Omit,
 								rawMaterial4NodeRef));
 						finishedProduct.getCompoListView().setCompoList(compoList);
 
@@ -336,9 +334,9 @@ public class FormulationCostsTest extends AbstractFinishedProductTest {
 			// Packaging list Of packaging kit
 			List<PackagingListDataItem> kitPackList = new ArrayList<>();
 			kitPackList.add(
-					new PackagingListDataItem(null, 1d, PackagingListUnit.P, PackagingLevel.Secondary, true, packagingMaterial2NodeRef));
+					new PackagingListDataItem(null, 1d, ProductUnit.P, PackagingLevel.Secondary, true, packagingMaterial2NodeRef));
 			kitPackList.add(
-					new PackagingListDataItem(null, 1d, PackagingListUnit.P, PackagingLevel.Tertiary, true, packagingMaterial3NodeRef));
+					new PackagingListDataItem(null, 1d, ProductUnit.P, PackagingLevel.Tertiary, true, packagingMaterial3NodeRef));
 			
 			packagingKit.getPackagingListView().setPackagingList(kitPackList);
 			
@@ -360,9 +358,9 @@ public class FormulationCostsTest extends AbstractFinishedProductTest {
 			List<PackagingListDataItem> finishedProductPackList = new ArrayList<>();
 			finishedProduct.getPackagingListView().setPackagingList(finishedProductPackList);
 			finishedProductPackList.add(
-					new PackagingListDataItem(null, 8d, PackagingListUnit.P, PackagingLevel.Primary, true, packagingMaterial1NodeRef));
+					new PackagingListDataItem(null, 8d, ProductUnit.P, PackagingLevel.Primary, true, packagingMaterial1NodeRef));
 			finishedProductPackList.add(
-					new PackagingListDataItem(null, 10d, PackagingListUnit.PP, PackagingLevel.Secondary, true, packagingKit1NodeRef));
+					new PackagingListDataItem(null, 10d, ProductUnit.PP, PackagingLevel.Secondary, true, packagingKit1NodeRef));
 			
 			finishedProduct = (FinishedProductData) alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct);			
 			
@@ -440,7 +438,7 @@ public class FormulationCostsTest extends AbstractFinishedProductTest {
 							finishedProduct.setUnit(ProductUnit.kg);
 							List<CompoListDataItem> compoList = new ArrayList<>();
 							compoList.add(
-									new CompoListDataItem(null, null, null, 1d, CompoListUnit.g, 0d, DeclarationType.Detail, rawMaterialNodeRef));
+									new CompoListDataItem(null, null, null, 1d, ProductUnit.g, 0d, DeclarationType.Detail, rawMaterialNodeRef));
 							finishedProduct.getCompoListView().setCompoList(compoList);
 
 							List<CostListDataItem> costList = new LinkedList<>();
@@ -518,7 +516,7 @@ public class FormulationCostsTest extends AbstractFinishedProductTest {
 						finishedProduct.setName("Produit fini 1");
 						finishedProduct.setUnit(ProductUnit.kg);
 						List<CompoListDataItem> compoList = new ArrayList<>();
-						compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.g, 0d, DeclarationType.Detail, rawMaterialNodeRef));
+						compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.g, 0d, DeclarationType.Detail, rawMaterialNodeRef));
 						finishedProduct.getCompoListView().setCompoList(compoList);
 
 						List<CostListDataItem> costList = new LinkedList<>();

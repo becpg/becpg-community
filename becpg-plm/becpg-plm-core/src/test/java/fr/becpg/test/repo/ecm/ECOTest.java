@@ -59,11 +59,9 @@ import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.constraints.CompoListUnit;
+import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
-import fr.becpg.repo.product.data.constraints.PackagingListUnit;
-import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
@@ -128,14 +126,14 @@ public class ECOTest extends AbstractFinishedProductTest {
 			finishedProduct.setQty(2d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
 
-			compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
+			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
 			compoList
-					.add(new CompoListDataItem(null, compoList.get(0), null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
+					.add(new CompoListDataItem(null, compoList.get(0), null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
+			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
 			compoList
-					.add(new CompoListDataItem(null, compoList.get(3), null, 3d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial4NodeRef));
+					.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+			compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial4NodeRef));
 
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
@@ -150,7 +148,7 @@ public class ECOTest extends AbstractFinishedProductTest {
 			finishedProduct.setNutList(nutList);
 
 			List<PackagingListDataItem> packList = new ArrayList<>();
-			packList.add(new PackagingListDataItem(null, 25d, PackagingListUnit.PP, PackagingLevel.Secondary, true, packagingKit1NodeRef));			
+			packList.add(new PackagingListDataItem(null, 25d, ProductUnit.PP, PackagingLevel.Secondary, true, packagingKit1NodeRef));			
 			finishedProduct.getPackagingListView().setPackagingList(packList);
 			
 
@@ -815,8 +813,8 @@ public class ECOTest extends AbstractFinishedProductTest {
 			finishedProduct3.setHierarchy1(HIERARCHY1_SEA_FOOD_REF);
 			finishedProduct3.setHierarchy2(HIERARCHY2_CRUSTACEAN_REF);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, 1d, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, finishedProduct1NodeRef));
-			compoList.add(new CompoListDataItem(null, null, 2d, 2d, CompoListUnit.kg, 0d, DeclarationType.Declare, finishedProduct2NodeRef));
+			compoList.add(new CompoListDataItem(null, null, 1d, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, finishedProduct1NodeRef));
+			compoList.add(new CompoListDataItem(null, null, 2d, 2d, ProductUnit.kg, 0d, DeclarationType.Declare, finishedProduct2NodeRef));
 			finishedProduct3.getCompoListView().setCompoList(compoList);
 
 			List<CostListDataItem> costList = new ArrayList<>();

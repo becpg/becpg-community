@@ -7,7 +7,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
 import fr.becpg.model.MPMModel;
-import fr.becpg.repo.product.data.constraints.ProcessListUnit;
+import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
@@ -31,7 +31,7 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 	private Double yield = 0d;
 	private Double rateProduct = 0d;
 	
-	private ProcessListUnit unit = ProcessListUnit.P;
+	private ProductUnit unit;
 	
 	private NodeRef step;	
 	private NodeRef product;
@@ -50,11 +50,11 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 	
 	@AlfProp
 	@AlfQname(qname="mpm:plUnit")
-	public ProcessListUnit getUnit() {
+	public ProductUnit getUnit() {
 		return unit;
 	}
 
-	public void setUnit(ProcessListUnit unit) {
+	public void setUnit(ProductUnit unit) {
 		this.unit = unit;
 	}
 
@@ -140,7 +140,7 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 	}
 	
 	
-	public ProcessListDataItem(NodeRef nodeRef, Double qty, Double qtyResource, Double rateResource, ProcessListUnit unit, Double yield, Double rateProduct, NodeRef step, NodeRef product, NodeRef resource){
+	public ProcessListDataItem(NodeRef nodeRef, Double qty, Double qtyResource, Double rateResource, ProductUnit unit, Double yield, Double rateProduct, NodeRef step, NodeRef product, NodeRef resource){
 		
 		setNodeRef(nodeRef);
 		setQty(qty);

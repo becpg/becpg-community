@@ -31,7 +31,6 @@ import org.junit.Test;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.constraints.CompoListUnit;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -65,10 +64,10 @@ public class FormulationCheckPropsOfCompTest extends AbstractFinishedProductTest
 			finishedProduct.setNetWeight(0d);
 			finishedProduct.setState(SystemState.Valid);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 100d, CompoListUnit.P, 10d, DeclarationType.Detail, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 10d, CompoListUnit.mL, 10d, DeclarationType.Detail, rawMaterial5NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 10d, CompoListUnit.g, 10d, DeclarationType.Detail, rawMaterial6NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 10d, CompoListUnit.g, 10d, DeclarationType.Detail, rawMaterial7NodeRef));
+			compoList.add(new CompoListDataItem(null, null, null, 100d, ProductUnit.P, 10d, DeclarationType.Detail, rawMaterial1NodeRef));
+			compoList.add(new CompoListDataItem(null, null, null, 10d, ProductUnit.mL, 10d, DeclarationType.Detail, rawMaterial5NodeRef));
+			compoList.add(new CompoListDataItem(null, null, null, 10d, ProductUnit.g, 10d, DeclarationType.Detail, rawMaterial6NodeRef));
+			compoList.add(new CompoListDataItem(null, null, null, 10d, ProductUnit.g, 10d, DeclarationType.Detail, rawMaterial7NodeRef));
 
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			NodeRef finishedProductNodeRef1 = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();

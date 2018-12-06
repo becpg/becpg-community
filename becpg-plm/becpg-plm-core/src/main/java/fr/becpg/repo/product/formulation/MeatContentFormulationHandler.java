@@ -75,7 +75,7 @@ public class MeatContentFormulationHandler extends FormulationBaseHandler<Produc
 
 					if (!(partProduct instanceof LocalSemiFinishedProductData)) {
 
-						boolean formulateInVol = FormulationHelper.isProductUnitLiter(partProduct.getUnit());
+						boolean formulateInVol = partProduct.getUnit()!=null && partProduct.getUnit().isLiter();
 
 						// calculate charact from qty or vol ?
 						Double qtyUsedPerc = formulateInVol ? volUsed : weightUsed;

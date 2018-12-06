@@ -43,7 +43,6 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
-import fr.becpg.repo.product.data.constraints.CompoListUnit;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.LabelingRuleType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
@@ -233,7 +232,7 @@ public class MeatContentFormulationTest extends AbstractFinishedProductTest {
 			semifinishedProduct1.setName("Semi Finished product " + Calendar.getInstance().getTimeInMillis());
 
 			List<CompoListDataItem> compoList1 = new ArrayList<>();
-			compoList1.add(new CompoListDataItem(null, null, null, 100d, CompoListUnit.Perc, 0d, DeclarationType.Declare, mpPorc2));
+			compoList1.add(new CompoListDataItem(null, null, null, 100d, ProductUnit.Perc, 0d, DeclarationType.Declare, mpPorc2));
 			semifinishedProduct1.getCompoListView().setCompoList(compoList1);
 
 			/**
@@ -249,8 +248,8 @@ public class MeatContentFormulationTest extends AbstractFinishedProductTest {
 			finishedProduct1.setUnit(ProductUnit.kg);
 			finishedProduct1.setDensity(1d);
 			compoList1 = new ArrayList<>();
-			compoList1.add(new CompoListDataItem(null, null, null, 2d, CompoListUnit.kg, 0d, DeclarationType.Declare, mpBeef1));
-			compoList1.add(new CompoListDataItem(null, null, null, 3d, CompoListUnit.kg, 0d, DeclarationType.Declare,
+			compoList1.add(new CompoListDataItem(null, null, null, 2d, ProductUnit.kg, 0d, DeclarationType.Declare, mpBeef1));
+			compoList1.add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare,
 					alfrescoRepository.create(getTestFolderNodeRef(), semifinishedProduct1).getNodeRef()));
 
 			finishedProduct1.getCompoListView().setCompoList(compoList1);

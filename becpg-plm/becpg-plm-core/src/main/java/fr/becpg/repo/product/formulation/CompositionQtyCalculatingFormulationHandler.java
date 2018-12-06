@@ -17,7 +17,6 @@
  ******************************************************************************/
 package fr.becpg.repo.product.formulation;
 
-import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -27,19 +26,19 @@ import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.constraints.CompoListUnit;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
 public class CompositionQtyCalculatingFormulationHandler extends FormulationBaseHandler<ProductData> {
 
 	private static final Log logger = LogFactory.getLog(CompositionQtyCalculatingFormulationHandler.class);
 
-	private NodeService nodeService;
+	private AlfrescoRepository<ProductData> alfrescoRepository;
 
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
+	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
+		this.alfrescoRepository = alfrescoRepository;
 	}
 
 	@Override
@@ -61,26 +60,19 @@ public class CompositionQtyCalculatingFormulationHandler extends FormulationBase
 
 		if (formulatedProduct.getUnit() != null) {
 			Double qty = null;
-
-			if ((formulatedProduct.getQty() != null)
-					&& (ProductUnit.g.equals(formulatedProduct.getUnit()) || ProductUnit.mL.equals(formulatedProduct.getUnit()))) {
-				qty = formulatedProduct.getQty() / 1000;
-			} else if ((formulatedProduct.getQty() != null)
-					&& ProductUnit.cL.equals(formulatedProduct.getUnit())) {
-				qty = formulatedProduct.getQty() / 100;
-			} else {
-				qty = formulatedProduct.getQty();
+			if (formulatedProduct.getQty() != null) {
+				Double unitFactor = formulatedProduct.getUnit().getUnitFactor();
+				qty = formulatedProduct.getQty() / unitFactor;
 			}
-			
-			
-			if (ProductUnit.g.equals(formulatedProduct.getUnit()) || ProductUnit.kg.equals(formulatedProduct.getUnit())) {
+
+			if (formulatedProduct.getUnit().isKg()) {
 				formulatedProduct.setNetWeight(qty);
-			} else if (ProductUnit.mL.equals(formulatedProduct.getUnit()) || ProductUnit.L.equals(formulatedProduct.getUnit())) {
+			} else if (formulatedProduct.getUnit().isLiter()) {
 				formulatedProduct.setNetVolume(qty);
 			}
 
 		}
-		Double netWeight = formulatedProduct.getNetWeight()!=null ? formulatedProduct.getNetWeight() : 100d ;
+		Double netWeight = formulatedProduct.getNetWeight() != null ? formulatedProduct.getNetWeight() : 100d;
 		Composite<CompoListDataItem> compositeAll = CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList());
 
 		// calculate on every item
@@ -94,11 +86,13 @@ public class CompositionQtyCalculatingFormulationHandler extends FormulationBase
 		for (Composite<CompoListDataItem> component : composite.getChildren()) {
 
 			Double qtyInKg = calculateQtyInKg(component.getData());
-			logger.debug("qtySubFormula: " + qtyInKg + " parentQty: " + parentQty);
+			if(logger.isDebugEnabled()) {
+				logger.debug("qtySubFormula: " + qtyInKg + " parentQty: " + parentQty);
+			}
 			if (qtyInKg != null) {
 
 				// take in account percentage
-				if (CompoListUnit.Perc.equals(component.getData().getCompoListUnit()) && (parentQty != null) && !parentQty.equals(0d)) {
+				if (ProductUnit.Perc.equals(component.getData().getCompoListUnit()) && (parentQty != null) && !parentQty.equals(0d)) {
 					qtyInKg = (qtyInKg * parentQty) / 100;
 				}
 
@@ -116,7 +110,7 @@ public class CompositionQtyCalculatingFormulationHandler extends FormulationBase
 			if (!component.isLeaf()) {
 
 				// take in account percentage
-				if (CompoListUnit.Perc.equals(component.getData().getCompoListUnit()) && (parentQty != null) && !parentQty.equals(0d)) {
+				if (ProductUnit.Perc.equals(component.getData().getCompoListUnit()) && (parentQty != null) && !parentQty.equals(0d)) {
 
 					visitQtyChildren(formulatedProduct, parentQty, component);
 
@@ -125,7 +119,7 @@ public class CompositionQtyCalculatingFormulationHandler extends FormulationBase
 					boolean isUnitPerc = true;
 					for (Composite<CompoListDataItem> child : component.getChildren()) {
 						compositePerc += child.getData().getQtySubFormula();
-						isUnitPerc = isUnitPerc && CompoListUnit.Perc.equals(child.getData().getCompoListUnit());
+						isUnitPerc = isUnitPerc && ProductUnit.Perc.equals(child.getData().getCompoListUnit());
 						if (!isUnitPerc) {
 							break;
 						}
@@ -143,33 +137,35 @@ public class CompositionQtyCalculatingFormulationHandler extends FormulationBase
 
 	private Double calculateQtyInKg(CompoListDataItem compoListDataItem) {
 		Double qty = compoListDataItem.getQtySubFormula();
-		CompoListUnit compoListUnit = compoListDataItem.getCompoListUnit();
+		ProductUnit compoListUnit = compoListDataItem.getCompoListUnit();
+		ProductData componentProductData = alfrescoRepository.findOne(compoListDataItem.getProduct());
+
 		if ((qty != null) && (compoListUnit != null)) {
 
-			if (compoListUnit.equals(CompoListUnit.kg)) {
-				return qty;
-			} else if (compoListUnit.equals(CompoListUnit.g)) {
-				return qty / 1000;
-			} else if (compoListUnit.equals(CompoListUnit.mg)) {
-				return qty / 1000000;
-			} else if (compoListUnit.equals(CompoListUnit.P)) {
-				return FormulationHelper.getNetWeight(compoListDataItem.getProduct(), nodeService, FormulationHelper.DEFAULT_NET_WEIGHT) * qty;
-			} else if (compoListUnit.equals(CompoListUnit.L) || compoListUnit.equals(CompoListUnit.mL) || compoListUnit.equals(CompoListUnit.cL)) {
+			Double unitFactor = compoListUnit.getUnitFactor();
 
-				if (compoListUnit.equals(CompoListUnit.mL)) {
-					qty = qty / 1000;
+			if (compoListUnit.isKg()) {
+				return qty / unitFactor;
+			} else if (compoListUnit.isP()) {
+
+				Double productQty = 1d;
+
+				if (compoListUnit.equals(ProductUnit.m) || (compoListUnit.equals(ProductUnit.m2) && (componentProductData.getQty() != null))) {
+					productQty = componentProductData.getQty();
 				}
-				
-				if (compoListUnit.equals(CompoListUnit.cL)) {
-					qty = qty / 100;
-				}
+
+				return (FormulationHelper.getNetWeight(componentProductData, FormulationHelper.DEFAULT_NET_WEIGHT) * qty) / productQty;
+
+			} else if (compoListUnit.isLiter()) {
+
+				qty = qty / unitFactor;
 
 				Double overrun = compoListDataItem.getOverrunPerc();
 				if (compoListDataItem.getOverrunPerc() == null) {
 					overrun = FormulationHelper.DEFAULT_OVERRUN;
 				}
 
-				Double density = FormulationHelper.getDensity(compoListDataItem.getProduct(), nodeService);
+				Double density = componentProductData.getDensity();
 				if ((density == null) || density.equals(0d)) {
 					if (logger.isDebugEnabled()) {
 						logger.debug("Cannot calculate qty since density is null or equals to 0");
@@ -179,13 +175,6 @@ public class CompositionQtyCalculatingFormulationHandler extends FormulationBase
 
 				}
 
-			} else if (compoListUnit.equals(CompoListUnit.m) || compoListUnit.equals(CompoListUnit.m2)) {
-				Double productQty = FormulationHelper.getProductQty(compoListDataItem.getProduct(), nodeService);
-				if (productQty == null) {
-					productQty = 1d;
-				}
-				return (FormulationHelper.getNetWeight(compoListDataItem.getProduct(), nodeService, FormulationHelper.DEFAULT_NET_WEIGHT) * qty)
-						/ productQty;
 			}
 			return qty;
 		}

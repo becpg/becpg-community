@@ -27,7 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.constraints.CompoListUnit;
+import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.lexer.CompositionLexer;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
@@ -60,19 +60,19 @@ public class CompositionLexerTest extends AbstractFinishedProductTest {
 		for (CompoListDataItem item : ret) {
 
 			if (item.getProduct().equals(rawMaterial1NodeRef) && item.getQtySubFormula().equals(5d)
-					&& item.getCompoListUnit().equals(CompoListUnit.P)) {
+					&& item.getCompoListUnit().equals(ProductUnit.P)) {
 				check++;
 			}
 			if (item.getProduct().equals(rawMaterial2NodeRef) && item.getQtySubFormula().equals(12.9d)
-					&& item.getCompoListUnit().equals(CompoListUnit.g)) {
+					&& item.getCompoListUnit().equals(ProductUnit.g)) {
 				check++;
 			}
 			if (item.getProduct().equals(rawMaterial3NodeRef) && item.getQtySubFormula().equals(25.5005d)
-					&& item.getCompoListUnit().equals(CompoListUnit.g)) {
+					&& item.getCompoListUnit().equals(ProductUnit.g)) {
 				check++;
 			}
 			if (item.getProduct().equals(rawMaterial5NodeRef) && item.getQtySubFormula().equals(50d)
-					&& item.getCompoListUnit().equals(CompoListUnit.P)) {
+					&& item.getCompoListUnit().equals(ProductUnit.P)) {
 				check++;
 			}
 		}
