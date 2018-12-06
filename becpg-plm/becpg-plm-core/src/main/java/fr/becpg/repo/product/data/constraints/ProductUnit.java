@@ -3,6 +3,7 @@
  */
 package fr.becpg.repo.product.data.constraints;
 
+
 /**
  * The Enum ProductUnit.
  *
@@ -10,9 +11,100 @@ package fr.becpg.repo.product.data.constraints;
  */
 public enum ProductUnit {
 
-	kg,L,P,m,m2,m3,h,g,cL,mL;
+	kg, g, mg, lb, oz , L, cL, mL, m, m2, m3, h, P, PP, Box, Perc;
+
 
 	public static ProductUnit getUnit(String productUnit) {
 		return ((productUnit != null) && !productUnit.isEmpty()) ? ProductUnit.valueOf(productUnit) : ProductUnit.kg;
 	}
+	
+	public  boolean isLiter() {
+		return L.equals(this) || mL.equals(this) || cL.equals(this);
+	}
+
+	public  boolean isKg() {
+		return kg.equals(this) || g.equals(this) || mg.equals(this) || isLb();
+	}
+
+	public  boolean isP() {
+		return P.equals(this) || m2.equals(this)|| m.equals(this);
+	}
+
+
+	public boolean isLb() {
+		return lb.equals(this) || oz.equals(this);
+	}
+	
+   /**
+    * Convert factor to Kg or L
+    * @return
+    */
+	public  Double getUnitFactor() {
+		if (this.equals(ProductUnit.mL) || this.equals(ProductUnit.g)) {
+			return  1000d;
+		} else if (this.equals(ProductUnit.cL)) {
+			return 100d;
+		} else if (this.equals(ProductUnit.mg)) {
+			return 1000000d;
+		} else if (this.equals(ProductUnit.lb)) {
+			return 1/0.4536d;
+		} else if (this.equals(ProductUnit.oz)) {
+			return 1/0.02835d;
+		}
+		return 1d;
+	}
+	
+
+	public static Double kgToLbs(Double kgValue) {
+		if(kgValue !=null) {
+			return kgValue * (1/ProductUnit.lb.getUnitFactor());
+		}
+		return null;
+	}
+	
+	
+	public ProductUnit getMainUnit() {
+		if (this.equals(ProductUnit.lb) || this.equals(ProductUnit.oz)) {
+			return ProductUnit.lb;
+		} else if (this.equals(ProductUnit.kg) || this.equals(ProductUnit.g) || this.equals(ProductUnit.mg)) {
+			return ProductUnit.kg;
+		} else if (this.equals(ProductUnit.L) || this.equals(ProductUnit.cL) || this.equals(ProductUnit.mL)) {
+			return ProductUnit.L;
+		}
+		return this;
+	}
+	
+
+	public static ProductUnit extractUnit(String unit) {
+
+			switch (unit.trim()) {
+			case "kg":
+				return kg;
+			case "g":
+			case "gr":
+				return g;
+			case "l":
+				return L;
+			case "ml":
+				return mL;
+			case "cl":
+				return mL;	
+			case "p":
+				return P;
+			case "m":
+				return m;
+			case "m2":
+				return m2;
+			case "perc":
+			case "%":
+				return Perc;
+			default:
+				return P;
+			}
+	}
+
+
+	
+
+	
 }

@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
-import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
@@ -51,8 +50,6 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.constraints.LabelingRuleType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
-import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.constraints.TareUnit;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
@@ -61,7 +58,6 @@ import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.test.PLMBaseTestCase;
 
 public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
@@ -1121,46 +1117,5 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 
 	}
 
-	private void checkError(final NodeRef productNodeRef, final List<LabelingRuleListDataItem> labelingRuleList, final String errorMessage) {
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-
-			ProductData formulatedProduct = alfrescoRepository.findOne(productNodeRef);
-
-			formulatedProduct.getLabelingListView().setLabelingRuleList(labelingRuleList);
-
-			productService.formulate(formulatedProduct);
-
-			assertFalse(formulatedProduct.getReqCtrlList().isEmpty());
-
-			for (ReqCtrlListDataItem reqCtrlListDataItem : formulatedProduct.getReqCtrlList()) {
-				if (RequirementType.Forbidden.equals(reqCtrlListDataItem.getReqType())) {
-
-					String error = reqCtrlListDataItem.getReqMessage();
-					if (RequirementDataType.Validation.equals(reqCtrlListDataItem.getReqDataType())) {
-						Assert.assertEquals("Composant non validé", error);
-					} else if (RequirementDataType.Completion.equals(reqCtrlListDataItem.getReqDataType())) {
-
-						boolean ret = Pattern.matches("Champ obligatoire '(.*)' manquant \\(catalogue 'EU 1169/2011 \\(INCO\\)'\\)", error);
-
-						if (!ret) {
-							logger.error("Incorrect requirement:" + error);
-						}
-
-						Assert.assertTrue(ret);
-					} else {
-						Assert.assertEquals("Incorrect label :" + error + "\n   - compare to " + errorMessage, error, errorMessage);
-					}
-				} else if (RequirementType.Info.equals(reqCtrlListDataItem.getReqType())) {
-					logger.info("Info rclDataItem, message: " + reqCtrlListDataItem.getReqMessage());
-					Assert.assertEquals("Etat de l'allégation {0} indéfini", reqCtrlListDataItem.getReqMessage());
-				}
-			}
-
-			return null;
-
-		}, false, true);
-
-	}
-
-
+	
 }

@@ -41,7 +41,6 @@ import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.PackagingKitData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ResourceProductData;
-import fr.becpg.repo.product.data.constraints.PackagingListUnit;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
@@ -268,8 +267,8 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 			
 			ProductUnit productUnit = subComponent.getUnit();
 			if (c != null) {
-				boolean shouldUseLiter = FormulationHelper.isProductUnitLiter(productUnit);
-				boolean useLiter = FormulationHelper.isCompoUnitLiter(c.getCompoListUnit());
+				boolean shouldUseLiter = productUnit!=null && productUnit.isLiter();
+				boolean useLiter = c.getCompoListUnit()!=null && c.getCompoListUnit().isLiter();
 				Double density = subComponent.getDensity();
 
 				if ((density == null) && ((shouldUseLiter && !useLiter) || (!shouldUseLiter && useLiter))) {
@@ -277,7 +276,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 					addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_MISSING_DENSITY, RequirementDataType.Composition);
 				}
 				Double overrunPerc = c.getOverrunPerc();
-				if (FormulationHelper.isProductUnitLiter(productUnit) || (overrunPerc != null)) {
+				if ((productUnit!=null && productUnit.isLiter()) || (overrunPerc != null)) {
 					if ((density == null) || density.equals(0d)) {
 						addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_MISSING_DENSITY, RequirementDataType.Composition);
 					}
@@ -294,20 +293,28 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		if (productUnit == null) {
 			addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_MISSING_UNIT, RequirementDataType.Packaging);
 		} else {
-			if ((p.getPackagingListUnit().equals(PackagingListUnit.kg) || p.getPackagingListUnit().equals(PackagingListUnit.g))
-					&& !FormulationHelper.isProductUnitKg(productUnit)) {
-				addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_WRONG_UNIT, RequirementDataType.Packaging);
+			boolean wrongUnit = false;
+			if(productUnit.isKg()) {
+				if(!(p.getPackagingListUnit()!=null && p.getPackagingListUnit().isKg())) {
+					wrongUnit = true;
+				}
+			} else if(productUnit.isLiter()) {
+				if(!(p.getPackagingListUnit()!=null && p.getPackagingListUnit().isKg())) {
+					wrongUnit = true;
+				}
+			} else {
+				if( ProductUnit.PP.equals(p.getPackagingListUnit())) {
+					if(!ProductUnit.P.equals(productUnit)) {
+						wrongUnit = true;
+					}
+				} else if(!productUnit.equals(p.getPackagingListUnit())){
+					wrongUnit = true;
+				}
 			}
-
-			if ((p.getPackagingListUnit().equals(PackagingListUnit.P) || p.getPackagingListUnit().equals(PackagingListUnit.PP))
-					&& !productUnit.equals(ProductUnit.P)) {
+			
+			if(wrongUnit) {
 				addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_WRONG_UNIT, RequirementDataType.Packaging);
-			}
-
-			if ((p.getPackagingListUnit().equals(PackagingListUnit.m) && !productUnit.equals(ProductUnit.m))
-					|| (p.getPackagingListUnit().equals(PackagingListUnit.m2) && !productUnit.equals(ProductUnit.m2))) {
-				addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_WRONG_UNIT, RequirementDataType.Packaging);
-			}
+			}	
 		}
 
 		if (!nodeService.hasAspect(p.getProduct(), PackModel.ASPECT_PALLET)) {

@@ -53,10 +53,9 @@ import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.PackagingMaterialData;
 import fr.becpg.repo.product.data.RawMaterialData;
-import fr.becpg.repo.product.data.constraints.CompoListUnit;
+import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
-import fr.becpg.repo.product.data.constraints.PackagingListUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.report.entity.EntityReportService;
@@ -459,9 +458,9 @@ public class ProductServiceTest extends PLMBaseTestCase {
 			FinishedProductData finishedProduct = new FinishedProductData();
 			finishedProduct.setName("Finished Product");
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, 1d, 1d, CompoListUnit.P, 0d, DeclarationType.Declare, lSF1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), 1d, 4d, CompoListUnit.P, 0d, DeclarationType.Declare, lSF2NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(1), 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterialNodeRef));
+			compoList.add(new CompoListDataItem(null, null, 1d, 1d, ProductUnit.P, 0d, DeclarationType.Declare, lSF1NodeRef));
+			compoList.add(new CompoListDataItem(null, compoList.get(0), 1d, 4d, ProductUnit.P, 0d, DeclarationType.Declare, lSF2NodeRef));
+			compoList.add(new CompoListDataItem(null, compoList.get(1), 3d, 0d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterialNodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
@@ -486,7 +485,7 @@ public class ProductServiceTest extends PLMBaseTestCase {
 			assertEquals("check PF level", new Integer(1), wUsed0.getDepthLevel());
 			assertEquals("check PF qty", 3d, wUsed0.getQty());
 			assertEquals("check PF qty sub formula", 0d, wUsed0.getQtySubFormula());
-			assertEquals("check PF unit", CompoListUnit.kg, wUsed0.getCompoListUnit());
+			assertEquals("check PF unit", ProductUnit.kg, wUsed0.getCompoListUnit());
 			assertEquals("check PF declaration", DeclarationType.Omit, wUsed0.getDeclType());
 			logger.debug("end");
 
@@ -506,7 +505,7 @@ public class ProductServiceTest extends PLMBaseTestCase {
 
 			Map<QName, Serializable> properties = nodeService.getProperties(kv.getKey());
 
-			CompoListUnit compoListUnit = CompoListUnit.valueOf((String) properties.get(PLMModel.PROP_COMPOLIST_UNIT));
+			ProductUnit compoListUnit = ProductUnit.valueOf((String) properties.get(PLMModel.PROP_COMPOLIST_UNIT));
 			DeclarationType declType = DeclarationType.valueOf((String) properties.get(PLMModel.PROP_COMPOLIST_DECL_TYPE));
 
 			CompoListDataItem compoListDataItem = new CompoListDataItem(kv.getKey(), null, (Double) properties.get(PLMModel.PROP_COMPOLIST_QTY),
@@ -543,14 +542,14 @@ public class ProductServiceTest extends PLMBaseTestCase {
 			FinishedProductData finishedProduct1 = new FinishedProductData();
 			finishedProduct1.setName("Finished Product 1");
 			List<PackagingListDataItem> packagingList1 = new ArrayList<>();
-			packagingList1.add(new PackagingListDataItem(null, 1d, PackagingListUnit.P, PackagingLevel.Primary, true, packagingMaterialNodeRef));
+			packagingList1.add(new PackagingListDataItem(null, 1d, ProductUnit.P, PackagingLevel.Primary, true, packagingMaterialNodeRef));
 			finishedProduct1.getPackagingListView().setPackagingList(packagingList1);
 			NodeRef finishedProductNodeRef1 = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
 
 			FinishedProductData finishedProduct2 = new FinishedProductData();
 			finishedProduct2.setName("Finished Product");
 			List<PackagingListDataItem> packagingList2 = new ArrayList<>();
-			packagingList2.add(new PackagingListDataItem(null, 8d, PackagingListUnit.PP, PackagingLevel.Secondary, true, packagingMaterialNodeRef));
+			packagingList2.add(new PackagingListDataItem(null, 8d, ProductUnit.PP, PackagingLevel.Secondary, true, packagingMaterialNodeRef));
 			finishedProduct2.getPackagingListView().setPackagingList(packagingList2);
 			NodeRef finishedProductNodeRef2 = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct2).getNodeRef();
 
@@ -562,11 +561,11 @@ public class ProductServiceTest extends PLMBaseTestCase {
 
 				if (packagingListDataItem.getProduct().equals(finishedProductNodeRef1)) {
 					assertEquals(1d, packagingListDataItem.getQty());
-					assertEquals(PackagingListUnit.P, packagingListDataItem.getPackagingListUnit());
+					assertEquals(ProductUnit.P, packagingListDataItem.getPackagingListUnit());
 					assertEquals(PackagingLevel.Primary, packagingListDataItem.getPkgLevel());
 				} else if (packagingListDataItem.getProduct().equals(finishedProductNodeRef2)) {
 					assertEquals(8d, packagingListDataItem.getQty());
-					assertEquals(PackagingListUnit.PP, packagingListDataItem.getPackagingListUnit());
+					assertEquals(ProductUnit.PP, packagingListDataItem.getPackagingListUnit());
 					assertEquals(PackagingLevel.Secondary, packagingListDataItem.getPkgLevel());
 				}
 			}
@@ -586,7 +585,7 @@ public class ProductServiceTest extends PLMBaseTestCase {
 		for (Map.Entry<NodeRef, MultiLevelListData> kv : wUsedData.getTree().entrySet()) {
 
 			Map<QName, Serializable> properties = nodeService.getProperties(kv.getKey());
-			PackagingListUnit packagingListUnit = PackagingListUnit.valueOf((String) properties.get(PLMModel.PROP_PACKAGINGLIST_UNIT));
+			ProductUnit packagingListUnit = ProductUnit.valueOf((String) properties.get(PLMModel.PROP_PACKAGINGLIST_UNIT));
 			PackagingLevel packagingLevel = PackagingLevel.valueOf((String) properties.get(PLMModel.PROP_PACKAGINGLIST_PKG_LEVEL));
 
 			PackagingListDataItem packagingListDataItem = new PackagingListDataItem(kv.getKey(),

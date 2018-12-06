@@ -30,11 +30,8 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.ResourceProductData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
-import fr.becpg.repo.product.data.constraints.CompoListUnit;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
-import fr.becpg.repo.product.data.constraints.PackagingListUnit;
-import fr.becpg.repo.product.data.constraints.ProcessListUnit;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -97,12 +94,12 @@ public class FormulationTest extends AbstractFinishedProductTest {
 			finishedProduct1.setUnit(ProductUnit.kg);
 			finishedProduct1.setDensity(1d);
 			List<CompoListDataItem> compoList1 = new ArrayList<>();
-			compoList1.add(new CompoListDataItem(null, null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF11NodeRef));
-			compoList1.add(new CompoListDataItem(null, compoList1.get(0), 1d, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial11NodeRef));
-			compoList1.add(new CompoListDataItem(null, compoList1.get(0), 2d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial12NodeRef));
-			compoList1.add(new CompoListDataItem(null, null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF12NodeRef));
-			compoList1.add(new CompoListDataItem(null, compoList1.get(3), 3d, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial13NodeRef));
-			compoList1.add(new CompoListDataItem(null, compoList1.get(3), 3d, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial14NodeRef));
+			compoList1.add(new CompoListDataItem(null, null, 1d, null, ProductUnit.kg, 0d, DeclarationType.Detail, localSF11NodeRef));
+			compoList1.add(new CompoListDataItem(null, compoList1.get(0), 1d, null, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial11NodeRef));
+			compoList1.add(new CompoListDataItem(null, compoList1.get(0), 2d, null, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial12NodeRef));
+			compoList1.add(new CompoListDataItem(null, null, 1d, null, ProductUnit.kg, 0d, DeclarationType.Detail, localSF12NodeRef));
+			compoList1.add(new CompoListDataItem(null, compoList1.get(3), 3d, null, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial13NodeRef));
+			compoList1.add(new CompoListDataItem(null, compoList1.get(3), 3d, null, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial14NodeRef));
 			finishedProduct1.getCompoListView().setCompoList(compoList1);
 			NodeRef finishedProductNodeRef1 = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
 			
@@ -194,12 +191,12 @@ public class FormulationTest extends AbstractFinishedProductTest {
 			finishedProduct2.setUnit(ProductUnit.kg);
 			finishedProduct2.setDensity(1d);
 			List<CompoListDataItem> compoList2 = new ArrayList<>();
-			compoList2.add(new CompoListDataItem(null, null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF11NodeRef));
-			compoList2.add(new CompoListDataItem(null, compoList2.get(0), 1d, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial11NodeRef));
-			compoList2.add(new CompoListDataItem(null, compoList2.get(0), 2d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial12NodeRef));
-			compoList2.add(new CompoListDataItem(null, null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF12NodeRef));
-			compoList2.add(new CompoListDataItem(null, compoList2.get(3), 3d, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial13NodeRef));
-			compoList2.add(new CompoListDataItem(null, compoList2.get(3), 3d, null, CompoListUnit.kg, 0d, DeclarationType.DoNotDeclare, rawMaterial14NodeRef));
+			compoList2.add(new CompoListDataItem(null, null, 1d, null, ProductUnit.kg, 0d, DeclarationType.Detail, localSF11NodeRef));
+			compoList2.add(new CompoListDataItem(null, compoList2.get(0), 1d, null, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial11NodeRef));
+			compoList2.add(new CompoListDataItem(null, compoList2.get(0), 2d, null, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial12NodeRef));
+			compoList2.add(new CompoListDataItem(null, null, 1d, null, ProductUnit.kg, 0d, DeclarationType.Detail, localSF12NodeRef));
+			compoList2.add(new CompoListDataItem(null, compoList2.get(3), 3d, null, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial13NodeRef));
+			compoList2.add(new CompoListDataItem(null, compoList2.get(3), 3d, null, ProductUnit.kg, 0d, DeclarationType.DoNotDeclare, rawMaterial14NodeRef));
 			finishedProduct2.getCompoListView().setCompoList(compoList2);
 			NodeRef finishedProductNodeRef2 = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct2).getNodeRef();			
 			
@@ -307,12 +304,12 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setQty(2d);
 				finishedProduct.setDensity(1d);
 				List<CompoListDataItem> compoList = new ArrayList<>();
-				compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, CompoListUnit.g, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, ProductUnit.g, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);				
 
 				List<CostListDataItem> costList = new ArrayList<>();
@@ -407,12 +404,12 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setUnit(ProductUnit.P);
 				finishedProduct.setDensity(0.1d);
 				List<CompoListDataItem> compoList = new ArrayList<>();
-				compoList.add(new CompoListDataItem(null, null, null, 42d, CompoListUnit.g, 0d, DeclarationType.Detail, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 40d, CompoListUnit.g, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, CompoListUnit.mL, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, null, null, 30d, CompoListUnit.g, 0d, DeclarationType.Detail, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 30d, CompoListUnit.g, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 0.05d, CompoListUnit.P, 0d, DeclarationType.Omit, rawMaterial5NodeRef));
+				compoList.add(new CompoListDataItem(null, null, null, 42d, ProductUnit.g, 0d, DeclarationType.Detail, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 40d, ProductUnit.g, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, ProductUnit.mL, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, null, null, 30d, ProductUnit.g, 0d, DeclarationType.Detail, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 30d, ProductUnit.g, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 0.05d, ProductUnit.P, 0d, DeclarationType.Omit, rawMaterial5NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);				
 
 				List<CostListDataItem> costList = new ArrayList<>();
@@ -508,8 +505,8 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setDensity(1d);
 				List<CompoListDataItem> compoList = new ArrayList<>();
-				compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, null, null, 2d, CompoListUnit.L, 0d, DeclarationType.Declare, rawMaterial6NodeRef));
+				compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, null, null, 2d, ProductUnit.L, 0d, DeclarationType.Declare, rawMaterial6NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
 				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
@@ -643,7 +640,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 //					SFProduct2.setUnit(ProductUnit.kg);
 //					SFProduct2.setQty(1d);
 //					List<CompoListDataItem> compoList2 = new ArrayList<CompoListDataItem>();
-//					compoList2.add(new CompoListDataItem(null, (CompoListDataItem)null, 3d, null, CompoListUnit.kg, 0d, DeclarationType.Declare, SFProduct1NodeRef));			
+//					compoList2.add(new CompoListDataItem(null, (CompoListDataItem)null, 3d, null, ProductUnit.kg, 0d, DeclarationType.Declare, SFProduct1NodeRef));			
 //					SFProduct2.getCompoListView().setCompoList(compoList2);
 //					
 //					nutList = new ArrayList<NutListDataItem>();
@@ -706,8 +703,8 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				SFProduct1.setUnit(ProductUnit.kg);
 				SFProduct1.setQty(1d);
 				List<CompoListDataItem> compoList1 = new ArrayList<>();
-				compoList1.add(new CompoListDataItem(null, null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-				compoList1.add(new CompoListDataItem(null, null, 2d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
+				compoList1.add(new CompoListDataItem(null, null, 1d, null, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList1.add(new CompoListDataItem(null, null, 2d, null, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
 				SFProduct1.getCompoListView().setCompoList(compoList1);
 				return alfrescoRepository.create(getTestFolderNodeRef(), SFProduct1).getNodeRef();
 				
@@ -723,8 +720,8 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				SFProduct2.setUnit(ProductUnit.kg);
 				SFProduct2.setQty(1d);
 				List<CompoListDataItem> compoList2 = new ArrayList<>();
-				compoList2.add(new CompoListDataItem(null, null, 3d, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-				compoList2.add(new CompoListDataItem(null, null, 3d, null, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+				compoList2.add(new CompoListDataItem(null, null, 3d, null, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+				compoList2.add(new CompoListDataItem(null, null, 3d, null, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 				SFProduct2.getCompoListView().setCompoList(compoList2);
 				return alfrescoRepository.create(getTestFolderNodeRef(), SFProduct2).getNodeRef();
 				
@@ -741,8 +738,8 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setQty(2d);
 				finishedProduct.setDensity(1d);
 				List<CompoListDataItem> compoList = new ArrayList<>();
-				compoList.add(new CompoListDataItem(null, null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, SFProduct1NodeRef));
-				compoList.add(new CompoListDataItem(null, null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, SFProduct2NodeRef));
+				compoList.add(new CompoListDataItem(null, null, 1d, null, ProductUnit.kg, 0d, DeclarationType.Detail, SFProduct1NodeRef));
+				compoList.add(new CompoListDataItem(null, null, 1d, null, ProductUnit.kg, 0d, DeclarationType.Detail, SFProduct2NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
 				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();	
 				
@@ -1009,12 +1006,12 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setQty(2d);
 				finishedProduct.setDensity(1d);
 				List<CompoListDataItem> compoList = new ArrayList<>();
-				compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 10d, DeclarationType.Detail, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, CompoListUnit.kg, 5d, DeclarationType.Declare, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, CompoListUnit.kg, 10d, DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 20d, DeclarationType.Detail, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 10d, DeclarationType.Detail, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, ProductUnit.kg, 5d, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, ProductUnit.kg, 10d, DeclarationType.Detail, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 20d, DeclarationType.Detail, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
 				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 				
@@ -1201,14 +1198,14 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setQty(2d);
 				finishedProduct.setDensity(1d);
 				List<CompoListDataItem> compoList = new ArrayList<>();
-				compoList.add(new CompoListDataItem(null, null, null, 2d,CompoListUnit.kg, 10d, DeclarationType.Detail, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, CompoListUnit.kg, 10d, DeclarationType.Detail, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(1), null, 0.80d, CompoListUnit.kg, 5d, DeclarationType.Declare, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(1), null, 0.30d, CompoListUnit.kg, 10d, DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(0), 1d, 1d, CompoListUnit.kg, 20d, DeclarationType.Detail, localSF3NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(4), null, 0.170d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(4), null, 0.40d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(4), null, 1d, CompoListUnit.P, 0d, DeclarationType.Declare, rawMaterial5NodeRef));
+				compoList.add(new CompoListDataItem(null, null, null, 2d,ProductUnit.kg, 10d, DeclarationType.Detail, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, ProductUnit.kg, 10d, DeclarationType.Detail, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(1), null, 0.80d, ProductUnit.kg, 5d, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(1), null, 0.30d, ProductUnit.kg, 10d, DeclarationType.Detail, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(0), 1d, 1d, ProductUnit.kg, 20d, DeclarationType.Detail, localSF3NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(4), null, 0.170d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(4), null, 0.40d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(4), null, 1d, ProductUnit.P, 0d, DeclarationType.Declare, rawMaterial5NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
 				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();				
 				
@@ -1295,9 +1292,9 @@ public class FormulationTest extends AbstractFinishedProductTest {
 					finishedProduct.setQty(2d);
 					finishedProduct.setDensity(1d);
 					List<PackagingListDataItem> packagingList = new ArrayList<>();
-					packagingList.add(new PackagingListDataItem(null, 1d, PackagingListUnit.P, PackagingLevel.Primary, true, packagingMaterial1NodeRef));
-					packagingList.add(new PackagingListDataItem(null, 3d, PackagingListUnit.m, PackagingLevel.Primary, true, packagingMaterial2NodeRef));
-					packagingList.add(new PackagingListDataItem(null, 8d, PackagingListUnit.PP, PackagingLevel.Tertiary, true, packagingMaterial3NodeRef));
+					packagingList.add(new PackagingListDataItem(null, 1d, ProductUnit.P, PackagingLevel.Primary, true, packagingMaterial1NodeRef));
+					packagingList.add(new PackagingListDataItem(null, 3d, ProductUnit.m, PackagingLevel.Primary, true, packagingMaterial2NodeRef));
+					packagingList.add(new PackagingListDataItem(null, 8d, ProductUnit.PP, PackagingLevel.Tertiary, true, packagingMaterial3NodeRef));
 					finishedProduct.getPackagingListView().setPackagingList(packagingList);
 					List<CostListDataItem> costList = new ArrayList<>();
 					costList.add(new CostListDataItem(null, null, null, null, pkgCost1, false));
@@ -1335,7 +1332,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 					assertEquals(2, checks);
 					
 					// add packaging kit
-					formulatedProduct.getPackagingList().add(new PackagingListDataItem(null, 25d, PackagingListUnit.PP, PackagingLevel.Secondary, true, packagingKit1NodeRef));
+					formulatedProduct.getPackagingList().add(new PackagingListDataItem(null, 25d, ProductUnit.PP, PackagingLevel.Secondary, true, packagingKit1NodeRef));
 					alfrescoRepository.save(formulatedProduct);					
 					productService.formulate(finishedProductNodeRef);
 					formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
@@ -1390,12 +1387,12 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setQty(2d);
 				finishedProduct.setDensity(1d);
 				List<CompoListDataItem> compoList = new ArrayList<>();
-				compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
 				
 				List<CostListDataItem> costList = new ArrayList<>();
@@ -1474,7 +1471,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				 * Check mini and maxi are null if no rawMaterial has any mini or maxi
 				 */
 				formulatedProduct.getCompoListView().getCompoList().clear();
-				formulatedProduct.getCompoListView().getCompoList().add(new CompoListDataItem(null, null, null, 3d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+				formulatedProduct.getCompoListView().getCompoList().add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 				alfrescoRepository.save(formulatedProduct);
 				productService.formulate(finishedProductNodeRef);								
 				formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
@@ -1525,12 +1522,12 @@ public class FormulationTest extends AbstractFinishedProductTest {
 //				finishedProduct.setUnit(ProductUnit.kg);
 //				finishedProduct.setQty(2d);
 //				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-//				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, null, CompoListUnit.kg, 0d, grpPate, DeclarationType.Detail, localSF1NodeRef));
-//				compoList.add(new CompoListDataItem(null, compoList.get(0), 1d, null, CompoListUnit.kg, 0d, null, DeclarationType.Declare, rawMaterial1NodeRef));
-//				compoList.add(new CompoListDataItem(null, compoList.get(0), 2d, null, CompoListUnit.kg, 0d, null, DeclarationType.Detail, rawMaterial2NodeRef));
-//				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, null, CompoListUnit.kg, 0d, grpGarniture, DeclarationType.Detail, localSF2NodeRef));
-//				compoList.add(new CompoListDataItem(null, compoList.get(3), 3d, null, CompoListUnit.kg, 0d, null, DeclarationType.Declare, rawMaterial3NodeRef));
-//				compoList.add(new CompoListDataItem(null, compoList.get(3), 3d, null, CompoListUnit.kg, 0d, null, DeclarationType.Omit, rawMaterial4NodeRef));
+//				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, null, ProductUnit.kg, 0d, grpPate, DeclarationType.Detail, localSF1NodeRef));
+//				compoList.add(new CompoListDataItem(null, compoList.get(0), 1d, null, ProductUnit.kg, 0d, null, DeclarationType.Declare, rawMaterial1NodeRef));
+//				compoList.add(new CompoListDataItem(null, compoList.get(0), 2d, null, ProductUnit.kg, 0d, null, DeclarationType.Detail, rawMaterial2NodeRef));
+//				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, null, ProductUnit.kg, 0d, grpGarniture, DeclarationType.Detail, localSF2NodeRef));
+//				compoList.add(new CompoListDataItem(null, compoList.get(3), 3d, null, ProductUnit.kg, 0d, null, DeclarationType.Declare, rawMaterial3NodeRef));
+//				compoList.add(new CompoListDataItem(null, compoList.get(3), 3d, null, ProductUnit.kg, 0d, null, DeclarationType.Omit, rawMaterial4NodeRef));
 //				finishedProduct.setCompoList(compoList);
 //				NodeRef finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();				
 //				
@@ -1658,16 +1655,16 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setQty(2d);
 				finishedProduct.setDensity(1d);
 				List<CompoListDataItem> compoList = new ArrayList<>();
-				compoList.add(new CompoListDataItem(null, null, null, 2d, CompoListUnit.kg, 10d, DeclarationType.Detail, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, CompoListUnit.kg, 10d, DeclarationType.Detail, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(1), null, 0.8d, CompoListUnit.kg, 5d, DeclarationType.Declare, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(1), null, 0.3d, CompoListUnit.kg, 10d, DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, CompoListUnit.kg, 20d, DeclarationType.Detail, localSF3NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(4), null, 0.17d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));				
-				CompoListDataItem temp = new CompoListDataItem(null, compoList.get(4), null, 0.40d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef);
+				compoList.add(new CompoListDataItem(null, null, null, 2d, ProductUnit.kg, 10d, DeclarationType.Detail, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, ProductUnit.kg, 10d, DeclarationType.Detail, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(1), null, 0.8d, ProductUnit.kg, 5d, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(1), null, 0.3d, ProductUnit.kg, 10d, DeclarationType.Detail, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, ProductUnit.kg, 20d, DeclarationType.Detail, localSF3NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(4), null, 0.17d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));				
+				CompoListDataItem temp = new CompoListDataItem(null, compoList.get(4), null, 0.40d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef);
 				temp.setYieldPerc(200d);
 				compoList.add(temp); 
-				compoList.add(new CompoListDataItem(null, compoList.get(4), null, 1d, CompoListUnit.P, 0d, DeclarationType.Declare, rawMaterial5NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(4), null, 1d, ProductUnit.P, 0d, DeclarationType.Declare, rawMaterial5NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
 				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();				
 				
@@ -1742,14 +1739,14 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setQty(2d);
 				finishedProduct.setDensity(1d);
 				List<CompoListDataItem> compoList = new ArrayList<>();
-				CompoListDataItem parent = new CompoListDataItem(null, null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef);
+				CompoListDataItem parent = new CompoListDataItem(null, null, 1d, null, ProductUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef);
 				compoList.add(parent);
-				compoList.add(new CompoListDataItem(null, parent, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, parent, null, 2d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-				parent = new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef);
+				compoList.add(new CompoListDataItem(null, parent, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, parent, null, 2d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
+				parent = new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef);
 				compoList.add(parent);
-				compoList.add(new CompoListDataItem(null, parent, null, 3d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, parent, null, 3d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, parent, null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, parent, null, 3d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
 				
 
@@ -1955,17 +1952,17 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setDensity(1d);
 				List<ProcessListDataItem> processList = new ArrayList<>();
 				//decoupe
-				processList.add(new ProcessListDataItem(null, 0.4d, 50d, 200d, ProcessListUnit.kg, null, null, decoupeNodeRef, null, boucherResourceNodeRef));
+				processList.add(new ProcessListDataItem(null, 0.4d, 50d, 200d, ProductUnit.kg, null, null, decoupeNodeRef, null, boucherResourceNodeRef));
 				//hachage
-				processList.add(new ProcessListDataItem(null, 0.4d, 1d, 200d, ProcessListUnit.kg, null, null, hachageNodeRef, null, hachoirResourceNodeRef));
+				processList.add(new ProcessListDataItem(null, 0.4d, 1d, 200d, ProductUnit.kg, null, null, hachageNodeRef, null, hachoirResourceNodeRef));
 				//cuisson
-				processList.add(new ProcessListDataItem(null, 0.4d, 1d, 200d, ProcessListUnit.kg, null, null, cuissonNodeRef, null, cuiseurResourceNodeRef));
+				processList.add(new ProcessListDataItem(null, 0.4d, 1d, 200d, ProductUnit.kg, null, null, cuissonNodeRef, null, cuiseurResourceNodeRef));
 				//mélange
-				processList.add(new ProcessListDataItem(null, 0.24d, 1d, 600d, ProcessListUnit.kg, null, null, melangeNodeRef, null, malaxeurResourceNodeRef));
+				processList.add(new ProcessListDataItem(null, 0.24d, 1d, 600d, ProductUnit.kg, null, null, melangeNodeRef, null, malaxeurResourceNodeRef));
 				//ligne
-				processList.add(new ProcessListDataItem(null, 1d, 1d, 500d, ProcessListUnit.kg, null, null, ligneStepNodeRef, null, ligneResourceNodeRef));				
+				processList.add(new ProcessListDataItem(null, 1d, 1d, 500d, ProductUnit.kg, null, null, ligneStepNodeRef, null, ligneResourceNodeRef));				
 				//emballage
-				processList.add(new ProcessListDataItem(null, 1d, 1d, 100d, ProcessListUnit.Box, null, null, embStepNodeRef, null, emballageResourceNodeRef));
+				processList.add(new ProcessListDataItem(null, 1d, 1d, 100d, ProductUnit.Box, null, null, embStepNodeRef, null, emballageResourceNodeRef));
 				finishedProduct.getProcessListView().setProcessList(processList);
 				
 				costList = new ArrayList<>();
@@ -1976,7 +1973,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setCostList(costList);
 				
 				List<PackagingListDataItem> packList = new ArrayList<>();
-				packList.add(new PackagingListDataItem(null, 25d, PackagingListUnit.PP, PackagingLevel.Secondary, true, packagingKit1NodeRef));			
+				packList.add(new PackagingListDataItem(null, 25d, ProductUnit.PP, PackagingLevel.Secondary, true, packagingKit1NodeRef));			
 				finishedProduct.getPackagingListView().setPackagingList(packList);
 				
 				NodeRef finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
@@ -2118,14 +2115,14 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setQty(2d);
 				finishedProduct.setDensity(1d);				
 				List<CompoListDataItem> compoList = new ArrayList<>();
-				compoList.add(new CompoListDataItem(null, null, null, 100d, CompoListUnit.Perc, 10d, DeclarationType.Detail, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 45d, CompoListUnit.Perc, 10d, DeclarationType.Detail, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(1), null, 20d, CompoListUnit.Perc, 5d, DeclarationType.Declare, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(1), null, 25d, CompoListUnit.Perc, 10d, DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(0), 1d, 55d, CompoListUnit.Perc, 20d, DeclarationType.Detail, localSF3NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(4), null, 10d, CompoListUnit.Perc, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(4), null, 25d, CompoListUnit.Perc, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(4), null, 20d, CompoListUnit.Perc, 0d, DeclarationType.Declare, rawMaterial5NodeRef));
+				compoList.add(new CompoListDataItem(null, null, null, 100d, ProductUnit.Perc, 10d, DeclarationType.Detail, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 45d, ProductUnit.Perc, 10d, DeclarationType.Detail, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(1), null, 20d, ProductUnit.Perc, 5d, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(1), null, 25d, ProductUnit.Perc, 10d, DeclarationType.Detail, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(0), 1d, 55d, ProductUnit.Perc, 20d, DeclarationType.Detail, localSF3NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(4), null, 10d, ProductUnit.Perc, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(4), null, 25d, ProductUnit.Perc, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(4), null, 20d, ProductUnit.Perc, 0d, DeclarationType.Declare, rawMaterial5NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
 				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();				
 				
@@ -2218,12 +2215,12 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setUnitPrice(12.4d);
 				finishedProduct.setDensity(1d);
 				List<CompoListDataItem> compoList = new ArrayList<>();
-				compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);		
 				
 				List<PhysicoChemListDataItem> physicoChemList = new ArrayList<>();
@@ -2303,15 +2300,15 @@ public class FormulationTest extends AbstractFinishedProductTest {
 			finishedProduct.setNetWeight(2d);
 			finishedProduct.setDensity(1d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 100d, CompoListUnit.Perc, 10d, DeclarationType.Detail, localSF1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 45d, CompoListUnit.Perc, 10d, DeclarationType.Detail, localSF2NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(1), null, 20d, CompoListUnit.Perc, 5d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(1), null, 25d, CompoListUnit.Perc, 10d, DeclarationType.Detail, rawMaterial2NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), 1d, 55d, CompoListUnit.Perc, 20d, DeclarationType.Detail, localSF3NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(4), null, 10d, CompoListUnit.Perc, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(4), null, 25d, CompoListUnit.Perc, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(4), null, 20d, CompoListUnit.Perc, 0d, DeclarationType.Declare, rawMaterial5NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.P, null, DeclarationType.Declare, rawMaterial15NodeRef));
+			compoList.add(new CompoListDataItem(null, null, null, 100d, ProductUnit.Perc, 10d, DeclarationType.Detail, localSF1NodeRef));
+			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 45d, ProductUnit.Perc, 10d, DeclarationType.Detail, localSF2NodeRef));
+			compoList.add(new CompoListDataItem(null, compoList.get(1), null, 20d, ProductUnit.Perc, 5d, DeclarationType.Declare, rawMaterial1NodeRef));
+			compoList.add(new CompoListDataItem(null, compoList.get(1), null, 25d, ProductUnit.Perc, 10d, DeclarationType.Detail, rawMaterial2NodeRef));
+			compoList.add(new CompoListDataItem(null, compoList.get(0), 1d, 55d, ProductUnit.Perc, 20d, DeclarationType.Detail, localSF3NodeRef));
+			compoList.add(new CompoListDataItem(null, compoList.get(4), null, 10d, ProductUnit.Perc, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+			compoList.add(new CompoListDataItem(null, compoList.get(4), null, 25d, ProductUnit.Perc, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+			compoList.add(new CompoListDataItem(null, compoList.get(4), null, 20d, ProductUnit.Perc, 0d, DeclarationType.Declare, rawMaterial5NodeRef));
+			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.P, null, DeclarationType.Declare, rawMaterial15NodeRef));
 			
 			// add overrun
 			compoList.get(6).setOverrunPerc(80d);

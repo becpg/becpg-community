@@ -12,8 +12,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.PLMModel;
-import fr.becpg.repo.product.data.constraints.CompoListUnit;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
+import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
@@ -64,7 +64,7 @@ public class CompositionLexer {
 		input = input.toLowerCase();
 		// The tokens to return
 		CompoListDataItem compoListDataItem = new CompoListDataItem();
-		compoListDataItem.setCompoListUnit(CompoListUnit.P);
+		compoListDataItem.setCompoListUnit(ProductUnit.P);
 
 		// Lexer logic begins here
 		StringBuilder tokenPatternsBuffer = new StringBuilder();
@@ -84,7 +84,7 @@ public class CompositionLexer {
 				matcher.appendReplacement(productName, "");
 				continue;
 			} else if (matcher.group(TokenType.COMPOUNIT.name()) != null && findIdx == 1) {
-				compoListDataItem.setCompoListUnit(extractUnit(matcher.group(TokenType.COMPOUNIT.name())));
+				compoListDataItem.setCompoListUnit(ProductUnit.extractUnit(matcher.group(TokenType.COMPOUNIT.name())));
 				matcher.appendReplacement(productName, "");
 				findIdx++;
 				continue;
@@ -132,32 +132,5 @@ public class CompositionLexer {
 				.singleValue();
 	}
 
-	private static CompoListUnit extractUnit(String unit) {
-
-		switch (unit.trim()) {
-		case "kg":
-			return CompoListUnit.kg;
-		case "g":
-		case "gr":
-			return CompoListUnit.g;
-		case "l":
-			return CompoListUnit.L;
-		case "ml":
-			return CompoListUnit.mL;
-		case "cl":
-			return CompoListUnit.mL;	
-		case "p":
-			return CompoListUnit.P;
-		case "m":
-			return CompoListUnit.m;
-		case "m2":
-			return CompoListUnit.m2;
-		case "perc":
-		case "%":
-			return CompoListUnit.Perc;
-		default:
-			return CompoListUnit.P;
-		}
-	}
 
 }

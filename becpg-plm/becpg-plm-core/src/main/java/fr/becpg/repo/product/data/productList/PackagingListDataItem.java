@@ -8,7 +8,7 @@ import org.alfresco.service.namespace.QName;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
-import fr.becpg.repo.product.data.constraints.PackagingListUnit;
+import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
@@ -29,7 +29,7 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 
 	private Double qty = 0d;
 
-	private PackagingListUnit packagingListUnit = PackagingListUnit.Unknown;
+	private ProductUnit packagingListUnit;
 	
 	private Double lossPerc = 0d;
 
@@ -51,11 +51,11 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 
 	@AlfProp
 	@AlfQname(qname = "bcpg:packagingListUnit")
-	public PackagingListUnit getPackagingListUnit() {
+	public ProductUnit getPackagingListUnit() {
 		return packagingListUnit;
 	}
 
-	public void setPackagingListUnit(PackagingListUnit packagingListUnit) {
+	public void setPackagingListUnit(ProductUnit packagingListUnit) {
 		this.packagingListUnit = packagingListUnit;
 	}
 	
@@ -113,11 +113,11 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 	 * 
 	 * @param nodeRef
 	 * @param qty
-	 * @param packagingListUnit
+	 * @param ProductUnit
 	 * @param pkgLevel
 	 * @param product
 	 */
-	public PackagingListDataItem(NodeRef nodeRef, Double qty, PackagingListUnit packagingListUnit, PackagingLevel pkgLevel, Boolean isMaster, NodeRef product) {
+	public PackagingListDataItem(NodeRef nodeRef, Double qty, ProductUnit packagingListUnit, PackagingLevel pkgLevel, Boolean isMaster, NodeRef product) {
 
 		setNodeRef(nodeRef);
 		setQty(qty);

@@ -109,7 +109,7 @@ public class EffectivityPolicyTest extends PLMBaseTestCase {
 //				fp1.setName("FP 1");
 //
 //				List<CompoListDataItem> compoList = new LinkedList<CompoListDataItem>();
-//				compoList.add(new CompoListDataItem(null, 1, 1d, 1d, 0d, CompoListUnit.P, 0d, null, DeclarationType.Declare, sfNodeRef));
+//				compoList.add(new CompoListDataItem(null, 1, 1d, 1d, 0d, ProductUnit.P, 0d, null, DeclarationType.Declare, sfNodeRef));
 //				
 //				fp1.setCompoList(compoList);
 //

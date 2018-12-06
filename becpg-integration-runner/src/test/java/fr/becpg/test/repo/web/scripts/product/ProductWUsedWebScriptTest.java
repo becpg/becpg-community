@@ -15,7 +15,7 @@ import org.junit.Test;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
-import fr.becpg.repo.product.data.constraints.CompoListUnit;
+import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.test.utils.TestWebscriptExecuters;
@@ -63,8 +63,8 @@ public class ProductWUsedWebScriptTest extends fr.becpg.test.PLMBaseTestCase{
 	 				FinishedProductData finishedProduct = new FinishedProductData();
 	 				finishedProduct.setName("Finished Product");
 	 				List<CompoListDataItem> compoList = new ArrayList<>();
-	 				compoList.add(new CompoListDataItem(null, null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, lSFNodeRef));
-	 				compoList.add(new CompoListDataItem(null, compoList.get(0), 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterialNodeRef));
+	 				compoList.add(new CompoListDataItem(null, null, 1d, 0d, ProductUnit.kg, 0d, DeclarationType.Omit, lSFNodeRef));
+	 				compoList.add(new CompoListDataItem(null, compoList.get(0), 3d, 0d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterialNodeRef));
 					finishedProduct.getCompoListView().setCompoList(compoList); 				
 
 	 				finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();

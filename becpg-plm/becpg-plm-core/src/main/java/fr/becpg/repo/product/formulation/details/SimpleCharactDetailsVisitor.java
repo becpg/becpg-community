@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
@@ -123,11 +122,14 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 							&& (FormulationHelper.getNetVolume(subProductData) != null) && (subVol != null)) {
 						volUsed = (volUsed / FormulationHelper.getNetVolume(subProductData)) * subVol;
 					}
-					visitPart(subProductData.getNodeRef(), compoListDataItem.getProduct(), ret, weightUsed, volUsed, netQty, subWeight, currLevel,
+					
+					ProductData  compoListProduct = 	(ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());
+					
+					visitPart(subProductData.getNodeRef(), compoListProduct, ret, weightUsed, volUsed, netQty, subWeight, currLevel,
 							null);
 					if (((maxLevel < 0) || (currLevel < maxLevel))
 							&& !entityDictionaryService.isMultiLevelLeaf(nodeService.getType(compoListDataItem.getProduct()))) {
-						visitRecur((ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct()), ret, currLevel + 1, maxLevel, weightUsed,
+						visitRecur(compoListProduct, ret, currLevel + 1, maxLevel, weightUsed,
 								volUsed, netQty);
 					}
 				}
@@ -155,20 +157,20 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 		return ret;
 	}
 
-	protected void visitPart(NodeRef parent, NodeRef entityNodeRef, CharactDetails charactDetails, Double weightUsed, Double volUsed,
+	protected void visitPart(NodeRef parent, ProductData productData, CharactDetails charactDetails, Double weightUsed, Double volUsed,
 			Double netQtyInLorKg, Double netWeight, Integer currLevel, SimpleCharactUnitProvider unitProvider) throws FormulateException {
 
-		if (entityNodeRef == null) {
+		if (productData == null) {
 			return;
 		}
 
-		if (!alfrescoRepository.hasDataList(entityNodeRef, dataListType)) {
-			logger.debug("no datalist for this product, exit. dataListType: " + dataListType + " entity: " + entityNodeRef);
+		if (!alfrescoRepository.hasDataList(productData, dataListType)) {
+			logger.debug("no datalist for this product, exit. dataListType: " + dataListType + " entity: " + productData.getNodeRef());
 			return;
 		}
 
 		@SuppressWarnings("unchecked")
-		List<SimpleCharactDataItem> simpleCharactDataList = (List<SimpleCharactDataItem>) alfrescoRepository.loadDataList(entityNodeRef, dataListType,
+		List<SimpleCharactDataItem> simpleCharactDataList = (List<SimpleCharactDataItem>) alfrescoRepository.loadDataList(productData.getNodeRef(), dataListType,
 				dataListType);
 
 		for (SimpleCharactDataItem simpleCharact : simpleCharactDataList) {
@@ -183,9 +185,9 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 					unit = ((UnitAwareDataItem) simpleCharact).getUnit();
 				}
 
+				
 				// calculate charact from qty or vol ?
-				boolean formulateInVol = FormulationHelper.isProductUnitLiter(FormulationHelper.getProductUnit(entityNodeRef, nodeService)) ? true
-						: false;
+				boolean formulateInVol = productData.getUnit()!=null && productData.getUnit().isLiter();
 				boolean forceWeight = false;
 
 				if (simpleCharact instanceof PhysicoChemListDataItem) {
@@ -207,11 +209,11 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 					if (logger.isDebugEnabled()) {
 						logger.debug("Add new charact detail. Charact: "
 								+ nodeService.getProperty(simpleCharact.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME) + " - entityNodeRef: "
-								+ nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + " - netQty: " + netQty + " - qty: " + qtyUsed
+								+ productData.getName() + " - netQty: " + netQty + " - qty: " + qtyUsed
 								+ " - value: " + value);
 					}
 
-					currentCharactDetailsValue = new CharactDetailsValue(parent, entityNodeRef, value, currLevel, unit);
+					currentCharactDetailsValue = new CharactDetailsValue(parent, productData.getNodeRef(), value, currLevel, unit);
 					
 					if(simpleCharact instanceof ForecastValueDataItem && ! charactDetails.isMultiple()){
 						ForecastValueDataItem forecastValue = (ForecastValueDataItem) simpleCharact;

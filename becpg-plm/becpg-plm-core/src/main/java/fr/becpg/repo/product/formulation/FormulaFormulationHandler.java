@@ -55,7 +55,7 @@ import fr.becpg.repo.product.data.PackagingListView;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
-import fr.becpg.repo.product.data.constraints.PackagingListUnit;
+import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.packaging.VariantPackagingData;
 import fr.becpg.repo.product.data.productList.CompositionDataItem;
 import fr.becpg.repo.product.data.productList.DynamicCharactExecOrder;
@@ -349,7 +349,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 				}
 
 				if ((dataListItem instanceof PackagingListDataItem) && (((PackagingListDataItem) dataListItem).getPackagingListUnit() != null)
-						&& !PackagingListUnit.PP.equals(((PackagingListDataItem) dataListItem).getPackagingListUnit())
+						&& !ProductUnit.PP.equals(((PackagingListDataItem) dataListItem).getPackagingListUnit())
 						&& (dataListItem.getQty() != null) && (subDataListItem.getQty() != null)) {
 
 					subDataListItem.setQty(dataListItem.getQty() * subDataListItem.getQty());

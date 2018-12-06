@@ -36,10 +36,9 @@ import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
-import fr.becpg.repo.product.data.constraints.CompoListUnit;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
-import fr.becpg.repo.product.data.constraints.PackagingListUnit;
+import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
@@ -65,7 +64,6 @@ public class ScoreCalculatingTest extends AbstractFinishedProductTest {
 	
 	private NodeRef familyNodeRef;
 	
-	private String oldJsonString="";
 	
 	public void setRepository(Repository repository) {
 		this.repositoryHelper = repository;
@@ -113,11 +111,11 @@ public class ScoreCalculatingTest extends AbstractFinishedProductTest {
 			alfrescoRepository.save(rawMaterial12);
 
 			List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial5NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial6NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial11NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial12NodeRef));
+			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial5NodeRef));
+			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial6NodeRef));
+			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial11NodeRef));
+			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial12NodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
 			/**
@@ -136,9 +134,9 @@ public class ScoreCalculatingTest extends AbstractFinishedProductTest {
 			alfrescoRepository.save(packagingKit);
 
 			List<PackagingListDataItem> packagingList = new ArrayList<PackagingListDataItem>();
-			packagingList.add(new PackagingListDataItem(null, 1d, PackagingListUnit.kg, PackagingLevel.Primary, false, packagingMaterial1NodeRef));
-			packagingList.add(new PackagingListDataItem(null, 1d, PackagingListUnit.kg, PackagingLevel.Primary, false, packagingMaterial2NodeRef));
-			packagingList.add(new PackagingListDataItem(null, 1d, PackagingListUnit.kg, PackagingLevel.Secondary, true, packagingKit1NodeRef));
+			packagingList.add(new PackagingListDataItem(null, 1d, ProductUnit.kg, PackagingLevel.Primary, false, packagingMaterial1NodeRef));
+			packagingList.add(new PackagingListDataItem(null, 1d, ProductUnit.kg, PackagingLevel.Primary, false, packagingMaterial2NodeRef));
+			packagingList.add(new PackagingListDataItem(null, 1d, ProductUnit.kg, PackagingLevel.Secondary, true, packagingKit1NodeRef));
 			finishedProduct.getPackagingListView().setPackagingList(packagingList);
 
 			finishedProduct.setLegalName(new MLText(Locale.FRENCH, "Produit fini 1"));

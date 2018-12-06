@@ -23,7 +23,7 @@ import fr.becpg.repo.activity.data.ActivityType;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;	
 import fr.becpg.repo.product.data.SemiFinishedProductData;
-import fr.becpg.repo.product.data.constraints.CompoListUnit;
+import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
@@ -412,7 +412,7 @@ public class PurgeActivityTest extends PlmActivityServiceTest {
 				// Add SF to finished product (data-list activity)
 				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 					List<CompoListDataItem> compoList = new ArrayList<>();
-					compoList.add(new CompoListDataItem(null, null, 1d, 1d, CompoListUnit.P, 0d, DeclarationType.Declare, lSF1NodeRef));
+					compoList.add(new CompoListDataItem(null, null, 1d, 1d, ProductUnit.P, 0d, DeclarationType.Declare, lSF1NodeRef));
 					FinishedProductData finishedProduct;
 					finishedProduct = ((FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef));
 					finishedProduct.getCompoListView().setCompoList(compoList);
@@ -498,7 +498,7 @@ public class PurgeActivityTest extends PlmActivityServiceTest {
 			productData.setParentNodeRef(getTestFolderNodeRef());
 			productData.setName("activity-test-product");
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, 1d, 1d, CompoListUnit.P, 0d, DeclarationType.Declare, semiFinishedProductNodeRef));
+			compoList.add(new CompoListDataItem(null, null, 1d, 1d, ProductUnit.P, 0d, DeclarationType.Declare, semiFinishedProductNodeRef));
 			productData.getCompoListView().setCompoList(compoList);
 			alfrescoRepository.save(productData);
 

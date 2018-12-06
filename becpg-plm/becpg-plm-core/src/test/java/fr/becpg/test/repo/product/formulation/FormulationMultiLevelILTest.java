@@ -28,7 +28,6 @@ import org.junit.Test;
 
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.constraints.CompoListUnit;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -60,8 +59,8 @@ public class FormulationMultiLevelILTest extends AbstractFinishedProductTest {
 				finishedProduct.setQty(4d);
 				finishedProduct.setDensity(1d);
 				List<CompoListDataItem> compoList = new ArrayList<>();
-				compoList.add(new CompoListDataItem(null, null, null, 3d, CompoListUnit.kg, 3d, DeclarationType.Declare, rawMaterial7NodeRef));
-				compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 1d, DeclarationType.Declare, rawMaterial6NodeRef));
+				compoList.add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg, 3d, DeclarationType.Declare, rawMaterial7NodeRef));
+				compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 1d, DeclarationType.Declare, rawMaterial6NodeRef));
 
 				finishedProduct.getCompoListView().setCompoList(compoList);
 				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();				

@@ -29,7 +29,6 @@ import fr.becpg.repo.activity.data.ActivityListDataItem;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
-import fr.becpg.repo.product.data.constraints.CompoListUnit;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -279,7 +278,7 @@ public class PlmActivityServiceTest extends AbstractFinishedProductTest {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, 1d, 1d, CompoListUnit.P, 0d, DeclarationType.Declare, lSF1NodeRef));
+			compoList.add(new CompoListDataItem(null, null, 1d, 1d, ProductUnit.P, 0d, DeclarationType.Declare, lSF1NodeRef));
 			FinishedProductData finishedProduct;
 			finishedProduct = ((FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);

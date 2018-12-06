@@ -24,10 +24,8 @@ import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
-import fr.becpg.repo.product.data.constraints.CompoListUnit;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
-import fr.becpg.repo.product.data.constraints.PackagingListUnit;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
@@ -79,9 +77,9 @@ public class DefaultProductReportExtractorTest extends AbstractFinishedProductTe
 			finishedProduct.setQty(2d);
 			finishedProduct.setNetWeight(2d);
 			List<PackagingListDataItem> packagingList = new ArrayList<>();
-			packagingList.add(new PackagingListDataItem(null, 1d, PackagingListUnit.P, PackagingLevel.Primary, true, packagingMaterial1NodeRef));
-			packagingList.add(new PackagingListDataItem(null, 3d, PackagingListUnit.m, PackagingLevel.Primary, true, packagingMaterial2NodeRef));
-			packagingList.add(new PackagingListDataItem(null, 8d, PackagingListUnit.PP, PackagingLevel.Tertiary, true, packagingMaterial3NodeRef));
+			packagingList.add(new PackagingListDataItem(null, 1d, ProductUnit.P, PackagingLevel.Primary, true, packagingMaterial1NodeRef));
+			packagingList.add(new PackagingListDataItem(null, 3d, ProductUnit.m, PackagingLevel.Primary, true, packagingMaterial2NodeRef));
+			packagingList.add(new PackagingListDataItem(null, 8d, ProductUnit.PP, PackagingLevel.Tertiary, true, packagingMaterial3NodeRef));
 			finishedProduct.getPackagingListView().setPackagingList(packagingList);
 			List<CostListDataItem> costList = new ArrayList<>();
 			costList.add(new CostListDataItem(null, 1d, "€/P", null, pkgCost1, false));
@@ -92,9 +90,9 @@ public class DefaultProductReportExtractorTest extends AbstractFinishedProductTe
 			nutList.add(new NutListDataItem(null, null, "g/100g", null, null, "Group1", nut2, false));
 			finishedProduct.setNutList(nutList);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, 1d, 1d, CompoListUnit.kg, 3d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, null, 0.5d, 0.5d, CompoListUnit.kg, 3d, DeclarationType.Declare, rawMaterial2NodeRef));
-			compoList.add(new CompoListDataItem(null, null, 0.5d, 0.5d, CompoListUnit.kg, 3d, DeclarationType.Declare, rawMaterial3NodeRef));
+			compoList.add(new CompoListDataItem(null, null, 1d, 1d, ProductUnit.kg, 3d, DeclarationType.Declare, rawMaterial1NodeRef));
+			compoList.add(new CompoListDataItem(null, null, 0.5d, 0.5d, ProductUnit.kg, 3d, DeclarationType.Declare, rawMaterial2NodeRef));
+			compoList.add(new CompoListDataItem(null, null, 0.5d, 0.5d, ProductUnit.kg, 3d, DeclarationType.Declare, rawMaterial3NodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			NodeRef finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 

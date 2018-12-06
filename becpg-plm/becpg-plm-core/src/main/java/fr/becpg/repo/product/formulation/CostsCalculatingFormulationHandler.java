@@ -31,7 +31,6 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
-import fr.becpg.repo.product.data.constraints.ProcessListUnit;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -112,10 +111,26 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				computeFormulatedList(formulatedProduct, formulatedProduct.getCostList(), PLMModel.PROP_COST_FORMULA,
 						"message.formulate.costList.error");
 
+				ProductUnit unit = formulatedProduct.getUnit();
+				
 				for (CostListDataItem c : formulatedProduct.getCostList()) {
-					c.setUnit(calculateUnit(formulatedProduct.getUnit(), (String) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTCURRENCY),
-							(Boolean) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTFIXED)));
-
+					if(unit!=null) {
+						Boolean fixed = (Boolean) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTFIXED);
+						
+						c.setUnit(calculateUnit(unit, (String) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTCURRENCY),fixed));
+	
+						if(!fixed) {
+							//TODO keepProductUnit bug ici si produit en g le coût est en kg
+							
+							if (!keepProductUnit && unit.isLb() ) { 
+								c.setValue(ProductUnit.kgToLbs(c.getValue()));
+								c.setMaxi(ProductUnit.kgToLbs(c.getMaxi()));
+								c.setPreviousValue(ProductUnit.kgToLbs(c.getPreviousValue()));
+								c.setFutureValue(ProductUnit.kgToLbs(c.getFutureValue()));
+							}
+						}
+					}
+					
 					if (transientFormulation) {
 						c.setTransient(true);
 					}
@@ -162,7 +177,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 					.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 				Double qty = FormulationHelper.getQtyForCostByPackagingLevel(formulatedProduct, packagingListDataItem, nodeService);
 
-				visitPart(packagingListDataItem.getProduct(), costList, qty,  qty, netQty, netQty, mandatoryCharacts2, null, false);
+				visitPart(packagingListDataItem.getProduct(), costList, qty, qty, netQty, netQty, mandatoryCharacts2, null, false);
 			}
 
 			addReqCtrlList(formulatedProduct.getReqCtrlList(), mandatoryCharacts2, getRequirementDataType());
@@ -179,7 +194,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				Double qty = FormulationHelper.getQty(formulatedProduct, processListDataItem);
 
 				if ((processListDataItem.getResource() != null) && (qty != null)) {
-					if (ProcessListUnit.P.equals(processListDataItem.getUnit()) && ProductUnit.P.equals(formulatedProduct.getUnit())) {
+					if (ProductUnit.P.equals(processListDataItem.getUnit()) && ProductUnit.P.equals(formulatedProduct.getUnit())) {
 						netQty = FormulationHelper.QTY_FOR_PIECE;
 					}
 
@@ -213,9 +228,8 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			} else {
 				CompoListDataItem compoListDataItem = component.getData();
 				ProductData componentProduct = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());
-				
-				Double qty = FormulationHelper.getQtyForCost(compoListDataItem, parentLossRatio,componentProduct ,
-						keepProductUnit);
+
+				Double qty = FormulationHelper.getQtyForCost(compoListDataItem, parentLossRatio, componentProduct, keepProductUnit);
 				visitPart(compoListDataItem.getProduct(), costList, qty, qty, netQty, netQty, mandatoryCharacts, totalQtiesValue,
 						formulatedProduct instanceof RawMaterialData);
 			}
@@ -255,19 +269,20 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	 */
 	public static String calculateSuffixUnit(ProductUnit productUnit) {
 		if (!keepProductUnit) {
-			if ((productUnit == null) || productUnit.equals(ProductUnit.kg) || productUnit.equals(ProductUnit.g)) {
-				return UNIT_SEPARATOR + ProductUnit.kg;
-			} else if (productUnit.equals(ProductUnit.L) || productUnit.equals(ProductUnit.mL) || productUnit.equals(ProductUnit.cL)) {
-				return UNIT_SEPARATOR + ProductUnit.L;
-			}
+			return UNIT_SEPARATOR + productUnit.getMainUnit().toString();
 		}
-
 		return UNIT_SEPARATOR + productUnit.toString();
 	}
 
 	private void calculateProfitability(ProductData formulatedProduct) {
 
+
 		Double netQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct, 1d);
+		if(formulatedProduct.getUnit()!=null && formulatedProduct.getUnit().isLb()) {
+			netQty =  ProductUnit.kgToLbs(netQty);
+		}
+		
+		
 		Double unitTotalVariableCost = 0d;// for 1 product
 		Double previousTotalVariableCost = 0d;
 		Double futureTotalVariableCost = 0d;
@@ -297,7 +312,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 
 					}
 
-				} else if (FormulationHelper.isProductUnitP(formulatedProduct.getUnit())) {
+				} else if ((formulatedProduct.getUnit() != null) && formulatedProduct.getUnit().isP()) {
 					costPerProduct = c.getValue();
 
 					if (c.getFutureValue() != null) {
@@ -321,6 +336,8 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 					}
 
 				} else {
+					
+					
 					costPerProduct = netQty * c.getValue();
 
 					if (c.getFutureValue() != null) {
@@ -532,7 +549,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 
 		if ((formulatedProduct.getUnit() != null) && (templateCostList.getUnit() != null)) {
 			if (!templateCostList.getUnit().endsWith(formulatedProduct.getUnit().toString())) {
-				if (FormulationHelper.isProductUnitP(formulatedProduct.getUnit())) {
+				if (formulatedProduct.getUnit().isP()) {
 					if (templateCostList.getUnit().endsWith("kg") || templateCostList.getUnit().endsWith("L")) {
 						calculateValues(templateCostList, costList, false, FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d));
 						isCalculated = true;
@@ -544,8 +561,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 						}
 						isCalculated = true;
 					}
-				} else if (FormulationHelper.isProductUnitKg(formulatedProduct.getUnit())
-						|| FormulationHelper.isProductUnitLiter(formulatedProduct.getUnit())) {
+				} else if (formulatedProduct.getUnit().isKg() || formulatedProduct.getUnit().isLiter()) {
 					if (templateCostList.getUnit().endsWith("P")) {
 						calculateValues(templateCostList, costList, true, FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d));
 						isCalculated = true;
@@ -657,15 +673,15 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 
 	private double getCompoListQty(ProductData productData, NodeRef componentNodeRef, double parentQty) {
 		double totalQty = 0d;
-		for (CompoListDataItem compoList : productData.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
+		for (CompoListDataItem compoList : productData
+				.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 			NodeRef productNodeRef = compoList.getProduct();
-			
+
 			ProductData componentProduct = alfrescoRepositoryProductData.findOne(productNodeRef);
-			
+
 			Double qty = FormulationHelper.getQtyForCost(compoList, 0d, componentProduct, keepProductUnit);
 			if (logger.isDebugEnabled()) {
-				logger.debug("Get component " + componentProduct.getName() + "qty: " + qty + " recipeQtyUsed "
-						+ productData.getRecipeQtyUsed());
+				logger.debug("Get component " + componentProduct.getName() + "qty: " + qty + " recipeQtyUsed " + productData.getRecipeQtyUsed());
 			}
 			if ((qty != null) && (productData.getRecipeQtyUsed() != null) && (productData.getRecipeQtyUsed() != 0d)) {
 				qty = (parentQty * qty) / productData.getRecipeQtyUsed();
@@ -683,7 +699,8 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	private double getPackagingListQty(ProductData productData, NodeRef componentNodeRef, int palletBoxesPerPallet) {
 		double totalQty = 0d;
 		if (productData.hasPackagingListEl()) {
-			for (PackagingListDataItem packList : productData.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
+			for (PackagingListDataItem packList : productData
+					.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 				QName nodeType = nodeService.getType(packList.getProduct());
 				NodeRef productNodeRef = packList.getProduct();
 				Double qty = FormulationHelper.getQtyForCost(productData, packList);
@@ -691,55 +708,55 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 					logger.debug("Get component " + nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME) + "qty: " + qty);
 				}
 				if (productNodeRef.equals(componentNodeRef)) {
-					if(PackagingLevel.Tertiary.equals(packList.getPkgLevel())){
-						totalQty =  qty / palletBoxesPerPallet;
+					if (PackagingLevel.Tertiary.equals(packList.getPkgLevel())) {
+						totalQty = qty / palletBoxesPerPallet;
 					} else {
 						totalQty += qty;
 					}
 					break;
-				} else if(PLMModel.TYPE_PACKAGINGKIT.equals(nodeType)){
-					totalQty = qty * getPackagingListQty(alfrescoRepositoryProductData.findOne(productNodeRef), componentNodeRef, 
+				} else if (PLMModel.TYPE_PACKAGINGKIT.equals(nodeType)) {
+					totalQty = qty * getPackagingListQty(alfrescoRepositoryProductData.findOne(productNodeRef), componentNodeRef,
 							(Integer) nodeService.getProperty(packList.getProduct(), PackModel.PROP_PALLET_BOXES_PER_PALLET));
 				}
 			}
 		}
 		return totalQty;
 	}
-	
+
 	private void calculateSimulationCosts(ProductData formulatedProduct) {
-        Double netQty = FormulationHelper.getNetQtyForCost(formulatedProduct);
-        
-        for (CostListDataItem c : formulatedProduct.getCostList()) {
-            if ((c.getComponentNodeRef() != null) && (c.getParent() != null)) {
-                Double qtyComponent;
-                ProductData componentData = alfrescoRepositoryProductData.findOne(c.getComponentNodeRef());
-                if (componentData instanceof PackagingMaterialData) {
-                    qtyComponent = getPackagingListQty(formulatedProduct, c.getComponentNodeRef(), 1);
-                } else {
-                    qtyComponent = getCompoListQty(formulatedProduct, c.getComponentNodeRef(), formulatedProduct.getRecipeQtyUsed());
-                }
-                for (CostListDataItem c2 : componentData.getCostList()) {
-                    if (c2.getCost().equals(c.getParent().getCost()) && (c.getSimulatedValue() != null)) {
-                        if (logger.isDebugEnabled()) {
-                            logger.debug("add simulationCost " + "c2 value " + c2.getValue() + "c simulated value " + c.getSimulatedValue()
-                                    + " qty component " + qtyComponent + " netQty " + netQty);
-                        }
-                        if (c2.getValue() != null) {
-                            c.setValue(((c.getSimulatedValue() - c2.getValue()) * qtyComponent) / (netQty!=0 ? netQty : 1d));
-                        } else {
-                            c.setValue(((c.getSimulatedValue()) * qtyComponent) / (netQty!=0 ? netQty : 1d));
-                        }
-                        if (c.getParent().getValue() != null) {
-                            c.getParent().setValue(c.getParent().getValue() + c.getValue());
-                        } else {
-                            c.getParent().setValue(c.getValue());
-                        }
-                        break;
-                    }
-                }
-            }
-        }
-    }
+		Double netQty = FormulationHelper.getNetQtyForCost(formulatedProduct);
+
+		for (CostListDataItem c : formulatedProduct.getCostList()) {
+			if ((c.getComponentNodeRef() != null) && (c.getParent() != null)) {
+				Double qtyComponent;
+				ProductData componentData = alfrescoRepositoryProductData.findOne(c.getComponentNodeRef());
+				if (componentData instanceof PackagingMaterialData) {
+					qtyComponent = getPackagingListQty(formulatedProduct, c.getComponentNodeRef(), 1);
+				} else {
+					qtyComponent = getCompoListQty(formulatedProduct, c.getComponentNodeRef(), formulatedProduct.getRecipeQtyUsed());
+				}
+				for (CostListDataItem c2 : componentData.getCostList()) {
+					if (c2.getCost().equals(c.getParent().getCost()) && (c.getSimulatedValue() != null)) {
+						if (logger.isDebugEnabled()) {
+							logger.debug("add simulationCost " + "c2 value " + c2.getValue() + "c simulated value " + c.getSimulatedValue()
+									+ " qty component " + qtyComponent + " netQty " + netQty);
+						}
+						if (c2.getValue() != null) {
+							c.setValue(((c.getSimulatedValue() - c2.getValue()) * qtyComponent) / (netQty != 0 ? netQty : 1d));
+						} else {
+							c.setValue(((c.getSimulatedValue()) * qtyComponent) / (netQty != 0 ? netQty : 1d));
+						}
+						if (c.getParent().getValue() != null) {
+							c.getParent().setValue(c.getParent().getValue() + c.getValue());
+						} else {
+							c.getParent().setValue(c.getValue());
+						}
+						break;
+					}
+				}
+			}
+		}
+	}
 
 	@Override
 	protected boolean accept(ProductData formulatedProduct) {

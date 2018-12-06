@@ -31,7 +31,6 @@ import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ResourceProductData;
-import fr.becpg.repo.product.data.constraints.ProcessListUnit;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
@@ -159,9 +158,9 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 		for (ProcessListDataItem p : formulatedProduct.getProcessList(new VariantFilters<>())) {
 
 			if (p.getRateResource() != null) {
-				if (ProcessListUnit.P.equals(p.getUnit())) {
+				if (ProductUnit.P.equals(p.getUnit())) {
 					p.setRateProduct(p.getRateResource());
-				} else if (ProcessListUnit.Box.equals(p.getUnit())) {
+				} else if (ProductUnit.Box.equals(p.getUnit())) {
 					if ((formulatedProduct.getDefaultVariantPackagingData() != null)
 							&& (formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() != null)) {
 						p.setRateProduct(p.getRateResource() * formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes());
