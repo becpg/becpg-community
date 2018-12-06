@@ -100,6 +100,8 @@ public interface PLMModel {
 	QName PROP_NUTLIST_MAXI = QName.createQName(BeCPGModel.BECPG_URI, "nutListMaxi");
 	QName PROP_NUTLIST_GROUP = QName.createQName(BeCPGModel.BECPG_URI, "nutListGroup");
 	QName PROP_NUTLIST_ROUNDED_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "nutListRoundedValue");
+	QName PROP_NUTLIST_FORMULA_ERROR = QName.createQName(BeCPGModel.BECPG_URI, "nutListFormulaErrorLog");
+	QName PROP_NUTLIST_METHOD = QName.createQName(BeCPGModel.BECPG_URI, "nutListMethod");
 	
 	// organoList
 	QName TYPE_ORGANOLIST = QName.createQName(BeCPGModel.BECPG_URI, "organoList");
@@ -171,8 +173,8 @@ public interface PLMModel {
 	QName PROP_LCL_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "lclType");
 	QName PROP_LCL_CLAIM_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "lclClaimValue");
 	QName ASSOC_LCL_LABELCLAIM = QName.createQName(BeCPGModel.BECPG_URI, "lclLabelClaim");
-	QName PROP_LCL_FORMULAERROR = QName.createQName(BeCPGModel.BECPG_URI, "llclFormulaErrorLog");
-	QName ASSOC_LCL_MISSING_LABELCLAIMS = QName.createQName(BeCPGModel.BECPG_URI, "lbcpg:lclMissingLabelClaims");
+	QName PROP_LCL_FORMULAERROR = QName.createQName(BeCPGModel.BECPG_URI, "lclFormulaErrorLog");
+	QName ASSOC_LCL_MISSING_LABELCLAIMS = QName.createQName(BeCPGModel.BECPG_URI, "lclMissingLabelClaims");
 	
 	// allergen
 	QName TYPE_ALLERGEN = QName.createQName(BeCPGModel.BECPG_URI, "allergen");
@@ -216,11 +218,7 @@ public interface PLMModel {
 	QName PROP_NUTUNIT = QName.createQName(BeCPGModel.BECPG_URI, "nutUnit");
 	QName PROP_NUTGDA = QName.createQName(BeCPGModel.BECPG_URI, "nutGDA");
 	QName PROP_NUTUL = QName.createQName(BeCPGModel.BECPG_URI, "nutUL");
-	QName PROP_NUT_FORMULA = QName.createQName(BeCPGModel.BECPG_URI, "nutFormula");
-	
-	QName PROP_NUT_FORMULA_ERROR = QName.createQName(BeCPGModel.BECPG_URI, "nutListFormulaErrorLog");
-	QName PROP_NUT_METHOD = QName.createQName(BeCPGModel.BECPG_URI, "nutListMethod");
-	
+	QName PROP_NUT_FORMULA = QName.createQName(BeCPGModel.BECPG_URI, "nutFormula");	
 
 	// organo
 	QName TYPE_ORGANO = QName.createQName(BeCPGModel.BECPG_URI, "organo");

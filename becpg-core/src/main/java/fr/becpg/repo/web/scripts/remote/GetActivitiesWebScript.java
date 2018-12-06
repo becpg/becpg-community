@@ -126,7 +126,7 @@ public class GetActivitiesWebScript extends AbstractWebScript {
 			// for the stream
 			resp.setContentType("application/xml");
 			resp.setContentEncoding("UTF-8");
-		} catch (SocketException e1) {
+		} catch (SocketException  e1) {
 
 			// the client cut the connection - our mission was accomplished
 			// apart from a little error message
@@ -134,7 +134,7 @@ public class GetActivitiesWebScript extends AbstractWebScript {
 				logger.info("Client aborted stream read:\n\tcontent", e1);
 			}
 
-		} catch (Exception e) {
+		} catch (XMLStreamException e) {
 			logger.error(e, e);
 		}
 
