@@ -81,7 +81,7 @@
 					<value>g</value>
 					<value>kg</value>
 					<value>oz</value>
-					<value>lbs</value>
+					<value>lb</value>
 				</list>
 			</parameter>
 			<parameter name="caseSensitive">

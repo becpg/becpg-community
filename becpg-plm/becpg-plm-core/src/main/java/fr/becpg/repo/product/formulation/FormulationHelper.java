@@ -465,7 +465,7 @@ public class FormulationHelper {
 		if ((tare == null) || (tareUnit == null)) {
 			return null;
 		} else {
-			return (new BigDecimal(tare)).divide(new BigDecimal(tareUnit.getUnitFactor()));
+			return (new BigDecimal(tare)).divide(new BigDecimal(tareUnit.getUnitFactor()), MathContext.DECIMAL64);
 		}
 	}
 
