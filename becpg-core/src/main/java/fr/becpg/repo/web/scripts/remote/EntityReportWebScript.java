@@ -19,6 +19,11 @@ import fr.becpg.repo.report.entity.EntityReportParameters;
 import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.report.client.ReportFormat;
 
+/**
+ * 
+ * @author rabah, matthieu
+ *
+ */
 public class EntityReportWebScript extends AbstractEntityWebScript {
 
 	private static final Log logger = LogFactory.getLog(EntityReportWebScript.class);
@@ -52,13 +57,20 @@ public class EntityReportWebScript extends AbstractEntityWebScript {
 			locale = MLTextHelper.parseLocale(paramLocale);
 		}
 
-		ReportFormat reportFormat;
-		String format = req.getParameter(PARAM_FORMAT);
-		if (format != null) {
-			reportFormat = ReportFormat.valueOf(format.toUpperCase());
-		} else {
-			reportFormat = ReportFormat.PDF;
+		String format = req.getFormat();
+		if (req.getParameter(PARAM_FORMAT) != null) {
+			format = req.getParameter(PARAM_FORMAT);
 		}
+
+		if (format == null || format.isEmpty() || ReportFormat.isBirtSupported(format.toUpperCase())) {
+			format = ReportFormat.PDF.toString().toLowerCase();
+		}
+
+		String mimetype = mimetypeService.getMimetype(format);
+		if (mimetype == null) {
+			throw new WebScriptException("Web Script format '" + format + "' is not registered");
+		}
+		resp.setContentType(mimetype);
 
 		EntityReportParameters reportParameters;
 		JSONObject json = (JSONObject) req.parseContent();
@@ -74,10 +86,8 @@ public class EntityReportWebScript extends AbstractEntityWebScript {
 		}
 
 		try {
-			String mimeType = mimetypeService.getMimetype(format);
-	
-			resp.setContentType(mimeType);
-			entityReportService.generateReport(entityNodeRef, templateNodeRef, reportParameters, locale, reportFormat, resp.getOutputStream());
+			entityReportService.generateReport(entityNodeRef, templateNodeRef, reportParameters, locale, ReportFormat.valueOf(format.toUpperCase()),
+					resp.getOutputStream());
 		} catch (SocketException e1) {
 
 			// the client cut the connection - our mission was accomplished
@@ -85,8 +95,8 @@ public class EntityReportWebScript extends AbstractEntityWebScript {
 			if (logger.isInfoEnabled())
 				logger.info("Client aborted stream read:\n\tcontent", e1);
 
-		} 
-		
+		}
+
 	}
 
 }
