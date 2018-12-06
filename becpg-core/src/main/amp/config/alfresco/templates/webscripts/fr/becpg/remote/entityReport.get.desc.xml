@@ -23,6 +23,5 @@
 	<url>/becpg/remote/report?nodeRef={nodeRef}&amp;tplNodeRef={tplNodeRef}&amp;locale={locale}&amp;format={format}</url>
 	<authentication>user</authentication>
 	<transaction allow="readonly" >required</transaction>
-	<format default="">extension</format>
 	<transaction>required</transaction>
 </webscript>
