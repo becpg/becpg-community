@@ -31,6 +31,7 @@ import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
+import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.TareUnit;
 import fr.becpg.repo.product.data.packaging.VariantPackagingData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -109,15 +110,28 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 			formulatedProduct.getExtraProperties().put(GS1Model.PROP_TERTIARY_NET_WEIGHT, formulatedProduct.getNetWeightTertiary());
 		}
 
-		formulatedProduct.setTareUnit(TareUnit.kg);
+		
+		if(formulatedProduct.getUnit()!=null && formulatedProduct.getUnit().isLb()) {
+			formulatedProduct.setTareUnit(TareUnit.lb);
+			Double tareInLb = ProductUnit.kgToLb(tarePrimary.doubleValue());
+			if(tareInLb < 1) {
+				tareInLb = ProductUnit.lbToOz(tareInLb);
+				formulatedProduct.setTareUnit(TareUnit.oz);
+			}
+			
+			
+			formulatedProduct.setTare(tareInLb);
+		} else {
+		
+			formulatedProduct.setTareUnit(TareUnit.kg);
+	
+			if (tarePrimary.doubleValue() < 1) {
+				tarePrimary = tarePrimary.multiply(new BigDecimal(1000d));
+				formulatedProduct.setTareUnit(TareUnit.g);
+			}
+			formulatedProduct.setTare(tarePrimary.doubleValue());
 
-		if (tarePrimary.doubleValue() < 1) {
-			logger.debug("Calculating tare in g: " + tarePrimary);
-			tarePrimary = tarePrimary.multiply(new BigDecimal(1000d));
-			formulatedProduct.setTareUnit(TareUnit.g);
 		}
-		formulatedProduct.setTare(tarePrimary.doubleValue());
-
 		return true;
 	}
 
