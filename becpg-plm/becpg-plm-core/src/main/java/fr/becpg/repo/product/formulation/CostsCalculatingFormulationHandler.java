@@ -119,7 +119,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 						
 						c.setUnit(calculateUnit(unit, (String) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTCURRENCY),fixed));
 	
-						if(!fixed) {
+						if(!fixed && hasCompoEl) {
 							//TODO keepProductUnit bug ici si produit en g le coût est en kg
 							
 							if (!keepProductUnit && unit.isLb() ) { 
