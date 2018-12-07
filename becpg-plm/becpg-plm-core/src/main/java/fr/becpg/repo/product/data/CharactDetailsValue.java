@@ -27,11 +27,18 @@ public class CharactDetailsValue {
 	public NodeRef getKeyNodeRef() {
 		return keyNodeRef;
 	}
+	
+
+	public void setValue(Double value) {
+		this.value = value;
+	}
+
 
 	public Double getValue() {
 		return value != 0d ? value : null;
 	}
-
+	
+	
 	public Integer getLevel() {
 		return level;
 	}

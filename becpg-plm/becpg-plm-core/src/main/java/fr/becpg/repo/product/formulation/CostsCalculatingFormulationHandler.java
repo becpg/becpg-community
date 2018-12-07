@@ -123,10 +123,10 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 							//TODO keepProductUnit bug ici si produit en g le coût est en kg
 							
 							if (!keepProductUnit && unit.isLb() ) { 
-								c.setValue(ProductUnit.kgToLbs(c.getValue()));
-								c.setMaxi(ProductUnit.kgToLbs(c.getMaxi()));
-								c.setPreviousValue(ProductUnit.kgToLbs(c.getPreviousValue()));
-								c.setFutureValue(ProductUnit.kgToLbs(c.getFutureValue()));
+								c.setValue(ProductUnit.kgToLb(c.getValue()));
+								c.setMaxi(ProductUnit.kgToLb(c.getMaxi()));
+								c.setPreviousValue(ProductUnit.kgToLb(c.getPreviousValue()));
+								c.setFutureValue(ProductUnit.kgToLb(c.getFutureValue()));
 							}
 						}
 					}
@@ -279,7 +279,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 
 		Double netQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct, 1d);
 		if(formulatedProduct.getUnit()!=null && formulatedProduct.getUnit().isLb()) {
-			netQty =  ProductUnit.kgToLbs(netQty);
+			netQty =  ProductUnit.kgToLb(netQty);
 		}
 		
 		

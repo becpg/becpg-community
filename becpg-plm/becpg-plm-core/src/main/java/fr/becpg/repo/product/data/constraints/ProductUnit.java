@@ -55,10 +55,18 @@ public enum ProductUnit {
 	}
 	
 
-	public static Double kgToLbs(Double kgValue) {
+	public static Double kgToLb(Double kgValue) {
 		if(kgValue !=null) {
 			return kgValue * (1/ProductUnit.lb.getUnitFactor());
 		}
+		return null;
+	}
+	
+
+	public static Double lbToOz(Double lbValue) {
+		if(lbValue!=null) {
+			return lbValue * 16d;
+		}	
 		return null;
 	}
 	
@@ -102,6 +110,7 @@ public enum ProductUnit {
 				return P;
 			}
 	}
+
 
 
 	
