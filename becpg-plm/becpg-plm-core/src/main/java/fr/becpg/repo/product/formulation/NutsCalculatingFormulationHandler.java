@@ -16,7 +16,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.GS1Model;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.data.EffectiveFilters;
@@ -139,69 +138,76 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 
 			if (formulatedProduct.getNutList() != null) {
 
+				calculateNutListDataItem(formulatedProduct, false, hasCompo);
 				computeFormulatedList(formulatedProduct, formulatedProduct.getNutList(), PLMModel.PROP_NUT_FORMULA,
 						"message.formulate.nutList.error");
-
-				formulatedProduct.getNutList().forEach(n -> {
-					if (n.getNut() != null) {
-						
-						NutDataItem nut = (NutDataItem) alfrescoRepository.findOne(n.getNut());
-												
-						n.setGroup(nut.getNutGroup());
-						n.setUnit(calculateUnit(formulatedProduct.getUnit(), nut.getNutUnit()));
-						
-						if (n.getLossPerc() != null) {
-							if (n.getValue() != null) {
-								n.setValue((n.getValue() * (100 - n.getLossPerc())) / 100);
-							}
-							if (n.getMini() != null) {
-								n.setMini((n.getMini() * (100 - n.getLossPerc())) / 100);
-							}
-							if (n.getMaxi() != null) {
-								n.setMaxi((n.getMaxi() * (100 - n.getLossPerc())) / 100);
-							}
-						}
-
-						if ((formulatedProduct.getServingSize() != null) && (n.getValue() != null)) {
-							Double valuePerserving = (n.getValue() * formulatedProduct.getServingSize()) / 100;
-							n.setValuePerServing(valuePerserving);
-							Double gda = nut.getNutGDA();
-							if ((gda != null) && (gda != 0d)) {
-								n.setGdaPerc((100 * n.getValuePerServing()) / gda);
-							}
-							Double ul = nut.getNutUL();
-							if (ul != null) {
-								if (valuePerserving > ul) {
-									String message = I18NUtil.getMessage(MESSAGE_MAXIMAL_DAILY_VALUE,
-											nut.getCharactName());
-
-									formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message,
-											n.getNut(), new ArrayList<NodeRef>(), RequirementDataType.Specification));
-								}
-							}
-						} else {
-							n.setValuePerServing(null);
-							n.setGdaPerc(null);
-						}
-
-						if (isCharactFormulated(n) && hasCompo) {
-							if (n.getManualValue() == null) {
-								n.setMethod(NUT_FORMULATED);
-							}
-						}
-						
-						NutrientFormulationHelper.extractRoundedValue(nut.getNutCode(),n);
-						
-						if (transientFormulation) {
-							n.setTransient(true);
-						}
-					}
-				});
+				calculateNutListDataItem(formulatedProduct, true, hasCompo);
 
 				checkRequirementsOfFormulatedProduct(formulatedProduct);
 			}
 		} 
 		return true;
+	}
+	
+	private void calculateNutListDataItem(ProductData formulatedProduct, boolean onlyFormulaNutrient, boolean hasCompo){
+		formulatedProduct.getNutList().forEach(n -> {
+			if (n.getNut() != null) {
+				NutDataItem nut = (NutDataItem) alfrescoRepository.findOne(n.getNut());
+				
+				if((onlyFormulaNutrient && nut.getNutFormula() != null && nut.getNutFormula() != "") 
+						|| (!onlyFormulaNutrient && (nut.getNutFormula() == null || nut.getNutFormula() == ""))){
+					n.setGroup(nut.getNutGroup());
+					n.setUnit(calculateUnit(formulatedProduct.getUnit(), nut.getNutUnit()));
+					
+					if (n.getLossPerc() != null) {
+						if (n.getValue() != null) {
+							n.setValue((n.getValue() * (100 - n.getLossPerc())) / 100);
+						}
+						if (n.getMini() != null) {
+							n.setMini((n.getMini() * (100 - n.getLossPerc())) / 100);
+						}
+						if (n.getMaxi() != null) {
+							n.setMaxi((n.getMaxi() * (100 - n.getLossPerc())) / 100);
+						}
+					}
+
+					if ((formulatedProduct.getServingSize() != null) && (n.getValue() != null)) {
+						Double valuePerserving = (n.getValue() * formulatedProduct.getServingSize()) / 100;
+						n.setValuePerServing(valuePerserving);
+						Double gda = nut.getNutGDA();
+						if ((gda != null) && (gda != 0d)) {
+							n.setGdaPerc((100 * n.getValuePerServing()) / gda);
+						}
+						Double ul = nut.getNutUL();
+						if (ul != null) {
+							if (valuePerserving > ul) {
+								String message = I18NUtil.getMessage(MESSAGE_MAXIMAL_DAILY_VALUE,
+										nut.getCharactName());
+
+								formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message,
+										n.getNut(), new ArrayList<NodeRef>(), RequirementDataType.Specification));
+							}
+						}
+					} else {
+						n.setValuePerServing(null);
+						n.setGdaPerc(null);
+					}
+
+					if (isCharactFormulated(n) && hasCompo) {
+						if (n.getManualValue() == null) {
+							n.setMethod(NUT_FORMULATED);
+						}
+					}
+					
+					NutrientFormulationHelper.extractRoundedValue(nut.getNutCode(),n);
+					
+					if (transientFormulation) {
+						n.setTransient(true);
+					}
+				}
+			}
+		});
+		
 	}
 	
 	private List<ReqCtrlListDataItem> visitPart(ProductData partProduct, List<NutListDataItem> nutList, List<NutListDataItem> retainNodes,
