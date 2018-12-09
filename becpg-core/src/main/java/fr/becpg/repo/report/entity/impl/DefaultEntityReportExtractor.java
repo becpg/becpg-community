@@ -456,8 +456,8 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	}
 
 	protected void addDataListState(Element xmlNode, NodeRef listNodeRef) {
-		if ((listNodeRef != null) && nodeService.exists(listNodeRef)) {
-			if (xmlNode.valueOf("@" + BeCPGModel.PROP_ENTITYLIST_STATE.getLocalName()).isEmpty()) {
+		if (xmlNode.attributeValue(BeCPGModel.PROP_ENTITYLIST_STATE.getLocalName()) == null) {
+			if (listNodeRef != null && nodeService.exists(listNodeRef)) {
 				Serializable state = nodeService.getProperty(listNodeRef, BeCPGModel.PROP_ENTITYLIST_STATE);
 				if (state != null) {
 					xmlNode.addAttribute(BeCPGModel.PROP_ENTITYLIST_STATE.getLocalName(), (String) state);
