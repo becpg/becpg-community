@@ -33,6 +33,7 @@ public class NutDataItem extends BeCPGDataObject {
 	
 	private String nutFormula;
 
+	private String nutColor;
 	
 	@AlfProp
 	@AlfQname(qname="gs1:nutrientTypeCode")
@@ -116,6 +117,16 @@ public class NutDataItem extends BeCPGDataObject {
 	public void setNutFormula(String nutFormula) {
 		this.nutFormula = nutFormula;
 	}
+	
+	@AlfProp
+	@AlfQname(qname="bcpg:color")
+	public String getNutColor() {
+		return nutColor;
+	}
+
+	public void setNutColor(String nutColor) {
+		this.nutColor = nutColor;
+	}
 
 	@Override
 	public int hashCode() {
@@ -123,6 +134,7 @@ public class NutDataItem extends BeCPGDataObject {
 		int result = super.hashCode();
 		result = prime * result + ((charactName == null) ? 0 : charactName.hashCode());
 		result = prime * result + ((nutCode == null) ? 0 : nutCode.hashCode());
+		result = prime * result + ((nutColor == null) ? 0 : nutColor.hashCode());
 		result = prime * result + ((nutFormula == null) ? 0 : nutFormula.hashCode());
 		result = prime * result + ((nutGDA == null) ? 0 : nutGDA.hashCode());
 		result = prime * result + ((nutGroup == null) ? 0 : nutGroup.hashCode());
@@ -150,6 +162,11 @@ public class NutDataItem extends BeCPGDataObject {
 			if (other.nutCode != null)
 				return false;
 		} else if (!nutCode.equals(other.nutCode))
+			return false;
+		if (nutColor == null) {
+			if (other.nutColor != null)
+				return false;
+		} else if (!nutColor.equals(other.nutColor))
 			return false;
 		if (nutFormula == null) {
 			if (other.nutFormula != null)
@@ -187,7 +204,7 @@ public class NutDataItem extends BeCPGDataObject {
 	@Override
 	public String toString() {
 		return "NutDataItem [nutCode=" + nutCode + ", charactName=" + charactName + ", nutGroup=" + nutGroup + ", nutType=" + nutType + ", nutUnit="
-				+ nutUnit + ", nutGDA=" + nutGDA + ", nutUL=" + nutUL + ", nutFormula=" + nutFormula + "]";
+				+ nutUnit + ", nutGDA=" + nutGDA + ", nutUL=" + nutUL + ", nutFormula=" + nutFormula + ", nutColor=" + nutColor + "]";
 	}
 }
 	

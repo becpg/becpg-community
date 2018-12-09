@@ -30,7 +30,6 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
-import fr.becpg.model.GS1Model;
 import fr.becpg.model.MPMModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
@@ -60,6 +59,7 @@ import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.MicrobioListDataItem;
+import fr.becpg.repo.product.data.productList.NutDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.OrganoListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
@@ -84,7 +84,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	protected static final List<QName> DATALIST_SPECIFIC_EXTRACTOR = Arrays.asList(PLMModel.TYPE_COMPOLIST, PLMModel.TYPE_PACKAGINGLIST,
 			MPMModel.TYPE_PROCESSLIST, PLMModel.TYPE_MICROBIOLIST, PLMModel.TYPE_INGLABELINGLIST, PLMModel.TYPE_NUTLIST, PLMModel.TYPE_ORGANOLIST,
-			PLMModel.TYPE_INGLIST, PLMModel.TYPE_FORBIDDENINGLIST, PLMModel.TYPE_LABELINGRULELIST, PLMModel.TYPE_REQCTRLLIST, PLMModel.TYPE_LABELCLAIMLIST);
+			PLMModel.TYPE_INGLIST, PLMModel.TYPE_FORBIDDENINGLIST, PLMModel.TYPE_LABELINGRULELIST, PLMModel.TYPE_REQCTRLLIST, PLMModel.TYPE_LABELCLAIMLIST,
+			PLMModel.TYPE_ALLERGENLIST);
 
 	private static final Log logger = LogFactory.getLog(ProductReportExtractorPlugin.class);
 
@@ -204,24 +205,16 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 						if ((dataListItems != null) && !dataListItems.isEmpty()) {
 							if (isExtractedProduct || context.prefsContains("componentDatalistsToExtract", componentDatalistsToExtract,
 									dataListQName.toPrefixString(namespaceService))) {
+								
 								Element dataListElt = dataListsElt.addElement(dataListQName.getLocalName() + "s");
+								addDataListState(dataListElt, listNodeRef);
 	
 								for (BeCPGDataObject dataListItem : dataListItems) {
-	
-									addDataListState(dataListElt, dataListItem.getParentNodeRef());
 									Element nodeElt = dataListElt.addElement(dataListQName.getLocalName());
 	
 									if (dataListItem instanceof CompositionDataItem) {
 										CompositionDataItem compositionDataItem = (CompositionDataItem) dataListItem;
 										loadProductData(compositionDataItem.getComponent(), nodeElt, context, null);
-									}
-	
-									if (dataListItem instanceof AllergenListDataItem) {
-										String allergenType = (String) nodeService.getProperty(((AllergenListDataItem) dataListItem).getAllergen(),
-												PLMModel.PROP_ALLERGEN_TYPE);
-										if (allergenType != null) {
-											nodeElt.addAttribute("allergenType", allergenType);
-										}
 									}
 	
 									loadDataListItemAttributes(dataListItem, nodeElt, context);
@@ -289,13 +282,13 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				}
 
 				if ((microbioList != null) && !microbioList.isEmpty()) {
-					Element microbioListElt = dataListsElt.addElement(PLMModel.TYPE_MICROBIOLIST.getLocalName() + "s");
+					Element microbioListsElt = dataListsElt.addElement(PLMModel.TYPE_MICROBIOLIST.getLocalName() + "s");
+					addDataListState(microbioListsElt, microbioList.get(0).getParentNodeRef());
 					if (productMicrobioCriteriaNodeRef != null) {
-						loadNodeAttributes(productMicrobioCriteriaNodeRef, microbioListElt, false, context);
+						loadNodeAttributes(productMicrobioCriteriaNodeRef, microbioListsElt, false, context);
 					}
 					for (MicrobioListDataItem dataItem : microbioList) {
-						Element nodeElt = microbioListElt.addElement(PLMModel.TYPE_MICROBIOLIST.getLocalName());
-						addDataListState(microbioListElt, dataItem.getParentNodeRef());
+						Element nodeElt = microbioListsElt.addElement(PLMModel.TYPE_MICROBIOLIST.getLocalName());
 						loadDataListItemAttributes(dataItem, nodeElt, context);
 					}
 				}
@@ -304,78 +297,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			if (isExtractedProduct || context.prefsContains("componentDatalistsToExtract", componentDatalistsToExtract,
 					PLMModel.TYPE_ALLERGENLIST.toPrefixString(namespaceService))) {
 
-				// allergen
-				Element allergenListElt = (Element) dataListsElt.selectSingleNode(PLMModel.TYPE_ALLERGENLIST.getLocalName() + "s");
-				if (allergenListElt != null) {
-
-					List<AllergenListDataItem> allergenList = (List<AllergenListDataItem>) datalists.get(PLMModel.TYPE_ALLERGENLIST);
-					String volAllergens = "";
-					String inVolAllergens = "";
-					String inVolAllergensProcess = "";
-					String inVolAllergensRawMaterial = "";
-
-					for (AllergenListDataItem dataItem : allergenList) {
-
-						addDataListState(allergenListElt, dataItem.getParentNodeRef());
-
-						// #1815: takes in account major
-						String allergenType = (String) nodeService.getProperty(dataItem.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE);
-						if ((allergenType != null) && allergenType.equals("Major") && !isAllergenDisableForLocal(dataItem.getAllergen())) {
-							String allergen = (String) nodeService.getProperty(dataItem.getAllergen(), BeCPGModel.PROP_LEGAL_NAME);
-
-							if ((allergen == null) || allergen.isEmpty()) {
-								allergen = (String) nodeService.getProperty(dataItem.getAllergen(), BeCPGModel.PROP_CHARACT_NAME);
-							}
-
-							if (allergen == null) {
-								allergen = "###";
-							}
-
-							// concat allergens
-							if (dataItem.getVoluntary()) {
-								if (volAllergens.isEmpty()) {
-									volAllergens = allergen;
-								} else {
-									volAllergens += RepoConsts.LABEL_SEPARATOR + allergen;
-								}
-							} else if (dataItem.getInVoluntary()) {
-								if (inVolAllergens.isEmpty()) {
-									inVolAllergens = allergen;
-								} else {
-									inVolAllergens += RepoConsts.LABEL_SEPARATOR + allergen;
-								}
-								boolean presentInRawMaterial = false;
-								boolean presentInProcess = false;
-								for (NodeRef inVoluntarySource : dataItem.getInVoluntarySources()) {
-									QName inVoluntarySourceType = nodeService.getType(inVoluntarySource);
-
-									if (!presentInRawMaterial && PLMModel.TYPE_RAWMATERIAL.equals(inVoluntarySourceType)) {
-										if (inVolAllergensRawMaterial.isEmpty()) {
-											inVolAllergensRawMaterial = allergen;
-										} else {
-											inVolAllergensRawMaterial += RepoConsts.LABEL_SEPARATOR + allergen;
-										}
-										presentInRawMaterial = true;
-									} else if (!presentInProcess && PLMModel.TYPE_RESOURCEPRODUCT.equals(inVoluntarySourceType)) {
-										if (inVolAllergensProcess.isEmpty()) {
-											inVolAllergensProcess = allergen;
-										} else {
-											inVolAllergensProcess += RepoConsts.LABEL_SEPARATOR + allergen;
-										}
-										presentInProcess = true;
-									}
-								}
-
-							}
-						}
-					}
-
-					allergenListElt.addAttribute(PLMModel.PROP_ALLERGENLIST_VOLUNTARY.getLocalName(), volAllergens);
-					allergenListElt.addAttribute(PLMModel.PROP_ALLERGENLIST_INVOLUNTARY.getLocalName(), inVolAllergens);
-					allergenListElt.addAttribute(ATTR_ALLERGENLIST_INVOLUNTARY_FROM_PROCESS, inVolAllergensProcess);
-					allergenListElt.addAttribute(ATTR_ALLERGENLIST_INVOLUNTARY_FROM_RAW_MATERIAL, inVolAllergensRawMaterial);
-
-				}
+				loadAllergenLists(productData, dataListsElt, context);
 			}
 
 			if (isExtractedProduct) {
@@ -412,12 +334,11 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			if (isExtractedProduct || context.prefsContains("componentDatalistsToExtract", componentDatalistsToExtract,
 					PLMModel.TYPE_INGLABELINGLIST.toPrefixString(namespaceService))) {
 				// IngLabelingList
-				if (productData.getLabelingListView().getIngLabelingList() != null) {
+				if (productData.getLabelingListView().getIngLabelingList() != null && !productData.getLabelingListView().getIngLabelingList().isEmpty()) {
 					Element ingListElt = dataListsElt.addElement(PLMModel.TYPE_INGLABELINGLIST.getLocalName() + "s");
-
+					addDataListState(ingListElt, productData.getLabelingListView().getIngLabelingList().get(0).getParentNodeRef());
 					for (IngLabelingListDataItem dataItem : productData.getLabelingListView().getIngLabelingList()) {
 
-						addDataListState(ingListElt, dataItem.getParentNodeRef());
 						MLText labelingText = dataItem.getValue();
 						MLText manualLabelingText = dataItem.getManualValue();
 
@@ -476,7 +397,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	}
 
-	private boolean isAllergenDisableForLocal(NodeRef allergen) {
+	private boolean isAllergenDisabledForLocal(NodeRef allergen) {
 		if (mlNodeService.hasAspect(allergen, ReportModel.ASPECT_REPORT_LOCALES)) {
 			List<String> langs = (List<String>) nodeService.getProperty(allergen, ReportModel.PROP_REPORT_LOCALES);
 			if ((langs != null) && !langs.isEmpty()) {
@@ -490,10 +411,10 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		// compoList
 		if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 			Element compoListElt = dataListsElt.addElement(PLMModel.TYPE_COMPOLIST.getLocalName() + "s");
-
+			addDataListState(compoListElt, productData.getCompoList().get(0).getParentNodeRef());
+			
 			for (CompoListDataItem dataItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 				if (dataItem.getProduct() != null) {
-					addDataListState(compoListElt, dataItem.getParentNodeRef());
 
 					ProductData subProductData = (ProductData) alfrescoRepository.findOne(dataItem.getProduct());
 
@@ -515,10 +436,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	private void loadProcessList(ProductData productData, Element dataListsElt, DefaultExtractorContext context, boolean isExtractedProduct) {
 		if (productData.hasProcessListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 			Element processListElt = dataListsElt.addElement(MPMModel.TYPE_PROCESSLIST.getLocalName() + "s");
-
+			addDataListState(processListElt, productData.getProcessList().get(0).getParentNodeRef());
+			
 			for (ProcessListDataItem dataItem : productData.getProcessList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-
-				addDataListState(processListElt, dataItem.getParentNodeRef());
 
 				Double qty = dataItem.getQty() != null ? dataItem.getQty() : 0d;
 
@@ -580,6 +500,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		if (productData.hasPackagingListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 
 			Element packagingListElt = dataListsElt.addElement(PLMModel.TYPE_PACKAGINGLIST.getLocalName() + "s");
+			addDataListState(packagingListElt, productData.getPackagingList().get(0).getParentNodeRef());
 
 			BigDecimal netWeightPrimary = new BigDecimal(
 					FormulationHelper.getNetWeight(productData.getNodeRef(), nodeService, FormulationHelper.DEFAULT_NET_WEIGHT).toString());
@@ -639,7 +560,6 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			VariantPackagingData defaultVariantPackagingData = packagingData.getVariants().get(defaultVariantNodeRef);
 			if (productData.hasPackagingListEl()) {
 				for (PackagingListDataItem dataItem : productData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-					addDataListState(packagingListElt, dataItem.getParentNodeRef());
 					loadPackagingItem(1d, 0d, dataItem, packagingListElt, defaultVariantNodeRef, defaultVariantPackagingData, context, 1);
 				}
 			}
@@ -910,7 +830,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 			Element dataListsElt = partElt.addElement(TAG_DATALISTS);
 			Element resourceListsElt = dataListsElt.addElement(MPMModel.TYPE_RESOURCEPARAMLIST.getLocalName() + "s");
-
+			addDataListState(resourceListsElt, productData.getResourceParamList().get(0).getParentNodeRef());
+			
 			for (ResourceParamListItem resourceParamListItem : productData.getResourceParamList()) {
 
 				Element ressourceListElt = resourceListsElt.addElement(MPMModel.TYPE_RESOURCEPARAMLIST.getLocalName());
@@ -926,43 +847,40 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		if ((productData.getNutList() != null) && !productData.getNutList().isEmpty()) {
 
 			Element nutListsElt = dataListsElt.addElement(PLMModel.TYPE_NUTLIST.getLocalName() + "s");
-
+			addDataListState(nutListsElt, productData.getNutList().get(0).getParentNodeRef());
+			
 			for (NutListDataItem dataListItem : productData.getNutList()) {
 
-				addDataListState(nutListsElt, dataListItem.getParentNodeRef());
 				if (dataListItem.getNut() != null) {
 
+					NutDataItem nut = (NutDataItem) alfrescoRepository.findOne(dataListItem.getNut());
 					Element nutListElt = nutListsElt.addElement(PLMModel.TYPE_NUTLIST.getLocalName());
 
 					loadDataListItemAttributes(dataListItem, nutListElt, context);
 
-					String value = nutListElt.valueOf("@" + PLMModel.PROP_NUTLIST_VALUE.getLocalName());
+					String value = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_VALUE.getLocalName());
 					if ((value == null) || value.isEmpty()) {
-						value = nutListElt.valueOf("@" + PLMModel.PROP_NUTLIST_FORMULATED_VALUE.getLocalName());
+						value = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_FORMULATED_VALUE.getLocalName());
 						nutListElt.addAttribute(PLMModel.PROP_NUTLIST_VALUE.getLocalName(), value);
 					}
 					
 					if(dataListItem.getErrorLog() != null && dataListItem.getErrorLog() != ""){
 						nutListElt.addAttribute(PLMModel.PROP_NUTLIST_FORMULA_ERROR.getLocalName(), "Error");
 					}
-					nutListElt.addAttribute(NutrientFormulationHelper.ATTR_NUT_CODE,(String)nodeService.getProperty(dataListItem.getNut(),GS1Model.PROP_NUTRIENT_TYPE_CODE) );
-					nutListElt.addAttribute(BeCPGModel.PROP_COLOR.getLocalName(),(String)nodeService.getProperty(dataListItem.getNut(),BeCPGModel.PROP_COLOR) );
+					nutListElt.addAttribute(NutrientFormulationHelper.ATTR_NUT_CODE, nut.getNutCode());
+					nutListElt.addAttribute(BeCPGModel.PROP_COLOR.getLocalName(),nut.getNutColor() );
 					
 					NutrientFormulationHelper.extractXMLAttribute(nutListElt , dataListItem.getRoundedValue(), I18NUtil.getLocale());
 					
 					
 					if(showDeprecated) {
 						
-						addCDATA(nutListElt, PLMModel.PROP_NUTGDA,
-								nodeService.getProperty(dataListItem.getNut(), PLMModel.PROP_NUTGDA) != null
-										? ((Double) nodeService.getProperty(dataListItem.getNut(), PLMModel.PROP_NUTGDA)).toString()
-										: "",
-								null);
+						addCDATA(nutListElt, PLMModel.PROP_NUTGDA, nut.getNutGDA() != null ? nut.getNutGDA().toString() : "", null);
 						
-						String nut = nutListElt.valueOf("@" + PLMModel.ASSOC_NUTLIST_NUT.getLocalName());
-						if ((nut != null) && !nut.isEmpty()) {
+						String assocNut = nutListElt.attributeValue(PLMModel.ASSOC_NUTLIST_NUT.getLocalName());
+						if ((assocNut != null) && !assocNut.isEmpty()) {
 	
-							nutListsElt.addAttribute(generateKeyAttribute(nut), value != null ? value : "");
+							nutListsElt.addAttribute(generateKeyAttribute(assocNut), value != null ? value : "");
 	
 						} else {
 							logger.warn("Nut is null for " + dataListItem.getNut());
@@ -976,10 +894,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	private void loadOrganoLists(ProductData productData, Element dataListsElt, DefaultExtractorContext context) {
 		if ((productData.getOrganoList() != null) && !productData.getOrganoList().isEmpty()) {
 			Element organoListsElt = dataListsElt.addElement(PLMModel.TYPE_ORGANOLIST.getLocalName() + "s");
-
+			addDataListState(organoListsElt, productData.getOrganoList().get(0).getParentNodeRef());
+			
 			for (OrganoListDataItem dataListItem : productData.getOrganoList()) {
-
-				addDataListState(organoListsElt, dataListItem.getParentNodeRef());
 				Element organoListElt = organoListsElt.addElement(PLMModel.TYPE_ORGANOLIST.getLocalName());
 				loadDataListItemAttributes(dataListItem, organoListElt, context);
 			}
@@ -989,10 +906,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	private void loadLabelCLaimLists(ProductData productData, Element dataListsElt, DefaultExtractorContext context) {
 		if ((productData.getLabelClaimList() != null) && !productData.getLabelClaimList().isEmpty()) {
 			Element lcListsElt = dataListsElt.addElement(PLMModel.TYPE_LABELCLAIMLIST.getLocalName() + "s");
+			addDataListState(lcListsElt, productData.getLabelClaimList().get(0).getParentNodeRef());
 
 			for (LabelClaimListDataItem dataListItem : productData.getLabelClaimList()) {
-
-				addDataListState(lcListsElt, dataListItem.getParentNodeRef());
 				Element lcListElt = lcListsElt.addElement(PLMModel.TYPE_LABELCLAIMLIST.getLocalName());
 				loadDataListItemAttributes(dataListItem, lcListElt, context);
 				
@@ -1011,13 +927,99 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			}
 		}
 	}
+	
+	private void loadAllergenLists(ProductData productData, Element dataListsElt, DefaultExtractorContext context) {
+		if ((productData.getAllergenList() != null) && !productData.getAllergenList().isEmpty()) {
+			Element allergenListsElt = dataListsElt.addElement(PLMModel.TYPE_ALLERGENLIST.getLocalName() + "s");
+			addDataListState(allergenListsElt, productData.getAllergenList().get(0).getParentNodeRef());
+			
+			String volAllergens = "";
+			String inVolAllergens = "";
+			String inVolAllergensProcess = "";
+			String inVolAllergensRawMaterial = "";
+
+			for (AllergenListDataItem dataListItem : productData.getAllergenList()) {
+				Element allergenListElt = allergenListsElt.addElement(PLMModel.TYPE_ALLERGENLIST.getLocalName());
+				loadDataListItemAttributes(dataListItem, allergenListElt, context);
+				
+				String allergenType = (String) nodeService.getProperty(dataListItem.getAllergen(),
+						PLMModel.PROP_ALLERGEN_TYPE);
+				boolean isDisable = isAllergenDisabledForLocal(dataListItem.getAllergen());
+				String displayMode = "";
+				
+				if(!isDisable){
+					displayMode = "O";
+				
+					if (allergenType != null) {
+						allergenListElt.addAttribute("allergenType", allergenType);
+						if(allergenType.equals("Major")){
+							
+							displayMode = "M";
+							String allergen = (String) nodeService.getProperty(dataListItem.getAllergen(), BeCPGModel.PROP_LEGAL_NAME);
+	
+							if ((allergen == null) || allergen.isEmpty()) {
+								allergen = (String) nodeService.getProperty(dataListItem.getAllergen(), BeCPGModel.PROP_CHARACT_NAME);
+							}
+	
+							if (allergen == null) {
+								allergen = "###";
+							}
+	
+							// concat allergens
+							if (dataListItem.getVoluntary()) {
+								if (volAllergens.isEmpty()) {
+									volAllergens = allergen;
+								} else {
+									volAllergens += RepoConsts.LABEL_SEPARATOR + allergen;
+								}
+							} else if (dataListItem.getInVoluntary()) {
+								if (inVolAllergens.isEmpty()) {
+									inVolAllergens = allergen;
+								} else {
+									inVolAllergens += RepoConsts.LABEL_SEPARATOR + allergen;
+								}
+								boolean presentInRawMaterial = false;
+								boolean presentInProcess = false;
+								for (NodeRef inVoluntarySource : dataListItem.getInVoluntarySources()) {
+									QName inVoluntarySourceType = nodeService.getType(inVoluntarySource);
+	
+									if (!presentInRawMaterial && PLMModel.TYPE_RAWMATERIAL.equals(inVoluntarySourceType)) {
+										if (inVolAllergensRawMaterial.isEmpty()) {
+											inVolAllergensRawMaterial = allergen;
+										} else {
+											inVolAllergensRawMaterial += RepoConsts.LABEL_SEPARATOR + allergen;
+										}
+										presentInRawMaterial = true;
+									} else if (!presentInProcess && PLMModel.TYPE_RESOURCEPRODUCT.equals(inVoluntarySourceType)) {
+										if (inVolAllergensProcess.isEmpty()) {
+											inVolAllergensProcess = allergen;
+										} else {
+											inVolAllergensProcess += RepoConsts.LABEL_SEPARATOR + allergen;
+										}
+										presentInProcess = true;
+									}
+								}
+	
+							}
+						}
+					}
+				}
+				allergenListElt.addAttribute("regulDisplayMode", displayMode);
+			}
+			
+			allergenListsElt.addAttribute(PLMModel.PROP_ALLERGENLIST_VOLUNTARY.getLocalName(), volAllergens);
+			allergenListsElt.addAttribute(PLMModel.PROP_ALLERGENLIST_INVOLUNTARY.getLocalName(), inVolAllergens);
+			allergenListsElt.addAttribute(ATTR_ALLERGENLIST_INVOLUNTARY_FROM_PROCESS, inVolAllergensProcess);
+			allergenListsElt.addAttribute(ATTR_ALLERGENLIST_INVOLUNTARY_FROM_RAW_MATERIAL, inVolAllergensRawMaterial);
+		}
+	}
 
 	private void loadIngLists(ProductData productData, Element dataListsElt, DefaultExtractorContext context) {
 		if ((productData.getIngList() != null) && !productData.getIngList().isEmpty()) {
 			Element ingListsElt = dataListsElt.addElement(PLMModel.TYPE_INGLIST.getLocalName() + "s");
-
+			addDataListState(ingListsElt, productData.getIngList().get(0).getParentNodeRef());
+			
 			for (IngListDataItem dataListItem : productData.getIngList()) {
-				addDataListState(ingListsElt, dataListItem.getParentNodeRef());
 				if (dataListItem.getIng() != null) {
 					Element ingListElt = ingListsElt.addElement(PLMModel.TYPE_INGLIST.getLocalName());
 					String ingCEECode = (String) nodeService.getProperty(dataListItem.getIng(), PLMModel.PROP_ING_CEECODE);
