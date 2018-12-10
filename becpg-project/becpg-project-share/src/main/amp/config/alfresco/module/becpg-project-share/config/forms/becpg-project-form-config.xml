@@ -381,6 +381,9 @@
 					<field id="pjt:projectCompletionDate"
 						 read-only="true"  label="hidden" />	 
 						 
+					<field id="pjt:completionPercent"
+						 read-only="true"  label="hidden" />	 
+						 
 					<field id="dataList_pjt:taskList"
 						label-id="becpg.forms.field.projects.datagrid.taskList.label" />
 					<field id="dataList_bcpg:activityList"

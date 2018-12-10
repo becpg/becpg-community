@@ -199,8 +199,10 @@ public class EntityReportServiceImpl implements EntityReportService {
 						Locale currentLocal = I18NUtil.getLocale();
 						Locale currentContentLocal = I18NUtil.getContentLocale();
 						try {
-							I18NUtil.setLocale(Locale.getDefault());
-							I18NUtil.setContentLocale(null);
+							Locale defaultLocale = MLTextHelper.getNearestLocale(Locale.getDefault());
+							
+							I18NUtil.setLocale(defaultLocale);
+							I18NUtil.setContentLocale(defaultLocale);
 
 							ruleService.disableRules();
 							policyBehaviourFilter.disableBehaviour(entityNodeRef);
@@ -226,7 +228,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 								Map<String, String> preferences = getMergedPreferences(tplsNodeRef);
 								
-								Locale defaultLocale = MLTextHelper.getNearestLocale(Locale.getDefault());
+							
 
 								List<Locale> entityReportLocales = getEntityReportLocales(entityNodeRef);
 								
@@ -241,6 +243,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 								for (Locale locale : entityReportLocales) {
 
 									I18NUtil.setLocale(locale);
+									I18NUtil.setContentLocale(locale);
 
 									EntityReportData reportData = retrieveExtractor(entityNodeRef).extract(entityNodeRef, preferences);
 
@@ -308,6 +311,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 																	writer.getContentOutputStream(), params);
 
 															I18NUtil.setLocale(Locale.getDefault());
+															I18NUtil.setContentLocale(Locale.getDefault());
 
 															nodeService.setProperty(documentNodeRef, ContentModel.PROP_MODIFIED, generatedDate);
 
@@ -398,8 +402,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 			}
 		}
 
-		reportKindValue = getRerportKindValue(reportKindCode);
-		reportKindNoneValue = getRerportKindValue("None");
+		reportKindValue = getReportKindValue(reportKindCode);
+		reportKindNoneValue = getReportKindValue("None");
 		// Filter XML report by reportKind
 		String[] entityParams = null;
 		for (Iterator<Element> entityIterator = dataXml.elementIterator(); entityIterator.hasNext();) {
@@ -468,7 +472,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	}
 
-	private String getRerportKindValue(String reportKindCode) {
+	private String getReportKindValue(String reportKindCode) {
 
 		String reportKindValue = "";
 
@@ -740,6 +744,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 										"Generate report: " + entityNodeRef + " - " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
 							}
 
+						
+							
 							Date generatedDate = Calendar.getInstance().getTime();
 
 							StopWatch watch = null;
@@ -755,6 +761,9 @@ public class EntityReportServiceImpl implements EntityReportService {
 							}
 
 							Locale locale = MLTextHelper.getNearestLocale(Locale.getDefault());
+							
+							I18NUtil.setLocale(locale);
+							I18NUtil.setContentLocale(locale);
 
 							Boolean isDefault = (Boolean) this.nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_IS_DEFAULT);
 
@@ -766,6 +775,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 								if ((langs != null) && !langs.isEmpty()) {
 									locale = MLTextHelper.parseLocale(langs.get(0));
 									I18NUtil.setLocale(locale);
+									I18NUtil.setContentLocale(locale);
 								}
 							}
 
@@ -815,6 +825,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 											writer.getContentOutputStream(), params);
 
 									I18NUtil.setLocale(Locale.getDefault());
+									I18NUtil.setContentLocale(Locale.getDefault());
 
 									if (reportParameters.isEmpty()) {
 										nodeService.removeProperty(documentNodeRef, ReportModel.PROP_REPORT_TEXT_PARAMETERS);
@@ -867,6 +878,10 @@ public class EntityReportServiceImpl implements EntityReportService {
 		Locale currentContentLocal = I18NUtil.getContentLocale();
 		try {
 
+
+			I18NUtil.setLocale(locale);
+			I18NUtil.setContentLocale(locale);
+			
 			EntityReportData reportData = retrieveExtractor(entityNodeRef).extract(entityNodeRef, reportParameters.getPreferences());
 
 			if (reportData.getXmlDataSource() == null) {
@@ -877,6 +892,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 			try {
 
+				
 				Map<String, Object> params = new HashMap<>();
 
 				params.put(ReportParams.PARAM_IMAGES, reportData.getDataObjects());
@@ -921,7 +937,6 @@ public class EntityReportServiceImpl implements EntityReportService {
 			List<String> langs = (List<String>) nodeService.getProperty(documentNodeRef, ReportModel.PROP_REPORT_LOCALES);
 			if ((langs != null) && !langs.isEmpty()) {
 				locale = MLTextHelper.parseLocale(langs.get(0));
-				I18NUtil.setLocale(locale);
 			}
 		}
 		
@@ -938,7 +953,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 		Locale currentContentLocal = I18NUtil.getContentLocale();
 		try {
 			I18NUtil.setLocale(Locale.getDefault());
-			I18NUtil.setContentLocale(null);
+			I18NUtil.setContentLocale(Locale.getDefault());
 			if (logger.isDebugEnabled()) {
 				watch = new StopWatch();
 				watch.start();
