@@ -47,9 +47,9 @@ public enum ProductUnit {
 		} else if (this.equals(ProductUnit.mg)) {
 			return 1000000d;
 		} else if (this.equals(ProductUnit.lb)) {
-			return 1/0.4536d;
+			return 2.204622622d;
 		} else if (this.equals(ProductUnit.oz)) {
-			return 1/0.02835d;
+			return 35.27396195d;
 		}
 		return 1d;
 	}
@@ -57,7 +57,7 @@ public enum ProductUnit {
 
 	public static Double kgToLb(Double kgValue) {
 		if(kgValue !=null) {
-			return kgValue * (1/ProductUnit.lb.getUnitFactor());
+			return kgValue * 0.45359237d;
 		}
 		return null;
 	}
