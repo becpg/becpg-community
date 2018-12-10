@@ -13,6 +13,7 @@ import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
 import org.alfresco.repo.domain.node.NodeDAO;
 import org.alfresco.repo.domain.patch.PatchDAO;
 import org.alfresco.repo.domain.qname.QNameDAO;
+import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -37,6 +38,7 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 	private QNameDAO qnameDAO;
 	private BehaviourFilter policyBehaviourFilter;
 	private RuleService ruleService;
+	private IntegrityChecker integrityChecker;
 
 	private final int batchThreads = 3;
 	private final int batchSize = 40;
@@ -50,7 +52,7 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 		nutrientTypeCode.put("Sodium, Na", "NA");
 		nutrientTypeCode.put("Magnesium, Mg", "MG");
 		nutrientTypeCode.put("Phosphorus, P", "P");
-		nutrientTypeCode.put("Potassium, k", "K");
+		nutrientTypeCode.put("Potassium, K", "K");
 		nutrientTypeCode.put("Calcium, Ca", "CA");
 		nutrientTypeCode.put("Manganese", "MN");
 		nutrientTypeCode.put("Iron, Fe", "FE");
@@ -63,9 +65,10 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 		nutrientTypeCode.put("Raw proteins (N x 6.25)", "PROCNT");
 		nutrientTypeCode.put("Carbohydrate, by difference", "CHOAVL");
 		nutrientTypeCode.put("Carbohydrate, by difference (with fiber)", "CHO-");
-		nutrientTypeCode.put("Sugars total", "SUGAR");
+		nutrientTypeCode.put("Total Carbohydrate", "CHO-");
+		nutrientTypeCode.put("Sugars, total", "SUGAR");
 		nutrientTypeCode.put("Starch", "STARCH");
-		nutrientTypeCode.put("Polyols total", "POLYL");
+		nutrientTypeCode.put("Polyols, total", "POLYL");
 		nutrientTypeCode.put("Fiber, total dietary", "FIBTG");
 		nutrientTypeCode.put("NSP Fiber", "PSACNS");
 		nutrientTypeCode.put("Total lipid (fat)", "FAT");
@@ -77,7 +80,8 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 		nutrientTypeCode.put("Vitamin A", "VITA-");
 		nutrientTypeCode.put("Vitamin A, IU", "VITAA");
 		nutrientTypeCode.put("Vitamin A retinol equivalents", "VITA");
-		nutrientTypeCode.put("VITAMIN D", "VITD-");
+		nutrientTypeCode.put("Vitamin A, RAE", "VITA");
+		nutrientTypeCode.put("Vitamin D", "VITD-");
 		nutrientTypeCode.put("Vitamin D (D2 + D3)", "VITDEQ");
 		nutrientTypeCode.put("Vitamin E (alpha-tocopherol)", "TOCPHA");
 		nutrientTypeCode.put("Vitamin E", "VITE-");
@@ -91,10 +95,10 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 		nutrientTypeCode.put("Vitamin B-6", "VITB6-");
 		nutrientTypeCode.put("Vitamin B7 (Biotin)", "BIOT");
 		nutrientTypeCode.put("Vitamin B-12", "VITB12");
-		nutrientTypeCode.put("Food folate", "FOL");
-		nutrientTypeCode.put("Folate DFE", "FOLDFE");
-		nutrientTypeCode.put("Folic acid", "FOLAC");
-		nutrientTypeCode.put("Folate natural", "FOLFD");
+		nutrientTypeCode.put("Food Folate", "FOL");
+		nutrientTypeCode.put("Folate, DFE", "FOLDFE");
+		nutrientTypeCode.put("Folic Acid", "FOLAC");
+		nutrientTypeCode.put("Folate, natural", "FOLFD");
 		nutrientTypeCode.put("CholineTot", "CHOLN");
 		nutrientTypeCode.put("Beta-Crypt", "CRYPX");
 		nutrientTypeCode.put("Lycopene", "LYCPN");
@@ -133,9 +137,16 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 		nutrientTypeCode.put("Tryptophan", "TRP");
 		nutrientTypeCode.put("Total omega 3 fatty acids", "FAPUN3F");
 		nutrientTypeCode.put("Total trans fatty acids", "FATRN");
-		nutrientTypeCode.put("Added sugars", "SUGAD");
+		nutrientTypeCode.put("Added Sugars", "SUGAD");
 		nutrientTypeCode.put("Soluble fiber", "FIBSOL");
 		nutrientTypeCode.put("Insoluble fiber", "FIBINS");
+		nutrientTypeCode.put("Alpha_Carot", "CARTA");
+		nutrientTypeCode.put("Beta-carotene", "CARTB");
+		nutrientTypeCode.put("Beta_Crypt", "CRYPX");
+		nutrientTypeCode.put("Fatty acids, total trans", "FATRN");
+		nutrientTypeCode.put("Fatty acids, omega 3", "FAPUN3F");
+		nutrientTypeCode.put("Fatty acids, omega 6", "FAPUN6F");
+		
 
 		nutrientTypeCode.put("Eau", "WATER");
 		nutrientTypeCode.put("Sodium", "NA");
@@ -230,6 +241,10 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 	public void setRuleService(RuleService ruleService) {
 		this.ruleService = ruleService;
 	}
+	
+	public void setIntegrityChecker(IntegrityChecker integrityChecker) {
+		this.integrityChecker = integrityChecker;
+	}
 
 	@Override
 	protected String applyInternal() throws Exception {
@@ -313,7 +328,12 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 			}
 
 		};
-		batchProcessor.process(worker, true);
+		integrityChecker.setEnabled(false);
+		try {
+			batchProcessor.process(worker, true);
+		} finally {
+			integrityChecker.setEnabled(true);
+		}
 		return I18NUtil.getMessage(MSG_SUCCESS);
 
 	}
