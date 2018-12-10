@@ -814,6 +814,7 @@
         <property name="fixesFromSchema" value="0"/>
          <property name="fixesToSchema" value="10057" />
         <property name="targetSchema" value="10175"/>
+        <property name="applyToTenants"><value>true</value></property>
         <property name="patchDAO">
             <ref bean="patchDAO"/>
         </property>
@@ -827,6 +828,7 @@
             <ref bean="policyBehaviourFilter"/>
         </property>
         <property name="ruleService" ref="ruleService"/>
+        <property name="integrityChecker" ref="integrityChecker"/>
     </bean>
 	
 </beans>
