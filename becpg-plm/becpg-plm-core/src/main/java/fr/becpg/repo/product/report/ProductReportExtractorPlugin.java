@@ -213,8 +213,6 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	
 								for (BeCPGDataObject dataListItem : dataListItems) {
-(??)	
-(??)									addDataListState(dataListElt, dataListItem.getParentNodeRef());
 									Element nodeElt = dataListElt.addElement(dataListQName.getLocalName());
 
 	
