@@ -53,6 +53,26 @@
 					<groupId>commons-logging</groupId>
 					<artifactId>commons-logging</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.poi</groupId>
+					<artifactId>poi-ooxml</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>fr.becpg.birt</groupId>
+					<artifactId>birt-controls-lib</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>fr.becpg.birt</groupId>
+					<artifactId>birt-controls-lib-ui</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.poi</groupId>
+					<artifactId>poi-ooxml-schemas</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 
