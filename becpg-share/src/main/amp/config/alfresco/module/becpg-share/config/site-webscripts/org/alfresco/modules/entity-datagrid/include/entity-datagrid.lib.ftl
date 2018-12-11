@@ -43,7 +43,7 @@
 
 
 <#macro dataGridToolbar toolbarId filter=false >
-	<#if filter?? >
+	<#if filter?? && filter >
          <@dataGridToolbarFilter  toolbarId=toolbarId />
     </#if>
     <@dataGridToolbarSelectedItem toolbarId=toolbarId />

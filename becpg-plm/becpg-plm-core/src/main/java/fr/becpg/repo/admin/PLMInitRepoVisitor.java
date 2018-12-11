@@ -1091,7 +1091,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			List<NodeRef> resources = new ArrayList<>();
 			for (String element : productReportResource) {
-				resources.add(reportTplService.createTplRessource(productReportTplsNodeRef, element, true));
+				resources.add(reportTplService.createTplRessource(productReportTplsNodeRef, element, false));
 			}
 
 			
