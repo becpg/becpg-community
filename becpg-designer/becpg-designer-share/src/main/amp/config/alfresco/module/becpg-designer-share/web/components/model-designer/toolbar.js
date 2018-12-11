@@ -156,10 +156,10 @@
 			                    	 var templateUrl = Alfresco.constants.PROXY_URI + "becpg/designer/model/unpublish?nodeRef="
 				                     + me.tree.modelNodeRef;
 			                    	 
-			  		               var publishName = this.tree.root.children[0].label;
+			  		               var publishName = me.tree.root.children[0].label;
 					               
 					               var popup = Alfresco.util.PopupManager.displayMessage({
-				                        text : this.msg("message.unpublishing", publishName),
+				                        text : me.msg("message.unpublishing", publishName),
 				                        spanClass : "wait",
 				                        displayTime : 0
 				                     });

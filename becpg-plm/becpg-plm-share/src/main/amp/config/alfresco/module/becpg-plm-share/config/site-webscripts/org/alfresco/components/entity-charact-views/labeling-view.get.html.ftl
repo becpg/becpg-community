@@ -32,7 +32,7 @@
 			<![endif]-->
 			<input id="yui-history-field" type="hidden" ></input>
 			<div id="toolbar-contribs-compoList-${el}" style="display:none;">
-				<@dataGridToolbar filter="true" toolbarId="ingLabelingList-${el}" />
+				<@dataGridToolbar filter=true toolbarId="ingLabelingList-${el}" />
 			</div>		
 			<div id="main-view-${el}" class="labeling-view">
 					<@dataGridDashlet  dashletName="ingLabelingListDashlet" dashletId="ingLabelingList-${el}"  hideFilter="true" hideTitle="true" hideToolbar="true"  />
