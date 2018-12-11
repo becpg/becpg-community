@@ -154,7 +154,7 @@
        },
        fn : function(instance) {
 
-          window.location.href = Alfresco.util.siteURL("edit-metadata?nodeRef="+this.entity.nodeRef);
+          window.location.href = Alfresco.util.siteURL("edit-metadata?nodeRef="+this.entity.nodeRef+ (this.options.siteId ? "&siteId=" + this.options.siteId : ""));
 
        }
 

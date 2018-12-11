@@ -79,7 +79,7 @@
                              * @property site
                              * @type string
                              */
-                            site: null,
+                            siteId: null,
 
                             /**
                              * The form id for the form to use.
@@ -128,6 +128,7 @@
                                   itemKind: "node",
                                   itemId: this.options.nodeRef,
                                   formId: this.options.formId,
+                                  siteId: this.options.siteId,
                                   mode: "view"
                                },
                                successCallback:
