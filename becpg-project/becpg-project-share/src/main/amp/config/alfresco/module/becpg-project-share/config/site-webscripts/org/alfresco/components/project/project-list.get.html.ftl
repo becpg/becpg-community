@@ -54,7 +54,7 @@
 		<![endif]-->
 		<input id="yui-history-field" type="hidden" />
 		<div id="toolbar-contribs-${el}" style="display:none;">
-			<@dataGridToolbar  toolbarId=el />
+			<@dataGridToolbar  toolbarId=el filter=true />
 		</div>
 	
 		

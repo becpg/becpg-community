@@ -49,7 +49,7 @@
 			<input id="yui-history-field" type="hidden" ></input>
 			<div id="toolbar-contribs-compoList-${el}" style="display:none;">
 				<div class="effectivityCheckbox" id="${el}-effectivityCheckbox"></div>
-				<@dataGridToolbar filter="true" toolbarId="compoList-${el}" />
+				<@dataGridToolbar filter=true toolbarId="compoList-${el}" />
 			</div>
 			<div id="main-view-${el}" class="formulation-view">
 					<div id="full-screen-form" class=" hidden"></div>
