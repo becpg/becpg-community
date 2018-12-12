@@ -24,7 +24,6 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationService;
-import fr.becpg.repo.helper.JsonScoreHelper;
 import fr.becpg.repo.repository.L2CacheSupport;
 
 /**
