@@ -17,26 +17,35 @@
  ******************************************************************************/
 package fr.becpg.test.repo.product.formulation;
 
+import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.NamespaceService;
+import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.MPMModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.ClientData;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
+import fr.becpg.repo.product.data.ResourceProductData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
@@ -44,6 +53,7 @@ import fr.becpg.repo.product.data.constraints.TareUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
+import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.formulation.CostsCalculatingFormulationHandler;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
@@ -427,6 +437,8 @@ public class FormulationCostsTest extends AbstractFinishedProductTest {
 							return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef();
 						}
 					}, false, true);
+			
+			
 
 			final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper()
 					.doInTransaction(new RetryingTransactionCallback<NodeRef>() {
@@ -474,6 +486,7 @@ public class FormulationCostsTest extends AbstractFinishedProductTest {
 							assertEquals(20d, costListDataItem.getValuePerProduct());
 							checks++;
 						}
+						
 
 					}
 					assertEquals(1, checks);
@@ -560,6 +573,124 @@ public class FormulationCostsTest extends AbstractFinishedProductTest {
 			}
 		}, false, true);
 
+	}
+	
+	@Test
+	public void testFormulationCostsWithLandLbUnits() throws Exception {
+		
+		try {
+
+			final NodeRef varnishNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				
+				// varnish packList
+				RawMaterialData varnish = new RawMaterialData();
+				varnish.setName("varnish Packaging keepProductUnit cost");
+				varnish.setUnit(ProductUnit.L);
+				
+				// varnish costList
+				List<CostListDataItem> costList = new ArrayList<>();
+				costList.add(new CostListDataItem(null, 5d, null, null, pkgCost1, null));
+				varnish.setCostList(costList);
+				
+				return alfrescoRepository.create(getTestFolderNodeRef(), varnish).getNodeRef();
+				
+			}, false, true);
+
+			final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				/*-- Create process steps, resources --*/
+				Map<QName, Serializable> properties = new HashMap<>();
+				properties.put(BeCPGModel.PROP_CHARACT_NAME, "Etape emb");			 					 				
+				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
+				NodeRef embStepNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
+				
+				ResourceProductData emballageResourceData = new ResourceProductData();
+				emballageResourceData.setName("Emballage");
+				List<CostListDataItem> costList = new LinkedList<>();
+				costList.add(new CostListDataItem(null, 5d, "€/h", null, cost3, false));
+				emballageResourceData.setCostList(costList);
+				NodeRef emballageResourceNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), emballageResourceData).getNodeRef();
+				
+				/*-- Create finished product --*/
+				FinishedProductData finishedProduct = new FinishedProductData();
+				finishedProduct.setName("Produit fini 1");
+				finishedProduct.setUnit(ProductUnit.lb);
+				
+				// compoList
+				List<CompoListDataItem> compoList = new ArrayList<>();
+				compoList.add(new CompoListDataItem(null, null, null, 0.5d, ProductUnit.lb, 0d, DeclarationType.Detail, rawMaterial8NodeRef));//5€/lb -> 2.5
+				compoList.add(new CompoListDataItem(null, null, null, 0.5d, ProductUnit.lb, 0d, DeclarationType.Detail, rawMaterial3NodeRef));//1€/kg -> 0.226796185
+				finishedProduct.getCompoListView().setCompoList(compoList);
+				
+				// packList
+				List<PackagingListDataItem> packList = new ArrayList<>();
+				packList.add(
+						new PackagingListDataItem(null, 2d, ProductUnit.L, PackagingLevel.Primary, true, varnishNodeRef)); // 5€/L -> 10€/lb
+				finishedProduct.getPackagingListView().setPackagingList(packList);
+				
+				// processList 
+				List<ProcessListDataItem> processList = new ArrayList<>();
+				processList.add(new ProcessListDataItem(null, 1d, 1d, 100d, ProductUnit.lb, null, null, embStepNodeRef, null, emballageResourceNodeRef)); //
+				finishedProduct.getProcessListView().setProcessList(processList);
+				
+				// costList
+				costList = new LinkedList<>();
+				costList.add(new CostListDataItem(null, null, null, null, cost1, null));
+				costList.add(new CostListDataItem(null, null, null, null, pkgCost1, null));
+				costList.add(new CostListDataItem(null, null, null, null, cost3, null));
+				finishedProduct.setCostList(costList);
+				
+				
+				
+				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+				
+			}, false, true);
+
+
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+					productService.formulate(finishedProductNodeRef);
+					ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+
+					ProductData varnishProduct = alfrescoRepository.findOne(varnishNodeRef);
+
+					// costs test
+					assertEquals("€/L", varnishProduct.getCostList().get(0).getUnit());
+
+					DecimalFormat df = new DecimalFormat("0.####");
+					int checks = 0;
+					assertNotNull("CostList is null", formulatedProduct.getCostList());
+					for (CostListDataItem costListDataItem : formulatedProduct.getCostList()) {
+						String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: "
+								+ costListDataItem.getValue() + " - previous value: " + costListDataItem.getPreviousValue() + " - future value: "
+								+ costListDataItem.getFutureValue() + " - unit: " + costListDataItem.getUnit();
+						logger.info(trace);
+						if (costListDataItem.getCost().equals(cost1) && costListDataItem.getComponentNodeRef() == null) {
+							assertEquals("€/lb", costListDataItem.getUnit());
+							assertEquals(df.format(2.726796185d), df.format(costListDataItem.getValue()));
+							assertEquals(df.format(2.726796185d), df.format(costListDataItem.getValuePerProduct()));
+						}
+						if (costListDataItem.getCost().equals(pkgCost1) && costListDataItem.getComponentNodeRef() == null) {
+							assertEquals("€/lb", costListDataItem.getUnit());
+							assertEquals(df.format(10d), df.format(costListDataItem.getValue()));
+							assertEquals(df.format(10d), df.format(costListDataItem.getValuePerProduct()));
+						}
+						if (costListDataItem.getCost().equals(cost3) && costListDataItem.getComponentNodeRef() == null) {
+							assertEquals("€/lb", costListDataItem.getUnit());
+							assertEquals(df.format(0.5d), df.format(costListDataItem.getValue()));
+							assertEquals(df.format(0.5d), df.format(costListDataItem.getValuePerProduct()));
+						}
+						
+						checks++;
+
+					}
+					assertEquals(3, checks);
+
+					return null;
+
+				} , false, true);
+			
+		} finally {
+		}
 	}
 
 }
