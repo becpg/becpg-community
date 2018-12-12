@@ -335,6 +335,12 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		condition.setParameterValue(IsSubTypeEvaluator.PARAM_TYPE, BeCPGModel.TYPE_ENTITY_V2);
 		condition.setInvertCondition(false);
 		compositeAction.addActionCondition(condition);
+		
+		boolean isDisabled = false;
+		List<SiteInfo> sites = siteService.listSites(null, null);
+		if(sites!=null && sites.size()>2) {
+			isDisabled = true;
+		}
 
 		// rule
 		Rule rule = new Rule();
@@ -344,7 +350,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		rule.applyToChildren(true);
 		rule.setTitle(CLASSIFY_RULE_TITLE);
 		rule.setExecuteAsynchronously(false);
-		rule.setRuleDisabled(true);
+		rule.setRuleDisabled(isDisabled);
 		rule.setDescription("Classify entity by state");
 
 		ruleService.saveRule(companyHome, rule);

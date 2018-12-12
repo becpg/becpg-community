@@ -275,6 +275,8 @@
 		<dependencies>
 			<css src="/modules/entity-version/new-version.css" />
 			<js src="/modules/entity-version/new-version.js" />
+			<css src="/modules/entity-process/entity-process.css" />
+			<js src="/modules/entity-process/entity-process.js" />
 			<js src="/components/documentlibrary/becpg/core-docLibAction.js" />
 		</dependencies>
 	</config>

@@ -18,14 +18,12 @@
  ******************************************************************************/
 package fr.becpg.repo.web.scripts.entity;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -47,14 +45,11 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.extensions.webscripts.Cache;
 import org.springframework.extensions.webscripts.DeclarativeWebScript;
-import org.springframework.extensions.webscripts.ScriptContent;
 import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptRequest;
-import org.springframework.extensions.webscripts.WebScriptResponse;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
