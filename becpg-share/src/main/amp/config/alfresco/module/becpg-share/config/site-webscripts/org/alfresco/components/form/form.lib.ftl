@@ -240,7 +240,7 @@
 
 <#macro renderLocaleImage field textarea=false htmlEditor=false>
   <#if !isHiddenField(field) && field.dataType == "mltext" && form.mode == "edit" && form.arguments.itemKind == "node">
-    
+   
     <#if userContentLocale??>
 	    <#if userContentLocale?contains("_") >
 	      <#assign localeshort = userContentLocale?substring(3,5)?lower_case >
