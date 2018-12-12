@@ -109,6 +109,8 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 	protected NodeRef rawMaterial6NodeRef;
 
 	protected NodeRef rawMaterial7NodeRef;
+	
+	protected NodeRef rawMaterial8NodeRef;
 
 	protected NodeRef localSF11NodeRef;
 
@@ -126,6 +128,9 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 	protected NodeRef packagingMaterial1NodeRef;
 	protected NodeRef packagingMaterial2NodeRef;
 	protected NodeRef packagingMaterial3NodeRef;
+	protected NodeRef packagingMaterial4NodeRef;
+	protected NodeRef packagingMaterial5NodeRef;
+	protected NodeRef packagingMaterial6NodeRef;
 
 	protected NodeRef packagingKit1NodeRef;
 
@@ -753,6 +758,19 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			rawMaterial5.setNutList(nutList);
 			rawMaterial5.setIngList(ingList);
 			rawMaterial5NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial5).getNodeRef();
+			
+			/*-- Raw material 8 --*/
+			RawMaterialData rawMaterial8 = new RawMaterialData();
+			rawMaterial8.setName("Raw material 8");
+			legalName = new MLText("Legal Raw material 8");
+			legalName.addValue(Locale.FRENCH, "Legal Raw material 5");
+			rawMaterial8.setLegalName(legalName);
+			rawMaterial8.setUnit(ProductUnit.lb);
+			// costList
+			costList = new ArrayList<>();
+			costList.add(new CostListDataItem(null, 5d, "€/lb", null, cost1, false));
+			rawMaterial8.setCostList(costList);
+			rawMaterial8NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial8).getNodeRef();
 
 			/*-- Raw material 6 --*/
 			RawMaterialData rawMaterial6 = new RawMaterialData();
@@ -811,7 +829,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			ingList.add(new IngListDataItem(null, ingList.get(0), 30d, null, null, null, false, false, false, false, ing4, false));
 			rawMaterial7.setIngList(ingList);
 			rawMaterial7NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial7).getNodeRef();
-
+			
 			/** Water **/
 			RawMaterialData waterRawMaterial = new RawMaterialData();
 			waterRawMaterial.setName("Water");
@@ -1018,7 +1036,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			packagingMaterial2.setCostList(costList);
 			packagingMaterial2NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial2).getNodeRef();
 
-			/*-- Packaging material 1 --*/
+			/*-- Packaging material 3 --*/
 			PackagingMaterialData packagingMaterial3 = new PackagingMaterialData();
 			packagingMaterial3.setName("Packaging material 3");
 			packagingMaterial3.setLegalName("Legal Packaging material 3");
@@ -1028,6 +1046,31 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			costList.add(new CostListDataItem(null, 2d, "€/P", null, pkgCost2, false));
 			packagingMaterial3.setCostList(costList);
 			packagingMaterial3NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial3).getNodeRef();
+			
+			/*-- Packaging material 4 --*/
+			PackagingMaterialData packagingMaterial4 = new PackagingMaterialData();
+			packagingMaterial4.setName("Packaging material 4");
+			packagingMaterial4.setLegalName("Legal Packaging material 4");
+			packagingMaterial4.setTare(0.110231d); // 50g
+			packagingMaterial4.setTareUnit(TareUnit.lb);
+			packagingMaterial4NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial4).getNodeRef();
+			
+			/*-- Packaging material 5 --*/
+			PackagingMaterialData packagingMaterial5 = new PackagingMaterialData();
+			packagingMaterial5.setName("Packaging material 5");
+			packagingMaterial5.setLegalName("Legal Packaging material 5");
+			packagingMaterial5.setTare(1.410958478d); // 40g
+			packagingMaterial5.setTareUnit(TareUnit.oz);
+			packagingMaterial5NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial5).getNodeRef();
+			
+			PackagingMaterialData packagingMaterial6 = new PackagingMaterialData();
+			packagingMaterial6.setName("Packaging material 6");
+			packagingMaterial6.setLegalName("Legal Packaging material 6");
+			packagingMaterial6.setUnit(ProductUnit.mL);
+			packagingMaterial4.setTare(1d); // 50g
+			packagingMaterial4.setTareUnit(TareUnit.g);
+			packagingMaterial6NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial6).getNodeRef();
+			
 
 			PackagingKitData packagingKit1 = new PackagingKitData();
 			packagingKit1.setName("Packaging kit 1");

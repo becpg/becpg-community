@@ -26,15 +26,10 @@ public enum TareUnit {
 	 * @return
 	 */
 	public Double getUnitFactor() {
-		if (this.equals(g)) {
-			return 1000d;
-		}
-		if (this.equals(lb)) {
-			return 1 / 0.4536d;
-		} else if (this.equals(oz)) {
-			return 1 / 0.02835d;
-		}
-		return 1d;
+		
+		return ProductUnit.valueOf(this.toString()).getUnitFactor();
+		
+	
 	}
 
 }
