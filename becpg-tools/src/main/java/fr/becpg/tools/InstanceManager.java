@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2018 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2018 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG.
  *  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
@@ -45,9 +45,9 @@ import fr.becpg.tools.jdbc.JdbcConnectionManager;
 import fr.becpg.tools.jdbc.JdbcUtils;
 
 /**
- * 
+ *
  * @author matthieu
- * 
+ *
  */
 public class InstanceManager {
 
@@ -74,7 +74,8 @@ public class InstanceManager {
 		private InstanceState instanceState;
 		private Date lastImport;
 
-		public Instance(Long id, Long batchId, String tenantUser, String tenantPassword, String tenantName, String instanceName, String instanceUrl, Date lastImport, InstanceState instanceState) {
+		public Instance(Long id, Long batchId, String tenantUser, String tenantPassword, String tenantName, String instanceName, String instanceUrl,
+				Date lastImport, InstanceState instanceState) {
 			super();
 			this.id = id;
 			this.batchId = batchId;
@@ -137,27 +138,28 @@ public class InstanceManager {
 
 		@Override
 		public String toString() {
-			return "Instance [id=" + id + ", batchId=" + batchId + ", tenantUser=" + tenantUser + ", tenantPassword=" + tenantPassword + ", tenantName=" + tenantName + ", instanceName="
-					+ instanceName + ", instanceUrl=" + instanceUrl + ", instanceSate=" + instanceState + ", lastImport=" + lastImport + "]";
+			return "Instance [id=" + id + ", batchId=" + batchId + ", tenantUser=" + tenantUser + ", tenantPassword=" + tenantPassword
+					+ ", tenantName=" + tenantName + ", instanceName=" + instanceName + ", instanceUrl=" + instanceUrl + ", instanceSate="
+					+ instanceState + ", lastImport=" + lastImport + "]";
 		}
 
 		public HttpClientContext createHttpContext() throws MalformedURLException {
 			HttpClientContext httpContext = HttpClientContext.create();
 
 			URL url = new URL(instanceUrl);
-			
+
 			HttpHost targetHost = new HttpHost(url.getHost(), url.getPort(), url.getProtocol());
-			
+
 			AuthCache authCache = new BasicAuthCache();
 			BasicScheme basicAuth = new BasicScheme();
 			authCache.put(targetHost, basicAuth);
-			
+
 			UsernamePasswordCredentials creds = new UsernamePasswordCredentials(getTenantUser(), getTenantPassword());
 			CredentialsProvider credsProvider = new BasicCredentialsProvider();
 			credsProvider.setCredentials(new AuthScope(url.getHost(), url.getPort()), creds);
 			httpContext.setCredentialsProvider(credsProvider);
 			httpContext.setAuthCache(authCache);
-			
+
 			return httpContext;
 
 		}
@@ -166,42 +168,39 @@ public class InstanceManager {
 
 	public List<Instance> getAllInstances() throws SQLException {
 		return jdbcConnectionManager.list(
-				"SELECT `id`,`batch_id` ,`tenant_username`,`tenant_password`,`tenant_name`,`instance_name`,`instance_url`,`last_imported`,`instance_state`  FROM `becpg_instance`",
-				new JdbcUtils.RowMapper<Instance>() {
-					public Instance mapRow(ResultSet rs, int line) throws SQLException {
-						return new Instance(rs.getLong(1), rs.getLong(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getTimestamp(8), InstanceState
-								.valueOf(rs.getString(9)));
-
-					}
-				}, new Object[] {});
+				"SELECT `id`,`batch_id` ,`tenant_username`,`tenant_password`,`tenant_name`,`instance_name`,`instance_url`,`last_imported`,`instance_state`  FROM `becpg_instance` WHERE `instance_url` IS NOT NULL",
+				(rs, line) -> new Instance(rs.getLong(1), rs.getLong(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6),
+						rs.getString(7), rs.getTimestamp(8), InstanceState.valueOf(rs.getString(9))),
+				new Object[] {});
 
 	}
-	
+
 	enum BatchState {
-		INPROGRESS,DONE
+		INPROGRESS, DONE
 	}
 
 	public Instance getOrCreateBatch(Connection connection, Instance instance) throws SQLException {
-		
-		 Long batchId = null;
-		
-		try ( PreparedStatement pst = connection.prepareStatement("select id from `becpg_batch` where `batch_state`=?", Statement.RETURN_GENERATED_KEYS)) {
+
+		Long batchId = null;
+
+		try (PreparedStatement pst = connection.prepareStatement("select id from `becpg_batch` where `batch_state`=?",
+				Statement.RETURN_GENERATED_KEYS)) {
 			pst.setString(1, BatchState.INPROGRESS.toString());
 			try (ResultSet rs = pst.executeQuery()) {
 				if (rs != null) {
-					if(rs.next()) {
+					if (rs.next()) {
 						batchId = rs.getLong(1);
 					}
 				}
 			}
 		}
-		
-		if(batchId ==null) {
+
+		if (batchId == null) {
 			batchId = JdbcUtils.update(connection, "INSERT INTO `becpg_batch`(`id`) VALUES(NULL)", new Object[] {});
 		}
-		
+
 		instance.setBatchId(batchId);
-		
+
 		return instance;
 
 	}
@@ -210,28 +209,39 @@ public class InstanceManager {
 
 		instance.setLastImport(new Date());
 
-		JdbcUtils.update(connection, "UPDATE `becpg_batch` SET `batch_state`=? WHERE `id`=?", new Object[] { BatchState.DONE.toString(), instance.getBatchId()});
-		
-		JdbcUtils.update(connection, "UPDATE `becpg_instance` SET `last_imported`=?, `batch_id`=? WHERE `id`=? ", new Object[] { instance.getLastImport(), instance.getBatchId(), instance.getId() });
+		JdbcUtils.update(connection, "UPDATE `becpg_batch` SET `batch_state`=? WHERE `id`=?",
+				new Object[] { BatchState.DONE.toString(), instance.getBatchId() });
+
+		JdbcUtils.update(connection, "UPDATE `becpg_instance` SET `last_imported`=?, `batch_id`=? WHERE `id`=? ",
+				new Object[] { instance.getLastImport(), instance.getBatchId(), instance.getId() });
 	}
 
 	public void updateInstanceState(Connection connection, Instance instance) throws SQLException {
-		JdbcUtils.update(connection, "UPDATE `becpg_instance` SET `instance_state`=?  WHERE `id`=? ", new Object[] { instance.getInstanceState().toString(), instance.getId() });
+		JdbcUtils.update(connection, "UPDATE `becpg_instance` SET `instance_state`=?  WHERE `id`=? ",
+				new Object[] { instance.getInstanceState().toString(), instance.getId() });
+	}
+
+	
+	public void updateInstanceStatistics(Connection connection, Instance instance, String schema, String os, Long diskFree, Integer nbProcs,
+			Date dbBackupDate, Long dbBackupSize, Date olapBackupDate, Long olapBackupSize) throws SQLException {
+
+		JdbcUtils.update(connection,
+				"UPDATE `becpg_instance` SET " + "`instance_schema`=? " + "`instance_os`=? " + "`instance_disk_free`=? " + "`instance_procs`=?"
+						+ "`db_last_backup_date`=?" + "`db_last_backup_size`=?" + "`olap_last_backup_date`=?" + "`olap_last_backup_size`=?"
+						+ "WHERE `id`=? ",
+				new Object[] { instance.getInstanceState().toString(), schema, os, diskFree, nbProcs, dbBackupDate, dbBackupSize, olapBackupDate,
+						olapBackupSize, instance.getId() });
 	}
 
 	public Instance findInstanceByUserName(String username) throws SQLException {
 		Matcher ma = UserNameHelper.userNamePattern.matcher(username);
 		if (ma.matches()) {
-			List<Instance> instances = jdbcConnectionManager
-					.list("SELECT `id`,`batch_id` ,`tenant_username`,`tenant_password`,`tenant_name`,`instance_name`,`instance_url`,`last_imported`,`instance_state`  FROM `becpg_instance` WHERE instance_name = ? and tenant_name = ?",
-							new JdbcUtils.RowMapper<Instance>() {
-								public Instance mapRow(ResultSet rs, int line) throws SQLException {
-									return new Instance(rs.getLong(1), rs.getLong(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getTimestamp(8),
-											InstanceState.valueOf(rs.getString(9)));
-
-								}
-							}, new Object[] { ma.group(1), ma.group(3) });
-			if (instances != null && instances.size() == 1) {
+			List<Instance> instances = jdbcConnectionManager.list(
+					"SELECT `id`,`batch_id` ,`tenant_username`,`tenant_password`,`tenant_name`,`instance_name`,`instance_url`,`last_imported`,`instance_state`  FROM `becpg_instance` WHERE instance_name = ? and tenant_name = ?",
+					(rs, line) -> new Instance(rs.getLong(1), rs.getLong(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6),
+							rs.getString(7), rs.getTimestamp(8), InstanceState.valueOf(rs.getString(9))),
+					new Object[] { ma.group(1), ma.group(3) });
+			if ((instances != null) && (instances.size() == 1)) {
 				return instances.get(0);
 			}
 			throw new IllegalStateException("Instance/Tenant not found : (" + ma.group(1) + "," + ma.group(3) + ")");
