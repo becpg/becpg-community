@@ -84,8 +84,12 @@ public class BeCPGLocaleResolver extends AcceptHeaderLocaleResolver {
 
 		I18NUtil.setContentLocale(locale);
 		// set locale onto Alfresco thread local
-		if (!locale.getLanguage().equals("fr")) {
-			locale = Locale.ENGLISH;
+		if (!locale.getLanguage().equals(Locale.FRENCH.getLanguage())) {
+			if(Locale.US.getCountry().equals(locale.getCountry())) {
+				locale = Locale.US;
+			} else {
+				locale = Locale.ENGLISH;
+			}
 		} else {
 			locale = Locale.FRENCH;
 		}

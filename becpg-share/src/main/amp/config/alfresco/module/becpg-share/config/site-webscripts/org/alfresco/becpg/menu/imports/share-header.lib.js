@@ -98,15 +98,15 @@ function getOrCreateBeCPGMenu() {
 		   var flag = getUserLocal(user);
 		   
 		   if(flag == null){
-			   
 			   flag = locale;
+		   }
 		   
+		   if(flag!=null){
 			   if(flag.indexOf("_")>0){
 				   flag = flag.substring(3,5).toLowerCase();
 			   } else {
 				   flag = flag.substring(0,2).toLowerCase();
 			   }
-		   
 		   }
 		   
 		   languageMenu = {
