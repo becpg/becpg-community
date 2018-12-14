@@ -24,7 +24,6 @@ import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.TareUnit;
 import fr.becpg.repo.product.data.ing.IngTypeItem;
 import fr.becpg.repo.product.data.meat.MeatContentData;
-import fr.becpg.repo.product.data.meat.MeatType;
 import fr.becpg.repo.product.data.packaging.VariantPackagingData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -640,12 +639,15 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	@AlfQname(qname = "bcpg:meatContentData")
 	@InternalField
 	public String getMeatContentData() {
-		try {
-			return MeatContentData.toJsonString(meatContentData);
-		} catch (JSONException e) {
+		if(meatContentData==null  || meatContentData.isEmpty()) {
 			return null;
+		} else {
+			try {
+				return MeatContentData.toJsonString(meatContentData);
+			} catch (JSONException e) {
+				return null;
+			}
 		}
-
 	}
 
 	public void setMeatContentData(String meatContentdata) {
