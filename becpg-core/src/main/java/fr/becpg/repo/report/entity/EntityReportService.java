@@ -34,6 +34,8 @@ public interface EntityReportService {
 	
 	NodeRef getOrRefreshReport(NodeRef entityNodeRef, NodeRef documentNodeRef);
 	
+	String getXmlReportDataSource(NodeRef entityNodeRef, Locale locale);
+
 	String getXmlReportDataSource(NodeRef entityNodeRef);
 
 	void setPermissions(NodeRef tplNodeRef, NodeRef documentNodeRef);
