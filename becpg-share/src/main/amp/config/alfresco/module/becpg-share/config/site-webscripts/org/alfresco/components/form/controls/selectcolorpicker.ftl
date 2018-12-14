@@ -19,9 +19,9 @@
    <#else>
 
       <label for="${fieldHtmlId}">${field.label?html}:<#if field.mandatory><span class="mandatory-indicator">${msg("form.required.fields.marker")}</span></#if></label>
-      <input style="width:6em!important" id="${fieldHtmlId}" name="${field.name}" type="color"
+      <input style="width:6em!important" id="${fieldHtmlId}" name="${field.name}" type="<#if field.control.params.textMode?? && field.control.params.textMode == "true">text<#else>color</#if>"
              <#if field.value?is_number>value="${field.value?c}"<#else>value="${field.value?html}"</#if>
-             <#if field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true")>disabled="true"</#if></input>
+             <#if field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true")>disabled="true"</#if> ></input>
       <span id="${fieldHtmlId}-color-button" class="select-color-picker" title="${msg("actions.select-color")}">&nbsp;</span>
   
       
