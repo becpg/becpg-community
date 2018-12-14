@@ -947,13 +947,18 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	@Override
 	public String getXmlReportDataSource(NodeRef entityNodeRef) {
+		return getXmlReportDataSource(entityNodeRef, Locale.getDefault());
+	}
+	
+	@Override
+	public String getXmlReportDataSource(NodeRef entityNodeRef, Locale locale) {
 
 		StopWatch watch = null;
 		Locale currentLocal = I18NUtil.getLocale();
-		Locale currentContentLocal = I18NUtil.getContentLocale();
+		Locale currentContentLocal = I18NUtil.getContentLocale(); 
 		try {
-			I18NUtil.setLocale(Locale.getDefault());
-			I18NUtil.setContentLocale(Locale.getDefault());
+			I18NUtil.setLocale(locale);
+			I18NUtil.setContentLocale(locale);
 			if (logger.isDebugEnabled()) {
 				watch = new StopWatch();
 				watch.start();
