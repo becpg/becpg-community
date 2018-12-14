@@ -262,7 +262,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 				simpleListDataList.forEach(newSimpleListDataItem -> {
 					if ((newSimpleListDataItem.getCharactNodeRef() != null) && isCharactFormulated(newSimpleListDataItem)) {
 
-						boolean formulateInVol =  partProduct.getUnit()!=null && partProduct.getUnit().isLiter();
+						boolean formulateInVol =  partProduct.getUnit()!=null && partProduct.getUnit().isVolume();
 						boolean forceWeight = false;
 						
 						if (newSimpleListDataItem instanceof PhysicoChemListDataItem) {

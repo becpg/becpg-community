@@ -187,7 +187,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 
 				
 				// calculate charact from qty or vol ?
-				boolean formulateInVol = productData.getUnit()!=null && productData.getUnit().isLiter();
+				boolean formulateInVol = productData.getUnit()!=null && productData.getUnit().isVolume();
 				boolean forceWeight = false;
 
 				if (simpleCharact instanceof PhysicoChemListDataItem) {

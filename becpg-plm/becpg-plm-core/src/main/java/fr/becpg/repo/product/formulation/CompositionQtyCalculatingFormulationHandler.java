@@ -65,9 +65,9 @@ public class CompositionQtyCalculatingFormulationHandler extends FormulationBase
 				qty = formulatedProduct.getQty() / unitFactor;
 			}
 
-			if (formulatedProduct.getUnit().isKg()) {
+			if (formulatedProduct.getUnit().isWeight()) {
 				formulatedProduct.setNetWeight(qty);
-			} else if (formulatedProduct.getUnit().isLiter()) {
+			} else if (formulatedProduct.getUnit().isVolume()) {
 				formulatedProduct.setNetVolume(qty);
 			}
 
@@ -144,7 +144,7 @@ public class CompositionQtyCalculatingFormulationHandler extends FormulationBase
 
 			Double unitFactor = compoListUnit.getUnitFactor();
 
-			if (compoListUnit.isKg()) {
+			if (compoListUnit.isWeight()) {
 				return qty / unitFactor;
 			} else if (compoListUnit.isP()) {
 
@@ -156,7 +156,7 @@ public class CompositionQtyCalculatingFormulationHandler extends FormulationBase
 
 				return (FormulationHelper.getNetWeight(componentProductData, FormulationHelper.DEFAULT_NET_WEIGHT) * qty) / productQty;
 
-			} else if (compoListUnit.isLiter()) {
+			} else if (compoListUnit.isVolume()) {
 
 				qty = qty / unitFactor;
 

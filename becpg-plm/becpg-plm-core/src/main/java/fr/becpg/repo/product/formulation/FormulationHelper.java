@@ -81,19 +81,21 @@ public class FormulationHelper {
 
 		Double unitFactor = 1d;
 		if (componentProductUnit != null) {
-			if ((componentProductUnit.isKg() || componentProductUnit.isLiter())) {
+			if ((componentProductUnit.isWeight() || componentProductUnit.isVolume())) {
 				if (keepProductUnit) {
 					unitFactor = componentProductUnit.getUnitFactor();
 				} else if (componentProductUnit.isLb()) {
 					unitFactor = ProductUnit.lb.getUnitFactor();
+				} else if(componentProductUnit.isGal()) {
+					unitFactor = ProductUnit.gal.getUnitFactor();
 				}
 			}
 		}
 
 		if ((compoListUnit != null) && (componentProductUnit != null)) {
-			if (componentProductUnit.isKg()) {
+			if (componentProductUnit.isWeight()) {
 				return FormulationHelper.getQtyWithLoss(qtyInKg, lossPerc) * unitFactor;
-			} else if (componentProductUnit.isLiter()) {
+			} else if (componentProductUnit.isVolume()) {
 				return FormulationHelper.getQtyWithLoss(qtyInL, lossPerc) * unitFactor;
 			} else if (componentProductUnit.isP()) {
 				if ((!compoListUnit.isP()) && (componentNetWeight != null) && (componentNetWeight != 0)) {
@@ -166,10 +168,11 @@ public class FormulationHelper {
 			qty = QTY_FOR_PIECE;
 		} else {
 			Double productQtyToTransform = FormulationHelper.QTY_FOR_PIECE;
-			if ((processListDataItem.getUnit() != null) && (processListDataItem.getUnit().isKg() || processListDataItem.getUnit().isLiter())) {
+			if ((processListDataItem.getUnit() != null) && (processListDataItem.getUnit().isWeight() || processListDataItem.getUnit().isVolume())) {
 				productQtyToTransform = processListDataItem.getQty() != null
-						? (processListDataItem.getQty() * processListDataItem.getUnit().getUnitFactor())
-						: FormulationHelper.getNetWeight(formulatedProduct, null);
+						? processListDataItem.getQty() : FormulationHelper.getNetWeight(formulatedProduct, null);
+						
+					
 			}
 
 			if (ProductUnit.Box.equals(processListDataItem.getUnit())) {
@@ -226,9 +229,9 @@ public class FormulationHelper {
 		} else {
 			if (productUnit != null) {
 				if (qty != null) {
-					if (productUnit.isKg() || productUnit.isLiter()) {
+					if (productUnit.isWeight() || productUnit.isVolume()) {
 						qty = qty / productUnit.getUnitFactor();
-						if (productUnit.isLiter()) {
+						if (productUnit.isVolume()) {
 							Double density = FormulationHelper.getDensity(nodeRef, nodeService);
 							if (density != null) {
 								qty = qty * density;
@@ -257,9 +260,9 @@ public class FormulationHelper {
 			ProductUnit productUnit = productData.getUnit();
 			if (productUnit != null) {
 				Double qty = productData.getQty();
-				if ((qty != null) && (productUnit.isKg() || productUnit.isLiter())) {
+				if ((qty != null) && (productUnit.isWeight() || productUnit.isVolume())) {
 					qty = qty / productUnit.getUnitFactor();
-					if (productUnit.isLiter()) {
+					if (productUnit.isVolume()) {
 						Double density = productData.getDensity();
 						if ((density != null)) {
 							qty = qty * density;
@@ -285,7 +288,7 @@ public class FormulationHelper {
 				return FormulationHelper.getQtyFromComposition(formulatedProduct, productUnit, defaultValue);
 			}
 
-			if (productUnit.isKg() || productUnit.isLiter()) {
+			if (productUnit.isWeight() || productUnit.isVolume()) {
 				return qty / productUnit.getUnitFactor();
 			} else if (productUnit.isP()) {
 				return FormulationHelper.getNetWeight(formulatedProduct, defaultValue);
@@ -304,7 +307,7 @@ public class FormulationHelper {
 
 	private static Double getQtyFromComposition(ProductData formulatedProduct, ProductUnit productUnit, Double defaultValue) {
 		Double qty = defaultValue;
-		if ((productUnit != null) && productUnit.isLiter()) {
+		if ((productUnit != null) && productUnit.isVolume()) {
 			if (formulatedProduct.getRecipeVolumeUsed() != null) {
 				qty = formulatedProduct.getRecipeVolumeUsed();
 			}
@@ -324,7 +327,7 @@ public class FormulationHelper {
 			return null;
 		} else {
 			ProductUnit productUnit = formulatedProduct.getUnit();
-			if ((productUnit != null) && productUnit.isLiter()) {
+			if ((productUnit != null) && productUnit.isVolume()) {
 				return qty / productUnit.getUnitFactor();
 			}
 			return null;
@@ -405,7 +408,7 @@ public class FormulationHelper {
 						productQty = 1d;
 					}
 
-				} else if (compoListUnit.isKg() || compoListUnit.isLiter()) {
+				} else if (compoListUnit.isWeight() || compoListUnit.isVolume()) {
 
 					productQty = getNetQtyInLorKg(subProduct, 1d);
 					qty = getQtyInKg(compoList);
@@ -434,7 +437,7 @@ public class FormulationHelper {
 		Double qty = FormulationHelper.getQty(packList);
 
 		if ((qty != null) && !qty.isNaN() && !qty.isInfinite()) {
-			if ((packList.getPackagingListUnit() != null) && packList.getPackagingListUnit().isKg()) {
+			if ((packList.getPackagingListUnit() != null) && packList.getPackagingListUnit().isWeight()) {
 				tare = new BigDecimal(qty);
 			} else {
 				BigDecimal t = FormulationHelper.getTareInKg(alfrescoRepository.findOne(packList.getProduct()));
@@ -445,7 +448,7 @@ public class FormulationHelper {
 		}
 		if (logger.isDebugEnabled()) {
 			logger.debug("Pack tare [" + alfrescoRepository.findOne(packList.getProduct()).getName() + "] (" + packList.getPackagingListUnit() + ")"
-					+ tare + " qty " + qty);
+					+ tare + " qty " + qty+" tareUnit "+FormulationHelper.getTareInKg(alfrescoRepository.findOne(packList.getProduct())));
 		}
 		return tare;
 	}

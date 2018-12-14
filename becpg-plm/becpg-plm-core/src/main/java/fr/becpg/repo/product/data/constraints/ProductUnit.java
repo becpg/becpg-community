@@ -11,29 +11,36 @@ package fr.becpg.repo.product.data.constraints;
  */
 public enum ProductUnit {
 
-	kg, g, mg, lb, oz , L, cL, mL, m, m2, m3, h, P, PP, Box, Perc;
+	kg, g, mg, lb, oz , L, cL, mL, fl_oz,cp,gal, inch, ft, mm, m, m2, m3, h, P, PP, Box, Perc;
+	
+	
 
 
 	public static ProductUnit getUnit(String productUnit) {
 		return ((productUnit != null) && !productUnit.isEmpty()) ? ProductUnit.valueOf(productUnit) : ProductUnit.kg;
 	}
 	
-	public  boolean isLiter() {
-		return L.equals(this) || mL.equals(this) || cL.equals(this);
+	public  boolean isVolume() {
+		return L.equals(this) || mL.equals(this) || cL.equals(this) || isGal();
 	}
 
-	public  boolean isKg() {
+	public  boolean isWeight() {
 		return kg.equals(this) || g.equals(this) || mg.equals(this) || isLb();
 	}
 
 	public  boolean isP() {
-		return P.equals(this) || m2.equals(this)|| m.equals(this);
+		return P.equals(this) || m2.equals(this)|| m.equals(this)  || inch.equals(this)|| ft.equals(this) || mm.equals(this) || m3.equals(this);
 	}
 
 
 	public boolean isLb() {
 		return lb.equals(this) || oz.equals(this);
 	}
+	
+	public boolean isGal() {
+		return fl_oz.equals(this) || cp.equals(this) || gal.equals(this);
+	}
+	
 	
    /**
     * Convert factor to Kg or L
@@ -50,6 +57,14 @@ public enum ProductUnit {
 			return 2.204622622d;
 		} else if (this.equals(ProductUnit.oz)) {
 			return 35.27396195d;
+		} else if (this.equals(ProductUnit.fl_oz)) {
+			return 33.814d;
+		} else if (this.equals(ProductUnit.cp)) {
+			return 4.16667d;
+		} else if (this.equals(ProductUnit.gal)) {
+			return 0.264172d;
+		} else if (this.equals(ProductUnit.mm)) {
+			return 1000d;
 		}
 		return 1d;
 	}
@@ -57,7 +72,29 @@ public enum ProductUnit {
 
 	public static Double kgToLb(Double kgValue) {
 		if(kgValue !=null) {
-			return kgValue * 0.45359237d;
+			return kgValue * 2.204622622d;
+		}
+		return null;
+	}
+	
+	public static Double lbToKg(Double kgValue) {
+		if(kgValue !=null) {
+			return kgValue / 2.204622622d;
+		}
+		return null;
+	}
+	
+
+	public static Double LToGal(Double value) {
+		if(value !=null) {
+			return value * 0.264172d;
+		}
+		return null;
+	}
+	
+	public static Double GalToL(Double value) {
+		if(value !=null) {
+			return value * 0.264172d;
 		}
 		return null;
 	}
@@ -78,7 +115,13 @@ public enum ProductUnit {
 			return ProductUnit.kg;
 		} else if (this.equals(ProductUnit.L) || this.equals(ProductUnit.cL) || this.equals(ProductUnit.mL)) {
 			return ProductUnit.L;
-		}
+		} if (this.equals(ProductUnit.fl_oz) || this.equals(ProductUnit.cp) || this.equals(ProductUnit.gal)) {
+			return ProductUnit.gal;
+		}  if (this.equals(ProductUnit.mm) || this.equals(ProductUnit.m) ) {
+			return ProductUnit.m;
+		}  if (this.equals(ProductUnit.inch) || this.equals(ProductUnit.ft) ) {
+			return ProductUnit.ft;
+		} 
 		return this;
 	}
 	
@@ -110,6 +153,7 @@ public enum ProductUnit {
 				return P;
 			}
 	}
+
 
 
 

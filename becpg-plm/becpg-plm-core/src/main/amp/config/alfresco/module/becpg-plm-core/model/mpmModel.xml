@@ -39,6 +39,7 @@
 					<value>kg</value>
 					<value>lb</value>
 					<value>L</value>
+					<value>gal</value>
 					<value>Box</value>
 				</list>
 			</parameter>

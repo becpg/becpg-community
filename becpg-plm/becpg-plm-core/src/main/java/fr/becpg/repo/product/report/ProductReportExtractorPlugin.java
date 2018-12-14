@@ -1287,7 +1287,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 					if (purchaseValue != null) {
 
-						if (purchaseUnit.isKg() || purchaseUnit.isLiter()) {
+						if (purchaseUnit.isWeight() || purchaseUnit.isVolume()) {
 							purchaseValue = purchaseValue / purchaseUnit.getUnitFactor();
 						} else if (purchaseUnit.isP()) {
 							purchaseValue = purchaseValue * FormulationHelper.getNetWeight(productData, 1d);
@@ -1399,7 +1399,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			// partElt.addAttribute(PLMModel.PROP_PACKAGINGLIST_QTY.getLocalName(),
 			// Double.toString(dataItem.getQty() * sfQty));
 			double qty = ProductUnit.PP.equals(dataItem.getPackagingListUnit()) ? 1 : dataItem.getQty();
-			if ((dataItem.getPackagingListUnit() != null) && dataItem.getPackagingListUnit().isKg()) {
+			if ((dataItem.getPackagingListUnit() != null) && dataItem.getPackagingListUnit().isWeight()) {
 				qty = qty / dataItem.getPackagingListUnit().getUnitFactor();
 			}
 			Double qtyForProduct = 0d;
