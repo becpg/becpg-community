@@ -169,8 +169,11 @@ public class InstanceManager {
 	public List<Instance> getAllInstances() throws SQLException {
 		return jdbcConnectionManager.list(
 				"SELECT `id`,`batch_id` ,`tenant_username`,`tenant_password`,`tenant_name`,`instance_name`,`instance_url`,`last_imported`,`instance_state`  FROM `becpg_instance` WHERE `instance_url` IS NOT NULL",
-				(rs, line) -> new Instance(rs.getLong(1), rs.getLong(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6),
-						rs.getString(7), rs.getTimestamp(8), InstanceState.valueOf(rs.getString(9))),
+				new JdbcUtils.RowMapper<Instance>() {
+					public Instance mapRow(ResultSet rs, int line) throws SQLException {
+						return  new Instance(rs.getLong(1), rs.getLong(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6),
+								rs.getString(7), rs.getTimestamp(8), InstanceState.valueOf(rs.getString(9)));
+					}},
 				new Object[] {});
 
 	}
@@ -221,25 +224,15 @@ public class InstanceManager {
 				new Object[] { instance.getInstanceState().toString(), instance.getId() });
 	}
 
-	
-	public void updateInstanceStatistics(Connection connection, Instance instance, String schema, String os, Long diskFree, Integer nbProcs,
-			Date dbBackupDate, Long dbBackupSize, Date olapBackupDate, Long olapBackupSize) throws SQLException {
-
-		JdbcUtils.update(connection,
-				"UPDATE `becpg_instance` SET " + "`instance_schema`=? " + "`instance_os`=? " + "`instance_disk_free`=? " + "`instance_procs`=?"
-						+ "`db_last_backup_date`=?" + "`db_last_backup_size`=?" + "`olap_last_backup_date`=?" + "`olap_last_backup_size`=?"
-						+ "WHERE `id`=? ",
-				new Object[] { instance.getInstanceState().toString(), schema, os, diskFree, nbProcs, dbBackupDate, dbBackupSize, olapBackupDate,
-						olapBackupSize, instance.getId() });
-	}
-
 	public Instance findInstanceByUserName(String username) throws SQLException {
 		Matcher ma = UserNameHelper.userNamePattern.matcher(username);
 		if (ma.matches()) {
 			List<Instance> instances = jdbcConnectionManager.list(
 					"SELECT `id`,`batch_id` ,`tenant_username`,`tenant_password`,`tenant_name`,`instance_name`,`instance_url`,`last_imported`,`instance_state`  FROM `becpg_instance` WHERE instance_name = ? and tenant_name = ?",
-					(rs, line) -> new Instance(rs.getLong(1), rs.getLong(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6),
-							rs.getString(7), rs.getTimestamp(8), InstanceState.valueOf(rs.getString(9))),
+					new JdbcUtils.RowMapper<Instance>() {
+						public Instance mapRow(ResultSet rs, int line) throws SQLException {
+							return new Instance(rs.getLong(1), rs.getLong(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6),
+									rs.getString(7), rs.getTimestamp(8), InstanceState.valueOf(rs.getString(9)));}},
 					new Object[] { ma.group(1), ma.group(3) });
 			if ((instances != null) && (instances.size() == 1)) {
 				return instances.get(0);
@@ -247,6 +240,36 @@ public class InstanceManager {
 			throw new IllegalStateException("Instance/Tenant not found : (" + ma.group(1) + "," + ma.group(3) + ")");
 		}
 		throw new IllegalStateException("Username : " + username + " doesn't match pattern");
+	}
+
+	public Instance findOrCreateInstanceByInstanceName(Connection connection, String name) throws SQLException {
+
+		List<Instance> instances = jdbcConnectionManager.list(
+				"SELECT `id`,`batch_id` ,`tenant_username`,`tenant_password`,`tenant_name`,`instance_name`,`instance_url`,`last_imported`,`instance_state`  FROM `becpg_instance` WHERE instance_name = ? and tenant_name = ?",
+				new JdbcUtils.RowMapper<Instance>() {
+					public Instance mapRow(ResultSet rs, int line) throws SQLException {
+						return new Instance(rs.getLong(1), rs.getLong(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6),
+								rs.getString(7), rs.getTimestamp(8), InstanceState.valueOf(rs.getString(9)));}},
+				new Object[] { name, "default" });
+		if ((instances != null) && (instances.size() == 1)) {
+			return instances.get(0);
+		}
+
+		Long instanceId = JdbcUtils.update(connection, "INSERT INTO `becpg_instance`(`instance_name`,`tenant_name`) VALUES('default',?)",
+				new Object[] { name });
+
+		return new Instance(instanceId, null, null, null, "default", name, null, null, InstanceState.DOWN);
+	}
+
+	public void updateInstanceStatistics(Connection connection, Instance instance, String schema, String os, Long diskFree, Integer nbProcs,
+			Date dbBackupDate, Long dbBackupSize, Date olapBackupDate, Long olapBackupSize) throws SQLException {
+
+		JdbcUtils.update(connection,
+				"UPDATE `becpg_instance` SET " + "`instance_schema`=? " + "`instance_os`=? " + "`instance_disk_free`=? " + "`instance_procs`=? "
+						+ "`db_last_backup_date`=? " + "`db_last_backup_size`=? " + "`olap_last_backup_date`=? " + "`olap_last_backup_size`=? "
+						+ "WHERE `id`=? ",
+						new Object[] {  schema, os, diskFree, nbProcs, dbBackupDate, dbBackupSize, olapBackupDate,
+								olapBackupSize, instance.getId() });
 	}
 
 }
