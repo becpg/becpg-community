@@ -109,13 +109,13 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 						shouldUpdate = false;
 
 						for (Map.Entry<QName, Serializable> extraProperty : entity.getExtraProperties().entrySet()) {
-							Serializable prop= nodeService.getProperty(entity.getNodeRef(), extraProperty.getKey());
-							
-							if (!((prop == null && extraProperty.getValue() == null) || (prop!=null && prop.equals(extraProperty.getValue())))) {
+							Serializable prop = nodeService.getProperty(entity.getNodeRef(), extraProperty.getKey());
+
+							if (!((prop == null && extraProperty.getValue() == null) || (prop != null && prop.equals(extraProperty.getValue())))) {
 								shouldUpdate = true;
 								if (logger.isDebugEnabled()) {
-									logger.debug("Change detected in " + extraProperty.getKey()+ " - actual: "+ prop
-									+ " - new: "+ extraProperty.getValue());
+									logger.debug("Change detected in " + extraProperty.getKey() + " - actual: " + prop + " - new: "
+											+ extraProperty.getValue());
 								}
 								break;
 							}
@@ -164,7 +164,19 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 						}
 
-						nodeService.addProperties(entity.getNodeRef(), properties);
+						Map<QName, Serializable> propToAdd = new HashMap<>();
+
+						for (Map.Entry<QName, Serializable> prop : properties.entrySet()) {
+							if (prop.getValue() == null) {
+								nodeService.removeProperty(entity.getNodeRef(), prop.getKey());
+							} else {
+								propToAdd.put(prop.getKey(), prop.getValue());
+							}
+
+						}
+
+						nodeService.addProperties(entity.getNodeRef(), propToAdd);
+
 					}
 
 					saveAssociations(entity);
