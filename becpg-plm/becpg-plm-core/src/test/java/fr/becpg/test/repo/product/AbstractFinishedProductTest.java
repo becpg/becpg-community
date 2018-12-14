@@ -1066,7 +1066,9 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			PackagingMaterialData packagingMaterial6 = new PackagingMaterialData();
 			packagingMaterial6.setName("Packaging material 6");
 			packagingMaterial6.setLegalName("Legal Packaging material 6");
-			packagingMaterial6.setUnit(ProductUnit.mL);
+			packagingMaterial6.setUnit(ProductUnit.L);
+			packagingMaterial6.setTare(1d); 
+			packagingMaterial6.setTareUnit(TareUnit.g);
 			packagingMaterial6NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial6).getNodeRef();
 			
 

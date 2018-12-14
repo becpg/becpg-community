@@ -267,8 +267,8 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 			
 			ProductUnit productUnit = subComponent.getUnit();
 			if (c != null) {
-				boolean shouldUseLiter = productUnit!=null && productUnit.isLiter();
-				boolean useLiter = c.getCompoListUnit()!=null && c.getCompoListUnit().isLiter();
+				boolean shouldUseLiter = productUnit!=null && productUnit.isVolume();
+				boolean useLiter = c.getCompoListUnit()!=null && c.getCompoListUnit().isVolume();
 				Double density = subComponent.getDensity();
 
 				if ((density == null) && ((shouldUseLiter && !useLiter) || (!shouldUseLiter && useLiter))) {
@@ -276,7 +276,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 					addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_MISSING_DENSITY, RequirementDataType.Composition);
 				}
 				Double overrunPerc = c.getOverrunPerc();
-				if ((productUnit!=null && productUnit.isLiter()) || (overrunPerc != null)) {
+				if ((productUnit!=null && productUnit.isVolume()) || (overrunPerc != null)) {
 					if ((density == null) || density.equals(0d)) {
 						addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_MISSING_DENSITY, RequirementDataType.Composition);
 					}
@@ -294,12 +294,12 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 			addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_MISSING_UNIT, RequirementDataType.Packaging);
 		} else {
 			boolean wrongUnit = false;
-			if(productUnit.isKg()) {
-				if(!(p.getPackagingListUnit()!=null && p.getPackagingListUnit().isKg())) {
+			if(productUnit.isWeight()) {
+				if(!(p.getPackagingListUnit()!=null && p.getPackagingListUnit().isWeight())) {
 					wrongUnit = true;
 				}
-			} else if(productUnit.isLiter()) {
-				if(!(p.getPackagingListUnit()!=null && p.getPackagingListUnit().isKg())) {
+			} else if(productUnit.isVolume()) {
+				if(!(p.getPackagingListUnit()!=null && p.getPackagingListUnit().isWeight())) {
 					wrongUnit = true;
 				}
 			} else {

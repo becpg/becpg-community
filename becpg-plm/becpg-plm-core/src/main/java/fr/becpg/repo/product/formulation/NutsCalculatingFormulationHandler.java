@@ -108,7 +108,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 
 							ProductData partProduct = (ProductData) alfrescoRepository.findOne(part);
 
-							Double qtyUsed = ((partProduct.getUnit() != null) && partProduct.getUnit().isLiter()) ? vol : weight;
+							Double qtyUsed = ((partProduct.getUnit() != null) && partProduct.getUnit().isVolume()) ? vol : weight;
 
 							if (qtyUsed != null) {
 								if (!(partProduct instanceof LocalSemiFinishedProductData)) {
@@ -281,7 +281,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 	 * @return
 	 */
 	public static String calculateSuffixUnit(ProductUnit productUnit) {
-		if (((productUnit != null) && productUnit.isLiter())) {
+		if (((productUnit != null) && productUnit.isVolume())) {
 			return UNIT_PER100ML;
 		} else {
 			return UNIT_PER100G;

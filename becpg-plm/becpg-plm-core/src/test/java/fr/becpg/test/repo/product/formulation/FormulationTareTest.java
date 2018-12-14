@@ -21,7 +21,6 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -69,20 +68,20 @@ public class FormulationTareTest extends AbstractFinishedProductTest {
 				finishedProduct.setQty(1d);
 				finishedProduct.setDensity(1d);
 				List<CompoListDataItem> compoList = new ArrayList<>();
-				compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial5NodeRef));// 90
-				compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.P, 0d, DeclarationType.Detail, rawMaterial5NodeRef));// 9
-				compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.lb, 0d, DeclarationType.Declare, rawMaterial5NodeRef));// 40.8233
-				compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.oz, 0d, DeclarationType.Detail, rawMaterial5NodeRef));// 2.5514 
+				compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial5NodeRef));// 90g
+				compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.P, 0d, DeclarationType.Detail, rawMaterial5NodeRef));// 9g
+				compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.lb, 0d, DeclarationType.Declare, rawMaterial5NodeRef));// 9 * 0.453592 / 0.1 = 40.8233
+				compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.oz, 0d, DeclarationType.Detail, rawMaterial5NodeRef));// 2.5514 g
 				finishedProduct.getCompoListView().setCompoList(compoList);
 
 				List<PackagingListDataItem> packList = new ArrayList<>();
-				packList.add(new PackagingListDataItem(null, 1d, ProductUnit.P, PackagingLevel.Primary, true, packagingMaterial1NodeRef));// 15
-				packList.add(new PackagingListDataItem(null, 2d, ProductUnit.P, PackagingLevel.Primary, true, packagingMaterial2NodeRef));// 2*5
-				packList.add(new PackagingListDataItem(null, 3d, ProductUnit.g, PackagingLevel.Primary, true, packagingMaterial3NodeRef));// 3
-				packList.add(new PackagingListDataItem(null, 1d, ProductUnit.P, PackagingLevel.Primary, true, packagingMaterial4NodeRef));// 50
-				packList.add(new PackagingListDataItem(null, 1d, ProductUnit.oz, PackagingLevel.Primary, true, packagingMaterial5NodeRef));// 28.349523125
+				packList.add(new PackagingListDataItem(null, 1d, ProductUnit.P, PackagingLevel.Primary, true, packagingMaterial1NodeRef));// 15g
+				packList.add(new PackagingListDataItem(null, 2d, ProductUnit.P, PackagingLevel.Primary, true, packagingMaterial2NodeRef));// 2*5g
+				packList.add(new PackagingListDataItem(null, 3d, ProductUnit.g, PackagingLevel.Primary, true, packagingMaterial3NodeRef));// 3g
+				packList.add(new PackagingListDataItem(null, 1d, ProductUnit.P, PackagingLevel.Primary, true, packagingMaterial4NodeRef));// 50g
+				packList.add(new PackagingListDataItem(null, 1d, ProductUnit.oz, PackagingLevel.Primary, true, packagingMaterial5NodeRef));// 28.349523125g
 				packList.add(new PackagingListDataItem(null, 10d, ProductUnit.mL, PackagingLevel.Primary, true, packagingMaterial4NodeRef));// 0.5
-				packList.add(new PackagingListDataItem(null, 0.2d, ProductUnit.L, PackagingLevel.Primary, true, packagingMaterial6NodeRef));// exp 200 but was 0
+				packList.add(new PackagingListDataItem(null, 0.2d, ProductUnit.L, PackagingLevel.Primary, true, packagingMaterial6NodeRef));// 0.2 but was 0
 				
 				finishedProduct.getPackagingListView().setPackagingList(packList);
 				
@@ -96,7 +95,7 @@ public class FormulationTareTest extends AbstractFinishedProductTest {
 				ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
 
 				DecimalFormat df = new DecimalFormat("0.####");
-				assertEquals(df.format(90d + 9d + 40.8233d + 2.5514d + 15d +  2*5d + 3d + 50d + 28.349523125d + 0.5d + 200d), df.format(formulatedProduct.getTare()));
+				assertEquals(df.format(90d + 9d + 40.8233d + 2.5514d + 15d +  2*5d + 3d + 50d + 28.349523125d + 0.5d + 0.2d), df.format(formulatedProduct.getTare()));
 				assertEquals(TareUnit.g, formulatedProduct.getTareUnit());
 				return null;
 

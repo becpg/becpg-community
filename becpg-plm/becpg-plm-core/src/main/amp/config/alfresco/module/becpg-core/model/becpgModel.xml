@@ -63,6 +63,7 @@
 			</parameter>
 		</constraint>
 		
+
 		
 		<!-- PLM -->
 		<constraint name="bcpg:productUnit" type="LIST">
@@ -76,6 +77,9 @@
 					<value>L</value>
 					<value>cL</value>
 					<value>mL</value>
+					<value>gal</value>
+					<value>cp</value>
+					<value>fl_oz</value>
 					<value>P</value>
 					<value>m</value>
 					<value>m2</value>
@@ -95,6 +99,9 @@
 					<value>L</value>
 					<value>mL</value>
 					<value>cL</value>
+					<value>gal</value>
+					<value>cp</value>
+					<value>fl_oz</value>
 					<value>P</value>
 					<value>m</value>
 					<value>m2</value>
@@ -108,6 +115,9 @@
 					<value>P</value>
 					<value>PP</value>
 					<value>m</value>
+					<value>mm</value>
+					<value>inch</value>
+					<value>ft</value>
 					<value>m2</value>
 					<value>kg</value>
 					<value>g</value>
@@ -115,6 +125,9 @@
 					<value>oz</value>
 					<value>L</value>
 					<value>mL</value>
+					<value>gal</value>
+					<value>cp</value>
+					<value>fl_oz</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -316,6 +329,12 @@
 					<value>€/oz</value>
 					<value>€/P</value>
 					<value>€/m</value>
+					<value>€/mm</value>
+					<value>€/inch</value>
+					<value>€/ft</value>
+					<value>€/gal</value>
+					<value>€/cp</value>
+					<value>€/fl_oz</value>
 					<value>€/m2</value>
 					<value>€/h</value>
 					<value>€/Pal</value>
@@ -329,6 +348,12 @@
 					<value>$/oz</value>
 					<value>$/P</value>
 					<value>$/m</value>
+					<value>$/mm</value>
+					<value>$/inch</value>
+					<value>$/ft</value>
+					<value>$/gal</value>
+					<value>$/cp</value>
+					<value>$/fl_oz</value>
 					<value>$/m2</value>
 					<value>$/h</value>
 					<value>$/Pal</value>
@@ -342,6 +367,12 @@
 					<value>£/oz</value>
 					<value>£/P</value>
 					<value>£/m</value>
+					<value>£/mm</value>
+					<value>£/inch</value>
+					<value>£/ft</value>
+					<value>£/gal</value>
+					<value>£/cp</value>
+					<value>£/fl_oz</value>
 					<value>£/m2</value>
 					<value>£/h</value>
 					<value>£/Pal</value>
@@ -355,6 +386,12 @@
 					<value>SFr/oz</value>
 					<value>SFr/P</value>
 					<value>SFr/m</value>
+					<value>SFr/mm</value>
+					<value>SFr/inch</value>
+					<value>SFr/ft</value>
+					<value>SFr/gal</value>
+					<value>SFr/cp</value>
+					<value>SFr/fl_oz</value>
 					<value>SFr/m2</value>
 					<value>SFr/h</value>
 					<value>SFr/Pal</value>
@@ -368,6 +405,12 @@
 					<value>zł/oz</value>
 					<value>zł/P</value>
 					<value>zł/m</value>
+					<value>zł/mm</value>
+					<value>zł/inch</value>
+					<value>zł/ft</value>
+					<value>zł/gal</value>
+					<value>zł/cp</value>
+					<value>zł/fl_oz</value>
 					<value>zł/m2</value>
 					<value>zł/h</value>
 					<value>zł/Pal</value>

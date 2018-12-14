@@ -75,7 +75,7 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 
 		visitRecurCost(formulatedProduct, ret, 0, level, netQty, netQty, unitProvider);
 		
-		if(formulatedProduct.getUnit()!=null && formulatedProduct.getUnit().isLb()) {
+		if(formulatedProduct.getUnit()!=null && (formulatedProduct.getUnit().isLb() || formulatedProduct.getUnit().isGal())) {
 			for(NodeRef costItemNodeRef : dataListItems) {
 				CostListDataItem c = (CostListDataItem) alfrescoRepository.findOne(costItemNodeRef);
 				Boolean fixed = (Boolean) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTFIXED);
@@ -83,10 +83,18 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 					if(ret.getData().containsKey(c.getCharactNodeRef())) {
 					
 						for(CharactDetailsValue value : ret.getData().get(c.getCharactNodeRef())) {
-							value.setValue(ProductUnit.kgToLb(value.getValue()));
-							value.setMaxi(ProductUnit.kgToLb(value.getMaxi()));
-							value.setPreviousValue(ProductUnit.kgToLb(value.getPreviousValue()));
-							value.setFutureValue(ProductUnit.kgToLb(value.getFutureValue()));	
+							if(formulatedProduct.getUnit().isLb()) {
+								value.setValue(ProductUnit.lbToKg(value.getValue()));
+								value.setMaxi(ProductUnit.lbToKg(value.getMaxi()));
+								value.setPreviousValue(ProductUnit.lbToKg(value.getPreviousValue()));
+								value.setFutureValue(ProductUnit.lbToKg(value.getFutureValue()));	
+							} else {
+								value.setValue(ProductUnit.GalToL(value.getValue()));
+								value.setMaxi(ProductUnit.GalToL(value.getMaxi()));
+								value.setPreviousValue(ProductUnit.GalToL(value.getPreviousValue()));
+								value.setFutureValue(ProductUnit.GalToL(value.getFutureValue()));	
+							}
+							
 						}
 					}
 					
@@ -94,8 +102,6 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 			}
 		}
 
-		
-		
 		return ret;
 	}
 
@@ -221,8 +227,8 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 
 									}
 								}
-							} else if (formulatedProduct.getUnit().isKg()
-									|| formulatedProduct.getUnit().isLiter()) {
+							} else if (formulatedProduct.getUnit().isWeight()
+									|| formulatedProduct.getUnit().isVolume()) {
 								if (templateCostList.getUnit().endsWith("P")) {
 									qtyUsed = FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d);
 

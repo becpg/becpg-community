@@ -123,10 +123,15 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 							//TODO keepProductUnit bug ici si produit en g le coût est en kg
 							
 							if (!keepProductUnit && unit.isLb() ) { 
-								c.setValue(ProductUnit.kgToLb(c.getValue()));
-								c.setMaxi(ProductUnit.kgToLb(c.getMaxi()));
-								c.setPreviousValue(ProductUnit.kgToLb(c.getPreviousValue()));
-								c.setFutureValue(ProductUnit.kgToLb(c.getFutureValue()));
+								c.setValue(ProductUnit.lbToKg(c.getValue()));
+								c.setMaxi(ProductUnit.lbToKg(c.getMaxi()));
+								c.setPreviousValue(ProductUnit.lbToKg(c.getPreviousValue()));
+								c.setFutureValue(ProductUnit.lbToKg(c.getFutureValue()));
+							} else if(!keepProductUnit && unit.isGal()) {
+								c.setValue(ProductUnit.GalToL(c.getValue()));
+								c.setMaxi(ProductUnit.GalToL(c.getMaxi()));
+								c.setPreviousValue(ProductUnit.GalToL(c.getPreviousValue()));
+								c.setFutureValue(ProductUnit.GalToL(c.getFutureValue()));
 							}
 						}
 					}
@@ -280,8 +285,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		Double netQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct, 1d);
 		if(formulatedProduct.getUnit()!=null && formulatedProduct.getUnit().isLb()) {
 			netQty =  ProductUnit.kgToLb(netQty);
-		}
-		
+		} 
 		
 		Double unitTotalVariableCost = 0d;// for 1 product
 		Double previousTotalVariableCost = 0d;
@@ -561,7 +565,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 						}
 						isCalculated = true;
 					}
-				} else if (formulatedProduct.getUnit().isKg() || formulatedProduct.getUnit().isLiter()) {
+				} else if (formulatedProduct.getUnit().isWeight() || formulatedProduct.getUnit().isVolume()) {
 					if (templateCostList.getUnit().endsWith("P")) {
 						calculateValues(templateCostList, costList, true, FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d));
 						isCalculated = true;

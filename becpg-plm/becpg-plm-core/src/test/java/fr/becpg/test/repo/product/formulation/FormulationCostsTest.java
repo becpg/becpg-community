@@ -43,6 +43,7 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.ClientData;
 import fr.becpg.repo.product.data.FinishedProductData;
+import fr.becpg.repo.product.data.PackagingMaterialData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.ResourceProductData;
@@ -583,7 +584,7 @@ public class FormulationCostsTest extends AbstractFinishedProductTest {
 			final NodeRef varnishNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 				
 				// varnish packList
-				RawMaterialData varnish = new RawMaterialData();
+				PackagingMaterialData varnish = new PackagingMaterialData();
 				varnish.setName("varnish Packaging keepProductUnit cost");
 				varnish.setUnit(ProductUnit.L);
 				
@@ -601,14 +602,13 @@ public class FormulationCostsTest extends AbstractFinishedProductTest {
 				Map<QName, Serializable> properties = new HashMap<>();
 				properties.put(BeCPGModel.PROP_CHARACT_NAME, "Etape emb");			 					 				
 				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
-				NodeRef embStepNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
 				
-				ResourceProductData emballageResourceData = new ResourceProductData();
-				emballageResourceData.setName("Emballage");
+				ResourceProductData processRessource = new ResourceProductData();
+				processRessource.setName("Process");
 				List<CostListDataItem> costList = new LinkedList<>();
 				costList.add(new CostListDataItem(null, 5d, "€/h", null, cost3, false));
-				emballageResourceData.setCostList(costList);
-				NodeRef emballageResourceNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), emballageResourceData).getNodeRef();
+				processRessource.setCostList(costList);
+				NodeRef emballageResourceNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), processRessource).getNodeRef();
 				
 				/*-- Create finished product --*/
 				FinishedProductData finishedProduct = new FinishedProductData();
@@ -629,7 +629,8 @@ public class FormulationCostsTest extends AbstractFinishedProductTest {
 				
 				// processList 
 				List<ProcessListDataItem> processList = new ArrayList<>();
-				processList.add(new ProcessListDataItem(null, 1d, 1d, 100d, ProductUnit.lb, null, null, embStepNodeRef, null, emballageResourceNodeRef)); //
+				processList.add(new ProcessListDataItem(null, 1d, 1d, 1d, ProductUnit.lb, null, null, null, null, emballageResourceNodeRef)); // 5€/h 
+				
 				finishedProduct.getProcessListView().setProcessList(processList);
 				
 				// costList
@@ -676,8 +677,8 @@ public class FormulationCostsTest extends AbstractFinishedProductTest {
 						}
 						if (costListDataItem.getCost().equals(cost3) && costListDataItem.getComponentNodeRef() == null) {
 							assertEquals("€/lb", costListDataItem.getUnit());
-							assertEquals(df.format(0.5d), df.format(costListDataItem.getValue()));
-							assertEquals(df.format(0.5d), df.format(costListDataItem.getValuePerProduct()));
+							assertEquals(df.format(5d), df.format(costListDataItem.getValue()));
+							assertEquals(df.format(5d), df.format(costListDataItem.getValuePerProduct()));
 						}
 						
 						checks++;
