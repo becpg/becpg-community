@@ -9030,7 +9030,9 @@
 				<appearance>
 					<field id="bcpg:color">
 						<control
-							template="/org/alfresco/components/form/controls/selectcolorpicker.ftl" />
+							template="/org/alfresco/components/form/controls/selectcolorpicker.ftl" >
+							<control-param name="textMode">true</control-param>
+						</control>	
 					</field>
 				</appearance>
 			</form>
@@ -9048,7 +9050,9 @@
 				<appearance>
 					<field id="bcpg:color">
 						<control
-							template="/org/alfresco/components/form/controls/selectcolorpicker.ftl" />
+							template="/org/alfresco/components/form/controls/selectcolorpicker.ftl" >
+							<control-param name="textMode">true</control-param>	
+						</control>
 					</field>
 				</appearance>
 			</form>
