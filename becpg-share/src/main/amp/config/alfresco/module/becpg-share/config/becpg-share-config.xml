@@ -22,9 +22,11 @@
 		<languages> 
 			<language locale="en">English</language>
 			<language locale="en_US">English - United States</language>
+			<language locale="en_CA">English - Canada</language>
 			<language locale="de">German</language>
 			<language locale="es">Spanish</language>
 			<language locale="fr">French</language>
+			<language locale="fr_CA">French - Canada</language>
 			<language locale="it">Italian</language>
 			<language locale="ja_JP">Japanese - Japan</language>
 			<language locale="nl">Dutch</language>
@@ -74,7 +76,6 @@
 			<language locale="en_ZA">English - South Africa</language>
 			<language locale="en_AU">English - Australia</language>
 			<language locale="en_IE">English - Ireland</language>
-			<language locale="en_CA">English - Canada</language>
 			<language locale="en_IN">English - India</language>
 			<language locale="en_GB">English - United Kingdom</language>
 			<language locale="es_PA">Spanish - Panama</language>
@@ -104,7 +105,6 @@
 			<language locale="fr_CH">French - Switzerland</language>
 			<language locale="fr_LU">French - Luxembourg</language>
 			<language locale="fr_FR">French - France</language>
-			<language locale="fr_CA">French - Canada</language>
 			<language locale="ga_IE">Irish - Ireland</language>
 			<language locale="hi_IN">Hindi - India</language>
 			<language locale="hr_HR">Croatian - Croatia</language>
