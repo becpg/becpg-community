@@ -26,7 +26,7 @@
          <div class="yui-u">
             <span>${msg("form.control.range.max")}:</span>
             <#-- max value -->
-            <input id="${controlId}-max" name="-" type="text" class="number number-range" <#if field.description??>title="${field.description}"</#if> tabindex="1" />
+            <input id="${controlId}-max" name="-" type="text" class="number number-range" <#if field.description??>title="${field.description}"</#if> tabindex="0" />
          </div>
       </div>
    </div>

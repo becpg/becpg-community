@@ -434,8 +434,6 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 		List<QName> pivotProperties = getPivotForComparison(dataListType);
 		
-		QName pivotAssoc = entityDictionaryService.getDefaultPivotAssoc(dataListType);
-		
 		
 		if (!pivotProperties.isEmpty()) {
 
@@ -507,7 +505,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				if (!pivot2Key.isEmpty()) {
 
 					if (pivot2Keys.contains(pivot2Key)) {
-						pivot2Key = pivot2Key + "@";
+						pivot2Key = pivot2Key + "|@";
 					}
 					pivot2Keys.add(pivot2Key);
 
@@ -522,7 +520,8 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 			// compare properties of characteristics
 			for (CharacteristicToCompare c : characteristicsToCmp) {
-				compareNode(dataListType, extractCharactName(c, pivotAssoc) , c.getPivotKey(), c.getNodeRef1(), c.getNodeRef2(), nbEntities, comparisonPosition,
+				compareNode(dataListType, extractCharactName(c, entityDictionaryService.getDefaultPivotAssoc(dataListType))
+						, c.getPivotKey(), c.getNodeRef1(), c.getNodeRef2(), nbEntities, comparisonPosition,
 						true, comparisonMap);
 			}
 
@@ -551,14 +550,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 	public void compareStructDatalist(NodeRef entity1NodeRef, NodeRef entity2NodeRef, QName datalistType,
 			Map<String, List<StructCompareResultDataItem>> structCompareResults) {
 
-		QName pivotProperty = null;
-
-		// load the 2 datalists
-		try {
-			pivotProperty = entityDictionaryService.getDefaultPivotAssoc(datalistType);
-		} catch (IllegalArgumentException e) {
-			logger.debug(e);
-		}
+		QName pivotProperty = entityDictionaryService.getDefaultPivotAssoc(datalistType);
 
 		if (pivotProperty != null) {
 			MultiLevelListData listData1 = loadCompositeDataList(entity1NodeRef, datalistType);
@@ -920,7 +912,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 				} else if (oValue1.equals(oValue2)) {
 					isDifferent = false;
-				}
+				} 
 			}
 		} else if (oValue2 == null) {
 			isDifferent = false;
@@ -1021,9 +1013,11 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 		}
 
-		if (res.isEmpty() && (entityDictionaryService.getDefaultPivotAssoc(type) != null)) {
-			res.add(entityDictionaryService.getDefaultPivotAssoc(type));
-		}
+		if (res.isEmpty()) {
+			if((entityDictionaryService.getDefaultPivotAssoc(type) != null)) {
+				res.add(entityDictionaryService.getDefaultPivotAssoc(type));
+			} 
+		} 
 		
 		return res;
 	}
