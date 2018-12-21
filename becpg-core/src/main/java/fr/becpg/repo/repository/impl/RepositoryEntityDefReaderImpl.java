@@ -194,10 +194,12 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 	public QName getDefaultPivoAssocName(QName entityDataListQname) {
 		Class<T> entityClass = getEntityClass(entityDataListQname);
 		if (entityClass == null) {
-			throw new IllegalArgumentException("Type is not registered : " + entityDataListQname);
+			if(logger.isDebugEnabled()){
+				logger.debug("Type is not registered : " + entityDataListQname);
+			}
+			return null;
 		}
 
-		
 		BeanWrapper beanWrapper = new BeanWrapperImpl(entityClass);
 
 		for (PropertyDescriptor pd : beanWrapper.getPropertyDescriptors()) {
