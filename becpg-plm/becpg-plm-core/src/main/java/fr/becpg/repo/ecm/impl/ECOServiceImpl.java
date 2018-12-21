@@ -121,6 +121,7 @@ public class ECOServiceImpl implements ECOService {
 
 	@Autowired
 	private ProductService productService;
+
 	@Autowired
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
@@ -179,8 +180,7 @@ public class ECOServiceImpl implements ECOService {
 				Composite<WUsedListDataItem> composite = CompositeHelper.getHierarchicalCompoList(ecoData.getWUsedList());
 
 				checkMissingWUsed(composite);
-				
-				
+
 				if (logger.isTraceEnabled()) {
 					logger.trace("WUsedList to impact :" + composite.toString());
 				}
@@ -230,22 +230,22 @@ public class ECOServiceImpl implements ECOService {
 	}
 
 	private void checkMissingWUsed(Composite<WUsedListDataItem> composite) {
-		
-		boolean childChecked  = false;
+
+		boolean childChecked = false;
 		for (final Composite<WUsedListDataItem> component : composite.getChildren()) {
-			if(!component.isLeaf()) {
-				 checkMissingWUsed(component);
+			if (!component.isLeaf()) {
+				checkMissingWUsed(component);
 			}
-			
-			 if(component.getData().getIsWUsedImpacted()) {
+
+			if (component.getData().getIsWUsedImpacted()) {
 				childChecked = true;
 			}
 		}
-		
-		if(composite.getData()!=null && childChecked) {
+
+		if ((composite.getData() != null) && childChecked) {
 			composite.getData().setIsWUsedImpacted(true);
 		}
-		
+
 	}
 	@Override
 	public void calculateWUsedList(NodeRef ecoNodeRef, boolean isWUsedImpacted) {
@@ -263,6 +263,8 @@ public class ECOServiceImpl implements ECOService {
 
 			if (ecoData.getReplacementList() != null) {
 
+				int sort = 1;
+				
 				for (ReplacementListDataItem replacementListDataItem : ecoData.getReplacementList()) {
 
 					List<NodeRef> replacements = getSourceItems(ecoData, replacementListDataItem);
@@ -272,6 +274,9 @@ public class ECOServiceImpl implements ECOService {
 						WUsedListDataItem parent = new WUsedListDataItem();
 						parent.setSourceItems(replacements);
 						parent.setIsWUsedImpacted(true);
+						parent.setDepthLevel(1);
+						parent.setSort(sort++);
+						
 						// parent.setLink(replacementListDataItem.getNodeRef());
 
 						ecoData.getWUsedList().add(parent);
@@ -284,8 +289,8 @@ public class ECOServiceImpl implements ECOService {
 									RepoConsts.MAX_DEPTH_LEVEL);
 
 							QName datalistQName = evaluateListFromAssociation(associationQName);
-							calculateWUsedList(ecoData, wUsedData, datalistQName, parent,
-									ChangeOrderType.Merge.equals(ecoData.getEcoType()) ? true : isWUsedImpacted);
+							sort = calculateWUsedList(ecoData, wUsedData, datalistQName, parent,
+									ChangeOrderType.Merge.equals(ecoData.getEcoType()) ? true : isWUsedImpacted, sort);
 						}
 					}
 				}
@@ -326,8 +331,8 @@ public class ECOServiceImpl implements ECOService {
 		return assocQNames;
 	}
 
-	private void calculateWUsedList(ChangeOrderData ecoData, MultiLevelListData wUsedData, QName dataListQName, WUsedListDataItem parent,
-			boolean isWUsedImpacted) {
+	private int calculateWUsedList(ChangeOrderData ecoData, MultiLevelListData wUsedData, QName dataListQName, WUsedListDataItem parent,
+			boolean isWUsedImpacted, int sort) {
 
 		for (Map.Entry<NodeRef, MultiLevelListData> kv : wUsedData.getTree().entrySet()) {
 
@@ -336,12 +341,15 @@ public class ECOServiceImpl implements ECOService {
 			wUsedListDataItem.setImpactedDataList(dataListQName);
 			wUsedListDataItem.setIsWUsedImpacted(isWUsedImpacted);
 			wUsedListDataItem.setSourceItems(kv.getValue().getEntityNodeRefs());
+			wUsedListDataItem.setSort(sort++);
 
 			ecoData.getWUsedList().add(wUsedListDataItem);
 
 			// recursive
-			calculateWUsedList(ecoData, kv.getValue(), dataListQName, wUsedListDataItem, isWUsedImpacted);
+			sort = calculateWUsedList(ecoData, kv.getValue(), dataListQName, wUsedListDataItem, isWUsedImpacted, sort);
 		}
+
+		return sort;
 	}
 
 	private ChangeUnitDataItem getOrCreateChangeUnitDataItem(ChangeOrderData ecoData, WUsedListDataItem data) {
@@ -392,6 +400,8 @@ public class ECOServiceImpl implements ECOService {
 	private boolean visitChildrens(Composite<WUsedListDataItem> composite, final ChangeOrderData ecoData, final boolean isSimulation,
 			Set<String> errors) {
 
+		int sort = 1;
+
 		for (final Composite<WUsedListDataItem> component : composite.getChildren()) {
 			boolean isMergeItem = ChangeOrderType.Merge.equals(ecoData.getEcoType()) && (component.getData().getDepthLevel() == 1);
 
@@ -415,6 +425,7 @@ public class ECOServiceImpl implements ECOService {
 						break;
 					}
 
+					final int finalSort = sort++;
 					final RetryingTransactionCallback<Object> actionCallback = () -> {
 
 						NodeRef productNodeRef = getProductToImpact(ecoData, changeUnitDataItem, isSimulation);
@@ -426,7 +437,7 @@ public class ECOServiceImpl implements ECOService {
 							if (isSimulation) {
 								// Before formulate we create simulation
 								// List
-								createCalculatedCharactValues(ecoData, productToFormulateData);
+								createCalculatedCharactValues(ecoData, productToFormulateData, finalSort);
 							}
 
 							// Level 2
@@ -435,19 +446,18 @@ public class ECOServiceImpl implements ECOService {
 							}
 
 							if (isMergeItem && isSimulation) {
-								
+
 								logger.debug("Merge finding corresponding branch...");
-								
+
 								for (ReplacementListDataItem replacementListDataItem : ecoData.getReplacementList()) {
 									if ((replacementListDataItem.getSourceItems() != null) && (replacementListDataItem.getTargetItem() != null)
 											&& (replacementListDataItem.getSourceItems().size() == 1)
 											&& replacementListDataItem.getTargetItem().equals(productNodeRef)) {
-                                       
-										
+
 										productToFormulateData = (ProductData) alfrescoRepository
 												.findOne(replacementListDataItem.getSourceItems().get(0));
-										
-										  logger.debug("Found matching branch product:" + productToFormulateData.getName());    
+
+										logger.debug("Found matching branch product:" + productToFormulateData.getName());
 
 										break;
 									}
@@ -767,7 +777,7 @@ public class ECOServiceImpl implements ECOService {
 
 	}
 
-	private void createCalculatedCharactValues(ChangeOrderData ecoData, ProductData sourceData) {
+	private void createCalculatedCharactValues(ChangeOrderData ecoData, ProductData sourceData, int sort) {
 
 		for (NodeRef charactNodeRef : ecoData.getCalculatedCharacts()) {
 			QName charactType = nodeService.getType(charactNodeRef);
@@ -776,7 +786,7 @@ public class ECOServiceImpl implements ECOService {
 				logger.debug("create calculated charact: " + nodeService.getProperty(sourceData.getNodeRef(), ContentModel.PROP_NAME) + " - "
 						+ charactNodeRef + " - sourceValue: " + sourceValue);
 			}
-			ecoData.getSimulationList().add(new SimulationListDataItem(null, sourceData.getNodeRef(), charactNodeRef, sourceValue, null));
+			ecoData.getSimulationList().add(new SimulationListDataItem(null, sourceData.getNodeRef(), charactNodeRef, sourceValue, null, sort));
 		}
 
 	}
@@ -789,8 +799,7 @@ public class ECOServiceImpl implements ECOService {
 			QName charactType = nodeService.getType(charactNodeRef);
 			Object targetValue = getCharactValue(charactNodeRef, charactType, targetData);
 			for (SimulationListDataItem simulationListDataItem : ecoData.getSimulationList()) {
-				if (simulationListDataItem.getCharact().equals(charactNodeRef)
-						&& simulationListDataItem.getSourceItem().equals(productNodeRef)) {
+				if (simulationListDataItem.getCharact().equals(charactNodeRef) && simulationListDataItem.getSourceItem().equals(productNodeRef)) {
 					simulationListDataItem.setTargetValue(targetValue);
 
 					if ((simulationListDataItem.getTargetValue() == null) && (simulationListDataItem.getSourceValue() == null)) {
@@ -942,7 +951,7 @@ public class ECOServiceImpl implements ECOService {
 
 		return false;
 	}
-	
+
 	@Override
 	public Boolean setInError(NodeRef ecoNodeRef, Exception e) {
 
