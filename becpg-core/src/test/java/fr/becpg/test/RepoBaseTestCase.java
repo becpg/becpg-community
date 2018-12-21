@@ -31,6 +31,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.repo.domain.qname.QNameDAO;
 import org.alfresco.repo.model.Repository;
+import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationComponent;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -259,6 +260,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 			public Boolean execute() throws Throwable {
 				ruleService.disableRules();
 				try {
+					IntegrityChecker.setWarnInTransaction();
 					nodeService.addAspect(threadSafeTestFolder.get(), ContentModel.ASPECT_TEMPORARY, null);
 					nodeService.deleteNode(threadSafeTestFolder.get());
 				} finally {
