@@ -34,7 +34,7 @@
 				<#assign description=mlField.description!""?html>
                 <#if mlField.locale != currentLocale>
 	         	<div class="form-field">
-      				<label for="${el}-${mlField.locale}"><#if args.label?? >${label?html}<#else>${mlField.label?html}</#if>:&nbsp;
+      				<label for="${el}-${mlField.locale}"><#if args.label?? >${label?html}<#elseif mlField.label??>${mlField.label?html}<#else> ${mlField.localeLabel}</#if>:&nbsp;
       						<span class="locale-icon"><img class="icon16_11" title="${mlField.localeLabel}" tabindex="0" src="${url.context}/res/components/images/flags/${mlField.country?lower_case}.png">&nbsp;(${mlField.localeLabel})<span>&nbsp;&nbsp;
       						<span class="translate-icon" onClick="suggestTranslate('${el}-${mlField.locale}','${mlField.locale}');" ><img class="icon16" title="${msg("translate.suggest")}" tabindex="0" src="${url.context}/res/components/images/translate-16.png"><span>
       				</label>
