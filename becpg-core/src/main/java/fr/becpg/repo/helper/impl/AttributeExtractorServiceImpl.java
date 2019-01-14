@@ -299,6 +299,8 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			Boolean b = (Boolean) v;
 
 			value = TranslateHelper.getTranslatedBoolean(b, propertyFormats.isUseDefaultLocale());
+			
+			
 
 		} else if (dataType.equals(DataTypeDefinition.TEXT.toString())) {
 
@@ -419,7 +421,6 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		return value;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public String extractPropertyForReport(PropertyDefinition propertyDef, Serializable value, PropertyFormats propertyFormats, boolean formatData) {
 
@@ -429,51 +430,8 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				if (DataTypeDefinition.ANY.toString().equals(propertyDef.getDataType().toString()) && (value instanceof String)) {
 					value = (Serializable) JsonFormulaHelper.cleanCompareJSON((String) value);
 				}
-				if (propertyDef.getConstraints().isEmpty()) {
+				if (propertyDef.getConstraints().isEmpty() || DataTypeDefinition.TEXT.toString().equals(propertyDef.getDataType().toString())) {
 					return getStringValue(propertyDef, value, propertyFormats);
-				} else if (DataTypeDefinition.TEXT.toString().equals(propertyDef.getDataType().toString())) {
-					DynListConstraint dynListConstraint = null;
-					for (ConstraintDefinition constraint : propertyDef.getConstraints()) {
-						if (constraint.getConstraint() instanceof DynListConstraint) {
-							dynListConstraint = (DynListConstraint) constraint.getConstraint();
-							break;
-						}
-					}
-
-					String ret = "";
-
-					if (propertyDef.isMultiValued()) {
-						List<String> values;
-
-						if (value instanceof String) {
-							values = Collections.singletonList((String) value);
-						} else {
-							values = (List<String>) value;
-						}
-
-						for (String tempValue : values) {
-							if (tempValue != null) {
-								if (!ret.isEmpty()) {
-									ret += RepoConsts.LABEL_SEPARATOR;
-								}
-
-								if (dynListConstraint != null) {
-									ret += dynListConstraint.getDisplayLabel(tempValue);
-								} else {
-									ret += tempValue;
-								}
-							}
-
-						}
-					} else {
-						if (dynListConstraint != null) {
-							ret = dynListConstraint.getDisplayLabel(value.toString());
-						} else {
-							ret = value.toString();
-						}
-					}
-
-					return ret;
 				} else {
 					return value.toString();
 				}
