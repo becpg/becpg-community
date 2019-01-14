@@ -530,10 +530,11 @@
                                        value = ""+oData[0].value;
                                        break;
                                    default:
-                                       value = oData[0].displayValue;
+                                       value = oData[0].value;
                                        break;
                                    }
-                                   if (repeating && value != null) {
+                                   
+                                   if (repeating && value != null && value.constructor !== Array) {
                                        value = value.split(",");
                                    }
                                }
@@ -601,7 +602,22 @@
                     	   var allOptions = oSelf.dropdown.options;
                     	   oDisplayValue = allOptions[allOptions.selectedIndex].label;
                     	   
-                       }
+                       } else if (oSelf instanceof YAHOO.widget.CheckboxCellEditor){
+                          	var values = oDisplayValue.split(",");
+                           	var tmpDisplayValue = "";
+                           	for(var val in values){
+                           	 var allOptions = oSelf.checkboxOptions;
+    						 for(var option in allOptions){
+    							if(allOptions[option].value == values[val]){
+    								if(tmpDisplayValue.length > 0){
+    									tmpDisplayValue += ",";
+    								}
+    								tmpDisplayValue += allOptions[option].label;
+    							}
+    						}
+                           } 
+    						oDisplayValue =  tmpDisplayValue;
+                           }
                        
 
                        oSelf.getDataTable().updateCell(oSelf.getRecord(), oSelf.getColumn(), {
@@ -620,6 +636,8 @@
                            oldData : oOrigValue,
                            newData : oSelf.value
                        });
+                       
+                       
                    } else {
                        oSelf.resetForm();
                        oSelf.fireEvent("revertEvent", {
