@@ -512,6 +512,7 @@ YAHOO.Bubbling
                                  width : "33em",
                                  onSuccess : {
                                 	  fn : function() {
+                                	  	  YAHOO.Bubbling.fire("metadataRefresh");
                                 		  YAHOO.Bubbling.fire("dirtyDataTable");
                                 		  Alfresco.util.PopupManager.displayMessage(
                                 	               {

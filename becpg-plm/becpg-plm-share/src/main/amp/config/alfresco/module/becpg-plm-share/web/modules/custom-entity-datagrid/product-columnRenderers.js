@@ -706,14 +706,11 @@ if (beCPG.module.EntityDataGridRenderers) {
 				}  
 			  }
 			}
-			var title = "&nbsp;";
-			
 			if(oColumn.label != ""){
-			   title += data.displayValue;
+				return "<span "+style+" title=\"" + data.displayValue + "\" class='"+cssClass+"'>&nbsp;</span>&nbsp;"+data.displayValue;
 			}	
 			
-			return "<span "+style+" title=\"" + data.displayValue + "\" class='"+cssClass+"'>"+title+"</span>";
-
+			return "<span "+style+" title=\"" + data.displayValue + "\" class='"+cssClass+"'>&nbsp;</span>";
 		}
 
 	});

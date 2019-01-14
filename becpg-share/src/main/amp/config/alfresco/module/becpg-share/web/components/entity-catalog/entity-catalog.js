@@ -166,115 +166,119 @@
 			 * json : catalogs
 			 * id : radical id of inputs (eg : $id_prop_bcpg_legalName)
 			 */ 
-			function colorizeMissingFields(catalogs, id){
-				var i=0;
-				
-				for(var key in catalogs){
-					
-					var color = catalogs[key].color;
-					
-					var colorTipElement = document.createElement("SPAN");
-					colorTipElement.style.backgroundColor=color;
-					colorTipElement.className+="catalog-color";	
-					colorTipElement.title=instance.msg("label.catalog")+" '"+catalogs[key].label+(catalogs[key].locale !== undefined && catalogs[key].locale.length == 1 ? "("+catalogs[key].locale+")'": "'");
-					
-					if(catalogs[key].missingFields !== undefined){
-						
-						//put a color tip for this catalog
-						var catalogId = catalogs[key].id;
-						var locale = catalogs[key].locale;
-						
-						if(locale !== undefined && locale != null ){
-							catalogId = catalogId+"_"+locale;
-						}
-						var labelId = instance.id+"_"+catalogId+"_missingPropLabel";
-						
-						if(catalogs[key].missingFields.length > 0){
-							var label = YAHOO.util.Dom.get(labelId);
-							
-							if(label !== undefined && label != null){
-								label.parentNode.insertBefore(colorTipElement.cloneNode(false), label.nextSibling);
+			function colorizeMissingFields(json, id){
+
+				if(json.catalogs !== undefined && json.catalogs != null && Object.keys(json.catalogs).length > 0){
+
+					var catalogs = json.catalogs;
+					var i=0;
+					for(var key in catalogs){
+
+						var color = catalogs[key].color;
+
+						var colorTipElement = document.createElement("SPAN");
+						colorTipElement.style.backgroundColor=color;
+						colorTipElement.className+="catalog-color";	
+						colorTipElement.title=instance.msg("label.catalog")+" '"+catalogs[key].label+(catalogs[key].locale !== undefined && catalogs[key].locale.length == 1 ? "("+catalogs[key].locale+")'": "'");
+
+						if(catalogs[key].missingFields !== undefined){
+
+							//put a color tip for this catalog
+							var catalogId = catalogs[key].id;
+							var locale = catalogs[key].locale;
+
+							if(locale !== undefined && locale != null ){
+								catalogId = catalogId+"_"+locale;
 							}
-						}
-						
-						//put color tip next to each non validated field according to the catalog
-						for(var field in catalogs[key].missingFields){							
-							//try to find a prop or assoc with this field
-							
-							
-							var fieldArray = new Array();
-							var fieldCode = catalogs[key].missingFields[field].id;
-							
-							
-							
-							
-							if(fieldCode.indexOf("|") > -1 ){
-								fieldArray = fieldCode.split("|");
-							} else {
-								fieldArray.push(fieldCode);
-							}
-							
-							
-							for(var field in fieldArray){
-								
-								var fieldId="";
-								var curField = fieldArray[field].replace(":", "_");
-								
-								
-								var found = YAHOO.util.Dom.get(id+"_assoc_"+curField);
-								fieldId=id+"_assoc_"+curField+"-cntrl";
-								
-								if(found === undefined || found == null){
-									found = YAHOO.util.Dom.get(id+"_prop_"+curField);
-									fieldId=id+"_prop_"+curField;
+							var labelId = instance.id+"_"+catalogId+"_missingPropLabel";
+
+							if(catalogs[key].missingFields.length > 0){
+								var label = YAHOO.util.Dom.get(labelId);
+
+								if(label !== undefined && label != null){
+									label.parentNode.insertBefore(colorTipElement.cloneNode(false), label.nextSibling);
 								}
-								
-								if(found !== undefined && found != null){
-									if(found.className.indexOf("multi-assoc") != -1){
-										found = found.parentNode;
+							}
+
+							//put color tip next to each non validated field according to the catalog
+							for(var field in catalogs[key].missingFields){							
+								//try to find a prop or assoc with this field
+
+
+								var fieldArray = new Array();
+								var fieldCode = catalogs[key].missingFields[field].id;
+
+
+
+
+								if(fieldCode.indexOf("|") > -1 ){
+									fieldArray = fieldCode.split("|");
+								} else {
+									fieldArray.push(fieldCode);
+								}
+
+
+								for(var field in fieldArray){
+
+									var fieldId="";
+									var curField = fieldArray[field].replace(":", "_");
+
+
+									var found = YAHOO.util.Dom.get(id+"_assoc_"+curField);
+									fieldId=id+"_assoc_"+curField+"-cntrl";
+
+									if(found === undefined || found == null){
+										found = YAHOO.util.Dom.get(id+"_prop_"+curField);
+										fieldId=id+"_prop_"+curField;
 									}
-									
-									//put color tip
-									var labels = document.getElementsByTagName("label");
-									
-	
-									for(var labelIndex = 0; labelIndex < labels.length; labelIndex++){
-										var currentLabel = labels[labelIndex];									
-										
-										//checks if we're on the right label, and the catalog is not already labelled
-										var hasLocaleIcon = false;
-										if(currentLabel.htmlFor.indexOf(fieldId) != -1  && currentLabel.parentNode.innerHTML.indexOf(colorTipElement.style.backgroundColor) == -1){
-											if(currentLabel.childNodes){
-												for(var child in currentLabel.childNodes){
-													var currentChildNode = currentLabel.childNodes[child];
-													if(currentChildNode.nodeType == Node.ELEMENT_NODE && currentChildNode.className.indexOf("locale-icon") != -1){
-														hasLocaleIcon = true;
-														break;
+
+									if(found !== undefined && found != null){
+										if(found.className.indexOf("multi-assoc") != -1){
+											found = found.parentNode;
+										}
+
+										//put color tip
+										var labels = document.getElementsByTagName("label");
+
+
+										for(var labelIndex = 0; labelIndex < labels.length; labelIndex++){
+											var currentLabel = labels[labelIndex];									
+
+											//checks if we're on the right label, and the catalog is not already labelled
+											var hasLocaleIcon = false;
+											if(currentLabel.htmlFor.indexOf(fieldId) != -1  && currentLabel.parentNode.innerHTML.indexOf(colorTipElement.style.backgroundColor) == -1){
+												if(currentLabel.childNodes){
+													for(var child in currentLabel.childNodes){
+														var currentChildNode = currentLabel.childNodes[child];
+														if(currentChildNode.nodeType == Node.ELEMENT_NODE && currentChildNode.className.indexOf("locale-icon") != -1){
+															hasLocaleIcon = true;
+															break;
+														}
 													}
 												}
+
+												if(hasLocaleIcon){
+													currentLabel.appendChild(colorTipElement.cloneNode(false));
+												} else {
+													currentLabel.innerHTML+=colorTipElement.outerHTML;
+												}
 											}
-											
-											if(hasLocaleIcon){
-												currentLabel.appendChild(colorTipElement.cloneNode(false));
-											} else {
-												currentLabel.innerHTML+=colorTipElement.outerHTML;
-											}
+										}							
+									} else {
+										var absentMissingFieldId = "missing-field_"+catalogs[key]+"_"+catalogs[key].missingFields[field].displayName;
+
+										var absentMissingFieldHTMLElement = YAHOO.util.Dom.get(absentMissingFieldId);
+
+										if(absentMissingFieldHTMLElement !== undefined && absentMissingFieldHTMLElement != null){
+											absentMissingFieldHTMLElement.outerHTML = "";
 										}
-									}							
-								} else {
-									var absentMissingFieldId = "missing-field_"+catalogs[key]+"_"+catalogs[key].missingFields[field].displayName;
-									
-									var absentMissingFieldHTMLElement = YAHOO.util.Dom.get(absentMissingFieldId);
-									
-									if(absentMissingFieldHTMLElement !== undefined && absentMissingFieldHTMLElement != null){
-										absentMissingFieldHTMLElement.outerHTML = "";
-									}
-								}	
-							
+									}	
+
+								}
 							}
 						}
+						i++;
 					}
-					i++;
 				}
 			}
 
