@@ -350,6 +350,30 @@
 			}
 			
 		},
+		
+		onActionShowWorkflows : function EntityDataGrid_onActionShowWorkflows(asset) {
+
+			 Alfresco.util.Ajax.request({
+				    method : Alfresco.util.Ajax.GET,
+					url : Alfresco.constants.URL_SERVICECONTEXT + "modules/entity-process/entity-process?nodeRef="+asset.nodeRef+"&htmlid="+this.id ,
+					successCallback : {
+						fn : function(resp){
+							var containerDiv = document.createElement("div");     
+                         containerDiv.innerHTML = resp.serverResponse.responseText;
+                         var panelDiv = Dom.getFirstChild(containerDiv);
+                         this.widgets.projects = Alfresco.util.createYUIPanel(panelDiv, {
+								draggable : true,
+								width : "40em"
+							});
+							this.widgets.projects.show();
+						},
+						scope : this
+					},
+					execScripts: true
+			   });
+			
+		},
+		
 
 	onActionShowComments : function EntityDataGrid_onActionShowComments(item) {
 
