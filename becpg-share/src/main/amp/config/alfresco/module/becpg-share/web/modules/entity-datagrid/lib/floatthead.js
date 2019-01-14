@@ -11,6 +11,7 @@
  *
  * Tested on FF13+, Chrome 21+, IE8, IE9, IE10, IE11
  */
+if(jQuery){ //beCPG
 (function( $ ) {
   /**
    * provides a default config object. You can modify this after including this script if you want to change the init defaults
@@ -1103,3 +1104,4 @@
     return this;
   };
 })(jQuery);
+}
