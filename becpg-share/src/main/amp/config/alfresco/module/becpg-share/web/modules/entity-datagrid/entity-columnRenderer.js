@@ -234,18 +234,22 @@
 							   var p_type = datalistColumn.dataType, p_label = datalistColumn.name;
 
 							   var ret = "";
-							   if (scope.renderers.hasOwnProperty(p_type + "_" + p_label)
-							         && typeof scope.renderers[p_type + "_" + p_label] === "function") {
-							   	ret = scope.renderers[p_type + "_" + p_label].call(scope, oRecord, data, p_label,
-								         datagrid, i, ii, elCell, oColumn);
-							   } else if (scope.renderers.hasOwnProperty(p_label)
-								         && typeof scope.renderers[p_label] === "function") {
-								   	ret = scope.renderers[p_label].call(scope, oRecord, data, p_label, datagrid, i, ii, elCell, oColumn);
-							   } else if (scope.renderers.hasOwnProperty(p_type)
-							         && typeof scope.renderers[p_type] === "function") {
-							   	ret = scope.renderers[p_type].call(scope, oRecord, data, p_label, datagrid, i, ii, elCell, oColumn);
-							   } else {
-							   	ret = $links($html(data.displayValue));
+							   try {
+								   if (scope.renderers.hasOwnProperty(p_type + "_" + p_label)
+								         && typeof scope.renderers[p_type + "_" + p_label] === "function") {
+								   	ret = scope.renderers[p_type + "_" + p_label].call(scope, oRecord, data, p_label,
+									         datagrid, i, ii, elCell, oColumn);
+								   } else if (scope.renderers.hasOwnProperty(p_label)
+									         && typeof scope.renderers[p_label] === "function") {
+									   	ret = scope.renderers[p_label].call(scope, oRecord, data, p_label, datagrid, i, ii, elCell, oColumn);
+								   } else if (scope.renderers.hasOwnProperty(p_type)
+								         && typeof scope.renderers[p_type] === "function") {
+								   	ret = scope.renderers[p_type].call(scope, oRecord, data, p_label, datagrid, i, ii, elCell, oColumn);
+								   } else {
+								   	ret = $links($html(data.displayValue));
+								   }
+							   } catch(e){
+								   console.log(e);
 							   }
 
 							   if (isArray) {
