@@ -57,7 +57,7 @@ function main()
            			  	if(lang.key.indexOf("_")>0){
            			  	 country = lang.key.split("_")[1].toLowerCase();
            			  	}
-           				var toAdd  = { "localeLabel" : lang.label, "locale" : lang.key, "value": "", "description":description, "country":country };
+           				var toAdd  = { "localeLabel" : lang.label, "locale" : lang.key, "value": "", "description":description, "country":country, "control": {"params": {"editorAppearance": "default"}} };
            				model.mlFields.push(toAdd);
            			}
            			
