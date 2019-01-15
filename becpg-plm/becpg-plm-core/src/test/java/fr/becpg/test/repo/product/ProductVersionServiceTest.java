@@ -107,7 +107,7 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 
 			/*-- Create raw material --*/
 			NodeRef r = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test report");
-			nodeService.setProperty(r, PLMModel.PROP_ERP_CODE, ERP_CODE);
+			nodeService.setProperty(r, BeCPGModel.PROP_ERP_CODE, ERP_CODE);
 			
 			nodeService.setProperty(r, PLMWorkflowModel.PROP_PV_VALIDATION_DATE, new Date());
 			
@@ -160,8 +160,8 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 			assertEquals("productCode should be the same after checkout", nodeService.getProperty(rawMaterialNodeRef, BeCPGModel.PROP_CODE),
 					nodeService.getProperty(workingCopyNodeRef, BeCPGModel.PROP_CODE));
 
-			assertEquals("erpCode should be the same after checkout", nodeService.getProperty(rawMaterialNodeRef, PLMModel.PROP_ERP_CODE),
-					nodeService.getProperty(workingCopyNodeRef, PLMModel.PROP_ERP_CODE));
+			assertEquals("erpCode should be the same after checkout", nodeService.getProperty(rawMaterialNodeRef, BeCPGModel.PROP_ERP_CODE),
+					nodeService.getProperty(workingCopyNodeRef, BeCPGModel.PROP_ERP_CODE));
 			
 			//Check aspect validation 
 			assertTrue(!nodeService.hasAspect(workingCopyNodeRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT));
@@ -331,7 +331,7 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 
 			// Valid it
 			nodeService.setProperty(rawMaterialNodeRef, PLMModel.PROP_PRODUCT_STATE, SystemState.Valid);
-			nodeService.setProperty(rawMaterialNodeRef, PLMModel.PROP_ERP_CODE, ERP_CODE);
+			nodeService.setProperty(rawMaterialNodeRef, BeCPGModel.PROP_ERP_CODE, ERP_CODE);
 			// products
 			hierarchyService.classifyByHierarchy(repositoryHelper.getCompanyHome(), rawMaterialNodeRef);
 
@@ -383,7 +383,7 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 					nodeService.getProperty(newRawMaterialNodeRef, PLMModel.PROP_PRODUCT_STATE));
 
 			assertEquals("erpCode should be the same after checkout", ERP_CODE,
-					nodeService.getProperty(newRawMaterialNodeRef, PLMModel.PROP_ERP_CODE));
+					nodeService.getProperty(newRawMaterialNodeRef, BeCPGModel.PROP_ERP_CODE));
 
 			assertEquals("Check state new version", SystemState.Valid.toString(),
 					nodeService.getProperty(entityVersionService.getEntityVersion(version), PLMModel.PROP_PRODUCT_STATE));
@@ -592,7 +592,7 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 
 			/*-- Create raw material --*/
 			NodeRef r = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "Test Check in Check out branch");
-			nodeService.setProperty(r, PLMModel.PROP_ERP_CODE, ERP_CODE);
+			nodeService.setProperty(r, BeCPGModel.PROP_ERP_CODE, ERP_CODE);
 			nodeService.setProperty(r, PLMWorkflowModel.PROP_PV_VALIDATION_DATE, new Date());
 			nodeService.createAssociation(r,personService.getPerson(BeCPGTestHelper.USER_ONE) ,
 					PLMWorkflowModel.ASSOC_PV_CALLER_ACTOR);
@@ -631,7 +631,7 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 			assertNotSame("productCode should be different in branch", nodeService.getProperty(rawMaterialNodeRef, BeCPGModel.PROP_CODE),
 					nodeService.getProperty(branchNodeRef, BeCPGModel.PROP_CODE));
 
-			assertNull("ERP code should be null", nodeService.getProperty(branchNodeRef, PLMModel.PROP_ERP_CODE));
+			assertNull("ERP code should be null", nodeService.getProperty(branchNodeRef, BeCPGModel.PROP_ERP_CODE));
 
 			//Check aspect validation 
 			assertTrue(!nodeService.hasAspect(branchNodeRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT));
@@ -693,7 +693,7 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 
 			/*-- Create raw material --*/
 			NodeRef r = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test report");
-			nodeService.setProperty(r, PLMModel.PROP_ERP_CODE, ERP_CODE);
+			nodeService.setProperty(r, BeCPGModel.PROP_ERP_CODE, ERP_CODE);
 			return r;
 		}, false, true);
 
@@ -786,7 +786,7 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 
 			/*-- Create raw material --*/
 			NodeRef r = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test report");
-			nodeService.setProperty(r, PLMModel.PROP_ERP_CODE, ERP_CODE);
+			nodeService.setProperty(r, BeCPGModel.PROP_ERP_CODE, ERP_CODE);
 			return r;
 		}, false, true);
 
@@ -885,7 +885,7 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 			assertNotNull(getFolderDocuments(entityVersionNodeRef));
 
 			assertEquals("erpCode should be the same after checkout", ERP_CODE,
-					nodeService.getProperty(newRawMaterialNodeRef, PLMModel.PROP_ERP_CODE));
+					nodeService.getProperty(newRawMaterialNodeRef, BeCPGModel.PROP_ERP_CODE));
 
 			// Check costs on new version
 			assertEquals("Check costs size", rawMaterial.getCostList().size(), newRawMaterial.getCostList().size());

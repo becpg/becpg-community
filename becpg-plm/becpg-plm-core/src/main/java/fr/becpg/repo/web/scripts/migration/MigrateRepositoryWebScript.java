@@ -32,6 +32,7 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import com.google.common.collect.Lists;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.AssociationService;
@@ -272,7 +273,7 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 			
 			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery()
 					.ofType(PLMModel.TYPE_RAWMATERIAL)
-					.isNotNull(PLMModel.PROP_ERP_CODE)
+					.isNotNull(BeCPGModel.PROP_ERP_CODE)
 					.excludeDefaults()
 					.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED);
 							
@@ -281,7 +282,7 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 			
 			for(NodeRef rawMaterialNodeRef : rawMaterialNodeRefs){	
 				
-				String erpCode = (String)nodeService.getProperty(rawMaterialNodeRef, PLMModel.PROP_ERP_CODE);
+				String erpCode = (String)nodeService.getProperty(rawMaterialNodeRef, BeCPGModel.PROP_ERP_CODE);
 				
 				Set<NodeRef> subList = rawMaterialsGroupByERPCode.get(erpCode);
 				if(subList == null){
@@ -317,10 +318,10 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 							String newERPCode = kv.getKey();	
 							List<NodeRef> rawMaterialSupplierNodeRefs = associationService.getTargetAssocs(n, PLMModel.ASSOC_SUPPLIERS);
 							for(NodeRef rawMaterialSupplierNodeRef : rawMaterialSupplierNodeRefs){
-								newERPCode += "-" + nodeService.getProperty(rawMaterialSupplierNodeRef, PLMModel.PROP_ERP_CODE);
+								newERPCode += "-" + nodeService.getProperty(rawMaterialSupplierNodeRef, BeCPGModel.PROP_ERP_CODE);
 							}
 							logger.info("Set ERP code for " + n + " code " + newERPCode);
-							nodeService.setProperty(n, PLMModel.PROP_ERP_CODE, newERPCode);
+							nodeService.setProperty(n, BeCPGModel.PROP_ERP_CODE, newERPCode);
 						}
 					}
 										

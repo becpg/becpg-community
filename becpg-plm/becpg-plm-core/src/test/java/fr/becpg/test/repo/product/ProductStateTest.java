@@ -10,6 +10,7 @@ import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.junit.Test;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.test.BeCPGPLMTestHelper;
@@ -36,7 +37,7 @@ public class ProductStateTest extends PLMBaseTestCase {
 			// Valid it
 			nodeService.setProperty(ret, PLMModel.PROP_PRODUCT_STATE, SystemState.Valid);
 
-			nodeService.setProperty(ret, PLMModel.PROP_ERP_CODE, "0001");
+			nodeService.setProperty(ret, BeCPGModel.PROP_ERP_CODE, "0001");
 
 			return ret;
 		}, false, true);
@@ -52,7 +53,7 @@ public class ProductStateTest extends PLMBaseTestCase {
 
 			assertEquals("Check state", SystemState.Simulation.toString(), nodeService.getProperty(copiedNodeRef, PLMModel.PROP_PRODUCT_STATE));
 
-			assertNull("Check Erp Code", nodeService.getProperty(copiedNodeRef, PLMModel.PROP_ERP_CODE));
+			assertNull("Check Erp Code", nodeService.getProperty(copiedNodeRef, BeCPGModel.PROP_ERP_CODE));
 
 			assertEquals("Check state", SystemState.Valid.toString(), nodeService.getProperty(rawMaterialNodeRef, PLMModel.PROP_PRODUCT_STATE));
 

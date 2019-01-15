@@ -62,7 +62,7 @@ public class ProductPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 
 		) {
 			nodeService.setProperty(destinationRef, PLMModel.PROP_PRODUCT_STATE, SystemState.Simulation);
-			nodeService.setProperty(destinationRef, PLMModel.PROP_ERP_CODE, null);
+			nodeService.setProperty(destinationRef, BeCPGModel.PROP_ERP_CODE, null);
 			
 			entityService.changeEntityListStates(destinationRef, EntityListState.ToValidate);
 			

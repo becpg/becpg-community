@@ -42,6 +42,7 @@ public interface RemoteEntityService {
 	String ATTR_NAME = "name";
 	String ATTR_NODEREF = "nodeRef";
 	String ATTR_CODE = "code";
+	String ATTR_ERP_CODE = "erpCode";
 	String ELEM_ENTITIES = "entities";
 	String ELEM_DATA = "data";
 	String ELEM_LIST = "values";
@@ -96,6 +97,16 @@ public interface RemoteEntityService {
 	void listEntities(List<NodeRef> entities, OutputStream result, RemoteEntityFormat format) throws BeCPGException;
 
 	/**
+	 * List entities at format with specific assoc/props
+	 * 
+	 * @param entities
+	 * @param out
+	 * @param format
+	 * @param fields
+	 */
+	void listEntities(List<NodeRef> entities, OutputStream result, RemoteEntityFormat format, List<String> fields) throws BeCPGException;
+	
+	/**
 	 * Return entity data
 	 * 
 	 * @param entityNodeRef
@@ -103,7 +114,16 @@ public interface RemoteEntityService {
 	 * @param format
 	 */
 	void getEntityData(NodeRef entityNodeRef, OutputStream outputStream, RemoteEntityFormat format) throws BeCPGException;
-
+	
+	/**
+	 * Return entity data with specific assoc/prop and lists
+	 * 
+	 * @param entityNodeRef
+	 * @param outputStream
+	 * @param format
+	 */
+	void getEntity(NodeRef entityNodeRef, OutputStream out, RemoteEntityFormat format, List<String> fields, List<String> lists) throws BeCPGException;
+	
 	/**
 	 * 
 	 * @param entityNodeRef
@@ -111,5 +131,7 @@ public interface RemoteEntityService {
 	 * @param format
 	 */
 	void addOrUpdateEntityData(NodeRef entityNodeRef, InputStream inputStream, RemoteEntityFormat format) throws BeCPGException;
+
+	
 
 }

@@ -150,5 +150,8 @@ public interface BeCPGModel {
 	
 	QName PROP_USER_LOCAL = QName.createQName(BECPG_URI,"userLocale");
 	QName PROP_USER_CONTENT_LOCAL = QName.createQName(BECPG_URI,"userContentLocale");
+	// code aspect
+	QName ASPECT_ERP_CODE = QName.createQName(BECPG_URI, "erpCodeAspect");
+	QName PROP_ERP_CODE = QName.createQName(BECPG_URI, "erpCode");
 
 }
