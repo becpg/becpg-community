@@ -729,8 +729,8 @@
                fnSetter("-view-enabled", person.enabled ? parent._msg("label.enabled") : parent._msg("label.disabled"));
                fnSetter("-view-quota", (person.quota !== -1 ? Alfresco.util.formatFileSize(person.quota) : ""));
                fnSetter("-view-usage", Alfresco.util.formatFileSize(person.sizeCurrent));
-               fnSetter("-view-usercontentlocale", person.userContentLocale != null ? this._msg("locale.name." + person.userContentLocale) : "");
-               fnSetter("-view-userlocale", person.userLocale != null ? this._msg("locale.name." + person.userLocale) : "");
+               fnSetter("-view-usercontentlocale", person.userContentLocale ? this._msg("locale.name." + person.userContentLocale) : "");
+               fnSetter("-view-userlocale", person.userLocale ? this._msg("locale.name." + person.userLocale) : "");
                var fnGroupToString = function()
                {
                   return this.displayName;
