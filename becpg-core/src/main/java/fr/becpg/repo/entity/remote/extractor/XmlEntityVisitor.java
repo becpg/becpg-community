@@ -90,10 +90,10 @@ public class XmlEntityVisitor {
 	private boolean entityList =  false;
 	private int extractLevel = 0;
 	
-	private List<String> fields = new ArrayList<>();
-	private List<String> lists = new ArrayList<>();
-	private Map<String, List<String>> assocProperties = new HashMap<>();
-	private Map<NodeRef, List<String>> cachedAssocRef = null;
+	private List<QName> filteredProperties = new ArrayList<>();
+	private List<String> filteredLists = new ArrayList<>();
+	private Map<QName, List<QName>> filteredAssocProperties = new HashMap<>();
+	private Map<NodeRef, List<QName>> cachedAssocRef = null;
 	
 	private final Set<NodeRef> cacheList = new HashSet<>();
 
@@ -105,40 +105,35 @@ public class XmlEntityVisitor {
 		this.light = light;
 	}
 	
-
-	
-	public void setLists(List<String> lists) {
-		this.lists = lists;
+	public void setFilteredLists(List<String> filteredLists) {
+		this.filteredLists = filteredLists;
 	}
-	
-	public void setFieldsAndAssocProperties(List<String> fields) {
+
+	public void setFilteredFields(List<String> fields) {
 		
-		List<String> tmpFields = new ArrayList<>() ;
 		
 		if (fields != null && !fields.isEmpty()) {
 			for(String el : fields) {
 				String[] assoc = el.split("\\|");
+				QName propQname = QName.createQName(assoc[0],namespaceService);
 				if(assoc != null && assoc.length > 1) {
-					if(assocProperties.containsKey(assoc[0])) {
-						assocProperties.get(assoc[0]).add(assoc[1]);
+					QName assocPropQName = QName.createQName(assoc[1],namespaceService);
+					if(filteredAssocProperties.containsKey(propQname)) {
+						filteredAssocProperties.get(propQname).add(assocPropQName);
 					}else {
-						List<String> tmp  = new ArrayList<>();
-						tmp.add(assoc[1]);
-						assocProperties.put(assoc[0], tmp);
+						List<QName> tmp  = new ArrayList<>();
+						tmp.add(assocPropQName);
+						filteredAssocProperties.put(propQname, tmp);
 					}
 				}else {
-					tmpFields.add(el);
+					filteredProperties.add(propQname);
 				}
 			}
 		}
-		this.fields =  tmpFields;
 		
 	}
 	
 	
-
-
-
 	private static final Log logger = LogFactory.getLog(XmlEntityVisitor.class);
 
 	public XmlEntityVisitor(NodeService mlNodeService, NodeService nodeService, NamespaceService namespaceService, DictionaryService dictionaryService,
@@ -194,7 +189,7 @@ public class XmlEntityVisitor {
 		xmlw.writeStartElement(BeCPGModel.BECPG_PREFIX, RemoteEntityService.ELEM_ENTITIES, BeCPGModel.BECPG_URI);
 
 		for (NodeRef nodeRef : entities) {
-			if(this.fields != null && !this.fields.isEmpty()) {
+			if(this.filteredProperties != null && !this.filteredProperties.isEmpty()) {
 				entityList = true;
 				visitNode(nodeRef, xmlw, true, true, false);
 			}else {
@@ -243,7 +238,7 @@ public class XmlEntityVisitor {
 		String prefix = nodeType.getPrefixString().split(":")[0];
 		String name = (String) nodeService.getProperty(nodeRef, RemoteHelper.getPropName(nodeType, dictionaryService));
 		// lists filter 
-		if(DataListModel.TYPE_DATALIST.equals(nodeType) && lists != null && !lists.isEmpty() && !lists.contains(name) ) {
+		if(DataListModel.TYPE_DATALIST.equals(nodeType) && filteredLists != null && !filteredLists.isEmpty() && !filteredLists.contains(name) ) {
 			extractLevel--;
 			return ;
 		}
@@ -280,10 +275,7 @@ public class XmlEntityVisitor {
 		if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ERP_CODE)) {
 			if (nodeService.getProperty(nodeRef, BeCPGModel.PROP_ERP_CODE) != null) {
 				xmlw.writeAttribute(RemoteEntityService.ATTR_ERP_CODE, (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_ERP_CODE));
-			} else {
-				logger.warn("Node : " + nodeRef + " has null erpCode");
-			}
-
+			} 
 		}
 
 		// Assoc first
@@ -357,7 +349,7 @@ public class XmlEntityVisitor {
 					QName nodeType = assocDef.getName().getPrefixedQName(namespaceService);
 					String prefix = nodeType.getPrefixString().split(":")[0];
 					// fields & child assocs filter
-					if((fields != null && !fields.isEmpty() && !fields.contains(nodeType.getPrefixString()) && extractLevel == 1 && !nodeType.equals(BeCPGModel.ASSOC_ENTITYLISTS))
+					if((filteredProperties != null && !filteredProperties.isEmpty() && !filteredProperties.contains(nodeType) && extractLevel == 1 && !nodeType.equals(BeCPGModel.ASSOC_ENTITYLISTS))
 							|| (nodeType.equals(BeCPGModel.ASSOC_ENTITYLISTS) && entityList && extractLevel == 1) ) {
 						
 						continue;
@@ -388,7 +380,7 @@ public class XmlEntityVisitor {
 					QName nodeType = assocDef.getName().getPrefixedQName(namespaceService);
 					String prefix = nodeType.getPrefixString().split(":")[0];
 					// fields & assocs filter
-					if(fields != null && !fields.isEmpty() && !fields.contains(nodeType.getPrefixString()) && extractLevel == 1) {
+					if(filteredProperties != null && !filteredProperties.isEmpty() && !filteredProperties.contains(nodeType) && extractLevel == 1) {
 						continue;
 					}
 					
@@ -399,8 +391,8 @@ public class XmlEntityVisitor {
 					for (AssociationRef assocRef : assocRefs) {
 						NodeRef childRef = assocRef.getTargetRef();
 						// extract assoc properties
-						if(assocProperties.containsKey(nodeType.getPrefixString())) {
-							cachedAssocRef = Collections.singletonMap(childRef, assocProperties.get((nodeType.getPrefixString())));
+						if(filteredAssocProperties.containsKey(nodeType)) {
+							cachedAssocRef = Collections.singletonMap(childRef, filteredAssocProperties.get((nodeType)));
 							visitNode(childRef, xmlw, shouldDumpAll(childRef), true, false);
 							
 						}else {
@@ -433,7 +425,7 @@ public class XmlEntityVisitor {
 						QName propName = entry.getKey().getPrefixedQName(namespaceService);
 						String prefix = propName.getPrefixString().split(":")[0];
 						// filter props
-						if(fields != null && !fields.isEmpty() && !fields.contains(propName.getPrefixString()) && extractLevel == 1) {
+						if(filteredProperties != null && !filteredProperties.isEmpty() && !filteredProperties.contains(propName) && extractLevel == 1) {
 							continue;
 						}
 						// Assoc properties filter
@@ -441,7 +433,7 @@ public class XmlEntityVisitor {
 							continue;
 						}
 						
-						Map<NodeRef, List<String>> tmpCachedAssocRef = cachedAssocRef;
+						Map<NodeRef, List<QName>> tmpCachedAssocRef = cachedAssocRef;
 						
 						xmlw.writeStartElement(prefix, propName.getLocalName(), propName.getNamespaceURI());
 						xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE,

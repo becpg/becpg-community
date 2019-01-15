@@ -131,10 +131,10 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 				xmlEntityVisitor.setLight(true);
 			}
 			if(fields != null && !fields.isEmpty()) {
-				xmlEntityVisitor.setFieldsAndAssocProperties(fields);
+				xmlEntityVisitor.setFilteredFields(fields);
 			}
 			if(lists !=null && !lists.isEmpty()) {
-				xmlEntityVisitor.setLists(lists);
+				xmlEntityVisitor.setFilteredLists(lists);
 			}
 			try {
 				xmlEntityVisitor.visit(entityNodeRef, out);
@@ -228,7 +228,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 		if (format.equals(RemoteEntityFormat.xml)) {
 			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(mlNodeService, nodeService, namespaceService, dictionaryService, contentService, siteService);
 			if(fields != null && !fields.isEmpty()) {
-				xmlEntityVisitor.setFieldsAndAssocProperties(fields);
+				xmlEntityVisitor.setFilteredFields(fields);
 			}
 			try {
 				xmlEntityVisitor.visit(entities, result);

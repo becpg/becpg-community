@@ -246,7 +246,7 @@ public class ImportEntityXmlVisitor {
 
 					NodeRef node = null;
 					if (currAssocType.isEmpty() || !currAssocType.peek().equals(RemoteEntityService.CHILD_ASSOC_TYPE)) {
-						node = findNode(nodeRef, code, name, curNodeRef.isEmpty() ? this.destNodeRef : null, path, nodeType, currProp, cache);
+						node = findNode(nodeRef, code, erpCode , name, curNodeRef.isEmpty() ? this.destNodeRef : null, path, nodeType, currProp, cache);
 					}
 					// Entity node
 					if (curNodeRef.isEmpty()) {
@@ -735,7 +735,7 @@ public class ImportEntityXmlVisitor {
 		 * We search for : 1° - TYPE/PATH/CODE/SAME NAME 2° - TYPE/PATH/SAME
 		 * NAME 3° - TYPE/SAME NAME
 		 */
-		private NodeRef findNode(String nodeRef, String code, String name, NodeRef parentNodeRef, String path, QName type, QName currProp,
+		private NodeRef findNode(String nodeRef, String code, String erpCode, String name, NodeRef parentNodeRef, String path, QName type, QName currProp,
 				Map<NodeRef, NodeRef> cache) {
 			if ((nodeRef != null) && serviceRegistry.getNodeService().exists(new NodeRef(nodeRef))) {
 				return new NodeRef(nodeRef);
@@ -774,6 +774,8 @@ public class ImportEntityXmlVisitor {
 
 			if ((code != null) && (code.length() > 0)) {
 				beCPGQueryBuilder.andPropEquals(BeCPGModel.PROP_CODE, code);
+			} else if ((erpCode != null) && (erpCode.length() > 0)) {
+				beCPGQueryBuilder.andPropEquals(BeCPGModel.PROP_ERP_CODE, code);
 			} else if ((name != null) && (name.length() > 0)) {
 				beCPGQueryBuilder.andPropEquals(RemoteHelper.getPropName(type, entityDictionaryService), removeTrailingSpecialChar(cleanName(name)));
 			}
@@ -796,12 +798,17 @@ public class ImportEntityXmlVisitor {
 
 			if (code != null) {
 				logger.debug("Retrying findNode without code for previous query : " + beCPGQueryBuilder.toString());
-				return findNode(nodeRef, null, name, parentNodeRef, path, type, currProp, null);
+				return findNode(nodeRef, null,erpCode, name, parentNodeRef, path, type, currProp, null);
+			}
+			
+			if (erpCode != null) {
+				logger.debug("Retrying findNode without erpCode for previous query : " + beCPGQueryBuilder.toString());
+				return findNode(nodeRef, null,null, name, parentNodeRef, path, type, currProp, null);
 			}
 
 			if (path != null) {
 				logger.debug("Retrying findNode without path for previous query : " + beCPGQueryBuilder.toString());
-				return findNode(nodeRef, code, name, parentNodeRef, null, type, currProp, null);
+				return findNode(nodeRef, code, erpCode, name, parentNodeRef, null, type, currProp, null);
 			}
 
 			logger.debug("No existing node found for " + beCPGQueryBuilder.toString());
