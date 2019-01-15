@@ -18,6 +18,7 @@
 package fr.becpg.repo.entity.datalist;
 
 import java.util.List;
+import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
@@ -30,5 +31,5 @@ public interface DataListSortPlugin {
 	
 	String getPluginId();
 
-	List<NodeRef> sort(List<NodeRef> projectList);
+	List<NodeRef> sort(List<NodeRef> projectList, Map<String, Boolean> sortMap);
 }

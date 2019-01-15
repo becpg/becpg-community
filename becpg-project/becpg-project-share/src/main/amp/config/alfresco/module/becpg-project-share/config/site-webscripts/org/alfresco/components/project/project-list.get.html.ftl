@@ -68,7 +68,12 @@
 			         </span>
 			      	 <select id="${el}-filters-menu">
 				         <#list filters as filter>
-				            <option value="${filter.id+"|"+filter.data}">${msg("filter."+filter.id+"."+filter.data)}</option>
+				         	<#if filter.data?? && filter.data?length gt 0 >
+				           		 <option value="${filter.id+"|"+filter.data}">${msg("filter."+filter.id+"."+filter.data)}</option>
+				            <#else>
+				           		 <option value="${filter.id}">${msg("filter."+filter.id)}</option>
+				            </#if>
+				            
 				         </#list>
 				      </select>	
 
