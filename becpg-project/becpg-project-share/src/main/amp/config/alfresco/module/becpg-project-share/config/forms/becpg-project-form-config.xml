@@ -1180,8 +1180,7 @@
 					<field id="pjt:tlIsGroup" label="hidden" />
 					<field id="pjt:tlPrevTasks" label="hidden" />
 					<field id="pjt:invoice" read-only="true" />
-					<field id="pjt:expense" read-only="true" />
-					<field id="fm:commentCount" label="hidden" read-only="true" />
+					<field id="pjt:expense" read-only="true" />					
 					<field id="pjt:tlIsMilestone" label="hidden" />
 					<field id="pjt:tlStart" read-only="true" />
 					<field id="pjt:tlEnd" read-only="true" />
@@ -1190,6 +1189,7 @@
 					<field id="pjt:expense" read-only="true" />
 					<field id="pjt:tlLoggedTime" read-only="true" />
 					<field id="pjt:tlTaskLegend" label="hidden" />
+					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
 			</form>
 			<form id="sub-datagrid">

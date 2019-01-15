@@ -721,9 +721,13 @@
                                     if (typeof me[owner.className] == "function")
                                     {
                                         args[1].stop = true;
-                                        var asset = me.widgets.dataTable.getRecord(args[1].target.offsetParent)
-                                                .getData();
-                                        me[owner.className].call(me, asset, owner);
+                                        if(args[1].target && me.widgets.dataTable.getRecord(args[1].target.offsetParent)!=null){
+	                                        var asset = me.widgets.dataTable.getRecord(args[1].target.offsetParent)
+	                                                .getData();
+	                                        me[owner.className].call(me, asset, owner);
+                                        } else {
+                                        	me[owner.className].call(me, owner, owner);
+                                        }
                                     }
                                 }
                                 return true;
@@ -3319,10 +3323,6 @@
                         _buildSortParam : function EntityDataGrid__buildSortParam()
                         {
                             var sortUrl = "";
-                            if (this.options.groupBy != null && this.options.groupBy.length > 0)
-                            {
-                                sortUrl += "&sort=" + this.options.groupBy.replace("prop_", "").replace("_", ":");
-                            }
                             if (this.options.sortId != null)
                             {
                                 sortUrl += "&sortId=" + this.options.sortId;

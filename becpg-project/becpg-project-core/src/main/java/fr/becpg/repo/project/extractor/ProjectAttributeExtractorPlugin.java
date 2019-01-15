@@ -27,19 +27,25 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorPlugin;
+import fr.becpg.repo.helper.impl.AbstractExprNameExtractor;
 
 /**
  * @author matthieu
  *
  */
 @Service
-public class ProjectAttributeExtractorPlugin implements AttributeExtractorPlugin {
+public class ProjectAttributeExtractorPlugin extends AbstractExprNameExtractor {
 	
 
+	@Value("${beCPG.project.name.format}")
+	private String projectNameFormat;
+
+	
 	@Autowired
 	private NodeService nodeService;
 
@@ -49,7 +55,7 @@ public class ProjectAttributeExtractorPlugin implements AttributeExtractorPlugin
 	@Override
 	public Collection<QName> getMatchingTypes() {
 		return Arrays.asList(ProjectModel.TYPE_TASK_LIST, ProjectModel.TYPE_DELIVERABLE_LIST, ProjectModel.TYPE_BUDGET_LIST,
-				ProjectModel.TYPE_INVOICE_LIST, ProjectModel.TYPE_LOG_TIME_LIST);
+				ProjectModel.TYPE_INVOICE_LIST, ProjectModel.TYPE_LOG_TIME_LIST,ProjectModel.TYPE_PROJECT);
 	}
 
 	@Override
@@ -60,6 +66,8 @@ public class ProjectAttributeExtractorPlugin implements AttributeExtractorPlugin
 			return (String) nodeService.getProperty(nodeRef, ProjectModel.PROP_BL_ITEM);
 		}else if (ProjectModel.TYPE_INVOICE_LIST.equals(type) || ProjectModel.TYPE_LOG_TIME_LIST.equals(type)) {
 			return type.toPrefixString();
+		} else if (ProjectModel.TYPE_PROJECT.equals(type) ) {
+			return extractExpr(nodeRef,projectNameFormat);
 		} 
 		return (String) nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_TASK_NAME);
 	}

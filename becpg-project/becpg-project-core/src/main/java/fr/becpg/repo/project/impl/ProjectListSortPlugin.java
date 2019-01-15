@@ -20,6 +20,7 @@ package fr.becpg.repo.project.impl;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -44,12 +45,13 @@ public class ProjectListSortPlugin implements DataListSortPlugin {
 	@Autowired
 	private NodeService nodeService;
 
+
 	@Override
 	public String getPluginId() {
 		return PLUGIN_ID;
 	}
 
-	public List<NodeRef> sort(List<NodeRef> projectList) {
+	public List<NodeRef> sort(List<NodeRef> projectList, Map<String, Boolean> sortMap) {
 
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
@@ -62,14 +64,27 @@ public class ProjectListSortPlugin implements DataListSortPlugin {
 			@Override
 			public int compare(NodeRef n1, NodeRef n2) {
 
+				boolean sortDir = false;
+				QName sortProp = ContentModel.PROP_NAME;
+
+				if (!sortMap.isEmpty()) {
+					Map.Entry<String, Boolean> kv = sortMap.entrySet().iterator().next();
+
+					sortDir = kv.getValue();
+					sortProp = QName.createQName(kv.getKey().replaceFirst("@", ""));
+				}
+
 				int comp = compare(getHierarchy(n1, ProjectModel.PROP_PROJECT_HIERARCHY1), getHierarchy(n2, ProjectModel.PROP_PROJECT_HIERARCHY1));
 
 				if (EQUAL == comp) {
 					comp = compare(getHierarchy(n1, ProjectModel.PROP_PROJECT_HIERARCHY2), getHierarchy(n2, ProjectModel.PROP_PROJECT_HIERARCHY2));
 
 					if (EQUAL == comp) {
-						comp = compare((String) nodeService.getProperty(n1, ContentModel.PROP_NAME),
-								(String) nodeService.getProperty(n2, ContentModel.PROP_NAME));
+						if (sortDir) {
+							comp = compare((String) nodeService.getProperty(n1, sortProp), (String) nodeService.getProperty(n2, sortProp));
+						} else {
+							comp = compare((String) nodeService.getProperty(n2, sortProp), (String) nodeService.getProperty(n1, sortProp));
+						}
 					}
 				}
 
