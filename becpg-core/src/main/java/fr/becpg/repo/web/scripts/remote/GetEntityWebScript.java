@@ -19,6 +19,7 @@ package fr.becpg.repo.web.scripts.remote;
 
 import java.io.IOException;
 import java.net.SocketException;
+import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.springframework.extensions.webscripts.WebScriptException;
@@ -44,7 +45,7 @@ public class GetEntityWebScript extends AbstractEntityWebScript {
 
 		try {
 
-			remoteEntityService.getEntity(entityNodeRef, resp.getOutputStream(), getFormat(req));
+			remoteEntityService.getEntity(entityNodeRef, resp.getOutputStream(), getFormat(req), extractFields(req), extractLists(req));
 
 			// set mimetype for the content and the character encoding + length
 			// for the stream

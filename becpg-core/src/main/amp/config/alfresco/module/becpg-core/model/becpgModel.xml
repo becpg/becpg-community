@@ -764,6 +764,15 @@
 				</property>
 			</properties>
 		</aspect>
+		
+		<aspect name="bcpg:erpCodeAspect">
+			<properties>
+				<property name="bcpg:erpCode">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+				</property>
+			</properties>
+		</aspect>
 
 	</aspects>
 </model>

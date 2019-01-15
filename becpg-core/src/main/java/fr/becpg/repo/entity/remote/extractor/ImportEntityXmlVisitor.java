@@ -227,6 +227,7 @@ public class ImportEntityXmlVisitor {
 					String name = attributes.getValue(RemoteEntityService.ATTR_NAME);
 					String nodeRef = attributes.getValue(RemoteEntityService.ATTR_NODEREF);
 					String code = attributes.getValue(RemoteEntityService.ATTR_CODE);
+					String erpCode = attributes.getValue(RemoteEntityService.ATTR_ERP_CODE);
 
 					if(nodeRef == null) {
 						nodeRef = "bcpg://tmpStore/"+UUID.randomUUID().toString();
@@ -253,9 +254,9 @@ public class ImportEntityXmlVisitor {
 						if (node == null) {
 							logger.debug("Add entity main node");
 							if (this.destNodeRef != null) {
-								node = createNode(this.destNodeRef, nodeType, name);
+								node = createNode(this.destNodeRef, nodeType, name, erpCode);
 							} else {
-								node = createNode(path, nodeType, name);
+								node = createNode(path, nodeType, name, erpCode);
 							}
 							try {
 								retrieveNodeContent(new NodeRef(nodeRef), node);
@@ -301,7 +302,7 @@ public class ImportEntityXmlVisitor {
 								} else {
 									// Case full xml
 									logger.debug("Creating new node from xml");
-									node = createNode(path, nodeType, name);
+									node = createNode(path, nodeType, name, erpCode);
 									cache.put(new NodeRef(nodeRef), node);
 								}
 							}
@@ -609,22 +610,25 @@ public class ImportEntityXmlVisitor {
 			return false;
 		}
 
-		private NodeRef createNode(String parentPath, QName type, String name) throws SAXException {
+		private NodeRef createNode(String parentPath, QName type, String name, String erpCode) throws SAXException {
 			NodeRef parentNodeRef = findNodeByPath(parentPath);
 
 			if (parentNodeRef != null) {
-				return createNode(parentNodeRef, type, removeTrailingSpecialChar(name));
+				return createNode(parentNodeRef, type, removeTrailingSpecialChar(name), erpCode);
 			}
 			throw new SAXException("Path doesn't exist on repository :" + parentPath);
 		}
 
-		private NodeRef createNode(NodeRef parentNodeRef, QName type, String name) {
+		private NodeRef createNode(NodeRef parentNodeRef, QName type, String name, String erpCode) {
 			name = removeTrailingSpecialChar(name);
 			NodeRef ret = serviceRegistry.getNodeService().getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, name);
 
 			if (ret == null) {
 				Map<QName, Serializable> properties = new HashMap<>();
 				properties.put(ContentModel.PROP_NAME, PropertiesHelper.cleanName(name));
+				if(erpCode != null && !erpCode.isEmpty()) {
+					properties.put(BeCPGModel.PROP_ERP_CODE, erpCode);
+				}
 				
 				QName assocName = ContentModel.ASSOC_CONTAINS;
 				logger.debug("Creating missing node :" + name + " at path :" + parentNodeRef+", type = "+type+", assocName = "+assocName);

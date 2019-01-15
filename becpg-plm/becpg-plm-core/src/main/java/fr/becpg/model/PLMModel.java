@@ -277,10 +277,6 @@ public interface PLMModel {
 	QName ASPECT_EAN = QName.createQName(BeCPGModel.BECPG_URI, "eanAspect");
 	QName PROP_EAN_CODE = QName.createQName(BeCPGModel.BECPG_URI, "eanCode");
 
-	// code aspect
-	QName ASPECT_ERP_CODE = QName.createQName(BeCPGModel.BECPG_URI, "erpCodeAspect");
-	QName PROP_ERP_CODE = QName.createQName(BeCPGModel.BECPG_URI, "erpCode");
-
 	// variant
 	QName TYPE_VARIANT = QName.createQName(BeCPGModel.BECPG_URI, "variant");
 	QName ASPECT_ENTITY_VARIANT = QName.createQName(BeCPGModel.BECPG_URI, "entityVariantAspect");

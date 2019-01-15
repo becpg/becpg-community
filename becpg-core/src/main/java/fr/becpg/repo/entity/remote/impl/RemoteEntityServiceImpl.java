@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -116,6 +117,11 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 
 	@Override
 	public void getEntity(NodeRef entityNodeRef, OutputStream out, RemoteEntityFormat format) throws BeCPGException {
+		getEntity(entityNodeRef, out, format, null, null);
+	}
+
+	@Override
+	public void getEntity(NodeRef entityNodeRef, OutputStream out, RemoteEntityFormat format, List<String> fields, List<String> lists) throws BeCPGException {
 		if (format.equals(RemoteEntityFormat.xml) || format.equals(RemoteEntityFormat.xml_all)  || format.equals(RemoteEntityFormat.xml_light)) {
 			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(mlNodeService, nodeService, namespaceService, dictionaryService, contentService, siteService);
 			if (format.equals(RemoteEntityFormat.xml_all)) {
@@ -124,7 +130,12 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 			if (format.equals(RemoteEntityFormat.xml_light)) {
 				xmlEntityVisitor.setLight(true);
 			}
-			
+			if(fields != null && !fields.isEmpty()) {
+				xmlEntityVisitor.setFieldsAndAssocProperties(fields);
+			}
+			if(lists !=null && !lists.isEmpty()) {
+				xmlEntityVisitor.setLists(lists);
+			}
 			try {
 				xmlEntityVisitor.visit(entityNodeRef, out);
 			} catch (XMLStreamException e) {
@@ -143,7 +154,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 			throw new BeCPGException("Unknown format " + format.toString());
 		}
 	}
-
+	
 	@Override
 	public NodeRef createOrUpdateEntity(NodeRef entityNodeRef, InputStream in, RemoteEntityFormat format,
 			EntityProviderCallBack entityProviderCallBack) throws BeCPGException {
@@ -206,11 +217,19 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 		}
 
 	}
-
+	
 	@Override
 	public void listEntities(List<NodeRef> entities, OutputStream result, RemoteEntityFormat format) throws BeCPGException {
+		listEntities(entities, result, format, new ArrayList<String>());
+	}
+
+	@Override
+	public void listEntities(List<NodeRef> entities, OutputStream result, RemoteEntityFormat format, List<String> fields) throws BeCPGException {
 		if (format.equals(RemoteEntityFormat.xml)) {
 			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(mlNodeService, nodeService, namespaceService, dictionaryService, contentService, siteService);
+			if(fields != null && !fields.isEmpty()) {
+				xmlEntityVisitor.setFieldsAndAssocProperties(fields);
+			}
 			try {
 				xmlEntityVisitor.visit(entities, result);
 			} catch (XMLStreamException e) {
@@ -221,6 +240,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 		}
 
 	}
+	
 
 	@Override
 	public void getEntityData(NodeRef entityNodeRef, OutputStream result, RemoteEntityFormat format) throws BeCPGException {
