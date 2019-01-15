@@ -180,7 +180,7 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 				if (dataListFilter.getSortId() != null) {
 					DataListSortPlugin plugin = dataListSortRegistry.getPluginById(dataListFilter.getSortId());
 					if (plugin != null) {
-						plugin.sort(results);
+						plugin.sort(results, dataListFilter.getSortMap());
 					}
 				}
 

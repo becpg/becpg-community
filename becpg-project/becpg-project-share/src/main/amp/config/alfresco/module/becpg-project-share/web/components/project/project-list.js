@@ -64,7 +64,7 @@ var g; // gantt var
                     .setOptions(
                     {
                         sortable : false,
-                        localSort : true,
+                        localSort : false,
                         usePagination : true,
                         useFilter : true,
                         configurableColumns : false,
@@ -261,14 +261,23 @@ var g; // gantt var
                                         "pjt_project|cm_name|pjt_projectHierarchy1|pjt_projectHierarchy2|pjt_completionPercent|bcpg_code" ];
 
                             }
+                            
+                            
 
                             var request =
                             {
                                 fields : fields,
                                 page : p_obj && p_obj.page ? p_obj.page : this.currentPage,
-                                queryExecutionId : this.queryExecutionId,
                                 extraParams : this.options.extraParams
                             };
+                            
+                            if(this.currentSort!=null){
+								request.sort = this.currentSort.replace("prop_","").replace("_",":")+"|"+((this.currentSortDir == "yui-dt-asc") ? "true" : "false");
+							}
+							
+							if(this.queryExecutionId != null) {
+								request.queryExecutionId = this.queryExecutionId;
+							}
 
                             if (p_obj && p_obj.filter)
                             {
@@ -283,6 +292,7 @@ var g; // gantt var
                             }
 
                             return request;
+
                         },
 
                         initGantt : function PL_initGantt()
@@ -496,6 +506,12 @@ var g; // gantt var
                                         .msg("filter." + filter.filterId))+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
                             	
                             }
+                            else if (filter.filterId == "all")
+                            {
+                            	this.widgets.filter.set("label", $html(this.msg(
+                                        "filter." + filter.filterId))+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
+                            	
+                            }
                             else if (filter.filterId == "tag")
                             {
                             	this.widgets.filter.set("label", $html(this.msg(
@@ -522,14 +538,16 @@ var g; // gantt var
                               var me = this
 
                               me.widgets.filter.set("label", menuItem.cfg.getProperty("text")+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
-                          	 
-                              var filterObj =
-                                    {
+         
+                              var filterObj = {
                                        filterOwner: me.name,
-                                       filterId: value.split("|")[0],
-                                       filterData :  value.split("|")[1]
+                                       filterId: value.split("|")[0]
                                     };
 
+                              if("all" != filterObj.filterId &&  value.split("|").length>1){
+                            	  filterObj.filterData = value.split("|")[1];
+                              }
+                              
                               YAHOO.Bubbling.fire("changeFilter", filterObj);
                            }
                         },

@@ -51,11 +51,22 @@ if (beCPG.module.EntityDataGridRenderers) {
       renderer : function(oRecord, data, label, scope) {
       	
       	var padding = 0, className = oRecord.getData("itemData")["prop_pjt_tlIsMilestone"].value ? "task-milestone" : "task";
+      	
+      	
       	if (oRecord.getData("itemData")["prop_bcpg_depthLevel"] && oRecord.getData("itemData")["prop_bcpg_depthLevel"].value) {
 				padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 25;
-			}      	
-         
-         return '<span class="' + className + '" style="margin-left:' + padding + 'px;" >' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+		}
+      	
+      	if(false === oRecord.getData("itemData")["isLeaf"]){
+			toogleGroupButton = '<div id="group_'+( oRecord.getData("itemData")["open"]?"expanded":"collapsed")+'_'+ oRecord.getData("nodeRef")+'" style="margin-left:' + padding
+					+ 'px;" class="onCollapsedAndExpanded" ><a href="#" class="'+scope.id + '-action-link"><span class="gicon ggroup-'
+					+( oRecord.getData("itemData")["open"]?"expanded":"collapsed")+'"></span></a></div>';
+		} else if( true === oRecord.getData("itemData")["isLeaf"] ){
+			padding +=25;
+		}
+      	
+         return (toogleGroupButton!=null ? toogleGroupButton : '')
+         +'<span class="' + className + '" style="margin-left:' + padding + 'px;" >' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
       }
 
    });

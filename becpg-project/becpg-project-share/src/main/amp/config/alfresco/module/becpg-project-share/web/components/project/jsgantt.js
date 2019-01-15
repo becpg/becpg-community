@@ -217,7 +217,7 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
        * @default 0
        * @private
        */
-      var vLevel = 0;
+      var vLevel = 1;
 
       /**
        * @property vNumKid
@@ -1556,12 +1556,14 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
                   if (vTaskList[i].getOpen() == 1){
                 	  gcssClass = "ggroup-expanded";
                   } 
-//                  if(vTaskList[i].getSubProject()!=null){
-//                	  gcssClass= "ggroup-project";
-//                  }
-                  
-                  vLeftTable += '<div style="margin-left:' + vMargin + 'px;" id="group_' + vcurrDivID + '" class="gicon '+gcssClass+'" onclick="JSGantt.folder(\'' + vcurrDivID + '\',' + vGanttVar + ');' + vGanttVar + '.DrawDependencies();"></div>';
-                  
+
+                  if(vTaskList[i].getSubProject()!=null){
+                	  vLeftTable += '<div id="group_'+( vTaskList[i].getOpen() ?"expanded":"collapsed")+'_'+ vcurrDivID+'" style="margin-left:' + vMargin
+						+ 'px;" class="onCollapsedAndExpanded" ><a href="#" class="'+JSGantt.scope.id + '-action-link"><span class="gicon '
+						+( gcssClass )+'"></span></a></div>'
+                  } else {
+                	  vLeftTable += '<div style="margin-left:' + vMargin + 'px;" id="group_' + vcurrDivID + '" class="gicon '+gcssClass+'" onclick="JSGantt.folder(\'' + vcurrDivID + '\',' + vGanttVar + ');' + vGanttVar + '.DrawDependencies();"></div>';
+                  }
                } else {
 
                   vLeftTable += '<span  style="margin-left:' + vMargin + 'px;">&nbsp;</span>';
