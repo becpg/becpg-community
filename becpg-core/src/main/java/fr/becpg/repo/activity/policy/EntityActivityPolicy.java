@@ -131,26 +131,31 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 			QName type = nodeService.getType(nodeRef);
 			if (accept(type)) {
 
-				if ((before != null) && (after != null) && (before.size() == after.size())) {
+				 if ((before != null) && (after != null) && (before.size() < after.size())) {
+						isDifferent = true;
+				}
+				 
+				if (before != null && after != null) {
 					for (QName beforeType : before.keySet()) {
 						if (!isIgnoredTypes.contains(beforeType)) {
-							if (((before.get(beforeType) != null) && !before.get(beforeType).equals(after.get(beforeType)))
-									|| ((before.get(beforeType) == null) && (after.get(beforeType) != null))) {
-
+							
+							if( (before.get(beforeType) == null && after.get(beforeType) == null )
+								|| (before.get(beforeType) != null && after.get(beforeType) != null && before.get(beforeType).equals(after.get(beforeType)))) {
+								continue;
+							}
+							
+							if ((before.get(beforeType) != null && after.get(beforeType) != null && !before.get(beforeType).equals(after.get(beforeType)))
+									|| (before.get(beforeType) == null || after.get(beforeType) == null) ) {
 								isDifferent = true;
 								if (entityActivityService.isMatchingStateProperty(beforeType)) {
 									entityState = beforeType;
-									beforeState = before.get(entityState).toString();
-									afterState = after.get(entityState).toString();
+									beforeState = before.get(entityState) != null ? before.get(entityState).toString() : "";
+									afterState = after.get(entityState) != null ? after.get(entityState).toString() : "";
 									break;
 								}
-
 							}
-
 						}
 					}
-				} else if ((before != null) && (after != null) && (before.size() < after.size())) {
-					isDifferent = true;
 				}
 
 				if (isDifferent) {
@@ -224,10 +229,10 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 	@Override
 	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 
+		
 		for (NodeRef nodeRef : pendingNodes) {
 			if (nodeService.exists(nodeRef)) {
 				QName type = nodeService.getType(nodeRef);
-				
 				switch (key) {
 				case KEY_QUEUE_UPDATED:
 					if (!containsNodeInQueue(KEY_QUEUE_CREATED, nodeRef) && !containsNodeInQueue(KEY_QUEUE_DELETED, nodeRef)
@@ -241,6 +246,7 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 				default:
 					if (key.contains(KEY_QUEUE_UPDATED_STATUS)) {
 						String[] strState = pattern.split(key);
+						logger.debug("Action change state, post activity");
 						entityActivityService.postStateChangeActivity(nodeRef, null, strState[1], strState[2]);
 					}
 					break;

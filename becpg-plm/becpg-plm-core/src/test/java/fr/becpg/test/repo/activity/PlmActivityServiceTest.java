@@ -26,6 +26,7 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.activity.data.ActivityListDataItem;
+import fr.becpg.repo.activity.data.ActivityType;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
@@ -258,7 +259,8 @@ public class PlmActivityServiceTest extends AbstractFinishedProductTest {
 		}, false, true);
 
 		// Activity recorded on branch
-		assertEquals("Check update Activity", 2, getActivities(productNodeRef, null).size());
+		assertEquals("Check update Activity", 1, 
+				(int) getActivityListDataItems(productNodeRef).entrySet().stream().filter(el -> el.getValue().getActivityType().equals(ActivityType.State)).count());
 
 	}
 
