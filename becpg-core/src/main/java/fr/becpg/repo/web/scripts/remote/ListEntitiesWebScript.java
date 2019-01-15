@@ -30,6 +30,8 @@ import fr.becpg.common.BeCPGException;
 
 public class ListEntitiesWebScript extends AbstractEntityWebScript {
 
+
+	
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
 		List<NodeRef> entities = findEntities(req);
@@ -38,7 +40,7 @@ public class ListEntitiesWebScript extends AbstractEntityWebScript {
 
 		try {
 
-			remoteEntityService.listEntities(entities, resp.getOutputStream(), getFormat(req));
+			remoteEntityService.listEntities(entities, resp.getOutputStream(), getFormat(req), extractFields(req));
 
 			// set mimetype for the content and the character encoding + length
 			// for the stream
@@ -57,5 +59,7 @@ public class ListEntitiesWebScript extends AbstractEntityWebScript {
 
 		}
 	}
+	
+	
 
 }

@@ -18,6 +18,7 @@ import org.springframework.util.StopWatch;
 
 import com.google.common.collect.Lists;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.entity.simulation.EntitySimulationPlugin;
 import fr.becpg.repo.entity.version.EntityVersionService;
@@ -110,10 +111,10 @@ public class ProductSimulationPlugin implements EntitySimulationPlugin {
 			if (productBranchNodeRef == null) {
 				productBranchNodeRef = entityVersionService.createBranch(productNodeRef, destNodeRef);
 
-				String oldErpCode = (String) nodeService.getProperty(productNodeRef, PLMModel.PROP_ERP_CODE);
+				String oldErpCode = (String) nodeService.getProperty(productNodeRef, BeCPGModel.PROP_ERP_CODE);
 				if ((oldErpCode != null) && !oldErpCode.isEmpty()) {
 					String destName = (String) nodeService.getProperty(destNodeRef, ContentModel.PROP_NAME);
-					nodeService.setProperty(productBranchNodeRef, PLMModel.PROP_ERP_CODE, destName + oldErpCode);
+					nodeService.setProperty(productBranchNodeRef, BeCPGModel.PROP_ERP_CODE, destName + oldErpCode);
 				}
 				
 				logger.debug("Create simulation node for: "+ nodeService.getProperty(productBranchNodeRef,  ContentModel.PROP_NAME));
