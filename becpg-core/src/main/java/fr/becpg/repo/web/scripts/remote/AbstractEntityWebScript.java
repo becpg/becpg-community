@@ -19,7 +19,10 @@ package fr.becpg.repo.web.scripts.remote;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -54,6 +57,8 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	protected static final String PARAM_FORMAT = "format";
 	protected static final String PARAM_NODEREF = "nodeRef";
 	protected static final String PARAM_ALL_VERSION = "allVersion";
+	protected static final String PARAM_FIELDS = "fields";
+	protected static final String PARAM_LISTS = "lists";
 
 	/** http://localhost:8080/alfresco/services/becpg/remote/entity **/
 	protected static final String PARAM_CALLBACK = "callback";
@@ -201,4 +206,33 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		}
 	}
 
+	public List<String> extractFields(WebScriptRequest req){
+		List<String> fields = new ArrayList<>() ;
+		String fieldsParams = req.getParameter(PARAM_FIELDS);
+		if (fieldsParams != null && fieldsParams.length() > 0) {
+			String[] splitted = fieldsParams.split(",");
+			fields = Arrays.asList(splitted);
+			
+		}
+		
+		return fields;
+	}
+	
+	public List<String> extractLists(WebScriptRequest req){
+		List<String> lists = new ArrayList<>() ;
+		String listsParams = req.getParameter(PARAM_LISTS);
+		if (listsParams != null && listsParams.length() > 0) {
+			String[] splitted = listsParams.split(",");
+			for(String list : splitted) {
+				String[] listName = list.split(":");
+				if(listName != null && listName.length > 0) {
+					lists.add(listName[1]);
+				}
+			}
+			
+		}
+		
+		return lists;
+	}
+	
 }
