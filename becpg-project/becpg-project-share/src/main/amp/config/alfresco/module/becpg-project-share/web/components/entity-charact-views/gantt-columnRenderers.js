@@ -82,6 +82,12 @@
                                                         	pSubProject = task["itemData"]["assoc_pjt_subProjectRef"][0].displayValue;
                                                         }
                                                         
+                                                        var pGroupOpen = 1;
+                                                        
+                                                        if ( pSubProject!=null && !task["itemData"]["open"])
+                                                        {
+                                                        	pGroupOpen = 0;
+                                                        }	
                                                         
                                                         var pGroup = !task["itemData"]["prop_pjt_tlIsGroup"].value ? 0 : 1;
                                                         
@@ -128,7 +134,7 @@
                                                         g.AddTaskItem(new JSGantt.TaskItem(taskId, this.getTaskTitle(task,
                                                                 this.options.entityNodeRef), tdates.start,
                                                                 tdates.end, this.getTaskColor(task), null, tlIsMilestone ? 1 : 0,
-                                                                taskOwner, tlPercent, pGroup, pParent, pSubProject!=null ? 0 : 1, precTaskIds,null,task.color, pSubProject));
+                                                                taskOwner, tlPercent, pGroup, pParent, pGroupOpen, precTaskIds,null,task.color, pSubProject));
                                                     }
 
                                                     this.refreshView();

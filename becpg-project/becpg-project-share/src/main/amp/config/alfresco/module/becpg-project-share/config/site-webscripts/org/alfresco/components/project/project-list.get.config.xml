@@ -19,6 +19,7 @@
       <filtermenu id="projects" data="OnHold"     />
       <filtermenu id="projects" data="Cancelled"  />
       <filtermenu id="projects" data="Completed"  />
+      <filtermenu id="all"  data="" />
       <filtermenu id="due" data="today"/>
       <filtermenu id="due" data="tomorrow" />
       <filtermenu id="due" data="next7Days"  />

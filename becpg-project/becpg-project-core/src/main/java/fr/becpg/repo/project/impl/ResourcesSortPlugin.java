@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -53,7 +54,7 @@ public class ResourcesSortPlugin implements DataListSortPlugin {
 		return PLUGIN_ID;
 	}
 
-	public List<NodeRef> sort(List<NodeRef> taskList) {
+	public List<NodeRef> sort(List<NodeRef> taskList, Map<String, Boolean> sortMap) {
 
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
