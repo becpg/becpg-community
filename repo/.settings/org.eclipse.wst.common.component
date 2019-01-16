@@ -5,16 +5,16 @@
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/properties/local"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
-        <dependent-module archiveName="becpg-core-2.2.4.amp" deploy-path="/WEB-INF/lib" handle="module:/resource/becpg-core/becpg-core">
+        <dependent-module archiveName="becpg-core-2.2.5.amp" deploy-path="/WEB-INF/lib" handle="module:/resource/becpg-core/becpg-core">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="becpg-designer-core-2.2.4.amp" deploy-path="/WEB-INF/lib" handle="module:/resource/becpg-designer-core/becpg-designer-core">
+        <dependent-module archiveName="becpg-designer-core-2.2.5.amp" deploy-path="/WEB-INF/lib" handle="module:/resource/becpg-designer-core/becpg-designer-core">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="becpg-project-core-2.2.4.amp" deploy-path="/WEB-INF/lib" handle="module:/resource/becpg-project-core/becpg-project-core">
+        <dependent-module archiveName="becpg-project-core-2.2.5.amp" deploy-path="/WEB-INF/lib" handle="module:/resource/becpg-project-core/becpg-project-core">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="becpg-plm-core-2.2.4.amp" deploy-path="/WEB-INF/lib" handle="module:/resource/becpg-plm-core/becpg-plm-core">
+        <dependent-module archiveName="becpg-plm-core-2.2.5.amp" deploy-path="/WEB-INF/lib" handle="module:/resource/becpg-plm-core/becpg-plm-core">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module deploy-path="/" handle="module:/overlay/prj/becpg-plm-core?includes=**/**&amp;excludes=META-INF/MANIFEST.MF">
