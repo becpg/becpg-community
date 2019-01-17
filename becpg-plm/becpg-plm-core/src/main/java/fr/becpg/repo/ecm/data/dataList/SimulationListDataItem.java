@@ -37,6 +37,7 @@ public class SimulationListDataItem extends BeCPGDataObject{
 	private NodeRef charact;
 	private Object sourceValue;
 	private Object targetValue;
+	private Integer sort;
 	
 	@AlfSingleAssoc
 	@AlfQname(qname="ecm:cclSourceItem")
@@ -76,16 +77,27 @@ public class SimulationListDataItem extends BeCPGDataObject{
 		this.targetValue = targetValue;
 	}
 
+	@AlfProp
+	@AlfQname(qname="bcpg:sort")
+	public Integer getSort() {
+		return sort;
+	}
+
+	public void setSort(Integer sort) {
+		this.sort = sort;
+	}
+	
 	public SimulationListDataItem() {
 		super();
 	}
 	
-	public SimulationListDataItem(NodeRef nodeRef, NodeRef sourceItem, NodeRef charact, Object sourceValue, Object targetValue){
+	public SimulationListDataItem(NodeRef nodeRef, NodeRef sourceItem, NodeRef charact, Object sourceValue, Object targetValue, Integer sort){
 		this.nodeRef=nodeRef;
 		this.sourceItem=sourceItem;
 		this.charact=charact;
 		this.sourceValue=sourceValue;
 		this.targetValue=targetValue;
+		this.sort=sort;
 	}
 	
 	@Override
@@ -96,6 +108,7 @@ public class SimulationListDataItem extends BeCPGDataObject{
 		result = prime * result + ((sourceItem == null) ? 0 : sourceItem.hashCode());
 		result = prime * result + ((sourceValue == null) ? 0 : sourceValue.hashCode());
 		result = prime * result + ((targetValue == null) ? 0 : targetValue.hashCode());
+		result = prime * result + ((sort == null) ? 0 : sort.hashCode());
 		return result;
 	}
 	
@@ -113,6 +126,13 @@ public class SimulationListDataItem extends BeCPGDataObject{
 				return false;
 		} else if (!charact.equals(other.charact))
 			return false;
+		
+		if (sort == null) {
+			if (other.sort != null)
+				return false;
+		} else if (!sort.equals(other.sort))
+			return false;
+		
 		if (sourceItem == null) {
 			if (other.sourceItem != null)
 				return false;

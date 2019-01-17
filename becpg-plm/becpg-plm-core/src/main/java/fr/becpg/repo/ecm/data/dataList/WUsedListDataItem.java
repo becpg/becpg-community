@@ -44,6 +44,7 @@ public class WUsedListDataItem extends BeCPGDataObject implements CompositeDataI
 	private NodeRef link;
 	private List<NodeRef> sourceItems;
 	private WUsedListDataItem parent;
+	private Integer sort;
 
 	@AlfProp
 	@AlfQname(qname = "bcpg:parentLevel")
@@ -82,6 +83,18 @@ public class WUsedListDataItem extends BeCPGDataObject implements CompositeDataI
 		this.depthLevel = depthLevel;
 	}
 
+	@AlfProp
+	@AlfQname(qname="bcpg:sort")
+	public Integer getSort() {
+		return sort;
+	}
+
+	public void setSort(Integer sort) {
+		this.sort = sort;
+	}
+
+	
+	
 	@AlfProp
 	@AlfQname(qname = "ecm:isWUsedImpacted")
 	public Boolean getIsWUsedImpacted() {
@@ -133,6 +146,7 @@ public class WUsedListDataItem extends BeCPGDataObject implements CompositeDataI
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + ((depthLevel == null) ? 0 : depthLevel.hashCode());
+		result = prime * result + ((sort == null) ? 0 : sort.hashCode());
 		result = prime * result + ((impactedDataList == null) ? 0 : impactedDataList.hashCode());
 		result = prime * result + ((isWUsedImpacted == null) ? 0 : isWUsedImpacted.hashCode());
 		result = prime * result + ((link == null) ? 0 : link.hashCode());
@@ -154,6 +168,11 @@ public class WUsedListDataItem extends BeCPGDataObject implements CompositeDataI
 			if (other.depthLevel != null)
 				return false;
 		} else if (!depthLevel.equals(other.depthLevel))
+			return false;
+		if (sort == null) {
+			if (other.sort != null)
+				return false;
+		} else if (!sort.equals(other.sort))
 			return false;
 		if (impactedDataList == null) {
 			if (other.impactedDataList != null)
