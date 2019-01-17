@@ -50,7 +50,7 @@ OA;Organic acids, total;;;;;;;;
 PANTAC;Panto acid;;1;false;true;false;5;;mg
 P;Phosphorus, P;;1;false;true;false;1250;;mg
 POLYL;Polyols total;;;;;;;;
-K;Potassium, k;11;1;false;true;false;4700;;mg
+K;Potassium, k;11;1;true;false;false;4700;;mg
 PRO-;Protein;8;1;true;false;true;;;g
 CARTBEQ;Provitamin A (b-carotene equivalents);;;;;;;;
 PROCNT;Raw proteins (N x 6.25);;;;;;;;
@@ -67,14 +67,14 @@ FAT;Total lipid (fat);2;1;true;false;true;75;;g
 FAPUN3F;Total omega 3 fatty acids;;;;;;;;
 FATRN;Total trans fatty acids;4;2;true;false;false;;;g
 TRP;Tryptophan;;;;;;;;
-VITA-;Vitamin A;;1;true;false;false;900;;µg
+VITA-;Vitamin A;;1;false;true;false;900;;µg
 VITA;Vitamin A retinol equivalents;;;;;;;;
 VITA-IU;Vitamin A, IU;;;;;;;;
 VITA-RAE;Vitamin A, RAE;;;;;;;;
 VITB12;Vitamin B-12;;1;false;true;false;2,4;;µg
 VITB6-;Vitamin B-6;;1;false;true;false;1,7;;mg
 BIOT;Vitamin B7 (Biotin);;1;false;true;false;30;;µg
-VITC-;Vitamin C, total ascorbic acid;;1;true;false;false;90;;mg
+VITC-;Vitamin C, total ascorbic acid;;1;false;true;false;90;;mg
 VITD-;VITAMIN D;;1;false;true;false;20;;µg
 VITDEQ;Vitamin D (D2 + D3);;;;;;;;
 VITE-;Vitamin E;;1;false;true;false;15;;mg
