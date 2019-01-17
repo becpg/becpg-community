@@ -7,14 +7,14 @@ CARTB;Beta-caroten;;;;true;;;;
 CRYPX;Beta-Crypt;;;;true;;;;
 CAFFN;Caffein;;;;true;;;;
 CA;Calcium, Ca;;1;false;true;false;800;;mg
-CHOAVL;Carbohydrate, by difference;5;1;true;true;false;260;;g
+CHOAVL;Carbohydrate, by difference;5;1;true;false;false;260;;g
 CHO-;Carbohydrate, by difference (with fiber);;;;true;;;;
 CHOL-;Cholesterol;;;;true;;;;
 CHOLN;CholineTot;;;;true;;;;
 CR;Chromium;;1;false;true;false;40;;µg
 CU;Copper;;1;false;true;false;1;;mg
-ENER-E14;Energy kcal;2;1;true;true;false;2000;;kcal
-ENER-KJO;Energy kJ;1;1;true;true;false;8400;;kJ
+ENER-E14;Energy kcal;2;1;true;false;false;2000;;kcal
+ENER-KJO;Energy kJ;1;1;true;false;false;8400;;kJ
 F10D0;FA 10:0, capric;;;;true;;;;
 F12D0;FA 12:0, lauric;;;;true;;;;
 F14D0;FA 14:0 , myristic;;;;true;;;;
@@ -32,7 +32,7 @@ F6D0;FA 6:0, caproic;;;;true;;;;
 F8D0;FA 8:0, caprylic;;;;true;;;;
 FAMSCIS;Fatty acids, total monounsaturated;;;;true;;;;
 FAPUCIS;Fatty acids, total polyunsaturated;;;;true;;;;
-FASAT;Fatty acids, total saturated;4;2;true;true;false;20;;g
+FASAT;Fatty acids, total saturated;4;2;true;false;false;20;;g
 FIBTG;Fiber, total dietary;7;1;false;true;false;;;g
 FOLDFE;Folate DFE;;;;true;;;;
 FOLFD;Folate natural;;;;true;;;;
@@ -52,19 +52,19 @@ PANTAC;Panto acid;;1;false;true;false;6;;mg
 P;Phosphorus, P;;1;false;true;false;700;;mg
 POLYL;Polyols total;;;;true;;;;
 K;Potassium, k;;1;false;true;false;2000;;mg
-PRO-;Protein;8;1;true;true;false;50;;g
+PRO-;Protein;8;1;true;false;false;50;;g
 CARTBEQ;Provitamin A (b-carotene equivalents);;;;true;;;;
 PROCNT;Raw proteins (N x 6.25);;;;true;;;;
 RETOL;Retinol;;;;true;;;;
 RIBF;Riboflavin;;1;false;true;false;1,4;;mg
-NACL;Salt;9;1;true;true;false;6;;g
+NACL;Salt;9;1;true;false;false;6;;g
 SE;Selenium;;1;false;true;false;55;;µg
 NA;Sodium, Na;;;;true;;;;g
 FIBSOL;Soluble fiber;;;;true;;;;
 STARCH;Starch;;;;true;;;;
-SUGAR;Sugars total;6;2;true;true;false;90;;g
+SUGAR;Sugars total;6;2;true;false;false;90;;g
 THIA;Thiamin;;1;false;true;false;1,1;;mg
-FAT;Total lipid (fat);3;1;true;true;false;70;;g
+FAT;Total lipid (fat);3;1;true;false;false;70;;g
 FAPUN3F;Total omega 3 fatty acids;;;;true;;;;
 FATRN;Total trans fatty acids;;;;true;;;;
 TRP;Tryptophan;;;;true;;;;
