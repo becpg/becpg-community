@@ -110,6 +110,13 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	private static final String PRODUCT_REPORT_PRODUCTION_PATH = "beCPG/birt/document/product/default/ProductReport_Prod.rptdesign";
 	private static final String PRODUCT_REPORT_PRODUCTION_NAME = "path.productreportproductiontemplate";
 
+	private static final String PRODUCT_REPORT_PACKAGING_PATH = "beCPG/birt/document/product/default/PackagingReport.rptdesign";
+	private static final String PRODUCT_REPORT_COST_PATH = "beCPG/birt/document/product/default/ProductReport_Cost.rptdesign";
+	private static final String PRODUCT_REPORT_COST_NAME = "path.productreportcosttemplate";
+	private static final String PRODUCT_REPORT_RD_PATH = "beCPG/birt/document/product/default/ProductReport_RD.rptdesign";
+	private static final String PRODUCT_REPORT_RD_NAME = "path.productreportrdtemplate";
+	private static final String PRODUCT_REPORT_TECHNICAL_SHEET_NAME = "path.productreporttechnicalsheettemplate";
+	
 	private static final String NC_REPORT_PATH = "beCPG/birt/document/nonconformity/NCReport.rptdesign";
 	private static final String QUALITY_CONTROL_REPORT_PATH = "beCPG/birt/document/qualitycontrol/QualityControlReport.rptdesign";
 	private static final String QUALITY_REPORT_RESSOURCE = "beCPG/birt/document/qualitycontrol/QualityControlReport.properties";
@@ -1042,18 +1049,21 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		// product report templates
 		NodeRef productReportTplsNodeRef = visitFolder(reportsNodeRef, PlmRepoConsts.PATH_PRODUCT_REPORTTEMPLATES);
 		String productReportClientName = I18NUtil.getMessage(PRODUCT_REPORT_CLIENT_NAME, Locale.getDefault());
-		String productReportSupplierName = I18NUtil.getMessage(PRODUCT_REPORT_CLIENT_NAME, Locale.getDefault());
+		String productReportSupplierName = I18NUtil.getMessage(PRODUCT_REPORT_TECHNICAL_SHEET_NAME, Locale.getDefault());
 		String productReportProductionName = I18NUtil.getMessage(PRODUCT_REPORT_PRODUCTION_NAME, Locale.getDefault());
-	
+		String productReportPackagingName = I18NUtil.getMessage(PRODUCT_REPORT_TECHNICAL_SHEET_NAME, Locale.getDefault());
+		String productReportCostName = I18NUtil.getMessage(PRODUCT_REPORT_COST_NAME, Locale.getDefault());
+		String productReportRDName = I18NUtil.getMessage(PRODUCT_REPORT_RD_NAME, Locale.getDefault());
+
 		try {
 
 			QName[] productTypes = { PLMModel.TYPE_FINISHEDPRODUCT, PLMModel.TYPE_RAWMATERIAL, PLMModel.TYPE_SEMIFINISHEDPRODUCT,
 					PLMModel.TYPE_PACKAGINGMATERIAL };
-			String[] defaultReport = { PRODUCT_REPORT_CLIENT_PATH, PRODUCT_REPORT_RAWMATERIAL_PATH, PRODUCT_REPORT_PRODUCTION_PATH, PRODUCT_REPORT_CLIENT_PATH };
-			String[] defaultReportName = { productReportClientName, productReportSupplierName, productReportProductionName, productReportClientName };
+			String[] defaultReport = { PRODUCT_REPORT_CLIENT_PATH, PRODUCT_REPORT_RAWMATERIAL_PATH, PRODUCT_REPORT_PRODUCTION_PATH, PRODUCT_REPORT_PACKAGING_PATH };
+			String[] defaultReportName = { productReportClientName, productReportSupplierName, productReportProductionName, productReportPackagingName };
 			
-			String[] otherReport = { PRODUCT_REPORT_PRODUCTION_PATH, null, null, null };
-			String[] otherReportName = { productReportProductionName, null, null, null };
+			String[][] otherReport = { { PRODUCT_REPORT_PRODUCTION_PATH, PRODUCT_REPORT_COST_PATH, PRODUCT_REPORT_RD_PATH }, null, null, null };
+			String[][] otherReportName = { { productReportProductionName, productReportCostName, productReportRDName }, null, null, null };
 			
 			String[] productReportResource = { PRODUCT_REPORT_DE_RESOURCE, PRODUCT_REPORT_EN_US_RESOURCE, PRODUCT_REPORT_EN_RESOURCE,
 					PRODUCT_REPORT_ES_RESOURCE, PRODUCT_REPORT_FR_RESOURCE, PRODUCT_REPORT_IT_RESOURCE, PRODUCT_REPORT_NL_RESOURCE,
@@ -1065,9 +1075,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			Map<String ,Map<QName, Serializable>> reportKindTplAssoc = new HashMap<>();
 			List<String> defaultKindReport = new ArrayList<>(Arrays.asList(defaultReport));
 			defaultKindReport.add(NONE_KIND_REPORT);
-			
+
 			for (String reportKind : defaultKindReport){	
-				if(reportKind == PRODUCT_REPORT_RAWMATERIAL_PATH){
+				if(reportKind == PRODUCT_REPORT_RAWMATERIAL_PATH || reportKind == PRODUCT_REPORT_PACKAGING_PATH || reportKind == PRODUCT_REPORT_COST_PATH  || reportKind == PRODUCT_REPORT_RD_PATH){
 					continue;
 				}
 				
@@ -1089,7 +1099,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				reportKindListProps.put(BeCPGModel.PROP_LV_VALUE, mltValue);
 				reportKindDefaultValues.put(reportKind, reportKindListProps);
 			}
-			
+
 			visitReportKindList(reportKindDefaultValues);
 			
 			
@@ -1101,9 +1111,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			}
 
 			
-			
 			for (QName productType : productTypes) {
-
+				
 				ClassDefinition classDef = dictionaryService.getClass(productType);
 
 				if (repoService.getFolderByPath(productReportTplsNodeRef, classDef.getTitle(dictionaryService)) == null) {
@@ -1114,34 +1123,45 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 					if ((defaultReport[i] != null) && (defaultReportName[i] != null)) {
 						NodeRef template = reportTplService.createTplRptDesign(folderNodeRef, defaultReportName[i], defaultReport[i],
 								ReportType.Document, ReportFormat.PDF, productType, true, true, false);
+												
 						
 						if(reportKindTplAssoc.get(defaultReport[i]) != null){
 							nodeService.addAspect(template, ReportModel.ASPECT_REPORT_KIND, reportKindTplAssoc.get(defaultReport[i]));
 						}
 						
 						if (!resources.isEmpty()) {
+							
 							for (NodeRef resource : resources) {
 								logger.debug("Associating resource: " + resource + " to template: " + template);
 								nodeService.createAssociation(template, resource, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES);
 							}
+							
 							nodeService.setProperty(template, ReportModel.PROP_REPORT_LOCALES,
 									(Serializable) Arrays.asList("fr", "en", "es", "en_US", "it", "nl"));
+							
+							if (productType == PLMModel.TYPE_PACKAGINGMATERIAL) {
+								nodeService.setProperty(template, ReportModel.PROP_REPORT_TEXT_PARAMETERS,
+										(Serializable) new String("{ prefs: { assocsToExtract: \"pack:pmMaterialRefs\"  } }"));
+							}
 						}
-
 					}
 
 					if ((otherReport[i] != null) && (otherReportName[i] != null)) {
-						NodeRef template = reportTplService.createTplRptDesign(folderNodeRef, otherReportName[i], otherReport[i], ReportType.Document,
-								ReportFormat.PDF, productType, true, false, false);
 						
-						if(reportKindTplAssoc.get(otherReport[i]) != null){
-							nodeService.addAspect(template, ReportModel.ASPECT_REPORT_KIND, reportKindTplAssoc.get(otherReport[i]));
-						}
-						
-						if (!resources.isEmpty()) {
-							for (NodeRef resource : resources) {
-								logger.debug("Associating resource: " + resource + " to template: " + template);
-								nodeService.createAssociation(template, resource, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES);
+						for(int b = 0; b < otherReport[i].length; b++) {
+							
+							NodeRef template = reportTplService.createTplRptDesign(folderNodeRef, otherReportName[i][b], otherReport[i][b], ReportType.Document,
+									ReportFormat.PDF, productType, true, false, false);
+							
+							if(reportKindTplAssoc.get(otherReport[i][b]) != null){
+								nodeService.addAspect(template, ReportModel.ASPECT_REPORT_KIND, reportKindTplAssoc.get(otherReport[i][b]));
+							}
+							
+							if (!resources.isEmpty()) {
+								for (NodeRef resource : resources) {
+									logger.debug("Associating resource: " + resource + " to template: " + template);
+									nodeService.createAssociation(template, resource, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES);
+								}
 							}
 						}
 
