@@ -73,6 +73,7 @@
 		<property name="dictionaryService" ref="dictionaryService"/>
 		<property name="attributeExtractorService" ref="attributeExtractorService"/>
 		<property name="entityListDAO" ref="entityListDAO"/>
+		<property name="tenantService" ref="tenantService"/>
 	</bean>
 
 

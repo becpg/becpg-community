@@ -20,16 +20,17 @@ package fr.becpg.repo.web.scripts.remote;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.security.AccessStatus;
+import org.alfresco.service.cmr.security.PermissionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.webscripts.AbstractWebScript;
+import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
@@ -80,6 +81,9 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 
 	protected MimetypeService mimetypeService;
 
+    protected PermissionService permissionService;
+	
+	
 	public void setMimetypeService(MimetypeService mimetypeService) {
 		this.mimetypeService = mimetypeService;
 	}
@@ -92,6 +96,10 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		this.nodeService = nodeService;
 	}
 	
+
+	public void setPermissionService(PermissionService permissionService) {
+		this.permissionService = permissionService;
+	}
 
 	protected List<NodeRef> findEntities(WebScriptRequest req) {
 
@@ -150,11 +158,16 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	}
 
 	protected NodeRef findEntity(WebScriptRequest req) {
+		
 		String nodeRef = req.getParameter(PARAM_NODEREF);
 		if (nodeRef != null && nodeRef.length() > 0) {
 			NodeRef node = new NodeRef(nodeRef);
 			if (nodeService.exists(node)) {
-				return node;
+				if(AccessStatus.ALLOWED.equals(permissionService.hasReadPermission(node))) {
+					return node;
+				} else {
+					throw new WebScriptException(Status.STATUS_UNAUTHORIZED, "You have no right to see this node");
+				}
 			} else {
 				throw new WebScriptException("Node " + nodeRef + " doesn't exist in repository");
 			}

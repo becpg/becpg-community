@@ -369,7 +369,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 							if (e instanceof ConcurrencyFailureException) {
 								throw (ConcurrencyFailureException) e;
 							}
-							logger.error(e, e);
+							logger.error("Cannot reformulate node:"+ toReformulate, e);
 							return false;
 						} finally {
 							policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
