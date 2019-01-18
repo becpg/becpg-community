@@ -74,7 +74,7 @@ VITA-RAE;Vitamin A, RAE;;;;;;;;
 VITB12;Vitamin B-12;;1;false;true;false;2,4;;µg
 VITB6-;Vitamin B-6;;1;false;true;false;1,7;100;mg
 BIOT;Vitamin B7 (Biotin);;1;false;true;false;30;;µg
-VITC-;Vitamin C, total ascorbic acid;;1;true;false;false;90;2000;mg
+VITC-;Vitamin C, total ascorbic acid;;1;false;true;false;90;2000;mg
 VITD-;VITAMIN D;12;1;true;false;false;20;100;µg
 VITDEQ;Vitamin D (D2 + D3);;;;;;;;
 VITE-;Vitamin E;;1;false;true;false;15;1000;mg
