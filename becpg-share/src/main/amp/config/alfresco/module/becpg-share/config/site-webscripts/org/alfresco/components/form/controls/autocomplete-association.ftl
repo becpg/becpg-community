@@ -26,6 +26,8 @@
 
 <#if field.control.params.multipleSelectMode?? && "true" == field.control.params.multipleSelectMode>
 	<#assign multipleSelectMode=true>
+<#elseif field.control.params.multipleSelectMode?? && "false" == field.control.params.multipleSelectMode>
+	<#assign multipleSelectMode=false>
 <#else>
 	<#assign multipleSelectMode=field.endpointMany />
 </#if>
