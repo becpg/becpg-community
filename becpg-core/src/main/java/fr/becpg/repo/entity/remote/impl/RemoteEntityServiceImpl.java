@@ -79,9 +79,11 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	private ServiceRegistry serviceRegistry;
 
 	@Autowired
+	@Qualifier("SiteService")
 	private SiteService siteService;
 
 	@Autowired
+	@Qualifier("NodeService")
 	private NodeService nodeService;
 	
 	@Autowired
@@ -95,6 +97,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	private DictionaryService dictionaryService;
 
 	@Autowired
+	@Qualifier("ContentService")
 	private ContentService contentService;
 
 	@Autowired

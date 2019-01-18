@@ -207,6 +207,7 @@
 		<property name="nodeService" ref="NodeService" />
 		<property name="remoteEntityService" ref="RemoteEntityService" />
 		<property name="mimetypeService" ref="MimetypeService" />
+		<property name="permissionService" ref="permissionService" />
 	</bean>
 
 
@@ -215,10 +216,10 @@
 	
 	<bean id="webscript.fr.becpg.remote.activities.get" parent="webscript" class="fr.becpg.repo.web.scripts.remote.GetActivitiesWebScript">
 		<property name="activityService" ref="activityService" />
-		<property name="siteService" ref="siteService" />
-		<property name="nodeService" ref="nodeService" />
+		<property name="siteService" ref="SiteService" />
+		<property name="nodeService" ref="NodeService" />
 		<property name="namespaceService" ref="namespaceService" />
-		<property name="contentService" ref="contentService" />	
+		<property name="contentService" ref="ContentService" />	
 	</bean>
 	
 	
@@ -255,9 +256,8 @@
 	<bean id="webscript.fr.becpg.remote.entities.get" class="fr.becpg.repo.web.scripts.remote.ListEntitiesWebScript" parent="abstractEntityWebScript">
 	</bean>
 	
-	<bean id="webscript.fr.becpg.remote.entityContent.get" class="fr.becpg.repo.web.scripts.remote.GetContentWebScript" parent="webscript">
-		<property name="nodeService" ref="nodeService" />
-		<property name="contentService" ref="contentService" />	
+	<bean id="webscript.fr.becpg.remote.entityContent.get" class="fr.becpg.repo.web.scripts.remote.GetContentWebScript" parent="abstractEntityWebScript">
+		<property name="contentService" ref="ContentService" />	
 		<property name="associationService" ref="associationService" />
 		<property name="entityReportService" ref="entityReportService" />
 	</bean>

@@ -18,6 +18,7 @@ import org.alfresco.repo.node.db.NodeHierarchyWalker;
 import org.alfresco.repo.node.db.NodeHierarchyWalker.VisitedNode;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
 import org.alfresco.repo.transaction.AlfrescoTransactionSupport.TxnReadState;
 import org.alfresco.repo.transaction.TransactionalResourceHelper;
@@ -67,6 +68,12 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 	private AttributeExtractorService attributeExtractorService;
 
 	private EntityListDAO entityListDAO;
+
+	private TenantService tenantService;
+
+	public void setTenantService(TenantService tenantService) {
+		this.tenantService = tenantService;
+	}
 
 	public void setNodeDAO(NodeDAO nodeDAO) {
 		this.nodeDAO = nodeDAO;
@@ -118,54 +125,64 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 	public void onRestoreNode(ChildAssociationRef childAssocRef) {
 		try {
 
-			Pair<Long, NodeRef> nodePair = nodeDAO.getNodePair(childAssocRef.getChildRef());
+			NodeRef childRef = childAssocRef.getChildRef();
 
-			// get the primary parent-child relationship before it is gone
-			Pair<Long, ChildAssociationRef> childAssocPair = nodeDAO.getPrimaryParentAssoc(nodePair.getFirst());
+			if (childRef == null) {
+				return;
+			}
+			childRef = tenantService.getName(childRef);
 
-			// Gather information about the hierarchy
-			NodeHierarchyWalker walker = new NodeHierarchyWalker(nodeDAO);
-			walker.walkHierarchy(nodePair, childAssocPair);
+			Pair<Long, NodeRef> nodePair = nodeDAO.getNodePair(childRef);
 
-			for (VisitedNode visitedNode : walker.getNodes(true)) {
+			if (nodePair != null) {
 
-				NodeRef entityNodeRef = visitedNode.nodeRef;
+				// get the primary parent-child relationship before it is gone
+				Pair<Long, ChildAssociationRef> childAssocPair = nodeDAO.getPrimaryParentAssoc(nodePair.getFirst());
 
-				if (entityDictionaryService.isSubClass(nodeService.getType(entityNodeRef), BeCPGModel.TYPE_ENTITY_V2)
-						|| entityDictionaryService.isSubClass(nodeService.getType(entityNodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
+				// Gather information about the hierarchy
+				NodeHierarchyWalker walker = new NodeHierarchyWalker(nodeDAO);
+				walker.walkHierarchy(nodePair, childAssocPair);
 
-					NodeRef rootArchiveRef = nodeService.getStoreArchiveNode(entityNodeRef.getStoreRef());
+				for (VisitedNode visitedNode : walker.getNodes(true)) {
 
-					if (logger.isDebugEnabled()) {
-						logger.debug("Retrieving " + REMOTE_FILE_NAME + "_" + entityNodeRef.getId() + " from archiveStore ");
-					}
+					NodeRef entityNodeRef = visitedNode.nodeRef;
 
-					NodeRef entityDeletedFileNodeRef = nodeService.getChildByName(rootArchiveRef, ContentModel.ASSOC_CONTAINS,
-							REMOTE_FILE_NAME + "_" + entityNodeRef.getId());
+					if (entityDictionaryService.isSubClass(nodeService.getType(entityNodeRef), BeCPGModel.TYPE_ENTITY_V2)
+							|| entityDictionaryService.isSubClass(nodeService.getType(entityNodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
 
-					if (entityDeletedFileNodeRef != null) {
+						NodeRef rootArchiveRef = nodeService.getStoreArchiveNode(entityNodeRef.getStoreRef());
 
-						ContentReader reader = contentService.getReader(entityDeletedFileNodeRef, ContentModel.PROP_CONTENT);
-						if (reader != null) {
-							try (InputStream in = reader.getContentInputStream()) {
-								policyBehaviourFilter.disableBehaviour(entityNodeRef);
-
-								remoteEntityService.createOrUpdateEntity(entityNodeRef, in, RemoteEntityFormat.xml, null);
-							} catch (IOException e) {
-								logger.error(e, e);
-							} finally {
-								policyBehaviourFilter.enableBehaviour(entityNodeRef);
-							}
-						} else {
-							logger.error("Cannot read content of " + REMOTE_FILE_NAME + "_" + entityNodeRef.getId());
+						if (logger.isDebugEnabled()) {
+							logger.debug("Retrieving " + REMOTE_FILE_NAME + "_" + entityNodeRef.getId() + " from archiveStore ");
 						}
 
-						nodeService.deleteNode(entityDeletedFileNodeRef);
-					} else {
-						logger.error("Cannot find " + REMOTE_FILE_NAME + "_" + entityNodeRef.getId() + " from archiveStore ");
-					}
-				}
+						NodeRef entityDeletedFileNodeRef = nodeService.getChildByName(rootArchiveRef, ContentModel.ASSOC_CONTAINS,
+								REMOTE_FILE_NAME + "_" + entityNodeRef.getId());
 
+						if (entityDeletedFileNodeRef != null) {
+
+							ContentReader reader = contentService.getReader(entityDeletedFileNodeRef, ContentModel.PROP_CONTENT);
+							if (reader != null) {
+								try (InputStream in = reader.getContentInputStream()) {
+									policyBehaviourFilter.disableBehaviour(entityNodeRef);
+
+									remoteEntityService.createOrUpdateEntity(entityNodeRef, in, RemoteEntityFormat.xml, null);
+								} catch (IOException e) {
+									logger.error(e, e);
+								} finally {
+									policyBehaviourFilter.enableBehaviour(entityNodeRef);
+								}
+							} else {
+								logger.error("Cannot read content of " + REMOTE_FILE_NAME + "_" + entityNodeRef.getId());
+							}
+
+							nodeService.deleteNode(entityDeletedFileNodeRef);
+						} else {
+							logger.error("Cannot find " + REMOTE_FILE_NAME + "_" + entityNodeRef.getId() + " from archiveStore ");
+						}
+					}
+
+				}
 			}
 
 		} catch (ContentIOException | BeCPGException e) {

@@ -429,7 +429,7 @@ public class XmlEntityVisitor {
 							continue;
 						}
 						// Assoc properties filter
-						if(cachedAssocRef != null && cachedAssocRef.get(nodeRef) != null && cachedAssocRef.containsKey(nodeRef) && !cachedAssocRef.get(nodeRef).contains(propName.getPrefixString())) {
+						if(cachedAssocRef != null && cachedAssocRef.get(nodeRef) != null && cachedAssocRef.containsKey(nodeRef) && !cachedAssocRef.get(nodeRef).contains(propName)) {
 							continue;
 						}
 						
