@@ -3,7 +3,6 @@ package fr.becpg.repo.web.scripts.discussion;
 import java.util.List;
 import java.util.Map;
 
-import org.alfresco.model.ForumModel;
 import org.alfresco.repo.web.scripts.discussion.ForumPostPut;
 import org.alfresco.service.cmr.discussion.PostInfo;
 import org.alfresco.service.cmr.discussion.TopicInfo;
@@ -12,7 +11,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.site.SiteInfo;
-import org.alfresco.service.cmr.site.SiteRole;
 import org.json.simple.JSONObject;
 import org.springframework.extensions.webscripts.Cache;
 import org.springframework.extensions.webscripts.Status;
@@ -134,16 +132,11 @@ public class BeCPGForumPostPut extends ForumPostPut {
 
 	public void updateTopicPermission(NodeRef topicNodeRef, NodeRef newUserNodeRef, NodeRef oldUserNodeRef) {
 		NodeRef discussion = nodeService.getPrimaryParent(topicNodeRef).getParentRef();
-		String siteShortName = siteService.getSiteShortName(nodeService.getPrimaryParent(discussion).getParentRef());
 
 		if (oldUserNodeRef != null) {
 			String oldUserName = personService.getPerson(oldUserNodeRef).getUserName();
 			permissionService.deletePermission(topicNodeRef, oldUserName, PermissionService.CREATE_CHILDREN);
 			permissionService.deletePermission(topicNodeRef, oldUserName, PermissionService.READ);
-			if(!hasTopic(oldUserName)){
-				siteService.removeMembership(siteShortName, oldUserName);
-			}
-			
 		}
 
 		String newUserName = personService.getPerson(newUserNodeRef).getUserName();
@@ -152,20 +145,7 @@ public class BeCPGForumPostPut extends ForumPostPut {
 		permissionService.setPermission(topicNodeRef, newUserName, PermissionService.CREATE_CHILDREN, true);
 		permissionService.setPermission(topicNodeRef, newUserName, PermissionService.READ, true);
 
-		// Check External if is a site member otherwise add him
-		if (!siteService.isMember(siteShortName, newUserName)) {
-			siteService.setMembership(siteShortName, newUserName, SiteRole.SiteConsumer.toString());
-		}
+		
 	}
 	
-	private boolean hasTopic(String oldUserName){
-		for (NodeRef nodeRef : associationService.getSourcesAssocs(personService.getPerson(oldUserName),
-				PLMModel.ASSOC_SUPPLIER_ACCOUNT)) {
-			if (nodeService.getType(nodeRef).equals(ForumModel.TYPE_TOPIC)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 }

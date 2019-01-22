@@ -9,7 +9,6 @@ import org.alfresco.service.cmr.discussion.TopicInfo;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.site.SiteInfo;
-import org.alfresco.service.cmr.site.SiteRole;
 import org.json.simple.JSONObject;
 import org.springframework.extensions.webscripts.Cache;
 import org.springframework.extensions.webscripts.Status;
@@ -89,10 +88,6 @@ public class BeCPGForumTopicPost extends ForumTopicPost {
 
 	private void updateTopicPermission(NodeRef topicNodeRef, String userName) {
 		NodeRef discussion = nodeService.getPrimaryParent(topicNodeRef).getParentRef();
-		String siteShortName = siteService.getSiteShortName(nodeService.getPrimaryParent(discussion).getParentRef());
-		if (!siteService.isMember(siteShortName, userName)) {
-			siteService.setMembership(siteShortName, userName, SiteRole.SiteConsumer.toString());
-		}
 		permissionService.setPermission(discussion, userName, PermissionService.READ, true);
 		permissionService.setPermission(topicNodeRef, userName, PermissionService.CREATE_CHILDREN, true);
 		permissionService.setPermission(topicNodeRef, userName, PermissionService.READ, true);
