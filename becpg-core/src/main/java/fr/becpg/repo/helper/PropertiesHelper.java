@@ -17,10 +17,25 @@
  ******************************************************************************/
 package fr.becpg.repo.helper;
 
+import java.util.regex.Pattern;
+
 import org.alfresco.service.namespace.QName;
 
 public class PropertiesHelper {
 
+
+	/*(.*[\"\*\\\>\<\?\/\:\|]+.*)|(.*[\.]?.*[\.]+$)|(.*[ ]+$)*/
+	
+	public static final Pattern namePattern =  Pattern.compile("(.*[\\\"\\*\\\\\\>\\<\\?\\/\\:\\|]+.*)|(.*[\\.]?.*[\\.]+$)|(.*[ ]+$)");
+
+	
+	public static boolean testName(String name) {
+		
+		return !(namePattern.matcher(name).find());
+	}
+	
+	
+	
 	/**
 	 * remove invalid characters.
 	 *
@@ -28,8 +43,10 @@ public class PropertiesHelper {
 	 * @return the string
 	 */
 	public static String cleanName(String name) {
-		/*(.*[\"\*\\\>\<\?\/\:\|]+.*)|(.*[\.]?.*[\.]+$)|(.*[ ]+$) */
-		return name!=null? name.replaceAll("([\"*\\><?/:|])", "-").trim(): null;
+		return name!=null? name.replaceAll("([\"*\\><?/:|])", "-")
+				.replaceAll("(\n)|(')|(\")", " ")
+				.replaceAll(Pattern.quote("*"), " ")
+				.replaceAll("\\.$", "").trim(): null;
 	}	
 	
 	public static String cleanFolderName(String name) {

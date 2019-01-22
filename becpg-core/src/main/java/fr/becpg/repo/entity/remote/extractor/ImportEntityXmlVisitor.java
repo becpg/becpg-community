@@ -224,7 +224,7 @@ public class ImportEntityXmlVisitor {
 
 				if ((type != null) && type.equals(RemoteEntityService.NODE_TYPE)) {
 					String path = attributes.getValue(RemoteEntityService.ATTR_PATH);
-					String name = attributes.getValue(RemoteEntityService.ATTR_NAME);
+					String name = PropertiesHelper.cleanName(attributes.getValue(RemoteEntityService.ATTR_NAME));
 					String nodeRef = attributes.getValue(RemoteEntityService.ATTR_NODEREF);
 					String code = attributes.getValue(RemoteEntityService.ATTR_CODE);
 					String erpCode = attributes.getValue(RemoteEntityService.ATTR_ERP_CODE);
@@ -614,18 +614,17 @@ public class ImportEntityXmlVisitor {
 			NodeRef parentNodeRef = findNodeByPath(parentPath);
 
 			if (parentNodeRef != null) {
-				return createNode(parentNodeRef, type, removeTrailingSpecialChar(name), erpCode);
+				return createNode(parentNodeRef, type, name, erpCode);
 			}
 			throw new SAXException("Path doesn't exist on repository :" + parentPath);
 		}
 
 		private NodeRef createNode(NodeRef parentNodeRef, QName type, String name, String erpCode) {
-			name = removeTrailingSpecialChar(name);
 			NodeRef ret = serviceRegistry.getNodeService().getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, name);
 
 			if (ret == null) {
 				Map<QName, Serializable> properties = new HashMap<>();
-				properties.put(ContentModel.PROP_NAME, PropertiesHelper.cleanName(name));
+				properties.put(ContentModel.PROP_NAME, name);
 				if(erpCode != null && !erpCode.isEmpty()) {
 					properties.put(BeCPGModel.PROP_ERP_CODE, erpCode);
 				}
@@ -639,7 +638,7 @@ public class ImportEntityXmlVisitor {
 				}
 				
 				ret = serviceRegistry.getNodeService().createNode(parentNodeRef, assocName,
-						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(PropertiesHelper.cleanName(name))), type,
+						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name)), type,
 						properties).getChildRef();
 				
 			} else {
@@ -685,7 +684,7 @@ public class ImportEntityXmlVisitor {
 					
 					logger.debug("Creating child assoc: " + assocName + " add type :" + type + " name :" + name);
 					Map<QName, Serializable> properties = new HashMap<>();
-					properties.put(ContentModel.PROP_NAME, PropertiesHelper.cleanName(name));
+					properties.put(ContentModel.PROP_NAME, name);
 					return serviceRegistry.getNodeService().createNode(parentNodeRef, assocName,
 							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(PropertiesHelper.cleanName(name))),
 							type, properties).getChildRef();
@@ -777,7 +776,7 @@ public class ImportEntityXmlVisitor {
 			} else if ((erpCode != null) && (erpCode.length() > 0)) {
 				beCPGQueryBuilder.andPropEquals(BeCPGModel.PROP_ERP_CODE, code);
 			} else if ((name != null) && (name.length() > 0)) {
-				beCPGQueryBuilder.andPropEquals(RemoteHelper.getPropName(type, entityDictionaryService), removeTrailingSpecialChar(cleanName(name)));
+				beCPGQueryBuilder.andPropEquals(RemoteHelper.getPropName(type, entityDictionaryService), name);
 			}
 
 			if (inBD) {
@@ -789,7 +788,7 @@ public class ImportEntityXmlVisitor {
 			List<NodeRef> ret = beCPGQueryBuilder.list();
 			if (!ret.isEmpty()) {
 				for (NodeRef node : ret) {				
-					if (serviceRegistry.getNodeService().exists(node) && removeTrailingSpecialChar(cleanName(name)).equals(removeTrailingSpecialChar(cleanName((String)serviceRegistry.getNodeService().getProperty(node, RemoteHelper.getPropName(type, entityDictionaryService)))))) {
+					if (serviceRegistry.getNodeService().exists(node) && name.equals(PropertiesHelper.cleanName((String)serviceRegistry.getNodeService().getProperty(node, RemoteHelper.getPropName(type, entityDictionaryService))))) {
 						logger.debug("Found node for query :" + beCPGQueryBuilder.toString());
 						return node;
 					}
@@ -815,14 +814,6 @@ public class ImportEntityXmlVisitor {
 			return null;
 		}
 
-		private String cleanName(String propValue) {
-			return propValue!=null ? propValue.replaceAll("\n", "").replaceAll("'", " ").replaceAll("\"", " ") .replaceAll(Pattern.quote("*"), " "): "";
-		}
 		
-		private String removeTrailingSpecialChar(String prop){
-			Pattern p = Pattern.compile("\\.$");
-			
-			return p.matcher(prop).replaceAll("");
-		}
 	}
 }
