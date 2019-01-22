@@ -48,9 +48,11 @@ public class BeCPGRuntimeContainer extends TenantRepositoryContainer implements 
 	@Override
 	protected void transactionedExecute(final WebScript script, final WebScriptRequest scriptReq, final WebScriptResponse scriptRes)
 			throws IOException {
-
+		
+		
 		String userId = AuthenticationUtil.getFullyAuthenticatedUser();
-		if ((userId != null) && !userId.isEmpty() && !AuthenticationUtil.getGuestUserName().equals(userId)) {
+		
+		if ((userId != null) && !userId.isEmpty() && !AuthenticationUtil.getGuestUserName().equals(userId)  && personService.personExists(userId)) {
 			NodeRef personNodeRef = personService.getPerson(userId);
 			if ((personNodeRef != null) && nodeService.exists(personNodeRef)) {
 

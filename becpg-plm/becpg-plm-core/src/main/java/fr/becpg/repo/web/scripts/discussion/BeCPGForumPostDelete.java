@@ -1,16 +1,12 @@
 package fr.becpg.repo.web.scripts.discussion;
 
 import java.text.MessageFormat;
-import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import org.alfresco.model.ContentModel;
-import org.alfresco.model.ForumModel;
 import org.alfresco.repo.web.scripts.discussion.ForumPostDelete;
 import org.alfresco.service.cmr.discussion.PostInfo;
 import org.alfresco.service.cmr.discussion.TopicInfo;
-import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.site.SiteInfo;
@@ -20,7 +16,6 @@ import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 
-import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.AssociationService;
 
 /**
@@ -73,28 +68,10 @@ public class BeCPGForumPostDelete extends ForumPostDelete {
 
 	private String doDeleteTopic(TopicInfo topic, SiteInfo site, WebScriptRequest req, JSONObject json, ResourceBundle rb) {
 
-		// Remove supplier form site
-		NodeRef userNodeRef = null;
-		NodeRef discussion = nodeService.getPrimaryParent(topic.getNodeRef()).getParentRef();
-		String siteShortName = siteService.getSiteShortName(nodeService.getPrimaryParent(discussion).getParentRef());
-		
-		if (nodeService.hasAspect(topic.getNodeRef(), PLMModel.ASPECT_SUPPLIERS_ACCOUNTREF)) {
-			List<AssociationRef> associations = nodeService.getTargetAssocs(topic.getNodeRef(), PLMModel.ASSOC_SUPPLIER_ACCOUNT);
-			userNodeRef = associations.get(0).getTargetRef();
-		}
-
+	
 		// Delete the topic, which removes all its posts too
 		discussionService.deleteTopic(topic);
 
-		if (userNodeRef != null) {
-
-			String userName = nodeService.getProperty(userNodeRef, ContentModel.PROP_USERNAME).toString();
-			if (userName != null) {
-				if (!hasTopic(userName)) {
-					siteService.removeMembership(siteShortName, userName);
-				}
-			}
-		}
 
 		// Add an activity entry for this if it's site based
 		if (site != null) {
@@ -126,13 +103,5 @@ public class BeCPGForumPostDelete extends ForumPostDelete {
 		return MessageFormat.format(message, post.getNodeRef());
 	}
 
-	private boolean hasTopic(String oldUserName) {
-		for (NodeRef nodeRef : associationService.getSourcesAssocs(personService.getPerson(oldUserName), PLMModel.ASSOC_SUPPLIER_ACCOUNT)) {
-			if (nodeService.getType(nodeRef).equals(ForumModel.TYPE_TOPIC)) {
-				return true;
-			}
-		}
-		return false;
-	}
 
 }

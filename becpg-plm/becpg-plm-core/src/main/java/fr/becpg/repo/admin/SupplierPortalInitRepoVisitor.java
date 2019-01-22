@@ -91,8 +91,6 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			siteService.setMembership(siteInfo.getShortName(), PermissionService.GROUP_PREFIX + PLMGroup.ReferencingMgr.toString(),
 					SiteModel.SITE_MANAGER);
-			siteService.setMembership(siteInfo.getShortName(), PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser.toString(),
-					SiteModel.SITE_CONSUMER);
 
 			// pre-create doclib
 			documentLibraryNodeRef = siteService.createContainer(SUPPLIER_SITE_ID, SiteService.DOCUMENT_LIBRARY, ContentModel.TYPE_FOLDER, null);
