@@ -2,8 +2,7 @@ pipeline {
     agent { 
     	docker {
             image 'docker.becpg.fr:443/becpg/becpg-ci-runner:latest'
-            args '-v /opt/mvn_repository:/root/.m2' 
-            
+            args '-v /mnt/stateful_partition/mvn_reporitory:/root/.m2' 
         }
     }
     stages {
