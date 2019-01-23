@@ -2,7 +2,7 @@ pipeline {
     agent { 
     	docker {
             image 'docker.becpg.fr:443/becpg/becpg-ci-runner:latest'
-            args '-v /mnt/stateful_partition/mvn_reporitory:/root/.m2' 
+            args '-u jenkins --privileged -v /mnt/stateful_partition/mvn_reporitory:/root/.m2 -v /var/run/docker.sock:/var/run/docker.sock' 
         }
     }
     stages {
