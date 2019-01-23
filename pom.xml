@@ -218,7 +218,6 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>${maven.surefire.version}</version>
 					<configuration>
 						<useSystemClassLoader>false</useSystemClassLoader>
 					</configuration>
@@ -291,14 +290,7 @@
 			</properties>
 		</profile>
 		<profile>
-			<id>dev-tours</id>
-			<properties>
-				<!-- Test -->
-				<alfresco.data.location>/dev/shm/alfresco</alfresco.data.location>
-			</properties>
-		</profile>
-		<profile>
-			<id>dev-montrouge</id>
+			<id>ci</id>
 			<properties>
 				<!-- Test -->
 				<alfresco.data.location>/dev/shm/alfresco</alfresco.data.location>
