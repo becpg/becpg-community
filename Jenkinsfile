@@ -1,18 +1,20 @@
 pipeline {
     agent { 
     	docker {
-            image 'maven:3-alpine'
+            image 'becpg-ci-runner:latest'
+            args '-v /opt/mvn_repository:/root/.m2' 
+            
         }
     }
     stages {
         stage('build') {
             steps {
-                sh 'mvn -B -DskipTests clean package'
+                sh 'cd becpg-enterprise && mvn -B -DskipTests clean package'
             }
         }
-        stage('Test') {
+        stage('test') {
             steps {
-                sh 'mvn clean test -P purge'
+                sh 'mvn clean test -Dmaven.test.failure.ignore=true -P purge'
             }
             post {
                 always {
@@ -20,5 +22,16 @@ pipeline {
                 }
             }
         }
+        stage('integration-test') {
+            steps {
+                sh 'MAVEN_OPTS="-Xms512m -Xmx2G" mvn install -Prun,integration-test'
+            }
+            post {
+                always {
+                    junit 'target/surefire-reports/*.xml'
+                }
+            }
+        }
+     
     }
 }
