@@ -84,7 +84,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 						} else {
 
 							if (logger.isDebugEnabled()) {
-								logger.debug("computeDepthAndSort for :" + tryGetName(nodeRef));
+								logger.debug("computeDepthAndSort for :" + tryGetName(nodeRef)+" type: "+dataType);
 							}
 
 							// #351 : we avoid lucene queries
