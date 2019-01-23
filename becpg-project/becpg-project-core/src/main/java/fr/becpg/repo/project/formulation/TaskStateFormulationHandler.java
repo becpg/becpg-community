@@ -265,7 +265,8 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 
 						// Completed or Closed
 						if (DeliverableState.Completed.equals(nextDeliverable.getState())
-								|| DeliverableState.Closed.equals(nextDeliverable.getState())) {
+								|| DeliverableState.Closed.equals(nextDeliverable.getState()) 
+								&& nextDeliverable.getCompletionPercent()!=null) {
 							taskCompletionPercent += nextDeliverable.getCompletionPercent();
 						}
 
