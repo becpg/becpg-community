@@ -13,21 +13,21 @@ pipeline {
         }
         stage('test') {
             steps {
-                sh 'mvn clean test -Dmaven.test.failure.ignore=true -P purge'
+                sh 'MAVEN_OPTS="-Xms512m -Xmx2G" mvn clean test -Dmaven.test.failure.ignore=true -P purge,ci'
             }
             post {
                 always {
-                    junit 'target/surefire-reports/*.xml'
+                    junit '**/target/surefire-reports/*.xml'
                 }
             }
         }
         stage('integration-test') {
             steps {
-                sh 'MAVEN_OPTS="-Xms512m -Xmx2G" mvn install -Prun,integration-test'
+                sh 'MAVEN_OPTS="-Xms512m -Xmx2G" mvn install -Prun,integration-test,ci'
             }
             post {
                 always {
-                    junit 'target/surefire-reports/*.xml'
+                    junit '**/target/surefire-reports/*.xml'
                 }
             }
         }
