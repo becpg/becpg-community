@@ -1,7 +1,7 @@
 pipeline {
     agent { 
     	docker {
-            image 'becpg-ci-runner:latest'
+            image 'docker.becpg.fr:443/becpg/becpg-ci-runner:latest'
             args '-v /opt/mvn_repository:/root/.m2' 
             
         }
