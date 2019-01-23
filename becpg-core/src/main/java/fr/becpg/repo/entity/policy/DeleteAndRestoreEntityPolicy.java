@@ -43,6 +43,7 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.helper.PropertiesHelper;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
 /**
@@ -249,7 +250,7 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 
 				name += attributeExtractorService.extractPropName(type, entityNodeRef) + "-" + UUID.randomUUID().toString();
 
-				nodeService.setProperty(entityNodeRef, ContentModel.PROP_NAME, name);
+				nodeService.setProperty(entityNodeRef, ContentModel.PROP_NAME, PropertiesHelper.cleanName(name));
 
 			}
 
