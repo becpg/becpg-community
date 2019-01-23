@@ -268,9 +268,10 @@ public class NutrientFormulationHelper {
 				maxi.put(key, regulation.round(n.getMaxi(), nutCode, nutUnit));
 				
 				if(n.getValuePerServing() != null){
-					valuePerServing.put(key,regulation.round(n.getValuePerServing(), nutCode, nutUnit));
+					Double vps = regulation.round(n.getValuePerServing(), nutCode, nutUnit);
+					valuePerServing.put(key,vps);
 					if(def!=null &&  def.getGda()!=null &&  def.getGda()!=0) {
-						gda.put(key, regulation.roundGDA(100 * regulation.convertValue(n.getValuePerServing(), nutUnit, def.getUnit()) / def.getGda(), nutCode));
+						gda.put(key, regulation.roundGDA(100 * regulation.convertValue(vps, nutUnit, def.getUnit()) / def.getGda(), nutCode));
 					}
 				}
 			}
