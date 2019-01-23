@@ -305,6 +305,7 @@
 		                  <artifactId>maven-surefire-plugin</artifactId>
 		                  <version>${maven.surefire.version}</version>
 		                  <configuration>
+		                 	  <useSystemClassLoader>false</useSystemClassLoader>
 		       				  <threadCount>6</threadCount>
 		       				  <parallel>classes</parallel>
 		                      <argLine>${app.testing.jvm.args}</argLine>
