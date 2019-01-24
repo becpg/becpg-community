@@ -13,7 +13,7 @@ pipeline {
         }
         stage('test') {
             steps {
-                sh 'MAVEN_OPTS="-Xms512m -Xmx2G" mvn clean test -Dmaven.test.failure.ignore=true -P purge,ci'
+                sh 'MAVEN_OPTS="-Xms512m -Xmx2G" mvn clean test -P purge'
             }
             post {
                 always {
@@ -23,7 +23,7 @@ pipeline {
         }
         stage('integration-test') {
             steps {
-                sh 'MAVEN_OPTS="-Xms512m -Xmx2G" mvn install -Prun,integration-test,ci'
+                sh 'MAVEN_OPTS="-Xms512m -Xmx2G" mvn install -Prun,integration-test'
             }
             post {
                 always {
