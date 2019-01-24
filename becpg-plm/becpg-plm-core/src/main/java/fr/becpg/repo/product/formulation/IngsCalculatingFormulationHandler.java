@@ -121,8 +121,14 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			// check formulated product
 			checkILOfFormulatedProduct(formulatedProduct, reqCtrlMap);
 		}
-
-		formulatedProduct.getReqCtrlList().addAll(reqCtrlMap.values());
+	
+		if(!reqCtrlMap.isEmpty()) {
+			if (formulatedProduct.getReqCtrlList() == null) {
+				formulatedProduct.setReqCtrlList(new LinkedList<ReqCtrlListDataItem>());
+			}
+			
+			formulatedProduct.getReqCtrlList().addAll(reqCtrlMap.values());
+		}
 
 		return true;
 	}
