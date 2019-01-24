@@ -57,7 +57,7 @@
 			<version>4.3.3</version>
 		</dependency>
 	</dependencies>
-		<build>
+	<build>
 		<plugins>
 		   <plugin>
 		          <artifactId>maven-compiler-plugin</artifactId>
@@ -69,4 +69,12 @@
 			</plugin>
 		</plugins>	
 	</build>
+        <profiles>
+		<profile>
+			<id>run</id>
+			<properties>
+				<skipTests>true</skipTests>
+			</properties>
+		</profile>
+	</profiles>
 </project>

@@ -215,6 +215,13 @@
 					</nonFilteredFileExtensions>
 				</configuration>
 			</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<configuration>
+						<useSystemClassLoader>false</useSystemClassLoader>
+					</configuration>
+				</plugin>
 		</plugins>
 	</build> 
 
@@ -283,14 +290,7 @@
 			</properties>
 		</profile>
 		<profile>
-			<id>dev-tours</id>
-			<properties>
-				<!-- Test -->
-				<alfresco.data.location>/dev/shm/alfresco</alfresco.data.location>
-			</properties>
-		</profile>
-		<profile>
-			<id>dev-montrouge</id>
+			<id>in-memory</id>
 			<properties>
 				<!-- Test -->
 				<alfresco.data.location>/dev/shm/alfresco</alfresco.data.location>

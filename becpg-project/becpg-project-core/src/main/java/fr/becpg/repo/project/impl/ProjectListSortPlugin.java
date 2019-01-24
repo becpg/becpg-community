@@ -17,8 +17,10 @@
  ******************************************************************************/
 package fr.becpg.repo.project.impl;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -45,7 +47,6 @@ public class ProjectListSortPlugin implements DataListSortPlugin {
 	@Autowired
 	private NodeService nodeService;
 
-
 	@Override
 	public String getPluginId() {
 		return PLUGIN_ID;
@@ -59,20 +60,25 @@ public class ProjectListSortPlugin implements DataListSortPlugin {
 			watch.start();
 		}
 
+		boolean dir = false;
+		QName prop = ContentModel.PROP_CREATED;
+
+		if (!sortMap.isEmpty()) {
+			Map.Entry<String, Boolean> kv = sortMap.entrySet().iterator().next();
+
+			if (!"@bcpg:sort".equals(kv.getKey())) {
+				dir = kv.getValue();
+				prop = QName.createQName(kv.getKey().replaceFirst("@", ""));
+			}
+		}
+
+		final boolean sortDir = dir;
+		final QName sortProp = prop;
+
 		Collections.sort(projectList, new Comparator<NodeRef>() {
 
 			@Override
 			public int compare(NodeRef n1, NodeRef n2) {
-
-				boolean sortDir = false;
-				QName sortProp = ContentModel.PROP_NAME;
-
-				if (!sortMap.isEmpty()) {
-					Map.Entry<String, Boolean> kv = sortMap.entrySet().iterator().next();
-
-					sortDir = kv.getValue();
-					sortProp = QName.createQName(kv.getKey().replaceFirst("@", ""));
-				}
 
 				int comp = compare(getHierarchy(n1, ProjectModel.PROP_PROJECT_HIERARCHY1), getHierarchy(n2, ProjectModel.PROP_PROJECT_HIERARCHY1));
 
@@ -81,14 +87,24 @@ public class ProjectListSortPlugin implements DataListSortPlugin {
 
 					if (EQUAL == comp) {
 						if (sortDir) {
-							comp = compare((String) nodeService.getProperty(n1, sortProp), (String) nodeService.getProperty(n2, sortProp));
+							comp = compare(toString(nodeService.getProperty(n1, sortProp)), toString(nodeService.getProperty(n2, sortProp)));
 						} else {
-							comp = compare((String) nodeService.getProperty(n2, sortProp), (String) nodeService.getProperty(n1, sortProp));
+							comp = compare(toString(nodeService.getProperty(n2, sortProp)), toString(nodeService.getProperty(n1, sortProp)));
 						}
 					}
 				}
 
 				return comp;
+			}
+
+			private String toString(Serializable property) {
+				if (property != null) {
+					if (property instanceof Date) {
+						return "" + ((Date) property).getTime();
+					}
+					return property.toString();
+				}
+				return null;
 			}
 
 			private String getHierarchy(NodeRef nodeRef, QName hierarchyQName) {
