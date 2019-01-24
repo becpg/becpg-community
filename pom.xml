@@ -290,7 +290,7 @@
 			</properties>
 		</profile>
 		<profile>
-			<id>ci</id>
+			<id>in-memory</id>
 			<properties>
 				<!-- Test -->
 				<alfresco.data.location>/dev/shm/alfresco</alfresco.data.location>
