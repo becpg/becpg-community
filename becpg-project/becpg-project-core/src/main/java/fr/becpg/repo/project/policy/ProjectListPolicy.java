@@ -18,6 +18,7 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.project.data.projectList.DeliverableState;
 import fr.becpg.repo.project.data.projectList.TaskManualDate;
 import fr.becpg.repo.project.data.projectList.TaskState;
@@ -32,6 +33,12 @@ public class ProjectListPolicy extends ProjectPolicy
 		NodeServicePolicies.OnDeleteAssociationPolicy, NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.BeforeDeleteNodePolicy {
 
 	private static final Log logger = LogFactory.getLog(ProjectListPolicy.class);
+
+	private AssociationService associationService;
+
+	public void setAssociationService(AssociationService associationService) {
+		this.associationService = associationService;
+	}
 
 	/**
 	 * Inits the.
@@ -131,19 +138,18 @@ public class ProjectListPolicy extends ProjectPolicy
 			}
 		}
 
-		if (isPropChanged(before, after, ProjectModel.PROP_TL_DURATION) || isPropChanged(before, after, ProjectModel.PROP_TL_START) || isPropChanged(before, after, ProjectModel.PROP_TL_WORK)
-				|| isPropChanged(before, after, ProjectModel.PROP_TL_FIXED_COST) ||  isPropChanged(before, after, BeCPGModel.PROP_PARENT_LEVEL) 
-				|| isPropChanged(before, after, ProjectModel.PROP_TL_MANUAL_DATE)
-				) {
+		if (isPropChanged(before, after, ProjectModel.PROP_TL_DURATION) || isPropChanged(before, after, ProjectModel.PROP_TL_START)
+				|| isPropChanged(before, after, ProjectModel.PROP_TL_WORK) || isPropChanged(before, after, ProjectModel.PROP_TL_FIXED_COST)
+				|| isPropChanged(before, after, BeCPGModel.PROP_PARENT_LEVEL) || isPropChanged(before, after, ProjectModel.PROP_TL_MANUAL_DATE)) {
 
 			logger.debug("update task list start, duration or end: " + nodeRef);
 			formulateProject = true;
 		} else {
-			String manualDate = (String)after.get(ProjectModel.PROP_TL_MANUAL_DATE);
-			if( (TaskManualDate.End.toString().equals(manualDate) && isPropChanged(before, after, ProjectModel.PROP_TL_END)) ) {
+			String manualDate = (String) after.get(ProjectModel.PROP_TL_MANUAL_DATE);
+			if ((TaskManualDate.End.toString().equals(manualDate) && isPropChanged(before, after, ProjectModel.PROP_TL_END))) {
 				formulateProject = true;
 			}
-			
+
 		}
 
 		if (formulateProject) {
@@ -225,7 +231,8 @@ public class ProjectListPolicy extends ProjectPolicy
 	public void onDeleteAssociation(AssociationRef assocRef) {
 		if (assocRef.getTypeQName().equals(ProjectModel.ASSOC_SUB_PROJECT)) {
 			NodeRef projectNodeRef = entityListDAO.getEntity(assocRef.getSourceRef());
-			if (projectNodeRef != null && !isNotLocked(projectNodeRef) && !nodeService.hasAspect(projectNodeRef, ContentModel.ASPECT_PENDING_DELETE)) {
+			if (projectNodeRef != null && !isNotLocked(projectNodeRef)
+					&& !nodeService.hasAspect(projectNodeRef, ContentModel.ASPECT_PENDING_DELETE)) {
 				nodeService.removeAssociation(assocRef.getTargetRef(), projectNodeRef, ProjectModel.ASSOC_PARENT_PROJECT);
 			}
 		}
@@ -239,10 +246,8 @@ public class ProjectListPolicy extends ProjectPolicy
 	@Override
 	public void onCreateAssociation(AssociationRef assocRef) {
 		if (assocRef.getTypeQName().equals(ProjectModel.ASSOC_SUB_PROJECT)) {
-			if (assocRef.getTypeQName().equals(ProjectModel.ASSOC_SUB_PROJECT)) {
-				NodeRef projectNodeRef = entityListDAO.getEntity(assocRef.getSourceRef());
-				nodeService.createAssociation(assocRef.getTargetRef(), projectNodeRef, ProjectModel.ASSOC_PARENT_PROJECT);
-			}
+			NodeRef projectNodeRef = entityListDAO.getEntity(assocRef.getSourceRef());
+			associationService.update(assocRef.getTargetRef(), ProjectModel.ASSOC_PARENT_PROJECT, projectNodeRef);
 		}
 
 		if (assocRef.getTypeQName().equals(ProjectModel.ASSOC_TL_RESOURCES)) {

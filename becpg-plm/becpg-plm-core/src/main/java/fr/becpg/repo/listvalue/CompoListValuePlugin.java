@@ -28,6 +28,8 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.preference.PreferenceService;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.security.AccessStatus;
+import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -62,6 +64,9 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 
 	@Autowired
 	private AssociationService associationService;
+
+	@Autowired
+	private PermissionService permissionService;
 
 	@Override
 	public String[] getHandleSourceTypes() {
@@ -111,7 +116,7 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 			}
 
 			String state = (String) nodeService.getProperty(entityNodeRef, PLMModel.PROP_PRODUCT_STATE);
-			
+
 			result.add(new ListValueEntry(entityNodeRef.toString(), (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME),
 					nodeService.getType(entityNodeRef).getLocalName() + "-" + state));
 
@@ -133,42 +138,44 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 
 					NodeRef productNodeRef = associationService.getTargetAssoc(dataListItemNodeRef, PLMModel.ASSOC_COMPOLIST_PRODUCT);
 
-					QName type = nodeService.getType(productNodeRef);
-					String productName = extractHierarchyFullName(productNodeRef);
+					if (AccessStatus.ALLOWED.equals(permissionService.hasReadPermission(productNodeRef))) {
 
-					if (type.isMatch(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT) || type.isMatch(PLMModel.TYPE_SEMIFINISHEDPRODUCT)) {
+						QName type = nodeService.getType(productNodeRef);
+						String productName = extractHierarchyFullName(productNodeRef);
 
-						boolean addNode = false;
+						if (type.isMatch(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT) || type.isMatch(PLMModel.TYPE_SEMIFINISHEDPRODUCT)) {
 
-						logger.debug("productName: " + productName + " - query: " + query);
+							boolean addNode = false;
 
-						if (!query.isEmpty()) {
+							logger.debug("productName: " + productName + " - query: " + query);
 
-							if (productName != null) {
-								if (isQueryMatch(query, productName)) {
-									addNode = true;
+							if (!query.isEmpty()) {
+
+								if (productName != null) {
+									if (isQueryMatch(query, productName)) {
+										addNode = true;
+									}
 								}
-							}
-						} else {
-							addNode = true;
-						}
-
-						if (addNode) {
-							logger.debug("add node productName: " + productName);
-							String state = (String) nodeService.getProperty(productNodeRef, PLMModel.PROP_PRODUCT_STATE);
-		
-							String variantNames  = extractVariantNames(dataListItemNodeRef);
-
-							if (type.isMatch(PLMModel.TYPE_SEMIFINISHEDPRODUCT)) {
-								result.add(new ListValueEntry(productNodeRef.toString(),variantNames + productName,
-										PLMModel.TYPE_SEMIFINISHEDPRODUCT.getLocalName() + "-" + state));
 							} else {
-								result.add(new ListValueEntry(dataListItemNodeRef.toString(), variantNames +  productName,
-										PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.getLocalName() + "-" + state));
+								addNode = true;
+							}
+
+							if (addNode) {
+								logger.debug("add node productName: " + productName);
+								String state = (String) nodeService.getProperty(productNodeRef, PLMModel.PROP_PRODUCT_STATE);
+
+								String variantNames = extractVariantNames(dataListItemNodeRef);
+
+								if (type.isMatch(PLMModel.TYPE_SEMIFINISHEDPRODUCT)) {
+									result.add(new ListValueEntry(productNodeRef.toString(), variantNames + productName,
+											PLMModel.TYPE_SEMIFINISHEDPRODUCT.getLocalName() + "-" + state));
+								} else {
+									result.add(new ListValueEntry(dataListItemNodeRef.toString(), variantNames + productName,
+											PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.getLocalName() + "-" + state));
+								}
 							}
 						}
 					}
-
 				}
 			}
 
@@ -180,23 +187,23 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 	private String extractVariantNames(NodeRef dataListItemNodeRef) {
 
 		List<NodeRef> variantNodeRefs = (List<NodeRef>) nodeService.getProperty(dataListItemNodeRef, PLMModel.PROP_VARIANTIDS);
-		String variantNames = ""; 
-		
-		if(variantNodeRefs!=null) {
+		String variantNames = "";
+
+		if (variantNodeRefs != null) {
 			for (NodeRef variantNodeRef : variantNodeRefs) {
-				if(!variantNames.isEmpty()) {
-					variantNames+=",";
+				if (!variantNames.isEmpty()) {
+					variantNames += ",";
 				}
 
-				variantNames+= ((String) nodeService.getProperty(variantNodeRef, ContentModel.PROP_NAME));
+				variantNames += ((String) nodeService.getProperty(variantNodeRef, ContentModel.PROP_NAME));
 			}
-			
-			if(!variantNames.isEmpty()) {
-				variantNames+=" - ";
+
+			if (!variantNames.isEmpty()) {
+				variantNames += " - ";
 			}
-				
+
 		}
-		
+
 		return variantNames;
 	}
 
@@ -213,7 +220,7 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 			for (Map.Entry<NodeRef, MultiLevelListData> kv : mlld.getTree().entrySet()) {
 
 				NodeRef productNodeRef = kv.getValue().getEntityNodeRef();
-				if (productNodeRef != null) {
+				if (productNodeRef != null  && AccessStatus.ALLOWED.equals(permissionService.hasReadPermission(productNodeRef)) ) {
 					logger.debug("productNodeRef: " + productNodeRef);
 
 					// avoid cycle: when editing an item, cannot select itself
@@ -247,10 +254,8 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 							logger.debug("add node productName: " + productName);
 							String state = (String) nodeService.getProperty(productNodeRef, PLMModel.PROP_PRODUCT_STATE);
 
+							String variantNames = extractVariantNames(kv.getKey());
 
-							String variantNames  = extractVariantNames(kv.getKey());
-
-							
 							if (type.isMatch(PLMModel.TYPE_SEMIFINISHEDPRODUCT)) {
 								result.add(new ListValueEntry(productNodeRef.toString(), variantNames + parentName + productName,
 										PLMModel.TYPE_SEMIFINISHEDPRODUCT.getLocalName() + "-" + state));
@@ -273,12 +278,12 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 
 	private String extractHierarchyFullName(NodeRef hierarchy) {
 		String res = (String) nodeService.getProperty(hierarchy, ContentModel.PROP_NAME);
-		NodeRef parent = (NodeRef) nodeService.getProperty(hierarchy, BeCPGModel.PROP_PARENT_LEVEL);
-		if (parent != null) {
-			res = extractHierarchyFullName(parent) + " > " + res;
-		}
-
-		return res;
+			NodeRef parent = (NodeRef) nodeService.getProperty(hierarchy, BeCPGModel.PROP_PARENT_LEVEL);
+			if (parent != null && AccessStatus.ALLOWED.equals(permissionService.hasReadPermission(parent))) {
+				res = extractHierarchyFullName(parent) + " > " + res;
+			}
+			return res;
+		
 	}
 
 	private int getDepthUserPref(DataListFilter dataListFilter) {

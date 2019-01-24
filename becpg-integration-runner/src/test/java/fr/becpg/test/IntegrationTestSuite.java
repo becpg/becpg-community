@@ -1,5 +1,8 @@
 package fr.becpg.test;
 
+import java.lang.reflect.Field;
+import java.util.Map;
+
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -67,4 +70,24 @@ import fr.becpg.test.repo.web.scripts.search.SearchWebScriptTest;
 })
 public class IntegrationTestSuite {
 
+//	
+//	static {
+//		try {
+//			@SuppressWarnings("rawtypes")
+//		    Class clazz = Class.forName("java.lang.ApplicationShutdownHooks");
+//		    Field field = clazz.getDeclaredField("hooks");
+//		    field.setAccessible(true);
+//	
+//		    @SuppressWarnings("unchecked")
+//		    Map<Thread, Thread> hooks = (Map<Thread, Thread>)field.get(null);
+//		    hooks.clear();
+//		} catch (ReflectiveOperationException e) {
+//			// TODO: handle exception
+//		}
+//		
+//	}
+//	
 }
+
+
+

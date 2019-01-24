@@ -330,7 +330,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 			if (!isInitialVersion) {
 
-				if (versionProperties.containsKey(EntityVersionPlugin.POST_UPDATE_HISTORY_NODEREF)) {
+				if (versionProperties!=null && versionProperties.containsKey(EntityVersionPlugin.POST_UPDATE_HISTORY_NODEREF)) {
 					NodeRef postUpdateHistoryNodeRef = (NodeRef) versionProperties.get(EntityVersionPlugin.POST_UPDATE_HISTORY_NODEREF);
 					if (postUpdateHistoryNodeRef != null) {
 						updateEntitiesHistory(postUpdateHistoryNodeRef, origNodeRef);

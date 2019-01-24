@@ -1,5 +1,4 @@
 #!/bin/bash
 
-mvn clean -P purge
-MAVEN_OPTS="-Xms512m -Xmx2G" mvn install -Prun,integration-test
-mvn surefire-report:report  -DskipTests=true
+MAVEN_OPTS="-Xms512m -Xmx2G" mvn clean verify -Prun,integration-test,purge
+#mvn surefire-report:report  -DskipTests=true
