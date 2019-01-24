@@ -23,11 +23,11 @@ pipeline {
         }
         stage('integration-test') {
             steps {
-                sh 'MAVEN_OPTS="-Xms512m -Xmx2G" mvn install -Prun,integration-test'
+                sh 'MAVEN_OPTS="-Xms512m -Xmx2G" mvn verify -Prun,integration-test'
             }
             post {
                 always {
-                    junit '**/target/surefire-reports/*.xml'
+                    junit '**/target/failsafe-reports/*.xml'
                 }
             }
         }
