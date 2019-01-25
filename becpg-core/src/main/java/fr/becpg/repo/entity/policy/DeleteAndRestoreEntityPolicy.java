@@ -178,7 +178,7 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 							}
 
 							nodeService.deleteNode(entityDeletedFileNodeRef);
-						} else {
+						} else if(!entityDictionaryService.isSubClass(nodeService.getType(entityNodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)){
 							logger.error("Cannot find " + REMOTE_FILE_NAME + "_" + entityNodeRef.getId() + " from archiveStore ");
 						}
 					}
