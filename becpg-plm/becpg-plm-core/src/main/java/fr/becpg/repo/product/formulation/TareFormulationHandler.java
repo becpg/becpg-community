@@ -58,17 +58,19 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 			logger.debug("no compoList, no packagingList => no formulation");
 			return true;
 		}
-		
-		//Do not calculate Tare on RawMaterialData
+
+		// Do not calculate Tare on RawMaterialData
 		if (formulatedProduct instanceof RawMaterialData) {
 			return true;
 		}
 
 		// Tare
 		BigDecimal tarePrimary = calculateTareOfComposition(formulatedProduct);
-                VariantPackagingData variantPackagingData = formulatedProduct.getDefaultVariantPackagingData();
+		VariantPackagingData variantPackagingData = formulatedProduct.getDefaultVariantPackagingData();
 
-                tarePrimary = tarePrimary.add(variantPackagingData.getTarePrimary());
+		if (variantPackagingData != null) {
+			tarePrimary = tarePrimary.add(variantPackagingData.getTarePrimary());
+		}
 
 		BigDecimal netWeightPrimary = new BigDecimal(
 				FormulationHelper.getNetWeight(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT).toString());
@@ -76,8 +78,6 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 		BigDecimal weightPrimary = tarePrimary.add(netWeightPrimary);
 
 		formulatedProduct.setWeightPrimary(weightPrimary.doubleValue());
-
-		
 
 		if ((variantPackagingData != null) && (variantPackagingData.getProductPerBoxes() != null)) {
 

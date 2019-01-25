@@ -243,6 +243,8 @@ public class EntityReportServiceTest extends PLMBaseTestCase {
 		int checks = 0;
 		for (NodeRef reportNodeRef : reportNodeRefs) {
 			String reportName = (String) nodeService.getProperty(reportNodeRef, ContentModel.PROP_NAME);
+			logger.debug("Test report name:"+reportName+" compare with :"+defaultReportName );
+			
 			if (reportName.equals(defaultReportName)) {
 				checks++;
 			} else if (reportName.equals(otherReportName)) {
