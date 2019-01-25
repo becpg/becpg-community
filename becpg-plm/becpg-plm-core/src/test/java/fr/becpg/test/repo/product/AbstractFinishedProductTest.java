@@ -1143,6 +1143,8 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 					if (grpNodeRef == null || illDataItem.getGrp().equals(grpNodeRef)) {
 
 						String formulatedIll = illDataItem.getValue().getValue(locale);
+						Assert.assertTrue(illDataItem.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM));
+						
 						Assert.assertEquals("Incorrect label :" + formulatedIll + "\n   - compare to " + ill, ill, formulatedIll);
 						Assert.assertNotNull(illDataItem.getLogValue());
 					}
@@ -1160,5 +1162,4 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 
 	}
 
-	
 }
