@@ -162,8 +162,8 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	 */
 
 	private List<VariantData> variants;
-	private VariantPackagingData defaultVariantPackagingData = new VariantPackagingData();
-	private VariantData defaultVariantData = new VariantData();
+	private VariantPackagingData defaultVariantPackagingData;
+	private VariantData defaultVariantData;
 
 	/*
 	 * Product specifications

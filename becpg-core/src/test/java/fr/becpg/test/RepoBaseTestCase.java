@@ -17,8 +17,10 @@
  ******************************************************************************/
 package fr.becpg.test;
 
+import java.lang.reflect.Field;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.xml.parsers.DocumentBuilder;
@@ -270,7 +272,21 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 			}
 		}, false, true);
+	
+		try {
+			@SuppressWarnings("rawtypes")
+		    Class clazz = Class.forName("java.lang.ApplicationShutdownHooks");
+		    Field field = clazz.getDeclaredField("hooks");
+		    field.setAccessible(true);
+	
+		    @SuppressWarnings("unchecked")
+		    Map<Thread, Thread> hooks = (Map<Thread, Thread>)field.get(null);
+		    hooks.clear();
+		} catch (ReflectiveOperationException e) {
+			// TODO: handle exception
+		}
 	}
+	
 
 	public void waitForSolr(final Date startTime) {
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {

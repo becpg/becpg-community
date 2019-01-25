@@ -1121,8 +1121,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		ill.setLogValue(log);
 		ill.setSort(sortOrder);
 		
-		if (!ill.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM) && ill.getNodeRef() != null) {
-			nodeService.addAspect(ill.getNodeRef(), BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM, null);
+		if (!ill.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM)) {
+			ill.getAspects().add(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
 		}
 
 		return ill;
