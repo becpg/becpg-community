@@ -333,7 +333,9 @@ public class ExportSearchWebScriptTest extends fr.becpg.test.PLMBaseTestCase {
 					+ "/Excel.xlsx?repo=true&term=&query="+UriEncoder.encode("{\"prop_cm_name\":\"\",\"prop_bcpg_legalName\":\"\",\"prop_bcpg_productHierarchy1\":\"\",\"prop_bcpg_productHierarchy2\":\"\",\"prop_bcpg_productState\":\"\",\"prop_bcpg_productCode\":\"\",\"prop_bcpg_eanCode\":\"\",\"assoc_bcpg_supplierAssoc\":\"\",\"assoc_bcpg_supplierAssoc_added\":\"\",\"assoc_bcpg_supplierAssoc_removed\":\"\",\"prop_cm_modified-date-range\":\"2011-04-17T00:00:00%2B02:00|2011-05-23T00:00:00%2B02:00\",\"prop_cm_modifier\":\"\",\"assoc_bcpg_ingListIng\":\"\",\"assoc_bcpg_ingListIng_added\":\"\",\"assoc_bcpg_ingListIng_removed\":\"\",\"assoc_bcpg_ingListGeoOrigin\":\"\",\"assoc_bcpg_ingListGeoOrigin_added\":\"\",\"assoc_bcpg_ingListGeoOrigin_removed\":\"\",\"assoc_bcpg_ingListBioOrigin\":\"\",\"assoc_bcpg_ingListBioOrigin_added\":\"\",\"assoc_bcpg_ingListBioOrigin_removed\":\"\",\"datatype\":\"bcpg:product\"}");
 
 			Response response = TestWebscriptExecuters.sendRequest(new GetRequest(url), 200, "admin");
-			logger.debug("Response: " + response.getContentAsString());
+			assertNotNull(response.getContentAsString());
+			
+			//logger.debug("Response: " + response.getContentAsString());
 		} catch (Exception e) {
 			logger.error("Failed to execute webscript", e);
 			assertNull("Should not throw an exception", e);
@@ -346,7 +348,8 @@ public class ExportSearchWebScriptTest extends fr.becpg.test.PLMBaseTestCase {
 					+ "/Excel.xlsx?repo=true&term=&query="+UriEncoder.encode("{\"prop_cm_name\":\"FP\",\"prop_cm_title\":\"\",\"prop_cm_description\":\"\",\"prop_mimetype\":\"\",\"prop_cm_modified-date-range\":\"\",\"prop_cm_modifier\":\"\",\"datatype\":\"cm:content\"}");
 
 			Response response = TestWebscriptExecuters.sendRequest(new GetRequest(url), 200, "admin");
-			logger.debug("Response: " + response.getContentAsString());
+			assertNotNull(response.getContentAsString());
+		//	logger.debug("Response: " + response.getContentAsString());
 		} catch (Exception e) {
 			logger.error("Failed to execute webscript", e);
 			assertNull("Should not throw an exception", e);
