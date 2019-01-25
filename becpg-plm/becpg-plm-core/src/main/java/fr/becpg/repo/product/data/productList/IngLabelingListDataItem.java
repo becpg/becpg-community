@@ -14,10 +14,11 @@ import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.model.AbstractManualDataItem;
+import fr.becpg.repo.repository.model.AspectAwareDataItem;
 
 @AlfType
 @AlfQname(qname = "bcpg:ingLabelingList")
-public class IngLabelingListDataItem extends AbstractManualDataItem {
+public class IngLabelingListDataItem extends AbstractManualDataItem implements AspectAwareDataItem {
 
 	
 	private static final long serialVersionUID = 3043212457177647400L;
@@ -114,11 +115,13 @@ public class IngLabelingListDataItem extends AbstractManualDataItem {
 	 * @param i
 	 */
 	public IngLabelingListDataItem(IngLabelingListDataItem i){
+		super(i);
 		this.nodeRef = i.nodeRef;
 		this.grp = i.grp;
 		this.value = i.value;		
 		this.isManual = i.isManual;
 		this.locales = i.locales;
+		
 	}
 
 	@Override
