@@ -36,6 +36,7 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.CompositionDataItem;
 import fr.becpg.repo.product.data.spel.FormulaFormulationContext;
 import fr.becpg.repo.product.data.spel.FormulaFormulationContext.Operator;
+import fr.becpg.repo.product.formulation.labeling.LabelingFormulaContext;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.RepositoryEntityDefReader;
@@ -278,6 +279,17 @@ public class FormulaService {
 
 		return context;
 	}
+	
+	public StandardEvaluationContext createEvaluationContext(ProductData productData, LabelingFormulaContext labelingFormulaContext) {
+		StandardEvaluationContext context = new StandardEvaluationContext(labelingFormulaContext);
+
+		labelingFormulaContext.setEntity(createSecurityProxy(productData));
+		
+		registerCustomFunctions(productData, context);
+
+		return context;
+	}
+	
 
 	public StandardEvaluationContext createEvaluationContext(ProductData productData, CompositionDataItem dataListItem) {
 		StandardEvaluationContext dataContext = new StandardEvaluationContext(

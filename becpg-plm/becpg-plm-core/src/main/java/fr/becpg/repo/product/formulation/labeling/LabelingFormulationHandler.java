@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
@@ -64,6 +65,7 @@ import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.spel.DeclarationFilterContext;
 import fr.becpg.repo.product.data.spel.SpelHelper;
+import fr.becpg.repo.product.formulation.FormulaService;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -83,6 +85,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	private NodeService mlNodeService;
 
 	private AssociationService associationService;
+	
+	private FormulaService formulaService;
 
 	private boolean ingsCalculatingWithYield = false;
 
@@ -104,6 +108,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	public void setIngsCalculatingWithYield(boolean ingsCalculatingWithYield) {
 		this.ingsCalculatingWithYield = ingsCalculatingWithYield;
+	}
+
+
+	public void setFormulaService(FormulaService formulaService) {
+		this.formulaService = formulaService;
 	}
 
 	@Override
@@ -163,8 +172,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			LabelingFormulaContext labelingFormulaContext = new LabelingFormulaContext(mlNodeService, associationService, alfrescoRepository);
 
 			ExpressionParser parser = new SpelExpressionParser();
-			StandardEvaluationContext dataContext = new StandardEvaluationContext(labelingFormulaContext);
-
+			StandardEvaluationContext dataContext = formulaService.createEvaluationContext(formulatedProduct,labelingFormulaContext); 
+			
 			List<LabelingRuleListDataItem> labelingRuleLists = labelingRuleListsGroup.getValue();
 
 			// Apply before formula
@@ -277,8 +286,24 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 									I18NUtil.setLocale(locale);
 									I18NUtil.setContentLocale(null);
 									
-									Expression exp = parser.parseExpression(SpelHelper.formatFormula(labelingRuleListDataItem.getFormula()));
-									String ret = exp.getValue(dataContext, String.class);
+									labelingFormulaContext.setLocale(locale);
+									
+									String ret = "" ;
+									
+									String[] formulas = SpelHelper.formatMTFormulas(labelingRuleListDataItem.getFormula());
+									for (String formula : formulas) {
+
+										Matcher varFormulaMatcher = SpelHelper.formulaVarPattern.matcher(formula);
+										if (varFormulaMatcher.matches()) {
+											logger.debug("Variable formula : " + varFormulaMatcher.group(2) + " (" + varFormulaMatcher.group(1) + ")");
+											Expression exp = parser.parseExpression(varFormulaMatcher.group(2));
+											dataContext.setVariable(varFormulaMatcher.group(1), exp.getValue(dataContext));
+										} else {
+											Expression exp = parser.parseExpression(formula);
+											 ret = exp.getValue(dataContext, String.class);
+										}
+									}
+									
 									if (logger.isDebugEnabled()) {
 										logger.debug("Running renderFormula :" + labelingRuleListDataItem.getFormula() + " for locale :"
 												+ locale.toString());
