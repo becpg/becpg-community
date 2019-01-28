@@ -238,7 +238,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 			String[] splitted = listsParams.split(",");
 			for(String list : splitted) {
 				String[] listName = list.split(":");
-				if(listName != null && listName.length > 0) {
+				if(listName != null && listName.length > 1) {
 					lists.add(listName[1]);
 				}
 			}
