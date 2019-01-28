@@ -167,12 +167,11 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			this.itemType = itemType;
 			this.childrens = readExtractStructure(fieldQname, dLFields);
 		}
-		
+
 		public AttributeExtractorStructure(String fieldName, String formula) {
 			this.fieldName = fieldName;
 			this.formula = formula;
 		}
-		
 
 		public String getFieldName() {
 			return fieldName;
@@ -181,9 +180,9 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		public boolean isEntityField() {
 			return isEntityField;
 		}
-		
+
 		public boolean isFormulaField() {
-			return formula!=null && !formula.isEmpty();
+			return (formula != null) && !formula.isEmpty();
 		}
 
 		public boolean isDataListItems() {
@@ -209,7 +208,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		public QName getItemType() {
 			return itemType;
 		}
-		
+
 		public String getFormula() {
 			return formula;
 		}
@@ -299,8 +298,6 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			Boolean b = (Boolean) v;
 
 			value = TranslateHelper.getTranslatedBoolean(b, propertyFormats.isUseDefaultLocale());
-			
-			
 
 		} else if (dataType.equals(DataTypeDefinition.TEXT.toString())) {
 
@@ -350,21 +347,22 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 				}
 			} else {
-				
-				if(SecurityModel.PROP_ACL_PROPNAME.equals(propertyDef.getName())) {
+
+				if (SecurityModel.PROP_ACL_PROPNAME.equals(propertyDef.getName())) {
 					QName aclPropName = QName.createQName(v.toString(), namespaceService);
-					ClassAttributeDefinition  aclDef = entityDictionaryService.getPropDef(aclPropName);
-					if(aclDef!=null) {
-						value =  aclDef.getTitle(dictionaryService);
+					ClassAttributeDefinition aclDef = entityDictionaryService.getPropDef(aclPropName);
+					if (aclDef != null) {
+						value = aclDef.getTitle(dictionaryService);
 					} else {
 						value = v.toString();
 					}
-					
+
 				} else {
 					if (dynListConstraint != null) {
 						value = dynListConstraint.getDisplayLabel(v.toString());
 					} else {
-						value = constraintName != null ? TranslateHelper.getConstraint(constraintName, v.toString(), propertyFormats.isUseDefaultLocale())
+						value = constraintName != null
+								? TranslateHelper.getConstraint(constraintName, v.toString(), propertyFormats.isUseDefaultLocale())
 								: v.toString();
 					}
 				}
@@ -430,8 +428,25 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				if (DataTypeDefinition.ANY.toString().equals(propertyDef.getDataType().toString()) && (value instanceof String)) {
 					value = (Serializable) JsonFormulaHelper.cleanCompareJSON((String) value);
 				}
-				if (propertyDef.getConstraints().isEmpty() || DataTypeDefinition.TEXT.toString().equals(propertyDef.getDataType().toString())) {
-					return getStringValue(propertyDef, value, propertyFormats);
+				if (propertyDef.getConstraints().isEmpty() || (DataTypeDefinition.TEXT.toString().equals(propertyDef.getDataType().toString()))) {
+
+					boolean isListCst = false;
+					//DO not modify that as in report we need dynamic being translated and LIST not
+					if (!propertyDef.getConstraints().isEmpty()) {
+
+						for (ConstraintDefinition constraint : propertyDef.getConstraints()) {
+							if ("LIST".equals(constraint.getConstraint().getType())) {
+								isListCst = true;
+								break;
+							}
+						}
+					}
+
+					if (formatData || !isListCst) {
+						return getStringValue(propertyDef, value, propertyFormats);
+					} else {
+						return value.toString();
+					}
 				} else {
 					return value.toString();
 				}
@@ -478,14 +493,13 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 						}
 					}
 
-				} else if("formula".equals(dlField)) {
+				} else if ("formula".equals(dlField)) {
 					field = tokeniser.nextToken();
-					ret.add(new AttributeExtractorStructure("formula_"+(formulaCount++),field));	
-				} else if("excel".equals(dlField)) {
+					ret.add(new AttributeExtractorStructure("formula_" + (formulaCount++), field));
+				} else if ("excel".equals(dlField)) {
 					field = tokeniser.nextToken();
-					ret.add(new AttributeExtractorStructure("excel_"+(formulaCount++),field));	
-				}  else {
-				
+					ret.add(new AttributeExtractorStructure("excel_" + (formulaCount++), field));
+				} else {
 
 					QName fieldQname = QName.createQName(dlField, namespaceService);
 
@@ -516,16 +530,14 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 				QName fieldQname = QName.createQName(field, namespaceService);
 
-				
-
 				if (hasReadAccess(itemType, field)) {
 
 					ClassAttributeDefinition prodDef = entityDictionaryService.getPropDef(fieldQname);
-					
-					if(field.startsWith("dyn_")){
+
+					if (field.startsWith("dyn_")) {
 						ret.add(new AttributeExtractorStructure(field, field));
 					}
-					
+
 					if (prodDef != null) {
 						String prefix = "prop_";
 						if (isAssoc(prodDef)) {
@@ -534,7 +546,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 						ret.add(new AttributeExtractorStructure(prefix + field.replaceFirst(":", "_"), prodDef, itemType));
 					}
 				}
-				
+
 			}
 		}
 		return ret;
@@ -553,7 +565,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			watch = new StopWatch();
 			watch.start();
 		}
-		
+
 		Map<String, Object> ret = new HashMap<>(metadataFields.size());
 
 		Integer order = 0;
@@ -575,7 +587,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 						ret.put(field.getFieldName(), callback.extractNestedField(nodeRef, field));
 					}
 				}
-			} else if(!field.isFormulaField()) {
+			} else if (!field.isFormulaField()) {
 				ret.put(field.getFieldName(), extractNodeData(nodeRef, properties, getFieldDef(itemType, field), mode, order++));
 			}
 
@@ -638,7 +650,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 					tmp.put("type", type);
 					tmp.put("label", attribute.getTitle(dictionaryService));
 				} else if (type != null) {
-					if(value!=null && type.equals(DataTypeDefinition.NODE_REF)) {
+					if ((value != null) && type.equals(DataTypeDefinition.NODE_REF)) {
 						String metadata = null;
 						if (!((PropertyDefinition) attribute).isMultiValued()) {
 							metadata = extractMetadata(nodeService.getType((NodeRef) value), (NodeRef) value);
@@ -652,12 +664,12 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 										} else {
 											metadata = "";
 										}
-										metadata += extractMetadata(nodeService.getType(tempValue),tempValue);
+										metadata += extractMetadata(nodeService.getType(tempValue), tempValue);
 									}
 								}
 							}
 						}
-						
+
 						tmp.put("metadata", metadata);
 					} else {
 						tmp.put("metadata", extractMetadata(type, nodeRef));
