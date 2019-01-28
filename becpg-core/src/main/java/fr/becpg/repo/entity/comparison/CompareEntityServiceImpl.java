@@ -533,14 +533,16 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		if(itemNodeRef==null) {
 			itemNodeRef = c.getNodeRef2();
 		}
-		
 		if(itemNodeRef!=null) {
 			if (pivotAssoc != null) {
 				NodeRef part = associationService.getTargetAssoc(itemNodeRef, pivotAssoc);
 				if ((part != null)) {
 					return attributeExtractorService.extractPropName(part);
+				}else {
+					return "";
 				}
 			}
+			
 			return attributeExtractorService.extractPropName(itemNodeRef);
 		}
 		return null;
