@@ -819,6 +819,40 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		checkILL(finishedProductNodeRef, labelingRuleList, "allergen2", Locale.FRENCH, "Rendu4");
 
 	}
+	
+	@Test
+	public void testSPELFormula() throws Exception {
+
+		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			logger.debug("/*-- Create finished product --*/");
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName("Produit fini 2");
+			finishedProduct.setLegalName("Legal Produit fini 2");
+			finishedProduct.setUnit(ProductUnit.kg);
+			finishedProduct.setQty(4d);
+			finishedProduct.setDensity(1d);
+			List<CompoListDataItem> compoList = new ArrayList<>();
+
+			compoList.add(new CompoListDataItem(null, null, null, 3d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial7NodeRef));
+			compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+			compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial2NodeRef));
+
+			finishedProduct.getCompoListView().setCompoList(compoList);
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+		}, false, true);
+
+		// Declare
+		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
+		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "entity.name+\"-\"+renderAllergens()", LabelingRuleType.Render));
+		labelingRuleList.add(new LabelingRuleListDataItem("Rendu2", "var a=3;\n#a+\"-\"+renderInvoluntaryAllergens()", LabelingRuleType.Render));
+		labelingRuleList.add(new LabelingRuleListDataItem("Rendu3", "locale", LabelingRuleType.Render));
+
+		checkILL(finishedProductNodeRef, labelingRuleList, "Produit fini 2-allergen1", Locale.FRENCH, "Rendu");
+		checkILL(finishedProductNodeRef, labelingRuleList, "3-allergen2", Locale.FRENCH, "Rendu2");
+		checkILL(finishedProductNodeRef, labelingRuleList, "fr", Locale.FRENCH, "Rendu3");
+	}
+
+	
 
 	@Test
 	public void testRawMaterialIngType() throws Exception {

@@ -144,7 +144,8 @@
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="mlNodeService" ref="mlAwareNodeService" />
 					<property name="associationService" ref="associationService"/>
-					<property name="ingsCalculatingWithYield" value="${beCPG.formulation.ingsCalculatingWithYield}"/>			
+					<property name="ingsCalculatingWithYield" value="${beCPG.formulation.ingsCalculatingWithYield}"/>	
+					<property name="formulaService" ref="formulaService"/>		
 				</bean>
 				<bean parent="abstractSimpleFormulationHandler"
 					class="fr.becpg.repo.product.formulation.PhysicoChemCalculatingFormulationHandler">
