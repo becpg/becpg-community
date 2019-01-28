@@ -383,15 +383,15 @@ public class LabelingFormulaContext extends RuleParser {
 	private MessageFormat applyRoundingMode(MessageFormat messageFormat, Double qty, RoundingMode maxRoundingMode) {
 		if (messageFormat.getFormats() != null) {
 			for (Format format : messageFormat.getFormats()) {
-				if (format instanceof NumberFormat) {
-					applyAutomaticPrecicion(((NumberFormat) format), qty, maxRoundingMode);
+				if (format instanceof DecimalFormat) {
+					applyAutomaticPrecicion(((DecimalFormat) format), qty, maxRoundingMode);
 				}
 			}
 		}
 		return messageFormat;
 	}
 
-	private void applyAutomaticPrecicion(NumberFormat decimalFormat, Double qty, RoundingMode maxRoundingMode) {
+	private void applyAutomaticPrecicion(DecimalFormat decimalFormat, Double qty, RoundingMode maxRoundingMode) {
 		decimalFormat.setRoundingMode(RoundingMode.HALF_DOWN);
 		if ((qty != null) && (qty > -1) && (qty != 0d)) {
 			int maxNum = decimalFormat.getMaximumFractionDigits();
@@ -699,7 +699,7 @@ public class LabelingFormulaContext extends RuleParser {
 		return renderAllergens(this.inVolAllergensRawMaterial);
 	}
 
-	private String renderAllergens(Set<NodeRef> allergensList) {
+	public String renderAllergens(Set<NodeRef> allergensList) {
 		StringBuffer ret = new StringBuffer();
 
 		if (logger.isTraceEnabled()) {
@@ -889,7 +889,7 @@ public class LabelingFormulaContext extends RuleParser {
 		return false;
 	}
 
-	private BigDecimal roundeedValue(Double qty, NumberFormat decimalFormat) {
+	private BigDecimal roundeedValue(Double qty, DecimalFormat decimalFormat) {
 		if (decimalFormat == null) {
 			DecimalFormatSymbols symbols = new DecimalFormatSymbols(I18NUtil.getContentLocale());
 			decimalFormat = new DecimalFormat(defaultPercFormat,symbols);
@@ -924,8 +924,8 @@ public class LabelingFormulaContext extends RuleParser {
 	private BigDecimal roundeedValue(Double qty, MessageFormat messageFormat) {
 
 		for (Format format : messageFormat.getFormats()) {
-			if (format instanceof NumberFormat) {
-				return roundeedValue(qty, (NumberFormat) format);
+			if (format instanceof DecimalFormat) {
+				return roundeedValue(qty, (DecimalFormat) format);
 			}
 		}
 		return new BigDecimal(qty);
