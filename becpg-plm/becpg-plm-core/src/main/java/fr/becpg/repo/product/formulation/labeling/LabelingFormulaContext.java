@@ -60,6 +60,7 @@ import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.LabelingRuleType;
 import fr.becpg.repo.product.data.ing.AbstractLabelingComponent;
@@ -102,6 +103,29 @@ public class LabelingFormulaContext extends RuleParser {
 	private Set<NodeRef> inVolAllergensRawMaterial = new HashSet<>();
 
 	private Set<NodeRef> toApplyThresholdItems = new HashSet<>();
+	
+	//Spel variable
+	private Locale locale;
+	
+	//Spel variable
+	private ProductData entity;
+	
+	
+	public Locale getLocale() {
+		return locale;
+	}
+
+	public void setLocale(Locale locale) {
+		this.locale = locale;
+	}
+
+	public ProductData getEntity() {
+		return entity;
+	}
+
+	public void setEntity(ProductData entity) {
+		this.entity = entity;
+	}
 
 	public List<ReqCtrlListDataItem> getErrors() {
 		return errors;
@@ -359,15 +383,15 @@ public class LabelingFormulaContext extends RuleParser {
 	private MessageFormat applyRoundingMode(MessageFormat messageFormat, Double qty, RoundingMode maxRoundingMode) {
 		if (messageFormat.getFormats() != null) {
 			for (Format format : messageFormat.getFormats()) {
-				if (format instanceof NumberFormat) {
-					applyAutomaticPrecicion(((NumberFormat) format), qty, maxRoundingMode);
+				if (format instanceof DecimalFormat) {
+					applyAutomaticPrecicion(((DecimalFormat) format), qty, maxRoundingMode);
 				}
 			}
 		}
 		return messageFormat;
 	}
 
-	private void applyAutomaticPrecicion(NumberFormat decimalFormat, Double qty, RoundingMode maxRoundingMode) {
+	private void applyAutomaticPrecicion(DecimalFormat decimalFormat, Double qty, RoundingMode maxRoundingMode) {
 		decimalFormat.setRoundingMode(RoundingMode.HALF_DOWN);
 		if ((qty != null) && (qty > -1) && (qty != 0d)) {
 			int maxNum = decimalFormat.getMaximumFractionDigits();
@@ -675,7 +699,7 @@ public class LabelingFormulaContext extends RuleParser {
 		return renderAllergens(this.inVolAllergensRawMaterial);
 	}
 
-	private String renderAllergens(Set<NodeRef> allergensList) {
+	public String renderAllergens(Set<NodeRef> allergensList) {
 		StringBuffer ret = new StringBuffer();
 
 		if (logger.isTraceEnabled()) {
@@ -865,7 +889,7 @@ public class LabelingFormulaContext extends RuleParser {
 		return false;
 	}
 
-	private BigDecimal roundeedValue(Double qty, NumberFormat decimalFormat) {
+	private BigDecimal roundeedValue(Double qty, DecimalFormat decimalFormat) {
 		if (decimalFormat == null) {
 			DecimalFormatSymbols symbols = new DecimalFormatSymbols(I18NUtil.getContentLocale());
 			decimalFormat = new DecimalFormat(defaultPercFormat,symbols);
@@ -900,8 +924,8 @@ public class LabelingFormulaContext extends RuleParser {
 	private BigDecimal roundeedValue(Double qty, MessageFormat messageFormat) {
 
 		for (Format format : messageFormat.getFormats()) {
-			if (format instanceof NumberFormat) {
-				return roundeedValue(qty, (NumberFormat) format);
+			if (format instanceof DecimalFormat) {
+				return roundeedValue(qty, (DecimalFormat) format);
 			}
 		}
 		return new BigDecimal(qty);
