@@ -805,7 +805,7 @@ public class LabelingFormulaContext extends RuleParser {
 							createSubIngBuff(lblCompositeContext, ingItem, subIngBuff, 1d);
 
 							subLabel = getIngTextFormat(component, qtyPerc)
-									.format(new Object[] { ingName, qtyPerc, subIngBuff.toString(), geoOriginsLabel });
+									.format(new Object[] { ingName, qtyPerc, subIngBuff.toString(), null });
 
 						} else if (component instanceof CompositeLabeling) {
 
@@ -815,7 +815,7 @@ public class LabelingFormulaContext extends RuleParser {
 							}
 
 							subLabel = getIngTextFormat(component, qtyPerc).format(new Object[] { ingName, qtyPerc,
-									renderCompositeIng((CompositeLabeling) component, subRatio, null), geoOriginsLabel });
+									renderCompositeIng((CompositeLabeling) component, subRatio, null), null });
 
 						} else {
 							logger.error("Unsupported ing type. Name: " + component.getName());
@@ -1053,7 +1053,11 @@ public class LabelingFormulaContext extends RuleParser {
 			}
 
 			String ingName = getLegalIngName(component, qtyPerc, false, first && (total != null));
-			String geoOriginsLabel = createGeoOriginsLabel(component.getNodeRef(), component.getGeoOrigins());
+			
+			String geoOriginsLabel = null;
+			if(this.showAllGeo){
+				geoOriginsLabel = createGeoOriginsLabel(component.getNodeRef(), component.getGeoOrigins());
+			}
 
 			if (logger.isDebugEnabled()) {
 
