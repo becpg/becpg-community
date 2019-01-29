@@ -34,7 +34,6 @@ import fr.becpg.common.BeCPGException;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.product.data.FinishedProductData;
-import fr.becpg.repo.product.data.constraints.CompoListUnit;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -228,7 +227,7 @@ public class RemoteEntityServiceTest extends PLMBaseTestCase {
 			productData.setErpCode("erp0001");
 			productData.setUnit(ProductUnit.kg);
 			List<CompoListDataItem> compoList = new LinkedList<>();
-			CompoListDataItem compoListItem = new CompoListDataItem(null, null, 1d, 1d, CompoListUnit.P, 0d, DeclarationType.Declare,
+			CompoListDataItem compoListItem = new CompoListDataItem(null, null, 1d, 1d, ProductUnit.P, 0d, DeclarationType.Declare,
 					rawMaterialNodeRef);
 			compoList.add(compoListItem);
 			productData.getCompoListView().setCompoList(compoList);
