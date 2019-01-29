@@ -3,9 +3,6 @@
  */
 package fr.becpg.test.repo.entity;
 
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertThat;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -15,7 +12,6 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -27,7 +23,6 @@ import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransacti
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.commons.math3.stat.descriptive.summary.Product;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
@@ -36,10 +31,10 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import fr.becpg.common.BeCPGException;
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.product.data.FinishedProductData;
+import fr.becpg.repo.product.data.constraints.CompoListUnit;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -233,7 +228,7 @@ public class RemoteEntityServiceTest extends PLMBaseTestCase {
 			productData.setErpCode("erp0001");
 			productData.setUnit(ProductUnit.kg);
 			List<CompoListDataItem> compoList = new LinkedList<>();
-			CompoListDataItem compoListItem = new CompoListDataItem(null, null, 1d, 1d, ProductUnit.P, 0d, DeclarationType.Declare,
+			CompoListDataItem compoListItem = new CompoListDataItem(null, null, 1d, 1d, CompoListUnit.P, 0d, DeclarationType.Declare,
 					rawMaterialNodeRef);
 			compoList.add(compoListItem);
 			productData.getCompoListView().setCompoList(compoList);
