@@ -45,7 +45,7 @@ public class NutrientFormulationHelper {
 		regulations.put("US_2013", new UsNutrientRegulation("beCPG/databases/nuts/UsNutrientRegulation_2013_2020.csv"));
 		
 		regulations.put("CA", new CanadianNutrientRegulation("beCPG/databases/nuts/CanadianNutrientRegulation_2017.csv"));
-		regulations.put("CA_2013", new CanadianNutrientRegulation("beCPG/databases/nuts/CanadianNutrientRegulation_2013_2022.csv"));
+		regulations.put("CA_2013", new CanadianNutrientRegulation2013("beCPG/databases/nuts/CanadianNutrientRegulation_2013_2022.csv"));
 		
 		regulations.put("CN", new ChineseNutrientRegulation("beCPG/databases/nuts/ChineseNutrientRegulation.csv"));
 		regulations.put("AU", new AustralianNutrientRegulation("beCPG/databases/nuts/AUNutrientRegulation.csv"));
@@ -173,7 +173,10 @@ public class NutrientFormulationHelper {
 						}
 						if( def.getUnit()!=null) {
 							nutListElt.addAttribute("regulUnit" + prefix, "" + def.getUnit());
-						}							
+						}
+						if( def.getShowGDAPerc()!=null) {
+							nutListElt.addAttribute("regulShowGDAPerc" + prefix, "" + def.getShowGDAPerc());
+						}
 					}
 					
 					for (Iterator<?> i = jsonRound.keys(); i.hasNext();) {
@@ -187,12 +190,12 @@ public class NutrientFormulationHelper {
 					if(nutListValue != null && nutListValue != ""){
 						nutListElt.addAttribute("roundedDisplayValue" + prefix , 
 								NutrientFormulationHelper.displayValue(Double.parseDouble(nutListValue), 
-										extractValue(roundedValue, locale), nutCode, locale));
+										extractValue(roundedValue, locale), nutCode, locale, locKey));
 					}
 					if(nutListValuePerServing != null && nutListValuePerServing != ""){
 						nutListElt.addAttribute("roundedDisplayValuePerServing" + prefix , 
 								NutrientFormulationHelper.displayValue(Double.parseDouble(nutListValuePerServing), 
-										extractValuePerServing(roundedValue, locale), nutCode, locale));
+										extractValuePerServing(roundedValue, locale), nutCode, locale, locKey));
 					}
 				}
 			} catch (JSONException e) {
@@ -271,7 +274,7 @@ public class NutrientFormulationHelper {
 					Double vps = regulation.round(n.getValuePerServing(), nutCode, nutUnit);
 					valuePerServing.put(key,vps);
 					if(def!=null &&  def.getGda()!=null &&  def.getGda()!=0) {
-						gda.put(key, regulation.roundGDA(100 * regulation.convertValue(vps, nutUnit, def.getUnit()) / def.getGda(), nutCode));
+						gda.put(key, regulation.roundGDA(100 * vps / def.getGda(), nutCode));
 					}
 				}
 			}
@@ -328,6 +331,13 @@ public class NutrientFormulationHelper {
 			return null;
 		}
 		return getRegulation(getLocalKey(locale)).displayValue(value, roundedValue, nutCode, locale);
+	}
+	
+	public static String displayValue(Double value, Double roundedValue, String nutCode, Locale locale, String regulation) {
+		if(value == null){
+			return null;
+		}
+		return getRegulation(regulation).displayValue(value, roundedValue, nutCode, locale);
 	}
 	
 	public static Double roundGDA(Double value, String nutCode, Locale locale) {

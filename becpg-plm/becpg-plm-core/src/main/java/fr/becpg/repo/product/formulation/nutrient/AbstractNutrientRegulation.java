@@ -30,13 +30,14 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 		private Double gda;
 		private Double ul;
 		private String unit;
+		private Boolean showGDAPerc;
 
 		public Integer getDepthLevel() {
 			return depthLevel;
 		}
 
 		public NutrientDefinition(String nutCode, Integer sort, Integer depthLevel, Boolean mandatory, Boolean optional, Boolean bold, Double gda,
-				Double ul, String unit) {
+				Double ul, String unit, Boolean showGDAPerc) {
 			super();
 			this.sort = sort;
 			this.depthLevel = depthLevel;
@@ -46,6 +47,7 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 			this.gda = gda;
 			this.ul = ul;
 			this.unit = unit;
+			this.showGDAPerc = showGDAPerc;
 		}
 
 		public Integer getSort() {
@@ -76,6 +78,10 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 			return unit;
 		}
 
+		public Boolean getShowGDAPerc() {
+			return showGDAPerc;
+		}
+
 	}
 
 	private Map<String, NutrientDefinition> definitions = null;
@@ -95,7 +101,7 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 					// nutCode charactName sort depthLevel mandatory optionnal bold gda ul
 					while ((line = csvReader.readNext()) != null) {
 						definitions.put(line[0], new NutrientDefinition(line[0], parseInt(line[2]), parseInt(line[3]), "true".equals(line[4]),
-								"true".equals(line[5]), "true".equals(line[6]), parseDouble(line[7]), parseDouble(line[8]), line[9]));
+								"true".equals(line[5]), "true".equals(line[6]), parseDouble(line[7]), parseDouble(line[8]), line[9], "true".equals(line[10])));
 					}
 				}
 			}
