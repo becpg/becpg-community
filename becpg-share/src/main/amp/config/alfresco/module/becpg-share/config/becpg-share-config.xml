@@ -22,6 +22,7 @@
 		<!-- the list of available language files -->
 		<languages> 
 			<language locale="en">English</language>
+			<language locale="en_CA">English - Canada</language>
 			<language locale="en_US">English - United States</language>
 			<language locale="en_CA">English - Canada</language>
 			<language locale="de">German</language>

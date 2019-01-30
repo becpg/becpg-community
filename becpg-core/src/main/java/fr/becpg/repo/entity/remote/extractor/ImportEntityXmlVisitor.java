@@ -233,6 +233,10 @@ public class ImportEntityXmlVisitor {
 						nodeRef = "bcpg://tmpStore/" + UUID.randomUUID().toString();
 					}
 
+					if(name == null || name.trim().isEmpty()) {
+						name = "REMOTE-"+UUID.randomUUID().toString();
+					}
+					
 					if ((entityNodeRef != null) && curNodeRef.isEmpty()) {
 						logger.debug("We force node update by providing nodeRef");
 						nodeRef = entityNodeRef.toString();
@@ -665,9 +669,9 @@ public class ImportEntityXmlVisitor {
 			// Translate
 			if ((existingNodeRef == null) || !serviceRegistry.getNodeService().exists(existingNodeRef)
 					|| type.equals(serviceRegistry.getNodeService().getType(existingNodeRef))) {
+				
+				
 				NodeRef ret = serviceRegistry.getNodeService().getChildByName(parentNodeRef, assocName, name);
-
-				logger.debug("AssocName: " + assocName + ", discussion qname: " + ForumModel.ASSOC_DISCUSSION);
 
 				// rendre générique ?
 				if (ForumModel.ASSOC_DISCUSSION.equals(assocName)) {
