@@ -188,9 +188,9 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 		nutrientTypeCode.put("Vitamine C totale", "VITC-");
 		nutrientTypeCode.put("Vitamine B1 ou Thiamine", "THIA");
 		nutrientTypeCode.put("Vitamine B2 ou Riboflavine", "RIBF");
-		nutrientTypeCode.put("Vitamine B3 PP ou Niacine", "NIA");
+		nutrientTypeCode.put("Vitamine B3 ou PP ou Niacine", "NIA");
 		nutrientTypeCode.put("Vitamine B5 ou Acide pantothénique", "PANTAC");
-		nutrientTypeCode.put("Vitamine B6 ou ou Pyridoxine", "VITB6-");
+		nutrientTypeCode.put("Vitamine B6 ou Pyridoxine", "VITB6-");
 		nutrientTypeCode.put("Vitamine B8 ou Biotine", "BIOT");
 		nutrientTypeCode.put("Vitamine B12 ou Cobalamines", "VITB12");
 		nutrientTypeCode.put("Vitamine B9 ou Folates totaux", "FOL");
