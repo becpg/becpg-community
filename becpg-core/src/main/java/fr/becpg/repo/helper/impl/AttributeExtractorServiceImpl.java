@@ -429,20 +429,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 					value = (Serializable) JsonFormulaHelper.cleanCompareJSON((String) value);
 				}
 				if (propertyDef.getConstraints().isEmpty() || (DataTypeDefinition.TEXT.toString().equals(propertyDef.getDataType().toString()))) {
-
-					boolean isListCst = false;
-					//DO not modify that as in report we need dynamic being translated and LIST not
-					if (!propertyDef.getConstraints().isEmpty()) {
-
-						for (ConstraintDefinition constraint : propertyDef.getConstraints()) {
-							if ("LIST".equals(constraint.getConstraint().getType())) {
-								isListCst = true;
-								break;
-							}
-						}
-					}
-
-					if (formatData || !isListCst) {
+					if (formatData ) {
 						return getStringValue(propertyDef, value, propertyFormats);
 					} else {
 						return value.toString();
