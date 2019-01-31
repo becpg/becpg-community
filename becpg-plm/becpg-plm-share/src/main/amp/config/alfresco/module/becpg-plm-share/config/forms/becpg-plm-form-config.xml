@@ -158,6 +158,7 @@
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:netWeight" force="true" />
 					<show id="bcpg:productDensity" />
+					<show id="bcpg:productLossPerc" />
 					<show id="bcpg:servingSize" force="true" />
 					<show id="bcpg:netVolume" force="true" />
 					<show id="bcpg:numberOfServings" force="true" />
@@ -419,6 +420,7 @@
 					</field>
 				
 					<field id="bcpg:productDensity" set="formulation" read-only="true" />
+					<field id="bcpg:productLossPerc" set="formulation" />
 					<field id="bcpg:servingSize" help-id="becpg.forms.help.servingSize" set="formulation" />
 					<field id="bcpg:netVolume" help-id="becpg.forms.help.netVolume" set="formulation" >
 						<control
@@ -3713,6 +3715,7 @@
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:netWeight" force="true" />
 					<show id="bcpg:productDensity" />
+					<show id="bcpg:productLossPerc" />
 					<show id="bcpg:servingSize" force="true" />
 					<show id="bcpg:productSpecifications" />
 
@@ -3830,6 +3833,7 @@
 						</control>
 					</field>
 					<field id="bcpg:productDensity" set="formulation"  read-only="true"/>
+					<field id="bcpg:productLossPerc" set="formulation" />
 					<field id="bcpg:servingSize" set="formulation" />
 					<field id="bcpg:productSpecifications" set="formulation">
 						<control
