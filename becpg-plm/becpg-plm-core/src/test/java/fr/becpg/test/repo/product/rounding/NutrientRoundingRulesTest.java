@@ -232,6 +232,10 @@ public class NutrientRoundingRulesTest {
 		assertEquals("50", NutrientFormulationHelper.displayValue(51d, 
 				NutrientFormulationHelper.round(51d, NutrientCode.VitA, Locale.CANADA, "µg/100g"), 
 				NutrientCode.VitA, Locale.US, "CA"));
+		
+		assertEquals("150", NutrientFormulationHelper.displayValue(150d, 
+				NutrientFormulationHelper.round(150d, NutrientCode.Sodium, Locale.CANADA, "mg/100g"), 
+				NutrientCode.Sodium, Locale.CANADA, "CA_2013"));
 	}
 
 	@Test
