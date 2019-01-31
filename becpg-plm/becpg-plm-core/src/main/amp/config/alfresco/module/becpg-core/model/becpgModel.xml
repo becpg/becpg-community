@@ -2985,6 +2985,9 @@
 				<property name="bcpg:productDensity">
 					<type>d:double</type>
 				</property>
+				<property name="bcpg:productLossPerc">
+					<type>d:double</type>
+				</property>
 				<property name="bcpg:productState">
 					<type>d:text</type>
 					<default>Simulation</default>
