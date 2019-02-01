@@ -96,7 +96,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		}
 
 
-		visitVariantData(variants, compositeAll, formulatedProduct.getProductLossPerc() != null ? formulatedProduct.getProductLossPerc() : 0d);
+		visitVariantData(variants, compositeAll, formulatedProduct.getProductLossPerc());
 
 		// Yield
 		visitYieldChildren(formulatedProduct, compositeDefaultVariant);
