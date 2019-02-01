@@ -929,22 +929,33 @@ if (beCPG.module.EntityDataGridRenderers) {
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : "bcpg:compoListQty",
 		renderer : function(oRecord, data, label, scope) {
-
 			var qty = "";			
 			if (data.value != null) {				
-				var unit = "", absValue = Math.abs(data.value);
-				if (absValue < 0.0001) {
-					qty = data.value * 1000000;
-					unit = " mg";
-				} else if (absValue < 1) {
-					qty = data.value * 1000;
-					unit = " g";
-				} else if (absValue > 1000) {
-					qty = data.value / 1000;
-					unit = " t";
+				var unit = "";
+				if( Alfresco.constants.JS_LOCALE == "en_US"){
+					var absValue = Math.abs(data.value*2.204622622)
+				  if (absValue < 1) {
+						qty = data.value *35.27396195;
+						unit = " oz";
+					}  else {
+						qty = data.value*2.204622622;
+						unit = " lb";
+					}
 				} else {
-					qty = data.value;
-					unit = " kg";
+					var absValue = Math.abs(data.value);
+					if (absValue < 0.0001) {
+						qty = data.value * 1000000;
+						unit = " mg";
+					} else if (absValue < 1) {
+						qty = data.value * 1000;
+						unit = " g";
+					} else if (absValue > 1000) {
+						qty = data.value / 1000;
+						unit = " t";
+					} else {
+						qty = data.value;
+						unit = " kg";
+					}
 				}
 
 				qty = parseFloat(qty.toPrecision(5)) + unit;
