@@ -158,6 +158,71 @@
             return n;   
         }       
     };
+
+    beCPG.util.convertUnit = function convertUnit(val, fromUnit, toUnit){
+    	// by Default toUnit is kg or m or L or perc
+    	if(val!=null && val!="" && val!=0){
+    		switch (fromUnit) {
+    		case "mo":
+    			val=  val * 30;
+    			break;
+    		case "ppm":
+    			val=   val / 10000;
+    			break;
+    		case "pp":
+    			val=   val / 10;
+    			break;
+    		case "g":
+    		case "milli":
+    		case "mL":
+    		case "mm":
+    			val=    val / 1000;	
+    			break;
+    		case "cL":	
+    		case "cm":
+    			val=   val / 100; 
+    			break;
+    		case "gal":	
+    			val=   val / 0.264172; 
+    			break;
+    		case "fl_oz":	
+    			val=   val / 33.814; 	
+    			break;
+    		case "cp":	
+    			val=   val / 4.16667; 	
+    			break;
+    		case "mg":	
+    		case "micro":		
+    			val=   val / 1000000; 
+    			break;
+    		case "mega":		
+    			val=   val * 1000000; 
+    			break;
+    		case "oz":		
+    			val=   val / 35.27396195; 	
+    			break;
+    		case "lb":
+    			val=   val / 2.204622622;
+    			break;
+    		case "ft":
+    			val=   val / 3.28084;
+    			break;
+    		case "in":
+    			val=   val / 39.37008;
+    			break;
+    		case "mil":
+    			val=   val / 39370,079;
+    			break;
+    		default:
+    			break;
+    		}
+    		if(toUnit =="mm" || toUnit =="g" || toUnit =="mL"){
+    			val = val *1000;
+    		}
+    	}
+    	return val;
+    };
+
     
     beCPG.util.encodeAttr = function(text, justified)
     {

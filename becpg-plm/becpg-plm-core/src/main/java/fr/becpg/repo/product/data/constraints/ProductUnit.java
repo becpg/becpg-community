@@ -11,7 +11,7 @@ package fr.becpg.repo.product.data.constraints;
  */
 public enum ProductUnit {
 
-	kg, g, mg, lb, oz , L, cL, mL, fl_oz,cp,gal, inch, ft, mm, m, m2, m3, h, P, PP, Box, Perc;
+	kg, g, mg, lb, oz , L, cL, mL, fl_oz,cp,gal, in, ft, mm, m, m2, m3, h, P, PP, Box, Perc;
 	
 	
 
@@ -29,7 +29,7 @@ public enum ProductUnit {
 	}
 
 	public  boolean isP() {
-		return P.equals(this) || m2.equals(this)|| m.equals(this)  || inch.equals(this)|| ft.equals(this) || mm.equals(this) || m3.equals(this);
+		return P.equals(this) || m2.equals(this)|| m.equals(this)  || in.equals(this)|| ft.equals(this) || mm.equals(this) || m3.equals(this);
 	}
 
 
@@ -94,7 +94,7 @@ public enum ProductUnit {
 	
 	public static Double GalToL(Double value) {
 		if(value !=null) {
-			return value * 0.264172d;
+			return value / 0.264172d;
 		}
 		return null;
 	}
@@ -119,7 +119,7 @@ public enum ProductUnit {
 			return ProductUnit.gal;
 		}  if (this.equals(ProductUnit.mm) || this.equals(ProductUnit.m) ) {
 			return ProductUnit.m;
-		}  if (this.equals(ProductUnit.inch) || this.equals(ProductUnit.ft) ) {
+		}  if (this.equals(ProductUnit.in) || this.equals(ProductUnit.ft) ) {
 			return ProductUnit.ft;
 		} 
 		return this;

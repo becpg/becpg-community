@@ -116,7 +116,7 @@
 					<value>PP</value>
 					<value>m</value>
 					<value>mm</value>
-					<value>inch</value>
+					<value>in</value>
 					<value>ft</value>
 					<value>m2</value>
 					<value>kg</value>
@@ -330,7 +330,7 @@
 					<value>€/P</value>
 					<value>€/m</value>
 					<value>€/mm</value>
-					<value>€/inch</value>
+					<value>€/in</value>
 					<value>€/ft</value>
 					<value>€/gal</value>
 					<value>€/cp</value>
@@ -349,7 +349,7 @@
 					<value>$/P</value>
 					<value>$/m</value>
 					<value>$/mm</value>
-					<value>$/inch</value>
+					<value>$/in</value>
 					<value>$/ft</value>
 					<value>$/gal</value>
 					<value>$/cp</value>
@@ -368,7 +368,7 @@
 					<value>£/P</value>
 					<value>£/m</value>
 					<value>£/mm</value>
-					<value>£/inch</value>
+					<value>£/in</value>
 					<value>£/ft</value>
 					<value>£/gal</value>
 					<value>£/cp</value>
@@ -387,7 +387,7 @@
 					<value>SFr/P</value>
 					<value>SFr/m</value>
 					<value>SFr/mm</value>
-					<value>SFr/inch</value>
+					<value>SFr/in</value>
 					<value>SFr/ft</value>
 					<value>SFr/gal</value>
 					<value>SFr/cp</value>
@@ -406,7 +406,7 @@
 					<value>zł/P</value>
 					<value>zł/m</value>
 					<value>zł/mm</value>
-					<value>zł/inch</value>
+					<value>zł/in</value>
 					<value>zł/ft</value>
 					<value>zł/gal</value>
 					<value>zł/cp</value>
