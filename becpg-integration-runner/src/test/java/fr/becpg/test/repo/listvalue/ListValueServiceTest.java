@@ -139,7 +139,7 @@ public class ListValueServiceTest extends AbstractListValuePluginTest {
 			assertEquals("2 suggestion", 2, suggestions.size());
 
 			authenticationComponent.setCurrentUser(BeCPGPLMTestHelper.USER_ONE);
-			suggestions = entityListValuePlugin.suggestTargetAssoc(null,PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT, "*", 0, 10, null, null).getResults();
+			suggestions = entityListValuePlugin.suggestTargetAssoc(null,PLMModel.TYPE_FINISHEDPRODUCT, "*", 0, 10, null, null).getResults();
 			for (ListValueEntry s5 : suggestions) {
 				logger.debug("SF for user one: " + s5.getName());
 

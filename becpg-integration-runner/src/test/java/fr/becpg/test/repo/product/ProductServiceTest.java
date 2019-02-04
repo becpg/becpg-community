@@ -155,7 +155,7 @@ public class ProductServiceTest extends PLMBaseTestCase {
 			assertNotNull(documentsNodeRef);
 			
 			NodeRef documentNodeRef = nodeService.getChildByName(documentsNodeRef, ContentModel.ASSOC_CONTAINS,
-					"MP test report - Fiche Technique Fournisseur.pdf");
+					"MP test report - Fiche Technique.pdf");
 			assertNotNull(documentNodeRef);
 			
 			ContentReader reader = contentService.getReader(documentNodeRef, ContentModel.PROP_CONTENT);
