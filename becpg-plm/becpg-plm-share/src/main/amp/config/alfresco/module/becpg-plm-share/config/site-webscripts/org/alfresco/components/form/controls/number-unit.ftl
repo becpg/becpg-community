@@ -1,5 +1,6 @@
 <#if field.control.params.format??><#assign format=field.control.params.format><#else><#assign format="0.####"></#if>
 
+
 <#if field.control.params.unit??>
   <#assign unit=field.control.params.unit>
   <#assign currUnit=field.control.params.unit> 
@@ -7,13 +8,36 @@
    <#assign unit="kg">
    <#assign currUnit="kg">
 </#if>
+
+
+<#if locale="en_US">
+ <#if unit=="kg">
+    <#assign currUnit="lb">
+ <#elseif unit=="g">
+    <#assign currUnit="oz">
+ <#elseif unit=="ml">
+    <#assign currUnit="cup">
+ <#elseif unit=="L">
+    <#assign currUnit="gal">
+  <#elseif unit=="m">
+    <#assign currUnit="ft">
+  <#elseif unit=="mm">
+    <#assign currUnit="in">
+ </#if>
+</#if>
+
+
 <#assign currValue=field.value>
- <#if unit=="perc">
-  	<#assign currUnits="perc,pp,ppm">
-   <#elseif unit=="kg">
-	<#assign currUnits="mg,g,kg">
-   <#elseif unit=="L">
-	<#assign currUnits="mL,L">
+ 	<#if unit=="perc">
+  	 <#assign currUnits="perc,pp,ppm">
+   <#elseif unit=="kg" >
+	<#assign currUnits="mg,g,kg,lb,oz">
+   <#elseif unit=="g" >
+     <#assign currUnits="g,oz">
+   <#elseif unit=="L" >
+	<#assign currUnits="mL,cL,L,fl_oz,cp,gal">
+   <#elseif unit=="m" || unit=="mm" >	
+	<#assign currUnits="mil,in,ft,mm,cm,m">
    <#elseif unit=="d">
 	<#assign currUnits="d,mo">
    <#elseif unit=="-">
@@ -21,7 +45,7 @@
  </#if>
 
 <#if field.value?is_number>
-   <#if unit=="perc">
+   <#if currUnit=="perc">
 	 <#if field.value == 0  >
         <#assign currUnit="perc">
      <#elseif field.value?abs &lt; 0.01  >
@@ -31,7 +55,7 @@
 		<#assign currUnit="pp" >
 		<#assign currValue=field.value*10 >
 	 </#if>
-   <#elseif unit=="kg">
+   <#elseif currUnit=="kg">
 	  <#if field.value == 0  >
         <#assign currUnit="kg">
      <#elseif field.value?abs &lt; 0.001  >
@@ -41,21 +65,60 @@
 		<#assign currUnit="g" >
 		<#assign currValue=field.value*1000 >
 	 </#if>
-   <#elseif unit=="L">
+   <#elseif currUnit=="lb">
+	 <#assign currValue=field.value*2.204622622 >
+	 <#if currValue == 0  >
+        <#assign currUnit="lb">
+     <#elseif currValue?abs &lt; 1  >
+		<#assign currUnit="oz" >
+		<#assign currValue=field.value*35.27396195 >
+	 </#if>
+    <#elseif currUnit=="gal">
+	 <#assign currValue=field.value*0.264172 >
+	 <#if currValue == 0  >
+        <#assign currUnit="gal">
+     <#elseif currValue?abs &lt; 1  >
+		<#assign currUnit="fl_oz" >
+		<#assign currValue=field.value*33.814 >
+	 </#if> 
+     <#elseif currUnit=="m">
+	  <#if field.value == 0  >
+        <#assign currUnit="m">
+     <#elseif field.value?abs &lt; 1  >
+		<#assign currUnit="mm" >
+		<#assign currValue=field.value*1000 >
+  	 </#if>
+      <#elseif currUnit=="ft">
+	 <#assign currValue=field.value* 3.28084 >
+	 <#if currValue == 0  >
+        <#assign currUnit="ft">
+     <#elseif currValue?abs &lt; 1  >
+		<#assign currUnit="in" >
+		<#assign currValue=field.value*39.37008 >
+	 </#if> 
+	 <#elseif currUnit=="in">
+	 <#assign currValue=field.value/25.4 >
+	 <#if currValue == 0  >
+        <#assign currUnit="in">
+     <#elseif currValue?abs &lt; 1  >
+		<#assign currUnit="mil" >
+		<#assign currValue=field.value*39.37008 >
+	 </#if>
+   <#elseif currUnit=="L">
 	  <#if field.value == 0  >
         <#assign currUnit="L">
      <#elseif field.value?abs &lt; 1  >
 		<#assign currUnit="mL" >
 		<#assign currValue=field.value*1000 >
   	 </#if>
-   <#elseif unit=="d">
+   <#elseif currUnit=="d">
 		<#if field.value == 0  >
        		 <#assign currUnit="d">
      	<#elseif field.value/30 &gt; 1 && field.value%30 == 0>
 			<#assign currUnit="mo">
 			<#assign currValue=field.value/30 >
 		</#if>
-    <#elseif unit=="-">
+    <#elseif currUnit=="-">
 		 <#if field.value == 0  >
        		 <#assign currUnit="-">
      	 <#elseif field.value?abs &lt; 0.001  >
@@ -93,11 +156,13 @@
 	             <#if field.control.params.maxLength??>maxlength="${field.control.params.maxLength}"</#if> 
 	             <#if field.control.params.size??>size="${field.control.params.size}"</#if> 
 	             <#if field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true")>disabled="true"</#if> />
+				 <#if !field.disabled || (field.control.params.forceEditable?? && field.control.params.forceEditable == "true")>	             
 	        <select id="${fieldHtmlId}-unit" name="-" tabindex="0" class="number-unit">
 	               <#list currUnits?split(",") as nameValue>
 	                  <option value="${nameValue?html}"<#if nameValue == currUnit?string> selected="selected"</#if>>${msg("becpg.forms.unit."+nameValue?replace("-","empty"))}</option>
 	               </#list>
 	        </select>
+	        	</#if>
 	        <input  id="${fieldHtmlId}-val"  name="${field.name}" type="hidden"  <#if field.value?is_number>value="${field.value?c}"<#else>value="${field.value?html}"</#if>> 
 	        <script type="text/javascript">//<![CDATA[
 			(function()
@@ -105,29 +170,12 @@
 	         	YAHOO.Bubbling.on("beforeFormRuntimeInit", function (layer, args) {	
 	         	
 	         			var updateVal = function (){
-	         			
-	         				var sel =  YAHOO.util.Dom.get("${fieldHtmlId}-unit");
-	         				var unit  = sel.value;
-				         	var val = YAHOO.util.Dom.get("${fieldHtmlId}").value;
-				         	if(val!=null && val!="" && val!=0){
-				         	  if(unit == "mo"){
-				         	    val = val * 30;
-				         	  } else if(unit == "ppm"){
-				         	   val = val / 10000;
-				         	  } else if(unit == "pp"){
-				         	   val = val / 10;		         	   
-				         	  } else if(unit == "g" || unit == "milli" || unit == "mL"){
-				         	    val = val / 1000;
-				         	  } else if(unit == "mg" || unit == "micro"){
-				         	    val = val / 1000000;
-				         	  } else if(unit == "mega"){
-				         	    val = val * 1000000;
-				         	  }
-				         	}
-				         	
-				         	YAHOO.util.Dom.get("${fieldHtmlId}-val").value = val;
-				         	YAHOO.util.Dom.get("${fieldHtmlId}-label").innerHTML =
-				         	    YAHOO.util.Dom.get("${fieldHtmlId}-label").innerHTML.replace(/ *\([^)]*\) */g,"("+sel.options[sel.selectedIndex].innerHTML+")");
+
+							var sel = YAHOO.util.Dom.get("${fieldHtmlId}-unit");
+				         	YAHOO.util.Dom.get("${fieldHtmlId}-val").value = 
+				         		beCPG.util.convertUnit(YAHOO.util.Dom.get("${fieldHtmlId}").value, sel.value,"${unit}");
+				         	YAHOO.util.Dom.get("${fieldHtmlId}-label").innerHTML =	
+				         		YAHOO.util.Dom.get("${fieldHtmlId}-label").innerHTML.replace(/ *\([^)]*\) */g," ("+sel.options[sel.selectedIndex].innerHTML+")");
 				         	return true;
 	         			};
 	         	
@@ -135,9 +183,9 @@
 			         	YAHOO.util.Event.addListener("${fieldHtmlId}", "change", updateVal);
 			         	
 			         	YAHOO.util.Event.addListener("${fieldHtmlId}", "keypress", function(e){
-						          if (e.keyCode == 13){
-						           updateVal();
-						         }
+						    if (e.keyCode == 13){
+						        updateVal();
+						    }
 						 });
 
 	         	}, this);

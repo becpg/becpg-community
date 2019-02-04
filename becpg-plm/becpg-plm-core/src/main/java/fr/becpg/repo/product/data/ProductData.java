@@ -419,8 +419,10 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		this.yieldVolume = yieldVolume;
 	}
 
+	@AlfProp
+	@AlfQname(qname = "bcpg:productLossPerc")
 	public Double getProductLossPerc() {
-		return productLossPerc;
+		return productLossPerc!=null ? productLossPerc : 0d;
 	}
 
 	public void setProductLossPerc(Double lossPerc) {
