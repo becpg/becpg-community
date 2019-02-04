@@ -96,7 +96,11 @@ public class EntityReportServiceTest extends PLMBaseTestCase {
 
 		initReports();
 
-		assertEquals("check system templates", 3,
+		List<NodeRef> ret = reportTplService.getSystemReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT);
+		for(NodeRef ref : ret) {
+			logger.info(nodeService.getProperty(ref, ContentModel.PROP_NAME));
+		}
+		assertEquals("check system templates", 5,
 				reportTplService.getSystemReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT).size());
 
 		// create product
@@ -129,7 +133,7 @@ public class EntityReportServiceTest extends PLMBaseTestCase {
 
 			// check report Tpl
 			List<NodeRef> reportTplNodeRefs = reportTplService.getSystemReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT);
-			assertEquals("check system templates", 3, reportTplNodeRefs.size());
+			assertEquals("check system templates", 5, reportTplNodeRefs.size());
 
 			for (NodeRef reportTplNodeRef : reportTplNodeRefs) {
 				String name = (String) nodeService.getProperty(reportTplNodeRef, ContentModel.PROP_NAME);
@@ -147,7 +151,7 @@ public class EntityReportServiceTest extends PLMBaseTestCase {
 			Date generatedDate = (Date) nodeService.getProperty(pfNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED);
 			createdDate.before(generatedDate);
 			List<NodeRef> reportNodeRefs = associationService.getTargetAssocs(pfNodeRef, ReportModel.ASSOC_REPORTS);
-			assertEquals(3, reportNodeRefs.size());
+			assertEquals(5, reportNodeRefs.size());
 
 			checkReportNames(defaultReportTplNodeRef, otherReportTplNodeRef, reportNodeRefs);
 
@@ -159,7 +163,7 @@ public class EntityReportServiceTest extends PLMBaseTestCase {
 			Date generatedDate2 = (Date) nodeService.getProperty(pfNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED);
 			generatedDate.before(generatedDate2);
 			List<NodeRef> reportNodeRefs2 = associationService.getTargetAssocs(pfNodeRef, ReportModel.ASSOC_REPORTS);
-			assertEquals(3, reportNodeRefs2.size());
+			assertEquals(5, reportNodeRefs2.size());
 
 			checkReportNames(defaultReportTplNodeRef, otherReportTplNodeRef, reportNodeRefs2);
 			return null;
@@ -207,11 +211,11 @@ public class EntityReportServiceTest extends PLMBaseTestCase {
 
 			// check report Tpl
 			List<NodeRef> reportTplNodeRefs = reportTplService.getSystemReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT);
-			assertEquals("check system templates", 2, reportTplNodeRefs.size());
+			assertEquals("check system templates", 4, reportTplNodeRefs.size());
 
 			// check other report is deleted
 			List<NodeRef> reportNodeRefs = associationService.getTargetAssocs(pfNodeRef, ReportModel.ASSOC_REPORTS);
-			assertEquals(2, reportNodeRefs.size());
+			assertEquals(4, reportNodeRefs.size());
 
 			boolean hasReportPF2Name = false;
 			for (NodeRef n : reportNodeRefs) {
@@ -289,7 +293,7 @@ public class EntityReportServiceTest extends PLMBaseTestCase {
 			pfNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), pfData).getNodeRef();
 
 			QName typeQName = nodeService.getType(pfNodeRef);
-			assertEquals("check system templates", 3, reportTplService.getSystemReportTemplates(ReportType.Document, typeQName).size());
+			assertEquals("check system templates", 5, reportTplService.getSystemReportTemplates(ReportType.Document, typeQName).size());
 
 			assertEquals("check user templates", 0,
 					reportTplService.getUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "user").size());
@@ -309,7 +313,7 @@ public class EntityReportServiceTest extends PLMBaseTestCase {
 		final NodeRef userTpl2NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			assertEquals("check user templates", 1,
-					reportTplService.getUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "user").size());
+					reportTplService.getUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "user tpl").size());
 
 			// add a user template
 			return reportTplService.createTplRptDesign(productReportTplFolder, "user tpl 2",

@@ -72,12 +72,12 @@ public class CompoListValuePluginTest extends AbstractListValuePluginTest {
 				logger.info("listValueEntry: " + listValueEntry2.getName() + " - " + listValueEntry2.getValue());
 			}
 
-			assertEquals(2, listValuePage.getResults().size());
+			assertEquals(3, listValuePage.getResults().size());
 
 			listValuePage = compoListValuePlugin.suggest("compoListParentLevel", "Local semi finished 2", null, ListValueService.SUGGEST_PAGE_SIZE,
 					props);
 
-			assertEquals(1, listValuePage.getResults().size());
+			assertEquals(2, listValuePage.getResults().size());
 
 			// Check cycle detection (exclude localSF1NodeRef)
 			ProductData finishedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
@@ -88,7 +88,11 @@ public class CompoListValuePluginTest extends AbstractListValuePluginTest {
 
 			listValuePage = compoListValuePlugin.suggest("compoListParentLevel", "", null, ListValueService.SUGGEST_PAGE_SIZE, props);
 
-			assertEquals(1, listValuePage.getResults().size());
+			for (ListValueEntry listValueEntry2 : listValuePage.getResults()) {
+				logger.debug("listValueEntry: " + listValueEntry2.getName() + " - " + listValueEntry2.getValue());
+			}
+			
+			assertEquals(2, listValuePage.getResults().size());
 
 			return null;
 
