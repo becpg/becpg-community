@@ -149,7 +149,7 @@ public class CompareProductReportWebScriptTest extends AbstractCompareProductTes
 			alfrescoRepository.save(workingCopy);
 
 			properties = new HashMap<>();
-			properties.put(VersionBaseModel.PROP_VERSION_TYPE, VersionType.MAJOR);
+			properties.put(VersionBaseModel.PROP_VERSION_TYPE, VersionType.MINOR);
 			NodeRef fpv2NodeRef = checkOutCheckInService.checkin(workingCopyNodeRef, properties);
 			logger.info("nodeService.getProperty(fpv2NodeRef, BeCPGModel.PROP_VERSION_LABEL)"
 					+ nodeService.getProperty(fpv2NodeRef, BeCPGModel.PROP_VERSION_LABEL));

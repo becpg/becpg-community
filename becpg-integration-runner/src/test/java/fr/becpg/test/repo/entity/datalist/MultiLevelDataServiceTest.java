@@ -124,6 +124,7 @@ waitForSolr(startTime);
 
 				final DataListFilter dataListFilter = new DataListFilter();
 				dataListFilter.setDataType(PLMModel.TYPE_COMPOLIST);
+				dataListFilter.updateMaxDepth(-1);
 				dataListFilter.setEntityNodeRefs(Collections.singletonList(finishedProductNodeRef));
 
 				MultiLevelListData mlld = multiLevelDataListService.getMultiLevelListData(dataListFilter);
@@ -131,34 +132,47 @@ waitForSolr(startTime);
 
 				assertNotNull(mlld);
 
-				for (MultiLevelListData mlld2 : mlld.getTree().values()) {
-					logger.debug("mlld2, depth : " + mlld2.getDepth() + " - " + mlld2.getEntityNodeRef());
-
-					if (mlld2.getEntityNodeRef().equals(lSF1NodeRef)) {
-						checks++;
-						assertEquals(1, mlld2.getDepth());
-					} else if (mlld2.getEntityNodeRef().equals(lSF2NodeRef)) {
-						checks++;
-						assertEquals(2, mlld2.getDepth());
-					} else if (mlld2.getEntityNodeRef().equals(rawMaterial1NodeRef)) {
-						checks++;
-						assertEquals(3, mlld2.getDepth());
-					} else if (mlld2.getEntityNodeRef().equals(lSF3NodeRef)) {
-						checks++;
-						assertEquals(1, mlld2.getDepth());
-					} else if (mlld2.getEntityNodeRef().equals(rawMaterial2NodeRef)) {
-						checks++;
-						assertEquals(2, mlld2.getDepth());
-					} else if (mlld2.getEntityNodeRef().equals(lSF4NodeRef)) {
-						checks++;
-						assertEquals(2, mlld2.getDepth());
-					}
+				for(MultiLevelListData mlld2 : mlld.getTree().values()) {
+					checks = doChecks(mlld2, checks);
 				}
-
+				
 				assertEquals(6, checks);
 				return null;
 
 			}
 		}, false, true);
+	}
+	
+	int doChecks(MultiLevelListData mlld2, int checks){
+		
+		if (mlld2.getEntityNodeRef().equals(lSF1NodeRef)) {
+			checks++;
+			assertEquals(1, mlld2.getDepth());
+		} else if (mlld2.getEntityNodeRef().equals(lSF2NodeRef)) {
+			checks++;
+			assertEquals(2, mlld2.getDepth());
+		} else if (mlld2.getEntityNodeRef().equals(rawMaterial1NodeRef)) {
+			checks++;
+			assertEquals(3, mlld2.getDepth());
+		} else if (mlld2.getEntityNodeRef().equals(lSF3NodeRef)) {
+			checks++;
+			assertEquals(1, mlld2.getDepth());
+		} else if (mlld2.getEntityNodeRef().equals(rawMaterial2NodeRef)) {
+			checks++;
+			assertEquals(2, mlld2.getDepth());
+		} else if (mlld2.getEntityNodeRef().equals(lSF4NodeRef)) {
+			checks++;
+			assertEquals(2, mlld2.getDepth());
+		}
+		
+		if(mlld2.getTree() != null && !mlld2.getTree().values().isEmpty()) {
+			logger.info("data list "+ mlld2);
+			for(MultiLevelListData mlld3 : mlld2.getTree().values()) {
+				logger.info("nodeRef"+mlld3 );
+				checks = doChecks(mlld3, checks);
+			}
+		}
+		
+		return checks;
 	}
 }
