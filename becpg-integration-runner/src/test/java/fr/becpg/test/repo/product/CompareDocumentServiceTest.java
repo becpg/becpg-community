@@ -153,8 +153,7 @@ public class CompareDocumentServiceTest extends AbstractCompareProductTest {
 				StructCompareOperator.Equal, "fx.pdf", "fx.pdf", "{}", "{}"));
 		
 		assertTrue(checkStructCompareRow(structCompareResult, "{http://www.alfresco.org/model/content/1.0}content", 2,
-				StructCompareOperator.Modified, "f1.pdf", "f1.pdf", "{{http://www.alfresco.org/model/content/1.0}name=f1.pdf}", 
-				"{{http://www.alfresco.org/model/content/1.0}name=f1.pdf}"));
+				StructCompareOperator.Modified, "f1.pdf", "f1.pdf", "{}","{}"));
 		
 		assertTrue(checkStructCompareRow(structCompareResult, "{http://www.alfresco.org/model/content/1.0}content", 2,
 				StructCompareOperator.Modified, "Sub-Presentation", "", "{}", "{}"));

@@ -347,7 +347,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 			for (FileInfo folderInfo2 : foldersInfo2) {
 				NodeRef folderNodeRef2 = folderInfo2.getNodeRef();
 				String folderName2 = (String) nodeService.getProperty(folderNodeRef2, ContentModel.PROP_NAME);
-				logger.trace("\n\nRetrieval  2 of folder Name   :" + folderName2);
+				logger.debug("\n\nRetrieval  2 of folder Name   :" + folderName2);
 
 				if (folderName1.equals(folderName2)) {
 
@@ -364,7 +364,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				}
 			}
 
-			if ((results != null) && (folderNodeRef1 != null)) {
+			if ((folderNodeRef1 != null)) {
 				// Suppression action
 				results = compareFiles((depthLevel + 1), folderNodeRef1, null, null, structComparisonListTMP, comparison, false);
 				isOperatorFolderIsEqual = results.getSecond() ? true : isOperatorFolderIsEqual;

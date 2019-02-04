@@ -331,12 +331,16 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 		XPathFactory factory = XPathFactory.newInstance();
 		XPath xpath = factory.newXPath();
 
+		String strIndex = (String) xpath.evaluate("//long[@name='Id for last TX in index']", doc, XPathConstants.STRING);
+		if(strIndex == null || strIndex.isEmpty()) {
+			return getLastSolrIndex();
+		}
 		// <long name="Id for last TX on server">1413</long><long
 		// name="Id for last TX in index">1413</long>
-
-		return Long.valueOf((String) xpath.evaluate("//long[@name='Id for last TX in index']", doc, XPathConstants.STRING));
+		return Long.valueOf(strIndex);
 	}
 
+	
 	protected boolean shouldInit() {
 		return nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
 				TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM)) == null;
