@@ -650,8 +650,8 @@
                                     me.widgets.dataTable.subscribe("cellClickEvent", function(events)
                                     {
                                         var target = events.target;
-                                        var recordRowIndex = me.getRecordIndex(target);
-                                        var recordSet = me.getRecordSet(), record;
+                                        var recordRowIndex = this.getRecordIndex(target);
+                                        var recordSet = this.getRecordSet(), record;
                                         record = recordSet.getRecord(recordRowIndex);
                                         if ((record.getData("type")).indexOf("Material") < 0)
                                         {
