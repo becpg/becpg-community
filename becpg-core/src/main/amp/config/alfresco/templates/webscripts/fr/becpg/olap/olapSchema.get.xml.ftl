@@ -1317,8 +1317,8 @@
 				<#if isAdmin>
 					<Table name="becpg_public_tags" />
 				<#else>
-					<Table name="becpg_public_tags">
-						becpg_public_clients.instanceId = ${instanceId}
+					<Table name="becpg_public_tags" alias="becpg_public_tags">
+						becpg_public_tags.instanceId = ${instanceId}
 					</Table>
 				</#if>
 				<Level name="tag" caption="${msg("jsolap.tag.title")}" column="tag"  type="String" >
