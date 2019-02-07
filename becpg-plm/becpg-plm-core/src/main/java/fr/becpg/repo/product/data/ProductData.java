@@ -403,6 +403,8 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		this.density = density;
 	}
 
+	@AlfProp
+	@AlfQname(qname = "bcpg:productYield")
 	public Double getYield() {
 		return yield;
 	}
