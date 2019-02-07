@@ -2988,6 +2988,9 @@
 				<property name="bcpg:productLossPerc">
 					<type>d:double</type>
 				</property>
+				<property name="bcpg:productYield">
+					<type>d:double</type>
+				</property>
 				<property name="bcpg:productState">
 					<type>d:text</type>
 					<default>Simulation</default>
