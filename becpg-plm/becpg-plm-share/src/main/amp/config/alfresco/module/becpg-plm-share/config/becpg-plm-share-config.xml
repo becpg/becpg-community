@@ -102,6 +102,7 @@
 			<itemType name="bcpg:semiFinishedProduct"  />
 			<itemType name="bcpg:rawMaterial"  />
 			<itemType name="bcpg:packagingMaterial"  />
+			<itemType name="bcpg:packagingKit"  />
 			<itemType name="bcpg:resourceProduct"  />
 		</filterTypes>
 		<aspectSubstitutions>
