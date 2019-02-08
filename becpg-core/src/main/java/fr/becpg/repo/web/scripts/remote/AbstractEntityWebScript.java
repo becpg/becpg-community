@@ -223,11 +223,8 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		List<String> fields = new ArrayList<>() ;
 		String fieldsParams = req.getParameter(PARAM_FIELDS);
 		if (fieldsParams != null && fieldsParams.length() > 0) {
-			String[] splitted = fieldsParams.split(",");
-			fields = Arrays.asList(splitted);
-			
+			fields = Arrays.asList(fieldsParams.split(","));
 		}
-		
 		return fields;
 	}
 	
@@ -242,9 +239,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 					lists.add(listName[1]);
 				}
 			}
-			
 		}
-		
 		return lists;
 	}
 	
