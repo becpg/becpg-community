@@ -146,7 +146,7 @@ public class NutrientFormulationHelper {
 							nutListElt.addAttribute("regulDepthLevel" + prefix, "" + def.getDepthLevel());
 						}
 						boolean display = true;
-						if(reportLocales != null && reportLocales.getText() != null){
+						if(reportLocales != null && reportLocales.getText() != null && reportLocales.getText() != ""){
 							display = false;
 							for (String reportLocale : reportLocales.getText().split(",")){
 								if(reportLocale != null && locale != null && reportLocale.trim().equals(locale.toString())){
