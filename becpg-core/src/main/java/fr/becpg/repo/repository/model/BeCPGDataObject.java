@@ -46,6 +46,8 @@ public  abstract class  BeCPGDataObject  extends BaseObject implements Repositor
 	
 	protected Set<QName> aspects = new HashSet<>();
 	
+	protected Set<QName> aspectsToRemove = new HashSet<>();
+
 	protected Map<QName,Serializable> extraProperties = new HashMap<>();
 	
 	protected transient boolean isTransient = false;
@@ -120,6 +122,15 @@ public  abstract class  BeCPGDataObject  extends BaseObject implements Repositor
 		this.aspects = aspects;
 	}
 
+	@InternalField
+	public Set<QName> getAspectsToRemove() {
+		return aspectsToRemove;
+	}
+
+	public void setAspectsToRemove(Set<QName> aspectsToRemove) {
+		this.aspectsToRemove = aspectsToRemove;
+	}
+	
 	@InternalField
 	public Map<QName, Serializable> getExtraProperties() {
 		return extraProperties;
