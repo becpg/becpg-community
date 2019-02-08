@@ -30,4 +30,12 @@ public interface AspectAwareDataItem {
 	Set<QName> getAspects();
 	void setAspects(Set<QName> aspects);
 	
+	/**
+	 * Optional Set to remove extra aspects
+	 * @return
+	 */
+	Set<QName> getAspectsToRemove();
+	void setAspectsToRemove(Set<QName> aspectsToRemove);
+	
+	
 }
