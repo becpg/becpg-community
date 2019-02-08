@@ -115,8 +115,14 @@ public class XmlEntityVisitor {
 		if (fields != null && !fields.isEmpty()) {
 			for(String el : fields) {
 				String[] assoc = el.split("\\|");
+				if(!isValidQNameString(assoc[0])) {
+					continue;
+				}
 				QName propQname = QName.createQName(assoc[0],namespaceService);
 				if(assoc != null && assoc.length > 1) {
+					if(!isValidQNameString(assoc[1])) {
+						continue;
+					}
 					QName assocPropQName = QName.createQName(assoc[1],namespaceService);
 					if(filteredAssocProperties.containsKey(propQname)) {
 						filteredAssocProperties.get(propQname).add(assocPropQName);
@@ -133,6 +139,13 @@ public class XmlEntityVisitor {
 		
 	}
 	
+	boolean isValidQNameString(String qName) {
+		String[] qnameArray = qName.split(":");
+		if(qName.indexOf(":") > 0 && qnameArray.length > 1 ) {
+			return true;
+		}
+		return false;
+	}
 	
 	private static final Log logger = LogFactory.getLog(XmlEntityVisitor.class);
 
