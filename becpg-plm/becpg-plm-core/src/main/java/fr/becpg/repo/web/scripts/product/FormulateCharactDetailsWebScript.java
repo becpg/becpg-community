@@ -123,15 +123,6 @@ public class FormulateCharactDetailsWebScript extends AbstractProductWebscript {
 
 			CharactDetails ret = productService.formulateDetails(productNodeRef, dataType, dataListName, elements, level);
 
-			if (elements.size() == 1 && dataListName.equals(PLMModel.TYPE_COSTLIST.getLocalName())) {
-				List<ChildAssociationRef> childAssocs = nodeService.getChildAssocsByPropertyValue(
-						nodeService.getPrimaryParent(elements.get(0)).getParentRef(), BeCPGModel.PROP_PARENT_LEVEL, elements.get(0));
-
-				if (childAssocs.size() > 0) {
-					ret = new CharactDetails(new ArrayList<NodeRef>());
-				}
-			}
-
 			if ("csv".equals(req.getFormat())) {
 				res.setContentType("application/vnd.ms-excel");
 				AttachmentHelper.setAttachment(req, res, (String) nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME) + ".xlsx");

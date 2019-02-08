@@ -707,39 +707,45 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	}
 	
 	private void calculateSimulationCosts(ProductData formulatedProduct) {
-        Double netQty = FormulationHelper.getNetQtyForCost(formulatedProduct);
-        
-        for (CostListDataItem c : formulatedProduct.getCostList()) {
-            if ((c.getComponentNodeRef() != null) && (c.getParent() != null)) {
-                Double qtyComponent;
-                ProductData componentData = alfrescoRepositoryProductData.findOne(c.getComponentNodeRef());
-                if (componentData instanceof PackagingMaterialData) {
-                    qtyComponent = getPackagingListQty(formulatedProduct, c.getComponentNodeRef(), 1);
-                } else {
-                    qtyComponent = getCompoListQty(formulatedProduct, c.getComponentNodeRef(), formulatedProduct.getRecipeQtyUsed());
-                }
-                for (CostListDataItem c2 : componentData.getCostList()) {
-                    if (c2.getCost().equals(c.getParent().getCost()) && (c.getSimulatedValue() != null)) {
-                        if (logger.isDebugEnabled()) {
-                            logger.debug("add simulationCost " + "c2 value " + c2.getValue() + "c simulated value " + c.getSimulatedValue()
-                                    + " qty component " + qtyComponent + " netQty " + netQty);
-                        }
-                        if (c2.getValue() != null) {
-                            c.setValue(((c.getSimulatedValue() - c2.getValue()) * qtyComponent) / (netQty!=0 ? netQty : 1d));
-                        } else {
-                            c.setValue(((c.getSimulatedValue()) * qtyComponent) / (netQty!=0 ? netQty : 1d));
-                        }
-                        if (c.getParent().getValue() != null) {
-                            c.getParent().setValue(c.getParent().getValue() + c.getValue());
-                        } else {
-                            c.getParent().setValue(c.getValue());
-                        }
-                        break;
-                    }
-                }
-            }
-        }
-    }
+		Double netQty = FormulationHelper.getNetQtyForCost(formulatedProduct);
+
+		for (CostListDataItem c : formulatedProduct.getCostList()) {
+			if ((c.getComponentNodeRef() != null) && (c.getParent() != null)) {
+				Double qtyComponent;
+				ProductData componentData = alfrescoRepositoryProductData.findOne(c.getComponentNodeRef());
+				if (componentData instanceof PackagingMaterialData) {
+					qtyComponent = getPackagingListQty(formulatedProduct, c.getComponentNodeRef(), 1);
+				} else {
+					qtyComponent = getCompoListQty(formulatedProduct, c.getComponentNodeRef(), formulatedProduct.getRecipeQtyUsed());
+				}
+				for (CostListDataItem c2 : componentData.getCostList()) {
+					if (c2.getCost().equals(c.getParent().getCost()) && (c.getSimulatedValue() != null)) {
+						if (c.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM)) {
+							c.getAspectsToRemove().add(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
+						}
+						if (logger.isDebugEnabled()) {
+							logger.debug("add simulationCost " + "c2 value " + c2.getValue() + "c simulated value " + c.getSimulatedValue()
+									+ " qty component " + qtyComponent + " netQty " + netQty);
+						}
+						if (c2.getValue() != null) {
+							c.setValue(((c.getSimulatedValue() - c2.getValue()) * qtyComponent) / (netQty != 0 ? netQty : 1d));
+						} else {
+							c.setValue(((c.getSimulatedValue()) * qtyComponent) / (netQty != 0 ? netQty : 1d));
+						}
+						if (c.getParent().getValue() != null) {
+							c.getParent().setValue(c.getParent().getValue() + c.getValue());
+						} else {
+							c.getParent().setValue(c.getValue());
+						}
+						break;
+					}
+				}
+			}
+			if (c.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM) && c.getParent() != null && c.getSimulatedValue() == null) {
+				c.getParent().getAspectsToRemove().add(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
+			}
+		}
+	}
 
 	@Override
 	protected boolean accept(ProductData formulatedProduct) {

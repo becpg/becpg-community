@@ -68,7 +68,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 	@Autowired
 	private NodeService nodeService;
-
+	
 	@Autowired
 	@Qualifier("mlAwareNodeService")
 	private NodeService mlNodeService;
@@ -215,13 +215,19 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		return entity;
 	}
 
-	// For now only add aspect
 	private void saveAspects(T entity) {
 		if (entity instanceof AspectAwareDataItem) {
 			if (((AspectAwareDataItem) entity).getAspects() != null) {
 				for (QName aspect : ((AspectAwareDataItem) entity).getAspects()) {
 					if (!nodeService.hasAspect(entity.getNodeRef(), aspect)) {
 						nodeService.addAspect(entity.getNodeRef(), aspect, new HashMap<QName, Serializable>());
+					}
+				}
+			}
+			if (((AspectAwareDataItem) entity).getAspectsToRemove() != null) {
+				for (QName aspect : ((AspectAwareDataItem) entity).getAspectsToRemove()) {
+					if (nodeService.hasAspect(entity.getNodeRef(), aspect)) {
+						nodeService.removeAspect(entity.getNodeRef(), aspect);
 					}
 				}
 			}
