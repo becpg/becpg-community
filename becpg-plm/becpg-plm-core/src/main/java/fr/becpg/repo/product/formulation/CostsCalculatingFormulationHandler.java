@@ -741,6 +741,9 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				}
 				for (CostListDataItem c2 : componentData.getCostList()) {
 					if (c2.getCost().equals(c.getParent().getCost()) && (c.getSimulatedValue() != null)) {
+						if (c.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM)) {
+							c.getAspectsToRemove().add(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
+						}
 						if (logger.isDebugEnabled()) {
 							logger.debug("add simulationCost " + "c2 value " + c2.getValue() + "c simulated value " + c.getSimulatedValue()
 									+ " qty component " + qtyComponent + " netQty " + netQty);
@@ -758,6 +761,9 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 						break;
 					}
 				}
+			}
+			if (c.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM) && c.getParent() != null && c.getSimulatedValue() == null) {
+				c.getParent().getAspectsToRemove().add(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
 			}
 		}
 	}
