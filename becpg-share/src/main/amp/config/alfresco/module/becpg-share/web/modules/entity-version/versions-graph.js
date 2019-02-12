@@ -242,7 +242,7 @@
             }
             instance.ctx = instance.widgets.canvas.getContext('2d');
 
-            instance.ctx.clearRect(0, 0, instance.widgets.width, instance.widgets.height);
+            instance.ctx.clearRect(0, 0, instance.widgets.canvas.width, instance.widgets.canvas.height);
             instance.ctx.strokeStyle = 'rgb(0, 0, 0)';
             instance.ctx.fillStyle = 'rgb(0, 0, 0)';
 
