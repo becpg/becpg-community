@@ -23,7 +23,7 @@ pipeline {
         }
         stage('integration-test') {
             steps {
-                sh 'MAVEN_OPTS="-Xms512m -Xmx2G" mvn verify -Prun,integration-test'
+                sh 'MAVEN_OPTS="-Xms512m -Xmx2G" mvn verify -Prun,integration-test,purge'
             }
             post {
                 always {
