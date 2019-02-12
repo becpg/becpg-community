@@ -164,6 +164,7 @@
 					<show id="bcpg:charactName" />
 					<show id="cm:title" />
 					<show id="cm:description" />
+					<show id="cm:content" force="true" />
 				</field-visibility>
 			</form>
 		</forms>
