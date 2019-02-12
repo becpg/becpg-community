@@ -14,8 +14,9 @@
 			<Level name="Day" caption="${msg("jsolap.day.title")}" column="Day" nameColumn="NDay" ordinalColumn="Day" type="Numeric"  levelType="TimeDays"  />
 		</Hierarchy>		
 	</Dimension>
+	
 	<#if isAdmin>
-	<Dimension name="instancesDimension" caption="Instances">
+	<Dimension name="instancesDimension" caption="${msg("jsolap.instance.title")}">
 		<Hierarchy name="instancesInfo" hasAll="true" allMemberCaption="${msg("jsolap.instance.caption")}"  defaultMember="[instancesDimension.instancesInfo].[${instanceId}]" caption="${msg("jsolap.instance.title")}" primaryKey="id">
 			<Table name="becpg_instance" />
 			<Level name="instance_id" column="id" visible="false" />
@@ -24,6 +25,155 @@
 		</Hierarchy>
 	</Dimension>
 	</#if>
+	
+	
+	<Dimension  name="tagsDimension" caption="${msg("jsolap.tags.title")}" >
+		<Hierarchy name="tags" hasAll="true" allMemberCaption="${msg("jsolap.tags.caption")}" primaryKey="entityNodeRef">		
+				<View name="tags" alias="tags">
+					<SQL dialect="generic">
+						select  
+							doc->>"$.entityNodeRef" as entityNodeRef,
+							doc->>"$.name" as name,
+							doc->>"$.nodeRef" as nodeRef
+						from
+							assoc_cm_taggable
+						<#if !isAdmin>	
+						  where doc->>"$.instanceId" = ${instanceId}
+						</#if>
+					</SQL>
+				</View>
+				<Level name="tag" caption="${msg("jsolap.tag.title")}" table="tags" column="nodeRef" nameColumn="name" type="String" ></Level>
+			</Hierarchy>
+		</Dimension>
+		
+		
+	
+		<Dimension name="clientsDimension" caption="${msg("jsolap.client.title")}">
+			<Hierarchy name="clients" hasAll="true" allMemberCaption="${msg("jsolap.client.caption")}" primaryKey="entityNodeRef">
+				<View name="clients" alias="clients">
+								<SQL dialect="generic">
+									select  
+										doc->>"$.entityNodeRef" as entityNodeRef,
+										doc->>"$.name" as name,
+										doc->>"$.nodeRef" as nodeRef
+									from
+										assoc_bcpg_clients
+									<#if !isAdmin>	
+									  where doc->>"$.instanceId" = ${instanceId}
+									</#if>
+								</SQL>
+				</View>
+				<Level name="name" caption="${msg("jsolap.clientName.title")}" table="clients" nameColumn="name" column="nodeRef"  type="String"   >
+				</Level>
+			</Hierarchy>
+		</Dimension>	
+		
+		
+		<Dimension  name="productsDimension" caption="${msg("jsolap.products.title")}">
+			<Hierarchy name="products" hasAll="true" allMemberCaption="${msg("jsolap.products.caption")}" primaryKey="nodeRef">		
+				<View name="products_dim" alias="products_dim">
+					<SQL dialect="generic">
+						select
+							doc->>"$.nodeRef" as nodeRef,
+							doc->>"$.cm_name" as name,
+							doc->>"$.bcpg_productHierarchy1[0]" as productHierarchy1,
+							doc->>"$.bcpg_productHierarchy2[0]" as productHierarchy2,
+							doc->>"$.bcpg_code" as code,
+							doc->>"$.bcpg_erpCode" as erpCode,
+							doc->>"$.bcpg_legalName" as legalName,
+							doc->>"$.bcpg_productState" as productState,
+							doc->>"$.bcpg_productType" as productType,
+							doc->>"$.cm_versionLabel" as versionLabel
+						from
+							bcpg_product
+						<#if !isAdmin>	
+						 where 
+						    doc->>"$.instanceId" = ${instanceId}
+						</#if>
+					</SQL>
+				</View>
+	
+				<Level approxRowCount="5" name="productState" caption="${msg("jsolap.state.title")}" table="products_dim" column="productState"  type="String"   >
+				  <NameExpression>
+					  <SQL dialect="generic" >
+					  <![CDATA[CASE WHEN productState='Simulation' THEN '${msg("listconstraint.bcpg_systemState.Simulation")}'
+	                            WHEN productState='ToValidate' THEN '${msg("listconstraint.bcpg_systemState.ToValidate")}'
+	                            WHEN productState='Valid' THEN '${msg("listconstraint.bcpg_systemState.Valid")}'
+	                            WHEN productState='Refused' THEN '${msg("listconstraint.bcpg_systemState.Refused")}'
+	                            WHEN productState='Archived' THEN '${msg("listconstraint.bcpg_systemState.Archived")}'
+	                            ELSE 'Vide'
+	                           END]]></SQL>
+             		 </NameExpression>
+				</Level>
+				<Level approxRowCount="10" name="entity_type" caption="${msg("jsolap.type.title")}" table="products_dim" column="productType" nameColumn="productType" type="String"   >
+					<NameExpression>
+					  <SQL dialect="generic" >
+					  <![CDATA[CASE WHEN productType='bcpg:rawMaterial' THEN "${msg('bcpg_bcpgmodel.type.bcpg_rawMaterial.title')}"
+	                            WHEN productType='bcpg:finishedProduct' THEN "${msg('bcpg_bcpgmodel.type.bcpg_finishedProduct.title')}"
+	                            WHEN productType='bcpg:semiFinishedProduct' THEN "${msg('bcpg_bcpgmodel.type.bcpg_semiFinishedProduct.title')}"
+	                            WHEN productType='bcpg:packagingMaterial' THEN "${msg('bcpg_bcpgmodel.type.bcpg_packagingMaterial.title')}"
+	                            WHEN productType='bcpg:packagingKit' THEN "${msg('bcpg_bcpgmodel.type.bcpg_packagingKit.title')}"
+	                            WHEN productType='bcpg:localSemiFinishedProduct' THEN "${msg('bcpg_bcpgmodel.type.bcpg_localSemiFinishedProduct.title')}"
+	                            WHEN productType='bcpg:resourceProduct' THEN "${msg('bcpg_bcpgmodel.type.bcpg_resourceProduct.title')}"
+	                            ELSE 'Vide'
+	                           END]]></SQL>
+             		 </NameExpression>
+				</Level>		
+				<Level name="productHierarchy1" caption="${msg("jsolap.family.title")}" table="products_dim" column="productHierarchy1"  type="String"    />
+				<Level name="productHierarchy2" caption="${msg("jsolap.subFamily.title")}" table="products_dim" column="productHierarchy2"  type="String"    />
+				<Level name="name" caption="${msg("jsolap.productName.title")}" table="products_dim" column="name"  type="String"    />
+				<Level name="code" caption="${msg("jsolap.productCode.title")}" table="products_dim" column="code"  type="String"   />
+				<Level name="erpCode" caption="${msg("jsolap.erpCode.title")}" table="products_dim" column="erpCode"  type="String"   />
+				<Level name="legalName" caption="${msg("jsolap.legalName.title")}" table="products_dim" column="legalName" type="String"    />
+				<Level name="versionLabel" caption="${msg("jsolap.versionLabel.title")}" table="products_dim" column="versionLabel" type="String" />
+			</Hierarchy>
+			
+		</Dimension>
+		
+		
+		
+		<Dimension   name="projectsDimension" caption="${msg("jsolap.project.title")}">
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.project.caption")}" primaryKey="nodeRef">
+				<View name="projects_dim" alias="projects_dim">
+					<SQL dialect="generic">
+						select
+							doc->>"$.nodeRef" as noderef,
+							doc->>"$.cm_name" as name,
+							doc->>"$.pjt_projectState" as projectState,
+							doc->>"$.projectManager[0]" as projectManager,
+							doc->>"$.pjt_projectHierarchy1" as	projectHierarchy1,
+							doc->>"$.pjt_projectHierarchy2" as	projectHierarchy2	
+						from
+							pjt_project
+						<#if !isAdmin>	
+						 where 
+						    doc->>"$.instanceId" = ${instanceId}
+						</#if>
+					</SQL>
+				 </View>
+			     <Level approxRowCount="5" name="projectState" caption="${msg("jsolap.state.title")}" table="projects_dim" column="projectState" type="String"   >
+				     <NameExpression>
+						  <SQL dialect="generic" >
+					  <![CDATA[CASE WHEN projectState='Planned' THEN '${msg("listconstraint.pjt_projectStates.Planned")}'
+	                            WHEN projectState='InProgress' THEN '${msg("listconstraint.pjt_projectStates.InProgress")}'
+	                            WHEN projectState='OnHold' THEN '${msg("listconstraint.pjt_projectStates.OnHold")}'
+	                            WHEN projectState='Cancelled' THEN '${msg("listconstraint.pjt_projectStates.Cancelled")}'
+	                            WHEN projectState='Completed' THEN '${msg("listconstraint.pjt_projectStates.Completed")}'
+	                            ELSE 'Vide'
+	                           END]]></SQL>
+	                </NameExpression>
+				</Level>	
+				<Level name="projectHierarchy1" caption="${msg("jsolap.family.title")}" table="projects_dim" column="projectHierarchy1" type="String"   >
+				</Level>
+				<Level name="projectHierarchy2" caption="${msg("jsolap.subFamily.title")}" table="projects_dim" column="projectHierarchy2" type="String"   >
+				</Level>
+				<Level name="projectManager" caption="${msg("jsolap.projectManager.title")}" table="projects_dim" column="projectManager"  type="String"    >
+				</Level>
+				<Level name="entity_noderef" caption="${msg("jsolap.project.title")}" table="projects_dim" column="noderef" nameColumn="name" type="String"   >
+				</Level>
+			</Hierarchy>
+		</Dimension>
+		
 	
 	<Cube name="software_usage" caption="${msg("jsolap.statistics.title")}" cache="false" enabled="true">
 		<#if isAdmin>
@@ -104,7 +254,7 @@
 			<Hierarchy name="site" caption="${msg("jsolap.site.title")}"  primaryKey="site_id" hasAll="true" allMemberCaption="${msg("jsolap.site.caption")}">
 				<Table name="becpg_activities_names" alias="becpg_activities_names">
 					<SQL dialect="generic">
-						<#if !isAdmin>becpg_activities_names.instance_id = ${instanceId}</#if>	 AND becpg_activities_names.user_id IS NULL AND becpg_activities_names.entity_id IS NULL
+						<#if !isAdmin>becpg_activities_names.instance_id = ${instanceId} AND </#if> becpg_activities_names.user_id IS NULL AND becpg_activities_names.entity_id IS NULL
 					</SQL>
 				</Table>
 				<Level name="site" caption="${msg("jsolap.site.title")}" column="site_id" nameColumn="name"  type="String" />
@@ -115,7 +265,7 @@
 			<Hierarchy name="users" caption="${msg("jsolap.users.title")}" primaryKey="user_id" hasAll="true" allMemberCaption="${msg("jsolap.users.title")}" >
 			   <Table name="becpg_activities_names" alias="becpg_activities_names">
 					<SQL dialect="generic">
-						<#if !isAdmin>becpg_activities_names.instance_id = ${instanceId}</#if>  AND becpg_activities_names.site_id IS NULL AND becpg_activities_names.entity_id IS NULL
+						<#if !isAdmin>becpg_activities_names.instance_id = ${instanceId} AND </#if> becpg_activities_names.site_id IS NULL AND becpg_activities_names.entity_id IS NULL
 					</SQL>
 				</Table>
 			
@@ -127,7 +277,7 @@
 			<Hierarchy name="entity" caption="${msg("jsolap.activityEntity.title")}" primaryKey="entity_id"  hasAll="true" allMemberCaption="${msg("jsolap.entity.caption")}">
 				<Table name="becpg_activities_names" alias="becpg_activities_names">
 					<SQL dialect="generic">
-						<#if !isAdmin>becpg_activities_names.instance_id = ${instanceId}</#if>   AND becpg_activities_names.user_id IS NULL AND becpg_activities_names.site_id IS NULL
+						<#if !isAdmin>becpg_activities_names.instance_id = ${instanceId} AND </#if> becpg_activities_names.user_id IS NULL AND becpg_activities_names.site_id IS NULL
 					</SQL>
 				</Table>
 				<Level name="entityType" caption="${msg("jsolap.activityEntity.type")}" column="entity_type"  nameColumn="entity_type" type="String" />
@@ -160,19 +310,27 @@
 		
 	</Cube>
 
-
-
 	<Cube name="requirements" caption="${msg("jsolap.requirements.title")}" cache="true" enabled="true" defaultMeasure="${msg("jsolap.requirementsNumber.title")}">
 		
-		<#if isAdmin>
-			<Table name="becpg_public_requirements" />
-		<#else>
-			<Table name="becpg_public_requirements" alias="becpg_public_requirements">
+			<View name="requirements" alias="requirements">
 				<SQL dialect="generic">
-					becpg_public_requirements.instanceId = ${instanceId}
+					select
+						doc->>"$.nodeRef" as noderef,
+						doc->>"$.entityNodeRef" as entityNodeRef,
+						doc->>"$.cm_name" as name,
+						doc->>"$.bcpg_rclReqType" as rclReqType,
+						doc->>"$.bcpg_rclReqMessage" as rclReqMessage,
+						doc->>"$.instanceId" as instanceId
+					from
+						reqCtrlList
+					<#if !isAdmin>	
+					 where 
+					    doc->>"$.instanceId" = ${instanceId}
+					</#if>
 				</SQL>
-			</Table>
-		</#if>
+			</View>
+		
+		
 		<Dimension name="rclReqMessage" caption="${msg("jsolap.message.title")}" >
 			<Hierarchy name="rclReqMessage" caption="${msg("jsolap.message.title")}" hasAll="true" allMemberCaption="${msg("jsolap.message.caption")}">
 				<Level name="rclReqMessage" caption="${msg("jsolap.message.title")}" column="rclReqMessage"  type="String"    />
@@ -194,82 +352,30 @@
 			</Hierarchy>
 		</Dimension>
 		
-		<Dimension type="StandardDimension" foreignKey="entity_fact_id"  name="targetProducts" caption="${msg("jsolap.targetProducts.title")}">
-			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.targetProducts.caption")}" primaryKey="target_id">
-
-				<View alias="req_target">
-					<SQL dialect="generic">
-						<![CDATA[
-							select productHierarchy1, productHierarchy2, becpg_public_products.noderef AS noderef, productState, productType, target_id, name, versionLabel
-							from becpg_public_requirement_sources, becpg_public_products
-							where becpg_public_requirement_sources.target_id = becpg_public_products.id
-						]]>
-					</SQL>
-				</View>
-				
-				<Level approxRowCount="5" name="productState" caption="${msg("jsolap.productState.title")}"  column="productState"  type="String"  >
-				  <NameExpression>
-					  <SQL dialect="generic" >
-					  <![CDATA[CASE WHEN productState='Simulation' THEN '${msg("listconstraint.bcpg_systemState.Simulation")}'
-	                            WHEN productState='ToValidate' THEN '${msg("listconstraint.bcpg_systemState.ToValidate")}'
-	                            WHEN productState='Valid' THEN '${msg("listconstraint.bcpg_systemState.Valid")}'
-	                            WHEN productState='Refused' THEN '${msg("listconstraint.bcpg_systemState.Refused")}'
-	                            WHEN productState='Archived' THEN '${msg("listconstraint.bcpg_systemState.Archived")}'
-	                            ELSE 'Vide'
-	                           END]]></SQL>
-             		 </NameExpression>
-				</Level>	
-				<Level approxRowCount="10" name="entity_type" caption="${msg("jsolap.type.title")}"  column="productType" nameColumn="productType" type="String"   >
-					<NameExpression>
-					  <SQL dialect="generic" >
-					  <![CDATA[CASE WHEN productType='bcpg:rawMaterial' THEN "${msg('bcpg_bcpgmodel.type.bcpg_rawMaterial.title')}"
-	                            WHEN productType='bcpg:finishedProduct' THEN "${msg('bcpg_bcpgmodel.type.bcpg_finishedProduct.title')}"
-	                            WHEN productType='bcpg:semiFinishedProduct' THEN "${msg('bcpg_bcpgmodel.type.bcpg_semiFinishedProduct.title')}"
-	                            WHEN productType='bcpg:packagingMaterial' THEN "${msg('bcpg_bcpgmodel.type.bcpg_packagingMaterial.title')}"
-	                            WHEN productType='bcpg:packagingKit' THEN "${msg('bcpg_bcpgmodel.type.bcpg_packagingKit.title')}"
-	                            WHEN productType='bcpg:localSemiFinishedProduct' THEN "${msg('bcpg_bcpgmodel.type.bcpg_localSemiFinishedProduct.title')}"
-	                            ELSE 'Vide'
-	                           END]]></SQL>
-             		 </NameExpression>
-				</Level>		
-				<Level name="productHierarchy1" caption="${msg("jsolap.family.title")}" column="productHierarchy1" type="String"   >
-				</Level>
-				<Level name="productHierarchy2" caption="${msg("jsolap.subFamily.title")}" column="productHierarchy2" type="String"   >
-				</Level>
-				
-				<Level name="entity_noderef" caption="${msg("jsolap.product.title")}" column="noderef" nameColumn="name" type="String"   >
-				</Level>
-				<Level name="versionLabel" caption="${msg("jsolap.versionLabel.title")}" column="versionLabel" type="String" />
-			</Hierarchy>
-		</Dimension>
 		
-		<Dimension type="StandardDimension" foreignKey="entity_fact_id"  name="sourceProducts" caption="${msg("jsolap.sourceProducts.title")}">
-			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.sourceProducts.caption")}" primaryKey="target_id">
-
-				<#if isAdmin>
-					<View alias="req_src">
-						<SQL dialect="generic">
-							<![CDATA[
-								select productHierarchy1, productHierarchy2, becpg_public_products.noderef AS noderef, productState, productType, target_id, name, versionLabel
-								from becpg_public_requirement_sources, becpg_public_products
-								where becpg_public_requirement_sources.source_id = becpg_public_products.id
-								
-							]]>
-						</SQL>
-					</View>
-				<#else>
-					<View alias="req_src">
-						<SQL dialect="generic">
-							<![CDATA[
-								select productHierarchy1, productHierarchy2, becpg_public_products.noderef AS noderef, productState, productType, target_id, name
-								from becpg_public_requirement_sources, becpg_public_products
-								where becpg_public_requirement_sources.source_id = becpg_public_products.id
-								and becpg_public_products.instanceId = ${instanceId}
-							]]>
-						</SQL>
-					</View>
-				</#if>
+		<DimensionUsage name="targetProducts" caption="${msg("jsolap.targetProducts.title")}" source="productsDimension" foreignKey="entityNodeRef" />
+		
+		
+		<Dimension type="StandardDimension" foreignKey="nodeRef"  name="sourceProducts" caption="${msg("jsolap.sourceProducts.title")}">
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.sourceProducts.caption")}" primaryKey="dataListNodeRef">
 				
+			<View name="rclSources" alias="rclSources">
+						<SQL dialect="generic">
+							select  a.doc->>"$.dataListNodeRef" as dataListNodeRef,
+								b.doc->>"$.cm_name" as name,
+								b.doc->>"$.nodeRef" as nodeRef,
+								b.doc->>"$.bcpg_productHierarchy1[0]" as productHierarchy1,
+								b.doc->>"$.bcpg_productHierarchy2[0]" as productHierarchy2,
+								b.doc->>"$.bcpg_productState" as productState,
+								b.doc->>"$.type" as productType,
+								b.doc->>"$.cm_versionLabel" as versionLabel
+							from
+								assoc_bcpg_rclSources a left join  bcpg_product b on a.doc->>"$.nodeRef" = b.doc->>"$.nodeRef"
+							<#if !isAdmin>	
+							  where a.doc->>"$.instanceId" = ${instanceId} and b.doc->>"$.instanceId"
+							</#if>
+						</SQL>
+				</View>
 				<Level approxRowCount="5" name="productState" caption="${msg("jsolap.productState.title")}"  column="productState"  type="String"  >
 				  <NameExpression>
 					  <SQL dialect="generic" >
@@ -291,34 +397,25 @@
 	                            WHEN productType='bcpg:packagingMaterial' THEN "${msg('bcpg_bcpgmodel.type.bcpg_packagingMaterial.title')}"
 	                            WHEN productType='bcpg:packagingKit' THEN "${msg('bcpg_bcpgmodel.type.bcpg_packagingKit.title')}"
 	                            WHEN productType='bcpg:localSemiFinishedProduct' THEN "${msg('bcpg_bcpgmodel.type.bcpg_localSemiFinishedProduct.title')}"
+	                            WHEN productType='bcpg:resourceProduct' THEN "${msg('bcpg_bcpgmodel.type.bcpg_resourceProduct.title')}"
 	                            ELSE 'Vide'
 	                           END]]></SQL>
-             		 </NameExpression>
-				</Level>		
-				<Level name="productHierarchy1" caption="${msg("jsolap.family.title")}" column="productHierarchy1" type="String"   >
+             	</NameExpression>
 				</Level>
-				<Level name="productHierarchy2" caption="${msg("jsolap.subFamily.title")}" column="productHierarchy2" type="String"   >
+				<Level name="productHierarchy1" caption="${msg("jsolap.family.title")}" table="rclSources" column="productHierarchy1" type="String"   >
 				</Level>
-				
-				<Level name="entity_noderef" caption="${msg("jsolap.product.title")}" column="noderef" nameColumn="name" type="String"   >
+				<Level name="productHierarchy2" caption="${msg("jsolap.subFamily.title")}" table="rclSources" column="productHierarchy2" type="String"   >
 				</Level>
-				<Level name="versionLabel" caption="${msg("jsolap.versionLabel.title")}" column="versionLabel" type="String" />
+				<Level name="entity_noderef" caption="${msg("jsolap.component.title")}" table="rclSources" column="nodeRef" nameColumn="name" type="String"   >
+				</Level>
+				<Level name="versionLabel" caption="${msg("jsolap.versionLabel.title")}" table="rclSources" column="versionLabel" type="String" />
 			</Hierarchy>
 		</Dimension>
 		
-		<Dimension  name="tags" foreignKey="entity_fact_id" caption="${msg("jsolap.tags.title")}" >
-			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.tags.caption")}" primaryKey="entity_fact_id">
-				<#if isAdmin>
-					<Table name="becpg_public_tags" />
-				<#else>
-					<Table name="becpg_public_tags">
-						becpg_public_clients.instanceId = ${instanceId}
-					</Table>
-				</#if>
-				<Level name="tag" caption="${msg("jsolap.tag.title")}" column="tag"  type="String" >
-				</Level>
-			</Hierarchy>
-		</Dimension>
+		
+		
+		<DimensionUsage name="tags" caption="${msg("jsolap.tags.title")}" source="tagsDimension" foreignKey="entityNodeRef" />
+		
 		
 		<#if isAdmin>
 			<DimensionUsage name="instance" caption="${msg("jsolap.instance.title")}" source="instancesDimension" foreignKey="instanceId" />
@@ -329,15 +426,38 @@
 
 	<Cube name="incidents" caption="${msg("jsolap.incidents.title")}" cache="true" enabled="true" defaultMeasure="${msg("jsolap.incidentsNumber.title")}">
 		
-		<#if isAdmin>
-			<Table name="becpg_public_nc"/>
-		<#else>
-			<Table name="becpg_public_nc" alias="becpg_public_nc">
+		<View name="incidents" alias="incidents">
 				<SQL dialect="generic">
-					becpg_public_nc.instanceId = ${instanceId}
+					select
+						doc->>"$.nodeRef" as noderef,
+						doc->>"$.cm_name" as name,
+						doc->>"$.metadata_siteId" as siteId,
+						doc->>"$.metadata_siteName" as siteName,
+						doc->>"$.bcpg_code" as code,
+						doc->>"$.qa_ncType" as ncType,
+						doc->>"$.qa_ncPriority" as ncPriority,
+						doc->>"$.qa_ncState" as ncState,
+						doc->>"$.qa_ncQuantityNc" as ncQuantityNc,
+						doc->>"$.qa_ncCost" as ncCost,
+						doc->>"$.qa_batchId" as batchId,
+						doc->>"$.qa_claimType" as claimType,
+						doc->>"$.qa_claimOriginHierarchy1[0]" as claimOriginHierarchy1,
+						doc->>"$.qa_claimOriginHierarchy2[0]" as claimOriginHierarchy2,
+						CAST(doc->>"$.cm_created" as DATE) as dateCreated,
+						CAST(doc->>"$.qa_claimResponseDate" as DATE)  as claimResponseDate,
+						CAST(doc->>"$.qa_claimTreatementDate" as DATE)  as claimTreatmentDate,
+						doc->>"$.qa_claimClosingDate" as claimClosingDate,
+						doc->>"$.qa_product_bcpg_nodeRef[0]" as productNodeRef,
+						doc->>"$.instanceId" as instanceId
+					from
+						qa_nc
+					<#if !isAdmin>	
+					 where 
+					    doc->>"$.instanceId" = ${instanceId}
+					</#if>
 				</SQL>
-			</Table>
-		</#if>
+			</View>
+			
 		
 		<Dimension name="site" caption="${msg("jsolap.site.title")}">
 			<Hierarchy name="site" caption="${msg("jsolap.site.title")}" hasAll="true" allMemberCaption="${msg("jsolap.site.caption")}">
@@ -419,69 +539,11 @@
 		</Dimension>
 
 
+		<DimensionUsage name="products" caption="${msg("jsolap.products.title")}" source="productsDimension" foreignKey="productNodeRef" />
+
+		<DimensionUsage name="clients" caption="${msg("jsolap.client.title")}" source="clientsDimension" foreignKey="nodeRef" />
 		
-		<Dimension type="StandardDimension" foreignKey="id"  name="products" caption="${msg("jsolap.products.title")}">
-			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.products.caption")}" primaryKeyTable="becpg_public_nc_products" primaryKey="entity_id">
-			
-				<#if isAdmin>
-					<Join leftKey="id" rightKey="id" >
-						<Table name="becpg_public_nc_products" />
-						<Table name="becpg_public_products" />
-					</Join>
-				<#else>
-					<Join leftKey="id" rightKey="id" >
-						<Table name="becpg_public_nc_products" alias="becpg_public_nc_products">
-							<SQL dialect="generic">
-								becpg_public_nc_products.instanceId = ${instanceId}
-							</SQL>
-						</Table>
-						<Table name="becpg_public_products" alias="becpg_public_products">
-							<SQL dialect="generic">
-								becpg_public_products.instanceId = ${instanceId}
-							</SQL>
-						</Table>
-					</Join>
-				</#if>
-				
-				<Level name="productHierarchy1" caption="${msg("jsolap.family.title")}" table="becpg_public_products" column="productHierarchy1" type="String"   >
-				</Level>
-				<Level name="productHierarchy2" caption="${msg("jsolap.subFamily.title")}" table="becpg_public_products" column="productHierarchy2" type="String"   >
-				</Level>
-				<Level name="entity_noderef" caption="${msg("jsolap.product.title")}" table="becpg_public_products" column="nodeRef" nameColumn="name" type="String"   >
-				</Level>
-				<Level name="versionLabel" caption="${msg("jsolap.versionLabel.title")}" table="becpg_public_products" column="versionLabel" type="String" />
-			</Hierarchy>
-		</Dimension>
-		
-		<Dimension type="StandardDimension" foreignKey="id"  name="client" caption="${msg("jsolap.client.title")}">
-			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.client.caption")}" primaryKey="entity_fact_id">
-				<#if isAdmin>
-					<Table name="becpg_public_clients" />
-				<#else>
-					<Table name="becpg_public_clients" alias="becpg_public_clients">
-						<SQL dialect="generic">
-							becpg_public_clients.instanceId = ${instanceId}
-						</SQL>
-					</Table>
-				</#if>
-				<Level name="name" caption="${msg("jsolap.clientName.title")}" nameColumn="name" column="nodeRef"  type="String" >
-				</Level>
-			</Hierarchy>
-		</Dimension>
-		
-		<Dimension  name="tags" foreignKey="entity_fact_id" caption="${msg("jsolap.tags.title")}" >
-			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.tags.caption")}" primaryKey="entity_fact_id">
-				<#if isAdmin>
-					<Table name="becpg_public_tags" />
-				<#else>
-					<Table name="becpg_public_tags">
-						becpg_public_clients.instanceId = ${instanceId}
-					</Table>
-				</#if>
-				<Level name="tag" caption="${msg("jsolap.tag.title")}" column="tag"  type="String" >
-				</Level>
-			</Hierarchy>
-		</Dimension>
+		<DimensionUsage name="tags" caption="${msg("jsolap.tags.title")}" source="tagsDimension" foreignKey="nodeRef" />
 		
 		<#if isAdmin>
 			<DimensionUsage name="instance" caption="${msg("jsolap.instance.title")}" source="instancesDimension" foreignKey="instanceId" />
@@ -498,29 +560,50 @@
 	</Cube>
 	
 	<Cube name="projectsSteps" caption="${msg("jsolap.projectsSteps.title")}" cache="true" enabled="true" defaultMeasure="${msg("jsolap.projectsSteps.title")}">
-		<#if isAdmin>
-			<Table name="becpg_public_project_steps" />
-		<#else>
-			<Table name="becpg_public_project_steps" alias="becpg_public_project_steps">
-				<SQL dialect="generic">
-					becpg_public_project_steps.instanceId = ${instanceId}
-				</SQL>
-			</Table>
-		</#if>
-		
-		<Dimension type="StandardDimension" foreignKey="entity_fact_id"   name="site" caption="${msg("jsolap.site.title")}">
-			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.site.caption")}" primaryKey="id">
 			
-				<#if isAdmin>
-					<Table name="becpg_public_projects" alias="becpg_public_projects" />
-				<#else>
-					<Table name="becpg_public_projects" alias="becpg_public_projects">
-						<SQL dialect="generic">
-							becpg_public_projects.instanceId = ${instanceId}
-						</SQL>
-					</Table>
-				</#if>
-				<Level name="site" caption="${msg("jsolap.site.title")}" column="siteName"  type="String" />
+				<View name="taskList" alias="taskList">
+					<SQL dialect="generic">
+						select  
+							doc->>"$.nodeRef" as noderef,
+							doc->>"$.entityNodeRef" as entityNodeRef,
+							doc->>"$.pjt_tlTaskName" as tlTaskName,
+							doc->>"$.pjt_tlDuration" as tlDuration,
+							doc->>"$.pjt_tlRealDuration" as tlRealDuration,
+							CAST(doc->>"$.pjt_tlStart" as DATE) as tlStart,
+							CAST(doc->>"$.pjt_tlEnd" as DATE) as tlEnd,
+							doc->>"$.pjt_tlState" as tlState,
+							doc->>"$.pjt_tlResources[0]" as tlResources,
+							doc->>"$.pjt_tlWork" as tlWork,
+							doc->>"$.pjt_tlLoggedTime" as tlLoggedTime,
+							doc->>"$.bcpg_sort" as sortOrder,
+							CAST(doc->>"$.cm_modified" as DATE) as projectDateModified,
+							doc->>"$.instanceId" as instanceId
+						from
+							taskList
+						<#if !isAdmin>	
+						  where doc->>"$.instanceId" = ${instanceId}
+						</#if>
+					</SQL>
+				</View>
+
+		
+		<Dimension type="StandardDimension" foreignKey="entityNodeRef"   name="site" caption="${msg("jsolap.site.title")}">
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.site.caption")}" primaryKey="nodeRef">
+				<View name="projects_site" alias="projects_site">
+				<SQL dialect="generic">
+					select
+						doc->>"$.nodeRef" as noderef,
+						doc->>"$.metadata_siteId" as siteId,
+						doc->>"$.metadata_siteName" as siteName		
+					from
+						pjt_project
+					<#if !isAdmin>	
+					 where 
+					    doc->>"$.instanceId" = ${instanceId}
+					</#if>
+				</SQL>
+			 </View>
+			<Level name="site" caption="${msg("jsolap.site.title")}" column="siteId"  nameColumn="siteName" type="String" />
 			</Hierarchy>
 		</Dimension>			
 		
@@ -548,67 +631,22 @@
 			</Hierarchy>
 		</Dimension>
 		
-		<Dimension type="StandardDimension" foreignKey="entity_fact_id"  name="project" caption="${msg("jsolap.project.title")}">
-			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.project.caption")}" primaryKey="id">
-			
-				<#if isAdmin>
-					<Table name="becpg_public_projects"/>
-				<#else>
-					<Table name="becpg_public_projects" alias="becpg_public_projects">
-						<SQL dialect="generic">
-							becpg_public_projects.instanceId = ${instanceId}
-						</SQL>
-					</Table>	
-				</#if>
-				
-			     <Level approxRowCount="5" name="projectState" caption="${msg("jsolap.state.title")}" column="projectState" type="String"   >
-				     <NameExpression>
-						  <SQL dialect="generic" >
-					  <![CDATA[CASE WHEN projectState='Planned' THEN '${msg("listconstraint.pjt_projectStates.Planned")}'
-	                            WHEN projectState='InProgress' THEN '${msg("listconstraint.pjt_projectStates.InProgress")}'
-	                            WHEN projectState='OnHold' THEN '${msg("listconstraint.pjt_projectStates.OnHold")}'
-	                            WHEN projectState='Cancelled' THEN '${msg("listconstraint.pjt_projectStates.Cancelled")}'
-	                            WHEN projectState='Completed' THEN '${msg("listconstraint.pjt_projectStates.Completed")}'
-	                            ELSE 'Vide'
-	                           END]]></SQL>
-	                </NameExpression>
-				</Level>	
-				<Level name="projectHierarchy1" caption="${msg("jsolap.family.title")}" column="projectHierarchy1" type="String"   >
-				</Level>
-				<Level name="projectHierarchy2" caption="${msg("jsolap.subFamily.title")}" column="projectHierarchy2" type="String"   >
-				</Level>
-				<Level name="projectManager" caption="${msg("jsolap.projectManager.title")}" column="projectManager"  type="String"    >
-				</Level>
-				<Level name="entity_noderef" caption="${msg("jsolap.project.title")}" column="noderef" nameColumn="name" type="String"   >
-				</Level>
-			</Hierarchy>
-		</Dimension>
-		
 		<Dimension name="resource" caption="${msg("jsolap.resource.title")}" >
 			<Hierarchy name="resource" caption="${msg("jsolap.resource.title")}" hasAll="true" allMemberCaption="${msg("jsolap.resource.caption")}">
 				<Level name="tlResources" caption="${msg("jsolap.resource.title")}" column="tlResources"  type="String"    />
 			</Hierarchy>
 		</Dimension>
 		
-		<Dimension  name="tags" foreignKey="entity_fact_id" caption="${msg("jsolap.tags.title")}" >
-			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.tags.caption")}" primaryKey="entity_fact_id">
-				<#if isAdmin>
-					<Table name="becpg_public_tags" />
-				<#else>
-					<Table name="becpg_public_tags">
-						becpg_public_clients.instanceId = ${instanceId}
-					</Table>
-				</#if>
-				<Level name="tag" caption="${msg("jsolap.tag.title")}" column="tag"  type="String" >
-				</Level>
-			</Hierarchy>
-		</Dimension>
+		<DimensionUsage name="project" caption="${msg("jsolap.project.title")}" source="projectsDimension" foreignKey="entityNodeRef" />
+			
+		<DimensionUsage name="tags" caption="${msg("jsolap.tags.title")}" source="tagsDimension" foreignKey="entityNodeRef" />
+		
 		
 		<#if isAdmin>
 			<DimensionUsage name="instance" caption="${msg("jsolap.instance.title")}" source="instancesDimension" foreignKey="instanceId" />
 		</#if>
-		<DimensionUsage name="tlStart" caption="Date début" source="timeDimension" foreignKey="tlStart" />
-		<DimensionUsage name="tlEnd" caption="Date de fin" source="timeDimension" foreignKey="tlEnd" />
+		<DimensionUsage name="tlStart" caption="${msg("jsolap.startDate.title")}" source="timeDimension" foreignKey="tlStart" />
+		<DimensionUsage name="tlEnd" caption="${msg("jsolap.endDate.title")}" source="timeDimension" foreignKey="tlEnd" />
 		<DimensionUsage name="projectDateModified" caption="${msg("jsolap.modificationDate.title")}" source="timeDimension"  foreignKey="projectDateModified" />	
 		<Measure name="stepsNumber" caption="${msg("jsolap.stepsNumber.title")}" column="noderef" datatype="Numeric" aggregator="distinct-count" visible="true" />
 		<Measure name="averageForecastDurations" caption="${msg("jsolap.averageForecastDurations.title")}" column="tlDuration" datatype="Numeric" aggregator="avg" visible="true"  />
@@ -624,32 +662,46 @@
 		
 	</Cube>
 	
+	
 	<Cube name="projectsEvaluation" caption="${msg("jsolap.projectsEvaluation.title")}" cache="true" enabled="true" defaultMeasure="${msg("jsolap.note.title")}">
 
-		<#if isAdmin>
-			<Table name="becpg_public_project_score"/>
-		<#else>
-			<Table name="becpg_public_project_score" alias="becpg_public_project_score">
-				<SQL dialect="generic">
-					becpg_public_project_score.instanceId = ${instanceId}
-				</SQL>
-			</Table>
-		</#if>
+				<View name="scoreList" alias="scoreList">
+					<SQL dialect="generic">
+						select  
+							doc->>"$.entityNodeRef" as entityNodeRef,
+							doc->>"$.pjt_slCriterion" as slCriterion,
+							doc->>"$.pjt_slWeight" as slWeight,
+							doc->>"$.pjt_slScore" as slScore,
+							doc->>"$.instanceId" as instanceId
+						from
+							scoreList
+						<#if !isAdmin>	
+						  where doc->>"$.instanceId" = ${instanceId}
+						</#if>
+					</SQL>
+				</View>
 		
-		<Dimension type="StandardDimension" foreignKey="entity_fact_id"  name="site" caption="${msg("jsolap.site.title")}">
-			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.site.caption")}" primaryKey="id">
-				<#if isAdmin>
-					<Table name="becpg_public_projects" />
-				<#else>
-					<Table name="becpg_public_projects" alias="becpg_public_projects">
-						<SQL dialect="generic">
-							becpg_public_projects.instanceId = ${instanceId}
-						</SQL>
-					</Table>
-				</#if>
-					<Level name="site" caption="${msg("jsolap.site.title")}" column="siteName"  type="String" />
+		
+		
+		<Dimension type="StandardDimension" foreignKey="entityNodeRef"   name="site" caption="${msg("jsolap.site.title")}">
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.site.caption")}" primaryKey="nodeRef">
+				<View name="projects_site" alias="projects_site">
+				<SQL dialect="generic">
+					select
+						doc->>"$.nodeRef" as noderef,
+						doc->>"$.metadata_siteId" as siteId,
+						doc->>"$.metadata_siteName" as siteName		
+					from
+						pjt_project
+					<#if !isAdmin>	
+					 where 
+					    doc->>"$.instanceId" = ${instanceId}
+					</#if>
+				</SQL>
+			 </View>
+			<Level name="site" caption="${msg("jsolap.site.title")}" column="siteId"  nameColumn="siteName" type="String" />
 			</Hierarchy>
-		</Dimension>
+		</Dimension>			
 		
 		<Dimension  name="designation" caption="${msg("jsolap.designation.title")}" >
 			<Hierarchy name="criterionByName" caption="${msg("jsolap.criterionByName.title")}" hasAll="true" allMemberCaption="${msg("jsolap.criterion.caption")}">
@@ -657,43 +709,9 @@
 			</Hierarchy>
 		</Dimension>		
 		
-		<Dimension type="StandardDimension" foreignKey="entity_fact_id"  name="project" caption="${msg("jsolap.project.title")}">
-			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.project.caption")}" primaryKey="id">
-			
-				<#if isAdmin>
-					<Table name="becpg_public_projects"/>
-				<#else>
-					<Table name="becpg_public_projects" alias="becpg_public_projects">
-						<SQL dialect="generic">
-							becpg_public_projects.instanceId = ${instanceId}
-						</SQL>
-					</Table>
-				
-				</#if>
-				<Level name="projectHierarchy1" caption="${msg("jsolap.family.title")}" column="projectHierarchy1" type="String"   >
-				</Level>
-				<Level name="projectHierarchy2" caption="${msg("jsolap.subFamily.title")}" column="projectHierarchy2" type="String"   >
-				</Level>
-				<Level name="projectManager" caption="${msg("jsolap.projectManager.title")}" column="projectManager"  type="String"    >
-				</Level>
-				<Level name="entity_noderef" caption="${msg("jsolap.project.title")}" column="noderef" nameColumn="name" type="String"   >
-				</Level>
-			</Hierarchy>
-		</Dimension>
-		
-		<Dimension  name="tags" foreignKey="entity_fact_id" caption="${msg("jsolap.tags.title")}" >
-			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.tags.caption")}" primaryKey="entity_fact_id">
-				<#if isAdmin>
-					<Table name="becpg_public_tags" />
-				<#else>
-					<Table name="becpg_public_tags">
-						becpg_public_clients.instanceId = ${instanceId}
-					</Table>
-				</#if>
-				<Level name="tag" caption="${msg("jsolap.tag.title")}" column="tag"  type="String" >
-				</Level>
-			</Hierarchy>
-		</Dimension>
+		<DimensionUsage name="project" caption="${msg("jsolap.project.title")}" source="projectsDimension" foreignKey="entityNodeRef" />
+
+		<DimensionUsage name="tags" caption="${msg("jsolap.tags.title")}" source="tagsDimension" foreignKey="entityNodeRef" />
 		
 		<#if isAdmin>
 			<DimensionUsage name="instance" caption="${msg("jsolap.instance.title")}" source="instancesDimension" foreignKey="instanceId" />
@@ -707,16 +725,43 @@
 	</Cube>
 
 	<Cube name="projects" caption="${msg("jsolap.projects.title")}" cache="true" enabled="true" defaultMeasure="${msg("jsolap.projectsNumberDistinct.title")}">
-		<#if isAdmin>
-			<Table name="becpg_public_projects" />
-		<#else>
-			<Table name="becpg_public_projects" alias="becpg_public_projects">
+			<View name="projects" alias="projects">
 				<SQL dialect="generic">
-					becpg_public_projects.instanceId = ${instanceId}
+					select
+						doc->>"$.nodeRef" as noderef,
+						doc->>"$.cm_name" as name,
+						doc->>"$.pjt_projectState" as projectState,
+						doc->>"$.pjt_projectHierarchy1[0]" as	projectHierarchy1,
+						doc->>"$.pjt_projectHierarchy2[0]" as	projectHierarchy2,
+						doc->>"$.metadata_siteId" as siteId,
+						doc->>"$.metadata_siteName" as siteName,
+						doc->>"$.bcpg_code" as code,
+						CAST(doc->>"$.cm_created" as DATE) as projectDateCreated,
+						doc->>"$.cm_creator" as projectCreator,
+						CAST(doc->>"$.cm_modified" as DATE)  as projectDateModified,
+						doc->>"$.cm_modifier" as  projectModifier,
+						CAST(doc->>"$.pjt_projectStartDate" as DATE)  as projectStartDate,
+						CAST(doc->>"$.pjt_projectDueDate" as DATE)  as projectDueDate,
+						CAST(doc->>"$.pjt_projectCompletionDate" as DATE)  as completionDate,
+						doc->>"$.pjt_projectPriority" as projectPriority,
+						doc->>"$.pjt_completionPercent" as completionPercent,
+						doc->>"$.pjt_projectScore" as projectScore,
+						doc->>"$.pjt_projectOverdue" as projectOverdue,
+						doc->>"$.pjt_projectManager[0]" as projectManager,
+						doc->>"$.pjt_projectOrigin" as projectOrigin,
+						doc->>"$.pjt_projectSponsor" as projectSponsor,
+						doc->>"$.bcpg_entityTplRef[0]" as entityTplRef,
+						doc->>"$.pjt_projectEntity_bcpg_nodeRef[0]" as projectEntityNodeRef,
+						DATEDIFF(CAST(doc->>"$.pjt_projectCompletionDate" as DATE),CAST(doc->>"$.pjt_projectStartDate" as DATE)) as duration,
+						doc->>"$.instanceId" as instanceId
+					from
+						pjt_project
+					<#if !isAdmin>	
+					 where 
+					    doc->>"$.instanceId" = ${instanceId}
+					</#if>
 				</SQL>
-			</Table>
-		</#if>
-		
+			 </View>
 
 		<Dimension name="site" caption="${msg("jsolap.site.title")}">
 			<Hierarchy name="site" caption="${msg("jsolap.site.title")}" hasAll="true" allMemberCaption="${msg("jsolap.site.caption")}">
@@ -770,52 +815,8 @@
 			</Hierarchy>
 		</Dimension>
 		
-		<Dimension type="StandardDimension" foreignKey="id" name="entities" caption="${msg("jsolap.entities.title")}">
-			<Hierarchy hasAll="true" primaryKey="project_id" primaryKeyTable="becpg_public_project_entities">
-			
-				<#if isAdmin>		
-					<Join leftKey="id" rightKey="id" >
-						<Table name="becpg_public_project_entities">
-						</Table>
-						<Table name="becpg_public_products">
-						</Table>
-					</Join>
-				<#else>
-					<Join leftKey="id" rightKey="id" >
-						<Table name="becpg_public_project_entities" alias="becpg_public_project_entities">
-							<SQL dialect="generic">
-							becpg_public_project_entities.instanceId = ${instanceId}
-							</SQL>
-						</Table>
-						<Table name="becpg_public_products" alias="becpg_public_products">
-							<SQL dialect="generic">
-							becpg_public_products.instanceId = ${instanceId}
-							</SQL>
-						</Table>
-					</Join>
-				</#if>
-				<Level approxRowCount="5" name="productState" caption="${msg("jsolap.state.title")}"  table="becpg_public_products" column="productState"  type="String"   >
-				  <NameExpression>
-					  <SQL dialect="generic" >
-					  <![CDATA[CASE WHEN productState='Simulation' THEN '${msg("listconstraint.bcpg_systemState.Simulation")}'
-	                            WHEN productState='ToValidate' THEN '${msg("listconstraint.bcpg_systemState.ToValidate")}'
-	                            WHEN productState='Valid' THEN '${msg("listconstraint.bcpg_systemState.Valid")}'
-	                            WHEN productState='Refused' THEN '${msg("listconstraint.bcpg_systemState.Refused")}'
-	                            WHEN productState='Archived' THEN '${msg("listconstraint.bcpg_systemState.Archived")}'
-	                            ELSE 'Vide'
-	                           END]]></SQL>
-             		 </NameExpression>
-				</Level>		
-				<Level name="productHierarchy1" caption="${msg("jsolap.family.title")}" table="becpg_public_products" column="productHierarchy1" type="String"   >
-				</Level>
-				<Level name="productHierarchy2" caption="${msg("jsolap.subFamily.title")}" table="becpg_public_products" column="productHierarchy2" type="String"   >
-				</Level>
-				<Level name="erpCode" caption="${msg("jsolap.erpCode.title")}" table="becpg_public_products" column="erpCode"  type="String"   />
-				<Level name="entity_noderef" caption="${msg("jsolap.entity.caption")}" table="becpg_public_products" column="noderef" nameColumn="name" type="String"   >
-				</Level>
-				<Level name="versionLabel" caption="${msg("jsolap.versionLabel.title")}" column="versionLabel" table="becpg_public_products" type="String" />
-			</Hierarchy>
-		</Dimension>
+		<DimensionUsage name="entities" caption="${msg("jsolap.entities.title")}" source="productsDimension" foreignKey="projectEntityNodeRef" />
+		
 		
 		<Dimension  name="projectManager" caption="${msg("jsolap.projectManager.title")}" >
 			<Hierarchy name="projectManager" caption="${msg("jsolap.projectManager.title")}" hasAll="true" allMemberCaption="${msg("jsolap.projectManager.caption")}">
@@ -853,19 +854,8 @@
 			</Hierarchy>
 		</Dimension>
 		
-		<Dimension  name="tags" foreignKey="id" caption="${msg("jsolap.tags.title")}" >
-			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.tags.caption")}" primaryKey="entity_fact_id">
-				<#if isAdmin>
-					<Table name="becpg_public_tags" />
-				<#else>
-					<Table name="becpg_public_tags">
-						becpg_public_clients.instanceId = ${instanceId}
-					</Table>
-				</#if>
-				<Level name="tag" caption="${msg("jsolap.tag.title")}" column="tag"  type="String" >
-				</Level>
-			</Hierarchy>
-		</Dimension>		
+		<DimensionUsage name="tags" caption="${msg("jsolap.tags.title")}" source="tagsDimension" foreignKey="nodeRef" />
+	
 		
 		<#if isAdmin>
 			<DimensionUsage name="instance" caption="${msg("jsolap.instance.title")}" source="instancesDimension" foreignKey="instanceId" />
@@ -877,8 +867,7 @@
 		<DimensionUsage name="completionDate" caption="${msg("jsolap.completionDate.title")}" source="timeDimension" foreignKey="completionDate" />
 	
 
-		<Measure name="projectsNumber" caption="${msg("jsolap.projectsNumber.title")}" column="id" datatype="Numeric" aggregator="count" visible="true" />
-		<Measure name="projectsNumberDistinct" caption="${msg("jsolap.projectsNumberDistinct.title")}" column="noderef" datatype="Numeric" aggregator="distinct-count" visible="true" />
+		<Measure name="projectsNumber" caption="${msg("jsolap.projectsNumber.title")}" column="noderef" datatype="Numeric" aggregator="count" visible="true" />
 		<Measure name="averageDuration" caption="${msg("jsolap.averageDuration.title")}" column="duration" datatype="Numeric" aggregator="avg" visible="true" />
 		<Measure name="averageProgress" caption="${msg("jsolap.averageProgress.title")}" column="completionPercent" datatype="Numeric" aggregator="avg" visible="true"  />
 		<Measure name="averageNote" caption="${msg("jsolap.averageNote.title")}" column="projectScore" datatype="Numeric" aggregator="avg" visible="true"  />
@@ -895,69 +884,69 @@
 	</Cube>
 	
 	<Cube name="nutrients" caption="${msg("jsolap.nutrients.title")}" cache="true" enabled="true" >
-		<#if isAdmin>
-			<Table name="becpg_public_nutrients"/>
-		<#else>
-			<Table name="becpg_public_nutrients" alias="becpg_public_nutrients">
+	
+		<View name="nutList" alias="nutList">
+					<SQL dialect="generic">
+						select  
+							doc->>"$.entityNodeRef" as entityNodeRef,
+							doc->>"$.bcpg_nutListNut[0]" as name,
+							doc->>"$.bcpg_nutListNut_bcpg_nodeRef[0]" as nodeRef,
+							doc->>"$.bcpg_nutListGroup" as nutGroup,
+							doc->>"$.bcpg_nutListValue" as nutValue,
+							doc->>"$.bcpg_nutListFormulatedValue" as nutFormulatedValue,
+							doc->>"$.bcpg_nutListGDAPerc" as nutListGDAPerc,
+							doc->>"$.bcpg_nutListValuePerServing" as nutListValuePerServing,
+							doc->>"$.instanceId" as instanceId
+						from
+							nutList
+						<#if !isAdmin>	
+						  where doc->>"$.instanceId" = ${instanceId}
+						</#if>
+					</SQL>
+		</View>
+	
+
+		<Dimension  name="site" caption="${msg("jsolap.site.title")}" type="StandardDimension" foreignKey="entityNodeRef" >
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.site.caption")}" primaryKey="noderef">
+			<View name="products" alias="products">
 				<SQL dialect="generic">
-					becpg_public_nutrients.instanceId = ${instanceId}
+					select
+						doc->>"$.nodeRef" as noderef,
+						doc->>"$.metadata_siteId" as siteId,
+						doc->>"$.metadata_siteName" as siteName		
+					from
+						bcpg_product
+					<#if !isAdmin>	
+					 where 
+					    doc->>"$.instanceId" = ${instanceId}
+					</#if>
 				</SQL>
-			</Table>
-		</#if>
-
-		<Dimension  name="site" caption="${msg("jsolap.site.title")}" type="StandardDimension" foreignKey="entity_fact_id" >
-			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.site.caption")}" primaryKey="id">
-			<#if isAdmin>
-				<Table name="becpg_public_products"/>
-			<#else>
-				<Table name="becpg_public_products" alias="becpg_public_products">
-					<SQL dialect="generic">
-						becpg_public_products.instanceId = ${instanceId}
-					</SQL>
-				</Table>
-			</#if>
-				<Level name="site" caption="${msg("jsolap.site.title")}" column="siteName"  type="String" />
+			</View>
+				<Level name="site" caption="${msg("jsolap.site.title")}" column="siteId"  nameColumn="siteName" type="String" />
 			</Hierarchy>
 		</Dimension>
 
-		<Dimension  name="designation" caption="${msg("jsolap.designation.title")}" type="StandardDimension" foreignKey="entity_fact_id" >
-			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.products.caption")}" primaryKey="id">
-			
-			<#if isAdmin>
-				<Table name="becpg_public_products"/>
-			<#else>
-				<Table name="becpg_public_products" alias="becpg_public_products">
-					<SQL dialect="generic">
-						becpg_public_products.instanceId = ${instanceId}
-					</SQL>
-				</Table>
-			</#if>
-				<Level approxRowCount="5" name="productState" caption="${msg("jsolap.state.title")}"  column="productState"  type="String"   >
-				  <NameExpression>
-					  <SQL dialect="generic" >
-					  <![CDATA[CASE WHEN productState='Simulation' THEN '${msg("listconstraint.bcpg_systemState.Simulation")}'
-	                            WHEN productState='ToValidate' THEN '${msg("listconstraint.bcpg_systemState.ToValidate")}'
-	                            WHEN productState='Valid' THEN '${msg("listconstraint.bcpg_systemState.Valid")}'
-	                            WHEN productState='Refused' THEN '${msg("listconstraint.bcpg_systemState.Refused")}'
-	                            WHEN productState='Archived' THEN '${msg("listconstraint.bcpg_systemState.Archived")}'
-	                            ELSE 'Vide'
-	                           END]]></SQL>
-             		 </NameExpression>
-				</Level>
-				<Level name="productHierarchy1" caption="${msg("jsolap.family.title")}" column="productHierarchy1"  type="String"    />
-				<Level name="productHierarchy2" caption="${msg("jsolap.subFamily.title")}" column="productHierarchy2"  type="String"    />
-				<Level name="name" caption="${msg("jsolap.productName.title")}" column="name"  type="String"    />
-				<Level name="code" caption="${msg("jsolap.productCode.title")}" column="code"  type="String"   />
-				<Level name="erpCode" caption="${msg("jsolap.erpCode.title")}" column="erpCode"  type="String"   />
-				<Level name="legalName" caption="${msg("jsolap.legalName.title")}" column="legalName" type="String"    />
-				<Level name="versionLabel" caption="${msg("jsolap.versionLabel.title")}" column="versionLabel" type="String" />
-			</Hierarchy>
-		</Dimension>
+		<DimensionUsage name="designation" caption="${msg("jsolap.designation.title")}" source="productsDimension" foreignKey="entityNodeRef" />
+
 		
-		<Dimension foreignKey="productType"  name="productType" caption="${msg("jsolap.productType.title")}">
-			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.productType.caption")}" primaryKey="entity_type" >
+		<Dimension foreignKey="entityNodeRef"  name="productType" caption="${msg("jsolap.productType.title")}">
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.productType.caption")}" primaryKey="nodeRef" >
+			
+			<View name="products_type" alias="products_type">
+					<SQL dialect="generic">
+						select
+							doc->>"$.nodeRef" as noderef,
+							doc->>"$.type" as productType
+						from
+							bcpg_product
+						<#if !isAdmin>	
+						 where 
+						    doc->>"$.instanceId" = ${instanceId}
+						</#if>
+					</SQL>
+				</View>
 				
-			<Level approxRowCount="10" name="entity_type" caption="${msg("jsolap.type.title")}" column="productType" nameColumn="entity_label" type="String"   >
+			<Level approxRowCount="10" name="entity_type" caption="${msg("jsolap.type.title")}" column="productType"  type="String"   >
 				<NameExpression>
 					  <SQL dialect="generic" >
 					  <![CDATA[CASE WHEN productType='bcpg:rawMaterial' THEN "${msg('bcpg_bcpgmodel.type.bcpg_rawMaterial.title')}"
@@ -966,6 +955,7 @@
 	                            WHEN productType='bcpg:packagingMaterial' THEN "${msg('bcpg_bcpgmodel.type.bcpg_packagingMaterial.title')}"
 	                            WHEN productType='bcpg:packagingKit' THEN "${msg('bcpg_bcpgmodel.type.bcpg_packagingKit.title')}"
 	                            WHEN productType='bcpg:localSemiFinishedProduct' THEN "${msg('bcpg_bcpgmodel.type.bcpg_localSemiFinishedProduct.title')}"
+	                            WHEN productType='bcpg:resourceProduct' THEN "${msg('bcpg_bcpgmodel.type.bcpg_resourceProduct.title')}"
 	                            ELSE 'Vide'
 	                           END]]></SQL>
              		 </NameExpression>
@@ -974,27 +964,17 @@
 			</Hierarchy>
 		</Dimension>
 
-		<Dimension type="StandardDimension" foreignKey="id"  name="nutrient" caption="${msg("jsolap.nutrient.title")}">
-			<Hierarchy name="nutrientPerGroup" caption="${msg("jsolap.nutrientPerGroup.title")}" hasAll="true" allMemberCaption="${msg("jsolap.nutrient.caption")}" primaryKey="entity_fact_id">
+		<Dimension type="StandardDimension"  name="nutrient" caption="${msg("jsolap.nutrient.title")}">
+			<Hierarchy name="nutrientPerGroup" caption="${msg("jsolap.nutrientPerGroup.title")}" hasAll="true" allMemberCaption="${msg("jsolap.nutrient.caption")}" >
 				<Level approxRowCount="3" name="nutGroup" caption="${msg("jsolap.nutrientGroup.title")}" column="nutGroup" type="String"   >
 				</Level>
-				<Level  name="nutNodeRef" caption="${msg("jsolap.nutrient.title")}" column="nutNodeRef"  nameColumn="nutName" type="String"   ></Level>
+				<Level  name="nutNodeRef" caption="${msg("jsolap.nutrient.title")}" column="nodeRef"  nameColumn="name" type="String"   ></Level>
 			</Hierarchy>	
 		</Dimension>
 		
-		<Dimension  name="tags" foreignKey="entity_fact_id" caption="${msg("jsolap.tags.title")}" >
-			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.tags.caption")}" primaryKey="entity_fact_id">
-				<#if isAdmin>
-					<Table name="becpg_public_tags" />
-				<#else>
-					<Table name="becpg_public_tags">
-						becpg_public_clients.instanceId = ${instanceId}
-					</Table>
-				</#if>
-				<Level name="tag" caption="${msg("jsolap.tag.title")}" column="tag"  type="String" >
-				</Level>
-			</Hierarchy>
-		</Dimension>	
+	
+		
+		<DimensionUsage name="tags" caption="${msg("jsolap.tags.title")}" source="tagsDimension" foreignKey="nodeRef" />
 		
 		<#if isAdmin>
 			<DimensionUsage name="instance" caption="${msg("jsolap.instance.title")}" source="instancesDimension" foreignKey="instanceId" />
@@ -1005,20 +985,17 @@
 		<Measure name="nutListGDAPerc" caption="${msg("jsolap.nutListGDAPerc.title")}" column="nutListGDAPerc" datatype="Numeric" aggregator="avg" visible="true"></Measure>
 	</Cube>				
 	
-
 	<Cube name="products" caption="${msg("jsolap.products.title")}" cache="true" enabled="true" defaultMeasure="${msg("jsolap.productsNumber.title")}">
+		
 		
 			<View name="products" alias="products">
 				<SQL dialect="generic">
 					select
-						doc->>"$._id" as id,
 						doc->>"$.nodeRef" as noderef,
 						doc->>"$.cm_name" as name,
 						doc->>"$.type" as productType,
 						doc->>"$.bcpg_productHierarchy1[0]" as productHierarchy1,
 						doc->>"$.bcpg_productHierarchy2[0]" as productHierarchy2,
-						doc->>"$.bcpg_clients" as clients,
-						doc->>"$.bcpg_suppliers" as suppliers,
 						doc->>"$.metadata_siteId" as siteId,
 						doc->>"$.metadata_siteName" as siteName,
 						doc->>"$.bcpg_code" as code,
@@ -1086,17 +1063,21 @@
 		
 		
 		 
-		<Dimension foreignKey="id"  name="geoOrigin" caption="${msg("jsolap.geoOrigin.title")}">
-			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.geoOrigin.caption")}" primaryKey="entity_fact_id">
-				<#if isAdmin>
-					<Table name="becpg_public_geo_origins"/>
-				<#else>
-					<Table name="becpg_public_geo_origins" alias="becpg_public_geo_origins">
-						<SQL dialect="generic">
-							becpg_public_geo_origins.instanceId = ${instanceId}
-						</SQL>
-					</Table>
-				</#if>
+		<Dimension foreignKey="nodeRef"  name="geoOrigin" caption="${msg("jsolap.geoOrigin.title")}">
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.geoOrigin.caption")}" primaryKey="entityNodeRef">
+				<View name="ingListgeoOrigin" alias="ingListgeoOrigin">
+								<SQL dialect="generic">
+									select  
+										doc->>"$.entityNodeRef" as entityNodeRef,
+										doc->>"$.name" as name,
+										doc->>"$.nodeRef" as nodeRef
+									from
+										assoc_bcpg_ingListGeoOrigin
+									<#if !isAdmin>	
+									  where doc->>"$.instanceId" = ${instanceId}
+									</#if>
+								</SQL>
+				</View>
 				<Level name="name" caption="${msg("jsolap.country.title")}" column="nodeRef" nameColumn="name" type="String"  >
 				</Level>
 			</Hierarchy>
@@ -1114,80 +1095,37 @@
 	                            WHEN productType='bcpg:packagingMaterial' THEN "${msg('bcpg_bcpgmodel.type.bcpg_packagingMaterial.title')}"
 	                            WHEN productType='bcpg:packagingKit' THEN "${msg('bcpg_bcpgmodel.type.bcpg_packagingKit.title')}"
 	                            WHEN productType='bcpg:localSemiFinishedProduct' THEN "${msg('bcpg_bcpgmodel.type.bcpg_localSemiFinishedProduct.title')}"
+	                            WHEN productType='bcpg:resourceProduct' THEN "${msg('bcpg_bcpgmodel.type.bcpg_resourceProduct.title')}"
 	                            ELSE 'Vide'
 	                           END]]></SQL>
              		 </NameExpression>
 			</Level>
 			</Hierarchy>
 		</Dimension>
-<#-- 		<Dimension type="StandardDimension" foreignKey="id" name="client" caption="${msg("jsolap.client.title")}">
-			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.client.caption")}" primaryKey="entity_fact_id">
-				<#if isAdmin>
-					<Table name="becpg_public_clients"/>
-				<#else>
-					<Table name="becpg_public_clients" alias="becpg_public_clients">
-						<SQL dialect="generic">
-						becpg_public_clients.instanceId = ${instanceId}
-						</SQL>
-					</Table>
-				</#if>
-				<Level name="name" caption="${msg("jsolap.clientName.title")}" nameColumn="name" column="nodeRef"  type="String"   >
-				</Level>
-			</Hierarchy>
-		</Dimension>
-	-->	
 		
-		<Dimension name="client" caption="${msg("jsolap.client.title")}">
-			<Hierarchy name="client" caption="${msg("jsolap.client.title")}" hasAll="true" allMemberCaption="${msg("jsolap.client.caption")}">
-				<Level name="client" caption="${msg("jsolap.clientName.title")}" column="clients"  type="String" />
-			</Hierarchy>
-		</Dimension>
-		
-		<Dimension name="supplier" caption="${msg("jsolap.supplier.title")}">
-			<Hierarchy name="client" caption="${msg("jsolap.supplier.title")}" hasAll="true" allMemberCaption="${msg("jsolap.client.caption")}">
-				<Level name="client" caption="${msg("jsolap.supplierName.title")}" column="suppliers"  type="String" />
-			</Hierarchy>
-		</Dimension>
-		<#-- 
-		<Dimension type="StandardDimension" foreignKey="id"  name="supplier" caption="${msg("jsolap.supplier.title")}">
-			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.supplier.caption")}" primaryKey="nodeRef">
-				<#if isAdmin>
-					<Table name="becpg_public_suppliers"/>
-				<#else>
-					<Table name="becpg_public_suppliers" alias="becpg_public_suppliers">
-						<SQL dialect="generic">
-							becpg_public_suppliers.instanceId = ${instanceId}
-						</SQL>
-					</Table>
-				</#if>
-				<Level name="name" caption="${msg("jsolap.supplierName.title")}" nameColumn="name" column="nodeRef" type="String"   >
-				</Level>
-			</Hierarchy>
-		</Dimension>
-		-->
-		<Dimension type="StandardDimension" foreignKey="nodeRef"  name="nutrient" caption="${msg("jsolap.nutrient.title")}">
-			<Hierarchy name="nutrientPerGroup" caption="${msg("jsolap.nutrientPerGroup.title")}" hasAll="true" allMemberCaption="${msg("jsolap.nutrient.caption")}" primaryKey="entityNodeRef">
-				<View name="nutList" alias="nutList">
+		<DimensionUsage name="clients" caption="${msg("jsolap.client.title")}" source="clientsDimension" foreignKey="nodeRef" />
+	
+		<Dimension type="StandardDimension" foreignKey="nodeRef"  name="supplier" caption="${msg("jsolap.supplier.title")}">
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.supplier.caption")}" primaryKey="entityNodeRef">
+				<View name="suppliers" alias="suppliers">
 								<SQL dialect="generic">
 									select  
 										doc->>"$.entityNodeRef" as entityNodeRef,
-										doc->>"$.bcpg_nutListNut[0]" as name,
-										doc->>"$.bcpg_nutListNut_bcpg_nodeRef[0]" as nodeRef,
-										doc->>"$.bcpg_nutListGroup[0]" as nutGroup
+										doc->>"$.name" as name,
+										doc->>"$.nodeRef" as nodeRef
 									from
-										nutList
+										assoc_bcpg_suppliers
 									<#if !isAdmin>	
 									  where doc->>"$.instanceId" = ${instanceId}
 									</#if>
 								</SQL>
-					</View>
-			
-				<Level approxRowCount="3" name="nutGroup" caption="${msg("jsolap.nutrientGroup.title")}" column="nutGroup" type="String"   >
+				</View>
+				<Level name="name" caption="${msg("jsolap.supplierName.title")}" nameColumn="name" column="nodeRef" type="String"   >
 				</Level>
-				<Level approxRowCount="20" name="nutName" caption="${msg("jsolap.nutrient.title")}" column="nodeRef"  nameColumn="name" type="String"   >
-				</Level>
-			</Hierarchy>	
+			</Hierarchy>
 		</Dimension>
+	
+		
 	    <Dimension name="nutritionScale" caption="${msg("jsolap.nutritionScale.title")}">
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.nutritionScale.caption")}" >
 				<Level name="nutrientProfilingClass" caption="${msg("jsolap.nutritionClass.title")}" column="nutrientProfilingClass"  type="String"    />
@@ -1240,135 +1178,99 @@
 		</Dimension>							
 		
 		
-		<Dimension type="StandardDimension" foreignKey="id"  name="ingredient" caption="${msg("jsolap.ingredient.title")}">
-			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.ingredient.caption")}" primaryKey="entity_fact_id">
-				<#if isAdmin>
-					<Table name="becpg_public_ingredients" />
-				<#else>
-					<Table name="becpg_public_ingredients" alias="becpg_public_ingredients">
-						<SQL dialect="generic">
-							becpg_public_ingredients.instanceId = ${instanceId}
-						</SQL>
-					</Table>
-				</#if>
-				<Level name="name" caption="${msg("jsolap.ingredient.title")}" column="nodeRef" nameColumn="name" type="String"   >
+		<Dimension type="StandardDimension" foreignKey="nodeRef"  name="ingredient" caption="${msg("jsolap.ingredient.title")}">
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.ingredient.caption")}" primaryKey="entityNodeRef">
+				<View name="ingList" alias="ingList">
+								<SQL dialect="generic">
+									select  
+										doc->>"$.entityNodeRef" as entityNodeRef,
+										doc->>"$.bcpg_ingListIng[0]" as name,
+										doc->>"$.bcpg_ingListIng_bcpg_nodeRef[0]" as nodeRef
+									from
+										ingList
+									<#if !isAdmin>	
+									  where doc->>"$.instanceId" = ${instanceId}
+									</#if>
+								</SQL>
+				</View>
+				<Level name="name" caption="${msg("jsolap.ingredient.title")}" table="ingList" column="nodeRef" nameColumn="name" type="String"   >
 				</Level>
 			</Hierarchy>
 		</Dimension>
 		
-		<Dimension type="StandardDimension" foreignKey="id"  name="labelClaim" caption="${msg("jsolap.labelClaim.title")}">
-			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.labelClaim.caption")}" primaryKey="entity_fact_id">
-				<#if isAdmin>
-					<Table name="becpg_public_labelclaims" />
-				<#else>
-					<Table name="becpg_public_labelclaims" alias="becpg_public_labelclaims" >
-						<SQL dialect="generic">
-							becpg_public_labelclaims.instanceId = ${instanceId}
-						</SQL>
-					</Table>
-				</#if>
-				<Level name="lclLabelClaimName" caption="${msg("jsolap.labelClaim.title")}" column="nodeRef" nameColumn="name" type="String" ></Level>
+		<Dimension type="StandardDimension" foreignKey="nodeRef"  name="labelClaim" caption="${msg("jsolap.labelClaim.title")}">
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.labelClaim.caption")}" primaryKey="entityNodeRef">
+				<View name="labelClaimList" alias="labelClaimList">
+								<SQL dialect="generic">
+									select  
+										doc->>"$.entityNodeRef" as entityNodeRef,
+										doc->>"$.bcpg_lclLabelClaim[0]" as name,
+										doc->>"$.bcpg_lclLabelClaim_becpg_nodeRef[0]" as nodeRef
+									from
+										labelClaimList
+									<#if !isAdmin>	
+									  where doc->>"$.instanceId" = ${instanceId}
+									</#if>
+								</SQL>
+				</View>
+				<Level name="lclLabelClaimName" caption="${msg("jsolap.labelClaim.title")}" table="labelClaimList" column="nodeRef" nameColumn="name" type="String" ></Level>
 			</Hierarchy>
 		</Dimension>
 		
 		
 		<Dimension type="StandardDimension" foreignKey="nodeRef"  name="composition" caption="${msg("jsolap.composition.title")}">
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.composition.caption")}" primaryKeyTable="compoList" primaryKey="entityNodeRef">
-						<View name="compoList" alias="compoList">
+				<View name="compoList" alias="compoList">
 								<SQL dialect="generic">
 									select  a.doc->>"$.entityNodeRef" as entityNodeRef,
 										b.doc->>"$.cm_name" as name,
+										b.doc->>"$.nodeRef" as nodeRef,
 										b.doc->>"$.bcpg_productHierarchy1[0]" as productHierarchy1,
-										b.doc->>"$.bcpg_productHierarchy2[0]" as productHierarchy2
+										b.doc->>"$.bcpg_productHierarchy2[0]" as productHierarchy2,
+										b.doc->>"$.cm_versionLabel" as versionLabel
 									from
 										compoList a left join  bcpg_product b on a.doc->>"$.bcpg_compoListProduct_bcpg_nodeRef[0]" = b.doc->>"$.nodeRef"
 									<#if !isAdmin>	
 									  where a.doc->>"$.instanceId" = ${instanceId} and b.doc->>"$.instanceId"
 									</#if>
 								</SQL>
-							</View>
-			
-			<#--  
-					<Join leftKey="compoListProduct" rightKey="nodeRef">
-						<View name="compoList" alias="compoList">
-								<SQL dialect="generic">
-									select  doc->>"$.entityNodeRef" as entityNodeRef,
-										doc->>"$.bcpg_compoListProduct_bcpg_nodeRef[0]" as compoListProduct,
-										doc->>"$.instanceId" as instanceId
-									from
-										compoList
-									<#if !isAdmin>	
-									  where doc->>"$.instanceId" = ${instanceId}
-									</#if>
-								</SQL>
-							</View>
-							<View name="products" alias="compoListProducts">
-							<SQL dialect="generic">
-								select
-										doc->>"$.nodeRef" as noderef,
-										doc->>"$.cm_name" as name,
-										doc->>"$.bcpg_productHierarchy1[0]" as productHierarchy1,
-										doc->>"$.bcpg_productHierarchy2[0]" as productHierarchy2
-									from
-										bcpg_product
-									<#if !isAdmin>	
-									 where  doc->>"$.instanceId" = ${instanceId}
-									</#if>
-							</SQL>
-						</View>
-					</Join>	
-					-->		
+				</View>
+		
 				<Level name="productHierarchy1" caption="${msg("jsolap.family.title")}" table="compoList" column="productHierarchy1" type="String"   >
 				</Level>
 				<Level name="productHierarchy2" caption="${msg("jsolap.subFamily.title")}" table="compoList" column="productHierarchy2" type="String"   >
 				</Level>
 				<Level name="entity_noderef" caption="${msg("jsolap.component.title")}" table="compoList" column="nodeRef" nameColumn="name" type="String"   >
 				</Level>
+				<Level name="versionLabel" caption="${msg("jsolap.versionLabel.title")}" table="compoList" column="versionLabel" type="String" />
 			</Hierarchy>
 		</Dimension>
 	
 		<Dimension type="StandardDimension" foreignKey="noderef"  name="packaging" caption="${msg("jsolap.packaging.title")}">
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.packaging.caption")}" primaryKeyTable="packagingList" primaryKey="entityNodeRef">
+				<View name="packagingList" alias="packagingList">
+						<SQL dialect="generic">
+							select  a.doc->>"$.entityNodeRef" as entityNodeRef,
+								b.doc->>"$.cm_name" as name,
+								b.doc->>"$.nodeRef" as nodeRef,
+								b.doc->>"$.bcpg_productHierarchy1[0]" as productHierarchy1,
+								b.doc->>"$.bcpg_productHierarchy2[0]" as productHierarchy2,
+								b.doc->>"$.cm_versionLabel" as versionLabel
+							from
+								packagingList a left join  bcpg_product b on a.doc->>"$.bcpg_packagingListProduct_bcpg_nodeRef[0]" = b.doc->>"$.nodeRef"
+							<#if !isAdmin>	
+							  where a.doc->>"$.instanceId" = ${instanceId} and b.doc->>"$.instanceId"
+							</#if>
+						</SQL>
+				</View>
 				
-					<Join leftKey="packagingListProduct" rightKey="noderef">
-							<View name="packagingList" alias="packagingList">
-								<SQL dialect="generic">
-									select  doc->>"$.entityNodeRef" as entityNodeRef,
-										doc->>"$.bcpg_packagingListProduct_bcpg_nodeRef[0]" as packagingListProduct,
-										doc->>"$.instanceId" as instanceId
-									from
-										packagingList
-									<#if !isAdmin>	
-									 where doc->>"$.instanceId" = ${instanceId}
-									</#if>
-										
-								</SQL>
-							</View>
-							<View name="packagingListProducts" alias="packagingListProducts">
-							<SQL dialect="generic">
-								select
-										doc->>"$.nodeRef" as noderef,
-										doc->>"$.cm_name" as name,
-										doc->>"$.bcpg_productHierarchy1[0]" as productHierarchy1,
-										doc->>"$.bcpg_productHierarchy2[0]" as productHierarchy2,
-										doc->>"$.cm_versionLabel" as versionLabel
-									from
-										bcpg_product
-									<#if !isAdmin>	
-									  where doc->>"$.instanceId" = ${instanceId}
-									</#if>
-							</SQL>
-						</View>
-					</Join>				
-				
-				
-				<Level name="productHierarchy1" caption="${msg("jsolap.family.title")}" table="packagingListProducts" column="productHierarchy1" type="String"   >
+				<Level name="productHierarchy1" caption="${msg("jsolap.family.title")}" table="packagingList" column="productHierarchy1" type="String"   >
 				</Level>
-				<Level name="productHierarchy2" caption="${msg("jsolap.subFamily.title")}" table="packagingListProducts" column="productHierarchy2" type="String"   >
+				<Level name="productHierarchy2" caption="${msg("jsolap.subFamily.title")}" table="packagingList" column="productHierarchy2" type="String"   >
 				</Level>
-				<Level name="entity_noderef" caption="${msg("jsolap.packaging.title")}" table="packagingListProducts" column="nodeRef" nameColumn="name" type="String"   >
+				<Level name="entity_noderef" caption="${msg("jsolap.packaging.title")}" table="packagingList" column="nodeRef" nameColumn="name" type="String"   >
 				</Level>
-				<Level name="versionLabel" caption="${msg("jsolap.versionLabel.title")}" table="packagingListProducts" column="versionLabel" type="String" />
+				<Level name="versionLabel" caption="${msg("jsolap.versionLabel.title")}" table="packagingList" column="versionLabel" type="String" />
 			</Hierarchy>
 		</Dimension>
 		
@@ -1385,19 +1287,7 @@
 			</Hierarchy>
 		</Dimension>
 		
-		<Dimension  name="tags" foreignKey="id" caption="${msg("jsolap.tags.title")}" >
-			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.tags.caption")}" primaryKey="entity_fact_id">
-				<#if isAdmin>
-					<Table name="becpg_public_tags" />
-				<#else>
-					<Table name="becpg_public_tags">
-						becpg_public_tags.instanceId = ${instanceId}
-					</Table>
-				</#if>
-				<Level name="tag" caption="${msg("jsolap.tag.title")}" column="tag"  type="String" >
-				</Level>
-			</Hierarchy>
-		</Dimension>
+		<DimensionUsage name="tags" caption="${msg("jsolap.tags.title")}" source="tagsDimension" foreignKey="nodeRef" />
 		
 		<#if isAdmin>
 			<DimensionUsage name="instance" caption="${msg("jsolap.instance.title")}" source="instancesDimension" foreignKey="instanceId" />
