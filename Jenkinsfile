@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('build') {
             steps {
-                sh 'cd becpg-enterprise && mvn -B -DskipTests clean package'
+                sh 'cd becpg-enterprise && mvn -B -DskipTests clean install'
             }
         }
         stage('test') {
