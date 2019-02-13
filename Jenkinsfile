@@ -6,7 +6,12 @@ pipeline {
         }
     }
     stages {
-        stage('build') {
+    	stage('build community') {
+            steps {
+                sh 'mvn -B -DskipTests clean install'
+            }
+        }
+        stage('build enterprise') {
             steps {
                 sh 'cd becpg-enterprise && mvn -B -DskipTests clean install'
             }
