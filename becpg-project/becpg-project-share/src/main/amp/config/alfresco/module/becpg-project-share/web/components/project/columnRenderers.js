@@ -2,16 +2,7 @@
 
 	if (beCPG.module.EntityDataGridRenderers) {
 		
-		
-		function createTextTooltip(msg,size){
-			 var text = msg;
-	    	  if(text!=null && text.length > size){
-	    		  text = Alfresco.util.encodeHTML(text.substring(0,size).trim())+"...";
-	    		  return '<span class="text-tooltip sw" data-tooltip="'+ beCPG.util.encodeAttr(msg) +'"><span>'+text+'</span></span>';
-	    	  }
-	    	 return Alfresco.util.encodeHTML(msg);
-		}
-		
+	
 
 		var $html = Alfresco.util.encodeHTML;
 
@@ -24,7 +15,7 @@
 				   if (data.version && data.version !== "") {
 					   version = '<span class="document-version">' + data.version + '</span>';
 				   }
-				   return '<span class="' + data.metadata + '"><a href="' + url + '">' + createTextTooltip(data.displayValue, 100) + '</a></span>' + version;
+				   return '<span class="' + data.metadata + '"><a href="' + url + '">' + beCPG.util.createTextTooltip(data.displayValue, 100) + '</a></span>' + version;
 			   }
 			   return "";
 		   }
@@ -55,18 +46,11 @@
 		YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		   propertyName : "cm:name",
 		   renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) { 
-			   return scope.getProjectTitleV2(oRecord.getData(),scope.options.columnFormId != "datagrid-simple",100);
+			   return scope.getProjectTitleV2(oRecord.getData(),scope.options.columnFormId != "datagrid-simple",oColumn);
 		   }
 		});
 		
 		
-	    YAHOO.Bubbling.fire("registerDataGridRenderer", {
-		      propertyName : ["text","cm:description"],
-		      renderer : function(oRecord, data, label, scope) {
-		    	  return createTextTooltip(data.value,100);
-		      }
-		  });
-	    
 
 	   YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		   propertyName : "pjt:taskList",

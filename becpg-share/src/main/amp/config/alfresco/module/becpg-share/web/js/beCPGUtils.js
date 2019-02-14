@@ -159,6 +159,17 @@
         }       
     };
     
+	
+    beCPG.util.createTextTooltip = function (msg,size){
+		 var text = msg;
+    	  if(text!=null && text.length > size){
+    		  text = Alfresco.util.encodeHTML(text.substring(0,size).trim())+"...";
+    		  return '<span class="text-tooltip sw" data-tooltip="'+ beCPG.util.encodeAttr(msg) +'"><span>'+text+'</span></span>';
+    	  }
+    	 return Alfresco.util.encodeHTML(msg);
+	}
+	
+    
     beCPG.util.encodeAttr = function(text, justified)
     {
        if (text === null || typeof text == "undefined")

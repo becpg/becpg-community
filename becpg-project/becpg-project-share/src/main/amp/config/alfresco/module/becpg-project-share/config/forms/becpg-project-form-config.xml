@@ -375,7 +375,7 @@
 					<!-- <field id="dataList_pjt:deliverableList" label-id="becpg.forms.field.projects.datagrid.deliverableList.label" 
 						/> -->
 					<field id="cm:name"
-						 read-only="true" />
+						 read-only="true" help="{maxAutoWidth:100,resizeable:true,minWidth:150,pattern:&quot;{bcpg:code} - {cm:name}&quot;}" />
 					<field id="pjt:projectOverdue"
 						 read-only="true"  label="hidden" />
 					<field id="pjt:projectCompletionDate"

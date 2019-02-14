@@ -237,19 +237,29 @@
 							   try {
 								   if (scope.renderers.hasOwnProperty(p_type + "_" + p_label)
 								         && typeof scope.renderers[p_type + "_" + p_label] === "function") {
-								   	ret = scope.renderers[p_type + "_" + p_label].call(scope, oRecord, data, p_label,
+								   		ret = scope.renderers[p_type + "_" + p_label].call(scope, oRecord, data, p_label,
 									         datagrid, i, ii, elCell, oColumn);
 								   } else if (scope.renderers.hasOwnProperty(p_label)
 									         && typeof scope.renderers[p_label] === "function") {
 									   	ret = scope.renderers[p_label].call(scope, oRecord, data, p_label, datagrid, i, ii, elCell, oColumn);
 								   } else if (scope.renderers.hasOwnProperty(p_type)
 								         && typeof scope.renderers[p_type] === "function") {
-								   	ret = scope.renderers[p_type].call(scope, oRecord, data, p_label, datagrid, i, ii, elCell, oColumn);
-								   } else {
-								   	ret = $links($html(data.displayValue));
-								   }
+								   		ret = scope.renderers[p_type].call(scope, oRecord, data, p_label, datagrid, i, ii, elCell, oColumn);
+								   } else {  
+									 var text = data.displayValue;
+									   
+									if(!oColumn.encodeHtml || oColumn.encodeHtml == true){
+									   text =  $html(text); 
+									}
+									   
+									if(oColumn.tooltip){
+										ret = beCPG.util.createTextTooltip($links(text),oColumn.tooltip);
+									} else { 
+									   	ret = $links(text);
+									}   
+								  }
 							   } catch(e){
-								   console.log(e);
+								   console.log("Error in column renderer:"+e);
 							   }
 
 							   if (isArray) {

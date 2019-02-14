@@ -110,15 +110,17 @@
 }
 
 
-.project-list  .yui-dt-col-prop_cm_name, 
+/*.project-list  .yui-dt-col-prop_cm_name, 
 .project-list  .yui-dt-col-dt_pjt_taskList  {
 	min-width: 265px;
 }
+*/
 
+/*
 .project-list  .yui-dt-col-prop_pjt_projectOverdue {
 	min-width: 90px;
 }
-
+*/
 
 .project-list .projects .yui-dt-data .yui-dt-last td {
 	border-bottom: medium none;

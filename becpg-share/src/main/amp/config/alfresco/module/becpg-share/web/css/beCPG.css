@@ -634,25 +634,25 @@ span.resourceProduct-Refused {
 }
 
 span.finishedProduct-Stopped {
-    background-image: url("../../components/images/states/archived-10.png") , url("../../components/images/filetypes/generic-finishedProduct-16.png") !important
+    background-image: url("../../components/images/states/stopped-10.png") , url("../../components/images/filetypes/generic-finishedProduct-16.png") !important
 }
 span.localSemiFinishedProduct-Stopped {
-    background-image: url("../../components/images/states/archived-10.png") , url("../../components/images/filetypes/generic-localSemiFinishedProduct-16.png") !important
+    background-image: url("../../components/images/states/stopped-10.png") , url("../../components/images/filetypes/generic-localSemiFinishedProduct-16.png") !important
 }
 span.packagingKit-Stopped {
-    background-image: url("../../components/images/states/archived-10.png") , url("../../components/images/filetypes/generic-packagingKit-16.png") !important
+    background-image: url("../../components/images/states/stopped-10.png") , url("../../components/images/filetypes/generic-packagingKit-16.png") !important
 }
 span.packagingMaterial-Stopped {
-    background-image: url("../../components/images/states/archived-10.png") , url("../../components/images/filetypes/generic-packagingMaterial-16.png") !important
+    background-image: url("../../components/images/states/stopped-10.png") , url("../../components/images/filetypes/generic-packagingMaterial-16.png") !important
 }
 span.rawMaterial-Stopped {
-    background-image: url("../../components/images/states/archived-10.png") , url("../../components/images/filetypes/generic-rawMaterial-16.png") !important
+    background-image: url("../../components/images/states/stopped-10.png") , url("../../components/images/filetypes/generic-rawMaterial-16.png") !important
 }
 span.semiFinishedProduct-Stopped {
-    background-image: url("../../components/images/states/archived-10.png") , url("../../components/images/filetypes/generic-semiFinishedProduct-16.png") !important
+    background-image: url("../../components/images/states/stopped-10.png") , url("../../components/images/filetypes/generic-semiFinishedProduct-16.png") !important
 }
 span.resourceProduct-Stopped {
-    background-image: url("../../components/images/states/archived-10.png") , url("../../components/images/filetypes/generic-resourceProduct-16.png") !important
+    background-image: url("../../components/images/states/stopped-10.png") , url("../../components/images/filetypes/generic-resourceProduct-16.png") !important
 }
 
 
