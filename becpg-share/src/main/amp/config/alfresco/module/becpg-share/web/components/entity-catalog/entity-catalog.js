@@ -319,9 +319,10 @@
 								}
 							}
 							
-							if(true === response.json.formulated){
+							/* if(true === response.json.formulated){
+							 *  ML find another way to refresh form 
 							   YAHOO.Bubbling.fire("metadataRefresh");
-							}
+							} */
 							
 						}
 						YAHOO.util.Dom.removeClass(formulateButton, "loading");
