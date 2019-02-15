@@ -57,6 +57,9 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 	private static final String TARGET_PATH = "targetPath";
 	private static final String ENTITYV2_SUBTYPE = "isEntityV2SubType";
 	
+	private static final String separator = "\\-";
+	private static final SimpleDateFormat formatter = new SimpleDateFormat("yyyy" + separator + "MM" + separator + "dd");
+	
 
 	@Autowired
 	private NodeService nodeService;
@@ -147,6 +150,7 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 			case Equals : // date = NOW + X
 				date.add(Calendar.DATE, notification.getDays());
 				fromQuery = formatDate(date);
+				toQuery = fromQuery;
 				break;
 			}
 
@@ -244,12 +248,12 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 		Map<String, NodeRef> ret = new HashMap<>();
 		    if(versionService.getVersionHistory(item) != null){
 		    	versionService.getVersionHistory(item).getAllVersions().forEach((version)-> {
-		    		Date createDate = (Date) nodeService.getProperty(version.getFrozenStateNodeRef(), ContentModel.PROP_CREATED);
-		    		if(version.getVersionType().toString().equals(versionType.toString()) && !version.getVersionLabel().equals("1.0") && createDate.after(from) && createDate.before(to)){
+		    		Date createDate = version.getFrozenModifiedDate();
+		    		if(version.getVersionType().toString().equals(versionType.toString()) && !version.getVersionLabel().equals("1.0") 
+		    				&& (from.equals(to) ? formatter.format(createDate).equals(formatter.format(from)) : (createDate.after(from) && createDate.before(to)))){
 		    			ret.put(version.getVersionLabel() + "|" + version.getDescription(), version.getFrozenStateNodeRef());
 		    		}
-		    	}
-		    			);
+		    	});
 		    }
 		return ret;
 	}
@@ -285,8 +289,6 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 		}else if (strDate.equals("NOW")){
 			date = new Date();
 		}else if(strDate != null){
-			String separator = "\\-";
-			SimpleDateFormat formatter = new SimpleDateFormat("yyyy" + separator + "MM" + separator + "dd");
 			try {
 				date = formatter.parse(strDate);
 			} catch (ParseException e) {
