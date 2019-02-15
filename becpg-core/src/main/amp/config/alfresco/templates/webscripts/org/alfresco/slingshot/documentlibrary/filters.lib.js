@@ -180,8 +180,9 @@ var Filters =
             filterParams.query = filterQuery;
             break;
          case "Simulation":
- 			case "ToValidate":
- 			case "Valid":         
+ 		 case "ToValidate":
+ 		 case "Valid":
+ 		 case "Stopped":
          case "Refused":
          case "Archived":
          	filterQuery += this.constructPathQuery(parsedArgs);

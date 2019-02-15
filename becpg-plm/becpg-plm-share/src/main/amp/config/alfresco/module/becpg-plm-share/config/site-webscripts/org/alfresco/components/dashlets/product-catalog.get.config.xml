@@ -1,10 +1,11 @@
 <config>
    <max-items>25</max-items>
    <filters>
-   	<filter type="Simulation" />
-   	<filter type="ToValidate" />
+      <filter type="Simulation" />
+   	  <filter type="ToValidate" />
       <filter type="Valid" />
       <filter type="Refused" />
+      <filter type="Stopped" />
       <filter type="Archived" />
       <filter type="all" />
       <filter type="favourites" />

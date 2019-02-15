@@ -237,19 +237,24 @@
 							   try {
 								   if (scope.renderers.hasOwnProperty(p_type + "_" + p_label)
 								         && typeof scope.renderers[p_type + "_" + p_label] === "function") {
-								   	ret = scope.renderers[p_type + "_" + p_label].call(scope, oRecord, data, p_label,
+								   		ret = scope.renderers[p_type + "_" + p_label].call(scope, oRecord, data, p_label,
 									         datagrid, i, ii, elCell, oColumn);
 								   } else if (scope.renderers.hasOwnProperty(p_label)
 									         && typeof scope.renderers[p_label] === "function") {
 									   	ret = scope.renderers[p_label].call(scope, oRecord, data, p_label, datagrid, i, ii, elCell, oColumn);
 								   } else if (scope.renderers.hasOwnProperty(p_type)
 								         && typeof scope.renderers[p_type] === "function") {
-								   	ret = scope.renderers[p_type].call(scope, oRecord, data, p_label, datagrid, i, ii, elCell, oColumn);
-								   } else {
-								   	ret = $links($html(data.displayValue));
-								   }
+								   		ret = scope.renderers[p_type].call(scope, oRecord, data, p_label, datagrid, i, ii, elCell, oColumn);
+								   } else {  
+						
+									if(oColumn.tooltip){
+										ret = beCPG.util.createTextTooltip(data.displayValue,oColumn.tooltip);
+									} else { 
+									   	ret = $links($html(data.displayValue));
+									}   
+								  }
 							   } catch(e){
-								   console.log(e);
+								   console.log("Error in column renderer:"+p_type+" - "+p_label+" error "+e);
 							   }
 
 							   if (isArray) {

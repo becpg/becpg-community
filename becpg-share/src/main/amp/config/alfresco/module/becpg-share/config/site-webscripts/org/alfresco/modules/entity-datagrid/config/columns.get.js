@@ -289,6 +289,11 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId) {
 							: formConfig.fields[fieldId].labelId;
 				}
 				
+				if (formConfig.fields[fieldId].getHelpText() != null) {
+					column.help = formConfig.fields[fieldId].getHelpText();
+				}
+				
+				
 				column.columns = getColumns(name + "", "sub-datagrid");
 
 				ret.push(column);
@@ -305,6 +310,11 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId) {
 					column.label = formConfig.fields[fieldId].label != null ? formConfig.fields[fieldId].label
 							: formConfig.fields[fieldId].labelId;
 				}
+				
+				if (formConfig.fields[fieldId].getHelpText() != null) {
+					column.help = formConfig.fields[fieldId].getHelpText();
+				}
+
 				
 				
 				if (formIdArgs != null) {
@@ -323,6 +333,10 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId) {
 							columns[j].label = formConfig.fields[fieldId].label != null ? formConfig.fields[fieldId].label
 									: formConfig.fields[fieldId].labelId;
 						}
+						
+						if (formConfig.fields[fieldId].getHelpText() != null) {
+							columns[j].help = formConfig.fields[fieldId].getHelpText();
+						} 
 
 						columns[j].readOnly = formConfig.fields[fieldId].isReadOnly();
 						

@@ -180,9 +180,10 @@ var Filters =
             filterQuery += " +@cm\\:lockType:\"WRITE_LOCK\"))";
             filterParams.query = filterQuery;
             break; 			
- 			case "Simulation":
- 			case "ToValidate":
- 			case "Valid":         
+ 		 case "Simulation":
+ 		 case "ToValidate":
+ 		 case "Stopped":	 
+ 		 case "Valid":         
          case "Refused":
          case "Archived":
          	filterQuery += this.constructPathQuery(parsedArgs);

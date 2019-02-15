@@ -1348,23 +1348,43 @@
                                 if (this.options.hiddenColumns.length < 1 || !beCPG.util.contains(
                                         this.options.hiddenColumns, key))
                                 {
-                                    columnDefinitions.push(
-                                    {
-                                        key : key,
-                                        label : column.label == "hidden" ? "" : column.label,
-                                       hidden : column.label == "hidden" || (beCPG.util.contains(
-                                                this.options.hiddenOnlyColumns, key)),
-                                     
-                                        sortable : (column.type == "property"),
-                                        sortOptions :
-                                        {
-                                            field : column.formsName,
-                                            sortFunction : this.rendererHelper.getSortFunction()
-                                        },
-                                        formatter : this.rendererHelper.getCellFormatter(this),
-                                        editor : this.options.saveFieldUrl != null ? this.rendererHelper.getCellEditor(
-                                                this, column, this.options.saveFieldUrl) : null
-                                    });
+                             
+                                	
+                                	var colDef = {
+                                            key : key,
+                                            label : column.label == "hidden" ? "" : column.label,
+                                            hidden : column.label == "hidden" || (beCPG.util.contains(
+                                                    this.options.hiddenOnlyColumns, key)),
+                                            sortable : (column.type == "property"),
+                                            sortOptions :
+                                            {
+                                                field : column.formsName,
+                                                sortFunction : this.rendererHelper.getSortFunction()
+                                            },
+                                            formatter : this.rendererHelper.getCellFormatter(this),
+                                            editor : this.options.saveFieldUrl != null ? this.rendererHelper.getCellEditor(
+                                                    this, column, this.options.saveFieldUrl) : null
+                                        };
+                                	
+                                	if(column.options!=null ){
+                                		try {
+	                                		var joptions = YAHOO.lang.JSON.parse(
+	                                				column.options);
+	                                		/* Syntax example
+	                                			{maxAutoWidth:100,resizeable:true,minWidth:150}
+	                                		*/
+	                                		if(joptions){
+		                                		for(var key in joptions) {
+		                                			colDef[key] = joptions[key];
+		                                		}
+	                                		}
+                                		} catch(e){
+                                			console.log("ERROR cannot parse options: "+column.options)
+                                		}
+                                	}
+                                	
+                                	
+                                    columnDefinitions.push(colDef);
                                 }
                             }
                             
