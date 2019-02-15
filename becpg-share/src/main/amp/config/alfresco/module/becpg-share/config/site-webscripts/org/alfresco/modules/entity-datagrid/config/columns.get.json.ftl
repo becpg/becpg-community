@@ -14,13 +14,16 @@
          <#else>
          "label": "",
          </#if>
+         <#if col.help??>
+          "options": "${jsonUtils.encodeJSONString(col.help)}",
+         </#if>
          <#if col.mandatory??>
          "mandatory": ${col.mandatory?string},
          </#if>
          <#if col.readOnly??>
-        	"readOnly": ${col.readOnly?string},
+          "readOnly": ${col.readOnly?string},
          </#if>
-         	 <#if col.protectedField??>
+          <#if col.protectedField??>
          "protectedField": ${col.protectedField?string},
       	 </#if>
       <#if col.dataType??>

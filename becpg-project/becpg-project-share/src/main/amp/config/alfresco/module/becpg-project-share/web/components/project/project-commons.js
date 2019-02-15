@@ -471,27 +471,35 @@
          return ret;
       },
       
-      getProjectTitleV2 : function PL_getProjectTitle(record, full, size) {
+      getProjectTitleV2 : function PL_getProjectTitle(record, full, oColumn) {
     	  
           var propertiesUrl = null, dataListUrl = null, version = "";
 
           var title = record.itemData["prop_cm_name"].displayValue, code = record.itemData["prop_bcpg_code"].displayValue, 
           overdue = '', ret = "", state = record.itemData["prop_pjt_projectState"].value;
 
+          var size = oColumn.tooltip!=null ? oColumn.tooltip : 100;
+          
+          var displayTitle = code + "-" + $html(title);
+          
+          if(oColumn.pattern!=null){
+        	  //TODO Do it better
+        	  displayTitle=oColumn.pattern.replace("{cm:name}",$html(title)).replace("{bcpg:code}",code);
+          }
           
           var light = "light";
           if(full){
         	  light="full"; 
           }
           
-          if(size && title!=null && title.length>size){
-    		  ret += '<span class="project-title text-tooltip se '+light+' project-status-'+state+'" data-tooltip="'+ beCPG.util.encodeAttr(title)+'" >';
-    		  title = Alfresco.util.encodeHTML(title.substring(0,size).trim())+"...";
+          if(size && displayTitle!=null && displayTitle.length>size){
+    		  ret += '<span class="project-title text-tooltip se '+light+' project-status-'+state+'" data-tooltip="'+ beCPG.util.encodeAttr(displayTitle)+'" >';
+    		  displayTitle = Alfresco.util.encodeHTML(displayTitle.substring(0,size).trim())+"...";
     	  } else {
     	    	ret += '<span class="project-title '+light+' project-status-'+state+'"  >';
       	  }
           
-          ret += '<a class="theme-color-1" href="' + beCPG.util.entityURL(record.siteId, record.nodeRef,"pjt:project") + '" >' + code + "-" + $html(title) + 
+          ret += '<a class="theme-color-1" href="' + beCPG.util.entityURL(record.siteId, record.nodeRef,"pjt:project") + '" >' + displayTitle + 
             '</a>' ;
           
           ret += '<span class="node-' + record.nodeRef +'">';

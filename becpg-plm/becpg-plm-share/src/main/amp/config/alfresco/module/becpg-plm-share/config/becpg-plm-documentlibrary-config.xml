@@ -105,6 +105,10 @@
 				<evaluator>evaluator.becpg.doclib.indicator.entity.archived</evaluator>
 			</indicator>
 			
+			<indicator id="entity-stopped" index="10">
+				<evaluator>evaluator.becpg.doclib.indicator.entity.stopped</evaluator>
+			</indicator>
+			
 			<!-- ECM -->
 			<indicator id="ecm-automatic"  index="15">
 				<evaluator>evaluator.becpg.doclib.indicator.ecm.automatic</evaluator>

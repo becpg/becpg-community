@@ -192,5 +192,13 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 			</bean>
 		</property>
 	</bean>	
+	<bean id="evaluator.becpg.doclib.indicator.entity.stopped" parent="evaluator.doclib.action.value">
+		<property name="accessor" value="node.properties.bcpg:productState" />
+		<property name="comparator">
+			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+				<property name="value" value="Stopped" />
+			</bean>
+		</property>
+	</bean>
 	
 </beans>
