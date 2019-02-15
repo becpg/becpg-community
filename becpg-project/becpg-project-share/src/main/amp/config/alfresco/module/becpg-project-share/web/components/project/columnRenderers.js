@@ -1,21 +1,25 @@
 (function() {
 
 	if (beCPG.module.EntityDataGridRenderers) {
-		
 	
 
 		var $html = Alfresco.util.encodeHTML;
 
 		YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		   propertyName : [ "pjt:projectEntity", "pjt:parentProjectRef" ],
-		   renderer : function(oRecord, data, label, scope) {
+		   renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
 			   if(data.value!=null){
 				   var url = beCPG.util.entityURL(data.siteId, data.value), version = "";
 	
+				   var size = 100;
+				   if(oColumn.tooltip){
+					   size = oColumn.tooltip;
+				   }
+				   
 				   if (data.version && data.version !== "") {
 					   version = '<span class="document-version">' + data.version + '</span>';
 				   }
-				   return '<span class="' + data.metadata + '"><a href="' + url + '">' + beCPG.util.createTextTooltip(data.displayValue, 100) + '</a></span>' + version;
+				   return '<span class="' + data.metadata + '"><a href="' + url + '">' + beCPG.util.createTextTooltip(data.displayValue, size) + '</a></span>' + version;
 			   }
 			   return "";
 		   }
@@ -54,11 +58,17 @@
 
 	   YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		   propertyName : "pjt:taskList",
-		   renderer : function(oRecord, data, label, scope, idx, length) {
+		   renderer : function(oRecord, data, label, scope, idx, length, elCell, oColumn) {
 			   var oData = oRecord.getData();
 			   if(data["itemData"]){
 				  
 				   if (idx == 0) {
+					   
+					   var size = 100;
+					   if(oColumn.tooltip){
+						   size = oColumn.tooltip;
+					   }
+					   
 					   var tasks = oRecord.getData("itemData")["dt_pjt_taskList"];
 
 					   var moreTasksHtlm = "";
@@ -76,7 +86,7 @@
 						 	if(count>4){
 						   		moreTasksHtlm += "<li "+padding+">" + scope.getTaskTitle(task, oData.nodeRef,true) + "</li>";
 						   	} else {
-						   		taskHtlm += "<li "+padding+">" + scope.getTaskTitle(task, oData.nodeRef,true,100) + "</li>";
+						   		taskHtlm += "<li "+padding+">" + scope.getTaskTitle(task, oData.nodeRef,true,size) + "</li>";
 						   	}
 					   }
 					   taskHtlm += "</ul>";

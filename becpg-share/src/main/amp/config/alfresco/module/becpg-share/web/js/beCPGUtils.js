@@ -31,7 +31,7 @@
     /**
      * Alfresco Slingshot aliases
      */
-    var $siteURL = Alfresco.util.siteURL;
+    var $siteURL = Alfresco.util.siteURL, $html = Alfresco.util.encodeHTML, $links = Alfresco.util.activateLinks;
 
     beCPG.util.incLockCount = function (){
     	return ++lockCount;
@@ -162,11 +162,24 @@
 	
     beCPG.util.createTextTooltip = function (msg,size){
 		 var text = msg;
-    	  if(text!=null && text.length > size){
-    		  text = Alfresco.util.encodeHTML(text.substring(0,size).trim())+"...";
-    		  return '<span class="text-tooltip sw" data-tooltip="'+ beCPG.util.encodeAttr(msg) +'"><span>'+text+'</span></span>';
+    	  if(text!=null && (text.length > size || text.split(/\r\n|\r|\n/).length > (size/25))){
+    		  var length = 0;
+    		  for(var i = 0; i < text.length; ++i){
+    		      if(text[i] == '\n') {
+    		    	  length = length+25;
+    		      } else if(text[i] == '\r') {
+    		    	  length = length+4;
+    		      }
+    		      length++;
+    		      
+    		      if(length>size){
+    		    	  text = text.substring(0,i-1).trim()+"...";
+    		    	  break;
+    		      }
+    		  }
+    		  return '<div class="dt-tooltip">'+$links($html(text))+'<span class="dt-tooltip-content">'+$links($html(msg))+'</span></div>';
     	  }
-    	 return Alfresco.util.encodeHTML(msg);
+    	 return $links($html(msg));
 	}
 	
     
