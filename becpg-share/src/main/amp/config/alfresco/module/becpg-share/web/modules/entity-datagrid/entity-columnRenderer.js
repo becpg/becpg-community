@@ -246,20 +246,15 @@
 								         && typeof scope.renderers[p_type] === "function") {
 								   		ret = scope.renderers[p_type].call(scope, oRecord, data, p_label, datagrid, i, ii, elCell, oColumn);
 								   } else {  
-									 var text = data.displayValue;
-									   
-									if(!oColumn.encodeHtml || oColumn.encodeHtml == true){
-									   text =  $html(text); 
-									}
-									   
+						
 									if(oColumn.tooltip){
-										ret = beCPG.util.createTextTooltip($links(text),oColumn.tooltip);
+										ret = beCPG.util.createTextTooltip(data.displayValue,oColumn.tooltip);
 									} else { 
-									   	ret = $links(text);
+									   	ret = $links($html(data.displayValue));
 									}   
 								  }
 							   } catch(e){
-								   console.log("Error in column renderer:"+e);
+								   console.log("Error in column renderer:"+p_type+" - "+p_label+" error "+e);
 							   }
 
 							   if (isArray) {

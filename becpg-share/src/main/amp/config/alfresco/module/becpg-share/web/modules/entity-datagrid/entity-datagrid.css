@@ -624,3 +624,63 @@ div.filterButtonsBar {
 
 
 
+/* Tooltip */
+
+div.dt-tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+div.dt-tooltip span.dt-tooltip-content {
+  visibility: hidden;
+	
+   opacity: 0;
+   z-index: 98;
+  -moz-transition: opacity 300ms, visibility 0ms linear 300ms;
+  -o-transition: opacity 300ms, visibility 0ms linear 300ms;
+  -webkit-transition: opacity 300ms, visibility 0ms linear;
+  -webkit-transition-delay: 0s, 300ms;
+  transition: opacity 300ms, visibility 0ms linear 300ms;
+  pointer-events: none;
+ 
+  width: 300px;
+  padding: 10px 15px;
+  line-height: 18px;
+  text-align: left;
+  font-size: 13px;
+  font-weight: normal;
+  white-space: normal;
+  word-break: break-word;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+  border-radius: 3px;
+  background-color: #2c3e50;
+  color: #fff;
+ 
+  position: absolute;
+	 top: 80%;
+  left: 50%;
+  margin-left: -60px; 
+}
+
+
+div.dt-tooltip:hover span.dt-tooltip-content {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: all;
+  -moz-transition-delay: 0ms;
+  -o-transition-delay: 0ms;
+  -webkit-transition-delay: 0ms;
+  transition-delay: 0ms;
+}
+
+
+div.dt-tooltip span.dt-tooltip-content::after {
+   content: " ";
+  position: absolute;
+  bottom: 100%;  
+  left: 50%;
+  margin-left: -10px;
+  border-width: 6px;
+  border-style: solid;
+  border-color: transparent transparent #2c3e50 transparent;
+}
