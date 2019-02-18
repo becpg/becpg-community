@@ -131,10 +131,12 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 
 			for (PackagingListDataItem packagingListDataItem : formulatedProduct
 					.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
-				Double qty = (FormulationHelper.getQtyForCostByPackagingLevel(formulatedProduct, packagingListDataItem, nodeService)
-						/ FormulationHelper.getNetQtyForCost(formulatedProduct)) * subQuantity;
+			
 
 				ProductData packagingListDataItemProduct = (ProductData) alfrescoRepository.findOne(packagingListDataItem.getProduct());
+				
+				Double qty = (FormulationHelper.getQtyForCostByPackagingLevel(formulatedProduct, packagingListDataItem, packagingListDataItemProduct)
+						/ FormulationHelper.getNetQtyForCost(formulatedProduct)) * subQuantity;
 				
 				visitPart(formulatedProduct.getNodeRef(), packagingListDataItemProduct, ret, qty, qty, netQty, netQty , currLevel, unitProvider);
 

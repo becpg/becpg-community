@@ -110,21 +110,19 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 			formulatedProduct.getExtraProperties().put(GS1Model.PROP_TERTIARY_NET_WEIGHT, formulatedProduct.getNetWeightTertiary());
 		}
 
-		
-		if(formulatedProduct.getUnit()!=null && formulatedProduct.getUnit().isLb()) {
+		if ((formulatedProduct.getUnit() != null) && formulatedProduct.getUnit().isLb()) {
 			formulatedProduct.setTareUnit(TareUnit.lb);
 			Double tareInLb = ProductUnit.kgToLb(tarePrimary.doubleValue());
-			if(tareInLb < 1) {
+			if (tareInLb < 1) {
 				tareInLb = ProductUnit.lbToOz(tareInLb);
 				formulatedProduct.setTareUnit(TareUnit.oz);
 			}
-			
-			
+
 			formulatedProduct.setTare(tareInLb);
 		} else {
-		
+
 			formulatedProduct.setTareUnit(TareUnit.kg);
-	
+
 			if (tarePrimary.doubleValue() < 1) {
 				tarePrimary = tarePrimary.multiply(new BigDecimal(1000d));
 				formulatedProduct.setTareUnit(TareUnit.g);
@@ -139,7 +137,9 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 		BigDecimal totalTare = new BigDecimal(0d);
 		for (CompoListDataItem compoList : formulatedProduct
 				.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
-			totalTare = totalTare.add(FormulationHelper.getTareInKg(compoList, alfrescoRepository));
+			if (compoList.getProduct() != null) {
+				totalTare = totalTare.add(FormulationHelper.getTareInKg(compoList, alfrescoRepository.findOne(compoList.getProduct())));
+			}
 		}
 		return totalTare;
 	}
