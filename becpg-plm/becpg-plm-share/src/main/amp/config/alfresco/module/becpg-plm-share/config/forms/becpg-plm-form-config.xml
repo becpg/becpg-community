@@ -159,9 +159,13 @@
 					<show id="bcpg:netWeight" force="true" />
 					<show id="bcpg:productDensity" />
 					<show id="bcpg:productLossPerc" />
-					<show id="bcpg:servingSize" force="true" />
 					<show id="bcpg:netVolume" force="true" />
+					<show id="bcpg:servingSize" force="true" />
+					<show id="bcpg:servingSizeUnit" force="true" />
+					<show id="bcpg:servingSizeText" force="true" />
 					<show id="bcpg:numberOfServings" force="true" />
+				
+					
 					<show id="bcpg:productSpecifications" />
 
 					<!-- Profitability -->
@@ -421,17 +425,23 @@
 				
 					<field id="bcpg:productDensity" set="formulation" read-only="true" />
 					<field id="bcpg:productLossPerc" set="formulation" />
-					<field id="bcpg:servingSize" help-id="becpg.forms.help.servingSize" set="formulation" />
 					<field id="bcpg:netVolume" help-id="becpg.forms.help.netVolume" set="formulation" >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">L</control-param>
 						</control>
 					</field>
+					<field id="bcpg:servingSize" help-id="becpg.forms.help.servingSize" set="formulation" />
+					<field id="bcpg:servingSizeUnit" set="formulation" />
+					<field id="bcpg:servingSizeText" set="formulation"  >
+					  <control
+							template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
 					<field id="bcpg:numberOfServings" help-id="becpg.forms.help.numberOfServings" set="formulation" >
 					  <control
 							template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
+					
 					<field id="bcpg:productSpecifications" help-id="becpg.forms.help.productSpecifications" set="formulation">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -637,6 +647,7 @@
 					<show id="bcpg:netWeight" force="true" />
 					<show id="bcpg:netVolume" force="true" />
 					<show id="bcpg:servingSize" force="true" />
+					<show id="bcpg:servingSizeUnit" force="true" />
 					<show id="bcpg:preparationTips" force="true" />
 					<show id="bcpg:productSpecifications" />
 					<show id="bcpg:compareWithEntities" force="true" />
@@ -646,7 +657,7 @@
 					<field id="bcpg:productQty" />
 					<field id="bcpg:productUnit">
 						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
-							<control-param name="options">kg,g,lb,oz,L,cL,mL,gal,cp,fl_oz,,P|becpg.forms.field.productUnit
+							<control-param name="options">kg,g,lb,oz,L,cL,mL,gal,cp,fl_oz,P|becpg.forms.field.productUnit
 							</control-param>
 						</control>
 					</field>
@@ -750,6 +761,8 @@
 			<form id="nutList">
 				<field-visibility>
 					<show id="bcpg:servingSize" force="true"/>
+					<show id="bcpg:servingSizeUnit" force="true" />
+					<show id="bcpg:servingSizeText" force="true" />
 					<show id="bcpg:numberOfServings" force="true" />
 					<show id="bcpg:nutrientProfilingScore" force="true" for-mode="view"/>
 					<show id="bcpg:nutrientProfilingClass" force="true" for-mode="view"/>
@@ -757,7 +770,15 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:servingSize" help-id="becpg.forms.help.servingSize"  />
-					<field id="bcpg:numberOfServings" help-id="becpg.forms.help.numberOfServings"  />
+					<field id="bcpg:servingSizeUnit"  />
+					<field id="bcpg:servingSizeText" >
+					  <control
+							template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:numberOfServings" help-id="becpg.forms.help.numberOfServings"  >
+					  <control
+							template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
 					<field id="bcpg:nutrientProfilingScore"  />
 					<field id="bcpg:nutrientProfilingClass"  >
 						<control template="/org/alfresco/components/form/controls/nutrient-class.ftl" />
@@ -1090,10 +1111,15 @@
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:netWeight" force="true" />
-					<show id="bcpg:servingSize" force="true" />
-					<show id="bcpg:numberOfServings" force="true" />
-					<show id="bcpg:netVolume" force="true" />
+					<show id="bcpg:productLossPerc" force="true"/>
 					<show id="bcpg:productSpecifications" />
+					<show id="bcpg:netVolume" force="true" />
+					<show id="bcpg:servingSize" force="true" />
+					<show id="bcpg:servingSizeUnit" force="true" />
+					<show id="bcpg:servingSizeText" force="true" />
+					<show id="bcpg:numberOfServings" force="true" />
+					
+					
 					
 
 					<!-- Profitability -->
@@ -1254,18 +1280,8 @@
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">kg</control-param>
 						</control>
-					</field>				
-					<field id="bcpg:servingSize" set="formulation" />
-					<field id="bcpg:numberOfServings" help-id="becpg.forms.help.numberOfServings" set="formulation" >
-					  <control
-							template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
-					<field id="bcpg:netVolume" help-id="becpg.forms.help.netVolume" set="formulation" >
-						<control
-							template="/org/alfresco/components/form/controls/number-unit.ftl">
-							<control-param name="unit">L</control-param>
-						</control>
-					</field>			
+					<field id="bcpg:productLossPerc" set="formulation" />
 					<field id="bcpg:productSpecifications" set="formulation">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -1274,6 +1290,24 @@
 							<control-param name="style">width:200px</control-param>
 						</control>
 					</field>
+					<field id="bcpg:netVolume" help-id="becpg.forms.help.netVolume" set="formulation" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">L</control-param>
+						</control>
+					</field>							
+					<field id="bcpg:servingSize" help-id="becpg.forms.help.servingSize"  set="formulation" />
+					<field id="bcpg:servingSizeUnit" set="formulation" />
+					<field id="bcpg:servingSizeText" set="formulation" >
+					  <control
+							template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:numberOfServings" help-id="becpg.forms.help.numberOfServings" set="formulation" >
+					  <control
+							template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					
+					
 
 					<!-- profitability -->
 					<field id="bcpg:unitPrice" help-id="becpg.forms.help.unitPrice" set="profitability" />
@@ -1309,6 +1343,7 @@
 					<show id="bcpg:netWeight" force="true" />
 					<show id="bcpg:netVolume" force="true" />
 					<show id="bcpg:servingSize" force="true" />
+					<show id="bcpg:servingSizeUnit" force="true" />
 					<show id="bcpg:entityTplRef" force="true" />
 				</field-visibility>
 				<appearance>
@@ -3892,6 +3927,7 @@
 					<show id="bcpg:productDensity" />
 					<show id="bcpg:productLossPerc" />
 					<show id="bcpg:servingSize" force="true" />
+					<show id="bcpg:servingSizeUnit" force="true" />
 					<show id="bcpg:productSpecifications" />
 
 					<!-- Consumer -->
@@ -4009,7 +4045,8 @@
 					</field>
 					<field id="bcpg:productDensity" set="formulation"  read-only="true"/>
 					<field id="bcpg:productLossPerc" set="formulation" />
-					<field id="bcpg:servingSize" set="formulation" />
+					<field id="bcpg:servingSize" help-id="becpg.forms.help.servingSize"  set="formulation" />
+					<field id="bcpg:servingSizeUnit" set="formulation" />
 					<field id="bcpg:productSpecifications" set="formulation">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -4145,6 +4182,7 @@
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:netWeight" force="true" />
 					<show id="bcpg:servingSize" force="true" />
+					<show id="bcpg:servingSizeUnit" force="true" />
 					<show id="bcpg:preparationTips" force="true" />
 					<show id="bcpg:productSpecifications" />
 					<show id="bcpg:compareWithEntities" force="true" />
@@ -4238,6 +4276,8 @@
 			<form id="nutList">
 				<field-visibility>
 					<show id="bcpg:servingSize" force="true"/>
+					<show id="bcpg:servingSizeUnit" force="true" />
+					<show id="bcpg:servingSizeText" force="true" />
 					<show id="bcpg:numberOfServings" force="true" />
 					<show id="bcpg:nutrientProfilingScore" force="true" for-mode="view"/>
 					<show id="bcpg:nutrientProfilingClass" force="true" for-mode="view"/>
@@ -4245,7 +4285,15 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:servingSize" help-id="becpg.forms.help.servingSize"  />
-					<field id="bcpg:numberOfServings" help-id="becpg.forms.help.numberOfServings"  />
+					<field id="bcpg:servingSizeUnit"  />
+					<field id="bcpg:servingSizeText" >
+					  <control
+							template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:numberOfServings" help-id="becpg.forms.help.numberOfServings"  >
+					  <control
+							template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
 					<field id="bcpg:nutrientProfilingScore"  />
 					<field id="bcpg:nutrientProfilingClass"  >
 						<control template="/org/alfresco/components/form/controls/nutrient-class.ftl" />
@@ -4511,6 +4559,7 @@
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:netWeight" force="true" />
 					<show id="bcpg:servingSize" force="true" />
+					<show id="bcpg:servingSizeUnit" force="true" />
 					<show id="bcpg:productSpecifications" />
 
 					<!-- tags and categories -->
@@ -4642,7 +4691,8 @@
 							<control-param name="unit">kg</control-param>
 						</control>
 					</field>
-					<field id="bcpg:servingSize" set="formulation" />
+					<field id="bcpg:servingSize" help-id="becpg.forms.help.servingSize"  set="formulation" />
+					<field id="bcpg:servingSizeUnit" set="formulation" />
 					<field id="bcpg:productSpecifications" set="formulation">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
