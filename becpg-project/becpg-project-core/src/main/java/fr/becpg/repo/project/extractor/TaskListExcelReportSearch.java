@@ -49,8 +49,10 @@ public class TaskListExcelReportSearch extends DefaultExcelReportSearchPlugin{
 				if(!resources.isEmpty()){
 					resources += ",";
 				}
+				resources += (String) nodeService.getProperty(resourceNoderef, nodeService.getType(resourceNoderef).equals(ContentModel.TYPE_AUTHORITY_CONTAINER) ? 
+						(nodeService.getProperty(resourceNoderef, ContentModel.PROP_AUTHORITY_DISPLAY_NAME) != null ? ContentModel.PROP_AUTHORITY_DISPLAY_NAME : ContentModel.PROP_AUTHORITY_NAME) 
+						: ContentModel.PROP_USERNAME);
 				
-				resources += (String) nodeService.getProperty(resourceNoderef, ContentModel.PROP_USERNAME);
 			}
 		}
 		
