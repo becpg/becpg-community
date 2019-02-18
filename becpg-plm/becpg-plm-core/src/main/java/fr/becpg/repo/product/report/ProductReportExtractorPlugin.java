@@ -1253,8 +1253,10 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	private void extractPriceBreaksForPackaging(ProductData productData, List<PriceBreakReportData> priceBreaks, Double parentQty) {
 
 		for (PackagingListDataItem packagingListDataItem : productData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-			Double qtyForCost = FormulationHelper.getQtyForCostByPackagingLevel(productData, packagingListDataItem, nodeService);
 			ProductData componentProduct = (ProductData) alfrescoRepository.findOne(packagingListDataItem.getComponent());
+			
+			Double qtyForCost = FormulationHelper.getQtyForCostByPackagingLevel(productData, packagingListDataItem, componentProduct);
+		
 			if (componentProduct instanceof PackagingKitData) {
 				extractPriceBreaksForPackaging(componentProduct, priceBreaks, parentQty * qtyForCost);
 			} else {
