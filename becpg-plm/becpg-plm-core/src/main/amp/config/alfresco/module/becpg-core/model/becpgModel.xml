@@ -82,12 +82,27 @@
 					<value>fl_oz</value>
 					<value>P</value>
 					<value>m</value>
+					<value>ft</value>
 					<value>m2</value>
 					<value>m3</value>
 					<value>h</value>
 				</list>
 			</parameter>
 		</constraint>
+		
+		<constraint name="bcpg:servingSizeUnit" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>g</value>
+					<value>mL</value>
+					<value>oz</value>
+					<value>cp</value>
+					<value>fl_oz</value>
+				</list>
+			</parameter>
+		</constraint>
+		
+		
 		<constraint name="bcpg:compoListUnit" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -3119,6 +3134,16 @@
 				</property>
 				<property name="bcpg:servingSize">
 					<type>d:double</type>
+				</property>
+				<property name="bcpg:servingSizeUnit">
+					<type>d:text</type>
+					<default>g</default>
+					<constraints>
+						<constraint ref="bcpg:servingSizeUnit" />
+					</constraints>
+				</property>
+				<property name="bcpg:servingSizeText">
+					<type>d:mltext</type>
 				</property>
 				<property name="bcpg:numberOfServings">
 					<type>d:mltext</type>

@@ -173,7 +173,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 					}
 
 					if ((formulatedProduct.getServingSize() != null) && (n.getValue() != null)) {
-						Double valuePerserving = (n.getValue() * formulatedProduct.getServingSize()) / 100;
+						Double valuePerserving = (n.getValue() * (FormulationHelper.getServingSizeInLorKg(formulatedProduct) *  1000d)) / 100;
 						n.setValuePerServing(valuePerserving);
 						Double gda = nut.getNutGDA();
 						if ((gda != null) && (gda != 0d)) {

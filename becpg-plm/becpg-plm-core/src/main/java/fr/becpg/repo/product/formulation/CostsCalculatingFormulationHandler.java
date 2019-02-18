@@ -10,7 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -18,7 +17,6 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
-import fr.becpg.model.PackModel;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.entity.EntityTplService;
@@ -26,6 +24,7 @@ import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.data.ClientData;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.FinishedProductData;
+import fr.becpg.repo.product.data.PackagingKitData;
 import fr.becpg.repo.product.data.PackagingMaterialData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
@@ -180,9 +179,12 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 
 			for (PackagingListDataItem packagingListDataItem : formulatedProduct
 					.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
-				Double qty = FormulationHelper.getQtyForCostByPackagingLevel(formulatedProduct, packagingListDataItem, nodeService);
+				
+				if(packagingListDataItem.getProduct()!=null) {
+					Double qty = FormulationHelper.getQtyForCostByPackagingLevel(formulatedProduct, packagingListDataItem,(ProductData) alfrescoRepository.findOne(packagingListDataItem.getProduct()));
 
-				visitPart(packagingListDataItem.getProduct(), costList, qty, qty, netQty, netQty, mandatoryCharacts2, null, false);
+					visitPart(packagingListDataItem.getProduct(), costList, qty, qty, netQty, netQty, mandatoryCharacts2, null, false);
+				}
 			}
 
 			addReqCtrlList(formulatedProduct.getReqCtrlList(), mandatoryCharacts2, getRequirementDataType());
@@ -705,22 +707,22 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		if (productData.hasPackagingListEl()) {
 			for (PackagingListDataItem packList : productData
 					.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
-				QName nodeType = nodeService.getType(packList.getProduct());
-				NodeRef productNodeRef = packList.getProduct();
-				Double qty = FormulationHelper.getQtyForCost(productData, packList);
+		
+				ProductData subProductData = (ProductData) alfrescoRepository.findOne(packList.getProduct());
+				
+				Double qty = FormulationHelper.getQtyForCost(productData, packList, subProductData);
 				if (logger.isDebugEnabled()) {
-					logger.debug("Get component " + nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME) + "qty: " + qty);
+					logger.debug("Get component " + subProductData.getName() + "qty: " + qty);
 				}
-				if (productNodeRef.equals(componentNodeRef)) {
+				if (subProductData.getNodeRef().equals(componentNodeRef)) {
 					if (PackagingLevel.Tertiary.equals(packList.getPkgLevel())) {
 						totalQty = qty / palletBoxesPerPallet;
 					} else {
 						totalQty += qty;
 					}
 					break;
-				} else if (PLMModel.TYPE_PACKAGINGKIT.equals(nodeType)) {
-					totalQty = qty * getPackagingListQty(alfrescoRepositoryProductData.findOne(productNodeRef), componentNodeRef,
-							(Integer) nodeService.getProperty(packList.getProduct(), PackModel.PROP_PALLET_BOXES_PER_PALLET));
+				} else if (subProductData instanceof PackagingKitData) {
+					totalQty = qty * getPackagingListQty(subProductData, componentNodeRef,((PackagingKitData)subProductData).getPalletBoxesPerPallet());
 				}
 			}
 		}

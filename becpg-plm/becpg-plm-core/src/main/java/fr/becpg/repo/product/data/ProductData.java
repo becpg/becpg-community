@@ -88,6 +88,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 
 	private Double netVolume;
 	private Double servingSize;
+	private ProductUnit servingSizeUnit;
 	private Double recipeQtyUsed;
 	private Double recipeVolumeUsed;
 	private Double productLossPerc = 0d;
@@ -527,6 +528,17 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 
 	public void setServingSize(Double servingSize) {
 		this.servingSize = servingSize;
+	}
+	
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:servingSizeUnit")
+	public ProductUnit getServingSizeUnit() {
+		return servingSizeUnit;
+	}
+
+	public void setServingSizeUnit(ProductUnit servingSizeUnit) {
+		this.servingSizeUnit = servingSizeUnit;
 	}
 
 	@AlfProp
@@ -1083,6 +1095,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		result = (prime * result) + ((qty == null) ? 0 : qty.hashCode());
 		result = (prime * result) + ((recipeQtyUsed == null) ? 0 : recipeQtyUsed.hashCode());
 		result = (prime * result) + ((servingSize == null) ? 0 : servingSize.hashCode());
+		result = (prime * result) + ((servingSizeUnit == null) ? 0 : servingSizeUnit.hashCode());
 		result = (prime * result) + ((state == null) ? 0 : state.hashCode());
 		result = (prime * result) + ((tare == null) ? 0 : tare.hashCode());
 		result = (prime * result) + ((tareUnit == null) ? 0 : tareUnit.hashCode());
@@ -1190,6 +1203,13 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 				return false;
 			}
 		} else if (!servingSize.equals(other.servingSize)) {
+			return false;
+		}
+		if (servingSizeUnit == null) {
+			if (other.servingSizeUnit != null) {
+				return false;
+			}
+		} else if (!servingSizeUnit.equals(other.servingSizeUnit)) {
 			return false;
 		}
 		if (state != other.state) {
