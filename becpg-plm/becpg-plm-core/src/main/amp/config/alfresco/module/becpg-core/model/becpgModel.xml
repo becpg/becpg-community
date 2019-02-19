@@ -3357,23 +3357,27 @@
 			<title>Location</title>
 			<properties>
 				<property name="bcpg:locationAddress1">
-					<title>Address 1</title>
+					<title>Address line 1</title>
 					<type>d:text</type>
 				</property>
 				<property name="bcpg:locationAddress2">
-					<title>Address 2</title>
+					<title>Address line 2</title>
 					<type>d:text</type>
 				</property>
 				<property name="bcpg:locationAddress3">
-					<title>Address 3</title>
-					<type>d:text</type>
-				</property>
-				<property name="bcpg:locationZip">
-					<title>Zip/Post Code</title>
+					<title>Address line 3</title>
 					<type>d:text</type>
 				</property>
 				<property name="bcpg:locationCity">
-					<title>Zip/Post Code</title>
+					<title>City</title>
+					<type>d:text</type>
+				</property>
+				<property name="bcpg:locationZip">
+					<title>Zip/Postal Code</title>
+					<type>d:text</type>
+				</property>
+				<property name="bcpg:locationState">
+					<title>State/Province/Region</title>
 					<type>d:text</type>
 				</property>
 				<property name="bcpg:locationCountry">
