@@ -411,7 +411,7 @@ define(["dojo/_base/declare",
        * @type {boolean}
        * @default
        */
-      allsites: false,
+      allsites: true,
       
       /**
        * This is the page to navigate to for blog post links. It defaults to 
