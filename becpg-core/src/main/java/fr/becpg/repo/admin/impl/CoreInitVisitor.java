@@ -104,8 +104,10 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 			}
 		}
 
-		createGroups(new String[] { SystemGroup.SystemMgr.toString(), SystemGroup.ExternalUser.toString(), SystemGroup.SecurityRole.toString() , SystemGroup.LanguageMgr.toString()});
+		createGroups(new String[] { SystemGroup.SystemMgr.toString(), SystemGroup.OlapUser.toString(), SystemGroup.ExternalUser.toString(), SystemGroup.SecurityRole.toString() , SystemGroup.LanguageMgr.toString()});
 
+		createGroups(new String[] {SystemGroup.LicenseReadConcurrent.toString(),SystemGroup.LicenseWriteConcurrent.toString(),SystemGroup.LicenseReadNamed.toString(),SystemGroup.LicenseWriteNamed.toString(),SystemGroup.LicenseSupplierConcurrent.toString() });
+		
 		// System
 		NodeRef systemNodeRef = visitFolder(companyHome, RepoConsts.PATH_SYSTEM);
 

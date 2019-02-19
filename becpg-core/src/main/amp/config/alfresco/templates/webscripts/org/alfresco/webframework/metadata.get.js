@@ -28,11 +28,14 @@ else if (args["user"] != null)
    
    //beCPG
    model.capabilities["isbeCPGSystemManager"] =false;
+  
    model.capabilities["isbeCPGExternalUser"] = false;
    model.capabilities["isbeCPGLanguageMgr"] = false;
    
    var languageMgrGroup = people.getGroup("GROUP_LanguageMgr");
 
+   var isOlapUser = false;
+   
    if(languageMgrGroup){
       if(people.getMembers(languageMgrGroup, false).length == 0){
     	  model.capabilities["isbeCPGLanguageMgr"] = true;
@@ -50,10 +53,13 @@ else if (args["user"] != null)
        if("GROUP_SystemMgr" == groups[i].properties["cm:authorityName"]){
     	   model.capabilities["isbeCPGSystemManager"] = true;
        }
+       if("GROUP_OlapUser" == groups[i].properties["cm:authorityName"]){
+    	   isOlapUser = true;
+       }
    }
    
    var olapSSOUrl = bcpg.getOlapSSOUrl();
-   if(olapSSOUrl!=null){
+   if(olapSSOUrl!=null && isOlapUser){
        model.capabilities["olapSSOUrl_"+olapSSOUrl] = true;
    }
     
