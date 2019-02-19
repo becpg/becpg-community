@@ -21,8 +21,8 @@
 <beans>
 
 	<!-- Product Policies -->
-	<bean id="productPolicy"
-		class="fr.becpg.repo.product.policy.ProductPolicy"
+	<bean id="entityCopyPolicy"
+		class="fr.becpg.repo.product.policy.EntityCopyPolicy"
 		parent="abstractBeCPGPolicy" depends-on="bcpg.plm.dictionaryBootstrap">
 		<property name="namespaceService" ref="namespaceService"/>
 		<property name="propertiesToReset" value="${beCPG.copyOrBranch.propertiesToReset}" />
