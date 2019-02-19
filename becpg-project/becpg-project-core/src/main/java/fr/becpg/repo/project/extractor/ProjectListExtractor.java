@@ -418,12 +418,12 @@ public class ProjectListExtractor extends ActivityListExtractor {
 		if (AttributeExtractorMode.CSV.equals(mode) || AttributeExtractorMode.XLSX.equals(mode)) {
 			String resources = "";
 			if (entityDictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
-				for (NodeRef resourceNoderef : projectService.extractResources(entityListDAO.getEntity(nodeRef),
+				for (NodeRef resourceNodeRef : projectService.extractResources(entityListDAO.getEntity(nodeRef),
 						associationService.getTargetAssocs(nodeRef, ProjectModel.ASSOC_TL_RESOURCES))) {
 					if (!resources.isEmpty()) {
 						resources += ",";
 					}
-					resources += (String) nodeService.getProperty(resourceNoderef, ContentModel.PROP_USERNAME);
+					resources += extractResourcePropName(resourceNodeRef);
 				}
 			}
 
@@ -437,10 +437,10 @@ public class ProjectListExtractor extends ActivityListExtractor {
 			}
 			for (Map<String, Object> resource : resources) {
 				NodeRef resourceRef = new NodeRef((String) resource.get("value"));
-				for (NodeRef extractctedResourceRef : projectService.extractResources(entityListDAO.getEntity(nodeRef), Arrays.asList(resourceRef))) {
-					resource.put("value", extractctedResourceRef.toString());
-					resource.put("metadata", nodeService.getProperty(extractctedResourceRef, ContentModel.PROP_USERNAME));
-					resource.put("displayValue", nodeService.getProperty(extractctedResourceRef, ContentModel.PROP_USERNAME));
+				for (NodeRef extractedResourceRef : projectService.extractResources(entityListDAO.getEntity(nodeRef), Arrays.asList(resourceRef))) {
+					resource.put("value", extractedResourceRef.toString());
+					resource.put("metadata", extractResourcePropName(extractedResourceRef));
+					resource.put("displayValue", resource.get("metadata"));
 				}
 			}
 
@@ -448,6 +448,12 @@ public class ProjectListExtractor extends ActivityListExtractor {
 
 	}
 
+	private String extractResourcePropName(NodeRef resourceRef) {
+		return (String) nodeService.getProperty(resourceRef, nodeService.getType(resourceRef).equals(ContentModel.TYPE_AUTHORITY_CONTAINER) ? 
+				(nodeService.getProperty(resourceRef, ContentModel.PROP_AUTHORITY_DISPLAY_NAME) != null ? ContentModel.PROP_AUTHORITY_DISPLAY_NAME : ContentModel.PROP_AUTHORITY_NAME) 
+				: ContentModel.PROP_USERNAME);
+	}
+	
 	@Override
 	public boolean applyTo(DataListFilter dataListFilter) {
 		return (dataListFilter.getDataListName() != null) && dataListFilter.getDataListName().equals(PROJECT_LIST);
