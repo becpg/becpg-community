@@ -20,7 +20,7 @@ import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.policy.CodePolicy;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
-public class ProductPolicy extends AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyCompletePolicy {
+public class EntityCopyPolicy extends AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyCompletePolicy {
 
 	private static final Log logger = LogFactory.getLog(CodePolicy.class);
 
@@ -48,7 +48,7 @@ public class ProductPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 	@Override
 	public void doInit() {
 		logger.debug("Init ProductPolicy...");
-		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyCompletePolicy.QNAME, PLMModel.ASPECT_PRODUCT,
+		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyCompletePolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2,
 				new JavaBehaviour(this, "onCopyComplete"));
 
 	}
@@ -61,34 +61,36 @@ public class ProductPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 				&& !isWorkingCopyOrVersion(sourceNodeRef)
 
 		) {
-			nodeService.setProperty(destinationRef, PLMModel.PROP_PRODUCT_STATE, SystemState.Simulation);
-			nodeService.setProperty(destinationRef, BeCPGModel.PROP_ERP_CODE, null);
+			
+			if(nodeService.hasAspect(destinationRef, BeCPGModel.ASPECT_ERP_CODE)) {
+				nodeService.setProperty(destinationRef, BeCPGModel.PROP_ERP_CODE, null);
+			}
 			
 			entityService.changeEntityListStates(destinationRef, EntityListState.ToValidate);
 			
+			
 			if(propertiesToReset!=null) {
-		        for(String propertyToKeep : propertiesToReset.split(",")) {
-		        	
-		        	QName propertyQname = QName.createQName(propertyToKeep,namespaceService );
-		        	
+		        for(String propertyToKeep : propertiesToReset.split(",")) {	        	
+		        	QName propertyQname = QName.createQName(propertyToKeep,namespaceService );	
 		        	nodeService.removeProperty(destinationRef, propertyQname);
 		        }
 	        }
 			
-			if(nodeService.hasAspect(destinationRef,  ContentModel.ASPECT_VERSIONABLE)) {
-				nodeService.removeAspect(destinationRef, ContentModel.ASPECT_VERSIONABLE);
+			if(nodeService.hasAspect(destinationRef, PLMModel.ASPECT_PRODUCT)) {
+				nodeService.setProperty(destinationRef, PLMModel.PROP_PRODUCT_STATE, SystemState.Simulation);
 			}
 			
 			if (nodeService.hasAspect(destinationRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT)) {
 				nodeService.removeAspect(destinationRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT);
 			}
-			// Allow to determine if is a branch or a version
+	
+			if(nodeService.hasAspect(destinationRef,  ContentModel.ASPECT_VERSIONABLE)) {
+				nodeService.removeAspect(destinationRef, ContentModel.ASPECT_VERSIONABLE);
+			}
 			
-			//if (!policyBehaviourFilter.isEnabled(BeCPGModel.ASPECT_ENTITY_BRANCH)) {
 			if (nodeService.hasAspect(destinationRef, BeCPGModel.ASPECT_ENTITY_BRANCH)) {
 				nodeService.removeAspect(destinationRef, BeCPGModel.ASPECT_ENTITY_BRANCH);
 			}
-			//}
 		}
 
 	}
