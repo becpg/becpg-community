@@ -6050,8 +6050,9 @@
 					<show id="bcpg:locationAddress1" />
 					<show id="bcpg:locationAddress2" />
 					<show id="bcpg:locationAddress3" />
-					<show id="bcpg:locationZip" />
 					<show id="bcpg:locationCity" />
+					<show id="bcpg:locationZip" />
+					<show id="bcpg:locationState" />
 					<show id="bcpg:locationCountry" />
 					<show id="bcpg:plantPackerCode" />
 					<show id="bcpg:plantCertifications" />
@@ -6063,6 +6064,8 @@
 	                       <control-param name="maxLength">10000</control-param>
 	                   </control>
 					</field>
+					<field id="bcpg:locationAddress1"  help-id="becpg.forms.help.locationAddress1" />
+					<field id="bcpg:locationAddress2"  help-id="becpg.forms.help.locationAddress2" />
 				</appearance>
 			</form>
 		</forms>
@@ -6082,8 +6085,9 @@
 					<show id="bcpg:locationAddress1" />
 					<show id="bcpg:locationAddress2" />
 					<show id="bcpg:locationAddress3" />
-					<show id="bcpg:locationZip" />
 					<show id="bcpg:locationCity" />
+					<show id="bcpg:locationZip" />
+					<show id="bcpg:locationState" />
 					<show id="bcpg:locationCountry" />
 					<show id="bcpg:plantPackerCode" />
 					<show id="bcpg:plantCertifications" />
@@ -6095,6 +6099,9 @@
 	                       <control-param name="maxLength">10000</control-param>
 	                   </control>
 					</field>
+					<field id="bcpg:locationAddress1"  help-id="becpg.forms.help.locationAddress1" />
+					<field id="bcpg:locationAddress2"  help-id="becpg.forms.help.locationAddress2" />
+					
 				</appearance>
 			</form>
 
@@ -6116,8 +6123,9 @@
 					<show id="bcpg:locationAddress1" />
 					<show id="bcpg:locationAddress2" />
 					<show id="bcpg:locationAddress3" />
-					<show id="bcpg:locationZip" />
 					<show id="bcpg:locationCity" />
+					<show id="bcpg:locationZip" />
+					<show id="bcpg:locationState" />
 					<show id="bcpg:locationCountry" />
 					<show id="bcpg:plantPackerCode" />
 					<show id="bcpg:plantCertifications" />
@@ -6126,6 +6134,8 @@
 				</field-visibility>
 				<appearance>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
+					<field id="bcpg:locationAddress1"  help-id="becpg.forms.help.locationAddress1" />
+					<field id="bcpg:locationAddress2"  help-id="becpg.forms.help.locationAddress2" />
 				</appearance>
 			</form>
 		</forms>
@@ -6599,8 +6609,9 @@
 					<show id="bcpg:locationAddress1" />
 					<show id="bcpg:locationAddress2" />
 					<show id="bcpg:locationAddress3" />
-					<show id="bcpg:locationZip" />
 					<show id="bcpg:locationCity" />
+					<show id="bcpg:locationZip" />
+					<show id="bcpg:locationState" />
 					<show id="bcpg:locationCountry" />
 					<!-- audit -->
 					<show id="cm:creator" for-mode="view"/>
@@ -6630,6 +6641,9 @@
 					</field>
 					<field id="bcpg:code" read-only="true" />
 					
+					<field id="bcpg:locationAddress1"  help-id="becpg.forms.help.locationAddress1" />
+					<field id="bcpg:locationAddress2"  help-id="becpg.forms.help.locationAddress2" />
+					
 					<!-- audit -->
 					<field id="cm:creator" set="audit" />
 					<field id="cm:created" set="audit" />
@@ -6649,8 +6663,9 @@
 					<show id="bcpg:locationAddress1" />
 					<show id="bcpg:locationAddress2" />
 					<show id="bcpg:locationAddress3" />
-					<show id="bcpg:locationZip" />
 					<show id="bcpg:locationCity" />
+					<show id="bcpg:locationZip" />
+					<show id="bcpg:locationState" />
 					<show id="bcpg:locationCountry" />
 				</field-visibility>
 				<appearance>
@@ -6659,6 +6674,9 @@
 							<control-param name="activateLinks">true</control-param>
 						</control>
 					</field>
+					<field id="bcpg:locationAddress1"  help-id="becpg.forms.help.locationAddress1" />
+					<field id="bcpg:locationAddress2"  help-id="becpg.forms.help.locationAddress2" />
+					
 				</appearance>
 			</form>
 			<form id="reports-parameters">
@@ -6700,8 +6718,8 @@
 					<show id="bcpg:locationAddress1" />
 					<show id="bcpg:locationAddress2" />
 					<show id="bcpg:locationAddress3" />
-					<show id="bcpg:locationZip" />
 					<show id="bcpg:locationCity" />
+					<show id="bcpg:locationZip" />
 					<show id="bcpg:locationState" />
 					<show id="bcpg:locationCountry" />
 				</field-visibility>
@@ -6726,6 +6744,8 @@
 						</control>
 					</field>
 					<field id="bcpg:code" read-only="true" />
+					<field id="bcpg:locationAddress1"  help-id="becpg.forms.help.locationAddress1" />
+					<field id="bcpg:locationAddress2"  help-id="becpg.forms.help.locationAddress2" />
 				</appearance>
 			</form>
 			<form id="search">
@@ -6777,8 +6797,8 @@
 					<show id="bcpg:locationAddress1" />
 					<show id="bcpg:locationAddress2" />
 					<show id="bcpg:locationAddress3" />
-					<show id="bcpg:locationZip" />
 					<show id="bcpg:locationCity" />
+					<show id="bcpg:locationZip" />
 					<show id="bcpg:locationState" />
 					<show id="bcpg:locationCountry" />
 					
@@ -6812,6 +6832,8 @@
 						</control>
 					</field>
 					<field id="bcpg:code" read-only="true" />
+					<field id="bcpg:locationAddress1"  help-id="becpg.forms.help.locationAddress1" />
+					<field id="bcpg:locationAddress2"  help-id="becpg.forms.help.locationAddress2" />
 					
 						<!-- audit -->
 					<field id="cm:creator" set="audit" />
@@ -6843,8 +6865,8 @@
 					<show id="bcpg:locationAddress1" />
 					<show id="bcpg:locationAddress2" />
 					<show id="bcpg:locationAddress3" />
-					<show id="bcpg:locationZip" />
 					<show id="bcpg:locationCity" />
+					<show id="bcpg:locationZip" />
 					<show id="bcpg:locationState" />
 					<show id="bcpg:locationCountry" />
 				</field-visibility>
@@ -6868,6 +6890,8 @@
 							<control-param name="activateLinks">true</control-param>
 						</control>
 					</field>
+					<field id="bcpg:locationAddress1"  help-id="becpg.forms.help.locationAddress1" />
+					<field id="bcpg:locationAddress2"  help-id="becpg.forms.help.locationAddress2" />
 					<field id="bcpg:code" read-only="true" />
 				</appearance>
 			</form>
