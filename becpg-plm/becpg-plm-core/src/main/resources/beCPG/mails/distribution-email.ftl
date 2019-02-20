@@ -1,6 +1,6 @@
-Bonjour,
+Hello,
 
-La fiche produit ${document.name} est disponible ici : <a href="${document.shareUrl}">${document.shareUrl}</a>
+The product specification ${document.name} is available here: <a href="${document.shareUrl}">${document.shareUrl}</a>
 
-Cordialement,
+Regards,
 beCPG
