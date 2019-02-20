@@ -1,5 +1,8 @@
 package fr.becpg.repo.license;
 
+import org.springframework.stereotype.Service;
+
+@Service("becpgLicenseManager")
 public class BeCPGLicenseManager {
 
 	private long allowedConcurrentRead = -1L;
