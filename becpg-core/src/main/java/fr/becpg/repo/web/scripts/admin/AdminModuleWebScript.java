@@ -29,6 +29,7 @@ import fr.becpg.repo.admin.InitVisitorService;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.entity.EntitySystemService;
+import fr.becpg.repo.license.BeCPGLicenseManager;
 import fr.becpg.repo.security.SecurityService;
 
 /**
@@ -59,6 +60,8 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 	private DictionaryDAO dictionaryDAO;
 
 	private EntitySystemService entitySystemService;
+	
+	private BeCPGLicenseManager licenseManager;
 
 	private AbstractAuthenticationService authenticationService;
 
@@ -101,6 +104,10 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 	public void setAuthenticationService(AbstractAuthenticationService authenticationService) {
 		this.authenticationService = authenticationService;
 	}
+	
+	public void setLicenseManager(BeCPGLicenseManager licenseManager) {
+		this.licenseManager = licenseManager;
+	}
 
 	@Override
 	protected Map<String, Object> executeImpl(WebScriptRequest req, Status status, Cache cache) {
@@ -114,7 +121,12 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 		if ((action == null) || action.isEmpty()) {
 			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "'action' argument cannot be null or empty");
 		}
-
+		long concurrentReadUsers = 0;
+		long concurrentSupplierUsers = 0;
+		long concurrentWriteUsers = 0;
+		long namedReadUsers = 0;
+		long namedWriteUsers = 0;
+		
 		Set<String> users = new HashSet<>(authenticationService.getUsersWithTickets(true));
 		for (Iterator<String> iterator = users.iterator(); iterator.hasNext();) {
 			String user = iterator.next();
@@ -124,6 +136,8 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 				iterator.remove();
 			}
 		}
+		
+		//TODO count license
 
 		// #378 : force to use server locale
 		Locale currentLocal = I18NUtil.getLocale();
@@ -176,6 +190,7 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 
 		MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
 
+		
 		Runtime runtime = Runtime.getRuntime();
 
 		ret.put("totalMemory", runtime.totalMemory() / 1000000d);
@@ -183,7 +198,21 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 		ret.put("maxMemory", runtime.maxMemory() / 1000000d);
 		ret.put("nonHeapMemoryUsage", memoryMXBean.getNonHeapMemoryUsage().getUsed() / 1000000d);
 		ret.put("connectedUsers", users.size());
+		ret.put("concurrentReadUsers", concurrentReadUsers);
+		ret.put("concurrentWriteUsers", concurrentWriteUsers);
+		ret.put("concurrentSupplierUsers", concurrentSupplierUsers);
+		ret.put("namedReadUsers", namedReadUsers);
+		ret.put("namedWriteUsers", namedWriteUsers);
+		ret.put("allowedConcurrentRead", licenseManager.getAllowedConcurrentRead());
+		ret.put("allowedConcurrentWrite", licenseManager.getAllowedConcurrentWrite());
+		ret.put("allowedConcurrentSupplier", licenseManager.getAllowedConcurrentSupplier());
+		ret.put("allowedNamedWrite", licenseManager.getAllowedNamedWrite());
+		ret.put("allowedNamedRead",  licenseManager.getAllowedNamedRead());
+		ret.put("licenseName",  licenseManager.getLicenseName());
+		
+		
 		ret.put("becpgSchema", becpgSchema);
+		
 
 		return ret;
 
