@@ -6,6 +6,19 @@
 		"freeMemory": ${freeMemory?c},
 		"maxMemory": ${maxMemory?c},
 		"connectedUsers": ${connectedUsers?c},
+		"concurrentReadUsers": ${concurrentReadUsers?c},
+		"concurrentSupplierUsers": ${concurrentSupplierUsers?c},
+		"concurrentWriteUsers": ${concurrentWriteUsers?c},
+	    "namedReadUsers: ${namedReadUsers?c},
+		"namedWriteUsers": ${namedWriteUsers?c},
+		license : {
+		    "name":${licenseName}
+			"allowedConcurrentRead": ${allowedConcurrentRead?c},
+			"allowedConcurrentWrite": ${allowedConcurrentWrite?c},
+			"allowedConcurrentSupplier": ${allowedConcurrentSupplier?c},
+			"allowedNamedWrite": ${allowedNamedWrite?c},
+			"allowedNamedRead": ${allowedNamedRead?c},
+		} ,
 		"nonHeapMemoryUsage": ${nonHeapMemoryUsage?c},
 		"becpgSchema": "${becpgSchema?js_string}"
    }
@@ -29,8 +42,8 @@
 	      	<#if people.getPerson(item) ??>
 	     	 <#assign currentPerson = people.getPerson(item)>
 	         	 "username" : "${item}",
-		         "fullName" : "${currentPerson.properties["cm:firstName"]} ${currentPerson.properties["cm:lastName"]}",
-		         "email" : "${currentPerson.properties["cm:email"]}"
+		         "fullName" : "${currentPerson.properties["cm:firstName"]!""} ${currentPerson.properties["cm:lastName"]!""}",
+		         "email" : "${currentPerson.properties["cm:email"]!""}"
 		     <#else>
 		     	  "username" : "${item}",
 		      	  "fullName" : "${item}",
