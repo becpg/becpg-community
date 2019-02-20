@@ -42,6 +42,7 @@ import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.rule.Rule;
 import org.alfresco.service.cmr.rule.RuleType;
+import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.namespace.QName;
@@ -104,9 +105,7 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 			}
 		}
 
-		createGroups(new String[] { SystemGroup.SystemMgr.toString(), SystemGroup.OlapUser.toString(), SystemGroup.ExternalUser.toString(), SystemGroup.SecurityRole.toString() , SystemGroup.LanguageMgr.toString()});
-
-		createGroups(new String[] {SystemGroup.LicenseReadConcurrent.toString(),SystemGroup.LicenseWriteConcurrent.toString(),SystemGroup.LicenseReadNamed.toString(),SystemGroup.LicenseWriteNamed.toString(),SystemGroup.LicenseSupplierConcurrent.toString() });
+		visitGroups();
 		
 		// System
 		NodeRef systemNodeRef = visitFolder(companyHome, RepoConsts.PATH_SYSTEM);
@@ -135,6 +134,22 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 		contentHelper.addFilesResources(beCPGMailService.getEmailNotifyTemplatesFolder(), "classpath*:beCPG/mails/notify/*.ftl");
 		
 		return new ArrayList<>();
+	}
+
+	private void visitGroups() {
+		
+		createGroups(new String[] { SystemGroup.SystemMgr.toString(), SystemGroup.OlapUser.toString(), SystemGroup.ExternalUser.toString(), SystemGroup.SecurityRole.toString() , SystemGroup.LanguageMgr.toString()});
+
+		createGroups(new String[] {SystemGroup.LicenseReadConcurrent.toString(),SystemGroup.LicenseWriteConcurrent.toString(),SystemGroup.LicenseReadNamed.toString(),SystemGroup.LicenseWriteNamed.toString(),SystemGroup.LicenseSupplierConcurrent.toString() });
+	
+		
+		Set<String> authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP,
+				PermissionService.GROUP_PREFIX + SystemGroup.LicenseSupplierConcurrent.toString(), true);
+		if (!authorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser.toString())) {
+			authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.LicenseSupplierConcurrent.toString(),
+					PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser.toString());
+		}
+		
 	}
 
 	/**
