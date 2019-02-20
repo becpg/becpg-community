@@ -37,9 +37,9 @@
 	                                                <td>
 	                                                   <div style="font-size: 22px; padding-bottom: 4px;">
 	                                                      <#if args.workflowPooled == true>
-	                                                         Nouvelle tâche partagée
+	                                                         New shared task
 	                                                      <#else>
-	                                                         Une tâche vous a été assignée
+	                                                         You have been assigned to a new task
 	                                                      </#if>
 	                                                   </div>
 	                                                   <div style="font-size: 13px;">
@@ -49,13 +49,13 @@
 	                                             </tr>
 	                                          </table>
 	                                          <div style="font-size: 14px; margin: 12px 0px 24px 0px; padding-top: 10px; border-top: 1px solid #aaaaaa;">
-	                                             <p>Bonjour,</p>
+	                                             <p>Hello,</p>
 	
 	                                             <p>
 	                                                <#if args.workflowPooled == true>
-	                                                   La tâche partagée suivante peut être récupérée :
+	                                                   The following shared task can be retrieved:
 	                                                <#else>
-	                                                   La tâche suivante vous a été assignée :
+	                                                   You have been assigned to the following task:
 	                                                </#if>
 	                                             </p>
 	                                             
@@ -70,14 +70,14 @@
 	                                             <p>
 	                                                <#if (args.workflowDueDate)??>Due:&nbsp;&nbsp;<b>${args.workflowDueDate?date?string.full}</b><br></#if>
 	                                                <#if (args.workflowPriority)??>
-	                                                   Priorité :&nbsp;&nbsp;
+	                                                   Priority:&nbsp;&nbsp;
 	                                                   <b>
 	                                                   <#if args.workflowPriority == 3>
-	                                                      Basse
+	                                                      Low
 	                                                   <#elseif args.workflowPriority == 2>
-	                                                      Moyenne
+	                                                      Medium
 	                                                   <#else>
-	                                                      Élevée
+	                                                      High
 	                                                   </#if>
 	                                                   </b>
 	                                                </#if>
@@ -100,7 +100,7 @@
 	                                                                        </tr>
 	                                                                        <#if doc.hasAspect("bcpg:entityListsAspect")>
 	                                                                          <tr>
-		                                                                           <td>Cliquez sur ce lien pour accéder à l'entité :</td>
+		                                                                           <td>Click on this link to access the entity:</td>
 		                                                                        </tr>
 		                                                                        <tr>
 		                                                                           <td>
@@ -110,7 +110,7 @@
 		                                                                        </tr>
 	                                                                         <#else>
 		                                                                        <tr>
-		                                                                           <td>Cliquez sur ce lien pour télécharger le document :</td>
+		                                                                           <td>Click on this link to download the document:</td>
 		                                                                        </tr>
 		                                                                        <tr>
 		                                                                           <td>
@@ -133,14 +133,14 @@
 	                                             </#if>
 	                                             
 	                                             <#if args.workflowPooled == true>
-	                                                <p>Cliquez sur ce lien pour voir la tâche :</p>
+	                                                <p>Click on this link to view the task:</p>
 	                                                <p><a href="${shareUrl}/page/task-details?taskId=${args.workflowId}">${shareUrl}/page/task-details?taskId=${args.workflowId}</a>
 	                                             <#else>
-	                                                <p>Cliquez sur ce lien pour modifier la tâche :</p>
+	                                                <p>Click on this link to modify the task:</p>
 	                                                <p><a href="${shareUrl}/page/task-edit?taskId=${args.workflowId}">${shareUrl}/page/task-edit?taskId=${args.workflowId}</a>
 	                                             </#if>
 	                                             
-	                                             <p>Cordialement,<br />
+	                                             <p>Regards,<br />
 	                                            beCPG</p>
 	                                          </div>
                                        	<#else>
@@ -151,7 +151,7 @@
 	                                                </td>
 	                                                <td>
 	                                                   <div style="font-size: 22px; padding-bottom: 4px;">
-	                                                      Une tâche vous a été assignée
+	                                                      You have been assigned to a task
 	                                                   </div>
 	                                                   <div style="font-size: 13px;">
 	                                                      ${date?datetime?string.full}
@@ -160,11 +160,11 @@
 	                                             </tr>
 	                                          </table>
 	                                          <div style="font-size: 14px; margin: 12px 0px 24px 0px; padding-top: 10px; border-top: 1px solid #aaaaaa;">
-	                                             <p>Bonjour,</p>
+	                                             <p>Hello,</p>
 	
-	                                             La demande de Validation Produit a été acceptée.
+	                                             The request for product validation has been accepted.
 	                                             
-	                                             <p>Cordialement,<br />
+	                                             <p>Regards,<br />
 	                                            beCPG</p>
 	                                          </div>
                                       		</#if>                                          

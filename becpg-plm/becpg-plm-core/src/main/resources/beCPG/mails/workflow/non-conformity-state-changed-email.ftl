@@ -1,10 +1,10 @@
-Bonjour,
+Hello,
 
-La non-conformité ${nc.properties["bcpg:code"]!""} a été mise à jour par ${person.properties["cm:firstName"]!""} ${person.properties["cm:lastName"]!""}.
+The non-conformance: ${nc.properties["bcpg:code"]!""} has been updated by ${person.properties["cm:firstName"]!""} ${person.properties["cm:lastName"]!""}.
 
-- Description : ${nc.properties["cm:description"]!""}
-- État : ${nc.properties["qa:ncState"]!""}
-- Commentaire : ${ncComment!""}
+- Description: ${nc.properties["cm:description"]!""}
+- State: ${nc.properties["qa:ncState"]!""}
+- Comment: ${ncComment!""}
 
-Cordialement,
+Regards,
 beCPG

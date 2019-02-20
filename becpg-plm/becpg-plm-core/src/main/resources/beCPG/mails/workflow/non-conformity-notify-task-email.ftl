@@ -1,9 +1,9 @@
-Bonjour,
+Hello,
 
-Vous êtes assigné pour travailler sur la non-conformité ${nc.properties["bcpg:code"]!""}.
+You have been assigned to work on the following non-conformance ${nc.properties["bcpg:code"]!""}.
 
-- Description : ${nc.properties["cm:description"]!""}
-- État : ${nc.properties["qa:ncState"]!""}
+- Description: ${nc.properties["cm:description"]!""}
+- State: ${nc.properties["qa:ncState"]!""}
 
-Cordialement,
+Regards,
 beCPG

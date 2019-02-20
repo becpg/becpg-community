@@ -1,6 +1,7 @@
-Bonjour,
+Hello,
 
-${person.properties["cm:firstName"]!""} ${person.properties["cm:lastName"]!""} vous a envoyé une tâche Adhoc.
+${person.properties["cm:firstName"]!""} ${person.properties["cm:lastName"]!""} has assigned an Adhoc task to you.
 
-Cordialement,
+Regards,
+
 beCPG
