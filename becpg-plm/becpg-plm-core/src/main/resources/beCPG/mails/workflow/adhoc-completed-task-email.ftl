@@ -1,6 +1,7 @@
-Bonjour,
+﻿Hello, 
 
-${person.properties["cm:firstName"]!""} ${person.properties["cm:lastName"]!""} a terminé la tâche Adhoc que vous lui avez envoyée.
+${person.properties["cm:firstName"]!""} ${person.properties["cm:lastName"]!""} has now completed the Adhoc task which you sent. 
 
-Cordialement,
+Regards, 
+
 beCPG

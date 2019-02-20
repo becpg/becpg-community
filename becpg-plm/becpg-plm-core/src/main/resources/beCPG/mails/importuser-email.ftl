@@ -52,7 +52,7 @@
 															<br />- Account : ${username}
 															<br />- Password : ${password}</p>
 															
-															<p>I advice you to use Firefox or Chrome browser.<br />															
+															<p>Please use Firefox or Chrome as preferred choice of browser.<br />															
 															You can create new products or new projects in the existing sites.<br />
 															</p>
 															
