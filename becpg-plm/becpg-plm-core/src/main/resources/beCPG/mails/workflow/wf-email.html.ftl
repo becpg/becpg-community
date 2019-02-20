@@ -38,7 +38,7 @@
                                                       <#if args.workflowPooled == true>
                                                          New Pooled Task
                                                       <#else>
-                                                         You have been assigned a task
+                                                         You have been assigned to a task
                                                       </#if>
                                                    </div>
                                                    <div style="font-size: 13px;">
@@ -48,13 +48,13 @@
                                              </tr>
                                           </table>
                                           <div style="font-size: 14px; margin: 12px 0px 24px 0px; padding-top: 10px; border-top: 1px solid #aaaaaa;">
-                                             <p>Hi,</p>
+                                             <p>Hello,</p>
 
                                              <p>
                                                 <#if args.workflowPooled == true>
                                                    The following pooled task is available to be claimed:
                                                 <#else>
-                                                   You have been assigned the following task:
+                                                   You have been assigned to the following task:
                                                 </#if>
                                              </p>
                                             
@@ -83,10 +83,10 @@
                                              </p>
                                              
                                              <#if args.workflowPooled == true>
-                                                <p>Click this link to view the task:</p>
+                                                <p>Click on this link to view the task:</p>
                                                 <p><a href="${shareUrl}/page/task-details?taskId=${args.workflowId}">${shareUrl}/page/task-details?taskId=${args.workflowId}</a>
                                              <#else>
-                                                <p>Click this link to edit the task:</p>
+                                                <p>Click on this link to edit the task:</p>
                                                 <p><a href="${shareUrl}/page/task-edit?taskId=${args.workflowId}">${shareUrl}/page/task-edit?taskId=${args.workflowId}</a>
                                              </#if>
                                              
@@ -139,7 +139,7 @@
                                                 </table>
                                              </#if>
                                              
-                                             <p>Sincerely,<br />
+                                             <p>Regards,<br />
                                              beCPG</p>
                                           </div>
                                        </td>

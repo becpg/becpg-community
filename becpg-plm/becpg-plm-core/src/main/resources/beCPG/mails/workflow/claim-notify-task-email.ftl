@@ -35,7 +35,7 @@
                                                 </td>
                                                 <td>
                                                    <div style="font-size: 22px; padding-bottom: 4px;">
-                                                      Pour information
+                                                      For information
                                                    </div>
                                                    <div style="font-size: 13px;">
                                                       ${date?datetime?string.full}
@@ -44,7 +44,7 @@
                                              </tr>
                                           </table>
                                           <div style="font-size: 14px; margin: 12px 0px 24px 0px; padding-top: 10px; border-top: 1px solid #aaaaaa;">
-                                             <p>Bonjour,</p>
+                                             <p>Hello,</p>
            
                                              <#if args.workflowTitle??>
 	                                         	 <p><b>"${args.workflowTitle}"</b></p>
@@ -75,7 +75,7 @@
                                                                         </tr>
                                                                         <#if doc.hasAspect("bcpg:entityListsAspect")>
                                                                           <tr>
-	                                                                           <td>Cliquez sur ce lien pour accéder à la réclamation :</td>
+	                                                                           <td>Click on this link to access the claim:</td>
 	                                                                        </tr>
 	                                                                        <tr>
 	                                                                           <td>
@@ -97,7 +97,7 @@
                                                 </table>
                                              </#if>
                                              
-                                             <p>Cordialement,<br />
+                                             <p>Regards,<br />
                                             beCPG</p>
                                           </div>
                                        </td>
