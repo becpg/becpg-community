@@ -9,16 +9,16 @@
 		"concurrentReadUsers": ${concurrentReadUsers?c},
 		"concurrentSupplierUsers": ${concurrentSupplierUsers?c},
 		"concurrentWriteUsers": ${concurrentWriteUsers?c},
-	    "namedReadUsers: ${namedReadUsers?c},
+	    "namedReadUsers": ${namedReadUsers?c},
 		"namedWriteUsers": ${namedWriteUsers?c},
-		license : {
-		    "name":${licenseName}
+		"license" : {
+		    "name":"${licenseName}",
 			"allowedConcurrentRead": ${allowedConcurrentRead?c},
 			"allowedConcurrentWrite": ${allowedConcurrentWrite?c},
 			"allowedConcurrentSupplier": ${allowedConcurrentSupplier?c},
 			"allowedNamedWrite": ${allowedNamedWrite?c},
-			"allowedNamedRead": ${allowedNamedRead?c},
-		} ,
+			"allowedNamedRead": ${allowedNamedRead?c}
+		},
 		"nonHeapMemoryUsage": ${nonHeapMemoryUsage?c},
 		"becpgSchema": "${becpgSchema?js_string}"
    }

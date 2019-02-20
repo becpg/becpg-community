@@ -57,6 +57,7 @@
 		<property name="authenticationService" ref="authenticationService" />
 		<property name="tenantAdminService" ref="tenantAdminService" />
 		<property name="initVisitorService" ref="initVisitorService"/>
+		<property name="licenseManager" ref="becpgLicenseManager"/>
 		<property name="becpgSchema" value="${becpg.schema}"/>
 	</bean>
 
