@@ -197,9 +197,8 @@ public class ImportServiceImpl implements ImportService {
 
 				ImportFileReader imporFileReader;
 				if (MimetypeMap.MIMETYPE_EXCEL.equals(mimeType) || MimetypeMap.MIMETYPE_OPENXML_SPREADSHEET.equals(mimeType)
-						 || MimetypeMap.MIMETYPE_OPENXML_SPREADSHEET_MACRO.equals(mimeType)
-						 || MimetypeMap.MIMETYPE_OPENXML_SPREADSHEET_BINARY_MACRO.equals(mimeType)
-						) {
+						|| MimetypeMap.MIMETYPE_OPENXML_SPREADSHEET_MACRO.equals(mimeType)
+						|| MimetypeMap.MIMETYPE_OPENXML_SPREADSHEET_BINARY_MACRO.equals(mimeType)) {
 					imporFileReader = new ImportExcelFileReader(is, importContext1.getPropertyFormats());
 				} else {
 					imporFileReader = new ImportCSVFileReader(is, charset, SEPARATOR);
@@ -335,210 +334,212 @@ public class ImportServiceImpl implements ImportService {
 		String[] arrStr;
 
 		while ((importContext.getImportIndex() < lastIndex) && ((arrStr = importContext.nextLine()) != null)) {
+			if (arrStr.length > 0) {
+				String prefix = PropertiesHelper.cleanValue(arrStr[COLUMN_PREFIX]);
 
-			String prefix = PropertiesHelper.cleanValue(arrStr[COLUMN_PREFIX]);
+				if (prefix.equals(PFX_PATH)) {
 
-			if (prefix.equals(PFX_PATH)) {
+					importContext.setParentNodeRef(null);
 
-				importContext.setParentNodeRef(null);
+					String pathValue = arrStr[COLUMN_PATH];
+					importContext.setPath(cleanPath(pathValue));
 
-				String pathValue = arrStr[COLUMN_PATH];
-				importContext.setPath(cleanPath(pathValue));
-
-				if (pathValue.isEmpty()) {
-					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_PATH, importContext.getImportIndex()));
-				}
-
-				if (pathValue.startsWith(PATH_SITES) || pathValue.startsWith(RepoConsts.PATH_SEPARATOR + PATH_SITES)) {
-					importContext.setSiteDocLib(true);
-				} else {
-					importContext.setSiteDocLib(false);
-				}
-
-				List<String> paths = new ArrayList<>();
-				String[] arrPath = pathValue.split(RepoConsts.PATH_SEPARATOR);
-				Collections.addAll(paths, arrPath);
-
-				NodeRef parentNodeRef = repoService.getOrCreateFolderByPaths(repositoryHelper.getCompanyHome(), paths);
-				importContext.setParentNodeRef(parentNodeRef);
-			} else if (prefix.equals(PFX_DOCS_BASE_PATH)) {
-
-				String importDocsBasePath = arrStr[COLUMN_MAPPING];
-				if (!importDocsBasePath.isEmpty()) {
-					importContext.setDocsBasePath(importDocsBasePath);
-				}
-
-			} else if (prefix.equals(PFX_IMPORT_TYPE)) {
-
-				importContext.setImportType(null);
-
-				String importTypeValue = arrStr[COLUMN_IMPORT_TYPE];
-				if (importTypeValue.isEmpty()) {
-					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_IMPORT_TYPE, importContext.getImportIndex()));
-				}
-
-				ImportType importType = ImportType.valueOf(importTypeValue);
-				importContext.setImportType(importType);
-			} else if (prefix.equals(PFX_DISABLED_POLICIES)) {
-
-				importContext.getDisabledPolicies().clear();
-
-				String disabledPoliciesValue = arrStr[COLUMN_DISABLED_POLICIES];
-				if (!disabledPoliciesValue.isEmpty()) {
-					for (String disabledPolicy : disabledPoliciesValue.split(RepoConsts.MULTI_VALUES_SEPARATOR)) {
-						importContext.getDisabledPolicies().add(QName.createQName(disabledPolicy, nameSpaceService));
+					if (pathValue.isEmpty()) {
+						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_PATH, importContext.getImportIndex()));
 					}
 
-				}
-			} else if (prefix.equals(PFX_LIST_TYPE)) {
-
-				importContext.setListType(null);
-
-				String typeValue = arrStr[COLUMN_LIST_TYPE];
-				if (typeValue.isEmpty()) {
-					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_LIST_TYPE, importContext.getImportIndex()));
-				}
-
-				QName type = QName.createQName(typeValue, nameSpaceService);
-				importContext.setListType(type);
-
-			} else if (prefix.equals(PFX_TYPE)) {
-
-				importContext.setType(null);
-
-				String typeValue = arrStr[COLUMN_TYPE];
-				if (typeValue.isEmpty()) {
-					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_TYPE, importContext.getImportIndex()));
-				}
-
-				QName type = QName.createQName(typeValue, nameSpaceService);
-				importContext.setType(type);
-
-			} else if (prefix.equals(PFX_ENTITY_TYPE)) {
-
-				importContext.setEntityType(null);
-
-				String typeValue = arrStr[COLUMN_ENTITY_TYPE];
-				if (typeValue.isEmpty()) {
-					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_ENTITY_TYPE, importContext.getImportIndex()));
-				}
-
-				QName entityType = QName.createQName(typeValue, nameSpaceService);
-				importContext.setEntityType(entityType);
-			} else if (prefix.equals(PFX_STOP_ON_FIRST_ERROR)) {
-
-				String stopOnFirstErrorValue = arrStr[COLUMN_TYPE];
-				if (!stopOnFirstErrorValue.isEmpty()) {
-					importContext.setStopOnFirstError(Boolean.valueOf(stopOnFirstErrorValue));
-				}
-			} else if (prefix.equals(PFX_DELETE_DATALIST)) {
-
-				String deleteDataList = arrStr[COLUMN_TYPE];
-				if (!deleteDataList.isEmpty()) {
-					importContext.setDeleteDataList(Boolean.valueOf(deleteDataList));
-				}
-
-			} else if (prefix.equals(PFX_COLUMS)) {
-
-				boolean undefinedColumns = true;
-				List<String> columns = new ArrayList<>(arrStr.length);
-				for (int z_idx = 1; z_idx < arrStr.length; z_idx++) {
-					if (!arrStr[z_idx].isEmpty()) {
-						columns.add(arrStr[z_idx]);
-						undefinedColumns = false;
+					if (pathValue.startsWith(PATH_SITES) || pathValue.startsWith(RepoConsts.PATH_SEPARATOR + PATH_SITES)) {
+						importContext.setSiteDocLib(true);
+					} else {
+						importContext.setSiteDocLib(false);
 					}
-				}
 
-				if (undefinedColumns) {
-					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_COLUMS, importContext.getImportIndex()));
-				}
+					List<String> paths = new ArrayList<>();
+					String[] arrPath = pathValue.split(RepoConsts.PATH_SEPARATOR);
+					Collections.addAll(paths, arrPath);
 
-				importContext = importNodeVisitor.loadMappingColumns(mappingElt, columns, importContext);
+					NodeRef parentNodeRef = repoService.getOrCreateFolderByPaths(repositoryHelper.getCompanyHome(), paths);
+					importContext.setParentNodeRef(parentNodeRef);
+				} else if (prefix.equals(PFX_DOCS_BASE_PATH)) {
 
-			} else if (prefix.equals(PFX_MAPPING)) {
+					String importDocsBasePath = arrStr[COLUMN_MAPPING];
+					if (!importDocsBasePath.isEmpty()) {
+						importContext.setDocsBasePath(importDocsBasePath);
+					}
 
-				String mappingValue = arrStr[COLUMN_MAPPING];
-				if (mappingValue.isEmpty()) {
-					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_MAPPING, importContext.getImportIndex()));
-				}
+				} else if (prefix.equals(PFX_IMPORT_TYPE)) {
 
-				mappingElt = loadMapping(mappingValue);
-				importContext = importNodeVisitor.loadClassMapping(mappingElt, importContext);
-			} else if (prefix.equals(PFX_VALUES)) {
+					importContext.setImportType(null);
 
-				try {
+					String importTypeValue = arrStr[COLUMN_IMPORT_TYPE];
+					if (importTypeValue.isEmpty()) {
+						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_IMPORT_TYPE, importContext.getImportIndex()));
+					}
 
-					boolean undefinedValues = true;
-					List<String> values = new ArrayList<>(arrStr.length);
+					ImportType importType = ImportType.valueOf(importTypeValue);
+					importContext.setImportType(importType);
+				} else if (prefix.equals(PFX_DISABLED_POLICIES)) {
+
+					importContext.getDisabledPolicies().clear();
+
+					String disabledPoliciesValue = arrStr[COLUMN_DISABLED_POLICIES];
+					if (!disabledPoliciesValue.isEmpty()) {
+						for (String disabledPolicy : disabledPoliciesValue.split(RepoConsts.MULTI_VALUES_SEPARATOR)) {
+							importContext.getDisabledPolicies().add(QName.createQName(disabledPolicy, nameSpaceService));
+						}
+
+					}
+				} else if (prefix.equals(PFX_LIST_TYPE)) {
+
+					importContext.setListType(null);
+
+					String typeValue = arrStr[COLUMN_LIST_TYPE];
+					if (typeValue.isEmpty()) {
+						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_LIST_TYPE, importContext.getImportIndex()));
+					}
+
+					QName type = QName.createQName(typeValue, nameSpaceService);
+					importContext.setListType(type);
+
+				} else if (prefix.equals(PFX_TYPE)) {
+
+					importContext.setType(null);
+
+					String typeValue = arrStr[COLUMN_TYPE];
+					if (typeValue.isEmpty()) {
+						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_TYPE, importContext.getImportIndex()));
+					}
+
+					QName type = QName.createQName(typeValue, nameSpaceService);
+					importContext.setType(type);
+
+				} else if (prefix.equals(PFX_ENTITY_TYPE)) {
+
+					importContext.setEntityType(null);
+
+					String typeValue = arrStr[COLUMN_ENTITY_TYPE];
+					if (typeValue.isEmpty()) {
+						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_ENTITY_TYPE, importContext.getImportIndex()));
+					}
+
+					QName entityType = QName.createQName(typeValue, nameSpaceService);
+					importContext.setEntityType(entityType);
+				} else if (prefix.equals(PFX_STOP_ON_FIRST_ERROR)) {
+
+					String stopOnFirstErrorValue = arrStr[COLUMN_TYPE];
+					if (!stopOnFirstErrorValue.isEmpty()) {
+						importContext.setStopOnFirstError(Boolean.valueOf(stopOnFirstErrorValue));
+					}
+				} else if (prefix.equals(PFX_DELETE_DATALIST)) {
+
+					String deleteDataList = arrStr[COLUMN_TYPE];
+					if (!deleteDataList.isEmpty()) {
+						importContext.setDeleteDataList(Boolean.valueOf(deleteDataList));
+					}
+
+				} else if (prefix.equals(PFX_COLUMS)) {
+
+					boolean undefinedColumns = true;
+					List<String> columns = new ArrayList<>(arrStr.length);
 					for (int z_idx = 1; z_idx < arrStr.length; z_idx++) {
-
-						String value = PropertiesHelper.cleanValue(arrStr[z_idx]);
-						values.add(value);
-
-						if (!value.isEmpty()) {
-							// one value defined, OK
-							undefinedValues = false;
+						if (!arrStr[z_idx].isEmpty()) {
+							columns.add(arrStr[z_idx]);
+							undefinedColumns = false;
 						}
 					}
 
-					if (undefinedValues) {
-						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_VALUES, importContext.getImportIndex()));
+					if (undefinedColumns) {
+						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_COLUMS, importContext.getImportIndex()));
 					}
 
-					// disable policy
-					for (QName disabledPolicy : importContext.getDisabledPolicies()) {
-						logger.debug("disableBehaviour: " + disabledPolicy);
-						policyBehaviourFilter.disableBehaviour(disabledPolicy);
+					importContext = importNodeVisitor.loadMappingColumns(mappingElt, columns, importContext);
+
+				} else if (prefix.equals(PFX_MAPPING)) {
+
+					String mappingValue = arrStr[COLUMN_MAPPING];
+					if (mappingValue.isEmpty()) {
+						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_MAPPING, importContext.getImportIndex()));
 					}
 
-					// TODO Use factory or @annotation instead of if
-					if (ImportType.Comments.equals(importContext.getImportType())) {
-						importCommentsVisitor.importNode(importContext, values);
-					} else if (dictionaryService.isSubClass(importContext.getType(), PLMModel.TYPE_PRODUCT)) {
-						importProductVisitor.importNode(importContext, values);
-					} else if (ImportType.EntityListAspect.equals(importContext.getImportType())) {
-						importEntityListAspectVisitor.importNode(importContext, values);
-					} else if (ImportType.EntityListItem.equals(importContext.getImportType())) {
-						importEntityListItemVisitor.importNode(importContext, values);
-					} else {
-						importNodeVisitor.importNode(importContext, values);
-					}
-					// Do not remove that
-					String successMessage = importContext.markCurrLineSuccess();
-					if (logger.isDebugEnabled()) {
-						logger.debug(successMessage);
-					}
+					mappingElt = loadMapping(mappingValue);
+					importContext = importNodeVisitor.loadClassMapping(mappingElt, importContext);
+				} else if (prefix.equals(PFX_VALUES)) {
 
-				} catch (ImporterException e) {
+					try {
 
-					if (importContext.isStopOnFirstError()) {
-						throw e;
-					} else {
+						boolean undefinedValues = true;
+						List<String> values = new ArrayList<>(arrStr.length);
+						for (int z_idx = 1; z_idx < arrStr.length; z_idx++) {
+
+							String value = PropertiesHelper.cleanValue(arrStr[z_idx]);
+							values.add(value);
+
+							if (!value.isEmpty()) {
+								// one value defined, OK
+								undefinedValues = false;
+							}
+						}
+
+						if (undefinedValues) {
+							throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_VALUES, importContext.getImportIndex()));
+						}
+
+						// disable policy
+						for (QName disabledPolicy : importContext.getDisabledPolicies()) {
+							logger.debug("disableBehaviour: " + disabledPolicy);
+							policyBehaviourFilter.disableBehaviour(disabledPolicy);
+						}
+
+						// TODO Use factory or @annotation instead of if
+						if (ImportType.Comments.equals(importContext.getImportType())) {
+							importCommentsVisitor.importNode(importContext, values);
+						} else if (dictionaryService.isSubClass(importContext.getType(), PLMModel.TYPE_PRODUCT)) {
+							importProductVisitor.importNode(importContext, values);
+						} else if (ImportType.EntityListAspect.equals(importContext.getImportType())) {
+							importEntityListAspectVisitor.importNode(importContext, values);
+						} else if (ImportType.EntityListItem.equals(importContext.getImportType())) {
+							importEntityListItemVisitor.importNode(importContext, values);
+						} else {
+							importNodeVisitor.importNode(importContext, values);
+						}
 						// Do not remove that
-						String errorMessage = importContext.markCurrLineError(e);
-						logger.error(errorMessage);
-					}
-				} catch (Exception e) {
+						String successMessage = importContext.markCurrLineSuccess();
+						if (logger.isDebugEnabled()) {
+							logger.debug(successMessage);
+						}
 
-					if (e instanceof ConcurrencyFailureException) {
-						throw (ConcurrencyFailureException) e;
-					} else if (importContext.isStopOnFirstError()) {
-						throw e;
-					} else {
-						// store the exception and the printStack and continue
-						// import...
-						// Do not remove that
-						String errorMessage = importContext.markCurrLineError(e);
-						logger.error(errorMessage, e);
+					} catch (ImporterException e) {
+
+						if (importContext.isStopOnFirstError()) {
+							throw e;
+						} else {
+							// Do not remove that
+							String errorMessage = importContext.markCurrLineError(e);
+							logger.error(errorMessage);
+						}
+					} catch (Exception e) {
+
+						if (e instanceof ConcurrencyFailureException) {
+							throw (ConcurrencyFailureException) e;
+						} else if (importContext.isStopOnFirstError()) {
+							throw e;
+						} else {
+							// store the exception and the printStack and
+							// continue
+							// import...
+							// Do not remove that
+							String errorMessage = importContext.markCurrLineError(e);
+							logger.error(errorMessage, e);
+						}
+					} finally {
+						// enable policy
+						for (QName disabledPolicy : importContext.getDisabledPolicies()) {
+							policyBehaviourFilter.enableBehaviour(disabledPolicy);
+						}
 					}
-				} finally {
-					// enable policy
-					for (QName disabledPolicy : importContext.getDisabledPolicies()) {
-						policyBehaviourFilter.enableBehaviour(disabledPolicy);
-					}
+				} else if (!(prefix.isEmpty() || prefix.equals(PFX_COMMENT))) {
+					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNSUPPORTED_PREFIX, importContext.getImportIndex(), prefix));
 				}
-			} else if (!(prefix.isEmpty() || prefix.equals(PFX_COMMENT))) {
-				throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNSUPPORTED_PREFIX, importContext.getImportIndex(), prefix));
 			}
 		}
 

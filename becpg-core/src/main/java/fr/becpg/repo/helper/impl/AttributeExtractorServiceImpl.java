@@ -429,7 +429,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 					value = (Serializable) JsonFormulaHelper.cleanCompareJSON((String) value);
 				}
 				if (propertyDef.getConstraints().isEmpty() || (DataTypeDefinition.TEXT.toString().equals(propertyDef.getDataType().toString()))) {
-					if (formatData ||  value instanceof NodeRef) {
+					if (formatData ||  value instanceof NodeRef || value instanceof List) {
 						return getStringValue(propertyDef, value, propertyFormats);
 					} else {
 						return value.toString();
