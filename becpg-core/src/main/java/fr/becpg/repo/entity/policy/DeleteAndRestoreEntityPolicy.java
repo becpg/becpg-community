@@ -16,6 +16,7 @@ import org.alfresco.repo.node.NodeServicePolicies.BeforeArchiveNodePolicy;
 import org.alfresco.repo.node.NodeServicePolicies.OnRestoreNodePolicy;
 import org.alfresco.repo.node.db.NodeHierarchyWalker;
 import org.alfresco.repo.node.db.NodeHierarchyWalker.VisitedNode;
+import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.TenantService;
@@ -44,6 +45,7 @@ import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.PropertiesHelper;
+import fr.becpg.repo.node.integrity.BeCPGIntegrityChecker;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
 /**
@@ -153,20 +155,24 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 
 						NodeRef rootArchiveRef = nodeService.getStoreArchiveNode(entityNodeRef.getStoreRef());
 
-						if (logger.isDebugEnabled()) {
-							logger.debug("Retrieving " + REMOTE_FILE_NAME + "_" + entityNodeRef.getId() + " from archiveStore ");
-						}
 
 						NodeRef entityDeletedFileNodeRef = nodeService.getChildByName(rootArchiveRef, ContentModel.ASSOC_CONTAINS,
 								REMOTE_FILE_NAME + "_" + entityNodeRef.getId());
 
+						
 						if (entityDeletedFileNodeRef != null) {
+
+							if (logger.isDebugEnabled()) {
+								logger.debug("Retrieving " + REMOTE_FILE_NAME + "_" + entityNodeRef.getId() + " from archiveStore: "+ entityDeletedFileNodeRef);
+							}
 
 							ContentReader reader = contentService.getReader(entityDeletedFileNodeRef, ContentModel.PROP_CONTENT);
 							if (reader != null) {
 								try (InputStream in = reader.getContentInputStream()) {
 									policyBehaviourFilter.disableBehaviour(entityNodeRef);
 
+									IntegrityChecker.setWarnInTransaction();
+									
 									remoteEntityService.createOrUpdateEntity(entityNodeRef, in, RemoteEntityFormat.xml, null);
 								} catch (IOException e) {
 									logger.error(e, e);
