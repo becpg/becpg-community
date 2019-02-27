@@ -318,19 +318,19 @@ public class ImportEntityXmlVisitor {
 
 							if (!currAssoc.isEmpty() && (currAssoc.peek() != null)) {
 
-								if (currAssocType.peek().equals(RemoteEntityService.NODEREF_TYPE)) {
-									// Case d:nodeRef
-									if (logger.isDebugEnabled()) {
-										logger.debug("Set property to : " + currAssoc.peek().toPrefixString(serviceRegistry.getNamespaceService())
-												+ " value " + node + " for type " + type);
-									}
-
+								if (currAssocType.peek().equals(RemoteEntityService.NODEREF_TYPE) || currAssocType.peek().equals(RemoteEntityService.CATEGORY_TYPE)) {
 									if (multipleValues != null) {
 										if (logger.isDebugEnabled()) {
-											logger.debug("Multiple value for d:nodeRef");
+											logger.debug("Add multiple value for "+ currAssoc.peek().toPrefixString(serviceRegistry.getNamespaceService())
+													+ " value " + node );
 										}
 										multipleValues.add(node);
 									} else {
+										if (logger.isDebugEnabled()) {
+											logger.debug("Set property to : " + currAssoc.peek().toPrefixString(serviceRegistry.getNamespaceService())
+													+ " value " + node + " for type " + type);
+										}
+
 										serviceRegistry.getNodeService().setProperty(curNodeRef.peek(), currAssoc.peek(), node);
 									}
 								} else {
@@ -340,21 +340,20 @@ public class ImportEntityXmlVisitor {
 
 							}
 
-							if (ContentModel.ASPECT_TAGGABLE.equals(currProp)) {
-								multipleValues.add(node);
-								logger.debug("Adding value " + node + " to multiple values, new MV array = " + multipleValues);
-							}
-
 							curNodeRef.push(node);
 
 						}
 					}
 
 				} else if ((type != null) && (type.equals(RemoteEntityService.ASSOC_TYPE) || type.equals(RemoteEntityService.CHILD_ASSOC_TYPE)
-						|| type.equals(RemoteEntityService.NODEREF_TYPE))) {
+						|| type.equals(RemoteEntityService.NODEREF_TYPE) || type.equals(RemoteEntityService.CATEGORY_TYPE))) {
 					currAssoc.push(parseQName(qName));
 					currAssocType.push(type);
-					if (!type.equals(RemoteEntityService.NODEREF_TYPE)) {
+					if(logger.isTraceEnabled()) {
+						logger.trace("Push assoc type:"+type);
+					}
+					
+					if (!type.equals(RemoteEntityService.NODEREF_TYPE) && !type.equals(RemoteEntityService.CATEGORY_TYPE)) {
 						queueExistingAssociations(curNodeRef.peek(), currAssoc.peek(), type);
 					}
 				} else if ((type != null) && (type.length() > 0)) {
@@ -370,7 +369,6 @@ public class ImportEntityXmlVisitor {
 								mltextAttributes.put(locale, StringEscapeUtils.unescapeHtml(attributes.getValue(i).toString()));
 							}
 						}
-
 					}
 
 					currProp = parseQName(qName);
@@ -439,7 +437,7 @@ public class ImportEntityXmlVisitor {
 					logger.trace("Pop node");
 					entityNodeRef = curNodeRef.pop();
 				} else if (RemoteEntityService.ELEM_LIST_VALUE.equals(qName)) {
-					if ((currAssocType.isEmpty() || !currAssocType.peek().equals(RemoteEntityService.NODEREF_TYPE)) && (currValue.length() > 0)) {
+					if ((currAssocType.isEmpty() || (!currAssocType.peek().equals(RemoteEntityService.NODEREF_TYPE) && !currAssocType.peek().equals(RemoteEntityService.CATEGORY_TYPE))) && (currValue.length() > 0)) {
 						if (logger.isTraceEnabled()) {
 							logger.trace("Add " + currValue.toString() + " to multipleValues ");
 						}
