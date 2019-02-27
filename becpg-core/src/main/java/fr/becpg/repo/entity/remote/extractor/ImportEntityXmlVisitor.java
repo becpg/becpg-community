@@ -446,7 +446,7 @@ public class ImportEntityXmlVisitor {
 						multipleValues.add(currValue.toString());
 					}
 				} else if ((type != null) && (type.equals(RemoteEntityService.ASSOC_TYPE) || type.equals(RemoteEntityService.CHILD_ASSOC_TYPE)
-						|| type.equals(RemoteEntityService.NODEREF_TYPE))) {
+						|| type.equals(RemoteEntityService.NODEREF_TYPE) || type.equals(RemoteEntityService.CATEGORY_TYPE))) {
 
 					if (multipleValues != null) {
 						serviceRegistry.getNodeService().setProperty(curNodeRef.peek(), currAssoc.peek(), multipleValues);
