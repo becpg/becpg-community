@@ -172,7 +172,7 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 									policyBehaviourFilter.disableBehaviour(entityNodeRef);
 
 									IntegrityChecker.setWarnInTransaction();
-									
+						
 									remoteEntityService.createOrUpdateEntity(entityNodeRef, in, RemoteEntityFormat.xml, null);
 								} catch (IOException e) {
 									logger.error(e, e);
