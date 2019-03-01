@@ -7,6 +7,7 @@ import java.util.Set;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.content.ContentServicePolicies;
 import org.alfresco.repo.node.NodeServicePolicies;
+import org.alfresco.repo.policy.Behaviour.NotificationFrequency;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
@@ -18,7 +19,7 @@ import fr.becpg.repo.designer.DesignerService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
 public class DesignerContentUpdatePolicy extends AbstractBeCPGPolicy implements ContentServicePolicies.OnContentUpdatePolicy,
-		NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.BeforeDeleteNodePolicy{
+		NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.BeforeDeleteNodePolicy, NodeServicePolicies.OnAddAspectPolicy{
 
 	private static final Log logger = LogFactory.getLog(DesignerContentUpdatePolicy.class);
 
@@ -30,6 +31,7 @@ public class DesignerContentUpdatePolicy extends AbstractBeCPGPolicy implements 
 
 	@Override
 	public void doInit() {
+		
 		policyComponent.bindClassBehaviour(ContentServicePolicies.OnContentUpdatePolicy.QNAME, DesignerModel.ASPECT_CONFIG, new JavaBehaviour(this,
 				"onContentUpdate"));
 
@@ -37,21 +39,27 @@ public class DesignerContentUpdatePolicy extends AbstractBeCPGPolicy implements 
 				"onContentUpdate"));
 
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, DesignerModel.ASPECT_CONFIG, new JavaBehaviour(this,
-				"onUpdateProperties"));
-
+								"onUpdateProperties", NotificationFrequency.TRANSACTION_COMMIT));
+		
 		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME, DesignerModel.ASPECT_CONFIG, new JavaBehaviour(this,
 				"beforeDeleteNode"));
-
+		
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnAddAspectPolicy.QNAME, DesignerModel.ASPECT_CONFIG, new JavaBehaviour(this, 
+				"onAddAspect"));
+		
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnAddAspectPolicy.QNAME, DesignerModel.ASPECT_MODEL, new JavaBehaviour(this, 
+				"onAddAspect"));
 	}
 
 	@Override
 	public void onContentUpdate(NodeRef nodeRef, boolean newContent) {
-		queueNode(nodeRef);
+		if(!isWorkingCopy(nodeRef)) {
+			queueNode(nodeRef);
+		}
 	}
 
 	@Override
 	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
-
 		try {
 			policyBehaviourFilter.disableBehaviour(DesignerModel.ASPECT_CONFIG);
 			policyBehaviourFilter.disableBehaviour(DesignerModel.ASPECT_MODEL);
@@ -77,19 +85,31 @@ public class DesignerContentUpdatePolicy extends AbstractBeCPGPolicy implements 
 		Serializable nameAfter = after.get(ContentModel.PROP_NAME);
 
 		logger.debug("Rename on config, before=" + nameBefore + ", after=" + nameAfter + ", equals ? " + nameBefore.equals(nameAfter));
-		if (nameBefore != null && !nameBefore.equals(nameAfter)) {
+		if (nameBefore != null && !nameBefore.equals(nameAfter) && nodeService.exists(nodeRef)) {
 			designerService.unpublish((String)nameBefore);
 			queueNode(nodeRef);
+		}
+		
+	}
+	
+	
+	@Override
+	public void beforeDeleteNode(NodeRef nodeRef) {
+		if(nodeService.exists(nodeRef) && !isWorkingCopy(nodeRef)){
+			logger.debug("Delete, oldNode = "+nodeRef+", exists ? "+nodeService.exists(nodeRef));
+			designerService.unpublish(nodeRef);
 		}
 	}
 	
 	@Override
-	public void beforeDeleteNode(NodeRef nodeRef) {
-		logger.debug("Delete, oldNode = "+nodeRef+", exists ? "+nodeService.exists(nodeRef));
-		
-		if(nodeService.exists(nodeRef)){
-			designerService.unpublish(nodeRef);
+	public void onAddAspect(NodeRef nodeRef, QName aspectTypeQName) {
+		if(!isWorkingCopy(nodeRef)) {
+			queueNode(nodeRef);
 		}
-	};
+	}
 
+	private boolean isWorkingCopy(NodeRef nodeRef) {
+		Set<QName> aspects = nodeService.getAspects(nodeRef);
+		return aspects.contains(ContentModel.ASPECT_WORKING_COPY);
+	}
 }
