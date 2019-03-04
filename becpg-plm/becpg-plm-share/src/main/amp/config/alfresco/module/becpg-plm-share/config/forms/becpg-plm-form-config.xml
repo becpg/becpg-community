@@ -135,7 +135,6 @@
 					<show id="bcpg:productGeoOrigin"  force="true"  />
 					<show id="bcpg:clients" />
 					<show id="bcpg:suppliers" />
-					
 					<show id="bcpg:entityTplRef" force="true" />
 					
 					<!-- Nutrient profiling score -->
@@ -157,15 +156,14 @@
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:netWeight" force="true" />
+					<show id="bcpg:drainedWeight" force="true" />
 					<show id="bcpg:productDensity" />
-					<show id="bcpg:productLossPerc" />
 					<show id="bcpg:netVolume" force="true" />
+					<show id="bcpg:productLossPerc" />
 					<show id="bcpg:servingSize" force="true" />
 					<show id="bcpg:servingSizeUnit" force="true" />
 					<show id="bcpg:servingSizeText" force="true" />
 					<show id="bcpg:numberOfServings" force="true" />
-				
-					
 					<show id="bcpg:productSpecifications" />
 
 					<!-- Profitability -->
@@ -199,19 +197,36 @@
 					<!-- GS1 -->
 					
 					<show id="gs1:productHierarchy1" for-mode="edit" />
-                    <show id="gs1:productHierarchy2" for-mode="edit" />
-                    <show id="gs1:productHierarchy3" for-mode="edit" />
-                    <show id="gs1:productHierarchy4" for-mode="edit" />
-                    <show id="gs1:productHierarchy5" for-mode="edit" />
+              	<show id="gs1:productHierarchy2" for-mode="edit" />
+             	<show id="gs1:productHierarchy3" for-mode="edit" />
+              	<show id="gs1:productHierarchy4" for-mode="edit" />
+             	<show id="gs1:productHierarchy5" for-mode="edit" />
 					
+					<show id="gs1:packagingTypeCode" for-mode="edit" />
 					<show id="gs1:height" for-mode="edit" />
 					<show id="gs1:width" for-mode="edit" />
 					<show id="gs1:depth" for-mode="edit" />
+					<show id="pack:tare" for-mode="edit" />
 					<show id="gs1:weight" for-mode="edit" />
-					<show id="gs1:secondaryWeight" for-mode="edit" />
-					<show id="gs1:tertiaryWeight" for-mode="edit" />
+					
+					<show id="gs1:secondaryHeight" for-mode="edit" />
+					<show id="gs1:secondaryWidth" for-mode="edit" />
+					<show id="gs1:secondaryDepth" for-mode="edit" />
 					<show id="gs1:secondaryNetWeight" for-mode="edit" />
+					<show id="gs1:secondaryTare" for-mode="edit" />
+					<show id="gs1:secondaryWeight" for-mode="edit" />
+					
+					<show id="pack:palletLayers" for-mode="edit" />
+					<show id="pack:palletBoxesPerLayer" for-mode="edit" />
+					<show id="pack:palletBoxesPerLastLayer" for-mode="edit" />
+					<show id="pack:palletBoxesPerPallet" for-mode="edit" />
+					<show id="pack:palletHeight" for-mode="edit" />
+					<show id="pack:palletNumberOnGround" for-mode="edit" />
+					<show id="pack:palletStackingMaxWeight" for-mode="edit" />
 					<show id="gs1:tertiaryNetWeight" for-mode="edit" />
+					<show id="gs1:tertiaryTare" for-mode="edit" />
+					<show id="gs1:tertiaryWeight" for-mode="edit" />
+					<show id="gs1:palletTypeCode" for-mode="edit" />
 					
 					<show id="gs1:isTradeItemABaseUnit" for-mode="edit" />
 					<show id="gs1:isTradeItemAConsumerUnit" for-mode="edit" />
@@ -232,8 +247,6 @@
 					<show id="gs1:lastChangeDateTime" for-mode="edit" />
 					<show id="gs1:publicationDate" for-mode="edit" />
 					<show id="gs1:isPackagingMarkedReturnable" for-mode="edit" />
-					<show id="gs1:packagingTypeCode" for-mode="edit" />
-					<show id="gs1:palletTypeCode" for-mode="edit" />
 
 
 				</field-visibility>
@@ -268,8 +281,14 @@
 				    <set appearance="bordered-panel" id="hierarchyPanel"
 						label-id="becpg.forms.set.hierarchyPanel.label" parent="publicationTab"
 						template="/org/alfresco/components/form/2-column-set.ftl" />
-					<set appearance="bordered-panel" id="mesuresPanel"
-						label-id="becpg.forms.set.measures.label" parent="publicationTab"
+					<set appearance="bordered-panel" id="primaryPackaging"
+						label-id="becpg.forms.set.primaryPackaging.label" parent="publicationTab"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set appearance="bordered-panel" id="secondaryPackaging"
+						label-id="becpg.forms.set.secondaryPackaging.label" parent="publicationTab"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set appearance="bordered-panel" id="tertiaryPackaging"
+						label-id="becpg.forms.set.tertiaryPackaging.label" parent="publicationTab"
 						template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set appearance="bordered-panel" id="indicateursPanel"
 						label-id="becpg.forms.set.indicators.label" parent="publicationTab"
@@ -277,10 +296,6 @@
 					<set appearance="bordered-panel" id="datesPanel"
 						label-id="becpg.forms.set.dates.label" parent="publicationTab"
 						template="/org/alfresco/components/form/2-column-set.ftl" />
-					<set appearance="bordered-panel" id="packagingPanel"
-						label-id="becpg.forms.set.packaging.label" parent="publicationTab"
-						template="/org/alfresco/components/form/2-column-set.ftl" />
-
 
 					<!-- Main info -->
 					<field id="cm:name" set="mainInfo" />
@@ -431,6 +446,12 @@
 							<control-param name="unit">L</control-param>
 						</control>
 					</field>
+					<field id="bcpg:drainedWeight" set="formulation" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">kg</control-param>
+						</control>
+					</field>
 					<field id="bcpg:servingSize" help-id="becpg.forms.help.servingSize" set="formulation" />
 					<field id="bcpg:servingSizeUnit" set="formulation" />
 					<field id="bcpg:servingSizeText" set="formulation"  >
@@ -558,56 +579,116 @@
 							<control-param name="parent">gs1_productHierarchy4</control-param>
 						</control>
 					</field>
-
-					<field id="gs1:height" help-id="becpg.forms.help.gs1.height" set="mesuresPanel" >
+					
+					<field id="gs1:packagingTypeCode" help-id="becpg.forms.help.gs1.packagingTypeCode"  set="primaryPackaging" />
+					<field id="gs1:height" help-id="becpg.forms.help.gs1.height" set="primaryPackaging" >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">mm</control-param>
 						</control>
 					</field>
-					<field id="gs1:width"  help-id="becpg.forms.help.gs1.width" set="mesuresPanel" >
+					<field id="gs1:width"  help-id="becpg.forms.help.gs1.width" set="primaryPackaging" >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">mm</control-param>
 						</control>
 					</field>
-					<field id="gs1:depth"  help-id="becpg.forms.help.gs1.depth" set="mesuresPanel" >
+					<field id="gs1:depth"  help-id="becpg.forms.help.gs1.depth" set="primaryPackaging" >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">mm</control-param>
 						</control>
 					</field>
-					<field id="gs1:weight" help-id="becpg.forms.help.gs1.weight" set="mesuresPanel" read-only="true" >
+					<field id="pack:tare" set="primaryPackaging" read-only="true" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">g</control-param>
+						</control>
+					</field>
+					<field id="gs1:weight" help-id="becpg.forms.help.gs1.weight" set="primaryPackaging" read-only="true" >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">kg</control-param>
 						</control>
 					</field>
 					
-					<field id="gs1:secondaryWeight" set="mesuresPanel" read-only="true" >
+					<field id="gs1:secondaryHeight" set="secondaryPackaging" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">mm</control-param>
+						</control>
+					</field>
+					<field id="gs1:secondaryWidth" set="secondaryPackaging" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">mm</control-param>
+						</control>
+					</field>
+					<field id="gs1:secondaryDepth" set="secondaryPackaging" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">mm</control-param>
+						</control>
+					</field>
+					<field id="gs1:secondaryNetWeight" set="secondaryPackaging" read-only="true">
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">kg</control-param>
 						</control>
 					</field>
-					<field id="gs1:tertiaryWeight" set="mesuresPanel" read-only="true">
+					<field id="gs1:secondaryTare" set="secondaryPackaging" read-only="true" >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">kg</control-param>
 						</control>
 					</field>
-					<field id="gs1:secondaryNetWeight" set="mesuresPanel" read-only="true">
+					<field id="gs1:secondaryWeight" set="secondaryPackaging" read-only="true" >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">kg</control-param>
 						</control>
 					</field>
-					<field id="gs1:tertiaryNetWeight" set="mesuresPanel" read-only="true">
+					
+					<!-- pallet -->
+					<field id="gs1:tertiaryNetWeight" set="tertiaryPackaging" read-only="true">
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">kg</control-param>
 						</control>
 					</field>
+					<field id="gs1:tertiaryTare" set="tertiaryPackaging" read-only="true" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">kg</control-param>
+						</control>
+					</field>
+					<field id="gs1:tertiaryWeight" set="tertiaryPackaging" read-only="true" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">kg</control-param>
+						</control>
+					</field>
+					<field id="pack:palletLayers" set="tertiaryPackaging" />
+					<field id="pack:palletBoxesPerLayer" set="tertiaryPackaging" />
+					<field id="pack:palletBoxesPerLastLayer" set="tertiaryPackaging" />
+					<field id="pack:palletBoxesPerPallet" set="tertiaryPackaging" />
+					<field id="pack:palletHeight" set="tertiaryPackaging" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">mm</control-param>
+						</control>
+					</field>
+					<field id="pack:palletNumberOnGround" set="tertiaryPackaging" />
+					<field id="pack:palletStackingMaxWeight" set="tertiaryPackaging" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">kg</control-param>
+						</control>
+					</field>
+					<field id="gs1:palletTypeCode" help-id="becpg.forms.help.gs1.palletTypeCode" set="tertiaryPackaging" />
+ 				
+ 					<field id="gs1:isTradeItemABaseUnit" help-id="becpg.forms.help.gs1.isTradeItemABaseUnit" set="indicateursPanel" />
+ 					<field id="gs1:isTradeItemAConsumerUnit" help-id="becpg.forms.help.gs1.isTradeItemAConsumerUnit" set="indicateursPanel" />
 					
 				
 					<field id="gs1:isTradeItemABaseUnit" help-id="becpg.forms.help.gs1.isTradeItemABaseUnit" set="indicateursPanel" />
@@ -631,9 +712,6 @@
 					<field id="gs1:startAvailabilityDateTime" help-id="becpg.forms.help.gs1.startAvailabilityDateTime"  set="datesPanel" />
 					<field id="gs1:lastChangeDateTime" help-id="becpg.forms.help.gs1.lastChangeDateTime"  set="datesPanel" />
 					<field id="gs1:publicationDate" help-id="becpg.forms.help.gs1.publicationDate"  set="datesPanel" />
-
-					<field id="gs1:packagingTypeCode" help-id="becpg.forms.help.gs1.packagingTypeCode"  set="packagingPanel" />
-					<field id="gs1:palletTypeCode" help-id="becpg.forms.help.gs1.palletTypeCode"  set="packagingPanel" />
 
 				</appearance>
 			</form>
@@ -1095,7 +1173,6 @@
 					<show id="bcpg:productGeoOrigin"  force="true"  />
 					<show id="bcpg:trademarkRef" force="true" />
 					<show id="bcpg:clients" />
-					<show id="bcpg:entityTplRef" force="true" />
 
 					<!-- consumer aspect -->
 					<show id="bcpg:useByDate" force="true" />
@@ -1111,16 +1188,15 @@
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:netWeight" force="true" />
+					<show id="bcpg:drainedWeight" force="true" />
 					<show id="bcpg:productLossPerc" force="true"/>
-					<show id="bcpg:productSpecifications" />
 					<show id="bcpg:netVolume" force="true" />
+					
 					<show id="bcpg:servingSize" force="true" />
 					<show id="bcpg:servingSizeUnit" force="true" />
 					<show id="bcpg:servingSizeText" force="true" />
 					<show id="bcpg:numberOfServings" force="true" />
-					
-					
-					
+					<show id="bcpg:productSpecifications" />					
 
 					<!-- Profitability -->
 					<show id="bcpg:unitPrice" force="true" />
@@ -1295,7 +1371,13 @@
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">L</control-param>
 						</control>
-					</field>							
+					</field>						
+					<field id="bcpg:drainedWeight" set="formulation" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">kg</control-param>
+						</control>
+					</field>	
 					<field id="bcpg:servingSize" help-id="becpg.forms.help.servingSize"  set="formulation" />
 					<field id="bcpg:servingSizeUnit" set="formulation" />
 					<field id="bcpg:servingSizeText" set="formulation" >
