@@ -231,6 +231,9 @@ public class DesignerServiceImpl implements DesignerService {
 		ContentWriter writer = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
 		OutputStream out = null;
 		try {
+			policyBehaviourFilter.disableBehaviour(DesignerModel.ASPECT_CONFIG);
+			policyBehaviourFilter.disableBehaviour(DesignerModel.ASPECT_MODEL);
+			
 			writer.setEncoding("UTF-8");
 			out = writer.getContentOutputStream();
 			if (nodeService.hasAspect(nodeRef, DesignerModel.ASPECT_MODEL)) {
@@ -257,6 +260,8 @@ public class DesignerServiceImpl implements DesignerService {
 					// Cannot do nothing here
 				}
 			}
+			policyBehaviourFilter.enableBehaviour(DesignerModel.ASPECT_CONFIG);
+			policyBehaviourFilter.enableBehaviour(DesignerModel.ASPECT_MODEL);
 		}
 
 	}
@@ -267,6 +272,7 @@ public class DesignerServiceImpl implements DesignerService {
 			logger.debug("Publish model");
 			nodeService.setProperty(nodeRef, ContentModel.PROP_MODEL_ACTIVE, true);
 		} else if (nodeService.hasAspect(nodeRef, DesignerModel.ASPECT_CONFIG)) {
+			logger.debug("Publish forms");
 			String name = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
 			File configDir = new File(configPath);
 			if (!configDir.exists()) {
@@ -291,6 +297,7 @@ public class DesignerServiceImpl implements DesignerService {
 			} finally {
 				IOUtils.closeQuietly(in);
 				IOUtils.closeQuietly(out);
+				
 			}
 		}
 	}
@@ -339,6 +346,8 @@ public class DesignerServiceImpl implements DesignerService {
 	@Override
 	public DesignerTree getDesignerTree(NodeRef nodeRef) {
 		NodeRef treeNodeRef = null;
+		
+		
 		if (nodeService.hasAspect(nodeRef, DesignerModel.ASPECT_MODEL)) {
 			treeNodeRef = findModelNodeRef(nodeRef);
 			if (logger.isDebugEnabled() && treeNodeRef == null) {
@@ -353,8 +362,14 @@ public class DesignerServiceImpl implements DesignerService {
 				|| nodeService.getType(nodeRef).getNamespaceURI().equals(DesignerModel.DESIGNER_URI)) {
 			treeNodeRef = nodeRef;
 		} else {
-			logger.info("Node has not mandatory aspect : model aspect. Creating ...");
+			logger.debug("Node has not mandatory aspect : model aspect. Creating ...");
 		}
+		
+		if(treeNodeRef!=null && nodeService.hasAspect(treeNodeRef, ContentModel.ASPECT_TEMPORARY)) {
+			nodeService.deleteNode(treeNodeRef);
+			treeNodeRef = null;
+		}
+		
 		if (treeNodeRef == null) {
 			if (nodeService.hasAspect(nodeRef, DesignerModel.ASPECT_CONFIG)) {
 				treeNodeRef = createConfigAspectNode(nodeRef);
@@ -705,6 +720,7 @@ public class DesignerServiceImpl implements DesignerService {
 			}
 			dictionaryDAO.reset();
 		} else if (nodeService.hasAspect(nodeRef, DesignerModel.ASPECT_CONFIG)) {
+			logger.debug("Publish forms");
 			String name = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
 			unpublish(name);
 		}
@@ -713,6 +729,9 @@ public class DesignerServiceImpl implements DesignerService {
 
 	@Override
 	public void createAndPublishConfig(NodeRef nodeRef) {
+		policyBehaviourFilter.disableBehaviour(DesignerModel.ASPECT_CONFIG);
+		policyBehaviourFilter.disableBehaviour(DesignerModel.ASPECT_MODEL);
+		
 		logger.debug("Creating and publishing: "+nodeRef);
 		
 		NodeRef configNodeRef = null;
@@ -723,16 +742,16 @@ public class DesignerServiceImpl implements DesignerService {
 			configNodeRef = findConfigNodeRef(nodeRef);
 		} 
 		
-		
 		if(configNodeRef!=null){
-			nodeService.deleteNode(configNodeRef);
+			nodeService.addAspect(configNodeRef, ContentModel.ASPECT_TEMPORARY, new HashMap<>());
 		}
-		getDesignerTree(nodeRef);
-		
+
 		if (nodeService.hasAspect(nodeRef, DesignerModel.ASPECT_CONFIG)) {
 			publish(nodeRef);
 		}
 		
+		policyBehaviourFilter.enableBehaviour(DesignerModel.ASPECT_CONFIG);
+		policyBehaviourFilter.enableBehaviour(DesignerModel.ASPECT_MODEL);
 		
 	}
 
