@@ -32,13 +32,13 @@
 				<View name="tags" alias="tags">
 					<SQL dialect="generic">
 						select  
-							doc->>"$.entityNodeRef" as entityNodeRef,
+							entityNodeRef,
 							doc->>"$.name" as name,
-							doc->>"$.nodeRef" as nodeRef
+							nodeRef
 						from
 							assoc_cm_taggable
 						<#if !isAdmin>	
-						  where doc->>"$.instanceId" = ${instanceId}
+						  where instanceId = ${instanceId}
 						</#if>
 					</SQL>
 				</View>
@@ -53,13 +53,13 @@
 				<View name="clients" alias="clients">
 								<SQL dialect="generic">
 									select  
-										doc->>"$.entityNodeRef" as entityNodeRef,
+										entityNodeRef,
 										doc->>"$.name" as name,
-										doc->>"$.nodeRef" as nodeRef
+										nodeRef
 									from
 										assoc_bcpg_clients
 									<#if !isAdmin>	
-									  where doc->>"$.instanceId" = ${instanceId}
+									  where instanceId = ${instanceId}
 									</#if>
 								</SQL>
 				</View>
@@ -74,7 +74,7 @@
 				<View name="products_dim" alias="products_dim">
 					<SQL dialect="generic">
 						select
-							doc->>"$.nodeRef" as nodeRef,
+							nodeRef,
 							doc->>"$.cm_name" as name,
 							doc->>"$.bcpg_productHierarchy1[0]" as productHierarchy1,
 							doc->>"$.bcpg_productHierarchy2[0]" as productHierarchy2,
@@ -88,7 +88,7 @@
 							bcpg_product
 						<#if !isAdmin>	
 						 where 
-						    doc->>"$.instanceId" = ${instanceId}
+						    instanceId = ${instanceId}
 						</#if>
 					</SQL>
 				</View>
@@ -137,7 +137,7 @@
 				<View name="projects_dim" alias="projects_dim">
 					<SQL dialect="generic">
 						select
-							doc->>"$.nodeRef" as noderef,
+							nodeRef,
 							doc->>"$.cm_name" as name,
 							doc->>"$.pjt_projectState" as projectState,
 							doc->>"$.projectManager[0]" as projectManager,
@@ -147,7 +147,7 @@
 							pjt_project
 						<#if !isAdmin>	
 						 where 
-						    doc->>"$.instanceId" = ${instanceId}
+						    instanceId = ${instanceId}
 						</#if>
 					</SQL>
 				 </View>
@@ -315,17 +315,17 @@
 			<View name="requirements" alias="requirements">
 				<SQL dialect="generic">
 					select
-						doc->>"$.nodeRef" as noderef,
-						doc->>"$.entityNodeRef" as entityNodeRef,
+						nodeRef,
+						entityNodeRef,
 						doc->>"$.cm_name" as name,
 						doc->>"$.bcpg_rclReqType" as rclReqType,
 						doc->>"$.bcpg_rclReqMessage" as rclReqMessage,
-						doc->>"$.instanceId" as instanceId
+						instanceId
 					from
 						reqCtrlList
 					<#if !isAdmin>	
 					 where 
-					    doc->>"$.instanceId" = ${instanceId}
+					    instanceId = ${instanceId}
 					</#if>
 				</SQL>
 			</View>
@@ -361,18 +361,18 @@
 				
 			<View name="rclSources" alias="rclSources">
 						<SQL dialect="generic">
-							select  a.doc->>"$.dataListNodeRef" as dataListNodeRef,
+							select  a.dataListNodeRef,
 								b.doc->>"$.cm_name" as name,
-								b.doc->>"$.nodeRef" as nodeRef,
+								b.nodeRef,
 								b.doc->>"$.bcpg_productHierarchy1[0]" as productHierarchy1,
 								b.doc->>"$.bcpg_productHierarchy2[0]" as productHierarchy2,
 								b.doc->>"$.bcpg_productState" as productState,
 								b.doc->>"$.type" as productType,
 								b.doc->>"$.cm_versionLabel" as versionLabel
 							from
-								assoc_bcpg_rclSources a left join  bcpg_product b on a.doc->>"$.nodeRef" = b.doc->>"$.nodeRef"
+								assoc_bcpg_rclSources a left join  bcpg_product b on a.nodeRef = b.nodeRef
 							<#if !isAdmin>	
-							  where a.doc->>"$.instanceId" = ${instanceId} and b.doc->>"$.instanceId"
+							  where a.instanceId = ${instanceId} and b.instanceId
 							</#if>
 						</SQL>
 				</View>
@@ -429,7 +429,7 @@
 		<View name="incidents" alias="incidents">
 				<SQL dialect="generic">
 					select
-						doc->>"$.nodeRef" as noderef,
+						nodeRef,
 						doc->>"$.cm_name" as name,
 						doc->>"$.metadata_siteId" as siteId,
 						doc->>"$.metadata_siteName" as siteName,
@@ -448,12 +448,12 @@
 						CAST(doc->>"$.qa_claimTreatementDate" as DATE)  as claimTreatmentDate,
 						doc->>"$.qa_claimClosingDate" as claimClosingDate,
 						doc->>"$.qa_product_bcpg_nodeRef[0]" as productNodeRef,
-						doc->>"$.instanceId" as instanceId
+						instanceId
 					from
 						qa_nc
 					<#if !isAdmin>	
 					 where 
-					    doc->>"$.instanceId" = ${instanceId}
+					    instanceId = ${instanceId}
 					</#if>
 				</SQL>
 			</View>
@@ -564,8 +564,8 @@
 				<View name="taskList" alias="taskList">
 					<SQL dialect="generic">
 						select  
-							doc->>"$.nodeRef" as noderef,
-							doc->>"$.entityNodeRef" as entityNodeRef,
+							nodeRef,
+							entityNodeRef,
 							doc->>"$.pjt_tlTaskName" as tlTaskName,
 							doc->>"$.pjt_tlDuration" as tlDuration,
 							doc->>"$.pjt_tlRealDuration" as tlRealDuration,
@@ -577,11 +577,11 @@
 							doc->>"$.pjt_tlLoggedTime" as tlLoggedTime,
 							doc->>"$.bcpg_sort" as sortOrder,
 							CAST(doc->>"$.cm_modified" as DATE) as projectDateModified,
-							doc->>"$.instanceId" as instanceId
+							instanceId
 						from
 							taskList
 						<#if !isAdmin>	
-						  where doc->>"$.instanceId" = ${instanceId}
+						  where instanceId = ${instanceId}
 						</#if>
 					</SQL>
 				</View>
@@ -592,14 +592,14 @@
 				<View name="projects_site" alias="projects_site">
 				<SQL dialect="generic">
 					select
-						doc->>"$.nodeRef" as noderef,
+						nodeRef,
 						doc->>"$.metadata_siteId" as siteId,
 						doc->>"$.metadata_siteName" as siteName		
 					from
 						pjt_project
 					<#if !isAdmin>	
 					 where 
-					    doc->>"$.instanceId" = ${instanceId}
+					    instanceId = ${instanceId}
 					</#if>
 				</SQL>
 			 </View>
@@ -668,15 +668,15 @@
 				<View name="scoreList" alias="scoreList">
 					<SQL dialect="generic">
 						select  
-							doc->>"$.entityNodeRef" as entityNodeRef,
+							entityNodeRef,
 							doc->>"$.pjt_slCriterion" as slCriterion,
 							doc->>"$.pjt_slWeight" as slWeight,
 							doc->>"$.pjt_slScore" as slScore,
-							doc->>"$.instanceId" as instanceId
+							instanceId
 						from
 							scoreList
 						<#if !isAdmin>	
-						  where doc->>"$.instanceId" = ${instanceId}
+						  where instanceId = ${instanceId}
 						</#if>
 					</SQL>
 				</View>
@@ -688,14 +688,14 @@
 				<View name="projects_site" alias="projects_site">
 				<SQL dialect="generic">
 					select
-						doc->>"$.nodeRef" as noderef,
+						nodeRef,
 						doc->>"$.metadata_siteId" as siteId,
 						doc->>"$.metadata_siteName" as siteName		
 					from
 						pjt_project
 					<#if !isAdmin>	
 					 where 
-					    doc->>"$.instanceId" = ${instanceId}
+					    instanceId = ${instanceId}
 					</#if>
 				</SQL>
 			 </View>
@@ -728,7 +728,7 @@
 			<View name="projects" alias="projects">
 				<SQL dialect="generic">
 					select
-						doc->>"$.nodeRef" as noderef,
+						nodeRef,
 						doc->>"$.cm_name" as name,
 						doc->>"$.pjt_projectState" as projectState,
 						doc->>"$.pjt_projectHierarchy1[0]" as	projectHierarchy1,
@@ -753,12 +753,12 @@
 						doc->>"$.bcpg_entityTplRef[0]" as entityTplRef,
 						doc->>"$.pjt_projectEntity_bcpg_nodeRef[0]" as projectEntityNodeRef,
 						DATEDIFF(CAST(doc->>"$.pjt_projectCompletionDate" as DATE),CAST(doc->>"$.pjt_projectStartDate" as DATE)) as duration,
-						doc->>"$.instanceId" as instanceId
+						instanceId
 					from
 						pjt_project
 					<#if !isAdmin>	
 					 where 
-					    doc->>"$.instanceId" = ${instanceId}
+					    instanceId = ${instanceId}
 					</#if>
 				</SQL>
 			 </View>
@@ -888,7 +888,7 @@
 		<View name="nutList" alias="nutList">
 					<SQL dialect="generic">
 						select  
-							doc->>"$.entityNodeRef" as entityNodeRef,
+							entityNodeRef,
 							doc->>"$.bcpg_nutListNut[0]" as name,
 							doc->>"$.bcpg_nutListNut_bcpg_nodeRef[0]" as nodeRef,
 							doc->>"$.bcpg_nutListGroup" as nutGroup,
@@ -896,11 +896,11 @@
 							doc->>"$.bcpg_nutListFormulatedValue" as nutFormulatedValue,
 							doc->>"$.bcpg_nutListGDAPerc" as nutListGDAPerc,
 							doc->>"$.bcpg_nutListValuePerServing" as nutListValuePerServing,
-							doc->>"$.instanceId" as instanceId
+							instanceId
 						from
 							nutList
 						<#if !isAdmin>	
-						  where doc->>"$.instanceId" = ${instanceId}
+						  where instanceId = ${instanceId}
 						</#if>
 					</SQL>
 		</View>
@@ -911,14 +911,14 @@
 			<View name="products" alias="products">
 				<SQL dialect="generic">
 					select
-						doc->>"$.nodeRef" as noderef,
+						nodeRef,
 						doc->>"$.metadata_siteId" as siteId,
 						doc->>"$.metadata_siteName" as siteName		
 					from
 						bcpg_product
 					<#if !isAdmin>	
 					 where 
-					    doc->>"$.instanceId" = ${instanceId}
+					    instanceId = ${instanceId}
 					</#if>
 				</SQL>
 			</View>
@@ -935,13 +935,13 @@
 			<View name="products_type" alias="products_type">
 					<SQL dialect="generic">
 						select
-							doc->>"$.nodeRef" as noderef,
+							nodeRef,
 							doc->>"$.type" as productType
 						from
 							bcpg_product
 						<#if !isAdmin>	
 						 where 
-						    doc->>"$.instanceId" = ${instanceId}
+						    instanceId = ${instanceId}
 						</#if>
 					</SQL>
 				</View>
@@ -991,7 +991,7 @@
 			<View name="products" alias="products">
 				<SQL dialect="generic">
 					select
-						doc->>"$.nodeRef" as noderef,
+						nodeRef,
 						doc->>"$.cm_name" as name,
 						doc->>"$.type" as productType,
 						doc->>"$.bcpg_productHierarchy1[0]" as productHierarchy1,
@@ -1014,12 +1014,12 @@
 						doc->>"$.cm_versionLabel" as versionLabel,
 						doc->>"$.cm_creator" as creator,
 						doc->>"$.cm_modifier" as modifier,
-						doc->>"$.instanceId" as instanceId
+						instanceId
 					from
 						bcpg_product
 					<#if !isAdmin>	
 					 where 
-					    doc->>"$.instanceId" = ${instanceId}
+					    instanceId = ${instanceId}
 					</#if>
 				</SQL>
 			</View>
@@ -1068,13 +1068,13 @@
 				<View name="ingListgeoOrigin" alias="ingListgeoOrigin">
 								<SQL dialect="generic">
 									select  
-										doc->>"$.entityNodeRef" as entityNodeRef,
+										entityNodeRef,
 										doc->>"$.name" as name,
-										doc->>"$.nodeRef" as nodeRef
+										nodeRef
 									from
 										assoc_bcpg_ingListGeoOrigin
 									<#if !isAdmin>	
-									  where doc->>"$.instanceId" = ${instanceId}
+									  where instanceId = ${instanceId}
 									</#if>
 								</SQL>
 				</View>
@@ -1110,13 +1110,13 @@
 				<View name="suppliers" alias="suppliers">
 								<SQL dialect="generic">
 									select  
-										doc->>"$.entityNodeRef" as entityNodeRef,
+										entityNodeRef,
 										doc->>"$.name" as name,
-										doc->>"$.nodeRef" as nodeRef
+										nodeRef
 									from
 										assoc_bcpg_suppliers
 									<#if !isAdmin>	
-									  where doc->>"$.instanceId" = ${instanceId}
+									  where instanceId = ${instanceId}
 									</#if>
 								</SQL>
 				</View>
@@ -1137,7 +1137,7 @@
 					<View name="allergenList" alias="allergenList">
 								<SQL dialect="generic">
 									select  
-										doc->>"$.entityNodeRef" as entityNodeRef,
+										entityNodeRef,
 										doc->>"$.bcpg_allergenListAllergen[0]" as name,
 										doc->>"$.bcpg_allergenListAllergen_bcpg_nodeRef[0]" as nodeRef
 									from
@@ -1145,7 +1145,7 @@
 									where 
 									   doc->>"$.bcpg_allergenListVoluntary" = "true"
 									<#if !isAdmin>	
-									  and doc->>"$.instanceId" = ${instanceId}
+									  and instanceId = ${instanceId}
 									</#if>
 								</SQL>
 					</View>
@@ -1159,7 +1159,7 @@
 				<View name="allergenList" alias="allergenList">
 								<SQL dialect="generic">
 									select  
-										doc->>"$.entityNodeRef" as entityNodeRef,
+										entityNodeRef,
 										doc->>"$.bcpg_allergenListAllergen[0]" as name,
 										doc->>"$.bcpg_allergenListAllergen_bcpg_nodeRef[0]" as nodeRef
 									from
@@ -1167,7 +1167,7 @@
 									where 
 									   doc->>"$.bcpg_allergenListVoluntary" = "false" and doc->>"$.bcpg_allergenListInVoluntary" = "true"
 									<#if !isAdmin>	
-									  and doc->>"$.instanceId" = ${instanceId}
+									  and instanceId = ${instanceId}
 									</#if>
 								</SQL>
 				</View>
@@ -1183,13 +1183,13 @@
 				<View name="ingList" alias="ingList">
 								<SQL dialect="generic">
 									select  
-										doc->>"$.entityNodeRef" as entityNodeRef,
+										entityNodeRef,
 										doc->>"$.bcpg_ingListIng[0]" as name,
 										doc->>"$.bcpg_ingListIng_bcpg_nodeRef[0]" as nodeRef
 									from
 										ingList
 									<#if !isAdmin>	
-									  where doc->>"$.instanceId" = ${instanceId}
+									  where instanceId = ${instanceId}
 									</#if>
 								</SQL>
 				</View>
@@ -1203,13 +1203,13 @@
 				<View name="labelClaimList" alias="labelClaimList">
 								<SQL dialect="generic">
 									select  
-										doc->>"$.entityNodeRef" as entityNodeRef,
+										entityNodeRef,
 										doc->>"$.bcpg_lclLabelClaim[0]" as name,
 										doc->>"$.bcpg_lclLabelClaim_becpg_nodeRef[0]" as nodeRef
 									from
 										labelClaimList
 									<#if !isAdmin>	
-									  where doc->>"$.instanceId" = ${instanceId}
+									  where instanceId = ${instanceId}
 									</#if>
 								</SQL>
 				</View>
@@ -1222,16 +1222,16 @@
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.composition.caption")}" primaryKeyTable="compoList" primaryKey="entityNodeRef">
 				<View name="compoList" alias="compoList">
 								<SQL dialect="generic">
-									select  a.doc->>"$.entityNodeRef" as entityNodeRef,
+									select  a.entityNodeRef,
 										b.doc->>"$.cm_name" as name,
-										b.doc->>"$.nodeRef" as nodeRef,
+										b.nodeRef,
 										b.doc->>"$.bcpg_productHierarchy1[0]" as productHierarchy1,
 										b.doc->>"$.bcpg_productHierarchy2[0]" as productHierarchy2,
 										b.doc->>"$.cm_versionLabel" as versionLabel
 									from
-										compoList a left join  bcpg_product b on a.doc->>"$.bcpg_compoListProduct_bcpg_nodeRef[0]" = b.doc->>"$.nodeRef"
+										compoList a left join  bcpg_product b on a.doc->>"$.bcpg_compoListProduct_bcpg_nodeRef[0]" = b.nodeRef
 									<#if !isAdmin>	
-									  where a.doc->>"$.instanceId" = ${instanceId} and b.doc->>"$.instanceId"
+									  where a.instanceId = ${instanceId} and b.instanceId
 									</#if>
 								</SQL>
 				</View>
@@ -1250,16 +1250,16 @@
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.packaging.caption")}" primaryKeyTable="packagingList" primaryKey="entityNodeRef">
 				<View name="packagingList" alias="packagingList">
 						<SQL dialect="generic">
-							select  a.doc->>"$.entityNodeRef" as entityNodeRef,
+							select  a.entityNodeRef,
 								b.doc->>"$.cm_name" as name,
-								b.doc->>"$.nodeRef" as nodeRef,
+								b.nodeRef,
 								b.doc->>"$.bcpg_productHierarchy1[0]" as productHierarchy1,
 								b.doc->>"$.bcpg_productHierarchy2[0]" as productHierarchy2,
 								b.doc->>"$.cm_versionLabel" as versionLabel
 							from
-								packagingList a left join  bcpg_product b on a.doc->>"$.bcpg_packagingListProduct_bcpg_nodeRef[0]" = b.doc->>"$.nodeRef"
+								packagingList a left join  bcpg_product b on a.doc->>"$.bcpg_packagingListProduct_bcpg_nodeRef[0]" = b.nodeRef
 							<#if !isAdmin>	
-							  where a.doc->>"$.instanceId" = ${instanceId} and b.doc->>"$.instanceId"
+							  where a.instanceId = ${instanceId} and b.instanceId
 							</#if>
 						</SQL>
 				</View>
