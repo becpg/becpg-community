@@ -229,6 +229,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	}
 
 	public String getMessage(String messageKey, Object param) {
+		
 		return I18NUtil.getMessage(messageKey, param, I18NUtil.getLocale());
 	}
 
