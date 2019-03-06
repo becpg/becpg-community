@@ -1,14 +1,14 @@
 package fr.becpg.repo.license;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import javax.annotation.PostConstruct;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.util.Base64;
@@ -19,15 +19,13 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.SystemGroup;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.helper.RepoService;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 @Service("becpgLicenseManager")
 public class BeCPGLicenseManager {
 
 	private static final Log logger = LogFactory.getLog(BeCPGLicenseManager.class);
-
-	private static final String CACHE_KEY = "LICENSE_CACHE_KEY";
 
 	private String licenseName = "beCPG OO License";
 	private long allowedConcurrentRead = -1L;
@@ -44,9 +42,12 @@ public class BeCPGLicenseManager {
 
 	@Autowired
 	private ContentService contentService;
+	
+	@Autowired
+	private BeCPGQueryBuilder beCPGQueryBuilder;
 
 	@Autowired
-	private BeCPGCacheService cacheService;
+	private TransactionService transactionService;
 
 	public long getAllowedConcurrentRead() {
 		return allowedConcurrentRead;
@@ -71,111 +72,115 @@ public class BeCPGLicenseManager {
 	public String getLicenseName() {
 		return licenseName;
 	}
+	
+	//TODO ne fonctionne pas en multitenant
 
-	public void readLicense() {
-		try {
-			JSONObject licenseObj = getLicenseFromCache();
-			if (licenseObj != null) {
-				if (licenseObj.has("LicenseKey")) {
-					String licenseKey = licenseObj.getString("LicenceKey");
+	@PostConstruct
+	public void init() {
+		if(beCPGQueryBuilder.isInit()) {
+		
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				return AuthenticationUtil.runAsSystem(() -> {
+					readLicense();
+					return true;
+				});
+			}, true);
+		}
+	}
 
-					licenseName = licenseObj.has("LicenseName") ? licenseObj.getString("LicenseName") : licenseName;
-					allowedNamedRead = licenseObj.has(SystemGroup.LicenseReadNamed.toString())
-							? licenseObj.getLong(SystemGroup.LicenseReadNamed.toString())
-							: -1L;
-					allowedNamedWrite = licenseObj.has(SystemGroup.LicenseWriteNamed.toString())
-							? licenseObj.getLong(SystemGroup.LicenseWriteNamed.toString())
-							: -1L;
-					allowedConcurrentRead = licenseObj.has(SystemGroup.LicenseReadConcurrent.toString())
-							? licenseObj.getLong(SystemGroup.LicenseReadConcurrent.toString())
-							: -1L;
-					allowedConcurrentWrite = licenseObj.has(SystemGroup.LicenseWriteConcurrent.toString())
-							? licenseObj.getLong(SystemGroup.LicenseWriteConcurrent.toString())
-							: -1L;
-					allowedConcurrentSupplier = licenseObj.has(SystemGroup.LicenseSupplierConcurrent.toString())
-							? licenseObj.getLong(SystemGroup.LicenseSupplierConcurrent.toString())
-							: -1L;
+	public void readLicense() throws JSONException {
+		JSONObject licenseObj = getLicense();
+		if (licenseObj != null) {
+			boolean valid = false;
+			if (licenseObj.has("LicenseKey")) {
 
-					if (!isValid(licenseKey, licenseName, allowedNamedRead, allowedNamedWrite, allowedConcurrentRead, allowedConcurrentWrite,
-							allowedConcurrentSupplier)) {
-						licenseName = "Invalid license file";
-						allowedNamedRead = 0;
-						allowedNamedWrite = 0;
-						allowedConcurrentRead = 0;
-						allowedConcurrentWrite = 0;
-						allowedConcurrentSupplier = 0;
-					}
-				}
+				String licenseKey = licenseObj.getString("LicenseKey");
+
+				licenseName = licenseObj.has("LicenseName") ? licenseObj.getString("LicenseName") : licenseName;
+				allowedNamedRead = licenseObj.has(SystemGroup.LicenseReadNamed.toString())
+						? licenseObj.getLong(SystemGroup.LicenseReadNamed.toString())
+						: -1L;
+				allowedNamedWrite = licenseObj.has(SystemGroup.LicenseWriteNamed.toString())
+						? licenseObj.getLong(SystemGroup.LicenseWriteNamed.toString())
+						: -1L;
+				allowedConcurrentRead = licenseObj.has(SystemGroup.LicenseReadConcurrent.toString())
+						? licenseObj.getLong(SystemGroup.LicenseReadConcurrent.toString())
+						: -1L;
+				allowedConcurrentWrite = licenseObj.has(SystemGroup.LicenseWriteConcurrent.toString())
+						? licenseObj.getLong(SystemGroup.LicenseWriteConcurrent.toString())
+						: -1L;
+				allowedConcurrentSupplier = licenseObj.has(SystemGroup.LicenseSupplierConcurrent.toString())
+						? licenseObj.getLong(SystemGroup.LicenseSupplierConcurrent.toString())
+						: -1L;
+
+				valid = isValid(licenseKey, licenseName, allowedNamedRead, allowedNamedWrite, allowedConcurrentRead, allowedConcurrentWrite,
+						allowedConcurrentSupplier);
+
 			}
-		} catch (Exception e) {
-			logger.warn("Can't read license informations", e);
+
+			if (!valid) {
+				licenseName = "Invalid license file";
+				allowedNamedRead = 0;
+				allowedNamedWrite = 0;
+				allowedConcurrentRead = 0;
+				allowedConcurrentWrite = 0;
+				allowedConcurrentSupplier = 0;
+			}
 		}
 	}
 
 	public static boolean isValid(String licenseKey, String licenseName, long allowedNamedRead, long allowedNamedWrite, long allowedConcurrentRead,
 			long allowedConcurrentWrite, long allowedConcurrentSupplier) {
 
-
-		return licenseKey.equals(computeLicenseKey(licenseName, allowedNamedRead, allowedNamedWrite, allowedConcurrentRead, allowedConcurrentWrite, allowedConcurrentSupplier));
+		String computedKey = computeLicenseKey(licenseName, allowedNamedRead, allowedNamedWrite, allowedConcurrentRead, allowedConcurrentWrite,
+				allowedConcurrentSupplier);
+		
+		boolean ret =  licenseKey.trim().equalsIgnoreCase(computedKey.trim());
+		
+		if(!ret) {
+			logger.error("License key do not match: "+licenseKey+ "/"+computedKey);
+			logger.warn("For: "+licenseName+ " / "+allowedNamedRead + " / "+ allowedNamedWrite 
+					+ " / "+ allowedConcurrentRead + " / "+ allowedConcurrentWrite + " / "+ allowedConcurrentSupplier);
+		}
+		
+		
+		return ret;
 	}
-	
+
 	public static String computeLicenseKey(String licenseName, long allowedNamedRead, long allowedNamedWrite, long allowedConcurrentRead,
 			long allowedConcurrentWrite, long allowedConcurrentSupplier) {
-		
-		String key = licenseName+allowedNamedRead+allowedNamedWrite+allowedConcurrentRead+allowedConcurrentWrite+allowedConcurrentSupplier;
-		
+
+		String key = licenseName + allowedNamedRead + allowedNamedWrite + allowedConcurrentRead + allowedConcurrentWrite + allowedConcurrentSupplier;
+
 		return Base64.encode(key.getBytes());
 	}
-	
 
-	private JSONObject getLicenseFromCache() {
-
-		BufferedReader bfReader = null;
-		JSONObject licenseObj = null;
+	private JSONObject getLicense() {
 		try {
 
-			licenseObj = cacheService.getFromCache(BeCPGLicenseManager.class.getName(), CACHE_KEY);
+			NodeRef licenseProfilesFolderNodeRef = repoService
+					.getFolderByPath(RepoConsts.PATH_SYSTEM + RepoConsts.PATH_SEPARATOR + RepoConsts.PATH_LICENSE);
+			if (licenseProfilesFolderNodeRef != null) {
+				NodeRef licenseFileNodeRef = nodeService.getChildByName(licenseProfilesFolderNodeRef, ContentModel.ASSOC_CONTAINS, "license.json");
 
-			if (licenseObj == null) {
-				NodeRef licenseProfilesFolderNodeRef = repoService
-						.getFolderByPath(RepoConsts.PATH_SYSTEM + RepoConsts.PATH_SEPARATOR + RepoConsts.PATH_LICENSE);
-				if (licenseProfilesFolderNodeRef != null) {
-					NodeRef licenseFileNodeRef = nodeService.getChildByName(licenseProfilesFolderNodeRef, ContentModel.ASSOC_CONTAINS,
-							"license.json");
+				if (licenseFileNodeRef != null) {
 
 					ContentReader reader = contentService.getReader(licenseFileNodeRef, ContentModel.PROP_CONTENT);
-
-					bfReader = new BufferedReader(new InputStreamReader(reader.getContentInputStream(), "UTF-8"));
-					StringBuilder responseStrBuilder = new StringBuilder();
-
-					String strStream;
-
-					while ((strStream = bfReader.readLine()) != null) {
-						responseStrBuilder.append(strStream);
-					}
-
-					licenseObj = new JSONObject(responseStrBuilder.toString());
-					cacheService.storeInCache(BeCPGLicenseManager.class.getName(), CACHE_KEY, licenseObj);
+					String content = reader.getContentString();
+					return new JSONObject(content);
+				} else {
+					logger.info("No beCPG license file installed");
 				}
+			} else {
+				logger.warn("No beCPG license folder, run init-repo");
 			}
 
-		} catch (IOException e) {
-			logger.error("Couldn't read license file ", e);
 		} catch (JSONException e) {
 			logger.error("Unable to serialize JSON", e);
 		}
 
-		finally {
-			if (bfReader != null) {
-				try {
-					bfReader.close();
-				} catch (IOException e) {
-					logger.error(e);
-				}
-			}
-		}
+		return null;
 
-		return licenseObj;
 	}
 
 }
