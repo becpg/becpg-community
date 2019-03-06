@@ -133,6 +133,9 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 		// MailTemplates
 		contentHelper.addFilesResources(beCPGMailService.getEmailNotifyTemplatesFolder(), "classpath*:beCPG/mails/notify/*.ftl");
 		
+		// license
+		visitFolder(systemNodeRef, RepoConsts.PATH_LICENSE);
+		
 		return new ArrayList<>();
 	}
 
@@ -163,6 +166,9 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 		}
 		if (RepoConsts.PATH_OLAP_QUERIES.equals(folderName)) {
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/olap/*.saiku");
+		}
+		if (RepoConsts.PATH_LICENSE.equals(folderName)) {
+			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/license/*.json");
 		}
 
 	}
@@ -242,6 +248,7 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 
 		// reports folder
 		NodeRef reportsNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_REPORTS);
+		
 
 		// compare report
 		try {
