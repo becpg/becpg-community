@@ -166,5 +166,7 @@ public class RepoConsts {
 
 	public static final String[] SUPPORTED_LANGUAGES = {"fr", "en"};
 
+	public static final String PATH_LICENSE = "license";
+
 	
 }

@@ -16,6 +16,8 @@ import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.security.authentication.AbstractAuthenticationService;
 import org.alfresco.repo.tenant.TenantAdminService;
+import org.alfresco.service.cmr.security.AuthorityService;
+import org.alfresco.service.cmr.security.PermissionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
@@ -25,6 +27,7 @@ import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 
+import fr.becpg.model.SystemGroup;
 import fr.becpg.repo.admin.InitVisitorService;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.dictionary.constraint.DynListConstraint;
@@ -68,6 +71,13 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 	private TenantAdminService tenantAdminService;
 
 	private String becpgSchema;
+	
+	private AuthorityService authorityService;
+
+	
+	public void setAuthorityService(AuthorityService authorityService) {
+		this.authorityService = authorityService;
+	}
 
 	public void setBecpgSchema(String becpgSchema) {
 		this.becpgSchema = becpgSchema;
@@ -137,7 +147,25 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 			}
 		}
 		
-		//TODO count license
+		licenseManager.readLicense();
+		for(String user : users) {
+			if(!"admin".equals(user)) {
+				Set<String> userAuthorities = authorityService.getAuthoritiesForUser(user);
+				if(userAuthorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser) 
+						&& userAuthorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.LicenseSupplierConcurrent)) {
+					concurrentSupplierUsers++;
+				}else if(userAuthorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.LicenseWriteNamed)) {
+					namedWriteUsers++;
+				}else if(userAuthorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.LicenseReadNamed)) {
+					namedReadUsers++;
+				}else if(userAuthorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.LicenseWriteConcurrent)) {
+					concurrentWriteUsers++;
+				}else if(userAuthorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.LicenseReadConcurrent)) {
+					concurrentReadUsers++;
+				} 
+			}
+			
+		}
 
 		// #378 : force to use server locale
 		Locale currentLocal = I18NUtil.getLocale();
