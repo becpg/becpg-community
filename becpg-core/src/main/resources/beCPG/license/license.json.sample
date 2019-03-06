@@ -1,0 +1,9 @@
+{
+	"LicenseName":"beCPG Sample LICENSE",
+	"LicenseWriteNamed":1,
+	"LicenseReadNamed":1,
+	"LicenseWriteConcurrent":1,
+	"LicenseReadConcurrent":10,
+	"LicenseSupplierConcurrent":10,
+	"LicenceKey": "YmVDUEcgU2FtcGxlIExJQ0VOU0UxMTEwMTEw"
+}

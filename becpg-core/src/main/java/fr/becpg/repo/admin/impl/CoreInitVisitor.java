@@ -168,7 +168,7 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/olap/*.saiku");
 		}
 		if (RepoConsts.PATH_LICENSE.equals(folderName)) {
-			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/license/*.json");
+			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/license/*.sample");
 		}
 
 	}
