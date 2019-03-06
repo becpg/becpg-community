@@ -156,6 +156,11 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		INSTANCE = this;
 
 	}
+	
+
+	public boolean isInit() {
+		return INSTANCE!=null;
+	}
 
 	private BeCPGQueryBuilder() {
 		// Make creation private
@@ -1270,5 +1275,6 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	public String toString() {
 		return buildQuery();
 	}
+
 
 }

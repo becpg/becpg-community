@@ -225,11 +225,11 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	}
 
 	public String getMessage(String messageKey) {
-		return I18NUtil.getMessage(messageKey, Locale.getDefault());
+		return I18NUtil.getMessage(messageKey, I18NUtil.getLocale());
 	}
 
 	public String getMessage(String messageKey, Object param) {
-		return I18NUtil.getMessage(messageKey, param, Locale.getDefault());
+		return I18NUtil.getMessage(messageKey, param, I18NUtil.getLocale());
 	}
 
 	public String getOlapSSOUrl() {

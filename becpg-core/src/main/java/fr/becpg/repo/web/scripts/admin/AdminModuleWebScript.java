@@ -20,6 +20,7 @@ import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONException;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.extensions.webscripts.Cache;
 import org.springframework.extensions.webscripts.DeclarativeWebScript;
@@ -51,6 +52,7 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 	private static final String ACTION_RELOAD_MODEL = "reload-model";
 	private static final String ACTION_GET_SYSTEM_ENTITIES = "system-entities";
 	private static final String ACTION_GET_CONNECTED_USERS = "show-users";
+	private static final String ACTION_READ_LICENSE = "read-license";
 
 	private InitVisitorService initVisitorService;
 
@@ -147,7 +149,7 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 			}
 		}
 		
-		licenseManager.readLicense();
+		
 		for(String user : users) {
 			if(!"admin".equals(user)) {
 				Set<String> userAuthorities = authorityService.getAuthoritiesForUser(user);
@@ -201,6 +203,14 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 				logger.debug("Get connected users");
 				ret.put("users", users);
 				break;
+			case ACTION_READ_LICENSE:
+				logger.debug("Update license information");
+				try {
+					licenseManager.readLicense();
+				} catch (JSONException e) {
+					throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Cannot read license",e);
+				}
+				break;	
 			default:
 				throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Unsupported argument 'action'. action = " + action);
 			}

@@ -220,7 +220,7 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 		if (nextTask.getIsGroup()) {
 			if (nextTask.getSubProject() == null) {
 				calculatePlanningOfChildren(projectData, nextTask);
-			}
+			} 
 		} else if (hasPlannedDuration(nextTask)) {
 			Date endDate = ProjectHelper.calculateEndDate(nextTask.getStart(), nextTask.getDuration());
 			ProjectHelper.setTaskEndDate(nextTask, endDate);
