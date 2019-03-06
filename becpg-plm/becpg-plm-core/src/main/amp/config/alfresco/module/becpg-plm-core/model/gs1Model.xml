@@ -17,474 +17,520 @@
   You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 -->
 <model xmlns="http://www.alfresco.org/model/dictionary/1.0" name="gs1:gs1Model">
-    <description>beCPG GS1 Model</description>
-    <author>Matthieu Laborie</author>
-    <published>2012-03-07</published>
-    <version>1.0</version>
-    <imports>
-        <import uri="http://www.alfresco.org/model/dictionary/1.0" prefix="d"/>
-        <import uri="http://www.alfresco.org/model/system/1.0" prefix="sys"/>
-        <import uri="http://www.alfresco.org/model/content/1.0" prefix="cm"/>
-        <import uri="http://www.alfresco.org/model/publishing/1.0" prefix="pub"/>
-    </imports>
-    <namespaces>
-        <namespace uri="http://www.bcpg.fr/model/gs1/1.0" prefix="gs1"/>
-    </namespaces>
-    <data-types/>
-    <constraints>
-        <constraint name="gs1:packagingTypeCodeConstraint" type="LIST">
-            <parameter name="allowedValues">
-                <list>
-                	<value></value>
-                    <value>BC</value>
-                    <value>BGE</value>
-                    <value>BR</value>
-                    <value>BRI</value>
-                    <value>BU</value>
-                    <value>DJ</value>
-                    <value>DP</value>
-                    <value>DPE</value>
-                    <value>FP</value>
-                    <value>ICA</value>
-                    <value>OPE</value>
-                    <value>PAE</value>
-                    <value>PG</value>
-                    <value>PLP</value>
-                    <value>RCA</value>
-                    <value>SH</value>
-                    <value>STL</value>
-                    <value>TAE</value>
-                    <value>TRE</value>
-                    <value>UUE</value>
-                    <value>UVE</value>
-                    <value>X11</value>
-                    <value>X2</value>
-                    <value>AE</value>
-                    <value>AT</value>
-                    <value>BAG</value>
-                    <value>BBL</value>
-                    <value>BDL</value>
-                    <value>BME</value>
-                    <value>BOT</value>
-                    <value>BOX</value>
-                    <value>BXT</value>
-                    <value>CAG</value>
-                    <value>CAN</value>
-                    <value>CAS</value>
-                    <value>CG</value>
-                    <value>CNT</value>
-                    <value>CRT</value>
-                    <value>CTN</value>
-                    <value>CYL</value>
-                    <value>DRM</value>
-                    <value>ENV</value>
-                    <value>FSK</value>
-                    <value>HPR</value>
-                    <value>HRB</value>
-                    <value>JAR</value>
-                    <value>PA</value>
-                    <value>PKG</value>
-                    <value>PLT</value>
-                    <value>PO</value>
-                    <value>PUN</value>
-                    <value>REL</value>
-                    <value>ROL</value>
-                    <value>SAK</value>
-                    <value>SLP</value>
-                    <value>SRW</value>
-                    <value>TBE</value>
-                    <value>TNK</value>
-                    <value>TRY</value>
-                    <value>TUB</value>
-                    <value>UNP</value>
-                    <value>UVQ</value>
-                    <value>VP</value>
-                </list>
-            </parameter>
-            <parameter name="caseSensitive">
-                <value>true</value>
-            </parameter>
-        </constraint>
-        <constraint name="gs1:palletTypeCodeConstraint" type="LIST">
-            <parameter name="allowedValues">
-                <list>
-                	<value></value>
-                    <value>9</value>
-                    <value>10</value>
-                    <value>11</value>
-                    <value>12</value>
-                    <value>13</value>
-                    <value>14</value>
-                    <value>15</value>
-                    <value>16</value>
-                    <value>17</value>
-                    <value>18</value>
-                    <value>19</value>
-                    <value>20</value>
-                    <value>21</value>
-                    <value>22</value>
-                    <value>23</value>
-                    <value>24</value>
-                    <value>25</value>
-                    <value>CHB</value>
-                    <value>CHC</value>
-                    <value>X9</value>
-                </list>
-            </parameter>
-            <parameter name="caseSensitive">
-                <value>true</value>
-            </parameter>
-        </constraint>
-    </constraints>
-    <aspects>
-        <aspect name="gs1:measuresAspect">
-            <properties>
-            	<property name="gs1:productHierarchy1">
-                    <type>d:noderef</type>
-                    <mandatory>false</mandatory>
-                </property>
-                <property name="gs1:productHierarchy2">
-                    <type>d:noderef</type>
-                    <mandatory>false</mandatory>
-                </property>
-                <property name="gs1:productHierarchy3">
-                    <type>d:noderef</type>
-                    <mandatory>false</mandatory> </property>
-                <property name="gs1:productHierarchy4">
-                    <type>d:noderef</type>
-                    <mandatory>false</mandatory>
-                 </property>
-                 <property name="gs1:productHierarchy5">
-                    <type>d:noderef</type>
-                    <mandatory>false</mandatory>
-                </property>
-                <property name="gs1:height">
-                    <type>d:float</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="true">
-                        <atomic>false</atomic>
-                        <stored>false</stored>
-                        <tokenised>TRUE</tokenised>
-                    </index>
-                </property>
-                <property name="gs1:width">
-                    <type>d:float</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="true">
-                        <atomic>false</atomic>
-                        <stored>false</stored>
-                        <tokenised>TRUE</tokenised>
-                    </index>
-                </property>
-                <property name="gs1:depth">
-                    <type>d:float</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="true">
-                        <atomic>false</atomic>
-                        <stored>false</stored>
-                        <tokenised>TRUE</tokenised>
-                    </index>
-                </property>
-                <property name="gs1:weight">
-                    <type>d:float</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="true">
-                        <atomic>false</atomic>
-                        <stored>false</stored>
-                        <tokenised>TRUE</tokenised>
-                    </index>
-                </property>
-                <property name="gs1:secondaryWeight">
-                    <type>d:double</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="true">
-                        <atomic>false</atomic>
-                        <stored>false</stored>
-                        <tokenised>TRUE</tokenised>
-                    </index>
-                </property>
-                <property name="gs1:tertiaryWeight">
-                    <type>d:double</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="true">
-                        <atomic>false</atomic>
-                        <stored>false</stored>
-                        <tokenised>TRUE</tokenised>
-                    </index>
-                </property>
-                 <property name="gs1:secondaryNetWeight">
-                    <type>d:double</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="true">
-                        <atomic>false</atomic>
-                        <stored>false</stored>
-                        <tokenised>TRUE</tokenised>
-                    </index>
-                </property>
-                <property name="gs1:tertiaryNetWeight">
-                    <type>d:double</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="true">
-                        <atomic>false</atomic>
-                        <stored>false</stored>
-                        <tokenised>TRUE</tokenised>
-                    </index>
-                </property>
-            </properties>
-            <associations/>
-            <overrides/>
-            <mandatory-aspects/>
-        </aspect>
-        <aspect name="gs1:indicatorsAspect">
-            <properties>
-            	<property name="gs1:isPublicated">
-                    <type>d:boolean</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="true">
-                        <atomic>false</atomic>
-                        <stored>false</stored>
-                        <tokenised>TRUE</tokenised>
-                    </index>
-                </property>
-                <property name="gs1:isTradeItemABaseUnit">
-                    <type>d:boolean</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="true">
-                        <atomic>false</atomic>
-                        <stored>false</stored>
-                        <tokenised>TRUE</tokenised>
-                    </index>
-                </property>
-                <property name="gs1:isTradeItemAConsumerUnit">
-                    <type>d:boolean</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="true">
-                        <atomic>false</atomic>
-                        <stored>false</stored>
-                        <tokenised>TRUE</tokenised>
-                    </index>
-                </property>
-                <property name="gs1:isTradeItemADespatchUnit">
-                    <type>d:boolean</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="true">
-                        <atomic>false</atomic>
-                        <stored>false</stored>
-                        <tokenised>TRUE</tokenised>
-                    </index>
-                </property>
-                <property name="gs1:isTradeItemAnInvoiceUnit">
-                    <description></description>
-                    <type>d:boolean</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="true">
-                        <atomic>false</atomic>
-                        <stored>false</stored>
-                        <tokenised>TRUE</tokenised>
-                    </index>
-                </property>
-                <property name="gs1:isTradeItemAnOrderableUnit">
-                    <type>d:boolean</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="true">
-                        <atomic>false</atomic>
-                        <stored>false</stored>
-                        <tokenised>TRUE</tokenised>
-                    </index>
-                </property>
-                <property name="gs1:isTradeItemAVariableUnit">
-                    <type>d:boolean</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="true">
-                        <atomic>false</atomic>
-                        <stored>false</stored>
-                        <tokenised>TRUE</tokenised>
-                    </index>
-                </property>
-                <property name="gs1:isTradeItemAFullDisplayStand">
-                    <type>d:boolean</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="true">
-                        <atomic>false</atomic>
-                        <stored>false</stored>
-                        <tokenised>TRUE</tokenised>
-                    </index>
-                </property>
-                <property name="gs1:isTradeItemAReturnableItem">
-                     <type>d:boolean</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="true">
-                        <atomic>false</atomic>
-                        <stored>false</stored>
-                        <tokenised>TRUE</tokenised>
-                    </index>
-                </property>
-                <property name="gs1:isTradeItemAService">
-                    <type>d:boolean</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="true">
-                        <atomic>false</atomic>
-                        <stored>false</stored>
-                        <tokenised>TRUE</tokenised>
-                    </index>
-                </property>
-                <property name="gs1:isTradeItemABulkItem">
-                    <type>d:boolean</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="true">
-                        <atomic>false</atomic>
-                        <stored>false</stored>
-                        <tokenised>TRUE</tokenised>
-                    </index>
-                </property>
-                <property name="gs1:isTradeItemACutToOrderItem">
-                    <type>d:boolean</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="true">
-                        <atomic>false</atomic>
-                        <stored>false</stored>
-                        <tokenised>TRUE</tokenised>
-                    </index>
-                </property>
-                <property name="gs1:isTradeItemAModel">
-                    <type>d:boolean</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="true">
-                        <atomic>false</atomic>
-                        <stored>false</stored>
-                        <tokenised>TRUE</tokenised>
-                    </index>
-                </property>
-                <property name="gs1:isTradeItemADivisibleItem">
-                    <type>d:boolean</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="true">
-                        <atomic>false</atomic>
-                        <stored>false</stored>
-                        <tokenised>TRUE</tokenised>
-                    </index>
-                </property>
-                <property name="gs1:isTradeItemAPromotionalItem">
-                    <type>d:boolean</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="true">
-                        <atomic>false</atomic>
-                        <stored>false</stored>
-                        <tokenised>TRUE</tokenised>
-                    </index>
-                </property>
-            </properties>
-            <associations/>
-            <overrides/>
-            <mandatory-aspects/>
-        </aspect>
-        <aspect name="gs1:datesAspect">
-            <title>GS1 Dates Aspect</title>
-            <properties>
-                <property name="gs1:effectiveDate">
-                    <type>d:date</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="true">
-                        <atomic>false</atomic>
-                        <stored>false</stored>
-                        <tokenised>TRUE</tokenised>
-                    </index>
-                </property>
-                <property name="gs1:startAvailabilityDateTime">
-                    <type>d:date</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="true">
-                        <atomic>false</atomic>
-                        <stored>false</stored>
-                        <tokenised>TRUE</tokenised>
-                    </index>
-                </property>
-                <property name="gs1:lastChangeDateTime">
-                    <type>d:date</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="true">
-                        <atomic>false</atomic>
-                        <stored>false</stored>
-                        <tokenised>TRUE</tokenised>
-                    </index>
-                </property>
-                <property name="gs1:publicationDate">
-                    <type>d:date</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="true">
-                        <atomic>false</atomic>
-                        <stored>false</stored>
-                        <tokenised>TRUE</tokenised>
-                    </index>
-                </property>
-            </properties>
-            <associations/>
-            <overrides/>
-            <mandatory-aspects/>
-        </aspect>
-        <aspect name="gs1:packagingAspect">
-            <properties>
-                <property name="gs1:isPackagingMarkedReturnable">
-                    <type>d:boolean</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="true">
-                        <atomic>false</atomic>
-                        <stored>false</stored>
-                        <tokenised>TRUE</tokenised>
-                    </index>
-                </property>
-                <property name="gs1:packagingTypeCode">
-                    <type>d:text</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="true">
-                        <atomic>false</atomic>
-                        <stored>false</stored>
-                        <tokenised>TRUE</tokenised>
-                    </index>
-                    <constraints>
-                        <constraint ref="gs1:packagingTypeCodeConstraint"/>
-                    </constraints>
-                </property>
-                <property name="gs1:palletTypeCode">
-                    <type>d:text</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="true">
-                        <atomic>false</atomic>
-                        <stored>false</stored>
-                        <tokenised>TRUE</tokenised>
-                    </index>
-                    <constraints>
-                        <constraint ref="gs1:palletTypeCodeConstraint"/>
-                    </constraints>
-                </property>
-            </properties>
-            <associations/>
-            <overrides/>
-            <mandatory-aspects/>
-        </aspect>
-        <aspect name="gs1:gs1Aspect">
-            <properties/>
-            <associations/>
-            <overrides/>
-            <mandatory-aspects>
-                <aspect>gs1:measuresAspect</aspect>
-                <aspect>gs1:indicatorsAspect</aspect>
-                <aspect>gs1:datesAspect</aspect>
-                <aspect>gs1:packagingAspect</aspect>
-            </mandatory-aspects>
-        </aspect>
-	<aspect name="gs1:nutrientAspect">
-		<properties>
-			<property name="gs1:nutrientTypeCode">
-				<type>d:text</type>
-				<mandatory>false</mandatory>
-				<index enabled="true">
-					<atomic>false</atomic>
-					<stored>false</stored>
-					<tokenised>TRUE</tokenised>
-				</index>
-			</property>
-		</properties>
-	</aspect> 
-  </aspects>
+	<description>beCPG GS1 Model</description>
+	<author>Matthieu Laborie</author>
+	<published>2012-03-07</published>
+	<version>1.0</version>
+	<imports>
+		<import uri="http://www.alfresco.org/model/dictionary/1.0" prefix="d" />
+		<import uri="http://www.alfresco.org/model/system/1.0" prefix="sys" />
+		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
+		<import uri="http://www.alfresco.org/model/publishing/1.0" prefix="pub" />
+		<import uri="http://www.bcpg.fr/model/becpg/1.0" prefix="bcpg" />
+	</imports>
+	<namespaces>
+		<namespace uri="http://www.bcpg.fr/model/gs1/1.0" prefix="gs1" />
+	</namespaces>
+	<data-types />
+	<constraints>
+		<constraint name="gs1:packagingTypeCodeConstraint" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>BC</value>
+					<value>BGE</value>
+					<value>BR</value>
+					<value>BRI</value>
+					<value>BU</value>
+					<value>DJ</value>
+					<value>DP</value>
+					<value>DPE</value>
+					<value>FP</value>
+					<value>ICA</value>
+					<value>OPE</value>
+					<value>PAE</value>
+					<value>PG</value>
+					<value>PLP</value>
+					<value>RCA</value>
+					<value>SH</value>
+					<value>STL</value>
+					<value>TAE</value>
+					<value>TRE</value>
+					<value>UUE</value>
+					<value>UVE</value>
+					<value>X11</value>
+					<value>X2</value>
+					<value>AE</value>
+					<value>AT</value>
+					<value>BAG</value>
+					<value>BBL</value>
+					<value>BDL</value>
+					<value>BME</value>
+					<value>BOT</value>
+					<value>BOX</value>
+					<value>BXT</value>
+					<value>CAG</value>
+					<value>CAN</value>
+					<value>CAS</value>
+					<value>CG</value>
+					<value>CNT</value>
+					<value>CRT</value>
+					<value>CTN</value>
+					<value>CYL</value>
+					<value>DRM</value>
+					<value>ENV</value>
+					<value>FSK</value>
+					<value>HPR</value>
+					<value>HRB</value>
+					<value>JAR</value>
+					<value>PA</value>
+					<value>PKG</value>
+					<value>PLT</value>
+					<value>PO</value>
+					<value>PUN</value>
+					<value>REL</value>
+					<value>ROL</value>
+					<value>SAK</value>
+					<value>SLP</value>
+					<value>SRW</value>
+					<value>TBE</value>
+					<value>TNK</value>
+					<value>TRY</value>
+					<value>TUB</value>
+					<value>UNP</value>
+					<value>UVQ</value>
+					<value>VP</value>
+				</list>
+			</parameter>
+			<parameter name="caseSensitive">
+				<value>true</value>
+			</parameter>
+		</constraint>
+		<constraint name="gs1:palletTypeCodeConstraint" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>9</value>
+					<value>10</value>
+					<value>11</value>
+					<value>12</value>
+					<value>13</value>
+					<value>14</value>
+					<value>15</value>
+					<value>16</value>
+					<value>17</value>
+					<value>18</value>
+					<value>19</value>
+					<value>20</value>
+					<value>21</value>
+					<value>22</value>
+					<value>23</value>
+					<value>24</value>
+					<value>25</value>
+					<value>CHB</value>
+					<value>CHC</value>
+					<value>X9</value>
+				</list>
+			</parameter>
+			<parameter name="caseSensitive">
+				<value>true</value>
+			</parameter>
+		</constraint>
+	</constraints>
+	<aspects>
+		<aspect name="gs1:measuresAspect">
+			<properties>
+				<property name="gs1:productHierarchy1">
+					<type>d:noderef</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="gs1:productHierarchy2">
+					<type>d:noderef</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="gs1:productHierarchy3">
+					<type>d:noderef</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="gs1:productHierarchy4">
+					<type>d:noderef</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="gs1:productHierarchy5">
+					<type>d:noderef</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="gs1:height">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="gs1:width">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="gs1:depth">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="gs1:weight">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="gs1:secondaryHeight">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="gs1:secondaryWidth">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="gs1:secondaryDepth">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="gs1:secondaryWeight">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="gs1:tertiaryWeight">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="gs1:secondaryNetWeight">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="gs1:tertiaryNetWeight">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="gs1:secondaryTare">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="gs1:tertiaryTare">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+			</properties>
+			<associations />
+			<overrides />
+			<mandatory-aspects />
+		</aspect>
+		<aspect name="gs1:indicatorsAspect">
+			<properties>
+				<property name="gs1:isPublicated">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="gs1:isTradeItemABaseUnit">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="gs1:isTradeItemAConsumerUnit">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="gs1:isTradeItemADespatchUnit">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="gs1:isTradeItemAnInvoiceUnit">
+					<description></description>
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="gs1:isTradeItemAnOrderableUnit">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="gs1:isTradeItemAVariableUnit">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="gs1:isTradeItemAFullDisplayStand">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="gs1:isTradeItemAReturnableItem">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="gs1:isTradeItemAService">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="gs1:isTradeItemABulkItem">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="gs1:isTradeItemACutToOrderItem">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="gs1:isTradeItemAModel">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="gs1:isTradeItemADivisibleItem">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="gs1:isTradeItemAPromotionalItem">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+			</properties>
+			<associations />
+			<overrides />
+			<mandatory-aspects />
+		</aspect>
+		<aspect name="gs1:datesAspect">
+			<title>GS1 Dates Aspect</title>
+			<properties>
+				<property name="gs1:effectiveDate">
+					<type>d:date</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="gs1:startAvailabilityDateTime">
+					<type>d:date</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="gs1:lastChangeDateTime">
+					<type>d:date</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="gs1:publicationDate">
+					<type>d:date</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+			</properties>
+			<associations />
+			<overrides />
+			<mandatory-aspects />
+		</aspect>
+		<aspect name="gs1:packagingAspect">
+			<properties>
+				<property name="gs1:isPackagingMarkedReturnable">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="gs1:packagingTypeCode">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+					<constraints>
+						<constraint ref="gs1:packagingTypeCodeConstraint" />
+					</constraints>
+				</property>
+				<property name="gs1:palletTypeCode">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+					<constraints>
+						<constraint ref="gs1:palletTypeCodeConstraint" />
+					</constraints>
+				</property>
+			</properties>
+			<overrides />
+			<mandatory-aspects />
+		</aspect>
+		<aspect name="gs1:gs1Aspect">
+			<properties />
+			<associations />
+			<overrides />
+			<mandatory-aspects>
+				<aspect>gs1:measuresAspect</aspect>
+				<aspect>gs1:indicatorsAspect</aspect>
+				<aspect>gs1:datesAspect</aspect>
+				<aspect>gs1:packagingAspect</aspect>
+			</mandatory-aspects>
+		</aspect>
+		<aspect name="gs1:nutrientAspect">
+			<properties>
+				<property name="gs1:nutrientTypeCode">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+			</properties>
+		</aspect>
+	</aspects>
 </model>

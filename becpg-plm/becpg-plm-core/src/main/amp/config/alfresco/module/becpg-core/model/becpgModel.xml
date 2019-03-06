@@ -3132,6 +3132,9 @@
 				<property name="bcpg:netVolume">
 					<type>d:double</type>
 				</property>
+				<property name="bcpg:drainedWeight">
+					<type>d:double</type>
+				</property>
 				<property name="bcpg:servingSize">
 					<type>d:double</type>
 				</property>
