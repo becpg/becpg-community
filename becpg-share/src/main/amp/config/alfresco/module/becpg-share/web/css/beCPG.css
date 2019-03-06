@@ -27,6 +27,10 @@
 	width: 95% !important;
 }
 
+.form-container .help-text {
+	width: 100% !important;
+}
+
 /*2 Column set */
 	:not(.bd) > .form-container .yui-g .form-field input[type="text"]:not(.number-range):not(.date-range):not(.number-unit):not(.yui-ac-input), 
 	:not(.bd) > .form-container .yui-g .form-field input[type="file"],
