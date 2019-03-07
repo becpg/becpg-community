@@ -1205,7 +1205,7 @@
 									select  
 										entityNodeRef,
 										doc->>"$.bcpg_lclLabelClaim[0]" as name,
-										doc->>"$.bcpg_lclLabelClaim_becpg_nodeRef[0]" as nodeRef
+										doc->>"$.bcpg_lclLabelClaim_bcpg_nodeRef[0]" as nodeRef
 									from
 										labelClaimList
 									<#if !isAdmin>	
