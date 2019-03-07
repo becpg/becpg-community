@@ -57,14 +57,14 @@ public class ProjectHelper {
 		return null;
 	}
 
-	public static List<TaskListDataItem> getNextTasks(ProjectData projectData, NodeRef taskListNodeRef) {
+	public static List<TaskListDataItem> getNextTasks(ProjectData projectData, NodeRef taskListNodeRef, boolean includeGroup) {
 
 		List<TaskListDataItem> taskList = new ArrayList<>();
 		if (projectData.getTaskList() != null) {
 			for (TaskListDataItem p : projectData.getTaskList()) {
 				// taskNodeRef is null when we start project
 				if (p.getPrevTasks().contains(taskListNodeRef)
-						|| (taskListNodeRef == null && (p.getIsGroup() == null || !p.getIsGroup()) && p.getPrevTasks().isEmpty())) {
+						|| (taskListNodeRef == null && (p.getIsGroup() == null || !p.getIsGroup() || includeGroup) && p.getPrevTasks().isEmpty())) {
 					taskList.add(p);
 				}
 			}
@@ -90,7 +90,7 @@ public class ProjectHelper {
 		List<TaskListDataItem> taskList = new ArrayList<>();
 		if (projectData.getTaskList() != null) {
 			for (TaskListDataItem t : projectData.getTaskList()) {
-				if (getNextTasks(projectData, t.getNodeRef()).isEmpty() && (t.getIsGroup() == null || !t.getIsGroup())) {
+				if (getNextTasks(projectData, t.getNodeRef(),false).isEmpty() && (t.getIsGroup() == null || !t.getIsGroup())) {
 					taskList.add(t);
 				}
 			}
@@ -270,7 +270,7 @@ public class ProjectHelper {
 	}
 
 	public static Date getFirstStartDate(ProjectData projectData) {
-		List<TaskListDataItem> tasks = getNextTasks(projectData, null);
+		List<TaskListDataItem> tasks = getNextTasks(projectData, null,false);
 		Date startDate = null;
 		for (TaskListDataItem task : tasks) {
 			if ((!task.getIsGroup() || task.getSubProject()!=null) && (startDate == null || (task.getStart() != null && task.getStart().before(startDate)))) {

@@ -38,6 +38,18 @@ function main()
 	    	   }
     	   }
     	   
+    	   if(obj.systemInfo.becpgSchema){
+    		   var splitted = obj.systemInfo.becpgSchema.split('-');
+	    		if(splitted.length>2){
+	    			model.schema = splitted[0];
+	    			model.version = splitted[1];
+	    			var d = new Date();
+	    			d.setTime(splitted[2]);
+	    			model.versionDate = new Date(d);
+	    		}
+    	   }
+    	   
+    	   
           model.systemEntities = obj.systemEntities;
           model.systemFolders = obj.systemFolders;
           model.systemInfo = obj.systemInfo;
