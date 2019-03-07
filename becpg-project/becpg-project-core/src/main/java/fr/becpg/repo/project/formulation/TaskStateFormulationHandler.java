@@ -169,7 +169,7 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 		}
 		
 		// add next tasks
-		List<TaskListDataItem> nextTasks = ProjectHelper.getNextTasks(projectData, taskListNodeRef);
+		List<TaskListDataItem> nextTasks = ProjectHelper.getNextTasks(projectData, taskListNodeRef,false);
 
 		if (!nextTasks.isEmpty()) {
 			for (TaskListDataItem nextTask : nextTasks) {
