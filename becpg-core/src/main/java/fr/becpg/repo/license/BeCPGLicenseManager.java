@@ -112,9 +112,6 @@ public class BeCPGLicenseManager {
 		return getLicense().licenseName;
 	}
 
-	public void readLicense() throws JSONException {
-
-	}
 
 	public static boolean isValid(String licenseKey, BeCPGLicense license) {
 
