@@ -140,9 +140,9 @@
 							nodeRef,
 							doc->>"$.cm_name" as name,
 							doc->>"$.pjt_projectState" as projectState,
-							doc->>"$.projectManager[0]" as projectManager,
-							doc->>"$.pjt_projectHierarchy1" as	projectHierarchy1,
-							doc->>"$.pjt_projectHierarchy2" as	projectHierarchy2	
+							doc->>"$.pjt_projectManager[0]" as projectManager,
+							doc->>"$.pjt_projectHierarchy1[0]" as	projectHierarchy1,
+							doc->>"$.pjt_projectHierarchy2[0]" as	projectHierarchy2	
 						from
 							pjt_project
 						<#if !isAdmin>	
@@ -1208,8 +1208,9 @@
 										doc->>"$.bcpg_lclLabelClaim_bcpg_nodeRef[0]" as nodeRef
 									from
 										labelClaimList
+									where doc->>"$.bcpg_lclClaimValue" = "true" 
 									<#if !isAdmin>	
-									  where instanceId = ${instanceId}
+									   and instanceId = ${instanceId}
 									</#if>
 								</SQL>
 				</View>
