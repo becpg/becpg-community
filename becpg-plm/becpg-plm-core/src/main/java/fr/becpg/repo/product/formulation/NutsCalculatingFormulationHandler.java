@@ -199,7 +199,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 						}
 					}
 					
-					NutrientFormulationHelper.extractRoundedValue(nut.getNutCode(),n);
+					NutrientFormulationHelper.extractRoundedValue(formulatedProduct, nut.getNutCode(),n);
 					
 					if (transientFormulation) {
 						n.setTransient(true);
