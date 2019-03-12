@@ -39,6 +39,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
+import fr.becpg.model.PLMModel;
+import fr.becpg.model.SystemState;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.test.BeCPGTestHelper;
 
@@ -74,6 +76,7 @@ public class ProductValidationWorkflowTest extends AbstractWorkflowTest {
 
 				RawMaterialData rawMaterial1 = new RawMaterialData();
 				rawMaterial1.setName("Raw material 1");
+				rawMaterial1.setState(SystemState.Simulation);
 
 				return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial1).getNodeRef();
 
@@ -107,7 +110,7 @@ public class ProductValidationWorkflowTest extends AbstractWorkflowTest {
 				Date dueDate = Calendar.getInstance().getTime();
 				properties.put(WorkflowModel.PROP_WORKFLOW_DUE_DATE, dueDate);
 				properties.put(WorkflowModel.PROP_WORKFLOW_PRIORITY, 2);
-				properties.put(WorkflowModel.PROP_WORKFLOW_DESCRIPTION, "test");
+				//properties.put(WorkflowModel.PROP_WORKFLOW_DESCRIPTION, "test");
 				properties.put(PROP_pvTransmitterComment, "test");
 
 				Serializable workflowPackage = workflowService.createPackage(null);
@@ -138,9 +141,11 @@ public class ProductValidationWorkflowTest extends AbstractWorkflowTest {
 			}
 		}, false, true);
 		
-
+		assertEquals(nodeService.getProperty(productNodeRef, PLMModel.PROP_PRODUCT_STATE), SystemState.ToValidate.toString());
 
 		WorkflowTask task =  getNextTaskForWorkflow(workflowInstanceId);
+		
+		assertEquals(task.getDescription(),"Validation produit - MP2 - Raw material 1");
 		
 		logger.info(task.getPath().getNode().getName());
 		assertEquals("doProductValidationRDTask", task.getPath().getNode().getName());
@@ -190,6 +195,7 @@ public class ProductValidationWorkflowTest extends AbstractWorkflowTest {
 		task = submitTask(workflowInstanceId, "bcpgwf:approveProductTask", null, new HashMap<QName, Serializable>());
 		//logger.info(task.getPath().getNode().getName());
 		
+		assertEquals(nodeService.getProperty(productNodeRef, PLMModel.PROP_PRODUCT_STATE), SystemState.Valid.toString());
 		
 		printInProgressTasks(workflowInstanceId);
 //
