@@ -7,41 +7,8 @@
         <activiti:executionListener event="start" class="org.alfresco.repo.workflow.activiti.listener.ScriptExecutionListener">
           <activiti:field name="script">
             <activiti:string><![CDATA[<import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js">
-            		execution.setVariable('bpm_comment',bcpgwf_pvTransmitterComment);
-	               execution.setVariable('bcpgwf_reviewRDApproval',null);
-	               execution.setVariable('bcpgwf_reviewPackagingApproval',null);
-	               execution.setVariable('bcpgwf_reviewProductionApproval',null);
-	               execution.setVariable('bcpgwf_reviewQualityApproval',null);
-	               execution.setVariable('bcpgwf_reviewCallerApproval',null);
-	               execution.setVariable('bcpgwf_reviewCaller2Approval',null);
-	               if(execution.getVariable('bcpgwf_pvRDApprovalActor')==null){
-	               	execution.setVariable('bcpgwf_pvRDApprovalActor',null);
-	               }
-	               if(execution.getVariable('bcpgwf_pvPackagingApprovalActor')==null){
-	               	execution.setVariable('bcpgwf_pvPackagingApprovalActor',null);
-	               }
-	               if(execution.getVariable('bcpgwf_pvProductionApprovalActor')==null){
-	               	execution.setVariable('bcpgwf_pvProductionApprovalActor',null);
-	               }
-	               if(execution.getVariable('bcpgwf_pvQualityApprovalActor')==null){
-	               	execution.setVariable('bcpgwf_pvQualityApprovalActor',null);
-	               }
-                  if(execution.getVariable('bcpgwf_pvCallerActor')==null){
-							execution.setVariable('bcpgwf_pvCallerActor',null) ;
-                  }
-                  if(execution.getVariable('bcpgwf_pvCaller2Actor')==null){
-							execution.setVariable('bcpgwf_pvCaller2Actor',null) ;
-                  }
-                  if(execution.getVariable('bcpgwf_notifyUsers')==null){
-	               	execution.setVariable('bcpgwf_notifyUsers',null);
-	               }
-	               
-	               execution.setVariable('bcpgwf_pvRDApprovalActorAssignee',null);
-	               execution.setVariable('bcpgwf_pvPackagingApprovalActorAssignee',null);
-	               execution.setVariable('bcpgwf_pvProductionApprovalActorAssignee',null);
-	               execution.setVariable('bcpgwf_pvQualityApprovalActorAssignee',null);
-	               execution.setVariable('bcpgwf_pvCallerActorAssignee',null);
-	               execution.setVariable('bcpgwf_pvCaller2ActorAssignee',null);]]></activiti:string>
+            		startProductValidationWF();
+            ]]></activiti:string>
           </activiti:field>
         </activiti:executionListener>
       </extensionElements>
@@ -229,55 +196,8 @@
           </activiti:field>
           <activiti:field name="script">
             <activiti:string><![CDATA[<import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js">
-            		 	if (typeof bpm_workflowDueDate != 'undefined') task.dueDate = bpm_workflowDueDate;
-            			if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority;
-            			task.setAssignee(getAssigneeOrDelegate(initiator));
-            			
-			           	if (bcpgwf_notifyUsers != null)
-			             {
-			             	for (var i = 0; i < bcpgwf_notifyUsers.size(); i++){
-			            		sendMail(bcpgwf_notifyUsers.get(i), null,
-										bcpg.getMessage('productValidationWF.mail.approved.subject', bpm_workflowDescription),
-										bcpg.getMessage('productValidationWF.mail.approved.message'), 
-										"/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:product-validation-approved-task-email.ftl",
-										bpm_package.children);
-				           	 }
-			             }
-			             
-			            for (var i = 0; i < bpm_package.children.length; i++)
-		             {    
-		             		var product = bpm_package.children[i];   
-		             		           		
-		             		var assocNames =  ["bcpgwf:pvCallerActor","bcpgwf:pvCaller2Actor","bcpgwf:pvRDApprovalActor","bcpgwf:pvPackagingApprovalActor","bcpgwf:pvQualityApprovalActor","bcpgwf:pvProductionApprovalActor","bcpgwf:pvTransmitterActor"];
-			             	var assocActors = [bcpgwf_pvCallerActorAssignee,bcpgwf_pvCaller2ActorAssignee,bcpgwf_pvRDApprovalActorAssignee,bcpgwf_pvPackagingApprovalActorAssignee,bcpgwf_pvQualityApprovalActorAssignee,bcpgwf_pvProductionApprovalActorAssignee, initiator];
-								for (var j = 0; j < assocNames.length; j++)
-								{
-									var assocName = assocNames[j];
-									var assocActor = assocActors[j];
-									
-									/* remove assocs */
-									var targetNodes = product.assocs[assocName];
-									if(targetNodes != null)
-									{
-										for (var k = 0; k < targetNodes.length; k++)
-										{
-										   product.removeAssociation(targetNodes[k], assocName); 
-										}
-									}
-									
-									/* add assocs */
-									if(assocActor != null)
-									{
-										if(assocActor.typeShort == null) {
-						               assocActor = people.getPerson(assocActor);
-						            }
-										product.createAssociation(assocActor, assocName);
-									}            		
-								}
-								product.properties["bcpgwf:pvValidationDate"] = new Date();
-								product.save();
-								
-		             }]]></activiti:string>
+            		onCreateApproveProductTask();
+            ]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
         <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
