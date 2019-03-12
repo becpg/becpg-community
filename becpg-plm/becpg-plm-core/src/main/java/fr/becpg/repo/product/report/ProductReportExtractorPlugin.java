@@ -1560,6 +1560,12 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			if ((isFixed == null) || (isFixed == Boolean.FALSE)) {
 
 				String costType = (String) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTTYPE);
+				String costCurrency = (String) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTCURRENCY);
+				String productCurrency = (String) nodeService.getProperty(nodeRef, PLMModel.PROP_PRICE_CURRENCY);
+
+
+				if ((productCurrency == null) || (costCurrency == null) || productCurrency.equals(costCurrency)) {
+
 
 				if (c.getValue() != null) {
 
@@ -1590,6 +1596,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					}
 				}
 			}
+}
 		}
 
 		if (shouldExtractCost()) {
