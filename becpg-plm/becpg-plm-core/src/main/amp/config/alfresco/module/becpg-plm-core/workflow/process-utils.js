@@ -95,12 +95,6 @@ function onCreateProductValidationTask(authorities) {
 		task.dueDate = bpm_workflowDueDate;
 	if (typeof bpm_workflowPriority != 'undefined')
 		task.priority = bpm_workflowPriority;
-	
-	/*if (bpm_workflowDescription!=null && typeof bpm_workflowDescription != 'undefined' ) {
-		task.description = bpm_workflowDescription;
-        task.setVariable('bpm_workflowDescription', bpm_workflowDescription);
-        task.setVariable('bpm_description', bpm_workflowDescription);
-	}*/
 		
 
 	var assignees = getAssignees(authorities)
@@ -195,12 +189,12 @@ function startProductValidationWF() {
 
 function extractName(product){
 	var ret = bcpg.getMessage('productValidationWF.workflow.title');
-	
-	if(product.properties["bcpg:erpCode"]!=null){
-		ret+=" - " + product.properties["bcpg:erpCode"];
-	} else if(product.properties["bcpg:code"]!=null){
-		ret+=" - " + product.properties["bcpg:code"];
-	}
+
+//	if(product.properties["bcpg:erpCode"]!=null){
+//		ret+=" - " + product.properties["bcpg:erpCode"];
+//	} else if(product.properties["bcpg:code"]!=null){
+//		ret+=" - " + product.properties["bcpg:code"];
+//	}
 	
 	ret+= " - " + product.name;
 	return ret;
