@@ -145,7 +145,7 @@ public class ProductValidationWorkflowTest extends AbstractWorkflowTest {
 
 		WorkflowTask task =  getNextTaskForWorkflow(workflowInstanceId);
 		
-		assertEquals(task.getDescription(),"Validation produit - MP2 - Raw material 1");
+		assertEquals(task.getDescription(),"Validation produit - Raw material 1");
 		
 		logger.info(task.getPath().getNode().getName());
 		assertEquals("doProductValidationRDTask", task.getPath().getNode().getName());
