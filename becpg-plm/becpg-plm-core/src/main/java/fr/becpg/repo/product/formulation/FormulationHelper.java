@@ -69,9 +69,8 @@ public class FormulationHelper {
 
 	public static Double getQtyForCost(CompoListDataItem compoListDataItem, Double parentLossRatio, ProductData componentProduct,
 			boolean keepProductUnit) {
-		double lossPerc = FormulationHelper.calculateLossPerc(parentLossRatio != null ? parentLossRatio : 0d,
-				compoListDataItem.getLossPerc() != null ? compoListDataItem.getLossPerc() : 0d);
-		double yieldPerc = compoListDataItem.getYieldPerc() != null ? compoListDataItem.getYieldPerc() : 100d;
+		Double lossPerc = FormulationHelper.calculateLossPerc(parentLossRatio != null ? parentLossRatio : 0d, FormulationHelper.getComponentLossPerc(componentProduct, compoListDataItem));
+		Double yieldPerc = compoListDataItem.getYieldPerc() != null ? compoListDataItem.getYieldPerc() : 100d;
 		Double qtySubFormula = compoListDataItem.getQtySubFormula() != null ? compoListDataItem.getQtySubFormula() : DEFAULT_COMPONANT_QUANTITY;
 		Double qtyInKg = compoListDataItem.getQty() != null ? compoListDataItem.getQty() : DEFAULT_COMPONANT_QUANTITY;
 		Double qtyInL = compoListDataItem.getVolume() != null ? compoListDataItem.getVolume() : DEFAULT_COMPONANT_QUANTITY;
@@ -564,5 +563,12 @@ public class FormulationHelper {
 			return isFormulatedFromVol != null ? isFormulatedFromVol : false;
 		}
 		return false;
+	}
+
+	public static Double getComponentLossPerc(ProductData componentProduct, CompoListDataItem compoListDataItem) {
+		if(componentProduct.getComponentLossPerc()!=null) {
+			return componentProduct.getComponentLossPerc();
+		}
+		return  compoListDataItem.getLossPerc() != null ? compoListDataItem.getLossPerc() : 0d;
 	}
 }

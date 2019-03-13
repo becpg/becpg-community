@@ -151,9 +151,11 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		for (Composite<CompoListDataItem> component : composite.getChildren()) {
 
 			if (!DeclarationType.Omit.equals(component.getData().getDeclType())) {
-
-				Double lossPerc = FormulationHelper.calculateLossPerc(parentLossRatio,
-						(component.getData().getLossPerc() != null ? component.getData().getLossPerc() : 0d));
+				
+				CompoListDataItem compoListDataItem = component.getData();
+				ProductData componentProduct = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());
+	
+				Double lossPerc = FormulationHelper.calculateLossPerc(parentLossRatio,FormulationHelper.getComponentLossPerc(componentProduct, compoListDataItem));
 
 				if (!component.isLeaf()) {
 					visitVariantData(variants, component, lossPerc);

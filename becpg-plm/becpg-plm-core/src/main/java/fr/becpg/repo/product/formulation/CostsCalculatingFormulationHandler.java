@@ -219,11 +219,12 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 
 		Map<NodeRef, Double> totalQtiesValue = new HashMap<>();
 		for (Composite<CompoListDataItem> component : composite.getChildren()) {
-
+			CompoListDataItem compoListDataItem = component.getData();
+			ProductData componentProduct = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());
 			if (!component.isLeaf()) {
-
+				
 				// take in account the loss perc
-				Double lossPerc = component.getData().getLossPerc() != null ? component.getData().getLossPerc() : 0d;
+				Double lossPerc = FormulationHelper.getComponentLossPerc( componentProduct,compoListDataItem);
 				Double newLossPerc = FormulationHelper.calculateLossPerc(parentLossRatio, lossPerc);
 				if (logger.isDebugEnabled()) {
 					logger.debug("parentLossRatio: " + parentLossRatio + " - lossPerc: " + lossPerc + " - newLossPerc: " + newLossPerc);
@@ -233,8 +234,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				Composite<CompoListDataItem> c = component;
 				visitCompoListChildren(formulatedProduct, c, costList, newLossPerc, netQty, mandatoryCharacts);
 			} else {
-				CompoListDataItem compoListDataItem = component.getData();
-				ProductData componentProduct = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());
+				
 
 				Double qty = FormulationHelper.getQtyForCost(compoListDataItem, parentLossRatio, componentProduct, keepProductUnit);
 				visitPart(compoListDataItem.getProduct(), costList, qty, qty, netQty, netQty, mandatoryCharacts, totalQtiesValue,
@@ -764,7 +764,8 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 					}
 				}
 			}
-			if (c.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM) && c.getParent() != null && c.getSimulatedValue() == null) {
+			if (c.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM) && (c.getParent() != null 
+					|| nodeService.hasAspect(c.getCost(),BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM)) && c.getSimulatedValue() == null) {
 				c.getParent().getAspectsToRemove().add(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
 			}
 		}

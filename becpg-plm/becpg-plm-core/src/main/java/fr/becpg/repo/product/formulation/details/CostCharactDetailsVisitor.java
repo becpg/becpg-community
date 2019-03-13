@@ -283,10 +283,12 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 
 		for (Composite<CompoListDataItem> component : composite.getChildren()) {
 
+			CompoListDataItem compoListDataItem = component.getData();
+			ProductData componentProduct = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());
 			if (!component.isLeaf()) {
 
 				// take in account the loss perc
-				Double lossPerc = component.getData().getLossPerc() != null ? component.getData().getLossPerc() : 0d;
+				Double lossPerc = FormulationHelper.getComponentLossPerc(componentProduct, compoListDataItem);
 				Double newLossPerc = FormulationHelper.calculateLossPerc(parentLossRatio, lossPerc);
 				if (logger.isDebugEnabled()) {
 					logger.debug("parentLossRatio: " + parentLossRatio + " - lossPerc: " + lossPerc + " - newLossPerc: " + newLossPerc);
@@ -296,8 +298,7 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 				Composite<CompoListDataItem> c = component;
 				visitCompoListChildren(productData, c, ret, newLossPerc, subQty, netQty, currLevel, maxLevel, unitProvider);
 			} else {
-				CompoListDataItem compoListDataItem = component.getData();
-				ProductData componentProduct = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());
+				
 				Double qty = (FormulationHelper.getQtyForCost(compoListDataItem, parentLossRatio,
 						componentProduct, CostsCalculatingFormulationHandler.keepProductUnit)
 						/ FormulationHelper.getNetQtyForCost(productData)) * subQty;
