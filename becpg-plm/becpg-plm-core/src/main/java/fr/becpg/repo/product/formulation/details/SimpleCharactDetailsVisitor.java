@@ -110,27 +110,25 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 					.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 
 				if (!DeclarationType.Omit.equals(compoListDataItem.getDeclType())) {
-				
+
 					Double weightUsed = FormulationHelper.getQtyInKg(compoListDataItem);
 					if ((FormulationHelper.getNetWeight(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT) != 0d) && (subWeight != null)) {
 						weightUsed = (weightUsed / FormulationHelper.getNetWeight(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT)) * subWeight;
-	
+
 					}
-	
-					Double volUsed = FormulationHelper.getNetVolume(compoListDataItem, nodeService);
-					if ((FormulationHelper.getNetVolume(compoListDataItem, nodeService) != null)
-							&& (FormulationHelper.getNetVolume(subProductData) != null) && (subVol != null)) {
+
+					Double volUsed = FormulationHelper.getNetVolume(compoListDataItem, subProductData);
+					Double netVol = FormulationHelper.getNetVolume(subProductData);
+					if ((volUsed != null) && (netVol != null) && (netVol != 0d) && (subVol != null)) {
 						volUsed = (volUsed / FormulationHelper.getNetVolume(subProductData)) * subVol;
 					}
-					
-					ProductData  compoListProduct = 	(ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());
-					
-					visitPart(subProductData.getNodeRef(), compoListProduct, ret, weightUsed, volUsed, netQty, subWeight, currLevel,
-							null);
+
+					ProductData compoListProduct = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());
+
+					visitPart(subProductData.getNodeRef(), compoListProduct, ret, weightUsed, volUsed, netQty, subWeight, currLevel, null);
 					if (((maxLevel < 0) || (currLevel < maxLevel))
 							&& !entityDictionaryService.isMultiLevelLeaf(nodeService.getType(compoListDataItem.getProduct()))) {
-						visitRecur(compoListProduct, ret, currLevel + 1, maxLevel, weightUsed,
-								volUsed, netQty);
+						visitRecur(compoListProduct, ret, currLevel + 1, maxLevel, weightUsed, volUsed, netQty);
 					}
 				}
 			}
@@ -170,8 +168,8 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 		}
 
 		@SuppressWarnings("unchecked")
-		List<SimpleCharactDataItem> simpleCharactDataList = (List<SimpleCharactDataItem>) alfrescoRepository.loadDataList(productData.getNodeRef(), dataListType,
-				dataListType);
+		List<SimpleCharactDataItem> simpleCharactDataList = (List<SimpleCharactDataItem>) alfrescoRepository.loadDataList(productData.getNodeRef(),
+				dataListType, dataListType);
 
 		for (SimpleCharactDataItem simpleCharact : simpleCharactDataList) {
 			if ((simpleCharact != null) && charactDetails.hasElement(simpleCharact.getCharactNodeRef())) {
@@ -185,13 +183,12 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 					unit = ((UnitAwareDataItem) simpleCharact).getUnit();
 				}
 
-				
 				// calculate charact from qty or vol ?
-				boolean formulateInVol = productData.getUnit()!=null && productData.getUnit().isVolume();
+				boolean formulateInVol = (productData.getUnit() != null) && productData.getUnit().isVolume();
 				boolean forceWeight = false;
 
 				if (simpleCharact instanceof PhysicoChemListDataItem) {
-					if (FormulationHelper.isCharactFormulatedFromVol(nodeService,simpleCharact )) {
+					if (FormulationHelper.isCharactFormulatedFromVol(nodeService, simpleCharact)) {
 						formulateInVol = true;
 					} else {
 						formulateInVol = false;
@@ -204,45 +201,46 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 				Double netQty = forceWeight ? netWeight : netQtyInLorKg;
 				Double value = FormulationHelper.calculateValue(0d, qtyUsed, simpleCharact.getValue(), netQty, unit);
 				CharactDetailsValue currentCharactDetailsValue = null;
-				
-				if (value != null && (simpleCharact.shouldDetailIfZero() || value != 0d)) {
+
+				if ((value != null) && (simpleCharact.shouldDetailIfZero() || (value != 0d))) {
 					if (logger.isDebugEnabled()) {
 						logger.debug("Add new charact detail. Charact: "
 								+ nodeService.getProperty(simpleCharact.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME) + " - entityNodeRef: "
-								+ productData.getName() + " - netQty: " + netQty + " - qty: " + qtyUsed
-								+ " - value: " + value);
+								+ productData.getName() + " - netQty: " + netQty + " - qty: " + qtyUsed + " - value: " + value);
 					}
 
 					currentCharactDetailsValue = new CharactDetailsValue(parent, productData.getNodeRef(), value, currLevel, unit);
-					
-					if(simpleCharact instanceof ForecastValueDataItem && ! charactDetails.isMultiple()){
+
+					if ((simpleCharact instanceof ForecastValueDataItem) && !charactDetails.isMultiple()) {
 						ForecastValueDataItem forecastValue = (ForecastValueDataItem) simpleCharact;
-						
-						logger.debug("ForecastDataItem, prev="+forecastValue.getPreviousValue()+", future="+forecastValue.getFutureValue());
+
+						logger.debug("ForecastDataItem, prev=" + forecastValue.getPreviousValue() + ", future=" + forecastValue.getFutureValue());
 						// add future and past values
-						if(forecastValue.getPreviousValue() != null){
-							currentCharactDetailsValue.setPreviousValue(FormulationHelper.calculateValue(0d, qtyUsed, forecastValue.getPreviousValue(), netQty, unit));
+						if (forecastValue.getPreviousValue() != null) {
+							currentCharactDetailsValue
+									.setPreviousValue(FormulationHelper.calculateValue(0d, qtyUsed, forecastValue.getPreviousValue(), netQty, unit));
 						}
-						
-						if(forecastValue.getFutureValue() != null){
-							currentCharactDetailsValue.setFutureValue(FormulationHelper.calculateValue(0d, qtyUsed, forecastValue.getFutureValue(), netQty, unit));
+
+						if (forecastValue.getFutureValue() != null) {
+							currentCharactDetailsValue
+									.setFutureValue(FormulationHelper.calculateValue(0d, qtyUsed, forecastValue.getFutureValue(), netQty, unit));
 						}
 					}
-					
-					if(simpleCharact instanceof MinMaxValueDataItem && ! charactDetails.isMultiple()){
+
+					if ((simpleCharact instanceof MinMaxValueDataItem) && !charactDetails.isMultiple()) {
 						MinMaxValueDataItem minMaxValue = (MinMaxValueDataItem) simpleCharact;
-						
-						logger.debug("minMaxValue, prev="+minMaxValue.getMini()+", maxi="+minMaxValue.getMaxi());
+
+						logger.debug("minMaxValue, prev=" + minMaxValue.getMini() + ", maxi=" + minMaxValue.getMaxi());
 						// add future and past values
-						if(minMaxValue.getMini() != null){
+						if (minMaxValue.getMini() != null) {
 							currentCharactDetailsValue.setMini(FormulationHelper.calculateValue(0d, qtyUsed, minMaxValue.getMini(), netQty, unit));
 						}
-						
-						if(minMaxValue.getMaxi() != null){
+
+						if (minMaxValue.getMaxi() != null) {
 							currentCharactDetailsValue.setMaxi(FormulationHelper.calculateValue(0d, qtyUsed, minMaxValue.getMaxi(), netQty, unit));
 						}
 					}
-					
+
 					charactDetails.addKeyValue(simpleCharact.getCharactNodeRef(), currentCharactDetailsValue);
 				}
 			}

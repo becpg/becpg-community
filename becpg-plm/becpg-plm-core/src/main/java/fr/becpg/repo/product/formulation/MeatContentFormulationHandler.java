@@ -3,7 +3,6 @@ package fr.becpg.repo.product.formulation;
 import java.util.Arrays;
 import java.util.Map;
 
-import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -34,13 +33,8 @@ public class MeatContentFormulationHandler extends FormulationBaseHandler<Produc
 
 	private static Log logger = LogFactory.getLog(MeatContentFormulationHandler.class);
 
-	private NodeService nodeService;
-
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
 
 	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
@@ -68,8 +62,6 @@ public class MeatContentFormulationHandler extends FormulationBaseHandler<Produc
 			for (CompoListDataItem compoItem : formulatedProduct
 					.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 				Double weightUsed = FormulationHelper.getQtyInKg(compoItem);
-				Double volUsed = FormulationHelper.getNetVolume(compoItem, nodeService);
-
 				if ((weightUsed != null) && !DeclarationType.Omit.equals(compoItem.getDeclType())) {
 					ProductData partProduct = (ProductData) alfrescoRepository.findOne(compoItem.getComponent());
 
@@ -77,6 +69,10 @@ public class MeatContentFormulationHandler extends FormulationBaseHandler<Produc
 
 						boolean formulateInVol = partProduct.getUnit()!=null && partProduct.getUnit().isVolume();
 
+
+						Double volUsed = FormulationHelper.getNetVolume(compoItem, partProduct);
+
+						
 						// calculate charact from qty or vol ?
 						Double qtyUsedPerc = formulateInVol ? volUsed : weightUsed;
 
