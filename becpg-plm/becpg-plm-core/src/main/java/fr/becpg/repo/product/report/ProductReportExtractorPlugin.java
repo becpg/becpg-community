@@ -416,7 +416,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 					ProductData subProductData = (ProductData) alfrescoRepository.findOne(dataItem.getProduct());
 
-					Double parentLossRatio = dataItem.getLossPerc() != null ? dataItem.getLossPerc() : 0d;
+					Double parentLossRatio = FormulationHelper.getComponentLossPerc(subProductData, dataItem);
 					Double qty = dataItem.getQty() != null ? dataItem.getQty() : 0d;
 					Double qtyForCost = FormulationHelper.getQtyForCost(dataItem, 0d, subProductData,
 							CostsCalculatingFormulationHandler.keepProductUnit);
@@ -474,7 +474,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 									|| nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_FINISHEDPRODUCT))) {
 								ProductData subProductData = (ProductData) alfrescoRepository.findOne(dataItem.getProduct());
 
-								Double parentLossRatio = dataItem.getLossPerc() != null ? dataItem.getLossPerc() : 0d;
+								Double parentLossRatio = FormulationHelper.getComponentLossPerc(subProductData, dataItem);
 								Double qty = dataItem.getQty() != null ? dataItem.getQty() : 0d;
 								Double qtyForCost = FormulationHelper.getQtyForCost(dataItem, 0d, subProductData,
 										CostsCalculatingFormulationHandler.keepProductUnit);
@@ -574,7 +574,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 								ProductData subProductData = (ProductData) alfrescoRepository.findOne(dataItem.getProduct());
 
-								Double parentLossRatio = dataItem.getLossPerc() != null ? dataItem.getLossPerc() : 0d;
+								Double parentLossRatio = FormulationHelper.getComponentLossPerc(subProductData, dataItem);
 								Double qty = dataItem.getQty() != null ? dataItem.getQty() : 0d;
 								Double qtyForCost = FormulationHelper.getQtyForCost(dataItem, 0d, subProductData,
 										CostsCalculatingFormulationHandler.keepProductUnit);
@@ -599,12 +599,16 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		if (productData.hasPackagingListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 
 			Element partElt = packagingListElt.addElement(PLMModel.TYPE_PACKAGINGLIST.getLocalName());
+
+			ProductData subProductData = (ProductData) alfrescoRepository.findOne(compoListItem.getComponent());
+
 			loadProductData(compoListItem.getComponent(), partElt, context, CostType.Packaging);
 			loadDataListItemAttributes(compoListItem, partElt, context);
 			partElt.addAttribute(PLMModel.ASSOC_PACKAGINGLIST_PRODUCT.getLocalName(),
 					(String) nodeService.getProperty(compoListItem.getComponent(), ContentModel.PROP_NAME));
-			partElt.addAttribute(PLMModel.PROP_PACKAGINGLIST_LOSS_PERC.getLocalName(),
-					compoListItem.getLossPerc() != null ? compoListItem.getLossPerc().toString() : "");
+			Double lossPerc = FormulationHelper.getComponentLossPerc(subProductData, compoListItem);
+
+			partElt.addAttribute(PLMModel.PROP_PACKAGINGLIST_LOSS_PERC.getLocalName(), lossPerc != null ? lossPerc.toString() : "");
 			partElt.addAttribute(PLMModel.PROP_PACKAGINGLIST_QTY.getLocalName(),
 					compoListItem.getQtySubFormula() != null ? compoListItem.getQtySubFormula().toString() : "");
 			partElt.addAttribute(PLMModel.PROP_PACKAGINGLIST_UNIT.getLocalName(),
@@ -643,7 +647,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 						Double subQtyForCost = (FormulationHelper.getQtyForCost(subDataItem, parentLossRatio, subProductData,
 								CostsCalculatingFormulationHandler.keepProductUnit) / FormulationHelper.getNetQtyForCost(productData)) * qtyForCost;
 
-						Double newLossPerc = subDataItem.getLossPerc() != null ? subDataItem.getLossPerc() : 0d;
+						Double newLossPerc = FormulationHelper.getComponentLossPerc(subProductData, subDataItem);
 
 						loadPackagingListItemForCompo(subDataItem, subProductData, packagingListElt, level + 1, subQty, subQtyForCost, newLossPerc,
 								context, defaultVariantNodeRef, defaultVariantPackagingData);
@@ -682,7 +686,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 						Double subQtyForCost = (FormulationHelper.getQtyForCost(subDataItem, parentLossRatio, subProductData,
 								CostsCalculatingFormulationHandler.keepProductUnit) / FormulationHelper.getNetQtyForCost(productData)) * qtyForCost;
 
-						Double newLossPerc = subDataItem.getLossPerc() != null ? subDataItem.getLossPerc() : 0d;
+						Double newLossPerc = FormulationHelper.getComponentLossPerc(subProductData, subDataItem);
 
 						loadProcessListItemForCompo(subDataItem, subProductData, processListElt, level + 1, subQty, subQtyForCost, newLossPerc,
 								context);
@@ -810,7 +814,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 									CostsCalculatingFormulationHandler.keepProductUnit) / FormulationHelper.getNetQtyForCost(productData))
 									* qtyForCost;
 
-							Double newLossPerc = subDataItem.getLossPerc() != null ? subDataItem.getLossPerc() : 0d;
+							Double newLossPerc = FormulationHelper.getComponentLossPerc(subProductData, subDataItem);
 
 							loadCompoListItem(dataItem, subDataItem, subProductData, compoListElt, level + 1, subQty, subQtyForCost, newLossPerc,
 									context);
@@ -1221,8 +1225,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					} else if (type.isMatch(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT)) {
 						continue;
 					} else {
-
-						Double lossPerc = compoList.getLossPerc() != null ? compoList.getLossPerc() : 0d;
+						Double lossPerc = FormulationHelper.getComponentLossPerc(componentProduct, compoList);
 						Double newLossPerc = FormulationHelper.calculateLossPerc(parentLossRatio, lossPerc);
 
 						extractPriceBreaks(componentProduct, newLossPerc, qty, priceBreaks);

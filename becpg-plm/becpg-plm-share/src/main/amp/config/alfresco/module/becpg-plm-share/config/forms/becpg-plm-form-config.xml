@@ -2086,6 +2086,7 @@
 					<show id="cm:description" force="true" />
 					<show id="bcpg:productState" />
 					<show id="bcpg:productUnit" />
+					<show id="bcpg:componentLossPerc" force="true" />
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:eanCode" />
@@ -2212,6 +2213,8 @@
 							</control-param>
 						</control>
 					</field>
+					<field id="bcpg:componentLossPerc" set="mainInfo" />
+					
 					<field id="rep:reportTpls" set="mainInfo" />
 					<field id="rep:reportLocales" set="mainInfo" >
 						<control template="/org/alfresco/components/form/controls/mtlangue.ftl"/>
@@ -2577,9 +2580,11 @@
 					<show id="bcpg:productHierarchy2" force="true"/>
 					<show id="bcpg:productState" force="true"/>
 					<show id="bcpg:productUnit" force="true"/>
+					<show id="bcpg:componentLossPerc" force="true" />
 					<show id="bcpg:code" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:entityTplRef" force="true" />
+					
 
 					<!-- pallet -->
 					<show id="pack:palletLayers" force="true" />
@@ -2675,6 +2680,7 @@
 					<show id="bcpg:entityTplRef" force="true" />
 					<show id="bcpg:productState" />
 					<show id="bcpg:productUnit" />
+					<show id="bcpg:componentLossPerc" />
 					<show id="bcpg:code" force="true" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:eanCode" />
@@ -2733,6 +2739,7 @@
 					</field>
 					<field id="bcpg:productState" set="mainInfo" />
 					<field id="bcpg:productUnit" set="mainInfo" />
+					<field id="bcpg:componentLossPerc" set="mainInfo" />
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
 					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo"  >
@@ -2890,6 +2897,7 @@
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:netWeight" force="true" />
 					<show id="bcpg:productDensity" />
+					<show id="bcpg:componentLossPerc" />
 					<show id="bcpg:reconstitutionRate" />
 					<show id="bcpg:reconstitutionPriority" />
 					<show id="bcpg:diluentRef" />
@@ -3046,6 +3054,8 @@
 						</control>
 					</field>
 					<field id="bcpg:productDensity" set="consumer" />
+				    <field id="bcpg:componentLossPerc" set="consumer" />
+					
 					<field id="bcpg:reconstitutionRate" set="consumer" />
 					<field id="bcpg:reconstitutionPriority" set="consumer" />
 					<field id="bcpg:diluentRef"  set="consumer">
@@ -3524,6 +3534,7 @@
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:netWeight" force="true" />
 					<show id="bcpg:productDensity" />
+					<show id="bcpg:componentLossPerc" />
 					<show id="bcpg:reconstitutionRate" />
 					<show id="bcpg:reconstitutionPriority" />
 					<show id="bcpg:diluentRef" />
@@ -3631,6 +3642,7 @@
 						</control>
 					</field>
 					<field id="bcpg:productDensity" set="consumer" />
+					 <field id="bcpg:componentLossPerc" set="consumer" />
 					<field id="bcpg:reconstitutionRate" set="consumer" />
 					<field id="bcpg:reconstitutionPriority" set="consumer" />
 					<field id="bcpg:diluentRef"  set="consumer">
@@ -6975,6 +6987,40 @@
 					<field id="bcpg:locationAddress1"  help-id="becpg.forms.help.locationAddress1" />
 					<field id="bcpg:locationAddress2"  help-id="becpg.forms.help.locationAddress2" />
 					<field id="bcpg:code" read-only="true" />
+				</appearance>
+			</form>
+			<form id="search">
+				<field-visibility>	
+					<show id="cm:name" />
+					<show id="bcpg:clientHierarchy1" />
+					<show id="bcpg:clientHierarchy2" />
+					<show id="bcpg:clientState" />
+					<show id="bcpg:code" />
+					<show id="bcpg:erpCode" />
+
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:clientHierarchy1">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/client_Hierarchy
+							</control-param>
+							<control-param name="multiple">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:clientHierarchy2">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/client_Hierarchy
+							</control-param>
+							<control-param name="parent">bcpg_clientHierarchy1
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:clientState">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 		</forms>
