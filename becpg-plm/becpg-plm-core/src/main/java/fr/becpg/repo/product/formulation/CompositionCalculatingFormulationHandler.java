@@ -126,7 +126,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		
 
 		Double netVolume = FormulationHelper.getNetVolume(formulatedProduct);
-		if ((netVolume != null) && (volumeUsed != 0d)) {
+		if ((netVolume != null) && (volumeUsed!=null) && (volumeUsed != 0d)) {
 			formulatedProduct.setYieldVolume((100 * netVolume) / volumeUsed);
 		}
 
@@ -169,6 +169,10 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 							Double recipeQtyUsed = (FormulationHelper.getQtyInKg(component.getData())
 									* FormulationHelper.getYield(component.getData())) / 100;
 							Double recipeVolumeUsed = FormulationHelper.getNetVolume(component.getData(), nodeService);
+							if(recipeVolumeUsed == null) {
+								recipeVolumeUsed = 0d;
+							}
+							
 							recipeQtyUsedWithLossPerc += variantData.getRecipeQtyUsedWithLossPerc();
 							recipeQtyUsed += variantData.getRecipeQtyUsed();
 							recipeVolumeUsed += variantData.getRecipeVolumeUsed();
