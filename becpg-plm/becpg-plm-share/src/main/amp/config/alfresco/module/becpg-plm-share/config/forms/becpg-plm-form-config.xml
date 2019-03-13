@@ -6302,6 +6302,22 @@
 					<show id="bcpg:trademarkType"  />
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
+					<!-- hide exif:exif -->
+					<hide id="exif:dateTimeOriginal" />
+					<hide id="exif:pixelXDimension" />
+					<hide id="exif:pixelYDimension" />
+					<hide id="exif:exposureTime" />
+					<hide id="exif:fNumber" />
+					<hide id="exif:flash" />
+					<hide id="exif:focalLength" />
+					<hide id="exif:isoSpeedRatings" />
+					<hide id="exif:manufacturer" />
+					<hide id="exif:model" />
+					<hide id="exif:software" />
+					<hide id="exif:orientation" />
+					<hide id="exif:xResolution" />
+					<hide id="exif:yResolution" />
+					<hide id="exif:resolutionUnit" />
 				</field-visibility>
 				<appearance>
 					<field id="cm:description">
