@@ -741,11 +741,14 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				} else {
 					qtyComponent = getCompoListQty(formulatedProduct, c.getComponentNodeRef(), formulatedProduct.getRecipeQtyUsed());
 				}
+				
+				if (c.getSimulatedValue() != null && c.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM)) {
+					c.getAspectsToRemove().add(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
+				}
+				
 				for (CostListDataItem c2 : componentData.getCostList()) {
 					if (c2.getCost().equals(c.getParent().getCost()) && (c.getSimulatedValue() != null)) {
-						if (c.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM)) {
-							c.getAspectsToRemove().add(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
-						}
+						
 						if (logger.isDebugEnabled()) {
 							logger.debug("add simulationCost " + "c2 value " + c2.getValue() + "c simulated value " + c.getSimulatedValue()
 									+ " qty component " + qtyComponent + " netQty " + netQty);
@@ -764,8 +767,8 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 					}
 				}
 			}
-			if (c.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM) && (c.getParent() != null 
-					|| nodeService.hasAspect(c.getCost(),BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM)) && c.getSimulatedValue() == null) {
+			if (c.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM) && c.getSimulatedValue() == null && c.getParent() != null 
+					&& !nodeService.hasAspect(c.getParent().getCost(),BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM) ) {
 				c.getParent().getAspectsToRemove().add(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
 			}
 		}
