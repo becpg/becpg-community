@@ -41,7 +41,6 @@ import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
-import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
 /**
@@ -2328,10 +2327,12 @@ public class FormulationTest extends AbstractFinishedProductTest {
 			assertNotNull(formulatedProduct1.getCompoList());
 			int checks=0;
 			for(CompoListDataItem compoListDataItem : formulatedProduct1.getCompoList()){				
-								
+						
+				ProductData partProduct = alfrescoRepository.findOne(compoListDataItem.getProduct());
+				
 				Double volume = compoListDataItem.getVolume();				
 				Double overrun = compoListDataItem.getOverrunPerc();
-				Double density = FormulationHelper.getDensity(compoListDataItem.getProduct(), nodeService);				
+				Double density =  partProduct.getDensity();				
 				logger.info("Product: " + nodeService.getProperty(compoListDataItem.getProduct(), ContentModel.PROP_NAME));
 				logger.info("overrun: " + overrun);
 				logger.info("volume: " + volume);

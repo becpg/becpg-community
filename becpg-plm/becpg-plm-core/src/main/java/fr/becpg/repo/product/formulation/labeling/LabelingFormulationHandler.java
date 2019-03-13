@@ -1213,7 +1213,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				}
 
 				// Calculate volume
-				Double volume = FormulationHelper.getNetVolume(compoListDataItem, nodeService);
+				Double volume = FormulationHelper.getNetVolume(compoListDataItem, productData);
 				if (volume == null) {
 					volume = 0d;
 				}

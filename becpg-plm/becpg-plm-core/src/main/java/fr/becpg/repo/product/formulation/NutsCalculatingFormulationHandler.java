@@ -103,10 +103,10 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 						if (compoItem.getDeclType() != DeclarationType.Omit) {
 
 							NodeRef part = compoItem.getProduct();
-							Double weight = FormulationHelper.getQtyInKg(compoItem);
-							Double vol = FormulationHelper.getNetVolume(compoItem, nodeService);
-
 							ProductData partProduct = (ProductData) alfrescoRepository.findOne(part);
+
+							Double weight = FormulationHelper.getQtyInKg(compoItem);
+							Double vol = FormulationHelper.getNetVolume(compoItem, partProduct);
 
 							Double qtyUsed = ((partProduct.getUnit() != null) && partProduct.getUnit().isVolume()) ? vol : weight;
 

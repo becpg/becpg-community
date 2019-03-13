@@ -29,7 +29,6 @@ import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
-import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 
 /**
@@ -213,10 +212,6 @@ public class FormulationHelper {
 		}
 	}
 
-	public static Double getDensity(NodeRef nodeRef, NodeService nodeService) {
-		Double density = (Double) nodeService.getProperty(nodeRef, PLMModel.PROP_PRODUCT_DENSITY);
-		return density != null ? density : DEFAULT_DENSITY;
-	}
 
 	/**
 	 *
@@ -239,9 +234,11 @@ public class FormulationHelper {
 					if (productUnit.isWeight() || productUnit.isVolume()) {
 						qty = qty / productUnit.getUnitFactor();
 						if (productUnit.isVolume()) {
-							Double density = FormulationHelper.getDensity(nodeRef, nodeService);
+							Double density = (Double) nodeService.getProperty(nodeRef, PLMModel.PROP_PRODUCT_DENSITY);	
 							if (density != null) {
 								qty = qty * density;
+							} else {
+								qty = 0d;
 							}
 						}
 						return qty;
@@ -352,7 +349,7 @@ public class FormulationHelper {
 		}
 	}
 
-	public static Double getNetVolume(Double qty, CompoListDataItem compoListDataItem, NodeService nodeService) {
+	private static Double getNetVolume(Double qty, CompoListDataItem compoListDataItem, ProductData subProductData) {
 
 		if (qty != null) {
 			Double overrun = compoListDataItem.getOverrunPerc();
@@ -365,7 +362,7 @@ public class FormulationHelper {
 					|| compoListDataItem.getYieldPerc().isInfinite()) {
 				yield = FormulationHelper.DEFAULT_YIELD;
 			}
-			Double density = FormulationHelper.getDensity(compoListDataItem.getProduct(), nodeService);
+			Double density = subProductData.getDensity();
 			if ((density == null) || density.equals(0d) || density.isNaN() || density.isInfinite()) {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Cannot calculate volume since density is null or equals to 0");
@@ -378,11 +375,11 @@ public class FormulationHelper {
 		return null;
 	}
 
-	public static Double getNetVolume(CompoListDataItem compoListDataItem, NodeService nodeService) {
+	public static Double getNetVolume(CompoListDataItem compoListDataItem, ProductData subProductData) {
 
 		Double qty = FormulationHelper.getQtyInKg(compoListDataItem);
 
-		return getNetVolume(qty, compoListDataItem, nodeService);
+		return getNetVolume(qty, compoListDataItem, subProductData);
 	}
 
 	public static Double calculateValue(Double totalValue, Double qtyUsed, Double value, Double netWeight, String unit) {

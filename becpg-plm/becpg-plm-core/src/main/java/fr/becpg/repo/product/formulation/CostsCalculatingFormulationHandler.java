@@ -181,9 +181,12 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 					.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 				
 				if(packagingListDataItem.getProduct()!=null) {
-					Double qty = FormulationHelper.getQtyForCostByPackagingLevel(formulatedProduct, packagingListDataItem,(ProductData) alfrescoRepository.findOne(packagingListDataItem.getProduct()));
+					
+					ProductData partProduct = (ProductData) alfrescoRepository.findOne(packagingListDataItem.getProduct());
+					
+					Double qty = FormulationHelper.getQtyForCostByPackagingLevel(formulatedProduct, packagingListDataItem,partProduct);
 
-					visitPart(packagingListDataItem.getProduct(), costList, qty, qty, netQty, netQty, mandatoryCharacts2, null, false);
+					visitPart(packagingListDataItem.getProduct(),partProduct, costList, qty, qty, netQty, netQty, mandatoryCharacts2, null, false);
 				}
 			}
 
@@ -205,7 +208,9 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 						netQty = FormulationHelper.QTY_FOR_PIECE;
 					}
 
-					visitPart(processListDataItem.getResource(), costList, qty, null, netQty, null, mandatoryCharacts3, null, false);
+					ProductData partProduct = (ProductData) alfrescoRepository.findOne(processListDataItem.getResource());
+					
+					visitPart(processListDataItem.getResource(),partProduct, costList, qty, null, netQty, null, mandatoryCharacts3, null, false);
 				}
 			}
 
@@ -237,7 +242,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				
 
 				Double qty = FormulationHelper.getQtyForCost(compoListDataItem, parentLossRatio, componentProduct, keepProductUnit);
-				visitPart(compoListDataItem.getProduct(), costList, qty, qty, netQty, netQty, mandatoryCharacts, totalQtiesValue,
+				visitPart(compoListDataItem.getProduct(),componentProduct, costList, qty, qty, netQty, netQty, mandatoryCharacts, totalQtiesValue,
 						formulatedProduct instanceof RawMaterialData);
 			}
 		}
