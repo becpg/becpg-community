@@ -1,12 +1,16 @@
 package fr.becpg.repo.product.data;
 
+import java.util.List;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.hierarchy.HierarchicalEntity;
+import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.repository.model.StateableEntity;
 
@@ -20,6 +24,9 @@ public class SupplierData extends BeCPGDataObject implements HierarchicalEntity,
 	private NodeRef hierarchy1;
 	private NodeRef hierarchy2;
 	private SystemState state = SystemState.Simulation;
+	
+
+	private List<CostListDataItem> costList;
 	
 	@AlfProp
 	@AlfQname(qname = "cm:name")
@@ -68,6 +75,17 @@ public class SupplierData extends BeCPGDataObject implements HierarchicalEntity,
 		this.hierarchy2 = hierarchy2;
 	}
 
+
+	@DataList
+	@AlfQname(qname = "bcpg:costList")
+	public List<CostListDataItem> getCostList() {
+		return costList;
+	}
+
+	public void setCostList(List<CostListDataItem> costList) {
+		this.costList = costList;
+	}
+	
 	@Override
 	public String toString() {
 		return "SupplierData [name=" + name + ", hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", state="

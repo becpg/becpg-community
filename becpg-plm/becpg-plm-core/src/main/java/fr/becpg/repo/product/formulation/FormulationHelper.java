@@ -114,7 +114,7 @@ public class FormulationHelper {
 		return ((1 + (lossPerc / 100)) * qty) / (yieldPerc / 100);
 	}
 
-	private static Double getQtyWithLoss(double qty, double lossPerc) {
+	static Double getQtyWithLoss(double qty, double lossPerc) {
 		return (1 + (lossPerc / 100)) * qty;
 	}
 
@@ -563,9 +563,9 @@ public class FormulationHelper {
 	}
 
 	public static Double getComponentLossPerc(ProductData componentProduct, CompoListDataItem compoListDataItem) {
-		if(componentProduct.getComponentLossPerc()!=null) {
-			return componentProduct.getComponentLossPerc();
+		if(compoListDataItem.getLossPerc()!=null) {
+			return compoListDataItem.getLossPerc();
 		}
-		return  compoListDataItem.getLossPerc() != null ? compoListDataItem.getLossPerc() : 0d;
+		return componentProduct.getComponentLossPerc()!= null ?componentProduct.getComponentLossPerc():0d;
 	}
 }

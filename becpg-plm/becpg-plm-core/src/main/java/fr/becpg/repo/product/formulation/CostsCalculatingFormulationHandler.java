@@ -29,6 +29,7 @@ import fr.becpg.repo.product.data.PackagingMaterialData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
+import fr.becpg.repo.product.data.SupplierData;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
@@ -244,6 +245,8 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				Double qty = FormulationHelper.getQtyForCost(compoListDataItem, parentLossRatio, componentProduct, keepProductUnit);
 				visitPart(compoListDataItem.getProduct(),componentProduct, costList, qty, qty, netQty, netQty, mandatoryCharacts, totalQtiesValue,
 						formulatedProduct instanceof RawMaterialData);
+						
+				
 			}
 		}
 		// Case Generic MP
@@ -450,47 +453,12 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 
 	@Override
 	protected void synchronizeTemplate(ProductData formulatedProduct, List<CostListDataItem> simpleListDataList) {
-		// TODO : manage multiple plants
-		NodeRef plantNodeRef = formulatedProduct.getPlants().isEmpty() ? null : formulatedProduct.getPlants().get(0);
+		
+		
 
 		if ((formulatedProduct.getEntityTpl() != null) && !formulatedProduct.getEntityTpl().equals(formulatedProduct)) {
 			formulatedProduct.getEntityTpl().getCostList().forEach(templateCostList -> {
-
-				boolean addCost = true;
-				for (CostListDataItem costList : simpleListDataList) {
-					// plants
-					if (templateCostList.getPlants().isEmpty() || templateCostList.getPlants().contains(plantNodeRef)) {
-						// same cost
-						if ((costList.getCost() != null) && costList.getCost().equals(templateCostList.getCost())) {
-							// manual
-							if ((costList.getIsManual() == null) || !costList.getIsManual()) {
-
-								if ((templateCostList.getParent() != null) && (costList.getParent() == null)) {
-									costList.setParent(findParentByCharactName(simpleListDataList, templateCostList.getParent().getCharactNodeRef()));
-								} else if (templateCostList.getParent() == null) {
-									costList.setParent(null);
-								}
-								copyTemplateCost(formulatedProduct, templateCostList, costList);
-							}
-							addCost = false;
-							break;
-						}
-					} else {
-						addCost = false;
-					}
-				}
-				if (addCost) {
-					CostListDataItem costListDataItem = new CostListDataItem(templateCostList);
-					costListDataItem.setNodeRef(null);
-					costListDataItem.setParentNodeRef(null);
-
-					if (costListDataItem.getParent() != null) {
-						costListDataItem.setParent(findParentByCharactName(simpleListDataList, costListDataItem.getParent().getCharactNodeRef()));
-					}
-
-					copyTemplateCost(formulatedProduct, templateCostList, costListDataItem);
-					simpleListDataList.add(costListDataItem);
-				}
+				synchronizeCost(formulatedProduct, templateCostList, simpleListDataList, true);
 			});
 
 			// check sorting
@@ -517,37 +485,74 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		if (formulatedProduct.getClients() != null) {
 			for (ClientData client : formulatedProduct.getClients()) {
 				client.getCostList().forEach(templateCostList -> {
-
-					boolean addCost = true;
-					for (CostListDataItem costList : simpleListDataList) {
-						// plants
-						if (templateCostList.getPlants().isEmpty() || templateCostList.getPlants().contains(plantNodeRef)) {
-							// same cost
-							if ((costList.getCost() != null) && costList.getCost().equals(templateCostList.getCost())) {
-								// manual
-								if ((costList.getIsManual() == null) || !costList.getIsManual()) {
-
-									copyTemplateCost(formulatedProduct, templateCostList, costList);
-								}
-								addCost = false;
-								break;
-							}
-						} else {
-							addCost = false;
-						}
-					}
-					if (addCost) {
-						CostListDataItem costListDataItem = new CostListDataItem(templateCostList);
-						costListDataItem.setNodeRef(null);
-						costListDataItem.setParentNodeRef(null);
-
-						copyTemplateCost(formulatedProduct, templateCostList, costListDataItem);
-						simpleListDataList.add(costListDataItem);
-					}
+					synchronizeCost(formulatedProduct, templateCostList, simpleListDataList,false);
+				});
+			}
+		}
+		
+		if ((formulatedProduct instanceof RawMaterialData) && ((RawMaterialData) formulatedProduct).getSuppliers() != null) {
+			for (NodeRef supplierNodeRef : ((RawMaterialData) formulatedProduct).getSuppliers()) {
+				SupplierData supplier = (SupplierData) alfrescoRepository.findOne(supplierNodeRef);
+				supplier.getCostList().forEach(templateCostList -> {
+					synchronizeCost(formulatedProduct, templateCostList, simpleListDataList,false);
+				});
+			}
+		}
+		
+		if ((formulatedProduct instanceof PackagingMaterialData) && ((PackagingMaterialData) formulatedProduct).getSuppliers() != null) {
+			for (NodeRef supplierNodeRef : ((PackagingMaterialData) formulatedProduct).getSuppliers()) {
+				SupplierData supplier = (SupplierData) alfrescoRepository.findOne(supplierNodeRef);
+				supplier.getCostList().forEach(templateCostList -> {
+					synchronizeCost(formulatedProduct, templateCostList, simpleListDataList,false);
 				});
 			}
 		}
 
+	}
+	
+	
+	private void synchronizeCost(ProductData formulatedProduct, CostListDataItem templateCostList, List<CostListDataItem> simpleListDataList, boolean isTemplateCost) {
+		// TODO : manage multiple plants
+		NodeRef plantNodeRef = formulatedProduct.getPlants().isEmpty() ? null : formulatedProduct.getPlants().get(0);
+
+		boolean addCost = true;
+		for (CostListDataItem costList : simpleListDataList) {
+			// plants
+			if (templateCostList.getPlants().isEmpty() || templateCostList.getPlants().contains(plantNodeRef)) {
+				// same cost
+				if ((costList.getCost() != null) && costList.getCost().equals(templateCostList.getCost())) {
+					// manual
+					if ((costList.getIsManual() == null) || !costList.getIsManual()) {
+
+						if(isTemplateCost) {
+							if ((templateCostList.getParent() != null) && (costList.getParent() == null)) {
+								costList.setParent(findParentByCharactName(simpleListDataList, templateCostList.getParent().getCharactNodeRef()));
+							} else if (templateCostList.getParent() == null) {
+								costList.setParent(null);
+							}
+						}
+						
+						copyTemplateCost(formulatedProduct, templateCostList, costList);
+					}
+					addCost = false;
+					break;
+				}
+			} else {
+				addCost = false;
+			}
+		}
+		if (addCost) {
+			CostListDataItem costListDataItem = new CostListDataItem(templateCostList);
+			costListDataItem.setNodeRef(null);
+			costListDataItem.setParentNodeRef(null);
+			if (costListDataItem.getParent() != null) {
+				costListDataItem.setParent(findParentByCharactName(simpleListDataList, costListDataItem.getParent().getCharactNodeRef()));
+			}
+			copyTemplateCost(formulatedProduct, templateCostList, costListDataItem);
+			simpleListDataList.add(costListDataItem);
+		}
+	
+		
 	}
 
 	private void copyTemplateCost(ProductData formulatedProduct, CostListDataItem templateCostList, CostListDataItem costList) {

@@ -33,7 +33,10 @@ import fr.becpg.repo.product.data.CharactDetails;
 import fr.becpg.repo.product.data.CharactDetailsValue;
 import fr.becpg.repo.product.data.ClientData;
 import fr.becpg.repo.product.data.EffectiveFilters;
+import fr.becpg.repo.product.data.PackagingMaterialData;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.RawMaterialData;
+import fr.becpg.repo.product.data.SupplierData;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
@@ -199,6 +202,21 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 			}
 		}
 
+		
+		if ((formulatedProduct instanceof RawMaterialData) && ((RawMaterialData) formulatedProduct).getSuppliers() != null) {
+			for (NodeRef supplierNodeRef : ((RawMaterialData) formulatedProduct).getSuppliers()) {
+				SupplierData supplier = (SupplierData) alfrescoRepository.findOne(supplierNodeRef);
+				visitTemplateCostList(formulatedProduct, supplier.getNodeRef(), supplier.getCostList(), ret);
+			}
+		}
+		
+		if ((formulatedProduct instanceof PackagingMaterialData) && ((PackagingMaterialData) formulatedProduct).getSuppliers() != null) {
+			for (NodeRef supplierNodeRef : ((PackagingMaterialData) formulatedProduct).getSuppliers()) {
+				SupplierData supplier = (SupplierData) alfrescoRepository.findOne(supplierNodeRef);
+				visitTemplateCostList(formulatedProduct, supplier.getNodeRef(), supplier.getCostList(), ret);
+			}
+		}
+		
 	}
 
 	private void visitTemplateCostList(ProductData formulatedProduct, NodeRef entityNodeRef, List<CostListDataItem> templateCostLists,
