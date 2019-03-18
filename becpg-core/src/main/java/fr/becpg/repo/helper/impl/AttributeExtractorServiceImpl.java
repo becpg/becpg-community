@@ -267,9 +267,13 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public String getStringValue(PropertyDefinition propertyDef, Serializable v, PropertyFormats propertyFormats) {
+		return getStringValue(propertyDef, v, propertyFormats, true);
+	}
+
+	@SuppressWarnings("unchecked")
+	private String getStringValue(PropertyDefinition propertyDef, Serializable v, PropertyFormats propertyFormats, boolean formatData) {
 
 		String value = null;
 
@@ -337,11 +341,20 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 						}
 
 						if (dynListConstraint != null) {
-							value += dynListConstraint.getDisplayLabel(tempValue);
+							if (!formatData) {
+								value += tempValue;
+							} else {
+								value += dynListConstraint.getDisplayLabel(tempValue);
+							}
 						} else {
-							value += constraintName != null
-									? TranslateHelper.getConstraint(constraintName, tempValue, propertyFormats.isUseDefaultLocale())
-									: tempValue;
+							if (!formatData) {
+								value += tempValue;
+							} else {
+
+								value += constraintName != null
+										? TranslateHelper.getConstraint(constraintName, tempValue, propertyFormats.isUseDefaultLocale())
+										: tempValue;
+							}
 						}
 					}
 
@@ -429,8 +442,8 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 					value = (Serializable) JsonFormulaHelper.cleanCompareJSON((String) value);
 				}
 				if (propertyDef.getConstraints().isEmpty() || (DataTypeDefinition.TEXT.toString().equals(propertyDef.getDataType().toString()))) {
-					if (formatData ||  value instanceof NodeRef || value instanceof List) {
-						return getStringValue(propertyDef, value, propertyFormats);
+					if (formatData || (value instanceof NodeRef) || (value instanceof List)) {
+						return getStringValue(propertyDef, value, propertyFormats, formatData);
 					} else {
 						return value.toString();
 					}
