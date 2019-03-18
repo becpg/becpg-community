@@ -4,17 +4,36 @@ import java.math.BigDecimal;
 
 /**
  * Manage variant
+ * 
  * @author quere
  *
  */
 public class VariantPackagingData {
-	
+
 	private BigDecimal tarePrimary = new BigDecimal(0d);
 	private BigDecimal tareSecondary = new BigDecimal(0d);
 	private BigDecimal tareTertiary = new BigDecimal(0d);
 	private Integer productPerBoxes;
 	private Integer boxesPerPallet;
+
+	private Integer palletLayers;
+	private Integer palletBoxesPerLayer;
+	private Integer palletBoxesPerPallet;
+	private Integer palletHeight;
 	private Integer palletNumberOnGround;
+	private Integer palletBoxesPerLastLayer;
+	private Integer palletStackingMaxWeight;
+
+	private Double height;
+	private Double width;
+	private Double depth;
+
+	private Double secondaryHeight;
+	private Double secondaryWidth;
+	private Double secondaryDepth;
+
+	private Double tertiaryWidth;
+	private Double tertiaryDepth;
 
 	public BigDecimal getTarePrimary() {
 		return tarePrimary;
@@ -59,76 +78,321 @@ public class VariantPackagingData {
 	public Integer getPalletNumberOnGround() {
 		return palletNumberOnGround;
 	}
-	
-	public Integer getProductPerPallet(){
-		if(this.productPerBoxes != null && this.boxesPerPallet != null){
+
+	public Integer getProductPerPallet() {
+		if ((this.productPerBoxes != null) && (this.boxesPerPallet != null)) {
 			return this.productPerBoxes * this.boxesPerPallet;
 		}
 		return null;
+	}
+
+	public Integer getPalletLayers() {
+		return palletLayers;
+	}
+
+	public void setPalletLayers(Integer palletLayers) {
+		this.palletLayers = palletLayers;
+	}
+
+	public Integer getPalletBoxesPerLayer() {
+		return palletBoxesPerLayer;
+	}
+
+	public void setPalletBoxesPerLayer(Integer palletBoxesPerLayer) {
+		this.palletBoxesPerLayer = palletBoxesPerLayer;
+	}
+
+	public Integer getPalletBoxesPerPallet() {
+		return palletBoxesPerPallet;
+	}
+
+	public void setPalletBoxesPerPallet(Integer palletBoxesPerPallet) {
+		this.palletBoxesPerPallet = palletBoxesPerPallet;
+	}
+
+	public Integer getPalletHeight() {
+		return palletHeight;
+	}
+
+	public void setPalletHeight(Integer palletHeight) {
+		this.palletHeight = palletHeight;
+	}
+
+	public Double getHeight() {
+		return height;
+	}
+
+	public void setHeight(Double height) {
+		this.height = height;
+	}
+
+	public Double getWidth() {
+		return width;
+	}
+
+	public void setWidth(Double width) {
+		this.width = width;
+	}
+
+	public Double getDepth() {
+		return depth;
+	}
+
+	public void setDepth(Double depth) {
+		this.depth = depth;
+	}
+
+	public Double getSecondaryHeight() {
+		return secondaryHeight;
+	}
+
+	public void setSecondaryHeight(Double secondaryHeight) {
+		this.secondaryHeight = secondaryHeight;
+	}
+
+	public Double getSecondaryWidth() {
+		return secondaryWidth;
+	}
+
+	public void setSecondaryWidth(Double secondaryWidth) {
+		this.secondaryWidth = secondaryWidth;
+	}
+
+	public Double getSecondaryDepth() {
+		return secondaryDepth;
+	}
+
+	public void setSecondaryDepth(Double secondaryDepth) {
+		this.secondaryDepth = secondaryDepth;
+	}
+
+	public Double getTertiaryWidth() {
+		return tertiaryWidth;
+	}
+
+	public void setTertiaryWidth(Double tertiaryWidth) {
+		this.tertiaryWidth = tertiaryWidth;
+	}
+
+	public Double getTertiaryDepth() {
+		return tertiaryDepth;
+	}
+
+	public void setTertiaryDepth(Double tertiaryDepth) {
+		this.tertiaryDepth = tertiaryDepth;
 	}
 
 	public void setPalletNumberOnGround(Integer palletNumberOnGround) {
 		this.palletNumberOnGround = palletNumberOnGround;
 	}
 
+	public Integer getPalletBoxesPerLastLayer() {
+		return palletBoxesPerLastLayer;
+	}
+
+	public void setPalletBoxesPerLastLayer(Integer palletBoxesPerLastLayer) {
+		this.palletBoxesPerLastLayer = palletBoxesPerLastLayer;
+	}
+
+	public Integer getPalletStackingMaxWeight() {
+		return palletStackingMaxWeight;
+	}
+
+	public void setPalletStackingMaxWeight(Integer palletStackingMaxWeight) {
+		this.palletStackingMaxWeight = palletStackingMaxWeight;
+	}
+
 	@Override
 	public String toString() {
-		return "VariantPackagingData [tareSecondary=" + tareSecondary + ", tareTertiary=" + tareTertiary
-				+ ", productPerBoxes=" + productPerBoxes + ", boxesPerPallet=" + boxesPerPallet + "]";
+		return "VariantPackagingData [tarePrimary=" + tarePrimary + ", tareSecondary=" + tareSecondary + ", tareTertiary=" + tareTertiary
+				+ ", productPerBoxes=" + productPerBoxes + ", boxesPerPallet=" + boxesPerPallet + ", palletLayers=" + palletLayers
+				+ ", palletBoxesPerLayer=" + palletBoxesPerLayer + ", palletBoxesPerPallet=" + palletBoxesPerPallet + ", palletHeight=" + palletHeight
+				+ ", palletNumberOnGround=" + palletNumberOnGround + ", palletBoxesPerLastLayer=" + palletBoxesPerLastLayer
+				+ ", palletStackingMaxWeight=" + palletStackingMaxWeight + ", height=" + height + ", width=" + width + ", depth=" + depth
+				+ ", secondaryHeight=" + secondaryHeight + ", secondaryWidth=" + secondaryWidth + ", secondaryDepth=" + secondaryDepth
+				+ ", tertiaryWidth=" + tertiaryWidth + ", tertiaryDepth=" + tertiaryDepth + "]";
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((boxesPerPallet == null) ? 0 : boxesPerPallet.hashCode());
-		result = prime * result + ((palletNumberOnGround == null) ? 0 : palletNumberOnGround.hashCode());
-		result = prime * result + ((productPerBoxes == null) ? 0 : productPerBoxes.hashCode());
-		result = prime * result + ((tarePrimary == null) ? 0 : tarePrimary.hashCode());
-		result = prime * result + ((tareSecondary == null) ? 0 : tareSecondary.hashCode());
-		result = prime * result + ((tareTertiary == null) ? 0 : tareTertiary.hashCode());
+		result = (prime * result) + ((boxesPerPallet == null) ? 0 : boxesPerPallet.hashCode());
+		result = (prime * result) + ((depth == null) ? 0 : depth.hashCode());
+		result = (prime * result) + ((height == null) ? 0 : height.hashCode());
+		result = (prime * result) + ((palletBoxesPerLastLayer == null) ? 0 : palletBoxesPerLastLayer.hashCode());
+		result = (prime * result) + ((palletBoxesPerLayer == null) ? 0 : palletBoxesPerLayer.hashCode());
+		result = (prime * result) + ((palletBoxesPerPallet == null) ? 0 : palletBoxesPerPallet.hashCode());
+		result = (prime * result) + ((palletHeight == null) ? 0 : palletHeight.hashCode());
+		result = (prime * result) + ((palletLayers == null) ? 0 : palletLayers.hashCode());
+		result = (prime * result) + ((palletNumberOnGround == null) ? 0 : palletNumberOnGround.hashCode());
+		result = (prime * result) + ((palletStackingMaxWeight == null) ? 0 : palletStackingMaxWeight.hashCode());
+		result = (prime * result) + ((productPerBoxes == null) ? 0 : productPerBoxes.hashCode());
+		result = (prime * result) + ((secondaryDepth == null) ? 0 : secondaryDepth.hashCode());
+		result = (prime * result) + ((secondaryHeight == null) ? 0 : secondaryHeight.hashCode());
+		result = (prime * result) + ((secondaryWidth == null) ? 0 : secondaryWidth.hashCode());
+		result = (prime * result) + ((tarePrimary == null) ? 0 : tarePrimary.hashCode());
+		result = (prime * result) + ((tareSecondary == null) ? 0 : tareSecondary.hashCode());
+		result = (prime * result) + ((tareTertiary == null) ? 0 : tareTertiary.hashCode());
+		result = (prime * result) + ((tertiaryDepth == null) ? 0 : tertiaryDepth.hashCode());
+		result = (prime * result) + ((tertiaryWidth == null) ? 0 : tertiaryWidth.hashCode());
+		result = (prime * result) + ((width == null) ? 0 : width.hashCode());
 		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		VariantPackagingData other = (VariantPackagingData) obj;
 		if (boxesPerPallet == null) {
-			if (other.boxesPerPallet != null)
+			if (other.boxesPerPallet != null) {
 				return false;
-		} else if (!boxesPerPallet.equals(other.boxesPerPallet))
+			}
+		} else if (!boxesPerPallet.equals(other.boxesPerPallet)) {
 			return false;
+		}
+		if (depth == null) {
+			if (other.depth != null) {
+				return false;
+			}
+		} else if (!depth.equals(other.depth)) {
+			return false;
+		}
+		if (height == null) {
+			if (other.height != null) {
+				return false;
+			}
+		} else if (!height.equals(other.height)) {
+			return false;
+		}
+		if (palletBoxesPerLastLayer == null) {
+			if (other.palletBoxesPerLastLayer != null) {
+				return false;
+			}
+		} else if (!palletBoxesPerLastLayer.equals(other.palletBoxesPerLastLayer)) {
+			return false;
+		}
+		if (palletBoxesPerLayer == null) {
+			if (other.palletBoxesPerLayer != null) {
+				return false;
+			}
+		} else if (!palletBoxesPerLayer.equals(other.palletBoxesPerLayer)) {
+			return false;
+		}
+		if (palletBoxesPerPallet == null) {
+			if (other.palletBoxesPerPallet != null) {
+				return false;
+			}
+		} else if (!palletBoxesPerPallet.equals(other.palletBoxesPerPallet)) {
+			return false;
+		}
+		if (palletHeight == null) {
+			if (other.palletHeight != null) {
+				return false;
+			}
+		} else if (!palletHeight.equals(other.palletHeight)) {
+			return false;
+		}
+		if (palletLayers == null) {
+			if (other.palletLayers != null) {
+				return false;
+			}
+		} else if (!palletLayers.equals(other.palletLayers)) {
+			return false;
+		}
 		if (palletNumberOnGround == null) {
-			if (other.palletNumberOnGround != null)
+			if (other.palletNumberOnGround != null) {
 				return false;
-		} else if (!palletNumberOnGround.equals(other.palletNumberOnGround))
+			}
+		} else if (!palletNumberOnGround.equals(other.palletNumberOnGround)) {
 			return false;
+		}
+		if (palletStackingMaxWeight == null) {
+			if (other.palletStackingMaxWeight != null) {
+				return false;
+			}
+		} else if (!palletStackingMaxWeight.equals(other.palletStackingMaxWeight)) {
+			return false;
+		}
 		if (productPerBoxes == null) {
-			if (other.productPerBoxes != null)
+			if (other.productPerBoxes != null) {
 				return false;
-		} else if (!productPerBoxes.equals(other.productPerBoxes))
+			}
+		} else if (!productPerBoxes.equals(other.productPerBoxes)) {
 			return false;
+		}
+		if (secondaryDepth == null) {
+			if (other.secondaryDepth != null) {
+				return false;
+			}
+		} else if (!secondaryDepth.equals(other.secondaryDepth)) {
+			return false;
+		}
+		if (secondaryHeight == null) {
+			if (other.secondaryHeight != null) {
+				return false;
+			}
+		} else if (!secondaryHeight.equals(other.secondaryHeight)) {
+			return false;
+		}
+		if (secondaryWidth == null) {
+			if (other.secondaryWidth != null) {
+				return false;
+			}
+		} else if (!secondaryWidth.equals(other.secondaryWidth)) {
+			return false;
+		}
 		if (tarePrimary == null) {
-			if (other.tarePrimary != null)
+			if (other.tarePrimary != null) {
 				return false;
-		} else if (!tarePrimary.equals(other.tarePrimary))
+			}
+		} else if (!tarePrimary.equals(other.tarePrimary)) {
 			return false;
+		}
 		if (tareSecondary == null) {
-			if (other.tareSecondary != null)
+			if (other.tareSecondary != null) {
 				return false;
-		} else if (!tareSecondary.equals(other.tareSecondary))
+			}
+		} else if (!tareSecondary.equals(other.tareSecondary)) {
 			return false;
+		}
 		if (tareTertiary == null) {
-			if (other.tareTertiary != null)
+			if (other.tareTertiary != null) {
 				return false;
-		} else if (!tareTertiary.equals(other.tareTertiary))
+			}
+		} else if (!tareTertiary.equals(other.tareTertiary)) {
 			return false;
+		}
+		if (tertiaryDepth == null) {
+			if (other.tertiaryDepth != null) {
+				return false;
+			}
+		} else if (!tertiaryDepth.equals(other.tertiaryDepth)) {
+			return false;
+		}
+		if (tertiaryWidth == null) {
+			if (other.tertiaryWidth != null) {
+				return false;
+			}
+		} else if (!tertiaryWidth.equals(other.tertiaryWidth)) {
+			return false;
+		}
+		if (width == null) {
+			if (other.width != null) {
+				return false;
+			}
+		} else if (!width.equals(other.width)) {
+			return false;
+		}
 		return true;
 	}
+
 }

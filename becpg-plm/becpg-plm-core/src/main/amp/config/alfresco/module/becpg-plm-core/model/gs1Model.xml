@@ -232,6 +232,24 @@
 						<tokenised>TRUE</tokenised>
 					</index>
 				</property>
+				<property name="gs1:tertiaryWidth">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="gs1:tertiaryDepth">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
 				<property name="gs1:tertiaryWeight">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
@@ -251,24 +269,6 @@
 					</index>
 				</property>
 				<property name="gs1:tertiaryNetWeight">
-					<type>d:double</type>
-					<mandatory>false</mandatory>
-					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
-					</index>
-				</property>
-				<property name="gs1:secondaryTare">
-					<type>d:double</type>
-					<mandatory>false</mandatory>
-					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
-					</index>
-				</property>
-				<property name="gs1:tertiaryTare">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
