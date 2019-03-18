@@ -40,6 +40,13 @@ public class PackModel {
 	public static final QName PROP_PALLET_NUMBER_ON_GROUND = QName.createQName(PACK_URI,
 			"palletNumberOnGround");
 	
+	public static final QName PROP_PALLET_BOXES_PER_LAST_LAYER  = QName.createQName(PACK_URI,
+			"palletBoxesPerLastLayer");
+
+	public static final QName PROP_PALLET_STACKING_MAX_WEIGHT = QName.createQName(PACK_URI,
+			"palletStackingMaxWeight");
+	
+	
 	public static final QName ASPECT_TARE =   QName.createQName(PACK_URI,
 			"tareAspect");
 	
@@ -78,4 +85,5 @@ public class PackModel {
 	public static final QName ASPECT_PM_MATERIAL = QName.createQName(PACK_URI,"pmMaterialAspect");
 
 	public static final QName ASSOC_PM_MATERIAL =   QName.createQName(PACK_URI,"pmMaterialRefs");
+
 }

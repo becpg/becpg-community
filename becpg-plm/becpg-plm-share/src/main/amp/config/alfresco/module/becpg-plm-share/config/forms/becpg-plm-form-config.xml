@@ -213,7 +213,6 @@
 					<show id="gs1:secondaryWidth" for-mode="edit" />
 					<show id="gs1:secondaryDepth" for-mode="edit" />
 					<show id="gs1:secondaryNetWeight" for-mode="edit" />
-					<show id="gs1:secondaryTare" for-mode="edit" />
 					<show id="gs1:secondaryWeight" for-mode="edit" />
 					
 					<show id="pack:palletLayers" for-mode="edit" />
@@ -223,8 +222,9 @@
 					<show id="pack:palletHeight" for-mode="edit" />
 					<show id="pack:palletNumberOnGround" for-mode="edit" />
 					<show id="pack:palletStackingMaxWeight" for-mode="edit" />
+					<show id="gs1:tertiaryWidth" for-mode="edit" />
+					<show id="gs1:tertiaryDepth" for-mode="edit" />
 					<show id="gs1:tertiaryNetWeight" for-mode="edit" />
-					<show id="gs1:tertiaryTare" for-mode="edit" />
 					<show id="gs1:tertiaryWeight" for-mode="edit" />
 					<show id="gs1:palletTypeCode" for-mode="edit" />
 					
@@ -636,12 +636,7 @@
 							<control-param name="unit">kg</control-param>
 						</control>
 					</field>
-					<field id="gs1:secondaryTare" set="secondaryPackaging" read-only="true" >
-						<control
-							template="/org/alfresco/components/form/controls/number-unit.ftl">
-							<control-param name="unit">kg</control-param>
-						</control>
-					</field>
+				
 					<field id="gs1:secondaryWeight" set="secondaryPackaging" read-only="true" >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
@@ -651,12 +646,6 @@
 					
 					<!-- pallet -->
 					<field id="gs1:tertiaryNetWeight" set="tertiaryPackaging" read-only="true">
-						<control
-							template="/org/alfresco/components/form/controls/number-unit.ftl">
-							<control-param name="unit">kg</control-param>
-						</control>
-					</field>
-					<field id="gs1:tertiaryTare" set="tertiaryPackaging" read-only="true" >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">kg</control-param>
@@ -685,6 +674,19 @@
 							<control-param name="unit">kg</control-param>
 						</control>
 					</field>
+					<field id="gs1:tertiaryWidth"  set="tertiaryPackaging" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">mm</control-param>
+						</control>
+					</field>
+					<field id="gs1:tertiaryDepth"  set="tertiaryPackaging">
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">mm</control-param>
+						</control>
+					</field>
+					
 					<field id="gs1:palletTypeCode" help-id="becpg.forms.help.gs1.palletTypeCode" set="tertiaryPackaging" />
  				
  					<field id="gs1:isTradeItemABaseUnit" help-id="becpg.forms.help.gs1.isTradeItemABaseUnit" set="indicateursPanel" />

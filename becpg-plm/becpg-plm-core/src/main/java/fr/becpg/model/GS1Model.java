@@ -25,7 +25,6 @@ public interface GS1Model {
 
 	String BECPG_PREFIX = "gs1";
 
-	/** The Constant MODEL. */
 	QName MODEL = QName.createQName(GS1_URI, "gs1Model");
 
 	QName ASPECT_MEASURES_ASPECT = QName.createQName(GS1_URI, "measuresAspect");
@@ -37,5 +36,21 @@ public interface GS1Model {
 	QName PROP_TERTIARY_NET_WEIGHT = QName.createQName(GS1_URI, "tertiaryNetWeight");
 
 	QName PROP_NUTRIENT_TYPE_CODE = QName.createQName(GS1_URI, "nutrientTypeCode");
+
+	QName PROP_WIDTH = QName.createQName(GS1_URI, "width");
+
+	QName PROP_DEPTH = QName.createQName(GS1_URI, "depth");
+
+	QName PROP_HEIGHT = QName.createQName(GS1_URI, "height");
+
+	QName PROP_SECONDARY_WIDTH = QName.createQName(GS1_URI, "secondaryWidth");
+
+	QName PROP_SECONDARY_DEPTH = QName.createQName(GS1_URI, "secondaryDepth");
+
+	QName PROP_SECONDARY_HEIGHT = QName.createQName(GS1_URI, "secondaryHeight");
+
+	QName PROP_TERTIARY_WIDTH = QName.createQName(GS1_URI, "tertiaryWidth");
+
+	QName PROP_TERTIARY_DEPTH = QName.createQName(GS1_URI, "tertiaryDepth");
 
 }

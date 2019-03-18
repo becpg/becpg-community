@@ -94,6 +94,7 @@ public class PackagingData {
 			variantPackagingData.setProductPerBoxes(value);
 		}
 	}
+	
 
 	public void setBoxesPerPallet(List<NodeRef> variantNodeRefs, Integer value) {
 		for (VariantPackagingData variantPackagingData : getVariantPackagingData(variantNodeRefs)) {
@@ -105,5 +106,95 @@ public class PackagingData {
 		for (VariantPackagingData variantPackagingData : getVariantPackagingData(variantNodeRefs)) {
 			variantPackagingData.setPalletNumberOnGround(value);
 		}
+	}
+
+	public void setPalletHeight(List<NodeRef> variantNodeRefs, Integer value) {
+		for (VariantPackagingData variantPackagingData : getVariantPackagingData(variantNodeRefs)) {
+			variantPackagingData.setPalletHeight(value);
+		}
+		
+	}
+
+	public void setPalletBoxesPerLayer(List<NodeRef> variantNodeRefs, Integer value) {
+		for (VariantPackagingData variantPackagingData : getVariantPackagingData(variantNodeRefs)) {
+			variantPackagingData.setPalletBoxesPerLayer(value);
+		}
+		
+	}
+
+	public void setPalletLayers(List<NodeRef> variantNodeRefs, Integer value) {
+		for (VariantPackagingData variantPackagingData : getVariantPackagingData(variantNodeRefs)) {
+			variantPackagingData.setPalletLayers(value);
+		}
+		
+	}
+
+	public void setTertiaryDepth(List<NodeRef> variantNodeRefs, Double value) {
+		for (VariantPackagingData variantPackagingData : getVariantPackagingData(variantNodeRefs)) {
+			variantPackagingData.setTertiaryDepth(value);
+		}
+		
+	}
+
+	public void setTertiaryWidth(List<NodeRef> variantNodeRefs, Double value) {
+		for (VariantPackagingData variantPackagingData : getVariantPackagingData(variantNodeRefs)) {
+			variantPackagingData.setTertiaryWidth(value);
+		}
+	}
+
+	public void setWidth(List<NodeRef> variantNodeRefs, Double value) {
+		for (VariantPackagingData variantPackagingData : getVariantPackagingData(variantNodeRefs)) {
+			variantPackagingData.setWidth(value);
+		}
+		
+	}
+
+	public void setHeight(List<NodeRef> variantNodeRefs, Double value) {
+		for (VariantPackagingData variantPackagingData : getVariantPackagingData(variantNodeRefs)) {
+			variantPackagingData.setHeight(value);
+		}
+		
+	}
+
+	public void setDepth(List<NodeRef> variantNodeRefs, Double value) {
+		for (VariantPackagingData variantPackagingData : getVariantPackagingData(variantNodeRefs)) {
+			variantPackagingData.setDepth(value);
+		}
+		
+	}
+
+	public void setSecondaryWidth(List<NodeRef> variantNodeRefs, Double value) {
+		for (VariantPackagingData variantPackagingData : getVariantPackagingData(variantNodeRefs)) {
+			variantPackagingData.setSecondaryWidth(value);
+		}
+		
+	}
+
+	public void setSecondaryHeight(List<NodeRef> variantNodeRefs, Double value) {
+		for (VariantPackagingData variantPackagingData : getVariantPackagingData(variantNodeRefs)) {
+			variantPackagingData.setSecondaryHeight(value);
+		}
+		
+	}
+
+	public void setSecondaryDepth(List<NodeRef> variantNodeRefs, Double value) {
+		for (VariantPackagingData variantPackagingData : getVariantPackagingData(variantNodeRefs)) {
+			variantPackagingData.setSecondaryDepth(value);
+		}
+		
+	}
+
+	public void setBoxesPerLastLayer(List<NodeRef> variantNodeRefs, Integer palletBoxesPerLastLayer) {
+		for (VariantPackagingData variantPackagingData : getVariantPackagingData(variantNodeRefs)) {
+			variantPackagingData.setPalletBoxesPerLastLayer(palletBoxesPerLastLayer);
+		}
+		
+	}
+
+	public void setStackingMaxWeight(List<NodeRef> currentVariants, Integer palletStackingMaxWeight) {
+		for (VariantPackagingData variantPackagingData : getVariantPackagingData(currentVariants)) {
+			variantPackagingData.setPalletStackingMaxWeight(palletStackingMaxWeight);
+		}
+		
 	}
 }
