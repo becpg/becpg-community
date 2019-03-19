@@ -32,7 +32,7 @@
     </list-property>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="452">
-            <property name="FILELIST">src/main/resources/beCPG/birt/document/product/default/ProductReport.xml</property>
+            <property name="FILELIST">TMP_STANDARD/datasource_PriceBreak.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -53,7 +53,13 @@
                 <structure>
                     <property name="columnName">products</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">products</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">priceListUnit</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">priceListUnit</text-property>
                 </structure>
             </list-property>
             <list-property name="parameters"/>
@@ -72,6 +78,11 @@
                     <structure>
                         <property name="position">3</property>
                         <property name="name">products</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">priceListUnit</property>
                         <property name="dataType">string</property>
                     </structure>
                 </list-property>
@@ -99,8 +110,15 @@
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">priceListUnit</property>
+                    <property name="nativeName">priceListUnit</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/priceBreaks/priceBreak]#:#{projectedQty;DOUBLE;/@projectedQty},{unitTotalCost;DOUBLE;/@unitTotalCost},{products;STRING;/@products}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/priceBreaks/priceBreak]#:#{projectedQty;DOUBLE;/@projectedQty},{unitTotalCost;DOUBLE;/@unitTotalCost},{products;STRING;/@products},{priceListUnit;STRING;/priceBreakDetail/@priceListUnit}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -1537,7 +1555,7 @@
                         <cell id="772">
                             <label id="773">
                                 <property name="style">becpg-header-type</property>
-                                <text-property name="text">Price break</text-property>
+                                <text-property name="text" key="technicalSheetPriceBreak">Price break</text-property>
                             </label>
                             <data id="3383">
                                 <property name="style">becpg-header-title</property>
@@ -2095,8 +2113,7 @@ function beforeDrawDataPoint( dph, fill, icsc )
 if(dph.getBaseValue() == 25000 || dph.getBaseValue() == 50000 || dph.getBaseValue() == 100000){
 	fill.set(255,0,0);
 }
-}
-</Script>
+}</Script>
   <Units>Points</Units>
   <SeriesThickness>10.0</SeriesThickness>
   <ExtendedProperties>
@@ -2150,7 +2167,7 @@ if(dph.getBaseValue() == 25000 || dph.getBaseValue() == 50000 || dph.getBaseValu
     <Type>Linear</Type>
     <Title>
       <Caption>
-        <Value>Quantity (Sale units)</Value>
+        <Value>qunatitySaleUnit=Quantity (Sale units)</Value>
         <Font>
           <Size>14.0</Size>
           <Bold>true</Bold>
@@ -2189,7 +2206,7 @@ if(dph.getBaseValue() == 25000 || dph.getBaseValue() == 50000 || dph.getBaseValu
       <Type>Linear</Type>
       <Title>
         <Caption>
-          <Value>Price £/SU</Value>
+          <Value>costUnitPerSU=Price £/SU</Value>
           <Font>
             <Size>14.0</Size>
             <Bold>true</Bold>
@@ -3013,6 +3030,12 @@ if(dph.getBaseValue() == 25000 || dph.getBaseValue() == 50000 || dph.getBaseValu
                     <expression name="expression" type="javascript">dataSetRow["products"]</expression>
                     <property name="dataType">string</property>
                 </structure>
+                <structure>
+                    <property name="name">priceListUnit</property>
+                    <text-property name="displayName">priceListUnit</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["priceListUnit"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
             </list-property>
         </extended-item>
         <label id="7368"/>
@@ -3164,41 +3187,42 @@ display;</expression>
                 <row id="3344">
                     <property name="fontWeight">bold</property>
                     <property name="textAlign">left</property>
+                    <property name="verticalAlign">middle</property>
                     <cell id="3345">
                         <property name="style">becpg-cell-header</property>
                         <label id="3364">
-                            <text-property name="text">Quantity break</text-property>
+                            <text-property name="text" key="quantityBreak">Quantity break</text-property>
                         </label>
                     </cell>
                     <cell id="3347">
                         <property name="style">becpg-cell-header</property>
-                        <label id="3366">
-                            <text-property name="text">Cost 
-£/SU</text-property>
-                        </label>
+                        <text id="7371">
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<VALUE-OF>reportContext.getMessage("costUnitPerSU", reportContext.getLocale()).replace("{priceListUnit}", row["priceListUnit"]);</VALUE-OF>]]></text-property>
+                        </text>
                     </cell>
                     <cell id="3349">
                         <property name="style">becpg-cell-header</property>
                         <label id="3350">
-                            <text-property name="text">Component</text-property>
+                            <text-property name="text" key="component">Component</text-property>
                         </label>
                     </cell>
                     <cell id="7356">
                         <property name="style">becpg-cell-header</property>
                         <label id="7360">
-                            <text-property name="text">Rank</text-property>
+                            <text-property name="text" key="rank">Rank</text-property>
                         </label>
                     </cell>
                     <cell id="7361">
                         <property name="style">becpg-cell-header</property>
                         <label id="7365">
-                            <text-property name="text">Supplier</text-property>
+                            <text-property name="text" key="priceBreak.supplier">Supplier</text-property>
                         </label>
                     </cell>
                     <cell id="3353">
                         <property name="style">becpg-cell-header</property>
                         <label id="3354">
-                            <text-property name="text">price</text-property>
+                            <text-property name="text" key="price">price</text-property>
                         </label>
                     </cell>
                 </row>
@@ -3212,8 +3236,7 @@ display;</expression>
                 <property name="hideDetail">false</property>
                 <header>
                     <row id="3439">
-                        <property name="borderTopStyle">solid</property>
-                        <property name="borderTopWidth">thin</property>
+                        <property name="style">becpg-row-border</property>
                         <cell id="3440">
                             <property name="style">becpg-cell-footer</property>
                             <data id="3463">
@@ -3225,7 +3248,7 @@ display;</expression>
                             </label>
                             <label id="7355">
                                 <property name="display">inline</property>
-                                <text-property name="text">SU</text-property>
+                                <text-property name="text" key="su">SU</text-property>
                             </label>
                         </cell>
                         <cell id="3441">
@@ -3255,8 +3278,8 @@ display;</expression>
             </group>
             <detail>
                 <row id="3367">
-                    <property name="borderTopStyle">solid</property>
-                    <property name="borderTopWidth">thin</property>
+                    <property name="style">becpg-row-border</property>
+                    <property name="verticalAlign">middle</property>
                     <cell id="3368">
                         <property name="style">becpg-cell-data</property>
                         <property name="textAlign">center</property>
