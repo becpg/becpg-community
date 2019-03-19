@@ -141,11 +141,11 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 		Set<String> users = new HashSet<>(authenticationService.getUsersWithTickets(true));
 		for (Iterator<String> iterator = users.iterator(); iterator.hasNext();) {
 			String user = iterator.next();
-			if ("guest".equals(user)) {
+			if ("guest".equals(user) || "system".equals(user)) {
 				iterator.remove();
 			} else if (tenantAdminService.isEnabled() && !tenantAdminService.getCurrentUserDomain().equals(tenantAdminService.getUserDomain(user))) {
 				iterator.remove();
-			}
+			} 
 		}
 		
 		
@@ -165,7 +165,6 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 					concurrentReadUsers++;
 				} 
 			}
-			
 		}
 
 		// #378 : force to use server locale

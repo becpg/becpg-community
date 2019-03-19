@@ -126,7 +126,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		
 
 		Double netVolume = FormulationHelper.getNetVolume(formulatedProduct);
-		if ((netVolume != null) && (volumeUsed != 0d)) {
+		if ((netVolume != null) && (volumeUsed!=null) && (volumeUsed != 0d)) {
 			formulatedProduct.setYieldVolume((100 * netVolume) / volumeUsed);
 		}
 
@@ -163,12 +163,16 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 					for (VariantData variantData : variants) {
 
 						if ((component.getData().getVariants() == null) || component.getData().getVariants().contains(variantData.getNodeRef())) {
-							Double recipeQtyUsedWithLossPerc = ((FormulationHelper.getQtyInKg(component.getData())
+							Double recipeQtyUsedWithLossPerc = ((FormulationHelper.getQtyInKg(compoListDataItem)
 									* FormulationHelper.getYield(component.getData()) * (1 + (lossPerc / 100))) / 100);
 
-							Double recipeQtyUsed = (FormulationHelper.getQtyInKg(component.getData())
+							Double recipeQtyUsed = (FormulationHelper.getQtyInKg(compoListDataItem)
 									* FormulationHelper.getYield(component.getData())) / 100;
-							Double recipeVolumeUsed = FormulationHelper.getNetVolume(component.getData(), nodeService);
+							Double recipeVolumeUsed = FormulationHelper.getNetVolume(compoListDataItem, componentProduct);
+							if(recipeVolumeUsed == null) {
+								recipeVolumeUsed = 0d;
+							}
+							
 							recipeQtyUsedWithLossPerc += variantData.getRecipeQtyUsedWithLossPerc();
 							recipeQtyUsed += variantData.getRecipeQtyUsed();
 							recipeVolumeUsed += variantData.getRecipeVolumeUsed();
@@ -202,8 +206,11 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 				component.getData().setVolume(value);
 
 			} else {
-				value = FormulationHelper.getNetVolume(component.getData(), nodeService);
-				component.getData().setVolume(value);
+				CompoListDataItem compoListDataItem = component.getData();
+				ProductData componentProduct = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());
+				
+				value = FormulationHelper.getNetVolume(compoListDataItem, componentProduct);
+				compoListDataItem.setVolume(value);
 			}
 			volume += ((value != null) && !value.isNaN() && !value.isInfinite() ? value : 0d);
 		}

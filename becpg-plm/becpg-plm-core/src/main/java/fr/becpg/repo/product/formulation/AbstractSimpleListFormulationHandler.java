@@ -186,10 +186,13 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 			for (CompoListDataItem compoItem : formulatedProduct
 					.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 				Double weight = FormulationHelper.getQtyInKg(compoItem);
-				Double vol = FormulationHelper.getNetVolume(compoItem, nodeService);
-
 				if (weight != null && !DeclarationType.Omit.equals(compoItem.getDeclType())  ) {
-					visitPart(compoItem.getProduct(), simpleListDataList, weight, vol, netQtyInLorKg, netWeight, mandatoryCharacts, totalQtiesValue,
+
+					ProductData partProduct = (ProductData) alfrescoRepository.findOne(compoItem.getProduct());
+					Double vol = FormulationHelper.getNetVolume(compoItem, partProduct);
+
+					
+					visitPart(compoItem.getProduct(), partProduct,  simpleListDataList, weight, vol, netQtyInLorKg, netWeight, mandatoryCharacts, totalQtiesValue,
 							isGenericRawMaterial);
 				}
 			}
@@ -240,11 +243,9 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	 * @param valueCount
 	 *
 	 */
-	protected void visitPart(NodeRef componentNodeRef, List<T> simpleListDataList, Double weightUsed, Double volUsed, Double netQtyInLorKg,
+	protected void visitPart(NodeRef componentNodeRef, ProductData partProduct, List<T> simpleListDataList, Double weightUsed, Double volUsed, Double netQtyInLorKg,
 			Double netWeight, Map<NodeRef, List<NodeRef>> mandatoryCharacts, Map<NodeRef, Double> totalQtiesValue, boolean isGenericRawMaterial)
 			throws FormulateException {
-
-		ProductData partProduct = (ProductData) alfrescoRepository.findOne(componentNodeRef);
 
 		if (!(partProduct instanceof LocalSemiFinishedProductData)) {
 

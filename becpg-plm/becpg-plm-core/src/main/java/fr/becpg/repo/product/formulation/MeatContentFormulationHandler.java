@@ -3,7 +3,6 @@ package fr.becpg.repo.product.formulation;
 import java.util.Arrays;
 import java.util.Map;
 
-import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -34,13 +33,7 @@ public class MeatContentFormulationHandler extends FormulationBaseHandler<Produc
 
 	private static Log logger = LogFactory.getLog(MeatContentFormulationHandler.class);
 
-	private NodeService nodeService;
-
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
-
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
 
 	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
@@ -61,26 +54,30 @@ public class MeatContentFormulationHandler extends FormulationBaseHandler<Produc
 
 		formulatedProduct.setMeatContentData(null);
 
-		Double netWeight = FormulationHelper.getNetWeight(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
-		FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
-
 		if (formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 			for (CompoListDataItem compoItem : formulatedProduct
 					.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 				Double weightUsed = FormulationHelper.getQtyInKg(compoItem);
-				Double volUsed = FormulationHelper.getNetVolume(compoItem, nodeService);
-
 				if ((weightUsed != null) && !DeclarationType.Omit.equals(compoItem.getDeclType())) {
 					ProductData partProduct = (ProductData) alfrescoRepository.findOne(compoItem.getComponent());
 
 					if (!(partProduct instanceof LocalSemiFinishedProductData)) {
 
-						boolean formulateInVol = partProduct.getUnit()!=null && partProduct.getUnit().isVolume();
+						boolean formulateInVol = (partProduct.getUnit() != null) && partProduct.getUnit().isVolume();
+
+						Double volUsed = FormulationHelper.getNetVolume(compoItem, partProduct);
+						Double netWeight = FormulationHelper.getNetWeight(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
 
 						// calculate charact from qty or vol ?
 						Double qtyUsedPerc = formulateInVol ? volUsed : weightUsed;
 
 						if ((qtyUsedPerc != null) && (qtyUsedPerc != 0d)) {
+
+							Double lossPerc = FormulationHelper.getComponentLossPerc(partProduct, compoItem);
+							if ((lossPerc != null) && (lossPerc != 0)) {
+								qtyUsedPerc = FormulationHelper.getQtyWithLoss(qtyUsedPerc, lossPerc);
+							}
+
 							if ((netWeight != null) && (netWeight != 0d)) {
 								qtyUsedPerc = qtyUsedPerc / netWeight;
 							}
@@ -105,7 +102,7 @@ public class MeatContentFormulationHandler extends FormulationBaseHandler<Produc
 										if (nutListDataItem.getUnit().startsWith("mg")) {
 											value = value / 1000d;
 										}
-										if(nut.getNutCode()!=null) {
+										if (nut.getNutCode() != null) {
 											switch (nut.getNutCode()) {
 											case "FAT":
 												meatContentData.addFatPerc(value);
