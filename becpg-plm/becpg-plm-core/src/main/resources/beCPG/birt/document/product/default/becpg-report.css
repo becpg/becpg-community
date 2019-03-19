@@ -165,6 +165,12 @@
 	border-top-color: #000000;
 }
 
+.becpg-row-border-top
+{
+	border-top-style: solid;
+	border-top-width: thin;
+	border-top-color: #000000;
+}
 .becpg-group-header
 {
 	background-color: #EEEEEE;

@@ -37,7 +37,7 @@
     </list-property>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="452">
-            <property name="FILELIST">/opt/becpg/workspace/becpg/becpg-plm/becpg-plm-core/src/main/resources/beCPG/birt/document/product/default/ProductReport.xml</property>
+            <property name="FILELIST">TMP_STANDARD/datasource_preprod.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -2080,7 +2080,7 @@ dataSetRow["name"]
                                     <cell id="7118">
                                         <property name="style">becpg-meta-cell-label</property>
                                         <label id="7257">
-                                            <text-property name="text" key="erpCode">Code ERP</text-property>
+                                            <text-property name="text" key="erpCodeHeader">Code ERP</text-property>
                                         </label>
                                     </cell>
                                     <cell id="7119">
@@ -2139,10 +2139,10 @@ dataSetRow["versionLabel"]
                     <property name="backgroundImageType">url</property>
                     <property name="pageBreakAfter">auto</property>
                     <column id="7302">
-                        <property name="width">2.0833333333333335in</property>
+                        <property name="width">2in</property>
                     </column>
                     <column id="7303">
-                        <property name="width">3in</property>
+                        <property name="width">2.8in</property>
                     </column>
                     <column id="7304">
                         <property name="width">2.2777777777777777in</property>
@@ -2156,6 +2156,7 @@ dataSetRow["versionLabel"]
                             <grid id="7312">
                                 <property name="style">becpg-meta-grid</property>
                                 <property name="textAlign">right</property>
+                                <property name="width">100%</property>
                                 <property name="dataSet">Product</property>
                                 <list-property name="boundDataColumns">
                                     <structure>
@@ -2165,8 +2166,12 @@ dataSetRow["versionLabel"]
                                         <property name="dataType">date-time</property>
                                     </structure>
                                 </list-property>
-                                <column id="7313"/>
-                                <column id="7314"/>
+                                <column id="7313">
+                                    <property name="width">0.6979166666666666in</property>
+                                </column>
+                                <column id="7314">
+                                    <property name="width">1.1in</property>
+                                </column>
                                 <row id="7345">
                                     <property name="fontSize">9pt</property>
                                     <property name="textAlign">left</property>
@@ -3023,7 +3028,7 @@ true
                                 <property name="operator">ne</property>
                                 <expression name="expr" type="javascript">row["plStep"]</expression>
                                 <simple-property-list name="value1">
-                                    <value>"Modifications - Conclusions"</value>
+                                    <value>"Modifications - Conclusions :"</value>
                                 </simple-property-list>
                                 <property name="updateAggregation">true</property>
                             </structure>
@@ -3157,7 +3162,7 @@ true
                                                 <property name="style">becpg-cell-header</property>
                                                 <label id="8419">
                                                     <property name="paddingLeft">5pt</property>
-                                                    <text-property name="text" key="results">Results</text-property>
+                                                    <text-property name="text" key="results">Resultats</text-property>
                                                 </label>
                                             </cell>
                                         </row>
@@ -3386,7 +3391,7 @@ true
                                             <property name="operator">eq</property>
                                             <expression name="expr" type="javascript">row["plStep"]</expression>
                                             <simple-property-list name="value1">
-                                                <value>"Modifications - Conclusions"</value>
+                                                <value>"Modifications - Conclusions :"</value>
                                             </simple-property-list>
                                             <property name="updateAggregation">true</property>
                                         </structure>

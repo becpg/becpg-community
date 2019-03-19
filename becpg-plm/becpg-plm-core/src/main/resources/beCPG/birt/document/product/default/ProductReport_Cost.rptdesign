@@ -37,7 +37,7 @@
     </list-property>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="452">
-            <property name="FILELIST">src/main/resources/beCPG/birt/document/product/default/ProductReport.xml</property>
+            <property name="FILELIST">TMP_STANDARD/ProductReport.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -827,7 +827,7 @@
             <list-property name="computedColumns">
                 <structure>
                     <property name="name">costPerProduct</property>
-                    <expression name="expression">row["qtyForCost"] * row["conditionalCurrentCost"]</expression>
+                    <expression name="expression">row["qtyForCost"] * row["currentCost"]</expression>
                     <property name="dataType">float</property>
                 </structure>
                 <structure>
@@ -849,21 +849,6 @@ row["compoListProduct"]
                     <property name="name">runningCount</property>
                     <property name="dataType">integer</property>
                     <property name="aggregateFunction">RUNNINGCOUNT</property>
-                </structure>
-                <structure>
-                    <property name="name">conditionalCurrentCost</property>
-                    <expression name="expression">var res = "";
-
-if(BirtStr.indexOf("previousCost", row["reportParameters"]) != -1){
-	res = row["previousCost"]
-} else if(BirtStr.indexOf("futureCost", row["reportParameters"]) != -1){
-	res = row["futureCost"]
-} else {
-	res = row["currentCost"]
-}
-
-res;</expression>
-                    <property name="dataType">float</property>
                 </structure>
             </list-property>
             <list-property name="columnHints">
@@ -1005,6 +990,7 @@ res;</expression>
                 <structure>
                     <property name="columnName">currentCost</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">currentCost</text-property>
                 </structure>
                 <structure>
@@ -1016,26 +1002,7 @@ res;</expression>
                 <structure>
                     <property name="columnName">parentLevel</property>
                     <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">parentLevel</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">futureCost</property>
-                    <property name="analysis">measure</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">futureCost</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">previousCost</property>
-                    <property name="analysis">measure</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">previousCost</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">reportParameters</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">reportParameters</text-property>
                 </structure>
             </list-property>
             <list-property name="parameters"/>
@@ -1168,43 +1135,23 @@ res;</expression>
                     </structure>
                     <structure>
                         <property name="position">26</property>
-                        <property name="name">futureCost</property>
-                        <property name="dataType">decimal</property>
-                    </structure>
-                    <structure>
-                        <property name="position">27</property>
-                        <property name="name">previousCost</property>
-                        <property name="dataType">float</property>
-                    </structure>
-                    <structure>
-                        <property name="position">28</property>
-                        <property name="name">reportParameters</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">29</property>
                         <property name="name">costPerProduct</property>
                         <property name="dataType">float</property>
                     </structure>
                     <structure>
-                        <property name="position">30</property>
+                        <property name="position">27</property>
                         <property name="name">costPerKilo</property>
                         <property name="dataType">float</property>
                     </structure>
                     <structure>
-                        <property name="position">31</property>
+                        <property name="position">28</property>
                         <property name="name">compoListProductLabel</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">32</property>
+                        <property name="position">29</property>
                         <property name="name">runningCount</property>
                         <property name="dataType">integer</property>
-                    </structure>
-                    <structure>
-                        <property name="position">33</property>
-                        <property name="name">conditionalCurrentCost</property>
-                        <property name="dataType">float</property>
                     </structure>
                 </list-property>
             </structure>
@@ -1385,29 +1332,8 @@ res;</expression>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
-                <structure>
-                    <property name="position">26</property>
-                    <property name="name">futureCost</property>
-                    <property name="nativeName">futureCost</property>
-                    <property name="dataType">decimal</property>
-                    <property name="nativeDataType">2</property>
-                </structure>
-                <structure>
-                    <property name="position">27</property>
-                    <property name="name">previousCost</property>
-                    <property name="nativeName">previousCost</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
-                </structure>
-                <structure>
-                    <property name="position">28</property>
-                    <property name="name">reportParameters</property>
-                    <property name="nativeName">reportParameters</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/compoLists/compoList]#:#{depthLevel;STRING;/@depthLevel},{compoListProduct;STRING;/@compoListProduct},{compoListQtySubFormula;BIGDECIMAL;/@compoListQtySubFormula},{compoListQty;DOUBLE;/@compoListQty},{compoListUnit;STRING;/@compoListUnit},{compoListQtyAfterProcess;DOUBLE;/@compoListQtyAfterProcess},{itemType;STRING;/@itemType},{erpCode;STRING;/@erpCode},{variants;STRING;/@variants},{compoListYieldPerc;DOUBLE;/@compoListYieldPerc},{compoListLossPerc;DOUBLE;/@compoListLossPerc},{instruction;STRING;/instruction},{unitTotalCost;DOUBLE;/@unitTotalCost},{productCompoQtyUsed;DOUBLE;../../../productCompoQtyUsed},{netWeight;DOUBLE;../../../netWeight},{compoListQtyForProduct;DOUBLE;/@compoListQtyForProduct},{versionLabel;STRING;/@versionLabel},{itemTypeEntity;STRING;../../../itemType},{title;STRING;/@title},{productCompoQtyUsed_1;DOUBLE;../../../productCompoQtyUsed},{productUnit;STRING;/@productUnit},{compoListVolume;DOUBLE;/@compoListVolume},{currentCost;DOUBLE;/@currentCost},{qtyForCost;DOUBLE;/@qtyForCost},{parentLevel;STRING;/@parentLevel},{futureCost;BIGDECIMAL;/@futureCost},{previousCost;DOUBLE;/@previousCost},{reportParameters;STRING;../../../reportParameters}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/compoLists/compoList]#:#{depthLevel;STRING;/@depthLevel},{compoListProduct;STRING;/@compoListProduct},{compoListQtySubFormula;BIGDECIMAL;/@compoListQtySubFormula},{compoListQty;DOUBLE;/@compoListQty},{compoListUnit;STRING;/@compoListUnit},{compoListQtyAfterProcess;DOUBLE;/@compoListQtyAfterProcess},{itemType;STRING;/@itemType},{erpCode;STRING;/@erpCode},{variants;STRING;/@variants},{compoListYieldPerc;DOUBLE;/@compoListYieldPerc},{compoListLossPerc;DOUBLE;/@compoListLossPerc},{instruction;STRING;/instruction},{unitTotalCost;DOUBLE;/@unitTotalCost},{productCompoQtyUsed;DOUBLE;../../../productCompoQtyUsed},{netWeight;DOUBLE;../../../netWeight},{compoListQtyForProduct;DOUBLE;/@compoListQtyForProduct},{versionLabel;STRING;/@versionLabel},{itemTypeEntity;STRING;../../../itemType},{title;STRING;/@title},{productCompoQtyUsed_1;DOUBLE;../../../productCompoQtyUsed},{productUnit;STRING;/@productUnit},{compoListVolume;DOUBLE;/@compoListVolume},{currentCost;DOUBLE;/@currentCost},{qtyForCost;DOUBLE;/@qtyForCost},{parentLevel;STRING;/@parentLevel}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -1754,58 +1680,28 @@ res;</expression>
                     <expression name="expression">var weight = (row["netWeight"] != null ? row["netWeight"] : row["productCompoQtyUsed"]);
 
 if(row["itemType"] == "bcpg:finishedProduct"){
-row["conditionalCostListValuePerProduct"] / weight
+row["costListValuePerProduct"] / weight
 }
 else if(row["costListUnit"].indexOf("/kg") > 0){
-row["conditionalCostListValue"]
+row["costListValue"]
 }
 else if(row["costListUnit"].indexOf("/P") > 0){
-row["conditionalCostListValue"] / weight
+row["costListValue"] / weight
 }</expression>
                     <property name="dataType">float</property>
                 </structure>
                 <structure>
                     <property name="name">costPerBox</property>
                     <expression name="expression">if(row["nbProductsPkgLevel2"] != null &amp;&amp; row["costListValuePerProduct"] != null){
-row["conditionalCostListValuePerProduct"] * row["nbProductsPkgLevel2"]
+row["costListValuePerProduct"] * row["nbProductsPkgLevel2"]
 }</expression>
                     <property name="dataType">float</property>
                 </structure>
                 <structure>
                     <property name="name">costPerPallet</property>
                     <expression name="expression">if(row["nbProductsPkgLevel3"] != null &amp;&amp; row["costListValuePerProduct"] != null){
-row["conditionalCostListValuePerProduct"] * row["nbProductsPkgLevel3"]
+row["costListValuePerProduct"] * row["nbProductsPkgLevel3"]
 }</expression>
-                    <property name="dataType">float</property>
-                </structure>
-                <structure>
-                    <property name="name">conditionalCostListValue</property>
-                    <expression name="expression">var res = "";
-
-if(BirtStr.indexOf("previousCost", row["reportParameters"]) != -1){
-	res = row["costListPreviousValue"]
-} else if(BirtStr.indexOf("futureCost", row["reportParameters"]) != -1){
-	res = row["costListFutureValue"]
-} else {
-	res = row["costListValue"]
-}
-
-res;</expression>
-                    <property name="dataType">float</property>
-                </structure>
-                <structure>
-                    <property name="name">conditionalCostListValuePerProduct</property>
-                    <expression name="expression">var res = "";
-
-if(BirtStr.indexOf("previousCost", row["reportParameters"]) != -1){
-	res = row["costListPreviousValuePerProduct"]
-} else if(BirtStr.indexOf("futureCost", row["reportParameters"]) != -1){
-	res = row["costListFutureValuePerProduct"]
-} else {
-	res = row["costListValuePerProduct"]
-}
-
-res;</expression>
                     <property name="dataType">float</property>
                 </structure>
             </list-property>
@@ -1819,6 +1715,7 @@ res;</expression>
                 <structure>
                     <property name="columnName">costListValue</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">costListValue</text-property>
                 </structure>
                 <structure>
@@ -1848,6 +1745,7 @@ res;</expression>
                 <structure>
                     <property name="columnName">costListValuePerProduct</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">costListValuePerProduct</text-property>
                 </structure>
                 <structure>
@@ -1879,36 +1777,6 @@ res;</expression>
                     <property name="analysis">measure</property>
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">productCompoQtyUsed</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">reportParameters</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">reportParameters</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">costListPreviousValue</property>
-                    <property name="analysis">measure</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">costListPreviousValue</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">costListFutureValuePerProduct</property>
-                    <property name="analysis">measure</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">costListFutureValuePerProduct</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">costListPreviousValuePerProduct</property>
-                    <property name="analysis">measure</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">costListPreviousValuePerProduct</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">costListFutureValue</property>
-                    <property name="analysis">measure</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">costListFutureValue</text-property>
                 </structure>
             </list-property>
             <list-property name="parameters"/>
@@ -1976,52 +1844,17 @@ res;</expression>
                     </structure>
                     <structure>
                         <property name="position">13</property>
-                        <property name="name">reportParameters</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">14</property>
-                        <property name="name">costListPreviousValue</property>
-                        <property name="dataType">float</property>
-                    </structure>
-                    <structure>
-                        <property name="position">15</property>
-                        <property name="name">costListFutureValuePerProduct</property>
-                        <property name="dataType">float</property>
-                    </structure>
-                    <structure>
-                        <property name="position">16</property>
-                        <property name="name">costListPreviousValuePerProduct</property>
-                        <property name="dataType">float</property>
-                    </structure>
-                    <structure>
-                        <property name="position">17</property>
-                        <property name="name">costListFutureValue</property>
-                        <property name="dataType">float</property>
-                    </structure>
-                    <structure>
-                        <property name="position">18</property>
                         <property name="name">costPerKilo</property>
                         <property name="dataType">float</property>
                     </structure>
                     <structure>
-                        <property name="position">19</property>
+                        <property name="position">14</property>
                         <property name="name">costPerBox</property>
                         <property name="dataType">float</property>
                     </structure>
                     <structure>
-                        <property name="position">20</property>
+                        <property name="position">15</property>
                         <property name="name">costPerPallet</property>
-                        <property name="dataType">float</property>
-                    </structure>
-                    <structure>
-                        <property name="position">21</property>
-                        <property name="name">conditionalCostListValue</property>
-                        <property name="dataType">float</property>
-                    </structure>
-                    <structure>
-                        <property name="position">22</property>
-                        <property name="name">conditionalCostListValuePerProduct</property>
                         <property name="dataType">float</property>
                     </structure>
                 </list-property>
@@ -2112,43 +1945,8 @@ res;</expression>
                     <property name="dataType">float</property>
                     <property name="nativeDataType">8</property>
                 </structure>
-                <structure>
-                    <property name="position">13</property>
-                    <property name="name">reportParameters</property>
-                    <property name="nativeName">reportParameters</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">14</property>
-                    <property name="name">costListPreviousValue</property>
-                    <property name="nativeName">costListPreviousValue</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
-                </structure>
-                <structure>
-                    <property name="position">15</property>
-                    <property name="name">costListFutureValuePerProduct</property>
-                    <property name="nativeName">costListFutureValuePerProduct</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
-                </structure>
-                <structure>
-                    <property name="position">16</property>
-                    <property name="name">costListPreviousValuePerProduct</property>
-                    <property name="nativeName">costListPreviousValuePerProduct</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
-                </structure>
-                <structure>
-                    <property name="position">17</property>
-                    <property name="name">costListFutureValue</property>
-                    <property name="nativeName">costListFutureValue</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
-                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/costLists/costList]#:#{costListCost;STRING;/@costListCost},{costListValue;DOUBLE;/@costListValue},{productQty;DOUBLE;../../../productQty},{productUnit;STRING;../../../productUnit},{depthLevel;INT;/@depthLevel},{netWeight;DOUBLE;../../../netWeight},{costListValuePerProduct;DOUBLE;/@costListValuePerProduct},{nbProductsPkgLevel2;INT;../../packagingLists/packagingLevelMeasures/@nbProductsPkgLevel2},{nbProductsPkgLevel3;INT;../../packagingLists/packagingLevelMeasures/@nbProductsPkgLevel3},{itemType;STRING;../../../itemType},{costListUnit;STRING;/@costListUnit},{productCompoQtyUsed;DOUBLE;../../../productCompoQtyUsed},{reportParameters;STRING;../../../reportParameters},{costListPreviousValue;DOUBLE;/@costListPreviousValue},{costListFutureValuePerProduct;DOUBLE;/@costListFutureValuePerProduct},{costListPreviousValuePerProduct;DOUBLE;/@costListPreviousValuePerProduct},{costListFutureValue;DOUBLE;/@costListFutureValue}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/costLists/costList]#:#{costListCost;STRING;/@costListCost},{costListValue;DOUBLE;/@costListValue},{productQty;DOUBLE;../../../productQty},{productUnit;STRING;../../../productUnit},{depthLevel;INT;/@depthLevel},{netWeight;DOUBLE;../../../netWeight},{costListValuePerProduct;DOUBLE;/@costListValuePerProduct},{nbProductsPkgLevel2;INT;../../packagingLists/packagingLevelMeasures/@nbProductsPkgLevel2},{nbProductsPkgLevel3;INT;../../packagingLists/packagingLevelMeasures/@nbProductsPkgLevel3},{itemType;STRING;../../../itemType},{costListUnit;STRING;/@costListUnit},{productCompoQtyUsed;DOUBLE;../../../productCompoQtyUsed}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -2206,7 +2004,7 @@ res;</expression>
             <list-property name="computedColumns">
                 <structure>
                     <property name="name">costPerProduct</property>
-                    <expression name="expression">row["qtyForCost"] * row["conditionalCurrentCost"]</expression>
+                    <expression name="expression">row["qtyForCost"] * row["currentCost"]</expression>
                     <property name="dataType">float</property>
                 </structure>
                 <structure>
@@ -2228,21 +2026,6 @@ row["packagingListProduct"]
                     <property name="name">runningCount</property>
                     <property name="dataType">integer</property>
                     <property name="aggregateFunction">RUNNINGCOUNT</property>
-                </structure>
-                <structure>
-                    <property name="name">conditionalCurrentCost</property>
-                    <expression name="expression">var res = "";
-
-if(BirtStr.indexOf("previousCost", row["reportParameters"]) != -1){
-	res = row["previousCost"]
-} else if(BirtStr.indexOf("futureCost", row["reportParameters"]) != -1){
-	res = row["futureCost"]
-} else {
-	res = row["currentCost"]
-}
-
-res;</expression>
-                    <property name="dataType">float</property>
                 </structure>
             </list-property>
             <list-property name="columnHints">
@@ -2339,6 +2122,7 @@ res;</expression>
                 <structure>
                     <property name="columnName">currentCost</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">currentCost</text-property>
                 </structure>
                 <structure>
@@ -2352,24 +2136,6 @@ res;</expression>
                     <property name="analysis">measure</property>
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">qtyForCost</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">futureCost</property>
-                    <property name="analysis">measure</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">futureCost</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">previousCost</property>
-                    <property name="analysis">measure</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">previousCost</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">reportParameters</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">reportParameters</text-property>
                 </structure>
             </list-property>
             <list-property name="filter"/>
@@ -2468,43 +2234,23 @@ res;</expression>
                     </structure>
                     <structure>
                         <property name="position">19</property>
-                        <property name="name">futureCost</property>
-                        <property name="dataType">float</property>
-                    </structure>
-                    <structure>
-                        <property name="position">20</property>
-                        <property name="name">previousCost</property>
-                        <property name="dataType">float</property>
-                    </structure>
-                    <structure>
-                        <property name="position">21</property>
-                        <property name="name">reportParameters</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">22</property>
                         <property name="name">costPerProduct</property>
                         <property name="dataType">float</property>
                     </structure>
                     <structure>
-                        <property name="position">23</property>
+                        <property name="position">20</property>
                         <property name="name">costPerKilo</property>
                         <property name="dataType">float</property>
                     </structure>
                     <structure>
-                        <property name="position">24</property>
+                        <property name="position">21</property>
                         <property name="name">packagingListProductLabel</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">25</property>
+                        <property name="position">22</property>
                         <property name="name">runningCount</property>
                         <property name="dataType">integer</property>
-                    </structure>
-                    <structure>
-                        <property name="position">26</property>
-                        <property name="name">conditionalCurrentCost</property>
-                        <property name="dataType">float</property>
                     </structure>
                 </list-property>
             </structure>
@@ -2636,29 +2382,8 @@ res;</expression>
                     <property name="dataType">float</property>
                     <property name="nativeDataType">8</property>
                 </structure>
-                <structure>
-                    <property name="position">19</property>
-                    <property name="name">futureCost</property>
-                    <property name="nativeName">futureCost</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
-                </structure>
-                <structure>
-                    <property name="position">20</property>
-                    <property name="name">previousCost</property>
-                    <property name="nativeName">previousCost</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
-                </structure>
-                <structure>
-                    <property name="position">21</property>
-                    <property name="name">reportParameters</property>
-                    <property name="nativeName">reportParameters</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingLists/packagingList]#:#{erpCode;STRING;/@erpCode},{packagingListProduct;STRING;/@packagingListProduct},{packagingListQty;DOUBLE;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{unitTotalCost;DOUBLE;/@unitTotalCost},{packagingListLossPerc;DOUBLE;/@packagingListLossPerc},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{packagingListQtyForProduct;DOUBLE;/@packagingListQtyForProduct},{depthLevel;INT;/@depthLevel},{netWeight;DOUBLE;../../../netWeight},{itemType;STRING;/@itemType},{versionLabel;STRING;/@versionLabel},{itemTypeEntity;STRING;../../../itemType},{title;STRING;/@title},{productCompoQtyUsed;DOUBLE;../../../productCompoQtyUsed},{currentCost;DOUBLE;/@currentCost},{compoListProduct;STRING;/@compoListProduct},{qtyForCost;DOUBLE;/@qtyForCost},{futureCost;DOUBLE;/@futureCost},{previousCost;DOUBLE;/@previousCost},{reportParameters;STRING;../../../reportParameters}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingLists/packagingList]#:#{erpCode;STRING;/@erpCode},{packagingListProduct;STRING;/@packagingListProduct},{packagingListQty;DOUBLE;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{unitTotalCost;DOUBLE;/@unitTotalCost},{packagingListLossPerc;DOUBLE;/@packagingListLossPerc},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{packagingListQtyForProduct;DOUBLE;/@packagingListQtyForProduct},{depthLevel;INT;/@depthLevel},{netWeight;DOUBLE;../../../netWeight},{itemType;STRING;/@itemType},{versionLabel;STRING;/@versionLabel},{itemTypeEntity;STRING;../../../itemType},{title;STRING;/@title},{productCompoQtyUsed;DOUBLE;../../../productCompoQtyUsed},{currentCost;DOUBLE;/@currentCost},{compoListProduct;STRING;/@compoListProduct},{qtyForCost;DOUBLE;/@qtyForCost}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -2764,7 +2489,7 @@ res;</expression>
             <list-property name="computedColumns">
                 <structure>
                     <property name="name">costPerProduct</property>
-                    <expression name="expression">row["conditionalCurrentCost"] * row["qtyForCost"]</expression>
+                    <expression name="expression">row["currentCost"] * row["qtyForCost"]</expression>
                     <property name="dataType">float</property>
                 </structure>
                 <structure>
@@ -2789,21 +2514,6 @@ row["compoListProduct"]
                     <property name="name">runningCount</property>
                     <property name="dataType">integer</property>
                     <property name="aggregateFunction">RUNNINGCOUNT</property>
-                </structure>
-                <structure>
-                    <property name="name">conditionalCurrentCost</property>
-                    <expression name="expression">var res = "";
-
-if(BirtStr.indexOf("previousCost", row["reportParameters"]) != -1){
-	res = row["previousCost"]
-} else if(BirtStr.indexOf("futureCost", row["reportParameters"]) != -1){
-	res = row["futureCost"]
-} else {
-	res = row["currentCost"]
-}
-
-res;</expression>
-                    <property name="dataType">float</property>
                 </structure>
             </list-property>
             <list-property name="columnHints">
@@ -2912,25 +2622,8 @@ res;</expression>
                 <structure>
                     <property name="columnName">currentCost</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">currentCost</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">reportParameters</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">reportParameters</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">futureCost</property>
-                    <property name="analysis">measure</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">futureCost</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">previousCost</property>
-                    <property name="analysis">measure</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">previousCost</text-property>
                 </structure>
             </list-property>
             <list-property name="filter">
@@ -3037,43 +2730,23 @@ res;</expression>
                     </structure>
                     <structure>
                         <property name="position">19</property>
-                        <property name="name">reportParameters</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">20</property>
-                        <property name="name">futureCost</property>
-                        <property name="dataType">float</property>
-                    </structure>
-                    <structure>
-                        <property name="position">21</property>
-                        <property name="name">previousCost</property>
-                        <property name="dataType">float</property>
-                    </structure>
-                    <structure>
-                        <property name="position">22</property>
                         <property name="name">costPerProduct</property>
                         <property name="dataType">float</property>
                     </structure>
                     <structure>
-                        <property name="position">23</property>
+                        <property name="position">20</property>
                         <property name="name">costPerKilo</property>
                         <property name="dataType">float</property>
                     </structure>
                     <structure>
-                        <property name="position">24</property>
+                        <property name="position">21</property>
                         <property name="name">plResourceLabel</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">25</property>
+                        <property name="position">22</property>
                         <property name="name">runningCount</property>
                         <property name="dataType">integer</property>
-                    </structure>
-                    <structure>
-                        <property name="position">26</property>
-                        <property name="name">conditionalCurrentCost</property>
-                        <property name="dataType">float</property>
                     </structure>
                 </list-property>
             </structure>
@@ -3205,29 +2878,8 @@ res;</expression>
                     <property name="dataType">float</property>
                     <property name="nativeDataType">8</property>
                 </structure>
-                <structure>
-                    <property name="position">19</property>
-                    <property name="name">reportParameters</property>
-                    <property name="nativeName">reportParameters</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">20</property>
-                    <property name="name">futureCost</property>
-                    <property name="nativeName">futureCost</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
-                </structure>
-                <structure>
-                    <property name="position">21</property>
-                    <property name="name">previousCost</property>
-                    <property name="nativeName">previousCost</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
-                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/processLists/processList]#:#{unitTotalCost;DOUBLE;/@unitTotalCost},{plRateProduct;DOUBLE;/@plRateProduct},{plRateResource;DOUBLE;/@plRateResource},{plRateProcess;DOUBLE;/@plRateProcess},{plQtyResource;DOUBLE;/@plQtyResource},{plUnit;STRING;/@plUnit},{plStep;STRING;/@plStep},{plResource;STRING;/@plResource},{processListQtyForProduct;DOUBLE;/@processListQtyForProduct},{netWeight;DOUBLE;../../../netWeight},{versionLabel;STRING;/@versionLabel},{depthLevel;INT;/@depthLevel},{itemTypeEntity;STRING;../../../itemType},{title;STRING;/@title},{productCompoQtyUsed;DOUBLE;../../../productCompoQtyUsed},{compoListProduct;STRING;/@compoListProduct},{qtyForCost;DOUBLE;/@qtyForCost},{currentCost;DOUBLE;/@currentCost},{reportParameters;STRING;../../../reportParameters},{futureCost;DOUBLE;/@futureCost},{previousCost;DOUBLE;/@previousCost}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/processLists/processList]#:#{unitTotalCost;DOUBLE;/@unitTotalCost},{plRateProduct;DOUBLE;/@plRateProduct},{plRateResource;DOUBLE;/@plRateResource},{plRateProcess;DOUBLE;/@plRateProcess},{plQtyResource;DOUBLE;/@plQtyResource},{plUnit;STRING;/@plUnit},{plStep;STRING;/@plStep},{plResource;STRING;/@plResource},{processListQtyForProduct;DOUBLE;/@processListQtyForProduct},{netWeight;DOUBLE;../../../netWeight},{versionLabel;STRING;/@versionLabel},{depthLevel;INT;/@depthLevel},{itemTypeEntity;STRING;../../../itemType},{title;STRING;/@title},{productCompoQtyUsed;DOUBLE;../../../productCompoQtyUsed},{compoListProduct;STRING;/@compoListProduct},{qtyForCost;DOUBLE;/@qtyForCost},{currentCost;DOUBLE;/@currentCost}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -3586,9 +3238,9 @@ res;</expression>
     <page-setup>
         <simple-master-page name="Simple MasterPage" id="10">
             <property name="topMargin">1cm</property>
-            <property name="leftMargin">1.5cm</property>
+            <property name="leftMargin">1cm</property>
             <property name="bottomMargin">1cm</property>
-            <property name="rightMargin">1.5cm</property>
+            <property name="rightMargin">1cm</property>
             <property name="headerHeight">1.15in</property>
             <property name="footerHeight">0.3in</property>
             <page-header>
@@ -3616,7 +3268,7 @@ res;</expression>
                         <cell id="772">
                             <label id="773">
                                 <property name="style">becpg-header-type</property>
-                                <text-property name="text" key="titleCostPrice">Prix de revient</text-property>
+                                <text-property name="text" key="technicalSheetCostPrice">Prix de revient</text-property>
                             </label>
                             <data id="3383">
                                 <property name="style">becpg-header-title</property>
@@ -4152,7 +3804,7 @@ dataSetRow["name"]
                 <structure>
                     <property name="name">costListValue</property>
                     <text-property name="displayName">costListValue</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["conditionalCostListValue"]</expression>
+                    <expression name="expression" type="javascript">dataSetRow["costListValue"]</expression>
                     <property name="dataType">float</property>
                     <property name="allowExport">true</property>
                 </structure>
@@ -4193,10 +3845,10 @@ dataSetRow["name"]
                     <property name="name">costListValuePerProduct</property>
                     <text-property name="displayName">costListValuePerProduct</text-property>
                     <expression name="expression" type="javascript">if(dataSetRow["itemType"] == "bcpg:finishedProduct"){
-dataSetRow["conditionalCostListValuePerProduct"]
+dataSetRow["costListValuePerProduct"]
 }
 else if(dataSetRow["costListUnit"].indexOf("/P") > 0){
-dataSetRow["conditionalCostListValue"]
+dataSetRow["costListValue"]
 }</expression>
                     <property name="dataType">float</property>
                     <property name="allowExport">true</property>
@@ -4479,7 +4131,7 @@ dataSetRow["conditionalCostListValue"]
         <table id="2890">
             <property name="fontSize">8pt</property>
             <property name="pageBreakInside">auto</property>
-            <property name="width">7.28125in</property>
+            <property name="width">100%</property>
             <property name="dataSet">CompoList</property>
             <list-property name="visibility">
                 <structure>
@@ -4681,7 +4333,7 @@ dataSetRow["conditionalCostListValue"]
                 <structure>
                     <property name="name">currentCost</property>
                     <text-property name="displayName">currentCost</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["conditionalCurrentCost"]</expression>
+                    <expression name="expression" type="javascript">dataSetRow["currentCost"]</expression>
                     <property name="dataType">float</property>
                 </structure>
                 <structure>
@@ -5060,7 +4712,7 @@ matière
         <label id="3174"/>
         <table id="3506">
             <property name="fontSize">8pt</property>
-            <property name="width">7.28125in</property>
+            <property name="width">100%</property>
             <property name="dataSet">packList</property>
             <list-property name="visibility">
                 <structure>
@@ -5198,7 +4850,7 @@ dataSetRow["packagingListPkgLevel"]
                 <structure>
                     <property name="name">currentCost</property>
                     <text-property name="displayName">currentCost</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["conditionalCurrentCost"]</expression>
+                    <expression name="expression" type="javascript">dataSetRow["currentCost"]</expression>
                     <property name="dataType">float</property>
                 </structure>
                 <structure>
@@ -5605,7 +5257,7 @@ dataSetRow["packagingListPkgLevel"]
                 <structure>
                     <property name="name">currentCost</property>
                     <text-property name="displayName">currentCost</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["conditionalCurrentCost"]</expression>
+                    <expression name="expression" type="javascript">dataSetRow["currentCost"]</expression>
                     <property name="dataType">float</property>
                     <property name="allowExport">true</property>
                 </structure>
