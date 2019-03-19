@@ -197,10 +197,10 @@
 					<!-- GS1 -->
 					
 					<show id="gs1:productHierarchy1" for-mode="edit" />
-              	<show id="gs1:productHierarchy2" for-mode="edit" />
-             	<show id="gs1:productHierarchy3" for-mode="edit" />
-              	<show id="gs1:productHierarchy4" for-mode="edit" />
-             	<show id="gs1:productHierarchy5" for-mode="edit" />
+	              	<show id="gs1:productHierarchy2" for-mode="edit" />
+	             	<show id="gs1:productHierarchy3" for-mode="edit" />
+	              	<show id="gs1:productHierarchy4" for-mode="edit" />
+	             	<show id="gs1:productHierarchy5" for-mode="edit" />
 					
 					<show id="gs1:packagingTypeCode" for-mode="edit" />
 					<show id="gs1:height" for-mode="edit" />
@@ -220,10 +220,12 @@
 					<show id="pack:palletBoxesPerLastLayer" for-mode="edit" />
 					<show id="pack:palletBoxesPerPallet" for-mode="edit" />
 					<show id="pack:palletHeight" for-mode="edit" />
-					<show id="pack:palletNumberOnGround" for-mode="edit" />
-					<show id="pack:palletStackingMaxWeight" for-mode="edit" />
 					<show id="gs1:tertiaryWidth" for-mode="edit" />
 					<show id="gs1:tertiaryDepth" for-mode="edit" />
+					
+					<show id="pack:palletNumberOnGround" for-mode="edit" />
+					<show id="pack:palletStackingMaxWeight" for-mode="edit" />
+					
 					<show id="gs1:tertiaryNetWeight" for-mode="edit" />
 					<show id="gs1:tertiaryWeight" for-mode="edit" />
 					<show id="gs1:palletTypeCode" for-mode="edit" />
@@ -667,13 +669,6 @@
 							<control-param name="unit">mm</control-param>
 						</control>
 					</field>
-					<field id="pack:palletNumberOnGround" set="tertiaryPackaging" />
-					<field id="pack:palletStackingMaxWeight" set="tertiaryPackaging" >
-						<control
-							template="/org/alfresco/components/form/controls/number-unit.ftl">
-							<control-param name="unit">kg</control-param>
-						</control>
-					</field>
 					<field id="gs1:tertiaryWidth"  set="tertiaryPackaging" >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
@@ -686,6 +681,14 @@
 							<control-param name="unit">mm</control-param>
 						</control>
 					</field>
+					<field id="pack:palletNumberOnGround" set="tertiaryPackaging" />
+					<field id="pack:palletStackingMaxWeight" set="tertiaryPackaging" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">kg</control-param>
+						</control>
+					</field>
+					
 					
 					<field id="gs1:palletTypeCode" help-id="becpg.forms.help.gs1.palletTypeCode" set="tertiaryPackaging" />
  				
@@ -1721,8 +1724,12 @@
 					<show id="pack:palletBoxesPerLastLayer" />
 					<show id="pack:palletBoxesPerPallet" />
 					<show id="pack:palletHeight" />
+					<show id="gs1:tertiaryWidth"  />
+					<show id="gs1:tertiaryDepth"  />
+					
 					<show id="pack:palletNumberOnGround" />
 					<show id="pack:palletStackingMaxWeight" />
+					<show id="gs1:palletTypeCode"  />
 			
 					<!-- tags and categories -->
 					<show id="cm:taggable" />
@@ -1801,6 +1808,20 @@
 							<control-param name="unit">mm</control-param>
 						</control>
 					</field>
+					
+					<field id="gs1:tertiaryWidth" set="pallet" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">mm</control-param>
+						</control>
+					</field>
+					<field id="gs1:tertiaryDepth"  set="pallet" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">mm</control-param>
+						</control>
+					</field>
+					
 					<field id="pack:palletNumberOnGround" set="pallet" />
 					<field id="pack:palletStackingMaxWeight" set="pallet" >
 						<control
@@ -1808,7 +1829,7 @@
 							<control-param name="unit">kg</control-param>
 						</control>
 					</field>					
-
+					<field id="gs1:palletTypeCode" help-id="becpg.forms.help.gs1.palletTypeCode" set="pallet" />
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
 						<control>
@@ -2021,8 +2042,11 @@
 					<show id="pack:palletBoxesPerLastLayer" force="true" />
 					<show id="pack:palletBoxesPerPallet" force="true" />
 					<show id="pack:palletHeight" force="true" />
+					<show id="gs1:tertiaryWidth" force="true" />
+					<show id="gs1:tertiaryDepth" force="true" />
 					<show id="pack:palletNumberOnGround" force="true" />
 					<show id="pack:palletStackingMaxWeight" force="true"/>
+					<show id="gs1:palletTypeCode" force="true" />
 					
 					<!-- Tare -->
 					<show id="pack:tare" force="true" />
@@ -2597,7 +2621,6 @@
 					<show id="pack:palletNumberOnGround" force="true" />
 					<show id="pack:palletStackingMaxWeight" force="true"/>
 					
-					
 					<!-- Tare -->
 					<show id="pack:tare" force="true" />
 					<show id="pack:tareUnit" force="true" />
@@ -2926,7 +2949,6 @@
 					<show id="pack:palletHeight" />
 					<show id="pack:palletNumberOnGround" />
 					<show id="pack:palletStackingMaxWeight" />
-
 					<!-- Tare -->
 					<show id="pack:tare" />
 					<show id="pack:tareUnit" />

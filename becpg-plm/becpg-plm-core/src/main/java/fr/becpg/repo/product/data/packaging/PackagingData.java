@@ -129,14 +129,14 @@ public class PackagingData {
 		
 	}
 
-	public void setTertiaryDepth(List<NodeRef> variantNodeRefs, Double value) {
+	public void setTertiaryDepth(List<NodeRef> variantNodeRefs, Float value) {
 		for (VariantPackagingData variantPackagingData : getVariantPackagingData(variantNodeRefs)) {
 			variantPackagingData.setTertiaryDepth(value);
 		}
 		
 	}
 
-	public void setTertiaryWidth(List<NodeRef> variantNodeRefs, Double value) {
+	public void setTertiaryWidth(List<NodeRef> variantNodeRefs, Float value) {
 		for (VariantPackagingData variantPackagingData : getVariantPackagingData(variantNodeRefs)) {
 			variantPackagingData.setTertiaryWidth(value);
 		}
@@ -191,9 +191,16 @@ public class PackagingData {
 		
 	}
 
-	public void setStackingMaxWeight(List<NodeRef> currentVariants, Integer palletStackingMaxWeight) {
+	public void setStackingMaxWeight(List<NodeRef> currentVariants, Double palletStackingMaxWeight) {
 		for (VariantPackagingData variantPackagingData : getVariantPackagingData(currentVariants)) {
 			variantPackagingData.setPalletStackingMaxWeight(palletStackingMaxWeight);
+		}
+		
+	}
+
+	public void setPalletTypeCode(List<NodeRef> currentVariants, String palletTypeCode) {
+		for (VariantPackagingData variantPackagingData : getVariantPackagingData(currentVariants)) {
+			variantPackagingData.setPalletTypeCode(palletTypeCode);
 		}
 		
 	}

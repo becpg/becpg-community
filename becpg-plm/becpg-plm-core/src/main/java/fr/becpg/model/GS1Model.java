@@ -53,4 +53,7 @@ public interface GS1Model {
 
 	QName PROP_TERTIARY_DEPTH = QName.createQName(GS1_URI, "tertiaryDepth");
 
+	QName PROP_PALLET_TYPE_CODE  = QName.createQName(GS1_URI, "palletTypeCode");
+
+
 }
