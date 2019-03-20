@@ -209,6 +209,8 @@ public class ImportEntityXmlVisitor {
 			this.destNodeRef = destNodeRef;
 			this.properties = properties;
 		}
+		
+		private static final String EMPTY_NAME_PREFIX="REMOTE-";
 
 		@Override
 		public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
@@ -234,7 +236,7 @@ public class ImportEntityXmlVisitor {
 					}
 
 					if(name == null || name.trim().isEmpty()) {
-						name = "REMOTE-"+UUID.randomUUID().toString();
+						name = EMPTY_NAME_PREFIX+UUID.randomUUID().toString();
 					}
 					
 					if ((entityNodeRef != null) && curNodeRef.isEmpty()) {
@@ -777,7 +779,7 @@ public class ImportEntityXmlVisitor {
 				beCPGQueryBuilder.andPropEquals(BeCPGModel.PROP_CODE, code);
 			} else if ((erpCode != null) && (erpCode.length() > 0)) {
 				beCPGQueryBuilder.andPropEquals(BeCPGModel.PROP_ERP_CODE, code);
-			} else if ((name != null) && (name.length() > 0)) {
+			} else if ((name != null) && (name.length() > 0) && !name.startsWith(EMPTY_NAME_PREFIX)) {
 				beCPGQueryBuilder.andPropEquals(RemoteHelper.getPropName(type, entityDictionaryService), name);
 			}
 
