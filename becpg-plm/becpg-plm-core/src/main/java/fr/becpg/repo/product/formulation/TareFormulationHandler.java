@@ -105,85 +105,42 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 
 		if (formulatedProduct.getAspects().contains(GS1Model.ASPECT_MEASURES_ASPECT)) {
 
-			if (formulatedProduct.getWeightPrimary() != null) {
-				formulatedProduct.getExtraProperties().put(GS1Model.PROP_WEIGHT, formulatedProduct.getWeightPrimary());
-			}
-			if (formulatedProduct.getWeightSecondary() != null) {
-				formulatedProduct.getExtraProperties().put(GS1Model.PROP_SECONDARY_WEIGHT, formulatedProduct.getWeightSecondary());
-			}
-			if (formulatedProduct.getNetWeightSecondary() != null) {
-				formulatedProduct.getExtraProperties().put(GS1Model.PROP_SECONDARY_NET_WEIGHT, formulatedProduct.getNetWeightSecondary());
-			}
-			if (formulatedProduct.getNetWeightTertiary() != null) {
-				formulatedProduct.getExtraProperties().put(GS1Model.PROP_TERTIARY_NET_WEIGHT, formulatedProduct.getNetWeightTertiary());
-			}
-			if (formulatedProduct.getWeightTertiary() != null) {
-				formulatedProduct.getExtraProperties().put(GS1Model.PROP_TERTIARY_WEIGHT, formulatedProduct.getWeightTertiary());
-			}
-
 			if (variantPackagingData != null) {
-
-				if (variantPackagingData.getWidth() != null) {
+				if (!variantPackagingData.isManualPrimary()) {
+					formulatedProduct.getExtraProperties().put(GS1Model.PROP_WEIGHT, formulatedProduct.getWeightPrimary());
 					formulatedProduct.getExtraProperties().put(GS1Model.PROP_WIDTH, variantPackagingData.getWidth());
-				}
-				if (variantPackagingData.getDepth() != null) {
 					formulatedProduct.getExtraProperties().put(GS1Model.PROP_DEPTH, variantPackagingData.getDepth());
-				}
-				if (variantPackagingData.getHeight() != null) {
 					formulatedProduct.getExtraProperties().put(GS1Model.PROP_HEIGHT, variantPackagingData.getHeight());
 				}
-				if (variantPackagingData.getSecondaryWidth() != null) {
+				if (!variantPackagingData.isManualSecondary()) {
+					formulatedProduct.getExtraProperties().put(GS1Model.PROP_SECONDARY_WEIGHT, formulatedProduct.getWeightSecondary());
+					formulatedProduct.getExtraProperties().put(GS1Model.PROP_SECONDARY_NET_WEIGHT, formulatedProduct.getNetWeightSecondary());
 					formulatedProduct.getExtraProperties().put(GS1Model.PROP_SECONDARY_WIDTH, variantPackagingData.getSecondaryWidth());
-				}
-				if (variantPackagingData.getSecondaryDepth() != null) {
 					formulatedProduct.getExtraProperties().put(GS1Model.PROP_SECONDARY_DEPTH, variantPackagingData.getSecondaryDepth());
-				}
-				if (variantPackagingData.getSecondaryHeight() != null) {
 					formulatedProduct.getExtraProperties().put(GS1Model.PROP_SECONDARY_HEIGHT, variantPackagingData.getSecondaryHeight());
 				}
 
-				if (variantPackagingData.getTertiaryWidth() != null) {
+				if (!variantPackagingData.isManualTertiary()) {
+					formulatedProduct.getExtraProperties().put(GS1Model.PROP_TERTIARY_NET_WEIGHT, formulatedProduct.getNetWeightTertiary());
+					formulatedProduct.getExtraProperties().put(GS1Model.PROP_TERTIARY_WEIGHT, formulatedProduct.getWeightTertiary());
 					formulatedProduct.getExtraProperties().put(GS1Model.PROP_TERTIARY_WIDTH, variantPackagingData.getTertiaryWidth());
-				}
-
-				if (variantPackagingData.getTertiaryDepth() != null) {
 					formulatedProduct.getExtraProperties().put(GS1Model.PROP_TERTIARY_DEPTH, variantPackagingData.getTertiaryDepth());
-				}
-
-				if (variantPackagingData.getPalletTypeCode() != null) {
 					formulatedProduct.getExtraProperties().put(GS1Model.PROP_PALLET_TYPE_CODE, variantPackagingData.getPalletTypeCode());
-				}
 
-				if (formulatedProduct.getAspects().contains(PackModel.ASPECT_PALLET)) {
+					if (formulatedProduct.getAspects().contains(PackModel.ASPECT_PALLET)) {
 
-					if (variantPackagingData.getPalletLayers() != null) {
 						formulatedProduct.getExtraProperties().put(PackModel.PROP_PALLET_LAYERS, variantPackagingData.getPalletLayers());
-					}
-					if (variantPackagingData.getPalletBoxesPerLayer() != null) {
 						formulatedProduct.getExtraProperties().put(PackModel.PROP_PALLET_BOXES_PER_LAYER,
 								variantPackagingData.getPalletBoxesPerLayer());
-					}
-					if (variantPackagingData.getBoxesPerPallet() != null) {
 						formulatedProduct.getExtraProperties().put(PackModel.PROP_PALLET_BOXES_PER_PALLET, variantPackagingData.getBoxesPerPallet());
-					}
-
-					if (variantPackagingData.getPalletStackingMaxWeight() != null) {
 						formulatedProduct.getExtraProperties().put(PackModel.PROP_PALLET_STACKING_MAX_WEIGHT,
 								variantPackagingData.getPalletStackingMaxWeight());
-					}
-
-					if (variantPackagingData.getPalletBoxesPerLastLayer() != null) {
 						formulatedProduct.getExtraProperties().put(PackModel.PROP_PALLET_BOXES_PER_LAST_LAYER,
 								variantPackagingData.getPalletBoxesPerLastLayer());
-					}
-
-					if (variantPackagingData.getPalletNumberOnGround() != null) {
 						formulatedProduct.getExtraProperties().put(PackModel.PROP_PALLET_NUMBER_ON_GROUND,
 								variantPackagingData.getPalletNumberOnGround());
-					}
-
-					if (variantPackagingData.getPalletHeight() != null) {
 						formulatedProduct.getExtraProperties().put(PackModel.PROP_PALLET_HEIGHT, variantPackagingData.getPalletHeight());
+
 					}
 				}
 			}
