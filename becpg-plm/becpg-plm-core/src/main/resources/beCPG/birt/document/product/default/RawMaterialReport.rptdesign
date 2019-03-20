@@ -37,7 +37,7 @@
     </list-property>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="452">
-            <property name="FILELIST">src/main/resources/beCPG/birt/document/product/default/datasource-rawmaterial.xml</property>
+            <property name="FILELIST">TMP_STANDARD/ProductReport.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -925,8 +925,6 @@
             <list-property name="columnHints">
                 <structure>
                     <property name="columnName">nutListMini</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">nutListMini</text-property>
                 </structure>
                 <structure>
@@ -943,8 +941,6 @@
                 </structure>
                 <structure>
                     <property name="columnName">nutListMaxi</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">nutListMaxi</text-property>
                 </structure>
                 <structure>
@@ -978,7 +974,7 @@
                     <structure>
                         <property name="position">1</property>
                         <property name="name">nutListMini</property>
-                        <property name="dataType">string</property>
+                        <property name="dataType">float</property>
                     </structure>
                     <structure>
                         <property name="position">2</property>
@@ -993,7 +989,7 @@
                     <structure>
                         <property name="position">4</property>
                         <property name="name">nutListMaxi</property>
-                        <property name="dataType">string</property>
+                        <property name="dataType">float</property>
                     </structure>
                     <structure>
                         <property name="position">5</property>
@@ -1028,8 +1024,8 @@
                     <property name="position">1</property>
                     <property name="name">nutListMini</property>
                     <property name="nativeName">nutListMini</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
                 </structure>
                 <structure>
                     <property name="position">2</property>
@@ -1049,8 +1045,8 @@
                     <property name="position">4</property>
                     <property name="name">nutListMaxi</property>
                     <property name="nativeName">nutListMaxi</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
                 </structure>
                 <structure>
                     <property name="position">5</property>
@@ -1081,7 +1077,7 @@
                     <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/nutLists/nutList]#:#{nutListMini;STRING;/@nutListMini},{nutListUnit;STRING;/@nutListUnit},{depthLevel;STRING;/@depthLevel},{nutListMaxi;STRING;/@nutListMaxi},{nutListNut;STRING;/@nutListNut},{legalName;STRING;/@legalName},{nutListValue;DOUBLE;/@nutListValue},{nutListMethod;STRING;/@nutListMethod}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/nutLists/nutList]#:#{nutListMini;DOUBLE;/@nutListMini},{nutListUnit;STRING;/@nutListUnit},{depthLevel;STRING;/@depthLevel},{nutListMaxi;DOUBLE;/@nutListMaxi},{nutListNut;STRING;/@nutListNut},{legalName;STRING;/@legalName},{nutListValue;DOUBLE;/@nutListValue},{nutListMethod;STRING;/@nutListMethod}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -4305,8 +4301,6 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
             <list-property name="columnHints">
                 <structure>
                     <property name="columnName">ingListQtyPerc</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">ingListQtyPerc</text-property>
                 </structure>
                 <structure>
@@ -4382,7 +4376,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                     <structure>
                         <property name="position">1</property>
                         <property name="name">ingListQtyPerc</property>
-                        <property name="dataType">string</property>
+                        <property name="dataType">float</property>
                     </structure>
                     <structure>
                         <property name="position">2</property>
@@ -4452,8 +4446,8 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                     <property name="position">1</property>
                     <property name="name">ingListQtyPerc</property>
                     <property name="nativeName">ingListQtyPerc</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
                 </structure>
                 <structure>
                     <property name="position">2</property>
@@ -4533,7 +4527,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                     <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/ingLists/ingList]#:#{ingListQtyPerc;STRING;/@ingListQtyPerc},{ingListQtyMaxi;STRING;/@ingListQtyMaxi},{ingListIsIonized;STRING;/@ingListIsIonized},{ingListIsProcessingAid;STRING;/@ingListIsProcessingAid},{ingListIsGMO;STRING;/@ingListIsGMO},{ingListIsSupport;STRING;/@ingListIsSupport},{ingListQtyMini;STRING;/@ingListQtyMini},{ingListFunctionality;STRING;/@ingListFunctionality},{ingListIng;STRING;/@ingListIng},{ingListGeoOrigin;STRING;/@ingListGeoOrigin},{ingListGeoTransfo;STRING;/@ingListGeoTransfo},{ingListBioOrigin;STRING;/@ingListBioOrigin}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/ingLists/ingList]#:#{ingListQtyPerc;DOUBLE;/@ingListQtyPerc},{ingListQtyMaxi;STRING;/@ingListQtyMaxi},{ingListIsIonized;STRING;/@ingListIsIonized},{ingListIsProcessingAid;STRING;/@ingListIsProcessingAid},{ingListIsGMO;STRING;/@ingListIsGMO},{ingListIsSupport;STRING;/@ingListIsSupport},{ingListQtyMini;STRING;/@ingListQtyMini},{ingListFunctionality;STRING;/@ingListFunctionality},{ingListIng;STRING;/@ingListIng},{ingListGeoOrigin;STRING;/@ingListGeoOrigin},{ingListGeoTransfo;STRING;/@ingListGeoTransfo},{ingListBioOrigin;STRING;/@ingListBioOrigin}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -5398,7 +5392,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                                     <cell id="7355">
                                         <property name="style">becpg-meta-cell-label</property>
                                         <label id="7257">
-                                            <text-property name="text" key="erpCode">Code ERP</text-property>
+                                            <text-property name="text" key="erpCodeHeader">Code ERP</text-property>
                                         </label>
                                     </cell>
                                     <cell id="7119">
@@ -5564,6 +5558,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                             <cell id="3329">
                                 <label id="7229">
                                     <property name="style">rowHeaderUpper</property>
+                                    <property name="textTransform">none</property>
                                     <text-property name="text" key="supplierName">Nom fournisseur</text-property>
                                 </label>
                             </cell>
@@ -5586,6 +5581,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                             <cell id="2491">
                                 <label id="6145">
                                     <property name="style">rowHeaderUpper</property>
+                                    <property name="textTransform">none</property>
                                     <text-property name="text" key="supplierAdress">Adresse fournisseur</text-property>
                                 </label>
                             </cell>
@@ -5595,7 +5591,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                                     <list-property name="visibility">
                                         <structure>
                                             <property name="format">all</property>
-                                            <expression name="valueExpr" type="javascript">row["locationAddress1"]==""</expression>
+                                            <expression name="valueExpr" type="javascript">row["locationAddress1"] == "" || row["locationAddress1"] == null</expression>
                                         </structure>
                                     </list-property>
                                     <list-property name="boundDataColumns">
@@ -5613,7 +5609,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                                     <list-property name="visibility">
                                         <structure>
                                             <property name="format">all</property>
-                                            <expression name="valueExpr" type="javascript">row["locationAddress2"]==""</expression>
+                                            <expression name="valueExpr" type="javascript">row["locationAddress2"] == "" || row["locationAddress2"] == null</expression>
                                         </structure>
                                     </list-property>
                                     <list-property name="boundDataColumns">
@@ -5631,7 +5627,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                                     <list-property name="visibility">
                                         <structure>
                                             <property name="format">all</property>
-                                            <expression name="valueExpr" type="javascript">row["locationAddress3"]==""</expression>
+                                            <expression name="valueExpr" type="javascript">row["locationAddress3"] == "" || row["locationAddress3"] == null</expression>
                                         </structure>
                                     </list-property>
                                     <list-property name="boundDataColumns">
@@ -5649,7 +5645,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                                     <list-property name="visibility">
                                         <structure>
                                             <property name="format">all</property>
-                                            <expression name="valueExpr" type="javascript">row["locationZip"]==""</expression>
+                                            <expression name="valueExpr" type="javascript">row["locationZip"] == "" || row["locationZip"] == null</expression>
                                         </structure>
                                     </list-property>
                                     <list-property name="boundDataColumns">
@@ -5667,7 +5663,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                                     <list-property name="visibility">
                                         <structure>
                                             <property name="format">all</property>
-                                            <expression name="valueExpr" type="javascript">row["locationCity"]==""</expression>
+                                            <expression name="valueExpr" type="javascript">row["locationCity"] == "" || row["locationCity"] == null</expression>
                                         </structure>
                                     </list-property>
                                     <list-property name="boundDataColumns">
@@ -5685,7 +5681,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                                     <list-property name="visibility">
                                         <structure>
                                             <property name="format">all</property>
-                                            <expression name="valueExpr" type="javascript">row["locationCountry"]==""</expression>
+                                            <expression name="valueExpr" type="javascript">row["locationCountry"] == "" || row["locationCountry"] == null</expression>
                                         </structure>
                                     </list-property>
                                     <list-property name="boundDataColumns">
@@ -5700,16 +5696,19 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                                 </data>
                             </cell>
                         </row>
-                        <row id="8536">
-                            <cell id="8537">
-                                <label id="8539"/>
+                        <row id="9155">
+                            <cell id="9156">
+                                <label id="9158">
+                                    <property name="fontSize">6pt</property>
+                                </label>
                             </cell>
-                            <cell id="8538"/>
+                            <cell id="9157"/>
                         </row>
                         <row id="6028">
                             <cell id="6029">
                                 <label id="7231">
                                     <property name="style">rowHeaderUpper</property>
+                                    <property name="textTransform">none</property>
                                     <text-property name="text" key="commercialDenomination">Libellé commercial</text-property>
                                 </label>
                             </cell>
@@ -6080,10 +6079,14 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                         </row>
                     </grid>
                     <grid id="6275">
+                        <property name="width">7.208333333333333in</property>
                         <column id="6276">
                             <property name="style">becpg-col-header</property>
+                            <property name="width">2.625in</property>
                         </column>
-                        <column id="6277"/>
+                        <column id="6277">
+                            <property name="width">4.583333333333333in</property>
+                        </column>
                         <row id="6278">
                             <cell id="6279">
                                 <label id="6334">
@@ -6142,7 +6145,8 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                                 <property name="name">ingListQtyPerc</property>
                                 <text-property name="displayName">ingListQtyPerc</text-property>
                                 <expression name="expression" type="javascript">dataSetRow["ingListQtyPerc"]</expression>
-                                <property name="dataType">string</property>
+                                <property name="dataType">float</property>
+                                <property name="allowExport">true</property>
                             </structure>
                             <structure>
                                 <property name="name">ingListQtyMaxi</property>
@@ -6348,6 +6352,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                             <row id="7026">
                                 <property name="verticalAlign">middle</property>
                                 <cell id="7027">
+                                    <method name="onRender"><![CDATA[indent_docx (0, 1, this);]]></method>
                                     <property name="style">becpg-cell-dynamic-header-left</property>
                                     <property name="borderBottomColor">#000000</property>
                                     <property name="borderBottomStyle">solid</property>
@@ -7063,7 +7068,8 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                                 <property name="name">nutListMini</property>
                                 <text-property name="displayName">nutListMini</text-property>
                                 <expression name="expression" type="javascript">dataSetRow["nutListMini"]</expression>
-                                <property name="dataType">string</property>
+                                <property name="dataType">float</property>
+                                <property name="allowExport">true</property>
                             </structure>
                             <structure>
                                 <property name="name">nutListUnit</property>
@@ -7081,7 +7087,8 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                                 <property name="name">nutListMaxi</property>
                                 <text-property name="displayName">nutListMaxi</text-property>
                                 <expression name="expression" type="javascript">dataSetRow["nutListMaxi"]</expression>
-                                <property name="dataType">string</property>
+                                <property name="dataType">float</property>
+                                <property name="allowExport">true</property>
                             </structure>
                             <structure>
                                 <property name="name">nutListNut</property>
@@ -7680,6 +7687,7 @@ decisionTree
                                 <property name="borderTopWidth">1px</property>
                                 <property name="verticalAlign">middle</property>
                                 <cell id="6697">
+                                    <method name="onRender"><![CDATA[indent_docx (0, 1, this);]]></method>
                                     <property name="style">becpg-cell-dynamic-header-left</property>
                                     <property name="paddingLeft">2pt</property>
                                     <data id="6787">
@@ -8028,61 +8036,10 @@ decisionTree
                                     <property name="borderTopColor">#000000</property>
                                     <property name="borderTopStyle">solid</property>
                                     <property name="borderTopWidth">1px</property>
-                                    <data id="6781">
-                                        <property name="backgroundAttachment">scroll</property>
-                                        <property name="backgroundPositionX">0%</property>
-                                        <property name="backgroundPositionY">0%</property>
-                                        <property name="backgroundRepeat">repeat</property>
-                                        <property name="fontFamily">"arial"</property>
-                                        <property name="fontSize">10pt</property>
-                                        <property name="fontWeight">normal</property>
-                                        <property name="fontStyle">normal</property>
-                                        <property name="fontVariant">normal</property>
-                                        <property name="color">black</property>
-                                        <property name="textLineThrough">none</property>
-                                        <property name="textOverline">none</property>
-                                        <property name="textUnderline">none</property>
-                                        <property name="borderBottomColor">black</property>
-                                        <property name="borderBottomStyle">none</property>
-                                        <property name="borderBottomWidth">medium</property>
-                                        <property name="borderLeftColor">black</property>
-                                        <property name="borderLeftStyle">none</property>
-                                        <property name="borderLeftWidth">medium</property>
-                                        <property name="borderRightColor">black</property>
-                                        <property name="borderRightStyle">none</property>
-                                        <property name="borderRightWidth">medium</property>
-                                        <property name="borderTopColor">black</property>
-                                        <property name="borderTopStyle">none</property>
-                                        <property name="borderTopWidth">medium</property>
-                                        <property name="marginTop">0pt</property>
-                                        <property name="marginLeft">0pt</property>
-                                        <property name="marginBottom">0pt</property>
-                                        <property name="marginRight">0pt</property>
-                                        <property name="paddingTop">1pt</property>
-                                        <property name="paddingLeft">1pt</property>
-                                        <property name="paddingBottom">1pt</property>
-                                        <property name="paddingRight">1pt</property>
-                                        <structure name="numberFormat">
-                                            <property name="category">General Number</property>
-                                            <property name="pattern">General Number</property>
-                                        </structure>
-                                        <property name="textAlign">center</property>
-                                        <property name="letterSpacing">normal</property>
-                                        <property name="lineHeight">normal</property>
-                                        <property name="orphans">2</property>
-                                        <property name="textTransform">none</property>
-                                        <property name="whiteSpace">normal</property>
-                                        <property name="widows">2</property>
-                                        <property name="wordSpacing">normal</property>
-                                        <property name="display">block</property>
-                                        <property name="pageBreakAfter">auto</property>
-                                        <property name="pageBreakBefore">auto</property>
-                                        <property name="pageBreakInside">avoid</property>
-                                        <property name="showIfBlank">false</property>
-                                        <property name="canShrink">false</property>
-                                        <property name="overflow">hidden</property>
-                                        <property name="resultSetColumn">allergenListVolSources</property>
-                                    </data>
+                                    <text id="9153">
+                                        <property name="contentType">html</property>
+                                        <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["allergenListVolSources"]</VALUE-OF>]]></text-property>
+                                    </text>
                                 </cell>
                                 <cell id="6703">
                                     <property name="style">becpg-cell-data</property>
@@ -8098,9 +8055,10 @@ decisionTree
                                     <property name="borderTopColor">#000000</property>
                                     <property name="borderTopStyle">solid</property>
                                     <property name="borderTopWidth">1px</property>
-                                    <data id="7127">
-                                        <property name="resultSetColumn">allergenListInVolSources</property>
-                                    </data>
+                                    <text id="9154">
+                                        <property name="contentType">html</property>
+                                        <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["allergenListInVolSources"]</VALUE-OF>]]></text-property>
+                                    </text>
                                 </cell>
                             </row>
                         </detail>
@@ -8183,7 +8141,7 @@ decisionTree
                                     <property name="rowSpan">1</property>
                                     <label id="6822">
                                         <property name="textAlign">center</property>
-                                        <text-property name="text" key="physicoChem">PHYSICO-CHIMIE</text-property>
+                                        <text-property name="text" key="chapterPhysico">PHYSICO-CHIMIE</text-property>
                                     </label>
                                 </cell>
                             </row>
@@ -8201,7 +8159,7 @@ decisionTree
                                 <cell id="6794">
                                     <property name="style">becpg-cell-header</property>
                                     <label id="6830">
-                                        <text-property name="text" key="caracteristics"></text-property>
+                                        <text-property name="text" key="charact"></text-property>
                                     </label>
                                 </cell>
                                 <cell id="6795">
@@ -8227,6 +8185,7 @@ decisionTree
                         <detail>
                             <row id="6799">
                                 <cell id="6800">
+                                    <method name="onRender"><![CDATA[indent_docx (0, 1, this);]]></method>
                                     <property name="style">becpg-cell-dynamic-header-left</property>
                                     <property name="borderBottomStyle">solid</property>
                                     <property name="borderBottomWidth">1px</property>
@@ -8561,19 +8520,19 @@ decisionTree
                         </list-property>
                         <column id="6849">
                             <property name="style">becpg-col-header</property>
-                            <property name="width">1.25in</property>
+                            <property name="width">1.29in</property>
                         </column>
                         <column id="6850">
-                            <property name="width">1.2395833333333333in</property>
+                            <property name="width">1.22in</property>
                         </column>
                         <column id="6851">
-                            <property name="width">1.0729166666666667in</property>
+                            <property name="width">0.9in</property>
                         </column>
                         <column id="6852">
-                            <property name="width">0.9270833333333334in</property>
+                            <property name="width">1.2in</property>
                         </column>
                         <column id="7217">
-                            <property name="width">2.3229166666666665in</property>
+                            <property name="width">2.3in</property>
                         </column>
                         <header>
                             <row id="6853">
@@ -8642,6 +8601,7 @@ decisionTree
                                 <property name="borderTopStyle">solid</property>
                                 <property name="borderTopWidth">1px</property>
                                 <cell id="6840">
+                                    <method name="onRender"><![CDATA[indent_docx (0, 1, this);]]></method>
                                     <property name="style">becpg-cell-dynamic-header-left</property>
                                     <property name="borderBottomStyle">solid</property>
                                     <property name="borderBottomWidth">1px</property>
@@ -9032,12 +8992,16 @@ BirtMath.round(dataSetRow["mblMaxi"],0) + " " + dataSetRow["mblUnit"]
                                 <cell id="6881">
                                     <property name="style">becpg-cell-header</property>
                                     <label id="6882">
+                                        <property name="style">becpg-col-header</property>
+                                        <property name="textAlign">center</property>
                                         <text-property name="text" key="charact">Caractéristique</text-property>
                                     </label>
                                 </cell>
                                 <cell id="6883">
                                     <property name="style">becpg-cell-header</property>
                                     <label id="6884">
+                                        <property name="style">becpg-col-header</property>
+                                        <property name="textAlign">center</property>
                                         <text-property name="text" key="value">Valeur</text-property>
                                     </label>
                                 </cell>
@@ -9050,7 +9014,9 @@ BirtMath.round(dataSetRow["mblMaxi"],0) + " " + dataSetRow["mblUnit"]
                                 <cell id="6885">
                                     <property name="style">becpg-cell-header</property>
                                     <label id="6886">
+                                        <property name="style">becpg-col-header</property>
                                         <property name="paddingLeft">5pt</property>
+                                        <property name="textAlign">center</property>
                                         <text-property name="text" key="maxi">Maxi</text-property>
                                     </label>
                                 </cell>
@@ -9072,6 +9038,7 @@ BirtMath.round(dataSetRow["mblMaxi"],0) + " " + dataSetRow["mblUnit"]
                             <row id="6887">
                                 <property name="style">becpg-row-border</property>
                                 <cell id="6888">
+                                    <method name="onRender"><![CDATA[indent_docx (0, 1, this);]]></method>
                                     <property name="style">becpg-cell-dynamic-header-left</property>
                                     <property name="paddingLeft">2pt</property>
                                     <data id="6889">
@@ -9347,6 +9314,7 @@ else{
                         <detail>
                             <row id="5434">
                                 <cell id="5435">
+                                    <method name="onRender"><![CDATA[indent_docx (0, 1, this);]]></method>
                                     <property name="style">becpg-cell-dynamic-header-left</property>
                                     <property name="borderBottomStyle">solid</property>
                                     <property name="borderBottomWidth">thin</property>
