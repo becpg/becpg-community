@@ -175,8 +175,10 @@ function startProductValidationWF() {
 			product.save();
 		}
 		
-		if (  execution.getVariable('bpm_workflowDescription') == null ||   execution.getVariable('bpm_workflowDescription') === "") {
-			
+	    var desc =  execution.getVariable('bpm_workflowDescription')
+		
+		if (  isEmpty(desc) ||  isBlank(desc)) {
+	
 			 bpm_workflowDescription = extractName(product);
 		     bpm_description = bpm_workflowDescription;
 		     execution.setVariable('bpm_workflowDescription', bpm_workflowDescription);
@@ -185,6 +187,14 @@ function startProductValidationWF() {
 		}
 	}
 
+}
+
+function isEmpty(str) {
+    return (!str || 0 === str.length);
+}
+
+function isBlank(str) {
+    return (!str || /^\s*$/.test(str));
 }
 
 function extractName(product){
