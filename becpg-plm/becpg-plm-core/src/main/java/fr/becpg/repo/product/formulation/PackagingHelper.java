@@ -47,6 +47,30 @@ public class PackagingHelper {
 				loadPackagingItem(dataItem, packagingData);
 			}
 		}
+
+		for (VariantPackagingData variantPackagingData : packagingData.getVariants().values()) {
+			if (productData.getAspects().contains(GS1Model.ASPECT_MEASURES_ASPECT)) {
+				if (variantPackagingData.isManualPrimary()) {
+
+					variantPackagingData.setWidth((Double) nodeService.getProperty(productData.getNodeRef(), GS1Model.PROP_WIDTH));
+					variantPackagingData.setHeight((Double) nodeService.getProperty(productData.getNodeRef(), GS1Model.PROP_HEIGHT));
+					variantPackagingData.setDepth((Double) nodeService.getProperty(productData.getNodeRef(), GS1Model.PROP_DEPTH));
+				}
+				if (variantPackagingData.isManualSecondary()) {
+					variantPackagingData.setSecondaryWidth((Double) nodeService.getProperty(productData.getNodeRef(), GS1Model.PROP_SECONDARY_WIDTH));
+					variantPackagingData
+							.setSecondaryHeight((Double) nodeService.getProperty(productData.getNodeRef(), GS1Model.PROP_SECONDARY_HEIGHT));
+					variantPackagingData.setSecondaryDepth((Double) nodeService.getProperty(productData.getNodeRef(), GS1Model.PROP_SECONDARY_DEPTH));
+				}
+
+			}
+			if (variantPackagingData.isManualTertiary()) {
+				if (productData.getAspects().contains(PackModel.ASPECT_PALLET)) {
+					extractPalletInformations(productData.getNodeRef(), variantPackagingData);
+				}
+			}
+		}
+
 		return packagingData;
 	}
 
@@ -75,115 +99,72 @@ public class PackagingHelper {
 		QName nodeType = nodeService.getType(dataItem.getProduct());
 
 		// Sum tare (don't take in account packagingKit)
-		if ((dataItem.getPkgLevel() != null) && !PLMModel.TYPE_PACKAGINGKIT.equals(nodeType) && dataItem.getProduct() != null) {
+		if ((dataItem.getPkgLevel() != null) && !PLMModel.TYPE_PACKAGINGKIT.equals(nodeType) && (dataItem.getProduct() != null)) {
+			for (VariantPackagingData variantPackagingData : packagingData.getVariantPackagingData(currentVariants)) {
+				BigDecimal tare = FormulationHelper.getTareInKg(dataItem, alfrescoRepository.findOne(dataItem.getProduct()));
 
-			BigDecimal tare = FormulationHelper.getTareInKg(dataItem, alfrescoRepository.findOne(dataItem.getProduct()));
-			if (PackagingLevel.Primary.equals(dataItem.getPkgLevel())) {
-				packagingData.addTarePrimary(currentVariants, tare);
+				if (PackagingLevel.Primary.equals(dataItem.getPkgLevel())) {
+					variantPackagingData.addTarePrimary(tare);
 
-				if (Boolean.TRUE.equals(dataItem.getIsMaster())) {
-					Double width = (Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_WIDTH);
-					if (width != null) {
-						packagingData.setWidth(currentVariants, width);
+					if (Boolean.TRUE.equals(dataItem.getIsMaster())) {
+
+						variantPackagingData.setManualPrimary(false);
+						variantPackagingData.setWidth((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_WIDTH));
+						variantPackagingData.setHeight((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_HEIGHT));
+						variantPackagingData.setDepth((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_LENGTH));
+
 					}
 
-					Double height = (Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_HEIGHT);
-					if (height != null) {
-						packagingData.setHeight(currentVariants, height);
+				} else if (PackagingLevel.Secondary.equals(dataItem.getPkgLevel())) {
+					variantPackagingData.addTareSecondary(tare);
+
+					if (Boolean.TRUE.equals(dataItem.getIsMaster())) {
+
+						variantPackagingData.setManualSecondary(false);
+						variantPackagingData.setSecondaryWidth((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_WIDTH));
+						variantPackagingData.setSecondaryHeight((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_HEIGHT));
+						variantPackagingData.setSecondaryDepth((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_LENGTH));
+
 					}
 
-					Double length = (Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_LENGTH);
-					if (length != null) {
-						packagingData.setDepth(currentVariants, length);
-					}
+				} else if (PackagingLevel.Tertiary.equals(dataItem.getPkgLevel())) {
+					variantPackagingData.addTareTertiary(tare);
 				}
-
-			} else if (PackagingLevel.Secondary.equals(dataItem.getPkgLevel())) {
-				packagingData.addTareSecondary(currentVariants, tare);
-
-				if (Boolean.TRUE.equals(dataItem.getIsMaster())) {
-					Double width = (Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_WIDTH);
-					if (width != null) {
-						packagingData.setSecondaryWidth(currentVariants, width);
-					}
-
-					Double height = (Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_HEIGHT);
-					if (height != null) {
-						packagingData.setSecondaryHeight(currentVariants, height);
-					}
-
-					Double length = (Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_LENGTH);
-					if (length != null) {
-						packagingData.setSecondaryDepth(currentVariants, length);
-					}
-				}
-
-			} else if (PackagingLevel.Tertiary.equals(dataItem.getPkgLevel())) {
-				packagingData.addTareTertiary(currentVariants, tare);
 			}
 		}
 
 		if (nodeService.hasAspect(dataItem.getProduct(), PackModel.ASPECT_PALLET) && PackagingLevel.Secondary.equals(dataItem.getPkgLevel())
 				&& ProductUnit.PP.equals(dataItem.getPackagingListUnit()) && PLMModel.TYPE_PACKAGINGKIT.equals(nodeType)) {
 			logger.debug("load pallet aspect ");
+			for (VariantPackagingData variantPackagingData : packagingData.getVariantPackagingData(currentVariants)) {
+				variantPackagingData.setManualTertiary(false);
 
-			// product per box and boxes per pallet
-			if (dataItem.getQty() != null) {
-				logger.debug("setProductPerBoxes " + dataItem.getQty().intValue());
-				packagingData.setProductPerBoxes(currentVariants, dataItem.getQty().intValue());
-			}
+				// product per box and boxes per pallet
+				if (dataItem.getQty() != null) {
+					logger.debug("setProductPerBoxes " + dataItem.getQty().intValue());
+					variantPackagingData.setProductPerBoxes(dataItem.getQty().intValue());
+				}
 
-			Integer palletLayers = (Integer) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_PALLET_LAYERS);
-			if (palletLayers != null) {
-				packagingData.setPalletLayers(currentVariants, palletLayers);
-			}
+				extractPalletInformations(dataItem.getProduct(), variantPackagingData);
 
-			Integer palletBoxesPerPallet = (Integer) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_PALLET_BOXES_PER_PALLET);
-			if (palletBoxesPerPallet != null) {
-				packagingData.setBoxesPerPallet(currentVariants, palletBoxesPerPallet);
-			}
-
-			Integer palletBoxesPerLastLayer = (Integer) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_PALLET_BOXES_PER_LAST_LAYER);
-			if (palletBoxesPerLastLayer != null) {
-				packagingData.setBoxesPerLastLayer(currentVariants, palletBoxesPerLastLayer);
-			}
-
-			Double palletStackingMaxWeight = (Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_PALLET_STACKING_MAX_WEIGHT);
-			if (palletStackingMaxWeight != null) {
-				packagingData.setStackingMaxWeight(currentVariants, palletStackingMaxWeight);
-			}
-
-			Integer palletBoxesPerLayer = (Integer) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_PALLET_BOXES_PER_LAYER);
-			if (palletBoxesPerLayer != null) {
-				packagingData.setPalletBoxesPerLayer(currentVariants, palletBoxesPerLayer);
-			}
-
-			Integer palletHeight = (Integer) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_PALLET_HEIGHT);
-			if (palletHeight != null) {
-				packagingData.setPalletHeight(currentVariants, palletHeight);
-			}
-
-			Integer palletNumberOnGround = (Integer) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_PALLET_NUMBER_ON_GROUND);
-			if (palletNumberOnGround != null) {
-				packagingData.setPalletNumberOnGround(currentVariants, palletNumberOnGround);
-			}
-
-			String palletTypeCode = (String) nodeService.getProperty(dataItem.getProduct(), GS1Model.PROP_PALLET_TYPE_CODE);
-			if (palletTypeCode != null) {
-				packagingData.setPalletTypeCode(currentVariants, palletTypeCode);
-			}
-
-			Float width = (Float) nodeService.getProperty(dataItem.getProduct(), GS1Model.PROP_TERTIARY_WIDTH);
-			if (width != null) {
-				packagingData.setTertiaryWidth(currentVariants, width);
-			}
-
-			Float length = (Float) nodeService.getProperty(dataItem.getProduct(), GS1Model.PROP_TERTIARY_DEPTH);
-			if (length != null) {
-				packagingData.setTertiaryDepth(currentVariants, length);
 			}
 
 		}
+	}
+
+	private void extractPalletInformations(NodeRef product, VariantPackagingData variantPackagingData) {
+
+		variantPackagingData.setPalletLayers((Integer) nodeService.getProperty(product, PackModel.PROP_PALLET_LAYERS));
+		variantPackagingData.setBoxesPerPallet((Integer) nodeService.getProperty(product, PackModel.PROP_PALLET_BOXES_PER_PALLET));
+		variantPackagingData.setPalletBoxesPerLastLayer((Integer) nodeService.getProperty(product, PackModel.PROP_PALLET_BOXES_PER_LAST_LAYER));
+		variantPackagingData.setPalletStackingMaxWeight((Double) nodeService.getProperty(product, PackModel.PROP_PALLET_STACKING_MAX_WEIGHT));
+		variantPackagingData.setPalletBoxesPerLayer((Integer) nodeService.getProperty(product, PackModel.PROP_PALLET_BOXES_PER_LAYER));
+		variantPackagingData.setPalletHeight((Integer) nodeService.getProperty(product, PackModel.PROP_PALLET_HEIGHT));
+		variantPackagingData.setPalletNumberOnGround((Integer) nodeService.getProperty(product, PackModel.PROP_PALLET_NUMBER_ON_GROUND));
+		variantPackagingData.setPalletTypeCode((String) nodeService.getProperty(product, GS1Model.PROP_PALLET_TYPE_CODE));
+		variantPackagingData.setTertiaryWidth((Float) nodeService.getProperty(product, GS1Model.PROP_TERTIARY_WIDTH));
+		variantPackagingData.setTertiaryDepth((Float) nodeService.getProperty(product, GS1Model.PROP_TERTIARY_DEPTH));
+
 	}
 
 	// manage 2 level depth
