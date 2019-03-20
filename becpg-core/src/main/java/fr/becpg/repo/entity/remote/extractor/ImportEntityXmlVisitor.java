@@ -792,7 +792,7 @@ public class ImportEntityXmlVisitor {
 			List<NodeRef> ret = beCPGQueryBuilder.list();
 			if (!ret.isEmpty()) {
 				for (NodeRef node : ret) {
-					if (serviceRegistry.getNodeService().exists(node) && ((name == null) || name.equals(PropertiesHelper.cleanName(
+					if (serviceRegistry.getNodeService().exists(node) && ((name == null) || name.startsWith(EMPTY_NAME_PREFIX) || name.equals(PropertiesHelper.cleanName(
 							(String) serviceRegistry.getNodeService().getProperty(node, RemoteHelper.getPropName(type, entityDictionaryService)))))) {
 						logger.debug("Found node for query :" + beCPGQueryBuilder.toString());
 						return node;
