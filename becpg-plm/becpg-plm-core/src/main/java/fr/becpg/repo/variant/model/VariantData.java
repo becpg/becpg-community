@@ -45,7 +45,7 @@ public class VariantData extends BeCPGDataObject {
 	@AlfProp
 	@AlfQname(qname="bcpg:isDefaultVariant")
 	public Boolean getIsDefaultVariant() {
-		return isDefaultVariant;
+		return isDefaultVariant!=null ? isDefaultVariant : false;
 	}
 
 	public void setIsDefaultVariant(Boolean isDefaultVariant) {
