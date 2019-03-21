@@ -24,13 +24,13 @@ public class VariantPackagingData {
 	private Double palletStackingMaxWeight;
 	private String palletTypeCode;
 
-	private Double height;
-	private Double width;
-	private Double depth;
+	private Float height;
+	private Float width;
+	private Float depth;
 
-	private Double secondaryHeight;
-	private Double secondaryWidth;
-	private Double secondaryDepth;
+	private Float secondaryHeight;
+	private Float secondaryWidth;
+	private Float secondaryDepth;
 
 	private Float tertiaryWidth;
 	private Float tertiaryDepth;
@@ -114,51 +114,51 @@ public class VariantPackagingData {
 		this.palletHeight = palletHeight;
 	}
 
-	public Double getHeight() {
+	public Float getHeight() {
 		return height;
 	}
 
-	public void setHeight(Double height) {
+	public void setHeight(Float height) {
 		this.height = height;
 	}
 
-	public Double getWidth() {
+	public Float getWidth() {
 		return width;
 	}
 
-	public void setWidth(Double width) {
+	public void setWidth(Float width) {
 		this.width = width;
 	}
 
-	public Double getDepth() {
+	public Float getDepth() {
 		return depth;
 	}
 
-	public void setDepth(Double depth) {
+	public void setDepth(Float depth) {
 		this.depth = depth;
 	}
 
-	public Double getSecondaryHeight() {
+	public Float getSecondaryHeight() {
 		return secondaryHeight;
 	}
 
-	public void setSecondaryHeight(Double secondaryHeight) {
+	public void setSecondaryHeight(Float secondaryHeight) {
 		this.secondaryHeight = secondaryHeight;
 	}
 
-	public Double getSecondaryWidth() {
+	public Float getSecondaryWidth() {
 		return secondaryWidth;
 	}
 
-	public void setSecondaryWidth(Double secondaryWidth) {
+	public void setSecondaryWidth(Float secondaryWidth) {
 		this.secondaryWidth = secondaryWidth;
 	}
 
-	public Double getSecondaryDepth() {
+	public Float getSecondaryDepth() {
 		return secondaryDepth;
 	}
 
-	public void setSecondaryDepth(Double secondaryDepth) {
+	public void setSecondaryDepth(Float secondaryDepth) {
 		this.secondaryDepth = secondaryDepth;
 	}
 

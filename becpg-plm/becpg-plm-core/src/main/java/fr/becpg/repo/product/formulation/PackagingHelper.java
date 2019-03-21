@@ -52,15 +52,15 @@ public class PackagingHelper {
 			if (productData.getAspects().contains(GS1Model.ASPECT_MEASURES_ASPECT)) {
 				if (variantPackagingData.isManualPrimary()) {
 
-					variantPackagingData.setWidth((Double) nodeService.getProperty(productData.getNodeRef(), GS1Model.PROP_WIDTH));
-					variantPackagingData.setHeight((Double) nodeService.getProperty(productData.getNodeRef(), GS1Model.PROP_HEIGHT));
-					variantPackagingData.setDepth((Double) nodeService.getProperty(productData.getNodeRef(), GS1Model.PROP_DEPTH));
+					variantPackagingData.setWidth((Float) nodeService.getProperty(productData.getNodeRef(), GS1Model.PROP_WIDTH));
+					variantPackagingData.setHeight((Float) nodeService.getProperty(productData.getNodeRef(), GS1Model.PROP_HEIGHT));
+					variantPackagingData.setDepth((Float) nodeService.getProperty(productData.getNodeRef(), GS1Model.PROP_DEPTH));
 				}
 				if (variantPackagingData.isManualSecondary()) {
-					variantPackagingData.setSecondaryWidth((Double) nodeService.getProperty(productData.getNodeRef(), GS1Model.PROP_SECONDARY_WIDTH));
+					variantPackagingData.setSecondaryWidth((Float) nodeService.getProperty(productData.getNodeRef(), GS1Model.PROP_SECONDARY_WIDTH));
 					variantPackagingData
-							.setSecondaryHeight((Double) nodeService.getProperty(productData.getNodeRef(), GS1Model.PROP_SECONDARY_HEIGHT));
-					variantPackagingData.setSecondaryDepth((Double) nodeService.getProperty(productData.getNodeRef(), GS1Model.PROP_SECONDARY_DEPTH));
+							.setSecondaryHeight((Float) nodeService.getProperty(productData.getNodeRef(), GS1Model.PROP_SECONDARY_HEIGHT));
+					variantPackagingData.setSecondaryDepth((Float) nodeService.getProperty(productData.getNodeRef(), GS1Model.PROP_SECONDARY_DEPTH));
 				}
 
 			}
@@ -109,9 +109,9 @@ public class PackagingHelper {
 					if (Boolean.TRUE.equals(dataItem.getIsMaster())) {
 
 						variantPackagingData.setManualPrimary(false);
-						variantPackagingData.setWidth((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_WIDTH));
-						variantPackagingData.setHeight((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_HEIGHT));
-						variantPackagingData.setDepth((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_LENGTH));
+						variantPackagingData.setWidth(parseFloat((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_WIDTH)));
+						variantPackagingData.setHeight(parseFloat((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_HEIGHT)));
+						variantPackagingData.setDepth(parseFloat((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_LENGTH)));
 
 					}
 
@@ -121,9 +121,9 @@ public class PackagingHelper {
 					if (Boolean.TRUE.equals(dataItem.getIsMaster())) {
 
 						variantPackagingData.setManualSecondary(false);
-						variantPackagingData.setSecondaryWidth((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_WIDTH));
-						variantPackagingData.setSecondaryHeight((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_HEIGHT));
-						variantPackagingData.setSecondaryDepth((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_LENGTH));
+						variantPackagingData.setSecondaryWidth(parseFloat((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_WIDTH)));
+						variantPackagingData.setSecondaryHeight(parseFloat((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_HEIGHT)));
+						variantPackagingData.setSecondaryDepth(parseFloat((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_LENGTH)));
 
 					}
 
@@ -150,6 +150,13 @@ public class PackagingHelper {
 			}
 
 		}
+	}
+
+	private Float parseFloat(Double value) {
+		if(value!=null) {
+			return value.floatValue();
+		}
+		return null;
 	}
 
 	private void extractPalletInformations(NodeRef product, VariantPackagingData variantPackagingData) {
