@@ -48,8 +48,6 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 
 	public static final String MESSAGE_MAXIMAL_DAILY_VALUE = "message.formulate.nut.maximalDailyValue";
 
-	public static final String MESSAGE_NUT_NOT_IN_RANGE = "message.formulate.nut.notInRangeValue";
-
 	private static final Log logger = LogFactory.getLog(NutsCalculatingFormulationHandler.class);
 
 	private boolean propagateModeEnable = false;
@@ -144,7 +142,6 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 						"message.formulate.nutList.error");
 				calculateNutListDataItem(formulatedProduct, true, hasCompo);
 
-				checkRequirementsOfFormulatedProduct(formulatedProduct);
 			}
 		} 
 		return true;
@@ -312,9 +309,5 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 		return RequirementDataType.Nutrient;
 	}
 
-	@Override
-	protected String getSpecErrorMessageKey() {
-		return MESSAGE_NUT_NOT_IN_RANGE;
-	}
 
 }

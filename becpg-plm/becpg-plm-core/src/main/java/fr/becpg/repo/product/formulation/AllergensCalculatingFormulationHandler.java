@@ -24,7 +24,6 @@ import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.AllergenType;
@@ -33,6 +32,7 @@ import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.product.requirement.AllergenRequirementScanner;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.variant.model.VariantDataItem;
@@ -53,6 +53,14 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 	protected AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
 	protected NodeService nodeService;
+	
+	private AllergenRequirementScanner allergenRequirementScanner;
+	
+	
+
+	public void setAllergenRequirementScanner(AllergenRequirementScanner allergenRequirementScanner) {
+		this.allergenRequirementScanner = allergenRequirementScanner;
+	}
 
 	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
@@ -178,10 +186,6 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 			sort(formulatedProduct.getAllergenList());
 
 		}
-
-		if(alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_ALLERGENLIST)) {
-			checkRequirementsOfFormulatedProduct(formulatedProduct);
-		}
 		
 		return true;
 
@@ -189,7 +193,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 	private Double getRegulatoryThreshold(ProductData formulatedProduct, NodeRef allergen) {
 		Double ret = null;
-		AllergenListDataItem temp = extractRequirements(formulatedProduct).stream().filter(al -> al.getAllergen().equals(allergen)).findFirst()
+		AllergenListDataItem temp = allergenRequirementScanner.extractRequirements(formulatedProduct.getProductSpecifications()).stream().filter(al -> al.getAllergen().equals(allergen)).findFirst()
 				.orElse(null);
 		if ((temp != null) && (temp.getQtyPerc() != null)) {
 			ret = temp.getQtyPerc();
@@ -430,81 +434,5 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 		return (String) nodeService.getProperty(charactRef, BeCPGModel.PROP_CHARACT_NAME);
 	}
 
-	private void checkRequirementsOfFormulatedProduct(ProductData formulatedProduct) {
-		if (getDataListVisited(formulatedProduct) != null) {
-			extractRequirements(formulatedProduct).forEach(specDataItem -> {
-				getDataListVisited(formulatedProduct).forEach(listDataItem -> {
-					if (listDataItem.getAllergen().equals(specDataItem.getAllergen())) {
-						if ((listDataItem.getInVoluntary() || listDataItem.getVoluntary())) {
-
-							boolean isAllergenAllowed = false;
-							if (specDataItem.getVoluntary() && listDataItem.getVoluntary()) {
-								isAllergenAllowed = true;
-							} else if (specDataItem.getInVoluntary() && listDataItem.getInVoluntary()) {
-								isAllergenAllowed = true;
-							}
-
-							if (!isAllergenAllowed) {
-								String message = I18NUtil.getMessage(MESSAGE_FORBIDDEN_ALLERGEN, extractName(listDataItem.getAllergen()));
-								ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message,
-										listDataItem.getAllergen(), new ArrayList<NodeRef>(), RequirementDataType.Specification);
-								rclDataItem.getSources().addAll(listDataItem.getVoluntarySources());
-								rclDataItem.getSources().addAll(listDataItem.getInVoluntarySources());
-								formulatedProduct.getReqCtrlList().add(rclDataItem);
-							}
-						}
-					}
-				});
-			});
-		}
-	}
-
-	private List<AllergenListDataItem> extractRequirements(ProductData formulatedProduct) {
-		List<AllergenListDataItem> ret = new ArrayList<>();
-		if (formulatedProduct.getProductSpecifications() != null) {
-			for (ProductSpecificationData specification : formulatedProduct.getProductSpecifications()) {
-				mergeRequirements(ret, extractRequirements(specification));
-				if (getDataListVisited(specification) != null) {
-					mergeRequirements(ret, getDataListVisited(specification));
-				}
-			}
-		}
-		return ret;
-	}
-
-	private void mergeRequirements(List<AllergenListDataItem> ret, List<AllergenListDataItem> toAdd) {
-		toAdd.forEach(item -> {
-			if (item.getAllergen() != null) {
-				boolean isFound = false;
-				for (AllergenListDataItem sl : ret) {
-					if (item.getAllergen().equals(sl.getAllergen())) {
-						isFound = true;
-
-						// if one value is true, set to true
-						if (Boolean.TRUE.equals(sl.getVoluntary()) && Boolean.FALSE.equals(item.getVoluntary())) {
-							sl.setVoluntary(Boolean.FALSE);
-						}
-
-						if (Boolean.TRUE.equals(sl.getInVoluntary()) && Boolean.FALSE.equals(item.getInVoluntary())) {
-							sl.setInVoluntary(Boolean.FALSE);
-						}
-
-						if ((sl.getQtyPerc() != null) && (item.getQtyPerc() != null)) {
-							sl.setQtyPerc(Math.min(sl.getQtyPerc(), item.getQtyPerc()));
-						}
-
-						break;
-					}
-				}
-				if (!isFound) {
-					ret.add(item);
-				}
-			}
-		});
-	}
-
-	private List<AllergenListDataItem> getDataListVisited(ProductData partProduct) {
-		return partProduct.getAllergenList();
-	}
 
 }

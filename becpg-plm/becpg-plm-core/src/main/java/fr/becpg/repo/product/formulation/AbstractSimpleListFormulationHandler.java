@@ -17,7 +17,6 @@
  ******************************************************************************/
 package fr.becpg.repo.product.formulation;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -46,7 +45,6 @@ import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
@@ -67,8 +65,7 @@ import fr.becpg.repo.variant.filters.VariantFilters;
 public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListDataItem> extends FormulationBaseHandler<ProductData> {
 
 	public static final String UNIT_SEPARATOR = "/";
-	public static final String MESSAGE_UNDEFINED_CHARACT = "message.formulate.undefined.charact";
-	public static final String MESSAGE_UNDEFINED_VALUE = "message.formulate.undefined.value";
+	protected static final String MESSAGE_UNDEFINED_CHARACT = "message.formulate.undefined.charact";
 
 	private static final Log logger = LogFactory.getLog(AbstractSimpleListFormulationHandler.class);
 
@@ -113,8 +110,6 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	protected abstract List<T> getDataListVisited(ProductData partProduct);
 
 	protected abstract Map<NodeRef, List<NodeRef>> getMandatoryCharacts(ProductData formulatedProduct, QName componentType);
-
-	protected abstract String getSpecErrorMessageKey();
 
 	protected abstract RequirementDataType getRequirementDataType();
 
@@ -583,115 +578,6 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 			}
 
 		}
-	}
-
-	protected void checkRequirementsOfFormulatedProduct(ProductData formulatedProduct) {
-		if (getDataListVisited(formulatedProduct) != null) {
-			extractRequirements(formulatedProduct).forEach(specDataItem -> {
-				getDataListVisited(formulatedProduct).forEach(listDataItem -> {
-					if (specDataItem instanceof MinMaxValueDataItem) {
-						if (specDataItem.getCharactNodeRef().equals(listDataItem.getCharactNodeRef())) {
-							boolean isCharactAllowed = true;
-							MinMaxValueDataItem minMaxSpecValueDataItem = (MinMaxValueDataItem) specDataItem;
-							if ((specDataItem.getValue() != null) && !specDataItem.getValue().equals(listDataItem.getValue())) {
-								isCharactAllowed = false;
-							}
-
-							if (minMaxSpecValueDataItem.getMini() != null) {
-								if ((listDataItem.getValue() == null) || (listDataItem.getValue() < minMaxSpecValueDataItem.getMini())) {
-									isCharactAllowed = false;
-								}
-							}
-
-							if (minMaxSpecValueDataItem.getMaxi() != null) {
-								if ((listDataItem.getValue() == null) || (listDataItem.getValue() > minMaxSpecValueDataItem.getMaxi())) {
-									isCharactAllowed = false;
-								}
-							}
-
-							if (!isCharactAllowed) {
-								String message = I18NUtil.getMessage(getSpecErrorMessageKey(),
-										nodeService.getProperty(listDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME),
-										(listDataItem.getValue() != null ? listDataItem.getValue() : I18NUtil.getMessage(MESSAGE_UNDEFINED_VALUE)),
-										(minMaxSpecValueDataItem.getMini() != null
-												? NumberFormat.getInstance(Locale.getDefault()).format(minMaxSpecValueDataItem.getMini()) + "<= "
-												: ""),
-										(minMaxSpecValueDataItem.getMaxi() != null
-												? " <=" + NumberFormat.getInstance(Locale.getDefault()).format(minMaxSpecValueDataItem.getMaxi())
-												: ""));
-								formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message,
-										listDataItem.getCharactNodeRef(), new ArrayList<NodeRef>(), RequirementDataType.Specification));
-
-							}
-						}
-
-					}
-				});
-			});
-		}
-	}
-
-	private List<T> extractRequirements(ProductData formulatedProduct) {
-		List<T> ret = new ArrayList<>();
-		if (formulatedProduct.getProductSpecifications() != null) {
-			for (ProductSpecificationData specification : formulatedProduct.getProductSpecifications()) {
-				mergeRequirements(ret, extractRequirements(specification));
-				if (getDataListVisited(specification) != null) {
-					mergeRequirements(ret, getDataListVisited(specification));
-				}
-			}
-		}
-
-		// if this spec has a datalist, merge it with the rest. Only applies to
-		// specs
-		if ((getDataListVisited(formulatedProduct) != null) && !getDataListVisited(formulatedProduct).isEmpty()
-				&& (formulatedProduct instanceof ProductSpecificationData)) {
-			if (logger.isTraceEnabled()) {
-				logger.trace("formulatedProduct (c=" + formulatedProduct.getClass().getName() + ") has a dataList, visiting it)");
-			}
-			mergeRequirements(ret, getDataListVisited(formulatedProduct));
-		}
-
-		return ret;
-	}
-
-	private void mergeRequirements(List<T> ret, List<T> toAdd) {
-		toAdd.forEach(item -> {
-			if (item.getCharactNodeRef() != null) {
-				boolean isFound = false;
-				for (T sl : ret) {
-					if (item.getCharactNodeRef().equals(sl.getCharactNodeRef())) {
-						isFound = true;
-						if ((sl instanceof MinMaxValueDataItem) && (item instanceof MinMaxValueDataItem)) {
-							MinMaxValueDataItem castSl = (MinMaxValueDataItem) sl;
-							MinMaxValueDataItem castItem = (MinMaxValueDataItem) item;
-							if (logger.isTraceEnabled()) {
-								logger.trace("Merging minMax values: sl=[" + castSl.getMini() + " - " + castSl.getMaxi() + "], item=["
-										+ castItem.getMini() + " - " + castItem.getMaxi() + "]");
-							}
-							if ((castSl.getMini() != null) && (castItem.getMini() != null)) {
-								castSl.setMini(Math.max(castSl.getMini(), castItem.getMini()));
-							} else if (castItem.getMini() != null) {
-								castSl.setMini(castItem.getMini());
-							}
-
-							if ((castSl.getMaxi() != null) && (castItem.getMaxi() != null)) {
-								castSl.setMaxi(Math.min(castSl.getMaxi(), castItem.getMaxi()));
-							} else if (castItem.getMaxi() != null) {
-								castSl.setMaxi(castItem.getMaxi());
-							}
-							if (logger.isTraceEnabled()) {
-								logger.trace("Merged sl=[" + castSl.getMini() + " - " + castSl.getMaxi() + "]");
-							}
-						}
-						break;
-					}
-				}
-				if (!isFound) {
-					ret.add(item);
-				}
-			}
-		});
 	}
 
 	protected T findParentByCharactName(List<T> simpleListDataList, NodeRef charactNodeRef) {
