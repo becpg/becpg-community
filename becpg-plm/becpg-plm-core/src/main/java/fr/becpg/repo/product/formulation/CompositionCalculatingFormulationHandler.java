@@ -109,6 +109,8 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 
 		if ((netWeight != null) && (qtyUsed != null) && (qtyUsed != 0d)) {
 			formulatedProduct.setYield((100 * netWeight) / qtyUsed);
+		} else {
+			formulatedProduct.setYield(null);
 		}
 
 		// Volume
