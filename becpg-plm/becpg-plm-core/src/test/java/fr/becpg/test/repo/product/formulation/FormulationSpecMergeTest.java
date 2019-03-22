@@ -42,6 +42,9 @@ import fr.becpg.repo.product.formulation.LabelClaimFormulationHandler;
 import fr.becpg.repo.product.formulation.NutsCalculatingFormulationHandler;
 import fr.becpg.repo.product.formulation.PhysicoChemCalculatingFormulationHandler;
 import fr.becpg.repo.product.formulation.ScoreCalculatingFormulationHandler;
+import fr.becpg.repo.product.requirement.ClaimRequirementScanner;
+import fr.becpg.repo.product.requirement.NutsRequirementScanner;
+import fr.becpg.repo.product.requirement.PhysicoRequirementScanner;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
 public class FormulationSpecMergeTest extends AbstractFinishedProductTest {
@@ -234,21 +237,21 @@ public class FormulationSpecMergeTest extends AbstractFinishedProductTest {
 			int checks = 0;
 			for (ReqCtrlListDataItem rclDataItem : formulatedProduct.getReqCtrlList()) {
 				logger.info(rclDataItem.getReqMessage());
-				if (I18NUtil.getMessage(LabelClaimFormulationHandler.MESSAGE_NOT_CLAIM, "labelClaim1").equals(rclDataItem.getReqMessage())) {
+				if (I18NUtil.getMessage(ClaimRequirementScanner.MESSAGE_NOT_CLAIM, "labelClaim1").equals(rclDataItem.getReqMessage())) {
 					fail();
-				} else if (I18NUtil.getMessage(LabelClaimFormulationHandler.MESSAGE_NOT_CLAIM, "labelClaim2").equals(rclDataItem.getReqMessage())) {
+				} else if (I18NUtil.getMessage(ClaimRequirementScanner.MESSAGE_NOT_CLAIM, "labelClaim2").equals(rclDataItem.getReqMessage())) {
 					assertEquals(RequirementDataType.Specification, rclDataItem.getReqDataType());
 					assertEquals(RequirementType.Forbidden, rclDataItem.getReqType());
 					checks++;
-				} else if (I18NUtil.getMessage(LabelClaimFormulationHandler.MESSAGE_NOT_CLAIM, "labelClaim3").equals(rclDataItem.getReqMessage())) {
+				} else if (I18NUtil.getMessage(ClaimRequirementScanner.MESSAGE_NOT_CLAIM, "labelClaim3").equals(rclDataItem.getReqMessage())) {
 					assertEquals(RequirementDataType.Specification, rclDataItem.getReqDataType());
 					assertEquals(RequirementType.Forbidden, rclDataItem.getReqType());
 					checks++;
-				} else if (I18NUtil.getMessage(LabelClaimFormulationHandler.MESSAGE_NOT_CLAIM, "labelClaim4").equals(rclDataItem.getReqMessage())) {
+				} else if (I18NUtil.getMessage(ClaimRequirementScanner.MESSAGE_NOT_CLAIM, "labelClaim4").equals(rclDataItem.getReqMessage())) {
 					fail();
-				} else if (I18NUtil.getMessage(LabelClaimFormulationHandler.MESSAGE_NOT_CLAIM, "labelClaim5").equals(rclDataItem.getReqMessage())) {
+				} else if (I18NUtil.getMessage(ClaimRequirementScanner.MESSAGE_NOT_CLAIM, "labelClaim5").equals(rclDataItem.getReqMessage())) {
 					fail();
-				} else if (I18NUtil.getMessage(LabelClaimFormulationHandler.MESSAGE_NOT_CLAIM, "labelClaim6").equals(rclDataItem.getReqMessage())) {
+				} else if (I18NUtil.getMessage(ClaimRequirementScanner.MESSAGE_NOT_CLAIM, "labelClaim6").equals(rclDataItem.getReqMessage())) {
 					assertEquals(RequirementDataType.Specification, rclDataItem.getReqDataType());
 					assertEquals(RequirementType.Forbidden, rclDataItem.getReqType());
 					checks++;
@@ -369,17 +372,17 @@ public class FormulationSpecMergeTest extends AbstractFinishedProductTest {
 			finishedProduct = alfrescoRepository.findOne(fp2);
 
 			// tests rclDataItem
-			String message0 = I18NUtil.getMessage(NutsCalculatingFormulationHandler.MESSAGE_NUT_NOT_IN_RANGE,
+			String message0 = I18NUtil.getMessage(NutsRequirementScanner.MESSAGE_NUT_NOT_IN_RANGE,
 					nodeService.getProperty(nut1, BeCPGModel.PROP_CHARACT_NAME), "6", "7<= ", "");
-			String message1 = I18NUtil.getMessage(NutsCalculatingFormulationHandler.MESSAGE_NUT_NOT_IN_RANGE,
+			String message1 = I18NUtil.getMessage(NutsRequirementScanner.MESSAGE_NUT_NOT_IN_RANGE,
 					nodeService.getProperty(nut2, BeCPGModel.PROP_CHARACT_NAME), "6", "7<= ", "");
-			String message2 = I18NUtil.getMessage(NutsCalculatingFormulationHandler.MESSAGE_NUT_NOT_IN_RANGE,
+			String message2 = I18NUtil.getMessage(NutsRequirementScanner.MESSAGE_NUT_NOT_IN_RANGE,
 					nodeService.getProperty(nut3, BeCPGModel.PROP_CHARACT_NAME), "14", "", " <=10");
 //			String message3 = I18NUtil.getMessage(AbstractSimpleListFormulationHandler.MESSAGE_UNDEFINED_CHARACT,
 //					nodeService.getProperty(nut3, BeCPGModel.PROP_CHARACT_NAME));
 			String message4 = I18NUtil.getMessage(NutsCalculatingFormulationHandler.MESSAGE_MAXIMAL_DAILY_VALUE,
 					nodeService.getProperty(nut3, BeCPGModel.PROP_CHARACT_NAME));
-			String message5 = I18NUtil.getMessage(NutsCalculatingFormulationHandler.MESSAGE_NUT_NOT_IN_RANGE,
+			String message5 = I18NUtil.getMessage(NutsRequirementScanner.MESSAGE_NUT_NOT_IN_RANGE,
 					nodeService.getProperty(nut4, BeCPGModel.PROP_CHARACT_NAME), 1.5, "1<= ", " <=1,2");
 
 			logger.debug("Message 1: " + message1);
@@ -675,18 +678,18 @@ public class FormulationSpecMergeTest extends AbstractFinishedProductTest {
 			for (ReqCtrlListDataItem reqCtrlList : formulatedProduct.getReqCtrlList()) {
 				logger.debug("/*-- Checking : \"" + reqCtrlList.getReqMessage() + "\" --*/");
 
-				if (I18NUtil.getMessage(PhysicoChemCalculatingFormulationHandler.MESSAGE_PHYSICO_NOT_IN_RANGE, "physicoChem2", "6", "8<= ", " <=8,5")
+				if (I18NUtil.getMessage(PhysicoRequirementScanner.MESSAGE_PHYSICO_NOT_IN_RANGE, "physicoChem2", "6", "8<= ", " <=8,5")
 						.equals(reqCtrlList.getReqMessage())) {
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
 					assertEquals(0, reqCtrlList.getSources().size());
 					checks++;
 				} else if (I18NUtil
-						.getMessage(PhysicoChemCalculatingFormulationHandler.MESSAGE_PHYSICO_NOT_IN_RANGE, "physicoChem6", 1.29, "3<= ", "")
+						.getMessage(PhysicoRequirementScanner.MESSAGE_PHYSICO_NOT_IN_RANGE, "physicoChem6", 1.29, "3<= ", "")
 						.equals(reqCtrlList.getReqMessage())) {
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
 					assertEquals(0, reqCtrlList.getSources().size());
 					checks++;
-				} else if (I18NUtil.getMessage(PhysicoChemCalculatingFormulationHandler.MESSAGE_PHYSICO_NOT_IN_RANGE, "physicoChem7", 3.4, "", " <=3")
+				} else if (I18NUtil.getMessage(PhysicoRequirementScanner.MESSAGE_PHYSICO_NOT_IN_RANGE, "physicoChem7", 3.4, "", " <=3")
 						.equals(reqCtrlList.getReqMessage())) {
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
 					assertEquals(0, reqCtrlList.getSources().size());

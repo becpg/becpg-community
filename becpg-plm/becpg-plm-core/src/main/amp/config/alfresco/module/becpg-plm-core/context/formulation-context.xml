@@ -116,6 +116,11 @@
 				<bean class="fr.becpg.repo.product.formulation.AllergensCalculatingFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="nodeService" ref="nodeService" />
+					<property name="allergenRequirementScanner">
+						<bean class="fr.becpg.repo.product.requirement.AllergenRequirementScanner">
+								<property name="nodeService" ref="nodeService" />
+						</bean>
+					</property>
 				</bean>
 				<bean parent="abstractSimpleFormulationHandler"
 					class="fr.becpg.repo.product.formulation.NutsCalculatingFormulationHandler">
@@ -163,6 +168,29 @@
 					<property name="formulaService" ref="formulaService"/>
 					<property name="nodeService" ref="nodeService" />
 					<property name="execOrder" value="Post"/>
+				</bean>
+				<bean class="fr.becpg.repo.product.formulation.ProductSpecificationsFormulationHandler">
+					<property name="requirementScanners"  >
+						<list>
+							<bean class="fr.becpg.repo.product.requirement.AllergenRequirementScanner">
+								<property name="nodeService" ref="nodeService" />
+							</bean>
+							<bean class="fr.becpg.repo.product.requirement.IngRequirementScanner">
+								<property name="nodeService" ref="nodeService" />
+								<property name="alfrescoRepository" ref="alfrescoRepository" />
+								<property name="ingsCalculatingWithYield" value="${beCPG.formulation.ingsCalculatingWithYield}"/>
+							</bean>
+							<bean class="fr.becpg.repo.product.requirement.NutsRequirementScanner">
+								<property name="nodeService" ref="nodeService" />
+							</bean>
+							<bean class="fr.becpg.repo.product.requirement.PhysicoRequirementScanner">
+								<property name="nodeService" ref="nodeService" />
+							</bean>
+							<bean class="fr.becpg.repo.product.requirement.ClaimRequirementScanner">
+								<property name="nodeService" ref="nodeService" />
+							</bean>
+						</list>
+					</property>
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.CompletionReqCtrlCalculatingFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />

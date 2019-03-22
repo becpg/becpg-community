@@ -2,11 +2,9 @@ package fr.becpg.repo.product.formulation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
@@ -27,7 +25,6 @@ import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -45,7 +42,6 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 
 	private static final Log logger = LogFactory.getLog(LabelClaimFormulationHandler.class);
 
-	public static final String MESSAGE_NOT_CLAIM = "message.formulate.labelClaim.notClaimed";
 
 	public static final String MESSAGE_MISSING_CLAIM = "message.formulate.labelClaim.missing";
 
@@ -120,10 +116,6 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 			computeClaimList(productData, parser, context);
 
 		}
-
-		// check even if product has no labelclaim, which can be forbidden by
-		// specifications
-		checkRequirementsOfFormulatedProduct(productData);
 
 		return true;
 	}
@@ -276,83 +268,6 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 			}
 		}
 
-	}
-
-	private void checkRequirementsOfFormulatedProduct(ProductData formulatedProduct) {
-		if (getDataListVisited(formulatedProduct) != null) {
-			Map<LabelClaimListDataItem, Boolean> specLabelClaimsVisitedMap = new HashMap<>();
-			extractRequirements(formulatedProduct).forEach(extracedSpecDataItem -> {
-				specLabelClaimsVisitedMap.put(extracedSpecDataItem, false);
-			});
-
-			specLabelClaimsVisitedMap.keySet().forEach(specDataItem -> {
-				getDataListVisited(formulatedProduct).forEach(listDataItem -> {
-					if (listDataItem.getLabelClaim().equals(specDataItem.getLabelClaim())) {
-						if (logger.isDebugEnabled()) {
-							logger.debug(extractName(specDataItem.getLabelClaim()) + " has been visited");
-						}
-						specLabelClaimsVisitedMap.put(specDataItem, true);
-						if (Boolean.TRUE.equals(specDataItem.getIsClaimed() && !Boolean.TRUE.equals(listDataItem.getIsClaimed()))) {
-							addSpecificationUnclaimedLabelClaim(formulatedProduct, listDataItem);
-						}
-					}
-				});
-			});
-
-			// check that all the labelClaim in specs have been visited in
-			// product
-			specLabelClaimsVisitedMap.keySet().forEach(specDataItem -> {
-				if (Boolean.FALSE.equals(specLabelClaimsVisitedMap.get(specDataItem))) {
-					if (logger.isDebugEnabled()) {
-						logger.debug(extractName(specDataItem.getLabelClaim()) + " was not found, raising rclDataItem for spec");
-					}
-					addSpecificationUnclaimedLabelClaim(formulatedProduct, specDataItem);
-				}
-			});
-		}
-	}
-
-	private void addSpecificationUnclaimedLabelClaim(ProductData formulatedProduct, LabelClaimListDataItem labelClaim) {
-		String message = I18NUtil.getMessage(MESSAGE_NOT_CLAIM, extractName(labelClaim.getLabelClaim()));
-		formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, labelClaim.getLabelClaim(),
-				new ArrayList<NodeRef>(), RequirementDataType.Specification));
-	}
-
-	private List<LabelClaimListDataItem> extractRequirements(ProductData formulatedProduct) {
-		List<LabelClaimListDataItem> ret = new ArrayList<>();
-		if (formulatedProduct.getProductSpecifications() != null) {
-			for (ProductSpecificationData specification : formulatedProduct.getProductSpecifications()) {
-				mergeRequirements(ret, extractRequirements(specification));
-				if (getDataListVisited(specification) != null) {
-					mergeRequirements(ret, getDataListVisited(specification));
-				}
-			}
-		}
-		return ret;
-	}
-
-	private void mergeRequirements(List<LabelClaimListDataItem> ret, List<LabelClaimListDataItem> toAdd) {
-		toAdd.forEach(item -> {
-			if (item.getLabelClaim() != null) {
-				boolean isFound = false;
-				for (LabelClaimListDataItem sl : ret) {
-					if (item.getLabelClaim().equals(sl.getLabelClaim())) {
-						isFound = true;
-						if (Boolean.FALSE.equals(sl.getIsClaimed()) && Boolean.TRUE.equals(item.getIsClaimed())) {
-							sl.setIsClaimed(true);
-						}
-						break;
-					}
-				}
-				if (!isFound) {
-					ret.add(item);
-				}
-			}
-		});
-	}
-
-	private List<LabelClaimListDataItem> getDataListVisited(ProductData partProduct) {
-		return partProduct.getLabelClaimList();
 	}
 
 }

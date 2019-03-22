@@ -28,7 +28,6 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 
 	private static final Log logger = LogFactory.getLog(PhysicoChemCalculatingFormulationHandler.class);
 
-	public static final String MESSAGE_PHYSICO_NOT_IN_RANGE = "message.formulate.physicoChem.notInRangeValue";
 	
 	@Override
 	protected Class<PhysicoChemListDataItem> getInstanceClass() {
@@ -56,7 +55,6 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 				n.setUnit((String) nodeService.getProperty(n.getPhysicoChem(), PLMModel.PROP_PHYSICO_CHEM_UNIT));
 			});
 
-			checkRequirementsOfFormulatedProduct(formulatedProduct);
 			
 		}
 		return true;
@@ -95,9 +93,5 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 		return RequirementDataType.Physicochem;
 	}
 
-	@Override
-	protected String getSpecErrorMessageKey() {
-		return MESSAGE_PHYSICO_NOT_IN_RANGE;
-	}
 
 }
