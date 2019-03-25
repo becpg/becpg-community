@@ -7950,6 +7950,8 @@
 					<show id="bcpg:priceListPurchaseQty" />
 					<show id="bcpg:priceListPurchaseUnit" />
 					<show id="bcpg:suppliers" />
+					<show id="bcpg:priceListGeoOrigins" />
+					
 					<show id="bcpg:startEffectivity" />
 					<show id="bcpg:endEffectivity" />
 				</field-visibility>
@@ -7958,6 +7960,12 @@
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
+					<field id="bcpg:priceListGeoOrigins">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					
+					
 					<field id="bcpg:startEffectivity">
 						<control template="/org/alfresco/components/form/controls/date.ftl">
 							<control-param name="showTime">false</control-param>
@@ -7980,6 +7988,7 @@
 					<show id="bcpg:priceListPurchaseQty" />
 					<show id="bcpg:priceListPurchaseUnit" />
 					<show id="bcpg:suppliers" />
+					<show id="bcpg:priceListGeoOrigins" />
 					<show id="bcpg:startEffectivity" />
 					<show id="bcpg:endEffectivity" />
 				</field-visibility>
@@ -7999,11 +8008,16 @@
 					<show id="bcpg:priceListPurchaseQty" />
 					<show id="bcpg:priceListPurchaseUnit" />
 					<show id="bcpg:suppliers" />
+					<show id="bcpg:priceListGeoOrigins" />
 					<show id="bcpg:startEffectivity" />
 					<show id="bcpg:endEffectivity" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:priceListCost">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:priceListGeoOrigins">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
