@@ -24,6 +24,8 @@ public class PriceBreakReportData {
 	private Integer priceListPrefRank;
 
 	private List<NodeRef> suppliers = new ArrayList<>();
+	
+	private List<NodeRef> geoOrigins = new ArrayList<>();
 
 	private NodeRef product;
 
@@ -107,4 +109,14 @@ public class PriceBreakReportData {
 		this.priceListPrefRank = priceListPrefRank;
 	}
 
+	public List<NodeRef> getGeoOrigins() {
+		return geoOrigins;
+	}
+
+	public void setGeoOrigins(List<NodeRef> geoOrigins) {
+		this.geoOrigins = geoOrigins;
+	}
+
+	
+	
 }

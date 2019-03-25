@@ -1160,6 +1160,22 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 				priceBreakEltDetailElt.addAttribute("suppliers", suppliers);
 
+				
+				String geoOrigins = "";
+				if (priceBreakReportData.getGeoOrigins() != null) {
+					for (NodeRef geoOrigin : priceBreakReportData.getGeoOrigins()) {
+						if (!geoOrigins.isEmpty()) {
+							geoOrigins += ",";
+						}
+						geoOrigins += (String) nodeService.getProperty(geoOrigin, BeCPGModel.PROP_CHARACT_NAME);
+					}
+
+				}
+
+				priceBreakEltDetailElt.addAttribute("geoOrigins", geoOrigins);
+
+				
+				
 				if (!suppliers.isEmpty()) {
 					product += " [" + suppliers + "]";
 				}
@@ -1263,6 +1279,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				priceBreakReportData.setCost(item.getCost());
 				priceBreakReportData.setProduct(componentProduct.getNodeRef());
 				priceBreakReportData.setSuppliers(item.getSuppliers());
+				priceBreakReportData.setGeoOrigins(item.getGeoOrigins());
 				priceBreakReportData.setPriceListValue(item.getValue());
 				priceBreakReportData.setPriceListUnit(item.getUnit());
 				priceBreakReportData.setPriceListPrefRank(item.getPrefRank());

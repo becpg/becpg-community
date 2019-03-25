@@ -1030,8 +1030,9 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 
 	// Formula helpers
 
+	
 	public boolean isLiquid() {
-		return (unit != null) && ((unit == ProductUnit.L) || (unit == ProductUnit.mL) || (unit == ProductUnit.cL));
+		return (unit != null) && ((unit.isVolume()));
 	}
 
 	public boolean isRawMaterial() {
@@ -1054,6 +1055,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		return this instanceof LocalSemiFinishedProductData;
 	}
 
+	
 	@Override
 	public Integer getReformulateCount() {
 		return reformulateCount;
