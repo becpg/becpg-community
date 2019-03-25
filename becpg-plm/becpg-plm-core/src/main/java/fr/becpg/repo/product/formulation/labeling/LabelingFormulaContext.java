@@ -641,13 +641,13 @@ public class LabelingFormulaContext extends RuleParser {
 				total = getTotal(lblCompositeContext);
 			}
 
-			return renderCompositeIng(lblCompositeContext, 1d, total);
+			return renderCompositeIng(lblCompositeContext, 1d, total,false);
 		} else {
 			if (force100Perc) {
 				total = getTotal(mergedLblCompositeContext);
 			}
 
-			return renderCompositeIng(mergedLblCompositeContext, 1d, total);
+			return renderCompositeIng(mergedLblCompositeContext, 1d, total,false);
 		}
 
 	}
@@ -759,7 +759,7 @@ public class LabelingFormulaContext extends RuleParser {
 				String geoOriginsLabel = createGeoOriginsLabel(null, kv.getValue());
 
 				String subLabel = getIngTextFormat(kv.getKey(), qtyPerc).format(new Object[] { ingTypeLegalName, null,
-						doNotDetailsDeclType ? null : renderLabelingComponent(lblCompositeContext, kv.getValue(), ingTypeDefaultSeparator, 1d, null),
+						doNotDetailsDeclType ? null : renderLabelingComponent(lblCompositeContext, kv.getValue(), ingTypeDefaultSeparator, 1d, null,true),
 						null });
 
 				if ((subLabel != null) && !subLabel.isEmpty()) {
@@ -800,7 +800,7 @@ public class LabelingFormulaContext extends RuleParser {
 							IngItem ingItem = (IngItem) component;
 
 							StringBuilder subIngBuff = new StringBuilder();
-							createSubIngBuff(lblCompositeContext, ingItem, subIngBuff, 1d);
+							createSubIngBuff(lblCompositeContext, ingItem, subIngBuff, 1d,true);
 
 							subLabel = getIngTextFormat(component, qtyPerc).format(new Object[] { ingName, qtyPerc, subIngBuff.toString(), null });
 
@@ -812,7 +812,7 @@ public class LabelingFormulaContext extends RuleParser {
 							}
 
 							subLabel = getIngTextFormat(component, qtyPerc).format(
-									new Object[] { ingName, qtyPerc, renderCompositeIng((CompositeLabeling) component, subRatio, null), null });
+									new Object[] { ingName, qtyPerc, renderCompositeIng((CompositeLabeling) component, subRatio, null, true), null });
 
 						} else {
 							logger.error("Unsupported ing type. Name: " + component.getName());
@@ -967,7 +967,7 @@ public class LabelingFormulaContext extends RuleParser {
 
 	}
 
-	private String renderCompositeIng(CompositeLabeling compositeLabeling, Double ratio, BigDecimal total) {
+	private String renderCompositeIng(CompositeLabeling compositeLabeling, Double ratio, BigDecimal total, boolean hideGeo) {
 		StringBuffer ret = new StringBuffer();
 		boolean appendEOF = false;
 		boolean first = true;
@@ -998,11 +998,11 @@ public class LabelingFormulaContext extends RuleParser {
 
 				toAppend.append(getIngTextFormat(kv.getKey(), qtyPerc).format(new Object[] { ingTypeLegalName, qtyPerc,
 						doNotDetailsDeclType ? null
-								: renderLabelingComponent(compositeLabeling, kv.getValue(), ingTypeDefaultSeparator, ratio, first ? total : null),
-						geoOriginsLabel }));
+								: renderLabelingComponent(compositeLabeling, kv.getValue(), ingTypeDefaultSeparator, ratio, first ? total : null, hideGeo),
+								hideGeo ? null: geoOriginsLabel }));
 
 			} else {
-				toAppend.append(renderLabelingComponent(compositeLabeling, kv.getValue(), defaultSeparator, ratio, first ? total : null));
+				toAppend.append(renderLabelingComponent(compositeLabeling, kv.getValue(), defaultSeparator, ratio, first ? total : null, hideGeo));
 			}
 
 			first = false;
@@ -1031,7 +1031,7 @@ public class LabelingFormulaContext extends RuleParser {
 	Double totalPrecision = 1 / Math.pow(10, maxPrecision + 2);
 
 	private StringBuilder renderLabelingComponent(CompositeLabeling parent, List<AbstractLabelingComponent> subComponents, String separator,
-			Double ratio, BigDecimal total) {
+			Double ratio, BigDecimal total, boolean hideGeo) {
 
 		StringBuilder ret = new StringBuilder();
 
@@ -1069,7 +1069,7 @@ public class LabelingFormulaContext extends RuleParser {
 					IngItem ingItem = (IngItem) component;
 
 					StringBuilder subIngBuff = new StringBuilder();
-					createSubIngBuff(parent, ingItem, subIngBuff, ratio);
+					createSubIngBuff(parent, ingItem, subIngBuff, ratio,hideGeo);
 
 					MessageFormat formater = getIngTextFormat(component, qtyPerc);
 
@@ -1078,7 +1078,7 @@ public class LabelingFormulaContext extends RuleParser {
 						first = false;
 					}
 
-					toAppend = formater.format(new Object[] { ingName, qtyPerc, subIngBuff.toString(), geoOriginsLabel });
+					toAppend = formater.format(new Object[] { ingName, qtyPerc, subIngBuff.toString(), hideGeo ? null: geoOriginsLabel });
 
 				} else if (component instanceof CompositeLabeling) {
 
@@ -1094,7 +1094,7 @@ public class LabelingFormulaContext extends RuleParser {
 					}
 
 					toAppend = formater.format(new Object[] { ingName, qtyPerc,
-							renderCompositeIng((CompositeLabeling) component, subRatio, first ? total : null), geoOriginsLabel });
+							renderCompositeIng((CompositeLabeling) component, subRatio, first ? total : null,hideGeo), hideGeo ? null: geoOriginsLabel });
 
 					first = false;
 
@@ -1553,7 +1553,7 @@ public class LabelingFormulaContext extends RuleParser {
 		return sortedIngListByType;
 	}
 
-	private void createSubIngBuff(CompositeLabeling parent, IngItem ingItem, StringBuilder subIngBuff, Double ratio) {
+	private void createSubIngBuff(CompositeLabeling parent, IngItem ingItem, StringBuilder subIngBuff, Double ratio, boolean hideGeo) {
 
 		CompositeLabeling subIngComposite = new CompositeLabeling();
 		for (IngItem subIngItem : ingItem.getSubIngs()) {
@@ -1565,7 +1565,7 @@ public class LabelingFormulaContext extends RuleParser {
 		subIngComposite.setQtyTotal(parent.getQtyTotal());
 		subIngComposite.setVolumeTotal(parent.getVolumeTotal());
 
-		subIngBuff.append(renderCompositeIng(subIngComposite, ratio, null));
+		subIngBuff.append(renderCompositeIng(subIngComposite, ratio, null, hideGeo));
 
 	}
 
