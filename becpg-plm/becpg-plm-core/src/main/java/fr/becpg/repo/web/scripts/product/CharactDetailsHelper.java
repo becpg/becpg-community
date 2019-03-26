@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2018 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2018 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.web.scripts.product;
@@ -20,14 +20,12 @@ package fr.becpg.repo.web.scripts.product;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.TreeMap;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -50,20 +48,21 @@ import fr.becpg.repo.product.data.CharactDetails;
 import fr.becpg.repo.product.data.CharactDetailsValue;
 
 /**
- * 
+ *
  * @author matthieu
  *
  */
 public class CharactDetailsHelper {
-	
+
 	private static final String PREVIOUS_COST_KEY = I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_costListPreviousValue.title");
 	private static final String FUTURE_COST_KEY = I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_costListFutureValue.title");
 	private static final String MINI_VALUE_KEY = I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_nutListMini.title");
 	private static final String MAXI_VALUE_KEY = I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_nutListMaxi.title");
 	private static final String LEVEL_KEY = I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_depthLevel.title");
 	private static final String PRODUCT_TYPE_KEY = I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_productType.title");
-	
-	public static JSONObject toJSONObject(final CharactDetails charactDetails, final NodeService nodeService, final AttributeExtractorService attributeExtractorService) throws JSONException {
+
+	public static JSONObject toJSONObject(final CharactDetails charactDetails, final NodeService nodeService,
+			final AttributeExtractorService attributeExtractorService) throws JSONException {
 
 		JSONObject obj = new JSONObject();
 		JSONArray metadatas = new JSONArray();
@@ -75,30 +74,15 @@ public class CharactDetailsHelper {
 
 		List<CharactDetailsValue> compEls = new LinkedList<>();
 
-		// translation -> index in resulting array, sorted so it goes value - mini - maxi, or value - previous - future
-		Map<String, Integer> additionalValues = new TreeMap<String, Integer>(
-				
-				new Comparator<String>() {
-					
-					@Override
-					public int compare(String o1, String o2) {
-						if(o2.contains(MAXI_VALUE_KEY) && !o1.contains(MAXI_VALUE_KEY)) {
-							return 1;
-						} else if (o2.contains(FUTURE_COST_KEY) && !o1.contains(FUTURE_COST_KEY)){
-							return -1;
-						}
-						return o2.compareTo(o1);
-					}
-				});
-		
+		Map<String, String> additionalValues = createAdditionalValuesMap();
 		List<Object> totals = new LinkedList<>();
 		String colUnit = "";
-		for (Map.Entry<NodeRef, List<CharactDetailsValue>> entry : charactDetails.getData().entrySet()) {			
+		for (Map.Entry<NodeRef, List<CharactDetailsValue>> entry : charactDetails.getData().entrySet()) {
 			String propName = attributeExtractorService.extractPropName(entry.getKey());
 
 			for (CharactDetailsValue value : entry.getValue()) {
-				
-				if(!compEls.contains(value)){
+
+				if (!compEls.contains(value)) {
 					value.setName(propName);
 					compEls.add(value);
 				}
@@ -110,86 +94,85 @@ public class CharactDetailsHelper {
 
 		// put previous, future, headers if necessary
 		Map<String, Integer> indexMap = createColumnMap(charactDetails.getData(), additionalValues, attributeExtractorService, metadatas.length());
-		
+
 		writeMetadata(colUnit, metadatas, indexMap);
 		// Entity nut 1, nut2, nut3
 
 		List<List<Object>> resultsets = new LinkedList<>();
 		totals.add(I18NUtil.getMessage("entity.datalist.item.details.totals"));
-		
-		for(int i = 0; i< indexMap.size(); ++i){
+
+		for (int i = 0; i < indexMap.size(); ++i) {
 			totals.add(0d);
 		}
-		
-		Map<NodeRef,List<Object>> tmpMap = new LinkedHashMap<NodeRef, List<Object>>();
-		
+
+		Map<NodeRef, List<Object>> tmpMap = new LinkedHashMap<>();
+
 		for (CharactDetailsValue charactDetailsValue : compEls) {
-			
+
 			String currentDetailsName = charactDetailsValue.getName();
 			List<Object> tmp;
-			if(!tmpMap.containsKey(charactDetailsValue.getKeyNodeRef())){
-			
+			if (!tmpMap.containsKey(charactDetailsValue.getKeyNodeRef())) {
+
 				tmp = new ArrayList<>();
 				tmp.add(attributeExtractorService.extractPropName(charactDetailsValue.getKeyNodeRef()));
-				
-				//insert padding in tmp so columns fit
-				for(int i=0; i<indexMap.size(); i++){
+
+				// insert padding in tmp so columns fit
+				for (int i = 0; i < indexMap.size(); i++) {
 					tmp.add(null);
 				}
 				tmpMap.put(charactDetailsValue.getKeyNodeRef(), tmp);
-			} else {				
+			} else {
 				tmp = tmpMap.get(charactDetailsValue.getKeyNodeRef());
 			}
-						
-			
-			
-			//set charact value, increase its total
-			for (Map.Entry<NodeRef,List<CharactDetailsValue>> entry : charactDetails.getData().entrySet()) {
+
+			// set charact value, increase its total
+			for (Map.Entry<NodeRef, List<CharactDetailsValue>> entry : charactDetails.getData().entrySet()) {
 				Integer currentIndex = indexMap.get(currentDetailsName);
 				Double total = (Double) totals.get(currentIndex);
-				Optional<CharactDetailsValue> matchingCharact = compEls.stream().filter(elt -> elt.keyEquals(charactDetailsValue) && elt.getName().equals(currentDetailsName)).findFirst();
+				Optional<CharactDetailsValue> matchingCharact = compEls.stream()
+						.filter(elt -> elt.keyEquals(charactDetailsValue) && elt.getName().equals(currentDetailsName)).findFirst();
 				if (matchingCharact.isPresent()) {
-					
+
 					int entryIndex = entry.getValue().indexOf(matchingCharact.get());
-					if(entryIndex != -1){
+					if (entryIndex != -1) {
 						Double value = entry.getValue().get(entryIndex).getValue();
-	
+
 						tmp.set(currentIndex, value);
-						if(entry.getValue().get(entryIndex).getLevel()==0){
-							total += value!=null ? value : 0d;
+						if (entry.getValue().get(entryIndex).getLevel() == 0) {
+							total += value != null ? value : 0d;
 						}
 					}
 				}
-				totals.set(currentIndex,total);
+				totals.set(currentIndex, total);
 			}
-					
-			//set additional values to tmp
-			for(Entry<String, Integer> entry : additionalValues.entrySet()){
-								
+
+			// set additional values to tmp
+			for (Entry<String, String> entry : additionalValues.entrySet()) {
+
 				String key = entry.getKey();
-				if(!key.contains(currentDetailsName)){
+				if (!entry.getValue().equals(currentDetailsName)) {
 					continue;
 				}
-				
+
 				Integer index = indexMap.get(key);
 				Double currentAdditionalValue = 0d;
-				boolean isNutrient = key.contains(MINI_VALUE_KEY) || key.contains(MAXI_VALUE_KEY);
+				boolean isNutrient = key.equals(MINI_VALUE_KEY) || key.equals(MAXI_VALUE_KEY);
 
-				if(key.contains(PREVIOUS_COST_KEY)){
+				if (key.equals(PREVIOUS_COST_KEY)) {
 					currentAdditionalValue = charactDetailsValue.getPreviousValue();
-				} else if(key.contains(FUTURE_COST_KEY)){
+				} else if (key.equals(FUTURE_COST_KEY)) {
 					currentAdditionalValue = charactDetailsValue.getFutureValue();
-				} else if(key.contains(MINI_VALUE_KEY)){
+				} else if (key.equals(MINI_VALUE_KEY)) {
 					currentAdditionalValue = charactDetailsValue.getMini();
-				} else if(key.contains(MAXI_VALUE_KEY)){
+				} else if (key.equals(MAXI_VALUE_KEY)) {
 					currentAdditionalValue = charactDetailsValue.getMaxi();
 				}
 
 				Integer level = charactDetailsValue.getLevel();
-				
+
 				Object elementToDisplay = currentAdditionalValue;
-				if(currentAdditionalValue == null){
-					if(isNutrient){
+				if (currentAdditionalValue == null) {
+					if (isNutrient) {
 						elementToDisplay = "—";
 						currentAdditionalValue = charactDetailsValue.getValue() != null ? charactDetailsValue.getValue() : 0d;
 					} else {
@@ -197,19 +180,19 @@ public class CharactDetailsHelper {
 						currentAdditionalValue = 0d;
 					}
 				}
-				
-				if(level == 0) {
+
+				if (level == 0) {
 					computeTotals(index, totals, currentAdditionalValue);
 				}
 				tmp.set(index, elementToDisplay);
 			}
-			
+
 			tmp.add(charactDetailsValue.getKeyNodeRef());
 			tmp.add(nodeService.getType(charactDetailsValue.getKeyNodeRef()));
 			tmp.add(nodeService.getType(charactDetailsValue.getKeyNodeRef()).getLocalName());
 			tmp.add(charactDetailsValue.getLevel());
 		}
-		
+
 		resultsets.addAll(tmpMap.values());
 		resultsets.add(totals);
 
@@ -219,9 +202,9 @@ public class CharactDetailsHelper {
 		return obj;
 
 	}
-	
-	private static void writeMetadata(String colUnit, JSONArray metadatas, Map<String, Integer> indexMap) throws JSONException{
-		for(Entry<String, Integer> entry : indexMap.entrySet()){
+
+	private static void writeMetadata(String colUnit, JSONArray metadatas, Map<String, Integer> indexMap) throws JSONException {
+		for (Entry<String, Integer> entry : indexMap.entrySet()) {
 			JSONObject metadata = new JSONObject();
 			metadata.put("colType", "Double");
 			metadata.put("colIndex", entry.getValue());
@@ -230,10 +213,11 @@ public class CharactDetailsHelper {
 			metadatas.put(metadata);
 		}
 	}
-	
-	private static Map<String, Integer> createColumnMap(Map<NodeRef, List<CharactDetailsValue>> characts, Map<String, Integer> additionalValues, AttributeExtractorService attributeExtractorService, Integer idx){
+
+	private static Map<String, Integer> createColumnMap(Map<NodeRef, List<CharactDetailsValue>> characts, Map<String, String> additionalValues,
+			AttributeExtractorService attributeExtractorService, Integer idx) {
 		Map<String, Integer> res = new LinkedHashMap<>();
-		for(Entry<NodeRef, List<CharactDetailsValue>> currentCharact : characts.entrySet()){
+		for (Entry<NodeRef, List<CharactDetailsValue>> currentCharact : characts.entrySet()) {
 			String currentCharactName = attributeExtractorService.extractPropName(currentCharact.getKey());
 			res.put(currentCharactName, idx);
 			idx = completeAdditionalValues(currentCharactName, res, idx, additionalValues);
@@ -241,37 +225,41 @@ public class CharactDetailsHelper {
 		}
 		return res;
 	}
-	
-	private static Integer completeAdditionalValues(String charactName, Map<String, Integer> indexMap, Integer idx, Map<String, Integer> additionalValues){
-		for(Entry<String, Integer> additionalValue : additionalValues.entrySet()){
-			if(additionalValue.getKey().contains(charactName)){
+
+	private static Integer completeAdditionalValues(String charactName, Map<String, Integer> indexMap, Integer idx,
+			Map<String, String> additionalValues) {
+		for (Entry<String, String> additionalValue : additionalValues.entrySet()) {
+			if (additionalValue.getValue().equals(charactName)) {
 				indexMap.put(additionalValue.getKey(), ++idx);
 			}
 		}
 		return idx;
 	}
-	
-	private static void computeTotals(Integer index, List<Object> totals, Double currentValue){
-		if(totals.size() > index){
-			totals.set(index, (Double)totals.get(index) + currentValue);
+
+	private static void computeTotals(Integer index, List<Object> totals, Double currentValue) {
+		if (totals.size() > index) {
+			totals.set(index, (Double) totals.get(index) + currentValue);
 		} else {
 			totals.add(index, currentValue);
 		}
 	}
-	
-	private static void fillAdditionalValuesMap(Map<String, Integer> additionalValues, CharactDetailsValue currentValue, String propName){
-		if(currentValue.getPreviousValue() != null){
-			additionalValues.put(propName+", "+PREVIOUS_COST_KEY, null);
+
+	private static void fillAdditionalValuesMap(Map<String, String> additionalValues, CharactDetailsValue currentValue, String propName) {
+
+		if (currentValue.getPreviousValue() != null) {
+			additionalValues.put(PREVIOUS_COST_KEY, propName);
 		}
-		if(currentValue.getFutureValue() != null){
-			additionalValues.put(propName+", "+FUTURE_COST_KEY, null);
+		if (currentValue.getFutureValue() != null) {
+			additionalValues.put(FUTURE_COST_KEY, propName);
 		}
-		if(currentValue.getMini() != null){
-			additionalValues.put(propName+", "+MINI_VALUE_KEY, null);
+		if (currentValue.getMini() != null) {
+
+			additionalValues.put(MINI_VALUE_KEY, propName);
 		}
-		if(currentValue.getMaxi() != null){
-			additionalValues.put(propName+", "+MAXI_VALUE_KEY, null);
+		if (currentValue.getMaxi() != null) {
+			additionalValues.put(MAXI_VALUE_KEY, propName);
 		}
+		
 	}
 
 	private static String getYAxisLabel() {
@@ -294,116 +282,121 @@ public class CharactDetailsHelper {
 		XSSFFont font = workbook.createFont();
 		font.setColor(HSSFColor.WHITE.index);
 		style.setFont(font);
-		
+
 		Cell cell = row.createCell(cellnum++);
 		cell.setCellValue(getYAxisLabel());
 		cell.setCellStyle(style);
-		
+
 		cell = row.createCell(cellnum++);
 		cell.setCellValue(PRODUCT_TYPE_KEY);
 		cell.setCellStyle(style);
-		
+
 		cell = row.createCell(cellnum++);
 		cell.setCellValue(LEVEL_KEY);
 		cell.setCellStyle(style);
-				
-		Map<String, Integer> additionalValues = new LinkedHashMap<String, Integer>();
+
+		Map<String, String> additionalValues = createAdditionalValuesMap();
 		List<CharactDetailsValue> compEls = new LinkedList<>();
 
-		for (Map.Entry<NodeRef,List<CharactDetailsValue>> entry : charactDetails.getData().entrySet()) {
+		for (Map.Entry<NodeRef, List<CharactDetailsValue>> entry : charactDetails.getData().entrySet()) {
 			for (CharactDetailsValue value : entry.getValue()) {
 				String propName = attributeExtractorService.extractPropName(entry.getKey());
-				if(!compEls.contains(value)){
+				if (!compEls.contains(value)) {
 					value.setName(propName);
 					compEls.add(value);
 				}
-				
+
 				fillAdditionalValuesMap(additionalValues, value, propName);
 			}
 		}
-		
+
 		Map<String, Integer> indexMap = createColumnMap(charactDetails.getData(), additionalValues, attributeExtractorService, cellnum);
-		//add sorted headers 
-		for(Entry<String, Integer> entry : indexMap.entrySet()){
+		// add sorted headers
+		for (Entry<String, Integer> entry : indexMap.entrySet()) {
 			cell = row.createCell(entry.getValue());
 			cell.setCellValue(entry.getKey());
 			cell.setCellStyle(style);
 		}
-		
+
 		for (CharactDetailsValue charactDetailsValue : compEls) {
 			cellnum = 0;
 			String prefix = "";
-			if(charactDetailsValue.getLevel()>0){
+			if (charactDetailsValue.getLevel() > 0) {
 				prefix = "└";
-				for(int i = 0;i< charactDetailsValue.getLevel();i++){
+				for (int i = 0; i < charactDetailsValue.getLevel(); i++) {
 					prefix += "──";
 				}
 				prefix += ">";
 			}
-						
+
 			row = sheet.createRow(rownum++);
 			cell = row.createCell(cellnum++);
-			cell.setCellValue(prefix+attributeExtractorService.extractPropName(charactDetailsValue.getKeyNodeRef()));
-						
-			//product type cell
+			cell.setCellValue(prefix + attributeExtractorService.extractPropName(charactDetailsValue.getKeyNodeRef()));
+
+			// product type cell
 			cell = row.createCell(cellnum++);
 			String type = nodeService.getType(charactDetailsValue.getKeyNodeRef()).getLocalName();
-			String typeTitle = I18NUtil.getMessage("bcpg_bcpgmodel.type.bcpg_"+type+".title");
+			String typeTitle = I18NUtil.getMessage("bcpg_bcpgmodel.type.bcpg_" + type + ".title");
 			cell.setCellValue(typeTitle);
-			
-			//level depth cell
+
+			// level depth cell
 			cell = row.createCell(cellnum++);
 			cell.setCellValue(charactDetailsValue.getLevel());
-			
+
 			String currentDetailsName = charactDetailsValue.getName();
-			
-			//set charact value to cell
-			for (Map.Entry<NodeRef,List<CharactDetailsValue>> entry : charactDetails.getData().entrySet()) {
-				
+
+			// set charact value to cell
+			for (Map.Entry<NodeRef, List<CharactDetailsValue>> entry : charactDetails.getData().entrySet()) {
+
 				Integer currentIndex = indexMap.get(currentDetailsName);
-							
+
 				if (entry.getValue().contains(charactDetailsValue)) {
-					
+
 					cell = row.createCell(currentIndex);
-					Double value = 	entry.getValue().get(entry.getValue().indexOf(charactDetailsValue)).getValue();
+					Double value = entry.getValue().get(entry.getValue().indexOf(charactDetailsValue)).getValue();
 					cell.setCellValue(value);
 				}
-			}			
-			
-			//put additional characts to cells
-			for(Entry<String, Integer> entry : additionalValues.entrySet()){
-				
+			}
+
+			// put additional characts to cells
+			for (Entry<String, String> entry : additionalValues.entrySet()) {
+
 				String key = entry.getKey();
-				
-				if(!key.contains(currentDetailsName)){
+
+				if (!entry.getValue().equals(currentDetailsName)) {
 					continue;
 				}
-				
+
 				Integer index = indexMap.get(key);
 				Double currentAdditionalValue = 0d;
 
-				if(key.contains(PREVIOUS_COST_KEY)){
+				if (key.equals(PREVIOUS_COST_KEY)) {
 					currentAdditionalValue = charactDetailsValue.getPreviousValue();
-				} else if(key.contains(FUTURE_COST_KEY)){
+				} else if (key.equals(FUTURE_COST_KEY)) {
 					currentAdditionalValue = charactDetailsValue.getFutureValue();
-				} else if(key.contains(MINI_VALUE_KEY)){
+				} else if (key.equals(MINI_VALUE_KEY)) {
 					currentAdditionalValue = charactDetailsValue.getMini();
-				} else if(key.contains(MAXI_VALUE_KEY)){
+				} else if (key.equals(MAXI_VALUE_KEY)) {
 					currentAdditionalValue = charactDetailsValue.getMaxi();
 				}
-				
-				if(currentAdditionalValue == null) {
+
+				if (currentAdditionalValue == null) {
 					currentAdditionalValue = 0d;
 				}
-				
-				
+
 				cell = row.createCell(index);
 				cell.setCellValue(currentAdditionalValue);
 			}
 		}
-		
+
 		workbook.write(outputStream);
-		
+
+	}
+
+	// translation -> index in resulting array, sorted so it goes value - mini -
+	// maxi, or value - previous - future
+	private static Map<String, String> createAdditionalValuesMap() {
+		return new LinkedHashMap<String, String>();
 	}
 
 }
