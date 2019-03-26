@@ -191,6 +191,10 @@
 		<aspect name="pack:palletAspect">
 			<title>Palettisation</title>
 			<properties>
+				<property name="pack:palletProductsPerBox">
+					<title>Nombre de produits / colis</title>
+					<type>d:int</type>	
+				</property>
 				<property name="pack:palletLayers">
 					<title>Nombre de couches / palette</title>
 					<type>d:int</type>

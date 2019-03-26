@@ -215,6 +215,8 @@
 					<show id="gs1:secondaryNetWeight" for-mode="edit" />
 					<show id="gs1:secondaryWeight" for-mode="edit" />
 					
+					
+					<show id="pack:palletProductsPerBox" for-mode="edit" />
 					<show id="pack:palletLayers" for-mode="edit" />
 					<show id="pack:palletBoxesPerLayer" for-mode="edit" />
 					<show id="pack:palletBoxesPerLastLayer" for-mode="edit" />
@@ -647,18 +649,8 @@
 					</field>
 					
 					<!-- pallet -->
-					<field id="gs1:tertiaryNetWeight" set="tertiaryPackaging" read-only="true">
-						<control
-							template="/org/alfresco/components/form/controls/number-unit.ftl">
-							<control-param name="unit">kg</control-param>
-						</control>
-					</field>
-					<field id="gs1:tertiaryWeight" set="tertiaryPackaging" read-only="true" >
-						<control
-							template="/org/alfresco/components/form/controls/number-unit.ftl">
-							<control-param name="unit">kg</control-param>
-						</control>
-					</field>
+				
+					<field id="pack:palletProductsPerBox" set="tertiaryPackaging" />
 					<field id="pack:palletLayers" set="tertiaryPackaging" />
 					<field id="pack:palletBoxesPerLayer" set="tertiaryPackaging" />
 					<field id="pack:palletBoxesPerLastLayer" set="tertiaryPackaging" />
@@ -688,7 +680,18 @@
 							<control-param name="unit">kg</control-param>
 						</control>
 					</field>
-					
+					<field id="gs1:tertiaryNetWeight" set="tertiaryPackaging" read-only="true">
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">kg</control-param>
+						</control>
+					</field>
+					<field id="gs1:tertiaryWeight" set="tertiaryPackaging" read-only="true" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">kg</control-param>
+						</control>
+					</field>
 					
 					<field id="gs1:palletTypeCode" help-id="becpg.forms.help.gs1.palletTypeCode" set="tertiaryPackaging" />
  				
@@ -2942,6 +2945,7 @@
 					
 
 					<!-- pallet -->
+					<show id="pack:palletProductsPerBox" />
 					<show id="pack:palletLayers" />
 					<show id="pack:palletBoxesPerLayer" />
 					<show id="pack:palletBoxesPerLastLayer" />
@@ -3153,6 +3157,7 @@
 					<field id="bcpg:certificateDate" set="consumer" />
 
 					<!-- pallet -->
+					<field id="pack:palletProductsPerBox" set="pallet"/>
 					<field id="pack:palletLayers" set="pallet" />
 					<field id="pack:palletBoxesPerLayer" set="pallet" />
 					<field id="pack:palletBoxesPerPallet" set="pallet" />
@@ -3288,6 +3293,7 @@
 					<show id="bcpg:certificateDate" force="true" />
 					
 					<!-- pallet -->
+					<show id="pack:palletProductsPerBox" />
 					<show id="pack:palletLayers" />
 					<show id="pack:palletBoxesPerLayer" />
 					<show id="pack:palletBoxesPerLastLayer" />
@@ -3398,6 +3404,7 @@
 					<field id="bcpg:certificateDate" set="consumer" />
 
 					<!-- pallet -->
+					<field id="pack:palletProductsPerBox" set="pallet" />
 					<field id="pack:palletLayers" set="pallet" />
 					<field id="pack:palletBoxesPerLayer" set="pallet" />
 					<field id="pack:palletBoxesPerPallet" set="pallet" />

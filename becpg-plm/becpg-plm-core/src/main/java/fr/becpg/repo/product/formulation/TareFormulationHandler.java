@@ -126,8 +126,12 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 					formulatedProduct.getExtraProperties().put(GS1Model.PROP_TERTIARY_WIDTH, variantPackagingData.getTertiaryWidth());
 					formulatedProduct.getExtraProperties().put(GS1Model.PROP_TERTIARY_DEPTH, variantPackagingData.getTertiaryDepth());
 					formulatedProduct.getExtraProperties().put(GS1Model.PROP_PALLET_TYPE_CODE, variantPackagingData.getPalletTypeCode());
+					
+				
 
 					if (formulatedProduct.getAspects().contains(PackModel.ASPECT_PALLET)) {
+						
+						formulatedProduct.getExtraProperties().put(PackModel.PROP_PALLET_PRODUCTS_PER_BOX, variantPackagingData.getProductPerBoxes());
 
 						formulatedProduct.getExtraProperties().put(PackModel.PROP_PALLET_LAYERS, variantPackagingData.getPalletLayers());
 						formulatedProduct.getExtraProperties().put(PackModel.PROP_PALLET_BOXES_PER_LAYER,
