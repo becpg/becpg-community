@@ -185,8 +185,8 @@ public class LabelingFormulaContext extends RuleParser {
 	}
 
 	private String ingDefaultFormat = "{0} [{3}]";
-	private String groupDefaultFormat = "<b>{0}:</b> {2}";
-	private String groupListDefaultFormat = "<b>{0}</b>";
+	private String groupDefaultFormat = "<b>{0} ({1,number,0.#%}):</b> {2}";
+	private String groupListDefaultFormat = "<b>{0} {1,number,0.#%}</b>";
 	private String detailsDefaultFormat = "{0} ({2}) [{3}]";
 	private String ingTypeDefaultFormat = "{0}: {2} [{3}]";
 	private String ingTypeDecThresholdFormat = "{0} [{3}]";
