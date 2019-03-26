@@ -46,6 +46,10 @@ public class PackModel {
 	public static final QName PROP_PALLET_STACKING_MAX_WEIGHT = QName.createQName(PACK_URI,
 			"palletStackingMaxWeight");
 	
+
+	public static final QName PROP_PALLET_PRODUCTS_PER_BOX = QName.createQName(PACK_URI,
+			"palletProductsPerBox");
+	
 	
 	public static final QName ASPECT_TARE =   QName.createQName(PACK_URI,
 			"tareAspect");

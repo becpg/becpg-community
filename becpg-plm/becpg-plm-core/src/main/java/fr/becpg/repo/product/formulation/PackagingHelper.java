@@ -65,6 +65,9 @@ public class PackagingHelper {
 
 			}
 			if (variantPackagingData.isManualTertiary()) {
+				
+				 variantPackagingData.setProductPerBoxes((Integer) nodeService.getProperty(productData.getNodeRef(),PackModel.PROP_PALLET_PRODUCTS_PER_BOX));
+				
 				if (productData.getAspects().contains(PackModel.ASPECT_PALLET)) {
 					extractPalletInformations(productData.getNodeRef(), variantPackagingData);
 				}
