@@ -17,6 +17,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.mail.BeCPGMailService;
@@ -26,6 +27,7 @@ import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.ProjectState;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskState;
+import fr.becpg.repo.project.impl.ProjectHelper;
 
 public class TaskOverdueFormulationHandler extends FormulationBaseHandler<ProjectData> {
 
@@ -63,7 +65,7 @@ public class TaskOverdueFormulationHandler extends FormulationBaseHandler<Projec
 	public boolean process(ProjectData projectData) {
 	
 
-		if(ProjectState.InProgress.equals(projectData.getProjectState())){
+		if(ProjectState.InProgress.equals(projectData.getProjectState()) && !projectData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)){
 
 			logger.debug("Processing tasks notifications");
 			
@@ -85,7 +87,7 @@ public class TaskOverdueFormulationHandler extends FormulationBaseHandler<Projec
 				logger.debug("/*-- \tTask "+task.getTaskName()+"\t --*/");
 
 				Date firstNotificationDate = calculateFirstNotificationDate(task);
-				Date currentDate = new Date();
+				Date currentDate = ProjectHelper.removeTime(new Date());
 				Date nextNotification = calculateNextNotificationDate(task, firstNotificationDate);
 				String workflowTaskId = extractWorkflowTask(task);
 				
@@ -119,18 +121,19 @@ public class TaskOverdueFormulationHandler extends FormulationBaseHandler<Projec
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(task.getLastNotification());
 			cal.add(Calendar.DAY_OF_MONTH, task.getNotificationFrequency());
-			return cal.getTime();
+			return ProjectHelper.removeTime(cal.getTime());
 		} else {
 			//no notif frequency set
 			return null;
 		}
 	}
 
+	// End 01/08 +5 -> 06/08
 	public Date calculateFirstNotificationDate(TaskListDataItem task){
 		Calendar firstNotificationCal = Calendar.getInstance();
 		firstNotificationCal.setTime(task.getEnd());
 		firstNotificationCal.add(Calendar.DAY_OF_MONTH, task.getInitialNotification());
-		return firstNotificationCal.getTime();
+		return ProjectHelper.removeTime(firstNotificationCal.getTime());
 	}
 
 	public void sendTaskNotificationEmails(List<NodeRef> authorities, TaskListDataItem task, ProjectData project, String workflowTaskId){
