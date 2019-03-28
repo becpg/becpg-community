@@ -11,6 +11,8 @@ import fr.becpg.repo.product.data.productList.PriceListDataItem;
 public class SimulationCostHelper {
 
 	
+	//T(fr.becpg.repo.product.helper.SimulationCostHelper).priceListItemByCriteria(ProductData productData, NodeRef cost, Double qtyInKg, List<NodeRef> geoOrigins)
+	
 	/*
 	 *  Rang 1 Coût MP 0
 	 *  Coût MP 100

@@ -129,11 +129,11 @@ public interface ProjectModel {
 	QName PROP_BUDGET_EXPENSE = QName.createQName(PROJECT_URI, "expense");
 	
 	//delegation
-	QName PROP_QNAME_DELEGATION_STATE = QName.createQName("http://www.bcpg.fr/model/project/1.0", "delegationActivated");
-	QName PROP_QNAME_DELEGATION_START = QName.createQName("http://www.bcpg.fr/model/project/1.0", "delegationStartDate");
-	QName PROP_QNAME_DELEGATION_END = QName.createQName("http://www.bcpg.fr/model/project/1.0", "delegationEndDate");
-	QName PROP_QNAME_REASSIGN_TASK = QName.createQName("http://www.bcpg.fr/model/project/1.0", "reassignCurrentTasks");
-	QName PROP_QNAME_REASSIGN_RESOURCE = QName.createQName("http://www.bcpg.fr/model/project/1.0", "reassignTo");
+	QName PROP_QNAME_DELEGATION_STATE = QName.createQName(PROJECT_URI, "delegationActivated");
+	QName PROP_QNAME_DELEGATION_START = QName.createQName(PROJECT_URI, "delegationStartDate");
+	QName PROP_QNAME_DELEGATION_END = QName.createQName(PROJECT_URI, "delegationEndDate");
+	QName PROP_QNAME_REASSIGN_TASK = QName.createQName(PROJECT_URI, "reassignCurrentTasks");
+	QName PROP_QNAME_REASSIGN_RESOURCE = QName.createQName(PROJECT_URI, "reassignTo");
 	
 	
 
