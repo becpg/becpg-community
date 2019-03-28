@@ -428,22 +428,13 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 				Assert.assertTrue("no metadata array",jsonRet.has("metadatas"));
 				JSONArray metadataArray = jsonRet.getJSONArray("metadatas");
 				
-				Assert.assertEquals(13, metadataArray.length());
+				Assert.assertEquals(7, metadataArray.length());
 				Assert.assertEquals("nut1 unset", ((JSONObject)metadataArray.get(1)).get("colName"),"nut1");
-				Assert.assertEquals("nut1 mini unset", ((JSONObject)metadataArray.get(2)).get("colName"),"nut1, Mini");
-				Assert.assertEquals("nut1 maxi unset", ((JSONObject)metadataArray.get(3)).get("colName"),"nut1, Maxi");
-				
-				Assert.assertEquals("nut2 unset", ((JSONObject)metadataArray.get(4)).get("colName"),"nut2");
-				Assert.assertEquals("nut2 maxi unset", ((JSONObject)metadataArray.get(5)).get("colName"),"nut2, Maxi");
-				Assert.assertEquals("nut2 mini unset", ((JSONObject)metadataArray.get(6)).get("colName"),"nut2, Mini");
-				
-				Assert.assertEquals("nut3 unset", ((JSONObject)metadataArray.get(7)).get("colName"),"nut3");
-				Assert.assertEquals("nut3 mini unset", ((JSONObject)metadataArray.get(8)).get("colName"),"nut3, Mini");
-				Assert.assertEquals("nut3 maxi unset", ((JSONObject)metadataArray.get(9)).get("colName"),"nut3, Maxi");
-				
-				Assert.assertEquals("nut4 unset", ((JSONObject)metadataArray.get(10)).get("colName"),"nut4");
-				Assert.assertEquals("nut4 maxi unset", ((JSONObject)metadataArray.get(11)).get("colName"),"nut4, Maxi");
-				Assert.assertEquals("nut4 mini unset", ((JSONObject)metadataArray.get(12)).get("colName"),"nut4, Mini");
+				Assert.assertEquals("nut2 unset", ((JSONObject)metadataArray.get(2)).get("colName"),"nut2");
+				Assert.assertEquals("nut3 unset", ((JSONObject)metadataArray.get(3)).get("colName"),"nut3");
+				Assert.assertEquals("nut4 unset", ((JSONObject)metadataArray.get(4)).get("colName"),"nut4");
+				Assert.assertEquals("nut3 mini unset", ((JSONObject)metadataArray.get(5)).get("colName"),"Mini");
+				Assert.assertEquals("nut3 maxi unset", ((JSONObject)metadataArray.get(6)).get("colName"),"Maxi");
 				
 				Assert.assertTrue("no resultsets", jsonRet.has("resultsets"));
 				JSONArray resultsArray = jsonRet.getJSONArray("resultsets");
@@ -457,20 +448,18 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 				ArrayList<Object> tmpResultsArray = (ArrayList<Object>) resultsArray.get(0);
 				Assert.assertEquals("Semi fini 1", tmpResultsArray.get(0));
 				Assert.assertEquals(df.format(0.667d), df.format(tmpResultsArray.get(1)));
-				Assert.assertEquals(df.format(0.556d), df.format(tmpResultsArray.get(2)));
-				Assert.assertEquals("\u2014",tmpResultsArray.get(3));
+			//	Assert.assertEquals(df.format(0.556d), df.format(tmpResultsArray.get(2)));
 				
-				Assert.assertEquals(df.format(1.778d), df.format(tmpResultsArray.get(4)));
-				Assert.assertEquals(df.format(2.222d), df.format(tmpResultsArray.get(5)));
-				Assert.assertEquals("\u2014",tmpResultsArray.get(6));
 				
-				Assert.assertEquals(df.format(0.889d), df.format(tmpResultsArray.get(7)));
-				Assert.assertEquals(df.format(0.178d), df.format(tmpResultsArray.get(8)));
-				Assert.assertEquals(df.format(0.467d), df.format(tmpResultsArray.get(9)));
+				Assert.assertEquals(df.format(1.778d), df.format(tmpResultsArray.get(2)));
+				//Assert.assertEquals(df.format(2.222d), df.format(tmpResultsArray.get(5)));
+			//	Assert.assertEquals("\u2014",tmpResultsArray.get(6));
+//				Assert.assertNull(tmpResultsArray.get(4));
+//				Assert.assertNull(tmpResultsArray.get(5));
 				
-				Assert.assertNull(tmpResultsArray.get(10));
-				Assert.assertNull(tmpResultsArray.get(11));
-				Assert.assertNull(tmpResultsArray.get(12));
+				Assert.assertEquals(df.format(0.889d), df.format(tmpResultsArray.get(3)));
+				
+				
 				
 				/*
 				 * RM 1
@@ -478,20 +467,14 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 				tmpResultsArray = (ArrayList<Object>) resultsArray.get(1);
 				Assert.assertEquals("Raw material 1", tmpResultsArray.get(0));
 				Assert.assertEquals(df.format(1.333d), df.format(tmpResultsArray.get(1)));
-				Assert.assertEquals(df.format(1.067d), df.format(tmpResultsArray.get(2)));
-				Assert.assertEquals(df.format(2.8d), df.format(tmpResultsArray.get(3)));
+				//Assert.assertEquals(df.format(1.067d), df.format(tmpResultsArray.get(2)));
+				//Assert.assertEquals(df.format(2.8d), df.format(tmpResultsArray.get(4)));
 				
-				Assert.assertEquals(df.format(2.667d), df.format(tmpResultsArray.get(4)));
-				Assert.assertEquals(df.format(2.933d), df.format(tmpResultsArray.get(5)));
-				Assert.assertEquals(df.format(2d), df.format(tmpResultsArray.get(6)));
+				Assert.assertEquals(df.format(2.667d), df.format(tmpResultsArray.get(2)));
+				//Assert.assertEquals(df.format(2.933d), df.format(tmpResultsArray.get(5)));
+				//Assert.assertEquals(df.format(2d), df.format(tmpResultsArray.get(5)));
 				
-				Assert.assertEquals(df.format(5.333d), df.format(tmpResultsArray.get(7)));
-				Assert.assertEquals(df.format(1.067d), df.format(tmpResultsArray.get(8)));
-				Assert.assertEquals(df.format(2.8d), df.format(tmpResultsArray.get(9)));
-				
-				Assert.assertEquals(df.format(4d), df.format(tmpResultsArray.get(10)));
-				Assert.assertEquals(df.format(2.8d), df.format(tmpResultsArray.get(11)));
-				Assert.assertEquals(df.format(1.067d), df.format(tmpResultsArray.get(12)));
+				Assert.assertEquals(df.format(5.333d), df.format(tmpResultsArray.get(3)));
 				
 				/*
 				 * RM 2
@@ -499,20 +482,14 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 				tmpResultsArray = (ArrayList<Object>) resultsArray.get(2);
 				Assert.assertEquals("Raw material 2", tmpResultsArray.get(0));
 				Assert.assertEquals(df.format(1d), df.format(tmpResultsArray.get(1)));
-				Assert.assertEquals(df.format(0.8d), df.format(tmpResultsArray.get(2)));
-				Assert.assertEquals(df.format(1.1d), df.format(tmpResultsArray.get(3)));
-				
-				Assert.assertEquals(df.format(2d), df.format(tmpResultsArray.get(4)));
-				Assert.assertEquals(df.format(2.1d), df.format(tmpResultsArray.get(5)));
-				Assert.assertEquals(df.format(0.8d), df.format(tmpResultsArray.get(6)));
-				
-				Assert.assertEquals(df.format(6d), df.format(tmpResultsArray.get(7)));
-				Assert.assertEquals(df.format(0.8d), df.format(tmpResultsArray.get(8)));
-				Assert.assertEquals(df.format(2.1d), df.format(tmpResultsArray.get(9)));
-				
-				Assert.assertNull(tmpResultsArray.get(10));
-				Assert.assertNull(tmpResultsArray.get(11));
-				Assert.assertNull(tmpResultsArray.get(12));
+//				Assert.assertEquals(df.format(0.8d), df.format(tmpResultsArray.get(2)));
+//				Assert.assertEquals(df.format(1.1d), df.format(tmpResultsArray.get(3)));
+//				
+				Assert.assertEquals(df.format(2d), df.format(tmpResultsArray.get(2)));
+//				Assert.assertEquals(df.format(2.1d), df.format(tmpResultsArray.get(5)));
+//				Assert.assertEquals(df.format(0.8d), df.format(tmpResultsArray.get(6)));
+//				
+				Assert.assertEquals(df.format(6d), df.format(tmpResultsArray.get(3)));
 				
 				/*
 				 * Totals
@@ -521,20 +498,20 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 				//TODO put entity.datalist.item.details.totals language key instead ?
 				Assert.assertEquals("Totaux ", totalArray.get(0));
 				Assert.assertEquals(df.format(3d), df.format(totalArray.get(1)));
-				Assert.assertEquals(df.format(2.422d), df.format(totalArray.get(2)));
-				Assert.assertEquals(df.format(4.567d), df.format(totalArray.get(3)));
+//				Assert.assertEquals(df.format(2.422d), df.format(totalArray.get(2)));
+//				Assert.assertEquals(df.format(4.567d), df.format(totalArray.get(3)));
+//				
+				Assert.assertEquals(df.format(6.444d), df.format(totalArray.get(2)));
+//				Assert.assertEquals(df.format(7.256d), df.format(totalArray.get(5)));
+//				Assert.assertEquals(df.format(4.578d), df.format(totalArray.get(6)));
 				
-				Assert.assertEquals(df.format(6.444d), df.format(totalArray.get(4)));
-				Assert.assertEquals(df.format(7.256d), df.format(totalArray.get(5)));
-				Assert.assertEquals(df.format(4.578d), df.format(totalArray.get(6)));
+				Assert.assertEquals(df.format(12.222d), df.format(totalArray.get(3)));
+//				Assert.assertEquals(df.format(2.044d), df.format(totalArray.get(8)));
+//				Assert.assertEquals(df.format(5.367d), df.format(totalArray.get(9)));
 				
-				Assert.assertEquals(df.format(12.222d), df.format(totalArray.get(7)));
-				Assert.assertEquals(df.format(2.044d), df.format(totalArray.get(8)));
-				Assert.assertEquals(df.format(5.367d), df.format(totalArray.get(9)));
-				
-				Assert.assertEquals(df.format(4d), df.format(totalArray.get(10)));
-				Assert.assertEquals(df.format(2.8d), df.format(totalArray.get(11)));
-				Assert.assertEquals(df.format(1.067d), df.format(totalArray.get(12)));				
+				Assert.assertEquals(df.format(4d), df.format(totalArray.get(4)));
+				Assert.assertEquals(df.format(2.8d), df.format(totalArray.get(6)));
+				Assert.assertEquals(df.format(1.067d), df.format(totalArray.get(5)));				
 				
 				return null;
 
