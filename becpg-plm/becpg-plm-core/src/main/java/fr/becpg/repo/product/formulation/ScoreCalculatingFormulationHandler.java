@@ -38,8 +38,6 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 	public static final String MESSAGE_NON_VALIDATED_STATE = "message.formulate.nonValidatedState";
 	public static final String MESSAGE_OR = "message.formulate.or";
 	public static final String MESSAGE_NON_UNIQUE_FIELD = "message.formulate.non-unique-field";
-	public static final String CATALOGS_PATH = "/app:company_home/cm:System/cm:PropertyCatalogs";
-	public static final String CATALOG_DEFS = "CATALOG_DEFS";
 	private AlfrescoRepository<ProductData> alfrescoRepository;
 
 	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
@@ -199,28 +197,29 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 		if(product.getReqCtrlList()!=null){
 			for (ReqCtrlListDataItem rclDataItem : product.getReqCtrlList()) {
 				RequirementDataType key = rclDataItem.getReqDataType();
-	
-				// make sure we don't put duplicates rclDataItems
-				if (counts.containsKey(key.toString()) && !visitedRclItems.contains(rclDataItem)) {
-					Map<String, Integer> currentCount = counts.get(key.toString());
-					if (currentCount == null) {
-						currentCount = new HashMap<String, Integer>();
+				if(key!=null && rclDataItem.getReqType()!=null) {
+					// make sure we don't put duplicates rclDataItems
+					if (counts.containsKey(key.toString()) && !visitedRclItems.contains(rclDataItem)) {
+						Map<String, Integer> currentCount = counts.get(key.toString());
+						if (currentCount == null) {
+							currentCount = new HashMap<String, Integer>();
+						}
+		
+						if (currentCount.containsKey(rclDataItem.getReqType().toString())) {
+							currentCount.put(rclDataItem.getReqType().toString(), currentCount.get(rclDataItem.getReqType().toString()) + 1);
+						} else {
+							currentCount.put(rclDataItem.getReqType().toString(), 1);
+						}
+						visitedRclItems.add(rclDataItem);
+		
+					} else if (!counts.containsKey(key.toString())) {
+						// this dataType was not found before, adding it
+						Map<String, Integer> newMap = new HashMap<String, Integer>();
+						newMap.put(rclDataItem.getReqType().toString(), 1);
+						counts.put(key.toString(), newMap);
+		
+						visitedRclItems.add(rclDataItem);
 					}
-	
-					if (currentCount.containsKey(rclDataItem.getReqType().toString())) {
-						currentCount.put(rclDataItem.getReqType().toString(), currentCount.get(rclDataItem.getReqType().toString()) + 1);
-					} else {
-						currentCount.put(rclDataItem.getReqType().toString(), 1);
-					}
-					visitedRclItems.add(rclDataItem);
-	
-				} else if (!counts.containsKey(key.toString())) {
-					// this dataType was not found before, adding it
-					Map<String, Integer> newMap = new HashMap<String, Integer>();
-					newMap.put(rclDataItem.getReqType().toString(), 1);
-					counts.put(key.toString(), newMap);
-	
-					visitedRclItems.add(rclDataItem);
 				}
 			}
 		}
