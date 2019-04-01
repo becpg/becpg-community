@@ -197,7 +197,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 		if(product.getReqCtrlList()!=null){
 			for (ReqCtrlListDataItem rclDataItem : product.getReqCtrlList()) {
 				RequirementDataType key = rclDataItem.getReqDataType();
-				if(key!=null) {
+				if(key!=null && rclDataItem.getReqType()!=null) {
 					// make sure we don't put duplicates rclDataItems
 					if (counts.containsKey(key.toString()) && !visitedRclItems.contains(rclDataItem)) {
 						Map<String, Integer> currentCount = counts.get(key.toString());
