@@ -141,7 +141,7 @@ function getConvertedCapacityInUsUnit (qty, unit, isVolume) {
     </list-property>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="452">
-            <property name="FILELIST">TMP_STANDARD/ToCompress/ProductReport.xml</property>
+            <property name="FILELIST">becpg-plm/becpg-plm-core/src/main/resources/beCPG/birt/document/product/default/ProductReport_en_US.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -11106,8 +11106,8 @@ if( row["roundedDisplayValuePerServing_US_2013"] != null &amp;&amp; row["rounded
                                                 </text>
                                             </cell>
                                             <cell id="9597">
-                                                <method name="onRender"><![CDATA[if (this.getRowData().getColumnValue("regulDepthLevel_toUse") > 1 ) {
-	indent_docx (10.5, this.getRowData().getColumnValue("regulDepthLevel_toUse"), this, "right");
+                                                <method name="onRender"><![CDATA[if (this.getRowData().getColumnValue("regulDepthLevel_toUse_US_2013") > 1 ) {
+	indent_docx (10.5, this.getRowData().getColumnValue("regulDepthLevel_toUse_US_2013"), this, "right");
 }]]></method>
                                                 <property name="textAlign">right</property>
                                                 <text id="8558">
@@ -11136,8 +11136,8 @@ row["roundedGDAPerc_US_2013"] + "%";
                                                 </text>
                                             </cell>
                                             <cell id="9690">
-                                                <method name="onRender"><![CDATA[if (this.getRowData().getColumnValue("regulDepthLevel_toUse") > 1 ) {
-	indent_docx (10.5, this.getRowData().getColumnValue("regulDepthLevel_toUse"), this, "right");
+                                                <method name="onRender"><![CDATA[if (this.getRowData().getColumnValue("regulDepthLevel_toUse_US_2013") > 1 ) {
+	indent_docx (10.5, this.getRowData().getColumnValue("regulDepthLevel_toUse_US_2013"), this, "right");
 }]]></method>
                                                 <property name="textAlign">right</property>
                                                 <table id="9697">
@@ -13415,8 +13415,8 @@ if( row["roundedDisplayValuePerServing_CA_2013"] != null &amp;&amp; row["rounded
                                                 </text>
                                             </cell>
                                             <cell id="9549">
-                                                <method name="onRender"><![CDATA[if (this.getRowData().getColumnValue("regulDepthLevel_toUse") > 1 ) {
-	indent_docx (10.5, this.getRowData().getColumnValue("regulDepthLevel_toUse"), this, "right");
+                                                <method name="onRender"><![CDATA[if (this.getRowData().getColumnValue("regulDepthLevel_toUse_CA_2013") > 1 ) {
+	indent_docx (10.5, this.getRowData().getColumnValue("regulDepthLevel_toUse_CA_2013"), this, "right");
 }]]></method>
                                                 <property name="paddingLeft">1pt</property>
                                                 <property name="textAlign">right</property>
@@ -13446,8 +13446,8 @@ row["roundedGDAPerc_CA_2013"] + "%";
                                                 </text>
                                             </cell>
                                             <cell id="9681">
-                                                <method name="onRender"><![CDATA[if (this.getRowData().getColumnValue("regulDepthLevel_toUse") > 1 ) {
-	indent_docx (10.5, this.getRowData().getColumnValue("regulDepthLevel_toUse"), this, "right");
+                                                <method name="onRender"><![CDATA[if (this.getRowData().getColumnValue("regulDepthLevel_toUse_CA_2013") > 1 ) {
+	indent_docx (10.5, this.getRowData().getColumnValue("regulDepthLevel_toUse_CA_2013"), this, "right");
 }]]></method>
                                                 <property name="paddingLeft">1pt</property>
                                                 <property name="textAlign">right</property>
