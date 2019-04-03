@@ -37,6 +37,7 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
+import fr.becpg.repo.product.helper.SimulationCostHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
@@ -687,70 +688,14 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		}
 	}
 
-	private double getCompoListQty(ProductData productData, NodeRef componentNodeRef, double parentQty) {
-		double totalQty = 0d;
-		for (CompoListDataItem compoList : productData
-				.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
-			NodeRef productNodeRef = compoList.getProduct();
-
-			ProductData componentProduct = alfrescoRepositoryProductData.findOne(productNodeRef);
-
-			Double qty = FormulationHelper.getQtyForCost(compoList, 0d, componentProduct, keepProductUnit);
-			if (logger.isDebugEnabled()) {
-				logger.debug("Get component " + componentProduct.getName() + "qty: " + qty + " recipeQtyUsed " + productData.getRecipeQtyUsed());
-			}
-			if ((qty != null) && (productData.getRecipeQtyUsed() != null) && (productData.getRecipeQtyUsed() != 0d)) {
-				qty = (parentQty * qty) / productData.getRecipeQtyUsed();
-
-				if (productNodeRef.equals(componentNodeRef)) {
-					totalQty += qty;
-				} else {
-					totalQty += getCompoListQty(componentProduct, componentNodeRef, qty);
-				}
-			}
-		}
-		return totalQty;
-	}
-
-	private double getPackagingListQty(ProductData productData, NodeRef componentNodeRef, int palletBoxesPerPallet) {
-		double totalQty = 0d;
-		if (productData.hasPackagingListEl()) {
-			for (PackagingListDataItem packList : productData
-					.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
-		
-				ProductData subProductData = (ProductData) alfrescoRepository.findOne(packList.getProduct());
-				
-				Double qty = FormulationHelper.getQtyForCost(productData, packList, subProductData);
-				if (logger.isDebugEnabled()) {
-					logger.debug("Get component " + subProductData.getName() + "qty: " + qty);
-				}
-				if (subProductData.getNodeRef().equals(componentNodeRef)) {
-					if (PackagingLevel.Tertiary.equals(packList.getPkgLevel())) {
-						totalQty = qty / palletBoxesPerPallet;
-					} else {
-						totalQty += qty;
-					}
-					break;
-				} else if (subProductData instanceof PackagingKitData) {
-					totalQty = qty * getPackagingListQty(subProductData, componentNodeRef,((PackagingKitData)subProductData).getPalletBoxesPerPallet());
-				}
-			}
-		}
-		return totalQty;
-	}
-
 	private void calculateSimulationCosts(ProductData formulatedProduct) {
 		Double netQty = FormulationHelper.getNetQtyForCost(formulatedProduct);
 
 		for (CostListDataItem c : formulatedProduct.getCostList()) {
 			if ((c.getComponentNodeRef() != null) && (c.getParent() != null)) {
-				Double qtyComponent;
 				ProductData componentData = alfrescoRepositoryProductData.findOne(c.getComponentNodeRef());
-				if (componentData instanceof PackagingMaterialData) {
-					qtyComponent = getPackagingListQty(formulatedProduct, c.getComponentNodeRef(), 1);
-				} else {
-					qtyComponent = getCompoListQty(formulatedProduct, c.getComponentNodeRef(), formulatedProduct.getRecipeQtyUsed());
-				}
+				Double qtyComponent = SimulationCostHelper.getComponentQuantity(formulatedProduct, componentData );
+				
 				
 				if (c.getSimulatedValue() != null && c.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM)) {
 					c.getAspectsToRemove().add(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
