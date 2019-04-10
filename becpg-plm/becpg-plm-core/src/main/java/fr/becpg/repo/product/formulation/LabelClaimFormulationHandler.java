@@ -78,6 +78,8 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 		if ((productData.getLabelClaimList() != null) && !productData.getLabelClaimList().isEmpty()) {
 			if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 
+				Set<NodeRef> resetedClaim = new HashSet<>();
+				
 				productData.getLabelClaimList().forEach(l -> {
 
 					l.getMissingLabelClaims().clear();
@@ -90,10 +92,8 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 						l.setIsManual(true);
 					}
 
-					if ((l.getIsManual() == null) || !l.getIsManual()) {
-						l.setLabelClaimValue(null);
-					}
 				});
+				
 
 				Set<NodeRef> visitedProducts = new HashSet<>();
 
@@ -102,9 +102,10 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 					NodeRef part = compoItem.getProduct();
 					if (!visitedProducts.contains(part) && (compoItem.getQtySubFormula() != null) && (compoItem.getQtySubFormula() > 0)) {
 						ProductData partProduct = alfrescoRepository.findOne(part);
-						if (partProduct.getLabelClaimList() != null) {
+						if (partProduct.getLabelClaimList() != null ) {
 							for (LabelClaimListDataItem labelClaim : partProduct.getLabelClaimList()) {
-								visitPart(productData, partProduct, labelClaim);
+
+								visitPart(productData, partProduct, labelClaim,resetedClaim);
 
 							}
 						}
@@ -120,7 +121,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 		return true;
 	}
 
-	private void visitPart(ProductData productData, ProductData partProduct, LabelClaimListDataItem subLabelClaimItem) {
+	private void visitPart(ProductData productData, ProductData partProduct, LabelClaimListDataItem subLabelClaimItem, Set<NodeRef> resetedClaim) {
 		for (LabelClaimListDataItem labelClaimItem : productData.getLabelClaimList()) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Visiting labelClaim " + extractName(labelClaimItem.getLabelClaim()) + " isManual: " + labelClaimItem.getIsManual()
@@ -129,6 +130,16 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 			if (((labelClaimItem.getIsManual() == null) || !labelClaimItem.getIsManual())
 					&& ((labelClaimItem.getLabelClaim() != null) && labelClaimItem.getLabelClaim().equals(subLabelClaimItem.getLabelClaim()))) {
 
+				if(!resetedClaim.contains(labelClaimItem.getLabelClaim())) {
+					
+					if ((labelClaimItem.getIsManual() == null) || !labelClaimItem.getIsManual()) {
+						labelClaimItem.setLabelClaimValue(null);
+					}
+					
+					resetedClaim.add(labelClaimItem.getLabelClaim());
+				}
+				
+				
 				if (subLabelClaimItem.getLabelClaimValue() != null) {
 					switch (subLabelClaimItem.getLabelClaimValue()) {
 					case LabelClaimListDataItem.VALUE_TRUE:
