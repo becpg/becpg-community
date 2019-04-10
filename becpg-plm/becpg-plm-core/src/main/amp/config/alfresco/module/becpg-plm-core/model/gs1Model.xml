@@ -33,112 +33,61 @@
 	</namespaces>
 	<data-types />
 	<constraints>
-		<constraint name="gs1:packagingTypeCodeConstraint" type="LIST">
-			<parameter name="allowedValues">
+		<constraint name="gs1:packagingTypeCodeConstraint" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
 				<list>
-					<value></value>
-					<value>BC</value>
-					<value>BGE</value>
-					<value>BR</value>
-					<value>BRI</value>
-					<value>BU</value>
-					<value>DJ</value>
-					<value>DP</value>
-					<value>DPE</value>
-					<value>FP</value>
-					<value>ICA</value>
-					<value>OPE</value>
-					<value>PAE</value>
-					<value>PG</value>
-					<value>PLP</value>
-					<value>RCA</value>
-					<value>SH</value>
-					<value>STL</value>
-					<value>TAE</value>
-					<value>TRE</value>
-					<value>UUE</value>
-					<value>UVE</value>
-					<value>X11</value>
-					<value>X2</value>
-					<value>AE</value>
-					<value>AT</value>
-					<value>BAG</value>
-					<value>BBL</value>
-					<value>BDL</value>
-					<value>BME</value>
-					<value>BOT</value>
-					<value>BOX</value>
-					<value>BXT</value>
-					<value>CAG</value>
-					<value>CAN</value>
-					<value>CAS</value>
-					<value>CG</value>
-					<value>CNT</value>
-					<value>CRT</value>
-					<value>CTN</value>
-					<value>CYL</value>
-					<value>DRM</value>
-					<value>ENV</value>
-					<value>FSK</value>
-					<value>HPR</value>
-					<value>HRB</value>
-					<value>JAR</value>
-					<value>PA</value>
-					<value>PKG</value>
-					<value>PLT</value>
-					<value>PO</value>
-					<value>PUN</value>
-					<value>REL</value>
-					<value>ROL</value>
-					<value>SAK</value>
-					<value>SLP</value>
-					<value>SRW</value>
-					<value>TBE</value>
-					<value>TNK</value>
-					<value>TRY</value>
-					<value>TUB</value>
-					<value>UNP</value>
-					<value>UVQ</value>
-					<value>VP</value>
+					<value>/System/Lists/bcpg:entityLists/PackagingTypeCodes</value>
 				</list>
 			</parameter>
-			<parameter name="caseSensitive">
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>bcpg:lvValue</value>
+			</parameter>
+			<parameter name="addEmptyValue">
 				<value>true</value>
 			</parameter>
 		</constraint>
-		<constraint name="gs1:palletTypeCodeConstraint" type="LIST">
-			<parameter name="allowedValues">
+		
+		<constraint name="gs1:palletTypeCodeConstraint" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
 				<list>
-					<value></value>
-					<value>9</value>
-					<value>10</value>
-					<value>11</value>
-					<value>12</value>
-					<value>13</value>
-					<value>14</value>
-					<value>15</value>
-					<value>16</value>
-					<value>17</value>
-					<value>18</value>
-					<value>19</value>
-					<value>20</value>
-					<value>21</value>
-					<value>22</value>
-					<value>23</value>
-					<value>24</value>
-					<value>25</value>
-					<value>CHB</value>
-					<value>CHC</value>
-					<value>X9</value>
+					<value>/System/Lists/bcpg:entityLists/PalletTypeCodes</value>
 				</list>
 			</parameter>
-			<parameter name="caseSensitive">
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>bcpg:lvValue</value>
+			</parameter>
+			<parameter name="addEmptyValue">
 				<value>true</value>
 			</parameter>
 		</constraint>
+		
+		
+	<constraint name="gs1:platformTermsAndConditionsCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/Lists/bcpg:entityLists/PlatformTermsAndConditionsCodes</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>bcpg:lvValue</value>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
+		</constraint>
+				
+		
 	</constraints>
 	<aspects>
-	
 	
 	
 		<aspect name="gs1:measuresAspect">
@@ -356,6 +305,9 @@
 			<overrides />
 			<mandatory-aspects />
 		</aspect>
+		
+		
+		
 		<aspect name="gs1:packagingAspect">
 			<properties>
 			<property name="gs1:height">
@@ -484,6 +436,15 @@
 						<tokenised>TRUE</tokenised>
 					</index>
 				</property>
+				<property name="gs1:isTradeItemMarkedAsRecyclable">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
 				<property name="gs1:packagingTypeCode">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
@@ -508,6 +469,16 @@
 						<constraint ref="gs1:palletTypeCodeConstraint" />
 					</constraints>
 				</property>
+				
+				<property name="gs1:platformTermsAndConditionsCode">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="false"/>
+					<constraints>
+						<constraint ref="gs1:platformTermsAndConditionsCodes" />
+					</constraints>
+				</property>
+		
 			</properties>
 			<overrides />
 			<mandatory-aspects />

@@ -59,7 +59,7 @@
                                              </p>
                                              
                                              <p>Cordialement,<br />
-                                             Alfresco</p>
+                                             beCPG</p>
                                           </div>
                                        </td>
                                     </tr>

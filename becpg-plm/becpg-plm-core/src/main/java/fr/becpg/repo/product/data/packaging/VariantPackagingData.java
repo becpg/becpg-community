@@ -23,6 +23,7 @@ public class VariantPackagingData {
 	private Integer palletBoxesPerLastLayer;
 	private Double palletStackingMaxWeight;
 	private String palletTypeCode;
+	private String platformTermsAndConditionsCode;
 
 	private Float height;
 	private Float width;
@@ -228,6 +229,16 @@ public class VariantPackagingData {
 
 	public void setManualSecondary(boolean isManualSecondary) {
 		this.isManualSecondary = isManualSecondary;
+	}
+	
+	
+
+	public String getPlatformTermsAndConditionsCode() {
+		return platformTermsAndConditionsCode;
+	}
+
+	public void setPlatformTermsAndConditionsCode(String platformTermsAndConditionsCode) {
+		this.platformTermsAndConditionsCode = platformTermsAndConditionsCode;
 	}
 
 	public void addTarePrimary(BigDecimal value) {

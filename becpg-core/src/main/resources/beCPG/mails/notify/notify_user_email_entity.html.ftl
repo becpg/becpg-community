@@ -35,7 +35,7 @@
                                                 </td>
                                                 <td>
                                                    <div style="font-size: 22px; padding-bottom: 4px;">
-                                                      ${person.properties.firstName} <#if person.properties.lastName?exists> ${person.properties.lastName}</#if> has added a new content item, ${document.name}, in the ${document.siteShortName!""} site
+                                                      ${person.properties.firstName} <#if person.properties.lastName?exists> ${person.properties.lastName}</#if> has added new content, ${document.name}, in the ${document.siteShortName!""} site
                                                    </div>
                                                    <div style="font-size: 13px;">
                                                       ${date?datetime?string.full}
@@ -48,9 +48,9 @@
 
                                              <p>${person.properties.firstName}
                                              <#if person.properties.lastName?exists> ${person.properties.lastName}</#if>
-                                             has added a new content item, ${document.name}, in the ${document.siteShortName!""} site.
+                                             has added new content, ${document.name}, in the ${document.siteShortName!""} site.
 
-                                             <p>Click this link to view the item:<br />
+                                             <p>Click on this link to see the item:<br />
                                              <br />
                                              <#if document.hasAspect("bcpg:entityListsAspect")>
                                              	${document.shareUrl?replace("document-details", "entity-data-lists")}
@@ -60,7 +60,7 @@
                                              </p>
                                              
                                              <p>Sincerely,<br />
-                                             Alfresco</p>
+                                             beCPG</p>
                                           </div>
                                        </td>
                                     </tr>

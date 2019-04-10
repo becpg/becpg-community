@@ -207,7 +207,10 @@
 					<show id="gs1:width" for-mode="edit" />
 					<show id="gs1:depth" for-mode="edit" />
 					<show id="pack:tare" for-mode="edit" />
+					<show id="pack:tareUnit" for-mode="edit" />
 					<show id="gs1:weight" for-mode="edit" />
+					
+					
 					
 					<show id="gs1:secondaryHeight" for-mode="edit" />
 					<show id="gs1:secondaryWidth" for-mode="edit" />
@@ -231,26 +234,31 @@
 					<show id="gs1:tertiaryNetWeight" for-mode="edit" />
 					<show id="gs1:tertiaryWeight" for-mode="edit" />
 					<show id="gs1:palletTypeCode" for-mode="edit" />
+					<show id="gs1:platformTermsAndConditionsCode" for-mode="edit" />
 					
-					<show id="gs1:isTradeItemABaseUnit" for-mode="edit" />
+					<!-- <show id="gs1:isTradeItemABaseUnit" for-mode="edit" />
 					<show id="gs1:isTradeItemAConsumerUnit" for-mode="edit" />
 					<show id="gs1:isTradeItemADespatchUnit" for-mode="edit" />
 					<show id="gs1:isTradeItemAnInvoiceUnit" for-mode="edit" />
-					<show id="gs1:isTradeItemAnOrderableUnit" for-mode="edit" />
+					<show id="gs1:isTradeItemAnOrderableUnit" for-mode="edit" /> 
+					<show id="gs1:isTradeItemAReturnableItem" for-mode="edit" />
+					-->
 					<show id="gs1:isTradeItemAVariableUnit" for-mode="edit" />
 					<show id="gs1:isTradeItemAFullDisplayStand" for-mode="edit" />
-					<show id="gs1:isTradeItemAReturnableItem" for-mode="edit" />
-					<show id="gs1:isTradeItemAService" for-mode="edit" />
+				<!-- 	<show id="gs1:isTradeItemAService" for-mode="edit" /> 
+					<show id="gs1:isTradeItemAModel" for-mode="edit" /> -->
 					<show id="gs1:isTradeItemABulkItem" for-mode="edit" />
-					<show id="gs1:isTradeItemAModel" for-mode="edit" />
 					<show id="gs1:isTradeItemADivisibleItem" for-mode="edit" />
 					<show id="gs1:isTradeItemAPromotionalItem" for-mode="edit" />
 					<show id="gs1:isTradeItemACutToOrderItem" for-mode="edit" />
+					<show id="gs1:isTradeItemMarkedAsRecyclable" for-mode="edit" />
+					<show id="gs1:isPackagingMarkedReturnable" for-mode="edit" />
+					
 					<show id="gs1:effectiveDate" for-mode="edit" />
 					<show id="gs1:startAvailabilityDateTime" for-mode="edit" />
 					<show id="gs1:lastChangeDateTime" for-mode="edit" />
 					<show id="gs1:publicationDate" for-mode="edit" />
-					<show id="gs1:isPackagingMarkedReturnable" for-mode="edit" />
+				
 
 
 				</field-visibility>
@@ -603,12 +611,11 @@
 							<control-param name="unit">mm</control-param>
 						</control>
 					</field>
-					<field id="pack:tare" set="primaryPackaging" read-only="true" >
-						<control
-							template="/org/alfresco/components/form/controls/number-unit.ftl">
-							<control-param name="unit">g</control-param>
-						</control>
-					</field>
+					<field id="pack:tare" set="primaryPackaging" read-only="true" ></field>
+					
+					<field id="pack:tareUnit" set="primaryPackaging" read-only="true" ></field>
+					
+					
 					<field id="gs1:weight" help-id="becpg.forms.help.gs1.weight" set="primaryPackaging" read-only="true" >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
@@ -694,6 +701,7 @@
 					</field>
 					
 					<field id="gs1:palletTypeCode" help-id="becpg.forms.help.gs1.palletTypeCode" set="tertiaryPackaging" />
+					<field id="gs1:platformTermsAndConditionsCode" help-id="becpg.forms.help.gs1.platformTermsAndConditionsCode" set="tertiaryPackaging" />
  				
  					<field id="gs1:isTradeItemABaseUnit" help-id="becpg.forms.help.gs1.isTradeItemABaseUnit" set="indicateursPanel" />
  					<field id="gs1:isTradeItemAConsumerUnit" help-id="becpg.forms.help.gs1.isTradeItemAConsumerUnit" set="indicateursPanel" />
@@ -706,15 +714,17 @@
 					<field id="gs1:isTradeItemAnOrderableUnit" help-id="becpg.forms.help.gs1.isTradeItemAnOrderableUnit" set="indicateursPanel" />
 					<field id="gs1:isTradeItemAVariableUnit" help-id="becpg.forms.help.gs1.isTradeItemAVariableUnit" set="indicateursPanel" />
 					<field id="gs1:isTradeItemAFullDisplayStand" help-id="becpg.forms.help.gs1.isTradeItemAFullDisplayStand" set="indicateursPanel" />
-					<field id="gs1:isTradeItemAReturnableItem" help-id="becpg.forms.help.gs1.isTradeItemAReturnableItem" set="indicateursPanel" />
+					
 					<field id="gs1:isTradeItemAService" help-id="becpg.forms.help.gs1.isTradeItemAService" set="indicateursPanel" />
 					<field id="gs1:isTradeItemABulkItem" help-id="becpg.forms.help.gs1.isTradeItemABulkItem" set="indicateursPanel" />
 					<field id="gs1:isTradeItemAModel" help-id="becpg.forms.help.gs1.isTradeItemAModel" set="indicateursPanel" />
 					<field id="gs1:isTradeItemADivisibleItem" help-id="becpg.forms.help.gs1.isTradeItemADivisibleItem" set="indicateursPanel" />
 					<field id="gs1:isTradeItemAPromotionalItem" help-id="becpg.forms.help.gs1.isTradeItemAPromotionalItem" set="indicateursPanel" />
 					<field id="gs1:isTradeItemACutToOrderItem" help-id="becpg.forms.help.gs1.isTradeItemACutToOrderItem" set="indicateursPanel" />
-					<field id="gs1:isPackagingMarkedReturnable" help-id="becpg.forms.help.gs1.isPackagingMarkedReturnable" set="indicateursPanel" />
 
+
+					<field id="gs1:isTradeItemMarkedAsRecyclable" help-id="becpg.forms.help.gs1.isTradeItemMarkedAsRecyclable" set="indicateursPanel" />
+					<field id="gs1:isPackagingMarkedReturnable" help-id="becpg.forms.help.gs1.isPackagingMarkedReturnable" set="indicateursPanel" />
 
 					<field id="gs1:effectiveDate" help-id="becpg.forms.help.gs1.effectiveDate"  set="datesPanel" />
 					<field id="gs1:startAvailabilityDateTime" help-id="becpg.forms.help.gs1.startAvailabilityDateTime"  set="datesPanel" />
@@ -727,7 +737,7 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="bcpg:legalName" />
-					<show id="cm:description" />
+					<show id="bcpg:erpCode" force="true"/>
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:netWeight" force="true" />
@@ -922,6 +932,7 @@
 					<show id="bcpg:customsCodeRef"  />
 
 					<show id="bcpg:clients" force="true" />
+					<show id="bcpg:plants" force="true" />
 					<show id="mpm:plResource" force="true" />
 					<show id="bcpg:compoListProduct" force="true" />
 					<show id="bcpg:packagingListProduct" force="true" />
@@ -1023,6 +1034,11 @@
 					</field>
 					
 					<field id="bcpg:clients" set="2-col-product-criteria">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					
+					<field id="bcpg:plants" set="2-col-product-criteria">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
@@ -1427,7 +1443,7 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="bcpg:legalName" />
-					<show id="cm:description" force="true" />
+					<show id="bcpg:erpCode" force="true"/>
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:netWeight" force="true" />
@@ -1733,6 +1749,8 @@
 					<show id="pack:palletNumberOnGround" />
 					<show id="pack:palletStackingMaxWeight" />
 					<show id="gs1:palletTypeCode"  />
+					<show id="gs1:platformTermsAndConditionsCode"  />
+		
 			
 					<!-- tags and categories -->
 					<show id="cm:taggable" />
@@ -1833,6 +1851,8 @@
 						</control>
 					</field>					
 					<field id="gs1:palletTypeCode" help-id="becpg.forms.help.gs1.palletTypeCode" set="pallet" />
+					<field id="gs1:platformTermsAndConditionsCode" help-id="becpg.forms.help.gs1.platformTermsAndConditionsCode" set="pallet" />
+					
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
 						<control>
@@ -2017,8 +2037,8 @@
 			<form id="formulation">
 				<field-visibility>
 					<show id="cm:name" />
-					<show id="cm:title" force="true" />
-					<show id="cm:description" force="true" />
+					<show id="bcpg:legalName"  />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:productUnit" />
 				</field-visibility>
 			</form>
@@ -2050,6 +2070,7 @@
 					<show id="pack:palletNumberOnGround" force="true" />
 					<show id="pack:palletStackingMaxWeight" force="true"/>
 					<show id="gs1:palletTypeCode" force="true" />
+					<show id="gs1:platformTermsAndConditionsCode" force="true" />
 					
 					<!-- Tare -->
 					<show id="pack:tare" force="true" />
@@ -2816,8 +2837,8 @@
 			<form id="formulation">
 				<field-visibility>
 					<show id="cm:name" />
-					<show id="cm:title" force="true" />
-					<show id="cm:description" force="true" />
+					<show id="bcpg:legalName" force="true" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:productUnit" />
 				</field-visibility>
 			</form>
@@ -3477,7 +3498,7 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="bcpg:legalName" />
-					<show id="cm:description" />
+					<show id="bcpg:erpCode" force="true" />
 				<!-- 	<show id="bcpg:productQty" /> -->
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:netWeight" force="true" />
@@ -3765,7 +3786,7 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="bcpg:legalName" />
-					<show id="cm:description" />
+					<show id="bcpg:erpCode" force="true" />
 					<!-- <show id="bcpg:productQty" /> -->
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:netWeight" force="true" />
@@ -4302,7 +4323,8 @@
 			<form id="formulation">
 				<field-visibility>
 					<show id="cm:name" />
-					<show id="cm:description" />
+					<show id="bcpg:legalName" />
+					<show id="bcpg:erpCode" force="true"/>
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:netWeight" force="true" />
@@ -4849,7 +4871,8 @@
 			<form id="formulation">
 				<field-visibility>
 					<show id="cm:name" />
-					<show id="cm:description" />
+					<show id="bcpg:legalName" />
+					<show id="bcpg:erpCode" force="true"/>
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:netWeight" force="true" />
@@ -6423,6 +6446,8 @@
 					<show id="cm:name" />
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
+					<show id="cm:from" force="true" />
+					<show id="cm:to" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="cm:description">
@@ -6444,6 +6469,8 @@
 					<show id="cm:name" />
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
+					<show id="cm:from" force="true" />
+					<show id="cm:to" force="true" />
 				</field-visibility>
 
 				<appearance>
@@ -6468,6 +6495,8 @@
 					<show id="cm:name" />
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
+					<show id="cm:from" force="true" />
+					<show id="cm:to" force="true" />
 				</field-visibility>
 			</form>
 		</forms>

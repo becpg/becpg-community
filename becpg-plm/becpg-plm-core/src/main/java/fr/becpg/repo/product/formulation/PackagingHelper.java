@@ -172,6 +172,8 @@ public class PackagingHelper {
 		variantPackagingData.setPalletHeight((Integer) nodeService.getProperty(product, PackModel.PROP_PALLET_HEIGHT));
 		variantPackagingData.setPalletNumberOnGround((Integer) nodeService.getProperty(product, PackModel.PROP_PALLET_NUMBER_ON_GROUND));
 		variantPackagingData.setPalletTypeCode((String) nodeService.getProperty(product, GS1Model.PROP_PALLET_TYPE_CODE));
+		variantPackagingData.setPlatformTermsAndConditionsCode((String) nodeService.getProperty(product, GS1Model.PROP_PLATFORMTERMSANSCONDITION_CODE));
+		
 		variantPackagingData.setTertiaryWidth((Float) nodeService.getProperty(product, GS1Model.PROP_TERTIARY_WIDTH));
 		variantPackagingData.setTertiaryDepth((Float) nodeService.getProperty(product, GS1Model.PROP_TERTIARY_DEPTH));
 
