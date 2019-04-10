@@ -55,5 +55,6 @@ public interface GS1Model {
 
 	QName PROP_PALLET_TYPE_CODE  = QName.createQName(GS1_URI, "palletTypeCode");
 
+	QName PROP_PLATFORMTERMSANSCONDITION_CODE  = QName.createQName(GS1_URI, "platformTermsAndConditionsCode");
 
 }

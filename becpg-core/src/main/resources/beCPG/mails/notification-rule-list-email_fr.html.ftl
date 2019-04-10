@@ -50,21 +50,21 @@
                                              </tr>
                                           </table>
                                           <div style="font-size: 14px; margin: 12px 0px 24px 0px; padding-top: 10px; border-top: 1px solid #aaaaaa;">
-                                             <p>Hello,</p>
+                                             <p>Bonjour,</p>
                                              
                                              <p>
-                                             	Please find below the objects in question: 
+                                             	Veuillez trouver ci-dessous les objets concernés: 
                                               </p>
                                             <#if args.entities?size != 0>
                                              <table cellpadding="0" cellspacing="0" style="border:solid 1px black;padding: 0px;" >
                                                <tr style="background-color: #009dcc;">
-                                                 <th>Folder</th>
-                                                 <th class="becpg_cellBorderLeft">Object</th>
+                                                 <th>Dossier</th>
+                                                 <th class="becpg_cellBorderLeft">Objet</th>
                                                  <#if args.versions??>
-                                                 <th class="becpg_cellBorderLeft">Date of creation</th>
-                                                 <th class="becpg_cellBorderLeft">Version</th>
-                                                 <th class="becpg_cellBorderLeft">Creator</th>
-                                                 <th class="becpg_cellBorderLeft">Comment</th>
+                                                 <th class="becpg_cellBorderLeft">Date de création</th>
+                                                 <th class="becpg_cellBorderLeft">Verion</th>
+                                                 <th class="becpg_cellBorderLeft">Créateur</th>
+                                                 <th class="becpg_cellBorderLeft">Commentaire</th>
                                                  <#else>
                                                  <th class="becpg_cellBorderLeft">${args.dateField}</th>
                                                  </#if>
@@ -100,10 +100,10 @@
 												</#list>
                                              </table>
                                              <#else>
-                                             <p><b> No element was found<b></p>
+                                             <p><b> Aucun élément trouvé<b></p>
                                              </#if>
                                              
-                                             <p>Regards,<br/>
+                                             <p>Cordialement,<br/>
                                              beCPG</p>
                                              
                                           </div>
