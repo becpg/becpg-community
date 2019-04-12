@@ -10,6 +10,7 @@ function main()
 
       // Display name
       model.displayName = nodeMetadata.name;
+      model.downloadName = encodeURIComponent(nodeMetadata.name);
 
       // Modify
       model.modifierFirstName = nodeMetadata.modifier.firstName || "";

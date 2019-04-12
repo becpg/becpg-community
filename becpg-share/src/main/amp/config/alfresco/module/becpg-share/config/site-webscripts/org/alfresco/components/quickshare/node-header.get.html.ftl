@@ -39,7 +39,7 @@
                   <!-- Download Button -->
                   <span class="yui-button yui-link-button onDownloadDocumentClick">
                      <span class="first-child">
-                        <a href="${url.context}/proxy/alfresco-noauth/api/internal/shared/node/${shareId}/content/${displayName}?a=true" tabindex="0">${msg("button.download")}</a>
+                        <a href="${url.context}/proxy/alfresco-noauth/api/internal/shared/node/${shareId}/content/${downloadName}?a=true" tabindex="0">${msg("button.download")}</a>
                      </span>
                   </span>
                </div>
