@@ -78,7 +78,7 @@ public class BeCPGTestHelper {
 
 	}
 	
-	public static NodeRef createGroup(String groupName, String user){
+	public static NodeRef createGroup(String groupName, String... users){
 		
 		Set<String> zones = new HashSet<>();
 		zones.add(AuthorityService.ZONE_APP_DEFAULT);
@@ -89,7 +89,9 @@ public class BeCPGTestHelper {
 			logger.debug("create group: " + groupName);
 			RepoBaseTestCase.INSTANCE.authorityService.createAuthority(AuthorityType.GROUP, groupName, groupName, zones);
 			
-			RepoBaseTestCase.INSTANCE.authorityService.addAuthority(PermissionService.GROUP_PREFIX + groupName, user);
+			for(String user : users) {
+				RepoBaseTestCase.INSTANCE.authorityService.addAuthority(PermissionService.GROUP_PREFIX + groupName, user);
+			}
 		}
 		return RepoBaseTestCase.INSTANCE.authorityService.getAuthorityNodeRef(PermissionService.GROUP_PREFIX + groupName);
 	}
