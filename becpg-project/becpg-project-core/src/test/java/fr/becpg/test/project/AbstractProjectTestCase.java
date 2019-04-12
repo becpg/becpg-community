@@ -89,6 +89,7 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 	protected NodeRef userOne;
 	protected NodeRef userTwo;
 	protected NodeRef groupOne;
+	protected NodeRef groupTwo;
 
 	protected List<NodeRef> assigneesOne;
 	protected List<NodeRef> assigneesTwo;
@@ -215,6 +216,8 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 				userTwo = BeCPGTestHelper.createUser(BeCPGTestHelper.USER_TWO);
 
 				groupOne = BeCPGTestHelper.createGroup("groupOne", BeCPGTestHelper.USER_TWO);
+				
+				groupTwo = BeCPGTestHelper.createGroup("groupTwo", BeCPGTestHelper.USER_ONE, BeCPGTestHelper.USER_TWO);
 
 				assigneesOne = new ArrayList<>();
 				assigneesOne.add(userOne);
