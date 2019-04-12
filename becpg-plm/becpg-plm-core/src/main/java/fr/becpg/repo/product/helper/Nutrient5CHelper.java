@@ -83,6 +83,8 @@ public class Nutrient5CHelper {
 	 * @param category
 	 * @return
 	 */
+	
+
 	public static int compute5CScore(Double energyKj, Double satFat, Double totalFat, Double totalSugar, Double sodium, Double percFruitsAndVetgs,
 			Double nspFibre, Double aoacFibre, Double protein, String category) {
 
@@ -183,8 +185,8 @@ public class Nutrient5CHelper {
 			}
 			cScore += score;
 		}
-
-		if (!((aScore >= 11) && ((percFruitsAndVetgs != null) && (percFruitsAndVetgs <= 80d))
+		
+		if (!((aScore >= 11 && cScore!=5) && ((percFruitsAndVetgs != null) && (percFruitsAndVetgs <= 80d))
 				&& !NutrientCategory.Cheeses.equals(NutrientCategory.valueOf(category)))) {
 			if (protein != null) {
 				score = 5;
