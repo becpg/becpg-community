@@ -155,7 +155,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 				formulatedProduct.getProcessList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)).forEach(processItem -> {
 					NodeRef resource = processItem.getResource();
 					if ((resource != null)) {
-						visitPart(processItem, (ProductData) alfrescoRepository.findOne(resource), formulatedProduct, retainNodes, null, null, null);
+						visitPart(processItem, (ProductData) alfrescoRepository.findOne(resource), formulatedProduct, retainNodes, null, null, errors);
 					}
 				});
 			}
