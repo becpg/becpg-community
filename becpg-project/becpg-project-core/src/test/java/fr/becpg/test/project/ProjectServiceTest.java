@@ -3,13 +3,16 @@
  */
 package fr.becpg.test.project;
 
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -22,6 +25,7 @@ import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.cmr.workflow.WorkflowTask;
 import org.alfresco.service.cmr.workflow.WorkflowTaskQuery;
 import org.alfresco.service.cmr.workflow.WorkflowTaskState;
+import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
@@ -645,6 +649,76 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 			return null;
 		} , false, true);
 	}
+	
+	
+	@Test
+	public void testPooledWorkflowProperties() {
+
+		final NodeRef projectNodeRef = createProject(ProjectState.InProgress, new Date(), null);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+
+			// check workflow instance is active and workflow props
+			TaskListDataItem taskListDataItem = projectData.getTaskList().get(0);
+			String workflowInstanceId = projectData.getTaskList().get(0).getWorkflowInstance();
+			assertEquals(true, workflowService.getWorkflowById(workflowInstanceId).isActive());
+			checkWorkflowProperties(workflowInstanceId, taskListDataItem.getNodeRef(), "Pjt 1 - task1", taskListDataItem.getEnd(),
+					taskListDataItem.getResources());
+
+			
+			// modify WF props (duration and add a resource)
+			logger.info("modify WF props");
+			taskListDataItem.setTaskName("task4 modified");
+			taskListDataItem.setDuration(3);
+			taskListDataItem.getResources().clear();
+			taskListDataItem.getResources().add(groupTwo);
+			alfrescoRepository.save(projectData);
+			projectService.formulate(projectNodeRef);
+
+			WorkflowTask task =  getNextTaskForWorkflow(workflowInstanceId);
+			
+			Assert.assertNull(task.getProperties().get(ContentModel.PROP_OWNER));			
+			 
+			Map<QName,Serializable> taskProp = new HashMap<>();
+			
+			taskProp.put(ContentModel.PROP_OWNER, BeCPGTestHelper.USER_ONE);
+			
+			
+			workflowService.updateTask(task.getId(),taskProp , null, null);
+			
+			alfrescoRepository.save(projectData);
+			projectService.formulate(projectNodeRef);
+			
+		
+
+			
+			// check workflow props
+			projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+			TaskListDataItem taskListDataItemDB = projectData.getTaskList().get(0);
+			assertEquals(taskListDataItem.getTaskName(), taskListDataItemDB.getTaskName());
+			assertEquals(taskListDataItem.getDuration(), taskListDataItemDB.getDuration());
+			assertEquals(taskListDataItem.getResources(), taskListDataItemDB.getResources());
+			assertEquals(1, taskListDataItemDB.getResources().size());
+			
+			 task =  getNextTaskForWorkflow(workflowInstanceId);
+			 Assert.assertEquals( BeCPGTestHelper.USER_ONE,task.getProperties().get(ContentModel.PROP_OWNER));
+			
+			return null;
+		} , false, true);
+	}
+	
+	protected WorkflowTask getNextTaskForWorkflow(String workflowInstanceId) {
+		WorkflowTaskQuery taskQuery = new WorkflowTaskQuery();
+		taskQuery.setProcessId(workflowInstanceId);
+		taskQuery.setTaskState(WorkflowTaskState.IN_PROGRESS);
+
+		List<WorkflowTask> workflowTasks = workflowService.queryTasks(taskQuery, false);
+		assertEquals(1, workflowTasks.size());
+		return workflowTasks.get(0);
+	}
+	
 
 	private void checkWorkflowProperties(String workflowInstance, NodeRef taskListDataItemNodeRef, String workflowDescription, Date dueDate,
 			List<NodeRef> assignees) {
