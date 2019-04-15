@@ -252,6 +252,8 @@ public class ProjectHelper {
 				totalWork += duration;
 				if (TaskState.Completed.equals(p.getTaskState()) || TaskState.Cancelled.equals(p.getTaskState())) {
 					workDone += duration;
+				} else if(p.getSubProject()!=null && p.getCompletionPercent()!=null) {
+					workDone += (duration * p.getCompletionPercent() / 100);
 				}
 			}
 		}
