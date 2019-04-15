@@ -258,11 +258,14 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 
 				if (TaskState.InProgress.equals(nextTask.getTaskState())) {
 
-					Integer taskCompletionPercent = 0;
+					Integer taskCompletionPercent = null;
 					List<DeliverableListDataItem> nextDeliverables = ProjectHelper.getDeliverables(projectData, nextTask.getNodeRef());
 
 					for (DeliverableListDataItem nextDeliverable : nextDeliverables) {
-
+						if(taskCompletionPercent == null) {
+							taskCompletionPercent = 0;
+						}
+						
 						// Completed or Closed
 						if (nextDeliverable.getCompletionPercent()!=null && (DeliverableState.Completed.equals(nextDeliverable.getState())
 								|| DeliverableState.Closed.equals(nextDeliverable.getState()) 
@@ -301,7 +304,9 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 
 						if (!nextTask.getIsGroup()) {
 							logger.debug("set completion percent to value " + taskCompletionPercent + " - noderef: " + nextTask.getNodeRef());
-							nextTask.setCompletionPercent(taskCompletionPercent == 0 ? null : taskCompletionPercent);
+							if(taskCompletionPercent!=null) {
+								nextTask.setCompletionPercent(taskCompletionPercent == 0 ? null : taskCompletionPercent);
+							}
 						}
 
 						if ((nextTask.getResources() != null) && !nextTask.getResources().isEmpty()) {
