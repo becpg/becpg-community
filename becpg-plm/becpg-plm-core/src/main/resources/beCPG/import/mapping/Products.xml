@@ -322,4 +322,22 @@
 		</columns>
 	</mapping>
 	
+	<mapping name="bcpg:microbioList">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="cm:name" />
+		</nodeColumnKeys>
+		<dataListColumnKeys>
+			<dataListColumnKey attribute="bcpg:mblMicrobio" />
+		</dataListColumnKeys>
+		<columns>
+		</columns>
+	</mapping>
+	
+	<mapping name="bcpg:productMicrobioCriteria">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="cm:name" />
+		</nodeColumnKeys>
+		<columns />
+	</mapping>
+	
 </mappings>
