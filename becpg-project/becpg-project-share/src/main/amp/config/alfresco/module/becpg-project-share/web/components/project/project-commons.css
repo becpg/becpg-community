@@ -92,7 +92,6 @@
 
 .project-list  a.task-comments,
 .project-list  a.submit-task,
-.project-list  a.show-details,
 .project-list  a.project-comments{ 
 	display: none;
 }
@@ -109,7 +108,7 @@
 	vertical-align: bottom;
 }
 
-.project-list  span.project-title:hover  a.show-details {
+.project-list  span.project-title  a.show-details {
 	cursor: pointer;
 	padding-left: 16px;
 	margin-left: 5px;
