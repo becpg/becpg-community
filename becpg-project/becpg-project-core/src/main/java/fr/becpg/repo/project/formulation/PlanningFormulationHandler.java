@@ -117,18 +117,19 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 					tl.setStart(null);
 					tl.setEnd(null);
 				} else {
-
-					if (hasPlannedDuration(tl)) {
-						// in retro-planning or task has prev tasks
-						if (tl.getIsGroup() || !isPlanning || !ProjectHelper.getPrevTasks(projectData, tl).isEmpty()) {
-							ProjectHelper.setTaskStartDate(tl, null);
+					if(tl.getSubProject() == null) {
+						if (hasPlannedDuration(tl)) {
+							// in retro-planning or task has prev tasks
+							if (tl.getIsGroup() || !isPlanning || !ProjectHelper.getPrevTasks(projectData, tl).isEmpty()) {
+								ProjectHelper.setTaskStartDate(tl, null);
+							}
+							// in planning or task has next tasks
+							if (tl.getIsGroup() || isPlanning || !ProjectHelper.getNextTasks(projectData, tl.getNodeRef(),false).isEmpty()) {
+								ProjectHelper.setTaskEndDate(tl, null);
+							}
+						} else if ((tl.getStart() != null) && (tl.getEnd() != null)) {
+							tl.setDuration(ProjectHelper.calculateTaskDuration(tl.getStart(), tl.getEnd()));
 						}
-						// in planning or task has next tasks
-						if (tl.getIsGroup() || isPlanning || !ProjectHelper.getNextTasks(projectData, tl.getNodeRef(),false).isEmpty()) {
-							ProjectHelper.setTaskEndDate(tl, null);
-						}
-					} else if ((tl.getStart() != null) && (tl.getEnd() != null)) {
-						tl.setDuration(ProjectHelper.calculateTaskDuration(tl.getStart(), tl.getEnd()));
 					}
 				}
 			}
