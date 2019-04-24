@@ -351,8 +351,10 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 						for (Locale locale : locales) {
 
-							logger.debug("ill, locale: " + locale);
-
+							if(logger.isTraceEnabled()) {
+								logger.trace("ill, locale: " + locale);
+							}
+							
 							String grpName = "";
 							if (dataItem.getGrp() != null) {
 								MLText grpMLText = (MLText) mlNodeService.getProperty(dataItem.getGrp(), PLMModel.PROP_LABELINGRULELIST_LABEL);
@@ -382,8 +384,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 							cDATAElt = ingLabelingElt.addElement(PLMModel.PROP_ILL_MANUAL_VALUE.getLocalName());
 							cDATAElt.addCDATA(dataItem.getManualValue() != null ? dataItem.getManualValue().getValue(locale) : VALUE_NULL);
 
-							if (logger.isDebugEnabled()) {
-								logger.debug("ingLabelingElt: " + ingLabelingElt.asXML());
+							if(logger.isTraceEnabled()) {
+								logger.trace("ingLabelingElt: " + ingLabelingElt.asXML());
 							}
 						}
 					}
