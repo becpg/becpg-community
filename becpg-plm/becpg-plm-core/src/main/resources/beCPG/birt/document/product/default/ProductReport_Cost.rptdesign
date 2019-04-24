@@ -5804,7 +5804,7 @@ dataSetRow["packagingListPkgLevel"]
                     <list-property name="arguments">
                         <structure>
                             <property name="name">Expression</property>
-                            <expression name="value" type="javascript">row["costPerProduct"]*(1+(dataSetRow["productLossPerc"]!=null?dataSetRow["productLossPerc"]:0)/100)</expression>
+                            <expression name="value" type="javascript">row["costPerProduct"]</expression>
                         </structure>
                     </list-property>
                     <expression name="filterExpr" type="javascript">dataSetRow["depthLevel"]==1</expression>
@@ -5817,7 +5817,7 @@ dataSetRow["packagingListPkgLevel"]
                     <list-property name="arguments">
                         <structure>
                             <property name="name">Expression</property>
-                            <expression name="value" type="javascript">row["costPerKilo"]*(1+(dataSetRow["productLossPerc"]!=null?dataSetRow["productLossPerc"]:0)/100)</expression>
+                            <expression name="value" type="javascript">row["costPerKilo"]</expression>
                         </structure>
                     </list-property>
                     <expression name="filterExpr" type="javascript">dataSetRow["depthLevel"]==1</expression>
