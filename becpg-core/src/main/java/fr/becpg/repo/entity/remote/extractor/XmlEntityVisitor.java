@@ -40,6 +40,7 @@ import javax.xml.stream.XMLStreamWriter;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.rule.RuleModel;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
+import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
@@ -67,6 +68,7 @@ import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.model.ReportModel;
+import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.SiteHelper;
@@ -457,8 +459,17 @@ public class XmlEntityVisitor {
 								&& mlNodeService.getProperty(nodeRef, propertyDefinition.getName()) instanceof MLText) {
 							mlValues = (MLText) mlNodeService.getProperty(nodeRef, propertyDefinition.getName());							
 							visitMltextAttributes(xmlw, mlValues);
+						} else if (DataTypeDefinition.TEXT.equals(propertyDefinition.getDataType().getName())) {
+							if (!propertyDefinition.getConstraints().isEmpty()) {
+								for (ConstraintDefinition constraint : propertyDefinition.getConstraints()) {
+									if (constraint.getConstraint() instanceof DynListConstraint) {
+										mlValues = ((DynListConstraint) constraint.getConstraint()).getMLAwareAllowedValues().get(entry.getValue());
+										visitMltextAttributes(xmlw, mlValues);
+										break;
+									} 
+								}
+							}
 						}
-						
 						cachedAssocRef = null;
 						visitPropValue(entry.getValue(), xmlw);
 						cachedAssocRef = tmpCachedAssocRef;

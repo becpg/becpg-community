@@ -236,6 +236,18 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 			return false;
 		}
+		
+		public boolean multiPrefsEquals(String key, String defaultValue, String query) {
+			if ((defaultValue != null) && Arrays.asList(defaultValue.split(",")).contains(query)) {
+				return true;
+			}
+
+			if (preferences.containsKey(key) &&  Arrays.asList(preferences.get(key).split(",")).contains(query)) {
+				return true;
+			}
+
+			return false;
+		}
 
 		public boolean isPrefOn(String key, Boolean defaultValue) {
 			if (Boolean.TRUE.equals(defaultValue)) {
