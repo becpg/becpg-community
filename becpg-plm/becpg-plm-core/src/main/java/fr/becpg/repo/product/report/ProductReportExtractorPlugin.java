@@ -175,6 +175,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 		RepositoryEntity entity = alfrescoRepository.findOne(entityNodeRef);
 
+		QName type = nodeService.getType(entityNodeRef);
+		
 		Map<QName, List<? extends RepositoryEntity>> datalists = repositoryEntityDefReader.getDataLists(entity);
 
 		NodeRef defaultVariantNodeRef = null;
@@ -201,8 +203,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 						List<BeCPGDataObject> dataListItems = (List) datalists.get(dataListQName);
 
 						if ((dataListItems != null) && !dataListItems.isEmpty()) {
-							if (isExtractedProduct || context.prefsContains("componentDatalistsToExtract", componentDatalistsToExtract,
-									dataListQName.toPrefixString(namespaceService))) {
+							if (shouldExtractList(isExtractedProduct, context, type, dataListQName  )) {
 
 								Element dataListElt = dataListsElt.addElement(dataListQName.getLocalName() + "s");
 								addDataListState(dataListElt, listNodeRef);
@@ -233,33 +234,27 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 		if (productData != null) {
 			// lists extracted on entity and raw materials
-			if (isExtractedProduct || context.prefsContains("componentDatalistsToExtract", componentDatalistsToExtract,
-					PLMModel.TYPE_ORGANOLIST.toPrefixString(namespaceService))) {
+			if (shouldExtractList(isExtractedProduct, context,type, PLMModel.TYPE_ORGANOLIST)) {
 				loadOrganoLists(productData, dataListsElt, context);
 			}
 
-			if (isExtractedProduct || context.prefsContains("componentDatalistsToExtract", componentDatalistsToExtract,
-					PLMModel.TYPE_LABELCLAIMLIST.toPrefixString(namespaceService))) {
+			if (shouldExtractList(isExtractedProduct, context,type, PLMModel.TYPE_LABELCLAIMLIST)) {
 				loadLabelCLaimLists(productData, dataListsElt, context);
 			}
 
-			if (isExtractedProduct || context.prefsContains("componentDatalistsToExtract", componentDatalistsToExtract,
-					PLMModel.TYPE_INGLIST.toPrefixString(namespaceService))) {
+			if (shouldExtractList(isExtractedProduct,context,type, PLMModel.TYPE_INGLIST)) {
 				loadIngLists(productData, dataListsElt, context);
 			}
 
-			if (isExtractedProduct || context.prefsContains("componentDatalistsToExtract", componentDatalistsToExtract,
-					PLMModel.TYPE_NUTLIST.toPrefixString(namespaceService))) {
+			if (shouldExtractList(isExtractedProduct, context,type, PLMModel.TYPE_NUTLIST)) {
 				loadNutLists(productData, dataListsElt, context);
 			}
 
-			if (!isExtractedProduct && context.prefsContains("componentDatalistsToExtract", componentDatalistsToExtract,
-					PLMModel.TYPE_DYNAMICCHARACTLIST.toPrefixString(namespaceService))) {
+			if (!isExtractedProduct && shouldExtractList(isExtractedProduct, context,type, PLMModel.TYPE_DYNAMICCHARACTLIST) ) {
 				loadDynamicCharactList(productData.getCompoListView().getDynamicCharactList(), dataListsElt);
 			}
 
-			if (isExtractedProduct || context.prefsContains("componentDatalistsToExtract", componentDatalistsToExtract,
-					PLMModel.TYPE_MICROBIOLIST.toPrefixString(namespaceService))) {
+			if (shouldExtractList(isExtractedProduct,context,type, PLMModel.TYPE_MICROBIOLIST)) {
 				// MicrobioList
 				List<MicrobioListDataItem> microbioList = null;
 				NodeRef productMicrobioCriteriaNodeRef = null;
@@ -291,8 +286,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				}
 			}
 
-			if (isExtractedProduct || context.prefsContains("componentDatalistsToExtract", componentDatalistsToExtract,
-					PLMModel.TYPE_ALLERGENLIST.toPrefixString(namespaceService))) {
+			if (shouldExtractList(isExtractedProduct,context,type, PLMModel.TYPE_ALLERGENLIST)) {
 
 				loadAllergenLists(productData, dataListsElt, context);
 			}
@@ -301,16 +295,14 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				loadCompoList(productData, dataListsElt, context);
 			}
 
-			if (isExtractedProduct || context.prefsContains("componentDatalistsToExtract", componentDatalistsToExtract,
-					PLMModel.TYPE_PACKAGINGLIST.toPrefixString(namespaceService))) {
+			if (shouldExtractList(isExtractedProduct,context,type, PLMModel.TYPE_PACKAGINGLIST)) {
 
 				// packList
 				loadPackagingList(productData, dataListsElt, defaultVariantNodeRef, context, isExtractedProduct);
 
 			}
 
-			if (isExtractedProduct || context.prefsContains("componentDatalistsToExtract", componentDatalistsToExtract,
-					MPMModel.TYPE_PROCESSLIST.toPrefixString(namespaceService))) {
+			if (shouldExtractList(isExtractedProduct,context,type, MPMModel.TYPE_PROCESSLIST)) {
 
 				// processList
 				loadProcessList(productData, dataListsElt, context, isExtractedProduct);
@@ -328,8 +320,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				extractRawMaterials(productData, dataListsElt, context);
 			}
 
-			if (isExtractedProduct || context.prefsContains("componentDatalistsToExtract", componentDatalistsToExtract,
-					PLMModel.TYPE_INGLABELINGLIST.toPrefixString(namespaceService))) {
+			if ( shouldExtractList(isExtractedProduct, context,type, PLMModel.TYPE_INGLABELINGLIST)) {
 				// IngLabelingList
 				if (productData.getLabelingListView().getIngLabelingList() != null
 						&& !productData.getLabelingListView().getIngLabelingList().isEmpty()) {
@@ -351,8 +342,10 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 						for (Locale locale : locales) {
 
-							logger.debug("ill, locale: " + locale);
-
+							if(logger.isTraceEnabled()) {
+								logger.trace("ill, locale: " + locale);
+							}
+							
 							String grpName = "";
 							if (dataItem.getGrp() != null) {
 								MLText grpMLText = (MLText) mlNodeService.getProperty(dataItem.getGrp(), PLMModel.PROP_LABELINGRULELIST_LABEL);
@@ -382,8 +375,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 							cDATAElt = ingLabelingElt.addElement(PLMModel.PROP_ILL_MANUAL_VALUE.getLocalName());
 							cDATAElt.addCDATA(dataItem.getManualValue() != null ? dataItem.getManualValue().getValue(locale) : VALUE_NULL);
 
-							if (logger.isDebugEnabled()) {
-								logger.debug("ingLabelingElt: " + ingLabelingElt.asXML());
+							if(logger.isTraceEnabled()) {
+								logger.trace("ingLabelingElt: " + ingLabelingElt.asXML());
 							}
 						}
 					}
@@ -393,6 +386,19 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 		}
 
+	}
+
+	private boolean shouldExtractList(boolean isExtractedProduct, DefaultExtractorContext context, QName type, QName dataListQName) {
+		if(isExtractedProduct) {
+			if(context.isNotEmptyPrefs("entityDatalistsToExtract", null) && !context.prefsContains("lists", null, dataListQName.toPrefixString(namespaceService))) {
+				return false;
+			}
+			return true;
+		}
+		
+		return context.multiPrefsEquals("componentDatalistsToExtract", componentDatalistsToExtract,
+				dataListQName.toPrefixString(namespaceService)) || context.multiPrefsEquals("componentDatalistsToExtract", componentDatalistsToExtract,
+						dataListQName.toPrefixString(namespaceService)+"|"+type.toPrefixString(namespaceService));
 	}
 
 	private boolean isAllergenDisabledForLocal(NodeRef allergen) {
@@ -595,6 +601,11 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	private void loadPackagingListItemForCompo(NodeRef entityNodeRef, CompoListDataItem compoListItem, ProductData productData, Element packagingListElt, int level,
 			double qty, double qtyForCost, double parentLossRatio, DefaultExtractorContext context, NodeRef defaultVariantNodeRef,
 			VariantPackagingData defaultVariantPackagingData) {
+		
+		if(level > 20) {
+			//Avoid infinite loop
+			return;
+		}
 
 		if (productData.hasPackagingListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 
@@ -662,6 +673,11 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	private void loadProcessListItemForCompo(NodeRef entityNodeRef, CompoListDataItem dataItem, ProductData productData, Element processListElt, int level, double qty,
 			double qtyForCost, double parentLossRatio, DefaultExtractorContext context) {
+		
+		if(level > 20) {
+			//Avoid infinite loop
+			return;
+		}
 
 		if (productData.hasProcessListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 			loadProcessListItem(entityNodeRef, dataItem, productData, processListElt, level, qty, qtyForCost, context);
@@ -702,6 +718,11 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	private void loadProcessListItem(NodeRef entityNodeRef, CompositionDataItem dataItem, ProductData productData, Element processListElt, int level, Double qty,
 			Double qtyForCost, DefaultExtractorContext context) {
 
+		if(level > 20) {
+			//Avoid infinite loop
+			return;
+		}
+		
 		Element partElt = processListElt.addElement(MPMModel.TYPE_PROCESSLIST.getLocalName());
 		loadProductData(entityNodeRef, dataItem.getComponent(), partElt, context, CostType.Process);
 		loadDataListItemAttributes((BeCPGDataObject) dataItem, partElt, context);
@@ -764,6 +785,12 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	private void loadCompoListItem(NodeRef entityNodeRef, CompoListDataItem parentDataItem, CompoListDataItem dataItem, ProductData componentProductData, Element compoListElt,
 			int level, double qty, double qtyForCost, double parentLossRatio, DefaultExtractorContext context) {
+		
+		if(level > 20) {
+			//Avoid infinite loop
+			return;
+		}
+		
 		if ((dataItem.getProduct() != null) && nodeService.exists(dataItem.getProduct())) {
 
 			Element partElt = compoListElt.addElement(PLMModel.TYPE_COMPOLIST.getLocalName());

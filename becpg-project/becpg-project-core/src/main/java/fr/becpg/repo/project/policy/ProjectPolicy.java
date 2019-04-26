@@ -101,8 +101,10 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 				Date startDate = ProjectHelper.removeTime(new Date());
 				nodeService.setProperty(nodeRef, ProjectModel.PROP_PROJECT_START_DATE, startDate);
 				ProjectData projectData = alfrescoRepository.findOne(nodeRef);
-				for (TaskListDataItem taskListDataItem : ProjectHelper.getNextTasks(projectData, null,false)) {
-					nodeService.setProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_START, startDate);
+				for (TaskListDataItem taskListDataItem : ProjectHelper.getNextTasks(projectData, null)) {
+					if(taskListDataItem.getSubProject() == null) {
+						nodeService.setProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_START, startDate);
+					}
 				}
 				formulateProject = true;
 			} else if (afterState.equals(ProjectState.Cancelled.toString()) || afterState.equals(ProjectState.OnHold.toString())) {
