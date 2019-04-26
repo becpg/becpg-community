@@ -4,7 +4,13 @@ import java.io.IOException;
 import java.net.SocketException;
 import java.util.Locale;
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.alfresco.model.ContentModel;
+import org.alfresco.service.cmr.repository.ContentReader;
+import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
@@ -32,10 +38,17 @@ public class EntityReportWebScript extends AbstractEntityWebScript {
 	private static final String PARAM_TEMPLATE = "tplNodeRef";
 
 	private EntityReportService entityReportService;
+	
+	private ContentService contentService;
 
 	public void setEntityReportService(EntityReportService entityReportService) {
 		this.entityReportService = entityReportService;
 	}
+	
+	public void setContentService(ContentService contentService) {
+		this.contentService = contentService;
+	}
+
 
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
@@ -62,9 +75,11 @@ public class EntityReportWebScript extends AbstractEntityWebScript {
 			format = req.getParameter(PARAM_FORMAT);
 		}
 
-		if (format == null || format.isEmpty() || ReportFormat.isBirtSupported(format.toUpperCase())) {
+		
+		if (format == null || format.isEmpty() || !ReportFormat.isBirtSupported(format.toUpperCase())) {
 			format = ReportFormat.PDF.toString().toLowerCase();
 		}
+	
 
 		String mimetype = mimetypeService.getMimetype(format);
 		if (mimetype == null) {
@@ -81,13 +96,30 @@ public class EntityReportWebScript extends AbstractEntityWebScript {
 					.createFromJSON((String) nodeService.getProperty(templateNodeRef, ReportModel.PROP_REPORT_TEXT_PARAMETERS));
 		}
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("Get report for entity: " + entityNodeRef);
-		}
 
 		try {
-			entityReportService.generateReport(entityNodeRef, templateNodeRef, reportParameters, locale, ReportFormat.valueOf(format.toUpperCase()),
+
+			NodeRef documentNodeRef = entityReportService.getAssociatedDocumentNodeRef(entityNodeRef, templateNodeRef, reportParameters, locale, ReportFormat.valueOf(format.toUpperCase()));
+			if(documentNodeRef!=null) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Get existing report for entity: " + entityNodeRef+ " doc "+documentNodeRef);
+				}
+				 // get the content reader
+		        ContentReader reader = contentService.getReader(documentNodeRef, ContentModel.PROP_CONTENT);
+		        if (reader == null || !reader.exists())
+		        {
+		            throw new WebScriptException(HttpServletResponse.SC_NOT_FOUND, "Unable to locate content for node ref " + documentNodeRef );
+		        }
+
+				IOUtils.copy(reader.getContentInputStream(), resp.getOutputStream());
+				
+			} else {			
+				if (logger.isDebugEnabled()) {
+					logger.debug("Generate report for entity: " + entityNodeRef);
+				}
+				entityReportService.generateReport(entityNodeRef, templateNodeRef, reportParameters, locale, ReportFormat.valueOf(format.toUpperCase()),
 					resp.getOutputStream());
+			}
 		} catch (SocketException e1) {
 
 			// the client cut the connection - our mission was accomplished
