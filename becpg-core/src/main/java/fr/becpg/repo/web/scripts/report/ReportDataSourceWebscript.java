@@ -21,12 +21,14 @@ import java.io.IOException;
 import java.util.Locale;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.json.JSONObject;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.report.entity.EntityReportParameters;
 import fr.becpg.repo.report.entity.EntityReportService;
 
 public class ReportDataSourceWebscript extends AbstractWebScript {
@@ -65,9 +67,18 @@ public class ReportDataSourceWebscript extends AbstractWebScript {
 			locale = MLTextHelper.parseLocale(paramLocale);
 		}
 
+
+		EntityReportParameters reportParameters = null;
+		JSONObject json = (JSONObject) req.parseContent();
+		if (json != null) {
+			reportParameters = EntityReportParameters.createFromJSON(json.toString());
+		}
+		
+		
+		
 		res.setContentType("application/xml");
 		res.setContentEncoding("UTF-8");
-		res.getWriter().write(entityReportService.getXmlReportDataSource(entityNodeRef, locale));
+		res.getWriter().write(entityReportService.getXmlReportDataSource(entityNodeRef, locale, reportParameters));
 
 	}
 

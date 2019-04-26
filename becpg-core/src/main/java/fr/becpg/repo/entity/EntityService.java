@@ -69,4 +69,6 @@ public interface EntityService {
 
 	boolean changeEntityListStates(NodeRef entityNodeRef, EntityListState state);
 
+	NodeRef getDocumentsFolder(NodeRef entityNodeRef, boolean create);
+
 }
