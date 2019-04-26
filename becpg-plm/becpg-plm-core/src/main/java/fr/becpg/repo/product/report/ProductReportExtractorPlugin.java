@@ -602,6 +602,11 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	private void loadPackagingListItemForCompo(CompoListDataItem compoListItem, ProductData productData, Element packagingListElt, int level,
 			double qty, double qtyForCost, double parentLossRatio, DefaultExtractorContext context, NodeRef defaultVariantNodeRef,
 			VariantPackagingData defaultVariantPackagingData) {
+		
+		if(level > 20) {
+			//Avoid infinite loop
+			return;
+		}
 
 		if (productData.hasPackagingListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 
@@ -665,6 +670,11 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	private void loadProcessListItemForCompo(CompoListDataItem dataItem, ProductData productData, Element processListElt, int level, double qty,
 			double qtyForCost, double parentLossRatio, DefaultExtractorContext context) {
+		
+		if(level > 20) {
+			//Avoid infinite loop
+			return;
+		}
 
 		if (productData.hasProcessListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 			loadProcessListItem(dataItem, productData, processListElt, level, qty, qtyForCost, context);
@@ -705,6 +715,11 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	private void loadProcessListItem(CompositionDataItem dataItem, ProductData productData, Element processListElt, int level, Double qty,
 			Double qtyForCost, DefaultExtractorContext context) {
 
+		if(level > 20) {
+			//Avoid infinite loop
+			return;
+		}
+		
 		Element partElt = processListElt.addElement(MPMModel.TYPE_PROCESSLIST.getLocalName());
 		loadProductData(dataItem.getComponent(), partElt, context, CostType.Process);
 		loadDataListItemAttributes((BeCPGDataObject) dataItem, partElt, context);
@@ -767,6 +782,12 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	private void loadCompoListItem(CompoListDataItem parentDataItem, CompoListDataItem dataItem, ProductData productData, Element compoListElt,
 			int level, double qty, double qtyForCost, double parentLossRatio, DefaultExtractorContext context) {
+		
+		if(level > 20) {
+			//Avoid infinite loop
+			return;
+		}
+		
 		if ((dataItem.getProduct() != null) && nodeService.exists(dataItem.getProduct())) {
 
 			Element partElt = compoListElt.addElement(PLMModel.TYPE_COMPOLIST.getLocalName());
