@@ -9,6 +9,8 @@ import fr.becpg.repo.repository.RepositoryEntity;
 
 public interface EntityTplPlugin {
 
+	void beforeSynchronizeEntity(NodeRef entityNodeRef, NodeRef entityTplNodeRef);
+	
 	void synchronizeEntity(NodeRef entityNodeRef, NodeRef entityTplNodeRef);
 
 	boolean shouldSynchronizeDataList(RepositoryEntity entity, QName dataListQName);

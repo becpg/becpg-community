@@ -33,6 +33,12 @@ public class ProcessListEntityTplPlugin implements EntityTplPlugin {
 	public void synchronizeEntity(NodeRef entityNodeRef, NodeRef entityTplNodeRef) {
 
 	}
+	
+	@Override
+	public void beforeSynchronizeEntity(NodeRef projectNodeRef, NodeRef entityTplNodeRef) {
+		  // Default plugin for spring injection or it will break designer
+		   //Do nothing
+	}
 
 	@Override
 	public boolean shouldSynchronizeDataList(RepositoryEntity entity, QName dataListQName) {
