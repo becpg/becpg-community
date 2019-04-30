@@ -520,6 +520,11 @@ public class EntityTplServiceImpl implements EntityTplService {
 			try {
 				((RuleService) ruleService).disableRules(entityNodeRef);
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+				
+				for (EntityTplPlugin entityTplPlugin : entityTplPlugins) {
+					entityTplPlugin.beforeSynchronizeEntity(entityNodeRef, entityTplNodeRef);
+				}
+				
 				// copy files
 				entityService.copyFiles(entityTplNodeRef, entityNodeRef);
 
