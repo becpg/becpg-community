@@ -33,6 +33,22 @@ public class EntityTplProjectPlugin implements EntityTplPlugin {
 	@Autowired
 	private AssociationService associationService;
 
+
+	@Override
+	public void beforeSynchronizeEntity(NodeRef projectNodeRef, NodeRef entityTplNodeRef) {
+		if (ProjectModel.TYPE_PROJECT.equals(nodeService.getType(projectNodeRef))) {
+			NodeRef listContainerNodeRef = entityListDAO.getListContainer(projectNodeRef);
+			if (listContainerNodeRef != null) {
+				Integer completionPerc = (Integer) nodeService.getProperty(projectNodeRef, ProjectModel.PROP_COMPLETION_PERCENT);
+				if(completionPerc == null || completionPerc == 0) {
+					nodeService.deleteNode(listContainerNodeRef);
+				}	
+			}
+		}
+	}
+
+	
+	
 	@Override
 	public void synchronizeEntity(NodeRef projectNodeRef, NodeRef projectTplNodeRef) {
 
