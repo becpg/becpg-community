@@ -2225,13 +2225,11 @@
 					<title>First Name</title>
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="false" />
 				</property>
 				<property name="bcpg:contactListLastName">
 					<title>Last Name</title>
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="false" />
 				</property>
 				<property name="bcpg:contactListEmail">
 					<title>Email Address</title>

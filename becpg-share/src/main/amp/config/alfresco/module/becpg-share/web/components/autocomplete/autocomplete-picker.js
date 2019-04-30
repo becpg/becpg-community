@@ -237,12 +237,17 @@
 
                                     if (me.options.parentFieldHtmlId != null)
                                     {
-                                        var parentElem = Dom.get(me.options.parentFieldHtmlId + (me.isAssoc ? "-added"
-                                                : ""));
-                                        if (parentElem != null)
-                                        {
-                                            oParentField = parentElem.value;
+                                        var parentElem = null;
+                                        if(me.isAssoc){
+                                        	oParentField = me.getValuesFromId(me.options.parentFieldHtmlId+"-cntrl");
+                                        } else {
+                                        	parentElem  =  Dom.get(me.options.parentFieldHtmlId);
+                                        	 if (parentElem != null)
+                                             {
+                                                 oParentField = parentElem.value;
+                                             } 
                                         }
+                                       
                                     }
 
                                     if (oParentField != null)
@@ -766,9 +771,14 @@
 
                         getValues : function AutoCompletePicker_getValues()
                         {
-                            var me = this, inputAdded = Dom.get(me.controlId + "-added");
-                            inputOrig = Dom.get(me.controlId + "-orig"), inputRemoved = Dom
-                                    .get(me.controlId + "-removed"), orig = [], removed = [], ret = [];
+                            return this.getValuesFromId(this.controlId);
+                        },
+                        
+                        getValuesFromId : function AutoCompletePicker_getValues(controlId)
+                        {
+                            var inputAdded = Dom.get(controlId + "-added");
+                            inputOrig = Dom.get(controlId + "-orig"), inputRemoved = Dom
+                                    .get(controlId + "-removed"), orig = [], removed = [], ret = [];
 
                             if (inputAdded != null && inputAdded.value.length > 0)
                             {

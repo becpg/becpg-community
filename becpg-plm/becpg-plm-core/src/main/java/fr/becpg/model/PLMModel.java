@@ -167,7 +167,9 @@ public interface PLMModel {
 
 	// contactList
 	QName TYPE_CONTACTLIST = QName.createQName(BeCPGModel.BECPG_URI, "contactList");
-
+	QName PROP_CONTACT_LIST_FIRST_NAME = QName.createQName(BeCPGModel.BECPG_URI, "contactListFirstName");
+	QName PROP_CONTACT_LIST_LAST_NAME = QName.createQName(BeCPGModel.BECPG_URI, "contactListLastName");
+	
 	// labelClaimList
 	QName TYPE_LABELCLAIMLIST = QName.createQName(BeCPGModel.BECPG_URI, "labelClaimList");
 	QName PROP_LCL_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "lclType");
