@@ -194,9 +194,9 @@ public class SimulationCostHelper implements InitializingBean {
 						.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 					NodeRef productNodeRef = compoList.getProduct();
 
-					ProductData componentProduct = alfrescoRepositoryProductData.findOne(productNodeRef);
+					ProductData componentProduct =  INSTANCE.alfrescoRepository.findOne(productNodeRef);
 
-					Double qty = FormulationHelper.getQtyForCost(compoList, 0d, componentProduct, keepProductUnit);
+					Double qty = FormulationHelper.getQtyForCost(compoList, 0d, componentProduct, INSTANCE.keepProductUnit);
 					if (logger.isDebugEnabled()) {
 						logger.debug("Get component " + componentProduct.getName() + "qty: " + qty + " recipeQtyUsed " + productData.getRecipeQtyUsed());
 					}
