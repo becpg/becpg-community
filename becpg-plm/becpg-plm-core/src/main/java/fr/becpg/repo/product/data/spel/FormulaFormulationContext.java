@@ -98,12 +98,12 @@ public class FormulaFormulationContext {
 		return ret;
 	}
 	
-	public Double sum(Collection<CompositionDataItem> range, String formula) {
+	public Double sum(Collection<RepositoryEntity> range, String formula) {
 		return formulaService.aggreate(entity, range, formula, Operator.SUM);
 	}
 	
 	
-	public Double avg(Collection<CompositionDataItem> range, String formula) {
+	public Double avg(Collection<RepositoryEntity> range, String formula) {
 		return formulaService.aggreate(entity, range, formula, Operator.AVG);
 	}
 	

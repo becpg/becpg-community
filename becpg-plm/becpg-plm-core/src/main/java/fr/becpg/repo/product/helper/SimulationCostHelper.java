@@ -128,13 +128,13 @@ public class SimulationCostHelper implements InitializingBean {
 	 */
 	public static Double getComponentQuantity(ProductData formulatedProduct, ProductData componentData) {
 		if (componentData instanceof PackagingMaterialData) {
-			return getPackagingListQty(formulatedProduct, componentData.getNodeRef(), 1);
+			return getPackagingListQty(formulatedProduct, componentData.getNodeRef(), 1, formulatedProduct.getRecipeQtyUsed());
 		}
 
 		return getCompoListQty(formulatedProduct, componentData.getNodeRef(), formulatedProduct.getRecipeQtyUsed());
 	}
 
-	private static double getCompoListQty(ProductData productData, NodeRef componentNodeRef, double parentQty) {
+	private static double getCompoListQty(ProductData productData, NodeRef componentNodeRef, Double parentQty) {
 		double totalQty = 0d;
 		if (productData.hasCompoListEl()) {
 			for (CompoListDataItem compoList : productData
@@ -161,7 +161,7 @@ public class SimulationCostHelper implements InitializingBean {
 		return totalQty;
 	}
 
-	private static double getPackagingListQty(ProductData productData, NodeRef componentNodeRef, int palletBoxesPerPallet) {
+	private static double getPackagingListQty(ProductData productData, NodeRef componentNodeRef, int palletBoxesPerPallet, Double parentQty) {
 		double totalQty = 0d;
 		if (productData.hasPackagingListEl()) {
 			for (PackagingListDataItem packList : productData
@@ -170,6 +170,9 @@ public class SimulationCostHelper implements InitializingBean {
 				ProductData subProductData = INSTANCE.alfrescoRepository.findOne(packList.getProduct());
 
 				Double qty = FormulationHelper.getQtyForCost(productData, packList, subProductData);
+				if ((qty != null) && (productData.getRecipeQtyUsed() != null) && (productData.getRecipeQtyUsed() != 0d)) {
+					qty = (parentQty * qty) / productData.getRecipeQtyUsed();
+				}
 				if (logger.isDebugEnabled()) {
 					logger.debug("Get component " + subProductData.getName() + "qty: " + qty);
 				}
@@ -182,11 +185,28 @@ public class SimulationCostHelper implements InitializingBean {
 					break;
 				} else if (subProductData instanceof PackagingKitData) {
 					totalQty = qty
-							* getPackagingListQty(subProductData, componentNodeRef, ((PackagingKitData) subProductData).getPalletBoxesPerPallet());
+							* getPackagingListQty(subProductData, componentNodeRef, ((PackagingKitData) subProductData).getPalletBoxesPerPallet(),null);
 				}
 			}
 
-			// TODO Recur on compoList #5465
+			if (productData.hasCompoListEl()) {
+				for (CompoListDataItem compoList : productData
+						.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
+					NodeRef productNodeRef = compoList.getProduct();
+
+					ProductData componentProduct = alfrescoRepositoryProductData.findOne(productNodeRef);
+
+					Double qty = FormulationHelper.getQtyForCost(compoList, 0d, componentProduct, keepProductUnit);
+					if (logger.isDebugEnabled()) {
+						logger.debug("Get component " + componentProduct.getName() + "qty: " + qty + " recipeQtyUsed " + productData.getRecipeQtyUsed());
+					}
+					if ((qty != null) && (productData.getRecipeQtyUsed() != null) && (productData.getRecipeQtyUsed() != 0d)) {
+						qty = (parentQty * qty) / productData.getRecipeQtyUsed();
+						totalQty += getPackagingListQty(componentProduct, componentNodeRef, palletBoxesPerPallet, qty);
+
+					}
+				}
+			}
 
 		}
 		return totalQty;
