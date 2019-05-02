@@ -39,21 +39,6 @@ public class EntityTplProjectPlugin implements EntityTplPlugin {
 
 	@Override
 	public void beforeSynchronizeEntity(NodeRef projectNodeRef, NodeRef entityTplNodeRef) {
-		if (ProjectModel.TYPE_PROJECT.equals(nodeService.getType(projectNodeRef))) {
-			NodeRef listContainerNodeRef = entityListDAO.getListContainer(projectNodeRef);
-			if (listContainerNodeRef != null) {
-				Integer completionPerc = (Integer) nodeService.getProperty(projectNodeRef, ProjectModel.PROP_COMPLETION_PERCENT);
-				if(completionPerc == null || completionPerc == 0) {
-					nodeService.deleteNode(listContainerNodeRef);
-				}	
-			}
-		}
-	}
-
-	
-	
-	@Override
-	public void beforeSynchronizeEntity(NodeRef projectNodeRef, NodeRef entityTplNodeRef) {
 		if (ProjectModel.TYPE_PROJECT.equals(nodeService.getType(projectNodeRef)) && !nodeService.hasAspect(projectNodeRef, BeCPGModel.ASPECT_ENTITY_TPL) && policyBehaviourFilter.isEnabled(BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
 			NodeRef listContainerNodeRef = entityListDAO.getListContainer(projectNodeRef);
 			if (listContainerNodeRef != null) {
