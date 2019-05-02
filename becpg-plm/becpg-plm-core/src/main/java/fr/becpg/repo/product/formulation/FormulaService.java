@@ -153,7 +153,7 @@ public class FormulaService {
 			return value;
 		}
 
-		public Double sum(Collection<CompositionDataItem> range, String formula) {
+		public Double sum(Collection<RepositoryEntity> range, String formula) {
 			return aggreate(productData, range, formula, Operator.SUM);
 		}
 
@@ -162,7 +162,7 @@ public class FormulaService {
 		}
 		
 		
-		public Double avg(Collection<CompositionDataItem> range, String formula) {
+		public Double avg(Collection<RepositoryEntity> range, String formula) {
 			return aggreate(productData, range, formula, Operator.AVG);
 		}
 		
@@ -300,7 +300,7 @@ public class FormulaService {
 		return dataContext;
 	}
 
-	public Double aggreate(ProductData entity, Collection<CompositionDataItem> range, String formula, Operator operator) {
+	public Double aggreate(ProductData entity, Collection<RepositoryEntity> range, String formula, Operator operator) {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Running aggregate fonction [" + formula + "] on range (" + range.size() + ") for operator " + operator);
@@ -310,7 +310,7 @@ public class FormulaService {
 		Expression exp = parser.parseExpression(formula);
 		Double sum = 0d;
 		int count = 0;
-		for (CompositionDataItem item : range) {
+		for (RepositoryEntity item : range) {
 			StandardEvaluationContext context = new StandardEvaluationContext(new FormulaFormulationContext(this, entity, item));
 
 			registerCustomFunctions(entity, context);
