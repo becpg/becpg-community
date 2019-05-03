@@ -44,7 +44,7 @@ public abstract class AbstractLabelingComponent extends BeCPGDataObject implemen
 	
 	private boolean shouldSkip = false;
 	
-	private MLText pluralLegalName;
+	protected MLText pluralLegalName;
 	
 	private Set<NodeRef> allergens = new HashSet<NodeRef>();
 	
@@ -177,9 +177,11 @@ public abstract class AbstractLabelingComponent extends BeCPGDataObject implemen
 		int result = super.hashCode();
 		result = prime * result + ((allergens == null) ? 0 : allergens.hashCode());
 		result = prime * result + ((geoOrigins == null) ? 0 : geoOrigins.hashCode());
+		result = prime * result + (isPlural ? 1231 : 1237);
 		result = prime * result + ((legalName == null) ? 0 : legalName.hashCode());
 		result = prime * result + ((pluralLegalName == null) ? 0 : pluralLegalName.hashCode());
 		result = prime * result + ((qty == null) ? 0 : qty.hashCode());
+		result = prime * result + (shouldSkip ? 1231 : 1237);
 		result = prime * result + ((volume == null) ? 0 : volume.hashCode());
 		return result;
 	}
@@ -203,6 +205,8 @@ public abstract class AbstractLabelingComponent extends BeCPGDataObject implemen
 				return false;
 		} else if (!geoOrigins.equals(other.geoOrigins))
 			return false;
+		if (isPlural != other.isPlural)
+			return false;
 		if (legalName == null) {
 			if (other.legalName != null)
 				return false;
@@ -217,6 +221,8 @@ public abstract class AbstractLabelingComponent extends BeCPGDataObject implemen
 			if (other.qty != null)
 				return false;
 		} else if (!qty.equals(other.qty))
+			return false;
+		if (shouldSkip != other.shouldSkip)
 			return false;
 		if (volume == null) {
 			if (other.volume != null)
