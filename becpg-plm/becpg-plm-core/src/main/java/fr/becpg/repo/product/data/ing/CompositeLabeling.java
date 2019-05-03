@@ -54,6 +54,7 @@ public class CompositeLabeling extends AbstractLabelingComponent {
 		this.name = productData.getName();
 		this.nodeRef = productData.getNodeRef();
 		this.legalName = productData.getLegalName();
+		this.pluralLegalName = productData.getPluralLegalName();
 		this.ingType = productData.getIngType();
 		
 	}
@@ -129,7 +130,7 @@ public class CompositeLabeling extends AbstractLabelingComponent {
 	}
 
 	private void print(StringBuilder sb, String prefix, boolean isTail) {
-		sb.append(prefix).append(isTail ? "└──[" : "├──[").append(getLegalName(I18NUtil.getContentLocaleLang()) == null ? ROOT : getLegalName(I18NUtil.getContentLocaleLang())).append(" - ").append(getQty()).append(" (").append(getQtyTotal()).append(", vol: ").append(getVolumeTotal()).append(") ").append(declarationType != null ? declarationType.toString() : "").append("]\n");
+		sb.append(prefix).append(isTail ? "└──[" : "├──[").append(getLegalName(I18NUtil.getContentLocaleLang()) == null ? ROOT : getLegalName(I18NUtil.getContentLocaleLang())).append(" ( plural:"+isPlural()+",shouldSkip:"+shouldSkip()+") ").append(" - ").append(getQty()).append(" (").append(getQtyTotal()).append(", vol: ").append(getVolumeTotal()).append(") ").append(declarationType != null ? declarationType.toString() : "").append("]\n");
         for (Iterator<AbstractLabelingComponent> iterator = ingList.values().iterator(); iterator.hasNext(); ) {
         	AbstractLabelingComponent labelingComponent =  iterator.next();
         	if(labelingComponent  instanceof CompositeLabeling) {
