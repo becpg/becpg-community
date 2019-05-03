@@ -31,7 +31,7 @@
 		 		,parentFieldHtmlId:"${parentFieldHtmlId}"
 				<#elseif field.control.params.parentAssoc??>
 					<#assign parentFieldHtmlId=args.htmlid + "_assoc_" + field.control.params.parentAssoc >
-		 		,parentFieldHtmlId:"${parentFieldHtmlId}"
+		 		,parentFieldHtmlId:"${parentFieldHtmlId}-cntrl"
 			</#if> 
 			<#if field.control.params.local?exists>
 			 		,isLocalProxy:${field.control.params.local?string}
