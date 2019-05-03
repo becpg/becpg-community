@@ -239,7 +239,7 @@
                                     {
                                         var parentElem = null;
                                         if(me.isAssoc){
-                                        	oParentField = me.getValuesFromId(me.options.parentFieldHtmlId+"-cntrl");
+                                        	oParentField = me.getValuesFromId(me.options.parentFieldHtmlId);
                                         } else {
                                         	parentElem  =  Dom.get(me.options.parentFieldHtmlId);
                                         	 if (parentElem != null)
