@@ -201,9 +201,9 @@
                             if (splitted.length == 2)
                             {
                                 var stepId = splitted[1];
-                                for (var i = 0; i < this.options.wizardStruct.length; i++)
+                                for (var i = 0; i < me.options.wizardStruct.length; i++)
                                 {
-                                    var step = this.options.wizardStruct[i];
+                                    var step = me.options.wizardStruct[i];
                                     if (step.id + "-form" == stepId)
                                     {
                                         step.form = args[1].runtime;
@@ -212,7 +212,7 @@
                                             successCallback :
                                             {
                                                 fn : me.onFormSubmit,
-                                                scope : this
+                                                scope : me
                                             }
                                         });
                                     }
@@ -250,7 +250,7 @@
                                                           me.loadStep(nextStep);
                                                           
                                                       },
-                                                      scope : this
+                                                      scope : me
                                                    }
                                                 });
                                            } else {
