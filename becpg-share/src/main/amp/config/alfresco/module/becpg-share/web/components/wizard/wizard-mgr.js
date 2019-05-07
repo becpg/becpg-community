@@ -270,6 +270,11 @@
 									 }
 								 }
 							 }
+						 }else {
+							 step = me.options.wizardStruct[me.currentIndex];
+							 if(step.finish ){
+								 me._navigateForward(me.options.wizardStruct[0].nodeRef);
+							 } 
 						 }
 
 					 }
