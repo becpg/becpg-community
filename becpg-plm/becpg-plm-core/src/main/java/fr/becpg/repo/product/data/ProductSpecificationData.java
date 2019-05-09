@@ -5,6 +5,7 @@ package fr.becpg.repo.product.data;
 
 import java.util.List;
 
+import fr.becpg.repo.ecm.data.dataList.ChangeUnitDataItem;
 import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.product.data.productList.ResourceParamDataItem;
@@ -23,6 +24,19 @@ public class ProductSpecificationData extends ProductData {
 	private List<LabelingRuleListDataItem> labelingRuleList;
 
 	private List<ResourceParamDataItem> resourceParams;
+
+	private List<ChangeUnitDataItem> changeUnitList;
+	
+	@DataList
+	@AlfQname(qname = "ecm:changeUnitList")
+	public List<ChangeUnitDataItem> getChangeUnitList() {
+		return changeUnitList;
+	}
+
+	public void setChangeUnitList(List<ChangeUnitDataItem> changeUnitList) {
+		this.changeUnitList = changeUnitList;
+	}
+	
 
 	@DataList
 	@AlfQname(qname = "bcpg:labelingRuleList")
