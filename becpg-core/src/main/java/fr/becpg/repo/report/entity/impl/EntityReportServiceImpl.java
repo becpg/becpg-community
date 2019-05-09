@@ -490,9 +490,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 		});
 
-		dataXml = entityParams != null ? filterByParams(dataXml, getFilteredParams(valideCode, Arrays.asList(entityParams), reportKindCode))
-				: dataXml;
-
+		dataXml = valideCode.size() > 0 ? filterByParams(dataXml, getFilteredParams(valideCode, Arrays.asList(entityParams != null ? entityParams : new String[0]), reportKindCode))
+					: dataXml;
 		if (logger.isDebugEnabled()) {
 			stopWatch.stop();
 			logger.debug("Filter XML takes : " + stopWatch.getTotalTimeSeconds() + "s");
@@ -532,6 +531,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 	@SuppressWarnings("unchecked")
 	private Element filterByParams(Element entity, List<String> filteredParams) {
 
+		
 		for (Iterator<Element> entityIter = entity.elementIterator(); entityIter.hasNext();) {
 			Element itemEl = entityIter.next();
 
