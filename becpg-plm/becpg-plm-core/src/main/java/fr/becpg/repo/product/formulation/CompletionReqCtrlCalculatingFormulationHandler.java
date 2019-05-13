@@ -32,11 +32,10 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.SystemState;
-import fr.becpg.repo.formulation.EntityCatalogService;
+import fr.becpg.repo.entity.catalog.EntityCatalogService;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.helper.AssociationService;
-import fr.becpg.repo.helper.EntityCatalogHelper;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.AbstractProductDataView;
 import fr.becpg.repo.product.data.ProductData;
@@ -65,12 +64,9 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 	private AssociationService associationService;
 	private NodeService mlNodeService;
 	private FormulaService formulaService;
-	private EntityCatalogService catalogService;
+	private EntityCatalogService entityCatalogService;
 
-	public void setCatalogService(EntityCatalogService catalogService) {
-		this.catalogService = catalogService;
-	}
-
+	
 	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
@@ -99,7 +95,9 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 		this.formulaService = formulaService;
 	}
 
-
+	public void setEntityCatalogService(EntityCatalogService entityCatalogService) {
+		this.entityCatalogService = entityCatalogService;
+	}
 
 	@Override
 	public boolean process(ProductData product) throws FormulateException {
@@ -138,7 +136,7 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 				product.getReqCtrlList().add(rclDataItem);
 			}
 
-			scores.put(EntityCatalogHelper.PROP_CATALOGS, mandatoryFields);
+			scores.put(EntityCatalogService.PROP_CATALOGS, mandatoryFields);
 
 		} catch (JSONException e) {
 			logger.error("Cannot create Json Score", e);
@@ -194,11 +192,11 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 				: I18NUtil.getMessage(MESSAGE_MANDATORY_FIELD_MISSING, displayName, catalogName));
 
 		if (lang != null) {
-			field.put(EntityCatalogHelper.PROP_LOCALE, lang);
+			field.put(EntityCatalogService.PROP_LOCALE, lang);
 		}
 
-		field.put(EntityCatalogHelper.PROP_ID, id);
-		field.put(EntityCatalogHelper.PROP_DISPLAY_NAME, displayName);
+		field.put(EntityCatalogService.PROP_ID, id);
+		field.put(EntityCatalogService.PROP_DISPLAY_NAME, displayName);
 
 		ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, null, new ArrayList<NodeRef>(),
 				RequirementDataType.Completion);
@@ -229,7 +227,7 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 	public JSONArray calculateMandatoryFieldsScore(ProductData productData) throws JSONException {
 		JSONArray ret = new JSONArray();
 
-		List<JSONArray> catalogs = catalogService.getCatalogsDef();
+		List<JSONArray> catalogs = entityCatalogService.getCatalogsDef();
 
 		if ((!catalogs.isEmpty()) && (productData.getNodeRef() != null) && nodeService.exists(productData.getNodeRef())) {
 			// Break rules !!!!
@@ -251,7 +249,7 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 					boolean productPassesFilter = productMatches(catalog, productData, productType);
 
 					if (logger.isDebugEnabled()) {
-						logger.debug("\n\t\t== Catalog \"" + catalog.getString(EntityCatalogHelper.PROP_LABEL) + "\" ==");
+						logger.debug("\n\t\t== Catalog \"" + catalog.getString(EntityCatalogService.PROP_LABEL) + "\" ==");
 						logger.debug("Type of product: " + productType);
 						logger.debug("Catalog json: " + catalog);
 						logger.debug("ProductPassesFilter: " + productPassesFilter);
@@ -262,9 +260,9 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 					// type defined (it applies to every entity type)
 					if (productPassesFilter) {
 						if (logger.isDebugEnabled()) {
-							logger.debug("Formulating for catalog \"" + catalog.getString(EntityCatalogHelper.PROP_LABEL) + "\"");
+							logger.debug("Formulating for catalog \"" + catalog.getString(EntityCatalogService.PROP_LABEL) + "\"");
 						}
-						List<String> langs = new LinkedList<>(EntityCatalogHelper.getLocales(productData.getReportLocales(), catalog));
+						List<String> langs = new LinkedList<>(entityCatalogService.getLocales(productData.getReportLocales(), catalog));
 
 						langs.sort((o1, o2) -> {
 							if (o1.equals(defaultLocale)) {
@@ -278,29 +276,29 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 
 						String color = getCatalogColor(catalog, i);
 
-						JSONArray reqFields = catalog.has(EntityCatalogHelper.PROP_FIELDS) ? catalog.getJSONArray(EntityCatalogHelper.PROP_FIELDS)
+						JSONArray reqFields = catalog.has(EntityCatalogService.PROP_FIELDS) ? catalog.getJSONArray(EntityCatalogService.PROP_FIELDS)
 								: new JSONArray();
-						JSONArray uniqueFields = catalog.has(EntityCatalogHelper.PROP_UNIQUE_FIELDS)
-								? catalog.getJSONArray(EntityCatalogHelper.PROP_UNIQUE_FIELDS)
+						JSONArray uniqueFields = catalog.has(EntityCatalogService.PROP_UNIQUE_FIELDS)
+								? catalog.getJSONArray(EntityCatalogService.PROP_UNIQUE_FIELDS)
 								: new JSONArray();
 
-						JSONArray nonUniqueFields = extractNonUniqueFields(productData, catalog.getString(EntityCatalogHelper.PROP_LABEL), properties,
+						JSONArray nonUniqueFields = extractNonUniqueFields(productData, catalog.getString(EntityCatalogService.PROP_LABEL), properties,
 								uniqueFields);
 
 						for (String lang : langs) {
 
-							JSONArray missingFields = extractMissingFields(productData, catalog.getString(EntityCatalogHelper.PROP_LABEL), properties,
+							JSONArray missingFields = extractMissingFields(productData, catalog.getString(EntityCatalogService.PROP_LABEL), properties,
 									reqFields, defaultLocale.equals(lang) ? null : lang);
 							if ((missingFields.length() > 0) || (nonUniqueFields.length() > 0)) {
 								JSONObject catalogDesc = new JSONObject();
-								catalogDesc.put(EntityCatalogHelper.PROP_MISSING_FIELDS, missingFields.length() > 0 ? missingFields : null);
-								catalogDesc.put(EntityCatalogHelper.PROP_NON_UNIQUE_FIELDS, nonUniqueFields.length() > 0 ? nonUniqueFields : null);
-								catalogDesc.put(EntityCatalogHelper.PROP_LOCALE, defaultLocale.equals(lang) ? null : lang);
-								catalogDesc.put(EntityCatalogHelper.PROP_SCORE,
+								catalogDesc.put(EntityCatalogService.PROP_MISSING_FIELDS, missingFields.length() > 0 ? missingFields : null);
+								catalogDesc.put(EntityCatalogService.PROP_NON_UNIQUE_FIELDS, nonUniqueFields.length() > 0 ? nonUniqueFields : null);
+								catalogDesc.put(EntityCatalogService.PROP_LOCALE, defaultLocale.equals(lang) ? null : lang);
+								catalogDesc.put(EntityCatalogService.PROP_SCORE,
 										((reqFields.length() - missingFields.length()) * 100d) / (reqFields.length() > 0 ? reqFields.length() : 1d));
-								catalogDesc.put(EntityCatalogHelper.PROP_LABEL, catalog.getString(EntityCatalogHelper.PROP_LABEL));
-								catalogDesc.put(EntityCatalogHelper.PROP_ID, catalog.getString(EntityCatalogHelper.PROP_ID));
-								catalogDesc.put(EntityCatalogHelper.PROP_COLOR, color);
+								catalogDesc.put(EntityCatalogService.PROP_LABEL, catalog.getString(EntityCatalogService.PROP_LABEL));
+								catalogDesc.put(EntityCatalogService.PROP_ID, catalog.getString(EntityCatalogService.PROP_ID));
+								catalogDesc.put(EntityCatalogService.PROP_COLOR, color);
 								ret.put(catalogDesc);
 							}
 
@@ -316,9 +314,9 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 
 	private boolean productMatches(JSONObject catalog, ProductData product, QName productType) throws JSONException {
 
-		boolean matchesOnType = EntityCatalogHelper.isMatcheEntityType(catalog, productType, namespaceService);
-		if (catalog.has(EntityCatalogHelper.PROP_ENTITY_FILTER)) {
-			String filterFormula = catalog.getString(EntityCatalogHelper.PROP_ENTITY_FILTER);
+		boolean matchesOnType = entityCatalogService.isMatcheEntityType(catalog, productType, namespaceService);
+		if (catalog.has(EntityCatalogService.PROP_ENTITY_FILTER)) {
+			String filterFormula = catalog.getString(EntityCatalogService.PROP_ENTITY_FILTER);
 			return matchesOnType && productMatchesOnFormula(filterFormula, product);
 		} else {
 			// no entity filter in catalog
@@ -356,10 +354,10 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 	
 
 	private String getCatalogColor(JSONObject catalog, int i) throws JSONException {
-		String color = catalog.has(EntityCatalogHelper.PROP_COLOR) ? catalog.getString(EntityCatalogHelper.PROP_COLOR)
+		String color = catalog.has(EntityCatalogService.PROP_COLOR) ? catalog.getString(EntityCatalogService.PROP_COLOR)
 				: "hsl(" + (i * (360 / 7)) + ", 60%, 50%)";
 		if (logger.isDebugEnabled()) {
-			logger.debug("Color of catalog is: " + color + (catalog.has(EntityCatalogHelper.PROP_COLOR) ? " (fetched from catalog)" : " (generated)"));
+			logger.debug("Color of catalog is: " + color + (catalog.has(EntityCatalogService.PROP_COLOR) ? " (fetched from catalog)" : " (generated)"));
 		}
 
 		return color;

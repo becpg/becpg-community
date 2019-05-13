@@ -774,31 +774,40 @@
 			</properties>
 		</aspect>
 		
-		<aspect name="bcpg:entityCatalogAspect">
+		<aspect name="bcpg:auditableCatalogAspect">
 			<properties>
-				<property name="bcpg:entityCatalogModifiedDate1">
-					<type>d:date</type>
-					<mandatory>false</mandatory>
+				<property name="bcpg:modifiedCatalog1">
+					 <type>d:datetime</type>
+		             <protected>true</protected>
+		             <mandatory>false</mandatory>
+		             <index enabled="true">
+		                  <atomic>true</atomic>
+		                  <stored>false</stored> 
+		                  <tokenised>both</tokenised>
+		                  <facetable>true</facetable>
+		              </index>
 				</property>
-				<property name="bcpg:entityCatalogModifiedDate2">
-					<type>d:date</type>
-					<mandatory>false</mandatory>
+				<property name="bcpg:modifiedCatalog2">
+					 <type>d:datetime</type>
+		             <protected>true</protected>
+		             <mandatory>false</mandatory>
+		             <index enabled="true">
+		                  <atomic>true</atomic>
+		                  <stored>false</stored> 
+		                  <tokenised>both</tokenised>
+		                  <facetable>true</facetable>
+		              </index>
 				</property>
-				<property name="bcpg:entityCatalogModifiedDate3">
-					<type>d:date</type>
-					<mandatory>false</mandatory>
-				</property>
-				<property name="bcpg:entityCatalogPublishedDate1">
-					<type>d:date</type>
-					<mandatory>false</mandatory>
-				</property>
-				<property name="bcpg:entityCatalogPublishedDate2">
-					<type>d:date</type>
-					<mandatory>false</mandatory>
-				</property>
-				<property name="bcpg:entityCatalogPublishedDate3">
-					<type>d:date</type>
-					<mandatory>false</mandatory>
+				<property name="bcpg:modifiedCatalog3">
+					 <type>d:datetime</type>
+		             <protected>true</protected>
+		             <mandatory>false</mandatory>
+		             <index enabled="true">
+		                  <atomic>true</atomic>
+		                  <stored>false</stored> 
+		                  <tokenised>both</tokenised>
+		                  <facetable>true</facetable>
+		              </index>
 				</property>
 			</properties>
 		</aspect>

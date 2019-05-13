@@ -154,7 +154,5 @@ public interface BeCPGModel {
 	QName ASPECT_ERP_CODE = QName.createQName(BECPG_URI, "erpCodeAspect");
 	QName PROP_ERP_CODE = QName.createQName(BECPG_URI, "erpCode");
 
-	// catalog aspect
-	QName ASPECT_ENTITY_CATALOG = QName.createQName(BECPG_URI, "entityCatalogAspect");
 	
 }
