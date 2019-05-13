@@ -3865,6 +3865,12 @@
 					<show id="bcpg:advLclClaimAnd" force="true" />
 					<show id="bcpg:advLclClaimNot" force="true" />
 
+					<!-- Product specifications -->
+					<show id="bcpg:advRespectedProductSpecs" force="true" />
+					<show id="bcpg:advNotRespectedProductSpecs" force="true" />
+					
+					
+
 				</field-visibility>
 				<appearance>
 					<set id="product-criteria" appearance="bordered-panel"
@@ -3888,6 +3894,9 @@
 					<set id="microbio-criteria" appearance="bordered-panel" template="/org/alfresco/components/form/2-column-set.ftl"
 						label-id="becpg.forms.set.microbio-criteria.label" />		
 	
+					<set id="product-specifications-criteria"  appearance="bordered-panel" template="/org/alfresco/components/form/2-column-set.ftl"
+						label-id="becpg.forms.set.product-specifications-criteria.label" />		
+
 
 					<field id="cm:name" set="2-col-product-criteria" />
 					<field id="cm:description" set="2-col-product-criteria" >
@@ -4036,6 +4045,17 @@
 						<control
 							template="/org/alfresco/components/form/controls/numberrange.ftl" />
 					</field>
+					
+					
+					<field id="bcpg:advRespectedProductSpecs" set="product-specifications-criteria" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:advNotRespectedProductSpecs" set="product-specifications-criteria"  >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					
 					
 				</appearance>
 			</form>
