@@ -15,7 +15,11 @@
             "bcpg:useByDate|bcpg:bestBeforeDate",
             "bcpg:storageConditionsRef|bcpg:preparationTips",
             "cm:title"
-        ]
+        ],
+        "auditedFields": [
+        ],
+        "modifiedDateField": "bcpg:entityCatalogModifiedDate1",
+        "publishedDateField": "bcpg:entityCatalogPublishedDate1"
     },
     {
         "id":"incoRawMaterials",
@@ -29,7 +33,11 @@
         ],
         "fields":[
             "bcpg:legalName"
-        ]
+        ],
+        "auditedFields": [
+        ],
+        "modifiedDateField": "bcpg:entityCatalogModifiedDate2",
+        "publishedDateField": "bcpg:entityCatalogPublishedDate2"
     }
 
 ]

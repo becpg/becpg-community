@@ -3857,6 +3857,34 @@
 			</associations>
 		</aspect>
 
+		<aspect name="bcpg:entityCatalogAspect">
+			<properties>
+				<property name="bcpg:entityCatalogModifiedDate1">
+					<type>d:date</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="bcpg:entityCatalogModifiedDate2">
+					<type>d:date</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="bcpg:entityCatalogModifiedDate3">
+					<type>d:date</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="bcpg:entityCatalogPublishedDate1">
+					<type>d:date</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="bcpg:entityCatalogPublishedDate2">
+					<type>d:date</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="bcpg:entityCatalogPublishedDate3">
+					<type>d:date</type>
+					<mandatory>false</mandatory>
+				</property>
+			</properties>
+		</aspect>
 		
 	</aspects>
 </model>
