@@ -104,6 +104,11 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 	private static final String CRITERIA_COMPO_LIST_PRODUCT = "assoc_bcpg_compoListProduct_added";
 
 	private static final String CRITERIA_PACK_LABEL_POSITION = "prop_pack_llPosition";
+	
+	
+	private static final String CRITERIA_NOTRESPECTED_SPECIFICATIONS = "assoc_bcpg_advNotRespectedProductSpecs_added";
+	private static final String CRITERIA_RESPECTED_SPECIFICATIONS = "assoc_bcpg_advRespectedProductSpecs_added";
+	
 
 	private static Set<String> keysToExclude = new HashSet<>();
 
@@ -157,6 +162,9 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		keysToExclude.add(CRITERIA_PACKAGING_LIST_PRODUCT);
 		keysToExclude.add(CRITERIA_PROCESS_LIST_RESSOURCE);
 		keysToExclude.add(CRITERIA_COMPO_LIST_PRODUCT);
+		
+		keysToExclude.add(CRITERIA_NOTRESPECTED_SPECIFICATIONS);
+		keysToExclude.add(CRITERIA_RESPECTED_SPECIFICATIONS);
 
 	}
 
@@ -219,11 +227,15 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_MICROBIO, PLMModel.ASSOC_MICROBIOLIST_MICROBIO,
 						PLMModel.PROP_MICROBIOLIST_VALUE, criteria.get(CRITERIA_MICROBIO_RANGE));
+				
+				nodes = getSearchNodesBySpecificationCriteria(nodes, criteria);
+				
 			}
 		}
 
 		return nodes;
 	}
+
 
 	@Override
 	public Set<String> getIgnoredFields(QName datatype) {
@@ -490,6 +502,13 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		return ret;
 	}
 
+	
+
+	private List<NodeRef> getSearchNodesBySpecificationCriteria(List<NodeRef> nodes, Map<String, String> criteria) {
+		// TODO Auto-generated method stub
+		return nodes;
+	}
+	
 	/**
 	 * Take in account criteria on ing list criteria
 	 *
