@@ -178,7 +178,7 @@
 					<property name="associationService" ref="associationService" />
 					<property name="mlNodeService" ref="mlAwareNodeService" />
 					<property name="formulaService" ref="formulaService" />
-					<property name="catalogService" ref="catalogService" />
+					<property name="entityCatalogService" ref="entityCatalogService" />
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.MergeReqCtrlFormulationHandler" >
 					<property name="alfrescoRepository" ref="alfrescoRepository" />

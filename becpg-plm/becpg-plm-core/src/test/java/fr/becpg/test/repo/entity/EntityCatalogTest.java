@@ -27,8 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.cache.BeCPGCacheService;
-import fr.becpg.repo.formulation.EntityCatalogService;
-import fr.becpg.repo.helper.EntityCatalogHelper;
+import fr.becpg.repo.entity.catalog.EntityCatalogService;
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
@@ -41,8 +40,8 @@ import fr.becpg.test.PLMBaseTestCase;
 public class EntityCatalogTest extends PLMBaseTestCase {
 
 	private static final Log logger = LogFactory.getLog(EntityCatalogTest.class);
-	private static final String CATALOG_STRING = "{\"id\":\"incoFinishedProduct\",\"label\":\"EU 1169/2011 (INCO)\",\"entityType\":[\"bcpg:finishedProduct\"],\"uniqueFields\":[\"bcpg:erpCode\",\"cm:name\"],\"fields\":[\"bcpg:legalName\",\"bcpg:useByDate|bcpg:bestBeforeDate\",\"bcpg:storageConditionsRef|bcpg:preparationTips\",\"cm:title\"],\"auditedFields\": [\"cm:name\",\"bcpg:compoList\"],\"modifiedDateField\": \"bcpg:entityCatalogModifiedDate1\",\"publishedDateField\": \"bcpg:entityCatalogPublishedDate1\"}";
-	private static final String CATALOGS_STRING = "[{\"id\":\"incoFinishedProduct\",\"label\":\"EU 1169/2011 (INCO)\",\"entityType\":[\"bcpg:finishedProduct\"],\"uniqueFields\":[\"bcpg:erpCode\",\"cm:name\"],\"fields\":[\"bcpg:legalName\",\"bcpg:useByDate|bcpg:bestBeforeDate\",\"bcpg:storageConditionsRef|bcpg:preparationTips\",\"cm:title\"],\"auditedFields\": [\"cm:name\",\"bcpg:costList\"],\"modifiedDateField\": \"bcpg:entityCatalogModifiedDate1\",\"publishedDateField\": \"bcpg:entityCatalogPublishedDate1\"},{\"id\":\"incoRawMaterials\",\"label\":\"EU 1169/2011 (INCO)\",\"entityType\":[\"bcpg:rawMaterial\"],\"uniqueFields\":[\"bcpg:erpCode\",\"cm:name\"],\"fields\":[\"bcpg:legalName\"],\"auditedFields\": [\"bcpg:legalName\"],\"modifiedDateField\": \"bcpg:entityCatalogModifiedDate2\",\"publishedDateField\": \"bcpg:entityCatalogPublishedDate2\"}]";
+	private static final String CATALOG_STRING = "{\"id\":\"incoFinishedProduct\",\"label\":\"EU 1169/2011 (INCO)\",\"entityType\":[\"bcpg:finishedProduct\"],\"uniqueFields\":[\"bcpg:erpCode\",\"cm:name\"],\"fields\":[\"bcpg:legalName\",\"bcpg:useByDate|bcpg:bestBeforeDate\",\"bcpg:storageConditionsRef|bcpg:preparationTips\",\"cm:title\"],\"auditedFields\": [\"cm:name\",\"bcpg:compoList\"],\"modifiedField\": \"bcpg:modifiedCatalog1\"}";
+	private static final String CATALOGS_STRING = "[{\"id\":\"incoFinishedProduct\",\"label\":\"EU 1169/2011 (INCO)\",\"entityType\":[\"bcpg:finishedProduct\"],\"uniqueFields\":[\"bcpg:erpCode\",\"cm:name\"],\"fields\":[\"bcpg:legalName\",\"bcpg:useByDate|bcpg:bestBeforeDate\",\"bcpg:storageConditionsRef|bcpg:preparationTips\",\"cm:title\"],\"auditedFields\": [\"cm:name\",\"bcpg:costList\"],\"modifiedField\": \"bcpg:modifiedCatalog1\"},{\"id\":\"incoRawMaterials\",\"label\":\"EU 1169/2011 (INCO)\",\"entityType\":[\"bcpg:rawMaterial\"],\"uniqueFields\":[\"bcpg:erpCode\",\"cm:name\"],\"fields\":[\"bcpg:legalName\"],\"auditedFields\": [\"bcpg:legalName\"],\"modifiedField\": \"bcpg:modifiedCatalog2\"}]";
 	@Resource
 	protected ProductService productService;
 	@Autowired
@@ -50,7 +49,7 @@ public class EntityCatalogTest extends PLMBaseTestCase {
 	@Autowired
 	NamespaceService namespaceService;
 	@Autowired
-	EntityCatalogService catalogService;
+	EntityCatalogService entityCatalogService;
 	@Autowired
 	BeCPGCacheService cacheService;
 
@@ -72,10 +71,10 @@ public class EntityCatalogTest extends PLMBaseTestCase {
 			nodeService.setProperty(rawMaterialNodeRef, ContentModel.PROP_NAME, "update rawMaterial Name");
 			return null;
 		}, false, false);
-		assertNull(nodeService.getProperty(productNodeRef, QName.createQName("bcpg:entityCatalogModifiedDate1", namespaceService)));
-		assertNull(nodeService.getProperty(productNodeRef, QName.createQName("bcpg:entityCatalogModifiedDate2", namespaceService)));
-		assertNull(nodeService.getProperty(rawMaterialNodeRef, QName.createQName("bcpg:entityCatalogModifiedDate1", namespaceService)));
-		assertNull(nodeService.getProperty(rawMaterialNodeRef, QName.createQName("bcpg:entityCatalogModifiedDate2", namespaceService)));
+		assertNull(nodeService.getProperty(productNodeRef, QName.createQName("bcpg:modifiedCatalog1", namespaceService)));
+		assertNull(nodeService.getProperty(productNodeRef, QName.createQName("bcpg:modifiedCatalog2", namespaceService)));
+		assertNull(nodeService.getProperty(rawMaterialNodeRef, QName.createQName("bcpg:modifiedCatalog1", namespaceService)));
+		assertNull(nodeService.getProperty(rawMaterialNodeRef, QName.createQName("bcpg:modifiedCatalog2", namespaceService)));
 		
 		Date beforeRef =  new Date();
 		
@@ -85,17 +84,17 @@ public class EntityCatalogTest extends PLMBaseTestCase {
 			nodeService.setProperty(rawMaterialNodeRef, BeCPGModel.PROP_LEGAL_NAME, "update rawMaterial legal name");
 			return null;
 		}, false, false);
-		assertNotNull(nodeService.getProperty(productNodeRef, QName.createQName("bcpg:entityCatalogModifiedDate1", namespaceService)));
-		assertNull(nodeService.getProperty(productNodeRef, QName.createQName("bcpg:entityCatalogModifiedDate2", namespaceService)));
-		assertNotNull(nodeService.getProperty(rawMaterialNodeRef, QName.createQName("bcpg:entityCatalogModifiedDate2", namespaceService)));
-		assertNull(nodeService.getProperty(rawMaterialNodeRef, QName.createQName("bcpg:entityCatalogModifiedDate1", namespaceService)));
+		assertNotNull(nodeService.getProperty(productNodeRef, QName.createQName("bcpg:modifiedCatalog1", namespaceService)));
+		assertNull(nodeService.getProperty(productNodeRef, QName.createQName("bcpg:modifiedCatalog2", namespaceService)));
+		assertNotNull(nodeService.getProperty(rawMaterialNodeRef, QName.createQName("bcpg:modifiedCatalog2", namespaceService)));
+		assertNull(nodeService.getProperty(rawMaterialNodeRef, QName.createQName("bcpg:modifiedCatalog1", namespaceService)));
 		
 		//update audited lists
 		Date afterRef = new Date();
-		assertTrue(beforeRef.before((Date)nodeService.getProperty(productNodeRef, QName.createQName("bcpg:entityCatalogModifiedDate1", namespaceService))));
-		assertTrue(afterRef.after((Date)nodeService.getProperty(productNodeRef, QName.createQName("bcpg:entityCatalogModifiedDate1", namespaceService))));
-		assertTrue(beforeRef.before((Date)nodeService.getProperty(rawMaterialNodeRef, QName.createQName("bcpg:entityCatalogModifiedDate2", namespaceService))));
-		assertTrue(afterRef.after((Date)nodeService.getProperty(rawMaterialNodeRef, QName.createQName("bcpg:entityCatalogModifiedDate2", namespaceService))));
+		assertTrue(beforeRef.before((Date)nodeService.getProperty(productNodeRef, QName.createQName("bcpg:modifiedCatalog1", namespaceService))));
+		assertTrue(afterRef.after((Date)nodeService.getProperty(productNodeRef, QName.createQName("bcpg:modifiedCatalog1", namespaceService))));
+		assertTrue(beforeRef.before((Date)nodeService.getProperty(rawMaterialNodeRef, QName.createQName("bcpg:modifiedCatalog2", namespaceService))));
+		assertTrue(afterRef.after((Date)nodeService.getProperty(rawMaterialNodeRef, QName.createQName("bcpg:modifiedCatalog2", namespaceService))));
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			FinishedProductData finishedProductData = (FinishedProductData) alfrescoRepository.findOne(productNodeRef);
@@ -110,10 +109,10 @@ public class EntityCatalogTest extends PLMBaseTestCase {
 			return null;
 		}, false, true);
 		
-		assertTrue(beforeRef.before((Date)nodeService.getProperty(productNodeRef, QName.createQName("bcpg:entityCatalogModifiedDate1", namespaceService))));
-		assertTrue(afterRef.after((Date)nodeService.getProperty(productNodeRef, QName.createQName("bcpg:entityCatalogModifiedDate1", namespaceService))));
-		assertTrue(beforeRef.before((Date)nodeService.getProperty(rawMaterialNodeRef, QName.createQName("bcpg:entityCatalogModifiedDate2", namespaceService))));
-		assertTrue(afterRef.after((Date)nodeService.getProperty(rawMaterialNodeRef, QName.createQName("bcpg:entityCatalogModifiedDate2", namespaceService))));
+		assertTrue(beforeRef.before((Date)nodeService.getProperty(productNodeRef, QName.createQName("bcpg:modifiedCatalog1", namespaceService))));
+		assertTrue(afterRef.after((Date)nodeService.getProperty(productNodeRef, QName.createQName("bcpg:modifiedCatalog1", namespaceService))));
+		assertTrue(beforeRef.before((Date)nodeService.getProperty(rawMaterialNodeRef, QName.createQName("bcpg:modifiedCatalog2", namespaceService))));
+		assertTrue(afterRef.after((Date)nodeService.getProperty(rawMaterialNodeRef, QName.createQName("bcpg:modifiedCatalog2", namespaceService))));
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			FinishedProductData finishedProductData = (FinishedProductData) alfrescoRepository.findOne(productNodeRef);
@@ -128,10 +127,10 @@ public class EntityCatalogTest extends PLMBaseTestCase {
 			return null;
 		}, false, true);
 		
-		assertTrue(beforeRef.before((Date)nodeService.getProperty(productNodeRef, QName.createQName("bcpg:entityCatalogModifiedDate1", namespaceService))));
-		assertFalse(afterRef.after((Date)nodeService.getProperty(productNodeRef, QName.createQName("bcpg:entityCatalogModifiedDate1", namespaceService))));
-		assertTrue(beforeRef.before((Date)nodeService.getProperty(rawMaterialNodeRef, QName.createQName("bcpg:entityCatalogModifiedDate2", namespaceService))));
-		assertTrue(afterRef.after((Date)nodeService.getProperty(rawMaterialNodeRef, QName.createQName("bcpg:entityCatalogModifiedDate2", namespaceService))));
+		assertTrue(beforeRef.before((Date)nodeService.getProperty(productNodeRef, QName.createQName("bcpg:modifiedCatalog1", namespaceService))));
+		assertFalse(afterRef.after((Date)nodeService.getProperty(productNodeRef, QName.createQName("bcpg:modifiedCatalog1", namespaceService))));
+		assertTrue(beforeRef.before((Date)nodeService.getProperty(rawMaterialNodeRef, QName.createQName("bcpg:modifiedCatalog2", namespaceService))));
+		assertTrue(afterRef.after((Date)nodeService.getProperty(rawMaterialNodeRef, QName.createQName("bcpg:modifiedCatalog2", namespaceService))));
 	}
 
 	@Test
@@ -139,10 +138,10 @@ public class EntityCatalogTest extends PLMBaseTestCase {
 		JSONObject catalog;
 		try {
 			catalog = new JSONObject(CATALOG_STRING);
-			assertTrue(EntityCatalogHelper.isMatcheEntityType(catalog, PLMModel.TYPE_FINISHEDPRODUCT, namespaceService));
-			assertFalse(EntityCatalogHelper.isMatcheEntityType(catalog, PLMModel.TYPE_RAWMATERIAL, namespaceService));
+			assertTrue(entityCatalogService.isMatcheEntityType(catalog, PLMModel.TYPE_FINISHEDPRODUCT, namespaceService));
+			assertFalse(entityCatalogService.isMatcheEntityType(catalog, PLMModel.TYPE_RAWMATERIAL, namespaceService));
 			assertEquals(new HashSet<QName>(Arrays.asList(new QName[] {ContentModel.PROP_NAME, QName.createQName("bcpg:compoList", namespaceService)})), 
-						EntityCatalogHelper.getAuditedFields(catalog, namespaceService));
+					entityCatalogService.getAuditedFields(catalog, namespaceService));
 		} catch (JSONException e) {
 			logger.error("Unable to load catalog", e);
 		}

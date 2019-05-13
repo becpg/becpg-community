@@ -23,7 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.formulation.EntityCatalogService;
+import fr.becpg.repo.entity.catalog.EntityCatalogService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
 /**
@@ -40,12 +40,11 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy implements No
 
 	private AuthenticationService authenticationService;
 	
-	private EntityCatalogService catalogService;
-	
+	private EntityCatalogService entityCatalogService;
 	
 
-	public void setCatalogService(EntityCatalogService catalogService) {
-		this.catalogService = catalogService;
+	public void setEntityCatalogService(EntityCatalogService entityCatalogService) {
+		this.entityCatalogService = entityCatalogService;
 	}
 
 	public void setAuthenticationService(AuthenticationService authenticationService) {
@@ -154,7 +153,7 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy implements No
 					policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
 					nodeService.setProperty(entityNodeRef, ContentModel.PROP_MODIFIED, Calendar.getInstance().getTime());
 					nodeService.setProperty(entityNodeRef, ContentModel.PROP_MODIFIER, authenticationService.getCurrentUserName());
-					catalogService.updateAuditedField(entityNodeRef,null,null,listNodeRefByContainer.get(listContainerNodeRef));
+					entityCatalogService.updateAuditedField(entityNodeRef,null,null,listNodeRefByContainer.get(listContainerNodeRef));
 				} finally {
 					policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
 				}
@@ -166,9 +165,8 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy implements No
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 		 if(!isVersionNode(nodeRef) && isNotLocked(nodeRef)) {
-			 catalogService.updateAuditedField(nodeRef, before, after, null);
+			 entityCatalogService.updateAuditedField(nodeRef, before, after, null);
 		 }
-		
 	}
 
 }

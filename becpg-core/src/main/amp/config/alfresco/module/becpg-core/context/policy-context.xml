@@ -84,7 +84,7 @@
 	</bean>
 	<bean id="auditEntityListItemPolicy" class="fr.becpg.repo.entity.datalist.policy.AuditEntityListItemPolicy" parent="abstractBeCPGPolicy">
 		<property name="authenticationService" ref="authenticationService" />
-		<property name="catalogService" ref="catalogService" />
+		<property name="entityCatalogService" ref="entityCatalogService" />
 	</bean>
 	<bean id="sortableListPolicy" class="fr.becpg.repo.entity.datalist.policy.SortableListPolicy" parent="abstractBeCPGPolicy">
 		<property name="dataListSortService" ref="dataListSortService" />
