@@ -174,14 +174,11 @@
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="namespaceService" ref="namespaceService" />
 					<property name="nodeService" ref="nodeService" />
-					<property name="beCPGCacheService" ref="beCPGCacheService"/>
 					<property name="dictionaryService" ref="dictionaryService"/>
 					<property name="associationService" ref="associationService" />
 					<property name="mlNodeService" ref="mlAwareNodeService" />
 					<property name="formulaService" ref="formulaService" />
-					<property name="repository" ref="repositoryHelper" />
-					<property name="fileFolderService" ref="fileFolderService" />
-					<property name="contentService" ref="contentService" />
+					<property name="catalogService" ref="catalogService" />
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.MergeReqCtrlFormulationHandler" >
 					<property name="alfrescoRepository" ref="alfrescoRepository" />

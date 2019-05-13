@@ -14,7 +14,7 @@ import org.json.JSONObject;
 
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
-import fr.becpg.repo.helper.JsonScoreHelper;
+import fr.becpg.repo.helper.EntityCatalogHelper;
 import fr.becpg.repo.product.data.AbstractProductDataView;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
@@ -101,8 +101,8 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 			}
 
 			// checks if mandatory fields are present
-			if (scores.has(JsonScoreHelper.PROP_CATALOGS)) {
-				JSONArray mandatoryFields = scores.getJSONArray(JsonScoreHelper.PROP_CATALOGS);
+			if (scores.has(EntityCatalogHelper.PROP_CATALOGS)) {
+				JSONArray mandatoryFields = scores.getJSONArray(EntityCatalogHelper.PROP_CATALOGS);
 
 				if (mandatoryFields.length() > 0) {
 
@@ -110,7 +110,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 
 					for (int j = 0; j < mandatoryFields.length(); j++) {
 						JSONObject catalog = (JSONObject) mandatoryFields.get(j);
-						mandatoryFieldsScore += catalog.getDouble(JsonScoreHelper.PROP_SCORE);
+						mandatoryFieldsScore += catalog.getDouble(EntityCatalogHelper.PROP_SCORE);
 					}
 
 					mandatoryFieldsScore /= mandatoryFields.length();
