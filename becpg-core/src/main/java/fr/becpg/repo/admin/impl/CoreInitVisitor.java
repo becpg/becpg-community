@@ -182,9 +182,7 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 		QName specialiseType = null;
 		boolean applyToChildren = false;
 
-		if (RepoConsts.PATH_ENTITY_TEMPLATES.equals(folderName)) {
-			specialiseType = BeCPGModel.TYPE_ENTITY_V2;
-		} else if (RepoConsts.PATH_REPORTS.equals(folderName)) {
+		if (RepoConsts.PATH_REPORTS.equals(folderName)) {
 
 			// Action : apply type
 			Map<String, Serializable> params = new HashMap<>();
