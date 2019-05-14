@@ -3,8 +3,8 @@
  */
 package fr.becpg.repo.product.data.ing;
 
-import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -32,7 +32,7 @@ public class IngItem extends AbstractLabelingComponent {
 	
 	private IngTypeItem ingType;
 
-	private List<IngItem> subIngs  = new ArrayList<>();
+	private List<IngItem> subIngs  = new LinkedList<>();
 	
 	private Set<NodeRef> pluralParents = new HashSet<>();
 
@@ -47,7 +47,7 @@ public class IngItem extends AbstractLabelingComponent {
 		super(ingItem);
 		this.ingCEECode = ingItem.ingCEECode;
 	    this.ingType = ingItem.ingType;
-	    this.subIngs = ingItem.subIngs;
+	    this.subIngs = clone(ingItem.subIngs);
 	    this.charactName = ingItem.charactName;
 	}
 	

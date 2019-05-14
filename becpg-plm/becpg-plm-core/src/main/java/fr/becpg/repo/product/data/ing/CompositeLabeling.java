@@ -44,12 +44,13 @@ public class CompositeLabeling extends AbstractLabelingComponent {
 	{
 		super(compositeLabeling);
 		this.ingType = compositeLabeling.ingType;
-	    this.ingList = compositeLabeling.ingList;
+	    this.ingList = clone(compositeLabeling.ingList);
 	    this.qtyTotal = compositeLabeling.qtyTotal;
 	    this.volumeTotal = compositeLabeling.volumeTotal;
 	    this.declarationType = compositeLabeling.declarationType;
 	}
 	
+
 	public CompositeLabeling(ProductData productData) {
 		this.name = productData.getName();
 		this.nodeRef = productData.getNodeRef();

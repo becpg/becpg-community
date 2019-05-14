@@ -85,7 +85,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	private NodeService mlNodeService;
 
 	private AssociationService associationService;
-	
+
 	private FormulaService formulaService;
 
 	private boolean ingsCalculatingWithYield = false;
@@ -109,7 +109,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	public void setIngsCalculatingWithYield(boolean ingsCalculatingWithYield) {
 		this.ingsCalculatingWithYield = ingsCalculatingWithYield;
 	}
-
 
 	public void setFormulaService(FormulaService formulaService) {
 		this.formulaService = formulaService;
@@ -172,8 +171,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			LabelingFormulaContext labelingFormulaContext = new LabelingFormulaContext(mlNodeService, associationService, alfrescoRepository);
 
 			ExpressionParser parser = new SpelExpressionParser();
-			StandardEvaluationContext dataContext = formulaService.createEvaluationContext(formulatedProduct,labelingFormulaContext); 
-			
+			StandardEvaluationContext dataContext = formulaService.createEvaluationContext(formulatedProduct, labelingFormulaContext);
+
 			List<LabelingRuleListDataItem> labelingRuleLists = labelingRuleListsGroup.getValue();
 
 			// Apply before formula
@@ -285,25 +284,26 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 								try {
 									I18NUtil.setLocale(locale);
 									I18NUtil.setContentLocale(null);
-									
+
 									labelingFormulaContext.setLocale(locale);
-									
-									String ret = "" ;
-									
+
+									String ret = "";
+
 									String[] formulas = SpelHelper.formatMTFormulas(labelingRuleListDataItem.getFormula());
 									for (String formula : formulas) {
 
 										Matcher varFormulaMatcher = SpelHelper.formulaVarPattern.matcher(formula);
 										if (varFormulaMatcher.matches()) {
-											logger.debug("Variable formula : " + varFormulaMatcher.group(2) + " (" + varFormulaMatcher.group(1) + ")");
+											logger.debug(
+													"Variable formula : " + varFormulaMatcher.group(2) + " (" + varFormulaMatcher.group(1) + ")");
 											Expression exp = parser.parseExpression(varFormulaMatcher.group(2));
 											dataContext.setVariable(varFormulaMatcher.group(1), exp.getValue(dataContext));
 										} else {
 											Expression exp = parser.parseExpression(formula);
-											 ret = exp.getValue(dataContext, String.class);
+											ret = exp.getValue(dataContext, String.class);
 										}
 									}
-									
+
 									if (logger.isDebugEnabled()) {
 										logger.debug("Running renderFormula :" + labelingRuleListDataItem.getFormula() + " for locale :"
 												+ locale.toString());
@@ -1145,7 +1145,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 		ill.setLogValue(log);
 		ill.setSort(sortOrder);
-		
+
 		if (!ill.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM)) {
 			ill.getAspects().add(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
 		}
@@ -1285,7 +1285,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							&& ((productData instanceof SemiFinishedProductData) || (productData instanceof FinishedProductData))) {
 						Composite<CompoListDataItem> sfComposite = CompositeHelper.getHierarchicalCompoList(
 								productData.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())));
-						if(sfComposite.getChildren() != null && !sfComposite.getChildren().isEmpty()){
+						if ((sfComposite.getChildren() != null) && !sfComposite.getChildren().isEmpty()) {
 							for (Composite<CompoListDataItem> sfChild : sfComposite.getChildren()) {
 								CompoListDataItem clone = sfChild.getData().clone();
 								clone.setParent(compoListDataItem);
@@ -1297,7 +1297,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					}
 
 					// Case show ings and is empty use legalName instead #2558
-					if (!isMultiLevel && DeclarationType.Declare.equals(declarationType) && !(productData instanceof LocalSemiFinishedProductData) ) {
+					if (!isMultiLevel && DeclarationType.Declare.equals(declarationType) && !(productData instanceof LocalSemiFinishedProductData)) {
 						if (((productData.getIngList() == null) || productData.getIngList().isEmpty())) {
 							declarationType = DeclarationType.DoNotDetails;
 						} else {
@@ -1734,10 +1734,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				ingLabelItem.getGeoOrigins().addAll(ingListItem.getData().getGeoOrigin());
 			}
 
-			if ( product.getGeoOrigins() != null) {
+			if (product.getGeoOrigins() != null) {
 				ingLabelItem.getGeoOrigins().addAll(product.getGeoOrigins());
 			}
-			
 
 			Double qtyPerc = ingListItem.getData().getQtyPerc();
 
