@@ -70,8 +70,10 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.action.executer.ImporterActionExecuter;
 import fr.becpg.repo.action.executer.UserImporterActionExecuter;
 import fr.becpg.repo.admin.impl.AbstractInitVisitorImpl;
+import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntitySystemService;
 import fr.becpg.repo.entity.EntityTplService;
+import fr.becpg.repo.entity.catalog.EntityCatalogService;
 import fr.becpg.repo.helper.ContentHelper;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.TranslateHelper;
@@ -205,6 +207,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	@Autowired
 	@Qualifier("mlAwareNodeService")
 	protected NodeService mlNodeService;
+	
+	@Autowired
+	protected BeCPGCacheService beCPGCacheService;
 	/**
 	 * Initialize the repository with system folders.
 	 *
@@ -310,9 +315,12 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		// Property catalogs
 		visitFolder(systemNodeRef, PlmRepoConsts.PATH_CATALOGS);
 
+		beCPGCacheService.clearCache(EntityCatalogService.class.getName());
+		
 		visitFolder(systemNodeRef, PlmRepoConsts.PATH_WORKFLOW_SCRIPTS);
 
 		addClassifyRule(companyHome);
+		
 
 		// Create default sites
 		return visitSites();
