@@ -15,6 +15,7 @@ import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.transaction.TransactionService;
@@ -24,11 +25,8 @@ import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.ECMModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.ecm.data.RevisionType;
-import fr.becpg.repo.ecm.data.dataList.ChangeUnitDataItem;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.ProductData;
@@ -36,6 +34,7 @@ import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.product.data.productList.SpecCompatibilityDataItem;
 import fr.becpg.repo.product.requirement.RequirementScanner;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -85,7 +84,7 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 		if (formulatedProduct instanceof ProductSpecificationData) {
 
 			ProductSpecificationData specificationData = (ProductSpecificationData) formulatedProduct;
-			if (alfrescoRepository.hasDataList(formulatedProduct, ECMModel.TYPE_CHANGEUNITLIST)) {
+			if (alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_SPEC_COMPATIBILTY_LIST)) {
 
 				Map<NodeRef, String> toUpdate = new HashMap<>();
 				Set<NodeRef> toSkipProduct = new HashSet<>();
@@ -141,9 +140,9 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 					}
 				}
 
-				List<ChangeUnitDataItem> toRemove = new ArrayList<>();
+				List<SpecCompatibilityDataItem> toRemove = new ArrayList<>();
 
-				for (ChangeUnitDataItem cul1 : specificationData.getChangeUnitList()) {
+				for (SpecCompatibilityDataItem cul1 : specificationData.getSpecCompatibilityList()) {
 					if (!toSkipProduct.contains(cul1.getSourceItem())) {
 						if (!toUpdate.containsKey(cul1.getSourceItem())) {
 							toRemove.add(cul1);
@@ -155,11 +154,11 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 				}
 
 				for (Map.Entry<NodeRef, String> entry : toUpdate.entrySet()) {
-					specificationData.getChangeUnitList().add(new ChangeUnitDataItem(RevisionType.NoRevision, RequirementType.Forbidden,
-							entry.getValue(), Boolean.TRUE, entry.getKey(), null));
+					specificationData.getSpecCompatibilityList().add(new SpecCompatibilityDataItem( RequirementType.Forbidden,
+							entry.getValue(), entry.getKey()));
 				}
 
-				specificationData.getChangeUnitList().removeAll(toRemove);
+				specificationData.getSpecCompatibilityList().removeAll(toRemove);
 
 			} else {
 				logger.debug("No change unit list");
@@ -231,6 +230,24 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 	}
 
 	private List<NodeRef> getProductNodeRefs(ProductSpecificationData formulatedProduct) {
+		
+		if(formulatedProduct.getSpecCompatibilityTpls()!=null && !formulatedProduct.getSpecCompatibilityTpls().isEmpty()) {
+			List<NodeRef> ret = new ArrayList<>();
+			for(NodeRef tplNodeRef : formulatedProduct.getSpecCompatibilityTpls()) {
+				List<AssociationRef> assocRefs = nodeService.getSourceAssocs(tplNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
+
+				for (AssociationRef assocRef : assocRefs) {
+					if (!nodeService.hasAspect(assocRef.getSourceRef(), BeCPGModel.ASPECT_COMPOSITE_VERSION) && !tplNodeRef.equals(assocRef.getSourceRef())) {
+						ret.add(assocRef.getSourceRef());
+					}
+				}
+				
+			}
+			
+			return ret;
+		}
+		
+		
 		return BeCPGQueryBuilder.createQuery().inType(PLMModel.TYPE_FINISHEDPRODUCT).inType(PLMModel.TYPE_SEMIFINISHEDPRODUCT)
 				.inType(PLMModel.TYPE_RAWMATERIAL).excludeDefaults().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list();
 	}

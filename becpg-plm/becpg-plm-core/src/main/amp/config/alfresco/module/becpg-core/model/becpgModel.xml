@@ -770,11 +770,57 @@
 		<!-- PLM -->
 		<type name="bcpg:productSpecification">
 			<parent>bcpg:entityV2</parent>
+			<associations>
+				<association name="bcpg:specCompatibilityTpls">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:entityV2</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>		
+		
 			<mandatory-aspects>
 				<aspect>bcpg:codeAspect</aspect>
 				<aspect>bcpg:entityListsAspect</aspect>
 			</mandatory-aspects>
 		</type>
+		
+		
+		<type name="bcpg:productSpecCompatibilityList">
+			<parent>bcpg:productListItem</parent>
+			<properties>														
+				<property name="bcpg:psclReqType">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<constraints>
+						<constraint ref="bcpg:reqTypes" />
+					</constraints>					
+				</property>				
+				<property name="bcpg:psclReqDetails">
+					<type>d:text</type>				
+					<index enabled="false"/>	
+				</property>	
+			</properties>		
+			<associations>
+				<association name="bcpg:psclSourceItem">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:entityV2</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>	
+		</type>
+		
 
 		<type name="bcpg:productMicrobioCriteria">
 			<parent>bcpg:entityV2</parent>
