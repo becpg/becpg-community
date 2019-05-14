@@ -139,7 +139,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		reportKindCodes.put(PRODUCT_REPORT_CLIENT_PATH, "CustomerSheet");
 		reportKindCodes.put(PRODUCT_REPORT_PRODUCTION_PATH, "ProductionSheet");
 		reportKindCodes.put(NONE_KIND_REPORT, "None");
-		
 	}
 	
 	// TODO
