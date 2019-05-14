@@ -53,7 +53,6 @@ import fr.becpg.repo.product.formulation.AllergensCalculatingFormulationHandler;
 import fr.becpg.repo.product.formulation.ScoreCalculatingFormulationHandler;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
-@SuppressWarnings("unused")
 public class FormulationWithIngRequirementsTest extends AbstractFinishedProductTest {
 
 	protected static final Log logger = LogFactory.getLog(FormulationWithIngRequirementsTest.class);
