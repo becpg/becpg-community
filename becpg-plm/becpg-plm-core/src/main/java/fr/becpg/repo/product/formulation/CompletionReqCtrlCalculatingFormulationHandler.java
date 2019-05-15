@@ -3,6 +3,7 @@ package fr.becpg.repo.product.formulation;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -30,6 +31,7 @@ import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
+import org.springframework.extensions.surf.util.ISO8601DateFormat;
 
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.entity.catalog.EntityCatalogService;
@@ -224,6 +226,8 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 		return res;
 	}
 
+	
+	//TODO a déplacer dans Audit policy
 	public JSONArray calculateMandatoryFieldsScore(ProductData productData) throws JSONException {
 		JSONArray ret = new JSONArray();
 
@@ -239,13 +243,6 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 				for (int i = 0; i < catalogDef.length(); i++) {
 					JSONObject catalog = catalogDef.getJSONObject(i);
 
-					// if( apply(catalog, productData)){
-
-					// if( apply(catalog, productData)){
-
-					// check if product matches various criteria, such as
-					// family,
-					// subfamily, etc.
 					boolean productPassesFilter = productMatches(catalog, productData, productType);
 
 					if (logger.isDebugEnabled()) {
@@ -259,6 +256,8 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 					// no
 					// type defined (it applies to every entity type)
 					if (productPassesFilter) {
+						
+						
 						if (logger.isDebugEnabled()) {
 							logger.debug("Formulating for catalog \"" + catalog.getString(EntityCatalogService.PROP_LABEL) + "\"");
 						}
@@ -286,21 +285,33 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 								uniqueFields);
 
 						for (String lang : langs) {
+							
+							JSONObject catalogDesc = new JSONObject();
 
 							JSONArray missingFields = extractMissingFields(productData, catalog.getString(EntityCatalogService.PROP_LABEL), properties,
 									reqFields, defaultLocale.equals(lang) ? null : lang);
 							if ((missingFields.length() > 0) || (nonUniqueFields.length() > 0)) {
-								JSONObject catalogDesc = new JSONObject();
+								
 								catalogDesc.put(EntityCatalogService.PROP_MISSING_FIELDS, missingFields.length() > 0 ? missingFields : null);
 								catalogDesc.put(EntityCatalogService.PROP_NON_UNIQUE_FIELDS, nonUniqueFields.length() > 0 ? nonUniqueFields : null);
-								catalogDesc.put(EntityCatalogService.PROP_LOCALE, defaultLocale.equals(lang) ? null : lang);
-								catalogDesc.put(EntityCatalogService.PROP_SCORE,
-										((reqFields.length() - missingFields.length()) * 100d) / (reqFields.length() > 0 ? reqFields.length() : 1d));
-								catalogDesc.put(EntityCatalogService.PROP_LABEL, catalog.getString(EntityCatalogService.PROP_LABEL));
-								catalogDesc.put(EntityCatalogService.PROP_ID, catalog.getString(EntityCatalogService.PROP_ID));
-								catalogDesc.put(EntityCatalogService.PROP_COLOR, color);
-								ret.put(catalogDesc);
 							}
+							
+							catalogDesc.put(EntityCatalogService.PROP_LOCALE, defaultLocale.equals(lang) ? null : lang);
+							catalogDesc.put(EntityCatalogService.PROP_SCORE,
+									((reqFields.length() - missingFields.length()) * 100d) / (reqFields.length() > 0 ? reqFields.length() : 1d));
+							catalogDesc.put(EntityCatalogService.PROP_LABEL, catalog.getString(EntityCatalogService.PROP_LABEL));
+							catalogDesc.put(EntityCatalogService.PROP_ID, catalog.getString(EntityCatalogService.PROP_ID));
+							catalogDesc.put(EntityCatalogService.PROP_COLOR, color);
+							
+
+							if (catalog.has(EntityCatalogService.PROP_CATALOG_MODIFIED_FIELD)) {
+								QName catalogModifiedDate = QName.createQName(catalog.getString(EntityCatalogService.PROP_CATALOG_MODIFIED_FIELD), namespaceService);
+								Date modifiedDate = (Date) properties.get(catalogModifiedDate);
+								if(modifiedDate!=null) {
+									catalogDesc.put(EntityCatalogService.PROP_CATALOG_MODIFIED_DATE, ISO8601DateFormat.format(modifiedDate));
+								}
+							}
+							ret.put(catalogDesc);
 
 						}
 					}
@@ -314,7 +325,7 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 
 	private boolean productMatches(JSONObject catalog, ProductData product, QName productType) throws JSONException {
 
-		boolean matchesOnType = entityCatalogService.isMatcheEntityType(catalog, productType, namespaceService);
+		boolean matchesOnType = entityCatalogService.isMatchEntityType(catalog, productType, namespaceService);
 		if (catalog.has(EntityCatalogService.PROP_ENTITY_FILTER)) {
 			String filterFormula = catalog.getString(EntityCatalogService.PROP_ENTITY_FILTER);
 			return matchesOnType && productMatchesOnFormula(filterFormula, product);

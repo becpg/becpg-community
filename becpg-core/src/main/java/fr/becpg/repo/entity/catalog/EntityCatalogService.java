@@ -51,11 +51,14 @@ public class EntityCatalogService {
 	public static final String PROP_COLOR = "color";
 	public static final String PROP_ENTITY_FILTER = "entityFilter";
 	public static final String PROP_OPERATOR = "operator";
+	public static final String PROP_CATALOG_MODIFIED_DATE = "modifiedDate";
 	public static final String PROP_FORMULA = "formula";
 	public static final String PROP_CATALOG_MODIFIED_FIELD = "modifiedField";
 	public static final String PROP_AUDITED_FIELDS = "auditedFields";
 	public static final String CATALOGS_PATH = "/app:company_home/cm:System/cm:PropertyCatalogs";
 	public static final String CATALOG_DEFS = "CATALOG_DEFS";
+
+
 
 	@Autowired
 	private NamespaceService namespaceService;
@@ -124,7 +127,7 @@ public class EntityCatalogService {
 							if ((auditedFields != null) && !auditedFields.isEmpty()) {
 								QName catalogModifiedDate = QName.createQName(catalog.getString(PROP_CATALOG_MODIFIED_FIELD), namespaceService);
 
-								if (isMatcheEntityType(catalog, nodeService.getType(entityNodeRef), namespaceService)) {
+								if (isMatchEntityType(catalog, nodeService.getType(entityNodeRef), namespaceService)) {
 
 									if (listNodeRefs != null) {
 										for (NodeRef listNodeRef : listNodeRefs) {
@@ -133,7 +136,7 @@ public class EntityCatalogService {
 													namespaceService);
 											if (auditedFields.contains(listType)) {
 												if (logger.isDebugEnabled()) {
-													logger.info("Catalog list changed update date: " + catalogModifiedDate);
+													logger.debug("Catalog list changed update date: " + catalogModifiedDate);
 												}
 												nodeService.setProperty(entityNodeRef, catalogModifiedDate, new Date());
 												break;
@@ -143,9 +146,10 @@ public class EntityCatalogService {
 									} else {
 										for (QName beforeType : before.keySet()) {
 											Serializable beforeValue = before.get(beforeType);
-											if (auditedFields.contains(beforeType) && !beforeValue.equals(after.get(beforeType))) {
+											if (auditedFields.contains(beforeType)
+													&& (((beforeValue == null) && (after != null)) || !beforeValue.equals(after.get(beforeType)))) {
 												if (logger.isDebugEnabled()) {
-													logger.info("Catalog properties changed update date: " + catalogModifiedDate);
+													logger.debug("Catalog properties changed update date: " + catalogModifiedDate);
 												}
 												nodeService.setProperty(entityNodeRef, catalogModifiedDate, new Date());
 												break;
@@ -165,7 +169,7 @@ public class EntityCatalogService {
 
 	}
 
-	public boolean isMatcheEntityType(JSONObject catalog, QName productType, NamespaceService namespaceService) throws JSONException {
+	public boolean isMatchEntityType(JSONObject catalog, QName productType, NamespaceService namespaceService) throws JSONException {
 		JSONArray catalogEntityTypes = (catalog.has(PROP_ENTITY_TYPE)) ? catalog.getJSONArray(PROP_ENTITY_TYPE) : new JSONArray();
 
 		for (int i = 0; i < catalogEntityTypes.length(); ++i) {
