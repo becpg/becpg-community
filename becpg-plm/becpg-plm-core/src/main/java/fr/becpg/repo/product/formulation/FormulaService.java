@@ -134,6 +134,15 @@ public class FormulaService {
 		public Serializable propValue(NodeRef nodeRef, String qname) {
 			return nodeService.getProperty(nodeRef, QName.createQName(qname, namespaceService));
 		}
+		
+		public Serializable propValue(RepositoryEntity item, String qname) {
+			Serializable value = item.getExtraProperties().get(QName.createQName(qname, namespaceService));
+			if(value == null){
+				value = nodeService.getProperty(item.getNodeRef(), QName.createQName(qname, namespaceService));
+				item.getExtraProperties().put(QName.createQName(qname, namespaceService), value);
+			}
+			return value;
+		}
 
         public NodeRef assocValue(NodeRef nodeRef, String qname) {
 			return associationService.getTargetAssoc(nodeRef, QName.createQName(qname, namespaceService));
