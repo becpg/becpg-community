@@ -39,6 +39,8 @@ public class PackagingMaterialData extends ProductData   {
 
 
 	private List<NodeRef> suppliers = new ArrayList<>();
+	
+	private List<NodeRef> packagingMaterials = new ArrayList<>();
 
 	@AlfMultiAssoc
 	@AlfQname(qname="bcpg:suppliers")
@@ -49,16 +51,25 @@ public class PackagingMaterialData extends ProductData   {
 	public void setSuppliers(List<NodeRef> suppliers) {
 		this.suppliers = suppliers;
 	}
+	
+	@AlfMultiAssoc
+	@AlfQname(qname="pack:pmMaterialRefs")
+	public List<NodeRef> getPackagingMaterials() {
+		return packagingMaterials;
+	}
 
+	public void setPackagingMaterials(List<NodeRef> packagingMaterials) {
+		this.packagingMaterials = packagingMaterials;
+	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
+		result = prime * result + ((packagingMaterials == null) ? 0 : packagingMaterials.hashCode());
 		result = prime * result + ((suppliers == null) ? 0 : suppliers.hashCode());
 		return result;
 	}
-
 
 	@Override
 	public boolean equals(Object obj) {
@@ -69,6 +80,11 @@ public class PackagingMaterialData extends ProductData   {
 		if (getClass() != obj.getClass())
 			return false;
 		PackagingMaterialData other = (PackagingMaterialData) obj;
+		if (packagingMaterials == null) {
+			if (other.packagingMaterials != null)
+				return false;
+		} else if (!packagingMaterials.equals(other.packagingMaterials))
+			return false;
 		if (suppliers == null) {
 			if (other.suppliers != null)
 				return false;
@@ -76,5 +92,7 @@ public class PackagingMaterialData extends ProductData   {
 			return false;
 		return true;
 	}
+
+
 	
 }
