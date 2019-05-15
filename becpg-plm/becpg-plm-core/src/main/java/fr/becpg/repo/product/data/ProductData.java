@@ -34,6 +34,7 @@ import fr.becpg.repo.product.data.productList.LabelingListDataItem;
 import fr.becpg.repo.product.data.productList.MicrobioListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.OrganoListDataItem;
+import fr.becpg.repo.product.data.productList.PackMaterialListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.data.productList.PriceListDataItem;
@@ -151,6 +152,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private List<LabelingListDataItem> labelingList;
 	private List<ResourceParamListItem> resourceParamList;
 	private List<ReqCtrlListDataItem> reqCtrlList;
+	private List<PackMaterialListDataItem> packMaterialList;
 
 	/*
 	 * View
@@ -888,6 +890,16 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 
 	public void setReqCtrlList(List<ReqCtrlListDataItem> reqCtrlList) {
 		this.reqCtrlList = reqCtrlList;
+	}
+	
+	@DataList
+	@AlfQname(qname = "pack:packMaterialList")
+	public List<PackMaterialListDataItem> getPackMaterialList() {
+		return packMaterialList;
+	}
+
+	public void setPackMaterialList(List<PackMaterialListDataItem> packMaterialList) {
+		this.packMaterialList = packMaterialList;
 	}
 
 	@DataListView
