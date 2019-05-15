@@ -57,9 +57,17 @@ public class EntityCatalogTest extends PLMBaseTestCase {
 	@Override
 	public void setUp() throws Exception {
 			super.setUp();
-			setUpCatalogs();
+			cacheService.clearCache(EntityCatalogService.class.getName());
+			List<JSONArray> res = new ArrayList<>();
+			res.add(new JSONArray(CATALOGS_STRING));
+			cacheService.storeInCache(EntityCatalogService.class.getName(), EntityCatalogService.CATALOG_DEFS, res);
 	}
 	
+	@Override
+	public void tearDown() throws Exception {
+		super.tearDown();
+		cacheService.clearCache(EntityCatalogService.class.getName());
+	}
 	
 	@Test
 	public void catalogServiceTest() {
@@ -138,8 +146,8 @@ public class EntityCatalogTest extends PLMBaseTestCase {
 		JSONObject catalog;
 		try {
 			catalog = new JSONObject(CATALOG_STRING);
-			assertTrue(entityCatalogService.isMatcheEntityType(catalog, PLMModel.TYPE_FINISHEDPRODUCT, namespaceService));
-			assertFalse(entityCatalogService.isMatcheEntityType(catalog, PLMModel.TYPE_RAWMATERIAL, namespaceService));
+			assertTrue(entityCatalogService.isMatchEntityType(catalog, PLMModel.TYPE_FINISHEDPRODUCT, namespaceService));
+			assertFalse(entityCatalogService.isMatchEntityType(catalog, PLMModel.TYPE_RAWMATERIAL, namespaceService));
 			assertEquals(new HashSet<QName>(Arrays.asList(new QName[] {ContentModel.PROP_NAME, QName.createQName("bcpg:compoList", namespaceService)})), 
 					entityCatalogService.getAuditedFields(catalog, namespaceService));
 		} catch (JSONException e) {
@@ -195,33 +203,5 @@ public class EntityCatalogTest extends PLMBaseTestCase {
 		}, false, true);
 	}
 
-	private void setUpCatalogs(){
-		cacheService.clearCache(EntityCatalogService.class.getName());
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-		NodeRef folder = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(), "/app:company_home/cm:System/cm:PropertyCatalogs");
-		 
-		 List<FileInfo> files = fileFolderService.list(folder);
-		 if(!files.isEmpty()) {
-			 
-			 NodeRef catalogFile = files.get(0).getNodeRef();
-			 JSONArray catalogs = new JSONArray();
-			 
-			 try {
-				 catalogs = new JSONArray(CATALOGS_STRING);
-				 ContentWriter writer = contentService.getWriter(catalogFile, ContentModel.PROP_CONTENT, true);
-				 PrintWriter printWriter = new PrintWriter(writer.getContentOutputStream());
-				 
-				 printWriter.write(catalogs.toString());
-				 printWriter.flush();
-				 printWriter.close();
-			} catch (JSONException e) {
-				logger.error("unable to parse catalogs");
-			}
-			 
-		 } else {
-			 logger.error("No catalog in folder, do init repo");	 
-		 }
-		 return null;
-		}, false, true);
-	}
+
 }
