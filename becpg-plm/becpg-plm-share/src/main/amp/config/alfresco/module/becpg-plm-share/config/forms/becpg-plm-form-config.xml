@@ -88,11 +88,19 @@
 					<show id="cm:title" force="true" />
 					<show id="cm:description" />
 					<show id="bcpg:productSpecifications" force="true" />
+					<show id="bcpg:specCompatibilityTpls" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:productSpecifications" help-id="becpg.forms.help.productSpecifications" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
+						</control>
+					</field>
+					<field id="bcpg:specCompatibilityTpls"  >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:entityV2?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse</control-param>
 							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
 						</control>
 					</field>
@@ -3865,6 +3873,12 @@
 					<show id="bcpg:advLclClaimAnd" force="true" />
 					<show id="bcpg:advLclClaimNot" force="true" />
 
+					<!-- Product specifications -->
+					<show id="bcpg:advRespectedProductSpecs" force="true" />
+					<show id="bcpg:advNotRespectedProductSpecs" force="true" />
+					
+					
+
 				</field-visibility>
 				<appearance>
 					<set id="product-criteria" appearance="bordered-panel"
@@ -3888,6 +3902,9 @@
 					<set id="microbio-criteria" appearance="bordered-panel" template="/org/alfresco/components/form/2-column-set.ftl"
 						label-id="becpg.forms.set.microbio-criteria.label" />		
 	
+					<set id="product-specifications-criteria"  appearance="bordered-panel" template="/org/alfresco/components/form/2-column-set.ftl"
+						label-id="becpg.forms.set.product-specifications-criteria.label" />		
+
 
 					<field id="cm:name" set="2-col-product-criteria" />
 					<field id="cm:description" set="2-col-product-criteria" >
@@ -4036,6 +4053,17 @@
 						<control
 							template="/org/alfresco/components/form/controls/numberrange.ftl" />
 					</field>
+					
+					
+					<field id="bcpg:advRespectedProductSpecs" set="product-specifications-criteria" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:advNotRespectedProductSpecs" set="product-specifications-criteria"  >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					
 					
 				</appearance>
 			</form>
@@ -9764,5 +9792,87 @@
 			</form>
 		</forms>
 	</config>	
+	
+	
+	
+	<!-- ecm:changeUnitList type -->
+	<config evaluator="model-type" condition="bcpg:productSpecCompatibilityList">
+		<forms>
+			<!-- Create item form -->
+			<form>
+				<field-visibility>
+					<show id="bcpg:psclSourceItem" />
+					<show id="bcpg:psclReqType" />
+					<show id="bcpg:psclReqDetails" />												
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:psclReqType">
+					<control
+						template="/org/alfresco/components/form/controls/selectone.ftl" >
+						 <control-param name="options">Forbidden|data.reqtype.forbidden,Tolerated|data.reqtype.tolerated,Info|data.reqtype.info</control-param>
+					</control>
+				</field>
+				</appearance>							
+			</form>
+			<form id="filter">
+				<field-visibility>
+					<show id="bcpg:psclRevision" />
+					<show id="entity_bcpg:psclSourceItem_bcpg:product" />
+					<show id="bcpg:psclReqType" />	
+				</field-visibility>
+				<appearance>
+			
+					<field id="bcpg:psclReqType">
+					<control
+						template="/org/alfresco/components/form/controls/selectone.ftl" >
+						 <control-param name="options">Forbidden|data.reqtype.forbidden,Tolerated|data.reqtype.tolerated,Info|data.reqtype.info</control-param>
+						 <control-param name="isSearch">true</control-param>
+						<control-param name="insertBlank">true</control-param>
+					</control>
+				</field>
+				</appearance>				
+			</form>
+			<!-- Data Grid view -->
+			<form id="datagrid">
+				<field-visibility>
+					<show id="bcpg:psclSourceItem" />
+					<show id="bcpg:psclReqType" />
+					<show id="bcpg:psclReqDetails" />		
+				</field-visibility>			
+			</form>
+		</forms>
+	</config>
+	<!-- ecm:changeUnitList type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:productSpecCompatibilityList">
+		<forms>
+			<!-- Data List pop-up edit form -->
+			<form>
+				<field-visibility>
+					<show id="bcpg:psclSourceItem" />
+					<show id="bcpg:psclReqType" />
+					<show id="bcpg:psclReqDetails" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:psclReqType">
+					<control
+						template="/org/alfresco/components/form/controls/selectone.ftl" >
+						 <control-param name="options">Forbidden|data.reqtype.forbidden,Tolerated|data.reqtype.tolerated,Info|data.reqtype.info</control-param>
+					</control>
+				</field>
+				</appearance>				
+			</form>
+		</forms>
+	</config>
+		
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 </alfresco-config>

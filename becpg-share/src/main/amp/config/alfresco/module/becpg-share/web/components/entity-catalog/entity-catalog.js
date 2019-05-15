@@ -80,6 +80,7 @@
 						var locale = catalogs[key].locale;
 						var label = catalogs[key].label;
 						var catalogId = catalogs[key].id;
+						var modifiedDate =  catalogs[key].modifiedDate;
 						var country = null;
 						
 						if(locale !== undefined && locale != null ){
@@ -93,20 +94,35 @@
 						
 						html+="<div class=\"catalog "+(key==0?"first-catalog":"")+"\">";
 						html+="<div class=\"catalog-header set-bordered-panel-heading\">";
-							html+="<span class=\"catalog-name\">"+instance.msg("label.catalog")+" \""+label+
+							html+="<table><tr><td><span class=\"catalog-name\">"+instance.msg("label.catalog")+" \""+label+
 							(country!=null?"<img title="+instance.msg("locale.name."+locale)
-									+" src=\"/share/res/components/images/flags/"+country+".png\">":"")+"\"</span>";
+									+" src=\"/share/res/components/images/flags/"+country+".png\">":"")+"\"</span></td>";
 							
-							html+="<progress value=\""+(score/100)+"\">";							
+							html+="<td><progress value=\""+(score/100)+"\">";							
 								//IE fix
 								html+="<div class=\"progress-bar\">";
 									html+="<span style=\"width: "+score+"%;\">"+score+"%</span>";
 								html+="</div>";					        	
-							html+="</progress>";
-							html+="<span class=\"score-info\">"+Math.floor(score)+" % "+instance.msg("label.completed")+"</span>";
-						html+="</div>";
+							html+="</progress></td></tr><tr>";
+							
+							if(modifiedDate!=null){
+								html += '<td><span class="date-info">';
+								html += instance.msg("label.modifiedDate",
+											Alfresco.util.relativeTime(Alfresco.util.fromISO8601(modifiedDate)) 
+											+' ('+  Alfresco.util.formatDate(modifiedDate	, instance.msg("date.format")) + ')');
+				    	        html += '</span></td>';
+							} else {
+								html+="<td></td>";
+							}
+							
+							html+="<td><span class=\"score-info\">"+Math.floor(score)+" % "+instance.msg("label.completed")+"</span></td>";
+							
+							
+						html+="</tr></table></div>";
 
-						html+="<div class=\"catalog-details\">";
+						if(catalogs[key].missingFields !== undefined || catalogs[key].nonUniqueFields !== undefined){
+							html+="<div class=\"catalog-details\">";
+						}
 						
 
 						//display missing props, if any
@@ -150,7 +166,9 @@
 							html+="</ul>";
 						}
 						
-						html+="</div>";
+						if(catalogs[key].missingFields !== undefined || catalogs[key].nonUniqueFields !== undefined){
+							html+="</div>";
+						}
 						html+="</div>";
 					}
 					html+="</div>";	

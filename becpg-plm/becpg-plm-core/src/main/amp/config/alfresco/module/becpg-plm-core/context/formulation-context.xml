@@ -169,41 +169,16 @@
 					<property name="nodeService" ref="nodeService" />
 					<property name="execOrder" value="Post"/>
 				</bean>
-				<bean class="fr.becpg.repo.product.formulation.ProductSpecificationsFormulationHandler">
-					<property name="requirementScanners"  >
-						<list>
-							<bean class="fr.becpg.repo.product.requirement.AllergenRequirementScanner">
-								<property name="nodeService" ref="nodeService" />
-							</bean>
-							<bean class="fr.becpg.repo.product.requirement.IngRequirementScanner">
-								<property name="nodeService" ref="nodeService" />
-								<property name="alfrescoRepository" ref="alfrescoRepository" />
-								<property name="ingsCalculatingWithYield" value="${beCPG.formulation.ingsCalculatingWithYield}"/>
-							</bean>
-							<bean class="fr.becpg.repo.product.requirement.NutsRequirementScanner">
-								<property name="nodeService" ref="nodeService" />
-							</bean>
-							<bean class="fr.becpg.repo.product.requirement.PhysicoRequirementScanner">
-								<property name="nodeService" ref="nodeService" />
-							</bean>
-							<bean class="fr.becpg.repo.product.requirement.ClaimRequirementScanner">
-								<property name="nodeService" ref="nodeService" />
-							</bean>
-						</list>
-					</property>
-				</bean>
+				<ref bean="productSpecificationsFormulationHandler" />
 				<bean class="fr.becpg.repo.product.formulation.CompletionReqCtrlCalculatingFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="namespaceService" ref="namespaceService" />
 					<property name="nodeService" ref="nodeService" />
-					<property name="beCPGCacheService" ref="beCPGCacheService"/>
 					<property name="dictionaryService" ref="dictionaryService"/>
 					<property name="associationService" ref="associationService" />
 					<property name="mlNodeService" ref="mlAwareNodeService" />
 					<property name="formulaService" ref="formulaService" />
-					<property name="repository" ref="repositoryHelper" />
-					<property name="fileFolderService" ref="fileFolderService" />
-					<property name="contentService" ref="contentService" />
+					<property name="entityCatalogService" ref="entityCatalogService" />
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.MergeReqCtrlFormulationHandler" >
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
@@ -292,5 +267,66 @@
 		<property name="contextClass" value="fr.becpg.repo.product.data.ProductData" />
 		<property name="updateFormulatedDate" value="false"/>
 	</bean> -->
+	
+	<!-- Specification Job -->
+
+
+	<bean id="productSpecificationFormulationJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+		<property name="jobClass">
+			<value>fr.becpg.repo.product.requirement.ProductSpecificationFormulationJob</value>
+		</property>
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="productSpecificationsFormulationHandler">
+					<ref bean="productSpecificationsFormulationHandler" />
+				</entry>
+				<entry key="tenantAdminService">
+					<ref bean="tenantAdminService" />
+				</entry>
+			</map>
+		</property>
+	</bean>
+
+	<bean id="productSpecificationFormulationJobTrigger" class="org.alfresco.util.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="productSpecificationFormulationJob" />
+		</property>
+		<property name="scheduler">
+			<ref bean="schedulerFactory" />
+		</property>
+		<!-- Everyday at 23h -->
+		<property name="cronExpression">
+			<value>0 0 23 * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="productSpecificationsFormulationHandler" class="fr.becpg.repo.product.formulation.ProductSpecificationsFormulationHandler">
+		<property name="transactionService" ref="transactionService" />
+		<property name="alfrescoRepository" ref="alfrescoRepository" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
+		<property name="requirementScanners">
+			<list>
+				<bean class="fr.becpg.repo.product.requirement.AllergenRequirementScanner">
+					<property name="nodeService" ref="nodeService" />
+				</bean>
+				<bean class="fr.becpg.repo.product.requirement.IngRequirementScanner">
+					<property name="nodeService" ref="nodeService" />
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+					<property name="ingsCalculatingWithYield" value="${beCPG.formulation.ingsCalculatingWithYield}" />
+				</bean>
+				<bean class="fr.becpg.repo.product.requirement.NutsRequirementScanner">
+					<property name="nodeService" ref="nodeService" />
+				</bean>
+				<bean class="fr.becpg.repo.product.requirement.PhysicoRequirementScanner">
+					<property name="nodeService" ref="nodeService" />
+				</bean>
+				<bean class="fr.becpg.repo.product.requirement.ClaimRequirementScanner">
+					<property name="nodeService" ref="nodeService" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
 
 </beans>

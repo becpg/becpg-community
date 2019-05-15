@@ -641,13 +641,13 @@ public class LabelingFormulaContext extends RuleParser {
 				total = getTotal(lblCompositeContext);
 			}
 
-			return renderCompositeIng(lblCompositeContext, 1d, total,false);
+			return renderCompositeIng(lblCompositeContext, 1d, total, false);
 		} else {
 			if (force100Perc) {
 				total = getTotal(mergedLblCompositeContext);
 			}
 
-			return renderCompositeIng(mergedLblCompositeContext, 1d, total,false);
+			return renderCompositeIng(mergedLblCompositeContext, 1d, total, false);
 		}
 
 	}
@@ -759,8 +759,7 @@ public class LabelingFormulaContext extends RuleParser {
 				String geoOriginsLabel = createGeoOriginsLabel(null, kv.getValue());
 
 				String subLabel = getIngTextFormat(kv.getKey(), qtyPerc).format(new Object[] { ingTypeLegalName, null,
-						doNotDetailsDeclType ? null : renderLabelingComponent(lblCompositeContext, kv.getValue(), ingTypeDefaultSeparator, 1d, null,true),
-						null });
+						doNotDetailsDeclType ? null : renderLabelingComponent(lblCompositeContext, kv.getValue(), true, 1d, null, true), null });
 
 				if ((subLabel != null) && !subLabel.isEmpty()) {
 
@@ -800,7 +799,7 @@ public class LabelingFormulaContext extends RuleParser {
 							IngItem ingItem = (IngItem) component;
 
 							StringBuilder subIngBuff = new StringBuilder();
-							createSubIngBuff(lblCompositeContext, ingItem, subIngBuff, 1d,true);
+							createSubIngBuff(lblCompositeContext, ingItem, subIngBuff, 1d, true);
 
 							subLabel = getIngTextFormat(component, qtyPerc).format(new Object[] { ingName, qtyPerc, subIngBuff.toString(), null });
 
@@ -972,13 +971,16 @@ public class LabelingFormulaContext extends RuleParser {
 		boolean appendEOF = false;
 		boolean first = true;
 
+		boolean applySeparatorRule = true;
+
 		for (Map.Entry<IngTypeItem, List<AbstractLabelingComponent>> kv : getSortedIngListByType(compositeLabeling).entrySet()) {
 
 			StringBuilder toAppend = new StringBuilder();
 
+			Double qtyPerc = null;
 			if ((kv.getKey() != null) && (getLegalIngName(kv.getKey(), null, false, false) != null)) {
 
-				Double qtyPerc = computeQtyPerc(compositeLabeling, kv.getKey(), ratio);
+				qtyPerc = computeQtyPerc(compositeLabeling, kv.getKey(), ratio);
 				Double volumePerc = computeVolumePerc(compositeLabeling, kv.getKey(), ratio);
 				qtyPerc = (useVolume ? volumePerc : qtyPerc);
 				kv.getKey().setQty(qtyPerc);
@@ -998,11 +1000,17 @@ public class LabelingFormulaContext extends RuleParser {
 
 				toAppend.append(getIngTextFormat(kv.getKey(), qtyPerc).format(new Object[] { ingTypeLegalName, qtyPerc,
 						doNotDetailsDeclType ? null
-								: renderLabelingComponent(compositeLabeling, kv.getValue(), ingTypeDefaultSeparator, ratio, first ? total : null, hideGeo),
-								hideGeo ? null: geoOriginsLabel }));
+								: renderLabelingComponent(compositeLabeling, kv.getValue(), true, ratio, first ? total : null, hideGeo),
+						hideGeo ? null : geoOriginsLabel }));
 
 			} else {
-				toAppend.append(renderLabelingComponent(compositeLabeling, kv.getValue(), defaultSeparator, ratio, first ? total : null, hideGeo));
+				if (!kv.getValue().isEmpty()) {
+					qtyPerc = computeQtyPerc(compositeLabeling, kv.getValue().get(0), ratio);
+					Double volumePerc = computeVolumePerc(compositeLabeling, kv.getValue().get(0), ratio);
+					qtyPerc = (useVolume ? volumePerc : qtyPerc);
+				}
+
+				toAppend.append(renderLabelingComponent(compositeLabeling, kv.getValue(), false, ratio, first ? total : null, hideGeo));
 			}
 
 			first = false;
@@ -1011,7 +1019,23 @@ public class LabelingFormulaContext extends RuleParser {
 					if (appendEOF) {
 						ret.append("<br/>");
 					} else {
-						ret.append(defaultSeparator);
+						if ((separatorRules != null) && !separatorRules.isEmpty() && applySeparatorRule) {
+
+							for (SeparatorRule separatorRule : separatorRules) {
+								if (separatorRule.matchLocale(I18NUtil.getLocale()) && (qtyPerc != null)
+										&& (qtyPerc <= separatorRule.getThreshold())) {
+									ret.append(separatorRule.getClosestValue(I18NUtil.getLocale()));
+									applySeparatorRule = false;
+									break;
+								}
+							}
+							if (applySeparatorRule) {
+								ret.append(defaultSeparator);
+							}
+						} else {
+
+							ret.append(defaultSeparator);
+						}
 					}
 				}
 				if (IngTypeItem.DEFAULT_GROUP.equals(kv.getKey())) {
@@ -1030,7 +1054,7 @@ public class LabelingFormulaContext extends RuleParser {
 
 	Double totalPrecision = 1 / Math.pow(10, maxPrecision + 2);
 
-	private StringBuilder renderLabelingComponent(CompositeLabeling parent, List<AbstractLabelingComponent> subComponents, String separator,
+	private StringBuilder renderLabelingComponent(CompositeLabeling parent, List<AbstractLabelingComponent> subComponents, boolean isIngType,
 			Double ratio, BigDecimal total, boolean hideGeo) {
 
 		StringBuilder ret = new StringBuilder();
@@ -1069,7 +1093,7 @@ public class LabelingFormulaContext extends RuleParser {
 					IngItem ingItem = (IngItem) component;
 
 					StringBuilder subIngBuff = new StringBuilder();
-					createSubIngBuff(parent, ingItem, subIngBuff, ratio,hideGeo);
+					createSubIngBuff(parent, ingItem, subIngBuff, ratio, hideGeo);
 
 					MessageFormat formater = getIngTextFormat(component, qtyPerc);
 
@@ -1078,7 +1102,7 @@ public class LabelingFormulaContext extends RuleParser {
 						first = false;
 					}
 
-					toAppend = formater.format(new Object[] { ingName, qtyPerc, subIngBuff.toString(), hideGeo ? null: geoOriginsLabel });
+					toAppend = formater.format(new Object[] { ingName, qtyPerc, subIngBuff.toString(), hideGeo ? null : geoOriginsLabel });
 
 				} else if (component instanceof CompositeLabeling) {
 
@@ -1094,7 +1118,8 @@ public class LabelingFormulaContext extends RuleParser {
 					}
 
 					toAppend = formater.format(new Object[] { ingName, qtyPerc,
-							renderCompositeIng((CompositeLabeling) component, subRatio, first ? total : null,hideGeo), hideGeo ? null: geoOriginsLabel });
+							renderCompositeIng((CompositeLabeling) component, subRatio, first ? total : null, hideGeo),
+							hideGeo ? null : geoOriginsLabel });
 
 					first = false;
 
@@ -1107,7 +1132,7 @@ public class LabelingFormulaContext extends RuleParser {
 						if (appendEOF) {
 							ret.append("<br/>");
 						} else {
-							ret.append(separator);
+							ret.append(isIngType ? ingTypeDefaultSeparator : defaultSeparator);
 						}
 					}
 
@@ -1131,7 +1156,7 @@ public class LabelingFormulaContext extends RuleParser {
 
 	private String createGeoOriginsLabel(NodeRef nodeRef, List<AbstractLabelingComponent> components) {
 
-		if (showAllGeo || (nodeRef != null && showGeoRules.containsKey(nodeRef) && showGeoRules.get(nodeRef).matchLocale(I18NUtil.getLocale()))) {
+		if (showAllGeo || ((nodeRef != null) && showGeoRules.containsKey(nodeRef) && showGeoRules.get(nodeRef).matchLocale(I18NUtil.getLocale()))) {
 
 			if ((components != null) && !components.isEmpty()) {
 
@@ -1153,7 +1178,7 @@ public class LabelingFormulaContext extends RuleParser {
 
 	private String createGeoOriginsLabel(NodeRef nodeRef, Set<NodeRef> geoOrigins) {
 
-		if (showAllGeo || (nodeRef != null && showGeoRules.containsKey(nodeRef) && showGeoRules.get(nodeRef).matchLocale(I18NUtil.getLocale()))) {
+		if (showAllGeo || ((nodeRef != null) && showGeoRules.containsKey(nodeRef) && showGeoRules.get(nodeRef).matchLocale(I18NUtil.getLocale()))) {
 
 			if ((geoOrigins != null) && !geoOrigins.isEmpty()) {
 				StringBuilder geoOriginsBuffer = new StringBuilder();

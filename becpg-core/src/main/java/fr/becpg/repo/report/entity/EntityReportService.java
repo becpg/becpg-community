@@ -34,9 +34,7 @@ public interface EntityReportService {
 	
 	NodeRef getOrRefreshReport(NodeRef entityNodeRef, NodeRef documentNodeRef);
 	
-	String getXmlReportDataSource(NodeRef entityNodeRef, Locale locale);
-
-	String getXmlReportDataSource(NodeRef entityNodeRef);
+	String getXmlReportDataSource(NodeRef entityNodeRef, Locale locale, EntityReportParameters reportParameters);
 
 	void setPermissions(NodeRef tplNodeRef, NodeRef documentNodeRef);
 
@@ -52,6 +50,8 @@ public interface EntityReportService {
 
 	void generateReport(NodeRef entityNodeRef, NodeRef templateNodeRef, EntityReportParameters reportParameters, Locale locale,
 			ReportFormat reportFormat, OutputStream outputStream);
+
+	NodeRef getAssociatedDocumentNodeRef(NodeRef entityNodeRef, NodeRef tplNodeRef, EntityReportParameters reportParameters, Locale locale, ReportFormat reportFormat);
 
 
 	

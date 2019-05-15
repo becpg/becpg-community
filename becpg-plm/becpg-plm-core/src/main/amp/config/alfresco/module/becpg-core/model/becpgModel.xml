@@ -770,11 +770,57 @@
 		<!-- PLM -->
 		<type name="bcpg:productSpecification">
 			<parent>bcpg:entityV2</parent>
+			<associations>
+				<association name="bcpg:specCompatibilityTpls">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:entityV2</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>		
+		
 			<mandatory-aspects>
 				<aspect>bcpg:codeAspect</aspect>
 				<aspect>bcpg:entityListsAspect</aspect>
 			</mandatory-aspects>
 		</type>
+		
+		
+		<type name="bcpg:productSpecCompatibilityList">
+			<parent>bcpg:productListItem</parent>
+			<properties>														
+				<property name="bcpg:psclReqType">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<constraints>
+						<constraint ref="bcpg:reqTypes" />
+					</constraints>					
+				</property>				
+				<property name="bcpg:psclReqDetails">
+					<type>d:text</type>				
+					<index enabled="false"/>	
+				</property>	
+			</properties>		
+			<associations>
+				<association name="bcpg:psclSourceItem">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:entityV2</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>	
+		</type>
+		
 
 		<type name="bcpg:productMicrobioCriteria">
 			<parent>bcpg:entityV2</parent>
@@ -2225,13 +2271,11 @@
 					<title>First Name</title>
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="false" />
 				</property>
 				<property name="bcpg:contactListLastName">
 					<title>Last Name</title>
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="false" />
 				</property>
 				<property name="bcpg:contactListEmail">
 					<title>Email Address</title>
@@ -3856,9 +3900,70 @@
 							<many>false</many>
 						</target>
 					</association>
+					
+					<association name="bcpg:advNotRespectedProductSpecs">
+						<source>
+							<mandatory>false</mandatory>
+							<many>true</many>
+						</source>
+						<target>
+							<class>bcpg:productSpecification</class>
+							<mandatory>false</mandatory>
+							<many>true</many>
+						</target>
+				</association>
+					<association name="bcpg:advRespectedProductSpecs">
+						<source>
+							<mandatory>false</mandatory>
+							<many>true</many>
+						</source>
+						<target>
+							<class>bcpg:productSpecification</class>
+							<mandatory>false</mandatory>
+							<many>true</many>
+						</target>
+				</association>
+					
 			</associations>
 		</aspect>
 
+		<aspect name="bcpg:auditableCatalogAspect">
+			<properties>
+				<property name="bcpg:modifiedCatalog1">
+					 <type>d:datetime</type>
+		             <protected>true</protected>
+		             <mandatory>false</mandatory>
+		             <index enabled="true">
+		                  <atomic>true</atomic>
+		                  <stored>false</stored> 
+		                  <tokenised>both</tokenised>
+		                  <facetable>true</facetable>
+		              </index>
+				</property>
+				<property name="bcpg:modifiedCatalog2">
+					 <type>d:datetime</type>
+		             <protected>true</protected>
+		             <mandatory>false</mandatory>
+		             <index enabled="true">
+		                  <atomic>true</atomic>
+		                  <stored>false</stored> 
+		                  <tokenised>both</tokenised>
+		                  <facetable>true</facetable>
+		              </index>
+				</property>
+				<property name="bcpg:modifiedCatalog3">
+					 <type>d:datetime</type>
+		             <protected>true</protected>
+		             <mandatory>false</mandatory>
+		             <index enabled="true">
+		                  <atomic>true</atomic>
+		                  <stored>false</stored> 
+		                  <tokenised>both</tokenised>
+		                  <facetable>true</facetable>
+		              </index>
+				</property>
+			</properties>
+		</aspect>
 		
 	</aspects>
 </model>

@@ -34,6 +34,7 @@ public abstract class RuleParser {
 	protected final Map<NodeRef, TextFormatRule> textFormaters = new HashMap<>();
 	protected final Map<NodeRef, List<DeclarationFilter>> nodeDeclarationFilters = new HashMap<>();
 	protected final List<DeclarationFilter> declarationFilters = new ArrayList<>();
+	protected final List<SeparatorRule> separatorRules = new ArrayList<>();
 	protected final Map<NodeRef, List<AggregateRule>> aggregateRules = new HashMap<>();
 	protected final List<MeatContentRule> meatContentRules = new ArrayList<>();
 	protected final Map<NodeRef, RenameRule> renameRules = new HashMap<>();
@@ -246,36 +247,41 @@ public abstract class RuleParser {
 	}
 
 	public boolean rename(List<NodeRef> components, List<NodeRef> replacement, MLText label, String formula, List<String> locales) {
-		for (NodeRef component : components) {
-			MLText mlText = null;
-			MLText pluralMlText = null;
-			if ((replacement != null) && !replacement.isEmpty()) {
-				mlText = (MLText) mlNodeService.getProperty(replacement.get(0), BeCPGModel.PROP_LEGAL_NAME);
-				pluralMlText = (MLText) mlNodeService.getProperty(replacement.get(0), BeCPGModel.PROP_PLURAL_LEGAL_NAME);
-			} else if (label != null) {
-				mlText = label;
-			} else if (formula != null) {
-				mlText = new MLText();
-
-				Set<Locale> availableLocales = new LinkedHashSet<>(getLocales());
-
-				if (availableLocales.isEmpty()) {
-					availableLocales.add(new Locale(Locale.getDefault().getLanguage()));
-				}
-
-				for (Locale locale : availableLocales) {
-					String val = I18NUtil.getMessage(formula, locale);
-					if (val == null) {
-						if (logger.isDebugEnabled()) {
-							logger.debug("I18 not found for key " + label + " locale " + locale.toString());
-						}
-						val = formula;
+		
+		if(components.isEmpty() && replacement.isEmpty() && formula!=null && formula.matches("-?\\d+(\\.\\d+)?")) {
+			separatorRules.add(new SeparatorRule(label, Double.parseDouble(formula), locales));
+		} else {
+			for (NodeRef component : components) {
+				MLText mlText = null;
+				MLText pluralMlText = null;
+				if ((replacement != null) && !replacement.isEmpty()) {
+					mlText = (MLText) mlNodeService.getProperty(replacement.get(0), BeCPGModel.PROP_LEGAL_NAME);
+					pluralMlText = (MLText) mlNodeService.getProperty(replacement.get(0), BeCPGModel.PROP_PLURAL_LEGAL_NAME);
+				} else if (label != null) {
+					mlText = label;
+				} else if (formula != null) {
+					mlText = new MLText();
+	
+					Set<Locale> availableLocales = new LinkedHashSet<>(getLocales());
+	
+					if (availableLocales.isEmpty()) {
+						availableLocales.add(new Locale(Locale.getDefault().getLanguage()));
 					}
-					mlText.addValue(locale, val);
+	
+					for (Locale locale : availableLocales) {
+						String val = I18NUtil.getMessage(formula, locale);
+						if (val == null) {
+							if (logger.isDebugEnabled()) {
+								logger.debug("I18 not found for key " + label + " locale " + locale.toString());
+							}
+							val = formula;
+						}
+						mlText.addValue(locale, val);
+					}
 				}
-			}
-			if (mlText != null) {
-				renameRules.put(component, new RenameRule(mlText, pluralMlText, locales));
+				if (mlText != null) {
+					renameRules.put(component, new RenameRule(mlText, pluralMlText, locales));
+				}
 			}
 		}
 		return true;

@@ -145,7 +145,10 @@
 			<properties>
 				<property name="rep:reportIsDefault">
 					<type>d:boolean</type>
-				</property>	
+				</property>
+				<property name="rep:reportIsDirty">
+					<type>d:boolean</type>
+				</property>		
 			</properties>
 			<associations>
 				<association name="rep:reportTplAssoc">

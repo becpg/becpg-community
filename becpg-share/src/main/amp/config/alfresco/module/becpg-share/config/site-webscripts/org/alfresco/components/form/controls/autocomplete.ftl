@@ -26,10 +26,13 @@
 			</#if>
 			      isMandatory : ${field.mandatory?string},
 			 		dsStr:"${ds}"
-			<#if field.control.params.parent?exists>
-			<#assign parentFieldHtmlId=args.htmlid + "_prop_" + field.control.params.parent >
-			 		,parentFieldHtmlId:"${parentFieldHtmlId}"
-			</#if>
+			<#if field.control.params.parent??>
+					<#assign parentFieldHtmlId=args.htmlid + "_prop_" + field.control.params.parent >
+		 		,parentFieldHtmlId:"${parentFieldHtmlId}"
+				<#elseif field.control.params.parentAssoc??>
+					<#assign parentFieldHtmlId=args.htmlid + "_assoc_" + field.control.params.parentAssoc >
+		 		,parentFieldHtmlId:"${parentFieldHtmlId}-cntrl"
+			</#if> 
 			<#if field.control.params.local?exists>
 			 		,isLocalProxy:${field.control.params.local?string}
 			</#if>

@@ -266,10 +266,12 @@
 	
 	<bean id="webscript.fr.becpg.remote.entityReport.get" class="fr.becpg.repo.web.scripts.remote.EntityReportWebScript" parent="abstractEntityWebScript">
 		<property name="entityReportService" ref="entityReportService" />
+		<property name="contentService" ref="ContentService" />	
 	</bean>
 	
 	<bean id="webscript.fr.becpg.remote.entityReport.post" class="fr.becpg.repo.web.scripts.remote.EntityReportWebScript" parent="abstractEntityWebScript">
 		<property name="entityReportService" ref="entityReportService" />
+		<property name="contentService" ref="ContentService" />	
 	</bean>
 		
 	<!-- dockbar -->
