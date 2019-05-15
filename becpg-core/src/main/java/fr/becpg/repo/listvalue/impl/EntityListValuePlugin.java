@@ -310,8 +310,12 @@ public class EntityListValuePlugin implements ListValuePlugin {
 
 		if (!all) {
 			String parent = (String) props.get(ListValueService.PROP_PARENT);
-			NodeRef parentNodeRef = (parent != null) && NodeRef.isNodeRef(parent) ? new NodeRef(parent) : null;
-			ret = hierarchyService.getHierarchiesByPath(path, parentNodeRef, query);
+			if((parent != null) && !NodeRef.isNodeRef(parent) ) {
+				ret = new ArrayList<>();
+			} else {
+				NodeRef parentNodeRef = (parent != null) && NodeRef.isNodeRef(parent) ? new NodeRef(parent) : null;
+				ret = hierarchyService.getHierarchiesByPath(path, parentNodeRef, query);
+			}
 		} else {
 
 			ret = hierarchyService.getAllHierarchiesByPath(path, query);
