@@ -15,7 +15,14 @@
             "bcpg:useByDate|bcpg:bestBeforeDate",
             "bcpg:storageConditionsRef|bcpg:preparationTips",
             "cm:title"
-        ]
+        ],
+        "auditedFields": [
+           "bcpg:legalName",
+           "bcpg:useByDate","bcpg:bestBeforeDate",
+           "bcpg:storageConditionsRef","bcpg:preparationTips",
+           "cm:title"
+        ],
+        "modifiedField": "bcpg:modifiedCatalog1"
     },
     {
         "id":"incoRawMaterials",

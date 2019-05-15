@@ -18,7 +18,9 @@
 package fr.becpg.repo.listvalue.impl;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -34,7 +36,7 @@ import fr.becpg.repo.listvalue.ListValueExtractor;
  */
 public class NodeRefListValueExtractor implements ListValueExtractor<NodeRef> {
 
-	private final QName propName;
+	private final Set<QName> propNames;
 	
 	private final NodeService nodeService;
 	
@@ -42,7 +44,14 @@ public class NodeRefListValueExtractor implements ListValueExtractor<NodeRef> {
 
 	public NodeRefListValueExtractor(QName propName,NodeService nodeService) {
 		super();
-		this.propName = propName;
+		propNames  = new HashSet<>();
+		propNames.add(propName);
+		this.nodeService = nodeService;
+	}
+	
+	public NodeRefListValueExtractor(Set<QName> propNames,NodeService nodeService) {
+		super();
+		this.propNames = propNames;
 		this.nodeService = nodeService;
 	}
 
@@ -53,9 +62,15 @@ public class NodeRefListValueExtractor implements ListValueExtractor<NodeRef> {
     	if(nodeRefs!=null){
     		for(NodeRef nodeRef : nodeRefs){
     			
-    			String name = (String)nodeService.getProperty(nodeRef, propName);
-    			suggestions.add(new ListValueEntry(nodeRef.toString(),name,nodeService.getType(nodeRef).getLocalName()));
+    			String name = "";
     			
+    			for(QName propName : propNames) {
+    				if(!name.isEmpty()) {
+    					name = name.trim()+" ";
+    				}
+    				name += (String)nodeService.getProperty(nodeRef, propName);
+    			}
+    			suggestions.add(new ListValueEntry(nodeRef.toString(),name.trim(),nodeService.getType(nodeRef).getLocalName()));
     		}
     	}
 		return suggestions;

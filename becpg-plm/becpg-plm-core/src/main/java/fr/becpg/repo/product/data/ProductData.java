@@ -65,6 +65,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private NodeRef hierarchy1;
 	private NodeRef hierarchy2;
 	private MLText legalName;
+	private MLText pluralLegalName;
 	private String title;
 	private String erpCode;
 	private SystemState state = SystemState.Simulation;
@@ -303,8 +304,20 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		this.legalName = legalName;
 	}
 
+	
 	public void setLegalName(String legalName) {
 		this.legalName = new MLText(legalName);
+	}
+	
+	@AlfMlText
+	@AlfProp
+	@AlfQname(qname = "bcpg:pluralLegalName")
+	public MLText getPluralLegalName() {
+		return pluralLegalName;
+	}
+
+	public void setPluralLegalName(MLText pluralLegalName) {
+		this.pluralLegalName = pluralLegalName;
 	}
 
 	@AlfProp

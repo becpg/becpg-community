@@ -3,12 +3,18 @@
  */
 package fr.becpg.repo.product.data;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.product.data.productList.ResourceParamDataItem;
+import fr.becpg.repo.product.data.productList.SpecCompatibilityDataItem;
+import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfQname;
+import fr.becpg.repo.repository.annotation.AlfReadOnly;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataList;
 
@@ -24,15 +30,35 @@ public class ProductSpecificationData extends ProductData {
 
 	private List<ResourceParamDataItem> resourceParams;
 
+	private List<SpecCompatibilityDataItem> specCompatibilityList;
+
+	private List<NodeRef> specCompatibilityTpls = new ArrayList<>();
+
+	@AlfMultiAssoc
+	@AlfQname(qname = "bcpg:specCompatibilityTpls")
+	@AlfReadOnly
+	public List<NodeRef> getSpecCompatibilityTpls() {
+		return specCompatibilityTpls;
+	}
+
+	public void setSpecCompatibilityTpls(List<NodeRef> specCompatibilityTpls) {
+		this.specCompatibilityTpls = specCompatibilityTpls;
+	}
+
+	@DataList
+	@AlfQname(qname = "bcpg:productSpecCompatibilityList")
+	public List<SpecCompatibilityDataItem> getSpecCompatibilityList() {
+		return specCompatibilityList;
+	}
+
+	public void setSpecCompatibilityList(List<SpecCompatibilityDataItem> specCompatibilityList) {
+		this.specCompatibilityList = specCompatibilityList;
+	}
+
 	@DataList
 	@AlfQname(qname = "bcpg:labelingRuleList")
 	public List<LabelingRuleListDataItem> getLabelingRuleList() {
 		return labelingRuleList;
-	}
-
-	@Override
-	public String toString() {
-		return "ProductSpecificationData [forbiddenIngList=" + forbiddenIngList + ", labelingRuleList=" + labelingRuleList + "]";
 	}
 
 	public void setLabelingRuleList(List<LabelingRuleListDataItem> labelingRuleList) {
@@ -65,6 +91,8 @@ public class ProductSpecificationData extends ProductData {
 		int result = super.hashCode();
 		result = (prime * result) + ((forbiddenIngList == null) ? 0 : forbiddenIngList.hashCode());
 		result = (prime * result) + ((labelingRuleList == null) ? 0 : labelingRuleList.hashCode());
+		result = (prime * result) + ((resourceParams == null) ? 0 : resourceParams.hashCode());
+		result = (prime * result) + ((specCompatibilityList == null) ? 0 : specCompatibilityList.hashCode());
 		return result;
 	}
 
@@ -94,7 +122,26 @@ public class ProductSpecificationData extends ProductData {
 		} else if (!labelingRuleList.equals(other.labelingRuleList)) {
 			return false;
 		}
+		if (resourceParams == null) {
+			if (other.resourceParams != null) {
+				return false;
+			}
+		} else if (!resourceParams.equals(other.resourceParams)) {
+			return false;
+		}
+		if (specCompatibilityList == null) {
+			if (other.specCompatibilityList != null) {
+				return false;
+			}
+		} else if (!specCompatibilityList.equals(other.specCompatibilityList)) {
+			return false;
+		}
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "ProductSpecificationData [forbiddenIngList=" + forbiddenIngList + ", labelingRuleList=" + labelingRuleList + "]";
 	}
 
 }

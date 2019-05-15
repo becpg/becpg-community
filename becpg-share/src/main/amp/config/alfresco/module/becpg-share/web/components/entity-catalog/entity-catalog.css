@@ -30,6 +30,18 @@
 	float: right;
 }
 
+.entity-catalog table {
+	width: 100%
+}
+
+.entity-catalog .date-info {
+	float:left;
+    color: #777;
+    font-size: 11px;
+    padding-left: 5px;
+}
+
+
 .entity-catalog .catalog li {
 	background-image: url("../../components/images/states/refused-10.png");
 	padding-left: 20px;
@@ -50,6 +62,9 @@
 .entity-catalog .score-info {
 	margin-left: 1em;
 	margin-right: 1em;
+	color: #777;
+    font-size: 11px;
+  	padding-left: 8px;
 }
 
 .entity-catalog .catalog-details {
@@ -59,6 +74,11 @@
 .entity-catalog .catalog-missing-propList ul li {
 	margin-top: 0.3em;
 	margin-bottom: 0.3em;
+}
+
+
+.entity-catalog progress {
+  height: 16px;
 }
 
 .entity-catalog ul {

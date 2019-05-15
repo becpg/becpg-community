@@ -91,7 +91,7 @@ public class ReportModel {
 	public static final QName PROP_REPORT_IS_DEFAULT =  QName.createQName(REPORT_URI,
 	"reportIsDefault");
 
-	
+	public static final QName PROP_REPORT_IS_DIRTY =  QName.createQName(REPORT_URI,"reportIsDirty");
 	
 	
 }
