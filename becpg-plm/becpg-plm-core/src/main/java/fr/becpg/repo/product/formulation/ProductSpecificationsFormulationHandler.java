@@ -126,9 +126,10 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 									}
 								}
 								if (reqDetails != null) {
-									stopWatch.stop();
-									logger.debug("Adding Forbidden for " + productNodeRef + " in " + stopWatch.getTotalTimeMillis() + "ms");
-
+									if(logger.isDebugEnabled()) {
+										stopWatch.stop();
+										logger.debug("Adding Forbidden for " + productNodeRef + " in " + stopWatch.getTotalTimeMillis() + "ms");
+									}
 									toUpdate.put(productNodeRef, reqDetails);
 								}
 							}
