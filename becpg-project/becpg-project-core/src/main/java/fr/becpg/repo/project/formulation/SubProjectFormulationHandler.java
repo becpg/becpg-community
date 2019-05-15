@@ -1,6 +1,8 @@
 package fr.becpg.repo.project.formulation;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -17,25 +19,23 @@ import fr.becpg.repo.project.impl.ProjectHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 
 /**
- * 
+ *
  * @author matthieu
  *
  */
-public class SubProjectFormulationHandler extends FormulationBaseHandler<ProjectData>{
-
+public class SubProjectFormulationHandler extends FormulationBaseHandler<ProjectData> {
 
 	private AlfrescoRepository<ProjectData> alfrescoRepository;
-	
+
 	private ProjectActivityService projectActivityService;
-	
+
 	private String propsToCopyFromParent = null;
-	
+
 	private String propsToCopyToParent = null;
-	
+
 	private NodeService nodeService;
-	
+
 	private NamespaceService namespaceService;
-	
 
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
@@ -52,12 +52,10 @@ public class SubProjectFormulationHandler extends FormulationBaseHandler<Project
 	public void setProjectActivityService(ProjectActivityService projectActivityService) {
 		this.projectActivityService = projectActivityService;
 	}
-	
 
 	public void setPropsToCopyToParent(String propsToCopyToParent) {
 		this.propsToCopyToParent = propsToCopyToParent;
 	}
-
 
 	public void setPropsToCopyFromParent(String propsToCopyFromParent) {
 		this.propsToCopyFromParent = propsToCopyFromParent;
@@ -65,76 +63,72 @@ public class SubProjectFormulationHandler extends FormulationBaseHandler<Project
 
 	@Override
 	public boolean process(ProjectData projectData) throws FormulateException {
-		
-		if(propsToCopyToParent!=null && !propsToCopyToParent.isEmpty()) {
-	        for(String propertyToCopy : propsToCopyToParent.split(",")) {
-	        	QName propertyQname = QName.createQName(propertyToCopy,namespaceService );
-	        	nodeService.removeProperty(projectData.getNodeRef(), propertyQname);
-	        }
-		}
-		
+
+		Map<QName, String> propsToCopyToParentTmp = new HashMap<>();
+
 		for (TaskListDataItem task : projectData.getTaskList()) {
-			if (task.getSubProject()!=null) {
-	
+			if (task.getSubProject() != null) {
+
 				ProjectData subProject = alfrescoRepository.findOne(task.getSubProject());
-	
+
 				task.setStart(subProject.getStartDate());
 				task.setEnd(subProject.getCompletionDate());
-				task.setDuration(ProjectHelper.calculateTaskDuration(subProject.getStartDate(),subProject.getCompletionDate()));
+				task.setDuration(ProjectHelper.calculateTaskDuration(subProject.getStartDate(), subProject.getCompletionDate()));
 				task.setCompletionPercent(subProject.getCompletionPercent());
-				task.setTaskName(subProject.getName());	
-				
-				if(subProject.getLegends()!=null && !subProject.getLegends().isEmpty()) {
+				task.setTaskName(subProject.getName());
+
+				if ((subProject.getLegends() != null) && !subProject.getLegends().isEmpty()) {
 					task.setTaskLegend(subProject.getLegends().get(0));
 				}
 
 				ProjectState state = subProject.getProjectState();
-				if(state == null) {
+				if (state == null) {
 					state = ProjectState.Planned;
 				}
-				
+
 				TaskState subProjectState = state.toTaskState();
 				if (!subProjectState.equals(task.getTaskState())) {
 					ProjectHelper.setTaskState(task, subProjectState, projectActivityService);
 				}
-				
-				
-				if(propsToCopyFromParent!=null && !propsToCopyFromParent.isEmpty()) {
-			        for(String propertyToCopy : propsToCopyFromParent.split(",")) {
-			        	QName propertyQname = QName.createQName(propertyToCopy,namespaceService );
-			        	
-			        	Serializable value = nodeService.getProperty(projectData.getNodeRef(), propertyQname);
-			        	if(value == null) {
-			        		nodeService.removeProperty(task.getSubProject(), propertyQname);
-			        	} else {
-			        		nodeService.setProperty(task.getSubProject(), propertyQname, value);
-			        	}
-			        }
-		        }
-				
-				
-				if(propsToCopyToParent!=null && !propsToCopyToParent.isEmpty()) {
-			        for(String propertyToCopy : propsToCopyToParent.split(",")) {
-			        	QName propertyQname = QName.createQName(propertyToCopy,namespaceService );
-			        	
-			        	Serializable value = nodeService.getProperty(task.getSubProject(), propertyQname);
-			        	Serializable origValue = nodeService.getProperty(projectData.getNodeRef(), propertyQname);
-			        	
-			        	
-			        	if(value instanceof String && value != null) {
-			        		
-			        		if(origValue!=null) {
-			        			value = origValue + "\n" + value;
-				        	}
-			        		
-			        		nodeService.setProperty(projectData.getNodeRef(), propertyQname, value);
-			        	}
-			        }
-		        }
-				
-	
+
+				if ((propsToCopyFromParent != null) && !propsToCopyFromParent.isEmpty()) {
+					for (String propertyToCopy : propsToCopyFromParent.split(",")) {
+						QName propertyQname = QName.createQName(propertyToCopy, namespaceService);
+
+						Serializable value = nodeService.getProperty(projectData.getNodeRef(), propertyQname);
+						if (value == null) {
+							nodeService.removeProperty(task.getSubProject(), propertyQname);
+						} else {
+							nodeService.setProperty(task.getSubProject(), propertyQname, value);
+						}
+					}
+				}
+
+				if ((propsToCopyToParent != null) && !propsToCopyToParent.isEmpty()) {
+					for (String propertyToCopy : propsToCopyToParent.split(",")) {
+						QName propertyQname = QName.createQName(propertyToCopy, namespaceService);
+
+						Serializable value = nodeService.getProperty(task.getSubProject(), propertyQname);
+
+						if ((value instanceof String) && (value != null)) {
+
+							if (propsToCopyToParentTmp.get(propertyQname) != null) {
+								value = propsToCopyToParentTmp.get(propertyQname) + "\n" + value;
+							}
+							propsToCopyToParentTmp.put(propertyQname, (String) value);
+						} else if (propsToCopyToParentTmp.get(propertyQname) == null) {
+							propsToCopyToParentTmp.put(propertyQname, null);
+						}
+					}
+				}
+
 			}
 		}
+
+		for (Map.Entry<QName, String> entry : propsToCopyToParentTmp.entrySet()) {
+			nodeService.setProperty(projectData.getNodeRef(), entry.getKey(), entry.getValue());
+		}
+
 		return true;
 	}
 
