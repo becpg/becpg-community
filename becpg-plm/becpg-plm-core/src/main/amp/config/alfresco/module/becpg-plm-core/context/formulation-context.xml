@@ -37,6 +37,12 @@
 		<property name="packagingHelper" ref="packagingHelper" />
 		<property name="entityDictionaryService" ref="entityDictionaryService" />	
 	</bean>
+	
+	<bean id="packagingMaterialCharactDetailsVisitor"
+		class="fr.becpg.repo.product.formulation.details.PackagingMaterialCharactDetailsVisitor">
+		<property name="alfrescoRepository" ref="alfrescoRepository" />
+		<property name="nodeService" ref="nodeService" />
+	</bean>
 
 
 	<bean id="charactDetailsVisitorFactory" class="fr.becpg.repo.product.CharactDetailsVisitorFactoryImpl">
@@ -56,6 +62,9 @@
 				</entry>	
 				<entry key="bcpg:allergenList">
 					<ref bean="simpleCharactDetailsVisitor" />
+				</entry>
+				<entry key="pack:packMaterialList">
+					<ref bean="packagingMaterialCharactDetailsVisitor" />
 				</entry>				
 			</map>
 		</property>
@@ -113,6 +122,7 @@
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="packagingHelper" ref="packagingHelper" />
 				</bean>
+				
 				<bean class="fr.becpg.repo.product.formulation.AllergensCalculatingFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="nodeService" ref="nodeService" />
@@ -195,12 +205,16 @@
 					<property name="nodeService" ref="nodeService" />
 					<property name="attributeExtractorService" ref="attributeExtractorService"/>
 				</bean>
+				<bean id="packagingMaterialFormulationHandler" class="fr.becpg.repo.product.formulation.PackagingMaterialFormulationHandler">
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+					<property name="nodeService" ref="nodeService" />
+				</bean>
 			</list>
 		</property>
 		<property name="formulationService" ref="formulationService" />
 		<property name="contextClass" value="fr.becpg.repo.product.data.ProductData" />
 	</bean>
-
+	
 <!-- 
   <bean id="fastProductFormulationChain" class="fr.becpg.repo.formulation.FormulationChain"
 		init-method="init">
