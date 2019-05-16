@@ -30,6 +30,9 @@ import fr.becpg.repo.entity.datalist.WUsedListService;
 import fr.becpg.repo.entity.datalist.WUsedListService.WUsedOperator;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.product.data.ProductSpecificationData;
+import fr.becpg.repo.product.data.productList.SpecCompatibilityDataItem;
+import fr.becpg.repo.repository.AlfrescoRepository;
 
 @Service
 public class ProductAdvSearchPlugin implements AdvSearchPlugin {
@@ -53,6 +56,9 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 	@Autowired
 	private EntityListDAO entityListDAO;
+
+	@Autowired
+	private AlfrescoRepository<ProductSpecificationData> alfrescoRepository;
 
 	private static final String CRITERIA_ING = "assoc_bcpg_ingListIng_added";
 	private static final String CRITERIA_ING_AND = "assoc_bcpg_advIlIngAnd_added";
@@ -104,11 +110,9 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 	private static final String CRITERIA_COMPO_LIST_PRODUCT = "assoc_bcpg_compoListProduct_added";
 
 	private static final String CRITERIA_PACK_LABEL_POSITION = "prop_pack_llPosition";
-	
-	
+
 	private static final String CRITERIA_NOTRESPECTED_SPECIFICATIONS = "assoc_bcpg_advNotRespectedProductSpecs_added";
 	private static final String CRITERIA_RESPECTED_SPECIFICATIONS = "assoc_bcpg_advRespectedProductSpecs_added";
-	
 
 	private static Set<String> keysToExclude = new HashSet<>();
 
@@ -162,7 +166,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		keysToExclude.add(CRITERIA_PACKAGING_LIST_PRODUCT);
 		keysToExclude.add(CRITERIA_PROCESS_LIST_RESSOURCE);
 		keysToExclude.add(CRITERIA_COMPO_LIST_PRODUCT);
-		
+
 		keysToExclude.add(CRITERIA_NOTRESPECTED_SPECIFICATIONS);
 		keysToExclude.add(CRITERIA_RESPECTED_SPECIFICATIONS);
 
@@ -227,15 +231,14 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_MICROBIO, PLMModel.ASSOC_MICROBIOLIST_MICROBIO,
 						PLMModel.PROP_MICROBIOLIST_VALUE, criteria.get(CRITERIA_MICROBIO_RANGE));
-				
+
 				nodes = getSearchNodesBySpecificationCriteria(nodes, criteria);
-				
+
 			}
 		}
 
 		return nodes;
 	}
-
 
 	@Override
 	public Set<String> getIgnoredFields(QName datatype) {
@@ -345,7 +348,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 					if (nodeService.exists(nodeRef)) {
 
 						List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, PLMModel.ASSOC_INGLIST_ING);
-						if(ingListItems == null){
+						if (ingListItems == null) {
 							ingListItems = new ArrayList<>(assocRefs.size());
 						}
 
@@ -368,7 +371,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 					if (nodeService.exists(nodeRef)) {
 
 						List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, PLMModel.ASSOC_INGLIST_ING);
-						if(notIngListItems == null){
+						if (notIngListItems == null) {
 							notIngListItems = new ArrayList<>(assocRefs.size());
 						}
 
@@ -502,13 +505,71 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		return ret;
 	}
 
-	
-
 	private List<NodeRef> getSearchNodesBySpecificationCriteria(List<NodeRef> nodes, Map<String, String> criteria) {
-		// TODO Auto-generated method stub
+	
+		if (criteria.containsKey(CRITERIA_NOTRESPECTED_SPECIFICATIONS)) {
+
+			String notRespectedCriterias = criteria.get(CRITERIA_NOTRESPECTED_SPECIFICATIONS);
+			String[] arrValues = notRespectedCriterias.split(RepoConsts.MULTI_VALUES_SEPARATOR);
+			for (String strNodeRef : arrValues) {
+				NodeRef nodeRef = new NodeRef(strNodeRef);
+				if (nodeService.exists(nodeRef)) {
+					ProductSpecificationData productSpecificationData = alfrescoRepository.findOne(nodeRef);
+					List<NodeRef> retainNodes = new ArrayList<>();
+					for (NodeRef productNodeRef : nodes) {
+						boolean retain = false;
+						for (SpecCompatibilityDataItem dataItem : productSpecificationData.getSpecCompatibilityList()) {
+							if ((dataItem.getSourceItem() != null) && dataItem.getSourceItem().equals(productNodeRef)) {
+								retain = true;
+								break;
+							}
+
+						}
+						if (retain) {
+							retainNodes.add(productNodeRef);
+						}
+
+					}
+					nodes.retainAll(retainNodes);
+
+				}
+			}
+
+		}
+
+		if (criteria.containsKey(CRITERIA_RESPECTED_SPECIFICATIONS)) {
+
+			String respectedCriterias = criteria.get(CRITERIA_RESPECTED_SPECIFICATIONS);
+			String[] arrValues = respectedCriterias.split(RepoConsts.MULTI_VALUES_SEPARATOR);
+			for (String strNodeRef : arrValues) {
+				NodeRef nodeRef = new NodeRef(strNodeRef);
+				if (nodeService.exists(nodeRef)) {
+					ProductSpecificationData productSpecificationData = alfrescoRepository.findOne(nodeRef);
+					List<NodeRef> removedNodes = new ArrayList<>();
+					for (NodeRef productNodeRef : nodes) {
+						boolean remove = false;
+						for (SpecCompatibilityDataItem dataItem : productSpecificationData.getSpecCompatibilityList()) {
+							if ((dataItem.getSourceItem() != null) && dataItem.getSourceItem().equals(productNodeRef)) {
+								remove = true;
+								break;
+							}
+
+						}
+						if (remove) {
+							removedNodes.add(productNodeRef);
+						}
+
+					}
+					nodes.removeAll(removedNodes);
+
+				}
+			}
+
+		}
+
 		return nodes;
 	}
-	
+
 	/**
 	 * Take in account criteria on ing list criteria
 	 *
@@ -648,7 +709,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 											String[] splitted = criteriaValue.split("\\|");
 											if (splitted.length == 2) {
 												if (logger.isDebugEnabled()) {
-													logger.debug("filter by range: " + splitted[0] + "->" + splitted[1]+", value="+value);
+													logger.debug("filter by range: " + splitted[0] + "->" + splitted[1] + ", value=" + value);
 												}
 												if ((splitted[0].isEmpty() || (((Double) value) >= Double.valueOf(splitted[0])))
 														&& (splitted[1].isEmpty() || (((Double) value) <= Double.valueOf(splitted[1])))) {
@@ -695,8 +756,8 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 		if (logger.isDebugEnabled()) {
 			watch.stop();
-			logger.debug("getSearchNodesByListCriteria "+criteriaAssoc.toPrefixString(namespaceService)
-			+" executed in  " + watch.getTotalTimeSeconds() + " seconds");
+			logger.debug("getSearchNodesByListCriteria " + criteriaAssoc.toPrefixString(namespaceService) + " executed in  "
+					+ watch.getTotalTimeSeconds() + " seconds");
 		}
 
 		return nodes;

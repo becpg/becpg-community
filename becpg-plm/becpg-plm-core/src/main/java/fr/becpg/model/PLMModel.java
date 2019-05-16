@@ -158,6 +158,8 @@ public interface PLMModel {
 	
 	QName TYPE_SPEC_COMPATIBILTY_LIST = QName.createQName(BeCPGModel.BECPG_URI, "productSpecCompatibilityList");
 	
+	QName ASSOC_PSCL_SOURCE_ITEM = QName.createQName(BeCPGModel.BECPG_URI, "psclSourceItem");
+	
 
 	QName TYPE_DYNAMICCHARACTLIST = QName.createQName(BeCPGModel.BECPG_URI, "dynamicCharactList");
 	QName PROP_DYNAMICCHARACT_TITLE = QName.createQName(BeCPGModel.BECPG_URI, "dynamicCharactTitle");
