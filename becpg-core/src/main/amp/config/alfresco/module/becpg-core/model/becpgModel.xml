@@ -192,6 +192,11 @@
 			</mandatory-aspects>
 		</type>		
 		
+		<type name="bcpg:smartContentListItem">
+			<parent>bcpg:entityListItem</parent>
+		</type>
+		
+		
 		<type name="bcpg:charact">
 			<parent>bcpg:entityListItem</parent>
 			<properties>

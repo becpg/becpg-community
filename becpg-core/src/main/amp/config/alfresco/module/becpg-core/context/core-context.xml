@@ -112,6 +112,10 @@
 		<property name="paginatedSearchCache" ref="paginatedSearchCache"/>
 		<property name="defaultExtractor" value="true"/>
 	</bean>
+	
+	 <bean id="smartContentExtractor" class="fr.becpg.repo.entity.datalist.impl.SmartContentExtractor" parent="simpleExtractor">
+	 	<property name="defaultExtractor" value="false"/>
+	 </bean>
 
 	<bean id="multiLevelExtractor" class="fr.becpg.repo.entity.datalist.impl.MultiLevelExtractor" parent="simpleExtractor">
 		<property name="multiLevelDataListService" ref="multiLevelDataListService" />

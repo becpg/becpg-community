@@ -92,7 +92,7 @@ public class InitEntityListPolicy extends AbstractBeCPGPolicy implements NodeSer
 				if(dictionaryService.isSubClass(dataListTypeQName, BeCPGModel.TYPE_ENTITYLIST_ITEM)){
 					
 					String dataListName = (String)nodeService.getProperty(dataListNodeRef, ContentModel.PROP_NAME);
-					if(!dataListName.startsWith(RepoConsts.WUSED_PREFIX) && !dataListName.startsWith(RepoConsts.CUSTOM_VIEW_PREFIX) && !dataListTypeQName.getLocalName().equals(dataListName)){
+					if(!dataListName.startsWith(RepoConsts.SMART_CONTENT_PREFIX) && !dataListName.startsWith(RepoConsts.WUSED_PREFIX) && !dataListName.startsWith(RepoConsts.CUSTOM_VIEW_PREFIX) && !dataListTypeQName.getLocalName().equals(dataListName)){
 						try {
 						  nodeService.setProperty(dataListNodeRef, ContentModel.PROP_NAME, dataListTypeQName.getLocalName());
 						} catch (DuplicateChildNodeNameException e){

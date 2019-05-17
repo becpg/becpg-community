@@ -36,6 +36,10 @@ import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtracto
  */
 public interface AttributeExtractorService {
 
+	public static final String PROP_SUFFIX = "prop_";
+	public static final String ASSOC_SUFFIX = "assoc_";
+	
+	
 	interface DataListCallBack {
 		
 		List<Map<String,Object>> extractNestedField(NodeRef nodeRef, AttributeExtractorStructure field);
@@ -87,6 +91,8 @@ public interface AttributeExtractorService {
 	String extractSiteId(NodeRef entityNodeRef);
 
 	boolean hasAttributeExtractorPlugin(NodeRef nodeRef);
+
+	boolean matchCriteria(NodeRef nodeRef, Map<String, String> criteriaMap);
 
 	
 	
