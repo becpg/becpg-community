@@ -143,6 +143,9 @@ public class RepoConsts {
 	public final static String WUSED_PREFIX = "WUsed";
 	public final static String WUSED_SEPARATOR = "-";
 	
+	//Smart content
+	public static final String SMART_CONTENT_PREFIX = "SmartContent";
+	
 	//View
 	public final static String CUSTOM_VIEW_PREFIX = "View";
 
@@ -167,6 +170,7 @@ public class RepoConsts {
 	public static final String[] SUPPORTED_LANGUAGES = {"fr", "en"};
 
 	public static final String PATH_LICENSE = "license";
+
 
 	
 }

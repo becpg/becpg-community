@@ -109,6 +109,23 @@
 	</config>
 
 
+
+
+
+	<config evaluator="model-type" condition="bcpg:smartContentListItem">
+		<forms>
+				<form id="datagrid">
+					<field-visibility>
+						<show id="cm:content" />
+						<show id="cm:name" />
+						<show id="cm:modified" />
+						<show id="cm:modifier" />
+					</field-visibility>
+			</form>
+		</forms>
+	</config>
+
+
 	<!-- ########## AUTOCOMP ############ -->
 
 	<!-- bcpg:LinkedValue type (existing nodes) -->
