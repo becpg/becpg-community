@@ -219,7 +219,7 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 			@Override
 			public int compare(ReqCtrlListDataItem r1, ReqCtrlListDataItem r2) {
 
-				if ((r1.getReqType() != null) && (r1.getReqType() != null)) {
+				if ((r1.getReqType() != null) && (r2.getReqType() != null)) {
 					if (r1.getReqType().equals(r2.getReqType())) {
 						return EQUAL;
 					} else if (r1.getReqType().equals(RequirementType.Forbidden)) {
@@ -228,9 +228,18 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 						return AFTER;
 					} else if (r1.getReqType().equals(RequirementType.Tolerated)) {
 						return BEFORE;
-					} else {
+					} else if(r2.getReqType().equals(RequirementType.Tolerated)) {
+						return AFTER;
+					}else if (r1.getReqType().equals(RequirementType.Info)) {
+						return BEFORE;
+					} else if(r2.getReqType().equals(RequirementType.Info)) {
+						return AFTER;
+					}else if (r1.getReqType().equals(RequirementType.Authorized)) {
+						return BEFORE;
+					} else if(r2.getReqType().equals(RequirementType.Authorized)) {
 						return AFTER;
 					}
+				
 				} else if (r1.getReqType() != null) {
 					return BEFORE;
 				} else if (r2.getReqType() != null) {
