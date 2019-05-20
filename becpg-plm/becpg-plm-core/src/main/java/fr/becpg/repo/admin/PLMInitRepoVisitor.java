@@ -154,6 +154,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	// "beCPG/birt/exportsearch/product/ExportRawMaterialAllergenList.xlsx";
 
 	private static final String EXPORT_INGLABELING_XLSX_PATH = "beCPG/birt/exportsearch/product/ExportIngLabellingList.xlsx";
+	private static final String EXPORT_PACKAGINGMATERIAL_XLSX_PATH = "beCPG/birt/exportsearch/product/ExportPackagingMaterial.xlsx";
+
 	private static final String EXPORT_SUPPLIERS_CONTACTS_XLSX_PATH = "beCPG/birt/exportsearch/product/ExportSuppliersContacts.xlsx";
 
 	private static final String PRODUCT_REPORT_DE_RESOURCE = "beCPG/birt/document/product/default/ProductReport_de.properties";
@@ -1263,6 +1265,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 					EXPORT_RAWMATERIAL_INGLIST_XLSX_PATH, ReportType.ExportSearch, ReportFormat.XLSX, PLMModel.TYPE_RAWMATERIAL, false, false, false);
 			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
 					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_INGLABELING), EXPORT_INGLABELING_XLSX_PATH,
+					ReportType.ExportSearch, ReportFormat.XLSX, PLMModel.TYPE_PRODUCT, false, false, false);
+			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
+					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_PACKAGINGMATERIAL), EXPORT_PACKAGINGMATERIAL_XLSX_PATH,
 					ReportType.ExportSearch, ReportFormat.XLSX, PLMModel.TYPE_PRODUCT, false, false, false);
 
 			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
