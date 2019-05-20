@@ -71,9 +71,7 @@
       <property name="transactionHelper" ref="retryingTransactionHelper"/>
       <property name="contentService" ref="contentService"/>
       <property name="updateService" ref="downloadStatusUpdateService"/>
-      <property name="namespaceService" ref="namespaceService"/>
-      <property name="attributeExtractorService" ref="attributeExtractorService"/>
-      <property name="entityDictionaryService" ref="entityDictionaryService"/>
+      <property name="excelReportSearchRenderer" ref="excelReportSearchRenderer"/>
    </bean>
     
     

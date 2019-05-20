@@ -38,6 +38,7 @@ public interface AttributeExtractorService {
 
 	public static final String PROP_SUFFIX = "prop_";
 	public static final String ASSOC_SUFFIX = "assoc_";
+	public static final String DT_SUFFIX = "dt_";
 	
 	
 	interface DataListCallBack {

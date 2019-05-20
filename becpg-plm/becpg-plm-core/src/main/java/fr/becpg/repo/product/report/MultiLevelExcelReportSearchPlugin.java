@@ -49,7 +49,7 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 	}
 
 	@Override
-	public void fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum, String[] parameters,
+	public int fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum, String[] parameters,
 			AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache) {
 		String parameter = (parameters != null) && (parameters.length > 0) ? parameters[0] : null;
 
@@ -82,6 +82,8 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 
 			}
 		}
+		
+		return rownum;
 	}
 
 	protected int appendNextLevel(MultiLevelListData listData, XSSFSheet sheet, QName itemType, List<AttributeExtractorStructure> metadataFields,

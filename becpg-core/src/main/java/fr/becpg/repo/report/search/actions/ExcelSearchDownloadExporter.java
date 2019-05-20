@@ -10,7 +10,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -31,20 +30,14 @@ import org.alfresco.service.cmr.security.AccessPermission;
 import org.alfresco.service.cmr.view.Exporter;
 import org.alfresco.service.cmr.view.ExporterContext;
 import org.alfresco.service.cmr.view.ExporterException;
-import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.entity.EntityDictionaryService;
-import fr.becpg.repo.helper.AttributeExtractorService;
-import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
-import fr.becpg.repo.report.search.impl.ExcelReportSearchPlugin;
+import fr.becpg.repo.report.search.impl.ExcelReportSearchRenderer;
+import fr.becpg.repo.report.search.impl.ExcelReportSearchRenderer.ExcelSheetExportContext;
 
 /**
  * Handler for exporting node content to Excel file
@@ -53,9 +46,7 @@ import fr.becpg.repo.report.search.impl.ExcelReportSearchPlugin;
 public class ExcelSearchDownloadExporter implements Exporter {
 	private static Log logger = LogFactory.getLog(ExcelSearchDownloadExporter.class);
 
-	private ExcelReportSearchPlugin[] excelReportSearchPlugins;
-	private AttributeExtractorService attributeExtractorService;
-	private EntityDictionaryService entityDictionaryService;
+	private ExcelReportSearchRenderer excelReportSearchRenderer;
 
 	private XSSFWorkbook workbook;
 
@@ -70,25 +61,23 @@ public class ExcelSearchDownloadExporter implements Exporter {
 	private RetryingTransactionHelper transactionHelper;
 	private DownloadStorage downloadStorage;
 	private DownloadStatusUpdateService updateService;
-	private NamespaceService namespaceService;
 	private ContentService contentService;
 
-	public ExcelSearchDownloadExporter(NamespaceService namespaceService, RetryingTransactionHelper transactionHelper,
-			DownloadStatusUpdateService updateService, DownloadStorage downloadStorage, ContentService contentService,
-			ExcelReportSearchPlugin[] excelReportSearchPlugins, AttributeExtractorService attributeExtractorService,
-			EntityDictionaryService entityDictionaryService, NodeRef downloadNodeRef, NodeRef templateNodeRef, Long nbOfLines) {
+	Map<String, ExcelSheetExportContext> context = new HashMap<>();
+	
+
+	public ExcelSearchDownloadExporter(RetryingTransactionHelper transactionHelper, DownloadStatusUpdateService updateService,
+			DownloadStorage downloadStorage, ContentService contentService, ExcelReportSearchRenderer excelReportSearchRenderer,
+			NodeRef downloadNodeRef, NodeRef templateNodeRef, Long nbOfLines) {
 
 		this.updateService = updateService;
 		this.transactionHelper = transactionHelper;
 		this.downloadStorage = downloadStorage;
 
-		this.excelReportSearchPlugins = excelReportSearchPlugins;
-		this.attributeExtractorService = attributeExtractorService;
-		this.entityDictionaryService = entityDictionaryService;
+		this.excelReportSearchRenderer = excelReportSearchRenderer;
 
 		this.downloadNodeRef = downloadNodeRef;
 		this.contentService = contentService;
-		this.namespaceService = namespaceService;
 
 		this.fileCount = nbOfLines;
 
@@ -140,8 +129,16 @@ public class ExcelSearchDownloadExporter implements Exporter {
 
 		filesAddedCount++;
 		QName mainType = null;
+
 		for (XSSFSheet sheet : sheets) {
-			mainType = fillSheet(sheet, entityNodeRef, mainType);
+
+			ExcelSheetExportContext excelSheetExportContext = context.get(sheet.getSheetName());
+			if (excelSheetExportContext == null) {
+				excelSheetExportContext = excelReportSearchRenderer.readHeader(sheet, mainType);
+				context.put(sheet.getSheetName(), excelSheetExportContext);
+			}
+
+			mainType = excelReportSearchRenderer.fillSheet(sheet, Arrays.asList(entityNodeRef), excelSheetExportContext);
 
 			updateStatus();
 			checkCancelled();
@@ -182,109 +179,6 @@ public class ExcelSearchDownloadExporter implements Exporter {
 
 	public int getNextSequenceNumber() {
 		return sequenceNumber++;
-	}
-
-	private QName fillSheet(XSSFSheet sheet, NodeRef entityNodeRef, QName mainType) {
-		int rownum = 0;
-		Row headerRow = sheet.getRow(rownum++);
-
-		if ((headerRow.getCell(0) != null) && "TYPE".equals(headerRow.getCell(0).getStringCellValue())) {
-			sheet.setColumnHidden(0, true);
-
-			QName itemType = QName.createQName(headerRow.getCell(1).getStringCellValue(), namespaceService);
-
-			List<String> parameters = new LinkedList<>();
-			if (headerRow.getCell(2) != null) {
-				parameters.add(headerRow.getCell(2).getStringCellValue());
-			}
-
-			if (headerRow.getCell(3) != null) {
-				parameters.add(headerRow.getCell(3).getStringCellValue());
-			}
-
-			if (logger.isDebugEnabled()) {
-				logger.debug("Sheet type : " + itemType.toPrefixString());
-			}
-
-			headerRow.setZeroHeight(true);
-			headerRow = sheet.getRow(rownum++);
-			headerRow.setZeroHeight(true);
-			List<AttributeExtractorStructure> metadataFields = extractListStruct(itemType, headerRow);
-			AttributeExtractorStructure keyColumn = null;
-			if (entityDictionaryService.isSubClass(itemType, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
-				keyColumn = metadataFields.remove(0);
-				logger.debug("Datalist key column : " + keyColumn.getFieldDef().getName());
-			} else {
-				mainType = itemType;
-			}
-
-			rownum++;
-
-			while ((sheet.getRow(rownum) != null) && (sheet.getRow(rownum).getCell(0) != null)) {
-				rownum++;
-			}
-
-			Map<NodeRef, Map<String, Object>> cache = new HashMap<>();
-
-			ExcelReportSearchPlugin plugin = null;
-
-			for (ExcelReportSearchPlugin tmp : excelReportSearchPlugins) {
-				if ((tmp.isDefault() && (plugin == null)) || tmp.isApplicable(itemType, parameters.toArray(new String[parameters.size()]))) {
-					plugin = tmp;
-				}
-			}
-
-			if (plugin != null) {
-				plugin.fillSheet(sheet, Arrays.asList(entityNodeRef), mainType, itemType, rownum, parameters.toArray(new String[parameters.size()]),
-						keyColumn, metadataFields, cache);
-
-			} else {
-				logger.error("No plugin found for : " + itemType.toString());
-			}
-
-		}
-		return mainType;
-
-	}
-
-	private List<AttributeExtractorStructure> extractListStruct(QName itemType, Row headerRow) {
-
-		List<String> metadataFields = new LinkedList<>();
-		String currentNested = "";
-		for (int i = 1; i < headerRow.getLastCellNum(); i++) {
-			if (headerRow.getCell(i) != null) {
-				if (headerRow.getCell(i).getCellType() == Cell.CELL_TYPE_STRING) {
-					String cellValue = headerRow.getCell(i).getStringCellValue();
-					if ((cellValue != null) && !cellValue.isEmpty() && !cellValue.startsWith("#")) {
-						if (cellValue.contains("_") && !cellValue.contains("formula") && !cellValue.startsWith("dyn_")) {
-							if (!currentNested.isEmpty() && currentNested.startsWith(cellValue.split("_")[0])) {
-								currentNested += "|" + cellValue.split("_")[1];
-							} else {
-								if (!currentNested.isEmpty()) {
-									logger.debug("Add nested field : " + currentNested);
-									metadataFields.add(currentNested);
-								}
-								currentNested = cellValue.replace("_", "|");
-							}
-
-						} else {
-							if (!currentNested.isEmpty() && !cellValue.contains("formula")) {
-								logger.debug("Add nested field : " + currentNested);
-								metadataFields.add(currentNested);
-								currentNested = "";
-							}
-							logger.debug("Add field : " + cellValue);
-							metadataFields.add(cellValue);
-						}
-					}
-				} else if(headerRow.getCell(i).getCellType() == Cell.CELL_TYPE_FORMULA) {
-					String cellFormula = headerRow.getCell(i).getCellFormula();
-					metadataFields.add("excel|"+cellFormula);
-				}
-			}
-
-		}
-		return attributeExtractorService.readExtractStructure(itemType, metadataFields);
 	}
 
 	@Override

@@ -59,7 +59,7 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 	protected EntityDictionaryService entityDictionaryService;
 
 	@Override
-	public void fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum, String[] parameters,
+	public int fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum, String[] parameters,
 			AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache) {
 		
 		for (NodeRef entityNodeRef : searchResults) {
@@ -91,6 +91,8 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 				}
 			}
 		}
+		
+		return rownum;
 
 	}
 
@@ -150,6 +152,7 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 					@Override
 					public List<Map<String, Object>> extractNestedField(NodeRef nodeRef, AttributeExtractorStructure field) {
 						List<Map<String, Object>> ret = new ArrayList<>();
+						
 						if (field.isDataListItems()) {
 							NodeRef listContainerNodeRef = entityListDAO.getListContainer(nodeRef);
 							NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, field.getFieldQname());
@@ -157,7 +160,9 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 								List<NodeRef> results = entityListDAO.getListItems(listNodeRef, field.getFieldQname());
 
 								for (NodeRef itemNodeRef : results) {
-									addExtracted(itemNodeRef, field, cache, ret);
+									if(field.getFilter()==null || attributeExtractorService.matchCriteria(itemNodeRef, field.getFilter().getCriteriaMap())) {
+										addExtracted(itemNodeRef, field, cache, ret);
+									}
 								}
 							}
 						} else if (field.isEntityField()) {
