@@ -24,7 +24,7 @@ public class DynamicCharactListExcelReportSearchPlugin extends DefaultExcelRepor
 	
 
 	@Override
-	public void fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum, String[] parameters,
+	public int fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum, String[] parameters,
 			AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache) {
 		
 		for (NodeRef entityNodeRef : searchResults) {
@@ -64,6 +64,7 @@ public class DynamicCharactListExcelReportSearchPlugin extends DefaultExcelRepor
 			}
 		}
 
+		return rownum;
 
 	}
 	

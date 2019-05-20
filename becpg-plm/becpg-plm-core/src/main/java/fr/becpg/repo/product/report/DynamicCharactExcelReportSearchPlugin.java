@@ -23,7 +23,7 @@ import fr.becpg.repo.report.search.impl.DefaultExcelReportSearchPlugin;
 public class DynamicCharactExcelReportSearchPlugin extends DefaultExcelReportSearchPlugin {
 
 	@Override
-	public void fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum, String[] parameters,
+	public int fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum, String[] parameters,
 			AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache) {
 
 		boolean addDynCharact = false;
@@ -74,6 +74,8 @@ public class DynamicCharactExcelReportSearchPlugin extends DefaultExcelReportSea
 			}
 		}
 
+		return rownum;
+		
 	}
 
 	Map<String, Object> getDynamicProperties(NodeRef entityNodeRef, QName listType) {

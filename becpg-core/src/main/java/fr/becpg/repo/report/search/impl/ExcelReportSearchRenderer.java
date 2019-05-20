@@ -40,7 +40,7 @@ import fr.becpg.report.client.ReportFormat;
 public class ExcelReportSearchRenderer implements SearchReportRenderer {
 
 	private final static Log logger = LogFactory.getLog(ExcelReportSearchRenderer.class);
-	
+
 	@Autowired
 	private ActionService actionService;
 
@@ -61,7 +61,7 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 
 	@Autowired
 	private ExcelReportSearchPlugin[] excelReportSearchPlugins;
-	
+
 	@Override
 	public void renderReport(NodeRef tplNodeRef, List<NodeRef> searchResults, ReportFormat reportFormat, OutputStream outputStream) {
 
@@ -97,7 +97,64 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 
 	}
 
-	private QName fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType) {
+	public class ExcelSheetExportContext {
+
+		List<AttributeExtractorStructure> metadataFields;
+		String[] parameters;
+		Map<NodeRef, Map<String, Object>> cache = new HashMap<>();
+		QName itemType;
+		QName mainType;
+		AttributeExtractorStructure keyColumn;
+		int rownum = 0;
+
+		public ExcelSheetExportContext(QName mainType, QName itemType, int rownum, List<String> parameters, AttributeExtractorStructure keyColumn,
+				List<AttributeExtractorStructure> metadataFields) {
+			this.parameters = parameters.toArray(new String[parameters.size()]);
+			this.rownum = rownum;
+			this.keyColumn = keyColumn;
+			this.metadataFields = metadataFields;
+			this.itemType = itemType;
+			this.mainType = mainType;
+		}
+
+		public List<AttributeExtractorStructure> getMetadataFields() {
+			return metadataFields;
+		}
+
+		public String[] getParameters() {
+			return parameters;
+		}
+
+		public Map<NodeRef, Map<String, Object>> getCache() {
+			return cache;
+		}
+
+		public QName getItemType() {
+			return itemType;
+		}
+
+		public AttributeExtractorStructure getKeyColumn() {
+			return keyColumn;
+		}
+
+		public int getRownum() {
+			return rownum;
+		}
+
+
+		public void setRownum(int rownum) {
+			this.rownum = rownum;
+		}
+
+		public QName getMainType() {
+			return mainType;
+		}
+
+		
+		
+	}
+
+	public ExcelSheetExportContext readHeader(XSSFSheet sheet, QName mainType) {
 		int rownum = 0;
 		Row headerRow = sheet.getRow(rownum++);
 
@@ -138,24 +195,44 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 				rownum++;
 			}
 
-			Map<NodeRef, Map<String, Object>> cache = new HashMap<>();
+			return new ExcelSheetExportContext(mainType, itemType, rownum, parameters, keyColumn, metadataFields);
+		}
+		return null;
+	}
 
+	public QName fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, ExcelSheetExportContext excelSheetExportContext) {
+		if (excelSheetExportContext != null) {
 			ExcelReportSearchPlugin plugin = null;
 
 			for (ExcelReportSearchPlugin tmp : excelReportSearchPlugins) {
-				if ((tmp.isDefault() && (plugin == null)) || tmp.isApplicable(itemType, parameters.toArray(new String[parameters.size()]))) {
+				if ((tmp.isDefault() && (plugin == null))
+						|| tmp.isApplicable(excelSheetExportContext.getItemType(), excelSheetExportContext.getParameters())) {
 					plugin = tmp;
 				}
 			}
 
 			if (plugin != null) {
-				plugin.fillSheet(sheet, searchResults, mainType, itemType, rownum, parameters.toArray(new String[parameters.size()]), keyColumn, metadataFields, cache);
+				excelSheetExportContext.setRownum(plugin.fillSheet(sheet, searchResults, excelSheetExportContext.getMainType(), excelSheetExportContext.getItemType(), excelSheetExportContext.getRownum(),
+						excelSheetExportContext.getParameters(), excelSheetExportContext.getKeyColumn(), excelSheetExportContext.getMetadataFields(),
+						excelSheetExportContext.getCache()));
+			
+			
 			} else {
-				logger.error("No plugin found for : " + itemType.toString());
+				logger.error("No plugin found for : " + excelSheetExportContext.getItemType().toString());
 			}
+			
+			return excelSheetExportContext.getMainType();
 
 		}
-		return mainType;
+		
+		return null;
+	}
+
+	private QName fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType) {
+
+		ExcelSheetExportContext excelSheetExportContext = readHeader(sheet, mainType);
+
+		return fillSheet(sheet, searchResults, excelSheetExportContext);
 
 	}
 
@@ -175,6 +252,7 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 								if (!currentNested.isEmpty()) {
 									logger.debug("Add nested field : " + currentNested);
 									metadataFields.add(currentNested);
+									currentNested = "";
 								}
 								currentNested = cellValue.replace("_", "|");
 							}
@@ -189,10 +267,19 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 							metadataFields.add(cellValue);
 						}
 					}
+				} else if (headerRow.getCell(i).getCellType() == Cell.CELL_TYPE_FORMULA) {
+					String cellFormula = headerRow.getCell(i).getCellFormula();
+					metadataFields.add("excel|" + cellFormula);
 				}
 			}
 
 		}
+
+		if (!currentNested.isEmpty()) {
+			logger.debug("Add nested field : " + currentNested);
+			metadataFields.add(currentNested);
+		}
+
 		return attributeExtractorService.readExtractStructure(itemType, metadataFields);
 	}
 
@@ -205,10 +292,10 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 	@Override
 	public void executeAction(NodeRef templateNodeRef, NodeRef downloadNode, ReportFormat reportFormat) {
 		Action action = actionService.createAction("excelSearchAction");
-        action.setExecuteAsynchronously(true);
-        action.setParameterValue(ExcelSearchAction.PARAM_TPL_NODEREF, templateNodeRef);
-        actionService.executeAction(action, downloadNode);
-		
+		action.setExecuteAsynchronously(true);
+		action.setParameterValue(ExcelSearchAction.PARAM_TPL_NODEREF, templateNodeRef);
+		actionService.executeAction(action, downloadNode);
+
 	}
 
 }
