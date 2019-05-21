@@ -3,3 +3,29 @@
    background: transparent url(../images/edit-inline-16.png) no-repeat 12px 4px;
    padding-left: 22px; 
 }
+
+.quick-share-url-container 
+{
+    max-height: 5em;
+    text-align: left;
+    padding: 0.5em;
+    overflow: auto;
+    border: 1px solid #dcdcdc;
+    -webkit-border-radius: 0 0 2px 2px;
+    border-radius: 0 0 2px 2px;
+    padding: 0.5em;
+}
+
+.quick-share-url-container span
+{
+   background-position: 1px 0px;
+   background-repeat: no-repeat;
+   display: block;
+   min-height: 18px;
+   padding-left: 20px;
+}
+
+.toolbar .onActionQuickShare
+{
+   background-image: url(../images/quickshare-action-16.png);
+}
