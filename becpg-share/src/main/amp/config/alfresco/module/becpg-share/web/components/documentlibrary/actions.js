@@ -2548,6 +2548,106 @@
             }
          }
          downloadDialog.show(config);
+      },
+      
+      
+      /**
+       * Quick Share documents 
+       *
+       */
+      onActionQuickShare: function DLTB_onActionDelete(records){
+    	  var me = this,
+    	  sharedFiles = [],
+    	  url = "/alfresco/api/-default-/public/alfresco/versions/1/shared-links/",
+    	  clipboardHtmlId = "copy-shareable-links-to-clipboard";
+    	 
+    	  me.services.quickshare = new Alfresco.service.QuickShare();
+    	  
+         
+    	  // Handle a single record being provided...
+    	  if (typeof records.length === "undefined"){
+    		  records = [records];
+    	  }
+    	  
+    	  var selectedFiles = [];
+    	  
+    	  for (var j = 0; j < records.length; j++){
+    		  if(!records[j].jsNode.isContainer){
+    			  selectedFiles.push(records[j]);
+    		  }
+    	  }
+    	  
+    	  if(selectedFiles.length == 0){
+    		  Alfresco.util.PopupManager.displayMessage({
+    			  text : me.msg("message.multiple-quick-share-empty")
+    		  });
+    	  }else {
+    		  for (var i = 0; i < records.length; i++){
+    			  if(!records[i].jsNode.isContainer){
+    				  (function(index) {
+    					  me.services.quickshare.share(records[index].nodeRef,{
+    						  successCallback: {
+    							  fn: function(response){
+    								  var share = response.json;
+    								  var sharedUrl = YAHOO.lang.substitute(Alfresco.constants.QUICKSHARE_URL, { sharedId: share.sharedId });
+    								  if (sharedUrl.indexOf("/") == 0){
+    									  sharedUrl = window.location.protocol + "//" + window.location.host + sharedUrl;
+    								  }
+    								  sharedFiles.push("<span>" + $html(records[index].displayName) + " : " + sharedUrl + "</span>");
+    								  
+    								  if((index == records.length - 1) || sharedFiles.length == selectedFiles.length){
+    									  var messageTitle = me.msg("title.multiple-quick-share");
+    									  
+    									  var messageBody = me.msg("message.multiple-quick-share", sharedFiles.length);
+    									  messageBody += '<div class="quick-share-url-container">' + sharedFiles.join("") + '</div>';
+    									  messageBody += '<textarea id="'+clipboardHtmlId+'" style ="display:block; width:0; height:0; opacity: 0;">' + sharedFiles.join("\n").replace(/<span>/g, '').replace(/<\/span>/g, '') + '</textarea>';
+    									  
+    									  Alfresco.util.PopupManager.displayPrompt(
+    											  {
+    												  title: messageTitle,
+    												  text: messageBody,
+    												  noEscape: true,
+    												  modal: true,
+    												  buttons: [
+    													  {
+    														  text: me.msg("button.ok"),
+    														  handler: function DLTB_onActionDelete_cancel(){
+    															  this.destroy();
+    														  },
+    														  
+    														  isDefault: true
+    													  },
+    													  {
+    														  text: me.msg("button.copy.to.clipboard"),
+    														  handler: function DLTB_onActionCopyToClipboard(){
+    															  if (document.selection) {// IE 
+    																  var range = document.querySelector("#"+clipboardHtmlId);
+    																  range.select();
+    																  document.execCommand("copy");
+    															  } else if (window.getSelection) { // Chrome, Mozilla, Edge ...
+    																  var range = document.querySelector("#"+clipboardHtmlId);
+    																  range.select();
+    																  var result = document.execCommand("copy");
+    															  }
+    															  Alfresco.util.PopupManager.displayMessage({
+    																  text : me.msg("message.copy-shareable-links.success"),
+    																  zIndex: 1000
+    															  });
+    														  },
+    														  
+    														  isDefault: true
+    													  }
+    													  ]
+    											  });
+    								  }
+    								  
+    							  }, scope: this
+    						  }
+    					  });
+    				  })(i);
+    			  }
+    		  }
+    	  }
       }
    };
 })();
