@@ -244,6 +244,12 @@
 					<show id="gs1:palletTypeCode" for-mode="edit" />
 					<show id="gs1:platformTermsAndConditionsCode" for-mode="edit" />
 					
+					<show id="gs1:isTradeItemMarkedAsRecyclable" for-mode="edit" />
+					<show id="gs1:packUnitNumber" for-mode="edit" />
+					<show id="gs1:sortingInstructions" for-mode="edit" />
+					<show id="gs1:sortingBonusCriteria" for-mode="edit" />
+
+					
 					<!-- <show id="gs1:isTradeItemABaseUnit" for-mode="edit" />
 					<show id="gs1:isTradeItemAConsumerUnit" for-mode="edit" />
 					<show id="gs1:isTradeItemADespatchUnit" for-mode="edit" />
@@ -259,8 +265,8 @@
 					<show id="gs1:isTradeItemADivisibleItem" for-mode="edit" />
 					<show id="gs1:isTradeItemAPromotionalItem" for-mode="edit" />
 					<show id="gs1:isTradeItemACutToOrderItem" for-mode="edit" />
-					<show id="gs1:isTradeItemMarkedAsRecyclable" for-mode="edit" />
 					<show id="gs1:isPackagingMarkedReturnable" for-mode="edit" />
+					
 					
 					<show id="gs1:effectiveDate" for-mode="edit" />
 					<show id="gs1:startAvailabilityDateTime" for-mode="edit" />
@@ -310,6 +316,10 @@
 					<set appearance="bordered-panel" id="tertiaryPackaging"
 						label-id="becpg.forms.set.tertiaryPackaging.label" parent="publicationTab"
 						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set appearance="bordered-panel" id="packSorting"
+						label-id="becpg.forms.set.packSorting.label" parent="publicationTab"
+						template="/org/alfresco/components/form/2-column-set.ftl" />		
+						
 					<set appearance="bordered-panel" id="indicateursPanel"
 						label-id="becpg.forms.set.indicators.label" parent="publicationTab"
 						template="/org/alfresco/components/form/2-column-set.ftl" />
@@ -710,6 +720,18 @@
 					
 					<field id="gs1:palletTypeCode" help-id="becpg.forms.help.gs1.palletTypeCode" set="tertiaryPackaging" />
 					<field id="gs1:platformTermsAndConditionsCode" help-id="becpg.forms.help.gs1.platformTermsAndConditionsCode" set="tertiaryPackaging" />
+					
+					
+					
+					<field id="gs1:isTradeItemMarkedAsRecyclable" help-id="becpg.forms.help.gs1.isTradeItemMarkedAsRecyclable" set="packSorting" />
+					<field id="gs1:packUnitNumber" help-id="becpg.forms.help.gs1.packUnitNumber" set="packSorting" />
+					<field id="gs1:sortingInstructions" set="packSorting" >
+					    <control template="/org/alfresco/components/form/controls/textarea.ftl">
+			              <control-param name="rows">2</control-param>
+			            </control>
+					</field>
+					<field id="gs1:sortingBonusCriteria" set="packSorting" />
+					
  				
  					<field id="gs1:isTradeItemABaseUnit" help-id="becpg.forms.help.gs1.isTradeItemABaseUnit" set="indicateursPanel" />
  					<field id="gs1:isTradeItemAConsumerUnit" help-id="becpg.forms.help.gs1.isTradeItemAConsumerUnit" set="indicateursPanel" />
@@ -729,10 +751,7 @@
 					<field id="gs1:isTradeItemADivisibleItem" help-id="becpg.forms.help.gs1.isTradeItemADivisibleItem" set="indicateursPanel" />
 					<field id="gs1:isTradeItemAPromotionalItem" help-id="becpg.forms.help.gs1.isTradeItemAPromotionalItem" set="indicateursPanel" />
 					<field id="gs1:isTradeItemACutToOrderItem" help-id="becpg.forms.help.gs1.isTradeItemACutToOrderItem" set="indicateursPanel" />
-
-
-					<field id="gs1:isTradeItemMarkedAsRecyclable" help-id="becpg.forms.help.gs1.isTradeItemMarkedAsRecyclable" set="indicateursPanel" />
-					<field id="gs1:isPackagingMarkedReturnable" help-id="becpg.forms.help.gs1.isPackagingMarkedReturnable" set="indicateursPanel" />
+					<field id="gs1:isPackagingMarkedReturnable" set="indicateursPanel" />
 
 					<field id="gs1:effectiveDate" help-id="becpg.forms.help.gs1.effectiveDate"  set="datesPanel" />
 					<field id="gs1:startAvailabilityDateTime" help-id="becpg.forms.help.gs1.startAvailabilityDateTime"  set="datesPanel" />
