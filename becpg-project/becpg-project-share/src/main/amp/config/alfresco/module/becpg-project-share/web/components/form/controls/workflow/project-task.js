@@ -171,6 +171,61 @@
                             
                             for (j in deliverables)
                             {
+                            	var dUrl = deliverables[j].url
+                            	if(dUrl != null && dUrl.length > 0 && dUrl.indexOf("wizard") > 0 && dUrl.indexOf("catalogId") > 0){
+                            	
+                            			 
+                            	    var wizardNodeRef = YAHOO.util.History.getQueryStringParameter("nodeRef",dUrl);
+                             		var catalogId = YAHOO.util.History.getQueryStringParameter("catalogId",dUrl);	 
+                            		
+                            		if(wizardNodeRef!=null && catalogId!=null){
+                            			
+
+                                		var validateButtonId = this.id.replace(/assoc_pjt_workflowTask\-cntrl/g,this.options.transitionField) + "-validate";
+                                    	YAHOO.util.Event.onAvailable(validateButtonId,function(){
+                                    		  Dom.addClass(validateButtonId, "hidden");
+                                    	}, this);
+                                		
+                                		
+                            			
+		                            	Alfresco.util.Ajax.request({
+		                    				url : Alfresco.constants.PROXY_URI + "becpg/entity/catalog/node/" + wizardNodeRef.replace(":/","")+"?catalogId="+ catalogId,
+		                    				method : Alfresco.util.Ajax.GET,
+		                    				responseContentType : Alfresco.util.Ajax.JSON,
+		                    				successCallback : {
+		                    					fn : function (response){
+		                    						var isValid = true;
+		                    						
+		                    						if( response.json.catalogs != null  && response.json.catalogs !== undefined 
+		                									&& Object.keys(response.json.catalogs).length > 0){
+		                    							
+		                    							var catalogs = response.json.catalogs;
+		                    							for(var key in catalogs){
+		                    								if(catalogs[key].missingFields !== undefined && catalogs[key].missingFields.length >0){
+		                    									isValid = false;
+		                    								}
+		                    							}
+		                    						}
+		                    						
+		                    						if(isValid){
+			                    						var nodes = YAHOO.util.Selector.query("div.delivrable-status-Refused");
+			                    						for(var key in nodes){
+			                    							 Dom.removeClass(nodes[key], "delivrable-status-Refused");
+			                    							 Dom.addClass(nodes[key], "delivrable-status-Completed");
+			                    						}
+			                    						
+			                    						
+			                                        	YAHOO.util.Event.onAvailable(validateButtonId,function(){
+			                                        		  Dom.removeClass(validateButtonId, "hidden");
+			                                        	}, this);
+		                    						}
+		                    					},
+		                    					scope : this
+		                    				}
+		                    			}); 
+                            		}
+                            	}
+                            	
                                 deliverableHtlm += "<li>" + this.getDeliverableTitle(deliverables[j], entityNodeRef) + "</li>";
                             }
                             deliverableHtlm += "</ul>";
@@ -203,6 +258,11 @@
 
                             var ret = "", url = deliverable.url;
 
+                            if(url != null && url.length > 0 && url.indexOf("catalogId") > 0){
+                            	 deliverable.state = "Refused";
+                            }
+                            
+                            
                             ret = '<div class="delivrable delivrable-status-' + deliverable.state + '">';
                             ret += '<div class="delivrable-status delivrable-status-' + deliverable.state + '"></div>';
 

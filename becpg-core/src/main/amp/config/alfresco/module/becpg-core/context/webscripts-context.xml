@@ -178,6 +178,7 @@
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter"/>
 		<property name="permissionService" ref="PermissionService"/>
 		<property name="ruleService" ref="ruleService"/>
+		<property name="entityCatalogService" ref="entityCatalogService"/>
 	</bean>
 	
 

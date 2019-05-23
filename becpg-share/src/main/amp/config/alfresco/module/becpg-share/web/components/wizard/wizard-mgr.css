@@ -23,6 +23,12 @@ div.wizard-comments {
 	  overflow: hidden;
 }
 
+div.wizard-catalog {
+	  margin-top: 20px;
+	  width: 21%;
+	  overflow: hidden;
+}
+
 div.wizard-container{
 	float: left; 
 	clear: none;
