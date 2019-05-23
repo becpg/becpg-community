@@ -155,7 +155,7 @@ function main() {
 			if (isInSite(document, VALID_SITE_ID) || isInSite(document, ARCHIVED_SITE_ID)) {
 				bcpg.moveAndRename(document, getDocumentLibraryNodeRef(SIMULATION_SITE_ID));
 			}
-		} else if (state == "Archived" || state == "Stopped") {
+		} else if (state == "Archived") {
 			if (!isInSite(document, ARCHIVED_SITE_ID)) {
 				classifyByHierarchy(document, getDocumentLibraryNodeRef(ARCHIVED_SITE_ID));
 			}
