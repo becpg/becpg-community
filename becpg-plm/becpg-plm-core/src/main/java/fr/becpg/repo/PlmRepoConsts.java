@@ -117,7 +117,9 @@ public class PlmRepoConsts {
 	public static final String PATH_REPORTS_EXPORT_SEARCH_NON_CONFORMITIES = "ExportNCSynthesis";
 	public static final String PATH_REPORTS_EXPORT_SEARCH_SUPPLIERS_CONTACTS = "ExportSuppliersContacts";
 	public static final String PATH_REPORTS_ECO = "ECOReports";
-	public static final String PATH_REPORTS_EXPORT_SEARCH_PACKAGINGMATERIAL= "ExportPackagingMaterial";
+	public static final String PATH_REPORTS_EXPORT_SEARCH_PACKAGINGMATERIALS= "ExportPackagingMaterials";
+	public static final String PATH_REPORTS_EXPORT_SEARCH_ALLERGENS= "ExportAllergens";
+	public static final String PATH_REPORTS_EXPORT_SEARCH_NUTRIENTS= "ExportNutrients";
 	
 		
 	// ECO

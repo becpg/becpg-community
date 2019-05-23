@@ -154,8 +154,11 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	// "beCPG/birt/exportsearch/product/ExportRawMaterialAllergenList.xlsx";
 
 	private static final String EXPORT_INGLABELING_XLSX_PATH = "beCPG/birt/exportsearch/product/ExportIngLabellingList.xlsx";
-	private static final String EXPORT_PACKAGINGMATERIAL_XLSX_PATH = "beCPG/birt/exportsearch/product/ExportPackagingMaterial.xlsx";
-
+	private static final String EXPORT_PACKAGINGMATERIALS_XLSX_PATH = "beCPG/birt/exportsearch/product/ExportPackagingMaterials.xlsx";
+	private static final String EXPORT_ALLERGENS_XLSX_PATH = "beCPG/birt/exportsearch/product/ExportAllergens.xlsx";
+	private static final String EXPORT_NUTRIENTS_XLSX_PATH = "beCPG/birt/exportsearch/product/ExportNutrients.xlsx";
+	
+	
 	private static final String EXPORT_SUPPLIERS_CONTACTS_XLSX_PATH = "beCPG/birt/exportsearch/product/ExportSuppliersContacts.xlsx";
 
 	private static final String PRODUCT_REPORT_DE_RESOURCE = "beCPG/birt/document/product/default/ProductReport_de.properties";
@@ -1267,9 +1270,15 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_INGLABELING), EXPORT_INGLABELING_XLSX_PATH,
 					ReportType.ExportSearch, ReportFormat.XLSX, PLMModel.TYPE_PRODUCT, false, false, false);
 			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
-					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_PACKAGINGMATERIAL), EXPORT_PACKAGINGMATERIAL_XLSX_PATH,
+					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_PACKAGINGMATERIALS), EXPORT_PACKAGINGMATERIALS_XLSX_PATH,
 					ReportType.ExportSearch, ReportFormat.XLSX, PLMModel.TYPE_PRODUCT, false, false, false);
-
+			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
+					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_ALLERGENS), EXPORT_ALLERGENS_XLSX_PATH,
+					ReportType.ExportSearch, ReportFormat.XLSX, PLMModel.TYPE_PRODUCT, false, false, false);
+			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
+					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_NUTRIENTS), EXPORT_NUTRIENTS_XLSX_PATH,
+					ReportType.ExportSearch, ReportFormat.XLSX, PLMModel.TYPE_PRODUCT, false, false, false);
+			
 			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
 					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_SUPPLIERS_CONTACTS),
 					EXPORT_SUPPLIERS_CONTACTS_XLSX_PATH, ReportType.ExportSearch, ReportFormat.XLSX, PLMModel.TYPE_SUPPLIER, false, false, false);
