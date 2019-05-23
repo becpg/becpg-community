@@ -80,5 +80,21 @@ function main() {
 	   model.widgets.push(commentList);
    } 
    
+   if(page.url.args.catalogId != null && page.url.args.nodeRef != null){
+	      model.catalogId = page.url.args.catalogId;
+	      var entityCatalog = {
+	 	         id : "EntityCatalog", 
+	 	         name : "beCPG.component.EntityCatalog",
+	 	         initArgs :  ["\"" + args.htmlid+"-step-step1_cat\""],
+	 	         options : {
+	 	            entityNodeRef :  (page.url.args.nodeRef != null) ? page.url.args.nodeRef : "",
+	 	        	catalogId : model.catalogId
+	 	         }
+	 	   };
+	      
+	    model.widgets.push(entityCatalog);  
+   }
+   
+   
 }
 main();

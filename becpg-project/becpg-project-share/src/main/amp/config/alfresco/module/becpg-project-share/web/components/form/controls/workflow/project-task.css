@@ -31,6 +31,10 @@
 	background-color : rgb(123, 209, 72);
 }
 
+.project-list div.delivrable-status.delivrable-status-Refused {
+	background-color : rgb(244, 67, 54);
+}
+
 .project-list div.delivrable-status-Closed   {
 	text-decoration:  line-through ;
 }
