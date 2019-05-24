@@ -430,7 +430,7 @@ YAHOO.Bubbling
                      hideLabel: true,
                      evaluate : function(asset, entity) {
                         return asset.name != null && 
-                             (asset.name === "View-properties" || asset.name === "compoList" || asset.name === "processList" || asset.name === "packagingList" || asset.name === "ingLabelingList" || asset.name === "nutList" || asset.name === "labelClaimList" || asset.name === "costList" || asset.name === "physicoChemList" || asset.name === "ingList" || asset.name === "allergenList")
+                             (asset.name === "View-properties" || asset.name === "compoList" || asset.name === "packMaterialList" || asset.name === "processList" || asset.name === "packagingList" || asset.name === "ingLabelingList" || asset.name === "nutList" || asset.name === "labelClaimList" || asset.name === "costList" || asset.name === "physicoChemList" || asset.name === "ingList" || asset.name === "allergenList")
                                && entity != null && beCPG.util.contains(entity.aspects,
                                        "bcpg:productAspect") && entity.userAccess.edit;
                      },
