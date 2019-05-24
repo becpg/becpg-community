@@ -2555,10 +2555,9 @@
        * Quick Share documents 
        *
        */
-      onActionQuickShare: function DLTB_onActionDelete(records){
+      onActionQuickShare: function DLTB_onActionQuickShare(records){
     	  var me = this,
     	  sharedFiles = [],
-    	  url = "/alfresco/api/-default-/public/alfresco/versions/1/shared-links/",
     	  clipboardHtmlId = "copy-shareable-links-to-clipboard";
     	 
     	  me.services.quickshare = new Alfresco.service.QuickShare();
