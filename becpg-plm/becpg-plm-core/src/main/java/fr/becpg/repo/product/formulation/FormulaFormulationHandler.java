@@ -410,12 +410,10 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 				if (sourceItem.isSynchronisable()) {
 					boolean isFound = false;
 					for (DynamicCharactListItem targetItem : targetList) {
-						// charact renamed
-						if (sourceItem.getName().equals(targetItem.getName()) && !sourceItem.getTitle().equals(targetItem.getTitle())) {
-							targetItem.setTitle(sourceItem.getTitle());
-						}
 						// update formula
-						if (sourceItem.getTitle().equals(targetItem.getTitle())) {
+						if (sourceItem.getName().equals(targetItem.getName()) || sourceItem.getTitle().equals(targetItem.getTitle())) {
+							targetItem.setName(sourceItem.getName());
+							targetItem.setTitle(sourceItem.getTitle());
 							if ((targetItem.getIsManual() == null) || !targetItem.getIsManual()) {
 								targetItem.setFormula(sourceItem.getFormula());
 								targetItem.setColumnName(sourceItem.getColumnName());
