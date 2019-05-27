@@ -83,7 +83,6 @@ public class Nutrient5CHelper {
 	 * @param category
 	 * @return
 	 */
-	
 
 	public static int compute5CScore(Double energyKj, Double satFat, Double totalFat, Double totalSugar, Double sodium, Double percFruitsAndVetgs,
 			Double nspFibre, Double aoacFibre, Double protein, String category) {
@@ -164,6 +163,22 @@ public class Nutrient5CHelper {
 			cScore += score;
 		}
 
+		if ((aScore < 11) || NutrientCategory.Cheeses.equals(NutrientCategory.valueOf(category))
+				|| ((aScore >= 11) && (cScore >= 5) && !NutrientCategory.Beverages.equals(NutrientCategory.valueOf(category)))
+				|| ((aScore >= 11) && (cScore >= 10) && NutrientCategory.Beverages.equals(NutrientCategory.valueOf(category)))) {
+			if (protein != null) {
+				score = 5;
+				for (double val : cCategories[3]) {
+					if ((protein > val) && (val > 0)) {
+						break;
+					}
+					score--;
+				}
+				cScore += score;
+			}
+
+		}
+
 		if (nspFibre != null) {
 			score = 5;
 			for (double val : cCategories[1]) {
@@ -184,20 +199,6 @@ public class Nutrient5CHelper {
 				score--;
 			}
 			cScore += score;
-		}
-		
-		if (!((aScore >= 11 && cScore!=5) && ((percFruitsAndVetgs != null) && (percFruitsAndVetgs <= 80d))
-				&& !NutrientCategory.Cheeses.equals(NutrientCategory.valueOf(category)))) {
-			if (protein != null) {
-				score = 5;
-				for (double val : cCategories[3]) {
-					if ((protein > val) && (val > 0)) {
-						break;
-					}
-					score--;
-				}
-				cScore += score;
-			}
 		}
 
 		return aScore - cScore;
