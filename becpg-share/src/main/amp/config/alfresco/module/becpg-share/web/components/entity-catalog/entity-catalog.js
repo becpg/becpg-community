@@ -100,9 +100,9 @@
 							
 							html+="<div class=\"catalog "+(key==0?"first-catalog":"")+"\">";
 							html+="<div class=\"catalog-header set-bordered-panel-heading\">";
-								html+="<table><tr><td><span style=\"background-color: "+color+";\" class=\"catalog-color\" ></span><span class=\"catalog-name\">"+instance.msg("label.catalog")+" \""+label+
+								html+="<table><tr><td><span style=\"background-color: "+color+";\" class=\"catalog-color\" ></span><span class=\"catalog-name\">"+instance.msg("label.catalog")+" "+label+
 								(country!=null?"<img title="+instance.msg("locale.name."+locale)
-										+" src=\"/share/res/components/images/flags/"+country+".png\">":"")+"\"</span></td>";
+										+" src=\"/share/res/components/images/flags/"+country+".png\">":"")+"</span></td>";
 								
 								html+="<td><progress value=\""+(score/100)+"\">";							
 									//IE fix
@@ -165,7 +165,7 @@
 								html+="<ul class=\"catalog-missing-propList\">";
 									for(var field in catalogs[key].nonUniqueFields){	
 										html+="<li class=\"non-unique-field\" >"
-												+catalogs[key].nonUniqueFields[field]
+												+catalogs[key].nonUniqueFields[field].displayName
 												+"</li>";	
 									}
 									
