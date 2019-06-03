@@ -247,7 +247,9 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 					if (key.contains(KEY_QUEUE_UPDATED_STATUS)) {
 						String[] strState = pattern.split(key);
 						logger.debug("Action change state, post activity");
-						entityActivityService.postStateChangeActivity(nodeRef, null, strState[1], strState[2]);
+						if(strState!=null && strState.length>1) {
+							entityActivityService.postStateChangeActivity(nodeRef, null, strState[1], strState[2]);
+						}
 					}
 					break;
 				}
