@@ -174,7 +174,7 @@ public class EntityCatalogService {
 										for (QName beforeType : before.keySet()) {
 											Serializable beforeValue = before.get(beforeType);
 											if (auditedFields.contains(beforeType)
-													&& (((beforeValue == null) && (after != null)) || !beforeValue.equals(after.get(beforeType)))) {
+													&& (((beforeValue == null)  && (after.get(beforeType) != null)) || (beforeValue != null && !beforeValue.equals(after.get(beforeType))))) {
 												if (logger.isDebugEnabled()) {
 													logger.debug("Catalog properties changed update date: " + catalogModifiedDate);
 												}
