@@ -831,7 +831,7 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
        * @private
        */
       var vDateDisplayFormat = "mm/dd/yy";
-
+      
       var vNumUnits = 0;
       var vCaptionType = "";
       var vDepId = 1;
@@ -1711,7 +1711,12 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
                       cssClass = "ghead current";
                      vCurrPosY = vColWidth * vNumCols;
                   }
-                  vHeader = vTmpDate.getDate() + '/' + (vTmpDate.getMonth() + 1);
+                  var dateFormat = JSGantt.msg("jsgantt.dateformat");
+                  if (dateFormat == 'mm/dd/yyyy'){
+                	  vHeader = (vTmpDate.getMonth() + 1) + '/' + vTmpDate.getDate();
+                  } else {
+                	  vHeader = vTmpDate.getDate() + '/' + (vTmpDate.getMonth() + 1);
+                  }
                   vTmpDate.setDate(vTmpDate.getDate() + 7);
 
                }
