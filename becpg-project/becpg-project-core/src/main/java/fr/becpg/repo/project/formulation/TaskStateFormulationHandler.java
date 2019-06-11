@@ -129,7 +129,7 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 
 			boolean allTaskPlanned = true;
 			for (TaskListDataItem task : projectData.getTaskList()) {
-				if (!TaskState.Planned.equals(task.getTaskState())) {
+				if (!TaskState.Planned.equals(task.getTaskState()) && !TaskState.Cancelled.equals(task.getTaskState())) {
 					allTaskPlanned = false;
 					break;
 				}
@@ -145,9 +145,9 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 				projectData.setCompletionDate(ProjectHelper.getLastEndDate(projectData));
 				projectData.setCompletionPercent(COMPLETED);
 				projectData.setProjectState(ProjectState.Completed);
+			} else {
+				projectData.setCompletionPercent(ProjectHelper.geProjectCompletionPercent(projectData));
 			}
-
-			projectData.setCompletionPercent(ProjectHelper.geProjectCompletionPercent(projectData));
 
 			calculateProjectLegendsAndCurrTasks(projectData);
 
