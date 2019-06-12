@@ -31,7 +31,7 @@
 
 	<issueManagement>
 		<system>RedMine</system>
-		<url>http://www.becpg.fr/redmine</url>
+		<url>https://support.becpg.fr</url>
 	</issueManagement>
 
 	<licenses>
@@ -79,11 +79,14 @@
 		<alfresco.version>5.2.g</alfresco.version>
 		<alfresco.repo.artifactId>alfresco-platform</alfresco.repo.artifactId>
 		<alfresco.share.version>5.2.f</alfresco.share.version>
-		<app.testing.jvm.args>-Xms256m -Xmx1524m -Duser.language=fr</app.testing.jvm.args>
 		<argLine>-Xms256m -Xmx1524m -Duser.language=fr</argLine>
-		
 		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
-		<sonar.language>java</sonar.language>
+		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+	    <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+        <sonar.jacoco.reportPaths>${maven.multiModuleProjectDirectory}/target/jacoco.exec</sonar.jacoco.reportPaths>
+	    <sonar.scm.disabled>true</sonar.scm.disabled>
+	    <sonar.language>java</sonar.language>
+		
 		<maven.compiler.source>1.8</maven.compiler.source>
 		
 		<springloaded.version>1.2.1.RELEASE</springloaded.version>
@@ -129,11 +132,6 @@
 		          </configuration>
 		        </plugin>
 				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>sonar-maven-plugin</artifactId>
-					<version>2.5</version>
-				</plugin>
-				<plugin>
 	                    <groupId>net.alchim31.maven</groupId>
 	                    <artifactId>yuicompressor-maven-plugin</artifactId>
 	                    <version>1.5.1</version>
@@ -158,6 +156,7 @@
 	                        </execution>
 	                    </executions>
 	               </plugin>
+	               
 			</plugins>
 		</pluginManagement>
 		<plugins>
@@ -219,9 +218,11 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
 					<configuration>
-						<useSystemClassLoader>false</useSystemClassLoader>
+						<useSystemClassLoader>true</useSystemClassLoader>
+						<runOrder>alphabetical</runOrder>
 					</configuration>
 				</plugin>
+				
 		</plugins>
 	</build> 
 
@@ -294,23 +295,6 @@
 			</properties>
 		</profile>
 		<profile>
-			<id>parallel</id>
-				<build>
-					<plugins>
-						<plugin>
-		                  <groupId>org.apache.maven.plugins</groupId>
-		                  <artifactId>maven-surefire-plugin</artifactId>
-		                  <version>${maven.surefire.version}</version>
-		                  <configuration>
-		       				  <threadCount>6</threadCount>
-		       				  <parallel>classes</parallel>
-		                      <argLine>${app.testing.jvm.args}</argLine>
-		                  </configuration>
-		                </plugin>
-	                </plugins>
-                </build>
-         </profile>       
-		<profile>
 			<id>purge</id>
 			<build>
 				<plugins>
@@ -338,6 +322,43 @@
 				</plugins>
 			</build>
 		</profile>
+		<profile>
+		 <id>sonar</id>
+		 <build>
+		 	<plugins>
+			  <plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<configuration>
+						<reuseForks>false</reuseForks>
+						<useSystemClassLoader>false</useSystemClassLoader>
+						<runOrder>alphabetical</runOrder>
+					</configuration>
+				</plugin>
+				<plugin>
+					    <groupId>org.jacoco</groupId>
+					    <artifactId>jacoco-maven-plugin</artifactId>
+					    <version>0.8.4</version>
+					    <configuration>
+					        <destFile>${sonar.jacoco.reportPaths}</destFile>
+					        <append>true</append>
+					         <excludes>
+	                            <exclude>org/alfresco/**</exclude>
+	                        </excludes>
+					    </configuration>
+					    <executions>
+					        <execution>
+					            <id>agent</id>
+					            <goals>
+					                <goal>prepare-agent</goal>
+					            </goals>
+					        </execution>
+					    </executions>
+					</plugin>
+			 </plugins>
+			</build> 
+		</profile>
+		
 	</profiles>
     
 </project>
