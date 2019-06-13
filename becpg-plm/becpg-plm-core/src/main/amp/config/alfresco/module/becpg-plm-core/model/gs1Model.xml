@@ -456,6 +456,19 @@
 						<constraint ref="gs1:packagingTypeCodeConstraint" />
 					</constraints>
 				</property>
+				<property name="gs1:secondaryPackagingTypeCode">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+					<constraints>
+						<constraint ref="gs1:packagingTypeCodeConstraint" />
+					</constraints>
+				</property>
+				
 				<property name="gs1:palletTypeCode">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
