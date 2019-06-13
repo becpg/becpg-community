@@ -75,7 +75,7 @@ public class ProductValidationWorkflowTest extends AbstractWorkflowTest {
 				BeCPGTestHelper.createUsers();
 
 				RawMaterialData rawMaterial1 = new RawMaterialData();
-				rawMaterial1.setName("Raw material 1");
+				rawMaterial1.setName("Raw material wf validation 1");
 				rawMaterial1.setState(SystemState.Simulation);
 
 				return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial1).getNodeRef();
@@ -145,7 +145,7 @@ public class ProductValidationWorkflowTest extends AbstractWorkflowTest {
 
 		WorkflowTask task =  getNextTaskForWorkflow(workflowInstanceId);
 		
-		assertEquals(task.getDescription(),"Validation produit - Raw material 1");
+		assertEquals(task.getDescription(),"Validation produit - Raw material wf validation 1");
 		
 		logger.info(task.getPath().getNode().getName());
 		assertEquals("doProductValidationRDTask", task.getPath().getNode().getName());
