@@ -26,11 +26,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.web.scripts.content.ContentGet;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
@@ -96,13 +98,18 @@ public class ReportContentGet extends ContentGet {
 			entityNodeRef = entityReportService.getEntityNodeRef(nodeRef);
 		}
 		
-
+		
 		if (entityNodeRef == null) {
 			throw new WebScriptException(HttpServletResponse.SC_NOT_FOUND, "No entity provided");
 		}
 
 		nodeRef = entityReportService.getOrRefreshReport(entityNodeRef, nodeRef);
 	
+
+		if(nodeRef!=null && !AccessStatus.ALLOWED.equals(permissionService.hasReadPermission(nodeRef))) {
+			throw new WebScriptException(Status.STATUS_UNAUTHORIZED, "You have no right to see this node");
+		}
+		
 
 		// determine attachment
 		boolean attach = Boolean.valueOf(req.getParameter("a"));
