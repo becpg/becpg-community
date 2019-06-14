@@ -219,7 +219,7 @@
 					<show id="gs1:weight" for-mode="edit" />
 					
 					
-					
+					<show id="gs1:secondaryPackagingTypeCode" for-mode="edit" />
 					<show id="gs1:secondaryHeight" for-mode="edit" />
 					<show id="gs1:secondaryWidth" for-mode="edit" />
 					<show id="gs1:secondaryDepth" for-mode="edit" />
@@ -611,6 +611,8 @@
 					</field>
 					
 					<field id="gs1:packagingTypeCode" help-id="becpg.forms.help.gs1.packagingTypeCode"  set="primaryPackaging" />
+					<field id="gs1:secondaryPackagingTypeCode" help-id="becpg.forms.help.gs1.packagingTypeCode"  set="primaryPackaging" />
+					
 					<field id="gs1:height" help-id="becpg.forms.help.gs1.height" set="primaryPackaging" >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
@@ -640,7 +642,7 @@
 							<control-param name="unit">kg</control-param>
 						</control>
 					</field>
-					
+					<field id="gs1:secondaryPackagingTypeCode" help-id="becpg.forms.help.gs1.packagingTypeCode"  set="secondaryPackaging" />
 					<field id="gs1:secondaryHeight" set="secondaryPackaging" >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
@@ -2167,6 +2169,7 @@
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:eanCode" />
+					
 					<show id="bcpg:certificateDate" force="true" />
 					<show id="bcpg:suppliers" />
 					<show id="bcpg:plants" force="true" />
