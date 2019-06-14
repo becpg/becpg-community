@@ -20,7 +20,9 @@ package fr.becpg.repo.web.scripts.remote;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -220,12 +222,17 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	}
 
 	public List<String> extractFields(WebScriptRequest req){
-		List<String> fields = new ArrayList<>() ;
+		Set<String> fields = new HashSet<>() ;
 		String fieldsParams = req.getParameter(PARAM_FIELDS);
 		if (fieldsParams != null && fieldsParams.length() > 0) {
-			fields = Arrays.asList(fieldsParams.split(","));
+			for(String field : fieldsParams.split(",")) {
+				fields.add(field);
+				if(field.contains("|")) {
+					fields.add(field.split("\\|")[0]);
+				}
+			}
 		}
-		return fields;
+		return new ArrayList<>(fields);
 	}
 	
 	public List<String> extractLists(WebScriptRequest req){
