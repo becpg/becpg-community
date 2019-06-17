@@ -115,7 +115,7 @@ public class TaskOverdueFormulationHandler extends FormulationBaseHandler<Projec
 	}
 
 	public Date calculateNextNotificationDate(TaskListDataItem task, Date firstNotificationDate){
-		if(task.getLastNotification() == null){
+		if(task.getLastNotification() == null || task.getLastNotification().before(firstNotificationDate)){
 			return firstNotificationDate;
 		} else if(task.getNotificationFrequency() != null && task.getNotificationFrequency() > 0){
 			Calendar cal = Calendar.getInstance();
