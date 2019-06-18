@@ -96,13 +96,12 @@ public class ReportContentGet extends ContentGet {
 			entityNodeRef = entityReportService.getEntityNodeRef(nodeRef);
 		}
 		
-
+		
 		if (entityNodeRef == null) {
 			throw new WebScriptException(HttpServletResponse.SC_NOT_FOUND, "No entity provided");
 		}
 
 		nodeRef = entityReportService.getOrRefreshReport(entityNodeRef, nodeRef);
-	
 
 		// determine attachment
 		boolean attach = Boolean.valueOf(req.getParameter("a"));
