@@ -685,7 +685,6 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	private double getPackagingListQty(ProductData productData, NodeRef componentNodeRef, int palletBoxesPerPallet, Double parentQty) {
 		double totalQty = 0d;
 		Double netQty = FormulationHelper.getNetQtyForCost(productData);
-		System.out.println(netQty+" "+parentQty);
 		
 		if (productData.hasPackagingListEl()) {
 			for (PackagingListDataItem packList : productData
