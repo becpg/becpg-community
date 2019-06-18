@@ -5,7 +5,7 @@
 	<groupId>fr.becpg</groupId>
 	<artifactId>becpg-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>2.2.5</version>
+	<version>3.0.0</version>
 	<name>beCPG</name>
 	<parent>
 		<groupId>org.alfresco.maven</groupId>
