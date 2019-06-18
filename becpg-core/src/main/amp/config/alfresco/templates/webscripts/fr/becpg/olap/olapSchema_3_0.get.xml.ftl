@@ -11,7 +11,11 @@
 			<Level name="Quarter" caption="${msg("jsolap.quarter.title")}" column="Quarter" nameColumn="NQuarter" type="String"  levelType="TimeQuarters"  />
 			<Level name="Month" caption="${msg("jsolap.month.title")}" column="Month" nameColumn="NMonth4L" ordinalColumn="Month" type="Numeric"  levelType="TimeMonths"  />
 			<Level name="Week" caption="${msg("jsolap.week.title")}" column="Week" nameColumn="NWeek" type="String"  levelType="TimeWeeks"  />
-			<Level name="Day" caption="${msg("jsolap.day.title")}" column="Day" nameColumn="NDay" ordinalColumn="Day" type="Numeric"  levelType="TimeDays"  />
+			<#if msg("jsolap.date.format") == "dd/mm/yyyy" >
+				<Level name="Day" caption="${msg("jsolap.day.title")}" column="Day" nameColumn="NDay" ordinalColumn="Day" type="Numeric"  levelType="TimeDays"  />
+			<#else>
+				<Level name="Day" caption="${msg("jsolap.day.title")}" column="Day" nameColumn="NDayUsFormat" ordinalColumn="Day" type="Numeric"  levelType="TimeDays"  />
+			</#if>
 		</Hierarchy>		
 	</Dimension>
 	
@@ -53,17 +57,26 @@
 				<View name="clients" alias="clients">
 								<SQL dialect="generic">
 									select  
-										entityNodeRef,
-										doc->>"$.name" as name,
-										nodeRef
+										a.entityNodeRef as entityNodeRef,
+										a.doc->>"$.name" as name,
+										a.nodeRef as nodeRef,
+										b.doc->>"$.bcpg_clientState" as clientState,
+										b.doc->>"$.bcpg_clientHierarchy1[0]" as clientHierarchy1,
+										b.doc->>"$.bcpg_clientHierarchy2[0]" as clientHierarchy2
 									from
-										assoc_bcpg_clients
+										assoc_bcpg_clients a left join bcpg_client b on a.nodeRef = b.nodeRef	
 									<#if !isAdmin>	
 									  where instanceId = ${instanceId}
 									</#if>
 								</SQL>
 				</View>
 				<Level name="name" caption="${msg("jsolap.clientName.title")}" table="clients" nameColumn="name" column="nodeRef"  type="String"   >
+				</Level>
+				<Level name="family" caption="${msg("jsolap.clientFamily.title")}" column="clientHierarchy1" type="String">
+				</Level>
+				<Level name="subfamily" caption="${msg("jsolap.clientSubFamily.title")}" column="clientHierarchy2" type="String">
+				</Level>
+				<Level name="state" caption="${msg("jsolap.clientState.title")}" column="clientState" type="String">
 				</Level>
 			</Hierarchy>
 		</Dimension>	
@@ -93,7 +106,7 @@
 					</SQL>
 				</View>
 	
-				<Level approxRowCount="5" name="productState" caption="${msg("jsolap.state.title")}" table="products_dim" column="productState"  type="String"   >
+				<Level approxRowCount="5" name="productState" caption="${msg("jsolap.productState.title")}" table="products_dim" column="productState"  type="String"   >
 				  <NameExpression>
 					  <SQL dialect="generic" >
 					  <![CDATA[CASE WHEN productState='Simulation' THEN '${msg("listconstraint.bcpg_systemState.Simulation")}'
@@ -105,7 +118,7 @@
 	                           END]]></SQL>
              		 </NameExpression>
 				</Level>
-				<Level approxRowCount="10" name="entity_type" caption="${msg("jsolap.type.title")}" table="products_dim" column="productType" nameColumn="productType" type="String"   >
+				<Level approxRowCount="10" name="entity_type" caption="${msg("jsolap.productType.title")}" table="products_dim" column="productType" nameColumn="productType" type="String"   >
 					<NameExpression>
 					  <SQL dialect="generic" >
 					  <![CDATA[CASE WHEN productType='bcpg:rawMaterial' THEN "${msg('bcpg_bcpgmodel.type.bcpg_rawMaterial.title')}"
@@ -119,28 +132,26 @@
 	                           END]]></SQL>
              		 </NameExpression>
 				</Level>		
-				<Level name="productHierarchy1" caption="${msg("jsolap.family.title")}" table="products_dim" column="productHierarchy1"  type="String"    />
-				<Level name="productHierarchy2" caption="${msg("jsolap.subFamily.title")}" table="products_dim" column="productHierarchy2"  type="String"    />
+				<Level name="productHierarchy1" caption="${msg("jsolap.productFamily.title")}" table="products_dim" column="productHierarchy1"  type="String"    />
+				<Level name="productHierarchy2" caption="${msg("jsolap.productSubFamily.title")}" table="products_dim" column="productHierarchy2"  type="String"    />
 				<Level name="name" caption="${msg("jsolap.productName.title")}" table="products_dim" column="name"  type="String"    />
 				<Level name="code" caption="${msg("jsolap.productCode.title")}" table="products_dim" column="code"  type="String"   />
-				<Level name="erpCode" caption="${msg("jsolap.erpCode.title")}" table="products_dim" column="erpCode"  type="String"   />
-				<Level name="legalName" caption="${msg("jsolap.legalName.title")}" table="products_dim" column="legalName" type="String"    />
-				<Level name="versionLabel" caption="${msg("jsolap.versionLabel.title")}" table="products_dim" column="versionLabel" type="String" />
+				<Level name="erpCode" caption="${msg("jsolap.productErpCode.title")}" table="products_dim" column="erpCode"  type="String"   />
+				<Level name="legalName" caption="${msg("jsolap.productLegalName.title")}" table="products_dim" column="legalName" type="String"    />
+				<Level name="versionLabel" caption="${msg("jsolap.productVersionLabel.title")}" table="products_dim" column="versionLabel" type="String" />
 			</Hierarchy>
 			
 		</Dimension>
 		
 		
 		
-		<Dimension   name="projectsDimension" caption="${msg("jsolap.project.title")}">
+		<Dimension name="projectsDimension" caption="${msg("jsolap.project.title")}">
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.project.caption")}" primaryKey="nodeRef">
 				<View name="projects_dim" alias="projects_dim">
 					<SQL dialect="generic">
 						select
 							nodeRef,
 							doc->>"$.cm_name" as name,
-							doc->>"$.pjt_projectState" as projectState,
-							doc->>"$.pjt_projectManager[0]" as projectManager,
 							doc->>"$.pjt_projectHierarchy1[0]" as	projectHierarchy1,
 							doc->>"$.pjt_projectHierarchy2[0]" as	projectHierarchy2	
 						from
@@ -151,9 +162,33 @@
 						</#if>
 					</SQL>
 				 </View>
-			     <Level approxRowCount="5" name="projectState" caption="${msg("jsolap.state.title")}" table="projects_dim" column="projectState" type="String"   >
-				     <NameExpression>
-						  <SQL dialect="generic" >
+				<Level name="projectHierarchy1" caption="${msg("jsolap.projectFamily.title")}" table="projects_dim" column="projectHierarchy1" type="String"   >
+				</Level>
+				<Level name="projectHierarchy2" caption="${msg("jsolap.projectSubFamily.title")}" table="projects_dim" column="projectHierarchy2" type="String"   >
+				</Level>
+				<Level name="entity_noderef" caption="${msg("jsolap.project.title")}" table="projects_dim" column="noderef" nameColumn="name" type="String"   >
+				</Level>
+			</Hierarchy>
+		</Dimension>
+		
+		<Dimension  name="projectStateDimension" caption="${msg("jsolap.projectState.title")}" >
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.projectState.caption")}" primaryKey="nodeRef" >
+				<View name="project_state" alias="project_state">
+					<SQL dialect="generic">
+						select
+							nodeRef,
+							doc->>"$.pjt_projectState" as projectState
+						from
+							pjt_project
+						<#if !isAdmin>	
+						 where 
+						    instanceId = ${instanceId}
+						</#if>
+					</SQL>
+				 </View>				 
+				<Level approxRowCount="5" name="projectState" caption="${msg("jsolap.projectState.title")}" column="projectState" type="String">
+				  <NameExpression>
+					  <SQL dialect="generic" >
 					  <![CDATA[CASE WHEN projectState='Planned' THEN '${msg("listconstraint.pjt_projectStates.Planned")}'
 	                            WHEN projectState='InProgress' THEN '${msg("listconstraint.pjt_projectStates.InProgress")}'
 	                            WHEN projectState='OnHold' THEN '${msg("listconstraint.pjt_projectStates.OnHold")}'
@@ -161,16 +196,27 @@
 	                            WHEN projectState='Completed' THEN '${msg("listconstraint.pjt_projectStates.Completed")}'
 	                            ELSE 'Vide'
 	                           END]]></SQL>
-	                </NameExpression>
-				</Level>	
-				<Level name="projectHierarchy1" caption="${msg("jsolap.family.title")}" table="projects_dim" column="projectHierarchy1" type="String"   >
+              </NameExpression>
 				</Level>
-				<Level name="projectHierarchy2" caption="${msg("jsolap.subFamily.title")}" table="projects_dim" column="projectHierarchy2" type="String"   >
-				</Level>
-				<Level name="projectManager" caption="${msg("jsolap.projectManager.title")}" table="projects_dim" column="projectManager"  type="String"    >
-				</Level>
-				<Level name="entity_noderef" caption="${msg("jsolap.project.title")}" table="projects_dim" column="noderef" nameColumn="name" type="String"   >
-				</Level>
+			</Hierarchy>
+		</Dimension>
+		
+			<Dimension name="projectManagerDimension" caption="${msg("jsolap.projectManager.title")}">
+			<Hierarchy hasAll="true" caption="${msg("jsolap.projectManager.title")}" allMemberCaption="${msg("jsolap.projectManager.caption")}" primaryKey="nodeRef">
+				<View name="project_manager_dim" alias="project_manager_dim">
+					<SQL dialect="generic">
+						select
+							nodeRef,
+							doc->>"$.pjt_projectManager[0]" as projectManager
+						from
+							pjt_project
+						<#if !isAdmin>	
+						 where 
+						    instanceId = ${instanceId}
+						</#if>
+					</SQL>
+				 </View>
+				<Level name="projectManager" caption="${msg("jsolap.projectManager.title")}" column="projectManager"  type="String" />
 			</Hierarchy>
 		</Dimension>
 		
@@ -201,36 +247,53 @@
 			<DimensionUsage name="instance" caption="${msg("jsolap.instance.title")}" source="instancesDimension" foreignKey="instance_id" />
 		</#if>		
 	
-		<Measure name="avgUsers" caption="${msg("jsolap.users-avg.title")}" column="connected_users" datatype="Numeric" aggregator="avg" visible="true"></Measure>
-		<Measure name="maxUsers" caption="${msg("jsolap.users-max.title")}" column="connected_users" datatype="Numeric" aggregator="max" visible="true"></Measure>
-		<Measure name="avgMemory" caption="${msg("jsolap.memory-avg.title")}" datatype="Numeric" aggregator="avg" visible="true">
+		<Measure name="avgUsers" caption="${msg("jsolap.usersAvg.title")}" column="connected_users" datatype="Numeric" aggregator="avg" visible="true"></Measure>
+		<Measure name="maxUsers" caption="${msg("jsolap.usersMax.title")}" column="connected_users" datatype="Numeric" aggregator="max" visible="true"></Measure>
+		<Measure name="avgMemory" caption="${msg("jsolap.memoryAvg.title")}" datatype="Numeric" aggregator="avg" visible="true">
 			<MeasureExpression>
 				<SQL dialect="generic">
 					total_memory - free_memory
 				</SQL>
 			</MeasureExpression>
 		</Measure>
-		<Measure name="maxMemory" caption="${msg("jsolap.memory-max.title")}" datatype="Numeric" aggregator="max" visible="true">
+		<Measure name="maxMemory" caption="${msg("jsolap.memoryMax.title")}" datatype="Numeric" aggregator="max" visible="true">
 			<MeasureExpression>
 				<SQL dialect="generic">
 					total_memory - free_memory
 				</SQL>
 			</MeasureExpression>
 		</Measure>
-		<Measure name="avgMemoryPct" caption="${msg("jsolap.mempct-avg.title")}" datatype="Numeric" aggregator="avg" visible="true">
+		<Measure name="avgMemoryPct" caption="${msg("jsolap.mempctAvg.title")}" datatype="Numeric" aggregator="avg" visible="true">
 			<MeasureExpression>
 				<SQL dialect="generic">
 					(1 - free_memory/total_memory)*100
 				</SQL>
 			</MeasureExpression>
 		</Measure>
-		<Measure name="maxMemoryPct" caption="${msg("jsolap.mempct-max.title")}" datatype="Numeric" aggregator="max" visible="true">
+		<Measure name="maxMemoryPct" caption="${msg("jsolap.mempctMax.title")}" datatype="Numeric" aggregator="max" visible="true">
 			<MeasureExpression>
 				<SQL dialect="generic">
 					(1 - free_memory/total_memory)*100
 				</SQL>
 			</MeasureExpression>
 		</Measure>
+		<Measure name="avgOsMemory" caption="${msg("jsolap.osMemoryAvg.title")}" column="system_free_memory" datatype="Numeric" aggregator="avg" visible="true"></Measure>
+		<Measure name="maxOsMemory" caption="${msg("jsolap.osMemoryMax.title")}" column="system_free_memory" datatype="Numeric" aggregator="max" visible="true"></Measure>
+		
+		<Measure name="avgConcurrentRead" caption="${msg("jsolap.concurrentReadAvg.title")}" column="concurrentReadUsers" datatype="Numeric" aggregator="avg" visible="true"></Measure>
+		<Measure name="maxConcurrentRead" caption="${msg("jsolap.concurrentReadMax.title")}" column="concurrentReadUsers" datatype="Numeric" aggregator="max" visible="true"></Measure>
+		
+		<Measure name="avgConcurrentSupplier" caption="${msg("jsolap.concurrentSupplierAvg.title")}" column="concurrentSupplierUsers" datatype="Numeric" aggregator="avg" visible="true"></Measure>
+		<Measure name="maxConcurrentSupplier" caption="${msg("jsolap.concurrentSupplierMax.title")}" column="concurrentSupplierUsers" datatype="Numeric" aggregator="max" visible="true"></Measure>
+		
+		<Measure name="avgConcurrentWrite" caption="${msg("jsolap.concurrentWriteAvg.title")}" column="concurrentWriteUsers" datatype="Numeric" aggregator="avg" visible="true"></Measure>
+		<Measure name="maxConcurrentWrite" caption="${msg("jsolap.concurrentWriteMax.title")}" column="concurrentWriteUsers" datatype="Numeric" aggregator="max" visible="true"></Measure>
+		
+		<Measure name="avgNamedRead" caption="${msg("jsolap.namedReadAvg.title")}" column="namedReadUsers" datatype="Numeric" aggregator="avg" visible="true"></Measure>
+		<Measure name="maxNamedRead" caption="${msg("jsolap.namedReadMax.title")}" column="namedReadUsers" datatype="Numeric" aggregator="max" visible="true"></Measure>
+		
+		<Measure name="avgNamedWrite" caption="${msg("jsolap.namedWriteAvg.title")}" column="namedWriteUsers" datatype="Numeric" aggregator="avg" visible="true"></Measure>
+		<Measure name="maxNamedWrite" caption="${msg("jsolap.namedWriteMax.title")}" column="namedWriteUsers" datatype="Numeric" aggregator="max" visible="true"></Measure>
 	
 	</Cube>
 	
@@ -353,7 +416,7 @@
 		</Dimension>
 		
 		
-		<DimensionUsage name="targetProducts" caption="${msg("jsolap.targetProducts.title")}" source="productsDimension" foreignKey="entityNodeRef" />
+		<DimensionUsage name="targetProducts" caption="${msg("jsolap.products.title")}" source="productsDimension" foreignKey="entityNodeRef" />
 		
 		
 		<Dimension type="StandardDimension" foreignKey="nodeRef"  name="sourceProducts" caption="${msg("jsolap.sourceProducts.title")}">
@@ -376,7 +439,7 @@
 							</#if>
 						</SQL>
 				</View>
-				<Level approxRowCount="5" name="productState" caption="${msg("jsolap.productState.title")}"  column="productState"  type="String"  >
+				<Level approxRowCount="5" name="productState" caption="${msg("jsolap.srcProductState.title")}"  column="productState"  type="String"  >
 				  <NameExpression>
 					  <SQL dialect="generic" >
 					  <![CDATA[CASE WHEN productState='Simulation' THEN '${msg("listconstraint.bcpg_systemState.Simulation")}'
@@ -388,7 +451,7 @@
 	                           END]]></SQL>
              		 </NameExpression>
 				</Level>	
-				<Level approxRowCount="10" name="entity_type" caption="${msg("jsolap.type.title")}" column="productType" nameColumn="productType" type="String"   >
+				<Level approxRowCount="10" name="entity_type" caption="${msg("jsolap.srcProductType.title")}" column="productType" nameColumn="productType" type="String"   >
 					<NameExpression>
 					  <SQL dialect="generic" >
 					  <![CDATA[CASE WHEN productType='bcpg:rawMaterial' THEN "${msg('bcpg_bcpgmodel.type.bcpg_rawMaterial.title')}"
@@ -402,13 +465,13 @@
 	                           END]]></SQL>
              	</NameExpression>
 				</Level>
-				<Level name="productHierarchy1" caption="${msg("jsolap.family.title")}" table="rclSources" column="productHierarchy1" type="String"   >
+				<Level name="productHierarchy1" caption="${msg("jsolap.srcProductFamily.title")}" table="rclSources" column="productHierarchy1" type="String"   >
 				</Level>
-				<Level name="productHierarchy2" caption="${msg("jsolap.subFamily.title")}" table="rclSources" column="productHierarchy2" type="String"   >
+				<Level name="productHierarchy2" caption="${msg("jsolap.srcProductSubFamily.title")}" table="rclSources" column="productHierarchy2" type="String"   >
 				</Level>
-				<Level name="entity_noderef" caption="${msg("jsolap.component.title")}" table="rclSources" column="nodeRef" nameColumn="name" type="String"   >
+				<Level name="entity_noderef" caption="${msg("jsolap.srcProductComponent.title")}" table="rclSources" column="nodeRef" nameColumn="name" type="String"   >
 				</Level>
-				<Level name="versionLabel" caption="${msg("jsolap.versionLabel.title")}" table="rclSources" column="versionLabel" type="String" />
+				<Level name="versionLabel" caption="${msg("jsolap.srcProductVersionLabel.title")}" table="rclSources" column="versionLabel" type="String" />
 			</Hierarchy>
 		</Dimension>
 		
@@ -465,9 +528,9 @@
 			</Hierarchy>
 		</Dimension>
 		
-		<Dimension  name="designation" caption="${msg("jsolap.designation.title")}" >
+		<Dimension  name="designation" caption="${msg("jsolap.incident.title")}" >
 			<Hierarchy name="incident" caption="${msg("jsolap.incident.title")}" hasAll="true" allMemberCaption="${msg("jsolap.incident.caption")}">
-				<Level name="name" caption="${msg("jsolap.name.title")}" column="name"  type="String"    />
+				<Level name="name" caption="${msg("jsolap.incidentName.title")}" column="name"  type="String"    />
 				<Level name="code" caption="${msg("jsolap.ncCode.title")}" column="code"  type="String"    />
 			</Hierarchy>
 		</Dimension>
@@ -478,16 +541,16 @@
 			</Hierarchy>
 		</Dimension>
 		
-		<Dimension  name="incidentOrigin" caption="${msg("jsolap.incidentOrigin.title")}" >
+		<Dimension  name="incidentOrigin" caption="${msg("jsolap.claimOrigin.title")}" >
 			<Hierarchy name="origin" caption="${msg("jsolap.origin.title")}" hasAll="true" allMemberCaption="${msg("jsolap.origin.caption")}">
-				<Level name="claimOriginHierarchy1" caption="${msg("jsolap.family.title")}" column="claimOriginHierarchy1"  type="String"    />
-				<Level name="claimOriginHierarchy2" caption="${msg("jsolap.subFamily.title")}" column="claimOriginHierarchy2"  type="String" approxRowCount="20"   />
+				<Level name="claimOriginHierarchy1" caption="${msg("jsolap.claimOriginFamily.title")}" column="claimOriginHierarchy1"  type="String"    />
+				<Level name="claimOriginHierarchy2" caption="${msg("jsolap.claimOriginSubFamily.title")}" column="claimOriginHierarchy2"  type="String" approxRowCount="20"   />
 			</Hierarchy>
 		</Dimension>
 		
-		<Dimension  name="incidentType" caption="${msg("jsolap.incidentType.title")}" >
-			<Hierarchy name="incidentType" caption="${msg("jsolap.incidentType.title")}" hasAll="true" allMemberCaption="${msg("jsolap.incidentType.caption")}">
-				<Level name="claimType" caption="${msg("jsolap.cause.title")}" column="claimType"  type="String" approxRowCount="20"   />
+		<Dimension  name="incidentType" caption="${msg("jsolap.claimType.title")}" >
+			<Hierarchy name="incidentType" caption="${msg("jsolap.claimType.title")}" hasAll="true" allMemberCaption="${msg("jsolap.claimType.caption")}">
+				<Level name="claimType" caption="${msg("jsolap.claimType.title")}" column="claimType"  type="String" approxRowCount="20"   />
 			</Hierarchy>
 		</Dimension>
 		
@@ -506,9 +569,9 @@
 			</Hierarchy>
 		</Dimension>
 		
-		<Dimension  name="type" caption="${msg("jsolap.type.title")}" >
-			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.type.caption")}" >
-				<Level approxRowCount="2" name="ncType" caption="${msg("jsolap.family.title")}"  column="ncType"  type="String"    >
+		<Dimension  name="type" caption="${msg("jsolap.ncType.title")}" >
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.ncType.caption")}" >
+				<Level approxRowCount="2" name="ncType" caption="${msg("jsolap.ncType.title")}"  column="ncType"  type="String"    >
 				<NameExpression>
 					  <SQL dialect="generic" >
 					  <![CDATA[CASE WHEN ncType='Claim' THEN '${msg("listconstraint.qa_ncTypes.Claim")}'
@@ -559,7 +622,7 @@
 		<Measure name="ncCost" caption="${msg("jsolap.nonConformityCost.title")}" column="ncCost" datatype="Numeric" aggregator="sum" visible="true"  />
 	</Cube>
 	
-	<Cube name="projectsSteps" caption="${msg("jsolap.projectsSteps.title")}" cache="true" enabled="true" defaultMeasure="${msg("jsolap.projectsSteps.title")}">
+	<Cube name="projectsSteps" caption="${msg("jsolap.projectsTasks.title")}" cache="true" enabled="true" defaultMeasure="${msg("jsolap.projectsTasks.title")}">
 			
 				<View name="taskList" alias="taskList">
 					<SQL dialect="generic">
@@ -607,16 +670,16 @@
 			</Hierarchy>
 		</Dimension>			
 		
-		<Dimension  name="designation" caption="${msg("jsolap.designation.title")}" >
+		<Dimension  name="designation" caption="${msg("jsolap.task.title")}" >
 			<Hierarchy name="taskPerName" caption="${msg("jsolap.taskPerName.title")}" hasAll="true" allMemberCaption="${msg("jsolap.task.caption")}">
-				<Level name="tlTaskName" caption="${msg("jsolap.task.title")}" column="tlTaskName" type="String" ordinalColumn="sortOrder" />
+				<Level name="tlTaskName" caption="${msg("jsolap.taskName.title")}" column="tlTaskName" type="String" ordinalColumn="sortOrder" />
 			</Hierarchy>
 		</Dimension>
 		
 		
-		<Dimension  name="state" caption="${msg("jsolap.state.title")}" >
-			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.state.caption")}" >
-				<Level approxRowCount="5" name="tlState" caption="${msg("jsolap.state.title")}"  column="tlState"  type="String"    >
+		<Dimension  name="taskState" caption="${msg("jsolap.taskState.title")}" >
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.taskState.caption")}" >
+				<Level approxRowCount="5" name="tlState" caption="${msg("jsolap.taskState.title")}"  column="tlState"  type="String"    >
 				  <NameExpression>
 					  <SQL dialect="generic" >
 					  <![CDATA[CASE WHEN tlState='Planned' THEN '${msg("listconstraint.pjt_projectStates.Planned")}'
@@ -630,7 +693,7 @@
 				</Level>
 			</Hierarchy>
 		</Dimension>
-		
+
 		<Dimension name="resource" caption="${msg("jsolap.resource.title")}" >
 			<Hierarchy name="resource" caption="${msg("jsolap.resource.title")}" hasAll="true" allMemberCaption="${msg("jsolap.resource.caption")}">
 				<Level name="tlResources" caption="${msg("jsolap.resource.title")}" column="tlResources"  type="String"    />
@@ -641,6 +704,9 @@
 			
 		<DimensionUsage name="tags" caption="${msg("jsolap.tags.title")}" source="tagsDimension" foreignKey="entityNodeRef" />
 		
+		<DimensionUsage name="projectState" caption="${msg("jsolap.projectState.title")}" source="projectStateDimension" foreignKey="entityNodeRef" />
+		
+		<DimensionUsage name="projectManager" caption="${msg("jsolap.projectManager.title")}" source="projectManagerDimension" foreignKey="entityNodeRef" />		
 		
 		<#if isAdmin>
 			<DimensionUsage name="instance" caption="${msg("jsolap.instance.title")}" source="instancesDimension" foreignKey="instanceId" />
@@ -656,7 +722,7 @@
 		<Measure name="avgLoggedTime" caption="${msg("jsolap.avgLoggedTime.title")}" column="tlLoggedTime" datatype="Integer" aggregator="avg" visible="true"></Measure>		
 		
 		<CalculatedMember name="averageDurations" caption="${msg("jsolap.averageDurations.title")}" dimension="Measures" visible="true">
-			<Formula>([Measures].[averageDurations],[designation.taskPerName].PrevMember) + ([Measures].[averageDurations])</Formula>
+			<Formula>([Measures].[averageDurations],[designation.taskPerName].PrevMember) + ([Measures].[averageActualDurations])</Formula>
 		</CalculatedMember>  
 		
 		
@@ -703,7 +769,7 @@
 			</Hierarchy>
 		</Dimension>			
 		
-		<Dimension  name="designation" caption="${msg("jsolap.designation.title")}" >
+		<Dimension  name="designation" caption="${msg("jsolap.criterion.title")}" >
 			<Hierarchy name="criterionByName" caption="${msg("jsolap.criterionByName.title")}" hasAll="true" allMemberCaption="${msg("jsolap.criterion.caption")}">
 				<Level name="slCriterion" caption="${msg("jsolap.criterion.title")}" column="slCriterion"  type="String"    />
 			</Hierarchy>
@@ -711,12 +777,16 @@
 		
 		<DimensionUsage name="project" caption="${msg("jsolap.project.title")}" source="projectsDimension" foreignKey="entityNodeRef" />
 
+		<DimensionUsage name="projectState" caption="${msg("jsolap.projectState.title")}" source="projectStateDimension" foreignKey="entityNodeRef" />
+		
+		<DimensionUsage name="projectManager" caption="${msg("jsolap.projectManager.title")}" source="projectManagerDimension" foreignKey="entityNodeRef" />
+		
 		<DimensionUsage name="tags" caption="${msg("jsolap.tags.title")}" source="tagsDimension" foreignKey="entityNodeRef" />
 		
 		<#if isAdmin>
 			<DimensionUsage name="instance" caption="${msg("jsolap.instance.title")}" source="instancesDimension" foreignKey="instanceId" />
 		</#if>
-		<Measure name="slWeight" caption="${msg("jsolap.weighting.title")}" column="slWeight" datatype="Numeric" aggregator="sum" visible="true" />
+		<Measure name="slWeight" caption="${msg("jsolap.weighting.title")}" column="slWeight" datatype="Numeric" aggregator="avg" visible="true" />
 		<Measure name="slScore" caption="${msg("jsolap.note.title")}" column="slScore" datatype="Numeric" aggregator="avg" visible="true"  />
 		
 		<CalculatedMember name="weightingNote" caption="${msg("jsolap.weightingNote.title")}" dimension="Measures" visible="true">
@@ -770,10 +840,10 @@
 		</Dimension>
 
 		
-		<Dimension  name="designation" caption="${msg("jsolap.designation.title")}" >
+		<Dimension  name="designation" caption="${msg("jsolap.project.title")}" >
 			<Hierarchy name="projectPerFamily" caption="${msg("jsolap.projectPerFamily.title")}" hasAll="true" allMemberCaption="${msg("jsolap.project.caption")}">
-				<Level name="projectHierarchy1" caption="${msg("jsolap.family.title")}" column="projectHierarchy1"  type="String"    />
-				<Level name="projectHierarchy2" caption="${msg("jsolap.subFamily.title")}" column="projectHierarchy2"  type="String"    />
+				<Level name="projectHierarchy1" caption="${msg("jsolap.projectFamily.title")}" column="projectHierarchy1"  type="String"    />
+				<Level name="projectHierarchy2" caption="${msg("jsolap.projectSubFamily.title")}" column="projectHierarchy2"  type="String"    />
 				<Level name="name" caption="${msg("jsolap.projectName.title")}" column="name"  type="String"    />
 				<Level name="code" caption="${msg("jsolap.projectCode.title")}" column="code"  type="String"    />
 			</Hierarchy>
@@ -798,9 +868,9 @@
 				</Level>
 			</Hierarchy>
 		</Dimension>
-		<Dimension  name="state" caption="${msg("jsolap.state.title")}" >
+		<Dimension  name="state" caption="${msg("jsolap.projectState.title")}" >
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.state.caption")}" >
-				<Level approxRowCount="5" name="projectState" caption="${msg("jsolap.state.title")}" column="projectState" type="String">
+				<Level approxRowCount="5" name="projectState" caption="${msg("jsolap.projectState.title")}" column="projectState" type="String">
 				  <NameExpression>
 					  <SQL dialect="generic" >
 					  <![CDATA[CASE WHEN projectState='Planned' THEN '${msg("listconstraint.pjt_projectStates.Planned")}'
@@ -824,9 +894,9 @@
 			</Hierarchy>
 		</Dimension>
 		
-		<Dimension  name="projectCreator" caption="${msg("jsolap.projectCreator.title")}" >
-			<Hierarchy name="projectCreator" caption="${msg("jsolap.projectCreator.title")}" hasAll="true" allMemberCaption="${msg("jsolap.projectCreator.caption")}">
-				<Level name="projectCreator" caption="${msg("jsolap.projectCreator.title")}" column="projectCreator"  type="String"    />
+		<Dimension  name="projectCreator" caption="${msg("jsolap.creator.title")}" >
+			<Hierarchy name="projectCreator" caption="${msg("jsolap.creator.caption")}" hasAll="true" allMemberCaption="${msg("jsolap.creator.caption")}">
+				<Level name="projectCreator" caption="${msg("jsolap.creator.title")}" column="projectCreator"  type="String"    />
 			</Hierarchy>
 		</Dimension>
 		
@@ -848,8 +918,8 @@
 			</Hierarchy>
 		</Dimension>
 		
-		<Dimension  name="modification" caption="${msg("jsolap.modification.title")}" >
-			<Hierarchy name="modifiers" caption="${msg("jsolap.modifiers.title")}" hasAll="true" >
+		<Dimension  name="modification" caption="${msg("jsolap.modifier.title")}" >
+			<Hierarchy name="modifiers" caption="${msg("jsolap.modifier.caption")}" hasAll="true" allMemberCaption="${msg("jsolap.modifier.caption")}" >
 				<Level name="modifier" caption="${msg("jsolap.modifier.title")}" column="projectModifier"  type="String" />
 			</Hierarchy>
 		</Dimension>
@@ -1031,21 +1101,21 @@
 			</Hierarchy>
 		</Dimension>
 
-		<Dimension  name="designation" caption="${msg("jsolap.designation.title")}" >
+		<Dimension  name="designation" caption="${msg("jsolap.product.title")}" >
 			<Hierarchy name="productPerFamily" caption="${msg("jsolap.productPerFamily.title")}" hasAll="true" allMemberCaption="${msg("jsolap.product.caption")}">
-				<Level name="productHierarchy1" caption="${msg("jsolap.family.title")}" column="productHierarchy1"  type="String"    />
-				<Level name="productHierarchy2" caption="${msg("jsolap.subFamily.title")}" column="productHierarchy2"  type="String"    />
+				<Level name="productHierarchy1" caption="${msg("jsolap.productFamily.title")}" column="productHierarchy1"  type="String"    />
+				<Level name="productHierarchy2" caption="${msg("jsolap.productSubFamily.title")}" column="productHierarchy2"  type="String"    />
 				<Level name="code" caption="${msg("jsolap.productCode.title")}" column="code"  type="String"  uniqueKeyLevelname="" highCardinality="true"  />
 				<Level name="name" caption="${msg("jsolap.productName.title")}" column="name"  type="String" />
-			    <Level name="erpCode" caption="${msg("jsolap.erpCode.title")}" column="erpCode"  type="String" />
-				<Level name="legalName" caption="${msg("jsolap.legalName.title")}" column="legalName"  type="String" />
-				<Level name="versionLabel" caption="${msg("jsolap.versionLabel.title")}" column="versionLabel" type="String" />
+			    <Level name="erpCode" caption="${msg("jsolap.productErpCode.title")}" column="erpCode"  type="String" />
+				<Level name="legalName" caption="${msg("jsolap.productLegalName.title")}" column="legalName"  type="String" />
+				<Level name="versionLabel" caption="${msg("jsolap.productVersionLabel.title")}" column="versionLabel" type="String" />
 			</Hierarchy>
 		</Dimension>
 		
-		<Dimension  name="state" caption="${msg("jsolap.state.title")}">
-			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.state.caption")}" >
-				<Level approxRowCount="5" name="productState" caption="${msg("jsolap.state.title")}"  column="productState"  type="String"   >
+		<Dimension  name="state" caption="${msg("jsolap.productState.title")}">
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.productState.caption")}" >
+				<Level approxRowCount="5" name="productState" caption="${msg("jsolap.productState.title")}"  column="productState"  type="String"   >
 				  <NameExpression>
 					  <SQL dialect="generic" >
 					  <![CDATA[CASE WHEN productState='Simulation' THEN '${msg("listconstraint.bcpg_systemState.Simulation")}'
@@ -1059,8 +1129,6 @@
 				</Level>
 			</Hierarchy>
 		</Dimension>
-		
-		
 		
 		 
 		<Dimension foreignKey="nodeRef"  name="geoOrigin" caption="${msg("jsolap.geoOrigin.title")}">
@@ -1078,7 +1146,27 @@
 									</#if>
 								</SQL>
 				</View>
-				<Level name="name" caption="${msg("jsolap.country.title")}" column="nodeRef" nameColumn="name" type="String"  >
+				<Level name="name" caption="${msg("jsolap.ingredientCountry.title")}" column="nodeRef" nameColumn="name" type="String"  >
+				</Level>
+			</Hierarchy>
+		</Dimension>
+		
+		<Dimension foreignKey="nodeRef"  name="productGeoOrigin" caption="${msg("jsolap.productGeoOrigin.title")}">
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.geoOrigin.caption")}" primaryKey="entityNodeRef">
+				<View name="productgeoOrigin" alias="productgeoOrigin">
+								<SQL dialect="generic">
+									select  
+										entityNodeRef,
+										doc->>"$.name" as name,
+										nodeRef
+									from
+										assoc_bcpg_productGeoOrigin
+									<#if !isAdmin>	
+									  where instanceId = ${instanceId}
+									</#if>
+								</SQL>
+				</View>
+				<Level name="name" caption="${msg("jsolap.productCountry.title")}" column="nodeRef" nameColumn="name" type="String"  >
 				</Level>
 			</Hierarchy>
 		</Dimension>
@@ -1086,7 +1174,7 @@
 		<Dimension name="productType" caption="${msg("jsolap.productType.title")}">
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.productType.caption")}"  >
 				
-			<Level approxRowCount="10" name="entity_type" caption="${msg("jsolap.type.title")}" column="productType" nameColumn="entity_label" type="String"   >
+			<Level approxRowCount="10" name="entity_type" caption="${msg("jsolap.productType.title")}" column="productType" nameColumn="entity_label" type="String"   >
 				<NameExpression>
 					  <SQL dialect="generic" >
 					  <![CDATA[CASE WHEN productType='bcpg:rawMaterial' THEN "${msg('bcpg_bcpgmodel.type.bcpg_rawMaterial.title')}"
@@ -1110,24 +1198,33 @@
 				<View name="suppliers" alias="suppliers">
 								<SQL dialect="generic">
 									select  
-										entityNodeRef,
-										doc->>"$.name" as name,
-										nodeRef
+										a.entityNodeRef,
+										a.doc->>"$.name" as name,
+										a.nodeRef as nodeRef,
+										b.doc->>"$.bcpg_supplierState" as supplierState,
+										b.doc->>"$.bcpg_supplierHierarchy1[0]" as supplierHierarchy1,
+										b.doc->>"$.bcpg_supplierHierarchy2[0]" as supplierHierarchy2
 									from
-										assoc_bcpg_suppliers
+										assoc_bcpg_suppliers a left join bcpg_supplier b on a.nodeRef = b.nodeRef						
 									<#if !isAdmin>	
 									  where instanceId = ${instanceId}
 									</#if>
 								</SQL>
 				</View>
-				<Level name="name" caption="${msg("jsolap.supplierName.title")}" nameColumn="name" column="nodeRef" type="String"   >
+				<Level name="name" caption="${msg("jsolap.supplierName.title")}" nameColumn="name" column="nodeRef" type="String">
+				</Level>
+				<Level name="family" caption="${msg("jsolap.supplierFamily.title")}" column="supplierHierarchy1" type="String">
+				</Level>
+				<Level name="subfamily" caption="${msg("jsolap.supplierSubFamily.title")}" column="supplierHierarchy2" type="String">
+				</Level>
+				<Level name="state" caption="${msg("jsolap.supplierState.title")}" column="supplierState" type="String">
 				</Level>
 			</Hierarchy>
 		</Dimension>
 	
 		
-	    <Dimension name="nutritionScale" caption="${msg("jsolap.nutritionScale.title")}">
-			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.nutritionScale.caption")}" >
+	    <Dimension name="nutritionScale" caption="${msg("jsolap.nutrientScore.title")}">
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.nutrientScore.caption")}" >
 				<Level name="nutrientProfilingClass" caption="${msg("jsolap.nutritionClass.title")}" column="nutrientProfilingClass"  type="String"    />
 			</Hierarchy>
 		</Dimension>
@@ -1219,8 +1316,8 @@
 		</Dimension>
 		
 		
-		<Dimension type="StandardDimension" foreignKey="nodeRef"  name="composition" caption="${msg("jsolap.composition.title")}">
-			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.composition.caption")}" primaryKeyTable="compoList" primaryKey="entityNodeRef">
+		<Dimension type="StandardDimension" foreignKey="nodeRef"  name="composition" caption="${msg("jsolap.component.title")}">
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.component.caption")}" primaryKeyTable="compoList" primaryKey="entityNodeRef">
 				<View name="compoList" alias="compoList">
 								<SQL dialect="generic">
 									select  a.entityNodeRef,
@@ -1237,13 +1334,13 @@
 								</SQL>
 				</View>
 		
-				<Level name="productHierarchy1" caption="${msg("jsolap.family.title")}" table="compoList" column="productHierarchy1" type="String"   >
+				<Level name="productHierarchy1" caption="${msg("jsolap.componentFamily.title")}" table="compoList" column="productHierarchy1" type="String"   >
 				</Level>
-				<Level name="productHierarchy2" caption="${msg("jsolap.subFamily.title")}" table="compoList" column="productHierarchy2" type="String"   >
+				<Level name="productHierarchy2" caption="${msg("jsolap.componentSubFamily.title")}" table="compoList" column="productHierarchy2" type="String"   >
 				</Level>
-				<Level name="entity_noderef" caption="${msg("jsolap.component.title")}" table="compoList" column="nodeRef" nameColumn="name" type="String"   >
+				<Level name="entity_noderef" caption="${msg("jsolap.componentName.title")}" table="compoList" column="nodeRef" nameColumn="name" type="String"   >
 				</Level>
-				<Level name="versionLabel" caption="${msg("jsolap.versionLabel.title")}" table="compoList" column="versionLabel" type="String" />
+				<Level name="versionLabel" caption="${msg("jsolap.componentVersionLabel.title")}" table="compoList" column="versionLabel" type="String" />
 			</Hierarchy>
 		</Dimension>
 	
@@ -1265,25 +1362,25 @@
 						</SQL>
 				</View>
 				
-				<Level name="productHierarchy1" caption="${msg("jsolap.family.title")}" table="packagingList" column="productHierarchy1" type="String"   >
+				<Level name="productHierarchy1" caption="${msg("jsolap.packagingFamily.title")}" table="packagingList" column="productHierarchy1" type="String"   >
 				</Level>
-				<Level name="productHierarchy2" caption="${msg("jsolap.subFamily.title")}" table="packagingList" column="productHierarchy2" type="String"   >
+				<Level name="productHierarchy2" caption="${msg("jsolap.packagingSubFamily.title")}" table="packagingList" column="productHierarchy2" type="String"   >
 				</Level>
-				<Level name="entity_noderef" caption="${msg("jsolap.packaging.title")}" table="packagingList" column="nodeRef" nameColumn="name" type="String"   >
+				<Level name="entity_noderef" caption="${msg("jsolap.packagingName.title")}" table="packagingList" column="nodeRef" nameColumn="name" type="String"   >
 				</Level>
-				<Level name="versionLabel" caption="${msg("jsolap.versionLabel.title")}" table="packagingList" column="versionLabel" type="String" />
+				<Level name="versionLabel" caption="${msg("jsolap.packagingVersionLabel.title")}" table="packagingList" column="versionLabel" type="String" />
 			</Hierarchy>
 		</Dimension>
 		
 
-		<Dimension  name="creation" caption="${msg("jsolap.creation.title")}" >
-			<Hierarchy name="creators" caption="${msg("jsolap.creators.title")}" hasAll="true" >
+		<Dimension  name="creation" caption="${msg("jsolap.creator.title")}" >
+			<Hierarchy name="creators" caption="${msg("jsolap.creator.caption")}" hasAll="true" allMemberCaption="${msg("jsolap.creator.caption")}">
 				<Level name="creator"  caption="${msg("jsolap.creator.title")}"  column="creator"  type="String" />
 			</Hierarchy>
 		</Dimension>
 		
-		<Dimension  name="modification" caption="${msg("jsolap.modification.title")}" >
-			<Hierarchy name="modifiers" caption="${msg("jsolap.modifiers.title")}" hasAll="true" >
+		<Dimension  name="modification" caption="${msg("jsolap.modifier.title")}" >
+			<Hierarchy name="modifiers" caption="${msg("jsolap.modifier.caption")}" hasAll="true" allMemberCaption="${msg("jsolap.modifier.caption")}" >
 				<Level name="modifier" caption="${msg("jsolap.modifier.title")}" column="modifier"  type="String" />
 			</Hierarchy>
 		</Dimension>
@@ -1299,20 +1396,20 @@
 		<DimensionUsage name="endEffectivity" caption="${msg("jsolap.effectivityEnd.title")}" source="timeDimension" foreignKey="endEffectivity" />
 		
 		<Measure name="productNumber" caption="${msg("jsolap.productNumber.title")}" column="noderef" datatype="Integer" aggregator="distinct-count" visible="true" />
-		<Measure name="projectedQty" caption="${msg("jsolap.plannedQuantity.title")}" column="projectedQty" datatype="Integer" aggregator="sum" visible="true">
+		<Measure name="projectedQty" caption="${msg("jsolap.projectedQuantity.title")}" column="projectedQty" datatype="Integer" aggregator="sum" visible="true">
 		</Measure>
-		<Measure name="unitTotalCost" caption="${msg("jsolap.costs.title")}" column="unitTotalCost" datatype="Numeric" aggregator="sum" visible="true" >
+		<Measure name="unitTotalCost" caption="${msg("jsolap.saleUnitCosts.title")}" column="unitTotalCost" datatype="Numeric" aggregator="avg" visible="true" >
 		</Measure>
-		<Measure name="profitability" caption="${msg("jsolap.unitProfitability.title")}" column="profitability" datatype="Numeric" aggregator="sum" visible="true">
+		<Measure name="unitProfitability" caption="${msg("jsolap.unitProfitability.title")}" column="profitability" datatype="Numeric" aggregator="avg" visible="true">
 		</Measure>
-		<Measure name="unitPrice" caption="${msg("jsolap.unitPrice.title")}" column="unitPrice" datatype="Numeric" aggregator="sum" visible="true">
+		<Measure name="unitPrice" caption="${msg("jsolap.unitPrice.title")}" column="unitPrice" datatype="Numeric" aggregator="avg" visible="true">
 		</Measure>
-		<CalculatedMember name="profit" caption="${msg("jsolap.profit.title")}" dimension="Measures" visible="true">
+		<CalculatedMember name="profit" caption="${msg("jsolap.profitProjectedQuantity.title")}" dimension="Measures" visible="true">
 			<Formula>([Measures].[unitPrice] - [Measures].[unitTotalCost])*[Measures].[projectedQty]
 			</Formula>
 		</CalculatedMember>
 		<CalculatedMember name="profitability" caption="${msg("jsolap.profitability.title")}" dimension="Measures" visible="true">
-			<Formula>([Measures].[unitPrice] - [Measures].[unitTotalCost])/[Measures].[unitTotalCost]</Formula>
+			<Formula>([Measures].[unitPrice] - [Measures].[unitTotalCost])/[Measures].[unitTotalCost]*100</Formula>
 		</CalculatedMember>
 	</Cube>
 
