@@ -90,6 +90,7 @@
          // change the default 'Submit' label to be 'Save'
          var submitButton = args[1].buttons.submit;
          submitButton.set("label", this.msg("button.create"));
+         submitButton.addListener("click", this.onSubmitButtonClick, null, this);
          
          // add a handler to the cancel button
          var cancelButton = args[1].buttons.cancel;
@@ -124,11 +125,6 @@
        */
       onCreateContentSuccess: function CreateContentMgr_onCreateContentSuccess(response)
       {
-    	  
-    	 Alfresco.util.PopupManager.displayMessage({
-    		            text: this.msg("message.create.please-wait"),
-    		            displayTime: 0
-    		         });
     	  
          var nodeRef = null, scope=this;
          if (response.json && response.json.persistedObject)
@@ -174,6 +170,21 @@
             title: this.msg("message.failure"),
             text: errorMsg
          });
+      },
+      
+      /**
+       * Called when user clicks on the submit button.
+       *
+       * @method onCancelButtonClick
+       * @param type
+       * @param args
+       */
+      onSubmitButtonClick: function CreateContentMgr_onSubmit(type, args)
+      {
+    	  Alfresco.util.PopupManager.displayMessage({
+	            text: this.msg("message.create.please-wait"),
+	            displayTime: 0
+	         });
       },
       
       /**
