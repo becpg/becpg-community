@@ -127,16 +127,22 @@ public class SimulationCostHelper implements InitializingBean {
 	 * Spel helper do not remove
 	 */
 	public static Double getComponentQuantity(ProductData formulatedProduct, ProductData componentData) {
+		
+		Double netQty = FormulationHelper.getNetQtyForCost(formulatedProduct);
+		
 		if (componentData instanceof PackagingMaterialData) {
-			return getPackagingListQty(formulatedProduct, componentData.getNodeRef(), 1, formulatedProduct.getRecipeQtyUsed());
+			return getPackagingListQty(formulatedProduct, componentData.getNodeRef(), 1, netQty);
 		}
 
-		return getCompoListQty(formulatedProduct, componentData.getNodeRef(), formulatedProduct.getRecipeQtyUsed());
+		return getCompoListQty(formulatedProduct, componentData.getNodeRef(), netQty);
 	}
 
 	private static double getCompoListQty(ProductData productData, NodeRef componentNodeRef, Double parentQty) {
 		double totalQty = 0d;
 		if (productData.hasCompoListEl()) {
+			
+			Double netQty = FormulationHelper.getNetQtyForCost(productData);
+			
 			for (CompoListDataItem compoList : productData
 					.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 				NodeRef productNodeRef = compoList.getProduct();
@@ -145,10 +151,10 @@ public class SimulationCostHelper implements InitializingBean {
 
 				Double qty = FormulationHelper.getQtyForCost(compoList, 0d, componentProduct, INSTANCE.keepProductUnit);
 				if (logger.isDebugEnabled()) {
-					logger.debug("Get component " + componentProduct.getName() + "qty: " + qty + " recipeQtyUsed " + productData.getRecipeQtyUsed());
+					logger.debug("Get CompoListQty " + componentProduct.getName() + "qty: " + qty + " netQty " + netQty);
 				}
-				if ((qty != null) && (productData.getRecipeQtyUsed() != null) && (productData.getRecipeQtyUsed() != 0d)) {
-					qty = (parentQty * qty) / productData.getRecipeQtyUsed();
+				if ((qty != null) && (netQty != null) && (netQty != 0d) && parentQty!=null) {
+					qty = (parentQty * qty) / netQty;
 
 					if (productNodeRef.equals(componentNodeRef)) {
 						totalQty += qty;
@@ -164,17 +170,20 @@ public class SimulationCostHelper implements InitializingBean {
 	private static double getPackagingListQty(ProductData productData, NodeRef componentNodeRef, int palletBoxesPerPallet, Double parentQty) {
 		double totalQty = 0d;
 		if (productData.hasPackagingListEl()) {
+			
+			Double netQty = FormulationHelper.getNetQtyForCost(productData);
+			
 			for (PackagingListDataItem packList : productData
 					.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 
 				ProductData subProductData = INSTANCE.alfrescoRepository.findOne(packList.getProduct());
 
 				Double qty = FormulationHelper.getQtyForCost(productData, packList, subProductData);
-				if ((qty != null) && (productData.getRecipeQtyUsed() != null) && (productData.getRecipeQtyUsed() != 0d)) {
-					qty = (parentQty * qty) / productData.getRecipeQtyUsed();
+				if ((qty != null) && (netQty != null) && (netQty != 0d) && parentQty!=null) {
+					qty = (parentQty * qty) / netQty;
 				}
 				if (logger.isDebugEnabled()) {
-					logger.debug("Get component " + subProductData.getName() + "qty: " + qty);
+					logger.debug("Get packagingListQty " + subProductData.getName() + "qty: " + qty);
 				}
 				if (subProductData.getNodeRef().equals(componentNodeRef)) {
 					if (PackagingLevel.Tertiary.equals(packList.getPkgLevel())) {
@@ -198,10 +207,10 @@ public class SimulationCostHelper implements InitializingBean {
 
 					Double qty = FormulationHelper.getQtyForCost(compoList, 0d, componentProduct, INSTANCE.keepProductUnit);
 					if (logger.isDebugEnabled()) {
-						logger.debug("Get component " + componentProduct.getName() + "qty: " + qty + " recipeQtyUsed " + productData.getRecipeQtyUsed());
+						logger.debug("Get packagingListQty " + componentProduct.getName() + "qty: " + qty + " netQty " + netQty);
 					}
-					if ((qty != null) && (productData.getRecipeQtyUsed() != null) && (productData.getRecipeQtyUsed() != 0d)) {
-						qty = (parentQty * qty) / productData.getRecipeQtyUsed();
+					if ((qty != null) && (netQty != null) && (netQty != 0d) && parentQty!=null) {
+						qty = (parentQty * qty) / netQty;
 						totalQty += getPackagingListQty(componentProduct, componentNodeRef, palletBoxesPerPallet, qty);
 
 					}
