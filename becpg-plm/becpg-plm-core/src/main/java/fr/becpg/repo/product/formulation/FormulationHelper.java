@@ -313,8 +313,7 @@ public class FormulationHelper {
 		} else if (formulatedProduct.getServingSize()!=null){
 			return formulatedProduct.getServingSize() / 1000d;
 		}
-		
-		return formulatedProduct.getServingSize();
+		return null;
 	}
 	
 	
