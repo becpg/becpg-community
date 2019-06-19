@@ -310,7 +310,10 @@ public class FormulationHelper {
 	public static Double getServingSizeInLorKg(ProductData formulatedProduct) {
 		if(formulatedProduct.getServingSize()!=null && formulatedProduct.getServingSizeUnit()!=null) {
 			return (formulatedProduct.getServingSize() /  formulatedProduct.getServingSizeUnit().getUnitFactor());
+		} else if (formulatedProduct.getServingSize()!=null){
+			return formulatedProduct.getServingSize() / 1000d;
 		}
+		
 		return formulatedProduct.getServingSize();
 	}
 	
