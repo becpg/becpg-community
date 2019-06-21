@@ -22,7 +22,7 @@ import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelClaimListDataItem> {
 
 	public static final String MESSAGE_NOT_CLAIM = "message.formulate.labelClaim.notClaimed";
-	
+
 	private static Log logger = LogFactory.getLog(ClaimRequirementScanner.class);
 
 	@Override
@@ -42,9 +42,14 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 							logger.debug(extractName(specDataItem.getLabelClaim()) + " has been visited");
 						}
 						specLabelClaimsVisitedMap.put(specDataItem, true);
-						if (Boolean.TRUE.equals(specDataItem.getIsClaimed() && !Boolean.TRUE.equals(listDataItem.getIsClaimed()))) {
+						if (Boolean.TRUE.equals(specDataItem.getIsClaimed()) && (!Boolean.TRUE
+								.equals(listDataItem.getIsClaimed() || !LabelClaimListDataItem.VALUE_NA.equals(listDataItem.getLabelClaimValue())))) {
+							addSpecificationUnclaimedLabelClaim(formulatedProduct, listDataItem);
+						} else if (LabelClaimListDataItem.VALUE_SUITABLE.equals(listDataItem.getLabelClaimValue()) && (!Boolean.TRUE.equals(
+								listDataItem.getIsClaimed() || !LabelClaimListDataItem.VALUE_SUITABLE.equals(listDataItem.getLabelClaimValue())))) {
 							addSpecificationUnclaimedLabelClaim(formulatedProduct, listDataItem);
 						}
+
 					}
 				});
 			});
@@ -63,7 +68,6 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 
 		return ret;
 	}
-
 
 	private void addSpecificationUnclaimedLabelClaim(ProductData formulatedProduct, LabelClaimListDataItem labelClaim) {
 		String message = I18NUtil.getMessage(MESSAGE_NOT_CLAIM, extractName(labelClaim.getLabelClaim()));
@@ -84,6 +88,7 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 		return ret;
 	}
 
+	@Override
 	protected void mergeRequirements(List<LabelClaimListDataItem> ret, List<LabelClaimListDataItem> toAdd) {
 		toAdd.forEach(item -> {
 			if (item.getLabelClaim() != null) {
@@ -104,15 +109,13 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 		});
 	}
 
+	@Override
 	protected List<LabelClaimListDataItem> getDataListVisited(ProductData partProduct) {
 		return partProduct.getLabelClaimList();
 	}
-
 
 	private String extractName(NodeRef labelClaim) {
 		return (String) nodeService.getProperty(labelClaim, BeCPGModel.PROP_CHARACT_NAME);
 	}
 
-
-	
 }
