@@ -236,13 +236,13 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 			return false;
 		}
-		
+
 		public boolean multiPrefsEquals(String key, String defaultValue, String query) {
 			if ((defaultValue != null) && Arrays.asList(defaultValue.split(",")).contains(query)) {
 				return true;
 			}
 
-			if (preferences.containsKey(key) &&  Arrays.asList(preferences.get(key).split(",")).contains(query)) {
+			if (preferences.containsKey(key) && Arrays.asList(preferences.get(key).split(",")).contains(query)) {
 				return true;
 			}
 
@@ -569,6 +569,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				}
 
 				String value = attributeExtractorService.extractPropertyForReport(propertyDef, property.getValue(), propertyFormats, false);
+	
 
 				boolean isDyn = false;
 				boolean isList = false;
@@ -591,23 +592,33 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 					}
 				}
 
-				if (useCData && isList) {
-					Element ret = addData(nodeElt, useCData, propertyDef.getName(), value, null, context);
-
-					if (ret != null) {
-						ret.addAttribute("translation",
-								attributeExtractorService.extractPropertyForReport(propertyDef, property.getValue(), propertyFormats, true));
+				if (isDyn || isList) {
+					String displayValue = attributeExtractorService.extractPropertyForReport(propertyDef, property.getValue(), propertyFormats, true);
+					if (useCData) {
+						if (isList) {
+							Element ret = addData(nodeElt, true, propertyDef.getName(), value, null, context);
+							if (ret != null) {
+								ret.addAttribute("translation", displayValue);
+							}
+						} else {
+							Element ret = addData(nodeElt, true, propertyDef.getName(), displayValue, null, context);
+							if (ret != null) {
+								ret.addAttribute("code", value);
+							}
+						}
+					} else {
+						if (isList) {
+							Element ret = addData(nodeElt, false, propertyDef.getName(), value, null, context);
+							if (ret != null) {
+								ret.addAttribute(propertyDef.getName().getLocalName() + "Translation", displayValue);
+							}
+						} else {
+							Element ret = addData(nodeElt, false, propertyDef.getName(), displayValue, null, context);
+							if (ret != null) {
+								ret.addAttribute(propertyDef.getName().getLocalName() + "Code", value);
+							}
+						}
 					}
-				} else if (useCData && isDyn) {
-
-					Element ret = addData(nodeElt, useCData, propertyDef.getName(),
-							attributeExtractorService.extractPropertyForReport(propertyDef, property.getValue(), propertyFormats, true), null,
-							context);
-
-					if (ret != null) {
-						ret.addAttribute("code", value);
-					}
-
 				} else {
 					addData(nodeElt, useCData, propertyDef.getName(), value, null, context);
 				}
@@ -620,26 +631,23 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 						mlValues = (MLText) mlNodeService.getProperty(nodeRef, propertyDef.getName());
 
 					} else if (DataTypeDefinition.TEXT.equals(propertyDef.getDataType().getName())) {
-
 						if (dynListConstraint != null) {
-
 							mlValues = dynListConstraint.getMLAwareAllowedValues().get(property.getValue());
 						}
-
 					}
 
 					if (mlValues != null) {
 						for (Map.Entry<Locale, String> mlEntry : mlValues.entrySet()) {
-
 							String code = mlEntry.getKey().getLanguage();
 							if ((mlEntry.getKey().getCountry() != null) && !mlEntry.getKey().getCountry().isEmpty()) {
 								code += "_" + mlEntry.getKey().getCountry();
 							}
 							if ((code != null) && !code.isEmpty()) {
-
 								Element ret = addData(nodeElt, useCData, propertyDef.getName(), mlEntry.getValue(), code, context);
-								if ( isDyn && useCData && ret!=null ) {
-									ret.addAttribute("code", value);
+								if (isDyn && (ret != null)) {
+									if( useCData) {
+									  ret.addAttribute("code", value);
+									} 
 								}
 
 							}
