@@ -255,4 +255,23 @@
 				attribute="qa:claimOriginHierarchy2" parentLevel="qa:claimOriginHierarchy1" />
 		</columns>
 	</mapping>
+	
+	<!-- Subsidiary -->
+    <mapping name="bcpg:subsidiary">
+        <nodeColumnKeys>
+            <nodeColumnKey attribute="cm:name" />
+        </nodeColumnKeys>
+        <columns>
+        </columns>
+    </mapping>
+
+    <!-- Trademark -->
+    <mapping name="bcpg:trademark">
+        <nodeColumnKeys>
+            <nodeColumnKey attribute="bcpg:erpCode" />
+            <nodeColumnKey attribute="cm:name" />
+        </nodeColumnKeys>
+        <columns>
+        </columns>
+    </mapping>
 </mappings>
