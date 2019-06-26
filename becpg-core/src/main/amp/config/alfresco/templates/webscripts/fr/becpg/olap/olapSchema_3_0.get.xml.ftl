@@ -249,6 +249,7 @@
 	
 		<Measure name="avgUsers" caption="${msg("jsolap.usersAvg.title")}" column="connected_users" datatype="Numeric" aggregator="avg" visible="true"></Measure>
 		<Measure name="maxUsers" caption="${msg("jsolap.usersMax.title")}" column="connected_users" datatype="Numeric" aggregator="max" visible="true"></Measure>
+		<Measure name="maxLastHttpRespTime" caption="${msg("jsolap.lastHttpRespTime.title")}" column="lastHttpRespTime" aggregator="max" datatype="Numeric" visible="true"></Measure>
 		<Measure name="avgMemory" caption="${msg("jsolap.memoryAvg.title")}" datatype="Numeric" aggregator="avg" visible="true">
 			<MeasureExpression>
 				<SQL dialect="generic">
@@ -277,6 +278,7 @@
 				</SQL>
 			</MeasureExpression>
 		</Measure>
+		
 		<Measure name="avgOsMemory" caption="${msg("jsolap.osMemoryAvg.title")}" column="system_free_memory" datatype="Numeric" aggregator="avg" visible="true"></Measure>
 		<Measure name="maxOsMemory" caption="${msg("jsolap.osMemoryMax.title")}" column="system_free_memory" datatype="Numeric" aggregator="max" visible="true"></Measure>
 		
@@ -294,7 +296,7 @@
 		
 		<Measure name="avgNamedWrite" caption="${msg("jsolap.namedWriteAvg.title")}" column="namedWriteUsers" datatype="Numeric" aggregator="avg" visible="true"></Measure>
 		<Measure name="maxNamedWrite" caption="${msg("jsolap.namedWriteMax.title")}" column="namedWriteUsers" datatype="Numeric" aggregator="max" visible="true"></Measure>
-	
+		
 	</Cube>
 	
 	
