@@ -1,3 +1,0 @@
-# To enable debugging place this file under :
-
-$TOMCAT_HOME$/shared/classes/alfresco/web-extension

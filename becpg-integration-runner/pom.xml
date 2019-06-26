@@ -13,445 +13,291 @@
 		<relativePath>../</relativePath>
 	</parent>
 
-
 	<dependencies>
-
-		<!-- beCPG -->
 		<dependency>
 			<groupId>fr.becpg</groupId>
 			<artifactId>becpg-core</artifactId>
 			<version>${project.version}</version>
 			<type>jar</type>
-			<classifier>api</classifier>
-			<scope>provided</scope>
+			<scope>compile</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>fr.becpg</groupId>
 			<artifactId>becpg-project-core</artifactId>
 			<version>${project.version}</version>
 			<type>jar</type>
-			<classifier>api</classifier>
-			<scope>provided</scope>
+			<scope>compile</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>fr.becpg</groupId>
 			<artifactId>becpg-designer-core</artifactId>
 			<version>${project.version}</version>
 			<type>jar</type>
-			<classifier>api</classifier>
-			<scope>provided</scope>
+			<scope>compile</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>fr.becpg</groupId>
 			<artifactId>becpg-plm-core</artifactId>
 			<version>${project.version}</version>
 			<type>jar</type>
-			<classifier>api</classifier>
-			<scope>provided</scope>
+			<scope>compile</scope>
 		</dependency>
-
+		
+		
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-test</artifactId>
+		    <version>3.2.17.RELEASE</version>
+		    <scope>test</scope>
+		</dependency>
+		
+		<!-- beCPG AMPs -->
+		<dependency>
+			<groupId>fr.becpg</groupId>
+			<artifactId>becpg-plm-core</artifactId>
+			<type>amp</type>
+			<version>${project.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>fr.becpg</groupId>
+			<artifactId>becpg-plm-share</artifactId>
+			<type>amp</type>
+			<version>${project.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>fr.becpg</groupId>
+			<artifactId>becpg-project-core</artifactId>
+			<type>amp</type>
+			<version>${project.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>fr.becpg</groupId>
+			<artifactId>becpg-project-share</artifactId>
+			<type>amp</type>
+			<version>${project.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>fr.becpg</groupId>
+			<artifactId>becpg-designer-core</artifactId>
+			<type>amp</type>
+			<version>${project.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>fr.becpg</groupId>
+			<artifactId>becpg-designer-share</artifactId>
+			<type>amp</type>
+			<version>${project.version}</version>
+			<scope>runtime</scope>
+		</dependency>
 		<dependency>
 			<groupId>fr.becpg</groupId>
 			<artifactId>becpg-core</artifactId>
+			<type>amp</type>
 			<version>${project.version}</version>
-			<scope>provided</scope>
-			<type>test-jar</type>
+			<scope>runtime</scope>
 		</dependency>
-
-
-		<!-- alfresco -->
-		
-		<dependency>
-			<groupId>org.alfresco</groupId>
-			<artifactId>alfresco-repository</artifactId>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.alfresco</groupId>
-			<artifactId>alfresco-remote-api</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		
-		<!-- Test -->
 		<dependency>
 			<groupId>fr.becpg</groupId>
-			<artifactId>becpg-designer-core</artifactId>
+			<artifactId>becpg-share</artifactId>
+			<type>amp</type>
 			<version>${project.version}</version>
-			<scope>provided</scope>
-			<type>test-jar</type>
-		</dependency>
-
-		<dependency>
-			<groupId>fr.becpg</groupId>
-			<artifactId>becpg-project-core</artifactId>
-			<version>${project.version}</version>
-			<scope>provided</scope>
-			<type>test-jar</type>
-		</dependency>
-
-		<dependency>
-			<groupId>fr.becpg</groupId>
-			<artifactId>becpg-plm-core</artifactId>
-			<version>${project.version}</version>
-			<scope>provided</scope>
-			<type>test-jar</type>
-		</dependency>
-		
-		<!-- solr4 -->
-		 <dependency>
-                    <groupId>${alfresco.groupId}</groupId>
-                    <artifactId>alfresco-solr4</artifactId>
-                    <version>${alfresco.version}</version>
-                    <classifier>config</classifier>
-                    <type>zip</type>
-                    <exclusions>
-                    	<exclusion>
-                    		<groupId>jdk.tools</groupId>
-							<artifactId>jdk.tools</artifactId>
-                    	</exclusion>
-                    </exclusions>
-         </dependency>
-
+			<scope>runtime</scope>
+		</dependency> 
 	</dependencies>
-	
-	<properties>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-	</properties>
-
 	<build>
-		<plugins>
+ 	<testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+      </testResources>
+	<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<skipTests>true</skipTests>
-				</configuration>
+				<artifactId>maven-jar-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>test-jar</id>
+						<phase>test-compile</phase>
+						<goals>
+							<goal>test-jar</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
-		</plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <!-- Copy the repository extension and the dependencies required for execute integration tests -->
+                    <execution>
+                        <id>collect-test-artifacts</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/becpg-test/extensions</outputDirectory>
+                            <excludeScope>compile</excludeScope>
+                            <excludeTypes>amp</excludeTypes>
+                        </configuration>
+                    </execution>
+                    <!-- Collect extensions (JARs or AMPs) declared in this module do be deployed to docker -->
+                    <execution>
+                        <id>collect-extensions</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/becpg-test</outputDirectory>
+                            <includeScope>runtime</includeScope>
+                            <includeTypes>amp</includeTypes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Filter the Dockerfile and the other files added to the container to be able to replace maven properties -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-and-filter-docker-resources</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/docker</directory>
+                                    <filtering>true</filtering>
+                                    <excludes>
+                                        <exclude>**/*.jar</exclude>
+                                        <exclude>**/*.so</exclude>
+                                        <exclude>**/*.gz</exclude>
+                                    </excludes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-and-filter-docker-resources-non-filtered</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/docker</directory>
+                                    <filtering>false</filtering>
+                                    <includes>
+                                        <include>**/*.jar</include>
+                                        <include>**/*.so</include>
+                                        <include>**/*.gz</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+    
+			<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>dockerfile-maven-plugin</artifactId>
+				<version>1.3.6</version>
+				<executions>
+					<execution>
+						<id>becpg-base</id>
+						<goals>
+							<goal>build</goal>
+						</goals>
+						<configuration>
+							<repository>${docker.becpg.url}/becpg-base</repository>
+							<contextDirectory>${project.build.directory}/becpg-base</contextDirectory>
+							<pullNewerImage>true</pullNewerImage>
+							<tag>${project.version}</tag>
+						</configuration>
+					</execution>
+					<execution>
+						<id>becpg-test</id>
+						<goals>
+							<goal>build</goal>
+						</goals>
+						<configuration>
+							<repository>${docker.becpg.url}/becpg-test</repository>
+							<contextDirectory>${project.build.directory}/becpg-test</contextDirectory>
+							<tag>${project.version}</tag>
+							<pullNewerImage>false</pullNewerImage>
+							<buildArgs>
+								<VERSION>${project.version}</VERSION>
+							</buildArgs>
+						</configuration>
+					</execution>
+					<execution>
+						<id>becpg-db</id>
+						<goals>
+							<goal>build</goal>
+						</goals>
+						<configuration>
+							<repository>${docker.becpg.url}/becpg-db</repository>
+							<contextDirectory>${project.build.directory}/becpg-db</contextDirectory>
+							<pullNewerImage>true</pullNewerImage>
+							<tag>${project.version}</tag>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<plugin>
+                <groupId>org.zeroturnaround</groupId>
+                <artifactId>jrebel-maven-plugin</artifactId>
+                <configuration>
+                    <rebelXmlDirectory>${project.build.testOutputDirectory}</rebelXmlDirectory>
+                </configuration>
+            </plugin>
+
+            <!-- Make sure we attach the tests so we can include them when running -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                            
+                        </goals>
+                        <configuration>
+                        		<outputDirectory>${project.build.directory}/becpg-test/extensions</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Runs the integration tests, any class that follows naming convention
+                 "**/IT*.java", "**/*IT.java", and "**/*ITCase.java" will be considered an integration test -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <systemPropertyVariables>
+                        <acs.endpoint.path>${test.acs.endpoint.path}</acs.endpoint.path>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>	
+			
+   	   </plugins>
 	</build>
 
-	<profiles>
-		<profile>
-			<id>run</id>
 
-			<!-- TODO: figure out a way to define these properties in a parent POM, 
-				they are now also duplicated in the solr-config/pom.xml -->
-			<properties>
-				<alfresco.solr.dir>${alfresco.data.location}/solr4</alfresco.solr.dir>
-				<alfresco.solr.home.dir>${alfresco.solr.dir}/config</alfresco.solr.home.dir>
-				<alfresco.solr.data.dir>${alfresco.solr.dir}/data</alfresco.solr.data.dir>
-			    <!-- Bring in newer Spring with support for annotations, used for Page Object tests -->
-		        <spring.version>4.1.6.RELEASE</spring.version>
-
-			</properties>
-
-			<build>
-				<plugins>
-				
-					 <!-- Run goal unpack and unzip the content of the downloaded default solr-config.zip file into the
-                         alfresco-maven-sdk2-test/alf_data_dev/solr4/config directory
-                         (The solr-config.zip is brought in via the dependency section) -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-dependency-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>unpack-alfresco-config</id>
-                                <goals>
-                                    <goal>unpack</goal>
-                                </goals>
-                                <phase>generate-resources</phase>
-                                <configuration>
-                                    <outputDirectory>${alfresco.solr.home.dir}</outputDirectory>
-                                    <artifactItems>
-                                        <artifactItem>
-                                            <groupId>${alfresco.groupId}</groupId>
-                                            <artifactId>alfresco-solr4</artifactId>
-                                            <version>${alfresco.version}</version>
-                                            <classifier>config</classifier>
-                                            <type>zip</type>
-                                        </artifactItem>
-                                    </artifactItems>
-                                </configuration>
-                            </execution>
-                            <execution>
-								<id>prepare-regression-test-resources</id>
-								<phase>pre-integration-test</phase>
-								<goals>
-									<goal>unpack</goal>
-								</goals>
-								<configuration>
-									<artifactItems>
-										<artifactItem>
-											<groupId>fr.becpg</groupId>
-							                 <artifactId>becpg-core</artifactId>
-							                 <version>${project.version}</version>
-							                 <type>test-jar</type>
-											<outputDirectory>${project.build.directory}/test-classes</outputDirectory>
-											<excludes>**/*alfresco-global.properties,**/*log4j.properties,**/*becpgModel.xml</excludes>
-										</artifactItem>
-										<artifactItem>
-											 <groupId>fr.becpg</groupId>
-							                 <artifactId>becpg-designer-core</artifactId>
-							                 <version>${project.version}</version>
-							                 <type>test-jar</type>
-											<outputDirectory>${project.build.directory}/test-classes</outputDirectory>
-											<excludes>**/*alfresco-global.properties,**/*log4j.properties</excludes>
-										</artifactItem>
-										<artifactItem>
-											<groupId>fr.becpg</groupId>
-							                <artifactId>becpg-project-core</artifactId>
-							                <version>${project.version}</version>
-							                <type>test-jar</type>
-											<outputDirectory>${project.build.directory}/test-classes</outputDirectory>
-											<includes>**/*.class,**/*.xml</includes>
-											<excludes>**/*alfresco-global.properties,**/*log4j.properties</excludes>
-										</artifactItem>
-										<artifactItem>
-											<groupId>fr.becpg</groupId>
-							                <artifactId>becpg-plm-core</artifactId>
-							                <version>${project.version}</version>
-							                <type>test-jar</type>
-											<outputDirectory>${project.build.directory}/test-classes</outputDirectory>
-											<includes>**/*.class,**/*.xml</includes>
-											<excludes>**/*alfresco-global.properties,**/*log4j.properties</excludes>
-										</artifactItem>
-									</artifactItems>
-								</configuration>
-							</execution>
-                        </executions>
-                    </plugin>
-
-                    <!-- For windows paths, convert single \ to / for the ${alfresco.solr.data.dir} path,
-                         by default it will be c:\bla\, we need forward slash or double backslash. -->
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>build-helper-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>regexp-property</id>
-                                <phase>generate-resources</phase>
-                                <goals>
-                                    <goal>regex-property</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <name>solrDataDir</name>
-                            <value>${alfresco.solr.data.dir}</value>
-                            <regex>\\</regex>
-                            <replacement>/</replacement>
-                            <failIfNoMatch>false</failIfNoMatch>
-                        </configuration>
-                    </plugin>
-
-
-                    <!-- Run the goal replace and update configuration files for the
-                         Solr cores to reflect our build structure -->
-                    <plugin>
-                        <groupId>com.google.code.maven-replacer-plugin</groupId>
-                        <artifactId>replacer</artifactId>
-                        <executions>
-                            <execution>
-                                <id>setup-solr-config</id>
-                                <phase>generate-resources</phase>
-                                <goals>
-                                    <goal>replace</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <regex>false</regex>
-                            <includes>
-                                <include>${alfresco.solr.home.dir}/archive-SpacesStore/conf/solrcore.properties</include>
-                                <include>${alfresco.solr.home.dir}/workspace-SpacesStore/conf/solrcore.properties</include>
-                            </includes>
-                            <replacements>
-                                <replacement>
-                                    <token>@@ALFRESCO_SOLR4_DATA_DIR@@</token>
-                                    <value>${solrDataDir}/index</value>
-                                </replacement>
-                            </replacements>
-                        </configuration>
-                    </plugin>
-				
-					<!-- Copy and filter webapp context files - output dir is runner/target/contexts -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-resources-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>copy-tomcat-resources</id>
-								<phase>prepare-package</phase>
-								<goals>
-									<goal>copy-resources</goal>
-								</goals>
-								<configuration>
-									<outputDirectory>${project.build.directory}/contexts</outputDirectory>
-									<resources>
-										<resource>
-											<directory>tomcat</directory>
-											<filtering>true</filtering>
-										</resource>
-									</resources>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-
-					<!-- Run Tomcat 7 embedded with Alfresco.war and Share.war contexts. 
-						The solr4.war is fetched directly from the Maven repo, it is not built like 
-						the other WARs. Plugin version is picked up from alfresco-sdk-parent.pom 
-						pluginManagement definition, which also brings in the H2 database lib -->
-					<plugin>
-						<groupId>org.apache.tomcat.maven</groupId>
-						<artifactId>tomcat7-maven-plugin</artifactId>
-						<dependencies>
-                            <!-- Bring in the H2 Database scripts needed when running embedded, they are now
-                                 available from the standard generated artifacts, no longer needed to be picked
-                                 up from the alfresco-rad project -->
-                            <dependency>
-                                <groupId>org.alfresco</groupId>
-                                <artifactId>alfresco-repository</artifactId>
-                                <version>${alfresco.version}</version>
-                                <classifier>h2scripts</classifier>
-                                <exclusions>
-                                    <exclusion>
-                                        <groupId>*</groupId>
-                                        <artifactId>*</artifactId>
-                                    </exclusion>
-                                </exclusions>
-                            </dependency>
-                            <!-- Explicitly bring in the Plexus Archiver so assembly goes quicker -->
-                            <dependency>
-                                <groupId>org.codehaus.plexus</groupId>
-                                <artifactId>plexus-archiver</artifactId>
-                                <version>2.3</version>
-                            </dependency>
-                            <dependency> 
-                            	<groupId>commons-io</groupId> 
-                            	<artifactId>commons-io</artifactId> 
-                            	<version>2.4</version> 
-                           </dependency>
-                        </dependencies>
-						<executions>
-							<execution>
-								<id>run-wars</id>
-								<goals>
-									<goal>run</goal>
-								</goals>
-								<phase>pre-integration-test</phase>
-							</execution>
-						</executions>
-						<configuration>
-							<ignorePackaging>true</ignorePackaging>
-							<!-- Make sure Catalina classes are picked up when we got virtual 
-								webapp contexts with classpaths -->
-							<useSeparateTomcatClassLoader>true</useSeparateTomcatClassLoader>
-							<path>/</path>
-							<systemProperties>
-								<solr.solr.home>${alfresco.solr.home.dir}</solr.solr.home>
-							</systemProperties>
-							<!-- Should this class loader delegate to the parent class loader 
-								before searching its own repositories (i.e. the usual Java2 delegation model) -->
-							<!-- Prevent parent classloader delegation, each webapp loads. If 
-								set to true then you will get a truckload of Solr logging as the alf_data_dev/solr4/config/log4j-solr.properties 
-								file is not picked up. This also fixes issues with the Google Guava Library, 
-								which this tomcat plugin uses version 10.0.1 of but Solr uses 14.0.1 -->
-							<delegate>false</delegate>
-							<webapps>
-								<webapp>
-									<groupId>${project.groupId}</groupId>
-									<artifactId>becpg-report</artifactId>
-									<version>2.2.4</version>
-									<type>war</type>
-									<asWebapp>true</asWebapp>
-									<contextPath>/becpg-report</contextPath>
-								</webapp>
-								<webapp>
-									<groupId>${project.groupId}</groupId>
-									<artifactId>repo</artifactId>
-									<version>${project.version}</version>
-									<type>war</type>
-									<!-- Make sure webapp is loaded with context and everything, if 
-										set to 'false' then you will get 404 when trying to access the webapp from 
-										browser -->
-									<asWebapp>true</asWebapp>
-									<contextPath>/alfresco</contextPath>
-									<contextFile>${project.build.directory}/contexts/context-repo.xml</contextFile>
-								</webapp>
-								<webapp>
-									<groupId>${project.groupId}</groupId>
-									<artifactId>share</artifactId>
-									<version>${project.version}</version>
-									<type>war</type>
-									<asWebapp>true</asWebapp>
-									<contextPath>/share</contextPath>
-									<contextFile>${project.build.directory}/contexts/context-share.xml</contextFile>
-								</webapp>
-								<webapp>
-									<groupId>${alfresco.groupId}</groupId>
-									<artifactId>alfresco-solr4</artifactId>
-									<version>${alfresco.version}</version>
-									<type>war</type>
-									<asWebapp>true</asWebapp>
-									<contextPath>/solr4</contextPath>
-									<contextFile>${project.build.directory}/contexts/context-solr.xml</contextFile>
-								</webapp>
-							</webapps>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-
-		<!-- Runs Share User Interface regression tests using Alfresco Share PO 
-			(Page Object) vanilla Selenium / Webdrone (WebDriver wrapper). NOTE: Assumes 
-			an already running Alfresco + Share at the default location ${share.client.url} 
-			(e.g. by invoking: $ mvn clean install -Prun,regression-testing to run a 
-			specific test do: $ mvn clean install -Prun,regression-testing -Dit.test=LoginPageTest -->
-		<profile>
-			<id>integration-test</id>
-			<properties>
-				<!-- Re-configure Tomcat 7 Plugin (see run profile) to fork so we can 
-					run tests in parallel -->
-				<!-- Note. the fork option does not fork a new JVM. Rather it is run 
-					in a thread created by the Maven Launcher class (org.codehaus.plexus.classworlds.launcher.Launcher) 
-					that is invoked by the mvn command. -->
-				<maven.tomcat.fork>true</maven.tomcat.fork>
-
-				<!-- Make sure we are actually testing something -->
-				<skipTests>false</skipTests>
-			</properties>
-			<build>
-				<plugins>
-					
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-failsafe-plugin</artifactId>
-						  <configuration>
-						  	  <useSystemClassLoader>false</useSystemClassLoader>
-					          <includes>
-					            <include>**/*/IntegrationTestSuite.java</include>
-					          </includes>
-					        </configuration>
-						 <executions>
-				            <execution>
-				              <id>integration-test</id>
-				              <goals>
-				                <goal>integration-test</goal>
-				                <goal>verify</goal>
-				              </goals>
-				            </execution>
-				          </executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-
-	</profiles>
 </project>

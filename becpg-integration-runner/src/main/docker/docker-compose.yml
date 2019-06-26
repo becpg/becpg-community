@@ -1,0 +1,39 @@
+version: '2'
+volumes:
+  becpg_data_db:
+  solr_data:
+  becpg_data:
+services:
+  becpg:
+    image: ${docker.becpg.url}/becpg-test:${project.version}
+    environment:
+      CATALINA_OPTS: -Xmx1G -Duser.language=fr -Duser.country=FR -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:8888
+    ports:
+      - "8080:8080"
+      - "8888:8888"  
+    volumes:
+      - becpg_data:/usr/local/tomcat/data
+  becpg-db:
+    image: ${docker.becpg.url}/becpg-db:${project.version}
+    environment:
+      MYSQL_DATABASE: db
+      MYSQL_PASSWORD: becpg
+      MYSQL_ROOT_PASSWORD: becpg
+      MYSQL_USER: becpg
+    volumes:
+      - becpg_data_db:/var/lib/mysql
+  solr:
+      image: alfresco/alfresco-search-services:1.3.0-RC2
+      environment:
+          - SOLR_ALFRESCO_HOST=becpg
+          - SOLR_ALFRESCO_PORT=8080
+          - SOLR_SOLR_HOST=solr
+          - SOLR_SOLR_PORT=8983
+          - SOLR_CREATE_ALFRESCO_DEFAULTS=alfresco,archive
+          - SOLR_JAVA_MEM=-Xmx1g
+      ports:
+          - "8983:8983"  
+  becpg-report:
+    image:  ${docker.becpg.url}/becpg-report:2.2.5
+
+ 

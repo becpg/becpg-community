@@ -1,0 +1,28 @@
+<alfresco-config>
+
+   <-- Put here all the config you want to override from becpg 
+
+	Exemple
+   <config evaluator="string-compare" condition="DocumentLibrary">
+      <aspects>
+         <visible>    
+         	
+         	
+         </visible>
+         
+         <!-- Aspects that a user can add. Same as "visible" if left empty -->
+         <addable>         	
+				
+         </addable>
+
+         <!-- Aspects that a user can remove. Same as "visible" if left empty -->
+         <removeable>
+			
+         </removeable>
+      </aspects>      
+   </config>
+   
+  -->
+
+   
+</alfresco-config>

@@ -1,0 +1,1 @@
+var docFolders=entity.childByNamePath("Documents");foreach(var node in docFolders.children){pdf.appendPDF(document,node)};
