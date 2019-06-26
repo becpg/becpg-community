@@ -1,0 +1,1 @@
+function main(){var b=null;var a=search.findNode(project.nodeRef);if(a.assocs["pjt:projectEntity"]!=null&&a.assocs["pjt:projectEntity"].length>0){b=a.assocs["pjt:projectEntity"][0]}bSupplier.validateProjectEntity(b)}main();

@@ -9,7 +9,7 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>becpg-share</artifactId>
-	<packaging>amp</packaging>
+	<packaging>jar</packaging>
 	<name>beCPG Vault Share</name>
 	<description>Alfresco share module for beCPG</description>
 	<licenses>
@@ -30,10 +30,6 @@
 			 </comments>
 		</license>
 	</licenses>
-	<properties>
-          <alfresco.client.war>share</alfresco.client.war>
-         <!--  <app.filtering.enabled>false</app.filtering.enabled> -->
-    </properties>
 	<dependencies>
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -41,14 +37,10 @@
 			<version>2.4</version>
 			<scope>provided</scope>
 		</dependency>
-	 	 <dependency>
-            <groupId>org.alfresco</groupId>
-            <artifactId>alfresco-repository</artifactId>
-            <scope>provided</scope>
-        </dependency>
         <dependency>
             <groupId>org.alfresco</groupId>
             <artifactId>alfresco-remote-api</artifactId>
+             <version>${alfresco.share.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -82,8 +74,8 @@
 	<build>
 		<plugins>
 			<plugin>
-                <groupId>net.alchim31.maven</groupId>
-                <artifactId>yuicompressor-maven-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
             </plugin>
 		</plugins>
 	</build>

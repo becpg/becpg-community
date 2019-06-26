@@ -9,14 +9,14 @@
 	
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>becpg-designer-core</artifactId>
-	<packaging>amp</packaging>
+	<packaging>jar</packaging>
 	<name>beCPG Designer core</name>
 	<description>BeCPG designer</description>
 	<licenses>
 		<license>
 			<name>GNU LESSER GENERAL PUBLIC LICENSE</name>
 			<url>http://www.gnu.org/licenses/lgpl-3.0.en.html</url>
-			<comments>Copyright (C) 2010-2018 beCPG. 
+			<comments>Copyright (C) 2010-2019 beCPG. 
   
 			  beCPG is free software: you can redistribute it and/or modify 
 			  it under the terms of the GNU Lesser General Public License as published by 
@@ -38,64 +38,24 @@
 			<version>${project.version}</version>
 			<scope>provided</scope>
 			<type>jar</type>
-			<classifier>api</classifier>
 		</dependency>
 		
-		<dependency>
-			<groupId>fr.becpg</groupId>
-			<artifactId>becpg-core</artifactId>
-			<version>${project.version}</version>
-			<scope>test</scope>
-			<type>test-jar</type>
-		</dependency>		
-
+	
 		<!-- alfresco -->
 		<dependency>
 			<groupId>org.alfresco</groupId>
 			<artifactId>alfresco-repository</artifactId>
+			<version>${alfresco.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>org.alfresco</groupId>
-			<artifactId>alfresco-remote-api</artifactId>
-			<scope>provided</scope>
-		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>api-jar</id>
-						<phase>package</phase>
-						<goals>
-							<goal>jar</goal>
-							<goal>test-jar</goal>
-						</goals>
-						<configuration>
-							<classifier>api</classifier>
-						</configuration>
-					</execution>
-					<execution>
-						<id>test-jar</id>
-						<phase>test-compile</phase>
-						<goals>
-							<goal>test-jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+            </plugin>
 		</plugins>
 	</build>
-	<profiles>
-		<profile>
-			<id>run</id>
-			<properties>
-				<skipTests>true</skipTests>
-			</properties>
-		</profile>
-	</profiles>
 </project>

@@ -9,7 +9,7 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>becpg-project-share</artifactId>
-	<packaging>amp</packaging>
+	<packaging>jar</packaging>
 	<name>beCPG Project Share</name>
 	<description>Alfresco share module for beCPG project</description>
 	<licenses>
@@ -30,14 +30,11 @@
 			 </comments>
 		</license>
 	</licenses>
-	<properties>
-        <alfresco.client.war>share</alfresco.client.war>
-    </properties>
 	<build>
 		<plugins>
 			<plugin>
-                <groupId>net.alchim31.maven</groupId>
-                <artifactId>yuicompressor-maven-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
             </plugin>
 		</plugins>
 	</build>

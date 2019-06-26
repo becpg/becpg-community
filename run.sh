@@ -1,13 +1,89 @@
-#!/bin/bash
-echo -e "\e[0m888                 \e[32m.d8888b.  8888888b.   .d8888b. \e[0m" 
-echo -e "888                \e[32md88P  Y88b 888   Y88b d88P  Y88b\e[0m" 
-echo -e "888                \e[32m888    888 888    888 888    888\e[0m" 
-echo -e "88888b.   .d88b.   \e[32m888        888   d88P 888       \e[0m" 
-echo -e "888 \"88b d8P  Y8b  \e[32m888        8888888P\"  888  88888\e[0m" 
-echo -e "888  888 88888888  \e[32m888    888 888        888    888\e[0m" 
-echo -e "888 d88P Y8b.      \e[32mY88b  d88P 888        Y88b  d88P\e[0m" 
-echo -e "88888P\"   \"Y8888    \e[32m\"Y8888P\"  888         \"Y8888P88\e[0m" 
-echo -e " \e[91mCopyright (C) 2010-2019 beCPG.\e[0m"
-# (Alfresco + Share + Solr) using the runner project
+#!/bin/sh
 
-MAVEN_OPTS="-Xmx1024m" mvn test-compile install -Prun
+export COMPOSE_FILE_PATH=${PWD}/becpg-integration-runner/target/docker-compose.yml
+
+if [ -z "${M2_HOME}" ]; then
+  export MVN_EXEC="mvn"
+else
+  export MVN_EXEC="${M2_HOME}/bin/mvn"
+fi
+
+start() {
+    docker-compose -f $COMPOSE_FILE_PATH up -d
+}
+
+down() {
+    if [ -f $COMPOSE_FILE_PATH ]; then
+        docker-compose -f $COMPOSE_FILE_PATH down
+    fi
+}
+
+purge() {
+    docker-compose -f  $COMPOSE_FILE_PATH down -v
+}
+
+build() {
+    $MVN_EXEC clean package -DskipTests=true
+}
+
+
+
+tail() {
+    docker-compose -f $COMPOSE_FILE_PATH logs -f
+}
+
+tail_all() {
+    docker-compose -f $COMPOSE_FILE_PATH logs --tail="50"
+}
+
+prepare_test() {
+    $MVN_EXEC verify -DskipTests=true -pl becpg-integration-runner
+}
+
+test() {
+    $MVN_EXEC verify -pl becpg-integration-runner
+}
+
+case "$1" in
+  build_start)
+    down
+    build
+    start
+    tail
+    ;;
+  build_start_it_supported)
+    down
+    build
+    prepare_test
+    start
+    tail
+    ;;
+  start)
+    start
+    tail
+    ;;
+  stop)
+    down
+    ;;
+  purge)
+    down
+    purge
+    ;;
+  tail)
+    tail
+    ;;
+  build_test)
+    down
+    build
+   # prepare_test
+    start
+    test
+    tail_all
+    down
+    ;;
+  test)
+    test
+    ;;
+  *)
+    echo "Usage: $0 {build_start|build_start_it_supported|start|stop|purge|tail|build_test|test}"
+esac
