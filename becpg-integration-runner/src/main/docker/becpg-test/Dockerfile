@@ -37,7 +37,7 @@ COPY beCPG.properties $TOMCAT_DIR/shared/classes/beCPG.properties
 COPY alfresco-global.properties $TOMCAT_DIR/shared/classes/alfresco-global.properties
 
 COPY disable-webscript-caching-context.xml $TOMCAT_DIR/shared/classes/alfresco/extension
-
+COPY lessc-context.xml $TOMCAT_DIR/shared/classes/alfresco/web-extension
 
 # Copy Dockerfile to avoid an error if no JARs exist
 COPY extensions/*.jar $TOMCAT_DIR/webapps/alfresco/WEB-INF/lib/
