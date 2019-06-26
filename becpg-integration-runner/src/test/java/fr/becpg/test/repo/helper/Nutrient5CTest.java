@@ -11,6 +11,9 @@ public class Nutrient5CTest {
 
 	@Test
 	public void test5C() {
+//		Double energyKj, Double satFat, Double totalFat, Double totalSugar, Double sodium, Double percFruitsAndVetgs,
+//		Double nspFibre, Double aoacFibre, Double protein, String category
+		
 		//#5500 
 		Assert.assertEquals(12,Nutrient5CHelper.compute5CScore(2084d, 2.8d, 22.9d, 4.73d, 672d, 0d, 0d, 4.13d, 5.81d, "Others"));
 		
@@ -26,8 +29,15 @@ public class Nutrient5CTest {
 		
 		Assert.assertEquals(4,Nutrient5CHelper.compute5CScore(2084d, 2.8d, 22.9d, 4.73d, 672d, 90d, 0d, 4.13d, 5.81d, "Others"));
 		
+		//#5087
+		
+
+		Assert.assertEquals(0,Nutrient5CHelper.compute5CScore(368d, 1.68d, 4.32d, 1.46d, 263d,0d, 0d, 1.9d, 6d, "Others"));
+	
+		
+		Assert.assertEquals(0,Nutrient5CHelper.compute5CScore(368.09999999999997d, 1.6826328584934984d, 4.320793803940095d, 1.4564453550672227d, 262.851279672858d, null, null, 1.9020344065737682d, 5.996492947498318d, "Others"));
+		
 		
 	}
-	
 	
 }
