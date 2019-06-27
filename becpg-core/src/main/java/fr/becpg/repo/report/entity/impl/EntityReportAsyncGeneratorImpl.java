@@ -131,7 +131,7 @@ public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerato
 								true, watch.getTotalTimeSeconds());
 
 						return null;
-					}, true, false);
+					}, true, true);
 					return null;
 				}, userName);
 
@@ -152,21 +152,23 @@ public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerato
 
 		@Override
 		public void run() {
-			try {
-				entityReportService.generateReports(entityNodeRef);
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				try {
+					entityReportService.generateReports(entityNodeRef);
+				} catch (Exception e) {
+					if (e instanceof ConcurrencyFailureException) {
+						throw (ConcurrencyFailureException) e;
+					}
+					logger.error("Unable to generate product reports ", e);
 
-			} catch (Exception e) {
-				if (e instanceof ConcurrencyFailureException) {
-					throw (ConcurrencyFailureException) e;
+				} finally {
+
+					if (callback != null) {
+						callback.notify(entityNodeRef);
+					}
 				}
-				logger.error("Unable to generate product reports ", e);
-
-			} finally {
-
-				if (callback != null) {
-					callback.notify(entityNodeRef);
-				}
-			}
+				return null;
+			}, false, true);
 		}
 
 		@Override
