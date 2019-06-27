@@ -132,6 +132,11 @@ public class PackagingHelper {
 
 				} else if (PackagingLevel.Tertiary.equals(dataItem.getPkgLevel())) {
 					variantPackagingData.addTareTertiary(tare);
+//					if (Boolean.TRUE.equals(dataItem.getIsMaster())) {
+//						variantPackagingData.setTertiaryWidth(parseFloat((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_WIDTH)));
+//						variantPackagingData.setTertiaryDepth(parseFloat((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_LENGTH)));
+//					}
+				
 				}
 			}
 		}
