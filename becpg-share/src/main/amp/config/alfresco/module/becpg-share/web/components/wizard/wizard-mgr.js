@@ -235,46 +235,43 @@
 					 var me = this; 
 					 if(response.json.persistedObject){
 
-						 var step = me.options.wizardStruct[me.currentIndex-1];
-						 if(step!=null){
-							 step.nodeRef = response.json.persistedObject;
+						 var nextStep = me.options.wizardStruct[me.currentIndex];
+						 if (nextStep != null)
+						 {
 
-							 if(step.finish ){
+							 if(nextStep.finish){
 								 me._navigateForward(me.options.wizardStruct[0].nodeRef);
-							 } else {
+								 return;
+							 }
 
-								 var nextStep = me.options.wizardStruct[me.currentIndex];
-								 if (nextStep != null)
-								 {
-									 if(step.nextStepWebScript!=null){
+							 var step = me.options.wizardStruct[me.currentIndex-1];
+							 if(step!=null){
+								 step.nodeRef = response.json.persistedObject;
 
-										 var url = YAHOO.lang.substitute(
-												 Alfresco.constants.PROXY_URI + step.nextStepWebScript, {
-													 nodeRef :   step.nodeRef
-												 });
+								 if(step.nextStepWebScript!=null){
 
-										 Alfresco.util.Ajax.jsonRequest({
-											 url : url,
-											 method : "GET",
-											 successCallback : {
-												 fn : function(response) {
-													 nextStep.nodeRef = response.json.nodeRef;
-													 me.loadStep(nextStep);
-												 },
-												 scope : this
-											 }
-										 });
-									 } else {
-										 nextStep.nodeRef = step.nodeRef;
-										 me.loadStep(nextStep);
-									 }
+									 var url = YAHOO.lang.substitute(
+											 Alfresco.constants.PROXY_URI + step.nextStepWebScript, {
+												 nodeRef :   step.nodeRef
+											 });
+
+									 Alfresco.util.Ajax.jsonRequest({
+										 url : url,
+										 method : "GET",
+										 successCallback : {
+											 fn : function(response) {
+												 nextStep.nodeRef = response.json.nodeRef;
+												 me.loadStep(nextStep);
+											 },
+											 scope : this
+										 }
+									 });
+								 } else {
+									 nextStep.nodeRef = step.nodeRef;
+									 me.loadStep(nextStep);
 								 }
 							 }
-						 }else {
-							 step = me.options.wizardStruct[me.currentIndex];
-							 if(step.finish ){
-								 me._navigateForward(me.options.wizardStruct[0].nodeRef);
-							 } 
+
 						 }
 
 					 }
