@@ -6,6 +6,21 @@ RUN curl -sL https://deb.nodesource.com/setup_9.x | bash - && apt-get install -y
 WORKDIR /usr/local/tomcat/
 ENV TOMCAT_DIR=/usr/local/tomcat/
 
+# HOTSWAP AGENT
+# Install and configure Trava OpenJDK (OpenJDK pre-built with DCEVM and hotswap agent for Java 11)
+#RUN curl -sL  https://github.com/TravaOpenJDK/trava-jdk-11-dcevm/releases/download/dcevm-11.0.1%2B8/java11-openjdk-dcevm-linux.tar.gz \
+#      -o $TOMCAT_DIR/trava-jdk-11-dcevm.tar.gz
+#RUN mkdir -p /usr/java && tar -xvf $TOMCAT_DIR/trava-jdk-11-dcevm.tar.gz -C /usr/java/ && \
+#    rm $TOMCAT_DIR/trava-jdk-11-dcevm.tar.gz && \
+#    alternatives --install /usr/bin/java java /usr/java/dcevm-11.0.1+7/bin/java 40000 && \
+#    alternatives --install /usr/bin/javac javac /usr/java/dcevm-11.0.1+7/bin/javac 40000 && \
+#    alternatives --install /usr/bin/jar jar /usr/java/dcevm-11.0.1+7/bin/jar 40000 && \
+#    alternatives --set java /usr/java/dcevm-11.0.1+7/bin/java && \
+#    alternatives --set javac /usr/java/dcevm-11.0.1+7/bin/javac && \
+#    alternatives --set jar /usr/java/dcevm-11.0.1+7/bin/jar && \
+#    ln -sfn /usr/java/dcevm-11.0.1+7 /usr/java/latest && \
+#    ln -sfn /usr/java/dcevm-11.0.1+7 /usr/java/default
+
       
 COPY becpg-core-${project.version}.amp /root/amp/
 COPY becpg-project-core-${project.version}.amp /root/amp/

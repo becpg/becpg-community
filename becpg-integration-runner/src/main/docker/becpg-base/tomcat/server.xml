@@ -69,8 +69,7 @@
                    connectionTimeout="60000"
                    executor="tomcatThreadPool"
                    port="8080" protocol="HTTP/1.1"
-              	   redirectPort="8443" 
-              	   secure="true" scheme="https" proxyPort="443" />
+              	   redirectPort="8443"  />
   
 
     <!-- Define an AJP 1.3 Connector on port 8009 -->

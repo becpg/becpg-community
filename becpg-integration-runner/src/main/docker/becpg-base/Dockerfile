@@ -1,4 +1,4 @@
-FROM tomcat:8.5-jre8
+FROM tomcat:9-jdk11
 MAINTAINER beCPG
 
 ENV NEXUS=https://artifacts.alfresco.com/nexus/content/groups/public
@@ -35,29 +35,6 @@ RUN set -x \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/*
       
-
-#Add JAI and ImageIO for great speedy speed.
-WORKDIR /tmp
-# A little logic that will fetch the JAI and JAI ImageIO tar file if it
-# is not available locally in the resources dir
-RUN if [ ! -f /tmp/resources/jai-1_1_3-lib-linux-amd64.tar.gz ]; then \
-    wget http://download.java.net/media/jai/builds/release/1_1_3/jai-1_1_3-lib-linux-amd64.tar.gz -P ./resources;\
-    fi; \
-    if [ ! -f /tmp/resources/jai_imageio-1_1-lib-linux-amd64.tar.gz ]; then \
-    wget http://download.java.net/media/jai-imageio/builds/release/1.1/jai_imageio-1_1-lib-linux-amd64.tar.gz -P ./resources;\
-    fi; \
-    mv resources/jai-1_1_3-lib-linux-amd64.tar.gz ./ && \
-    mv resources/jai_imageio-1_1-lib-linux-amd64.tar.gz ./ && \
-    gunzip -c jai-1_1_3-lib-linux-amd64.tar.gz | tar xf - && \
-    gunzip -c jai_imageio-1_1-lib-linux-amd64.tar.gz | tar xf - && \
-    mv /tmp/jai-1_1_3/lib/*.jar $JAVA_HOME/lib/ext/ && \
-    mv /tmp/jai-1_1_3/lib/*.so $JAVA_HOME/lib/amd64/ && \
-    mv /tmp/jai_imageio-1_1/lib/*.jar $JAVA_HOME/lib/ext/ && \
-    mv /tmp/jai_imageio-1_1/lib/*.so $JAVA_HOME/lib/amd64/ && \
-    rm /tmp/jai-1_1_3-lib-linux-amd64.tar.gz && \
-    rm -r /tmp/jai-1_1_3 && \
-    rm /tmp/jai_imageio-1_1-lib-linux-amd64.tar.gz && \
-    rm -r /tmp/jai_imageio-1_1
 WORKDIR /usr/local/tomcat/
       
 
@@ -108,6 +85,69 @@ RUN set -x && \
       -o /root/amp/alfresco-share-services-${ALF_SHARE_VERSION}.amp && \
     java -jar /root/alfresco-mmt.jar install /root/amp/ webapps/alfresco -nobackup -directory && \
     rm /root/amp/alfresco-share-services-${ALF_SHARE_VERSION}.amp
+
+
+#workflow-reporting-repo 
+RUN set -x && \
+    curl --silent --location \
+      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/workflow-reporting-repo-1.0.0.amp  \
+      -o /root/amp/workflow-reporting-repo-1.0.0.amp && \
+    java -jar /root/alfresco-mmt.jar install /root/amp/ webapps/alfresco -nobackup -directory && \
+    rm /root/amp/workflow-reporting-repo-1.0.0.amp      
+
+RUN set -x && \
+    curl --silent --location \
+      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/workflow-reporting-share-1.0.0.amp  \
+      -o /root/amp/workflow-reporting-share-1.0.0.amp && \
+    java -jar /root/alfresco-mmt.jar install /root/amp/ webapps/share -nobackup -directory && \
+    rm /root/amp/workflow-reporting-share-1.0.0.amp     
+    
+
+#Javascript console
+RUN set -x && \
+    curl --silent --location \
+      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/javascript-console-repo-0.6.0.amp  \
+      -o /root/amp/javascript-console-repo-0.6.0.amp && \
+    java -jar /root/alfresco-mmt.jar install /root/amp/ webapps/alfresco -nobackup -directory && \
+    rm /root/amp/javascript-console-repo-0.6.0.amp  
+    
+RUN set -x && \
+    curl --silent --location \
+      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/javascript-console-share-0.6.0.amp  \
+      -o /root/amp/javascript-console-share-0.6.0.amp && \
+    java -jar /root/alfresco-mmt.jar install /root/amp/ webapps/share -nobackup -directory && \
+    rm /root/amp/javascript-console-share-0.6.0.amp 
+    
+#Support tools
+RUN set -x && \
+    curl --silent --location \
+      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/support-tools-repo-1.0.0.0.amp  \
+      -o /root/amp/support-tools-repo-1.0.0.0.amp && \
+    java -jar /root/alfresco-mmt.jar install /root/amp/ webapps/alfresco -nobackup -directory && \
+    rm /root/amp/support-tools-repo-1.0.0.0.amp  
+
+
+RUN set -x && \
+    curl --silent --location \
+      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/support-tools-share-1.0.0.0.amp  \
+      -o /root/amp/support-tools-share-1.0.0.0.amp && \
+    java -jar /root/alfresco-mmt.jar install /root/amp/ webapps/share -nobackup -directory && \
+    rm /root/amp/support-tools-share-1.0.0.0.amp  
+
+#AOS    
+RUN set -x && \
+    curl --silent --location \
+      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/_vti_bin-1.1.7.war  \
+      -o _vti_bin-1.1.7.war && \
+    unzip -q _vti_bin-1.1.7.war -d webapps/_vti_bin && \
+    rm _vti_bin-1.1.7.war
+        	        
+RUN set -x && \
+    curl --silent --location \
+      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/alfresco-aos-core-1.1.7.amp  \
+      -o /root/amp/alfresco-aos-core-1.1.7.amp && \
+    java -jar /root/alfresco-mmt.jar install /root/amp/ webapps/alfresco -nobackup -directory && \
+    rm /root/amp/alfresco-aos-core-1.1.7.amp
 
 
       
