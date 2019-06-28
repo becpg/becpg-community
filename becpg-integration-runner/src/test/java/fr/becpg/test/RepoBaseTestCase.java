@@ -18,11 +18,14 @@
 package fr.becpg.test;
 
 import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.naming.Name;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
@@ -66,6 +69,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.MethodRule;
+import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
@@ -96,22 +100,33 @@ import junit.framework.TestCase;
  * @author matthieu
  */
 @RunWith(value = BeCPGTestRunner.class)
-@TestExecutionListeners( { BeCPGDependencyInjectionTestListener.class })
+@TestExecutionListeners( { BeCPSpringTestListener.class })
 public abstract class RepoBaseTestCase extends TestCase implements InitializingBean {
 
 	private static final Log logger = LogFactory.getLog(RepoBaseTestCase.class);
 
-	private final ThreadLocal<NodeRef> threadSafeTestFolder = new ThreadLocal<>();
+	private Map<String, NodeRef> testFolders = new HashMap<>();
+	
 
+	@Rule public TestName name = new TestName();
+	
+	
 	public NodeRef getTestFolderNodeRef() {
-		return threadSafeTestFolder.get();
+		return testFolders.get(getTestFolderName());
 	}
 
+	private String getTestFolderName() {
+		return getClassName().replaceAll("\\.", "_")+"_"+name.getMethodName();
+	}
+	
 	protected NodeRef systemFolderNodeRef;
 
 	public static RepoBaseTestCase INSTANCE;
 
 	public static final Wiser wiser = new Wiser(2500);
+	
+	
+	
 
 	 /**
      * Print the test we are currently running, useful if the test is running remotely
@@ -261,50 +276,48 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 	@Before
 	public void setUp() throws Exception {
-		threadSafeTestFolder.set(transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+		testFolders.put(getTestFolderName(), transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 				// As system user
 				AuthenticationUtil.setFullyAuthenticatedUser(AuthenticationUtil.getAdminUserName());
 
-				String testFolderName = "TestFolder" + (new Date()).getTime();
+				String testFolderName =   getTestFolderName();
+				
+				Date now = new Date();
+				SimpleDateFormat format = new SimpleDateFormat("dd_MM_YYYY_hh_mm_ss");
+				
+				NodeRef parentTestFolder = repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), "Junit Tests", "Junit Test");
 
-				NodeRef folderNodeRef = RepoBaseTestCase.INSTANCE.fileFolderService.create(repositoryHelper.getCompanyHome(), testFolderName,
+				parentTestFolder = repoService.getOrCreateFolderByPath(parentTestFolder, format.format(now), format.format(now));
+				
+				NodeRef folderNodeRef = RepoBaseTestCase.INSTANCE.fileFolderService.create(parentTestFolder, testFolderName,
 						ContentModel.TYPE_FOLDER).getNodeRef();
 				return folderNodeRef;
 
 			}
+
+			
 		}, false, true));
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
-			public Boolean execute() throws Throwable {
-				ruleService.disableRules();
-				try {
-					IntegrityChecker.setWarnInTransaction();
-					nodeService.addAspect(threadSafeTestFolder.get(), ContentModel.ASPECT_TEMPORARY, null);
-					nodeService.deleteNode(threadSafeTestFolder.get());
-				} finally {
-					ruleService.enableRules();
-				}
-				return true;
+//		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
+//			public Boolean execute() throws Throwable {
+//				ruleService.disableRules();
+//				try {
+//					IntegrityChecker.setWarnInTransaction();
+//					nodeService.addAspect(getTestFolderNodeRef(), ContentModel.ASPECT_TEMPORARY, null);
+//					nodeService.deleteNode(getTestFolderNodeRef());
+//				} finally {
+//					ruleService.enableRules();
+//				}
+//				return true;
+//
+//			}
+//		}, false, true);
+	
 
-			}
-		}, false, true);
-	
-		try {
-			@SuppressWarnings("rawtypes")
-		    Class clazz = Class.forName("java.lang.ApplicationShutdownHooks");
-		    Field field = clazz.getDeclaredField("hooks");
-		    field.setAccessible(true);
-	
-		    @SuppressWarnings("unchecked")
-		    Map<Thread, Thread> hooks = (Map<Thread, Thread>)field.get(null);
-		    hooks.clear();
-		} catch (ReflectiveOperationException e) {
-			// TODO: handle exception
-		}
 	}
 	
 

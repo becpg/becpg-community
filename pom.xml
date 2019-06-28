@@ -120,8 +120,6 @@
         <docker.acs.image>alfresco/alfresco-content-repository-community</docker.acs.image>
         <docker.share.image>alfresco/alfresco-share</docker.share.image>
 
-        <!-- JRebel Hot reloading of classpath stuff and web resource stuff -->
-        <jrebel.version>1.1.8</jrebel.version>
 
         <!-- Environment configuration properties -->
         <share.port>8180</share.port>
@@ -132,7 +130,7 @@
         <!-- This parameter is only required for those cases in which ACS is not exposed in http://localhost:8080/alfresco (i.e. Windows Docker) -->
         <test.acs.endpoint.path/>
         
-        <mysql.connector.version>5.1.47</mysql.connector.version>
+        <mysql.connector.version>8.0.16</mysql.connector.version>
 	
 		<docker.becpg.url>docker.becpg.fr:443/becpg</docker.becpg.url>
 	   
@@ -295,12 +293,6 @@
                 </plugin>
 
                 <plugin>
-                    <groupId>org.zeroturnaround</groupId>
-                    <artifactId>jrebel-maven-plugin</artifactId>
-                    <version>${jrebel.version}</version>
-                </plugin>
-
-                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>3.1.0</version>
@@ -424,41 +416,6 @@
                 </executions>
             </plugin>
 
-            <!-- Hot reloading with JRebel -->
-            <plugin>
-                <groupId>org.zeroturnaround</groupId>
-                <artifactId>jrebel-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>generate-rebel-xml</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <!-- For more information about how to configure JRebel plugin see:
-                         http://manuals.zeroturnaround.com/jrebel/standalone/maven.html#maven-rebel-xml -->
-                    <classpath>
-                        <fallback>all</fallback>
-                        <resources>
-                            <resource>
-                                <directory>${project.build.outputDirectory}</directory>
-                                <directory>${project.build.testOutputDirectory}</directory>
-                            </resource>
-                        </resources>
-                    </classpath>
-
-                    <!--
-                      alwaysGenerate - default is false
-                      If 'false' - rebel.xml is generated if timestamps of pom.xml and the current rebel.xml file are not equal.
-                      If 'true' - rebel.xml will always be generated
-                    -->
-                    <alwaysGenerate>true</alwaysGenerate>
-                </configuration>
-            </plugin>
-		
 	 
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -521,7 +478,6 @@
 					<artifactId>maven-surefire-plugin</artifactId>
 					<version>3.0.0-M1</version>
 					<configuration>
-						<useSystemClassLoader>true</useSystemClassLoader>
 						<runOrder>alphabetical</runOrder>
 					</configuration>
 				</plugin>

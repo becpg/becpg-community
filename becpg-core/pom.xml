@@ -90,6 +90,33 @@
             <artifactId>spring-webscripts</artifactId>
             <scope>provided</scope>
         </dependency>
+        
+        <!-- JDK11 -->
+        <dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+			<version>2.3.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-core</artifactId>
+			<version>2.3.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-impl</artifactId>
+			<version>2.3.0</version>
+		</dependency>
+		<dependency>
+		    <groupId>javax.xml.ws</groupId>
+		    <artifactId>jaxws-api</artifactId>
+		    <version>2.3.0</version>
+		</dependency>
+		<dependency>
+		    <groupId>javax.activation</groupId>
+		    <artifactId>javax.activation-api</artifactId>
+		    <version>1.2.0</version>
+		</dependency>
 		
 		<!-- Common -->
 		<dependency>
@@ -106,7 +133,7 @@
         </dependency>
 
 
-		<!-- Image IO -->
+		<!-- Image IO
 		 <dependency>
 	        <groupId>com.twelvemonkeys.imageio</groupId>
 	        <artifactId>imageio-jpeg</artifactId>
@@ -119,7 +146,8 @@
 	        <version>3.3.2</version>
 	         <scope>test</scope>
 	    </dependency>
-		
+		 -->
+		 
 		<!-- IText PDF -->
 		<dependency>
 			<groupId>com.itextpdf</groupId>

@@ -192,9 +192,8 @@ public class BeCPGPLMTestHelper {
 	 */
 	public static NodeRef createRawMaterial(NodeRef parentNodeRef, String name) {
 
-		logger.debug("createRawMaterial");
+		logger.debug("createRawMaterial: "+name);
 
-		logger.debug("Create MP");
 		RawMaterialData rawMaterial = new RawMaterialData();
 		rawMaterial.setName(name);
 		rawMaterial.setHierarchy1(PLMBaseTestCase.INSTANCE2.HIERARCHY1_SEA_FOOD_REF);

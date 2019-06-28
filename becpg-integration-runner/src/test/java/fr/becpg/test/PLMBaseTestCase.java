@@ -140,36 +140,6 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 
 	}
 
-//	@After
-//	public void tearDown() throws Exception {
-//		logger.trace("TearDown :");
-//		super.tearDown();
-//		
-//		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
-//			public Boolean execute() throws Throwable {
-//				AuthenticationUtil.setFullyAuthenticatedUser(AuthenticationUtil.getAdminUserName());
-//				// products
-//				List<NodeRef> productNodeRefs = BeCPGQueryBuilder.createQuery().ofType(PLMModel.TYPE_PRODUCT).inDB().list();
-//
-//				for (NodeRef productNodeRef : productNodeRefs) {
-//					if (nodeService.exists(productNodeRef) && !nodeService.hasAspect(productNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)) {
-//                       try {
-//						String path = nodeService.getPath(productNodeRef).toDisplayPath(nodeService, permissionService);
-//						// if(!path.contains(BeCPGTestHelper.PATH_TESTFOLDER)){
-//						logger.trace("   - Deleting :" + nodeService.getProperty(productNodeRef, BeCPGModel.PROP_CHARACT_NAME));
-//						logger.trace("   - PATH :" + path);
-//						nodeService.deleteNode(productNodeRef);
-//						// }
-//                       }catch(NodeLockedException e){
-//                    	   logger.warn("node is locked",e);
-//                       }
-//					}
-//				}
-//				return true;
-//
-//			}
-//		}, false, true);
-//	}
 
 	private void initConstraints() {
 

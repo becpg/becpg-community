@@ -126,7 +126,7 @@ public class BeCPGTestRunner extends SpringJUnit4ClassRunner {
         // Login credentials for Alfresco Repo
         // TODO: Maybe configure credentials in props...
         CredentialsProvider provider = new BasicCredentialsProvider();
-        UsernamePasswordCredentials credentials = new UsernamePasswordCredentials("admin", "admin");
+        UsernamePasswordCredentials credentials = new UsernamePasswordCredentials("admin", "becpg");
         provider.setCredentials(AuthScope.ANY, credentials);
 
         // Create HTTP Client with credentials
@@ -176,6 +176,7 @@ public class BeCPGTestRunner extends SpringJUnit4ClassRunner {
                                 try {
                                     object = objectFromString(throwableBody);
                                 } catch (ClassNotFoundException e) {
+                                	e.printStackTrace();
                                 }
                                 if (null != object && object instanceof Throwable) {
                                     throwable = (Throwable) object;
