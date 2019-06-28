@@ -24,6 +24,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.virtual.VirtualContentModel;
 import org.alfresco.repo.web.scripts.content.ContentGet;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
@@ -96,11 +97,14 @@ public class ReportContentGet extends ContentGet {
 			entityNodeRef = entityReportService.getEntityNodeRef(nodeRef);
 		}
 		
+		if(entityNodeRef != null && nodeService.hasAspect(entityNodeRef, VirtualContentModel.ASPECT_VIRTUAL_DOCUMENT)) {
+            entityNodeRef = new NodeRef((String) nodeService.getProperty(entityNodeRef, VirtualContentModel.PROP_ACTUAL_NODE_REF));
+        }
 		
 		if (entityNodeRef == null) {
 			throw new WebScriptException(HttpServletResponse.SC_NOT_FOUND, "No entity provided");
 		}
-
+		
 		nodeRef = entityReportService.getOrRefreshReport(entityNodeRef, nodeRef);
 
 		// determine attachment
