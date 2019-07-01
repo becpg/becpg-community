@@ -143,22 +143,6 @@
 	    
 	    	<!-- Deprecated -->
 	    <alfresco.version>5.2.g</alfresco.version>
-	    <alfresco.db.url>jdbc:h2:${alfresco.data.location}/h2_data/${alfresco.db.name};${alfresco.db.params}</alfresco.db.url>
-	    <alfresco.data.location>/tmp/alf_data_dev</alfresco.data.location>
-	
-	  <!--   <app.log.root.level>WARN</app.log.root.level>
-        
-        <env>local</env>
-		<alfresco.version>5.2.g</alfresco.version>
-		<alfresco.repo.artifactId>alfresco-platform</alfresco.repo.artifactId>
-		<alfresco.share.version>5.2.f</alfresco.share.version>
-		<argLine>-Xms256m -Xmx1524m -Duser.language=fr</argLine>
-	
-		
-		<maven.compiler.source>1.8</maven.compiler.source>
-		
-		<springloaded.version>1.2.1.RELEASE</springloaded.version>
-		 -->
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -199,24 +183,7 @@
                 <classifier>classes</classifier>
                 <scope>provided</scope>
             </dependency>
-            
-            <!-- DEPRECATED
-            
-        <dependency>
-				<groupId>org.alfresco.surf</groupId>
-				<artifactId>spring-surf-api</artifactId>
-				<version>6.9</version>
-				<type>jar</type>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.alfresco.surf</groupId>
-				<artifactId>spring-surf</artifactId>
-				<version>6.9</version>
-				<type>jar</type>
-				<scope>provided</scope>
-			</dependency> 
- 	-->
+         
         </dependencies>
 			
 		
@@ -318,6 +285,9 @@
                             </goals>
                         </execution>
                     </executions>
+                    <configuration>
+						<runOrder>alphabetical</runOrder>
+					</configuration>
                     <dependencies>
                         <dependency>
                             <groupId>org.apache.maven.surefire</groupId>
@@ -436,43 +406,6 @@
 				</configuration>
 			</plugin>
 			
-		<!-- 	
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.6</version>
-				<configuration>
-					<encoding>UTF-8</encoding>
-					<nonFilteredFileExtensions>
-						 <nonFilteredFileExtension>ftl</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>acp</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>jpg</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>png</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>gif</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>svg</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>pdf</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>doc</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>docx</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>xls</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>xlsx</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>ppt</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>pptx</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>bin</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>lic</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>swf</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>zip</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>msg</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>jar</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>ttf</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>eot</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>woff</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>woff2</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>css</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>ico</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>psd</nonFilteredFileExtension>
-					</nonFilteredFileExtensions>
-				</configuration>
-			</plugin> -->
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
@@ -536,7 +469,6 @@
 
 	</dependencies>
 	<profiles>
-	
 		<profile>
             <id>java8</id>
             <activation>
@@ -586,46 +518,9 @@
         </profile>
 	
 		<profile>
-			<id>purge</id>
-			<build>
-				<plugins>
-					<!-- Cleaning Alfresco Repository storage/log folders/files -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-clean-plugin</artifactId>
-						<configuration>
-							<filesets>
-								<fileset>
-									<directory>${alfresco.data.location}</directory>
-								</fileset>
-								<fileset>
-									<directory>${project.basedir}/solr_home</directory>
-								</fileset>
-								<fileset>
-									<directory>${project.basedir}</directory>
-									<includes>
-										<include>**/*.log</include>
-									</includes>
-								</fileset>
-							</filesets>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
 		 <id>sonar</id>
 		 <build>
 		 	<plugins>
-			  <plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-surefire-plugin</artifactId>
-					<configuration>
-						<reuseForks>false</reuseForks>
-						<useSystemClassLoader>false</useSystemClassLoader>
-						<runOrder>alphabetical</runOrder>
-					</configuration>
-				</plugin>
 				<plugin>
 					    <groupId>org.jacoco</groupId>
 					    <artifactId>jacoco-maven-plugin</artifactId>
@@ -649,9 +544,7 @@
 			 </plugins>
 			</build> 
 		</profile>
-		
 	</profiles>
-    
-    
+	
     
 </project>
