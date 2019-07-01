@@ -220,29 +220,29 @@
 				</executions>
 			</plugin>
 
+			
 			<plugin>
-				<groupId>com.spotify</groupId>
-				<artifactId>dockerfile-maven-plugin</artifactId>
-				<version>1.3.6</version>
-				<executions>
-					<execution>
-						<id>becpg-test</id>
-						<goals>
-							<goal>build</goal>
-						</goals>
-						<configuration>
-							<repository>${docker.becpg.url}/becpg-test</repository>
-							<contextDirectory>${project.build.directory}/becpg-test</contextDirectory>
-							<tag>${project.version}</tag>
-							<pullNewerImage>false</pullNewerImage>
-							<buildArgs>
-								<VERSION>${project.version}</VERSION>
-							</buildArgs>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
+						<groupId>com.spotify</groupId>
+						<artifactId>dockerfile-maven-plugin</artifactId>
+						<version>1.4.10</version>
+						<executions>
+							<execution>
+								<id>becpg-test</id>
+								<goals>
+									<goal>build</goal>
+								</goals>
+								<configuration>
+									<repository>${docker.becpg.url}/becpg-test</repository>
+									<contextDirectory>${project.build.directory}/becpg-test</contextDirectory>
+									<tag>${project.version}</tag>
+									<pullNewerImage>false</pullNewerImage>
+									<buildArgs>
+										<VERSION>${project.version}</VERSION>
+									</buildArgs>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
 
             <!-- Make sure we attach the tests so we can include them when running -->
 			<plugin>
@@ -265,11 +265,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
-				<configuration>
-					<systemPropertyVariables>
-						<acs.endpoint.path>${test.acs.endpoint.path}</acs.endpoint.path>
-					</systemPropertyVariables>
-				</configuration>
 			</plugin>
 
 		</plugins>
@@ -282,16 +277,30 @@
 					<plugin>
 						<groupId>com.spotify</groupId>
 						<artifactId>dockerfile-maven-plugin</artifactId>
-						<version>1.3.6</version>
+						<version>1.4.10</version>
 						<executions>
 							<execution>
 								<id>becpg-base</id>
+								<phase>prepare-package</phase>
 								<goals>
 									<goal>build</goal>
 								</goals>
 								<configuration>
 									<repository>${docker.becpg.url}/becpg-base</repository>
 									<contextDirectory>${project.build.directory}/becpg-base</contextDirectory>
+									<pullNewerImage>true</pullNewerImage>
+									<tag>${project.version}</tag>
+								</configuration>
+							</execution>
+							<execution>
+								<id>becpg-db</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>build</goal>
+								</goals>
+								<configuration>
+									<repository>${docker.becpg.url}/becpg-db</repository>
+									<contextDirectory>${project.build.directory}/becpg-db</contextDirectory>
 									<pullNewerImage>true</pullNewerImage>
 									<tag>${project.version}</tag>
 								</configuration>
@@ -309,18 +318,6 @@
 									<buildArgs>
 										<VERSION>${project.version}</VERSION>
 									</buildArgs>
-								</configuration>
-							</execution>
-							<execution>
-								<id>becpg-db</id>
-								<goals>
-									<goal>build</goal>
-								</goals>
-								<configuration>
-									<repository>${docker.becpg.url}/becpg-db</repository>
-									<contextDirectory>${project.build.directory}/becpg-db</contextDirectory>
-									<pullNewerImage>true</pullNewerImage>
-									<tag>${project.version}</tag>
 								</configuration>
 							</execution>
 						</executions>

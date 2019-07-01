@@ -33,17 +33,17 @@ down() {
 deploy_fast(){
 
 	#becpg-amp
-	docker-compose cp becpg-core/src/main/amp/config/alfresco/templates/. becpg:/usr/local/tomcat/webapps/alfresco/WEB-INF/classes/alfresco/templates
+	docker-compose -f $COMPOSE_FILE_PATH cp becpg-core/src/main/amp/config/alfresco/templates/. becpg:/usr/local/tomcat/webapps/alfresco/WEB-INF/classes/alfresco/templates
 	
 	#becpg-share
-	docker-compose cp becpg-share/src/main/amp/config/alfresco/module/becpg-share/web/. becpg:/usr/local/tomcat/webapps/share/
-	docker-compose cp becpg-share/src/main/amp/config/alfresco/module/becpg-share/config/. becpg:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
-	docker-compose cp becpg-designer/becpg-designer-share/src/main/amp/config/alfresco/module/becpg-designer-share/web/. becpg:/usr/local/tomcat/webapps/share/
-	docker-compose cp becpg-designer/becpg-designer-share/src/main/amp/config/alfresco/module/becpg-designer-share/config/. becpg:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
-	docker-compose cp becpg-project/becpg-project-share/src/main/amp/config/alfresco/module/becpg-project-share/web/. becpg:/usr/local/tomcat/webapps/share/
-	docker-compose cp becpg-project/becpg-project-share/src/main/amp/config/alfresco/module/becpg-project-share/config/. becpg:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
-	docker-compose cp becpg-plm/becpg-plm-share/src/main/amp/config/alfresco/module/becpg-plm-share/web/. becpg:/usr/local/tomcat/webapps/share/
-	docker-compose cp becpg-plm/becpg-plm-share/src/main/amp/config/alfresco/module/becpg-plm-share/config/. becpg:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
+	docker-compose -f $COMPOSE_FILE_PATH cp becpg-share/src/main/amp/config/alfresco/module/becpg-share/web/. becpg:/usr/local/tomcat/webapps/share/
+	docker-compose -f $COMPOSE_FILE_PATH cp becpg-share/src/main/amp/config/alfresco/module/becpg-share/config/. becpg:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
+	docker-compose -f $COMPOSE_FILE_PATH cp becpg-designer/becpg-designer-share/src/main/amp/config/alfresco/module/becpg-designer-share/web/. becpg:/usr/local/tomcat/webapps/share/
+	docker-compose -f $COMPOSE_FILE_PATH cp becpg-designer/becpg-designer-share/src/main/amp/config/alfresco/module/becpg-designer-share/config/. becpg:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
+	docker-compose -f $COMPOSE_FILE_PATH cp becpg-project/becpg-project-share/src/main/amp/config/alfresco/module/becpg-project-share/web/. becpg:/usr/local/tomcat/webapps/share/
+	docker-compose -f $COMPOSE_FILE_PATH cp becpg-project/becpg-project-share/src/main/amp/config/alfresco/module/becpg-project-share/config/. becpg:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
+	docker-compose -f $COMPOSE_FILE_PATH cp becpg-plm/becpg-plm-share/src/main/amp/config/alfresco/module/becpg-plm-share/web/. becpg:/usr/local/tomcat/webapps/share/
+	docker-compose -f $COMPOSE_FILE_PATH cp becpg-plm/becpg-plm-share/src/main/amp/config/alfresco/module/becpg-plm-share/config/. becpg:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
 	
 	#docker cp becpg-enterprise/becpg-enterprise-share/src/main/amp/config/alfresco/module/becpg-enterprise-share/web/. $CONTAINER_PLM_NAME:/usr/local/tomcat/webapps/share/
 	#docker cp becpg-enterprise/becpg-enterprise-share/src/main/amp/config/alfresco/module/becpg-enterprise-share/config/. $CONTAINER_PLM_NAME:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
@@ -57,11 +57,11 @@ purge() {
 }
 
 build() {
-    $MVN_EXEC clean package -DskipTests=true
+    $MVN_EXEC clean package $EXTRA_ENV -DskipTests=true
 }
 
 build_full() {
-    $MVN_EXEC clean package -DskipTests=true -P full
+    $MVN_EXEC clean package $EXTRA_ENV -DskipTests=true -P full
 }
 
 tail() {
@@ -69,7 +69,7 @@ tail() {
 }
 
 test() {
-    $MVN_EXEC verify -pl becpg-integration-runner
+    $MVN_EXEC verify $EXTRA_ENV -pl becpg-integration-runner
 }
 
 case "$1" in
