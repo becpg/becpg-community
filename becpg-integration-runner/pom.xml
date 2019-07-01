@@ -125,19 +125,7 @@
 			</testResource>
 		</testResources>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>test-jar</id>
-						<phase>test-compile</phase>
-						<goals>
-							<goal>test-jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
@@ -250,6 +238,13 @@
 				<artifactId>maven-jar-plugin</artifactId>
 				<executions>
 					<execution>
+						<id>test-jar</id>
+						<phase>test-compile</phase>
+						<goals>
+							<goal>test-jar</goal>
+						</goals>
+					</execution>
+					<execution>
 						<goals>
 							<goal>test-jar</goal>
 						</goals>
@@ -259,7 +254,6 @@
 					</execution>
 				</executions>
 			</plugin>
-
             <!-- Runs the integration tests, any class that follows naming convention
                  "**/IT*.java", "**/*IT.java", and "**/*ITCase.java" will be considered an integration test -->
 			<plugin>
