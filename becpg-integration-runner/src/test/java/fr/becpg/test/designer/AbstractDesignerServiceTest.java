@@ -12,7 +12,7 @@ public abstract class AbstractDesignerServiceTest extends RepoBaseTestCase {
 
 	@Override
 	protected boolean shouldInit() {
-		return super.shouldInit() || designerInitService.getConfigsNodeRef()==null;
+		return super.shouldInit() || (designerInitService.getConfigsNodeRef() == null);
 	}
-	
+
 }

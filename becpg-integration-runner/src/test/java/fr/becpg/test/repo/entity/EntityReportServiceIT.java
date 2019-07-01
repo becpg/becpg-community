@@ -94,17 +94,15 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 
 		logger.debug("testIsReportUpToDate()");
 
-		
 		initReports();
 
 		List<NodeRef> ret = reportTplService.getSystemReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT);
-		for(NodeRef ref : ret) {
+		for (NodeRef ref : ret) {
 			logger.info(nodeService.getProperty(ref, ContentModel.PROP_NAME));
 		}
 		assertEquals("check system templates", 5,
 				reportTplService.getSystemReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT).size());
 
-		
 		// create product
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -124,7 +122,7 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 		}, false, true);
 
 		System.out.println("PWET3");
-		
+
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			createdDate = new Date();
@@ -134,7 +132,7 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 		}, false, true);
 
 		System.out.println("PWET4");
-		
+
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			// check report Tpl
@@ -176,7 +174,7 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 		}, false, true);
 
 		System.out.println("PWET5");
-		
+
 		// Test datalist modified
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -189,7 +187,7 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 			return null;
 		}, false, true);
 
-		assertFalse(entityReportService.shouldGenerateReport(pfNodeRef,null));
+		assertFalse(entityReportService.shouldGenerateReport(pfNodeRef, null));
 
 		// Test datalist modified
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -202,7 +200,7 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 
 		}, false, true);
 
-		assertTrue(entityReportService.shouldGenerateReport(pfNodeRef,null));
+		assertTrue(entityReportService.shouldGenerateReport(pfNodeRef, null));
 
 		// Delete report tpl -> report should be deleted
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -239,7 +237,7 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 			return null;
 
 		}, false, true);
-		
+
 		System.out.println("PWET7");
 
 	}
@@ -257,8 +255,8 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 		int checks = 0;
 		for (NodeRef reportNodeRef : reportNodeRefs) {
 			String reportName = (String) nodeService.getProperty(reportNodeRef, ContentModel.PROP_NAME);
-			logger.debug("Test report name:"+reportName+" compare with :"+defaultReportName );
-			
+			logger.debug("Test report name:" + reportName + " compare with :" + defaultReportName);
+
 			if (reportName.equals(defaultReportName)) {
 				checks++;
 			} else if (reportName.equals(otherReportName)) {
@@ -314,7 +312,7 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 
 			return null;
 
-		} , false, true);
+		}, false, true);
 
 		waitForSolr(startTime);
 
@@ -330,7 +328,7 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 					"beCPG/birt/document/product/default/ProductReport.rptdesign", ReportType.Document, ReportFormat.PDF,
 					PLMModel.TYPE_FINISHEDPRODUCT, false, false, true);
 
-		} , false, true);
+		}, false, true);
 
 		waitForSolr(startTime);
 
@@ -349,7 +347,7 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 
 			return null;
 
-		} , false, true);
+		}, false, true);
 
 	}
 }

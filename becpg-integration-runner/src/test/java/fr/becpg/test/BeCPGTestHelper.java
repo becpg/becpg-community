@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2018 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2018 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.test;
@@ -31,25 +31,16 @@ import org.apache.commons.logging.LogFactory;
 
 public class BeCPGTestHelper {
 
-
 	public static final String USER_ONE = "matthieuWF";
 	public static final String USER_TWO = "philippeWF";
-	
 
-	
-	
 	private static final Log logger = LogFactory.getLog(BeCPGTestHelper.class);
-	
-	
-	
-	
-	
+
 	public static void createUsers() {
 
 		/*
 		 * Matthieu : user Philippe : validators
 		 */
-
 
 		// USER_ONE
 		NodeRef userOne = RepoBaseTestCase.INSTANCE.personService.getPerson(USER_ONE);
@@ -77,25 +68,24 @@ public class BeCPGTestHelper {
 		}
 
 	}
-	
-	public static NodeRef createGroup(String groupName, String... users){
-		
+
+	public static NodeRef createGroup(String groupName, String... users) {
+
 		Set<String> zones = new HashSet<>();
 		zones.add(AuthorityService.ZONE_APP_DEFAULT);
 		zones.add(AuthorityService.ZONE_APP_SHARE);
 		zones.add(AuthorityService.ZONE_AUTH_ALFRESCO);
-		
+
 		if (!RepoBaseTestCase.INSTANCE.authorityService.authorityExists(PermissionService.GROUP_PREFIX + groupName)) {
 			logger.debug("create group: " + groupName);
 			RepoBaseTestCase.INSTANCE.authorityService.createAuthority(AuthorityType.GROUP, groupName, groupName, zones);
-			
-			for(String user : users) {
+
+			for (String user : users) {
 				RepoBaseTestCase.INSTANCE.authorityService.addAuthority(PermissionService.GROUP_PREFIX + groupName, user);
 			}
 		}
 		return RepoBaseTestCase.INSTANCE.authorityService.getAuthorityNodeRef(PermissionService.GROUP_PREFIX + groupName);
 	}
-	
 
 	public static NodeRef createUser(String userName) {
 		if (!RepoBaseTestCase.INSTANCE.authenticationService.authenticationExists(userName)) {
@@ -114,9 +104,4 @@ public class BeCPGTestHelper {
 		}
 	}
 
-	
-
-
-	
-	
 }

@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2018 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2018 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.test.repo.product.lexer;
@@ -20,8 +20,6 @@ package fr.becpg.test.repo.product.lexer;
 import java.util.Date;
 import java.util.List;
 
-import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
-import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
@@ -51,50 +49,49 @@ public class CompositionLexerIT extends AbstractFinishedProductTest {
 
 	@Test
 	public void testCompositionLexer() throws Exception {
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			String recipe = "5 P Raw material 1\n 12,9 gr Raw material 2\n 25.5005 g Raw material 3\n50 Raw material 5";
 
-		String recipe = "5 P Raw material 1\n 12,9 gr Raw material 2\n 25.5005 g Raw material 3\n50 Raw material 5";
+			List<CompoListDataItem> ret = CompositionLexer.lexMultiLine(recipe);
 
-		List<CompoListDataItem> ret = CompositionLexer.lexMultiLine(recipe);
+			int check = 0;
+			for (CompoListDataItem item : ret) {
 
-		int check = 0;
-		for (CompoListDataItem item : ret) {
-
-			if (item.getProduct().equals(rawMaterial1NodeRef) && item.getQtySubFormula().equals(5d)
-					&& item.getCompoListUnit().equals(ProductUnit.P)) {
-				check++;
+				if (item.getProduct().equals(rawMaterial1NodeRef) && item.getQtySubFormula().equals(5d)
+						&& item.getCompoListUnit().equals(ProductUnit.P)) {
+					check++;
+				}
+				if (item.getProduct().equals(rawMaterial2NodeRef) && item.getQtySubFormula().equals(12.9d)
+						&& item.getCompoListUnit().equals(ProductUnit.g)) {
+					check++;
+				}
+				if (item.getProduct().equals(rawMaterial3NodeRef) && item.getQtySubFormula().equals(25.5005d)
+						&& item.getCompoListUnit().equals(ProductUnit.g)) {
+					check++;
+				}
+				if (item.getProduct().equals(rawMaterial5NodeRef) && item.getQtySubFormula().equals(50d)
+						&& item.getCompoListUnit().equals(ProductUnit.P)) {
+					check++;
+				}
 			}
-			if (item.getProduct().equals(rawMaterial2NodeRef) && item.getQtySubFormula().equals(12.9d)
-					&& item.getCompoListUnit().equals(ProductUnit.g)) {
-				check++;
-			}
-			if (item.getProduct().equals(rawMaterial3NodeRef) && item.getQtySubFormula().equals(25.5005d)
-					&& item.getCompoListUnit().equals(ProductUnit.g)) {
-				check++;
-			}
-			if (item.getProduct().equals(rawMaterial5NodeRef) && item.getQtySubFormula().equals(50d)
-					&& item.getCompoListUnit().equals(ProductUnit.P)) {
-				check++;
-			}
-		}
 
-		org.junit.Assert.assertEquals(4, check);
-
+			org.junit.Assert.assertEquals(4, check);
+			return true;
+		}, false, true);
 	}
 
 	@Test
 	public void testFormulateRecipe() throws Exception {
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			public NodeRef execute() throws Throwable {
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-				String recipe = "5 P Raw material 1\n 12,9 gr Raw material 2\n 25.5005 g Raw material 3\n50 Raw material 5";
+			String recipe = "5 P Raw material 1\n 12,9 gr Raw material 2\n 25.5005 g Raw material 3\n50 Raw material 5";
 
-				ProductData productData = productService.formulateText(recipe);
+			ProductData productData = productService.formulateText(recipe);
 
-				org.junit.Assert.assertNotNull(productData);
-				return null;
+			org.junit.Assert.assertNotNull(productData);
+			return null;
 
-			}
 		}, false, true);
 	}
 

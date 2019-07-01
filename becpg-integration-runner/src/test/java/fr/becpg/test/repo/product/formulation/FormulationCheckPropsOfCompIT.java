@@ -93,11 +93,13 @@ public class FormulationCheckPropsOfCompIT extends AbstractFinishedProductTest {
 							assertTrue(r.getSources().contains(rawMaterial1NodeRef) && r.getSources().contains(rawMaterial5NodeRef)
 									&& r.getSources().contains(rawMaterial6NodeRef) && r.getSources().contains(rawMaterial7NodeRef));
 						} else if (source.equals(finishedProductNodeRef1)) {
-							//only legal name is filled
+							// only legal name is filled
 							assertTrue(r.getReqMessage().equals("Champ obligatoire 'Précautions d'emploi' manquant (catalogue 'EU 1169/2011 (INCO)')")
-									|| r.getReqMessage().equals("Champ obligatoire 'Conditions de conservation' manquant (catalogue 'EU 1169/2011 (INCO)')")
-							|| r.getReqMessage().equals("Champ obligatoire 'DLC (J) ou DDM/DLUO (J)' manquant (catalogue 'EU 1169/2011 (INCO)')")
-							|| r.getReqMessage().equals("Champ obligatoire 'Titre' manquant (catalogue 'EU 1169/2011 (INCO)')"));
+									|| r.getReqMessage()
+											.equals("Champ obligatoire 'Conditions de conservation' manquant (catalogue 'EU 1169/2011 (INCO)')")
+									|| r.getReqMessage()
+											.equals("Champ obligatoire 'DLC (J) ou DDM/DLUO (J)' manquant (catalogue 'EU 1169/2011 (INCO)')")
+									|| r.getReqMessage().equals("Champ obligatoire 'Titre' manquant (catalogue 'EU 1169/2011 (INCO)')"));
 						} else if (source.equals(rawMaterial5NodeRef)) {
 							assertEquals("L'unité utilisée n'est pas la bonne.", r.getReqMessage());
 							checks++;
@@ -106,7 +108,7 @@ public class FormulationCheckPropsOfCompIT extends AbstractFinishedProductTest {
 							checks++;
 						} else {
 							// should not occur
-							
+
 							assertTrue(false);
 						}
 					}

@@ -54,7 +54,7 @@ public class RemoteEntityWebScriptIT extends RepoBaseTestCase {
 			}
 
 			return null;
-		} , false, true);
+		}, false, true);
 
 		// Call webscript on raw material
 		String url = "/becpg/remote/entity";
@@ -62,26 +62,30 @@ public class RemoteEntityWebScriptIT extends RepoBaseTestCase {
 		Resource res = new ClassPathResource("beCPG/remote/entity.xml");
 		Resource data = new ClassPathResource("beCPG/remote/data.xml");
 
-		Response response = TestWebscriptExecuters.sendRequest(new PutRequest(url, convertStreamToString(res.getInputStream()), "application/xml"),
-				200, "admin");
-		logger.info("Resp : " + response.getContentAsString());
+		final NodeRef nodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-		final NodeRef nodeRef = parseNodeRef(response.getContentAsString());
+			Response response = TestWebscriptExecuters
+					.sendRequest(new PutRequest(url, convertStreamToString(res.getInputStream()), "application/xml"), 200, "admin");
+			logger.info("Resp : " + response.getContentAsString());
 
-		logger.info("Name : " + nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
+			NodeRef ret = parseNodeRef(response.getContentAsString());
 
-		Assert.assertTrue(nodeService.exists(nodeRef));
+			logger.info("Name : " + nodeService.getProperty(ret, ContentModel.PROP_NAME));
 
-		NodeRef imageNodeRef = entityService.getImageFolder(nodeRef);
+			Assert.assertTrue(nodeService.exists(ret));
 
-		Assert.assertNotNull(imageNodeRef);
-		Assert.assertEquals(0, fileFolderService.list(imageNodeRef).size());
+			NodeRef imageNodeRef = entityService.getImageFolder(ret);
 
+			Assert.assertNotNull(imageNodeRef);
+			Assert.assertEquals(0, fileFolderService.list(imageNodeRef).size());
+
+			return ret;
+		}, false, true);
 		// create product
 		final NodeRef sfNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> entityService.createDefaultImage(nodeRef),
 				false, true);
 
-		response = TestWebscriptExecuters.sendRequest(
+		Response response = TestWebscriptExecuters.sendRequest(
 				new PostRequest(url + "/data?nodeRef=" + sfNodeRef.toString(), convertStreamToString(data.getInputStream()), "application/xml"), 200,
 				"admin");
 		logger.info("Resp : " + response.getContentAsString());
@@ -93,13 +97,13 @@ public class RemoteEntityWebScriptIT extends RepoBaseTestCase {
 			}
 		}
 
-		Assert.assertEquals(1, fileFolderService.list(imageNodeRef).size());
+		Assert.assertEquals(1, fileFolderService.list(entityService.getImageFolder(nodeRef)).size());
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			nodeService.deleteNode(nodeRef);
 			return null;
-		} , false, true);
+		}, false, true);
 
 	}
 

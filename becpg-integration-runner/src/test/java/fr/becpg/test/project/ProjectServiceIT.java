@@ -91,7 +91,7 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 			assertEquals(DeliverableState.Planned, projectData.getDeliverableList().get(2).getState());
 
 			return null;
-		} , false, true);
+		}, false, true);
 	}
 
 	/**
@@ -117,7 +117,7 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 			alfrescoRepository.save(projectData);
 
 			return null;
-		} , false, true);
+		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -134,7 +134,7 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 			alfrescoRepository.save(projectData);
 
 			return null;
-		} , false, true);
+		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -152,11 +152,10 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 			alfrescoRepository.save(projectData);
 
 			return null;
-		} , false, true);
+		}, false, true);
 
 	}
 
-	
 	@Test
 	public void testonHoldProject() {
 
@@ -177,7 +176,7 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 			alfrescoRepository.save(projectData);
 
 			return null;
-		} , false, true);
+		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -194,7 +193,7 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 			alfrescoRepository.save(projectData);
 
 			return null;
-		} , false, true);
+		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -212,10 +211,10 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 			alfrescoRepository.save(projectData);
 
 			return null;
-		} , false, true);
+		}, false, true);
 
 	}
-	
+
 	/**
 	 * Test a project can be deleted (and workflow)
 	 */
@@ -236,14 +235,14 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 			nodeService.deleteNode(projectNodeRef);
 
 			return projectData.getTaskList().get(0).getWorkflowInstance();
-		} , false, true);
+		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			assertEquals(null, workflowService.getWorkflowById(workflowInstanceId));
 
 			return null;
-		} , false, true);
+		}, false, true);
 	}
 
 	@Test
@@ -280,14 +279,17 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 					ProjectModel.TYPE_TASK_LEGEND);
 
 			return assocRef.getChildRef();
-		} , false, true);
+		}, false, true);
 
-		Assert.assertNull(projectService.getProjectsContainer(null));
-		Assert.assertTrue(projectService.getTaskLegendList().size() > 0);
-	
-		logger.debug("Look for legend:"+legendNodeRef);
-		
-		Assert.assertTrue(projectService.getTaskLegendList().contains(legendNodeRef));
+		logger.debug("Look for legend:" + legendNodeRef);
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			Assert.assertNull(projectService.getProjectsContainer(null));
+			Assert.assertTrue(projectService.getTaskLegendList().size() > 0);
+
+			Assert.assertTrue(projectService.getTaskLegendList().contains(legendNodeRef));
+			return null;
+		}, false, true);
 	}
 
 	@Test
@@ -332,7 +334,7 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 			assertEquals(4, checks);
 
 			return null;
-		} , false, true);
+		}, false, true);
 
 	}
 
@@ -389,7 +391,7 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 			assertEquals(dateFormat.parse("15/11/2012"), projectData.getTaskList().get(5).getEnd());
 
 			return null;
-		} , false, true);
+		}, false, true);
 	}
 
 	@Test
@@ -414,14 +416,14 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 			projectData = (ProjectData) alfrescoRepository.save(projectData);
 
 			return projectData.getNodeRef();
-		} , false, true);
+		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 			assertEquals(ProjectState.InProgress, projectData.getProjectState());
 			return null;
-		} , false, true);
+		}, false, true);
 
 	}
 
@@ -460,7 +462,7 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 			alfrescoRepository.save(projectData);
 
 			return null;
-		} , false, true);
+		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -470,7 +472,7 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 			assertEquals(6, projectData.getScore().intValue());
 
 			return null;
-		} , false, true);
+		}, false, true);
 	}
 
 	/**
@@ -503,7 +505,7 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 			projectData.setTaskList(taskList);
 			projectData = (ProjectData) alfrescoRepository.save(projectData);
 			return projectData.getNodeRef();
-		} , false, true);
+		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -525,7 +527,7 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 			assertEquals(ProjectState.Completed, projectData.getProjectState());
 
 			return null;
-		} , false, true);
+		}, false, true);
 	}
 
 	@Test
@@ -573,7 +575,7 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 			assertEquals(1, (pooledWorkflowTasks2.size() - pooledWorkflowTasks1.size()));
 
 			return null;
-		} , false, true);
+		}, false, true);
 
 	}
 
@@ -593,7 +595,7 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 			assertEquals(DeliverableState.InProgress, projectData.getDeliverableList().get(0).getState());
 
 			return projectData.getTaskList().get(0).getWorkflowInstance();
-		} , false, true);
+		}, false, true);
 
 		final NodeRef copiedProjectNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(
 				() -> copyService.copy(projectNodeRef, getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true), false,
@@ -612,7 +614,7 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 
 			return null;
 
-		} , false, true);
+		}, false, true);
 	}
 
 	@Test
@@ -650,10 +652,9 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 					taskListDataItemDB.getResources());
 
 			return null;
-		} , false, true);
+		}, false, true);
 	}
-	
-	
+
 	@Test
 	public void testPooledWorkflowProperties() {
 
@@ -670,7 +671,6 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 			checkWorkflowProperties(workflowInstanceId, taskListDataItem.getNodeRef(), "Pjt 1 - task1", taskListDataItem.getEnd(),
 					taskListDataItem.getResources());
 
-			
 			// modify WF props (duration and add a resource)
 			logger.info("modify WF props");
 			taskListDataItem.setTaskName("task4 modified");
@@ -680,23 +680,19 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 			alfrescoRepository.save(projectData);
 			projectService.formulate(projectNodeRef);
 
-			WorkflowTask task =  getNextTaskForWorkflow(workflowInstanceId);
-			
-			Assert.assertNull(task.getProperties().get(ContentModel.PROP_OWNER));			
-			 
-			Map<QName,Serializable> taskProp = new HashMap<>();
-			
+			WorkflowTask task = getNextTaskForWorkflow(workflowInstanceId);
+
+			Assert.assertNull(task.getProperties().get(ContentModel.PROP_OWNER));
+
+			Map<QName, Serializable> taskProp = new HashMap<>();
+
 			taskProp.put(ContentModel.PROP_OWNER, BeCPGTestHelper.USER_ONE);
-			
-			
-			workflowService.updateTask(task.getId(),taskProp , null, null);
-			
+
+			workflowService.updateTask(task.getId(), taskProp, null, null);
+
 			alfrescoRepository.save(projectData);
 			projectService.formulate(projectNodeRef);
-			
-		
 
-			
 			// check workflow props
 			projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 			TaskListDataItem taskListDataItemDB = projectData.getTaskList().get(0);
@@ -704,14 +700,14 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 			assertEquals(taskListDataItem.getDuration(), taskListDataItemDB.getDuration());
 			assertEquals(taskListDataItem.getResources(), taskListDataItemDB.getResources());
 			assertEquals(1, taskListDataItemDB.getResources().size());
-			
-			 task =  getNextTaskForWorkflow(workflowInstanceId);
-			 Assert.assertEquals( BeCPGTestHelper.USER_ONE,task.getProperties().get(ContentModel.PROP_OWNER));
-			
+
+			task = getNextTaskForWorkflow(workflowInstanceId);
+			Assert.assertEquals(BeCPGTestHelper.USER_ONE, task.getProperties().get(ContentModel.PROP_OWNER));
+
 			return null;
-		} , false, true);
+		}, false, true);
 	}
-	
+
 	protected WorkflowTask getNextTaskForWorkflow(String workflowInstanceId) {
 		WorkflowTaskQuery taskQuery = new WorkflowTaskQuery();
 		taskQuery.setProcessId(workflowInstanceId);
@@ -721,7 +717,6 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 		assertEquals(1, workflowTasks.size());
 		return workflowTasks.get(0);
 	}
-	
 
 	private void checkWorkflowProperties(String workflowInstance, NodeRef taskListDataItemNodeRef, String workflowDescription, Date dueDate,
 			List<NodeRef> assignees) {
@@ -768,7 +763,7 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 			nodeService.deleteNode(projectData.getDeliverableList().get(0).getNodeRef());
 
 			return workflowInstanceId;
-		} , false, true);
+		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -786,14 +781,14 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 			nodeService.deleteNode(projectData.getTaskList().get(0).getNodeRef());
 
 			return null;
-		} , false, true);
+		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			assertNull(workflowService.getWorkflowById(finalWorkflowInstanceId));
 
 			return null;
-		} , false, true);
+		}, false, true);
 	}
 
 	@Test
@@ -816,7 +811,7 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 			nodeService.deleteNode(projectData.getTaskList().get(1).getNodeRef());
 
 			return null;
-		} , false, true);
+		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -828,6 +823,6 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 			assertEquals(projectData.getTaskList().get(0).getNodeRef(), prevTasks.get(0));
 
 			return null;
-		} , false, true);
+		}, false, true);
 	}
 }

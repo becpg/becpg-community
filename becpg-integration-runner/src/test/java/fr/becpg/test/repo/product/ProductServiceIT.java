@@ -53,9 +53,9 @@ import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.PackagingMaterialData;
 import fr.becpg.repo.product.data.RawMaterialData;
-import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
+import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.report.entity.EntityReportService;
@@ -117,7 +117,7 @@ public class ProductServiceIT extends PLMBaseTestCase {
 
 			return null;
 
-		} , false, true);
+		}, false, true);
 
 	}
 
@@ -142,7 +142,7 @@ public class ProductServiceIT extends PLMBaseTestCase {
 			logger.debug("Create product");
 			return BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test report");
 
-		} , false, true);
+		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -153,11 +153,11 @@ public class ProductServiceIT extends PLMBaseTestCase {
 			logger.debug("/*-- Check report --*/");
 			NodeRef documentsNodeRef = nodeService.getChildByName(rawMaterialNodeRef, ContentModel.ASSOC_CONTAINS, "Documents");
 			assertNotNull(documentsNodeRef);
-			
+
 			NodeRef documentNodeRef = nodeService.getChildByName(documentsNodeRef, ContentModel.ASSOC_CONTAINS,
 					"MP test report - Fiche Technique.pdf");
 			assertNotNull(documentNodeRef);
-			
+
 			ContentReader reader = contentService.getReader(documentNodeRef, ContentModel.PROP_CONTENT);
 			assertNotNull("Reader should not be null", reader);
 			InputStream in = reader.getContentInputStream();
@@ -182,7 +182,7 @@ public class ProductServiceIT extends PLMBaseTestCase {
 
 			return null;
 
-		} , false, true);
+		}, false, true);
 	}
 
 	/**
@@ -226,7 +226,7 @@ public class ProductServiceIT extends PLMBaseTestCase {
 
 			return null;
 
-		} , false, true);
+		}, false, true);
 
 		/*-- Create raw material --*/
 		NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -239,7 +239,7 @@ public class ProductServiceIT extends PLMBaseTestCase {
 
 			return rawMaterialNodeRef1;
 
-		} , false, true);
+		}, false, true);
 
 		// Check
 		logger.debug("//Check raw material");
@@ -258,15 +258,19 @@ public class ProductServiceIT extends PLMBaseTestCase {
 
 			return finishedProductNodeRef1;
 
-		} , false, true);
+		}, false, true);
 
 		// Check
-		logger.debug("//Check finished product");
-		NodeRef imagesFolder = nodeService.getChildByName(finishedProductNodeRef, ContentModel.ASSOC_CONTAINS,
-				TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
-		assertNotNull(imagesFolder);
-		
-		assertNotNull("Image product must be not null", entityService.getEntityDefaultImage(finishedProductNodeRef));
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			logger.debug("//Check finished product");
+			NodeRef imagesFolder = nodeService.getChildByName(finishedProductNodeRef, ContentModel.ASSOC_CONTAINS,
+					TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
+			assertNotNull(imagesFolder);
+
+			assertNotNull("Image product must be not null", entityService.getEntityDefaultImage(finishedProductNodeRef));
+			return null;
+
+		}, false, true);
 	}
 
 	/**
@@ -334,7 +338,7 @@ public class ProductServiceIT extends PLMBaseTestCase {
 			rawMaterial.setState(SystemState.Valid);
 			return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef();
 
-		} , false, true);
+		}, false, true);
 
 		waitForSolr(startTime);
 
@@ -385,7 +389,7 @@ public class ProductServiceIT extends PLMBaseTestCase {
 			rawMaterial2.setState(SystemState.Valid);
 			return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial2).getNodeRef();
 
-		} , false, true);
+		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -408,7 +412,7 @@ public class ProductServiceIT extends PLMBaseTestCase {
 
 			return null;
 
-		} , false, true);
+		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -418,7 +422,7 @@ public class ProductServiceIT extends PLMBaseTestCase {
 
 			return null;
 
-		} , false, true);
+		}, false, true);
 	}
 
 	/**
@@ -437,7 +441,7 @@ public class ProductServiceIT extends PLMBaseTestCase {
 			rawMaterial.setName("Raw material");
 			return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef();
 
-		} , false, true);
+		}, false, true);
 
 		final NodeRef lSF1NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -445,7 +449,7 @@ public class ProductServiceIT extends PLMBaseTestCase {
 			lSF1.setName("Local semi finished 1");
 			return alfrescoRepository.create(getTestFolderNodeRef(), lSF1).getNodeRef();
 
-		} , false, true);
+		}, false, true);
 
 		final NodeRef lSF2NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -453,7 +457,7 @@ public class ProductServiceIT extends PLMBaseTestCase {
 			lSF2.setName("Local semi finished 2");
 			return alfrescoRepository.create(getTestFolderNodeRef(), lSF2).getNodeRef();
 
-		} , false, true);
+		}, false, true);
 
 		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -468,7 +472,7 @@ public class ProductServiceIT extends PLMBaseTestCase {
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
-		} , false, true);
+		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -495,7 +499,7 @@ public class ProductServiceIT extends PLMBaseTestCase {
 
 			return null;
 
-		} , false, true);
+		}, false, true);
 	}
 
 	private List<CompoListDataItem> getWUsedCompoList(NodeRef productNodeRef) {
@@ -576,7 +580,7 @@ public class ProductServiceIT extends PLMBaseTestCase {
 
 			return null;
 
-		} , false, true);
+		}, false, true);
 	}
 
 	private List<PackagingListDataItem> getWUsedPackagingList(NodeRef productNodeRef) {

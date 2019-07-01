@@ -27,48 +27,26 @@ import fr.becpg.test.repo.web.scripts.report.ExportSearchWebScriptIT;
 import fr.becpg.test.repo.web.scripts.search.SearchWebScriptIT;
 
 @RunWith(Suite.class)
-@SuiteClasses(value={
-		AdminModuleWebScriptIT.class,
-		CompoListValuePluginIT.class,
-		ListValueServiceIT.class,
-		CompositionLexerIT.class,
-	
-		ProductServiceIT.class,
-		EntityDictionnaryWebScriptIT.class,
-		EntityListsWebScriptIT.class,
-		AutoCompleteWebScriptIT.class,
+@SuiteClasses(value = { AdminModuleWebScriptIT.class, CompoListValuePluginIT.class, ListValueServiceIT.class, CompositionLexerIT.class,
+
+		ProductServiceIT.class, EntityDictionnaryWebScriptIT.class, EntityListsWebScriptIT.class, AutoCompleteWebScriptIT.class,
 		ProductWUsedWebScriptIT.class,
-	
+
 		SearchWebScriptIT.class,
-		
-		//Compare
-		CompareProductServiceIT.class,
-		CompareDocumentServiceIT.class,
-		
-		
-		//Slow
-		MultiLevelDataServiceIT.class,
-		EntityReportServiceIT.class,
-		
-		
+
+		// Compare
+		CompareProductServiceIT.class, CompareDocumentServiceIT.class,
+
+		// Slow
+		MultiLevelDataServiceIT.class, EntityReportServiceIT.class,
+
 		EntityVersionWebScriptIT.class,
-		
-		
-		//Bug
-		CheckOutCheckInWebScriptIT.class,
-	    RemoteEntityWebScriptIT.class,
-		ExportSearchWebScriptIT.class,
-		CompareProductReportWebScriptIT.class,
-		
-		
-		//Project
-		NPDServiceIT.class,
-		ProjectListSortIT.class
-})
+
+		// Bug
+		CheckOutCheckInWebScriptIT.class, RemoteEntityWebScriptIT.class, ExportSearchWebScriptIT.class, CompareProductReportWebScriptIT.class,
+
+		// Project
+		NPDServiceIT.class, ProjectListSortIT.class })
 public class IntegrationTestSuite {
 
-
 }
-
-
-

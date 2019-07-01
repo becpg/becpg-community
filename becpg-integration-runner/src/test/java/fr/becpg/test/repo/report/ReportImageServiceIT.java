@@ -7,7 +7,6 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
@@ -31,48 +30,41 @@ public class ReportImageServiceIT extends RepoBaseTestCase {
 
 		extractImage("beCPG/birt/productImage2.jpg");
 		extractImage("beCPG/birt/productImage.jpg");
-		
 
 	}
-	
-	
-	private void extractImage(final String path){
-		
-		Assert.notNull(transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<byte[]>() {
-			public byte[] execute() throws Throwable {
 
-				NodeRef tempImgNodeRef = nodeService
-						.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, ContentModel.TYPE_CONTENT)
-						.getChildRef();
+	private void extractImage(final String path) {
 
-				ContentWriter writer = contentService.getWriter(tempImgNodeRef, ContentModel.PROP_CONTENT, true);
-				if (writer != null) {
+		Assert.notNull(transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-					ClassPathResource resource = new ClassPathResource(path);
+			NodeRef tempImgNodeRef = nodeService
+					.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, ContentModel.TYPE_CONTENT)
+					.getChildRef();
 
-					writer.setMimetype("image/jpeg");
-					writer.putContent(resource.getInputStream());
+			ContentWriter writer = contentService.getWriter(tempImgNodeRef, ContentModel.PROP_CONTENT, true);
+			if (writer != null) {
 
-					if (logger.isDebugEnabled()) {
-						logger.debug("File successfully modified");
-					}
-				} else {
-					logger.error("Cannot write node");
+				ClassPathResource resource = new ClassPathResource(path);
+
+				writer.setMimetype("image/jpeg");
+				writer.putContent(resource.getInputStream());
+
+				if (logger.isDebugEnabled()) {
+					logger.debug("File successfully modified");
 				}
-
-				Iterator<ImageReader> readers = ImageIO.getImageReadersByFormatName("JPEG");
-				while (readers.hasNext()) {
-					logger.info("reader: " + readers.next());
-				}
-				
-				
-				return entityService.getImage(tempImgNodeRef);
-				
-
+			} else {
+				logger.error("Cannot write node");
 			}
+
+			Iterator<ImageReader> readers = ImageIO.getImageReadersByFormatName("JPEG");
+			while (readers.hasNext()) {
+				logger.info("reader: " + readers.next());
+			}
+
+			return entityService.getImage(tempImgNodeRef);
+
 		}, false, true));
 
-		
 	}
 
 }

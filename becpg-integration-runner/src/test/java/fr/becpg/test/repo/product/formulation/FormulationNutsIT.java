@@ -89,39 +89,39 @@ public class FormulationNutsIT extends AbstractFinishedProductTest {
 			String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME) + " - value: "
 					+ nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
 			logger.info(trace);
-							
+
 			if (nutListDataItem.getNut().equals(nut1)) {
 				assertNotSame("nut1.getValue() == 3, actual values: " + trace, 3d, nutListDataItem.getValue());
 				assertEquals("nut1.getUnit() == kJ/100g, actual values: " + trace, "kJ/100g", nutListDataItem.getUnit());
 				assertEquals("must be group1", GROUP1, nutListDataItem.getGroup());
-				checks++; 
+				checks++;
 			}
 			if (nutListDataItem.getNut().equals(nut2)) {
 				assertEquals("nut2.getValue() == 6, actual values: " + trace, 6d, nutListDataItem.getValue());
 				assertEquals("nut2.getUnit() == kcal/100g, actual values: " + trace, "kcal/100g", nutListDataItem.getUnit());
 				assertEquals("must be group2", GROUP2, nutListDataItem.getGroup());
-				assertEquals((6d * 50d) / 100, nutListDataItem.getValuePerServing());		
+				assertEquals((6d * 50d) / 100, nutListDataItem.getValuePerServing());
 				assertEquals((100 * nutListDataItem.getValuePerServing()) / 2000d, nutListDataItem.getGdaPerc());
-				
-				
-				assertEquals(NutrientFormulationHelper.extractValuePerServing(nutListDataItem.getRoundedValue(), Locale.FRENCH).doubleValue(), (6d * 50d) / 100);
-				
+
+				assertEquals(NutrientFormulationHelper.extractValuePerServing(nutListDataItem.getRoundedValue(), Locale.FRENCH).doubleValue(),
+						(6d * 50d) / 100);
+
 				checks++;
 			}
 			if (nutListDataItem.getNut().equals(nut3)) {
 				assertEquals("nut3.getValue() == 14, actual values: " + trace, 14d, nutListDataItem.getValue());
 				checks++;
 			}
-			 if (nutListDataItem.getNut().equals(nut4)) {
-	                assertEquals("nut4.getValue() == 1.5d, actual values: " + trace, 1.5d, nutListDataItem.getValue());
+			if (nutListDataItem.getNut().equals(nut4)) {
+				assertEquals("nut4.getValue() == 1.5d, actual values: " + trace, 1.5d, nutListDataItem.getValue());
 
-	                assertEquals(NutrientFormulationHelper.extractValue(nutListDataItem.getRoundedValue(), Locale.FRENCH).doubleValue(), 2d);
-	                assertEquals(NutrientFormulationHelper.extractValue(nutListDataItem.getRoundedValue(), Locale.US).doubleValue(), 2d);
-	                assertEquals(NutrientFormulationHelper.extractMini(nutListDataItem.getRoundedValue(), Locale.FRENCH).doubleValue(),0d);
-	                assertEquals(NutrientFormulationHelper.extractMaxi(nutListDataItem.getRoundedValue(), Locale.FRENCH).doubleValue(), 1d);
-	            
-	                checks++;
-	            }
+				assertEquals(NutrientFormulationHelper.extractValue(nutListDataItem.getRoundedValue(), Locale.FRENCH).doubleValue(), 2d);
+				assertEquals(NutrientFormulationHelper.extractValue(nutListDataItem.getRoundedValue(), Locale.US).doubleValue(), 2d);
+				assertEquals(NutrientFormulationHelper.extractMini(nutListDataItem.getRoundedValue(), Locale.FRENCH).doubleValue(), 0d);
+				assertEquals(NutrientFormulationHelper.extractMaxi(nutListDataItem.getRoundedValue(), Locale.FRENCH).doubleValue(), 1d);
+
+				checks++;
+			}
 
 			assertEquals(NutsCalculatingFormulationHandler.NUT_FORMULATED, nutListDataItem.getMethod());
 		}
@@ -132,7 +132,7 @@ public class FormulationNutsIT extends AbstractFinishedProductTest {
 			assertEquals(3, checks);
 		}
 
-		//ReqCtrlList
+		// ReqCtrlList
 		checks = 0;
 
 		String message0 = I18NUtil.getMessage(NutsRequirementScanner.MESSAGE_NUT_NOT_IN_RANGE,
@@ -165,7 +165,7 @@ public class FormulationNutsIT extends AbstractFinishedProductTest {
 
 		assertEquals(3, checks);
 	}
-	
+
 	protected NodeRef createFullProductNodeRef(final String name) {
 		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -198,12 +198,10 @@ public class FormulationNutsIT extends AbstractFinishedProductTest {
 			finishedProduct.setProjectedQty(10000l);
 			List<CompoListDataItem> compoList = new ArrayList<>();
 			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
-			compoList
-					.add(new CompoListDataItem(null, compoList.get(0), null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
 			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
 			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
-			compoList
-					.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+			compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 			compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 

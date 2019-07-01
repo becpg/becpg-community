@@ -10,7 +10,6 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -27,7 +26,7 @@ import fr.becpg.test.PLMBaseTestCase;
 // TODO: Auto-generated Javadoc
 /**
  * The Class ProductListPoliciesTest.
- * 
+ *
  * @author querephi
  */
 public class ProductListPoliciesIT extends PLMBaseTestCase {
@@ -42,34 +41,31 @@ public class ProductListPoliciesIT extends PLMBaseTestCase {
 	@Test
 	public void testGetList() {
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-				RawMaterialData rawMaterialData = new RawMaterialData();
-				rawMaterialData.setName("RM");
-				NodeRef rawMaterialNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterialData).getNodeRef();
+			RawMaterialData rawMaterialData = new RawMaterialData();
+			rawMaterialData.setName("RM");
+			NodeRef rawMaterialNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterialData).getNodeRef();
 
-				NodeRef containerListNodeRef = entityListDAO.getListContainer(rawMaterialNodeRef);
+			NodeRef containerListNodeRef = entityListDAO.getListContainer(rawMaterialNodeRef);
 
-				Map<QName, Serializable> properties = new HashMap<>();
-				properties.put(ContentModel.PROP_NAME, GUID.generate());
-				properties.put(DataListModel.PROP_DATALISTITEMTYPE, BeCPGModel.BECPG_PREFIX + ":" + PLMModel.TYPE_COSTLIST.getLocalName());
-				NodeRef costListCreatedNodeRef = nodeService.createNode(containerListNodeRef, ContentModel.ASSOC_CONTAINS,
-						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), DataListModel.TYPE_DATALIST, properties)
-						.getChildRef();
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(ContentModel.PROP_NAME, GUID.generate());
+			properties.put(DataListModel.PROP_DATALISTITEMTYPE, BeCPGModel.BECPG_PREFIX + ":" + PLMModel.TYPE_COSTLIST.getLocalName());
+			NodeRef costListCreatedNodeRef = nodeService.createNode(containerListNodeRef, ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
+					DataListModel.TYPE_DATALIST, properties).getChildRef();
 
-				NodeRef costListNodeRef = entityListDAO.getList(entityListDAO.getListContainer(rawMaterialNodeRef), PLMModel.TYPE_COSTLIST);
-				assertNotNull("cost list should exist", costListNodeRef);
-				assertEquals("cost list should be the same", costListCreatedNodeRef, costListNodeRef);
+			NodeRef costListNodeRef = entityListDAO.getList(entityListDAO.getListContainer(rawMaterialNodeRef), PLMModel.TYPE_COSTLIST);
+			assertNotNull("cost list should exist", costListNodeRef);
+			assertEquals("cost list should be the same", costListCreatedNodeRef, costListNodeRef);
 
-				costListNodeRef = entityListDAO.getList(entityListDAO.getListContainer(rawMaterialNodeRef), PLMModel.TYPE_COSTLIST);
-				assertNotNull("cost list should exist", costListNodeRef);
-				assertEquals("cost list should be the same", costListCreatedNodeRef, costListNodeRef);
+			costListNodeRef = entityListDAO.getList(entityListDAO.getListContainer(rawMaterialNodeRef), PLMModel.TYPE_COSTLIST);
+			assertNotNull("cost list should exist", costListNodeRef);
+			assertEquals("cost list should be the same", costListCreatedNodeRef, costListNodeRef);
 
-				return null;
+			return null;
 
-			}
 		}, false, true);
 
 	}

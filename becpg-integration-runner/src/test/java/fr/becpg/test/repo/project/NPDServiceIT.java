@@ -1,15 +1,18 @@
 /*
- * 
+ *
  */
 package fr.becpg.test.repo.project;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.CopyService;
@@ -35,7 +38,7 @@ import fr.becpg.test.project.AbstractProjectTestCase;
 
 /**
  * The Class ProjectServiceTest.
- * 
+ *
  * @author quere
  */
 public class NPDServiceIT extends AbstractProjectTestCase {
@@ -55,48 +58,40 @@ public class NPDServiceIT extends AbstractProjectTestCase {
 	private PersonService personService;
 
 	private static final String NPDWF_URI = "http://www.bcpg.fr/model/npd-workflow/1.0";
-	
 
 	@Test
 	public void testNPDProjectTask() {
 
-		final NodeRef projectNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
+		final NodeRef projectNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-				// create project Tpl
-				ProjectData projectData = new ProjectData(null, "Pjt", PROJECT_HIERARCHY1_SEA_FOOD_REF, PROJECT_HIERARCHY2_CRUSTACEAN_REF, null,
-						null, null, PlanningMode.Planning, null, null, null, 0, null);
+			// create project Tpl
+			ProjectData projectData = new ProjectData(null, "Pjt", PROJECT_HIERARCHY1_SEA_FOOD_REF, PROJECT_HIERARCHY2_CRUSTACEAN_REF, null, null,
+					null, PlanningMode.Planning, null, null, null, 0, null);
 
-				// create datalists
-				List<TaskListDataItem> taskList = new LinkedList<>();
-				taskList.add(new TaskListDataItem(null, "task1", false, 2, null, assigneesOne, taskLegends.get(0), "activiti$projectNewProduct"));
-				projectData.setTaskList(taskList);
+			// create datalists
+			List<TaskListDataItem> taskList = new LinkedList<>();
+			taskList.add(new TaskListDataItem(null, "task1", false, 2, null, assigneesOne, taskLegends.get(0), "activiti$projectNewProduct"));
+			projectData.setTaskList(taskList);
 
-				projectData.setParentNodeRef(getTestFolderNodeRef());
-				projectData = (ProjectData) alfrescoRepository.save(projectData);
-				
+			projectData.setParentNodeRef(getTestFolderNodeRef());
+			projectData = (ProjectData) alfrescoRepository.save(projectData);
 
-				// start
-				projectData.setProjectState(ProjectState.InProgress);
-				projectData = (ProjectData) alfrescoRepository.save(projectData);
+			// start
+			projectData.setProjectState(ProjectState.InProgress);
+			projectData = (ProjectData) alfrescoRepository.save(projectData);
 
-				return projectData.getNodeRef();
-			}
+			return projectData.getNodeRef();
 		}, false, true);
 
-		String workflowInstance = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<String>() {
-			@Override
-			public String execute() throws Throwable {
+		String workflowInstance = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
-				assertEquals(ProjectState.InProgress, projectData.getProjectState());
+			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+			assertEquals(ProjectState.InProgress, projectData.getProjectState());
 
-				logger.info("workflow instance " + projectData.getTaskList().get(0).getWorkflowInstance());
-				assertNotNull(projectData.getTaskList().get(0).getWorkflowInstance());
+			logger.info("workflow instance " + projectData.getTaskList().get(0).getWorkflowInstance());
+			assertNotNull(projectData.getTaskList().get(0).getWorkflowInstance());
 
-				return projectData.getTaskList().get(0).getWorkflowInstance();
-			}
+			return projectData.getTaskList().get(0).getWorkflowInstance();
 		}, false, true);
 
 		testNPDWorkflow(workflowInstance);
@@ -106,107 +101,101 @@ public class NPDServiceIT extends AbstractProjectTestCase {
 	private void testNPDWorkflow(final String workflowInstanceId) {
 		assertNotNull("The workflow instance is null!", workflowInstanceId);
 
-		List<WorkflowPath> paths = workflowService.getWorkflowPaths(workflowInstanceId);
-		assertEquals(1, paths.size());
-		WorkflowPath path = paths.get(0);
+		List<WorkflowTask> tasks = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			List<WorkflowPath> paths = workflowService.getWorkflowPaths(workflowInstanceId);
+			assertEquals(1, paths.size());
+			WorkflowPath path = paths.get(0);
 
-		List<WorkflowTask> tasks = workflowService.getTasksForWorkflowPath(path.getId());
+			return workflowService.getTasksForWorkflowPath(path.getId());
+		}, false, true);
 		assertEquals(1, tasks.size());
 
 		final WorkflowTask task1 = tasks.get(0);
 
 		assertEquals("npdwf:newProductTask", task1.getName());
 
-		final WorkflowTask task2 = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<WorkflowTask>() {
-			public WorkflowTask execute() throws Throwable {
+		final WorkflowTask task2 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-				logger.info("Set npd task information " + task1.getName());
-				Map<QName, Serializable> properties = new HashMap<>();
-				properties.put(QName.createQName(NPDWF_URI, "npdProductName"), "Test NPD");
-				properties.put(QName.createQName(NPDWF_URI, "npdAction"), "createNewProduct");
-				java.util.Map<QName, List<NodeRef>> assocs = new HashMap<>();
+			logger.info("Set npd task information " + task1.getName());
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(QName.createQName(NPDWF_URI, "npdProductName"), "Test NPD");
+			properties.put(QName.createQName(NPDWF_URI, "npdAction"), "createNewProduct");
+			java.util.Map<QName, List<NodeRef>> assocs = new HashMap<>();
 
-				workflowService.updateTask(task1.getId(), properties, assocs, new HashMap<QName, List<NodeRef>>());
+			workflowService.updateTask(task1.getId(), properties, assocs, new HashMap<QName, List<NodeRef>>());
 
-				workflowService.endTask(task1.getId(), null);
+			workflowService.endTask(task1.getId(), null);
 
-				List<WorkflowPath> paths = workflowService.getWorkflowPaths(workflowInstanceId);
-				assertEquals(1, paths.size());
-				WorkflowPath path = paths.get(0);
+			List<WorkflowPath> paths = workflowService.getWorkflowPaths(workflowInstanceId);
+			assertEquals(1, paths.size());
+			WorkflowPath path = paths.get(0);
 
-				List<WorkflowTask> tasks = workflowService.getTasksForWorkflowPath(path.getId());
-				assertEquals(1, tasks.size());
+			List<WorkflowTask> tasks1 = workflowService.getTasksForWorkflowPath(path.getId());
+			assertEquals(1, tasks1.size());
 
-				WorkflowTask task = tasks.get(0);
+			WorkflowTask task = tasks1.get(0);
 
-				workflowService.updateTask(task.getId(), properties, assocs, new HashMap<QName, List<NodeRef>>());
-				workflowService.endTask(task.getId(), null);
+			workflowService.updateTask(task.getId(), properties, assocs, new HashMap<QName, List<NodeRef>>());
+			workflowService.endTask(task.getId(), null);
 
-				paths = workflowService.getWorkflowPaths(workflowInstanceId);
-				assertEquals(1, paths.size());
-				path = paths.get(0);
+			paths = workflowService.getWorkflowPaths(workflowInstanceId);
+			assertEquals(1, paths.size());
+			path = paths.get(0);
 
-				tasks = workflowService.getTasksForWorkflowPath(path.getId());
-				assertEquals(1, tasks.size());
+			tasks1 = workflowService.getTasksForWorkflowPath(path.getId());
+			assertEquals(1, tasks1.size());
 
-				return tasks.get(0);
-			}
+			return tasks1.get(0);
 		}, false, true);
 
-		final NodeRef productNoderef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			public NodeRef execute() throws Throwable {
-				int count = 0;
-				NodeRef ret = null;
-				NodeRef pkgNodeRef = workflowService.getWorkflowById(workflowInstanceId).getWorkflowPackage();
-				List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(pkgNodeRef, WorkflowModel.ASSOC_PACKAGE_CONTAINS,
-						RegexQNamePattern.MATCH_ALL);
-				for (ChildAssociationRef childAssoc : childAssocs) {
-					if (PLMModel.TYPE_FINISHEDPRODUCT.equals(nodeService.getType(childAssoc.getChildRef()))) {
-						count++;
-						ret = childAssoc.getChildRef();
-						logger.info("NPD created product" + nodeService.getProperty(ret, ContentModel.PROP_NAME) + " "
-								+ nodeService.getProperty(ret, PLMModel.PROP_PRODUCT_STATE));
-						assertEquals(SystemState.Simulation.toString(), nodeService.getProperty(ret, PLMModel.PROP_PRODUCT_STATE));
-					}
+		final NodeRef productNoderef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			int count = 0;
+			NodeRef ret = null;
+			NodeRef pkgNodeRef = workflowService.getWorkflowById(workflowInstanceId).getWorkflowPackage();
+			List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(pkgNodeRef, WorkflowModel.ASSOC_PACKAGE_CONTAINS,
+					RegexQNamePattern.MATCH_ALL);
+			for (ChildAssociationRef childAssoc : childAssocs) {
+				if (PLMModel.TYPE_FINISHEDPRODUCT.equals(nodeService.getType(childAssoc.getChildRef()))) {
+					count++;
+					ret = childAssoc.getChildRef();
+					logger.info("NPD created product" + nodeService.getProperty(ret, ContentModel.PROP_NAME) + " "
+							+ nodeService.getProperty(ret, PLMModel.PROP_PRODUCT_STATE));
+					assertEquals(SystemState.Simulation.toString(), nodeService.getProperty(ret, PLMModel.PROP_PRODUCT_STATE));
 				}
-				assertEquals(2, count);
-				return ret;
 			}
+			assertEquals(2, count);
+			return ret;
 		}, false, true);
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<WorkflowTask>() {
-			public WorkflowTask execute() throws Throwable {
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-				logger.info("Set npd task information " + task2.getName());
-				Map<QName, Serializable> properties = new HashMap<>();
-				properties.put(QName.createQName(NPDWF_URI, "npdAction"), "submitTask");
-				java.util.Map<QName, List<NodeRef>> assocs = new HashMap<>();
-				assocs.put(QName.createQName(NPDWF_URI, "npdSelectedProducts"), Collections.singletonList(productNoderef));
+			logger.info("Set npd task information " + task2.getName());
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(QName.createQName(NPDWF_URI, "npdAction"), "submitTask");
+			java.util.Map<QName, List<NodeRef>> assocs = new HashMap<>();
+			assocs.put(QName.createQName(NPDWF_URI, "npdSelectedProducts"), Collections.singletonList(productNoderef));
 
-				workflowService.updateTask(task2.getId(), properties, assocs, new HashMap<QName, List<NodeRef>>());
-				return workflowService.endTask(task2.getId(), null);
-			}
+			workflowService.updateTask(task2.getId(), properties, assocs, new HashMap<QName, List<NodeRef>>());
+			return workflowService.endTask(task2.getId(), null);
 		}, false, true);
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			public NodeRef execute() throws Throwable {
-				int count = 0;
-				NodeRef ret = null;
-				NodeRef pkgNodeRef = workflowService.getWorkflowById(workflowInstanceId).getWorkflowPackage();
-				List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(pkgNodeRef, WorkflowModel.ASSOC_PACKAGE_CONTAINS,
-						RegexQNamePattern.MATCH_ALL);
-				for (ChildAssociationRef childAssoc : childAssocs) {
-					if (PLMModel.TYPE_FINISHEDPRODUCT.equals(nodeService.getType(childAssoc.getChildRef()))) {
-						count++;
-						ret = childAssoc.getChildRef();
-						logger.info("NPD updated product" + nodeService.getProperty(ret, ContentModel.PROP_NAME) + " "
-								+ nodeService.getProperty(ret, PLMModel.PROP_PRODUCT_STATE));
-						assertEquals(SystemState.ToValidate.toString(), nodeService.getProperty(ret, PLMModel.PROP_PRODUCT_STATE));
-					}
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			int count = 0;
+			NodeRef ret = null;
+			NodeRef pkgNodeRef = workflowService.getWorkflowById(workflowInstanceId).getWorkflowPackage();
+			List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(pkgNodeRef, WorkflowModel.ASSOC_PACKAGE_CONTAINS,
+					RegexQNamePattern.MATCH_ALL);
+			for (ChildAssociationRef childAssoc : childAssocs) {
+				if (PLMModel.TYPE_FINISHEDPRODUCT.equals(nodeService.getType(childAssoc.getChildRef()))) {
+					count++;
+					ret = childAssoc.getChildRef();
+					logger.info("NPD updated product" + nodeService.getProperty(ret, ContentModel.PROP_NAME) + " "
+							+ nodeService.getProperty(ret, PLMModel.PROP_PRODUCT_STATE));
+					assertEquals(SystemState.ToValidate.toString(), nodeService.getProperty(ret, PLMModel.PROP_PRODUCT_STATE));
 				}
-				assertEquals(1, count);
-				return ret;
 			}
+			assertEquals(1, count);
+			return ret;
 		}, false, true);
 	}
 }

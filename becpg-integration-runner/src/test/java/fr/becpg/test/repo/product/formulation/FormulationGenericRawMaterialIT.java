@@ -42,7 +42,7 @@ import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
 /**
  * Test the formulation of a generic raw material
- * 
+ *
  * @author quere
  *
  */
@@ -86,7 +86,7 @@ public class FormulationGenericRawMaterialIT extends AbstractFinishedProductTest
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), genRawMaterial).getNodeRef();
 
-		} , false, true);
+		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -123,16 +123,14 @@ public class FormulationGenericRawMaterialIT extends AbstractFinishedProductTest
 				}
 			}
 			assertEquals(1, checks);
-			
-			
+
 			NodeRef listContainerNodeRef = entityListDAO.getListContainer(rawMaterial1NodeRef);
 			Assert.assertNotNull(listContainerNodeRef);
 			Assert.assertNotNull(entityListDAO.getList(listContainerNodeRef, PLMModel.TYPE_COSTLIST));
-			
-			
+
 			return null;
 
-		} , false, true);
+		}, false, true);
 	}
 
 	@Test
@@ -156,13 +154,13 @@ public class FormulationGenericRawMaterialIT extends AbstractFinishedProductTest
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), genRawMaterial).getNodeRef();
 
-		} , false, true);
+		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			productService.formulate(rawMaterialNodeRef);
 			return null;
-		} , false, true);
+		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -174,6 +172,6 @@ public class FormulationGenericRawMaterialIT extends AbstractFinishedProductTest
 
 			return null;
 
-		} , false, true);
+		}, false, true);
 	}
 }

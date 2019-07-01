@@ -1,5 +1,5 @@
 /*
- * 
+ *
  */
 package fr.becpg.test.repo.importer;
 
@@ -15,7 +15,6 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.MLText;
@@ -50,7 +49,7 @@ import fr.becpg.test.PLMBaseTestCase;
 
 /**
  * The Class ImportServiceTest.
- * 
+ *
  * @author querephi
  */
 public class ImportServiceIT extends PLMBaseTestCase {
@@ -58,7 +57,7 @@ public class ImportServiceIT extends PLMBaseTestCase {
 	private static final String PATH_TEMP = "Temp";
 	private static final String PATH_PRODUCTS = "Products";
 	private static final String PATH_SITE_FOLDER = "./st:sites/cm:folder";
-	
+
 	private static final Log logger = LogFactory.getLog(ImportServiceIT.class);
 
 	@Resource
@@ -78,7 +77,7 @@ public class ImportServiceIT extends PLMBaseTestCase {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see fr.becpg.test.RepoBaseTestCase#setUp()
 	 */
 	@Override
@@ -90,21 +89,19 @@ public class ImportServiceIT extends PLMBaseTestCase {
 
 	private void cleanTempFolder() {
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			public NodeRef execute() throws Throwable {
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-				NodeRef folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TEMP);
-				if (folderNodeRef != null) {
-					fileFolderService.delete(folderNodeRef);
-				}
-				return null;
+			NodeRef folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TEMP);
+			if (folderNodeRef != null) {
+				fileFolderService.delete(folderNodeRef);
 			}
+			return null;
 		}, false, true);
 	}
 
 	/**
 	 * Test import text.
-	 * 
+	 *
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 * @throws ImporterException
@@ -113,37 +110,35 @@ public class ImportServiceIT extends PLMBaseTestCase {
 	@Test
 	public void testImportText() throws IOException, ImporterException {
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-				/*-- Create file to import --*/
-				logger.debug("create file to import");
-				Map<QName, Serializable> properties = new HashMap<>();
-				properties.put(ContentModel.PROP_NAME, "import.xlsx");
+			/*-- Create file to import --*/
+			logger.debug("create file to import");
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(ContentModel.PROP_NAME, "import.xlsx");
 
-				NodeRef nodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, (String) properties.get(ContentModel.PROP_NAME));
-				if (nodeRef != null) {
-					nodeService.deleteNode(nodeRef);
-				}
-				nodeRef = nodeService.createNode(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
-						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_CONTENT, properties)
-						.getChildRef();
-
-				ContentWriter writer = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
-				logger.debug("Load import.xlsx");
-				InputStream in = (new ClassPathResource("beCPG/import/Import.xlsx")).getInputStream();
-				
-				logger.debug("import.xlsx loaded");
-				writer.putContent(in);
-
-				logger.debug("Start import");
-				
-				importService.importText(nodeRef, true, false);
-
-				return null;
-
+			NodeRef nodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
+					(String) properties.get(ContentModel.PROP_NAME));
+			if (nodeRef != null) {
+				nodeService.deleteNode(nodeRef);
 			}
+			nodeRef = nodeService.createNode(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
+					ContentModel.TYPE_CONTENT, properties).getChildRef();
+
+			ContentWriter writer = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
+			logger.debug("Load import.xlsx");
+			InputStream in = (new ClassPathResource("beCPG/import/Import.xlsx")).getInputStream();
+
+			logger.debug("import.xlsx loaded");
+			writer.putContent(in);
+
+			logger.debug("Start import");
+
+			importService.importText(nodeRef, true, false);
+
+			return null;
+
 		}, false, true);
 
 		/*-- Check MLText property --*/
@@ -196,7 +191,7 @@ public class ImportServiceIT extends PLMBaseTestCase {
 
 	/**
 	 * Test import products.
-	 * 
+	 *
 	 * @throws Exception
 	 * @throws ParseException
 	 */
@@ -206,69 +201,65 @@ public class ImportServiceIT extends PLMBaseTestCase {
 		/*
 		 * Delete temp, products folder Add mapping file
 		 */
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-				NodeRef tempNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TEMP);
-				if (tempNodeRef != null) {
-					logger.debug("delete temp folder");
-					fileFolderService.delete(tempNodeRef);
-				}
-
-				// remove companies
-				NodeRef companiesFolder = repoService.getFolderByPath(repositoryHelper.getCompanyHome(), PlmRepoConsts.PATH_COMPANIES);
-
-				if (companiesFolder != null) {
-					logger.debug("delete companies folder");
-					nodeService.deleteNode(companiesFolder);
-				}
-
-				// remove site folder
-				List<NodeRef> siteFoldernode = searchService.selectNodes(repositoryHelper.getCompanyHome(), PATH_SITE_FOLDER, null, namespaceService, false);
-
-				if (siteFoldernode != null && siteFoldernode.size() > 0) {
-					logger.debug("delete site folder");
-					nodeService.deleteNode(siteFoldernode.get(0));
-				}
-
-				return null;
-
+			NodeRef tempNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TEMP);
+			if (tempNodeRef != null) {
+				logger.debug("delete temp folder");
+				fileFolderService.delete(tempNodeRef);
 			}
+
+			// remove companies
+			NodeRef companiesFolder = repoService.getFolderByPath(repositoryHelper.getCompanyHome(), PlmRepoConsts.PATH_COMPANIES);
+
+			if (companiesFolder != null) {
+				logger.debug("delete companies folder");
+				nodeService.deleteNode(companiesFolder);
+			}
+
+			// remove site folder
+			List<NodeRef> siteFoldernode = searchService.selectNodes(repositoryHelper.getCompanyHome(), PATH_SITE_FOLDER, null, namespaceService,
+					false);
+
+			if ((siteFoldernode != null) && (siteFoldernode.size() > 0)) {
+				logger.debug("delete site folder");
+				nodeService.deleteNode(siteFoldernode.get(0));
+			}
+
+			return null;
+
 		}, false, true);
 
 		/*
 		 * Create file
 		 */
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-				logger.debug("create file to import");
-				Map<QName, Serializable> properties = new HashMap<>();
-				properties.put(ContentModel.PROP_NAME, "Import-Products.csv");
+			logger.debug("create file to import");
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(ContentModel.PROP_NAME, "Import-Products.csv");
 
-				NodeRef nodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, (String) properties.get(ContentModel.PROP_NAME));
-				if (nodeRef != null) {
-					nodeService.deleteNode(nodeRef);
-				}
-				nodeRef = nodeService.createNode(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
-						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_CONTENT, properties)
-						.getChildRef();
-
-				ContentWriter writer = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
-				logger.debug("Load import.csv");
-				InputStream in = (new ClassPathResource("beCPG/import/Import-Products.csv")).getInputStream();
-				logger.debug("import.csv loaded");
-				writer.putContent(in);
-
-				logger.debug("Start import");
-				importService.importText(nodeRef, true, false);
-
-				return null;
-
+			NodeRef nodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
+					(String) properties.get(ContentModel.PROP_NAME));
+			if (nodeRef != null) {
+				nodeService.deleteNode(nodeRef);
 			}
+			nodeRef = nodeService.createNode(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
+					ContentModel.TYPE_CONTENT, properties).getChildRef();
+
+			ContentWriter writer = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
+			logger.debug("Load import.csv");
+			InputStream in = (new ClassPathResource("beCPG/import/Import-Products.csv")).getInputStream();
+			logger.debug("import.csv loaded");
+			writer.putContent(in);
+
+			logger.debug("Start import");
+			importService.importText(nodeRef, true, false);
+
+			return null;
+
 		}, false, true);
 
 		/*
@@ -459,48 +450,48 @@ public class ImportServiceIT extends PLMBaseTestCase {
 		 * Test the catch of integrity exception during import
 		 */
 		try {
-			transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-				@Override
-				public NodeRef execute() throws Throwable {
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-					/*-- Clean costs --*/
-					NodeRef systemFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
-							TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
-					NodeRef costsFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_COSTS));
+				/*-- Clean costs --*/
+				NodeRef systemFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
+						TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
+				NodeRef costsFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS,
+						TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_COSTS));
 
-					if (costsFolder != null) {
-						nodeService.deleteNode(costsFolder);
-					}
-
-					/*-- Create file to import --*/
-					logger.debug("create file to import");
-					Map<QName, Serializable> properties = new HashMap<>();
-					properties.put(ContentModel.PROP_NAME, "Import-with-IntegrityException.csv");
-
-					NodeRef nodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, (String) properties.get(ContentModel.PROP_NAME));
-					if (nodeRef != null) {
-						nodeService.deleteNode(nodeRef);
-					}
-					nodeRef = nodeService.createNode(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
-							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_CONTENT, properties)
-							.getChildRef();
-
-					ContentWriter writer = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
-					InputStream in = (new ClassPathResource("beCPG/import/Import-with-IntegrityException.csv")).getInputStream();
-					writer.putContent(in);
-
-					logger.debug("Start import");
-					importService.importText(nodeRef, true, false);
-
-					/*-- check nothing is imported --*/
-					systemFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
-							TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
-					costsFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_COSTS));
-					assertNull("costs should not exist", costsFolder);
-
-					return null;
-
+				if (costsFolder != null) {
+					nodeService.deleteNode(costsFolder);
 				}
+
+				/*-- Create file to import --*/
+				logger.debug("create file to import");
+				Map<QName, Serializable> properties = new HashMap<>();
+				properties.put(ContentModel.PROP_NAME, "Import-with-IntegrityException.csv");
+
+				NodeRef nodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
+						(String) properties.get(ContentModel.PROP_NAME));
+				if (nodeRef != null) {
+					nodeService.deleteNode(nodeRef);
+				}
+				nodeRef = nodeService.createNode(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
+						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
+						ContentModel.TYPE_CONTENT, properties).getChildRef();
+
+				ContentWriter writer = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
+				InputStream in = (new ClassPathResource("beCPG/import/Import-with-IntegrityException.csv")).getInputStream();
+				writer.putContent(in);
+
+				logger.debug("Start import");
+				importService.importText(nodeRef, true, false);
+
+				/*-- check nothing is imported --*/
+				systemFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
+						TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
+				costsFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS,
+						TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_COSTS));
+				assertNull("costs should not exist", costsFolder);
+
+				return null;
+
 			}, false, true);
 
 		} catch (Exception e) {
@@ -513,7 +504,7 @@ public class ImportServiceIT extends PLMBaseTestCase {
 
 	/**
 	 * Test import product lists
-	 * 
+	 *
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 * @throws ImporterException
@@ -522,99 +513,93 @@ public class ImportServiceIT extends PLMBaseTestCase {
 	@Test
 	public void testImportProductLists() throws IOException, ImporterException {
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-				/*-- Delete temp, products folder --*/
-				NodeRef tempNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TEMP);
-				if (tempNodeRef != null) {
-					fileFolderService.delete(tempNodeRef);
-				}
-
-				/*-- Create file to import --*/
-				logger.debug("create file to import");
-				Map<QName, Serializable> properties = new HashMap<>();
-				properties.put(ContentModel.PROP_NAME, "Import-ProductLists.csv");
-
-				NodeRef nodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, (String) properties.get(ContentModel.PROP_NAME));
-				if (nodeRef != null) {
-					nodeService.deleteNode(nodeRef);
-				}
-				nodeRef = nodeService.createNode(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
-						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_CONTENT, properties)
-						.getChildRef();
-
-				ContentWriter writer = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
-				logger.debug("Load import.csv");
-				InputStream in = (new ClassPathResource("beCPG/import/Import-ProductLists.csv")).getInputStream();
-				logger.debug("import.csv loaded");
-				writer.putContent(in);
-
-				logger.debug("Start import");
-				importService.importText(nodeRef, true, false);
-
-				return null;
-
+			/*-- Delete temp, products folder --*/
+			NodeRef tempNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TEMP);
+			if (tempNodeRef != null) {
+				fileFolderService.delete(tempNodeRef);
 			}
+
+			/*-- Create file to import --*/
+			logger.debug("create file to import");
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(ContentModel.PROP_NAME, "Import-ProductLists.csv");
+
+			NodeRef nodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
+					(String) properties.get(ContentModel.PROP_NAME));
+			if (nodeRef != null) {
+				nodeService.deleteNode(nodeRef);
+			}
+			nodeRef = nodeService.createNode(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
+					ContentModel.TYPE_CONTENT, properties).getChildRef();
+
+			ContentWriter writer = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
+			logger.debug("Load import.csv");
+			InputStream in = (new ClassPathResource("beCPG/import/Import-ProductLists.csv")).getInputStream();
+			logger.debug("import.csv loaded");
+			writer.putContent(in);
+
+			logger.debug("Start import");
+			importService.importText(nodeRef, true, false);
+
+			return null;
+
 		}, false, true);
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-				/*-- check imported values --*/
-				NodeRef tempNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TEMP);
-				assertNotNull("Temp folder should exist", tempNodeRef);
-				NodeRef importFolderNodeRef = nodeService.getChildByName(tempNodeRef, ContentModel.ASSOC_CONTAINS, PATH_PRODUCTS);
-				assertNotNull("import folder should exist", importFolderNodeRef);
-				logger.info("###fileFolderService.listFiles(importFolderNodeRef).size()" + fileFolderService.listFiles(importFolderNodeRef).size());
-				assertEquals(4, fileFolderService.list(importFolderNodeRef).size());
+			/*-- check imported values --*/
+			NodeRef tempNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TEMP);
+			assertNotNull("Temp folder should exist", tempNodeRef);
+			NodeRef importFolderNodeRef = nodeService.getChildByName(tempNodeRef, ContentModel.ASSOC_CONTAINS, PATH_PRODUCTS);
+			assertNotNull("import folder should exist", importFolderNodeRef);
+			logger.info("###fileFolderService.listFiles(importFolderNodeRef).size()" + fileFolderService.listFiles(importFolderNodeRef).size());
+			assertEquals(4, fileFolderService.list(importFolderNodeRef).size());
 
-				/*
-				 * check products
-				 */
+			/*
+			 * check products
+			 */
 
-				NodeRef product1NodeRef = nodeService.getChildByName(importFolderNodeRef, ContentModel.ASSOC_CONTAINS, "Saumon surgelé 80x20x4");
+			NodeRef product1NodeRef = nodeService.getChildByName(importFolderNodeRef, ContentModel.ASSOC_CONTAINS, "Saumon surgelé 80x20x4");
 
-				assertNotNull("product 1 should exist", product1NodeRef);
-				ProductData productData = alfrescoRepository.findOne(product1NodeRef);
+			assertNotNull("product 1 should exist", product1NodeRef);
+			ProductData productData = alfrescoRepository.findOne(product1NodeRef);
 
-				/*-- check productLists --*/
-		
-				
-				assertEquals("compoList should exist", 3, productData.getCompoListView().getCompoList().size());
-				String[] rmNames = { "MP1", "MP2", "MP3" };
-				double[] qtyValues = { 1.0d, 2.0d, 3.2d };
-				String[] unitValues = { "g", "kg", "g" };
+			/*-- check productLists --*/
 
-				// check MP
-				int rmChecked = 0;
-				int z_idx = 0;
-				for (CompoListDataItem c : productData.getCompoListView().getCompoList()) {
-					String rmName = (String) nodeService.getProperty(c.getProduct(), ContentModel.PROP_NAME);
+			assertEquals("compoList should exist", 3, productData.getCompoListView().getCompoList().size());
+			String[] rmNames = { "MP1", "MP2", "MP3" };
+			double[] qtyValues = { 1.0d, 2.0d, 3.2d };
+			String[] unitValues = { "g", "kg", "g" };
 
-					for (String s : rmNames) {
-						if (s.equals(rmName)) {
-							assertEquals("Check rm value", qtyValues[z_idx], nodeService.getProperty(c.getNodeRef(), PLMModel.PROP_COMPOLIST_QTY));
-							assertEquals("Check rm unit", unitValues[z_idx], nodeService.getProperty(c.getNodeRef(), PLMModel.PROP_COMPOLIST_UNIT));
-							rmChecked++;
-							break;
-						}
+			// check MP
+			int rmChecked = 0;
+			int z_idx = 0;
+			for (CompoListDataItem c : productData.getCompoListView().getCompoList()) {
+				String rmName = (String) nodeService.getProperty(c.getProduct(), ContentModel.PROP_NAME);
+
+				for (String s : rmNames) {
+					if (s.equals(rmName)) {
+						assertEquals("Check rm value", qtyValues[z_idx], nodeService.getProperty(c.getNodeRef(), PLMModel.PROP_COMPOLIST_QTY));
+						assertEquals("Check rm unit", unitValues[z_idx], nodeService.getProperty(c.getNodeRef(), PLMModel.PROP_COMPOLIST_UNIT));
+						rmChecked++;
+						break;
 					}
-					z_idx++;
 				}
-				assertEquals("3 rm have been checked", 3, rmChecked);
-
-				return null;
-
+				z_idx++;
 			}
+			assertEquals("3 rm have been checked", 3, rmChecked);
+
+			return null;
+
 		}, false, true);
 	}
 
 	/**
 	 * Test import text.
-	 * 
+	 *
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 * @throws ImporterException
@@ -633,49 +618,49 @@ public class ImportServiceIT extends PLMBaseTestCase {
 		assertEquals(1, ret.size());
 
 		// search by code
-		assertNotNull(hierarchyService.getHierarchyByPath(HIERARCHY_RAWMATERIAL_PATH, null, (String) nodeService.getProperty(ret.get(0), BeCPGModel.PROP_CODE)));
+		assertNotNull(hierarchyService.getHierarchyByPath(HIERARCHY_RAWMATERIAL_PATH, null,
+				(String) nodeService.getProperty(ret.get(0), BeCPGModel.PROP_CODE)));
 
 		NodeRef parentNodeRef = ret.get(0);
 
 		// search by name
 		ret = hierarchyService.getHierarchiesByPath(HIERARCHY_RAWMATERIAL_PATH, parentNodeRef, "Dairy and Egg Products");
-		
+
 		assertEquals(1, ret.size());
 
 		// search by code
-		assertNotNull(hierarchyService.getHierarchyByPath(HIERARCHY_RAWMATERIAL_PATH, parentNodeRef, (String) nodeService.getProperty(ret.get(0), BeCPGModel.PROP_CODE)));
+		assertNotNull(hierarchyService.getHierarchyByPath(HIERARCHY_RAWMATERIAL_PATH, parentNodeRef,
+				(String) nodeService.getProperty(ret.get(0), BeCPGModel.PROP_CODE)));
 	}
-	
-	private void importHierarchiesFile(final int i){
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
 
-				/*-- Create file to import --*/
-				logger.debug("create file to import");
-				Map<QName, Serializable> properties = new HashMap<>();
-				properties.put(ContentModel.PROP_NAME, "import-productHierarchies" + i + ".csv");
+	private void importHierarchiesFile(final int i) {
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-				NodeRef nodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, (String) properties.get(ContentModel.PROP_NAME));
-				if (nodeRef != null) {
-					nodeService.deleteNode(nodeRef);
-				}
-				nodeRef = nodeService.createNode(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
-						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_CONTENT, properties)
-						.getChildRef();
+			/*-- Create file to import --*/
+			logger.debug("create file to import");
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(ContentModel.PROP_NAME, "import-productHierarchies" + i + ".csv");
 
-				ContentWriter writer = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
-				logger.debug("Load import.csv");
-				InputStream in = (new ClassPathResource("beCPG/import/import-productHierarchies" + i + ".csv")).getInputStream();
-				logger.debug("import.csv loaded");
-				writer.putContent(in);
-
-				logger.debug("Start import");
-				importService.importText(nodeRef, true, false);
-
-				return null;
-
+			NodeRef nodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
+					(String) properties.get(ContentModel.PROP_NAME));
+			if (nodeRef != null) {
+				nodeService.deleteNode(nodeRef);
 			}
+			nodeRef = nodeService.createNode(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
+					ContentModel.TYPE_CONTENT, properties).getChildRef();
+
+			ContentWriter writer = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
+			logger.debug("Load import.csv");
+			InputStream in = (new ClassPathResource("beCPG/import/import-productHierarchies" + i + ".csv")).getInputStream();
+			logger.debug("import.csv loaded");
+			writer.putContent(in);
+
+			logger.debug("Start import");
+			importService.importText(nodeRef, true, false);
+
+			return null;
+
 		}, false, true);
 	}
 
@@ -683,78 +668,71 @@ public class ImportServiceIT extends PLMBaseTestCase {
 		/*-- Check hierarchies --*/
 		logger.debug("Check hierarchies");
 		importHierarchiesFile(1);
-		
+
 		NodeRef hierarchy1USDA = hierarchyService.getHierarchyByPath(HIERARCHY_RAWMATERIAL_PATH, null, "USDA");
 		assertNotNull(hierarchy1USDA);
-		
+
 		importHierarchiesFile(2);
-		
+
 		NodeRef hierarchy2Dairy = hierarchyService.getHierarchyByPath(HIERARCHY_RAWMATERIAL_PATH, hierarchy1USDA, "Dairy and Egg Products");
 		assertNotNull(hierarchy2Dairy);
 		NodeRef hierarchy2Spices = hierarchyService.getHierarchyByPath(HIERARCHY_RAWMATERIAL_PATH, hierarchy1USDA, "Spices and Herbs");
 		assertNotNull(hierarchy2Spices);
-		
+
 		importHierarchiesFile(3);
-		
+
 		NodeRef hierarchy3Dairy = hierarchyService.getHierarchyByPath(HIERARCHY_RAWMATERIAL_PATH, hierarchy2Dairy, "Dairy");
 		assertNotNull(hierarchy3Dairy);
-		
+
 		importHierarchiesFile(4);
 
-	
 		// check unicity
 		List<NodeRef> listItems = BeCPGQueryBuilder.createQuery().andID(hierarchy1USDA).inDB().list();
 		assertEquals(1, listItems.size());
-		listItems =  BeCPGQueryBuilder.createQuery().andID(hierarchy2Dairy).inDB().list();
+		listItems = BeCPGQueryBuilder.createQuery().andID(hierarchy2Dairy).inDB().list();
 		assertEquals(1, listItems.size());
-		listItems =  BeCPGQueryBuilder.createQuery().andID(hierarchy2Spices).inDB().list();
+		listItems = BeCPGQueryBuilder.createQuery().andID(hierarchy2Spices).inDB().list();
 		assertEquals(1, listItems.size());
 	}
 
 	@Test
 	public void testImportFormula() throws IOException, ImporterException {
 
-		
-				
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-				/*-- Create file to import --*/
-				logger.debug("create file to import");
-				Map<QName, Serializable> properties = new HashMap<>();
-				properties.put(ContentModel.PROP_NAME, "importClaim.csv");
+			/*-- Create file to import --*/
+			logger.debug("create file to import");
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(ContentModel.PROP_NAME, "importClaim.csv");
 
-				NodeRef nodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_CONTENT, properties)
-						.getChildRef();
+			NodeRef nodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
+					ContentModel.TYPE_CONTENT, properties).getChildRef();
 
-				ContentWriter writer = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
-				logger.debug("Load importClaim.csv");
-				InputStream in = (new ClassPathResource("beCPG/import/LabelClaims.csv")).getInputStream();
-				logger.debug("import.csv loaded");
-				writer.putContent(in);
+			ContentWriter writer = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
+			logger.debug("Load importClaim.csv");
+			InputStream in = (new ClassPathResource("beCPG/import/LabelClaims.csv")).getInputStream();
+			logger.debug("import.csv loaded");
+			writer.putContent(in);
 
-				logger.debug("Start import");
-				importService.importText(nodeRef, true, false);
+			logger.debug("Start import");
+			importService.importText(nodeRef, true, false);
 
-				return null;
+			return null;
 
-			}
 		}, false, true);
-		
+
 		NodeRef systemFolder = repoService.getFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM);
 
-		NodeRef labelClaimListsFolder = entitySystemService.getSystemEntityDataList(systemFolder, RepoConsts.PATH_CHARACTS, PlmRepoConsts.PATH_LABELCLAIMS);
-		List<NodeRef> labelClaimsFileInfo = entityListDAO.getListItems(labelClaimListsFolder,PLMModel.TYPE_LABEL_CLAIM);
+		NodeRef labelClaimListsFolder = entitySystemService.getSystemEntityDataList(systemFolder, RepoConsts.PATH_CHARACTS,
+				PlmRepoConsts.PATH_LABELCLAIMS);
+		List<NodeRef> labelClaimsFileInfo = entityListDAO.getListItems(labelClaimListsFolder, PLMModel.TYPE_LABEL_CLAIM);
 
-		Assert.assertTrue(labelClaimsFileInfo.size()==3);
-		
-		
-		
+		Assert.assertTrue(labelClaimsFileInfo.size() == 3);
+
 		for (NodeRef fileInfo : labelClaimsFileInfo) {
-			String formula = (String)nodeService.getProperty( fileInfo,PLMModel.PROP_LABEL_CLAIM_FORMULA);
-			
+			String formula = (String) nodeService.getProperty(fileInfo, PLMModel.PROP_LABEL_CLAIM_FORMULA);
+
 			Assert.assertNotNull(formula);
 			logger.info(formula);
 		}

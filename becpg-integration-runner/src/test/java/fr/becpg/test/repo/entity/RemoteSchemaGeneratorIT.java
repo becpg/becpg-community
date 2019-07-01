@@ -29,24 +29,19 @@ public class RemoteSchemaGeneratorIT extends PLMBaseTestCase {
 
 	@Resource
 	private RemoteSchemaGenerator remoteSchemaGenerator;
-	
-
 
 	@Test
-	public void testGenerateSchema() throws XMLStreamException, IOException, SAXException, BeCPGException  {
-		
+	public void testGenerateSchema() throws XMLStreamException, IOException, SAXException, BeCPGException {
+
 		File tempFile = File.createTempFile("schema", "xsd");
-		
+
 		remoteSchemaGenerator.generateSchema(new FileOutputStream(tempFile));
-		
-		
+
 		org.springframework.core.io.Resource res = new ClassPathResource("beCPG/remote/entity_excel.xml");
-        SchemaFactory factory = 
-            SchemaFactory.newInstance(javax.xml.XMLConstants.XML_NS_URI);
-        javax.xml.validation.Schema schema = factory.newSchema(new StreamSource(new FileInputStream(tempFile)));
-        Validator validator = schema.newValidator();
-        validator.validate(new StreamSource(res.getInputStream()));
-        
-        
+		SchemaFactory factory = SchemaFactory.newInstance(javax.xml.XMLConstants.XML_NS_URI);
+		javax.xml.validation.Schema schema = factory.newSchema(new StreamSource(new FileInputStream(tempFile)));
+		Validator validator = schema.newValidator();
+		validator.validate(new StreamSource(res.getInputStream()));
+
 	}
 }

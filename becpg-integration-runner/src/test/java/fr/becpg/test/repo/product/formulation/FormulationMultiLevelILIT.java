@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2018 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2018 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.test.repo.product.formulation;
@@ -20,7 +20,6 @@ package fr.becpg.test.repo.product.formulation;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -45,60 +44,55 @@ public class FormulationMultiLevelILIT extends AbstractFinishedProductTest {
 	}
 
 	@Test
-	public void testFormulationMultiLevelILTest() throws Exception{
-		
-	   final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
-			public NodeRef execute() throws Throwable {					   							
-					
-				/*-- Create finished product --*/
-				logger.debug("/*-- Create finished product --*/");
-				FinishedProductData finishedProduct = new FinishedProductData();
-				finishedProduct.setName("Produit fini 1");
-				finishedProduct.setLegalName("Legal Produit fini 1");
-				finishedProduct.setUnit(ProductUnit.kg);
-				finishedProduct.setQty(4d);
-				finishedProduct.setDensity(1d);
-				List<CompoListDataItem> compoList = new ArrayList<>();
-				compoList.add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg, 3d, DeclarationType.Declare, rawMaterial7NodeRef));
-				compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 1d, DeclarationType.Declare, rawMaterial6NodeRef));
+	public void testFormulationMultiLevelILTest() throws Exception {
 
-				finishedProduct.getCompoListView().setCompoList(compoList);
-				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();				
-				
-			}},false,true);
-	   
-	   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
-			public NodeRef execute() throws Throwable {	
-	   
-				productService.formulate(finishedProductNodeRef);
-				
-				return null;
+		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-			}},false,true);
-	   
-	   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
-			public NodeRef execute() throws Throwable {	
-	   
-				ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);		
-				
-				assertEquals(5, formulatedProduct.getIngList().size());
-				assertEquals(ing5, formulatedProduct.getIngList().get(0).getIng());
-				assertEquals(75d, formulatedProduct.getIngList().get(0).getQtyPerc());
-				assertEquals(ing1, formulatedProduct.getIngList().get(1).getIng());
-				assertEquals(52.5d, formulatedProduct.getIngList().get(1).getQtyPerc()); 
-				assertEquals(ing4, formulatedProduct.getIngList().get(2).getIng());
-				assertEquals(22,5d, formulatedProduct.getIngList().get(2).getQtyPerc());
-				assertEquals(ing1, formulatedProduct.getIngList().get(3).getIng());
-				assertEquals(20d, formulatedProduct.getIngList().get(3).getQtyPerc());
-				assertEquals(ing2, formulatedProduct.getIngList().get(4).getIng());
-				assertEquals(5d, formulatedProduct.getIngList().get(4).getQtyPerc());
-				
-				return null;
+			/*-- Create finished product --*/
+			logger.debug("/*-- Create finished product --*/");
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName("Produit fini 1");
+			finishedProduct.setLegalName("Legal Produit fini 1");
+			finishedProduct.setUnit(ProductUnit.kg);
+			finishedProduct.setQty(4d);
+			finishedProduct.setDensity(1d);
+			List<CompoListDataItem> compoList = new ArrayList<>();
+			compoList.add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg, 3d, DeclarationType.Declare, rawMaterial7NodeRef));
+			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 1d, DeclarationType.Declare, rawMaterial6NodeRef));
 
-			}},false,true);
-	   		   
-	   }
-	
-	
+			finishedProduct.getCompoListView().setCompoList(compoList);
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+
+		}, false, true);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			productService.formulate(finishedProductNodeRef);
+
+			return null;
+
+		}, false, true);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+
+			assertEquals(5, formulatedProduct.getIngList().size());
+			assertEquals(ing5, formulatedProduct.getIngList().get(0).getIng());
+			assertEquals(75d, formulatedProduct.getIngList().get(0).getQtyPerc());
+			assertEquals(ing1, formulatedProduct.getIngList().get(1).getIng());
+			assertEquals(52.5d, formulatedProduct.getIngList().get(1).getQtyPerc());
+			assertEquals(ing4, formulatedProduct.getIngList().get(2).getIng());
+			assertEquals(22, 5d, formulatedProduct.getIngList().get(2).getQtyPerc());
+			assertEquals(ing1, formulatedProduct.getIngList().get(3).getIng());
+			assertEquals(20d, formulatedProduct.getIngList().get(3).getQtyPerc());
+			assertEquals(ing2, formulatedProduct.getIngList().get(4).getIng());
+			assertEquals(5d, formulatedProduct.getIngList().get(4).getQtyPerc());
+
+			return null;
+
+		}, false, true);
+
+	}
 
 }

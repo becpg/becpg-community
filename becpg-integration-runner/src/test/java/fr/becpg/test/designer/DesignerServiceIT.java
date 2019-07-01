@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2018 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2018 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.test.designer;
@@ -25,7 +25,6 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.dictionary.M2Model;
-import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
@@ -63,31 +62,29 @@ public class DesignerServiceIT extends AbstractDesignerServiceTest {
 	public void testMetaModelVisitor() {
 
 		logger.info("testMetaModelVisitor");
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-				InputStream in = (new ClassPathResource("beCPG/designer/testModel.xml")).getInputStream();
-				assertNotNull(in);
+			InputStream in = (new ClassPathResource("beCPG/designer/testModel.xml")).getInputStream();
+			assertNotNull(in);
 
-				M2Model m2Model = M2Model.createModel(in);
+			M2Model m2Model = M2Model.createModel(in);
 
-				NodeRef modelNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN,
-						DesignerModel.TYPE_M2_MODEL).getChildRef();
+			NodeRef modelNodeRef = nodeService
+					.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, DesignerModel.TYPE_M2_MODEL)
+					.getChildRef();
 
-				// Try to parse becpgModel
-				metaModelVisitor.visitModelNodeRef(modelNodeRef, m2Model);
+			// Try to parse becpgModel
+			metaModelVisitor.visitModelNodeRef(modelNodeRef, m2Model);
 
-				DesignerTree tree = designerTreeVisitor.visitModelTreeNodeRef(modelNodeRef);
-				assertNotNull(tree);
-				logger.debug(tree);
+			DesignerTree tree = designerTreeVisitor.visitModelTreeNodeRef(modelNodeRef);
+			assertNotNull(tree);
+			logger.debug(tree);
 
-				// To Xml
-				metaModelVisitor.visitModelXml(modelNodeRef, System.out);
+			// To Xml
+			metaModelVisitor.visitModelXml(modelNodeRef, System.out);
 
-				return null;
+			return null;
 
-			}
 		}, false, true);
 
 	}
@@ -96,28 +93,26 @@ public class DesignerServiceIT extends AbstractDesignerServiceTest {
 	public void testFormModelVisitor() {
 
 		logger.info("testFormModelVisitor");
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-				InputStream in = (new ClassPathResource("beCPG/designer/testConfig.xml")).getInputStream();
-				assertNotNull(in);
+			InputStream in = (new ClassPathResource("beCPG/designer/testConfig.xml")).getInputStream();
+			assertNotNull(in);
 
-				NodeRef modelNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN,
-						ContentModel.TYPE_CONTENT).getChildRef();
-				nodeService.addAspect(modelNodeRef, DesignerModel.ASPECT_CONFIG, new HashMap<QName, Serializable>());
+			NodeRef modelNodeRef = nodeService
+					.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, ContentModel.TYPE_CONTENT)
+					.getChildRef();
+			nodeService.addAspect(modelNodeRef, DesignerModel.ASPECT_CONFIG, new HashMap<QName, Serializable>());
 
-				ChildAssociationRef childAssociationRef = nodeService.createNode(modelNodeRef, DesignerModel.ASSOC_DSG_CONFIG,
-						DesignerModel.ASSOC_DSG_CONFIG, DesignerModel.TYPE_DSG_CONFIG);
-				NodeRef configNodeRef = childAssociationRef.getChildRef();
+			ChildAssociationRef childAssociationRef = nodeService.createNode(modelNodeRef, DesignerModel.ASSOC_DSG_CONFIG,
+					DesignerModel.ASSOC_DSG_CONFIG, DesignerModel.TYPE_DSG_CONFIG);
+			NodeRef configNodeRef = childAssociationRef.getChildRef();
 
-				formModelVisitor.visitConfigNodeRef(configNodeRef, in);
-				// To Xml
-				formModelVisitor.visitConfigXml(configNodeRef, System.out);
+			formModelVisitor.visitConfigNodeRef(configNodeRef, in);
+			// To Xml
+			formModelVisitor.visitConfigXml(configNodeRef, System.out);
 
-				return null;
+			return null;
 
-			}
 		}, false, true);
 
 	}
@@ -126,38 +121,36 @@ public class DesignerServiceIT extends AbstractDesignerServiceTest {
 	public void testDesignerService() {
 
 		logger.info("testDesignerService");
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-				List<FormControl> controls = designerService.getFormControls();
+			List<FormControl> controls = designerService.getFormControls();
 
-				assertNotNull(controls);
-				assertTrue(controls.size() > 0);
+			assertNotNull(controls);
+			assertTrue(controls.size() > 0);
 
-				InputStream in = (new ClassPathResource("beCPG/designer/testModel.xml")).getInputStream();
-				assertNotNull(in);
+			InputStream in = (new ClassPathResource("beCPG/designer/testModel.xml")).getInputStream();
+			assertNotNull(in);
 
-				M2Model m2Model = M2Model.createModel(in);
+			M2Model m2Model = M2Model.createModel(in);
 
-				NodeRef modelNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN,
-						DesignerModel.TYPE_M2_MODEL).getChildRef();
+			NodeRef modelNodeRef = nodeService
+					.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, DesignerModel.TYPE_M2_MODEL)
+					.getChildRef();
 
-				// Try to parse becpgModel
-				metaModelVisitor.visitModelNodeRef(modelNodeRef, m2Model);
+			// Try to parse becpgModel
+			metaModelVisitor.visitModelNodeRef(modelNodeRef, m2Model);
 
-				Map<QName, Serializable> props = new HashMap<>();
-				props.put(DesignerModel.PROP_M2_NAME, "bcpg:test");
+			Map<QName, Serializable> props = new HashMap<>();
+			props.put(DesignerModel.PROP_M2_NAME, "bcpg:test");
 
-				NodeRef elNodeRef = designerService.createModelElement(modelNodeRef, DesignerModel.TYPE_M2_TYPE, DesignerModel.ASSOC_M2_TYPES, props,
-						"templateModel_STARTTASK");
+			NodeRef elNodeRef = designerService.createModelElement(modelNodeRef, DesignerModel.TYPE_M2_TYPE, DesignerModel.ASSOC_M2_TYPES, props,
+					"templateModel_STARTTASK");
 
-				assertEquals("bcpg:test", (String) nodeService.getProperty(elNodeRef, DesignerModel.PROP_M2_NAME));
-				assertEquals("bpm:startTask", (String) nodeService.getProperty(elNodeRef, DesignerModel.PROP_M2_PARENT_NAME));
+			assertEquals("bcpg:test", (String) nodeService.getProperty(elNodeRef, DesignerModel.PROP_M2_NAME));
+			assertEquals("bpm:startTask", (String) nodeService.getProperty(elNodeRef, DesignerModel.PROP_M2_PARENT_NAME));
 
-				return null;
+			return null;
 
-			}
 		}, false, true);
 
 	}
@@ -166,30 +159,27 @@ public class DesignerServiceIT extends AbstractDesignerServiceTest {
 	public void testFindOrCreateModel() {
 
 		logger.info("testFindOrCreateModel");
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-				String name = "testFindOrCreateModel.xml";
+			String name = "testFindOrCreateModel.xml";
 
-				Map<String, Object> templateContext = new HashMap<>();
-				templateContext.put("processId", "processId");
-				templateContext.put("modelName", "modelName");
-				templateContext.put("engineId", "activiti");
-				templateContext.put("prefix", "test");
+			Map<String, Object> templateContext = new HashMap<>();
+			templateContext.put("processId", "processId");
+			templateContext.put("modelName", "modelName");
+			templateContext.put("engineId", "activiti");
+			templateContext.put("prefix", "test");
 
-				NodeRef modelNodeRef = designerService.findOrCreateModel(name, "extWorkflowModel.ftl", templateContext);
+			NodeRef modelNodeRef = designerService.findOrCreateModel(name, "extWorkflowModel.ftl", templateContext);
 
-				NodeRef configNodeRef = designerService.findOrCreateConfig(name, "extWorkflowForm.ftl", templateContext);
+			NodeRef configNodeRef = designerService.findOrCreateConfig(name, "extWorkflowForm.ftl", templateContext);
 
-				assertNotNull(modelNodeRef);
-				assertNotNull(configNodeRef);
+			assertNotNull(modelNodeRef);
+			assertNotNull(configNodeRef);
 
-				nodeService.deleteNode(modelNodeRef);
-				nodeService.deleteNode(configNodeRef);
-				return null;
+			nodeService.deleteNode(modelNodeRef);
+			nodeService.deleteNode(configNodeRef);
+			return null;
 
-			}
 		}, false, true);
 
 	}

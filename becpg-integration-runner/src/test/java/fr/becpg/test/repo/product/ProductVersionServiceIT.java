@@ -108,18 +108,17 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 			/*-- Create raw material --*/
 			NodeRef r = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test report");
 			nodeService.setProperty(r, BeCPGModel.PROP_ERP_CODE, ERP_CODE);
-			
+
 			nodeService.setProperty(r, PLMWorkflowModel.PROP_PV_VALIDATION_DATE, new Date());
-			
-			nodeService.createAssociation(r,personService.getPerson(BeCPGTestHelper.USER_ONE) ,
-					PLMWorkflowModel.ASSOC_PV_CALLER_ACTOR);
-			
+
+			nodeService.createAssociation(r, personService.getPerson(BeCPGTestHelper.USER_ONE), PLMWorkflowModel.ASSOC_PV_CALLER_ACTOR);
+
 			return r;
 		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			assertTrue(nodeService.hasAspect(rawMaterialNodeRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT));
-			
+
 			entityReportService.generateReports(rawMaterialNodeRef);
 			return null;
 		}, false, true);
@@ -162,8 +161,8 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 
 			assertEquals("erpCode should be the same after checkout", nodeService.getProperty(rawMaterialNodeRef, BeCPGModel.PROP_ERP_CODE),
 					nodeService.getProperty(workingCopyNodeRef, BeCPGModel.PROP_ERP_CODE));
-			
-			//Check aspect validation 
+
+			// Check aspect validation
 			assertTrue(!nodeService.hasAspect(workingCopyNodeRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT));
 
 			// Check costs on working copy
@@ -594,8 +593,7 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 			NodeRef r = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "Test Check in Check out branch");
 			nodeService.setProperty(r, BeCPGModel.PROP_ERP_CODE, ERP_CODE);
 			nodeService.setProperty(r, PLMWorkflowModel.PROP_PV_VALIDATION_DATE, new Date());
-			nodeService.createAssociation(r,personService.getPerson(BeCPGTestHelper.USER_ONE) ,
-					PLMWorkflowModel.ASSOC_PV_CALLER_ACTOR);
+			nodeService.createAssociation(r, personService.getPerson(BeCPGTestHelper.USER_ONE), PLMWorkflowModel.ASSOC_PV_CALLER_ACTOR);
 			return r;
 		}, false, true);
 
@@ -616,7 +614,7 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 		}, false, true);
 
 		final Date validationDate = new Date();
-		
+
 		final ProductData rawMaterial = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			assertNotNull("Check branch exists", branchNodeRef);
@@ -633,10 +631,9 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 
 			assertNull("ERP code should be null", nodeService.getProperty(branchNodeRef, BeCPGModel.PROP_ERP_CODE));
 
-			//Check aspect validation 
+			// Check aspect validation
 			assertTrue(!nodeService.hasAspect(branchNodeRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT));
 
-			
 			// Check costs on working copy
 			ProductData rawMaterial1 = alfrescoRepository.findOne(rawMaterialNodeRef);
 			ProductData branchRawMaterial = alfrescoRepository.findOne(branchNodeRef);
@@ -657,33 +654,27 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 			for (CostListDataItem c : branchRawMaterial.getCostList()) {
 				c.setValue(c.getValue() + valueAdded);
 			}
-			
-			
-			
+
 			alfrescoRepository.save(branchRawMaterial);
-			
-			//Validate Branch
+
+			// Validate Branch
 			nodeService.setProperty(branchNodeRef, PLMWorkflowModel.PROP_PV_VALIDATION_DATE, validationDate);
-			nodeService.createAssociation(branchNodeRef,personService.getPerson(BeCPGTestHelper.USER_ONE) ,
-					PLMWorkflowModel.ASSOC_PV_CALLER_ACTOR);
-			
-			
+			nodeService.createAssociation(branchNodeRef, personService.getPerson(BeCPGTestHelper.USER_ONE), PLMWorkflowModel.ASSOC_PV_CALLER_ACTOR);
 
 			return rawMaterial1;
 		}, false, true);
-		
 
 		assertTrue(nodeService.hasAspect(branchNodeRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT));
 		assertEquals(nodeService.getProperty(branchNodeRef, PLMWorkflowModel.PROP_PV_VALIDATION_DATE), validationDate);
-	
+
 		final NodeRef newRawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(
 				() -> entityVersionService.mergeBranch(branchNodeRef, rawMaterialNodeRef, VersionType.MAJOR, "This is a test version"), false, true);
 
-		validateNewVersion(newRawMaterialNodeRef, rawMaterialNodeRef, rawMaterial, productUnit, valueAdded,false);
+		validateNewVersion(newRawMaterialNodeRef, rawMaterialNodeRef, rawMaterial, productUnit, valueAdded, false);
 
 		assertTrue(nodeService.hasAspect(newRawMaterialNodeRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT));
 		assertEquals(nodeService.getProperty(newRawMaterialNodeRef, PLMWorkflowModel.PROP_PV_VALIDATION_DATE), validationDate);
-		
+
 	}
 
 	@Test
@@ -736,8 +727,8 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 		assertEquals(newRawMaterialNodeRef, rawMaterialNodeRef);
 		assertNotNull(entityVersionService.getVersionHistoryNodeRef(rawMaterialNodeRef));
 		assertNotNull(versionService.getVersionHistory(rawMaterialNodeRef));
-		
-		for(EntityVersion entityVersion : entityVersionService.getAllVersions(rawMaterialNodeRef)) {
+
+		for (EntityVersion entityVersion : entityVersionService.getAllVersions(rawMaterialNodeRef)) {
 			assertNull(versionService.getVersionHistory(entityVersion.getEntityVersionNodeRef()));
 		}
 
@@ -855,11 +846,6 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 		assertFalse(nodeService.exists(rawMaterialNodeRef));
 
 	}
-	
-	
-	
-	
-	
 
 	private Object getVersionHistoryNodeRef(NodeRef rawMaterialNodeRef) {
 		NodeRef rootNode = nodeService.getRootNode(new StoreRef(StoreRef.PROTOCOL_WORKSPACE, Version2Model.STORE_ID));
@@ -902,28 +888,28 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 			assertEquals("Check products are the same", rawMaterialNodeRef, newRawMaterialNodeRef);
 
 			// 2nd Check out, Check in
-			if(secondCheckin) {
+			if (secondCheckin) {
 				NodeRef workingCopy2NodeRef = checkOutCheckInService.checkout(rawMaterialNodeRef);
-	
+
 				Map<String, Serializable> versionProperties = new HashMap<>();
 				versionProperties.put(VersionBaseModel.PROP_VERSION_TYPE, VersionType.MAJOR);
 				versionProperties.put(Version.PROP_DESCRIPTION, "description");
 				return checkOutCheckInService.checkin(workingCopy2NodeRef, versionProperties);
-			} 
+			}
 			return rawMaterialNodeRef;
 
 		}, false, true);
 
-		if(secondCheckin) {
+		if (secondCheckin) {
 			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-	
+
 				ProductData newRawMaterial = alfrescoRepository.findOne(newRawMaterialNodeRef);
 				assertEquals("Check version", "3.0", getVersionLabel(newRawMaterial));
 				VersionHistory versionHistory = versionService.getVersionHistory(newRawMaterialNodeRef);
 				Version version = versionHistory.getVersion("3.0");
 				assertNotNull(version);
 				assertNotNull(entityVersionService.getEntityVersion(version));
-	
+
 				// Check cost Unit has changed after transaction
 				for (int i = 0; i < newRawMaterial.getCostList().size(); i++) {
 					CostListDataItem vCostListDataItem = newRawMaterial.getCostList().get(i);
@@ -932,12 +918,12 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 						assertTrue("Check cost unit", vCostListDataItem.getUnit().endsWith("/L"));
 					}
 				}
-	
+
 				// documents are restored under orig node
 				assertNotNull(getFolderDocuments(rawMaterialNodeRef));
-	
+
 				return null;
-	
+
 			}, false, true);
 		}
 

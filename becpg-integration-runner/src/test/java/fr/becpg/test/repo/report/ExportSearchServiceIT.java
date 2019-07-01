@@ -102,7 +102,7 @@ public class ExportSearchServiceIT extends RepoBaseTestCase {
 
 			searchResults.add(entityNodeRef);
 
-			allEntries.add("subimg" + i+".jpeg - Export Zip Test " + i + ".jpeg");
+			allEntries.add("subimg" + i + ".jpeg - Export Zip Test " + i + ".jpeg");
 			allEntries.add("Sub folder/Image - Export Zip Test " + i + ".jpeg");
 			allEntries.add("Sub folder2/img" + i + ".jpeg");
 
@@ -130,9 +130,11 @@ public class ExportSearchServiceIT extends RepoBaseTestCase {
 		}, false, true);
 
 		DownloadStatus status = getDownloadStatus(downloadNode);
+		System.out.println("Downloading");
 		while (status.getStatus() == Status.PENDING) {
 			Thread.sleep(PAUSE_TIME);
 			status = getDownloadStatus(downloadNode);
+			System.out.println("...");
 		}
 
 		Assert.assertEquals(30l, status.getTotalFiles());
@@ -199,7 +201,7 @@ public class ExportSearchServiceIT extends RepoBaseTestCase {
 	}
 
 	private DownloadStatus getDownloadStatus(final NodeRef downloadNode) {
-		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> downloadService.getDownloadStatus(downloadNode));
+		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> downloadService.getDownloadStatus(downloadNode), false, true);
 	}
 
 }

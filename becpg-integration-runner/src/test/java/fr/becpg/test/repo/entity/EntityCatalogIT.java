@@ -49,92 +49,119 @@ public class EntityCatalogIT extends PLMBaseTestCase {
 	@Autowired
 	BeCPGCacheService cacheService;
 
-
 	@Override
 	public void setUp() throws Exception {
-			super.setUp();
-			cacheService.clearCache(EntityCatalogService.class.getName());
-			List<JSONArray> res = new ArrayList<>();
-			res.add(new JSONArray(CATALOGS_STRING));
-			cacheService.storeInCache(EntityCatalogService.class.getName(), EntityCatalogService.CATALOG_DEFS, res);
+		super.setUp();
+		cacheService.clearCache(EntityCatalogService.class.getName());
+		List<JSONArray> res = new ArrayList<>();
+		res.add(new JSONArray(CATALOGS_STRING));
+		cacheService.storeInCache(EntityCatalogService.class.getName(), EntityCatalogService.CATALOG_DEFS, res);
 	}
-	
+
 	@Override
 	public void tearDown() throws Exception {
 		super.tearDown();
 		cacheService.clearCache(EntityCatalogService.class.getName());
 	}
-	
+
 	@Test
 	public void catalogServiceTest() {
 		NodeRef productNodeRef = createFinishedProduct();
 		NodeRef rawMaterialNodeRef = createRawMaterial();
-		//update non audited fields
+		// update non audited fields
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			nodeService.setProperty(productNodeRef, BeCPGModel.PROP_LEGAL_NAME, "update product legal name");
 			nodeService.setProperty(rawMaterialNodeRef, ContentModel.PROP_NAME, "update rawMaterial Name");
 			return null;
-		}, false, false);
-		assertNull(nodeService.getProperty(productNodeRef, QName.createQName("bcpg:modifiedCatalog1", namespaceService)));
-		assertNull(nodeService.getProperty(productNodeRef, QName.createQName("bcpg:modifiedCatalog2", namespaceService)));
-		assertNull(nodeService.getProperty(rawMaterialNodeRef, QName.createQName("bcpg:modifiedCatalog1", namespaceService)));
-		assertNull(nodeService.getProperty(rawMaterialNodeRef, QName.createQName("bcpg:modifiedCatalog2", namespaceService)));
-		
-		Date beforeRef =  new Date();
-		
+		}, false, true);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			assertNull(nodeService.getProperty(productNodeRef, QName.createQName("bcpg:modifiedCatalog1", namespaceService)));
+			assertNull(nodeService.getProperty(productNodeRef, QName.createQName("bcpg:modifiedCatalog2", namespaceService)));
+			assertNull(nodeService.getProperty(rawMaterialNodeRef, QName.createQName("bcpg:modifiedCatalog1", namespaceService)));
+			assertNull(nodeService.getProperty(rawMaterialNodeRef, QName.createQName("bcpg:modifiedCatalog2", namespaceService)));
+			return null;
+		}, false, true);
+
+		Date beforeRef = new Date();
+
 		// update audited fields
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			nodeService.setProperty(productNodeRef, ContentModel.PROP_NAME, "update product Name");
 			nodeService.setProperty(rawMaterialNodeRef, BeCPGModel.PROP_LEGAL_NAME, "update rawMaterial legal name");
 			return null;
-		}, false, false);
-		assertNotNull(nodeService.getProperty(productNodeRef, QName.createQName("bcpg:modifiedCatalog1", namespaceService)));
-		assertNull(nodeService.getProperty(productNodeRef, QName.createQName("bcpg:modifiedCatalog2", namespaceService)));
-		assertNotNull(nodeService.getProperty(rawMaterialNodeRef, QName.createQName("bcpg:modifiedCatalog2", namespaceService)));
-		assertNull(nodeService.getProperty(rawMaterialNodeRef, QName.createQName("bcpg:modifiedCatalog1", namespaceService)));
-		
-		//update audited lists
+		}, false, true);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			assertNotNull(nodeService.getProperty(productNodeRef, QName.createQName("bcpg:modifiedCatalog1", namespaceService)));
+			assertNull(nodeService.getProperty(productNodeRef, QName.createQName("bcpg:modifiedCatalog2", namespaceService)));
+			assertNotNull(nodeService.getProperty(rawMaterialNodeRef, QName.createQName("bcpg:modifiedCatalog2", namespaceService)));
+			assertNull(nodeService.getProperty(rawMaterialNodeRef, QName.createQName("bcpg:modifiedCatalog1", namespaceService)));
+			return null;
+		}, false, true);
+
+		// update audited lists
 		Date afterRef = new Date();
-		assertTrue(beforeRef.before((Date)nodeService.getProperty(productNodeRef, QName.createQName("bcpg:modifiedCatalog1", namespaceService))));
-		assertTrue(afterRef.after((Date)nodeService.getProperty(productNodeRef, QName.createQName("bcpg:modifiedCatalog1", namespaceService))));
-		assertTrue(beforeRef.before((Date)nodeService.getProperty(rawMaterialNodeRef, QName.createQName("bcpg:modifiedCatalog2", namespaceService))));
-		assertTrue(afterRef.after((Date)nodeService.getProperty(rawMaterialNodeRef, QName.createQName("bcpg:modifiedCatalog2", namespaceService))));
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			assertTrue(
+					beforeRef.before((Date) nodeService.getProperty(productNodeRef, QName.createQName("bcpg:modifiedCatalog1", namespaceService))));
+			assertTrue(afterRef.after((Date) nodeService.getProperty(productNodeRef, QName.createQName("bcpg:modifiedCatalog1", namespaceService))));
+			assertTrue(beforeRef
+					.before((Date) nodeService.getProperty(rawMaterialNodeRef, QName.createQName("bcpg:modifiedCatalog2", namespaceService))));
+			assertTrue(
+					afterRef.after((Date) nodeService.getProperty(rawMaterialNodeRef, QName.createQName("bcpg:modifiedCatalog2", namespaceService))));
+			return null;
+		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			FinishedProductData finishedProductData = (FinishedProductData) alfrescoRepository.findOne(productNodeRef);
 			RawMaterialData rawMaterialData = (RawMaterialData) alfrescoRepository.findOne(rawMaterialNodeRef);
-			
+
 			NodeRef nodeRef = finishedProductData.getAllergenList().get(0).getAllergen();
 			nodeService.setProperty(nodeRef, PLMModel.PROP_ALLERGENLIST_VOLUNTARY, true);
 			rawMaterialData.getCostList().add(new CostListDataItem(null, 4000d, "€", null, costs.get(0), true));
-			
+
 			alfrescoRepository.save(finishedProductData);
 			alfrescoRepository.save(rawMaterialData);
 			return null;
 		}, false, true);
-		
-		assertTrue(beforeRef.before((Date)nodeService.getProperty(productNodeRef, QName.createQName("bcpg:modifiedCatalog1", namespaceService))));
-		assertTrue(afterRef.after((Date)nodeService.getProperty(productNodeRef, QName.createQName("bcpg:modifiedCatalog1", namespaceService))));
-		assertTrue(beforeRef.before((Date)nodeService.getProperty(rawMaterialNodeRef, QName.createQName("bcpg:modifiedCatalog2", namespaceService))));
-		assertTrue(afterRef.after((Date)nodeService.getProperty(rawMaterialNodeRef, QName.createQName("bcpg:modifiedCatalog2", namespaceService))));
-		
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			assertTrue(
+					beforeRef.before((Date) nodeService.getProperty(productNodeRef, QName.createQName("bcpg:modifiedCatalog1", namespaceService))));
+			assertTrue(afterRef.after((Date) nodeService.getProperty(productNodeRef, QName.createQName("bcpg:modifiedCatalog1", namespaceService))));
+			assertTrue(beforeRef
+					.before((Date) nodeService.getProperty(rawMaterialNodeRef, QName.createQName("bcpg:modifiedCatalog2", namespaceService))));
+			assertTrue(
+					afterRef.after((Date) nodeService.getProperty(rawMaterialNodeRef, QName.createQName("bcpg:modifiedCatalog2", namespaceService))));
+			return null;
+		}, false, true);
+
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			FinishedProductData finishedProductData = (FinishedProductData) alfrescoRepository.findOne(productNodeRef);
 			RawMaterialData rawMaterialData = (RawMaterialData) alfrescoRepository.findOne(rawMaterialNodeRef);
-			
+
 			finishedProductData.getCostList().add(new CostListDataItem(null, 4000d, "€", null, costs.get(0), true));
 			NodeRef nodeRef = rawMaterialData.getAllergenList().get(0).getAllergen();
 			nodeService.setProperty(nodeRef, PLMModel.PROP_ALLERGENLIST_VOLUNTARY, true);
-			
+
 			alfrescoRepository.save(finishedProductData);
 			alfrescoRepository.save(rawMaterialData);
 			return null;
 		}, false, true);
-		
-		assertTrue(beforeRef.before((Date)nodeService.getProperty(productNodeRef, QName.createQName("bcpg:modifiedCatalog1", namespaceService))));
-		assertFalse(afterRef.after((Date)nodeService.getProperty(productNodeRef, QName.createQName("bcpg:modifiedCatalog1", namespaceService))));
-		assertTrue(beforeRef.before((Date)nodeService.getProperty(rawMaterialNodeRef, QName.createQName("bcpg:modifiedCatalog2", namespaceService))));
-		assertTrue(afterRef.after((Date)nodeService.getProperty(rawMaterialNodeRef, QName.createQName("bcpg:modifiedCatalog2", namespaceService))));
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			assertTrue(
+					beforeRef.before((Date) nodeService.getProperty(productNodeRef, QName.createQName("bcpg:modifiedCatalog1", namespaceService))));
+			assertFalse(afterRef.after((Date) nodeService.getProperty(productNodeRef, QName.createQName("bcpg:modifiedCatalog1", namespaceService))));
+			assertTrue(beforeRef
+					.before((Date) nodeService.getProperty(rawMaterialNodeRef, QName.createQName("bcpg:modifiedCatalog2", namespaceService))));
+			assertTrue(
+					afterRef.after((Date) nodeService.getProperty(rawMaterialNodeRef, QName.createQName("bcpg:modifiedCatalog2", namespaceService))));
+			return null;
+		}, false, true);
 	}
 
 	@Test
@@ -144,7 +171,7 @@ public class EntityCatalogIT extends PLMBaseTestCase {
 			catalog = new JSONObject(CATALOG_STRING);
 			assertTrue(entityCatalogService.isMatchEntityType(catalog, PLMModel.TYPE_FINISHEDPRODUCT, namespaceService));
 			assertFalse(entityCatalogService.isMatchEntityType(catalog, PLMModel.TYPE_RAWMATERIAL, namespaceService));
-			assertEquals(new HashSet<QName>(Arrays.asList(new QName[] {ContentModel.PROP_NAME, QName.createQName("bcpg:compoList", namespaceService)})), 
+			assertEquals(new HashSet<>(Arrays.asList(new QName[] { ContentModel.PROP_NAME, QName.createQName("bcpg:compoList", namespaceService) })),
 					entityCatalogService.getAuditedFields(catalog, namespaceService));
 		} catch (JSONException e) {
 			logger.error("Unable to load catalog", e);
@@ -153,7 +180,7 @@ public class EntityCatalogIT extends PLMBaseTestCase {
 	}
 
 	private NodeRef createFinishedProduct() {
-		
+
 		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			logger.info("/*-- Create finished product --*/");
 			FinishedProductData finishedProduct = new FinishedProductData();
@@ -170,14 +197,14 @@ public class EntityCatalogIT extends PLMBaseTestCase {
 			finishedProduct.setCostList(costList);
 
 			List<AllergenListDataItem> allergenList = new ArrayList<>();
-			allergenList.add(new AllergenListDataItem(null,null, true, true, null, null, allergens.get(0), false));
+			allergenList.add(new AllergenListDataItem(null, null, true, true, null, null, allergens.get(0), false));
 			finishedProduct.setAllergenList(allergenList);
-			
+
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
 		}, false, true);
 	}
-	
+
 	private NodeRef createRawMaterial() {
 		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			logger.info("/*-- Create Raw Material --*/");
@@ -191,13 +218,12 @@ public class EntityCatalogIT extends PLMBaseTestCase {
 			rawMaterial.setCostList(costList);
 
 			List<AllergenListDataItem> allergenList = new ArrayList<>();
-			allergenList.add(new AllergenListDataItem(null,null, true, true, null, null, allergens.get(0), false));
+			allergenList.add(new AllergenListDataItem(null, null, true, true, null, null, allergens.get(0), false));
 			rawMaterial.setAllergenList(allergenList);
-			
+
 			return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef();
 
 		}, false, true);
 	}
-
 
 }

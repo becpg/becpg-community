@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2018 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2018 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.test.repo.security;
@@ -22,7 +22,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
@@ -48,7 +47,7 @@ public class SecurityServiceIT extends RepoBaseTestCase {
 	protected static final String USER_ONE = "matthieu_secu";
 
 	protected static final String USER_TWO = "philippe_secu";
-	
+
 	protected static final String USER_THREE = "steven_secu";
 
 	private String grp1;
@@ -75,24 +74,23 @@ public class SecurityServiceIT extends RepoBaseTestCase {
 		 * Matthieu : GRP_1, GRP_2 Philippe : GRP_3 Admin
 		 */
 
-		if(authorityService.authorityExists(PermissionService.GROUP_PREFIX+"GRP_1")){
-			grp1 = PermissionService.GROUP_PREFIX+"GRP_1";
+		if (authorityService.authorityExists(PermissionService.GROUP_PREFIX + "GRP_1")) {
+			grp1 = PermissionService.GROUP_PREFIX + "GRP_1";
 		} else {
 			grp1 = authorityService.createAuthority(AuthorityType.GROUP, "GRP_1");
 		}
-		if(authorityService.authorityExists(PermissionService.GROUP_PREFIX+"GRP_2")){
-			grp2 = PermissionService.GROUP_PREFIX+"GRP_2";
+		if (authorityService.authorityExists(PermissionService.GROUP_PREFIX + "GRP_2")) {
+			grp2 = PermissionService.GROUP_PREFIX + "GRP_2";
 		} else {
 			grp2 = authorityService.createAuthority(AuthorityType.GROUP, "GRP_2");
 		}
-		
-		if(authorityService.authorityExists(PermissionService.GROUP_PREFIX+"GRP_3")){
-			grp3 = PermissionService.GROUP_PREFIX+"GRP_3";
+
+		if (authorityService.authorityExists(PermissionService.GROUP_PREFIX + "GRP_3")) {
+			grp3 = PermissionService.GROUP_PREFIX + "GRP_3";
 		} else {
 			grp3 = authorityService.createAuthority(AuthorityType.GROUP, "GRP_3");
 		}
-		
-		
+
 		if (!authenticationDAO.userExists(USER_ONE)) {
 			BeCPGTestHelper.createUser(USER_ONE);
 
@@ -106,7 +104,7 @@ public class SecurityServiceIT extends RepoBaseTestCase {
 
 			authorityService.addAuthority(grp3, USER_TWO);
 		}
-		
+
 		if (!authenticationDAO.userExists(USER_THREE)) {
 			BeCPGTestHelper.createUser(USER_THREE);
 
@@ -140,10 +138,10 @@ public class SecurityServiceIT extends RepoBaseTestCase {
 
 		acls.add(new ACLEntryDataItem("cm:titled", PermissionModel.READ_ONLY, group3s));
 		acls.add(new ACLEntryDataItem("cm:titled", PermissionModel.READ_WRITE, group1s));
-		
+
 		acls.add(new ACLEntryDataItem("cm:description", PermissionModel.READ_WRITE, group1s));
 		acls.add(new ACLEntryDataItem("cm:description", PermissionModel.READ_ONLY, group3s));
-		
+
 		aclGroupData.setAcls(acls);
 		alfrescoRepository.create(getTestFolderNodeRef(), aclGroupData);
 
@@ -154,17 +152,14 @@ public class SecurityServiceIT extends RepoBaseTestCase {
 	@Test
 	public void testComputeAccessMode() {
 
-		final NodeRef aclGroupNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
+		final NodeRef aclGroupNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-				NodeRef ret = createACLGroup();
+			NodeRef ret = createACLGroup();
 
-				securityService.refreshAcls();
+			securityService.refreshAcls();
 
-				return ret;
+			return ret;
 
-			}
 		}, false, true);
 
 		authenticationComponent.setCurrentUser(USER_TWO);
@@ -174,9 +169,9 @@ public class SecurityServiceIT extends RepoBaseTestCase {
 		assertEquals(securityService.computeAccessMode(SecurityModel.TYPE_ACL_ENTRY, "sec:propName"), SecurityService.READ_ACCESS);
 
 		assertEquals(securityService.computeAccessMode(SecurityModel.TYPE_ACL_ENTRY, "sec:aclPermission"), SecurityService.NONE_ACCESS);
-		
+
 		assertEquals(securityService.computeAccessMode(SecurityModel.TYPE_ACL_ENTRY, "cm:description"), SecurityService.READ_ACCESS);
-		
+
 		assertEquals(securityService.computeAccessMode(SecurityModel.TYPE_ACL_ENTRY, "cm:titled"), SecurityService.READ_ACCESS);
 
 		authenticationComponent.setCurrentUser(USER_ONE);
@@ -186,15 +181,15 @@ public class SecurityServiceIT extends RepoBaseTestCase {
 		assertEquals(securityService.computeAccessMode(SecurityModel.TYPE_ACL_ENTRY, "sec:propName"), SecurityService.WRITE_ACCESS);
 
 		assertEquals(securityService.computeAccessMode(SecurityModel.TYPE_ACL_ENTRY, "sec:aclPermission"), SecurityService.READ_ACCESS);
-		
-	    assertEquals(securityService.computeAccessMode(SecurityModel.TYPE_ACL_ENTRY, "cm:description"), SecurityService.WRITE_ACCESS);
-		
+
+		assertEquals(securityService.computeAccessMode(SecurityModel.TYPE_ACL_ENTRY, "cm:description"), SecurityService.WRITE_ACCESS);
+
 		assertEquals(securityService.computeAccessMode(SecurityModel.TYPE_ACL_ENTRY, "cm:titled"), SecurityService.WRITE_ACCESS);
-		
+
 		authenticationComponent.setCurrentUser(USER_THREE);
-		
+
 		assertEquals(securityService.computeAccessMode(SecurityModel.TYPE_ACL_ENTRY, "cm:description"), SecurityService.NONE_ACCESS);
-			
+
 		assertEquals(securityService.computeAccessMode(SecurityModel.TYPE_ACL_ENTRY, "cm:titled"), SecurityService.NONE_ACCESS);
 
 		authenticationComponent.setCurrentUser("admin");
@@ -205,14 +200,11 @@ public class SecurityServiceIT extends RepoBaseTestCase {
 
 		assertEquals(securityService.computeAccessMode(SecurityModel.TYPE_ACL_ENTRY, "sec:aclPermission"), SecurityService.WRITE_ACCESS);
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-				nodeService.deleteNode(aclGroupNodeRef);
+			nodeService.deleteNode(aclGroupNodeRef);
 
-				return null;
-			}
+			return null;
 		}, false, true);
 
 	}

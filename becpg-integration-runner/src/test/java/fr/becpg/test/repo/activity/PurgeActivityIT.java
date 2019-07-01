@@ -21,47 +21,45 @@ import fr.becpg.repo.activity.data.ActivityEvent;
 import fr.becpg.repo.activity.data.ActivityListDataItem;
 import fr.becpg.repo.activity.data.ActivityType;
 import fr.becpg.repo.product.data.FinishedProductData;
-import fr.becpg.repo.product.data.LocalSemiFinishedProductData;	
+import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
-import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
+import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 
 /**
  * This <code>class</code> is a test case of the purge functionality
- * 
+ *
  * @see EntityActivityService#cleanActivities().
- * 
+ *
  * @since beCPG-PLM 2.2.2
- * 
+ *
  * @author rabah.
  */
 public class PurgeActivityIT extends PlmActivityServiceIT {
 
 	private static Log logger = LogFactory.getLog(PurgeActivityIT.class);
-	
+
 	ContentService contentService;
-	
+
 	private static final int MAX_PAGE = 50;
-	
+
 	private static final Map<String, Boolean> SORT_MAP;
-	static{
+	static {
 		SORT_MAP = new LinkedHashMap<>();
 		SORT_MAP.put("@cm:created", true);
 	}
 
 	private static final NodeRef ENTITY_NODEREF = new NodeRef("workspace://SpacesStore/8b573");
-	
 
 	/**
 	 * @Goals: merge same activities which are one after the other.
-	 * 
-	 * @Steps:  - Create finished product. 	
-	 * 			- Formulate finished product. 
-	 * 			- After 3 hours, formulate again the finished product. 
-	 * 			- After 6 hours, formulate again the finished product.
-	 * 
+	 *
+	 * @Steps: - Create finished product. - Formulate finished product. - After
+	 *         3 hours, formulate again the finished product. - After 6 hours,
+	 *         formulate again the finished product.
+	 *
 	 * @Results: System will just keep one formulation activity.
 	 */
 	@Test
@@ -69,32 +67,31 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 
 		// Create FP
 		NodeRef finishedProductNodeRef = createFinishedProduct();
-		
+
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.HOUR, -13);
-		
-		List<NodeRef> customActivities = new ArrayList<>(); 
+
+		List<NodeRef> customActivities = new ArrayList<>();
 		List<NodeRef> activities = new ArrayList<>();
-		
+
 		for (int i = 0; i < 3; i++) {
-			// Formulate finished product	
+			// Formulate finished product
 			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 				productService.formulate(finishedProductNodeRef, false);
 				return null;
 			}, false, true);
-			
-			
+
 			activities = getActivities(finishedProductNodeRef, SORT_MAP);
-			
+
 			activities.forEach((nodeRef) -> {
-				if(!customActivities.contains(nodeRef)){
+				if (!customActivities.contains(nodeRef)) {
 					cal.add(Calendar.HOUR, +3);
 					changeCreatedNodeDate(nodeRef, cal.getTime());
 					customActivities.add(nodeRef);
 				}
-			});		
+			});
 		}
-		
+
 		List<ActivityType> activityTypes = new ArrayList<>();
 		getActivities(finishedProductNodeRef, SORT_MAP)
 				.forEach((activity) -> activityTypes.add(((ActivityListDataItem) alfrescoRepository.findOne(activity)).getActivityType()));
@@ -110,20 +107,19 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 
 	/**
 	 * @Goals: merge same activity in last hour
-	 * 
-	 * @Steps:  - Create finished product. 
-	 * 			- Change finished product props. 
-	 * 			- Formulate the finished product. 
-	 * 			- Modify again finished product props.
-	 * 
+	 *
+	 * @Steps: - Create finished product. - Change finished product props. -
+	 *         Formulate the finished product. - Modify again finished product
+	 *         props.
+	 *
 	 * @Results: System will generate 3 activities : one for FP creation and
 	 *           second for formulation and last for props modification.
 	 */
 	@Test
 	public void mergeSameActivityInLastHourTest() {
-		
+
 		NodeRef finishedProductNodeRef = createFinishedProduct();
-		
+
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			// Modify finished product props (unit total cost)
 			FinishedProductData productData = (FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef);
@@ -136,7 +132,8 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			// Again modify finished product name props (previous unit total cost)
+			// Again modify finished product name props (previous unit total
+			// cost)
 			FinishedProductData productData = (FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 			productData.setPreviousUnitTotalCost(2.0);
 			alfrescoRepository.save(productData);
@@ -166,21 +163,19 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 
 	/**
 	 * @Goals: Don't merge activities of the first page
+	 *
+	 * @Steps: - Create finished product. - Add raw-material to finished
+	 *         product. - After 2 hours, generate report and formulate. - Change
+	 *         in raw-material. - Repeat 50 times the steps 3 and 4.
 	 * 
-	 * @Steps:  - Create finished product.
-	 * 			- Add raw-material to finished product.
-	 *        	- After 2 hours, generate report and formulate. 
-	 *        	- Change in raw-material. 
-	 *        	- Repeat 50 times the steps 3 and 4.
-	 *        	
-	 * 
+	 *
 	 * @Results: System will keep the same 50 first activities.
 	 */
 	@Test
 	public void alwaysKeepSameLastFiftyActivitiesTest() {
-		
+
 		NodeRef finishedProductNodeRef = createFinishedProduct();
-		
+
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			FinishedProductData productData = (FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 			// generate change activity of type state
@@ -207,44 +202,40 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 
 		List<NodeRef> activities = getActivities(finishedProductNodeRef, SORT_MAP);
 		Collections.reverse(activities);
-		
+
 		List<NodeRef> firstPageBeforeClean = activities.subList(0, MAX_PAGE);
-		
+
 		// clean activities
 		entityActivityService.cleanActivities();
 
 		activities = getActivities(finishedProductNodeRef, SORT_MAP);
 		Collections.reverse(activities);
 		List<NodeRef> firstPageAfterClean = activities.subList(0, MAX_PAGE);
-		
-		
+
 		// Make sure that we have more than one page
 		assertTrue(activities.size() > MAX_PAGE);
-		
-		// Make sure that we kept the same first 50 activities 
+
+		// Make sure that we kept the same first 50 activities
 		assertEquals("First page always the same ", firstPageBeforeClean, firstPageAfterClean);
-		
 
 	}
 
 	/**
 	 * @Goals: Keep at least one report/formulation per page from the second
 	 *         page Also insure that we keep the last one.
-	 * 
-	 * @Steps:  - Create finished product 
-	 * 		    - Generate report 
-	 * 			- After 2 hours, Formulate the product 
-	 * 			- Repeat the steps 2 and 3 many times
-	 * 
+	 *
+	 * @Steps: - Create finished product - Generate report - After 2 hours,
+	 *         Formulate the product - Repeat the steps 2 and 3 many times
+	 *
 	 * @Results: System will keep one report activity and another formulation
 	 *           activity in the second page.
 	 */
 	@Test
 	public void keepOneActivityOfTypeReportAndFormulationPerPageTest() {
-		
+
 		// Create FP
 		NodeRef finishedProductNodeRef = createFinishedProduct();
-		
+
 		Calendar cal = Calendar.getInstance();
 		for (int i = 0; i < 100; i++) {
 			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -255,30 +246,30 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 
 				return null;
 			}, false, true);
-			
+
 			getActivities(finishedProductNodeRef, null).forEach((nodeRef) -> {
 				cal.add(Calendar.HOUR, -2);
 				changeCreatedNodeDate(nodeRef, cal.getTime());
-				
+
 			});
 		}
-		
+
 		// activities number before clean
 		assertEquals("number activities = 201", 201, getActivities(finishedProductNodeRef, null).size());
-		
+
 		entityActivityService.cleanActivities();
-		
+
 		List<NodeRef> activities = getActivities(finishedProductNodeRef, SORT_MAP);
-			
+
 		// activities number after clean
 		assertTrue("number formulation activities in second page = 52", activities.size() == 52);
-		
+
 		Collections.reverse(activities);
 		activities = activities.subList(50, 52);
-		
+
 		List<ActivityType> activityTypes = new ArrayList<>();
 		activities.forEach((activity) -> activityTypes.add(((ActivityListDataItem) alfrescoRepository.findOne(activity)).getActivityType()));
-		
+
 		// Make sure that we keep one formulation activity in the second page
 		assertEquals("formulation number in the second page ", 1, Collections.frequency(activityTypes, ActivityType.Formulation));
 		// Make sure that we keep one formulation activity in second page
@@ -287,17 +278,16 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 	}
 
 	/**
-	 * @Goals: Don't merge activities of type : 
-	 * 			comments, version, merge, content and state.
-	 * 
-	 * @Steps: 	- Create finished product 
-	 * 			- Change date time for each activity
-	 * 			- Generate one action of ( comments or version or merge or content or state) 
-	 * 			- Repeat the step 2 and 3 till you create 50 activities. 
-	 * 			- Change date another time 
-	 * 			- Do random action of formulation/report/data-list till we get more than 100 activities
-	 * 			- Assert that we keep activities after clean
-	 * 
+	 * @Goals: Don't merge activities of type : comments, version, merge,
+	 *         content and state.
+	 *
+	 * @Steps: - Create finished product - Change date time for each activity -
+	 *         Generate one action of ( comments or version or merge or content
+	 *         or state) - Repeat the step 2 and 3 till you create 50
+	 *         activities. - Change date another time - Do random action of
+	 *         formulation/report/data-list till we get more than 100 activities
+	 *         - Assert that we keep activities after clean
+	 *
 	 * @Results: System will keep all comments, merge, version, content and
 	 *           state activities.
 	 */
@@ -306,12 +296,12 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 
 		// Create FP
 		NodeRef finishedProductNodeRef = createFinishedProduct();
-		
+
 		Calendar cal = Calendar.getInstance();
-		
+
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			// Comments
-			commentService.createComment(finishedProductNodeRef, COMMENT_TITLE_TEXT, COMMENT_DATA_TEXT, false); 
+			commentService.createComment(finishedProductNodeRef, COMMENT_TITLE_TEXT, COMMENT_DATA_TEXT, false);
 			commentService.createComment(finishedProductNodeRef, COMMENT_TITLE_TEXT, COMMENT_DATA_TEXT, false);
 			// Version
 			entityActivityService.postVersionActivity(finishedProductNodeRef, ENTITY_NODEREF, "1.0");
@@ -322,93 +312,92 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 			// Content
 			entityActivityService.postContentActivity(finishedProductNodeRef, finishedProductNodeRef, ActivityEvent.Update);
 			entityActivityService.postContentActivity(finishedProductNodeRef, finishedProductNodeRef, ActivityEvent.Update);
-			
+
 			return null;
 		}, false, true);
-		
-		for(int i = 0; i < 25; i++){
+
+		for (int i = 0; i < 25; i++) {
 			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 				// Generate report
 				entityActivityService.postEntityActivity(finishedProductNodeRef, ActivityType.Report, ActivityEvent.Update);
 				// Formulation
-				entityActivityService.postEntityActivity(finishedProductNodeRef, ActivityType.Formulation, ActivityEvent.Update);				
-				return null; 
-			}, false,true);
-			
-			
+				entityActivityService.postEntityActivity(finishedProductNodeRef, ActivityType.Formulation, ActivityEvent.Update);
+				return null;
+			}, false, true);
+
 			int[] hour = { 0 };
 			getActivities(finishedProductNodeRef, SORT_MAP).forEach((nodeRef) -> {
 				cal.add(Calendar.HOUR_OF_DAY, -hour[0]++);
-				changeCreatedNodeDate(nodeRef, cal.getTime());					
+				changeCreatedNodeDate(nodeRef, cal.getTime());
 			});
-		}			
-		
+		}
+
 		List<ActivityType> activityTypesBeforeClean = new ArrayList<>();
 		getActivities(finishedProductNodeRef, null)
 				.forEach((activity) -> activityTypesBeforeClean.add(((ActivityListDataItem) alfrescoRepository.findOne(activity)).getActivityType()));
-		
+
 		// Make sure that we have all comments activities
 		assertEquals("Comment activities number = 2", 2, Collections.frequency(activityTypesBeforeClean, ActivityType.Comment));
 		// Make sure that we have all versions activities
 		assertEquals("Version activities number = 2", 2, Collections.frequency(activityTypesBeforeClean, ActivityType.Version));
-		// Make sure that w have all state activities 
+		// Make sure that w have all state activities
 		assertEquals("State activities number = 2", 2, Collections.frequency(activityTypesBeforeClean, ActivityType.State));
 		// Make sure that we have all content activities
 		assertEquals("Content activities number = 2", 2, Collections.frequency(activityTypesBeforeClean, ActivityType.Content));
-		
+
 		entityActivityService.cleanActivities();
-		
+
 		List<ActivityType> activityTypesAfterClean = new ArrayList<>();
 		getActivities(finishedProductNodeRef, null)
 				.forEach((activity) -> activityTypesAfterClean.add(((ActivityListDataItem) alfrescoRepository.findOne(activity)).getActivityType()));
 
-		// Make sure that we keep comments activities even if they are in the second page
+		// Make sure that we keep comments activities even if they are in the
+		// second page
 		assertEquals("Comment activities number = 2", 2, Collections.frequency(activityTypesAfterClean, ActivityType.Comment));
-		// Make sure that we keep version activities		
+		// Make sure that we keep version activities
 		assertEquals("Version activities number = 2", 2, Collections.frequency(activityTypesAfterClean, ActivityType.Version));
-		// Make sure that we keep state activities 
+		// Make sure that we keep state activities
 		assertEquals("State activities number = 2", 2, Collections.frequency(activityTypesBeforeClean, ActivityType.State));
-		// Make sure that we keep content activities 
+		// Make sure that we keep content activities
 		assertEquals("Content activities number = 2", 2, Collections.frequency(activityTypesBeforeClean, ActivityType.Content));
 
 	}
-	
+
 	/**
 	 * @Goals: merge activities by day for the last week.
+	 *
+	 * @Steps: - Create finished product. - Add SF to finished-product
+	 *         composition list. - Generate multiples actions and change their
+	 *         create time. which will be between 08h and 18h. - Generate 50
+	 *         activities of type comment which will be activities of the first
+	 *         page.
 	 * 
-	 * @Steps: 	- Create finished product.
-	 * 			- Add SF to finished-product composition list.  
-	 * 			- Generate multiples actions and change their create time.
-	 * 			  which will be between 08h and 18h.
-	 * 			- Generate 50 activities of type comment 
-	 * 			  which will be activities of the first page.
-	 *  
-	 * 			
-	 * @Results: System will keep for each day during the current week 
-	 *           the last activity in the day taht's mean 18h.
-	 *           
-	 *           NB. we talk here about activities after the first page (>50). 
+	 * 
+	 * @Results: System will keep for each day during the current week the last
+	 *           activity in the day taht's mean 18h.
+	 * 
+	 *           NB. we talk here about activities after the first page (>50).
 	 */
 	@Test
 	public void mergeActivitiesByDayForTheLastWeekTest() {
 		// Create FP
 		NodeRef finishedProductNodeRef = createFinishedProduct();
-		
+
 		List<NodeRef> activityWithCustomDate = new ArrayList<>();
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.DAY_OF_MONTH, -1);
 		cal.set(Calendar.MINUTE, 0);
-		
-		// Create SF		
+
+		// Create SF
 		final NodeRef lSF1NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			LocalSemiFinishedProductData lSF1 = new LocalSemiFinishedProductData();
 			lSF1.setName("SF-1");
 			return alfrescoRepository.create(getTestFolderNodeRef(), lSF1).getNodeRef();
 		}, false, true);
-			
-		// Generate different actions 
-		for(int i = 0; i < 20; i++){
-			for(int j = 8 ; j < 19; j++){
+
+		// Generate different actions
+		for (int i = 0; i < 20; i++) {
+			for (int j = 8; j < 19; j++) {
 				// Add SF to finished product (data-list activity)
 				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 					List<CompoListDataItem> compoList = new ArrayList<>();
@@ -419,7 +408,7 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 					alfrescoRepository.save(finishedProduct);
 					return null;
 				}, false, true);
-				
+
 				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 					// Generate report
 					entityActivityService.postEntityActivity(finishedProductNodeRef, ActivityType.Report, ActivityEvent.Update);
@@ -427,57 +416,57 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 					entityActivityService.postEntityActivity(finishedProductNodeRef, ActivityType.Formulation, ActivityEvent.Update);
 					return null;
 				}, false, true);
-				
+
 				cal.set(Calendar.HOUR_OF_DAY, j);
-				
+
 				getActivities(finishedProductNodeRef, null).forEach((nodeRef) -> {
-					if (!activityWithCustomDate.contains(nodeRef)){
+					if (!activityWithCustomDate.contains(nodeRef)) {
 						activityWithCustomDate.add(nodeRef);
 						changeCreatedNodeDate(nodeRef, cal.getTime());
 					}
 				});
 			}
-			
+
 			cal.add(Calendar.DAY_OF_YEAR, -1);
 		}
-		
+
 		// Generate multiple activities of type comment
-		for(int i = 0; i < MAX_PAGE; i++){
+		for (int i = 0; i < MAX_PAGE; i++) {
 			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-				commentService.createComment(finishedProductNodeRef, COMMENT_TITLE_TEXT, COMMENT_DATA_TEXT, false); 
+				commentService.createComment(finishedProductNodeRef, COMMENT_TITLE_TEXT, COMMENT_DATA_TEXT, false);
 				return null;
 			}, false, true);
 		}
-		
-		logger.info("Activities number before clean : "+getActivities(finishedProductNodeRef, null).size());
-		
+
+		logger.info("Activities number before clean : " + getActivities(finishedProductNodeRef, null).size());
+
 		// clean activities
 		entityActivityService.cleanActivities();
-		
+
 		List<NodeRef> activityNodeRefs = getActivities(finishedProductNodeRef, SORT_MAP);
 		Collections.reverse(activityNodeRefs);
-		
-		logger.info("Activities number after clean : "+activityNodeRefs.size());
-		
+
+		logger.info("Activities number after clean : " + activityNodeRefs.size());
+
 		activityNodeRefs.subList(MAX_PAGE, activityNodeRefs.size()).forEach((nodeRef) -> {
 			Date customCreationDate = (Date) nodeService.getProperty(nodeRef, ContentModel.PROP_CREATED);
 			Calendar time = Calendar.getInstance();
 			time.setTime(customCreationDate);
-			ActivityType activityType = ((ActivityListDataItem) alfrescoRepository.findOne(nodeRef)).getActivityType(); 
+			ActivityType activityType = ((ActivityListDataItem) alfrescoRepository.findOne(nodeRef)).getActivityType();
 			// make sure that we keep only activities of the last day
-			
-			if(activityType.equals(ActivityType.Datalist)){	
-				//Make sure we keep the last activity per day
+
+			if (activityType.equals(ActivityType.Datalist)) {
+				// Make sure we keep the last activity per day
 				assertEquals("activity time creation at 18h", 18, time.get(Calendar.HOUR_OF_DAY));
 			}
-			
+
 		});
-	
+
 	}
 
 	/**
 	 * The legacy Generals tests cases of purge functionality
-	 * 
+	 *
 	 */
 
 	@Test
@@ -519,18 +508,18 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 			for (int i = 0; i < MAX_PAGE; i++) {
 				commentService.createComment(productNodeRef, COMMENT_TITLE_TEXT, COMMENT_DATA_TEXT, false);
 			}
-			
+
 			productData.getCostList().add(new CostListDataItem(null, 10d, "kg", null, costs.get(0), false));
 			alfrescoRepository.save(productData);
 
 			return null;
 		}, false, true);
 
-		assertEquals("Check generated Activity", MAX_PAGE+4, getActivities(productNodeRef, null).size());
+		assertEquals("Check generated Activity", MAX_PAGE + 4, getActivities(productNodeRef, null).size());
 
 		entityActivityService.cleanActivities();
 
-		assertEquals("Check generated Activity", MAX_PAGE+4, getActivities(productNodeRef, null).size());
+		assertEquals("Check generated Activity", MAX_PAGE + 4, getActivities(productNodeRef, null).size());
 
 		for (int i = 0; i < 50; i++) {
 			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -567,15 +556,14 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 
 	}
 
-
 	/**
 	 * Create finished-product with an activity list
-	 * 
+	 *
 	 * @return finished-product nodeRef
-	 * 
+	 *
 	 */
 	private NodeRef createFinishedProduct() {
-	
+
 		NodeRef productNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			// Create finished product
 			FinishedProductData productData = new FinishedProductData();
@@ -589,17 +577,19 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 
 			return productData.getNodeRef();
 		}, false, true);
-		
+
 		return productNodeRef;
 	}
 
 	/**
 	 * Change node time creation to a custom date
-	 * 
-	 * @param nodeRef, nodeRef of entity
-	 * 
-	 * @param customDate, new date creation of entity
-	 * 
+	 *
+	 * @param nodeRef,
+	 *            nodeRef of entity
+	 *
+	 * @param customDate,
+	 *            new date creation of entity
+	 *
 	 */
 	private void changeCreatedNodeDate(NodeRef nodeRef, Date customDate) {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -614,11 +604,12 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 	}
 
 	/**
-	 * Legacy method to change <code>@cm:created</code> 
-	 *   of activities for the passed entity
-	 * 
-	 * @param nodeRef, the entity nodeRef
-	 * 
+	 * Legacy method to change <code>@cm:created</code> of activities for the
+	 * passed entity
+	 *
+	 * @param nodeRef,
+	 *            the entity nodeRef
+	 *
 	 */
 	@Deprecated
 	private void changeCreatedDate(NodeRef nodeRef) {
@@ -641,22 +632,21 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 		}, false, true);
 
 	}
-	
+
 	@Override
 	protected List<NodeRef> getActivities(NodeRef entityNodeRef, Map<String, Boolean> sortMap) {
-		
+
 		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			List<NodeRef> ret = new ArrayList<>();
 			NodeRef activityListNodeRef = getActivityList(entityNodeRef);
 			if (activityListNodeRef != null) {
-				ret = sortMap !=null ? entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST, sortMap) : 
-					entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
+				ret = sortMap != null ? entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST, sortMap)
+						: entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
 			}
 
 			return ret;
 		}, true, false);
 	}
-	
-	
+
 }

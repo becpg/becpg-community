@@ -19,7 +19,6 @@ import javax.annotation.Resource;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,7 +43,7 @@ import fr.becpg.test.PLMBaseTestCase;
 // TODO: Auto-generated Javadoc
 /**
  * The Class RemoteEntityServiceTest.
- * 
+ *
  * @author matthieu
  */
 public class RemoteEntityServiceIT extends PLMBaseTestCase {
@@ -54,101 +53,88 @@ public class RemoteEntityServiceIT extends PLMBaseTestCase {
 
 	@Resource
 	private RemoteEntityService remoteEntityService;
-	
 
 	@Test
 	public void testRemoteEntity() throws FileNotFoundException {
-		
+
 		// create product
-	   final NodeRef	sfNodeRef  = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			public NodeRef execute() throws Throwable {
+		final NodeRef sfNodeRef = transactionService.getRetryingTransactionHelper()
+				.doInTransaction(() -> BeCPGPLMTestHelper.createMultiLevelProduct(getTestFolderNodeRef()), false, true);
 
-				return BeCPGPLMTestHelper.createMultiLevelProduct(getTestFolderNodeRef());
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			try {
+
+				// TODO
+
+				File tempFile = File.createTempFile("remoteEntity", "xml");
+				File tempFile2 = File.createTempFile("remoteEntity2", "xml");
+
+				List<NodeRef> entities = new ArrayList<>();
+				entities.add(sfNodeRef);
+
+				remoteEntityService.listEntities(entities, new FileOutputStream(tempFile2), RemoteEntityFormat.xml);
+
+				remoteEntityService.getEntity(sfNodeRef, new FileOutputStream(tempFile), RemoteEntityFormat.xml);
+
+				nodeService.deleteNode(sfNodeRef);
+
+				NodeRef tmpNodeRef = remoteEntityService.createOrUpdateEntity(sfNodeRef, new FileInputStream(tempFile), RemoteEntityFormat.xml, null);
+
+				remoteEntityService.getEntity(tmpNodeRef, new FileOutputStream(tempFile2), RemoteEntityFormat.xml);
+
+				remoteEntityService.getEntityData(tmpNodeRef, new FileOutputStream(tempFile2), RemoteEntityFormat.xml);
+
+				remoteEntityService.getEntityData(tmpNodeRef, new FileOutputStream(tempFile), RemoteEntityFormat.xml);
+
+				remoteEntityService.addOrUpdateEntityData(tmpNodeRef, new FileInputStream(tempFile), RemoteEntityFormat.xml);
+
+				tempFile.delete();
+
+			} catch (BeCPGException e) {
+				logger.error(e, e);
+				Assert.fail(e.getMessage());
 			}
+
+			return null;
 		}, false, true);
-		
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
-				try {
-					
-					//TODO
-					
-					File tempFile = File.createTempFile("remoteEntity", "xml");
-					File tempFile2 = File.createTempFile("remoteEntity2", "xml");
-					
-					List<NodeRef> entities = new ArrayList<>();
-					entities.add(sfNodeRef);
-					
-					remoteEntityService.listEntities(entities, new FileOutputStream(tempFile2),  RemoteEntityFormat.xml);
-					
-					remoteEntityService.getEntity(sfNodeRef, new FileOutputStream(tempFile), RemoteEntityFormat.xml);
-
-					nodeService.deleteNode(sfNodeRef);
-					
-					NodeRef tmpNodeRef = remoteEntityService.createOrUpdateEntity(sfNodeRef, new FileInputStream(tempFile), RemoteEntityFormat.xml,null);
-					
-					remoteEntityService.getEntity(tmpNodeRef, new FileOutputStream(tempFile2), RemoteEntityFormat.xml);
-					
-					remoteEntityService.getEntityData(tmpNodeRef, new FileOutputStream(tempFile2), RemoteEntityFormat.xml);
-					
-					remoteEntityService.getEntityData(tmpNodeRef, new FileOutputStream(tempFile), RemoteEntityFormat.xml);
-					
-					remoteEntityService.addOrUpdateEntityData(tmpNodeRef,  new FileInputStream(tempFile), RemoteEntityFormat.xml);
-					
-					tempFile.delete();
-
-					
-				} catch (BeCPGException e) {
-					logger.error(e,e);
-					Assert.fail(e.getMessage());
-				}
-
-				return null;
-			}
-		}, false, true);	
 	}
-	
+
 	@Test
 	public void testRemoteFullXmlEntity() throws FileNotFoundException {
-		
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
-				try {
-					ruleService.disableRules();
-					ClassPathResource res = new ClassPathResource("beCPG/remote/entity_fullxml.xml");
-					
-					NodeRef tmpNodeRef = remoteEntityService.createOrUpdateEntity(null, res.getInputStream(), RemoteEntityFormat.xml,null);
-					Assert.assertNotNull(tmpNodeRef);
-					
-					
-				} catch (BeCPGException e) {
-					logger.error(e,e);
-					Assert.fail(e.getMessage());
-				} finally {
-					ruleService.enableRules();
-				}
 
-				return null;
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			try {
+				ruleService.disableRules();
+				ClassPathResource res = new ClassPathResource("beCPG/remote/entity_fullxml.xml");
+
+				NodeRef tmpNodeRef = remoteEntityService.createOrUpdateEntity(null, res.getInputStream(), RemoteEntityFormat.xml, null);
+				Assert.assertNotNull(tmpNodeRef);
+
+			} catch (BeCPGException e) {
+				logger.error(e, e);
+				Assert.fail(e.getMessage());
+			} finally {
+				ruleService.enableRules();
 			}
-		}, false, true);	
+
+			return null;
+		}, false, true);
 	}
-	
+
 	/**
-	 * Test Remote filters 
+	 * Test Remote filters
 	 */
 	@Test
 	public void testRemoteEntityFilteredListsAndFields() {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			// Get Filtered Entity
-			List<String> filteredLists = Arrays.asList(new String []{"compoList"}); 
-			List<String> filteredFields = Arrays.asList(new String []{"bcpg:legalName", "bcpg:compoListProduct|cm:name"}); 
+			List<String> filteredLists = Arrays.asList(new String[] { "compoList" });
+			List<String> filteredFields = Arrays.asList(new String[] { "bcpg:legalName", "bcpg:compoListProduct|cm:name" });
 			NodeRef nodeRef = createFinishedProduct();
-			OutputStream out =  new ByteArrayOutputStream();
-			remoteEntityService.getEntity(nodeRef, out, RemoteEntityFormat.xml , filteredFields ,filteredLists);
+			OutputStream out = new ByteArrayOutputStream();
+			remoteEntityService.getEntity(nodeRef, out, RemoteEntityFormat.xml, filteredFields, filteredLists);
 			ByteArrayOutputStream buffer = (ByteArrayOutputStream) out;
-			String xmlString =  new String(buffer.toByteArray());
+			String xmlString = new String(buffer.toByteArray());
 
 			try {
 				// Parse XML
@@ -159,8 +145,8 @@ public class RemoteEntityServiceIT extends PLMBaseTestCase {
 				Element entity = (Element) doc.getFirstChild();
 				// erpCode Property
 				assertTrue(entity.hasAttribute("erpCode"));
-				assertEquals("Extract Property erpCode" , "erp0001", entity.getAttribute("erpCode"));
-				
+				assertEquals("Extract Property erpCode", "erp0001", entity.getAttribute("erpCode"));
+
 				// Properties/Assoc filter
 				NodeList properties = entity.getChildNodes();
 				int checks = 0;
@@ -168,32 +154,32 @@ public class RemoteEntityServiceIT extends PLMBaseTestCase {
 					if (properties.item(j) instanceof Element) {
 						Element property = ((Element) properties.item(j));
 						String propName = property.getNodeName();
-						if("bcpg:legalName".equals(propName)) {
+						if ("bcpg:legalName".equals(propName)) {
 							checks++;
 						}
-						assertFalse("Entity property filter : "+propName, propName.equals("bcpg:netVolume"));
-						assertFalse("Entity property filter : "+propName, propName.equals("bcpg:productUnit"));
-						assertFalse("Entity property filter : "+propName, propName.equals("bcpg:erpCode"));
+						assertFalse("Entity property filter : " + propName, propName.equals("bcpg:netVolume"));
+						assertFalse("Entity property filter : " + propName, propName.equals("bcpg:productUnit"));
+						assertFalse("Entity property filter : " + propName, propName.equals("bcpg:erpCode"));
 					}
 				}
-				
+
 				assertEquals("Entity property filter : ", 1, checks);
-				
+
 				// Lists filter
 				NodeList dataLists = entity.getElementsByTagName("dl:dataList");
 				for (int i = 0; i < dataLists.getLength(); i++) {
 					Element dataList = ((Element) dataLists.item(i));
 					assertEquals("Entity list filter ", "compoList", dataList.getAttribute("name"));
 				}
-				
+
 				// Extract assoc properties
 				checks = 0;
 				NodeList compoProductList = entity.getElementsByTagName("bcpg:compoListProduct");
-				for(int i = 0; i < compoProductList.getLength(); i++) {
+				for (int i = 0; i < compoProductList.getLength(); i++) {
 					Element compoProduct = ((Element) compoProductList.item(i));
 					Element assoc = (Element) compoProduct.getChildNodes().item(0);
 					NodeList assocProperties = assoc.getChildNodes();
-					
+
 					for (int j = 0; j < properties.getLength(); j++) {
 						if (assocProperties.item(j) instanceof Element) {
 							Element assocProp = ((Element) assocProperties.item(j));
@@ -204,16 +190,16 @@ public class RemoteEntityServiceIT extends PLMBaseTestCase {
 					}
 				}
 				assertEquals("Entity assoc properties extraction", 1, checks);
-				
-			} catch(Exception e) {
+
+			} catch (Exception e) {
 				logger.error(e);
 			}
-			
+
 			return null;
 		}, false, true);
-		
+
 	}
-	
+
 	private NodeRef createFinishedProduct() {
 		// Create finished composite product with ActivityList
 		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -235,9 +221,8 @@ public class RemoteEntityServiceIT extends PLMBaseTestCase {
 			productData.getPackagingListView().setPackagingList(packList);
 			alfrescoRepository.save(productData);
 			return productData.getNodeRef();
-			
+
 		}, false, true);
 	}
 
-	
 }

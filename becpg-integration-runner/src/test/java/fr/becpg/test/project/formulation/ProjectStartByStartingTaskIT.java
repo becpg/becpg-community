@@ -1,9 +1,8 @@
 /*
- * 
+ *
  */
 package fr.becpg.test.project.formulation;
 
-import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -16,10 +15,10 @@ import fr.becpg.test.project.AbstractProjectTestCase;
 
 /**
  * The Class ProjectCalculatePlanningDatesTest.
- * 
+ *
  * @author quere
  */
-public class ProjectStartByStartingTaskIT extends AbstractProjectTestCase {	
+public class ProjectStartByStartingTaskIT extends AbstractProjectTestCase {
 
 	private static final Log logger = LogFactory.getLog(ProjectStartByStartingTaskIT.class);
 
@@ -33,40 +32,34 @@ public class ProjectStartByStartingTaskIT extends AbstractProjectTestCase {
 
 		final NodeRef projectNodeRef = createProject(ProjectState.Planned, null, null);
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 
-				assertNotNull(projectData);
-				assertNotNull(projectData.getTaskList());
-				assertEquals(6, projectData.getTaskList().size());
-				assertEquals(TaskState.Planned, projectData.getTaskList().get(0).getTaskState());
-				assertEquals(TaskState.Planned, projectData.getTaskList().get(1).getTaskState());
-				
-				projectData.getTaskList().get(0).setTaskState(TaskState.InProgress);
-				alfrescoRepository.save(projectData);
+			assertNotNull(projectData);
+			assertNotNull(projectData.getTaskList());
+			assertEquals(6, projectData.getTaskList().size());
+			assertEquals(TaskState.Planned, projectData.getTaskList().get(0).getTaskState());
+			assertEquals(TaskState.Planned, projectData.getTaskList().get(1).getTaskState());
 
-				return null;
-			}
+			projectData.getTaskList().get(0).setTaskState(TaskState.InProgress);
+			alfrescoRepository.save(projectData);
+
+			return null;
 		}, false, true);
-		
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
 
-				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-				assertNotNull(projectData);
-				assertNotNull(projectData.getTaskList());
-				assertEquals(6, projectData.getTaskList().size());
-				assertEquals(TaskState.InProgress, projectData.getTaskList().get(0).getTaskState());
-				assertEquals(TaskState.Planned, projectData.getTaskList().get(1).getTaskState());				
-				assertEquals(ProjectState.InProgress, projectData.getProjectState());				
+			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 
-				return null;
-			}
+			assertNotNull(projectData);
+			assertNotNull(projectData.getTaskList());
+			assertEquals(6, projectData.getTaskList().size());
+			assertEquals(TaskState.InProgress, projectData.getTaskList().get(0).getTaskState());
+			assertEquals(TaskState.Planned, projectData.getTaskList().get(1).getTaskState());
+			assertEquals(ProjectState.InProgress, projectData.getProjectState());
+
+			return null;
 		}, false, true);
 	}
 }

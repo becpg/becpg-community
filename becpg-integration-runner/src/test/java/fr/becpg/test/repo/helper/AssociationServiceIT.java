@@ -1,5 +1,5 @@
 /*
- * 
+ *
  */
 package fr.becpg.test.repo.helper;
 
@@ -13,7 +13,6 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.coci.CheckOutCheckInService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.version.Version;
@@ -32,7 +31,7 @@ import fr.becpg.test.PLMBaseTestCase;
 
 /**
  * The Class ProductVersionServiceTest.
- * 
+ *
  * @author querephi
  */
 public class AssociationServiceIT extends PLMBaseTestCase {
@@ -45,118 +44,104 @@ public class AssociationServiceIT extends PLMBaseTestCase {
 
 	@Resource
 	private NamespaceService namespaceService;
-	
+
 	@Resource
 	private EntityVersionService entityVersionService;
-	
+
 	@Resource
 	private AssociationService associationService;
-	
+
 	@Resource
 	private EntityReportService entityReportService;
-	
+
 	@Resource
 	private EntityService entityService;
-
 
 	/**
 	 * Test check out check in.
 	 */
 	@Test
-	public void testUpdateCachedAssocs(){
-		
-		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(
-				new RetryingTransactionCallback<NodeRef>() {
+	public void testUpdateCachedAssocs() {
 
-					@Override
-					public NodeRef execute() throws Throwable {
+		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-						NodeRef rawMaterialNodeRef = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test report");
-						if (!nodeService.hasAspect(rawMaterialNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
-							Map<QName, Serializable> aspectProperties = new HashMap<>();
-							aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
-							nodeService.addAspect(rawMaterialNodeRef, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
-						}
-						return rawMaterialNodeRef;
-					}
+			NodeRef rawMaterialNodeRef1 = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test report");
+			if (!nodeService.hasAspect(rawMaterialNodeRef1, ContentModel.ASPECT_VERSIONABLE)) {
+				Map<QName, Serializable> aspectProperties = new HashMap<>();
+				aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
+				nodeService.addAspect(rawMaterialNodeRef1, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
+			}
+			return rawMaterialNodeRef1;
+		}, false, true);
 
-				}, false, true);
-		
-		
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
-			@Override
-			public NodeRef execute() throws Throwable {
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-				// suppliers
-				String []supplierNames = {"Supplier1", "Supplier2", "Supplier3"};
-				List<NodeRef> supplierNodeRefs = new LinkedList<>();
-				for(String supplierName : supplierNames){
-					NodeRef supplierNodeRef = null;
-					NodeRef entityFolder = nodeService.getChildByName(getTestFolderNodeRef(),
-							ContentModel.ASSOC_CONTAINS, supplierName);
-					if(entityFolder != null){
-						supplierNodeRef = nodeService.getChildByName(entityFolder,
-								ContentModel.ASSOC_CONTAINS, supplierName);
-					}
-					
-					if(supplierNodeRef == null){
-						Map<QName, Serializable> properties = new HashMap<>();
-						properties.put(ContentModel.PROP_NAME, supplierName);
-						supplierNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName((String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_SUPPLIER, properties).getChildRef();
-					}
-					
-					supplierNodeRefs.add(supplierNodeRef);
+			// suppliers
+			String[] supplierNames = { "Supplier1", "Supplier2", "Supplier3" };
+			List<NodeRef> supplierNodeRefs = new LinkedList<>();
+			for (String supplierName : supplierNames) {
+				NodeRef supplierNodeRef = null;
+				NodeRef entityFolder = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, supplierName);
+				if (entityFolder != null) {
+					supplierNodeRef = nodeService.getChildByName(entityFolder, ContentModel.ASSOC_CONTAINS, supplierName);
 				}
-				
-				
-				associationService.update(rawMaterialNodeRef, PLMModel.ASSOC_SUPPLIERS, supplierNodeRefs.get(0));
-				
-				// check
-				List<NodeRef> targetNodeRefs = associationService.getTargetAssocs(rawMaterialNodeRef, PLMModel.ASSOC_SUPPLIERS);
-				assertEquals("", 1, targetNodeRefs.size());
-				
-				//Check out
-				NodeRef workingCopyNodeRef = checkOutCheckInService.checkout(rawMaterialNodeRef);			
-				
-				// add new Supplier
-				associationService.update(workingCopyNodeRef, PLMModel.ASSOC_SUPPLIERS, supplierNodeRefs);
-				
-				// check-in
-				Map<String, Serializable> versionProperties = new HashMap<>();
-				versionProperties.put(Version.PROP_DESCRIPTION, "This is a test version");
-				checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
-				
-				
-				
-				// check
-				targetNodeRefs = associationService.getTargetAssocs(rawMaterialNodeRef, PLMModel.ASSOC_SUPPLIERS);
-				
-				assertEquals("Assert 3", 3, targetNodeRefs.size());
-				
 
-				nodeService.deleteNode(supplierNodeRefs.get(0));
-				
-				// check
-				targetNodeRefs = associationService.getTargetAssocs(rawMaterialNodeRef, PLMModel.ASSOC_SUPPLIERS);
-				assertEquals("Assert 2", 2, targetNodeRefs.size());
-				
-				
-				//Check out
-				workingCopyNodeRef = checkOutCheckInService.checkout(rawMaterialNodeRef);			
-				
-				// remove Suppliers
-				associationService.update(workingCopyNodeRef, PLMModel.ASSOC_SUPPLIERS, new ArrayList<NodeRef>());
-				
-				// check-in
-				checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
-				
-				// check
-				targetNodeRefs = associationService.getTargetAssocs(rawMaterialNodeRef, PLMModel.ASSOC_SUPPLIERS);
-				assertEquals(0, targetNodeRefs.size());
-				
+				if (supplierNodeRef == null) {
+					Map<QName, Serializable> properties = new HashMap<>();
+					properties.put(ContentModel.PROP_NAME, supplierName);
+					supplierNodeRef = nodeService
+							.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+									QName.createQName((String) properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_SUPPLIER, properties)
+							.getChildRef();
+				}
+
+				supplierNodeRefs.add(supplierNodeRef);
+			}
+
+			associationService.update(rawMaterialNodeRef, PLMModel.ASSOC_SUPPLIERS, supplierNodeRefs.get(0));
+
+			// check
+			List<NodeRef> targetNodeRefs = associationService.getTargetAssocs(rawMaterialNodeRef, PLMModel.ASSOC_SUPPLIERS);
+			assertEquals("", 1, targetNodeRefs.size());
+
+			// Check out
+			NodeRef workingCopyNodeRef = checkOutCheckInService.checkout(rawMaterialNodeRef);
+
+			// add new Supplier
+			associationService.update(workingCopyNodeRef, PLMModel.ASSOC_SUPPLIERS, supplierNodeRefs);
+
+			// check-in
+			Map<String, Serializable> versionProperties = new HashMap<>();
+			versionProperties.put(Version.PROP_DESCRIPTION, "This is a test version");
+			checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
+
+			// check
+			targetNodeRefs = associationService.getTargetAssocs(rawMaterialNodeRef, PLMModel.ASSOC_SUPPLIERS);
+
+			assertEquals("Assert 3", 3, targetNodeRefs.size());
+
+			nodeService.deleteNode(supplierNodeRefs.get(0));
+
+			// check
+			targetNodeRefs = associationService.getTargetAssocs(rawMaterialNodeRef, PLMModel.ASSOC_SUPPLIERS);
+			assertEquals("Assert 2", 2, targetNodeRefs.size());
+
+			// Check out
+			workingCopyNodeRef = checkOutCheckInService.checkout(rawMaterialNodeRef);
+
+			// remove Suppliers
+			associationService.update(workingCopyNodeRef, PLMModel.ASSOC_SUPPLIERS, new ArrayList<NodeRef>());
+
+			// check-in
+			checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
+
+			// check
+			targetNodeRefs = associationService.getTargetAssocs(rawMaterialNodeRef, PLMModel.ASSOC_SUPPLIERS);
+			assertEquals(0, targetNodeRefs.size());
+
 			return null;
-			
-			}},false,true);
+
+		}, false, true);
 	}
-	
+
 }

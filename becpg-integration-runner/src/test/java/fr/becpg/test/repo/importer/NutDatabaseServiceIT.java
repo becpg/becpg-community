@@ -119,7 +119,7 @@ public class NutDatabaseServiceIT extends PLMBaseTestCase {
 			assertEquals(3, checks);
 
 			checks = 0;
-			List<NodeRef> importedRMList = new ArrayList<NodeRef>(Arrays.asList(importedRM1, importedRM2, importedRM3));
+			List<NodeRef> importedRMList = new ArrayList<>(Arrays.asList(importedRM1, importedRM2, importedRM3));
 			for (ChildAssociationRef child : nodeService.getChildAssocs(emptyRM)) {
 				if (importedRMList.contains(child.getChildRef())) {
 					++checks;
